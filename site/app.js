@@ -356,7 +356,7 @@ function drawCurveTable(rows) {
   const th = S.index.thresholds;
   const grid = S.index.grid;
   const cols = rows.map((r) => r.s);
-  let html = `<table class="data"><thead><tr><th class="t">At or below</th>${cols.map((s) => `<th>${s.label}</th>`).join("")}</tr></thead><tbody>`;
+  let html = `<table class="data"><thead><tr><th class="t">At or below ($/MWh)</th>${cols.map((s) => `<th>${s.label} (MW)</th>`).join("")}</tr></thead><tbody>`;
   th.forEach((t) => {
     const i = grid.indexOf(t);
     html += `<tr><td class="t">${t === -249 ? "Floor" : fmtPrice0(t)}</td>${rows.map((r) => `<td>${fmtMW(r.full[i] ?? 0)}</td>`).join("")}</tr>`;
@@ -476,15 +476,15 @@ const esc = (t) => String(t).replace(/&/g, "&amp;").replace(/"/g, "&quot;").repl
 const TECH_COLS = [
   ["Technology", "Resources are grouped by the resource type ERCOT reports for each unit. Hover a technology name to see which types it includes."],
   ["Units online", "Average number of units with an online status (ON, ONRUC, ONTEST and similar) across the day's SCED runs. Units that are off or on outage are excluded from every column."],
-  ["Available (HSL)", "High Sustained Limit: the most the online units can produce right now, as telemetered to ERCOT. For wind and solar it follows available output from the forecast and telemetry, not nameplate capacity."],
-  ["Min output (LSL)", "Low Sustained Limit: the least an online unit can produce and stay online. A thermal unit cannot go below this in response to price without shutting down, so this block keeps running however low prices fall."],
+  ["Available, HSL (MW)", "High Sustained Limit: the most the online units can produce right now, as telemetered to ERCOT. For wind and solar it follows available output from the forecast and telemetry, not nameplate capacity."],
+  ["Min output, LSL (MW)", "Low Sustained Limit: the least an online unit can produce and stay online. A thermal unit cannot go below this in response to price without shutting down, so this block keeps running however low prices fall."],
   ["LSL / HSL", "Minimum output as a share of available capacity. A higher share means less room to back down when prices drop: a unit at 60% can only shed 40% of its available output before it has to shut down."],
-  ["Output", "Telemetered net output, averaged over the day."],
-  ["At floor, as used", "MW in the curve SCED dispatched against that is priced at the −$250 floor (or −$249.99). This includes minimum output, which ERCOT places at −$250 whatever the generator offered, and the full output schedule of units with no offer curve. SCED treats this supply as a price-taker."],
+  ["Output (MW)", "Telemetered net output, averaged over the day."],
+  ["At floor, as used (MW)", "MW in the curve SCED dispatched against that is priced at the −$250 floor (or −$249.99). This includes minimum output, which ERCOT places at −$250 whatever the generator offered, and the full output schedule of units with no offer curve. SCED treats this supply as a price-taker."],
   ["Floor / output", "At-floor MW as a share of actual output: how much of the technology's generation SCED could not price off the system."],
-  ["≤ $0, as used", "MW offered at or below $0 in the curve SCED used. This supply keeps running when prices go negative."],
-  ["≤ $0, as submitted", "MW the generators themselves priced at or below $0 in the offer curves they submitted. The gap between this and the as-used column is supply placed low by ERCOT's curve extensions (minimum output and units without offers) rather than by the generator's own price."],
-  ["No submitted offer", "Available capacity of online units that submitted no energy offer curve and ran on an output schedule instead. ERCOT dispatches these against a proxy curve priced at the floor up to their schedule. Nuclear units typically work this way."],
+  ["≤ $0, as used (MW)", "MW offered at or below $0 in the curve SCED used. This supply keeps running when prices go negative."],
+  ["≤ $0, as submitted (MW)", "MW the generators themselves priced at or below $0 in the offer curves they submitted. The gap between this and the as-used column is supply placed low by ERCOT's curve extensions (minimum output and units without offers) rather than by the generator's own price."],
+  ["No submitted offer (MW)", "Available capacity (HSL, in MW) of online units that submitted no energy offer curve and ran on an output schedule instead. ERCOT dispatches these against a proxy curve priced at the floor up to their schedule. Nuclear units typically work this way."],
 ];
 const TECH_NOTES = {
   combined_cycle: "Combined-cycle gas plants (resource types CCGT90 and CCLE90). Each configuration of a plant is reported as its own resource.",
@@ -541,9 +541,9 @@ function drawTechTable() {
 
 // ---- unit table (60-day) -----------------------------------------------------
 const UNIT_COLS = [
-  ["unit", "Unit", "t"], ["type", "Type", "t"], ["hours_online", "Hours online"], ["hsl", "HSL MW"], ["lsl", "LSL MW"],
-  ["output", "Output MW"], ["pinned_share", "Time at LSL", "pct"], ["floor_mw", "At floor MW"],
-  ["le0_sced", "≤ $0 as used MW"], ["le0_submitted", "≤ $0 as submitted MW"], ["min_sub_price", "Lowest submitted $", "price"],
+  ["unit", "Unit", "t"], ["type", "Type", "t"], ["hours_online", "Hours online"], ["hsl", "HSL (MW)"], ["lsl", "LSL (MW)"],
+  ["output", "Output (MW)"], ["pinned_share", "Time at LSL", "pct"], ["floor_mw", "At floor (MW)"],
+  ["le0_sced", "≤ $0 as used (MW)"], ["le0_submitted", "≤ $0 as submitted (MW)"], ["min_sub_price", "Lowest submitted price ($/MWh)", "price"],
   ["no_offer_share", "No offer", "pct"],
 ];
 function drawUnits() {
