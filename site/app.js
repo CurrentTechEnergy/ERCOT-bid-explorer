@@ -34,7 +34,7 @@ const RANGES = {
 // ----------------------------------------------------------------- state ---
 const S = {
   index: null, source: "2d", date: null, hour: 12, version: "curves",
-  xrange: "low", mode: "lines", threshold: 0, location: "lambda",
+  xrange: "low", mode: "lines", axes: "price_x", threshold: 0, location: "lambda",
   hidden: new Set(), heatTech: null, unitTech: "all", unitSearch: "",
   unitSort: { key: "floor_mw", dir: -1 }, unitShowAll: false,
   day: null, prices: null, summaries: {},
@@ -216,9 +216,10 @@ function drawCurves() {
   const dom = [R.domain[0], Math.min(R.domain[1], grid[grid.length - 1])];
   const idx = grid.map((p, i) => i).filter((i) => grid[i] >= dom[0] && grid[i] <= dom[1]);
   const prices = idx.map((i) => grid[i]);
+  const flip = S.axes === "price_y";          // classic supply-curve orientation: MW across, price up
 
   const visible = seriesList().filter((s) => !S.hidden.has(s.id));
-  let rows = visible.map((s) => {
+  const rows = visible.map((s) => {
     const c = seriesCurves(S.day, s, S.version);
     const r = c && c[h];
     if (!r) return null;
@@ -234,54 +235,72 @@ function drawCurves() {
     ? { s: { ...DEMAND_2D, color: "--c-other" }, vals: idx.map((i) => S.day.curves.clr[h][i] ?? 0) } : null;
 
   const { w } = size(el);
-  const H = Math.max(300, Math.min(440, w * 0.45));
-  const m = { t: 18, r: S.mode === "stack" ? 16 : 150, b: 40, l: 64 };
-  if (w < 560) m.r = 16;
-  const x = (R.scale === "symlog" ? d3.scaleSymlog().constant(25) : d3.scaleLinear()).domain(dom).range([m.l, w - m.r]);
+  const H = flip ? Math.max(340, Math.min(520, w * 0.52)) : Math.max(300, Math.min(440, w * 0.45));
+  const labelRoom = !flip && S.mode !== "stack" && w >= 560;
+  const m = { t: 18, r: labelRoom ? 150 : 16, b: 40, l: flip ? 70 : 64 };
 
-  let stacked = null, yDom;
+  // value (MW or %) scale and price scale; which one is horizontal depends on `flip`
+  let stacked = null, vDom;
   if (S.mode === "stack" && rows.length) {
     const data = prices.map((p, j) => Object.fromEntries([["p", p], ...rows.map((r) => [r.s.id, r.vals[j]])]));
     stacked = d3.stack().keys(rows.map((r) => r.s.id)).offset(d3.stackOffsetDiverging)(data);
-    yDom = [Math.min(0, d3.min(stacked, (l) => d3.min(l, (d) => d[0]))), d3.max(stacked, (l) => d3.max(l, (d) => d[1]))];
+    vDom = [Math.min(0, d3.min(stacked, (l) => d3.min(l, (d) => d[0]))), d3.max(stacked, (l) => d3.max(l, (d) => d[1]))];
   } else if (S.mode === "share") {
-    yDom = [0, 100];
+    vDom = [0, 100];
   } else {
     const all = rows.flatMap((r) => r.vals).concat(demand ? demand.vals : []);
-    yDom = [Math.min(0, d3.min(all) ?? 0), Math.max(1, d3.max(all) ?? 1)];
+    vDom = [Math.min(0, d3.min(all) ?? 0), Math.max(1, d3.max(all) ?? 1)];
   }
-  const y = d3.scaleLinear().domain(yDom).nice().range([H - m.b, m.t]);
+  const pScale = (R.scale === "symlog" ? d3.scaleSymlog().constant(25) : d3.scaleLinear()).domain(dom);
+  const vScale = d3.scaleLinear().domain(vDom);
+  const xS = flip ? vScale : pScale, yS = flip ? pScale : vScale;
+  xS.range([m.l, w - m.r]);
+  yS.range([H - m.b, m.t]);
+  vScale.nice();
+  const P = flip ? (p) => yS(p) : (p) => xS(p);   // price -> pixel along the price axis
+  const V = flip ? (v) => xS(v) : (v) => yS(v);   // value -> pixel along the value axis
+  const pt = (p, v) => (flip ? [V(v), P(p)] : [P(p), V(v)]);
 
   const svg = d3.create("svg").attr("viewBox", `0 0 ${w} ${H}`).attr("role", "img")
     .attr("aria-label", `Offer curves for ${S.date} ${heLabel(h)}`);
-  svg.append("g").attr("class", "gridline").attr("transform", `translate(${m.l},0)`)
-    .call(d3.axisLeft(y).ticks(6).tickSize(-(w - m.l - m.r)).tickFormat(""));
-  const xTicks = R.scale === "symlog" ? [-250, -100, -25, 0, 25, 100, 300, 1000, 5000] : x.ticks(w < 560 ? 5 : 9);
-  svg.append("g").attr("class", "axis").attr("transform", `translate(0,${H - m.b})`)
-    .call(d3.axisBottom(x).tickValues(xTicks).tickFormat(fmtPrice0).tickSizeOuter(0));
-  svg.append("g").attr("class", "axis").attr("transform", `translate(${m.l},0)`)
-    .call(d3.axisLeft(y).ticks(6).tickFormat(S.mode === "share" ? (v) => v + "%" : d3.format(",.0f")).tickSizeOuter(0));
-  if (yDom[0] < 0) svg.append("line").attr("class", "zero").attr("x1", m.l).attr("x2", w - m.r).attr("y1", y(0)).attr("y2", y(0));
-  svg.append("text").attr("class", "axis-title").attr("x", w - m.r).attr("y", H - 6).attr("text-anchor", "end").text("Offer price ($/MWh)");
-  svg.append("text").attr("class", "axis-title").attr("x", m.l).attr("y", 10).text(S.mode === "share" ? "% of MW offered at any price" : "MW offered at or below price");
+  const priceTicks = R.scale === "symlog" ? [-250, -100, -25, 0, 25, 100, 300, 1000, 5000]
+    : pScale.ticks(flip ? 8 : (w < 560 ? 5 : 9));
+  const valFmt = S.mode === "share" ? (v) => v + "%" : d3.format(",.0f");
+  const valTicks = flip && w < 560 ? 4 : 6;
+  const xAxis = flip ? d3.axisBottom(xS).ticks(valTicks).tickFormat(valFmt) : d3.axisBottom(xS).tickValues(priceTicks).tickFormat(fmtPrice0);
+  const yAxis = flip ? d3.axisLeft(yS).tickValues(priceTicks).tickFormat(fmtPrice0) : d3.axisLeft(yS).ticks(6).tickFormat(valFmt);
+  const gridAxis = flip ? d3.axisBottom(xS).ticks(valTicks).tickSize(-(H - m.t - m.b)).tickFormat("")
+    : d3.axisLeft(yS).ticks(6).tickSize(-(w - m.l - m.r)).tickFormat("");
+  svg.append("g").attr("class", "gridline").attr("transform", flip ? `translate(0,${H - m.b})` : `translate(${m.l},0)`).call(gridAxis);
+  svg.append("g").attr("class", "axis").attr("transform", `translate(0,${H - m.b})`).call(xAxis.tickSizeOuter(0));
+  svg.append("g").attr("class", "axis").attr("transform", `translate(${m.l},0)`).call(yAxis.tickSizeOuter(0));
+  // zero lines: value 0 (MW) and, when flipped, $0 is just a tick
+  if (vDom[0] < 0) {
+    if (flip) svg.append("line").attr("class", "zero").attr("x1", V(0)).attr("x2", V(0)).attr("y1", m.t).attr("y2", H - m.b);
+    else svg.append("line").attr("class", "zero").attr("x1", m.l).attr("x2", w - m.r).attr("y1", V(0)).attr("y2", V(0));
+  }
+  const valTitle = S.mode === "share" ? "% of MW offered at any price" : "MW offered at or below price";
+  svg.append("text").attr("class", "axis-title").attr("x", w - m.r).attr("y", H - 6).attr("text-anchor", "end").text(flip ? valTitle : "Offer price ($/MWh)");
+  svg.append("text").attr("class", "axis-title").attr("x", m.l).attr("y", 10).text(flip ? "Offer price ($/MWh)" : valTitle);
 
-  // cleared price band and rule (drawn under the data)
   const hp = hourPrice(S.prices, h);
   const priceLayer = svg.append("g");
 
   if (stacked) {
-    const area = d3.area().x((d) => x(d.data.p)).y0((d) => y(d[0])).y1((d) => y(d[1])).curve(d3.curveStepAfter);
+    const area = flip
+      ? d3.area().y((d) => P(d.data.p)).x0((d) => V(d[0])).x1((d) => V(d[1])).curve(d3.curveStepBefore)
+      : d3.area().x((d) => P(d.data.p)).y0((d) => V(d[0])).y1((d) => V(d[1])).curve(d3.curveStepAfter);
     svg.append("g").selectAll("path").data(stacked).join("path")
       .attr("fill", (l) => css(rows.find((r) => r.s.id === l.key).s.color))
-      .attr("stroke", css("--surface")).attr("stroke-width", 1).attr("d", area);
+      .attr("d", area);
   } else {
-    const line = d3.line().x((d, j) => x(prices[j])).y((d) => y(d)).curve(d3.curveStepAfter);
+    const line = d3.line().x((d, j) => pt(prices[j], d)[0]).y((d, j) => pt(prices[j], d)[1])
+      .curve(flip ? d3.curveStepBefore : d3.curveStepAfter);
     const g = svg.append("g").attr("fill", "none").attr("stroke-width", 2).attr("stroke-linejoin", "round");
     rows.forEach((r) => g.append("path").attr("stroke", css(r.s.color)).attr("d", line(r.vals)));
     if (demand) g.append("path").attr("stroke", css("--c-other")).attr("stroke-dasharray", "5 4").attr("d", line(demand.vals));
-    // direct labels at the right edge, nudged apart
-    if (m.r > 100) {
-      const labs = rows.concat(demand ? [demand] : []).map((r) => ({ text: r.s.label.replace(/ \(.*\)$/, ""), y: y(r.vals[r.vals.length - 1]) }))
+    if (labelRoom) {
+      const labs = rows.concat(demand ? [demand] : []).map((r) => ({ text: r.s.label.replace(/ \(.*\)$/, ""), y: V(r.vals[r.vals.length - 1]) }))
         .sort((a, b) => a.y - b.y);
       for (let i = 1; i < labs.length; i++) if (labs[i].y - labs[i - 1].y < 13) labs[i].y = labs[i - 1].y + 13;
       svg.append("g").selectAll("text").data(labs).join("text").attr("class", "dlabel")
@@ -289,26 +308,36 @@ function drawCurves() {
     }
   }
 
+  // cleared price: a line across the value axis at the hour's average, with the hour's range shaded
   if (hp && hp.mean != null && hp.mean >= dom[0] && hp.mean <= dom[1]) {
-    if (hp.min != null && hp.max != null && hp.max > hp.min)
-      priceLayer.append("rect").attr("class", "price-band").attr("x", x(Math.max(dom[0], hp.min))).attr("width", Math.max(1, x(Math.min(dom[1], hp.max)) - x(Math.max(dom[0], hp.min))))
-        .attr("y", m.t).attr("height", H - m.b - m.t);
-    svg.append("line").attr("class", "price-rule").attr("x1", x(hp.mean)).attr("x2", x(hp.mean)).attr("y1", m.t).attr("y2", H - m.b);
+    const lo = Math.max(dom[0], hp.min ?? hp.mean), hi = Math.min(dom[1], hp.max ?? hp.mean);
     const txt = `${S.location === "lambda" ? "λ" : S.location} ${fmtPrice(hp.mean)}`;
-    const tx = x(hp.mean) + (x(hp.mean) > w - m.r - 120 ? -6 : 6);
-    const anchor = x(hp.mean) > w - m.r - 120 ? "end" : "start";
-    svg.append("text").attr("class", "price-label").attr("x", tx).attr("y", m.t + 12).attr("text-anchor", anchor).text(txt);
+    if (flip) {
+      if (hi > lo) priceLayer.append("rect").attr("class", "price-band").attr("x", m.l).attr("width", w - m.l - m.r)
+        .attr("y", P(hi)).attr("height", Math.max(1, P(lo) - P(hi)));
+      svg.append("line").attr("class", "price-rule").attr("x1", m.l).attr("x2", w - m.r).attr("y1", P(hp.mean)).attr("y2", P(hp.mean));
+      svg.append("text").attr("class", "price-label").attr("x", w - m.r).attr("y", P(hp.mean) - 5).attr("text-anchor", "end").text(txt);
+    } else {
+      if (hi > lo) priceLayer.append("rect").attr("class", "price-band").attr("x", P(lo)).attr("width", Math.max(1, P(hi) - P(lo)))
+        .attr("y", m.t).attr("height", H - m.b - m.t);
+      svg.append("line").attr("class", "price-rule").attr("x1", P(hp.mean)).attr("x2", P(hp.mean)).attr("y1", m.t).attr("y2", H - m.b);
+      const right = P(hp.mean) > w - m.r - 120;
+      svg.append("text").attr("class", "price-label").attr("x", P(hp.mean) + (right ? -6 : 6)).attr("y", m.t + 12)
+        .attr("text-anchor", right ? "end" : "start").text(txt);
+    }
   }
 
-  // hover
-  const cross = svg.append("line").attr("class", "crosshair").attr("y1", m.t).attr("y2", H - m.b).style("display", "none");
+  // hover: crosshair along the price axis
+  const cross = svg.append("line").attr("class", "crosshair").style("display", "none");
   svg.append("rect").attr("x", m.l).attr("y", m.t).attr("width", w - m.l - m.r).attr("height", H - m.t - m.b)
     .attr("fill", "transparent")
     .on("pointermove", (ev) => {
-      const [mx] = d3.pointer(ev);
-      const p = x.invert(mx);
+      const [mx, my] = d3.pointer(ev);
+      const p = pScale.invert(flip ? my : mx);
       const j = d3.minIndex(prices, (q) => Math.abs(q - p));
-      cross.style("display", null).attr("x1", x(prices[j])).attr("x2", x(prices[j]));
+      if (flip) cross.attr("x1", m.l).attr("x2", w - m.r).attr("y1", P(prices[j])).attr("y2", P(prices[j]));
+      else cross.attr("x1", P(prices[j])).attr("x2", P(prices[j])).attr("y1", m.t).attr("y2", H - m.b);
+      cross.style("display", null);
       const unit = S.mode === "share" ? "%" : " MW";
       const lines = rows.map((r) => [r.s, r.vals[j]]).concat(demand ? [[demand.s, demand.vals[j]]] : []);
       let html = `<h4>At or below ${fmtPrice0(prices[j])}/MWh</h4><table>` +
@@ -441,6 +470,46 @@ function drawHeatmap() {
   scaleEl.innerHTML = `<span>${fmtMW(ext[0])} MW</span><span class="ramp" style="background:linear-gradient(90deg,${css("--seq-lo")},${css("--seq-hi")})"></span><span>${fmtMW(ext[1])} MW</span>`;
 }
 
+
+// ---- explanations shown on hover / focus ---------------------------------------
+const esc = (t) => String(t).replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;");
+const TECH_COLS = [
+  ["Technology", "Resources are grouped by the resource type ERCOT reports for each unit. Hover a technology name to see which types it includes."],
+  ["Units online", "Average number of units with an online status (ON, ONRUC, ONTEST and similar) across the day's SCED runs. Units that are off or on outage are excluded from every column."],
+  ["Available (HSL)", "High Sustained Limit: the most the online units can produce right now, as telemetered to ERCOT. For wind and solar it follows available output from the forecast and telemetry, not nameplate capacity."],
+  ["Min output (LSL)", "Low Sustained Limit: the least an online unit can produce and stay online. A thermal unit cannot go below this in response to price without shutting down, so this block keeps running however low prices fall."],
+  ["LSL / HSL", "Minimum output as a share of available capacity. A higher share means less room to back down when prices drop: a unit at 60% can only shed 40% of its available output before it has to shut down."],
+  ["Output", "Telemetered net output, averaged over the day."],
+  ["At floor, as used", "MW in the curve SCED dispatched against that is priced at the −$250 floor (or −$249.99). This includes minimum output, which ERCOT places at −$250 whatever the generator offered, and the full output schedule of units with no offer curve. SCED treats this supply as a price-taker."],
+  ["Floor / output", "At-floor MW as a share of actual output: how much of the technology's generation SCED could not price off the system."],
+  ["≤ $0, as used", "MW offered at or below $0 in the curve SCED used. This supply keeps running when prices go negative."],
+  ["≤ $0, as submitted", "MW the generators themselves priced at or below $0 in the offer curves they submitted. The gap between this and the as-used column is supply placed low by ERCOT's curve extensions (minimum output and units without offers) rather than by the generator's own price."],
+  ["No submitted offer", "Available capacity of online units that submitted no energy offer curve and ran on an output schedule instead. ERCOT dispatches these against a proxy curve priced at the floor up to their schedule. Nuclear units typically work this way."],
+];
+const TECH_NOTES = {
+  combined_cycle: "Combined-cycle gas plants (resource types CCGT90 and CCLE90). Each configuration of a plant is reported as its own resource.",
+  combustion_turbine: "Simple-cycle gas and oil combustion turbines (SCGT90, SCLE90): typically peakers with quick starts.",
+  wind: "Wind-powered generation resources (WIND). Curves are capped at available output.",
+  solar: "Photovoltaic generation resources (PVGR). Curves are capped at available output, so they shrink to zero at night.",
+  nuclear: "Nuclear units (NUC). They normally submit no offer curve and run on an output schedule.",
+  gas_steam: "Gas-fired steam units (GSREH reheat, GSSUP supercritical, GSNONR non-reheat).",
+  storage: "Energy storage resources (ESR). Values are net: negative while charging, positive while discharging.",
+  coal: "Coal and lignite units (CLLIG).",
+  other: "Hydro (HYDRO), diesel (DSL), biomass and other renewables (RENEW), and any resource type not otherwise mapped.",
+};
+const UNIT_TIPS = {
+  hours_online: "Hours of the day with an online status.",
+  hsl: "High Sustained Limit averaged over the hours online.",
+  lsl: "Low Sustained Limit (minimum output) averaged over the hours online.",
+  output: "Telemetered net output averaged over the hours online.",
+  pinned_share: "Share of online SCED runs in which the unit's base point sat at its minimum output: SCED wanted less but the unit could not go lower.",
+  floor_mw: "MW priced at −$250/−$249.99 in the curve SCED used, averaged over the hours online.",
+  le0_sced: "MW at or below $0 in the curve SCED used.",
+  le0_submitted: "MW at or below $0 in the curve the generator submitted.",
+  min_sub_price: "Price of the first (cheapest) point on the submitted offer curve, lowest of the day. Blank when no curve was submitted.",
+  no_offer_share: "Share of online SCED runs with no submitted offer curve.",
+};
+
 // ---- technology table (60-day) ---------------------------------------------
 function drawTechTable() {
   const el = $("tech-table");
@@ -455,19 +524,19 @@ function drawTechTable() {
     return r;
   });
   const maxShare = d3.max(rows, (r) => (r.output > 1 ? r.floor_sced / r.output : 0)) || 1;
-  const head = ["Technology", "Units online", "Available (HSL)", "Min output (LSL)", "LSL / HSL", "Output", "At floor, as used", "Floor / output",
-    "≤ $0, as used", "≤ $0, as submitted", "No submitted offer"];
-  let html = `<table class="data"><thead><tr>${head.map((h, i) => `<th class="${i ? "" : "t"}">${h}</th>`).join("")}</tr></thead><tbody>`;
+  const head = TECH_COLS.map(([label, tip], i) =>
+    `<th class="${i ? "" : "t"} has-tip" tabindex="0" data-tip-title="${esc(label)}" data-tip="${esc(tip)}">${label}</th>`);
+  let html = `<table class="data"><thead><tr>${head.join("")}</tr></thead><tbody>`;
   rows.forEach((r) => {
     const share = r.output > 1 ? r.floor_sced / r.output : null;
-    html += `<tr><td class="t"><span class="sw" style="background:var(${r.s.color});margin-right:6px"></span>${r.s.label}</td>
+    html += `<tr><td class="t"><span class="has-tip" tabindex="0" data-tip-title="${esc(r.s.label)}" data-tip="${esc(TECH_NOTES[r.s.id] || "")}"><span class="sw" style="background:var(${r.s.color});margin-right:6px"></span>${r.s.label}</span></td>
       <td>${d3.format(",.0f")(r.n_online)}</td><td>${fmtMW(r.hsl)}</td><td>${fmtMW(r.lsl)}</td>
       <td>${r.hsl > 1 && r.s.id !== "storage" ? fmtPct(r.lsl / r.hsl) : "–"}</td><td>${fmtMW(r.output)}</td>
       <td>${fmtMW(r.floor_sced)}</td>
       <td>${share == null || r.s.id === "storage" ? "–" : fmtPct(share) + `<span class="bar-cell" style="width:${Math.round(40 * share / maxShare)}px"></span>`}</td>
       <td>${fmtMW(r.le0_sced)}</td><td>${fmtMW(r.le0_submitted)}</td><td>${fmtMW(r.no_offer_hsl)}</td></tr>`;
   });
-  el.innerHTML = html + `</tbody></table><p class="note">MW are averages over the day's hours. Storage values are net (negative = charging). "No submitted offer" is the available capacity of online units that submitted no energy offer curve; ERCOT dispatches those against a proxy curve priced at the floor up to their output schedule.</p>`;
+  el.innerHTML = html + `</tbody></table><p class="note">MW are averages over the day's hours. Hover a column heading or a technology name for an explanation.</p>`;
 }
 
 // ---- unit table (60-day) -----------------------------------------------------
@@ -495,7 +564,7 @@ function drawUnits() {
   if (!S.unitShowAll) rows = rows.slice(0, 150);
   const fmt = (v, kind) => v == null ? "–" : kind === "pct" ? fmtPct(v) : kind === "price" ? fmtPrice(v) : kind === "t" ? v : d3.format(",.1f")(v);
   let html = `<div class="units-wrap"><table class="data"><thead><tr>${UNIT_COLS.map(([k, label, kind]) =>
-    `<th class="sortable ${kind === "t" ? "t" : ""}" data-k="${k}" aria-sort="${k === key ? (dir > 0 ? "ascending" : "descending") : "none"}">${label}${k === key ? (dir > 0 ? " ▲" : " ▼") : ""}</th>`).join("")}</tr></thead><tbody>`;
+    `<th class="sortable ${kind === "t" ? "t" : ""}${UNIT_TIPS[k] ? " has-tip" : ""}" data-k="${k}"${UNIT_TIPS[k] ? ` data-tip-title="${esc(label)}" data-tip="${esc(UNIT_TIPS[k])}"` : ""} aria-sort="${k === key ? (dir > 0 ? "ascending" : "descending") : "none"}">${label}${k === key ? (dir > 0 ? " ▲" : " ▼") : ""}</th>`).join("")}</tr></thead><tbody>`;
   html += rows.map((r) => `<tr>${UNIT_COLS.map(([k, , kind]) => `<td class="${kind === "t" ? "t" : ""}">${fmt(r[k], kind)}</td>`).join("")}</tr>`).join("");
   el.innerHTML = html + "</tbody></table></div>";
   $("units-foot").innerHTML = total > rows.length
@@ -560,13 +629,14 @@ async function boot() {
   $("status").textContent = `2-day: ${D["2d"].length} day(s), latest ${last(D["2d"])} · 60-day: ${D["60d"].length} day(s), latest ${last(D["60d"])} · prices: ${D.prices.length} day(s) · updated ${S.index.updated.replace("T", " ").replace("Z", " UTC")}`;
 
   $("source").querySelectorAll("button").forEach((b) => (b.disabled = !D[b.dataset.v].length));
-  setSeg("source", S.source); setSeg("version", S.version); setSeg("xrange", S.xrange); setSeg("mode", S.mode);
+  setSeg("source", S.source); setSeg("version", S.version); setSeg("xrange", S.xrange); setSeg("mode", S.mode); setSeg("axes", S.axes);
   fillDates(); fillLocations(); fillThresholds(); fillTechSelects();
 
   bindSeg("source", "source", async () => { S.hidden.clear(); fillDates(); fillTechSelects(); await changeDay(); });
   bindSeg("version", "version");
   bindSeg("xrange", "xrange");
   bindSeg("mode", "mode");
+  bindSeg("axes", "axes");
   $("date").onchange = async (e) => { S.date = e.target.value; await changeDay(); };
   $("hour").oninput = (e) => { S.hour = +e.target.value; render(); };
   $("location").onchange = (e) => { S.location = e.target.value; render(); };
@@ -587,6 +657,19 @@ async function boot() {
     const id = b.dataset.id;
     S.hidden.has(id) ? S.hidden.delete(id) : S.hidden.add(id);
     render();
+  });
+
+  // explainer tooltips: hover, keyboard focus, or tap
+  const tipFor = (el) => `<h4>${esc(el.dataset.tipTitle || "")}</h4><p class="tip-body">${esc(el.dataset.tip)}</p>`;
+  const tipAt = (el) => { const r = el.getBoundingClientRect(); return { clientX: r.left, clientY: r.bottom - 6 }; };
+  document.addEventListener("pointerover", (e) => { const el = e.target.closest("[data-tip]"); if (el && e.pointerType === "mouse") showTip(e, tipFor(el)); });
+  document.addEventListener("pointermove", (e) => { const el = e.target.closest("[data-tip]"); if (el && e.pointerType === "mouse") showTip(e, tipFor(el)); });
+  document.addEventListener("pointerout", (e) => { const el = e.target.closest("[data-tip]"); if (el && !el.contains(e.relatedTarget)) hideTip(); });
+  document.addEventListener("focusin", (e) => { const el = e.target.closest("[data-tip]"); if (el) showTip(tipAt(el), tipFor(el)); });
+  document.addEventListener("focusout", (e) => { if (e.target.closest("[data-tip]")) hideTip(); });
+  document.addEventListener("click", (e) => {
+    const el = e.target.closest("[data-tip]");
+    if (el && e.pointerType !== "mouse" && !el.dataset.k) showTip(tipAt(el), tipFor(el));
   });
 
   let t;

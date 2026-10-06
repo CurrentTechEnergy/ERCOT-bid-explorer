@@ -53,7 +53,7 @@
     <div class="panel-head">
       <div>
         <h2>Offer curves <span class="h-note" id="curve-title-note"></span></h2>
-        <p class="note">MW offered at or below each price, averaged over the SCED runs in the hour. The vertical line marks the cleared price.</p>
+        <p class="note">MW offered at or below each price, averaged over the SCED runs in the hour. The line across the chart marks the cleared price for the hour; the shaded band is its range.</p>
       </div>
       <div class="panel-tools">
         <div class="seg seg-sm" id="xrange" role="radiogroup" aria-label="Price range">
@@ -65,6 +65,10 @@
           <button type="button" data-v="lines" role="radio">Lines</button>
           <button type="button" data-v="stack" role="radio">Stacked</button>
           <button type="button" data-v="share" role="radio" title="Each technology as a share of the MW it offers at any price">% of offered</button>
+        </div>
+        <div class="seg seg-sm" id="axes" role="radiogroup" aria-label="Axis orientation">
+          <button type="button" data-v="price_x" role="radio" title="Price across the bottom, MW up the side">Price on x</button>
+          <button type="button" data-v="price_y" role="radio" title="MW across the bottom, price up the side (supply-curve view)">Price on y</button>
         </div>
       </div>
     </div>

@@ -146,3 +146,7 @@ table.data tr:hover td { background: var(--accent-soft); }
 }
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
 .linkish { font: inherit; color: var(--accent); background: none; border: 0; padding: 0; cursor: pointer; text-decoration: underline; }
+.has-tip { text-decoration: underline dotted var(--muted); text-underline-offset: 3px; cursor: help; }
+th.sortable.has-tip { cursor: pointer; }
+.tip .tip-body { margin: 0; line-height: 1.45; color: var(--ink-2); }
+.tip { max-width: 320px; }
