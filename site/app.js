@@ -178,6 +178,10 @@ async function changeDay() {
 
 function render() {
   const is60 = S.source === "60d";
+  const days = S.index ? [...S.index.days[S.source]].sort() : [];
+  const di = days.indexOf(S.date);
+  $("date-prev").disabled = di <= 0;
+  $("date-next").disabled = di < 0 || di >= days.length - 1;
   $("ctl-version").hidden = !is60;
   $("thermal-panel").hidden = !is60;
   $("units-panel").hidden = !is60;
@@ -638,6 +642,16 @@ async function boot() {
   bindSeg("mode", "mode");
   bindSeg("axes", "axes");
   $("date").onchange = async (e) => { S.date = e.target.value; await changeDay(); };
+  // step one available day older (-1) or newer (+1)
+  const stepDay = async (dir) => {
+    const days = [...S.index.days[S.source]].sort();
+    const i = days.indexOf(S.date) + dir;
+    if (i < 0 || i >= days.length) return;
+    S.date = days[i]; $("date").value = S.date;
+    await changeDay();
+  };
+  $("date-prev").onclick = () => stepDay(-1);
+  $("date-next").onclick = () => stepDay(1);
   $("hour").oninput = (e) => { S.hour = +e.target.value; render(); };
   $("location").onchange = (e) => { S.location = e.target.value; render(); };
   $("threshold").onchange = (e) => { S.threshold = +e.target.value; render(); };

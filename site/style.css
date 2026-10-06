@@ -150,3 +150,8 @@ table.data tr:hover td { background: var(--accent-soft); }
 th.sortable.has-tip { cursor: pointer; }
 .tip .tip-body { margin: 0; line-height: 1.45; color: var(--ink-2); }
 .tip { max-width: 320px; }
+.date-step { display: flex; gap: 4px; align-items: stretch; }
+.step { font: 600 18px/1 var(--font-ui); color: var(--ink); background: var(--surface); border: 1px solid var(--line); border-radius: 6px;
+  min-width: 34px; min-height: 34px; padding: 0 8px; cursor: pointer; }
+.step:hover:not(:disabled) { background: var(--accent-soft); }
+.step:disabled { opacity: 0.35; cursor: not-allowed; }
