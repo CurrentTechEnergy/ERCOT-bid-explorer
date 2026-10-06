@@ -45,6 +45,7 @@ jobs:
 
       - name: Fetch and process new reports
         env:
+          PYTHONUNBUFFERED: "1"      # stream log lines as they happen
           ERCOT_API_USERNAME: ${{ secrets.ERCOT_API_USERNAME }}
           ERCOT_API_PASSWORD: ${{ secrets.ERCOT_API_PASSWORD }}
           ERCOT_API_SUBSCRIPTION_KEY: ${{ secrets.ERCOT_API_SUBSCRIPTION_KEY }}
