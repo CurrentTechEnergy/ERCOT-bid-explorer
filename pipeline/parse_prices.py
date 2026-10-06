@@ -8,6 +8,7 @@ import pandas as pd
 
 from .config import PRICE_POINT_TYPES
 from .curves import parse_sced_time, to_iso_date
+from .log import warn
 
 
 def _r2(a):
@@ -41,7 +42,7 @@ def read_lambda(csvs: Iterable[Tuple[str, bytes]]) -> pd.DataFrame:
         flag = _pick(f.columns, "repeatedhourflag", "repeathourflag", contains="repeat")
         lam = _pick(f.columns, "cappedsystemlambda", "systemlambda", contains="lambda", exclude=("uncapped",))
         if stamp is None or lam is None:
-            print(f"  ! unrecognised system lambda columns in {n}: {list(f.columns)}")
+            warn(f"Unrecognised system lambda columns in {n}: {list(f.columns)}")
             continue
         frames.append(pd.DataFrame({
             "stamp": f[stamp].astype(str).str.strip(),
@@ -63,7 +64,7 @@ def read_spp(csvs: Iterable[Tuple[str, bytes]]) -> pd.DataFrame:
         c = {k: _pick(f.columns, k) for k in ("deliverydate", "deliveryhour", "deliveryinterval",
                                                 "settlementpointname", "settlementpointtype", "settlementpointprice")}
         if any(v is None for v in c.values()):
-            print(f"  ! unrecognised settlement point price columns in {n}: {list(f.columns)}")
+            warn(f"Unrecognised settlement point price columns in {n}: {list(f.columns)}")
             continue
         g = pd.DataFrame({
             "date": f[c["deliverydate"]].astype(str).str.strip(),

@@ -17,6 +17,7 @@ from .parse_2day import parse_2day_zip
 from .parse_60day import parse_60day_zip
 from .parse_prices import build_price_day, read_lambda, read_spp
 from .store import iter_csvs, zip_names, load_index, save_index, update_summary, write_json_gz
+from .log import warn, write_summary, WARNINGS
 
 warnings.filterwarnings("ignore", category=RuntimeWarning)
 
@@ -88,7 +89,7 @@ def fetch_curves(api, emil: str, posted_from: dt.datetime, posted_to: dt.datetim
             have.add(date)
             save_index(index)
         except Exception as e:  # keep going; one bad file shouldn't stop the run
-            print(f"  ! failed: {e}")
+            warn(f"{emil} {guess}: failed: {type(e).__name__}: {e}")
         n += 1
         if limit and n >= limit:
             break
@@ -112,9 +113,11 @@ def fetch_prices(api, dates, index: dict):
                     blobs.extend(api.download_many(emil, [x["docId"] for x in docs]))
             done = process_price_blobs(blobs, [date], index)
         except Exception as e:   # a price problem must not lose the curve data already processed
-            print(f"  ! prices {date} failed: {type(e).__name__}: {e}")
+            warn(f"Prices {date}: failed: {type(e).__name__}: {e}")
             done, failed = [], True
         print(f"  prices {date}: {'ok' if done else 'none found'}")
+        if not done and not failed:
+            warn(f"Prices {date}: no system lambda or hub prices found on the ERCOT API")
         if not done and not failed:       # count only genuine "no prices" results
             misses[date] = misses.get(date, 0) + 1
         save_index(index)
@@ -131,6 +134,7 @@ def main(argv=None):
     args = ap.parse_args(argv)
 
     index = load_index()
+    before = {k: set(v) for k, v in index["days"].items()}
 
     if args.local:
         price_blobs, curve_dates = [], []
@@ -179,7 +183,15 @@ def main(argv=None):
         fetch_prices(api, need, index)
 
     save_index(index)
-    print("done")
+    added = {k: sorted(set(index["days"][k]) - before.get(k, set())) for k in index["days"]}
+    names = {"2d": "2-day curves", "60d": "60-day curves", "prices": "prices"}
+    lines = ["### ERCOT data update", "", "| Data | Days added | Range |", "|---|---|---|"]
+    for k, v in added.items():
+        lines.append(f"| {names.get(k, k)} | {len(v)} | {v[0] + ' to ' + v[-1] if v else '–'} |")
+    lines += ["", f"**{len(WARNINGS)} warning(s)**" if WARNINGS else "No warnings."]
+    lines += [f"- {w}" for w in WARNINGS[:50]]
+    write_summary(lines)
+    print("done:", {k: len(v) for k, v in added.items()}, f"{len(WARNINGS)} warning(s)")
 
 
 if __name__ == "__main__":

@@ -15,6 +15,7 @@ import pandas as pd
 from .config import PRICE_GRID, SIXTY_DAY_TECHS, TECH_OF_TYPE
 from .curves import accumulate, mw_at_prices, parse_sced_time
 from .store import iter_csvs, thresholds_from_curves, _round
+from .log import warn
 
 N_SCED_PTS = 35
 N_TPO_PTS = 10   # ESR files may carry more; detected from the header
@@ -155,7 +156,7 @@ def parse_60day_zip(blob: bytes, chunksize: int = 40000):
     date = max(set(acc.dates), key=acc.dates.count)
     runs, sced, sub, stats, ut = acc.finish()
     if acc.unknown_types:
-        print(f"  note: unmapped resource types grouped as 'other': {sorted(acc.unknown_types)}")
+        warn(f"Unmapped resource types grouped as 'other': {sorted(acc.unknown_types)}")
 
     def r1(x):
         return None if pd.isna(x) else round(float(x), 1)
