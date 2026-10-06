@@ -33,6 +33,8 @@ jobs:
     timeout-minutes: 340
     steps:
       - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0     # full history so the data commit can be rebased onto newer code
 
       - uses: actions/setup-python@v6
         with:
@@ -63,10 +65,17 @@ jobs:
           git add site/data
           if git diff --cached --quiet; then
             echo "No new data"
-          else
-            git commit -m "Data update $(date -u +%Y-%m-%d)"
-            git push
+            exit 0
           fi
+          git commit -m "Data update $(date -u +%Y-%m-%d)"
+          # Code may have been pushed while this run was working: rebase onto it, then push.
+          for attempt in 1 2 3 4 5; do
+            git pull --rebase origin "${GITHUB_REF_NAME}" && git push origin "HEAD:${GITHUB_REF_NAME}" && exit 0
+            echo "Push attempt $attempt failed; retrying"
+            sleep $((attempt * 10))
+          done
+          echo "::error::Could not push the data commit after 5 attempts"
+          exit 1
 
   # Publishing to GitHub Pages is optional: set the repository variable ENABLE_PAGES=true
   # (Settings > Secrets and variables > Actions > Variables) and set Pages source to "GitHub Actions".

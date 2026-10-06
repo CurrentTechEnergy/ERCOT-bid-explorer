@@ -7,6 +7,7 @@ Usage:
   python -m pipeline.update --local FILE.zip ...  # process report zips you downloaded yourself
 """
 import argparse
+from collections import Counter
 import datetime as dt
 import sys
 import time
@@ -70,29 +71,48 @@ def process_price_blobs(blobs, dates, index: dict):
 # ---------------------------------------------------------------- fetching --
 def fetch_curves(api, emil: str, posted_from: dt.datetime, posted_to: dt.datetime,
                  index: dict, source: str, want_dates=None, limit=None):
+    """Download and process report files not yet loaded.
+
+    ERCOT usually posts one file per day, `lag` days after the operating day, but
+    postings are sometimes late, doubled up on one day, or reposted.  So files are
+    tracked by document id; the posting date is only used as a hint."""
     docs = api.list_archives(emil, posted_from, posted_to)
     docs.sort(key=lambda d: d.get("postDatetime", ""))
     print(f"{emil}: {len(docs)} file(s) posted {posted_from:%Y-%m-%d} .. {posted_to:%Y-%m-%d}")
     lag = 2 if source == "2d" else 60
     have = set(index["days"][source])
+    done_ids = set(index.setdefault("docs", {}).setdefault(emil, []))
+    guess_of = {d["docId"]: (_d(d["postDatetime"][:10]) - dt.timedelta(days=lag)).isoformat() for d in docs}
+    per_guess = Counter(guess_of.values())
+    if want_dates:   # allow for files posted a few days late or early
+        lo, hi = _d(min(want_dates)) - dt.timedelta(days=4), _d(max(want_dates)) + dt.timedelta(days=4)
     n = 0
     for doc in docs:
-        posted = _d(doc["postDatetime"][:10])
-        guess = (posted - dt.timedelta(days=lag)).isoformat()   # operating day = posting day - lag
-        if guess in have:
+        doc_id, guess = doc["docId"], guess_of[doc["docId"]]
+        if doc_id in done_ids:
             continue
-        if want_dates and guess not in want_dates:
+        # skip without downloading only when the posting date unambiguously maps to a day we have
+        if guess in have and per_guess[guess] == 1:
             continue
-        print(f"  downloading {doc.get('friendlyName', doc['docId'])} (op day ~{guess})")
+        if want_dates and not (lo <= _d(guess) <= hi):
+            continue
+        print(f"  downloading {doc.get('friendlyName', doc_id)} posted {doc['postDatetime'][:16]} (op day ~{guess})")
         try:
-            date = process_curve_zip(api.download(emil, doc["docId"]), index)
+            date = process_curve_zip(api.download(emil, doc_id), index)
             have.add(date)
+            index["docs"][emil].append(doc_id)
             save_index(index)
         except Exception as e:  # keep going; one bad file shouldn't stop the run
             warn(f"{emil} {guess}: failed: {type(e).__name__}: {e}")
         n += 1
         if limit and n >= limit:
-            break
+            print(f"  reached the limit of {limit} files for this run; run again to continue")
+            return
+    if want_dates:
+        missing = sorted(d for d in want_dates if d not in have and d <= max(guess_of.values(), default=""))
+        if missing:
+            warn(f"{emil}: no file found for {len(missing)} day(s) in the range: {', '.join(missing[:20])}"
+                 + (" ..." if len(missing) > 20 else ""))
 
 
 def fetch_prices(api, dates, index: dict):
@@ -169,7 +189,7 @@ def main(argv=None):
                 continue
             fetch_curves(api, emil,
                          dt.datetime.combine(start + dt.timedelta(days=lag - 1), dt.time()),
-                         dt.datetime.combine(end + dt.timedelta(days=lag + 2), dt.time()),
+                         dt.datetime.combine(end + dt.timedelta(days=lag + 5), dt.time()),
                          index, source, want_dates=want, limit=args.max_files)
     else:
         since = now - dt.timedelta(days=args.days)
