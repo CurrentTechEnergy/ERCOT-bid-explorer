@@ -3,12 +3,22 @@ import numpy as np
 import pandas as pd
 
 
+def to_iso_date(s: pd.Series) -> pd.Series:
+    """'MM/DD/YYYY...' or 'YYYY-MM-DD...' -> 'YYYY-MM-DD'."""
+    s = s.astype(str).str.strip()
+    us = s.str.match(r"^\d{2}/\d{2}/\d{4}")
+    out = s.str.slice(0, 10)
+    out[us] = s[us].str.slice(6, 10) + "-" + s[us].str.slice(0, 2) + "-" + s[us].str.slice(3, 5)
+    return out
+
+
 def parse_sced_time(s: pd.Series) -> pd.DataFrame:
-    """'MM/DD/YYYY HH:MM:SS' (Central prevailing time) -> date (ISO str) and hour (0-23, hour beginning)."""
-    s = s.astype(str)
-    date = s.str.slice(6, 10) + "-" + s.str.slice(0, 2) + "-" + s.str.slice(3, 5)
+    """SCED timestamp (Central prevailing time) -> date (ISO str) and hour (0-23, hour beginning).
+    Accepts 'MM/DD/YYYY HH:MM:SS' (report files) and 'YYYY-MM-DDTHH:MM:SS'."""
+    s = s.astype(str).str.strip()
+    date = to_iso_date(s)
     hour = s.str.slice(11, 13).astype(int)
-    return pd.DataFrame({"date": date, "hour": hour})
+    return pd.DataFrame({"date": date.values, "hour": hour.values}, index=s.index)
 
 
 def mw_at_prices(prices: np.ndarray, mws: np.ndarray, grid: np.ndarray,

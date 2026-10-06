@@ -103,14 +103,19 @@ def fetch_prices(api, dates, index: dict):
         d = _d(date)
         start = dt.datetime.combine(d, dt.time(0, 0))
         end = dt.datetime.combine(d + dt.timedelta(days=1), dt.time(2, 0))
-        blobs = []
-        for emil in (EMIL_LAMBDA, EMIL_SPP):
-            docs = api.list_archives(emil, start, end)
-            if docs:
-                blobs.extend(api.download_many(emil, [x["docId"] for x in docs]))
-        done = process_price_blobs(blobs, [date], index)
+        failed = False
+        try:
+            blobs = []
+            for emil in (EMIL_LAMBDA, EMIL_SPP):
+                docs = api.list_archives(emil, start, end)
+                if docs:
+                    blobs.extend(api.download_many(emil, [x["docId"] for x in docs]))
+            done = process_price_blobs(blobs, [date], index)
+        except Exception as e:   # a price problem must not lose the curve data already processed
+            print(f"  ! prices {date} failed: {type(e).__name__}: {e}")
+            done, failed = [], True
         print(f"  prices {date}: {'ok' if done else 'none found'}")
-        if not done:
+        if not done and not failed:       # count only genuine "no prices" results
             misses[date] = misses.get(date, 0) + 1
         save_index(index)
 
