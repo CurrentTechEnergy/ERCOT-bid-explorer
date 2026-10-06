@@ -1,0 +1,89 @@
+name: Update ERCOT data
+
+on:
+  schedule:
+    # ERCOT posts the 2-day curves around 04:15 and the 60-day disclosure around 05:45 Central.
+    - cron: "41 12 * * *"   # ~07:41 Central
+    - cron: "41 18 * * *"   # afternoon retry in case a report posted late
+  workflow_dispatch:
+    inputs:
+      backfill_start:
+        description: "Backfill from operating day (YYYY-MM-DD). Leave blank for a normal update."
+        required: false
+      backfill_end:
+        description: "Backfill to operating day (YYYY-MM-DD)"
+        required: false
+      max_files:
+        description: "Max report files per report type in this run (backfill only)"
+        required: false
+        default: "60"
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: update-data
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    timeout-minutes: 340
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - run: pip install -r requirements.txt
+
+      - name: Fetch and process new reports
+        env:
+          ERCOT_API_USERNAME: ${{ secrets.ERCOT_API_USERNAME }}
+          ERCOT_API_PASSWORD: ${{ secrets.ERCOT_API_PASSWORD }}
+          ERCOT_API_SUBSCRIPTION_KEY: ${{ secrets.ERCOT_API_SUBSCRIPTION_KEY }}
+          BACKFILL_START: ${{ github.event.inputs.backfill_start }}
+          BACKFILL_END: ${{ github.event.inputs.backfill_end }}
+          MAX_FILES: ${{ github.event.inputs.max_files }}
+        run: |
+          if [ -n "$BACKFILL_START" ]; then
+            python -m pipeline.update --backfill "$BACKFILL_START" "${BACKFILL_END:-$BACKFILL_START}" --max-files "${MAX_FILES:-60}"
+          else
+            python -m pipeline.update
+          fi
+
+      - name: Commit new data
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add site/data
+          if git diff --cached --quiet; then
+            echo "No new data"
+          else
+            git commit -m "Data update $(date -u +%Y-%m-%d)"
+            git push
+          fi
+
+  # Publishing to GitHub Pages is optional: set the repository variable ENABLE_PAGES=true
+  # (Settings > Secrets and variables > Actions > Variables) and set Pages source to "GitHub Actions".
+  deploy:
+    needs: update
+    if: vars.ENABLE_PAGES == 'true'
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref_name }}     # include the data commit made by the update job
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+      - id: deployment
+        uses: actions/deploy-pages@v4

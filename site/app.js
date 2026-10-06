@@ -1,0 +1,600 @@
+/* ERCOT Bid Stack Explorer — static dashboard. Reads data/*.json(.gz) written by the pipeline. */
+(() => {
+"use strict";
+
+// ---------------------------------------------------------------- series ---
+// Colors are fixed per technology (never re-assigned when series are hidden).
+const SERIES = {
+  "2d": [
+    { id: "non_irr", keys: ["non_irr"], label: "Thermal & other (non-IRR)", color: "--c1" },
+    { id: "wind", keys: ["wind"], label: "Wind", color: "--c3" },
+    { id: "solar", keys: ["solar"], label: "Solar", color: "--c4" },
+    { id: "storage", keys: ["storage"], label: "Storage (ESR)", color: "--c7" },
+  ],
+  "60d": [
+    { id: "combined_cycle", keys: ["combined_cycle"], label: "Combined cycle", color: "--c1" },
+    { id: "combustion_turbine", keys: ["combustion_turbine"], label: "Combustion turbine", color: "--c2" },
+    { id: "wind", keys: ["wind"], label: "Wind", color: "--c3" },
+    { id: "solar", keys: ["solar"], label: "Solar", color: "--c4" },
+    { id: "nuclear", keys: ["nuclear"], label: "Nuclear", color: "--c5" },
+    { id: "gas_steam", keys: ["gas_steam"], label: "Gas steam", color: "--c6" },
+    { id: "storage", keys: ["storage"], label: "Storage (ESR)", color: "--c7" },
+    { id: "coal", keys: ["coal"], label: "Coal & lignite", color: "--c8" },
+    { id: "other", keys: ["hydro", "other"], label: "Other (hydro, diesel, biomass)", color: "--c-other" },
+  ],
+};
+const DEMAND_2D = { id: "clr", keys: ["clr"], label: "Controllable load bids (demand)" };
+
+const RANGES = {
+  low: { domain: [-250, 100], scale: "linear" },
+  mid: { domain: [-250, 300], scale: "linear" },
+  full: { domain: [-250, 5000], scale: "symlog" },
+};
+
+// ----------------------------------------------------------------- state ---
+const S = {
+  index: null, source: "2d", date: null, hour: 12, version: "curves",
+  xrange: "low", mode: "lines", threshold: 0, location: "lambda",
+  hidden: new Set(), heatTech: null, unitTech: "all", unitSearch: "",
+  unitSort: { key: "floor_mw", dir: -1 }, unitShowAll: false,
+  day: null, prices: null, summaries: {},
+};
+const cache = new Map();
+const $ = (id) => document.getElementById(id);
+const fmtMW = d3.format(",.0f");
+const fmtPrice = (v) => (v == null || isNaN(v) ? "–" : d3.format("$,.2f")(v));
+const fmtPrice0 = (v) => d3.format("$,.0f")(v);
+const fmtPct = d3.format(".0%");
+const css = (v) => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+const heLabel = (h) => `HE ${h + 1}`;
+
+// ------------------------------------------------------------------ data ---
+async function getJSON(url) {
+  if (cache.has(url)) return cache.get(url);
+  const p = (async () => {
+    const r = await fetch(url, { cache: "no-cache" });
+    if (!r.ok) throw new Error(`${url}: ${r.status}`);
+    const buf = new Uint8Array(await r.arrayBuffer());
+    let text;
+    if (buf[0] === 0x1f && buf[1] === 0x8b) {
+      const stream = new Blob([buf]).stream().pipeThrough(new DecompressionStream("gzip"));
+      text = await new Response(stream).text();
+    } else {
+      text = new TextDecoder().decode(buf);
+    }
+    return JSON.parse(text);
+  })();
+  cache.set(url, p);
+  p.catch(() => cache.delete(url));
+  return p;
+}
+const tryJSON = (url) => getJSON(url).catch(() => null);
+
+function seriesList() { return SERIES[S.source]; }
+function gridIndex(price) {
+  const g = S.index.grid;
+  let best = 0;
+  for (let i = 0; i < g.length; i++) if (Math.abs(g[i] - price) < Math.abs(g[best] - price)) best = i;
+  return best;
+}
+
+/** [24][G] array for a series (summing component keys), or null. */
+function seriesCurves(day, s, version) {
+  const block = day[version === "submitted" && S.source === "60d" ? "submitted" : "curves"];
+  const parts = s.keys.map((k) => block && block[k]).filter(Boolean);
+  if (!parts.length) return null;
+  return parts[0].map((row, h) => row == null ? null : row.map((v, i) =>
+    parts.reduce((a, p) => a + ((p[h] && p[h][i]) || 0), 0)));
+}
+
+/** Threshold summary for a series on one date: [24][T] or null. */
+function summarySeries(entry, s) {
+  if (!entry) return null;
+  const block = S.source === "60d" ? entry[S.version === "submitted" ? "submitted" : "curves"] : entry;
+  const parts = s.keys.map((k) => block && block[k]).filter(Boolean);
+  if (!parts.length) return null;
+  return parts[0].map((row, h) => row.map((v, i) =>
+    parts.reduce((a, p) => (p[h][i] == null ? a : a + p[h][i]), 0)));
+}
+
+function hourPrice(prices, h) {
+  if (!prices) return null;
+  if (S.location === "lambda") {
+    const L = prices.lambda;
+    return { mean: L.hourly_mean[h], min: L.hourly_min[h], max: L.hourly_max[h] };
+  }
+  const q = prices.spp15 && prices.spp15[S.location];
+  if (!q) return null;
+  const v = q.slice(h * 4, h * 4 + 4).filter((x) => x != null);
+  if (!v.length) return null;
+  return { mean: d3.mean(v), min: d3.min(v), max: d3.max(v) };
+}
+
+// ------------------------------------------------------------- controls ---
+function setSeg(id, value) {
+  $(id).querySelectorAll("button").forEach((b) => b.setAttribute("aria-checked", String(b.dataset.v === value)));
+}
+function bindSeg(id, key, after) {
+  $(id).addEventListener("click", (e) => {
+    const b = e.target.closest("button");
+    if (!b || b.disabled) return;
+    S[key] = b.dataset.v;
+    setSeg(id, S[key]);
+    after ? after() : render();
+  });
+}
+
+function fillDates() {
+  const days = [...S.index.days[S.source]].sort().reverse();
+  const withPrices = new Set(S.index.days.prices);
+  $("date").innerHTML = days.map((d) => {
+    const label = d3.timeFormat("%a %b %-d, %Y")(new Date(d + "T12:00:00"));
+    return `<option value="${d}">${label}${withPrices.has(d) ? "" : " (no prices yet)"}</option>`;
+  }).join("");
+  if (!days.includes(S.date)) S.date = days[0] || null;
+  $("date").value = S.date || "";
+}
+
+function fillLocations() {
+  const pts = new Set();
+  Object.values(S.summaries.prices || {}).forEach((e) => Object.keys(e.spp || {}).forEach((p) => pts.add(p)));
+  const sorted = [...pts].sort((a, b) => (a.startsWith("HB_") === b.startsWith("HB_") ? a.localeCompare(b) : a.startsWith("HB_") ? -1 : 1));
+  $("location").innerHTML = `<option value="lambda">System lambda</option>` +
+    sorted.map((p) => `<option value="${p}">${p}</option>`).join("");
+  $("location").value = pts.has(S.location) ? S.location : "lambda";
+  S.location = $("location").value;
+}
+
+function fillThresholds() {
+  $("threshold").innerHTML = S.index.thresholds.map((t) =>
+    `<option value="${t}">${t === -249 ? "Price floor (−$250)" : fmtPrice0(t)}</option>`).join("");
+  $("threshold").value = String(S.threshold);
+}
+
+function fillTechSelects() {
+  const list = seriesList();
+  if (!list.some((s) => s.id === S.heatTech)) S.heatTech = list[0].id;
+  $("heat-tech").innerHTML = list.map((s) => `<option value="${s.id}">${s.label}</option>`).join("");
+  $("heat-tech").value = S.heatTech;
+  $("unit-tech").innerHTML = `<option value="all">All</option>` +
+    SERIES["60d"].map((s) => `<option value="${s.id}">${s.label}</option>`).join("");
+  $("unit-tech").value = S.unitTech;
+}
+
+// ------------------------------------------------------------ rendering ---
+async function loadDay() {
+  if (!S.date) { S.day = null; S.prices = null; return; }
+  const [day, prices] = await Promise.all([
+    tryJSON(`data/${S.source}/${S.date}.json.gz`),
+    tryJSON(`data/prices/${S.date}.json.gz`),
+  ]);
+  S.day = day; S.prices = prices;
+}
+
+async function changeDay() {
+  await loadDay();
+  render();
+}
+
+function render() {
+  const is60 = S.source === "60d";
+  $("ctl-version").hidden = !is60;
+  $("thermal-panel").hidden = !is60;
+  $("units-panel").hidden = !is60;
+  $("hour-out").textContent = `${heLabel(S.hour)} · ${String(S.hour).padStart(2, "0")}:00–${String(S.hour + 1).padStart(2, "0")}:00`;
+  $("curve-title-note").textContent = S.date ? `${S.date} · ${heLabel(S.hour)}` : "";
+  renderLegend();
+  drawCurves();
+  drawProfile();
+  drawHeatmap();
+  if (is60) { drawTechTable(); drawUnits(); }
+  drawDuration();
+}
+
+function renderLegend() {
+  const items = seriesList().map((s) =>
+    `<button type="button" data-id="${s.id}" aria-pressed="${!S.hidden.has(s.id)}"><span class="sw" style="background:var(${s.color})"></span>${s.label}</button>`);
+  if (S.source === "2d") items.push(`<button type="button" data-id="clr" aria-pressed="${!S.hidden.has("clr")}"><span class="sw sw-line"></span>${DEMAND_2D.label}</button>`);
+  $("legend").innerHTML = items.join("");
+}
+
+function emptyMsg(el, msg) { el.innerHTML = `<p class="empty">${msg}</p>`; }
+
+function size(el, h) {
+  const w = Math.max(280, el.clientWidth || el.parentElement.clientWidth || 600);
+  return { w, h };
+}
+
+// ---- offer curve chart ----------------------------------------------------
+function drawCurves() {
+  const el = $("curve-chart");
+  if (!S.day) return emptyMsg(el, "No data for this day.");
+  const h = S.hour;
+  if (!S.day.runs[h]) return emptyMsg(el, `No SCED runs recorded in ${heLabel(h)} (daylight-saving change).`);
+  const grid = S.index.grid;
+  const R = RANGES[S.xrange];
+  const dom = [R.domain[0], Math.min(R.domain[1], grid[grid.length - 1])];
+  const idx = grid.map((p, i) => i).filter((i) => grid[i] >= dom[0] && grid[i] <= dom[1]);
+  const prices = idx.map((i) => grid[i]);
+
+  const visible = seriesList().filter((s) => !S.hidden.has(s.id));
+  let rows = visible.map((s) => {
+    const c = seriesCurves(S.day, s, S.version);
+    const r = c && c[h];
+    if (!r) return null;
+    let vals = idx.map((i) => r[i] ?? 0);
+    if (S.mode === "share") {
+      const last = r[r.length - 1] ?? 0, first = r[0] ?? 0;
+      const span = s.id === "storage" ? last - first : last;
+      vals = idx.map((i) => span ? ((s.id === "storage" ? (r[i] - first) : r[i]) / span) * 100 : 0);
+    }
+    return { s, vals, full: r };
+  }).filter(Boolean);
+  const demand = S.source === "2d" && !S.hidden.has("clr") && S.mode === "lines" && S.day.curves.clr && S.day.curves.clr[h]
+    ? { s: { ...DEMAND_2D, color: "--c-other" }, vals: idx.map((i) => S.day.curves.clr[h][i] ?? 0) } : null;
+
+  const { w } = size(el);
+  const H = Math.max(300, Math.min(440, w * 0.45));
+  const m = { t: 18, r: S.mode === "stack" ? 16 : 150, b: 40, l: 64 };
+  if (w < 560) m.r = 16;
+  const x = (R.scale === "symlog" ? d3.scaleSymlog().constant(25) : d3.scaleLinear()).domain(dom).range([m.l, w - m.r]);
+
+  let stacked = null, yDom;
+  if (S.mode === "stack" && rows.length) {
+    const data = prices.map((p, j) => Object.fromEntries([["p", p], ...rows.map((r) => [r.s.id, r.vals[j]])]));
+    stacked = d3.stack().keys(rows.map((r) => r.s.id)).offset(d3.stackOffsetDiverging)(data);
+    yDom = [Math.min(0, d3.min(stacked, (l) => d3.min(l, (d) => d[0]))), d3.max(stacked, (l) => d3.max(l, (d) => d[1]))];
+  } else if (S.mode === "share") {
+    yDom = [0, 100];
+  } else {
+    const all = rows.flatMap((r) => r.vals).concat(demand ? demand.vals : []);
+    yDom = [Math.min(0, d3.min(all) ?? 0), Math.max(1, d3.max(all) ?? 1)];
+  }
+  const y = d3.scaleLinear().domain(yDom).nice().range([H - m.b, m.t]);
+
+  const svg = d3.create("svg").attr("viewBox", `0 0 ${w} ${H}`).attr("role", "img")
+    .attr("aria-label", `Offer curves for ${S.date} ${heLabel(h)}`);
+  svg.append("g").attr("class", "gridline").attr("transform", `translate(${m.l},0)`)
+    .call(d3.axisLeft(y).ticks(6).tickSize(-(w - m.l - m.r)).tickFormat(""));
+  const xTicks = R.scale === "symlog" ? [-250, -100, -25, 0, 25, 100, 300, 1000, 5000] : x.ticks(w < 560 ? 5 : 9);
+  svg.append("g").attr("class", "axis").attr("transform", `translate(0,${H - m.b})`)
+    .call(d3.axisBottom(x).tickValues(xTicks).tickFormat(fmtPrice0).tickSizeOuter(0));
+  svg.append("g").attr("class", "axis").attr("transform", `translate(${m.l},0)`)
+    .call(d3.axisLeft(y).ticks(6).tickFormat(S.mode === "share" ? (v) => v + "%" : d3.format(",.0f")).tickSizeOuter(0));
+  if (yDom[0] < 0) svg.append("line").attr("class", "zero").attr("x1", m.l).attr("x2", w - m.r).attr("y1", y(0)).attr("y2", y(0));
+  svg.append("text").attr("class", "axis-title").attr("x", w - m.r).attr("y", H - 6).attr("text-anchor", "end").text("Offer price ($/MWh)");
+  svg.append("text").attr("class", "axis-title").attr("x", m.l).attr("y", 10).text(S.mode === "share" ? "% of MW offered at any price" : "MW offered at or below price");
+
+  // cleared price band and rule (drawn under the data)
+  const hp = hourPrice(S.prices, h);
+  const priceLayer = svg.append("g");
+
+  if (stacked) {
+    const area = d3.area().x((d) => x(d.data.p)).y0((d) => y(d[0])).y1((d) => y(d[1])).curve(d3.curveStepAfter);
+    svg.append("g").selectAll("path").data(stacked).join("path")
+      .attr("fill", (l) => css(rows.find((r) => r.s.id === l.key).s.color))
+      .attr("stroke", css("--surface")).attr("stroke-width", 1).attr("d", area);
+  } else {
+    const line = d3.line().x((d, j) => x(prices[j])).y((d) => y(d)).curve(d3.curveStepAfter);
+    const g = svg.append("g").attr("fill", "none").attr("stroke-width", 2).attr("stroke-linejoin", "round");
+    rows.forEach((r) => g.append("path").attr("stroke", css(r.s.color)).attr("d", line(r.vals)));
+    if (demand) g.append("path").attr("stroke", css("--c-other")).attr("stroke-dasharray", "5 4").attr("d", line(demand.vals));
+    // direct labels at the right edge, nudged apart
+    if (m.r > 100) {
+      const labs = rows.concat(demand ? [demand] : []).map((r) => ({ text: r.s.label.replace(/ \(.*\)$/, ""), y: y(r.vals[r.vals.length - 1]) }))
+        .sort((a, b) => a.y - b.y);
+      for (let i = 1; i < labs.length; i++) if (labs[i].y - labs[i - 1].y < 13) labs[i].y = labs[i - 1].y + 13;
+      svg.append("g").selectAll("text").data(labs).join("text").attr("class", "dlabel")
+        .attr("x", w - m.r + 8).attr("y", (d) => d.y).attr("dy", "0.32em").text((d) => d.text);
+    }
+  }
+
+  if (hp && hp.mean != null && hp.mean >= dom[0] && hp.mean <= dom[1]) {
+    if (hp.min != null && hp.max != null && hp.max > hp.min)
+      priceLayer.append("rect").attr("class", "price-band").attr("x", x(Math.max(dom[0], hp.min))).attr("width", Math.max(1, x(Math.min(dom[1], hp.max)) - x(Math.max(dom[0], hp.min))))
+        .attr("y", m.t).attr("height", H - m.b - m.t);
+    svg.append("line").attr("class", "price-rule").attr("x1", x(hp.mean)).attr("x2", x(hp.mean)).attr("y1", m.t).attr("y2", H - m.b);
+    const txt = `${S.location === "lambda" ? "λ" : S.location} ${fmtPrice(hp.mean)}`;
+    const tx = x(hp.mean) + (x(hp.mean) > w - m.r - 120 ? -6 : 6);
+    const anchor = x(hp.mean) > w - m.r - 120 ? "end" : "start";
+    svg.append("text").attr("class", "price-label").attr("x", tx).attr("y", m.t + 12).attr("text-anchor", anchor).text(txt);
+  }
+
+  // hover
+  const cross = svg.append("line").attr("class", "crosshair").attr("y1", m.t).attr("y2", H - m.b).style("display", "none");
+  svg.append("rect").attr("x", m.l).attr("y", m.t).attr("width", w - m.l - m.r).attr("height", H - m.t - m.b)
+    .attr("fill", "transparent")
+    .on("pointermove", (ev) => {
+      const [mx] = d3.pointer(ev);
+      const p = x.invert(mx);
+      const j = d3.minIndex(prices, (q) => Math.abs(q - p));
+      cross.style("display", null).attr("x1", x(prices[j])).attr("x2", x(prices[j]));
+      const unit = S.mode === "share" ? "%" : " MW";
+      const lines = rows.map((r) => [r.s, r.vals[j]]).concat(demand ? [[demand.s, demand.vals[j]]] : []);
+      let html = `<h4>At or below ${fmtPrice0(prices[j])}/MWh</h4><table>` +
+        lines.map(([s, v]) => `<tr><td><span class="sw ${s.id === "clr" ? "sw-line" : ""}" style="${s.id === "clr" ? "" : `background:var(${s.color})`}"></span></td><td>${s.label}</td><td class="n">${fmtMW(v)}${unit}</td></tr>`).join("");
+      if (S.mode !== "share" && rows.length > 1) html += `<tr><td></td><td><b>Total supply</b></td><td class="n"><b>${fmtMW(d3.sum(rows, (r) => r.vals[j]))} MW</b></td></tr>`;
+      showTip(ev, html + "</table>");
+    })
+    .on("pointerleave", () => { cross.style("display", "none"); hideTip(); });
+
+  el.replaceChildren(svg.node());
+  if (!hp) el.insertAdjacentHTML("beforeend", `<p class="note">No cleared price loaded for this day yet.</p>`);
+  drawCurveTable(rows);
+}
+
+function drawCurveTable(rows) {
+  const th = S.index.thresholds;
+  const grid = S.index.grid;
+  const cols = rows.map((r) => r.s);
+  let html = `<table class="data"><thead><tr><th class="t">At or below</th>${cols.map((s) => `<th>${s.label}</th>`).join("")}</tr></thead><tbody>`;
+  th.forEach((t) => {
+    const i = grid.indexOf(t);
+    html += `<tr><td class="t">${t === -249 ? "Floor" : fmtPrice0(t)}</td>${rows.map((r) => `<td>${fmtMW(r.full[i] ?? 0)}</td>`).join("")}</tr>`;
+  });
+  $("curve-table").innerHTML = html + "</tbody></table>";
+}
+
+// ---- hourly profile + price ------------------------------------------------
+function drawProfile() {
+  const el = $("profile-chart"), pel = $("price-chart");
+  if (!S.day) { emptyMsg(el, "No data for this day."); pel.innerHTML = ""; return; }
+  const gi = S.index.grid.indexOf(S.threshold);
+  const rows = seriesList().filter((s) => !S.hidden.has(s.id)).map((s) => {
+    const c = seriesCurves(S.day, s, S.version);
+    return c && { s, vals: c.map((r) => (r ? r[gi] : null)) };
+  }).filter(Boolean);
+
+  const { w } = size(el);
+  const H = 240, m = { t: 14, r: 16, b: 26, l: 64 };
+  const x = d3.scaleLinear().domain([1, 24]).range([m.l, w - m.r]);
+  const all = rows.flatMap((r) => r.vals).filter((v) => v != null);
+  const y = d3.scaleLinear().domain([Math.min(0, d3.min(all) ?? 0), Math.max(1, d3.max(all) ?? 1)]).nice().range([H - m.b, m.t]);
+  const svg = d3.create("svg").attr("viewBox", `0 0 ${w} ${H}`);
+  svg.append("rect").attr("class", "price-band").attr("x", x(S.hour + 1) - 6).attr("width", 12).attr("y", m.t).attr("height", H - m.t - m.b);
+  svg.append("g").attr("class", "gridline").attr("transform", `translate(${m.l},0)`).call(d3.axisLeft(y).ticks(5).tickSize(-(w - m.l - m.r)).tickFormat(""));
+  svg.append("g").attr("class", "axis").attr("transform", `translate(0,${H - m.b})`).call(d3.axisBottom(x).tickValues([1, 4, 8, 12, 16, 20, 24]).tickFormat((d) => "HE" + d).tickSizeOuter(0));
+  svg.append("g").attr("class", "axis").attr("transform", `translate(${m.l},0)`).call(d3.axisLeft(y).ticks(5).tickFormat(d3.format(",.0f")).tickSizeOuter(0));
+  if (y.domain()[0] < 0) svg.append("line").attr("class", "zero").attr("x1", m.l).attr("x2", w - m.r).attr("y1", y(0)).attr("y2", y(0));
+  svg.append("text").attr("class", "axis-title").attr("x", m.l).attr("y", 10).text(`MW at or below ${S.threshold === -249 ? "the price floor" : fmtPrice0(S.threshold)}`);
+  const line = d3.line().defined((d) => d != null).x((d, i) => x(i + 1)).y((d) => y(d));
+  rows.forEach((r) => svg.append("path").attr("fill", "none").attr("stroke", css(r.s.color)).attr("stroke-width", 2).attr("d", line(r.vals)));
+  hoverHours(svg, x, m, H, (i) => `<h4>${heLabel(i)}</h4><table>` + rows.map((r) =>
+    `<tr><td><span class="sw" style="background:var(${r.s.color})"></span></td><td>${r.s.label}</td><td class="n">${r.vals[i] == null ? "–" : fmtMW(r.vals[i]) + " MW"}</td></tr>`).join("") + "</table>");
+  el.replaceChildren(svg.node());
+
+  // price by hour (separate chart, never a second axis)
+  if (!S.prices) { pel.innerHTML = `<p class="note">No cleared price loaded for this day yet.</p>`; return; }
+  const hp = d3.range(24).map((i) => hourPrice(S.prices, i));
+  const H2 = 150, m2 = { t: 14, r: 16, b: 26, l: 64 };
+  const vals = hp.flatMap((p) => p ? [p.min, p.max, p.mean] : []).filter((v) => v != null);
+  const y2 = d3.scaleLinear().domain([Math.min(0, d3.min(vals) ?? 0), Math.max(10, d3.max(vals) ?? 10)]).nice().range([H2 - m2.b, m2.t]);
+  const s2 = d3.create("svg").attr("viewBox", `0 0 ${w} ${H2}`);
+  s2.append("rect").attr("class", "price-band").attr("x", x(S.hour + 1) - 6).attr("width", 12).attr("y", m2.t).attr("height", H2 - m2.t - m2.b);
+  s2.append("g").attr("class", "gridline").attr("transform", `translate(${m2.l},0)`).call(d3.axisLeft(y2).ticks(4).tickSize(-(w - m2.l - m2.r)).tickFormat(""));
+  s2.append("g").attr("class", "axis").attr("transform", `translate(0,${H2 - m2.b})`).call(d3.axisBottom(x).tickValues([1, 4, 8, 12, 16, 20, 24]).tickFormat((d) => "HE" + d).tickSizeOuter(0));
+  s2.append("g").attr("class", "axis").attr("transform", `translate(${m2.l},0)`).call(d3.axisLeft(y2).ticks(4).tickFormat(fmtPrice0).tickSizeOuter(0));
+  if (y2.domain()[0] < 0) s2.append("line").attr("class", "zero").attr("x1", m2.l).attr("x2", w - m2.r).attr("y1", y2(0)).attr("y2", y2(0));
+  s2.append("text").attr("class", "axis-title").attr("x", m2.l).attr("y", 10).text(`${S.location === "lambda" ? "System lambda" : S.location} ($/MWh), hourly average and range`);
+  s2.append("path").attr("fill", css("--band")).attr("d", d3.area().defined((p) => p && p.min != null).x((p, i) => x(i + 1)).y0((p) => y2(p.min)).y1((p) => y2(p.max))(hp));
+  s2.append("path").attr("fill", "none").attr("stroke", css("--price")).attr("stroke-width", 2).attr("d", d3.line().defined((p) => p && p.mean != null).x((p, i) => x(i + 1)).y((p) => y2(p.mean))(hp));
+  hoverHours(s2, x, m2, H2, (i) => hp[i] ? `<h4>${heLabel(i)}</h4>Average ${fmtPrice(hp[i].mean)}<br>Range ${fmtPrice(hp[i].min)} to ${fmtPrice(hp[i].max)}` : `<h4>${heLabel(i)}</h4>No price`);
+  pel.replaceChildren(s2.node());
+}
+
+function hoverHours(svg, x, m, H, htmlFor) {
+  const w = +svg.attr("viewBox").split(" ")[2];
+  const cross = svg.append("line").attr("class", "crosshair").attr("y1", m.t).attr("y2", H - m.b).style("display", "none");
+  svg.append("rect").attr("x", m.l).attr("y", m.t).attr("width", w - m.l - m.r).attr("height", H - m.t - m.b).attr("fill", "transparent")
+    .style("cursor", "pointer")
+    .on("pointermove", (ev) => {
+      const i = Math.max(0, Math.min(23, Math.round(x.invert(d3.pointer(ev)[0])) - 1));
+      cross.style("display", null).attr("x1", x(i + 1)).attr("x2", x(i + 1));
+      showTip(ev, htmlFor(i));
+    })
+    .on("pointerleave", () => { cross.style("display", "none"); hideTip(); })
+    .on("click", (ev) => {
+      S.hour = Math.max(0, Math.min(23, Math.round(x.invert(d3.pointer(ev)[0])) - 1));
+      $("hour").value = S.hour; render();
+    });
+}
+
+// ---- heatmap --------------------------------------------------------------
+function drawHeatmap() {
+  const el = $("heatmap"), scaleEl = $("heat-scale");
+  const summ = S.summaries[S.source] || {};
+  const s = seriesList().find((q) => q.id === S.heatTech) || seriesList()[0];
+  const ti = S.index.thresholds.indexOf(S.threshold);
+  const dates = Object.keys(summ).sort();
+  if (!dates.length) { emptyMsg(el, "No days loaded yet."); scaleEl.innerHTML = ""; return; }
+  const cells = [];
+  dates.forEach((d) => {
+    const v = summarySeries(summ[d], s);
+    if (v) v.forEach((row, h) => { if (row && row[ti] != null) cells.push({ d, h, v: row[ti] }); });
+  });
+  const cw = Math.max(10, Math.min(36, (el.clientWidth - 70) / dates.length));
+  const ch = 10;
+  const m = { t: 8, r: 8, b: 44, l: 52 };
+  const w = Math.max(el.clientWidth || 300, m.l + m.r + cw * dates.length);
+  const H = m.t + m.b + ch * 24;
+  const x = d3.scaleBand().domain(dates).range([m.l, m.l + cw * dates.length]).paddingInner(0.08);
+  const y = d3.scaleBand().domain(d3.range(24)).range([m.t, m.t + ch * 24]).paddingInner(0.08);
+  const ext = d3.extent(cells, (c) => c.v);
+  if (ext[0] === ext[1]) ext[1] = ext[0] + 1;
+  const color = d3.scaleSequential(d3.interpolateRgb(css("--seq-lo"), css("--seq-hi"))).domain(ext);
+  const svg = d3.create("svg").attr("viewBox", `0 0 ${w} ${H}`).style("width", w + "px").style("max-width", "none");
+  svg.append("g").selectAll("rect").data(cells).join("rect")
+    .attr("x", (c) => x(c.d)).attr("y", (c) => y(c.h)).attr("width", x.bandwidth()).attr("height", y.bandwidth()).attr("rx", 2)
+    .attr("fill", (c) => color(c.v))
+    .attr("stroke", (c) => (c.d === S.date && c.h === S.hour ? css("--ink") : "none")).attr("stroke-width", 1.5)
+    .style("cursor", "pointer")
+    .on("pointermove", (ev, c) => showTip(ev, `<h4>${c.d} · ${heLabel(c.h)}</h4>${s.label}: <b>${fmtMW(c.v)} MW</b> at or below ${S.threshold === -249 ? "the floor" : fmtPrice0(S.threshold)}`))
+    .on("pointerleave", hideTip)
+    .on("click", async (ev, c) => { S.hour = c.h; $("hour").value = c.h; if (c.d !== S.date) { S.date = c.d; $("date").value = c.d; await loadDay(); } render(); });
+  svg.append("g").attr("class", "axis").attr("transform", `translate(${m.l - 2},0)`)
+    .call(d3.axisLeft(y).tickValues([0, 5, 11, 17, 23]).tickFormat((h) => heLabel(h)).tickSize(0)).select(".domain").remove();
+  const every = Math.ceil(dates.length / Math.max(1, Math.floor((cw * dates.length) / 70)));
+  svg.append("g").attr("class", "axis").attr("transform", `translate(0,${m.t + ch * 24 + 2})`)
+    .call(d3.axisBottom(x).tickValues(dates.filter((d, i) => i % every === 0)).tickFormat((d) => d3.timeFormat("%b %-d")(new Date(d + "T12:00:00"))).tickSize(0))
+    .select(".domain").remove();
+  el.replaceChildren(svg.node());
+  scaleEl.innerHTML = `<span>${fmtMW(ext[0])} MW</span><span class="ramp" style="background:linear-gradient(90deg,${css("--seq-lo")},${css("--seq-hi")})"></span><span>${fmtMW(ext[1])} MW</span>`;
+}
+
+// ---- technology table (60-day) ---------------------------------------------
+function drawTechTable() {
+  const el = $("tech-table");
+  if (!S.day || !S.day.stats) return emptyMsg(el, "No 60-day data for this day.");
+  const names = S.day.stat_names;
+  const col = (k) => names.indexOf(k);
+  const hours = d3.range(24).filter((h) => S.day.runs[h]);
+  const rows = SERIES["60d"].map((s) => {
+    const avg = (k) => d3.mean(hours, (h) => d3.sum(s.keys, (key) => (S.day.stats[key] && S.day.stats[key][h] && S.day.stats[key][h][col(k)]) || 0));
+    const r = { s };
+    names.forEach((k) => (r[k] = avg(k)));
+    return r;
+  });
+  const maxShare = d3.max(rows, (r) => (r.output > 1 ? r.floor_sced / r.output : 0)) || 1;
+  const head = ["Technology", "Units online", "Available (HSL)", "Min output (LSL)", "LSL / HSL", "Output", "At floor, as used", "Floor / output",
+    "≤ $0, as used", "≤ $0, as submitted", "No submitted offer"];
+  let html = `<table class="data"><thead><tr>${head.map((h, i) => `<th class="${i ? "" : "t"}">${h}</th>`).join("")}</tr></thead><tbody>`;
+  rows.forEach((r) => {
+    const share = r.output > 1 ? r.floor_sced / r.output : null;
+    html += `<tr><td class="t"><span class="sw" style="background:var(${r.s.color});margin-right:6px"></span>${r.s.label}</td>
+      <td>${d3.format(",.0f")(r.n_online)}</td><td>${fmtMW(r.hsl)}</td><td>${fmtMW(r.lsl)}</td>
+      <td>${r.hsl > 1 && r.s.id !== "storage" ? fmtPct(r.lsl / r.hsl) : "–"}</td><td>${fmtMW(r.output)}</td>
+      <td>${fmtMW(r.floor_sced)}</td>
+      <td>${share == null || r.s.id === "storage" ? "–" : fmtPct(share) + `<span class="bar-cell" style="width:${Math.round(40 * share / maxShare)}px"></span>`}</td>
+      <td>${fmtMW(r.le0_sced)}</td><td>${fmtMW(r.le0_submitted)}</td><td>${fmtMW(r.no_offer_hsl)}</td></tr>`;
+  });
+  el.innerHTML = html + `</tbody></table><p class="note">MW are averages over the day's hours. Storage values are net (negative = charging). "No submitted offer" is the available capacity of online units that submitted no energy offer curve; ERCOT dispatches those against a proxy curve priced at the floor up to their output schedule.</p>`;
+}
+
+// ---- unit table (60-day) -----------------------------------------------------
+const UNIT_COLS = [
+  ["unit", "Unit", "t"], ["type", "Type", "t"], ["hours_online", "Hours online"], ["hsl", "HSL MW"], ["lsl", "LSL MW"],
+  ["output", "Output MW"], ["pinned_share", "Time at LSL", "pct"], ["floor_mw", "At floor MW"],
+  ["le0_sced", "≤ $0 as used MW"], ["le0_submitted", "≤ $0 as submitted MW"], ["min_sub_price", "Lowest submitted $", "price"],
+  ["no_offer_share", "No offer", "pct"],
+];
+function drawUnits() {
+  const el = $("units-table");
+  if (!S.day || !S.day.units) return emptyMsg(el, "No 60-day data for this day.");
+  const C = S.day.units.columns;
+  const techOf = (t) => (["hydro", "other"].includes(t) ? "other" : t);
+  let rows = S.day.units.rows.map((r) => Object.fromEntries(C.map((c, i) => [c, r[i]])));
+  if (S.unitTech !== "all") rows = rows.filter((r) => techOf(r.tech) === S.unitTech);
+  if (S.unitSearch) rows = rows.filter((r) => r.unit.toLowerCase().includes(S.unitSearch.toLowerCase()));
+  const { key, dir } = S.unitSort;
+  rows.sort((a, b) => {
+    const va = a[key], vb = b[key];
+    if (va == null) return 1; if (vb == null) return -1;
+    return (typeof va === "string" ? va.localeCompare(vb) : va - vb) * dir;
+  });
+  const total = rows.length;
+  if (!S.unitShowAll) rows = rows.slice(0, 150);
+  const fmt = (v, kind) => v == null ? "–" : kind === "pct" ? fmtPct(v) : kind === "price" ? fmtPrice(v) : kind === "t" ? v : d3.format(",.1f")(v);
+  let html = `<div class="units-wrap"><table class="data"><thead><tr>${UNIT_COLS.map(([k, label, kind]) =>
+    `<th class="sortable ${kind === "t" ? "t" : ""}" data-k="${k}" aria-sort="${k === key ? (dir > 0 ? "ascending" : "descending") : "none"}">${label}${k === key ? (dir > 0 ? " ▲" : " ▼") : ""}</th>`).join("")}</tr></thead><tbody>`;
+  html += rows.map((r) => `<tr>${UNIT_COLS.map(([k, , kind]) => `<td class="${kind === "t" ? "t" : ""}">${fmt(r[k], kind)}</td>`).join("")}</tr>`).join("");
+  el.innerHTML = html + "</tbody></table></div>";
+  $("units-foot").innerHTML = total > rows.length
+    ? `Showing ${rows.length} of ${total} units. <button type="button" id="units-all" class="linkish">Show all</button>`
+    : `${total} units. "Time at LSL" is the share of online SCED runs with the base point at minimum output.`;
+  const b = $("units-all");
+  if (b) b.onclick = () => { S.unitShowAll = true; drawUnits(); };
+}
+
+// ---- price duration -----------------------------------------------------------
+function drawDuration() {
+  const el = $("duration-chart");
+  const summ = S.summaries.prices || {};
+  const vals = Object.values(summ).flatMap((e) => (S.location === "lambda" ? e.lambda : (e.spp || {})[S.location]) || []).filter((v) => v != null);
+  if (vals.length < 2) return emptyMsg(el, "Price history appears here as days with prices are loaded.");
+  vals.sort((a, b) => b - a);
+  const { w } = size(el);
+  const H = 200, m = { t: 14, r: 16, b: 30, l: 64 };
+  const x = d3.scaleLinear().domain([0, 100]).range([m.l, w - m.r]);
+  const ext = d3.extent(vals);
+  const y = d3.scaleSymlog().constant(20).domain([Math.min(0, ext[0]), Math.max(50, ext[1])]).range([H - m.b, m.t]);
+  const svg = d3.create("svg").attr("viewBox", `0 0 ${w} ${H}`);
+  const yt = [-250, -50, 0, 25, 50, 100, 500, 1000, 5000].filter((v) => v >= y.domain()[0] && v <= y.domain()[1]);
+  svg.append("g").attr("class", "gridline").attr("transform", `translate(${m.l},0)`).call(d3.axisLeft(y).tickValues(yt).tickSize(-(w - m.l - m.r)).tickFormat(""));
+  svg.append("g").attr("class", "axis").attr("transform", `translate(0,${H - m.b})`).call(d3.axisBottom(x).ticks(5).tickFormat((d) => d + "%").tickSizeOuter(0));
+  svg.append("g").attr("class", "axis").attr("transform", `translate(${m.l},0)`).call(d3.axisLeft(y).tickValues(yt).tickFormat(fmtPrice0).tickSizeOuter(0));
+  svg.append("line").attr("class", "zero").attr("x1", m.l).attr("x2", w - m.r).attr("y1", y(0)).attr("y2", y(0));
+  svg.append("path").attr("fill", "none").attr("stroke", css("--price")).attr("stroke-width", 2)
+    .attr("d", d3.line().x((v, i) => x((i / (vals.length - 1)) * 100)).y((v) => y(v))(vals));
+  const below = vals.filter((v) => v <= S.threshold).length / vals.length;
+  svg.append("text").attr("class", "axis-title").attr("x", w - m.r).attr("y", 12).attr("text-anchor", "end")
+    .text(`${vals.length.toLocaleString()} hours · ${fmtPct(below)} at or below ${S.threshold === -249 ? "the floor" : fmtPrice0(S.threshold)}`);
+  svg.append("text").attr("class", "axis-title").attr("x", w - m.r).attr("y", H - 4).attr("text-anchor", "end").text("Share of hours");
+  el.replaceChildren(svg.node());
+}
+
+// -------------------------------------------------------------- tooltip ---
+function showTip(ev, html) {
+  const t = $("tip");
+  t.innerHTML = html; t.hidden = false;
+  const r = t.getBoundingClientRect();
+  let left = ev.clientX + 14, top = ev.clientY + 14;
+  if (left + r.width > window.innerWidth - 8) left = ev.clientX - r.width - 14;
+  if (top + r.height > window.innerHeight - 8) top = ev.clientY - r.height - 14;
+  t.style.left = Math.max(8, left) + "px"; t.style.top = Math.max(8, top) + "px";
+}
+function hideTip() { $("tip").hidden = true; }
+
+// ---------------------------------------------------------------- boot ---
+async function boot() {
+  try {
+    S.index = await getJSON("data/index.json");
+  } catch (e) {
+    $("status").textContent = "No data yet. Run the pipeline to fetch ERCOT reports (see README).";
+    return;
+  }
+  const [s2, s60, sp] = await Promise.all([tryJSON("data/summary_2d.json.gz"), tryJSON("data/summary_60d.json.gz"), tryJSON("data/summary_prices.json.gz")]);
+  S.summaries = { "2d": s2 || {}, "60d": s60 || {}, prices: sp || {} };
+  const D = S.index.days;
+  if (!D["2d"].length && D["60d"].length) S.source = "60d";
+  const last = (a) => (a.length ? [...a].sort().at(-1) : "none");
+  $("status").textContent = `2-day: ${D["2d"].length} day(s), latest ${last(D["2d"])} · 60-day: ${D["60d"].length} day(s), latest ${last(D["60d"])} · prices: ${D.prices.length} day(s) · updated ${S.index.updated.replace("T", " ").replace("Z", " UTC")}`;
+
+  $("source").querySelectorAll("button").forEach((b) => (b.disabled = !D[b.dataset.v].length));
+  setSeg("source", S.source); setSeg("version", S.version); setSeg("xrange", S.xrange); setSeg("mode", S.mode);
+  fillDates(); fillLocations(); fillThresholds(); fillTechSelects();
+
+  bindSeg("source", "source", async () => { S.hidden.clear(); fillDates(); fillTechSelects(); await changeDay(); });
+  bindSeg("version", "version");
+  bindSeg("xrange", "xrange");
+  bindSeg("mode", "mode");
+  $("date").onchange = async (e) => { S.date = e.target.value; await changeDay(); };
+  $("hour").oninput = (e) => { S.hour = +e.target.value; render(); };
+  $("location").onchange = (e) => { S.location = e.target.value; render(); };
+  $("threshold").onchange = (e) => { S.threshold = +e.target.value; render(); };
+  $("heat-tech").onchange = (e) => { S.heatTech = e.target.value; drawHeatmap(); };
+  $("unit-tech").onchange = (e) => { S.unitTech = e.target.value; S.unitShowAll = false; drawUnits(); };
+  $("unit-search").oninput = (e) => { S.unitSearch = e.target.value; drawUnits(); };
+  $("units-table").addEventListener("click", (e) => {
+    const th = e.target.closest("th[data-k]");
+    if (!th) return;
+    const k = th.dataset.k;
+    S.unitSort = { key: k, dir: S.unitSort.key === k ? -S.unitSort.dir : (["unit", "type"].includes(k) ? 1 : -1) };
+    drawUnits();
+  });
+  $("legend").addEventListener("click", (e) => {
+    const b = e.target.closest("button[data-id]");
+    if (!b) return;
+    const id = b.dataset.id;
+    S.hidden.has(id) ? S.hidden.delete(id) : S.hidden.add(id);
+    render();
+  });
+
+  let t;
+  new ResizeObserver(() => { clearTimeout(t); t = setTimeout(render, 120); }).observe(document.querySelector("main"));
+  window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", render);
+  new MutationObserver(render).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+
+  await changeDay();
+}
+boot();
+})();

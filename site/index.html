@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>ERCOT Bid Stack Explorer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Sans+Condensed:wght@600&display=swap">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="page">
+
+<header class="masthead">
+  <div class="brand">
+    <h1>ERCOT Bid Stack Explorer</h1>
+    <p class="sub">How resources offer energy into SCED, by technology, day and hour. Data from ERCOT's 2-Day SCED Energy Curves and 60-Day SCED Disclosure reports.</p>
+  </div>
+  <p class="status" id="status">Loading data…</p>
+</header>
+
+<section class="controls" aria-label="Filters">
+  <div class="ctl">
+    <span class="lbl" id="lbl-source">Report</span>
+    <div class="seg" role="radiogroup" aria-labelledby="lbl-source" id="source">
+      <button type="button" data-v="2d" role="radio">2-day aggregate</button>
+      <button type="button" data-v="60d" role="radio">60-day by technology</button>
+    </div>
+  </div>
+  <div class="ctl">
+    <label class="lbl" for="date">Operating day</label>
+    <select id="date"></select>
+  </div>
+  <div class="ctl ctl-hour">
+    <label class="lbl" for="hour">Hour <output id="hour-out">HE 13</output></label>
+    <input type="range" id="hour" min="0" max="23" step="1" value="12">
+  </div>
+  <div class="ctl" id="ctl-version">
+    <span class="lbl" id="lbl-version">Curve</span>
+    <div class="seg" role="radiogroup" aria-labelledby="lbl-version" id="version">
+      <button type="button" data-v="curves" role="radio" title="Curve used by SCED: as submitted, extended by ERCOT to the unit's limits">As used in SCED</button>
+      <button type="button" data-v="submitted" role="radio" title="Price-quantity pairs as submitted by the QSE">As submitted</button>
+    </div>
+  </div>
+  <div class="ctl">
+    <label class="lbl" for="location">Price</label>
+    <select id="location"></select>
+  </div>
+</section>
+
+<main>
+  <section class="panel panel-wide">
+    <div class="panel-head">
+      <div>
+        <h2>Offer curves <span class="h-note" id="curve-title-note"></span></h2>
+        <p class="note">MW offered at or below each price, averaged over the SCED runs in the hour. The vertical line marks the cleared price.</p>
+      </div>
+      <div class="panel-tools">
+        <div class="seg seg-sm" id="xrange" role="radiogroup" aria-label="Price range">
+          <button type="button" data-v="low" role="radio">−$250 to $100</button>
+          <button type="button" data-v="mid" role="radio">to $300</button>
+          <button type="button" data-v="full" role="radio">Full range</button>
+        </div>
+        <div class="seg seg-sm" id="mode" role="radiogroup" aria-label="Chart style">
+          <button type="button" data-v="lines" role="radio">Lines</button>
+          <button type="button" data-v="stack" role="radio">Stacked</button>
+          <button type="button" data-v="share" role="radio" title="Each technology as a share of the MW it offers at any price">% of offered</button>
+        </div>
+      </div>
+    </div>
+    <div class="legend" id="legend"></div>
+    <div class="chart" id="curve-chart"></div>
+    <details class="table-view"><summary>Table view</summary><div id="curve-table" class="scroll-x"></div></details>
+  </section>
+
+  <section class="panel">
+    <div class="panel-head">
+      <div>
+        <h2>Through the day</h2>
+        <p class="note">MW offered at or below the threshold in each hour of the selected day, with the cleared price below.</p>
+      </div>
+      <div class="panel-tools">
+        <label class="lbl inline" for="threshold">At or below</label>
+        <select id="threshold"></select>
+      </div>
+    </div>
+    <div class="chart" id="profile-chart"></div>
+    <div class="chart chart-short" id="price-chart"></div>
+  </section>
+
+  <section class="panel">
+    <div class="panel-head">
+      <div>
+        <h2>Across days</h2>
+        <p class="note">MW offered at or below the threshold, by day and hour. Uses every day loaded so far.</p>
+      </div>
+      <div class="panel-tools">
+        <label class="lbl inline" for="heat-tech">Technology</label>
+        <select id="heat-tech"></select>
+      </div>
+    </div>
+    <div class="chart scroll-x" id="heatmap"></div>
+    <div class="heat-scale" id="heat-scale"></div>
+  </section>
+
+  <section class="panel panel-wide" id="thermal-panel">
+    <div class="panel-head">
+      <div>
+        <h2>Inflexibility by technology <span class="h-note">60-day data</span></h2>
+        <p class="note">Daily averages for units online. "At the floor" is MW offered at −$250/−$249.99, which includes minimum output that ERCOT's proxy curves place at the floor and units with no submitted offer.</p>
+      </div>
+    </div>
+    <div class="scroll-x" id="tech-table"></div>
+  </section>
+
+  <section class="panel panel-wide" id="units-panel">
+    <div class="panel-head">
+      <div>
+        <h2>Units <span class="h-note">60-day data</span></h2>
+        <p class="note">One row per resource for the operating day. Click a column to sort.</p>
+      </div>
+      <div class="panel-tools">
+        <label class="lbl inline" for="unit-tech">Technology</label>
+        <select id="unit-tech"></select>
+        <label class="lbl inline" for="unit-search">Search</label>
+        <input type="search" id="unit-search" placeholder="Unit name">
+      </div>
+    </div>
+    <div class="scroll-x" id="units-table"></div>
+    <p class="note" id="units-foot"></p>
+  </section>
+
+  <section class="panel panel-wide">
+    <div class="panel-head">
+      <div>
+        <h2>Price duration</h2>
+        <p class="note">Hourly average prices across every loaded day, highest to lowest, for the selected price location.</p>
+      </div>
+    </div>
+    <div class="chart chart-short" id="duration-chart"></div>
+  </section>
+</main>
+
+<footer class="foot">
+  <p>Source: ERCOT EMIL products NP3-908-ER, NP3-965-ER, NP6-322-CD and NP6-905-CD. Times are hour ending, Central prevailing time. Curves are capped at each unit's high sustainable limit for the SCED run.</p>
+</footer>
+</div>
+<div class="tip" id="tip" hidden></div>
+<script src="vendor/d3.min.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
