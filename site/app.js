@@ -37,7 +37,7 @@ const S = {
   xrange: "low", mode: "lines", axes: "price_x", threshold: 0, location: "lambda",
   hidden: new Set(), heatTech: null, unitTech: "all", unitSearch: "",
   unitSort: { key: "floor_mw", dir: -1 }, unitShowAll: false,
-  day: null, gen: null, prices: null, summaries: {},
+  day: null, prices: null, summaries: {},
 };
 const cache = new Map();
 const $ = (id) => document.getElementById(id);
@@ -163,16 +163,12 @@ function fillTechSelects() {
 
 // ------------------------------------------------------------ rendering ---
 async function loadDay() {
-  if (!S.date) { S.day = null; S.gen = null; S.prices = null; return; }
-  // the generation mix always comes from the 60-day file, whichever report is selected
-  const gen60 = S.source !== "60d" && S.index.days["60d"].includes(S.date);
-  const [day, prices, gen] = await Promise.all([
+  if (!S.date) { S.day = null; S.prices = null; return; }
+  const [day, prices] = await Promise.all([
     tryJSON(`data/${S.source}/${S.date}.json.gz`),
     tryJSON(`data/prices/${S.date}.json.gz`),
-    gen60 ? tryJSON(`data/60d/${S.date}.json.gz`) : null,
   ]);
   S.day = day; S.prices = prices;
-  S.gen = S.source === "60d" ? day : gen;
 }
 
 async function changeDay() {
@@ -415,30 +411,47 @@ function barTable(rows, mwHead, shareHead, totalLabel, total) {
     `<tr><td class="t"><b>${totalLabel}</b></td><td><b>${fmtMW(total)}</b></td><td></td></tr></tbody></table>`;
 }
 
-// ---- generation mix (60-day output by technology) ---------------------------
+// ---- generation mix ----------------------------------------------------------
+// 60-day: telemetered output by technology. 2-day: estimated as each curve's MW at or
+// below the hour's average system lambda (the curves carry no output figures).
+function mixRows(h) {
+  const D = S.day;
+  if (S.source === "60d") {
+    const oi = D.stat_names.indexOf("output");
+    return SERIES["60d"].map((s) => ({ s, mw: d3.sum(s.keys, (k) => (D.stats[k] && D.stats[k][h] && D.stats[k][h][oi]) || 0) }));
+  }
+  const lam = S.prices && S.prices.lambda && S.prices.lambda.hourly_mean[h];
+  if (lam == null) return null;
+  const i = d3.bisectRight(S.index.grid, lam) - 1;
+  return SERIES["2d"].map((s) => {
+    const c = seriesCurves(D, s, S.version), r = c && c[h];
+    return r && { s, mw: i < 0 ? (s.id === "storage" ? r[0] ?? 0 : 0) : r[i] ?? 0 };
+  }).filter(Boolean);
+}
+
 function drawMix() {
   const el = $("mix-chart"), tel = $("mix-table");
-  const h = S.hour, D = S.gen;
-  $("mix-title-note").textContent = S.date ? `${S.date} · ${heLabel(h)}` : "";
-  if (!D || !D.stats) {
-    tel.innerHTML = "";
-    const days = S.index.days["60d"];
-    const latest = days.length ? [...days].sort().at(-1) : null;
-    return emptyMsg(el, `No 60-day data for this day. The 60-day disclosure runs about two months behind${latest ? `; the latest day it covers is ${latest}` : ""}.`);
-  }
-  if (!D.runs[h]) { tel.innerHTML = ""; return emptyMsg(el, `No SCED runs recorded in ${heLabel(h)} (daylight-saving change).`); }
-  const oi = D.stat_names.indexOf("output");
-  const rows = SERIES["60d"].map((s) => ({ s, mw: d3.sum(s.keys, (k) => (D.stats[k] && D.stats[k][h] && D.stats[k][h][oi]) || 0) }));
+  const h = S.hour, est = S.source !== "60d";
+  $("mix-title-note").textContent = S.date ? `${S.date} · ${heLabel(h)}${est ? " · estimated" : ""}` : "";
+  const clear = (msg) => { tel.innerHTML = ""; emptyMsg(el, msg); };
+  if (!S.day) return clear("No data for this day.");
+  if (!S.day.runs[h]) return clear(`No SCED runs recorded in ${heLabel(h)} (daylight-saving change).`);
+  const rows = mixRows(h);
+  if (!rows) return clear("No system lambda loaded for this day yet, so output can't be estimated from the 2-day curves.");
   // share of generation: storage counts only while discharging (net positive)
   const total = d3.sum(rows, (r) => Math.max(0, r.mw));
   rows.forEach((r) => (r.share = total > 0 && r.mw > 0 ? r.mw / total : null));
   rows.sort((a, b) => b.mw - a.mw);
+  const what = est ? "Estimated output" : "Net output";
   el.replaceChildren(hBars(el, rows, (r) => `<h4>${r.s.label} · ${heLabel(h)}</h4><table>
-        <tr><td>Net output</td><td class="n">${fmtMW(r.mw)} MW</td></tr>
+        <tr><td>${what}</td><td class="n">${fmtMW(r.mw)} MW</td></tr>
         <tr><td>Share of generation</td><td class="n">${r.share != null ? d3.format(".1%")(r.share) : "–"}</td></tr>
         <tr><td>Total generation</td><td class="n">${fmtMW(total)} MW</td></tr></table>${r.s.id === "storage" ? `<p class="tip-body">Net of charging. Counted in the share only while discharging.</p>` : ""}`));
-  el.insertAdjacentHTML("beforeend", `<p class="note">Total generation ${fmtMW(total)} MW. Storage is shown net of charging and counts toward the total only while discharging.${S.source !== "60d" ? " Uses the 60-day disclosure for this day." : ""}</p>`);
-  tel.innerHTML = barTable(rows, "Net output (MW)", "Share of generation", "Total generation", total);
+  const lam = est ? S.prices.lambda.hourly_mean[h] : null;
+  el.insertAdjacentHTML("beforeend", `<p class="note">${est
+    ? `Estimated: MW each group offers at or below the hour's average system lambda (${fmtPrice(lam)}), from the hourly-averaged 2-day curves. The 2-day report has no output figures. Against the 60-day telemetered output this runs about 8% high for wind and solar (it counts available output, before curtailment) and is typically within about 8% for thermal in a given hour. Switch to the 60-day report for measured output and a split of thermal by technology.`
+    : "Telemetered net output from the 60-day disclosure, averaged over the SCED runs in the hour."} Total generation ${fmtMW(total)} MW. Storage is shown net of charging and counts toward the total only while discharging.</p>`);
+  tel.innerHTML = barTable(rows, `${what} (MW)`, "Share of generation", "Total generation", total);
 }
 
 // ---- marginal supply: MW offered within the hour's cleared price range ------
