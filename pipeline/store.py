@@ -29,18 +29,27 @@ def iter_csvs(blob: bytes, name: str = "") -> Iterator[Tuple[str, bytes]]:
 
 
 def zip_names(blob: bytes) -> list:
-    """CSV file names inside a zip (one level of nesting), without decompressing them."""
+    """File names inside a zip, descending into nested zips, without decompressing CSVs."""
     if blob[:2] != b"PK":
         return []
     names = []
     with zipfile.ZipFile(io.BytesIO(blob)) as zf:
         for info in zf.infolist():
             if info.filename.lower().endswith(".zip"):
-                with zipfile.ZipFile(io.BytesIO(zf.read(info))) as inner:
-                    names += [Path(n).name for n in inner.namelist()]
+                names += zip_names(zf.read(info))
             else:
                 names.append(Path(info.filename).name)
     return names
+
+
+def describe_blob(blob: bytes) -> str:
+    """Short description of a downloaded file, for error messages."""
+    if blob[:2] != b"PK":
+        head = blob[:120].decode("utf-8", "replace").replace("\n", " ").strip()
+        return f"{len(blob):,} bytes, not a zip, starts with {head!r}"
+    names = zip_names(blob)
+    shown = ", ".join(names[:8]) + (f", ... ({len(names)} files)" if len(names) > 8 else "")
+    return f"{len(blob):,} byte zip containing: {shown or 'nothing'}"
 
 
 # ---------------------------------------------------------------- writing ---

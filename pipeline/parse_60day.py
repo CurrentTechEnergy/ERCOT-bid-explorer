@@ -141,9 +141,9 @@ def parse_60day_zip(blob: bytes, chunksize: int = 40000):
     acc = _Accumulator()
     found = False
     for name, data in iter_csvs(blob, "x.zip"):
-        if name.startswith("60d_SCED_Gen_Resource_Data"):
+        if name.lower().startswith("60d_sced_gen_resource_data"):
             is_esr = False
-        elif name.startswith("60d_ESR_Data_in_SCED"):
+        elif name.lower().startswith("60d_esr_data_in_sced"):
             is_esr = True
         else:
             continue

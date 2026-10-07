@@ -53,7 +53,7 @@ def parse_2day_zip(blob: bytes):
     files = dict(iter_csvs(blob, "x.zip"))
     curves, dates, runs_out = {}, [], None
     for key, (prefix, _label, kind) in TWO_DAY_CURVES.items():
-        match = [n for n in files if n.startswith(prefix)]
+        match = [n for n in files if n.lower().startswith(prefix.lower())]
         if not match:
             continue
         df = pd.read_csv(io.BytesIO(files[match[0]]))

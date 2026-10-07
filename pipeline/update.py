@@ -17,7 +17,7 @@ from .config import DATA_DIR, EMIL_2DAY, EMIL_60DAY, EMIL_LAMBDA, EMIL_SPP
 from .parse_2day import parse_2day_zip
 from .parse_60day import parse_60day_zip
 from .parse_prices import build_price_day, read_lambda, read_spp
-from .store import iter_csvs, zip_names, load_index, save_index, update_summary, write_json_gz
+from .store import describe_blob, iter_csvs, zip_names, load_index, save_index, update_summary, write_json_gz
 from .log import warn, write_summary, WARNINGS
 
 warnings.filterwarnings("ignore", category=RuntimeWarning)
@@ -28,14 +28,23 @@ def _d(s: str) -> dt.date:
 
 
 # ------------------------------------------------------------- processing --
+def curve_source(blob: bytes):
+    """("2d" | "60d", parser) for a report zip, or None if it is neither."""
+    names = [n.lower() for n in zip_names(blob)]
+    if any(n.startswith("2d_agg_") for n in names):
+        return "2d", parse_2day_zip
+    # the same files parse_60day_zip reads
+    if any(n.startswith(("60d_sced_gen_resource_data", "60d_esr_data_in_sced")) for n in names):
+        return "60d", parse_60day_zip
+    return None
+
+
 def process_curve_zip(blob: bytes, index: dict) -> str:
-    names = zip_names(blob)
-    if any(n.startswith("2d_Agg_") for n in names):
-        source, parser = "2d", parse_2day_zip
-    elif any(n.startswith("60d_SCED_Gen_Resource_Data") for n in names):
-        source, parser = "60d", parse_60day_zip
-    else:
-        raise ValueError("Not a 2-day SCED energy curves or 60-day SCED disclosure zip")
+    found = curve_source(blob)
+    if found is None:
+        raise ValueError("Not a 2-day SCED energy curves or 60-day SCED disclosure zip "
+                         f"({describe_blob(blob)})")
+    source, parser = found
     t0 = time.time()
     date, day, summary = parser(blob)
     write_json_gz(DATA_DIR / source / f"{date}.json.gz", day)
@@ -98,12 +107,18 @@ def fetch_curves(api, emil: str, posted_from: dt.datetime, posted_to: dt.datetim
             continue
         print(f"  downloading {doc.get('friendlyName', doc_id)} posted {doc['postDatetime'][:16]} (op day ~{guess})")
         try:
-            date = process_curve_zip(api.download(emil, doc_id), index)
+            blob = api.download(emil, doc_id)
+            if blob[:2] != b"PK":     # an error page or empty body instead of the zip: try once more
+                print(f"  download was not a zip ({describe_blob(blob)}); retrying")
+                time.sleep(10)
+                blob = api.download(emil, doc_id)
+            date = process_curve_zip(blob, index)
             have.add(date)
             index["docs"][emil].append(doc_id)
             save_index(index)
         except Exception as e:  # keep going; one bad file shouldn't stop the run
-            warn(f"{emil} {guess}: failed: {type(e).__name__}: {e}")
+            warn(f"{emil} {guess} ({doc.get('friendlyName', '')} doc {doc_id}, "
+                 f"posted {doc['postDatetime'][:16]}): failed: {type(e).__name__}: {e}")
         n += 1
         if limit and n >= limit:
             print(f"  reached the limit of {limit} files for this run; run again to continue")
@@ -160,8 +175,7 @@ def main(argv=None):
         price_blobs, curve_dates = [], []
         for path in args.local:
             blob = open(path, "rb").read()
-            names = zip_names(blob)
-            if any(n.startswith(("2d_Agg_", "60d_")) for n in names):
+            if curve_source(blob):
                 print(f"{path}")
                 curve_dates.append(process_curve_zip(blob, index))
             else:
