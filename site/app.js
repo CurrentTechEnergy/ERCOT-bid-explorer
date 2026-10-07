@@ -124,8 +124,13 @@ function bindSeg(id, key, after) {
   });
 }
 
+// every operating day with either report, oldest first
+function allDays() { return [...new Set([...S.index.days["2d"], ...S.index.days["60d"]])].sort(); }
+// the 60-day disclosure is more detailed (per unit, measured output), so use it whenever the day has it
+function sourceFor(d) { return S.index.days["60d"].includes(d) ? "60d" : "2d"; }
+
 function fillDates() {
-  const days = [...S.index.days[S.source]].sort().reverse();
+  const days = allDays().reverse();
   const withPrices = new Set(S.index.days.prices);
   $("date").innerHTML = days.map((d) => {
     const label = d3.timeFormat("%a %b %-d, %Y")(new Date(d + "T12:00:00"));
@@ -133,6 +138,15 @@ function fillDates() {
   }).join("");
   if (!days.includes(S.date)) S.date = days[0] || null;
   $("date").value = S.date || "";
+}
+
+// pick the report for the selected day; reset per-report choices when it changes
+function syncSource() {
+  const src = S.date ? sourceFor(S.date) : S.source;
+  if (src !== S.source) { S.source = src; S.hidden.clear(); fillTechSelects(); }
+  $("source-note").textContent = S.source === "60d"
+    ? "Data: 60-day disclosure, per unit"
+    : "Data: 2-day report. Per-unit detail arrives about 60 days later.";
 }
 
 function fillLocations() {
@@ -172,13 +186,14 @@ async function loadDay() {
 }
 
 async function changeDay() {
+  syncSource();
   await loadDay();
   render();
 }
 
 function render() {
   const is60 = S.source === "60d";
-  const days = S.index ? [...S.index.days[S.source]].sort() : [];
+  const days = S.index ? allDays() : [];
   const di = days.indexOf(S.date);
   $("date-prev").disabled = di <= 0;
   $("date-next").disabled = di < 0 || di >= days.length - 1;
@@ -531,7 +546,7 @@ function drawMix() {
         <tr><td>Total generation</td><td class="n">${fmtMW(total)} MW</td></tr></table>${r.s.id === "storage" ? `<p class="tip-body">Net of charging. Counted in the share only while discharging.</p>` : ""}`));
   const lam = est ? S.prices.lambda.hourly_mean[h] : null;
   el.insertAdjacentHTML("beforeend", `<p class="note">${est
-    ? `Estimated: MW each group offers at or below the hour's average system lambda (${fmtPrice(lam)}), from the hourly-averaged 2-day curves. The 2-day report has no output figures. Against the 60-day telemetered output this runs about 8% high for wind and solar (it counts available output, before curtailment) and is typically within about 8% for thermal in a given hour. Switch to the 60-day report for measured output and a split of thermal by technology.`
+    ? `Estimated: MW each group offers at or below the hour's average system lambda (${fmtPrice(lam)}), from the hourly-averaged 2-day curves. The 2-day report has no output figures. Against the 60-day telemetered output this runs about 8% high for wind and solar (it counts available output, before curtailment) and is typically within about 8% for thermal in a given hour. Days with the 60-day disclosure (about two months back and older) show measured output with thermal split by technology.`
     : "Telemetered net output from the 60-day disclosure, averaged over the SCED runs in the hour."} Total generation ${fmtMW(total)} MW. Storage is shown net of charging and counts toward the total only while discharging.</p>`);
   tel.innerHTML = barTable(rows, `${what} (MW)`, "Share of generation", "Total generation", total);
 }
@@ -962,15 +977,12 @@ async function boot() {
   const [s2, s60, sp] = await Promise.all([tryJSON("data/summary_2d.json.gz"), tryJSON("data/summary_60d.json.gz"), tryJSON("data/summary_prices.json.gz")]);
   S.summaries = { "2d": s2 || {}, "60d": s60 || {}, prices: sp || {} };
   const D = S.index.days;
-  if (!D["2d"].length && D["60d"].length) S.source = "60d";
   const last = (a) => (a.length ? [...a].sort().at(-1) : "none");
   $("status").textContent = `2-day: ${D["2d"].length} day(s), latest ${last(D["2d"])} · 60-day: ${D["60d"].length} day(s), latest ${last(D["60d"])} · prices: ${D.prices.length} day(s) · updated ${S.index.updated.replace("T", " ").replace("Z", " UTC")}`;
 
-  $("source").querySelectorAll("button").forEach((b) => (b.disabled = !D[b.dataset.v].length));
-  setSeg("source", S.source); setSeg("version", S.version); setSeg("xrange", S.xrange); setSeg("mode", S.mode); setSeg("axes", S.axes);
-  fillDates(); fillLocations(); fillThresholds(); fillTechSelects();
+  setSeg("version", S.version); setSeg("xrange", S.xrange); setSeg("mode", S.mode); setSeg("axes", S.axes);
+  fillDates(); syncSource(); fillLocations(); fillThresholds(); fillTechSelects();
 
-  bindSeg("source", "source", async () => { S.hidden.clear(); fillDates(); fillTechSelects(); await changeDay(); });
   bindSeg("version", "version");
   bindSeg("xrange", "xrange");
   bindSeg("mode", "mode");
@@ -981,7 +993,7 @@ async function boot() {
   $("date").onchange = async (e) => { S.date = e.target.value; await changeDay(); };
   // step one available day older (-1) or newer (+1)
   const stepDay = async (dir) => {
-    const days = [...S.index.days[S.source]].sort();
+    const days = allDays();
     const i = days.indexOf(S.date) + dir;
     if (i < 0 || i >= days.length) return;
     S.date = days[i]; $("date").value = S.date;
