@@ -22,19 +22,13 @@
 
 <section class="controls" aria-label="Filters">
   <div class="ctl">
-    <span class="lbl" id="lbl-source">Report</span>
-    <div class="seg" role="radiogroup" aria-labelledby="lbl-source" id="source">
-      <button type="button" data-v="2d" role="radio">2-day aggregate</button>
-      <button type="button" data-v="60d" role="radio">60-day by technology</button>
-    </div>
-  </div>
-  <div class="ctl">
     <label class="lbl" for="date">Operating day</label>
     <div class="date-step">
       <button type="button" class="step" id="date-prev" aria-label="Previous day" title="Previous day">&#8249;</button>
       <select id="date"></select>
       <button type="button" class="step" id="date-next" aria-label="Next day" title="Next day">&#8250;</button>
     </div>
+    <p class="source-note" id="source-note"></p>
   </div>
   <div class="ctl ctl-hour">
     <label class="lbl" for="hour">Hour <output id="hour-out">HE 13</output></label>
