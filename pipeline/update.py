@@ -39,6 +39,11 @@ def curve_source(blob: bytes):
     return None
 
 
+def is_load_resource_only(blob: bytes) -> bool:
+    names = [n.lower() for n in zip_names(blob)]
+    return bool(names) and all(n.startswith("60d_load_resource_data") for n in names)
+
+
 def process_curve_zip(blob: bytes, index: dict) -> str:
     found = curve_source(blob)
     if found is None:
@@ -112,8 +117,12 @@ def fetch_curves(api, emil: str, posted_from: dt.datetime, posted_to: dt.datetim
                 print(f"  download was not a zip ({describe_blob(blob)}); retrying")
                 time.sleep(10)
                 blob = api.download(emil, doc_id)
-            date = process_curve_zip(blob, index)
-            have.add(date)
+            if is_load_resource_only(blob):
+                # ERCOT's occasional "SUPPLEMENTAL" repost of only the Load Resource files;
+                # the dashboard doesn't read those, and the regular daily zips carry the rest
+                print(f"  skipped: Load Resource data only ({describe_blob(blob)})")
+            else:
+                have.add(process_curve_zip(blob, index))
             index["docs"][emil].append(doc_id)
             save_index(index)
         except Exception as e:  # keep going; one bad file shouldn't stop the run
