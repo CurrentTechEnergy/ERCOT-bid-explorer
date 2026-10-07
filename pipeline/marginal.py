@@ -17,6 +17,14 @@ TECHS = {
 LEFT_HOLDS = {"storage"}   # storage curves start at their charging MW, not zero
 
 
+def columns(techs):
+    """Storage is split: MW below zero on its curve is charging (it buys), above zero discharging."""
+    out = []
+    for t in techs:
+        out += ["storage_charging", "storage_discharging"] if t == "storage" else [t]
+    return out
+
+
 def _mw_at(row, i, tech):
     """MW at or below grid point i (i < 0: below the grid)."""
     if i < 0:
@@ -41,7 +49,11 @@ def hour_rows(day: dict, prices: dict, techs) -> list:
         mw = []
         for t in techs:
             row = (day["curves"].get(t) or [None] * 24)[h]
-            mw.append(0.0 if row is None else round(max(0.0, _mw_at(row, i_hi, t) - _mw_at(row, i_lo, t)), 1))
+            a, b = (0.0, 0.0) if row is None else (_mw_at(row, i_lo, t), _mw_at(row, i_hi, t))
+            if t == "storage":
+                mw += [round(max(0.0, min(b, 0) - min(a, 0)), 1), round(max(0.0, max(b, 0) - max(a, 0)), 1)]
+            else:
+                mw.append(round(max(0.0, b - a), 1))
         out.append([day["date"], h, round(m, 2)] + mw)
     return out
 
@@ -56,5 +68,5 @@ def build_marginal(index: dict) -> None:
             if day and prices:
                 rows += hour_rows(day, prices, techs)
         write_json_gz(DATA_DIR / f"marginal_{source}.json.gz",
-                      {"columns": ["date", "hour", "lambda"] + techs, "rows": rows})
+                      {"columns": ["date", "hour", "lambda"] + columns(techs), "rows": rows})
         print(f"marginal_{source}: {len(rows)} hours")

@@ -461,15 +461,25 @@ function priceWindow(hp) {
   return [Math.min(hp.min ?? hp.mean, hp.mean - 1), Math.max(hp.max ?? hp.mean, hp.mean + 1)];
 }
 // MW each technology offers between lo and hi (inclusive) in hour h, from the hourly curves.
+// Storage at the margin is split by the side of its curve: below zero MW it is charging
+// (bidding to buy, so it takes less as price rises), above zero it is discharging.
+const STORAGE_SPLIT = [
+  { id: "storage_charging", keys: ["storage"], part: "chg", label: "Storage charging (bids to buy)", color: "--c7-soft" },
+  { id: "storage_discharging", keys: ["storage"], part: "dis", label: "Storage discharging", color: "--c7" },
+];
+function marginalSeries(list) { return list.flatMap((s) => (s.id === "storage" ? STORAGE_SPLIT : [s])); }
+
 function marginalRows(h, hp) {
   const grid = S.index.grid;
   const [lo, hi] = priceWindow(hp);
   const iHi = d3.bisectRight(grid, hi) - 1, iLo = d3.bisectLeft(grid, lo) - 1;   // last point <= hi, last point < lo
-  const rows = seriesList().map((s) => {
+  const rows = marginalSeries(seriesList()).map((s) => {
     const c = seriesCurves(S.day, s, S.version), r = c && c[h];
     if (!r) return null;
-    const at = (i) => (i < 0 ? (s.id === "storage" ? r[0] ?? 0 : 0) : r[i] ?? 0);
-    return { s, mw: Math.max(0, at(iHi) - at(iLo)) };
+    const at = (i) => (i < 0 ? (s.keys[0] === "storage" ? r[0] ?? 0 : 0) : r[i] ?? 0);
+    const a = at(iLo), b = at(iHi);
+    const mw = s.part === "chg" ? Math.min(b, 0) - Math.min(a, 0) : s.part === "dis" ? Math.max(b, 0) - Math.max(a, 0) : b - a;
+    return { s, mw: Math.max(0, mw) };
   }).filter(Boolean);
   const total = d3.sum(rows, (r) => r.mw);
   rows.forEach((r) => (r.share = total > 0 ? r.mw / total : null));
@@ -499,7 +509,7 @@ function drawMarginal() {
   tel.innerHTML = barTable(all, `MW offered ${win}`, "Share of marginal MW", "Total", total);
 
   // share of marginal MW by hour, 100% stacked columns
-  const list = seriesList();
+  const list = marginalSeries(seriesList());
   const hours = d3.range(24).map((i) => {
     const p = hourPrice(S.prices, i);
     if (!S.day.runs[i] || !p || p.mean == null) return null;
@@ -547,7 +557,7 @@ const MBP_BINS = [
 
 async function drawMarginalByPrice() {
   const el = $("mbp-chart"), tel = $("mbp-table");
-  const src = S.source, list = SERIES[src];
+  const src = S.source, list = marginalSeries(SERIES[src]);
   $("mbp-legend").innerHTML = list.map((s) => `<span><span class="sw" style="background:var(${s.color})"></span>${s.label}</span>`).join("");
   const data = await tryJSON(`data/marginal_${src}.json.gz`);
   if (src !== S.source) return;   // report changed while loading
@@ -563,7 +573,8 @@ async function drawMarginalByPrice() {
 
   const bins = MBP_BINS.map(([lo, hi, label]) => {
     const hrs = rows.filter((r) => r[2] >= lo && r[2] < hi);
-    const mw = Object.fromEntries(list.map((s) => [s.id, d3.sum(hrs, (r) => d3.sum(s.keys, (k) => r[ci[k]] || 0))]));
+    const cols = (s) => (s.part ? [s.id] : s.keys);   // split storage has its own columns in the file
+    const mw = Object.fromEntries(list.map((s) => [s.id, d3.sum(hrs, (r) => d3.sum(cols(s), (k) => r[ci[k]] || 0))]));
     const tot = d3.sum(list, (s) => mw[s.id]);
     return { label, n: hrs.length, mw, tot };
   });
