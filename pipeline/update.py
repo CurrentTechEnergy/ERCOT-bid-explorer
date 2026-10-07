@@ -95,13 +95,21 @@ def fetch_curves(api, emil: str, posted_from: dt.datetime, posted_to: dt.datetim
     per_guess = Counter(guess_of.values())
     if want_dates:   # allow for files posted a few days late or early
         lo, hi = _d(min(want_dates)) - dt.timedelta(days=4), _d(max(want_dates)) + dt.timedelta(days=4)
-    n = 0
+    # A file posted a day or two off its usual schedule can carry a date we are missing
+    # while its posting date points at a day we already have, so near a gap open every
+    # file rather than trusting the posting date.
+    gaps = {_d(d) for d in want_dates or () if d not in have}
+
+    def near_gap(day: str) -> bool:
+        return any(abs((_d(day) - g).days) <= 3 for g in gaps)
+
+    n, failed = 0, set()
     for doc in docs:
         doc_id, guess = doc["docId"], guess_of[doc["docId"]]
         if doc_id in done_ids:
             continue
         # skip without downloading only when the posting date unambiguously maps to a day we have
-        if guess in have and per_guess[guess] == 1:
+        if guess in have and per_guess[guess] == 1 and not near_gap(guess):
             continue
         if want_dates and not (lo <= _d(guess) <= hi):
             continue
@@ -117,6 +125,7 @@ def fetch_curves(api, emil: str, posted_from: dt.datetime, posted_to: dt.datetim
             index["docs"][emil].append(doc_id)
             save_index(index)
         except Exception as e:  # keep going; one bad file shouldn't stop the run
+            failed.add(doc_id)
             warn(f"{emil} {guess} ({doc.get('friendlyName', '')} doc {doc_id}, "
                  f"posted {doc['postDatetime'][:16]}): failed: {type(e).__name__}: {e}")
         n += 1
@@ -126,8 +135,13 @@ def fetch_curves(api, emil: str, posted_from: dt.datetime, posted_to: dt.datetim
     if want_dates:
         missing = sorted(d for d in want_dates if d not in have and d <= max(guess_of.values(), default=""))
         if missing:
+            nearby = [d for d in docs if any(abs((_d(guess_of[d["docId"]]) - _d(m)).days) <= 3 for m in missing)]
             warn(f"{emil}: no file found for {len(missing)} day(s) in the range: {', '.join(missing[:20])}"
-                 + (" ..." if len(missing) > 20 else ""))
+                 + (" ..." if len(missing) > 20 else "")
+                 + (f". All {len(nearby)} files posted within 3 days of these have been opened"
+                    " and none holds them, so ERCOT appears not to have posted them."
+                    if not failed & {d["docId"] for d in nearby} else
+                    ". Some files posted near them failed to load (see the warnings above)."))
 
 
 def fetch_prices(api, dates, index: dict):
