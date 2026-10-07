@@ -37,7 +37,7 @@ const S = {
   xrange: "low", mode: "lines", axes: "price_x", threshold: 0, location: "lambda",
   hidden: new Set(), heatTech: null, unitTech: "all", unitSearch: "",
   unitSort: { key: "floor_mw", dir: -1 }, unitShowAll: false,
-  day: null, prices: null, summaries: {},
+  day: null, gen: null, prices: null, summaries: {},
 };
 const cache = new Map();
 const $ = (id) => document.getElementById(id);
@@ -163,12 +163,16 @@ function fillTechSelects() {
 
 // ------------------------------------------------------------ rendering ---
 async function loadDay() {
-  if (!S.date) { S.day = null; S.prices = null; return; }
-  const [day, prices] = await Promise.all([
+  if (!S.date) { S.day = null; S.gen = null; S.prices = null; return; }
+  // the generation mix always comes from the 60-day file, whichever report is selected
+  const gen60 = S.source !== "60d" && S.index.days["60d"].includes(S.date);
+  const [day, prices, gen] = await Promise.all([
     tryJSON(`data/${S.source}/${S.date}.json.gz`),
     tryJSON(`data/prices/${S.date}.json.gz`),
+    gen60 ? tryJSON(`data/60d/${S.date}.json.gz`) : null,
   ]);
   S.day = day; S.prices = prices;
+  S.gen = S.source === "60d" ? day : gen;
 }
 
 async function changeDay() {
@@ -189,6 +193,7 @@ function render() {
   $("curve-title-note").textContent = S.date ? `${S.date} · ${heLabel(S.hour)}` : "";
   renderLegend();
   drawCurves();
+  drawMix();
   drawProfile();
   drawHeatmap();
   if (is60) { drawTechTable(); drawUnits(); }
@@ -366,6 +371,66 @@ function drawCurveTable(rows) {
     html += `<tr><td class="t">${t === -249 ? "Floor" : fmtPrice0(t)}</td>${rows.map((r) => `<td>${fmtMW(r.full[i] ?? 0)}</td>`).join("")}</tr>`;
   });
   $("curve-table").innerHTML = html + "</tbody></table>";
+}
+
+// ---- generation mix (60-day output by technology) ---------------------------
+function drawMix() {
+  const el = $("mix-chart"), tel = $("mix-table");
+  const h = S.hour, D = S.gen;
+  $("mix-title-note").textContent = S.date ? `${S.date} · ${heLabel(h)}` : "";
+  if (!D || !D.stats) {
+    tel.innerHTML = "";
+    const days = S.index.days["60d"];
+    const latest = days.length ? [...days].sort().at(-1) : null;
+    return emptyMsg(el, `No 60-day data for this day. The 60-day disclosure runs about two months behind${latest ? `; the latest day it covers is ${latest}` : ""}.`);
+  }
+  if (!D.runs[h]) { tel.innerHTML = ""; return emptyMsg(el, `No SCED runs recorded in ${heLabel(h)} (daylight-saving change).`); }
+  const oi = D.stat_names.indexOf("output");
+  const rows = SERIES["60d"].map((s) => ({ s, mw: d3.sum(s.keys, (k) => (D.stats[k] && D.stats[k][h] && D.stats[k][h][oi]) || 0) }));
+  // share of generation: storage counts only while discharging (net positive)
+  const total = d3.sum(rows, (r) => Math.max(0, r.mw));
+  rows.forEach((r) => (r.share = total > 0 && r.mw > 0 ? r.mw / total : null));
+  rows.sort((a, b) => b.mw - a.mw);
+
+  const { w } = size(el);
+  const narrow = w < 560;
+  // on phones the technology name sits above its bar instead of to the left
+  const bh = 22, lab = narrow ? 18 : 0, gap = 8 + lab, m = { t: 8 + lab, r: narrow ? 120 : 150, b: 26, l: narrow ? 8 : 220 };
+  const H = m.t + m.b + rows.length * (bh + gap) - gap;
+  const pct = d3.format(narrow ? ".0%" : ".1%");
+  const x = d3.scaleLinear().domain([Math.min(0, d3.min(rows, (r) => r.mw)), Math.max(1, d3.max(rows, (r) => r.mw))]).nice().range([m.l, w - m.r]);
+  const y = d3.scaleBand().domain(rows.map((r) => r.s.id)).range([m.t, H - m.b]).paddingInner(gap / (bh + gap));
+  const svg = d3.create("svg").attr("viewBox", `0 0 ${w} ${H}`);
+  svg.append("g").attr("class", "gridline").attr("transform", `translate(0,${H - m.b})`).call(d3.axisBottom(x).ticks(narrow ? 3 : 6).tickSize(-(H - m.t - m.b)).tickFormat(""));
+  svg.append("g").attr("class", "axis").attr("transform", `translate(0,${H - m.b})`).call(d3.axisBottom(x).ticks(narrow ? 3 : 6).tickFormat(narrow ? (v) => (v ? d3.format(",")(v / 1000) + "k" : "0") : d3.format(",.0f")).tickSizeOuter(0));
+  const r4 = 4;
+  rows.forEach((r) => {
+    const y0 = y(r.s.id), x0 = x(0), x1 = x(r.mw), len = Math.abs(x1 - x0);
+    const g = svg.append("g");
+    if (len >= 0.5) {
+      // rounded at the data end, square at the zero baseline
+      const rr = Math.min(r4, len, bh / 2), dir = r.mw >= 0 ? 1 : -1, xe = x1;
+      g.append("path").attr("fill", css(r.s.color)).attr("d",
+        `M${x0},${y0}H${xe - dir * rr}Q${xe},${y0} ${xe},${y0 + rr}V${y0 + bh - rr}Q${xe},${y0 + bh} ${xe - dir * rr},${y0 + bh}H${x0}Z`);
+    }
+    if (narrow) g.append("text").attr("class", "mix-label").attr("x", m.l).attr("y", y0 - 5).text(r.s.label);
+    else g.append("text").attr("class", "mix-label").attr("x", m.l - 10).attr("y", y0 + bh / 2).attr("dy", "0.35em").attr("text-anchor", "end").text(r.s.label);
+    const val = `${fmtMW(r.mw)} MW` + (r.share != null ? ` · ${pct(r.share)}` : r.mw < 0 ? " · charging" : "");
+    g.append("text").attr("class", "mix-value").attr("x", Math.max(x0, x1) + 6).attr("y", y0 + bh / 2).attr("dy", "0.35em").text(val);
+    g.append("rect").attr("x", 0).attr("y", y0 - gap + 4).attr("width", w).attr("height", bh + gap).attr("fill", "transparent")
+      .on("pointermove", (ev) => showTip(ev, `<h4>${r.s.label} · ${heLabel(h)}</h4><table>
+        <tr><td>Net output</td><td class="n">${fmtMW(r.mw)} MW</td></tr>
+        <tr><td>Share of generation</td><td class="n">${r.share != null ? d3.format(".1%")(r.share) : "–"}</td></tr>
+        <tr><td>Total generation</td><td class="n">${fmtMW(total)} MW</td></tr></table>${r.s.id === "storage" ? `<p class="tip-body">Net of charging. Counted in the share only while discharging.</p>` : ""}`))
+      .on("pointerleave", hideTip);
+  });
+  if (x.domain()[0] < 0) svg.append("line").attr("class", "zero").attr("x1", x(0)).attr("x2", x(0)).attr("y1", m.t).attr("y2", H - m.b);
+  el.replaceChildren(svg.node());
+  el.insertAdjacentHTML("beforeend", `<p class="note">Total generation ${fmtMW(total)} MW. Storage is shown net of charging and counts toward the total only while discharging.${S.source !== "60d" ? " Uses the 60-day disclosure for this day." : ""}</p>`);
+
+  tel.innerHTML = `<table class="data"><thead><tr><th class="t">Technology</th><th>Net output (MW)</th><th>Share of generation</th></tr></thead><tbody>` +
+    rows.map((r) => `<tr><td class="t">${r.s.label}</td><td>${fmtMW(r.mw)}</td><td>${r.share != null ? d3.format(".1%")(r.share) : "–"}</td></tr>`).join("") +
+    `<tr><td class="t"><b>Total generation</b></td><td><b>${fmtMW(total)}</b></td><td></td></tr></tbody></table>`;
 }
 
 // ---- hourly profile + price ------------------------------------------------

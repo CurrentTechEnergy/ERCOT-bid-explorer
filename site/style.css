@@ -105,6 +105,8 @@ h2 { font: 600 17px/1.2 var(--font-head); margin: 0 0 4px; letter-spacing: 0.01e
 .dlabel { font: 500 11px var(--font-ui); fill: var(--ink-2); }
 .price-rule { stroke: var(--price); stroke-width: 1.5; }
 .price-band { fill: var(--band); }
+.mix-label { font-size: 13px; fill: var(--ink-2); }
+.mix-value { font: 12px var(--font-data); fill: var(--ink); }
 .price-label { fill: var(--ink); font: 500 11px var(--font-data); }
 .price-label-bg { fill: var(--surface); }
 .crosshair { stroke: var(--muted); stroke-dasharray: 3 3; }
