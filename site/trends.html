@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>ERCOT Bidding Trends</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Sans+Condensed:wght@600&display=swap">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="page">
+
+<header class="masthead">
+  <div class="brand">
+    <nav class="nav" aria-label="Pages"><a href="index.html">Day view</a><a href="trends.html" aria-current="page">Trends</a></nav>
+    <h1>ERCOT Bidding Trends</h1>
+    <p class="sub">How thermal and renewable resources bid and run across every day loaded from ERCOT's 60-Day SCED Disclosure. Each point is a daily average over that day's SCED runs.</p>
+  </div>
+  <p class="status" id="status">Loading data…</p>
+</header>
+
+<main>
+  <section class="panel panel-wide">
+    <div class="panel-head">
+      <div>
+        <h2>Floor-priced MW by technology</h2>
+        <p class="note" id="floor-note"></p>
+      </div>
+      <div class="panel-tools">
+        <div class="seg seg-sm" id="floor-mode" role="radiogroup" aria-label="Measure">
+          <button type="button" data-v="floor_sced" role="radio" title="MW at −$250/−$249.99 in the curve SCED dispatched against">At floor, as used</button>
+          <button type="button" data-v="floor_submitted" role="radio" title="MW the generator itself priced at the floor">At floor, as submitted</button>
+          <button type="button" data-v="le0_submitted" role="radio" title="MW the generator itself priced at or below $0">≤ $0, as submitted</button>
+        </div>
+      </div>
+    </div>
+    <div class="legend" id="floor-legend"></div>
+    <div class="chart" id="floor-chart"></div>
+    <div class="chart chart-short" id="floor-price"></div>
+  </section>
+
+  <section class="panel panel-wide">
+    <div class="panel-head">
+      <div>
+        <h2>Units online</h2>
+        <p class="note">Average number of units with an online status each day. Each combined-cycle configuration is reported as its own resource, so combined-cycle counts are configurations, not plants.</p>
+      </div>
+    </div>
+    <div class="legend" id="online-legend"></div>
+    <div class="chart" id="online-chart"></div>
+  </section>
+
+  <section class="panel panel-wide">
+    <div class="panel-head">
+      <div>
+        <h2>Units online vs price</h2>
+        <p class="note">One dot per day. The line is the median for each $5 band of price. Commitment decisions are made ahead of time, so the trailing week's price often explains them better than the same day's.</p>
+      </div>
+      <div class="panel-tools">
+        <label class="lbl inline" for="sc-tech">Technology</label>
+        <select id="sc-tech"></select>
+        <div class="seg seg-sm" id="sc-x" role="radiogroup" aria-label="Price measure">
+          <button type="button" data-v="day" role="radio">Same day's lambda</button>
+          <button type="button" data-v="week" role="radio">Previous 7 days' lambda</button>
+        </div>
+      </div>
+    </div>
+    <div class="chart" id="sc-chart"></div>
+  </section>
+
+  <section class="panel panel-wide">
+    <div class="panel-head">
+      <div>
+        <h2>Units online for only part of the day</h2>
+        <p class="note">Units online between 1 and 22 hours of the day: a measure of cycling and two-shifting. It cannot yet tell a unit that shut down overnight and restarted from one that started once and stayed on, and peaking turbines that run a few hours count too.</p>
+      </div>
+    </div>
+    <div class="legend" id="partial-legend"></div>
+    <div class="chart" id="partial-chart"></div>
+  </section>
+
+  <section class="panel panel-wide">
+    <div class="panel-head">
+      <div>
+        <h2>Changes in bidding approach</h2>
+        <p class="note" id="chg-note"></p>
+      </div>
+      <div class="panel-tools">
+        <label class="lbl inline" for="chg-tech">Technology</label>
+        <select id="chg-tech"></select>
+        <label class="lbl inline" for="chg-sig">Change</label>
+        <select id="chg-sig"></select>
+      </div>
+    </div>
+    <div class="scroll-x" id="chg-summary"></div>
+    <div class="units-wrap" id="chg-table"></div>
+    <div id="unit-detail" hidden>
+      <h2 id="unit-title"></h2>
+      <p class="note" id="unit-note"></p>
+      <div class="chart chart-short" id="unit-price"></div>
+      <div class="chart chart-short" id="unit-share"></div>
+      <div class="chart chart-short" id="unit-hours"></div>
+    </div>
+  </section>
+</main>
+
+<footer class="foot">
+  <p>Source: ERCOT EMIL products NP3-965-ER (60-Day SCED Disclosure) and NP6-322-CD (SCED System Lambda). Built by the data update workflow from the days already loaded; the 60-day report runs about two months behind.</p>
+</footer>
+</div>
+<div class="tip" id="tip" hidden></div>
+<script src="vendor/d3.min.js"></script>
+<script src="trends.js"></script>
+</body>
+</html>
