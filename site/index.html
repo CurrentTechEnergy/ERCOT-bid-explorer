@@ -81,6 +81,29 @@
     <details class="table-view"><summary>Table view</summary><div id="curve-table" class="scroll-x"></div></details>
   </section>
 
+  <section class="panel panel-wide">
+    <div class="panel-head">
+      <div>
+        <h2>Generation mix <span class="h-note" id="mix-title-note"></span></h2>
+        <p class="note">Output by technology in the hour and each technology's share of total generation. With the 60-day report this is measured output; with the 2-day report it is an estimate from the offer curves at the cleared price.</p>
+      </div>
+    </div>
+    <div class="chart" id="mix-chart"></div>
+    <details class="table-view"><summary>Table view</summary><div id="mix-table" class="scroll-x"></div></details>
+  </section>
+
+  <section class="panel panel-wide">
+    <div class="panel-head">
+      <div>
+        <h2>Marginal supply <span class="h-note" id="marg-title-note"></span></h2>
+        <p class="note">Who is offering at the cleared price: MW each technology offers between the hour's lowest and highest cleared price (at least ±$1 around the average), from the hourly offer curves (it follows the Report, Curve and Price selections). It shows who stands at the margin, not which unit set each SCED price; with congestion, units can set price locally at prices away from system lambda.</p>
+      </div>
+    </div>
+    <div class="chart" id="marg-chart"></div>
+    <div class="chart" id="marg-day"></div>
+    <details class="table-view"><summary>Table view</summary><div id="marg-table" class="scroll-x"></div></details>
+  </section>
+
   <section class="panel">
     <div class="panel-head">
       <div>

@@ -189,6 +189,8 @@ function render() {
   $("curve-title-note").textContent = S.date ? `${S.date} · ${heLabel(S.hour)}` : "";
   renderLegend();
   drawCurves();
+  drawMix();
+  drawMarginal();
   drawProfile();
   drawHeatmap();
   if (is60) { drawTechTable(); drawUnits(); }
@@ -366,6 +368,173 @@ function drawCurveTable(rows) {
     html += `<tr><td class="t">${t === -249 ? "Floor" : fmtPrice0(t)}</td>${rows.map((r) => `<td>${fmtMW(r.full[i] ?? 0)}</td>`).join("")}</tr>`;
   });
   $("curve-table").innerHTML = html + "</tbody></table>";
+}
+
+// ---- horizontal bars: one per technology, MW with share ----------------------
+// rows: [{ s, mw, share }] sorted; returns the svg node.
+function hBars(el, rows, tipFor) {
+  const { w } = size(el);
+  const narrow = w < 560;
+  // on phones the technology name sits above its bar instead of to the left
+  const bh = 22, lab = narrow ? 18 : 0, gap = 8 + lab, m = { t: 8 + lab, r: narrow ? 120 : 150, b: 26, l: narrow ? 8 : 220 };
+  const H = m.t + m.b + rows.length * (bh + gap) - gap;
+  const pct = d3.format(narrow ? ".0%" : ".1%");
+  const x = d3.scaleLinear().domain([Math.min(0, d3.min(rows, (r) => r.mw)), Math.max(1, d3.max(rows, (r) => r.mw))]).nice().range([m.l, w - m.r]);
+  const y = d3.scaleBand().domain(rows.map((r) => r.s.id)).range([m.t, H - m.b]).paddingInner(gap / (bh + gap));
+  const svg = d3.create("svg").attr("viewBox", `0 0 ${w} ${H}`);
+  svg.append("g").attr("class", "gridline").attr("transform", `translate(0,${H - m.b})`).call(d3.axisBottom(x).ticks(narrow ? 3 : 6).tickSize(-(H - m.t - m.b)).tickFormat(""));
+  svg.append("g").attr("class", "axis").attr("transform", `translate(0,${H - m.b})`).call(d3.axisBottom(x).ticks(narrow ? 3 : 6).tickFormat(narrow ? (v) => (v ? d3.format(",")(v / 1000) + "k" : "0") : d3.format(",.0f")).tickSizeOuter(0));
+  rows.forEach((r) => {
+    const y0 = y(r.s.id), x0 = x(0), x1 = x(r.mw), len = Math.abs(x1 - x0);
+    const g = svg.append("g");
+    if (len >= 0.5) {
+      // rounded at the data end, square at the zero baseline
+      const rr = Math.min(4, len, bh / 2), dir = r.mw >= 0 ? 1 : -1;
+      g.append("path").attr("fill", css(r.s.color)).attr("d",
+        `M${x0},${y0}H${x1 - dir * rr}Q${x1},${y0} ${x1},${y0 + rr}V${y0 + bh - rr}Q${x1},${y0 + bh} ${x1 - dir * rr},${y0 + bh}H${x0}Z`);
+    }
+    if (narrow) g.append("text").attr("class", "mix-label").attr("x", m.l).attr("y", y0 - 5).text(r.s.label);
+    else g.append("text").attr("class", "mix-label").attr("x", m.l - 10).attr("y", y0 + bh / 2).attr("dy", "0.35em").attr("text-anchor", "end").text(r.s.label);
+    const val = `${fmtMW(r.mw)} MW` + (r.share != null ? ` · ${pct(r.share)}` : r.mw < 0 ? " · charging" : "");
+    g.append("text").attr("class", "mix-value").attr("x", Math.max(x0, x1) + 6).attr("y", y0 + bh / 2).attr("dy", "0.35em").text(val);
+    g.append("rect").attr("x", 0).attr("y", y0 - gap + 4).attr("width", w).attr("height", bh + gap).attr("fill", "transparent")
+      .on("pointermove", (ev) => showTip(ev, tipFor(r)))
+      .on("pointerleave", hideTip);
+  });
+  if (x.domain()[0] < 0) svg.append("line").attr("class", "zero").attr("x1", x(0)).attr("x2", x(0)).attr("y1", m.t).attr("y2", H - m.b);
+  return svg.node();
+}
+
+function barTable(rows, mwHead, shareHead, totalLabel, total) {
+  return `<table class="data"><thead><tr><th class="t">Technology</th><th>${mwHead}</th><th>${shareHead}</th></tr></thead><tbody>` +
+    rows.map((r) => `<tr><td class="t">${r.s.label}</td><td>${fmtMW(r.mw)}</td><td>${r.share != null ? d3.format(".1%")(r.share) : "–"}</td></tr>`).join("") +
+    `<tr><td class="t"><b>${totalLabel}</b></td><td><b>${fmtMW(total)}</b></td><td></td></tr></tbody></table>`;
+}
+
+// ---- generation mix ----------------------------------------------------------
+// 60-day: telemetered output by technology. 2-day: estimated as each curve's MW at or
+// below the hour's average system lambda (the curves carry no output figures).
+function mixRows(h) {
+  const D = S.day;
+  if (S.source === "60d") {
+    const oi = D.stat_names.indexOf("output");
+    return SERIES["60d"].map((s) => ({ s, mw: d3.sum(s.keys, (k) => (D.stats[k] && D.stats[k][h] && D.stats[k][h][oi]) || 0) }));
+  }
+  const lam = S.prices && S.prices.lambda && S.prices.lambda.hourly_mean[h];
+  if (lam == null) return null;
+  const i = d3.bisectRight(S.index.grid, lam) - 1;
+  return SERIES["2d"].map((s) => {
+    const c = seriesCurves(D, s, S.version), r = c && c[h];
+    return r && { s, mw: i < 0 ? (s.id === "storage" ? r[0] ?? 0 : 0) : r[i] ?? 0 };
+  }).filter(Boolean);
+}
+
+function drawMix() {
+  const el = $("mix-chart"), tel = $("mix-table");
+  const h = S.hour, est = S.source !== "60d";
+  $("mix-title-note").textContent = S.date ? `${S.date} · ${heLabel(h)}${est ? " · estimated" : ""}` : "";
+  const clear = (msg) => { tel.innerHTML = ""; emptyMsg(el, msg); };
+  if (!S.day) return clear("No data for this day.");
+  if (!S.day.runs[h]) return clear(`No SCED runs recorded in ${heLabel(h)} (daylight-saving change).`);
+  const rows = mixRows(h);
+  if (!rows) return clear("No system lambda loaded for this day yet, so output can't be estimated from the 2-day curves.");
+  // share of generation: storage counts only while discharging (net positive)
+  const total = d3.sum(rows, (r) => Math.max(0, r.mw));
+  rows.forEach((r) => (r.share = total > 0 && r.mw > 0 ? r.mw / total : null));
+  rows.sort((a, b) => b.mw - a.mw);
+  const what = est ? "Estimated output" : "Net output";
+  el.replaceChildren(hBars(el, rows, (r) => `<h4>${r.s.label} · ${heLabel(h)}</h4><table>
+        <tr><td>${what}</td><td class="n">${fmtMW(r.mw)} MW</td></tr>
+        <tr><td>Share of generation</td><td class="n">${r.share != null ? d3.format(".1%")(r.share) : "–"}</td></tr>
+        <tr><td>Total generation</td><td class="n">${fmtMW(total)} MW</td></tr></table>${r.s.id === "storage" ? `<p class="tip-body">Net of charging. Counted in the share only while discharging.</p>` : ""}`));
+  const lam = est ? S.prices.lambda.hourly_mean[h] : null;
+  el.insertAdjacentHTML("beforeend", `<p class="note">${est
+    ? `Estimated: MW each group offers at or below the hour's average system lambda (${fmtPrice(lam)}), from the hourly-averaged 2-day curves. The 2-day report has no output figures. Against the 60-day telemetered output this runs about 8% high for wind and solar (it counts available output, before curtailment) and is typically within about 8% for thermal in a given hour. Switch to the 60-day report for measured output and a split of thermal by technology.`
+    : "Telemetered net output from the 60-day disclosure, averaged over the SCED runs in the hour."} Total generation ${fmtMW(total)} MW. Storage is shown net of charging and counts toward the total only while discharging.</p>`);
+  tel.innerHTML = barTable(rows, `${what} (MW)`, "Share of generation", "Total generation", total);
+}
+
+// ---- marginal supply: MW offered within the hour's cleared price range ------
+// Price window for an hour: the cleared range, widened to at least ±$1 around the average.
+function priceWindow(hp) {
+  return [Math.min(hp.min ?? hp.mean, hp.mean - 1), Math.max(hp.max ?? hp.mean, hp.mean + 1)];
+}
+// MW each technology offers between lo and hi (inclusive) in hour h, from the hourly curves.
+function marginalRows(h, hp) {
+  const grid = S.index.grid;
+  const [lo, hi] = priceWindow(hp);
+  const iHi = d3.bisectRight(grid, hi) - 1, iLo = d3.bisectLeft(grid, lo) - 1;   // last point <= hi, last point < lo
+  const rows = seriesList().map((s) => {
+    const c = seriesCurves(S.day, s, S.version), r = c && c[h];
+    if (!r) return null;
+    const at = (i) => (i < 0 ? (s.id === "storage" ? r[0] ?? 0 : 0) : r[i] ?? 0);
+    return { s, mw: Math.max(0, at(iHi) - at(iLo)) };
+  }).filter(Boolean);
+  const total = d3.sum(rows, (r) => r.mw);
+  rows.forEach((r) => (r.share = total > 0 ? r.mw / total : null));
+  return { rows, total, lo, hi };
+}
+
+function drawMarginal() {
+  const el = $("marg-chart"), del = $("marg-day"), tel = $("marg-table");
+  const h = S.hour;
+  const pname = S.location === "lambda" ? "system lambda" : S.location;
+  $("marg-title-note").textContent = S.date ? `${S.date} · ${heLabel(h)}` : "";
+  const clear = (msg) => { emptyMsg(el, msg); del.innerHTML = ""; tel.innerHTML = ""; };
+  if (!S.day) return clear("No data for this day.");
+  if (!S.prices) return clear("No cleared price loaded for this day yet.");
+  const hp = hourPrice(S.prices, h);
+  if (!S.day.runs[h] || !hp || hp.mean == null) return clear(`No SCED runs or price recorded in ${heLabel(h)}.`);
+
+  const m0 = marginalRows(h, hp), { total, lo, hi } = m0;
+  // technologies with nothing at the margin are left off the bars (they stay in the table)
+  const all = m0.rows.sort((a, b) => b.mw - a.mw), rows = all.filter((r) => r.mw >= 1);
+  if (!rows.length) return clear(`No MW offered within ${heLabel(h)}'s cleared price range.`);
+  const win = `${fmtPrice(lo)} to ${fmtPrice(hi)}`;
+  el.replaceChildren(hBars(el, rows, (r) => `<h4>${r.s.label} · ${heLabel(h)}</h4><table>
+      <tr><td>Offered from ${win}</td><td class="n">${fmtMW(r.mw)} MW</td></tr>
+      <tr><td>Share of marginal MW</td><td class="n">${r.share != null ? d3.format(".1%")(r.share) : "–"}</td></tr></table>`));
+  el.insertAdjacentHTML("beforeend", `<p class="note">${fmtMW(total)} MW offered from ${win} (${pname} averaged ${fmtPrice(hp.mean)} in ${heLabel(h)}).</p>`);
+  tel.innerHTML = barTable(all, `MW offered ${win}`, "Share of marginal MW", "Total", total);
+
+  // share of marginal MW by hour, 100% stacked columns
+  const list = seriesList();
+  const hours = d3.range(24).map((i) => {
+    const p = hourPrice(S.prices, i);
+    if (!S.day.runs[i] || !p || p.mean == null) return null;
+    const m = marginalRows(i, p);
+    return m.total > 0 ? Object.fromEntries(m.rows.map((r) => [r.s.id, r.mw / m.total])) : null;
+  });
+  const { w } = size(del);
+  const H = 200, m = { t: 14, r: 16, b: 26, l: 64 };
+  const x = d3.scaleBand().domain(d3.range(1, 25)).range([m.l, w - m.r]).paddingInner(0.15);
+  const y = d3.scaleLinear().domain([0, 1]).range([H - m.b, m.t]);
+  const svg = d3.create("svg").attr("viewBox", `0 0 ${w} ${H}`);
+  svg.append("g").attr("class", "gridline").attr("transform", `translate(${m.l},0)`).call(d3.axisLeft(y).ticks(4).tickSize(-(w - m.l - m.r)).tickFormat(""));
+  svg.append("g").attr("class", "axis").attr("transform", `translate(0,${H - m.b})`).call(d3.axisBottom(x).tickValues([1, 4, 8, 12, 16, 20, 24]).tickFormat((d) => "HE" + d).tickSizeOuter(0));
+  svg.append("g").attr("class", "axis").attr("transform", `translate(${m.l},0)`).call(d3.axisLeft(y).ticks(4).tickFormat(fmtPct).tickSizeOuter(0));
+  svg.append("text").attr("class", "axis-title").attr("x", m.l).attr("y", 10).text("Share of marginal MW by hour");
+  hours.forEach((sh, i) => {
+    const cx = x(i + 1), bw = x.bandwidth();
+    if (!sh) return;
+    const op = i === h ? 1 : 0.5;   // the selected hour stands out
+    let acc = 0;
+    list.forEach((s) => {
+      const v = sh[s.id] || 0;
+      if (v <= 0) return;
+      // 1px surface gap between stacked segments
+      const y1 = y(acc + v), y0 = y(acc);
+      svg.append("rect").attr("x", cx).attr("width", bw).attr("y", y1).attr("height", Math.max(0, y0 - y1 - 1)).attr("fill", css(s.color)).attr("opacity", op);
+      acc += v;
+    });
+  });
+  hoverHours(svg, d3.scaleLinear().domain([1, 24]).range([x(1) + x.bandwidth() / 2, x(24) + x.bandwidth() / 2]), m, H, (i) => {
+    const sh = hours[i];
+    if (!sh) return `<h4>${heLabel(i)}</h4>No price or curve data`;
+    return `<h4>${heLabel(i)}</h4><table>` + list.filter((s) => sh[s.id] > 0).sort((a, b) => sh[b.id] - sh[a.id]).map((s) =>
+      `<tr><td><span class="sw" style="background:var(${s.color})"></span></td><td>${s.label}</td><td class="n">${d3.format(".0%")(sh[s.id])}</td></tr>`).join("") + "</table>";
+  });
+  del.replaceChildren(svg.node());
 }
 
 // ---- hourly profile + price ------------------------------------------------
