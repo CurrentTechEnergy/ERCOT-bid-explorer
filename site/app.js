@@ -189,6 +189,7 @@ function render() {
   $("curve-title-note").textContent = S.date ? `${S.date} · ${heLabel(S.hour)}` : "";
   renderLegend();
   drawCurves();
+  drawDay();
   drawMix();
   drawMarginal();
   drawProfile();
@@ -411,11 +412,91 @@ function barTable(rows, mwHead, shareHead, totalLabel, total) {
     `<tr><td class="t"><b>${totalLabel}</b></td><td><b>${fmtMW(total)}</b></td><td></td></tr></tbody></table>`;
 }
 
+// ---- day overview: mix and price by hour, click to pick the hour --------------
+function drawDay() {
+  const mel = $("day-mix"), pel = $("day-price"), est = S.source !== "60d";
+  $("day-title-note").textContent = S.date ? `${S.date}${est ? " · mix estimated from 2-day curves" : ""}` : "";
+  const list = SERIES[S.source];
+  $("day-legend").innerHTML = list.map((s) => `<span><span class="sw" style="background:var(${s.color})"></span>${s.label}</span>`).join("");
+  if (!S.day) { emptyMsg(mel, "No data for this day."); pel.innerHTML = ""; return; }
+  const mix = d3.range(24).map((h) => {
+    const rows = mixRows(h);
+    return rows && Object.fromEntries(rows.map((r) => [r.s.id, r.mw]));
+  });
+  const hp = d3.range(24).map((h) => hourPrice(S.prices, h));
+  const pname = S.location === "lambda" ? "System lambda" : S.location;
+
+  const { w } = size(mel);
+  const m = { t: 14, r: 16, b: 26, l: 64 };
+  const x = d3.scaleBand().domain(d3.range(1, 25)).range([m.l, w - m.r]).paddingInner(0.15);
+  const xc = d3.scaleLinear().domain([1, 24]).range([x(1) + x.bandwidth() / 2, x(24) + x.bandwidth() / 2]);   // band centres, for hover
+  const xAxis = (g, H) => g.attr("class", "axis").attr("transform", `translate(0,${H - m.b})`)
+    .call(d3.axisBottom(x).tickValues([1, 4, 8, 12, 16, 20, 24]).tickFormat((d) => "HE" + d).tickSizeOuter(0));
+  const tip = (i) => {
+    const p = hp[i], mx = mix[i];
+    let html = `<h4>${heLabel(i)}</h4>${pname}: ${p && p.mean != null ? fmtPrice(p.mean) : "–"}`;
+    if (mx) {
+      const tot = d3.sum(list, (s) => Math.max(0, mx[s.id] || 0));
+      html += `<table>` + list.filter((s) => mx[s.id]).sort((a, b) => mx[b.id] - mx[a.id]).map((s) =>
+        `<tr><td><span class="sw" style="background:var(${s.color})"></span></td><td>${s.label}</td><td class="n">${fmtMW(mx[s.id])} MW</td><td class="n">${mx[s.id] > 0 && tot ? fmtPct(mx[s.id] / tot) : ""}</td></tr>`).join("") + `</table>`;
+    }
+    return html + `<p class="tip-body">Click to see this hour's bid stack.</p>`;
+  };
+
+  // stacked columns: generation above zero, storage charging below
+  const H = 220;
+  const ext = mix.filter(Boolean).map((mx) => [d3.sum(list, (s) => Math.min(0, mx[s.id] || 0)), d3.sum(list, (s) => Math.max(0, mx[s.id] || 0))]);
+  const y = d3.scaleLinear().domain([Math.min(0, d3.min(ext, (e) => e[0]) ?? 0), Math.max(1, d3.max(ext, (e) => e[1]) ?? 1)]).nice().range([H - m.b, m.t]);
+  const svg = d3.create("svg").attr("viewBox", `0 0 ${w} ${H}`);
+  svg.append("g").attr("class", "gridline").attr("transform", `translate(${m.l},0)`).call(d3.axisLeft(y).ticks(5).tickSize(-(w - m.l - m.r)).tickFormat(""));
+  svg.append("g").call((g) => xAxis(g, H));
+  svg.append("g").attr("class", "axis").attr("transform", `translate(${m.l},0)`).call(d3.axisLeft(y).ticks(5).tickFormat(d3.format(",.0f")).tickSizeOuter(0));
+  svg.append("text").attr("class", "axis-title").attr("x", m.l).attr("y", 10).text(`Generation by hour (MW)${est ? ", estimated" : ""}`);
+  mix.forEach((mx, i) => {
+    if (!mx) return;
+    const op = i === S.hour ? 1 : 0.5;   // the selected hour stands out
+    let up = 0, down = 0;
+    list.forEach((s) => {
+      const v = mx[s.id] || 0;
+      if (!v) return;
+      const a = v > 0 ? up : down, b = a + v;
+      v > 0 ? (up = b) : (down = b);
+      const top = y(Math.max(a, b)), bot = y(Math.min(a, b));
+      // 1px surface gap between stacked segments
+      svg.append("rect").attr("x", x(i + 1)).attr("width", x.bandwidth()).attr("y", top).attr("height", Math.max(0, bot - top - 1))
+        .attr("fill", css(s.color)).attr("opacity", op);
+    });
+  });
+  if (y.domain()[0] < 0) svg.append("line").attr("class", "zero").attr("x1", m.l).attr("x2", w - m.r).attr("y1", y(0)).attr("y2", y(0));
+  hoverHours(svg, xc, m, H, tip);
+  mel.replaceChildren(svg.node());
+
+  // price by hour (its own chart, never a second axis)
+  if (!S.prices) { pel.innerHTML = `<p class="note">No cleared price loaded for this day yet.</p>`; return; }
+  const H2 = 140;
+  const vals = hp.flatMap((p) => (p ? [p.min, p.max, p.mean] : [])).filter((v) => v != null);
+  const y2 = d3.scaleLinear().domain([Math.min(0, d3.min(vals) ?? 0), Math.max(10, d3.max(vals) ?? 10)]).nice().range([H2 - m.b, m.t]);
+  const s2 = d3.create("svg").attr("viewBox", `0 0 ${w} ${H2}`);
+  s2.append("rect").attr("class", "price-band").attr("x", x(S.hour + 1)).attr("width", x.bandwidth()).attr("y", m.t).attr("height", H2 - m.t - m.b);
+  s2.append("g").attr("class", "gridline").attr("transform", `translate(${m.l},0)`).call(d3.axisLeft(y2).ticks(4).tickSize(-(w - m.l - m.r)).tickFormat(""));
+  s2.append("g").call((g) => xAxis(g, H2));
+  s2.append("g").attr("class", "axis").attr("transform", `translate(${m.l},0)`).call(d3.axisLeft(y2).ticks(4).tickFormat(fmtPrice0).tickSizeOuter(0));
+  if (y2.domain()[0] < 0) s2.append("line").attr("class", "zero").attr("x1", m.l).attr("x2", w - m.r).attr("y1", y2(0)).attr("y2", y2(0));
+  s2.append("text").attr("class", "axis-title").attr("x", m.l).attr("y", 10).text(`${pname} ($/MWh), hourly average and range`);
+  s2.append("path").attr("fill", css("--band")).attr("d", d3.area().defined((p) => p && p.min != null).x((p, i) => xc(i + 1)).y0((p) => y2(p.min)).y1((p) => y2(p.max))(hp));
+  s2.append("path").attr("fill", "none").attr("stroke", css("--price")).attr("stroke-width", 2).attr("d", d3.line().defined((p) => p && p.mean != null).x((p, i) => xc(i + 1)).y((p) => y2(p.mean))(hp));
+  const sel = hp[S.hour];
+  if (sel && sel.mean != null) s2.append("circle").attr("cx", xc(S.hour + 1)).attr("cy", y2(sel.mean)).attr("r", 4).attr("fill", css("--price")).attr("stroke", css("--surface")).attr("stroke-width", 2);
+  hoverHours(s2, xc, m, H2, tip);
+  pel.replaceChildren(s2.node());
+}
+
 // ---- generation mix ----------------------------------------------------------
 // 60-day: telemetered output by technology. 2-day: estimated as each curve's MW at or
 // below the hour's average system lambda (the curves carry no output figures).
 function mixRows(h) {
   const D = S.day;
+  if (!D || !D.runs[h]) return null;
   if (S.source === "60d") {
     const oi = D.stat_names.indexOf("output");
     return SERIES["60d"].map((s) => ({ s, mw: d3.sum(s.keys, (k) => (D.stats[k] && D.stats[k][h] && D.stats[k][h][oi]) || 0) }));
