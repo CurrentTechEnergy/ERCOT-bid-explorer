@@ -104,6 +104,29 @@
     <details class="table-view"><summary>Table view</summary><div id="marg-table" class="scroll-x"></div></details>
   </section>
 
+  <section class="panel panel-wide">
+    <div class="panel-head">
+      <div>
+        <h2>Marginality by price <span class="h-note" id="mbp-title-note"></span></h2>
+        <p class="note">Every loaded hour, grouped by its average system lambda. Each column shows which technologies offered the MW within that hour's cleared price range, summed over the hours in the group. Uses the curves as used in SCED and follows the Report selection.</p>
+      </div>
+      <div class="panel-tools">
+        <div class="seg seg-sm" id="mbp-days" role="radiogroup" aria-label="Days included">
+          <button type="button" data-v="all" role="radio">All days</button>
+          <button type="button" data-v="90" role="radio">Last 90 days</button>
+          <button type="button" data-v="30" role="radio">Last 30 days</button>
+        </div>
+        <div class="seg seg-sm" id="mbp-unit" role="radiogroup" aria-label="Measure">
+          <button type="button" data-v="share" role="radio">% of marginal MW</button>
+          <button type="button" data-v="mw" role="radio">Average MW</button>
+        </div>
+      </div>
+    </div>
+    <div class="legend legend-static" id="mbp-legend"></div>
+    <div class="chart" id="mbp-chart"></div>
+    <details class="table-view"><summary>Table view</summary><div id="mbp-table" class="scroll-x"></div></details>
+  </section>
+
   <section class="panel">
     <div class="panel-head">
       <div>

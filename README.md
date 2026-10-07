@@ -69,11 +69,12 @@ pipeline/
   parse_2day.py    NP3-908-ER  -> hourly curves per technology
   parse_60day.py   NP3-965-ER  -> hourly curves, statistics, per-unit summary
   parse_prices.py  NP6-322-CD, NP6-905-CD -> lambda and hub/zone prices
+  marginal.py      day files + prices -> hourly marginal MW by technology (no downloads)
   ercot_api.py     ERCOT Public API client (token, archive listing, downloads)
   update.py        command line entry point
 site/
   index.html, app.js, style.css, vendor/d3.min.js
-  data/            generated: index.json, summary_*.json.gz, 2d/, 60d/, prices/
+  data/            generated: index.json, summary_*.json.gz, marginal_*.json.gz, 2d/, 60d/, prices/
 ```
 
 ## Caveats

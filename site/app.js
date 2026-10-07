@@ -37,7 +37,7 @@ const S = {
   xrange: "low", mode: "lines", axes: "price_x", threshold: 0, location: "lambda",
   hidden: new Set(), heatTech: null, unitTech: "all", unitSearch: "",
   unitSort: { key: "floor_mw", dir: -1 }, unitShowAll: false,
-  day: null, prices: null, summaries: {},
+  day: null, prices: null, summaries: {}, mbpDays: "all", mbpUnit: "share",
 };
 const cache = new Map();
 const $ = (id) => document.getElementById(id);
@@ -191,6 +191,7 @@ function render() {
   drawCurves();
   drawMix();
   drawMarginal();
+  drawMarginalByPrice();
   drawProfile();
   drawHeatmap();
   if (is60) { drawTechTable(); drawUnits(); }
@@ -537,6 +538,78 @@ function drawMarginal() {
   del.replaceChildren(svg.node());
 }
 
+// ---- marginality by price: every loaded hour, grouped by system lambda -------
+const MBP_BINS = [
+  [-Infinity, -5, "< −$5"], [-5, 0, "−$5–0"], [0, 5, "$0–5"], [5, 10, "$5–10"], [10, 15, "$10–15"], [15, 20, "$15–20"],
+  [20, 25, "$20–25"], [25, 30, "$25–30"], [30, 40, "$30–40"], [40, 50, "$40–50"], [50, 75, "$50–75"],
+  [75, 100, "$75–100"], [100, 200, "$100–200"], [200, Infinity, "≥ $200"],
+];
+
+async function drawMarginalByPrice() {
+  const el = $("mbp-chart"), tel = $("mbp-table");
+  const src = S.source, list = SERIES[src];
+  $("mbp-legend").innerHTML = list.map((s) => `<span><span class="sw" style="background:var(${s.color})"></span>${s.label}</span>`).join("");
+  const data = await tryJSON(`data/marginal_${src}.json.gz`);
+  if (src !== S.source) return;   // report changed while loading
+  if (!data || !data.rows.length) { tel.innerHTML = ""; return emptyMsg(el, "No marginal data yet. It is built by the data update workflow."); }
+  const C = data.columns, ci = Object.fromEntries(C.map((c, i) => [c, i]));
+  let rows = data.rows;
+  const last = rows[rows.length - 1][0];
+  if (S.mbpDays !== "all") {
+    const from = d3.timeFormat("%Y-%m-%d")(d3.timeDay.offset(new Date(last + "T12:00:00"), -(+S.mbpDays - 1)));
+    rows = rows.filter((r) => r[0] >= from);
+  }
+  $("mbp-title-note").textContent = `${rows.length ? rows[0][0] : ""} to ${last} · ${rows.length.toLocaleString()} hours`;
+
+  const bins = MBP_BINS.map(([lo, hi, label]) => {
+    const hrs = rows.filter((r) => r[2] >= lo && r[2] < hi);
+    const mw = Object.fromEntries(list.map((s) => [s.id, d3.sum(hrs, (r) => d3.sum(s.keys, (k) => r[ci[k]] || 0))]));
+    const tot = d3.sum(list, (s) => mw[s.id]);
+    return { label, n: hrs.length, mw, tot };
+  });
+  const val = (b, s) => (S.mbpUnit === "share" ? (b.tot ? b.mw[s.id] / b.tot : 0) : (b.n ? b.mw[s.id] / b.n : 0));
+
+  const { w } = size(el);
+  const narrow = w < 560;
+  const H = 310, m = { t: 14, r: 12, b: narrow ? 74 : 58, l: 56 };
+  const x = d3.scaleBand().domain(bins.map((b) => b.label)).range([m.l, w - m.r]).paddingInner(0.18);
+  const ymax = S.mbpUnit === "share" ? 1 : d3.max(bins, (b) => d3.sum(list, (s) => val(b, s))) || 1;
+  const y = d3.scaleLinear().domain([0, ymax]).nice().range([H - m.b, m.t]);
+  const svg = d3.create("svg").attr("viewBox", `0 0 ${w} ${H}`);
+  svg.append("g").attr("class", "gridline").attr("transform", `translate(${m.l},0)`).call(d3.axisLeft(y).ticks(5).tickSize(-(w - m.l - m.r)).tickFormat(""));
+  const xa = svg.append("g").attr("class", "axis").attr("transform", `translate(0,${H - m.b})`).call(d3.axisBottom(x).tickSizeOuter(0));
+  if (narrow) xa.selectAll("text").attr("transform", "rotate(-45)").attr("text-anchor", "end").attr("dx", "-0.4em").attr("dy", "0.5em");
+  svg.append("g").attr("class", "axis").attr("transform", `translate(${m.l},0)`)
+    .call(d3.axisLeft(y).ticks(5).tickFormat(S.mbpUnit === "share" ? fmtPct : d3.format(",.0f")).tickSizeOuter(0));
+  svg.append("text").attr("class", "axis-title").attr("x", m.l).attr("y", 10)
+    .text(S.mbpUnit === "share" ? "Share of marginal MW" : "Average marginal MW per hour");
+  svg.append("text").attr("class", "axis-title").attr("x", w - m.r).attr("y", H - 2).attr("text-anchor", "end").text("Hour's average system lambda ($/MWh)");
+  bins.forEach((b) => {
+    const cx = x(b.label), bw = x.bandwidth();
+    let acc = 0;
+    if (b.n) list.forEach((s) => {
+      const v = val(b, s);
+      if (v <= 0) return;
+      const y1 = y(acc + v), y0 = y(acc);
+      // 1px surface gap between stacked segments; groups with few hours are faded
+      svg.append("rect").attr("x", cx).attr("width", bw).attr("y", y1).attr("height", Math.max(0, y0 - y1 - 1))
+        .attr("fill", css(s.color)).attr("opacity", b.n < 24 ? 0.45 : 1);
+      acc += v;
+    });
+    if (!narrow) svg.append("text").attr("class", "axis-title").attr("x", cx + bw / 2).attr("y", H - m.b + 32).attr("text-anchor", "middle").text(`${b.n.toLocaleString()} h`);
+    svg.append("rect").attr("x", cx - 2).attr("width", bw + 4).attr("y", m.t).attr("height", H - m.t - m.b).attr("fill", "transparent")
+      .on("pointermove", (ev) => showTip(ev, `<h4>System lambda ${b.label}</h4>${b.n.toLocaleString()} hours${b.n && b.n < 24 ? " (few hours: read with care)" : ""}` +
+        (b.n ? `<table>` + list.filter((s) => b.mw[s.id] > 0).sort((p, q) => b.mw[q.id] - b.mw[p.id]).map((s) =>
+          `<tr><td><span class="sw" style="background:var(${s.color})"></span></td><td>${s.label}</td><td class="n">${fmtPct(b.mw[s.id] / b.tot)}</td><td class="n">${fmtMW(b.mw[s.id] / b.n)} MW</td></tr>`).join("") + `</table><p class="tip-body">Share of marginal MW, and average marginal MW per hour.</p>` : "")))
+      .on("pointerleave", hideTip);
+  });
+  el.replaceChildren(svg.node());
+
+  tel.innerHTML = `<table class="data"><thead><tr><th class="t">System lambda</th><th>Hours</th>${list.map((s) => `<th>${s.label}</th>`).join("")}</tr></thead><tbody>` +
+    bins.map((b) => `<tr><td class="t">${b.label}</td><td>${b.n.toLocaleString()}</td>${list.map((s) => `<td>${b.tot ? fmtPct(b.mw[s.id] / b.tot) : "–"}</td>`).join("")}</tr>`).join("") +
+    `</tbody></table><p class="note">Share of marginal MW in each price group.</p>`;
+}
+
 // ---- hourly profile + price ------------------------------------------------
 function drawProfile() {
   const el = $("profile-chart"), pel = $("price-chart");
@@ -810,6 +883,9 @@ async function boot() {
   bindSeg("xrange", "xrange");
   bindSeg("mode", "mode");
   bindSeg("axes", "axes");
+  setSeg("mbp-days", S.mbpDays); setSeg("mbp-unit", S.mbpUnit);
+  bindSeg("mbp-days", "mbpDays", drawMarginalByPrice);
+  bindSeg("mbp-unit", "mbpUnit", drawMarginalByPrice);
   $("date").onchange = async (e) => { S.date = e.target.value; await changeDay(); };
   // step one available day older (-1) or newer (+1)
   const stepDay = async (dir) => {
