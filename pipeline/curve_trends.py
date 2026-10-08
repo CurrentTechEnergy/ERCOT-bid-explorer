@@ -12,10 +12,11 @@ Writes data/curve_trends.json.gz for the Trends page:
          available, from the submitted 60-day curves, averaged over the day's hours.
          {"dates": [...], "q": [0.25, 0.5, 0.9], tech: {"p25": [...], "p50": [...], "p90": [...]}}
   "curt": wind and solar curtailment: MW available (HSL, or HASL in the 2-day summary) minus
-         the base point SCED sent, from two independent reports so each checks the other.
+         the base point SCED sent, from the 60-day disclosure and from the 2-day reports
+         (generation summary base points with the 2-day offer curves' summed HSL).
          {"dates": [...], tech: {"c60": [MWh per day], "a60": [available MWh], "c2d": [...], "a2d": [...]},
           "hours": {"columns": ["date", "hour", "lambda", "src", "wind", "solar", "wind_avail", "solar_avail"],
-                    "rows": [...]}}   hourly MW, 2-day where the day has it, else 60-day
+                    "rows": [...]}}   hourly MW, 60-day where the day has it, else 2-day
 
 Needs no downloads, so it runs on every update.
 """
@@ -122,17 +123,28 @@ def hourly_60d(day: dict, tech: str):
     return [(r[hi], r[bi]) if r else (None, None) for r in st]
 
 
-def hourly_2dgen(hourly: dict, tech: str):
+def hourly_2dgen(hourly: dict, tech: str, curves2d=None):
+    """(available MW, base point MW) per hour from the 2-day generation summary.  Since RTC+B
+    (Dec 5 2025) the summary carries no HASL, so the available MW come from the top of the
+    2-day aggregate offer curve instead (curves are capped at each unit's HSL, so the top is
+    the summed HSL; it matches the 60-day HSL exactly on days both cover)."""
     cols = list(hourly)
-    a = find_col(cols, "hasl", CURT_TECHS[tech]) or find_col(cols, "hsl", CURT_TECHS[tech])
+    a = find_col(cols, "hasl", CURT_TECHS[tech])
     b = find_col(cols, "base", "point", CURT_TECHS[tech])
-    if not a or not b:
+    if not b:
         return None
-    return list(zip(hourly[a], hourly[b]))
+    if a:
+        avail = hourly[a]
+    elif curves2d and curves2d.get(tech):
+        avail = [r[-1] if r else None for r in curves2d[tech]]
+    else:
+        return None
+    return list(zip(avail, hourly[b]))
 
 
 def build_curtailment(index: dict) -> dict:
     d60 = sorted(index["days"].get("60d", []))
+    d2 = set(index["days"].get("2d", []))
     g2 = read_json_gz(DATA_DIR / "summary_2dgen.json.gz", default={}) or {}
     dates = sorted(set(d60) | set(g2))
     out = {"dates": dates, **{t: {"c60": [], "a60": [], "c2d": [], "a2d": []} for t in CURT_TECHS}}
@@ -140,22 +152,25 @@ def build_curtailment(index: dict) -> dict:
 
     def daily(h):
         pairs = [(a, b) for a, b in (h or []) if a is not None and b is not None]
-        if not h or len(pairs) < 20:
-            return None, None
+        if not h or len(pairs) < 20 or not any(a for a, _ in pairs):
+            return None, None     # no hours, or a day with no availability recorded
         return round(sum(max(0.0, a - b) for a, b in pairs)), round(sum(a for a, _ in pairs))
 
     for d in dates:
         day60 = read_json_gz(DATA_DIR / "60d" / f"{d}.json.gz") if d in d60 else None
         gen = (g2.get(d) or {}).get("hourly")
+        curves2d = ((read_json_gz(DATA_DIR / "2d" / f"{d}.json.gz") or {}).get("curves")) if gen and d in d2 else None
         hours = {}
         for t in CURT_TECHS:
             h60 = hourly_60d(day60, t) if day60 else None
-            h2 = hourly_2dgen(gen, t) if gen else None
+            h2 = hourly_2dgen(gen, t, curves2d) if gen else None
             c, a = daily(h60)
             out[t]["c60"].append(c); out[t]["a60"].append(a)
             c, a = daily(h2)
             out[t]["c2d"].append(c); out[t]["a2d"].append(a)
-            hours[t] = ("2d", h2) if h2 else ("60d", h60) if h60 else (None, None)
+            # 60-day first: it is per unit; the 2-day reports fill the recent days
+            hours[t] = (("60d", h60) if out[t]["c60"][-1] is not None else
+                        ("2d", h2) if out[t]["c2d"][-1] is not None else (None, None))
         prices = read_json_gz(DATA_DIR / "prices" / f"{d}.json.gz")
         lam = (prices or {}).get("lambda", {}).get("hourly_mean") or [None] * 24
         src = hours["wind"][0] or hours["solar"][0]
