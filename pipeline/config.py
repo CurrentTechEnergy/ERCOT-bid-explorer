@@ -1,4 +1,5 @@
 """Shared settings: price grid, technology groupings, file locations."""
+import os
 from pathlib import Path
 
 import numpy as np
@@ -6,6 +7,9 @@ import numpy as np
 ROOT = Path(__file__).resolve().parent.parent
 SITE_DIR = ROOT / "site"
 DATA_DIR = SITE_DIR / "data"
+# Full-fidelity per-unit day files (see pipeline/units.py). Too big for the site's branch:
+# in GitHub Actions this is a checkout of the orphan `data` branch. Gitignored on main.
+UNIT_DATA_DIR = Path(os.environ.get("UNIT_DATA_DIR") or (ROOT / "unitdata")).resolve()
 
 # Price grid ($/MWh) on which every curve is stored.
 # $1 steps where low-price behaviour lives, coarser above.
