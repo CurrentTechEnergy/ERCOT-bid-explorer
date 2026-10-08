@@ -125,6 +125,70 @@
   <section class="panel panel-wide">
     <div class="panel-head">
       <div>
+        <h2>Thermal output in cheap hours</h2>
+        <p class="note" id="cheap-note"></p>
+      </div>
+      <div class="panel-tools">
+        <label class="lbl inline" for="cheap-tech">Technology</label>
+        <select id="cheap-tech"></select>
+        <div class="seg seg-sm" id="cheap-thr" role="radiogroup" aria-label="Hours">
+          <button type="button" data-v="0" role="radio">Lambda below $0</button>
+          <button type="button" data-v="10" role="radio">Lambda below $10</button>
+        </div>
+      </div>
+    </div>
+    <div class="legend legend-static" id="cheap-legend"></div>
+    <div class="chart" id="cheap-chart"></div>
+    <h3 class="sub-h">Units that stayed above minimum in those hours</h3>
+    <p class="note" id="cheap-units-note"></p>
+    <div class="units-wrap" id="cheap-units"></div>
+  </section>
+
+  <section class="panel panel-wide">
+    <div class="panel-head">
+      <div>
+        <h2>Shutdowns and two-shifting</h2>
+        <p class="note" id="shut-note"></p>
+      </div>
+      <div class="panel-tools">
+        <label class="lbl inline" for="shut-tech">Technology</label>
+        <select id="shut-tech"></select>
+        <div class="seg seg-sm" id="shut-price" role="radiogroup" aria-label="Price after shutdown">
+          <button type="button" data-v="any" role="radio">Any price</button>
+          <button type="button" data-v="10" role="radio">Into lambda below $10</button>
+          <button type="button" data-v="0" role="radio">Into lambda below $0</button>
+        </div>
+      </div>
+    </div>
+    <div class="legend legend-static" id="shut-legend"></div>
+    <div class="chart" id="shut-chart"></div>
+    <div class="chart chart-short" id="shut-hours"></div>
+    <h3 class="sub-h">Units shutting down most often</h3>
+    <div class="units-wrap" id="shut-units"></div>
+  </section>
+
+  <section class="panel panel-wide">
+    <div class="panel-head">
+      <div>
+        <h2>Across days</h2>
+        <p class="note" id="heat-note"></p>
+      </div>
+      <div class="panel-tools">
+        <label class="lbl inline" for="heat-measure">Show</label>
+        <select id="heat-measure"></select>
+        <label class="lbl inline" for="heat-tech" id="heat-tech-lbl">Technology</label>
+        <select id="heat-tech"></select>
+        <label class="lbl inline" for="heat-thr" id="heat-thr-lbl">At or below</label>
+        <select id="heat-thr"></select>
+      </div>
+    </div>
+    <div class="chart scroll-x" id="heatmap"></div>
+    <div class="heat-scale" id="heat-scale"></div>
+  </section>
+
+  <section class="panel panel-wide">
+    <div class="panel-head">
+      <div>
         <h2>Marginal supply by settled price <span class="h-note" id="mbp-title-note"></span></h2>
         <p class="note">Which resources move when the price moves, across every hour loaded, sorted by that hour's system lambda. Above zero: each technology's share of the supply MW whose offer price falls just around lambda. Below zero: battery charging bids that stop at that price, as a share of all MW moving. Smoothed blends the 200 hours nearest each price, so each point rests on the same amount of data.</p>
       </div>
@@ -166,12 +230,28 @@
     <h3 class="sub-h">Units switching between ≤ $0 and above $0 within a day</h3>
     <p class="note">Days when a thermal unit's offer moved its first price across $0 and back at least once, which points to deliberate intraday repricing rather than a change in strategy.</p>
     <div id="flip-table"></div>
+  </section>
+
+  <section class="panel panel-wide" id="unit-panel">
+    <div class="panel-head">
+      <div>
+        <h2>Unit detail</h2>
+        <p class="note">Pick a thermal unit, or click a unit in any table above.</p>
+      </div>
+      <div class="panel-tools">
+        <label class="lbl inline" for="unit-pick">Unit</label>
+        <input type="search" id="unit-pick" list="unit-list" placeholder="Search unit name" autocomplete="off">
+        <datalist id="unit-list"></datalist>
+      </div>
+    </div>
     <div id="unit-detail" hidden>
-      <h2 id="unit-title"></h2>
+      <h3 class="sub-h" id="unit-title"></h3>
       <p class="note" id="unit-note"></p>
+      <div class="legend legend-static" id="unit-strip-legend"></div>
+      <div class="chart" id="unit-strip"></div>
       <div class="chart chart-short" id="unit-price"></div>
       <div class="chart chart-short" id="unit-share"></div>
-      <div class="chart chart-short" id="unit-hours"></div>
+      <div class="units-wrap" id="unit-changes"></div>
     </div>
   </section>
 </main>
