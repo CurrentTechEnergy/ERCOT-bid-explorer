@@ -5,8 +5,8 @@ changes in each unit's bidding approach.  Needs no downloads.  Read by trends.ht
 From the per-unit day files in UNIT_DATA_DIR (days without one are skipped / null):
   daily[tech]["starts"]  number of starts (status not starting "ON" -> starting "ON")
   units[i]["starts"]     the same per thermal unit and day
-  flips                  thermal units whose submitted curve offered >= 50% of HSL at or below
-                         $0 in some online runs and <= 10% in others on the same day:
+  flips                  thermal units whose submitted curve offered some MW at or below $0 in
+                         some online runs and none in others on the same day:
                          [unit, tech, date, n_switches, first_switch "HH:MM", hours_le0]
 """
 import numpy as np
@@ -23,7 +23,7 @@ STAT_OF = {"mw_on": "hsl", "mw_onruc": "hsl_onruc", "mw_off": "hsl_off", "mw_out
 # stat order of summaries written before they carried "stat_names"
 LEGACY_STATS = ["n_online", "hsl", "lsl", "base_point", "output", "floor_sced", "floor_submitted",
                 "le0_sced", "le0_submitted", "no_offer_hsl", "no_offer_output_schedule"]
-FLIP_HI, FLIP_LO = 0.5, 0.1
+FLIP_EPS = 0.005   # share of HSL at or below $0 that counts as offering there (rounding)
 UNIT_TECHS = ["nuclear", "coal", "combined_cycle", "gas_steam", "combustion_turbine"]
 
 # Bidding-approach changes. Each signal is compared between the K online days before and
@@ -91,20 +91,18 @@ def unit_day_facts(ud: dict, prev_last: dict):
             continue
         share = le0_share(u, n)
         ok = ~np.isnan(share)
-        if not (np.any(share[ok] >= FLIP_HI) and np.any(share[ok] <= FLIP_LO)):
+        if not (np.any(share[ok] > FLIP_EPS) and np.any(share[ok] <= FLIP_EPS)):
             continue
         state, n_sw, first_sw = None, 0, None
         for r in np.flatnonzero(ok):
-            cur = "le0" if share[r] >= FLIP_HI else "gt0" if share[r] <= FLIP_LO else None
-            if cur is None:
-                continue
+            cur = "le0" if share[r] > FLIP_EPS else "gt0"
             if state is not None and cur != state:
                 n_sw += 1
                 if first_sw is None:
                     m = ud["runs"][r] % 1440
                     first_sw = f"{m // 60:02d}:{m % 60:02d}"
             state = cur
-        hours = round(float(np.sum(share[ok] >= FLIP_HI)) * 24 / max(n, 1), 1)
+        hours = round(float(np.sum(share[ok] > FLIP_EPS)) * 24 / max(n, 1), 1)
         flips.append([name, u["tech"], ud["date"], n_sw, first_sw, hours])
     return starts, last, flips
 
