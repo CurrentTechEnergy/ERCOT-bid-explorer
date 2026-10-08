@@ -477,7 +477,7 @@ function drawMarginalGroups(el, H, list, w, narrow) {
 // ---- bidding-approach changes -----------------------------------------------------
 function drawChanges() {
   const T = S.T, techOf = Object.fromEntries(T.units.map((u) => [u.unit, u]));
-  $("chg-note").textContent = `A change is a shift that holds: the median over the ${T.window} online days after a day differs from the median over the ${T.window} online days before by at least 25 percentage points of MW offered at or below $0, half the day running without an offer, or $10 in first offer price relative to that day's median for the technology (which removes moves in fuel price). Thermal units only. Click a row to see the unit.`;
+  $("chg-note").textContent = `A change is a shift that holds: the median over the ${T.window} online days after a day differs from the median over the ${T.window} online days before by at least 25 percentage points of MW offered at or below $0, half the day running without an offer, or $10 in first offer price above $0 relative to that day's median for its peers (which removes moves in fuel price). Peers are units of the same ERCOT resource type (for example CCGT90 or SCLE90) when at least 8 of them have a price that day, otherwise the same technology. Thermal units only. Click a row to see the unit.`;
   // summary: units per technology, how many changed
   const sum = THERMAL.map((t) => {
     const us = T.units.filter((u) => u.tech === t);
@@ -516,9 +516,10 @@ function drawUnit(u) {
   drawUnitStrip(u, s, marks);
   const median = u.first.map((v, i) => (v == null || u.rel[i] == null ? null : v - u.rel[i]));
   timeChart($("unit-price"), [
-    { label: "First offer price", color: s.color, values: u.first },
-    { label: `${s.label} median`, color: "--muted", values: median, dash: "4 3", width: 1.5 },
-  ], { title: "First offer price ($/MWh)", H: 170, yFmt: d3.format("$,.0f"), tipFmt: fmtPrice, markers: marks, dots: true });
+    { label: "First offer price above $0", color: s.color, values: u.first },
+    { label: "Peer median", color: "--muted", values: median, dash: "4 3", width: 1.5 },
+  ], { title: "First offer price above $0 ($/MWh), and the median of its peers", H: 170, yFmt: d3.format("$,.0f"), tipFmt: fmtPrice, markers: marks, dots: true,
+    tipNote: (i) => (u.peer && u.peer[i] != null ? ` · peers: ${u.peer[i] ? `${u.type} units` : `all ${s.label.toLowerCase()}`}` : "") });
   timeChart($("unit-share"), [
     { label: "MW offered ≤ $0", color: s.color, values: u.le0 },
     { label: "Share of day with no offer", color: "--muted", values: u.noff, dash: "4 3", width: 1.5 },

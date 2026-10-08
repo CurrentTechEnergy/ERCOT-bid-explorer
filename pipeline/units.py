@@ -214,3 +214,23 @@ def le0_share(u: dict, n_runs: int) -> np.ndarray:
                 cache[key] = min(max(mw0, 0.0), hsl) / hsl
         out[r] = cache[key]
     return out
+
+
+def first_positive_price(u: dict, n_runs: int):
+    """Mean over the day's online runs with a submitted curve of the first price above $0 on
+    that curve: roughly where the unit starts pricing its energy at cost, skipping minimum
+    output and other blocks priced at or below $0.  None if no run has a price above $0."""
+    si = _ffill_index(u["status"], n_runs)
+    ci = _ffill_index(u["curve"], n_runs)
+    vals = []
+    for r in range(n_runs):
+        s = u["status"][si[r]][1] if si[r] >= 0 else None
+        if not s or not s.startswith("ON") or ci[r] < 0:
+            continue
+        ev = u["curve"][ci[r]]
+        if ev[1] is None:
+            continue
+        pos = [p for p in ev[1] if p > 0]
+        if pos:
+            vals.append(pos[0])
+    return round(float(np.mean(vals)), 2) if vals else None

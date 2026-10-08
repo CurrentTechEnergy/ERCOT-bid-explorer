@@ -70,6 +70,9 @@ pipeline/
   parse_60day.py   NP3-965-ER  -> hourly curves, statistics, per-unit summary
   parse_prices.py  NP6-322-CD, NP6-905-CD -> lambda and hub/zone prices
   marginal.py      day files + prices -> hourly marginal MW by technology (no downloads)
+  trends.py        per-unit day files -> daily trends, starts, flips, bidding changes (no downloads)
+  intraday.py      per-unit day files -> thermal output at/above minimum in cheap hours, off spells
+                   (shutdowns, two-shifting), hourly state per unit (no downloads)
   ercot_api.py     ERCOT Public API client (token, archive listing, downloads)
   update.py        command line entry point
 site/
