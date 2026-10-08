@@ -58,6 +58,20 @@ def is_load_resource_only(blob: bytes) -> bool:
 UNIT_FILES = []     # (date, compressed bytes, COV events) written in this run
 
 
+def _drop_nan(x, path, bad):
+    """Copy of a JSON-like structure with NaN floats replaced by None; their paths go in bad."""
+    if isinstance(x, float):
+        if x != x:
+            bad.append(path)
+            return None
+        return x
+    if isinstance(x, dict):
+        return {k: _drop_nan(v, f"{path}/{k}", bad) for k, v in x.items()}
+    if isinstance(x, (list, tuple)):
+        return [_drop_nan(v, f"{path}/{i}", bad) for i, v in enumerate(x)]
+    return x
+
+
 def process_curve_zip(blob: bytes, index: dict) -> str:
     found = curve_source(blob)
     if found is None:
@@ -71,6 +85,10 @@ def process_curve_zip(blob: bytes, index: dict) -> str:
     index["days"].setdefault(source, []).append(date)
     if extra:     # 60-day: per-unit change-of-value day file
         unit_day, n_events = extra[0]
+        bad = []
+        unit_day = _drop_nan(unit_day, "", bad)
+        if bad:
+            warn(f"unit file {date}: {len(bad)} NaN value(s) written as null, e.g. {', '.join(bad[:5])}")
         path = UNIT_DATA_DIR / source / f"{date}.json.gz"
         write_json_gz(path, unit_day)
         size = path.stat().st_size

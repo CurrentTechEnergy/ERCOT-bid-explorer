@@ -159,14 +159,15 @@ function fillTechSelects() {
 async function loadDay() {
   if (!S.date) { S.day = null; S.prices = null; return; }
   const has = (k) => (S.index.days[k] || []).includes(S.date);
-  const [day, prices, d60, gen] = await Promise.all([
+  const [day, prices, other, gen] = await Promise.all([
     tryJSON(`data/${S.source}/${S.date}.json.gz`),
     tryJSON(`data/prices/${S.date}.json.gz`),
-    S.source !== "60d" && has("60d") ? tryJSON(`data/60d/${S.date}.json.gz`) : null,
+    // the other report's day file, for the curtailment comparison
+    has(S.source === "60d" ? "2d" : "60d") ? tryJSON(`data/${S.source === "60d" ? "2d" : "60d"}/${S.date}.json.gz`) : null,
     has("2dgen") ? tryJSON(`data/2dgen/${S.date}.json.gz`) : null,
   ]);
   S.day = day; S.prices = prices;
-  S.day60 = S.source === "60d" ? day : d60; S.gen = gen;
+  S.day60 = S.source === "60d" ? day : other; S.day2 = S.source === "60d" ? other : day; S.gen = gen;
 }
 
 async function changeDay() {
@@ -527,9 +528,12 @@ function curtHours(src, t) {
   const g = S.gen && S.gen.hourly;
   if (!g) return null;
   const find = (...parts) => Object.keys(g).find((k) => parts.every((p) => k.split("_").includes(p)));
-  const ak = find("hasl", t.gen) || find("hsl", t.gen), bk = find("base", "point", t.gen);
-  if (!ak || !bk) return null;
-  return d3.range(24).map((h) => (g[ak][h] != null && g[bk][h] != null ? { a: g[ak][h], c: Math.max(0, g[ak][h] - g[bk][h]) } : null));
+  // since RTC+B the summary has no HASL: the top of the 2-day offer curve is the summed HSL
+  const ak = find("hasl", t.gen), bk = find("base", "point", t.gen);
+  const top = S.day2 && S.day2.curves && S.day2.curves[t.stat];
+  if (!bk || (!ak && !top)) return null;
+  const avail = (h) => (ak ? g[ak][h] : top[h] && top[h].length ? top[h][top[h].length - 1] : null);
+  return d3.range(24).map((h) => { const a = avail(h), b = g[bk][h]; return a != null && b != null ? { a, c: Math.max(0, a - b) } : null; });
 }
 
 function drawCurtail() {
