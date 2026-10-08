@@ -19,7 +19,7 @@ Schema
       "type": "CCGT90",       # raw Resource Type
       "tech": "combined_cycle",   # config.TECH_OF_TYPE grouping ("other" if unmapped)
       "frac": true,           # only for tech wind/solar: curve MW are stored as fractions of HSL
-      "status": [[run, "ON"], [run, "OFF"], [run, null], ...],
+      "status": [[run, "ON"], [run, "OFF"], [run, ""], [run, null], ...],   # "" = blank in ERCOT's file
                               # raw "Telemetered Resource Status" code whenever it changes;
                               # null = unit absent from that run onwards (until the next event)
       "lim":    [[run, hsl, lsl], ...],          # MW rounded to 1, when either changes

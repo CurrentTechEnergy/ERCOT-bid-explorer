@@ -84,7 +84,8 @@ class _Accumulator:
         self.unknown_types.update(rtype[tech.isna()].unique().tolist())
         tech = tech.fillna("other").map(TECH_INDEX).values.astype(int)
 
-        status = df["Telemetered Resource Status"].astype(str).str.strip()
+        # pandas 3 keeps missing values through astype(str): a blank status becomes "" (unknown)
+        status = df["Telemetered Resource Status"].fillna("").astype(str).str.strip()
         online = status.str.startswith("ON").values
         hsl = df["HSL"].astype(float).fillna(0).values
         lsl = df["LSL"].astype(float).fillna(0).values
