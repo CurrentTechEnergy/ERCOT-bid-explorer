@@ -78,7 +78,7 @@ def unit_day_facts(ud: dict, prev_last: dict):
     n = len(ud["runs"])
     starts, last, flips = {}, {}, []
     for name, u in ud["units"].items():
-        seq = [s for _, s in u["status"] if s is not None]
+        seq = [s for _, s in u["status"] if s]      # skip absent runs (None) and blank statuses ("")
         cnt, prev = 0, prev_last.get(name)
         for s in seq:
             if prev is not None and not _online(prev) and _online(s):
