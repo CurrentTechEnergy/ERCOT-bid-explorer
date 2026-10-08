@@ -189,6 +189,62 @@ function drawRenewBands() {
   });
 }
 
+const CURT = [
+  { id: "wind", label: "Wind", color: "--c3" },
+  { id: "solar", label: "Solar", color: "--c4" },
+];
+function drawCurtailment() {
+  const c = S.C && S.C.curt, el = $("curt-daily"), pel = $("curt-price");
+  staticLegend($("curt-legend"), CURT);
+  if (!c || !c.dates.length) { emptyMsg(el, "No curtailment data yet. It is built by the data update workflow."); pel.innerHTML = ""; return; }
+  const gwh = (v) => (v == null ? null : v / 1000);
+  const has2d = CURT.some((t) => c[t.id].c2d.some((v) => v != null));
+  timeChart(el, CURT.flatMap((t) => [
+    { label: `${t.label}, 60-day`, color: t.color, values: c[t.id].c60.map(gwh) },
+    ...(has2d ? [{ label: `${t.label}, 2-day`, color: t.color, values: c[t.id].c2d.map(gwh), dash: "5 3", width: 1.5 }] : []),
+  ]), { dates: c.dates, H: 240, title: "Curtailed energy (GWh per day)", yFmt: d3.format(",.0f"), tipFmt: d3.format(",.1f"),
+    tipNote: (i) => {
+      const share = CURT.map((t) => { const k = c[t.id].c60[i] != null ? "60" : "2d"; const a = c[t.id]["a" + k][i], v = c[t.id]["c" + k][i]; return a ? `${t.label} ${fmtPct(v / a)}` : null; }).filter(Boolean);
+      return share.length ? ` · share of available: ${share.join(", ")}` : "";
+    } });
+
+  // hourly curtailed MW grouped by system lambda
+  const ci = Object.fromEntries(c.hours.columns.map((k, i) => [k, i]));
+  const rows = c.hours.rows;
+  const bins = MBP_BINS.map(([lo, hi, label]) => {
+    const hrs = rows.filter((r) => r[ci.lambda] >= lo && r[ci.lambda] < hi);
+    const mean = (k) => (hrs.length ? d3.mean(hrs, (r) => r[ci[k]] || 0) : 0);
+    return { label, n: hrs.length, wind: mean("wind"), solar: mean("solar"), wa: mean("wind_avail"), sa: mean("solar_avail") };
+  });
+  const w = Math.max(280, pel.clientWidth || 600), narrow = w < 560, H = 260, m = { t: 18, r: 12, b: narrow ? 74 : 58, l: 56 };
+  const x = d3.scaleBand().domain(bins.map((b) => b.label)).range([m.l, w - m.r]).paddingInner(0.18);
+  const y = d3.scaleLinear().domain([0, Math.max(100, d3.max(bins, (b) => b.wind + b.solar))]).nice().range([H - m.b, m.t]);
+  const svg = d3.create("svg").attr("viewBox", `0 0 ${w} ${H}`);
+  svg.append("g").attr("class", "gridline").attr("transform", `translate(${m.l},0)`).call(d3.axisLeft(y).ticks(5).tickSize(-(w - m.l - m.r)).tickFormat(""));
+  svg.append("g").attr("class", "axis").attr("transform", `translate(${m.l},0)`).call(d3.axisLeft(y).ticks(5).tickFormat(d3.format(",.0f")).tickSizeOuter(0));
+  const xa = svg.append("g").attr("class", "axis").attr("transform", `translate(0,${H - m.b})`).call(d3.axisBottom(x).tickSizeOuter(0));
+  if (narrow) xa.selectAll("text").attr("transform", "rotate(-45)").attr("text-anchor", "end").attr("dx", "-0.4em").attr("dy", "0.5em");
+  svg.append("text").attr("class", "axis-title").attr("x", m.l).attr("y", 10).text("Average curtailed MW in hours at each system lambda");
+  svg.append("text").attr("class", "axis-title").attr("x", w - m.r).attr("y", H - 2).attr("text-anchor", "end").text("Hour's average system lambda ($/MWh)");
+  bins.forEach((b) => {
+    const cx = x(b.label), bw = x.bandwidth(), op = b.n < 24 ? 0.45 : 1;
+    let acc = 0;
+    CURT.forEach((t) => {
+      const v = b[t.id];
+      if (v > 0) svg.append("rect").attr("x", cx).attr("width", bw).attr("y", y(acc + v)).attr("height", Math.max(0, y(acc) - y(acc + v) - 1)).attr("fill", css(t.color)).attr("opacity", op);
+      acc += v;
+    });
+    if (!narrow) svg.append("text").attr("class", "axis-title").attr("x", cx + bw / 2).attr("y", H - m.b + 32).attr("text-anchor", "middle").text(`${b.n.toLocaleString()} h`);
+    svg.append("rect").attr("x", cx - 2).attr("width", bw + 4).attr("y", m.t).attr("height", H - m.t - m.b).attr("fill", "transparent")
+      .on("pointermove", (ev) => showTip(ev, `<h4>System lambda ${b.label}</h4>${b.n.toLocaleString()} hours${b.n && b.n < 24 ? " (few hours: read with care)" : ""}<table>` +
+        CURT.map((t) => { const a = t.id === "wind" ? b.wa : b.sa; return `<tr><td><span class="sw" style="background:var(${t.color})"></span></td><td>${t.label}</td><td class="n">${fmtMW(b[t.id])} MW</td><td class="n">${a > 0 ? fmtPct(b[t.id] / a) + " of available" : ""}</td></tr>`; }).join("") + "</table>"))
+      .on("pointerleave", hideTip);
+  });
+  pel.replaceChildren(svg.node());
+  setCSV(pel, ["lambda_group", "hours", "wind_curtailed_mw", "solar_curtailed_mw", "wind_available_mw", "solar_available_mw"],
+    bins.map((b) => [b.label, b.n, b.wind, b.solar, b.wa, b.sa]), "Curtailment by price");
+}
+
 function drawPriceQuantiles() {
   const pq = S.C && S.C.pq, el = $("pq-chart");
   if (!pq || !pq[S.pqTech]) return emptyMsg(el, "No curve trends yet. They are built by the data update workflow.");
@@ -470,7 +526,7 @@ function saveView() { window.CX.writeHash(Object.fromEntries(Object.entries(VIEW
 function loadView() { const v = window.CX.readHash(); Object.entries(VIEW_KEYS).forEach(([k, sk]) => { if (v[k] != null) S[sk] = v[k]; }); }
 
 // ---- boot ---------------------------------------------------------------------------
-function drawAll() { drawFloor(); drawRenewBands(); drawPriceQuantiles(); drawCapacity(); drawScatter(); drawPartial(); drawMarginal(); drawChanges(); }
+function drawAll() { drawFloor(); drawRenewBands(); drawCurtailment(); drawPriceQuantiles(); drawCapacity(); drawScatter(); drawPartial(); drawMarginal(); drawChanges(); }
 
 async function boot() {
   [S.T, S.C] = await Promise.all([tryJSON("data/trends_60d.json.gz"), tryJSON("data/curve_trends.json.gz")]);

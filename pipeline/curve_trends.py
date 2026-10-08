@@ -11,12 +11,18 @@ Writes data/curve_trends.json.gz for the Trends page:
   "pq":  price at which 25%, 50% and 90% of each thermal technology's offered MW is
          available, from the submitted 60-day curves, averaged over the day's hours.
          {"dates": [...], "q": [0.25, 0.5, 0.9], tech: {"p25": [...], "p50": [...], "p90": [...]}}
+  "curt": wind and solar curtailment: MW available (HSL, or HASL in the 2-day summary) minus
+         the base point SCED sent, from two independent reports so each checks the other.
+         {"dates": [...], tech: {"c60": [MWh per day], "a60": [available MWh], "c2d": [...], "a2d": [...]},
+          "hours": {"columns": ["date", "hour", "lambda", "src", "wind", "solar", "wind_avail", "solar_avail"],
+                    "rows": [...]}}   hourly MW, 2-day where the day has it, else 60-day
 
 Needs no downloads, so it runs on every update.
 """
 import numpy as np
 
 from .config import DATA_DIR, PRICE_GRID
+from .parse_2day_gen import find_col
 from .store import read_json_gz, write_json_gz
 
 G = np.asarray(PRICE_GRID, dtype=float)
@@ -97,5 +103,74 @@ def build_curve_trends(index: dict) -> None:
             for q in QS:
                 pq[t][f"p{int(q * 100)}"].append(price_at_share(sub.get(t), q))
 
-    write_json_gz(DATA_DIR / "curve_trends.json.gz", {"rs": rs, "pq": pq})
-    print(f"curve_trends: {len(rs_dates)} days of wind/solar bands, {len(pq_dates)} days of price quantiles")
+    curt = build_curtailment(index)
+    write_json_gz(DATA_DIR / "curve_trends.json.gz", {"rs": rs, "pq": pq, "curt": curt})
+    print(f"curve_trends: {len(rs_dates)} days of wind/solar bands, {len(pq_dates)} days of price quantiles, "
+          f"{len(curt['dates'])} days of curtailment")
+
+
+CURT_TECHS = {"wind": "wgr", "solar": "pvgr"}
+
+
+def hourly_60d(day: dict, tech: str):
+    """(available MW, base point MW) per hour from a 60-day day file's technology stats."""
+    names = day.get("stat_names") or []
+    st = (day.get("stats") or {}).get(tech)
+    if not st or "hsl" not in names or "base_point" not in names:
+        return None
+    hi, bi = names.index("hsl"), names.index("base_point")
+    return [(r[hi], r[bi]) if r else (None, None) for r in st]
+
+
+def hourly_2dgen(hourly: dict, tech: str):
+    cols = list(hourly)
+    a = find_col(cols, "hasl", CURT_TECHS[tech]) or find_col(cols, "hsl", CURT_TECHS[tech])
+    b = find_col(cols, "base", "point", CURT_TECHS[tech])
+    if not a or not b:
+        return None
+    return list(zip(hourly[a], hourly[b]))
+
+
+def build_curtailment(index: dict) -> dict:
+    d60 = sorted(index["days"].get("60d", []))
+    g2 = read_json_gz(DATA_DIR / "summary_2dgen.json.gz", default={}) or {}
+    dates = sorted(set(d60) | set(g2))
+    out = {"dates": dates, **{t: {"c60": [], "a60": [], "c2d": [], "a2d": []} for t in CURT_TECHS}}
+    rows = []
+
+    def daily(h):
+        pairs = [(a, b) for a, b in (h or []) if a is not None and b is not None]
+        if not h or len(pairs) < 20:
+            return None, None
+        return round(sum(max(0.0, a - b) for a, b in pairs)), round(sum(a for a, _ in pairs))
+
+    for d in dates:
+        day60 = read_json_gz(DATA_DIR / "60d" / f"{d}.json.gz") if d in d60 else None
+        gen = (g2.get(d) or {}).get("hourly")
+        hours = {}
+        for t in CURT_TECHS:
+            h60 = hourly_60d(day60, t) if day60 else None
+            h2 = hourly_2dgen(gen, t) if gen else None
+            c, a = daily(h60)
+            out[t]["c60"].append(c); out[t]["a60"].append(a)
+            c, a = daily(h2)
+            out[t]["c2d"].append(c); out[t]["a2d"].append(a)
+            hours[t] = ("2d", h2) if h2 else ("60d", h60) if h60 else (None, None)
+        prices = read_json_gz(DATA_DIR / "prices" / f"{d}.json.gz")
+        lam = (prices or {}).get("lambda", {}).get("hourly_mean") or [None] * 24
+        src = hours["wind"][0] or hours["solar"][0]
+        if not src:
+            continue
+        for hr in range(24):
+            vals = []
+            for t in CURT_TECHS:
+                s_, h = hours[t]
+                a, b = h[hr] if h and hr < len(h) else (None, None)
+                vals.append((None if a is None or b is None else round(max(0.0, a - b)), a))
+            if lam[hr] is None or all(v[0] is None for v in vals):
+                continue
+            rows.append([d, hr, round(lam[hr], 2), src, vals[0][0], vals[1][0],
+                         None if vals[0][1] is None else round(vals[0][1]),
+                         None if vals[1][1] is None else round(vals[1][1])])
+    out["hours"] = {"columns": ["date", "hour", "lambda", "src", "wind", "solar", "wind_avail", "solar_avail"], "rows": rows}
+    return out

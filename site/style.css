@@ -182,3 +182,4 @@ details.dl > summary:hover { color: var(--ink); border-color: var(--muted); }
 .copy-link:hover { color: var(--ink); border-color: var(--muted); }
 .tip td.n { white-space: nowrap; }
 .sub-h { font-size: 0.95rem; font-weight: 600; margin: 1.4rem 0 0.2rem; }
+.tip .muted { color: var(--muted); }

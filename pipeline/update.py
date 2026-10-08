@@ -13,8 +13,9 @@ import sys
 import time
 import warnings
 
-from .config import DATA_DIR, EMIL_2DAY, EMIL_60DAY, EMIL_LAMBDA, EMIL_SPP
+from .config import DATA_DIR, EMIL_2DAY, EMIL_2DAY_GEN, EMIL_60DAY, EMIL_LAMBDA, EMIL_SPP
 from .parse_2day import parse_2day_zip
+from .parse_2day_gen import is_gen_summary, parse_2day_gen_zip
 from .parse_60day import parse_60day_zip
 from .parse_prices import build_price_day, read_lambda, read_spp
 from .marginal import build_marginal
@@ -32,8 +33,10 @@ def _d(s: str) -> dt.date:
 
 # ------------------------------------------------------------- processing --
 def curve_source(blob: bytes):
-    """("2d" | "60d", parser) for a report zip, or None if it is neither."""
+    """("2d" | "2dgen" | "60d", parser) for a report zip, or None if it is none of them."""
     names = [n.lower() for n in zip_names(blob)]
+    if is_gen_summary(names):      # NP3-910-ER: also named 2d_Agg_*, so check it first
+        return "2dgen", parse_2day_gen_zip
     if any(n.startswith("2d_agg_") for n in names):
         return "2d", parse_2day_zip
     # the same files parse_60day_zip reads
@@ -50,14 +53,14 @@ def is_load_resource_only(blob: bytes) -> bool:
 def process_curve_zip(blob: bytes, index: dict) -> str:
     found = curve_source(blob)
     if found is None:
-        raise ValueError("Not a 2-day SCED energy curves or 60-day SCED disclosure zip "
+        raise ValueError("Not a 2-day SCED energy curves, 2-day generation summary or 60-day SCED disclosure zip "
                          f"({describe_blob(blob)})")
     source, parser = found
     t0 = time.time()
     date, day, summary = parser(blob)
     write_json_gz(DATA_DIR / source / f"{date}.json.gz", day)
     update_summary(source, date, summary)
-    index["days"][source].append(date)
+    index["days"].setdefault(source, []).append(date)
     print(f"  {source} {date} processed in {time.time() - t0:.0f}s")
     return date
 
@@ -96,8 +99,8 @@ def fetch_curves(api, emil: str, posted_from: dt.datetime, posted_to: dt.datetim
     docs = api.list_archives(emil, posted_from, posted_to)
     docs.sort(key=lambda d: d.get("postDatetime", ""))
     print(f"{emil}: {len(docs)} file(s) posted {posted_from:%Y-%m-%d} .. {posted_to:%Y-%m-%d}")
-    lag = 2 if source == "2d" else 60
-    have = set(index["days"][source])
+    lag = 60 if source == "60d" else 2
+    have = set(index["days"].setdefault(source, []))
     done_ids = set(index.setdefault("docs", {}).setdefault(emil, []))
     guess_of = {d["docId"]: (_d(d["postDatetime"][:10]) - dt.timedelta(days=lag)).isoformat() for d in docs}
     per_guess = Counter(guess_of.values())
@@ -190,7 +193,7 @@ def main(argv=None):
     ap.add_argument("--days", type=int, default=4, help="look back this many days of postings (default 4)")
     ap.add_argument("--backfill", nargs=2, metavar=("START", "END"), help="operating-day range to fill")
     ap.add_argument("--max-files", type=int, default=None, help="cap curve files per report per run")
-    ap.add_argument("--skip", choices=["2d", "60d", "prices"], action="append", default=[])
+    ap.add_argument("--skip", choices=["2d", "2dgen", "60d", "prices"], action="append", default=[])
     ap.add_argument("--local", nargs="+", help="process local zip files instead of calling the API")
     args = ap.parse_args(argv)
 
@@ -227,7 +230,7 @@ def main(argv=None):
     if args.backfill:
         start, end = _d(args.backfill[0]), _d(args.backfill[1])
         want = {(start + dt.timedelta(days=i)).isoformat() for i in range((end - start).days + 1)}
-        for source, emil, lag in (("2d", EMIL_2DAY, 2), ("60d", EMIL_60DAY, 60)):
+        for source, emil, lag in (("2d", EMIL_2DAY, 2), ("2dgen", EMIL_2DAY_GEN, 2), ("60d", EMIL_60DAY, 60)):
             if source in args.skip:
                 continue
             fetch_curves(api, emil,
@@ -238,6 +241,8 @@ def main(argv=None):
         since = now - dt.timedelta(days=args.days)
         if "2d" not in args.skip:
             fetch_curves(api, EMIL_2DAY, since, now + dt.timedelta(days=1), index, "2d", limit=args.max_files)
+        if "2dgen" not in args.skip:
+            fetch_curves(api, EMIL_2DAY_GEN, since, now + dt.timedelta(days=1), index, "2dgen", limit=args.max_files)
         if "60d" not in args.skip:
             fetch_curves(api, EMIL_60DAY, since, now + dt.timedelta(days=1), index, "60d", limit=args.max_files)
 
@@ -250,7 +255,7 @@ def main(argv=None):
     build_curve_trends(index)
     save_index(index)
     added = {k: sorted(set(index["days"][k]) - before.get(k, set())) for k in index["days"]}
-    names = {"2d": "2-day curves", "60d": "60-day curves", "prices": "prices"}
+    names = {"2d": "2-day curves", "2dgen": "2-day generation summary", "60d": "60-day curves", "prices": "prices"}
     lines = ["### ERCOT data update", "", "| Data | Days added | Range |", "|---|---|---|"]
     for k, v in added.items():
         lines.append(f"| {names.get(k, k)} | {len(v)} | {v[0] + ' to ' + v[-1] if v else '–'} |")

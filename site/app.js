@@ -158,11 +158,15 @@ function fillTechSelects() {
 // ------------------------------------------------------------ rendering ---
 async function loadDay() {
   if (!S.date) { S.day = null; S.prices = null; return; }
-  const [day, prices] = await Promise.all([
+  const has = (k) => (S.index.days[k] || []).includes(S.date);
+  const [day, prices, d60, gen] = await Promise.all([
     tryJSON(`data/${S.source}/${S.date}.json.gz`),
     tryJSON(`data/prices/${S.date}.json.gz`),
+    S.source !== "60d" && has("60d") ? tryJSON(`data/60d/${S.date}.json.gz`) : null,
+    has("2dgen") ? tryJSON(`data/2dgen/${S.date}.json.gz`) : null,
   ]);
   S.day = day; S.prices = prices;
+  S.day60 = S.source === "60d" ? day : d60; S.gen = gen;
 }
 
 async function changeDay() {
@@ -185,6 +189,7 @@ function render() {
   renderLegend();
   drawCurves();
   drawDay();
+  drawCurtail();
   drawMix();
   drawMarginal();
   drawOfferStack();
@@ -503,6 +508,74 @@ function drawDay() {
   if (sel && sel.mean != null) s2.append("circle").attr("cx", xc(S.hour + 1)).attr("cy", y2(sel.mean)).attr("r", 4).attr("fill", css("--price")).attr("stroke", css("--surface")).attr("stroke-width", 2);
   hoverHours(s2, xc, m, H2, tip);
   pel.replaceChildren(s2.node());
+}
+
+// ---- curtailment ----------------------------------------------------------------
+// available MW (HSL; HASL in the 2-day summary) minus base point, per hour, from both reports
+const CURT = [
+  { id: "wind", label: "Wind", color: "--c3", stat: "wind", gen: "wgr" },
+  { id: "solar", label: "Solar", color: "--c4", stat: "solar", gen: "pvgr" },
+];
+function curtHours(src, t) {
+  if (src === "60d") {
+    const D = S.day60;
+    if (!D || !D.stats || !D.stats[t.stat]) return null;
+    const hi = D.stat_names.indexOf("hsl"), bi = D.stat_names.indexOf("base_point");
+    if (hi < 0 || bi < 0) return null;
+    return d3.range(24).map((h) => { const r = D.stats[t.stat][h]; return r && r[hi] != null && r[bi] != null ? { a: r[hi], c: Math.max(0, r[hi] - r[bi]) } : null; });
+  }
+  const g = S.gen && S.gen.hourly;
+  if (!g) return null;
+  const find = (...parts) => Object.keys(g).find((k) => parts.every((p) => k.split("_").includes(p)));
+  const ak = find("hasl", t.gen) || find("hsl", t.gen), bk = find("base", "point", t.gen);
+  if (!ak || !bk) return null;
+  return d3.range(24).map((h) => (g[ak][h] != null && g[bk][h] != null ? { a: g[ak][h], c: Math.max(0, g[ak][h] - g[bk][h]) } : null));
+}
+
+function drawCurtail() {
+  const el = $("curt-chart");
+  $("curt-legend").innerHTML = CURT.map((s) => `<span><span class="sw" style="background:var(${s.color})"></span>${s.label}</span>`).join("");
+  const by = { "60d": CURT.map((t) => curtHours("60d", t)), "2d": CURT.map((t) => curtHours("2d", t)) };
+  const has = (k) => by[k].some(Boolean);
+  // the chart follows the day's main report; the other is shown alongside in the readout
+  const main = S.source === "60d" ? (has("60d") ? "60d" : "2d") : (has("2d") ? "2d" : "60d");
+  const other = main === "60d" ? "2d" : "60d";
+  const srcName = { "60d": "60-day disclosure", "2d": "2-day generation summary" };
+  $("curt-title-note").textContent = S.date && has(main) ? `${S.date} · ${srcName[main]}${has(other) ? ` (and ${srcName[other]})` : ""}` : "";
+  if (!has(main)) return emptyMsg(el, "No curtailment data for this day yet. The 2-day generation summary fills in recent days once the data update has fetched it.");
+  const hp = d3.range(24).map((h) => hourPrice(S.prices, h));
+  const pname = S.location === "lambda" ? "System lambda" : S.location;
+  const { w } = size(el);
+  const m = { t: 14, r: 16, b: 26, l: 64 }, H = 200;
+  const x = d3.scaleBand().domain(d3.range(1, 25)).range([m.l, w - m.r]).paddingInner(0.15);
+  const xc = d3.scaleLinear().domain([1, 24]).range([x(1) + x.bandwidth() / 2, x(24) + x.bandwidth() / 2]);
+  const tot = d3.range(24).map((h) => d3.sum(by[main], (r) => (r && r[h] ? r[h].c : 0)));
+  const y = d3.scaleLinear().domain([0, Math.max(100, d3.max(tot))]).nice().range([H - m.b, m.t]);
+  const svg = d3.create("svg").attr("viewBox", `0 0 ${w} ${H}`);
+  svg.append("g").attr("class", "gridline").attr("transform", `translate(${m.l},0)`).call(d3.axisLeft(y).ticks(4).tickSize(-(w - m.l - m.r)).tickFormat(""));
+  svg.append("g").attr("class", "axis").attr("transform", `translate(0,${H - m.b})`).call(d3.axisBottom(x).tickValues([1, 4, 8, 12, 16, 20, 24]).tickFormat((d) => "HE" + d).tickSizeOuter(0));
+  svg.append("g").attr("class", "axis").attr("transform", `translate(${m.l},0)`).call(d3.axisLeft(y).ticks(4).tickFormat(d3.format(",.0f")).tickSizeOuter(0));
+  svg.append("text").attr("class", "axis-title").attr("x", m.l).attr("y", 10).text("Curtailed MW, hourly average");
+  d3.range(24).forEach((h) => {
+    let acc = 0;
+    CURT.forEach((t, j) => {
+      const r = by[main][j] && by[main][j][h];
+      if (!r || !r.c) return;
+      svg.append("rect").attr("x", x(h + 1)).attr("width", x.bandwidth()).attr("y", y(acc + r.c)).attr("height", Math.max(0, y(acc) - y(acc + r.c) - 1))
+        .attr("fill", css(t.color)).attr("opacity", h === S.hour ? 1 : 0.6);
+      acc += r.c;
+    });
+  });
+  const row = (k, j, h) => { const r = by[k][j] && by[k][j][h]; return r ? `${fmtMW(r.c)} MW <span class="muted">of ${fmtMW(r.a)} (${r.a > 0 ? fmtPct(r.c / r.a) : "–"})</span>` : "–"; };
+  hoverHours(svg, xc, m, H, (h) => `<h4>${heLabel(h)}</h4>${pname}: ${hp[h] && hp[h].mean != null ? fmtPrice(hp[h].mean) : "–"}<table>` +
+    CURT.map((t, j) => `<tr><td><span class="sw" style="background:var(${t.color})"></span></td><td>${t.label}${has(other) ? ` (${main === "60d" ? "60-day" : "2-day"})` : ""}</td><td class="n">${row(main, j, h)}</td></tr>` +
+      (has(other) ? `<tr><td></td><td>${t.label} (${other === "60d" ? "60-day" : "2-day"})</td><td class="n">${row(other, j, h)}</td></tr>` : "")).join("") + "</table>");
+  el.replaceChildren(svg.node());
+  const cols = ["hour_ending", `${pname} mean`];
+  ["60d", "2d"].filter(has).forEach((k) => CURT.forEach((t) => cols.push(`${t.label} curtailed MW (${k})`, `${t.label} available MW (${k})`)));
+  setCSV(el, cols, d3.range(24).map((h) => [h + 1, hp[h]?.mean, ...["60d", "2d"].filter(has).flatMap((k) => CURT.flatMap((t, j) => {
+    const r = by[k][j] && by[k][j][h]; return [r ? r.c : null, r ? r.a : null];
+  }))]), `Wind and solar curtailment ${S.date}`);
 }
 
 // ---- generation mix ----------------------------------------------------------

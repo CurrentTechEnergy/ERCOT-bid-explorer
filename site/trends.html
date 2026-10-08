@@ -55,6 +55,18 @@
   <section class="panel panel-wide">
     <div class="panel-head">
       <div>
+        <h2>Wind and solar curtailment</h2>
+        <p class="note">Energy wind and solar could have produced (HSL) minus what SCED dispatched them to (base point). The 60-day disclosure (solid) and ERCOT's 2-day generation summary (dashed) report it independently, so where both cover a day the lines should agree. The lower chart averages each hour's curtailed MW by that hour's system lambda: the cheap energy that was available but not taken.</p>
+      </div>
+    </div>
+    <div class="legend legend-static" id="curt-legend"></div>
+    <div class="chart" id="curt-daily"></div>
+    <div class="chart" id="curt-price"></div>
+  </section>
+
+  <section class="panel panel-wide">
+    <div class="panel-head">
+      <div>
         <h2>Thermal offer prices</h2>
         <p class="note">Price at which 25%, 50% and 90% of a technology's submitted MW is offered, averaged over the day's hours. A falling median with a steady lambda means units are bidding more of their capacity cheaply. Nuclear submits no curves.</p>
       </div>
