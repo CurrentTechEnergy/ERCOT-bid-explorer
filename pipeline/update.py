@@ -5,6 +5,11 @@ Usage:
   python -m pipeline.update --days 10             # look further back
   python -m pipeline.update --backfill 2026-07-01 2026-07-31   # operating days in a range
   python -m pipeline.update --local FILE.zip ...  # process report zips you downloaded yourself
+  python -m pipeline.update --reprocess-60d --max-files 40   # re-download and reparse 60-day days
+        already in the index that have no per-unit day file yet (resumable); `--reprocess-60d all`
+        redoes every 60-day day in the index
+
+60-day days also write a per-unit day file to UNIT_DATA_DIR (env var; default ./unitdata).
 """
 import argparse
 from collections import Counter
@@ -13,7 +18,7 @@ import sys
 import time
 import warnings
 
-from .config import DATA_DIR, EMIL_2DAY, EMIL_60DAY, EMIL_LAMBDA, EMIL_SPP
+from .config import DATA_DIR, UNIT_DATA_DIR, EMIL_2DAY, EMIL_60DAY, EMIL_LAMBDA, EMIL_SPP
 from .parse_2day import parse_2day_zip
 from .parse_60day import parse_60day_zip
 from .parse_prices import build_price_day, read_lambda, read_spp
@@ -46,6 +51,9 @@ def is_load_resource_only(blob: bytes) -> bool:
     return bool(names) and all(n.startswith("60d_load_resource_data") for n in names)
 
 
+UNIT_FILES = []     # (date, compressed bytes, COV events) written in this run
+
+
 def process_curve_zip(blob: bytes, index: dict) -> str:
     found = curve_source(blob)
     if found is None:
@@ -53,10 +61,18 @@ def process_curve_zip(blob: bytes, index: dict) -> str:
                          f"({describe_blob(blob)})")
     source, parser = found
     t0 = time.time()
-    date, day, summary = parser(blob)
+    date, day, summary, *extra = parser(blob)
     write_json_gz(DATA_DIR / source / f"{date}.json.gz", day)
     update_summary(source, date, summary)
     index["days"][source].append(date)
+    if extra:     # 60-day: per-unit change-of-value day file
+        unit_day, n_events = extra[0]
+        path = UNIT_DATA_DIR / source / f"{date}.json.gz"
+        write_json_gz(path, unit_day)
+        size = path.stat().st_size
+        UNIT_FILES.append((date, size, n_events))
+        print(f"  unit file {path.name}: {len(unit_day['units'])} units, {len(unit_day['runs'])} runs, "
+              f"{n_events:,} COV events, {size / 1e6:.2f} MB compressed")
     print(f"  {source} {date} processed in {time.time() - t0:.0f}s")
     return date
 
@@ -155,6 +171,50 @@ def fetch_curves(api, emil: str, posted_from: dt.datetime, posted_to: dt.datetim
                     ". Some files posted near them failed to load (see the warnings above)."))
 
 
+def reprocess_60d(api, index: dict, mode: str = "missing", limit=None):
+    """Re-download and reparse 60-day days already in the index: those without a per-unit day
+    file (mode "missing", so an interrupted run resumes), or all of them (mode "all")."""
+    targets = {d for d in index["days"]["60d"]
+               if mode == "all" or not (UNIT_DATA_DIR / "60d" / f"{d}.json.gz").exists()}
+    print(f"reprocess 60d ({mode}): {len(targets)} day(s)")
+    if not targets:
+        return
+    lag = 60
+    lo, hi = _d(min(targets)), _d(max(targets))
+    docs = api.list_archives(EMIL_60DAY, dt.datetime.combine(lo + dt.timedelta(days=lag - 4), dt.time()),
+                             dt.datetime.combine(hi + dt.timedelta(days=lag + 5), dt.time()))
+    docs.sort(key=lambda d: d.get("postDatetime", ""))
+    guess_of = {d["docId"]: (_d(d["postDatetime"][:10]) - dt.timedelta(days=lag)).isoformat() for d in docs}
+    opened, n = set(), 0
+    # first the files whose posting date points at a target day, then files posted within
+    # 3 days of a target that is still missing (late or doubled-up postings)
+    for near in (False, True):
+        for doc in docs:
+            doc_id, guess = doc["docId"], guess_of[doc["docId"]]
+            if doc_id in opened or not targets:
+                continue
+            if not (any(abs((_d(guess) - _d(t)).days) <= 3 for t in targets) if near else guess in targets):
+                continue
+            opened.add(doc_id)
+            print(f"  downloading {doc.get('friendlyName', doc_id)} posted {doc['postDatetime'][:16]} (op day ~{guess})")
+            try:
+                blob = api.download(EMIL_60DAY, doc_id)
+                if blob[:2] != b"PK":
+                    time.sleep(10)
+                    blob = api.download(EMIL_60DAY, doc_id)
+                if not is_load_resource_only(blob):
+                    targets.discard(process_curve_zip(blob, index))
+                    save_index(index)
+            except Exception as e:
+                warn(f"reprocess 60d {guess} (doc {doc_id}): failed: {type(e).__name__}: {e}")
+            n += 1
+            if limit and n >= limit:
+                print(f"  reached the limit of {limit} files; {len(targets)} day(s) left to reprocess")
+                return
+    if targets:
+        warn(f"reprocess 60d: no file found for {len(targets)} day(s): {', '.join(sorted(targets)[:20])}")
+
+
 def fetch_prices(api, dates, index: dict):
     have = set(index["days"]["prices"])
     misses = index.setdefault("price_misses", {})
@@ -183,6 +243,14 @@ def fetch_prices(api, dates, index: dict):
         save_index(index)
 
 
+def unit_file_summary():
+    if not UNIT_FILES:
+        return []
+    lines = ["", "| Per-unit day file | Compressed | COV events |", "|---|---|---|"]
+    lines += [f"| {d} | {b / 1e6:.2f} MB | {n:,} |" for d, b, n in UNIT_FILES]
+    return lines
+
+
 # -------------------------------------------------------------------- main --
 def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
@@ -191,6 +259,9 @@ def main(argv=None):
     ap.add_argument("--max-files", type=int, default=None, help="cap curve files per report per run")
     ap.add_argument("--skip", choices=["2d", "60d", "prices"], action="append", default=[])
     ap.add_argument("--local", nargs="+", help="process local zip files instead of calling the API")
+    ap.add_argument("--reprocess-60d", nargs="?", const="missing", choices=["missing", "all"],
+                    help="re-download and reparse 60-day days already in the index: those without a "
+                         "per-unit day file (default), or all")
     args = ap.parse_args(argv)
 
     index = load_index()
@@ -232,6 +303,8 @@ def main(argv=None):
                          dt.datetime.combine(start + dt.timedelta(days=lag - 1), dt.time()),
                          dt.datetime.combine(end + dt.timedelta(days=lag + 5), dt.time()),
                          index, source, want_dates=want, limit=args.max_files)
+    elif args.reprocess_60d:
+        reprocess_60d(api, index, args.reprocess_60d, limit=args.max_files)
     else:
         since = now - dt.timedelta(days=args.days)
         if "2d" not in args.skip:
@@ -251,6 +324,7 @@ def main(argv=None):
     lines = ["### ERCOT data update", "", "| Data | Days added | Range |", "|---|---|---|"]
     for k, v in added.items():
         lines.append(f"| {names.get(k, k)} | {len(v)} | {v[0] + ' to ' + v[-1] if v else '–'} |")
+    lines += unit_file_summary()
     lines += ["", f"**{len(WARNINGS)} warning(s)**" if WARNINGS else "No warnings."]
     lines += [f"- {w}" for w in WARNINGS[:50]]
     write_summary(lines)

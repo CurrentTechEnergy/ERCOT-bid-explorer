@@ -6,6 +6,13 @@ Two curve versions are kept for every unit:
               unit's operating limits (what SCED actually dispatched against)
   submitted - "Submitted TPO" curve: the price/quantity pairs the QSE submitted
 Both are capped at the unit's HSL for that SCED run (storage: limited to [LSL, HSL]).
+
+Also builds the full-fidelity per-unit day file (status, limits and submitted curve of every
+unit at every SCED run, as change-of-value events); schema in pipeline/units.py.
+
+Status statistics (appended to STATS): n_onruc/hsl_onruc = units with status ONRUC (these are
+also counted as online), n_off/hsl_off = status codes starting "OFF", n_out/hsl_out = "OUT".
+Their HSL is the telemetered HSL as reported, whatever the status.
 """
 import io
 
@@ -15,13 +22,16 @@ import pandas as pd
 from .config import PRICE_GRID, SIXTY_DAY_TECHS, TECH_OF_TYPE
 from .curves import accumulate, mw_at_prices, parse_sced_time
 from .store import iter_csvs, thresholds_from_curves, _round
+from .units import build_unit_day
 from .log import warn
 
 N_SCED_PTS = 35
 N_TPO_PTS = 10   # ESR files may carry more; detected from the header
 STATS = ["n_online", "hsl", "lsl", "base_point", "output",
          "floor_sced", "floor_submitted", "le0_sced", "le0_submitted",
-         "no_offer_hsl", "no_offer_output_schedule"]
+         "no_offer_hsl", "no_offer_output_schedule",
+         # appended later: days processed before these existed lack them (read by name)
+         "n_onruc", "n_off", "n_out", "hsl_onruc", "hsl_off", "hsl_out"]
 # "At the floor" = offered at or below -$249/MWh.  ERCOT's proxy curves place
 # minimum output at -$250 and output-schedule MW at -$249.99.
 I_FLOOR = int(np.searchsorted(PRICE_GRID, -249))
@@ -49,6 +59,8 @@ class _Accumulator:
         self.dates = []
         self.unit_rows = []
         self.unknown_types = set()
+        self.run_keys = {}      # run key -> (timestamp string, repeated-hour flag)
+        self.unit_cols = []     # per-chunk arrays for the per-unit day file
 
     def add_chunk(self, df: pd.DataFrame, is_esr: bool):
         df.columns = [c.strip() for c in df.columns]
@@ -62,6 +74,10 @@ class _Accumulator:
         run = (df["SCED Time Stamp"].astype(str) + "|" + df["Repeated Hour Flag"].astype(str)).values
         for h in np.unique(hour):
             self.runs[int(h)].update(np.unique(run[hour == h]).tolist())
+        for k in np.unique(run):
+            if k not in self.run_keys:
+                ts, flag = k.rsplit("|", 1)
+                self.run_keys[k] = (ts.strip(), flag.strip().upper() == "Y")
 
         rtype = df["Resource Type"].astype(str).str.strip()
         tech = rtype.map(TECH_OF_TYPE)
@@ -88,16 +104,35 @@ class _Accumulator:
         accumulate(self.sced, key, sced)
         accumulate(self.sub, key, sub)
         no_offer = online & np.isnan(df[t_mw[0]].astype(float).values) if t_mw else online
-        os_ = df["Output Schedule"].astype(float).fillna(0).values if "Output Schedule" in header else np.zeros(len(df))
+        has_os = "Output Schedule" in header
+        os_raw = df["Output Schedule"].astype(float).values if has_os else np.full(len(df), np.nan)
+        os_ = np.nan_to_num(os_raw)
+        onruc = (status == "ONRUC").values
+        off = status.str.startswith("OFF").values
+        out_ = (status == "OUT").values
         st = np.column_stack([
             online.astype(float), hsl_eff, lsl_eff, np.where(online, bp, 0), np.where(online, out, 0),
             sced[:, I_FLOOR], sub[:, I_FLOOR], sced[:, I_ZERO], sub[:, I_ZERO],
             np.where(no_offer, hsl_eff, 0), np.where(no_offer, os_, 0),
+            onruc.astype(float), off.astype(float), out_.astype(float),
+            np.where(onruc, hsl, 0), np.where(off, hsl, 0), np.where(out_, hsl, 0),
         ])
         accumulate(self.stats, key, st)
 
-        # per-unit rows (online intervals only)
+        # every row, for the per-unit day file
         tp = df[t_pr].astype(float).values
+        n = len(df)
+        self.unit_cols.append({
+            "run": run, "unit": df["Resource Name"].astype(str).str.strip().values,
+            "type": rtype.values, "tech": np.array(SIXTY_DAY_TECHS)[tech], "status": status.values,
+            "hsl": df["HSL"].astype(float).values, "lsl": df["LSL"].astype(float).values,
+            "bp": df["Base Point"].astype(float).values, "out": df["Telemetered Net Output"].astype(float).values,
+            "hour": hour, "oschd": os_raw if has_os else None,
+            "tpo_p": tp if tp.shape[1] else np.full((n, 1), np.nan),
+            "tpo_m": df[t_mw].astype(float).values if t_mw else np.full((n, 1), np.nan),
+        })
+
+        # per-unit rows (online intervals only)
         first_sub_price = tp[:, 0] if tp.shape[1] else np.full(len(df), np.nan)
         pinned = (lsl_eff > 0) & (bp <= lsl_eff + np.maximum(1.0, 0.01 * lsl_eff))
         u = pd.DataFrame({
@@ -136,8 +171,35 @@ class _Accumulator:
         }).reset_index()
         return runs, sced, sub, stats, ut
 
+    def unit_day(self, date: str):
+        """Per-unit COV day file (see pipeline/units.py) and its number of events."""
+        day0 = pd.Timestamp(date)
+        recs = []
+        for k, (ts, rep) in self.run_keys.items():
+            t = pd.to_datetime(ts, format="mixed")
+            minutes = int((t.normalize() - day0).days) * 1440 + t.hour * 60 + t.minute
+            # the repeated (second) 01:xx hour sorts after the first one and before 02:00
+            order = (t - day0).total_seconds() + (3600 if rep else 0)
+            recs.append((k, minutes, rep, order))
+        run_sort = pd.DataFrame(recs, columns=["key", "minutes", "repeat", "order"])
+        width = max(c["tpo_p"].shape[1] for c in self.unit_cols)
+
+        def pad(a):
+            return a if a.shape[1] == width else np.hstack([a, np.full((len(a), width - a.shape[1]), np.nan)])
+
+        rows = {}
+        for name in ("run", "unit", "type", "tech", "status", "hsl", "lsl", "bp", "out", "hour"):
+            rows[name] = np.concatenate([c[name] for c in self.unit_cols])
+        rows["tpo_p"] = np.vstack([pad(c["tpo_p"]) for c in self.unit_cols])
+        rows["tpo_m"] = np.vstack([pad(c["tpo_m"]) for c in self.unit_cols])
+        if any(c["oschd"] is not None for c in self.unit_cols):
+            rows["oschd"] = np.concatenate([c["oschd"] if c["oschd"] is not None else np.full(len(c["run"]), np.nan)
+                                            for c in self.unit_cols])
+        return build_unit_day(date, run_sort, rows)
+
 
 def parse_60day_zip(blob: bytes, chunksize: int = 40000):
+    """-> (date, day file, summary entry, (unit day file, number of COV events))"""
     acc = _Accumulator()
     found = False
     for name, data in iter_csvs(blob, "x.zip"):
@@ -179,5 +241,6 @@ def parse_60day_zip(blob: bytes, chunksize: int = 40000):
         "curves": {tk: [_round(r) for r in thresholds_from_curves(sced[i])] for i, tk in enumerate(SIXTY_DAY_TECHS)},
         "submitted": {tk: [_round(r) for r in thresholds_from_curves(sub[i])] for i, tk in enumerate(SIXTY_DAY_TECHS)},
         "stats": {tk: [[r1(x) for x in row] for row in stats[i]] for i, tk in enumerate(SIXTY_DAY_TECHS)},
+        "stat_names": STATS,
     }
-    return date, day, summary
+    return date, day, summary, acc.unit_day(date)
