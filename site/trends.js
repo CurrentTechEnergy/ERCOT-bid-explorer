@@ -62,7 +62,7 @@ const S = { T: null, C: null, M: {}, floorMode: "floor_sced", hidden: { floor: n
   pqTech: "coal", capTech: "coal", scTech: "coal", scX: "week", mSrc: "60d", mView: "smooth", mDays: "all",
   chgTech: "all", chgSig: "all", unit: null,
   I: null, UH: null, idx: null, summ60: null, cheapTech: "all", cheapThr: "0", shutTech: "combined_cycle", shutPrice: "any",
-  heatMeasure: "offer", heatTech: "combined_cycle", heatThr: "0" };
+  heatMeasure: "offer", heatTech: "combined_cycle", heatThr: "0", heatScale: "zero" };
 const { getJSON, tryJSON, showTip, hideTip, setCSV } = window.CX;
 const $ = (id) => document.getElementById(id);
 const css = (v) => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
@@ -743,6 +743,7 @@ async function drawHeat() {
   const el = $("heatmap"), scaleEl = $("heat-scale"), I = S.I, meas = S.heatMeasure;
   const offer = meas === "offer", thermal = meas === "running" || meas === "above";
   $("heat-thr").hidden = $("heat-thr-lbl").hidden = !offer;
+  $("heat-scale-mode").hidden = meas === "lambda";
   $("heat-tech").hidden = $("heat-tech-lbl").hidden = meas === "lambda";
   const techOpts = offer ? [...TECHS.filter((t) => t.id !== "other"), { id: "storage", keys: ["storage"], label: "Storage (ESR)", color: "--c7" }, TECHS.find((t) => t.id === "other")]
     : [ALL_THERMAL, ...TECHS.filter((t) => THERMAL.includes(t.id))];
@@ -790,7 +791,9 @@ async function drawHeat() {
     const pos = d3.interpolateRgb(css("--seq-lo"), css("--seq-hi")), neg = d3.interpolateRgb(css("--seq-lo"), css("--c8"));
     color = (v) => (v < 0 ? neg(Math.min(1, v / lo)) : pos(Math.min(1, v / hi)));
   } else {
-    lo = vs[0]; hi = vs.at(-1); if (lo === hi) hi = lo + 1;
+    // MW scales start at zero, so the color shows each hour's size and not just its rank;
+    // "Fit to data" stretches the scale over the observed range to bring out small differences
+    lo = S.heatScale === "fit" ? vs[0] : Math.min(0, vs[0]); hi = vs.at(-1); if (lo === hi) hi = lo + 1;
     color = d3.scaleSequential(d3.interpolateRgb(css("--seq-lo"), css("--seq-hi"))).domain([lo, hi]);
   }
   const fmtV = meas === "lambda" ? fmtPrice : (v) => `${fmtMW(v)} MW`;
@@ -810,11 +813,12 @@ async function drawHeat() {
   el.replaceChildren(svg.node());
   setCSV(el, ["date", "hour_ending", HEAT_MEASURES.find((q) => q.id === meas).label], cells.map((c) => [c.d, c.h + 1, c.v]), "Across days");
   const ramp = meas === "lambda" ? `${css("--c8")},${css("--seq-lo")} ${(100 * -lo / (hi - lo)).toFixed(0)}%,${css("--seq-hi")}` : `${css("--seq-lo")},${css("--seq-hi")}`;
-  scaleEl.innerHTML = `<span>${fmtV(lo)}</span><span class="ramp" style="background:linear-gradient(90deg,${ramp})"></span><span>${fmtV(hi)}${meas === "lambda" ? " (98th pct.)" : ""}</span>`;
+  scaleEl.innerHTML = `<span>${fmtV(lo)}</span><span class="ramp" style="background:linear-gradient(90deg,${ramp})"></span><span>${fmtV(hi)}${meas === "lambda" ? " (98th pct.)" : ""}</span>` +
+    (meas !== "lambda" && S.heatScale === "fit" ? `<span>Scale fitted to the data: small differences look large</span>` : "");
 }
 
 // ---- links ------------------------------------------------------------------------
-const VIEW_KEYS = { cht: "cheapTech", chthr: "cheapThr", sht: "shutTech", shp: "shutPrice", hm: "heatMeasure", ht: "heatTech", hthr: "heatThr", f: "floorMode", pq: "pqTech", cap: "capTech", sc: "scTech", scx: "scX", ms: "mSrc", mv: "mView", md: "mDays", ct: "chgTech", cs: "chgSig", unit: "unit" };
+const VIEW_KEYS = { cht: "cheapTech", chthr: "cheapThr", sht: "shutTech", shp: "shutPrice", hm: "heatMeasure", ht: "heatTech", hthr: "heatThr", hs: "heatScale", f: "floorMode", pq: "pqTech", cap: "capTech", sc: "scTech", scx: "scX", ms: "mSrc", mv: "mView", md: "mDays", ct: "chgTech", cs: "chgSig", unit: "unit" };
 function saveView() { window.CX.writeHash(Object.fromEntries(Object.entries(VIEW_KEYS).map(([k, sk]) => [k, S[sk]]))); }
 function loadView() { const v = window.CX.readHash(); Object.entries(VIEW_KEYS).forEach(([k, sk]) => { if (v[k] != null) S[sk] = v[k]; }); }
 
@@ -840,7 +844,7 @@ async function boot() {
   bindSelect("sc-tech", "scTech", thermal, drawScatter);
   bindSelect("chg-tech", "chgTech", [{ id: "all", label: "All" }, ...thermal], drawChanges);
   bindSelect("chg-sig", "chgSig", [{ id: "all", label: "All" }, ...Object.entries(S.T.signals).map(([id, label]) => ({ id, label }))], drawChanges);
-  [["cheap-thr", "cheapThr", drawCheap], ["shut-price", "shutPrice", drawShut]].forEach(([id, key, fn]) => { setSeg(id, S[key]); bindSeg(id, key, fn); });
+  [["cheap-thr", "cheapThr", drawCheap], ["shut-price", "shutPrice", drawShut], ["heat-scale-mode", "heatScale", drawHeat]].forEach(([id, key, fn]) => { setSeg(id, S[key]); bindSeg(id, key, fn); });
   bindSelect("cheap-tech", "cheapTech", [ALL_THERMAL, ...thermal], drawCheap);
   bindSelect("shut-tech", "shutTech", [ALL_THERMAL, ...thermal], drawShut);
   bindSelect("heat-measure", "heatMeasure", HEAT_MEASURES, drawHeat);

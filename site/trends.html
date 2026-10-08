@@ -180,6 +180,10 @@
         <select id="heat-tech"></select>
         <label class="lbl inline" for="heat-thr" id="heat-thr-lbl">At or below</label>
         <select id="heat-thr"></select>
+        <div class="seg seg-sm" id="heat-scale-mode" role="radiogroup" aria-label="Color scale">
+          <button type="button" data-v="zero" role="radio" title="Colors run from 0 MW to the highest value">From zero</button>
+          <button type="button" data-v="fit" role="radio" title="Colors run from the lowest to the highest value">Fit to data</button>
+        </div>
       </div>
     </div>
     <div class="chart scroll-x" id="heatmap"></div>
