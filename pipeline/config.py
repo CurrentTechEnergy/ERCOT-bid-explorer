@@ -69,6 +69,7 @@ PRICE_POINT_TYPES = {"HU", "SH", "AH", "LZ"}
 
 # ERCOT Public API report ids (EMIL ids)
 EMIL_2DAY = "np3-908-er"
+EMIL_2DAY_GEN = "np3-910-er"     # 2-day aggregated generation / load / output schedule summaries
 EMIL_60DAY = "np3-965-er"
 EMIL_LAMBDA = "np6-322-cd"
 EMIL_SPP = "np6-905-cd"
