@@ -13,9 +13,9 @@
 
 <header class="masthead">
   <div class="brand">
-    <nav class="nav" aria-label="Pages"><a href="index.html">Day view</a><a href="trends.html" aria-current="page">Trends</a></nav>
+    <div class="nav-row"><nav class="nav" aria-label="Pages"><a href="index.html">Day view</a><a href="trends.html" aria-current="page">Trends</a></nav><button type="button" class="copy-link" id="copy-link" title="Copy a link to exactly this view">Copy link</button></div>
     <h1>ERCOT Bidding Trends</h1>
-    <p class="sub">How thermal and renewable resources bid and run across every day loaded from ERCOT's 60-Day SCED Disclosure. Each point is a daily average over that day's SCED runs.</p>
+    <p class="sub">How thermal and renewable resources bid and run across every day loaded from ERCOT's SCED disclosures. Each point is a daily average over that day's SCED runs.</p>
   </div>
   <p class="status" id="status">Loading data…</p>
 </header>
@@ -43,18 +43,48 @@
   <section class="panel panel-wide">
     <div class="panel-head">
       <div>
-        <h2>Units online</h2>
-        <p class="note">Average number of units with an online status each day. Each combined-cycle configuration is reported as its own resource, so combined-cycle counts are configurations, not plants.</p>
+        <h2>Wind and solar offer prices</h2>
+        <p class="note">Share of the MW wind and solar offered each day that was priced in each band, weighted by MW over the day's hours. Tax-credit bids cluster between about −$60 and −$25 with little between −$25 and −$5, so −$20 separates them from shallow negatives. Uses the 2-day curves where the day has them, otherwise the 60-day curves.</p>
       </div>
     </div>
-    <div class="legend" id="online-legend"></div>
-    <div class="chart" id="online-chart"></div>
+    <div class="legend" id="rs-legend"></div>
+    <div class="chart" id="rs-wind"></div>
+    <div class="chart" id="rs-solar"></div>
   </section>
 
   <section class="panel panel-wide">
     <div class="panel-head">
       <div>
-        <h2>Units online vs price</h2>
+        <h2>Thermal offer prices</h2>
+        <p class="note">Price at which 25%, 50% and 90% of a technology's submitted MW is offered, averaged over the day's hours. A falling median with a steady lambda means units are bidding more of their capacity cheaply. Nuclear submits no curves.</p>
+      </div>
+      <div class="panel-tools">
+        <label class="lbl inline" for="pq-tech">Technology</label>
+        <select id="pq-tech"></select>
+      </div>
+    </div>
+    <div class="chart" id="pq-chart"></div>
+  </section>
+
+  <section class="panel panel-wide">
+    <div class="panel-head">
+      <div>
+        <h2>Capacity by status</h2>
+        <p class="note" id="cap-note"></p>
+      </div>
+      <div class="panel-tools">
+        <label class="lbl inline" for="cap-tech">Technology</label>
+        <select id="cap-tech"></select>
+      </div>
+    </div>
+    <div class="legend" id="cap-legend"></div>
+    <div class="chart" id="cap-chart"></div>
+  </section>
+
+  <section class="panel panel-wide">
+    <div class="panel-head">
+      <div>
+        <h2>Running vs price</h2>
         <p class="note">One dot per day. The line is the median for each $5 band of price. Commitment decisions are made ahead of time, so the trailing week's price often explains them better than the same day's.</p>
       </div>
       <div class="panel-tools">
@@ -72,12 +102,38 @@
   <section class="panel panel-wide">
     <div class="panel-head">
       <div>
-        <h2>Units online for only part of the day</h2>
-        <p class="note">Units online between 1 and 22 hours of the day: a measure of cycling and two-shifting. It cannot yet tell a unit that shut down overnight and restarted from one that started once and stayed on, and peaking turbines that run a few hours count too.</p>
+        <h2 id="partial-title">Units online for only part of the day</h2>
+        <p class="note" id="partial-note"></p>
       </div>
     </div>
     <div class="legend" id="partial-legend"></div>
     <div class="chart" id="partial-chart"></div>
+  </section>
+
+  <section class="panel panel-wide">
+    <div class="panel-head">
+      <div>
+        <h2>Marginal supply by settled price <span class="h-note" id="mbp-title-note"></span></h2>
+        <p class="note">Which resources move when the price moves, across every hour loaded, sorted by that hour's system lambda. Above zero: each technology's share of the supply MW whose offer price falls just around lambda. Below zero: battery charging bids that stop at that price, as a share of all MW moving. Smoothed blends the 200 hours nearest each price, so each point rests on the same amount of data.</p>
+      </div>
+      <div class="panel-tools">
+        <div class="seg seg-sm" id="mbp-view" role="radiogroup" aria-label="View">
+          <button type="button" data-v="smooth" role="radio">Smoothed</button>
+          <button type="button" data-v="groups" role="radio">Price groups</button>
+        </div>
+        <div class="seg seg-sm" id="mbp-src" role="radiogroup" aria-label="Report">
+          <button type="button" data-v="60d" role="radio" title="Per technology, about two months behind">60-day</button>
+          <button type="button" data-v="2d" role="radio" title="Wind, solar, storage and everything else, recent days">2-day</button>
+        </div>
+        <div class="seg seg-sm" id="mbp-days" role="radiogroup" aria-label="Days">
+          <button type="button" data-v="all" role="radio">All days</button>
+          <button type="button" data-v="90" role="radio">Last 90</button>
+          <button type="button" data-v="30" role="radio">Last 30</button>
+        </div>
+      </div>
+    </div>
+    <div class="legend" id="mbp-legend"></div>
+    <div class="chart" id="mbp-chart"></div>
   </section>
 
   <section class="panel panel-wide">
@@ -95,6 +151,9 @@
     </div>
     <div class="scroll-x" id="chg-summary"></div>
     <div class="units-wrap" id="chg-table"></div>
+    <h3 class="sub-h">Units switching between ≤ $0 and above $0 within a day</h3>
+    <p class="note">Days when a thermal unit's offer moved its first price across $0 and back at least once, which points to deliberate intraday repricing rather than a change in strategy.</p>
+    <div id="flip-table"></div>
     <div id="unit-detail" hidden>
       <h2 id="unit-title"></h2>
       <p class="note" id="unit-note"></p>
@@ -106,11 +165,12 @@
 </main>
 
 <footer class="foot">
-  <p>Source: ERCOT EMIL products NP3-965-ER (60-Day SCED Disclosure) and NP6-322-CD (SCED System Lambda). Built by the data update workflow from the days already loaded; the 60-day report runs about two months behind.</p>
+  <p>Source: ERCOT EMIL products NP3-965-ER (60-Day SCED Disclosure) and NP6-322-CD (SCED System Lambda), plus NP3-908-ER (2-Day SCED Energy Curves) for recent days. Built by the data update workflow from the days already loaded; the 60-day report runs about two months behind.</p>
 </footer>
 </div>
 <div class="tip" id="tip" hidden></div>
 <script src="vendor/d3.min.js"></script>
+<script src="common.js"></script>
 <script src="trends.js"></script>
 </body>
 </html>

@@ -19,6 +19,7 @@ from .parse_60day import parse_60day_zip
 from .parse_prices import build_price_day, read_lambda, read_spp
 from .marginal import build_marginal
 from .trends import build_trends
+from .curve_trends import build_curve_trends
 from .store import describe_blob, iter_csvs, zip_names, load_index, save_index, update_summary, write_json_gz
 from .log import warn, write_summary, WARNINGS
 
@@ -215,6 +216,7 @@ def main(argv=None):
             print("prices:", process_price_blobs(price_blobs, dates, index))
         build_marginal(index)
         build_trends(index)
+        build_curve_trends(index)
         save_index(index)
         return
 
@@ -245,6 +247,7 @@ def main(argv=None):
 
     build_marginal(index)
     build_trends(index)
+    build_curve_trends(index)
     save_index(index)
     added = {k: sorted(set(index["days"][k]) - before.get(k, set())) for k in index["days"]}
     names = {"2d": "2-day curves", "60d": "60-day curves", "prices": "prices"}

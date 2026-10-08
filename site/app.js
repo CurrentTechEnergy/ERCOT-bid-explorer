@@ -37,9 +37,8 @@ const S = {
   xrange: "low", mode: "lines", axes: "price_x", threshold: 0, location: "lambda",
   hidden: new Set(), heatTech: null, unitTech: "all", unitSearch: "",
   unitSort: { key: "floor_mw", dir: -1 }, unitShowAll: false,
-  day: null, prices: null, summaries: {}, mbpDays: "all", mbpUnit: "share",
+  day: null, prices: null, summaries: {}, osView: "day", osUnit: "share",
 };
-const cache = new Map();
 const $ = (id) => document.getElementById(id);
 const fmtMW = d3.format(",.0f");
 const fmtPrice = (v) => (v == null || isNaN(v) ? "–" : d3.format("$,.2f")(v));
@@ -49,26 +48,7 @@ const css = (v) => getComputedStyle(document.documentElement).getPropertyValue(v
 const heLabel = (h) => `HE ${h + 1}`;
 
 // ------------------------------------------------------------------ data ---
-async function getJSON(url) {
-  if (cache.has(url)) return cache.get(url);
-  const p = (async () => {
-    const r = await fetch(url, { cache: "no-cache" });
-    if (!r.ok) throw new Error(`${url}: ${r.status}`);
-    const buf = new Uint8Array(await r.arrayBuffer());
-    let text;
-    if (buf[0] === 0x1f && buf[1] === 0x8b) {
-      const stream = new Blob([buf]).stream().pipeThrough(new DecompressionStream("gzip"));
-      text = await new Response(stream).text();
-    } else {
-      text = new TextDecoder().decode(buf);
-    }
-    return JSON.parse(text);
-  })();
-  cache.set(url, p);
-  p.catch(() => cache.delete(url));
-  return p;
-}
-const tryJSON = (url) => getJSON(url).catch(() => null);
+const { getJSON, tryJSON, showTip, hideTip, setCSV } = window.CX;
 
 function seriesList() { return SERIES[S.source]; }
 function gridIndex(price) {
@@ -207,11 +187,25 @@ function render() {
   drawDay();
   drawMix();
   drawMarginal();
-  drawMarginalByPrice();
+  drawOfferStack();
   drawProfile();
   drawHeatmap();
   if (is60) { drawTechTable(); drawUnits(); }
   drawDuration();
+  saveView();
+}
+
+// the address bar carries the view, so a copied link reopens this exact day, hour and settings
+const VIEW_KEYS = { loc: "location", xr: "xrange", mode: "mode", axes: "axes", ver: "version", thr: "threshold", heat: "heatTech", os: "osView", osu: "osUnit" };
+function saveView() {
+  window.CX.writeHash({ date: S.date, he: S.hour + 1, ...Object.fromEntries(Object.entries(VIEW_KEYS).map(([k, sk]) => [k, S[sk]])) });
+}
+function loadView() {
+  const v = window.CX.readHash();
+  if (v.date) S.date = v.date;
+  if (v.he && +v.he >= 1 && +v.he <= 24) S.hour = +v.he - 1;
+  Object.entries(VIEW_KEYS).forEach(([k, sk]) => { if (v[k] != null) S[sk] = sk === "threshold" ? +v[k] : v[k]; });
+  if (!S.index.thresholds.includes(S.threshold)) S.threshold = 0;
 }
 
 function renderLegend() {
@@ -371,6 +365,8 @@ function drawCurves() {
     .on("pointerleave", () => { cross.style("display", "none"); hideTip(); });
 
   el.replaceChildren(svg.node());
+  setCSV(el, ["price_usd_mwh", ...rows.map((r) => r.s.label + (S.mode === "share" ? " (%)" : " (MW)")), ...(demand ? [demand.s.label + " (MW)"] : [])],
+    prices.map((p, j) => [p, ...rows.map((r) => r.vals[j]), ...(demand ? [demand.vals[j]] : [])]), `Offer curves ${S.date} ${heLabel(h)}`);
   if (!hp) el.insertAdjacentHTML("beforeend", `<p class="note">No cleared price loaded for this day yet.</p>`);
   drawCurveTable(rows);
 }
@@ -412,7 +408,7 @@ function hBars(el, rows, tipFor) {
     }
     if (narrow) g.append("text").attr("class", "mix-label").attr("x", m.l).attr("y", y0 - 5).text(r.s.label);
     else g.append("text").attr("class", "mix-label").attr("x", m.l - 10).attr("y", y0 + bh / 2).attr("dy", "0.35em").attr("text-anchor", "end").text(r.s.label);
-    const val = `${fmtMW(r.mw)} MW` + (r.share != null ? ` · ${pct(r.share)}` : r.mw < 0 ? " · charging" : "");
+    const val = r.valText ?? `${fmtMW(r.mw)} MW` + (r.share != null ? ` · ${pct(r.share)}` : r.mw < 0 ? " · charging" : "");
     g.append("text").attr("class", "mix-value").attr("x", Math.max(x0, x1) + 6).attr("y", y0 + bh / 2).attr("dy", "0.35em").text(val);
     g.append("rect").attr("x", 0).attr("y", y0 - gap + 4).attr("width", w).attr("height", bh + gap).attr("fill", "transparent")
       .on("pointermove", (ev) => showTip(ev, tipFor(r)))
@@ -486,6 +482,8 @@ function drawDay() {
   if (y.domain()[0] < 0) svg.append("line").attr("class", "zero").attr("x1", m.l).attr("x2", w - m.r).attr("y1", y(0)).attr("y2", y(0));
   hoverHours(svg, xc, m, H, tip);
   mel.replaceChildren(svg.node());
+  setCSV(mel, ["hour_ending", `${pname} mean`, `${pname} min`, `${pname} max`, ...list.map((s) => `${s.label} (MW${est ? ", estimated" : ""})`)],
+    d3.range(24).map((i) => [i + 1, hp[i]?.mean, hp[i]?.min, hp[i]?.max, ...list.map((s) => (mix[i] ? mix[i][s.id] ?? null : null))]), `Price and generation by hour ${S.date}`);
 
   // price by hour (its own chart, never a second axis)
   if (!S.prices) { pel.innerHTML = `<p class="note">No cleared price loaded for this day yet.</p>`; return; }
@@ -549,6 +547,7 @@ function drawMix() {
     ? `Estimated: MW each group offers at or below the hour's average system lambda (${fmtPrice(lam)}), from the hourly-averaged 2-day curves. The 2-day report has no output figures. Against the 60-day telemetered output this runs about 8% high for wind and solar (it counts available output, before curtailment) and is typically within about 8% for thermal in a given hour. Days with the 60-day disclosure (about two months back and older) show measured output with thermal split by technology.`
     : "Telemetered net output from the 60-day disclosure, averaged over the SCED runs in the hour."} Total generation ${fmtMW(total)} MW. Storage is shown net of charging and counts toward the total only while discharging.</p>`);
   tel.innerHTML = barTable(rows, `${what} (MW)`, "Share of generation", "Total generation", total);
+  setCSV(el, ["technology", `${what} (MW)`, "share_of_generation"], rows.map((r) => [r.s.label, r.mw, r.share]), `Generation mix ${S.date} ${heLabel(h)}`);
 }
 
 // ---- marginal supply: MW offered within the hour's cleared price range ------
@@ -577,144 +576,209 @@ function marginalRows(h, hp) {
     const mw = s.part === "chg" ? Math.min(b, 0) - Math.min(a, 0) : s.part === "dis" ? Math.max(b, 0) - Math.max(a, 0) : b - a;
     return { s, mw: Math.max(0, mw) };
   }).filter(Boolean);
-  const total = d3.sum(rows, (r) => r.mw);
-  rows.forEach((r) => (r.share = total > 0 ? r.mw / total : null));
-  return { rows, total, lo, hi };
+  // supply shares add to 100% of supply; battery charging is demand, so its share is of all
+  // the MW that moves in the window (supply plus charging that stops)
+  const supply = rows.filter((r) => r.s.part !== "chg"), chg = rows.find((r) => r.s.part === "chg");
+  const total = d3.sum(supply, (r) => r.mw), chgMW = chg ? chg.mw : 0;
+  supply.forEach((r) => (r.share = total > 0 ? r.mw / total : null));
+  if (chg) chg.share = total + chgMW > 0 ? chgMW / (total + chgMW) : null;
+  return { rows, supply, chg, total, chgMW, lo, hi };
 }
 
 function drawMarginal() {
   const el = $("marg-chart"), del = $("marg-day"), tel = $("marg-table");
   const h = S.hour;
   const pname = S.location === "lambda" ? "system lambda" : S.location;
-  $("marg-title-note").textContent = S.date ? `${S.date} · ${heLabel(h)}` : "";
+  $("marg-title-note").textContent = S.date ? `${S.date} · ${heLabel(h)} · ${S.location === "lambda" ? "System lambda" : S.location}` : "";
   const clear = (msg) => { emptyMsg(el, msg); del.innerHTML = ""; tel.innerHTML = ""; };
   if (!S.day) return clear("No data for this day.");
   if (!S.prices) return clear("No cleared price loaded for this day yet.");
   const hp = hourPrice(S.prices, h);
   if (!S.day.runs[h] || !hp || hp.mean == null) return clear(`No SCED runs or price recorded in ${heLabel(h)}.`);
 
-  const m0 = marginalRows(h, hp), { total, lo, hi } = m0;
+  const m0 = marginalRows(h, hp), { total, chg, chgMW, lo, hi } = m0;
   // technologies with nothing at the margin are left off the bars (they stay in the table)
-  const all = m0.rows.sort((a, b) => b.mw - a.mw), rows = all.filter((r) => r.mw >= 1);
-  if (!rows.length) return clear(`No MW offered within ${heLabel(h)}'s cleared price range.`);
+  const all = m0.supply.sort((a, b) => b.mw - a.mw), rows = all.filter((r) => r.mw >= 1);
+  if (!rows.length && chgMW < 1) return clear(`No MW offered within ${heLabel(h)}'s cleared price range.`);
   const win = `${fmtPrice(lo)} to ${fmtPrice(hi)}`;
-  el.replaceChildren(hBars(el, rows, (r) => `<h4>${r.s.label} · ${heLabel(h)}</h4><table>
+  // battery charging is drawn on the other side of zero: it is demand that drops out as price rises
+  const bars = rows.concat(chg && chgMW >= 1 ? [{ ...chg, mw: -chgMW, valText: `${fmtMW(chgMW)} MW · ${d3.format(".0%")(chg.share)} of all moving MW` }] : []);
+  el.replaceChildren(hBars(el, bars, (r) => r.s.part === "chg"
+    ? `<h4>${r.s.label} · ${heLabel(h)}</h4><table>
+      <tr><td>Charging that stops from ${win}</td><td class="n">${fmtMW(chgMW)} MW</td></tr>
+      <tr><td>Share of all MW moving in the window</td><td class="n">${d3.format(".1%")(r.share)}</td></tr></table>
+      <p class="tip-body">Batteries bidding to charge below this price stop charging as price rises. That is demand stepping back, not supply, so it is kept out of the supply shares.</p>`
+    : `<h4>${r.s.label} · ${heLabel(h)}</h4><table>
       <tr><td>Offered from ${win}</td><td class="n">${fmtMW(r.mw)} MW</td></tr>
-      <tr><td>Share of marginal MW</td><td class="n">${r.share != null ? d3.format(".1%")(r.share) : "–"}</td></tr></table>`));
-  el.insertAdjacentHTML("beforeend", `<p class="note">${fmtMW(total)} MW offered from ${win} (${pname} averaged ${fmtPrice(hp.mean)} in ${heLabel(h)}).</p>`);
-  tel.innerHTML = barTable(all, `MW offered ${win}`, "Share of marginal MW", "Total", total);
+      <tr><td>Share of marginal supply</td><td class="n">${r.share != null ? d3.format(".1%")(r.share) : "–"}</td></tr></table>`));
+  el.insertAdjacentHTML("beforeend", `<p class="note">${fmtMW(total)} MW of supply offered from ${win}${chgMW >= 1 ? `, and ${fmtMW(chgMW)} MW of battery charging that stops in the same window` : ""} (${pname} averaged ${fmtPrice(hp.mean)} in ${heLabel(h)}).</p>`);
+  tel.innerHTML = barTable(all, `MW offered ${win}`, "Share of marginal supply", "Total supply", total) +
+    (chg ? `<p class="note">Battery charging that stops in the window: ${fmtMW(chgMW)} MW (${chg.share != null ? d3.format(".1%")(chg.share) : "–"} of all MW moving).</p>` : "");
+  setCSV(el, ["technology", `MW from ${lo} to ${hi}`, "share_of_marginal_supply"], all.map((r) => [r.s.label, r.mw, r.share])
+    .concat(chg ? [[chg.s.label, chgMW, null], ["charging share of all moving MW", null, chg.share]] : []), `Marginal supply ${S.date} ${heLabel(h)}`);
 
-  // share of marginal MW by hour, 100% stacked columns
-  const list = marginalSeries(seriesList());
+  // by hour: supply shares above zero (100% stacked), charging below as a share of all moving MW
+  const list = marginalSeries(seriesList()).filter((s) => s.part !== "chg");
   const hours = d3.range(24).map((i) => {
     const p = hourPrice(S.prices, i);
     if (!S.day.runs[i] || !p || p.mean == null) return null;
     const m = marginalRows(i, p);
-    return m.total > 0 ? Object.fromEntries(m.rows.map((r) => [r.s.id, r.mw / m.total])) : null;
+    if (!(m.total > 0) && !(m.chgMW > 0)) return null;
+    return { sh: Object.fromEntries(m.supply.map((r) => [r.s.id, r.share || 0])), chg: m.chg ? m.chg.share || 0 : 0 };
   });
   const { w } = size(del);
-  const H = 200, m = { t: 14, r: 16, b: 26, l: 64 };
+  const H = 230, m = { t: 14, r: 16, b: 26, l: 64 };
   const x = d3.scaleBand().domain(d3.range(1, 25)).range([m.l, w - m.r]).paddingInner(0.15);
-  const y = d3.scaleLinear().domain([0, 1]).range([H - m.b, m.t]);
+  const lowest = -Math.max(0.25, d3.max(hours, (d) => (d ? d.chg : 0)) || 0);
+  const y = d3.scaleLinear().domain([lowest, 1]).nice().range([H - m.b, m.t]);
   const svg = d3.create("svg").attr("viewBox", `0 0 ${w} ${H}`);
-  svg.append("g").attr("class", "gridline").attr("transform", `translate(${m.l},0)`).call(d3.axisLeft(y).ticks(4).tickSize(-(w - m.l - m.r)).tickFormat(""));
+  svg.append("g").attr("class", "gridline").attr("transform", `translate(${m.l},0)`).call(d3.axisLeft(y).ticks(5).tickSize(-(w - m.l - m.r)).tickFormat(""));
   svg.append("g").attr("class", "axis").attr("transform", `translate(0,${H - m.b})`).call(d3.axisBottom(x).tickValues([1, 4, 8, 12, 16, 20, 24]).tickFormat((d) => "HE" + d).tickSizeOuter(0));
-  svg.append("g").attr("class", "axis").attr("transform", `translate(${m.l},0)`).call(d3.axisLeft(y).ticks(4).tickFormat(fmtPct).tickSizeOuter(0));
-  svg.append("text").attr("class", "axis-title").attr("x", m.l).attr("y", 10).text("Share of marginal MW by hour");
-  hours.forEach((sh, i) => {
+  svg.append("g").attr("class", "axis").attr("transform", `translate(${m.l},0)`).call(d3.axisLeft(y).ticks(5).tickFormat((v) => fmtPct(Math.abs(v))).tickSizeOuter(0));
+  svg.append("text").attr("class", "axis-title").attr("x", m.l).attr("y", 10).text("Share of marginal supply by hour (above) · battery charging that stops (below)");
+  hours.forEach((d, i) => {
     const cx = x(i + 1), bw = x.bandwidth();
-    if (!sh) return;
+    if (!d) return;
     const op = i === h ? 1 : 0.5;   // the selected hour stands out
     let acc = 0;
     list.forEach((s) => {
-      const v = sh[s.id] || 0;
+      const v = d.sh[s.id] || 0;
       if (v <= 0) return;
       // 1px surface gap between stacked segments
       const y1 = y(acc + v), y0 = y(acc);
       svg.append("rect").attr("x", cx).attr("width", bw).attr("y", y1).attr("height", Math.max(0, y0 - y1 - 1)).attr("fill", css(s.color)).attr("opacity", op);
       acc += v;
     });
+    if (d.chg > 0) svg.append("rect").attr("x", cx).attr("width", bw).attr("y", y(0) + 1).attr("height", Math.max(0, y(-d.chg) - y(0) - 1))
+      .attr("fill", css(STORAGE_SPLIT[0].color)).attr("opacity", op);
   });
+  svg.append("line").attr("class", "zero").attr("x1", m.l).attr("x2", w - m.r).attr("y1", y(0)).attr("y2", y(0));
   hoverHours(svg, d3.scaleLinear().domain([1, 24]).range([x(1) + x.bandwidth() / 2, x(24) + x.bandwidth() / 2]), m, H, (i) => {
-    const sh = hours[i];
-    if (!sh) return `<h4>${heLabel(i)}</h4>No price or curve data`;
-    return `<h4>${heLabel(i)}</h4><table>` + list.filter((s) => sh[s.id] > 0).sort((a, b) => sh[b.id] - sh[a.id]).map((s) =>
-      `<tr><td><span class="sw" style="background:var(${s.color})"></span></td><td>${s.label}</td><td class="n">${d3.format(".0%")(sh[s.id])}</td></tr>`).join("") + "</table>";
+    const d = hours[i];
+    if (!d) return `<h4>${heLabel(i)}</h4>No price or curve data`;
+    return `<h4>${heLabel(i)}</h4><table>` + list.filter((s) => d.sh[s.id] > 0).sort((a, b) => d.sh[b.id] - d.sh[a.id]).map((s) =>
+      `<tr><td><span class="sw" style="background:var(${s.color})"></span></td><td>${s.label}</td><td class="n">${d3.format(".0%")(d.sh[s.id])}</td></tr>`).join("") +
+      (d.chg > 0 ? `<tr><td><span class="sw" style="background:var(${STORAGE_SPLIT[0].color})"></span></td><td>Battery charging that stops (of all moving MW)</td><td class="n">${d3.format(".0%")(d.chg)}</td></tr>` : "") + "</table>";
   });
   del.replaceChildren(svg.node());
+  setCSV(del, ["hour_ending", ...list.map((s) => `${s.label} share of marginal supply`), "battery charging share of all moving MW"],
+    hours.map((d, i) => [i + 1, ...list.map((s) => (d ? d.sh[s.id] ?? 0 : null)), d ? d.chg : null]), `Marginal supply by hour ${S.date}`);
 }
 
-// ---- marginality by price: every loaded hour, grouped by system lambda -------
-const MBP_BINS = [
-  [-Infinity, -5, "< −$5"], [-5, 0, "−$5–0"], [0, 5, "$0–5"], [5, 10, "$5–10"], [10, 15, "$10–15"], [15, 20, "$15–20"],
-  [20, 25, "$20–25"], [25, 30, "$25–30"], [30, 40, "$30–40"], [40, 50, "$40–50"], [50, 75, "$50–75"],
-  [75, 100, "$75–100"], [100, 200, "$100–200"], [200, Infinity, "≥ $200"],
-];
-
-async function drawMarginalByPrice() {
-  const el = $("mbp-chart"), tel = $("mbp-table");
-  const src = S.source, list = marginalSeries(SERIES[src]);
-  $("mbp-legend").innerHTML = list.map((s) => `<span><span class="sw" style="background:var(${s.color})"></span>${s.label}</span>`).join("");
-  const data = await tryJSON(`data/marginal_${src}.json.gz`);
-  if (src !== S.source) return;   // report changed while loading
-  if (!data || !data.rows.length) { tel.innerHTML = ""; return emptyMsg(el, "No marginal data yet. It is built by the data update workflow."); }
-  const C = data.columns, ci = Object.fromEntries(C.map((c, i) => [c, i]));
-  let rows = data.rows;
-  const last = rows[rows.length - 1][0];
-  if (S.mbpDays !== "all") {
-    const from = d3.timeFormat("%Y-%m-%d")(d3.timeDay.offset(new Date(last + "T12:00:00"), -(+S.mbpDays - 1)));
-    rows = rows.filter((r) => r[0] >= from);
-  }
-  $("mbp-title-note").textContent = `${rows.length ? rows[0][0] : ""} to ${last} · ${rows.length.toLocaleString()} hours`;
-
-  const bins = MBP_BINS.map(([lo, hi, label]) => {
-    const hrs = rows.filter((r) => r[2] >= lo && r[2] < hi);
-    const cols = (s) => (s.part ? [s.id] : s.keys);   // split storage has its own columns in the file
-    const mw = Object.fromEntries(list.map((s) => [s.id, d3.sum(hrs, (r) => d3.sum(cols(s), (k) => r[ci[k]] || 0))]));
-    const tot = d3.sum(list, (s) => mw[s.id]);
-    return { label, n: hrs.length, mw, tot };
+// ---- offer stack by price: the slope of the day's offer curves ----------------
+// Each technology's share of the MW offered around each price: who would move next if price
+// landed there. Battery charging bids are demand, so they are kept out of the supply shares and
+// drawn below the line as a share of all MW moving at that price. Floor-priced MW are left out.
+const OS_DOMAIN = [-100, 1000];
+function drawOfferStack() {
+  const el = $("os-chart");
+  const list = marginalSeries(seriesList());
+  const chgI = list.findIndex((s) => s.part === "chg");
+  const supI = list.map((s, j) => j).filter((j) => j !== chgI);
+  $("os-legend").innerHTML = list.map((s) => `<span><span class="sw" style="background:var(${s.color})"></span>${s.label}</span>`).join("");
+  $("os-title-note").textContent = S.date ? `${S.date} · ${S.osView === "hour" ? heLabel(S.hour) : "average of the day's hours"}` : "";
+  if (!S.day) return emptyMsg(el, "No data for this day.");
+  const hours = S.osView === "hour" ? [S.hour].filter((h) => S.day.runs[h]) : d3.range(24).filter((h) => S.day.runs[h]);
+  if (!hours.length) return emptyMsg(el, `No SCED runs recorded in ${heLabel(S.hour)}.`);
+  const G = S.index.grid;
+  // MW added between consecutive grid prices, per series, averaged over the hours
+  const inc = list.map((s) => {
+    const c = seriesCurves(S.day, s, S.version);
+    return G.map((g, i) => {
+      if (!c || i === 0 || g <= -249) return 0;
+      let v = 0;
+      hours.forEach((h) => {
+        const r = c[h];
+        if (!r) return;
+        const a = r[i - 1] ?? 0, b = r[i] ?? 0;
+        v += s.part === "chg" ? Math.min(b, 0) - Math.min(a, 0) : s.part === "dis" ? Math.max(b, 0) - Math.max(a, 0) : b - a;
+      });
+      return Math.max(0, v / hours.length);
+    });
   });
-  const val = (b, s) => (S.mbpUnit === "share" ? (b.tot ? b.mw[s.id] / b.tot : 0) : (b.n ? b.mw[s.id] / b.n : 0));
 
   const { w } = size(el);
   const narrow = w < 560;
-  const H = 310, m = { t: 14, r: 12, b: narrow ? 74 : 58, l: 56 };
-  const x = d3.scaleBand().domain(bins.map((b) => b.label)).range([m.l, w - m.r]).paddingInner(0.18);
-  const ymax = S.mbpUnit === "share" ? 1 : d3.max(bins, (b) => d3.sum(list, (s) => val(b, s))) || 1;
-  const y = d3.scaleLinear().domain([0, ymax]).nice().range([H - m.b, m.t]);
-  const svg = d3.create("svg").attr("viewBox", `0 0 ${w} ${H}`);
-  svg.append("g").attr("class", "gridline").attr("transform", `translate(${m.l},0)`).call(d3.axisLeft(y).ticks(5).tickSize(-(w - m.l - m.r)).tickFormat(""));
-  const xa = svg.append("g").attr("class", "axis").attr("transform", `translate(0,${H - m.b})`).call(d3.axisBottom(x).tickSizeOuter(0));
-  if (narrow) xa.selectAll("text").attr("transform", "rotate(-45)").attr("text-anchor", "end").attr("dx", "-0.4em").attr("dy", "0.5em");
-  svg.append("g").attr("class", "axis").attr("transform", `translate(${m.l},0)`)
-    .call(d3.axisLeft(y).ticks(5).tickFormat(S.mbpUnit === "share" ? fmtPct : d3.format(",.0f")).tickSizeOuter(0));
-  svg.append("text").attr("class", "axis-title").attr("x", m.l).attr("y", 10)
-    .text(S.mbpUnit === "share" ? "Share of marginal MW" : "Average marginal MW per hour");
-  svg.append("text").attr("class", "axis-title").attr("x", w - m.r).attr("y", H - 2).attr("text-anchor", "end").text("Hour's average system lambda ($/MWh)");
-  bins.forEach((b) => {
-    const cx = x(b.label), bw = x.bandwidth();
-    let acc = 0;
-    if (b.n) list.forEach((s) => {
-      const v = val(b, s);
-      if (v <= 0) return;
-      const y1 = y(acc + v), y0 = y(acc);
-      // 1px surface gap between stacked segments; groups with few hours are faded
-      svg.append("rect").attr("x", cx).attr("width", bw).attr("y", y1).attr("height", Math.max(0, y0 - y1 - 1))
-        .attr("fill", css(s.color)).attr("opacity", b.n < 24 ? 0.45 : 1);
-      acc += v;
+  const H = 360, m = { t: 26, r: 16, b: 30, l: 56 }, HS = 54;
+  const x = d3.scaleSymlog().constant(10).domain(OS_DOMAIN).range([m.l, w - m.r]);
+  // Gaussian smoothing in screen space, so the blur looks the same at every price
+  const bw = Math.max(5, (w - m.l - m.r) * 0.0135);
+  const xg = G.map((g) => x(g));
+  const pts = d3.range(m.l, w - m.r + 1, narrow ? 2 : 3).map((px) => {
+    const v = list.map((_, j) => {
+      let t = 0;
+      for (let i = 1; i < G.length; i++) {
+        const d = (xg[i] - px) / bw;
+        if (d > -3 && d < 3 && inc[j][i]) t += inc[j][i] * Math.exp(-d * d / 2);
+      }
+      return t;
     });
-    if (!narrow) svg.append("text").attr("class", "axis-title").attr("x", cx + bw / 2).attr("y", H - m.b + 32).attr("text-anchor", "middle").text(`${b.n.toLocaleString()} h`);
-    svg.append("rect").attr("x", cx - 2).attr("width", bw + 4).attr("y", m.t).attr("height", H - m.t - m.b).attr("fill", "transparent")
-      .on("pointermove", (ev) => showTip(ev, `<h4>System lambda ${b.label}</h4>${b.n.toLocaleString()} hours${b.n && b.n < 24 ? " (few hours: read with care)" : ""}` +
-        (b.n ? `<table>` + list.filter((s) => b.mw[s.id] > 0).sort((p, q) => b.mw[q.id] - b.mw[p.id]).map((s) =>
-          `<tr><td><span class="sw" style="background:var(${s.color})"></span></td><td>${s.label}</td><td class="n">${fmtPct(b.mw[s.id] / b.tot)}</td><td class="n">${fmtMW(b.mw[s.id] / b.n)} MW</td></tr>`).join("") + `</table><p class="tip-body">Share of marginal MW, and average marginal MW per hour.</p>` : "")))
-      .on("pointerleave", hideTip);
+    const p = x.invert(px), dollarsPerPx = (x.invert(px + 1) - x.invert(px - 1)) / 2;
+    const k = 1 / (Math.sqrt(2 * Math.PI) * bw * dollarsPerPx);   // kernel sum -> MW per $
+    const sup = d3.sum(supI, (j) => v[j]), chg = chgI >= 0 ? v[chgI] : 0;
+    return { px, p, mwd: v.map((t) => t * k), sup: sup * k, chg: chg * k,
+      sh: v.map((t, j) => (j === chgI ? (sup + chg > 0 ? chg / (sup + chg) : 0) : sup > 0 ? t / sup : 0)) };
   });
-  el.replaceChildren(svg.node());
+  const maxAll = d3.max(pts, (d) => d.sup + d.chg) || 1;
+  const live = pts.map((d) => d.sup + d.chg > maxAll * 1e-4);   // nothing offered: leave a gap
+  const share = S.osUnit === "share";
+  const y = share ? d3.scaleLinear().domain([-0.5, 1]).range([H - m.b, m.t])
+    : d3.scaleLinear().domain([-(d3.max(pts, (d) => d.chg) || 1), d3.max(pts, (d) => d.sup) || 1]).nice().range([H - m.b, m.t]);
+  const val = (d, j) => (share ? d.sh[j] : d.mwd[j]);
 
-  tel.innerHTML = `<table class="data"><thead><tr><th class="t">System lambda</th><th>Hours</th>${list.map((s) => `<th>${s.label}</th>`).join("")}</tr></thead><tbody>` +
-    bins.map((b) => `<tr><td class="t">${b.label}</td><td>${b.n.toLocaleString()}</td>${list.map((s) => `<td>${b.tot ? fmtPct(b.mw[s.id] / b.tot) : "–"}</td>`).join("")}</tr>`).join("") +
-    `</tbody></table><p class="note">Share of marginal MW in each price group.</p>`;
+  const svg = d3.create("svg").attr("viewBox", `0 0 ${w} ${H + (share ? HS + 24 : 0)}`);
+  svg.append("g").attr("class", "gridline").attr("transform", `translate(${m.l},0)`).call(d3.axisLeft(y).ticks(6).tickSize(-(w - m.l - m.r)).tickFormat(""));
+  const pt = narrow ? [-50, 0, 25, 100, 1000] : [-100, -50, -20, 0, 10, 20, 30, 50, 100, 200, 500, 1000];
+  svg.append("g").attr("class", "axis").attr("transform", `translate(0,${H - m.b})`).call(d3.axisBottom(x).tickValues(pt).tickFormat(fmtPrice0).tickSizeOuter(0));
+  svg.append("g").attr("class", "axis").attr("transform", `translate(${m.l},0)`)
+    .call(d3.axisLeft(y).ticks(6).tickFormat(share ? (v) => fmtPct(Math.abs(v)) : (v) => d3.format(",.0f")(Math.abs(v))).tickSizeOuter(0));
+  svg.append("text").attr("class", "axis-title").attr("x", m.l).attr("y", 10)
+    .text(share ? "Share of supply offered near each price (above) · battery charging (below)" : "MW offered per $1 of price (above: supply, below: battery charging)");
+  svg.append("text").attr("class", "axis-title").attr("x", w - m.r).attr("y", H - 2).attr("text-anchor", "end").text("Offer price ($/MWh, compressed scale)");
+  // supply stacked upward, charging downward
+  const area = (y0f, y1f) => d3.area().defined((d, i) => live[i]).curve(d3.curveMonotoneX).x((d) => d.px).y0(y0f).y1(y1f);
+  let base = pts.map(() => 0);
+  supI.forEach((j) => {
+    const lo = base, hi = pts.map((d, i) => lo[i] + val(d, j));
+    svg.append("path").attr("fill", css(list[j].color)).attr("d", area((d, i) => y(lo[i]), (d, i) => y(hi[i]))(pts));
+    base = hi;
+  });
+  if (chgI >= 0) svg.append("path").attr("fill", css(list[chgI].color)).attr("d", area(() => y(0), (d) => y(-val(d, chgI)))(pts));
+  svg.append("line").attr("class", "zero").attr("x1", m.l).attr("x2", w - m.r).attr("y1", y(0)).attr("y2", y(0));
+  // each hour's system lambda as a tick along the top; the selected hour is darker
+  const lam = S.prices && S.prices.lambda ? S.prices.lambda.hourly_mean : [];
+  svg.append("g").selectAll("line").data(lam.map((v, i) => ({ v, i })).filter((d) => d.v != null && d.v >= OS_DOMAIN[0] && d.v <= OS_DOMAIN[1])).join("line")
+    .attr("x1", (d) => x(d.v)).attr("x2", (d) => x(d.v)).attr("y1", 14).attr("y2", 24)
+    .attr("stroke", css("--ink")).attr("stroke-width", (d) => (d.i === S.hour ? 2.5 : 1.2)).attr("opacity", (d) => (d.i === S.hour ? 1 : 0.45));
+  if (lam.length) svg.append("text").attr("class", "axis-title").attr("x", w - m.r).attr("y", 10).attr("text-anchor", "end").text(`ticks: system lambda by hour, ${heLabel(S.hour)} darker`);
+  if (share) {
+    // how much is offered near each price, so a 100% share on a sliver of MW reads as a sliver
+    const g = svg.append("g").attr("transform", `translate(0,${H + 14})`);
+    const yd = d3.scaleLinear().domain([0, maxAll]).range([HS, 0]);
+    g.append("path").attr("fill", css("--band-strong") || css("--muted")).attr("opacity", 0.5)
+      .attr("d", d3.area().curve(d3.curveMonotoneX).x((d) => d.px).y0(HS).y1((d) => yd(d.sup + d.chg))(pts));
+    g.append("line").attr("class", "zero").attr("x1", m.l).attr("x2", w - m.r).attr("y1", HS).attr("y2", HS);
+    g.append("text").attr("class", "axis-title").attr("x", m.l).attr("y", -2).text("How much is offered near each price (relative)");
+  }
+  // hover
+  const cross = svg.append("line").attr("class", "crosshair").attr("y1", m.t).attr("y2", H - m.b).style("display", "none");
+  svg.append("rect").attr("x", m.l).attr("y", m.t).attr("width", w - m.l - m.r).attr("height", H - m.t - m.b).attr("fill", "transparent")
+    .on("pointermove", (ev) => {
+      const i = d3.minIndex(pts, (d) => Math.abs(d.px - d3.pointer(ev)[0])), d = pts[i];
+      cross.style("display", null).attr("x1", d.px).attr("x2", d.px);
+      if (!live[i]) return showTip(ev, `<h4>Around ${fmtPrice(d.p)}</h4>Almost nothing is offered near this price.`);
+      const rows = supI.filter((j) => d.sh[j] > 0.005).sort((a, b) => d.sh[b] - d.sh[a]);
+      showTip(ev, `<h4>Around ${fmtPrice(d.p)}</h4><table>` + rows.map((j) =>
+        `<tr><td><span class="sw" style="background:var(${list[j].color})"></span></td><td>${list[j].label}</td><td class="n">${d3.format(".0%")(d.sh[j])}</td><td class="n">${d3.format(",.0f")(d.mwd[j])} MW/$</td></tr>`).join("") +
+        (chgI >= 0 && d.chg > 0 ? `<tr><td><span class="sw" style="background:var(${list[chgI].color})"></span></td><td>Battery charging (of all moving MW)</td><td class="n">${d3.format(".0%")(d.sh[chgI])}</td><td class="n">${d3.format(",.0f")(d.chg)} MW/$</td></tr>` : "") +
+        `</table><p class="tip-body">Supply shares add to 100% of supply offered near this price.</p>`);
+    })
+    .on("pointerleave", () => { cross.style("display", "none"); hideTip(); });
+  el.replaceChildren(svg.node());
+  setCSV(el, ["price_usd_mwh", ...supI.map((j) => `${list[j].label} share of supply`), ...supI.map((j) => `${list[j].label} MW per $`),
+    ...(chgI >= 0 ? ["battery charging share of all moving MW", "battery charging MW per $"] : [])],
+    pts.filter((d, i) => live[i]).map((d) => [Math.round(d.p * 100) / 100, ...supI.map((j) => d.sh[j]), ...supI.map((j) => d.mwd[j]), ...(chgI >= 0 ? [d.sh[chgI], d.chg] : [])]),
+    `Offer stack by price ${S.date}`);
 }
 
 // ---- hourly profile + price ------------------------------------------------
@@ -741,6 +805,7 @@ function drawProfile() {
   svg.append("text").attr("class", "axis-title").attr("x", m.l).attr("y", 10).text(`MW at or below ${S.threshold === -249 ? "the price floor" : fmtPrice0(S.threshold)}`);
   const line = d3.line().defined((d) => d != null).x((d, i) => x(i + 1)).y((d) => y(d));
   rows.forEach((r) => svg.append("path").attr("fill", "none").attr("stroke", css(r.s.color)).attr("stroke-width", 2).attr("d", line(r.vals)));
+  setCSV(el, ["hour_ending", ...rows.map((r) => `${r.s.label} (MW at or below ${S.threshold})`)], d3.range(24).map((i) => [i + 1, ...rows.map((r) => r.vals[i])]), `Through the day ${S.date}`);
   hoverHours(svg, x, m, H, (i) => `<h4>${heLabel(i)}</h4><table>` + rows.map((r) =>
     `<tr><td><span class="sw" style="background:var(${r.s.color})"></span></td><td>${r.s.label}</td><td class="n">${r.vals[i] == null ? "–" : fmtMW(r.vals[i]) + " MW"}</td></tr>`).join("") + "</table>");
   el.replaceChildren(svg.node());
@@ -766,6 +831,7 @@ function drawProfile() {
 
 function hoverHours(svg, x, m, H, htmlFor) {
   const w = +svg.attr("viewBox").split(" ")[2];
+  svg.attr("data-nopin", "");   // a click here picks the hour
   const cross = svg.append("line").attr("class", "crosshair").attr("y1", m.t).attr("y2", H - m.b).style("display", "none");
   svg.append("rect").attr("x", m.l).attr("y", m.t).attr("width", w - m.l - m.r).attr("height", H - m.t - m.b).attr("fill", "transparent")
     .style("cursor", "pointer")
@@ -804,7 +870,7 @@ function drawHeatmap() {
   const ext = d3.extent(cells, (c) => c.v);
   if (ext[0] === ext[1]) ext[1] = ext[0] + 1;
   const color = d3.scaleSequential(d3.interpolateRgb(css("--seq-lo"), css("--seq-hi"))).domain(ext);
-  const svg = d3.create("svg").attr("viewBox", `0 0 ${w} ${H}`).style("width", w + "px").style("max-width", "none");
+  const svg = d3.create("svg").attr("viewBox", `0 0 ${w} ${H}`).style("width", w + "px").style("max-width", "none").attr("data-nopin", "");
   svg.append("g").selectAll("rect").data(cells).join("rect")
     .attr("x", (c) => x(c.d)).attr("y", (c) => y(c.h)).attr("width", x.bandwidth()).attr("height", y.bandwidth()).attr("rx", 2)
     .attr("fill", (c) => color(c.v))
@@ -820,6 +886,7 @@ function drawHeatmap() {
     .call(d3.axisBottom(x).tickValues(dates.filter((d, i) => i % every === 0)).tickFormat((d) => d3.timeFormat("%b %-d")(new Date(d + "T12:00:00"))).tickSize(0))
     .select(".domain").remove();
   el.replaceChildren(svg.node());
+  setCSV(el, ["date", "hour_ending", `${s.label} MW at or below ${S.threshold}`], cells.map((c) => [c.d, c.h + 1, c.v]), "Across days");
   scaleEl.innerHTML = `<span>${fmtMW(ext[0])} MW</span><span class="ramp" style="background:linear-gradient(90deg,${css("--seq-lo")},${css("--seq-hi")})"></span><span>${fmtMW(ext[1])} MW</span>`;
 }
 
@@ -948,23 +1015,37 @@ function drawDuration() {
   svg.append("path").attr("fill", "none").attr("stroke", css("--price")).attr("stroke-width", 2)
     .attr("d", d3.line().x((v, i) => x((i / (vals.length - 1)) * 100)).y((v) => y(v))(vals));
   const below = vals.filter((v) => v <= S.threshold).length / vals.length;
-  svg.append("text").attr("class", "axis-title").attr("x", w - m.r).attr("y", 12).attr("text-anchor", "end")
+  const pname = S.location === "lambda" ? "System lambda" : `${S.location} settlement point price`;
+  $("dur-title-note").textContent = S.location === "lambda" ? "System lambda" : S.location;
+  svg.append("text").attr("class", "axis-title").attr("x", m.l).attr("y", 10).text(`${pname} ($/MWh), hourly average`);
+  svg.append("text").attr("class", "axis-title").attr("x", w - m.r).attr("y", 10).attr("text-anchor", "end")
     .text(`${vals.length.toLocaleString()} hours · ${fmtPct(below)} at or below ${S.threshold === -249 ? "the floor" : fmtPrice0(S.threshold)}`);
-  svg.append("text").attr("class", "axis-title").attr("x", w - m.r).attr("y", H - 4).attr("text-anchor", "end").text("Share of hours");
+  svg.append("text").attr("class", "axis-title").attr("x", w - m.r).attr("y", H - 4).attr("text-anchor", "end").text("Share of hours above the price");
+  // the selected day's hours on the curve: where each sat in the distribution, the selected hour as a dot
+  const pctAbove = (v) => (d3.bisectLeft(vals.map((q) => -q), -v) / (vals.length - 1)) * 100;   // vals sorted high to low
+  const hp = d3.range(24).map((i) => hourPrice(S.prices, i));
+  const dayPts = hp.map((p, i) => (p && p.mean != null ? { i, v: p.mean, x: pctAbove(p.mean) } : null)).filter(Boolean);
+  svg.append("g").selectAll("line").data(dayPts.filter((d) => d.i !== S.hour)).join("line")
+    .attr("x1", (d) => x(d.x)).attr("x2", (d) => x(d.x)).attr("y1", (d) => y(d.v) - 5).attr("y2", (d) => y(d.v) + 5)
+    .attr("stroke", css("--accent")).attr("stroke-width", 1.5).attr("opacity", 0.6);
+  const sel = dayPts.find((d) => d.i === S.hour);
+  if (sel) {
+    svg.append("circle").attr("cx", x(sel.x)).attr("cy", y(sel.v)).attr("r", 5).attr("fill", css("--accent")).attr("stroke", css("--surface")).attr("stroke-width", 2);
+    const right = x(sel.x) > w - m.r - 230;
+    svg.append("text").attr("class", "price-label").attr("x", x(sel.x) + (right ? -10 : 10)).attr("y", y(sel.v) - 8).attr("text-anchor", right ? "end" : "start")
+      .text(`${S.date} ${heLabel(S.hour)} · ${fmtPrice(sel.v)}, above ${fmtPct(1 - sel.x / 100)} of hours`);
+  }
+  const cross = svg.append("line").attr("class", "crosshair").attr("y1", m.t).attr("y2", H - m.b).style("display", "none");
+  svg.append("rect").attr("x", m.l).attr("y", m.t).attr("width", w - m.l - m.r).attr("height", H - m.t - m.b).attr("fill", "transparent")
+    .on("pointermove", (ev) => {
+      const q = Math.max(0, Math.min(100, x.invert(d3.pointer(ev)[0]))), v = vals[Math.round((q / 100) * (vals.length - 1))];
+      cross.style("display", null).attr("x1", x(q)).attr("x2", x(q));
+      showTip(ev, `<h4>${pname}</h4>${fmtPct(q / 100)} of hours were above ${fmtPrice(v)}`);
+    })
+    .on("pointerleave", () => { cross.style("display", "none"); hideTip(); });
   el.replaceChildren(svg.node());
+  setCSV(el, ["share_of_hours_above", `${pname} ($/MWh)`], vals.map((v, i) => [i / (vals.length - 1), v]), "Price duration");
 }
-
-// -------------------------------------------------------------- tooltip ---
-function showTip(ev, html) {
-  const t = $("tip");
-  t.innerHTML = html; t.hidden = false;
-  const r = t.getBoundingClientRect();
-  let left = ev.clientX + 14, top = ev.clientY + 14;
-  if (left + r.width > window.innerWidth - 8) left = ev.clientX - r.width - 14;
-  if (top + r.height > window.innerHeight - 8) top = ev.clientY - r.height - 14;
-  t.style.left = Math.max(8, left) + "px"; t.style.top = Math.max(8, top) + "px";
-}
-function hideTip() { $("tip").hidden = true; }
 
 // ---------------------------------------------------------------- boot ---
 async function boot() {
@@ -980,6 +1061,8 @@ async function boot() {
   const last = (a) => (a.length ? [...a].sort().at(-1) : "none");
   $("status").textContent = `2-day: ${D["2d"].length} day(s), latest ${last(D["2d"])} · 60-day: ${D["60d"].length} day(s), latest ${last(D["60d"])} · prices: ${D.prices.length} day(s) · updated ${S.index.updated.replace("T", " ").replace("Z", " UTC")}`;
 
+  loadView();
+  $("hour").value = S.hour;
   setSeg("version", S.version); setSeg("xrange", S.xrange); setSeg("mode", S.mode); setSeg("axes", S.axes);
   fillDates(); syncSource(); fillLocations(); fillThresholds(); fillTechSelects();
 
@@ -987,9 +1070,9 @@ async function boot() {
   bindSeg("xrange", "xrange");
   bindSeg("mode", "mode");
   bindSeg("axes", "axes");
-  setSeg("mbp-days", S.mbpDays); setSeg("mbp-unit", S.mbpUnit);
-  bindSeg("mbp-days", "mbpDays", drawMarginalByPrice);
-  bindSeg("mbp-unit", "mbpUnit", drawMarginalByPrice);
+  setSeg("os-view", S.osView); setSeg("os-unit", S.osUnit);
+  bindSeg("os-view", "osView", drawOfferStack);
+  bindSeg("os-unit", "osUnit", drawOfferStack);
   $("date").onchange = async (e) => { S.date = e.target.value; await changeDay(); };
   // step one available day older (-1) or newer (+1)
   const stepDay = async (dir) => {
@@ -1035,8 +1118,10 @@ async function boot() {
     if (el && e.pointerType !== "mouse" && !el.dataset.k) showTip(tipAt(el), tipFor(el));
   });
 
-  let t;
-  new ResizeObserver(() => { clearTimeout(t); t = setTimeout(render, 120); }).observe(document.querySelector("main"));
+  window.CX.init();
+  let t, lastW = 0;
+  // redraw on width changes only (the page grows as charts draw, which would loop)
+  new ResizeObserver((e) => { const w = Math.round(e[0].contentRect.width); if (w === lastW) return; lastW = w; clearTimeout(t); t = setTimeout(render, 120); }).observe(document.querySelector("main"));
   window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", render);
   new MutationObserver(render).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
 
