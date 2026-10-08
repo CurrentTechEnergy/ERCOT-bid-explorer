@@ -37,7 +37,7 @@ const S = {
   xrange: "low", mode: "lines", axes: "price_x", threshold: 0, location: "lambda",
   hidden: new Set(), heatTech: null, unitTech: "all", unitSearch: "",
   unitSort: { key: "floor_mw", dir: -1 }, unitShowAll: false,
-  day: null, prices: null, summaries: {}, osView: "day", osUnit: "share",
+  day: null, prices: null, summaries: {}, osView: "hour", osUnit: "share",
 };
 const $ = (id) => document.getElementById(id);
 const fmtMW = d3.format(",.0f");
