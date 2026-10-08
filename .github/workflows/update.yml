@@ -39,7 +39,7 @@ jobs:
     steps:
       - uses: actions/checkout@v5
         with:
-          fetch-depth: 0     # full history so the data commit can be rebased onto newer code
+          fetch-depth: 1     # main's history is fetched just before the data commit is rebased
 
       - uses: actions/setup-python@v6
         with:
@@ -52,14 +52,14 @@ jobs:
       # live on the orphan `data` branch, checked out as a worktree in unitdata/ (gitignored on
       # main) so they never bloat main or the Pages site.
       # Keep the data branch small: every file on it is regenerable from ERCOT's reports, so its
-      # history can be squashed to a single commit (e.g. orphan + force-push) whenever it grows;
-      # note that fetch-depth: 0 above also fetches the data branch's history.
+      # history can be squashed to a single commit (e.g. orphan + force-push) whenever it grows.
+      # Only its latest commit is fetched, so its history never slows the run.
       - name: Check out the data branch
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
           if git ls-remote --exit-code --heads origin data > /dev/null; then
-            git fetch origin data
+            git fetch --depth 1 origin data
             git worktree add -B data unitdata FETCH_HEAD
           else
             echo "No data branch yet: creating it as an orphan"
@@ -123,6 +123,7 @@ jobs:
           fi
           git commit -m "Data update $(date -u +%Y-%m-%d)"
           # Code may have been pushed while this run was working: rebase onto it, then push.
+          git fetch --unshallow origin "${GITHUB_REF_NAME}"
           for attempt in 1 2 3 4 5; do
             git pull --rebase origin "${GITHUB_REF_NAME}" && git push origin "HEAD:${GITHUB_REF_NAME}" && exit 0
             echo "Push attempt $attempt failed; retrying"
