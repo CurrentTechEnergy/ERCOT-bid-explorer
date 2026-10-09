@@ -411,7 +411,7 @@ function marginalAxes(svg, y, x, w, H, m, xTitle, xAxis) {
 
 // smoothed: each point blends the MBP_K hours nearest that price, so it rests on the same amount of data
 // everywhere; exact: each $1 band of lambda on its own hours
-const MBP_K = 50, MBP_MIN_H = 5;
+const MBP_K = 100, MBP_MIN_H = 5;
 function drawMarginalSmooth(el, H, list, w, narrow) {
   if (S.mView !== "exact") S.mView = "smooth";   // old links may say "groups"
   const exact = S.mView === "exact";
