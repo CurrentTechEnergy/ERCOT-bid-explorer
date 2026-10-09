@@ -170,6 +170,33 @@
   <section class="panel panel-wide">
     <div class="panel-head">
       <div>
+        <h2>Who turns off for cheap stretches</h2>
+        <p class="note" id="st-note"></p>
+      </div>
+      <div class="panel-tools">
+        <label class="lbl inline" for="st-tech">Technology</label>
+        <select id="st-tech"></select>
+        <div class="seg seg-sm" id="st-thr" role="radiogroup" aria-label="Cheap means lambda below">
+          <button type="button" data-v="0" role="radio">Lambda below $0</button>
+          <button type="button" data-v="10" role="radio">Below $10</button>
+        </div>
+        <div class="seg seg-sm" id="st-unit" role="radiogroup" aria-label="Show as">
+          <button type="button" data-v="mw" role="radio">MW</button>
+          <button type="button" data-v="share" role="radio">Share</button>
+        </div>
+      </div>
+    </div>
+    <div class="legend legend-static" id="st-legend"></div>
+    <div class="chart" id="st-group"></div>
+    <h3 class="sub-h">Units: response to cheap stretches and time off when they shut down</h3>
+    <p class="note" id="st-units-note"></p>
+    <div class="panel-tools"><label class="lbl inline" for="st-sort">Sort by</label><select id="st-sort"></select></div>
+    <div class="units-wrap" id="st-units"></div>
+  </section>
+
+  <section class="panel panel-wide">
+    <div class="panel-head">
+      <div>
         <h2>Across days</h2>
         <p class="note" id="heat-note"></p>
       </div>
@@ -253,6 +280,7 @@
       <p class="note" id="unit-note"></p>
       <div class="legend legend-static" id="unit-strip-legend"></div>
       <div class="chart" id="unit-strip"></div>
+      <div id="unit-stretch"></div>
       <div class="chart chart-short" id="unit-price"></div>
       <div class="chart chart-short" id="unit-share"></div>
       <div class="units-wrap" id="unit-changes"></div>

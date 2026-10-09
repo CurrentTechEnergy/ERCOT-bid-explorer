@@ -63,17 +63,6 @@
   <section class="panel panel-wide">
     <div class="panel-head">
       <div>
-        <h2>Wind and solar curtailment <span class="h-note" id="curt-title-note"></span></h2>
-        <p class="note">MW wind and solar could have produced (HSL) minus the base point SCED sent them, averaged over each hour. This is the output SCED held back, for price or for congestion. It comes from the 60-day disclosure and, for recent days, from ERCOT's 2-day reports (generation summary base points against the 2-day offer curves' summed HSL); where a day has both, the readout shows both.</p>
-      </div>
-    </div>
-    <div class="legend legend-static" id="curt-legend"></div>
-    <div class="chart" id="curt-chart"></div>
-  </section>
-
-  <section class="panel panel-wide">
-    <div class="panel-head">
-      <div>
         <h2>Offer curves <span class="h-note" id="curve-title-note"></span></h2>
         <p class="note">MW offered at or below each price, averaged over the SCED runs in the hour. The line across the chart marks the cleared price for the hour; the shaded band is its range in that hour.</p>
       </div>
@@ -137,6 +126,10 @@
           <button type="button" data-v="share" role="radio">Share</button>
           <button type="button" data-v="mw" role="radio">MW per $</button>
         </div>
+        <div class="seg seg-sm" id="os-smooth" role="radiogroup" aria-label="Detail">
+          <button type="button" data-v="smooth" role="radio">Smoothed</button>
+          <button type="button" data-v="exact" role="radio">Exact</button>
+        </div>
       </div>
     </div>
     <div class="legend legend-static" id="os-legend"></div>
@@ -183,6 +176,17 @@
     </div>
     <div class="scroll-x" id="units-table"></div>
     <p class="note" id="units-foot"></p>
+  </section>
+
+  <section class="panel panel-wide">
+    <div class="panel-head">
+      <div>
+        <h2>Wind and solar curtailment <span class="h-note" id="curt-title-note"></span></h2>
+        <p class="note">MW wind and solar could have produced (HSL) minus the base point SCED sent them, averaged over each hour. This is the output SCED held back, for price or for congestion. It comes from the 60-day disclosure and, for recent days, from ERCOT's 2-day reports (generation summary base points against the 2-day offer curves' summed HSL); where a day has both, the readout shows both.</p>
+      </div>
+    </div>
+    <div class="legend legend-static" id="curt-legend"></div>
+    <div class="chart" id="curt-chart"></div>
   </section>
 
   <section class="panel panel-wide">

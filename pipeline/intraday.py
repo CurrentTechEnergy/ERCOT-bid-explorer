@@ -11,6 +11,8 @@ Writes
                        at_min  MW of output up to each running unit's LSL
                        above   MW of output above LSL
                        n       units running
+                     and cap_<group>: [day] average MW of capacity (HSL) in each status group
+                     (STATUS_GROUPS, see status_group)
     above_units      units that ran above minimum in cheap hours, all days together:
                      [unit, tech, threshold, hours running, hours above minimum, MWh above minimum]
                      for each threshold in CHEAP (hours with lambda below it)
@@ -20,9 +22,11 @@ Writes
                      on outage (OUT) during the spell]
   data/unit_hours_60d.json.gz
     dates, units: {unit: "one character per hour, 24 per day"}:
-      "-" no data, "0" offline, "m" running at minimum, "a" running above minimum
+      "-" no data, "0" offline, "o" on outage, "m" running at minimum, "a" running above minimum
+    hsl: {unit: median HSL in the hours it ran (MW)}
 
-A unit runs in an hour when most of its SCED runs in that hour have an online status (ON...).
+A unit runs in an hour when most of its SCED runs in that hour have an online status (ON...);
+an hour it does not run counts as an outage when most of its runs that hour are OUT.
 "At minimum" means hourly output no more than ABOVE_EPS of HSL above the hour's LSL.
 """
 import numpy as np
@@ -47,12 +51,38 @@ def _r(x, nd=1):
     return None if x is None or not np.isfinite(x) else round(float(x), nd)
 
 
+# capacity (HSL) by status group, from the raw "Telemetered Resource Status" codes
+STATUS_GROUPS = ["offer", "schedule", "ruc", "other_on", "off", "out"]
+
+
+def status_group(s):
+    """offer: ON (running on its offer curve); schedule: ONOS (running to an output schedule);
+    ruc: ONRUC/ONOPTOUT (committed by ERCOT's RUC); other_on: any other online or transitional
+    state (ONTEST, ONHOLD, ONREG, ONEMR, EMR, EMRSWGR, STARTUP, SHUTDOWN, ...); off: OFF...
+    (offline but available); out: OUT (outage).  None for blank or absent."""
+    if not s:
+        return None
+    if s == "ON":
+        return "offer"
+    if s == "ONOS":
+        return "schedule"
+    if s in ("ONRUC", "ONOPTOUT"):
+        return "ruc"
+    if s == "OUT":
+        return "out"
+    if s.startswith("OFF"):
+        return "off"
+    return "other_on"
+
+
 def unit_hours(u: dict, runs: list) -> tuple:
-    """Per hour of the day: state char, output, LSL, HSL (NaN where not running)."""
+    """Per hour of the day: state char, output, LSL, HSL (NaN where not running); and the
+    expanded per-run values (units.expand)."""
     n = len(runs)
     e = expand(u, n)
     hr = np.minimum(np.array(runs) // 60, 23)
     on = np.array([_online(s) for s in e["status"]])
+    is_out = np.array([s == "OUT" for s in e["status"]])
     present = np.array([s is not None for s in e["status"]])
     out = np.array([np.nan if v is None else v for v in u["out"]], float)
     states, lsl_h, hsl_h = [], np.full(24, np.nan), np.full(24, np.nan)
@@ -62,7 +92,7 @@ def unit_hours(u: dict, runs: list) -> tuple:
             states.append("-")
             continue
         if on[idx].mean() < 0.5 or np.isnan(out[h]):
-            states.append("0")
+            states.append("o" if is_out[idx & present].mean() > 0.5 else "0")
             continue
         sel = idx & on
         lsl, hsl = np.nanmean(e["lsl"][sel]), np.nanmean(e["hsl"][sel])
@@ -70,7 +100,7 @@ def unit_hours(u: dict, runs: list) -> tuple:
         lsl_h[h], hsl_h[h] = lsl, hsl
         above = out[h] - lsl > ABOVE_EPS * (hsl if hsl > 0 else 1.0)
         states.append("a" if above else "m")
-    return "".join(states), out, lsl_h, hsl_h
+    return "".join(states), out, lsl_h, hsl_h, e
 
 
 def build_intraday(index: dict) -> None:
@@ -85,8 +115,10 @@ def build_intraday(index: dict) -> None:
     day_no = {d: int(np.datetime64(d).astype(int)) for d in dates}
     date_idx = {d: i for i, d in enumerate(dates)}
 
-    tech = {t: {k: [None] * D for k in ("at_min", "above", "n")} for t in UNIT_TECHS}
+    tech = {t: {k: [None] * D for k in ["at_min", "above", "n"] + ["cap_" + g for g in STATUS_GROUPS]}
+            for t in UNIT_TECHS}
     strips = {}
+    hsl_run = {}              # unit -> list of hourly HSL while running
     above_acc = {}            # (unit, thr) -> [tech, hours running, hours above, MWh above]
     spells = []
     pending = {}              # unit -> open spell (dict) carried across consecutive days
@@ -128,14 +160,21 @@ def build_intraday(index: dict) -> None:
         prev_day = d
         runs = ud["runs"]
         acc = {t: (np.zeros(24), np.zeros(24), np.zeros(24)) for t in UNIT_TECHS}
+        cap = {t: dict.fromkeys(STATUS_GROUPS, 0.0) for t in UNIT_TECHS}
         seen, new_last = set(), {}
         for name, u in ud["units"].items():
             t = u["tech"]
             if t not in UNIT_TECHS:
                 continue
             seen.add(name)
-            st, out, lsl, hsl = unit_hours(u, runs)
+            st, out, lsl, hsl, e = unit_hours(u, runs)
+            sacc = cap[t]
+            for s_, h_ in zip(e["status"], e["hsl"]):
+                g = status_group(s_)
+                if g and np.isfinite(h_):
+                    sacc[g] += h_
             strips.setdefault(name, ["-" * 24] * di).append(st)
+            hsl_run.setdefault(name, []).extend(v for v in hsl if np.isfinite(v))
             a_min, a_above, a_n = acc[t]
             for h, c in enumerate(st):
                 if c in "ma":
@@ -184,6 +223,8 @@ def build_intraday(index: dict) -> None:
             tech[t]["at_min"][di] = [round(float(v)) for v in a_min]
             tech[t]["above"][di] = [round(float(v)) for v in a_above]
             tech[t]["n"][di] = [int(v) for v in a_n]
+            for g in STATUS_GROUPS:
+                tech[t]["cap_" + g][di] = round(cap[t][g] / len(runs))
     for name, sp in pending.items():
         close(name, sp, None)
 
@@ -195,6 +236,7 @@ def build_intraday(index: dict) -> None:
     })
     write_json_gz(DATA_DIR / "unit_hours_60d.json.gz", {
         "dates": dates, "units": {k: "".join(v) for k, v in sorted(strips.items())},
+        "hsl": {k: round(float(np.median(v))) for k, v in sorted(hsl_run.items()) if v},
     })
     print(f"intraday_60d: {D} days, {n_files} per-unit day file(s), {len(spells)} off spells, "
           f"{len(strips)} unit strips")

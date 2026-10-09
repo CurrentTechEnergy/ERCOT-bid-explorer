@@ -62,7 +62,8 @@ const S = { T: null, C: null, M: {}, floorMode: "floor_sced", hidden: { floor: n
   pqTech: "coal", capTech: "coal", scTech: "coal", scX: "week", mSrc: "60d", mView: "smooth", mDays: "all",
   chgTech: "all", chgSig: "all", unit: null,
   I: null, UH: null, idx: null, summ60: null, cheapTech: "all", cheapThr: "0", shutTech: "combined_cycle", shutPrice: "any",
-  heatMeasure: "offer", heatTech: "combined_cycle", heatThr: "0", heatScale: "zero" };
+  heatMeasure: "offer", heatTech: "combined_cycle", heatThr: "0", heatScale: "zero",
+  stTech: "all", stThr: "0", stSort: "off", stUnit: "mw", stBase: null, stripScale: null };
 const { getJSON, tryJSON, showTip, hideTip, setCSV } = window.CX;
 const $ = (id) => document.getElementById(id);
 const css = (v) => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
@@ -266,8 +267,26 @@ function drawPriceQuantiles() {
     title: `${s.label}: offer price at which 25%, 50% and 90% of submitted MW is available ($/MWh)` });
 }
 
+// capacity by status from the intraday file (pipeline/intraday.py status_group)
+const STATUS6 = [
+  { id: "offer", label: "Running on an offer", color: "--c1" },
+  { id: "schedule", label: "Running on an output schedule", color: "--c4" },
+  { id: "ruc", label: "Committed by ERCOT (RUC)", color: "--c8" },
+  { id: "other_on", label: "Other online states (testing, emergency, starting, stopping)", color: "--c7-soft" },
+  { id: "off", label: "Offline but available", color: "--c-other" },
+  { id: "out", label: "On outage", color: "--ink-2" },
+];
 function drawCapacity() {
   const el = $("cap-chart"), s = TECHS.find((t) => t.id === S.capTech);
+  const C = S.I && S.I.tech[S.capTech];
+  if (C && C.cap_offer) {
+    $("cap-note").textContent = "MW of capacity (HSL) by unit status, averaged over each day's SCED runs, from the per-unit 60-day data. \"Offline but available\" is the economic choice not to run; outages are not. Units on an output schedule run at the MW their QSE scheduled, with no offer curve. RUC is ERCOT committing a unit for reliability, which is rare.";
+    staticLegend($("cap-legend"), STATUS6);
+    const series = STATUS6.map((g) => ({ ...g, values: C["cap_" + g.id] }));
+    return timeChart(el, series, { stack: true, dates: S.I.dates,
+      stackMax: d3.max(S.I.dates, (_, i) => d3.sum(series, (x) => x.values[i] || 0)) || 1,
+      H: 280, title: `${s.label}: capacity by status (MW)`, yFmt: d3.format(",.0f") });
+  }
   if (!hasStat("mw_off")) {
     $("cap-note").textContent = "Status detail (running, ERCOT-committed, offline but available, on outage) fills in after the 60-day data is reprocessed. Until then this shows units online.";
     $("cap-legend").innerHTML = "";
@@ -527,7 +546,7 @@ function drawUnit(u) {
 }
 
 // day × hour state of one unit: offline, at minimum, above minimum; negative-price hours marked
-const STRIP_STATES = { "0": "Offline", m: "Running at minimum", a: "Running above minimum" };
+const STRIP_STATES = { "0": "Offline", o: "On outage", m: "Running at minimum", a: "Running above minimum" };
 async function drawUnitStrip(u, s, marks) {
   const el = $("unit-strip");
   if (!S.UH) {
@@ -537,7 +556,7 @@ async function drawUnitStrip(u, s, marks) {
   }
   const str = S.UH.units[u.unit];
   const lam = S.I ? S.I.lambda : null;
-  $("unit-strip-legend").innerHTML = [["--grid", 1, "Offline"], [s.color, 0.4, "Running at minimum (LSL)"], [s.color, 1, "Running above minimum"]]
+  $("unit-strip-legend").innerHTML = [["--grid", 1, "Offline"], ["--ink-2", 0.35, "On outage"], [s.color, 0.4, "Running at minimum (LSL)"], [s.color, 1, "Running above minimum"]]
     .map(([c, o, l]) => `<span><span class="sw" style="background:var(${c});opacity:${o}"></span>${l}</span>`).join("") +
     `<span><span class="sw sw-neg"></span>Hour with lambda below $0</span>`;
   if (!str) return emptyMsg(el, "No hourly data for this unit.");
@@ -546,13 +565,13 @@ async function drawUnitStrip(u, s, marks) {
   const x = d3.scaleTime().domain(d3.extent(dates)).range([m.l, w - m.r]);
   const cw = (w - m.l - m.r) / Math.max(1, D - 1);
   const svg = d3.create("svg").attr("viewBox", `0 0 ${w} ${H}`);
-  const col = { "0": css("--grid"), m: css(s.color), a: css(s.color) };
+  const col = { "0": css("--grid"), o: css("--ink-2"), m: css(s.color), a: css(s.color) };
   const g = svg.append("g");
   for (let i = 0; i < D; i++) for (let h = 0; h < 24; h++) {
     const c = str[i * 24 + h];
     if (c === "-" || c === undefined) continue;
     g.append("rect").attr("x", x(dates[i]) - cw / 2).attr("y", m.t + h * ch).attr("width", cw + 0.3).attr("height", ch - 0.5)
-      .attr("fill", col[c]).attr("fill-opacity", c === "m" ? 0.4 : 1);
+      .attr("fill", col[c]).attr("fill-opacity", c === "m" ? 0.4 : c === "o" ? 0.35 : 1);
   }
   // negative-price hours: a dark tick in the cell
   if (lam) {
@@ -577,6 +596,7 @@ async function drawUnitStrip(u, s, marks) {
     })
     .on("pointerleave", hideTip);
   el.replaceChildren(svg.node());
+  drawUnitStretch(u, s, { x, w, m, dates });
   setCSV(el, ["date", "hour_ending", "state"], dstr.flatMap((d, i) => d3.range(24).map((h) => [d, h + 1, STRIP_STATES[str[i * 24 + h]] || ""])), `${u.unit} hourly state`);
 }
 
@@ -655,7 +675,7 @@ function drawCheap() {
   // units above minimum (nuclear left out: it always is)
   const rows = I.above_units.filter((r) => r[2] === thr && r[1] !== "nuclear" && ts.includes(r[1]) && r[4] > 0)
     .map((r) => ({ unit: r[0], tech: r[1], run: r[3], above: r[4], mwh: r[5] })).sort((a, b) => b.mwh - a.mwh);
-  $("cheap-units-note").textContent = `All loaded days together, nuclear left out. ${rows.length} unit${rows.length === 1 ? "" : "s"} ran above minimum in at least one hour with lambda below ${fmtPrice0(thr)}; the top 30 by energy above minimum are listed. Cogeneration and units carrying ancillary services are likely here. Click a row to see the unit.`;
+  $("cheap-units-note").textContent = `All days together, nuclear left out. ${rows.length} unit${rows.length === 1 ? "" : "s"} ran above minimum in at least one hour with lambda below ${fmtPrice0(thr)}; the top 30 by energy above minimum are listed. Cogeneration and units carrying ancillary services are likely here. Click a row to see the unit.`;
   $("cheap-units").innerHTML = rows.length ? unitRows(rows.slice(0, 30), [
     { h: "Unit", t: 1, f: (r) => esc(r.unit) }, { h: "Technology", t: 1, f: (r) => techLabel(r.tech) },
     { h: `Hours running below ${fmtPrice0(thr)}`, f: (r) => r.run }, { h: "Hours above minimum", f: (r) => r.above },
@@ -678,11 +698,11 @@ function drawShut() {
   const has = I.dates.map((_, i) => I.tech[ts[0]].n[i] != null);
   const series = [
     { label: "Back online within 24 hours (two-shifting)", color: s.color, values: two.map((v, i) => (has[i] ? v : null)) },
-    { label: "Off longer, or not back in the loaded days", color: s.color, opacity: 0.4, values: long.map((v, i) => (has[i] ? v : null)) },
+    { label: "Off longer, or not back before the data ends", color: s.color, opacity: 0.4, values: long.map((v, i) => (has[i] ? v : null)) },
   ];
   $("shut-legend").innerHTML = series.map((x) => `<span><span class="sw" style="background:var(${x.color});opacity:${x.opacity || 1}"></span>${x.label}</span>`).join("");
   const priceTxt = thr == null ? "" : ` where system lambda averaged below ${fmtPrice0(thr)} over the ${I.next_h} hours after the unit went off`;
-  $("shut-note").textContent = `Each bar counts ${s.label.toLowerCase()} units that went from online to off on that day${priceTxt}. Units that went on outage while off are left out, as are spells shorter than an hour (mostly combined-cycle configuration changes). The lower chart shows, for the units back within 24 hours, the hours of the day they were off, as an average number of units per day, with the average lambda for each hour across all loaded days as a dashed line (right axis).`;
+  $("shut-note").textContent = `Each bar counts ${s.label.toLowerCase()} units that went from online to off on that day${priceTxt}. Units that went on outage while off are left out, as are spells shorter than an hour (mostly combined-cycle configuration changes). The lower chart shows, for the units back within 24 hours, the hours of the day they were off, as an average number of units per day, with the average lambda for each hour across all days as a dashed line (right axis).`;
   dayBars(el, I.dates, series, { title: `${s.label}: shutdowns per day`, yFmt: d3.format(",.0f") });
   // hour-of-day profile of short spells
   const off = new Array(24).fill(0);
@@ -705,6 +725,220 @@ function drawShut() {
     { h: "Median hours off", f: (r) => (r.off == null ? "–" : d3.format(",.1f")(r.off)) },
     { h: `Median lambda, first ${I.next_h} h off`, f: (r) => fmtPrice(r.l4) }, { h: "Median lambda while off", f: (r) => fmtPrice(r.lo) },
   ]) : `<p class="empty">No shutdowns match.</p>`;
+}
+
+// ---- cheap stretches: who turns off ------------------------------------------------
+// From the hourly unit strips. A combined-cycle train is registered as one resource per
+// configuration (only one online at a time), so configurations are merged into their train:
+// in each hour the train takes the "most running" state of its configurations.
+const ST_LEAD = 6;                       // hours before a stretch a unit must already be running
+const ST_RESP = [
+  { id: "B", label: `Turned off in the ${ST_LEAD} h before`, color: "--c8", o: 1 },
+  { id: "D", label: "Turned off during the stretch", color: "--c8", o: 0.45 },
+  { id: "M", label: "Ran at minimum", color: null, o: 0.4 },
+  { id: "A", label: "Ran above minimum", color: null, o: 1 },
+];
+const ST_GROUPS = [
+  { id: "never", label: "Never shut down", note: "no shutdown in the period" },
+  { id: "rare", label: "Shuts down, no two-shifts", note: "shut down, but never back within 24 h" },
+  { id: "some", label: "Two-shifts 1–2 times", note: "off and back within 24 h once or twice" },
+  { id: "cycler", label: "Two-shifts 3+ times", note: "off and back within 24 h at least 3 times" },
+];
+const ST_RANK = { a: 4, m: 3, "0": 2, o: 1, "-": 0 };
+const trainOf = (u) => { const m = /^(.*_CC\d+)_/.exec(u); return m ? m[1] : u; };
+
+function stretchBase() {
+  if (S.stBase) return S.stBase;
+  const UH = S.UH, I = S.I, info = new Map(S.T.units.map((u) => [u.unit, u]));
+  const dstr = UH.dates, day0 = parseDate(dstr[0]);
+  const dayNo = dstr.map((d) => Math.round((parseDate(d) - day0) / 864e5)), N = (dayNo.at(-1) + 1) * 24;
+  const lam = new Float64Array(N).fill(NaN), li = new Map(I.dates.map((d, i) => [d, i]));
+  dstr.forEach((d, i) => { const L = I.lambda[li.get(d)]; if (L) L.forEach((v, h) => { if (v != null) lam[dayNo[i] * 24 + h] = v; }); });
+  // merged hourly state per unit (train for combined cycles)
+  const units = new Map();
+  for (const [name, str] of Object.entries(UH.units)) {
+    const u = info.get(name);
+    if (!u || u.tech === "nuclear") continue;
+    const key = u.tech === "combined_cycle" ? trainOf(name) : name;
+    let e = units.get(key);
+    if (!e) { e = { unit: key, tech: u.tech, st: new Array(N).fill("-"), configs: [], mw: 0 }; units.set(key, e); }
+    let run = 0;
+    dstr.forEach((_, i) => { for (let h = 0; h < 24; h++) {
+      const c = str[i * 24 + h] || "-", k = dayNo[i] * 24 + h;
+      if (ST_RANK[c] > ST_RANK[e.st[k]]) e.st[k] = c;
+      if (c === "m" || c === "a") run++;
+    } });
+    e.configs.push({ name, run });
+    e.mw = Math.max(e.mw, (UH.hsl || {})[name] || 0);
+  }
+  // off spells: offline hours between two running hours, with no outage or missing data.
+  // A single offline hour inside a combined-cycle train is a configuration change, not a shutdown.
+  for (const e of units.values()) {
+    const st = e.st; e.off = []; e.shut = 0;
+    if (e.tech === "combined_cycle") for (let k = 1; k < N - 1; k++)
+      if (st[k] === "0" && "ma".includes(st[k - 1]) && "ma".includes(st[k + 1])) st[k] = "m";
+    let k = 0;
+    while (k < N) {
+      if (st[k] === "0" && k > 0 && (st[k - 1] === "m" || st[k - 1] === "a")) {
+        let j = k, bad = false;
+        while (j < N && (st[j] === "0" || st[j] === "o" || st[j] === "-")) { if (st[j] !== "0") bad = true; j++; }
+        if (!bad || j === N) e.shut++;
+        if (!bad && j < N) e.off.push(j - k);
+        k = j;
+      } else k++;
+    }
+    const two = e.off.filter((h) => h < 24).length;
+    e.group = two >= 3 ? "cycler" : two > 0 ? "some" : e.shut > 0 ? "rare" : "never";
+    e.pick = e.configs.sort((a, b) => b.run - a.run)[0].name;   // config shown in Unit detail
+    const o = e.off.slice().sort(d3.ascending);
+    e.offMin = o.length ? o[0] : null; e.offP10 = o.length ? d3.quantile(o, 0.1) : null; e.offMed = o.length ? d3.median(o) : null;
+  }
+  return (S.stBase = { N, lam, units, day0 });
+}
+
+function stretchResponses(thr) {
+  const B = stretchBase();
+  B.resp = B.resp || {};
+  if (B.resp[thr]) return B.resp[thr];
+  const { N, lam } = B, eps = [];
+  for (let k = 0; k < N;) {
+    if (lam[k] < thr) { let j = k; while (j < N && lam[j] < thr) j++; eps.push([k, j]); k = j; } else k++;
+  }
+  const rows = [];
+  for (const [a, b] of eps) {
+    if (a < ST_LEAD) continue;
+    for (const e of B.units.values()) {
+      const st = e.st, s0 = st[a - ST_LEAD];
+      if (s0 !== "m" && s0 !== "a") continue;
+      let pre0 = false, dur0 = false, bad = false, na = 0;
+      for (let k = a - ST_LEAD; k < b; k++) {
+        const c = st[k];
+        if (c === "o" || c === "-") { bad = true; break; }
+        if (c === "0") (k < a ? (pre0 = true) : (dur0 = true));
+        if (k >= a && c === "a") na++;
+      }
+      if (bad) continue;
+      let run = 0;
+      for (let k = a - ST_LEAD; k >= 0 && (st[k] === "m" || st[k] === "a"); k--) run++;
+      rows.push({ unit: e.unit, tech: e.tech, group: e.group, mw: e.mw, a, len: b - a, run,
+        r: pre0 ? "B" : dur0 ? "D" : na / (b - a) > 0.5 ? "A" : "M" });
+    }
+  }
+  return (B.resp[thr] = { rows, n: eps.length });
+}
+
+// share: each bar sums to 100% of times a unit ran into a stretch; mw: average MW per stretch doing each thing
+function stackBars(el, groups, s, title, xTitle, nEps) {
+  const mw = S.stUnit === "mw", w = Math.max(280, el.clientWidth || 500), H = 262, m = { t: 22, r: 8, b: 60, l: mw ? 56 : 44 };
+  const x = d3.scaleBand().domain(groups.map((g) => g.label)).range([m.l, w - m.r]).padding(w > 900 ? 0.45 : 0.22);
+  const val = (g, rows) => (mw ? d3.sum(rows, (z) => z.mw) / Math.max(1, g.nEps ?? nEps) : rows.length / Math.max(1, g.rows.length));
+  const top = mw ? d3.max(groups, (g) => val(g, g.rows)) || 1 : 1;
+  const y = d3.scaleLinear().domain([0, top]).nice().range([H - m.b, m.t]);
+  const yFmt = mw ? d3.format(",.0f") : fmtPct;
+  const svg = d3.create("svg").attr("viewBox", `0 0 ${w} ${H}`);
+  svg.append("g").attr("class", "gridline").attr("transform", `translate(${m.l},0)`).call(d3.axisLeft(y).ticks(5).tickSize(-(w - m.l - m.r)).tickFormat(""));
+  svg.append("g").attr("class", "axis").attr("transform", `translate(${m.l},0)`).call(d3.axisLeft(y).ticks(5).tickFormat(yFmt).tickSizeOuter(0));
+  // tick labels on two lines when they would collide
+  const ax = svg.append("g").attr("class", "axis").attr("transform", `translate(0,${H - m.b})`).call(d3.axisBottom(x).tickSizeOuter(0));
+  ax.selectAll(".tick text").each(function (t) {
+    if (t.length * 6.5 < x.step()) return;
+    const sp = t.includes(", ") ? t.indexOf(", ") + 1 : t.lastIndexOf(" ", Math.ceil(t.length / 2) + 2);
+    const el = d3.select(this).text(null);
+    el.append("tspan").attr("x", 0).attr("dy", "0.71em").text(t.slice(0, sp).trim());
+    el.append("tspan").attr("x", 0).attr("dy", "1.1em").text(t.slice(sp).trim());
+  });
+  const two = ax.selectAll(".tick text tspan").size() > 0;
+  svg.append("text").attr("class", "axis-title").attr("x", m.l).attr("y", 10).text(title + (mw ? " (MW per stretch)" : ""));
+  svg.append("text").attr("class", "axis-title").attr("x", w - m.r).attr("y", H - 4).attr("text-anchor", "end").text(xTitle);
+  groups.forEach((g) => {
+    const n = g.rows.length;
+    svg.append("text").attr("class", "axis-title").attr("x", x(g.label) + x.bandwidth() / 2).attr("y", H - m.b + (two ? 42 : 30)).attr("text-anchor", "middle")
+      .text(`${d3.format(",")(new Set(g.rows.map((z) => z.unit)).size)} units`);
+    if (!n) return;
+    let y0 = 0;
+    ST_RESP.forEach((r) => {
+      const sub = g.rows.filter((z) => z.r === r.id), k = sub.length, v = val(g, sub);
+      svg.append("rect").attr("x", x(g.label)).attr("width", x.bandwidth()).attr("y", y(y0 + v)).attr("height", y(y0) - y(y0 + v))
+        .attr("fill", css(r.color || s.color)).attr("fill-opacity", r.o)
+        .on("pointermove", (ev) => showTip(ev, `<h4>${g.label}</h4>${r.label}: ${mw ? `${d3.format(",.0f")(v)} MW per stretch on average` : fmtPct(v)} (${k} of ${n} times a unit in this group ran into a stretch)`)).on("pointerleave", hideTip);
+      y0 += v;
+    });
+  });
+  el.replaceChildren(svg.node());
+}
+
+const ST_MIN_N = 5;                      // stretches needed before a unit's shares are shown
+const ST_SORT = [
+  { id: "off", label: "Share turned off", f: (a, b) => d3.descending(a.offShare ?? -1, b.offShare ?? -1) },
+  { id: "p10", label: "Minimum hours off (10th pct)", f: (a, b) => d3.ascending(a.offP10 ?? 1e9, b.offP10 ?? 1e9) },
+  { id: "n", label: "Stretches running into", f: (a, b) => d3.descending(a.n, b.n) },
+];
+async function drawStretch() {
+  const el = $("st-group");
+  if (!S.I) return emptyMsg(el, "Fills in after the data update builds the intraday file.");
+  if (!S.UH) {
+    el.innerHTML = `<p class="empty">Loading hourly data…</p>`;
+    S.UH = (await tryJSON("data/unit_hours_60d.json.gz")) || { dates: [], units: {} };
+  }
+  if (!S.UH.dates.length) return emptyMsg(el, "No hourly data.");
+  const thr = +S.stThr, ts = techsOf(S.stTech).filter((t) => t !== "nuclear");
+  const s = S.stTech === "all" ? ALL_THERMAL : TECHS.find((x) => x.id === S.stTech);
+  const { rows: all, n: nEps } = stretchResponses(thr), rows = all.filter((r) => ts.includes(r.tech));
+  $("st-legend").innerHTML = ST_RESP.map((r) => `<span><span class="sw" style="background:var(${r.color || s.color});opacity:${r.o}"></span>${r.label}</span>`).join("");
+  const fmtD = d3.timeFormat("%b %-d, %Y"), period = `${fmtD(parseDate(S.UH.dates[0]))} to ${fmtD(parseDate(S.UH.dates.at(-1)))}`;
+  $("st-note").textContent = `A cheap stretch is a run of consecutive hours with system lambda below ${fmtPrice0(thr)}. There were ${nEps} from ${period}. ` +
+    `The chart takes the ${S.stTech === "all" ? "coal and gas" : s.label.toLowerCase()} units that were already running ${ST_LEAD} hours before each stretch began and shows what they did by the time it ended. ` +
+    `Each bar is one group of units, by how they ran over the whole period: ${ST_GROUPS.map((g) => `${g.label.toLowerCase()} (${g.note})`).join("; ")}. ` +
+    (S.stUnit === "mw" ? `Bars show MW of capacity (HSL) in a typical stretch, averaged over all ${nEps}. ` : `Bars show the share of times a unit in the group ran into a stretch. `) +
+    `Each combined-cycle train counts as one unit, so switching configuration is not a shutdown. Nuclear is left out. Lambda is the system price; a unit's own nodal price can differ.`;
+  stackBars(el, ST_GROUPS.map((g) => ({ label: g.label, rows: rows.filter((r) => r.group === g.id) })), s, "What running units did in cheap stretches", "", nEps);
+  // unit table
+  const B = stretchBase(), by = d3.group(rows, (r) => r.unit);
+  const list = [...B.units.values()].filter((e) => ts.includes(e.tech) && (by.has(e.unit) || e.shut > 0)).map((e) => {
+    const g = by.get(e.unit) || [], n = g.length, c = (id) => (n >= ST_MIN_N ? g.filter((r) => r.r === id).length / n : null);
+    return { ...e, n, offShare: n >= ST_MIN_N ? c("B") + c("D") : null, minShare: c("M"), aboveShare: c("A") };
+  }).sort(ST_SORT.find((x) => x.id === S.stSort).f);
+  const gl = (id) => ST_GROUPS.find((g) => g.id === id).label, hrs = (v) => (v == null ? "–" : d3.format(",.0f")(v)), pc = (v) => (v == null ? "–" : fmtPct(v));
+  $("st-units-note").textContent = `${list.length} units. "Stretches" counts the cheap stretches a unit was already running into; the next three columns say what it did in them (shown once a unit has at least ${ST_MIN_N}). ` +
+    `"Shutdowns" and hours off cover every shutdown in the period, cheap or not, in whole hours, leaving out outages; for a combined-cycle train a single offline hour is taken as a configuration change. ` +
+    `The 10th percentile of hours off is a steadier guide to a unit's real minimum down time than its single shortest spell, which can be a trip and quick restart. Click a unit to open its detail.`;
+  const cols = [
+    { h: "Unit", t: 1, f: (r) => esc(r.name) }, { h: "Technology", t: 1, f: (r) => techLabel(r.tech) }, { h: "Group", t: 1, f: (r) => gl(r.group) }, { h: "MW", f: (r) => d3.format(",.0f")(r.mw) },
+    { h: "Stretches", f: (r) => r.n }, { h: "Turned off", f: (r) => pc(r.offShare) }, { h: "At min", f: (r) => pc(r.minShare) }, { h: "Above min", f: (r) => pc(r.aboveShare) },
+    { h: "Shutdowns", f: (r) => r.shut }, { h: "Shortest off (h)", f: (r) => hrs(r.offMin) }, { h: "Min off, 10th pct (h)", f: (r) => hrs(r.offP10) }, { h: "Median off (h)", f: (r) => hrs(r.offMed) },
+  ];
+  $("st-units").innerHTML = list.length ? unitRows(list.map((r) => ({ ...r, name: r.unit, unit: r.pick })), cols)
+    : `<p class="empty">No units match.</p>`;
+  setCSV(el, ["unit", "technology", "group", "stretches_running_into", "share_turned_off", "share_at_minimum", "share_above_minimum", "shutdowns", "shortest_hours_off", "p10_hours_off", "median_hours_off", "mw"],
+    list.map((r) => [r.unit, r.tech, r.group, r.n, r.offShare, r.minShare, r.aboveShare, r.shut, r.offMin, r.offP10, r.offMed, r.mw]), `Cheap stretches, lambda below ${thr}`);
+  if (S.unit && S.T.units.find((u) => u.unit === S.unit) && !$("unit-detail").hidden) {
+    const u = S.T.units.find((x) => x.unit === S.unit); drawUnitStretch(u, TECHS.find((x) => x.id === u.tech), S.stripScale);
+  }
+}
+
+// under the unit strip: one mark per cheap stretch the unit (or its train) ran into
+function drawUnitStretch(u, s, sc) {
+  const el = $("unit-stretch");
+  S.stripScale = sc;
+  if (!sc || !S.I || !S.UH || u.tech === "nuclear") { el.replaceChildren(); return; }
+  const thr = +S.stThr, key = u.tech === "combined_cycle" ? trainOf(u.unit) : u.unit;
+  const { rows } = stretchResponses(thr), mine = rows.filter((r) => r.unit === key), B = stretchBase();
+  const { x, w, m } = sc, H = 74, top = 22;
+  const svg = d3.create("svg").attr("viewBox", `0 0 ${w} ${H}`);
+  const e = B.units.get(key), cnt = d3.rollup(mine, (g) => g.length, (r) => r.r);
+  svg.append("text").attr("class", "axis-title").attr("x", m.l).attr("y", 12)
+    .text(`${key === u.unit ? "" : `Train ${key} · `}ran into ${mine.length} cheap stretch${mine.length === 1 ? "" : "es"} below ${fmtPrice0(thr)}` +
+      (mine.length ? " · " + ST_RESP.map((r) => `${r.label.toLowerCase()} ${cnt.get(r.id) || 0}`).join(", ") : "") + (e ? ` · ${ST_GROUPS.find((g) => g.id === e.group).label.toLowerCase()}` : ""));
+  const t0 = B.day0.getTime() - 12 * 3600e3;    // day0 is noon
+  const xt = (k) => x(new Date(t0 + k * 3600e3));
+  svg.append("line").attr("x1", m.l).attr("x2", w - m.r).attr("y1", top + 20).attr("y2", top + 20).attr("stroke", css("--grid"));
+  mine.forEach((r) => {
+    const rr = ST_RESP.find((z) => z.id === r.r), x0 = xt(r.a), x1 = Math.max(x0 + 3, xt(r.a + r.len));
+    svg.append("rect").attr("x", x0).attr("y", top + 4).attr("width", x1 - x0).attr("height", 32).attr("fill", css(rr.color || s.color)).attr("fill-opacity", rr.o)
+      .on("pointermove", (ev) => showTip(ev, `<h4>${fmtDate(new Date(t0 + r.a * 3600e3))} · from HE ${(r.a % 24) + 1}</h4>${r.len} h below ${fmtPrice0(thr)}<br>${rr.label}<br>Running ${r.run} h before the ${ST_LEAD} h lead-in`))
+      .on("pointerleave", hideTip);
+  });
+  el.replaceChildren(svg.node());
 }
 
 // bars by hour of day with the average lambda line on a right axis
@@ -819,12 +1053,12 @@ async function drawHeat() {
 }
 
 // ---- links ------------------------------------------------------------------------
-const VIEW_KEYS = { cht: "cheapTech", chthr: "cheapThr", sht: "shutTech", shp: "shutPrice", hm: "heatMeasure", ht: "heatTech", hthr: "heatThr", hs: "heatScale", f: "floorMode", pq: "pqTech", cap: "capTech", sc: "scTech", scx: "scX", ms: "mSrc", mv: "mView", md: "mDays", ct: "chgTech", cs: "chgSig", unit: "unit" };
+const VIEW_KEYS = { stu: "stUnit", stt: "stTech", stp: "stThr", sts: "stSort", cht: "cheapTech", chthr: "cheapThr", sht: "shutTech", shp: "shutPrice", hm: "heatMeasure", ht: "heatTech", hthr: "heatThr", hs: "heatScale", f: "floorMode", pq: "pqTech", cap: "capTech", sc: "scTech", scx: "scX", ms: "mSrc", mv: "mView", md: "mDays", ct: "chgTech", cs: "chgSig", unit: "unit" };
 function saveView() { window.CX.writeHash(Object.fromEntries(Object.entries(VIEW_KEYS).map(([k, sk]) => [k, S[sk]]))); }
 function loadView() { const v = window.CX.readHash(); Object.entries(VIEW_KEYS).forEach(([k, sk]) => { if (v[k] != null) S[sk] = v[k]; }); }
 
 // ---- boot ---------------------------------------------------------------------------
-function drawAll() { drawFloor(); drawRenewBands(); drawCurtailment(); drawPriceQuantiles(); drawCapacity(); drawScatter(); drawPartial(); drawCheap(); drawShut(); if (heatSeen) drawHeat(); drawMarginal(); drawChanges(); }
+function drawAll() { drawFloor(); drawRenewBands(); drawCurtailment(); drawPriceQuantiles(); drawCapacity(); drawScatter(); drawPartial(); drawCheap(); drawShut(); drawStretch(); if (heatSeen) drawHeat(); drawMarginal(); drawChanges(); }
 let heatSeen = false;
 
 async function boot() {
@@ -848,6 +1082,10 @@ async function boot() {
   [["cheap-thr", "cheapThr", drawCheap], ["shut-price", "shutPrice", drawShut], ["heat-scale-mode", "heatScale", drawHeat]].forEach(([id, key, fn]) => { setSeg(id, S[key]); bindSeg(id, key, fn); });
   bindSelect("cheap-tech", "cheapTech", [ALL_THERMAL, ...thermal], drawCheap);
   bindSelect("shut-tech", "shutTech", [ALL_THERMAL, ...thermal], drawShut);
+  bindSelect("st-tech", "stTech", [ALL_THERMAL, ...thermal.filter((t) => t.id !== "nuclear")], drawStretch);
+  bindSelect("st-sort", "stSort", ST_SORT, drawStretch);
+  setSeg("st-thr", S.stThr); bindSeg("st-thr", "stThr", drawStretch);
+  setSeg("st-unit", S.stUnit); bindSeg("st-unit", "stUnit", drawStretch);
   bindSelect("heat-measure", "heatMeasure", HEAT_MEASURES, drawHeat);
   // the offer summaries are large: draw the heatmap once it is about to scroll into view
   new IntersectionObserver((es, ob) => { if (es.some((e) => e.isIntersecting)) { heatSeen = true; drawHeat(); ob.disconnect(); } }, { rootMargin: "400px" })
@@ -855,7 +1093,7 @@ async function boot() {
   $("unit-list").innerHTML = S.T.units.map((u) => `<option value="${esc(u.unit)}">${techLabel(u.tech)}</option>`).join("");
   $("unit-pick").addEventListener("change", (e) => showUnit(e.target.value.trim()));
   $("unit-pick").addEventListener("input", (e) => { if (S.T.units.some((u) => u.unit === e.target.value)) showUnit(e.target.value); });
-  ["chg-table", "flip-table", "cheap-units", "shut-units"].forEach((id) => $(id).addEventListener("click", (e) => {
+  ["chg-table", "flip-table", "cheap-units", "shut-units", "st-units"].forEach((id) => $(id).addEventListener("click", (e) => {
     const tr = e.target.closest("tr[data-unit]");
     if (tr) showUnit(tr.dataset.unit);
   }));
