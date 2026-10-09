@@ -819,7 +819,7 @@ function drawOfferStack() {
   svg.append("g").attr("class", "axis").attr("transform", `translate(${m.l},0)`)
     .call(d3.axisLeft(y).ticks(6).tickFormat(share ? (v) => fmtPct(Math.abs(v)) : (v) => d3.format(",.0f")(Math.abs(v))).tickSizeOuter(0));
   svg.append("text").attr("class", "axis-title").attr("x", m.l).attr("y", 10)
-    .text(share ? "Share of supply offered near each price (above) · battery charging (below)" : "MW offered per $1 of price (above: supply, below: battery charging)");
+    .text(share ? "Share of supply offered near each price (above) · battery charging (below)" : "MW offered at each $1 of price (above: supply, below: battery charging)");
   svg.append("text").attr("class", "axis-title").attr("x", w - m.r).attr("y", H - 2).attr("text-anchor", "end").text("Offer price ($/MWh, compressed scale)");
   // supply stacked upward, charging downward, clipped to the plot
   const clipId = "os-clip-" + Math.random().toString(36).slice(2, 8);
@@ -858,14 +858,14 @@ function drawOfferStack() {
       if (!live[i]) return showTip(ev, `<h4>Around ${fmtPrice(d.p)}</h4>Almost nothing is offered near this price.`);
       const rows = supI.filter((j) => d.sh[j] > 0.005).sort((a, b) => d.sh[b] - d.sh[a]);
       showTip(ev, `<h4>Around ${fmtPrice(d.p)}</h4><table>` + rows.map((j) =>
-        `<tr><td><span class="sw" style="background:var(${list[j].color})"></span></td><td>${list[j].label}</td><td class="n">${d3.format(".0%")(d.sh[j])}</td><td class="n">${d3.format(",.0f")(d.mwd[j])} MW/$</td></tr>`).join("") +
-        (chgI >= 0 && d.chg > 0 ? `<tr><td><span class="sw" style="background:var(${list[chgI].color})"></span></td><td>Battery charging (of all moving MW)</td><td class="n">${d3.format(".0%")(d.sh[chgI])}</td><td class="n">${d3.format(",.0f")(d.chg)} MW/$</td></tr>` : "") +
+        `<tr><td><span class="sw" style="background:var(${list[j].color})"></span></td><td>${list[j].label}</td><td class="n">${d3.format(".0%")(d.sh[j])}</td><td class="n">${d3.format(",.0f")(d.mwd[j])} MW</td></tr>`).join("") +
+        (chgI >= 0 && d.chg > 0 ? `<tr><td><span class="sw" style="background:var(${list[chgI].color})"></span></td><td>Battery charging (of all moving MW)</td><td class="n">${d3.format(".0%")(d.sh[chgI])}</td><td class="n">${d3.format(",.0f")(d.chg)} MW</td></tr>` : "") +
         `</table><p class="tip-body">Supply shares add to 100% of supply offered near this price.</p>`);
     })
     .on("pointerleave", () => { cross.style("display", "none"); hideTip(); });
   el.replaceChildren(svg.node());
-  setCSV(el, ["price_usd_mwh", ...supI.map((j) => `${list[j].label} share of supply`), ...supI.map((j) => `${list[j].label} MW per $`),
-    ...(chgI >= 0 ? ["battery charging share of all moving MW", "battery charging MW per $"] : [])],
+  setCSV(el, ["price_usd_mwh", ...supI.map((j) => `${list[j].label} share of supply`), ...supI.map((j) => `${list[j].label} MW per $1 of price`),
+    ...(chgI >= 0 ? ["battery charging share of all moving MW", "battery charging MW per $1 of price"] : [])],
     pts.filter((d, i) => live[i]).map((d) => [Math.round(d.p * 100) / 100, ...supI.map((j) => d.sh[j]), ...supI.map((j) => d.mwd[j]), ...(chgI >= 0 ? [d.sh[chgI], d.chg] : [])]),
     `Offer stack by price ${S.date}`);
 }
