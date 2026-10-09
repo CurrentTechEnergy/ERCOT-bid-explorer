@@ -266,8 +266,26 @@ function drawPriceQuantiles() {
     title: `${s.label}: offer price at which 25%, 50% and 90% of submitted MW is available ($/MWh)` });
 }
 
+// capacity by status from the intraday file (pipeline/intraday.py status_group)
+const STATUS6 = [
+  { id: "offer", label: "Running on an offer", color: "--c1" },
+  { id: "schedule", label: "Running on an output schedule", color: "--c4" },
+  { id: "ruc", label: "Committed by ERCOT (RUC)", color: "--c8" },
+  { id: "other_on", label: "Other online states (testing, emergency, starting, stopping)", color: "--c7-soft" },
+  { id: "off", label: "Offline but available", color: "--c-other" },
+  { id: "out", label: "On outage", color: "--ink-2" },
+];
 function drawCapacity() {
   const el = $("cap-chart"), s = TECHS.find((t) => t.id === S.capTech);
+  const C = S.I && S.I.tech[S.capTech];
+  if (C && C.cap_offer) {
+    $("cap-note").textContent = "MW of capacity (HSL) by unit status, averaged over each day's SCED runs, from the per-unit 60-day data. \"Offline but available\" is the economic choice not to run; outages are not. Units on an output schedule run at the MW their QSE scheduled, with no offer curve. RUC is ERCOT committing a unit for reliability, which is rare.";
+    staticLegend($("cap-legend"), STATUS6);
+    const series = STATUS6.map((g) => ({ ...g, values: C["cap_" + g.id] }));
+    return timeChart(el, series, { stack: true, dates: S.I.dates,
+      stackMax: d3.max(S.I.dates, (_, i) => d3.sum(series, (x) => x.values[i] || 0)) || 1,
+      H: 280, title: `${s.label}: capacity by status (MW)`, yFmt: d3.format(",.0f") });
+  }
   if (!hasStat("mw_off")) {
     $("cap-note").textContent = "Status detail (running, ERCOT-committed, offline but available, on outage) fills in after the 60-day data is reprocessed. Until then this shows units online.";
     $("cap-legend").innerHTML = "";
