@@ -212,8 +212,9 @@ function drawTotals() {
     { ...MARGIN, values: margin }, { title: "Revenue (up) and cost (down) per day, $, all units", yFmt: (v) => fmt$k(v) });
   let cum = 0;
   const cumv = margin.map((v) => (v == null ? null : (cum += v)));
-  lineChart(mel, T.dates, [{ label: "Cumulative margin", color: "--c5", values: cumv }, { label: "Margin per MWh (daily)", color: "--c1", dash: "4 3", values: margin.map((v, i) => (v == null || !mwh[i] ? null : v / mwh[i])) }],
-    { H: 200, title: "Cumulative margin ($) and daily margin per MWh", yFmt: (v) => fmt$k(v), tipFmt: fmt$ });
+  lineChart(mel, T.dates, [{ label: "Cumulative margin", color: "--c5", values: cumv }], { H: 200, title: "Cumulative margin ($)", yFmt: (v) => fmt$k(v), tipFmt: fmt$ });
+  lineChart($("mpm-chart"), T.dates, [{ label: "Margin per MWh", color: "--c1", values: margin.map((v, i) => (v == null || !mwh[i] ? null : v / mwh[i])) }],
+    { H: 180, title: "Daily margin per MWh produced ($/MWh)", yFmt: (v) => fmt$(v), tipFmt: fmt$2 });
 }
 
 function drawInputs() {
