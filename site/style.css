@@ -185,5 +185,3 @@ details.dl > summary:hover { color: var(--ink); border-color: var(--muted); }
 .tip td.n { white-space: nowrap; }
 .sub-h { font-size: 0.95rem; font-weight: 600; margin: 1.4rem 0 0.2rem; }
 .tip .muted { color: var(--muted); }
-.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
-@media (max-width: 760px) { .two-col { grid-template-columns: 1fr; } }

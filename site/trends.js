@@ -63,7 +63,7 @@ const S = { T: null, C: null, M: {}, floorMode: "floor_sced", hidden: { floor: n
   chgTech: "all", chgSig: "all", unit: null,
   I: null, UH: null, idx: null, summ60: null, cheapTech: "all", cheapThr: "0", shutTech: "combined_cycle", shutPrice: "any",
   heatMeasure: "offer", heatTech: "combined_cycle", heatThr: "0", heatScale: "zero",
-  stTech: "all", stThr: "0", stSort: "off", stUnit: "share", stSplit: "after", stBase: null, stripScale: null };
+  stTech: "all", stThr: "0", stSort: "off", stUnit: "mw", stBase: null, stripScale: null };
 const { getJSON, tryJSON, showTip, hideTip, setCSV } = window.CX;
 const $ = (id) => document.getElementById(id);
 const css = (v) => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
@@ -732,7 +732,6 @@ function drawShut() {
 // configuration (only one online at a time), so configurations are merged into their train:
 // in each hour the train takes the "most running" state of its configurations.
 const ST_LEAD = 6;                       // hours before a stretch a unit must already be running
-const ST_AFTER = 6;                      // hours after a stretch whose highest lambda is "the price after"
 const ST_RESP = [
   { id: "B", label: `Turned off in the ${ST_LEAD} h before`, color: "--c8", o: 1 },
   { id: "D", label: "Turned off during the stretch", color: "--c8", o: 0.45 },
@@ -808,8 +807,6 @@ function stretchResponses(thr) {
   const rows = [];
   for (const [a, b] of eps) {
     if (a < ST_LEAD) continue;
-    let after = null;
-    for (let k = b; k < Math.min(N, b + ST_AFTER); k++) if (!isNaN(lam[k])) after = Math.max(after ?? -Infinity, lam[k]);
     for (const e of B.units.values()) {
       const st = e.st, s0 = st[a - ST_LEAD];
       if (s0 !== "m" && s0 !== "a") continue;
@@ -823,7 +820,7 @@ function stretchResponses(thr) {
       if (bad) continue;
       let run = 0;
       for (let k = a - ST_LEAD; k >= 0 && (st[k] === "m" || st[k] === "a"); k--) run++;
-      rows.push({ unit: e.unit, tech: e.tech, group: e.group, mw: e.mw, a, len: b - a, run, after,
+      rows.push({ unit: e.unit, tech: e.tech, group: e.group, mw: e.mw, a, len: b - a, run,
         r: pre0 ? "B" : dur0 ? "D" : na / (b - a) > 0.5 ? "A" : "M" });
     }
   }
@@ -833,7 +830,7 @@ function stretchResponses(thr) {
 // share: each bar sums to 100% of unit-stretches; mw: average MW per cheap stretch doing each thing
 function stackBars(el, groups, s, title, xTitle, nEps) {
   const mw = S.stUnit === "mw", w = Math.max(280, el.clientWidth || 500), H = 262, m = { t: 22, r: 8, b: 60, l: mw ? 56 : 44 };
-  const x = d3.scaleBand().domain(groups.map((g) => g.label)).range([m.l, w - m.r]).padding(0.22);
+  const x = d3.scaleBand().domain(groups.map((g) => g.label)).range([m.l, w - m.r]).padding(w > 900 ? 0.45 : 0.22);
   const val = (g, rows) => (mw ? d3.sum(rows, (z) => z.mw) / Math.max(1, g.nEps ?? nEps) : rows.length / Math.max(1, g.rows.length));
   const top = mw ? d3.max(groups, (g) => val(g, g.rows)) || 1 : 1;
   const y = d3.scaleLinear().domain([0, top]).nice().range([H - m.b, m.t]);
@@ -891,18 +888,10 @@ async function drawStretch() {
   const fmtD = d3.timeFormat("%b %-d, %Y"), period = `${fmtD(parseDate(S.UH.dates[0]))} to ${fmtD(parseDate(S.UH.dates.at(-1)))}`;
   $("st-note").textContent = `A cheap stretch is a run of consecutive hours with system lambda below ${fmtPrice0(thr)}. There were ${nEps} from ${period}. ` +
     `Each bar looks at the ${S.stTech === "all" ? "coal and gas" : s.label.toLowerCase()} units that were already running ${ST_LEAD} hours before a stretch began, and shows what they did by the time it ended. ` +
-    `The left chart groups units by how they ran over the whole period: ${ST_GROUPS.map((g) => `${g.label.toLowerCase()} (${g.note})`).join("; ")}. ` +
+    `Units are grouped by how they ran over the whole period: ${ST_GROUPS.map((g) => `${g.label.toLowerCase()} (${g.note})`).join("; ")}. ` +
     (S.stUnit === "mw" ? `In MW, bars show the average capacity (HSL) per stretch: how many MW of running units did each thing in a typical stretch. ` : "") +
     `Each combined-cycle train counts as one unit, so switching configuration is not a shutdown. Nuclear is left out. Lambda is the system price; a unit's own nodal price can differ.`;
-  stackBars(el, ST_GROUPS.map((g) => ({ label: g.label, rows: rows.filter((r) => r.group === g.id) })), s, "What running units did, by how they ran over the period", "", nEps);
-  const byLen = S.stSplit === "len";
-  const bins = byLen ? [[0, 2, "1–2 h"], [2, 6, "3–6 h"], [6, 1e9, "7 h or more"]] : [[-1e9, 30, "Under $30"], [30, 60, "$30–60"], [60, 1e9, "$60 or more"]];
-  const key = byLen ? (r) => r.len : (r) => r.after;
-  stackBars($("st-len"), bins.map(([a, b, l]) => {
-    const g = rows.filter((r) => key(r) != null && (byLen ? key(r) > a && key(r) <= b : key(r) >= a && key(r) < b));
-    return { label: l, rows: g, nEps: new Set(g.map((r) => r.a)).size };
-  }), s, byLen ? "What running units did, by length of the stretch" : `What running units did, by the price after the stretch`,
-  byLen ? "Length of the cheap stretch" : `Highest lambda in the ${ST_AFTER} hours after the stretch`, nEps);
+  stackBars(el, ST_GROUPS.map((g) => ({ label: g.label, rows: rows.filter((r) => r.group === g.id) })), s, "What running units did in cheap stretches, by how each unit ran over the period", "", nEps);
   // unit table
   const B = stretchBase(), by = d3.group(rows, (r) => r.unit);
   const list = [...B.units.values()].filter((e) => ts.includes(e.tech) && (by.has(e.unit) || e.shut > 0)).map((e) => {
@@ -1064,7 +1053,7 @@ async function drawHeat() {
 }
 
 // ---- links ------------------------------------------------------------------------
-const VIEW_KEYS = { stsp: "stSplit", stu: "stUnit", stt: "stTech", stp: "stThr", sts: "stSort", cht: "cheapTech", chthr: "cheapThr", sht: "shutTech", shp: "shutPrice", hm: "heatMeasure", ht: "heatTech", hthr: "heatThr", hs: "heatScale", f: "floorMode", pq: "pqTech", cap: "capTech", sc: "scTech", scx: "scX", ms: "mSrc", mv: "mView", md: "mDays", ct: "chgTech", cs: "chgSig", unit: "unit" };
+const VIEW_KEYS = { stu: "stUnit", stt: "stTech", stp: "stThr", sts: "stSort", cht: "cheapTech", chthr: "cheapThr", sht: "shutTech", shp: "shutPrice", hm: "heatMeasure", ht: "heatTech", hthr: "heatThr", hs: "heatScale", f: "floorMode", pq: "pqTech", cap: "capTech", sc: "scTech", scx: "scX", ms: "mSrc", mv: "mView", md: "mDays", ct: "chgTech", cs: "chgSig", unit: "unit" };
 function saveView() { window.CX.writeHash(Object.fromEntries(Object.entries(VIEW_KEYS).map(([k, sk]) => [k, S[sk]]))); }
 function loadView() { const v = window.CX.readHash(); Object.entries(VIEW_KEYS).forEach(([k, sk]) => { if (v[k] != null) S[sk] = v[k]; }); }
 
@@ -1097,7 +1086,6 @@ async function boot() {
   bindSelect("st-sort", "stSort", ST_SORT, drawStretch);
   setSeg("st-thr", S.stThr); bindSeg("st-thr", "stThr", drawStretch);
   setSeg("st-unit", S.stUnit); bindSeg("st-unit", "stUnit", drawStretch);
-  setSeg("st-split", S.stSplit); bindSeg("st-split", "stSplit", drawStretch);
   bindSelect("heat-measure", "heatMeasure", HEAT_MEASURES, drawHeat);
   // the offer summaries are large: draw the heatmap once it is about to scroll into view
   new IntersectionObserver((es, ob) => { if (es.some((e) => e.isIntersecting)) { heatSeen = true; drawHeat(); ob.disconnect(); } }, { rootMargin: "400px" })
