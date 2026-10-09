@@ -744,6 +744,7 @@ const ST_GROUPS = [
   { id: "some", label: "Two-shifts 1–2 times", note: "off and back within 24 h once or twice" },
   { id: "cycler", label: "Two-shifts 3+ times", note: "off and back within 24 h at least 3 times" },
 ];
+const ST_FLEET = [...ST_RESP, { id: "N", label: "Not running going in", color: "--grid", o: 1 }];
 const ST_RANK = { a: 4, m: 3, "0": 2, o: 1, "-": 0 };
 const trainOf = (u) => { const m = /^(.*_CC\d+)_/.exec(u); return m ? m[1] : u; };
 
@@ -790,6 +791,7 @@ function stretchBase() {
     const two = e.off.filter((h) => h < 24).length;
     e.group = two >= 3 ? "cycler" : two > 0 ? "some" : e.shut > 0 ? "rare" : "never";
     e.pick = e.configs.sort((a, b) => b.run - a.run)[0].name;   // config shown in Unit detail
+    e.ran = st.some((c) => c === "m" || c === "a");
     const o = e.off.slice().sort(d3.ascending);
     e.offMin = o.length ? o[0] : null; e.offP10 = o.length ? d3.quantile(o, 0.1) : null; e.offMed = o.length ? d3.median(o) : null;
   }
@@ -827,12 +829,13 @@ function stretchResponses(thr) {
   return (B.resp[thr] = { rows, n: eps.length });
 }
 
-// share: each bar sums to 100% of times a unit ran into a stretch; mw: average MW per stretch doing each thing
-function stackBars(el, groups, s, title, xTitle, nEps) {
+// each bar is a group's whole fleet: every unit's capacity (HSL) split by what it did across
+// all cheap stretches (including stretches it was not running into); share = the same / group MW
+function fleetBars(el, groups, s, title) {
   const mw = S.stUnit === "mw", w = Math.max(280, el.clientWidth || 500), H = 262, m = { t: 22, r: 8, b: 60, l: mw ? 56 : 44 };
   const x = d3.scaleBand().domain(groups.map((g) => g.label)).range([m.l, w - m.r]).padding(w > 900 ? 0.45 : 0.22);
-  const val = (g, rows) => (mw ? d3.sum(rows, (z) => z.mw) / Math.max(1, g.nEps ?? nEps) : rows.length / Math.max(1, g.rows.length));
-  const top = mw ? d3.max(groups, (g) => val(g, g.rows)) || 1 : 1;
+  const val = (g, id) => (mw ? g.mw[id] : g.total ? g.mw[id] / g.total : 0);
+  const top = mw ? d3.max(groups, (g) => g.total) || 1 : 1;
   const y = d3.scaleLinear().domain([0, top]).nice().range([H - m.b, m.t]);
   const yFmt = mw ? d3.format(",.0f") : fmtPct;
   const svg = d3.create("svg").attr("viewBox", `0 0 ${w} ${H}`);
@@ -848,19 +851,17 @@ function stackBars(el, groups, s, title, xTitle, nEps) {
     el.append("tspan").attr("x", 0).attr("dy", "1.1em").text(t.slice(sp).trim());
   });
   const two = ax.selectAll(".tick text tspan").size() > 0;
-  svg.append("text").attr("class", "axis-title").attr("x", m.l).attr("y", 10).text(title + (mw ? " (MW per stretch)" : ""));
-  svg.append("text").attr("class", "axis-title").attr("x", w - m.r).attr("y", H - 4).attr("text-anchor", "end").text(xTitle);
+  svg.append("text").attr("class", "axis-title").attr("x", m.l).attr("y", 10).text(title);
   groups.forEach((g) => {
-    const n = g.rows.length;
     svg.append("text").attr("class", "axis-title").attr("x", x(g.label) + x.bandwidth() / 2).attr("y", H - m.b + (two ? 42 : 30)).attr("text-anchor", "middle")
-      .text(`${d3.format(",")(new Set(g.rows.map((z) => z.unit)).size)} units`);
-    if (!n) return;
+      .text(`${g.n} units · ${d3.format(",.0f")(g.total)} MW`);
     let y0 = 0;
-    ST_RESP.forEach((r) => {
-      const sub = g.rows.filter((z) => z.r === r.id), k = sub.length, v = val(g, sub);
+    ST_FLEET.forEach((r) => {
+      const v = val(g, r.id);
       svg.append("rect").attr("x", x(g.label)).attr("width", x.bandwidth()).attr("y", y(y0 + v)).attr("height", y(y0) - y(y0 + v))
         .attr("fill", css(r.color || s.color)).attr("fill-opacity", r.o)
-        .on("pointermove", (ev) => showTip(ev, `<h4>${g.label}</h4>${r.label}: ${mw ? `${d3.format(",.0f")(v)} MW per stretch on average` : fmtPct(v)} (${k} of ${n} times a unit in this group ran into a stretch)`)).on("pointerleave", hideTip);
+        .on("pointermove", (ev) => showTip(ev, `<h4>${g.label}</h4>${r.label}: ${d3.format(",.0f")(g.mw[r.id])} MW (${fmtPct(g.total ? g.mw[r.id] / g.total : 0)} of the group's ${d3.format(",.0f")(g.total)} MW)`))
+        .on("pointerleave", hideTip);
       y0 += v;
     });
   });
@@ -884,16 +885,27 @@ async function drawStretch() {
   const thr = +S.stThr, ts = techsOf(S.stTech).filter((t) => t !== "nuclear");
   const s = S.stTech === "all" ? ALL_THERMAL : TECHS.find((x) => x.id === S.stTech);
   const { rows: all, n: nEps } = stretchResponses(thr), rows = all.filter((r) => ts.includes(r.tech));
-  $("st-legend").innerHTML = ST_RESP.map((r) => `<span><span class="sw" style="background:var(${r.color || s.color});opacity:${r.o}"></span>${r.label}</span>`).join("");
+  $("st-legend").innerHTML = ST_FLEET.map((r) => `<span><span class="sw" style="background:var(${r.color || s.color});opacity:${r.o}"></span>${r.label}</span>`).join("");
   const fmtD = d3.timeFormat("%b %-d, %Y"), period = `${fmtD(parseDate(S.UH.dates[0]))} to ${fmtD(parseDate(S.UH.dates.at(-1)))}`;
-  $("st-note").textContent = `A cheap stretch is a run of consecutive hours with system lambda below ${fmtPrice0(thr)}. There were ${nEps} from ${period}. ` +
-    `The chart takes the ${S.stTech === "all" ? "coal and gas" : s.label.toLowerCase()} units that were already running ${ST_LEAD} hours before each stretch began and shows what they did by the time it ended. ` +
-    `Each bar is one group of units, by how they ran over the whole period: ${ST_GROUPS.map((g) => `${g.label.toLowerCase()} (${g.note})`).join("; ")}. ` +
-    (S.stUnit === "mw" ? `Bars show MW of capacity (HSL) in a typical stretch, averaged over all ${nEps}. ` : `Bars show the share of times a unit in the group ran into a stretch. `) +
-    `Each combined-cycle train counts as one unit, so switching configuration is not a shutdown. Nuclear is left out. Lambda is the system price; a unit's own nodal price can differ.`;
-  stackBars(el, ST_GROUPS.map((g) => ({ label: g.label, rows: rows.filter((r) => r.group === g.id) })), s, "What running units did in cheap stretches", "", nEps);
-  // unit table
   const B = stretchBase(), by = d3.group(rows, (r) => r.unit);
+  // units that never ran in the period (mothballed, long outage) are left out
+  const fleet = [...B.units.values()].filter((e) => ts.includes(e.tech) && e.mw > 0 && e.ran);
+  const groups = ST_GROUPS.map((g) => {
+    const us = fleet.filter((e) => e.group === g.id), out = { label: g.label, n: us.length, total: d3.sum(us, (e) => e.mw), mw: {} };
+    ST_FLEET.forEach((r) => (out.mw[r.id] = 0));
+    us.forEach((e) => {
+      const mine = by.get(e.unit) || [];
+      ST_RESP.forEach((r) => (out.mw[r.id] += (e.mw * mine.filter((z) => z.r === r.id).length) / nEps));
+      out.mw.N += (e.mw * (nEps - mine.length)) / nEps;
+    });
+    return out;
+  });
+  $("st-note").textContent = `A cheap stretch is a run of consecutive hours with system lambda below ${fmtPrice0(thr)}. There were ${nEps} from ${period}. ` +
+    `Each bar is the total capacity (HSL) of one group of ${S.stTech === "all" ? "coal and gas" : s.label.toLowerCase()} units, grouped by how they ran over the whole period: ${ST_GROUPS.map((g) => `${g.label.toLowerCase()} (${g.note})`).join("; ")}. ` +
+    `Each unit's capacity is split by what it did across the ${nEps} stretches: turned off in the ${ST_LEAD} hours before, turned off during, ran at minimum or above minimum (when it was already running ${ST_LEAD} hours before the stretch began), or not running going in (offline, on outage or no data). Units that never ran in the period are left out. ` +
+    `Each combined-cycle train counts as one unit, so switching configuration is not a shutdown. Nuclear is left out. Lambda is the system price; a unit's own nodal price can differ.`;
+  fleetBars(el, groups, s, S.stUnit === "mw" ? "Capacity of each group, MW, split by what it did in cheap stretches" : "Share of each group's capacity, by what it did in cheap stretches");
+  // unit table
   const list = [...B.units.values()].filter((e) => ts.includes(e.tech) && (by.has(e.unit) || e.shut > 0)).map((e) => {
     const g = by.get(e.unit) || [], n = g.length, c = (id) => (n >= ST_MIN_N ? g.filter((r) => r.r === id).length / n : null);
     return { ...e, n, offShare: n >= ST_MIN_N ? c("B") + c("D") : null, minShare: c("M"), aboveShare: c("A") };
