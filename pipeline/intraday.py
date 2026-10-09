@@ -22,9 +22,11 @@ Writes
                      on outage (OUT) during the spell]
   data/unit_hours_60d.json.gz
     dates, units: {unit: "one character per hour, 24 per day"}:
-      "-" no data, "0" offline, "m" running at minimum, "a" running above minimum
+      "-" no data, "0" offline, "o" on outage, "m" running at minimum, "a" running above minimum
+    hsl: {unit: median HSL in the hours it ran (MW)}
 
-A unit runs in an hour when most of its SCED runs in that hour have an online status (ON...).
+A unit runs in an hour when most of its SCED runs in that hour have an online status (ON...);
+an hour it does not run counts as an outage when most of its runs that hour are OUT.
 "At minimum" means hourly output no more than ABOVE_EPS of HSL above the hour's LSL.
 """
 import numpy as np
@@ -80,6 +82,7 @@ def unit_hours(u: dict, runs: list) -> tuple:
     e = expand(u, n)
     hr = np.minimum(np.array(runs) // 60, 23)
     on = np.array([_online(s) for s in e["status"]])
+    is_out = np.array([s == "OUT" for s in e["status"]])
     present = np.array([s is not None for s in e["status"]])
     out = np.array([np.nan if v is None else v for v in u["out"]], float)
     states, lsl_h, hsl_h = [], np.full(24, np.nan), np.full(24, np.nan)
@@ -89,7 +92,7 @@ def unit_hours(u: dict, runs: list) -> tuple:
             states.append("-")
             continue
         if on[idx].mean() < 0.5 or np.isnan(out[h]):
-            states.append("0")
+            states.append("o" if is_out[idx & present].mean() > 0.5 else "0")
             continue
         sel = idx & on
         lsl, hsl = np.nanmean(e["lsl"][sel]), np.nanmean(e["hsl"][sel])
@@ -115,6 +118,7 @@ def build_intraday(index: dict) -> None:
     tech = {t: {k: [None] * D for k in ["at_min", "above", "n"] + ["cap_" + g for g in STATUS_GROUPS]}
             for t in UNIT_TECHS}
     strips = {}
+    hsl_run = {}              # unit -> list of hourly HSL while running
     above_acc = {}            # (unit, thr) -> [tech, hours running, hours above, MWh above]
     spells = []
     pending = {}              # unit -> open spell (dict) carried across consecutive days
@@ -170,6 +174,7 @@ def build_intraday(index: dict) -> None:
                 if g and np.isfinite(h_):
                     sacc[g] += h_
             strips.setdefault(name, ["-" * 24] * di).append(st)
+            hsl_run.setdefault(name, []).extend(v for v in hsl if np.isfinite(v))
             a_min, a_above, a_n = acc[t]
             for h, c in enumerate(st):
                 if c in "ma":
@@ -231,6 +236,7 @@ def build_intraday(index: dict) -> None:
     })
     write_json_gz(DATA_DIR / "unit_hours_60d.json.gz", {
         "dates": dates, "units": {k: "".join(v) for k, v in sorted(strips.items())},
+        "hsl": {k: round(float(np.median(v))) for k, v in sorted(hsl_run.items()) if v},
     })
     print(f"intraday_60d: {D} days, {n_files} per-unit day file(s), {len(spells)} off spells, "
           f"{len(strips)} unit strips")
