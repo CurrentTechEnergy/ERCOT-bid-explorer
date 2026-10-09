@@ -20,7 +20,8 @@ For every unit in the per-unit day files (UNIT_DATA_DIR/60d/) and each 60-day da
             what the unit itself thought its energy was worth
   mingen    DAM minimum-energy offer that day ($/MWh, null without one)
   start     [hot, intermediate, cold] DAM start-up offers ($ per start, null without one)
-  starts    starts that day (trends_60d: status moving to ON), thermal units only
+  starts    starts that day (telemetered status moving from not online to ON), counted for a
+            combined-cycle train as a whole so configuration switches are not starts
   hours_on  hours running (unit_hours_60d strips), thermal units only
 
 Prices are hourly means of the 15-minute (node) or 5-minute (lambda) values, so settlement
@@ -83,8 +84,6 @@ def build_econ(index: dict) -> None:
     node_days = set(index["days"].get("nodes", []))
     dam_days = set(index["days"].get("dam", []))
     prices = read_json_gz(DATA_DIR / "summary_prices.json.gz", default={})
-    trends = read_json_gz(DATA_DIR / "trends_60d.json.gz", default={}) or {}
-    starts_of = {u["unit"]: u.get("starts") for u in trends.get("units", [])} if trends.get("dates") == dates else {}
     strips = (read_json_gz(DATA_DIR / "unit_hours_60d.json.gz", default={}) or {}).get("units", {})
     gas = read_json_gz(DATA_DIR / "gas.json.gz", default=None) or {}
     gas_by = dict(zip(gas.get("dates", []), gas.get("value", [])))
@@ -94,6 +93,8 @@ def build_econ(index: dict) -> None:
         gas_series.append(last)
 
     units = {}      # name -> {"type", "tech", "sp", "hsl": [], series: [D]}
+    starts = {}     # unit, or combined-cycle train -> [D]
+    prev_last, prev_date = {}, None
 
     def rec(name, u):
         if name not in units:
@@ -112,6 +113,24 @@ def build_econ(index: dict) -> None:
         lam = (prices.get(d) or {}).get("lambda") or []
         lam = np.array([np.nan if v is None else v for v in lam[:24]] + [np.nan] * (24 - len(lam[:24])), float)
         runs = ud["runs"]
+        # starts: status events of a day, combined-cycle configurations merged into their train;
+        # a start in the day's first run counts only when the previous day is known
+        if prev_date is None or (np.datetime64(d) - np.datetime64(prev_date)).astype(int) != 1:
+            prev_last = {}
+        evs = {}
+        for name, u in ud["units"].items():
+            key = train_of(name) if u.get("tech") == "combined_cycle" else name
+            evs.setdefault(key, []).extend(ev for ev in u["status"] if ev[1])
+        for key, ev in evs.items():
+            cnt, prev = 0, prev_last.get(key)
+            for _, st in sorted(ev, key=lambda e: e[0]):
+                if prev is not None and not _online(prev) and _online(st):
+                    cnt += 1
+                prev = st
+            starts.setdefault(key, [None] * D)[di] = cnt
+            if prev is not None:
+                prev_last[key] = prev
+        prev_date = d
         for name, u in ud["units"].items():
             if not u.get("out"):
                 continue
@@ -170,13 +189,10 @@ def build_econ(index: dict) -> None:
             s = strips.get(name)
             if s and len(s) >= (di + 1) * 24:
                 r["hours_on"][di] = sum(1 for c in s[di * 24:(di + 1) * 24] if c in "ma")
-            st = starts_of.get(name)
-            if st is not None and di < len(st):
-                r["starts"][di] = st[di]
 
     # a combined-cycle train is one plant registered as several configurations; its economics
     # are summed over them, with the DAM costs of the configuration that produced most that day
-    ADD = ("mwh", "chg", "rev_rt", "rev_lam", "da_mwh", "rev_da", "rev_da_rt", "rev_as", "cost_off", "starts", "hours_on")
+    ADD = ("mwh", "chg", "rev_rt", "rev_lam", "da_mwh", "rev_da", "rev_da_rt", "rev_as", "cost_off", "hours_on")
     merged = {}
     for name, r in units.items():
         key = train_of(name) if r["tech"] == "combined_cycle" else name
@@ -197,6 +213,9 @@ def build_econ(index: dict) -> None:
                     if r[k][di] is not None:
                         m[k][di] = r[k][di]
     units = merged
+    for key, r in units.items():
+        if r["tech"] in SIXTY_DAY_TECHS and r["tech"] not in ("wind", "solar", "storage", "hydro", "other") and key in starts:
+            r["starts"] = starts[key]
     by_tech = {}
     for name, r in units.items():
         t = r["tech"] if r["tech"] in SIXTY_DAY_TECHS else "other"
