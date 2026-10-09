@@ -688,7 +688,7 @@ function drawShut() {
   ];
   $("shut-legend").innerHTML = series.map((x) => `<span><span class="sw" style="background:var(${x.color});opacity:${x.opacity || 1}"></span>${x.label}</span>`).join("");
   const priceTxt = thr == null ? "" : ` where system lambda averaged below ${fmtPrice0(thr)} over the ${I.next_h} hours after the unit went off`;
-  $("shut-note").textContent = `Each bar counts ${s.label.toLowerCase()} units that went from online to off on that day${priceTxt}. Units that went on outage while off are left out, as are spells shorter than an hour (mostly combined-cycle configuration changes). The lower chart shows, for the units back within 24 hours, the hours of the day they were off, as an average number of units per day, with the average lambda for each hour across all days as a dashed line (right axis).`;
+  $("shut-note").textContent = `Each bar counts ${s.label.toLowerCase()} units that went from online to off on that day${priceTxt}. Combined-cycle configurations are merged into their train, so a train that keeps running in another configuration does not count as shut down. Units that went on outage while off are left out, as are spells shorter than an hour. The lower chart shows, for the units back within 24 hours, the hours of the day they were off, as an average number of units per day, with the average lambda for each hour across all days as a dashed line (right axis).`;
   dayBars(el, I.dates, series, { title: `${s.label}: shutdowns per day`, yFmt: d3.format(",.0f") });
   // hour-of-day profile of short spells
   const off = new Array(24).fill(0);
