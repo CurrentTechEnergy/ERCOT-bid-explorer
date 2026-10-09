@@ -396,8 +396,7 @@ async function drawMarginal() {
     .filter((h) => d3.sum(h.v) + h.c > 0).sort((a, b) => a.p - b.p);
   if (H.length < 30) return emptyMsg(el, "Too few hours for this view.");
   const w = Math.max(280, el.clientWidth || 600), narrow = w < 560;
-  if (S.mView === "smooth") drawMarginalSmooth(el, H, list, w, narrow);
-  else drawMarginalGroups(el, H, list, w, narrow);
+  drawMarginalSmooth(el, H, list, w, narrow);
 }
 
 function marginalAxes(svg, y, x, w, H, m, xTitle, xAxis) {
@@ -410,16 +409,37 @@ function marginalAxes(svg, y, x, w, H, m, xTitle, xAxis) {
   return xa;
 }
 
-// each point blends the K hours nearest that price, so it rests on the same amount of data everywhere
+// smoothed: each point blends the MBP_K hours nearest that price, so it rests on the same amount of data
+// everywhere; exact: each $1 band of lambda on its own hours
+const MBP_K = 50, MBP_MIN_H = 5;
 function drawMarginalSmooth(el, H, list, w, narrow) {
-  const K = Math.min(200, Math.floor(H.length / 4)), n = H.length;
-  const cum = [list.map(() => 0)], cc = [0];
-  H.forEach((h, i) => { cum.push(cum[i].map((c, j) => c + h.v[j])); cc.push(cc[i] + h.c); });
-  const step = Math.max(1, Math.floor(n / 400)), pts = [];
-  for (let i = 0; i + K <= n; i += step) {
-    const a = i, b = i + K, v = list.map((_, j) => cum[b][j] - cum[a][j]), sup = d3.sum(v), c = cc[b] - cc[a];
-    pts.push({ p: H[a + (K >> 1)].p, lo: H[a].p, hi: H[b - 1].p, sh: v.map((t) => (sup ? t / sup : 0)), c: sup + c ? c / (sup + c) : 0 });
+  if (S.mView !== "exact") S.mView = "smooth";   // old links may say "groups"
+  const exact = S.mView === "exact";
+  const K = Math.min(MBP_K, Math.floor(H.length / 4)), n = H.length;
+  const pts = [];
+  if (exact) {
+    // each $1 band of lambda on its own hours, as flat steps; thin bands are left blank
+    const bands = d3.groups(H, (h) => Math.floor(h.p)).sort((a, b) => a[0] - b[0]);
+    let prev = null;
+    bands.forEach(([b, hs]) => {
+      if (hs.length < MBP_MIN_H) return;
+      const v = list.map((_, j) => d3.sum(hs, (h) => h.v[j])), sup = d3.sum(v), c = d3.sum(hs, (h) => h.c);
+      const d = { lo: b, hi: b + 1, nh: hs.length, sh: v.map((t) => (sup ? t / sup : 0)), c: sup + c ? c / (sup + c) : 0 };
+      if (prev != null && b !== prev + 1) pts.push({ ...d, p: b, gap: true });
+      pts.push({ ...d, p: b }, { ...d, p: b + 1 });
+      prev = b;
+    });
+    if (!pts.length) return emptyMsg(el, "Too few hours for this view.");
+  } else {
+    const cum = [list.map(() => 0)], cc = [0];
+    H.forEach((h, i) => { cum.push(cum[i].map((c, j) => c + h.v[j])); cc.push(cc[i] + h.c); });
+    const step = Math.max(1, Math.floor(n / 400));
+    for (let i = 0; i + K <= n; i += step) {
+      const a = i, b = i + K, v = list.map((_, j) => cum[b][j] - cum[a][j]), sup = d3.sum(v), c = cc[b] - cc[a];
+      pts.push({ p: H[a + (K >> 1)].p, lo: H[a].p, hi: H[b - 1].p, sh: v.map((t) => (sup ? t / sup : 0)), c: sup + c ? c / (sup + c) : 0 });
+    }
   }
+  const area = () => d3.area().defined((d) => !d.gap).curve(exact ? d3.curveLinear : d3.curveMonotoneX);
   const Hh = 400, HS = 60, m = { t: 18, r: 16, b: 30, l: 50 };
   const x = d3.scaleSymlog().constant(10).domain(d3.extent(pts, (d) => d.p)).range([m.l, w - m.r]);
   const y = d3.scaleLinear().domain([-0.5, 1]).range([Hh - m.b, m.t]);
@@ -429,10 +449,10 @@ function drawMarginalSmooth(el, H, list, w, narrow) {
   let base = pts.map(() => 0);
   list.forEach((s, j) => {
     const lo = base, hi = lo.map((b, i) => b + pts[i].sh[j]);
-    svg.append("path").attr("fill", css(s.color)).attr("d", d3.area().curve(d3.curveMonotoneX).x((d) => x(d.p)).y0((d, i) => y(lo[i])).y1((d, i) => y(hi[i]))(pts));
+    svg.append("path").attr("fill", css(s.color)).attr("d", area().x((d) => x(d.p)).y0((d, i) => y(lo[i])).y1((d, i) => y(hi[i]))(pts));
     base = hi;
   });
-  svg.append("path").attr("fill", css(CHARGING.color)).attr("d", d3.area().curve(d3.curveMonotoneX).x((d) => x(d.p)).y0(y(0)).y1((d) => y(-d.c))(pts));
+  svg.append("path").attr("fill", css(CHARGING.color)).attr("d", area().x((d) => x(d.p)).y0(y(0)).y1((d) => y(-d.c))(pts));
   svg.append("line").attr("class", "zero").attr("x1", m.l).attr("x2", w - m.r).attr("y1", y(0)).attr("y2", y(0));
   // how many hours sit at each price
   const g = svg.append("g").attr("transform", `translate(0,${Hh + 16})`);
@@ -441,56 +461,22 @@ function drawMarginalSmooth(el, H, list, w, narrow) {
   const yh = d3.scaleLinear().domain([0, d3.max(bins, (b) => b.length) || 1]).range([HS, 0]);
   g.selectAll("rect").data(bins).join("rect").attr("x", (b) => x(b.x0) + 0.5).attr("width", (b) => Math.max(0, x(b.x1) - x(b.x0) - 1))
     .attr("y", (b) => yh(b.length)).attr("height", (b) => HS - yh(b.length)).attr("fill", css("--muted")).attr("opacity", 0.45);
-  g.append("text").attr("class", "axis-title").attr("x", m.l).attr("y", -3).text(`Hours at each price (${n.toLocaleString()} hours; the line stops where fewer than ${K / 2} hours lie beyond)`);
+  g.append("text").attr("class", "axis-title").attr("x", m.l).attr("y", -3).text(exact ? `Hours at each price (${n.toLocaleString()} hours; $1 bands with fewer than ${MBP_MIN_H} hours are left blank)` : `Hours at each price (${n.toLocaleString()} hours; the line stops where fewer than ${K / 2} hours lie beyond)`);
   const cross = svg.append("line").attr("class", "crosshair").attr("y1", m.t).attr("y2", Hh - m.b).style("display", "none");
   svg.append("rect").attr("x", m.l).attr("y", m.t).attr("width", w - m.l - m.r).attr("height", Hh - m.t - m.b).attr("fill", "transparent")
     .on("pointermove", (ev) => {
-      const p = x.invert(d3.pointer(ev)[0]), d = pts[d3.minIndex(pts, (q) => Math.abs(q.p - p))];
+      const p = x.invert(d3.pointer(ev)[0]), d = exact ? pts.find((q) => !q.gap && p >= q.lo && p < q.hi) : pts[d3.minIndex(pts, (q) => Math.abs(q.p - p))];
+      if (!d) { cross.style("display", "none"); hideTip(); return; }
       cross.style("display", null).attr("x1", x(d.p)).attr("x2", x(d.p));
       showTip(ev, `<h4>Around ${fmtPrice(d.p)}</h4><table>` + list.map((s, j) => [s, d.sh[j]]).filter(([, v]) => v > 0.005).sort((a, b) => b[1] - a[1])
         .map(([s, v]) => `<tr><td><span class="sw" style="background:var(${s.color})"></span></td><td>${s.label}</td><td class="n">${fmtPct(v)}</td></tr>`).join("") +
         `<tr><td><span class="sw" style="background:var(${CHARGING.color})"></span></td><td>Battery charging (of all moving MW)</td><td class="n">${fmtPct(d.c)}</td></tr></table>` +
-        `<p class="tip-body">Blends the ${K} hours with lambda from ${fmtPrice(d.lo)} to ${fmtPrice(d.hi)}.</p>`);
+        (exact ? `<p class="tip-body">${d.nh} hours with lambda from ${fmtPrice0(d.lo)} to ${fmtPrice0(d.hi)}.</p>` : `<p class="tip-body">Blends the ${K} hours with lambda from ${fmtPrice(d.lo)} to ${fmtPrice(d.hi)}.</p>`));
     })
     .on("pointerleave", () => { cross.style("display", "none"); hideTip(); });
   el.replaceChildren(svg.node());
   setCSV(el, ["lambda_usd_mwh", "window_low", "window_high", ...list.map((s) => `${s.label} share of marginal supply`), "battery charging share of all moving MW"],
     pts.map((d) => [d.p, d.lo, d.hi, ...d.sh, d.c]), "Marginal supply by settled price");
-}
-
-function drawMarginalGroups(el, H, list, w, narrow) {
-  const bins = MBP_BINS.map(([lo, hi, label]) => {
-    const hrs = H.filter((h) => h.p >= lo && h.p < hi);
-    const v = list.map((_, j) => d3.sum(hrs, (h) => h.v[j])), sup = d3.sum(v), c = d3.sum(hrs, (h) => h.c);
-    return { label, n: hrs.length, sh: v.map((t) => (sup ? t / sup : 0)), c: sup + c ? c / (sup + c) : 0 };
-  });
-  const Hh = 360, m = { t: 18, r: 12, b: narrow ? 74 : 58, l: 50 };
-  const x = d3.scaleBand().domain(bins.map((b) => b.label)).range([m.l, w - m.r]).paddingInner(0.18);
-  const y = d3.scaleLinear().domain([-0.5, 1]).range([Hh - m.b, m.t]);
-  const svg = d3.create("svg").attr("viewBox", `0 0 ${w} ${Hh}`);
-  const xa = marginalAxes(svg, y, x, w, Hh, m, "Hour's average system lambda ($/MWh)", d3.axisBottom(x));
-  if (narrow) xa.selectAll("text").attr("transform", "rotate(-45)").attr("text-anchor", "end").attr("dx", "-0.4em").attr("dy", "0.5em");
-  bins.forEach((b) => {
-    const cx = x(b.label), bw = x.bandwidth(), op = b.n < 24 ? 0.45 : 1;   // groups with few hours are faded
-    let acc = 0;
-    if (b.n) list.forEach((s, j) => {
-      const v = b.sh[j];
-      if (v <= 0) return;
-      svg.append("rect").attr("x", cx).attr("width", bw).attr("y", y(acc + v)).attr("height", Math.max(0, y(acc) - y(acc + v) - 1)).attr("fill", css(s.color)).attr("opacity", op);
-      acc += v;
-    });
-    if (b.c > 0) svg.append("rect").attr("x", cx).attr("width", bw).attr("y", y(0) + 1).attr("height", Math.max(0, y(-b.c) - y(0) - 1)).attr("fill", css(CHARGING.color)).attr("opacity", op);
-    if (!narrow) svg.append("text").attr("class", "axis-title").attr("x", cx + bw / 2).attr("y", Hh - m.b + 32).attr("text-anchor", "middle").text(`${b.n.toLocaleString()} h`);
-    svg.append("rect").attr("x", cx - 2).attr("width", bw + 4).attr("y", m.t).attr("height", Hh - m.t - m.b).attr("fill", "transparent")
-      .on("pointermove", (ev) => showTip(ev, `<h4>System lambda ${b.label}</h4>${b.n.toLocaleString()} hours${b.n && b.n < 24 ? " (few hours: read with care)" : ""}` +
-        (b.n ? `<table>` + list.map((s, j) => [s, b.sh[j]]).filter(([, v]) => v > 0).sort((p, q) => q[1] - p[1]).map(([s, v]) =>
-          `<tr><td><span class="sw" style="background:var(${s.color})"></span></td><td>${s.label}</td><td class="n">${fmtPct(v)}</td></tr>`).join("") +
-          `<tr><td><span class="sw" style="background:var(${CHARGING.color})"></span></td><td>Battery charging (of all moving MW)</td><td class="n">${fmtPct(b.c)}</td></tr></table>` : "")))
-      .on("pointerleave", hideTip);
-  });
-  el.replaceChildren(svg.node());
-  setCSV(el, ["lambda_group", "hours", ...list.map((s) => `${s.label} share of marginal supply`), "battery charging share of all moving MW"],
-    bins.map((b) => [b.label, b.n, ...b.sh, b.c]), "Marginal supply by settled price");
 }
 
 // ---- bidding-approach changes -----------------------------------------------------
