@@ -71,5 +71,20 @@ PRICE_POINT_TYPES = {"HU", "SH", "AH", "LZ"}
 EMIL_2DAY = "np3-908-er"
 EMIL_2DAY_GEN = "np3-910-er"     # 2-day aggregated generation / load / output schedule summaries
 EMIL_60DAY = "np3-965-er"
+EMIL_DAM = "np3-966-er"          # 60-day DAM disclosure: three-part offers, awards, AS awards
 EMIL_LAMBDA = "np6-322-cd"
 EMIL_SPP = "np6-905-cd"
+
+# --- Plant costs when a unit has no DAM three-part offer that day ---------------
+# Generic per-technology values used (and marked as such) by pipeline/stayon.py when a unit
+# submitted no DAM three-part offer, so stay-on comparisons still cover it.  Start costs are
+# $ per start for a typical unit; minimum-energy cost is $/MWh at minimum output.  Rough values
+# chosen from the range of submitted DAM offers; override by editing here.  Nuclear has no
+# entry: it does not cycle for a cheap stretch, so it is left out when it has no DAM offer.
+GENERIC_COSTS = {
+    #                  start hot, inter,   cold,  min-energy $/MWh
+    "coal":           (30000.0, 60000.0, 90000.0,  25.0),
+    "combined_cycle": (15000.0, 25000.0, 40000.0,  22.0),
+    "gas_steam":      (10000.0, 20000.0, 30000.0,  35.0),
+    "combustion_turbine": (3000.0, 4000.0, 5000.0, 40.0),
+}

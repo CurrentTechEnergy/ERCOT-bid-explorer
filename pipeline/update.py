@@ -10,6 +10,7 @@ Usage:
         redoes every 60-day day in the index
 
 60-day days also write a per-unit day file to UNIT_DATA_DIR (env var; default ./unitdata).
+60-day DAM disclosure days (three-part offers, awards) are written to data/dam/.
 """
 import argparse
 from collections import Counter
@@ -18,14 +19,16 @@ import sys
 import time
 import warnings
 
-from .config import DATA_DIR, UNIT_DATA_DIR, EMIL_2DAY, EMIL_2DAY_GEN, EMIL_60DAY, EMIL_LAMBDA, EMIL_SPP
+from .config import DATA_DIR, UNIT_DATA_DIR, EMIL_2DAY, EMIL_2DAY_GEN, EMIL_60DAY, EMIL_DAM, EMIL_LAMBDA, EMIL_SPP
 from .parse_2day import parse_2day_zip
 from .parse_2day_gen import is_gen_summary, parse_2day_gen_zip
 from .parse_60day import parse_60day_zip
+from .parse_dam import parse_dam_zip, has_dam_gen
 from .parse_prices import build_price_day, read_lambda, read_spp
 from .marginal import build_marginal
 from .trends import build_trends
 from .intraday import build_intraday
+from .stayon import build_stayon
 from .curve_trends import build_curve_trends
 from .store import describe_blob, iter_csvs, zip_names, load_index, save_index, update_summary, write_json_gz
 from .log import warn, write_summary, WARNINGS
@@ -48,12 +51,25 @@ def curve_source(blob: bytes):
     # the same files parse_60day_zip reads
     if any(n.startswith(("60d_sced_gen_resource_data", "60d_esr_data_in_sced")) for n in names):
         return "60d", parse_60day_zip
+    if has_dam_gen(names):
+        return "dam", parse_dam_zip
+    return None
+
+
+def skip_reason(blob: bytes):
+    """Why a downloaded zip is not processed, or None: ERCOT's occasional "SUPPLEMENTAL" reposts
+    carry only some of a day's files, and the dashboard does not read the Load Resource ones nor
+    the DAM files other than the generation resource data."""
+    names = [n.lower() for n in zip_names(blob)]
+    if names and all(n.startswith("60d_load_resource_data") for n in names):
+        return "Load Resource data only"
+    if names and all(n.startswith("60d_dam_") for n in names) and not has_dam_gen(names):
+        return "DAM files without the generation resource data"
     return None
 
 
 def is_load_resource_only(blob: bytes) -> bool:
-    names = [n.lower() for n in zip_names(blob)]
-    return bool(names) and all(n.startswith("60d_load_resource_data") for n in names)
+    return skip_reason(blob) is not None
 
 
 UNIT_FILES = []     # (date, compressed bytes, COV events) written in this run
@@ -76,8 +92,8 @@ def _drop_nan(x, path, bad):
 def process_curve_zip(blob: bytes, index: dict) -> str:
     found = curve_source(blob)
     if found is None:
-        raise ValueError("Not a 2-day SCED energy curves, 2-day generation summary or 60-day SCED disclosure zip "
-                         f"({describe_blob(blob)})")
+        raise ValueError("Not a 2-day SCED energy curves, 2-day generation summary, 60-day SCED disclosure "
+                         f"or 60-day DAM disclosure zip ({describe_blob(blob)})")
     source, parser = found
     t0 = time.time()
     date, day, summary, *extra = parser(blob)
@@ -134,7 +150,7 @@ def fetch_curves(api, emil: str, posted_from: dt.datetime, posted_to: dt.datetim
     docs = api.list_archives(emil, posted_from, posted_to)
     docs.sort(key=lambda d: d.get("postDatetime", ""))
     print(f"{emil}: {len(docs)} file(s) posted {posted_from:%Y-%m-%d} .. {posted_to:%Y-%m-%d}")
-    lag = 60 if source == "60d" else 2
+    lag = 60 if source in ("60d", "dam") else 2
     have = set(index["days"].setdefault(source, []))
     done_ids = set(index.setdefault("docs", {}).setdefault(emil, []))
     guess_of = {d["docId"]: (_d(d["postDatetime"][:10]) - dt.timedelta(days=lag)).isoformat() for d in docs}
@@ -166,10 +182,9 @@ def fetch_curves(api, emil: str, posted_from: dt.datetime, posted_to: dt.datetim
                 print(f"  download was not a zip ({describe_blob(blob)}); retrying")
                 time.sleep(10)
                 blob = api.download(emil, doc_id)
-            if is_load_resource_only(blob):
-                # ERCOT's occasional "SUPPLEMENTAL" repost of only the Load Resource files;
-                # the dashboard doesn't read those, and the regular daily zips carry the rest
-                print(f"  skipped: Load Resource data only ({describe_blob(blob)})")
+            reason = skip_reason(blob)
+            if reason:
+                print(f"  skipped: {reason} ({describe_blob(blob)})")
             else:
                 have.add(process_curve_zip(blob, index))
             index["docs"][emil].append(doc_id)
@@ -280,7 +295,7 @@ def main(argv=None):
     ap.add_argument("--days", type=int, default=4, help="look back this many days of postings (default 4)")
     ap.add_argument("--backfill", nargs=2, metavar=("START", "END"), help="operating-day range to fill")
     ap.add_argument("--max-files", type=int, default=None, help="cap curve files per report per run")
-    ap.add_argument("--skip", choices=["2d", "2dgen", "60d", "prices"], action="append", default=[])
+    ap.add_argument("--skip", choices=["2d", "2dgen", "60d", "dam", "prices"], action="append", default=[])
     ap.add_argument("--local", nargs="+", help="process local zip files instead of calling the API")
     ap.add_argument("--reprocess-60d", nargs="?", const="missing", choices=["missing", "all"],
                     help="re-download and reparse 60-day days already in the index: those without a "
@@ -310,6 +325,7 @@ def main(argv=None):
         build_marginal(index)
         build_trends(index)
         build_intraday(index)
+        build_stayon(index)
         build_curve_trends(index)
         save_index(index)
         return
@@ -321,7 +337,8 @@ def main(argv=None):
     if args.backfill:
         start, end = _d(args.backfill[0]), _d(args.backfill[1])
         want = {(start + dt.timedelta(days=i)).isoformat() for i in range((end - start).days + 1)}
-        for source, emil, lag in (("2d", EMIL_2DAY, 2), ("2dgen", EMIL_2DAY_GEN, 2), ("60d", EMIL_60DAY, 60)):
+        for source, emil, lag in (("2d", EMIL_2DAY, 2), ("2dgen", EMIL_2DAY_GEN, 2), ("60d", EMIL_60DAY, 60),
+                                  ("dam", EMIL_DAM, 60)):
             if source in args.skip:
                 continue
             fetch_curves(api, emil,
@@ -338,6 +355,8 @@ def main(argv=None):
             fetch_curves(api, EMIL_2DAY_GEN, since, now + dt.timedelta(days=1), index, "2dgen", limit=args.max_files)
         if "60d" not in args.skip:
             fetch_curves(api, EMIL_60DAY, since, now + dt.timedelta(days=1), index, "60d", limit=args.max_files)
+        if "dam" not in args.skip:
+            fetch_curves(api, EMIL_DAM, since, now + dt.timedelta(days=1), index, "dam", limit=args.max_files)
 
     if "prices" not in args.skip:
         need = set(index["days"]["2d"]) | set(index["days"]["60d"])
@@ -346,10 +365,12 @@ def main(argv=None):
     build_marginal(index)
     build_trends(index)
     build_intraday(index)
+    build_stayon(index)
     build_curve_trends(index)
     save_index(index)
     added = {k: sorted(set(index["days"][k]) - before.get(k, set())) for k in index["days"]}
-    names = {"2d": "2-day curves", "2dgen": "2-day generation summary", "60d": "60-day curves", "prices": "prices"}
+    names = {"2d": "2-day curves", "2dgen": "2-day generation summary", "60d": "60-day curves",
+             "dam": "60-day DAM offers and awards", "prices": "prices"}
     lines = ["### ERCOT data update", "", "| Data | Days added | Range |", "|---|---|---|"]
     for k, v in added.items():
         lines.append(f"| {names.get(k, k)} | {len(v)} | {v[0] + ' to ' + v[-1] if v else '–'} |")
