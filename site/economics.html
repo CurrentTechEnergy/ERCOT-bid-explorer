@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>ERCOT Plant Economics</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Sans+Condensed:wght@600&display=swap">
+<link rel="stylesheet" href="style.css">
+<style>
+  .inputs { display: grid; grid-template-columns: auto repeat(3, minmax(70px, 100px)); gap: 4px 10px; align-items: center; font-size: 12.5px; }
+  .inputs .lbl { font-size: 10px; }
+  .inputs input[type="number"] { font: inherit; font-family: var(--font-data); color: var(--ink); background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 4px 6px; width: 100%; min-height: 30px; }
+  .inputs .t { font-family: var(--font-ui); }
+  .ctl-gas input[type="number"] { font: inherit; font-family: var(--font-data); color: var(--ink); background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 6px 8px; min-height: 34px; width: 90px; }
+  .kpis { display: flex; flex-wrap: wrap; gap: 8px 28px; }
+  .kpi { display: flex; flex-direction: column; gap: 2px; }
+  .kpi .v { font: 500 20px var(--font-data); font-variant-numeric: tabular-nums; }
+  .kpi .k { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; }
+  .neg { color: var(--c8); }
+</style>
+</head>
+<body>
+<div class="page">
+
+<header class="masthead">
+  <div class="brand">
+    <div class="nav-row"><nav class="nav" aria-label="Pages"><a href="index.html">Day view</a><a href="trends.html">Trends</a><a href="economics.html" aria-current="page">Plant economics</a></nav><button type="button" class="copy-link" id="copy-link" title="Copy a link to exactly this view">Copy link</button></div>
+    <h1>ERCOT Plant Economics</h1>
+    <p class="sub">What each unit earned and what it cost to run, day by day, from the 60-day disclosures: output at the unit's own node price, day-ahead awards and ancillary services against fuel, variable and start-up costs on a cost basis you choose.</p>
+  </div>
+  <p class="status" id="status">Loading data…</p>
+</header>
+
+<section class="controls" aria-label="Controls">
+  <div class="ctl">
+    <label class="lbl" for="tech">Technology</label>
+    <select id="tech"></select>
+  </div>
+  <div class="ctl">
+    <span class="lbl" id="lbl-cost">Cost basis</span>
+    <div class="seg" role="radiogroup" aria-labelledby="lbl-cost" id="cost">
+      <button type="button" data-v="eia" role="radio" title="EIA average tested heat rate for the technology (Electric Power Annual table 8.2, 2024) times the gas price, plus a variable O&amp;M allowance">EIA heat rate</button>
+      <button type="button" data-v="offer" role="radio" title="The unit's own DAM energy offer curve integrated up to its output, or its minimum-energy offer, with its own start-up offer">Unit's DAM offer</button>
+      <button type="button" data-v="generic" role="radio" title="Heat rate, variable O&amp;M and start cost you set per technology">Generic</button>
+    </div>
+  </div>
+  <div class="ctl">
+    <span class="lbl" id="lbl-rev">Energy revenue</span>
+    <div class="seg" role="radiogroup" aria-labelledby="lbl-rev" id="rev">
+      <button type="button" data-v="two" role="radio" title="Day-ahead award at the day-ahead price, plus the real-time deviation at the real-time node price (falls back to real-time at the node, then lambda, where data is missing)">Two-settlement</button>
+      <button type="button" data-v="rt" role="radio" title="All output at the real-time node price">Real-time at node</button>
+      <button type="button" data-v="lam" role="radio" title="All output at system lambda, ignoring the unit's location">At system lambda</button>
+    </div>
+  </div>
+  <div class="ctl ctl-gas">
+    <label class="lbl" for="gas-adder">Gas adder to Henry Hub ($/MMBtu)</label>
+    <input type="number" id="gas-adder" step="0.05" value="0">
+  </div>
+</section>
+
+<main>
+  <section class="panel panel-wide">
+    <div class="panel-head">
+      <div>
+        <h2 id="tot-title">Technology totals</h2>
+        <p class="note" id="tot-note"></p>
+      </div>
+    </div>
+    <div class="kpis" id="kpis"></div>
+    <div class="legend legend-static" id="tot-legend"></div>
+    <div class="chart" id="tot-chart"></div>
+    <div class="chart chart-short" id="margin-chart"></div>
+  </section>
+
+  <section class="panel">
+    <div class="panel-head">
+      <div>
+        <h2>Cost assumptions</h2>
+        <p class="note" id="cost-note"></p>
+      </div>
+    </div>
+    <div class="inputs" id="inputs"></div>
+  </section>
+
+  <section class="panel">
+    <div class="panel-head">
+      <div>
+        <h2>How revenue is counted</h2>
+        <p class="note">Energy revenue uses hourly mean prices and output, so it differs a little from settlement at 15-minute intervals. Node prices load a few days per update, newest first; days without them fall back to system lambda and are marked. Ancillary service revenue is the DAM award at the DAM clearing price (real-time AS awards under real-time co-optimization are not in the disclosures yet). Start-up costs count the hot start offer for every start; a unit off long enough for an intermediate or cold start cost more. Submitted offers are capped by ERCOT's cost verification, so the offer basis is an upper bound on what the unit said its energy was worth, not an audited cost.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="panel panel-wide">
+    <div class="panel-head">
+      <div>
+        <h2>Units <span class="h-note" id="units-note"></span></h2>
+        <p class="note">Every unit of the technology over the loaded days. Click a column to sort and a unit to see its days. Margin is energy plus ancillary revenue minus fuel, variable and start costs on the chosen bases; it leaves out fixed costs, so it is the contribution to them.</p>
+      </div>
+      <div class="panel-tools">
+        <input type="search" id="unit-search" placeholder="Find a unit" aria-label="Find a unit">
+      </div>
+    </div>
+    <div class="units-wrap" id="units-table"></div>
+    <div id="unit-detail" hidden>
+      <h3 class="sub-h" id="unit-title"></h3>
+      <p class="note" id="unit-note"></p>
+      <div class="legend legend-static" id="unit-legend"></div>
+      <div class="chart" id="unit-chart"></div>
+      <div class="chart chart-short" id="unit-cum"></div>
+    </div>
+  </section>
+</main>
+
+<footer class="foot">
+  <p>Source: ERCOT EMIL products NP3-965-ER (60-Day SCED Disclosure), NP3-966-ER (60-Day DAM Disclosure), NP6-905-CD (Settlement Point Prices) and NP6-322-CD (SCED System Lambda); Henry Hub spot price from the EIA. Built by the data update workflow from the days already loaded; the 60-day reports run about two months behind.</p>
+  <p>Made by <a href="https://currenttech.energy">currenttech.energy</a>.</p>
+</footer>
+</div>
+<div class="tip" id="tip" hidden></div>
+<script src="vendor/d3.min.js"></script>
+<script src="common.js"></script>
+<script src="economics.js"></script>
+</body>
+</html>

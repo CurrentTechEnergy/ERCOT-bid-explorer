@@ -84,6 +84,8 @@ pipeline/
   nodes.py         per-unit day files + node prices + DAM settlement points -> wind and solar
                    curtailment priced at each unit's node, split congestion / oversupply (no downloads)
   gas.py           EIA API -> Henry Hub daily spot price (data/gas.json.gz)
+  econ.py          per-unit day files + node prices + DAM awards and offers -> daily revenue and
+                   offer-implied cost per unit (data/econ/<tech>.json.gz, no downloads)
   marginal.py      day files + prices -> hourly marginal MW by technology (no downloads)
   trends.py        per-unit day files -> daily trends, starts, flips, bidding changes (no downloads)
   intraday.py      per-unit day files -> thermal output at/above minimum in cheap hours, off spells
@@ -93,7 +95,7 @@ pipeline/
   ercot_api.py     ERCOT Public API client (token, archive listing, downloads)
   update.py        command line entry point
 site/
-  index.html, app.js, style.css, vendor/d3.min.js
+  index.html, app.js, trends.html, trends.js, economics.html, economics.js, style.css, vendor/d3.min.js
   data/            generated: index.json, summary_*.json.gz, marginal_*.json.gz, 2d/, 60d/, dam/, prices/,
                    curtail_nodes.json.gz, gas.json.gz
 ```
@@ -107,6 +109,10 @@ site/
 ### Curtailment at the node
 
 `pipeline/nodes.py` prices every curtailed wind and solar unit-hour (hourly HSL minus base point, from the per-unit day files) at the unit's own resource node. Units are matched to settlement points through the DAM disclosure, since the SCED file carries none. A curtailed hour counts as **congestion** when the node price is at least $5/MWh below system lambda (the energy was worth less where the unit sits) and as **oversupply** otherwise (the system as a whole did not want it at the unit's offer). The split is by price, so it describes what the energy was worth at the node, not which constraint SCED was managing. Node prices are fetched a few days per run for days that have per-unit data, newest first, so the split fills in over several runs (or at once with a backfill run).
+
+### Plant economics
+
+`pipeline/econ.py` writes, for every unit and loaded day, the energy produced, its value at the unit's node and at system lambda, the DAM energy award and its value at the day-ahead and real-time prices (so two-settlement revenue can be formed), ancillary service awards at their clearing prices, the cost implied by the unit's own DAM energy offer curve up to its output, its minimum-energy and start-up offers, starts and hours run. Combined-cycle configurations are summed into their train. The page `economics.html` turns that into revenue, cost and margin on a cost basis chosen there: the EIA average tested heat rate for the technology (Electric Power Annual table 8.2) times Henry Hub plus an adder, the unit's own DAM offer, or generic per-technology inputs that can be edited on the page. Fixed costs are not included, so margin is the contribution to them.
 
 ## Caveats
 
