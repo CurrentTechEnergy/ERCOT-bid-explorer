@@ -35,7 +35,12 @@ Schema
       "bp":  [24 x hourly mean Base Point, 0.1 MW, or null]
                               # hourly means over the runs the unit is present in, any status
     }, ...
-  }
+  },
+  "overrides": {        # from the disclosure's HDL/LDL Manual Override Summary (empty if none that day;
+                        # absent in files written before it was read)
+    "<Resource Name>": [[minutes after midnight, HDL original, HDL manual, HDL final,
+                         LDL original, LDL manual, LDL final, reason code], ...]
+  }                     # SCED runs where an ERCOT operator changed the unit's dispatch limits
 }
 Every event list is sorted by run index and its first event is at the unit's first run, so the
 value at run r is the last event with index <= r.  Runs where status is null carry no meaning

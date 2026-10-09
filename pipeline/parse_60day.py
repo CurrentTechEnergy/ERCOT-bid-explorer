@@ -199,15 +199,66 @@ class _Accumulator:
         return build_unit_day(date, run_sort, rows)
 
 
+# totals for the run, reported once by update.main so an override file that has rows but
+# yields none (a timestamp or date mismatch) shows up on the run page
+OVERRIDE_STATS = {"days": 0, "files": 0, "rows": 0, "kept": 0, "units": 0, "sample": None}
+
+
+def _norm(c) -> str:
+    return "".join(ch for ch in str(c).lower() if ch.isalnum())
+
+
+def parse_overrides(data: bytes, date: str) -> dict:
+    """The disclosure's "HDL and LDL Manual Override Summary": SCED runs where an ERCOT operator
+    manually changed a unit's HDL or LDL.  -> {unit: [[minutes after midnight, HDL original,
+    HDL manual, HDL final, LDL original, LDL manual, LDL final, reason code], ...]} for runs on
+    `date` (a run on the next calendar day counts from 1440), in time order."""
+    f = pd.read_csv(io.BytesIO(data), low_memory=False)
+    norm = {_norm(c): c for c in f.columns}
+    stamp = norm.get("scedtimestamp") or next((c for n, c in norm.items() if "timestamp" in n), None)
+    unit = norm.get("resourcename") or next((c for n, c in norm.items() if "resource" in n), None)
+    if stamp is None or unit is None:
+        warn(f"Unrecognised override summary columns: {list(f.columns)}")
+        return {}
+    cols = [next((c for n, c in norm.items() if n.startswith(k)), None)
+            for k in ("hdloriginal", "hdlmanual", "hdlfinal", "ldloriginal", "ldlmanual", "ldlfinal", "reason")]
+    t = pd.to_datetime(f[stamp].astype(str).str.strip(), format="mixed", errors="coerce")
+    day0 = pd.Timestamp(date)
+    minutes = ((t.dt.normalize() - day0).dt.days * 1440 + t.dt.hour * 60 + t.dt.minute)
+    keep = t.notna() & (minutes >= 0) & (minutes < 1440 + 120)
+    OVERRIDE_STATS["files"] += 1
+    OVERRIDE_STATS["rows"] += len(f)
+    OVERRIDE_STATS["kept"] += int(keep.sum())
+    if len(f) and OVERRIDE_STATS["sample"] is None:
+        OVERRIDE_STATS["sample"] = f"{f[stamp].iloc[0]!r} on {date}"
+    out = {}
+    for i in np.flatnonzero(keep.values):
+        row = []
+        for c in cols:
+            v = f[c].iloc[i] if c is not None else None
+            if c is not None and c == cols[-1]:
+                row.append(None if pd.isna(v) else str(v).strip())
+            else:
+                row.append(None if v is None or pd.isna(v) else round(float(v), 1))
+        out.setdefault(str(f[unit].iloc[i]).strip(), []).append([int(minutes.iloc[i])] + row)
+    for v in out.values():
+        v.sort(key=lambda r: r[0])
+    return out
+
+
 def parse_60day_zip(blob: bytes, chunksize: int = 40000):
     """-> (date, day file, summary entry, (unit day file, number of COV events))"""
     acc = _Accumulator()
     found = False
+    override_csvs = []
     for name, data in iter_csvs(blob, "x.zip"):
         if name.lower().startswith("60d_sced_gen_resource_data"):
             is_esr = False
         elif name.lower().startswith("60d_esr_data_in_sced"):
             is_esr = True
+        elif "override" in name.lower():
+            override_csvs.append(data)
+            continue
         else:
             continue
         found = True
@@ -244,4 +295,19 @@ def parse_60day_zip(blob: bytes, chunksize: int = 40000):
         "stats": {tk: [[r1(x) for x in row] for row in stats[i]] for i, tk in enumerate(SIXTY_DAY_TECHS)},
         "stat_names": STATS,
     }
-    return date, day, summary, acc.unit_day(date)
+    unit_day, n_events = acc.unit_day(date)
+    overrides = {}
+    for data in override_csvs:
+        for k, v in parse_overrides(data, date).items():
+            overrides.setdefault(k, []).extend(v)
+    # always present (empty when the day had no manual overrides), so a day file that lacks the
+    # key is one written before overrides were read and reprocess_60d knows to redo it
+    unit_day["overrides"] = {k: sorted(v, key=lambda r: r[0]) for k, v in overrides.items()}
+    OVERRIDE_STATS["days"] += 1
+    OVERRIDE_STATS["units"] += len(overrides)
+    if overrides:
+        print(f"  overrides {date}: {sum(len(v) for v in overrides.values())} manual HDL/LDL rows on "
+              f"{len(overrides)} unit(s)")
+    elif not override_csvs:
+        warn(f"60-day {date}: no HDL/LDL manual override summary in the zip")
+    return date, day, summary, (unit_day, n_events)

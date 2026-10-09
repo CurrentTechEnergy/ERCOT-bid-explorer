@@ -17,13 +17,14 @@ from collections import Counter
 import datetime as dt
 import sys
 import time
+import os
 import warnings
 
 from .config import (DATA_DIR, UNIT_DATA_DIR, EMIL_2DAY, EMIL_2DAY_GEN, EMIL_60DAY, EMIL_DAM, EMIL_LAMBDA, EMIL_SPP,
                      NODE_DAYS_PER_RUN)
 from .parse_2day import parse_2day_zip
 from .parse_2day_gen import is_gen_summary, parse_2day_gen_zip
-from .parse_60day import parse_60day_zip
+from .parse_60day import parse_60day_zip, OVERRIDE_STATS
 from .parse_dam import parse_dam_zip, has_dam_gen
 from .parse_prices import build_price_day, node_prices, read_lambda, read_spp
 from .marginal import build_marginal
@@ -34,7 +35,7 @@ from .curve_trends import build_curve_trends
 from .nodes import build_node_curtail
 from .gas import fetch_gas
 from .econ import build_econ
-from .store import describe_blob, iter_csvs, zip_names, load_index, save_index, update_summary, write_json_gz
+from .store import describe_blob, iter_csvs, zip_names, load_index, read_json_gz, save_index, update_summary, write_json_gz
 from .log import warn, write_summary, WARNINGS
 
 warnings.filterwarnings("ignore", category=RuntimeWarning)
@@ -221,10 +222,18 @@ def fetch_curves(api, emil: str, posted_from: dt.datetime, posted_to: dt.datetim
 
 
 def reprocess_60d(api, index: dict, mode: str = "missing", limit=None):
-    """Re-download and reparse 60-day days already in the index: those without a per-unit day
-    file (mode "missing", so an interrupted run resumes), or all of them (mode "all")."""
-    targets = {d for d in index["days"]["60d"]
-               if mode == "all" or not (UNIT_DATA_DIR / "60d" / f"{d}.json.gz").exists()}
+    """Re-download and reparse 60-day days already in the index: those whose per-unit day file
+    is missing or predates the current format (mode "missing", so an interrupted run resumes
+    and a format change is filled in over several runs), or all of them (mode "all")."""
+    def current(d):
+        path = UNIT_DATA_DIR / "60d" / f"{d}.json.gz"
+        if not path.exists():
+            return False
+        try:
+            return "overrides" in (read_json_gz(path) or {})
+        except Exception:
+            return False
+    targets = {d for d in index["days"]["60d"] if mode == "all" or not current(d)}
     print(f"reprocess 60d ({mode}): {len(targets)} day(s)")
     if not targets:
         return
@@ -403,6 +412,15 @@ def main(argv=None):
     for k, v in added.items():
         lines.append(f"| {names.get(k, k)} | {len(v)} | {v[0] + ' to ' + v[-1] if v else '–'} |")
     lines += unit_file_summary()
+    o = OVERRIDE_STATS
+    if o["days"]:
+        msg = (f"HDL/LDL overrides: {o['files']} summary file(s) over {o['days']} day(s), {o['rows']} row(s), "
+               f"{o['kept']} kept, on {o['units']} unit-day(s)")
+        if o["rows"] and not o["kept"]:
+            warn(msg + f"; none matched the operating day (first timestamp {o['sample']})")
+        else:
+            print(f"::notice::{msg}" if os.environ.get("GITHUB_ACTIONS") == "true" else msg, flush=True)
+            lines += ["", msg]
     lines += ["", f"**{len(WARNINGS)} warning(s)**" if WARNINGS else "No warnings."]
     lines += [f"- {w}" for w in WARNINGS[:50]]
     write_summary(lines)

@@ -18,7 +18,7 @@ on:
         required: false
         default: "60"
       reprocess_60d:
-        description: "Re-download and reparse 60-day days already loaded that have no per-unit day file yet (resumable; limited by max_files)"
+        description: "Re-download and reparse 60-day days already loaded whose per-unit day file is missing or predates the current format (resumable; limited by max_files)"
         type: boolean
         required: false
         default: false
