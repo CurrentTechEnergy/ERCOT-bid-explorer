@@ -37,7 +37,7 @@ const S = {
   xrange: "low", mode: "lines", axes: "price_x", threshold: 0, location: "lambda",
   hidden: new Set(), unitTech: "all", unitSearch: "",
   unitSort: { key: "floor_mw", dir: -1 }, unitShowAll: false,
-  day: null, prices: null, summaries: {}, osView: "hour", osUnit: "share",
+  day: null, prices: null, summaries: {}, osView: "hour", osUnit: "share", osSmooth: "smooth",
 };
 const $ = (id) => document.getElementById(id);
 const fmtMW = d3.format(",.0f");
@@ -197,7 +197,7 @@ function render() {
 }
 
 // the address bar carries the view, so a copied link reopens this exact day, hour and settings
-const VIEW_KEYS = { loc: "location", xr: "xrange", mode: "mode", axes: "axes", ver: "version", thr: "threshold", os: "osView", osu: "osUnit" };
+const VIEW_KEYS = { loc: "location", xr: "xrange", mode: "mode", axes: "axes", ver: "version", thr: "threshold", os: "osView", osu: "osUnit", osm: "osSmooth" };
 function saveView() {
   window.CX.writeHash({ date: S.date, he: S.hour + 1, ...Object.fromEntries(Object.entries(VIEW_KEYS).map(([k, sk]) => [k, S[sk]])) });
 }
@@ -776,7 +776,21 @@ function drawOfferStack() {
   // Gaussian smoothing in screen space, so the blur looks the same at every price
   const bw = Math.max(5, (w - m.l - m.r) * 0.0135);
   const xg = G.map((g) => x(g));
-  const pts = d3.range(m.l, w - m.r + 1, narrow ? 2 : 3).map((px) => {
+  const exact = S.osSmooth === "exact";
+  // exact: one flat step per $ grid interval, MW in the interval / its width in $
+  const exactPts = () => {
+    const out = [];
+    for (let i = 1; i < G.length; i++) {
+      if (G[i] <= OS_DOMAIN[0] || G[i - 1] >= OS_DOMAIN[1]) continue;
+      const dw = G[i] - G[i - 1], v = list.map((_, j) => inc[j][i] / dw);
+      const sup = d3.sum(supI, (j) => v[j]), chg = chgI >= 0 ? v[chgI] : 0;
+      const sh = v.map((t, j) => (j === chgI ? (sup + chg > 0 ? chg / (sup + chg) : 0) : sup > 0 ? t / sup : 0));
+      const d = { p: G[i], mwd: v, sup, chg, sh };
+      out.push({ ...d, px: x(Math.max(G[i - 1], OS_DOMAIN[0])) }, { ...d, px: x(Math.min(G[i], OS_DOMAIN[1])) });
+    }
+    return out;
+  };
+  const pts = exact ? exactPts() : d3.range(m.l, w - m.r + 1, narrow ? 2 : 3).map((px) => {
     const v = list.map((_, j) => {
       let t = 0;
       for (let i = 1; i < G.length; i++) {
@@ -807,15 +821,18 @@ function drawOfferStack() {
   svg.append("text").attr("class", "axis-title").attr("x", m.l).attr("y", 10)
     .text(share ? "Share of supply offered near each price (above) · battery charging (below)" : "MW offered per $1 of price (above: supply, below: battery charging)");
   svg.append("text").attr("class", "axis-title").attr("x", w - m.r).attr("y", H - 2).attr("text-anchor", "end").text("Offer price ($/MWh, compressed scale)");
-  // supply stacked upward, charging downward
-  const area = (y0f, y1f) => d3.area().defined((d, i) => live[i]).curve(d3.curveMonotoneX).x((d) => d.px).y0(y0f).y1(y1f);
+  // supply stacked upward, charging downward, clipped to the plot
+  const clipId = "os-clip-" + Math.random().toString(36).slice(2, 8);
+  svg.append("clipPath").attr("id", clipId).append("rect").attr("x", m.l).attr("y", m.t).attr("width", w - m.l - m.r).attr("height", H - m.t - m.b);
+  const plot = svg.append("g").attr("clip-path", `url(#${clipId})`);
+  const area = (y0f, y1f) => d3.area().defined((d, i) => live[i]).curve(exact ? d3.curveLinear : d3.curveMonotoneX).x((d) => d.px).y0(y0f).y1(y1f);
   let base = pts.map(() => 0);
   supI.forEach((j) => {
     const lo = base, hi = pts.map((d, i) => lo[i] + val(d, j));
-    svg.append("path").attr("fill", css(list[j].color)).attr("d", area((d, i) => y(lo[i]), (d, i) => y(hi[i]))(pts));
+    plot.append("path").attr("fill", css(list[j].color)).attr("d", area((d, i) => y(lo[i]), (d, i) => y(hi[i]))(pts));
     base = hi;
   });
-  if (chgI >= 0) svg.append("path").attr("fill", css(list[chgI].color)).attr("d", area(() => y(0), (d) => y(-val(d, chgI)))(pts));
+  if (chgI >= 0) plot.append("path").attr("fill", css(list[chgI].color)).attr("d", area(() => y(0), (d) => y(-val(d, chgI)))(pts));
   svg.append("line").attr("class", "zero").attr("x1", m.l).attr("x2", w - m.r).attr("y1", y(0)).attr("y2", y(0));
   // each hour's system lambda as a tick along the top; the selected hour is darker
   const lam = S.prices && S.prices.lambda ? S.prices.lambda.hourly_mean : [];
@@ -1101,6 +1118,7 @@ async function boot() {
   setSeg("os-view", S.osView); setSeg("os-unit", S.osUnit);
   bindSeg("os-view", "osView", drawOfferStack);
   bindSeg("os-unit", "osUnit", drawOfferStack);
+  setSeg("os-smooth", S.osSmooth); bindSeg("os-smooth", "osSmooth", drawOfferStack);
   $("date").onchange = async (e) => { S.date = e.target.value; await changeDay(); };
   // step one available day older (-1) or newer (+1)
   const stepDay = async (dir) => {
