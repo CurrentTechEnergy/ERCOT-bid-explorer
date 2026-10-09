@@ -18,6 +18,10 @@ For every unit in the per-unit day files (UNIT_DATA_DIR/60d/) and each 60-day da
             hour's offer curve up to the hour's output ($; null without a DAM curve).  Offers
             are what the unit asked for, not a cost accounting, so this is an upper bound on
             what the unit itself thought its energy was worth
+  cost_inc  output x the unit's incremental DAM offer price: the price its energy offer curve
+            puts on the hour's output level, applied to all MWh that hour ($; null without a
+            DAM curve).  Reads the curve above minimum as the unit's own marginal cost and
+            ignores the minimum-energy price, which units set low to get committed
   mingen    DAM minimum-energy offer that day ($/MWh, null without one)
   start     [hot, intermediate, cold] DAM start-up offers ($ per start, null without one)
   starts    starts that day (telemetered status moving from not online to ON), counted for a
@@ -38,7 +42,7 @@ from .intraday import _online, train_of
 from .store import read_json_gz, write_json_gz
 from .units import _ffill_index
 
-SERIES = ("mwh", "chg", "rev_rt", "rev_lam", "da_mwh", "rev_da", "rev_da_rt", "rev_as", "cost_off",
+SERIES = ("mwh", "chg", "rev_rt", "rev_lam", "da_mwh", "rev_da", "rev_da_rt", "rev_as", "cost_off", "cost_inc",
           "mingen", "start_hot", "start_inter", "start_cold", "starts", "hours_on")
 AS_KEYS = ("regup", "regdn", "rrs", "ecrs", "nspin")
 
@@ -68,6 +72,19 @@ def curve_cost(prices, mws, q: float) -> float:
         if mi >= q:
             return cost
     return cost + prev_p * (q - prev_m)
+
+
+def curve_price(prices, mws, q: float) -> float:
+    """Price a piecewise-linear offer curve puts on output q MW: the first price below the first
+    point, the last price above the last, linear between."""
+    p, m = np.asarray(prices, float), np.asarray(mws, float)
+    if len(p) == 0:
+        return float("nan")
+    if q <= m[0]:
+        return float(p[0])
+    if q >= m[-1]:
+        return float(p[-1])
+    return float(np.interp(q, m, p))
 
 
 def _hourly_online(u: dict, runs: list) -> np.ndarray:
@@ -179,20 +196,22 @@ def build_econ(index: dict) -> None:
                 r["start_hot"][di], r["start_inter"][di], r["start_cold"][di] = st[0], st[1], st[2]
                 curves, idx = du.get("curves") or [], du.get("curve") or []
                 if curves and idx:
-                    cost = 0.0
+                    cost = inc = 0.0
                     for h in range(min(24, len(idx))):
                         ci = idx[h]
                         if ci is None or ci < 0 or ci >= len(curves) or pos[h] <= 0:
                             continue
                         cost += curve_cost(curves[ci][0], curves[ci][1], pos[h])
+                        inc += pos[h] * curve_price(curves[ci][0], curves[ci][1], pos[h])
                     r["cost_off"][di] = _r(cost)
+                    r["cost_inc"][di] = _r(inc)
             s = strips.get(name)
             if s and len(s) >= (di + 1) * 24:
                 r["hours_on"][di] = sum(1 for c in s[di * 24:(di + 1) * 24] if c in "ma")
 
     # a combined-cycle train is one plant registered as several configurations; its economics
     # are summed over them, with the DAM costs of the configuration that produced most that day
-    ADD = ("mwh", "chg", "rev_rt", "rev_lam", "da_mwh", "rev_da", "rev_da_rt", "rev_as", "cost_off", "hours_on")
+    ADD = ("mwh", "chg", "rev_rt", "rev_lam", "da_mwh", "rev_da", "rev_da_rt", "rev_as", "cost_off", "cost_inc", "hours_on")
     merged = {}
     for name, r in units.items():
         key = train_of(name) if r["tech"] == "combined_cycle" else name

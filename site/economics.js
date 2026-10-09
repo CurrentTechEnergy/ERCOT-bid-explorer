@@ -32,6 +32,7 @@ const FUEL_PRICE = { coal: 2.0, nuclear: 0.7 };     // $/MMBtu, user-editable
 const COST_NOTES = {
   eia: "Fuel = output × the EIA average tested heat rate for the technology × the fuel price (Henry Hub plus the adder for gas; the $/MMBtu set here for coal and nuclear), plus variable O&M per MWh. Starts cost the unit's own DAM hot-start offer where it has one, else the generic start cost.",
   offer: "Energy cost = the area under the unit's own DAM energy offer curve up to each hour's output; where the unit offered no curve, its minimum-energy offer × output; where it submitted no three-part offer at all, the generic basis. Starts cost its DAM hot-start offer, else the generic start cost.",
+  inc: "Energy cost = each hour's output × the price the unit's own DAM energy offer curve puts on that output level (its incremental offer, read as its marginal cost), ignoring the minimum-energy price that units set low to get committed. Units with no DAM curve use the generic basis and are counted as estimated. Starts cost the DAM hot-start offer, else the generic start cost.",
   generic: "Fuel = output × the heat rate set here × the fuel price (Henry Hub plus the adder for gas; the $/MMBtu set here for coal and nuclear), plus variable O&M per MWh and the start cost per start.",
 };
 const { getJSON, tryJSON, showTip, hideTip, setCSV, css, esc } = window.CX;
@@ -79,9 +80,10 @@ function unitEcon(u, D, gas) {
       const fp = fuelPrice(i);
       const n = u.starts[i] || 0;
       const own = u.start_hot[i] != null ? u.start_hot[i] : null;
-      if (S.cost === "offer") {
-        if (u.cost_off[i] != null) fuel = u.cost_off[i];
-        else if (u.mingen[i] != null) fuel = mwh * u.mingen[i];
+      if (S.cost === "offer" || S.cost === "inc") {
+        const own_cost = S.cost === "inc" ? u.cost_inc[i] : u.cost_off[i];
+        if (own_cost != null) fuel = own_cost;
+        else if (S.cost === "offer" && u.mingen[i] != null) fuel = mwh * u.mingen[i];
         else if (fp != null) { fuel = mwh * (p.hr * fp + p.vom); estimated = true; }
         else fuel = null;
         starts = n * (own != null ? own : p.start);
@@ -224,7 +226,7 @@ function drawInputs() {
   const row = (label, key, val, step, unit, disabled) => `<span class="t">${label}</span><input type="number" data-k="${key}" value="${val}" step="${step}" ${disabled ? "disabled" : ""}><span class="lbl">${unit}</span><span></span>`;
   el.innerHTML = `<span class="lbl">Input</span><span class="lbl">Value</span><span></span><span></span>` +
     row("Heat rate", "hr", S.cost === "eia" ? EIA_HR[t] : p.hr, 0.1, "MMBtu/MWh" + (S.cost === "eia" ? " (EIA 2024)" : ""), S.cost !== "generic") +
-    row("Variable O&M", "vom", p.vom, 0.5, "$/MWh", S.cost === "offer") +
+    row("Variable O&M", "vom", p.vom, 0.5, "$/MWh", S.cost === "offer" || S.cost === "inc") +
     row("Start cost", "start", p.start, 500, "$ per start" + (S.cost !== "generic" ? " (where no DAM offer)" : ""), false) +
     (fuelKind !== "gas" ? row("Fuel price", "fuel", S.fuel[fuelKind], 0.1, "$/MMBtu", false) : "");
   el.querySelectorAll("input").forEach((inp) => inp.addEventListener("change", () => {
@@ -255,7 +257,7 @@ function unitRows() {
     const e = ECON[name], mwh = sum(u.mwh), days = u.mwh.filter((v) => v != null).length;
     const energy = sum(e.energy), as = sum(e.as), fuel = sum(e.fuel), starts = sum(e.starts), margin = sum(e.margin);
     return { unit: name, sp: u.sp, configs: u.configs ? u.configs.length : 0, mwh, cf: u.hsl && days ? mwh / (u.hsl * 24 * days) : null,
-      energy, as, fuel, starts, nstarts: sum(u.starts), margin, mpm: mwh ? margin / mwh : null, lamDays: e.lamDays, days };
+      energy, as, fuel, starts, nstarts: sum(u.starts), margin, mpm: mwh ? margin / mwh : null, lamDays: e.lamDays, est: e.est, days };
   });
 }
 function drawUnits() {
