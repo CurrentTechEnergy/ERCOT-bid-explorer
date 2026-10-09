@@ -6,6 +6,17 @@ const $ = (id) => document.getElementById(id);
 const css = (v) => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
 const esc = (t) => String(t).replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;");
 
+// ------------------------------------------------------------ analytics ---
+// GoatCounter page counts: no cookies, no personal data. Set to "" to turn off.
+const GOATCOUNTER_CODE = "ercotbids";
+if (GOATCOUNTER_CODE) {
+  const s = document.createElement("script");
+  s.async = true;
+  s.src = "https://gc.zgo.at/count.js";
+  s.dataset.goatcounter = `https://${GOATCOUNTER_CODE}.goatcounter.com/count`;
+  document.head.appendChild(s);
+}
+
 // ------------------------------------------------------------------ data ---
 const cache = new Map();
 function getJSON(url) {
