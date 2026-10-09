@@ -774,7 +774,7 @@ function drawOfferStack() {
   const H = 360, m = { t: 26, r: 16, b: 30, l: 56 }, HS = 54;
   const x = d3.scaleSymlog().constant(10).domain(OS_DOMAIN).range([m.l, w - m.r]);
   // Gaussian smoothing in screen space, so the blur looks the same at every price
-  const bw = Math.max(5, (w - m.l - m.r) * 0.0135);
+  const bw = Math.max(2, (w - m.l - m.r) * 0.004);
   const xg = G.map((g) => x(g));
   const exact = S.osSmooth === "exact";
   // exact: one flat step per $ grid interval, MW in the interval / its width in $

@@ -675,7 +675,7 @@ function drawCheap() {
   // units above minimum (nuclear left out: it always is)
   const rows = I.above_units.filter((r) => r[2] === thr && r[1] !== "nuclear" && ts.includes(r[1]) && r[4] > 0)
     .map((r) => ({ unit: r[0], tech: r[1], run: r[3], above: r[4], mwh: r[5] })).sort((a, b) => b.mwh - a.mwh);
-  $("cheap-units-note").textContent = `All loaded days together, nuclear left out. ${rows.length} unit${rows.length === 1 ? "" : "s"} ran above minimum in at least one hour with lambda below ${fmtPrice0(thr)}; the top 30 by energy above minimum are listed. Cogeneration and units carrying ancillary services are likely here. Click a row to see the unit.`;
+  $("cheap-units-note").textContent = `All days together, nuclear left out. ${rows.length} unit${rows.length === 1 ? "" : "s"} ran above minimum in at least one hour with lambda below ${fmtPrice0(thr)}; the top 30 by energy above minimum are listed. Cogeneration and units carrying ancillary services are likely here. Click a row to see the unit.`;
   $("cheap-units").innerHTML = rows.length ? unitRows(rows.slice(0, 30), [
     { h: "Unit", t: 1, f: (r) => esc(r.unit) }, { h: "Technology", t: 1, f: (r) => techLabel(r.tech) },
     { h: `Hours running below ${fmtPrice0(thr)}`, f: (r) => r.run }, { h: "Hours above minimum", f: (r) => r.above },
@@ -698,11 +698,11 @@ function drawShut() {
   const has = I.dates.map((_, i) => I.tech[ts[0]].n[i] != null);
   const series = [
     { label: "Back online within 24 hours (two-shifting)", color: s.color, values: two.map((v, i) => (has[i] ? v : null)) },
-    { label: "Off longer, or not back in the loaded days", color: s.color, opacity: 0.4, values: long.map((v, i) => (has[i] ? v : null)) },
+    { label: "Off longer, or not back before the data ends", color: s.color, opacity: 0.4, values: long.map((v, i) => (has[i] ? v : null)) },
   ];
   $("shut-legend").innerHTML = series.map((x) => `<span><span class="sw" style="background:var(${x.color});opacity:${x.opacity || 1}"></span>${x.label}</span>`).join("");
   const priceTxt = thr == null ? "" : ` where system lambda averaged below ${fmtPrice0(thr)} over the ${I.next_h} hours after the unit went off`;
-  $("shut-note").textContent = `Each bar counts ${s.label.toLowerCase()} units that went from online to off on that day${priceTxt}. Units that went on outage while off are left out, as are spells shorter than an hour (mostly combined-cycle configuration changes). The lower chart shows, for the units back within 24 hours, the hours of the day they were off, as an average number of units per day, with the average lambda for each hour across all loaded days as a dashed line (right axis).`;
+  $("shut-note").textContent = `Each bar counts ${s.label.toLowerCase()} units that went from online to off on that day${priceTxt}. Units that went on outage while off are left out, as are spells shorter than an hour (mostly combined-cycle configuration changes). The lower chart shows, for the units back within 24 hours, the hours of the day they were off, as an average number of units per day, with the average lambda for each hour across all days as a dashed line (right axis).`;
   dayBars(el, I.dates, series, { title: `${s.label}: shutdowns per day`, yFmt: d3.format(",.0f") });
   // hour-of-day profile of short spells
   const off = new Array(24).fill(0);
@@ -827,7 +827,7 @@ function stretchResponses(thr) {
   return (B.resp[thr] = { rows, n: eps.length });
 }
 
-// share: each bar sums to 100% of unit-stretches; mw: average MW per cheap stretch doing each thing
+// share: each bar sums to 100% of times a unit ran into a stretch; mw: average MW per stretch doing each thing
 function stackBars(el, groups, s, title, xTitle, nEps) {
   const mw = S.stUnit === "mw", w = Math.max(280, el.clientWidth || 500), H = 262, m = { t: 22, r: 8, b: 60, l: mw ? 56 : 44 };
   const x = d3.scaleBand().domain(groups.map((g) => g.label)).range([m.l, w - m.r]).padding(w > 900 ? 0.45 : 0.22);
@@ -853,14 +853,14 @@ function stackBars(el, groups, s, title, xTitle, nEps) {
   groups.forEach((g) => {
     const n = g.rows.length;
     svg.append("text").attr("class", "axis-title").attr("x", x(g.label) + x.bandwidth() / 2).attr("y", H - m.b + (two ? 42 : 30)).attr("text-anchor", "middle")
-      .text(mw ? `${d3.format(",")(g.nEps ?? nEps)} stretch${(g.nEps ?? nEps) === 1 ? "" : "es"}` : `${d3.format(",")(n)} unit-stretch${n === 1 ? "" : "es"}`);
+      .text(`${d3.format(",")(new Set(g.rows.map((z) => z.unit)).size)} units`);
     if (!n) return;
     let y0 = 0;
     ST_RESP.forEach((r) => {
       const sub = g.rows.filter((z) => z.r === r.id), k = sub.length, v = val(g, sub);
       svg.append("rect").attr("x", x(g.label)).attr("width", x.bandwidth()).attr("y", y(y0 + v)).attr("height", y(y0) - y(y0 + v))
         .attr("fill", css(r.color || s.color)).attr("fill-opacity", r.o)
-        .on("pointermove", (ev) => showTip(ev, `<h4>${g.label}</h4>${r.label}: ${mw ? `${d3.format(",.0f")(v)} MW per stretch on average` : fmtPct(v)} (${k} of ${n} times a unit ran into a stretch)`)).on("pointerleave", hideTip);
+        .on("pointermove", (ev) => showTip(ev, `<h4>${g.label}</h4>${r.label}: ${mw ? `${d3.format(",.0f")(v)} MW per stretch on average` : fmtPct(v)} (${k} of ${n} times a unit in this group ran into a stretch)`)).on("pointerleave", hideTip);
       y0 += v;
     });
   });
@@ -887,11 +887,11 @@ async function drawStretch() {
   $("st-legend").innerHTML = ST_RESP.map((r) => `<span><span class="sw" style="background:var(${r.color || s.color});opacity:${r.o}"></span>${r.label}</span>`).join("");
   const fmtD = d3.timeFormat("%b %-d, %Y"), period = `${fmtD(parseDate(S.UH.dates[0]))} to ${fmtD(parseDate(S.UH.dates.at(-1)))}`;
   $("st-note").textContent = `A cheap stretch is a run of consecutive hours with system lambda below ${fmtPrice0(thr)}. There were ${nEps} from ${period}. ` +
-    `Each bar looks at the ${S.stTech === "all" ? "coal and gas" : s.label.toLowerCase()} units that were already running ${ST_LEAD} hours before a stretch began, and shows what they did by the time it ended. ` +
-    `Units are grouped by how they ran over the whole period: ${ST_GROUPS.map((g) => `${g.label.toLowerCase()} (${g.note})`).join("; ")}. ` +
-    (S.stUnit === "mw" ? `In MW, bars show the average capacity (HSL) per stretch: how many MW of running units did each thing in a typical stretch. ` : "") +
+    `The chart takes the ${S.stTech === "all" ? "coal and gas" : s.label.toLowerCase()} units that were already running ${ST_LEAD} hours before each stretch began and shows what they did by the time it ended. ` +
+    `Each bar is one group of units, by how they ran over the whole period: ${ST_GROUPS.map((g) => `${g.label.toLowerCase()} (${g.note})`).join("; ")}. ` +
+    (S.stUnit === "mw" ? `Bars show MW of capacity (HSL) in a typical stretch, averaged over all ${nEps}. ` : `Bars show the share of times a unit in the group ran into a stretch. `) +
     `Each combined-cycle train counts as one unit, so switching configuration is not a shutdown. Nuclear is left out. Lambda is the system price; a unit's own nodal price can differ.`;
-  stackBars(el, ST_GROUPS.map((g) => ({ label: g.label, rows: rows.filter((r) => r.group === g.id) })), s, "What running units did in cheap stretches, by how each unit ran over the period", "", nEps);
+  stackBars(el, ST_GROUPS.map((g) => ({ label: g.label, rows: rows.filter((r) => r.group === g.id) })), s, "What running units did in cheap stretches", "", nEps);
   // unit table
   const B = stretchBase(), by = d3.group(rows, (r) => r.unit);
   const list = [...B.units.values()].filter((e) => ts.includes(e.tech) && (by.has(e.unit) || e.shut > 0)).map((e) => {
