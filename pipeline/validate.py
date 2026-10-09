@@ -263,10 +263,11 @@ def check_day(date, have):
             if aw:
                 n_award += 1
                 hsl_h = u.get("hsl_h") or [u.get("hsl")] * len(u["award"])
-                worst = max(((a or 0) - (hh if hh is not None else np.inf), a, hh)
-                            for a, hh in zip(u["award"], hsl_h))
-                if worst[0] > TOL["limit_mw"]:
-                    over.append(f"{name} {worst[1]:.0f} > HSL {worst[2]:.0f}")
+                pairs = [(a - hh, a, hh) for a, hh in zip(u["award"], hsl_h) if a is not None and hh is not None]
+                if pairs:
+                    worst = max(pairs, key=lambda p: p[0])
+                    if worst[0] > TOL["limit_mw"]:
+                        over.append(f"{name} {worst[1]:.0f} > HSL {worst[2]:.0f}")
                 if u["tech"] in THERMAL:
                     acc = by_tech.setdefault(u["tech"], np.zeros(24))
                     for h, a in enumerate(u["award"][:24]):
