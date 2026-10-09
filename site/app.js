@@ -674,22 +674,22 @@ function drawMarginal() {
   if (!rows.length && chgMW < 1) return clear(`No MW offered within ${heLabel(h)}'s cleared price range.`);
   const win = `${fmtPrice(lo)} to ${fmtPrice(hi)}`;
   // battery charging is drawn on the other side of zero: it is demand that drops out as price rises
-  const bars = rows.concat(chg && chgMW >= 1 ? [{ ...chg, mw: -chgMW, valText: `${fmtMW(chgMW)} MW · ${d3.format(".0%")(chg.share)} of all moving MW` }] : []);
+  const bars = rows.concat(chg && chgMW >= 1 ? [{ ...chg, mw: -chgMW, valText: `${fmtMW(chgMW)} MW · ${d3.format(".0%")(chg.share)} of supply + charging` }] : []);
   el.replaceChildren(hBars(el, bars, (r) => r.s.part === "chg"
     ? `<h4>${r.s.label} · ${heLabel(h)}</h4><table>
       <tr><td>Charging that stops from ${win}</td><td class="n">${fmtMW(chgMW)} MW</td></tr>
-      <tr><td>Share of all MW moving in the window</td><td class="n">${d3.format(".1%")(r.share)}</td></tr></table>
+      <tr><td>Share of supply + charging in the window</td><td class="n">${d3.format(".1%")(r.share)}</td></tr></table>
       <p class="tip-body">Batteries bidding to charge below this price stop charging as price rises. That is demand stepping back, not supply, so it is kept out of the supply shares.</p>`
     : `<h4>${r.s.label} · ${heLabel(h)}</h4><table>
       <tr><td>Offered from ${win}</td><td class="n">${fmtMW(r.mw)} MW</td></tr>
       <tr><td>Share of marginal supply</td><td class="n">${r.share != null ? d3.format(".1%")(r.share) : "–"}</td></tr></table>`));
   el.insertAdjacentHTML("beforeend", `<p class="note">${fmtMW(total)} MW of supply offered from ${win}${chgMW >= 1 ? `, and ${fmtMW(chgMW)} MW of battery charging that stops in the same window` : ""} (${pname} averaged ${fmtPrice(hp.mean)} in ${heLabel(h)}).</p>`);
   tel.innerHTML = barTable(all, `MW offered ${win}`, "Share of marginal supply", "Total supply", total) +
-    (chg ? `<p class="note">Battery charging that stops in the window: ${fmtMW(chgMW)} MW (${chg.share != null ? d3.format(".1%")(chg.share) : "–"} of all MW moving).</p>` : "");
+    (chg ? `<p class="note">Storage charging (bids to buy) that stops in the window: ${fmtMW(chgMW)} MW (${chg.share != null ? d3.format(".1%")(chg.share) : "–"} of supply + charging).</p>` : "");
   setCSV(el, ["technology", `MW from ${lo} to ${hi}`, "share_of_marginal_supply"], all.map((r) => [r.s.label, r.mw, r.share])
-    .concat(chg ? [[chg.s.label, chgMW, null], ["charging share of all moving MW", null, chg.share]] : []), `Marginal supply ${S.date} ${heLabel(h)}`);
+    .concat(chg ? [[chg.s.label, chgMW, null], ["storage charging share of supply plus charging", null, chg.share]] : []), `Marginal supply ${S.date} ${heLabel(h)}`);
 
-  // by hour: supply shares above zero (100% stacked), charging below as a share of all moving MW
+  // by hour: supply shares above zero (100% stacked), charging below as a share of supply plus charging
   const list = marginalSeries(seriesList()).filter((s) => s.part !== "chg");
   const hours = d3.range(24).map((i) => {
     const p = hourPrice(S.prices, i);
@@ -730,17 +730,17 @@ function drawMarginal() {
     if (!d) return `<h4>${heLabel(i)}</h4>No price or curve data`;
     return `<h4>${heLabel(i)}</h4><table>` + list.filter((s) => d.sh[s.id] > 0).sort((a, b) => d.sh[b.id] - d.sh[a.id]).map((s) =>
       `<tr><td><span class="sw" style="background:var(${s.color})"></span></td><td>${s.label}</td><td class="n">${d3.format(".0%")(d.sh[s.id])}</td></tr>`).join("") +
-      (d.chg > 0 ? `<tr><td><span class="sw" style="background:var(${STORAGE_SPLIT[0].color})"></span></td><td>Battery charging that stops (of all moving MW)</td><td class="n">${d3.format(".0%")(d.chg)}</td></tr>` : "") + "</table>";
+      (d.chg > 0 ? `<tr><td><span class="sw" style="background:var(${STORAGE_SPLIT[0].color})"></span></td><td>Storage charging (bids to buy)</td><td class="n">${d3.format(".0%")(d.chg)} of supply + charging</td></tr>` : "") + "</table>";
   });
   del.replaceChildren(svg.node());
-  setCSV(del, ["hour_ending", ...list.map((s) => `${s.label} share of marginal supply`), "battery charging share of all moving MW"],
+  setCSV(del, ["hour_ending", ...list.map((s) => `${s.label} share of marginal supply`), "storage charging share of supply plus charging"],
     hours.map((d, i) => [i + 1, ...list.map((s) => (d ? d.sh[s.id] ?? 0 : null)), d ? d.chg : null]), `Marginal supply by hour ${S.date}`);
 }
 
 // ---- offer stack by price: the slope of the day's offer curves ----------------
 // Each technology's share of the MW offered around each price: who would move next if price
 // landed there. Battery charging bids are demand, so they are kept out of the supply shares and
-// drawn below the line as a share of all MW moving at that price. Floor-priced MW are left out.
+// drawn below the line as a share of supply plus charging at that price. Floor-priced MW are left out.
 const OS_DOMAIN = [-100, 1000];
 function drawOfferStack() {
   const el = $("os-chart");
@@ -819,7 +819,7 @@ function drawOfferStack() {
   svg.append("g").attr("class", "axis").attr("transform", `translate(${m.l},0)`)
     .call(d3.axisLeft(y).ticks(6).tickFormat(share ? (v) => fmtPct(Math.abs(v)) : (v) => d3.format(",.0f")(Math.abs(v))).tickSizeOuter(0));
   svg.append("text").attr("class", "axis-title").attr("x", m.l).attr("y", 10)
-    .text(share ? "Share of supply offered near each price (above) · battery charging (below)" : "MW offered per $1 of price (above: supply, below: battery charging)");
+    .text(share ? "Share of supply offered near each price (above) · battery charging (below)" : "MW offered at each $1 of price (above: supply, below: battery charging)");
   svg.append("text").attr("class", "axis-title").attr("x", w - m.r).attr("y", H - 2).attr("text-anchor", "end").text("Offer price ($/MWh, compressed scale)");
   // supply stacked upward, charging downward, clipped to the plot
   const clipId = "os-clip-" + Math.random().toString(36).slice(2, 8);
@@ -855,17 +855,17 @@ function drawOfferStack() {
     .on("pointermove", (ev) => {
       const i = d3.minIndex(pts, (d) => Math.abs(d.px - d3.pointer(ev)[0])), d = pts[i];
       cross.style("display", null).attr("x1", d.px).attr("x2", d.px);
-      if (!live[i]) return showTip(ev, `<h4>Around ${fmtPrice(d.p)}</h4>Almost nothing is offered near this price.`);
+      if (!live[i]) return showTip(ev, `<h4>Around ${fmtPrice0(Math.round(d.p) || 0)}</h4>Almost nothing is offered near this price.`);
       const rows = supI.filter((j) => d.sh[j] > 0.005).sort((a, b) => d.sh[b] - d.sh[a]);
-      showTip(ev, `<h4>Around ${fmtPrice(d.p)}</h4><table>` + rows.map((j) =>
-        `<tr><td><span class="sw" style="background:var(${list[j].color})"></span></td><td>${list[j].label}</td><td class="n">${d3.format(".0%")(d.sh[j])}</td><td class="n">${d3.format(",.0f")(d.mwd[j])} MW/$</td></tr>`).join("") +
-        (chgI >= 0 && d.chg > 0 ? `<tr><td><span class="sw" style="background:var(${list[chgI].color})"></span></td><td>Battery charging (of all moving MW)</td><td class="n">${d3.format(".0%")(d.sh[chgI])}</td><td class="n">${d3.format(",.0f")(d.chg)} MW/$</td></tr>` : "") +
+      showTip(ev, `<h4>Around ${fmtPrice0(Math.round(d.p) || 0)}</h4><table>` + rows.map((j) =>
+        `<tr><td><span class="sw" style="background:var(${list[j].color})"></span></td><td>${list[j].label}</td><td class="n">${d3.format(".0%")(d.sh[j])}</td><td class="n">${d3.format(",.0f")(d.mwd[j])} MW</td></tr>`).join("") +
+        (chgI >= 0 && d.chg > 0 ? `<tr><td><span class="sw" style="background:var(${list[chgI].color})"></span></td><td>Storage charging (bids to buy)</td><td class="n">${d3.format(".0%")(d.sh[chgI])} of supply + charging</td><td class="n">${d3.format(",.0f")(d.chg)} MW</td></tr>` : "") +
         `</table><p class="tip-body">Supply shares add to 100% of supply offered near this price.</p>`);
     })
     .on("pointerleave", () => { cross.style("display", "none"); hideTip(); });
   el.replaceChildren(svg.node());
-  setCSV(el, ["price_usd_mwh", ...supI.map((j) => `${list[j].label} share of supply`), ...supI.map((j) => `${list[j].label} MW per $`),
-    ...(chgI >= 0 ? ["battery charging share of all moving MW", "battery charging MW per $"] : [])],
+  setCSV(el, ["price_usd_mwh", ...supI.map((j) => `${list[j].label} share of supply`), ...supI.map((j) => `${list[j].label} MW per $1 of price`),
+    ...(chgI >= 0 ? ["storage charging share of supply plus charging", "storage charging MW per $1 of price"] : [])],
     pts.filter((d, i) => live[i]).map((d) => [Math.round(d.p * 100) / 100, ...supI.map((j) => d.sh[j]), ...supI.map((j) => d.mwd[j]), ...(chgI >= 0 ? [d.sh[chgI], d.chg] : [])]),
     `Offer stack by price ${S.date}`);
 }

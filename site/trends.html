@@ -221,12 +221,12 @@
     <div class="panel-head">
       <div>
         <h2>Marginal supply by settled price <span class="h-note" id="mbp-title-note"></span></h2>
-        <p class="note">Which resources move when the price moves, across every hour loaded, sorted by that hour's system lambda. Above zero: each technology's share of the supply MW whose offer price falls just around lambda. Below zero: battery charging bids that stop at that price, as a share of all MW moving. Smoothed blends the 200 hours nearest each price, so each point rests on the same amount of data.</p>
+        <p class="note">Which resources move when the price moves, across every hour loaded, sorted by that hour's system lambda. Above zero: each technology's share of the supply MW whose offer price falls just around lambda. Below zero: battery charging bids that stop at that price, as a share of supply plus charging. Smoothed blends the 100 hours nearest each price, so each point rests on the same amount of data. Exact uses only the hours in each $1 band of lambda.</p>
       </div>
       <div class="panel-tools">
         <div class="seg seg-sm" id="mbp-view" role="radiogroup" aria-label="View">
           <button type="button" data-v="smooth" role="radio">Smoothed</button>
-          <button type="button" data-v="groups" role="radio">Price groups</button>
+          <button type="button" data-v="exact" role="radio">Exact</button>
         </div>
         <div class="seg seg-sm" id="mbp-src" role="radiogroup" aria-label="Report">
           <button type="button" data-v="60d" role="radio" title="Per technology, about two months behind">60-day</button>
