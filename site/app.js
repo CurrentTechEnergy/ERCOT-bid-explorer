@@ -855,9 +855,9 @@ function drawOfferStack() {
     .on("pointermove", (ev) => {
       const i = d3.minIndex(pts, (d) => Math.abs(d.px - d3.pointer(ev)[0])), d = pts[i];
       cross.style("display", null).attr("x1", d.px).attr("x2", d.px);
-      if (!live[i]) return showTip(ev, `<h4>Around ${fmtPrice(d.p)}</h4>Almost nothing is offered near this price.`);
+      if (!live[i]) return showTip(ev, `<h4>Around ${fmtPrice0(Math.round(d.p) || 0)}</h4>Almost nothing is offered near this price.`);
       const rows = supI.filter((j) => d.sh[j] > 0.005).sort((a, b) => d.sh[b] - d.sh[a]);
-      showTip(ev, `<h4>Around ${fmtPrice(d.p)}</h4><table>` + rows.map((j) =>
+      showTip(ev, `<h4>Around ${fmtPrice0(Math.round(d.p) || 0)}</h4><table>` + rows.map((j) =>
         `<tr><td><span class="sw" style="background:var(${list[j].color})"></span></td><td>${list[j].label}</td><td class="n">${d3.format(".0%")(d.sh[j])}</td><td class="n">${d3.format(",.0f")(d.mwd[j])} MW</td></tr>`).join("") +
         (chgI >= 0 && d.chg > 0 ? `<tr><td><span class="sw" style="background:var(${list[chgI].color})"></span></td><td>Battery charging (of all moving MW)</td><td class="n">${d3.format(".0%")(d.sh[chgI])}</td><td class="n">${d3.format(",.0f")(d.chg)} MW</td></tr>` : "") +
         `</table><p class="tip-body">Supply shares add to 100% of supply offered near this price.</p>`);

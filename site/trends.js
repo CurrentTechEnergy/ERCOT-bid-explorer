@@ -468,10 +468,10 @@ function drawMarginalSmooth(el, H, list, w, narrow) {
       const p = x.invert(d3.pointer(ev)[0]), d = exact ? pts.find((q) => !q.gap && p >= q.lo && p < q.hi) : pts[d3.minIndex(pts, (q) => Math.abs(q.p - p))];
       if (!d) { cross.style("display", "none"); hideTip(); return; }
       cross.style("display", null).attr("x1", x(d.p)).attr("x2", x(d.p));
-      showTip(ev, `<h4>Around ${fmtPrice(d.p)}</h4><table>` + list.map((s, j) => [s, d.sh[j]]).filter(([, v]) => v > 0.005).sort((a, b) => b[1] - a[1])
+      showTip(ev, `<h4>Around ${fmtPrice0(Math.round(d.p) || 0)}</h4><table>` + list.map((s, j) => [s, d.sh[j]]).filter(([, v]) => v > 0.005).sort((a, b) => b[1] - a[1])
         .map(([s, v]) => `<tr><td><span class="sw" style="background:var(${s.color})"></span></td><td>${s.label}</td><td class="n">${fmtPct(v)}</td></tr>`).join("") +
         `<tr><td><span class="sw" style="background:var(${CHARGING.color})"></span></td><td>Battery charging (of all moving MW)</td><td class="n">${fmtPct(d.c)}</td></tr></table>` +
-        (exact ? `<p class="tip-body">${d.nh} hours with lambda from ${fmtPrice0(d.lo)} to ${fmtPrice0(d.hi)}.</p>` : `<p class="tip-body">Blends the ${K} hours with lambda from ${fmtPrice(d.lo)} to ${fmtPrice(d.hi)}.</p>`));
+        (exact ? `<p class="tip-body">${d.nh} hours with lambda from ${fmtPrice0(d.lo)} to ${fmtPrice0(d.hi)}.</p>` : `<p class="tip-body">Blends the ${K} hours with lambda from ${fmtPrice0(Math.round(d.lo) || 0)} to ${fmtPrice0(Math.round(d.hi) || 0)}.</p>`));
     })
     .on("pointerleave", () => { cross.style("display", "none"); hideTip(); });
   el.replaceChildren(svg.node());
