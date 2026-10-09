@@ -68,7 +68,7 @@
     <div class="panel-head">
       <div>
         <h2>Curtailment at the node <span class="h-note" id="nc-note"></span></h2>
-        <p class="note">The same curtailed energy priced at each unit's own settlement point. An hour counts as <b>congestion</b> when the node price is at least $5/MWh below system lambda (the energy was worth less where the unit sits, often negative) and as <b>oversupply</b> otherwise (the system as a whole did not want it at the unit's offer). The split is by price, so it says what the energy was worth at the node, not which constraint SCED was managing. Units are matched to nodes through the DAM disclosure; hours with no node price are priced at lambda and counted as unmatched. Node prices load a few days per update, newest first, so early days fill in over time.</p>
+        <p class="note">The same curtailed energy priced at each unit's own settlement point. An hour counts as <b>operator-directed</b> where ERCOT's HDL/LDL Manual Override Summary shows an operator lowering the unit's HDL (curtailment up to that reduction, averaged over the hour's runs), as <b>congestion</b> when the node price is at least $5/MWh below system lambda (the energy was worth less where the unit sits, often negative) and as <b>oversupply</b> otherwise (the system as a whole did not want it at the unit's offer). The split is by price, so it says what the energy was worth at the node, not which constraint SCED was managing. Units are matched to nodes through the DAM disclosure; hours with no node price are priced at lambda and counted as unmatched. Node prices load a few days per update, newest first, so early days fill in over time.</p>
       </div>
     </div>
     <div class="legend legend-static" id="nc-legend"></div>

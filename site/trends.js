@@ -256,17 +256,19 @@ function drawCurtailment() {
 const NC_SERIES = [
   { id: "wind_cong", tech: "wind", key: "cong", label: "Wind, congestion", color: "--c3" },
   { id: "wind_over", tech: "wind", key: "over", label: "Wind, oversupply", color: "--c3", dash: "5 3" },
+  { id: "wind_dir", tech: "wind", key: "directed", label: "Wind, operator-directed", color: "--c3", dash: "1 3", width: 1.5 },
   { id: "solar_cong", tech: "solar", key: "cong", label: "Solar, congestion", color: "--c4" },
   { id: "solar_over", tech: "solar", key: "over", label: "Solar, oversupply", color: "--c4", dash: "5 3" },
+  { id: "solar_dir", tech: "solar", key: "directed", label: "Solar, operator-directed", color: "--c4", dash: "1 3", width: 1.5 },
 ];
 function drawNodeCurtail() {
   const N = S.N, el = $("nc-daily"), vel = $("nc-value"), bel = $("nc-bins"), uel = $("nc-units");
   $("nc-legend").innerHTML = NC_SERIES.map((s) => `<span><span class="sw" style="background:var(${s.color});${s.dash ? "opacity:.5" : ""}"></span>${s.label}</span>`).join("");
   if (!N || !N.dates.length) { emptyMsg(el, "No node-priced curtailment yet. It is built by the data update workflow once node prices are loaded."); vel.innerHTML = bel.innerHTML = uel.innerHTML = ""; return; }
-  const nNodes = N.has_nodes.filter(Boolean).length;
-  $("nc-note").textContent = `${nNodes} of ${N.dates.length} days have node prices · ${N.n_units.wind.mapped + N.n_units.solar.mapped} units matched, ${N.n_units.wind.unmapped + N.n_units.solar.unmapped} not`;
+  const nNodes = N.has_nodes.filter(Boolean).length, nOv = (N.has_overrides || []).filter(Boolean).length;
+  $("nc-note").textContent = `${nNodes} of ${N.dates.length} days have node prices · ${nOv} have operator override data · ${N.n_units.wind.mapped + N.n_units.solar.mapped} units matched, ${N.n_units.wind.unmapped + N.n_units.solar.unmapped} not`;
   const gwh = (v) => (v == null ? null : v / 1000);
-  timeChart(el, NC_SERIES.map((s) => ({ label: s.label, color: s.color, dash: s.dash, values: N.daily[s.tech][s.key].map(gwh) })),
+  timeChart(el, NC_SERIES.filter((s) => N.daily[s.tech][s.key]).map((s) => ({ label: s.label, color: s.color, dash: s.dash, width: s.width, values: N.daily[s.tech][s.key].map(gwh) })),
     { dates: N.dates, H: 240, title: "Curtailed energy by what it was worth at the node (GWh per day)", yFmt: d3.format(",.1f"), tipFmt: d3.format(",.1f"), dots: true,
       tipNote: (i) => { const u = (N.daily.wind.unmapped[i] || 0) + (N.daily.solar.unmapped[i] || 0); return u ? ` · ${fmtMW(u)} MWh unmatched` : ""; } });
   // value of the curtailed energy: at the node against at system lambda
@@ -307,17 +309,18 @@ function drawNodeCurtail() {
     labels.map((lb, i) => [lb, N.bins.wind.mwh[i] / 1000, N.bins.solar.mwh[i] / 1000, N.bins.wind.uh[i], N.bins.solar.uh[i]]), "Curtailment by node price");
 
   // most curtailed units
-  const rows = N.units.map((r) => ({ unit: r[0], tech: r[1], sp: r[2], curt: r[3], cong: r[4], value: r[5], node: r[6], avail: r[7], days: r[8] }));
+  const rows = N.units.map((r) => ({ unit: r[0], tech: r[1], sp: r[2], curt: r[3], cong: r[4], value: r[5], node: r[6], avail: r[7], days: r[8], dir: r[9] }));
   const cols = [
     { h: "Unit", t: true, f: (r) => esc(r.unit) }, { h: "Technology", t: true, f: (r) => techLabel(r.tech) }, { h: "Settlement point", t: true, f: (r) => esc(r.sp || "–") },
     { h: "Curtailed GWh", f: (r) => d3.format(",.1f")(r.curt / 1000) }, { h: "Of available", f: (r) => (r.avail ? fmtPct(r.curt / r.avail) : "–") },
     { h: "Congestion share", f: (r) => (r.cong != null && r.curt ? fmtPct(r.cong / r.curt) : "–") },
+    { h: "Operator-directed", f: (r) => (r.dir != null && r.curt ? fmtPct(r.dir / r.curt) : "–") },
     { h: "Mean node price when curtailed", f: (r) => fmtPrice(r.node) }, { h: "Worth at the node", f: (r) => (r.value == null ? "–" : fmtPrice0(r.value)) }, { h: "Days priced", f: (r) => r.days },
   ];
   uel.innerHTML = rows.length ? `<table class="data"><thead><tr>${cols.map((c) => `<th${c.t ? ' class="t"' : ""}>${c.h}</th>`).join("")}</tr></thead><tbody>` +
     rows.map((r) => `<tr>${cols.map((c) => `<td${c.t ? ' class="t"' : ""}>${c.f(r)}</td>`).join("")}</tr>`).join("") + "</tbody></table>" : "";
-  setCSV(uel, ["unit", "technology", "settlement_point", "curtailed_mwh", "available_mwh", "congestion_mwh", "value_at_node", "mean_node_price", "days"],
-    rows.map((r) => [r.unit, r.tech, r.sp, r.curt, r.avail, r.cong, r.value, r.node, r.days]), "Most curtailed units");
+  setCSV(uel, ["unit", "technology", "settlement_point", "curtailed_mwh", "available_mwh", "congestion_mwh", "directed_mwh", "value_at_node", "mean_node_price", "days"],
+    rows.map((r) => [r.unit, r.tech, r.sp, r.curt, r.avail, r.cong, r.dir, r.value, r.node, r.days]), "Most curtailed units");
 }
 
 // ---- natural gas ----------------------------------------------------------------------
