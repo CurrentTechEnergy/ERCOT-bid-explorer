@@ -103,7 +103,7 @@
     <div class="panel-head">
       <div>
         <h2>Marginal supply <span class="h-note" id="marg-title-note"></span></h2>
-        <p class="note">Who is offering at the cleared price: MW each technology offers between the hour's lowest and highest cleared price (at least ±$1 around the average), from the hourly offer curves (it follows the Curve and Price selections). Supply shares add to 100% of supply. Batteries that stop charging as price rises are demand, so they are drawn on the other side of zero as a share of all MW moving in the window. It shows who stands at the margin, not which unit set each SCED price; with congestion, units can set price locally at prices away from system lambda.</p>
+        <p class="note">Who is offering at the cleared price: MW each technology offers between the hour's lowest and highest cleared price (at least ±$1 around the average), from the hourly offer curves (it follows the Curve and Price selections). Supply shares add to 100% of supply. Batteries that stop charging as price rises are demand, so they are drawn on the other side of zero as a share of supply plus charging in the window. It shows who stands at the margin, not which unit set each SCED price; with congestion, units can set price locally at prices away from system lambda.</p>
       </div>
     </div>
     <div class="chart" id="marg-chart"></div>
@@ -115,7 +115,7 @@
     <div class="panel-head">
       <div>
         <h2>Offer stack by price <span class="h-note" id="os-title-note"></span></h2>
-        <p class="note">Who would move next if price landed at each level: each technology's share of the MW offered around that price, read off the day's offer curves (the slope of the bid stack). Battery charging bids are demand, so they sit below the line as a share of all MW moving at that price. Floor-priced MW (minimum output and output schedules) are left out. Ticks along the top mark each hour's system lambda. The same view across all days, by settled price, is on the <a href="trends.html">Trends</a> page.</p>
+        <p class="note">Who would move next if price landed at each level: each technology's share of the MW offered around that price, read off the day's offer curves (the slope of the bid stack). Battery charging bids are demand, so they sit below the line as a share of supply plus charging at that price. Floor-priced MW (minimum output and output schedules) are left out. Ticks along the top mark each hour's system lambda. The same view across all days, by settled price, is on the <a href="trends.html">Trends</a> page.</p>
       </div>
       <div class="panel-tools">
         <div class="seg seg-sm" id="os-view" role="radiogroup" aria-label="Hours">

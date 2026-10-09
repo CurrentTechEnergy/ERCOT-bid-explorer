@@ -470,12 +470,12 @@ function drawMarginalSmooth(el, H, list, w, narrow) {
       cross.style("display", null).attr("x1", x(d.p)).attr("x2", x(d.p));
       showTip(ev, `<h4>Around ${fmtPrice0(Math.round(d.p) || 0)}</h4><table>` + list.map((s, j) => [s, d.sh[j]]).filter(([, v]) => v > 0.005).sort((a, b) => b[1] - a[1])
         .map(([s, v]) => `<tr><td><span class="sw" style="background:var(${s.color})"></span></td><td>${s.label}</td><td class="n">${fmtPct(v)}</td></tr>`).join("") +
-        `<tr><td><span class="sw" style="background:var(${CHARGING.color})"></span></td><td>Battery charging (of all moving MW)</td><td class="n">${fmtPct(d.c)}</td></tr></table>` +
+        `<tr><td><span class="sw" style="background:var(${CHARGING.color})"></span></td><td>Storage charging (bids to buy)</td><td class="n">${fmtPct(d.c)} of supply + charging</td></tr></table>` +
         (exact ? `<p class="tip-body">${d.nh} hours with lambda from ${fmtPrice0(d.lo)} to ${fmtPrice0(d.hi)}.</p>` : ""));
     })
     .on("pointerleave", () => { cross.style("display", "none"); hideTip(); });
   el.replaceChildren(svg.node());
-  setCSV(el, ["lambda_usd_mwh", "window_low", "window_high", ...list.map((s) => `${s.label} share of marginal supply`), "battery charging share of all moving MW"],
+  setCSV(el, ["lambda_usd_mwh", "window_low", "window_high", ...list.map((s) => `${s.label} share of marginal supply`), "storage charging share of supply plus charging"],
     pts.map((d) => [d.p, d.lo, d.hi, ...d.sh, d.c]), "Marginal supply by settled price");
 }
 
