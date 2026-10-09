@@ -16,7 +16,8 @@ Writes
     above_units      units that ran above minimum in cheap hours, all days together:
                      [unit, tech, threshold, hours running, hours above minimum, MWh above minimum]
                      for each threshold in CHEAP (hours with lambda below it)
-    spells           off spells of thermal units: [unit, tech, shutdown date, "HH:MM",
+    spells           off spells of thermal units (combined cycle by train, configurations merged):
+                     [unit or train, tech, shutdown date, "HH:MM",
                      hours off (null if not back on within the loaded days), mean lambda over the
                      first 4 hours off, mean lambda while off (first 24 h), 1 if the unit went
                      on outage (OUT) during the spell]
@@ -29,6 +30,8 @@ A unit runs in an hour when most of its SCED runs in that hour have an online st
 an hour it does not run counts as an outage when most of its runs that hour are OUT.
 "At minimum" means hourly output no more than ABOVE_EPS of HSL above the hour's LSL.
 """
+import re
+
 import numpy as np
 
 from .config import DATA_DIR, UNIT_DATA_DIR
@@ -41,6 +44,33 @@ CHEAP = [0, 10]           # $/MWh thresholds for the above-minimum table
 SHUT_TO = ("OFF", "SHUTDOWN", "OFFQS")   # an online unit going to one of these is a shutdown
 NEXT_H = 4                # hours after a shutdown averaged for "price when it went off"
 MAX_OFF_H = 24            # hours of an off spell averaged for "price while off"
+
+
+# A combined-cycle train is registered as one resource per configuration, and each SCED run lists
+# exactly one of them, so a train's status sequence is its configurations' events put together.
+_TRAIN = re.compile(r"^(.*_CC\d+)_")
+
+
+def train_of(name: str) -> str:
+    m = _TRAIN.match(name)
+    return m.group(1) if m else name
+
+
+def _spell_units(units: dict) -> dict:
+    """{key: (tech, status events)} for off-spell tracking: thermal units by name, combined-cycle
+    configurations merged into their train (absent runs (None) dropped, events in run order)."""
+    out, merged = {}, {}
+    for name, u in units.items():
+        t = u["tech"]
+        if t not in UNIT_TECHS:
+            continue
+        if t == "combined_cycle":
+            merged.setdefault(train_of(name), []).extend(ev for ev in u["status"] if ev[1] is not None)
+        else:
+            out[name] = (t, u["status"])
+    for key, evs in merged.items():
+        out[key] = ("combined_cycle", sorted(evs, key=lambda ev: ev[0]))
+    return out
 
 
 def _online(s):
@@ -189,11 +219,13 @@ def build_intraday(index: dict) -> None:
                             if c == "a":
                                 r[2] += 1
                                 r[3] += out[h] - lsl[h]
-            # off spells from status changes, run by run; a spell open at the end of yesterday
-            # and yesterday's last status carry over when the days are consecutive
+        # off spells from status changes, run by run; a spell open at the end of yesterday
+        # and yesterday's last status carry over when the days are consecutive
+        for name, (t, events) in _spell_units(ud["units"]).items():
+            seen.add(name)
             sp = pending.pop(name, None)
             prev = last_status.get(name)
-            for r_i, s in u["status"]:
+            for r_i, s in events:
                 if not s:
                     continue
                 m = day_no[d] * 1440 + runs[r_i]
