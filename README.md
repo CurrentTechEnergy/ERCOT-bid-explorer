@@ -12,6 +12,7 @@ An interactive dashboard of how ERCOT resources offer energy into real-time disp
 |---|---|---|---|
 | 2-Day SCED Energy Curves | NP3-908-ER | 2 days | Aggregate supply curves for wind, solar, storage and all other resources ("non-IRR", i.e. thermal and everything else), plus controllable-load demand bids, for every SCED run |
 | 60-Day SCED Disclosure | NP3-965-ER | 60 days | Every unit's offer curve in every SCED run, with its resource type, limits, base point and output. Lets thermal capacity be split into nuclear, coal, combined cycle, gas steam and combustion turbines |
+| 60-Day DAM Disclosure | NP3-966-ER | 60 days | Every generation resource's day-ahead three-part offer (energy curve, start-up costs, minimum-energy cost), its day-ahead energy and ancillary service awards, its settlement point and the day-ahead price there |
 | SCED System Lambda | NP6-322-CD | real time | System energy price for each SCED run |
 | Settlement Point Prices | NP6-905-CD | real time | 15-minute prices at hubs and load zones |
 
@@ -76,17 +77,26 @@ pipeline/
   config.py        price grid, thresholds, technology groupings
   parse_2day.py    NP3-908-ER  -> hourly curves per technology
   parse_60day.py   NP3-965-ER  -> hourly curves, statistics, per-unit summary
+  parse_dam.py     NP3-966-ER  -> per-unit day-ahead offers, costs, awards and prices (data/dam/)
   parse_prices.py  NP6-322-CD, NP6-905-CD -> lambda and hub/zone prices
   marginal.py      day files + prices -> hourly marginal MW by technology (no downloads)
   trends.py        per-unit day files -> daily trends, starts, flips, bidding changes (no downloads)
   intraday.py      per-unit day files -> thermal output at/above minimum in cheap hours, off spells
+  stayon.py        per-unit day files + DAM costs -> what riding through a cheap stretch cost each
+                   thermal unit against a shutdown and restart (no downloads)
                    (shutdowns, two-shifting), hourly state per unit (no downloads)
   ercot_api.py     ERCOT Public API client (token, archive listing, downloads)
   update.py        command line entry point
 site/
   index.html, app.js, style.css, vendor/d3.min.js
-  data/            generated: index.json, summary_*.json.gz, marginal_*.json.gz, 2d/, 60d/, prices/
+  data/            generated: index.json, summary_*.json.gz, marginal_*.json.gz, 2d/, 60d/, dam/, prices/
 ```
+
+### Day-ahead offers and costs
+
+`pipeline/parse_dam.py` keeps, for every generation resource and operating day, the DAM three-part offer as submitted (energy offer curve by hour, hot / intermediate / cold start-up cost in $ per start, minimum-energy cost in $/MWh), the DAM resource status, the energy award, the unit's settlement point with the day-ahead price there, and ancillary service awards with their clearing prices. Only the generation resource file of the DAM disclosure is read; energy-only offers, PTP obligations and load resources are not.
+
+`pipeline/stayon.py` puts those costs against the real-time data: for every stretch of hours with system lambda below $0 or $10, each thermal unit that ran through it is scored on what its output earned at lambda, what it cost at the unit's minimum-energy price, and what a shutdown and restart would have cost instead (hot start for stretches up to 8 hours, intermediate up to 24, cold beyond). Units with no three-part offer that day use their own most recent one within 10 days, or a generic per-technology value from `pipeline/config.py`, and are marked as such. Submitted costs are capped by ERCOT's cost verification rules, so they are an upper bound on cost, and lambda is the system price rather than the unit's node price.
 
 ## Caveats
 

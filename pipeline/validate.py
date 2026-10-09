@@ -13,6 +13,8 @@ consistency:
                     repeated fall-back hour)
   prices            system lambda for every hour and close to the hub average
   statuses          per-unit file: status codes and resource types the pipeline knows
+  dam               DAM day file: awards within HSL, 24 hours per unit, and (recorded) how the
+                    day-ahead awards compare with real-time base points by technology
 
 A check is an "error" when the numbers cannot both be right (a parsing or mapping bug), a
 "warning" when something is worth a look, and "info" when it is only recorded.  Results that did not pass are kept per day in data/validation.json.
@@ -128,6 +130,7 @@ def check_day(date, have):
     d6 = read_json_gz(DATA_DIR / "60d" / f"{date}.json.gz") if date in have["60d"] else None
     gen = read_json_gz(DATA_DIR / "2dgen" / f"{date}.json.gz") if date in have["2dgen"] else None
     pr = read_json_gz(DATA_DIR / "prices" / f"{date}.json.gz") if date in have["prices"] else None
+    dam = read_json_gz(DATA_DIR / "dam" / f"{date}.json.gz") if date in have.get("dam", ()) else None
 
     if d2:
         _runs_check(day, "2d", d2["runs"], date)
@@ -249,6 +252,37 @@ def check_day(date, have):
                 ([f"resource type(s) grouped as 'other': {new_types}"] if new_types else [])))
         else:
             day.add("codes", "ok", f"{len(codes)} status codes and {len(types)} resource types, all known")
+    # DAM day file: awards within limits, complete hours, and the day-ahead vs real-time gap
+    if dam:
+        over, short, n_award = [], [], 0
+        by_tech = {}
+        for name, u in dam["units"].items():
+            aw = [a for a in u.get("award", []) if a is not None]
+            if len(u.get("award", [])) != dam.get("hours", 24):
+                short.append(name)
+            if aw:
+                n_award += 1
+                if u.get("hsl") is not None and max(aw) > u["hsl"] + TOL["limit_mw"]:
+                    over.append(f"{name} {max(aw):.0f} > HSL {u['hsl']:.0f}")
+                if u["tech"] in THERMAL:
+                    acc = by_tech.setdefault(u["tech"], np.zeros(24))
+                    for h, a in enumerate(u["award"][:24]):
+                        if a is not None:
+                            acc[h] += a
+        if over:
+            day.add("dam_awards", "error", f"{len(over)} unit(s) awarded above HSL, e.g. {'; '.join(over[:3])}")
+        elif short:
+            day.add("dam_awards", "warning", f"{len(short)} unit(s) without a row for every hour, e.g. {short[:3]}")
+        else:
+            day.add("dam_awards", "ok", f"{n_award} units with a DAM energy award, all within HSL")
+        if d6 and by_tech:
+            stat = d6["stat_names"].index("base_point") if "stat_names" in d6 else LEGACY_STATS.index("base_point")
+            gaps = []
+            for tech, aw in by_tech.items():
+                bp = _hourly(d6["stats"].get(tech) or [], stat)
+                if bp.size == 24 and np.isfinite(bp).any():
+                    gaps.append(f"{tech} {np.nanmedian(aw - bp):+.0f}")
+            day.add("dam_vs_rt", "info", "DAM award minus real-time base point, median hour MW: " + ", ".join(gaps))
     return day
 
 
@@ -258,7 +292,7 @@ def _level(results):
 
 
 def run(dates, index, fail=True):
-    have = {k: set(index["days"].get(k, [])) for k in ("2d", "60d", "2dgen", "prices")}
+    have = {k: set(index["days"].get(k, [])) for k in ("2d", "60d", "2dgen", "dam", "prices")}
     report = json.loads(REPORT_PATH.read_text()) if REPORT_PATH.exists() else {"days": {}}
     checked = []
     for date in sorted(dates):
@@ -300,7 +334,7 @@ def _gha():
 def pending_days(index):
     """Days whose sources changed since they were last checked (or never checked)."""
     report = json.loads(REPORT_PATH.read_text()) if REPORT_PATH.exists() else {"days": {}}
-    have = {k: set(index["days"].get(k, [])) for k in ("2d", "60d", "2dgen", "prices")}
+    have = {k: set(index["days"].get(k, [])) for k in ("2d", "60d", "2dgen", "dam", "prices")}
     out = []
     for date in set().union(*have.values()):
         now = sorted(k for k in have if date in have[k])
