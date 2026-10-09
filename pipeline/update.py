@@ -34,6 +34,7 @@ from .stayon import build_stayon
 from .curve_trends import build_curve_trends
 from .nodes import build_node_curtail
 from .gas import fetch_gas
+from .econ import build_econ
 from .store import describe_blob, iter_csvs, zip_names, load_index, read_json_gz, save_index, update_summary, write_json_gz
 from .log import warn, write_summary, WARNINGS
 
@@ -356,6 +357,7 @@ def main(argv=None):
         build_stayon(index)
         build_curve_trends(index)
         build_node_curtail(index)
+        build_econ(index)
         save_index(index)
         return
 
@@ -401,6 +403,7 @@ def main(argv=None):
     build_stayon(index)
     build_curve_trends(index)
     build_node_curtail(index)
+    build_econ(index)
     save_index(index)
     added = {k: sorted(set(index["days"][k]) - before.get(k, set())) for k in index["days"]}
     names = {"2d": "2-day curves", "2dgen": "2-day generation summary", "60d": "60-day curves",
