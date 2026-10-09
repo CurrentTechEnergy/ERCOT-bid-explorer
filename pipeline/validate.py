@@ -13,8 +13,8 @@ consistency:
                     repeated fall-back hour)
   prices            system lambda for every hour and close to the hub average
   statuses          per-unit file: status codes and resource types the pipeline knows
-  dam               DAM day file: awards within HSL, 24 hours per unit, and (recorded) how the
-                    day-ahead awards compare with real-time base points by technology
+  dam               DAM day file: awards within each hour's HSL (warning), 24 hours per unit,
+                    and (recorded) how the day-ahead awards compare with real-time base points
 
 A check is an "error" when the numbers cannot both be right (a parsing or mapping bug), a
 "warning" when something is worth a look, and "info" when it is only recorded.  Results that did not pass are kept per day in data/validation.json.
@@ -262,15 +262,18 @@ def check_day(date, have):
                 short.append(name)
             if aw:
                 n_award += 1
-                if u.get("hsl") is not None and max(aw) > u["hsl"] + TOL["limit_mw"]:
-                    over.append(f"{name} {max(aw):.0f} > HSL {u['hsl']:.0f}")
+                hsl_h = u.get("hsl_h") or [u.get("hsl")] * len(u["award"])
+                worst = max(((a or 0) - (hh if hh is not None else np.inf), a, hh)
+                            for a, hh in zip(u["award"], hsl_h))
+                if worst[0] > TOL["limit_mw"]:
+                    over.append(f"{name} {worst[1]:.0f} > HSL {worst[2]:.0f}")
                 if u["tech"] in THERMAL:
                     acc = by_tech.setdefault(u["tech"], np.zeros(24))
                     for h, a in enumerate(u["award"][:24]):
                         if a is not None:
                             acc[h] += a
         if over:
-            day.add("dam_awards", "error", f"{len(over)} unit(s) awarded above HSL, e.g. {'; '.join(over[:3])}")
+            day.add("dam_awards", "warning", f"{len(over)} unit(s) awarded above that hour's HSL, e.g. {'; '.join(over[:3])}")
         elif short:
             day.add("dam_awards", "warning", f"{len(short)} unit(s) without a row for every hour, e.g. {short[:3]}")
         else:

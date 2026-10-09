@@ -20,6 +20,8 @@ Writes data/dam/{date}.json.gz:
       "sp": "SETTLEMENT_POINT",     # the unit's settlement point (resource node)
       "status": "ON",               # DAM resource status (the day's most common value)
       "hsl": 540, "lsl": 320,       # daily median MW
+      "hsl_h": [24],                # hourly HSL, only when it changes during the day (wind
+                                    # and solar forecasts, temperature-dependent thermal limits)
       "start": [hot, inter, cold],  # $ per start, daily median (null = not offered)
       "start_var": true,            # only when a start cost changed during the day
       "mingen": 22.5,               # minimum-energy cost $/MWh, daily median (null = none)
@@ -186,6 +188,9 @@ def parse_dam_frame(df: pd.DataFrame):
         u = {"type": rtype[idx[0]], "tech": t, "sp": sp[idx[0]],
              "hsl": _median_or_none(hsl[idx], 1), "lsl": _median_or_none(lsl[idx], 1),
              "start": start, "mingen": _median_or_none(mingen[idx])}
+        hv = hsl[idx]
+        if np.isfinite(hv).any() and np.nanmax(hv) - np.nanmin(hv) > 0.5:
+            u["hsl_h"] = _series(hv, h, n_hours, 1)
         st = [s for s in status[idx] if s]
         u["status"] = max(set(st), key=st.count) if st else ""
         if any(np.nanmax(a[idx]) - np.nanmin(a[idx]) > 0.005 * max(1.0, abs(np.nanmax(a[idx])))
