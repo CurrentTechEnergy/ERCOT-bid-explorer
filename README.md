@@ -14,7 +14,8 @@ An interactive dashboard of how ERCOT resources offer energy into real-time disp
 | 60-Day SCED Disclosure | NP3-965-ER | 60 days | Every unit's offer curve in every SCED run, with its resource type, limits, base point and output. Lets thermal capacity be split into nuclear, coal, combined cycle, gas steam and combustion turbines |
 | 60-Day DAM Disclosure | NP3-966-ER | 60 days | Every generation resource's day-ahead three-part offer (energy curve, start-up costs, minimum-energy cost), its day-ahead energy and ancillary service awards, its settlement point and the day-ahead price there |
 | SCED System Lambda | NP6-322-CD | real time | System energy price for each SCED run |
-| Settlement Point Prices | NP6-905-CD | real time | 15-minute prices at hubs and load zones |
+| Settlement Point Prices | NP6-905-CD | real time | 15-minute prices at hubs and load zones; hourly prices at every resource node (kept on the data branch, for days with per-unit data) |
+| EIA Henry Hub spot price | RNGWHHD | daily | Natural gas price, $/MMBtu, from the EIA open data API (needs an `EIA_API_KEY` secret; skipped without one) |
 
 All curves are stored as hourly averages of the SCED runs in each hour, on a price grid with $1 steps from −$250 to $150 and coarser steps above.
 
@@ -31,7 +32,7 @@ Both versions are capped at each unit's high sustainable limit (HSL) for the SCE
 
 ### Accuracy checks
 
-After processing, `pipeline/validate.py` checks every new or changed operating day: the wind, solar and storage curves rebuilt from 60-day unit data against ERCOT's 2-day aggregate curves, thermal base points against the 2-day generation summary, curves and base points against online HSL, SCED runs per hour (allowing for DST), system lambda against the hub average, and status codes and resource types the pipeline does not know. An error stops the run before anything is committed; warnings appear on the run summary. Results that did not pass are kept per day in `site/data/validation.json`. To commit a day anyway, run the workflow with **ignore_checks**.
+After processing, `pipeline/validate.py` checks every new or changed operating day: the wind, solar and storage curves rebuilt from 60-day unit data against ERCOT's 2-day aggregate curves, thermal base points against the 2-day generation summary, curves and base points against online HSL, SCED runs per hour (allowing for DST), system lambda against the hub average, and status codes and resource types the pipeline does not know. A new error stops the run before anything is committed (an error already recorded for that day, from a run committed with **ignore_checks**, does not block a later re-check); warnings appear on the run summary. Results that did not pass are kept per day in `site/data/validation.json`. To commit a day anyway, run the workflow with **ignore_checks**.
 
 ```bash
 python -m pipeline.validate --all --no-fail   # re-check every day
@@ -78,7 +79,11 @@ pipeline/
   parse_2day.py    NP3-908-ER  -> hourly curves per technology
   parse_60day.py   NP3-965-ER  -> hourly curves, statistics, per-unit summary
   parse_dam.py     NP3-966-ER  -> per-unit day-ahead offers, costs, awards and prices (data/dam/)
-  parse_prices.py  NP6-322-CD, NP6-905-CD -> lambda and hub/zone prices
+  parse_prices.py  NP6-322-CD, NP6-905-CD -> lambda and hub/zone prices (data/prices/), hourly
+                   resource-node prices (data branch nodes/)
+  nodes.py         per-unit day files + node prices + DAM settlement points -> wind and solar
+                   curtailment priced at each unit's node, split congestion / oversupply (no downloads)
+  gas.py           EIA API -> Henry Hub daily spot price (data/gas.json.gz)
   marginal.py      day files + prices -> hourly marginal MW by technology (no downloads)
   trends.py        per-unit day files -> daily trends, starts, flips, bidding changes (no downloads)
   intraday.py      per-unit day files -> thermal output at/above minimum in cheap hours, off spells
@@ -89,7 +94,8 @@ pipeline/
   update.py        command line entry point
 site/
   index.html, app.js, style.css, vendor/d3.min.js
-  data/            generated: index.json, summary_*.json.gz, marginal_*.json.gz, 2d/, 60d/, dam/, prices/
+  data/            generated: index.json, summary_*.json.gz, marginal_*.json.gz, 2d/, 60d/, dam/, prices/,
+                   curtail_nodes.json.gz, gas.json.gz
 ```
 
 ### Day-ahead offers and costs
@@ -97,6 +103,10 @@ site/
 `pipeline/parse_dam.py` keeps, for every generation resource and operating day, the DAM three-part offer as submitted (energy offer curve by hour, hot / intermediate / cold start-up cost in $ per start, minimum-energy cost in $/MWh), the DAM resource status, the energy award, the unit's settlement point with the day-ahead price there, and ancillary service awards with their clearing prices. Only the generation resource file of the DAM disclosure is read; energy-only offers, PTP obligations and load resources are not.
 
 `pipeline/stayon.py` puts those costs against the real-time data: for every stretch of hours with system lambda below $0 or $10, each thermal unit that ran through it is scored on what its output earned at lambda, what it cost at the unit's minimum-energy price, and what a shutdown and restart would have cost instead (hot start for stretches up to 8 hours, intermediate up to 24, cold beyond). Units with no three-part offer that day use their own most recent one within 10 days, or a generic per-technology value from `pipeline/config.py`, and are marked as such. Submitted costs are capped by ERCOT's cost verification rules, so they are an upper bound on cost, and lambda is the system price rather than the unit's node price.
+
+### Curtailment at the node
+
+`pipeline/nodes.py` prices every curtailed wind and solar unit-hour (hourly HSL minus base point, from the per-unit day files) at the unit's own resource node. Units are matched to settlement points through the DAM disclosure, since the SCED file carries none. A curtailed hour counts as **congestion** when the node price is at least $5/MWh below system lambda (the energy was worth less where the unit sits) and as **oversupply** otherwise (the system as a whole did not want it at the unit's offer). The split is by price, so it describes what the energy was worth at the node, not which constraint SCED was managing. Node prices are fetched a few days per run for days that have per-unit data, newest first, so the split fills in over several runs (or at once with a backfill run).
 
 ## Caveats
 

@@ -1,12 +1,13 @@
-"""Cleared prices: SCED system lambda (NP6-322-CD) and settlement point prices at
-hubs and load zones (NP6-905-CD).  Both are posted as many small files per day."""
+"""Cleared prices: SCED system lambda (NP6-322-CD) and settlement point prices (NP6-905-CD):
+hubs and load zones for the site's price day files, resource nodes for the per-day node files
+on the data branch.  Both reports are posted as many small files per day."""
 import io
 from typing import Dict, Iterable, Tuple
 
 import numpy as np
 import pandas as pd
 
-from .config import PRICE_POINT_TYPES
+from .config import PRICE_NODE_TYPES, PRICE_POINT_TYPES
 from .curves import parse_sced_time, to_iso_date
 from .log import warn
 
@@ -74,19 +75,32 @@ def read_spp(csvs: Iterable[Tuple[str, bytes]]) -> pd.DataFrame:
             "type": f[c["settlementpointtype"]].astype(str).str.strip(),
             "price": pd.to_numeric(f[c["settlementpointprice"]], errors="coerce"),
         })
-        frames.append(g[g["type"].isin(PRICE_POINT_TYPES)])
+        frames.append(g[g["type"].isin(PRICE_POINT_TYPES | PRICE_NODE_TYPES)])
     if not frames:
-        return pd.DataFrame(columns=["date", "he", "interval", "point", "price"])
+        return pd.DataFrame(columns=["date", "he", "interval", "point", "type", "price"])
     d = pd.concat(frames, ignore_index=True)
     d["date"] = to_iso_date(d["date"])
     d = d.dropna(subset=["he", "interval"])
-    return d[["date", "he", "interval", "point", "price"]]
+    return d[["date", "he", "interval", "point", "type", "price"]]
+
+
+def node_prices(date: str, spp: pd.DataFrame):
+    """Hourly mean price at every resource node on one day, or None when the day has none:
+    {"date", "points": {node: [24 x $/MWh or null]}}.  Hourly means are enough for the
+    curtailment and revenue figures; the 15-minute detail stays in ERCOT's report."""
+    g = spp[(spp["date"] == date) & spp["type"].isin(PRICE_NODE_TYPES)]
+    if g.empty:
+        return None
+    he = g["he"].astype(int).clip(1, 24) - 1
+    q = g.assign(he=he.values).groupby(["point", "he"])["price"].mean().unstack("he").reindex(columns=range(24))
+    return {"date": date, "points": {name: _r2(row.values) for name, row in q.iterrows()}}
 
 
 def build_price_day(date: str, lam: pd.DataFrame, spp: pd.DataFrame):
-    """Returns (day_payload, summary_payload) or None if no prices for the date."""
+    """Returns (day_payload, summary_payload) or None if no prices for the date.  Only hubs
+    and load zones go in the day file; node_prices() builds the resource-node file."""
     lam = lam[lam["date"] == date].sort_values(["stamp", "flag"])
-    spp = spp[spp["date"] == date]
+    spp = spp[(spp["date"] == date) & spp["type"].isin(PRICE_POINT_TYPES)]
     if lam.empty and spp.empty:
         return None
 

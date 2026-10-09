@@ -90,7 +90,7 @@ INDEX_PATH = DATA_DIR / "index.json"
 def load_index() -> dict:
     if INDEX_PATH.exists():
         return json.loads(INDEX_PATH.read_text())
-    return {"days": {"2d": [], "60d": [], "dam": [], "prices": []}}
+    return {"days": {"2d": [], "60d": [], "dam": [], "prices": [], "nodes": []}}
 
 
 def save_index(index: dict) -> None:

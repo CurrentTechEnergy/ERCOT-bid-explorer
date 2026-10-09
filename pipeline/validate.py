@@ -298,6 +298,9 @@ def _level(results):
 def run(dates, index, fail=True):
     have = {k: set(index["days"].get(k, [])) for k in ("2d", "60d", "2dgen", "dam", "prices")}
     report = json.loads(REPORT_PATH.read_text()) if REPORT_PATH.exists() else {"days": {}}
+    # errors already recorded for a day (committed with "ignore checks") do not fail a later
+    # run that re-checks the day because a new source arrived; only new errors do
+    known = {(date, c[0]) for date, e in report["days"].items() for c in e.get("checks", []) if c[1] == "error"}
     checked = []
     for date in sorted(dates):
         day = check_day(date, have)
@@ -316,18 +319,20 @@ def run(dates, index, fail=True):
 
     errors = [(d.date, r) for d in checked for r in d.results if r[1] == "error"]
     warnings_ = [(d.date, r) for d in checked for r in d.results if r[1] == "warning"]
+    new_errors = [(date, r) for date, r in errors if (date, r[0]) not in known]
     for date, r in errors:
-        print(f"::error::validation {date} {r[0]}: {r[2]}" if _gha() else f"  ERROR {date} {r[0]}: {r[2]}")
+        tag = "" if (date, r[0]) not in known else " (already recorded, not blocking)"
+        print(f"::error::validation {date} {r[0]}: {r[2]}{tag}" if _gha() else f"  ERROR {date} {r[0]}: {r[2]}{tag}")
     for date, r in warnings_:
         warn(f"validation {date} {r[0]}: {r[2]}")
     lines = ["### Accuracy checks", "",
-             f"{len(checked)} day(s) checked: {len(errors)} error(s), {len(warnings_)} warning(s).", ""]
+             f"{len(checked)} day(s) checked: {len(errors)} error(s) ({len(new_errors)} new), {len(warnings_)} warning(s).", ""]
     if errors or warnings_:
         lines += ["| Day | Check | Level | Detail |", "|---|---|---|---|"]
         lines += [f"| {d} | {r[0]} | {r[1]} | {r[2]} |" for d, r in (errors + warnings_)[:80]]
     write_summary(lines)
     print("\n".join(lines))
-    return 1 if (errors and fail) else 0
+    return 1 if (new_errors and fail) else 0
 
 
 def _gha():

@@ -67,6 +67,20 @@
   <section class="panel panel-wide">
     <div class="panel-head">
       <div>
+        <h2>Curtailment at the node <span class="h-note" id="nc-note"></span></h2>
+        <p class="note">The same curtailed energy priced at each unit's own settlement point. An hour counts as <b>congestion</b> when the node price is at least $5/MWh below system lambda (the energy was worth less where the unit sits, often negative) and as <b>oversupply</b> otherwise (the system as a whole did not want it at the unit's offer). The split is by price, so it says what the energy was worth at the node, not which constraint SCED was managing. Units are matched to nodes through the DAM disclosure; hours with no node price are priced at lambda and counted as unmatched. Node prices load a few days per update, newest first, so early days fill in over time.</p>
+      </div>
+    </div>
+    <div class="legend legend-static" id="nc-legend"></div>
+    <div class="chart" id="nc-daily"></div>
+    <div class="chart" id="nc-value"></div>
+    <div class="chart" id="nc-bins"></div>
+    <div class="units-wrap" id="nc-units"></div>
+  </section>
+
+  <section class="panel panel-wide">
+    <div class="panel-head">
+      <div>
         <h2>Thermal offer prices</h2>
         <p class="note">Price at which 25%, 50% and 90% of a technology's submitted MW is offered, averaged over the day's hours. A falling median with a steady lambda means units are bidding more of their capacity cheaply. Nuclear submits no curves.</p>
       </div>
@@ -76,6 +90,17 @@
       </div>
     </div>
     <div class="chart" id="pq-chart"></div>
+  </section>
+
+  <section class="panel panel-wide">
+    <div class="panel-head">
+      <div>
+        <h2>Natural gas and implied heat rate <span class="h-note" id="gas-note"></span></h2>
+        <p class="note">Henry Hub daily spot price from the EIA, and the median submitted offer price of combined cycles and combustion turbines divided by that day's gas price: the heat rate (MMBtu per MWh) the offers imply if they were pure fuel cost. A steady implied heat rate with a moving offer price means the offers are tracking gas; a changing one means something else moved (margins, variable costs, the mix of units offering). Henry Hub is used in place of the Houston Ship Channel price, which usually trades near it.</p>
+      </div>
+    </div>
+    <div class="chart" id="gas-chart"></div>
+    <div class="chart" id="gas-hr"></div>
   </section>
 
   <section class="panel panel-wide">
