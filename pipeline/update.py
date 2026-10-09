@@ -19,17 +19,20 @@ import sys
 import time
 import warnings
 
-from .config import DATA_DIR, UNIT_DATA_DIR, EMIL_2DAY, EMIL_2DAY_GEN, EMIL_60DAY, EMIL_DAM, EMIL_LAMBDA, EMIL_SPP
+from .config import (DATA_DIR, UNIT_DATA_DIR, EMIL_2DAY, EMIL_2DAY_GEN, EMIL_60DAY, EMIL_DAM, EMIL_LAMBDA, EMIL_SPP,
+                     NODE_DAYS_PER_RUN)
 from .parse_2day import parse_2day_zip
 from .parse_2day_gen import is_gen_summary, parse_2day_gen_zip
 from .parse_60day import parse_60day_zip
 from .parse_dam import parse_dam_zip, has_dam_gen
-from .parse_prices import build_price_day, read_lambda, read_spp
+from .parse_prices import build_price_day, node_prices, read_lambda, read_spp
 from .marginal import build_marginal
 from .trends import build_trends
 from .intraday import build_intraday
 from .stayon import build_stayon
 from .curve_trends import build_curve_trends
+from .nodes import build_node_curtail
+from .gas import fetch_gas
 from .store import describe_blob, iter_csvs, zip_names, load_index, save_index, update_summary, write_json_gz
 from .log import warn, write_summary, WARNINGS
 
@@ -128,6 +131,13 @@ def process_price_blobs(blobs, dates, index: dict):
     lam, spp = read_lambda(lam_csvs), read_spp(spp_csvs)
     done = []
     for date in sorted(set(dates)):
+        nodes = node_prices(date, spp)
+        if nodes:                 # resource-node prices: data branch, not the site
+            write_json_gz(UNIT_DATA_DIR / "nodes" / f"{date}.json.gz", nodes)
+            index["days"].setdefault("nodes", []).append(date)
+        if date in index["days"]["prices"] and not lam_csvs:
+            done.append(date)     # node-only refetch of a day whose hub prices are already in
+            continue
         res = build_price_day(date, lam, spp)
         if res is None:
             continue
@@ -253,10 +263,19 @@ def reprocess_60d(api, index: dict, mode: str = "missing", limit=None):
         warn(f"reprocess 60d: no file found for {len(targets)} day(s): {', '.join(sorted(targets)[:20])}")
 
 
-def fetch_prices(api, dates, index: dict):
+def fetch_prices(api, dates, index: dict, node_dates=(), node_limit=NODE_DAYS_PER_RUN):
+    """Hub, load-zone and system lambda prices for `dates` not yet loaded; and resource-node
+    prices (settlement point report only) for up to node_limit of `node_dates` that have hub
+    prices but no node file yet, so node prices backfill a few days per run."""
     have = set(index["days"]["prices"])
+    have_nodes = set(index["days"].get("nodes", []))
     misses = index.setdefault("price_misses", {})
-    for date in sorted(set(dates) - have):
+    todo = [(date, (EMIL_LAMBDA, EMIL_SPP)) for date in sorted(set(dates) - have)]
+    node_only = sorted((set(node_dates) & have) - have_nodes, reverse=True)[:node_limit]
+    todo += [(date, (EMIL_SPP,)) for date in node_only]
+    if node_only:
+        print(f"node prices: fetching {len(node_only)} day(s), {node_only[-1]} to {node_only[0]}")
+    for date, emils in todo:
         if misses.get(date, 0) >= 3:      # stop retrying days ERCOT has no prices for
             continue
         d = _d(date)
@@ -265,7 +284,7 @@ def fetch_prices(api, dates, index: dict):
         failed = False
         try:
             blobs = []
-            for emil in (EMIL_LAMBDA, EMIL_SPP):
+            for emil in emils:
                 docs = api.list_archives(emil, start, end)
                 if docs:
                     blobs.extend(api.download_many(emil, [x["docId"] for x in docs]))
@@ -273,7 +292,7 @@ def fetch_prices(api, dates, index: dict):
         except Exception as e:   # a price problem must not lose the curve data already processed
             warn(f"Prices {date}: failed: {type(e).__name__}: {e}")
             done, failed = [], True
-        print(f"  prices {date}: {'ok' if done else 'none found'}")
+        print(f"  {'node prices' if emils == (EMIL_SPP,) else 'prices'} {date}: {'ok' if done else 'none found'}")
         if not done and not failed:
             warn(f"Prices {date}: no system lambda or hub prices found on the ERCOT API")
         if not done and not failed:       # count only genuine "no prices" results
@@ -295,7 +314,7 @@ def main(argv=None):
     ap.add_argument("--days", type=int, default=4, help="look back this many days of postings (default 4)")
     ap.add_argument("--backfill", nargs=2, metavar=("START", "END"), help="operating-day range to fill")
     ap.add_argument("--max-files", type=int, default=None, help="cap curve files per report per run")
-    ap.add_argument("--skip", choices=["2d", "2dgen", "60d", "dam", "prices"], action="append", default=[])
+    ap.add_argument("--skip", choices=["2d", "2dgen", "60d", "dam", "prices", "gas"], action="append", default=[])
     ap.add_argument("--local", nargs="+", help="process local zip files instead of calling the API")
     ap.add_argument("--reprocess-60d", nargs="?", const="missing", choices=["missing", "all"],
                     help="re-download and reparse 60-day days already in the index: those without a "
@@ -327,6 +346,7 @@ def main(argv=None):
         build_intraday(index)
         build_stayon(index)
         build_curve_trends(index)
+        build_node_curtail(index)
         save_index(index)
         return
 
@@ -360,17 +380,22 @@ def main(argv=None):
 
     if "prices" not in args.skip:
         need = set(index["days"]["2d"]) | set(index["days"]["60d"])
-        fetch_prices(api, need, index)
+        node_need = set(index["days"]["60d"]) | set(index["days"].get("dam", []))
+        fetch_prices(api, need, index, node_dates=node_need,
+                     node_limit=args.max_files if args.backfill and args.max_files else NODE_DAYS_PER_RUN)
+    if "gas" not in args.skip:
+        fetch_gas()
 
     build_marginal(index)
     build_trends(index)
     build_intraday(index)
     build_stayon(index)
     build_curve_trends(index)
+    build_node_curtail(index)
     save_index(index)
     added = {k: sorted(set(index["days"][k]) - before.get(k, set())) for k in index["days"]}
     names = {"2d": "2-day curves", "2dgen": "2-day generation summary", "60d": "60-day curves",
-             "dam": "60-day DAM offers and awards", "prices": "prices"}
+             "dam": "60-day DAM offers and awards", "prices": "prices", "nodes": "resource-node prices"}
     lines = ["### ERCOT data update", "", "| Data | Days added | Range |", "|---|---|---|"]
     for k, v in added.items():
         lines.append(f"| {names.get(k, k)} | {len(v)} | {v[0] + ' to ' + v[-1] if v else '–'} |")

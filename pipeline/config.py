@@ -64,8 +64,13 @@ TECH_LABELS = {
 SIXTY_DAY_TECHS = list(TECH_LABELS)
 
 # --- Prices -----------------------------------------------------------------
-# Settlement point types kept from NP6-905-CD (hubs and load zones only).
+# Settlement point types kept from NP6-905-CD in the site's price day files (hubs and load zones).
 PRICE_POINT_TYPES = {"HU", "SH", "AH", "LZ"}
+# Resource-node prices are kept too, hourly, in per-day files on the data branch (see
+# pipeline/nodes.py): one unit's own settlement point price, for curtailment and revenue.
+PRICE_NODE_TYPES = {"RN"}
+# Node prices are fetched for days with per-unit data; this many node-only days per run.
+NODE_DAYS_PER_RUN = 40
 
 # ERCOT Public API report ids (EMIL ids)
 EMIL_2DAY = "np3-908-er"
@@ -74,6 +79,12 @@ EMIL_60DAY = "np3-965-er"
 EMIL_DAM = "np3-966-er"          # 60-day DAM disclosure: three-part offers, awards, AS awards
 EMIL_LAMBDA = "np6-322-cd"
 EMIL_SPP = "np6-905-cd"
+
+# --- Natural gas (EIA open data, https://www.eia.gov/opendata/) ---------------------------
+# Henry Hub spot price, $/MMBtu, daily (EIA_API_KEY in the environment; skipped without one).
+EIA_SERIES = "RNGWHHD"
+EIA_ROUTE = "natural-gas/pri/fut"
+GAS_START = "2025-11-01"
 
 # --- Plant costs when a unit has no DAM three-part offer that day ---------------
 # Generic per-technology values used (and marked as such) by pipeline/stayon.py when a unit
