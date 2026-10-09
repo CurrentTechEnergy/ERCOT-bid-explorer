@@ -22,6 +22,11 @@ on:
         type: boolean
         required: false
         default: false
+      ignore_checks:
+        description: "Commit the data even if an accuracy check fails (see the run summary for what failed)"
+        type: boolean
+        required: false
+        default: false
 
 permissions:
   contents: write
@@ -93,6 +98,20 @@ jobs:
             python -m pipeline.update --backfill "$BACKFILL_START" "${BACKFILL_END:-$BACKFILL_START}" --max-files "${MAX_FILES:-60}"
           else
             python -m pipeline.update
+          fi
+
+      # Compares each new or changed day with ERCOT's own aggregates and checks it for internal
+      # consistency (pipeline/validate.py). An error stops the run here, so nothing is committed;
+      # rerun with "ignore_checks" to commit anyway.
+      - name: Check accuracy
+        env:
+          UNIT_DATA_DIR: unitdata
+          IGNORE_CHECKS: ${{ github.event.inputs.ignore_checks }}
+        run: |
+          if [ "$IGNORE_CHECKS" = "true" ]; then
+            python -m pipeline.validate --no-fail
+          else
+            python -m pipeline.validate
           fi
 
       - name: Commit per-unit data to the data branch

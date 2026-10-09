@@ -28,6 +28,14 @@ Both versions are capped at each unit's high sustainable limit (HSL) for the SCE
 
 `.github/workflows/update.yml` runs twice a day. It calls the ERCOT Public API for any reports posted in the last few days, processes them into `site/data/`, and commits the result. Each day adds roughly 50 KB of 2-day data and 150 KB of 60-day data.
 
+### Accuracy checks
+
+After processing, `pipeline/validate.py` checks every new or changed operating day: the wind, solar and storage curves rebuilt from 60-day unit data against ERCOT's 2-day aggregate curves, thermal base points against the 2-day generation summary, curves and base points against online HSL, SCED runs per hour (allowing for DST), system lambda against the hub average, and status codes and resource types the pipeline does not know. An error stops the run before anything is committed; warnings appear on the run summary. Results that did not pass are kept per day in `site/data/validation.json`. To commit a day anyway, run the workflow with **ignore_checks**.
+
+```bash
+python -m pipeline.validate --all --no-fail   # re-check every day
+```
+
 ### One-time setup
 
 1. Register for the ERCOT Public API at https://apiexplorer.ercot.com and subscribe to the public reports product.
