@@ -199,6 +199,11 @@ class _Accumulator:
         return build_unit_day(date, run_sort, rows)
 
 
+# totals for the run, reported once by update.main so an override file that has rows but
+# yields none (a timestamp or date mismatch) shows up on the run page
+OVERRIDE_STATS = {"days": 0, "files": 0, "rows": 0, "kept": 0, "units": 0, "sample": None}
+
+
 def _norm(c) -> str:
     return "".join(ch for ch in str(c).lower() if ch.isalnum())
 
@@ -221,6 +226,11 @@ def parse_overrides(data: bytes, date: str) -> dict:
     day0 = pd.Timestamp(date)
     minutes = ((t.dt.normalize() - day0).dt.days * 1440 + t.dt.hour * 60 + t.dt.minute)
     keep = t.notna() & (minutes >= 0) & (minutes < 1440 + 120)
+    OVERRIDE_STATS["files"] += 1
+    OVERRIDE_STATS["rows"] += len(f)
+    OVERRIDE_STATS["kept"] += int(keep.sum())
+    if len(f) and OVERRIDE_STATS["sample"] is None:
+        OVERRIDE_STATS["sample"] = f"{f[stamp].iloc[0]!r} on {date}"
     out = {}
     for i in np.flatnonzero(keep.values):
         row = []
@@ -293,6 +303,8 @@ def parse_60day_zip(blob: bytes, chunksize: int = 40000):
     # always present (empty when the day had no manual overrides), so a day file that lacks the
     # key is one written before overrides were read and reprocess_60d knows to redo it
     unit_day["overrides"] = {k: sorted(v, key=lambda r: r[0]) for k, v in overrides.items()}
+    OVERRIDE_STATS["days"] += 1
+    OVERRIDE_STATS["units"] += len(overrides)
     if overrides:
         print(f"  overrides {date}: {sum(len(v) for v in overrides.values())} manual HDL/LDL rows on "
               f"{len(overrides)} unit(s)")

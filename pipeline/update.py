@@ -17,13 +17,14 @@ from collections import Counter
 import datetime as dt
 import sys
 import time
+import os
 import warnings
 
 from .config import (DATA_DIR, UNIT_DATA_DIR, EMIL_2DAY, EMIL_2DAY_GEN, EMIL_60DAY, EMIL_DAM, EMIL_LAMBDA, EMIL_SPP,
                      NODE_DAYS_PER_RUN)
 from .parse_2day import parse_2day_zip
 from .parse_2day_gen import is_gen_summary, parse_2day_gen_zip
-from .parse_60day import parse_60day_zip
+from .parse_60day import parse_60day_zip, OVERRIDE_STATS
 from .parse_dam import parse_dam_zip, has_dam_gen
 from .parse_prices import build_price_day, node_prices, read_lambda, read_spp
 from .marginal import build_marginal
@@ -408,6 +409,15 @@ def main(argv=None):
     for k, v in added.items():
         lines.append(f"| {names.get(k, k)} | {len(v)} | {v[0] + ' to ' + v[-1] if v else '–'} |")
     lines += unit_file_summary()
+    o = OVERRIDE_STATS
+    if o["days"]:
+        msg = (f"HDL/LDL overrides: {o['files']} summary file(s) over {o['days']} day(s), {o['rows']} row(s), "
+               f"{o['kept']} kept, on {o['units']} unit-day(s)")
+        if o["rows"] and not o["kept"]:
+            warn(msg + f"; none matched the operating day (first timestamp {o['sample']})")
+        else:
+            print(f"::notice::{msg}" if os.environ.get("GITHUB_ACTIONS") == "true" else msg, flush=True)
+            lines += ["", msg]
     lines += ["", f"**{len(WARNINGS)} warning(s)**" if WARNINGS else "No warnings."]
     lines += [f"- {w}" for w in WARNINGS[:50]]
     write_summary(lines)
