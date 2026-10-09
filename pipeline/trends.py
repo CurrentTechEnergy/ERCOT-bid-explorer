@@ -5,6 +5,10 @@ changes in each unit's bidding approach.  Needs no downloads.  Read by trends.ht
 From the per-unit day files in UNIT_DATA_DIR (days without one are skipped / null):
   daily[tech]["starts"]  number of starts (status not starting "ON" -> starting "ON")
   units[i]["starts"]     the same per thermal unit and day
+  units[i]["first"]      first offer price above $0, averaged over the day's online runs
+  units[i]["rel"]        that minus the day's median for the unit's peer group; "peer" says which
+                         group: 1 its resource type (PEER_MIN or more units with a price), 0 its
+                         technology
   flips                  thermal units whose submitted curve offered some MW at or below $0 in
                          some online runs and none in others on the same day:
                          [unit, tech, date, n_switches, first_switch "HH:MM", hours_le0]
@@ -13,7 +17,7 @@ import numpy as np
 
 from .config import DATA_DIR, SIXTY_DAY_TECHS, UNIT_DATA_DIR
 from .store import read_json_gz, write_json_gz
-from .units import le0_share
+from .units import first_positive_price, le0_share
 
 DAILY_STATS = ["n_online", "hsl", "lsl", "output", "floor_sced", "floor_submitted",
                "le0_submitted", "no_offer_hsl",
@@ -25,6 +29,9 @@ LEGACY_STATS = ["n_online", "hsl", "lsl", "base_point", "output", "floor_sced", 
                 "le0_sced", "le0_submitted", "no_offer_hsl", "no_offer_output_schedule"]
 FLIP_EPS = 0.005   # share of HSL at or below $0 that counts as offering there (rounding)
 UNIT_TECHS = ["nuclear", "coal", "combined_cycle", "gas_steam", "combustion_turbine"]
+# a unit's offer price is compared with the median of its own resource type (CCGT90, SCLE90, ...)
+# on days when at least PEER_MIN units of that type have one, otherwise with its technology's
+PEER_MIN = 8
 
 # Bidding-approach changes. Each signal is compared between the K online days before and
 # after a day; a change is a sustained shift larger than its threshold.
@@ -34,8 +41,8 @@ SIGNALS = {
     "le0": {"thr": 0.25, "label": "MW offered at or below $0"},
     # share of the day with no submitted offer (running on an output schedule)
     "noff": {"thr": 0.5, "label": "Running without an offer curve"},
-    # first offer price minus that day's median for the technology: removes fuel-price moves
-    "rel": {"thr": 10.0, "label": "Offer price vs technology median"},
+    # first offer price above $0 minus that day's median for its peer group: removes fuel-price moves
+    "rel": {"thr": 10.0, "label": "Offer price vs peer median"},
 }
 
 
@@ -72,11 +79,12 @@ def _online(s):
 
 
 def unit_day_facts(ud: dict, prev_last: dict):
-    """From one per-unit day file: starts per unit, each unit's last known status, and flips.
+    """From one per-unit day file: starts per unit, each unit's last known status, flips, and each
+    thermal unit's first offer price above $0 (units.first_positive_price).
     prev_last: {unit: status} at the end of the previous day (empty if that day is missing);
     a start in the first run of the day counts only when it is known."""
     n = len(ud["runs"])
-    starts, last, flips = {}, {}, []
+    starts, last, flips, pos = {}, {}, [], {}
     for name, u in ud["units"].items():
         seq = [s for _, s in u["status"] if s]      # skip absent runs (None) and blank statuses ("")
         cnt, prev = 0, prev_last.get(name)
@@ -89,6 +97,7 @@ def unit_day_facts(ud: dict, prev_last: dict):
             last[name] = seq[-1]
         if u["tech"] not in UNIT_TECHS:
             continue
+        pos[name] = first_positive_price(u, n)
         share = le0_share(u, n)
         ok = ~np.isnan(share)
         if not (np.any(share[ok] > FLIP_EPS) and np.any(share[ok] <= FLIP_EPS)):
@@ -104,7 +113,7 @@ def unit_day_facts(ud: dict, prev_last: dict):
             state = cur
         hours = round(float(np.sum(share[ok] > FLIP_EPS)) * 24 / max(n, 1), 1)
         flips.append([name, u["tech"], ud["date"], n_sw, first_sw, hours])
-    return starts, last, flips
+    return starts, last, flips, pos
 
 
 def build_trends(index: dict) -> None:
@@ -133,7 +142,7 @@ def build_trends(index: dict) -> None:
         if ud:
             n_unit_days += 1
             known = prev_last if prev_date and np.datetime64(prev_date) + 1 == np.datetime64(d) else {}
-            starts, prev_last, fl = unit_day_facts(ud, known)
+            starts, prev_last, fl, pos = unit_day_facts(ud, known)
             prev_date = d
             flips += fl
             for t in SIXTY_DAY_TECHS:
@@ -141,6 +150,7 @@ def build_trends(index: dict) -> None:
             for nm, c in starts.items():
                 unit_starts.setdefault(nm, {})[di] = c
         else:
+            pos = {}
             for t in SIXTY_DAY_TECHS:
                 daily[t]["starts"].append(None)
         day = read_json_gz(DATA_DIR / "60d" / f"{d}.json.gz") or {}
@@ -157,7 +167,7 @@ def build_trends(index: dict) -> None:
                                                  "floor": {}, "le0": {}, "noff": {}})
             hsl = r[C["hsl"]] or 0
             e["hours"][di] = hrs
-            e["first"][di] = r[C["avg_sub_price"]]
+            e["first"][di] = pos.get(r[C["unit"]])
             e["noff"][di] = r[C["no_offer_share"]]
             e["floor"][di] = round(r[C["floor_mw"]] / hsl, 3) if hsl > 1 else None
             e["le0"][di] = round(r[C["le0_submitted"]] / hsl, 3) if hsl > 1 else None
@@ -171,21 +181,33 @@ def build_trends(index: dict) -> None:
             for t in SIXTY_DAY_TECHS:
                 for k in daily[t]:
                     daily[t][k][i] = None
-    # that day's median first-offer price per technology, over units with an offer
-    med = {}
-    for t in UNIT_TECHS:
-        for i in range(D):
-            p = [e["first"][i] for e in units.values() if e["tech"] == t and e["first"].get(i) is not None]
-            med[(t, i)] = float(np.median(p)) if p else None
+    # that day's median first offer price above $0 per resource type and per technology
+    def _median(sel):
+        return {i: float(np.median(p)) if (p := [e["first"][i] for e in units.values() if sel(e) and e["first"].get(i) is not None]) else None
+                for i in range(D)}
+    tech_med = {t: _median(lambda e, t=t: e["tech"] == t) for t in UNIT_TECHS}
+    type_n = {}
+    for e in units.values():
+        for i, v in e["first"].items():
+            if v is not None:
+                type_n[(e["type"], i)] = type_n.get((e["type"], i), 0) + 1
+    type_med = {ty: _median(lambda e, ty=ty: e["type"] == ty) for ty in {e["type"] for e in units.values()}}
+
+    def peer(e, i):
+        """(median, 1 if the unit's resource type, 0 if its technology)"""
+        if type_n.get((e["type"], i), 0) >= PEER_MIN:
+            return type_med[e["type"]][i], 1
+        return tech_med[e["tech"]][i], 0
     unit_out, changes = [], []
     for name, e in sorted(units.items()):
         arr = lambda m: [m.get(i) for i in range(D)]
-        rel = [None if e["first"].get(i) is None or med[(e["tech"], i)] is None
-               else round(e["first"][i] - med[(e["tech"], i)], 1) for i in range(D)]
+        pm = [peer(e, i) for i in range(D)]
+        rel = [None if e["first"].get(i) is None or pm[i][0] is None
+               else round(e["first"][i] - pm[i][0], 1) for i in range(D)]
         ch = detect_changes({"le0": arr(e["le0"]), "noff": arr(e["noff"]), "rel": rel})
         unit_out.append({"unit": name, "tech": e["tech"], "type": e["type"],
                          "hours": [e["hours"].get(i, 0) for i in range(D)],
-                         "first": arr(e["first"]), "rel": rel, "floor": arr(e["floor"]),
+                         "first": arr(e["first"]), "rel": rel, "peer": [None if r is None else p[1] for r, p in zip(rel, pm)], "floor": arr(e["floor"]),
                          "le0": arr(e["le0"]), "noff": arr(e["noff"]), "n_changes": len(ch),
                          "starts": arr(unit_starts.get(name, {}))})
         changes += [[name, e["tech"], dates[i], sig, b, a] for i, sig, b, a in ch]

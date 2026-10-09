@@ -60,7 +60,9 @@ const SIG_FMT = { le0: (v) => d3.format(".0%")(v), noff: (v) => d3.format(".0%")
 
 const S = { T: null, C: null, M: {}, floorMode: "floor_sced", hidden: { floor: new Set(), partial: new Set() },
   pqTech: "coal", capTech: "coal", scTech: "coal", scX: "week", mSrc: "60d", mView: "smooth", mDays: "all",
-  chgTech: "all", chgSig: "all", unit: null };
+  chgTech: "all", chgSig: "all", unit: null,
+  I: null, UH: null, idx: null, summ60: null, cheapTech: "all", cheapThr: "0", shutTech: "combined_cycle", shutPrice: "any",
+  heatMeasure: "offer", heatTech: "combined_cycle", heatThr: "0", heatScale: "zero" };
 const { getJSON, tryJSON, showTip, hideTip, setCSV } = window.CX;
 const $ = (id) => document.getElementById(id);
 const css = (v) => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
@@ -131,7 +133,11 @@ function timeChart(el, series, opts) {
   svg.append("g").attr("class", "axis").attr("transform", `translate(${m.l},0)`).call(yAxis().tickFormat(opts.yFmt || d3.format(",.0f")).tickSizeOuter(0));
   if (y.domain()[0] < 0) svg.append("line").attr("class", "zero").attr("x1", m.l).attr("x2", w - m.r).attr("y1", y(0)).attr("y2", y(0));
   svg.append("text").attr("class", "axis-title").attr("x", m.l).attr("y", 10).text(opts.title);
-  (opts.markers || []).forEach((d) => svg.append("line").attr("class", "crosshair").attr("x1", x(parseDate(d))).attr("x2", x(parseDate(d))).attr("y1", m.t).attr("y2", H - m.b).style("stroke", css("--accent")));
+  // markers: dates, or { d, color } to color each line
+  (opts.markers || []).forEach((mk) => {
+    const xm = x(parseDate(mk.d || mk));
+    svg.append("line").attr("class", "crosshair").attr("x1", xm).attr("x2", xm).attr("y1", m.t).attr("y2", H - m.b).style("stroke", css(mk.color || "--accent"));
+  });
   if (opts.stack) {
     // stacked areas in series order; a day missing from every series is a gap
     const ok = dates.map((_, i) => series.some((s) => s.values[i] != null));
@@ -471,7 +477,7 @@ function drawMarginalGroups(el, H, list, w, narrow) {
 // ---- bidding-approach changes -----------------------------------------------------
 function drawChanges() {
   const T = S.T, techOf = Object.fromEntries(T.units.map((u) => [u.unit, u]));
-  $("chg-note").textContent = `A change is a shift that holds: the median over the ${T.window} online days after a day differs from the median over the ${T.window} online days before by at least 25 percentage points of MW offered at or below $0, half the day running without an offer, or $10 in first offer price relative to that day's median for the technology (which removes moves in fuel price). Thermal units only. Click a row to see the unit.`;
+  $("chg-note").textContent = `A change is a shift that holds: the median over the ${T.window} online days after a day differs from the median over the ${T.window} online days before by at least 25 percentage points of MW offered at or below $0, half the day running without an offer, or $10 in first offer price above $0 relative to that day's median for its peers (which removes moves in fuel price). Peers are units of the same ERCOT resource type (for example CCGT90 or SCLE90) when at least 8 of them have a price that day, otherwise the same technology. Thermal units only. Click a row to see the unit.`;
   // summary: units per technology, how many changed
   const sum = THERMAL.map((t) => {
     const us = T.units.filter((u) => u.tech === t);
@@ -494,42 +500,335 @@ function drawChanges() {
   if (S.unit && techOf[S.unit]) drawUnit(techOf[S.unit]);
 }
 
+// each kind of bidding change has its own marker color
+const SIG_COLOR = { le0: "--c8", noff: "--c7", rel: "--c4" };
 function drawUnit(u) {
   const T = S.T, s = TECHS.find((x) => x.id === u.tech);
-  const marks = T.changes.filter((c) => c[0] === u.unit).map((c) => c[2]);
+  const ch = T.changes.filter((c) => c[0] === u.unit);
+  const marks = ch.map((c) => ({ d: c[2], color: SIG_COLOR[c[3]] }));
   $("unit-detail").hidden = false;
+  $("unit-pick").value = u.unit;
   $("unit-title").textContent = `${u.unit} · ${s.label} (${u.type})`;
-  $("unit-note").textContent = `${marks.length} change${marks.length === 1 ? "" : "s"} detected, marked with vertical lines. Days offline are gaps.`;
+  $("unit-note").innerHTML = (ch.length ? `${ch.length} bidding change${ch.length === 1 ? "" : "s"} detected, marked on every chart by a line colored by the kind of change: ` +
+    Object.entries(T.signals).map(([k, l]) => `<span class="mk" style="border-color:var(${SIG_COLOR[k]})"></span>${l}`).join(", ") + "." : "No bidding changes detected.") + " Days offline are gaps in the line charts.";
+  $("unit-changes").innerHTML = ch.length ? `<table class="data"><thead><tr><th class="t">Date</th><th class="t">Change</th><th>Before</th><th>After</th></tr></thead><tbody>` +
+    ch.map((c) => `<tr><td class="t">${c[2]}</td><td class="t"><span class="mk" style="border-color:var(${SIG_COLOR[c[3]]})"></span>${T.signals[c[3]]}</td><td>${SIG_FMT[c[3]](c[4])}</td><td>${SIG_FMT[c[3]](c[5])}</td></tr>`).join("") + "</tbody></table>" : "";
+  drawUnitStrip(u, s, marks);
   const median = u.first.map((v, i) => (v == null || u.rel[i] == null ? null : v - u.rel[i]));
   timeChart($("unit-price"), [
-    { label: "First offer price", color: s.color, values: u.first },
-    { label: `${s.label} median`, color: "--muted", values: median, dash: "4 3", width: 1.5 },
-  ], { title: "First offer price ($/MWh)", H: 170, yFmt: d3.format("$,.0f"), tipFmt: fmtPrice, markers: marks, dots: true });
+    { label: "First offer price above $0", color: s.color, values: u.first },
+    { label: "Peer median", color: "--muted", values: median, dash: "4 3", width: 1.5 },
+  ], { title: "First offer price above $0 ($/MWh), and the median of its peers", H: 170, yFmt: d3.format("$,.0f"), tipFmt: fmtPrice, markers: marks, dots: true,
+    tipNote: (i) => (u.peer && u.peer[i] != null ? ` · peers: ${u.peer[i] ? `${u.type} units` : `all ${s.label.toLowerCase()}`}` : "") });
   timeChart($("unit-share"), [
     { label: "MW offered ≤ $0", color: s.color, values: u.le0 },
     { label: "Share of day with no offer", color: "--muted", values: u.noff, dash: "4 3", width: 1.5 },
   ], { title: "MW offered ≤ $0, and day with no offer (share)", H: 150, yFmt: d3.format(".0%"), markers: marks, dots: true });
-  timeChart($("unit-hours"), [{ label: "Hours online", color: s.color, values: u.hours }, ...(u.starts ? [{ label: "Starts", color: "--muted", values: u.starts, dash: "4 3", width: 1.5 }] : [])],
-    { title: u.starts ? "Hours online, and starts" : "Hours online", H: 130, yFmt: d3.format(",.0f"), tipFmt: d3.format(",.1f"), markers: marks });
+}
+
+// day × hour state of one unit: offline, at minimum, above minimum; negative-price hours marked
+const STRIP_STATES = { "0": "Offline", m: "Running at minimum", a: "Running above minimum" };
+async function drawUnitStrip(u, s, marks) {
+  const el = $("unit-strip");
+  if (!S.UH) {
+    el.innerHTML = `<p class="empty">Loading hourly data…</p>`;
+    S.UH = (await tryJSON("data/unit_hours_60d.json.gz")) || { dates: [], units: {} };
+    if (S.unit !== u.unit) return;
+  }
+  const str = S.UH.units[u.unit];
+  const lam = S.I ? S.I.lambda : null;
+  $("unit-strip-legend").innerHTML = [["--grid", 1, "Offline"], [s.color, 0.4, "Running at minimum (LSL)"], [s.color, 1, "Running above minimum"]]
+    .map(([c, o, l]) => `<span><span class="sw" style="background:var(${c});opacity:${o}"></span>${l}</span>`).join("") +
+    `<span><span class="sw sw-neg"></span>Hour with lambda below $0</span>`;
+  if (!str) return emptyMsg(el, "No hourly data for this unit.");
+  const dstr = S.UH.dates, dates = dstr.map(parseDate), D = dstr.length;
+  const w = Math.max(280, el.clientWidth || 600), m = { t: 16, r: 16, b: 26, l: 64 }, ch = 7, H = m.t + m.b + ch * 24;
+  const x = d3.scaleTime().domain(d3.extent(dates)).range([m.l, w - m.r]);
+  const cw = (w - m.l - m.r) / Math.max(1, D - 1);
+  const svg = d3.create("svg").attr("viewBox", `0 0 ${w} ${H}`);
+  const col = { "0": css("--grid"), m: css(s.color), a: css(s.color) };
+  const g = svg.append("g");
+  for (let i = 0; i < D; i++) for (let h = 0; h < 24; h++) {
+    const c = str[i * 24 + h];
+    if (c === "-" || c === undefined) continue;
+    g.append("rect").attr("x", x(dates[i]) - cw / 2).attr("y", m.t + h * ch).attr("width", cw + 0.3).attr("height", ch - 0.5)
+      .attr("fill", col[c]).attr("fill-opacity", c === "m" ? 0.4 : 1);
+  }
+  // negative-price hours: a dark tick in the cell
+  if (lam) {
+    const li = new Map(S.I.dates.map((d, i) => [d, i]));
+    const t = svg.append("g");
+    dstr.forEach((d, i) => {
+      const L = lam[li.get(d)];
+      if (L) L.forEach((v, h) => { if (v != null && v < 0) t.append("rect").attr("x", x(dates[i]) - 0.75).attr("y", m.t + h * ch + 1.5).attr("width", 1.5).attr("height", ch - 3.5).attr("fill", css("--ink")); });
+    });
+  }
+  const y = d3.scaleBand().domain(d3.range(24)).range([m.t, m.t + ch * 24]);
+  svg.append("g").attr("class", "axis").attr("transform", `translate(${m.l - 4},0)`).call(d3.axisLeft(y).tickValues([0, 5, 11, 17, 23]).tickFormat((h) => `HE ${h + 1}`).tickSize(0)).select(".domain").remove();
+  svg.append("g").attr("class", "axis").attr("transform", `translate(0,${H - m.b})`).call(d3.axisBottom(x).ticks(w < 560 ? 4 : 8).tickSizeOuter(0));
+  svg.append("text").attr("class", "axis-title").attr("x", m.l).attr("y", 10).text("Hour by hour: offline, at minimum or above minimum");
+  marks.forEach((mk) => svg.append("line").attr("class", "crosshair").attr("x1", x(parseDate(mk.d))).attr("x2", x(parseDate(mk.d))).attr("y1", m.t).attr("y2", H - m.b).style("stroke", css(mk.color)));
+  svg.append("rect").attr("x", m.l - cw / 2).attr("y", m.t).attr("width", w - m.l - m.r + cw).attr("height", ch * 24).attr("fill", "transparent")
+    .on("pointermove", (ev) => {
+      const [px, py] = d3.pointer(ev);
+      const i = d3.minIndex(dates, (d) => Math.abs(d - x.invert(px))), h = Math.max(0, Math.min(23, Math.floor((py - m.t) / ch)));
+      const c = str[i * 24 + h], li = S.I ? S.I.dates.indexOf(dstr[i]) : -1, L = li >= 0 ? S.I.lambda[li][h] : null;
+      showTip(ev, `<h4>${fmtDate(dates[i])} · HE ${h + 1}</h4>${STRIP_STATES[c] || "No data"}<br>Lambda ${fmtPrice(L)}`);
+    })
+    .on("pointerleave", hideTip);
+  el.replaceChildren(svg.node());
+  setCSV(el, ["date", "hour_ending", "state"], dstr.flatMap((d, i) => d3.range(24).map((h) => [d, h + 1, STRIP_STATES[str[i * 24 + h]] || ""])), `${u.unit} hourly state`);
 }
 
 function showUnit(name) {
   const u = S.T.units.find((x) => x.unit === name);
   if (!u) return;
   S.unit = name; drawUnit(u); saveView();
-  $("unit-detail").scrollIntoView({ behavior: "smooth", block: "nearest" });
+  $("unit-panel").scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+// ---- intraday: thermal output in cheap hours ---------------------------------------
+// stacked bars, one per day. series: [{ label, color, opacity?, values }]
+function dayBars(el, dstr, series, opts) {
+  const dates = dstr.map(parseDate);
+  const w = Math.max(280, el.clientWidth || 600), H = opts.H || 240, m = { t: 16, r: 16, b: 26, l: 64 };
+  const tot = dstr.map((_, i) => (series.some((s) => s.values[i] != null) ? d3.sum(series, (s) => s.values[i] || 0) : null));
+  if (!tot.some((v) => v != null)) return emptyMsg(el, opts.empty || "No data.");
+  const x = d3.scaleTime().domain(d3.extent(dates)).range([m.l, w - m.r]);
+  const y = d3.scaleLinear().domain([0, Math.max(1, d3.max(tot))]).nice().range([H - m.b, m.t]);
+  const bw = Math.max(1, ((w - m.l - m.r) / Math.max(1, dstr.length - 1)) * 0.75);
+  const svg = d3.create("svg").attr("viewBox", `0 0 ${w} ${H}`);
+  svg.append("g").attr("class", "gridline").attr("transform", `translate(${m.l},0)`).call(d3.axisLeft(y).ticks(5).tickSize(-(w - m.l - m.r)).tickFormat(""));
+  svg.append("g").attr("class", "axis").attr("transform", `translate(0,${H - m.b})`).call(d3.axisBottom(x).ticks(w < 560 ? 4 : 8).tickSizeOuter(0));
+  svg.append("g").attr("class", "axis").attr("transform", `translate(${m.l},0)`).call(d3.axisLeft(y).ticks(5).tickFormat(opts.yFmt || fmtMW).tickSizeOuter(0));
+  svg.append("text").attr("class", "axis-title").attr("x", m.l).attr("y", 10).text(opts.title);
+  let base = dstr.map(() => 0);
+  series.forEach((s) => {
+    const lo = base;
+    svg.append("g").selectAll("rect").data(dstr.map((_, i) => i).filter((i) => s.values[i])).join("rect")
+      .attr("x", (i) => x(dates[i]) - bw / 2).attr("width", bw)
+      .attr("y", (i) => y(lo[i] + s.values[i])).attr("height", (i) => y(lo[i]) - y(lo[i] + s.values[i]))
+      .attr("fill", css(s.color)).attr("fill-opacity", s.opacity || 1);
+    base = lo.map((b, i) => b + (s.values[i] || 0));
+  });
+  const cross = svg.append("line").attr("class", "crosshair").attr("y1", m.t).attr("y2", H - m.b).style("display", "none");
+  const tf = opts.tipFmt || opts.yFmt || fmtMW;
+  svg.append("rect").attr("x", m.l).attr("y", m.t).attr("width", w - m.l - m.r).attr("height", H - m.t - m.b).attr("fill", "transparent")
+    .on("pointermove", (ev) => {
+      const t = x.invert(d3.pointer(ev)[0]);
+      const i = d3.minIndex(dates, (d) => Math.abs(d - t));
+      cross.style("display", null).attr("x1", x(dates[i])).attr("x2", x(dates[i]));
+      if (tot[i] == null) return showTip(ev, `<h4>${fmtDate(dates[i])}</h4>${opts.none || "No data"}`);
+      showTip(ev, `<h4>${fmtDate(dates[i])}${opts.tipNote ? opts.tipNote(i) : ""}</h4><table>` + [...series].reverse().map((s) =>
+        `<tr><td><span class="sw" style="background:var(${s.color});opacity:${s.opacity || 1}"></span></td><td>${s.label}</td><td class="n">${tf(s.values[i] || 0)}</td></tr>`).join("") + "</table>");
+    })
+    .on("pointerleave", () => { cross.style("display", "none"); hideTip(); });
+  el.replaceChildren(svg.node());
+  setCSV(el, ["date", ...series.map((s) => s.label)], dstr.map((d, i) => [d, ...series.map((s) => s.values[i])]), opts.title);
+}
+
+const ALL_THERMAL = { id: "all", label: "All thermal", color: "--c1" };
+const techsOf = (id) => (id === "all" ? THERMAL : [id]);
+const unitRows = (rows, cols) => `<table class="data"><thead><tr>${cols.map((c) => `<th${c.t ? ' class="t"' : ""}>${c.h}</th>`).join("")}</tr></thead><tbody>` +
+  rows.map((r) => `<tr data-unit="${esc(r.unit)}" style="cursor:pointer">${cols.map((c) => `<td${c.t ? ' class="t"' : ""}>${c.f(r)}</td>`).join("")}</tr>`).join("") + "</tbody></table>";
+const techLabel = (t) => TECHS.find((x) => x.id === t)?.label || t;
+
+function drawCheap() {
+  const I = S.I, el = $("cheap-chart");
+  if (!I) return emptyMsg(el, "Fills in after the data update builds the intraday file.");
+  const thr = +S.cheapThr, ts = techsOf(S.cheapTech), s = S.cheapTech === "all" ? ALL_THERMAL : TECHS.find((x) => x.id === S.cheapTech);
+  const hrs = I.dates.map((_, i) => d3.range(24).filter((h) => I.lambda[i][h] != null && I.lambda[i][h] < thr && I.tech[ts[0]].at_min[i]));
+  // nuclear runs flat out whatever its reported LSL, so with all thermal it is its own segment
+  const split = S.cheapTech === "all", flex = split ? ts.filter((t) => t !== "nuclear") : ts;
+  const avg = (list, k) => I.dates.map((_, i) => (hrs[i].length ? d3.mean(hrs[i], (h) => d3.sum(list, (t) => d3.sum(k, (kk) => I.tech[t][kk][i][h]))) : null));
+  const atMin = avg(flex, ["at_min"]), above = avg(flex, ["above"]), n = avg(ts, ["n"]);
+  const series = [
+    ...(split ? [{ label: "Nuclear (all output)", color: "--c5", values: avg(["nuclear"], ["at_min", "above"]) }] : []),
+    { label: split ? "Other thermal at minimum (up to LSL)" : "At minimum (up to LSL)", color: s.color, opacity: 0.45, values: atMin },
+    { label: split ? "Other thermal above minimum" : "Above minimum", color: s.color, values: above },
+  ];
+  $("cheap-legend").innerHTML = series.map((x) => `<span><span class="sw" style="background:var(${x.color});opacity:${x.opacity || 1}"></span>${x.label}</span>`).join("");
+  const nDays = hrs.filter((h) => h.length).length;
+  $("cheap-note").textContent = `Average MW of ${s.label.toLowerCase()} output in the hours each day when system lambda was below ${fmtPrice0(thr)} (${nDays} of ${I.dates.length} days had such hours), split into output up to each running unit's minimum (LSL) and output above it. A unit counts as at minimum when its output is no more than ${fmtPct(I.above_eps)} of its HSL above its LSL. Output at minimum is what the unit cannot shed without shutting down. Nuclear reports a low LSL but runs flat out, so with all thermal selected it is shown whole, and on its own nearly all of it shows as above minimum.`;
+  dayBars(el, I.dates, series, { title: `${s.label}: average MW in hours with lambda below ${fmtPrice0(thr)}`, none: `No hours with lambda below ${fmtPrice0(thr)}`,
+    tipNote: (i) => ` · ${hrs[i].length} h, ${d3.format(",.0f")(n[i])} units running` });
+  // units above minimum (nuclear left out: it always is)
+  const rows = I.above_units.filter((r) => r[2] === thr && r[1] !== "nuclear" && ts.includes(r[1]) && r[4] > 0)
+    .map((r) => ({ unit: r[0], tech: r[1], run: r[3], above: r[4], mwh: r[5] })).sort((a, b) => b.mwh - a.mwh);
+  $("cheap-units-note").textContent = `All loaded days together, nuclear left out. ${rows.length} unit${rows.length === 1 ? "" : "s"} ran above minimum in at least one hour with lambda below ${fmtPrice0(thr)}; the top 30 by energy above minimum are listed. Cogeneration and units carrying ancillary services are likely here. Click a row to see the unit.`;
+  $("cheap-units").innerHTML = rows.length ? unitRows(rows.slice(0, 30), [
+    { h: "Unit", t: 1, f: (r) => esc(r.unit) }, { h: "Technology", t: 1, f: (r) => techLabel(r.tech) },
+    { h: `Hours running below ${fmtPrice0(thr)}`, f: (r) => r.run }, { h: "Hours above minimum", f: (r) => r.above },
+    { h: "Share", f: (r) => fmtPct(r.above / r.run) }, { h: "Avg MW above minimum", f: (r) => fmtMW(r.mwh / r.above) },
+    { h: "MWh above minimum", f: (r) => fmtMW(r.mwh) },
+  ]) : `<p class="empty">No units ran above minimum in those hours.</p>`;
+}
+
+// ---- intraday: shutdowns and two-shifting ------------------------------------------
+function drawShut() {
+  const I = S.I, el = $("shut-chart");
+  if (!I) return emptyMsg(el, "Fills in after the data update builds the intraday file.");
+  const ts = techsOf(S.shutTech), s = S.shutTech === "all" ? ALL_THERMAL : TECHS.find((x) => x.id === S.shutTech);
+  const thr = S.shutPrice === "any" ? null : +S.shutPrice;
+  // spells: [unit, tech, date, "HH:MM", hours off, lambda first 4 h, lambda while off, outage]
+  const sp = I.spells.filter((r) => ts.includes(r[1]) && !r[7] && !(r[4] != null && r[4] < 1) && (thr == null || (r[5] != null && r[5] < thr)));
+  const di = new Map(I.dates.map((d, i) => [d, i]));
+  const two = I.dates.map(() => 0), long = I.dates.map(() => 0);
+  sp.forEach((r) => { const i = di.get(r[2]); if (i == null) return; (r[4] != null && r[4] < 24 ? two : long)[i]++; });
+  const has = I.dates.map((_, i) => I.tech[ts[0]].n[i] != null);
+  const series = [
+    { label: "Back online within 24 hours (two-shifting)", color: s.color, values: two.map((v, i) => (has[i] ? v : null)) },
+    { label: "Off longer, or not back in the loaded days", color: s.color, opacity: 0.4, values: long.map((v, i) => (has[i] ? v : null)) },
+  ];
+  $("shut-legend").innerHTML = series.map((x) => `<span><span class="sw" style="background:var(${x.color});opacity:${x.opacity || 1}"></span>${x.label}</span>`).join("");
+  const priceTxt = thr == null ? "" : ` where system lambda averaged below ${fmtPrice0(thr)} over the ${I.next_h} hours after the unit went off`;
+  $("shut-note").textContent = `Each bar counts ${s.label.toLowerCase()} units that went from online to off on that day${priceTxt}. Units that went on outage while off are left out, as are spells shorter than an hour (mostly combined-cycle configuration changes). The lower chart shows, for the units back within 24 hours, the hours of the day they were off, as an average number of units per day, with the average lambda for each hour across all loaded days as a dashed line (right axis).`;
+  dayBars(el, I.dates, series, { title: `${s.label}: shutdowns per day`, yFmt: d3.format(",.0f") });
+  // hour-of-day profile of short spells
+  const off = new Array(24).fill(0);
+  const short = sp.filter((r) => r[4] != null && r[4] < 24);
+  short.forEach((r) => {
+    const [hh, mm] = r[3].split(":").map(Number), start = hh * 60 + mm;
+    for (let t = 0; t < r[4] * 60; t += 60) off[Math.floor(((start + t) % 1440) / 60)] += 1;
+  });
+  const nd = has.filter(Boolean).length || 1;
+  const lamH = d3.range(24).map((h) => d3.mean(I.lambda, (L) => L[h]));
+  drawHourProfile($("shut-hours"), off.map((v) => v / nd), lamH, s,
+    `${s.label}: units off in a two-shift, by hour (avg per day)`);
+  // table by unit
+  const rows = d3.rollups(sp, (g) => ({ unit: g[0][0], tech: g[0][1], n: g.length, two: g.filter((r) => r[4] != null && r[4] < 24).length,
+    off: d3.median(g.filter((r) => r[4] != null), (r) => r[4]), l4: d3.median(g, (r) => r[5]), lo: d3.median(g, (r) => r[6]) }), (r) => r[0])
+    .map(([, v]) => v).sort((a, b) => b.n - a.n);
+  $("shut-units").innerHTML = rows.length ? unitRows(rows.slice(0, 30), [
+    { h: "Unit", t: 1, f: (r) => esc(r.unit) }, { h: "Technology", t: 1, f: (r) => techLabel(r.tech) },
+    { h: "Shutdowns", f: (r) => r.n }, { h: "Back within 24 h", f: (r) => r.two },
+    { h: "Median hours off", f: (r) => (r.off == null ? "–" : d3.format(",.1f")(r.off)) },
+    { h: `Median lambda, first ${I.next_h} h off`, f: (r) => fmtPrice(r.l4) }, { h: "Median lambda while off", f: (r) => fmtPrice(r.lo) },
+  ]) : `<p class="empty">No shutdowns match.</p>`;
+}
+
+// bars by hour of day with the average lambda line on a right axis
+function drawHourProfile(el, vals, lamH, s, title) {
+  const w = Math.max(280, el.clientWidth || 600), H = 170, m = { t: 16, r: 52, b: 26, l: 64 };
+  const x = d3.scaleBand().domain(d3.range(24)).range([m.l, w - m.r]).paddingInner(0.15);
+  const y = d3.scaleLinear().domain([0, Math.max(0.1, d3.max(vals))]).nice().range([H - m.b, m.t]);
+  const yl = d3.scaleLinear().domain([Math.min(0, d3.min(lamH)), d3.max(lamH)]).nice().range([H - m.b, m.t]);
+  const svg = d3.create("svg").attr("viewBox", `0 0 ${w} ${H}`);
+  svg.append("g").attr("class", "gridline").attr("transform", `translate(${m.l},0)`).call(d3.axisLeft(y).ticks(4).tickSize(-(w - m.l - m.r)).tickFormat(""));
+  svg.append("g").attr("class", "axis").attr("transform", `translate(0,${H - m.b})`).call(d3.axisBottom(x).tickValues([0, 5, 11, 17, 23]).tickFormat((h) => `HE ${h + 1}`).tickSizeOuter(0));
+  svg.append("g").attr("class", "axis").attr("transform", `translate(${m.l},0)`).call(d3.axisLeft(y).ticks(4).tickFormat(d3.format(",.2~f")).tickSizeOuter(0));
+  svg.append("g").attr("class", "axis").attr("transform", `translate(${w - m.r},0)`).call(d3.axisRight(yl).ticks(4).tickFormat(d3.format("$,.0f")).tickSizeOuter(0));
+  svg.append("text").attr("class", "axis-title").attr("x", m.l).attr("y", 10).text(title);
+  svg.append("g").selectAll("rect").data(vals).join("rect").attr("x", (_, h) => x(h)).attr("width", x.bandwidth())
+    .attr("y", (v) => y(v)).attr("height", (v) => y(0) - y(v)).attr("fill", css(s.color));
+  svg.append("path").attr("fill", "none").attr("stroke", css("--ink")).attr("stroke-width", 1.5).attr("stroke-dasharray", "4 3")
+    .attr("d", d3.line().x((_, h) => x(h) + x.bandwidth() / 2).y((v) => yl(v))(lamH));
+  svg.append("rect").attr("x", m.l).attr("y", m.t).attr("width", w - m.l - m.r).attr("height", H - m.t - m.b).attr("fill", "transparent")
+    .on("pointermove", (ev) => {
+      const h = Math.max(0, Math.min(23, Math.floor((d3.pointer(ev)[0] - m.l) / x.step())));
+      showTip(ev, `<h4>HE ${h + 1}</h4>${d3.format(",.2f")(vals[h])} units off per day<br>Average lambda ${fmtPrice(lamH[h])}`);
+    })
+    .on("pointerleave", hideTip);
+  el.replaceChildren(svg.node());
+  setCSV(el, ["hour_ending", "units_off_per_day", "avg_lambda"], vals.map((v, h) => [h + 1, v, lamH[h]]), title);
+}
+
+// ---- across days: day × hour heatmap -----------------------------------------------
+const HEAT_MEASURES = [
+  { id: "offer", label: "MW offered at or below a price" },
+  { id: "running", label: "Thermal output (MW)" },
+  { id: "above", label: "Thermal output above minimum (MW)" },
+  { id: "lambda", label: "System lambda" },
+];
+async function drawHeat() {
+  const el = $("heatmap"), scaleEl = $("heat-scale"), I = S.I, meas = S.heatMeasure;
+  const offer = meas === "offer", thermal = meas === "running" || meas === "above";
+  $("heat-thr").hidden = $("heat-thr-lbl").hidden = !offer;
+  $("heat-scale-mode").hidden = meas === "lambda";
+  $("heat-tech").hidden = $("heat-tech-lbl").hidden = meas === "lambda";
+  const techOpts = offer ? [...TECHS.filter((t) => t.id !== "other"), { id: "storage", keys: ["storage"], label: "Storage (ESR)", color: "--c7" }, TECHS.find((t) => t.id === "other")]
+    : [ALL_THERMAL, ...TECHS.filter((t) => THERMAL.includes(t.id))];
+  bindSelect("heat-tech", "heatTech", techOpts, drawHeat);
+  let dstr, val;
+  if (offer) {
+    if (!S.summ60) {
+      el.innerHTML = `<p class="empty">Loading offer summaries…</p>`;
+      [S.idx, S.summ60] = await Promise.all([tryJSON("data/index.json"), tryJSON("data/summary_60d.json.gz")]);
+      S.summ60 = S.summ60 || {};
+      if (S.heatMeasure !== "offer") return;
+    }
+    const th = (S.idx && S.idx.thresholds) || [0];
+    bindSelect("heat-thr", "heatThr", th.map((t) => ({ id: String(t), label: t === -249 ? "Price floor (−$250)" : fmtPrice0(t) })), drawHeat);
+    const ti = th.indexOf(+S.heatThr), s = techOpts.find((t) => t.id === S.heatTech);
+    dstr = Object.keys(S.summ60).sort();
+    val = (i, h) => {
+      const c = S.summ60[dstr[i]] && S.summ60[dstr[i]].curves;
+      if (!c) return null;
+      const parts = s.keys.map((k) => c[k] && c[k][h] && c[k][h][ti]).filter((v) => v != null);
+      return parts.length ? d3.sum(parts) : null;
+    };
+    $("heat-note").textContent = `MW of ${s.label.toLowerCase()} offered at or below ${+S.heatThr === -249 ? "the price floor" : fmtPrice0(+S.heatThr)} in each hour, from the 60-day curves as used in SCED. Click a cell to open that day and hour in the Day view.`;
+  } else {
+    if (!I) return emptyMsg(el, "Fills in after the data update builds the intraday file.");
+    dstr = I.dates;
+    const ts = techsOf(S.heatTech), s = S.heatTech === "all" ? ALL_THERMAL : TECHS.find((x) => x.id === S.heatTech);
+    if (meas === "lambda") val = (i, h) => I.lambda[i][h];
+    else val = (i, h) => (I.tech[ts[0]].n[i] ? d3.sum(ts, (t) => I.tech[t].above[i][h] + (meas === "running" ? I.tech[t].at_min[i][h] : 0)) : null);
+    $("heat-note").textContent = meas === "lambda" ? "Hourly system lambda. Negative hours are red. Click a cell to open that day and hour in the Day view."
+      : `${meas === "running" ? "Output" : "Output above minimum (LSL)"} of running ${s.label.toLowerCase()} units, from the 60-day disclosure. Click a cell to open that day and hour in the Day view.`;
+  }
+  const cells = [];
+  dstr.forEach((d, i) => { for (let h = 0; h < 24; h++) { const v = val(i, h); if (v != null) cells.push({ d, h, v }); } });
+  if (!cells.length) { emptyMsg(el, "No data."); scaleEl.innerHTML = ""; return; }
+  const cw = Math.max(4, Math.min(36, ((el.clientWidth || 600) - 70) / dstr.length)), chh = 10;
+  const m = { t: 8, r: 8, b: 44, l: 52 };
+  const w = Math.max(el.clientWidth || 300, m.l + m.r + cw * dstr.length), H = m.t + m.b + chh * 24;
+  const x = d3.scaleBand().domain(dstr).range([m.l, m.l + cw * dstr.length]).paddingInner(cw > 6 ? 0.08 : 0);
+  const y = d3.scaleBand().domain(d3.range(24)).range([m.t, m.t + chh * 24]).paddingInner(0.08);
+  let color, lo, hi;
+  const vs = cells.map((c) => c.v).sort(d3.ascending);
+  if (meas === "lambda") {
+    lo = Math.min(-1, vs[0]); hi = Math.max(1, d3.quantile(vs, 0.98));
+    const pos = d3.interpolateRgb(css("--seq-lo"), css("--seq-hi")), neg = d3.interpolateRgb(css("--seq-lo"), css("--c8"));
+    color = (v) => (v < 0 ? neg(Math.min(1, v / lo)) : pos(Math.min(1, v / hi)));
+  } else {
+    // MW scales start at zero, so the color shows each hour's size and not just its rank;
+    // "Fit to data" stretches the scale over the observed range to bring out small differences
+    lo = S.heatScale === "fit" ? vs[0] : Math.min(0, vs[0]); hi = vs.at(-1); if (lo === hi) hi = lo + 1;
+    color = d3.scaleSequential(d3.interpolateRgb(css("--seq-lo"), css("--seq-hi"))).domain([lo, hi]);
+  }
+  const fmtV = meas === "lambda" ? fmtPrice : (v) => `${fmtMW(v)} MW`;
+  const svg = d3.create("svg").attr("viewBox", `0 0 ${w} ${H}`).style("width", w + "px").style("max-width", "none").attr("data-nopin", "");
+  svg.append("g").selectAll("rect").data(cells).join("rect")
+    .attr("x", (c) => x(c.d)).attr("y", (c) => y(c.h)).attr("width", x.bandwidth()).attr("height", y.bandwidth()).attr("rx", cw > 6 ? 2 : 0)
+    .attr("fill", (c) => color(c.v)).style("cursor", "pointer")
+    .on("pointermove", (ev, c) => showTip(ev, `<h4>${fmtDate(parseDate(c.d))} · HE ${c.h + 1}</h4><b>${fmtV(c.v)}</b><br><span class="tip-pin-note">Click to open in the Day view</span>`))
+    .on("pointerleave", hideTip)
+    .on("click", (ev, c) => { location.href = `index.html#date=${c.d}&he=${c.h + 1}`; });
+  svg.append("g").attr("class", "axis").attr("transform", `translate(${m.l - 2},0)`)
+    .call(d3.axisLeft(y).tickValues([0, 5, 11, 17, 23]).tickFormat((h) => `HE ${h + 1}`).tickSize(0)).select(".domain").remove();
+  const every = Math.ceil(dstr.length / Math.max(1, Math.floor((cw * dstr.length) / 70)));
+  svg.append("g").attr("class", "axis").attr("transform", `translate(0,${m.t + chh * 24 + 2})`)
+    .call(d3.axisBottom(x).tickValues(dstr.filter((d, i) => i % every === 0)).tickFormat((d) => d3.timeFormat("%b %-d")(parseDate(d))).tickSize(0))
+    .select(".domain").remove();
+  el.replaceChildren(svg.node());
+  setCSV(el, ["date", "hour_ending", HEAT_MEASURES.find((q) => q.id === meas).label], cells.map((c) => [c.d, c.h + 1, c.v]), "Across days");
+  const ramp = meas === "lambda" ? `${css("--c8")},${css("--seq-lo")} ${(100 * -lo / (hi - lo)).toFixed(0)}%,${css("--seq-hi")}` : `${css("--seq-lo")},${css("--seq-hi")}`;
+  scaleEl.innerHTML = `<span>${fmtV(lo)}</span><span class="ramp" style="background:linear-gradient(90deg,${ramp})"></span><span>${fmtV(hi)}${meas === "lambda" ? " (98th pct.)" : ""}</span>` +
+    (meas !== "lambda" && S.heatScale === "fit" ? `<span>Scale fitted to the data: small differences look large</span>` : "");
 }
 
 // ---- links ------------------------------------------------------------------------
-const VIEW_KEYS = { f: "floorMode", pq: "pqTech", cap: "capTech", sc: "scTech", scx: "scX", ms: "mSrc", mv: "mView", md: "mDays", ct: "chgTech", cs: "chgSig", unit: "unit" };
+const VIEW_KEYS = { cht: "cheapTech", chthr: "cheapThr", sht: "shutTech", shp: "shutPrice", hm: "heatMeasure", ht: "heatTech", hthr: "heatThr", hs: "heatScale", f: "floorMode", pq: "pqTech", cap: "capTech", sc: "scTech", scx: "scX", ms: "mSrc", mv: "mView", md: "mDays", ct: "chgTech", cs: "chgSig", unit: "unit" };
 function saveView() { window.CX.writeHash(Object.fromEntries(Object.entries(VIEW_KEYS).map(([k, sk]) => [k, S[sk]]))); }
 function loadView() { const v = window.CX.readHash(); Object.entries(VIEW_KEYS).forEach(([k, sk]) => { if (v[k] != null) S[sk] = v[k]; }); }
 
 // ---- boot ---------------------------------------------------------------------------
-function drawAll() { drawFloor(); drawRenewBands(); drawCurtailment(); drawPriceQuantiles(); drawCapacity(); drawScatter(); drawPartial(); drawMarginal(); drawChanges(); }
+function drawAll() { drawFloor(); drawRenewBands(); drawCurtailment(); drawPriceQuantiles(); drawCapacity(); drawScatter(); drawPartial(); drawCheap(); drawShut(); if (heatSeen) drawHeat(); drawMarginal(); drawChanges(); }
+let heatSeen = false;
 
 async function boot() {
-  [S.T, S.C] = await Promise.all([tryJSON("data/trends_60d.json.gz"), tryJSON("data/curve_trends.json.gz")]);
+  [S.T, S.C, S.I] = await Promise.all([tryJSON("data/trends_60d.json.gz"), tryJSON("data/curve_trends.json.gz"), tryJSON("data/intraday_60d.json.gz")]);
   if (!S.T) { $("status").textContent = "No trends data yet. It is built by the data update workflow."; return; }
   const D = S.T.dates;
   $("status").textContent = `60-day data: ${D.length} days, ${D[0]} to ${D[D.length - 1]} · ${S.T.units.length} thermal units` +
@@ -546,7 +845,17 @@ async function boot() {
   bindSelect("sc-tech", "scTech", thermal, drawScatter);
   bindSelect("chg-tech", "chgTech", [{ id: "all", label: "All" }, ...thermal], drawChanges);
   bindSelect("chg-sig", "chgSig", [{ id: "all", label: "All" }, ...Object.entries(S.T.signals).map(([id, label]) => ({ id, label }))], drawChanges);
-  ["chg-table", "flip-table"].forEach((id) => $(id).addEventListener("click", (e) => {
+  [["cheap-thr", "cheapThr", drawCheap], ["shut-price", "shutPrice", drawShut], ["heat-scale-mode", "heatScale", drawHeat]].forEach(([id, key, fn]) => { setSeg(id, S[key]); bindSeg(id, key, fn); });
+  bindSelect("cheap-tech", "cheapTech", [ALL_THERMAL, ...thermal], drawCheap);
+  bindSelect("shut-tech", "shutTech", [ALL_THERMAL, ...thermal], drawShut);
+  bindSelect("heat-measure", "heatMeasure", HEAT_MEASURES, drawHeat);
+  // the offer summaries are large: draw the heatmap once it is about to scroll into view
+  new IntersectionObserver((es, ob) => { if (es.some((e) => e.isIntersecting)) { heatSeen = true; drawHeat(); ob.disconnect(); } }, { rootMargin: "400px" })
+    .observe($("heatmap"));
+  $("unit-list").innerHTML = S.T.units.map((u) => `<option value="${esc(u.unit)}">${techLabel(u.tech)}</option>`).join("");
+  $("unit-pick").addEventListener("change", (e) => showUnit(e.target.value.trim()));
+  $("unit-pick").addEventListener("input", (e) => { if (S.T.units.some((u) => u.unit === e.target.value)) showUnit(e.target.value); });
+  ["chg-table", "flip-table", "cheap-units", "shut-units"].forEach((id) => $(id).addEventListener("click", (e) => {
     const tr = e.target.closest("tr[data-unit]");
     if (tr) showUnit(tr.dataset.unit);
   }));

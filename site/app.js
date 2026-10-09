@@ -35,7 +35,7 @@ const RANGES = {
 const S = {
   index: null, source: "2d", date: null, hour: 12, version: "curves",
   xrange: "low", mode: "lines", axes: "price_x", threshold: 0, location: "lambda",
-  hidden: new Set(), heatTech: null, unitTech: "all", unitSearch: "",
+  hidden: new Set(), unitTech: "all", unitSearch: "",
   unitSort: { key: "floor_mw", dir: -1 }, unitShowAll: false,
   day: null, prices: null, summaries: {}, osView: "hour", osUnit: "share",
 };
@@ -146,10 +146,6 @@ function fillThresholds() {
 }
 
 function fillTechSelects() {
-  const list = seriesList();
-  if (!list.some((s) => s.id === S.heatTech)) S.heatTech = list[0].id;
-  $("heat-tech").innerHTML = list.map((s) => `<option value="${s.id}">${s.label}</option>`).join("");
-  $("heat-tech").value = S.heatTech;
   $("unit-tech").innerHTML = `<option value="all">All</option>` +
     SERIES["60d"].map((s) => `<option value="${s.id}">${s.label}</option>`).join("");
   $("unit-tech").value = S.unitTech;
@@ -195,14 +191,13 @@ function render() {
   drawMarginal();
   drawOfferStack();
   drawProfile();
-  drawHeatmap();
   if (is60) { drawTechTable(); drawUnits(); }
   drawDuration();
   saveView();
 }
 
 // the address bar carries the view, so a copied link reopens this exact day, hour and settings
-const VIEW_KEYS = { loc: "location", xr: "xrange", mode: "mode", axes: "axes", ver: "version", thr: "threshold", heat: "heatTech", os: "osView", osu: "osUnit" };
+const VIEW_KEYS = { loc: "location", xr: "xrange", mode: "mode", axes: "axes", ver: "version", thr: "threshold", os: "osView", osu: "osUnit" };
 function saveView() {
   window.CX.writeHash({ date: S.date, he: S.hour + 1, ...Object.fromEntries(Object.entries(VIEW_KEYS).map(([k, sk]) => [k, S[sk]])) });
 }
@@ -924,50 +919,6 @@ function hoverHours(svg, x, m, H, htmlFor) {
     });
 }
 
-// ---- heatmap --------------------------------------------------------------
-function drawHeatmap() {
-  const el = $("heatmap"), scaleEl = $("heat-scale");
-  const summ = S.summaries[S.source] || {};
-  const s = seriesList().find((q) => q.id === S.heatTech) || seriesList()[0];
-  const ti = S.index.thresholds.indexOf(S.threshold);
-  const dates = Object.keys(summ).sort();
-  if (!dates.length) { emptyMsg(el, "No days loaded yet."); scaleEl.innerHTML = ""; return; }
-  const cells = [];
-  dates.forEach((d) => {
-    const v = summarySeries(summ[d], s);
-    if (v) v.forEach((row, h) => { if (row && row[ti] != null) cells.push({ d, h, v: row[ti] }); });
-  });
-  const cw = Math.max(10, Math.min(36, (el.clientWidth - 70) / dates.length));
-  const ch = 10;
-  const m = { t: 8, r: 8, b: 44, l: 52 };
-  const w = Math.max(el.clientWidth || 300, m.l + m.r + cw * dates.length);
-  const H = m.t + m.b + ch * 24;
-  const x = d3.scaleBand().domain(dates).range([m.l, m.l + cw * dates.length]).paddingInner(0.08);
-  const y = d3.scaleBand().domain(d3.range(24)).range([m.t, m.t + ch * 24]).paddingInner(0.08);
-  const ext = d3.extent(cells, (c) => c.v);
-  if (ext[0] === ext[1]) ext[1] = ext[0] + 1;
-  const color = d3.scaleSequential(d3.interpolateRgb(css("--seq-lo"), css("--seq-hi"))).domain(ext);
-  const svg = d3.create("svg").attr("viewBox", `0 0 ${w} ${H}`).style("width", w + "px").style("max-width", "none").attr("data-nopin", "");
-  svg.append("g").selectAll("rect").data(cells).join("rect")
-    .attr("x", (c) => x(c.d)).attr("y", (c) => y(c.h)).attr("width", x.bandwidth()).attr("height", y.bandwidth()).attr("rx", 2)
-    .attr("fill", (c) => color(c.v))
-    .attr("stroke", (c) => (c.d === S.date && c.h === S.hour ? css("--ink") : "none")).attr("stroke-width", 1.5)
-    .style("cursor", "pointer")
-    .on("pointermove", (ev, c) => showTip(ev, `<h4>${c.d} · ${heLabel(c.h)}</h4>${s.label}: <b>${fmtMW(c.v)} MW</b> at or below ${S.threshold === -249 ? "the floor" : fmtPrice0(S.threshold)}`))
-    .on("pointerleave", hideTip)
-    .on("click", async (ev, c) => { S.hour = c.h; $("hour").value = c.h; if (c.d !== S.date) { S.date = c.d; $("date").value = c.d; await loadDay(); } render(); });
-  svg.append("g").attr("class", "axis").attr("transform", `translate(${m.l - 2},0)`)
-    .call(d3.axisLeft(y).tickValues([0, 5, 11, 17, 23]).tickFormat((h) => heLabel(h)).tickSize(0)).select(".domain").remove();
-  const every = Math.ceil(dates.length / Math.max(1, Math.floor((cw * dates.length) / 70)));
-  svg.append("g").attr("class", "axis").attr("transform", `translate(0,${m.t + ch * 24 + 2})`)
-    .call(d3.axisBottom(x).tickValues(dates.filter((d, i) => i % every === 0)).tickFormat((d) => d3.timeFormat("%b %-d")(new Date(d + "T12:00:00"))).tickSize(0))
-    .select(".domain").remove();
-  el.replaceChildren(svg.node());
-  setCSV(el, ["date", "hour_ending", `${s.label} MW at or below ${S.threshold}`], cells.map((c) => [c.d, c.h + 1, c.v]), "Across days");
-  scaleEl.innerHTML = `<span>${fmtMW(ext[0])} MW</span><span class="ramp" style="background:linear-gradient(90deg,${css("--seq-lo")},${css("--seq-hi")})"></span><span>${fmtMW(ext[1])} MW</span>`;
-}
-
-
 // ---- explanations shown on hover / focus ---------------------------------------
 const esc = (t) => String(t).replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;");
 const TECH_COLS = [
@@ -1164,7 +1115,6 @@ async function boot() {
   $("hour").oninput = (e) => { S.hour = +e.target.value; render(); };
   $("location").onchange = (e) => { S.location = e.target.value; render(); };
   $("threshold").onchange = (e) => { S.threshold = +e.target.value; render(); };
-  $("heat-tech").onchange = (e) => { S.heatTech = e.target.value; drawHeatmap(); };
   $("unit-tech").onchange = (e) => { S.unitTech = e.target.value; S.unitShowAll = false; drawUnits(); };
   $("unit-search").oninput = (e) => { S.unitSearch = e.target.value; drawUnits(); };
   $("units-table").addEventListener("click", (e) => {
