@@ -33,7 +33,7 @@ from .stayon import build_stayon
 from .curve_trends import build_curve_trends
 from .nodes import build_node_curtail
 from .gas import fetch_gas
-from .store import describe_blob, iter_csvs, zip_names, load_index, save_index, update_summary, write_json_gz
+from .store import describe_blob, iter_csvs, zip_names, load_index, read_json_gz, save_index, update_summary, write_json_gz
 from .log import warn, write_summary, WARNINGS
 
 warnings.filterwarnings("ignore", category=RuntimeWarning)
@@ -220,10 +220,18 @@ def fetch_curves(api, emil: str, posted_from: dt.datetime, posted_to: dt.datetim
 
 
 def reprocess_60d(api, index: dict, mode: str = "missing", limit=None):
-    """Re-download and reparse 60-day days already in the index: those without a per-unit day
-    file (mode "missing", so an interrupted run resumes), or all of them (mode "all")."""
-    targets = {d for d in index["days"]["60d"]
-               if mode == "all" or not (UNIT_DATA_DIR / "60d" / f"{d}.json.gz").exists()}
+    """Re-download and reparse 60-day days already in the index: those whose per-unit day file
+    is missing or predates the current format (mode "missing", so an interrupted run resumes
+    and a format change is filled in over several runs), or all of them (mode "all")."""
+    def current(d):
+        path = UNIT_DATA_DIR / "60d" / f"{d}.json.gz"
+        if not path.exists():
+            return False
+        try:
+            return "overrides" in (read_json_gz(path) or {})
+        except Exception:
+            return False
+    targets = {d for d in index["days"]["60d"] if mode == "all" or not current(d)}
     print(f"reprocess 60d ({mode}): {len(targets)} day(s)")
     if not targets:
         return

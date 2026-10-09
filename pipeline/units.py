@@ -36,7 +36,8 @@ Schema
                               # hourly means over the runs the unit is present in, any status
     }, ...
   },
-  "overrides": {        # only when the disclosure's HDL/LDL Manual Override Summary has rows
+  "overrides": {        # from the disclosure's HDL/LDL Manual Override Summary (empty if none that day;
+                        # absent in files written before it was read)
     "<Resource Name>": [[minutes after midnight, HDL original, HDL manual, HDL final,
                          LDL original, LDL manual, LDL final, reason code], ...]
   }                     # SCED runs where an ERCOT operator changed the unit's dispatch limits

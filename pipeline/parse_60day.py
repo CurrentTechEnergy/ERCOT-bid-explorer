@@ -290,8 +290,12 @@ def parse_60day_zip(blob: bytes, chunksize: int = 40000):
     for data in override_csvs:
         for k, v in parse_overrides(data, date).items():
             overrides.setdefault(k, []).extend(v)
+    # always present (empty when the day had no manual overrides), so a day file that lacks the
+    # key is one written before overrides were read and reprocess_60d knows to redo it
+    unit_day["overrides"] = {k: sorted(v, key=lambda r: r[0]) for k, v in overrides.items()}
     if overrides:
-        unit_day["overrides"] = {k: sorted(v, key=lambda r: r[0]) for k, v in overrides.items()}
         print(f"  overrides {date}: {sum(len(v) for v in overrides.values())} manual HDL/LDL rows on "
               f"{len(overrides)} unit(s)")
+    elif not override_csvs:
+        warn(f"60-day {date}: no HDL/LDL manual override summary in the zip")
     return date, day, summary, (unit_day, n_events)
