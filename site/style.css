@@ -145,6 +145,7 @@ table.data tr:hover td { background: var(--accent-soft); }
 .heat-scale .ramp { width: 160px; height: 10px; border-radius: 3px; }
 
 .foot { margin-top: 24px; color: var(--muted); font-size: 12px; max-width: 100ch; }
+.foot a { color: var(--accent); }
 
 @media (max-width: 900px) {
   main { grid-template-columns: minmax(0, 1fr); }
