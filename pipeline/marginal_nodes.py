@@ -184,6 +184,9 @@ def build_marginal_nodes(index: dict) -> None:
         pr = read_json_gz(DATA_DIR / "prices" / f"{d}.json.gz") if d in price_days else None
         lam = (pr or {}).get("lambda") or {}
         nodes = ((read_json_gz(UNIT_DATA_DIR / "nodes" / f"{d}.json.gz") or {}).get("points") or {}) if d in node_days else {}
+        by_site = {}      # site prefix -> nodes, for batteries the DAM files never name
+        for k in nodes:
+            by_site.setdefault(k.split("_")[0], []).append(k)
         has_nodes.append(bool(nodes))
         exact = bool(ud) and ud.get("format", 0) >= 4
         exact_days.append(exact)
@@ -203,6 +206,8 @@ def build_marginal_nodes(index: dict) -> None:
             if t == "storage" and not u.get("disp"):
                 continue
             marg, price, bp, _ = unit_runs(u, n, hr)
+            if t == "storage":
+                marg &= np.abs(bp) >= STEP_MW     # an idle battery sits between its bid and offer, not on a margin
             on_runs = np.isfinite(bp) & np.array([u["lim"][i][1] is not None if i >= 0 else False for i in _ffill_index(u["lim"], n)])
             if not marg.any() and not on_runs.any():
                 continue
@@ -210,7 +215,10 @@ def build_marginal_nodes(index: dict) -> None:
             rec = units.setdefault(name, [t, sp_of.get(name), 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0, 0.0])
             rec[2] += float(np.sum(on_runs / runs_h[hr]))
             rec[9] += float(np.nansum(np.where(on_runs, hsl_r, 0.0) / runs_h[hr]))
-            node = nodes.get(rec[1]) if rec[1] else None
+            sp = rec[1]
+            if sp is None and t == "storage" and len(by_site.get(name.split("_")[0], [])) == 1:
+                sp = by_site[name.split("_")[0]][0]      # the site's only node
+            node = nodes.get(sp) if sp else None
             for r in np.flatnonzero(marg):
                 p, l = price[r], lam_r[r]
                 if not np.isfinite(l):
