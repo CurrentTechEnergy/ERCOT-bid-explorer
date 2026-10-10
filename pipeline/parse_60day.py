@@ -15,6 +15,7 @@ also counted as online), n_off/hsl_off = status codes starting "OFF", n_out/hsl_
 Their HSL is the telemetered HSL as reported, whatever the status.
 """
 import io
+import re
 
 import numpy as np
 import pandas as pd
@@ -201,14 +202,44 @@ class _Accumulator:
 
 # totals for the run, reported once by update.main so an override file that has rows but
 # yields none (a timestamp or date mismatch) shows up on the run page
-OVERRIDE_STATS = {"days": 0, "files": 0, "rows": 0, "kept": 0, "units": 0, "sample": None}
+OVERRIDE_STATS = {"days": 0, "files": 0, "rows": 0, "kept": 0, "units": 0, "sample": None, "unmatched": None,
+                  "other": {}}      # other files with "override" in the name: {name pattern: rows}
+
+# bump when the override parsing changes, so reprocess_60d's "missing" mode redoes older files
+OVERRIDES_FORMAT = 3
 
 
 def _norm(c) -> str:
     return "".join(ch for ch in str(c).lower() if ch.isalnum())
 
 
-def parse_overrides(data: bytes, date: str) -> dict:
+# words ERCOT might use for each of the three values of a limit, in the order tried
+_KIND_WORDS = {
+    "original": ("original", "orig", "sced", "telemetered", "before", "initial"),
+    "manual": ("manual", "override", "operator", "entered"),
+    "final": ("final", "used", "after", "resulting", "effective"),
+}
+
+
+def _limit_col(norm: dict, lim: str, kind: str):
+    """The column for one of the six limit values, matched on the limit name (hdl / ldl, or
+    'high' / 'low' dispatch limit) and a word for the kind, whatever their order."""
+    words = (lim, "high" if lim == "hdl" else "low")
+    cands = [(n, c) for n, c in norm.items()
+             if n.startswith(words[0]) or lim in n or (words[1] in n and "dispatch" in n)]
+    for w in _KIND_WORDS[kind]:
+        hit = [c for n, c in cands if w in n and not any(
+            o in n for k, ws in _KIND_WORDS.items() if k != kind for o in ws[:2])]
+        if len(hit) == 1:
+            return hit[0]
+    return None
+
+
+def _pattern(name: str) -> str:
+    return re.sub(r"\d", "#", name.rsplit("/", 1)[-1])
+
+
+def parse_overrides(data: bytes, date: str, name: str = "") -> dict:
     """The disclosure's "HDL and LDL Manual Override Summary": SCED runs where an ERCOT operator
     manually changed a unit's HDL or LDL.  -> {unit: [[minutes after midnight, HDL original,
     HDL manual, HDL final, LDL original, LDL manual, LDL final, reason code], ...]} for runs on
@@ -220,8 +251,15 @@ def parse_overrides(data: bytes, date: str) -> dict:
     if stamp is None or unit is None:
         warn(f"Unrecognised override summary columns: {list(f.columns)}")
         return {}
-    cols = [next((c for n, c in norm.items() if n.startswith(k)), None)
-            for k in ("hdloriginal", "hdlmanual", "hdlfinal", "ldloriginal", "ldlmanual", "ldlfinal", "reason")]
+    cols = [_limit_col(norm, lim, kind) for lim in ("hdl", "ldl") for kind in ("original", "manual", "final")]
+    cols.append(next((c for n, c in norm.items() if "reason" in n), None))
+    if not any("hdl" in n or "ldl" in n or "dispatchlimit" in n for n in norm):
+        # another override file in the zip (e.g. the ancillary service capability derates)
+        other = OVERRIDE_STATS["other"]
+        other[_pattern(name)] = other.get(_pattern(name), 0) + len(f)
+        return {}
+    if any(c is None for c in cols[:6]):
+        OVERRIDE_STATS["unmatched"] = list(f.columns)
     t = pd.to_datetime(f[stamp].astype(str).str.strip(), format="mixed", errors="coerce")
     day0 = pd.Timestamp(date)
     minutes = ((t.dt.normalize() - day0).dt.days * 1440 + t.dt.hour * 60 + t.dt.minute)
@@ -257,7 +295,7 @@ def parse_60day_zip(blob: bytes, chunksize: int = 40000):
         elif name.lower().startswith("60d_esr_data_in_sced"):
             is_esr = True
         elif "override" in name.lower():
-            override_csvs.append(data)
+            override_csvs.append((name, data))
             continue
         else:
             continue
@@ -297,12 +335,13 @@ def parse_60day_zip(blob: bytes, chunksize: int = 40000):
     }
     unit_day, n_events = acc.unit_day(date)
     overrides = {}
-    for data in override_csvs:
-        for k, v in parse_overrides(data, date).items():
+    for name, data in override_csvs:
+        for k, v in parse_overrides(data, date, name).items():
             overrides.setdefault(k, []).extend(v)
     # always present (empty when the day had no manual overrides), so a day file that lacks the
     # key is one written before overrides were read and reprocess_60d knows to redo it
     unit_day["overrides"] = {k: sorted(v, key=lambda r: r[0]) for k, v in overrides.items()}
+    unit_day["overrides_format"] = OVERRIDES_FORMAT
     OVERRIDE_STATS["days"] += 1
     OVERRIDE_STATS["units"] += len(overrides)
     if overrides:
