@@ -414,8 +414,10 @@ def main(argv=None):
     lines += unit_file_summary()
     o = OVERRIDE_STATS
     if o["days"]:
-        msg = (f"HDL/LDL overrides: {o['files']} summary file(s) over {o['days']} day(s), {o['rows']} row(s), "
-               f"{o['kept']} kept, on {o['units']} unit-day(s)")
+        msg = (f"HDL/LDL overrides: {o['files']} file(s) read over {o['days']} day(s), "
+               f"{o['rows']} row(s), {o['kept']} on the operating day, on {o['units']} unit-day(s)")
+        if o["other"]:
+            msg += "; other override files skipped: " + ", ".join(f"{k} ({v} rows)" for k, v in o["other"].items())
         if o["unmatched"]:
             warn(f"HDL/LDL override summary: limit columns not recognised, values left empty: {o['unmatched']}")
         if o["rows"] and not o["kept"]:
