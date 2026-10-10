@@ -121,7 +121,7 @@ def main(days):
     out = {"days_missing": sorted(targets), "columns": colsets,
            "award_rows": {k: v for k, v in award_stats.items()},
            "counts": {"|".join(k): v for k, v in sorted(counts.items())}}
-    json.dump(out, open("as_test.json", "w"), indent=1)
+    json.dump(out, open("as_test.json", "w"), indent=1, default=float)
     print("\nAS award columns (rows > 0, total MW):")
     for k, v in award_stats.items():
         print(f"  {k}: {v[0]} rows, {v[1]:.0f} MW")
