@@ -1,0 +1,981 @@
+{
+ "n_products": 120,
+ "products": [
+  {
+   "emilId": "COPG-316",
+   "name": "Load Estimation Counts - Public",
+   "description": "Counts of ESIIDs and percentages of counts by MRE settled with actual meter data, estimated using historical meter data, and estimated using default load."
+  },
+  {
+   "emilId": "EIA-930-CD",
+   "name": "Hourly Balancing Authority Operations Report",
+   "description": "Hourly Balancing Authority Operations Report"
+  },
+  {
+   "emilId": "EIA-930-ER",
+   "name": "Daily Balancing Authority Operations Report",
+   "description": "Daily Balancing Authority Operations Report"
+  },
+  {
+   "emilId": "GEN-55-CD",
+   "name": "Hourly Real-Time Load vs. Actual Report",
+   "description": "Load Forecast vs. Actual. Day-ahead values update once a day approx 1:30."
+  },
+  {
+   "emilId": "NP1-300",
+   "name": "Confidentiality Expired Adjusted Meter Load Report",
+   "description": "AML for each QSE by LSE, by Load Zone and by Settlement Interval, both from the initial settlement and all subsequent settlements, 180 days after the Operating Day."
+  },
+  {
+   "emilId": "NP1-301",
+   "name": "60-Day COP Adjustment Period Snapshot",
+   "description": "Complete Current Operating Plan (COP) data for each QSE snapshot on each hour; confidentiality expired 60 day data. Previously named Complete Current Operating Plan Data."
+  },
+  {
+   "emilId": "NP1-302",
+   "name": "Ancillary Service Obligations Report",
+   "description": "Ancillary Service Obligation Report for each QSE, 180 days after the Operating Day"
+  },
+  {
+   "emilId": "NP1-346-ER",
+   "name": "Unplanned Resource Outages Report",
+   "description": "This report contains a snapshot of all unplanned Resource outages (i.e., Forced Outages and Maintenance Outages) and derates that were active in the Outage Scheduler at any time on the third day before the posting date of this report. The data for these outages is submitted by operators of generation assets and is used by ERCOT staff in the operation of the Texas power grid. This report does not contain Resource outages for generators that are no longer operational on the Texas power grid or have not begun operating on the Texas power grid. This report contains all outages for Resources that are required to enter outages in the ERCOT Outage Scheduler including Generation Resources in Private Use Networks, and Energy Storage Resources. Some smaller operational derates are not required to be reported."
+  },
+  {
+   "emilId": "NP3-108",
+   "name": "Monthly ERCOT Demand Response from Load Resources",
+   "description": "The MW of Demand Response that is participating in the past month in Emergency Response Service (ERS), Ancillary Service as a Load Resource, or pilot project permitted by subsection (k) of P.U.C. Subst. R. 25.361, Electric Reliability Council of Texas (ERCOT), by Load Zone."
+  },
+  {
+   "emilId": "NP3-161-CD",
+   "name": "Available Resource Planned Outage Capacity Margin_7 Day Plus",
+   "description": "Daily Maximum Resource Capacity Available for Planned Outages for 7 days to 60 months of the Operating Day"
+  },
+  {
+   "emilId": "NP3-162-CD",
+   "name": "Available Resource Planned Outage Capacity Margin_7 Day",
+   "description": "Hourly Maximum Resource Capacity Available for Planned Outages within 7 days of the Operating Day"
+  },
+  {
+   "emilId": "NP3-233-CD",
+   "name": "Hourly Resource Outage Capacity",
+   "description": "This report includes all approved and accepted Planned, Forced and Maintenance Resource outages EXCEPT Resource outages for retirement of old equipment, seasonal mothballed (during the outaged season), and mothballed. The outage capacity in this report reflects aggregated ACTIVE resource outaged capacity by Load Zone sourced from the Outage Scheduler (OS) for the next 168 hours and is published every hour. Columns \u2018C\u2019 - \u2018F\u2019 consists of the aggregated outaged capacity of ALL the ACTIVE resource outages by Load Zone in the OS for each hour excluding the outages stated above, IRR resource outages, and new equipment outages. Columns \u2018G\u2019 - \u2018J\u2019 consists of the aggregated outaged capacity of ALL the ACTIVE IRR resource outages by Load Zone in the OS for each hour excluding the outages stated above, outages in columns \u2018C\u2019 - \u2018F\u2019 and new equipment outages. Columns \u2018K\u2019 - \u2018N\u2019 consists of the aggregated outaged capacity of ALL the ACTIVE New Equipment Energization resource outages by Load Zone. Note that this report contains OS data only and does not look at telemetry. It includes both entire resource outage and de-rates."
+  },
+  {
+   "emilId": "NP3-257-EX",
+   "name": "3-Day Highest Price Bids Selected or Dispatched in SCED",
+   "description": "The bid price and the name of the Entity submitting the bid for the highest-priced bid selected or Dispatched by SCED three days after the applicable Operating Day. If multiple Entities submitted the highest-priced bids selected, all Entities shall be identified on the MIS Public Area."
+  },
+  {
+   "emilId": "NP3-560-CD",
+   "name": "Seven-Day Load Forecast by Forecast Zone",
+   "description": "Forecasted hourly demands by Forecast Zone and system total, for the current day and six days forward."
+  },
+  {
+   "emilId": "NP3-561-CD",
+   "name": "Seven-Day Load Forecast by Weather Zone",
+   "description": "Forecasted hourly demands by Weather Zone and system total, for the current day and six days forward."
+  },
+  {
+   "emilId": "NP3-562-CD",
+   "name": "Intra-Hour Load Forecast by Weather Zone",
+   "description": "Intra-Hour Load Forecast (IHLF) that provides a rolling two hour, five minute forecast of ERCOT-wide Load by weather zone."
+  },
+  {
+   "emilId": "NP3-565-CD",
+   "name": "Seven-Day Load Forecast by Model and Weather Zone",
+   "description": "Hourly system-wide Mid-Term Load Forecasts (MTLFs) for all forecast models with an indicator for which forecast was in use by ERCOT at the time of publication for current day plus the next 7."
+  },
+  {
+   "emilId": "NP3-566-CD",
+   "name": "Seven-Day Load Forecast by Model and Study Area",
+   "description": "Forecasted hourly demands by Study Area, for the current day plus the next seven days."
+  },
+  {
+   "emilId": "NP3-763-CD",
+   "name": "Short-Term System Adequacy Report",
+   "description": "The available On-Line Resource capacity for Generation Resources and the available capacity for Load Resources, for each hour of the current day and six days forward."
+  },
+  {
+   "emilId": "NP3-764-CD",
+   "name": "Hourly RUC Online In SCED Offline In COP Report",
+   "description": "An hourly RUC report containing the sum of the HSLs of Generation Resources that are online in the most recent SCED execution and indicated as offline in its COP, for each hour of the RUC study period. Online SCED statuses are ONRUC, ON, ONOS, ONTEST, ONEMR, ONOPTOUT, STARTUP, ONSC, ONHOLD,  ONL, and OFFQS. Offline COP statuses are OFF, OUT, and EMR."
+  },
+  {
+   "emilId": "NP3-765-CD",
+   "name": "Approved DC Tie Schedules",
+   "description": "For each Direct Current Tie (DC Tie), the sum of any ERCOT-approved DC Tie Schedules for each 15-minute interval for the first seven days.  The sum shall be displayed as an absolute value and classified as a net import or net export."
+  },
+  {
+   "emilId": "NP3-906-EX",
+   "name": "2-Day SCED Ancillary Service Disclosure",
+   "description": "This report will contain all 2-day disclosure data related to Ancillary Services Offers for the Real-Time Market (RTM)."
+  },
+  {
+   "emilId": "NP3-907-EX",
+   "name": "2-Day DAM Energy Curves",
+   "description": "This report contains 2-Day aggregate energy demand and supply curve disclosure data for the Day-Ahead Market (DAM).  The following file types are included in this report:  Energy Demand Curves, Energy Supply Curves, and Minimum Energy Supply Curves, including by Disclosure Area."
+  },
+  {
+   "emilId": "NP3-908-ER",
+   "name": "2-Day SCED Energy Curves",
+   "description": "This report contains 2-Day aggregate energy demand and supply curve disclosure data for SCED. The following file types are included in this report:  Energy Demand Curves for CLRs including by Disclosure Area, Supply Curve for ESR, Photovoltaic, Wind, and Non-Intermittent Renewable Resources, including by Disclosure Area."
+  },
+  {
+   "emilId": "NP3-909-ER",
+   "name": "2-Day DAM Bids and Offers Reports",
+   "description": "This report will contain all 48 Hour disclosure data related to DAM. The following individual files are included in the report:  2-Day Total Cleared Energy Bids and Energy-Only Offers, 2-Day Total Cleared Energy Bids and Energy-Only Offers by Disclosure Areas, 2-Day Point-to-Point Obligation Bids, 2-Day Point-to-Point Obligation Bids by Disclosure Areas."
+  },
+  {
+   "emilId": "NP3-910-ER",
+   "name": "2-Day Real Time Gen and Load Data Reports",
+   "description": "This report contains 2-Day aggregate disclosure data related to Real Time.  The following file types are included in this report: Aggregate Generation Summary, Aggregate Load Summary, and Aggregate Output Schedules, including by Disclosure Area."
+  },
+  {
+   "emilId": "NP3-911-ER",
+   "name": "2-Day DAM Ancillary Services Reports",
+   "description": "This report will contain all 48 Hour disclosure data related to DAM. The following individual files are included in the report:  2-Day Aggregate DAM AS Offers, 2-Day Cleared DAM AS, and 2-Day Self-Arranged AS."
+  },
+  {
+   "emilId": "NP3-914-EX",
+   "name": "3-Day SCED Highest Price AS Offer Selected",
+   "description": "This report provides the offer price and the name of the Entity submitting the offer for the highest-priced Ancillary Service (AS) Offer selected in the Real-Time Market (RTM) for each AS three days after the end of the applicable Operating Day.  If multiple Entities submitted the highest-priced offers selected, all Entities shall be identified."
+  },
+  {
+   "emilId": "NP3-915-EX",
+   "name": "3-Day DAM Highest Price AS Offer Selected",
+   "description": "This report provides the offer price and the name of the Entity submitting the offer for the highest-priced Ancillary Service (AS) Offer selected in the Day-Ahead Market (DAM) for each AS three days after the end of the applicable Operating Day.  If multiple Entities submitted the highest-priced offers selected, all Entities shall be identified."
+  },
+  {
+   "emilId": "NP3-916-EX",
+   "name": "3-Day Highest Price Offered in SCED",
+   "description": "ERCOT shall post the offer price and the name of the Entity submitting the offer for the highest-priced offer selected or Dispatched by SCED three days after the applicable Operating Day. If multiple Entities submitted the highest-priced offers selected, all Entities shall be identified on the MIS Public Area."
+  },
+  {
+   "emilId": "NP3-965-ER",
+   "name": "60-Day SCED Disclosure Reports",
+   "description": "This report contains all 60-day disclosure data related to Security Constrained Economic Dispatch (SCED). The following file types are included in the report: AS Capability Manual Override, ESR Data in SCED, Generation Resource Data in SCED, HDL and LDL Manual Override Summary, Load Resource Data in SCED, QSE Self Arranged AS in SCED, SCED AS Offer Updates in Operating Period, SCED Energy Offer Curve Updates in Operating Hour, SCED Resource AS Offers, and Settlement Metered Net Energy for Generation Resources."
+  },
+  {
+   "emilId": "NP3-966-ER",
+   "name": "60-Day DAM Disclosure Reports",
+   "description": "This report will contain all 60 day disclosure data related to DAM. The following individual files are included in the report: 60d_DAM_EnergyBidAwards; 60d_DAM_EnergyBids; 60d_DAM_EnergyOnlyOfferAwards; 60d_DAM_EnergyOnlyOffers; 60d_DAM_Generation_Resource_ASOffers; 60d_DAM_Gen_Resource_Data; 60d_DAM_Load_Resource_ASOffers; 60d_DAM_Load_Resource_Data; 60d_DAM_PTPObligationBidAwards; 60d_DAM_PTPObligationBids; 60d_DAM_PTP_Obligation_Option; 60d_DAM_PTP_Obligation_OptionAwards; and 60d_DAM_QSE_Self_Arranged_AS."
+  },
+  {
+   "emilId": "NP3-987-EX",
+   "name": "7-Day Event Trigger Posting",
+   "description": "Seven days after the applicable Operating Day, ERCOT shall post the portion of any Resource's Energy Offer Curve or Energy Bid/Offer Curve that is at or above 50 times the Fuel Index Price (50xFIP) for any Security-Constrained Economic Dispatch (SCED) interval in the Real-Time Market (RTM) where any Real-Time Locational Marginal Price (LMP) exceeds 50xFIP, or the portion of any Resource\u2019s Ancillary Service Offer that is at or above 50xFIP for any operating Hour in Day-Ahead Market (DAM) or any SCED intervals in Real-Time Market (RTM) where any Ancillary Service Market Clearing Price for Capacity (MCPC) exceeds 50xFIP."
+  },
+  {
+   "emilId": "NP3-988-ER",
+   "name": "Resource Decision-Making Entity List",
+   "description": "Daily Resource Decision-Making Entity List containing the decision-making entities for each Resource."
+  },
+  {
+   "emilId": "NP3-990-EX",
+   "name": "60-Day SASM Disclosure Reports",
+   "description": "This report will contain all 60 day disclosure data related to SASM for Generation and Load Resources. Report removed with PR447-03 RTC. Link to remain available until postings have expired."
+  },
+  {
+   "emilId": "NP3-991-EX",
+   "name": "60-Day COP All Updates",
+   "description": "This report will contain all iterative Current Operating Plan (COP) submissions where a change has occurred for the operating day. Previously named 60-Day Current Operating Plan."
+  },
+  {
+   "emilId": "NP4-158-SG",
+   "name": "DAM Electrically Similar Settlement Points",
+   "description": "The current list of all DAM Electrically Similar Settlement Points (ESSPs) that are used for market processes and transactions. Per protocols, certain transaction are not allowed between ESSPs. In order to support this protocol requirement, a list of ESSPs are posted prior to 0600 as a study for DAM, and also after DAM completion to reflect the ESSP list that was enforced in the DAM solution (recognizing that the network topology and outage changes can add or remove settlement points from the ESSP list on an intra-day basis)."
+  },
+  {
+   "emilId": "NP4-159-CD",
+   "name": "Load Distribution Factors",
+   "description": "Load forecast distribution factors from which Market Participants can calculate Load at the Electrical Bus level by hour for the next seven days after a change in values.  A seasonal or manual change in values triggers the posting of the report."
+  },
+  {
+   "emilId": "NP4-179-CD",
+   "name": "Total Ancillary Service Offers",
+   "description": "The total quantity in MW of Offers per Ancillary Service per hour from the Day-Ahead Market for the last thirty days on a daily basis which includes the following AS types: REGDN, REGUP, RRSPFR, RRSFFR, RRSUFR, NSPIN, ECRSS & ECRSM. Report removed with PR447-03 RTC.  Link to remain available until postings have expired."
+  },
+  {
+   "emilId": "NP4-180-ER",
+   "name": "Historical DAM Load Zone and Hub Prices",
+   "description": "Historical DAM Settlement Point Prices (SPPs) for each of the Hubs and Load Zones"
+  },
+  {
+   "emilId": "NP4-181-ER",
+   "name": "Historical DAM Clearing Prices for Capacity",
+   "description": "Historical (by year) of DAM Clearing Prices for Capacity"
+  },
+  {
+   "emilId": "NP4-183-CD",
+   "name": "DAM Hourly LMPs",
+   "description": "The Hourly Locational Marginal Prices per electrical bus from the Day-Ahead Market for the last thirty days on a daily basis."
+  },
+  {
+   "emilId": "NP4-188-CD",
+   "name": "DAM Clearing Prices for Capacity",
+   "description": "The Market Clearing Prices for Capacity for all Ancillary Services from the Day-Ahead Market."
+  },
+  {
+   "emilId": "NP4-190-CD",
+   "name": "DAM Settlement Point Prices",
+   "description": "The Settlement Point Prices for all Resource Nodes, Load Zones, and Trading Hubs from the Day-Ahead Market."
+  },
+  {
+   "emilId": "NP4-191-CD",
+   "name": "DAM Shadow Prices",
+   "description": "The active and binding constraints as well as the associated shadow prices from the Day-Ahead Market for the last thirty days on a daily basis."
+  },
+  {
+   "emilId": "NP4-192-CD",
+   "name": "DAM Total Energy Purchased",
+   "description": "The total amount of energy purchased via energy bid/offer curves and energy-only bids per Settlement Point from the Day-Ahead Market (DAM) on a daily basis."
+  },
+  {
+   "emilId": "NP4-193-CD",
+   "name": "DAM Total Energy Sold",
+   "description": "The total amount of energy sold via three-part supply offers, energy offer curves, and energy-only offers per Settlement Point from the Day-Ahead Market (DAM) on a daily basis."
+  },
+  {
+   "emilId": "NP4-194-CD",
+   "name": "DAM PTP Obligation Results by Settlement Point",
+   "description": "The total amount of PTP Obligation Bids awarded and CRR Offers not awarded in the Day-Ahead Market per Settlement Point where the Settlement Point of the bid or offer is either the Source or the Sink for the last thirty days on a daily basis."
+  },
+  {
+   "emilId": "NP4-196-M",
+   "name": "DAM Price Corrections",
+   "description": "Day-Ahead Market price corrections."
+  },
+  {
+   "emilId": "NP4-197-M",
+   "name": "RTM Price Corrections",
+   "description": "Real-Time Market price corrections"
+  },
+  {
+   "emilId": "NP4-19-CD",
+   "name": "DAM Aggregated Ancillary Service Offer Curve",
+   "description": "The Day-Ahead Market (DAM) Aggregated Ancillary Service Offer Curve for the last 30 days which includes the following AS types: REGDN, REGUP, RRSPF, RRSFF, RRSUF, ECRSS, & ECRSM. Previously named Aggregated Ancillary Service Offer Curve."
+  },
+  {
+   "emilId": "NP4-200-CD",
+   "name": "DAM De-Energized Settlement Points in Base Case",
+   "description": "The list of settlement points that were de-energized in the base case of the Day Ahead Market."
+  },
+  {
+   "emilId": "NP4-212-CD",
+   "name": "DAM and SCED Ancillary Service Demand Curves",
+   "description": "Ancillary Service Demand Curve (ASDC) data for all AS Types by hour that will be used by DAM and SCED to procure Ancillary Services. If the AS Plan is altered, a new ASDC will be posted to reflect this change for applicable hours."
+  },
+  {
+   "emilId": "NP4-213-CD",
+   "name": "Hourly RUC Ancillary Service Demand Curves",
+   "description": "Ancillary Service Demand Curve (ASDC) data for all AS Types by hour that will be used by HRUC to procure Ancillary Services. If the AS Plan is altered, a new ASDC will be posted to reflect this change for applicable hours."
+  },
+  {
+   "emilId": "NP4-214-CD",
+   "name": "Daily RUC Ancillary Service Demand Curves",
+   "description": "Ancillary Service Demand Curve (ASDC) data for all AS Types by hour that will be used by DRUC to procure Ancillary Services. If the AS Plan is altered, a new ASDC will be posted to reflect this change for applicable hours."
+  },
+  {
+   "emilId": "NP4-215-CD",
+   "name": "Weekly RUC Ancillary Service Demand Curves",
+   "description": "Ancillary Service Demand Curve  (ASDC) data for all AS Types by hour that will be used by WRUC to procure Ancillary Services. If the AS Plan is altered, a new ASDC will be posted to reflect this change for applicable hours."
+  },
+  {
+   "emilId": "NP4-231-CD",
+   "name": "Electrical Bus Mapping for Heuristic Pricing",
+   "description": "This report shows the heuristic pricing associations on a daily basis that are used in the market solutions for Day-Ahead Market (DAM) and Real-Time Market (RTM). This posting helps the market's understanding of the methodology and values of the published prices."
+  },
+  {
+   "emilId": "NP4-33-CD",
+   "name": "DAM Ancillary Service Plan",
+   "description": "Ancillary Service requirements by type and quantity for each hour of the current day plus the next 6 days"
+  },
+  {
+   "emilId": "NP4-412-CD",
+   "name": "Emergency Pricing Program Cumulative Hours Tracking",
+   "description": "This report updates every 15 minutes and shows the sum of the Real-Time Market (RTM) System Lambda and Real-Time Reliability Deployment Price Adder for Energy, time-weight averaged to a 15-minute Settlement Interval. If this sum is greater than or equal to the High System-Wide Offer Cap for the Day-Ahead Market (DAM) for 12 hours within a rolling 24-hour period, an Emergency Offer Cap Effective Period initiates at the beginning of the next Operating Hour."
+  },
+  {
+   "emilId": "NP4-442-CD",
+   "name": "Hourly System-wide and Regional Wind Forecasts by Model",
+   "description": "This report is posted every hour and includes system-wide and regional STWPF and WGRPP values produced by each forecast model for On-Line WGRs and the wind generation components of DC-Coupled Resources for the rolling historical 48-hour period and the rolling future 168-hour period and also indicates which forecast model is used for each region to populate COPs.  Previously named:  Hourly System-wide and Regional STWPF and WGRPP by Forecast Model.  Name change with implementation of PR373-01 FPP."
+  },
+  {
+   "emilId": "NP4-443-CD",
+   "name": "Hourly System-Wide and Regional Solar Forecasts by Model",
+   "description": "This report is posted every hour and includes system-wide and regional STPPF and PVGRPP values produced by each forecast model for On-Line PVGRs for the rolling future 168-hour period and also indicates which forecast model is used for each region to populate COPs."
+  },
+  {
+   "emilId": "NP4-494-ER",
+   "name": "Exceptional Fuel Cost Submission Report",
+   "description": "The day following an Operating Day for which an Exceptional Fuel Cost is submitted, ERCOT shall post a report on the ERCOT website indicating the affected Operating Hours and the number of Resources for which a QSE submitted Exceptional Fuel Cost for a particular Operating Day."
+  },
+  {
+   "emilId": "NP4-523-CD",
+   "name": "DAM System Lambda",
+   "description": "System lambda of each successful DAM"
+  },
+  {
+   "emilId": "NP4-532-CD",
+   "name": "DAM Total Ancillary Services Sold",
+   "description": "Ancillary Services sold in the DAM consisting of the total quantity of awarded Resource-Specific Ancillary Service Offers and Ancillary Service Only Offers, for each Ancillary Service for each hour of the Operating Day."
+  },
+  {
+   "emilId": "NP4-722-CD",
+   "name": "Weather Assumptions",
+   "description": "Forecasted hourly temperature values for the next day for each weather zone."
+  },
+  {
+   "emilId": "NP4-732-CD",
+   "name": "Wind Power Production - Hourly Averaged Actual and Forecasted Values",
+   "description": "This report is posted every hour and includes System-wide and regional actual hourly averaged wind power production (GEN), STWPF, WGRPP and COP HSLs for On-Line WGRs for a rolling historical 48-hour period as well as the System-wide and regional STWPF, WGRPP and COP HSLs for On-Line WGRs for the rolling future 168-hour period. System-wide actual hourly averaged wind power potential (HSL) for a rolling historical 48-hour period is also included. Our forecasts attempt to predict HSL, which is uncurtailed power generation potential."
+  },
+  {
+   "emilId": "NP4-733-CD",
+   "name": "Wind Power Production - Actual 5-Minute Averaged Values",
+   "description": "This report is posted every 5 minutes and includes System-wide actual 5-min averaged wind power production (GEN) and wind power potential (HSL) for a rolling historical 60-minute period. Actual 5-min averaged wind power production (GEN) is also included at region level."
+  },
+  {
+   "emilId": "NP4-737-CD",
+   "name": "Solar Power Production - Hourly Averaged Actual and Forecasted Values",
+   "description": "This report includes System-wide actual hourly averaged solar power production (GEN), actual hourly averaged solar power potential (HSL), STPPF, PVGRPP, and COP HSLs for On-Line PVGRs for a rolling historical 48-hour period as well as the System-wide STPPF, PVGRPP and COP HSLs for On-Line PVGRs for the rolling future 168-hour period. Our forecasts attempt to predict HSL, which is uncurtailed power generation potential."
+  },
+  {
+   "emilId": "NP4-738-CD",
+   "name": "Solar Power Production - Actual 5-Minute Averaged Values",
+   "description": "This report is posted every 5 minutes and includes System-wide actual 5-minute averaged solar power production (GEN) and solar power potential (HSL) for On-Line PVGRs for a rolling historical 60-minute period."
+  },
+  {
+   "emilId": "NP4-742-CD",
+   "name": "Wind Power Production - Hourly Averaged Actual and Forecasted Values by Geographical Region",
+   "description": "This report is posted every hour and includes System-wide and geographic regional actual hourly averaged wind power production (GEN), STWPF, WGRPP and COP HSLs for On-Line WGRs for a rolling historical 48-hour period as well as the System-wide and regional STWPF, WGRPP and COP HSLs for On-Line WGRs for the rolling future 168-hour period. System-wide actual hourly averaged wind power potential (HSL) for a rolling historical 48-hour period is also included.  Our forecasts attempt to predict HSL, which is uncurtailed power generation potential."
+  },
+  {
+   "emilId": "NP4-743-CD",
+   "name": "Wind Power Production - Actual 5-Minute Averaged Values by Geographical Region",
+   "description": "This report is posted every 5 minutes and includes System-wide actual 5-minute averaged wind power production (GEN) and wind power potential (HSL) for a rolling historical 60-minute period. Actual 5-min averaged wind power production (GEN) is also included at the geographic regional level."
+  },
+  {
+   "emilId": "NP4-745-CD",
+   "name": "Solar Power Production - Hourly Averaged Actual and Forecasted Values by Geographical Region",
+   "description": "This report is posted every hour and includes System-wide and geographic regional hourly averaged solar power production (GEN), STPPF, PVGRPP, and COP HSL for On-Line PVGRs for a rolling historical 48-hour period as well as the system-wide and regional STPPF, PVGRPP, and COP HSL for On-Line PVGRs for the rolling future 168-hour period. System-wide actual hourly averaged solar power potential (HSL) for a rolling historical 48-hour period is also included. ERCOT's forecasts attempt to predict HSL, which is uncurtailed power generation potential."
+  },
+  {
+   "emilId": "NP4-746-CD",
+   "name": "Solar Power Production - Actual 5-Minute Averaged Values by Geographical Region",
+   "description": "This report is posted every 5 minutes and includes System-wide actual 5-minute averaged solar power production (GEN) and solar power potential (HSL) for a rolling historical 60-minute period. Actual 5-min averaged solar power production (GEN) is also included at the geographic regional level."
+  },
+  {
+   "emilId": "NP4-751-CD",
+   "name": "Intra-Hour Wind Power Forecast By Geographical Region",
+   "description": "Intra-Hour Wind Power Forecast (IHWPF) by wind region that provides a rolling two hour, five minute forecast of ERCOT-wide wind production potential."
+  },
+  {
+   "emilId": "NP4-752-CD",
+   "name": "Intra-Hour Solar Power Forecast by Geographical Region",
+   "description": "This report is posted every 5 minutes and includes system-wide and solar region aggregations of the Intra-Hour Photovoltaic Power Forecast (IHPPF) for the next two hours, with five minute resolution."
+  },
+  {
+   "emilId": "NP4-760-ER",
+   "name": "Renewable Integration Report",
+   "description": "A high level summary of daily and all-time renewable generation and penetration records, renewable generation capacity, renewable generation in comparison to load, and renewable generation during peak load hours."
+  },
+  {
+   "emilId": "NP4-765-ER",
+   "name": "ESR Integration Report",
+   "description": "A high level summary of daily Energy Storage Resource generation and penetration records."
+  },
+  {
+   "emilId": "NP4-790-CD",
+   "name": "Peaker Net Margin",
+   "description": "The cumulative Peaker Net Margin in dollars per MW since the start of the annual resource adequacy cycle, posted daily."
+  },
+  {
+   "emilId": "NP4-791-CD",
+   "name": "Day-Ahead and Real-Time System Wide-Offer Caps",
+   "description": "The Day-Ahead and Real-Time Offer Caps in place for Ancillary Services and Energy for the last thirty days on a daily basis. Previously named System-Wide Offer Cap."
+  },
+  {
+   "emilId": "NP5-108-CD",
+   "name": "Hourly RMR Services Deployed",
+   "description": "Reliability Must Run (RMR) Resources deployed for the prior hour, if any."
+  },
+  {
+   "emilId": "NP5-520-ER",
+   "name": "Monthly Ancillary Service Deployment Factors",
+   "description": "The average, minimum, and maximum Ancillary Service Deployment Factors used in the Reliability Unit Commitment (RUC) process by type of Ancillary Service and hour of the day for the month."
+  },
+  {
+   "emilId": "NP5-525-CD",
+   "name": "Weekly RUC Ancillary Service Deployment Factors",
+   "description": "Ancillary Service Deployment Factors used by the Weekly Reliability Unit Commitment (WRUC) process for each hour in the RUC Study Period."
+  },
+  {
+   "emilId": "NP5-526-CD",
+   "name": "Projected Ancillary Service Deployments Factors",
+   "description": "Provides the Ancillary Service Deployments Factors that are projected to be used in the DRUC and HRUC process for the next Operating Day."
+  },
+  {
+   "emilId": "NP5-527-CD",
+   "name": "Daily RUC Ancillary Service Deployment Factors",
+   "description": "Ancillary Service Deployment Factors used by the Daily Reliability Unit Commitment (DRUC) process for each hour in the RUC Study Period."
+  },
+  {
+   "emilId": "NP5-528-CD",
+   "name": "Hourly RUC Ancillary Service Deployment Factors",
+   "description": "Ancillary Service Deployment Factors used by the Hourly Reliability Unit Commitment (HRUC) process for each hour in the RUC Study Period."
+  },
+  {
+   "emilId": "NP5-754-CD",
+   "name": "Daily RUC Active and Binding Transmission Constraints",
+   "description": "List of all active and binding constraints observed in the Day-Ahead Reliability Unit Commitment (RUC) process."
+  },
+  {
+   "emilId": "NP5-755-CD",
+   "name": "Hourly RUC Active and Binding Transmission Constraints",
+   "description": "All active and binding constraints observed in the Hourly Reliability Unit Commitment (RUC) process."
+  },
+  {
+   "emilId": "NP6-235-CD",
+   "name": "System-Wide Demand",
+   "description": "Aggregated ERCOT system actual demand by 15-minute interval, for the most recent hour."
+  },
+  {
+   "emilId": "NP6-322-CD",
+   "name": "SCED System Lambda",
+   "description": "System lambda of each successful SCED"
+  },
+  {
+   "emilId": "NP6-323-CD",
+   "name": "Real-Time Price Adders by SCED Interval",
+   "description": "This report updates immediately following each SCED run and shows the Real-Time Reliability Deployment Price Adders for energy and for each ancillary service, the total RUC/RMR LDL relaxed, total Load Resource MW deployed that is added to the Demand, total ERS MW deployed that is added to the Demand, total LSL, and total HSL for each SCED interval. Name change from Real-Time ORDC and Reliability Deployment Price Adders and Reserves by SCED Interval."
+  },
+  {
+   "emilId": "NP6-324-CD",
+   "name": "Real-Time Price Adders for 15-Minute Settlement Interval",
+   "description": "This report updates immediately following the end of each 15-minute Settlement Interval and shows the Real-Time On-Line Reliability Deployment Price Adders for energy and each ancillary service type for each 15-minute Settlement Interval.  Previously named Real-Time ORDC and Reliability Deployment Prices for 15-minute Settlement Interval."
+  },
+  {
+   "emilId": "NP6-325-CD",
+   "name": "RTD Indicative Price Adders",
+   "description": "This report updates immediately following each RTD run and shows the projected the Real-Time Reliability Deployment Price Adders for Energy and Ancillary Services for all the future intervals of the RTD run. This report also shows the total RUC/RMR LSDL relaxed, total Load Resource MW deployed that is added to the Demand, total ERS MW deployed that is added to the Demand, total LSL, total HSL for all the future intervals of the RTD run. Name change from RTD Indicative ORDC and Reliability Deployment Price Adders and Reserves."
+  },
+  {
+   "emilId": "NP6-326-CD",
+   "name": "Real-Time Price for SOG",
+   "description": "This report provides the Real-Time price for each Settlement Only Distribution Generators (SODGs) and Settlement Only Transmission Generators (SOTGs) for each 15-min Settlement Interval."
+  },
+  {
+   "emilId": "NP6-327-CD",
+   "name": "LMP By SOG Including Price Adders",
+   "description": "This report provides the nodal prices for Settlement Only Distribution Generators (SODGs) and Settlement Only Transmission Generators (SOTGs) for each SCED interval. The final prices also include the Real-Time Reliability Deployment Price Adders."
+  },
+  {
+   "emilId": "NP6-328-CD",
+   "name": "Total Capability of Resources Available to Provide Ancillary Service",
+   "description": "Total capability of Resources available to provide Ancillary Service combinations, based on the Resource telemetry from the QSE and capped by the limits of the Resource and, for ESRs, further capped by Ancillary Service SCED duration requirements and current available State of Charge (SOC), for the most recent SCED execution."
+  },
+  {
+   "emilId": "NP6-329-CD",
+   "name": "RTD Indicative Real-Time MCPC",
+   "description": "This report updates immediately following each Real-Time Dispatch (RTD) run and shows the projected Market Clearing Prices for Capacity for all Ancillary Services from the Real-time Market for all the future intervals of the RTD run."
+  },
+  {
+   "emilId": "NP6-331-CD",
+   "name": "Real-Time Clearing Prices for Capacity by 15-Minute Settlement Interval",
+   "description": "The 15-minute Real-Time Market Clearing Price for Capacity for each Ancillary Service calculated using the time-weighted average of the sum of the Real-Time MCPCs and Real-Time Reliability Deployment Price Adders."
+  },
+  {
+   "emilId": "NP6-332-CD",
+   "name": "Real-Time Clearing Prices for Capacity by SCED Interval",
+   "description": "Report contains the Real-Time Market Clearing Prices for Capacity for each Ancillary Service normally produced by SCED every five minutes."
+  },
+  {
+   "emilId": "NP6-344-CD",
+   "name": "Actual System Load by Study Area",
+   "description": "A daily report of actual hourly load data by Study Area for each hour of the previous operating day."
+  },
+  {
+   "emilId": "NP6-345-CD",
+   "name": "Actual System Load by Weather Zone",
+   "description": "Report of Actual hourly load data by weather zone and ERCOT total."
+  },
+  {
+   "emilId": "NP6-346-CD",
+   "name": "Actual System Load by Forecast Zone",
+   "description": "A daily report of Actual System Load by Forecast Zone for each hour of the previous operating day."
+  },
+  {
+   "emilId": "NP6-569-CD",
+   "name": "SASM MCPC by Ancillary Service Type",
+   "description": "Communication of SASM Results. Publish Ancillary Service quantities"
+  },
+  {
+   "emilId": "NP6-625-CD",
+   "name": "State Estimator Load Report - Total ERCOT Generation",
+   "description": "The aggregate generation of real and reactive power (MW and MVAR) for the entire ERCOT system."
+  },
+  {
+   "emilId": "NP6-626-CD",
+   "name": "State Estimator Load Report - DC Ties Flows",
+   "description": "The export or import of real power for each of the DC Ties"
+  },
+  {
+   "emilId": "NP6-655-CD",
+   "name": "Total Ancillary Service Procured in SASM",
+   "description": "Communication of SASM Results. Publish Ancillary Service quantities"
+  },
+  {
+   "emilId": "NP6-785-ER",
+   "name": "Historical RTM Load Zone and Hub Prices",
+   "description": "Historical RTM Settlement Point Prices (SPPs) for each of the Hubs and Load Zones."
+  },
+  {
+   "emilId": "NP6-787-CD",
+   "name": "LMPs by Electrical Bus",
+   "description": "The Locational Marginal Price for each Electrical Bus, normally produced by SCED every five minutes.."
+  },
+  {
+   "emilId": "NP6-788-CD",
+   "name": "LMPs by Resource Nodes, Load Zones and Trading Hubs",
+   "description": "The Locational Marginal Price for each Settlement Point, normally produced by SCED every five minutes."
+  },
+  {
+   "emilId": "NP6-792-ER",
+   "name": "Historical Real-Time Price Adders by SCED Interval",
+   "description": "This report updates every week for the previous week and shows the Real-Time On-Line Reliability Deployment Price Adders for energy and each ancillary service, the total RUC/RMR LDL relaxed, total Load Resource MW deployed that is added to the Demand, total ERS MW deployed that is added to the Demand, total LSL, and total HSL for each SCED interval in the previous week.  Previously named:  Historical Real Time ORDC and Reliability Deployment Price Adders and Reserves."
+  },
+  {
+   "emilId": "NP6-793-ER",
+   "name": "Historical Real-Time Price Adders for 15-Minute Settlement Interval",
+   "description": "This report updates every week for the previous week and shows historical Real-Time On-Line Reliability Deployment Price Adders for energy and each ancillary service type for each 15-minute Settlement Interval of the previous week. Previously named:  Historical Real-Time ORDC and Reliability Deployment Prices for 15-minute Settlement Interval."
+  },
+  {
+   "emilId": "NP6-794-ER",
+   "name": "Historical Total Capability of Resources Available to Provide Ancillary Services by SCED Interval",
+   "description": "This report updates every week for the previous week and shows the total capability of Resources available to provide the following Ancillary Service combinations, based on the Resource telemetry from the QSE and capped by the limits of the Resource and, for ESRs, further capped by Ancillary Service SCED duration requirements and current available State of Charge (SOC), for all SCED intervals of the previous week."
+  },
+  {
+   "emilId": "NP6-795-ER",
+   "name": "Historical RTM Clearing Prices for Capacity by SCED Interval",
+   "description": "This report updates every week for the previous week and shows the Real-Time Market Clearing Prices for Capacity for each Ancillary Service produced by each SCED interval of the previous week."
+  },
+  {
+   "emilId": "NP6-796-ER",
+   "name": "Historical RTM Clearing Prices for Capacity by 15-Minute Settlement Interval",
+   "description": "This report updates every week for the previous week and shows the 15-minute Real-Time Market Clearing Price for Capacity for each Ancillary Service for each 15-minute Settlement Interval of the previous week."
+  },
+  {
+   "emilId": "NP6-86-CD",
+   "name": "SCED Shadow Prices and Binding Transmission Constraints",
+   "description": "The report for Shadow Prices of binding/violated constraints in SCED. The report shows the contingency name, overloaded element details (element name, from/to station name and kV level), Shadow Price ( price for resolving one MW of the constraint), Penalty for violating the constraint (MaxShadow Price), overloaded element limit and flow (value)pairs that caused such constraint."
+  },
+  {
+   "emilId": "NP6-905-CD",
+   "name": "Settlement Point Prices at Resource Nodes, Hubs and Load Zones",
+   "description": "Settlement Point Price for each Settlement Point, produced from SCED LMPs every 15 minutes."
+  },
+  {
+   "emilId": "NP6-913-CD",
+   "name": "SASM Aggregated Ancillary Service Offer Curve",
+   "description": "Aggregated AS Offer Curve for each AS for each hour."
+  },
+  {
+   "emilId": "NP6-915-CD",
+   "name": "Summary Report of HDL and LDL",
+   "description": "Posted after every SCED runand includes the sum of the High Dispatch Limit (HDL) and the sum of the Low Dispatch Limit (LDL) for all Generation Resources On-Line and Dispatched by SCED."
+  },
+  {
+   "emilId": "NP6-970-CD",
+   "name": "RTD Indicative LMPs by Resource Nodes, Load Zones and Hubs",
+   "description": "This report is posted after every Look Ahead RTD run and includes indicative LMPs at Resource Nodes, Hub LMPs and Load Zone for each interval in the Look Ahead SCED-RTD Study Period."
+  },
+  {
+   "emilId": "NP7-464-CD",
+   "name": "Day Ahead Point-to-Point Option Price Report",
+   "description": "The Point-to-Point Option price in dollars identified by Source & Sink Settlement Point calculated by MMS from the Day-Ahead Market for the last thirty days on a daily basis."
+  },
+  {
+   "emilId": "NP7-535-SG",
+   "name": "Monthly Path Specific Adders",
+   "description": "Displays the path specific adders used in the calculation of the Obligation bid credit requirements for the associated monthly CRR Auction."
+  }
+ ],
+ "2025-12-01": {
+  "60d_HDL_LDL_ManOverride-30-JAN-26.csv": [
+   "SCED Timestamp",
+   "Repeated Hour Flag",
+   "Participant Name",
+   "Resource Name",
+   "HDL Original",
+   "HDL Manual",
+   "HDL Final",
+   "LDL Original",
+   "LDL Manual",
+   "LDL Final",
+   "Reason Code"
+  ],
+  "60d_SCED_EOC_Updates_in_OpHour-30-JAN-26.csv": [
+   "Delivery Date",
+   "Delivery Hour",
+   "Resource Name",
+   "Reason",
+   "Count of Updates During Operating Hour"
+  ],
+  "60d_SCED_QSE_Self_Arranged_AS-30-JAN-26.csv": [
+   "SCED Time Stamp",
+   "Repeated Hour Flag",
+   "QSE",
+   "REGUP",
+   "REGDN",
+   "NSPIN",
+   "NSPNM",
+   "RRSPFR",
+   "RRSFFR",
+   "RRSUFR",
+   "ECRSS",
+   "ECRSM"
+  ],
+  "60d_SCED_DSR_Load_Data-30-JAN-26.csv": [
+   "SCED Time Stamp",
+   "Repeated Hour Flag",
+   "QSE Name",
+   "Total Telemetered DSR Loads"
+  ],
+  "60d_SCED_SMNE_GEN_RES-30-JAN-26.csv": [
+   "Interval Time",
+   "Interval Number",
+   "Resource Code",
+   "Interval Value"
+  ],
+  "60d_SCED_Gen_Resource_Data-30-JAN-26.csv": [
+   "SCED Time Stamp",
+   "Repeated Hour Flag",
+   "QSE",
+   "DME",
+   "Resource Name",
+   "Resource Type",
+   "Output Schedule",
+   "HSL",
+   "HASL",
+   "HDL",
+   "LSL",
+   "LASL",
+   "LDL",
+   "Telemetered Resource Status",
+   "Base Point",
+   "Telemetered Net Output ",
+   "Ancillary Service REGUP",
+   "Ancillary Service REGDN",
+   "Ancillary Service RRS",
+   "Ancillary Service RRSFFR",
+   "Ancillary Service NSRS",
+   "Ancillary Service ECRS",
+   "Bid_Type",
+   "Start Up Cold Offer",
+   "Start Up Hot Offer",
+   "Start Up Inter Offer",
+   "Min Gen Cost",
+   "Proxy Extension",
+   "SCED1 Curve",
+   "SCED2 Curve",
+   "Submitted TPO"
+  ],
+  "60d_Load_Resource_Data_in_SCED-30-JAN-26.csv": [
+   "SCED Time Stamp",
+   "Repeated Hour Flag",
+   "QSE",
+   "DME",
+   "Resource Name",
+   "Telemetered Resource Status",
+   "Max Power Consumption",
+   "Low Power Consumption",
+   "Real Power Consumption",
+   "AS Responsibility for RRS",
+   "AS Responsibility for RRSFFR",
+   "AS Responsibility for NonSpin",
+   "AS Responsibility for RegUp",
+   "AS Responsibility for RegDown",
+   "AS Responsibility for ECRS",
+   "SCED Bid to Buy Curve-MW1",
+   "SCED Bid to Buy Curve-Price1",
+   "SCED Bid to Buy Curve-MW2",
+   "SCED Bid to Buy Curve-Price2",
+   "SCED Bid to Buy Curve-MW3",
+   "SCED Bid to Buy Curve-Price3",
+   "SCED Bid to Buy Curve-MW4",
+   "SCED Bid to Buy Curve-Price4",
+   "SCED Bid to Buy Curve-MW5",
+   "SCED Bid to Buy Curve-Price5",
+   "SCED Bid to Buy Curve-MW6",
+   "SCED Bid to Buy Curve-Price6",
+   "SCED Bid to Buy Curve-MW7",
+   "SCED Bid to Buy Curve-Price7",
+   "SCED Bid to Buy Curve-MW8",
+   "SCED Bid to Buy Curve-Price8",
+   "SCED Bid to Buy Curve-MW9",
+   "SCED Bid to Buy Curve-Price9",
+   "SCED Bid to Buy Curve-MW10",
+   "SCED Bid to Buy Curve-Price10",
+   "HASL",
+   "HDL",
+   "LASL",
+   "LDL",
+   "Base Point",
+   "SCED Bid to Buy Curve"
+  ]
+ },
+ "2026-04-27": {
+  "60d_SCED_QSE_Self_Arranged_AS-26-JUN-26.csv": [
+   "SCED Time Stamp",
+   "Repeated Hour Flag",
+   "QSE",
+   "REGUP",
+   "REGDN",
+   "NSPIN",
+   "NSPNM",
+   "RRSPFR",
+   "RRSFFR",
+   "RRSUFR",
+   "ECRSS",
+   "ECRSM"
+  ],
+  "60d_SCED_SMNE_GEN_RES-26-JUN-26.csv": [
+   "Interval Time",
+   "Interval Number",
+   "Resource Code",
+   "Interval Value"
+  ],
+  "60d_SCED_Gen_Resource_Data-26-JUN-26.csv": [
+   "SCED Time Stamp",
+   "Repeated Hour Flag",
+   "QSE",
+   "DME",
+   "Resource Name",
+   "Resource Type",
+   "Output Schedule",
+   "HSL",
+   "HDL",
+   "LSL",
+   "LDL",
+   "Telemetered Resource Status",
+   "Base Point",
+   "Telemetered Net Output",
+   "Ramp Rate Up",
+   "Ramp Rate Down",
+   "AS Capability REGUP",
+   "AS Capability REGDN",
+   "AS Capability ECRS",
+   "AS Capability NSPIN",
+   "AS Capability RRSPFR",
+   "AS Capability RRSFFR",
+   "AS Awards NSPIN",
+   "AS Awards RRSFFR",
+   "AS Awards RRSPFR",
+   "AS Awards RRSUFR",
+   "AS Awards ECRS",
+   "AS Awards REGUP",
+   "AS Awards REGDN",
+   "Bid_Type",
+   "Start Up Cold Offer",
+   "Start Up Hot Offer",
+   "Start Up Inter Offer",
+   "Min Gen Cost",
+   "Proxy Extension",
+   "SCED1 Curve",
+   "SCED2 Curve",
+   "Submitted TPO"
+  ],
+  "60d_Load_Resource_Data_in_SCED-26-JUN-26.csv": [
+   "SCED Time Stamp",
+   "Repeated Hour Flag",
+   "QSE",
+   "DME",
+   "Resource Name",
+   "Telemetered Resource Status",
+   "Max Power Consumption",
+   "Low Power Consumption",
+   "Real Power Consumption",
+   "AS Awards NSPIN",
+   "AS Awards RRSFFR",
+   "AS Awards RRSPFR",
+   "AS Awards RRSUFR",
+   "AS Awards ECRS",
+   "AS Awards REGUP",
+   "AS Awards REGDN",
+   "SCED Bid to Buy Curve-MW1",
+   "SCED Bid to Buy Curve-Price1",
+   "SCED Bid to Buy Curve-MW2",
+   "SCED Bid to Buy Curve-Price2",
+   "SCED Bid to Buy Curve-MW3",
+   "SCED Bid to Buy Curve-Price3",
+   "SCED Bid to Buy Curve-MW4",
+   "SCED Bid to Buy Curve-Price4",
+   "SCED Bid to Buy Curve-MW5",
+   "SCED Bid to Buy Curve-Price5",
+   "SCED Bid to Buy Curve-MW6",
+   "SCED Bid to Buy Curve-Price6",
+   "SCED Bid to Buy Curve-MW7",
+   "SCED Bid to Buy Curve-Price7",
+   "SCED Bid to Buy Curve-MW8",
+   "SCED Bid to Buy Curve-Price8",
+   "SCED Bid to Buy Curve-MW9",
+   "SCED Bid to Buy Curve-Price9",
+   "SCED Bid to Buy Curve-MW10",
+   "SCED Bid to Buy Curve-Price10",
+   "Self Provided RRSFFR",
+   "Self Provided RRSUFR",
+   "Self Provided ECRS",
+   "Ramp Rate Up",
+   "Ramp Rate Down",
+   "AS Capability NSPIN",
+   "AS Capability ECRS",
+   "AS Capability REGUP",
+   "AS Capability REGDN",
+   "AS Capability RRSPFR",
+   "AS Capability RRSFFR",
+   "AS Capability RRSUFR",
+   "HDL",
+   "LDL",
+   "Base Point",
+   "SCED Bid to Buy Curve"
+  ],
+  "60d_HDL_LDL_ManOverride-26-JUN-26.csv": [
+   "SCED Timestamp",
+   "Repeated Hour Flag",
+   "Participant Name",
+   "Resource Name",
+   "HDL Original",
+   "HDL Manual",
+   "HDL Final",
+   "LDL Original",
+   "LDL Manual",
+   "LDL Final",
+   "Reason Code"
+  ],
+  "60d_SCED_EOC_Updates_in_OpHour-26-JUN-26.csv": [
+   "Delivery Date",
+   "Delivery Hour",
+   "Resource Name",
+   "Reason",
+   "Count of Updates During Operating Hour"
+  ],
+  "60d_AS_Capability_ManOverride-26-JUN-26.csv": [
+   "SCED Timestamp",
+   "Repeated Hour Flag",
+   "Start Timestamp",
+   "End Timestamp",
+   "Participant Name",
+   "Resource Name",
+   "AS Type",
+   "AS Capability Limit",
+   "Derated Qty",
+   "Reason Code"
+  ],
+  "60d_ESR_Data_in_SCED-26-JUN-26.csv": [
+   "SCED Time Stamp",
+   "Repeated Hour Flag",
+   "QSE",
+   "DME",
+   "Resource Name",
+   "Resource Type",
+   "Output Schedule",
+   "HSL",
+   "HDL",
+   "LSL",
+   "LDL",
+   "Telemetered Resource Status",
+   "Base Point",
+   "Telemetered Net Output",
+   "Ramp Rate Up",
+   "Ramp Rate Down",
+   "AS Capability REGUP",
+   "AS Capability REGDN",
+   "AS Capability ECRS",
+   "AS Capability NSPIN",
+   "AS Capability RRSPFR",
+   "AS Capability RRSFFR",
+   "State of Charge",
+   "Minimum SOC",
+   "Maximum SOC",
+   "AS Awards NSPIN",
+   "AS Awards RRSFFR",
+   "AS Awards RRSPFR",
+   "AS Awards RRSUFR",
+   "AS Awards ECRS",
+   "AS Awards REGUP",
+   "AS Awards REGDN",
+   "Bid_Type",
+   "Start Up Cold Offer",
+   "Start Up Hot Offer",
+   "Start Up Inter Offer",
+   "Min Gen Cost",
+   "Proxy Extension",
+   "SCED1 Curve",
+   "SCED2 Curve",
+   "Submitted TPO"
+  ],
+  "60d_SCED_Resource_AS_OFFERS-26-JUN-26.csv": [
+   "SCED Timestamp",
+   "Repeated Hour Flag",
+   "Resource Name",
+   "PRICE1_REGUP",
+   "PRICE1_REGDN",
+   "PRICE1_RRSPFR",
+   "PRICE1_RRSUFR",
+   "PRICE1_RRSFFR",
+   "PRICE1_NSPIN",
+   "PRICE1_ECRS",
+   "QUANTITY_MW1",
+   "PRICE2_REGUP",
+   "PRICE2_REGDN",
+   "PRICE2_RRSPFR",
+   "PRICE2_RRSUFR",
+   "PRICE2_RRSFFR",
+   "PRICE2_NSPIN",
+   "PRICE2_ECRS",
+   "QUANTITY_MW2",
+   "PRICE3_REGUP",
+   "PRICE3_REGDN",
+   "PRICE3_RRSPFR",
+   "PRICE3_RRSUFR",
+   "PRICE3_RRSFFR",
+   "PRICE3_NSPIN",
+   "PRICE3_ECRS",
+   "QUANTITY_MW3",
+   "PRICE4_REGUP",
+   "PRICE4_REGDN",
+   "PRICE4_RRSPFR",
+   "PRICE4_RRSUFR",
+   "PRICE4_RRSFFR",
+   "PRICE4_NSPIN",
+   "PRICE4_ECRS",
+   "QUANTITY_MW4",
+   "PRICE5_REGUP",
+   "PRICE5_REGDN",
+   "PRICE5_RRSPFR",
+   "PRICE5_RRSUFR",
+   "PRICE5_RRSFFR",
+   "PRICE5_NSPIN",
+   "PRICE5_ECRS",
+   "QUANTITY_MW5",
+   "PRICE6_REGUP",
+   "PRICE6_REGDN",
+   "PRICE6_RRSPFR",
+   "PRICE6_RRSUFR",
+   "PRICE6_RRSFFR",
+   "PRICE6_NSPIN",
+   "PRICE6_ECRS",
+   "QUANTITY_MW6",
+   "Offer Type"
+  ],
+  "60d_SCED_AS_Offer_Updates_in_OpPeriod-26-JUN-26.csv": [
+   "Delivery Date",
+   "Delivery Hour",
+   "Resource Name",
+   "AS Type",
+   "Count of Updates During Operating Period"
+  ]
+ }
+}
