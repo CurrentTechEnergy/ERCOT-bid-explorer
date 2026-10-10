@@ -58,6 +58,10 @@ def read_lambda(csvs: Iterable[Tuple[str, bytes]]) -> pd.DataFrame:
     return d[["stamp", "flag", "lambda", "date", "hour"]]
 
 
+SEEN_TYPES = set()          # settlement point types met this run beyond the known ones
+NODE_FORMAT = 2             # bump when the node files change (update.py refetches older ones)
+
+
 def read_spp(csvs: Iterable[Tuple[str, bytes]]) -> pd.DataFrame:
     frames = []
     for n, b in csvs:
@@ -75,7 +79,12 @@ def read_spp(csvs: Iterable[Tuple[str, bytes]]) -> pd.DataFrame:
             "type": f[c["settlementpointtype"]].astype(str).str.strip(),
             "price": pd.to_numeric(f[c["settlementpointprice"]], errors="coerce"),
         })
-        frames.append(g[g["type"].isin(PRICE_POINT_TYPES | PRICE_NODE_TYPES)])
+        new_types = set(g["type"].unique()) - PRICE_POINT_TYPES - PRICE_NODE_TYPES - SEEN_TYPES
+        if new_types:
+            SEEN_TYPES.update(new_types)
+            print(f"spp: settlement point types besides {sorted(PRICE_POINT_TYPES | PRICE_NODE_TYPES)}: "
+                  f"{sorted(new_types)} (kept as nodes)")
+        frames.append(g)
     if not frames:
         return pd.DataFrame(columns=["date", "he", "interval", "point", "type", "price"])
     d = pd.concat(frames, ignore_index=True)
@@ -85,15 +94,20 @@ def read_spp(csvs: Iterable[Tuple[str, bytes]]) -> pd.DataFrame:
 
 
 def node_prices(date: str, spp: pd.DataFrame):
-    """Hourly mean price at every resource node on one day, or None when the day has none:
-    {"date", "points": {node: [24 x $/MWh or null]}}.  Hourly means are enough for the
-    curtailment and revenue figures; the 15-minute detail stays in ERCOT's report."""
-    g = spp[(spp["date"] == date) & spp["type"].isin(PRICE_NODE_TYPES)]
+    """Hourly mean price at every settlement point that is not a hub or load zone on one day
+    (resource nodes of every type: ERCOT files combined-cycle trains and some others under
+    types other than "RN"), or None when the day has none:
+    {"date", "format", "points": {node: [24 x $/MWh or null]}, "types": {type: n points}}.
+    Hourly means are enough for the curtailment and revenue figures; the 15-minute detail
+    stays in ERCOT's report."""
+    g = spp[(spp["date"] == date) & ~spp["type"].isin(PRICE_POINT_TYPES)]
     if g.empty:
         return None
     he = g["he"].astype(int).clip(1, 24) - 1
     q = g.assign(he=he.values).groupby(["point", "he"])["price"].mean().unstack("he").reindex(columns=range(24))
-    return {"date": date, "points": {name: _r2(row.values) for name, row in q.iterrows()}}
+    types = g.drop_duplicates("point")["type"].value_counts().to_dict()
+    return {"date": date, "format": NODE_FORMAT, "points": {name: _r2(row.values) for name, row in q.iterrows()},
+            "types": {str(k): int(v) for k, v in types.items()}}
 
 
 def build_price_day(date: str, lam: pd.DataFrame, spp: pd.DataFrame):
