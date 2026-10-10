@@ -590,7 +590,7 @@ function drawNodeMarginal() {
   $("mn-legend").innerHTML = MN_TECHS.map((t) => `<span><span class="sw" style="background:var(${t.color})"></span>${t.label}</span>`).join("") +
     `<span><span class="sw" style="background:var(--ink);opacity:.45"></span>below lambda</span><span><span class="sw" style="background:repeating-linear-gradient(45deg,var(--ink) 0 2px,transparent 2px 5px)"></span>above lambda</span>`;
   staticLegend($("mn-split-legend"), MN_SPLIT);
-  if (!D || !D.hours.rows.length) { emptyMsg(el, "No node marginality data yet. It is built by the data update workflow."); del.innerHTML = uel.innerHTML = vel.innerHTML = ""; return; }
+  if (!D || !D.hours.rows.length) { emptyMsg(el, "No node marginality data yet. It is built by the data update workflow."); del.innerHTML = uel.innerHTML = vel.innerHTML = $("mn-valid-note").textContent = ""; return; }
   const ci = Object.fromEntries(D.hours.columns.map((c, i) => [c, i]));
   const mw = S.mnMeasure === "mw", K = mw ? ["mw_at", "mw_below", "mw_above"] : ["n_at", "n_below", "n_above"];
   let rows = D.hours.rows;
@@ -658,7 +658,7 @@ function drawNodeMarginal() {
 
   // implied price against the published node price
   const V = D.valid;
-  if (!V || !V.n) { emptyMsg(vel, "No node prices yet to check the implied prices against."); return; }
+  if (!V || !V.n) { $("mn-valid-note").textContent = ""; emptyMsg(vel, "No node prices yet to check the implied prices against."); return; }
   const pts = V.sample, W = Math.max(280, vel.clientWidth || 600), VH = 360, vm = { t: 18, r: 16, b: 34, l: 56 };
   const ext = d3.extent(pts.flatMap((p) => [p[0], p[1]]));
   const sx = d3.scaleSymlog().constant(10).domain(ext).range([vm.l, W - vm.r]), sy = d3.scaleSymlog().constant(10).domain(ext).range([VH - vm.b, vm.t]);
@@ -668,9 +668,10 @@ function drawNodeMarginal() {
   vs.append("g").attr("class", "axis").attr("transform", `translate(${vm.l},0)`).call(d3.axisLeft(sy).tickValues(ticks).tickFormat(fmtPrice0).tickSizeOuter(0));
   vs.append("g").attr("class", "axis").attr("transform", `translate(0,${VH - vm.b})`).call(d3.axisBottom(sx).tickValues(ticks).tickFormat(fmtPrice0).tickSizeOuter(0));
   vs.append("line").attr("class", "zero").attr("x1", sx(ext[0])).attr("x2", sx(ext[1])).attr("y1", sy(ext[0])).attr("y2", sy(ext[1]));
-  const bc = V.by_class || {}, cls = (k, lb) => (bc[k] && bc[k].n ? `${lb}: ${bc[k].n.toLocaleString()} hours, ${fmtPct(bc[k].within5)} within $5` : null);
-  vs.append("text").attr("class", "axis-title").attr("x", vm.l).attr("y", 10).text(`Published node price ($/MWh) against the price implied by the unit's curve · ${V.n.toLocaleString()} marginal unit-hours with a node price · median gap ${fmtPrice(V.median_abs)} · ${fmtPct(V.within5)} within $5 · ` +
-    [cls("at", "at lambda"), cls("below", "below"), cls("above", "above")].filter(Boolean).join(" · "));
+  const bc = V.by_class || {}, cls = (k, lb) => (bc[k] && bc[k].n ? `${lb}: ${bc[k].n.toLocaleString()} unit-hours, median gap ${fmtPrice(bc[k].median_abs)}, ${fmtPct(bc[k].within5)} within $5` : null);
+  $("mn-valid-note").textContent = `Check against ERCOT's published node prices, ${V.n.toLocaleString()} marginal unit-hours on days with node prices: median gap ${fmtPrice(V.median_abs)}, ${fmtPct(V.within5)} within $5 and ${fmtPct(V.within10)} within $10. ` +
+    [cls("at", "At lambda"), cls("below", "below"), cls("above", "above")].filter(Boolean).join("; ") + ". A gap means the unit was not really on the margin at that price: it was ramping, or moving between its limits inside the hour.";
+  vs.append("text").attr("class", "axis-title").attr("x", vm.l).attr("y", 10).text("Published node price ($/MWh, compressed scale) against the price the unit's curve implies");
   vs.append("text").attr("class", "axis-title").attr("x", W - vm.r).attr("y", VH - 2).attr("text-anchor", "end").text("Implied price from the offer curve ($/MWh, compressed scale)");
   vs.append("g").selectAll("circle").data(pts).join("circle").attr("cx", (p) => sx(p[0])).attr("cy", (p) => sy(p[1])).attr("r", 2.5).attr("fill", (p) => css(techOf(p[2]).color)).attr("opacity", 0.45)
     .on("pointermove", (ev, p) => showTip(ev, `<h4>${techOf(p[2]).label}</h4>implied ${fmtPrice(p[0])} · node ${fmtPrice(p[1])}${p.length > 3 ? ` · lambda ${fmtPrice(p[3])} · ${MN_SPLIT[p[4]].label.split(" (")[0].toLowerCase()}` : ""}`)).on("pointerleave", hideTip);
