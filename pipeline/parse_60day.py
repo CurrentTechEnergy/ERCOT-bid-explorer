@@ -67,15 +67,15 @@ def _mitigation(P1, M1, P2, M2, bp, lsl, hsl):
     with np.errstate(invalid="ignore"):
         at_bp = _price_at(P1, M1, bp) - _price_at(P2, M2, bp)
         cut = np.full(n, np.nan)
-        # both curves are piecewise linear, so the largest gap is at a breakpoint of one of them
+        # at the SCED2 breakpoints only: SCED1's own breakpoints include the ends ERCOT extends
+        # to the limits, where vertical steps make the price at a MW ambiguous
         top = np.where(np.isfinite(hsl), hsl, np.inf) + 0.1
-        for Pa, Ma, Pb, Mb, sign in ((P2, M2, P1, M1, 1.0), (P1, M1, P2, M2, -1.0)):
-            for k in range(Ma.shape[1]):
-                m = Ma[:, k]
-                inside = np.isfinite(m) & (m >= np.nan_to_num(lsl) - 0.1) & (m <= top)
-                d = np.where(inside, sign * (_price_at(Pb, Mb, m) - Pa[:, k]), np.nan)
-                cut = np.fmax(cut, d)
-        cut = np.fmax(cut, at_bp)
+        for k in range(M2.shape[1]):
+            m = M2[:, k]
+            inside = np.isfinite(m) & (m >= np.nan_to_num(lsl) - 0.1) & (m <= top)
+            d = np.where(inside, _price_at(P1, M1, m) - P2[:, k], np.nan)
+            cut = np.fmax(cut, d)
+        cut = np.fmax(cut, at_bp)     # the base point can fall between breakpoints
     has = ~np.isnan(P1[:, 0]) & ~np.isnan(P2[:, 0])
     at_bp = np.where(has, np.clip(np.nan_to_num(at_bp), 0, None), np.nan)
     cut = np.where(has, np.clip(np.nan_to_num(cut), 0, None), np.nan)
