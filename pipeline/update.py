@@ -35,6 +35,7 @@ from .stayon import build_stayon
 from .curve_trends import build_curve_trends
 from .nodes import build_node_curtail
 from .marginal_nodes import build_marginal_nodes
+from .mitigation import build_mitigation
 from .gas import fetch_gas
 from .econ import build_econ
 from .store import describe_blob, iter_csvs, zip_names, load_index, read_json_gz, save_index, update_summary, write_json_gz
@@ -363,6 +364,7 @@ def main(argv=None):
         build_curve_trends(index)
         build_node_curtail(index)
         build_marginal_nodes(index)
+        build_mitigation(index)
         build_econ(index)
         save_index(index)
         return
@@ -410,6 +412,7 @@ def main(argv=None):
     build_curve_trends(index)
     build_node_curtail(index)
     build_marginal_nodes(index)
+    build_mitigation(index)
     build_econ(index)
     save_index(index)
     added = {k: sorted(set(index["days"][k]) - before.get(k, set())) for k in index["days"]}

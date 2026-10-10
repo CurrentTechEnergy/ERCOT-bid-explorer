@@ -681,6 +681,52 @@ function drawNodeMarginal() {
   setCSV(vel, ["implied_price", "node_price", "technology", "lambda", "class"], pts.map((p) => [p[0], p[1], p[2], p[3], p[4] == null ? "" : ["at", "below", "above"][p[4]]]), "Implied against node price");
 }
 
+// ---- mitigation ------------------------------------------------------------------------
+function drawMitigation() {
+  const D = S.MIT, del = $("mit-daily"), uel = $("mit-units");
+  $("mit-legend").innerHTML = MN_TECHS.map((t) => `<span><span class="sw" style="background:var(${t.color})"></span>${t.label}</span>`).join("");
+  const nCov = D ? D.covered.filter(Boolean).length : 0;
+  if (!D || !nCov) {
+    $("mit-note").textContent = "";
+    $("mit-check").textContent = "";
+    uel.innerHTML = "";
+    return emptyMsg(del, "No mitigation data yet. It needs per-unit files with the SCED2 curve (format 6), written for new days by the update workflow and for older days by a reprocess.");
+  }
+  const ci = Object.fromEntries(D.days.columns.map((c, i) => [c, i]));
+  const techOf = (t) => MN_TECHS.find((s) => s.keys.includes(t)) || MN_TECHS.at(-1);
+  const dts = D.dates.filter((d, i) => D.covered[i]);
+  const byDay = new Map(dts.map((d) => [d, Object.fromEntries(MN_TECHS.map((t) => [t.id, 0]))]));
+  let hMit = 0, hBp = 0, hSet = 0, imp = 0;
+  D.days.rows.forEach((r) => {
+    const a = byDay.get(r[ci.date]);
+    if (a) a[techOf(r[ci.tech]).id] += r[ci.h_mit] || 0;
+    hMit += r[ci.h_mit] || 0; hBp += r[ci.h_mit_bp] || 0; hSet += r[ci.h_set] || 0; imp += r[ci.impact_sum] || 0;
+  });
+  $("mit-note").textContent = `${nCov} days · ${D.n_mitigated} of ${D.n_units} units mitigated at least once · ${fmtMW(hMit)} mitigated unit-hours, ${fmtMW(hBp)} at the base point, ${fmtMW(hSet)} setting the price` +
+    (hSet ? ` (LMP lowered by ${fmtPrice(imp / hSet)} on average)` : "");
+  const series = MN_TECHS.map((t) => ({ ...t, values: dts.map((d) => byDay.get(d)[t.id]) })).filter((s) => d3.sum(s.values) > 0);
+  timeChart(del, series, { dates: dts, stack: true, stackMax: Math.max(1, d3.max(dts, (d) => d3.sum(Object.values(byDay.get(d))))), H: 220,
+    yFmt: d3.format(",.0f"), tipFmt: d3.format(",.1f"), title: "Mitigated unit-hours per day" });
+  const C = D.check;
+  $("mit-check").textContent = C && C.n ? `Check against ERCOT's published node prices, ${C.n.toLocaleString()} runs where a mitigated unit set the price: the mitigated price is within $5 of the node price in ${fmtPct(C.within5_mitigated)} of them, the price the unit offered in ${fmtPct(C.within5_offered)}.` : "";
+  const uc = Object.fromEntries(D.units.columns.map((c, i) => [c, i]));
+  const urows = D.units.rows;
+  const g = (r, k) => r[uc[k]];
+  const cols = [
+    { h: "Unit", t: true, f: (r) => esc(g(r, "unit")) }, { h: "Technology", t: true, f: (r) => techLabel(g(r, "tech")) },
+    { h: "Hours online", f: (r) => fmtMW(g(r, "hours_online")) },
+    { h: "Hours mitigated", f: (r) => `${d3.format(",.1f")(g(r, "h_mit"))} (${fmtPct(g(r, "h_mit") / (g(r, "hours_online") || 1))})` },
+    { h: "Days mitigated", f: (r) => g(r, "days_mitigated") },
+    { h: "At the base point", f: (r) => d3.format(",.1f")(g(r, "h_mit_bp")) },
+    { h: "Mean cut at base point", f: (r) => fmtPrice(g(r, "mean_cut_bp")) }, { h: "Largest cut", f: (r) => fmtPrice(g(r, "max_cut")) },
+    { h: "Hours setting the price", f: (r) => d3.format(",.1f")(g(r, "h_set")) }, { h: "Mean LMP lowered by", f: (r) => fmtPrice(g(r, "mean_impact")) },
+    { h: "Node within $5: mitigated / offered", f: (r) => (g(r, "n_checked") ? `${fmtPct(g(r, "within5_mitigated"))} / ${fmtPct(g(r, "within5_offered"))}` : "–") },
+  ];
+  uel.innerHTML = `<p class="note">Units most often mitigated. Cuts are in $/MWh.</p><table class="data"><thead><tr>${cols.map((c) => `<th${c.t ? ' class="t"' : ""}>${c.h}</th>`).join("")}</tr></thead><tbody>` +
+    urows.map((r) => `<tr>${cols.map((c) => `<td${c.t ? ' class="t"' : ""}>${c.f(r)}</td>`).join("")}</tr>`).join("") + "</tbody></table>";
+  setCSV(uel, D.units.columns, urows, "Mitigated units");
+}
+
 // ---- bidding-approach changes -----------------------------------------------------
 function drawChanges() {
   const T = S.T, techOf = Object.fromEntries(T.units.map((u) => [u.unit, u]));
@@ -1258,12 +1304,12 @@ function saveView() { window.CX.writeHash(Object.fromEntries(Object.entries(VIEW
 function loadView() { const v = window.CX.readHash(); Object.entries(VIEW_KEYS).forEach(([k, sk]) => { if (v[k] != null) S[sk] = v[k]; }); }
 
 // ---- boot ---------------------------------------------------------------------------
-function drawAll() { drawFloor(); drawRenewBands(); drawCurtailment(); drawNodeCurtail(); drawPriceQuantiles(); drawGas(); drawCapacity(); drawScatter(); drawPartial(); drawCheap(); drawShut(); drawStretch(); if (heatSeen) drawHeat(); drawMarginal(); drawNodeMarginal(); drawChanges(); }
+function drawAll() { drawFloor(); drawRenewBands(); drawCurtailment(); drawNodeCurtail(); drawPriceQuantiles(); drawGas(); drawCapacity(); drawScatter(); drawPartial(); drawCheap(); drawShut(); drawStretch(); if (heatSeen) drawHeat(); drawMarginal(); drawNodeMarginal(); drawMitigation(); drawChanges(); }
 let heatSeen = false;
 
 async function boot() {
-  [S.T, S.C, S.I, S.N, S.G, S.MN] = await Promise.all([tryJSON("data/trends_60d.json.gz"), tryJSON("data/curve_trends.json.gz"), tryJSON("data/intraday_60d.json.gz"),
-    tryJSON("data/curtail_nodes.json.gz"), tryJSON("data/gas.json.gz"), tryJSON("data/marginal_nodes.json.gz")]);
+  [S.T, S.C, S.I, S.N, S.G, S.MN, S.MIT] = await Promise.all([tryJSON("data/trends_60d.json.gz"), tryJSON("data/curve_trends.json.gz"), tryJSON("data/intraday_60d.json.gz"),
+    tryJSON("data/curtail_nodes.json.gz"), tryJSON("data/gas.json.gz"), tryJSON("data/marginal_nodes.json.gz"), tryJSON("data/mitigation.json.gz")]);
   if (!S.T) { $("status").textContent = "No trends data yet. It is built by the data update workflow."; return; }
   const D = S.T.dates;
   $("status").textContent = `60-day data: ${D.length} days, ${D[0]} to ${D[D.length - 1]} · ${S.T.units.length} thermal units` +

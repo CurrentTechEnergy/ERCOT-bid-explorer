@@ -9,7 +9,7 @@ Schema
 ------
 {
   "date": "YYYY-MM-DD",
-  "format": 5,                # UNIT_FORMAT below; update.reprocess_60d redoes older files
+  "format": 6,                # UNIT_FORMAT below; update.reprocess_60d redoes older files
   "runs": [m0, m1, ...],      # SCED run timestamps, minutes after midnight (int, floor of the
                               # timestamp; +1440 if a run falls on the next calendar day), in
                               # time order.  A "run index" below is a position in this list.
@@ -32,13 +32,20 @@ Schema
                               # negative (charging) to positive.
       "oschd":  [[run, mw or null], ...],        # Output Schedule (MW, 0.1), only if the file
                               # has that column
-      "disp":   [[run, base point, hdl, ldl, as up, as down], ...],   # MW (0.1) when any
-                              # changes: SCED's base point for the run, the ramp-limited range
-                              # (HDL, LDL) it had to stay within, and the ancillary service
-                              # awarded in the run (up: Reg-Up, RRS, ECRS, Non-Spin; down:
-                              # Reg-Down), which takes energy room from that range.  null where
-                              # the file has no value.  Files from before format 4 lack this
-                              # list; format 4 files have only the first four values.
+      "curve2": [[run, [p1..pn], [mw1..mwn]], [run, null], ...],
+                              # the SCED2 curve, encoded like "curve": the submitted curve
+                              # after ERCOT's extension to the unit's limits and mitigation,
+                              # i.e. what SCED dispatched against (format 6 on)
+      "disp":   [[run, base point, hdl, ldl, as up, as down, mit bp, mit max], ...],
+                              # when any changes: SCED's base point for the run (MW, 0.1), the
+                              # ramp-limited range (HDL, LDL) it had to stay within, the
+                              # ancillary service awarded in the run (up: Reg-Up, RRS, ECRS,
+                              # Non-Spin; down: Reg-Down), which takes energy room from that
+                              # range, and how far mitigation lowered the offer ($/MWh, 0.1):
+                              # SCED1 minus SCED2 price at the base point, and the largest cut
+                              # anywhere between LSL and HSL.  null where the file has no
+                              # value.  Files from before format 4 lack this list; format 4
+                              # files have the first four values, format 5 the first six.
       "out": [24 x hourly mean Telemetered Net Output, 0.1 MW, or null],
       "bp":  [24 x hourly mean Base Point, 0.1 MW, or null]
                               # hourly means over the runs the unit is present in, any status
@@ -61,7 +68,7 @@ import pandas as pd
 from .curves import mw_at_prices
 
 FRAC_TECHS = ("wind", "solar")
-UNIT_FORMAT = 5      # bump when the day file gains something a reprocess of history should fill in
+UNIT_FORMAT = 6      # bump when the day file gains something a reprocess of history should fill in
 
 
 # ------------------------------------------------------------------ encoding --
@@ -109,7 +116,9 @@ def build_unit_day(date: str, run_sort: pd.DataFrame, rows: dict) -> dict:
     ldl = take("ldl").astype(float) if rows.get("ldl") is not None else np.full(len(bp), np.nan)
     asup = take("asup").astype(float) if rows.get("asup") is not None else np.full(len(bp), np.nan)
     asdn = take("asdn").astype(float) if rows.get("asdn") is not None else np.full(len(bp), np.nan)
-    disp = np.round(np.column_stack([bp, hdl, ldl, asup, asdn]), 1)
+    mit_bp = take("mit_bp").astype(float) if rows.get("mit_bp") is not None else np.full(len(bp), np.nan)
+    mit_max = take("mit_max").astype(float) if rows.get("mit_max") is not None else np.full(len(bp), np.nan)
+    disp = np.round(np.column_stack([bp, hdl, ldl, asup, asdn, mit_bp, mit_max]), 1)
     oschd = None if rows.get("oschd") is None else np.round(take("oschd").astype(float), 1)
     P, M = take("tpo_p").astype(float), take("tpo_m").astype(float)
     valid = ~np.isnan(P) & ~np.isnan(M)
@@ -118,6 +127,15 @@ def build_unit_day(date: str, run_sort: pd.DataFrame, rows: dict) -> dict:
     with np.errstate(invalid="ignore", divide="ignore"):
         Mf = np.where(hsl_raw[:, None] > 0, M / hsl_raw[:, None], 0.0)
     M = np.where(valid, np.where(frac[:, None], np.round(Mf, 2), np.round(M, 1)), np.nan)
+    # the SCED2 curve (what SCED dispatched against), encoded the same way
+    has2 = rows.get("s2_p") is not None
+    if has2:
+        P2, M2 = take("s2_p").astype(float), take("s2_m").astype(float)
+        valid2 = ~np.isnan(P2) & ~np.isnan(M2)
+        P2 = np.where(valid2, np.round(P2, 2), np.nan)
+        with np.errstate(invalid="ignore", divide="ignore"):
+            M2f = np.where(hsl_raw[:, None] > 0, M2 / hsl_raw[:, None], 0.0)
+        M2 = np.where(valid2, np.where(frac[:, None], np.round(M2f, 2), np.round(M2, 1)), np.nan)
 
     first = np.r_[True, unit[1:] != unit[:-1]]
     gap = np.r_[False, (ri[1:] != ri[:-1] + 1) & ~first[1:]]   # unit was absent just before
@@ -125,6 +143,7 @@ def build_unit_day(date: str, run_sort: pd.DataFrame, rows: dict) -> dict:
     ch_status = first | gap | np.r_[True, st_obj[1:] != st_obj[:-1]]
     ch_lim = _changed(np.column_stack([hsl, lsl]), first)
     ch_curve = _changed(np.hstack([P, M]), first)
+    ch_curve2 = _changed(np.hstack([P2, M2]), first) if has2 else None
     ch_os = _changed(oschd, first) if oschd is not None else None
     ch_disp = _changed(disp, first)
 
@@ -159,13 +178,19 @@ def build_unit_day(date: str, run_sort: pd.DataFrame, rows: dict) -> dict:
             else:
                 cv.append([int(ri[i]), None])
         e["curve"] = cv
+        if has2:
+            cv2 = []
+            for i in np.flatnonzero(ch_curve2[a:b]) + a:
+                v = valid2[i]
+                cv2.append([int(ri[i]), [float(x) for x in P2[i][v]], [float(x) for x in M2[i][v]]] if v.any() else [int(ri[i]), None])
+            e["curve2"] = cv2
         if ch_os is not None:
             e["oschd"] = [[int(ri[i]), _f(oschd[i], 1)] for i in range(a, b) if ch_os[i]]
         e["disp"] = [[int(ri[i])] + [_f(v, 1) for v in disp[i]] for i in range(a, b) if ch_disp[i]]
         h = hm.loc[name]
         e["out"] = [_f(h["out"].get(k, np.nan), 1) for k in range(24)]
         e["bp"] = [_f(h["bp"].get(k, np.nan), 1) for k in range(24)]
-        n_events += len(st) + len(e["lim"]) + len(cv) + len(e.get("oschd", ())) + len(e["disp"])
+        n_events += len(st) + len(e["lim"]) + len(cv) + len(e.get("curve2", ())) + len(e.get("oschd", ())) + len(e["disp"])
         units[name] = e
 
     day = {"date": date, "format": UNIT_FORMAT, "runs": run_sort["minutes"].astype(int).tolist()}
@@ -206,7 +231,7 @@ def expand(u: dict, n_runs: int) -> dict:
     res = {"status": status, "hsl": hsl, "lsl": lsl, "curve": curve}
     if u.get("disp"):
         di = _ffill_index(u["disp"], n_runs)
-        for j, k in enumerate(("bp", "hdl", "ldl", "asup", "asdn"), 1):
+        for j, k in enumerate(("bp", "hdl", "ldl", "asup", "asdn", "mit_bp", "mit_max"), 1):
             res[k] = np.array([u["disp"][i][j] if i >= 0 and j < len(u["disp"][i]) and u["disp"][i][j] is not None
                                else np.nan for i in di], float)
     if "oschd" in u:

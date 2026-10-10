@@ -1,8 +1,9 @@
 """Which units are on the margin at their own node, read from the per-unit day files.  Needs
 no downloads.
 
-A unit is marginal in a SCED run when SCED dispatched it to the interior of its own submitted
-offer curve: its base point sits strictly inside the ramp-limited range it had that run (LDL
+A unit is marginal in a SCED run when SCED dispatched it to the interior of its own offer
+curve (the SCED2 curve SCED dispatched against from format 6, the submitted one before):
+its base point sits strictly inside the ramp-limited range it had that run (LDL
 to HDL, within LSL and HSL) and on a curve segment with some width, rather than pinned at a
 limit or on a vertical step.  A unit climbing at its ramp rate has base point equal to HDL,
 so it is pinned, not marginal.  The curve's price at that base point is then the price SCED
@@ -92,9 +93,11 @@ def price_at(P: np.ndarray, M: np.ndarray, b: np.ndarray):
 def unit_runs(u: dict, n: int, hr: np.ndarray):
     """Per run: (marginal, implied price, base point) for one unit, and whether the per-run
     dispatch data was there (else the hourly means stood in)."""
-    si, li, ci = _ffill_index(u["status"], n), _ffill_index(u["lim"], n), _ffill_index(u["curve"], n)
+    # the SCED2 curve SCED dispatched against when the file has it (format 6), else the submitted one
+    cv = u.get("curve2") or u["curve"]
+    si, li, ci = _ffill_index(u["status"], n), _ffill_index(u["lim"], n), _ffill_index(cv, n)
     on = np.array([i >= 0 and _online(u["status"][i][1]) for i in si])
-    has_curve = np.array([i >= 0 and u["curve"][i][1] is not None for i in ci])
+    has_curve = np.array([i >= 0 and cv[i][1] is not None for i in ci])
     hsl = np.array([u["lim"][i][1] if i >= 0 and u["lim"][i][1] is not None else np.nan for i in li], float)
     lsl = np.array([u["lim"][i][2] if i >= 0 and u["lim"][i][2] is not None else np.nan for i in li], float)
     exact = bool(u.get("disp"))
@@ -104,9 +107,14 @@ def unit_runs(u: dict, n: int, hr: np.ndarray):
         bp, hdl, ldl, asup, asdn = (np.array([u["disp"][i][j] if i >= 0 and j < len(u["disp"][i]) and u["disp"][i][j] is not None
                                               else np.nan for i in di], float) for j in (1, 2, 3, 4, 5))
         # ancillary service awards hold back part of the dispatch range: a unit carrying them
-        # is at its energy limit before it reaches HDL / LDL (none recorded before format 5)
-        hdl = hdl - np.nan_to_num(asup)
-        ldl = ldl + np.nan_to_num(asdn)
+        # is at its energy limit before it reaches HDL / LDL (none recorded before format 5).
+        # Not for combustion turbines: on 15 test days netting brought coal and gas steam
+        # "below lambda" runs from 78% and 65% to about 90% within $5 of the node price, almost
+        # all of it from Non-Spin, but made turbines worse (at lambda 90% -> 81%), so their
+        # HDL apparently already allows for it.
+        if u.get("tech") != "combustion_turbine":
+            hdl = hdl - np.nan_to_num(asup)
+            ldl = ldl + np.nan_to_num(asdn)
     else:
         # the hourly mean base point stands in for every run, against the hour's mean limits
         # over the runs the unit was online (per-run limits against a mean base point would
@@ -129,11 +137,11 @@ def unit_runs(u: dict, n: int, hr: np.ndarray):
         return marg, price, bp, exact
     idx = np.flatnonzero(ok)
     events = sorted(set(ci[idx]))
-    kmax = max(len(u["curve"][c][1]) for c in events)
-    Pe = np.full((len(u["curve"]), kmax), np.nan)
-    Me = np.full((len(u["curve"]), kmax), np.nan)
+    kmax = max(len(cv[c][1]) for c in events)
+    Pe = np.full((len(cv), kmax), np.nan)
+    Me = np.full((len(cv), kmax), np.nan)
     for c in events:
-        ev = u["curve"][c]
+        ev = cv[c]
         Pe[c, :len(ev[1])] = ev[1]
         Me[c, :len(ev[2])] = ev[2]
     P, M = Pe[ci[idx]], Me[ci[idx]]
