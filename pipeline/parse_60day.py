@@ -2,8 +2,10 @@
 plus a per-unit daily summary.
 
 Two curve versions are kept for every unit:
-  sced      - "SCED1" curve: as submitted, then extended/truncated by ERCOT to the
-              unit's operating limits (what SCED actually dispatched against)
+  sced      - "SCED2" curve: as submitted, extended/truncated by ERCOT to the unit's
+              operating limits (the "SCED1" curve) and then mitigated where a
+              non-competitive constraint binds: what SCED actually dispatched against.
+              Files without SCED2 columns fall back to SCED1.
   submitted - "Submitted TPO" curve: the price/quantity pairs the QSE submitted
 Both are capped at the unit's HSL for that SCED run (storage: limited to [LSL, HSL]).
 
@@ -49,6 +51,33 @@ def _as_awards(df: pd.DataFrame, up: bool) -> np.ndarray:
     return np.nansum(np.column_stack([pd.to_numeric(df[c], errors="coerce").values for c in cols]), axis=1)
 
 
+def _price_at(P, M, b):
+    """Price of each row's curve (NaN padded, MW non-decreasing) at MW b[row]; NaN outside it."""
+    from .marginal_nodes import price_at
+    return price_at(P, M, b)[0]
+
+
+def _mitigation(P1, M1, P2, M2, bp, lsl, hsl):
+    """Per row, how far ERCOT's mitigation lowered the offer: the SCED1 price minus the SCED2
+    price at the base point, and the largest such cut at any SCED2 point between LSL and HSL
+    ($/MWh, 0 when not mitigated, NaN without both curves)."""
+    n = len(bp)
+    if not P1.shape[1] or not P2.shape[1] or P1 is P2:
+        return np.full(n, np.nan), np.full(n, np.nan)
+    with np.errstate(invalid="ignore"):
+        at_bp = _price_at(P1, M1, bp) - _price_at(P2, M2, bp)
+        cut = np.full(n, np.nan)
+        for k in range(M2.shape[1]):
+            m = M2[:, k]
+            inside = np.isfinite(m) & (m >= np.nan_to_num(lsl) - 0.1) & (m <= np.where(np.isfinite(hsl), hsl, np.inf) + 0.1)
+            d = np.where(inside, _price_at(P1, M1, m) - P2[:, k], np.nan)
+            cut = np.fmax(cut, d)
+    has = ~np.isnan(P1[:, 0]) & ~np.isnan(P2[:, 0])
+    at_bp = np.where(has, np.clip(np.nan_to_num(at_bp), 0, None), np.nan)
+    cut = np.where(has, np.clip(np.nan_to_num(cut), 0, None), np.nan)
+    return at_bp, cut
+
+
 def _cols(header, prefix, n_max=60):
     mw, pr = [], []
     for i in range(1, n_max + 1):
@@ -75,7 +104,10 @@ class _Accumulator:
     def add_chunk(self, df: pd.DataFrame, is_esr: bool):
         df.columns = [c.strip() for c in df.columns]
         header = set(df.columns)
-        s_mw, s_pr = _cols(header, "SCED1 Curve")
+        s1_mw, s1_pr = _cols(header, "SCED1 Curve")
+        s_mw, s_pr = _cols(header, "SCED2 Curve")
+        if not s_mw:
+            s_mw, s_pr = s1_mw, s1_pr
         t_mw, t_pr = _cols(header, "Submitted TPO")
 
         t = parse_sced_time(df["SCED Time Stamp"])
@@ -133,6 +165,9 @@ class _Accumulator:
         # every row, for the per-unit day file
         tp = df[t_pr].astype(float).values
         n = len(df)
+        s2p, s2m = df[s_pr].astype(float).values, df[s_mw].astype(float).values
+        mit_bp, mit_max = _mitigation(df[s1_pr].astype(float).values, df[s1_mw].astype(float).values, s2p, s2m,
+                                      bp, lsl, hsl)
         self.unit_cols.append({
             "run": run, "unit": df["Resource Name"].astype(str).str.strip().values,
             "type": rtype.values, "tech": np.array(SIXTY_DAY_TECHS)[tech], "status": status.values,
@@ -141,6 +176,9 @@ class _Accumulator:
             "hdl": df["HDL"].astype(float).values if "HDL" in header else np.full(n, np.nan),
             "ldl": df["LDL"].astype(float).values if "LDL" in header else np.full(n, np.nan),
             "asup": _as_awards(df, up=True), "asdn": _as_awards(df, up=False),
+            "mit_bp": mit_bp, "mit_max": mit_max,
+            "s2_p": s2p if s2p.shape[1] else np.full((n, 1), np.nan),
+            "s2_m": s2m if s2m.shape[1] else np.full((n, 1), np.nan),
             "hour": hour, "oschd": os_raw if has_os else None,
             "tpo_p": tp if tp.shape[1] else np.full((n, 1), np.nan),
             "tpo_m": df[t_mw].astype(float).values if t_mw else np.full((n, 1), np.nan),
@@ -202,10 +240,14 @@ class _Accumulator:
             return a if a.shape[1] == width else np.hstack([a, np.full((len(a), width - a.shape[1]), np.nan)])
 
         rows = {}
-        for name in ("run", "unit", "type", "tech", "status", "hsl", "lsl", "bp", "out", "hdl", "ldl", "asup", "asdn", "hour"):
+        for name in ("run", "unit", "type", "tech", "status", "hsl", "lsl", "bp", "out", "hdl", "ldl", "asup", "asdn", "mit_bp", "mit_max", "hour"):
             rows[name] = np.concatenate([c[name] for c in self.unit_cols])
         rows["tpo_p"] = np.vstack([pad(c["tpo_p"]) for c in self.unit_cols])
         rows["tpo_m"] = np.vstack([pad(c["tpo_m"]) for c in self.unit_cols])
+        w2 = max(c["s2_p"].shape[1] for c in self.unit_cols)
+        pad2 = lambda a: a if a.shape[1] == w2 else np.hstack([a, np.full((len(a), w2 - a.shape[1]), np.nan)])
+        rows["s2_p"] = np.vstack([pad2(c["s2_p"]) for c in self.unit_cols])
+        rows["s2_m"] = np.vstack([pad2(c["s2_m"]) for c in self.unit_cols])
         if any(c["oschd"] is not None for c in self.unit_cols):
             rows["oschd"] = np.concatenate([c["oschd"] if c["oschd"] is not None else np.full(len(c["run"]), np.nan)
                                             for c in self.unit_cols])
