@@ -299,6 +299,19 @@
   <section class="panel panel-wide">
     <div class="panel-head">
       <div>
+        <h2>Mitigation <span class="h-note" id="mit-note"></span></h2>
+        <p class="note">ERCOT mitigates a unit's energy offer when the unit can relieve a non-competitive transmission constraint, capping the curve SCED uses (the SCED2 curve) at the unit's mitigated offer cap. For every unit and SCED run this compares SCED2 with SCED1 (the offer as submitted, extended to the unit's limits). A run is <b>mitigated</b> when any part of the curve between LSL and HSL was lowered by more than $0.50/MWh, and <b>mitigated at the base point</b> when the price at the MW SCED dispatched was lowered. It <b>set the price</b> when the unit was also on the margin (see the panel above), so the node's LMP was the mitigated price; the cut at the base point is then how much mitigation lowered that LMP, holding the dispatch fixed. That is the first-order effect: with the offer as submitted SCED would also have dispatched differently, so the true price change is at most this. Only days whose per-unit files carry the SCED2 curve (format 6) are counted.</p>
+      </div>
+    </div>
+    <div class="legend legend-static" id="mit-legend"></div>
+    <div class="chart" id="mit-daily"></div>
+    <p class="note" id="mit-check"></p>
+    <div class="units-wrap" id="mit-units"></div>
+  </section>
+
+  <section class="panel panel-wide">
+    <div class="panel-head">
+      <div>
         <h2>Changes in bidding approach</h2>
         <p class="note" id="chg-note"></p>
       </div>
