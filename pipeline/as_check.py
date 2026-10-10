@@ -24,11 +24,15 @@ runs = ud["runs"]; n = len(runs); hr = np.minimum(np.array(runs) // 60, 23); lr 
 site = {}
 for k in nodes: site.setdefault(k.split("_")[0], []).append(k)
 res = {}
-for name, u in ud["units"].items():
+import copy
+for variant in ("netted", "not_netted"):
+  for name, u0 in ud["units"].items():
+    u = u0 if variant == "netted" else dict(u0, disp=[e[:4] for e in (u0.get("disp") or [])])
     t = u.get("tech")
     if not u.get("curve") or not u.get("disp"): continue
+    t = variant + "|" + t
     marg, price, bp, _ = unit_runs(u, n, hr)
-    if t == "storage": marg &= np.abs(bp) >= STEP_MW
+    if t.endswith("storage"): marg &= np.abs(bp) >= STEP_MW
     sp = SP.get(name) or (site[name.split("_")[0]][0] if len(site.get(name.split("_")[0], [])) == 1 else None)
     node = nodes.get(sp) if sp else None
     if node is None: continue
