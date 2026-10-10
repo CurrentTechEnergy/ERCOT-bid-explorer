@@ -119,6 +119,18 @@ def main(days):
                 r[0] += 1
                 r[1] += abs(g) <= 5
                 r[2] += g > 5
+        # ramp: base point at telemetered output +/- 5 minutes of the unit's ramp rate
+        tout, rru, rrd = f("Telemetered Net Output"), f("Ramp Rate Up"), f("Ramp Rate Down")
+        ramp_up = bp >= tout + 5 * rru - 1.0
+        ramp_dn = bp <= tout - 5 * rrd + 1.0
+        rb = np.where(ramp_up, "ramp_up_bound", np.where(ramp_dn, "ramp_down_bound", "ramp_free"))
+        rb = np.where(np.isfinite(rru) & np.isfinite(tout), rb, "ramp?")
+        for t, c, k, g in zip(tech[net], cls[net], rb[net], gap[net]):
+            for key in ((t, c, "net_of_AS_" + k), ("ALL", c, "net_of_AS_" + k)):
+                r = counts[key]
+                r[0] += 1
+                r[1] += abs(g) <= 5
+                r[2] += g > 5
         # batteries: where the state of charge sits in its range
         soc, smin, smax = f("State of Charge"), f("Minimum SOC"), f("Maximum SOC")
         with np.errstate(invalid="ignore", divide="ignore"):
