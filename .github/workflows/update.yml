@@ -44,6 +44,10 @@ jobs:
     steps:
       - uses: actions/checkout@v5
         with:
+          # The branch tip, not the commit that triggered the run: a run queued behind another
+          # in the update-data group would otherwise start from data the earlier run replaced,
+          # and its rebase of the generated files would conflict.
+          ref: ${{ github.ref_name }}
           fetch-depth: 1     # main's history is fetched just before the data commit is rebased
 
       - uses: actions/setup-python@v6
