@@ -104,6 +104,15 @@ def main(days):
         base = interior & (bp > bot + TOL_MW) & (bp < top - TOL_MW) & np.isfinite(l) & np.isfinite(node)
         base &= np.where(tech == "storage", np.abs(bp) >= STEP_MW, True)
         net = base & (bp > bot + dn + TOL_MW) & (bp < top - up - TOL_MW)
+        aw = lambda k: pd.to_numeric(df[k], errors="coerce").fillna(0).values if k in df.columns else 0.0
+        variants = {
+            "none": base,
+            "all": net,
+            "no_nspin": base & (bp > bot + dn + TOL_MW) & (bp < top - (up - aw("AS Awards NSPIN")) - TOL_MW),
+            "reg_rrs_only": base & (bp > bot + dn + TOL_MW) & (bp < top - aw("AS Awards REGUP") - aw("AS Awards RRSPFR") - aw("AS Awards RRSFFR") - TOL_MW),
+            "nspin_only": base & (bp < top - aw("AS Awards NSPIN") - TOL_MW),
+            "ecrs_only": base & (bp < top - aw("AS Awards ECRS") - TOL_MW),
+        }
         b = np.array([band(x) if np.isfinite(x) else np.nan for x in l])
         cls = np.where(np.abs(price - l) <= b, "at", np.where(price < l, "below", "above"))
         gap = node - price
@@ -144,6 +153,13 @@ def main(days):
             r[0] += 1
             r[1] += abs(g) <= 5
             r[2] += g > 5
+        for vname, vm in variants.items():
+            for t, c, g in zip(tech[vm], cls[vm], gap[vm]):
+                for key in ((t, c, "v_" + vname), ("ALL", c, "v_" + vname)):
+                    r = counts[key]
+                    r[0] += 1
+                    r[1] += abs(g) <= 5
+                    r[2] += g > 5
         for kind, mask in (("all_marginal", base), ("still_marginal_net_of_AS", net), ("at_AS_limit", base & ~net)):
             for t, c, g in zip(tech[mask], cls[mask], gap[mask]):
                 for key in ((t, c, kind), ("ALL", c, kind)):
