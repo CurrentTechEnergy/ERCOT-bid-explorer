@@ -603,7 +603,8 @@ function drawNodeMarginal() {
   const tot = [0, 0, 0];
   rows.forEach((r) => K.forEach((k, j) => { tot[j] += r[ci[k]] || 0; }));
   const totAll = d3.sum(tot) || 1;
-  $("mn-note").textContent = `${nDays} days · ${d3.sum(rows, (r) => r[ci.n_at] + r[ci.n_below] + r[ci.n_above]).toLocaleString()} marginal unit-hours · ${fmtPct(tot[0] / totAll)} at lambda, ${fmtPct(tot[1] / totAll)} below, ${fmtPct(tot[2] / totAll)} above`;
+  const nExact = (D.exact || []).filter((e, i) => e && days.has(D.dates[i])).length;
+  $("mn-note").textContent = `${nDays} days (${nExact} with per-run base points) · ${fmtMW(d3.sum(rows, (r) => r[ci.n_at] + r[ci.n_below] + r[ci.n_above]))} marginal unit-hours · ${fmtPct(tot[0] / totAll)} at lambda, ${fmtPct(tot[1] / totAll)} below, ${fmtPct(tot[2] / totAll)} above`;
 
   // by hour of day: mean per day of each technology's marginal units (or base point MW), split at / below / above
   const techOf = (t) => MN_TECHS.find((s) => s.keys.includes(t)) || MN_TECHS.at(-1);
@@ -647,9 +648,9 @@ function drawNodeMarginal() {
   const urows = D.units.map((r) => ({ unit: r[0], tech: r[1], sp: r[2], on: r[3], at: r[4], below: r[5], above: r[6], implied: r[7], node: r[8], nn: r[9], hsl: r[10] }));
   const cols = [
     { h: "Unit", t: true, f: (r) => esc(r.unit) }, { h: "Technology", t: true, f: (r) => techLabel(r.tech) }, { h: "Settlement point", t: true, f: (r) => esc(r.sp || "–") },
-    { h: "Mean HSL", f: (r) => fmtMW(r.hsl) }, { h: "Hours online", f: (r) => r.on.toLocaleString() }, { h: "Marginal at lambda", f: (r) => r.at.toLocaleString() },
-    { h: "Below lambda", f: (r) => r.below.toLocaleString() }, { h: "Above lambda", f: (r) => r.above.toLocaleString() },
-    { h: "Mean implied price", f: (r) => fmtPrice(r.implied) }, { h: "Mean node price, same hours", f: (r) => (r.nn ? fmtPrice(r.node) : "–") }, { h: "Hours with node price", f: (r) => r.nn },
+    { h: "Mean HSL", f: (r) => fmtMW(r.hsl) }, { h: "Hours online", f: (r) => fmtMW(r.on) }, { h: "Marginal at lambda", f: (r) => fmtMW(r.at) },
+    { h: "Below lambda", f: (r) => fmtMW(r.below) }, { h: "Above lambda", f: (r) => fmtMW(r.above) },
+    { h: "Mean implied price", f: (r) => fmtPrice(r.implied) }, { h: "Mean node price, same runs", f: (r) => (r.nn ? fmtPrice(r.node) : "–") }, { h: "Runs with node price", f: (r) => r.nn.toLocaleString() },
   ];
   uel.innerHTML = `<p class="note">Units most often on the margin away from lambda, over all days.</p><table class="data"><thead><tr>${cols.map((c) => `<th${c.t ? ' class="t"' : ""}>${c.h}</th>`).join("")}</tr></thead><tbody>` +
     urows.map((r) => `<tr>${cols.map((c) => `<td${c.t ? ' class="t"' : ""}>${c.f(r)}</td>`).join("")}</tr>`).join("") + "</tbody></table>";
@@ -668,9 +669,9 @@ function drawNodeMarginal() {
   vs.append("g").attr("class", "axis").attr("transform", `translate(${vm.l},0)`).call(d3.axisLeft(sy).tickValues(ticks).tickFormat(fmtPrice0).tickSizeOuter(0));
   vs.append("g").attr("class", "axis").attr("transform", `translate(0,${VH - vm.b})`).call(d3.axisBottom(sx).tickValues(ticks).tickFormat(fmtPrice0).tickSizeOuter(0));
   vs.append("line").attr("class", "zero").attr("x1", sx(ext[0])).attr("x2", sx(ext[1])).attr("y1", sy(ext[0])).attr("y2", sy(ext[1]));
-  const bc = V.by_class || {}, cls = (k, lb) => (bc[k] && bc[k].n ? `${lb}: ${bc[k].n.toLocaleString()} unit-hours, median gap ${fmtPrice(bc[k].median_abs)}, ${fmtPct(bc[k].within5)} within $5` : null);
-  $("mn-valid-note").textContent = `Check against ERCOT's published node prices, ${V.n.toLocaleString()} marginal unit-hours on days with node prices: median gap ${fmtPrice(V.median_abs)}, ${fmtPct(V.within5)} within $5 and ${fmtPct(V.within10)} within $10. ` +
-    [cls("at", "At lambda"), cls("below", "below"), cls("above", "above")].filter(Boolean).join("; ") + ". A gap means the unit was not really on the margin at that price: it was ramping, or moving between its limits inside the hour.";
+  const bc = V.by_class || {}, cls = (k, lb) => (bc[k] && bc[k].n ? `${lb}: ${bc[k].n.toLocaleString()} runs, median gap ${fmtPrice(bc[k].median_abs)}, ${fmtPct(bc[k].within5)} within $5` : null);
+  $("mn-valid-note").textContent = `Check against ERCOT's published node prices, ${V.n.toLocaleString()} marginal runs on days with node prices: median gap ${fmtPrice(V.median_abs)}, ${fmtPct(V.within5)} within $5 and ${fmtPct(V.within10)} within $10. ` +
+    [cls("at", "At lambda"), cls("below", "below"), cls("above", "above")].filter(Boolean).join("; ") + ". A gap means the unit was not really on the margin at that price, which on days without per-run base points is usually a unit moving between its limits inside the hour.";
   vs.append("text").attr("class", "axis-title").attr("x", vm.l).attr("y", 10).text("Published node price ($/MWh, compressed scale) against the price the unit's curve implies");
   vs.append("text").attr("class", "axis-title").attr("x", W - vm.r).attr("y", VH - 2).attr("text-anchor", "end").text("Implied price from the offer curve ($/MWh, compressed scale)");
   vs.append("g").selectAll("circle").data(pts).join("circle").attr("cx", (p) => sx(p[0])).attr("cy", (p) => sy(p[1])).attr("r", 2.5).attr("fill", (p) => css(techOf(p[2]).color)).attr("opacity", 0.45)

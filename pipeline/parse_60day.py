@@ -129,6 +129,8 @@ class _Accumulator:
             "type": rtype.values, "tech": np.array(SIXTY_DAY_TECHS)[tech], "status": status.values,
             "hsl": df["HSL"].astype(float).values, "lsl": df["LSL"].astype(float).values,
             "bp": df["Base Point"].astype(float).values, "out": df["Telemetered Net Output"].astype(float).values,
+            "hdl": df["HDL"].astype(float).values if "HDL" in header else np.full(n, np.nan),
+            "ldl": df["LDL"].astype(float).values if "LDL" in header else np.full(n, np.nan),
             "hour": hour, "oschd": os_raw if has_os else None,
             "tpo_p": tp if tp.shape[1] else np.full((n, 1), np.nan),
             "tpo_m": df[t_mw].astype(float).values if t_mw else np.full((n, 1), np.nan),
@@ -190,7 +192,7 @@ class _Accumulator:
             return a if a.shape[1] == width else np.hstack([a, np.full((len(a), width - a.shape[1]), np.nan)])
 
         rows = {}
-        for name in ("run", "unit", "type", "tech", "status", "hsl", "lsl", "bp", "out", "hour"):
+        for name in ("run", "unit", "type", "tech", "status", "hsl", "lsl", "bp", "out", "hdl", "ldl", "hour"):
             rows[name] = np.concatenate([c[name] for c in self.unit_cols])
         rows["tpo_p"] = np.vstack([pad(c["tpo_p"]) for c in self.unit_cols])
         rows["tpo_m"] = np.vstack([pad(c["tpo_m"]) for c in self.unit_cols])

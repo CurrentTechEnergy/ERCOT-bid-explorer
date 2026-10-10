@@ -39,6 +39,7 @@ import numpy as np
 
 from .config import DATA_DIR, SIXTY_DAY_TECHS, UNIT_DATA_DIR
 from .intraday import _online, train_of
+from .parse_prices import node_hourly
 from .store import read_json_gz, write_json_gz
 from .units import _ffill_index
 
@@ -123,7 +124,7 @@ def build_econ(index: dict) -> None:
         ud = read_json_gz(UNIT_DATA_DIR / "60d" / f"{d}.json.gz")
         if not ud:
             continue
-        nodes = (read_json_gz(UNIT_DATA_DIR / "nodes" / f"{d}.json.gz") or {}).get("points") if d in node_days else None
+        nodes = node_hourly(read_json_gz(UNIT_DATA_DIR / "nodes" / f"{d}.json.gz")) if d in node_days else None
         dam = read_json_gz(DATA_DIR / "dam" / f"{d}.json.gz") if d in dam_days else None
         dam_units = (dam or {}).get("units") or {}
         mcpc = (dam or {}).get("mcpc") or {}

@@ -9,6 +9,7 @@ Schema
 ------
 {
   "date": "YYYY-MM-DD",
+  "format": 4,                # UNIT_FORMAT below; update.reprocess_60d redoes older files
   "runs": [m0, m1, ...],      # SCED run timestamps, minutes after midnight (int, floor of the
                               # timestamp; +1440 if a run falls on the next calendar day), in
                               # time order.  A "run index" below is a position in this list.
@@ -31,6 +32,10 @@ Schema
                               # negative (charging) to positive.
       "oschd":  [[run, mw or null], ...],        # Output Schedule (MW, 0.1), only if the file
                               # has that column
+      "disp":   [[run, base point, hdl, ldl], ...],   # MW (0.1) when any changes: SCED's base
+                              # point for the run and the ramp-limited range (HDL, LDL) it had
+                              # to stay within.  null where the file has no value.  Files from
+                              # before format 4 lack this list.
       "out": [24 x hourly mean Telemetered Net Output, 0.1 MW, or null],
       "bp":  [24 x hourly mean Base Point, 0.1 MW, or null]
                               # hourly means over the runs the unit is present in, any status
@@ -53,6 +58,7 @@ import pandas as pd
 from .curves import mw_at_prices
 
 FRAC_TECHS = ("wind", "solar")
+UNIT_FORMAT = 4      # bump when the day file gains something a reprocess of history should fill in
 
 
 # ------------------------------------------------------------------ encoding --
@@ -96,6 +102,9 @@ def build_unit_day(date: str, run_sort: pd.DataFrame, rows: dict) -> dict:
     hsl_raw = take("hsl").astype(float)
     hsl, lsl = np.round(hsl_raw), np.round(take("lsl").astype(float))
     bp, out, hour = take("bp").astype(float), take("out").astype(float), take("hour").astype(int)
+    hdl = take("hdl").astype(float) if rows.get("hdl") is not None else np.full(len(bp), np.nan)
+    ldl = take("ldl").astype(float) if rows.get("ldl") is not None else np.full(len(bp), np.nan)
+    disp = np.round(np.column_stack([bp, hdl, ldl]), 1)
     oschd = None if rows.get("oschd") is None else np.round(take("oschd").astype(float), 1)
     P, M = take("tpo_p").astype(float), take("tpo_m").astype(float)
     valid = ~np.isnan(P) & ~np.isnan(M)
@@ -112,6 +121,7 @@ def build_unit_day(date: str, run_sort: pd.DataFrame, rows: dict) -> dict:
     ch_lim = _changed(np.column_stack([hsl, lsl]), first)
     ch_curve = _changed(np.hstack([P, M]), first)
     ch_os = _changed(oschd, first) if oschd is not None else None
+    ch_disp = _changed(disp, first)
 
     # hourly means of output and base point over the runs each unit is present in
     hm = pd.DataFrame({"u": unit, "h": hour, "out": out, "bp": bp}).groupby(["u", "h"]).mean()
@@ -146,13 +156,14 @@ def build_unit_day(date: str, run_sort: pd.DataFrame, rows: dict) -> dict:
         e["curve"] = cv
         if ch_os is not None:
             e["oschd"] = [[int(ri[i]), _f(oschd[i], 1)] for i in range(a, b) if ch_os[i]]
+        e["disp"] = [[int(ri[i])] + [_f(v, 1) for v in disp[i]] for i in range(a, b) if ch_disp[i]]
         h = hm.loc[name]
         e["out"] = [_f(h["out"].get(k, np.nan), 1) for k in range(24)]
         e["bp"] = [_f(h["bp"].get(k, np.nan), 1) for k in range(24)]
-        n_events += len(st) + len(e["lim"]) + len(cv) + len(e.get("oschd", ()))
+        n_events += len(st) + len(e["lim"]) + len(cv) + len(e.get("oschd", ())) + len(e["disp"])
         units[name] = e
 
-    day = {"date": date, "runs": run_sort["minutes"].astype(int).tolist()}
+    day = {"date": date, "format": UNIT_FORMAT, "runs": run_sort["minutes"].astype(int).tolist()}
     rep = np.flatnonzero(run_sort["repeat"].values).tolist()
     if rep:
         day["dst_repeat"] = rep
@@ -168,9 +179,9 @@ def _ffill_index(events, n):
 
 
 def expand(u: dict, n_runs: int) -> dict:
-    """Per-run values of one unit: status (list), hsl, lsl, oschd (float arrays, NaN where
-    unknown) and curve (list of (prices, MW) tuples or None).  Curve MW are in MW (fractions
-    multiplied by that run's rounded HSL)."""
+    """Per-run values of one unit: status (list), hsl, lsl, oschd, and bp / hdl / ldl when the
+    file has "disp" (float arrays, NaN where unknown) and curve (list of (prices, MW) tuples
+    or None).  Curve MW are in MW (fractions multiplied by that run's rounded HSL)."""
     si = _ffill_index(u["status"], n_runs)
     status = [u["status"][i][1] if i >= 0 else None for i in si]
     li = _ffill_index(u["lim"], n_runs)
@@ -188,6 +199,10 @@ def expand(u: dict, n_runs: int) -> dict:
             m = m * (hsl[r] if not np.isnan(hsl[r]) else 0.0)
         curve.append((np.array(ev[1], float), m))
     res = {"status": status, "hsl": hsl, "lsl": lsl, "curve": curve}
+    if u.get("disp"):
+        di = _ffill_index(u["disp"], n_runs)
+        for j, k in enumerate(("bp", "hdl", "ldl"), 1):
+            res[k] = np.array([u["disp"][i][j] if i >= 0 and u["disp"][i][j] is not None else np.nan for i in di], float)
     if "oschd" in u:
         oi = _ffill_index(u["oschd"], n_runs)
         res["oschd"] = np.array([u["oschd"][i][1] if i >= 0 and u["oschd"][i][1] is not None else np.nan
