@@ -1,0 +1,789 @@
+{
+ "days_missing": [],
+ "columns": {
+  "60d_SCED_Gen_Resource_Data": [
+   "SCED Time Stamp",
+   "Repeated Hour Flag",
+   "QSE",
+   "DME",
+   "Resource Name",
+   "Resource Type",
+   "SCED1 Curve-MW1",
+   "SCED1 Curve-Price1",
+   "SCED1 Curve-MW2",
+   "SCED1 Curve-Price2",
+   "SCED1 Curve-MW3",
+   "SCED1 Curve-Price3",
+   "SCED1 Curve-MW4",
+   "SCED1 Curve-Price4",
+   "SCED1 Curve-MW5",
+   "SCED1 Curve-Price5",
+   "SCED1 Curve-MW6",
+   "SCED1 Curve-Price6",
+   "SCED1 Curve-MW7",
+   "SCED1 Curve-Price7",
+   "SCED1 Curve-MW8",
+   "SCED1 Curve-Price8",
+   "SCED1 Curve-MW9",
+   "SCED1 Curve-Price9",
+   "SCED1 Curve-MW10",
+   "SCED1 Curve-Price10",
+   "SCED1 Curve-MW11",
+   "SCED1 Curve-Price11",
+   "SCED1 Curve-MW12",
+   "SCED1 Curve-Price12",
+   "SCED1 Curve-MW13",
+   "SCED1 Curve-Price13",
+   "SCED1 Curve-MW14",
+   "SCED1 Curve-Price14",
+   "SCED1 Curve-MW15",
+   "SCED1 Curve-Price15",
+   "SCED1 Curve-MW16",
+   "SCED1 Curve-Price16",
+   "SCED1 Curve-MW17",
+   "SCED1 Curve-Price17",
+   "SCED1 Curve-MW18",
+   "SCED1 Curve-Price18",
+   "SCED1 Curve-MW19",
+   "SCED1 Curve-Price19",
+   "SCED1 Curve-MW20",
+   "SCED1 Curve-Price20",
+   "SCED1 Curve-MW21",
+   "SCED1 Curve-Price21",
+   "SCED1 Curve-MW22",
+   "SCED1 Curve-Price22",
+   "SCED1 Curve-MW23",
+   "SCED1 Curve-Price23",
+   "SCED1 Curve-MW24",
+   "SCED1 Curve-Price24",
+   "SCED1 Curve-MW25",
+   "SCED1 Curve-Price25",
+   "SCED1 Curve-MW26",
+   "SCED1 Curve-Price26",
+   "SCED1 Curve-MW27",
+   "SCED1 Curve-Price27",
+   "SCED1 Curve-MW28",
+   "SCED1 Curve-Price28",
+   "SCED1 Curve-MW29",
+   "SCED1 Curve-Price29",
+   "SCED1 Curve-MW30",
+   "SCED1 Curve-Price30",
+   "SCED1 Curve-MW31",
+   "SCED1 Curve-Price31",
+   "SCED1 Curve-MW32",
+   "SCED1 Curve-Price32",
+   "SCED1 Curve-MW33",
+   "SCED1 Curve-Price33",
+   "SCED1 Curve-MW34",
+   "SCED1 Curve-Price34",
+   "SCED1 Curve-MW35",
+   "SCED1 Curve-Price35",
+   "SCED2 Curve-MW1",
+   "SCED2 Curve-Price1",
+   "SCED2 Curve-MW2",
+   "SCED2 Curve-Price2",
+   "SCED2 Curve-MW3",
+   "SCED2 Curve-Price3",
+   "SCED2 Curve-MW4",
+   "SCED2 Curve-Price4",
+   "SCED2 Curve-MW5",
+   "SCED2 Curve-Price5",
+   "SCED2 Curve-MW6",
+   "SCED2 Curve-Price6",
+   "SCED2 Curve-MW7",
+   "SCED2 Curve-Price7",
+   "SCED2 Curve-MW8",
+   "SCED2 Curve-Price8",
+   "SCED2 Curve-MW9",
+   "SCED2 Curve-Price9",
+   "SCED2 Curve-MW10",
+   "SCED2 Curve-Price10",
+   "SCED2 Curve-MW11",
+   "SCED2 Curve-Price11",
+   "SCED2 Curve-MW12",
+   "SCED2 Curve-Price12",
+   "SCED2 Curve-MW13",
+   "SCED2 Curve-Price13",
+   "SCED2 Curve-MW14",
+   "SCED2 Curve-Price14",
+   "SCED2 Curve-MW15",
+   "SCED2 Curve-Price15",
+   "SCED2 Curve-MW16",
+   "SCED2 Curve-Price16",
+   "SCED2 Curve-MW17",
+   "SCED2 Curve-Price17",
+   "SCED2 Curve-MW18",
+   "SCED2 Curve-Price18",
+   "SCED2 Curve-MW19",
+   "SCED2 Curve-Price19",
+   "SCED2 Curve-MW20",
+   "SCED2 Curve-Price20",
+   "SCED2 Curve-MW21",
+   "SCED2 Curve-Price21",
+   "SCED2 Curve-MW22",
+   "SCED2 Curve-Price22",
+   "SCED2 Curve-MW23",
+   "SCED2 Curve-Price23",
+   "SCED2 Curve-MW24",
+   "SCED2 Curve-Price24",
+   "SCED2 Curve-MW25",
+   "SCED2 Curve-Price25",
+   "SCED2 Curve-MW26",
+   "SCED2 Curve-Price26",
+   "SCED2 Curve-MW27",
+   "SCED2 Curve-Price27",
+   "SCED2 Curve-MW28",
+   "SCED2 Curve-Price28",
+   "SCED2 Curve-MW29",
+   "SCED2 Curve-Price29",
+   "SCED2 Curve-MW30",
+   "SCED2 Curve-Price30",
+   "SCED2 Curve-MW31",
+   "SCED2 Curve-Price31",
+   "SCED2 Curve-MW32",
+   "SCED2 Curve-Price32",
+   "SCED2 Curve-MW33",
+   "SCED2 Curve-Price33",
+   "SCED2 Curve-MW34",
+   "SCED2 Curve-Price34",
+   "SCED2 Curve-MW35",
+   "SCED2 Curve-Price35",
+   "Output Schedule",
+   "HSL",
+   "HDL",
+   "LSL",
+   "LDL",
+   "Telemetered Resource Status",
+   "Base Point",
+   "Telemetered Net Output",
+   "Ramp Rate Up",
+   "Ramp Rate Down",
+   "AS Capability REGUP",
+   "AS Capability REGDN",
+   "AS Capability ECRS",
+   "AS Capability NSPIN",
+   "AS Capability RRSPFR",
+   "AS Capability RRSFFR",
+   "AS Awards NSPIN",
+   "AS Awards RRSFFR",
+   "AS Awards RRSPFR",
+   "AS Awards RRSUFR",
+   "AS Awards ECRS",
+   "AS Awards REGUP",
+   "AS Awards REGDN",
+   "Bid_Type",
+   "Start Up Cold Offer",
+   "Start Up Hot Offer",
+   "Start Up Inter Offer",
+   "Min Gen Cost",
+   "Submitted TPO-MW1",
+   "Submitted TPO-Price1",
+   "Submitted TPO-MW2",
+   "Submitted TPO-Price2",
+   "Submitted TPO-MW3",
+   "Submitted TPO-Price3",
+   "Submitted TPO-MW4",
+   "Submitted TPO-Price4",
+   "Submitted TPO-MW5",
+   "Submitted TPO-Price5",
+   "Submitted TPO-MW6",
+   "Submitted TPO-Price6",
+   "Submitted TPO-MW7",
+   "Submitted TPO-Price7",
+   "Submitted TPO-MW8",
+   "Submitted TPO-Price8",
+   "Submitted TPO-MW9",
+   "Submitted TPO-Price9",
+   "Submitted TPO-MW10",
+   "Submitted TPO-Price10",
+   "Proxy Extension"
+  ],
+  "60d_ESR_Data_in_SCED": [
+   "SCED Time Stamp",
+   "Repeated Hour Flag",
+   "QSE",
+   "DME",
+   "Resource Name",
+   "Resource Type",
+   "SCED1 Curve-MW1",
+   "SCED1 Curve-Price1",
+   "SCED1 Curve-MW2",
+   "SCED1 Curve-Price2",
+   "SCED1 Curve-MW3",
+   "SCED1 Curve-Price3",
+   "SCED1 Curve-MW4",
+   "SCED1 Curve-Price4",
+   "SCED1 Curve-MW5",
+   "SCED1 Curve-Price5",
+   "SCED1 Curve-MW6",
+   "SCED1 Curve-Price6",
+   "SCED1 Curve-MW7",
+   "SCED1 Curve-Price7",
+   "SCED1 Curve-MW8",
+   "SCED1 Curve-Price8",
+   "SCED1 Curve-MW9",
+   "SCED1 Curve-Price9",
+   "SCED1 Curve-MW10",
+   "SCED1 Curve-Price10",
+   "SCED1 Curve-MW11",
+   "SCED1 Curve-Price11",
+   "SCED1 Curve-MW12",
+   "SCED1 Curve-Price12",
+   "SCED1 Curve-MW13",
+   "SCED1 Curve-Price13",
+   "SCED1 Curve-MW14",
+   "SCED1 Curve-Price14",
+   "SCED1 Curve-MW15",
+   "SCED1 Curve-Price15",
+   "SCED1 Curve-MW16",
+   "SCED1 Curve-Price16",
+   "SCED1 Curve-MW17",
+   "SCED1 Curve-Price17",
+   "SCED1 Curve-MW18",
+   "SCED1 Curve-Price18",
+   "SCED1 Curve-MW19",
+   "SCED1 Curve-Price19",
+   "SCED1 Curve-MW20",
+   "SCED1 Curve-Price20",
+   "SCED1 Curve-MW21",
+   "SCED1 Curve-Price21",
+   "SCED1 Curve-MW22",
+   "SCED1 Curve-Price22",
+   "SCED1 Curve-MW23",
+   "SCED1 Curve-Price23",
+   "SCED1 Curve-MW24",
+   "SCED1 Curve-Price24",
+   "SCED1 Curve-MW25",
+   "SCED1 Curve-Price25",
+   "SCED1 Curve-MW26",
+   "SCED1 Curve-Price26",
+   "SCED1 Curve-MW27",
+   "SCED1 Curve-Price27",
+   "SCED1 Curve-MW28",
+   "SCED1 Curve-Price28",
+   "SCED1 Curve-MW29",
+   "SCED1 Curve-Price29",
+   "SCED1 Curve-MW30",
+   "SCED1 Curve-Price30",
+   "SCED1 Curve-MW31",
+   "SCED1 Curve-Price31",
+   "SCED1 Curve-MW32",
+   "SCED1 Curve-Price32",
+   "SCED1 Curve-MW33",
+   "SCED1 Curve-Price33",
+   "SCED1 Curve-MW34",
+   "SCED1 Curve-Price34",
+   "SCED1 Curve-MW35",
+   "SCED1 Curve-Price35",
+   "SCED2 Curve-MW1",
+   "SCED2 Curve-Price1",
+   "SCED2 Curve-MW2",
+   "SCED2 Curve-Price2",
+   "SCED2 Curve-MW3",
+   "SCED2 Curve-Price3",
+   "SCED2 Curve-MW4",
+   "SCED2 Curve-Price4",
+   "SCED2 Curve-MW5",
+   "SCED2 Curve-Price5",
+   "SCED2 Curve-MW6",
+   "SCED2 Curve-Price6",
+   "SCED2 Curve-MW7",
+   "SCED2 Curve-Price7",
+   "SCED2 Curve-MW8",
+   "SCED2 Curve-Price8",
+   "SCED2 Curve-MW9",
+   "SCED2 Curve-Price9",
+   "SCED2 Curve-MW10",
+   "SCED2 Curve-Price10",
+   "SCED2 Curve-MW11",
+   "SCED2 Curve-Price11",
+   "SCED2 Curve-MW12",
+   "SCED2 Curve-Price12",
+   "SCED2 Curve-MW13",
+   "SCED2 Curve-Price13",
+   "SCED2 Curve-MW14",
+   "SCED2 Curve-Price14",
+   "SCED2 Curve-MW15",
+   "SCED2 Curve-Price15",
+   "SCED2 Curve-MW16",
+   "SCED2 Curve-Price16",
+   "SCED2 Curve-MW17",
+   "SCED2 Curve-Price17",
+   "SCED2 Curve-MW18",
+   "SCED2 Curve-Price18",
+   "SCED2 Curve-MW19",
+   "SCED2 Curve-Price19",
+   "SCED2 Curve-MW20",
+   "SCED2 Curve-Price20",
+   "SCED2 Curve-MW21",
+   "SCED2 Curve-Price21",
+   "SCED2 Curve-MW22",
+   "SCED2 Curve-Price22",
+   "SCED2 Curve-MW23",
+   "SCED2 Curve-Price23",
+   "SCED2 Curve-MW24",
+   "SCED2 Curve-Price24",
+   "SCED2 Curve-MW25",
+   "SCED2 Curve-Price25",
+   "SCED2 Curve-MW26",
+   "SCED2 Curve-Price26",
+   "SCED2 Curve-MW27",
+   "SCED2 Curve-Price27",
+   "SCED2 Curve-MW28",
+   "SCED2 Curve-Price28",
+   "SCED2 Curve-MW29",
+   "SCED2 Curve-Price29",
+   "SCED2 Curve-MW30",
+   "SCED2 Curve-Price30",
+   "SCED2 Curve-MW31",
+   "SCED2 Curve-Price31",
+   "SCED2 Curve-MW32",
+   "SCED2 Curve-Price32",
+   "SCED2 Curve-MW33",
+   "SCED2 Curve-Price33",
+   "SCED2 Curve-MW34",
+   "SCED2 Curve-Price34",
+   "SCED2 Curve-MW35",
+   "SCED2 Curve-Price35",
+   "Output Schedule",
+   "HSL",
+   "HDL",
+   "LSL",
+   "LDL",
+   "Telemetered Resource Status",
+   "Base Point",
+   "Telemetered Net Output",
+   "Ramp Rate Up",
+   "Ramp Rate Down",
+   "AS Capability REGUP",
+   "AS Capability REGDN",
+   "AS Capability ECRS",
+   "AS Capability NSPIN",
+   "AS Capability RRSPFR",
+   "AS Capability RRSFFR",
+   "State of Charge",
+   "Minimum SOC",
+   "Maximum SOC",
+   "AS Awards NSPIN",
+   "AS Awards RRSFFR",
+   "AS Awards RRSPFR",
+   "AS Awards RRSUFR",
+   "AS Awards ECRS",
+   "AS Awards REGUP",
+   "AS Awards REGDN",
+   "Bid_Type",
+   "Start Up Cold Offer",
+   "Start Up Hot Offer",
+   "Start Up Inter Offer",
+   "Min Gen Cost",
+   "Submitted TPO-MW1",
+   "Submitted TPO-Price1",
+   "Submitted TPO-MW2",
+   "Submitted TPO-Price2",
+   "Submitted TPO-MW3",
+   "Submitted TPO-Price3",
+   "Submitted TPO-MW4",
+   "Submitted TPO-Price4",
+   "Submitted TPO-MW5",
+   "Submitted TPO-Price5",
+   "Submitted TPO-MW6",
+   "Submitted TPO-Price6",
+   "Submitted TPO-MW7",
+   "Submitted TPO-Price7",
+   "Submitted TPO-MW8",
+   "Submitted TPO-Price8",
+   "Submitted TPO-MW9",
+   "Submitted TPO-Price9",
+   "Submitted TPO-MW10",
+   "Submitted TPO-Price10",
+   "Proxy Extension"
+  ]
+ },
+ "award_rows": {
+  "AS Awards NSPIN": [
+   577910,
+   10499125.1718
+  ],
+  "AS Awards RRSFFR": [
+   77956,
+   618047.3037999998
+  ],
+  "AS Awards RRSPFR": [
+   378397,
+   6364625.035999999
+  ],
+  "AS Awards RRSUFR": [
+   0,
+   0.0
+  ],
+  "AS Awards ECRS": [
+   366052,
+   5650381.2189
+  ],
+  "AS Awards REGUP": [
+   125882,
+   2188972.9448
+  ],
+  "AS Awards REGDN": [
+   107087,
+   1921542.6417999999
+  ]
+ },
+ "counts": {
+  "ALL|above|all_marginal": [
+   43005,
+   24030.0,
+   6636.0
+  ],
+  "ALL|above|at_AS_limit": [
+   9768,
+   5008.0,
+   2456.0
+  ],
+  "ALL|above|still_marginal_net_of_AS": [
+   33237,
+   19022.0,
+   4180.0
+  ],
+  "ALL|at|all_marginal": [
+   66686,
+   58353.0,
+   6077.0
+  ],
+  "ALL|at|at_AS_limit": [
+   17152,
+   14017.0,
+   2505.0
+  ],
+  "ALL|at|still_marginal_net_of_AS": [
+   49534,
+   44336.0,
+   3572.0
+  ],
+  "ALL|below|all_marginal": [
+   143535,
+   74642.0,
+   64745.0
+  ],
+  "ALL|below|at_AS_limit": [
+   48789,
+   19773.0,
+   27955.0
+  ],
+  "ALL|below|still_marginal_net_of_AS": [
+   94746,
+   54869.0,
+   36790.0
+  ],
+  "coal|above|all_marginal": [
+   393,
+   347.0,
+   19.0
+  ],
+  "coal|above|at_AS_limit": [
+   133,
+   98.0,
+   9.0
+  ],
+  "coal|above|still_marginal_net_of_AS": [
+   260,
+   249.0,
+   10.0
+  ],
+  "coal|at|all_marginal": [
+   2394,
+   2351.0,
+   37.0
+  ],
+  "coal|at|at_AS_limit": [
+   517,
+   493.0,
+   20.0
+  ],
+  "coal|at|still_marginal_net_of_AS": [
+   1877,
+   1858.0,
+   17.0
+  ],
+  "coal|below|all_marginal": [
+   3657,
+   2857.0,
+   770.0
+  ],
+  "coal|below|at_AS_limit": [
+   1688,
+   932.0,
+   735.0
+  ],
+  "coal|below|still_marginal_net_of_AS": [
+   1969,
+   1925.0,
+   35.0
+  ],
+  "combined_cycle|above|all_marginal": [
+   2728,
+   2278.0,
+   200.0
+  ],
+  "combined_cycle|above|at_AS_limit": [
+   409,
+   275.0,
+   38.0
+  ],
+  "combined_cycle|above|still_marginal_net_of_AS": [
+   2319,
+   2003.0,
+   162.0
+  ],
+  "combined_cycle|at|all_marginal": [
+   14971,
+   14296.0,
+   533.0
+  ],
+  "combined_cycle|at|at_AS_limit": [
+   3108,
+   2993.0,
+   82.0
+  ],
+  "combined_cycle|at|still_marginal_net_of_AS": [
+   11863,
+   11303.0,
+   451.0
+  ],
+  "combined_cycle|below|all_marginal": [
+   33456,
+   18678.0,
+   14468.0
+  ],
+  "combined_cycle|below|at_AS_limit": [
+   11128,
+   4231.0,
+   6798.0
+  ],
+  "combined_cycle|below|still_marginal_net_of_AS": [
+   22328,
+   14447.0,
+   7670.0
+  ],
+  "combustion_turbine|above|all_marginal": [
+   1086,
+   715.0,
+   313.0
+  ],
+  "combustion_turbine|above|at_AS_limit": [
+   669,
+   544.0,
+   104.0
+  ],
+  "combustion_turbine|above|still_marginal_net_of_AS": [
+   417,
+   171.0,
+   209.0
+  ],
+  "combustion_turbine|at|all_marginal": [
+   6291,
+   5674.0,
+   477.0
+  ],
+  "combustion_turbine|at|at_AS_limit": [
+   4326,
+   4078.0,
+   234.0
+  ],
+  "combustion_turbine|at|still_marginal_net_of_AS": [
+   1965,
+   1596.0,
+   243.0
+  ],
+  "combustion_turbine|below|all_marginal": [
+   16909,
+   9206.0,
+   7305.0
+  ],
+  "combustion_turbine|below|at_AS_limit": [
+   11073,
+   6286.0,
+   4708.0
+  ],
+  "combustion_turbine|below|still_marginal_net_of_AS": [
+   5836,
+   2920.0,
+   2597.0
+  ],
+  "gas_steam|above|all_marginal": [
+   1514,
+   906.0,
+   417.0
+  ],
+  "gas_steam|above|at_AS_limit": [
+   412,
+   95.0,
+   229.0
+  ],
+  "gas_steam|above|still_marginal_net_of_AS": [
+   1102,
+   811.0,
+   188.0
+  ],
+  "gas_steam|at|all_marginal": [
+   3448,
+   3145.0,
+   246.0
+  ],
+  "gas_steam|at|at_AS_limit": [
+   1558,
+   1333.0,
+   188.0
+  ],
+  "gas_steam|at|still_marginal_net_of_AS": [
+   1890,
+   1812.0,
+   58.0
+  ],
+  "gas_steam|below|all_marginal": [
+   6850,
+   4445.0,
+   2301.0
+  ],
+  "gas_steam|below|at_AS_limit": [
+   4659,
+   2497.0,
+   2119.0
+  ],
+  "gas_steam|below|still_marginal_net_of_AS": [
+   2191,
+   1948.0,
+   182.0
+  ],
+  "other|above|all_marginal": [
+   286,
+   256.0,
+   29.0
+  ],
+  "other|above|at_AS_limit": [
+   38,
+   38.0,
+   0.0
+  ],
+  "other|above|still_marginal_net_of_AS": [
+   248,
+   218.0,
+   29.0
+  ],
+  "other|at|all_marginal": [
+   638,
+   592.0,
+   38.0
+  ],
+  "other|at|at_AS_limit": [
+   179,
+   152.0,
+   23.0
+  ],
+  "other|at|still_marginal_net_of_AS": [
+   459,
+   440.0,
+   15.0
+  ],
+  "other|below|all_marginal": [
+   3063,
+   812.0,
+   2235.0
+  ],
+  "other|below|at_AS_limit": [
+   2415,
+   266.0,
+   2144.0
+  ],
+  "other|below|still_marginal_net_of_AS": [
+   648,
+   546.0,
+   91.0
+  ],
+  "solar|at|all_marginal": [
+   406,
+   405.0,
+   0.0
+  ],
+  "solar|at|still_marginal_net_of_AS": [
+   406,
+   405.0,
+   0.0
+  ],
+  "solar|below|all_marginal": [
+   5060,
+   4122.0,
+   834.0
+  ],
+  "solar|below|still_marginal_net_of_AS": [
+   5060,
+   4122.0,
+   834.0
+  ],
+  "storage|above|all_marginal": [
+   36998,
+   19528.0,
+   5658.0
+  ],
+  "storage|above|at_AS_limit": [
+   8107,
+   3958.0,
+   2076.0
+  ],
+  "storage|above|still_marginal_net_of_AS": [
+   28891,
+   15570.0,
+   3582.0
+  ],
+  "storage|at|all_marginal": [
+   38517,
+   31869.0,
+   4746.0
+  ],
+  "storage|at|at_AS_limit": [
+   7464,
+   4968.0,
+   1958.0
+  ],
+  "storage|at|still_marginal_net_of_AS": [
+   31053,
+   26901.0,
+   2788.0
+  ],
+  "storage|below|all_marginal": [
+   68216,
+   29248.0,
+   35894.0
+  ],
+  "storage|below|at_AS_limit": [
+   17826,
+   5561.0,
+   11451.0
+  ],
+  "storage|below|still_marginal_net_of_AS": [
+   50390,
+   23687.0,
+   24443.0
+  ],
+  "wind|at|all_marginal": [
+   21,
+   21.0,
+   0.0
+  ],
+  "wind|at|still_marginal_net_of_AS": [
+   21,
+   21.0,
+   0.0
+  ],
+  "wind|below|all_marginal": [
+   6324,
+   5274.0,
+   938.0
+  ],
+  "wind|below|still_marginal_net_of_AS": [
+   6324,
+   5274.0,
+   938.0
+  ]
+ }
+}
