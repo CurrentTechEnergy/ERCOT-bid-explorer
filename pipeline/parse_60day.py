@@ -59,7 +59,7 @@ def _price_at(P, M, b):
 
 def _mitigation(P1, M1, P2, M2, bp, lsl, hsl):
     """Per row, how far ERCOT's mitigation lowered the offer: the SCED1 price minus the SCED2
-    price at the base point, and the largest such cut at any SCED2 point between LSL and HSL
+    price at the base point, and the largest such cut anywhere between LSL and HSL
     ($/MWh, 0 when not mitigated, NaN without both curves)."""
     n = len(bp)
     if not P1.shape[1] or not P2.shape[1] or P1 is P2:
@@ -67,11 +67,15 @@ def _mitigation(P1, M1, P2, M2, bp, lsl, hsl):
     with np.errstate(invalid="ignore"):
         at_bp = _price_at(P1, M1, bp) - _price_at(P2, M2, bp)
         cut = np.full(n, np.nan)
-        for k in range(M2.shape[1]):
-            m = M2[:, k]
-            inside = np.isfinite(m) & (m >= np.nan_to_num(lsl) - 0.1) & (m <= np.where(np.isfinite(hsl), hsl, np.inf) + 0.1)
-            d = np.where(inside, _price_at(P1, M1, m) - P2[:, k], np.nan)
-            cut = np.fmax(cut, d)
+        # both curves are piecewise linear, so the largest gap is at a breakpoint of one of them
+        top = np.where(np.isfinite(hsl), hsl, np.inf) + 0.1
+        for Pa, Ma, Pb, Mb, sign in ((P2, M2, P1, M1, 1.0), (P1, M1, P2, M2, -1.0)):
+            for k in range(Ma.shape[1]):
+                m = Ma[:, k]
+                inside = np.isfinite(m) & (m >= np.nan_to_num(lsl) - 0.1) & (m <= top)
+                d = np.where(inside, sign * (_price_at(Pb, Mb, m) - Pa[:, k]), np.nan)
+                cut = np.fmax(cut, d)
+        cut = np.fmax(cut, at_bp)
     has = ~np.isnan(P1[:, 0]) & ~np.isnan(P2[:, 0])
     at_bp = np.where(has, np.clip(np.nan_to_num(at_bp), 0, None), np.nan)
     cut = np.where(has, np.clip(np.nan_to_num(cut), 0, None), np.nan)
