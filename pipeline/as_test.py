@@ -26,7 +26,7 @@ def norm(c):
 
 
 def as_cols(cols):
-    return [c for c in cols if any(w in norm(c) for w in AS_WORDS)]
+    return [c for c in cols if norm(c).startswith("asawards")]
 
 
 def is_down(c):
