@@ -24,7 +24,7 @@ from .config import (DATA_DIR, UNIT_DATA_DIR, EMIL_2DAY, EMIL_2DAY_GEN, EMIL_60D
                      NODE_DAYS_PER_RUN)
 from .parse_2day import parse_2day_zip
 from .parse_2day_gen import is_gen_summary, parse_2day_gen_zip
-from .parse_60day import parse_60day_zip, OVERRIDE_STATS
+from .parse_60day import parse_60day_zip, OVERRIDE_STATS, OVERRIDES_FORMAT
 from .parse_dam import parse_dam_zip, has_dam_gen
 from .parse_prices import build_price_day, node_prices, read_lambda, read_spp
 from .marginal import build_marginal
@@ -230,7 +230,7 @@ def reprocess_60d(api, index: dict, mode: str = "missing", limit=None):
         if not path.exists():
             return False
         try:
-            return "overrides" in (read_json_gz(path) or {})
+            return (read_json_gz(path) or {}).get("overrides_format") == OVERRIDES_FORMAT
         except Exception:
             return False
     targets = {d for d in index["days"]["60d"] if mode == "all" or not current(d)}
@@ -416,6 +416,8 @@ def main(argv=None):
     if o["days"]:
         msg = (f"HDL/LDL overrides: {o['files']} summary file(s) over {o['days']} day(s), {o['rows']} row(s), "
                f"{o['kept']} kept, on {o['units']} unit-day(s)")
+        if o["unmatched"]:
+            warn(f"HDL/LDL override summary: limit columns not recognised, values left empty: {o['unmatched']}")
         if o["rows"] and not o["kept"]:
             warn(msg + f"; none matched the operating day (first timestamp {o['sample']})")
         else:
