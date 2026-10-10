@@ -140,6 +140,36 @@ def main(days):
                 r[0] += 1
                 r[1] += abs(g) <= 5
                 r[2] += g > 5
+        # SCED2 (mitigated) curve: score against it, and count runs where mitigation lowered
+        # the price at the base point
+        P2, M2 = tpo(df, "SCED2 Curve")
+        if P2.shape[1]:
+            price2, interior2 = price_at(P2, M2, bp)
+            p1_at, _ = price_at(P1, M1, bp)
+            mitig = np.isfinite(price2) & np.isfinite(p1_at) & (price2 < p1_at - 0.5)
+            online_curve = np.isfinite(p1_at)
+            for t, m_, oc in zip(tech, mitig, online_curve):
+                if oc:
+                    r = counts[(t, "any", "mitigation_share")]
+                    r[0] += 1
+                    r[1] += bool(m_)
+            net2 = net & interior2
+            cls2 = np.where(np.abs(price2 - l) <= b, "at", np.where(price2 < l, "below", "above"))
+            g2 = node - price2
+            for t, c, g, m_ in zip(tech[net2], cls2[net2], g2[net2], mitig[net2]):
+                for key in ((t, c, "net_of_AS_sced2_curve"), ("ALL", c, "net_of_AS_sced2_curve"),
+                            (t, c, "net_of_AS_sced2_curve_" + ("mitigated" if m_ else "unmitigated"))):
+                    r = counts[key]
+                    r[0] += 1
+                    r[1] += abs(g) <= 5
+                    r[2] += g > 5
+            # mitigated runs scored on the submitted curve, for comparison
+            for t, c, g, m_ in zip(tech[net], cls[net], gap[net], mitig[net]):
+                if m_:
+                    r = counts[(t, c, "net_of_AS_submitted_curve_mitigated")]
+                    r[0] += 1
+                    r[1] += abs(g) <= 5
+                    r[2] += g > 5
         # batteries: where the state of charge sits in its range
         soc, smin, smax = f("State of Charge"), f("Minimum SOC"), f("Maximum SOC")
         with np.errstate(invalid="ignore", divide="ignore"):
