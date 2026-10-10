@@ -51,6 +51,7 @@ def main(days):
     # counts[(tech, cls, kind)] = [n, n matched within $5, n node > curve by > $5]
     counts = defaultdict(lambda: [0, 0, 0])
     colsets, award_stats = {}, defaultdict(lambda: [0, 0.0])
+    per_unit = {}
     for doc in sorted(docs, key=lambda d: d["postDatetime"]):
         guess = (dt.date.fromisoformat(doc["postDatetime"][:10]) - dt.timedelta(days=60)).isoformat()
         if guess not in targets:
@@ -148,6 +149,14 @@ def main(days):
             p1_at, _ = price_at(P1, M1, bp)
             mitig = np.isfinite(price2) & np.isfinite(p1_at) & (price2 < p1_at - 0.5)
             online_curve = np.isfinite(p1_at)
+            for nm, t, m_, oc, d1, d2 in zip(name, tech, mitig, online_curve, p1_at, price2):
+                if oc:
+                    r = per_unit.setdefault(nm, [t, 0, 0, 0.0, set()])
+                    r[1] += 1
+                    if m_:
+                        r[2] += 1
+                        r[3] += d1 - d2
+                        r[4].add(date)
             for t, m_, oc in zip(tech, mitig, online_curve):
                 if oc:
                     r = counts[(t, "any", "mitigation_share")]
@@ -203,7 +212,10 @@ def main(days):
             award_stats[c][1] += float(v.sum())
     out = {"days_missing": sorted(targets), "columns": colsets,
            "award_rows": {k: v for k, v in award_stats.items()},
-           "counts": {"|".join(k): v for k, v in sorted(counts.items())}}
+           "counts": {"|".join(k): v for k, v in sorted(counts.items())},
+           "mitigated_units": sorted([[k, v[0], v[1], v[2], round(v[3] / v[2], 2) if v[2] else None, len(v[4])]
+                                      for k, v in per_unit.items() if v[2]], key=lambda r: -r[3])[:40],
+           "n_units_mitigated": sum(1 for v in per_unit.values() if v[2]), "n_units": len(per_unit)}
     json.dump(out, open("as_test.json", "w"), indent=1, default=float)
     print("\nAS award columns (rows > 0, total MW):")
     for k, v in award_stats.items():
