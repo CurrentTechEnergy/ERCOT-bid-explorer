@@ -133,4 +133,11 @@ def main(days):
 
 
 if __name__ == "__main__":
-    main(sys.argv[1:])
+    try:
+        main(sys.argv[1:])
+    except Exception:
+        import traceback
+        tb = traceback.format_exc()
+        open("as_test_error.txt", "w").write(tb)
+        print("::error::" + " | ".join(tb.strip().splitlines()[-6:]))
+        raise

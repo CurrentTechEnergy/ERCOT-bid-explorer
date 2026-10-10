@@ -2,6 +2,8 @@ name: AS test (one-off)
 on:
   push:
     branches: [as-test]
+permissions:
+  contents: write
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -24,8 +26,10 @@ jobs:
           ERCOT_API_PASSWORD: ${{ secrets.ERCOT_API_PASSWORD }}
           ERCOT_API_SUBSCRIPTION_KEY: ${{ secrets.ERCOT_API_SUBSCRIPTION_KEY }}
         run: python -m pipeline.as_test 2026-01-26 2026-07-22 2026-04-27 2026-06-06 2026-04-24 2026-07-21 2026-04-25 2026-03-16 2026-05-27 2026-07-23 2026-08-05 2026-08-07 2026-01-07 2025-12-16 2026-01-11
-      - uses: actions/upload-artifact@v4
+      - name: Commit results to the branch
         if: always()
-        with:
-          name: as-test
-          path: as_test.json
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          mkdir -p as_results && cp as_test*.json as_test_error.txt as_results/ 2>/dev/null || true
+          git add as_results && git commit -m "AS test results [skip ci]" && git push origin HEAD:as-test
