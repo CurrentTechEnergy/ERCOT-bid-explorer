@@ -9,7 +9,7 @@ Schema
 ------
 {
   "date": "YYYY-MM-DD",
-  "format": 4,                # UNIT_FORMAT below; update.reprocess_60d redoes older files
+  "format": 5,                # UNIT_FORMAT below; update.reprocess_60d redoes older files
   "runs": [m0, m1, ...],      # SCED run timestamps, minutes after midnight (int, floor of the
                               # timestamp; +1440 if a run falls on the next calendar day), in
                               # time order.  A "run index" below is a position in this list.
@@ -32,10 +32,13 @@ Schema
                               # negative (charging) to positive.
       "oschd":  [[run, mw or null], ...],        # Output Schedule (MW, 0.1), only if the file
                               # has that column
-      "disp":   [[run, base point, hdl, ldl], ...],   # MW (0.1) when any changes: SCED's base
-                              # point for the run and the ramp-limited range (HDL, LDL) it had
-                              # to stay within.  null where the file has no value.  Files from
-                              # before format 4 lack this list.
+      "disp":   [[run, base point, hdl, ldl, as up, as down], ...],   # MW (0.1) when any
+                              # changes: SCED's base point for the run, the ramp-limited range
+                              # (HDL, LDL) it had to stay within, and the ancillary service
+                              # awarded in the run (up: Reg-Up, RRS, ECRS, Non-Spin; down:
+                              # Reg-Down), which takes energy room from that range.  null where
+                              # the file has no value.  Files from before format 4 lack this
+                              # list; format 4 files have only the first four values.
       "out": [24 x hourly mean Telemetered Net Output, 0.1 MW, or null],
       "bp":  [24 x hourly mean Base Point, 0.1 MW, or null]
                               # hourly means over the runs the unit is present in, any status
@@ -58,7 +61,7 @@ import pandas as pd
 from .curves import mw_at_prices
 
 FRAC_TECHS = ("wind", "solar")
-UNIT_FORMAT = 4      # bump when the day file gains something a reprocess of history should fill in
+UNIT_FORMAT = 5      # bump when the day file gains something a reprocess of history should fill in
 
 
 # ------------------------------------------------------------------ encoding --
@@ -104,7 +107,9 @@ def build_unit_day(date: str, run_sort: pd.DataFrame, rows: dict) -> dict:
     bp, out, hour = take("bp").astype(float), take("out").astype(float), take("hour").astype(int)
     hdl = take("hdl").astype(float) if rows.get("hdl") is not None else np.full(len(bp), np.nan)
     ldl = take("ldl").astype(float) if rows.get("ldl") is not None else np.full(len(bp), np.nan)
-    disp = np.round(np.column_stack([bp, hdl, ldl]), 1)
+    asup = take("asup").astype(float) if rows.get("asup") is not None else np.full(len(bp), np.nan)
+    asdn = take("asdn").astype(float) if rows.get("asdn") is not None else np.full(len(bp), np.nan)
+    disp = np.round(np.column_stack([bp, hdl, ldl, asup, asdn]), 1)
     oschd = None if rows.get("oschd") is None else np.round(take("oschd").astype(float), 1)
     P, M = take("tpo_p").astype(float), take("tpo_m").astype(float)
     valid = ~np.isnan(P) & ~np.isnan(M)
@@ -201,8 +206,9 @@ def expand(u: dict, n_runs: int) -> dict:
     res = {"status": status, "hsl": hsl, "lsl": lsl, "curve": curve}
     if u.get("disp"):
         di = _ffill_index(u["disp"], n_runs)
-        for j, k in enumerate(("bp", "hdl", "ldl"), 1):
-            res[k] = np.array([u["disp"][i][j] if i >= 0 and u["disp"][i][j] is not None else np.nan for i in di], float)
+        for j, k in enumerate(("bp", "hdl", "ldl", "asup", "asdn"), 1):
+            res[k] = np.array([u["disp"][i][j] if i >= 0 and j < len(u["disp"][i]) and u["disp"][i][j] is not None
+                               else np.nan for i in di], float)
     if "oschd" in u:
         oi = _ffill_index(u["oschd"], n_runs)
         res["oschd"] = np.array([u["oschd"][i][1] if i >= 0 and u["oschd"][i][1] is not None else np.nan
