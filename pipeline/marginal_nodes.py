@@ -101,8 +101,17 @@ def unit_runs(u: dict, n: int, hr: np.ndarray):
     tol_scale = 1
     if exact:
         di = _ffill_index(u["disp"], n)
-        bp, hdl, ldl = (np.array([u["disp"][i][j] if i >= 0 and u["disp"][i][j] is not None else np.nan for i in di], float)
-                        for j in (1, 2, 3))
+        bp, hdl, ldl, asup, asdn = (np.array([u["disp"][i][j] if i >= 0 and j < len(u["disp"][i]) and u["disp"][i][j] is not None
+                                              else np.nan for i in di], float) for j in (1, 2, 3, 4, 5))
+        # ancillary service awards hold back part of the dispatch range: a unit carrying them
+        # is at its energy limit before it reaches HDL / LDL (none recorded before format 5).
+        # Not for combustion turbines: on 15 test days netting brought coal and gas steam
+        # "below lambda" runs from 78% and 65% to about 90% within $5 of the node price, almost
+        # all of it from Non-Spin, but made turbines worse (at lambda 90% -> 81%), so their
+        # HDL apparently already allows for it.
+        if u.get("tech") != "combustion_turbine":
+            hdl = hdl - np.nan_to_num(asup)
+            ldl = ldl + np.nan_to_num(asdn)
     else:
         # the hourly mean base point stands in for every run, against the hour's mean limits
         # over the runs the unit was online (per-run limits against a mean base point would
@@ -174,7 +183,7 @@ def build_marginal_nodes(index: dict) -> None:
     node_days = set(index["days"].get("nodes", []))
     price_days = set(index["days"].get("prices", []))
     sp_of = settlement_points(index)
-    rows, has_nodes, exact_days = [], [], []
+    rows, has_nodes, exact_days, netted_days = [], [], [], []
     units = {}        # name -> [tech, sp, h_on, h_at, h_below, h_above, sum implied, sum node, n node, sum hsl]
     ever = {t: set() for t in TECHS}
     diffs, sample, n_seen = {0: [], 1: [], 2: []}, [], 0
@@ -190,6 +199,7 @@ def build_marginal_nodes(index: dict) -> None:
         has_nodes.append(bool(nodes))
         exact = bool(ud) and ud.get("format", 0) >= 4
         exact_days.append(exact)
+        netted_days.append(bool(ud) and ud.get("format", 0) >= 5)
         if not ud or not lam.get("value"):
             continue
         runs = ud["runs"]
@@ -262,7 +272,7 @@ def build_marginal_nodes(index: dict) -> None:
     valid = {**stats(diffs[0] + diffs[1] + diffs[2]), "by_class": {k: stats(diffs[i]) for i, k in enumerate(("at", "below", "above"))},
              "sample": sample}
     write_json_gz(DATA_DIR / "marginal_nodes.json.gz", {
-        "dates": dates, "exact": exact_days, "has_nodes": has_nodes, "band": BAND, "band_rel": BAND_REL, "tol": TOL, "tol_mw": TOL_MW,
+        "dates": dates, "exact": exact_days, "as_netted": netted_days, "has_nodes": has_nodes, "band": BAND, "band_rel": BAND_REL, "tol": TOL, "tol_mw": TOL_MW,
         "hours": {"columns": ["date", "hour", "lambda", "tech", "n_at", "n_below", "n_above", "mw_at", "mw_below", "mw_above"],
                   "rows": rows},
         "units": out_units, "valid": valid,
