@@ -25,7 +25,7 @@ jobs:
           ERCOT_API_USERNAME: ${{ secrets.ERCOT_API_USERNAME }}
           ERCOT_API_PASSWORD: ${{ secrets.ERCOT_API_PASSWORD }}
           ERCOT_API_SUBSCRIPTION_KEY: ${{ secrets.ERCOT_API_SUBSCRIPTION_KEY }}
-        run: python -m pipeline.as_test 2026-01-26 2026-07-22 2026-04-27 2026-06-06 2026-04-24 2026-07-21 2026-04-25 2026-03-16 2026-05-27 2026-07-23 2026-08-05 2026-08-07 2026-01-07 2025-12-16 2026-01-11
+        run: python -m pipeline.sced2_check
       - name: Commit results to the branch
         if: always()
         run: |
