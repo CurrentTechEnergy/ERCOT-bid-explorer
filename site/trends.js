@@ -60,7 +60,7 @@ const SIG_FMT = { le0: (v) => d3.format(".0%")(v), noff: (v) => d3.format(".0%")
 
 const S = { T: null, C: null, M: {}, floorMode: "floor_sced", hidden: { floor: new Set(), partial: new Set() },
   pqTech: "coal", capTech: "coal", scTech: "coal", scX: "week", mSrc: "60d", mView: "smooth", mDays: "all",
-  chgTech: "all", chgSig: "all", unit: null,
+  chgTech: "all", chgSig: "all", unit: null, mnMeasure: "units", mnDays: "all",
   I: null, UH: null, idx: null, summ60: null, cheapTech: "all", cheapThr: "0", shutTech: "combined_cycle", shutPrice: "any",
   heatMeasure: "offer", heatTech: "combined_cycle", heatThr: "0", heatScale: "zero",
   stTech: "all", stThr: "0", stSort: "off", stUnit: "mw", stBase: null, stripScale: null };
@@ -570,6 +570,112 @@ function drawMarginalSmooth(el, H, list, w, narrow) {
   el.replaceChildren(svg.node());
   setCSV(el, ["lambda_usd_mwh", "window_low", "window_high", ...list.map((s) => `${s.label} share of marginal supply`), "storage charging share of supply plus charging"],
     pts.map((d) => [d.p, d.lo, d.hi, ...d.sh, d.c]), "Marginal supply by settled price");
+}
+
+// ---- marginality at the node ---------------------------------------------------------
+const MN_TECHS = TECHS.filter((s) => s.id !== "other").concat([{ id: "other", keys: ["other", "hydro"], label: "Other (hydro, diesel, biomass)", color: "--c-other" }]);
+const MN_SPLIT = [
+  { id: "at", label: "At lambda (sets the system price)", color: "--c1" },
+  { id: "below", label: "Below lambda (behind an export constraint)", color: "--c4" },
+  { id: "above", label: "Above lambda (node dearer than the system)", color: "--c8" },
+];
+const mnHatchId = (t) => `mn-hatch-${t}`;
+function mnDefs(svg) {
+  const defs = svg.append("defs");
+  MN_TECHS.forEach((t) => defs.append("pattern").attr("id", mnHatchId(t.id)).attr("patternUnits", "userSpaceOnUse").attr("width", 6).attr("height", 6).attr("patternTransform", "rotate(45)")
+    .call((p) => { p.append("rect").attr("width", 6).attr("height", 6).attr("fill", css(t.color)).attr("opacity", 0.25); p.append("line").attr("x1", 0).attr("x2", 0).attr("y1", 0).attr("y2", 6).attr("stroke", css(t.color)).attr("stroke-width", 2.5); }));
+}
+function drawNodeMarginal() {
+  const D = S.MN, el = $("mn-hourly"), del = $("mn-daily"), uel = $("mn-units"), vel = $("mn-valid");
+  $("mn-legend").innerHTML = MN_TECHS.map((t) => `<span><span class="sw" style="background:var(${t.color})"></span>${t.label}</span>`).join("") +
+    `<span><span class="sw" style="background:var(--ink);opacity:.45"></span>below lambda</span><span><span class="sw" style="background:repeating-linear-gradient(45deg,var(--ink) 0 2px,transparent 2px 5px)"></span>above lambda</span>`;
+  staticLegend($("mn-split-legend"), MN_SPLIT);
+  if (!D || !D.hours.rows.length) { emptyMsg(el, "No node marginality data yet. It is built by the data update workflow."); del.innerHTML = uel.innerHTML = vel.innerHTML = ""; return; }
+  const ci = Object.fromEntries(D.hours.columns.map((c, i) => [c, i]));
+  const mw = S.mnMeasure === "mw", K = mw ? ["mw_at", "mw_below", "mw_above"] : ["n_at", "n_below", "n_above"];
+  let rows = D.hours.rows;
+  const last = D.dates.at(-1);
+  if (S.mnDays !== "all") {
+    const from = d3.timeFormat("%Y-%m-%d")(d3.timeDay.offset(parseDate(last), -(+S.mnDays - 1)));
+    rows = rows.filter((r) => r[ci.date] >= from);
+  }
+  const days = new Set(rows.map((r) => r[ci.date])), nDays = Math.max(1, days.size);
+  const tot = [0, 0, 0];
+  rows.forEach((r) => K.forEach((k, j) => { tot[j] += r[ci[k]] || 0; }));
+  const totAll = d3.sum(tot) || 1;
+  $("mn-note").textContent = `${nDays} days · ${d3.sum(rows, (r) => r[ci.n_at] + r[ci.n_below] + r[ci.n_above]).toLocaleString()} marginal unit-hours · ${fmtPct(tot[0] / totAll)} at lambda, ${fmtPct(tot[1] / totAll)} below, ${fmtPct(tot[2] / totAll)} above`;
+
+  // by hour of day: mean per day of each technology's marginal units (or base point MW), split at / below / above
+  const techOf = (t) => MN_TECHS.find((s) => s.keys.includes(t)) || MN_TECHS.at(-1);
+  const H = d3.range(24).map(() => Object.fromEntries(MN_TECHS.map((t) => [t.id, [0, 0, 0]])));
+  rows.forEach((r) => { const a = H[r[ci.hour]][techOf(r[ci.tech]).id]; K.forEach((k, j) => { a[j] += (r[ci[k]] || 0) / nDays; }); });
+  const w = Math.max(280, el.clientWidth || 600), narrow = w < 560, Hh = 300, m = { t: 18, r: 12, b: 34, l: 56 };
+  const x = d3.scaleBand().domain(d3.range(24)).range([m.l, w - m.r]).paddingInner(0.2);
+  const y = d3.scaleLinear().domain([0, Math.max(1, d3.max(H, (h) => d3.sum(MN_TECHS, (t) => d3.sum(h[t.id]))))]).nice().range([Hh - m.b, m.t]);
+  const svg = d3.create("svg").attr("viewBox", `0 0 ${w} ${Hh}`);
+  mnDefs(svg);
+  svg.append("g").attr("class", "gridline").attr("transform", `translate(${m.l},0)`).call(d3.axisLeft(y).ticks(5).tickSize(-(w - m.l - m.r)).tickFormat(""));
+  svg.append("g").attr("class", "axis").attr("transform", `translate(${m.l},0)`).call(d3.axisLeft(y).ticks(5).tickFormat(d3.format(",.0f")).tickSizeOuter(0));
+  svg.append("g").attr("class", "axis").attr("transform", `translate(0,${Hh - m.b})`).call(d3.axisBottom(x).tickValues(narrow ? d3.range(0, 24, 3) : d3.range(24)).tickFormat((h) => h + 1).tickSizeOuter(0));
+  svg.append("text").attr("class", "axis-title").attr("x", m.l).attr("y", 10).text(mw ? "Base point MW of the units on the margin, average day" : "Units on the margin, average day");
+  svg.append("text").attr("class", "axis-title").attr("x", w - m.r).attr("y", Hh - 2).attr("text-anchor", "end").text("Hour ending");
+  H.forEach((h, i) => {
+    const cx = x(i), bw = x.bandwidth();
+    let acc = 0;
+    MN_TECHS.forEach((t) => h[t.id].forEach((v, j) => {
+      if (v <= 0) return;
+      const r = svg.append("rect").attr("x", cx).attr("width", bw).attr("y", y(acc + v)).attr("height", Math.max(0, y(acc) - y(acc + v) - 0.5));
+      if (j === 2) r.attr("fill", `url(#${mnHatchId(t.id)})`); else r.attr("fill", css(t.color)).attr("opacity", j === 1 ? 0.45 : 1);
+      acc += v;
+    }));
+    svg.append("rect").attr("x", cx - 1).attr("width", bw + 2).attr("y", m.t).attr("height", Hh - m.t - m.b).attr("fill", "transparent")
+      .on("pointermove", (ev) => showTip(ev, `<h4>Hour ending ${i + 1}</h4><table><tr><th></th><th></th><th class="n">at</th><th class="n">below</th><th class="n">above</th></tr>` +
+        MN_TECHS.filter((t) => d3.sum(h[t.id]) > 0).map((t) => `<tr><td><span class="sw" style="background:var(${t.color})"></span></td><td>${t.label}</td>` + h[t.id].map((v) => `<td class="n">${mw ? fmtMW(v) : d3.format(".1f")(v)}</td>`).join("") + "</tr>").join("") + "</table>"))
+      .on("pointerleave", hideTip);
+  });
+  el.replaceChildren(svg.node());
+  setCSV(el, ["hour_ending", ...MN_TECHS.flatMap((t) => ["at", "below", "above"].map((k) => `${t.label} ${k} lambda`))], H.map((h, i) => [i + 1, ...MN_TECHS.flatMap((t) => h[t.id])]), "Marginality at the node by hour");
+
+  // daily split: share of marginal unit-hours (or MW) at, below and above lambda
+  const byDay = new Map();
+  rows.forEach((r) => { const a = byDay.get(r[ci.date]) || [0, 0, 0]; K.forEach((k, j) => { a[j] += r[ci[k]] || 0; }); byDay.set(r[ci.date], a); });
+  const dts = D.dates.filter((d) => byDay.has(d));
+  timeChart(del, MN_SPLIT.map((s, j) => ({ ...s, values: dts.map((d) => { const a = byDay.get(d), t = d3.sum(a.map(Math.abs)); return t ? Math.abs(a[j]) / t : null; }) })),
+    { dates: dts, stack: true, H: 200, yFmt: fmtPct, tipFmt: d3.format(".1%"), title: mw ? "Share of marginal base point MW by where the implied price sat" : "Share of marginal unit-hours by where the implied price sat" });
+
+  // units most often marginal away from lambda
+  const urows = D.units.map((r) => ({ unit: r[0], tech: r[1], sp: r[2], on: r[3], at: r[4], below: r[5], above: r[6], implied: r[7], node: r[8], nn: r[9], hsl: r[10] }));
+  const cols = [
+    { h: "Unit", t: true, f: (r) => esc(r.unit) }, { h: "Technology", t: true, f: (r) => techLabel(r.tech) }, { h: "Settlement point", t: true, f: (r) => esc(r.sp || "–") },
+    { h: "Mean HSL", f: (r) => fmtMW(r.hsl) }, { h: "Hours online", f: (r) => r.on.toLocaleString() }, { h: "Marginal at lambda", f: (r) => r.at.toLocaleString() },
+    { h: "Below lambda", f: (r) => r.below.toLocaleString() }, { h: "Above lambda", f: (r) => r.above.toLocaleString() },
+    { h: "Mean implied price", f: (r) => fmtPrice(r.implied) }, { h: "Mean node price, same hours", f: (r) => (r.nn ? fmtPrice(r.node) : "–") }, { h: "Hours with node price", f: (r) => r.nn },
+  ];
+  uel.innerHTML = `<p class="note">Units most often on the margin away from lambda, over all days.</p><table class="data"><thead><tr>${cols.map((c) => `<th${c.t ? ' class="t"' : ""}>${c.h}</th>`).join("")}</tr></thead><tbody>` +
+    urows.map((r) => `<tr>${cols.map((c) => `<td${c.t ? ' class="t"' : ""}>${c.f(r)}</td>`).join("")}</tr>`).join("") + "</tbody></table>";
+  setCSV(uel, ["unit", "technology", "settlement_point", "mean_hsl", "hours_online", "hours_at_lambda", "hours_below", "hours_above", "mean_implied_price", "mean_node_price", "hours_with_node_price"],
+    urows.map((r) => [r.unit, r.tech, r.sp, r.hsl, r.on, r.at, r.below, r.above, r.implied, r.node, r.nn]), "Units marginal away from lambda");
+
+  // implied price against the published node price
+  const V = D.valid;
+  if (!V || !V.n) { emptyMsg(vel, "No node prices yet to check the implied prices against."); return; }
+  const pts = V.sample, W = Math.max(280, vel.clientWidth || 600), VH = 360, vm = { t: 18, r: 16, b: 34, l: 56 };
+  const ext = d3.extent(pts.flatMap((p) => [p[0], p[1]]));
+  const sx = d3.scaleSymlog().constant(10).domain(ext).range([vm.l, W - vm.r]), sy = d3.scaleSymlog().constant(10).domain(ext).range([VH - vm.b, vm.t]);
+  const ticks = [-250, -50, -20, -5, 0, 5, 20, 50, 200, 1000, 5000].filter((t) => t >= ext[0] && t <= ext[1]);
+  const vs = d3.create("svg").attr("viewBox", `0 0 ${W} ${VH}`);
+  vs.append("g").attr("class", "gridline").attr("transform", `translate(${vm.l},0)`).call(d3.axisLeft(sy).tickValues(ticks).tickSize(-(W - vm.l - vm.r)).tickFormat(""));
+  vs.append("g").attr("class", "axis").attr("transform", `translate(${vm.l},0)`).call(d3.axisLeft(sy).tickValues(ticks).tickFormat(fmtPrice0).tickSizeOuter(0));
+  vs.append("g").attr("class", "axis").attr("transform", `translate(0,${VH - vm.b})`).call(d3.axisBottom(sx).tickValues(ticks).tickFormat(fmtPrice0).tickSizeOuter(0));
+  vs.append("line").attr("class", "zero").attr("x1", sx(ext[0])).attr("x2", sx(ext[1])).attr("y1", sy(ext[0])).attr("y2", sy(ext[1]));
+  const bc = V.by_class || {}, cls = (k, lb) => (bc[k] && bc[k].n ? `${lb}: ${bc[k].n.toLocaleString()} hours, ${fmtPct(bc[k].within5)} within $5` : null);
+  vs.append("text").attr("class", "axis-title").attr("x", vm.l).attr("y", 10).text(`Published node price ($/MWh) against the price implied by the unit's curve · ${V.n.toLocaleString()} marginal unit-hours with a node price · median gap ${fmtPrice(V.median_abs)} · ${fmtPct(V.within5)} within $5 · ` +
+    [cls("at", "at lambda"), cls("below", "below"), cls("above", "above")].filter(Boolean).join(" · "));
+  vs.append("text").attr("class", "axis-title").attr("x", W - vm.r).attr("y", VH - 2).attr("text-anchor", "end").text("Implied price from the offer curve ($/MWh, compressed scale)");
+  vs.append("g").selectAll("circle").data(pts).join("circle").attr("cx", (p) => sx(p[0])).attr("cy", (p) => sy(p[1])).attr("r", 2.5).attr("fill", (p) => css(techOf(p[2]).color)).attr("opacity", 0.45)
+    .on("pointermove", (ev, p) => showTip(ev, `<h4>${techOf(p[2]).label}</h4>implied ${fmtPrice(p[0])} · node ${fmtPrice(p[1])}${p.length > 3 ? ` · lambda ${fmtPrice(p[3])} · ${MN_SPLIT[p[4]].label.split(" (")[0].toLowerCase()}` : ""}`)).on("pointerleave", hideTip);
+  vel.replaceChildren(vs.node());
+  setCSV(vel, ["implied_price", "node_price", "technology", "lambda", "class"], pts.map((p) => [p[0], p[1], p[2], p[3], p[4] == null ? "" : ["at", "below", "above"][p[4]]]), "Implied against node price");
 }
 
 // ---- bidding-approach changes -----------------------------------------------------
@@ -1144,24 +1250,25 @@ async function drawHeat() {
 }
 
 // ---- links ------------------------------------------------------------------------
-const VIEW_KEYS = { stu: "stUnit", stt: "stTech", stp: "stThr", sts: "stSort", cht: "cheapTech", chthr: "cheapThr", sht: "shutTech", shp: "shutPrice", hm: "heatMeasure", ht: "heatTech", hthr: "heatThr", hs: "heatScale", f: "floorMode", pq: "pqTech", cap: "capTech", sc: "scTech", scx: "scX", ms: "mSrc", mv: "mView", md: "mDays", ct: "chgTech", cs: "chgSig", unit: "unit" };
+const VIEW_KEYS = { stu: "stUnit", stt: "stTech", stp: "stThr", sts: "stSort", cht: "cheapTech", chthr: "cheapThr", sht: "shutTech", shp: "shutPrice", hm: "heatMeasure", ht: "heatTech", hthr: "heatThr", hs: "heatScale", f: "floorMode", pq: "pqTech", cap: "capTech", sc: "scTech", scx: "scX", ms: "mSrc", mv: "mView", md: "mDays", mnm: "mnMeasure", mnd: "mnDays", ct: "chgTech", cs: "chgSig", unit: "unit" };
 function saveView() { window.CX.writeHash(Object.fromEntries(Object.entries(VIEW_KEYS).map(([k, sk]) => [k, S[sk]]))); }
 function loadView() { const v = window.CX.readHash(); Object.entries(VIEW_KEYS).forEach(([k, sk]) => { if (v[k] != null) S[sk] = v[k]; }); }
 
 // ---- boot ---------------------------------------------------------------------------
-function drawAll() { drawFloor(); drawRenewBands(); drawCurtailment(); drawNodeCurtail(); drawPriceQuantiles(); drawGas(); drawCapacity(); drawScatter(); drawPartial(); drawCheap(); drawShut(); drawStretch(); if (heatSeen) drawHeat(); drawMarginal(); drawChanges(); }
+function drawAll() { drawFloor(); drawRenewBands(); drawCurtailment(); drawNodeCurtail(); drawPriceQuantiles(); drawGas(); drawCapacity(); drawScatter(); drawPartial(); drawCheap(); drawShut(); drawStretch(); if (heatSeen) drawHeat(); drawMarginal(); drawNodeMarginal(); drawChanges(); }
 let heatSeen = false;
 
 async function boot() {
-  [S.T, S.C, S.I, S.N, S.G] = await Promise.all([tryJSON("data/trends_60d.json.gz"), tryJSON("data/curve_trends.json.gz"), tryJSON("data/intraday_60d.json.gz"),
-    tryJSON("data/curtail_nodes.json.gz"), tryJSON("data/gas.json.gz")]);
+  [S.T, S.C, S.I, S.N, S.G, S.MN] = await Promise.all([tryJSON("data/trends_60d.json.gz"), tryJSON("data/curve_trends.json.gz"), tryJSON("data/intraday_60d.json.gz"),
+    tryJSON("data/curtail_nodes.json.gz"), tryJSON("data/gas.json.gz"), tryJSON("data/marginal_nodes.json.gz")]);
   if (!S.T) { $("status").textContent = "No trends data yet. It is built by the data update workflow."; return; }
   const D = S.T.dates;
   $("status").textContent = `60-day data: ${D.length} days, ${D[0]} to ${D[D.length - 1]} · ${S.T.units.length} thermal units` +
     (S.C ? ` · wind and solar offers through ${S.C.rs.dates.at(-1)}` : "");
   loadView();
   const thermal = TECHS.filter((s) => THERMAL.includes(s.id));
-  [["floor-mode", "floorMode", drawFloor], ["sc-x", "scX", drawScatter], ["mbp-src", "mSrc", drawMarginal], ["mbp-view", "mView", drawMarginal], ["mbp-days", "mDays", drawMarginal]]
+  [["floor-mode", "floorMode", drawFloor], ["sc-x", "scX", drawScatter], ["mbp-src", "mSrc", drawMarginal], ["mbp-view", "mView", drawMarginal], ["mbp-days", "mDays", drawMarginal],
+   ["mn-measure", "mnMeasure", drawNodeMarginal], ["mn-days", "mnDays", drawNodeMarginal]]
     .forEach(([id, key, fn]) => { setSeg(id, S[key]); bindSeg(id, key, fn); });
   legend($("floor-legend"), FLOOR_TECHS, S.hidden.floor, drawFloor);
   legend($("partial-legend"), thermal, S.hidden.partial, drawPartial);

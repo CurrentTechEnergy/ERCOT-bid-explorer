@@ -26,13 +26,14 @@ from .parse_2day import parse_2day_zip
 from .parse_2day_gen import is_gen_summary, parse_2day_gen_zip
 from .parse_60day import parse_60day_zip, OVERRIDE_STATS, OVERRIDES_FORMAT
 from .parse_dam import parse_dam_zip, has_dam_gen
-from .parse_prices import build_price_day, node_prices, read_lambda, read_spp
+from .parse_prices import NODE_FORMAT, build_price_day, node_prices, read_lambda, read_spp
 from .marginal import build_marginal
 from .trends import build_trends
 from .intraday import build_intraday
 from .stayon import build_stayon
 from .curve_trends import build_curve_trends
 from .nodes import build_node_curtail
+from .marginal_nodes import build_marginal_nodes
 from .gas import fetch_gas
 from .econ import build_econ
 from .store import describe_blob, iter_csvs, zip_names, load_index, read_json_gz, save_index, update_summary, write_json_gz
@@ -136,7 +137,8 @@ def process_price_blobs(blobs, dates, index: dict):
         nodes = node_prices(date, spp)
         if nodes:                 # resource-node prices: data branch, not the site
             write_json_gz(UNIT_DATA_DIR / "nodes" / f"{date}.json.gz", nodes)
-            index["days"].setdefault("nodes", []).append(date)
+            if date not in index["days"].setdefault("nodes", []):
+                index["days"]["nodes"].append(date)
         if date in index["days"]["prices"] and not lam_csvs:
             done.append(date)     # node-only refetch of a day whose hub prices are already in
             continue
@@ -276,9 +278,11 @@ def reprocess_60d(api, index: dict, mode: str = "missing", limit=None):
 def fetch_prices(api, dates, index: dict, node_dates=(), node_limit=NODE_DAYS_PER_RUN):
     """Hub, load-zone and system lambda prices for `dates` not yet loaded; and resource-node
     prices (settlement point report only) for up to node_limit of `node_dates` that have hub
-    prices but no node file yet, so node prices backfill a few days per run."""
+    prices but no current node file yet, so node prices backfill a few days per run."""
     have = set(index["days"]["prices"])
-    have_nodes = set(index["days"].get("nodes", []))
+    # a node file from before NODE_FORMAT (resource nodes of type "RN" only) counts as missing
+    have_nodes = {d for d in index["days"].get("nodes", [])
+                  if (read_json_gz(UNIT_DATA_DIR / "nodes" / f"{d}.json.gz") or {}).get("format") == NODE_FORMAT}
     misses = index.setdefault("price_misses", {})
     todo = [(date, (EMIL_LAMBDA, EMIL_SPP)) for date in sorted(set(dates) - have)]
     node_only = sorted((set(node_dates) & have) - have_nodes, reverse=True)[:node_limit]
@@ -357,6 +361,7 @@ def main(argv=None):
         build_stayon(index)
         build_curve_trends(index)
         build_node_curtail(index)
+        build_marginal_nodes(index)
         build_econ(index)
         save_index(index)
         return
@@ -403,6 +408,7 @@ def main(argv=None):
     build_stayon(index)
     build_curve_trends(index)
     build_node_curtail(index)
+    build_marginal_nodes(index)
     build_econ(index)
     save_index(index)
     added = {k: sorted(set(index["days"][k]) - before.get(k, set())) for k in index["days"]}

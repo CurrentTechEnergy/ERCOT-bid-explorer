@@ -271,6 +271,32 @@
   <section class="panel panel-wide">
     <div class="panel-head">
       <div>
+        <h2>Marginality at the node <span class="h-note" id="mn-note"></span></h2>
+        <p class="note">Which units SCED dispatched to the interior of their own offer curve, hour by hour: not pinned at a limit or on a vertical step, so the curve's price at their base point is the price SCED saw at their node. <b>At lambda</b> means that implied price lies within the hour's range of system lambda (plus $2 either side): the unit is setting the system price. <b>Below lambda</b> means the unit sits behind an export constraint, where its node is cheaper than the system (wind and solar offering at negative prices are the usual case). <b>Above lambda</b> means its node is dearer than the system. Base points are hourly means, so a unit swinging between its limits, or held by its ramp rate, can read as marginal; the last chart checks the implied price against ERCOT's published node price on the days that have one. Storage is left out, as a battery's hourly mean base point says nothing about its margin.</p>
+      </div>
+      <div class="panel-tools">
+        <div class="seg seg-sm" id="mn-measure" role="radiogroup" aria-label="Measure">
+          <button type="button" data-v="units" role="radio">Units</button>
+          <button type="button" data-v="mw" role="radio">Base point MW</button>
+        </div>
+        <div class="seg seg-sm" id="mn-days" role="radiogroup" aria-label="Days">
+          <button type="button" data-v="all" role="radio">All days</button>
+          <button type="button" data-v="90" role="radio">Last 90</button>
+          <button type="button" data-v="30" role="radio">Last 30</button>
+        </div>
+      </div>
+    </div>
+    <div class="legend legend-static" id="mn-legend"></div>
+    <div class="chart" id="mn-hourly"></div>
+    <div class="legend legend-static" id="mn-split-legend"></div>
+    <div class="chart" id="mn-daily"></div>
+    <div class="units-wrap" id="mn-units"></div>
+    <div class="chart" id="mn-valid"></div>
+  </section>
+
+  <section class="panel panel-wide">
+    <div class="panel-head">
+      <div>
         <h2>Changes in bidding approach</h2>
         <p class="note" id="chg-note"></p>
       </div>

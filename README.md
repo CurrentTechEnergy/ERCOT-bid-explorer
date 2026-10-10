@@ -83,6 +83,8 @@ pipeline/
                    resource-node prices (data branch nodes/)
   nodes.py         per-unit day files + node prices + DAM settlement points -> wind and solar
                    curtailment priced at each unit's node, split congestion / oversupply (no downloads)
+  marginal_nodes.py per-unit day files -> units on the interior of their offer curve, the
+                   price that implies, and how it sits against lambda (no downloads)
   gas.py           EIA API -> Henry Hub daily spot price (data/gas.json.gz)
   econ.py          per-unit day files + node prices + DAM awards and offers -> daily revenue and
                    offer-implied cost per unit (data/econ/<tech>.json.gz, no downloads)
@@ -97,7 +99,7 @@ pipeline/
 site/
   index.html, app.js, trends.html, trends.js, economics.html, economics.js, style.css, vendor/d3.min.js
   data/            generated: index.json, summary_*.json.gz, marginal_*.json.gz, 2d/, 60d/, dam/, prices/,
-                   curtail_nodes.json.gz, gas.json.gz
+                   curtail_nodes.json.gz, marginal_nodes.json.gz, gas.json.gz
 ```
 
 ### Day-ahead offers and costs
@@ -109,6 +111,12 @@ site/
 ### Curtailment at the node
 
 `pipeline/nodes.py` prices every curtailed wind and solar unit-hour (hourly HSL minus base point, from the per-unit day files) at the unit's own resource node. Units are matched to settlement points through the DAM disclosure, since the SCED file carries none. Curtailment in an hour where ERCOT's "HDL and LDL Manual Override Summary" (part of the same 60-day zip) shows an operator lowering the unit's HDL counts as **operator-directed**, up to that reduction; the rest counts as **congestion** when the node price is at least $5/MWh below system lambda (the energy was worth less where the unit sits) and as **oversupply** otherwise (the system as a whole did not want it at the unit's offer). The split is by price, so it describes what the energy was worth at the node, not which constraint SCED was managing. Node prices are fetched a few days per run for days that have per-unit data, newest first, so the split fills in over several runs (or at once with a backfill run).
+
+### Marginality at the node
+
+`pipeline/marginal_nodes.py` finds, for every unit and hour, whether SCED dispatched it to the interior of its own submitted offer curve: base point strictly between its limits (LSL, HSL, the curve's first and last MW) on a segment with some width rather than a vertical step. The curve's price at that base point is the price SCED saw at the unit's node, so each marginal unit-hour carries an implied LMP. Against the hour's range of system lambda (widened $2 each side) the unit is **at lambda** (setting the system price), **below** (behind an export constraint; wind and solar at negative prices are the usual case) or **above** (its node dearer than the system). Base points are hourly means, so a unit swinging between its limits or held by its ramp rate can read as marginal; the dashboard checks the implied prices against the published node prices for the days that have them. Storage is left out, since a battery's hourly mean base point says nothing about where it sat on its curve.
+
+Node prices now keep every settlement point that is not a hub or load zone (ERCOT files combined-cycle trains under a type other than `RN`), and node files carry a format number so earlier ones are refetched a few days per run.
 
 ### Plant economics
 
