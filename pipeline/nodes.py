@@ -39,6 +39,7 @@ import numpy as np
 
 from .config import DATA_DIR, UNIT_DATA_DIR
 from .intraday import _online
+from .parse_prices import node_hourly
 from .store import read_json_gz, write_json_gz
 from .units import _ffill_index
 
@@ -98,7 +99,7 @@ def build_node_curtail(index: dict) -> None:
 
     for d in dates:
         ud = read_json_gz(UNIT_DATA_DIR / "60d" / f"{d}.json.gz")
-        nodes = (read_json_gz(UNIT_DATA_DIR / "nodes" / f"{d}.json.gz") or {}).get("points") if d in node_days else None
+        nodes = node_hourly(read_json_gz(UNIT_DATA_DIR / "nodes" / f"{d}.json.gz")) if d in node_days else None
         has_nodes.append(bool(nodes))
         has_overrides.append(bool(ud) and "overrides" in ud)
         overrides = (ud or {}).get("overrides") or {}

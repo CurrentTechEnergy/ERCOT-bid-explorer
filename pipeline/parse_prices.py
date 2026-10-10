@@ -4,6 +4,8 @@ on the data branch.  Both reports are posted as many small files per day."""
 import io
 from typing import Dict, Iterable, Tuple
 
+import warnings
+
 import numpy as np
 import pandas as pd
 
@@ -59,7 +61,7 @@ def read_lambda(csvs: Iterable[Tuple[str, bytes]]) -> pd.DataFrame:
 
 
 SEEN_TYPES = set()          # settlement point types met this run beyond the known ones
-NODE_FORMAT = 2             # bump when the node files change (update.py refetches older ones)
+NODE_FORMAT = 3             # bump when the node files change (update.py refetches older ones)
 
 
 def read_spp(csvs: Iterable[Tuple[str, bytes]]) -> pd.DataFrame:
@@ -94,20 +96,35 @@ def read_spp(csvs: Iterable[Tuple[str, bytes]]) -> pd.DataFrame:
 
 
 def node_prices(date: str, spp: pd.DataFrame):
-    """Hourly mean price at every settlement point that is not a hub or load zone on one day
+    """15-minute price at every settlement point that is not a hub or load zone on one day
     (resource nodes of every type: ERCOT files combined-cycle trains and some others under
     types other than "RN"), or None when the day has none:
-    {"date", "format", "points": {node: [24 x $/MWh or null]}, "types": {type: n points}}.
-    Hourly means are enough for the curtailment and revenue figures; the 15-minute detail
-    stays in ERCOT's report."""
+    {"date", "format", "points": {node: [96 x $/MWh or null]}, "types": {type: n points}}.
+    node_hourly() below gives the hourly means the curtailment and revenue figures use."""
     g = spp[(spp["date"] == date) & ~spp["type"].isin(PRICE_POINT_TYPES)]
     if g.empty:
         return None
-    he = g["he"].astype(int).clip(1, 24) - 1
-    q = g.assign(he=he.values).groupby(["point", "he"])["price"].mean().unstack("he").reindex(columns=range(24))
+    iv = (g["he"].astype(int).clip(1, 24) - 1) * 4 + (g["interval"].astype(int).clip(1, 4) - 1)
+    q = g.assign(iv=iv.values).groupby(["point", "iv"])["price"].mean().unstack("iv").reindex(columns=range(96))
     types = g.drop_duplicates("point")["type"].value_counts().to_dict()
     return {"date": date, "format": NODE_FORMAT, "points": {name: _r2(row.values) for name, row in q.iterrows()},
             "types": {str(k): int(v) for k, v in types.items()}}
+
+
+def node_hourly(nodes) -> dict:
+    """{node: [24 hourly mean prices or null]} from a node file of any format (24 or 96 values
+    per point); {} when there is none."""
+    out = {}
+    for name, vals in ((nodes or {}).get("points") or {}).items():
+        if len(vals) == 96:
+            a = np.array([np.nan if v is None else v for v in vals], float).reshape(24, 4)
+            with warnings.catch_warnings():
+                warnings.simplefilter("ignore", RuntimeWarning)
+                m = np.nanmean(a, axis=1)
+            out[name] = [None if np.isnan(v) else round(float(v), 2) for v in m]
+        else:
+            out[name] = vals
+    return out
 
 
 def build_price_day(date: str, lam: pd.DataFrame, spp: pd.DataFrame):
