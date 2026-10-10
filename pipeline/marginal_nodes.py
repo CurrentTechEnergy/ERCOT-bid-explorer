@@ -104,9 +104,14 @@ def unit_runs(u: dict, n: int, hr: np.ndarray):
         bp, hdl, ldl, asup, asdn = (np.array([u["disp"][i][j] if i >= 0 and j < len(u["disp"][i]) and u["disp"][i][j] is not None
                                               else np.nan for i in di], float) for j in (1, 2, 3, 4, 5))
         # ancillary service awards hold back part of the dispatch range: a unit carrying them
-        # is at its energy limit before it reaches HDL / LDL (none recorded before format 5)
-        hdl = hdl - np.nan_to_num(asup)
-        ldl = ldl + np.nan_to_num(asdn)
+        # is at its energy limit before it reaches HDL / LDL (none recorded before format 5).
+        # Not for combustion turbines: on 15 test days netting brought coal and gas steam
+        # "below lambda" runs from 78% and 65% to about 90% within $5 of the node price, almost
+        # all of it from Non-Spin, but made turbines worse (at lambda 90% -> 81%), so their
+        # HDL apparently already allows for it.
+        if u.get("tech") != "combustion_turbine":
+            hdl = hdl - np.nan_to_num(asup)
+            ldl = ldl + np.nan_to_num(asdn)
     else:
         # the hourly mean base point stands in for every run, against the hour's mean limits
         # over the runs the unit was online (per-run limits against a mean base point would
