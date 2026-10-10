@@ -604,7 +604,8 @@ function drawNodeMarginal() {
   rows.forEach((r) => K.forEach((k, j) => { tot[j] += r[ci[k]] || 0; }));
   const totAll = d3.sum(tot) || 1;
   const nExact = (D.exact || []).filter((e, i) => e && days.has(D.dates[i])).length;
-  $("mn-note").textContent = `${nDays} days (${nExact} with per-run base points) · ${fmtMW(d3.sum(rows, (r) => r[ci.n_at] + r[ci.n_below] + r[ci.n_above]))} marginal unit-hours · ${fmtPct(tot[0] / totAll)} at lambda, ${fmtPct(tot[1] / totAll)} below, ${fmtPct(tot[2] / totAll)} above`;
+  const nNet = (D.as_netted || []).filter((e, i) => e && days.has(D.dates[i])).length;
+  $("mn-note").textContent = `${nDays} days (${nExact} with per-run base points, ${nNet} net of ancillary service awards) · ${fmtMW(d3.sum(rows, (r) => r[ci.n_at] + r[ci.n_below] + r[ci.n_above]))} marginal unit-hours · ${fmtPct(tot[0] / totAll)} at lambda, ${fmtPct(tot[1] / totAll)} below, ${fmtPct(tot[2] / totAll)} above`;
 
   // by hour of day: mean per day of each technology's marginal units (or base point MW), split at / below / above
   const techOf = (t) => MN_TECHS.find((s) => s.keys.includes(t)) || MN_TECHS.at(-1);

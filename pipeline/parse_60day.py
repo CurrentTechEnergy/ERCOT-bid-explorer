@@ -40,6 +40,15 @@ I_ZERO = int(np.searchsorted(PRICE_GRID, 0))
 TECH_INDEX = {t: i for i, t in enumerate(SIXTY_DAY_TECHS)}
 
 
+def _as_awards(df: pd.DataFrame, up: bool) -> np.ndarray:
+    """Per row, the MW of ancillary service awarded in the run: every "AS Awards ..." column
+    but REGDN (up), or REGDN (down).  NaN when the file has no award columns."""
+    cols = [c for c in df.columns if c.startswith("AS Awards") and (("REGDN" in c) != up)]
+    if not cols:
+        return np.full(len(df), np.nan)
+    return np.nansum(np.column_stack([pd.to_numeric(df[c], errors="coerce").values for c in cols]), axis=1)
+
+
 def _cols(header, prefix, n_max=60):
     mw, pr = [], []
     for i in range(1, n_max + 1):
@@ -131,6 +140,7 @@ class _Accumulator:
             "bp": df["Base Point"].astype(float).values, "out": df["Telemetered Net Output"].astype(float).values,
             "hdl": df["HDL"].astype(float).values if "HDL" in header else np.full(n, np.nan),
             "ldl": df["LDL"].astype(float).values if "LDL" in header else np.full(n, np.nan),
+            "asup": _as_awards(df, up=True), "asdn": _as_awards(df, up=False),
             "hour": hour, "oschd": os_raw if has_os else None,
             "tpo_p": tp if tp.shape[1] else np.full((n, 1), np.nan),
             "tpo_m": df[t_mw].astype(float).values if t_mw else np.full((n, 1), np.nan),
@@ -192,7 +202,7 @@ class _Accumulator:
             return a if a.shape[1] == width else np.hstack([a, np.full((len(a), width - a.shape[1]), np.nan)])
 
         rows = {}
-        for name in ("run", "unit", "type", "tech", "status", "hsl", "lsl", "bp", "out", "hdl", "ldl", "hour"):
+        for name in ("run", "unit", "type", "tech", "status", "hsl", "lsl", "bp", "out", "hdl", "ldl", "asup", "asdn", "hour"):
             rows[name] = np.concatenate([c[name] for c in self.unit_cols])
         rows["tpo_p"] = np.vstack([pad(c["tpo_p"]) for c in self.unit_cols])
         rows["tpo_m"] = np.vstack([pad(c["tpo_m"]) for c in self.unit_cols])
