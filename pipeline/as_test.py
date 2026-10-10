@@ -34,9 +34,9 @@ def is_down(c):
     return "regdn" in n or "regdown" in n or "down" in n
 
 
-def tpo(df):
-    mw = [c for c in df.columns if re.fullmatch(r"Submitted TPO-MW\d+", c)]
-    pr = [c.replace("MW", "Price") for c in mw]
+def tpo(df, prefix="Submitted TPO"):
+    mw = [c for c in df.columns if re.fullmatch(re.escape(prefix) + r"-MW\d+", c)]
+    pr = [c.replace("-MW", "-Price") for c in mw]
     return df[pr].astype(float).values, df[mw].astype(float).values
 
 
@@ -107,6 +107,31 @@ def main(days):
         b = np.array([band(x) if np.isfinite(x) else np.nan for x in l])
         cls = np.where(np.abs(price - l) <= b, "at", np.where(price < l, "below", "above"))
         gap = node - price
+        # the same, priced off the SCED1 curve (submitted, then extended / truncated by ERCOT)
+        P1, M1 = tpo(df, "SCED1 Curve")
+        price1, interior1 = price_at(P1, M1, bp)
+        net1 = net & interior1
+        cls1 = np.where(np.abs(price1 - l) <= b, "at", np.where(price1 < l, "below", "above"))
+        g1 = node - price1
+        for t, c, g in zip(tech[net1], cls1[net1], g1[net1]):
+            for key in ((t, c, "net_of_AS_sced1_curve"), ("ALL", c, "net_of_AS_sced1_curve")):
+                r = counts[key]
+                r[0] += 1
+                r[1] += abs(g) <= 5
+                r[2] += g > 5
+        # batteries: where the state of charge sits in its range
+        soc, smin, smax = f("State of Charge"), f("Minimum SOC"), f("Maximum SOC")
+        with np.errstate(invalid="ignore", divide="ignore"):
+            pos = (soc - smin) / (smax - smin)
+        bucket = np.where(pos < 0.1, "soc<10%", np.where(pos > 0.9, "soc>90%", "soc10-90%"))
+        bucket = np.where(np.isfinite(pos), bucket, "soc?")
+        direction = np.where(bp > 0, "dis", "chg")
+        m = net & (tech == "storage")
+        for c, bk, dr, g in zip(cls[m], bucket[m], direction[m], gap[m]):
+            r = counts[("storage_" + dr + "_" + bk, c, "net_of_AS")]
+            r[0] += 1
+            r[1] += abs(g) <= 5
+            r[2] += g > 5
         for kind, mask in (("all_marginal", base), ("still_marginal_net_of_AS", net), ("at_AS_limit", base & ~net)):
             for t, c, g in zip(tech[mask], cls[mask], gap[mask]):
                 for key in ((t, c, kind), ("ALL", c, kind)):
