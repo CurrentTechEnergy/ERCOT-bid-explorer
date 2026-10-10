@@ -1,0 +1,95 @@
+{
+ "date": "2026-04-27",
+ "format": 5,
+ "disp_lengths": {
+  "6": 214215
+ },
+ "disp_events_with_as_up": 38060,
+ "events": 652956,
+ "score": {
+  "coal|above": [
+   8,
+   1.0
+  ],
+  "coal|at": [
+   41,
+   1.0
+  ],
+  "coal|below": [
+   50,
+   0.96
+  ],
+  "combined_cycle|above": [
+   176,
+   0.858
+  ],
+  "combined_cycle|at": [
+   440,
+   0.966
+  ],
+  "combined_cycle|below": [
+   1515,
+   0.694
+  ],
+  "combustion_turbine|above": [
+   34,
+   0.706
+  ],
+  "combustion_turbine|at": [
+   49,
+   0.367
+  ],
+  "combustion_turbine|below": [
+   807,
+   0.44
+  ],
+  "gas_steam|above": [
+   87,
+   0.736
+  ],
+  "gas_steam|at": [
+   42,
+   0.952
+  ],
+  "gas_steam|below": [
+   333,
+   0.336
+  ],
+  "other|above": [
+   25,
+   1.0
+  ],
+  "other|at": [
+   21,
+   1.0
+  ],
+  "other|below": [
+   40,
+   0.575
+  ],
+  "solar|above": [
+   6,
+   0.0
+  ],
+  "solar|below": [
+   694,
+   0.829
+  ],
+  "storage|above": [
+   1447,
+   0.531
+  ],
+  "storage|at": [
+   934,
+   0.454
+  ],
+  "storage|below": [
+   5803,
+   0.234
+  ],
+  "wind|below": [
+   968,
+   0.822
+  ]
+ }
+}
