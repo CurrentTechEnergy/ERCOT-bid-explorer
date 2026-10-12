@@ -340,21 +340,30 @@ function drawGas() {
   const gasOn = {};
   const all = [...new Set([...G.dates, ...T.dates])].sort();
   all.forEach((d) => { if (gasBy.has(d)) last = gasBy.get(d); gasOn[d] = last; });
-  // median over the technology's units of each unit's first offer price above $0, which skips
-  // minimum output and other blocks priced at or below $0; blank when few units have a price
-  const HR_MIN_UNITS = 10;
+  // Each unit's first offer price above $0 (skips minimum output and other blocks priced at or
+  // below $0) divided by gas on the day it offered. On each day a unit uses its latest value
+  // from the last HR_CARRY_DAYS, so the median covers the fleet, not just the units that ran
+  // that day. Blank when fewer than HR_MIN_UNITS units have a value.
+  const HR_MIN_UNITS = 10, HR_CARRY_DAYS = 14, DAY_MS = 864e5;
+  const t0 = T.dates.map((d) => parseDate(d).getTime());
   const hr = (t) => {
     const us = T.units.filter((u) => u.tech === t);
+    const lastHr = us.map(() => null), lastT = us.map(() => -Infinity);
     return T.dates.map((d, i) => {
-      const v = us.map((u) => u.first[i]).filter((x) => x != null);
-      const g = gasOn[d];
-      return v.length >= HR_MIN_UNITS && g > 0 ? d3.median(v) / g : null;
+      const v = [];
+      us.forEach((u, k) => {
+        const p = u.first[i], g = gasOn[d];
+        if (p != null && g > 0) { lastHr[k] = p / g; lastT[k] = t0[i]; }
+        if (lastHr[k] != null && t0[i] - lastT[k] <= HR_CARRY_DAYS * DAY_MS) v.push(lastHr[k]);
+      });
+      return v.length >= HR_MIN_UNITS ? d3.median(v) : null;
     });
   };
   timeChart(hel, [
-    { label: "Combined cycle, median first offer above $0 ÷ gas", color: "--c1", values: hr("combined_cycle") },
-    { label: "Combustion turbine, median first offer above $0 ÷ gas", color: "--c2", values: hr("combustion_turbine") },
-  ], { dates: T.dates, H: 220, title: "Implied heat rate of the median unit's first offer price above $0 (MMBtu per MWh)", yFmt: d3.format(",.1f"), tipFmt: d3.format(",.2f"), yTicks: [0, 5, 7, 10, 15, 20] });
+    { label: "Combined cycle", color: "--c1", values: hr("combined_cycle") },
+    { label: "Combustion turbine", color: "--c2", values: hr("combustion_turbine") },
+    { label: "Gas steam", color: "--c6", values: hr("gas_steam") },
+  ], { dates: T.dates, H: 220, title: "Implied heat rate: median unit's first offer price above $0 ÷ gas (MMBtu per MWh)", yFmt: d3.format(",.1f"), tipFmt: d3.format(",.2f"), yTicks: [0, 5, 7, 10, 15, 20] });
 }
 
 function drawPriceQuantiles() {
