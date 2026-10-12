@@ -356,19 +356,38 @@ function drawGas() {
   $("gas-note").textContent = `${G.name || "Henry Hub"} · through ${G.dates.at(-1)}`;
   timeChart(el, [{ label: "Henry Hub spot ($/MMBtu)", color: "--c1", values: G.value }],
     { dates: G.dates, H: 220, title: "Henry Hub natural gas spot price ($/MMBtu)", yFmt: d3.format("$,.2f"), tipFmt: d3.format("$,.2f") });
-  const pq = S.C && S.C.pq;
-  if (!pq) { hel.innerHTML = ""; return; }
-  // gas price on each curve day: the last trading day on or before it
+  const T = S.T;
+  if (!T || !T.units) { hel.innerHTML = ""; return; }
+  // gas price on each trend day: the last trading day on or before it
   const gasBy = new Map(G.dates.map((d, i) => [d, G.value[i]]));
   let last = null;
   const gasOn = {};
-  const all = [...new Set([...G.dates, ...pq.dates])].sort();
+  const all = [...new Set([...G.dates, ...T.dates])].sort();
   all.forEach((d) => { if (gasBy.has(d)) last = gasBy.get(d); gasOn[d] = last; });
-  const hr = (t) => pq.dates.map((d, i) => { const p = pq[t] && pq[t].p50[i], g = gasOn[d]; return p != null && g > 0 ? p / g : null; });
+  // Each unit's first offer price above $0 (skips minimum output and other blocks priced at or
+  // below $0) divided by gas on the day it offered. On each day a unit uses its latest value
+  // from the last HR_CARRY_DAYS, so the median covers the fleet, not just the units that ran
+  // that day. Blank when fewer than HR_MIN_UNITS units have a value.
+  const HR_MIN_UNITS = 10, HR_CARRY_DAYS = 14, DAY_MS = 864e5;
+  const t0 = T.dates.map((d) => parseDate(d).getTime());
+  const hr = (t) => {
+    const us = T.units.filter((u) => u.tech === t);
+    const lastHr = us.map(() => null), lastT = us.map(() => -Infinity);
+    return T.dates.map((d, i) => {
+      const v = [];
+      us.forEach((u, k) => {
+        const p = u.first[i], g = gasOn[d];
+        if (p != null && g > 0) { lastHr[k] = p / g; lastT[k] = t0[i]; }
+        if (lastHr[k] != null && t0[i] - lastT[k] <= HR_CARRY_DAYS * DAY_MS) v.push(lastHr[k]);
+      });
+      return v.length >= HR_MIN_UNITS ? d3.median(v) : null;
+    });
+  };
   timeChart(hel, [
-    { label: "Combined cycle, median offer ÷ gas", color: "--c1", values: hr("combined_cycle") },
-    { label: "Combustion turbine, median offer ÷ gas", color: "--c2", values: hr("combustion_turbine") },
-  ], { dates: pq.dates, H: 220, title: "Implied heat rate of the median submitted offer (MMBtu per MWh)", yFmt: d3.format(",.1f"), tipFmt: d3.format(",.2f"), yTicks: [0, 5, 7, 10, 15, 20] });
+    { label: "Combined cycle", color: "--c1", values: hr("combined_cycle") },
+    { label: "Combustion turbine", color: "--c2", values: hr("combustion_turbine") },
+    { label: "Gas steam", color: "--c6", values: hr("gas_steam") },
+  ], { dates: T.dates, H: 220, title: "Implied heat rate: median unit's first offer price above $0 ÷ gas (MMBtu per MWh)", yFmt: d3.format(",.1f"), tipFmt: d3.format(",.2f"), yTicks: [0, 5, 7, 10, 15, 20] });
 }
 
 function drawPriceQuantiles() {
