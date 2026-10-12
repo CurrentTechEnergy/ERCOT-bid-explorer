@@ -25,16 +25,36 @@ const SERIES = {
 };
 const DEMAND_2D = { id: "clr", keys: ["clr"], label: "Controllable load bids (demand)" };
 
+// "low" runs from -$50 to the hour's highest cleared price or $60, whichever is higher, so the
+// cleared price is always in view; the -$250 floor is left to the full range.
 const RANGES = {
-  low: { domain: [-250, 100], scale: "linear" },
-  mid: { domain: [-250, 300], scale: "linear" },
+  low: { domain: [-50, 60], scale: "linear" },
+  mid: { domain: [-50, 300], scale: "linear" },
   full: { domain: [-250, 5000], scale: "symlog" },
 };
+function rangeFor(key) {
+  if (key === "custom") return priceAxis(S.xMin, S.xMax);
+  if (key !== "low") return RANGES[key];
+  const hp = hourPrice(S.prices, S.hour);
+  const top = hp && hp.max != null && hp.max > 55 ? Math.ceil((hp.max + 5) / 10) * 10 : 60;
+  return priceAxis(-50, top);
+}
+// A price axis the user types in: kept inside the price grid, at least $5 wide, and
+// compressed (symlog) once it spans more than $600 so the low prices stay readable.
+const LOG_TICKS = [-250, -100, -50, -20, 0, 10, 20, 30, 50, 100, 200, 300, 500, 1000, 2000, 5000];
+function priceAxis(lo, hi) {
+  const g = S.index ? S.index.grid : [-250, 5000], g0 = g[0], g1 = g[g.length - 1];
+  lo = Math.max(g0, Math.min(isFinite(lo) ? lo : g0, g1 - 5));
+  hi = Math.min(g1, Math.max(isFinite(hi) ? hi : g1, lo + 5));
+  return { domain: [lo, hi], scale: hi - lo > 600 ? "symlog" : "linear" };
+}
+const LOG_TICKS_NARROW = [-250, -50, 0, 25, 100, 1000, 5000];
+const logTicks = (dom, narrow) => (narrow ? LOG_TICKS_NARROW : LOG_TICKS).filter((v) => v >= dom[0] && v <= dom[1]);
 
 // ----------------------------------------------------------------- state ---
 const S = {
   index: null, source: "2d", date: null, hour: 12, version: "curves",
-  xrange: "low", mode: "lines", axes: "price_x", threshold: 0, location: "lambda",
+  xrange: "low", xMin: -250, xMax: 100, osMin: -100, osMax: 1000, mode: "lines", axes: "price_x", threshold: 0, location: "lambda",
   hidden: new Set(), unitTech: "all", unitSearch: "",
   unitSort: { key: "floor_mw", dir: -1 }, unitShowAll: false,
   day: null, prices: null, summaries: {}, osView: "hour", osUnit: "share", osSmooth: "smooth",
@@ -197,15 +217,20 @@ function render() {
 }
 
 // the address bar carries the view, so a copied link reopens this exact day, hour and settings
-const VIEW_KEYS = { loc: "location", xr: "xrange", mode: "mode", axes: "axes", ver: "version", thr: "threshold", os: "osView", osu: "osUnit", osm: "osSmooth" };
+const NUM_KEYS = new Set(["threshold", "xMin", "xMax", "osMin", "osMax"]);
+const VIEW_KEYS = { loc: "location", xr: "xrange", xmin: "xMin", xmax: "xMax", osmin: "osMin", osmax: "osMax", mode: "mode", axes: "axes", ver: "version", thr: "threshold", os: "osView", osu: "osUnit", osm: "osSmooth" };
+// price limits go in the link only when they are in use
+const HIDE_KEY = { xMin: () => S.xrange !== "custom", xMax: () => S.xrange !== "custom",
+  osMin: () => S.osMin === OS_DEFAULT[0] && S.osMax === OS_DEFAULT[1], osMax: () => S.osMin === OS_DEFAULT[0] && S.osMax === OS_DEFAULT[1] };
 function saveView() {
-  window.CX.writeHash({ date: S.date, he: S.hour + 1, ...Object.fromEntries(Object.entries(VIEW_KEYS).map(([k, sk]) => [k, S[sk]])) });
+  window.CX.writeHash({ date: S.date, he: S.hour + 1, ...Object.fromEntries(Object.entries(VIEW_KEYS)
+    .filter(([, sk]) => !(HIDE_KEY[sk] && HIDE_KEY[sk]())).map(([k, sk]) => [k, S[sk]])) });
 }
 function loadView() {
   const v = window.CX.readHash();
   if (v.date) S.date = v.date;
   if (v.he && +v.he >= 1 && +v.he <= 24) S.hour = +v.he - 1;
-  Object.entries(VIEW_KEYS).forEach(([k, sk]) => { if (v[k] != null) S[sk] = sk === "threshold" ? +v[k] : v[k]; });
+  Object.entries(VIEW_KEYS).forEach(([k, sk]) => { if (v[k] != null) S[sk] = NUM_KEYS.has(sk) ? +v[k] : v[k]; });
   if (!S.index.thresholds.includes(S.threshold)) S.threshold = 0;
 }
 
@@ -230,7 +255,7 @@ function drawCurves() {
   const h = S.hour;
   if (!S.day.runs[h]) return emptyMsg(el, `No SCED runs recorded in ${heLabel(h)} (daylight-saving change).`);
   const grid = S.index.grid;
-  const R = RANGES[S.xrange];
+  const R = rangeFor(S.xrange);
   const dom = [R.domain[0], Math.min(R.domain[1], grid[grid.length - 1])];
   const idx = grid.map((p, i) => i).filter((i) => grid[i] >= dom[0] && grid[i] <= dom[1]);
   const prices = idx.map((i) => grid[i]);
@@ -281,7 +306,7 @@ function drawCurves() {
 
   const svg = d3.create("svg").attr("viewBox", `0 0 ${w} ${H}`).attr("role", "img")
     .attr("aria-label", `Offer curves for ${S.date} ${heLabel(h)}`);
-  const priceTicks = R.scale === "symlog" ? [-250, -100, -25, 0, 25, 100, 300, 1000, 5000]
+  const priceTicks = R.scale === "symlog" ? (S.xrange === "custom" ? logTicks(dom, w < 560) : [-250, -100, -25, 0, 25, 100, 300, 1000, 5000])
     : pScale.ticks(flip ? 8 : (w < 560 ? 5 : 9));
   const valFmt = S.mode === "share" ? (v) => v + "%" : d3.format(",.0f");
   const valTicks = flip && w < 560 ? 4 : 6;
@@ -740,8 +765,9 @@ function drawMarginal() {
 // ---- offer stack by price: the slope of the day's offer curves ----------------
 // Each technology's share of the MW offered around each price: who would move next if price
 // landed there. Battery charging bids are demand, so they are kept out of the supply shares and
-// drawn below the line as a share of supply plus charging at that price. Floor-priced MW are left out.
-const OS_DOMAIN = [-100, 1000];
+// drawn below the line as a share of supply plus charging at that price. MW at the -$250 floor
+// (no-offer units) are left out; minimum output ERCOT prices at -$20/-$50 is included.
+const OS_DEFAULT = [-100, 1000];
 function drawOfferStack() {
   const el = $("os-chart");
   const list = marginalSeries(seriesList());
@@ -772,7 +798,8 @@ function drawOfferStack() {
   const { w } = size(el);
   const narrow = w < 560;
   const H = 360, m = { t: 26, r: 16, b: 30, l: 56 }, HS = 54;
-  const x = d3.scaleSymlog().constant(10).domain(OS_DOMAIN).range([m.l, w - m.r]);
+  const OSR = priceAxis(S.osMin, S.osMax), OS_DOMAIN = OSR.domain;
+  const x = (OSR.scale === "symlog" ? d3.scaleSymlog().constant(10) : d3.scaleLinear()).domain(OS_DOMAIN).range([m.l, w - m.r]);
   // Gaussian smoothing in screen space, so the blur looks the same at every price
   const bw = Math.max(2, (w - m.l - m.r) * 0.004);
   const xg = G.map((g) => x(g));
@@ -814,13 +841,13 @@ function drawOfferStack() {
 
   const svg = d3.create("svg").attr("viewBox", `0 0 ${w} ${H + (share ? HS + 24 : 0)}`);
   svg.append("g").attr("class", "gridline").attr("transform", `translate(${m.l},0)`).call(d3.axisLeft(y).ticks(6).tickSize(-(w - m.l - m.r)).tickFormat(""));
-  const pt = narrow ? [-50, 0, 25, 100, 1000] : [-100, -50, -20, 0, 10, 20, 30, 50, 100, 200, 500, 1000];
+  const pt = OSR.scale === "linear" ? x.ticks(narrow ? 5 : 10) : logTicks(OS_DOMAIN, narrow);
   svg.append("g").attr("class", "axis").attr("transform", `translate(0,${H - m.b})`).call(d3.axisBottom(x).tickValues(pt).tickFormat(fmtPrice0).tickSizeOuter(0));
   svg.append("g").attr("class", "axis").attr("transform", `translate(${m.l},0)`)
     .call(d3.axisLeft(y).ticks(6).tickFormat(share ? (v) => fmtPct(Math.abs(v)) : (v) => d3.format(",.0f")(Math.abs(v))).tickSizeOuter(0));
   svg.append("text").attr("class", "axis-title").attr("x", m.l).attr("y", 10)
     .text(share ? "Share of supply offered near each price (above) · battery charging (below)" : "MW offered at each $1 of price (above: supply, below: battery charging)");
-  svg.append("text").attr("class", "axis-title").attr("x", w - m.r).attr("y", H - 2).attr("text-anchor", "end").text("Offer price ($/MWh, compressed scale)");
+  svg.append("text").attr("class", "axis-title").attr("x", w - m.r).attr("y", H - 2).attr("text-anchor", "end").text(OSR.scale === "symlog" ? "Offer price ($/MWh, compressed scale)" : "Offer price ($/MWh)");
   // supply stacked upward, charging downward, clipped to the plot
   const clipId = "os-clip-" + Math.random().toString(36).slice(2, 8);
   svg.append("clipPath").attr("id", clipId).append("rect").attr("x", m.l).attr("y", m.t).attr("width", w - m.l - m.r).attr("height", H - m.t - m.b);
@@ -1112,7 +1139,31 @@ async function boot() {
   fillDates(); syncSource(); fillLocations(); fillThresholds(); fillTechSelects();
 
   bindSeg("version", "version");
-  bindSeg("xrange", "xrange");
+  // Custom price range: the boxes start from the range that was showing
+  const syncXr = () => {
+    $("xrange-custom").hidden = S.xrange !== "custom";
+    const d = priceAxis(S.xMin, S.xMax).domain;
+    $("xr-min").value = d[0]; $("xr-max").value = d[1];
+  };
+  let lastPreset = S.xrange === "custom" ? "low" : S.xrange;
+  bindSeg("xrange", "xrange", () => {
+    if (S.xrange === "custom") {
+      if (lastPreset) [S.xMin, S.xMax] = rangeFor(lastPreset).domain;
+      lastPreset = null;
+    } else lastPreset = S.xrange;
+    syncXr(); render();
+  });
+  const readRange = (minId, maxId, keys) => {
+    const d = priceAxis(parseFloat($(minId).value), parseFloat($(maxId).value)).domain;
+    [S[keys[0]], S[keys[1]]] = d;
+    $(minId).value = d[0]; $(maxId).value = d[1];
+  };
+  ["xr-min", "xr-max"].forEach((id) => $(id).addEventListener("change", () => { readRange("xr-min", "xr-max", ["xMin", "xMax"]); render(); }));
+  syncXr();
+  const syncOs = () => { const d = priceAxis(S.osMin, S.osMax).domain; $("os-min").value = d[0]; $("os-max").value = d[1]; };
+  ["os-min", "os-max"].forEach((id) => $(id).addEventListener("change", () => { readRange("os-min", "os-max", ["osMin", "osMax"]); drawOfferStack(); saveView(); }));
+  $("os-reset").onclick = () => { [S.osMin, S.osMax] = OS_DEFAULT; syncOs(); drawOfferStack(); saveView(); };
+  syncOs();
   bindSeg("mode", "mode");
   bindSeg("axes", "axes");
   setSeg("os-view", S.osView); setSeg("os-unit", S.osUnit);
