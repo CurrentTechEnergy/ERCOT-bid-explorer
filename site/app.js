@@ -762,7 +762,7 @@ function drawMarginal() {
     hours.map((d, i) => [i + 1, ...list.map((s) => (d ? d.sh[s.id] ?? 0 : null)), d ? d.chg : null]), `Marginal supply by hour ${S.date}`);
 }
 
-// ---- offer stack by price: the slope of the day's offer curves ----------------
+// ---- marginal offer stack by price: the slope of the day's offer curves ----------------
 // Each technology's share of the MW offered around each price: who would move next if price
 // landed there. Battery charging bids are demand, so they are kept out of the supply shares and
 // drawn below the line as a share of supply plus charging at that price. MW at the -$250 floor
@@ -894,7 +894,7 @@ function drawOfferStack() {
   setCSV(el, ["price_usd_mwh", ...supI.map((j) => `${list[j].label} share of supply`), ...supI.map((j) => `${list[j].label} MW per $1 of price`),
     ...(chgI >= 0 ? ["storage charging share of supply plus charging", "storage charging MW per $1 of price"] : [])],
     pts.filter((d, i) => live[i]).map((d) => [Math.round(d.p * 100) / 100, ...supI.map((j) => d.sh[j]), ...supI.map((j) => d.mwd[j]), ...(chgI >= 0 ? [d.sh[chgI], d.chg] : [])]),
-    `Offer stack by price ${S.date}`);
+    `Marginal offer stack by price ${S.date}`);
 }
 
 // ---- hourly profile + price ------------------------------------------------
