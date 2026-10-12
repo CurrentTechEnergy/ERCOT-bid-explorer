@@ -31,6 +31,7 @@ from .parse_prices import NODE_FORMAT, build_price_day, node_prices, read_lambda
 from .marginal import build_marginal
 from .trends import build_trends
 from .intraday import build_intraday
+from .hourly_context import build_hourly_context
 from .stayon import build_stayon
 from .curve_trends import build_curve_trends
 from .nodes import build_node_curtail
@@ -360,6 +361,7 @@ def main(argv=None):
         build_marginal(index)
         build_trends(index)
         build_intraday(index)
+        build_hourly_context(index)
         build_stayon(index)
         build_curve_trends(index)
         build_node_curtail(index)
@@ -408,6 +410,7 @@ def main(argv=None):
     build_marginal(index)
     build_trends(index)
     build_intraday(index)
+    build_hourly_context(index)
     build_stayon(index)
     build_curve_trends(index)
     build_node_curtail(index)

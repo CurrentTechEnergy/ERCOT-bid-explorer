@@ -95,6 +95,8 @@ pipeline/
   stayon.py        per-unit day files + DAM costs -> what riding through a cheap stretch cost each
                    thermal unit against a shutdown and restart (no downloads)
                    (shutdowns, two-shifting), hourly state per unit (no downloads)
+  hourly_context.py 60-day summary + prices -> hourly wind, solar, storage and hub price for the
+                   Trends page's leanest thermal hours table (no downloads)
   ercot_api.py     ERCOT Public API client (token, archive listing, downloads)
   update.py        command line entry point
 site/
