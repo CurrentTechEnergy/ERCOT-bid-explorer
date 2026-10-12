@@ -33,8 +33,10 @@ UNIT_TECHS = ["nuclear", "coal", "combined_cycle", "gas_steam", "combustion_turb
 # on days when at least PEER_MIN units of that type have one, otherwise with its technology's
 PEER_MIN = 8
 # Read off each day's hourly curves (what SCED dispatched against): MW at or below -$20.
-# In the SCED2 curve ERCOT prices minimum output at -$20 (-$50 or -$250 for some units with
-# no offer), so this catches everything ERCOT puts at its floor prices.
+# In the SCED2 curve, units that offer have the MW below their first offered point (usually
+# minimum output) at -$20 (-$50 for some); units with no offer curve sit at -$250/-$249.99
+# (nuclear, hydro) or at -$20/-$50 (other thermal).  So this catches everything ERCOT prices
+# at its floor values.
 CURVE_STATS = {"le20_sced": -20.0}
 
 # Bidding-approach changes. Each signal is compared between the K online days before and

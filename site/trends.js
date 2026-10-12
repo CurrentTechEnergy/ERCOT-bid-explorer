@@ -17,8 +17,8 @@ const TECHS = [
 const THERMAL = ["nuclear", "coal", "combined_cycle", "gas_steam", "combustion_turbine"];
 const FLOOR_TECHS = TECHS.filter((s) => !["wind", "solar"].includes(s.id));   // wind and solar have their own chart
 const FLOOR_NOTES = {
-  le20_sced: "MW priced at or below −$20 in the curves SCED dispatched against, averaged over each day. In those curves ERCOT prices a unit's minimum output at −$20 whatever the generator offered, and units with no offer at −$20, −$50 or the −$250 floor, so this counts all of it, plus anything generators themselves offered at or below −$20. Storage below zero is charging bid at or below −$20.",
-  floor_sced: "MW priced at the −$250 floor (or −$249.99) in the curves SCED dispatched against, averaged over each day. Since ERCOT prices minimum output at −$20 in those curves, this is mostly units with no offer, such as nuclear, plus storage charging bid at the floor. Minimum output is under ≤ −$20, as used.",
+  le20_sced: "MW priced at or below −$20 in the curves SCED dispatched against, averaged over each day. In those curves ERCOT fills in prices a unit didn't offer. Units that offer have the MW below their first offered point, usually minimum output, at −$20 (−$50 for some units). Units with no offer curve sit at −$250 with the rest of their output schedule at −$249.99 if they are nuclear or hydro, and at −$20 or −$50 otherwise. This counts all of that, plus anything generators themselves offered at or below −$20. Storage below zero is charging bid at or below −$20.",
+  floor_sced: "MW priced at the −$250 floor (or −$249.99) in the curves SCED dispatched against, averaged over each day. ERCOT puts only units with no offer curve there, mostly nuclear and hydro. Minimum output of units that offer sits at −$20 (−$50 for some units), so it is counted under ≤ −$20, as used, not here. Storage below zero is charging bid at the floor.",
   floor_submitted: "MW the generators themselves priced at the −$250 floor in the offer curves they submitted, averaged over each day.",
   le0_submitted: "MW the generators themselves priced at or below $0 in the offer curves they submitted, averaged over each day.",
 };
