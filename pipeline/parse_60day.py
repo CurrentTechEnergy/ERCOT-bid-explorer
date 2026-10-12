@@ -35,8 +35,10 @@ STATS = ["n_online", "hsl", "lsl", "base_point", "output",
          "no_offer_hsl", "no_offer_output_schedule",
          # appended later: days processed before these existed lack them (read by name)
          "n_onruc", "n_off", "n_out", "hsl_onruc", "hsl_off", "hsl_out"]
-# "At the floor" = offered at or below -$249/MWh.  ERCOT's proxy curves place
-# minimum output at -$250 and output-schedule MW at -$249.99.
+# "At the floor" = offered at or below -$249/MWh.  In the SCED2 curve, units with no
+# offer curve have minimum output at -$250 and the rest of their output schedule at
+# -$249.99; units that offer have the MW below their first offered point (usually
+# minimum output) at -$20, which is not at the floor.
 I_FLOOR = int(np.searchsorted(PRICE_GRID, -249))
 I_ZERO = int(np.searchsorted(PRICE_GRID, 0))
 TECH_INDEX = {t: i for i, t in enumerate(SIXTY_DAY_TECHS)}
