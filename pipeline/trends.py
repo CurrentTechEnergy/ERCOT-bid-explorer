@@ -45,7 +45,7 @@ K = 7
 SIGNALS = {
     # share of available MW the unit itself offered at or below $0 (price-taking)
     "le0": {"thr": 0.25, "label": "MW offered at or below $0"},
-    # share of the day with no submitted offer (running on an output schedule)
+    # share of the day running without an offer curve (held to its output schedule)
     "noff": {"thr": 0.5, "label": "Running without an offer curve"},
     # first offer price above $0 minus that day's median for its peer group: removes fuel-price moves
     "rel": {"thr": 10.0, "label": "Offer price vs peer median"},

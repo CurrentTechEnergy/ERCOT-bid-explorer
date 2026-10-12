@@ -976,14 +976,14 @@ const TECH_COLS = [
   ["Floor / output", "At-floor MW as a share of actual output: how much of the technology's generation SCED could not price off the system."],
   ["≤ $0, as used (MW)", "MW offered at or below $0 in the curve SCED used. This supply keeps running when prices go negative."],
   ["≤ $0, as submitted (MW)", "MW the generators themselves priced at or below $0 in the offer curves they submitted. The gap between this and the as-used column is supply placed low by ERCOT's curve extensions (minimum output and units without offers) rather than by the generator's own price."],
-  ["No submitted offer (MW)", "Available capacity (HSL, in MW) of online units that submitted no energy offer curve and ran on an output schedule instead. ERCOT dispatches these against a proxy curve priced at the floor up to their schedule. Nuclear units typically work this way."],
+  ["No offer curve (MW)", "Available capacity (HSL, in MW) of online units running without an offer curve. SCED holds these at the MW their QSE scheduled (the output schedule), against a stand-in curve: −$250/−$249.99 for nuclear and hydro, −$20 or −$50 for others. Nuclear units typically work this way."],
 ];
 const TECH_NOTES = {
   combined_cycle: "Combined-cycle gas plants (resource types CCGT90 and CCLE90). Each configuration of a plant is reported as its own resource.",
   combustion_turbine: "Simple-cycle gas and oil combustion turbines (SCGT90, SCLE90): typically peakers with quick starts.",
   wind: "Wind-powered generation resources (WIND). Curves are capped at available output.",
   solar: "Photovoltaic generation resources (PVGR). Curves are capped at available output, so they shrink to zero at night.",
-  nuclear: "Nuclear units (NUC). They normally submit no offer curve and run on an output schedule.",
+  nuclear: "Nuclear units (NUC). They normally run without an offer curve, held to their output schedule.",
   gas_steam: "Gas-fired steam units (GSREH reheat, GSSUP supercritical, GSNONR non-reheat).",
   storage: "Energy storage resources (ESR). Values are net: negative while charging, positive while discharging.",
   coal: "Coal and lignite units (CLLIG).",
@@ -999,7 +999,7 @@ const UNIT_TIPS = {
   le0_sced: "MW at or below $0 in the curve SCED used.",
   le0_submitted: "MW at or below $0 in the curve the generator submitted.",
   min_sub_price: "Price of the first (cheapest) point on the submitted offer curve, lowest of the day. Blank when no curve was submitted.",
-  no_offer_share: "Share of online SCED runs with no submitted offer curve.",
+  no_offer_share: "Share of online SCED runs without an offer curve.",
 };
 
 // ---- technology table (60-day) ---------------------------------------------
@@ -1036,7 +1036,7 @@ const UNIT_COLS = [
   ["unit", "Unit", "t"], ["type", "Type", "t"], ["hours_online", "Hours online"], ["hsl", "HSL (MW)"], ["lsl", "LSL (MW)"],
   ["output", "Output (MW)"], ["pinned_share", "Time at LSL", "pct"], ["floor_mw", "At floor (MW)"],
   ["le0_sced", "≤ $0 as used (MW)"], ["le0_submitted", "≤ $0 as submitted (MW)"], ["min_sub_price", "Lowest submitted price ($/MWh)", "price"],
-  ["no_offer_share", "No offer", "pct"],
+  ["no_offer_share", "No offer curve", "pct"],
 ];
 function drawUnits() {
   const el = $("units-table");
