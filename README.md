@@ -89,6 +89,8 @@ pipeline/
                    price that implies, and how it sits against lambda (no downloads)
   gas.py           EIA API -> Henry Hub daily spot price (data/gas.json.gz); OilPriceAPI -> Houston
                    Ship Channel and Waha daily prices (data/gas_hubs.json.gz)
+  fuel_hub.py      trends + DAM offers + node prices + gas hubs -> which gas price each gas unit
+                   buys at, Waha or Houston Ship Channel (data/fuel_hubs.json.gz, no downloads)
   econ.py          per-unit day files + node prices + DAM awards and offers -> daily revenue and
                    offer-implied cost per unit (data/econ/<tech>.json.gz, no downloads)
   marginal.py      day files + prices -> hourly marginal MW by technology (no downloads)
@@ -125,9 +127,13 @@ site/
 
 Node prices are kept at 15 minutes for every settlement point that is not a hub or load zone (ERCOT files combined-cycle trains under a type other than `RN`); `node_hourly()` gives the hourly means the curtailment and revenue figures use. Node files and per-unit day files carry a format number, and a workflow run with **reprocess_60d** (or the regular node backfill, a few days per run) redoes the older ones.
 
+### Which gas price a unit buys at
+
+`pipeline/fuel_hub.py` assigns every gas-fired unit a fuel hub, Waha (West Texas) or Houston Ship Channel, from two signals. Its own offer prices (first SCED offer price above $0, and DAM minimum-energy offer) are each regressed on the previous trading day's Waha and Houston prices; a series votes for a hub when the better fit explains at least 30% of the variance with a heat rate between 3 and 25 MMBtu/MWh and beats the other hub by 0.1 in R². When the votes agree the offers decide; otherwise the unit's node location does (the ERCOT hub whose real-time price its node tracks most closely: West and Panhandle nodes go to Waha, the rest to Houston). The Economics page uses this for its "By unit" gas price and shows each unit's hub and how it was decided.
+
 ### Plant economics
 
-`pipeline/econ.py` writes, for every unit and loaded day, the energy produced, its value at the unit's node and at system lambda, the DAM energy award and its value at the day-ahead and real-time prices (so two-settlement revenue can be formed), ancillary service awards at their clearing prices, the cost implied by the unit's own DAM energy offer curve up to its output, its minimum-energy and start-up offers, starts and hours run. Combined-cycle configurations are summed into their train. The page `economics.html` turns that into revenue, cost and margin on a cost basis chosen there: the EIA average tested heat rate for the technology (Electric Power Annual table 8.2) times a gas price (Houston Ship Channel by default, or Waha or Henry Hub) plus an adder, the unit's own DAM offer, or generic per-technology inputs that can be edited on the page. Fixed costs are not included, so margin is the contribution to them. Capacity factor divides output by a capacity taken from the SCED data: the 95th percentile, over the loaded days, of each day's highest HSL (for a combined-cycle train, across its configurations). Wind and solar HSL is weather-limited available output, so a typical HSL would measure output against availability; the daily peak reaches the rating on windy or clear days.
+`pipeline/econ.py` writes, for every unit and loaded day, the energy produced, its value at the unit's node and at system lambda, the DAM energy award and its value at the day-ahead and real-time prices (so two-settlement revenue can be formed), ancillary service awards at their clearing prices, the cost implied by the unit's own DAM energy offer curve up to its output, its minimum-energy and start-up offers, starts and hours run. Combined-cycle configurations are summed into their train. The page `economics.html` turns that into revenue, cost and margin on a cost basis chosen there: the EIA average tested heat rate for the technology (Electric Power Annual table 8.2) times a gas price (each unit's own fuel hub by default, see below, or Houston Ship Channel, Waha or Henry Hub for all) plus an adder, the unit's own DAM offer, or generic per-technology inputs that can be edited on the page. Fixed costs are not included, so margin is the contribution to them. Capacity factor divides output by a capacity taken from the SCED data: the 95th percentile, over the loaded days, of each day's highest HSL (for a combined-cycle train, across its configurations). Wind and solar HSL is weather-limited available output, so a typical HSL would measure output against availability; the daily peak reaches the rating on windy or clear days.
 
 ## Caveats
 

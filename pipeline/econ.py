@@ -250,8 +250,8 @@ def build_econ(index: dict) -> None:
     for name, r in units.items():
         got = [fh[c] for c in (r.get("configs") or [name]) if c in fh]
         if got:
-            hubs = [g["hub"] for g in got]
-            hub = max(set(hubs), key=hubs.count)
+            votes = [g["hub"] for g in got]
+            hub = max(set(votes), key=votes.count)
             r["fuel_hub"] = hub
             r["fuel_hub_method"] = next(g["method"] for g in got if g["hub"] == hub)
     by_tech = {}
