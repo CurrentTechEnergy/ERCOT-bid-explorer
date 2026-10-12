@@ -1,0 +1,14 @@
+name: OilPriceAPI probe (temporary)
+on:
+  push:
+    branches: [oilprice-probe]
+  workflow_dispatch:
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: pip install requests
+      - run: python .github/probe/oilprice_probe.py
+        env:
+          OILPRICEAPI_KEY: ${{ secrets.OILPRICEAPI_KEY }}
