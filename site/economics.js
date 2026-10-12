@@ -51,9 +51,12 @@ const parseDate = (d) => new Date(d + "T12:00:00");
 const fmtDate = d3.timeFormat("%a %b %-d, %Y");
 
 // gas price used for gas-fired fuel cost: Houston Ship Channel and Waha from OilPriceAPI, Henry Hub
-// from the EIA. A hub with no prices in the loaded data falls back to Henry Hub.
+// from the EIA, or "unit": each unit's own fuel hub (Waha or Houston Ship Channel, from
+// pipeline/fuel_hub.py). A hub with no prices in the loaded data falls back to Henry Hub.
 const HUBS = { hsc: "Houston Ship Channel", waha: "Waha", hh: "Henry Hub" };
-const S = { tech: "combined_cycle", cost: "eia", rev: "two", hub: "hsc", adder: 0, sort: "margin", dir: -1, unit: null, q: "",
+const HUB_CHOICES = { unit: "each unit's own hub", ...HUBS };
+const HUB_METHOD = { offers: "its offers follow that price", location: "by its node's location", default: "no signal, default" };
+const S = { tech: "combined_cycle", cost: "eia", rev: "two", hub: "unit", adder: 0, sort: "margin", dir: -1, unit: null, q: "",
   params: JSON.parse(JSON.stringify(DEFAULTS)), fuel: { ...FUEL_PRICE }, idx: null, data: {} };
 const VIEW_KEYS = { tech: "tech", cost: "cost", rev: "rev", gas: "hub", adder: "adder", unit: "unit", sort: "sort" };
 function saveView() { window.CX.writeHash(Object.fromEntries(Object.entries(VIEW_KEYS).map(([k, sk]) => [k, S[sk]]))); }
@@ -189,18 +192,25 @@ function legendHTML(el) {
 
 // ---- panels --------------------------------------------------------------------------
 let ECON = {};     // unit name -> unitEcon result, for the current tech and bases
-// the gas price series in use for this tech's data and its label: the chosen hub, else Henry Hub
-function gasSeries(T) {
-  const h = T.hubs && T.hubs[S.hub];
-  if (S.hub !== "hh" && h && h.some((v) => v != null)) return { values: h, label: HUBS[S.hub] };
-  return { values: T.gas, label: HUBS.hh + (S.hub !== "hh" ? ` (no ${HUBS[S.hub]} prices loaded)` : "") };
+// the gas price series for one hub in this tech's data and its label; Henry Hub when the hub has none
+function hubSeries(T, hub) {
+  const h = T.hubs && T.hubs[hub];
+  if (hub !== "hh" && h && h.some((v) => v != null)) return { values: h, label: HUBS[hub] };
+  return { values: T.gas, label: HUBS.hh + (hub !== "hh" ? ` (no ${HUBS[hub]} prices loaded)` : "") };
+}
+// the hub a unit is costed at under the current choice: its own fuel hub, else Houston Ship Channel
+const unitHub = (u) => (S.hub === "unit" ? u.fuel_hub || "hsc" : S.hub);
+function gasLabel(T) {
+  if (S.hub !== "unit") return hubSeries(T, S.hub).label;
+  const n = Object.values(T.units).filter((u) => u.fuel_hub === "waha").length;
+  return `each unit's own hub (${n} on Waha, the rest Houston Ship Channel)`;
 }
 function compute() {
   const T = S.data[S.tech];
   ECON = {};
   if (!T) return;
-  const D = T.dates.length, gas = gasSeries(T).values;
-  Object.entries(T.units).forEach(([name, u]) => { ECON[name] = unitEcon(u, D, gas); });
+  const D = T.dates.length;
+  Object.entries(T.units).forEach(([name, u]) => { ECON[name] = unitEcon(u, D, hubSeries(T, unitHub(u)).values); });
 }
 
 function drawTotals() {
@@ -221,7 +231,7 @@ function drawTotals() {
   $("tot-note").textContent = `${names.length} units over ${D} days · node prices on ${nodeDays} days` +
     (lamDays ? ` · ${fmt0(lamDays)} unit-days priced at system lambda for want of a node price` : "") +
     (missing ? ` · ${fmt0(missing)} unit-days with no fuel price (before the first gas price)` : "") +
-    (FUEL[S.tech] === "gas" && (S.cost === "eia" || S.cost === "generic") ? ` · gas at ${gasSeries(T).label}` : "") + ` · ${COST_NOTES[S.cost].split(".")[0]}.`;
+    (FUEL[S.tech] === "gas" && (S.cost === "eia" || S.cost === "generic") ? ` · gas at ${gasLabel(T)}` : "") + ` · ${COST_NOTES[S.cost].split(".")[0]}.`;
   barChart(el, T.dates, REV_SERIES.map((s) => ({ ...s, values: { energy, as }[s.k] })), COST_SERIES.map((s) => ({ ...s, values: { fuel, starts }[s.k] })),
     { ...MARGIN, values: margin }, { title: "Revenue (up) and cost (down) per day, $, all units", yFmt: fmt$k });
   let cum = 0;
@@ -248,9 +258,10 @@ function drawInputs() {
   }));
 }
 
-const COLS = [
+const ALL_COLS = [
   { k: "unit", h: "Unit", t: true, f: (r) => esc(r.unit) + (r.configs ? ` <span class="h-note">${r.configs} configs</span>` : "") },
   { k: "sp", h: "Settlement point", t: true, f: (r) => esc(r.sp || "–") },
+  { k: "hub", h: "Fuel hub", t: true, gas: true, f: (r) => (r.hub ? esc(HUBS[r.hub]) : "–") },
   { k: "mwh", h: "GWh", f: (r) => fmt1(r.mwh / 1000) },
   { k: "cf", h: "Capacity factor", f: (r) => (r.cf == null ? "–" : fmtPct(r.cf)) },
   { k: "energy", h: "Energy revenue", f: (r) => fmt$k(r.energy) },
@@ -268,11 +279,12 @@ function unitRows() {
   return Object.entries(T.units).map(([name, u]) => {
     const e = ECON[name], mwh = sum(u.mwh), days = u.mwh.filter((v) => v != null).length;
     const energy = sum(e.energy), as = sum(e.as), fuel = sum(e.fuel), starts = sum(e.starts), margin = sum(e.margin);
-    return { unit: name, sp: u.sp, configs: u.configs ? u.configs.length : 0, mwh, cf: u.hsl && days ? mwh / (u.hsl * 24 * days) : null,
+    return { unit: name, sp: u.sp, hub: u.fuel_hub || null, configs: u.configs ? u.configs.length : 0, mwh, cf: u.hsl && days ? mwh / (u.hsl * 24 * days) : null,
       energy, as, fuel, starts, nstarts: sum(u.starts), margin, mpm: mwh ? margin / mwh : null, lamDays: e.lamDays, est: e.est, days };
   });
 }
 function drawUnits() {
+  const COLS = ALL_COLS.filter((c) => !c.gas || FUEL[S.tech] === "gas");
   const el = $("units-table"), rows = unitRows().filter((r) => !S.q || r.unit.toLowerCase().includes(S.q) || (r.sp || "").toLowerCase().includes(S.q));
   $("units-note").textContent = rows.length ? `${rows.length} units` : "";
   if (!rows.length) return emptyMsg(el, "No units.");
@@ -294,7 +306,8 @@ function drawUnit() {
   const own = u.start_hot.filter((v) => v != null).length, curves = u.cost_off.filter((v) => v != null).length, mg = u.mingen.filter((v) => v != null);
   $("unit-note").textContent = `${r.days} days · ${fmt1(r.mwh / 1000)} GWh · ${r.nstarts} starts · margin ${fmt$(r.margin)} (${r.mpm == null ? "–" : fmt$2(r.mpm)} per MWh)` +
     (own ? ` · DAM three-part offer on ${own} days (hot start ${fmt$(d3.median(u.start_hot.filter((v) => v != null)))}, minimum-energy ${fmt$2(d3.median(mg))}/MWh, energy curve on ${curves})` : " · no DAM three-part offer on any loaded day") +
-    (u.configs ? ` · configurations ${u.configs.join(", ")}` : "");
+    (u.configs ? ` · configurations ${u.configs.join(", ")}` : "") +
+    (u.fuel_hub ? ` · fuel hub ${HUBS[u.fuel_hub]} (${HUB_METHOD[u.fuel_hub_method] || u.fuel_hub_method})` : "");
   legendHTML($("unit-legend"));
   barChart($("unit-chart"), T.dates, REV_SERIES.map((s) => ({ ...s, values: e[s.k] })), COST_SERIES.map((s) => ({ ...s, values: e[s.k] })),
     { ...MARGIN, values: e.margin }, { title: "Revenue (up) and cost (down) per day, $", yFmt: fmt$k,
@@ -325,7 +338,7 @@ async function boot() {
   $("tech").onchange = (e) => { S.tech = e.target.value; S.unit = null; changeTech(); saveView(); };
   setSeg("cost", S.cost); bindSeg("cost", "cost", redraw);
   setSeg("rev", S.rev); bindSeg("rev", "rev", redraw);
-  if (!HUBS[S.hub]) S.hub = "hsc";
+  if (!HUB_CHOICES[S.hub]) S.hub = "unit";
   setSeg("hub", S.hub); bindSeg("hub", "hub", redraw);
   $("gas-adder").value = S.adder;
   $("gas-adder").addEventListener("change", (e) => { S.adder = +e.target.value || 0; redraw(); saveView(); });
