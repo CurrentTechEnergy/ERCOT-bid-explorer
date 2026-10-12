@@ -68,9 +68,9 @@
       </div>
       <div class="panel-tools">
         <div class="seg seg-sm" id="xrange" role="radiogroup" aria-label="Price range">
-          <button type="button" data-v="low" role="radio">−$250 to $100</button>
-          <button type="button" data-v="mid" role="radio">to $300</button>
-          <button type="button" data-v="full" role="radio">Full range</button>
+          <button type="button" data-v="low" role="radio" title="−$50 to the hour's highest cleared price or $60, whichever is higher">−$50 to $60+</button>
+          <button type="button" data-v="mid" role="radio" title="−$50 to $300">to $300</button>
+          <button type="button" data-v="full" role="radio" title="−$250 to $5,000, compressed scale">Full range</button>
           <button type="button" data-v="custom" role="radio">Custom</button>
         </div>
         <span class="price-range" id="xrange-custom" hidden>
@@ -120,7 +120,7 @@
     <div class="panel-head">
       <div>
         <h2>Offer stack by price <span class="h-note" id="os-title-note"></span></h2>
-        <p class="note">Who would move next if price landed at each level: each technology's share of the MW offered around that price, read off the day's offer curves (the slope of the bid stack). Battery charging bids are demand, so they sit below the line as a share of supply plus charging at that price. Floor-priced MW (minimum output and output schedules) are left out. Ticks along the top mark each hour's system lambda. The same view across all days, by settled price, is on the <a href="trends.html">Trends</a> page.</p>
+        <p class="note">Who would move next if price landed at each level: each technology's share of the MW offered around that price, read off the day's offer curves (the slope of the bid stack). Battery charging bids are demand, so they sit below the line as a share of supply plus charging at that price. MW at the −$250 floor (units with no offer curve, mostly nuclear and hydro) are left out. Minimum output that ERCOT prices at −$20 (−$50 for some units) is included, which is the spike at −$20. Ticks along the top mark each hour's system lambda. The same view across all days, by settled price, is on the <a href="trends.html">Trends</a> page.</p>
       </div>
       <div class="panel-tools">
         <div class="seg seg-sm" id="os-view" role="radiogroup" aria-label="Hours">

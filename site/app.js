@@ -25,11 +25,20 @@ const SERIES = {
 };
 const DEMAND_2D = { id: "clr", keys: ["clr"], label: "Controllable load bids (demand)" };
 
+// "low" runs from -$50 to the hour's highest cleared price or $60, whichever is higher, so the
+// cleared price is always in view; the -$250 floor is left to the full range.
 const RANGES = {
-  low: { domain: [-250, 100], scale: "linear" },
-  mid: { domain: [-250, 300], scale: "linear" },
+  low: { domain: [-50, 60], scale: "linear" },
+  mid: { domain: [-50, 300], scale: "linear" },
   full: { domain: [-250, 5000], scale: "symlog" },
 };
+function rangeFor(key) {
+  if (key === "custom") return priceAxis(S.xMin, S.xMax);
+  if (key !== "low") return RANGES[key];
+  const hp = hourPrice(S.prices, S.hour);
+  const top = hp && hp.max != null && hp.max > 55 ? Math.ceil((hp.max + 5) / 10) * 10 : 60;
+  return priceAxis(-50, top);
+}
 // A price axis the user types in: kept inside the price grid, at least $5 wide, and
 // compressed (symlog) once it spans more than $600 so the low prices stay readable.
 const LOG_TICKS = [-250, -100, -50, -20, 0, 10, 20, 30, 50, 100, 200, 300, 500, 1000, 2000, 5000];
@@ -246,7 +255,7 @@ function drawCurves() {
   const h = S.hour;
   if (!S.day.runs[h]) return emptyMsg(el, `No SCED runs recorded in ${heLabel(h)} (daylight-saving change).`);
   const grid = S.index.grid;
-  const R = S.xrange === "custom" ? priceAxis(S.xMin, S.xMax) : RANGES[S.xrange];
+  const R = rangeFor(S.xrange);
   const dom = [R.domain[0], Math.min(R.domain[1], grid[grid.length - 1])];
   const idx = grid.map((p, i) => i).filter((i) => grid[i] >= dom[0] && grid[i] <= dom[1]);
   const prices = idx.map((i) => grid[i]);
@@ -756,7 +765,8 @@ function drawMarginal() {
 // ---- offer stack by price: the slope of the day's offer curves ----------------
 // Each technology's share of the MW offered around each price: who would move next if price
 // landed there. Battery charging bids are demand, so they are kept out of the supply shares and
-// drawn below the line as a share of supply plus charging at that price. Floor-priced MW are left out.
+// drawn below the line as a share of supply plus charging at that price. MW at the -$250 floor
+// (no-offer units) are left out; minimum output ERCOT prices at -$20/-$50 is included.
 const OS_DEFAULT = [-100, 1000];
 function drawOfferStack() {
   const el = $("os-chart");
@@ -1138,7 +1148,7 @@ async function boot() {
   let lastPreset = S.xrange === "custom" ? "low" : S.xrange;
   bindSeg("xrange", "xrange", () => {
     if (S.xrange === "custom") {
-      if (lastPreset) [S.xMin, S.xMax] = RANGES[lastPreset].domain;
+      if (lastPreset) [S.xMin, S.xMax] = rangeFor(lastPreset).domain;
       lastPreset = null;
     } else lastPreset = S.xrange;
     syncXr(); render();
