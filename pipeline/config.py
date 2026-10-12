@@ -87,6 +87,15 @@ EMIL_SPP = "np6-905-cd"
 EIA_SERIES = "RNGWHHD"
 EIA_ROUTE = "natural-gas/pri/fut"
 GAS_START = "2025-11-01"
+# Regional daily gas prices from OilPriceAPI (OILPRICEAPI_KEY in the environment; skipped without
+# one): key -> (series code, label).  Houston Ship Channel is the usual fuel reference for ERCOT
+# gas units; Waha is West Texas (Permian), which trades well below it and at times below $0.
+# Their Henry Hub series is not the spot price (it reads like the front-month future), so Henry
+# Hub stays on the EIA.
+GAS_HUBS = {
+    "hsc": ("NATURAL_GAS_HSC_USD", "Houston Ship Channel"),
+    "waha": ("NATURAL_GAS_WAHA", "Waha"),
+}
 
 # --- Plant costs when a unit has no DAM three-part offer that day ---------------
 # Generic per-technology values used (and marked as such) by pipeline/stayon.py when a unit

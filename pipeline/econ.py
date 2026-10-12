@@ -31,8 +31,9 @@ For every unit in the per-unit day files (UNIT_DATA_DIR/60d/) and each 60-day da
 Prices are hourly means of the 15-minute (node) or 5-minute (lambda) values, so settlement
 at the real intervals differs a little.  Written per technology to data/econ/<tech>.json.gz:
   {dates, gas: [Henry Hub $/MMBtu per date, last trading day carried forward, null before
-   the first], units: {name: {type, sp, hsl, configs (combined cycle: the configuration names
-   summed into this train, else null), series...}}}
+   the first], hubs: {hsc: [Houston Ship Channel, likewise], waha: [Waha, likewise]},
+   units: {name: {type, sp, hsl, configs (combined cycle: the configuration names summed into
+   this train, else null), series...}}}
 `hsl` is the unit's capacity for capacity factors (MW): the 95th percentile, over the loaded days,
 of each day's highest HSL in any SCED run the unit is present in (for a combined-cycle train, the
 highest across its configurations).  Wind and solar HSL is weather-limited output, so a typical
@@ -108,12 +109,18 @@ def build_econ(index: dict) -> None:
     dam_days = set(index["days"].get("dam", []))
     prices = read_json_gz(DATA_DIR / "summary_prices.json.gz", default={})
     strips = (read_json_gz(DATA_DIR / "unit_hours_60d.json.gz", default={}) or {}).get("units", {})
-    gas = read_json_gz(DATA_DIR / "gas.json.gz", default=None) or {}
-    gas_by = dict(zip(gas.get("dates", []), gas.get("value", [])))
-    gas_series, last = [], None
-    for d in dates:
-        last = gas_by.get(d, last)
-        gas_series.append(last)
+    def carried(src):
+        """{dates, value} -> one price per loaded date, the last trading day carried forward."""
+        by = dict(zip(src.get("dates", []), src.get("value", [])))
+        out, last = [], None
+        for d in dates:
+            last = by.get(d, last)
+            out.append(last)
+        return out
+
+    gas_series = carried(read_json_gz(DATA_DIR / "gas.json.gz", default=None) or {})
+    hub_files = (read_json_gz(DATA_DIR / "gas_hubs.json.gz", default=None) or {}).get("hubs", {})
+    hubs = {h: carried(v) for h, v in hub_files.items()}
 
     units = {}      # name -> {"type", "tech", "sp", "hsl": [D] daily peak HSL, series: [D]}
     starts = {}     # unit, or combined-cycle train -> [D]
@@ -246,11 +253,13 @@ def build_econ(index: dict) -> None:
     out_dir = DATA_DIR / "econ"
     for t in SIXTY_DAY_TECHS:
         us = by_tech.get(t, {})
-        write_json_gz(out_dir / f"{t}.json.gz", {"dates": dates, "gas": gas_series, "units": dict(sorted(us.items()))})
+        write_json_gz(out_dir / f"{t}.json.gz", {"dates": dates, "gas": gas_series, "hubs": hubs,
+                                                     "units": dict(sorted(us.items()))})
     write_json_gz(DATA_DIR / "econ_index.json.gz", {
         "dates": dates, "techs": {t: sorted(by_tech.get(t, {})) for t in SIXTY_DAY_TECHS},
         "has_nodes": [d in node_days for d in dates], "has_dam": [d in dam_days for d in dates],
         "gas_days": sum(1 for g in gas_series if g is not None),
+        "hub_days": {h: sum(1 for g in v if g is not None) for h, v in hubs.items()},
     })
     print(f"econ: {D} days, {len(units)} units, {sum(1 for d in dates if d in node_days)} days with node prices, "
           f"{sum(1 for d in dates if d in dam_days)} with DAM")
