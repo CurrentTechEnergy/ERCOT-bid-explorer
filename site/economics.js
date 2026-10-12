@@ -35,7 +35,7 @@ const COST_NOTES = {
   inc: "Energy cost = each hour's output × the price the unit's own DAM energy offer curve puts on that output level (its incremental offer, read as its marginal cost), ignoring the minimum-energy price that units set low to get committed. Units with no DAM curve use the generic basis and are counted as estimated. Starts cost the DAM hot-start offer, else the generic start cost.",
   generic: "Fuel = output × the heat rate set here × the fuel price (Henry Hub plus the adder for gas; the $/MMBtu set here for coal and nuclear), plus variable O&M per MWh and the start cost per start.",
 };
-const { getJSON, tryJSON, showTip, hideTip, setCSV, css, esc } = window.CX;
+const { getJSON, tryJSON, showTip, hideTip, setCSV, css, esc, axisFmt, fmtKind } = window.CX;
 const $ = (id) => document.getElementById(id);
 const fmt0 = d3.format(",.0f"), fmt1 = d3.format(",.1f"), fmtPct = d3.format(".0%");
 const fmt$ = (v) => (v == null || isNaN(v) ? "–" : (v < 0 ? "−" : "") + "$" + fmt0(Math.abs(v)));
@@ -44,6 +44,8 @@ const fmt$k = (v) => {      // compact money: $12k, $1.2M, $3.4B
   const a = Math.abs(v), sign = v < 0 ? "−" : "";
   return sign + "$" + (a >= 1e9 ? d3.format(",.2f")(a / 1e9) + "B" : a >= 1e6 ? d3.format(",.1f")(a / 1e6) + "M" : a >= 1e3 ? fmt0(a / 1e3) + "k" : fmt0(a));
 };
+// axis labels: compact money keeps one unit ($k or $M) across the whole axis
+const yKind = (f) => (f === fmt$k ? "$k" : fmtKind(f));
 const fmt$2 = (v) => (v == null || isNaN(v) ? "–" : (v < 0 ? "−" : "") + "$" + d3.format(",.2f")(Math.abs(v)));
 const parseDate = (d) => new Date(d + "T12:00:00");
 const fmtDate = d3.timeFormat("%a %b %-d, %Y");
@@ -113,7 +115,7 @@ function lineChart(el, dstr, series, opts) {
   const svg = d3.create("svg").attr("viewBox", `0 0 ${w} ${H}`);
   svg.append("g").attr("class", "gridline").attr("transform", `translate(${m.l},0)`).call(d3.axisLeft(y).ticks(5).tickSize(-(w - m.l - m.r)).tickFormat(""));
   svg.append("g").attr("class", "axis").attr("transform", `translate(0,${H - m.b})`).call(d3.axisBottom(x).ticks(w < 560 ? 4 : 8).tickSizeOuter(0));
-  svg.append("g").attr("class", "axis").attr("transform", `translate(${m.l},0)`).call(d3.axisLeft(y).ticks(5).tickFormat(opts.yFmt || fmt0).tickSizeOuter(0));
+  svg.append("g").attr("class", "axis").attr("transform", `translate(${m.l},0)`).call(axisFmt(d3.axisLeft(y), 5, yKind(opts.yFmt)).tickSizeOuter(0));
   if (y.domain()[0] < 0) svg.append("line").attr("class", "zero").attr("x1", m.l).attr("x2", w - m.r).attr("y1", y(0)).attr("y2", y(0));
   svg.append("text").attr("class", "axis-title").attr("x", m.l).attr("y", 10).text(opts.title);
   const line = d3.line().defined((v) => v != null).x((v, i) => x(dates[i])).y((v) => y(v));
@@ -150,7 +152,7 @@ function barChart(el, dstr, up, down, lineS, opts) {
   const svg = d3.create("svg").attr("viewBox", `0 0 ${w} ${H}`);
   svg.append("g").attr("class", "gridline").attr("transform", `translate(${m.l},0)`).call(d3.axisLeft(y).ticks(6).tickSize(-(w - m.l - m.r)).tickFormat(""));
   svg.append("g").attr("class", "axis").attr("transform", `translate(0,${H - m.b})`).call(d3.axisBottom(x).ticks(w < 560 ? 4 : 8).tickSizeOuter(0));
-  svg.append("g").attr("class", "axis").attr("transform", `translate(${m.l},0)`).call(d3.axisLeft(y).ticks(6).tickFormat(opts.yFmt || fmt0).tickSizeOuter(0));
+  svg.append("g").attr("class", "axis").attr("transform", `translate(${m.l},0)`).call(axisFmt(d3.axisLeft(y), 6, yKind(opts.yFmt)).tickSizeOuter(0));
   svg.append("text").attr("class", "axis-title").attr("x", m.l).attr("y", 10).text(opts.title);
   dstr.forEach((_, i) => {
     let acc = 0;
@@ -211,12 +213,12 @@ function drawTotals() {
     (lamDays ? ` · ${fmt0(lamDays)} unit-days priced at system lambda for want of a node price` : "") +
     (missing ? ` · ${fmt0(missing)} unit-days with no fuel price (before the first gas price)` : "") + ` · ${COST_NOTES[S.cost].split(".")[0]}.`;
   barChart(el, T.dates, REV_SERIES.map((s) => ({ ...s, values: { energy, as }[s.k] })), COST_SERIES.map((s) => ({ ...s, values: { fuel, starts }[s.k] })),
-    { ...MARGIN, values: margin }, { title: "Revenue (up) and cost (down) per day, $, all units", yFmt: (v) => fmt$k(v) });
+    { ...MARGIN, values: margin }, { title: "Revenue (up) and cost (down) per day, $, all units", yFmt: fmt$k });
   let cum = 0;
   const cumv = margin.map((v) => (v == null ? null : (cum += v)));
-  lineChart(mel, T.dates, [{ label: "Cumulative margin", color: "--c5", values: cumv }], { H: 200, title: "Cumulative margin ($)", yFmt: (v) => fmt$k(v), tipFmt: fmt$ });
+  lineChart(mel, T.dates, [{ label: "Cumulative margin", color: "--c5", values: cumv }], { H: 200, title: "Cumulative margin ($)", yFmt: fmt$k, tipFmt: fmt$ });
   lineChart($("mpm-chart"), T.dates, [{ label: "Margin per MWh", color: "--c1", values: margin.map((v, i) => (v == null || !mwh[i] ? null : v / mwh[i])) }],
-    { H: 180, title: "Daily margin per MWh produced ($/MWh)", yFmt: (v) => fmt$(v), tipFmt: fmt$2 });
+    { H: 180, title: "Daily margin per MWh produced ($/MWh)", yFmt: fmt$, tipFmt: fmt$2 });
 }
 
 function drawInputs() {
@@ -285,11 +287,11 @@ function drawUnit() {
     (u.configs ? ` · configurations ${u.configs.join(", ")}` : "");
   legendHTML($("unit-legend"));
   barChart($("unit-chart"), T.dates, REV_SERIES.map((s) => ({ ...s, values: e[s.k] })), COST_SERIES.map((s) => ({ ...s, values: e[s.k] })),
-    { ...MARGIN, values: e.margin }, { title: "Revenue (up) and cost (down) per day, $", yFmt: (v) => fmt$k(v),
+    { ...MARGIN, values: e.margin }, { title: "Revenue (up) and cost (down) per day, $", yFmt: fmt$k,
       tipNote: (i) => `<br>${fmt0(u.mwh[i] || 0)} MWh${u.da_mwh[i] != null ? `, DA award ${fmt0(u.da_mwh[i])} MWh` : ""}${u.rev_rt[i] == null ? ", priced at lambda" : ""}${u.starts[i] ? `, ${u.starts[i]} start(s)` : ""}` });
   let cum = 0;
   lineChart($("unit-cum"), T.dates, [{ label: "Cumulative margin", color: "--c5", values: e.margin.map((v) => (v == null ? null : (cum += v))) }],
-    { H: 180, title: "Cumulative margin ($)", yFmt: (v) => fmt$k(v), tipFmt: fmt$ });
+    { H: 180, title: "Cumulative margin ($)", yFmt: fmt$k, tipFmt: fmt$ });
 }
 
 async function loadTech() {
