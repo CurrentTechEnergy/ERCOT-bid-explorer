@@ -31,8 +31,13 @@ For every unit in the per-unit day files (UNIT_DATA_DIR/60d/) and each 60-day da
 Prices are hourly means of the 15-minute (node) or 5-minute (lambda) values, so settlement
 at the real intervals differs a little.  Written per technology to data/econ/<tech>.json.gz:
   {dates, gas: [Henry Hub $/MMBtu per date, last trading day carried forward, null before
-   the first], units: {name: {type, sp, hsl (median HSL while running, MW), configs (combined
-   cycle: the configuration names summed into this train, else null), series...}}}
+   the first], units: {name: {type, sp, hsl, configs (combined cycle: the configuration names
+   summed into this train, else null), series...}}}
+`hsl` is the unit's capacity for capacity factors (MW): the 95th percentile, over the loaded days,
+of each day's highest HSL in any SCED run the unit is present in (for a combined-cycle train, the
+highest across its configurations).  Wind and solar HSL is weather-limited output, so a typical
+HSL would measure availability rather than capacity; the daily peak reaches the rating on windy
+or clear days, and the 95th percentile keeps a stray telemetry spike from setting it.
 and an index data/econ_index.json.gz {dates, techs: {tech: [names]}, has_nodes, has_dam}.
 """
 import numpy as np
@@ -88,12 +93,12 @@ def curve_price(prices, mws, q: float) -> float:
     return float(np.interp(q, m, p))
 
 
-def _hourly_online(u: dict, runs: list) -> np.ndarray:
-    n = len(runs)
-    hr = np.minimum(np.array(runs) // 60, 23)
-    si = _ffill_index(u["status"], n)
-    on = np.array([i >= 0 and _online(u["status"][i][1]) for i in si])
-    return np.array([on[hr == h].mean() >= 0.5 if (hr == h).any() else False for h in range(24)])
+def _peak_hsl(u: dict, n: int):
+    """The day's highest HSL over the runs the unit is present in (MW), or None."""
+    si, li = _ffill_index(u["status"], n), _ffill_index(u["lim"], n)
+    hsl = [u["lim"][j][1] for i, j in zip(si, li)
+           if i >= 0 and u["status"][i][1] is not None and j >= 0 and u["lim"][j][1] is not None]
+    return max(hsl) if hsl else None
 
 
 def build_econ(index: dict) -> None:
@@ -110,13 +115,13 @@ def build_econ(index: dict) -> None:
         last = gas_by.get(d, last)
         gas_series.append(last)
 
-    units = {}      # name -> {"type", "tech", "sp", "hsl": [], series: [D]}
+    units = {}      # name -> {"type", "tech", "sp", "hsl": [D] daily peak HSL, series: [D]}
     starts = {}     # unit, or combined-cycle train -> [D]
     prev_last, prev_date = {}, None
 
     def rec(name, u):
         if name not in units:
-            units[name] = {"type": u.get("type"), "tech": u.get("tech"), "sp": None, "hsl": [],
+            units[name] = {"type": u.get("type"), "tech": u.get("tech"), "sp": None, "hsl": [None] * D,
                            **{k: [None] * D for k in SERIES}}
         return units[name]
 
@@ -160,12 +165,7 @@ def build_econ(index: dict) -> None:
             if u.get("tech") == "storage":
                 r["chg"][di] = _r(-neg.sum())
             r["rev_lam"][di] = _r(np.nansum(out * lam))
-            on = _hourly_online(u, runs)
-            if on.any():
-                li = _ffill_index(u["lim"], len(runs))
-                hsl = [u["lim"][i][1] for i in li if i >= 0 and u["lim"][i][1] is not None]
-                if hsl:
-                    r["hsl"].append(float(np.median(hsl)))
+            r["hsl"][di] = _peak_hsl(u, len(runs))
             du = dam_units.get(name)
             sp = (du or {}).get("sp")
             if sp:
@@ -222,7 +222,8 @@ def build_econ(index: dict) -> None:
             continue
         m = merged[key]
         m["configs"].append(name)
-        m["hsl"] = m["hsl"] + r["hsl"]
+        m["hsl"] = [max(a, b) if a is not None and b is not None else (a if b is None else b)
+                    for a, b in zip(m["hsl"], r["hsl"])]
         m["sp"] = m["sp"] or r["sp"]
         for di in range(D):
             for k in ADD:
@@ -239,7 +240,8 @@ def build_econ(index: dict) -> None:
     by_tech = {}
     for name, r in units.items():
         t = r["tech"] if r["tech"] in SIXTY_DAY_TECHS else "other"
-        r["hsl"] = _r(np.median(r["hsl"])) if r["hsl"] else None
+        peaks = [v for v in r["hsl"] if v is not None]
+        r["hsl"] = _r(np.percentile(peaks, 95)) if peaks else None
         by_tech.setdefault(t, {})[name] = r
     out_dir = DATA_DIR / "econ"
     for t in SIXTY_DAY_TECHS:
