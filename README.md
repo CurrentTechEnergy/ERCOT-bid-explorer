@@ -27,6 +27,8 @@ All curves are stored as hourly averages of the SCED runs in each hour, on a pri
 
 Both versions are capped at each unit's high sustainable limit (HSL) for the SCED run, so wind and solar curves reflect available output, not nameplate. Storage curves run from charging (negative MW) to discharging.
 
+SCED can only move a unit between its LSL and HSL, so the part of a curve below minimum output never sets dispatch or price. The technology curves keep it (it is the MW that stays on at any price), but the unit-level offer metrics read the submitted curve from LSL up: the share offered at or below $0 is of the dispatchable range (HSL − LSL), and a unit's first offer price above $0 is the first submitted point at or above LSL. Many curves run from 0 MW at −$250 to the unit's price at HSL, which would otherwise count MW "at or below $0" by interpolation alone.
+
 ## How it updates
 
 `.github/workflows/update.yml` runs twice a day. It calls the ERCOT Public API for any reports posted in the last few days, processes them into `site/data/`, and commits the result. Each day adds roughly 50 KB of 2-day data and 150 KB of 60-day data.

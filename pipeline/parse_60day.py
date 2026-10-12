@@ -190,8 +190,15 @@ class _Accumulator:
             "tpo_m": df[t_mw].astype(float).values if t_mw else np.full((n, 1), np.nan),
         })
 
-        # per-unit rows (online intervals only)
-        first_sub_price = tp[:, 0] if tp.shape[1] else np.full(len(df), np.nan)
+        # per-unit rows (online intervals only).  SCED dispatches only between LSL and HSL, so
+        # the submitted-curve figures are read over that range: MW at or below $0 above LSL,
+        # and the price of the first submitted point at or above LSL (a curve that starts at
+        # 0 MW at -$250 and climbs to HSL would otherwise show -$250 as its "lowest price")
+        tm = df[t_mw].astype(float).values if t_mw else np.full((len(df), 1), np.nan)
+        at_lsl = ~np.isnan(tm) & ~np.isnan(tp) & (tm >= lsl_eff[:, None] - 0.5)
+        k = np.argmax(at_lsl, axis=1)
+        first_sub_price = np.where(at_lsl.any(axis=1), tp[np.arange(len(df)), k], np.nan)
+        le0_sub_lsl = np.maximum(sub[:, I_ZERO] - lsl_eff, 0.0)
         pinned = (lsl_eff > 0) & (bp <= lsl_eff + np.maximum(1.0, 0.01 * lsl_eff))
         u = pd.DataFrame({
             "unit": df["Resource Name"].astype(str).str.strip().values,
@@ -200,7 +207,7 @@ class _Accumulator:
             "online": online,
             "hsl": hsl_eff, "lsl": lsl_eff, "bp": bp, "out": out,
             "pinned": pinned, "floor_sced": sced[:, I_FLOOR], "le0_sced": sced[:, I_ZERO],
-            "le0_sub": sub[:, I_ZERO], "first_sub_price": first_sub_price,
+            "le0_sub": le0_sub_lsl, "first_sub_price": first_sub_price,
             "no_offer": no_offer,
         })
         self.unit_rows.append(u[u["online"]])
