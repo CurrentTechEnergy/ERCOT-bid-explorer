@@ -119,7 +119,7 @@ function panelName(panel) {
 }
 function slug(s) { return s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 60); }
 
-// One SVG for a panel: title, legend, every chart in it, and a source line.
+// One SVG for a panel: title, description, legend, every chart in it, and a source line.
 function panelSVG(panel) {
   const title = (panel.querySelector("h2")?.textContent || "chart").trim().replace(/\s+/g, " ");
   const svgs = [...panel.querySelectorAll(".chart svg")].filter((s) => s.getBoundingClientRect().width > 0);
@@ -136,6 +136,21 @@ function panelSVG(panel) {
     out.appendChild(t); return t;
   };
   text(16, y, title, 16, ink, 600);
+  // the panel's description under the title, wrapped to the image width
+  const note = (panel.querySelector(".panel-head .note")?.textContent || "").trim().replace(/\s+/g, " ");
+  if (note) {
+    const ctx = document.createElement("canvas").getContext("2d");
+    ctx.font = `12px ${font}`;
+    let line = "";
+    const lines = [];
+    note.split(" ").forEach((word) => {
+      const next = line ? `${line} ${word}` : word;
+      if (line && ctx.measureText(next).width > W - 32) { lines.push(line); line = word; } else line = next;
+    });
+    if (line) lines.push(line);
+    y += 6;
+    lines.forEach((l) => { y += 16; text(16, y, l, 12, muted); });
+  }
   y += 10;
   // legend: swatches and labels of the visible series
   const items = [...panel.querySelectorAll(".legend > *")].filter((b) => b.getAttribute("aria-pressed") !== "false")
