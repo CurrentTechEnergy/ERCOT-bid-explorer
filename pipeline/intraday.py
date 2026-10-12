@@ -11,6 +11,8 @@ Writes
                        at_min  MW of output up to each running unit's LSL
                        above   MW of output above LSL
                        n       units running
+                       transit MW of output from units not counted as running that hour
+                               (starting up, shutting down, or online for under half of it)
                      and cap_<group>: [day] average MW of capacity (HSL) in each status group
                      (STATUS_GROUPS, see status_group)
     above_units      units that ran above minimum in cheap hours, all days together:
@@ -145,7 +147,7 @@ def build_intraday(index: dict) -> None:
     day_no = {d: int(np.datetime64(d).astype(int)) for d in dates}
     date_idx = {d: i for i, d in enumerate(dates)}
 
-    tech = {t: {k: [None] * D for k in ["at_min", "above", "n"] + ["cap_" + g for g in STATUS_GROUPS]}
+    tech = {t: {k: [None] * D for k in ["at_min", "above", "n", "transit"] + ["cap_" + g for g in STATUS_GROUPS]}
             for t in UNIT_TECHS}
     strips = {}
     hsl_run = {}              # unit -> list of hourly HSL while running
@@ -189,7 +191,7 @@ def build_intraday(index: dict) -> None:
         n_files += 1
         prev_day = d
         runs = ud["runs"]
-        acc = {t: (np.zeros(24), np.zeros(24), np.zeros(24)) for t in UNIT_TECHS}
+        acc = {t: (np.zeros(24), np.zeros(24), np.zeros(24), np.zeros(24)) for t in UNIT_TECHS}
         cap = {t: dict.fromkeys(STATUS_GROUPS, 0.0) for t in UNIT_TECHS}
         seen, new_last = set(), {}
         for name, u in ud["units"].items():
@@ -205,20 +207,23 @@ def build_intraday(index: dict) -> None:
                     sacc[g] += h_
             strips.setdefault(name, ["-" * 24] * di).append(st)
             hsl_run.setdefault(name, []).extend(v for v in hsl if np.isfinite(v))
-            a_min, a_above, a_n = acc[t]
+            a_min, a_above, a_n, a_tr = acc[t]
             for h, c in enumerate(st):
-                if c in "ma":
-                    lo = min(out[h], lsl[h])
-                    a_min[h] += max(lo, 0.0)
-                    a_above[h] += max(out[h] - lsl[h], 0.0)
-                    a_n[h] += 1
-                    for thr in CHEAP:
-                        if np.isfinite(lam_arr[di, h]) and lam_arr[di, h] < thr:
-                            r = above_acc.setdefault((name, thr), [t, 0, 0, 0.0])
-                            r[1] += 1
-                            if c == "a":
-                                r[2] += 1
-                                r[3] += out[h] - lsl[h]
+                if c not in "ma":
+                    if c != "-" and np.isfinite(out[h]):
+                        a_tr[h] += max(out[h], 0.0)
+                    continue
+                lo = min(out[h], lsl[h])
+                a_min[h] += max(lo, 0.0)
+                a_above[h] += max(out[h] - lsl[h], 0.0)
+                a_n[h] += 1
+                for thr in CHEAP:
+                    if np.isfinite(lam_arr[di, h]) and lam_arr[di, h] < thr:
+                        r = above_acc.setdefault((name, thr), [t, 0, 0, 0.0])
+                        r[1] += 1
+                        if c == "a":
+                            r[2] += 1
+                            r[3] += out[h] - lsl[h]
         # off spells from status changes, run by run; a spell open at the end of yesterday
         # and yesterday's last status carry over when the days are consecutive
         for name, (t, events) in _spell_units(ud["units"]).items():
@@ -251,10 +256,11 @@ def build_intraday(index: dict) -> None:
                 strips[name].append("-" * 24)
         last_status = new_last
         for t in UNIT_TECHS:
-            a_min, a_above, a_n = acc[t]
+            a_min, a_above, a_n, a_tr = acc[t]
             tech[t]["at_min"][di] = [round(float(v)) for v in a_min]
             tech[t]["above"][di] = [round(float(v)) for v in a_above]
             tech[t]["n"][di] = [int(v) for v in a_n]
+            tech[t]["transit"][di] = [round(float(v)) for v in a_tr]
             for g in STATUS_GROUPS:
                 tech[t]["cap_" + g][di] = round(cap[t][g] / len(runs))
     for name, sp in pending.items():

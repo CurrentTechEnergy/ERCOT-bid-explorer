@@ -1353,7 +1353,9 @@ function drawLean() {
   const months = [...new Set(I.dates.map((d) => d.slice(0, 7)))];
   bindSelect("lean-month", "leanMonth", [{ id: "all", label: "All months" },
     ...months.reverse().map((m) => ({ id: m, label: d3.timeFormat("%b %Y")(parseDate(m + "-15")) }))], drawLean);
-  const out = (t, i, h) => I.tech[t].at_min[i][h] + I.tech[t].above[i][h];
+  // all output: running units plus units starting up, shutting down or online for under half the hour
+  const transit = (t, i, h) => I.tech[t].transit?.[i]?.[h] || 0;
+  const out = (t, i, h) => I.tech[t].at_min[i][h] + I.tech[t].above[i][h] + transit(t, i, h);
   let rows = [];
   I.dates.forEach((d, i) => {
     if (I.tech.coal.n[i] == null || (S.leanMonth !== "all" && !d.startsWith(S.leanMonth))) return;
@@ -1363,6 +1365,7 @@ function drawLean() {
       FOSSIL.forEach((t) => { r[t] = out(t, i, h); });
       r.fossil = d3.sum(FOSSIL, (t) => r[t]);
       r.above = d3.sum(FOSSIL, (t) => I.tech[t].above[i][h]);
+      r.transit = d3.sum(FOSSIL, (t) => transit(t, i, h));
       r.v = fossil ? r.fossil : r.fossil + r.nuc;
       if (!r.v) continue;   // the hour skipped at the spring DST change
       const c = ci.get(d);
@@ -1378,15 +1381,17 @@ function drawLean() {
     { h: "Date", t: 1, k: "date", f: (r) => d3.timeFormat("%a %b %-d, %Y")(parseDate(r.d)) }, { h: "HE", k: "hour_ending", f: (r) => r.h + 1 },
     { h: fossil ? "Fossil MW" : "Thermal MW", k: fossil ? "fossil_mw" : "thermal_mw", f: (r) => `<b>${mw(r.v)}</b>` },
     { h: "Fossil above min.", k: "fossil_above_min_mw", f: (r) => mw(r.above) },
+    { h: "Fossil starting/stopping", k: "fossil_starting_stopping_mw", f: (r) => mw(r.transit) },
     { h: "Coal", k: "coal_mw", f: (r) => mw(r.coal) }, { h: "Comb. cycle", k: "combined_cycle_mw", f: (r) => mw(r.combined_cycle) },
     { h: "Gas steam", k: "gas_steam_mw", f: (r) => mw(r.gas_steam) }, { h: "CT", k: "combustion_turbine_mw", f: (r) => mw(r.combustion_turbine) },
     { h: "Nuclear", k: "nuclear_mw", f: (r) => mw(r.nuc) }, { h: "Wind", k: "wind_mw", f: (r) => mw(r.wind) }, { h: "Solar", k: "solar_mw", f: (r) => mw(r.solar) },
     { h: "Storage", k: "storage_mw", f: (r) => mw(r.storage) }, { h: "Lambda", k: "lambda", f: (r) => fmtPrice(r.lam) }, { h: "Hub avg", k: "hub_avg", f: (r) => fmtPrice(r.hub) },
   ];
-  const val = (r) => [r.d, r.h + 1, r.v, r.above, r.coal, r.combined_cycle, r.gas_steam, r.combustion_turbine, r.nuc, r.wind, r.solar, r.storage, r.lam, r.hub];
+  const val = (r) => [r.d, r.h + 1, r.v, r.above, r.transit, r.coal, r.combined_cycle, r.gas_steam, r.combustion_turbine, r.nuc, r.wind, r.solar, r.storage, r.lam, r.hub];
   const scope = S.leanMonth === "all" ? "all days" : d3.timeFormat("%B %Y")(parseDate(S.leanMonth + "-15"));
   $("lean-note").textContent = `The ${top.length} hours with the least ${fossil ? "fossil (coal, combined cycle, gas steam and combustion turbine)" : "thermal (fossil and nuclear)"} output, ${scope}` +
-    `${S.leanPer === "day" ? ", one per day" : ""}, from the 60-day disclosure. "Above min." is output above each running unit's LSL, so the rest is output units could not shed without shutting down. ` +
+    `${S.leanPer === "day" ? ", one per day" : ""}, from the 60-day disclosure. Output counts every unit's telemetered MW, including units starting up, shutting down or online for under half the hour ("starting/stopping"). ` +
+    `"Above min." is output above each running unit's LSL; the rest of the running units' output is what they could not shed without shutting down. ` +
     `Storage is net output (negative while charging); hub avg is the HB_HUBAVG settlement point price. Click a row to open that hour in the Day view.`;
   if (!top.length) { el.innerHTML = `<p class="empty">No hours in this range.</p>`; setCSV(el, [], [], "Leanest thermal hours"); return; }
   el.innerHTML = `<table class="data"><thead><tr>${cols.map((c) => `<th${c.t ? ' class="t"' : ""}>${c.h}</th>`).join("")}</tr></thead><tbody>` +
