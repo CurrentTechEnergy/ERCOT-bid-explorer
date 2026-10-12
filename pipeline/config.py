@@ -21,9 +21,10 @@ PRICE_GRID = np.concatenate([
 ]).astype(float)
 
 # Price thresholds kept in the long-range summary ("MW offered at or below $X").
-# -249 stands for the price floor.  In the SCED2 curve, units with no offer curve have
-# minimum output at -$250 and the rest of their output schedule at -$249.99; units that
-# offer have the MW below their first offered point (usually minimum output) at -$20.
+# -249 stands for the price floor.  In the SCED2 curve, units that offer have the MW
+# below their first offered point (usually minimum output) at -$20 (-$50 for some).
+# Units with no offer curve sit at -$250 with the rest of their output schedule at
+# -$249.99 if nuclear or hydro, and at -$20 or -$50 otherwise.
 THRESHOLDS = [-249, -100, -50, -25, -10, -5, 0, 5, 10, 15, 20, 25, 30, 40,
               50, 75, 100, 150, 200, 300, 500, 1000, 2000]
 
