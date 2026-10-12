@@ -257,7 +257,36 @@ function initCopyLink() {
   };
 }
 
+// ---------------------------------------------------------------- axes ---
+// Tick labels carry only as many decimals as the tick spacing needs, so every axis reads the
+// same way: $5, $10 (or $2.50, $3.00 when steps are under $1); 0.5, 1.0; 20%, 40%.
+// kind: "num", "$", "%" or "$k" (money in one unit per axis: $500k, $1,000k or $0.5M, $1.0M).
+function tickFormat(ticks, kind = "num") {
+  const t = [...ticks].filter(Number.isFinite).sort((a, b) => a - b);
+  let step = Infinity;
+  for (let i = 1; i < t.length; i++) if (t[i] > t[i - 1]) step = Math.min(step, t[i] - t[i - 1]);
+  if (!Number.isFinite(step)) step = Math.abs(t[0]) || 1;
+  if (kind === "%") return d3.format(`.${d3.precisionFixed(step * 100)}%`);
+  if (kind === "$k") {
+    const top = d3.max(t, Math.abs) || 0;
+    const [u, sfx] = top >= 1e9 ? [1e9, "B"] : top >= 1e6 ? [1e6, "M"] : top >= 1e3 ? [1e3, "k"] : [1, ""];
+    const f = d3.format(`,.${d3.precisionFixed(step / u)}f`);
+    return (v) => (v < 0 ? "\u2212" : "") + "$" + f(Math.abs(v) / u) + (v ? sfx : "");
+  }
+  const p = d3.precisionFixed(step);
+  return d3.format(kind === "$" ? `$,.${p ? Math.max(2, p) : 0}f` : `,.${p}f`);
+}
+// the kind of a value formatter, read from how it prints 1 ("$1.00" -> "$", "100%" -> "%")
+function fmtKind(f) { const s = f ? String(f(1)) : ""; return s.includes("%") ? "%" : s.includes("$") ? "$" : "num"; }
+// fixes an axis's tick values (its own, or scale.ticks(n)) and labels them with tickFormat;
+// abs labels mirrored axes (values below zero drawn downward) by size
+function axisFmt(axis, n, kind = "num", abs = false) {
+  const v = axis.tickValues() || axis.scale().ticks(n);
+  const f = tickFormat(v, kind);
+  return axis.tickValues(v).tickFormat(abs ? (x) => f(Math.abs(x)) : f);
+}
+
 function init() { initPins(); addDownloads(); initCopyLink(); }
 
-window.CX = { getJSON, tryJSON, showTip, hideTip, clearPins, setCSV, readHash, writeHash, init, css, esc };
+window.CX = { getJSON, tryJSON, showTip, hideTip, clearPins, setCSV, readHash, writeHash, init, css, esc, tickFormat, fmtKind, axisFmt };
 })();

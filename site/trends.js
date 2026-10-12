@@ -65,7 +65,7 @@ const S = { T: null, C: null, M: {}, floorMode: "le20_sced", hidden: { floor: ne
   I: null, UH: null, idx: null, summ60: null, cheapTech: "all", cheapThr: "0", shutTech: "combined_cycle", shutPrice: "any",
   heatMeasure: "offer", heatTech: "combined_cycle", heatThr: "0", heatScale: "zero",
   stTech: "all", stThr: "0", stSort: "off", stUnit: "mw", stBase: null, stripScale: null };
-const { getJSON, tryJSON, showTip, hideTip, setCSV } = window.CX;
+const { getJSON, tryJSON, showTip, hideTip, setCSV, tickFormat, fmtKind, axisFmt } = window.CX;
 const $ = (id) => document.getElementById(id);
 const css = (v) => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
 const fmtMW = d3.format(",.0f");
@@ -113,26 +113,50 @@ function techDaily(s, stat) {
 }
 const hasStat = (stat) => THERMAL.some((t) => (S.T.daily[t]?.[stat] || []).some((v) => v != null));
 
+// ---- shared date range --------------------------------------------------------------
+// S.span: first and last day of any daily series on the page (set in init). Every daily chart
+// uses the same x scale, padded half a day each side so the end days (and bars) sit fully inside.
+function dateX(w, m) {
+  const a = parseDate(S.span[0]), b = parseDate(S.span[1]);
+  return d3.scaleTime().domain([d3.timeHour.offset(a, -12), d3.timeHour.offset(b, 12)]).range([m.l, w - m.r]);
+}
+// bottom date axis, plus a light band over the days after the last 60-day report
+function dateAxis(svg, x, w, H, m) {
+  svg.append("g").attr("class", "axis").attr("transform", `translate(0,${H - m.b})`).call(d3.axisBottom(x).ticks(w < 560 ? 4 : 8).tickSizeOuter(0));
+  if (!S.last60 || S.last60 >= S.span[1]) return;
+  const x0 = x(d3.timeHour.offset(parseDate(S.last60), 12)), x1 = w - m.r;
+  svg.insert("rect", ":first-child").attr("class", "no60").attr("x", x0).attr("y", m.t).attr("width", x1 - x0).attr("height", H - m.t - m.b)
+    .attr("fill", css("--grid")).attr("fill-opacity", 0.35);
+  if (x1 - x0 > 70) svg.append("text").attr("class", "axis-title").attr("x", x1 - 4).attr("y", m.t + 10).attr("text-anchor", "end").text("No 60-day data yet");
+}
+
 // ---- time-series chart with hover crosshair ---------------------------------------
 // series: [{ label, color, values, dash?, width? }]
 // opts: { title, yFmt, tipFmt, H, markers, dots, dates (defaults to the 60-day dates), stack (100% areas), yScale }
+// Every chart shares the page's date range (dateX); days outside it are dropped.
 function timeChart(el, series, opts) {
-  const dstr = opts.dates || S.T.dates, dates = dstr.map(parseDate);
+  let dstr = opts.dates || S.T.dates;
+  const keep = dstr.map((d) => d >= S.span[0] && d <= S.span[1]);
+  if (keep.includes(false)) {
+    dstr = dstr.filter((_, i) => keep[i]);
+    series = series.map((s) => ({ ...s, values: s.values.filter((_, i) => keep[i]) }));
+  }
+  const dates = dstr.map(parseDate);
   const w = Math.max(280, el.clientWidth || 600);
   const H = opts.H || 260, m = { t: 16, r: 16, b: 26, l: 64 };
-  const x = d3.scaleTime().domain(d3.extent(dates)).range([m.l, w - m.r]);
+  const x = dateX(w, m);
   const all = series.flatMap((s) => s.values).filter((v) => v != null);
   if (!all.length) return emptyMsg(el, opts.empty || "No data.");
   let y;
   if (opts.stack) y = d3.scaleLinear().domain([0, opts.stackMax || 1]).range([H - m.b, m.t]);
   else if (opts.yScale === "symlog") y = d3.scaleSymlog().constant(10).domain([Math.min(0, d3.min(all)), d3.max(all)]).range([H - m.b, m.t]);
   else y = d3.scaleLinear().domain([Math.min(0, d3.min(all)), Math.max(opts.yMin || 1, d3.max(all))]).nice().range([H - m.b, m.t]);
-  const yTicks = opts.yTicks ? opts.yTicks.filter((v) => v >= y.domain()[0] && v <= y.domain()[1]) : null;
+  const yTicks = opts.yTicks ? opts.yTicks.filter((v) => v >= y.domain()[0] && v <= y.domain()[1]) : y.ticks(5);
   const svg = d3.create("svg").attr("viewBox", `0 0 ${w} ${H}`);
-  const yAxis = () => (yTicks ? d3.axisLeft(y).tickValues(yTicks) : d3.axisLeft(y).ticks(5));
+  const yAxis = () => d3.axisLeft(y).tickValues(yTicks);
   svg.append("g").attr("class", "gridline").attr("transform", `translate(${m.l},0)`).call(yAxis().tickSize(-(w - m.l - m.r)).tickFormat(""));
-  svg.append("g").attr("class", "axis").attr("transform", `translate(0,${H - m.b})`).call(d3.axisBottom(x).ticks(w < 560 ? 4 : 8).tickSizeOuter(0));
-  svg.append("g").attr("class", "axis").attr("transform", `translate(${m.l},0)`).call(yAxis().tickFormat(opts.yFmt || d3.format(",.0f")).tickSizeOuter(0));
+  dateAxis(svg, x, w, H, m);
+  svg.append("g").attr("class", "axis").attr("transform", `translate(${m.l},0)`).call(yAxis().tickFormat(tickFormat(yTicks, fmtKind(opts.yFmt))).tickSizeOuter(0));
   if (y.domain()[0] < 0) svg.append("line").attr("class", "zero").attr("x1", m.l).attr("x2", w - m.r).attr("y1", y(0)).attr("y2", y(0));
   svg.append("text").attr("class", "axis-title").attr("x", m.l).attr("y", 10).text(opts.title);
   // markers: dates, or { d, color } to color each line
@@ -230,7 +254,7 @@ function drawCurtailment() {
   const y = d3.scaleLinear().domain([0, Math.max(100, d3.max(bins, (b) => b.wind + b.solar))]).nice().range([H - m.b, m.t]);
   const svg = d3.create("svg").attr("viewBox", `0 0 ${w} ${H}`);
   svg.append("g").attr("class", "gridline").attr("transform", `translate(${m.l},0)`).call(d3.axisLeft(y).ticks(5).tickSize(-(w - m.l - m.r)).tickFormat(""));
-  svg.append("g").attr("class", "axis").attr("transform", `translate(${m.l},0)`).call(d3.axisLeft(y).ticks(5).tickFormat(d3.format(",.0f")).tickSizeOuter(0));
+  svg.append("g").attr("class", "axis").attr("transform", `translate(${m.l},0)`).call(axisFmt(d3.axisLeft(y), 5).tickSizeOuter(0));
   const xa = svg.append("g").attr("class", "axis").attr("transform", `translate(0,${H - m.b})`).call(d3.axisBottom(x).tickSizeOuter(0));
   if (narrow) xa.selectAll("text").attr("transform", "rotate(-45)").attr("text-anchor", "end").attr("dx", "-0.4em").attr("dy", "0.5em");
   svg.append("text").attr("class", "axis-title").attr("x", m.l).attr("y", 10).text("Average curtailed MW in hours at each system lambda");
@@ -289,7 +313,7 @@ function drawNodeCurtail() {
   const y = d3.scaleLinear().domain([0, Math.max(1, d3.max(tot) / 1000)]).nice().range([H - m.b, m.t]);
   const svg = d3.create("svg").attr("viewBox", `0 0 ${w} ${H}`);
   svg.append("g").attr("class", "gridline").attr("transform", `translate(${m.l},0)`).call(d3.axisLeft(y).ticks(5).tickSize(-(w - m.l - m.r)).tickFormat(""));
-  svg.append("g").attr("class", "axis").attr("transform", `translate(${m.l},0)`).call(d3.axisLeft(y).ticks(5).tickFormat(d3.format(",.1f")).tickSizeOuter(0));
+  svg.append("g").attr("class", "axis").attr("transform", `translate(${m.l},0)`).call(axisFmt(d3.axisLeft(y), 5).tickSizeOuter(0));
   const xa = svg.append("g").attr("class", "axis").attr("transform", `translate(0,${H - m.b})`).call(d3.axisBottom(x).tickSizeOuter(0));
   if (narrow) xa.selectAll("text").attr("transform", "rotate(-45)").attr("text-anchor", "end").attr("dx", "-0.4em").attr("dy", "0.5em");
   svg.append("text").attr("class", "axis-title").attr("x", m.l).attr("y", 10).text("Curtailed energy by the price at the unit's node (GWh, days with node prices)");
@@ -443,8 +467,8 @@ function drawScatter() {
   const yFmt = status ? fmtPct : d3.format(",.0f");
   const svg = d3.create("svg").attr("viewBox", `0 0 ${w} ${H}`);
   svg.append("g").attr("class", "gridline").attr("transform", `translate(${m.l},0)`).call(d3.axisLeft(y).ticks(5).tickSize(-(w - m.l - m.r)).tickFormat(""));
-  svg.append("g").attr("class", "axis").attr("transform", `translate(0,${H - m.b})`).call(d3.axisBottom(x).ticks(w < 560 ? 4 : 8).tickFormat(d3.format("$,.0f")).tickSizeOuter(0));
-  svg.append("g").attr("class", "axis").attr("transform", `translate(${m.l},0)`).call(d3.axisLeft(y).ticks(5).tickFormat(yFmt).tickSizeOuter(0));
+  svg.append("g").attr("class", "axis").attr("transform", `translate(0,${H - m.b})`).call(axisFmt(d3.axisBottom(x), w < 560 ? 4 : 8, "$").tickSizeOuter(0));
+  svg.append("g").attr("class", "axis").attr("transform", `translate(${m.l},0)`).call(axisFmt(d3.axisLeft(y), 5, fmtKind(yFmt)).tickSizeOuter(0));
   svg.append("text").attr("class", "axis-title").attr("x", m.l).attr("y", 10)
     .text(status ? `${s.label}: share of available capacity running, daily average` : `${s.label}: units online, daily average`);
   svg.append("text").attr("class", "axis-title").attr("x", w - m.r).attr("y", H - 4).attr("text-anchor", "end")
@@ -515,7 +539,7 @@ async function drawMarginal() {
 
 function marginalAxes(svg, y, x, w, H, m, xTitle, xAxis) {
   svg.append("g").attr("class", "gridline").attr("transform", `translate(${m.l},0)`).call(d3.axisLeft(y).ticks(6).tickSize(-(w - m.l - m.r)).tickFormat(""));
-  svg.append("g").attr("class", "axis").attr("transform", `translate(${m.l},0)`).call(d3.axisLeft(y).ticks(6).tickFormat((v) => fmtPct(Math.abs(v))).tickSizeOuter(0));
+  svg.append("g").attr("class", "axis").attr("transform", `translate(${m.l},0)`).call(axisFmt(d3.axisLeft(y), 6, "%", true).tickSizeOuter(0));
   const xa = svg.append("g").attr("class", "axis").attr("transform", `translate(0,${H - m.b})`).call(xAxis.tickSizeOuter(0));
   svg.append("line").attr("class", "zero").attr("x1", m.l).attr("x2", w - m.r).attr("y1", y(0)).attr("y2", y(0));
   svg.append("text").attr("class", "axis-title").attr("x", m.l).attr("y", 10).text("Share of marginal supply (above) · battery charging that stops (below)");
@@ -638,7 +662,7 @@ function drawNodeMarginal() {
   const svg = d3.create("svg").attr("viewBox", `0 0 ${w} ${Hh}`);
   mnDefs(svg);
   svg.append("g").attr("class", "gridline").attr("transform", `translate(${m.l},0)`).call(d3.axisLeft(y).ticks(5).tickSize(-(w - m.l - m.r)).tickFormat(""));
-  svg.append("g").attr("class", "axis").attr("transform", `translate(${m.l},0)`).call(d3.axisLeft(y).ticks(5).tickFormat(d3.format(",.0f")).tickSizeOuter(0));
+  svg.append("g").attr("class", "axis").attr("transform", `translate(${m.l},0)`).call(axisFmt(d3.axisLeft(y), 5).tickSizeOuter(0));
   svg.append("g").attr("class", "axis").attr("transform", `translate(0,${Hh - m.b})`).call(d3.axisBottom(x).tickValues(narrow ? d3.range(0, 24, 3) : d3.range(24)).tickFormat((h) => h + 1).tickSizeOuter(0));
   svg.append("text").attr("class", "axis-title").attr("x", m.l).attr("y", 10).text(mw ? "Base point MW of the units on the margin, average day" : "Units on the margin, average day");
   svg.append("text").attr("class", "axis-title").attr("x", w - m.r).attr("y", Hh - 2).attr("text-anchor", "end").text("Hour ending");
@@ -817,8 +841,8 @@ async function drawUnitStrip(u, s, marks) {
   if (!str) return emptyMsg(el, "No hourly data for this unit.");
   const dstr = S.UH.dates, dates = dstr.map(parseDate), D = dstr.length;
   const w = Math.max(280, el.clientWidth || 600), m = { t: 16, r: 16, b: 26, l: 64 }, ch = 7, H = m.t + m.b + ch * 24;
-  const x = d3.scaleTime().domain(d3.extent(dates)).range([m.l, w - m.r]);
-  const cw = (w - m.l - m.r) / Math.max(1, D - 1);
+  const x = dateX(w, m);
+  const cw = x(d3.timeDay.offset(x.domain()[0], 1)) - x(x.domain()[0]);
   const svg = d3.create("svg").attr("viewBox", `0 0 ${w} ${H}`);
   const col = { "0": css("--grid"), o: css("--ink-2"), m: css(s.color), a: css(s.color) };
   const g = svg.append("g");
@@ -839,10 +863,10 @@ async function drawUnitStrip(u, s, marks) {
   }
   const y = d3.scaleBand().domain(d3.range(24)).range([m.t, m.t + ch * 24]);
   svg.append("g").attr("class", "axis").attr("transform", `translate(${m.l - 4},0)`).call(d3.axisLeft(y).tickValues([0, 5, 11, 17, 23]).tickFormat((h) => `HE ${h + 1}`).tickSize(0)).select(".domain").remove();
-  svg.append("g").attr("class", "axis").attr("transform", `translate(0,${H - m.b})`).call(d3.axisBottom(x).ticks(w < 560 ? 4 : 8).tickSizeOuter(0));
+  dateAxis(svg, x, w, H, m);
   svg.append("text").attr("class", "axis-title").attr("x", m.l).attr("y", 10).text("Hour by hour: offline, at minimum or above minimum");
   marks.forEach((mk) => svg.append("line").attr("class", "crosshair").attr("x1", x(parseDate(mk.d))).attr("x2", x(parseDate(mk.d))).attr("y1", m.t).attr("y2", H - m.b).style("stroke", css(mk.color)));
-  svg.append("rect").attr("x", m.l - cw / 2).attr("y", m.t).attr("width", w - m.l - m.r + cw).attr("height", ch * 24).attr("fill", "transparent")
+  svg.append("rect").attr("x", m.l).attr("y", m.t).attr("width", w - m.l - m.r).attr("height", ch * 24).attr("fill", "transparent")
     .on("pointermove", (ev) => {
       const [px, py] = d3.pointer(ev);
       const i = d3.minIndex(dates, (d) => Math.abs(d - x.invert(px))), h = Math.max(0, Math.min(23, Math.floor((py - m.t) / ch)));
@@ -869,13 +893,13 @@ function dayBars(el, dstr, series, opts) {
   const w = Math.max(280, el.clientWidth || 600), H = opts.H || 240, m = { t: 16, r: 16, b: 26, l: 64 };
   const tot = dstr.map((_, i) => (series.some((s) => s.values[i] != null) ? d3.sum(series, (s) => s.values[i] || 0) : null));
   if (!tot.some((v) => v != null)) return emptyMsg(el, opts.empty || "No data.");
-  const x = d3.scaleTime().domain(d3.extent(dates)).range([m.l, w - m.r]);
+  const x = dateX(w, m);
   const y = d3.scaleLinear().domain([0, Math.max(1, d3.max(tot))]).nice().range([H - m.b, m.t]);
-  const bw = Math.max(1, ((w - m.l - m.r) / Math.max(1, dstr.length - 1)) * 0.75);
+  const bw = Math.max(1, (x(d3.timeDay.offset(x.domain()[0], 1)) - x(x.domain()[0])) * 0.75);
   const svg = d3.create("svg").attr("viewBox", `0 0 ${w} ${H}`);
   svg.append("g").attr("class", "gridline").attr("transform", `translate(${m.l},0)`).call(d3.axisLeft(y).ticks(5).tickSize(-(w - m.l - m.r)).tickFormat(""));
-  svg.append("g").attr("class", "axis").attr("transform", `translate(0,${H - m.b})`).call(d3.axisBottom(x).ticks(w < 560 ? 4 : 8).tickSizeOuter(0));
-  svg.append("g").attr("class", "axis").attr("transform", `translate(${m.l},0)`).call(d3.axisLeft(y).ticks(5).tickFormat(opts.yFmt || fmtMW).tickSizeOuter(0));
+  dateAxis(svg, x, w, H, m);
+  svg.append("g").attr("class", "axis").attr("transform", `translate(${m.l},0)`).call(axisFmt(d3.axisLeft(y), 5, fmtKind(opts.yFmt)).tickSizeOuter(0));
   svg.append("text").attr("class", "axis-title").attr("x", m.l).attr("y", 10).text(opts.title);
   let base = dstr.map(() => 0);
   series.forEach((s) => {
@@ -1095,7 +1119,7 @@ function fleetBars(el, groups, s, title) {
   const yFmt = mw ? d3.format(",.0f") : fmtPct;
   const svg = d3.create("svg").attr("viewBox", `0 0 ${w} ${H}`);
   svg.append("g").attr("class", "gridline").attr("transform", `translate(${m.l},0)`).call(d3.axisLeft(y).ticks(5).tickSize(-(w - m.l - m.r)).tickFormat(""));
-  svg.append("g").attr("class", "axis").attr("transform", `translate(${m.l},0)`).call(d3.axisLeft(y).ticks(5).tickFormat(yFmt).tickSizeOuter(0));
+  svg.append("g").attr("class", "axis").attr("transform", `translate(${m.l},0)`).call(axisFmt(d3.axisLeft(y), 5, fmtKind(yFmt)).tickSizeOuter(0));
   // tick labels on two lines when they would collide
   const ax = svg.append("g").attr("class", "axis").attr("transform", `translate(0,${H - m.b})`).call(d3.axisBottom(x).tickSizeOuter(0));
   ax.selectAll(".tick text").each(function (t) {
@@ -1217,8 +1241,8 @@ function drawHourProfile(el, vals, lamH, s, title) {
   const svg = d3.create("svg").attr("viewBox", `0 0 ${w} ${H}`);
   svg.append("g").attr("class", "gridline").attr("transform", `translate(${m.l},0)`).call(d3.axisLeft(y).ticks(4).tickSize(-(w - m.l - m.r)).tickFormat(""));
   svg.append("g").attr("class", "axis").attr("transform", `translate(0,${H - m.b})`).call(d3.axisBottom(x).tickValues([0, 5, 11, 17, 23]).tickFormat((h) => `HE ${h + 1}`).tickSizeOuter(0));
-  svg.append("g").attr("class", "axis").attr("transform", `translate(${m.l},0)`).call(d3.axisLeft(y).ticks(4).tickFormat(d3.format(",.2~f")).tickSizeOuter(0));
-  svg.append("g").attr("class", "axis").attr("transform", `translate(${w - m.r},0)`).call(d3.axisRight(yl).ticks(4).tickFormat(d3.format("$,.0f")).tickSizeOuter(0));
+  svg.append("g").attr("class", "axis").attr("transform", `translate(${m.l},0)`).call(axisFmt(d3.axisLeft(y), 4).tickSizeOuter(0));
+  svg.append("g").attr("class", "axis").attr("transform", `translate(${w - m.r},0)`).call(axisFmt(d3.axisRight(yl), 4, "$").tickSizeOuter(0));
   svg.append("text").attr("class", "axis-title").attr("x", m.l).attr("y", 10).text(title);
   svg.append("g").selectAll("rect").data(vals).join("rect").attr("x", (_, h) => x(h)).attr("width", x.bandwidth())
     .attr("y", (v) => y(v)).attr("height", (v) => y(0) - y(v)).attr("fill", css(s.color));
@@ -1333,6 +1357,10 @@ async function boot() {
     tryJSON("data/curtail_nodes.json.gz"), tryJSON("data/gas.json.gz"), tryJSON("data/marginal_nodes.json.gz"), tryJSON("data/mitigation.json.gz")]);
   if (!S.T) { $("status").textContent = "No trends data yet. It is built by the data update workflow."; return; }
   const D = S.T.dates;
+  // one date range for every daily chart: all the bid and curtailment data (gas is trimmed to it)
+  const spans = [D, S.C?.rs?.dates, S.C?.curt?.dates, S.C?.pq?.dates, S.N?.dates, S.I?.dates].filter((d) => d && d.length);
+  S.span = [d3.min(spans, (d) => d[0]), d3.max(spans, (d) => d.at(-1))];
+  S.last60 = D.at(-1);
   $("status").textContent = `60-day data: ${D.length} days, ${D[0]} to ${D[D.length - 1]} · ${S.T.units.length} thermal units` +
     (S.C ? ` · wind and solar offers through ${S.C.rs.dates.at(-1)}` : "");
   loadView();
