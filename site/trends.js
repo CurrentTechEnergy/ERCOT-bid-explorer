@@ -17,7 +17,8 @@ const TECHS = [
 const THERMAL = ["nuclear", "coal", "combined_cycle", "gas_steam", "combustion_turbine"];
 const FLOOR_TECHS = TECHS.filter((s) => !["wind", "solar"].includes(s.id));   // wind and solar have their own chart
 const FLOOR_NOTES = {
-  floor_sced: "MW priced at the −$250 floor (or −$249.99) in the curves SCED dispatched against, averaged over each day. This includes minimum output, which ERCOT places at the floor whatever the generator offered, and units running on an output schedule with no offer.",
+  le20_sced: "MW priced at or below −$20 in the curves SCED dispatched against, averaged over each day. In those curves ERCOT prices a unit's minimum output at −$20 whatever the generator offered, and units with no offer at −$20, −$50 or the −$250 floor, so this counts all of it, plus anything generators themselves offered at or below −$20. Storage below zero is charging bid at or below −$20.",
+  floor_sced: "MW priced at the −$250 floor (or −$249.99) in the curves SCED dispatched against, averaged over each day. Since ERCOT prices minimum output at −$20 in those curves, this is mostly units with no offer, such as nuclear, plus storage charging bid at the floor. Minimum output is under ≤ −$20, as used.",
   floor_submitted: "MW the generators themselves priced at the −$250 floor in the offer curves they submitted, averaged over each day.",
   le0_submitted: "MW the generators themselves priced at or below $0 in the offer curves they submitted, averaged over each day.",
 };
@@ -58,7 +59,7 @@ const MBP_BINS = [
 ];
 const SIG_FMT = { le0: (v) => d3.format(".0%")(v), noff: (v) => d3.format(".0%")(v), rel: (v) => (v >= 0 ? "+" : "−") + d3.format("$,.0f")(Math.abs(v)) };
 
-const S = { T: null, C: null, M: {}, floorMode: "floor_sced", hidden: { floor: new Set(), partial: new Set() },
+const S = { T: null, C: null, M: {}, floorMode: "le20_sced", hidden: { floor: new Set(), partial: new Set() },
   pqTech: "coal", capTech: "coal", scTech: "coal", scX: "week", mSrc: "60d", mView: "smooth", mDays: "all",
   chgTech: "all", chgSig: "all", unit: null, mnMeasure: "units", mnDays: "all",
   I: null, UH: null, idx: null, summ60: null, cheapTech: "all", cheapThr: "0", shutTech: "combined_cycle", shutPrice: "any",
@@ -178,6 +179,7 @@ function timeChart(el, series, opts) {
 function drawFloor() {
   $("floor-note").textContent = FLOOR_NOTES[S.floorMode];
   const list = FLOOR_TECHS.filter((s) => !S.hidden.floor.has(s.id));
+  if (!hasStat(S.floorMode)) return emptyMsg($("floor-chart"), "Not built yet. It fills in with the next data update.");
   timeChart($("floor-chart"), list.map((s) => ({ ...s, values: techDaily(s, S.floorMode) })), { title: "MW, daily average", H: 280 });
   timeChart($("floor-price"), [{ label: "System lambda", color: "--price", values: S.T.lambda }],
     { title: "System lambda ($/MWh), daily average", H: 140, yFmt: d3.format("$,.0f"), tipFmt: fmtPrice, yMin: 10 });

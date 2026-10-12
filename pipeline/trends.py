@@ -15,7 +15,7 @@ From the per-unit day files in UNIT_DATA_DIR (days without one are skipped / nul
 """
 import numpy as np
 
-from .config import DATA_DIR, SIXTY_DAY_TECHS, UNIT_DATA_DIR
+from .config import DATA_DIR, PRICE_GRID, SIXTY_DAY_TECHS, UNIT_DATA_DIR
 from .store import read_json_gz, write_json_gz
 from .units import first_positive_price, le0_share
 
@@ -32,6 +32,10 @@ UNIT_TECHS = ["nuclear", "coal", "combined_cycle", "gas_steam", "combustion_turb
 # a unit's offer price is compared with the median of its own resource type (CCGT90, SCLE90, ...)
 # on days when at least PEER_MIN units of that type have one, otherwise with its technology's
 PEER_MIN = 8
+# Read off each day's hourly curves (what SCED dispatched against): MW at or below -$20.
+# In the SCED2 curve ERCOT prices minimum output at -$20 (-$50 or -$250 for some units with
+# no offer), so this catches everything ERCOT puts at its floor prices.
+CURVE_STATS = {"le20_sced": -20.0}
 
 # Bidding-approach changes. Each signal is compared between the K online days before and
 # after a day; a change is a sustained shift larger than its threshold.
@@ -122,7 +126,7 @@ def build_trends(index: dict) -> None:
     summ = read_json_gz(DATA_DIR / "summary_60d.json.gz", default={})
     lam = [_mean((prices.get(d) or {}).get("lambda") or []) for d in dates]
 
-    daily = {t: {k: [] for k in DAILY_STATS + ["partial_units", "starts"]} for t in SIXTY_DAY_TECHS}
+    daily = {t: {k: [] for k in DAILY_STATS + list(CURVE_STATS) + ["partial_units", "starts"]} for t in SIXTY_DAY_TECHS}
     units = {}
     unit_starts, flips = {}, []    # unit -> {day index: starts}
     prev_date, prev_last = None, {}
@@ -154,6 +158,11 @@ def build_trends(index: dict) -> None:
             for t in SIXTY_DAY_TECHS:
                 daily[t]["starts"].append(None)
         day = read_json_gz(DATA_DIR / "60d" / f"{d}.json.gz") or {}
+        for t in SIXTY_DAY_TECHS:
+            rows = [r for r in (day.get("curves") or {}).get(t, []) if r]
+            for k, p in CURVE_STATS.items():
+                j = int(np.searchsorted(PRICE_GRID, p))
+                daily[t][k].append(_mean([r[j] if j < len(r) else None for r in rows]))
         u = day.get("units") or {"columns": [], "rows": []}
         C = {c: i for i, c in enumerate(u["columns"])}
         partial = {t: 0 for t in SIXTY_DAY_TECHS}
