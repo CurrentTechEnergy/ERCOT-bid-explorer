@@ -114,7 +114,8 @@ pipeline/
   ercot_api.py     ERCOT Public API client (token, archive listing, downloads)
   update.py        command line entry point
 site/
-  index.html, app.js, trends.html, trends.js, economics.html, economics.js, style.css, vendor/d3.min.js
+  index.html, app.js, trends.html, trends.js, economics.html, economics.js, contracts.html, contracts.js,
+  builder.html, builder.js, style.css, vendor/d3.min.js
   data/            generated: index.json, summary_*.json.gz, marginal_*.json.gz, 2d/, 60d/, dam/, prices/,
                    curtail_nodes.json.gz, marginal_nodes.json.gz, gas.json.gz, gas_hubs.json.gz,
                    series/
@@ -154,7 +155,7 @@ Node prices are kept at 15 minutes for every settlement point that is not a hub 
 
 ### Hourly unit series
 
-`pipeline/series.py` reduces each 60-day per-unit day file to one value per unit and hour: mean HSL while online, base point, telemetered output, three readings of the submitted offer curve (its first price, the price at half its MW, and the price it puts on the base point, each the median over the hour's online runs), MW taken off HDL by operator override, the DAM award and the DA price at the unit's settlement point, plus the real-time price at each settlement point. It writes `data/series/YYYY-MM/<tech>.json.gz` and an index of units, for charts of any unit or plant without loading the full day files (about 185 KB a day for all units). Per-day results are cached on the data branch under `series/`, keyed on the sizes of the files they came from, so each update only redoes new or reprocessed days.
+`pipeline/series.py` reduces each 60-day per-unit day file to one value per unit and hour: mean HSL while online, base point, telemetered output, three readings of the submitted offer curve (its first price, the price at half its MW, and the price it puts on the base point, each the median over the hour's online runs), MW taken off HDL by operator override, the DAM award and the DA price at the unit's settlement point, plus the real-time price at each settlement point. It writes `data/series/YYYY-MM/<tech>.json.gz` and an index of units, read by the graph builder (`builder.html`), for charts of any unit or plant without loading the full day files (about 185 KB a day for all units). Per-day results are cached on the data branch under `series/`, keyed on the sizes of the files they came from, so each update only redoes new or reprocessed days.
 
 ### Plant economics
 

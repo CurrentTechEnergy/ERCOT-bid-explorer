@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>ERCOT Graph Builder</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Sans+Condensed:wght@600&display=swap">
+<link rel="stylesheet" href="style.css">
+<style>
+  .builder { display: grid; grid-template-columns: 340px minmax(0, 1fr); gap: 16px; margin-top: 16px; align-items: start; }
+  .side { display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+  .side .panel { gap: 8px; }
+  .side label.f { font-size: 12px; color: var(--ink-2); display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+  .side input[type=text], .side input[type=date], .side input[type=number], .side select, .side textarea {
+    font: inherit; font-size: 13px; color: var(--ink); background: var(--surface); border: 1px solid var(--line);
+    border-radius: 6px; padding: 5px 7px; min-height: 32px; width: 100%; }
+  .side textarea { resize: vertical; min-height: 54px; }
+  .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .series-list { display: flex; flex-direction: column; gap: 6px; }
+  .s-row { display: grid; grid-template-columns: 12px minmax(0, 1fr) auto; gap: 8px; align-items: center; padding: 6px 8px;
+    border: 1px solid var(--line); border-radius: 7px; font-size: 13px; }
+  .s-row .sw { width: 12px; height: 12px; }
+  .s-row .lab { overflow-wrap: anywhere; }
+  .s-row .meta { color: var(--muted); font-size: 11px; display: flex; gap: 6px; align-items: center; margin-top: 3px; }
+  .s-row .meta select { min-height: 24px; padding: 1px 4px; font-size: 11px; width: auto; }
+  .s-row .x { font: inherit; font-size: 16px; line-height: 1; color: var(--muted); background: none; border: 0; cursor: pointer; padding: 4px; }
+  .s-row .x:hover { color: var(--ink); }
+  .add { font: inherit; font-size: 13px; color: var(--accent); background: var(--accent-soft); border: 1px dashed var(--accent);
+    border-radius: 7px; padding: 7px; cursor: pointer; }
+  .add:disabled { opacity: 0.5; cursor: not-allowed; }
+  .hours { display: grid; grid-template-columns: repeat(12, 1fr); gap: 2px; }
+  .hours button { font: 10px var(--font-data); padding: 4px 0; border: 0; border-radius: 3px; background: var(--grid); color: var(--muted); cursor: pointer; }
+  .hours button[aria-pressed="true"] { background: var(--ink); color: var(--surface); }
+  .exports { display: flex; flex-wrap: wrap; gap: 6px; }
+  .exports button { font: inherit; font-size: 13px; background: var(--surface); color: var(--ink); border: 1px solid var(--line);
+    border-radius: 6px; padding: 6px 10px; cursor: pointer; }
+  .exports button.primary { background: var(--ink); color: var(--surface); border-color: var(--ink); }
+  .hint { margin: 0; font-size: 12px; color: var(--muted); }
+  .figure-main { position: sticky; top: 16px; min-width: 0; }
+  .figure-wrap { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 8px; min-width: 0; overflow-x: auto; }
+  dialog.picker { width: min(640px, calc(100vw - 32px)); max-height: calc(100vh - 48px); border: 1px solid var(--axis); border-radius: 10px;
+    padding: 16px; background: var(--surface); color: var(--ink); box-shadow: 0 12px 40px rgba(0,0,0,.2); }
+  dialog.picker::backdrop { background: rgba(0,0,0,.25); }
+  .picker h3 { margin: 0 0 10px; font: 600 15px var(--font-ui); }
+  .picker .cols { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 14px; margin-top: 10px; }
+  .picker ul { list-style: none; margin: 6px 0 0; padding: 0; font-size: 13px; max-height: 300px; overflow: auto; }
+  .picker li button { width: 100%; font: inherit; text-align: left; display: flex; justify-content: space-between; gap: 8px;
+    background: none; border: 0; border-radius: 5px; padding: 6px 8px; color: var(--ink); cursor: pointer; }
+  .picker li button:hover { background: var(--grid); }
+  .picker li button[aria-pressed="true"] { background: var(--accent-soft); }
+  .picker li .m { color: var(--muted); font-size: 11px; white-space: nowrap; }
+  .picker .metrics label { display: flex; justify-content: space-between; gap: 8px; font-size: 13px; padding: 4px 2px; }
+  .picker .metrics label span.u { color: var(--muted); font-size: 11px; }
+  .picker .foot-row { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-top: 12px; }
+  .picker .foot-row .btns { display: flex; gap: 8px; }
+  .picker button.go { font: inherit; background: var(--ink); color: var(--surface); border: 0; border-radius: 6px; padding: 7px 14px; cursor: pointer; }
+  .picker button.go:disabled { opacity: 0.4; cursor: not-allowed; }
+  .picker button.cancel { font: inherit; background: none; color: var(--ink-2); border: 1px solid var(--line); border-radius: 6px; padding: 7px 14px; cursor: pointer; }
+  @media (max-width: 900px) {
+    .builder { grid-template-columns: minmax(0, 1fr); }
+    .figure-main { position: static; order: -1; }
+    .figure-wrap .chart { min-width: 720px; }
+    .picker .cols { grid-template-columns: minmax(0, 1fr); }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+<header class="masthead">
+  <div class="brand">
+    <div class="nav-row"><nav class="nav" aria-label="Pages"><a href="index.html">Day view</a><a href="trends.html">Trends</a><a href="economics.html">Plant economics</a><a href="contracts.html">Hedge signals</a><a href="builder.html" aria-current="page">Graph builder</a></nav><button type="button" class="copy-link" id="copy-link" title="Copy a link that rebuilds exactly this chart">Copy link</button></div>
+    <h1>ERCOT Graph Builder</h1>
+    <p class="sub">Chart any unit, plant, technology fleet or price point on a shared time axis, then download it with its caption. MW series share one panel and prices another, so nothing ever sits on a second y-axis.</p>
+  </div>
+  <p class="status" id="status">Loading data…</p>
+</header>
+
+<div class="builder">
+  <aside class="side" aria-label="Chart settings">
+    <section class="panel">
+      <label class="f lbl" for="preset">Start from</label>
+      <select id="preset"></select>
+    </section>
+
+    <section class="panel">
+      <span class="lbl">Series</span>
+      <div class="series-list" id="series-list"></div>
+      <button type="button" class="add" id="add">+ Add series</button>
+      <p class="hint" id="series-hint"></p>
+    </section>
+
+    <section class="panel">
+      <span class="lbl">Time</span>
+      <div class="row2">
+        <label class="f">From<input type="date" id="from"></label>
+        <label class="f">To<input type="date" id="to"></label>
+      </div>
+      <label class="f">Resolution
+        <select id="res"><option value="h">Hourly</option><option value="dm">Daily mean</option><option value="ds">Daily total (MWh; prices stay daily means)</option></select>
+      </label>
+      <span class="f" style="font-size:12px;color:var(--ink-2)">Hours shown (hour ending)</span>
+      <div class="seg seg-sm" role="radiogroup" id="hourset">
+        <button type="button" data-v="all" role="radio">All</button>
+        <button type="button" data-v="day" role="radio" title="Hours ending 8 to 19">Daylight</button>
+        <button type="button" data-v="on" role="radio" title="Hours ending 7 to 22, Monday to Friday">On-peak</button>
+        <button type="button" data-v="off" role="radio" title="Everything outside on-peak">Off-peak</button>
+        <button type="button" data-v="custom" role="radio">Custom</button>
+      </div>
+      <div class="hours" id="hours" aria-label="Hours ending to include"></div>
+      <p class="hint" id="avail"></p>
+    </section>
+
+    <section class="panel">
+      <span class="lbl">Labels and axes</span>
+      <label class="f">Title<input type="text" id="title" placeholder="Chart title"></label>
+      <label class="f">Subtitle<input type="text" id="subtitle" placeholder="What, where, when"></label>
+      <label class="f">Footnote<textarea id="note" placeholder="Method note, printed under the chart"></textarea></label>
+      <div class="row2">
+        <label class="f">Price axis
+          <select id="paxis"><option value="lin">Linear</option><option value="sym">Compressed (symlog)</option></select>
+        </label>
+        <label class="f">MW axis
+          <select id="maxis"><option value="zero">From zero</option><option value="fit">Fit the data</option></select>
+        </label>
+      </div>
+      <div class="row2">
+        <label class="f">Price min ($)<input type="number" id="pmin" placeholder="auto"></label>
+        <label class="f">Price max ($)<input type="number" id="pmax" placeholder="auto"></label>
+      </div>
+    </section>
+
+    <section class="panel">
+      <span class="lbl">Download</span>
+      <div class="exports">
+        <button type="button" class="primary" data-x="png">Image (PNG)</button>
+        <button type="button" data-x="svg">Vector (SVG)</button>
+        <button type="button" data-x="csv">Data (CSV)</button>
+      </div>
+      <p class="hint">The image is 1200 px wide at 2× resolution, in the current light or dark theme, with the title, legends, footnote and sources included.</p>
+    </section>
+  </aside>
+
+  <main class="figure-main" style="display:block;margin:0">
+    <div class="figure-wrap"><div class="chart" id="figure"></div></div>
+  </main>
+</div>
+
+<p class="foot">Unit, plant and fleet series come from ERCOT's 60-day SCED and DAM disclosures, so they end about 60 days ago. Hub prices and system lambda go up to the latest loaded day. A plant is every unit at one settlement point. Hourly values are means over the hour's SCED runs (offer prices are medians), hour ending 1 to 24. <a href="https://github.com/CurrentTechEnergy/ERCOT-bid-explorer#hourly-unit-series">How the series are built</a>.</p>
+
+<dialog class="picker" id="picker">
+  <h3>Add series</h3>
+  <div class="seg seg-sm" role="radiogroup" id="pk-kind">
+    <button type="button" data-v="unit" role="radio">Unit or plant</button>
+    <button type="button" data-v="fleet" role="radio">Fleet</button>
+    <button type="button" data-v="price" role="radio">Price point</button>
+  </div>
+  <div class="cols">
+    <div>
+      <input type="search" id="pk-q" placeholder="Unit name or settlement point" style="width:100%" aria-label="Search">
+      <ul id="pk-list"></ul>
+    </div>
+    <div class="metrics">
+      <div class="hint" id="pk-for">Pick one on the left</div>
+      <div id="pk-metrics"></div>
+    </div>
+  </div>
+  <div class="foot-row">
+    <p class="hint" id="pk-hint">MW metrics go to the MW panel and prices to the price panel.</p>
+    <div class="btns"><button type="button" class="cancel" id="pk-cancel">Cancel</button><button type="button" class="go" id="pk-go" disabled>Add</button></div>
+  </div>
+</dialog>
+
+<div class="tip" id="tip" hidden></div>
+<script src="vendor/d3.min.js"></script>
+<script src="common.js"></script>
+<script src="builder.js"></script>
+</body>
+</html>
