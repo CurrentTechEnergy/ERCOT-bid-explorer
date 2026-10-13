@@ -230,8 +230,15 @@ const floorKeep = () => { const lam = lamHours(), thr = S.floorHours === "all" ?
 async function drawFloor() {
   const byGroup = S.floorGroup === "behaviour";
   $("floor-mode").querySelectorAll("button").forEach((b) => (b.disabled = byGroup && b.dataset.v !== "le20_sced"));
-  const keep = floorKeep(), only = (vals) => vals.map((v, i) => (keep[i] ? v : null));
-  const sub = S.floorHours === "all" ? "" : `, hours with lambda below ${fmtPrice0(+S.floorHours)}`;
+  // all hours: a line per hour; a price filter: one stacked bar per day, averaged over that day's hours below it
+  const floorPlot = (el, list, what) => {
+    if (S.floorHours === "all") return timeChart(el, list, { title: `${what}, hourly`, H: 280, dates: S.TH.dates, hourly: true });
+    const keep = floorKeep(), D = S.TH.dates, thr = fmtPrice0(+S.floorHours);
+    const hrs = D.map((_, i) => d3.range(24).filter((h) => keep[i * 24 + h]));
+    const day = (vals) => D.map((_, i) => { const v = hrs[i].map((h) => vals[i * 24 + h]).filter((x) => x != null); return v.length ? d3.mean(v) : null; });
+    dayBars(el, D, list.map((s) => ({ ...s, values: day(s.values) })), { H: 280, title: `${what}, average over each day's hours with lambda below ${thr}`,
+      none: `No hours with lambda below ${thr}`, tipNote: (i) => ` · ${hrs[i].length} hour${hrs[i].length === 1 ? "" : "s"}` });
+  };
   const el = $("floor-chart");
   if (byGroup) {
     $("floor-note").textContent = FLOOR_GROUP_NOTE;
@@ -256,19 +263,19 @@ async function drawFloor() {
         for (let h = 0; h < 24; h++) { const c = str[j * 24 + h]; if ((c === "m" || c === "a") && acc[i * 24 + h] != null) acc[i * 24 + h] += v; }
       });
     }
-    const list = FLOOR_GROUPS.filter((g) => !S.hidden.floorG.has(g.id)).map((g) => ({ ...g, values: only(sums.get(g.id).map((v) => (v == null ? null : Math.round(v)))) }));
-    timeChart(el, list, { title: `MW at or below −$20 as used, by group, hourly${sub}`, H: 280, dates: D, hourly: true });
+    const list = FLOOR_GROUPS.filter((g) => !S.hidden.floorG.has(g.id)).map((g) => ({ ...g, values: sums.get(g.id).map((v) => (v == null ? null : Math.round(v))) }));
+    floorPlot(el, list, "MW at or below −$20 as used, by group");
   } else {
     $("floor-note").textContent = FLOOR_NOTES[S.floorMode];
     legend($("floor-legend"), FLOOR_TECHS, S.hidden.floor, drawFloor);
     const src = S.TH && S.TH.floor[S.floorMode];
     if (!src) return emptyMsg(el, "Not built yet. It fills in with the next data update.");
     const list = FLOOR_TECHS.filter((s) => !S.hidden.floor.has(s.id) && s.keys.some((k) => src[k]));
-    timeChart(el, list.map((s) => ({ ...s, values: only(techHours(s, src)) })), { title: `MW, hourly${sub}`, H: 280, dates: S.TH.dates, hourly: true });
+    floorPlot(el, list.map((s) => ({ ...s, values: techHours(s, src) })), "MW");
   }
   const thr = S.floorHours === "all" ? null : +S.floorHours;
   timeChart($("floor-price"), [{ label: "System lambda", color: "--price", values: lamHours() }],
-    { title: `System lambda ($/MWh), hourly${thr == null ? "" : `; the chart above shows the hours below ${fmtPrice0(thr)}`}`, H: 160, dates: S.TH.dates, hourly: true,
+    { title: `System lambda ($/MWh), hourly${thr == null ? "" : `; the chart above averages the hours below ${fmtPrice0(thr)}`}`, H: 160, dates: S.TH.dates, hourly: true,
       yScale: "symlog", yTicks: [-250, -50, -10, 0, 10, 25, 50, 100, 250, 1000, 5000], yFmt: fmtPrice0, tipFmt: fmtPrice });
 }
 
