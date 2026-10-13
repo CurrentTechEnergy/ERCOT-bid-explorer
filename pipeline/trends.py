@@ -1,41 +1,57 @@
-"""Long-term trends from the 60-day data already in data/: daily statistics by technology,
-daily system lambda, per-unit daily offer behaviour for thermal units, and detected
-changes in each unit's bidding approach.  Needs no downloads.  Read by trends.html.
+"""Long-term trends from the 60-day data already in data/: hourly floor-priced MW and capacity
+running by technology, starts per day, per-unit daily offer behaviour for thermal units, and
+detected changes in each unit's bidding approach.  Needs no downloads.  Read by trends.html.
 
-From the per-unit day files in UNIT_DATA_DIR (days without one are skipped / null):
-  daily[tech]["starts"]  number of starts (status not starting "ON" -> starting "ON")
-  units[i]["starts"]     the same per thermal unit and day
+data/trends_hourly_60d.json.gz   {"dates", "floor", "run"}, every series [day][24] (MW, null where
+                                 missing; a day with no thermal unit online is null throughout)
+  floor[stat][tech]  stat:
+                       le20_sced        MW at or below -$20 in the curve SCED dispatched against
+                                        (the 60-day day file's hourly technology curves).  In the
+                                        SCED2 curve, units that offer have the MW below their
+                                        first offered point (usually minimum output) at -$20
+                                        (-$50 for some); units with no offer curve sit at
+                                        -$250/-$249.99 (nuclear, hydro) or at -$20/-$50 (other
+                                        thermal), so this catches everything ERCOT prices at its
+                                        floor values
+                       floor_sced, floor_submitted   the 60-day summary's hourly stats
+                       le0_sub_lsl      MW offered at or below $0 above LSL in the submitted
+                                        curves, summed over the technology's units, averaged over
+                                        the hour's runs (thermal only, from the per-unit files).
+                                        Curves are read from LSL up because SCED cannot dispatch
+                                        below it; a curve from 0 MW at -$250 up to HSL puts MW at
+                                        or below $0 only by interpolation, below LSL
+  run[tech]          thermal: "on" HSL of units online, "off" HSL of units offline but available
+
+data/trends_60d.json.gz
+  starts[tech]           thermal units' starts per day (status not starting "ON" -> starting "ON")
+  has_units              per day, 1 when that day's per-unit file was read
   units[i]["first"]      first offer price above $0 at or above LSL, averaged over the day's online
                          runs (units.first_positive_price)
   units[i]["le0"]        share of the unit's dispatchable range (HSL - LSL) it offered at or below
                          $0, averaged over the day's online runs (units.le0_share)
-  daily[tech]["le0_sub_lsl"]  MW offered at or below $0 above LSL in the submitted curves, summed
-                         over the technology's units and averaged over the day's runs.  Curves
-                         are read from LSL up because SCED cannot dispatch below it; a curve
-                         from 0 MW at -$250 up to HSL puts MW at or below $0 only by
-                         interpolation, below LSL
+  units[i]["noff"]       share of the day's online runs without an offer curve
   units[i]["le20"]       MW at or below -$20 in the curve SCED dispatched against, averaged over
-                         the day's runs (0 while offline), so the units of a technology sum to
-                         daily[tech]["le20_sced"]; null on days without a per-unit file
-  has_units              per day, 1 when that day's per-unit file was read
-  units[i]["rel"]        that minus the day's median for the unit's peer group; "peer" says which
+                         the runs the unit was online that day (null when it never was); the page
+                         spreads it over the hours the unit ran (unit_hours_60d)
+  units[i]["rel"]        first minus the day's median for the unit's peer group; "peer" says which
                          group: 1 its resource type (PEER_MIN or more units with a price), 0 its
                          technology
+  changes                sustained shifts in le0, noff or rel (detect_changes)
   flips                  thermal units whose submitted curve offered some MW at or below $0
                          above LSL in some online runs and none in others on the same day:
                          [unit, tech, date, n_switches, first_switch "HH:MM", hours_le0]
 """
 import numpy as np
 
-from .config import DATA_DIR, PRICE_GRID, SIXTY_DAY_TECHS, UNIT_DATA_DIR
+from .config import DATA_DIR, PRICE_GRID, UNIT_DATA_DIR
 from .store import read_json_gz, write_json_gz
-from .units import first_positive_price, le0_above_lsl, le20_sced_mw
+from .units import first_positive_price, le0_above_lsl, le20_sced_runs
 
-DAILY_STATS = ["n_online", "hsl", "lsl", "output", "floor_sced", "floor_submitted",
-               "le0_submitted", "no_offer_hsl",
-               "mw_on", "mw_onruc", "mw_off", "mw_out", "n_onruc", "n_off", "n_out"]
-# daily key -> stat name in the 60-day summary, where they differ
-STAT_OF = {"mw_on": "hsl", "mw_onruc": "hsl_onruc", "mw_off": "hsl_off", "mw_out": "hsl_out"}
+# hourly MW at or near the floor (see the module docstring); le0_sub_lsl is thermal only
+FLOOR_STATS = ["le20_sced", "floor_sced", "floor_submitted", "le0_sub_lsl"]
+FLOOR_TECHS = ["nuclear", "coal", "combined_cycle", "gas_steam", "combustion_turbine", "hydro", "other"]
+# hourly capacity (HSL) online and offline-but-available -> stat name in the 60-day summary
+RUN_STATS = {"on": "hsl", "off": "hsl_off"}
 # stat order of summaries written before they carried "stat_names"
 LEGACY_STATS = ["n_online", "hsl", "lsl", "base_point", "output", "floor_sced", "floor_submitted",
                 "le0_sced", "le0_submitted", "no_offer_hsl", "no_offer_output_schedule"]
@@ -44,12 +60,6 @@ UNIT_TECHS = ["nuclear", "coal", "combined_cycle", "gas_steam", "combustion_turb
 # a unit's offer price is compared with the median of its own resource type (CCGT90, SCLE90, ...)
 # on days when at least PEER_MIN units of that type have one, otherwise with its technology's
 PEER_MIN = 8
-# Read off each day's hourly curves (what SCED dispatched against): MW at or below -$20.
-# In the SCED2 curve, units that offer have the MW below their first offered point (usually
-# minimum output) at -$20 (-$50 for some); units with no offer curve sit at -$250/-$249.99
-# (nuclear, hydro) or at -$20/-$50 (other thermal).  So this catches everything ERCOT prices
-# at its floor values.
-CURVE_STATS = {"le20_sced": -20.0}
 
 # Bidding-approach changes. Each signal is compared between the K online days before and
 # after a day; a change is a sustained shift larger than its threshold.
@@ -87,11 +97,6 @@ def detect_changes(series):
     return sorted(found)
 
 
-def _mean(vals):
-    v = [x for x in vals if x is not None]
-    return round(float(np.mean(v)), 1) if v else None
-
-
 def _online(s):
     return bool(s) and s.startswith("ON")
 
@@ -99,12 +104,13 @@ def _online(s):
 def unit_day_facts(ud: dict, prev_last: dict):
     """From one per-unit day file: starts per unit, each unit's last known status, flips, each
     thermal unit's first offer price above $0 at or above LSL (units.first_positive_price) and
-    its share of the dispatchable range offered at or below $0, and per technology the MW offered
-    at or below $0 above LSL (averaged over the day's runs), and each thermal unit's MW at or
-    below -$20 as used (units.le20_sced_mw).
+    its share of the dispatchable range offered at or below $0, per technology and hour the MW
+    offered at or below $0 above LSL (averaged over the hour's runs), and each thermal unit's MW
+    at or below -$20 as used, averaged over the runs it was online (units.le20_sced_runs).
     prev_last: {unit: status} at the end of the previous day (empty if that day is missing);
     a start in the first run of the day counts only when it is known."""
     n = len(ud["runs"])
+    hr = np.minimum(np.array(ud["runs"]) // 60, 23)
     starts, last, flips, pos, le0, tech_le0, le20 = {}, {}, [], {}, {}, {}, {}
     for name, u in ud["units"].items():
         seq = [s for _, s in u["status"] if s]      # skip absent runs (None) and blank statuses ("")
@@ -119,9 +125,11 @@ def unit_day_facts(ud: dict, prev_last: dict):
         if u["tech"] not in UNIT_TECHS:
             continue
         pos[name] = first_positive_price(u, n)
-        le20[name] = round(le20_sced_mw(u, n), 1)
+        v = le20_sced_runs(u, n)
+        if not np.isnan(v).all():
+            le20[name] = round(float(np.nanmean(v)), 1)
         mw, rng = le0_above_lsl(u, n)
-        tech_le0[u["tech"]] = tech_le0.get(u["tech"], 0.0) + float(np.nansum(mw)) / max(n, 1)
+        tech_le0[u["tech"]] = tech_le0.get(u["tech"], np.zeros(n)) + np.nan_to_num(mw)
         with np.errstate(invalid="ignore", divide="ignore"):
             share = np.where(rng >= 1.0, mw / rng, np.nan)
         ok = ~np.isnan(share)
@@ -140,30 +148,47 @@ def unit_day_facts(ud: dict, prev_last: dict):
             state = cur
         hours = round(float(np.sum(share[ok] > FLIP_EPS)) * 24 / max(n, 1), 1)
         flips.append([name, u["tech"], ud["date"], n_sw, first_sw, hours])
+    # per-run technology sums -> hourly means
+    tech_le0 = {t: [round(float(v[hr == h].mean()), 1) if (hr == h).any() else None for h in range(24)]
+                for t, v in tech_le0.items()}
     return starts, last, flips, pos, le0, tech_le0, le20
+
+
+def _hour_rows(rows, j):
+    """[24] values of column j from a technology's hourly rows (None where missing)."""
+    out = []
+    for h in range(24):
+        r = rows[h] if h < len(rows) else None
+        v = r[j] if r and j is not None and j < len(r) else None
+        out.append(None if v is None else round(float(v)))
+    return out
 
 
 def build_trends(index: dict) -> None:
     dates = sorted(index["days"].get("60d", []))
-    prices = read_json_gz(DATA_DIR / "summary_prices.json.gz", default={})
     summ = read_json_gz(DATA_DIR / "summary_60d.json.gz", default={})
-    lam = [_mean((prices.get(d) or {}).get("lambda") or []) for d in dates]
 
-    daily = {t: {k: [] for k in DAILY_STATS + list(CURVE_STATS) + ["partial_units", "starts", "le0_sub_lsl"]} for t in SIXTY_DAY_TECHS}
+    # hourly series, [day][24] per technology
+    floor = {k: {t: [] for t in (UNIT_TECHS if k == "le0_sub_lsl" else FLOOR_TECHS)} for k in FLOOR_STATS}
+    run = {t: {k: [] for k in RUN_STATS} for t in UNIT_TECHS}
+    starts_t = {t: [] for t in UNIT_TECHS}
     units = {}
-    unit_starts, flips = {}, []    # unit -> {day index: starts}
+    flips = []
     prev_date, prev_last = None, {}
-    n_unit_days, has_units = 0, []
+    n_unit_days, has_units, empty = 0, [], []
     for di, d in enumerate(dates):
         sd = summ.get(d) or {}
         st = sd.get("stats") or {}
         names = sd.get("stat_names") or LEGACY_STATS
-        for t in SIXTY_DAY_TECHS:
-            rows = [r for r in st.get(t, []) if r]
-            for k in DAILY_STATS:
-                name = STAT_OF.get(k, k)
-                j = names.index(name) if name in names else None
-                daily[t][k].append(None if j is None else _mean([r[j] if j < len(r) else None for r in rows]))
+        col = lambda nm: names.index(nm) if nm in names else None
+        for k in ("floor_sced", "floor_submitted"):
+            for t in floor[k]:
+                floor[k][t].append(_hour_rows(st.get(t) or [], col(k)))
+        for t in UNIT_TECHS:
+            for k, nm in RUN_STATS.items():
+                run[t][k].append(_hour_rows(st.get(t) or [], col(nm)))
+        j = col("n_online")
+        empty.append(not any(r and j is not None and j < len(r) and r[j] for t in UNIT_TECHS for r in st.get(t) or []))
 
         ud = read_json_gz(UNIT_DATA_DIR / "60d" / f"{d}.json.gz")
         if ud:
@@ -172,43 +197,30 @@ def build_trends(index: dict) -> None:
             starts, prev_last, fl, pos, le0, tech_le0, le20 = unit_day_facts(ud, known)
             prev_date = d
             flips += fl
-            for t in SIXTY_DAY_TECHS:
-                daily[t]["starts"].append(sum(c for nm, c in starts.items() if ud["units"][nm]["tech"] == t))
-                daily[t]["le0_sub_lsl"].append(round(tech_le0.get(t, 0.0), 1) if t in UNIT_TECHS else None)
-            for nm, c in starts.items():
-                unit_starts.setdefault(nm, {})[di] = c
+            for t in UNIT_TECHS:
+                starts_t[t].append(sum(c for nm, c in starts.items() if ud["units"][nm]["tech"] == t))
+                floor["le0_sub_lsl"][t].append(tech_le0.get(t) or [0.0] * 24)
         else:
             pos, le0, le20 = {}, {}, {}
-            for t in SIXTY_DAY_TECHS:
-                daily[t]["starts"].append(None)
-                daily[t]["le0_sub_lsl"].append(None)
+            for t in UNIT_TECHS:
+                starts_t[t].append(None)
+                floor["le0_sub_lsl"][t].append(None)
         has_units.append(1 if ud else 0)
         day = read_json_gz(DATA_DIR / "60d" / f"{d}.json.gz") or {}
-        for t in SIXTY_DAY_TECHS:
-            rows = [r for r in (day.get("curves") or {}).get(t, []) if r]
-            for k, p in CURVE_STATS.items():
-                j = int(np.searchsorted(PRICE_GRID, p))
-                daily[t][k].append(_mean([r[j] if j < len(r) else None for r in rows]))
+        g = int(np.searchsorted(PRICE_GRID, -20.0))
+        for t in FLOOR_TECHS:
+            floor["le20_sced"][t].append(_hour_rows((day.get("curves") or {}).get(t) or [], g))
         u = day.get("units") or {"columns": [], "rows": []}
         C = {c: i for i, c in enumerate(u["columns"])}
-        partial = {t: 0 for t in SIXTY_DAY_TECHS}
         for r in u["rows"]:
-            tech, hrs = r[C["tech"]], r[C["hours_online"]] or 0
-            if 1 <= hrs <= 22:
-                partial[tech] = partial.get(tech, 0) + 1
-            if tech not in UNIT_TECHS:
+            if r[C["tech"]] not in UNIT_TECHS:
                 continue
-            e = units.setdefault(r[C["unit"]], {"tech": tech, "type": r[C["type"]], "hours": {}, "first": {},
-                                                 "floor": {}, "le0": {}, "noff": {}, "le20": {}})
-            hsl = r[C["hsl"]] or 0
-            e["hours"][di] = hrs
+            e = units.setdefault(r[C["unit"]], {"tech": r[C["tech"]], "type": r[C["type"]], "first": {},
+                                                 "le0": {}, "noff": {}, "le20": {}})
             e["first"][di] = pos.get(r[C["unit"]])
             e["noff"][di] = r[C["no_offer_share"]]
-            e["floor"][di] = round(r[C["floor_mw"]] / hsl, 3) if hsl > 1 else None
             e["le0"][di] = le0.get(r[C["unit"]])
-        for t in SIXTY_DAY_TECHS:
-            daily[t]["partial_units"].append(partial[t] if u["rows"] else None)
-        # every thermal unit in the day file, online that day or not (offline units count 0)
+        # every thermal unit in the day file: MW at or below -$20 while it was online
         for name, v in le20.items():
             if name in units:
                 units[name]["le20"][di] = v
@@ -216,10 +228,11 @@ def build_trends(index: dict) -> None:
     D = len(dates)
     # a day with no thermal unit online is a gap in the disclosure, not a real day
     for i in range(D):
-        if not sum(daily[t]["n_online"][i] or 0 for t in UNIT_TECHS):
-            for t in SIXTY_DAY_TECHS:
-                for k in daily[t]:
-                    daily[t][k][i] = None
+        if empty[i]:
+            for ser in [*(v for f in floor.values() for v in f.values()), *(v for r in run.values() for v in r.values())]:
+                ser[i] = None
+            for t in UNIT_TECHS:
+                starts_t[t][i] = None
     # that day's median first offer price above $0 per resource type and per technology
     def _median(sel):
         return {i: float(np.median(p)) if (p := [e["first"][i] for e in units.values() if sel(e) and e["first"].get(i) is not None]) else None
@@ -245,18 +258,17 @@ def build_trends(index: dict) -> None:
                else round(e["first"][i] - pm[i][0], 1) for i in range(D)]
         ch = detect_changes({"le0": arr(e["le0"]), "noff": arr(e["noff"]), "rel": rel})
         unit_out.append({"unit": name, "tech": e["tech"], "type": e["type"],
-                         "hours": [e["hours"].get(i, 0) for i in range(D)],
-                         "first": arr(e["first"]), "rel": rel, "peer": [None if r is None else p[1] for r, p in zip(rel, pm)], "floor": arr(e["floor"]),
+                         "first": arr(e["first"]), "rel": rel, "peer": [None if r is None else p[1] for r, p in zip(rel, pm)],
                          "le0": arr(e["le0"]), "noff": arr(e["noff"]), "n_changes": len(ch),
-                         "le20": [e["le20"].get(i, 0.0 if has_units[i] else None) for i in range(D)],
-                         "starts": arr(unit_starts.get(name, {}))})
+                         "le20": arr(e["le20"])})
         changes += [[name, e["tech"], dates[i], sig, b, a] for i, sig, b, a in ch]
 
+    write_json_gz(DATA_DIR / "trends_hourly_60d.json.gz", {"dates": dates, "floor": floor, "run": run})
     write_json_gz(DATA_DIR / "trends_60d.json.gz", {
-        "dates": dates, "lambda": lam, "techs": SIXTY_DAY_TECHS, "daily": daily, "has_units": has_units,
+        "dates": dates, "starts": starts_t, "has_units": has_units,
         "signals": {k: v["label"] for k, v in SIGNALS.items()}, "window": K, "units": unit_out,
         "changes": sorted(changes, key=lambda c: c[2]),
         "flips": sorted(flips, key=lambda f: (f[2], f[0])),
     })
-    print(f"trends_60d: {D} days, {len(unit_out)} units, {len(changes)} bidding changes; "
+    print(f"trends_60d / trends_hourly_60d: {D} days, {len(unit_out)} units, {len(changes)} bidding changes; "
           f"{n_unit_days} per-unit day file(s), {len(flips)} flips")

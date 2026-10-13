@@ -1,4 +1,4 @@
-/* ERCOT Bidding Trends — long-term view. Reads data/trends_60d.json.gz (pipeline/trends.py),
+/* ERCOT Bidding Trends — long-term view. Reads data/trends_60d.json.gz and data/trends_hourly_60d.json.gz (pipeline/trends.py),
    data/curve_trends.json.gz (pipeline/curve_trends.py) and data/marginal_*.json.gz (pipeline/marginal.py). */
 (() => {
 "use strict";
@@ -17,10 +17,10 @@ const TECHS = [
 const THERMAL = ["nuclear", "coal", "combined_cycle", "gas_steam", "combustion_turbine"];
 const FLOOR_TECHS = TECHS.filter((s) => !["wind", "solar"].includes(s.id));   // wind and solar have their own chart
 const FLOOR_NOTES = {
-  le20_sced: "MW priced at or below −$20 in the curves SCED dispatched against, averaged over each day. In those curves ERCOT fills in prices a unit didn't offer. Units that offer have the MW below their first offered point, usually minimum output, at −$20 (−$50 for some units). Units with no offer curve sit at −$250 with the rest of their output schedule at −$249.99 if they are nuclear or hydro, and at −$20 or −$50 otherwise. This counts all of that, plus anything generators themselves offered at or below −$20. Storage below zero is charging bid at or below −$20.",
-  floor_sced: "MW priced at the −$250 floor (or −$249.99) in the curves SCED dispatched against, averaged over each day. ERCOT puts only units with no offer curve there, mostly nuclear and hydro. Minimum output of units that offer sits at −$20 (−$50 for some units), so it is counted under ≤ −$20, as used, not here. Storage below zero is charging bid at the floor.",
-  floor_submitted: "MW the generators themselves priced at the −$250 floor in the offer curves they submitted, averaged over each day.",
-  le0_sub_lsl: "MW above minimum output (LSL) that the generators themselves priced at or below $0 in the offer curves they submitted, averaged over each day. Thermal technologies only. Minimum output is left out because SCED cannot dispatch below it: many curves start at 0 MW at −$250 and climb to the unit's real price, which puts MW at or below $0 by interpolation, all of it below LSL.",
+  le20_sced: "MW priced at or below −$20 in the curves SCED dispatched against, hour by hour. In those curves ERCOT fills in prices a unit didn't offer. Units that offer have the MW below their first offered point, usually minimum output, at −$20 (−$50 for some units). Units with no offer curve sit at −$250 with the rest of their output schedule at −$249.99 if they are nuclear or hydro, and at −$20 or −$50 otherwise. This counts all of that, plus anything generators themselves offered at or below −$20. Storage below zero is charging bid at or below −$20.",
+  floor_sced: "MW priced at the −$250 floor (or −$249.99) in the curves SCED dispatched against, hour by hour. ERCOT puts only units with no offer curve there, mostly nuclear and hydro. Minimum output of units that offer sits at −$20 (−$50 for some units), so it is counted under ≤ −$20, as used, not here. Storage below zero is charging bid at the floor.",
+  floor_submitted: "MW the generators themselves priced at the −$250 floor in the offer curves they submitted, hour by hour.",
+  le0_sub_lsl: "MW above minimum output (LSL) that the generators themselves priced at or below $0 in the offer curves they submitted, averaged over each hour's SCED runs. Thermal technologies only. Minimum output is left out because SCED cannot dispatch below it: many curves start at 0 MW at −$250 and climb to the unit's real price, which puts MW at or below $0 by interpolation, all of it below LSL.",
 };
 // floor chart grouped by shutdown behaviour: nuclear on its own (no offer curve, never moves),
 // the other thermal units by the groups of the cheap-stretches panel (ST_GROUPS, from the
@@ -34,7 +34,7 @@ const FLOOR_GROUPS = [
   { id: "daily2", label: "Daily, 1–2 a week", color: "--c3" },
   { id: "daily3", label: "Daily, over 2 a week", color: "--c4" },
 ];
-const FLOOR_GROUP_NOTE = "MW priced at or below −$20 in the curves SCED dispatched against, summed over thermal units grouped by how they ran over the whole period (the groups of the cheap-stretches panel below; nuclear separately, since it has no offer curve and its whole output sits at the floor). For units that offer, this is almost entirely minimum output (LSL) at ERCOT's placeholder price, so the chart tracks how much minimum load is committed: day-to-day movement is which units are online: the daily groups drive the day-to-day swing and the seasonal group the slow one. Storage, hydro and other resources are left out.";
+const FLOOR_GROUP_NOTE = "MW priced at or below −$20 in the curves SCED dispatched against, summed over thermal units grouped by how they ran over the whole period (the groups of the cheap-stretches panel below; nuclear separately, since it has no offer curve and its whole output sits at the floor). For units that offer, this is almost entirely minimum output (LSL) at ERCOT's placeholder price, so the chart tracks how much minimum load is committed: day-to-day movement is which units are online: the daily groups drive the day-to-day swing and the seasonal group the slow one. Storage, hydro and other resources are left out. Each unit's MW at or below −$20 is its average over the runs it was online that day, counted in the hours it ran.";
 // wind and solar offer price bands (pipeline/curve_trends.py), ordered from cheapest
 const BANDS = [
   { id: "floor", label: "At the floor (−$250)", color: "--c8" },
@@ -72,7 +72,7 @@ const MBP_BINS = [
 ];
 const SIG_FMT = { le0: (v) => d3.format(".0%")(v), noff: (v) => d3.format(".0%")(v), rel: (v) => (v >= 0 ? "+" : "−") + d3.format("$,.0f")(Math.abs(v)) };
 
-const S = { T: null, C: null, M: {}, floorMode: "le20_sced", floorGroup: "tech", hidden: { floor: new Set(), floorG: new Set(), partial: new Set() },
+const S = { T: null, C: null, M: {}, floorMode: "le20_sced", floorGroup: "tech", floorHours: "all", hidden: { floor: new Set(), floorG: new Set(), partial: new Set() },
   pqTech: "coal", capTech: "coal", scTech: "coal", scX: "week", mSrc: "60d", mView: "smooth", mDays: "all",
   chgTech: "all", chgSig: "all", unit: null, mnMeasure: "units", mnDays: "all",
   I: null, UH: null, idx: null, summ60: null, cheapTech: "all", cheapThr: "0", shutTech: "combined_cycle", shutPrice: "any",
@@ -116,15 +116,19 @@ function legend(el, list, hidden, redraw) {
   };
 }
 
-// daily value for a technology series (sums component keys; null when every part is missing)
-function techDaily(s, stat) {
-  const D = S.T.daily;
-  return S.T.dates.map((_, i) => {
-    const parts = s.keys.map((k) => D[k] && D[k][stat] && D[k][stat][i]).filter((v) => v != null);
+// hourly series of a technology group from trends_hourly_60d ([day][24] per key), flattened to
+// one value per hour (null when every part is missing)
+function techHours(s, src) {
+  return S.TH.dates.flatMap((_, i) => d3.range(24).map((h) => {
+    const parts = s.keys.map((k) => src[k]?.[i]?.[h]).filter((v) => v != null);
     return parts.length ? d3.sum(parts) : null;
-  });
+  }));
 }
-const hasStat = (stat) => THERMAL.some((t) => (S.T.daily[t]?.[stat] || []).some((v) => v != null));
+// hourly system lambda on the same days, flattened
+const lamHours = () => { const by = new Map(S.I.dates.map((d, i) => [d, S.I.lambda[i]])); return S.TH.dates.flatMap((d) => d3.range(24).map((h) => by.get(d)?.[h] ?? null)); };
+const HOUR_MS = 36e5;
+const hourTime = (d, h) => new Date(parseDate(d).getTime() + (h - 11.5) * HOUR_MS);   // middle of hour ending h + 1
+const heLabel = (h) => `HE ${String(h + 1).padStart(2, "0")}`;
 
 // ---- shared date range --------------------------------------------------------------
 // S.span: first and last day of any daily series on the page (set in init). Every daily chart
@@ -144,17 +148,19 @@ function dateAxis(svg, x, w, H, m) {
 }
 
 // ---- time-series chart with hover crosshair ---------------------------------------
-// series: [{ label, color, values, dash?, width? }]
-// opts: { title, yFmt, tipFmt, H, markers, dots, dates (defaults to the 60-day dates), stack (100% areas), yScale }
+// series: [{ label, color, values, dash?, width?, opacity? }]
+// opts: { title, yFmt, tipFmt, H, markers, dots, dates (defaults to the 60-day dates), stack (100% areas), yScale,
+//         hourly (values are one per hour of each date: dates.length * 24) }
 // Every chart shares the page's date range (dateX); days outside it are dropped.
 function timeChart(el, series, opts) {
   let dstr = opts.dates || S.T.dates;
+  const per = opts.hourly ? 24 : 1;
   const keep = dstr.map((d) => d >= S.span[0] && d <= S.span[1]);
   if (keep.includes(false)) {
     dstr = dstr.filter((_, i) => keep[i]);
-    series = series.map((s) => ({ ...s, values: s.values.filter((_, i) => keep[i]) }));
+    series = series.map((s) => ({ ...s, values: s.values.filter((_, i) => keep[Math.floor(i / per)]) }));
   }
-  const dates = dstr.map(parseDate);
+  const dates = opts.hourly ? dstr.flatMap((d) => d3.range(24).map((h) => hourTime(d, h))) : dstr.map(parseDate);
   const w = Math.max(280, el.clientWidth || 600);
   const H = opts.H || 260, m = { t: 16, r: 16, b: 26, l: 64 };
   const x = dateX(w, m);
@@ -189,14 +195,19 @@ function timeChart(el, series, opts) {
     });
   } else {
     const line = d3.line().defined((v) => v != null).x((v, i) => x(dates[i])).y((v) => y(v));
-    series.forEach((s) => svg.append("path").attr("fill", "none").attr("stroke", css(s.color)).attr("stroke-width", s.width || 2)
-      .attr("stroke-dasharray", s.dash || null).attr("d", line(s.values)));
-    // single days between gaps draw no line segment, so mark every point when asked
-    if (opts.dots) series.forEach((s) => svg.append("g").selectAll("circle").data(s.values.map((v, i) => [v, i]).filter(([v]) => v != null))
-      .join("circle").attr("cx", ([, i]) => x(dates[i])).attr("cy", ([v]) => y(v)).attr("r", 2).attr("fill", css(s.color)));
+    series.forEach((s) => svg.append("path").attr("fill", "none").attr("stroke", css(s.color)).attr("stroke-width", s.width || (opts.hourly ? 1 : 2))
+      .attr("stroke-opacity", s.opacity ?? null).attr("stroke-dasharray", s.dash || null).attr("d", line(s.values)));
+    // single points between gaps draw no line segment, so mark every point when asked (hourly
+    // charts mark the lone hours)
+    if (opts.dots || opts.hourly) series.forEach((s) => {
+      const lone = s.values.map((v, i) => [v, i]).filter(([v, i]) => v != null && (opts.dots || (s.values[i - 1] == null && s.values[i + 1] == null)));
+      svg.append("g").selectAll("circle").data(lone).join("circle").attr("cx", ([, i]) => x(dates[i])).attr("cy", ([v]) => y(v))
+        .attr("r", opts.hourly ? 1.2 : 2).attr("fill", css(s.color));
+    });
   }
   const cross = svg.append("line").attr("class", "crosshair").attr("y1", m.t).attr("y2", H - m.b).style("display", "none");
   const tf = opts.tipFmt || opts.yFmt || fmtMW;
+  const when = (i) => opts.hourly ? `${fmtDate(parseDate(dstr[Math.floor(i / 24)]))} · ${heLabel(i % 24)}` : fmtDate(dates[i]);
   svg.append("rect").attr("x", m.l).attr("y", m.t).attr("width", w - m.l - m.r).attr("height", H - m.t - m.b).attr("fill", "transparent")
     .on("pointermove", (ev) => {
       const t = x.invert(d3.pointer(ev)[0]);
@@ -204,47 +215,68 @@ function timeChart(el, series, opts) {
       cross.style("display", null).attr("x1", x(dates[i])).attr("x2", x(dates[i]));
       const rows = series.filter((s) => s.values[i] != null);
       if (!opts.stack) rows.sort((a, b) => b.values[i] - a.values[i]);
-      showTip(ev, `<h4>${fmtDate(dates[i])}${opts.tipNote ? opts.tipNote(i) : ""}</h4><table>` + (opts.stack ? [...rows].reverse() : rows).map((s) =>
+      showTip(ev, `<h4>${when(i)}${opts.tipNote ? opts.tipNote(i) : ""}</h4><table>` + (opts.stack ? [...rows].reverse() : rows).map((s) =>
         `<tr><td><span class="sw" style="background:var(${s.color})"></span></td><td>${s.label}</td><td class="n">${tf(s.values[i])}</td></tr>`).join("") + "</table>");
     })
     .on("pointerleave", () => { cross.style("display", "none"); hideTip(); });
   el.replaceChildren(svg.node());
-  setCSV(el, ["date", ...series.map((s) => s.label)], dstr.map((d, i) => [d, ...series.map((s) => s.values[i])]), opts.title);
+  if (opts.hourly) setCSV(el, ["date", "hour_ending", ...series.map((s) => s.label)], dates.map((_, i) => [dstr[Math.floor(i / 24)], i % 24 + 1, ...series.map((s) => s.values[i])]), opts.title);
+  else setCSV(el, ["date", ...series.map((s) => s.label)], dstr.map((d, i) => [d, ...series.map((s) => s.values[i])]), opts.title);
 }
 
 // ---- panels ----------------------------------------------------------------------
+// hours the floor chart shows: all, or only those with system lambda below a price
+const floorKeep = () => { const lam = lamHours(), thr = S.floorHours === "all" ? null : +S.floorHours; return lam.map((v) => thr == null || (v != null && v < thr)); };
 async function drawFloor() {
   const byGroup = S.floorGroup === "behaviour";
   $("floor-mode").querySelectorAll("button").forEach((b) => (b.disabled = byGroup && b.dataset.v !== "le20_sced"));
+  // all hours: a line per hour; a price filter: one stacked bar per day, averaged over that day's hours below it
+  const floorPlot = (el, list, what) => {
+    if (S.floorHours === "all") return timeChart(el, list, { title: `${what}, hourly`, H: 280, dates: S.TH.dates, hourly: true });
+    const keep = floorKeep(), D = S.TH.dates, thr = fmtPrice0(+S.floorHours);
+    const hrs = D.map((_, i) => d3.range(24).filter((h) => keep[i * 24 + h]));
+    const day = (vals) => D.map((_, i) => { const v = hrs[i].map((h) => vals[i * 24 + h]).filter((x) => x != null); return v.length ? d3.mean(v) : null; });
+    dayBars(el, D, list.map((s) => ({ ...s, values: day(s.values) })), { H: 280, title: `${what}, average over each day's hours with lambda below ${thr}`,
+      none: `No hours with lambda below ${thr}`, tipNote: (i) => ` · ${hrs[i].length} hour${hrs[i].length === 1 ? "" : "s"}` });
+  };
+  const el = $("floor-chart");
   if (byGroup) {
     $("floor-note").textContent = FLOOR_GROUP_NOTE;
     legend($("floor-legend"), FLOOR_GROUPS, S.hidden.floorG, drawFloor);
-    const el = $("floor-chart");
-    if (!S.I || !S.T.has_units || !S.T.units.some((u) => u.le20)) return emptyMsg(el, "Not built yet. It fills in with the next data update.");
+    if (!S.I || !S.T.units.some((u) => u.le20)) return emptyMsg(el, "Not built yet. It fills in with the next data update.");
     if (!S.UH) {
       emptyMsg(el, "Loading hourly data…");
       S.UH = (await tryJSON("data/unit_hours_60d.json.gz")) || { dates: [], units: {} };
       if (S.floorGroup !== "behaviour") return;
     }
-    const B = stretchBase(), D = S.T.dates.length, sums = new Map(FLOOR_GROUPS.map((g) => [g.id, new Array(D).fill(0)]));
+    // each unit's MW while online, in every hour it ran (unit_hours_60d), summed by group
+    const B = stretchBase(), D = S.TH.dates, uh = new Map(S.UH.dates.map((d, i) => [d, i]));
+    const ti = new Map(S.T.dates.map((d, i) => [d, i]));
+    const sums = new Map(FLOOR_GROUPS.map((g) => [g.id, D.flatMap((d) => d3.range(24).map(() => (S.T.has_units[ti.get(d)] && uh.has(d) ? 0 : null)))]));
     for (const u of S.T.units) {
       const g = u.tech === "nuclear" ? "nuclear" : B.units.get(u.tech === "combined_cycle" ? trainOf(u.unit) : u.unit)?.group;
-      const acc = g && sums.get(g);
-      if (!acc || !u.le20) continue;
-      u.le20.forEach((v, i) => { if (v != null) acc[i] += v; });
+      const acc = g && sums.get(g), str = S.UH.units[u.unit];
+      if (!acc || !u.le20 || !str) continue;
+      D.forEach((d, i) => {
+        const v = u.le20[ti.get(d)], j = uh.get(d);
+        if (v == null || j == null) return;
+        for (let h = 0; h < 24; h++) { const c = str[j * 24 + h]; if ((c === "m" || c === "a") && acc[i * 24 + h] != null) acc[i * 24 + h] += v; }
+      });
     }
-    const list = FLOOR_GROUPS.filter((g) => !S.hidden.floorG.has(g.id))
-      .map((g) => ({ ...g, values: sums.get(g.id).map((v, i) => (S.T.has_units[i] ? Math.round(v) : null)) }));
-    timeChart(el, list, { title: "MW at or below −$20 as used, daily average, by group", H: 280 });
+    const list = FLOOR_GROUPS.filter((g) => !S.hidden.floorG.has(g.id)).map((g) => ({ ...g, values: sums.get(g.id).map((v) => (v == null ? null : Math.round(v))) }));
+    floorPlot(el, list, "MW at or below −$20 as used, by group");
   } else {
     $("floor-note").textContent = FLOOR_NOTES[S.floorMode];
     legend($("floor-legend"), FLOOR_TECHS, S.hidden.floor, drawFloor);
-    const list = FLOOR_TECHS.filter((s) => !S.hidden.floor.has(s.id));
-    if (!hasStat(S.floorMode)) return emptyMsg($("floor-chart"), "Not built yet. It fills in with the next data update.");
-    timeChart($("floor-chart"), list.map((s) => ({ ...s, values: techDaily(s, S.floorMode) })), { title: "MW, daily average", H: 280 });
+    const src = S.TH && S.TH.floor[S.floorMode];
+    if (!src) return emptyMsg(el, "Not built yet. It fills in with the next data update.");
+    const list = FLOOR_TECHS.filter((s) => !S.hidden.floor.has(s.id) && s.keys.some((k) => src[k]));
+    floorPlot(el, list.map((s) => ({ ...s, values: techHours(s, src) })), "MW");
   }
-  timeChart($("floor-price"), [{ label: "System lambda", color: "--price", values: S.T.lambda }],
-    { title: "System lambda ($/MWh), daily average", H: 140, yFmt: d3.format("$,.0f"), tipFmt: fmtPrice, yMin: 10 });
+  const thr = S.floorHours === "all" ? null : +S.floorHours;
+  timeChart($("floor-price"), [{ label: "System lambda", color: "--price", values: lamHours() }],
+    { title: `System lambda ($/MWh), hourly${thr == null ? "" : `; the chart above averages the hours below ${fmtPrice0(thr)}`}`, H: 160, dates: S.TH.dates, hourly: true,
+      yScale: "symlog", yTicks: [-250, -50, -10, 0, 10, 25, 50, 100, 250, 1000, 5000], yFmt: fmtPrice0, tipFmt: fmtPrice });
 }
 
 function drawRenewBands() {
@@ -452,14 +484,15 @@ function drawPriceQuantiles() {
   const pq = S.C && S.C.pq, el = $("pq-chart");
   if (!pq || !pq[S.pqTech]) return emptyMsg(el, "No curve trends yet. They are built by the data update workflow.");
   const s = TECHS.find((t) => t.id === S.pqTech), q = pq[S.pqTech];
-  // the daily lambda on the same dates, for reference
-  const lamBy = Object.fromEntries(S.T.dates.map((d, i) => [d, S.T.lambda[i]]));
+  // hourly lambda on the same dates, for reference: each day's offer price repeats over its hours
+  const lamBy = new Map(S.I.dates.map((d, i) => [d, S.I.lambda[i]]));
+  const hours = (v) => v.flatMap((x) => d3.range(24).map(() => x));
   timeChart(el, [
-    { label: "90% of offered MW at or below", color: s.color, values: q.p90, dash: "6 3", width: 1.5 },
-    { label: "50% (median MW)", color: s.color, values: q.p50, width: 2.5 },
-    { label: "25% of offered MW at or below", color: s.color, values: q.p25, dash: "2 3", width: 1.5 },
-    { label: "System lambda, daily average", color: "--price", values: pq.dates.map((d) => lamBy[d] ?? null), width: 1 },
-  ], { dates: pq.dates, H: 280, yScale: "symlog", yTicks: [-250, -50, 0, 10, 25, 50, 100, 250, 1000, 5000], yFmt: fmtPrice0, tipFmt: fmtPrice,
+    { label: "System lambda, hourly", color: "--price", values: pq.dates.flatMap((d) => d3.range(24).map((h) => lamBy.get(d)?.[h] ?? null)), width: 0.6, opacity: 0.25 },
+    { label: "90% of offered MW at or below", color: s.color, values: hours(q.p90), dash: "6 3", width: 1.5 },
+    { label: "50% (median MW)", color: s.color, values: hours(q.p50), width: 2.5 },
+    { label: "25% of offered MW at or below", color: s.color, values: hours(q.p25), dash: "2 3", width: 1.5 },
+  ], { dates: pq.dates, hourly: true, H: 280, yScale: "symlog", yTicks: [-250, -50, 0, 10, 25, 50, 100, 250, 1000, 5000], yFmt: fmtPrice0, tipFmt: fmtPrice,
     title: `${s.label}: offer price at which 25%, 50% and 90% of submitted MW is available ($/MWh)` });
 }
 
@@ -483,78 +516,60 @@ function drawCapacity() {
       stackMax: d3.max(S.I.dates, (_, i) => d3.sum(series, (x) => x.values[i] || 0)) || 1,
       H: 280, title: `${s.label}: capacity by status (MW)`, yFmt: d3.format(",.0f") });
   }
-  if (!hasStat("mw_off")) {
-    $("cap-note").textContent = "Status detail (running, ERCOT-committed, offline but available, on outage) fills in after the 60-day data is reprocessed. Until then this shows units online.";
-    $("cap-legend").innerHTML = "";
-    return timeChart(el, [{ ...s, values: techDaily(s, "n_online") }], { title: `${s.label}: units online, daily average`, tipFmt: d3.format(",.1f") });
-  }
-  $("cap-note").textContent = "MW of capacity (HSL) by status, daily average. Only \"offline but available\" is an economic choice not to run; outages are not.";
-  staticLegend($("cap-legend"), STATUS);
-  const on = techDaily(s, "mw_on"), ruc = techDaily(s, "mw_onruc");
-  timeChart(el, [
-    { ...STATUS[0], values: on.map((v, i) => (v == null ? null : Math.max(0, v - (ruc[i] || 0)))) },
-    { ...STATUS[1], values: ruc },
-    { ...STATUS[2], values: techDaily(s, "mw_off") },
-    { ...STATUS[3], values: techDaily(s, "mw_out") },
-  ], { stack: true, stackMax: d3.max(S.T.dates, (_, i) => d3.sum(["mw_on", "mw_off", "mw_out"], (k) => techDaily(s, k)[i] || 0)) || 1,
-    H: 280, title: `${s.label}: capacity by status (MW)`, yFmt: d3.format(",.0f") });
+  emptyMsg(el, "No capacity data yet. It is built by the data update workflow.");
 }
 
 function drawScatter() {
   const el = $("sc-chart");
-  const s = TECHS.find((t) => t.id === S.scTech);
-  // with status data: share of the available fleet that ran; without it: units online
-  const status = hasStat("mw_off");
-  const on = techDaily(s, status ? "mw_on" : "n_online"), off = status ? techDaily(s, "mw_off") : null;
-  const yv = status ? on.map((v, i) => (v == null || off[i] == null || v + off[i] <= 0 ? null : v / (v + off[i]))) : on;
-  const lam = S.T.lambda;
-  const xv = lam.map((v, i) => {
-    if (S.scX === "day") return v;
-    const prev = lam.slice(Math.max(0, i - 7), i).filter((p) => p != null);
-    return prev.length >= 4 ? d3.mean(prev) : null;   // needs most of the previous week
-  });
-  const pts = S.T.dates.map((d, i) => ({ d, x: xv[i], y: yv[i] })).filter((p) => p.x != null && p.y != null);
+  const s = TECHS.find((t) => t.id === S.scTech), R = S.TH && S.TH.run[S.scTech];
+  if (!R) return emptyMsg(el, "Not built yet. It fills in with the next data update.");
+  // per hour: share of available capacity running, against that hour's lambda or the mean of the previous 168 hours
+  const D = S.TH.dates, lam = lamHours();
+  const yv = D.flatMap((_, i) => d3.range(24).map((h) => { const on = R.on[i]?.[h], off = R.off[i]?.[h]; return on == null || off == null || on + off <= 0 ? null : on / (on + off); }));
+  const xv = S.scX === "hour" ? lam : (() => {
+    const out = [], win = 168; let sum = 0, n = 0;
+    lam.forEach((v, i) => {
+      out.push(n >= win * 0.6 ? sum / n : null);      // needs most of the previous week
+      if (v != null) { sum += v; n++; }
+      const old = lam[i - win];
+      if (i >= win && old != null) { sum -= old; n--; }
+    });
+    return out;
+  })();
+  const pts = xv.map((x, i) => ({ d: D[Math.floor(i / 24)], h: i % 24, x, y: yv[i] })).filter((p) => p.x != null && p.y != null);
   if (!pts.length) return emptyMsg(el, "No data.");
   const w = Math.max(280, el.clientWidth || 600);
   const H = 320, m = { t: 30, r: 16, b: 38, l: 56 };
-  // clip extreme prices so the bulk of days stays readable; they still count in the bands
+  // clip extreme prices so the bulk of hours stays readable; they still count in the bands
   const xmax = Math.min(d3.max(pts, (p) => p.x), d3.quantile(pts.map((p) => p.x).sort(d3.ascending), 0.98) * 1.2);
   const x = d3.scaleLinear().domain([Math.min(0, d3.min(pts, (p) => p.x)), xmax]).nice().range([m.l, w - m.r]);
   const shown = pts.filter((p) => p.x <= x.domain()[1]), offN = pts.length - shown.length;
-  const y = d3.scaleLinear().domain([0, status ? 1 : d3.max(pts, (p) => p.y)]).nice().range([H - m.b, m.t]);
-  const yFmt = status ? fmtPct : d3.format(",.0f");
+  const y = d3.scaleLinear().domain([0, 1]).range([H - m.b, m.t]);
   const svg = d3.create("svg").attr("viewBox", `0 0 ${w} ${H}`);
   svg.append("g").attr("class", "gridline").attr("transform", `translate(${m.l},0)`).call(d3.axisLeft(y).ticks(5).tickSize(-(w - m.l - m.r)).tickFormat(""));
   svg.append("g").attr("class", "axis").attr("transform", `translate(0,${H - m.b})`).call(axisFmt(d3.axisBottom(x), w < 560 ? 4 : 8, "$").tickSizeOuter(0));
-  svg.append("g").attr("class", "axis").attr("transform", `translate(${m.l},0)`).call(axisFmt(d3.axisLeft(y), 5, fmtKind(yFmt)).tickSizeOuter(0));
-  svg.append("text").attr("class", "axis-title").attr("x", m.l).attr("y", 10)
-    .text(status ? `${s.label}: share of available capacity running, daily average` : `${s.label}: units online, daily average`);
+  svg.append("g").attr("class", "axis").attr("transform", `translate(${m.l},0)`).call(axisFmt(d3.axisLeft(y), 5, fmtKind(fmtPct)).tickSizeOuter(0));
+  svg.append("text").attr("class", "axis-title").attr("x", m.l).attr("y", 10).text(`${s.label}: share of available capacity running, by hour`);
   svg.append("text").attr("class", "axis-title").attr("x", w - m.r).attr("y", H - 4).attr("text-anchor", "end")
-    .text(S.scX === "day" ? "System lambda that day ($/MWh)" : "Average system lambda over the previous 7 days ($/MWh)");
+    .text(S.scX === "hour" ? "System lambda that hour ($/MWh)" : "Average system lambda over the previous 7 days ($/MWh)");
   if (offN) svg.append("text").attr("class", "axis-title").attr("x", m.l).attr("y", 24)
-    .text(`${offN} day${offN === 1 ? "" : "s"} above ${d3.format("$,.0f")(x.domain()[1])} not shown`);
-  svg.append("g").selectAll("circle").data(shown).join("circle").attr("cx", (p) => x(p.x)).attr("cy", (p) => y(p.y)).attr("r", 4)
-    .attr("fill", css(s.color)).attr("fill-opacity", 0.55).attr("stroke", css("--surface")).attr("stroke-width", 1)
-    .on("pointermove", (ev, p) => showTip(ev, `<h4>${fmtDate(parseDate(p.d))}</h4>${status ? fmtPct(p.y) + " of available capacity running" : d3.format(",.1f")(p.y) + " units online"}<br>Lambda ${fmtPrice(p.x)}`))
+    .text(`${offN.toLocaleString()} hour${offN === 1 ? "" : "s"} above ${d3.format("$,.0f")(x.domain()[1])} not shown`);
+  svg.append("g").selectAll("circle").data(shown).join("circle").attr("cx", (p) => x(p.x)).attr("cy", (p) => y(p.y)).attr("r", 2)
+    .attr("fill", css(s.color)).attr("fill-opacity", 0.3)
+    .on("pointermove", (ev, p) => showTip(ev, `<h4>${fmtDate(parseDate(p.d))} · ${heLabel(p.h)}</h4>${fmtPct(p.y)} of available capacity running<br>Lambda ${fmtPrice(p.x)}`))
     .on("pointerleave", hideTip);
-  // median per $5 band (bands with at least 3 days)
-  const bands = d3.groups(pts, (p) => Math.floor(p.x / 5) * 5).filter(([, g]) => g.length >= 3)
+  // median per $5 band (bands with at least 12 hours)
+  const bands = d3.groups(pts, (p) => Math.floor(p.x / 5) * 5).filter(([, g]) => g.length >= 12)
     .map(([b, g]) => ({ x: b + 2.5, y: d3.median(g, (p) => p.y), n: g.length })).sort((a, b) => a.x - b.x);
   svg.append("path").attr("fill", "none").attr("stroke", css("--ink")).attr("stroke-width", 2)
     .attr("d", d3.line().defined((b) => b.x <= x.domain()[1]).x((b) => x(b.x)).y((b) => y(b.y))(bands));
   el.replaceChildren(svg.node());
-  setCSV(el, ["date", S.scX === "day" ? "lambda_same_day" : "lambda_prev_7_days", status ? "share_of_available_capacity_running" : "units_online"], pts.map((p) => [p.d, p.x, p.y]), "Units online vs price");
+  setCSV(el, ["date", "hour_ending", S.scX === "hour" ? "lambda_same_hour" : "lambda_prev_7_days", "share_of_available_capacity_running"], pts.map((p) => [p.d, p.h + 1, p.x, p.y]), "Running vs price");
 }
 
 function drawPartial() {
-  const exact = hasStat("starts");
-  $("partial-title").textContent = exact ? "Starts per day" : "Units online for only part of the day";
-  $("partial-note").textContent = exact
-    ? "Number of times units of each technology came online (OFF to ON) each day, counted from per-unit status changes. Two starts in a day means a unit cycled off and back on."
-    : "Units online between 1 and 22 hours of the day: a stand-in for cycling and two-shifting. It cannot tell a unit that shut down overnight and restarted from one that started once and stayed on. An exact count of starts fills in after the 60-day data is reprocessed.";
   const list = TECHS.filter((s) => THERMAL.includes(s.id) && !S.hidden.partial.has(s.id));
-  timeChart($("partial-chart"), list.map((s) => ({ ...s, values: techDaily(s, exact ? "starts" : "partial_units") })),
-    { title: exact ? "Unit starts per day" : "Units online 1–22 hours of the day" });
+  timeChart($("partial-chart"), list.map((s) => ({ ...s, values: S.T.starts[s.id] || [] })), { title: "Unit starts per day" });
 }
 
 function drawFlips() {
@@ -1561,7 +1576,7 @@ function drawLean() {
 }
 
 // ---- links ------------------------------------------------------------------------
-const VIEW_KEYS = { fg: "floorGroup", stu: "stUnit", stt: "stTech", stp: "stThr", sts: "stSort", cht: "cheapTech", chthr: "cheapThr", sht: "shutTech", shp: "shutPrice", hm: "heatMeasure", ht: "heatTech", hthr: "heatThr", hs: "heatScale", lr: "leanRank", lm: "leanMonth", lp: "leanPer", f: "floorMode", pq: "pqTech", cap: "capTech", sc: "scTech", scx: "scX", ms: "mSrc", mv: "mView", md: "mDays", mnm: "mnMeasure", mnd: "mnDays", ct: "chgTech", cs: "chgSig", unit: "unit" };
+const VIEW_KEYS = { fg: "floorGroup", fh: "floorHours", stu: "stUnit", stt: "stTech", stp: "stThr", sts: "stSort", cht: "cheapTech", chthr: "cheapThr", sht: "shutTech", shp: "shutPrice", hm: "heatMeasure", ht: "heatTech", hthr: "heatThr", hs: "heatScale", lr: "leanRank", lm: "leanMonth", lp: "leanPer", f: "floorMode", pq: "pqTech", cap: "capTech", sc: "scTech", scx: "scX", ms: "mSrc", mv: "mView", md: "mDays", mnm: "mnMeasure", mnd: "mnDays", ct: "chgTech", cs: "chgSig", unit: "unit" };
 function saveView() { window.CX.writeHash(Object.fromEntries(Object.entries(VIEW_KEYS).map(([k, sk]) => [k, S[sk]]))); }
 function loadView() { const v = window.CX.readHash(); Object.entries(VIEW_KEYS).forEach(([k, sk]) => { if (v[k] != null) S[sk] = v[k]; }); }
 
@@ -1570,7 +1585,7 @@ function drawAll() { drawFloor(); drawRenewBands(); drawCurtailment(); drawNodeC
 let heatSeen = false;
 
 async function boot() {
-  [S.T, S.C, S.I, S.N, S.G, S.GH, S.MN, S.MIT, S.HC] = await Promise.all([tryJSON("data/trends_60d.json.gz"), tryJSON("data/curve_trends.json.gz"), tryJSON("data/intraday_60d.json.gz"),
+  [S.T, S.TH, S.C, S.I, S.N, S.G, S.GH, S.MN, S.MIT, S.HC] = await Promise.all([tryJSON("data/trends_60d.json.gz"), tryJSON("data/trends_hourly_60d.json.gz"), tryJSON("data/curve_trends.json.gz"), tryJSON("data/intraday_60d.json.gz"),
     tryJSON("data/curtail_nodes.json.gz"), tryJSON("data/gas.json.gz"), tryJSON("data/gas_hubs.json.gz"), tryJSON("data/marginal_nodes.json.gz"), tryJSON("data/mitigation.json.gz"),
     tryJSON("data/hourly_context_60d.json.gz")]);
   if (!S.T) { $("status").textContent = "No trends data yet. It is built by the data update workflow."; return; }
@@ -1583,8 +1598,10 @@ async function boot() {
     (S.C ? ` · wind and solar offers through ${S.C.rs.dates.at(-1)}` : "");
   loadView();
   if (!FLOOR_NOTES[S.floorMode]) S.floorMode = "le20_sced";    // a measure from an older saved view
+  if (!["all", "10", "0"].includes(S.floorHours)) S.floorHours = "all";
+  if (S.scX === "day") S.scX = "hour";                             // the scatter was daily before it went hourly
   const thermal = TECHS.filter((s) => THERMAL.includes(s.id));
-  [["floor-mode", "floorMode", drawFloor], ["sc-x", "scX", drawScatter], ["mbp-src", "mSrc", drawMarginal], ["mbp-view", "mView", drawMarginal], ["mbp-days", "mDays", drawMarginal],
+  [["floor-mode", "floorMode", drawFloor], ["floor-hours", "floorHours", drawFloor], ["sc-x", "scX", drawScatter], ["mbp-src", "mSrc", drawMarginal], ["mbp-view", "mView", drawMarginal], ["mbp-days", "mDays", drawMarginal],
    ["mn-measure", "mnMeasure", drawNodeMarginal], ["mn-days", "mnDays", drawNodeMarginal]]
     .forEach(([id, key, fn]) => { setSeg(id, S[key]); bindSeg(id, key, fn); });
   setSeg("floor-group", S.floorGroup); bindSeg("floor-group", "floorGroup", drawFloor);
