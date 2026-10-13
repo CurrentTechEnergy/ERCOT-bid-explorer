@@ -8,7 +8,8 @@ counting hours with HSL >= MIN_HSL and an offer:
   h     hours online with an offer; days with fewer than MIN_HOURS take no part in detection
   k     the day's kind: "x" a formula day (offers follow a x DA price + b at one settlement point,
         fitted per calendar year with ppa.infer_unit and kept when that day's own fit has a
-        slope in ppa.SLOPE and an RMS error within ppa.HIT_USD), "v" moving (4 or more prices
+        slope in ppa.SLOPE and an RMS error within ppa.HIT_USD, or when the year's formula held at
+        a cap or floor explains the day: _clamped_days), "v" moving (4 or more prices
         to the nearest $0.50 but no formula), "f" a floor (one price most of the day)
   fl    the day's most common offer, md its median
   x     on formula days: [settlement point, a, b]
@@ -22,8 +23,9 @@ the unit's online days, in date order, a change is:
                           online days stay within TOL of the new floor; "back" when the unit
                           held that floor within NEW_DAYS before
   formula_on / formula_off, moving_on / moving_off   the same test for a switch of kind
-  terms                   inside a formula regime, the slope moves by TERMS_A or the intercept
-                          by TERMS_B, held the same way over formula days
+  terms                   inside a formula regime, the slope moves by TERMS_A or the offer the
+                          formula gives at a REF_DA price by TERMS_B, held the same way over
+                          formula days
   episode                 1 to EP_MAX days away from a floor regime, with a median offer at least
                           EP_USD from it, then back to that floor
 
@@ -81,9 +83,12 @@ MIN_HELD = 6       # of which at least this many must be in it
 EP_USD = 5.0       # an episode's median offer is at least this far from the floor
 EP_MAX = 6         # longest episode, online days
 NEW_DAYS = 90      # a floor held within this many days before is "back", not "new"
-TERMS_A, TERMS_B = 0.05, 1.0
+TERMS_A, TERMS_B = 0.1, 1.0   # formula terms: slope, and offer at REF_DA ($/MWh)
+REF_DA = 30.0      # a typical DA price: day fits trade slope against intercept, so the
+                   # intercept is compared through the offer the formula gives at this price
 TOGGLE = 4         # floor_back events or episodes in 365 days that make a toggler
 MOVED_MWH = 1.0    # an event moved dispatch when its window has at least this many MWh
+CLAMP_SHARE = 0.8  # share of a day's hours the clamped year formula must explain
 KINDS = {
     "floor_new": "New floor", "floor_back": "Back to an earlier floor",
     "formula_on": "Formula on", "formula_off": "Formula off", "terms": "Formula terms changed",
@@ -163,9 +168,50 @@ def signatures(store: Store, points: list) -> dict:
                 for di, a, b, rmse, n in res["daily"]:
                     if SLOPE[0] <= a <= SLOPE[1] and rmse <= HIT_USD and n >= 4:
                         xs[ds[di]] = (p, a, b)
+                if xs and SLOPE[0] <= res["best"][2] <= SLOPE[1]:
+                    xs.update(_clamped_days(days, store.hubs, base, xs, p, res["best"][2], res["best"][3]))
             for d, (h, k, fl, md, dam, cur) in base.items():
                 x = xs.get(d)
                 out[year][name][d] = (h, "x" if x else k, fl, md, dam, cur, x)
+    return out
+
+
+def _clamped_days(days, hubs, base, xs, p, a, b) -> dict:
+    """Days the year's formula (p, a, b) explains once it is clamped to the day's floor: a
+    formula held at a cap or floor (PORT never offers above $0) leaves days that sit at that
+    price, or follow the formula only in a few hours.  The clamp side is learned from the formula
+    days: their hours at the day's floor must all have the formula beyond it on one side.  A day
+    counts when CLAMP_SHARE of its online hours either follow the formula within HIT_USD or sit
+    at its floor with the formula on that side."""
+    def hours(d):
+        off, _, hsl, _, _, _, _, da_node = days[d]
+        x = da_node if p == "node" else (hubs.get(d) or {}).get(p)
+        if x is None:
+            return None
+        on = np.isfinite(off) & (np.nan_to_num(hsl, nan=0.0) >= MIN_HSL) & np.isfinite(x)
+        return off[on], a * x[on] + b, base[d][2]
+    side = []
+    for d in xs:
+        r = hours(d) if d in base else None
+        if r is None:
+            continue
+        off, pred, fl = r
+        at = np.abs(off - fl) < 0.05
+        side += list(np.sign(pred[at] - fl)[np.abs(pred[at] - fl) >= HIT_USD])
+    if len(side) < 4 or abs(np.mean(side)) < 0.8:
+        return {}
+    sd = float(np.sign(np.mean(side)))
+    out = {}
+    for d in base:
+        if d in xs:
+            continue
+        r = hours(d)
+        if r is None or len(r[0]) < MIN_HOURS:
+            continue
+        off, pred, fl = r
+        ok = (np.abs(off - pred) < HIT_USD) | ((np.abs(off - fl) < 0.05) & (np.sign(pred - fl) * sd > 0))
+        if ok.mean() >= CLAMP_SHARE:
+            out[d] = (p, a, b)
     return out
 
 
@@ -258,6 +304,10 @@ def all_signatures():
 
 
 # ---------------------------------------------------------------- detection --
+def _at_ref(a, b):
+    return a * REF_DA + b
+
+
 def _same(s, R):
     """Is day signature s in regime R?  R = ("f", floor) | ("x", point, a, b) | ("v",)."""
     if R[0] == "f":
@@ -327,9 +377,11 @@ def detect_unit(days):
                 if len(xs) >= HOLD:
                     a = float(np.median([v[6][1] for v in xs]))
                     b = float(np.median([v[6][2] for v in xs]))
-                    ok = sum(abs(v[6][1] - a) < TERMS_A and abs(v[6][2] - b) < TERMS_B for v in xs)
-                    if (abs(a - R[2]) >= TERMS_A or abs(b - R[3]) >= TERMS_B) and ok >= MIN_HELD \
-                            and abs(s[6][1] - a) < TERMS_A and abs(s[6][2] - b) < TERMS_B:
+                    def near(v):
+                        return abs(v[6][1] - a) < TERMS_A and abs(_at_ref(v[6][1], v[6][2]) - _at_ref(a, b)) < TERMS_B
+                    ok = sum(near(v) for v in xs)
+                    if (abs(a - R[2]) >= TERMS_A or abs(_at_ref(a, b) - _at_ref(R[2], R[3])) >= TERMS_B) \
+                            and ok >= MIN_HELD and near(s):
                         newR = ("x", R[1], a, b)
                         win = [dd for dd, v in days[i:i + HOLD * 3] if v[1] == "x"][:HOLD]
                         ev.append((d, "terms", R, newR, win, {"ctx": _ctx(days, i, i)}))
@@ -521,7 +573,7 @@ def write_events(detected, seq, tech, src) -> None:
     out = {
         "updated": dt.datetime.now(dt.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
         "params": {"tol": TOL, "hold": HOLD, "min_held": MIN_HELD, "ep_usd": EP_USD, "ep_max": EP_MAX,
-                   "new_days": NEW_DAYS, "terms_a": TERMS_A, "terms_b": TERMS_B, "toggle": TOGGLE,
+                   "new_days": NEW_DAYS, "terms_a": TERMS_A, "terms_b": TERMS_B, "ref_da": REF_DA, "toggle": TOGGLE,
                    "moved_mwh": MOVED_MWH},
         "kinds": KINDS, "first": dates[0] if dates else None, "last": dates[-1] if dates else None,
         "live_first": min((d for d in dates if src[d] == "l"), default=None),
