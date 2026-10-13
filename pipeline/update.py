@@ -36,7 +36,7 @@ from .curve_trends import build_curve_trends
 from .nodes import build_node_curtail
 from .marginal_nodes import build_marginal_nodes
 from .mitigation import build_mitigation
-from .gas import fetch_gas
+from .gas import fetch_gas, fetch_hubs
 from .econ import build_econ
 from .store import describe_blob, iter_csvs, zip_names, load_index, read_json_gz, save_index, update_summary, write_json_gz
 from .log import warn, write_summary, WARNINGS
@@ -404,6 +404,7 @@ def main(argv=None):
                      node_limit=args.max_files if args.backfill and args.max_files else NODE_DAYS_PER_RUN)
     if "gas" not in args.skip:
         fetch_gas()
+        fetch_hubs()
 
     build_marginal(index)
     build_trends(index)

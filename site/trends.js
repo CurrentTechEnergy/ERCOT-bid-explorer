@@ -350,15 +350,35 @@ function drawNodeCurtail() {
 }
 
 // ---- natural gas ----------------------------------------------------------------------
+// Henry Hub from the EIA (gas.json.gz); Houston Ship Channel and Waha from OilPriceAPI (gas_hubs.json.gz)
+const GAS_LINES = [
+  { key: "hsc", label: "Houston Ship Channel", color: "--c1" },
+  { key: "waha", label: "Waha", color: "--c3" },
+  { key: "hh", label: "Henry Hub", color: "--c2", dash: "6 3" },
+];
+function gasSources() {
+  const out = {};
+  if (S.G && S.G.dates && S.G.dates.length) out.hh = { dates: S.G.dates, value: S.G.value };
+  const H = (S.GH && S.GH.hubs) || {};
+  Object.entries(H).forEach(([k, v]) => { if (v.dates && v.dates.length) out[k] = v; });
+  return out;
+}
 function drawGas() {
-  const G = S.G, el = $("gas-chart"), hel = $("gas-hr");
-  if (!G || !G.dates || !G.dates.length) { emptyMsg(el, "No gas prices yet. They are fetched from the EIA by the data update workflow when an EIA_API_KEY secret is set."); hel.innerHTML = ""; return; }
-  $("gas-note").textContent = `${G.name || "Henry Hub"} · through ${G.dates.at(-1)}`;
-  timeChart(el, [{ label: "Henry Hub spot ($/MMBtu)", color: "--c1", values: G.value }],
-    { dates: G.dates, H: 220, title: "Henry Hub natural gas spot price ($/MMBtu)", yFmt: d3.format("$,.2f"), tipFmt: d3.format("$,.2f") });
+  const src = gasSources(), el = $("gas-chart"), hel = $("gas-hr");
+  if (!Object.keys(src).length) { emptyMsg(el, "No gas prices yet. The data update workflow fetches Henry Hub from the EIA when an EIA_API_KEY secret is set, and Houston Ship Channel and Waha from OilPriceAPI when an OILPRICEAPI_KEY secret is set."); hel.innerHTML = ""; $("gas-legend").innerHTML = ""; return; }
+  // all series on one date axis: every date any of them has, each carrying no value where it has none
+  const dates = [...new Set(Object.values(src).flatMap((g) => g.dates))].sort();
+  const on = (g) => { const by = new Map(g.dates.map((d, i) => [d, g.value[i]])); return dates.map((d) => (by.has(d) ? by.get(d) : null)); };
+  const lines = GAS_LINES.filter((l) => src[l.key]);
+  staticLegend($("gas-legend"), lines);
+  $("gas-note").textContent = lines.map((l) => `${l.label} through ${src[l.key].dates.at(-1)}`).join(" · ");
+  timeChart(el, lines.map((l) => ({ label: l.label, color: l.color, dash: l.dash, values: on(src[l.key]) })),
+    { dates, H: 220, title: "Natural gas daily prices ($/MMBtu)", yFmt: d3.format("$,.2f"), tipFmt: d3.format("$,.2f") });
   const T = S.T;
   if (!T || !T.units) { hel.innerHTML = ""; return; }
-  // gas price on each trend day: the last trading day on or before it
+  // implied heat rate divides by Houston Ship Channel (Henry Hub when it isn't loaded): the price
+  // closest to what most ERCOT gas units burn. Gas on each trend day: last trading day on or before it.
+  const G = src.hsc || src.hh;
   const gasBy = new Map(G.dates.map((d, i) => [d, G.value[i]]));
   let last = null;
   const gasOn = {};
@@ -387,7 +407,7 @@ function drawGas() {
     { label: "Combined cycle", color: "--c1", values: hr("combined_cycle") },
     { label: "Combustion turbine", color: "--c2", values: hr("combustion_turbine") },
     { label: "Gas steam", color: "--c6", values: hr("gas_steam") },
-  ], { dates: T.dates, H: 220, title: "Implied heat rate: median unit's first offer price above $0 ÷ gas (MMBtu per MWh)", yFmt: d3.format(",.1f"), tipFmt: d3.format(",.2f"), yTicks: [0, 5, 7, 10, 15, 20] });
+  ], { dates: T.dates, H: 220, title: `Implied heat rate: median unit's first offer price above $0 ÷ ${src.hsc ? "Houston Ship Channel" : "Henry Hub"} gas (MMBtu per MWh)`, yFmt: d3.format(",.1f"), tipFmt: d3.format(",.2f"), yTicks: [0, 5, 7, 10, 15, 20] });
 }
 
 function drawPriceQuantiles() {
@@ -1353,8 +1373,8 @@ function drawAll() { drawFloor(); drawRenewBands(); drawCurtailment(); drawNodeC
 let heatSeen = false;
 
 async function boot() {
-  [S.T, S.C, S.I, S.N, S.G, S.MN, S.MIT] = await Promise.all([tryJSON("data/trends_60d.json.gz"), tryJSON("data/curve_trends.json.gz"), tryJSON("data/intraday_60d.json.gz"),
-    tryJSON("data/curtail_nodes.json.gz"), tryJSON("data/gas.json.gz"), tryJSON("data/marginal_nodes.json.gz"), tryJSON("data/mitigation.json.gz")]);
+  [S.T, S.C, S.I, S.N, S.G, S.GH, S.MN, S.MIT] = await Promise.all([tryJSON("data/trends_60d.json.gz"), tryJSON("data/curve_trends.json.gz"), tryJSON("data/intraday_60d.json.gz"),
+    tryJSON("data/curtail_nodes.json.gz"), tryJSON("data/gas.json.gz"), tryJSON("data/gas_hubs.json.gz"), tryJSON("data/marginal_nodes.json.gz"), tryJSON("data/mitigation.json.gz")]);
   if (!S.T) { $("status").textContent = "No trends data yet. It is built by the data update workflow."; return; }
   const D = S.T.dates;
   // one date range for every daily chart: all the bid and curtailment data (gas is trimmed to it)

@@ -16,6 +16,7 @@ An interactive dashboard of how ERCOT resources offer energy into real-time disp
 | SCED System Lambda | NP6-322-CD | real time | System energy price for each SCED run |
 | Settlement Point Prices | NP6-905-CD | real time | 15-minute prices at hubs and load zones; hourly prices at every resource node (kept on the data branch, for days with per-unit data) |
 | EIA Henry Hub spot price | RNGWHHD | daily | Natural gas price, $/MMBtu, from the EIA open data API (needs an `EIA_API_KEY` secret; skipped without one) |
+| OilPriceAPI regional gas prices | NATURAL_GAS_HSC_USD, NATURAL_GAS_WAHA | daily | Houston Ship Channel and Waha (West Texas) natural gas prices, $/MMBtu (needs an `OILPRICEAPI_KEY` secret, free tier; skipped without one). Their Henry Hub series is not used: it is not the spot price |
 
 All curves are stored as hourly averages of the SCED runs in each hour, on a price grid with $1 steps from −$250 to $150 and coarser steps above.
 
@@ -86,7 +87,8 @@ pipeline/
   mitigation.py     per-unit day files -> how often and how far ERCOT mitigated each offer
   marginal_nodes.py per-unit day files -> units on the interior of their offer curve, the
                    price that implies, and how it sits against lambda (no downloads)
-  gas.py           EIA API -> Henry Hub daily spot price (data/gas.json.gz)
+  gas.py           EIA API -> Henry Hub daily spot price (data/gas.json.gz); OilPriceAPI -> Houston
+                   Ship Channel and Waha daily prices (data/gas_hubs.json.gz)
   econ.py          per-unit day files + node prices + DAM awards and offers -> daily revenue and
                    offer-implied cost per unit (data/econ/<tech>.json.gz, no downloads)
   marginal.py      day files + prices -> hourly marginal MW by technology (no downloads)
@@ -100,7 +102,7 @@ pipeline/
 site/
   index.html, app.js, trends.html, trends.js, economics.html, economics.js, style.css, vendor/d3.min.js
   data/            generated: index.json, summary_*.json.gz, marginal_*.json.gz, 2d/, 60d/, dam/, prices/,
-                   curtail_nodes.json.gz, marginal_nodes.json.gz, gas.json.gz
+                   curtail_nodes.json.gz, marginal_nodes.json.gz, gas.json.gz, gas_hubs.json.gz
 ```
 
 ### Day-ahead offers and costs
@@ -125,7 +127,7 @@ Node prices are kept at 15 minutes for every settlement point that is not a hub 
 
 ### Plant economics
 
-`pipeline/econ.py` writes, for every unit and loaded day, the energy produced, its value at the unit's node and at system lambda, the DAM energy award and its value at the day-ahead and real-time prices (so two-settlement revenue can be formed), ancillary service awards at their clearing prices, the cost implied by the unit's own DAM energy offer curve up to its output, its minimum-energy and start-up offers, starts and hours run. Combined-cycle configurations are summed into their train. The page `economics.html` turns that into revenue, cost and margin on a cost basis chosen there: the EIA average tested heat rate for the technology (Electric Power Annual table 8.2) times Henry Hub plus an adder, the unit's own DAM offer, or generic per-technology inputs that can be edited on the page. Fixed costs are not included, so margin is the contribution to them. Capacity factor divides output by a capacity taken from the SCED data: the 95th percentile, over the loaded days, of each day's highest HSL (for a combined-cycle train, across its configurations). Wind and solar HSL is weather-limited available output, so a typical HSL would measure output against availability; the daily peak reaches the rating on windy or clear days.
+`pipeline/econ.py` writes, for every unit and loaded day, the energy produced, its value at the unit's node and at system lambda, the DAM energy award and its value at the day-ahead and real-time prices (so two-settlement revenue can be formed), ancillary service awards at their clearing prices, the cost implied by the unit's own DAM energy offer curve up to its output, its minimum-energy and start-up offers, starts and hours run. Combined-cycle configurations are summed into their train. The page `economics.html` turns that into revenue, cost and margin on a cost basis chosen there: the EIA average tested heat rate for the technology (Electric Power Annual table 8.2) times a gas price (Houston Ship Channel by default, or Waha or Henry Hub) plus an adder, the unit's own DAM offer, or generic per-technology inputs that can be edited on the page. Fixed costs are not included, so margin is the contribution to them. Capacity factor divides output by a capacity taken from the SCED data: the 95th percentile, over the loaded days, of each day's highest HSL (for a combined-cycle train, across its configurations). Wind and solar HSL is weather-limited available output, so a typical HSL would measure output against availability; the daily peak reaches the rating on windy or clear days.
 
 ## Caveats
 
