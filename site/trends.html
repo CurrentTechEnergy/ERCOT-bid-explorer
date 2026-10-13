@@ -13,7 +13,7 @@
 
 <header class="masthead">
   <div class="brand">
-    <div class="nav-row"><nav class="nav" aria-label="Pages"><a href="index.html">Day view</a><a href="trends.html" aria-current="page">Trends</a><a href="economics.html">Plant economics</a><a href="contracts.html">Hedge signals</a></nav><button type="button" class="copy-link" id="copy-link" title="Copy a link to exactly this view">Copy link</button></div>
+    <div class="nav-row"><nav class="nav" aria-label="Pages"><a href="index.html">Day view</a><a href="trends.html" aria-current="page">Trends</a><a href="economics.html">Plant economics</a><a href="contracts.html">Hedge signals</a><a href="builder.html">Graph builder</a></nav><button type="button" class="copy-link" id="copy-link" title="Copy a link to exactly this view">Copy link</button></div>
     <h1>ERCOT Bidding Trends</h1>
     <p class="sub">How thermal and renewable resources bid and run across every day loaded from ERCOT's SCED disclosures. Each point is a daily average over that day's SCED runs.</p>
   </div>
@@ -31,6 +31,11 @@
         <div class="seg seg-sm" id="floor-group" role="radiogroup" aria-label="Group by">
           <button type="button" data-v="tech" role="radio">By technology</button>
           <button type="button" data-v="behaviour" role="radio" title="Thermal units grouped by how they ran over the whole period, as in the cheap-stretches panel below">By shutdown behaviour</button>
+        </div>
+        <div class="seg seg-sm" id="floor-hours" role="radiogroup" aria-label="Hours shown">
+          <button type="button" data-v="all" role="radio">All hours</button>
+          <button type="button" data-v="10" role="radio" title="Only the hours when system lambda was below $10">Lambda below $10</button>
+          <button type="button" data-v="0" role="radio" title="Only the hours when system lambda was below $0">Below $0</button>
         </div>
         <div class="seg seg-sm" id="floor-mode" role="radiogroup" aria-label="Measure">
           <button type="button" data-v="le20_sced" role="radio" title="MW at or below −$20 in the curve SCED dispatched against: everything ERCOT prices at its floor values">≤ −$20, as used</button>
@@ -128,13 +133,13 @@
     <div class="panel-head">
       <div>
         <h2>Running vs price</h2>
-        <p class="note">One dot per day. The line is the median for each $5 band of price. Commitment decisions are made ahead of time, so the trailing week's price often explains them better than the same day's.</p>
+        <p class="note">One dot per hour: the share of available capacity (HSL of units online plus offline but available; outages left out) that was running. The line is the median for each $5 band of price. Peakers follow the hour's price; coal and other slow units commit days ahead, so the trailing week's price often explains them better.</p>
       </div>
       <div class="panel-tools">
         <label class="lbl inline" for="sc-tech">Technology</label>
         <select id="sc-tech"></select>
         <div class="seg seg-sm" id="sc-x" role="radiogroup" aria-label="Price measure">
-          <button type="button" data-v="day" role="radio">Same day's lambda</button>
+          <button type="button" data-v="hour" role="radio">That hour's lambda</button>
           <button type="button" data-v="week" role="radio">Previous 7 days' lambda</button>
         </div>
       </div>
@@ -145,8 +150,8 @@
   <section class="panel panel-wide">
     <div class="panel-head">
       <div>
-        <h2 id="partial-title">Units online for only part of the day</h2>
-        <p class="note" id="partial-note"></p>
+        <h2>Starts per day</h2>
+        <p class="note">Number of times units of each technology came online (OFF to ON) each day, counted from per-unit status changes. Two starts in a day means a unit cycled off and back on.</p>
       </div>
     </div>
     <div class="legend" id="partial-legend"></div>

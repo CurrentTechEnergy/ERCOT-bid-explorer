@@ -104,6 +104,9 @@ pipeline/
   renew_changes.py ppa cache + DAM day files + node prices (and the history release) -> every change in
                    how each wind and solar unit bids, and whether it moved dispatch (data/renew_changes.json.gz,
                    data/renew/, no downloads)
+  series.py        per-unit day files + node prices + DAM awards -> hourly HSL, base point, output,
+                   offer prices, award and node prices per unit, by month and technology, for the
+                   graph builder (data/series/, no downloads)
   trends.py        per-unit day files -> daily trends, starts, flips, bidding changes (no downloads)
   intraday.py      per-unit day files -> thermal output at/above minimum in cheap hours, off spells
   stayon.py        per-unit day files + DAM costs -> what riding through a cheap stretch cost each
@@ -114,9 +117,11 @@ pipeline/
   ercot_api.py     ERCOT Public API client (token, archive listing, downloads)
   update.py        command line entry point
 site/
-  index.html, app.js, trends.html, trends.js, economics.html, economics.js, style.css, vendor/d3.min.js
+  index.html, app.js, trends.html, trends.js, economics.html, economics.js, contracts.html, contracts.js,
+  builder.html, builder.js, style.css, vendor/d3.min.js
   data/            generated: index.json, summary_*.json.gz, marginal_*.json.gz, 2d/, 60d/, dam/, prices/,
-                   curtail_nodes.json.gz, marginal_nodes.json.gz, gas.json.gz, gas_hubs.json.gz
+                   curtail_nodes.json.gz, marginal_nodes.json.gz, gas.json.gz, gas_hubs.json.gz,
+                   series/
 ```
 
 ### Day-ahead offers and costs
@@ -160,6 +165,10 @@ The regular update rebuilds the loaded 60-day days. Years before that come from 
 ### Hourly history (2019 on)
 
 `pipeline/history.py` builds a separate, compact history for longer-run analysis of wind and solar behaviour: one row per unit and hour with the real-time offer, HSL, base point, output, operator HDL overrides, DAM award, DAM HSL forecast and node DA price, plus DA hub and load-zone prices. It reads ERCOT's archive directly (the 60-day reports there go back to at least 2016) and never touches `site/data` or the data branch. The **Build hourly history** workflow (manual) builds one month per job and uploads `units-YYYY-MM.parquet` and `da-hubs-YYYY-MM.parquet` to the `history` release; `gh release download history -D history/` fetches them.
+
+### Hourly unit series
+
+`pipeline/series.py` reduces each 60-day per-unit day file to one value per unit and hour: mean HSL while online, base point, telemetered output, three readings of the submitted offer curve (its first price, the price at half its MW, and the price it puts on the base point, each the median over the hour's online runs), MW taken off HDL by operator override, the DAM award and the DA price at the unit's settlement point, plus the real-time price at each settlement point. It writes `data/series/YYYY-MM/<tech>.json.gz` and an index of units, read by the graph builder (`builder.html`), for charts of any unit or plant without loading the full day files (about 185 KB a day for all units). Per-day results are cached on the data branch under `series/`, keyed on the sizes of the files they came from, so each update only redoes new or reprocessed days.
 
 ### Plant economics
 
