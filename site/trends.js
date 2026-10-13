@@ -63,7 +63,7 @@ const S = { T: null, C: null, M: {}, floorMode: "le20_sced", hidden: { floor: ne
   pqTech: "coal", capTech: "coal", scTech: "coal", scX: "week", mSrc: "60d", mView: "smooth", mDays: "all",
   chgTech: "all", chgSig: "all", unit: null, mnMeasure: "units", mnDays: "all",
   I: null, UH: null, idx: null, summ60: null, cheapTech: "all", cheapThr: "0", shutTech: "combined_cycle", shutPrice: "any",
-  heatMeasure: "offer", heatTech: "combined_cycle", heatThr: "0", heatScale: "zero",
+  heatMeasure: "offer", heatTech: "combined_cycle", heatThr: "0", heatScale: "zero", HC: null, leanRank: "fossil", leanMonth: "all", leanPer: "day",
   stTech: "all", stThr: "0", stSort: "off", stUnit: "mw", stBase: null, stripScale: null };
 const { getJSON, tryJSON, showTip, hideTip, setCSV, tickFormat, fmtKind, axisFmt } = window.CX;
 const $ = (id) => document.getElementById(id);
@@ -1363,18 +1363,75 @@ async function drawHeat() {
     (meas !== "lambda" && S.heatScale === "fit" ? `<span>Scale fitted to the data: small differences look large</span>` : "");
 }
 
+// ---- leanest thermal hours: the hours with the least thermal output, with what else ran --
+const FOSSIL = THERMAL.filter((t) => t !== "nuclear");
+const LEAN_N = 25;
+function drawLean() {
+  const I = S.I, HC = S.HC, el = $("lean-table");
+  if (!I) return emptyMsg(el, "Fills in after the data update builds the intraday file.");
+  const fossil = S.leanRank === "fossil", ci = new Map((HC?.dates || []).map((d, i) => [d, i]));
+  const months = [...new Set(I.dates.map((d) => d.slice(0, 7)))];
+  bindSelect("lean-month", "leanMonth", [{ id: "all", label: "All months" },
+    ...months.reverse().map((m) => ({ id: m, label: d3.timeFormat("%b %Y")(parseDate(m + "-15")) }))], drawLean);
+  // all output: running units plus units starting up, shutting down or online for under half the hour
+  const transit = (t, i, h) => I.tech[t].transit?.[i]?.[h] || 0;
+  const out = (t, i, h) => I.tech[t].at_min[i][h] + I.tech[t].above[i][h] + transit(t, i, h);
+  let rows = [];
+  I.dates.forEach((d, i) => {
+    if (I.tech.coal.n[i] == null || (S.leanMonth !== "all" && !d.startsWith(S.leanMonth))) return;
+    for (let h = 0; h < 24; h++) {
+      if (I.tech.coal.at_min[i][h] == null) continue;
+      const r = { d, h, nuc: out("nuclear", i, h), lam: I.lambda[i][h] };
+      FOSSIL.forEach((t) => { r[t] = out(t, i, h); });
+      r.fossil = d3.sum(FOSSIL, (t) => r[t]);
+      r.above = d3.sum(FOSSIL, (t) => I.tech[t].above[i][h]);
+      r.transit = d3.sum(FOSSIL, (t) => transit(t, i, h));
+      r.v = fossil ? r.fossil : r.fossil + r.nuc;
+      if (!r.v) continue;   // the hour skipped at the spring DST change
+      const c = ci.get(d);
+      ["wind", "solar", "storage", "hub"].forEach((k) => { r[k] = c == null ? null : HC[k][c][h]; });
+      rows.push(r);
+    }
+  });
+  rows.sort((a, b) => a.v - b.v);
+  if (S.leanPer === "day") { const seen = new Set(); rows = rows.filter((r) => !seen.has(r.d) && seen.add(r.d)); }
+  const top = rows.slice(0, LEAN_N);
+  const mw = (v) => (v == null ? "–" : fmtMW(v));
+  const cols = [
+    { h: "Date", t: 1, k: "date", f: (r) => d3.timeFormat("%a %b %-d, %Y")(parseDate(r.d)) }, { h: "HE", k: "hour_ending", f: (r) => r.h + 1 },
+    { h: fossil ? "Fossil MW" : "Thermal MW", k: fossil ? "fossil_mw" : "thermal_mw", f: (r) => `<b>${mw(r.v)}</b>` },
+    { h: "Fossil above min.", k: "fossil_above_min_mw", f: (r) => mw(r.above) },
+    { h: "Fossil starting/stopping", k: "fossil_starting_stopping_mw", f: (r) => mw(r.transit) },
+    { h: "Coal", k: "coal_mw", f: (r) => mw(r.coal) }, { h: "Comb. cycle", k: "combined_cycle_mw", f: (r) => mw(r.combined_cycle) },
+    { h: "Gas steam", k: "gas_steam_mw", f: (r) => mw(r.gas_steam) }, { h: "CT", k: "combustion_turbine_mw", f: (r) => mw(r.combustion_turbine) },
+    { h: "Nuclear", k: "nuclear_mw", f: (r) => mw(r.nuc) }, { h: "Wind", k: "wind_mw", f: (r) => mw(r.wind) }, { h: "Solar", k: "solar_mw", f: (r) => mw(r.solar) },
+    { h: "Storage", k: "storage_mw", f: (r) => mw(r.storage) }, { h: "Lambda", k: "lambda", f: (r) => fmtPrice(r.lam) }, { h: "Hub avg", k: "hub_avg", f: (r) => fmtPrice(r.hub) },
+  ];
+  const val = (r) => [r.d, r.h + 1, r.v, r.above, r.transit, r.coal, r.combined_cycle, r.gas_steam, r.combustion_turbine, r.nuc, r.wind, r.solar, r.storage, r.lam, r.hub];
+  const scope = S.leanMonth === "all" ? "all days" : d3.timeFormat("%B %Y")(parseDate(S.leanMonth + "-15"));
+  $("lean-note").textContent = `The ${top.length} hours with the least ${fossil ? "fossil (coal, combined cycle, gas steam and combustion turbine)" : "thermal (fossil and nuclear)"} output, ${scope}` +
+    `${S.leanPer === "day" ? ", one per day" : ""}, from the 60-day disclosure. Output counts every unit's telemetered MW, including units starting up, shutting down or online for under half the hour ("starting/stopping"). ` +
+    `"Above min." is output above each running unit's LSL; the rest of the running units' output is what they could not shed without shutting down. ` +
+    `Storage is net output (negative while charging); hub avg is the HB_HUBAVG settlement point price. Click a row to open that hour in the Day view.`;
+  if (!top.length) { el.innerHTML = `<p class="empty">No hours in this range.</p>`; setCSV(el, [], [], "Leanest thermal hours"); return; }
+  el.innerHTML = `<table class="data"><thead><tr>${cols.map((c) => `<th${c.t ? ' class="t"' : ""}>${c.h}</th>`).join("")}</tr></thead><tbody>` +
+    top.map((r) => `<tr data-href="index.html#date=${r.d}&he=${r.h + 1}" style="cursor:pointer">${cols.map((c) => `<td${c.t ? ' class="t"' : ""}>${c.f(r)}</td>`).join("")}</tr>`).join("") + "</tbody></table>";
+  setCSV(el, cols.map((c) => c.k), top.map(val), "Leanest thermal hours");
+}
+
 // ---- links ------------------------------------------------------------------------
-const VIEW_KEYS = { stu: "stUnit", stt: "stTech", stp: "stThr", sts: "stSort", cht: "cheapTech", chthr: "cheapThr", sht: "shutTech", shp: "shutPrice", hm: "heatMeasure", ht: "heatTech", hthr: "heatThr", hs: "heatScale", f: "floorMode", pq: "pqTech", cap: "capTech", sc: "scTech", scx: "scX", ms: "mSrc", mv: "mView", md: "mDays", mnm: "mnMeasure", mnd: "mnDays", ct: "chgTech", cs: "chgSig", unit: "unit" };
+const VIEW_KEYS = { stu: "stUnit", stt: "stTech", stp: "stThr", sts: "stSort", cht: "cheapTech", chthr: "cheapThr", sht: "shutTech", shp: "shutPrice", hm: "heatMeasure", ht: "heatTech", hthr: "heatThr", hs: "heatScale", lr: "leanRank", lm: "leanMonth", lp: "leanPer", f: "floorMode", pq: "pqTech", cap: "capTech", sc: "scTech", scx: "scX", ms: "mSrc", mv: "mView", md: "mDays", mnm: "mnMeasure", mnd: "mnDays", ct: "chgTech", cs: "chgSig", unit: "unit" };
 function saveView() { window.CX.writeHash(Object.fromEntries(Object.entries(VIEW_KEYS).map(([k, sk]) => [k, S[sk]]))); }
 function loadView() { const v = window.CX.readHash(); Object.entries(VIEW_KEYS).forEach(([k, sk]) => { if (v[k] != null) S[sk] = v[k]; }); }
 
 // ---- boot ---------------------------------------------------------------------------
-function drawAll() { drawFloor(); drawRenewBands(); drawCurtailment(); drawNodeCurtail(); drawPriceQuantiles(); drawGas(); drawCapacity(); drawScatter(); drawPartial(); drawCheap(); drawShut(); drawStretch(); if (heatSeen) drawHeat(); drawMarginal(); drawNodeMarginal(); drawMitigation(); drawChanges(); }
+function drawAll() { drawFloor(); drawRenewBands(); drawCurtailment(); drawNodeCurtail(); drawPriceQuantiles(); drawGas(); drawCapacity(); drawScatter(); drawPartial(); drawCheap(); drawShut(); drawStretch(); if (heatSeen) drawHeat(); drawLean(); drawMarginal(); drawNodeMarginal(); drawMitigation(); drawChanges(); }
 let heatSeen = false;
 
 async function boot() {
-  [S.T, S.C, S.I, S.N, S.G, S.GH, S.MN, S.MIT] = await Promise.all([tryJSON("data/trends_60d.json.gz"), tryJSON("data/curve_trends.json.gz"), tryJSON("data/intraday_60d.json.gz"),
-    tryJSON("data/curtail_nodes.json.gz"), tryJSON("data/gas.json.gz"), tryJSON("data/gas_hubs.json.gz"), tryJSON("data/marginal_nodes.json.gz"), tryJSON("data/mitigation.json.gz")]);
+  [S.T, S.C, S.I, S.N, S.G, S.GH, S.MN, S.MIT, S.HC] = await Promise.all([tryJSON("data/trends_60d.json.gz"), tryJSON("data/curve_trends.json.gz"), tryJSON("data/intraday_60d.json.gz"),
+    tryJSON("data/curtail_nodes.json.gz"), tryJSON("data/gas.json.gz"), tryJSON("data/gas_hubs.json.gz"), tryJSON("data/marginal_nodes.json.gz"), tryJSON("data/mitigation.json.gz"),
+    tryJSON("data/hourly_context_60d.json.gz")]);
   if (!S.T) { $("status").textContent = "No trends data yet. It is built by the data update workflow."; return; }
   const D = S.T.dates;
   // one date range for every daily chart: all the bid and curtailment data (gas is trimmed to it)
@@ -1397,7 +1454,8 @@ async function boot() {
   bindSelect("sc-tech", "scTech", thermal, drawScatter);
   bindSelect("chg-tech", "chgTech", [{ id: "all", label: "All" }, ...thermal], drawChanges);
   bindSelect("chg-sig", "chgSig", [{ id: "all", label: "All" }, ...Object.entries(S.T.signals).map(([id, label]) => ({ id, label }))], drawChanges);
-  [["cheap-thr", "cheapThr", drawCheap], ["shut-price", "shutPrice", drawShut], ["heat-scale-mode", "heatScale", drawHeat]].forEach(([id, key, fn]) => { setSeg(id, S[key]); bindSeg(id, key, fn); });
+  [["cheap-thr", "cheapThr", drawCheap], ["shut-price", "shutPrice", drawShut], ["heat-scale-mode", "heatScale", drawHeat],
+   ["lean-rank", "leanRank", drawLean], ["lean-per", "leanPer", drawLean]].forEach(([id, key, fn]) => { setSeg(id, S[key]); bindSeg(id, key, fn); });
   bindSelect("cheap-tech", "cheapTech", [ALL_THERMAL, ...thermal], drawCheap);
   bindSelect("shut-tech", "shutTech", [ALL_THERMAL, ...thermal], drawShut);
   bindSelect("st-tech", "stTech", [ALL_THERMAL, ...thermal.filter((t) => t.id !== "nuclear")], drawStretch);
@@ -1411,6 +1469,7 @@ async function boot() {
   $("unit-list").innerHTML = S.T.units.map((u) => `<option value="${esc(u.unit)}">${techLabel(u.tech)}</option>`).join("");
   $("unit-pick").addEventListener("change", (e) => showUnit(e.target.value.trim()));
   $("unit-pick").addEventListener("input", (e) => { if (S.T.units.some((u) => u.unit === e.target.value)) showUnit(e.target.value); });
+  $("lean-table").addEventListener("click", (e) => { const tr = e.target.closest("tr[data-href]"); if (tr) location.href = tr.dataset.href; });
   ["chg-table", "flip-table", "cheap-units", "shut-units", "st-units"].forEach((id) => $(id).addEventListener("click", (e) => {
     const tr = e.target.closest("tr[data-unit]");
     if (tr) showUnit(tr.dataset.unit);

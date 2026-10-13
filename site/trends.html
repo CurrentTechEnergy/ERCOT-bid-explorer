@@ -242,6 +242,21 @@
     </div>
     <div class="chart scroll-x" id="heatmap"></div>
     <div class="heat-scale" id="heat-scale"></div>
+    <h3 class="sub-h">Leanest thermal hours</h3>
+    <p class="note" id="lean-note"></p>
+    <div class="panel-tools">
+      <div class="seg seg-sm" id="lean-rank" role="radiogroup" aria-label="Rank by">
+        <button type="button" data-v="fossil" role="radio" title="Coal, combined cycle, gas steam and combustion turbines">Fossil (no nuclear)</button>
+        <button type="button" data-v="all" role="radio">All thermal</button>
+      </div>
+      <label class="lbl inline" for="lean-month">Month</label>
+      <select id="lean-month"></select>
+      <div class="seg seg-sm" id="lean-per" role="radiogroup" aria-label="Rows">
+        <button type="button" data-v="day" role="radio" title="Only each day's leanest hour">One per day</button>
+        <button type="button" data-v="hour" role="radio">Every hour</button>
+      </div>
+    </div>
+    <div class="chart units-wrap" id="lean-table"></div>
   </section>
 
   <section class="panel panel-wide">
