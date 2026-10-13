@@ -20,7 +20,7 @@ const FLOOR_NOTES = {
   le20_sced: "MW priced at or below −$20 in the curves SCED dispatched against, averaged over each day. In those curves ERCOT fills in prices a unit didn't offer. Units that offer have the MW below their first offered point, usually minimum output, at −$20 (−$50 for some units). Units with no offer curve sit at −$250 with the rest of their output schedule at −$249.99 if they are nuclear or hydro, and at −$20 or −$50 otherwise. This counts all of that, plus anything generators themselves offered at or below −$20. Storage below zero is charging bid at or below −$20.",
   floor_sced: "MW priced at the −$250 floor (or −$249.99) in the curves SCED dispatched against, averaged over each day. ERCOT puts only units with no offer curve there, mostly nuclear and hydro. Minimum output of units that offer sits at −$20 (−$50 for some units), so it is counted under ≤ −$20, as used, not here. Storage below zero is charging bid at the floor.",
   floor_submitted: "MW the generators themselves priced at the −$250 floor in the offer curves they submitted, averaged over each day.",
-  le0_submitted: "MW the generators themselves priced at or below $0 in the offer curves they submitted, averaged over each day.",
+  le0_sub_lsl: "MW above minimum output (LSL) that the generators themselves priced at or below $0 in the offer curves they submitted, averaged over each day. Thermal technologies only. Minimum output is left out because SCED cannot dispatch below it: many curves start at 0 MW at −$250 and climb to the unit's real price, which puts MW at or below $0 by interpolation, all of it below LSL.",
 };
 // wind and solar offer price bands (pipeline/curve_trends.py), ordered from cheapest
 const BANDS = [
@@ -384,8 +384,8 @@ function drawGas() {
   const gasOn = {};
   const all = [...new Set([...G.dates, ...T.dates])].sort();
   all.forEach((d) => { if (gasBy.has(d)) last = gasBy.get(d); gasOn[d] = last; });
-  // Each unit's first offer price above $0 (skips minimum output and other blocks priced at or
-  // below $0) divided by gas on the day it offered. On each day a unit uses its latest value
+  // Each unit's first offer price above $0 at or above LSL (skips minimum output, which SCED
+  // cannot back down, and blocks priced at or below $0) divided by gas on the day it offered. On each day a unit uses its latest value
   // from the last HR_CARRY_DAYS, so the median covers the fleet, not just the units that ran
   // that day. Blank when fewer than HR_MIN_UNITS units have a value.
   const HR_MIN_UNITS = 10, HR_CARRY_DAYS = 14, DAY_MS = 864e5;
@@ -407,7 +407,7 @@ function drawGas() {
     { label: "Combined cycle", color: "--c1", values: hr("combined_cycle") },
     { label: "Combustion turbine", color: "--c2", values: hr("combustion_turbine") },
     { label: "Gas steam", color: "--c6", values: hr("gas_steam") },
-  ], { dates: T.dates, H: 220, title: `Implied heat rate: median unit's first offer price above $0 ÷ ${src.hsc ? "Houston Ship Channel" : "Henry Hub"} gas (MMBtu per MWh)`, yFmt: d3.format(",.1f"), tipFmt: d3.format(",.2f"), yTicks: [0, 5, 7, 10, 15, 20] });
+  ], { dates: T.dates, H: 220, title: `Implied heat rate: median unit's first offer price above $0 at or above LSL ÷ ${src.hsc ? "Houston Ship Channel" : "Henry Hub"} gas (MMBtu per MWh)`, yFmt: d3.format(",.1f"), tipFmt: d3.format(",.2f"), yTicks: [0, 5, 7, 10, 15, 20] });
 }
 
 function drawPriceQuantiles() {
@@ -795,7 +795,7 @@ function drawMitigation() {
 // ---- bidding-approach changes -----------------------------------------------------
 function drawChanges() {
   const T = S.T, techOf = Object.fromEntries(T.units.map((u) => [u.unit, u]));
-  $("chg-note").textContent = `A change is a shift that holds: the median over the ${T.window} online days after a day differs from the median over the ${T.window} online days before by at least 25 percentage points of MW offered at or below $0, half the day running without an offer curve, or $10 in first offer price above $0 relative to that day's median for its peers (which removes moves in fuel price). Peers are units of the same ERCOT resource type (for example CCGT90 or SCLE90) when at least 8 of them have a price that day, otherwise the same technology. Thermal units only. Click a row to see the unit.`;
+  $("chg-note").textContent = `A change is a shift that holds: the median over the ${T.window} online days after a day differs from the median over the ${T.window} online days before by at least 25 percentage points of the dispatchable range (above LSL) offered at or below $0, half the day running without an offer curve, or $10 in first offer price above $0 (at or above LSL) relative to that day's median for its peers (which removes moves in fuel price). Peers are units of the same ERCOT resource type (for example CCGT90 or SCLE90) when at least 8 of them have a price that day, otherwise the same technology. Thermal units only. Click a row to see the unit.`;
   // summary: units per technology, how many changed
   const sum = THERMAL.map((t) => {
     const us = T.units.filter((u) => u.tech === t);
@@ -834,14 +834,14 @@ function drawUnit(u) {
   drawUnitStrip(u, s, marks);
   const median = u.first.map((v, i) => (v == null || u.rel[i] == null ? null : v - u.rel[i]));
   timeChart($("unit-price"), [
-    { label: "First offer price above $0", color: s.color, values: u.first },
+    { label: "First offer price above $0, at or above LSL", color: s.color, values: u.first },
     { label: "Peer median", color: "--muted", values: median, dash: "4 3", width: 1.5 },
-  ], { title: "First offer price above $0 ($/MWh), and the median of its peers", H: 170, yFmt: d3.format("$,.0f"), tipFmt: fmtPrice, markers: marks, dots: true,
+  ], { title: "First offer price above $0 at or above LSL ($/MWh), and the median of its peers", H: 170, yFmt: d3.format("$,.0f"), tipFmt: fmtPrice, markers: marks, dots: true,
     tipNote: (i) => (u.peer && u.peer[i] != null ? ` · peers: ${u.peer[i] ? `${u.type} units` : `all ${s.label.toLowerCase()}`}` : "") });
   timeChart($("unit-share"), [
-    { label: "MW offered ≤ $0", color: s.color, values: u.le0 },
+    { label: "Share of MW above LSL offered ≤ $0", color: s.color, values: u.le0 },
     { label: "Share of day without an offer curve", color: "--muted", values: u.noff, dash: "4 3", width: 1.5 },
-  ], { title: "MW offered ≤ $0, and day without an offer curve (share)", H: 150, yFmt: d3.format(".0%"), markers: marks, dots: true });
+  ], { title: "Share of MW above LSL offered ≤ $0, and share of day without an offer curve", H: 150, yFmt: d3.format(".0%"), markers: marks, dots: true });
 }
 
 // day × hour state of one unit: offline, at minimum, above minimum; negative-price hours marked
@@ -1384,6 +1384,7 @@ async function boot() {
   $("status").textContent = `60-day data: ${D.length} days, ${D[0]} to ${D[D.length - 1]} · ${S.T.units.length} thermal units` +
     (S.C ? ` · wind and solar offers through ${S.C.rs.dates.at(-1)}` : "");
   loadView();
+  if (!FLOOR_NOTES[S.floorMode]) S.floorMode = "le20_sced";    // a measure from an older saved view
   const thermal = TECHS.filter((s) => THERMAL.includes(s.id));
   [["floor-mode", "floorMode", drawFloor], ["sc-x", "scX", drawScatter], ["mbp-src", "mSrc", drawMarginal], ["mbp-view", "mView", drawMarginal], ["mbp-days", "mDays", drawMarginal],
    ["mn-measure", "mnMeasure", drawNodeMarginal], ["mn-days", "mnDays", drawNodeMarginal]]

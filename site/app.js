@@ -997,8 +997,8 @@ const UNIT_TIPS = {
   pinned_share: "Share of online SCED runs in which the unit's base point sat at its minimum output: SCED wanted less but the unit could not go lower.",
   floor_mw: "MW priced at −$250/−$249.99 in the curve SCED used, averaged over the hours online.",
   le0_sced: "MW at or below $0 in the curve SCED used.",
-  le0_submitted: "MW at or below $0 in the curve the generator submitted.",
-  min_sub_price: "Price of the first (cheapest) point on the submitted offer curve, lowest of the day. Blank when no curve was submitted.",
+  le0_submitted: "MW above minimum output (LSL) at or below $0 in the curve the generator submitted. Minimum output is left out because SCED cannot dispatch below it. Days processed before this column was read from LSL up include it.",
+  min_sub_price: "Price of the first point at or above minimum output (LSL) on the submitted offer curve, lowest of the day. Blank when no curve was submitted. Days processed before this column was read from LSL up show the curve's first point, which is −$250 for curves that start at 0 MW.",
   no_offer_share: "Share of online SCED runs without an offer curve.",
 };
 
@@ -1035,7 +1035,7 @@ function drawTechTable() {
 const UNIT_COLS = [
   ["unit", "Unit", "t"], ["type", "Type", "t"], ["hours_online", "Hours online"], ["hsl", "HSL (MW)"], ["lsl", "LSL (MW)"],
   ["output", "Output (MW)"], ["pinned_share", "Time at LSL", "pct"], ["floor_mw", "At floor (MW)"],
-  ["le0_sced", "≤ $0 as used (MW)"], ["le0_submitted", "≤ $0 as submitted (MW)"], ["min_sub_price", "Lowest submitted price ($/MWh)", "price"],
+  ["le0_sced", "≤ $0 as used (MW)"], ["le0_submitted", "≤ $0 as submitted, above LSL (MW)"], ["min_sub_price", "Lowest submitted price at or above LSL ($/MWh)", "price"],
   ["no_offer_share", "No offer curve", "pct"],
 ];
 function drawUnits() {
