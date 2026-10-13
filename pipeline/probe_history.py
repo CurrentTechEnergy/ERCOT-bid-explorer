@@ -103,6 +103,9 @@ def main(argv=None):
     if summary:
         with open(summary, "a") as f:
             f.write("\n".join(lines) + "\n")
+    if os.environ.get("GITHUB_ACTIONS"):     # also as one annotation, readable from the checks API
+        text = "\n".join(lines).replace("%", "%25").replace("\r", "").replace("\n", "%0A")
+        print(f"::notice title=ERCOT archive probe::{text}")
 
 
 if __name__ == "__main__":
