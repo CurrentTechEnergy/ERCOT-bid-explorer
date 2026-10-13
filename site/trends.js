@@ -22,6 +22,17 @@ const FLOOR_NOTES = {
   floor_submitted: "MW the generators themselves priced at the −$250 floor in the offer curves they submitted, averaged over each day.",
   le0_sub_lsl: "MW above minimum output (LSL) that the generators themselves priced at or below $0 in the offer curves they submitted, averaged over each day. Thermal technologies only. Minimum output is left out because SCED cannot dispatch below it: many curves start at 0 MW at −$250 and climb to the unit's real price, which puts MW at or below $0 by interpolation, all of it below LSL.",
 };
+// floor chart grouped by shutdown behaviour: nuclear on its own (no offer curve, never moves),
+// the other thermal units by the groups of the cheap-stretches panel (ST_GROUPS, from the
+// hourly unit strips). Only the "≤ −$20, as used" measure has per-unit values (units[i].le20).
+const FLOOR_GROUPS = [
+  { id: "nuclear", label: "Nuclear (no offer curve)", color: "--c5" },
+  { id: "never", label: "Never shut down", color: "--c1" },
+  { id: "rare", label: "Shuts down, no two-shifts", color: "--c6" },
+  { id: "some", label: "Two-shifts 1–2 times", color: "--c2" },
+  { id: "cycler", label: "Two-shifts 3+ times", color: "--c8" },
+];
+const FLOOR_GROUP_NOTE = "MW priced at or below −$20 in the curves SCED dispatched against, summed over thermal units grouped by how they ran over the whole period (the groups of the cheap-stretches panel below; nuclear separately, since it has no offer curve and its whole output sits at the floor). For units that offer, this is almost entirely minimum output (LSL) at ERCOT's placeholder price, so the chart tracks how much minimum load is committed: day-to-day movement is which units are online, and the units that two-shift drive the seasonal swing. Storage, hydro and other resources are left out.";
 // wind and solar offer price bands (pipeline/curve_trends.py), ordered from cheapest
 const BANDS = [
   { id: "floor", label: "At the floor (−$250)", color: "--c8" },
@@ -59,7 +70,7 @@ const MBP_BINS = [
 ];
 const SIG_FMT = { le0: (v) => d3.format(".0%")(v), noff: (v) => d3.format(".0%")(v), rel: (v) => (v >= 0 ? "+" : "−") + d3.format("$,.0f")(Math.abs(v)) };
 
-const S = { T: null, C: null, M: {}, floorMode: "le20_sced", hidden: { floor: new Set(), partial: new Set() },
+const S = { T: null, C: null, M: {}, floorMode: "le20_sced", floorGroup: "tech", hidden: { floor: new Set(), floorG: new Set(), partial: new Set() },
   pqTech: "coal", capTech: "coal", scTech: "coal", scX: "week", mSrc: "60d", mView: "smooth", mDays: "all",
   chgTech: "all", chgSig: "all", unit: null, mnMeasure: "units", mnDays: "all",
   I: null, UH: null, idx: null, summ60: null, cheapTech: "all", cheapThr: "0", shutTech: "combined_cycle", shutPrice: "any",
@@ -200,11 +211,36 @@ function timeChart(el, series, opts) {
 }
 
 // ---- panels ----------------------------------------------------------------------
-function drawFloor() {
-  $("floor-note").textContent = FLOOR_NOTES[S.floorMode];
-  const list = FLOOR_TECHS.filter((s) => !S.hidden.floor.has(s.id));
-  if (!hasStat(S.floorMode)) return emptyMsg($("floor-chart"), "Not built yet. It fills in with the next data update.");
-  timeChart($("floor-chart"), list.map((s) => ({ ...s, values: techDaily(s, S.floorMode) })), { title: "MW, daily average", H: 280 });
+async function drawFloor() {
+  const byGroup = S.floorGroup === "behaviour";
+  $("floor-mode").querySelectorAll("button").forEach((b) => (b.disabled = byGroup && b.dataset.v !== "le20_sced"));
+  if (byGroup) {
+    $("floor-note").textContent = FLOOR_GROUP_NOTE;
+    legend($("floor-legend"), FLOOR_GROUPS, S.hidden.floorG, drawFloor);
+    const el = $("floor-chart");
+    if (!S.I || !S.T.has_units || !S.T.units.some((u) => u.le20)) return emptyMsg(el, "Not built yet. It fills in with the next data update.");
+    if (!S.UH) {
+      emptyMsg(el, "Loading hourly data…");
+      S.UH = (await tryJSON("data/unit_hours_60d.json.gz")) || { dates: [], units: {} };
+      if (S.floorGroup !== "behaviour") return;
+    }
+    const B = stretchBase(), D = S.T.dates.length, sums = new Map(FLOOR_GROUPS.map((g) => [g.id, new Array(D).fill(0)]));
+    for (const u of S.T.units) {
+      const g = u.tech === "nuclear" ? "nuclear" : B.units.get(u.tech === "combined_cycle" ? trainOf(u.unit) : u.unit)?.group;
+      const acc = g && sums.get(g);
+      if (!acc || !u.le20) continue;
+      u.le20.forEach((v, i) => { if (v != null) acc[i] += v; });
+    }
+    const list = FLOOR_GROUPS.filter((g) => !S.hidden.floorG.has(g.id))
+      .map((g) => ({ ...g, values: sums.get(g.id).map((v, i) => (S.T.has_units[i] ? Math.round(v) : null)) }));
+    timeChart(el, list, { title: "MW at or below −$20 as used, daily average, by group", H: 280 });
+  } else {
+    $("floor-note").textContent = FLOOR_NOTES[S.floorMode];
+    legend($("floor-legend"), FLOOR_TECHS, S.hidden.floor, drawFloor);
+    const list = FLOOR_TECHS.filter((s) => !S.hidden.floor.has(s.id));
+    if (!hasStat(S.floorMode)) return emptyMsg($("floor-chart"), "Not built yet. It fills in with the next data update.");
+    timeChart($("floor-chart"), list.map((s) => ({ ...s, values: techDaily(s, S.floorMode) })), { title: "MW, daily average", H: 280 });
+  }
   timeChart($("floor-price"), [{ label: "System lambda", color: "--price", values: S.T.lambda }],
     { title: "System lambda ($/MWh), daily average", H: 140, yFmt: d3.format("$,.0f"), tipFmt: fmtPrice, yMin: 10 });
 }
@@ -1168,6 +1204,96 @@ function fleetBars(el, groups, s, title) {
 }
 
 const ST_MIN_N = 5;                      // stretches needed before a unit's shares are shown
+const ST_MIN_CHEAP_H = 10;               // cheap hours a unit must be available for in a month to be judged
+const ST_WINDOW = 3;                     // tested months in each window of the "changed" comparison
+const ST_CHANGE = 0.4;                   // change in run-through share between windows that is flagged
+const ST_OUT_MIN_H = 4;                  // an off spell with fewer OFF hours than this, or more OUT than OFF, is an outage
+
+// Month by month, the share of cheap hours (lambda below thr) each unit kept running through
+// while it was available. From the merged hourly strips: running = "m"/"a", available but off =
+// "0"; outage ("o") and missing hours are left out, and an off spell that is mostly outage, or
+// turns into one within ST_OUT_MIN_H hours, counts as outage throughout (a unit returning from
+// a refuelling outage can report OFF for days). Months with fewer than ST_MIN_CHEAP_H cheap
+// hours available are untested (null).
+function monthShares(thr) {
+  const B = stretchBase();
+  B.months = B.months || {};
+  if (B.months[thr]) return B.months[thr];
+  const { N, lam, units, day0 } = B;
+  const monthOf = new Array(N), months = [];
+  for (let k = 0; k < N; k++) {
+    const m = d3.timeFormat("%Y-%m")(new Date(day0.getTime() + k * 3600e3));
+    if (months.at(-1) !== m) months.push(m);
+    monthOf[k] = months.length - 1;
+  }
+  const cheapH = months.map(() => 0);
+  for (let k = 0; k < N; k++) if (lam[k] < thr) cheapH[monthOf[k]]++;
+  const rows = new Map();
+  for (const e of units.values()) {
+    const st = e.st.slice();
+    for (let k = 0; k < N;) {
+      if (st[k] === "m" || st[k] === "a") { k++; continue; }
+      let j = k, off = 0, out = 0;
+      while (j < N && st[j] !== "m" && st[j] !== "a") { if (st[j] === "0") off++; else if (st[j] === "o") out++; j++; }
+      if (out && (off < ST_OUT_MIN_H || out > off)) for (let i = k; i < j; i++) if (st[i] === "0") st[i] = "o";
+      k = j;
+    }
+    const run = months.map(() => 0), avail = months.map(() => 0);
+    for (let k = 0; k < N; k++) {
+      if (!(lam[k] < thr)) continue;
+      const c = st[k];
+      if (c === "m" || c === "a") { run[monthOf[k]]++; avail[monthOf[k]]++; } else if (c === "0") avail[monthOf[k]]++;
+    }
+    rows.set(e.unit, { run, avail, share: months.map((_, i) => (avail[i] >= ST_MIN_CHEAP_H ? run[i] / avail[i] : null)) });
+  }
+  return (B.months[thr] = { months, cheapH, rows });
+}
+
+// the two most recent windows of ST_WINDOW tested months each: run-through share in each
+function monthChange(r) {
+  const tested = r.share.map((v, i) => (v == null ? null : i)).filter((i) => i != null);
+  if (tested.length < 2 * ST_WINDOW) return null;
+  const late = tested.slice(-ST_WINDOW), early = tested.slice(-2 * ST_WINDOW, -ST_WINDOW);
+  const sh = (ix) => d3.sum(ix, (i) => r.run[i]) / d3.sum(ix, (i) => r.avail[i]);
+  return { early: sh(early), late: sh(late), earlyIx: early, lateIx: late };
+}
+
+function drawMonths(fleet, s, thr) {
+  const el = $("st-months"), M = monthShares(thr), fmtM = (m) => d3.timeFormat("%b %y")(parseDate(m + "-15"));
+  const gl = (id) => ST_GROUPS.find((g) => g.id === id).label;
+  const units = fleet.map((e) => ({ e, r: M.rows.get(e.unit) })).filter((x) => x.r && x.r.share.some((v) => v != null))
+    .sort((a, b) => d3.ascending(ST_GROUPS.findIndex((g) => g.id === a.e.group), ST_GROUPS.findIndex((g) => g.id === b.e.group)) || d3.descending(a.e.mw, b.e.mw));
+  const tested = M.months.map((_, i) => M.cheapH[i] >= ST_MIN_CHEAP_H);
+  $("st-month-note").textContent = `Each cell is the share of hours with system lambda below ${fmtPrice0(thr)} that month in which the unit kept running, out of the hours it was available (running or off but not on outage). ` +
+    `Dark means it rode through, light means it turned off. Blank cells are untested: fewer than ${ST_MIN_CHEAP_H} cheap hours while the unit was available, or the unit on outage. ` +
+    `A unit's own month can be untested in a month with cheap hours if it was on outage for them. Rows are sorted by group, then capacity. Click a row to open the unit.`;
+  // units whose share moved between the two most recent windows of tested months
+  const changed = units.map((x) => ({ ...x, c: monthChange(x.r) })).filter((x) => x.c && Math.abs(x.c.late - x.c.early) >= ST_CHANGE)
+    .sort((a, b) => d3.descending(Math.abs(b.c.late - b.c.early), Math.abs(a.c.late - a.c.early)));
+  const win = (ix) => `${fmtM(M.months[ix[0]])}–${fmtM(M.months[ix.at(-1)])}`;
+  $("st-changed").innerHTML = changed.length
+    ? `<p class="note">Changed behaviour: units whose run-through share moved by ${fmtPct(ST_CHANGE)} or more between their two most recent windows of ${ST_WINDOW} tested months.</p>` +
+      unitRows(changed.map((x) => ({ ...x.e, unit: x.e.pick, c: x.c })), [
+        { h: "Unit", t: 1, f: (r) => esc(r.unit === r.pick ? r.unit : `${r.unit} (${r.unit})`) }, { h: "Technology", t: 1, f: (r) => techLabel(r.tech) }, { h: "Group", t: 1, f: (r) => gl(r.group) },
+        { h: "MW", f: (r) => fmtMW(r.mw) }, { h: "Earlier window", t: 1, f: (r) => win(r.c.earlyIx) }, { h: "Ran through", f: (r) => fmtPct(r.c.early) },
+        { h: "Latest window", t: 1, f: (r) => win(r.c.lateIx) }, { h: "Ran through", f: (r) => fmtPct(r.c.late) },
+        { h: "Change", f: (r) => (r.c.late >= r.c.early ? "+" : "−") + fmtPct(Math.abs(r.c.late - r.c.early)) },
+      ])
+    : `<p class="note">No unit changed its behaviour between its two most recent windows of ${ST_WINDOW} tested months (a change is ${fmtPct(ST_CHANGE)} or more in the share of cheap hours it ran through).</p>`;
+  if (!units.length) return emptyMsg(el, "No units match.");
+  const base = d3.color(css(s.color));
+  const cell = (v) => {
+    if (v == null) return `<td class="st-na" title="Untested"></td>`;
+    const c = base.copy({ opacity: 0.08 + 0.92 * v });
+    return `<td style="background:${c.formatRgb()};color:${v > 0.55 ? "#fff" : "inherit"}">${fmtPct(v)}</td>`;
+  };
+  el.innerHTML = `<table class="data st-grid"><thead><tr><th class="t">Unit</th><th class="t">Group</th><th>MW</th>` +
+    M.months.map((m, i) => `<th${tested[i] ? "" : ' class="st-na"'} title="${M.cheapH[i]} hours below ${fmtPrice0(thr)}">${fmtM(m)}<br><span class="muted">${M.cheapH[i]} h</span></th>`).join("") + "</tr></thead><tbody>" +
+    units.map((x) => `<tr data-unit="${esc(x.e.pick)}" style="cursor:pointer"><td class="t">${esc(x.e.unit)}</td><td class="t">${gl(x.e.group)}</td><td>${fmtMW(x.e.mw)}</td>${x.r.share.map(cell).join("")}</tr>`).join("") +
+    "</tbody></table>";
+  setCSV(el, ["unit", "technology", "group", "mw", ...M.months.map((m) => `${m}_share_ran_through`), ...M.months.map((m) => `${m}_cheap_hours_available`)],
+    units.map((x) => [x.e.unit, x.e.tech, x.e.group, Math.round(x.e.mw), ...x.r.share.map((v) => (v == null ? "" : v.toFixed(3))), ...x.r.avail]), `cheap-hours-month-by-month-${thr}`);
+}
 const ST_SORT = [
   { id: "off", label: "Share turned off", f: (a, b) => d3.descending(a.offShare ?? -1, b.offShare ?? -1) },
   { id: "p10", label: "Minimum hours off (10th pct)", f: (a, b) => d3.ascending(a.offP10 ?? 1e9, b.offP10 ?? 1e9) },
@@ -1204,6 +1330,7 @@ async function drawStretch() {
     `Each unit's capacity is split by what it did across the ${nEps} stretches: turned off in the ${ST_LEAD} hours before, turned off during, ran at minimum or above minimum (when it was already running ${ST_LEAD} hours before the stretch began), or not running going in (offline, on outage or no data). Units that never ran in the period are left out. ` +
     `Each combined-cycle train counts as one unit, so switching configuration is not a shutdown. Nuclear is left out. Lambda is the system price; a unit's own nodal price can differ.`;
   fleetBars(el, groups, s, S.stUnit === "mw" ? "Capacity of each group, MW, split by what it did in cheap stretches" : "Share of each group's capacity, by what it did in cheap stretches");
+  drawMonths(fleet, s, thr);
   // unit table
   const list = [...B.units.values()].filter((e) => ts.includes(e.tech) && (by.has(e.unit) || e.shut > 0)).map((e) => {
     const g = by.get(e.unit) || [], n = g.length, c = (id) => (n >= ST_MIN_N ? g.filter((r) => r.r === id).length / n : null);
@@ -1364,7 +1491,7 @@ async function drawHeat() {
 }
 
 // ---- links ------------------------------------------------------------------------
-const VIEW_KEYS = { stu: "stUnit", stt: "stTech", stp: "stThr", sts: "stSort", cht: "cheapTech", chthr: "cheapThr", sht: "shutTech", shp: "shutPrice", hm: "heatMeasure", ht: "heatTech", hthr: "heatThr", hs: "heatScale", f: "floorMode", pq: "pqTech", cap: "capTech", sc: "scTech", scx: "scX", ms: "mSrc", mv: "mView", md: "mDays", mnm: "mnMeasure", mnd: "mnDays", ct: "chgTech", cs: "chgSig", unit: "unit" };
+const VIEW_KEYS = { fg: "floorGroup", stu: "stUnit", stt: "stTech", stp: "stThr", sts: "stSort", cht: "cheapTech", chthr: "cheapThr", sht: "shutTech", shp: "shutPrice", hm: "heatMeasure", ht: "heatTech", hthr: "heatThr", hs: "heatScale", f: "floorMode", pq: "pqTech", cap: "capTech", sc: "scTech", scx: "scX", ms: "mSrc", mv: "mView", md: "mDays", mnm: "mnMeasure", mnd: "mnDays", ct: "chgTech", cs: "chgSig", unit: "unit" };
 function saveView() { window.CX.writeHash(Object.fromEntries(Object.entries(VIEW_KEYS).map(([k, sk]) => [k, S[sk]]))); }
 function loadView() { const v = window.CX.readHash(); Object.entries(VIEW_KEYS).forEach(([k, sk]) => { if (v[k] != null) S[sk] = v[k]; }); }
 
@@ -1389,7 +1516,7 @@ async function boot() {
   [["floor-mode", "floorMode", drawFloor], ["sc-x", "scX", drawScatter], ["mbp-src", "mSrc", drawMarginal], ["mbp-view", "mView", drawMarginal], ["mbp-days", "mDays", drawMarginal],
    ["mn-measure", "mnMeasure", drawNodeMarginal], ["mn-days", "mnDays", drawNodeMarginal]]
     .forEach(([id, key, fn]) => { setSeg(id, S[key]); bindSeg(id, key, fn); });
-  legend($("floor-legend"), FLOOR_TECHS, S.hidden.floor, drawFloor);
+  setSeg("floor-group", S.floorGroup); bindSeg("floor-group", "floorGroup", drawFloor);
   legend($("partial-legend"), thermal, S.hidden.partial, drawPartial);
   staticLegend($("rs-legend"), BANDS);
   bindSelect("pq-tech", "pqTech", thermal.filter((s) => s.id !== "nuclear"), drawPriceQuantiles);
@@ -1411,7 +1538,7 @@ async function boot() {
   $("unit-list").innerHTML = S.T.units.map((u) => `<option value="${esc(u.unit)}">${techLabel(u.tech)}</option>`).join("");
   $("unit-pick").addEventListener("change", (e) => showUnit(e.target.value.trim()));
   $("unit-pick").addEventListener("input", (e) => { if (S.T.units.some((u) => u.unit === e.target.value)) showUnit(e.target.value); });
-  ["chg-table", "flip-table", "cheap-units", "shut-units", "st-units"].forEach((id) => $(id).addEventListener("click", (e) => {
+  ["chg-table", "flip-table", "cheap-units", "shut-units", "st-units", "st-changed", "st-months"].forEach((id) => $(id).addEventListener("click", (e) => {
     const tr = e.target.closest("tr[data-unit]");
     if (tr) showUnit(tr.dataset.unit);
   }));

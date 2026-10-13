@@ -285,6 +285,34 @@ def le0_share(u: dict, n_runs: int) -> np.ndarray:
         return np.where(rng >= 1.0, mw / rng, np.nan)
 
 
+def le20_sced_mw(u: dict, n_runs: int) -> float:
+    """Mean over all of the day's runs of the MW at or below -$20 in the curve SCED dispatched
+    against (SCED2 from format 6, else the submitted curve), for runs the unit is online with
+    HSL > 0; 0 for other runs.  Same evaluation as the technology series (curves.mw_at_prices,
+    0 MW below the first point, clipped to [0, HSL]), so the per-unit values sum to it."""
+    si = _ffill_index(u["status"], n_runs)
+    li = _ffill_index(u["lim"], n_runs)
+    cv = u.get("curve2") or u["curve"]
+    ci = _ffill_index(cv, n_runs)
+    total, cache = 0.0, {}
+    for r in range(n_runs):
+        s = u["status"][si[r]][1] if si[r] >= 0 else None
+        if not (s and s.startswith("ON")) or li[r] < 0 or ci[r] < 0:
+            continue
+        key = (li[r], ci[r])
+        if key not in cache:
+            hsl = u["lim"][li[r]][1] or 0
+            ev = cv[ci[r]]
+            if hsl <= 0 or ev[1] is None:
+                cache[key] = 0.0
+            else:
+                m = np.array(ev[2], float) * (hsl if u.get("frac") else 1.0)
+                mw = mw_at_prices(np.array([ev[1]], float), m[None, :], np.array([-20.0]))[0, 0]
+                cache[key] = float(min(max(mw, 0.0), hsl))
+        total += cache[key]
+    return total / max(n_runs, 1)
+
+
 def first_positive_price(u: dict, n_runs: int):
     """Mean over the day's online runs with a submitted curve of the price of the first curve
     point at or above LSL that is priced above $0: roughly where the unit starts pricing its
