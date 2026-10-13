@@ -1,0 +1,82 @@
+name: Build bidding-change history
+
+# Fills the Hedge signals page's bidding changes for the years before the loaded 60-day days,
+# from the hourly Parquet files on the `history` release (pipeline/renew_changes.py --history).
+# Run it once after the history release is built, and again whenever months are added to it.
+# Days the regular update covers are left alone.  Shares the update workflow's concurrency group,
+# since both commit site/data.
+on:
+  workflow_dispatch:
+    inputs:
+      years:
+        description: "Only these years, space separated (blank = every year on the release)"
+        required: false
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: update-data
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 300
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: ${{ github.ref_name }}
+          fetch-depth: 1
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install -r requirements.txt -r requirements-history.txt
+      - name: Download the history release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release download history -R "$GITHUB_REPOSITORY" -D history/ --pattern "*.parquet"
+      - name: Build
+        env:
+          PYTHONUNBUFFERED: "1"
+          YEARS: ${{ inputs.years }}
+        run: python -m pipeline.renew_changes --history history ${YEARS:+--years $YEARS}
+      - name: Commit
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add site/data/renew site/data/renew_changes.json.gz
+          if git diff --cached --quiet; then
+            echo "No change"
+            exit 0
+          fi
+          git commit -m "Bidding-change history $(date -u +%Y-%m-%d)"
+          git fetch --unshallow origin "${GITHUB_REF_NAME}"
+          for attempt in 1 2 3 4 5; do
+            git pull --rebase origin "${GITHUB_REF_NAME}" && git push origin "HEAD:${GITHUB_REF_NAME}" && exit 0
+            echo "Push attempt $attempt failed; retrying"
+            sleep $((attempt * 10))
+          done
+          echo "::error::Could not push after 5 attempts"
+          exit 1
+
+  deploy:
+    needs: build
+    if: vars.ENABLE_PAGES == 'true'
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: ${{ github.ref_name }}
+      - uses: actions/configure-pages@v6
+      - uses: actions/upload-pages-artifact@v5
+        with:
+          path: site
+      - id: deployment
+        uses: actions/deploy-pages@v5

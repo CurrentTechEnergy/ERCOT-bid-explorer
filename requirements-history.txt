@@ -1,2 +1,3 @@
-# Extra packages for pipeline/history.py (the "Build hourly history" workflow only)
+# Extra packages for pipeline/history.py and pipeline/renew_changes.py --history (the "Build hourly
+# history" and "Build bidding-change history" workflows only)
 pyarrow>=15
