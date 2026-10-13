@@ -192,3 +192,8 @@ details.dl > summary:hover { color: var(--ink); border-color: var(--muted); }
 .price-range[hidden] { display: none; }
 .price-range input { width: 72px; min-height: 30px; padding: 3px 6px; font-size: 12px; }
 .link-btn { font: inherit; font-size: 12px; color: var(--accent); background: none; border: 0; padding: 4px; cursor: pointer; }
+.st-grid th { text-align: center; }
+.st-grid th .muted { font-weight: 400; text-transform: none; letter-spacing: 0; }
+.st-grid td:nth-child(n+4) { text-align: center; min-width: 58px; }
+.st-grid td.st-na { background: repeating-linear-gradient(135deg, var(--line) 0 2px, transparent 2px 7px); }
+.st-grid th.st-na { color: var(--line); }

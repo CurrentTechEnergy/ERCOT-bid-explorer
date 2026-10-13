@@ -14,6 +14,10 @@ From the per-unit day files in UNIT_DATA_DIR (days without one are skipped / nul
                          are read from LSL up because SCED cannot dispatch below it; a curve
                          from 0 MW at -$250 up to HSL puts MW at or below $0 only by
                          interpolation, below LSL
+  units[i]["le20"]       MW at or below -$20 in the curve SCED dispatched against, averaged over
+                         the day's runs (0 while offline), so the units of a technology sum to
+                         daily[tech]["le20_sced"]; null on days without a per-unit file
+  has_units              per day, 1 when that day's per-unit file was read
   units[i]["rel"]        that minus the day's median for the unit's peer group; "peer" says which
                          group: 1 its resource type (PEER_MIN or more units with a price), 0 its
                          technology
@@ -25,7 +29,7 @@ import numpy as np
 
 from .config import DATA_DIR, PRICE_GRID, SIXTY_DAY_TECHS, UNIT_DATA_DIR
 from .store import read_json_gz, write_json_gz
-from .units import first_positive_price, le0_above_lsl
+from .units import first_positive_price, le0_above_lsl, le20_sced_mw
 
 DAILY_STATS = ["n_online", "hsl", "lsl", "output", "floor_sced", "floor_submitted",
                "le0_submitted", "no_offer_hsl",
@@ -96,11 +100,12 @@ def unit_day_facts(ud: dict, prev_last: dict):
     """From one per-unit day file: starts per unit, each unit's last known status, flips, each
     thermal unit's first offer price above $0 at or above LSL (units.first_positive_price) and
     its share of the dispatchable range offered at or below $0, and per technology the MW offered
-    at or below $0 above LSL (averaged over the day's runs).
+    at or below $0 above LSL (averaged over the day's runs), and each thermal unit's MW at or
+    below -$20 as used (units.le20_sced_mw).
     prev_last: {unit: status} at the end of the previous day (empty if that day is missing);
     a start in the first run of the day counts only when it is known."""
     n = len(ud["runs"])
-    starts, last, flips, pos, le0, tech_le0 = {}, {}, [], {}, {}, {}
+    starts, last, flips, pos, le0, tech_le0, le20 = {}, {}, [], {}, {}, {}, {}
     for name, u in ud["units"].items():
         seq = [s for _, s in u["status"] if s]      # skip absent runs (None) and blank statuses ("")
         cnt, prev = 0, prev_last.get(name)
@@ -114,6 +119,7 @@ def unit_day_facts(ud: dict, prev_last: dict):
         if u["tech"] not in UNIT_TECHS:
             continue
         pos[name] = first_positive_price(u, n)
+        le20[name] = round(le20_sced_mw(u, n), 1)
         mw, rng = le0_above_lsl(u, n)
         tech_le0[u["tech"]] = tech_le0.get(u["tech"], 0.0) + float(np.nansum(mw)) / max(n, 1)
         with np.errstate(invalid="ignore", divide="ignore"):
@@ -134,7 +140,7 @@ def unit_day_facts(ud: dict, prev_last: dict):
             state = cur
         hours = round(float(np.sum(share[ok] > FLIP_EPS)) * 24 / max(n, 1), 1)
         flips.append([name, u["tech"], ud["date"], n_sw, first_sw, hours])
-    return starts, last, flips, pos, le0, tech_le0
+    return starts, last, flips, pos, le0, tech_le0, le20
 
 
 def build_trends(index: dict) -> None:
@@ -147,7 +153,7 @@ def build_trends(index: dict) -> None:
     units = {}
     unit_starts, flips = {}, []    # unit -> {day index: starts}
     prev_date, prev_last = None, {}
-    n_unit_days = 0
+    n_unit_days, has_units = 0, []
     for di, d in enumerate(dates):
         sd = summ.get(d) or {}
         st = sd.get("stats") or {}
@@ -163,7 +169,7 @@ def build_trends(index: dict) -> None:
         if ud:
             n_unit_days += 1
             known = prev_last if prev_date and np.datetime64(prev_date) + 1 == np.datetime64(d) else {}
-            starts, prev_last, fl, pos, le0, tech_le0 = unit_day_facts(ud, known)
+            starts, prev_last, fl, pos, le0, tech_le0, le20 = unit_day_facts(ud, known)
             prev_date = d
             flips += fl
             for t in SIXTY_DAY_TECHS:
@@ -172,10 +178,11 @@ def build_trends(index: dict) -> None:
             for nm, c in starts.items():
                 unit_starts.setdefault(nm, {})[di] = c
         else:
-            pos, le0 = {}, {}
+            pos, le0, le20 = {}, {}, {}
             for t in SIXTY_DAY_TECHS:
                 daily[t]["starts"].append(None)
                 daily[t]["le0_sub_lsl"].append(None)
+        has_units.append(1 if ud else 0)
         day = read_json_gz(DATA_DIR / "60d" / f"{d}.json.gz") or {}
         for t in SIXTY_DAY_TECHS:
             rows = [r for r in (day.get("curves") or {}).get(t, []) if r]
@@ -192,7 +199,7 @@ def build_trends(index: dict) -> None:
             if tech not in UNIT_TECHS:
                 continue
             e = units.setdefault(r[C["unit"]], {"tech": tech, "type": r[C["type"]], "hours": {}, "first": {},
-                                                 "floor": {}, "le0": {}, "noff": {}})
+                                                 "floor": {}, "le0": {}, "noff": {}, "le20": {}})
             hsl = r[C["hsl"]] or 0
             e["hours"][di] = hrs
             e["first"][di] = pos.get(r[C["unit"]])
@@ -201,6 +208,10 @@ def build_trends(index: dict) -> None:
             e["le0"][di] = le0.get(r[C["unit"]])
         for t in SIXTY_DAY_TECHS:
             daily[t]["partial_units"].append(partial[t] if u["rows"] else None)
+        # every thermal unit in the day file, online that day or not (offline units count 0)
+        for name, v in le20.items():
+            if name in units:
+                units[name]["le20"][di] = v
 
     D = len(dates)
     # a day with no thermal unit online is a gap in the disclosure, not a real day
@@ -237,11 +248,12 @@ def build_trends(index: dict) -> None:
                          "hours": [e["hours"].get(i, 0) for i in range(D)],
                          "first": arr(e["first"]), "rel": rel, "peer": [None if r is None else p[1] for r, p in zip(rel, pm)], "floor": arr(e["floor"]),
                          "le0": arr(e["le0"]), "noff": arr(e["noff"]), "n_changes": len(ch),
+                         "le20": [e["le20"].get(i, 0.0 if has_units[i] else None) for i in range(D)],
                          "starts": arr(unit_starts.get(name, {}))})
         changes += [[name, e["tech"], dates[i], sig, b, a] for i, sig, b, a in ch]
 
     write_json_gz(DATA_DIR / "trends_60d.json.gz", {
-        "dates": dates, "lambda": lam, "techs": SIXTY_DAY_TECHS, "daily": daily,
+        "dates": dates, "lambda": lam, "techs": SIXTY_DAY_TECHS, "daily": daily, "has_units": has_units,
         "signals": {k: v["label"] for k, v in SIGNALS.items()}, "window": K, "units": unit_out,
         "changes": sorted(changes, key=lambda c: c[2]),
         "flips": sorted(flips, key=lambda f: (f[2], f[0])),

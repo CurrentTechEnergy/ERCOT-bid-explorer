@@ -28,6 +28,10 @@
         <p class="note" id="floor-note"></p>
       </div>
       <div class="panel-tools">
+        <div class="seg seg-sm" id="floor-group" role="radiogroup" aria-label="Group by">
+          <button type="button" data-v="tech" role="radio">By technology</button>
+          <button type="button" data-v="behaviour" role="radio" title="Thermal units grouped by how they ran over the whole period, as in the cheap-stretches panel below">By shutdown behaviour</button>
+        </div>
         <div class="seg seg-sm" id="floor-mode" role="radiogroup" aria-label="Measure">
           <button type="button" data-v="le20_sced" role="radio" title="MW at or below −$20 in the curve SCED dispatched against: everything ERCOT prices at its floor values">≤ −$20, as used</button>
           <button type="button" data-v="floor_sced" role="radio" title="MW at −$250/−$249.99 in the curve SCED dispatched against: units with no offer curve, mostly nuclear and hydro">At floor, as used</button>
@@ -215,6 +219,10 @@
     </div>
     <div class="legend legend-static" id="st-legend"></div>
     <div class="chart" id="st-group"></div>
+    <h3 class="sub-h">Month by month: did each unit keep running through cheap hours?</h3>
+    <p class="note" id="st-month-note"></p>
+    <div id="st-changed"></div>
+    <div class="units-wrap scroll-x" id="st-months"></div>
     <h3 class="sub-h">Units: response to cheap stretches and time off when they shut down</h3>
     <p class="note" id="st-units-note"></p>
     <div class="panel-tools"><label class="lbl inline" for="st-sort">Sort by</label><select id="st-sort"></select></div>
