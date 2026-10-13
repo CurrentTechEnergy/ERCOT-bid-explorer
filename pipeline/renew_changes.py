@@ -33,6 +33,12 @@ Units of one plant (name up to its unit number) changing the same way within a d
 are one event.  A unit with TOGGLE or more floor_back events or episodes in some 365 days is a
 "toggler" (Frye moves between two fixed floors all year); its events are still listed.
 
+PTC.  A floor between PTC_BAND prices a per-MWh credit.  A floor change inside the band of
+PTC_STEP or less is tagged "level" (re-pricing the credit, as the yearly inflation adjustment
+does); a floor leaving the band for PTC_OFF or above and never returning to it is tagged
+"expired" (inferred: the credit runs 10 years from the plant's start, which the data does
+not give).  ptc_trend is the monthly median of those floors by technology.
+
 Moved dispatch.  For the first HOLD online days of a new regime (or an episode's days), each
 online hour is compared with what the old regime would have offered: the old floor, or the old
 formula at that hour's DA price.  The unit dispatched differently when the node price fell
@@ -55,7 +61,8 @@ Writes:
   data/renew/impacts.json.gz    {"unit|date|kind": impact}, kept between runs: each build fills
                                  the events whose first window day it has hourly data for
   data/renew_changes.json.gz    params, kinds, first, last, years, n_units, togglers,
-                                 events: [{date, plant, units, tech, kind, before, after, days,
+                                 ptc_band, ptc_trend {months, wind/solar: {median, units}},
+                                 events: [{date, plant, units, tech, kind, before, after, days, ptc,
                                  gap, ctx [dam before, dam after, cur before, cur after],
                                  impact {hours, up, dn, v_up, v_dn, est} or null}], newest first
   monthly counts are left to the page.
@@ -89,6 +96,9 @@ REF_DA = 30.0      # a typical DA price: day fits trade slope against intercept,
 TOGGLE = 4         # floor_back events or episodes in 365 days that make a toggler
 MOVED_MWH = 1.0    # an event moved dispatch when its window has at least this many MWh
 CLAMP_SHARE = 0.8  # share of a day's hours the clamped year formula must explain
+PTC_BAND = [-60.0, -15.0]   # floors here price a per-MWh credit such as the PTC
+PTC_STEP = 5.0     # a floor change inside the band of this much or less is "PTC level"
+PTC_OFF = -5.0     # a floor leaving the band for this or higher, for good, may be the PTC running out
 KINDS = {
     "floor_new": "New floor", "floor_back": "Back to an earlier floor",
     "formula_on": "Formula on", "formula_off": "Formula off", "terms": "Formula terms changed",
@@ -504,6 +514,53 @@ def _num(v):
     return 0.0 if v is None else v
 
 
+def _in_band(r) -> bool:
+    return r.get("k") == "f" and r.get("v") is not None and PTC_BAND[0] <= r["v"] <= PTC_BAND[1]
+
+
+def _tag_ptc(events) -> None:
+    """e["ptc"]: "level" for a floor change inside the PTC band of PTC_STEP or less (re-pricing
+    the credit), "expired" for a floor leaving the band for PTC_OFF or above that never returns
+    to the band in the data (the credit running out after 10 years, inferred)."""
+    by_unit = defaultdict(list)
+    for e in events:
+        for u in e["units"]:
+            by_unit[u].append(e)
+    for e in events:
+        e["ptc"] = None
+        if e["kind"] not in ("floor_new", "floor_back"):
+            continue
+        b, a = e["before"], e["after"]
+        if _in_band(b) and _in_band(a) and abs(a["v"] - b["v"]) <= PTC_STEP:
+            e["ptc"] = "level"
+        elif _in_band(b) and a.get("k") == "f" and a["v"] >= PTC_OFF:
+            back = any(o["date"] > e["date"] and _in_band(o["after"]) and o["kind"] != "episode"
+                       for u in e["units"] for o in by_unit[u])
+            if not back:
+                e["ptc"] = "expired"
+
+
+def ptc_trend(seq, tech) -> dict:
+    """Monthly median, over units, of each unit's median floor on floor days inside the PTC
+    band, by technology, with the number of units behind each value."""
+    per = defaultdict(list)             # (tech, month, unit) -> floors
+    for name, days in seq.items():
+        t = tech.get(name)
+        for d, s in days:
+            if s[0] >= MIN_HOURS and s[1] == "f" and PTC_BAND[0] <= s[2] <= PTC_BAND[1]:
+                per[(t, d[:7], name)].append(s[2])
+    months = sorted({k[1] for k in per})
+    out = {"months": months}
+    for t in ("wind", "solar"):
+        med, n = [], []
+        for m in months:
+            v = [float(np.median(f)) for (tt, mm, _), f in per.items() if tt == t and mm == m]
+            med.append(_r(float(np.median(v))) if len(v) >= 3 else None)
+            n.append(len(v))
+        out[t] = {"median": med, "units": n}
+    return out
+
+
 def _close(a, b) -> bool:
     """Two regime descriptions alike enough for units of one plant to share an event."""
     if a["k"] == "f":
@@ -567,6 +624,7 @@ def write_events(detected, seq, tech, src) -> None:
         im = e["impact"]
         e["moved"] = None if im is None else bool(_num(im["up"]) + _num(im["dn"]) >= MOVED_MWH)
         e["toggler"] = any(u in toggle for u in e["units"])
+    _tag_ptc(events)
     events.sort(key=lambda e: (e["date"], e["plant"]), reverse=True)
     dates = sorted(src)
     n_units = Counter(tech.get(n) for n, days in seq.items() if any(s[0] >= MIN_HOURS for _, s in days))
@@ -578,6 +636,7 @@ def write_events(detected, seq, tech, src) -> None:
         "kinds": KINDS, "first": dates[0] if dates else None, "last": dates[-1] if dates else None,
         "live_first": min((d for d in dates if src[d] == "l"), default=None),
         "years": sorted({d[:4] for d in dates}), "n_units": dict(n_units), "togglers": toggle,
+        "ptc_band": PTC_BAND, "ptc_trend": ptc_trend(seq, tech),
         "events": events,
     }
     write_json_gz(DATA_DIR / "renew_changes.json.gz", out)

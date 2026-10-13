@@ -127,6 +127,12 @@
           <button type="button" data-v="no" role="radio">Did not</button>
         </div>
       </div>
+      <div class="ctl"><label class="lbl" for="chg-ptc">PTC</label><select id="chg-ptc">
+        <option value="all">All changes</option>
+        <option value="hide">Hide PTC-level moves</option>
+        <option value="level">PTC-level moves only</option>
+        <option value="expired">PTC may have expired</option>
+      </select></div>
       <label class="chk"><input type="checkbox" id="chg-tog"> Hide togglers</label>
     </div>
     <div class="legend legend-static" id="chg-legend"></div>
@@ -142,6 +148,17 @@
         <p class="note">Per MWh, a plant hedged on a DA-settled, as-generated contract earns roughly the real-time price at its node, plus share × (strike − DA price at the settlement point), plus any per-MWh credit. Generating pays only when the RT price beats share × DA − (share × strike + credit), and that is the offer a QSE bidding the contract submits. Each hour's offer is the median over its SCED runs of the submitted curve's price at half its MW, kept only when it did not move within the hour (a DA-based price is hourly). A formula day has at least four such hours at four or more prices, after dropping a floor or cap the formula is clamped to. Every candidate settlement point (the unit's own node, each hub and load zone) is fitted on each formula day; the point's formula is the median over days, and its hit rate is the share of hours it predicts within <span id="hit-v">$2</span>.</p>
       </div>
     </div>
+  </section>
+
+  <section class="panel panel-wide" id="ptc-panel">
+    <div class="panel-head">
+      <div>
+        <h2>PTC floor level <span class="h-note" id="ptc-note"></span></h2>
+        <p class="note" id="ptc-text"></p>
+      </div>
+    </div>
+    <div class="legend legend-static" id="ptc-legend"></div>
+    <div class="chart chart-short" id="ptc-chart"></div>
   </section>
 
   <section class="panel">

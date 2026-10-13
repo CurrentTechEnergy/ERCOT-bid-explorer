@@ -25,7 +25,7 @@ const POINT_LABEL = (p, u) => (p === "node" ? `own node${u && u.sp ? ` (${u.sp})
 
 const S = { tech: "all", show: "found", q: "", sort: "tier", dir: 1, unit: null, data: null };
 const VIEW_KEYS = { tech: "tech", show: "show", unit: "unit", sort: "sort" };
-const CH_KEYS = { ckind: "kind", cyear: "year", cmoved: "moved", crange: "range" };
+const CH_KEYS = { ckind: "kind", cyear: "year", cmoved: "moved", cptc: "ptc", crange: "range" };
 function saveView() {
   window.CX.writeHash({ ...Object.fromEntries(Object.entries(VIEW_KEYS).map(([k, sk]) => [k, S[sk]]).filter(([, v]) => v != null)),
     ...Object.fromEntries(Object.entries(CH_KEYS).map(([k, ck]) => [k, CH[ck]]).filter(([, v]) => v != null && v !== "all" && v !== "12m")),
@@ -224,7 +224,10 @@ function drawUnit() {
 }
 
 // ---- bidding changes (data/renew_changes.json.gz, pipeline/renew_changes.py) ----------------
-const CH = { kind: "all", year: "all", moved: "all", hideTog: false, limit: 200, range: null };
+const CH = { kind: "all", year: "all", moved: "all", ptc: "all", hideTog: false, limit: 200, range: null };
+const PTC_TAG = { level: { label: "PTC level", tip: "A floor change inside the PTC band of $5 or less: re-pricing the credit (the yearly inflation adjustment does this), not a change of approach." },
+  expired: { label: "PTC may have expired", tip: "The floor left the PTC band for about $0 and never came back to it. The PTC runs 10 years from the plant's start, so this is what its end looks like; inferred, since the data has no start dates." } };
+const ptcTag = (e) => (e.ptc ? ` <span class="tag" title="${esc(PTC_TAG[e.ptc].tip)}">${PTC_TAG[e.ptc].label}</span>` : "");
 const MOVED = [
   { id: "yes", label: "Moved dispatch", color: "--c1" },
   { id: "no", label: "Did not move dispatch", color: "--c-other" },
@@ -265,6 +268,7 @@ function chgRows(R) {
     && (CH.kind === "all" || e.kind === CH.kind)
     && (CH.year === "all" || e.date.slice(0, 4) === CH.year)
     && (CH.moved === "all" || (CH.moved === "yes" ? e.moved === true : e.moved !== true))
+    && (CH.ptc === "all" || (CH.ptc === "hide" ? e.ptc !== "level" : e.ptc === CH.ptc))
     && (!CH.hideTog || !e.toggler)
     && (!q || e.plant.toLowerCase().includes(q) || e.units.some((u) => u.toLowerCase().includes(q))));
 }
@@ -282,13 +286,13 @@ function drawChanges() {
   tbl.innerHTML = rs.length ? `<table class="data"><thead><tr><th class="t">Date</th><th class="t">Plant</th><th class="t">Tech</th><th class="t">Change</th><th class="t">Before → after</th><th class="t">Moved dispatch</th><th>Worth at node price</th><th class="t">Context, 7 days before → after</th></tr></thead><tbody>` +
     shown.map((e) => `<tr data-unit="${esc(e.units[0])}" class="${e.units.includes(S.unit) ? "sel" : ""}" style="cursor:pointer">` +
       `<td class="t">${e.date}</td><td class="t">${esc(e.plant)}${e.units.length > 1 ? ` <span class="muted">${e.units.length} units</span>` : ""}${e.toggler ? ' <span class="tag" title="Moves between fixed offers often">toggler</span>' : ""}</td>` +
-      `<td class="t">${e.tech === "wind" ? "Wind" : "Solar"}</td><td class="t">${esc(R.kinds[e.kind])}${e.days ? ` <span class="muted">${e.days} day${e.days > 1 ? "s" : ""}</span>` : ""}${e.gap ? ` <span class="muted">after ${e.gap} days off</span>` : ""}</td>` +
+      `<td class="t">${e.tech === "wind" ? "Wind" : "Solar"}</td><td class="t">${esc(R.kinds[e.kind])}${ptcTag(e)}${e.days ? ` <span class="muted">${e.days} day${e.days > 1 ? "s" : ""}</span>` : ""}${e.gap ? ` <span class="muted">after ${e.gap} days off</span>` : ""}</td>` +
       `<td class="t">${regime(e.before)} → ${regime(e.after)}</td><td class="t">${impactText(e)}</td><td>${valueText(e)}</td><td class="t muted">${ctxText(e)}</td></tr>`).join("") +
     "</tbody></table>" : `<p class="empty">No changes match.</p>`;
   $("chg-more").hidden = rs.length <= CH.limit;
   $("chg-more").textContent = `Show more (${fmt0(rs.length - CH.limit)} not shown)`;
   setCSV(tbl, ["date", "plant", "units", "tech", "kind", "before", "after", "episode_days", "moved", "hours", "mwh_given_up", "mwh_gained", "value_given_up", "value_gained", "share_hours_da_price", "dam_before", "dam_after", "curtailed_before", "curtailed_after", "toggler"],
-    rs.map((e) => [e.date, e.plant, e.units.join(" "), e.tech, e.kind, regime(e.before).replace(/&[a-z]+;/g, ""), regime(e.after).replace(/&[a-z]+;/g, ""), e.days, e.moved,
+    rs.map((e) => [e.date, e.plant, e.units.join(" "), e.tech, e.kind + (e.ptc ? ` (ptc ${e.ptc})` : ""), regime(e.before).replace(/&[a-z]+;/g, ""), regime(e.after).replace(/&[a-z]+;/g, ""), e.days, e.moved,
       ...(e.impact ? [e.impact.hours, e.impact.up, e.impact.dn, e.impact.v_up, e.impact.v_dn, e.impact.est] : [null, null, null, null, null, null]), ...(e.ctx || [null, null, null, null]), e.toggler]), "Bidding changes");
   $("chg-method").textContent = `A unit's regime is its floor (one offer price most of the day, within $${P.tol}), a day-ahead formula at one settlement point (as fitted above), or offers that move within the day. ` +
     `A change is a new regime that holds on at least ${P.min_held} of the next ${P.hold} online days. A floor counts as "back" when the unit held it within the previous ${P.new_days} days. ` +
@@ -379,7 +383,7 @@ async function drawHistory(name) {
   if (!P.length) { emptyMsg(el, "No online days with an offer in this range."); }
   else histChart(el, name, P, evIn);
   $("unit-changes").innerHTML = evs.length ? `<table class="data"><thead><tr><th class="t">Date</th><th class="t">Change</th><th class="t">Before → after</th><th class="t">Moved dispatch</th><th>Worth at node price</th><th class="t">Context, 7 days before → after</th></tr></thead><tbody>` +
-    evs.map((e) => `<tr id="uc-${e.date}-${e.kind}"><td class="t">${e.date}</td><td class="t">${esc(R.kinds[e.kind])}${e.days ? ` <span class="muted">${e.days} day${e.days > 1 ? "s" : ""}</span>` : ""}${e.units.length > 1 ? ` <span class="muted">with ${esc(e.units.filter((u) => u !== name).join(", "))}</span>` : ""}</td>` +
+    evs.map((e) => `<tr id="uc-${e.date}-${e.kind}"><td class="t">${e.date}</td><td class="t">${esc(R.kinds[e.kind])}${ptcTag(e)}${e.days ? ` <span class="muted">${e.days} day${e.days > 1 ? "s" : ""}</span>` : ""}${e.units.length > 1 ? ` <span class="muted">with ${esc(e.units.filter((u) => u !== name).join(", "))}</span>` : ""}</td>` +
       `<td class="t">${regime(e.before)} → ${regime(e.after)}</td><td class="t">${impactText(e)}</td><td>${valueText(e)}</td><td class="t muted">${ctxText(e)}</td></tr>`).join("") + "</tbody></table>"
     : `<p class="empty">No bidding changes detected for this unit.</p>`;
 }
@@ -446,12 +450,51 @@ function histChart(el, name, P, evs) {
     `<span><span class="mk" style="border-color:var(--c1);border-left-style:solid"></span>Change that moved dispatch</span><span><span class="mk" style="border-color:var(--c-other)"></span>Other change</span>`;
 }
 
+// monthly median of floors in the PTC band, wind and solar
+const PTC_SERIES = [{ id: "wind", label: "Wind", color: "--c3" }, { id: "solar", label: "Solar", color: "--c4" }];
+function drawPTC() {
+  const R = S.R, el = $("ptc-chart"), T = R && R.ptc_trend;
+  if (!T || !T.months.length) { emptyMsg(el, "No PTC floor data yet."); return; }
+  const [lo, hi] = R.ptc_band;
+  const lev = R.events.filter((e) => e.ptc === "level").length, exp = R.events.filter((e) => e.ptc === "expired").length;
+  $("ptc-note").textContent = `${T.months[0]} to ${T.months[T.months.length - 1]}`;
+  $("ptc-text").textContent = `A floor between ${fmt$0(lo)} and ${fmt$0(hi)} prices a per-MWh credit such as the PTC: the unit would rather be paid less than not produce. Each line is the median, across units, of each unit's typical floor that month. ` +
+    `Few units move their floor on the day the yearly inflation adjustment takes effect, but the median drifts lower year by year. In the change log, ${fmt0(lev)} changes are tagged PTC level (a move inside the band of $5 or less) and ${fmt0(exp)} PTC may have expired (the floor left the band for about $0 and never came back).`;
+  const ts = T.months.map((m) => new Date(m + "-15T12:00:00"));
+  const w = Math.max(280, el.clientWidth || 600), H = 220, m = { t: 18, r: 16, b: 26, l: 56 };
+  const all = PTC_SERIES.flatMap((s) => T[s.id].median).filter((v) => v != null);
+  const x = d3.scaleTime().domain(d3.extent(ts)).range([m.l, w - m.r]);
+  const y = d3.scaleLinear().domain(d3.extent(all)).nice().range([H - m.b, m.t]);
+  const svg = d3.create("svg").attr("viewBox", `0 0 ${w} ${H}`);
+  svg.append("g").attr("class", "gridline").attr("transform", `translate(${m.l},0)`).call(d3.axisLeft(y).ticks(5).tickSize(-(w - m.l - m.r)).tickFormat(""));
+  svg.append("g").attr("class", "axis").attr("transform", `translate(0,${H - m.b})`).call(d3.axisBottom(x).ticks(w < 560 ? 4 : 8).tickSizeOuter(0));
+  svg.append("g").attr("class", "axis").attr("transform", `translate(${m.l},0)`).call(axisFmt(d3.axisLeft(y), 5, "$").tickSizeOuter(0));
+  svg.append("text").attr("class", "axis-title").attr("x", m.l).attr("y", 10).text("Median PTC-band floor, $/MWh");
+  PTC_SERIES.forEach((s) => {
+    const line = d3.line().defined((d) => d != null).x((d, i) => x(ts[i])).y((d) => y(d));
+    svg.append("path").attr("d", line(T[s.id].median)).attr("fill", "none").attr("stroke", css(s.color)).attr("stroke-width", 2);
+  });
+  const cross = svg.append("line").attr("class", "crosshair").attr("y1", m.t).attr("y2", H - m.b).style("display", "none");
+  svg.append("rect").attr("x", m.l).attr("y", m.t).attr("width", w - m.l - m.r).attr("height", H - m.t - m.b).attr("fill", "transparent")
+    .on("pointermove", (ev) => {
+      const t = x.invert(d3.pointer(ev)[0]), i = d3.minIndex(ts, (d) => Math.abs(d - t));
+      cross.style("display", null).attr("x1", x(ts[i])).attr("x2", x(ts[i]));
+      showTip(ev, `<h4>${d3.timeFormat("%B %Y")(ts[i])}</h4><table>` + PTC_SERIES.map((s) =>
+        `<tr><td><span class="sw" style="background:var(${s.color})"></span></td><td>${s.label}</td><td class="n">${fmt$(T[s.id].median[i])}</td><td class="n muted">${T[s.id].units[i]} units</td></tr>`).join("") + "</table>");
+    })
+    .on("pointerleave", () => { cross.style("display", "none"); hideTip(); });
+  el.replaceChildren(svg.node());
+  $("ptc-legend").innerHTML = PTC_SERIES.map((s) => `<span><span class="sw" style="background:var(${s.color})"></span>${s.label}</span>`).join("");
+  setCSV(el, ["month", "wind_median_floor", "wind_units", "solar_median_floor", "solar_units"], T.months.map((mo, i) => [mo, T.wind.median[i], T.wind.units[i], T.solar.median[i], T.solar.units[i]]), "PTC floor level");
+}
+
 function initChanges() {
   const R = S.R;
   if (!R) return;
   $("chg-kind").innerHTML = `<option value="all">All changes</option>` + Object.entries(R.kinds).map(([k, l]) => `<option value="${k}">${esc(l)}</option>`).join("");
   $("chg-year").innerHTML = `<option value="all">All years</option>` + R.years.slice().reverse().map((y) => `<option value="${y}">${y}</option>`).join("");
-  $("chg-kind").value = CH.kind; $("chg-year").value = CH.year; $("chg-tog").checked = CH.hideTog;
+  $("chg-kind").value = CH.kind; $("chg-year").value = CH.year; $("chg-ptc").value = CH.ptc; $("chg-tog").checked = CH.hideTog;
+  $("chg-ptc").addEventListener("change", (e) => { CH.ptc = e.target.value; CH.limit = 200; drawChanges(); saveView(); });
   $("chg-kind").addEventListener("change", (e) => { CH.kind = e.target.value; CH.limit = 200; drawChanges(); saveView(); });
   $("chg-year").addEventListener("change", (e) => { CH.year = e.target.value; CH.limit = 200; drawChanges(); saveView(); });
   $("chg-tog").addEventListener("change", (e) => { CH.hideTog = e.target.checked; drawChanges(); saveView(); });
@@ -467,7 +510,7 @@ function initChanges() {
   });
 }
 
-function redraw() { drawKpis(); drawUnits(); drawUnit(); drawChanges(); }
+function redraw() { drawKpis(); drawUnits(); drawUnit(); drawChanges(); drawPTC(); }
 
 async function boot() {
   [S.data, S.R] = await Promise.all([tryJSON("data/ppa.json.gz"), tryJSON("data/renew_changes.json.gz")]);
@@ -481,7 +524,7 @@ async function boot() {
   if (!S.unit) { const first = S.data.units.find((u) => u.tier === "revealed"); S.unit = first ? first.name : null; }
   redraw();
   window.CX.init();
-  let tm; window.addEventListener("resize", () => { clearTimeout(tm); tm = setTimeout(() => { drawUnit(); drawChanges(); }, 150); });
+  let tm; window.addEventListener("resize", () => { clearTimeout(tm); tm = setTimeout(() => { drawUnit(); drawChanges(); drawPTC(); }, 150); });
 }
 boot();
 })();
