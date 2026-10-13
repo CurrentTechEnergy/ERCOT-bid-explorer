@@ -31,6 +31,7 @@ from .parse_prices import NODE_FORMAT, build_price_day, node_prices, read_lambda
 from .marginal import build_marginal
 from .trends import build_trends
 from .intraday import build_intraday
+from .hourly_context import build_hourly_context
 from .stayon import build_stayon
 from .curve_trends import build_curve_trends
 from .nodes import build_node_curtail
@@ -39,6 +40,8 @@ from .mitigation import build_mitigation
 from .gas import fetch_gas, fetch_hubs
 from .fuel_hub import build_fuel_hubs
 from .econ import build_econ
+from .dam_prices import fetch_dam_prices
+from .ppa import build_ppa
 from .store import describe_blob, iter_csvs, zip_names, load_index, read_json_gz, save_index, update_summary, write_json_gz
 from .log import warn, write_summary, WARNINGS
 
@@ -361,12 +364,14 @@ def main(argv=None):
         build_marginal(index)
         build_trends(index)
         build_intraday(index)
+        build_hourly_context(index)
         build_stayon(index)
         build_curve_trends(index)
         build_node_curtail(index)
         build_marginal_nodes(index)
         build_mitigation(index)
         build_econ(index)
+        build_ppa(index)
         save_index(index)
         return
 
@@ -403,6 +408,7 @@ def main(argv=None):
         node_need = set(index["days"]["60d"]) | set(index["days"].get("dam", []))
         fetch_prices(api, need, index, node_dates=node_need,
                      node_limit=args.max_files if args.backfill and args.max_files else NODE_DAYS_PER_RUN)
+        fetch_dam_prices(api, index["days"]["60d"], index)
     if "gas" not in args.skip:
         fetch_gas()
         fetch_hubs()
@@ -410,6 +416,7 @@ def main(argv=None):
     build_marginal(index)
     build_trends(index)
     build_intraday(index)
+    build_hourly_context(index)
     build_stayon(index)
     build_curve_trends(index)
     build_node_curtail(index)
@@ -417,6 +424,7 @@ def main(argv=None):
     build_mitigation(index)
     build_fuel_hubs(index)
     build_econ(index)
+    build_ppa(index)
     save_index(index)
     added = {k: sorted(set(index["days"][k]) - before.get(k, set())) for k in index["days"]}
     names = {"2d": "2-day curves", "2dgen": "2-day generation summary", "60d": "60-day curves",

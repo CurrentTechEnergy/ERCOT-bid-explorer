@@ -1,0 +1,2 @@
+# Extra packages for pipeline/history.py (the "Build hourly history" workflow only)
+pyarrow>=15
