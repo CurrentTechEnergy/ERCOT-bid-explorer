@@ -101,6 +101,9 @@ pipeline/
                    (data/dam_hubs.json.gz)
   ppa.py           per-unit day files + DA prices -> wind and solar offers that follow
                    share x DA price - constant: settlement point, share, implied strike (data/ppa.json.gz)
+  renew_changes.py ppa cache + DAM day files + node prices (and the history release) -> every change in
+                   how each wind and solar unit bids, and whether it moved dispatch (data/renew_changes.json.gz,
+                   data/renew/, no downloads)
   series.py        per-unit day files + node prices + DAM awards -> hourly HSL, base point, output,
                    offer prices, award and node prices per unit, by month and technology, for the
                    graph builder (data/series/, no downloads)
@@ -148,6 +151,16 @@ Node prices are kept at 15 minutes for every settlement point that is not a hub 
 ### Hedge signals
 
 `pipeline/ppa.py` looks for wind and solar units whose real-time offers follow a contract for differences settled at a day-ahead price on generated energy: offer = share × DA price − constant, hour by hour. For each unit it fits every candidate settlement point (its own node, each hub and load zone) on the days its offer moved with the hour, picks the point whose formula predicts the most hours within $2, and grades the result (revealed, location unclear, partial, hints only). The intercept gives an implied strike range: all strike, or strike plus a per-MWh credit such as the PTC. Everything is inferred from offers; the page `contracts.html` shows the fits. Hourly offers per day are cached on the data branch under `ppa/`.
+
+### Bidding changes (wind and solar)
+
+`pipeline/renew_changes.py` gives every wind and solar unit-day a signature from its hourly real-time offers: a floor (one offer price most of the day), a day-ahead formula day (as on the hedge signals page, fitted per calendar year), or offers that move within the day, plus its DAM award and curtailed share. A change is a new regime that holds on 6 of the next 7 online days: a floor that moves by $1 or more (new, or back to one held in the previous 90 days), a formula switched on or off, a step in the formula's share or intercept, or offers starting or stopping moving within the day. An episode is 1 to 6 days with a median offer $5 or more from the floor, then back to it (Outpost and Frye in Winter Storm Fern). Units of one plant that change the same way within a day are one event.
+
+Floors between −$60 and −$15 price a per-MWh credit such as the PTC. A floor change inside that band of $5 or less is tagged **PTC level** (re-pricing the credit, as the yearly inflation adjustment does), and a floor that leaves the band for −$5 or higher and never comes back to it is tagged **PTC may have expired** (inferred: the credit runs 10 years from the plant's start, which the data does not give). The page also charts the monthly median of those floors for wind and solar.
+
+Each change is checked for whether it **moved dispatch**: over the first 7 online days of the new regime (or the episode's days), an hour counts when the unit was online and its node price fell between the old and the new offer. Priced up, HSL minus base point is energy given up; priced down, the base point is energy the old offer would not have produced; both are valued at the node price. The real-time node price is used where loaded; history days only have the day-ahead node price, and those estimates are marked. Most changes never move dispatch (a floor moving from −$37 to −$39 sits below almost every price the node reaches), so the page keeps them all and lets the reader filter.
+
+The regular update rebuilds the loaded 60-day days. Years before that come from the `history` release: run **Build bidding-change history** (manual) once after the release is built, or locally `python -m pipeline.renew_changes --history history/`. Daily signatures are kept per year in `site/data/renew/sig-YYYY.json.gz` for the unit timeline, and moved-dispatch estimates in `site/data/renew/impacts.json.gz`, so the regular update never needs the history files.
 
 ### Hourly history (2019 on)
 

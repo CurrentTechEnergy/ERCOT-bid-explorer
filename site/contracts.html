@@ -19,6 +19,12 @@
   .dot-legend { display: inline-flex; align-items: center; gap: 6px; }
   .dot-legend .ramp { width: 120px; height: 10px; border-radius: 3px; }
   .muted { color: var(--muted); }
+  .ctl-row { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 10px 18px; margin: 4px 0 10px; }
+  .ctl-row .ctl { display: flex; flex-direction: column; gap: 4px; }
+  .chk { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; color: var(--ink-2); min-height: 34px; }
+  .tag { display: inline-block; font-size: 11px; padding: 0 5px; border: 1px solid var(--line); border-radius: 4px; color: var(--muted); margin-left: 4px; }
+  .moved { color: var(--ink); font-weight: 500; }
+  button.more { font: inherit; color: var(--ink); background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 6px 12px; cursor: pointer; }
 </style>
 </head>
 <body>
@@ -28,7 +34,7 @@
   <div class="brand">
     <div class="nav-row"><nav class="nav" aria-label="Pages"><a href="index.html">Day view</a><a href="trends.html">Trends</a><a href="economics.html">Plant economics</a><a href="contracts.html" aria-current="page">Hedge signals</a><a href="builder.html">Graph builder</a></nav><button type="button" class="copy-link" id="copy-link" title="Copy a link to exactly this view">Copy link</button></div>
     <h1>ERCOT Renewable Hedge Signals</h1>
-    <p class="sub">What wind and solar offers give away about their hedges. A plant on a contract for differences settled at a day-ahead price, on the energy it generates, should offer at <em>share × DA price − a constant</em>. Where a unit's real-time offers follow that line, this page names the settlement point, the slope and the implied strike. All of it is inferred from public offers; none of it is a disclosed contract term.</p>
+    <p class="sub">What wind and solar offers give away about their hedges, and every change in how each unit bids. A plant on a contract for differences settled at a day-ahead price, on the energy it generates, should offer at <em>share × DA price − a constant</em>. Where a unit's real-time offers follow that line, this page names the settlement point, the slope and the implied strike. All of it is inferred from public offers; none of it is a disclosed contract term.</p>
   </div>
   <p class="status" id="status">Loading data…</p>
 </header>
@@ -85,11 +91,54 @@
         <p class="note" id="unit-note"></p>
       </div>
     </div>
+    <div id="ppa-part">
     <div class="legend legend-static" id="fit-legend"></div>
     <div class="chart" id="fit-chart"></div>
     <h3 class="sub-h">Formula by day</h3>
     <p class="note">The share and intercept fitted on each formula day alone, at the same settlement point. A flat line means one standing rule; a change marks a new rule or a new contract.</p>
     <div class="chart chart-short" id="daily-chart"></div>
+    </div>
+    <h3 class="sub-h">Bidding history <span class="h-note" id="hist-note"></span></h3>
+    <div class="ctl-row">
+      <label class="lbl" for="hist-range">Show</label>
+      <select id="hist-range"></select>
+    </div>
+    <p class="note" id="hist-text"></p>
+    <div class="legend legend-static" id="hist-legend"></div>
+    <div class="chart" id="hist-chart"></div>
+    <div class="units-wrap" id="unit-changes"></div>
+  </section>
+
+  <section class="panel panel-wide" id="changes-panel">
+    <div class="panel-head">
+      <div>
+        <h2>Bidding changes <span class="h-note" id="chg-note"></span></h2>
+        <p class="note" id="chg-text"></p>
+      </div>
+    </div>
+    <div class="ctl-row">
+      <div class="ctl"><label class="lbl" for="chg-kind">Change</label><select id="chg-kind"></select></div>
+      <div class="ctl"><label class="lbl" for="chg-year">Year</label><select id="chg-year"></select></div>
+      <div class="ctl">
+        <span class="lbl" id="lbl-moved">Dispatch</span>
+        <div class="seg seg-sm" role="radiogroup" aria-labelledby="lbl-moved" id="chg-moved">
+          <button type="button" data-v="all" role="radio">Any</button>
+          <button type="button" data-v="yes" role="radio" title="The node price fell between the old and new offer in hours the unit was online, so the old offer would have dispatched differently">Moved dispatch</button>
+          <button type="button" data-v="no" role="radio">Did not</button>
+        </div>
+      </div>
+      <div class="ctl"><label class="lbl" for="chg-ptc">PTC</label><select id="chg-ptc">
+        <option value="all">All changes</option>
+        <option value="hide">Hide PTC-level moves</option>
+        <option value="level">PTC-level moves only</option>
+        <option value="expired">PTC may have expired</option>
+      </select></div>
+      <label class="chk"><input type="checkbox" id="chg-tog"> Hide togglers</label>
+    </div>
+    <div class="legend legend-static" id="chg-legend"></div>
+    <div class="chart chart-short" id="chg-chart"></div>
+    <div class="units-wrap" id="chg-table"></div>
+    <p><button type="button" class="more" id="chg-more" hidden>Show more</button></p>
   </section>
 
   <section class="panel">
@@ -97,6 +146,26 @@
       <div>
         <h2>How it works</h2>
         <p class="note">Per MWh, a plant hedged on a DA-settled, as-generated contract earns roughly the real-time price at its node, plus share × (strike − DA price at the settlement point), plus any per-MWh credit. Generating pays only when the RT price beats share × DA − (share × strike + credit), and that is the offer a QSE bidding the contract submits. Each hour's offer is the median over its SCED runs of the submitted curve's price at half its MW, kept only when it did not move within the hour (a DA-based price is hourly). A formula day has at least four such hours at four or more prices, after dropping a floor or cap the formula is clamped to. Every candidate settlement point (the unit's own node, each hub and load zone) is fitted on each formula day; the point's formula is the median over days, and its hit rate is the share of hours it predicts within <span id="hit-v">$2</span>.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="panel panel-wide" id="ptc-panel">
+    <div class="panel-head">
+      <div>
+        <h2>PTC floor level <span class="h-note" id="ptc-note"></span></h2>
+        <p class="note" id="ptc-text"></p>
+      </div>
+    </div>
+    <div class="legend legend-static" id="ptc-legend"></div>
+    <div class="chart chart-short" id="ptc-chart"></div>
+  </section>
+
+  <section class="panel">
+    <div class="panel-head">
+      <div>
+        <h2>How changes are found</h2>
+        <p class="note" id="chg-method"></p>
       </div>
     </div>
   </section>
@@ -112,7 +181,7 @@
 </main>
 
 <footer class="foot">
-  <p>Source: ERCOT EMIL products NP3-965-ER (60-Day SCED Disclosure: submitted offer curves), NP3-966-ER (60-Day DAM Disclosure: each unit's node DA price and DAM awards) and NP4-190-CD / NP4-180-ER (DAM settlement point prices at hubs and load zones). Built by the data update workflow from the days already loaded; the 60-day reports run about two months behind.</p>
+  <p>Source: ERCOT EMIL products NP3-965-ER (60-Day SCED Disclosure: submitted offer curves), NP3-966-ER (60-Day DAM Disclosure: each unit's node DA price and DAM awards) and NP4-190-CD / NP4-180-ER (DAM settlement point prices at hubs and load zones), and for bidding changes before the loaded 60-day days, the hourly history built from ERCOT's archive (2019 on). Built by the data update workflow from the days already loaded; the 60-day reports run about two months behind.</p>
   <p>Made by <a href="https://currenttech.energy">currenttech.energy</a>.</p>
 </footer>
 </div>

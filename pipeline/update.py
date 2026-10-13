@@ -42,6 +42,7 @@ from .fuel_hub import build_fuel_hubs
 from .econ import build_econ
 from .dam_prices import fetch_dam_prices
 from .ppa import build_ppa
+from .renew_changes import build_renew_changes
 from .series import build_series
 from .store import describe_blob, iter_csvs, zip_names, load_index, read_json_gz, save_index, update_summary, write_json_gz
 from .log import warn, write_summary, WARNINGS
@@ -373,6 +374,7 @@ def main(argv=None):
         build_mitigation(index)
         build_econ(index)
         build_ppa(index)
+        build_renew_changes(index)
         build_series(index)
         save_index(index)
         return
@@ -427,6 +429,7 @@ def main(argv=None):
     build_fuel_hubs(index)
     build_econ(index)
     build_ppa(index)
+    build_renew_changes(index)
     build_series(index)
     save_index(index)
     added = {k: sorted(set(index["days"][k]) - before.get(k, set())) for k in index["days"]}
