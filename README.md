@@ -15,6 +15,7 @@ An interactive dashboard of how ERCOT resources offer energy into real-time disp
 | 60-Day DAM Disclosure | NP3-966-ER | 60 days | Every generation resource's day-ahead three-part offer (energy curve, start-up costs, minimum-energy cost), its day-ahead energy and ancillary service awards, its settlement point and the day-ahead price there |
 | SCED System Lambda | NP6-322-CD | real time | System energy price for each SCED run |
 | Settlement Point Prices | NP6-905-CD | real time | 15-minute prices at hubs and load zones; hourly prices at every resource node (kept on the data branch, for days with per-unit data) |
+| DAM Settlement Point Prices | NP4-190-CD | day ahead | Hourly day-ahead prices at hubs and load zones, for the hedge signals page (history can be loaded from the yearly NP4-180-ER workbook) |
 | EIA Henry Hub spot price | RNGWHHD | daily | Natural gas price, $/MMBtu, from the EIA open data API (needs an `EIA_API_KEY` secret; skipped without one) |
 | OilPriceAPI regional gas prices | NATURAL_GAS_HSC_USD, NATURAL_GAS_WAHA | daily | Houston Ship Channel and Waha (West Texas) natural gas prices, $/MMBtu (needs an `OILPRICEAPI_KEY` secret, free tier; skipped without one). Their Henry Hub series is not used: it is not the spot price |
 
@@ -96,6 +97,10 @@ pipeline/
   econ.py          per-unit day files + node prices + DAM awards and offers -> daily revenue and
                    offer-implied cost per unit (data/econ/<tech>.json.gz, no downloads)
   marginal.py      day files + prices -> hourly marginal MW by technology (no downloads)
+  dam_prices.py    NP4-190-CD (or the yearly NP4-180-ER workbook) -> day-ahead hub and load zone prices
+                   (data/dam_hubs.json.gz)
+  ppa.py           per-unit day files + DA prices -> wind and solar offers that follow
+                   share x DA price - constant: settlement point, share, implied strike (data/ppa.json.gz)
   trends.py        per-unit day files -> daily trends, starts, flips, bidding changes (no downloads)
   intraday.py      per-unit day files -> thermal output at/above minimum in cheap hours, off spells
   stayon.py        per-unit day files + DAM costs -> what riding through a cheap stretch cost each
@@ -134,6 +139,10 @@ Node prices are kept at 15 minutes for every settlement point that is not a hub 
 ### Which gas price a unit buys at
 
 `pipeline/fuel_hub.py` assigns every gas-fired unit a fuel hub, Waha (West Texas) or Houston Ship Channel, from two signals. Its own offer prices (first SCED offer price above $0, and DAM minimum-energy offer) are each regressed on the previous trading day's Waha and Houston prices; a series votes for a hub when the better fit explains at least 30% of the variance with a heat rate between 3 and 25 MMBtu/MWh and beats the other hub by 0.1 in R². When the votes agree the offers decide; otherwise the unit's node location does (the ERCOT hub whose real-time price its node tracks most closely: West and Panhandle nodes go to Waha, the rest to Houston). The Economics page uses this for its "By unit" gas price and shows each unit's hub and how it was decided.
+
+### Hedge signals
+
+`pipeline/ppa.py` looks for wind and solar units whose real-time offers follow a contract for differences settled at a day-ahead price on generated energy: offer = share × DA price − constant, hour by hour. For each unit it fits every candidate settlement point (its own node, each hub and load zone) on the days its offer moved with the hour, picks the point whose formula predicts the most hours within $2, and grades the result (revealed, location unclear, partial, hints only). The intercept gives an implied strike range: all strike, or strike plus a per-MWh credit such as the PTC. Everything is inferred from offers; the page `contracts.html` shows the fits. Hourly offers per day are cached on the data branch under `ppa/`.
 
 ### Plant economics
 

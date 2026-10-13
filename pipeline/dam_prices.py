@@ -1,0 +1,138 @@
+"""Day-ahead settlement point prices at hubs and load zones (NP4-190-CD, "DAM Settlement Point
+Prices"), hourly, for the PPA guesser (pipeline/ppa.py).  The 60-day DAM disclosure already
+gives each unit's own node DA price; this adds the hubs and load zones a hedge could settle at.
+
+Writes data/dam_hubs.json.gz:
+  {"points": [HB_..., LZ_...], "days": {date: {point: [24 x $/MWh or null]}}}
+Hours are hour ending 1..24 stored at index 0..23; on the fall-back day the repeated hour is
+dropped (as in the per-unit day files, which average it into one).
+
+History before the API backfill reaches it can be loaded from ERCOT's yearly file of DAM hub and
+load zone prices (NP4-180-ER, an .xlsx with one sheet per month):
+  python -m pipeline.dam_prices rpt.00013060...DAMLZHBSPP_2026.xlsx
+"""
+import datetime as dt
+import io
+import sys
+from typing import Iterable, Tuple
+
+import pandas as pd
+
+from .config import DATA_DIR, EMIL_DAM_SPP
+from .curves import to_iso_date
+from .log import warn
+from .store import iter_csvs, read_json_gz, write_json_gz
+
+PATH = DATA_DIR / "dam_hubs.json.gz"
+MAX_MISSES = 3
+
+
+def _norm(c) -> str:
+    return "".join(ch for ch in str(c).lower() if ch.isalnum())
+
+
+def _keep(point: str) -> bool:
+    return point.startswith("HB_") or point.startswith("LZ_")
+
+
+def frame_to_days(f: pd.DataFrame) -> dict:
+    """{date: {point: [24]}} from a frame with columns date (ISO), he (1..24), flag, point, price."""
+    f = f[f["point"].map(_keep) & (f["flag"].astype(str).str.upper() != "Y")]
+    f = f.dropna(subset=["he"])
+    out = {}
+    for (date, point), g in f.groupby(["date", "point"]):
+        row = [None] * 24
+        for he, p in zip(g["he"].astype(int), g["price"]):
+            if 1 <= he <= 24 and pd.notna(p):
+                row[he - 1] = round(float(p), 2)
+        out.setdefault(date, {})[point] = row
+    return out
+
+
+def read_dam_spp(csvs: Iterable[Tuple[str, bytes]]) -> dict:
+    """NP4-190-CD CSVs -> {date: {point: [24]}} for hubs and load zones."""
+    frames = []
+    for n, b in csvs:
+        f = pd.read_csv(io.BytesIO(b))
+        c = {_norm(k): k for k in f.columns}
+        need = ("deliverydate", "hourending", "settlementpoint", "settlementpointprice")
+        if any(k not in c for k in need):
+            warn(f"Unrecognised DAM settlement point price columns in {n}: {list(f.columns)}")
+            continue
+        flag = c.get("dstflag") or c.get("repeatedhourflag")
+        frames.append(pd.DataFrame({
+            "date": to_iso_date(f[c["deliverydate"]].astype(str).str.strip()),
+            "he": pd.to_numeric(f[c["hourending"]].astype(str).str.split(":").str[0], errors="coerce"),
+            "flag": f[flag].astype(str).str.strip() if flag else "N",
+            "point": f[c["settlementpoint"]].astype(str).str.strip(),
+            "price": pd.to_numeric(f[c["settlementpointprice"]], errors="coerce"),
+        }))
+    return frame_to_days(pd.concat(frames, ignore_index=True)) if frames else {}
+
+
+def load() -> dict:
+    return read_json_gz(PATH, default=None) or {"points": [], "days": {}}
+
+
+def save(store: dict) -> None:
+    store["days"] = dict(sorted(store["days"].items()))
+    store["points"] = sorted({p for v in store["days"].values() for p in v})
+    write_json_gz(PATH, store)
+
+
+def merge(store: dict, days: dict) -> list:
+    for d, pts in days.items():
+        store["days"].setdefault(d, {}).update(pts)
+    return sorted(days)
+
+
+def fetch_dam_prices(api, dates, index: dict, limit: int = 60) -> None:
+    """DA hub and load-zone prices for `dates` not yet stored, newest first, up to `limit` days a
+    run.  The report for operating day D is posted around midday on D - 1."""
+    store = load()
+    misses = index.setdefault("dam_price_misses", {})
+    todo = sorted((set(dates) - set(store["days"])), reverse=True)
+    todo = [d for d in todo if misses.get(d, 0) < MAX_MISSES][:limit]
+    if todo:
+        print(f"DA hub prices: fetching {len(todo)} day(s), {todo[-1]} to {todo[0]}")
+    for date in todo:
+        d = dt.date.fromisoformat(date)
+        try:
+            docs = api.list_archives(EMIL_DAM_SPP, dt.datetime.combine(d - dt.timedelta(days=2), dt.time()),
+                                     dt.datetime.combine(d + dt.timedelta(days=1), dt.time()))
+            blobs = api.download_many(EMIL_DAM_SPP, [x["docId"] for x in docs]) if docs else []
+            got = read_dam_spp([c for b in blobs for c in iter_csvs(b, "x.zip")])
+        except Exception as e:   # a DA price problem must not lose the rest of the run
+            warn(f"DA hub prices {date}: failed: {type(e).__name__}: {e}")
+            continue
+        merge(store, got)
+        if date not in got:
+            misses[date] = misses.get(date, 0) + 1
+    save(store)
+
+
+def load_xlsx(path: str) -> list:
+    """Merge ERCOT's yearly NP4-180-ER workbook into the store; returns the dates added."""
+    sheets = pd.read_excel(path, sheet_name=None, dtype=str)
+    frames = []
+    for _, f in sheets.items():
+        if f.empty:
+            continue
+        c = {_norm(k): k for k in f.columns}
+        frames.append(pd.DataFrame({
+            "date": to_iso_date(f[c["deliverydate"]].str.strip()),
+            "he": pd.to_numeric(f[c["hourending"]].str.split(":").str[0], errors="coerce"),
+            "flag": f[c["repeatedhourflag"]] if "repeatedhourflag" in c else "N",
+            "point": f[c["settlementpoint"]].str.strip(),
+            "price": pd.to_numeric(f[c["settlementpointprice"]], errors="coerce"),
+        }))
+    store = load()
+    added = merge(store, frame_to_days(pd.concat(frames, ignore_index=True)))
+    save(store)
+    return added
+
+
+if __name__ == "__main__":
+    for p in sys.argv[1:]:
+        added = load_xlsx(p)
+        print(f"{p}: {len(added)} day(s), {added[0] if added else '-'} to {added[-1] if added else '-'}")
