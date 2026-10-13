@@ -35,6 +35,7 @@ import calendar
 import datetime as dt
 import sys
 import time
+from concurrent.futures import ProcessPoolExecutor
 from pathlib import Path
 
 import numpy as np
@@ -43,8 +44,6 @@ import pandas as pd
 from .config import EMIL_60DAY, EMIL_DAM, EMIL_DAM_SPP
 from .dam_prices import read_dam_spp
 from .log import warn
-from .parse_60day import parse_60day_zip
-from .parse_dam import parse_dam_zip
 from .ppa import hourly_offers
 from .store import describe_blob, iter_csvs
 from .update import curve_source, skip_reason
@@ -118,9 +117,37 @@ def unit_rows(ud: dict, dam: dict) -> pd.DataFrame:
     return f
 
 
-def _disclosures(api, emil: str, days, parser_source: str):
-    """Yield (date, parsed) for the month's operating days from a 60-day report, opening each
-    file whose posting date maps to within SLACK days of the month."""
+DAM_KEEP = ("sp", "award", "spp", "hsl", "hsl_h")
+MEM_LIMIT = 5 * 2 ** 30    # bytes of address space a parse may use (hosted runners have 7 GB)
+
+
+def _slim_dam(day: dict) -> dict:
+    """Only what unit_rows reads from a DAM day file."""
+    return {"hours": day.get("hours", 24),
+            "units": {n: {k: u[k] for k in DAM_KEEP if k in u} for n, u in (day.get("units") or {}).items()
+                      if u.get("tech") in ("wind", "solar")}}
+
+
+def _parse(blob: bytes, source: str, dam: dict):
+    """Run in a child process: parse one disclosure and reduce it to what the month file keeps,
+    -> (operating day, slim DAM day file or unit-hour frame).  The address-space cap makes a file
+    too big to parse fail with MemoryError here instead of taking down the whole runner."""
+    import resource
+    resource.setrlimit(resource.RLIMIT_AS, (MEM_LIMIT, MEM_LIMIT))
+    found = curve_source(blob)
+    if found is None or found[0] != source:
+        raise ValueError(f"not a {source} disclosure ({describe_blob(blob)})")
+    parsed = found[1](blob)
+    if source == "dam":
+        return parsed[0], _slim_dam(parsed[1])
+    return parsed[0], unit_rows(parsed[3][0], dam.get(parsed[0]))
+
+
+def _disclosures(api, emil: str, days, source: str, dam=None):
+    """Yield (date, result of _parse) for the month's operating days from a 60-day report,
+    opening each file whose posting date maps to within SLACK days of the month.  Each file is
+    parsed in a fresh child process, so its memory is returned and one file that fails (even by
+    running out of memory) is reported and skipped."""
     lo, hi = days[0], days[-1]
     docs = api.list_archives(emil, _t(lo + dt.timedelta(days=LAG - SLACK)), _t(hi + dt.timedelta(days=LAG + SLACK + 1)))
     docs.sort(key=lambda d: d.get("postDatetime", ""))
@@ -130,6 +157,8 @@ def _disclosures(api, emil: str, days, parser_source: str):
         guess = dt.date.fromisoformat(doc["postDatetime"][:10]) - dt.timedelta(days=LAG)
         if not (lo - dt.timedelta(days=SLACK) <= guess <= hi + dt.timedelta(days=SLACK)):
             continue
+        label = f"{emil} {doc.get('friendlyName', doc['docId'])} posted {doc['postDatetime'][:10]}"
+        blob = b""
         try:
             blob = api.download(emil, doc["docId"])
             if blob[:2] != b"PK":
@@ -137,20 +166,19 @@ def _disclosures(api, emil: str, days, parser_source: str):
                 blob = api.download(emil, doc["docId"])
             if skip_reason(blob):
                 continue
-            found = curve_source(blob)
-            if found is None or found[0] != parser_source:
-                warn(f"{emil} doc {doc['docId']}: not a {parser_source} disclosure ({describe_blob(blob)})")
-                continue
-            parsed = found[1](blob)
-        except Exception as e:
-            warn(f"{emil} doc {doc['docId']} posted {doc['postDatetime'][:10]}: failed: {type(e).__name__}: {e}")
+            t0 = time.time()
+            with ProcessPoolExecutor(max_workers=1) as ex:
+                date, result = ex.submit(_parse, blob, source, dam or {}).result()
+            print(f"  {label}: {date}, {len(blob) / 1e6:.0f} MB zip, {time.time() - t0:.0f}s", flush=True)
+        except Exception as e:     # BrokenProcessPool when the child was killed
+            warn(f"{label} ({len(blob) / 1e6:.0f} MB): failed: {type(e).__name__}: {e}")
             continue
-        if parsed[0] in want:
-            seen.add(parsed[0])
-            yield parsed[0], parsed
+        if date in want:
+            seen.add(date)
+            yield date, result
     missing = sorted(want - seen)
     if missing:
-        warn(f"{emil}: no file found for {len(missing)} day(s): {', '.join(missing)}")
+        warn(f"{emil}: no file loaded for {len(missing)} day(s): {', '.join(missing)}")
 
 
 def da_hubs(api, days) -> pd.DataFrame:
@@ -179,11 +207,8 @@ def build_month(api, month: str, out: Path = OUT, force: bool = False) -> None:
         print(f"{upath.name}: already there")
         return
     t0 = time.time()
-    dam = {d: p[1] for d, p in _disclosures(api, EMIL_DAM, days, "dam")}
-    frames = []
-    for date, (_, _, _, (ud, _)) in _disclosures(api, EMIL_60DAY, days, "60d"):
-        frames.append(unit_rows(ud, dam.get(date)))
-        print(f"  {date}: {frames[-1]['unit'].nunique()} units", flush=True)
+    dam = dict(_disclosures(api, EMIL_DAM, days, "dam"))
+    frames = [rows for _, rows in _disclosures(api, EMIL_60DAY, days, "60d", dam)]
     if not frames:
         warn(f"{month}: no 60-day SCED days found; nothing written")
         return
