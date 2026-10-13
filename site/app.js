@@ -57,7 +57,7 @@ const S = {
   xrange: "low", xMin: -250, xMax: 100, osMin: -100, osMax: 1000, mode: "lines", axes: "price_x", threshold: 0, location: "lambda",
   hidden: new Set(), unitTech: "all", unitSearch: "",
   unitSort: { key: "floor_mw", dir: -1 }, unitShowAll: false,
-  day: null, prices: null, summaries: {}, osView: "hour", osUnit: "share", osSmooth: "smooth",
+  day: null, prices: null, summaries: {}, osView: "hour", ttView: "hour", osUnit: "share", osSmooth: "smooth",
 };
 const $ = (id) => document.getElementById(id);
 const fmtMW = d3.format(",.0f");
@@ -218,7 +218,7 @@ function render() {
 
 // the address bar carries the view, so a copied link reopens this exact day, hour and settings
 const NUM_KEYS = new Set(["threshold", "xMin", "xMax", "osMin", "osMax"]);
-const VIEW_KEYS = { loc: "location", xr: "xrange", xmin: "xMin", xmax: "xMax", osmin: "osMin", osmax: "osMax", mode: "mode", axes: "axes", ver: "version", thr: "threshold", os: "osView", osu: "osUnit", osm: "osSmooth" };
+const VIEW_KEYS = { loc: "location", xr: "xrange", xmin: "xMin", xmax: "xMax", osmin: "osMin", osmax: "osMax", mode: "mode", axes: "axes", ver: "version", thr: "threshold", os: "osView", tt: "ttView", osu: "osUnit", osm: "osSmooth" };
 // price limits go in the link only when they are in use
 const HIDE_KEY = { xMin: () => S.xrange !== "custom", xMax: () => S.xrange !== "custom",
   osMin: () => S.osMin === OS_DEFAULT[0] && S.osMax === OS_DEFAULT[1], osMax: () => S.osMin === OS_DEFAULT[0] && S.osMax === OS_DEFAULT[1] };
@@ -967,11 +967,11 @@ function hoverHours(svg, x, m, H, htmlFor) {
 const esc = (t) => String(t).replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;");
 const TECH_COLS = [
   ["Technology", "Resources are grouped by the resource type ERCOT reports for each unit. Hover a technology name to see which types it includes."],
-  ["Units online", "Average number of units with an online status (ON, ONRUC, ONTEST and similar) across the day's SCED runs. Units that are off or on outage are excluded from every column."],
+  ["Units online", "Average number of units with an online status (ON, ONRUC, ONTEST and similar) across the SCED runs in the hours shown. Units that are off or on outage are excluded from every column."],
   ["Available, HSL (MW)", "High Sustained Limit: the most the online units can produce right now, as telemetered to ERCOT. For wind and solar it follows available output from the forecast and telemetry, not nameplate capacity."],
   ["Min output, LSL (MW)", "Low Sustained Limit: the least an online unit can produce and stay online. A thermal unit cannot go below this in response to price without shutting down, so this block keeps running however low prices fall."],
   ["LSL / HSL", "Minimum output as a share of available capacity. A higher share means less room to back down when prices drop: a unit at 60% can only shed 40% of its available output before it has to shut down."],
-  ["Output (MW)", "Telemetered net output, averaged over the day."],
+  ["Output (MW)", "Telemetered net output, averaged over the hours shown."],
   ["At floor, as used (MW)", "MW in the curve SCED dispatched against that is priced at the −$250 floor (or −$249.99). In that curve ERCOT fills in prices a unit didn't offer. Units that offer have the MW below their first offered point, usually minimum output, at −$20 (−$50 for some units), so it does not count here; that is the large step at −$20 in the thermal curves. Units with no offer curve sit at −$250 with the rest of their output schedule at −$249.99 if they are nuclear or hydro, so all of it counts here, and at −$20 or −$50 otherwise. SCED treats floor supply as a price-taker."],
   ["Floor / output", "At-floor MW as a share of actual output: how much of the technology's generation SCED could not price off the system."],
   ["≤ $0, as used (MW)", "MW offered at or below $0 in the curve SCED used. This supply keeps running when prices go negative."],
@@ -1008,7 +1008,8 @@ function drawTechTable() {
   if (!S.day || !S.day.stats) return emptyMsg(el, "No 60-day data for this day.");
   const names = S.day.stat_names;
   const col = (k) => names.indexOf(k);
-  const hours = d3.range(24).filter((h) => S.day.runs[h]);
+  const hours = (S.ttView === "hour" ? [S.hour] : d3.range(24)).filter((h) => S.day.runs[h]);
+  if (!hours.length) return emptyMsg(el, `No SCED runs recorded in ${heLabel(S.hour)}.`);
   const rows = SERIES["60d"].map((s) => {
     const avg = (k) => d3.mean(hours, (h) => d3.sum(s.keys, (key) => (S.day.stats[key] && S.day.stats[key][h] && S.day.stats[key][h][col(k)]) || 0));
     const r = { s };
@@ -1028,7 +1029,7 @@ function drawTechTable() {
       <td>${share == null || r.s.id === "storage" ? "–" : fmtPct(share) + `<span class="bar-cell" style="width:${Math.round(40 * share / maxShare)}px"></span>`}</td>
       <td>${fmtMW(r.le0_sced)}</td><td>${fmtMW(r.le0_submitted)}</td><td>${fmtMW(r.no_offer_hsl)}</td></tr>`;
   });
-  el.innerHTML = html + `</tbody></table><p class="note">MW are averages over the day's hours. Hover a column heading or a technology name for an explanation.</p>`;
+  el.innerHTML = html + `</tbody></table><p class="note">MW are ${S.ttView === "hour" ? `averages over the SCED runs in ${heLabel(S.hour)}` : "averages over the day's hours"}. Hover a column heading or a technology name for an explanation.</p>`;
 }
 
 // ---- unit table (60-day) -----------------------------------------------------
@@ -1168,6 +1169,7 @@ async function boot() {
   bindSeg("axes", "axes");
   setSeg("os-view", S.osView); setSeg("os-unit", S.osUnit);
   bindSeg("os-view", "osView", drawOfferStack);
+  setSeg("tt-view", S.ttView); bindSeg("tt-view", "ttView", drawTechTable);
   bindSeg("os-unit", "osUnit", drawOfferStack);
   setSeg("os-smooth", S.osSmooth); bindSeg("os-smooth", "osSmooth", drawOfferStack);
   $("date").onchange = async (e) => { S.date = e.target.value; await changeDay(); };
