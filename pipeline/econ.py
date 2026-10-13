@@ -33,7 +33,9 @@ at the real intervals differs a little.  Written per technology to data/econ/<te
   {dates, gas: [Henry Hub $/MMBtu per date, last trading day carried forward, null before
    the first], hubs: {hsc: [Houston Ship Channel, likewise], waha: [Waha, likewise]},
    units: {name: {type, sp, hsl, configs (combined cycle: the configuration names summed into
-   this train, else null), series...}}}
+   this train, else null), fuel_hub ("waha" | "hsc" for gas-fired units, from fuel_hubs.json.gz:
+   a train takes the hub most of its configurations got; null without one), fuel_hub_method,
+   series...}}}
 `hsl` is the unit's capacity for capacity factors (MW): the 95th percentile, over the loaded days,
 of each day's highest HSL in any SCED run the unit is present in (for a combined-cycle train, the
 highest across its configurations).  Wind and solar HSL is weather-limited output, so a typical
@@ -244,6 +246,14 @@ def build_econ(index: dict) -> None:
     for key, r in units.items():
         if r["tech"] in SIXTY_DAY_TECHS and r["tech"] not in ("wind", "solar", "storage", "hydro", "other") and key in starts:
             r["starts"] = starts[key]
+    fh = (read_json_gz(DATA_DIR / "fuel_hubs.json.gz", default=None) or {}).get("units", {})
+    for name, r in units.items():
+        got = [fh[c] for c in (r.get("configs") or [name]) if c in fh]
+        if got:
+            votes = [g["hub"] for g in got]
+            hub = max(set(votes), key=votes.count)
+            r["fuel_hub"] = hub
+            r["fuel_hub_method"] = next(g["method"] for g in got if g["hub"] == hub)
     by_tech = {}
     for name, r in units.items():
         t = r["tech"] if r["tech"] in SIXTY_DAY_TECHS else "other"
