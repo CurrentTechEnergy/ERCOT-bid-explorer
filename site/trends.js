@@ -27,12 +27,12 @@ const FLOOR_NOTES = {
 // hourly unit strips). Only the "≤ −$20, as used" measure has per-unit values (units[i].le20).
 const FLOOR_GROUPS = [
   { id: "nuclear", label: "Nuclear (no offer curve)", color: "--c5" },
-  { id: "never", label: "Never shut down", color: "--c1" },
-  { id: "rare", label: "Shuts down, no two-shifts", color: "--c6" },
-  { id: "some", label: "Two-shifts 1–2 times", color: "--c2" },
-  { id: "cycler", label: "Two-shifts 3+ times", color: "--c8" },
+  { id: "never", label: "Never off", color: "--c1" },
+  { id: "seasonal", label: "Seasonal: off a week or more", color: "--c6" },
+  { id: "multiday", label: "Multi-day: off 1–7 days", color: "--c2" },
+  { id: "daily", label: "Daily: off and back within 24 h", color: "--c8" },
 ];
-const FLOOR_GROUP_NOTE = "MW priced at or below −$20 in the curves SCED dispatched against, summed over thermal units grouped by how they ran over the whole period (the groups of the cheap-stretches panel below; nuclear separately, since it has no offer curve and its whole output sits at the floor). For units that offer, this is almost entirely minimum output (LSL) at ERCOT's placeholder price, so the chart tracks how much minimum load is committed: day-to-day movement is which units are online, and the units that two-shift drive the seasonal swing. Storage, hydro and other resources are left out.";
+const FLOOR_GROUP_NOTE = "MW priced at or below −$20 in the curves SCED dispatched against, summed over thermal units grouped by how they ran over the whole period (the groups of the cheap-stretches panel below; nuclear separately, since it has no offer curve and its whole output sits at the floor). For units that offer, this is almost entirely minimum output (LSL) at ERCOT's placeholder price, so the chart tracks how much minimum load is committed: day-to-day movement is which units are online: the daily group drives the day-to-day swing and the seasonal group the slow one. Storage, hydro and other resources are left out.";
 // wind and solar offer price bands (pipeline/curve_trends.py), ordered from cheapest
 const BANDS = [
   { id: "floor", label: "At the floor (−$250)", color: "--c8" },
@@ -1073,12 +1073,14 @@ const ST_RESP = [
   { id: "M", label: "Ran at minimum", color: null, o: 0.4 },
   { id: "A", label: "Ran above minimum", color: null, o: 1 },
 ];
+// Groups by the finest timescale a unit has shown it will shut down on: its shortest off spell.
 const ST_GROUPS = [
-  { id: "never", label: "Never shut down", note: "no shutdown in the period" },
-  { id: "rare", label: "Shuts down, no two-shifts", note: "shut down, but never back within 24 h" },
-  { id: "some", label: "Two-shifts 1–2 times", note: "off and back within 24 h once or twice" },
-  { id: "cycler", label: "Two-shifts 3+ times", note: "off and back within 24 h at least 3 times" },
+  { id: "never", label: "Never off", note: "no shutdown in the period" },
+  { id: "seasonal", label: "Seasonal: off a week or more", note: "every off spell lasted 7 days or more" },
+  { id: "multiday", label: "Multi-day: off 1–7 days", note: "shortest off spell between 24 h and 7 days" },
+  { id: "daily", label: "Daily: off and back within 24 h", note: "at least two off spells under 24 h" },
 ];
+const ST_OUT_MIN_H = 4;                  // an off spell with fewer OFF hours than this, or more OUT than OFF, is an outage
 const ST_FLEET = [...ST_RESP, { id: "N", label: "Not running going in", color: "--grid", o: 1 }];
 const ST_RANK = { a: 4, m: 3, "0": 2, o: 1, "-": 0 };
 const trainOf = (u) => { const m = /^(.*_CC\d+)_/.exec(u); return m ? m[1] : u; };
@@ -1107,24 +1109,40 @@ function stretchBase() {
     e.configs.push({ name, run });
     e.mw = Math.max(e.mw, (UH.hsl || {})[name] || 0);
   }
-  // off spells: offline hours between two running hours, with no outage or missing data.
-  // A single offline hour inside a combined-cycle train is a configuration change, not a shutdown.
+  // Any non-running spell that is mostly outage, or turns into one within ST_OUT_MIN_H hours, is
+  // an outage throughout (a unit returning from a refuelling outage can report OFF for days): its
+  // OFF hours are rewritten to "o". Off spells are then the offline hours after a running hour:
+  // shutdowns, outage hours inside them included (a maintenance window slotted into an economic
+  // shutdown), with at least ST_OUT_MIN_H hours OFF and no more missing hours than OFF hours (a
+  // missing hour inside a spell is usually the spring clock change). A single offline
+  // hour inside a combined-cycle train is a configuration change, not a shutdown. A spell still
+  // open at the end of the period counts once it is a day long.
   for (const e of units.values()) {
     const st = e.st; e.off = []; e.shut = 0;
     if (e.tech === "combined_cycle") for (let k = 1; k < N - 1; k++)
       if (st[k] === "0" && "ma".includes(st[k - 1]) && "ma".includes(st[k + 1])) st[k] = "m";
-    let k = 0;
+    for (let k = 0; k < N;) {
+      if (st[k] === "m" || st[k] === "a") { k++; continue; }
+      let j = k, off = 0, out = 0;
+      while (j < N && st[j] !== "m" && st[j] !== "a") { if (st[j] === "0") off++; else if (st[j] === "o") out++; j++; }
+      if (out && (off < ST_OUT_MIN_H || out > off)) for (let i = k; i < j; i++) if (st[i] === "0") st[i] = "o";
+      k = j;
+    }
+    let k = 0, short = 0, long = [];
     while (k < N) {
       if (st[k] === "0" && k > 0 && (st[k - 1] === "m" || st[k - 1] === "a")) {
-        let j = k, bad = false;
-        while (j < N && (st[j] === "0" || st[j] === "o" || st[j] === "-")) { if (st[j] !== "0") bad = true; j++; }
-        if (!bad || j === N) e.shut++;
-        if (!bad && j < N) e.off.push(j - k);
+        let j = k, off = 0, out = 0, gap = 0;
+        while (j < N && (st[j] === "0" || st[j] === "o" || st[j] === "-")) { if (st[j] === "0") off++; else if (st[j] === "o") out++; else gap++; j++; }
+        if (gap <= off && off >= ST_OUT_MIN_H && (j < N || j - k >= 24)) {
+          e.shut++; e.off.push(j - k);
+          if (j - k >= 24) long.push(j - k); else if (!out) short++;
+        }
         k = j;
       } else k++;
     }
-    const two = e.off.filter((h) => h < 24).length;
-    e.group = two >= 3 ? "cycler" : two > 0 ? "some" : e.shut > 0 ? "rare" : "never";
+    // daily needs two pure OFF spells under 24 h (one can be a trip and restart); a lone short
+    // spell does not place a unit
+    e.group = short >= 2 ? "daily" : long.length ? (d3.min(long) < 168 ? "multiday" : "seasonal") : "never";
     e.pick = e.configs.sort((a, b) => b.run - a.run)[0].name;   // config shown in Unit detail
     e.ran = st.some((c) => c === "m" || c === "a");
     const o = e.off.slice().sort(d3.ascending);
@@ -1207,14 +1225,11 @@ const ST_MIN_N = 5;                      // stretches needed before a unit's sha
 const ST_MIN_CHEAP_H = 10;               // cheap hours a unit must be available for in a month to be judged
 const ST_WINDOW = 3;                     // tested months in each window of the "changed" comparison
 const ST_CHANGE = 0.4;                   // change in run-through share between windows that is flagged
-const ST_OUT_MIN_H = 4;                  // an off spell with fewer OFF hours than this, or more OUT than OFF, is an outage
 
 // Month by month, the share of cheap hours (lambda below thr) each unit kept running through
-// while it was available. From the merged hourly strips: running = "m"/"a", available but off =
-// "0"; outage ("o") and missing hours are left out, and an off spell that is mostly outage, or
-// turns into one within ST_OUT_MIN_H hours, counts as outage throughout (a unit returning from
-// a refuelling outage can report OFF for days). Months with fewer than ST_MIN_CHEAP_H cheap
-// hours available are untested (null).
+// while it was available. From the merged hourly strips (outage-like off spells already rewritten
+// to "o" in stretchBase): running = "m"/"a", available but off = "0"; outage and missing hours
+// are left out. Months with fewer than ST_MIN_CHEAP_H cheap hours available are untested (null).
 function monthShares(thr) {
   const B = stretchBase();
   B.months = B.months || {};
@@ -1230,14 +1245,7 @@ function monthShares(thr) {
   for (let k = 0; k < N; k++) if (lam[k] < thr) cheapH[monthOf[k]]++;
   const rows = new Map();
   for (const e of units.values()) {
-    const st = e.st.slice();
-    for (let k = 0; k < N;) {
-      if (st[k] === "m" || st[k] === "a") { k++; continue; }
-      let j = k, off = 0, out = 0;
-      while (j < N && st[j] !== "m" && st[j] !== "a") { if (st[j] === "0") off++; else if (st[j] === "o") out++; j++; }
-      if (out && (off < ST_OUT_MIN_H || out > off)) for (let i = k; i < j; i++) if (st[i] === "0") st[i] = "o";
-      k = j;
-    }
+    const st = e.st;
     const run = months.map(() => 0), avail = months.map(() => 0);
     for (let k = 0; k < N; k++) {
       if (!(lam[k] < thr)) continue;
@@ -1338,7 +1346,7 @@ async function drawStretch() {
   }).sort(ST_SORT.find((x) => x.id === S.stSort).f);
   const gl = (id) => ST_GROUPS.find((g) => g.id === id).label, hrs = (v) => (v == null ? "–" : d3.format(",.0f")(v)), pc = (v) => (v == null ? "–" : fmtPct(v));
   $("st-units-note").textContent = `${list.length} units. "Stretches" counts the cheap stretches a unit was already running into; the next three columns say what it did in them (shown once a unit has at least ${ST_MIN_N}). ` +
-    `"Shutdowns" and hours off cover every shutdown in the period, cheap or not, in whole hours, leaving out outages; for a combined-cycle train a single offline hour is taken as a configuration change. ` +
+    `"Shutdowns" and hours off cover every shutdown in the period, cheap or not, in whole hours. An offline spell that is mostly on declared outage, or has under 4 hours OFF before the outage, is an outage, not a shutdown; a shutdown with some outage hours inside it counts whole. For a combined-cycle train a single offline hour is taken as a configuration change. ` +
     `The 10th percentile of hours off is a steadier guide to a unit's real minimum down time than its single shortest spell, which can be a trip and quick restart. Click a unit to open its detail.`;
   const cols = [
     { h: "Unit", t: 1, f: (r) => esc(r.name) }, { h: "Technology", t: 1, f: (r) => techLabel(r.tech) }, { h: "Group", t: 1, f: (r) => gl(r.group) }, { h: "MW", f: (r) => d3.format(",.0f")(r.mw) },
