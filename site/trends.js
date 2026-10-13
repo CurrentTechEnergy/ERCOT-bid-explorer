@@ -20,7 +20,7 @@ const FLOOR_NOTES = {
   le20_sced: "MW priced at or below −$20 in the curves SCED dispatched against, averaged over each day. In those curves ERCOT fills in prices a unit didn't offer. Units that offer have the MW below their first offered point, usually minimum output, at −$20 (−$50 for some units). Units with no offer curve sit at −$250 with the rest of their output schedule at −$249.99 if they are nuclear or hydro, and at −$20 or −$50 otherwise. This counts all of that, plus anything generators themselves offered at or below −$20. Storage below zero is charging bid at or below −$20.",
   floor_sced: "MW priced at the −$250 floor (or −$249.99) in the curves SCED dispatched against, averaged over each day. ERCOT puts only units with no offer curve there, mostly nuclear and hydro. Minimum output of units that offer sits at −$20 (−$50 for some units), so it is counted under ≤ −$20, as used, not here. Storage below zero is charging bid at the floor.",
   floor_submitted: "MW the generators themselves priced at the −$250 floor in the offer curves they submitted, averaged over each day.",
-  le0_submitted: "MW the generators themselves priced at or below $0 in the offer curves they submitted, averaged over each day.",
+  le0_sub_lsl: "MW above minimum output (LSL) that the generators themselves priced at or below $0 in the offer curves they submitted, averaged over each day. Thermal technologies only. Minimum output is left out because SCED cannot dispatch below it: many curves start at 0 MW at −$250 and climb to the unit's real price, which puts MW at or below $0 by interpolation, all of it below LSL.",
 };
 // wind and solar offer price bands (pipeline/curve_trends.py), ordered from cheapest
 const BANDS = [
@@ -350,22 +350,42 @@ function drawNodeCurtail() {
 }
 
 // ---- natural gas ----------------------------------------------------------------------
+// Henry Hub from the EIA (gas.json.gz); Houston Ship Channel and Waha from OilPriceAPI (gas_hubs.json.gz)
+const GAS_LINES = [
+  { key: "hsc", label: "Houston Ship Channel", color: "--c1" },
+  { key: "waha", label: "Waha", color: "--c3" },
+  { key: "hh", label: "Henry Hub", color: "--c2", dash: "6 3" },
+];
+function gasSources() {
+  const out = {};
+  if (S.G && S.G.dates && S.G.dates.length) out.hh = { dates: S.G.dates, value: S.G.value };
+  const H = (S.GH && S.GH.hubs) || {};
+  Object.entries(H).forEach(([k, v]) => { if (v.dates && v.dates.length) out[k] = v; });
+  return out;
+}
 function drawGas() {
-  const G = S.G, el = $("gas-chart"), hel = $("gas-hr");
-  if (!G || !G.dates || !G.dates.length) { emptyMsg(el, "No gas prices yet. They are fetched from the EIA by the data update workflow when an EIA_API_KEY secret is set."); hel.innerHTML = ""; return; }
-  $("gas-note").textContent = `${G.name || "Henry Hub"} · through ${G.dates.at(-1)}`;
-  timeChart(el, [{ label: "Henry Hub spot ($/MMBtu)", color: "--c1", values: G.value }],
-    { dates: G.dates, H: 220, title: "Henry Hub natural gas spot price ($/MMBtu)", yFmt: d3.format("$,.2f"), tipFmt: d3.format("$,.2f") });
+  const src = gasSources(), el = $("gas-chart"), hel = $("gas-hr");
+  if (!Object.keys(src).length) { emptyMsg(el, "No gas prices yet. The data update workflow fetches Henry Hub from the EIA when an EIA_API_KEY secret is set, and Houston Ship Channel and Waha from OilPriceAPI when an OILPRICEAPI_KEY secret is set."); hel.innerHTML = ""; $("gas-legend").innerHTML = ""; return; }
+  // all series on one date axis: every date any of them has, each carrying no value where it has none
+  const dates = [...new Set(Object.values(src).flatMap((g) => g.dates))].sort();
+  const on = (g) => { const by = new Map(g.dates.map((d, i) => [d, g.value[i]])); return dates.map((d) => (by.has(d) ? by.get(d) : null)); };
+  const lines = GAS_LINES.filter((l) => src[l.key]);
+  staticLegend($("gas-legend"), lines);
+  $("gas-note").textContent = lines.map((l) => `${l.label} through ${src[l.key].dates.at(-1)}`).join(" · ");
+  timeChart(el, lines.map((l) => ({ label: l.label, color: l.color, dash: l.dash, values: on(src[l.key]) })),
+    { dates, H: 220, title: "Natural gas daily prices ($/MMBtu)", yFmt: d3.format("$,.2f"), tipFmt: d3.format("$,.2f") });
   const T = S.T;
   if (!T || !T.units) { hel.innerHTML = ""; return; }
-  // gas price on each trend day: the last trading day on or before it
+  // implied heat rate divides by Houston Ship Channel (Henry Hub when it isn't loaded): the price
+  // closest to what most ERCOT gas units burn. Gas on each trend day: last trading day on or before it.
+  const G = src.hsc || src.hh;
   const gasBy = new Map(G.dates.map((d, i) => [d, G.value[i]]));
   let last = null;
   const gasOn = {};
   const all = [...new Set([...G.dates, ...T.dates])].sort();
   all.forEach((d) => { if (gasBy.has(d)) last = gasBy.get(d); gasOn[d] = last; });
-  // Each unit's first offer price above $0 (skips minimum output and other blocks priced at or
-  // below $0) divided by gas on the day it offered. On each day a unit uses its latest value
+  // Each unit's first offer price above $0 at or above LSL (skips minimum output, which SCED
+  // cannot back down, and blocks priced at or below $0) divided by gas on the day it offered. On each day a unit uses its latest value
   // from the last HR_CARRY_DAYS, so the median covers the fleet, not just the units that ran
   // that day. Blank when fewer than HR_MIN_UNITS units have a value.
   const HR_MIN_UNITS = 10, HR_CARRY_DAYS = 14, DAY_MS = 864e5;
@@ -387,7 +407,7 @@ function drawGas() {
     { label: "Combined cycle", color: "--c1", values: hr("combined_cycle") },
     { label: "Combustion turbine", color: "--c2", values: hr("combustion_turbine") },
     { label: "Gas steam", color: "--c6", values: hr("gas_steam") },
-  ], { dates: T.dates, H: 220, title: "Implied heat rate: median unit's first offer price above $0 ÷ gas (MMBtu per MWh)", yFmt: d3.format(",.1f"), tipFmt: d3.format(",.2f"), yTicks: [0, 5, 7, 10, 15, 20] });
+  ], { dates: T.dates, H: 220, title: `Implied heat rate: median unit's first offer price above $0 at or above LSL ÷ ${src.hsc ? "Houston Ship Channel" : "Henry Hub"} gas (MMBtu per MWh)`, yFmt: d3.format(",.1f"), tipFmt: d3.format(",.2f"), yTicks: [0, 5, 7, 10, 15, 20] });
 }
 
 function drawPriceQuantiles() {
@@ -775,7 +795,7 @@ function drawMitigation() {
 // ---- bidding-approach changes -----------------------------------------------------
 function drawChanges() {
   const T = S.T, techOf = Object.fromEntries(T.units.map((u) => [u.unit, u]));
-  $("chg-note").textContent = `A change is a shift that holds: the median over the ${T.window} online days after a day differs from the median over the ${T.window} online days before by at least 25 percentage points of MW offered at or below $0, half the day running without an offer curve, or $10 in first offer price above $0 relative to that day's median for its peers (which removes moves in fuel price). Peers are units of the same ERCOT resource type (for example CCGT90 or SCLE90) when at least 8 of them have a price that day, otherwise the same technology. Thermal units only. Click a row to see the unit.`;
+  $("chg-note").textContent = `A change is a shift that holds: the median over the ${T.window} online days after a day differs from the median over the ${T.window} online days before by at least 25 percentage points of the dispatchable range (above LSL) offered at or below $0, half the day running without an offer curve, or $10 in first offer price above $0 (at or above LSL) relative to that day's median for its peers (which removes moves in fuel price). Peers are units of the same ERCOT resource type (for example CCGT90 or SCLE90) when at least 8 of them have a price that day, otherwise the same technology. Thermal units only. Click a row to see the unit.`;
   // summary: units per technology, how many changed
   const sum = THERMAL.map((t) => {
     const us = T.units.filter((u) => u.tech === t);
@@ -814,14 +834,14 @@ function drawUnit(u) {
   drawUnitStrip(u, s, marks);
   const median = u.first.map((v, i) => (v == null || u.rel[i] == null ? null : v - u.rel[i]));
   timeChart($("unit-price"), [
-    { label: "First offer price above $0", color: s.color, values: u.first },
+    { label: "First offer price above $0, at or above LSL", color: s.color, values: u.first },
     { label: "Peer median", color: "--muted", values: median, dash: "4 3", width: 1.5 },
-  ], { title: "First offer price above $0 ($/MWh), and the median of its peers", H: 170, yFmt: d3.format("$,.0f"), tipFmt: fmtPrice, markers: marks, dots: true,
+  ], { title: "First offer price above $0 at or above LSL ($/MWh), and the median of its peers", H: 170, yFmt: d3.format("$,.0f"), tipFmt: fmtPrice, markers: marks, dots: true,
     tipNote: (i) => (u.peer && u.peer[i] != null ? ` · peers: ${u.peer[i] ? `${u.type} units` : `all ${s.label.toLowerCase()}`}` : "") });
   timeChart($("unit-share"), [
-    { label: "MW offered ≤ $0", color: s.color, values: u.le0 },
+    { label: "Share of MW above LSL offered ≤ $0", color: s.color, values: u.le0 },
     { label: "Share of day without an offer curve", color: "--muted", values: u.noff, dash: "4 3", width: 1.5 },
-  ], { title: "MW offered ≤ $0, and day without an offer curve (share)", H: 150, yFmt: d3.format(".0%"), markers: marks, dots: true });
+  ], { title: "Share of MW above LSL offered ≤ $0, and share of day without an offer curve", H: 150, yFmt: d3.format(".0%"), markers: marks, dots: true });
 }
 
 // day × hour state of one unit: offline, at minimum, above minimum; negative-price hours marked
@@ -1409,8 +1429,9 @@ function drawAll() { drawFloor(); drawRenewBands(); drawCurtailment(); drawNodeC
 let heatSeen = false;
 
 async function boot() {
-  [S.T, S.C, S.I, S.N, S.G, S.MN, S.MIT, S.HC] = await Promise.all([tryJSON("data/trends_60d.json.gz"), tryJSON("data/curve_trends.json.gz"), tryJSON("data/intraday_60d.json.gz"),
-    tryJSON("data/curtail_nodes.json.gz"), tryJSON("data/gas.json.gz"), tryJSON("data/marginal_nodes.json.gz"), tryJSON("data/mitigation.json.gz"), tryJSON("data/hourly_context_60d.json.gz")]);
+  [S.T, S.C, S.I, S.N, S.G, S.GH, S.MN, S.MIT, S.HC] = await Promise.all([tryJSON("data/trends_60d.json.gz"), tryJSON("data/curve_trends.json.gz"), tryJSON("data/intraday_60d.json.gz"),
+    tryJSON("data/curtail_nodes.json.gz"), tryJSON("data/gas.json.gz"), tryJSON("data/gas_hubs.json.gz"), tryJSON("data/marginal_nodes.json.gz"), tryJSON("data/mitigation.json.gz"),
+    tryJSON("data/hourly_context_60d.json.gz")]);
   if (!S.T) { $("status").textContent = "No trends data yet. It is built by the data update workflow."; return; }
   const D = S.T.dates;
   // one date range for every daily chart: all the bid and curtailment data (gas is trimmed to it)
@@ -1420,6 +1441,7 @@ async function boot() {
   $("status").textContent = `60-day data: ${D.length} days, ${D[0]} to ${D[D.length - 1]} · ${S.T.units.length} thermal units` +
     (S.C ? ` · wind and solar offers through ${S.C.rs.dates.at(-1)}` : "");
   loadView();
+  if (!FLOOR_NOTES[S.floorMode]) S.floorMode = "le20_sced";    // a measure from an older saved view
   const thermal = TECHS.filter((s) => THERMAL.includes(s.id));
   [["floor-mode", "floorMode", drawFloor], ["sc-x", "scX", drawScatter], ["mbp-src", "mSrc", drawMarginal], ["mbp-view", "mView", drawMarginal], ["mbp-days", "mDays", drawMarginal],
    ["mn-measure", "mnMeasure", drawNodeMarginal], ["mn-days", "mnDays", drawNodeMarginal]]

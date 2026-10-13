@@ -30,10 +30,10 @@ const DEFAULTS = {
 };
 const FUEL_PRICE = { coal: 2.0, nuclear: 0.7 };     // $/MMBtu, user-editable
 const COST_NOTES = {
-  eia: "Fuel = output × the EIA average tested heat rate for the technology × the fuel price (Henry Hub plus the adder for gas; the $/MMBtu set here for coal and nuclear), plus variable O&M per MWh. Starts cost the unit's own DAM hot-start offer where it has one, else the generic start cost.",
+  eia: "Fuel = output × the EIA average tested heat rate for the technology × the fuel price (the chosen gas price plus the adder for gas; the $/MMBtu set here for coal and nuclear), plus variable O&M per MWh. Starts cost the unit's own DAM hot-start offer where it has one, else the generic start cost.",
   offer: "Energy cost = the area under the unit's own DAM energy offer curve up to each hour's output; where the unit offered no curve, its minimum-energy offer × output; where it submitted no three-part offer at all, the generic basis. Starts cost its DAM hot-start offer, else the generic start cost.",
   inc: "Energy cost = each hour's output × the price the unit's own DAM energy offer curve puts on that output level (its incremental offer, read as its marginal cost), ignoring the minimum-energy price that units set low to get committed. Units with no DAM curve use the generic basis and are counted as estimated. Starts cost the DAM hot-start offer, else the generic start cost.",
-  generic: "Fuel = output × the heat rate set here × the fuel price (Henry Hub plus the adder for gas; the $/MMBtu set here for coal and nuclear), plus variable O&M per MWh and the start cost per start.",
+  generic: "Fuel = output × the heat rate set here × the fuel price (the chosen gas price plus the adder for gas; the $/MMBtu set here for coal and nuclear), plus variable O&M per MWh and the start cost per start.",
 };
 const { getJSON, tryJSON, showTip, hideTip, setCSV, css, esc, axisFmt, fmtKind } = window.CX;
 const $ = (id) => document.getElementById(id);
@@ -50,9 +50,15 @@ const fmt$2 = (v) => (v == null || isNaN(v) ? "–" : (v < 0 ? "−" : "") + "$"
 const parseDate = (d) => new Date(d + "T12:00:00");
 const fmtDate = d3.timeFormat("%a %b %-d, %Y");
 
-const S = { tech: "combined_cycle", cost: "eia", rev: "two", adder: 0, sort: "margin", dir: -1, unit: null, q: "",
+// gas price used for gas-fired fuel cost: Houston Ship Channel and Waha from OilPriceAPI, Henry Hub
+// from the EIA, or "unit": each unit's own fuel hub (Waha or Houston Ship Channel, from
+// pipeline/fuel_hub.py). A hub with no prices in the loaded data falls back to Henry Hub.
+const HUBS = { hsc: "Houston Ship Channel", waha: "Waha", hh: "Henry Hub" };
+const HUB_CHOICES = { unit: "each unit's own hub", ...HUBS };
+const HUB_METHOD = { offers: "its offers follow that price", location: "by its node's location", default: "no signal, default" };
+const S = { tech: "combined_cycle", cost: "eia", rev: "two", hub: "unit", adder: 0, sort: "margin", dir: -1, unit: null, q: "",
   params: JSON.parse(JSON.stringify(DEFAULTS)), fuel: { ...FUEL_PRICE }, idx: null, data: {} };
-const VIEW_KEYS = { tech: "tech", cost: "cost", rev: "rev", adder: "adder", unit: "unit", sort: "sort" };
+const VIEW_KEYS = { tech: "tech", cost: "cost", rev: "rev", gas: "hub", adder: "adder", unit: "unit", sort: "sort" };
 function saveView() { window.CX.writeHash(Object.fromEntries(Object.entries(VIEW_KEYS).map(([k, sk]) => [k, S[sk]]))); }
 function loadView() { const v = window.CX.readHash(); Object.entries(VIEW_KEYS).forEach(([k, sk]) => { if (v[k] != null) S[sk] = k === "adder" ? +v[k] : v[k]; }); }
 function setSeg(id, value) { $(id).querySelectorAll("button").forEach((b) => b.setAttribute("aria-checked", String(b.dataset.v === value))); }
@@ -186,12 +192,25 @@ function legendHTML(el) {
 
 // ---- panels --------------------------------------------------------------------------
 let ECON = {};     // unit name -> unitEcon result, for the current tech and bases
+// the gas price series for one hub in this tech's data and its label; Henry Hub when the hub has none
+function hubSeries(T, hub) {
+  const h = T.hubs && T.hubs[hub];
+  if (hub !== "hh" && h && h.some((v) => v != null)) return { values: h, label: HUBS[hub] };
+  return { values: T.gas, label: HUBS.hh + (hub !== "hh" ? ` (no ${HUBS[hub]} prices loaded)` : "") };
+}
+// the hub a unit is costed at under the current choice: its own fuel hub, else Houston Ship Channel
+const unitHub = (u) => (S.hub === "unit" ? u.fuel_hub || "hsc" : S.hub);
+function gasLabel(T) {
+  if (S.hub !== "unit") return hubSeries(T, S.hub).label;
+  const n = Object.values(T.units).filter((u) => u.fuel_hub === "waha").length;
+  return `each unit's own hub (${n} on Waha, the rest Houston Ship Channel)`;
+}
 function compute() {
   const T = S.data[S.tech];
   ECON = {};
   if (!T) return;
   const D = T.dates.length;
-  Object.entries(T.units).forEach(([name, u]) => { ECON[name] = unitEcon(u, D, T.gas); });
+  Object.entries(T.units).forEach(([name, u]) => { ECON[name] = unitEcon(u, D, hubSeries(T, unitHub(u)).values); });
 }
 
 function drawTotals() {
@@ -211,7 +230,8 @@ function drawTotals() {
   const nodeDays = S.idx.has_nodes.filter(Boolean).length;
   $("tot-note").textContent = `${names.length} units over ${D} days · node prices on ${nodeDays} days` +
     (lamDays ? ` · ${fmt0(lamDays)} unit-days priced at system lambda for want of a node price` : "") +
-    (missing ? ` · ${fmt0(missing)} unit-days with no fuel price (before the first gas price)` : "") + ` · ${COST_NOTES[S.cost].split(".")[0]}.`;
+    (missing ? ` · ${fmt0(missing)} unit-days with no fuel price (before the first gas price)` : "") +
+    (FUEL[S.tech] === "gas" && (S.cost === "eia" || S.cost === "generic") ? ` · gas at ${gasLabel(T)}` : "") + ` · ${COST_NOTES[S.cost].split(".")[0]}.`;
   barChart(el, T.dates, REV_SERIES.map((s) => ({ ...s, values: { energy, as }[s.k] })), COST_SERIES.map((s) => ({ ...s, values: { fuel, starts }[s.k] })),
     { ...MARGIN, values: margin }, { title: "Revenue (up) and cost (down) per day, $, all units", yFmt: fmt$k });
   let cum = 0;
@@ -238,9 +258,10 @@ function drawInputs() {
   }));
 }
 
-const COLS = [
+const ALL_COLS = [
   { k: "unit", h: "Unit", t: true, f: (r) => esc(r.unit) + (r.configs ? ` <span class="h-note">${r.configs} configs</span>` : "") },
   { k: "sp", h: "Settlement point", t: true, f: (r) => esc(r.sp || "–") },
+  { k: "hub", h: "Fuel hub", t: true, gas: true, f: (r) => (r.hub ? esc(HUBS[r.hub]) : "–") },
   { k: "mwh", h: "GWh", f: (r) => fmt1(r.mwh / 1000) },
   { k: "cf", h: "Capacity factor", f: (r) => (r.cf == null ? "–" : fmtPct(r.cf)) },
   { k: "energy", h: "Energy revenue", f: (r) => fmt$k(r.energy) },
@@ -258,11 +279,12 @@ function unitRows() {
   return Object.entries(T.units).map(([name, u]) => {
     const e = ECON[name], mwh = sum(u.mwh), days = u.mwh.filter((v) => v != null).length;
     const energy = sum(e.energy), as = sum(e.as), fuel = sum(e.fuel), starts = sum(e.starts), margin = sum(e.margin);
-    return { unit: name, sp: u.sp, configs: u.configs ? u.configs.length : 0, mwh, cf: u.hsl && days ? mwh / (u.hsl * 24 * days) : null,
+    return { unit: name, sp: u.sp, hub: u.fuel_hub || null, configs: u.configs ? u.configs.length : 0, mwh, cf: u.hsl && days ? mwh / (u.hsl * 24 * days) : null,
       energy, as, fuel, starts, nstarts: sum(u.starts), margin, mpm: mwh ? margin / mwh : null, lamDays: e.lamDays, est: e.est, days };
   });
 }
 function drawUnits() {
+  const COLS = ALL_COLS.filter((c) => !c.gas || FUEL[S.tech] === "gas");
   const el = $("units-table"), rows = unitRows().filter((r) => !S.q || r.unit.toLowerCase().includes(S.q) || (r.sp || "").toLowerCase().includes(S.q));
   $("units-note").textContent = rows.length ? `${rows.length} units` : "";
   if (!rows.length) return emptyMsg(el, "No units.");
@@ -284,7 +306,8 @@ function drawUnit() {
   const own = u.start_hot.filter((v) => v != null).length, curves = u.cost_off.filter((v) => v != null).length, mg = u.mingen.filter((v) => v != null);
   $("unit-note").textContent = `${r.days} days · ${fmt1(r.mwh / 1000)} GWh · ${r.nstarts} starts · margin ${fmt$(r.margin)} (${r.mpm == null ? "–" : fmt$2(r.mpm)} per MWh)` +
     (own ? ` · DAM three-part offer on ${own} days (hot start ${fmt$(d3.median(u.start_hot.filter((v) => v != null)))}, minimum-energy ${fmt$2(d3.median(mg))}/MWh, energy curve on ${curves})` : " · no DAM three-part offer on any loaded day") +
-    (u.configs ? ` · configurations ${u.configs.join(", ")}` : "");
+    (u.configs ? ` · configurations ${u.configs.join(", ")}` : "") +
+    (u.fuel_hub ? ` · fuel hub ${HUBS[u.fuel_hub]} (${HUB_METHOD[u.fuel_hub_method] || u.fuel_hub_method})` : "");
   legendHTML($("unit-legend"));
   barChart($("unit-chart"), T.dates, REV_SERIES.map((s) => ({ ...s, values: e[s.k] })), COST_SERIES.map((s) => ({ ...s, values: e[s.k] })),
     { ...MARGIN, values: e.margin }, { title: "Revenue (up) and cost (down) per day, $", yFmt: fmt$k,
@@ -301,7 +324,8 @@ function redraw() { compute(); drawTotals(); drawInputs(); drawUnits(); drawUnit
 async function changeTech() { $("status").textContent = "Loading…"; await loadTech(); status(); if (!(S.data[S.tech] || {}).units?.[S.unit]) S.unit = null; redraw(); }
 function status() {
   const I = S.idx, D = I.dates;
-  $("status").textContent = `60-day data: ${D.length} days, ${D[0]} to ${D[D.length - 1]} · node prices on ${I.has_nodes.filter(Boolean).length} days · DAM on ${I.has_dam.filter(Boolean).length} · gas prices on ${I.gas_days}`;
+  $("status").textContent = `60-day data: ${D.length} days, ${D[0]} to ${D[D.length - 1]} · node prices on ${I.has_nodes.filter(Boolean).length} days · DAM on ${I.has_dam.filter(Boolean).length} · gas prices on ${I.gas_days} days (Henry Hub)` +
+    Object.entries(I.hub_days || {}).map(([h, n]) => `, ${n} (${HUBS[h] || h})`).join("");
 }
 
 async function boot() {
@@ -314,6 +338,8 @@ async function boot() {
   $("tech").onchange = (e) => { S.tech = e.target.value; S.unit = null; changeTech(); saveView(); };
   setSeg("cost", S.cost); bindSeg("cost", "cost", redraw);
   setSeg("rev", S.rev); bindSeg("rev", "rev", redraw);
+  if (!HUB_CHOICES[S.hub]) S.hub = "unit";
+  setSeg("hub", S.hub); bindSeg("hub", "hub", redraw);
   $("gas-adder").value = S.adder;
   $("gas-adder").addEventListener("change", (e) => { S.adder = +e.target.value || 0; redraw(); saveView(); });
   $("unit-search").addEventListener("input", (e) => { S.q = e.target.value.trim().toLowerCase(); drawUnits(); });

@@ -241,14 +241,22 @@ def expand(u: dict, n_runs: int) -> dict:
     return res
 
 
-def le0_share(u: dict, n_runs: int) -> np.ndarray:
-    """Per run: share of HSL offered at or below $0 in the submitted curve, for online runs
-    (status starting "ON") with HSL > 0 and a curve; NaN otherwise.  Same interpolation as the
-    summary stats (curves.mw_at_prices, 0 MW below the first point), clipped to [0, HSL]."""
+# SCED dispatches a unit only between its LSL and HSL, so the part of an offer curve below LSL
+# (minimum output) never decides anything.  The unit-level offer metrics below therefore read
+# the submitted curve over the LSL-to-HSL range only: a curve that starts at 0 MW at -$250 and
+# climbs to HSL puts MW "at or below $0" by interpolation, but all of it below LSL.
+LSL_TOL = 0.5     # MW: a curve point this close below LSL counts as at LSL (rounding)
+
+
+def le0_above_lsl(u: dict, n_runs: int) -> tuple:
+    """Per run, for online runs (status starting "ON") with HSL > 0 and a submitted curve:
+    MW offered at or below $0 above LSL, and the dispatchable range HSL - LSL (NaN otherwise).
+    Same interpolation as the summary stats (curves.mw_at_prices, 0 MW below the first point),
+    clipped to [0, HSL] before LSL is taken off."""
     si = _ffill_index(u["status"], n_runs)
     li = _ffill_index(u["lim"], n_runs)
     ci = _ffill_index(u["curve"], n_runs)
-    out = np.full(n_runs, np.nan)
+    mw, rng = np.full(n_runs, np.nan), np.full(n_runs, np.nan)
     cache = {}
     for r in range(n_runs):
         s = u["status"][si[r]][1] if si[r] >= 0 else None
@@ -256,23 +264,34 @@ def le0_share(u: dict, n_runs: int) -> np.ndarray:
             continue
         key = (li[r], ci[r])
         if key not in cache:
-            hsl = u["lim"][li[r]][1] or 0
+            hsl, lsl = u["lim"][li[r]][1] or 0, u["lim"][li[r]][2] or 0
             ev = u["curve"][ci[r]]
             if hsl <= 0 or ev[1] is None:
-                cache[key] = np.nan
+                cache[key] = (np.nan, np.nan)
             else:
                 m = np.array(ev[2], float) * (hsl if u.get("frac") else 1.0)
                 mw0 = mw_at_prices(np.array([ev[1]], float), m[None, :], np.array([0.0]))[0, 0]
-                cache[key] = min(max(mw0, 0.0), hsl) / hsl
-        out[r] = cache[key]
-    return out
+                cache[key] = (max(min(mw0, hsl) - lsl, 0.0), max(hsl - lsl, 0.0))
+        mw[r], rng[r] = cache[key]
+    return mw, rng
+
+
+def le0_share(u: dict, n_runs: int) -> np.ndarray:
+    """Per run: share of the dispatchable range (HSL - LSL) offered at or below $0 in the
+    submitted curve (le0_above_lsl); NaN where the range is under 1 MW or the unit is not
+    online with a curve."""
+    mw, rng = le0_above_lsl(u, n_runs)
+    with np.errstate(invalid="ignore", divide="ignore"):
+        return np.where(rng >= 1.0, mw / rng, np.nan)
 
 
 def first_positive_price(u: dict, n_runs: int):
-    """Mean over the day's online runs with a submitted curve of the first price above $0 on
-    that curve: roughly where the unit starts pricing its energy at cost, skipping minimum
-    output and other blocks priced at or below $0.  None if no run has a price above $0."""
+    """Mean over the day's online runs with a submitted curve of the price of the first curve
+    point at or above LSL that is priced above $0: roughly where the unit starts pricing its
+    dispatchable energy at cost, skipping minimum output (which SCED cannot back down) and
+    other blocks priced at or below $0.  None if no run has such a point."""
     si = _ffill_index(u["status"], n_runs)
+    li = _ffill_index(u["lim"], n_runs)
     ci = _ffill_index(u["curve"], n_runs)
     vals = []
     for r in range(n_runs):
@@ -282,7 +301,10 @@ def first_positive_price(u: dict, n_runs: int):
         ev = u["curve"][ci[r]]
         if ev[1] is None:
             continue
-        pos = [p for p in ev[1] if p > 0]
+        lsl = (u["lim"][li[r]][2] or 0) if li[r] >= 0 else 0
+        hsl = (u["lim"][li[r]][1] or 0) if li[r] >= 0 else 0
+        scale = hsl if u.get("frac") else 1.0
+        pos = [p for p, m in zip(ev[1], ev[2]) if p > 0 and m * scale >= lsl - LSL_TOL]
         if pos:
             vals.append(pos[0])
     return round(float(np.mean(vals)), 2) if vals else None
