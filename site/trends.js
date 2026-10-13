@@ -30,9 +30,11 @@ const FLOOR_GROUPS = [
   { id: "never", label: "Never off", color: "--c1" },
   { id: "seasonal", label: "Seasonal: off a week or more", color: "--c6" },
   { id: "multiday", label: "Multi-day: off 1–7 days", color: "--c2" },
-  { id: "daily", label: "Daily: off and back within 24 h", color: "--c8" },
+  { id: "daily1", label: "Daily, under 1 shutdown a week", color: "--c8" },
+  { id: "daily2", label: "Daily, 1–2 a week", color: "--c3" },
+  { id: "daily3", label: "Daily, over 2 a week", color: "--c4" },
 ];
-const FLOOR_GROUP_NOTE = "MW priced at or below −$20 in the curves SCED dispatched against, summed over thermal units grouped by how they ran over the whole period (the groups of the cheap-stretches panel below; nuclear separately, since it has no offer curve and its whole output sits at the floor). For units that offer, this is almost entirely minimum output (LSL) at ERCOT's placeholder price, so the chart tracks how much minimum load is committed: day-to-day movement is which units are online: the daily group drives the day-to-day swing and the seasonal group the slow one. Storage, hydro and other resources are left out.";
+const FLOOR_GROUP_NOTE = "MW priced at or below −$20 in the curves SCED dispatched against, summed over thermal units grouped by how they ran over the whole period (the groups of the cheap-stretches panel below; nuclear separately, since it has no offer curve and its whole output sits at the floor). For units that offer, this is almost entirely minimum output (LSL) at ERCOT's placeholder price, so the chart tracks how much minimum load is committed: day-to-day movement is which units are online: the daily groups drive the day-to-day swing and the seasonal group the slow one. Storage, hydro and other resources are left out.";
 // wind and solar offer price bands (pipeline/curve_trends.py), ordered from cheapest
 const BANDS = [
   { id: "floor", label: "At the floor (−$250)", color: "--c8" },
@@ -1078,7 +1080,9 @@ const ST_GROUPS = [
   { id: "never", label: "Never off", note: "no shutdown in the period" },
   { id: "seasonal", label: "Seasonal: off a week or more", note: "every off spell lasted 7 days or more" },
   { id: "multiday", label: "Multi-day: off 1–7 days", note: "shortest off spell between 24 h and 7 days" },
-  { id: "daily", label: "Daily: off and back within 24 h", note: "at least two off spells under 24 h" },
+  { id: "daily1", label: "Daily, under 1 shutdown a week", note: "at least two off spells under 24 h, fewer than one shutdown a week" },
+  { id: "daily2", label: "Daily, 1–2 a week", note: "one to two shutdowns a week" },
+  { id: "daily3", label: "Daily, over 2 a week", note: "more than two shutdowns a week" },
 ];
 const ST_OUT_MIN_H = 4;                  // an off spell with fewer OFF hours than this, or more OUT than OFF, is an outage
 const ST_FLEET = [...ST_RESP, { id: "N", label: "Not running going in", color: "--grid", o: 1 }];
@@ -1140,9 +1144,11 @@ function stretchBase() {
         k = j;
       } else k++;
     }
-    // daily needs two pure OFF spells under 24 h (one can be a trip and restart); a lone short
-    // spell does not place a unit
-    e.group = short >= 2 ? "daily" : long.length ? (d3.min(long) < 168 ? "multiday" : "seasonal") : "never";
+    // daily needs two pure OFF spells under 24 h (one can be a trip and restart) and is split by
+    // shutdowns per week over the period; a lone short spell does not place a unit
+    const perWeek = e.shut / (N / 168);
+    e.group = short >= 2 ? (perWeek < 1 ? "daily1" : perWeek <= 2 ? "daily2" : "daily3")
+      : long.length ? (d3.min(long) < 168 ? "multiday" : "seasonal") : "never";
     e.pick = e.configs.sort((a, b) => b.run - a.run)[0].name;   // config shown in Unit detail
     e.ran = st.some((c) => c === "m" || c === "a");
     const o = e.off.slice().sort(d3.ascending);
