@@ -1,0 +1,120 @@
+name: Build hourly history
+
+# Hourly wind and solar history from ERCOT's archive (pipeline/history.py), one month per job,
+# uploaded as Parquet files to the `history` release.  Kept apart from the site data and the
+# `data` branch: this workflow never commits, never touches data/ or the data branch, and does not
+# share the update workflow's concurrency group.
+on:
+  workflow_dispatch:
+    inputs:
+      start:
+        description: "First month (YYYY-MM)"
+        required: false
+        default: "2019-01"
+      end:
+        description: "Last month (YYYY-MM); blank = the latest month the 60-day reports fully cover"
+        required: false
+      max_months:
+        description: "Most months to build in this run (months already on the release are skipped)"
+        required: false
+        default: "24"
+      force:
+        description: "Rebuild months already on the release"
+        type: boolean
+        required: false
+        default: false
+  pull_request:       # smoke test on a PR that changes the history code: one month, nothing uploaded
+    paths:
+      - pipeline/history.py
+      - .github/workflows/history.yml
+
+permissions:
+  contents: write     # release assets only
+
+concurrency:
+  group: history
+  cancel-in-progress: false
+
+jobs:
+  plan:
+    runs-on: ubuntu-latest
+    outputs:
+      months: ${{ steps.plan.outputs.months }}
+    steps:
+      - id: plan
+        env:
+          GH_TOKEN: ${{ github.token }}
+          START: ${{ inputs.start || '2019-01' }}
+          END: ${{ inputs.end }}
+          MAX: ${{ inputs.max_months || '24' }}
+          FORCE: ${{ inputs.force || false }}
+          EVENT: ${{ github.event_name }}
+        run: |
+          if [ "$EVENT" = "pull_request" ]; then echo 'months=["2019-01"]' >> "$GITHUB_OUTPUT"; exit 0; fi
+          if ! gh release view history -R "$GITHUB_REPOSITORY" > /dev/null 2>&1; then
+            gh release create history -R "$GITHUB_REPOSITORY" --title "Hourly history" --latest=false \
+              --notes "Hourly wind and solar history built from ERCOT's archive by the Build hourly history workflow (pipeline/history.py documents the files). Data only: kept apart from the site data and the data branch."
+          fi
+          have=$(gh release view history -R "$GITHUB_REPOSITORY" --json assets --jq '.assets[].name' | sed -n 's/^units-\(.*\)\.parquet$/\1/p')
+          python3 - "$have" <<'PY' >> "$GITHUB_OUTPUT"
+          import datetime as dt, json, os, sys
+          have = set(sys.argv[1].split())
+          # the 60-day reports run ~60 days behind: the last month they fully cover is the one
+          # before the month that (today - 62 days) falls in
+          last = (dt.date.today() - dt.timedelta(days=62)).replace(day=1) - dt.timedelta(days=1)
+          end = min(os.environ["END"] or "9999-12", last.isoformat()[:7])
+          y, m = map(int, os.environ["START"].split("-"))
+          months = []
+          while f"{y:04d}-{m:02d}" <= end:
+              months.append(f"{y:04d}-{m:02d}")
+              y, m = (y + 1, 1) if m == 12 else (y, m + 1)
+          if os.environ["FORCE"] != "true":
+              months = [x for x in months if x not in have]
+          print("months=" + json.dumps(months[: int(os.environ["MAX"])]))
+          PY
+          cat "$GITHUB_OUTPUT"
+
+  build:
+    needs: plan
+    if: needs.plan.outputs.months != '[]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    strategy:
+      fail-fast: false
+      max-parallel: 3     # one ERCOT API key for every job
+      matrix:
+        month: ${{ fromJson(needs.plan.outputs.months) }}
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install -r requirements.txt -r requirements-history.txt
+      - name: Build ${{ matrix.month }}
+        env:
+          ERCOT_API_USERNAME: ${{ secrets.ERCOT_API_USERNAME }}
+          ERCOT_API_PASSWORD: ${{ secrets.ERCOT_API_PASSWORD }}
+          ERCOT_API_SUBSCRIPTION_KEY: ${{ secrets.ERCOT_API_SUBSCRIPTION_KEY }}
+        run: python -m pipeline.history "${{ matrix.month }}" --out out
+      - name: Summarise
+        run: |
+          python3 - <<'PY'
+          import glob, os, pandas as pd
+          lines = []
+          for p in sorted(glob.glob("out/*.parquet")):
+              f = pd.read_parquet(p)
+              extra = (f", {f['unit'].nunique()} units ({', '.join(f'{k}: {v}' for k, v in f.groupby('tech', observed=True)['unit'].nunique().items())})"
+                       f", offer present {f['offer'].notna().mean():.0%}, DA node price present {f['da_node'].notna().mean():.0%}"
+                       if "unit" in f else f", {f['point'].nunique()} points")
+              lines.append(f"- {os.path.basename(p)}: {len(f):,} rows, {f['date'].nunique()} days, {os.path.getsize(p) / 1e6:.1f} MB{extra}")
+          text = "\n".join(lines)
+          print(text)
+          open(os.environ["GITHUB_STEP_SUMMARY"], "a").write(text + "\n")
+          print("::notice title=History " + "${{ matrix.month }}" + "::" + text.replace("%", "%25").replace("\n", "%0A"))
+          PY
+      - name: Upload to the history release
+        if: github.event_name == 'workflow_dispatch'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release upload history out/*.parquet --clobber -R "$GITHUB_REPOSITORY"
