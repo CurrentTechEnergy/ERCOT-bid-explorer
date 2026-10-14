@@ -55,6 +55,7 @@ const logTicks = (dom, narrow) => (narrow ? LOG_TICKS_NARROW : LOG_TICKS).filter
 const S = {
   index: null, source: "2d", date: null, hour: 12, version: "curves",
   xrange: "low", xMin: -250, xMax: 100, osMin: -100, osMax: 1000, mode: "lines", axes: "price_x", threshold: 0, location: "lambda",
+  lslMode: "from_lsl",     // offer curves: "from_lsl" (LSL plus the MW offered above it) or "ercot" (as ERCOT prices them)
   hidden: new Set(), unitTech: "all", unitSearch: "",
   unitSort: { key: "floor_mw", dir: -1 }, unitShowAll: false,
   day: null, prices: null, summaries: {}, osView: "hour", ttView: "hour", osUnit: "share", osSmooth: "smooth",
@@ -113,6 +114,28 @@ function seriesLSL(s, h) {
   const j = S.day.stat_names.indexOf("lsl");
   return j < 0 ? null : d3.sum(s.keys, (k) => (S.day.stats[k] && S.day.stats[k][h] && S.day.stats[k][h][j]) || 0);
 }
+
+/** [G] curve for series s in hour h as the chart draws it.  "From LSL": each technology's online
+ * minimum output (LSL) plus the MW it offers above LSL at or below each price, from the dispatchable
+ * block, so the curve runs flat at LSL from the left edge instead of carrying ERCOT's -$20/-$50
+ * placeholder steps and the sub-LSL points of submitted curves.  Technologies the block leaves out
+ * (wind, solar, storage), 2-day days and days without the block keep the curve as ERCOT prices it. */
+function chartCurve(s, h) {
+  const key = S.version === "submitted" && S.source === "60d" ? "submitted" : "curves";
+  const block = S.day[key] || {};
+  const disp = S.lslMode === "from_lsl" && hasDispatchable() ? S.day.dispatchable[key] || {} : {};
+  const j = S.day.stat_names ? S.day.stat_names.indexOf("lsl") : -1;
+  const parts = s.keys.map((k) => {
+    const d = disp[k] && disp[k][h];
+    if (!d) return block[k] && block[k][h];
+    const lsl = (j >= 0 && S.day.stats[k] && S.day.stats[k][h] && S.day.stats[k][h][j]) || 0;
+    return d.map((v) => (v == null ? null : v + lsl));
+  }).filter(Boolean);
+  if (!parts.length) return null;
+  return parts[0].map((v, i) => parts.reduce((a, p) => a + (p[i] || 0), 0));
+}
+/** Whether the offer curves chart is drawing from LSL for the loaded day. */
+function curvesFromLSL() { return S.lslMode === "from_lsl" && hasDispatchable(); }
 
 function hourPrice(prices, h) {
   if (!prices) return null;
@@ -219,7 +242,7 @@ function render() {
   $("thermal-panel").hidden = !is60;
   $("units-panel").hidden = !is60;
   $("hour-out").textContent = `${heLabel(S.hour)} · ${String(S.hour).padStart(2, "0")}:00–${String(S.hour + 1).padStart(2, "0")}:00`;
-  $("curve-title-note").textContent = S.date ? `${S.date} · ${heLabel(S.hour)}` : "";
+  $("curve-title-note").textContent = S.date ? `${S.date} · ${heLabel(S.hour)}${S.source !== "60d" ? "" : curvesFromLSL() ? " · from LSL" : S.lslMode === "from_lsl" ? " · as ERCOT prices them (no LSL data for this day yet)" : " · as ERCOT prices them"}` : "";
   renderLegend();
   drawCurves();
   drawDay();
@@ -235,7 +258,7 @@ function render() {
 
 // the address bar carries the view, so a copied link reopens this exact day, hour and settings
 const NUM_KEYS = new Set(["threshold", "xMin", "xMax", "osMin", "osMax"]);
-const VIEW_KEYS = { loc: "location", xr: "xrange", xmin: "xMin", xmax: "xMax", osmin: "osMin", osmax: "osMax", mode: "mode", axes: "axes", ver: "version", thr: "threshold", os: "osView", tt: "ttView", osu: "osUnit", osm: "osSmooth" };
+const VIEW_KEYS = { loc: "location", xr: "xrange", xmin: "xMin", xmax: "xMax", osmin: "osMin", osmax: "osMax", mode: "mode", axes: "axes", lsl: "lslMode", ver: "version", thr: "threshold", os: "osView", tt: "ttView", osu: "osUnit", osm: "osSmooth" };
 // price limits go in the link only when they are in use
 const HIDE_KEY = { xMin: () => S.xrange !== "custom", xMax: () => S.xrange !== "custom",
   osMin: () => S.osMin === OS_DEFAULT[0] && S.osMax === OS_DEFAULT[1], osMax: () => S.osMin === OS_DEFAULT[0] && S.osMax === OS_DEFAULT[1] };
@@ -280,8 +303,7 @@ function drawCurves() {
 
   const visible = seriesList().filter((s) => !S.hidden.has(s.id));
   const rows = visible.map((s) => {
-    const c = seriesCurves(S.day, s, S.version);
-    const r = c && c[h];
+    const r = chartCurve(s, h);
     if (!r) return null;
     let vals = idx.map((i) => r[i] ?? 0);
     if (S.mode === "share") {
@@ -346,30 +368,20 @@ function drawCurves() {
   const hp = hourPrice(S.prices, h);
   const priceLayer = svg.append("g");
 
-  // minimum output (LSL) of the online units shown: the part of the curves that keeps running
-  // however low the price goes and never sets dispatch.  Stacked: one band from 0 to the total.
-  // Lines: a dashed level per technology, the lower part of each curve up to it is minimum output.
-  const lslRule = (v, cls, color) => {
-    const l = priceLayer.append("line").attr("class", cls);
-    if (color) l.attr("stroke", css(color));
-    return flip ? l.attr("x1", V(v)).attr("x2", V(v)).attr("y1", m.t).attr("y2", H - m.b)
-      : l.attr("x1", m.l).attr("x2", w - m.r).attr("y1", V(v)).attr("y2", V(v));
-  };
+  // stacked view: the minimum output (LSL) of the online units shown as one band from zero, the
+  // part of the stack that keeps running however low the price goes and never sets dispatch
   if (S.mode === "stack") {
     const lsl = d3.sum(rows, (r) => seriesLSL(r.s, h) || 0);
     if (lsl > 0 && lsl <= vDom[1]) {
       if (flip) priceLayer.append("rect").attr("class", "lsl-band").attr("x", V(0)).attr("width", Math.max(1, V(lsl) - V(0))).attr("y", m.t).attr("height", H - m.b - m.t);
       else priceLayer.append("rect").attr("class", "lsl-band").attr("x", m.l).attr("width", w - m.l - m.r).attr("y", V(lsl)).attr("height", Math.max(1, V(0) - V(lsl)));
-      lslRule(lsl, "lsl-rule");
+      const l = priceLayer.append("line").attr("class", "lsl-rule");
+      if (flip) l.attr("x1", V(lsl)).attr("x2", V(lsl)).attr("y1", m.t).attr("y2", H - m.b);
+      else l.attr("x1", m.l).attr("x2", w - m.r).attr("y1", V(lsl)).attr("y2", V(lsl));
       const txt = `Minimum output (LSL) of the online units shown: ${fmtMW(lsl)} MW`;
       if (flip) priceLayer.append("text").attr("class", "lsl-label").attr("x", V(lsl) + 5).attr("y", H - m.b - 6).text(txt);
       else priceLayer.append("text").attr("class", "lsl-label").attr("x", m.l + 6).attr("y", V(lsl) - 5).text(txt);
     }
-  } else if (S.mode === "lines") {
-    const levels = rows.map((r) => ({ s: r.s, lsl: seriesLSL(r.s, h) })).filter((d) => d.lsl > 0.01 * vDom[1] && d.lsl <= vDom[1]);
-    levels.forEach((d) => lslRule(d.lsl, "lsl-rule lsl-series", d.s.color));
-    if (levels.length) priceLayer.append("text").attr("class", "lsl-label").attr("x", flip ? w - m.r - 4 : m.l + 6).attr("y", flip ? H - m.b - 6 : m.t + 12)
-      .attr("text-anchor", flip ? "end" : "start").text("dashed: minimum output (LSL) of each technology's online units");
   }
 
   if (stacked) {
@@ -432,7 +444,7 @@ function drawCurves() {
         (withLSL ? `<tr><th></th><th></th><th class="n">Offered</th><th class="n">of which LSL</th></tr>` : "") +
         lines.map(([s, v, l]) => `<tr><td><span class="sw ${s.id === "clr" ? "sw-line" : ""}" style="${s.id === "clr" ? "" : `background:var(${s.color})`}"></span></td><td>${s.label}</td><td class="n">${fmtMW(v)}${unit}</td>${lslCell(l)}</tr>`).join("");
       if (S.mode !== "share" && rows.length > 1) html += `<tr><td></td><td><b>Total supply</b></td><td class="n"><b>${fmtMW(d3.sum(rows, (r) => r.vals[j]))} MW</b></td>${lslCell(withLSL ? d3.sum(lines, (l) => l[2] || 0) : null)}</tr>`;
-      if (withLSL) html += `</table><p class="tip-body">LSL is the minimum output of the online units: it runs at any price, so the MW SCED can move by price is what is offered above it.</p><table>`;
+      if (withLSL) html += `</table><p class="tip-body">LSL is the minimum output of the online units: it runs at any price, so the MW SCED can move by price is what is offered above it.${curvesFromLSL() ? " The curves start at LSL and rise with the offers above it." : ""}</p><table>`;
       showTip(ev, html + "</table>");
     })
     .on("pointerleave", () => { cross.style("display", "none"); hideTip(); });
@@ -1221,6 +1233,8 @@ async function boot() {
   syncOs();
   bindSeg("mode", "mode");
   bindSeg("axes", "axes");
+  if (!["from_lsl", "ercot"].includes(S.lslMode)) S.lslMode = "from_lsl";
+  setSeg("lsl-mode", S.lslMode); bindSeg("lsl-mode", "lslMode");
   setSeg("os-view", S.osView); setSeg("os-unit", S.osUnit);
   bindSeg("os-view", "osView", drawOfferStack);
   setSeg("tt-view", S.ttView); bindSeg("tt-view", "ttView", drawTechTable);
