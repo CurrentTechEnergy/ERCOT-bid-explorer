@@ -78,10 +78,14 @@ function gridIndex(price) {
   return best;
 }
 
-/** [24][G] array for a series (summing component keys), or null. */
-function seriesCurves(day, s, version) {
-  const block = day[version === "submitted" && S.source === "60d" ? "submitted" : "curves"];
-  const parts = s.keys.map((k) => block && block[k]).filter(Boolean);
+/** [24][G] array for a series (summing component keys), or null.  With `dispatchable`, a 60-day
+ * day that has the block (each unit's minimum output taken out, pipeline/dispatchable.py) gives
+ * that version of the curve; technologies the block leaves out (wind, solar, storage) and days
+ * without it fall back to the whole curve. */
+function seriesCurves(day, s, version, dispatchable) {
+  const key = version === "submitted" && S.source === "60d" ? "submitted" : "curves";
+  const block = day[key], disp = dispatchable && S.source === "60d" && day.dispatchable && day.dispatchable[key];
+  const parts = s.keys.map((k) => (disp && disp[k]) || (block && block[k])).filter(Boolean);
   if (!parts.length) return null;
   return parts[0].map((row, h) => row == null ? null : row.map((v, i) =>
     parts.reduce((a, p) => a + ((p[h] && p[h][i]) || 0), 0)));
@@ -95,6 +99,19 @@ function summarySeries(entry, s) {
   if (!parts.length) return null;
   return parts[0].map((row, h) => row.map((v, i) =>
     parts.reduce((a, p) => (p[h][i] == null ? a : a + p[h][i]), 0)));
+}
+
+/** Whether the loaded day carries dispatchable curves (minimum output taken out). */
+function hasDispatchable() { return S.source === "60d" && !!(S.day && S.day.dispatchable); }
+/** Short note on what the marginal charts count: MW above LSL, or whole curves where the day lacks the block. */
+function dispNote() {
+  return hasDispatchable() ? "MW above minimum output (LSL)" : S.source === "60d" ? "minimum output included: this day has not been reprocessed yet" : "minimum output included: the 2-day report has no unit limits";
+}
+/** Minimum output (LSL) online in hour h for a series, from the 60-day technology stats (null without them). */
+function seriesLSL(s, h) {
+  if (S.source !== "60d" || !S.day || !S.day.stats || s.id === "storage") return null;
+  const j = S.day.stat_names.indexOf("lsl");
+  return j < 0 ? null : d3.sum(s.keys, (k) => (S.day.stats[k] && S.day.stats[k][h] && S.day.stats[k][h][j]) || 0);
 }
 
 function hourPrice(prices, h) {
@@ -329,6 +346,32 @@ function drawCurves() {
   const hp = hourPrice(S.prices, h);
   const priceLayer = svg.append("g");
 
+  // minimum output (LSL) of the online units shown: the part of the curves that keeps running
+  // however low the price goes and never sets dispatch.  Stacked: one band from 0 to the total.
+  // Lines: a dashed level per technology, the lower part of each curve up to it is minimum output.
+  const lslRule = (v, cls, color) => {
+    const l = priceLayer.append("line").attr("class", cls);
+    if (color) l.attr("stroke", css(color));
+    return flip ? l.attr("x1", V(v)).attr("x2", V(v)).attr("y1", m.t).attr("y2", H - m.b)
+      : l.attr("x1", m.l).attr("x2", w - m.r).attr("y1", V(v)).attr("y2", V(v));
+  };
+  if (S.mode === "stack") {
+    const lsl = d3.sum(rows, (r) => seriesLSL(r.s, h) || 0);
+    if (lsl > 0 && lsl <= vDom[1]) {
+      if (flip) priceLayer.append("rect").attr("class", "lsl-band").attr("x", V(0)).attr("width", Math.max(1, V(lsl) - V(0))).attr("y", m.t).attr("height", H - m.b - m.t);
+      else priceLayer.append("rect").attr("class", "lsl-band").attr("x", m.l).attr("width", w - m.l - m.r).attr("y", V(lsl)).attr("height", Math.max(1, V(0) - V(lsl)));
+      lslRule(lsl, "lsl-rule");
+      const txt = `Minimum output (LSL) of the online units shown: ${fmtMW(lsl)} MW`;
+      if (flip) priceLayer.append("text").attr("class", "lsl-label").attr("x", V(lsl) + 5).attr("y", H - m.b - 6).text(txt);
+      else priceLayer.append("text").attr("class", "lsl-label").attr("x", m.l + 6).attr("y", V(lsl) - 5).text(txt);
+    }
+  } else if (S.mode === "lines") {
+    const levels = rows.map((r) => ({ s: r.s, lsl: seriesLSL(r.s, h) })).filter((d) => d.lsl > 0.01 * vDom[1] && d.lsl <= vDom[1]);
+    levels.forEach((d) => lslRule(d.lsl, "lsl-rule lsl-series", d.s.color));
+    if (levels.length) priceLayer.append("text").attr("class", "lsl-label").attr("x", flip ? w - m.r - 4 : m.l + 6).attr("y", flip ? H - m.b - 6 : m.t + 12)
+      .attr("text-anchor", flip ? "end" : "start").text("dashed: minimum output (LSL) of each technology's online units");
+  }
+
   if (stacked) {
     const area = flip
       ? d3.area().y((d) => P(d.data.p)).x0((d) => V(d[0])).x1((d) => V(d[1])).curve(d3.curveStepBefore)
@@ -382,10 +425,14 @@ function drawCurves() {
       else cross.attr("x1", P(prices[j])).attr("x2", P(prices[j])).attr("y1", m.t).attr("y2", H - m.b);
       cross.style("display", null);
       const unit = S.mode === "share" ? "%" : " MW";
-      const lines = rows.map((r) => [r.s, r.vals[j]]).concat(demand ? [[demand.s, demand.vals[j]]] : []);
+      const lines = rows.map((r) => [r.s, r.vals[j], S.mode === "share" ? null : seriesLSL(r.s, h)]).concat(demand ? [[demand.s, demand.vals[j], null]] : []);
+      const withLSL = lines.some((l) => l[2] != null);
+      const lslCell = (v) => (withLSL ? `<td class="n muted">${v == null ? "" : fmtMW(v)}</td>` : "");
       let html = `<h4>At or below ${fmtPrice0(prices[j])}/MWh</h4><table>` +
-        lines.map(([s, v]) => `<tr><td><span class="sw ${s.id === "clr" ? "sw-line" : ""}" style="${s.id === "clr" ? "" : `background:var(${s.color})`}"></span></td><td>${s.label}</td><td class="n">${fmtMW(v)}${unit}</td></tr>`).join("");
-      if (S.mode !== "share" && rows.length > 1) html += `<tr><td></td><td><b>Total supply</b></td><td class="n"><b>${fmtMW(d3.sum(rows, (r) => r.vals[j]))} MW</b></td></tr>`;
+        (withLSL ? `<tr><th></th><th></th><th class="n">Offered</th><th class="n">of which LSL</th></tr>` : "") +
+        lines.map(([s, v, l]) => `<tr><td><span class="sw ${s.id === "clr" ? "sw-line" : ""}" style="${s.id === "clr" ? "" : `background:var(${s.color})`}"></span></td><td>${s.label}</td><td class="n">${fmtMW(v)}${unit}</td>${lslCell(l)}</tr>`).join("");
+      if (S.mode !== "share" && rows.length > 1) html += `<tr><td></td><td><b>Total supply</b></td><td class="n"><b>${fmtMW(d3.sum(rows, (r) => r.vals[j]))} MW</b></td>${lslCell(withLSL ? d3.sum(lines, (l) => l[2] || 0) : null)}</tr>`;
+      if (withLSL) html += `</table><p class="tip-body">LSL is the minimum output of the online units: it runs at any price, so the MW SCED can move by price is what is offered above it.</p><table>`;
       showTip(ev, html + "</table>");
     })
     .on("pointerleave", () => { cross.style("display", "none"); hideTip(); });
@@ -666,7 +713,7 @@ function marginalRows(h, hp) {
   const [lo, hi] = priceWindow(hp);
   const iHi = d3.bisectRight(grid, hi) - 1, iLo = d3.bisectLeft(grid, lo) - 1;   // last point <= hi, last point < lo
   const rows = marginalSeries(seriesList()).map((s) => {
-    const c = seriesCurves(S.day, s, S.version), r = c && c[h];
+    const c = seriesCurves(S.day, s, S.version, true), r = c && c[h];
     if (!r) return null;
     const at = (i) => (i < 0 ? (s.keys[0] === "storage" ? r[0] ?? 0 : 0) : r[i] ?? 0);
     const a = at(iLo), b = at(iHi);
@@ -686,7 +733,7 @@ function drawMarginal() {
   const el = $("marg-chart"), del = $("marg-day"), tel = $("marg-table");
   const h = S.hour;
   const pname = S.location === "lambda" ? "system lambda" : S.location;
-  $("marg-title-note").textContent = S.date ? `${S.date} · ${heLabel(h)} · ${S.location === "lambda" ? "System lambda" : S.location}` : "";
+  $("marg-title-note").textContent = S.date ? `${S.date} · ${heLabel(h)} · ${S.location === "lambda" ? "System lambda" : S.location} · ${dispNote()}` : "";
   const clear = (msg) => { emptyMsg(el, msg); del.innerHTML = ""; tel.innerHTML = ""; };
   if (!S.day) return clear("No data for this day.");
   if (!S.prices) return clear("No cleared price loaded for this day yet.");
@@ -766,7 +813,8 @@ function drawMarginal() {
 // Each technology's share of the MW offered around each price: who would move next if price
 // landed there. Battery charging bids are demand, so they are kept out of the supply shares and
 // drawn below the line as a share of supply plus charging at that price. MW at the -$250 floor
-// (no-offer units) are left out; minimum output ERCOT prices at -$20/-$50 is included.
+// (no-offer units) are left out. Minimum output (LSL) is left out too where the day has the
+// dispatchable curves; on days without them it shows as a spike at -$20/-$50.
 const OS_DEFAULT = [-100, 1000];
 function drawOfferStack() {
   const el = $("os-chart");
@@ -774,14 +822,14 @@ function drawOfferStack() {
   const chgI = list.findIndex((s) => s.part === "chg");
   const supI = list.map((s, j) => j).filter((j) => j !== chgI);
   $("os-legend").innerHTML = list.map((s) => `<span><span class="sw" style="background:var(${s.color})"></span>${s.label}</span>`).join("");
-  $("os-title-note").textContent = S.date ? `${S.date} · ${S.osView === "hour" ? heLabel(S.hour) : "average of the day's hours"}` : "";
+  $("os-title-note").textContent = S.date ? `${S.date} · ${S.osView === "hour" ? heLabel(S.hour) : "average of the day's hours"} · ${dispNote()}` : "";
   if (!S.day) return emptyMsg(el, "No data for this day.");
   const hours = S.osView === "hour" ? [S.hour].filter((h) => S.day.runs[h]) : d3.range(24).filter((h) => S.day.runs[h]);
   if (!hours.length) return emptyMsg(el, `No SCED runs recorded in ${heLabel(S.hour)}.`);
   const G = S.index.grid;
   // MW added between consecutive grid prices, per series, averaged over the hours
   const inc = list.map((s) => {
-    const c = seriesCurves(S.day, s, S.version);
+    const c = seriesCurves(S.day, s, S.version, true);
     return G.map((g, i) => {
       if (!c || i === 0 || g <= -249) return 0;
       let v = 0;
@@ -975,6 +1023,7 @@ const TECH_COLS = [
   ["At floor, as used (MW)", "MW in the curve SCED dispatched against that is priced at the −$250 floor (or −$249.99). In that curve ERCOT fills in prices a unit didn't offer. Units that offer have the MW below their first offered point, usually minimum output, at −$20 (−$50 for some units), so it does not count here; that is the large step at −$20 in the thermal curves. Units with no offer curve sit at −$250 with the rest of their output schedule at −$249.99 if they are nuclear or hydro, so all of it counts here, and at −$20 or −$50 otherwise. SCED treats floor supply as a price-taker."],
   ["Floor / output", "At-floor MW as a share of actual output: how much of the technology's generation SCED could not price off the system."],
   ["≤ $0, as used (MW)", "MW offered at or below $0 in the curve SCED used. This supply keeps running when prices go negative."],
+  ["of which above LSL (MW)", "The part of the ≤ $0 as-used MW that sits above the units' minimum output (LSL): what SCED could actually back down by price. The rest is minimum output, which runs at any price unless the unit shuts down. Blank on days processed before the dispatchable curves were added."],
   ["≤ $0, as submitted (MW)", "MW the generators themselves priced at or below $0 in the offer curves they submitted. The gap between this and the as-used column is supply placed low by ERCOT's curve extensions (minimum output and units without offers) rather than by the generator's own price."],
   ["No offer curve (MW)", "Available capacity (HSL, in MW) of online units running without an offer curve. SCED holds these at the MW their QSE scheduled (the output schedule), against a stand-in curve: −$250/−$249.99 for nuclear and hydro, −$20 or −$50 for others. Nuclear units typically work this way."],
 ];
@@ -1016,6 +1065,11 @@ function drawTechTable() {
     names.forEach((k) => (r[k] = avg(k)));
     return r;
   });
+  const i0 = gridIndex(0), disp = hasDispatchable() ? S.day.dispatchable.curves : null;
+  rows.forEach((r) => {     // technologies the block leaves out (wind, solar) have no minimum output to take out
+    const at0 = (k, h) => { const c = (disp[k] || S.day.curves[k] || [])[h]; return (c && c[i0]) || 0; };
+    r.le0_disp = !disp || r.s.id === "storage" ? null : d3.mean(hours, (h) => d3.sum(r.s.keys, (k) => at0(k, h)));
+  });
   const maxShare = d3.max(rows, (r) => (r.output > 1 ? r.floor_sced / r.output : 0)) || 1;
   const head = TECH_COLS.map(([label, tip], i) =>
     `<th class="${i ? "" : "t"} has-tip" tabindex="0" data-tip-title="${esc(label)}" data-tip="${esc(tip)}">${label}</th>`);
@@ -1027,9 +1081,9 @@ function drawTechTable() {
       <td>${r.hsl > 1 && r.s.id !== "storage" ? fmtPct(r.lsl / r.hsl) : "–"}</td><td>${fmtMW(r.output)}</td>
       <td>${fmtMW(r.floor_sced)}</td>
       <td>${share == null || r.s.id === "storage" ? "–" : fmtPct(share) + `<span class="bar-cell" style="width:${Math.round(40 * share / maxShare)}px"></span>`}</td>
-      <td>${fmtMW(r.le0_sced)}</td><td>${fmtMW(r.le0_submitted)}</td><td>${fmtMW(r.no_offer_hsl)}</td></tr>`;
+      <td>${fmtMW(r.le0_sced)}</td><td>${r.le0_disp == null ? "–" : fmtMW(r.le0_disp)}</td><td>${fmtMW(r.le0_submitted)}</td><td>${fmtMW(r.no_offer_hsl)}</td></tr>`;
   });
-  el.innerHTML = html + `</tbody></table><p class="note">MW are ${S.ttView === "hour" ? `averages over the SCED runs in ${heLabel(S.hour)}` : "averages over the day's hours"}. Hover a column heading or a technology name for an explanation.</p>`;
+  el.innerHTML = html + `</tbody></table><p class="note">MW are ${S.ttView === "hour" ? `averages over the SCED runs in ${heLabel(S.hour)}` : "averages over the day's hours"}. Hover a column heading or a technology name for an explanation.${disp ? "" : " \"Of which above LSL\" is blank until this day is reprocessed with the dispatchable curves."}</p>`;
 }
 
 // ---- unit table (60-day) -----------------------------------------------------

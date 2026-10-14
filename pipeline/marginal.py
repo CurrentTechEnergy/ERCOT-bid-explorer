@@ -3,6 +3,11 @@ the hour's cleared system lambda range (widened to at least ±$1 around the aver
 
 Built from the day files and price files already in data/, so it needs no downloads.
 The dashboard's "Marginality by price" chart groups these hours by price.
+
+60-day days use the "dispatchable" curves (each unit's minimum output taken out, see
+pipeline/dispatchable.py) when the day file has them, so minimum output that ERCOT prices at
+-$20/-$50 does not read as marginal in hours when lambda sits there.  The output notes how
+many days still fall back to the full curves ("full_curve_days").
 """
 import numpy as np
 
@@ -32,7 +37,15 @@ def _mw_at(row, i, tech):
     return row[i] or 0.0
 
 
+def day_curves(day: dict) -> tuple:
+    """(curves by technology, True when they are the dispatchable ones).  The dispatchable block
+    covers only the technologies where it differs from the main curves."""
+    d = (day.get("dispatchable") or {}).get("curves")
+    return ({**day["curves"], **d}, True) if d else (day["curves"], False)
+
+
 def hour_rows(day: dict, prices: dict, techs) -> list:
+    curves, _ = day_curves(day)
     lam = prices.get("lambda") or {}
     mean, lo_, hi_ = lam.get("hourly_mean"), lam.get("hourly_min"), lam.get("hourly_max")
     if not mean:
@@ -48,7 +61,7 @@ def hour_rows(day: dict, prices: dict, techs) -> list:
         i_lo = int(np.searchsorted(PRICE_GRID, lo, side="left")) - 1    # last point < lo
         mw = []
         for t in techs:
-            row = (day["curves"].get(t) or [None] * 24)[h]
+            row = (curves.get(t) or [None] * 24)[h]
             a, b = (0.0, 0.0) if row is None else (_mw_at(row, i_lo, t), _mw_at(row, i_hi, t))
             if t == "storage":
                 mw += [round(max(0.0, min(b, 0) - min(a, 0)), 1), round(max(0.0, max(b, 0) - max(a, 0)), 1)]
@@ -61,12 +74,16 @@ def hour_rows(day: dict, prices: dict, techs) -> list:
 def build_marginal(index: dict) -> None:
     have_prices = set(index["days"].get("prices", []))
     for source, techs in TECHS.items():
-        rows = []
+        rows, full_days = [], []
         for date in sorted(set(index["days"].get(source, [])) & have_prices):
             day = read_json_gz(DATA_DIR / source / f"{date}.json.gz")
             prices = read_json_gz(DATA_DIR / "prices" / f"{date}.json.gz")
             if day and prices:
                 rows += hour_rows(day, prices, techs)
-        write_json_gz(DATA_DIR / f"marginal_{source}.json.gz",
-                      {"columns": ["date", "hour", "lambda"] + columns(techs), "rows": rows})
-        print(f"marginal_{source}: {len(rows)} hours")
+                if source == "60d" and not day_curves(day)[1]:
+                    full_days.append(date)
+        out = {"columns": ["date", "hour", "lambda"] + columns(techs), "rows": rows}
+        if source == "60d":
+            out["full_curve_days"] = full_days
+        write_json_gz(DATA_DIR / f"marginal_{source}.json.gz", out)
+        print(f"marginal_{source}: {len(rows)} hours" + (f", {len(full_days)} day(s) on full curves" if full_days else ""))

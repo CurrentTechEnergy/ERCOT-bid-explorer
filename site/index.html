@@ -64,7 +64,7 @@
     <div class="panel-head">
       <div>
         <h2>Offer curves <span class="h-note" id="curve-title-note"></span></h2>
-        <p class="note">MW offered at or below each price, averaged over the SCED runs in the hour. The line across the chart marks the cleared price for the hour; the shaded band is its range in that hour.</p>
+        <p class="note">MW offered at or below each price, averaged over the SCED runs in the hour. The line across the chart marks the cleared price for the hour; the shaded band is its range in that hour. With the 60-day report, minimum output (LSL) of the online units is marked: a dashed level per technology in the Lines view, a grey band from zero in the Stacked view. That block runs however low the price goes (ERCOT prices it at −$20, or −$50 for some units, in the curve SCED uses), so only the MW above it can move by price; hover for the split.</p>
       </div>
       <div class="panel-tools">
         <div class="seg seg-sm" id="xrange" role="radiogroup" aria-label="Price range">
@@ -108,7 +108,7 @@
     <div class="panel-head">
       <div>
         <h2>Marginal supply <span class="h-note" id="marg-title-note"></span></h2>
-        <p class="note">Who is offering at the cleared price: MW each technology offers between the hour's lowest and highest cleared price (at least ±$1 around the average), from the hourly offer curves (it follows the Curve and Price selections). Supply shares add to 100% of supply. Batteries that stop charging as price rises are demand, so they are drawn on the other side of zero as a share of supply plus charging in the window. It shows who stands at the margin, not which unit set each SCED price; with congestion, units can set price locally at prices away from system lambda.</p>
+        <p class="note">Who is offering at the cleared price: MW each technology offers between the hour's lowest and highest cleared price (at least ±$1 around the average), from the hourly offer curves (it follows the Curve and Price selections), with each unit's minimum output (LSL) taken out, since SCED cannot move a unit below it. Supply shares add to 100% of supply. Batteries that stop charging as price rises are demand, so they are drawn on the other side of zero as a share of supply plus charging in the window. It shows who stands at the margin, not which unit set each SCED price; with congestion, units can set price locally at prices away from system lambda.</p>
       </div>
     </div>
     <div class="chart" id="marg-chart"></div>
@@ -120,7 +120,7 @@
     <div class="panel-head">
       <div>
         <h2>Marginal offer stack by price <span class="h-note" id="os-title-note"></span></h2>
-        <p class="note">Who would move next if price landed at each level: each technology's share of the MW offered around that price, read off the day's offer curves (the slope of the bid stack). Battery charging bids are demand, so they sit below the line as a share of supply plus charging at that price. MW at the −$250 floor (units with no offer curve, mostly nuclear and hydro) are left out. Minimum output that ERCOT prices at −$20 (−$50 for some units) is included, which is the spike at −$20. Ticks along the top mark each hour's system lambda. The same view across all days, by settled price, is on the <a href="trends.html">Trends</a> page.</p>
+        <p class="note">Who would move next if price landed at each level: each technology's share of the MW offered around that price, read off the day's offer curves (the slope of the bid stack). Battery charging bids are demand, so they sit below the line as a share of supply plus charging at that price. MW at the −$250 floor (units with no offer curve, mostly nuclear and hydro) are left out, and so is each unit's minimum output (LSL), which SCED cannot move: on days processed before that was done it still shows as a spike at −$20 (−$50 for some units). Ticks along the top mark each hour's system lambda. The same view across all days, by settled price, is on the <a href="trends.html">Trends</a> page.</p>
       </div>
       <div class="panel-tools">
         <div class="seg seg-sm" id="os-view" role="radiogroup" aria-label="Hours">

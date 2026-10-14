@@ -7,6 +7,8 @@ Two curve versions are kept for every unit:
               non-competitive constraint binds: what SCED actually dispatched against.
               Files without SCED2 columns fall back to SCED1.
   submitted - "Submitted TPO" curve: the price/quantity pairs the QSE submitted
+The day file also carries a "dispatchable" block: both curves with each online unit's LSL
+taken out, i.e. only the MW SCED can move by price (pipeline/dispatchable.py).
 Both are capped at the unit's HSL for that SCED run (storage: limited to [LSL, HSL]).
 
 Also builds the full-fidelity per-unit day file (status, limits and submitted curve of every
@@ -24,6 +26,7 @@ import pandas as pd
 
 from .config import PRICE_GRID, SIXTY_DAY_TECHS, TECH_OF_TYPE
 from .curves import accumulate, mw_at_prices, parse_sced_time
+from .dispatchable import above_lsl, block_from_arrays
 from .store import iter_csvs, thresholds_from_curves, _round
 from .units import build_unit_day
 from .log import warn
@@ -99,6 +102,8 @@ class _Accumulator:
         T, G = len(SIXTY_DAY_TECHS), PRICE_GRID.size
         self.sced = np.zeros((T * 24, G))
         self.sub = np.zeros((T * 24, G))
+        self.dsced = np.zeros((T * 24, G))     # the same curves with each unit's LSL taken out
+        self.dsub = np.zeros((T * 24, G))      # (pipeline/dispatchable.py)
         self.stats = np.zeros((T * 24, len(STATS)))
         self.runs = {h: set() for h in range(24)}
         self.dates = []
@@ -152,6 +157,8 @@ class _Accumulator:
         key = tech * 24 + hour
         accumulate(self.sced, key, sced)
         accumulate(self.sub, key, sub)
+        accumulate(self.dsced, key, above_lsl(sced, lsl_eff, is_esr))
+        accumulate(self.dsub, key, above_lsl(sub, lsl_eff, is_esr))
         no_offer = online & np.isnan(df[t_mw[0]].astype(float).values) if t_mw else online
         has_os = "Output Schedule" in header
         os_raw = df["Output Schedule"].astype(float).values if has_os else np.full(len(df), np.nan)
@@ -218,6 +225,7 @@ class _Accumulator:
         div = np.tile(np.where(runs > 0, runs, np.nan), T)[:, None]
         sced = (self.sced / div).reshape(T, 24, -1)
         sub = (self.sub / div).reshape(T, 24, -1)
+        disp = {"curves": (self.dsced / div).reshape(T, 24, -1), "submitted": (self.dsub / div).reshape(T, 24, -1)}
         stats = (self.stats / div).reshape(T, 24, -1)
 
         units = pd.concat(self.unit_rows, ignore_index=True)
@@ -234,7 +242,7 @@ class _Accumulator:
             "avg_sub_price": g["first_sub_price"].mean(),
             "no_offer_share": g["no_offer"].mean(),
         }).reset_index()
-        return runs, sced, sub, stats, ut
+        return runs, sced, sub, disp, stats, ut
 
     def unit_day(self, date: str):
         """Per-unit COV day file (see pipeline/units.py) and its number of events."""
@@ -373,7 +381,7 @@ def parse_60day_zip(blob: bytes, chunksize: int = 40000):
         raise ValueError("No generation/ESR resource file found in 60-day zip")
 
     date = max(set(acc.dates), key=acc.dates.count)
-    runs, sced, sub, stats, ut = acc.finish()
+    runs, sced, sub, disp, stats, ut = acc.finish()
     if acc.unknown_types:
         warn(f"Unmapped resource types grouped as 'other': {sorted(acc.unknown_types)}")
 
@@ -387,6 +395,8 @@ def parse_60day_zip(blob: bytes, chunksize: int = 40000):
         "stat_names": STATS,
         "curves": {tk: [_round(row) for row in sced[i]] for i, tk in enumerate(SIXTY_DAY_TECHS)},
         "submitted": {tk: [_round(row) for row in sub[i]] for i, tk in enumerate(SIXTY_DAY_TECHS)},
+        # the same two curves with each online unit's LSL taken out (pipeline/dispatchable.py)
+        "dispatchable": block_from_arrays(disp),
         "stats": {tk: [[r1(x) for x in row] for row in stats[i]] for i, tk in enumerate(SIXTY_DAY_TECHS)},
         "units": {
             "columns": list(ut.columns),

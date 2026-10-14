@@ -493,7 +493,7 @@ function drawPriceQuantiles() {
     { label: "50% (median MW)", color: s.color, values: hours(q.p50), width: 2.5 },
     { label: "25% of offered MW at or below", color: s.color, values: hours(q.p25), dash: "2 3", width: 1.5 },
   ], { dates: pq.dates, hourly: true, H: 280, yScale: "symlog", yTicks: [-250, -50, 0, 10, 25, 50, 100, 250, 1000, 5000], yFmt: fmtPrice0, tipFmt: fmtPrice,
-    title: `${s.label}: offer price at which 25%, 50% and 90% of submitted MW is available ($/MWh)` });
+    title: `${s.label}: offer price at which 25%, 50% and 90% of submitted MW above LSL is available ($/MWh)${pq.full && pq.full.length ? ` · ${pq.full.length} day${pq.full.length === 1 ? "" : "s"} not yet reprocessed use the whole curves` : ""}` });
 }
 
 // capacity by status from the intraday file (pipeline/intraday.py status_group)
@@ -601,7 +601,9 @@ async function drawMarginal() {
     const from = d3.timeFormat("%Y-%m-%d")(d3.timeDay.offset(parseDate(last), -(+S.mDays - 1)));
     rows = rows.filter((r) => r[0] >= from);
   }
-  $("mbp-title-note").textContent = `${src === "60d" ? "60-day" : "2-day"} data · ${rows.length ? rows[0][0] : ""} to ${last} · ${rows.length.toLocaleString()} hours`;
+  const full = src === "60d" ? (data.full_curve_days || []).filter((d) => !rows.length || d >= rows[0][0]).length : 0;
+  $("mbp-title-note").textContent = `${src === "60d" ? "60-day" : "2-day"} data · ${rows.length ? rows[0][0] : ""} to ${last} · ${rows.length.toLocaleString()} hours` +
+    (src === "60d" ? (full ? ` · ${full} day${full === 1 ? "" : "s"} not yet reprocessed still include minimum output` : " · MW above minimum output (LSL)") : "");
   // per hour: supply MW per series, and charging MW that stops in the hour's price window
   const H = rows.map((r) => ({ p: r[2], v: list.map((s) => d3.sum(s.keys, (k) => r[ci[k]] || 0)), c: r[ci.storage_charging] || 0 }))
     .filter((h) => d3.sum(h.v) + h.c > 0).sort((a, b) => a.p - b.p);

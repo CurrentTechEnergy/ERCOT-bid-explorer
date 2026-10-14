@@ -29,6 +29,7 @@ from .units import UNIT_FORMAT
 from .parse_dam import parse_dam_zip, has_dam_gen
 from .parse_prices import NODE_FORMAT, build_price_day, node_prices, read_lambda, read_spp
 from .marginal import build_marginal
+from .dispatchable import build_dispatchable
 from .trends import build_trends
 from .intraday import build_intraday
 from .hourly_context import build_hourly_context
@@ -363,6 +364,7 @@ def main(argv=None):
                             if b"SettlementPointPrice" in c[1][:200]])
             dates = set(lam["date"]) | set(spp["date"])
             print("prices:", process_price_blobs(price_blobs, dates, index))
+        build_dispatchable(index)
         build_marginal(index)
         build_trends(index)
         build_intraday(index)
@@ -417,6 +419,7 @@ def main(argv=None):
         fetch_gas()
         fetch_hubs()
 
+    build_dispatchable(index)
     build_marginal(index)
     build_trends(index)
     build_intraday(index)

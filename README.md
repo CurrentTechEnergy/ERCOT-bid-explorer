@@ -28,7 +28,7 @@ All curves are stored as hourly averages of the SCED runs in each hour, on a pri
 
 Both versions are capped at each unit's high sustainable limit (HSL) for the SCED run, so wind and solar curves reflect available output, not nameplate. Storage curves run from charging (negative MW) to discharging.
 
-SCED can only move a unit between its LSL and HSL, so the part of a curve below minimum output never sets dispatch or price. The technology curves keep it (it is the MW that stays on at any price), but the unit-level offer metrics read the submitted curve from LSL up: the share offered at or below $0 is of the dispatchable range (HSL − LSL), and a unit's first offer price above $0 is the first submitted point at or above LSL. Many curves run from 0 MW at −$250 to the unit's price at HSL, which would otherwise count MW "at or below $0" by interpolation alone.
+SCED can only move a unit between its LSL and HSL, so the part of a curve below minimum output never sets dispatch or price. The technology curves keep it (it is the MW that stays on at any price), and each 60-day day file also carries a **dispatchable** version of both curves with every online unit's LSL taken out (`pipeline/dispatchable.py`; written by the parser for new days and filled in for history from the per-unit files, no download needed). The Day page's marginal supply and marginal offer stack, the Trends marginal supply by settled price and the thermal offer-price quantiles read that version, so minimum output that ERCOT prices at −$20 no longer shows as marginal; the Offer curves chart marks the LSL block instead. The unit-level offer metrics read the submitted curve from LSL up: the share offered at or below $0 is of the dispatchable range (HSL − LSL), and a unit's first offer price above $0 is the first submitted point at or above LSL. Many curves run from 0 MW at −$250 to the unit's price at HSL, which would otherwise count MW "at or below $0" by interpolation alone.
 
 ## How it updates
 
@@ -96,6 +96,7 @@ pipeline/
                    buys at, Waha or Houston Ship Channel (data/fuel_hubs.json.gz, no downloads)
   econ.py          per-unit day files + node prices + DAM awards and offers -> daily revenue and
                    offer-implied cost per unit (data/econ/<tech>.json.gz, no downloads)
+  dispatchable.py  per-unit day files -> "dispatchable" curves (LSL taken out) in the 60-day day files (no downloads)
   marginal.py      day files + prices -> hourly marginal MW by technology (no downloads)
   dam_prices.py    NP4-190-CD (or the yearly NP4-180-ER workbook) -> day-ahead hub and load zone prices
                    (data/dam_hubs.json.gz)
