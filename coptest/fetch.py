@@ -1,0 +1,75 @@
+"""Throwaway test (branch cop-test only): fetch two operating days of the 60-Day COP Adjustment
+Period Snapshot, the raw DAM generation resource file and the SCED ESR file, and commit them
+gzipped under coptest/out/ for offline analysis."""
+import datetime as dt, gzip, io, json, sys, zipfile
+sys.path.insert(0, ".")
+from pipeline.ercot_api import ErcotAPI
+
+DAYS = [dt.date(2026, 8, 5), dt.date(2026, 8, 12)]
+OUT = "coptest/out"
+api = ErcotAPI()
+log = {}
+
+
+def tag(d):            # 05-AUG-26 style used in 60-day file names
+    return d.strftime("%d-%b-%y").upper()
+
+
+def csvs(blob):
+    """(name, bytes) of every CSV in a zip, opening nested zips."""
+    z = zipfile.ZipFile(io.BytesIO(blob))
+    for n in z.namelist():
+        b = z.read(n)
+        if n.lower().endswith(".zip"):
+            yield from csvs(b)
+        elif n.lower().endswith(".csv"):
+            yield n, b
+
+
+def save(name, b):
+    import os
+    os.makedirs(OUT, exist_ok=True)
+    gz = gzip.compress(b)
+    if len(gz) > 90e6:
+        lines = b.split(b"\n")
+        gz = gzip.compress(b"\n".join(lines[:300000]))
+        log.setdefault("truncated", []).append(name)
+    open(f"{OUT}/{name}.gz", "wb").write(gz)
+    log.setdefault("saved", []).append([name, len(b), len(gz), b.split(b"\n", 1)[0].decode(errors="replace")])
+
+
+def fetch(emil, want, lag=60):
+    """Download docs of report `emil` posted near each day + lag; keep CSVs whose name passes want()."""
+    for d in DAYS:
+        post = d + dt.timedelta(days=lag)
+        try:
+            docs = api.list_archives(emil, dt.datetime.combine(post - dt.timedelta(days=2), dt.time()),
+                                     dt.datetime.combine(post + dt.timedelta(days=3), dt.time()))
+        except Exception as e:
+            log.setdefault("errors", []).append([emil, str(d), f"{type(e).__name__}: {e}"[:300]])
+            continue
+        log.setdefault("listing", {})[f"{emil} {d}"] = [[x.get("docId"), x.get("friendlyName"), x.get("postDatetime")] for x in docs][:40]
+        for doc in docs:
+            name = (doc.get("friendlyName") or "") + " " + json.dumps(doc.get("_links", {}))
+            if tag(d) not in name.upper() and len(docs) > 1:
+                continue
+            blob = api.download(emil, doc["docId"])
+            if blob[:2] != b"PK":
+                log.setdefault("errors", []).append([emil, str(d), "not a zip", blob[:200].decode(errors="replace")])
+                continue
+            for n, b in csvs(blob):
+                log.setdefault("files", []).append([emil, str(d), n, len(b)])
+                if want(n):
+                    save(n, b)
+            break
+
+
+fetch("np1-301", lambda n: True)                                         # COP snapshot (EMIL from the product page)
+if not any("cop" in f[2].lower() for f in log.get("files", [])):
+    fetch("np3-991-er", lambda n: True)                                  # fallback guess
+fetch("np3-966-er", lambda n: n.lower().startswith("60d_dam_gen_resource_data"))
+fetch("np3-965-er", lambda n: n.lower().startswith("60d_esr_data_in_sced"))
+import os
+os.makedirs(OUT, exist_ok=True)
+json.dump(log, open(f"{OUT}/log.json", "w"), indent=1)
+print(json.dumps({k: v for k, v in log.items() if k != "listing"}, indent=1)[:5000])
