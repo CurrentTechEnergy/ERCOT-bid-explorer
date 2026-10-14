@@ -9,8 +9,11 @@ Writes data/curve_trends.json.gz for the Trends page:
          {"dates": [...], "src": ["2d"|"60d", ...], "bands": [...],
           "wind": {band: [share per day]}, "solar": {...}}
   "pq":  price at which 25%, 50% and 90% of each thermal technology's offered MW is
-         available, from the submitted 60-day curves, averaged over the day's hours.
-         {"dates": [...], "q": [0.25, 0.5, 0.9], tech: {"p25": [...], "p50": [...], "p90": [...]}}
+         available, from the submitted 60-day curves, averaged over the day's hours.  Read
+         from the dispatchable curves (MW above each unit's LSL, pipeline/dispatchable.py)
+         where the day has them, since minimum output never sets dispatch; "full" lists the
+         days that still use the whole curves.
+         {"dates": [...], "q": [0.25, 0.5, 0.9], "full": [...], tech: {"p25": [...], "p50": [...], "p90": [...]}}
   "curt": wind and solar curtailment: MW available (HSL, or HASL in the 2-day summary) minus
          the base point SCED sent, from the 60-day disclosure and from the 2-day reports
          (generation summary base points with the 2-day offer curves' summed HSL).
@@ -96,10 +99,15 @@ def build_curve_trends(index: dict) -> None:
                 rs[t][name].append(round(mw[name] / tot, 4) if tot > 0 else None)
 
     pq_dates = sorted(d60)
-    pq = {"dates": pq_dates, "q": QS, **{t: {f"p{int(q * 100)}": [] for q in QS} for t in PQ_TECHS}}
+    pq = {"dates": pq_dates, "q": QS, "full": [], **{t: {f"p{int(q * 100)}": [] for q in QS} for t in PQ_TECHS}}
     for d in pq_dates:
         day = read_json_gz(DATA_DIR / "60d" / f"{d}.json.gz") or {}
-        sub = day.get("submitted") or {}
+        sub = (day.get("dispatchable") or {}).get("submitted")
+        if sub:
+            sub = {**(day.get("submitted") or {}), **sub}
+        else:
+            pq["full"].append(d)
+            sub = day.get("submitted") or {}
         for t in PQ_TECHS:
             for q in QS:
                 pq[t][f"p{int(q * 100)}"].append(price_at_share(sub.get(t), q))
