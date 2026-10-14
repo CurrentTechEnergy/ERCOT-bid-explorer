@@ -50,6 +50,12 @@ Writes data/decisions.json.gz:
                      award share, verdict]]} for the latest day with node prices, or null
   predictions       {date: [[train, verdict, loss]]} every day scored so far
   scored            [[date, train, verdict, shut]] predictions for days whose decision is known
+  flags             shutdowns that break the unit's pattern, newest first: [[train, date, kind,
+                    loss, hours off, days since its previous shutdown (null if none in the
+                    data), award share]]; kind is "new" for a unit's first shutdown after
+                    NEW_DAYS or more days without one (with at least NEW_DAYS days of data
+                    before it) and "award" for a shutdown over a window a DAM award covered in
+                    full (award share at least AWARD_FULL)
 """
 import numpy as np
 
@@ -64,6 +70,8 @@ HALF = 0.5           # award share at which a day's window counts as covered
 COST_DAYS = 10       # how far back a unit's own DAM costs are carried
 MIN_DAYS = 15        # decision days before a unit gets a cutoff, ...
 MIN_EACH = 3         # ... with at least this many shutdowns and this many stays
+NEW_DAYS = 30        # days without a shutdown after which the next one is new behaviour
+AWARD_FULL = 0.9     # award share of the window above which a shutdown is flagged as despite an award
 PATH = DATA_DIR / "decisions.json.gz"
 NODES_PATH = DATA_DIR / "dam_nodes.json.gz"
 TECHS = [t for t in UNIT_TECHS if t != "nuclear"]
@@ -174,6 +182,22 @@ def _shutdown(st, k0):
         else:
             k += 1
     return best > 0, best
+
+
+def _shutdown_days(st, dates, si):
+    """Day indices on which a merged state starts an off spell of OUT_MIN_H hours or more."""
+    out, N, k = set(), len(st), 1
+    while k < N:
+        if st[k] == "0" and st[k - 1] in "ma":
+            j = k
+            while j < N and st[j] in "0o-":
+                j += 1
+            if j - k >= OUT_MIN_H:
+                out.add(k // 24)
+            k = j
+        else:
+            k += 1
+    return sorted(out)
 
 
 def _cutoff(days):
@@ -287,13 +311,30 @@ def build_decisions(index: dict) -> None:
         if out:
             predictions[nd] = [[r[0], r[8], r[3]] for r in out if r[8]]
             tomorrow = {"date": nd, "rows": out}
+    # shutdowns that break the pattern: the first after NEW_DAYS days without one, or one over a
+    # window a DAM award covered in full
+    flags = []
+    first_day = {key: min(si[r[1]] for r in rows if r[0] == key) for key in by_unit}
+    shut_days = {key: _shutdown_days(merged[key], sdates, si) for key in by_unit}
+    for r in rows:
+        key, d, loss, _, _, cov, shut, off_h = r
+        if not shut:
+            continue
+        i = si[d]
+        prev = [x for x in shut_days[key] if x < i]
+        since = i - prev[-1] if prev else None
+        new = (since is None or since >= NEW_DAYS) and i - first_day[key] >= NEW_DAYS
+        if new or cov >= AWARD_FULL:
+            flags.append([key, d, "new" if new else "award", loss, off_h, since, cov])
+    flags.sort(key=lambda f: f[1], reverse=True)
     known = {(r[0], r[1]): r[6] for r in rows}
     scored = [[d, key, v, known[(key, d)]] for d in sorted(predictions) for key, v, _ in predictions[d] if (key, d) in known]
     write_json_gz(PATH, {
         "dates": dates, "out_min_h": OUT_MIN_H, "award_lsl": AWARD_LSL, "cost_days": COST_DAYS,
         "min_days": MIN_DAYS, "min_each": MIN_EACH,
         "units": units, "days": rows, "tomorrow": tomorrow, "predictions": predictions, "scored": scored,
+        "new_days": NEW_DAYS, "award_full": AWARD_FULL, "flags": flags,
     })
     n_cut = sum(1 for u in units.values() if u[9] is not None)
-    print(f"decisions: {len(dates)} days, {len(rows)} unit-days, {len(units)} units, {n_cut} with a cutoff"
+    print(f"decisions: {len(dates)} days, {len(rows)} unit-days, {len(units)} units, {n_cut} with a cutoff, {len(flags)} flags"
           + (f", tomorrow {tomorrow['date']}: {len(tomorrow['rows'])} units" if tomorrow else ", no node prices for tomorrow"))

@@ -1398,6 +1398,7 @@ async function drawStretch() {
     list.map((r) => [r.unit, r.tech, r.group, r.n, r.offShare, r.minShare, r.aboveShare, r.shut, r.offMin, r.offP10, r.offMed, r.mw,
       r.dec?.days, r.dec?.shut, r.dec?.cutoff, r.dec?.cutoff != null ? r.dec.acc : null, r.dec?.base, r.dec?.award]), `Cheap stretches, lambda below ${thr}`);
   drawNext(B, ts, gl);
+  drawFlags(B, ts, gl);
   if (S.unit && S.T.units.find((u) => u.unit === S.unit) && !$("unit-detail").hidden) {
     const u = S.T.units.find((x) => x.unit === S.unit); drawUnitStretch(u, TECHS.find((x) => x.id === u.tech), S.stripScale);
   }
@@ -1433,6 +1434,28 @@ function drawNext(B, ts, gl) {
   ]);
   setCSV(el, ["date", "verdict", "unit", "technology", "group", "lsl_mw", "window_first_he", "window_hours", "loss_usd", "cutoff_usd", "award_share"],
     rows.map((r) => [tm.date, r.v, r.unit, r.tech, r.group, r.lsl, r.he, r.h, r.loss, r.cutoff, r.award]), `Expected turn-offs ${tm.date}`);
+}
+
+// Shutdowns that broke a unit's pattern (pipeline/decisions.py flags): the first after a month
+// or more without one, or one over a window its DAM award covered in full.
+const FLAG_KIND = { new: "First in a month or more", award: "Despite a DAM award" };
+function drawFlags(B, ts, gl) {
+  const el = $("st-flags"), DEC = S.DEC;
+  if (!DEC?.flags) { $("st-flags-note").textContent = ""; return emptyMsg(el, "Fills in after the data update builds the decisions file."); }
+  const rows = DEC.flags.map((f) => ({ unit: f[0], date: f[1], kind: f[2], loss: f[3], off: f[4], since: f[5], award: f[6], e: B.units.get(f[0]) }))
+    .filter((r) => r.e && ts.includes(r.e.tech)).map((r) => ({ ...r, pick: r.e.pick, tech: r.e.tech, group: r.e.group, mw: r.e.mw }));
+  const n = (k) => rows.filter((r) => r.kind === k).length;
+  $("st-flags-note").textContent = `Every shutdown on a decision day that was the unit's first in ${DEC.new_days} days or more (with at least ${DEC.new_days} days of data before it), or came over a window its DAM energy award covered in full: ` +
+    `a unit that normally rides through starting to cycle, a seasonal layup beginning, or a unit dropping an award it held. ${n("new")} first-in-a-month and ${n("award")} despite-an-award shutdowns, newest first. ` +
+    `"Loss" is what riding through the day's worst window would have cost at its node's day-ahead price; "hours off" counts to the end of the spell, so a long one is a layup or an undeclared outage. Click a unit to open its detail.`;
+  if (!rows.length) return emptyMsg(el, "No flagged shutdowns for these units.");
+  el.innerHTML = unitRows(rows.map((r) => ({ ...r, name: r.unit, unit: r.pick })), [
+    { h: "Date", t: 1, f: (r) => r.date }, { h: "Unit", t: 1, f: (r) => esc(r.name) }, { h: "Technology", t: 1, f: (r) => techLabel(r.tech) }, { h: "Group", t: 1, f: (r) => gl(r.group) }, { h: "MW", f: (r) => fmtMW(r.mw) },
+    { h: "Why flagged", t: 1, f: (r) => FLAG_KIND[r.kind] }, { h: "Days since last shutdown", f: (r) => (r.since == null ? "none in data" : r.since) }, { h: "Loss riding through", f: (r) => fmtK(r.loss) },
+    { h: "Award over window", f: (r) => fmtPct(r.award) }, { h: "Hours off", f: (r) => fmtMW(r.off) },
+  ]);
+  setCSV(el, ["date", "unit", "technology", "group", "mw", "kind", "days_since_last_shutdown", "loss_usd", "award_share", "hours_off"],
+    rows.map((r) => [r.date, r.unit, r.tech, r.group, r.mw, r.kind, r.since, r.loss, r.award, r.off]), "Shutdowns that broke a pattern");
 }
 
 // under the unit strip: one mark per cheap stretch the unit (or its train) ran into
@@ -1680,7 +1703,7 @@ async function boot() {
   $("unit-pick").addEventListener("change", (e) => showUnit(e.target.value.trim()));
   $("unit-pick").addEventListener("input", (e) => { if (S.T.units.some((u) => u.unit === e.target.value)) showUnit(e.target.value); });
   $("lean-table").addEventListener("click", (e) => { const tr = e.target.closest("tr[data-href]"); if (tr) location.href = tr.dataset.href; });
-  ["chg-table", "flip-table", "cheap-units", "shut-units", "st-units", "st-changed", "st-months", "st-next"].forEach((id) => $(id).addEventListener("click", (e) => {
+  ["chg-table", "flip-table", "cheap-units", "shut-units", "st-units", "st-changed", "st-months", "st-next", "st-flags"].forEach((id) => $(id).addEventListener("click", (e) => {
     const tr = e.target.closest("tr[data-unit]");
     if (tr) showUnit(tr.dataset.unit);
   }));
