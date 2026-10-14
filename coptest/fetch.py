@@ -5,10 +5,10 @@ import datetime as dt, gzip, io, json, sys, zipfile
 sys.path.insert(0, ".")
 from pipeline.ercot_api import ErcotAPI
 
-DAYS = [dt.date(2026, 8, 5), dt.date(2026, 8, 12)]
+DAYS = [dt.date(2026, 2, 24), dt.date(2026, 3, 17), dt.date(2026, 3, 22), dt.date(2026, 5, 3)]
 OUT = "coptest/out"
 api = ErcotAPI()
-log = {}
+log = {}  # round 2: spring cheap-stretch days
 
 
 def tag(d):            # 05-AUG-26 style used in 60-day file names
@@ -69,11 +69,11 @@ def fetch(emil, want, lag=60):
                 break
 
 
-# fetch("np1-301", lambda n: True)                                         # COP snapshot (EMIL from the product page)
+fetch("np1-301", lambda n: True)                                         # COP snapshot (EMIL from the product page)
 if False:
     fetch("np3-991-er", lambda n: True)                                  # fallback guess
 fetch("np3-966-er", lambda n: n.lower().startswith("60d_dam_gen_resource_data"))
-fetch("np3-965-er", lambda n: n.lower().startswith("60d_esr_data_in_sced"))
+# SCED ESR file not needed this round
 import os
 os.makedirs(OUT, exist_ok=True)
 json.dump(log, open(f"{OUT}/log.json", "w"), indent=1)
