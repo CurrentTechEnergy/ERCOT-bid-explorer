@@ -59,7 +59,7 @@ def fetch(emil, want, lag=60):
             got = list(csvs(blob))
             for n, b in got:
                 log.setdefault("files", []).append([emil, str(d), doc["postDatetime"], n, len(b)])
-            hit = [(n, b) for n, b in got if tag(d) in n.upper()]
+            hit = [(n, b) for n, b in got if tag(post) in n.upper()]
             if not hit and len(got) and emil == "np1-301":
                 hit = got if doc is docs[0] else []
             for n, b in hit:
@@ -69,8 +69,8 @@ def fetch(emil, want, lag=60):
                 break
 
 
-fetch("np1-301", lambda n: True)                                         # COP snapshot (EMIL from the product page)
-if not any("cop" in f[3].lower() for f in log.get("files", [])):
+# fetch("np1-301", lambda n: True)                                         # COP snapshot (EMIL from the product page)
+if False:
     fetch("np3-991-er", lambda n: True)                                  # fallback guess
 fetch("np3-966-er", lambda n: n.lower().startswith("60d_dam_gen_resource_data"))
 fetch("np3-965-er", lambda n: n.lower().startswith("60d_esr_data_in_sced"))
