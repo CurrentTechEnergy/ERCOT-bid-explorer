@@ -2,9 +2,11 @@ name: Update ERCOT data
 
 on:
   schedule:
-    # ERCOT posts the 2-day curves around 04:15 and the 60-day disclosure around 05:45 Central.
+    # ERCOT posts the 2-day curves around 04:15 and the 60-day disclosure around 05:45 Central;
+    # the day-ahead market results (tomorrow's node prices) by 13:30 Central.
     - cron: "41 12 * * *"   # ~07:41 Central
-    - cron: "41 18 * * *"   # afternoon retry in case a report posted late
+    - cron: "31 19 * * *"   # 14:31 Central in summer, 13:31 in winter: after the DAM posts, and the
+                            # retry in case a morning report posted late
   workflow_dispatch:
     inputs:
       backfill_start:
