@@ -1,518 +1,776 @@
 {
  "listing": {
-  "np3-966-er 2026-08-05": [
+  "np1-301 2026-02-24": [
    [
-    1283121681,
-    "60_Day_DAM_Disclosure",
-    "2026-10-06T06:29:09.000"
+    1220227743,
+    "60_Day_COP_Adjustment_Period_Snapshot",
+    "2026-04-27T09:31:13.000"
    ],
    [
-    1282698066,
-    "60_Day_DAM_Disclosure",
-    "2026-10-05T05:35:15.000"
+    1219824234,
+    "60_Day_COP_Adjustment_Period_Snapshot",
+    "2026-04-26T07:59:33.000"
    ],
    [
-    1282314462,
-    "60_Day_DAM_Disclosure",
-    "2026-10-04T05:23:09.000"
+    1219459708,
+    "60_Day_COP_Adjustment_Period_Snapshot",
+    "2026-04-25T08:19:26.000"
    ],
    [
-    1281928378,
-    "60_Day_DAM_Disclosure",
-    "2026-10-03T05:31:11.000"
+    1219099776,
+    "60_Day_COP_Adjustment_Period_Snapshot",
+    "2026-04-24T09:29:21.000"
    ],
    [
-    1281550598,
-    "60_Day_DAM_Disclosure",
-    "2026-10-02T06:21:56.000"
+    1218746920,
+    "60_Day_COP_Adjustment_Period_Snapshot",
+    "2026-04-23T10:47:10.000"
    ]
   ],
-  "np3-966-er 2026-08-12": [
+  "np1-301 2026-03-17": [
    [
-    1285889775,
-    "60_Day_DAM_Disclosure",
-    "2026-10-13T06:33:54.000"
+    1228141176,
+    "60_Day_COP_Adjustment_Period_Snapshot",
+    "2026-05-18T06:52:40.000"
    ],
    [
-    1285464608,
-    "60_Day_DAM_Disclosure",
-    "2026-10-12T05:53:17.000"
+    1227771913,
+    "60_Day_COP_Adjustment_Period_Snapshot",
+    "2026-05-17T06:54:19.000"
    ],
    [
-    1285096931,
-    "60_Day_DAM_Disclosure",
-    "2026-10-11T06:46:25.000"
+    1227402302,
+    "60_Day_COP_Adjustment_Period_Snapshot",
+    "2026-05-16T06:54:53.000"
    ],
    [
-    1284713334,
-    "60_Day_DAM_Disclosure",
-    "2026-10-10T06:37:44.000"
+    1227016349,
+    "60_Day_COP_Adjustment_Period_Snapshot",
+    "2026-05-15T06:52:53.000"
    ],
    [
-    1284310624,
-    "60_Day_DAM_Disclosure",
-    "2026-10-09T06:19:07.000"
+    1226645187,
+    "60_Day_COP_Adjustment_Period_Snapshot",
+    "2026-05-14T07:02:01.000"
    ]
   ],
-  "np3-965-er 2026-08-05": [
+  "np1-301 2026-03-22": [
    [
-    1283107089,
-    "60_Day_SCED_Disclosure",
-    "2026-10-06T05:44:25.000"
+    1230062384,
+    "60_Day_COP_Adjustment_Period_Snapshot",
+    "2026-05-23T07:01:10.000"
    ],
    [
-    1282683786,
-    "60_Day_SCED_Disclosure",
-    "2026-10-05T05:05:21.000"
+    1229679986,
+    "60_Day_COP_Adjustment_Period_Snapshot",
+    "2026-05-22T06:56:46.000"
    ],
    [
-    1282310696,
-    "60_Day_SCED_Disclosure",
-    "2026-10-04T05:08:09.000"
+    1229299882,
+    "60_Day_COP_Adjustment_Period_Snapshot",
+    "2026-05-21T06:57:01.000"
    ],
    [
-    1281925056,
-    "60_Day_SCED_Disclosure",
-    "2026-10-03T05:16:37.000"
+    1228919509,
+    "60_Day_COP_Adjustment_Period_Snapshot",
+    "2026-05-20T06:53:55.000"
    ],
    [
-    1281540073,
-    "60_Day_SCED_Disclosure",
-    "2026-10-02T05:51:56.000"
+    1228529464,
+    "60_Day_COP_Adjustment_Period_Snapshot",
+    "2026-05-19T06:53:57.000"
    ]
   ],
-  "np3-965-er 2026-08-12": [
+  "np1-301 2026-05-03": [
    [
-    1285881770,
-    "60_Day_SCED_Disclosure",
-    "2026-10-13T06:03:50.000"
+    1246143793,
+    "60_Day_COP_Adjustment_Period_Snapshot",
+    "2026-07-04T04:17:53.000"
    ],
    [
-    1285455794,
-    "60_Day_SCED_Disclosure",
-    "2026-10-12T05:23:17.000"
+    1245818100,
+    "60_Day_COP_Adjustment_Period_Snapshot",
+    "2026-07-03T07:12:55.000"
    ],
    [
-    1285088798,
-    "60_Day_SCED_Disclosure",
-    "2026-10-11T06:16:25.000"
+    1245431844,
+    "60_Day_COP_Adjustment_Period_Snapshot",
+    "2026-07-02T07:10:16.000"
    ],
    [
-    1284697954,
-    "60_Day_SCED_Disclosure",
-    "2026-10-10T05:52:13.000"
+    1245050123,
+    "60_Day_COP_Adjustment_Period_Snapshot",
+    "2026-07-01T07:29:54.000"
    ],
    [
-    1284296984,
-    "60_Day_SCED_Disclosure",
-    "2026-10-09T05:34:07.000"
+    1244657447,
+    "60_Day_COP_Adjustment_Period_Snapshot",
+    "2026-06-30T07:14:32.000"
+   ]
+  ],
+  "np3-966-er 2026-02-24": [
+   [
+    1220155261,
+    "60_Day_DAM_Disclosure",
+    "2026-04-27T05:27:16.000"
+   ],
+   [
+    1219770142,
+    "60_Day_DAM_Disclosure",
+    "2026-04-26T04:59:33.000"
+   ],
+   [
+    1219413061,
+    "60_Day_DAM_Disclosure",
+    "2026-04-25T05:34:26.000"
+   ],
+   [
+    1219017298,
+    "60_Day_DAM_Disclosure",
+    "2026-04-24T04:54:29.000"
+   ],
+   [
+    1218655048,
+    "60_Day_DAM_Disclosure",
+    "2026-04-23T05:45:28.000"
+   ]
+  ],
+  "np3-966-er 2026-03-17": [
+   [
+    1228104648,
+    "60_Day_DAM_Disclosure",
+    "2026-05-18T04:52:40.000"
+   ],
+   [
+    1227741334,
+    "60_Day_DAM_Disclosure",
+    "2026-05-17T05:09:52.000"
+   ],
+   [
+    1227372048,
+    "60_Day_DAM_Disclosure",
+    "2026-05-16T05:09:57.000"
+   ],
+   [
+    1226984992,
+    "60_Day_DAM_Disclosure",
+    "2026-05-15T04:52:53.000"
+   ],
+   [
+    1226605847,
+    "60_Day_DAM_Disclosure",
+    "2026-05-14T04:47:01.000"
+   ]
+  ],
+  "np3-966-er 2026-03-22": [
+   [
+    1230021115,
+    "60_Day_DAM_Disclosure",
+    "2026-05-23T04:46:10.000"
+   ],
+   [
+    1229641662,
+    "60_Day_DAM_Disclosure",
+    "2026-05-22T04:56:46.000"
+   ],
+   [
+    1229260212,
+    "60_Day_DAM_Disclosure",
+    "2026-05-21T04:42:01.000"
+   ],
+   [
+    1228882735,
+    "60_Day_DAM_Disclosure",
+    "2026-05-20T04:54:06.000"
+   ],
+   [
+    1228490174,
+    "60_Day_DAM_Disclosure",
+    "2026-05-19T04:54:10.000"
+   ]
+  ],
+  "np3-966-er 2026-05-03": [
+   [
+    1246155494,
+    "60_Day_DAM_Disclosure",
+    "2026-07-04T05:03:11.000"
+   ],
+   [
+    1245784845,
+    "60_Day_DAM_Disclosure",
+    "2026-07-03T05:12:55.000"
+   ],
+   [
+    1245403926,
+    "60_Day_DAM_Disclosure",
+    "2026-07-02T05:40:16.000"
+   ],
+   [
+    1245022575,
+    "60_Day_DAM_Disclosure",
+    "2026-07-01T05:59:54.000"
+   ],
+   [
+    1244616569,
+    "60_Day_DAM_Disclosure",
+    "2026-06-30T04:59:32.000"
    ]
   ]
  },
  "files": [
   [
-   "np3-966-er",
-   "2026-08-05",
-   "2026-10-04T05:23:09.000",
-   "60d_DAM_QSE_Self_Arranged_AS-04-OCT-26.csv",
-   22877
+   "np1-301",
+   "2026-02-24",
+   "2026-04-25T08:19:26.000",
+   "60d_COP_Adjustment_Period_Snapshot-25-APR-26.csv",
+   3797898
+  ],
+  [
+   "np1-301",
+   "2026-03-17",
+   "2026-05-16T06:54:53.000",
+   "60d_COP_Adjustment_Period_Snapshot-16-MAY-26.csv",
+   3823322
+  ],
+  [
+   "np1-301",
+   "2026-03-22",
+   "2026-05-21T06:57:01.000",
+   "60d_COP_Adjustment_Period_Snapshot-21-MAY-26.csv",
+   3826855
+  ],
+  [
+   "np1-301",
+   "2026-05-03",
+   "2026-07-02T07:10:16.000",
+   "60d_COP_Adjustment_Period_Snapshot-02-JUL-26.csv",
+   3858246
   ],
   [
    "np3-966-er",
-   "2026-08-05",
-   "2026-10-04T05:23:09.000",
-   "60d_DAM_Gen_Resource_Data-04-OCT-26.csv",
-   3985506
+   "2026-02-24",
+   "2026-04-25T05:34:26.000",
+   "60d_DAM_QSE_Self_Arranged_AS-25-APR-26.csv",
+   23726
   ],
   [
    "np3-966-er",
-   "2026-08-05",
-   "2026-10-04T05:23:09.000",
-   "60d_DAM_Generation_Resource_ASOffers-04-OCT-26.csv",
-   885145
+   "2026-02-24",
+   "2026-04-25T05:34:26.000",
+   "60d_DAM_Gen_Resource_Data-25-APR-26.csv",
+   3816264
   ],
   [
    "np3-966-er",
-   "2026-08-05",
-   "2026-10-04T05:23:09.000",
-   "60d_DAM_Load_Resource_Data-04-OCT-26.csv",
-   528526
+   "2026-02-24",
+   "2026-04-25T05:34:26.000",
+   "60d_DAM_Generation_Resource_ASOffers-25-APR-26.csv",
+   718180
   ],
   [
    "np3-966-er",
-   "2026-08-05",
-   "2026-10-04T05:23:09.000",
-   "60d_DAM_Load_Resource_ASOffers-04-OCT-26.csv",
-   304049
+   "2026-02-24",
+   "2026-04-25T05:34:26.000",
+   "60d_DAM_Load_Resource_Data-25-APR-26.csv",
+   521902
   ],
   [
    "np3-966-er",
-   "2026-08-05",
-   "2026-10-04T05:23:09.000",
-   "60d_DAM_EnergyOnlyOffers-04-OCT-26.csv",
-   3797373
+   "2026-02-24",
+   "2026-04-25T05:34:26.000",
+   "60d_DAM_Load_Resource_ASOffers-25-APR-26.csv",
+   318645
   ],
   [
    "np3-966-er",
-   "2026-08-05",
-   "2026-10-04T05:23:09.000",
-   "60d_DAM_EnergyOnlyOfferAwards-04-OCT-26.csv",
-   2471992
+   "2026-02-24",
+   "2026-04-25T05:34:26.000",
+   "60d_DAM_EnergyOnlyOffers-25-APR-26.csv",
+   2823991
   ],
   [
    "np3-966-er",
-   "2026-08-05",
-   "2026-10-04T05:23:09.000",
-   "60d_DAM_EnergyBids-04-OCT-26.csv",
-   5498142
+   "2026-02-24",
+   "2026-04-25T05:34:26.000",
+   "60d_DAM_EnergyOnlyOfferAwards-25-APR-26.csv",
+   1873898
   ],
   [
    "np3-966-er",
-   "2026-08-05",
-   "2026-10-04T05:23:09.000",
-   "60d_DAM_EnergyBidAwards-04-OCT-26.csv",
-   3323649
+   "2026-02-24",
+   "2026-04-25T05:34:26.000",
+   "60d_DAM_EnergyBids-25-APR-26.csv",
+   1899472
   ],
   [
    "np3-966-er",
-   "2026-08-05",
-   "2026-10-04T05:23:09.000",
-   "60d_DAM_PTP_Obligation_Option-04-OCT-26.csv",
-   687106
+   "2026-02-24",
+   "2026-04-25T05:34:26.000",
+   "60d_DAM_EnergyBidAwards-25-APR-26.csv",
+   1262238
   ],
   [
    "np3-966-er",
-   "2026-08-05",
-   "2026-10-04T05:23:09.000",
-   "60d_DAM_PTPObligationBids-04-OCT-26.csv",
-   14324147
+   "2026-02-24",
+   "2026-04-25T05:34:26.000",
+   "60d_DAM_PTP_Obligation_Option-25-APR-26.csv",
+   573641
   ],
   [
    "np3-966-er",
-   "2026-08-05",
-   "2026-10-04T05:23:09.000",
-   "60d_DAM_PTP_Obligation_OptionAwards-04-OCT-26.csv",
-   677774
+   "2026-02-24",
+   "2026-04-25T05:34:26.000",
+   "60d_DAM_PTPObligationBids-25-APR-26.csv",
+   14068082
   ],
   [
    "np3-966-er",
-   "2026-08-05",
-   "2026-10-04T05:23:09.000",
-   "60d_DAM_PTPObligationBidAwards-04-OCT-26.csv",
-   13797410
+   "2026-02-24",
+   "2026-04-25T05:34:26.000",
+   "60d_DAM_PTP_Obligation_OptionAwards-25-APR-26.csv",
+   566898
   ],
   [
    "np3-966-er",
-   "2026-08-05",
-   "2026-10-04T05:23:09.000",
-   "60d_DAM_ESR_ASOffers-04-OCT-26.csv",
-   1053995
+   "2026-02-24",
+   "2026-04-25T05:34:26.000",
+   "60d_DAM_PTPObligationBidAwards-25-APR-26.csv",
+   13575679
   ],
   [
    "np3-966-er",
-   "2026-08-05",
-   "2026-10-04T05:23:09.000",
-   "60d_DAM_ESR_Data-04-OCT-26.csv",
-   1129425
+   "2026-02-24",
+   "2026-04-25T05:34:26.000",
+   "60d_DAM_ESR_ASOffers-25-APR-26.csv",
+   803526
   ],
   [
    "np3-966-er",
-   "2026-08-05",
-   "2026-10-04T05:23:09.000",
-   "60d_DAM_AS_Only_Offers-04-OCT-26.csv",
-   59569
+   "2026-02-24",
+   "2026-04-25T05:34:26.000",
+   "60d_DAM_ESR_Data-25-APR-26.csv",
+   1031995
   ],
   [
    "np3-966-er",
-   "2026-08-05",
-   "2026-10-04T05:23:09.000",
-   "60d_DAM_AS_Only_Awards-04-OCT-26.csv",
-   30168
+   "2026-02-24",
+   "2026-04-25T05:34:26.000",
+   "60d_DAM_AS_Only_Offers-25-APR-26.csv",
+   58587
   ],
   [
    "np3-966-er",
-   "2026-08-12",
-   "2026-10-11T06:46:25.000",
-   "60d_DAM_QSE_Self_Arranged_AS-11-OCT-26.csv",
-   22847
+   "2026-02-24",
+   "2026-04-25T05:34:26.000",
+   "60d_DAM_AS_Only_Awards-25-APR-26.csv",
+   32466
   ],
   [
    "np3-966-er",
-   "2026-08-12",
-   "2026-10-11T06:46:25.000",
-   "60d_DAM_Gen_Resource_Data-11-OCT-26.csv",
-   3979109
+   "2026-03-17",
+   "2026-05-16T05:09:57.000",
+   "60d_DAM_QSE_Self_Arranged_AS-16-MAY-26.csv",
+   24506
   ],
   [
    "np3-966-er",
-   "2026-08-12",
-   "2026-10-11T06:46:25.000",
-   "60d_DAM_Generation_Resource_ASOffers-11-OCT-26.csv",
-   905776
+   "2026-03-17",
+   "2026-05-16T05:09:57.000",
+   "60d_DAM_Gen_Resource_Data-16-MAY-26.csv",
+   3796371
   ],
   [
    "np3-966-er",
-   "2026-08-12",
-   "2026-10-11T06:46:25.000",
-   "60d_DAM_Load_Resource_Data-11-OCT-26.csv",
-   524957
+   "2026-03-17",
+   "2026-05-16T05:09:57.000",
+   "60d_DAM_Generation_Resource_ASOffers-16-MAY-26.csv",
+   603803
   ],
   [
    "np3-966-er",
-   "2026-08-12",
-   "2026-10-11T06:46:25.000",
-   "60d_DAM_Load_Resource_ASOffers-11-OCT-26.csv",
-   328202
+   "2026-03-17",
+   "2026-05-16T05:09:57.000",
+   "60d_DAM_Load_Resource_Data-16-MAY-26.csv",
+   530217
   ],
   [
    "np3-966-er",
-   "2026-08-12",
-   "2026-10-11T06:46:25.000",
-   "60d_DAM_EnergyOnlyOffers-11-OCT-26.csv",
-   4694450
+   "2026-03-17",
+   "2026-05-16T05:09:57.000",
+   "60d_DAM_Load_Resource_ASOffers-16-MAY-26.csv",
+   326450
   ],
   [
    "np3-966-er",
-   "2026-08-12",
-   "2026-10-11T06:46:25.000",
-   "60d_DAM_EnergyOnlyOfferAwards-11-OCT-26.csv",
-   3033537
+   "2026-03-17",
+   "2026-05-16T05:09:57.000",
+   "60d_DAM_EnergyOnlyOffers-16-MAY-26.csv",
+   2924374
   ],
   [
    "np3-966-er",
-   "2026-08-12",
-   "2026-10-11T06:46:25.000",
-   "60d_DAM_EnergyBids-11-OCT-26.csv",
-   5746652
+   "2026-03-17",
+   "2026-05-16T05:09:57.000",
+   "60d_DAM_EnergyOnlyOfferAwards-16-MAY-26.csv",
+   1961762
   ],
   [
    "np3-966-er",
-   "2026-08-12",
-   "2026-10-11T06:46:25.000",
-   "60d_DAM_EnergyBidAwards-11-OCT-26.csv",
-   3465664
+   "2026-03-17",
+   "2026-05-16T05:09:57.000",
+   "60d_DAM_EnergyBids-16-MAY-26.csv",
+   2081025
   ],
   [
    "np3-966-er",
-   "2026-08-12",
-   "2026-10-11T06:46:25.000",
-   "60d_DAM_PTP_Obligation_Option-11-OCT-26.csv",
-   707173
+   "2026-03-17",
+   "2026-05-16T05:09:57.000",
+   "60d_DAM_EnergyBidAwards-16-MAY-26.csv",
+   1375083
   ],
   [
    "np3-966-er",
-   "2026-08-12",
-   "2026-10-11T06:46:25.000",
-   "60d_DAM_PTPObligationBids-11-OCT-26.csv",
-   15492613
+   "2026-03-17",
+   "2026-05-16T05:09:57.000",
+   "60d_DAM_PTP_Obligation_Option-16-MAY-26.csv",
+   573985
   ],
   [
    "np3-966-er",
-   "2026-08-12",
-   "2026-10-11T06:46:25.000",
-   "60d_DAM_PTP_Obligation_OptionAwards-11-OCT-26.csv",
-   698885
+   "2026-03-17",
+   "2026-05-16T05:09:57.000",
+   "60d_DAM_PTPObligationBids-16-MAY-26.csv",
+   14982005
   ],
   [
    "np3-966-er",
-   "2026-08-12",
-   "2026-10-11T06:46:25.000",
-   "60d_DAM_PTPObligationBidAwards-11-OCT-26.csv",
-   14953291
+   "2026-03-17",
+   "2026-05-16T05:09:57.000",
+   "60d_DAM_PTP_Obligation_OptionAwards-16-MAY-26.csv",
+   568424
   ],
   [
    "np3-966-er",
-   "2026-08-12",
-   "2026-10-11T06:46:25.000",
-   "60d_DAM_ESR_ASOffers-11-OCT-26.csv",
-   1032489
+   "2026-03-17",
+   "2026-05-16T05:09:57.000",
+   "60d_DAM_PTPObligationBidAwards-16-MAY-26.csv",
+   14466670
   ],
   [
    "np3-966-er",
-   "2026-08-12",
-   "2026-10-11T06:46:25.000",
-   "60d_DAM_ESR_Data-11-OCT-26.csv",
-   1150305
+   "2026-03-17",
+   "2026-05-16T05:09:57.000",
+   "60d_DAM_ESR_ASOffers-16-MAY-26.csv",
+   814948
   ],
   [
    "np3-966-er",
-   "2026-08-12",
-   "2026-10-11T06:46:25.000",
-   "60d_DAM_AS_Only_Offers-11-OCT-26.csv",
-   59094
+   "2026-03-17",
+   "2026-05-16T05:09:57.000",
+   "60d_DAM_ESR_Data-16-MAY-26.csv",
+   1038198
   ],
   [
    "np3-966-er",
-   "2026-08-12",
-   "2026-10-11T06:46:25.000",
-   "60d_DAM_AS_Only_Awards-11-OCT-26.csv",
-   30590
+   "2026-03-17",
+   "2026-05-16T05:09:57.000",
+   "60d_DAM_AS_Only_Offers-16-MAY-26.csv",
+   55182
   ],
   [
-   "np3-965-er",
-   "2026-08-05",
-   "2026-10-04T05:08:09.000",
-   "60d_SCED_QSE_Self_Arranged_AS-04-OCT-26.csv",
-   333620
+   "np3-966-er",
+   "2026-03-17",
+   "2026-05-16T05:09:57.000",
+   "60d_DAM_AS_Only_Awards-16-MAY-26.csv",
+   28504
   ],
   [
-   "np3-965-er",
-   "2026-08-05",
-   "2026-10-04T05:08:09.000",
-   "60d_SCED_SMNE_GEN_RES-04-OCT-26.csv",
-   6636042
+   "np3-966-er",
+   "2026-03-22",
+   "2026-05-21T04:42:01.000",
+   "60d_DAM_QSE_Self_Arranged_AS-21-MAY-26.csv",
+   23762
   ],
   [
-   "np3-965-er",
-   "2026-08-05",
-   "2026-10-04T05:08:09.000",
-   "60d_SCED_Gen_Resource_Data-04-OCT-26.csv",
-   160191433
+   "np3-966-er",
+   "2026-03-22",
+   "2026-05-21T04:42:01.000",
+   "60d_DAM_Gen_Resource_Data-21-MAY-26.csv",
+   3793209
   ],
   [
-   "np3-965-er",
-   "2026-08-05",
-   "2026-10-04T05:08:09.000",
-   "60d_Load_Resource_Data_in_SCED-04-OCT-26.csv",
-   19196517
+   "np3-966-er",
+   "2026-03-22",
+   "2026-05-21T04:42:01.000",
+   "60d_DAM_Generation_Resource_ASOffers-21-MAY-26.csv",
+   658135
   ],
   [
-   "np3-965-er",
-   "2026-08-05",
-   "2026-10-04T05:08:09.000",
-   "60d_HDL_LDL_ManOverride-04-OCT-26.csv",
-   145
+   "np3-966-er",
+   "2026-03-22",
+   "2026-05-21T04:42:01.000",
+   "60d_DAM_Load_Resource_Data-21-MAY-26.csv",
+   528840
   ],
   [
-   "np3-965-er",
-   "2026-08-05",
-   "2026-10-04T05:08:09.000",
-   "60d_SCED_EOC_Updates_in_OpHour-04-OCT-26.csv",
-   1593376
+   "np3-966-er",
+   "2026-03-22",
+   "2026-05-21T04:42:01.000",
+   "60d_DAM_Load_Resource_ASOffers-21-MAY-26.csv",
+   310529
   ],
   [
-   "np3-965-er",
-   "2026-08-05",
-   "2026-10-04T05:08:09.000",
-   "60d_AS_Capability_ManOverride-04-OCT-26.csv",
-   147
+   "np3-966-er",
+   "2026-03-22",
+   "2026-05-21T04:42:01.000",
+   "60d_DAM_EnergyOnlyOffers-21-MAY-26.csv",
+   2808885
   ],
   [
-   "np3-965-er",
-   "2026-08-05",
-   "2026-10-04T05:08:09.000",
-   "60d_ESR_Data_in_SCED-04-OCT-26.csv",
-   61632994
+   "np3-966-er",
+   "2026-03-22",
+   "2026-05-21T04:42:01.000",
+   "60d_DAM_EnergyOnlyOfferAwards-21-MAY-26.csv",
+   1898442
   ],
   [
-   "np3-965-er",
-   "2026-08-05",
-   "2026-10-04T05:08:09.000",
-   "60d_SCED_Resource_AS_OFFERS-04-OCT-26.csv",
-   161761762
+   "np3-966-er",
+   "2026-03-22",
+   "2026-05-21T04:42:01.000",
+   "60d_DAM_EnergyBids-21-MAY-26.csv",
+   1882333
   ],
   [
-   "np3-965-er",
-   "2026-08-05",
-   "2026-10-04T05:08:09.000",
-   "60d_SCED_AS_Offer_Updates_in_OpPeriod-04-OCT-26.csv",
-   277896
+   "np3-966-er",
+   "2026-03-22",
+   "2026-05-21T04:42:01.000",
+   "60d_DAM_EnergyBidAwards-21-MAY-26.csv",
+   1262193
   ],
   [
-   "np3-965-er",
-   "2026-08-12",
-   "2026-10-11T06:16:25.000",
-   "60d_SCED_QSE_Self_Arranged_AS-11-OCT-26.csv",
-   330960
+   "np3-966-er",
+   "2026-03-22",
+   "2026-05-21T04:42:01.000",
+   "60d_DAM_PTP_Obligation_Option-21-MAY-26.csv",
+   582998
   ],
   [
-   "np3-965-er",
-   "2026-08-12",
-   "2026-10-11T06:16:25.000",
-   "60d_SCED_SMNE_GEN_RES-11-OCT-26.csv",
-   6638307
+   "np3-966-er",
+   "2026-03-22",
+   "2026-05-21T04:42:01.000",
+   "60d_DAM_PTPObligationBids-21-MAY-26.csv",
+   16237669
   ],
   [
-   "np3-965-er",
-   "2026-08-12",
-   "2026-10-11T06:16:25.000",
-   "60d_SCED_Gen_Resource_Data-11-OCT-26.csv",
-   159203223
+   "np3-966-er",
+   "2026-03-22",
+   "2026-05-21T04:42:01.000",
+   "60d_DAM_PTP_Obligation_OptionAwards-21-MAY-26.csv",
+   579289
   ],
   [
-   "np3-965-er",
-   "2026-08-12",
-   "2026-10-11T06:16:25.000",
-   "60d_Load_Resource_Data_in_SCED-11-OCT-26.csv",
-   18725674
+   "np3-966-er",
+   "2026-03-22",
+   "2026-05-21T04:42:01.000",
+   "60d_DAM_PTPObligationBidAwards-21-MAY-26.csv",
+   15699032
   ],
   [
-   "np3-965-er",
-   "2026-08-12",
-   "2026-10-11T06:16:25.000",
-   "60d_HDL_LDL_ManOverride-11-OCT-26.csv",
-   145
+   "np3-966-er",
+   "2026-03-22",
+   "2026-05-21T04:42:01.000",
+   "60d_DAM_ESR_ASOffers-21-MAY-26.csv",
+   838231
   ],
   [
-   "np3-965-er",
-   "2026-08-12",
-   "2026-10-11T06:16:25.000",
-   "60d_SCED_EOC_Updates_in_OpHour-11-OCT-26.csv",
-   1573891
+   "np3-966-er",
+   "2026-03-22",
+   "2026-05-21T04:42:01.000",
+   "60d_DAM_ESR_Data-21-MAY-26.csv",
+   1055716
   ],
   [
-   "np3-965-er",
-   "2026-08-12",
-   "2026-10-11T06:16:25.000",
-   "60d_AS_Capability_ManOverride-11-OCT-26.csv",
-   147
+   "np3-966-er",
+   "2026-03-22",
+   "2026-05-21T04:42:01.000",
+   "60d_DAM_AS_Only_Offers-21-MAY-26.csv",
+   62449
   ],
   [
-   "np3-965-er",
-   "2026-08-12",
-   "2026-10-11T06:16:25.000",
-   "60d_ESR_Data_in_SCED-11-OCT-26.csv",
-   61446615
+   "np3-966-er",
+   "2026-03-22",
+   "2026-05-21T04:42:01.000",
+   "60d_DAM_AS_Only_Awards-21-MAY-26.csv",
+   29724
   ],
   [
-   "np3-965-er",
-   "2026-08-12",
-   "2026-10-11T06:16:25.000",
-   "60d_SCED_Resource_AS_OFFERS-11-OCT-26.csv",
-   159988441
+   "np3-966-er",
+   "2026-05-03",
+   "2026-07-02T05:40:16.000",
+   "60d_DAM_QSE_Self_Arranged_AS-02-JUL-26.csv",
+   23638
   ],
   [
-   "np3-965-er",
-   "2026-08-12",
-   "2026-10-11T06:16:25.000",
-   "60d_SCED_AS_Offer_Updates_in_OpPeriod-11-OCT-26.csv",
-   273334
+   "np3-966-er",
+   "2026-05-03",
+   "2026-07-02T05:40:16.000",
+   "60d_DAM_Gen_Resource_Data-02-JUL-26.csv",
+   3802946
+  ],
+  [
+   "np3-966-er",
+   "2026-05-03",
+   "2026-07-02T05:40:16.000",
+   "60d_DAM_Generation_Resource_ASOffers-02-JUL-26.csv",
+   599528
+  ],
+  [
+   "np3-966-er",
+   "2026-05-03",
+   "2026-07-02T05:40:16.000",
+   "60d_DAM_Load_Resource_Data-02-JUL-26.csv",
+   543492
+  ],
+  [
+   "np3-966-er",
+   "2026-05-03",
+   "2026-07-02T05:40:16.000",
+   "60d_DAM_Load_Resource_ASOffers-02-JUL-26.csv",
+   333092
+  ],
+  [
+   "np3-966-er",
+   "2026-05-03",
+   "2026-07-02T05:40:16.000",
+   "60d_DAM_EnergyOnlyOffers-02-JUL-26.csv",
+   2500090
+  ],
+  [
+   "np3-966-er",
+   "2026-05-03",
+   "2026-07-02T05:40:16.000",
+   "60d_DAM_EnergyOnlyOfferAwards-02-JUL-26.csv",
+   1678682
+  ],
+  [
+   "np3-966-er",
+   "2026-05-03",
+   "2026-07-02T05:40:16.000",
+   "60d_DAM_EnergyBids-02-JUL-26.csv",
+   4023047
+  ],
+  [
+   "np3-966-er",
+   "2026-05-03",
+   "2026-07-02T05:40:16.000",
+   "60d_DAM_EnergyBidAwards-02-JUL-26.csv",
+   2429645
+  ],
+  [
+   "np3-966-er",
+   "2026-05-03",
+   "2026-07-02T05:40:16.000",
+   "60d_DAM_PTP_Obligation_Option-02-JUL-26.csv",
+   327221
+  ],
+  [
+   "np3-966-er",
+   "2026-05-03",
+   "2026-07-02T05:40:16.000",
+   "60d_DAM_PTPObligationBids-02-JUL-26.csv",
+   11926247
+  ],
+  [
+   "np3-966-er",
+   "2026-05-03",
+   "2026-07-02T05:40:16.000",
+   "60d_DAM_PTP_Obligation_OptionAwards-02-JUL-26.csv",
+   324911
+  ],
+  [
+   "np3-966-er",
+   "2026-05-03",
+   "2026-07-02T05:40:16.000",
+   "60d_DAM_PTPObligationBidAwards-02-JUL-26.csv",
+   11495740
+  ],
+  [
+   "np3-966-er",
+   "2026-05-03",
+   "2026-07-02T05:40:16.000",
+   "60d_DAM_ESR_ASOffers-02-JUL-26.csv",
+   968507
+  ],
+  [
+   "np3-966-er",
+   "2026-05-03",
+   "2026-07-02T05:40:16.000",
+   "60d_DAM_ESR_Data-02-JUL-26.csv",
+   1080500
+  ],
+  [
+   "np3-966-er",
+   "2026-05-03",
+   "2026-07-02T05:40:16.000",
+   "60d_DAM_AS_Only_Offers-02-JUL-26.csv",
+   55560
+  ],
+  [
+   "np3-966-er",
+   "2026-05-03",
+   "2026-07-02T05:40:16.000",
+   "60d_DAM_AS_Only_Awards-02-JUL-26.csv",
+   26582
   ]
  ],
  "saved": [
   [
-   "60d_DAM_Gen_Resource_Data-04-OCT-26.csv",
-   3985506,
-   616537,
+   "60d_COP_Adjustment_Period_Snapshot-25-APR-26.csv",
+   3797898,
+   263698,
+   "Delivery Date,QSE Name,Resource Name,Hour Ending,Status,High Sustained Limit,Low Sustained Limit,High Emergency Limit,Low Emergency Limit,Reg Up,Reg Down,RRSPFR,RRSFFR,RRSUFR,NSPIN,ECRS,Minimum SOC,Maximum SOC,Hour Beginning Planned SOC"
+  ],
+  [
+   "60d_COP_Adjustment_Period_Snapshot-16-MAY-26.csv",
+   3823322,
+   267258,
+   "Delivery Date,QSE Name,Resource Name,Hour Ending,Status,High Sustained Limit,Low Sustained Limit,High Emergency Limit,Low Emergency Limit,Reg Up,Reg Down,RRSPFR,RRSFFR,RRSUFR,NSPIN,ECRS,Minimum SOC,Maximum SOC,Hour Beginning Planned SOC"
+  ],
+  [
+   "60d_COP_Adjustment_Period_Snapshot-21-MAY-26.csv",
+   3826855,
+   267329,
+   "Delivery Date,QSE Name,Resource Name,Hour Ending,Status,High Sustained Limit,Low Sustained Limit,High Emergency Limit,Low Emergency Limit,Reg Up,Reg Down,RRSPFR,RRSFFR,RRSUFR,NSPIN,ECRS,Minimum SOC,Maximum SOC,Hour Beginning Planned SOC"
+  ],
+  [
+   "60d_COP_Adjustment_Period_Snapshot-02-JUL-26.csv",
+   3858246,
+   269593,
+   "Delivery Date,QSE Name,Resource Name,Hour Ending,Status,High Sustained Limit,Low Sustained Limit,High Emergency Limit,Low Emergency Limit,Reg Up,Reg Down,RRSPFR,RRSFFR,RRSUFR,NSPIN,ECRS,Minimum SOC,Maximum SOC,Hour Beginning Planned SOC"
+  ],
+  [
+   "60d_DAM_Gen_Resource_Data-25-APR-26.csv",
+   3816264,
+   575911,
    "Delivery Date,Hour Ending,QSE,DME,Resource Name,Resource Type,QSE submitted Curve-MW1,QSE submitted Curve-Price1,QSE submitted Curve-MW2,QSE submitted Curve-Price2,QSE submitted Curve-MW3,QSE submitted Curve-Price3,QSE submitted Curve-MW4,QSE submitted Curve-Price4,QSE submitted Curve-MW5,QSE submitted Curve-Price5,QSE submitted Curve-MW6,QSE submitted Curve-Price6,QSE submitted Curve-MW7,QSE submitted Curve-Price7,QSE submitted Curve-MW8,QSE submitted Curve-Price8,QSE submitted Curve-MW9,QSE submitted Curve-Price9,QSE submitted Curve-MW10,QSE submitted Curve-Price10,Start Up Hot,Start Up Inter,Start Up Cold,Min Gen Cost,HSL,LSL,Resource Status,Awarded Quantity,Settlement Point Name,Energy Settlement Point Price,RegUp Awarded,RegUp MCPC,RegDown Awarded,RegDown MCPC,RRSPFR Awarded,RRSFFR Awarded,RRSUFR Awarded,RRS MCPC,ECRSSD Awarded,ECRS MCPC,NonSpin Awarded,NonSpin MCPC"
   ],
   [
-   "60d_DAM_Gen_Resource_Data-11-OCT-26.csv",
-   3979109,
-   617246,
+   "60d_DAM_Gen_Resource_Data-16-MAY-26.csv",
+   3796371,
+   567533,
    "Delivery Date,Hour Ending,QSE,DME,Resource Name,Resource Type,QSE submitted Curve-MW1,QSE submitted Curve-Price1,QSE submitted Curve-MW2,QSE submitted Curve-Price2,QSE submitted Curve-MW3,QSE submitted Curve-Price3,QSE submitted Curve-MW4,QSE submitted Curve-Price4,QSE submitted Curve-MW5,QSE submitted Curve-Price5,QSE submitted Curve-MW6,QSE submitted Curve-Price6,QSE submitted Curve-MW7,QSE submitted Curve-Price7,QSE submitted Curve-MW8,QSE submitted Curve-Price8,QSE submitted Curve-MW9,QSE submitted Curve-Price9,QSE submitted Curve-MW10,QSE submitted Curve-Price10,Start Up Hot,Start Up Inter,Start Up Cold,Min Gen Cost,HSL,LSL,Resource Status,Awarded Quantity,Settlement Point Name,Energy Settlement Point Price,RegUp Awarded,RegUp MCPC,RegDown Awarded,RegDown MCPC,RRSPFR Awarded,RRSFFR Awarded,RRSUFR Awarded,RRS MCPC,ECRSSD Awarded,ECRS MCPC,NonSpin Awarded,NonSpin MCPC"
   ],
   [
-   "60d_ESR_Data_in_SCED-04-OCT-26.csv",
-   61632994,
-   9680758,
-   "SCED Time Stamp,Repeated Hour Flag,QSE,DME,Resource Name,Resource Type,SCED1 Curve-MW1,SCED1 Curve-Price1,SCED1 Curve-MW2,SCED1 Curve-Price2,SCED1 Curve-MW3,SCED1 Curve-Price3,SCED1 Curve-MW4,SCED1 Curve-Price4,SCED1 Curve-MW5,SCED1 Curve-Price5,SCED1 Curve-MW6,SCED1 Curve-Price6,SCED1 Curve-MW7,SCED1 Curve-Price7,SCED1 Curve-MW8,SCED1 Curve-Price8,SCED1 Curve-MW9,SCED1 Curve-Price9,SCED1 Curve-MW10,SCED1 Curve-Price10,SCED1 Curve-MW11,SCED1 Curve-Price11,SCED1 Curve-MW12,SCED1 Curve-Price12,SCED1 Curve-MW13,SCED1 Curve-Price13,SCED1 Curve-MW14,SCED1 Curve-Price14,SCED1 Curve-MW15,SCED1 Curve-Price15,SCED1 Curve-MW16,SCED1 Curve-Price16,SCED1 Curve-MW17,SCED1 Curve-Price17,SCED1 Curve-MW18,SCED1 Curve-Price18,SCED1 Curve-MW19,SCED1 Curve-Price19,SCED1 Curve-MW20,SCED1 Curve-Price20,SCED1 Curve-MW21,SCED1 Curve-Price21,SCED1 Curve-MW22,SCED1 Curve-Price22,SCED1 Curve-MW23,SCED1 Curve-Price23,SCED1 Curve-MW24,SCED1 Curve-Price24,SCED1 Curve-MW25,SCED1 Curve-Price25,SCED1 Curve-MW26,SCED1 Curve-Price26,SCED1 Curve-MW27,SCED1 Curve-Price27,SCED1 Curve-MW28,SCED1 Curve-Price28,SCED1 Curve-MW29,SCED1 Curve-Price29,SCED1 Curve-MW30,SCED1 Curve-Price30,SCED1 Curve-MW31,SCED1 Curve-Price31,SCED1 Curve-MW32,SCED1 Curve-Price32,SCED1 Curve-MW33,SCED1 Curve-Price33,SCED1 Curve-MW34,SCED1 Curve-Price34,SCED1 Curve-MW35,SCED1 Curve-Price35,SCED2 Curve-MW1,SCED2 Curve-Price1,SCED2 Curve-MW2,SCED2 Curve-Price2,SCED2 Curve-MW3,SCED2 Curve-Price3,SCED2 Curve-MW4,SCED2 Curve-Price4,SCED2 Curve-MW5,SCED2 Curve-Price5,SCED2 Curve-MW6,SCED2 Curve-Price6,SCED2 Curve-MW7,SCED2 Curve-Price7,SCED2 Curve-MW8,SCED2 Curve-Price8,SCED2 Curve-MW9,SCED2 Curve-Price9,SCED2 Curve-MW10,SCED2 Curve-Price10,SCED2 Curve-MW11,SCED2 Curve-Price11,SCED2 Curve-MW12,SCED2 Curve-Price12,SCED2 Curve-MW13,SCED2 Curve-Price13,SCED2 Curve-MW14,SCED2 Curve-Price14,SCED2 Curve-MW15,SCED2 Curve-Price15,SCED2 Curve-MW16,SCED2 Curve-Price16,SCED2 Curve-MW17,SCED2 Curve-Price17,SCED2 Curve-MW18,SCED2 Curve-Price18,SCED2 Curve-MW19,SCED2 Curve-Price19,SCED2 Curve-MW20,SCED2 Curve-Price20,SCED2 Curve-MW21,SCED2 Curve-Price21,SCED2 Curve-MW22,SCED2 Curve-Price22,SCED2 Curve-MW23,SCED2 Curve-Price23,SCED2 Curve-MW24,SCED2 Curve-Price24,SCED2 Curve-MW25,SCED2 Curve-Price25,SCED2 Curve-MW26,SCED2 Curve-Price26,SCED2 Curve-MW27,SCED2 Curve-Price27,SCED2 Curve-MW28,SCED2 Curve-Price28,SCED2 Curve-MW29,SCED2 Curve-Price29,SCED2 Curve-MW30,SCED2 Curve-Price30,SCED2 Curve-MW31,SCED2 Curve-Price31,SCED2 Curve-MW32,SCED2 Curve-Price32,SCED2 Curve-MW33,SCED2 Curve-Price33,SCED2 Curve-MW34,SCED2 Curve-Price34,SCED2 Curve-MW35,SCED2 Curve-Price35,Output Schedule,HSL,HDL,LSL,LDL,Telemetered Resource Status,Base Point,Telemetered Net Output,Ramp Rate Up,Ramp Rate Down,AS Capability REGUP,AS Capability REGDN,AS Capability ECRS,AS Capability NSPIN,AS Capability RRSPFR,AS Capability RRSFFR,State of Charge,Minimum SOC,Maximum SOC,AS Awards NSPIN,AS Awards RRSFFR,AS Awards RRSPFR,AS Awards RRSUFR,AS Awards ECRS,AS Awards REGUP,AS Awards REGDN,Bid_Type,Start Up Cold Offer,Start Up Hot Offer,Start Up Inter Offer,Min Gen Cost,Submitted TPO-MW1,Submitted TPO-Price1,Submitted TPO-MW2,Submitted TPO-Price2,Submitted TPO-MW3,Submitted TPO-Price3,Submitted TPO-MW4,Submitted TPO-Price4,Submitted TPO-MW5,Submitted TPO-Price5,Submitted TPO-MW6,Submitted TPO-Price6,Submitted TPO-MW7,Submitted TPO-Price7,Submitted TPO-MW8,Submitted TPO-Price8,Submitted TPO-MW9,Submitted TPO-Price9,Submitted TPO-MW10,Submitted TPO-Price10,Proxy Extension"
+   "60d_DAM_Gen_Resource_Data-21-MAY-26.csv",
+   3793209,
+   570017,
+   "Delivery Date,Hour Ending,QSE,DME,Resource Name,Resource Type,QSE submitted Curve-MW1,QSE submitted Curve-Price1,QSE submitted Curve-MW2,QSE submitted Curve-Price2,QSE submitted Curve-MW3,QSE submitted Curve-Price3,QSE submitted Curve-MW4,QSE submitted Curve-Price4,QSE submitted Curve-MW5,QSE submitted Curve-Price5,QSE submitted Curve-MW6,QSE submitted Curve-Price6,QSE submitted Curve-MW7,QSE submitted Curve-Price7,QSE submitted Curve-MW8,QSE submitted Curve-Price8,QSE submitted Curve-MW9,QSE submitted Curve-Price9,QSE submitted Curve-MW10,QSE submitted Curve-Price10,Start Up Hot,Start Up Inter,Start Up Cold,Min Gen Cost,HSL,LSL,Resource Status,Awarded Quantity,Settlement Point Name,Energy Settlement Point Price,RegUp Awarded,RegUp MCPC,RegDown Awarded,RegDown MCPC,RRSPFR Awarded,RRSFFR Awarded,RRSUFR Awarded,RRS MCPC,ECRSSD Awarded,ECRS MCPC,NonSpin Awarded,NonSpin MCPC"
   ],
   [
-   "60d_ESR_Data_in_SCED-11-OCT-26.csv",
-   61446615,
-   9685371,
-   "SCED Time Stamp,Repeated Hour Flag,QSE,DME,Resource Name,Resource Type,SCED1 Curve-MW1,SCED1 Curve-Price1,SCED1 Curve-MW2,SCED1 Curve-Price2,SCED1 Curve-MW3,SCED1 Curve-Price3,SCED1 Curve-MW4,SCED1 Curve-Price4,SCED1 Curve-MW5,SCED1 Curve-Price5,SCED1 Curve-MW6,SCED1 Curve-Price6,SCED1 Curve-MW7,SCED1 Curve-Price7,SCED1 Curve-MW8,SCED1 Curve-Price8,SCED1 Curve-MW9,SCED1 Curve-Price9,SCED1 Curve-MW10,SCED1 Curve-Price10,SCED1 Curve-MW11,SCED1 Curve-Price11,SCED1 Curve-MW12,SCED1 Curve-Price12,SCED1 Curve-MW13,SCED1 Curve-Price13,SCED1 Curve-MW14,SCED1 Curve-Price14,SCED1 Curve-MW15,SCED1 Curve-Price15,SCED1 Curve-MW16,SCED1 Curve-Price16,SCED1 Curve-MW17,SCED1 Curve-Price17,SCED1 Curve-MW18,SCED1 Curve-Price18,SCED1 Curve-MW19,SCED1 Curve-Price19,SCED1 Curve-MW20,SCED1 Curve-Price20,SCED1 Curve-MW21,SCED1 Curve-Price21,SCED1 Curve-MW22,SCED1 Curve-Price22,SCED1 Curve-MW23,SCED1 Curve-Price23,SCED1 Curve-MW24,SCED1 Curve-Price24,SCED1 Curve-MW25,SCED1 Curve-Price25,SCED1 Curve-MW26,SCED1 Curve-Price26,SCED1 Curve-MW27,SCED1 Curve-Price27,SCED1 Curve-MW28,SCED1 Curve-Price28,SCED1 Curve-MW29,SCED1 Curve-Price29,SCED1 Curve-MW30,SCED1 Curve-Price30,SCED1 Curve-MW31,SCED1 Curve-Price31,SCED1 Curve-MW32,SCED1 Curve-Price32,SCED1 Curve-MW33,SCED1 Curve-Price33,SCED1 Curve-MW34,SCED1 Curve-Price34,SCED1 Curve-MW35,SCED1 Curve-Price35,SCED2 Curve-MW1,SCED2 Curve-Price1,SCED2 Curve-MW2,SCED2 Curve-Price2,SCED2 Curve-MW3,SCED2 Curve-Price3,SCED2 Curve-MW4,SCED2 Curve-Price4,SCED2 Curve-MW5,SCED2 Curve-Price5,SCED2 Curve-MW6,SCED2 Curve-Price6,SCED2 Curve-MW7,SCED2 Curve-Price7,SCED2 Curve-MW8,SCED2 Curve-Price8,SCED2 Curve-MW9,SCED2 Curve-Price9,SCED2 Curve-MW10,SCED2 Curve-Price10,SCED2 Curve-MW11,SCED2 Curve-Price11,SCED2 Curve-MW12,SCED2 Curve-Price12,SCED2 Curve-MW13,SCED2 Curve-Price13,SCED2 Curve-MW14,SCED2 Curve-Price14,SCED2 Curve-MW15,SCED2 Curve-Price15,SCED2 Curve-MW16,SCED2 Curve-Price16,SCED2 Curve-MW17,SCED2 Curve-Price17,SCED2 Curve-MW18,SCED2 Curve-Price18,SCED2 Curve-MW19,SCED2 Curve-Price19,SCED2 Curve-MW20,SCED2 Curve-Price20,SCED2 Curve-MW21,SCED2 Curve-Price21,SCED2 Curve-MW22,SCED2 Curve-Price22,SCED2 Curve-MW23,SCED2 Curve-Price23,SCED2 Curve-MW24,SCED2 Curve-Price24,SCED2 Curve-MW25,SCED2 Curve-Price25,SCED2 Curve-MW26,SCED2 Curve-Price26,SCED2 Curve-MW27,SCED2 Curve-Price27,SCED2 Curve-MW28,SCED2 Curve-Price28,SCED2 Curve-MW29,SCED2 Curve-Price29,SCED2 Curve-MW30,SCED2 Curve-Price30,SCED2 Curve-MW31,SCED2 Curve-Price31,SCED2 Curve-MW32,SCED2 Curve-Price32,SCED2 Curve-MW33,SCED2 Curve-Price33,SCED2 Curve-MW34,SCED2 Curve-Price34,SCED2 Curve-MW35,SCED2 Curve-Price35,Output Schedule,HSL,HDL,LSL,LDL,Telemetered Resource Status,Base Point,Telemetered Net Output,Ramp Rate Up,Ramp Rate Down,AS Capability REGUP,AS Capability REGDN,AS Capability ECRS,AS Capability NSPIN,AS Capability RRSPFR,AS Capability RRSFFR,State of Charge,Minimum SOC,Maximum SOC,AS Awards NSPIN,AS Awards RRSFFR,AS Awards RRSPFR,AS Awards RRSUFR,AS Awards ECRS,AS Awards REGUP,AS Awards REGDN,Bid_Type,Start Up Cold Offer,Start Up Hot Offer,Start Up Inter Offer,Min Gen Cost,Submitted TPO-MW1,Submitted TPO-Price1,Submitted TPO-MW2,Submitted TPO-Price2,Submitted TPO-MW3,Submitted TPO-Price3,Submitted TPO-MW4,Submitted TPO-Price4,Submitted TPO-MW5,Submitted TPO-Price5,Submitted TPO-MW6,Submitted TPO-Price6,Submitted TPO-MW7,Submitted TPO-Price7,Submitted TPO-MW8,Submitted TPO-Price8,Submitted TPO-MW9,Submitted TPO-Price9,Submitted TPO-MW10,Submitted TPO-Price10,Proxy Extension"
+   "60d_DAM_Gen_Resource_Data-02-JUL-26.csv",
+   3802946,
+   558558,
+   "Delivery Date,Hour Ending,QSE,DME,Resource Name,Resource Type,QSE submitted Curve-MW1,QSE submitted Curve-Price1,QSE submitted Curve-MW2,QSE submitted Curve-Price2,QSE submitted Curve-MW3,QSE submitted Curve-Price3,QSE submitted Curve-MW4,QSE submitted Curve-Price4,QSE submitted Curve-MW5,QSE submitted Curve-Price5,QSE submitted Curve-MW6,QSE submitted Curve-Price6,QSE submitted Curve-MW7,QSE submitted Curve-Price7,QSE submitted Curve-MW8,QSE submitted Curve-Price8,QSE submitted Curve-MW9,QSE submitted Curve-Price9,QSE submitted Curve-MW10,QSE submitted Curve-Price10,Start Up Hot,Start Up Inter,Start Up Cold,Min Gen Cost,HSL,LSL,Resource Status,Awarded Quantity,Settlement Point Name,Energy Settlement Point Price,RegUp Awarded,RegUp MCPC,RegDown Awarded,RegDown MCPC,RRSPFR Awarded,RRSFFR Awarded,RRSUFR Awarded,RRS MCPC,ECRSSD Awarded,ECRS MCPC,NonSpin Awarded,NonSpin MCPC"
   ]
  ]
 }
