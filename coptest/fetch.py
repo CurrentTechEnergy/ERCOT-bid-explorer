@@ -49,23 +49,28 @@ def fetch(emil, want, lag=60):
             log.setdefault("errors", []).append([emil, str(d), f"{type(e).__name__}: {e}"[:300]])
             continue
         log.setdefault("listing", {})[f"{emil} {d}"] = [[x.get("docId"), x.get("friendlyName"), x.get("postDatetime")] for x in docs][:40]
-        for doc in docs:
-            name = (doc.get("friendlyName") or "") + " " + json.dumps(doc.get("_links", {}))
-            if tag(d) not in name.upper() and len(docs) > 1:
-                continue
+        # op day = post date - lag; try the doc posted that day first, then its neighbours
+        docs.sort(key=lambda x: abs((dt.date.fromisoformat(x["postDatetime"][:10]) - post).days))
+        for doc in docs[:3]:
             blob = api.download(emil, doc["docId"])
             if blob[:2] != b"PK":
                 log.setdefault("errors", []).append([emil, str(d), "not a zip", blob[:200].decode(errors="replace")])
                 continue
-            for n, b in csvs(blob):
-                log.setdefault("files", []).append([emil, str(d), n, len(b)])
+            got = list(csvs(blob))
+            for n, b in got:
+                log.setdefault("files", []).append([emil, str(d), doc["postDatetime"], n, len(b)])
+            hit = [(n, b) for n, b in got if tag(d) in n.upper()]
+            if not hit and len(got) and emil == "np1-301":
+                hit = got if doc is docs[0] else []
+            for n, b in hit:
                 if want(n):
                     save(n, b)
-            break
+            if hit:
+                break
 
 
 fetch("np1-301", lambda n: True)                                         # COP snapshot (EMIL from the product page)
-if not any("cop" in f[2].lower() for f in log.get("files", [])):
+if not any("cop" in f[3].lower() for f in log.get("files", [])):
     fetch("np3-991-er", lambda n: True)                                  # fallback guess
 fetch("np3-966-er", lambda n: n.lower().startswith("60d_dam_gen_resource_data"))
 fetch("np3-965-er", lambda n: n.lower().startswith("60d_esr_data_in_sced"))
