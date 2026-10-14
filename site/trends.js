@@ -1329,7 +1329,13 @@ const ST_SORT = [
   { id: "off", label: "Share turned off", f: (a, b) => d3.descending(a.offShare ?? -1, b.offShare ?? -1) },
   { id: "p10", label: "Minimum hours off (10th pct)", f: (a, b) => d3.ascending(a.offP10 ?? 1e9, b.offP10 ?? 1e9) },
   { id: "n", label: "Stretches running into", f: (a, b) => d3.descending(a.n, b.n) },
+  { id: "cutoff", label: "Day-ahead cutoff", f: (a, b) => d3.ascending(a.dec?.cutoff ?? 1e12, b.dec?.cutoff ?? 1e12) },
+  { id: "lift", label: "Cutoff rule over base rate", f: (a, b) => d3.descending(a.dec ? a.dec.acc - a.dec.base : -1, b.dec ? b.dec.acc - b.dec.base : -1) },
 ];
+// pipeline/decisions.py: a unit's shutdown decisions scored day-ahead (see decisionOf)
+const DEC_F = { tech: 0, lsl: 1, mingen: 2, hot: 3, est: 4, days: 5, shut: 6, award: 7, base: 8, cutoff: 9, acc: 10, stayMax: 11, shutMin: 12 };
+const decisionOf = (key) => { const u = S.DEC?.units?.[key]; return u ? Object.fromEntries(Object.entries(DEC_F).map(([k, i]) => [k, u[i]])) : null; };
+const fmtK = (v) => (v == null ? "–" : (v < 0 ? "−" : "") + "$" + d3.format(",.0f")(Math.abs(v) / 1e3) + "k");
 async function drawStretch() {
   const el = $("st-group");
   if (!S.I) return emptyMsg(el, "Fills in after the data update builds the intraday file.");
@@ -1365,24 +1371,68 @@ async function drawStretch() {
   // unit table
   const list = [...B.units.values()].filter((e) => ts.includes(e.tech) && (by.has(e.unit) || e.shut > 0)).map((e) => {
     const g = by.get(e.unit) || [], n = g.length, c = (id) => (n >= ST_MIN_N ? g.filter((r) => r.r === id).length / n : null);
-    return { ...e, n, offShare: n >= ST_MIN_N ? c("B") + c("D") : null, minShare: c("M"), aboveShare: c("A") };
+    return { ...e, n, offShare: n >= ST_MIN_N ? c("B") + c("D") : null, minShare: c("M"), aboveShare: c("A"), dec: decisionOf(e.unit) };
   }).sort(ST_SORT.find((x) => x.id === S.stSort).f);
+  const DEC = S.DEC || {};
   const gl = (id) => ST_GROUPS.find((g) => g.id === id).label, hrs = (v) => (v == null ? "–" : d3.format(",.0f")(v)), pc = (v) => (v == null ? "–" : fmtPct(v));
   $("st-units-note").textContent = `${list.length} units. "Stretches" counts the cheap stretches a unit was already running into; the next three columns say what it did in them (shown once a unit has at least ${ST_MIN_N}). ` +
     `"Shutdowns" and hours off cover every shutdown in the period, cheap or not, in whole hours. An offline spell that is mostly on declared outage, or has under 4 hours OFF before the outage, is an outage, not a shutdown; a shutdown with some outage hours inside it counts whole. For a combined-cycle train a single offline hour is taken as a configuration change. ` +
-    `The 10th percentile of hours off is a steadier guide to a unit's real minimum down time than its single shortest spell, which can be a trip and quick restart. Click a unit to open its detail.`;
+    `The 10th percentile of hours off is a steadier guide to a unit's real minimum down time than its single shortest spell, which can be a trip and quick restart. ` +
+    (DEC.units ? `The last four columns score the decision day-ahead (${DEC.dates.length} days): on every day the unit started online, what riding through the day's worst window of hours would have lost at its own node's day-ahead price (minimum-energy cost minus price, times LSL, before any start cost), and whether it shut down for ${DEC.out_min_h} hours or more. ` +
+      `"Cutoff" is the loss above which it turned off on days with no DAM award covering that window, chosen to separate its shutdowns from its stays best (once it has ${DEC.min_days} decision days with at least ${DEC.min_each} of each; a $0 cutoff means it turned off whenever riding through lost anything). ` +
+      `"Rule right" is how often "off when no award and the loss is above the cutoff, else on" matched what it did, against "base", the share of its commoner outcome; a rule no better than base says the price was not what decided it. "Awarded" is the share of its days with an award over the window. ` : "") +
+    `Click a unit to open its detail.`;
   const cols = [
     { h: "Unit", t: 1, f: (r) => esc(r.name) }, { h: "Technology", t: 1, f: (r) => techLabel(r.tech) }, { h: "Group", t: 1, f: (r) => gl(r.group) }, { h: "MW", f: (r) => d3.format(",.0f")(r.mw) },
     { h: "Stretches", f: (r) => r.n }, { h: "Turned off", f: (r) => pc(r.offShare) }, { h: "At min", f: (r) => pc(r.minShare) }, { h: "Above min", f: (r) => pc(r.aboveShare) },
     { h: "Shutdowns", f: (r) => r.shut }, { h: "Shortest off (h)", f: (r) => hrs(r.offMin) }, { h: "Min off, 10th pct (h)", f: (r) => hrs(r.offP10) }, { h: "Median off (h)", f: (r) => hrs(r.offMed) },
+    ...(DEC.units ? [
+      { h: "Decision days", f: (r) => (r.dec ? `${r.dec.days} (${r.dec.shut} off)` : "–") }, { h: "Cutoff, no award", f: (r) => fmtK(r.dec?.cutoff) },
+      { h: "Rule right", f: (r) => pc(r.dec?.cutoff != null ? r.dec.acc : null) }, { h: "Base", f: (r) => pc(r.dec?.base) }, { h: "Awarded", f: (r) => pc(r.dec?.award) },
+    ] : []),
   ];
   $("st-units").innerHTML = list.length ? unitRows(list.map((r) => ({ ...r, name: r.unit, unit: r.pick })), cols)
     : `<p class="empty">No units match.</p>`;
-  setCSV(el, ["unit", "technology", "group", "stretches_running_into", "share_turned_off", "share_at_minimum", "share_above_minimum", "shutdowns", "shortest_hours_off", "p10_hours_off", "median_hours_off", "mw"],
-    list.map((r) => [r.unit, r.tech, r.group, r.n, r.offShare, r.minShare, r.aboveShare, r.shut, r.offMin, r.offP10, r.offMed, r.mw]), `Cheap stretches, lambda below ${thr}`);
+  setCSV(el, ["unit", "technology", "group", "stretches_running_into", "share_turned_off", "share_at_minimum", "share_above_minimum", "shutdowns", "shortest_hours_off", "p10_hours_off", "median_hours_off", "mw",
+    "decision_days", "decision_shutdowns", "cutoff_no_award_usd", "rule_accuracy", "base_rate", "award_share"],
+    list.map((r) => [r.unit, r.tech, r.group, r.n, r.offShare, r.minShare, r.aboveShare, r.shut, r.offMin, r.offP10, r.offMed, r.mw,
+      r.dec?.days, r.dec?.shut, r.dec?.cutoff, r.dec?.cutoff != null ? r.dec.acc : null, r.dec?.base, r.dec?.award]), `Cheap stretches, lambda below ${thr}`);
+  drawNext(B, ts, gl);
   if (S.unit && S.T.units.find((u) => u.unit === S.unit) && !$("unit-detail").hidden) {
     const u = S.T.units.find((x) => x.unit === S.unit); drawUnitStretch(u, TECHS.find((x) => x.id === u.tech), S.stripScale);
   }
+}
+
+// Tomorrow's expected turn-offs: the latest day with day-ahead node prices, each unit's worst
+// loss window at its node against its cutoff (pipeline/decisions.py). The award for that day is
+// not public yet, so a unit that often holds one over its window is "maybe" rather than "off".
+const NEXT_VERDICT = { off: "Off", maybe: "Maybe: often awarded", on: "On" };
+function drawNext(B, ts, gl) {
+  const el = $("st-next"), DEC = S.DEC, tm = DEC?.tomorrow;
+  if (!tm) { $("st-next-note").textContent = ""; return emptyMsg(el, "Fills in once the data update has fetched day-ahead node prices (NP4-190-CD) for a coming day."); }
+  const rows = tm.rows.filter((r) => ts.includes(r[1]) && r[8]).map((r) => {
+    const e = B.units.get(r[0]);
+    return { unit: r[0], pick: e?.pick || r[0], tech: r[1], group: e?.group, lsl: r[2], loss: r[3], he: r[4], h: r[5], cutoff: r[6], award: r[7], v: r[8] };
+  }).sort((a, b) => d3.ascending(["off", "maybe", "on"].indexOf(a.v), ["off", "maybe", "on"].indexOf(b.v)) || d3.descending(a.loss, b.loss));
+  const noRule = tm.rows.filter((r) => ts.includes(r[1]) && !r[8]).length;
+  const mw = (v) => d3.sum(rows.filter((r) => r.v === v), (r) => r.lsl);
+  // how the verdicts have done on days whose 60-day data has since arrived
+  const sc = DEC.scored || [], known = sc.length;
+  const hit = (v, s) => sc.filter((x) => x[2] === v && x[3] === s).length;
+  const fmtD = d3.timeFormat("%A %b %-d");
+  $("st-next-note").textContent = `Day-ahead prices for ${fmtD(parseDate(tm.date))} at each unit's own node, against its latest minimum-energy cost and LSL: the worst window of hours and what riding through it at minimum would lose, before any start cost. ` +
+    `Units with a cutoff get a verdict: off when the loss is above it, on when at or below, "maybe" when above it but the unit held a DAM award over its window on half or more of its days (tomorrow's awards are not public until the 60-day disclosure). ` +
+    `${rows.filter((r) => r.v === "off").length} units expected off (${fmtMW(mw("off"))} MW of LSL), ${rows.filter((r) => r.v === "maybe").length} maybe (${fmtMW(mw("maybe"))} MW), ${rows.filter((r) => r.v === "on").length} on (${fmtMW(mw("on"))} MW); ${noRule} units have no cutoff. ` +
+    `Whether a unit is online going into the day is not known either: these are the units that had decision days in the period. ` +
+    (known ? `Verdicts checked so far against days whose 60-day data has arrived: ${known}; "off" was right ${hit("off", 1)} of ${hit("off", 1) + hit("off", 0)} times, "on" ${hit("on", 0)} of ${hit("on", 0) + hit("on", 1)}, "maybe" turned off ${hit("maybe", 1)} of ${hit("maybe", 1) + hit("maybe", 0)} times.` : "No verdict has a known outcome yet: the 60-day data for a scored day arrives two months later.");
+  if (!rows.length) return emptyMsg(el, "No units with a cutoff match.");
+  el.innerHTML = unitRows(rows.map((r) => ({ ...r, name: r.unit, unit: r.pick })), [
+    { h: "Verdict", t: 1, f: (r) => NEXT_VERDICT[r.v] }, { h: "Unit", t: 1, f: (r) => esc(r.name) }, { h: "Technology", t: 1, f: (r) => techLabel(r.tech) }, { h: "Group", t: 1, f: (r) => (r.group ? gl(r.group) : "–") },
+    { h: "LSL MW", f: (r) => fmtMW(r.lsl) }, { h: "Worst window", t: 1, f: (r) => (r.h ? `HE ${r.he}–${r.he + r.h - 1} (${r.h} h)` : "none: profitable all day") }, { h: "Loss riding through", f: (r) => fmtK(r.loss) },
+    { h: "Cutoff", f: (r) => fmtK(r.cutoff) }, { h: "Awarded", f: (r) => fmtPct(r.award) },
+  ]);
+  setCSV(el, ["date", "verdict", "unit", "technology", "group", "lsl_mw", "window_first_he", "window_hours", "loss_usd", "cutoff_usd", "award_share"],
+    rows.map((r) => [tm.date, r.v, r.unit, r.tech, r.group, r.lsl, r.he, r.h, r.loss, r.cutoff, r.award]), `Expected turn-offs ${tm.date}`);
 }
 
 // under the unit strip: one mark per cheap stretch the unit (or its train) ran into
@@ -1587,9 +1637,9 @@ function drawAll() { drawFloor(); drawRenewBands(); drawCurtailment(); drawNodeC
 let heatSeen = false;
 
 async function boot() {
-  [S.T, S.TH, S.C, S.I, S.N, S.G, S.GH, S.MN, S.MIT, S.HC] = await Promise.all([tryJSON("data/trends_60d.json.gz"), tryJSON("data/trends_hourly_60d.json.gz"), tryJSON("data/curve_trends.json.gz"), tryJSON("data/intraday_60d.json.gz"),
+  [S.T, S.TH, S.C, S.I, S.N, S.G, S.GH, S.MN, S.MIT, S.HC, S.DEC] = await Promise.all([tryJSON("data/trends_60d.json.gz"), tryJSON("data/trends_hourly_60d.json.gz"), tryJSON("data/curve_trends.json.gz"), tryJSON("data/intraday_60d.json.gz"),
     tryJSON("data/curtail_nodes.json.gz"), tryJSON("data/gas.json.gz"), tryJSON("data/gas_hubs.json.gz"), tryJSON("data/marginal_nodes.json.gz"), tryJSON("data/mitigation.json.gz"),
-    tryJSON("data/hourly_context_60d.json.gz")]);
+    tryJSON("data/hourly_context_60d.json.gz"), tryJSON("data/decisions.json.gz")]);
   if (!S.T) { $("status").textContent = "No trends data yet. It is built by the data update workflow."; return; }
   const D = S.T.dates;
   // one date range for every daily chart: all the bid and curtailment data (gas is trimmed to it)
@@ -1630,7 +1680,7 @@ async function boot() {
   $("unit-pick").addEventListener("change", (e) => showUnit(e.target.value.trim()));
   $("unit-pick").addEventListener("input", (e) => { if (S.T.units.some((u) => u.unit === e.target.value)) showUnit(e.target.value); });
   $("lean-table").addEventListener("click", (e) => { const tr = e.target.closest("tr[data-href]"); if (tr) location.href = tr.dataset.href; });
-  ["chg-table", "flip-table", "cheap-units", "shut-units", "st-units", "st-changed", "st-months"].forEach((id) => $(id).addEventListener("click", (e) => {
+  ["chg-table", "flip-table", "cheap-units", "shut-units", "st-units", "st-changed", "st-months", "st-next"].forEach((id) => $(id).addEventListener("click", (e) => {
     const tr = e.target.closest("tr[data-unit]");
     if (tr) showUnit(tr.dataset.unit);
   }));

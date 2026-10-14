@@ -15,7 +15,7 @@ An interactive dashboard of how ERCOT resources offer energy into real-time disp
 | 60-Day DAM Disclosure | NP3-966-ER | 60 days | Every generation resource's day-ahead three-part offer (energy curve, start-up costs, minimum-energy cost), its day-ahead energy and ancillary service awards, its settlement point and the day-ahead price there |
 | SCED System Lambda | NP6-322-CD | real time | System energy price for each SCED run |
 | Settlement Point Prices | NP6-905-CD | real time | 15-minute prices at hubs and load zones; hourly prices at every resource node (kept on the data branch, for days with per-unit data) |
-| DAM Settlement Point Prices | NP4-190-CD | day ahead | Hourly day-ahead prices at hubs and load zones, for the hedge signals page (history can be loaded from the yearly NP4-180-ER workbook) |
+| DAM Settlement Point Prices | NP4-190-CD | day ahead | Hourly day-ahead prices at hubs and load zones, for the hedge signals page (history can be loaded from the yearly NP4-180-ER workbook), and at thermal resource nodes for the last two weeks, for tomorrow's shutdown verdicts |
 | EIA Henry Hub spot price | RNGWHHD | daily | Natural gas price, $/MMBtu, from the EIA open data API (needs an `EIA_API_KEY` secret; skipped without one) |
 | OilPriceAPI regional gas prices | NATURAL_GAS_HSC_USD, NATURAL_GAS_WAHA | daily | Houston Ship Channel and Waha (West Texas) natural gas prices, $/MMBtu (needs an `OILPRICEAPI_KEY` secret, free tier; skipped without one). Their Henry Hub series is not used: it is not the spot price |
 
@@ -99,7 +99,7 @@ pipeline/
   dispatchable.py  per-unit day files -> "dispatchable" curves (LSL taken out) in the 60-day day files (no downloads)
   marginal.py      day files + prices -> hourly marginal MW by technology (no downloads)
   dam_prices.py    NP4-190-CD (or the yearly NP4-180-ER workbook) -> day-ahead hub and load zone prices
-                   (data/dam_hubs.json.gz)
+                   (data/dam_hubs.json.gz); thermal node prices for the last two weeks (data/dam_nodes.json.gz)
   ppa.py           per-unit day files + DA prices -> wind and solar offers that follow
                    share x DA price - constant: settlement point, share, implied strike (data/ppa.json.gz)
   renew_changes.py ppa cache + DAM day files + node prices (and the history release) -> every change in
@@ -112,6 +112,9 @@ pipeline/
   intraday.py      per-unit day files -> thermal output at/above minimum in cheap hours, off spells
   stayon.py        per-unit day files + DAM costs -> what riding through a cheap stretch cost each
                    thermal unit against a shutdown and restart (no downloads)
+  decisions.py     hourly unit states + DAM node prices, costs and awards -> each thermal unit's
+                   shutdown decisions day by day, its loss cutoff, and tomorrow's expected
+                   turn-offs from the day-ahead node prices (no downloads)
                    (shutdowns, two-shifting), hourly state per unit (no downloads)
   hourly_context.py 60-day summary + prices -> hourly wind, solar, storage and hub price for the
                    Trends page's leanest thermal hours table (no downloads)
@@ -130,6 +133,8 @@ site/
 `pipeline/parse_dam.py` keeps, for every generation resource and operating day, the DAM three-part offer as submitted (energy offer curve by hour, hot / intermediate / cold start-up cost in $ per start, minimum-energy cost in $/MWh), the DAM resource status, the energy award, the unit's settlement point with the day-ahead price there, and ancillary service awards with their clearing prices. Only the generation resource file of the DAM disclosure is read; energy-only offers, PTP obligations and load resources are not.
 
 `pipeline/stayon.py` puts those costs against the real-time data: for every stretch of hours with system lambda below $0 or $10, each thermal unit that ran through it is scored on what its output earned at lambda, what it cost at the unit's minimum-energy price, and what a shutdown and restart would have cost instead (hot start for stretches up to 8 hours, intermediate up to 24, cold beyond). Units with no three-part offer that day use their own most recent one within 10 days, or a generic per-technology value from `pipeline/config.py`, and are marked as such. Submitted costs are capped by ERCOT's cost verification rules, so they are an upper bound on cost, and lambda is the system price rather than the unit's node price.
+
+`pipeline/decisions.py` scores the decision as the unit could have made it when the day-ahead market cleared: for every day a thermal unit started online, the worst contiguous window of (minimum-energy cost − day-ahead price at its own node) × LSL is what riding through would lose, before any start cost; whether its DAM energy award covered that window; and whether it shut down for at least 4 hours. A unit with enough history gets a cutoff, the loss that best separates its shutdowns from its stays on days without an award, and the rule "off when no award covers the window and the loss exceeds the cutoff" is scored against its commoner outcome. Day-ahead node prices for tomorrow are public the afternoon before (NP4-190-CD, kept for thermal nodes in `data/dam_nodes.json.gz`), so the same arithmetic with each unit's latest costs gives the units expected to turn off tomorrow; the award is not known until the disclosure, so the verdict leans on how often the unit has held one. Each day's verdicts are kept and scored once its 60-day data arrives.
 
 ### Curtailment at the node
 

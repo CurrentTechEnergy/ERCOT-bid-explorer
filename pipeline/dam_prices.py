@@ -1,11 +1,17 @@
-"""Day-ahead settlement point prices at hubs and load zones (NP4-190-CD, "DAM Settlement Point
-Prices"), hourly, for the PPA guesser (pipeline/ppa.py).  The 60-day DAM disclosure already
-gives each unit's own node DA price; this adds the hubs and load zones a hedge could settle at.
+"""Day-ahead settlement point prices (NP4-190-CD, "DAM Settlement Point Prices"), hourly.
 
+Hubs and load zones, for the PPA guesser (pipeline/ppa.py).  The 60-day DAM disclosure already
+gives each unit's own node DA price; this adds the hubs and load zones a hedge could settle at.
 Writes data/dam_hubs.json.gz:
   {"points": [HB_..., LZ_...], "days": {date: {point: [24 x $/MWh or null]}}}
 Hours are hour ending 1..24 stored at index 0..23; on the fall-back day the repeated hour is
 dropped (as in the per-unit day files, which average it into one).
+
+Thermal resource nodes for the most recent days, for tomorrow's shutdown verdicts
+(pipeline/decisions.py): the report for operating day D is posted around 13:30 Central on
+D - 1, sixty days before the disclosure gives the units' own prices.  Only the settlement
+points of thermal units in the latest DAM disclosure files are kept, and only the last
+NODE_DAYS days.  Writes data/dam_nodes.json.gz in the same shape.
 
 History before the API backfill reaches it can be loaded from ERCOT's yearly file of DAM hub and
 load zone prices (NP4-180-ER, an .xlsx with one sheet per month):
@@ -24,7 +30,10 @@ from .log import warn
 from .store import iter_csvs, read_json_gz, write_json_gz
 
 PATH = DATA_DIR / "dam_hubs.json.gz"
+NODES_PATH = DATA_DIR / "dam_nodes.json.gz"
 MAX_MISSES = 3
+NODE_DAYS = 14        # days of thermal node prices kept
+NODE_FROM_DAM = 5     # latest DAM disclosure files the thermal node list is read from
 
 
 def _norm(c) -> str:
@@ -35,9 +44,10 @@ def _keep(point: str) -> bool:
     return point.startswith("HB_") or point.startswith("LZ_")
 
 
-def frame_to_days(f: pd.DataFrame) -> dict:
-    """{date: {point: [24]}} from a frame with columns date (ISO), he (1..24), flag, point, price."""
-    f = f[f["point"].map(_keep) & (f["flag"].astype(str).str.upper() != "Y")]
+def frame_to_days(f: pd.DataFrame, keep=_keep) -> dict:
+    """{date: {point: [24]}} from a frame with columns date (ISO), he (1..24), flag, point, price,
+    for the settlement points `keep` accepts."""
+    f = f[f["point"].map(keep) & (f["flag"].astype(str).str.upper() != "Y")]
     f = f.dropna(subset=["he"])
     out = {}
     for (date, point), g in f.groupby(["date", "point"]):
@@ -49,8 +59,9 @@ def frame_to_days(f: pd.DataFrame) -> dict:
     return out
 
 
-def read_dam_spp(csvs: Iterable[Tuple[str, bytes]]) -> dict:
-    """NP4-190-CD CSVs -> {date: {point: [24]}} for hubs and load zones."""
+def read_dam_spp(csvs: Iterable[Tuple[str, bytes]], keep=_keep) -> dict:
+    """NP4-190-CD CSVs -> {date: {point: [24]}} for the settlement points `keep` accepts (hubs
+    and load zones by default)."""
     frames = []
     for n, b in csvs:
         f = pd.read_csv(io.BytesIO(b))
@@ -67,17 +78,17 @@ def read_dam_spp(csvs: Iterable[Tuple[str, bytes]]) -> dict:
             "point": f[c["settlementpoint"]].astype(str).str.strip(),
             "price": pd.to_numeric(f[c["settlementpointprice"]], errors="coerce"),
         }))
-    return frame_to_days(pd.concat(frames, ignore_index=True)) if frames else {}
+    return frame_to_days(pd.concat(frames, ignore_index=True), keep) if frames else {}
 
 
-def load() -> dict:
-    return read_json_gz(PATH, default=None) or {"points": [], "days": {}}
+def load(path=PATH) -> dict:
+    return read_json_gz(path, default=None) or {"points": [], "days": {}}
 
 
-def save(store: dict) -> None:
+def save(store: dict, path=PATH) -> None:
     store["days"] = dict(sorted(store["days"].items()))
     store["points"] = sorted({p for v in store["days"].values() for p in v})
-    write_json_gz(PATH, store)
+    write_json_gz(path, store)
 
 
 def merge(store: dict, days: dict) -> list:
@@ -109,6 +120,51 @@ def fetch_dam_prices(api, dates, index: dict, limit: int = 60) -> None:
         if date not in got:
             misses[date] = misses.get(date, 0) + 1
     save(store)
+
+
+def thermal_nodes(index: dict) -> set:
+    """Settlement points of the thermal units in the latest DAM disclosure files."""
+    from .trends import UNIT_TECHS
+    nodes = set()
+    for d in sorted(index["days"].get("dam", []))[-NODE_FROM_DAM:]:
+        dd = read_json_gz(DATA_DIR / "dam" / f"{d}.json.gz")
+        for u in (dd or {}).get("units", {}).values():
+            if u.get("tech") in UNIT_TECHS and u.get("sp"):
+                nodes.add(u["sp"])
+    return nodes
+
+
+def fetch_dam_node_prices(api, index: dict, today: dt.date = None) -> None:
+    """Thermal node DA prices for the last NODE_DAYS days up to tomorrow, those not yet stored."""
+    nodes = thermal_nodes(index)
+    if not nodes:
+        return
+    today = today or dt.date.today()
+    store = load(NODES_PATH)
+    keep_from = (today - dt.timedelta(days=NODE_DAYS - 2)).isoformat()
+    store["days"] = {d: v for d, v in store["days"].items() if d >= keep_from}
+    misses = index.setdefault("dam_node_misses", {})
+    want = [(today + dt.timedelta(days=k)).isoformat() for k in range(1, 1 - NODE_DAYS, -1)]
+    todo = [d for d in want if d not in store["days"] and misses.get(d, 0) < MAX_MISSES]
+    for date in todo:
+        d = dt.date.fromisoformat(date)
+        try:
+            docs = api.list_archives(EMIL_DAM_SPP, dt.datetime.combine(d - dt.timedelta(days=2), dt.time()),
+                                     dt.datetime.combine(d + dt.timedelta(days=1), dt.time()))
+            blobs = api.download_many(EMIL_DAM_SPP, [x["docId"] for x in docs]) if docs else []
+            got = read_dam_spp([c for b in blobs for c in iter_csvs(b, "x.zip")], keep=nodes.__contains__)
+        except Exception as e:
+            warn(f"DA node prices {date}: failed: {type(e).__name__}: {e}")
+            continue
+        if date in got:
+            store["days"][date] = got[date]
+        else:
+            misses[date] = misses.get(date, 0) + 1
+    index["dam_node_misses"] = {d: n for d, n in misses.items() if d >= keep_from}
+    save(store, NODES_PATH)
+    if store["days"]:
+        last = max(store["days"])
+        print(f"DA node prices: {len(store['days'])} day(s) to {last}, {len(store['days'][last])} thermal nodes")
 
 
 def load_xlsx(path: str) -> list:
