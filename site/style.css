@@ -115,7 +115,6 @@ h2 { font: 600 17px/1.2 var(--font-head); margin: 0 0 4px; letter-spacing: 0.01e
 .price-band { fill: var(--band); }
 .lsl-band { fill: var(--ink); opacity: 0.06; }
 .lsl-rule { stroke: var(--ink); stroke-dasharray: 4 3; opacity: 0.45; }
-.lsl-rule.lsl-series { stroke-width: 1.2; opacity: 0.55; }
 .lsl-label { font-size: 11px; fill: var(--muted); }
 .mix-label { font-size: 13px; fill: var(--ink-2); }
 .mix-value { font: 12px var(--font-data); fill: var(--ink); }
