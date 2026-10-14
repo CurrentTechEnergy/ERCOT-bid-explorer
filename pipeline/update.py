@@ -34,6 +34,7 @@ from .trends import build_trends
 from .intraday import build_intraday
 from .hourly_context import build_hourly_context
 from .stayon import build_stayon
+from .decisions import build_decisions
 from .curve_trends import build_curve_trends
 from .nodes import build_node_curtail
 from .marginal_nodes import build_marginal_nodes
@@ -41,7 +42,7 @@ from .mitigation import build_mitigation
 from .gas import fetch_gas, fetch_hubs
 from .fuel_hub import build_fuel_hubs
 from .econ import build_econ
-from .dam_prices import fetch_dam_prices
+from .dam_prices import fetch_dam_prices, fetch_dam_node_prices
 from .ppa import build_ppa
 from .renew_changes import build_renew_changes
 from .series import build_series
@@ -370,6 +371,7 @@ def main(argv=None):
         build_intraday(index)
         build_hourly_context(index)
         build_stayon(index)
+        build_decisions(index)
         build_curve_trends(index)
         build_node_curtail(index)
         build_marginal_nodes(index)
@@ -415,6 +417,7 @@ def main(argv=None):
         fetch_prices(api, need, index, node_dates=node_need,
                      node_limit=args.max_files if args.backfill and args.max_files else NODE_DAYS_PER_RUN)
         fetch_dam_prices(api, index["days"]["60d"], index)
+        fetch_dam_node_prices(api, index)
     if "gas" not in args.skip:
         fetch_gas()
         fetch_hubs()
@@ -425,6 +428,7 @@ def main(argv=None):
     build_intraday(index)
     build_hourly_context(index)
     build_stayon(index)
+    build_decisions(index)
     build_curve_trends(index)
     build_node_curtail(index)
     build_marginal_nodes(index)
