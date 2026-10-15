@@ -134,7 +134,7 @@
     <div class="prose">
       <p class="step-num">STEP 2</p>
       <h2>Anatomy of an offer curve</h2>
-      <p>An energy offer curve is a list of price and MW points: "I will produce up to this many MW at or above this price." ERCOT draws straight lines between the points.</p>
+      <p>An energy offer curve is a list of price and MW points. Each point says: "once the price reaches this level, I am willing to run at this many MW." ERCOT draws straight lines between the points, so a price between two points maps to an output between them. The curve sets the most SCED will ask of the unit at a given price; SCED can still run it lower than that, for example when its ramp limits or local congestion hold it back.</p>
       <p>Two limits matter. <strong>HSL</strong> (high sustained limit) is the most the unit can produce right now. <strong>LSL</strong> (low sustained limit) is the least it can produce and stay online: its minimum output. Rio Nogales' LSL is about <span id="s2-lsl">475</span> MW out of <span id="s2-hsl">800</span> MW.</p>
       <p>The shaded block from 0 MW to LSL is <strong>not a bid</strong>. While the unit is on, those MW run at any price; the only way to stop them is to turn the unit off (step 1). Whatever prices the curve shows below LSL never set dispatch or the market price.</p>
       <p>Switch to <strong>"As ERCOT uses it"</strong> to see the curve SCED actually ran on. ERCOT fills the space from 0 MW up to the first offered point with a placeholder price (usually −$20), so in ERCOT's version the LSL block looks like MW offered at −$20. It is minimum output, not an offer to run at −$20.</p>
