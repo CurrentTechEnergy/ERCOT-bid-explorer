@@ -655,8 +655,8 @@ function drawMarginalSmooth(el, H, list, w, narrow) {
   const area = () => d3.area().defined((d) => !d.gap).curve(exact ? d3.curveLinear : d3.curveMonotoneX);
   const Hh = 400, HS = 60, m = { t: 18, r: 16, b: 30, l: 50 };
   const x = d3.scaleSymlog().constant(10).domain(d3.extent(pts, (d) => d.p)).range([m.l, w - m.r]);
-  // charging as a share of supply can pass 100%; it is drawn no deeper than 200% (the readout gives the value)
-  const y = d3.scaleLinear().domain([-Math.min(2, Math.max(0.5, d3.max(pts, (d) => d.c) || 0)), 1]).nice().range([Hh - m.b, m.t]);
+  // charging as a share of supply can pass 100%; it is drawn no deeper than 100% (the readout gives the value)
+  const y = d3.scaleLinear().domain([-Math.min(1, Math.max(0.5, d3.max(pts, (d) => d.c) || 0)), 1]).nice().range([Hh - m.b, m.t]);
   const svg = d3.create("svg").attr("viewBox", `0 0 ${w} ${Hh + HS + 30}`);
   const ticks = (narrow ? [0, 20, 50, 100] : [-20, -5, 0, 10, 20, 30, 50, 100, 200, 500]).filter((t) => t >= x.domain()[0] && t <= x.domain()[1]);
   marginalAxes(svg, y, x, w, Hh, m, "System lambda, hourly average ($/MWh, compressed scale)", d3.axisBottom(x).tickValues(ticks).tickFormat(fmtPrice0));

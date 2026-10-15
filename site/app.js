@@ -718,9 +718,9 @@ const STORAGE_SPLIT = [
   { id: "storage_charging", keys: ["storage"], part: "chg", label: "Storage charging (bids to buy)", color: "--c7-soft" },
   { id: "storage_discharging", keys: ["storage"], part: "dis", label: "Storage discharging", color: "--c7" },
 ];
-// charging as a share of supply can run far past 100% when little supply moves, so the charts
-// draw it no deeper than this (the readouts give the real value)
-const CHG_AXIS_MAX = 2;
+// charging as a share of supply can pass 100% when little supply moves, so the charts draw it
+// no deeper than 100% (the readouts give the real value)
+const CHG_AXIS_MAX = 1;
 function marginalSeries(list) { return list.flatMap((s) => (s.id === "storage" ? STORAGE_SPLIT : [s])); }
 
 function marginalRows(h, hp) {
