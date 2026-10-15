@@ -158,7 +158,7 @@
       <h2>What SCED can actually move</h2>
       <p>SCED reads the curve from LSL up. Drag the price: the dot is where SCED would put the unit at that price. It follows the curve above LSL and stops at LSL however low the price goes.</p>
       <p>In each five-minute run SCED also respects ramp limits, so the real range is a little narrower than LSL to HSL: <strong>LDL</strong> and <strong>HDL</strong> (low and high dispatch limits). The chart below shows the whole day: from HE 10 to HE 17 the price was negative and Rio Nogales sat at its minimum output, because SCED had no lower point to send it to.</p>
-      <p class="key">At negative prices the thermal MW on the grid are mostly minimum output that SCED cannot touch. The only thermal MW that respond to price are the ones offered above LSL.</p>
+      <p class="key">Price can only move an online unit between its LSL and HSL. When the price falls, SCED backs each unit down toward LSL until it reaches MW the unit offered at or below that price. So at negative prices, the thermal MW still running above LSL are only those offered at or below the negative price (or held up for a few minutes by ramp limits). Everything else is minimum output that SCED cannot touch.</p>
     </div>
     <div class="fig">
       <div class="panel-tools">
