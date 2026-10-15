@@ -13,6 +13,7 @@
   .toc a:hover { color: var(--ink); border-color: var(--muted); }
   .guide { display: flex; flex-direction: column; gap: 16px; margin-top: 16px; }
   .gstep { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 20px 28px; align-items: start; scroll-margin-top: 90px; }
+  .gstep.aside { border-style: dashed; background: var(--page); }
   .gstep.text-only { grid-template-columns: minmax(0, 1fr); }
   .step-num { font: 500 12px var(--font-data); color: var(--muted); letter-spacing: 0.04em; margin: 0 0 4px; }
   .prose { display: flex; flex-direction: column; gap: 10px; min-width: 0; }
@@ -93,10 +94,10 @@
     <li><a href="#s1">1 Two decisions</a></li>
     <li><a href="#s2">2 Offer curve</a></li>
     <li><a href="#s3">3 What SCED moves</a></li>
-    <li><a href="#s4">4 Day-ahead</a></li>
-    <li><a href="#s5">5 Staying on</a></li>
-    <li><a href="#s6">6 “From LSL”</a></li>
-    <li><a href="#s7">7 Reading the site</a></li>
+    <li><a href="#s5">4 Staying on</a></li>
+    <li><a href="#s4">Sidequest: Day-ahead</a></li>
+    <li><a href="#s6">5 “From LSL”</a></li>
+    <li><a href="#s7">6 Reading the site</a></li>
   </ul>
 </section>
 
@@ -171,24 +172,9 @@
     </div>
   </section>
 
-  <section class="panel gstep" id="s4">
-    <div class="prose">
-      <p class="step-num">STEP 4</p>
-      <h2>The day-ahead market</h2>
-      <p>The day-ahead market (DAM) is financial and voluntary. A QSE can offer a <strong>three-part offer</strong>: a start-up cost, a minimum-energy cost (for running at LSL) and an energy curve above it. If it clears, the unit gets an hourly energy award, a promise to deliver at the day-ahead price or buy back the difference in real time.</p>
-      <p>A DAM award is not a commitment instruction, and many units run without one. Rio Nogales had awards overnight and in the evening but <strong>none from HE 11 to HE 17</strong>, and it ran at minimum output through those hours anyway.</p>
-      <p id="s4-fleet">Across the fleet that day…</p>
-      <p>Some plants never use the day-ahead market at all. On every day loaded on this site, W.A. Parish, Limestone and Oak Grove submitted no DAM energy offer, so their on/off schedule is set entirely by their owners.</p>
-    </div>
-    <div class="fig">
-      <div class="chart" id="c4"></div>
-      <p class="cap" id="c4-cap"></p>
-    </div>
-  </section>
-
   <section class="panel gstep" id="s5">
     <div class="prose">
-      <p class="step-num">STEP 5</p>
+      <p class="step-num">STEP 4</p>
       <h2>The stay-on decision</h2>
       <p>When a stretch of cheap hours is coming, the owner of an online unit chooses between two costs:</p>
       <ul>
@@ -205,9 +191,24 @@
     </div>
   </section>
 
+  <section class="panel gstep aside" id="s4">
+    <div class="prose">
+      <p class="step-num">SIDEQUEST</p>
+      <h2>Doesn't the day-ahead market decide who runs?</h2>
+      <p>Not directly. The day-ahead market (DAM) is financial and voluntary. A QSE can offer a <strong>three-part offer</strong>: a start-up cost, a minimum-energy cost (for running at LSL) and an energy curve above it. If it clears, the unit gets an hourly energy award, a promise to deliver at the day-ahead price or buy back the difference in real time.</p>
+      <p>A DAM award is not a commitment instruction, and many units run without one. Rio Nogales had awards overnight and in the evening but <strong>none from HE 11 to HE 17</strong>, and it ran at minimum output through those hours anyway.</p>
+      <p id="s4-fleet">Across the fleet that day…</p>
+      <p>Some plants never use the day-ahead market at all. On every day loaded on this site, W.A. Parish, Limestone and Oak Grove submitted no DAM energy offer, so their on/off schedule is set entirely by their owners.</p>
+    </div>
+    <div class="fig">
+      <div class="chart" id="c4"></div>
+      <p class="cap" id="c4-cap"></p>
+    </div>
+  </section>
+
   <section class="panel gstep" id="s6">
     <div class="prose">
-      <p class="step-num">STEP 6</p>
+      <p class="step-num">STEP 5</p>
       <h2>Adding it up: what “From LSL” means on this site</h2>
       <p>Add up every online unit and the minimum output blocks form a large spike at the bottom of the offer stack. In ERCOT's version (step 2) the spike sits at −$20, which makes it look as though many gigawatts are bid at −$20 and are ready to move. They are not.</p>
       <p><strong>"From LSL"</strong> is how this site draws and counts offers instead. For each technology it takes the online units' total LSL and adds only the MW they offer <em>above</em> LSL at or below each price. The curve runs flat at the LSL total from the left edge, then rises with the real bids. The flat part answers "how much runs regardless of price", and the rise answers "how much moves with price". Switch views to compare.</p>
@@ -235,7 +236,7 @@
 
   <section class="panel gstep text-only" id="s7">
     <div class="prose">
-      <p class="step-num">STEP 7</p>
+      <p class="step-num">STEP 6</p>
       <h2>Reading the site with this in mind</h2>
       <p>Most charts answer one of two questions. Knowing which one helps avoid reading minimum output as a bid.</p>
     </div>
