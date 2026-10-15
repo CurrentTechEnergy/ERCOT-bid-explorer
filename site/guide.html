@@ -116,7 +116,7 @@
       <p>Whether a unit runs at all and how much it produces are separate decisions, made by different parties at different times.</p>
       <ul>
         <li><strong>On or off (commitment)</strong> is decided by the unit's owner, through its QSE (the company that schedules and bids it), hours to days ahead. The QSE reports each hour's planned status in the Current Operating Plan (COP). ERCOT can add units through reliability unit commitment (RUC), but it does not turn units off to save money.</li>
-        <li><strong>How much (dispatch)</strong> is decided by SCED, ERCOT's real-time market, every five minutes. It only moves units that are already on, and only within limits the unit sets.</li>
+        <li><strong>How much (dispatch)</strong> is decided by SCED, ERCOT's real-time market, every five minutes. It only moves units that are already on, and only <strong>within each unit's limits</strong>: between its minimum output (LSL) and its maximum (HSL), narrowed by how fast it can ramp. Inside that range SCED <strong>follows the unit's offer curve</strong>, running the cheapest offered MW first until supply meets demand (steps 2 and 3).</li>
       </ul>
       <p class="key">SCED never turns a unit on or off. So a negative price on its own does not shut anything down: it only pushes online units down toward their minimum output.</p>
     </div>
@@ -125,7 +125,7 @@
         <div class="tl"><span class="when">Days ahead</span><span class="what">Unit plans</span><p>Fuel, maintenance, start-up plans. The QSE decides which units to run.</p><span class="who q">QSE decides</span></div>
         <div class="tl"><span class="when">Day before, 10 am</span><span class="what">Day-ahead market</span><p>Financial, voluntary. Three-part offers can win an energy award for each hour.</p><span class="who q">QSE offers, ERCOT clears</span></div>
         <div class="tl"><span class="when">Day before to real time</span><span class="what">COP and RUC</span><p>QSE reports planned status per hour. ERCOT may commit extra units for reliability.</p><span class="who q">QSE reports, ERCOT checks</span></div>
-        <div class="tl rt"><span class="when">Every 5 minutes</span><span class="what">SCED</span><p>Sets each online unit's output (base point) and the price, from the offer curves.</p><span class="who e">ERCOT dispatches</span></div>
+        <div class="tl rt"><span class="when">Every 5 minutes</span><span class="what">SCED</span><p>Sets each online unit's output (base point) and the price, from its offer curve, within its LSL to HSL limits.</p><span class="who e">ERCOT dispatches</span></div>
       </div>
     </div>
   </section>
