@@ -119,11 +119,13 @@ pipeline/
                    (shutdowns, two-shifting), hourly state per unit (no downloads)
   hourly_context.py 60-day summary + prices -> hourly wind, solar, storage and hub price for the
                    Trends page's leanest thermal hours table (no downloads)
+  guide.py         one example day's per-unit file -> data/guide.json.gz, the worked examples on
+                   the How offers work page (run by hand, not by the workflow)
   ercot_api.py     ERCOT Public API client (token, archive listing, downloads)
   update.py        command line entry point
 site/
   index.html, app.js, trends.html, trends.js, economics.html, economics.js, contracts.html, contracts.js,
-  builder.html, builder.js, style.css, vendor/d3.min.js
+  builder.html, builder.js, guide.html, guide.js, style.css, vendor/d3.min.js
   data/            generated: index.json, summary_*.json.gz, marginal_*.json.gz, 2d/, 60d/, dam/, prices/,
                    curtail_nodes.json.gz, marginal_nodes.json.gz, gas.json.gz, gas_hubs.json.gz,
                    series/

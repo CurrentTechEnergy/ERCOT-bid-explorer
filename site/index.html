@@ -13,7 +13,7 @@
 
 <header class="masthead">
   <div class="brand">
-    <div class="nav-row"><nav class="nav" aria-label="Pages"><a href="index.html" aria-current="page">Day view</a><a href="trends.html">Trends</a><a href="economics.html">Plant economics</a><a href="contracts.html">Hedge signals</a><a href="builder.html">Graph builder</a></nav></div>
+    <div class="nav-row"><nav class="nav" aria-label="Pages"><a href="index.html" aria-current="page">Day view</a><a href="trends.html">Trends</a><a href="economics.html">Plant economics</a><a href="contracts.html">Hedge signals</a><a href="builder.html">Graph builder</a><a href="guide.html">How offers work</a></nav></div>
     <h1>ERCOT Bid Stack Explorer</h1>
     <p class="sub">How resources offer energy into SCED, by technology, day and hour. Data from ERCOT's 2-Day SCED Energy Curves and 60-Day SCED Disclosure reports.</p>
   </div>
@@ -64,7 +64,7 @@
     <div class="panel-head">
       <div>
         <h2>Offer curves <span class="h-note" id="curve-title-note"></span></h2>
-        <p class="note">MW offered at or below each price, averaged over the SCED runs in the hour. The line across the chart marks the cleared price for the hour; the shaded band is its range in that hour. With the 60-day report, "From LSL" draws each technology as the minimum output (LSL) of its online units plus the MW offered above that, so the curve runs flat at LSL and rises with the bids: minimum output runs however low the price goes, and only the MW above it can move by price. "As ERCOT prices it" shows the curves the way SCED sees them, with minimum output at −$20 (−$50 for some units) and the −$250 starts of some submitted curves. The Stacked view shades the LSL block from zero; hover for the split.</p>
+        <p class="note">MW offered at or below each price, averaged over the SCED runs in the hour. The line across the chart marks the cleared price for the hour; the shaded band is its range in that hour. With the 60-day report, "From LSL" draws each technology as the minimum output (LSL) of its online units plus the MW offered above that, so the curve runs flat at LSL and rises with the bids: minimum output runs however low the price goes, and only the MW above it can move by price. "As ERCOT prices it" shows the curves the way SCED sees them, with minimum output at −$20 (−$50 for some units) and the −$250 starts of some submitted curves. The Stacked view shades the LSL block from zero; hover for the split. <a href="guide.html#s6">More on what “From LSL” means</a>.</p>
       </div>
       <div class="panel-tools">
         <div class="seg seg-sm" id="xrange" role="radiogroup" aria-label="Price range">

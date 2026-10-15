@@ -1,0 +1,281 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>How Offers Work</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Sans+Condensed:wght@600&display=swap">
+<link rel="stylesheet" href="style.css">
+<style>
+  .toc { display: flex; flex-wrap: wrap; gap: 6px; margin: 0; padding: 0; list-style: none; font-size: 12.5px; }
+  .toc a { display: inline-block; color: var(--ink-2); text-decoration: none; padding: 3px 10px; border: 1px solid var(--line); border-radius: 999px; background: var(--surface); }
+  .toc a:hover { color: var(--ink); border-color: var(--muted); }
+  .guide { display: flex; flex-direction: column; gap: 16px; margin-top: 16px; }
+  .gstep { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 20px 28px; align-items: start; scroll-margin-top: 90px; }
+  .gstep.aside { border-style: dashed; background: var(--page); }
+  .gstep.text-only { grid-template-columns: minmax(0, 1fr); }
+  .step-num { font: 500 12px var(--font-data); color: var(--muted); letter-spacing: 0.04em; margin: 0 0 4px; }
+  .prose { display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+  .prose p, .prose li { margin: 0; color: var(--ink-2); max-width: 66ch; }
+  .prose ul { margin: 0; padding-left: 18px; display: flex; flex-direction: column; gap: 6px; }
+  .prose strong { color: var(--ink); font-weight: 600; }
+  .prose a, .cheat a { color: var(--accent); }
+  .key { border-left: 3px solid var(--accent); padding: 6px 12px; background: var(--accent-soft); border-radius: 0 6px 6px 0; color: var(--ink) !important; }
+  .see { font-size: 13px; }
+  .fig { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+  .fig .panel-tools { justify-content: space-between; }
+  .cap { margin: 0; font-size: 12px; color: var(--muted); }
+  .timeline { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
+  .tl { border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; background: var(--page); display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+  .tl .when { font: 500 11px var(--font-data); color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; }
+  .tl .what { font: 600 14px var(--font-head); }
+  .tl p { margin: 0; font-size: 12.5px; color: var(--ink-2); }
+  .tl.rt { border-color: var(--accent); }
+  .tl .who { margin-top: auto; padding-top: 6px; border-top: 2px solid var(--c2); font-size: 11.5px; color: var(--muted); }
+  .tl .who.e { border-color: var(--accent); }
+  .kpis { display: flex; flex-wrap: wrap; gap: 10px 28px; }
+  .kpi { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+  .kpi .v { font: 500 19px var(--font-data); font-variant-numeric: tabular-nums; }
+  .kpi .k { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; max-width: 22ch; }
+  .neg { color: var(--c8); }
+  .cheat { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+  .cheat h3 { margin: 0 0 4px; font: 600 15px var(--font-head); }
+  .cheat p.lead { margin: 0 0 8px; font-size: 13px; color: var(--ink-2); }
+  .cheat ul { margin: 0; padding-left: 18px; font-size: 13px; color: var(--ink-2); display: flex; flex-direction: column; gap: 5px; }
+  .uses { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+  .uses th, .uses td { text-align: left; vertical-align: top; padding: 6px 8px; border-bottom: 1px solid var(--line); }
+  .uses th { font-size: 11px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: var(--muted); }
+  .uses td:first-child { color: var(--ink); white-space: nowrap; }
+  .uses td { color: var(--ink-2); }
+  .tag { display: inline-block; font: 500 10.5px var(--font-data); padding: 1px 6px; border-radius: 4px; background: var(--accent-soft); color: var(--accent); white-space: nowrap; }
+  .tag.inc { background: var(--grid); color: var(--ink-2); }
+  .ctl-unit select { min-width: 260px; max-width: 100%; }
+  .unit-note { margin: 0; font-size: 12px; color: var(--muted); max-width: 46ch; }
+  .chart .lab { font: 11px var(--font-ui); fill: var(--muted); }
+  .chart .lab-ink { font: 500 11px var(--font-ui); fill: var(--ink-2); }
+  .curve-faint { fill: none; stroke-width: 1.5; stroke-dasharray: 3 3; opacity: 0.55; }
+  .curve-solid { fill: none; stroke-width: 2.25; }
+  .bp-dot { stroke: var(--surface); stroke-width: 2; }
+  @media (max-width: 900px) {
+    .gstep { grid-template-columns: minmax(0, 1fr); }
+    .timeline { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+    .cheat { grid-template-columns: minmax(0, 1fr); }
+  }
+  @media (max-width: 480px) {
+    .ctl-unit select { min-width: 0; width: 100%; }
+    .uses td:first-child { white-space: normal; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+<header class="masthead">
+  <div class="brand">
+    <div class="nav-row"><nav class="nav" aria-label="Pages"><a href="index.html">Day view</a><a href="trends.html">Trends</a><a href="economics.html">Plant economics</a><a href="contracts.html">Hedge signals</a><a href="builder.html">Graph builder</a><a href="guide.html" aria-current="page">How offers work</a></nav></div>
+    <h1>How offers work</h1>
+    <p class="sub">Why thermal plants keep running when prices go negative. A walk through offer curves, minimum output (LSL), real-time dispatch (SCED), the day-ahead market (DAM) and on/off decisions, using one real day and real units from ERCOT's 60-day disclosures.</p>
+  </div>
+  <p class="status" id="status">Loading data…</p>
+</header>
+
+<section class="controls" aria-label="Example">
+  <div class="ctl ctl-unit">
+    <label class="lbl" for="unit">Example unit</label>
+    <select id="unit"></select>
+    <p class="unit-note" id="unit-note"></p>
+  </div>
+  <div class="ctl ctl-hour">
+    <label class="lbl" for="hour">Hour <output id="hour-out">HE 13</output></label>
+    <input type="range" id="hour" min="0" max="23" step="1" value="12">
+  </div>
+  <ul class="toc" aria-label="Steps">
+    <li><a href="#s1">1 Two decisions</a></li>
+    <li><a href="#s2">2 Offer curve</a></li>
+    <li><a href="#s3">3 What SCED moves</a></li>
+    <li><a href="#s5">4 Staying on</a></li>
+    <li><a href="#s4">Sidequest: Day-ahead</a></li>
+    <li><a href="#s6">On this site: “From LSL”</a></li>
+    <li><a href="#s7">5 Reading the site</a></li>
+  </ul>
+</section>
+
+<main class="guide">
+
+  <section class="panel" id="s0">
+    <div class="prose">
+      <p class="key" id="day-key">The example day is loading.</p>
+      <p>Every chart below uses that day. Pick a different example unit or hour at the top; the text describes the default, Rio Nogales combined cycle at HE 13.</p>
+    </div>
+  </section>
+
+  <section class="panel gstep" id="s1">
+    <div class="prose">
+      <p class="step-num">STEP 1</p>
+      <h2>Two decisions, made on two clocks</h2>
+      <p>Whether a unit runs at all and how much it produces are separate decisions, made by different parties at different times.</p>
+      <ul>
+        <li><strong>On or off (commitment)</strong> is decided by the unit's owner, through its QSE (the company that schedules and bids it), hours to days ahead. The QSE reports each hour's planned status in the Current Operating Plan (COP). ERCOT can add units through reliability unit commitment (RUC), but it does not turn units off to save money.</li>
+        <li><strong>How much (dispatch)</strong> is decided by SCED, ERCOT's real-time market, every five minutes. It only moves units that are already on, and only <strong>within each unit's limits</strong>: between its minimum output (LSL) and its maximum (HSL), narrowed by how fast it can ramp. Inside that range SCED <strong>follows the unit's offer curve</strong>, running the cheapest offered MW first until supply meets demand (steps 2 and 3).</li>
+      </ul>
+      <p class="key">SCED never turns a unit on or off. So a negative price on its own does not shut anything down: it only pushes online units down toward their minimum output.</p>
+    </div>
+    <div class="fig">
+      <div class="timeline" aria-label="Timeline of decisions">
+        <div class="tl"><span class="when">Days ahead</span><span class="what">Unit plans</span><p>Fuel, maintenance, start-up plans. The QSE decides which units to run.</p><span class="who q">QSE decides</span></div>
+        <div class="tl"><span class="when">Day before, 10 am</span><span class="what">Day-ahead market</span><p>Financial, voluntary. Three-part offers can win an energy award for each hour.</p><span class="who q">QSE offers, ERCOT clears</span></div>
+        <div class="tl"><span class="when">Day before to real time</span><span class="what">COP and RUC</span><p>QSE reports planned status per hour. ERCOT may commit extra units for reliability.</p><span class="who q">QSE reports, ERCOT checks</span></div>
+        <div class="tl rt"><span class="when">Every 5 minutes</span><span class="what">SCED</span><p>Sets each online unit's output (base point) and the price, from its offer curve, within its LSL to HSL limits.</p><span class="who e">ERCOT dispatches</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="panel gstep" id="s2">
+    <div class="prose">
+      <p class="step-num">STEP 2</p>
+      <h2>Anatomy of an offer curve</h2>
+      <p>An energy offer curve is a list of price and MW points. Each point says: "once the price reaches this level, I am willing to run at this many MW." ERCOT draws straight lines between the points, so a price between two points maps to an output between them. The curve sets the most SCED will ask of the unit at a given price; SCED can still run it lower than that, for example when its ramp limits or local congestion hold it back.</p>
+      <p>Two limits matter. <strong>HSL</strong> (high sustained limit) is the most the unit can produce right now. <strong>LSL</strong> (low sustained limit) is the least it can produce and stay online: its minimum output. Rio Nogales' LSL is about <span id="s2-lsl">475</span> MW out of <span id="s2-hsl">800</span> MW.</p>
+      <p>The shaded block from 0 MW to LSL is <strong>not a bid</strong>. While the unit is on, those MW run at any price; the only way to stop them is to turn the unit off (step 1). Whatever prices the curve shows below LSL never set dispatch or the market price.</p>
+      <p>Switch to <strong>"As ERCOT uses it"</strong> to see the curve SCED actually ran on. ERCOT fills the space from 0 MW up to the first offered point with a placeholder price (usually −$20), so in ERCOT's version the LSL block looks like MW offered at −$20. It is minimum output, not an offer to run at −$20.</p>
+      <p class="see"><a id="s2-link" href="index.html">See the technology totals in the Day view's Offer curves chart →</a></p>
+    </div>
+    <div class="fig">
+      <div class="panel-tools">
+        <div class="seg seg-sm" role="radiogroup" aria-label="Curve version" id="s2-ver">
+          <button type="button" data-v="sub" role="radio" aria-checked="true">As submitted</button>
+          <button type="button" data-v="sced" role="radio" aria-checked="false">As ERCOT uses it</button>
+        </div>
+      </div>
+      <div class="chart" id="c2"></div>
+      <p class="cap" id="c2-cap"></p>
+    </div>
+  </section>
+
+  <section class="panel gstep" id="s3">
+    <div class="prose">
+      <p class="step-num">STEP 3</p>
+      <h2>What SCED can actually move</h2>
+      <p>SCED reads the curve from LSL up. Drag the price: the dot is where SCED would put the unit at that price. It follows the curve above LSL and stops at LSL however low the price goes.</p>
+      <p>In each five-minute run SCED also respects ramp limits, so the real range is a little narrower than LSL to HSL: <strong>LDL</strong> and <strong>HDL</strong> (low and high dispatch limits). The chart below shows the whole day: from HE 10 to HE 17 the price was negative and Rio Nogales sat at its minimum output, because SCED had no lower point to send it to.</p>
+      <p class="key">Price can only move an online unit between its LSL and HSL. When the price falls, SCED backs each unit down toward LSL until it reaches MW the unit offered at or below that price. So at negative prices, the thermal MW still running above LSL are only those offered at or below the negative price (or held up for a few minutes by ramp limits). Everything else is minimum output that SCED cannot touch.</p>
+    </div>
+    <div class="fig">
+      <div class="panel-tools">
+        <label class="price-range" for="s3-price">Price <output id="s3-price-out" class="lbl" style="margin:0">$0</output></label>
+      </div>
+      <input type="range" id="s3-price" min="-50" max="60" step="1" value="0" aria-label="Price ($/MWh)">
+      <div class="chart" id="c3"></div>
+      <div class="chart" id="c3d"></div>
+      <p class="cap" id="c3-cap"></p>
+    </div>
+  </section>
+
+  <section class="panel gstep" id="s5">
+    <div class="prose">
+      <p class="step-num">STEP 4</p>
+      <h2>The stay-on decision</h2>
+      <p>When a stretch of cheap hours is coming, the owner of an online unit chooses between two costs:</p>
+      <ul>
+        <li><strong>Stay on:</strong> run at LSL through the stretch, paying fuel for every MWh and being paid the (negative) price for it.</li>
+        <li><strong>Cycle off:</strong> shut down and restart for the evening, paying a start cost, accepting a minimum time offline, and risking a failed or late start.</li>
+      </ul>
+      <p>The figures here use the site's Stay-on calculation. Most example units had no three-part offer that day, so their costs are generic and only a rough guide. They say cycling off would have been cheaper, and those units stayed on anyway. Common reasons are start risk and wear, minimum off times, gas already bought, ancillary service awards and the cost of being wrong about the evening ramp.</p>
+      <p><strong>Quail Run</strong> is the counterexample. It is in West Texas, where Waha gas traded at −$3.21/MMBtu that day, so burning gas earned money. It offered its output below −$30, ran above its minimum through the whole stretch, and came out ahead by staying on, even before the restart it avoided.</p>
+      <p class="see"><a href="trends.html">Trends has the full Stay-on, Shutdowns and "Who turns off for cheap stretches" charts →</a></p>
+    </div>
+    <div class="fig">
+      <div class="kpis" id="k5"></div>
+      <div class="chart" id="c5"></div>
+      <p class="cap" id="c5-cap"></p>
+    </div>
+  </section>
+
+  <section class="panel gstep aside" id="s4">
+    <div class="prose">
+      <p class="step-num">SIDEQUEST</p>
+      <h2>Doesn't the day-ahead market decide who runs?</h2>
+      <p>Not directly. The day-ahead market (DAM) is financial and voluntary. A QSE can offer a <strong>three-part offer</strong>: a start-up cost, a minimum-energy cost (for running at LSL) and an energy curve above it. If it clears, the unit gets an hourly energy award, a promise to deliver at the day-ahead price or buy back the difference in real time.</p>
+      <p>A DAM award is not a commitment instruction, and many units run without one. Rio Nogales had awards overnight and in the evening but <strong>none from HE 11 to HE 17</strong>, and it ran at minimum output through those hours anyway.</p>
+      <p id="s4-fleet">Across the fleet that day…</p>
+      <p>Some plants never use the day-ahead market at all. On every day loaded on this site, W.A. Parish, Limestone and Oak Grove submitted no DAM energy offer, so their on/off schedule is set entirely by their owners.</p>
+    </div>
+    <div class="fig">
+      <div class="chart" id="c4"></div>
+      <p class="cap" id="c4-cap"></p>
+    </div>
+  </section>
+
+  <section class="panel gstep" id="s6">
+    <div class="prose">
+      <p class="step-num">ON THIS SITE</p>
+      <h2>What “From LSL” means</h2>
+      <p>Add up every online unit and the minimum output blocks form a large spike at the bottom of the offer stack. In ERCOT's version (step 2) the spike sits at −$20, which makes it look as though many gigawatts are bid at −$20 and are ready to move. They are not.</p>
+      <p><strong>"From LSL"</strong> is how this site draws and counts offers instead. For each technology it takes the online units' total LSL and adds only the MW they offer <em>above</em> LSL at or below each price. The curve runs flat at the LSL total from the left edge, then rises with the real bids. The flat part answers "how much runs regardless of price", and the rise answers "how much moves with price". Switch views to compare.</p>
+      <ul>
+        <li><strong>Offer curves (Day view):</strong> "From LSL" is the default. "As ERCOT prices it" shows the curves SCED saw, with minimum output at the placeholder price.</li>
+        <li><strong>Marginal supply and Marginal offer stack (Day view), Marginal supply by settled price and Thermal offer prices (Trends):</strong> count only MW above LSL, since only those can be marginal.</li>
+        <li><strong>Unit metrics:</strong> "≤ $0 as submitted" is a share of the range from LSL to HSL. "First offer price above $0", implied heat rate and the bidding-change signals read the curve from LSL up.</li>
+        <li><strong>Charts that keep LSL on purpose:</strong> the Floor chart's "≤ −$20, as used", "≤ $0 as used", thermal output in cheap hours and Stay-on. These are about who is running, so minimum output belongs in them.</li>
+        <li><strong>2-day days</strong> (the most recent two months) have no unit limits, so they show curves as ERCOT prices them.</li>
+      </ul>
+      <p class="see"><a id="s6-link" href="index.html">Open this hour in the Day view →</a></p>
+    </div>
+    <div class="fig">
+      <div class="panel-tools">
+        <div class="seg seg-sm" role="radiogroup" aria-label="Curve view" id="s6-mode">
+          <button type="button" data-v="from_lsl" role="radio" aria-checked="true">From LSL</button>
+          <button type="button" data-v="ercot" role="radio" aria-checked="false">As ERCOT prices it</button>
+        </div>
+      </div>
+      <div class="legend legend-static" id="l6"></div>
+      <div class="chart" id="c6"></div>
+      <p class="cap" id="c6-cap"></p>
+    </div>
+  </section>
+
+  <section class="panel gstep text-only" id="s7">
+    <div class="prose">
+      <p class="step-num">STEP 5</p>
+      <h2>Reading the site with this in mind</h2>
+      <p>Most charts answer one of two questions. Knowing which one helps avoid reading minimum output as a bid.</p>
+    </div>
+    <div class="cheat">
+      <div>
+        <h3>Commitment: who is on?</h3>
+        <p class="lead">Decided by owners, hours or days ahead. Includes minimum output.</p>
+        <ul>
+          <li><a href="trends.html">Floor-priced MW</a> (≤ −$20 as used): almost all of it is LSL</li>
+          <li><a href="trends.html">Capacity by status</a>, <a href="trends.html">Running vs price</a>, <a href="trends.html">Starts per day</a></li>
+          <li><a href="trends.html">Thermal output in cheap hours</a>, <a href="trends.html">Shutdowns and two-shifting</a>, <a href="trends.html">Who turns off for cheap stretches</a></li>
+          <li><a href="index.html">Inflexibility by technology</a>: "≤ $0 as used" and "At floor"</li>
+          <li><a href="economics.html">Plant economics</a>: what running cost and earned</li>
+        </ul>
+      </div>
+      <div>
+        <h3>Bidding: what do the MW above LSL ask?</h3>
+        <p class="lead">Set by the offer curve, read from LSL up. This is where price moves come from.</p>
+        <ul>
+          <li><a href="index.html">Offer curves</a> (the rise above the flat LSL part), <a href="index.html">Marginal supply</a>, <a href="index.html">Marginal offer stack by price</a></li>
+          <li><a href="trends.html">Thermal offer prices</a>, <a href="trends.html">Natural gas and implied heat rate</a></li>
+          <li><a href="trends.html">Marginal supply by settled price</a>, <a href="trends.html">Changes in bidding approach</a></li>
+          <li><a href="trends.html">Wind and solar offer prices</a>: wind and solar have no meaningful LSL, so their whole curve is a bid</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="foot">
+  <p>Example data: ERCOT 60-Day SCED Disclosure (NP3-965-ER) and 60-Day DAM Disclosure (NP3-966-ER) for the example day, with SCED system lambda (NP6-322-CD). Unit curves are the curves in force at the middle SCED run of each hour. Stay-on figures follow the Trends Stay-on method; costs are generic where the unit had no three-part offer. Descriptions of ERCOT's rules are simplified for a general reader; the ERCOT Nodal Protocols are the authority.</p>
+  <p>Made by <a href="https://currenttech.energy">currenttech.energy</a>.</p>
+</footer>
+</div>
+<div class="tip" id="tip" hidden></div>
+<script src="vendor/d3.min.js"></script>
+<script src="common.js"></script>
+<script src="guide.js"></script>
+</body>
+</html>
