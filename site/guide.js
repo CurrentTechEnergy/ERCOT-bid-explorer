@@ -209,12 +209,19 @@ function drawStep5() {
     const k = [
       ["Output in the stretch", fmt0(r.mwh) + " MWh"],
       ["Paid at the system price", fmt$k(r.revenue), r.revenue < 0],
-      ["Fuel and running cost" + (r.est ? " (est.)" : ""), fmt$k(r.cost)],
-      ["Restart cost if it had cycled off" + (r.est === 2 ? " (generic)" : ""), fmt$k(r.start)],
+      ["Fuel and running cost" + (r.est || r.fuel ? " (est.)" : ""), fmt$k(r.cost), r.cost < 0],
+      ["Restart cost if it had cycled off" + (r.est === 2 ? " (generic)" : r.est === 0 ? " (own offer)" : " (est.)"), fmt$k(r.start)],
       [r.saves > 0 ? "Cycling off would have saved" : "Staying on saved", fmt$k(Math.abs(r.saves))],
     ];
     $("k5").innerHTML = k.map(([t, v, neg]) => `<div class="kpi"><span class="v${neg ? " neg" : ""}">${v}</span><span class="k">${t}</span></div>`).join("");
-    $("c5-cap").textContent = `${u.label}, ${heLabel(s0)} to ${heLabel(s0 + sn - 1)} (${sn} hours, average system price ${fmtP(mean)}). Running cost is output × minimum-energy cost; it ${r.est === 2 ? "uses the technology's generic cost because the unit had no three-part offer that day" : r.est === 1 ? "uses the unit's most recent three-part offer" : "uses the unit's own three-part offer"}.`;
+    const f = r.fuel;
+    const run = f
+      ? `Running cost is estimated from ${f.hub} gas at ${fmtP(f.gas)}/MMBtu × the EIA heat rate of ${f.hr} MMBtu/MWh plus ${fmtP(f.vom)}/MWh variable O&M, or ${fmtP(f.per_mwh)}/MWh. Its own day-ahead minimum-energy offer was ${fmtP(f.mingen)}/MWh, a price set to get committed rather than a cost, so it is not used. Negative gas means the unit was paid to take fuel.`
+      : `Running cost is output × minimum-energy cost, ${r.est === 2 ? "using the technology's generic cost because the unit had no three-part offer that day" : r.est === 1 ? "from the unit's most recent three-part offer" : "from the unit's own three-part offer"}.`;
+    const start = r.est === 0 ? " The restart cost is the unit's own day-ahead start-up offer."
+      : r.start_range ? ` The restart cost is a generic ${r.start_kind} start; real ${r.start_kind}-start offers from other units this type suggest roughly ${fmt$k(r.start_range[0])} to ${fmt$k(r.start_range[2])} for a unit this size (middle half), so read it as an order of magnitude.`
+      : " The restart cost is a generic estimate; too few units of this type offer start costs to give a range.";
+    $("c5-cap").textContent = `${u.label}, ${heLabel(s0)} to ${heLabel(s0 + sn - 1)} (${sn} hours, average system price ${fmtP(mean)}). ${run}${start}`;
   }
   drawChoice($("c5"), r);
 }
@@ -223,20 +230,20 @@ function drawStep5() {
 function drawChoice(el, r) {
   if (!r) { el.innerHTML = ""; return; }
   const rows = [
-    { k: "Stay on", sub: "running cost minus what the price paid", v: r.loss },
+    { k: "Stay on", sub: r.loss < 0 ? "came out ahead: earned more than it cost" : "running cost minus what the price paid", v: r.loss },
     { k: "Cycle off", sub: "restart for the evening", v: r.start },
   ];
   const w = width(el), bh = 34, m = { t: 8, r: 70, b: 28, l: w < 480 ? 92 : 230 }, H = m.t + rows.length * (bh + 18) + m.b;
-  const x = d3.scaleLinear().domain([0, d3.max(rows, (d) => d.v) * 1.05]).nice().range([m.l, w - m.r]);
+  const x = d3.scaleLinear().domain([Math.min(0, d3.min(rows, (d) => d.v) * 1.05), d3.max(rows, (d) => d.v) * 1.05]).nice().range([m.l, w - m.r]);
   const svg = svgEl(el, w, H);
   grid(svg, d3.axisBottom(x).ticks(4), w, m, H, false);
   rows.forEach((d, i) => {
     const y0 = m.t + i * (bh + 18);
-    svg.append("rect").attr("x", x(0)).attr("y", y0).attr("width", Math.max(1, x(d.v) - x(0))).attr("height", bh)
+    svg.append("rect").attr("x", Math.min(x(0), x(d.v))).attr("y", y0).attr("width", Math.max(1, Math.abs(x(d.v) - x(0)))).attr("height", bh)
       .attr("fill", css(i ? "--c-other" : TECH_COLOR[U().tech] || "--c1")).attr("rx", 2);
     svg.append("text").attr("class", "lab-ink").attr("x", m.l - 8).attr("y", y0 + 14).attr("text-anchor", "end").text(d.k);
     if (w >= 480) svg.append("text").attr("class", "lab").attr("x", m.l - 8).attr("y", y0 + 28).attr("text-anchor", "end").text(d.sub);
-    svg.append("text").attr("class", "mix-value").attr("x", x(d.v) + 6).attr("y", y0 + bh / 2 + 4).text(fmt$k(d.v));
+    svg.append("text").attr("class", "mix-value").attr("x", Math.max(x(0), x(d.v)) + 6).attr("y", y0 + bh / 2 + 4).text(fmt$k(d.v));
   });
   svg.append("g").attr("class", "axis").attr("transform", `translate(0,${H - m.b})`)
     .call(d3.axisBottom(x).ticks(4).tickFormat((v) => fmt$k(v)));

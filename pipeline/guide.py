@@ -18,21 +18,33 @@ Writes data/guide.json.gz:
                              sub: [[prices], [MW]] curves, sub_h: [24] index into sub per hour,
                              sced: same for the SCED2 curve (as ERCOT used it), sced_h,
                              dam_award, dam_spp: [24], dam_curve: [[prices], [MW]] or null,
-                             ride: stay-on figures for the stretch (pipeline/stayon.py) or null}
+                             ride: stay-on figures for the stretch (pipeline/stayon.py) or null;
+                                  with "fuel" when the running cost is re-estimated from gas
+                                  (FUEL_EST), and "start_range" [p25, p50, p75] $ when the start
+                                  cost is generic: the technology's real offers per MW of HSL, median per unit, at
+                                  least 10 units}
 """
 import numpy as np
 
 from .config import DATA_DIR, UNIT_DATA_DIR
 from .store import read_json_gz, write_json_gz
+from .stayon import HOT_H, INTER_H
 from .units import _ffill_index, expand
 
 DATE = "2026-02-24"
 UNITS = {   # resource name -> (label, one-line note shown with the picker)
     "RIONOG_CC1_6": ("Rio Nogales combined cycle", "Gas combined cycle that sat at its minimum output all afternoon"),
     "BRAUNIG_CC1_2": ("Braunig combined cycle", "Smaller gas combined cycle with the same pattern"),
-    "CALAVERS_JKS2": ("J.K. Spruce 2 (coal)", "Coal unit at minimum output, carrying reserves through the stretch"),
+    "CALAVERS_JKS2": ("J.K. Spruce 2 (coal)", "Coal unit that sat at its minimum output through the stretch"),
     "SANMIGL_G1": ("San Miguel (lignite)", "Lignite unit whose curve starts at 0 MW and −$250"),
+    "QALSW_CC1_2": ("Quail Run combined cycle (Odessa)", "West Texas gas combined cycle that offered below −$30 and ran above its minimum all afternoon"),
 }
+# Units whose day-ahead minimum-energy offer is a token price (a bid to be committed, not a
+# cost): their stay-on running cost is estimated from their gas hub instead, as the Plant
+# economics page's EIA basis does (heat rate x gas price + variable O&M).
+FUEL_EST = {"QALSW_CC1_2": "waha"}
+EIA_HR = {"combined_cycle": 7.548}     # MMBtu/MWh, EIA Electric Power Annual table 8.2
+VOM = {"combined_cycle": 3.0}          # $/MWh, the economics page's generic default
 THERMAL = ("nuclear", "coal", "combined_cycle", "gas_steam", "combustion_turbine")
 
 
@@ -116,6 +128,18 @@ def build():
         lsl_aw += np.mean([min(aw[h] or 0.0, l) for h, l in zip(sh, lsl_h)])
     fleet = {"n": n_on, "lsl": _r(lsl_mw, 0), "lsl_award": _r(lsl_aw, 0)}
 
+    # start-up offers per MW of HSL across the loaded DAM days, for the range around a generic cost
+    kind = 0 if stretch[1] <= HOT_H else 1 if stretch[1] <= INTER_H else 2
+    per_mw = {}
+    for f in sorted((DATA_DIR / "dam").glob("*.json.gz")):
+        for unit, v in (read_json_gz(f) or {}).get("units", {}).items():
+            st = v.get("start") or [None] * 3
+            if st[kind] and (v.get("hsl") or 0) > 100:
+                per_mw.setdefault(v.get("tech"), {}).setdefault(unit, []).append(st[kind] / v["hsl"])
+    # one value per unit (its median), and only where enough units offer one to call it a range
+    per_mw = {t: [float(np.median(x)) for x in us.values()] for t, us in per_mw.items() if len(us) >= 10}
+    hubs = (read_json_gz(DATA_DIR / "gas_hubs.json.gz") or {}).get("hubs", {})
+
     units = []
     for name, (label, note) in UNITS.items():
         u = ud["units"][name]
@@ -124,6 +148,20 @@ def build():
         sced, sced_h = _curves(u.get("curve2") or u["curve"], hour, n)
         d = dam.get(name) or {}
         dc = d.get("curves") or []
+        ride = rides.get(name)
+        if ride and name in FUEL_EST:
+            hub = hubs[FUEL_EST[name]]
+            gas = hub["value"][hub["dates"].index(DATE)]
+            per = EIA_HR[u["tech"]] * gas + VOM[u["tech"]]
+            ride["cost"] = _r(ride["mwh"] * per, 0)
+            ride["loss"] = _r(ride["cost"] - ride["revenue"], 0)
+            ride["saves"] = _r(ride["loss"] - ride["start"], 0)
+            ride["fuel"] = {"hub": hub["name"], "gas": gas, "hr": EIA_HR[u["tech"]], "vom": VOM[u["tech"]],
+                            "per_mwh": _r(per, 2), "mingen": d.get("mingen")}
+        if ride and ride["est"] == 2 and per_mw.get(u["tech"]):
+            hsl = np.nanmax(e["hsl"])
+            ride["start_range"] = [_r(q * hsl, -3) for q in np.percentile(per_mw[u["tech"]], [25, 50, 75])]
+            ride["start_kind"] = ("hot", "intermediate", "cold")[kind]
         units.append({
             "name": name, "label": label, "note": note, "type": u["type"], "tech": u["tech"],
             **{k: _hourly(e[k], hour) for k in ("hsl", "lsl", "ldl", "hdl", "bp")},
@@ -131,7 +169,7 @@ def build():
             "sub": sub, "sub_h": sub_h, "sced": sced, "sced_h": sced_h,
             "dam_award": d.get("award"), "dam_spp": d.get("spp"),
             "dam_curve": dc[d["curve"][12]] if dc and d.get("curve") and d["curve"][12] is not None else None,
-            "ride": rides.get(name),
+            "ride": ride,
         })
 
     out = {"date": DATE, "lambda": lam_h, "stretch": stretch, "fleet": fleet, "units": units}
