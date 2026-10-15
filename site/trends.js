@@ -637,7 +637,7 @@ function drawMarginalSmooth(el, H, list, w, narrow) {
     bands.forEach(([b, hs]) => {
       if (hs.length < MBP_MIN_H) return;
       const v = list.map((_, j) => d3.sum(hs, (h) => h.v[j])), sup = d3.sum(v), c = d3.sum(hs, (h) => h.c);
-      const d = { lo: b, hi: b + 1, nh: hs.length, sh: v.map((t) => (sup ? t / sup : 0)), c: sup + c ? c / (sup + c) : 0 };
+      const d = { lo: b, hi: b + 1, nh: hs.length, sh: v.map((t) => (sup ? t / sup : 0)), c: sup ? c / sup : 0 };
       if (prev != null && b !== prev + 1) pts.push({ ...d, p: b, gap: true });
       pts.push({ ...d, p: b }, { ...d, p: b + 1 });
       prev = b;
@@ -649,13 +649,14 @@ function drawMarginalSmooth(el, H, list, w, narrow) {
     const step = Math.max(1, Math.floor(n / 400));
     for (let i = 0; i + K <= n; i += step) {
       const a = i, b = i + K, v = list.map((_, j) => cum[b][j] - cum[a][j]), sup = d3.sum(v), c = cc[b] - cc[a];
-      pts.push({ p: H[a + (K >> 1)].p, lo: H[a].p, hi: H[b - 1].p, sh: v.map((t) => (sup ? t / sup : 0)), c: sup + c ? c / (sup + c) : 0 });
+      pts.push({ p: H[a + (K >> 1)].p, lo: H[a].p, hi: H[b - 1].p, sh: v.map((t) => (sup ? t / sup : 0)), c: sup ? c / sup : 0 });
     }
   }
   const area = () => d3.area().defined((d) => !d.gap).curve(exact ? d3.curveLinear : d3.curveMonotoneX);
   const Hh = 400, HS = 60, m = { t: 18, r: 16, b: 30, l: 50 };
   const x = d3.scaleSymlog().constant(10).domain(d3.extent(pts, (d) => d.p)).range([m.l, w - m.r]);
-  const y = d3.scaleLinear().domain([-0.5, 1]).range([Hh - m.b, m.t]);
+  // charging as a share of supply can pass 100%; it is drawn no deeper than 200% (the readout gives the value)
+  const y = d3.scaleLinear().domain([-Math.min(2, Math.max(0.5, d3.max(pts, (d) => d.c) || 0)), 1]).nice().range([Hh - m.b, m.t]);
   const svg = d3.create("svg").attr("viewBox", `0 0 ${w} ${Hh + HS + 30}`);
   const ticks = (narrow ? [0, 20, 50, 100] : [-20, -5, 0, 10, 20, 30, 50, 100, 200, 500]).filter((t) => t >= x.domain()[0] && t <= x.domain()[1]);
   marginalAxes(svg, y, x, w, Hh, m, "System lambda, hourly average ($/MWh, compressed scale)", d3.axisBottom(x).tickValues(ticks).tickFormat(fmtPrice0));
@@ -665,7 +666,7 @@ function drawMarginalSmooth(el, H, list, w, narrow) {
     svg.append("path").attr("fill", css(s.color)).attr("d", area().x((d) => x(d.p)).y0((d, i) => y(lo[i])).y1((d, i) => y(hi[i]))(pts));
     base = hi;
   });
-  svg.append("path").attr("fill", css(CHARGING.color)).attr("d", area().x((d) => x(d.p)).y0(y(0)).y1((d) => y(-d.c))(pts));
+  svg.append("path").attr("fill", css(CHARGING.color)).attr("d", area().x((d) => x(d.p)).y0(y(0)).y1((d) => y(-Math.min(d.c, -y.domain()[0])))(pts));
   svg.append("line").attr("class", "zero").attr("x1", m.l).attr("x2", w - m.r).attr("y1", y(0)).attr("y2", y(0));
   // how many hours sit at each price
   const g = svg.append("g").attr("transform", `translate(0,${Hh + 16})`);
@@ -683,12 +684,12 @@ function drawMarginalSmooth(el, H, list, w, narrow) {
       cross.style("display", null).attr("x1", x(d.p)).attr("x2", x(d.p));
       showTip(ev, `<h4>Around ${fmtPrice0(Math.round(d.p) || 0)}</h4><table>` + list.map((s, j) => [s, d.sh[j]]).filter(([, v]) => v > 0.005).sort((a, b) => b[1] - a[1])
         .map(([s, v]) => `<tr><td><span class="sw" style="background:var(${s.color})"></span></td><td>${s.label}</td><td class="n">${fmtPct(v)}</td></tr>`).join("") +
-        `<tr><td><span class="sw" style="background:var(${CHARGING.color})"></span></td><td>Storage charging (bids to buy)</td><td class="n">${fmtPct(d.c)} of supply + charging</td></tr></table>` +
+        `<tr><td><span class="sw" style="background:var(${CHARGING.color})"></span></td><td>Storage charging (bids to buy)</td><td class="n">${fmtPct(d.c)} of supply</td></tr></table>` +
         (exact ? `<p class="tip-body">${d.nh} hours with lambda from ${fmtPrice0(d.lo)} to ${fmtPrice0(d.hi)}.</p>` : ""));
     })
     .on("pointerleave", () => { cross.style("display", "none"); hideTip(); });
   el.replaceChildren(svg.node());
-  setCSV(el, ["lambda_usd_mwh", "window_low", "window_high", ...list.map((s) => `${s.label} share of marginal supply`), "storage charging share of supply plus charging"],
+  setCSV(el, ["lambda_usd_mwh", "window_low", "window_high", ...list.map((s) => `${s.label} share of marginal supply`), "storage charging as share of supply"],
     pts.map((d) => [d.p, d.lo, d.hi, ...d.sh, d.c]), "Marginal supply by settled price");
 }
 
