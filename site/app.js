@@ -57,7 +57,7 @@ const S = {
   xrange: "low", xMin: -250, xMax: 100, osMin: -100, osMax: 1000, mode: "lines", axes: "price_x", threshold: 0, location: "lambda",
   lslMode: "from_lsl",     // offer curves: "from_lsl" (LSL plus the MW offered above it) or "ercot" (as ERCOT prices them)
   hidden: new Set(), unitTech: "all", unitSearch: "",
-  unitSort: { key: "floor_mw", dir: -1 }, unitShowAll: false,
+  unitSort: { key: "lsl", dir: -1 }, unitShowAll: false, unitView: "day", unitHours: new Map(),
   day: null, prices: null, summaries: {}, osView: "hour", ttView: "hour", osUnit: "share", osSmooth: "smooth",
 };
 const $ = (id) => document.getElementById(id);
@@ -215,15 +215,15 @@ function fillTechSelects() {
 async function loadDay() {
   if (!S.date) { S.day = null; S.prices = null; return; }
   const has = (k) => (S.index.days[k] || []).includes(S.date);
-  const [day, prices, other, gen] = await Promise.all([
+  // a day uses the 60-day report whenever it has it, so curtailment needs the 2-day files only
+  // for days without it
+  const [day, prices, gen] = await Promise.all([
     tryJSON(`data/${S.source}/${S.date}.json.gz`),
     tryJSON(`data/prices/${S.date}.json.gz`),
-    // the other report's day file, for the curtailment comparison
-    has(S.source === "60d" ? "2d" : "60d") ? tryJSON(`data/${S.source === "60d" ? "2d" : "60d"}/${S.date}.json.gz`) : null,
-    has("2dgen") ? tryJSON(`data/2dgen/${S.date}.json.gz`) : null,
+    S.source === "2d" && has("2dgen") ? tryJSON(`data/2dgen/${S.date}.json.gz`) : null,
   ]);
   S.day = day; S.prices = prices;
-  S.day60 = S.source === "60d" ? day : other; S.day2 = S.source === "60d" ? other : day; S.gen = gen;
+  S.day60 = S.source === "60d" ? day : null; S.day2 = S.source === "60d" ? null : day; S.gen = gen;
 }
 
 async function changeDay() {
@@ -258,7 +258,7 @@ function render() {
 
 // the address bar carries the view, so a copied link reopens this exact day, hour and settings
 const NUM_KEYS = new Set(["threshold", "xMin", "xMax", "osMin", "osMax"]);
-const VIEW_KEYS = { loc: "location", xr: "xrange", xmin: "xMin", xmax: "xMax", osmin: "osMin", osmax: "osMax", mode: "mode", axes: "axes", lsl: "lslMode", ver: "version", thr: "threshold", os: "osView", tt: "ttView", osu: "osUnit", osm: "osSmooth" };
+const VIEW_KEYS = { loc: "location", xr: "xrange", xmin: "xMin", xmax: "xMax", osmin: "osMin", osmax: "osMax", mode: "mode", axes: "axes", lsl: "lslMode", ver: "version", thr: "threshold", os: "osView", tt: "ttView", uv: "unitView", osu: "osUnit", osm: "osSmooth" };
 // price limits go in the link only when they are in use
 const HIDE_KEY = { xMin: () => S.xrange !== "custom", xMax: () => S.xrange !== "custom",
   osMin: () => S.osMin === OS_DEFAULT[0] && S.osMax === OS_DEFAULT[1], osMax: () => S.osMin === OS_DEFAULT[0] && S.osMax === OS_DEFAULT[1] };
@@ -620,11 +620,11 @@ function drawCurtail() {
   $("curt-legend").innerHTML = CURT.map((s) => `<span><span class="sw" style="background:var(${s.color})"></span>${s.label}</span>`).join("");
   const by = { "60d": CURT.map((t) => curtHours("60d", t)), "2d": CURT.map((t) => curtHours("2d", t)) };
   const has = (k) => by[k].some(Boolean);
-  // the chart follows the day's main report; the other is shown alongside in the readout
-  const main = S.source === "60d" ? (has("60d") ? "60d" : "2d") : (has("2d") ? "2d" : "60d");
-  const other = main === "60d" ? "2d" : "60d";
-  const srcName = { "60d": "60-day disclosure", "2d": "2-day generation summary" };
-  $("curt-title-note").textContent = S.date && has(main) ? `${S.date} · ${srcName[main]}${has(other) ? ` (and ${srcName[other]})` : ""}` : "";
+  // the 60-day disclosure whenever the day has it; the 2-day figure (an estimate, see the note)
+  // only for recent days that have no 60-day data yet
+  const main = has("60d") ? "60d" : "2d";
+  const srcName = { "60d": "60-day disclosure", "2d": "2-day reports, estimated" };
+  $("curt-title-note").textContent = S.date && has(main) ? `${S.date} · ${srcName[main]}` : "";
   if (!has(main)) return emptyMsg(el, "No curtailment data for this day yet. The 2-day generation summary fills in recent days once the data update has fetched it.");
   const hp = d3.range(24).map((h) => hourPrice(S.prices, h));
   const pname = S.location === "lambda" ? "System lambda" : S.location;
@@ -651,14 +651,14 @@ function drawCurtail() {
   });
   const row = (k, j, h) => { const r = by[k][j] && by[k][j][h]; return r ? `${fmtMW(r.c)} MW <span class="muted">of ${fmtMW(r.a)} (${r.a > 0 ? fmtPct(r.c / r.a) : "–"})</span>` : "–"; };
   hoverHours(svg, xc, m, H, (h) => `<h4>${heLabel(h)}</h4>${pname}: ${hp[h] && hp[h].mean != null ? fmtPrice(hp[h].mean) : "–"}<table>` +
-    CURT.map((t, j) => `<tr><td><span class="sw" style="background:var(${t.color})"></span></td><td>${t.label}${has(other) ? ` (${main === "60d" ? "60-day" : "2-day"})` : ""}</td><td class="n">${row(main, j, h)}</td></tr>` +
-      (has(other) ? `<tr><td></td><td>${t.label} (${other === "60d" ? "60-day" : "2-day"})</td><td class="n">${row(other, j, h)}</td></tr>` : "")).join("") + "</table>");
+    CURT.map((t, j) => `<tr><td><span class="sw" style="background:var(${t.color})"></span></td><td>${t.label}</td><td class="n">${row(main, j, h)}</td></tr>`).join("") + "</table>" +
+    (main === "2d" ? `<p class="tip-body">Estimated from the 2-day reports until this day's 60-day disclosure is out.</p>` : ""));
   el.replaceChildren(svg.node());
   const cols = ["hour_ending", `${pname} mean`];
-  ["60d", "2d"].filter(has).forEach((k) => CURT.forEach((t) => cols.push(`${t.label} curtailed MW (${k})`, `${t.label} available MW (${k})`)));
-  setCSV(el, cols, d3.range(24).map((h) => [h + 1, hp[h]?.mean, ...["60d", "2d"].filter(has).flatMap((k) => CURT.flatMap((t, j) => {
-    const r = by[k][j] && by[k][j][h]; return [r ? r.c : null, r ? r.a : null];
-  }))]), `Wind and solar curtailment ${S.date}`);
+  CURT.forEach((t) => cols.push(`${t.label} curtailed MW (${main})`, `${t.label} available MW (${main})`));
+  setCSV(el, cols, d3.range(24).map((h) => [h + 1, hp[h]?.mean, ...CURT.flatMap((t, j) => {
+    const r = by[main][j] && by[main][j][h]; return [r ? r.c : null, r ? r.a : null];
+  })]), `Wind and solar curtailment ${S.date}`);
 }
 
 // ---- generation mix ----------------------------------------------------------
@@ -718,6 +718,9 @@ const STORAGE_SPLIT = [
   { id: "storage_charging", keys: ["storage"], part: "chg", label: "Storage charging (bids to buy)", color: "--c7-soft" },
   { id: "storage_discharging", keys: ["storage"], part: "dis", label: "Storage discharging", color: "--c7" },
 ];
+// charging as a share of supply can pass 100% when little supply moves, so the charts draw it
+// no deeper than 100% (the readouts give the real value)
+const CHG_AXIS_MAX = 1;
 function marginalSeries(list) { return list.flatMap((s) => (s.id === "storage" ? STORAGE_SPLIT : [s])); }
 
 function marginalRows(h, hp) {
@@ -732,12 +735,12 @@ function marginalRows(h, hp) {
     const mw = s.part === "chg" ? Math.min(b, 0) - Math.min(a, 0) : s.part === "dis" ? Math.max(b, 0) - Math.max(a, 0) : b - a;
     return { s, mw: Math.max(0, mw) };
   }).filter(Boolean);
-  // supply shares add to 100% of supply; battery charging is demand, so its share is of all
-  // the MW that moves in the window (supply plus charging that stops)
+  // supply shares add to 100% of supply; battery charging is demand, so it is kept out of them
+  // and shown as a share of that supply (it can pass 100% when little supply moves)
   const supply = rows.filter((r) => r.s.part !== "chg"), chg = rows.find((r) => r.s.part === "chg");
   const total = d3.sum(supply, (r) => r.mw), chgMW = chg ? chg.mw : 0;
   supply.forEach((r) => (r.share = total > 0 ? r.mw / total : null));
-  if (chg) chg.share = total + chgMW > 0 ? chgMW / (total + chgMW) : null;
+  if (chg) chg.share = total > 0 ? chgMW / total : null;
   return { rows, supply, chg, total, chgMW, lo, hi };
 }
 
@@ -758,22 +761,22 @@ function drawMarginal() {
   if (!rows.length && chgMW < 1) return clear(`No MW offered within ${heLabel(h)}'s cleared price range.`);
   const win = `${fmtPrice(lo)} to ${fmtPrice(hi)}`;
   // battery charging is drawn on the other side of zero: it is demand that drops out as price rises
-  const bars = rows.concat(chg && chgMW >= 1 ? [{ ...chg, mw: -chgMW, valText: `${fmtMW(chgMW)} MW · ${d3.format(".0%")(chg.share)} of supply + charging` }] : []);
+  const bars = rows.concat(chg && chgMW >= 1 ? [{ ...chg, mw: -chgMW, valText: `${fmtMW(chgMW)} MW · ${d3.format(".0%")(chg.share)} of supply` }] : []);
   el.replaceChildren(hBars(el, bars, (r) => r.s.part === "chg"
     ? `<h4>${r.s.label} · ${heLabel(h)}</h4><table>
       <tr><td>Charging that stops from ${win}</td><td class="n">${fmtMW(chgMW)} MW</td></tr>
-      <tr><td>Share of supply + charging in the window</td><td class="n">${d3.format(".1%")(r.share)}</td></tr></table>
+      <tr><td>As a share of supply in the window</td><td class="n">${d3.format(".1%")(r.share)}</td></tr></table>
       <p class="tip-body">Batteries bidding to charge below this price stop charging as price rises. That is demand stepping back, not supply, so it is kept out of the supply shares.</p>`
     : `<h4>${r.s.label} · ${heLabel(h)}</h4><table>
       <tr><td>Offered from ${win}</td><td class="n">${fmtMW(r.mw)} MW</td></tr>
       <tr><td>Share of marginal supply</td><td class="n">${r.share != null ? d3.format(".1%")(r.share) : "–"}</td></tr></table>`));
   el.insertAdjacentHTML("beforeend", `<p class="note">${fmtMW(total)} MW of supply offered from ${win}${chgMW >= 1 ? `, and ${fmtMW(chgMW)} MW of battery charging that stops in the same window` : ""} (${pname} averaged ${fmtPrice(hp.mean)} in ${heLabel(h)}).</p>`);
   tel.innerHTML = barTable(all, `MW offered ${win}`, "Share of marginal supply", "Total supply", total) +
-    (chg ? `<p class="note">Storage charging (bids to buy) that stops in the window: ${fmtMW(chgMW)} MW (${chg.share != null ? d3.format(".1%")(chg.share) : "–"} of supply + charging).</p>` : "");
+    (chg ? `<p class="note">Storage charging (bids to buy) that stops in the window: ${fmtMW(chgMW)} MW (${chg.share != null ? d3.format(".1%")(chg.share) : "–"} of supply).</p>` : "");
   setCSV(el, ["technology", `MW from ${lo} to ${hi}`, "share_of_marginal_supply"], all.map((r) => [r.s.label, r.mw, r.share])
-    .concat(chg ? [[chg.s.label, chgMW, null], ["storage charging share of supply plus charging", null, chg.share]] : []), `Marginal supply ${S.date} ${heLabel(h)}`);
+    .concat(chg ? [[chg.s.label, chgMW, null], ["storage charging as share of supply", null, chg.share]] : []), `Marginal supply ${S.date} ${heLabel(h)}`);
 
-  // by hour: supply shares above zero (100% stacked), charging below as a share of supply plus charging
+  // by hour: supply shares above zero (100% stacked), charging below as a share of supply
   const list = marginalSeries(seriesList()).filter((s) => s.part !== "chg");
   const hours = d3.range(24).map((i) => {
     const p = hourPrice(S.prices, i);
@@ -785,7 +788,7 @@ function drawMarginal() {
   const { w } = size(del);
   const H = 230, m = { t: 14, r: 16, b: 26, l: 64 };
   const x = d3.scaleBand().domain(d3.range(1, 25)).range([m.l, w - m.r]).paddingInner(0.15);
-  const lowest = -Math.max(0.25, d3.max(hours, (d) => (d ? d.chg : 0)) || 0);
+  const lowest = -Math.min(CHG_AXIS_MAX, Math.max(0.25, d3.max(hours, (d) => (d ? d.chg : 0)) || 0));
   const y = d3.scaleLinear().domain([lowest, 1]).nice().range([H - m.b, m.t]);
   const svg = d3.create("svg").attr("viewBox", `0 0 ${w} ${H}`);
   svg.append("g").attr("class", "gridline").attr("transform", `translate(${m.l},0)`).call(d3.axisLeft(y).ticks(5).tickSize(-(w - m.l - m.r)).tickFormat(""));
@@ -805,7 +808,7 @@ function drawMarginal() {
       svg.append("rect").attr("x", cx).attr("width", bw).attr("y", y1).attr("height", Math.max(0, y0 - y1 - 1)).attr("fill", css(s.color)).attr("opacity", op);
       acc += v;
     });
-    if (d.chg > 0) svg.append("rect").attr("x", cx).attr("width", bw).attr("y", y(0) + 1).attr("height", Math.max(0, y(-d.chg) - y(0) - 1))
+    if (d.chg > 0) svg.append("rect").attr("x", cx).attr("width", bw).attr("y", y(0) + 1).attr("height", Math.max(0, y(-Math.min(d.chg, -lowest)) - y(0) - 1))
       .attr("fill", css(STORAGE_SPLIT[0].color)).attr("opacity", op);
   });
   svg.append("line").attr("class", "zero").attr("x1", m.l).attr("x2", w - m.r).attr("y1", y(0)).attr("y2", y(0));
@@ -814,17 +817,17 @@ function drawMarginal() {
     if (!d) return `<h4>${heLabel(i)}</h4>No price or curve data`;
     return `<h4>${heLabel(i)}</h4><table>` + list.filter((s) => d.sh[s.id] > 0).sort((a, b) => d.sh[b.id] - d.sh[a.id]).map((s) =>
       `<tr><td><span class="sw" style="background:var(${s.color})"></span></td><td>${s.label}</td><td class="n">${d3.format(".0%")(d.sh[s.id])}</td></tr>`).join("") +
-      (d.chg > 0 ? `<tr><td><span class="sw" style="background:var(${STORAGE_SPLIT[0].color})"></span></td><td>Storage charging (bids to buy)</td><td class="n">${d3.format(".0%")(d.chg)} of supply + charging</td></tr>` : "") + "</table>";
+      (d.chg > 0 ? `<tr><td><span class="sw" style="background:var(${STORAGE_SPLIT[0].color})"></span></td><td>Storage charging (bids to buy)</td><td class="n">${d3.format(".0%")(d.chg)} of supply</td></tr>` : "") + "</table>";
   });
   del.replaceChildren(svg.node());
-  setCSV(del, ["hour_ending", ...list.map((s) => `${s.label} share of marginal supply`), "storage charging share of supply plus charging"],
+  setCSV(del, ["hour_ending", ...list.map((s) => `${s.label} share of marginal supply`), "storage charging as share of supply"],
     hours.map((d, i) => [i + 1, ...list.map((s) => (d ? d.sh[s.id] ?? 0 : null)), d ? d.chg : null]), `Marginal supply by hour ${S.date}`);
 }
 
 // ---- marginal offer stack by price: the slope of the day's offer curves ----------------
 // Each technology's share of the MW offered around each price: who would move next if price
 // landed there. Battery charging bids are demand, so they are kept out of the supply shares and
-// drawn below the line as a share of supply plus charging at that price. MW at the -$250 floor
+// drawn below the line as a share of the supply offered at that price. MW at the -$250 floor
 // (no-offer units) are left out. Minimum output (LSL) is left out too where the day has the
 // dispatchable curves; on days without them it shows as a spike at -$20/-$50.
 const OS_DEFAULT = [-100, 1000];
@@ -871,7 +874,7 @@ function drawOfferStack() {
       if (G[i] <= OS_DOMAIN[0] || G[i - 1] >= OS_DOMAIN[1]) continue;
       const dw = G[i] - G[i - 1], v = list.map((_, j) => inc[j][i] / dw);
       const sup = d3.sum(supI, (j) => v[j]), chg = chgI >= 0 ? v[chgI] : 0;
-      const sh = v.map((t, j) => (j === chgI ? (sup + chg > 0 ? chg / (sup + chg) : 0) : sup > 0 ? t / sup : 0));
+      const sh = v.map((t, j) => (j === chgI ? (sup > 0 ? chg / sup : 0) : sup > 0 ? t / sup : 0));
       const d = { p: G[i], mwd: v, sup, chg, sh };
       out.push({ ...d, px: x(Math.max(G[i - 1], OS_DOMAIN[0])) }, { ...d, px: x(Math.min(G[i], OS_DOMAIN[1])) });
     }
@@ -890,12 +893,13 @@ function drawOfferStack() {
     const k = 1 / (Math.sqrt(2 * Math.PI) * bw * dollarsPerPx);   // kernel sum -> MW per $
     const sup = d3.sum(supI, (j) => v[j]), chg = chgI >= 0 ? v[chgI] : 0;
     return { px, p, mwd: v.map((t) => t * k), sup: sup * k, chg: chg * k,
-      sh: v.map((t, j) => (j === chgI ? (sup + chg > 0 ? chg / (sup + chg) : 0) : sup > 0 ? t / sup : 0)) };
+      sh: v.map((t, j) => (j === chgI ? (sup > 0 ? chg / sup : 0) : sup > 0 ? t / sup : 0)) };
   });
   const maxAll = d3.max(pts, (d) => d.sup + d.chg) || 1;
   const live = pts.map((d) => d.sup + d.chg > maxAll * 1e-4);   // nothing offered: leave a gap
   const share = S.osUnit === "share";
-  const y = share ? d3.scaleLinear().domain([-0.5, 1]).range([H - m.b, m.t])
+  const chgTop = chgI >= 0 ? d3.max(pts.filter((d, i) => live[i]), (d) => d.sh[chgI]) || 0 : 0;
+  const y = share ? d3.scaleLinear().domain([-Math.min(CHG_AXIS_MAX, Math.max(0.5, chgTop)), 1]).nice().range([H - m.b, m.t])
     : d3.scaleLinear().domain([-(d3.max(pts, (d) => d.chg) || 1), d3.max(pts, (d) => d.sup) || 1]).nice().range([H - m.b, m.t]);
   const val = (d, j) => (share ? d.sh[j] : d.mwd[j]);
 
@@ -946,13 +950,13 @@ function drawOfferStack() {
       const rows = supI.filter((j) => d.sh[j] > 0.005).sort((a, b) => d.sh[b] - d.sh[a]);
       showTip(ev, `<h4>Around ${fmtPrice0(Math.round(d.p) || 0)}</h4><table>` + rows.map((j) =>
         `<tr><td><span class="sw" style="background:var(${list[j].color})"></span></td><td>${list[j].label}</td><td class="n">${d3.format(".0%")(d.sh[j])}</td><td class="n">${d3.format(",.0f")(d.mwd[j])} MW</td></tr>`).join("") +
-        (chgI >= 0 && d.chg > 0 ? `<tr><td><span class="sw" style="background:var(${list[chgI].color})"></span></td><td>Storage charging (bids to buy)</td><td class="n">${d3.format(".0%")(d.sh[chgI])} of supply + charging</td><td class="n">${d3.format(",.0f")(d.chg)} MW</td></tr>` : "") +
+        (chgI >= 0 && d.chg > 0 ? `<tr><td><span class="sw" style="background:var(${list[chgI].color})"></span></td><td>Storage charging (bids to buy)</td><td class="n">${d3.format(".0%")(d.sh[chgI])} of supply</td><td class="n">${d3.format(",.0f")(d.chg)} MW</td></tr>` : "") +
         `</table><p class="tip-body">Supply shares add to 100% of supply offered near this price.</p>`);
     })
     .on("pointerleave", () => { cross.style("display", "none"); hideTip(); });
   el.replaceChildren(svg.node());
   setCSV(el, ["price_usd_mwh", ...supI.map((j) => `${list[j].label} share of supply`), ...supI.map((j) => `${list[j].label} MW per $1 of price`),
-    ...(chgI >= 0 ? ["storage charging share of supply plus charging", "storage charging MW per $1 of price"] : [])],
+    ...(chgI >= 0 ? ["storage charging as share of supply", "storage charging MW per $1 of price"] : [])],
     pts.filter((d, i) => live[i]).map((d) => [Math.round(d.p * 100) / 100, ...supI.map((j) => d.sh[j]), ...supI.map((j) => d.mwd[j]), ...(chgI >= 0 ? [d.sh[chgI], d.chg] : [])]),
     `Marginal offer stack by price ${S.date}`);
 }
@@ -962,10 +966,18 @@ function drawProfile() {
   const el = $("profile-chart"), pel = $("price-chart");
   if (!S.day) { emptyMsg(el, "No data for this day."); pel.innerHTML = ""; return; }
   const gi = S.index.grid.indexOf(S.threshold);
+  // follows the Offer curves chart: from LSL (online minimum output counts at every threshold, plus
+  // the MW offered above it) or the curves as ERCOT prices them (minimum output at -$20/-$50)
+  const fromLSL = curvesFromLSL();
   const rows = seriesList().filter((s) => !S.hidden.has(s.id)).map((s) => {
+    if (fromLSL) {
+      const vals = d3.range(24).map((h) => { const c = S.day.runs[h] ? chartCurve(s, h) : null; return c ? c[gi] : null; });
+      return vals.some((v) => v != null) && { s, vals };
+    }
     const c = seriesCurves(S.day, s, S.version);
     return c && { s, vals: c.map((r) => (r ? r[gi] : null)) };
   }).filter(Boolean);
+  $("profile-title-note").textContent = S.source !== "60d" ? "" : fromLSL ? "from LSL" : "as ERCOT prices them";
 
   const { w } = size(el);
   const H = 240, m = { t: 14, r: 16, b: 26, l: 64 };
@@ -1032,12 +1044,8 @@ const TECH_COLS = [
   ["Min output, LSL (MW)", "Low Sustained Limit: the least an online unit can produce and stay online. A thermal unit cannot go below this in response to price without shutting down, so this block keeps running however low prices fall."],
   ["LSL / HSL", "Minimum output as a share of available capacity. A higher share means less room to back down when prices drop: a unit at 60% can only shed 40% of its available output before it has to shut down."],
   ["Output (MW)", "Telemetered net output, averaged over the hours shown."],
-  ["At floor, as used (MW)", "MW in the curve SCED dispatched against that is priced at the −$250 floor (or −$249.99). In that curve ERCOT fills in prices a unit didn't offer. Units that offer have the MW below their first offered point, usually minimum output, at −$20 (−$50 for some units), so it does not count here; that is the large step at −$20 in the thermal curves. Units with no offer curve sit at −$250 with the rest of their output schedule at −$249.99 if they are nuclear or hydro, so all of it counts here, and at −$20 or −$50 otherwise. SCED treats floor supply as a price-taker."],
-  ["Floor / output", "At-floor MW as a share of actual output: how much of the technology's generation SCED could not price off the system."],
-  ["≤ $0, as used (MW)", "MW offered at or below $0 in the curve SCED used. This supply keeps running when prices go negative."],
-  ["of which above LSL (MW)", "The part of the ≤ $0 as-used MW that sits above the units' minimum output (LSL): what SCED could actually back down by price. The rest is minimum output, which runs at any price unless the unit shuts down. Blank on days processed before the dispatchable curves were added."],
-  ["≤ $0, as submitted (MW)", "MW the generators themselves priced at or below $0 in the offer curves they submitted. The gap between this and the as-used column is supply placed low by ERCOT's curve extensions (minimum output and units without offers) rather than by the generator's own price."],
-  ["No offer curve (MW)", "Available capacity (HSL, in MW) of online units running without an offer curve. SCED holds these at the MW their QSE scheduled (the output schedule), against a stand-in curve: −$250/−$249.99 for nuclear and hydro, −$20 or −$50 for others. Nuclear units typically work this way."],
+  ["Offered ≤ $0 above LSL (MW)", "MW above the units' minimum output (LSL) that the generators themselves offered at or below $0, from their submitted curves: output that SCED could back down by price but that keeps running when prices go negative. Minimum output is left out because it runs at any price, and units without an offer curve count nothing here because SCED holds them at their schedule. For wind and solar this is the whole submitted curve (they have no minimum output to speak of). Blank for storage, whose curve runs from charging to discharging."],
+  ["No offer curve (MW)", "MW scheduled (the output schedule) by online units running without an offer curve. SCED holds these units at that MW whatever the price, against a stand-in curve ERCOT fills in (−$250/−$249.99 for nuclear and hydro, −$20 or −$50 for others). Nuclear units typically work this way. This is the MW that runs regardless of price because no price was offered."],
 ];
 const TECH_NOTES = {
   combined_cycle: "Combined-cycle gas plants (resource types CCGT90 and CCLE90). Each configuration of a plant is reported as its own resource.",
@@ -1059,7 +1067,7 @@ const UNIT_TIPS = {
   floor_mw: "MW priced at −$250/−$249.99 in the curve SCED used, averaged over the hours online.",
   le0_sced: "MW at or below $0 in the curve SCED used.",
   le0_submitted: "MW above minimum output (LSL) at or below $0 in the curve the generator submitted. Minimum output is left out because SCED cannot dispatch below it. Days processed before this column was read from LSL up include it.",
-  min_sub_price: "Price of the first point at or above minimum output (LSL) on the submitted offer curve, lowest of the day. Blank when no curve was submitted. Days processed before this column was read from LSL up show the curve's first point, which is −$250 for curves that start at 0 MW.",
+  min_sub_price: "Price of the first point at or above minimum output (LSL) on the submitted offer curve, lowest of the day (or of the hour). \"No curve\" marks units that ran without an offer curve, which SCED holds at their output schedule whatever the price; a unit with a curve only part of the time shows the share without one. Days processed before this column was read from LSL up show the curve's first point, which is −$250 for curves that start at 0 MW.",
   no_offer_share: "Share of online SCED runs without an offer curve.",
 };
 
@@ -1077,40 +1085,68 @@ function drawTechTable() {
     names.forEach((k) => (r[k] = avg(k)));
     return r;
   });
-  const i0 = gridIndex(0), disp = hasDispatchable() ? S.day.dispatchable.curves : null;
-  rows.forEach((r) => {     // technologies the block leaves out (wind, solar) have no minimum output to take out
-    const at0 = (k, h) => { const c = (disp[k] || S.day.curves[k] || [])[h]; return (c && c[i0]) || 0; };
-    r.le0_disp = !disp || r.s.id === "storage" ? null : d3.mean(hours, (h) => d3.sum(r.s.keys, (k) => at0(k, h)));
+  // MW the generators offered above LSL at or below $0: the submitted curves with LSL taken out
+  // (dispatchable block); wind and solar, which the block leaves out, use their whole submitted curve
+  const i0 = gridIndex(0), disp = hasDispatchable() ? S.day.dispatchable.submitted || {} : null;
+  rows.forEach((r) => {
+    if (r.s.id === "storage") { r.le0_flex = null; return; }
+    if (!disp) { r.le0_flex = r.le0_submitted; return; }
+    const at0 = (k, h) => { const c = (disp[k] || (S.day.submitted || {})[k] || [])[h]; return (c && c[i0]) || 0; };
+    r.le0_flex = d3.mean(hours, (h) => d3.sum(r.s.keys, (k) => at0(k, h)));
   });
-  const maxShare = d3.max(rows, (r) => (r.output > 1 ? r.floor_sced / r.output : 0)) || 1;
   const head = TECH_COLS.map(([label, tip], i) =>
     `<th class="${i ? "" : "t"} has-tip" tabindex="0" data-tip-title="${esc(label)}" data-tip="${esc(tip)}">${label}</th>`);
   let html = `<table class="data"><thead><tr>${head.join("")}</tr></thead><tbody>`;
   rows.forEach((r) => {
-    const share = r.output > 1 ? r.floor_sced / r.output : null;
+    const st = r.s.id === "storage";
     html += `<tr><td class="t"><span class="has-tip" tabindex="0" data-tip-title="${esc(r.s.label)}" data-tip="${esc(TECH_NOTES[r.s.id] || "")}"><span class="sw" style="background:var(${r.s.color});margin-right:6px"></span>${r.s.label}</span></td>
       <td>${d3.format(",.0f")(r.n_online)}</td><td>${fmtMW(r.hsl)}</td><td>${fmtMW(r.lsl)}</td>
-      <td>${r.hsl > 1 && r.s.id !== "storage" ? fmtPct(r.lsl / r.hsl) : "–"}</td><td>${fmtMW(r.output)}</td>
-      <td>${fmtMW(r.floor_sced)}</td>
-      <td>${share == null || r.s.id === "storage" ? "–" : fmtPct(share) + `<span class="bar-cell" style="width:${Math.round(40 * share / maxShare)}px"></span>`}</td>
-      <td>${fmtMW(r.le0_sced)}</td><td>${r.le0_disp == null ? "–" : fmtMW(r.le0_disp)}</td><td>${fmtMW(r.le0_submitted)}</td><td>${fmtMW(r.no_offer_hsl)}</td></tr>`;
+      <td>${r.hsl > 1 && !st ? fmtPct(r.lsl / r.hsl) : "–"}</td><td>${fmtMW(r.output)}</td>
+      <td>${r.le0_flex == null ? "–" : fmtMW(r.le0_flex)}</td><td>${st ? "–" : fmtMW(r.no_offer_output_schedule)}</td></tr>`;
   });
-  el.innerHTML = html + `</tbody></table><p class="note">MW are ${S.ttView === "hour" ? `averages over the SCED runs in ${heLabel(S.hour)}` : "averages over the day's hours"}. Hover a column heading or a technology name for an explanation.${disp ? "" : " \"Of which above LSL\" is blank until this day is reprocessed with the dispatchable curves."}</p>`;
+  const span = S.ttView === "hour" ? heLabel(S.hour) : "day average";
+  el.innerHTML = html + `</tbody></table><p class="note">MW are ${S.ttView === "hour" ? `averages over the SCED runs in ${heLabel(S.hour)}` : "averages over the day's hours"}. Hover a column heading or a technology name for an explanation. The CSV download has every measure, including the ones not shown here.${disp ? "" : " This day has not been reprocessed with the dispatchable curves, so \"Offered ≤ $0 above LSL\" may still include some minimum output."}</p>`;
+  setCSV(el, ["technology", "hours", "le0_offered_above_lsl", ...names], rows.map((r) => [r.s.label, span, r.le0_flex, ...names.map((k) => r[k])]),
+    `Inflexibility by technology ${S.date} ${span}`);
 }
 
 // ---- unit table (60-day) -----------------------------------------------------
+// Day: one row per unit from the day file. Selected hour: the unit's row for that hour from
+// data/60d-units/{date}.json.gz (pipeline/unit_hours_day.py), loaded when first asked for.
+// Columns hidden from the table stay in the CSV download.
 const UNIT_COLS = [
   ["unit", "Unit", "t"], ["type", "Type", "t"], ["hours_online", "Hours online"], ["hsl", "HSL (MW)"], ["lsl", "LSL (MW)"],
-  ["output", "Output (MW)"], ["pinned_share", "Time at LSL", "pct"], ["floor_mw", "At floor (MW)"],
-  ["le0_sced", "≤ $0 as used (MW)"], ["le0_submitted", "≤ $0 as submitted, above LSL (MW)"], ["min_sub_price", "Lowest submitted price at or above LSL ($/MWh)", "price"],
-  ["no_offer_share", "No offer curve", "pct"],
+  ["output", "Output (MW)"], ["pinned_share", "Time at LSL", "pct"], ["le0_submitted", "Offered ≤ $0 above LSL (MW)"],
+  ["min_sub_price", "Lowest offer price at or above LSL ($/MWh)", "offer"],
 ];
-function drawUnits() {
+const UNIT_CSV = ["unit", "type", "tech", "hours_online", "hsl", "lsl", "base_point", "output", "pinned_share", "floor_mw", "le0_sced",
+  "le0_submitted", "min_sub_price", "avg_sub_price", "no_offer_share"];
+async function unitHourRows(date) {
+  if (!S.unitHours.has(date)) S.unitHours.set(date, tryJSON(`data/60d-units/${date}.json.gz`));
+  return S.unitHours.get(date);
+}
+async function drawUnits() {
   const el = $("units-table");
   if (!S.day || !S.day.units) return emptyMsg(el, "No 60-day data for this day.");
-  const C = S.day.units.columns;
+  const hourly = S.unitView === "hour", date = S.date, h = S.hour;
+  let rows;
+  if (hourly) {
+    const f = await unitHourRows(date);
+    if (date !== S.date || h !== S.hour || S.unitView !== "hour") return;   // a newer draw took over
+    if (!f) return emptyMsg(el, "Hourly unit data for this day is not built yet. It fills in over the next data updates; the Day view has the daily table.");
+    const ci = Object.fromEntries(f.columns.map((c, i) => [c, i + 2]));
+    rows = f.rows.filter((r) => r[1] === h + 1).map((r) => {
+      const [unit, type, tech] = f.units[r[0]];
+      const o = { unit, type, tech };
+      f.columns.forEach((c) => (o[c] = r[ci[c]]));
+      o.hours_online = o.online_share;
+      return o;
+    });
+  } else {
+    const C = S.day.units.columns;
+    rows = S.day.units.rows.map((r) => Object.fromEntries(C.map((c, i) => [c, r[i]])));
+  }
   const techOf = (t) => (["hydro", "other"].includes(t) ? "other" : t);
-  let rows = S.day.units.rows.map((r) => Object.fromEntries(C.map((c, i) => [c, r[i]])));
   if (S.unitTech !== "all") rows = rows.filter((r) => techOf(r.tech) === S.unitTech);
   if (S.unitSearch) rows = rows.filter((r) => r.unit.toLowerCase().includes(S.unitSearch.toLowerCase()));
   const { key, dir } = S.unitSort;
@@ -1119,16 +1155,30 @@ function drawUnits() {
     if (va == null) return 1; if (vb == null) return -1;
     return (typeof va === "string" ? va.localeCompare(vb) : va - vb) * dir;
   });
+  const span = hourly ? heLabel(h) : "day";
+  setCSV(el, UNIT_CSV.map((k) => (hourly && k === "hours_online" ? "online_share" : k)).filter((k) => !(hourly && k === "avg_sub_price")),
+    rows.map((r) => UNIT_CSV.filter((k) => !(hourly && k === "avg_sub_price")).map((k) => r[k])), `Units ${date} ${span}`);
   const total = rows.length;
   if (!S.unitShowAll) rows = rows.slice(0, 150);
-  const fmt = (v, kind) => v == null ? "–" : kind === "pct" ? fmtPct(v) : kind === "price" ? fmtPrice(v) : kind === "t" ? v : d3.format(",.1f")(v);
-  let html = `<div class="units-wrap"><table class="data"><thead><tr>${UNIT_COLS.map(([k, label, kind]) =>
-    `<th class="sortable ${kind === "t" ? "t" : ""}${UNIT_TIPS[k] ? " has-tip" : ""}" data-k="${k}"${UNIT_TIPS[k] ? ` data-tip-title="${esc(label)}" data-tip="${esc(UNIT_TIPS[k])}"` : ""} aria-sort="${k === key ? (dir > 0 ? "ascending" : "descending") : "none"}">${label}${k === key ? (dir > 0 ? " ▲" : " ▼") : ""}</th>`).join("")}</tr></thead><tbody>`;
-  html += rows.map((r) => `<tr>${UNIT_COLS.map(([k, , kind]) => `<td class="${kind === "t" ? "t" : ""}">${fmt(r[k], kind)}</td>`).join("")}</tr>`).join("");
+  // the lowest offer price, or "No curve" for units that ran without one (with the share of
+  // the time when they had a curve only part of it)
+  const offer = (r) => {
+    const nc = r.no_offer_share || 0;
+    if (r.min_sub_price == null) return nc > 0 ? "No curve" : "–";
+    return fmtPrice(r.min_sub_price) + (nc >= 0.005 ? ` <span class="muted">· no curve ${fmtPct(nc)}</span>` : "");
+  };
+  const fmt = (r, k, kind) => kind === "offer" ? offer(r) : r[k] == null ? "–" : kind === "pct" ? fmtPct(r[k])
+    : kind === "t" ? esc(r[k]) : k === "hours_online" && hourly ? fmtPct(r[k]) : d3.format(hourly ? ",.0f" : ",.1f")(r[k]);   // hourly rows are whole MW
+  const label = (k, l) => (hourly && k === "hours_online" ? "Online" : l);
+  const tip = (k) => (hourly && k === "hours_online" ? "Share of the hour's SCED runs with an online status." : UNIT_TIPS[k]);
+  let html = `<div class="units-wrap"><table class="data"><thead><tr>${UNIT_COLS.map(([k, l, kind]) =>
+    `<th class="sortable ${kind === "t" ? "t" : ""}${tip(k) ? " has-tip" : ""}" data-k="${k}"${tip(k) ? ` data-tip-title="${esc(label(k, l))}" data-tip="${esc(tip(k))}"` : ""} aria-sort="${k === key ? (dir > 0 ? "ascending" : "descending") : "none"}">${label(k, l)}${k === key ? (dir > 0 ? " ▲" : " ▼") : ""}</th>`).join("")}</tr></thead><tbody>`;
+  html += rows.map((r) => `<tr>${UNIT_COLS.map(([k, , kind]) => `<td class="${kind === "t" ? "t" : ""}">${fmt(r, k, kind)}</td>`).join("")}</tr>`).join("");
   el.innerHTML = html + "</tbody></table></div>";
-  $("units-foot").innerHTML = total > rows.length
+  const what = hourly ? `Units online in ${heLabel(h)}` : "Units";
+  $("units-foot").innerHTML = (total > rows.length
     ? `Showing ${rows.length} of ${total} units. <button type="button" id="units-all" class="linkish">Show all</button>`
-    : `${total} units. "Time at LSL" is the share of online SCED runs with the base point at minimum output.`;
+    : `${what}: ${total}.`) + " The CSV download has every measure, including the ones not shown here.";
   const b = $("units-all");
   if (b) b.onclick = () => { S.unitShowAll = true; drawUnits(); };
 }
@@ -1238,6 +1288,8 @@ async function boot() {
   setSeg("os-view", S.osView); setSeg("os-unit", S.osUnit);
   bindSeg("os-view", "osView", drawOfferStack);
   setSeg("tt-view", S.ttView); bindSeg("tt-view", "ttView", drawTechTable);
+  if (!["day", "hour"].includes(S.unitView)) S.unitView = "day";
+  setSeg("unit-view", S.unitView); bindSeg("unit-view", "unitView", () => { S.unitShowAll = false; drawUnits(); saveView(); });
   bindSeg("os-unit", "osUnit", drawOfferStack);
   setSeg("os-smooth", S.osSmooth); bindSeg("os-smooth", "osSmooth", drawOfferStack);
   $("date").onchange = async (e) => { S.date = e.target.value; await changeDay(); };
@@ -1292,6 +1344,7 @@ async function boot() {
   new MutationObserver(render).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
 
   await changeDay();
+  window.CX.panelFromLink();
 }
 boot();
 })();

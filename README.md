@@ -110,6 +110,7 @@ pipeline/
                    graph builder (data/series/, no downloads)
   trends.py        per-unit day files -> daily trends, starts, flips, bidding changes (no downloads)
   intraday.py      per-unit day files -> thermal output at/above minimum in cheap hours, off spells
+  unit_hours_day.py per-unit day files -> each unit's hourly rows for the Day page's Units table (data/60d-units/)
   stayon.py        per-unit day files + DAM costs -> what riding through a cheap stretch cost each
                    thermal unit against a shutdown and restart (no downloads)
   decisions.py     hourly unit states + DAM node prices, costs and awards -> each thermal unit's

@@ -32,6 +32,7 @@ from .marginal import build_marginal
 from .dispatchable import build_dispatchable
 from .trends import build_trends
 from .intraday import build_intraday
+from .unit_hours_day import build_unit_hour_days
 from .hourly_context import build_hourly_context
 from .stayon import build_stayon
 from .decisions import build_decisions
@@ -369,6 +370,7 @@ def main(argv=None):
         build_marginal(index)
         build_trends(index)
         build_intraday(index)
+        build_unit_hour_days(index)
         build_hourly_context(index)
         build_stayon(index)
         build_decisions(index)
@@ -426,6 +428,7 @@ def main(argv=None):
     build_marginal(index)
     build_trends(index)
     build_intraday(index)
+    build_unit_hour_days(index)
     build_hourly_context(index)
     build_stayon(index)
     build_decisions(index)

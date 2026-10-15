@@ -8,12 +8,12 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Sans+Condensed:wght@600&display=swap">
 <link rel="stylesheet" href="style.css">
 </head>
-<body>
+<body data-panel-links>
 <div class="page">
 
 <header class="masthead">
   <div class="brand">
-    <div class="nav-row"><nav class="nav" aria-label="Pages"><a href="index.html" aria-current="page">Day view</a><a href="trends.html">Trends</a><a href="economics.html">Plant economics</a><a href="contracts.html">Hedge signals</a><a href="builder.html">Graph builder</a></nav><button type="button" class="copy-link" id="copy-link" title="Copy a link to exactly this view">Copy link</button></div>
+    <div class="nav-row"><nav class="nav" aria-label="Pages"><a href="index.html" aria-current="page">Day view</a><a href="trends.html">Trends</a><a href="economics.html">Plant economics</a><a href="contracts.html">Hedge signals</a><a href="builder.html">Graph builder</a></nav></div>
     <h1>ERCOT Bid Stack Explorer</h1>
     <p class="sub">How resources offer energy into SCED, by technology, day and hour. Data from ERCOT's 2-Day SCED Energy Curves and 60-Day SCED Disclosure reports.</p>
   </div>
@@ -60,7 +60,7 @@
     <div class="chart" id="day-mix"></div>
   </section>
 
-  <section class="panel panel-wide">
+  <section class="panel panel-wide" id="curves-panel">
     <div class="panel-head">
       <div>
         <h2>Offer curves <span class="h-note" id="curve-title-note"></span></h2>
@@ -97,7 +97,7 @@
     <details class="table-view"><summary>Table view</summary><div id="curve-table" class="scroll-x"></div></details>
   </section>
 
-  <section class="panel panel-wide">
+  <section class="panel panel-wide" id="mix-panel">
     <div class="panel-head">
       <div>
         <h2>Generation mix <span class="h-note" id="mix-title-note"></span></h2>
@@ -108,11 +108,11 @@
     <details class="table-view"><summary>Table view</summary><div id="mix-table" class="scroll-x"></div></details>
   </section>
 
-  <section class="panel panel-wide">
+  <section class="panel panel-wide" id="marg-panel">
     <div class="panel-head">
       <div>
         <h2>Marginal supply <span class="h-note" id="marg-title-note"></span></h2>
-        <p class="note">Who is offering at the cleared price: MW each technology offers between the hour's lowest and highest cleared price (at least ±$1 around the average), from the hourly offer curves (it follows the Curve and Price selections), with each unit's minimum output (LSL) taken out, since SCED cannot move a unit below it. Supply shares add to 100% of supply. Batteries that stop charging as price rises are demand, so they are drawn on the other side of zero as a share of supply plus charging in the window. It shows who stands at the margin, not which unit set each SCED price; with congestion, units can set price locally at prices away from system lambda.</p>
+        <p class="note">Who is offering at the cleared price: MW each technology offers between the hour's lowest and highest cleared price (at least ±$1 around the average), from the hourly offer curves (it follows the Curve and Price selections), with each unit's minimum output (LSL) taken out, since SCED cannot move a unit below it. Supply shares add to 100% of supply. Batteries that stop charging as price rises are demand, so they are drawn on the other side of zero as a share of the supply in the window (it can pass 100% when little supply moves; the chart stops at 100%). It shows who stands at the margin, not which unit set each SCED price; with congestion, units can set price locally at prices away from system lambda.</p>
       </div>
     </div>
     <div class="chart" id="marg-chart"></div>
@@ -120,11 +120,11 @@
     <details class="table-view"><summary>Table view</summary><div id="marg-table" class="scroll-x"></div></details>
   </section>
 
-  <section class="panel panel-wide">
+  <section class="panel panel-wide" id="os-panel">
     <div class="panel-head">
       <div>
         <h2>Marginal offer stack by price <span class="h-note" id="os-title-note"></span></h2>
-        <p class="note">Who would move next if price landed at each level: each technology's share of the MW offered around that price, read off the day's offer curves (the slope of the bid stack). Battery charging bids are demand, so they sit below the line as a share of supply plus charging at that price. MW at the −$250 floor (units with no offer curve, mostly nuclear and hydro) are left out, and so is each unit's minimum output (LSL), which SCED cannot move: on days processed before that was done it still shows as a spike at −$20 (−$50 for some units). Ticks along the top mark each hour's system lambda. The same view across all days, by settled price, is on the <a href="trends.html">Trends</a> page.</p>
+        <p class="note">Who would move next if price landed at each level: each technology's share of the MW offered around that price, read off the day's offer curves (the slope of the bid stack). Battery charging bids are demand, so they sit below the line as a share of the supply offered at that price. MW at the −$250 floor (units with no offer curve, mostly nuclear and hydro) are left out, and so is each unit's minimum output (LSL), which SCED cannot move: on days processed before that was done it still shows as a spike at −$20 (−$50 for some units). Ticks along the top mark each hour's system lambda. The same view across all days, by settled price, is on the <a href="trends.html">Trends</a> page.</p>
       </div>
       <div class="panel-tools">
         <div class="seg seg-sm" id="os-view" role="radiogroup" aria-label="Hours">
@@ -150,11 +150,11 @@
     <div class="chart" id="os-chart"></div>
   </section>
 
-  <section class="panel panel-wide">
+  <section class="panel panel-wide" id="profile-panel">
     <div class="panel-head">
       <div>
-        <h2>Through the day</h2>
-        <p class="note">MW offered at or below the threshold in each hour of the selected day, with the cleared price below. The same measure for every day and hour is under Across days on the <a href="trends.html">Trends</a> page.</p>
+        <h2>Through the day <span class="h-note" id="profile-title-note"></span></h2>
+        <p class="note">MW offered at or below the threshold in each hour of the selected day, with the cleared price below. It follows the Offer curves chart's minimum output setting: "From LSL" counts each technology's online minimum output (LSL) at every threshold, since it runs however low the price goes, plus the MW offered above it at or below the threshold; "As ERCOT prices it" counts minimum output only from −$20 (−$50 for some units) up, where ERCOT prices it. The same measure for every day and hour is under Across days on the <a href="trends.html">Trends</a> page.</p>
       </div>
       <div class="panel-tools">
         <label class="lbl inline" for="threshold">At or below</label>
@@ -169,7 +169,7 @@
     <div class="panel-head">
       <div>
         <h2>Inflexibility by technology <span class="h-note">60-day data</span></h2>
-        <p class="note">Units online, in the selected hour or averaged over the day. "At the floor" is MW offered at −$250/−$249.99. In the curves SCED dispatches against, ERCOT fills in prices a unit didn't offer. Units that offer have the MW below their first offered point, usually minimum output, at −$20 (−$50 for some units). That is the large step at −$20 in the thermal curves. Units with no offer curve sit at −$250 with the rest of their output schedule at −$249.99 if they are nuclear or hydro, and at −$20 or −$50 otherwise.</p>
+        <p class="note">Units online, in the selected hour or averaged over the day. Minimum output (LSL) runs at any price, so it is the inflexible block; the MW offered above it at or below $0 can still be backed down by price but keeps running when prices go negative; and units with no offer curve run at their schedule whatever the price.</p>
       </div>
       <div class="panel-tools">
         <div class="seg seg-sm" id="tt-view" role="radiogroup" aria-label="Hours">
@@ -178,38 +178,42 @@
         </div>
       </div>
     </div>
-    <div class="scroll-x" id="tech-table"></div>
+    <div class="scroll-x" id="tech-table" data-csv></div>
   </section>
 
   <section class="panel panel-wide" id="units-panel">
     <div class="panel-head">
       <div>
         <h2>Units <span class="h-note">60-day data</span></h2>
-        <p class="note">One row per resource for the operating day. Click a column to sort.</p>
+        <p class="note">One row per resource, for the operating day or the selected hour. Click a column to sort.</p>
       </div>
       <div class="panel-tools">
+        <div class="seg seg-sm" id="unit-view" role="radiogroup" aria-label="Hours">
+          <button type="button" data-v="hour" role="radio">Selected hour</button>
+          <button type="button" data-v="day" role="radio">Day</button>
+        </div>
         <label class="lbl inline" for="unit-tech">Technology</label>
         <select id="unit-tech"></select>
         <label class="lbl inline" for="unit-search">Search</label>
         <input type="search" id="unit-search" placeholder="Unit name">
       </div>
     </div>
-    <div class="scroll-x" id="units-table"></div>
+    <div class="scroll-x" id="units-table" data-csv></div>
     <p class="note" id="units-foot"></p>
   </section>
 
-  <section class="panel panel-wide">
+  <section class="panel panel-wide" id="curt-panel">
     <div class="panel-head">
       <div>
         <h2>Wind and solar curtailment <span class="h-note" id="curt-title-note"></span></h2>
-        <p class="note">MW wind and solar could have produced (HSL) minus the base point SCED sent them, averaged over each hour. This is the output SCED held back, for price or for congestion. It comes from the 60-day disclosure and, for recent days, from ERCOT's 2-day reports (generation summary base points against the 2-day offer curves' summed HSL); where a day has both, the readout shows both.</p>
+        <p class="note">MW wind and solar could have produced (HSL) minus the base point SCED sent them, averaged over each hour. This is the output SCED held back, for price or for congestion. It comes from the 60-day disclosure, unit by unit. Recent days that have no 60-day data yet use an estimate from ERCOT's 2-day reports: the generation summary's base points against the top of the 2-day offer curves, since the summary no longer carries available output (HASL).</p>
       </div>
     </div>
     <div class="legend legend-static" id="curt-legend"></div>
     <div class="chart" id="curt-chart"></div>
   </section>
 
-  <section class="panel panel-wide">
+  <section class="panel panel-wide" id="dur-panel">
     <div class="panel-head">
       <div>
         <h2>Price duration <span class="h-note" id="dur-title-note"></span></h2>
