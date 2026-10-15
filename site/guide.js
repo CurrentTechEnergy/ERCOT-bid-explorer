@@ -230,10 +230,10 @@ function drawStep5() {
 function drawChoice(el, r) {
   if (!r) { el.innerHTML = ""; return; }
   const rows = [
-    { k: "Stay on", sub: r.loss < 0 ? "came out ahead: earned more than it cost" : "running cost minus what the price paid", v: r.loss },
+    { k: "Stay on", sub: "running cost minus what the price paid", v: r.loss },
     { k: "Cycle off", sub: "restart for the evening", v: r.start },
   ];
-  const w = width(el), bh = 34, m = { t: 8, r: 70, b: 28, l: w < 480 ? 92 : 230 }, H = m.t + rows.length * (bh + 18) + m.b;
+  const w = width(el), bh = 34, m = { t: 8, r: 70, b: 48, l: w < 480 ? 92 : 230 }, H = m.t + rows.length * (bh + 18) + m.b;
   const x = d3.scaleLinear().domain([Math.min(0, d3.min(rows, (d) => d.v) * 1.05), d3.max(rows, (d) => d.v) * 1.05]).nice().range([m.l, w - m.r]);
   const svg = svgEl(el, w, H);
   grid(svg, d3.axisBottom(x).ticks(4), w, m, H, false);
@@ -247,6 +247,10 @@ function drawChoice(el, r) {
   });
   svg.append("g").attr("class", "axis").attr("transform", `translate(0,${H - m.b})`)
     .call(d3.axisBottom(x).ticks(4).tickFormat((v) => fmt$k(v)));
+  // which way is good: below $0 the owner comes out ahead, above $0 it pays
+  const ax = svg.append("g").attr("transform", `translate(0,${H - 8})`);
+  if (x.domain()[0] < 0) ax.append("text").attr("class", "lab-ink").attr("x", x(0) - 6).attr("text-anchor", "end").text(w < 480 ? "← better" : "← better: owner comes out ahead");
+  ax.append("text").attr("class", "lab-ink").attr("x", x(0) + 6).text(x.domain()[0] < 0 ? (w < 480 ? "worse →" : "worse: owner pays →") : "Net cost to the owner: bigger is worse →");
 }
 
 // --------------------------------------------------- step 6: fleet curves ---
