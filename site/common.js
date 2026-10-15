@@ -209,24 +209,27 @@ function downloadPNG(panel) {
   img.src = url;
 }
 function downloadCSV(panel) {
-  const parts = [...panel.querySelectorAll(".chart")].map((el) => csvData.get(el)).filter(Boolean);
+  const parts = [...panel.querySelectorAll(".chart, [data-csv]")].map((el) => csvData.get(el)).filter(Boolean);
   if (!parts.length) return;
   const cell = (v) => (v == null ? "" : typeof v === "number" ? String(Math.round(v * 1e4) / 1e4) : /[",\n]/.test(v) ? `"${String(v).replace(/"/g, '""')}"` : v);
   const text = parts.map((p) => (parts.length > 1 ? `# ${p.name}\n` : "") + [p.header, ...p.rows].map((r) => r.map(cell).join(",")).join("\n")).join("\n\n");
   save(new Blob([text + "\n"], { type: "text/csv" }), `${slug(panelName(panel))}-${stamp()}.csv`);
 }
-// a small Download menu at the top right of every panel that holds a chart
+// a small Download menu at the top right of every panel that holds a chart (or a table marked
+// data-csv, which offers its data only)
 function addDownloads() {
   document.querySelectorAll("section.panel").forEach((panel) => {
-    if (!panel.querySelector(".chart") || panel.querySelector(".dl")) return;
+    const chart = !!panel.querySelector(".chart");
+    if ((!chart && !panel.querySelector("[data-csv]")) || panel.querySelector(".dl")) return;
     const head = panel.querySelector(".panel-head");
     const box = document.createElement("details");
     box.className = "dl";
-    box.innerHTML = `<summary aria-label="Download this chart">Download</summary><div class="dl-menu">
-      <button type="button" data-f="png">Image (PNG)</button><button type="button" data-f="svg">Vector (SVG)</button><button type="button" data-f="csv">Data (CSV)</button></div>`;
+    box.innerHTML = `<summary aria-label="Download this ${chart ? "chart" : "table"}">Download</summary><div class="dl-menu">` +
+      (chart ? `<button type="button" data-f="png">Image (PNG)</button><button type="button" data-f="svg">Vector (SVG)</button>` : "") +
+      `<button type="button" data-f="csv">Data (CSV${chart ? "" : ", all columns"})</button></div>`;
     (head.querySelector(".panel-tools") || head.appendChild(Object.assign(document.createElement("div"), { className: "panel-tools" }))).appendChild(box);
     box.addEventListener("toggle", () => {
-      const has = [...panel.querySelectorAll(".chart")].some((el) => csvData.get(el));
+      const has = [...panel.querySelectorAll(".chart, [data-csv]")].some((el) => csvData.get(el));
       box.querySelector('[data-f="csv"]').disabled = !has;
     });
     box.addEventListener("click", (e) => {
@@ -250,11 +253,7 @@ function writeHash(obj) {
 function initCopyLink() {
   const b = $("copy-link");
   if (!b) return;
-  b.onclick = async () => {
-    try { await navigator.clipboard.writeText(location.href); b.textContent = "Link copied"; }
-    catch (e) { prompt("Copy this link", location.href); }
-    setTimeout(() => (b.textContent = "Copy link"), 1600);
-  };
+  b.onclick = () => copyText(b, location.href, "Copy link");
 }
 
 // ---------------------------------------------------------------- axes ---
@@ -286,7 +285,37 @@ function axisFmt(axis, n, kind = "num", abs = false) {
   return axis.tickValues(v).tickFormat(abs ? (x) => f(Math.abs(x)) : f);
 }
 
-function init() { initPins(); addDownloads(); initCopyLink(); }
+// pages with <body data-panel-links> get a Copy link button on each panel instead of one in the
+// header: the link carries the view plus the panel (p=<panel id>), and panelFromLink() scrolls there
+async function copyText(b, text, label) {
+  try { await navigator.clipboard.writeText(text); b.textContent = "Link copied"; }
+  catch (e) { prompt("Copy this link", text); }
+  setTimeout(() => (b.textContent = label), 1600);
+}
+function addPanelLinks() {
+  if (!document.body.hasAttribute("data-panel-links")) return;
+  document.querySelectorAll("section.panel[id]").forEach((panel) => {
+    const head = panel.querySelector(".panel-head");
+    if (!head || head.querySelector(".panel-link")) return;
+    const b = Object.assign(document.createElement("button"), { type: "button", className: "copy-link panel-link", textContent: "Copy link",
+      title: "Copy a link that opens this chart with the same day, hour and settings" });
+    const tools = head.querySelector(".panel-tools") || head.appendChild(Object.assign(document.createElement("div"), { className: "panel-tools" }));
+    tools.appendChild(b);
+    b.onclick = () => {
+      const q = new URLSearchParams(location.hash.slice(1));
+      q.set("p", panel.id);
+      copyText(b, `${location.origin}${location.pathname}#${q}`, "Copy link");
+    };
+  });
+}
+// the panel a copied link points at (read once, before the page rewrites the address bar)
+const linkedPanel = new URLSearchParams(location.hash.slice(1)).get("p");
+function panelFromLink() {
+  const el = linkedPanel && document.getElementById(linkedPanel);
+  if (el && !el.hidden) el.scrollIntoView({ block: "start" });
+}
 
-window.CX = { getJSON, tryJSON, showTip, hideTip, clearPins, setCSV, readHash, writeHash, init, css, esc, tickFormat, fmtKind, axisFmt };
+function init() { initPins(); addDownloads(); addPanelLinks(); initCopyLink(); }
+
+window.CX = { getJSON, tryJSON, showTip, hideTip, clearPins, setCSV, readHash, writeHash, init, panelFromLink, css, esc, tickFormat, fmtKind, axisFmt };
 })();
