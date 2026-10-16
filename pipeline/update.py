@@ -49,6 +49,7 @@ from .forecast.run import build_forecast
 from .ppa import build_ppa
 from .renew_changes import build_renew_changes
 from .series import build_series
+from .storage import build_storage
 from .store import describe_blob, iter_csvs, zip_names, load_index, read_json_gz, save_index, update_summary, write_json_gz
 from .log import warn, write_summary, WARNINGS
 
@@ -92,6 +93,7 @@ def is_load_resource_only(blob: bytes) -> bool:
 
 
 UNIT_FILES = []     # (date, compressed bytes, COV events) written in this run
+RTCB_START = "2025-12-05"   # first operating day with the ESR file in the 60-day SCED disclosure
 
 
 def _drop_nan(x, path, bad):
@@ -245,9 +247,12 @@ def reprocess_60d(api, index: dict, mode: str = "missing", limit=None):
         if not path.exists():
             return False
         try:
-            return (read_json_gz(path) or {}).get("format") == UNIT_FORMAT
+            fmt = (read_json_gz(path) or {}).get("format")
         except Exception:
             return False
+        # format 7 only adds battery columns from the RTC+B ESR file; a format 6 file for a day
+        # before RTC+B would come back identical, so it is not redone
+        return fmt == UNIT_FORMAT or (fmt == 6 and d < RTCB_START)
     targets = {d for d in index["days"]["60d"] if mode == "all" or not current(d)}
     print(f"reprocess 60d ({mode}): {len(targets)} day(s)")
     if not targets:
@@ -384,6 +389,7 @@ def main(argv=None):
         build_ppa(index)
         build_renew_changes(index)
         build_series(index)
+        build_storage(index)
         build_forecast(index)
         save_index(index)
         return
@@ -445,12 +451,14 @@ def main(argv=None):
     build_ppa(index)
     build_renew_changes(index)
     build_series(index)
+    build_storage(index)
     if "forecast" not in args.skip:
         build_forecast(index)
     save_index(index)
     added = {k: sorted(set(index["days"][k]) - before.get(k, set())) for k in index["days"]}
     names = {"2d": "2-day curves", "2dgen": "2-day generation summary", "60d": "60-day curves",
-             "dam": "60-day DAM offers and awards", "prices": "prices", "nodes": "resource-node prices"}
+             "dam": "60-day DAM offers and awards", "prices": "prices", "nodes": "resource-node prices",
+             "storage": "battery day files"}
     lines = ["### ERCOT data update", "", "| Data | Days added | Range |", "|---|---|---|"]
     for k, v in added.items():
         lines.append(f"| {names.get(k, k)} | {len(v)} | {v[0] + ' to ' + v[-1] if v else '–'} |")
