@@ -263,6 +263,7 @@ function drawMini() {
 }
 
 // ---------------------------------------------------------------- who runs: bars ---
+const CAP_KEYS = ["cap", "on", "off", "out", "unknown", "min", "exp", "gwh", "n_on", "n_off", "n_out", "n_unknown"];
 const HATCH = "background:var(--track);background-image:repeating-linear-gradient(135deg,transparent 0 3px,var(--axis) 3px 4px)";
 function barLegend(col) {
   return `<span><span class="sw" style="background:var(${col})"></span>Online, minimum output (LSL)</span><span><span class="sw" style="background:var(${col});opacity:0.45"></span>Online, up to maximum (HSL)</span>` +
@@ -303,6 +304,7 @@ function drawGroups() {
     html += barRow(GROUP_SHORT[g] || g, `${GROUP_NOTES[g] || S.fc.group_labels[g]} (${n} units)`, GROUP_COLORS[g] || "--c-other", c, null, act(g));
   });
   el.innerHTML = html;
+  setCSV(el, ["group", ...CAP_KEYS, "actual_gwh"], S.fc.groups.filter((g) => D.capacity.group[g]).map((g) => [GROUP_SHORT[g] || g, ...CAP_KEYS.map((k) => D.capacity.group[g][k]), act(g)]), `Expected to run by group ${S.date}`);
 }
 // the reasons behind a technology's verdicts, counted from the units table
 function techWhy(t) {
@@ -346,6 +348,9 @@ function drawTechs() {
       (a2 != null ? `<i class="act" style="left:calc(${(a2 / (np * 24 / 1000)) * 100}% - 1.5px)"></i>` : "") + `</div>` +
       `<div class="val"><b>${f(disp)} ${u}</b> expected of ${f(avail)} ${u} available` + (a2 != null ? `<br>${gwh ? fmtGWh(a2) : fmtGW(a2 / 24 * 1000)} ${u} actual` : "") + `</div>`;
   });
+  const csv = TECHS.filter(([t]) => D.capacity.tech[t]).map(([t, label]) => [label, ...CAP_KEYS.map((k) => D.capacity.tech[t][k]), act(t), null, null, null]);
+  [WIND, SOLAR].forEach((s) => { const r = D.headline[s.id]; if (r) csv.push([s.label, r.nameplate, ...CAP_KEYS.slice(1).map(() => null), sc && sc.two_day ? sc.two_day[`${s.id}_gwh_act`] : null, r.avail_gwh, r.disp_gwh, r.curt_gwh]); });
+  setCSV(el, ["technology", ...CAP_KEYS, "actual_gwh", "avail_gwh", "disp_gwh", "priced_out_gwh"], csv, `Expected to run by technology ${S.date}`);
   html += `<div class="sect">Storage</div><div class="lab"><span class="sw" style="background:var(${STORAGE.color})"></span><div>Batteries<small>awaiting battery data; no forecast yet</small></div></div><div class="bar"></div><div class="val">–</div>`;
   el.innerHTML = html;
 }
