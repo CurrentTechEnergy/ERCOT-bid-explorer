@@ -16,8 +16,10 @@ spell still open at the end of the period counts once it is a day long.
   daily2    one to two shutdowns a week
   daily3    more than two shutdowns a week
 
-This helper stays until the Commitment build (PR 1) lands its own group file in the
-pipeline; unit_groups() is the one place to swap for that file.
+The Commitment build (PR 1, branch commitment-pipeline) writes the same groups to
+data/groups_60d.json.gz from pipeline/groups.py (units: {unit or train: [tech, group, ...]}).
+unit_groups() reads that file whenever it exists and falls back to the port below, so the two
+builds agree whichever lands first.
 """
 import datetime as dt
 
@@ -122,9 +124,16 @@ def group_of(st: np.ndarray, N: int) -> str:
     return "never"
 
 
+GROUP_FILE = DATA_DIR / "groups_60d.json.gz"
+
+
 def unit_groups(uh: dict = None, techs: dict = None) -> dict:
-    """{train: group} for every thermal unit or train with hourly states.  techs maps unit name
-    to technology (default: the trends units list)."""
+    """{train: group} for every thermal unit or train with hourly states, from the pipeline's
+    group file when it exists (PR 1), else computed here.  techs maps unit name to technology
+    (default: the trends units list)."""
+    g = read_json_gz(GROUP_FILE, default=None)
+    if g and isinstance(g.get("units"), dict):
+        return {k: v[1] for k, v in g["units"].items() if v and len(v) > 1 and v[1] in GROUPS}
     if uh is None:
         uh = read_json_gz(DATA_DIR / "unit_hours_60d.json.gz", default={}) or {}
     if techs is None:
