@@ -123,15 +123,20 @@ function actual60() {
   const group = {}, tech = {};
   S.day.units.rows.forEach((r) => { group[r[0]] = r[2]; });
   const byG = {}, byT = {}, online = {};
+  // a combined-cycle train is one resource per configuration in the 60-day data (NAME_CC1_2);
+  // the forecast judges the train (NAME_CC1), as pipeline/forecast/score.py does
+  const trainOf = (name, t) => (t === "combined_cycle" ? (name.match(/^(.*_CC\d+)_/) || [])[1] || name : name);
+  const onHour = {};
   f.rows.forEach((r) => {
-    const [name, , t] = f.units[r[0]], h = r[1] - 1, out = r[ci.output] || 0;
+    const [name0, , t] = f.units[r[0]], h = r[1] - 1, out = r[ci.output] || 0, name = trainOf(name0, t);
     if (h < 0 || h > 23) return;
     (byT[t] = byT[t] || HRS.map(() => 0))[h] += out;
     const g = group[name];
     if (g) (byG[g] = byG[g] || HRS.map(() => 0))[h] += out;
-    if ((r[ci.online_share] || 0) >= 0.5) online[name] = (online[name] || 0) + 1;
+    if ((r[ci.online_share] || 0) >= 0.5) (onHour[name] = onHour[name] || new Set()).add(h);
   });
-  return { group: byG, tech: byT, online };
+  Object.entries(onHour).forEach(([name, hs]) => (online[name] = hs.size));
+  return { group: byG, tech: byT, online, trainOf };
 }
 
 // ---------------------------------------------------------------- headline ---
@@ -576,7 +581,11 @@ function drawUnits() {
     // the selected hour: the unit's expected state in it, and its measured state once the 60-day data is in
     const ci = f ? Object.fromEntries(f.columns.map((c, i) => [c, i + 2])) : null;
     const on60 = {};
-    if (f) f.rows.forEach((r) => { if (r[1] === h + 1) on60[f.units[r[0]][0]] = { online: r[ci.online_share], out: r[ci.output] }; });
+    if (f) f.rows.forEach((r) => {
+      if (r[1] !== h + 1) return;
+      const [n0, , t] = f.units[r[0]], name = S.a60.trainOf(n0, t), a = on60[name] || (on60[name] = { online: 0, out: 0 });
+      a.online = Math.max(a.online, r[ci.online_share] || 0); a.out += r[ci.output] || 0;
+    });
     rows.forEach((o) => {
       const offHere = o.off_from != null && o.off_hours && h >= o.off_from - 1 && h < o.off_from - 1 + o.off_hours;
       o.state = o.verdict === "peaker" ? "peaker" : o.verdict === "outage" ? "outage" : offHere ? "off" : o.verdict;
