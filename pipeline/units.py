@@ -9,7 +9,8 @@ Schema
 ------
 {
   "date": "YYYY-MM-DD",
-  "format": 6,                # UNIT_FORMAT below; update.reprocess_60d redoes older files
+  "format": 8,                # UNIT_FORMAT below (8: diesel/recip "DSL" units are tech
+                              # combustion_turbine, no longer "other"); update.reprocess_60d redoes older files
   "runs": [m0, m1, ...],      # SCED run timestamps, minutes after midnight (int, floor of the
                               # timestamp; +1440 if a run falls on the next calendar day), in
                               # time order.  A "run index" below is a position in this list.
@@ -46,6 +47,13 @@ Schema
                               # anywhere between LSL and HSL.  null where the file has no
                               # value.  Files from before format 4 lack this list; format 4
                               # files have the first four values, format 5 the first six.
+      "soc":    [[run, soc, min soc, max soc], ...],   # storage (ESR) only, format 7 on: the
+                              # telemetered state of charge and its limits (MWh, 0.1) when any
+                              # changes; null where the file has no value.  Absent for other
+                              # units and for ESR files without the columns (before Feb 2026)
+      "ascap":  [[run, regup, regdn, rrs, ecrs, nspin], ...],
+                              # storage only, format 7 on: the AS capability telemetered per
+                              # service (MW, 0.1; RRS = PFR + FFR + UFR) when any changes
       "out": [24 x hourly mean Telemetered Net Output, 0.1 MW, or null],
       "bp":  [24 x hourly mean Base Point, 0.1 MW, or null]
                               # hourly means over the runs the unit is present in, any status
@@ -68,7 +76,7 @@ import pandas as pd
 from .curves import mw_at_prices
 
 FRAC_TECHS = ("wind", "solar")
-UNIT_FORMAT = 6      # bump when the day file gains something a reprocess of history should fill in
+UNIT_FORMAT = 8      # bump when the day file gains something a reprocess of history should fill in
 
 
 # ------------------------------------------------------------------ encoding --
@@ -119,6 +127,11 @@ def build_unit_day(date: str, run_sort: pd.DataFrame, rows: dict) -> dict:
     mit_bp = take("mit_bp").astype(float) if rows.get("mit_bp") is not None else np.full(len(bp), np.nan)
     mit_max = take("mit_max").astype(float) if rows.get("mit_max") is not None else np.full(len(bp), np.nan)
     disp = np.round(np.column_stack([bp, hdl, ldl, asup, asdn, mit_bp, mit_max]), 1)
+    # storage only (format 7): state of charge and AS capability, NaN rows for every other unit
+    has_soc = rows.get("soc") is not None
+    if has_soc:
+        soc = np.round(np.column_stack([take("soc"), take("soc_min"), take("soc_max")]).astype(float), 1)
+        ascap = np.round(take("ascap").astype(float), 1) if rows.get("ascap") is not None else np.full((len(bp), 5), np.nan)
     oschd = None if rows.get("oschd") is None else np.round(take("oschd").astype(float), 1)
     P, M = take("tpo_p").astype(float), take("tpo_m").astype(float)
     valid = ~np.isnan(P) & ~np.isnan(M)
@@ -146,6 +159,9 @@ def build_unit_day(date: str, run_sort: pd.DataFrame, rows: dict) -> dict:
     ch_curve2 = _changed(np.hstack([P2, M2]), first) if has2 else None
     ch_os = _changed(oschd, first) if oschd is not None else None
     ch_disp = _changed(disp, first)
+    if has_soc:
+        ch_soc = _changed(soc, first)
+        ch_cap = _changed(ascap, first)
 
     # hourly means of output and base point over the runs each unit is present in
     hm = pd.DataFrame({"u": unit, "h": hour, "out": out, "bp": bp}).groupby(["u", "h"]).mean()
@@ -187,10 +203,15 @@ def build_unit_day(date: str, run_sort: pd.DataFrame, rows: dict) -> dict:
         if ch_os is not None:
             e["oschd"] = [[int(ri[i]), _f(oschd[i], 1)] for i in range(a, b) if ch_os[i]]
         e["disp"] = [[int(ri[i])] + [_f(v, 1) for v in disp[i]] for i in range(a, b) if ch_disp[i]]
+        if has_soc and not np.isnan(soc[a:b]).all():
+            e["soc"] = [[int(ri[i])] + [_f(v, 1) for v in soc[i]] for i in range(a, b) if ch_soc[i]]
+        if has_soc and not np.isnan(ascap[a:b]).all():
+            e["ascap"] = [[int(ri[i])] + [_f(v, 1) for v in ascap[i]] for i in range(a, b) if ch_cap[i]]
         h = hm.loc[name]
         e["out"] = [_f(h["out"].get(k, np.nan), 1) for k in range(24)]
         e["bp"] = [_f(h["bp"].get(k, np.nan), 1) for k in range(24)]
-        n_events += len(st) + len(e["lim"]) + len(cv) + len(e.get("curve2", ())) + len(e.get("oschd", ())) + len(e["disp"])
+        n_events += (len(st) + len(e["lim"]) + len(cv) + len(e.get("curve2", ())) + len(e.get("oschd", ())) + len(e["disp"])
+                     + len(e.get("soc", ())) + len(e.get("ascap", ())))
         units[name] = e
 
     day = {"date": date, "format": UNIT_FORMAT, "runs": run_sort["minutes"].astype(int).tolist()}
@@ -209,9 +230,9 @@ def _ffill_index(events, n):
 
 
 def expand(u: dict, n_runs: int) -> dict:
-    """Per-run values of one unit: status (list), hsl, lsl, oschd, and bp / hdl / ldl when the
-    file has "disp" (float arrays, NaN where unknown) and curve (list of (prices, MW) tuples
-    or None).  Curve MW are in MW (fractions multiplied by that run's rounded HSL)."""
+    """Per-run values of one unit: status (list), hsl, lsl, oschd, bp / hdl / ldl / asup / asdn
+    when the file has "disp", soc / soc_min / soc_max and cap_<service> for storage from format
+    7 (float arrays, NaN where unknown) and curve (list of (prices, MW) tuples or None).  Curve MW are in MW (fractions multiplied by that run's rounded HSL)."""
     si = _ffill_index(u["status"], n_runs)
     status = [u["status"][i][1] if i >= 0 else None for i in si]
     li = _ffill_index(u["lim"], n_runs)
@@ -234,6 +255,12 @@ def expand(u: dict, n_runs: int) -> dict:
         for j, k in enumerate(("bp", "hdl", "ldl", "asup", "asdn", "mit_bp", "mit_max"), 1):
             res[k] = np.array([u["disp"][i][j] if i >= 0 and j < len(u["disp"][i]) and u["disp"][i][j] is not None
                                else np.nan for i in di], float)
+    for key, names in (("soc", ("soc", "soc_min", "soc_max")), ("ascap", ("cap_regup", "cap_regdn", "cap_rrs", "cap_ecrs", "cap_nspin"))):
+        if u.get(key):
+            ki = _ffill_index(u[key], n_runs)
+            for j, k in enumerate(names, 1):
+                res[k] = np.array([u[key][i][j] if i >= 0 and j < len(u[key][i]) and u[key][i][j] is not None
+                                   else np.nan for i in ki], float)
     if "oschd" in u:
         oi = _ffill_index(u["oschd"], n_runs)
         res["oschd"] = np.array([u["oschd"][i][1] if i >= 0 and u["oschd"][i][1] is not None else np.nan

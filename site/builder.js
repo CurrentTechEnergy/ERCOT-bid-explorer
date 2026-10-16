@@ -14,7 +14,7 @@ const isoDay = (d) => d.toISOString().slice(0, 10);
 const SLOTS = ["--c1", "--c2", "--c3", "--c4", "--c5", "--c6", "--c7", "--c8"];
 const MAX_SERIES = SLOTS.length;
 const TECHS = { nuclear: "Nuclear", coal: "Coal & lignite", combined_cycle: "Combined cycle", gas_steam: "Gas steam",
-  combustion_turbine: "Combustion turbine", wind: "Wind", solar: "Solar", storage: "Storage", hydro: "Hydro", other: "Other" };
+  combustion_turbine: "Peakers (CT and recip)", wind: "Wind", solar: "Solar", storage: "Storage", hydro: "Hydro", other: "Other" };
 const METRICS = {
   hsl: { label: "Available (HSL)", u: "MW" },
   bp: { label: "Dispatched (base point)", u: "MW" },

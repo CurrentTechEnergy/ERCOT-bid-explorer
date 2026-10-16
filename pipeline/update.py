@@ -26,12 +26,13 @@ from .parse_2day import parse_2day_zip
 from .parse_2day_gen import is_gen_summary, parse_2day_gen_zip
 from .parse_60day import parse_60day_zip, OVERRIDE_STATS
 from .units import UNIT_FORMAT
-from .parse_dam import parse_dam_zip, has_dam_gen
+from .parse_dam import DAM_FORMAT, parse_dam_zip, has_dam_gen
 from .parse_prices import NODE_FORMAT, build_price_day, node_prices, read_lambda, read_spp
 from .marginal import build_marginal
 from .dispatchable import build_dispatchable
 from .trends import build_trends
 from .intraday import build_intraday
+from .groups import build_groups
 from .unit_hours_day import build_unit_hour_days
 from .hourly_context import build_hourly_context
 from .stayon import build_stayon
@@ -49,6 +50,7 @@ from .forecast.run import build_forecast
 from .ppa import build_ppa
 from .renew_changes import build_renew_changes
 from .series import build_series
+from .storage import build_storage
 from .store import describe_blob, iter_csvs, zip_names, load_index, read_json_gz, save_index, update_summary, write_json_gz
 from .log import warn, write_summary, WARNINGS
 
@@ -85,10 +87,6 @@ def skip_reason(blob: bytes):
     if names and all(n.startswith("60d_dam_") for n in names) and not has_dam_gen(names):
         return "DAM files without the generation resource data"
     return None
-
-
-def is_load_resource_only(blob: bytes) -> bool:
-    return skip_reason(blob) is not None
 
 
 UNIT_FILES = []     # (date, compressed bytes, COV events) written in this run
@@ -237,28 +235,42 @@ def fetch_curves(api, emil: str, posted_from: dt.datetime, posted_to: dt.datetim
 
 
 def reprocess_60d(api, index: dict, mode: str = "missing", limit=None):
-    """Re-download and reparse 60-day days already in the index: those whose per-unit day file
-    is missing or predates the current format (mode "missing", so an interrupted run resumes
-    and a format change is filled in over several runs), or all of them (mode "all")."""
-    def current(d):
-        path = UNIT_DATA_DIR / "60d" / f"{d}.json.gz"
+    """Re-download and reparse 60-day days already in the index, SCED disclosure first, then the
+    DAM disclosure: those whose file is missing or predates the current format (the per-unit day
+    file's UNIT_FORMAT, the DAM day file's DAM_FORMAT; mode "missing", so an interrupted run
+    resumes and a format change is filled in over several runs), or all of them (mode "all").
+    `limit` caps the files downloaded over both."""
+    def current(path, fmt):
         if not path.exists():
             return False
         try:
-            return (read_json_gz(path) or {}).get("format") == UNIT_FORMAT
+            return ((read_json_gz(path) or {}).get("format") or 0) >= fmt
         except Exception:
             return False
-    targets = {d for d in index["days"]["60d"] if mode == "all" or not current(d)}
-    print(f"reprocess 60d ({mode}): {len(targets)} day(s)")
-    if not targets:
-        return
+    n = 0
+    for source, emil, folder, fmt in (("60d", EMIL_60DAY, UNIT_DATA_DIR / "60d", UNIT_FORMAT),
+                                      ("dam", EMIL_DAM, DATA_DIR / "dam", DAM_FORMAT)):
+        targets = {d for d in index["days"].get(source, [])
+                   if mode == "all" or not current(folder / f"{d}.json.gz", fmt)}
+        print(f"reprocess {source} ({mode}): {len(targets)} day(s)")
+        if not targets:
+            continue
+        if limit and n >= limit:
+            print(f"  reached the limit of {limit} files; {len(targets)} {source} day(s) left to reprocess")
+            return
+        n = _reprocess(api, index, source, emil, targets, n, limit)
+
+
+def _reprocess(api, index: dict, source: str, emil: str, targets: set, n: int, limit) -> int:
+    """Download and reparse the files of `targets` (operating days of `source`); -> files opened
+    so far, counting from n."""
     lag = 60
     lo, hi = _d(min(targets)), _d(max(targets))
-    docs = api.list_archives(EMIL_60DAY, dt.datetime.combine(lo + dt.timedelta(days=lag - 4), dt.time()),
+    docs = api.list_archives(emil, dt.datetime.combine(lo + dt.timedelta(days=lag - 4), dt.time()),
                              dt.datetime.combine(hi + dt.timedelta(days=lag + 5), dt.time()))
     docs.sort(key=lambda d: d.get("postDatetime", ""))
     guess_of = {d["docId"]: (_d(d["postDatetime"][:10]) - dt.timedelta(days=lag)).isoformat() for d in docs}
-    opened, n = set(), 0
+    opened = set()
     # first the files whose posting date points at a target day, then files posted within
     # 3 days of a target that is still missing (late or doubled-up postings)
     for near in (False, True):
@@ -271,21 +283,22 @@ def reprocess_60d(api, index: dict, mode: str = "missing", limit=None):
             opened.add(doc_id)
             print(f"  downloading {doc.get('friendlyName', doc_id)} posted {doc['postDatetime'][:16]} (op day ~{guess})")
             try:
-                blob = api.download(EMIL_60DAY, doc_id)
+                blob = api.download(emil, doc_id)
                 if blob[:2] != b"PK":
                     time.sleep(10)
-                    blob = api.download(EMIL_60DAY, doc_id)
-                if not is_load_resource_only(blob):
+                    blob = api.download(emil, doc_id)
+                if skip_reason(blob) is None:
                     targets.discard(process_curve_zip(blob, index))
                     save_index(index)
             except Exception as e:
-                warn(f"reprocess 60d {guess} (doc {doc_id}): failed: {type(e).__name__}: {e}")
+                warn(f"reprocess {source} {guess} (doc {doc_id}): failed: {type(e).__name__}: {e}")
             n += 1
             if limit and n >= limit:
-                print(f"  reached the limit of {limit} files; {len(targets)} day(s) left to reprocess")
-                return
+                print(f"  reached the limit of {limit} files; {len(targets)} {source} day(s) left to reprocess")
+                return n
     if targets:
-        warn(f"reprocess 60d: no file found for {len(targets)} day(s): {', '.join(sorted(targets)[:20])}")
+        warn(f"reprocess {source}: no file found for {len(targets)} day(s): {', '.join(sorted(targets)[:20])}")
+    return n
 
 
 def fetch_prices(api, dates, index: dict, node_dates=(), node_limit=NODE_DAYS_PER_RUN):
@@ -344,8 +357,8 @@ def main(argv=None):
     ap.add_argument("--skip", choices=["2d", "2dgen", "60d", "dam", "prices", "gas", "forecast"], action="append", default=[])
     ap.add_argument("--local", nargs="+", help="process local zip files instead of calling the API")
     ap.add_argument("--reprocess-60d", nargs="?", const="missing", choices=["missing", "all"],
-                    help="re-download and reparse 60-day days already in the index: those without a "
-                         "per-unit day file (default), or all")
+                    help="re-download and reparse 60-day SCED and DAM days already in the index: those "
+                         "whose file is missing or predates the current format (default), or all")
     args = ap.parse_args(argv)
 
     index = load_index()
@@ -372,6 +385,7 @@ def main(argv=None):
         build_marginal(index)
         build_trends(index)
         build_intraday(index)
+        build_groups(index)
         build_unit_hour_days(index)
         build_hourly_context(index)
         build_stayon(index)
@@ -384,6 +398,7 @@ def main(argv=None):
         build_ppa(index)
         build_renew_changes(index)
         build_series(index)
+        build_storage(index)
         build_forecast(index)
         save_index(index)
         return
@@ -432,6 +447,7 @@ def main(argv=None):
     build_marginal(index)
     build_trends(index)
     build_intraday(index)
+    build_groups(index)
     build_unit_hour_days(index)
     build_hourly_context(index)
     build_stayon(index)
@@ -445,12 +461,14 @@ def main(argv=None):
     build_ppa(index)
     build_renew_changes(index)
     build_series(index)
+    build_storage(index)
     if "forecast" not in args.skip:
         build_forecast(index)
     save_index(index)
     added = {k: sorted(set(index["days"][k]) - before.get(k, set())) for k in index["days"]}
     names = {"2d": "2-day curves", "2dgen": "2-day generation summary", "60d": "60-day curves",
-             "dam": "60-day DAM offers and awards", "prices": "prices", "nodes": "resource-node prices"}
+             "dam": "60-day DAM offers and awards", "prices": "prices", "nodes": "resource-node prices",
+             "storage": "battery day files"}
     lines = ["### ERCOT data update", "", "| Data | Days added | Range |", "|---|---|---|"]
     for k, v in added.items():
         lines.append(f"| {names.get(k, k)} | {len(v)} | {v[0] + ' to ' + v[-1] if v else '–'} |")

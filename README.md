@@ -12,7 +12,7 @@ An interactive dashboard of how ERCOT resources offer energy into real-time disp
 |---|---|---|---|
 | 2-Day SCED Energy Curves | NP3-908-ER | 2 days | Aggregate supply curves for wind, solar, storage and all other resources ("non-IRR", i.e. thermal and everything else), plus controllable-load demand bids, for every SCED run |
 | 60-Day SCED Disclosure | NP3-965-ER | 60 days | Every unit's offer curve in every SCED run, with its resource type, limits, base point and output. Lets thermal capacity be split into nuclear, coal, combined cycle, gas steam and combustion turbines |
-| 60-Day DAM Disclosure | NP3-966-ER | 60 days | Every generation resource's day-ahead three-part offer (energy curve, start-up costs, minimum-energy cost), its day-ahead energy and ancillary service awards, its settlement point and the day-ahead price there |
+| 60-Day DAM Disclosure | NP3-966-ER | 60 days | Every generation resource's day-ahead three-part offer (energy curve, start-up costs, minimum-energy cost), its day-ahead energy and ancillary service awards, its settlement point and the day-ahead price there; from the RTC+B start (Dec 6, 2025) the same for every battery from the ESR Data file (a charging award is negative MW). The ESR AS Offers file is not read |
 | SCED System Lambda | NP6-322-CD | real time | System energy price for each SCED run |
 | Settlement Point Prices | NP6-905-CD | real time | 15-minute prices at hubs and load zones; hourly prices at every resource node (kept on the data branch, for days with per-unit data) |
 | DAM Settlement Point Prices | NP4-190-CD | day ahead | Hourly day-ahead prices at hubs and load zones, for the hedge signals page (history can be loaded from the yearly NP4-180-ER workbook), and at thermal resource nodes for the last two weeks, for tomorrow's shutdown verdicts |
@@ -37,7 +37,7 @@ SCED can only move a unit between its LSL and HSL, so the part of a curve below 
 
 ### Accuracy checks
 
-After processing, `pipeline/validate.py` checks every new or changed operating day: the wind, solar and storage curves rebuilt from 60-day unit data against ERCOT's 2-day aggregate curves, thermal base points against the 2-day generation summary, the 2-day fit's residual and its fitted curve against the 2-day curve, curves and base points against online HSL, SCED runs per hour (allowing for DST), system lambda against the hub average, and status codes and resource types the pipeline does not know. A new error stops the run before anything is committed (an error already recorded for that day, from a run committed with **ignore_checks**, does not block a later re-check); warnings appear on the run summary. Results that did not pass are kept per day in `site/data/validation.json`. To commit a day anyway, run the workflow with **ignore_checks**.
+After processing, `pipeline/validate.py` checks every new or changed operating day: the wind, solar and storage curves rebuilt from 60-day unit data against ERCOT's 2-day aggregate curves, thermal base points against the 2-day generation summary, the 2-day fit's residual and its fitted curve against the 2-day curve, battery charging and discharging rebuilt from the per-unit base points against the summary's ESR series (with each battery's DAM awards against its limits and its state of charge against its window), curves and base points against online HSL, SCED runs per hour (allowing for DST), system lambda against the hub average, and status codes and resource types the pipeline does not know. A new error stops the run before anything is committed (an error already recorded for that day, from a run committed with **ignore_checks**, does not block a later re-check); warnings appear on the run summary. Results that did not pass are kept per day in `site/data/validation.json`. To commit a day anyway, run the workflow with **ignore_checks**.
 
 ```bash
 python -m pipeline.validate --all --no-fail   # re-check every day
@@ -83,7 +83,8 @@ pipeline/
   config.py        price grid, thresholds, technology groupings
   parse_2day.py    NP3-908-ER  -> hourly curves per technology
   parse_60day.py   NP3-965-ER  -> hourly curves, statistics, per-unit summary
-  parse_dam.py     NP3-966-ER  -> per-unit day-ahead offers, costs, awards and prices (data/dam/)
+  parse_dam.py     NP3-966-ER  -> per-unit day-ahead offers, costs, awards and prices (data/dam/),
+                   generation resources and, from RTC+B, batteries (the DAM ESR Data file)
   parse_prices.py  NP6-322-CD, NP6-905-CD -> lambda and hub/zone prices (data/prices/), hourly
                    resource-node prices (data branch nodes/)
   nodes.py         per-unit day files + node prices + DAM settlement points -> wind and solar
@@ -109,6 +110,9 @@ pipeline/
   series.py        per-unit day files + node prices + DAM awards -> hourly HSL, base point, output,
                    offer prices, award and node prices per unit, by month and technology, for the
                    graph builder (data/series/, no downloads)
+  storage.py       per-unit day files + DAM day files -> one battery day file per 60-day day
+                   (data/storage/): fleet and per-battery charging, discharging, limits, headroom,
+                   state of charge, AS awards and capability, DAM energy and AS awards (no downloads)
   trends.py        per-unit day files -> daily trends, starts, flips, bidding changes (no downloads)
   intraday.py      per-unit day files -> thermal output at/above minimum in cheap hours, off spells
   unit_hours_day.py per-unit day files -> each unit's hourly rows for the Day page's Units table (data/60d-units/)
@@ -149,7 +153,7 @@ site/
   builder.html, builder.js, guide.html, guide.js, style.css, vendor/d3.min.js
   data/            generated: index.json, summary_*.json.gz, marginal_*.json.gz, 2d/, 60d/, dam/, prices/,
                    curtail_nodes.json.gz, marginal_nodes.json.gz, gas.json.gz, gas_hubs.json.gz,
-                   series/, forecast/, fit/
+                   series/, storage/, forecast/, fit/
 ```
 
 ### Day-ahead offers and costs
@@ -166,7 +170,7 @@ site/
 
 ### Marginality at the node
 
-`pipeline/marginal_nodes.py` finds, for every unit and SCED run, whether SCED dispatched it to the interior of its own offer curve (SCED2 from format 6, the submitted curve before): base point strictly inside the ramp-limited range it had that run (LDL to HDL, within LSL and HSL) on a segment with some width rather than a vertical step. A unit climbing at its ramp rate sits at HDL and is pinned, not marginal. The curve's price at the base point is the price SCED saw at the unit's node, so each marginal run carries an implied LMP. Against that run's system lambda the unit is **at lambda** (within $2 or 5%: setting the system price), **below** (behind an export constraint; wind and solar at negative prices are the usual case) or **above** (its node dearer than the system). The per-unit day files carry the base point, HDL and LDL of every run from format 4 on (`pipeline/units.py`); for older files the hourly mean base point stands in, which lets a unit swinging between its limits read as marginal, and storage is skipped. From format 5 the files also carry each run's ancillary service awards (up: Reg-Up, RRS, ECRS, Non-Spin; down: Reg-Down), and the scoring takes them off the HDL-to-LDL range first, except for combustion turbines, where netting made the check against node prices worse. Format 6 adds the SCED2 curve, which the scoring uses in place of the submitted one. History stays at its older format until a `reprocess_60d` run redoes it.
+`pipeline/marginal_nodes.py` finds, for every unit and SCED run, whether SCED dispatched it to the interior of its own offer curve (SCED2 from format 6, the submitted curve before): base point strictly inside the ramp-limited range it had that run (LDL to HDL, within LSL and HSL) on a segment with some width rather than a vertical step. A unit climbing at its ramp rate sits at HDL and is pinned, not marginal. The curve's price at the base point is the price SCED saw at the unit's node, so each marginal run carries an implied LMP. Against that run's system lambda the unit is **at lambda** (within $2 or 5%: setting the system price), **below** (behind an export constraint; wind and solar at negative prices are the usual case) or **above** (its node dearer than the system). The per-unit day files carry the base point, HDL and LDL of every run from format 4 on (`pipeline/units.py`); for older files the hourly mean base point stands in, which lets a unit swinging between its limits read as marginal, and storage is skipped. From format 5 the files also carry each run's ancillary service awards (up: Reg-Up, RRS, ECRS, Non-Spin; down: Reg-Down), and the scoring takes them off the HDL-to-LDL range first, except for combustion turbines, where netting made the check against node prices worse. Format 6 adds the SCED2 curve, which the scoring uses in place of the submitted one. Format 7 keeps, for batteries, the state of charge with its minimum and maximum (MWh; in ERCOT's ESR file from the February 2026 postings on) and the AS capability telemetered per service, which `pipeline/storage.py` reads. History stays at its older format until a `reprocess_60d` run redoes it.
 
 ### Mitigation
 

@@ -20,6 +20,12 @@ consistency:
                     the 2-day curve by more than the tolerance, group sums equal the fleet, a
                     model and version on every row, and (recorded) the fitted committed minimum
                     against the 2-day curve at -$20
+  storage           battery day file (pipeline/storage): fleet discharging and charging rebuilt
+                    from the per-unit base points match the 2-day generation summary's ESR
+                    series; every battery has 24 hours; DAM awards within each battery's HSL
+                    and LSL and never charging and discharging in the same hour; the state of
+                    charge inside its min / max window; (recorded) how many batteries report a
+                    state of charge and have DAM rows, and the DAM names without a SCED match
   forecast          forecast day file (pipeline/forecast): shares between 0 and 1, group sums
                     equal technology sums equal the fleet hour by hour, committed minimum <=
                     expected output <= capacity, verdict counts equal the units rows, a model
@@ -71,6 +77,9 @@ TOL = {
     "limit_mw": 5,             # curve vs HSL / LSL, base point vs HSL: rounding slack, MW
     "lambda_hub": 0.5,         # min hourly correlation of system lambda and hub average (warning)
     "fit_cap_mw": 1500,        # fitted curve at the cap above the 2-day curve at the cap, worst hour, MW (warning)
+    "storage_bp_mw": 400,      # fleet discharging / charging vs generation summary ESR series: median hour, MW (error)
+    "storage_bp_max_mw": 1000, # same, worst hour (warning)
+    "soc_mwh": 1.0,            # state of charge outside [min, max] by more than this, MWh (warning)
 }
 
 
@@ -298,6 +307,10 @@ def check_day(date, have):
                 if bp.size == 24 and np.isfinite(bp).any():
                     gaps.append(f"{tech} {np.nanmedian(aw - bp):+.0f}")
             day.add("dam_vs_rt", "info", "DAM award minus real-time base point, median hour MW: " + ", ".join(gaps))
+    # battery day file (pipeline/storage)
+    st = read_json_gz(DATA_DIR / "storage" / f"{date}.json.gz") if date in have.get("storage", ()) else None
+    if st:
+        _storage_checks(day, st, gen, dam)
     # forecast day file (pipeline/forecast): the page renders it as is, so it must add up
     fc = read_json_gz(DATA_DIR / "forecast" / f"{date}.json.gz") if date in have.get("forecast", ()) else None
     if fc:
@@ -328,6 +341,60 @@ def _fit_checks(day, ft):
     at20 = T[:, 1]
     day.add("fit_lsl_vs_curve", "info", f"fitted committed minimum minus the 2-day curve at -$20, median hour {np.nanmedian(lsl_fit - at20):+.0f} MW "
             f"(the curve at -$20 holds most of the online LSL; units pricing minimum output above $0 sit higher)")
+def _storage_checks(day, st, gen, dam):
+    f = st["fleet"]
+    # fleet discharging and charging against ERCOT's own ESR sums (independent file)
+    if gen:
+        h = gen["hourly"]
+        for k, col, sign in (("dis", "sum_base_point_esr_discharging", 1.0), ("chg", "sum_base_point_esr_charging", -1.0)):
+            if col in h:
+                diff = _v(f[k]) - sign * _v(h[col])
+                if not np.isnan(diff).all():
+                    med, worst = float(np.nanmedian(np.abs(diff))), int(np.nanargmax(np.abs(diff)))
+                    level = ("error" if med > TOL["storage_bp_mw"] else
+                             "warning" if abs(diff[worst]) > TOL["storage_bp_max_mw"] else "ok")
+                    day.add(f"storage_{k}_vs_2dgen", level,
+                            f"battery {'discharging' if k == 'dis' else 'charging'}, per-unit minus generation summary: "
+                            f"median hour {med:.0f} MW, worst {diff[worst]:+.0f} MW at hour {worst}")
+    # every battery has 24 hours; DAM awards within limits and one direction per hour; SOC in its window
+    short, over, soc_out, n_dam, n_soc = [], [], [], 0, 0
+    for name, u in st["units"].items():
+        if any(len(u[k] or [None] * 24) != 24 for k in ("bp", "out")):
+            short.append(name)
+        if u.get("dam"):
+            n_dam += 1
+            hsl, lsl = u.get("hsl") or 0.0, u.get("lsl") or 0.0
+            bad = [a for a in u["dam"] if a is not None and (a > hsl + TOL["limit_mw"] or a < lsl - TOL["limit_mw"])]
+            if bad:
+                over.append(f"{name} {max(bad, key=abs):.0f} outside [{lsl:.0f}, {hsl:.0f}]")
+        if u.get("soc"):
+            n_soc += 1
+            lo, hi = u.get("soc_min"), u.get("soc_max")
+            vals = [v for v in u["soc"] if v is not None]
+            if vals and lo is not None and hi is not None and hi > lo and (min(vals) < lo - TOL["soc_mwh"] or max(vals) > hi + TOL["soc_mwh"]):
+                soc_out.append(f"{name} {min(vals):.0f}-{max(vals):.0f} vs [{lo:.0f}, {hi:.0f}]")
+    day.add("storage_hours", "error" if short else "ok",
+            f"{len(short)} battery(ies) without 24 hourly values, e.g. {short[:3]}" if short else f"{st['n_units']} batteries with 24 hourly values")
+    if n_dam:
+        # a DAM award is one signed number per hour, so one direction per hour holds by construction;
+        # the check that can fail is the award against the battery's limits
+        day.add("storage_dam_awards", "warning" if over else "ok",
+                f"{len(over)} battery(ies) awarded outside HSL / LSL, e.g. {'; '.join(over[:3])}" if over
+                else f"{n_dam} batteries with a DAM energy award, all within their limits")
+        if dam:
+            sced_names = set(st["units"])
+            unmatched = sorted(n for n, u in dam["units"].items() if u.get("tech") == "storage" and n not in sced_names)
+            day.add("storage_dam_names", "warning" if len(unmatched) > 0.1 * max(n_dam, 1) else "ok" if not unmatched else "info",
+                    f"{len(unmatched)} DAM battery name(s) without a SCED match, e.g. {unmatched[:3]}" if unmatched
+                    else "every DAM battery name matches a SCED battery")
+    else:
+        day.add("storage_dam_awards", "info", "no DAM battery rows for this day (DAM ESR file not loaded)")
+    if n_soc:
+        day.add("storage_soc", "warning" if soc_out else "ok",
+                f"{len(soc_out)} battery(ies) with a state of charge outside its window, e.g. {'; '.join(soc_out[:3])}" if soc_out
+                else f"{n_soc} of {st['n_units']} batteries report a state of charge, all inside their windows")
+    else:
+        day.add("storage_soc", "info", "no state of charge for this day (per-unit file predates format 7)")
 
 
 def _forecast_checks(day, fc):
@@ -384,6 +451,7 @@ def _have(index):
     fc = read_json_gz(DATA_DIR / "forecast" / "index.json.gz", default=None) or {}
     have["forecast"] = set(fc.get("days", []))
     have["fit"] = set(index["days"].get("fit", []))
+    have["storage"] = set(index["days"].get("storage", []))
     return have
 
 

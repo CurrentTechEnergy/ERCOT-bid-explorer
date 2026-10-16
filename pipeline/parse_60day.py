@@ -56,6 +56,33 @@ def _as_awards(df: pd.DataFrame, up: bool) -> np.ndarray:
     return np.nansum(np.column_stack([pd.to_numeric(df[c], errors="coerce").values for c in cols]), axis=1)
 
 
+# ESR file only (format 7): state of charge and the AS capability per service
+SOC_COLS = {"soc": ("stateofcharge", "soc"), "soc_min": ("minimumsoc", "minsoc"), "soc_max": ("maximumsoc", "maxsoc")}
+ASCAP_SERVICES = {"regup": ("regup",), "regdn": ("regdn", "regdown"), "rrs": ("rrspf", "rrsff", "rrsuf", "rrs"),
+                  "ecrs": ("ecrs",), "nspin": ("nspin", "nonspin")}
+ASCAP_KEYS = list(ASCAP_SERVICES)
+
+
+def _esr_cols(df: pd.DataFrame, is_esr: bool):
+    """Per row: state of charge, min and max SOC (MWh) and the AS capability by service (MW,
+    ASCAP_KEYS order); NaN where the file has no such column (every non-ESR file)."""
+    n = len(df)
+    soc = {k: np.full(n, np.nan) for k in SOC_COLS}
+    cap = np.full((n, len(ASCAP_KEYS)), np.nan)
+    if not is_esr:
+        return soc, cap
+    norm = {"".join(ch for ch in c.lower() if ch.isalnum()): c for c in df.columns}
+    for k, cands in SOC_COLS.items():
+        c = next((norm[x] for x in cands if x in norm), None)
+        if c is not None:
+            soc[k] = pd.to_numeric(df[c], errors="coerce").values
+    for j, (k, words) in enumerate(ASCAP_SERVICES.items()):
+        cols = [c for nc, c in norm.items() if nc.startswith("ascapability") and any(nc.endswith(w) for w in words)]
+        if cols:
+            cap[:, j] = np.nansum(np.column_stack([pd.to_numeric(df[c], errors="coerce").values for c in cols]), axis=1)
+    return soc, cap
+
+
 def _price_at(P, M, b):
     """Price of each row's curve (NaN padded, MW non-decreasing) at MW b[row]; NaN outside it."""
     from .marginal_nodes import price_at
@@ -111,6 +138,8 @@ class _Accumulator:
         self.unknown_types = set()
         self.run_keys = {}      # run key -> (timestamp string, repeated-hour flag)
         self.unit_cols = []     # per-chunk arrays for the per-unit day file
+        self.esr_rows = 0       # ESR file rows, and how many carry a state of charge
+        self.esr_soc_rows = 0
 
     def add_chunk(self, df: pd.DataFrame, is_esr: bool):
         df.columns = [c.strip() for c in df.columns]
@@ -181,6 +210,10 @@ class _Accumulator:
         s2p, s2m = df[s_pr].astype(float).values, df[s_mw].astype(float).values
         mit_bp, mit_max = _mitigation(df[s1_pr].astype(float).values, df[s1_mw].astype(float).values, s2p, s2m,
                                       bp, lsl, hsl)
+        soc, ascap = _esr_cols(df, is_esr)
+        if is_esr:
+            self.esr_soc_rows += int(np.isfinite(soc["soc"]).sum())
+            self.esr_rows += n
         self.unit_cols.append({
             "run": run, "unit": df["Resource Name"].astype(str).str.strip().values,
             "type": rtype.values, "tech": np.array(SIXTY_DAY_TECHS)[tech], "status": status.values,
@@ -190,6 +223,7 @@ class _Accumulator:
             "ldl": df["LDL"].astype(float).values if "LDL" in header else np.full(n, np.nan),
             "asup": _as_awards(df, up=True), "asdn": _as_awards(df, up=False),
             "mit_bp": mit_bp, "mit_max": mit_max,
+            "soc": soc["soc"], "soc_min": soc["soc_min"], "soc_max": soc["soc_max"], "ascap": ascap,
             "s2_p": s2p if s2p.shape[1] else np.full((n, 1), np.nan),
             "s2_m": s2m if s2m.shape[1] else np.full((n, 1), np.nan),
             "hour": hour, "oschd": os_raw if has_os else None,
@@ -261,8 +295,10 @@ class _Accumulator:
             return a if a.shape[1] == width else np.hstack([a, np.full((len(a), width - a.shape[1]), np.nan)])
 
         rows = {}
-        for name in ("run", "unit", "type", "tech", "status", "hsl", "lsl", "bp", "out", "hdl", "ldl", "asup", "asdn", "mit_bp", "mit_max", "hour"):
+        for name in ("run", "unit", "type", "tech", "status", "hsl", "lsl", "bp", "out", "hdl", "ldl", "asup", "asdn", "mit_bp", "mit_max",
+                     "soc", "soc_min", "soc_max", "hour"):
             rows[name] = np.concatenate([c[name] for c in self.unit_cols])
+        rows["ascap"] = np.vstack([c["ascap"] for c in self.unit_cols])
         rows["tpo_p"] = np.vstack([pad(c["tpo_p"]) for c in self.unit_cols])
         rows["tpo_m"] = np.vstack([pad(c["tpo_m"]) for c in self.unit_cols])
         w2 = max(c["s2_p"].shape[1] for c in self.unit_cols)
@@ -381,6 +417,8 @@ def parse_60day_zip(blob: bytes, chunksize: int = 40000):
         raise ValueError("No generation/ESR resource file found in 60-day zip")
 
     date = max(set(acc.dates), key=acc.dates.count)
+    if acc.esr_rows and not acc.esr_soc_rows:
+        warn(f"60-day {date}: the ESR file carries no state of charge column (expected from the February 2026 postings on)")
     runs, sced, sub, disp, stats, ut = acc.finish()
     if acc.unknown_types:
         warn(f"Unmapped resource types grouped as 'other': {sorted(acc.unknown_types)}")
