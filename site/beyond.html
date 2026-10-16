@@ -20,7 +20,7 @@
   <div class="brand">
     <div class="nav-row"><nav class="nav" aria-label="Pages"><a href="overview.html">Overview</a><a href="beyond.html" aria-current="page">Beyond baseload</a><a href="index.html">Day view</a><a href="trends.html">Trends</a><a href="economics.html">Plant economics</a><a href="contracts.html">Hedge signals</a><a href="builder.html">Graph builder</a><a href="guide.html">How offers work</a></nav></div>
     <h1>Beyond baseload</h1>
-    <p class="sub">Once the committed minimum is on, what happens above it: what the MW above minimum output ask, who is marginal, where price is set, and how much headroom there is at each price. The cheap-power question: what a flexible load buys against when prices are low. Data from ERCOT's day-ahead prices and the 2-day and 60-day SCED disclosures.</p>
+    <p class="sub">Once the committed minimum is on, what happens above it: what the MW above minimum output ask, who is marginal, where price is set, and which technology would move next at each price. The cheap-power question: what a flexible load buys against when prices are low. Data from ERCOT's day-ahead prices and the 2-day and 60-day SCED disclosures.</p>
   </div>
   <p class="status" id="status">Loading data…</p>
 </header>
@@ -125,7 +125,7 @@
   <section class="panel panel-wide" id="os-panel">
     <div class="panel-head">
       <div>
-        <h2>Headroom by price <span class="h-note" id="os-title-note"></span></h2>
+        <h2>Marginal generation by price <span class="h-note" id="os-title-note"></span></h2>
         <p class="note">Who would move next if price landed at each level: each technology's share of the MW offered around that price, read off the day's offer curves (the slope of the bid stack). Battery charging bids are demand, so they sit below the line as a share of the supply offered at that price. MW at the −$250 floor (units with no offer curve, mostly nuclear and hydro) are left out, and so is each unit's minimum output (LSL), which SCED cannot move: on days processed before that was done it still shows as a spike at −$20 (−$50 for some units). Ticks along the top mark each hour's system lambda. The same view across every loaded day, by settled price, is below.</p>
       </div>
       <div class="panel-tools">
@@ -254,27 +254,6 @@
   
   </section>
 
-  <section class="panel panel-wide" id="changes-panel">
-    <div class="panel-head">
-      <div>
-        <h2>Changes in bidding approach</h2>
-        <p class="note" id="chg-note"></p>
-      </div>
-      <div class="panel-tools">
-        <label class="lbl inline" for="chg-tech">Technology</label>
-        <select id="chg-tech"></select>
-        <label class="lbl inline" for="chg-sig">Change</label>
-        <select id="chg-sig"></select>
-      </div>
-    </div>
-
-    <div class="scroll-x" id="chg-summary"></div>
-    <div class="units-wrap" id="chg-table"></div>
-    <h3 class="sub-h">Units switching between ≤ $0 and above $0 within a day (MW above LSL)</h3>
-    <p class="note">Days when a thermal unit's offer moved its first price across $0 and back at least once, which points to deliberate intraday repricing rather than a change in strategy.</p>
-    <div id="flip-table"></div>
-  
-  </section>
 </main>
 
 <footer class="foot">

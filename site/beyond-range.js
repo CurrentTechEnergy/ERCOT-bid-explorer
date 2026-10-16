@@ -1,6 +1,6 @@
 /* Beyond baseload, across days: offers against fuel (thermal offer-price quantiles, gas hubs and
-   implied heat rate), marginal supply by settled price, marginality at the node and changes in
-   bidding approach, lifted from trends.js. Reads data/trends_60d.json.gz, data/curve_trends.json.gz,
+   implied heat rate), marginal generation by settled price and marginality at the node, lifted
+   from trends.js. Reads data/trends_60d.json.gz, data/curve_trends.json.gz,
    data/gas.json.gz, data/gas_hubs.json.gz, data/marginal_*.json.gz, data/marginal_nodes.json.gz and
    data/summary_prices.json.gz.
    The one-day panels on the same page are beyond-day.js, which also owns the status line and the
@@ -75,11 +75,10 @@ const MBP_BINS = [
   [20, 25, "$20–25"], [25, 30, "$25–30"], [30, 40, "$30–40"], [40, 50, "$40–50"], [50, 75, "$50–75"],
   [75, 100, "$75–100"], [100, 200, "$100–200"], [200, Infinity, "≥ $200"],
 ];
-const SIG_FMT = { le0: (v) => d3.format(".0%")(v), noff: (v) => d3.format(".0%")(v), rel: (v) => (v >= 0 ? "+" : "−") + d3.format("$,.0f")(Math.abs(v)) };
 
 const S = { T: null, C: null, M: {}, floorMode: "le20_sced", floorGroup: "tech", floorHours: "all", hidden: { floor: new Set(), floorG: new Set(), partial: new Set() },
   pqTech: "coal", capTech: "coal", scTech: "coal", scX: "week", mSrc: "60d", mView: "smooth", mDays: "all",
-  chgTech: "all", chgSig: "all", unit: null, mnMeasure: "units", mnDays: "all",
+  unit: null, mnMeasure: "units", mnDays: "all",
   I: null, UH: null, idx: null, summ60: null, cheapTech: "all", cheapThr: "0", shutTech: "combined_cycle", shutPrice: "any",
   heatMeasure: "offer", heatTech: "combined_cycle", heatThr: "0", heatScale: "zero", HC: null, leanRank: "fossil", leanMonth: "all", leanPer: "day",
   stTech: "all", stThr: "0", stSort: "off", stUnit: "mw", stBase: null, stripScale: null };
@@ -307,19 +306,6 @@ const STATUS6 = [
   { id: "off", label: "Offline but available", color: "--c-other" },
   { id: "out", label: "On outage", color: "--ink-2" },
 ];
-function drawFlips() {
-  const el = $("flip-table"), flips = S.T.flips;
-  if (!flips) { el.innerHTML = `<p class="empty">Fills in after the 60-day data is reprocessed with per-unit offer curves.</p>`; return; }
-  let rows = flips;
-  if (S.chgTech !== "all") rows = rows.filter((f) => f[1] === S.chgTech);
-  rows = [...rows].reverse();
-  const byUnit = d3.rollups(flips, (v) => v.length, (f) => f[0]).sort((a, b) => b[1] - a[1]).slice(0, 10);
-  el.innerHTML = (byUnit.length ? `<p class="note">Most frequent: ${byUnit.map(([u, n]) => `${esc(u)} (${n} day${n === 1 ? "" : "s"})`).join(", ")}.</p>` : "") +
-    (rows.length ? `<div class="units-wrap"><table class="data"><thead><tr><th class="t">Date</th><th class="t">Unit</th><th class="t">Technology</th><th>Switches</th><th>First switch</th><th>Hours offering ≤ $0</th></tr></thead><tbody>` +
-      rows.map((f) => `<tr data-unit="${esc(f[0])}" style="cursor:pointer"><td class="t">${f[2]}</td><td class="t">${esc(f[0])}</td><td class="t">${TECHS.find((t) => t.id === f[1])?.label || f[1]}</td><td>${f[3]}</td><td>${f[4] ?? "–"}</td><td>${f[5] == null ? "–" : d3.format(",.1f")(f[5])}</td></tr>`).join("") +
-      "</tbody></table></div>" : `<p class="empty">No units switched within a day.</p>`);
-}
-
 // ---- marginal supply by settled price ----------------------------------------------
 async function drawMarginal() {
   const el = $("mbp-chart"), src = S.mSrc;
@@ -537,42 +523,14 @@ function drawNodeMarginal() {
   setCSV(vel, ["implied_price", "node_price", "technology", "lambda", "class"], pts.map((p) => [p[0], p[1], p[2], p[3], p[4] == null ? "" : ["at", "below", "above"][p[4]]]), "Implied against node price");
 }
 
-// ---- bidding-approach changes -----------------------------------------------------
-function drawChanges() {
-  const T = S.T, techOf = Object.fromEntries(T.units.map((u) => [u.unit, u]));
-  $("chg-note").textContent = `A change is a shift that holds: the median over the ${T.window} online days after a day differs from the median over the ${T.window} online days before by at least 25 percentage points of the dispatchable range (above LSL) offered at or below $0, half the day running without an offer curve, or $10 in first offer price above $0 (at or above LSL) relative to that day's median for its peers (which removes moves in fuel price). Peers are units of the same ERCOT resource type (for example CCGT90 or SCLE90) when at least 8 of them have a price that day, otherwise the same technology. Thermal units only. Click a row to open the unit.`;
-  // summary: units per technology, how many changed
-  const sum = THERMAL.map((t) => {
-    const us = T.units.filter((u) => u.tech === t);
-    const ch = us.filter((u) => u.n_changes > 0);
-    return { s: TECHS.find((x) => x.id === t), n: us.length, changed: ch.length, changes: d3.sum(ch, (u) => u.n_changes) };
-  });
-  $("chg-summary").innerHTML = `<table class="data"><thead><tr><th class="t">Technology</th><th>Units</th><th>Kept one approach</th><th>Changed at least once</th><th>Changes</th></tr></thead><tbody>` +
-    sum.map((r) => `<tr><td class="t"><span class="sw" style="background:var(${r.s.color});margin-right:6px"></span>${r.s.label}</td><td>${r.n}</td><td>${r.n - r.changed}</td><td>${r.changed}</td><td>${r.changes}</td></tr>`).join("") + "</tbody></table>";
-
-  let rows = T.changes;
-  if (S.chgTech !== "all") rows = rows.filter((c) => c[1] === S.chgTech);
-  if (S.chgSig !== "all") rows = rows.filter((c) => c[3] === S.chgSig);
-  rows = [...rows].reverse();
-  $("chg-table").innerHTML = rows.length ? `<table class="data"><thead><tr><th class="t">Date</th><th class="t">Unit</th><th class="t">Technology</th><th class="t">Change</th><th>Before</th><th>After</th></tr></thead><tbody>` +
-    rows.map((c) => {
-      const s = TECHS.find((x) => x.id === c[1]);
-      return `<tr data-unit="${esc(c[0])}" style="cursor:pointer"><td class="t">${c[2]}</td><td class="t">${esc(c[0])}</td><td class="t">${s ? s.label : c[1]}</td><td class="t">${T.signals[c[3]]}</td><td>${SIG_FMT[c[3]](c[4])}</td><td>${SIG_FMT[c[3]](c[5])}</td></tr>`;
-    }).join("") + "</tbody></table>" : `<p class="empty">No changes match.</p>`;
-  drawFlips();
-}
-
-// ---- units open on their own page ---------------------------------------------------
-function showUnit(name) { location.href = `trends.html#unit=${encodeURIComponent(name)}&p=unit-panel`; }
-
 // ---- links ------------------------------------------------------------------------
 // the one-day panels (beyond-day.js) keep their own keys in the same address bar
-const VIEW_KEYS = { pq: "pqTech", ms: "mSrc", mv: "mView", md: "mDays", mnm: "mnMeasure", mnd: "mnDays", ct: "chgTech", cs: "chgSig" };
+const VIEW_KEYS = { pq: "pqTech", ms: "mSrc", mv: "mView", md: "mDays", mnm: "mnMeasure", mnd: "mnDays" };
 function saveView() { window.CX.writeHash({ ...window.CX.readHash(), ...Object.fromEntries(Object.entries(VIEW_KEYS).map(([k, sk]) => [k, S[sk]])) }); }
 function loadView() { const v = window.CX.readHash(); Object.entries(VIEW_KEYS).forEach(([k, sk]) => { if (v[k] != null) S[sk] = v[k]; }); }
 
 // ---- boot ---------------------------------------------------------------------------
-function drawAll() { drawPriceQuantiles(); drawGas(); drawMarginal(); drawNodeMarginal(); drawChanges(); }
+function drawAll() { drawPriceQuantiles(); drawGas(); drawMarginal(); drawNodeMarginal(); }
 
 async function boot() {
   [S.T, S.C, S.G, S.GH, S.MN, S.SP] = await Promise.all([tryJSON("data/trends_60d.json.gz"), tryJSON("data/curve_trends.json.gz"),
@@ -591,12 +549,6 @@ async function boot() {
    ["mn-measure", "mnMeasure", drawNodeMarginal], ["mn-days", "mnDays", drawNodeMarginal]]
     .forEach(([id, key, fn]) => { setSeg(id, S[key]); bindSeg(id, key, fn); });
   bindSelect("pq-tech", "pqTech", thermal.filter((s) => s.id !== "nuclear"), drawPriceQuantiles);
-  bindSelect("chg-tech", "chgTech", [{ id: "all", label: "All" }, ...thermal], drawChanges);
-  bindSelect("chg-sig", "chgSig", [{ id: "all", label: "All" }, ...Object.entries(S.T.signals).map(([id, label]) => ({ id, label }))], drawChanges);
-  ["chg-table", "flip-table"].forEach((id) => $(id).addEventListener("click", (e) => {
-    const tr = e.target.closest("tr[data-unit]");
-    if (tr) showUnit(tr.dataset.unit);
-  }));
   drawAll();
   saveView();
   let t, lastW = 0;
