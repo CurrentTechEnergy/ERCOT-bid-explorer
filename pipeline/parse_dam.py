@@ -1,17 +1,22 @@
 """60-Day DAM Disclosure (NP3-966-ER) -> one day file of every generation resource's day-ahead
 three-part offer, awards and prices, plus a small daily summary by technology.
 
-Only the generation resource file (60d_DAM_Gen_Resource_Data-*.csv) is read.  It has one row
-per resource and hour with the QSE's submitted energy offer curve, start-up costs (hot,
+Two files are read: the generation resource file (60d_DAM_Gen_Resource_Data-*.csv) and, from
+the RTC+B start (operating day Dec 6, 2025), the energy storage resource file (60d_DAM_ESR_Data-*,
+matched on the 60d_DAM_ESR prefix; the ESR AS Offers file is not read).  Each has one row per
+resource and hour with the QSE's submitted energy offer curve, start-up costs (hot,
 intermediate, cold, $ per start), minimum-energy cost ($/MWh), limits, DAM resource status,
 the energy award, the settlement point and its DAM price, and ancillary service awards with
-the market clearing prices for capacity (MCPC).
+the market clearing prices for capacity (MCPC).  A battery's energy award is signed: negative
+MW is a charging award.
 
 Writes data/dam/{date}.json.gz:
 {
   "date", "source": "dam",
   "hours": 24,                      # 23 / 25 on daylight-saving days: hours are stored in
                                     # file order after the hour-ending column
+  "files": {"gen": 1, "esr": 1},    # files read from the zip (esr: 0 before RTC+B, or when the
+                                    # zip had none)
   "mcpc": {"regup": [24], "regdn": [24], "rrs": [24], "ecrs": [24], "nspin": [24]},
                                     # $/MW per hour, null where the file has no column
   "units": {
@@ -26,7 +31,8 @@ Writes data/dam/{date}.json.gz:
       "start_var": true,            # only when a start cost changed during the day
       "mingen": 22.5,               # minimum-energy cost $/MWh, daily median (null = none)
       "mingen_var": true,           # only when it changed during the day
-      "award": [24],                # DAM energy award MW per hour (null = no award row)
+      "award": [24],                # DAM energy award MW per hour (null = no award row);
+                                    # storage: signed, negative = charging
       "spp": [24],                  # DAM settlement point price at the unit's node, $/MWh
       "as": {"regup": [24], ...},   # AS awards MW per hour; only services with an award
       "curves": [[[p1..pn], [mw1..mwn]], ...],   # distinct submitted offer curves this day
@@ -35,7 +41,8 @@ Writes data/dam/{date}.json.gz:
   }
 }
 and a summary entry: per technology, awarded MW by hour, units with a three-part offer, and
-quartiles of start-up costs and minimum-energy cost (for trend charts).
+quartiles of start-up costs and minimum-energy cost (for trend charts); storage also carries
+the awarded charging and discharging MW by hour separately (award_chg, award_dis).
 """
 import io
 import re
@@ -49,6 +56,8 @@ from .log import warn
 from .store import iter_csvs
 
 GEN_FILE = "60d_dam_gen_resource_data"
+ESR_FILE = "60d_dam_esr"             # ESR Data file; its AS Offers sibling is skipped (see is_esr_data)
+ESR_FROM = "2025-12-06"              # first RTC+B day-ahead market: an ESR file is expected from here
 AS_SERVICES = {
     # key -> candidate normalised award column names (summed when several match)
     "regup": ["regupawarded"],
@@ -105,7 +114,7 @@ def read_dam_gen(csv_bytes: bytes) -> pd.DataFrame:
     return df
 
 
-def parse_dam_frame(df: pd.DataFrame):
+def parse_dam_frame(df: pd.DataFrame, files=None):
     norm = {_norm(c): c for c in df.columns}
     col = {
         "date": _pick(norm, "deliverydate"), "he": _pick(norm, "hourending"),
@@ -224,7 +233,10 @@ def parse_dam_frame(df: pd.DataFrame):
     if unknown_types:
         warn(f"DAM {date}: resource types grouped as 'other': {sorted(unknown_types)}")
 
-    day = {"date": date, "source": "dam", "hours": n_hours, "mcpc": mcpc, "units": units}
+    day = {"date": date, "source": "dam", "hours": n_hours, "files": files or {"gen": 1, "esr": 0},
+           "mcpc": mcpc, "units": units}
+    if date >= ESR_FROM and not (files or {}).get("esr"):
+        warn(f"DAM {date}: no ESR data file in the zip, batteries have no day-ahead rows")
     summary = _summary(tech_rows, award, n_hours, he)
     return date, day, summary
 
@@ -235,13 +247,17 @@ def _summary(tech_rows, award, n_hours, he):
     out = {}
     for t in SIXTY_DAY_TECHS:
         rows = [(u, idx) for tt, u, idx in tech_rows if tt == t]
-        aw = np.zeros(n_hours)
+        aw, chg, dis = np.zeros(n_hours), np.zeros(n_hours), np.zeros(n_hours)
         for u, idx in rows:
             a = award[idx]
             h = he[idx]
             for v, hh in zip(a, h):
                 if np.isfinite(v) and 1 <= hh <= n_hours:
                     aw[hh - 1] += v
+                    if v < 0:
+                        chg[hh - 1] += -v
+                    else:
+                        dis[hh - 1] += v
         with_offer = [u for u, _ in rows if u["mingen"] is not None]
 
         def q(vals):
@@ -250,6 +266,8 @@ def _summary(tech_rows, award, n_hours, he):
 
         out[t] = {
             "award": [round(float(x)) for x in aw],
+            **({"award_chg": [round(float(x)) for x in chg], "award_dis": [round(float(x)) for x in dis]}
+               if t == "storage" else {}),
             "n": len(rows), "n_offer": len(with_offer),
             "start_hot": q(u["start"][0] for u in with_offer),
             "start_inter": q(u["start"][1] for u in with_offer),
@@ -263,12 +281,23 @@ def has_dam_gen(names) -> bool:
     return any(n.lower().startswith(GEN_FILE) for n in names)
 
 
+def is_esr_data(name: str) -> bool:
+    """The ESR Data file, not the ESR AS Offers file (its name carries "offer")."""
+    n = name.lower()
+    return n.startswith(ESR_FILE) and "offer" not in n
+
+
 def parse_dam_zip(blob: bytes):
     """-> (date, day file, summary entry)"""
-    frames = []
+    frames, files = [], {"gen": 0, "esr": 0}
     for name, data in iter_csvs(blob, "x.zip"):
         if name.lower().startswith(GEN_FILE):
             frames.append(read_dam_gen(data))
-    if not frames:
+            files["gen"] += 1
+        elif is_esr_data(name):
+            frames.append(read_dam_gen(data))
+            files["esr"] += 1
+    if not files["gen"]:
         raise ValueError("No DAM generation resource file in the 60-day DAM zip")
-    return parse_dam_frame(pd.concat(frames, ignore_index=True) if len(frames) > 1 else frames[0])
+    # the two files share most columns; a column one of them lacks is NaN for its rows
+    return parse_dam_frame(pd.concat(frames, ignore_index=True) if len(frames) > 1 else frames[0], files)
