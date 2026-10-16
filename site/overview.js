@@ -617,7 +617,7 @@ function drawUnits() {
   const fmt = (r, k, kind) => {
     const v = r[k];
     if (v == null) return "–";
-    if (kind === "t") return esc(v);
+    if (kind === "t") return k === "unit" ? `<a href="unit.html?unit=${encodeURIComponent(v)}">${esc(v)}</a>` : esc(v);
     if (kind === "tech") return TECH_LABEL[v] || esc(v);
     if (kind === "group") return GROUP_SHORT[v] || esc(v);
     if (kind === "verdict") return VERDICT_LABEL[v] || esc(v);
