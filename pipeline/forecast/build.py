@@ -12,8 +12,8 @@ data/forecast/<date>.json.gz
                     disp_gwh, curt_gwh}; storage: null until the battery model exists
   capacity          group[g] and tech[t]: {cap, on, off, out, unknown, min, exp, gwh, n_on,
                     n_off, n_out, n_unknown} (MW; HSL of units in each state, on = p_on >= 0.5)
-  hourly            group[g] / tech[t] / fleet: {min, exp, hsl} [24]; wind / solar: {avail,
-                    disp} [24]; storage: null; model: {series: "model version"}
+  hourly            group[g] / tech[t] / category[c] / fleet: {min, exp, hsl} [24]; wind /
+                    solar: {avail, disp} [24]; storage: null; model: {series: "model version"}
   units             columns + rows, one per thermal train: unit, tech, group, hsl, lsl,
                     verdict (on | off | maybe | nocut | outage | peaker), p_on, loss, cutoff,
                     off_from, off_hours, reason, curve (1 if dispatched on its own curve),
@@ -109,6 +109,7 @@ def build_day(date, ctx: C.Context) -> dict:
         return {"min": np.zeros(24), "exp": np.zeros(24), "hsl": np.zeros(24)}
     by_g = {g: blank() for g in GROUPS}
     by_t = {t: blank() for t in C.THERMAL}
+    by_c = {k: blank() for k in CATEGORIES}
     cap = {"group": {g: _cap0() for g in GROUPS}, "tech": {t: _cap0() for t in C.THERMAL}}
     cat = {k: {"cap": 0.0, "on": 0.0, "min": 0.0, "exp": 0.0, "gwh": 0.0, "n_on": 0, "n_units": 0} for k in CATEGORIES}
     unit_rows = []
@@ -133,7 +134,11 @@ def build_day(date, ctx: C.Context) -> dict:
             agg["min"] += d["min"]; agg["exp"] += d["exp"]
             if state != "out":
                 agg["hsl"] += hsl
-        c = cat[category(row["tech"], g)]
+        ck = category(row["tech"], g)
+        by_c[ck]["min"] += d["min"]; by_c[ck]["exp"] += d["exp"]
+        if state != "out":
+            by_c[ck]["hsl"] += hsl
+        c = cat[ck]
         c["cap"] += hsl; c["exp"] += exp_mean; c["gwh"] += float(d["exp"].sum()) / 1000.0; c["n_units"] += 1
         if state == "on":
             c["on"] += hsl; c["min"] += lsl; c["n_on"] += 1
@@ -181,7 +186,7 @@ def build_day(date, ctx: C.Context) -> dict:
         "capacity": {"group": {g: _cap_out(c) for g, c in cap["group"].items()},
                      "tech": {t: _cap_out(c) for t, c in cap["tech"].items()}},
         "hourly": {"group": {g: _h_out(a) for g, a in by_g.items()}, "tech": {t: _h_out(a) for t, a in by_t.items()},
-                   "fleet": _h_out(fleet),
+                   "category": {k: _h_out(a) for k, a in by_c.items()}, "fleet": _h_out(fleet),
                    **{t: {"avail": _rl(rn[t]["avail"]), "disp": _rl(rn[t]["disp"])} if rn[t]["n"] else None for t in C.RENEW},
                    "storage": None, "model": hourly_model},
         "units": {"columns": UNIT_COLS, "rows": unit_rows},
