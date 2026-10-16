@@ -103,6 +103,13 @@ const ICON = {
   check: `<svg viewBox="0 0 16 16" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8.5l3.2 3L13 4.5"/></svg>`,
 };
 
+// the icon buttons sit in a corner strip at the panel's top right, outside the heading row
+function panelActions(panel) {
+  let a = panel.querySelector(":scope > .panel-actions");
+  if (!a) { a = Object.assign(document.createElement("div"), { className: "panel-actions" }); panel.prepend(a); }
+  return a;
+}
+
 // ------------------------------------------------------------ downloads ---
 // Each chart can register the data it plots: CX.setCSV(chartEl, header, rows, name).
 const csvData = new WeakMap();
@@ -229,13 +236,12 @@ function addDownloads() {
   document.querySelectorAll("section.panel").forEach((panel) => {
     const chart = !!panel.querySelector(".chart");
     if ((!chart && !panel.querySelector("[data-csv]")) || panel.querySelector(".dl")) return;
-    const head = panel.querySelector(".panel-head");
     const box = document.createElement("details");
     box.className = "dl";
     box.innerHTML = `<summary class="icon-btn" aria-label="Download this ${chart ? "chart" : "table"}" title="Download this ${chart ? "chart" : "table"}">${ICON.download}</summary><div class="dl-menu">` +
       (chart ? `<button type="button" data-f="png">Image (PNG)</button><button type="button" data-f="svg">Vector (SVG)</button>` : "") +
       `<button type="button" data-f="csv">Data (CSV${chart ? "" : ", all columns"})</button></div>`;
-    (head.querySelector(".panel-tools") || head.appendChild(Object.assign(document.createElement("div"), { className: "panel-tools" }))).appendChild(box);
+    panelActions(panel).appendChild(box);
     box.addEventListener("toggle", () => {
       const has = [...panel.querySelectorAll(".chart, [data-csv]")].some((el) => csvData.get(el));
       box.querySelector('[data-f="csv"]').disabled = !has;
@@ -306,13 +312,11 @@ async function copyText(b, text) {
 function addPanelLinks() {
   if (!document.body.hasAttribute("data-panel-links")) return;
   document.querySelectorAll("section.panel[id]").forEach((panel) => {
-    const head = panel.querySelector(".panel-head");
-    if (!head || head.querySelector(".panel-link")) return;
+    if (panel.querySelector(".panel-link")) return;
     const b = Object.assign(document.createElement("button"), { type: "button", className: "copy-link panel-link icon-btn", innerHTML: ICON.link,
       title: "Copy a link that opens this chart with the same day, hour and settings" });
     b.setAttribute("aria-label", "Copy link to this chart");
-    const tools = head.querySelector(".panel-tools") || head.appendChild(Object.assign(document.createElement("div"), { className: "panel-tools" }));
-    tools.appendChild(b);
+    panelActions(panel).appendChild(b);
     b.onclick = () => {
       const q = new URLSearchParams(location.hash.slice(1));
       q.set("p", panel.id);
