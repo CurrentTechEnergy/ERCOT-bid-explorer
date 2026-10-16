@@ -9,7 +9,8 @@ Schema
 ------
 {
   "date": "YYYY-MM-DD",
-  "format": 6,                # UNIT_FORMAT below; update.reprocess_60d redoes older files
+  "format": 7,                # UNIT_FORMAT below (7: diesel/recip "DSL" units are tech
+                              # combustion_turbine, no longer "other"); update.reprocess_60d redoes older files
   "runs": [m0, m1, ...],      # SCED run timestamps, minutes after midnight (int, floor of the
                               # timestamp; +1440 if a run falls on the next calendar day), in
                               # time order.  A "run index" below is a position in this list.

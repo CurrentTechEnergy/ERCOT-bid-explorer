@@ -13,14 +13,14 @@ const SERIES = {
   ],
   "60d": [
     { id: "combined_cycle", keys: ["combined_cycle"], label: "Combined cycle", color: "--c1" },
-    { id: "combustion_turbine", keys: ["combustion_turbine"], label: "Combustion turbine", color: "--c2" },
+    { id: "combustion_turbine", keys: ["combustion_turbine"], label: "Peakers (CT and recip)", color: "--c2" },
     { id: "wind", keys: ["wind"], label: "Wind", color: "--c3" },
     { id: "solar", keys: ["solar"], label: "Solar", color: "--c4" },
     { id: "nuclear", keys: ["nuclear"], label: "Nuclear", color: "--c5" },
     { id: "gas_steam", keys: ["gas_steam"], label: "Gas steam", color: "--c6" },
     { id: "storage", keys: ["storage"], label: "Storage (ESR)", color: "--c7" },
     { id: "coal", keys: ["coal"], label: "Coal & lignite", color: "--c8" },
-    { id: "other", keys: ["hydro", "other"], label: "Other (hydro, diesel, biomass)", color: "--c-other" },
+    { id: "other", keys: ["hydro", "other"], label: "Other (hydro, biomass)", color: "--c-other" },
   ],
 };
 const DEMAND_2D = { id: "clr", keys: ["clr"], label: "Controllable load bids (demand)" };
@@ -1049,14 +1049,14 @@ const TECH_COLS = [
 ];
 const TECH_NOTES = {
   combined_cycle: "Combined-cycle gas plants (resource types CCGT90 and CCLE90). Each configuration of a plant is reported as its own resource.",
-  combustion_turbine: "Simple-cycle gas and oil combustion turbines (SCGT90, SCLE90): typically peakers with quick starts.",
+  combustion_turbine: "Peakers: simple-cycle gas and oil combustion turbines (SCGT90, SCLE90) and diesel and reciprocating engines (DSL), typically with quick starts. Days processed before the engines moved here (per-unit file format below 7) count them under Other.",
   wind: "Wind-powered generation resources (WIND). Curves are capped at available output.",
   solar: "Photovoltaic generation resources (PVGR). Curves are capped at available output, so they shrink to zero at night.",
   nuclear: "Nuclear units (NUC). They normally run without an offer curve, held to their output schedule.",
   gas_steam: "Gas-fired steam units (GSREH reheat, GSSUP supercritical, GSNONR non-reheat).",
   storage: "Energy storage resources (ESR). Values are net: negative while charging, positive while discharging.",
   coal: "Coal and lignite units (CLLIG).",
-  other: "Hydro (HYDRO), diesel (DSL), biomass and other renewables (RENEW), and any resource type not otherwise mapped.",
+  other: "Hydro (HYDRO), biomass and other renewables (RENEW), and any resource type not otherwise mapped.",
 };
 const UNIT_TIPS = {
   hours_online: "Hours of the day with an online status.",
