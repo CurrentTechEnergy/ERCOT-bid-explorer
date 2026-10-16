@@ -20,7 +20,7 @@ on:
         required: false
         default: "60"
       reprocess_60d:
-        description: "Re-download and reparse 60-day SCED and DAM days already loaded whose file is missing or predates the current format (resumable; limited by max_files)"
+        description: "Re-download and reparse 60-day SCED and DAM days already loaded whose file is missing or predates the current format (max_files per run; queues the next run until done)"
         type: boolean
         required: false
         default: false
@@ -31,6 +31,7 @@ on:
         default: false
 
 permissions:
+  actions: write     # a reprocess run queues the next one
   contents: write
   pages: write
   id-token: write
@@ -88,6 +89,7 @@ jobs:
           fi
 
       - name: Fetch and process new reports
+        id: fetch
         env:
           PYTHONUNBUFFERED: "1"      # stream log lines as they happen
           ERCOT_API_USERNAME: ${{ secrets.ERCOT_API_USERNAME }}
@@ -159,6 +161,18 @@ jobs:
           done
           echo "::error::Could not push the data commit after 5 attempts"
           exit 1
+
+      # A reprocess run does max_files files; while days are left (and this run got through some),
+      # it queues the next one, so one click fills a format change in.  Cancel a queued run to stop.
+      - name: Queue the next reprocess run
+        if: steps.fetch.outputs.reprocess_more == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          MAX_FILES: ${{ github.event.inputs.max_files }}
+          IGNORE_CHECKS: ${{ github.event.inputs.ignore_checks }}
+        run: |
+          gh workflow run update.yml -R "$GITHUB_REPOSITORY" --ref "$GITHUB_REF_NAME" \
+            -f reprocess_60d=true -f max_files="${MAX_FILES:-60}" -f ignore_checks="${IGNORE_CHECKS:-false}"
 
   # Publishing to GitHub Pages is optional: set the repository variable ENABLE_PAGES=true
   # (Settings > Secrets and variables > Actions > Variables) and set Pages source to "GitHub Actions".
