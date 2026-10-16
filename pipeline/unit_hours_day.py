@@ -142,15 +142,17 @@ def build_unit_hour_days(index: dict) -> None:
     for d in sorted(index["days"].get("60d", []), reverse=True):
         if done >= MAX_PER_RUN:
             break
-        path = OUT_DIR / f"{d}.json.gz"
+        path, src = OUT_DIR / f"{d}.json.gz", UNIT_DATA_DIR / "60d" / f"{d}.json.gz"
+        size = src.stat().st_size if src.exists() else 0
         cur = read_json_gz(path) if path.exists() else None
-        if cur and cur.get("format") == FORMAT:
+        # a reprocessed per-unit file (new size) is rebuilt; a missing one keeps what is there
+        if cur and cur.get("format") == FORMAT and (not size or cur.get("src_size") in (None, size)):
             continue
-        ud = read_json_gz(UNIT_DATA_DIR / "60d" / f"{d}.json.gz")
+        ud = read_json_gz(src)
         if not ud:
             skipped += 1
             continue
-        write_json_gz(path, unit_hour_day(ud))
+        write_json_gz(path, {**unit_hour_day(ud), "src_size": size})
         done += 1
     left = sum(1 for d in index["days"].get("60d", []) if not (OUT_DIR / f"{d}.json.gz").exists())
     print(f"unit hours: {done} day(s) written" + (f", {skipped} without a per-unit file" if skipped else "")
