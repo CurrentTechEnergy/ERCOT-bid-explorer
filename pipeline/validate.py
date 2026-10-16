@@ -26,6 +26,9 @@ consistency:
                     expected output <= capacity, verdict counts equal the units rows, a model
                     name and version on every row and series, and (recorded) that a day with
                     an answer has been scored
+  forecast_stack    dispatch stack file (pipeline/forecast/stack.py): MW never falls as the
+                    price rises, groups and technologies each sum to the fleet, the floor is at
+                    least the forecast's committed minimum and the top at most its capacity
 
 A check is an "error" when the numbers cannot both be right (a parsing or mapping bug), a
 "warning" when something is worth a look, and "info" when it is only recorded.  Results that did not pass are kept per day in data/validation.json.
@@ -309,6 +312,11 @@ def check_day(date, have):
     fc = read_json_gz(DATA_DIR / "forecast" / f"{date}.json.gz") if date in have.get("forecast", ()) else None
     if fc:
         _forecast_checks(day, fc)
+        st = read_json_gz(DATA_DIR / "forecast" / "stack" / f"{date}.json.gz", default=None)
+        if st:
+            _stack_checks(day, fc, st)
+        else:
+            day.add("forecast_stack", "warning", "forecast day without a dispatch stack file")
     return day
 
 
@@ -366,6 +374,30 @@ def _storage_checks(day, st, gen, dam):
                 else f"{n_soc} of {st['n_units']} batteries report a state of charge, all inside their windows")
     else:
         day.add("storage_soc", "info", "no state of charge for this day (per-unit file predates format 7)")
+
+
+def _stack_checks(day, fc, st):
+    tol = 2.0
+    fl = np.asarray(st["fleet"]["mw"], float)                 # [24][prices]
+    drop = float(np.max(-np.diff(fl, axis=1))) if fl.shape[1] > 1 else 0.0
+    g = np.sum([np.asarray(v["mw"], float) for v in st["group"].values()], axis=0)
+    t = np.sum([np.asarray(v["mw"], float) for v in st["tech"].values()], axis=0)
+    dg, dt_ = float(np.max(np.abs(g - fl))), float(np.max(np.abs(t - fl)))
+    h = fc["hourly"]["fleet"]
+    low = float(np.max(_v(h["min"]) - fl[:, 0]))
+    high = float(np.max(fl[:, -1] - _v(h["hsl"])))
+    bad = []
+    if drop > tol:
+        bad.append(f"MW falls by up to {drop:.0f} as the price rises")
+    if dg > tol or dt_ > tol:
+        bad.append(f"groups vs fleet {dg:.0f} MW, technologies vs fleet {dt_:.0f} MW")
+    if low > tol:
+        bad.append(f"floor {low:.0f} MW below the committed minimum")
+    if high > tol:
+        bad.append(f"top {high:.0f} MW above capacity")
+    day.add("forecast_stack", "error" if bad else "ok", "; ".join(bad) or
+            f"monotone, sums agree, floor {fl[:, 0].min():.0f}-{fl[:, 0].max():.0f} MW within "
+            f"[committed minimum, capacity]")
 
 
 def _forecast_checks(day, fc):
