@@ -15,6 +15,11 @@ consistency:
   statuses          per-unit file: status codes and resource types the pipeline knows
   dam               DAM day file: awards within each hour's HSL (warning), 24 hours per unit,
                     and (recorded) how the day-ahead awards compare with real-time base points
+  forecast          forecast day file (pipeline/forecast): shares between 0 and 1, group sums
+                    equal technology sums equal the fleet hour by hour, committed minimum <=
+                    expected output <= capacity, verdict counts equal the units rows, a model
+                    name and version on every row and series, and (recorded) that a day with
+                    an answer has been scored
 
 A check is an "error" when the numbers cannot both be right (a parsing or mapping bug), a
 "warning" when something is worth a look, and "info" when it is only recorded.  Results that did not pass are kept per day in data/validation.json.
@@ -287,7 +292,65 @@ def check_day(date, have):
                 if bp.size == 24 and np.isfinite(bp).any():
                     gaps.append(f"{tech} {np.nanmedian(aw - bp):+.0f}")
             day.add("dam_vs_rt", "info", "DAM award minus real-time base point, median hour MW: " + ", ".join(gaps))
+    # forecast day file (pipeline/forecast): the page renders it as is, so it must add up
+    fc = read_json_gz(DATA_DIR / "forecast" / f"{date}.json.gz") if date in have.get("forecast", ()) else None
+    if fc:
+        _forecast_checks(day, fc)
     return day
+
+
+def _forecast_checks(day, fc):
+    tol = 2.0
+    h = fc["hourly"]
+    groups = fc["hourly"]["group"]
+    bad = []
+    for k in ("min", "exp", "hsl"):
+        g = np.sum([_v(v[k]) for v in groups.values()], axis=0)
+        t = np.sum([_v(v[k]) for v in h["tech"].values()], axis=0)
+        f = _v(h["fleet"][k])
+        if np.nanmax(np.abs(g - f)) > tol or np.nanmax(np.abs(t - f)) > tol:
+            bad.append(f"{k}: groups vs fleet {np.nanmax(np.abs(g - f)):.0f} MW, techs vs fleet {np.nanmax(np.abs(t - f)):.0f} MW")
+    day.add("forecast_sums", "error" if bad else "ok", "; ".join(bad) or "group, technology and fleet series agree")
+    f_min, f_exp, f_hsl = _v(h["fleet"]["min"]), _v(h["fleet"]["exp"]), _v(h["fleet"]["hsl"])
+    over = int(((f_exp < f_min - tol) | (f_exp > f_hsl + tol)).sum())
+    day.add("forecast_limits", "error" if over else "ok",
+            f"{over} hour(s) with expected output outside [committed minimum, capacity]" if over
+            else f"expected {f_exp.min():.0f}-{f_exp.max():.0f} MW within minimum {f_min.min():.0f} and capacity {f_hsl.max():.0f}")
+    shares = []
+    for k in ("baseload", "price_sensitive", "peakers"):
+        c = fc["headline"].get(k) or {}
+        if c.get("share") is not None:
+            shares.append(c["share"])
+    badp = [r for r in fc["units"]["rows"] if r[6] is not None and not 0 <= r[6] <= 1]
+    day.add("forecast_shares", "error" if any(not 0 <= x <= 1 for x in shares) or badp else "ok",
+            f"headline shares {shares}, {len(badp)} unit(s) with p_on outside [0, 1]")
+    cap = fc["capacity"]["tech"]
+    n_cap = sum(c["n_on"] + c["n_off"] + c["n_out"] + c["n_unknown"] for c in cap.values())
+    n_rows = len(fc["units"]["rows"])
+    day.add("forecast_counts", "ok" if n_cap == n_rows else "error",
+            f"{n_cap} units in the capacity panel, {n_rows} unit rows")
+    cols = fc["units"]["columns"]
+    im, iv = cols.index("model"), cols.index("version")
+    no_model = sum(1 for r in fc["units"]["rows"] if not r[im] or not r[iv])
+    rc = fc["renewables"]["columns"]
+    no_model += sum(1 for r in fc["renewables"]["rows"] if not r[rc.index("model")] or not r[rc.index("version")])
+    series = [k for k in list(groups) + list(h["tech"]) + ["fleet", "wind", "solar"] if not h["model"].get(k)]
+    day.add("forecast_model", "ok" if not no_model and not series else "error",
+            f"{no_model} row(s) without a model name or version; series without one: {series}" if (no_model or series)
+            else "every row and series names its model and version")
+    sc = read_json_gz(DATA_DIR / "forecast" / "scores.json.gz", default=None) or {"days": {}}
+    s = sc["days"].get(fc["date"])
+    has_answer = (DATA_DIR / "2dgen" / f"{fc['date']}.json.gz").exists()
+    if has_answer:
+        day.add("forecast_scored", "ok" if s and s.get("two_day") else "warning",
+                "scored against the 2-day answer" if s and s.get("two_day") else "has a 2-day answer but no score")
+
+
+def _have(index):
+    have = {k: set(index["days"].get(k, [])) for k in ("2d", "60d", "2dgen", "dam", "prices")}
+    fc = read_json_gz(DATA_DIR / "forecast" / "index.json.gz", default=None) or {}
+    have["forecast"] = set(fc.get("days", []))
+    return have
 
 
 def _level(results):
@@ -296,7 +359,7 @@ def _level(results):
 
 
 def run(dates, index, fail=True):
-    have = {k: set(index["days"].get(k, [])) for k in ("2d", "60d", "2dgen", "dam", "prices")}
+    have = _have(index)
     report = json.loads(REPORT_PATH.read_text()) if REPORT_PATH.exists() else {"days": {}}
     # errors already recorded for a day (committed with "ignore checks") do not fail a later
     # run that re-checks the day because a new source arrived; only new errors do
@@ -343,7 +406,7 @@ def _gha():
 def pending_days(index):
     """Days whose sources changed since they were last checked (or never checked)."""
     report = json.loads(REPORT_PATH.read_text()) if REPORT_PATH.exists() else {"days": {}}
-    have = {k: set(index["days"].get(k, [])) for k in ("2d", "60d", "2dgen", "dam", "prices")}
+    have = _have(index)
     out = []
     for date in set().union(*have.values()):
         now = sorted(k for k in have if date in have[k])
