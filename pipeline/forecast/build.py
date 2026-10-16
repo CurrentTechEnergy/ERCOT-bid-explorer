@@ -33,6 +33,7 @@ from ..config import DATA_DIR
 from ..store import read_json_gz, write_json_gz
 from ..models import MODELS, versions
 from . import context as C
+from . import stack as STACK
 from .groups import GROUPS as HISTORY_GROUPS, GROUP_LABELS as HISTORY_LABELS
 
 # the six timescale groups plus one for thermal units with no hourly history yet (new units)
@@ -192,6 +193,8 @@ def build_day(date, ctx: C.Context) -> dict:
                    "storage": None, "model": hourly_model},
         "units": {"columns": UNIT_COLS, "rows": unit_rows},
         "renewables": {"columns": RENEW_COLS, "rows": renew_rows},
+        # written to its own file by write_day (pipeline.forecast.stack), not into this one
+        "_stack": STACK.build(date, ctx, commit, disp, GROUPS),
     }
     return out
 
@@ -211,6 +214,7 @@ def _h_out(a):
 
 def write_day(date, ctx):
     day = build_day(date, ctx)
+    STACK.write(date, day.pop("_stack"))
     write_json_gz(OUT_DIR / f"{date}.json.gz", day)
     return day
 

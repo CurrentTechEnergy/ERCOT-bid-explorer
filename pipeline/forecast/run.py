@@ -22,7 +22,7 @@ def build_forecast(index: dict, days=None) -> list:
     score_days(all_days, ctx, OUT_DIR)
     write_index(ctx, all_days)
     # files for days that no longer have a price source are stale; drop them
-    for p in OUT_DIR.glob("20*.json.gz"):
+    for p in [*OUT_DIR.glob("20*.json.gz"), *(OUT_DIR / "stack").glob("20*.json.gz")]:
         if p.name[:10] not in set(all_days):
             p.unlink()
     print(f"forecast: {len(todo)} day(s) built, {n_fit} fitted, {len(all_days)} in the index, {time.time() - t0:.0f}s"
