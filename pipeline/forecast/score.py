@@ -16,13 +16,20 @@ Two answers per day:
              at least half of its hours with data; one judged off when it did not.  Peakers
              are scored on the share of hours online against the mean p_on.
 
+  fit        the 2-day fit (pipeline/models/two_day_fit, data/fit/): its residual against the
+             2-day curve before and after, and, sixty days on, the committed minimum (online
+             LSL by hour, fleet and by group) of the forecast and of the fit against the
+             60-day online LSL, the fit's on/off calls beside the forecast's on the same units,
+             and how often it named the right combined-cycle configuration
+
 Per day: mean absolute error (MW over 24 hours), bias (expected minus actual), expected and
 actual GWh, and the headline call: right when expected thermal GWh is within HEADLINE_TOL of
 the 2-day answer.  Summary: hit rates and mean errors over all scored days and by price band,
 keyed by the model versions that produced the files.
 
 Writes data/forecast/scores.json.gz:
-  days[date]   {"versions": {...}, "band", "two_day": {...} | null, "sixty_day": {...} | null}
+  days[date]   {"versions": {...}, "band", "two_day": {...} | null, "sixty_day": {...} | null,
+                "fit": {...} | null}
   summary      {versions key: {n, headline_hit, thermal_mae, thermal_bias, unit_hit, n_judged,
                 wind_mae, solar_mae, by_band: {band: {...}}, group: {g: {mae, bias, n}}}}
 """
@@ -143,6 +150,69 @@ def score_sixty_day(day: dict, ctx: C.Context) -> dict:
     return out
 
 
+def score_fit(day: dict, ctx: C.Context) -> dict:
+    """The 2-day fit for the day against the 60-day answer, beside the forecast."""
+    date = day["date"]
+    ft = read_json_gz(DATA_DIR / "fit" / f"{date}.json.gz")
+    if not ft:
+        return None
+    out = {"version": ft.get("version"), "residual_before": ft["residual"]["before"], "residual_after": ft["residual"]["after"],
+           "n_changed": ft["inputs"].get("n_changed"), "lsl_fc_gwh": _r(np.nansum(_arr(ft["hourly"]["lsl_forecast"])) / 1000, 2),
+           "lsl_fit_gwh": _r(np.nansum(_arr(ft["hourly"]["lsl_fit"])) / 1000, 2)}
+    rows_file = read_json_gz(DATA_DIR / "60d-units" / f"{date}.json.gz")
+    if not rows_file:
+        return out
+    cols = {c: i + 2 for i, c in enumerate(rows_file["columns"])}
+    names = rows_file["units"]
+    on_lsl, on_share, configs = {}, {}, {}
+    for r in rows_file["rows"]:
+        name, t = names[r[0]][0], names[r[0]][2]
+        if t not in ("coal", "combined_cycle", "gas_steam"):
+            continue
+        key = train_of(name) if t == "combined_cycle" else name
+        a = on_lsl.setdefault(key, np.zeros(24))
+        if (r[cols["online_share"]] or 0) >= 0.5:
+            a[r[1] - 1] += r[cols["lsl"]] or 0.0
+            on_share[key] = on_share.get(key, 0) + 1
+            configs.setdefault(key, set()).add(name)
+    fc = {c: i for i, c in enumerate(ft["units"]["columns"])}
+    group_of = {r[fc["unit"]]: (r[fc["group"]] or "ungrouped") for r in ft["units"]["rows"]}
+    act_fleet = sum(on_lsl.values()) if on_lsl else np.zeros(24)
+    act_group = {}
+    for key, a in on_lsl.items():
+        g = group_of.get(key)
+        if g:
+            act_group[g] = act_group.get(g, np.zeros(24)) + a
+    lsl_fc, lsl_fit = _arr(ft["hourly"]["lsl_forecast"]), _arr(ft["hourly"]["lsl_fit"])
+    out["lsl_act_gwh"] = _r(act_fleet.sum() / 1000, 2)
+    out["lsl_mae_fc"] = _r(np.nanmean(np.abs(lsl_fc - act_fleet)))
+    out["lsl_mae_fit"] = _r(np.nanmean(np.abs(lsl_fit - act_fleet)))
+    out["lsl_bias_fc"] = _r(np.nanmean(lsl_fc - act_fleet))
+    out["lsl_bias_fit"] = _r(np.nanmean(lsl_fit - act_fleet))
+    # by group: the fit file carries daily sums only, so compare the day's mean online LSL
+    out["group"] = {}
+    for g, agg in ft["groups"].items():
+        act = float(act_group.get(g, np.zeros(24)).mean())
+        out["group"][g] = {"lsl_fc": agg["lsl_fc"], "lsl_fit": agg["lsl_fit"], "lsl_act_mean": _r(act),
+                           "err_fc": _r(agg["lsl_fc"] - act), "err_fit": _r(agg["lsl_fit"] - act)}
+    hit_fc = hit_fit = judged = cfg_hit = cfg_n = 0
+    for r in ft["units"]["rows"]:
+        key = r[fc["unit"]]
+        if key not in on_lsl:
+            continue
+        on = (on_share.get(key, 0) / 24.0) >= 0.5
+        v, p = r[fc["forecast"]], r[fc["p_on"]] or 0.0
+        fc_on = (p >= 0.5) if v == "nocut" else v not in ("off", "outage")
+        fit_on = r[fc["fit"]] != "off"
+        judged += 1; hit_fc += int(fc_on == on); hit_fit += int(fit_on == on)
+        if fit_on and on and r[fc["config"]]:
+            cfg_n += 1; cfg_hit += int(r[fc["config"]] in configs.get(key, ()))
+    out.update(n_judged=judged, unit_hit_fc=_r(hit_fc / judged, 3) if judged else None,
+               unit_hit_fit=_r(hit_fit / judged, 3) if judged else None,
+               config_hit=_r(cfg_hit / cfg_n, 3) if cfg_n else None, n_config=cfg_n)
+    return out
+
+
 def score_days(days: list, ctx: C.Context, out_dir) -> dict:
     scores = read_json_gz(PATH, default=None) or {"days": {}}
     for date in days:
@@ -150,7 +220,8 @@ def score_days(days: list, ctx: C.Context, out_dir) -> dict:
         if not day:
             continue
         scores["days"][date] = {"versions": day["models"], "band": day["headline"].get("band"),
-                                "two_day": score_two_day(day), "sixty_day": score_sixty_day(day, ctx)}
+                                "two_day": score_two_day(day), "sixty_day": score_sixty_day(day, ctx),
+                                "fit": score_fit(day, ctx)}
     scores["days"] = {d: v for d, v in sorted(scores["days"].items()) if d in set(days)}
     scores["summary"] = summarise(scores["days"])
     scores["headline_tol"] = HEADLINE_TOL
@@ -183,6 +254,15 @@ def summarise(days: dict) -> dict:
                    "n_judged": int(sum(n for _, n in uh))}
             res["group"] = {g: {"mae": _r(np.mean([s["group"][g]["mae"] for s in sd])), "bias": _r(np.mean([s["group"][g]["bias"] for s in sd])), "n": len(sd)}
                             for g in GROUPS} if sd else None
+            ft = [s["fit"] for s in items if s.get("fit")]
+            fs = [f for f in ft if f.get("lsl_mae_fit") is not None]
+            res["fit"] = {"n": len(ft), "n_sixty_day": len(fs), "version": ft[-1].get("version") if ft else None,
+                          "residual_cut": _r(1 - np.mean([f["residual_after"] / f["residual_before"] for f in ft if f.get("residual_before")]), 3) if ft else None,
+                          "lsl_mae_fc": _r(np.mean([f["lsl_mae_fc"] for f in fs])) if fs else None,
+                          "lsl_mae_fit": _r(np.mean([f["lsl_mae_fit"] for f in fs])) if fs else None,
+                          "unit_hit_fc": _r(np.mean([f["unit_hit_fc"] for f in fs if f.get("unit_hit_fc") is not None]), 3) if fs else None,
+                          "unit_hit_fit": _r(np.mean([f["unit_hit_fit"] for f in fs if f.get("unit_hit_fit") is not None]), 3) if fs else None,
+                          "config_hit": _r(np.mean([f["config_hit"] for f in fs if f.get("config_hit") is not None]), 3) if any(f.get("config_hit") is not None for f in fs) else None} if ft else None
             res["tech"] = {t: {"mae": _r(np.mean([s["tech"][t]["mae"] for s in sd])), "bias": _r(np.mean([s["tech"][t]["bias"] for s in sd])), "n": len(sd)}
                            for t in C.THERMAL} if sd else None
             return res

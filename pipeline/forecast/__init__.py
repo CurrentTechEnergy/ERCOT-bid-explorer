@@ -6,6 +6,8 @@ pipeline/models, plus an index and a score file.  The page does sums and shares 
   data/forecast/index.json.gz       days, price bands, model versions
   data/forecast/scores.json.gz      every forecast day scored against the 2-day and 60-day
                                     answers (score.py), the track record the page shows
+  data/fit/<date>.json.gz           the 2-day fit (pipeline/models/two_day_fit): the committed set
+                                    inferred from the 2-day thermal curve, two days after the day
 
 Usage:
   python -m pipeline.forecast                       # all days with a day-ahead price source

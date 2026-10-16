@@ -117,6 +117,7 @@ def build_day(date, ctx: C.Context) -> dict:
         d = disp["rows"][key]
         g = "never" if row["tech"] == "nuclear" else (row["group"] or "ungrouped")
         hsl, lsl = d["hsl"], float(row["lsl"] or 0.0)
+        floor = float(d.get("floor", lsl))     # the minimum the dispatch model holds the unit at when on
         p_day = float(np.mean(d["p"]))
         state = ("out" if row["verdict"] == "outage" else "unknown" if row["verdict"] == "nocut"
                  else "on" if p_day >= 0.5 else "off")
@@ -127,7 +128,7 @@ def build_day(date, ctx: C.Context) -> dict:
             tgt["cap"] += hsl; tgt[state] += hsl; tgt["n_" + state] += 1
             tgt["exp"] += exp_mean; tgt["gwh"] += float(d["exp"].sum()) / 1000.0
             if state == "on":
-                tgt["min"] += lsl
+                tgt["min"] += floor
         for agg in ((by_g[g] if g in by_g else None), by_t[row["tech"]]):
             if agg is None:
                 continue
@@ -141,7 +142,7 @@ def build_day(date, ctx: C.Context) -> dict:
         c = cat[ck]
         c["cap"] += hsl; c["exp"] += exp_mean; c["gwh"] += float(d["exp"].sum()) / 1000.0; c["n_units"] += 1
         if state == "on":
-            c["on"] += hsl; c["min"] += lsl; c["n_on"] += 1
+            c["on"] += hsl; c["min"] += floor; c["n_on"] += 1
         p_on = round(p_day, 2) if row["tech"] == "combustion_turbine" else row["p_on"]
         unit_rows.append([key, row["tech"], g, _r(hsl), _r(lsl), row["verdict"], p_on, row["loss"], row["cutoff"],
                           row["off_from"], row["off_hours"], row["reason"], int(d["curve"]),
