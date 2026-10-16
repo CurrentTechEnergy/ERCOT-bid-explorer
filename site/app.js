@@ -1049,7 +1049,7 @@ const TECH_COLS = [
 ];
 const TECH_NOTES = {
   combined_cycle: "Combined-cycle gas plants (resource types CCGT90 and CCLE90). Each configuration of a plant is reported as its own resource.",
-  combustion_turbine: "Peakers: simple-cycle gas and oil combustion turbines (SCGT90, SCLE90) and diesel and reciprocating engines (DSL), typically with quick starts. Days processed before the engines moved here (per-unit file format below 7) count them under Other.",
+  combustion_turbine: "Peakers: simple-cycle gas and oil combustion turbines (SCGT90, SCLE90) and diesel and reciprocating engines (DSL), typically with quick starts. Days processed before the engines moved here (per-unit file format below 8) count them under Other.",
   wind: "Wind-powered generation resources (WIND). Curves are capped at available output.",
   solar: "Photovoltaic generation resources (PVGR). Curves are capped at available output, so they shrink to zero at night.",
   nuclear: "Nuclear units (NUC). They normally run without an offer curve, held to their output schedule.",
