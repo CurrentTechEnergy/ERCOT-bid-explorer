@@ -308,9 +308,11 @@ def _forecast_checks(day, fc):
         g = np.sum([_v(v[k]) for v in groups.values()], axis=0)
         t = np.sum([_v(v[k]) for v in h["tech"].values()], axis=0)
         f = _v(h["fleet"][k])
-        if np.nanmax(np.abs(g - f)) > tol or np.nanmax(np.abs(t - f)) > tol:
-            bad.append(f"{k}: groups vs fleet {np.nanmax(np.abs(g - f)):.0f} MW, techs vs fleet {np.nanmax(np.abs(t - f)):.0f} MW")
-    day.add("forecast_sums", "error" if bad else "ok", "; ".join(bad) or "group, technology and fleet series agree")
+        c = np.sum([_v(v[k]) for v in h.get("category", {}).values()], axis=0) if h.get("category") else f
+        if np.nanmax(np.abs(g - f)) > tol or np.nanmax(np.abs(t - f)) > tol or np.nanmax(np.abs(c - f)) > tol:
+            bad.append(f"{k}: groups vs fleet {np.nanmax(np.abs(g - f)):.0f} MW, techs vs fleet {np.nanmax(np.abs(t - f)):.0f} MW, "
+                       f"categories vs fleet {np.nanmax(np.abs(c - f)):.0f} MW")
+    day.add("forecast_sums", "error" if bad else "ok", "; ".join(bad) or "group, technology, category and fleet series agree")
     f_min, f_exp, f_hsl = _v(h["fleet"]["min"]), _v(h["fleet"]["exp"]), _v(h["fleet"]["hsl"])
     over = int(((f_exp < f_min - tol) | (f_exp > f_hsl + tol)).sum())
     day.add("forecast_limits", "error" if over else "ok",
