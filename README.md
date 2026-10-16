@@ -16,6 +16,7 @@ An interactive dashboard of how ERCOT resources offer energy into real-time disp
 | SCED System Lambda | NP6-322-CD | real time | System energy price for each SCED run |
 | Settlement Point Prices | NP6-905-CD | real time | 15-minute prices at hubs and load zones; hourly prices at every resource node (kept on the data branch, for days with per-unit data) |
 | DAM Settlement Point Prices | NP4-190-CD | day ahead | Hourly day-ahead prices at hubs and load zones, for the hedge signals page (history can be loaded from the yearly NP4-180-ER workbook), and at thermal resource nodes for the last two weeks, for tomorrow's shutdown verdicts |
+| Wind and solar power production, hourly averaged actual and forecasted | NP4-732-CD, NP4-737-CD | hourly | ERCOT's short-term wind and solar forecasts (STWPF, STPPF), system-wide: the available wind and solar in the Overview's forecast (the posting in force when the day-ahead market cleared), and the hourly actuals for reconciliation |
 | EIA Henry Hub spot price | RNGWHHD | daily | Natural gas price, $/MMBtu, from the EIA open data API (needs an `EIA_API_KEY` secret; skipped without one) |
 | OilPriceAPI regional gas prices | NATURAL_GAS_HSC_USD, NATURAL_GAS_WAHA | daily | Houston Ship Channel and Waha (West Texas) natural gas prices, $/MMBtu (needs an `OILPRICEAPI_KEY` secret, free tier; skipped without one). Their Henry Hub series is not used: it is not the spot price |
 
@@ -113,6 +114,22 @@ pipeline/
   unit_hours_day.py per-unit day files -> each unit's hourly rows for the Day page's Units table (data/60d-units/)
   stayon.py        per-unit day files + DAM costs -> what riding through a cheap stretch cost each
                    thermal unit against a shutdown and restart (no downloads)
+  renew_forecast.py NP4-732-CD, NP4-737-CD -> ERCOT's wind and solar forecasts for the days ahead
+                   (data/renew_forecast.json.gz)
+  forecast/        the Overview's forecast files (data/forecast/<date>.json.gz, index, scores): one
+                   file per operating day in a fixed schema, written from the models below and read
+                   by the page, which does sums and shares only.  context.py gathers what was known
+                   when the day-ahead market cleared (prices, units, 60-day-old states, curve
+                   snapshots on the data branch), build.py assembles a day, score.py scores every
+                   day against the 2-day and 60-day answers, benchmark.py holds the fixed 30-day set
+                   a model version must beat (python -m pipeline.forecast, python -m
+                   pipeline.forecast.benchmark); groups.py ports the timescale groups
+  models/          one module per model, each with NAME, VERSION and forecast(date, ctx):
+                   thermal_cutoff (commitment on the stay-on loss at the node against the unit's
+                   own cutoff), thermal_dispatch (the committed set's offer curves met by the hourly
+                   day-ahead price), peaker_share (combustion turbines by price level and hour),
+                   renewable_floor (wind and solar forecast less what prices itself out at its
+                   node), storage_habit (not built until the battery data is loaded)
   decisions.py     hourly unit states + DAM node prices, costs and awards -> each thermal unit's
                    shutdown decisions day by day, its loss cutoff, and tomorrow's expected
                    turn-offs from the day-ahead node prices (no downloads)

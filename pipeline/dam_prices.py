@@ -7,11 +7,13 @@ Writes data/dam_hubs.json.gz:
 Hours are hour ending 1..24 stored at index 0..23; on the fall-back day the repeated hour is
 dropped (as in the per-unit day files, which average it into one).
 
-Thermal resource nodes for the most recent days, for tomorrow's shutdown verdicts
-(pipeline/decisions.py): the report for operating day D is posted around 13:30 Central on
-D - 1, sixty days before the disclosure gives the units' own prices.  Only the settlement
-points of thermal units in the latest DAM disclosure files are kept, and only the last
-NODE_DAYS days.  Writes data/dam_nodes.json.gz in the same shape.
+Thermal, wind and solar resource nodes for the most recent days, for tomorrow's shutdown
+verdicts (pipeline/decisions.py) and the Overview's forecast (pipeline/forecast): the report
+for operating day D is posted around 13:30 Central on D - 1, sixty days before the disclosure
+gives the units' own prices.  Only the settlement points of units in the latest DAM disclosure
+files are kept, and only the last NODE_DAYS days.  Writes data/dam_nodes.json.gz in the same
+shape; the hub and load-zone prices in the same files go into data/dam_hubs.json.gz, so the
+hub history runs up to tomorrow rather than stopping at the 60-day days.
 
 History before the API backfill reaches it can be loaded from ERCOT's yearly file of DAM hub and
 load zone prices (NP4-180-ER, an .xlsx with one sheet per month):
@@ -122,14 +124,17 @@ def fetch_dam_prices(api, dates, index: dict, limit: int = 60) -> None:
     save(store)
 
 
+NODE_TECHS = ("nuclear", "coal", "combined_cycle", "gas_steam", "combustion_turbine", "wind", "solar")
+
+
 def thermal_nodes(index: dict) -> set:
-    """Settlement points of the thermal units in the latest DAM disclosure files."""
-    from .trends import UNIT_TECHS
+    """Settlement points of the thermal, wind and solar units in the latest DAM disclosure
+    files (wind and solar for the Overview's priced-out share, pipeline/models/renewable_floor.py)."""
     nodes = set()
     for d in sorted(index["days"].get("dam", []))[-NODE_FROM_DAM:]:
         dd = read_json_gz(DATA_DIR / "dam" / f"{d}.json.gz")
         for u in (dd or {}).get("units", {}).values():
-            if u.get("tech") in UNIT_TECHS and u.get("sp"):
+            if u.get("tech") in NODE_TECHS and u.get("sp"):
                 nodes.add(u["sp"])
     return nodes
 
@@ -145,14 +150,17 @@ def fetch_dam_node_prices(api, index: dict, today: dt.date = None) -> None:
     store["days"] = {d: v for d, v in store["days"].items() if d >= keep_from}
     misses = index.setdefault("dam_node_misses", {})
     want = [(today + dt.timedelta(days=k)).isoformat() for k in range(1, 1 - NODE_DAYS, -1)]
-    todo = [d for d in want if d not in store["days"] and misses.get(d, 0) < MAX_MISSES]
+    hub_have = set(load()["days"])
+    todo = [d for d in want if (d not in store["days"] or d not in hub_have) and misses.get(d, 0) < MAX_MISSES]
     for date in todo:
         d = dt.date.fromisoformat(date)
         try:
             docs = api.list_archives(EMIL_DAM_SPP, dt.datetime.combine(d - dt.timedelta(days=2), dt.time()),
                                      dt.datetime.combine(d + dt.timedelta(days=1), dt.time()))
             blobs = api.download_many(EMIL_DAM_SPP, [x["docId"] for x in docs]) if docs else []
-            got = read_dam_spp([c for b in blobs for c in iter_csvs(b, "x.zip")], keep=nodes.__contains__)
+            csvs = [c for b in blobs for c in iter_csvs(b, "x.zip")]
+            got = read_dam_spp(csvs, keep=nodes.__contains__)
+            hubs = read_dam_spp(csvs)
         except Exception as e:
             warn(f"DA node prices {date}: failed: {type(e).__name__}: {e}")
             continue
@@ -160,6 +168,10 @@ def fetch_dam_node_prices(api, index: dict, today: dt.date = None) -> None:
             store["days"][date] = got[date]
         else:
             misses[date] = misses.get(date, 0) + 1
+        if date in hubs:      # the same files carry the hubs and load zones: keep them for the
+            hub_store = load()    # days ahead of the 60-day history (the forecast's price bands)
+            merge(hub_store, {date: hubs[date]})
+            save(hub_store)
     index["dam_node_misses"] = {d: n for d, n in misses.items() if d >= keep_from}
     save(store, NODES_PATH)
     if store["days"]:

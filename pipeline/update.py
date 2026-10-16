@@ -44,6 +44,8 @@ from .gas import fetch_gas, fetch_hubs
 from .fuel_hub import build_fuel_hubs
 from .econ import build_econ
 from .dam_prices import fetch_dam_prices, fetch_dam_node_prices
+from .renew_forecast import fetch_renew_forecast
+from .forecast.run import build_forecast
 from .ppa import build_ppa
 from .renew_changes import build_renew_changes
 from .series import build_series
@@ -339,7 +341,7 @@ def main(argv=None):
     ap.add_argument("--days", type=int, default=4, help="look back this many days of postings (default 4)")
     ap.add_argument("--backfill", nargs=2, metavar=("START", "END"), help="operating-day range to fill")
     ap.add_argument("--max-files", type=int, default=None, help="cap curve files per report per run")
-    ap.add_argument("--skip", choices=["2d", "2dgen", "60d", "dam", "prices", "gas"], action="append", default=[])
+    ap.add_argument("--skip", choices=["2d", "2dgen", "60d", "dam", "prices", "gas", "forecast"], action="append", default=[])
     ap.add_argument("--local", nargs="+", help="process local zip files instead of calling the API")
     ap.add_argument("--reprocess-60d", nargs="?", const="missing", choices=["missing", "all"],
                     help="re-download and reparse 60-day days already in the index: those without a "
@@ -382,6 +384,7 @@ def main(argv=None):
         build_ppa(index)
         build_renew_changes(index)
         build_series(index)
+        build_forecast(index)
         save_index(index)
         return
 
@@ -420,6 +423,7 @@ def main(argv=None):
                      node_limit=args.max_files if args.backfill and args.max_files else NODE_DAYS_PER_RUN)
         fetch_dam_prices(api, index["days"]["60d"], index)
         fetch_dam_node_prices(api, index)
+        fetch_renew_forecast(api, index)
     if "gas" not in args.skip:
         fetch_gas()
         fetch_hubs()
@@ -441,6 +445,8 @@ def main(argv=None):
     build_ppa(index)
     build_renew_changes(index)
     build_series(index)
+    if "forecast" not in args.skip:
+        build_forecast(index)
     save_index(index)
     added = {k: sorted(set(index["days"][k]) - before.get(k, set())) for k in index["days"]}
     names = {"2d": "2-day curves", "2dgen": "2-day generation summary", "60d": "60-day curves",
