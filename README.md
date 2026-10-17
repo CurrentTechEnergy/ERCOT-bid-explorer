@@ -133,7 +133,9 @@ pipeline/
                    own cutoff), thermal_dispatch (the committed set's offer curves met by the hourly
                    day-ahead price), peaker_share (combustion turbines by price level and hour),
                    renewable_floor (wind and solar forecast less what prices itself out at its
-                   node), storage_habit (not built until the battery data is loaded)
+                   node), storage_habit (the battery fleet's discharging and charging by hour from
+                   its recent habit, nudged by the day's hub price shape; python -m
+                   pipeline.models.storage_habit --backtest prints how the rule has done)
                    two_day_fit (the 2-day fit, plan layer 2: the committed set inferred from the 2-day
                    thermal curve two days after the day, by unit, combined-cycle configuration and the
                    peaker fleet's hourly share; data/fit/<date>.json.gz, scored beside the forecast)

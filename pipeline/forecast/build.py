@@ -9,11 +9,14 @@ data/forecast/<date>.json.gz
   headline          hub_avg, band (low | medium | high), band_edges [q25, q75], hub [24];
                     baseload / price_sensitive / peakers: {cap, on, exp, min, share, gwh,
                     n_on, n_units}; wind / solar: {nameplate, avail, disp, avail_gwh,
-                    disp_gwh, curt_gwh}; storage: null until the battery model exists
+                    disp_gwh, curt_gwh}; storage: {peak_dis, peak_chg, gwh_dis, gwh_chg, eff,
+                    known_through, capped} (fleet MW and GWh, pipeline.models.storage_habit),
+                    null while fewer than a week of 2-day battery actuals is known
   capacity          group[g] and tech[t]: {cap, on, off, out, unknown, min, exp, gwh, n_on,
                     n_off, n_out, n_unknown} (MW; HSL of units in each state, on = p_on >= 0.5)
   hourly            group[g] / tech[t] / category[c] / fleet: {min, exp, hsl} [24]; wind /
-                    solar: {avail, disp} [24]; storage: null; model: {series: "model version"}
+                    solar: {avail, disp} [24]; storage: {dis, chg, soc} [24] (fleet discharging MW,
+                    charging MW below zero, energy path MWh) or null; model: {series: "model version"}
   units             columns + rows, one per thermal train: unit, tech, group, hsl, lsl,
                     verdict (on | off | maybe | nocut | outage | peaker), p_on, loss, cutoff,
                     off_from, off_hours, reason, curve (1 if dispatched on its own curve),
@@ -172,25 +175,28 @@ def build_day(date, ctx: C.Context) -> dict:
         headline[t] = {"nameplate": _r(r["nameplate"]), "avail": _r(r["avail"].mean()), "disp": _r(r["disp"].mean()),
                        "avail_gwh": _r(r["avail"].sum() / 1000, 2), "disp_gwh": _r(r["disp"].sum() / 1000, 2),
                        "curt_gwh": _r((r["avail"] - r["disp"]).sum() / 1000, 2), "n_units": r["n"]} if r["n"] else None
-    headline["storage"] = None
+    sr = stor["rows"]
+    headline["storage"] = ({k: sr[k] for k in ("peak_dis", "peak_chg", "gwh_dis", "gwh_chg")}
+                           | {k: stor["inputs"].get(k) for k in ("eff", "known_through", "capped")}) if sr else None
     v = versions()
     hourly_model = {**{g: f"{v['thermal_cutoff']} / {v['thermal_dispatch']}" for g in GROUPS},
                     **{t: f"{v['thermal_cutoff']} / {v['thermal_dispatch']}" for t in C.THERMAL},
                     "combustion_turbine": f"{v['peaker_share']} / {v['thermal_dispatch']}",
                     "fleet": f"{v['thermal_cutoff']} / {v['peaker_share']} / {v['thermal_dispatch']}",
-                    "wind": v["renewable_floor"], "solar": v["renewable_floor"], "storage": None}
+                    "wind": v["renewable_floor"], "solar": v["renewable_floor"], "storage": v["storage_habit"] if sr else None}
     out = {
         "date": date, "format": FORMAT,
         "models": {k: val for k, val in v.items()},
         "inputs": {**commit["inputs"], **disp["inputs"], "avail": renew["inputs"]["avail"],
-                   "forecast_posted": renew["inputs"].get("forecast_posted"), "hub": hub is not None},
+                   "forecast_posted": renew["inputs"].get("forecast_posted"), "hub": hub is not None,
+                   "storage": stor["inputs"]},
         "headline": headline,
         "capacity": {"group": {g: _cap_out(c) for g, c in cap["group"].items()},
                      "tech": {t: _cap_out(c) for t, c in cap["tech"].items()}},
         "hourly": {"group": {g: _h_out(a) for g, a in by_g.items()}, "tech": {t: _h_out(a) for t, a in by_t.items()},
                    "category": {k: _h_out(a) for k, a in by_c.items()}, "fleet": _h_out(fleet),
                    **{t: {"avail": _rl(rn[t]["avail"]), "disp": _rl(rn[t]["disp"])} if rn[t]["n"] else None for t in C.RENEW},
-                   "storage": None, "model": hourly_model},
+                   "storage": {k: sr[k] for k in ("dis", "chg", "soc")} if sr else None, "model": hourly_model},
         "units": {"columns": UNIT_COLS, "rows": unit_rows},
         "renewables": {"columns": RENEW_COLS, "rows": renew_rows},
         # written to its own file by write_day (pipeline.forecast.stack), not into this one
