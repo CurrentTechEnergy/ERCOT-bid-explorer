@@ -30,7 +30,7 @@ Writes data/curtail_nodes.json.gz:
   hours         columns / rows, one row per technology and hour with node prices:
                 [date, hour, tech, lambda, curt, cong, over, node, directed]  node =
                 MWh-weighted mean node price of the curtailed energy
-  units         the most curtailed units over the days with node prices: [name, tech, sp,
+  units         every wind and solar unit over the days with node prices, most curtailed first: [name, tech, sp,
                 curt MWh, cong MWh, value $, mean node price when curtailed, available MWh,
                 days with node prices, directed MWh]
   n_units[tech] {mapped, unmapped}
@@ -49,7 +49,6 @@ TECHS = ("wind", "solar")
 BIN_EDGES = [-np.inf, -40, -20, -5, 0, 5, 10, 15, 20, 30, 50, 100, np.inf]
 BIN_LABELS = ["< −$40", "−$40 to −20", "−$20 to −5", "−$5 to 0", "$0–5", "$5–10", "$10–15", "$15–20",
               "$20–30", "$30–50", "$50–100", "≥ $100"]
-TOP_UNITS = 40
 
 
 def _r(x, nd=0):
@@ -182,7 +181,7 @@ def build_node_curtail(index: dict) -> None:
                         rows.append([d, h, t, _r(lam[h], 2), _r(a[0, h]), _r(a[1, h]), _r(a[2, h]),
                                      _r(node_wsum[t][h] / priced, 2) if priced > 0 else None, _r(a[6, h])])
 
-    top = sorted(units.items(), key=lambda kv: -kv[1][2])[:TOP_UNITS]
+    top = sorted(units.items(), key=lambda kv: -kv[1][2])
     out_units = [[name, r[0], r[1], _r(r[2]), _r(r[3]), _r(r[4]), _r(r[4] / r[5], 2) if r[5] > 0 else None,
                   _r(r[6]), r[7], _r(r[8])] for name, r in top]
     write_json_gz(DATA_DIR / "curtail_nodes.json.gz", {

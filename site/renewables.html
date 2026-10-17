@@ -89,6 +89,7 @@
     <div class="chart" id="nc-value"></div>
     <div class="chart" id="nc-bins"></div>
     <div class="units-wrap" id="nc-units"></div>
+    <p><button type="button" class="more" id="nc-more" hidden>Show all</button></p>
   </section>
 
   <section class="panel panel-wide" id="fc-panel">
@@ -222,7 +223,7 @@
     <div class="panel-head">
       <div>
         <h2>Realised $/MWh by unit <span class="h-note" id="eco-note"></span></h2>
-        <p class="note">Revenue as above over the unit's energy, for every wind and solar unit over every loaded 60-day day. The dashed lines are each technology's median. Curtailed share is estimated: each day's curtailed share of available energy (HSL minus base point, from the bidding-history files) applied to that day's output. Click a column to sort and a unit to open its page.</p>
+        <p class="note">Revenue as above over the unit's energy, for every wind and solar unit over every loaded 60-day day. The dashed lines are each technology's median. Curtailed share is the unit's curtailed energy (HSL minus base point, hour by hour) over its available energy, the same figure as "Of available" in the curtailment table. Click a column to sort and a unit to open its page.</p>
       </div>
       <div class="panel-tools">
         <div class="seg seg-sm" id="eco-tech" role="radiogroup" aria-label="Technology">

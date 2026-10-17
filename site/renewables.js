@@ -29,7 +29,7 @@ const MBP_BINS = [
   [75, 100, "$75–100"], [100, 200, "$100–200"], [200, Infinity, "≥ $200"],
 ];
 
-const S = { C: null, N: null, FI: null, SC: null, E: {}, SIG: [], cday: null, span: null, last60: null, ecoTech: "all", ecoSort: "pmwh", ecoDir: -1, ecoAll: false };
+const S = { C: null, N: null, FI: null, SC: null, E: {}, SIG: [], cday: null, span: null, last60: null, ecoTech: "all", ecoSort: "pmwh", ecoDir: -1, ecoAll: false, ncAll: false };
 const { tryJSON, showTip, hideTip, setCSV, tickFormat, fmtKind, axisFmt, css, esc } = window.CX;
 const $ = (id) => document.getElementById(id);
 const fmtMW = d3.format(",.0f");
@@ -281,8 +281,8 @@ function drawNodeCurtail() {
   setCSV(bel, ["node_price_bin", "wind_gwh", "solar_gwh", "wind_unit_hours", "solar_unit_hours"],
     labels.map((lb, i) => [lb, N.bins.wind.mwh[i] / 1000, N.bins.solar.mwh[i] / 1000, N.bins.wind.uh[i], N.bins.solar.uh[i]]), "Curtailment by node price");
 
-  // most curtailed units
-  const rows = N.units.map((r) => ({ unit: r[0], tech: r[1], sp: r[2], curt: r[3], cong: r[4], value: r[5], node: r[6], avail: r[7], days: r[8], dir: r[9], bid: bidWhenCurtailed(r[0], N.dates) }));
+  // most curtailed units (the file holds every unit, most curtailed first)
+  const rows = N.units.slice(0, S.ncAll ? undefined : 40).map((r) => ({ unit: r[0], tech: r[1], sp: r[2], curt: r[3], cong: r[4], value: r[5], node: r[6], avail: r[7], days: r[8], dir: r[9], bid: bidWhenCurtailed(r[0], N.dates) }));
   const cols = [
     { h: "Unit", t: true, f: (r) => `<a href="unit.html?unit=${encodeURIComponent(r.unit)}">${esc(r.unit)}</a>` }, { h: "Technology", t: true, f: (r) => techLabel(r.tech) }, { h: "Settlement point", t: true, f: (r) => esc(r.sp || "–") },
     { h: "Curtailed GWh", f: (r) => d3.format(",.1f")(r.curt / 1000) }, { h: "Of available", f: (r) => (r.avail ? fmtPct(r.curt / r.avail) : "–") },
@@ -291,10 +291,12 @@ function drawNodeCurtail() {
     { h: "Mean node price when curtailed", f: (r) => fmtPrice(r.node) },
     { h: "Average offer on curtailed days", f: (r) => (r.bid === undefined ? "…" : fmtPrice(r.bid)) }, { h: "Worth at the node", f: (r) => (r.value == null ? "–" : fmtPrice0(r.value)) }, { h: "Days priced", f: (r) => r.days },
   ];
+  $("nc-more").hidden = S.ncAll || N.units.length <= 40;
+  $("nc-more").textContent = `Show all ${N.units.length}`;
   uel.innerHTML = rows.length ? `<table class="data"><thead><tr>${cols.map((c) => `<th${c.t ? ' class="t"' : ""}>${c.h}</th>`).join("")}</tr></thead><tbody>` +
     rows.map((r) => `<tr>${cols.map((c) => `<td${c.t ? ' class="t"' : ""}>${c.f(r)}</td>`).join("")}</tr>`).join("") + "</tbody></table>" : "";
   setCSV(uel, ["unit", "technology", "settlement_point", "curtailed_mwh", "available_mwh", "congestion_mwh", "directed_mwh", "value_at_node", "mean_node_price", "avg_offer_curtailed_days", "days"],
-    rows.map((r) => [r.unit, r.tech, r.sp, r.curt, r.avail, r.cong, r.dir, r.value, r.node, r.bid ?? null, r.days]), "Most curtailed units");
+    N.units.map((r) => [r[0], r[1], r[2], r[3], r[7], r[4], r[9], r[5], r[6], bidWhenCurtailed(r[0], N.dates) ?? null, r[8]]), "Curtailed units");
 }
 
 
@@ -413,13 +415,6 @@ function dayRevenue(u, i) {
   const e = two != null ? two : u.rev_rt[i] != null ? u.rev_rt[i] : u.rev_lam[i];
   return e == null ? null : e + (u.rev_as[i] || 0);
 }
-// estimated curtailed MWh per unit and day: the daily curtailed share in the bidding-history files
-// (HSL minus base point over HSL energy) applied to the day's output
-function curtMap() {
-  const out = new Map();
-  S.SIG.forEach((f) => { if (!f) return; Object.entries(f.units).forEach(([n, u]) => { const m = out.get(n) || new Map(); f.dates.forEach((d, i) => { if (u.cur[i] != null) m.set(d, u.cur[i]); }); out.set(n, m); }); });
-  return out;
-}
 // a unit's average offer on the days it was curtailed: the mean of its daily median offer while
 // online (data/renew/sig-YYYY, "md") over the days in the window with a curtailed share above 0.5%;
 // undefined until the bidding-history files have loaded
@@ -431,23 +426,21 @@ function bidWhenCurtailed(name, dates) {
 }
 let ECO = null;
 function computeEco() {
-  const cm = curtMap(), units = [], months = new Map();
+  // curtailed share of available energy (HSL), exact per unit from curtail_nodes
+  const units = [], months = new Map(), cs = new Map((S.N?.units || []).map((r) => [r[0], r[7] ? r[3] / r[7] : null]));
   ["wind", "solar"].forEach((t) => {
     const E = S.E[t];
     if (!E) return;
     Object.entries(E.units).forEach(([name, u]) => {
-      let rev = 0, mwh = 0, cur = 0, days = 0;
-      const cu = cm.get(name);
+      let rev = 0, mwh = 0, days = 0;
       E.dates.forEach((d, i) => {
         const r = dayRevenue(u, i), q = u.mwh[i];
         if (r == null || q == null) return;
         rev += r; mwh += q; days++;
-        const s = cu && cu.get(d);
-        if (s != null && s < 1) cur += q * s / (1 - s);
         const mo = d.slice(0, 7), k = `${mo}|${t}`, m = months.get(k) || { mo, t, rev: 0, mwh: 0 };
         m.rev += r; m.mwh += q; months.set(k, m);
       });
-      if (mwh > 0) units.push({ name, tech: t, sp: u.sp, hsl: u.hsl, rev, mwh, pmwh: rev / mwh, cf: u.hsl ? mwh / (u.hsl * 24 * days) : null, curt: cu ? cur / (cur + mwh) : null, days });
+      if (mwh > 0) units.push({ name, tech: t, sp: u.sp, hsl: u.hsl, rev, mwh, pmwh: rev / mwh, cf: u.hsl ? mwh / (u.hsl * 24 * days) : null, curt: cs.get(name) ?? null, days });
     });
   });
   ECO = { units, months: [...months.values()] };
@@ -572,7 +565,7 @@ function drawEcoUnits() {
     const kk = th.dataset.k; if (S.ecoSort === kk) S.ecoDir = -S.ecoDir; else { S.ecoSort = kk; S.ecoDir = ["name", "tech", "sp"].includes(kk) ? 1 : -1; }
     drawEcoUnits(); saveView();
   }));
-  setCSV(el, ["unit", "tech", "settlement_point", "realised_usd_per_mwh", "mwh", "revenue", "capacity_factor", "curtailed_share_est", "days"], us.map((u) => [u.name, u.tech, u.sp, u.pmwh, u.mwh, u.rev, u.cf, u.curt, u.days]), "Wind and solar realised revenue");
+  setCSV(el, ["unit", "tech", "settlement_point", "realised_usd_per_mwh", "mwh", "revenue", "capacity_factor", "curtailed_share", "days"], us.map((u) => [u.name, u.tech, u.sp, u.pmwh, u.mwh, u.rev, u.cf, u.curt, u.days]), "Wind and solar realised revenue");
 }
 
 // ---- links ------------------------------------------------------------------------
@@ -603,6 +596,7 @@ async function boot() {
   $("cday-prev").onclick = () => step(-1); $("cday-next").onclick = () => step(1);
   setSeg("eco-tech", S.ecoTech); bindSeg("eco-tech", "ecoTech", drawEcoUnits);
   $("eco-more").onclick = () => { S.ecoAll = true; drawEcoUnits(); };
+  $("nc-more").onclick = () => { S.ncAll = true; drawNodeCurtail(); };
   drawAll();
   window.CX.init();
   saveView();
