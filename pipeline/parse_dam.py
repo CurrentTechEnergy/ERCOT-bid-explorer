@@ -12,7 +12,7 @@ MW is a charging award.
 
 Writes data/dam/{date}.json.gz:
 {
-  "date", "source": "dam",
+  "date", "source": "dam", "format": 2,   # DAM_FORMAT; absent on files parsed before format 2
   "hours": 24,                      # 23 / 25 on daylight-saving days: hours are stored in
                                     # file order after the hour-ending column
   "files": {"gen": 1, "esr": 1},    # files read from the zip (esr: 0 before RTC+B, or when the
@@ -23,7 +23,11 @@ Writes data/dam/{date}.json.gz:
     "<Resource Name>": {
       "type": "CCGT90", "tech": "combined_cycle",
       "sp": "SETTLEMENT_POINT",     # the unit's settlement point (resource node)
-      "status": "ON",               # DAM resource status (the day's most common value)
+      "status": "ON",               # DAM resource status (the day's most common value): the
+                                    # QSE's plan for the unit when the DAM ran
+      "status_h": [24],             # hourly DAM resource status, only when it changes during the
+                                    # day (null where the hour has no row); days parsed before it
+                                    # was kept have only "status"
       "hsl": 540, "lsl": 320,       # daily median MW
       "hsl_h": [24],                # hourly HSL, only when it changes during the day (wind
                                     # and solar forecasts, temperature-dependent thermal limits)
@@ -58,6 +62,10 @@ from .store import iter_csvs
 GEN_FILE = "60d_dam_gen_resource_data"
 ESR_FILE = "60d_dam_esr"             # ESR Data file; its AS Offers sibling is skipped (see is_esr_data)
 ESR_FROM = "2025-12-06"              # first RTC+B day-ahead market: an ESR file is expected from here
+# Bump when the day file gains something a reprocess of history should fill in
+# (update.reprocess_60d redoes older files).  2: hourly resource status ("status_h"), diesel /
+# recip engines (DSL) under combustion_turbine, and ESR rows for days parsed before they were read.
+DAM_FORMAT = 2
 AS_SERVICES = {
     # key -> candidate normalised award column names (summed when several match)
     "regup": ["regupawarded"],
@@ -202,6 +210,12 @@ def parse_dam_frame(df: pd.DataFrame, files=None):
             u["hsl_h"] = _series(hv, h, n_hours, 1)
         st = [s for s in status[idx] if s]
         u["status"] = max(set(st), key=st.count) if st else ""
+        if len(set(st)) > 1:
+            sh = [None] * n_hours
+            for v, hh in zip(status[idx], h):
+                if v and 1 <= hh <= n_hours:
+                    sh[hh - 1] = str(v)
+            u["status_h"] = sh
         if any(np.nanmax(a[idx]) - np.nanmin(a[idx]) > 0.005 * max(1.0, abs(np.nanmax(a[idx])))
                for a in (hot, inter, cold) if np.isfinite(a[idx]).any()):
             u["start_var"] = True
@@ -233,8 +247,8 @@ def parse_dam_frame(df: pd.DataFrame, files=None):
     if unknown_types:
         warn(f"DAM {date}: resource types grouped as 'other': {sorted(unknown_types)}")
 
-    day = {"date": date, "source": "dam", "hours": n_hours, "files": files or {"gen": 1, "esr": 0},
-           "mcpc": mcpc, "units": units}
+    day = {"date": date, "source": "dam", "format": DAM_FORMAT, "hours": n_hours,
+           "files": files or {"gen": 1, "esr": 0}, "mcpc": mcpc, "units": units}
     if date >= ESR_FROM and not (files or {}).get("esr"):
         warn(f"DAM {date}: no ESR data file in the zip, batteries have no day-ahead rows")
     summary = _summary(tech_rows, award, n_hours, he)

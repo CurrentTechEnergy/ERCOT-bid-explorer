@@ -9,7 +9,8 @@ Schema
 ------
 {
   "date": "YYYY-MM-DD",
-  "format": 6,                # UNIT_FORMAT below; update.reprocess_60d redoes older files
+  "format": 8,                # UNIT_FORMAT below (8: diesel/recip "DSL" units are tech
+                              # combustion_turbine, no longer "other"); update.reprocess_60d redoes older files
   "runs": [m0, m1, ...],      # SCED run timestamps, minutes after midnight (int, floor of the
                               # timestamp; +1440 if a run falls on the next calendar day), in
                               # time order.  A "run index" below is a position in this list.
@@ -75,7 +76,7 @@ import pandas as pd
 from .curves import mw_at_prices
 
 FRAC_TECHS = ("wind", "solar")
-UNIT_FORMAT = 7      # bump when the day file gains something a reprocess of history should fill in
+UNIT_FORMAT = 8      # bump when the day file gains something a reprocess of history should fill in
 
 
 # ------------------------------------------------------------------ encoding --

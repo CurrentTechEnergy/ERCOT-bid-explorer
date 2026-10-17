@@ -6,7 +6,7 @@
 
 const TECHS = [
   { id: "combined_cycle", label: "Combined cycle", color: "--c1" },
-  { id: "combustion_turbine", label: "Combustion turbine", color: "--c2" },
+  { id: "combustion_turbine", label: "Peakers (CT and recip)", color: "--c2" },
   { id: "gas_steam", label: "Gas steam", color: "--c6" },
   { id: "coal", label: "Coal & lignite", color: "--c8" },
   { id: "nuclear", label: "Nuclear", color: "--c5" },
