@@ -6,13 +6,13 @@
 // Colors are fixed per technology and match the day view.
 const TECHS = [
   { id: "combined_cycle", keys: ["combined_cycle"], label: "Combined cycle", color: "--c1" },
-  { id: "combustion_turbine", keys: ["combustion_turbine"], label: "Combustion turbine", color: "--c2" },
+  { id: "combustion_turbine", keys: ["combustion_turbine"], label: "Peakers (CT and recip)", color: "--c2" },
   { id: "wind", keys: ["wind"], label: "Wind", color: "--c3" },
   { id: "solar", keys: ["solar"], label: "Solar", color: "--c4" },
   { id: "nuclear", keys: ["nuclear"], label: "Nuclear", color: "--c5" },
   { id: "gas_steam", keys: ["gas_steam"], label: "Gas steam", color: "--c6" },
   { id: "coal", keys: ["coal"], label: "Coal & lignite", color: "--c8" },
-  { id: "other", keys: ["hydro", "other"], label: "Other (hydro, diesel, biomass)", color: "--c-other" },
+  { id: "other", keys: ["hydro", "other"], label: "Other (hydro, biomass)", color: "--c-other" },
 ];
 const THERMAL = ["nuclear", "coal", "combined_cycle", "gas_steam", "combustion_turbine"];
 const FLOOR_TECHS = TECHS.filter((s) => !["wind", "solar"].includes(s.id));   // wind and solar have their own chart
@@ -246,7 +246,7 @@ async function drawFloor() {
     if (!S.I || !S.T.units.some((u) => u.le20)) return emptyMsg(el, "Not built yet. It fills in with the next data update.");
     if (!S.UH) {
       emptyMsg(el, "Loading hourly data…");
-      S.UH = (await tryJSON("data/unit_hours_60d.json.gz")) || { dates: [], units: {} };
+      await loadUnitHours();
       if (S.floorGroup !== "behaviour") return;
     }
     // each unit's MW while online, in every hour it ran (unit_hours_60d), summed by group
@@ -475,7 +475,7 @@ function drawGas() {
   };
   timeChart(hel, [
     { label: "Combined cycle", color: "--c1", values: hr("combined_cycle") },
-    { label: "Combustion turbine", color: "--c2", values: hr("combustion_turbine") },
+    { label: "Peakers (CT and recip)", color: "--c2", values: hr("combustion_turbine") },
     { label: "Gas steam", color: "--c6", values: hr("gas_steam") },
   ], { dates: T.dates, H: 220, title: `Implied heat rate: median unit's first offer price above $0 at or above LSL ÷ ${src.hsc ? "Houston Ship Channel" : "Henry Hub"} gas (MMBtu per MWh)`, yFmt: d3.format(",.1f"), tipFmt: d3.format(",.2f"), yTicks: [0, 5, 7, 10, 15, 20] });
 }
@@ -501,17 +501,19 @@ const STATUS6 = [
   { id: "offer", label: "Running on an offer", color: "--c1" },
   { id: "schedule", label: "Running without an offer curve", color: "--c4" },
   { id: "ruc", label: "Committed by ERCOT (RUC)", color: "--c8" },
-  { id: "other_on", label: "Other online states (testing, emergency, starting, stopping)", color: "--c7-soft" },
+  { id: "other_on", label: "Other online states (testing, held, starting, stopping)", color: "--c7-soft" },
+  { id: "quick", label: "Offline, quick start", color: "--c2" },
   { id: "off", label: "Offline but available", color: "--c-other" },
+  { id: "emr", label: "Emergency only", color: "--c5" },
   { id: "out", label: "On outage", color: "--ink-2" },
 ];
 function drawCapacity() {
   const el = $("cap-chart"), s = TECHS.find((t) => t.id === S.capTech);
   const C = S.I && S.I.tech[S.capTech];
   if (C && C.cap_offer) {
-    $("cap-note").textContent = "MW of capacity (HSL) by unit status, averaged over each day's SCED runs, from the per-unit 60-day data. \"Offline but available\" is the economic choice not to run; outages are not. Units running without an offer curve (status ONOS) are held to the MW their QSE scheduled; units testing without one are under Other online states. RUC is ERCOT committing a unit for reliability, which is rare.";
+    $("cap-note").textContent = "MW of capacity (HSL) by unit status, averaged over each day's SCED runs, from the per-unit 60-day data. \"Offline but available\" is the economic choice not to run; outages are not. Units running without an offer curve (status ONOS) are held to the MW their QSE scheduled; units testing without one are under Other online states. RUC is ERCOT committing a unit for reliability, which is rare. Quick start (OFFQS) is offline capacity SCED can start within the hour; emergency only (EMR, EMRSWGR) is kept for emergencies or can be switched to another grid, so it is not economic capacity.";
     staticLegend($("cap-legend"), STATUS6);
-    const series = STATUS6.map((g) => ({ ...g, values: C["cap_" + g.id] }));
+    const series = STATUS6.filter((g) => C["cap_" + g.id]).map((g) => ({ ...g, values: C["cap_" + g.id] }));
     return timeChart(el, series, { stack: true, dates: S.I.dates,
       stackMax: d3.max(S.I.dates, (_, i) => d3.sum(series, (x) => x.values[i] || 0)) || 1,
       H: 280, title: `${s.label}: capacity by status (MW)`, yFmt: d3.format(",.0f") });
@@ -694,7 +696,7 @@ function drawMarginalSmooth(el, H, list, w, narrow) {
 }
 
 // ---- marginality at the node ---------------------------------------------------------
-const MN_TECHS = TECHS.filter((s) => s.id !== "other").concat([{ id: "other", keys: ["other", "hydro"], label: "Other (hydro, diesel, biomass)", color: "--c-other" }]);
+const MN_TECHS = TECHS.filter((s) => s.id !== "other").concat([{ id: "other", keys: ["other", "hydro"], label: "Other (hydro, biomass)", color: "--c-other" }]);
 const MN_SPLIT = [
   { id: "at", label: "At lambda (sets the system price)", color: "--c1" },
   { id: "below", label: "Below lambda (behind an export constraint)", color: "--c4" },
@@ -906,7 +908,7 @@ async function drawUnitStrip(u, s, marks) {
   const el = $("unit-strip");
   if (!S.UH) {
     el.innerHTML = `<p class="empty">Loading hourly data…</p>`;
-    S.UH = (await tryJSON("data/unit_hours_60d.json.gz")) || { dates: [], units: {} };
+    await loadUnitHours();
     if (S.unit !== u.unit) return;
   }
   const str = S.UH.units[u.unit];
@@ -1107,6 +1109,13 @@ const ST_FLEET = [...ST_RESP, { id: "N", label: "Not running going in", color: "
 const ST_RANK = { a: 4, m: 3, "0": 2, o: 1, "-": 0 };
 const trainOf = (u) => { const m = /^(.*_CC\d+)_/.exec(u); return m ? m[1] : u; };
 
+// hourly per-unit strips and the timescale groups (pipeline/groups.py), loaded together
+async function loadUnitHours() {
+  const [uh, g] = await Promise.all([tryJSON("data/unit_hours_60d.json.gz"), tryJSON("data/groups_60d.json.gz")]);
+  S.UH = uh || { dates: [], units: {} };
+  S.G = g && g.units ? g : null;
+}
+
 function stretchBase() {
   if (S.stBase) return S.stBase;
   const UH = S.UH, I = S.I, info = new Map(S.T.units.map((u) => [u.unit, u]));
@@ -1171,6 +1180,10 @@ function stretchBase() {
     e.ran = st.some((c) => c === "m" || c === "a");
     const o = e.off.slice().sort(d3.ascending);
     e.offMin = o.length ? o[0] : null; e.offP10 = o.length ? d3.quantile(o, 0.1) : null; e.offMed = o.length ? d3.median(o) : null;
+    // the pipeline's groups (pipeline/groups.py, the same rules) are the shared definition, also
+    // used by the Commitment page; the lines above only cover a site deployed before that file
+    const g = S.G && S.G.units[e.unit];
+    if (g) [, e.group, , e.shut, e.offMin, e.offP10, e.offMed, e.pick] = g;
   }
   return (S.stBase = { N, lam, units, day0 });
 }
@@ -1342,7 +1355,7 @@ async function drawStretch() {
   if (!S.I) return emptyMsg(el, "Fills in after the data update builds the intraday file.");
   if (!S.UH) {
     el.innerHTML = `<p class="empty">Loading hourly data…</p>`;
-    S.UH = (await tryJSON("data/unit_hours_60d.json.gz")) || { dates: [], units: {} };
+    await loadUnitHours();
   }
   if (!S.UH.dates.length) return emptyMsg(el, "No hourly data.");
   const thr = +S.stThr, ts = techsOf(S.stTech).filter((t) => t !== "nuclear");

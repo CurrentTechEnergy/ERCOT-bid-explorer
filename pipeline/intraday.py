@@ -84,14 +84,16 @@ def _r(x, nd=1):
 
 
 # capacity (HSL) by status group, from the raw "Telemetered Resource Status" codes
-STATUS_GROUPS = ["offer", "schedule", "ruc", "other_on", "off", "out"]
+STATUS_GROUPS = ["offer", "schedule", "ruc", "other_on", "quick", "off", "emr", "out"]
 
 
 def status_group(s):
     """offer: ON (running on its offer curve); schedule: ONOS (running to an output schedule);
     ruc: ONRUC/ONOPTOUT (committed by ERCOT's RUC); other_on: any other online or transitional
-    state (ONTEST, ONHOLD, ONREG, ONEMR, EMR, EMRSWGR, STARTUP, SHUTDOWN, ...); off: OFF...
-    (offline but available); out: OUT (outage).  None for blank or absent."""
+    state (ONTEST, ONHOLD, ONREG, ONEMR, STARTUP, SHUTDOWN, ...); quick: OFFQS (offline, can be
+    started by SCED within the hour); off: OFF/OFFNS (offline but available); emr: EMR/EMRSWGR
+    (offline, available only in an emergency or switchable to another grid, so not economic
+    capacity); out: OUT (outage).  None for blank or absent."""
     if not s:
         return None
     if s == "ON":
@@ -102,8 +104,12 @@ def status_group(s):
         return "ruc"
     if s == "OUT":
         return "out"
+    if s == "OFFQS":
+        return "quick"
     if s.startswith("OFF"):
         return "off"
+    if s in ("EMR", "EMRSWGR"):
+        return "emr"
     return "other_on"
 
 

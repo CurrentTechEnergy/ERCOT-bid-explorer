@@ -48,7 +48,9 @@ TECH_OF_TYPE = {
     "WIND": "wind",
     "PVGR": "solar",
     "HYDRO": "hydro",
-    "DSL": "other", "RENEW": "other",
+    # diesel and reciprocating engines run like peakers, so they are grouped with combustion
+    # turbines ("Peakers"); biomass and other non-intermittent renewables stay in "other"
+    "DSL": "combustion_turbine", "RENEW": "other",
     "ESR": "storage",
 }
 TECH_LABELS = {
@@ -56,12 +58,12 @@ TECH_LABELS = {
     "coal": "Coal & lignite",
     "combined_cycle": "Combined cycle",
     "gas_steam": "Gas steam",
-    "combustion_turbine": "Combustion turbine",
+    "combustion_turbine": "Peakers (CT and recip)",
     "wind": "Wind",
     "solar": "Solar",
     "storage": "Storage (ESR)",
     "hydro": "Hydro",
-    "other": "Other (diesel, biomass, unclassified)",
+    "other": "Other (biomass, unclassified)",
 }
 SIXTY_DAY_TECHS = list(TECH_LABELS)
 
