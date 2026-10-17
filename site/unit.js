@@ -1,7 +1,8 @@
 /* Unit page: everything about one unit, reached from any unit row (unit.html?unit=NAME).
    This file: the unit picker, the header with the latest forecast's verdict and the decision
    history behind the unit's cutoff (data/decisions.json.gz, data/forecast/), hours online and
-   starts (data/unit_hours_60d.json.gz), one day by hour (data/60d-units/) and the thermal bidding charts (data/trends_60d.json.gz),
+   starts (data/unit_hours_60d.json.gz), one day by hour with the offer curve in the chosen hour
+   (data/60d-units/, data/60d-curves/) and the thermal bidding charts (data/trends_60d.json.gz),
    lifted from trends.js. unit-econ.js draws revenue and cost and unit-renew.js the wind and
    solar hedge formula and bidding history; both redraw on the "unitchange" event this file sends. */
 (() => {
@@ -24,7 +25,7 @@ const techLabel = (t) => (TECH_OF[t] ? TECH_OF[t].label : t === "storage" ? "Sto
 const SIG_FMT = { le0: (v) => d3.format(".0%")(v), noff: (v) => d3.format(".0%")(v), rel: (v) => (v >= 0 ? "+" : "−") + d3.format("$,.0f")(Math.abs(v)) };
 const GROUP_SHORT = { never: "Never off", seasonal: "Seasonal", multiday: "Multi-day", daily1: "Daily, under once a week", daily2: "Daily, 1 to 2 a week", daily3: "Daily, over 2 a week", ungrouped: "Not yet grouped" };
 const VERDICT = { on: "expected on", off: "expected off", maybe: "maybe: off on its loss but often holds a day-ahead award", nocut: "no cutoff yet (too few decision days)", outage: "on outage", peaker: "peaker: judged by its history at this price and hour" };
-const S = { econ: {}, day: null, T: null, DEC: null, UH: null, SP: null, FI: null, FC: null, PPA: null, list: new Map(), unit: null, cfg: null, span: null, last60: null };
+const S = { econ: {}, day: null, hour: null, T: null, DEC: null, UH: null, SP: null, FI: null, FC: null, PPA: null, list: new Map(), unit: null, cfg: null, span: null, last60: null };
 const { tryJSON, showTip, hideTip, setCSV, tickFormat, fmtKind, axisFmt, css, esc } = window.CX;
 const $ = (id) => document.getElementById(id);
 const fmtMW = d3.format(",.0f");
@@ -318,7 +319,8 @@ async function drawDay(e) {
   const H = d3.range(24).map((h) => ({ h, out: null, bp: null, hsl: null, lsl: null, n: 0 }));
   f.rows.forEach((r) => {
     if (!idx.has(r[0])) return;
-    const x = H[r[1] - 1];
+    const x = H[r[1] - 1], name = f.units[r[0]][0], o = r[ci.output] || 0;
+    if (!x.cfg || o > x.cfgOut) { x.cfg = name; x.cfgOut = o; }
     ["out", "bp", "hsl", "lsl"].forEach((k, j) => { const v = r[ci[["output", "base_point", "hsl", "lsl"][j]]]; if (v != null) x[k] = (x[k] || 0) + v; });
     x.n++;
   });
@@ -358,11 +360,93 @@ async function drawDay(e) {
       showTip(ev, `<h4>${fmtDate(parseDate(day))} · HE ${h + 1}</h4><table>` + (v.n ? `<tr><td>Output</td><td class="n">${fmtMW(v.out)} MW</td></tr><tr><td>Base point</td><td class="n">${v.bp == null ? "–" : fmtMW(v.bp) + " MW"}</td></tr>` +
         `<tr><td>Minimum to maximum</td><td class="n">${fmtMW(v.lsl)} to ${fmtMW(v.hsl)} MW</td></tr>` : `<tr><td colspan="2">Offline</td></tr>`) + `<tr><td>Lambda</td><td class="n">${fmtPrice(lam[h])}</td></tr></table>`);
     })
-    .on("pointerleave", hideTip);
+    .on("pointerleave", hideTip)
+    .on("click", (ev) => { S.hour = Math.max(0, Math.min(23, Math.floor((d3.pointer(ev)[0] - m.l) / x.step()))); saveView(); drawDay(e); });
+  if (S.hour == null || !H[S.hour].n) {
+    const onH = H.filter((v) => v.n);
+    S.hour = onH.length ? onH[d3.maxIndex(onH, (v) => lam[v.h] ?? -Infinity)].h : 12;
+  }
+  svg.insert("rect", ":first-child").attr("x", x(S.hour) - x.step() * x.padding() / 2).attr("width", x.step()).attr("y", m.t).attr("height", Hh + Hp - m.t - m.b)
+    .attr("fill", css("--accent-soft"));
   el.replaceChildren(svg.node());
+  drawCurve(e, day, H[S.hour], lam[S.hour]);
   setCSV(el, ["hour_ending", "output_mw", "base_point_mw", "lsl_mw", "hsl_mw", "lambda"], H.map((v) => [v.h + 1, v.out, v.bp, v.lsl, v.hsl, lam[v.h] ?? null]), `${e.name} ${day} by hour`);
   $("day-legend").innerHTML = `<span><span class="sw" style="background:var(${s.color})"></span>Output</span><span><span class="sw sw-line" style="border-top-color:var(--ink)"></span>Base point</span>` +
     `<span><span class="sw" style="background:var(${s.color});opacity:0.25"></span>Minimum to maximum output</span><span><span class="sw" style="background:var(--c8)"></span>Lambda below $0</span>`;
+}
+
+// the unit's offer curve in the chosen hour: as submitted and as SCED used it (data/60d-curves/<date>)
+const curveCache = new Map();
+const loadCurves = (d) => { if (!curveCache.has(d)) curveCache.set(d, tryJSON(`data/60d-curves/${d}.json.gz`)); return curveCache.get(d); };
+async function drawCurve(e, day, v, lam) {
+  const el = $("curve-chart"), h = v.h, thermal = THERMAL.includes(e.tech);
+  $("curve-block").hidden = !thermal;
+  if (!thermal) return;
+  $("curve-title").textContent = `Offer curve in HE ${h + 1}`;
+  if (!v.n) { $("curve-note").textContent = ""; $("curve-legend").innerHTML = ""; return emptyMsg(el, `Offline in HE ${h + 1}. Click an hour it ran in the chart above.`); }
+  const f = await loadCurves(day);
+  if (S.unit !== e.name || S.day !== day || S.hour !== h) return;
+  const u = f && f.units[v.cfg || e.name];
+  if (!u) { $("curve-note").textContent = ""; $("curve-legend").innerHTML = ""; return emptyMsg(el, f ? "No offer curve for this unit in this hour." : `No offer curve file for ${day}.`); }
+  const sub = u.sub[h] >= 0 ? u.curves[u.sub[h]] : null, used = u.used[h] >= 0 ? u.curves[u.used[h]] : null;
+  const lim = u.lim[h] || [v.hsl, v.lsl], s = TECH_OF[e.tech] || { color: "--c-other" };
+  const pts = (c) => (c ? c[0].map((p, i) => [c[1][i], p]) : []);
+  const A = pts(sub), B = pts(used);
+  if (!A.length && !B.length) { $("curve-note").textContent = ""; return emptyMsg(el, "No offer curve for this unit in this hour."); }
+  const all = [...A, ...B];
+  // price axis: keep the floor and the cap from squashing the part that matters
+  const ps = all.map((q) => q[1]).sort(d3.ascending);
+  const pMin = Math.max(-260, Math.min(-10, ps[0], lam ?? 0));
+  const pMax = Math.max(Math.min(ps.at(-1), Math.max(150, d3.quantile(ps, 0.8) * 1.3)), (lam ?? 0) * 1.1, 10);
+  const w = Math.max(280, el.clientWidth || 600), H = 280, m = { t: 18, r: 16, b: 38, l: 64 };
+  const x = d3.scaleLinear().domain([0, Math.max(lim[0] || 0, d3.max(all, (q) => q[0])) * 1.04]).nice().range([m.l, w - m.r]);
+  const y = d3.scaleLinear().domain([pMin, pMax]).nice().range([H - m.b, m.t]).clamp(true);
+  const svg = d3.create("svg").attr("viewBox", `0 0 ${w} ${H}`);
+  svg.append("g").attr("class", "gridline").attr("transform", `translate(${m.l},0)`).call(d3.axisLeft(y).ticks(6).tickSize(-(w - m.l - m.r)).tickFormat(""));
+  svg.append("g").attr("class", "axis").attr("transform", `translate(0,${H - m.b})`).call(axisFmt(d3.axisBottom(x), w < 560 ? 4 : 8, "MW").tickSizeOuter(0));
+  svg.append("g").attr("class", "axis").attr("transform", `translate(${m.l},0)`).call(axisFmt(d3.axisLeft(y), 6, "$").tickSizeOuter(0));
+  svg.append("text").attr("class", "axis-title").attr("x", m.l).attr("y", 10).text("Offer price ($/MWh)");
+  svg.append("text").attr("class", "axis-title").attr("x", w - m.r).attr("y", H - 4).attr("text-anchor", "end").text("MW");
+  if (y.domain()[0] < 0) svg.append("line").attr("class", "zero").attr("x1", m.l).attr("x2", w - m.r).attr("y1", y(0)).attr("y2", y(0));
+  // limits
+  if (lim[1]) svg.append("rect").attr("x", m.l).attr("width", Math.max(0, x(lim[1]) - m.l)).attr("y", m.t).attr("height", H - m.t - m.b).attr("fill", css("--ink-2")).attr("fill-opacity", 0.08);
+  [[lim[1], "LSL"], [lim[0], "HSL"]].forEach(([mw, l]) => { if (mw) {
+    svg.append("line").attr("x1", x(mw)).attr("x2", x(mw)).attr("y1", m.t).attr("y2", H - m.b).attr("stroke", css("--ink-2")).attr("stroke-dasharray", "2 3");
+    svg.append("text").attr("class", "axis-title").attr("x", x(mw) + (l === "HSL" ? -4 : 4)).attr("y", H - m.b - 6).attr("text-anchor", l === "HSL" ? "end" : "start").text(l);
+  } });
+  if (lam != null) {
+    svg.append("line").attr("class", "price-rule").attr("x1", m.l).attr("x2", w - m.r).attr("y1", y(lam)).attr("y2", y(lam));
+    svg.append("text").attr("class", "axis-title").attr("x", w - m.r - 4).attr("y", y(lam) - 5).attr("text-anchor", "end")
+      .attr("paint-order", "stroke").attr("stroke", css("--surface")).attr("stroke-width", 3).text(`lambda ${fmtPrice(lam)}`);
+  }
+  const line = d3.line().x((q) => x(q[0])).y((q) => y(q[1]));
+  if (A.length) svg.append("path").attr("fill", "none").attr("stroke", css("--ink-2")).attr("stroke-width", 1.5).attr("stroke-dasharray", "5 3").attr("d", line(A));
+  if (B.length) svg.append("path").attr("fill", "none").attr("stroke", css(s.color)).attr("stroke-width", 2.2).attr("d", line(B));
+  const onCurve = (P, mw) => { if (!P.length) return null; if (mw <= P[0][0]) return P[0][1]; for (let i = 1; i < P.length; i++) if (mw <= P[i][0]) { const [a, b] = [P[i - 1], P[i]]; return b[0] === a[0] ? b[1] : a[1] + (b[1] - a[1]) * (mw - a[0]) / (b[0] - a[0]); } return P.at(-1)[1]; };
+  const bpMW = v.bp != null ? v.bp : v.out;
+  if (bpMW != null && (B.length || A.length)) {
+    const py = onCurve(B.length ? B : A, bpMW);
+    svg.append("circle").attr("cx", x(bpMW)).attr("cy", y(py)).attr("r", 4.5).attr("fill", css("--ink")).attr("stroke", css("--surface")).attr("stroke-width", 1.5);
+  }
+  const ys = [...new Set(all.map((q) => q[1]))];
+  svg.append("rect").attr("x", m.l).attr("y", m.t).attr("width", w - m.l - m.r).attr("height", H - m.t - m.b).attr("fill", "transparent")
+    .on("pointermove", (ev) => {
+      const mw = x.invert(d3.pointer(ev)[0]);
+      showTip(ev, `<h4>${fmtMW(mw)} MW · HE ${h + 1}</h4><table>` +
+        (A.length ? `<tr><td>Submitted</td><td class="n">${fmtPrice(onCurve(A, mw))}</td></tr>` : "") +
+        (B.length ? `<tr><td>As used by SCED</td><td class="n">${fmtPrice(onCurve(B, mw))}</td></tr>` : "") +
+        `<tr><td>Lambda</td><td class="n">${fmtPrice(lam)}</td></tr></table>`);
+    })
+    .on("pointerleave", hideTip);
+  el.replaceChildren(svg.node());
+  setCSV(el, ["curve", "mw", "price"], [...A.map((q) => ["submitted", ...q]), ...B.map((q) => ["used", ...q])], `${v.cfg || e.name} ${day} HE ${h + 1} offer curve`);
+  const off = all.filter((q) => q[1] < y.domain()[0] || q[1] > y.domain()[1]).length;
+  const diff = sub && used && JSON.stringify(sub) !== JSON.stringify(used);
+  $("curve-note").textContent = `${v.cfg && v.cfg !== e.name ? `${v.cfg}, the configuration online. ` : ""}Base point ${v.bp == null ? "–" : fmtMW(v.bp) + " MW"} against minimum ${fmtMW(lim[1])} and maximum ${fmtMW(lim[0])} MW. ` +
+    (!used ? "The disclosure for this day has no SCED-used curve. " : !sub ? "No submitted curve this hour: SCED used ERCOT's curve. " : diff ? "SCED's curve differs from the submitted one: ERCOT extends the curve to the unit's limits and applies mitigation. " : "SCED used the curve as submitted. ") +
+    (off ? "Points beyond the price axis sit at its edge; the download has them all. " : "") + "Click another hour in the chart above to change it.";
+  $("curve-legend").innerHTML = `<span><span class="sw sw-line" style="border-top-color:var(${s.color})"></span>As used by SCED</span><span><span class="sw sw-line" style="border-top:2px dashed var(--ink-2)"></span>As submitted</span>` +
+    `<span><span class="sw" style="background:var(--ink);border-radius:50%"></span>Base point</span><span><span class="sw sw-line" style="border-top-color:var(--ink-2)"></span>System lambda</span>`;
 }
 
 // ---- bidding (thermal, per configuration), lifted from the Trends unit detail -------------
@@ -408,7 +492,7 @@ function drawBidding(e) {
 function saveView() {
   const q = S.unit ? `?unit=${encodeURIComponent(S.unit)}` : "";
   if (q !== location.search) history.replaceState(null, "", q + location.hash);
-  window.CX.writeHash({ cfg: S.cfg && S.list.get(S.unit)?.configs.length > 1 ? S.cfg : null, day: S.day });
+  window.CX.writeHash({ cfg: S.cfg && S.list.get(S.unit)?.configs.length > 1 ? S.cfg : null, day: S.day, he: S.hour == null ? null : S.hour + 1 });
 }
 function draw() {
   const e = S.list.get(S.unit);
@@ -420,7 +504,7 @@ function draw() {
 async function select(name, cfg, keepDay) {
   if (!S.list.has(name)) return;
   S.unit = name; S.cfg = cfg || null;
-  if (!keepDay) S.day = null;
+  if (!keepDay) { S.day = null; S.hour = null; }
   $("unit-pick").value = name;
   const e = S.list.get(name);
   if (!(e.tech in S.econ)) S.econ[e.tech] = await tryJSON(`data/econ/${e.tech}.json.gz`);
@@ -442,9 +526,10 @@ async function boot() {
   pick.addEventListener("change", () => select(pick.value.trim()));
   pick.addEventListener("input", () => { if (S.list.has(pick.value)) select(pick.value); });
   window.CX.init();
-  $("day-pick").addEventListener("change", (ev) => { S.day = ev.target.value; saveView(); drawDay(S.list.get(S.unit)); });
+  $("day-pick").addEventListener("change", (ev) => { S.day = ev.target.value; S.hour = null; saveView(); drawDay(S.list.get(S.unit)); });
   const want = new URLSearchParams(location.search).get("unit") || v.unit;
   S.day = v.day || null;
+  S.hour = v.he ? +v.he - 1 : null;
   if (want && S.list.has(want)) select(want, v.cfg, true); else draw();
   let t, lastW = 0;
   new ResizeObserver((en) => { const w = Math.round(en[0].contentRect.width); if (w === lastW) return; lastW = w; clearTimeout(t); t = setTimeout(() => { draw(); window.dispatchEvent(new CustomEvent("unitresize")); }, 150); }).observe(document.querySelector("main"));
