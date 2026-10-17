@@ -12,7 +12,8 @@ For a unit with weight p_on (from thermal_cutoff, or by hour from peaker_share):
             MW scaled to the train's HSL, since the snapshot may hold a smaller configuration;
             a unit without a curve runs at its median output when running, else at HSL
             (nuclear) or LSL
-  min[h]  = p_on x LSL          the committed minimum
+  min[h]  = p_on x floor        the committed minimum (floor = the snapshot configuration LSL the
+                                curve is clamped to, else the day-ahead LSL)
   off window: a unit judged "off" or "maybe" for a window is at 0 inside it (its p_on applies
             outside), since the verdict says it shuts for those hours; a whole-day "off" is 0
             throughout; nuclear runs at HSL.
@@ -22,7 +23,7 @@ import numpy as np
 from ..forecast import context as C
 
 NAME = "thermal_dispatch"
-VERSION = "v0"
+VERSION = "v1"    # v1: committed minimum uses the configuration floor; breakpoint interpolation fix
 
 
 def _config_curve(ctx, month, u):
@@ -58,6 +59,7 @@ def forecast(date, ctx: C.Context, commit: dict, peakers: dict) -> dict:
         c = _config_curve(ctx, month, u)
         s = ctx.stats["units"].get(key)
         mw = np.zeros(24)
+        floor = lsl    # the minimum the model holds the unit at when on: the snapshot configuration's LSL
         if row["tech"] == "nuclear":
             mw[:] = hsl
         elif c and prices is not None:
@@ -66,14 +68,17 @@ def forecast(date, ctx: C.Context, commit: dict, peakers: dict) -> dict:
             clsl = c["lsl"] if c.get("lsl") is not None else lsl
             scale = hsl / chsl if (len(u["configs"]) > 1 and chsl and hsl and abs(hsl - chsl) > 1) else 1.0
             cmw = (np.asarray(c["mw"], float) * scale).tolist()
+            floor = min(clsl * scale, chsl * scale)
             for h in range(24):
-                mw[h] = C.curve_mw(c["p"], cmw, float(prices[h]), min(clsl * scale, chsl * scale), chsl * scale)
+                mw[h] = C.curve_mw(c["p"], cmw, float(prices[h]), floor, chsl * scale)
             # the snapshot's limits can differ from the DAM's; keep the DAM's as the envelope
-            mw = np.clip(mw, lsl, hsl) if hsl > 0 else mw
+            if hsl > 0:
+                mw = np.clip(mw, lsl, hsl)
+                floor = float(min(max(floor, lsl), hsl))
         elif s and s["out_med"] is not None:
             mw[:] = min(max(s["out_med"], lsl), hsl) if hsl > 0 else s["out_med"]
         else:
             mw[:] = hsl if row["tech"] == "nuclear" else lsl
-        rows[key] = {"exp": np.round(p * mw, 1), "min": np.round(p * lsl, 1), "hsl": hsl, "p": np.round(p, 3),
-                     "curve": bool(c), "model": NAME, "version": VERSION}
+        rows[key] = {"exp": np.round(p * mw, 1), "min": np.round(p * floor, 1), "hsl": hsl, "p": np.round(p, 3),
+                     "floor": round(floor, 1), "curve": bool(c), "model": NAME, "version": VERSION}
     return {"rows": rows, "inputs": {"curve_month": month, "curve_hindsight": hindsight, "with_curve": n_curve}}

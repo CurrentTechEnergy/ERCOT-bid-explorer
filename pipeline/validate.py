@@ -15,6 +15,11 @@ consistency:
   statuses          per-unit file: status codes and resource types the pipeline knows
   dam               DAM day file: awards within each hour's HSL (warning), 24 hours per unit,
                     and (recorded) how the day-ahead awards compare with real-time base points
+  fit               2-day fit file (pipeline/models/two_day_fit): the residual after the fit is
+                    not above the residual before, the fitted curve at the cap does not exceed
+                    the 2-day curve by more than the tolerance, group sums equal the fleet, a
+                    model and version on every row, and (recorded) the fitted committed minimum
+                    against the 2-day curve at -$20
   storage           battery day file (pipeline/storage): fleet discharging and charging rebuilt
                     from the per-unit base points match the 2-day generation summary's ESR
                     series; every battery has 24 hours; DAM awards within each battery's HSL
@@ -78,9 +83,11 @@ TOL = {
     "irr_bp_mw": 2500,         # wind / solar base point vs generation summary, MW (warning)
     "limit_mw": 5,             # curve vs HSL / LSL, base point vs HSL: rounding slack, MW
     "lambda_hub": 0.5,         # min hourly correlation of system lambda and hub average (warning)
+    "fit_cap_mw": 1500,        # fitted curve at the cap above the 2-day curve at the cap, worst hour, MW (warning)
     "storage_bp_mw": 400,      # fleet discharging / charging vs generation summary ESR series: median hour, MW (error)
     "storage_bp_max_mw": 1000, # same, worst hour (warning)
     "soc_mwh": 1.0,            # state of charge outside [min, max] by more than this, MWh (warning)
+    "storage_fleet_mw": 20000, # forecast battery fleet discharging or charging above this, MW (warning)
 }
 
 
@@ -325,9 +332,32 @@ def check_day(date, have):
             _stack_checks(day, fc, st)
         else:
             day.add("forecast_stack", "warning", "forecast day without a dispatch stack file")
+    ft = read_json_gz(DATA_DIR / "fit" / f"{date}.json.gz") if date in have.get("fit", ()) else None
+    if ft:
+        _fit_checks(day, ft)
     return day
 
 
+def _fit_checks(day, ft):
+    r = ft["residual"]
+    day.add("fit_residual", "ok" if r["after"] <= r["before"] else "error",
+            f"weighted residual {r['before']:,.0f} before, {r['after']:,.0f} after ({1 - r['after'] / r['before']:.0%} lower)" if r["before"]
+            else "no residual recorded")
+    T = np.array([[np.nan if v is None else v for v in row] for row in ft["hourly"]["target"]], float)
+    A = np.array([[np.nan if v is None else v for v in row] for row in ft["hourly"]["after"]], float)
+    over = A[:, -1] - T[:, -1]
+    day.limit("fit_cap", np.where(over > 0, over, 0.0), np.full(24, TOL["fit_cap_mw"]), "fitted curve at the cap above the 2-day curve", warn_only=True)
+    g_lsl = sum(v["lsl_fit"] for v in ft["groups"].values())
+    t_lsl = sum(v["lsl_fit"] for v in ft["tech"].values())
+    day.add("fit_sums", "ok" if abs(g_lsl - t_lsl) <= 2 else "error", f"fitted LSL by group {g_lsl:,.0f} MW, by technology {t_lsl:,.0f} MW")
+    cols = ft["units"]["columns"]
+    im, iv = cols.index("model"), cols.index("version")
+    bad = sum(1 for row in ft["units"]["rows"] if not row[im] or not row[iv])
+    day.add("fit_model", "ok" if not bad else "error", f"{bad} row(s) without a model name or version" if bad else "every row names its model and version")
+    lsl_fit = _v(ft["hourly"]["lsl_fit"])
+    at20 = T[:, 1]
+    day.add("fit_lsl_vs_curve", "info", f"fitted committed minimum minus the 2-day curve at -$20, median hour {np.nanmedian(lsl_fit - at20):+.0f} MW "
+            f"(the curve at -$20 holds most of the online LSL; units pricing minimum output above $0 sit higher)")
 def _storage_checks(day, st, gen, dam):
     f = st["fleet"]
     # fleet discharging and charging against ERCOT's own ESR sums (independent file)
@@ -472,7 +502,22 @@ def _forecast_checks(day, fc):
     no_model = sum(1 for r in fc["units"]["rows"] if not r[im] or not r[iv])
     rc = fc["renewables"]["columns"]
     no_model += sum(1 for r in fc["renewables"]["rows"] if not r[rc.index("model")] or not r[rc.index("version")])
-    series = [k for k in list(groups) + list(h["tech"]) + ["fleet", "wind", "solar"] if not h["model"].get(k)]
+    series = [k for k in list(groups) + list(h["tech"]) + ["fleet", "wind", "solar"] + (["storage"] if h.get("storage") else []) if not h["model"].get(k)]
+    st = h.get("storage")
+    if st:
+        dis, chg, soc = _v(st["dis"]), -_v(st["chg"]), _v(st["soc"])
+        hs = fc["headline"].get("storage") or {}
+        both = int(((dis > 0) & (chg > 0)).sum())
+        neg = int(((dis < -tol) | (chg < -tol) | (soc < -tol)).sum())
+        eff = hs.get("eff") or 1.0
+        start = soc[0] - (chg[0] * eff - dis[0])
+        energy_ok = np.nansum(dis) <= np.nansum(chg) * eff + start + 1.0
+        day.add("forecast_storage", "error" if both or neg or not energy_ok else "ok",
+                f"{both} hour(s) charging and discharging at once, {neg} negative value(s), "
+                f"discharged {np.nansum(dis) / 1000:.1f} GWh against {np.nansum(chg) / 1000:.1f} GWh charged x {eff:.2f} + {start / 1000:.1f} GWh to start"
+                if (both or neg or not energy_ok) else
+                f"battery fleet: discharging peaks {np.nanmax(dis):,.0f} MW, charging {np.nanmax(chg):,.0f} MW, one direction per hour, energy balanced at {eff:.2f}")
+        day.limit("forecast_storage_mw", np.maximum(dis, chg), np.full(24, TOL["storage_fleet_mw"]), "battery fleet MW above the fleet bound", warn_only=True)
     day.add("forecast_model", "ok" if not no_model and not series else "error",
             f"{no_model} row(s) without a model name or version; series without one: {series}" if (no_model or series)
             else "every row and series names its model and version")
@@ -488,6 +533,7 @@ def _have(index):
     have = {k: set(index["days"].get(k, [])) for k in ("2d", "60d", "2dgen", "dam", "prices")}
     fc = read_json_gz(DATA_DIR / "forecast" / "index.json.gz", default=None) or {}
     have["forecast"] = set(fc.get("days", []))
+    have["fit"] = set(index["days"].get("fit", []))
     have["storage"] = set(index["days"].get("storage", []))
     return have
 
