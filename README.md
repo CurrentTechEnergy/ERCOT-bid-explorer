@@ -37,7 +37,7 @@ SCED can only move a unit between its LSL and HSL, so the part of a curve below 
 
 ### Accuracy checks
 
-After processing, `pipeline/validate.py` checks every new or changed operating day: the wind, solar and storage curves rebuilt from 60-day unit data against ERCOT's 2-day aggregate curves, thermal base points against the 2-day generation summary, battery charging and discharging rebuilt from the per-unit base points against the summary's ESR series (with each battery's DAM awards against its limits and its state of charge against its window), curves and base points against online HSL, SCED runs per hour (allowing for DST), system lambda against the hub average, and status codes and resource types the pipeline does not know. A new error stops the run before anything is committed (an error already recorded for that day, from a run committed with **ignore_checks**, does not block a later re-check); warnings appear on the run summary. Results that did not pass are kept per day in `site/data/validation.json`. To commit a day anyway, run the workflow with **ignore_checks**.
+After processing, `pipeline/validate.py` checks every new or changed operating day: the wind, solar and storage curves rebuilt from 60-day unit data against ERCOT's 2-day aggregate curves, thermal base points against the 2-day generation summary, the 2-day fit's residual and its fitted curve against the 2-day curve, battery charging and discharging rebuilt from the per-unit base points against the summary's ESR series (with each battery's DAM awards against its limits and its state of charge against its window), curves and base points against online HSL, SCED runs per hour (allowing for DST), system lambda against the hub average, and status codes and resource types the pipeline does not know. A new error stops the run before anything is committed (an error already recorded for that day, from a run committed with **ignore_checks**, does not block a later re-check); warnings appear on the run summary. Results that did not pass are kept per day in `site/data/validation.json`. To commit a day anyway, run the workflow with **ignore_checks**.
 
 ```bash
 python -m pipeline.validate --all --no-fail   # re-check every day
@@ -133,7 +133,12 @@ pipeline/
                    own cutoff), thermal_dispatch (the committed set's offer curves met by the hourly
                    day-ahead price), peaker_share (combustion turbines by price level and hour),
                    renewable_floor (wind and solar forecast less what prices itself out at its
-                   node), storage_habit (not built until the battery data is loaded)
+                   node), storage_habit (the battery fleet's discharging and charging by hour from
+                   its recent habit, nudged by the day's hub price shape; python -m
+                   pipeline.models.storage_habit --backtest prints how the rule has done)
+                   two_day_fit (the 2-day fit, plan layer 2: the committed set inferred from the 2-day
+                   thermal curve two days after the day, by unit, combined-cycle configuration and the
+                   peaker fleet's hourly share; data/fit/<date>.json.gz, scored beside the forecast)
   decisions.py     hourly unit states + DAM node prices, costs and awards -> each thermal unit's
                    shutdown decisions day by day, its loss cutoff, and tomorrow's expected
                    turn-offs from the day-ahead node prices (no downloads)
@@ -150,7 +155,7 @@ site/
   builder.html, builder.js, guide.html, guide.js, style.css, vendor/d3.min.js
   data/            generated: index.json, summary_*.json.gz, marginal_*.json.gz, 2d/, 60d/, dam/, prices/,
                    curtail_nodes.json.gz, marginal_nodes.json.gz, gas.json.gz, gas_hubs.json.gz,
-                   series/, storage/
+                   series/, storage/, forecast/, fit/
 ```
 
 ### Day-ahead offers and costs

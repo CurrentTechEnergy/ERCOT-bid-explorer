@@ -379,8 +379,9 @@ def curve_mw(p, mw, price, lsl, hsl):
         v = 0.0
     elif j == len(p) - 1:
         v = mw[-1]
-    elif p[j + 1] <= price:
-        v = mw[j]
     else:
+        # p[j] < price <= p[j+1], so the segment is sloped or ends exactly at the price: interpolate.
+        # At price == p[j+1] this gives mw[j+1], the top of a ramp that ends there, while a step
+        # at the price (p[j+1] == p[j+2]) stays uncounted because the ramp stops at its bottom.
         v = mw[j] + (price - p[j]) / (p[j + 1] - p[j]) * (mw[j + 1] - mw[j])
     return float(min(max(v, lsl), hsl))

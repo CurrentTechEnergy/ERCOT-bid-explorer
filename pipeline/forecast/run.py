@@ -1,4 +1,4 @@
-"""Build the forecast files: curve snapshots, one file per day, scores and the index."""
+"""Build the forecast files: curve snapshots, one file per day, the 2-day fit, scores and the index."""
 import argparse
 import time
 
@@ -6,6 +6,7 @@ from ..store import load_index
 from . import context as C
 from .build import OUT_DIR, forecast_days, write_day, write_index
 from .score import score_days
+from ..models.two_day_fit import fit_days, write_index as write_fit_index
 
 
 def build_forecast(index: dict, days=None) -> list:
@@ -16,13 +17,15 @@ def build_forecast(index: dict, days=None) -> list:
     todo = [d for d in all_days if days is None or days[0] <= d <= days[1]]
     for d in todo:
         write_day(d, ctx)
+    n_fit = len(fit_days(ctx, all_days, OUT_DIR))       # the 2-day fit for every day with a 2-day curve
+    write_fit_index(index)
     score_days(all_days, ctx, OUT_DIR)
     write_index(ctx, all_days)
     # files for days that no longer have a price source are stale; drop them
     for p in [*OUT_DIR.glob("20*.json.gz"), *(OUT_DIR / "stack").glob("20*.json.gz")]:
         if p.name[:10] not in set(all_days):
             p.unlink()
-    print(f"forecast: {len(todo)} day(s) built, {len(all_days)} in the index, {time.time() - t0:.0f}s"
+    print(f"forecast: {len(todo)} day(s) built, {n_fit} fitted, {len(all_days)} in the index, {time.time() - t0:.0f}s"
           + (f", latest {all_days[-1]}" if all_days else ""))
     return todo
 
