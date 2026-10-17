@@ -120,6 +120,8 @@ function legend(el, list, hidden, redraw) {
   };
 }
 
+// a unit's own page; a combined-cycle configuration opens its train
+const unitLink = (u) => { const m = /^(.*_CC\d+)_/.exec(u); return `<a href="unit.html?unit=${encodeURIComponent(m ? m[1] : u)}">${esc(u)}</a>`; };
 const techLabel = (t) => TECHS.find((x) => x.id === t)?.label || t;
 const HOUR_MS = 36e5;
 const hourTime = (d, h) => new Date(parseDate(d).getTime() + (h - 11.5) * HOUR_MS);   // middle of hour ending h + 1
@@ -490,7 +492,7 @@ function drawNodeMarginal() {
   // units most often marginal away from lambda
   const urows = D.units.map((r) => ({ unit: r[0], tech: r[1], sp: r[2], on: r[3], at: r[4], below: r[5], above: r[6], implied: r[7], node: r[8], nn: r[9], hsl: r[10] }));
   const cols = [
-    { h: "Unit", t: true, f: (r) => esc(r.unit) }, { h: "Technology", t: true, f: (r) => techLabel(r.tech) }, { h: "Settlement point", t: true, f: (r) => esc(r.sp || "–") },
+    { h: "Unit", t: true, f: (r) => unitLink(r.unit) }, { h: "Technology", t: true, f: (r) => techLabel(r.tech) }, { h: "Settlement point", t: true, f: (r) => esc(r.sp || "–") },
     { h: "Mean HSL", f: (r) => fmtMW(r.hsl) }, { h: "Hours online", f: (r) => fmtMW(r.on) }, { h: "Marginal at lambda", f: (r) => fmtMW(r.at) },
     { h: "Below lambda", f: (r) => fmtMW(r.below) }, { h: "Above lambda", f: (r) => fmtMW(r.above) },
     { h: "Mean implied price", f: (r) => fmtPrice(r.implied) }, { h: "Mean node price, same runs", f: (r) => (r.nn ? fmtPrice(r.node) : "–") }, { h: "Runs with node price", f: (r) => r.nn.toLocaleString() },

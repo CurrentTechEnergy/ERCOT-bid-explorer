@@ -184,7 +184,8 @@ function drawHeadline() {
   $("track").innerHTML = tr
     ? `<b>Track record</b> (${tr.n} days scored, model versions ${esc(Object.entries(S.fc.models).filter(([, v]) => v).map(([k, v]) => `${k} ${v}`).join(", "))}): thermal energy over the day within ${fmtPct(S.scores.headline_tol)} of the 2-day summary on ${fmtPct(tr.headline_hit)} of ${tr.n_two_day} days; each unit's on or off call right on ${fmtPct(tr.unit_hit)} of ${d3.format(",")(tr.n_judged)} unit-days against the 60-day disclosure (${tr.n_sixty_day} days); thermal output off by ${fmtGW(tr.thermal_mae)} GW on average, wind by ${fmtGW(tr.wind_mae)} GW, solar by ${fmtGW(tr.solar_mae)} GW` +
       (tr.by_band && tr.by_band[band] ? `. On ${band} days: thermal within tolerance ${fmtPct(tr.by_band[band].headline_hit)} of ${tr.by_band[band].n_two_day} days, unit calls right ${fmtPct(tr.by_band[band].unit_hit)}.` : ".") +
-      (tr.storage_dis_mae != null ? ` <b>Batteries</b> (${tr.n_storage} days): fleet discharging off by ${fmtGW(tr.storage_dis_mae)} GW an hour on average, charging by ${fmtGW(tr.storage_chg_mae)} GW${tr.storage_peak_bias != null ? `; the peak hour ${tr.storage_peak_bias < 0 ? "under" : "over"} by ${fmtGW(Math.abs(tr.storage_peak_bias))} GW` : ""}.` : "")
+      (tr.storage_dis_mae != null ? ` <b>Batteries</b> (${tr.n_storage} days): fleet discharging off by ${fmtGW(tr.storage_dis_mae)} GW an hour on average, charging by ${fmtGW(tr.storage_chg_mae)} GW${tr.storage_peak_bias != null ? `; the peak hour ${tr.storage_peak_bias < 0 ? "under" : "over"} by ${fmtGW(Math.abs(tr.storage_peak_bias))} GW` : ""}.` : "") +
+      (tr.fit && tr.fit.lsl_mae_fit != null ? ` <b>2-day fit</b> (${tr.fit.version}, ${tr.fit.n_sixty_day} days): the committed minimum is off by ${fmtGW(tr.fit.lsl_mae_fc)} GW in the forecast and ${fmtGW(tr.fit.lsl_mae_fit)} GW after the fit; unit calls right ${fmtPct(tr.fit.unit_hit_fc)} and ${fmtPct(tr.fit.unit_hit_fit)}${tr.fit.config_hit != null ? `, combined-cycle configuration right ${fmtPct(tr.fit.config_hit)}` : ""}.` : "")
     : "No scores yet.";
 }
 
@@ -391,6 +392,10 @@ function drawHourly() {
   const stChg = S.day.hourly.storage && S.day.hourly.storage.chg.map((v) => (v == null ? null : -v));
   if (stChg) lines.push({ id: "storage_chg", label: "Batteries charging (load)", color: STORAGE.color, vals: stChg, dash: "1 3", own: stChg });
   if (gh && gh.charging.some((v) => v != null)) lines.push({ id: "act_chg", label: "2-day actual: batteries charging", color: STORAGE.color, vals: gh.charging.map((v) => (v == null ? null : -v)), dash: "5 3", own: gh.charging.map((v) => (v == null ? null : -v)) });
+  // the 2-day fit's committed minimum: the online LSL of the units the fit says were on, two days after
+  // the day (pipeline/models/two_day_fit); drawn as a line like the forecast's minimum
+  const fitLsl = S.fit && S.fit.hourly && S.fit.hourly.lsl_fit;
+  if (fitLsl) lines.push({ id: "fit_lsl", label: "2-day fit: committed minimum", color: "--c-other", vals: fitLsl, dash: "2 3", own: fitLsl });
   $("hourly-legend").innerHTML = ser.map((s) => `<button type="button" data-id="${s.id}" aria-pressed="${!S.hidden.has(s.id)}"><span class="sw" style="background:var(${s.color})"></span>${s.label}</button>`).join("") +
     `<span class="legend-static"><span><span class="mk" style="border-color:var(--ink)"></span>Committed thermal minimum (stays on at any price)</span></span>` +
     lines.map((l) => `<button type="button" data-id="${l.id}" aria-pressed="${!S.hidden.has(l.id)}"><span class="sw sw-line" style="border-color:var(${l.color});border-style:${l.dash ? "dashed" : "solid"}"></span>${l.label}</button>`).join("");
@@ -440,7 +445,7 @@ function drawHourly() {
 // ---------------------------------------------------------------- how the day went ---
 function drawScore() {
   const sc = dayScore(), el = $("score-table"), panel = $("score-panel");
-  panel.hidden = !sc || (!sc.two_day && !sc.sixty_day);
+  panel.hidden = !sc || (!sc.two_day && !sc.sixty_day && !sc.fit);
   if (panel.hidden) return;
   const rows = [], csv = [];
   const row = (what, exp, act, extra = "") => {
@@ -459,6 +464,11 @@ function drawScore() {
       row("Batteries charging, 2-day summary", td.storage_chg_gwh_exp, td.storage_chg_gwh_act, td.storage_chg_mae != null ? `off by ${fmtGW(td.storage_chg_mae)} GW per hour on average` : "");
     }
   }
+  const fs = sc.fit;
+  if (fs && fs.lsl_act_gwh != null) {
+    row("Committed minimum (online LSL), forecast", fs.lsl_fc_gwh, fs.lsl_act_gwh, `off by ${fmtGW(fs.lsl_mae_fc)} GW per hour on average; unit calls right ${fmtPct(fs.unit_hit_fc)} of ${fs.n_judged}`);
+    row("Committed minimum (online LSL), 2-day fit", fs.lsl_fit_gwh, fs.lsl_act_gwh, `off by ${fmtGW(fs.lsl_mae_fit)} GW; unit calls right ${fmtPct(fs.unit_hit_fit)}${fs.config_hit != null ? `; combined-cycle configuration right ${fmtPct(fs.config_hit)} of ${fs.n_config}` : ""}`);
+  }
   const sd = sc.sixty_day;
   if (sd) {
     row("Thermal fleet, 60-day disclosure", sd.fleet.exp_gwh, sd.fleet.act_gwh, `unit on/off calls right ${fmtPct(sd.unit_hit)} of ${sd.n_judged}; peakers online ${fmtPct(sd.peaker_online_share)} of unit-hours against ${fmtPct(sd.peaker_p_on)} expected`);
@@ -466,7 +476,7 @@ function drawScore() {
     TECHS.forEach(([t, label]) => { if (sd.tech[t]) row(`· ${label}`, sd.tech[t].exp_gwh, sd.tech[t].act_gwh); });
   }
   el.innerHTML = `<table class="data"><thead><tr><th class="t">Energy over the day</th><th>Forecast (GWh)</th><th>Actual (GWh)</th><th>Error</th><th class="t"></th></tr></thead><tbody>${rows.join("")}</tbody></table>`;
-  $("score-note").textContent = `${S.date} · ${sc.band} day · scored against ${[td && "the 2-day summary", sd && "the 60-day disclosure"].filter(Boolean).join(" and ")}`;
+  $("score-note").textContent = `${S.date} · ${sc.band} day · scored against ${[td && "the 2-day summary", sd && "the 60-day disclosure"].filter(Boolean).join(" and ")}${fs ? " · 2-day fit " + (fs.version || "") : ""}`;
   setCSV(el, ["what", "forecast_gwh", "actual_gwh", "error"], csv, `Score ${S.date}`);
 }
 
@@ -634,7 +644,7 @@ function drawUnits() {
   const fmt = (r, k, kind) => {
     const v = r[k];
     if (v == null) return "–";
-    if (kind === "t") return esc(v);
+    if (kind === "t") return k === "unit" ? `<a href="unit.html?unit=${encodeURIComponent(v)}">${esc(v)}</a>` : esc(v);
     if (kind === "tech") return TECH_LABEL[v] || esc(v);
     if (kind === "group") return GROUP_SHORT[v] || esc(v);
     if (kind === "verdict") return VERDICT_LABEL[v] || esc(v);
@@ -658,13 +668,23 @@ function drawUnits() {
 }
 
 // ---------------------------------------------------------------- layers strip ---
+// one sentence on the 2-day fit: how far it moved the committed minimum, and how many units it changed
+function fitSummary() {
+  const f = S.fit, sc = dayScore(), fs = sc && sc.fit;
+  const lsl = (a) => fmtGW(d3.mean(a));
+  let t = `. 2-day fit (${f.model} ${f.version}): committed minimum ${lsl(f.hourly.lsl_forecast)} GW forecast, ${lsl(f.hourly.lsl_fit)} GW fitted on average over the day, ${f.inputs.n_changed} of ${f.inputs.n_candidates} units changed, residual against the 2-day curve ${fmtPct(1 - f.residual.after / f.residual.before)} lower`;
+  if (fs && fs.lsl_mae_fit != null) t += `; against the 60-day answer the committed minimum was off by ${fmtGW(fs.lsl_mae_fc)} GW in the forecast and ${fmtGW(fs.lsl_mae_fit)} GW after the fit, unit calls right ${fmtPct(fs.unit_hit_fc)} and ${fmtPct(fs.unit_hit_fit)}`;
+  return t;
+}
 function drawLayers() {
   const d = S.date, known = S.day && S.day.inputs;
   const sc = dayScore();
   const card = (n, title, state, body) => `<div class="layer ${state === "now" ? "now" : ""}"><span class="st">${n} · ${title} · ${state === "now" ? "shown" : state}</span><p>${body}</p></div>`;
   $("layers").innerHTML =
     card(1, "Forecast", "now", known ? `from day-ahead ${known.node_prices === "dam" ? "node" : "node (last 14 days' file)"} prices and unit states known on ${known.known_date}` : "no forecast file for this day") +
-    card(2, "2-day summary", has("2dgen") ? "in" : "in 2 days", has("2dgen") ? (sc && sc.two_day ? `thermal energy ${sc.two_day.headline_hit ? "within" : "outside"} tolerance; actual lines drawn on the hourly chart` : "actual lines drawn on the hourly chart") : "scores the thermal, wind and solar energy over the day") +
+    card(2, "2-day summary and fit", has("2dgen") || S.fit ? "in" : "in 2 days",
+      (has("2dgen") ? (sc && sc.two_day ? `thermal energy ${sc.two_day.headline_hit ? "within" : "outside"} tolerance; actual lines drawn on the hourly chart` : "actual lines drawn on the hourly chart") : "scores the thermal, wind and solar energy over the day") +
+      (S.fit ? fitSummary() : has("2d") ? "" : "; the fit of the committed set to the 2-day thermal curve follows the 2-day curves")) +
     card(3, "60-day answer", has("60d") ? "in" : "in 60 days", has("60d") ? (sc && sc.sixty_day ? `unit calls right ${fmtPct(sc.sixty_day.unit_hit)}; actual ticks on the bars and the units table` : "actual ticks on the bars and the units table") : "scores each unit's on or off call and each group's energy");
   $("source-note").textContent = known ? `Forecast built ${S.fc.updated.slice(0, 10)} · curves from ${known.curve_month}` : "";
 }
@@ -685,14 +705,15 @@ function renderHour() {
 }
 async function loadDay() {
   const d = S.date;
-  const [day, gen, units60, prices] = await Promise.all([
+  const [day, gen, units60, prices, fit] = await Promise.all([
     tryJSON(`data/forecast/${d}.json.gz`),
     has("2dgen") ? tryJSON(`data/2dgen/${d}.json.gz`) : null,
     has("60d") ? tryJSON(`data/60d-units/${d}.json.gz`) : null,
     has("prices") ? tryJSON(`data/prices/${d}.json.gz`) : null,
+    has("fit") ? tryJSON(`data/fit/${d}.json.gz`) : null,
   ]);
   if (d !== S.date) return;    // a newer pick took over
-  S.day = day; S.gen = gen; S.units60 = units60; S.prices = prices;
+  S.day = day; S.gen = gen; S.units60 = units60; S.prices = prices; S.fit = fit;
   S.a60 = actual60();
   S.unitShowAll = false;
 }

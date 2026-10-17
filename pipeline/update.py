@@ -234,12 +234,12 @@ def fetch_curves(api, emil: str, posted_from: dt.datetime, posted_to: dt.datetim
                     ". Some files posted near them failed to load (see the warnings above)."))
 
 
-def reprocess_60d(api, index: dict, mode: str = "missing", limit=None):
+def reprocess_60d(api, index: dict, mode: str = "missing", limit=None) -> tuple:
     """Re-download and reparse 60-day days already in the index, SCED disclosure first, then the
     DAM disclosure: those whose file is missing or predates the current format (the per-unit day
     file's UNIT_FORMAT, the DAM day file's DAM_FORMAT; mode "missing", so an interrupted run
     resumes and a format change is filled in over several runs), or all of them (mode "all").
-    `limit` caps the files downloaded over both."""
+    `limit` caps the files downloaded over both.  -> (days to reprocess at the start, days left)"""
     def current(path, fmt):
         if not path.exists():
             return False
@@ -247,18 +247,25 @@ def reprocess_60d(api, index: dict, mode: str = "missing", limit=None):
             return ((read_json_gz(path) or {}).get("format") or 0) >= fmt
         except Exception:
             return False
-    n = 0
+    todo = []
     for source, emil, folder, fmt in (("60d", EMIL_60DAY, UNIT_DATA_DIR / "60d", UNIT_FORMAT),
                                       ("dam", EMIL_DAM, DATA_DIR / "dam", DAM_FORMAT)):
         targets = {d for d in index["days"].get(source, [])
                    if mode == "all" or not current(folder / f"{d}.json.gz", fmt)}
         print(f"reprocess {source} ({mode}): {len(targets)} day(s)")
+        todo.append((source, emil, targets))
+    start = sum(len(t) for _, _, t in todo)
+    n = 0
+    for source, emil, targets in todo:
         if not targets:
             continue
         if limit and n >= limit:
             print(f"  reached the limit of {limit} files; {len(targets)} {source} day(s) left to reprocess")
-            return
+            break
         n = _reprocess(api, index, source, emil, targets, n, limit)
+    left = sum(len(t) for _, _, t in todo)
+    print(f"reprocess: {start - left} of {start} day(s) done, {left} left")
+    return start, left
 
 
 def _reprocess(api, index: dict, source: str, emil: str, targets: set, n: int, limit) -> int:
@@ -419,7 +426,11 @@ def main(argv=None):
                          dt.datetime.combine(end + dt.timedelta(days=lag + 5), dt.time()),
                          index, source, want_dates=want, limit=args.max_files)
     elif args.reprocess_60d:
-        reprocess_60d(api, index, args.reprocess_60d, limit=args.max_files)
+        start, left = reprocess_60d(api, index, args.reprocess_60d, limit=args.max_files)
+        # the workflow queues another reprocess run while days are left and this one made progress
+        if os.environ.get("GITHUB_OUTPUT"):
+            with open(os.environ["GITHUB_OUTPUT"], "a") as f:
+                f.write(f"reprocess_more={'true' if left and left < start else 'false'}\n")
     else:
         since = now - dt.timedelta(days=args.days)
         if "2d" not in args.skip:

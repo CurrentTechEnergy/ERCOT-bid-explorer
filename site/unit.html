@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Unit · ERCOT Bid Stack Explorer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Sans+Condensed:wght@600&display=swap">
+<link rel="stylesheet" href="style.css">
+<style>
+  .unit-pick { min-width: min(320px, 100%); }
+  .verdict { font-size: 15px; margin: 6px 0 0; max-width: 72ch; }
+  .muted { color: var(--muted); }
+  .formula { font: 500 14px var(--font-data); margin: 2px 0 0; }
+  .dot-legend { display: inline-flex; align-items: center; gap: 6px; }
+  .dot-legend .ramp { width: 120px; height: 10px; border-radius: 3px; }
+  .ctl-row { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 10px 18px; margin: 4px 0 10px; }
+  .tag { display: inline-block; font-size: 11px; padding: 0 5px; border: 1px solid var(--line); border-radius: 4px; color: var(--muted); margin-left: 4px; }
+  .moved { color: var(--ink); font-weight: 500; }
+  table.data tr.sel td { background: var(--accent-soft); }
+</style>
+</head>
+<body data-panel-links>
+<div class="page">
+
+<header class="masthead">
+  <div class="brand">
+    <div class="nav-row"><nav class="nav" aria-label="Pages"><a href="overview.html">Overview</a><a href="beyond.html">Beyond baseload</a><a href="index.html">Day view</a><a href="trends.html">Trends</a><a href="economics.html">Plant economics</a><a href="contracts.html">Hedge signals</a><a href="builder.html">Graph builder</a><a href="guide.html">How offers work</a></nav></div>
+    <h1 id="unit-title">Unit</h1>
+    <p class="sub" id="unit-meta">Everything about one unit: the forecast's call and the decision history behind it, when it ran, how it bids, and what it earned.</p>
+    <p class="verdict" id="unit-verdict"></p>
+  </div>
+  <p class="status" id="status">Loading data…</p>
+</header>
+
+<section class="controls" aria-label="Unit">
+  <div class="ctl">
+    <label class="lbl" for="unit-pick">Unit</label>
+    <input type="search" class="unit-pick" id="unit-pick" list="unit-list" placeholder="Type a unit name" autocomplete="off">
+    <datalist id="unit-list"></datalist>
+  </div>
+</section>
+
+<main>
+  <section class="panel panel-wide" id="unit-empty">
+    <p class="empty">Pick a unit above, or open one from a unit row on any page. Thermal units, wind and solar are listed; a combined-cycle train is one entry with its configurations under it.</p>
+  </section>
+
+  <section class="panel panel-wide unit-only" id="dec-panel" hidden>
+    <div class="panel-head">
+      <div>
+        <h2>Decision history</h2>
+        <p class="note">Each point is a day the unit started online, with what the day-ahead prices at its node said it would lose by staying on through the day's worst stretch (energy at its node price against its costs at minimum output), and what it did. The forecast's cutoff for the unit is the loss that best separates its shutdowns from its stays.</p>
+        <p class="note" id="dec-note"></p>
+      </div>
+    </div>
+    <div class="legend legend-static" id="dec-legend"></div>
+    <div class="chart" id="dec-chart"></div>
+  </section>
+
+  <section class="panel panel-wide unit-only" id="hours-panel" hidden>
+    <div class="panel-head">
+      <div>
+        <h2>Hours online and starts</h2>
+        <p class="note" id="hours-note"></p>
+      </div>
+    </div>
+    <div class="legend legend-static" id="hours-legend"></div>
+    <div class="chart" id="hours-strip"></div>
+  </section>
+
+  <section class="panel panel-wide unit-only" id="day-panel" hidden>
+    <div class="panel-head">
+      <div>
+        <h2>One day by hour</h2>
+        <p class="note" id="day-note"></p>
+      </div>
+      <div class="panel-tools"><label class="lbl inline" for="day-pick">Day</label><select id="day-pick"></select></div>
+    </div>
+    <div class="legend legend-static" id="day-legend"></div>
+    <div class="chart" id="day-chart"></div>
+  </section>
+
+  <section class="panel panel-wide unit-only" id="bid-panel" hidden>
+    <div class="panel-head">
+      <div>
+        <h2>Bidding <span class="h-note" id="bid-title-note"></span></h2>
+        <p class="note" id="bid-note"></p>
+      </div>
+      <div class="panel-tools" id="bid-cfg"></div>
+    </div>
+    <div class="chart chart-short" id="bid-price"></div>
+    <div class="chart chart-short" id="bid-share"></div>
+    <div class="units-wrap" id="bid-changes"></div>
+  </section>
+
+  <section class="panel panel-wide" id="renew-panel" hidden>
+    <div class="panel-head">
+      <div>
+        <h2>Hedge formula</h2>
+        <p class="formula" id="unit-formula"></p>
+        <p class="note" id="ppa-note"></p>
+      </div>
+    </div>
+    <div id="ppa-part">
+      <div class="legend legend-static" id="fit-legend"></div>
+      <div class="chart" id="fit-chart"></div>
+      <h3 class="sub-h">Formula by day</h3>
+      <p class="note">The share and intercept fitted on each formula day alone, at the same settlement point. A flat line means one standing rule; a change marks a new rule or a new contract.</p>
+      <div class="chart chart-short" id="daily-chart"></div>
+    </div>
+    <h3 class="sub-h">Bidding history <span class="h-note" id="hist-note"></span></h3>
+    <div class="ctl-row">
+      <label class="lbl" for="hist-range">Show</label>
+      <select id="hist-range"></select>
+    </div>
+    <p class="note" id="hist-text"></p>
+    <div class="legend legend-static" id="hist-legend"></div>
+    <div class="chart" id="hist-chart"></div>
+    <div class="units-wrap" id="unit-changes"></div>
+  </section>
+
+  <section class="panel panel-wide" id="econ-panel" hidden>
+    <div class="panel-head">
+      <div>
+        <h2>Revenue and cost</h2>
+        <p class="note" id="econ-note"></p>
+      </div>
+    </div>
+    <div class="legend legend-static" id="econ-legend"></div>
+    <div class="chart" id="econ-chart"></div>
+    <div class="chart chart-short" id="econ-cum"></div>
+  </section>
+</main>
+
+<footer class="foot">
+  <p>Source: ERCOT EMIL products NP3-965-ER (60-Day SCED Disclosure), NP3-966-ER (60-Day DAM Disclosure) and NP6-322-CD (SCED System Lambda), gas prices from OilPriceAPI and the EIA, and the forecast built from them. Built by the data update workflow from the days already loaded; the 60-day reports run about two months behind.</p>
+  <p>Made by <a href="https://currenttech.energy">currenttech.energy</a>.</p>
+</footer>
+</div>
+<div class="tip" id="tip" hidden></div>
+<script src="vendor/d3.min.js"></script>
+<script src="common.js"></script>
+<script src="unit.js"></script>
+<script src="unit-econ.js"></script>
+<script src="unit-renew.js"></script>
+</body>
+</html>
