@@ -1,0 +1,253 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Renewables · ERCOT Bid Stack Explorer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Sans+Condensed:wght@600&display=swap">
+<link rel="stylesheet" href="style.css">
+<style>
+  .page-section { grid-column: 1 / -1; margin: 18px 0 -4px; font-size: 20px; }
+  .kpis { display: flex; flex-wrap: wrap; gap: 8px 28px; }
+  .kpi { display: flex; flex-direction: column; gap: 2px; }
+  .kpi .v { font: 500 20px var(--font-data); font-variant-numeric: tabular-nums; }
+  .kpi .k { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; }
+  .tier { display: inline-flex; align-items: center; gap: 6px; }
+  .tier .sw { width: 10px; height: 10px; }
+  .muted { color: var(--muted); }
+  .ctl-row { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 10px 18px; margin: 4px 0 10px; }
+  .ctl-row .ctl { display: flex; flex-direction: column; gap: 4px; }
+  .chk { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; color: var(--ink-2); min-height: 34px; }
+  .tag { display: inline-block; font-size: 11px; padding: 0 5px; border: 1px solid var(--line); border-radius: 4px; color: var(--muted); margin-left: 4px; }
+  .moved { color: var(--ink); font-weight: 500; }
+  button.more { font: inherit; color: var(--ink); background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 6px 12px; cursor: pointer; }
+  .hedge-ctl { grid-column: 1 / -1; margin: 0; }
+  details.how summary { cursor: pointer; font-weight: 500; margin: 6px 0; }
+</style>
+</head>
+<body data-panel-links>
+<div class="page">
+
+<header class="masthead">
+  <div class="brand">
+    <div class="nav-row"><nav class="nav" aria-label="Pages"><a href="overview.html">Overview</a><a href="beyond.html">Beyond baseload</a><a href="renewables.html" aria-current="page">Renewables</a><a href="index.html">Day view</a><a href="trends.html">Trends</a><a href="economics.html">Plant economics</a><a href="contracts.html">Hedge signals</a><a href="builder.html">Graph builder</a><a href="guide.html">How offers work</a></nav></div>
+    <h1>Renewables</h1>
+    <p class="sub">How wind and solar offer, how much SCED held back and where, what their offers give away about their hedges, and what they earned. Data from ERCOT's 2-day and 60-day SCED and DAM disclosures and the day-ahead forecast built from them.</p>
+  </div>
+  <p class="status" id="status">Loading data…</p>
+</header>
+
+<main>
+  <section class="panel panel-wide">
+    <div class="panel-head">
+      <div>
+        <h2>Wind and solar offer prices</h2>
+        <p class="note">Share of the MW wind and solar offered each day that was priced in each band, weighted by MW over the day's hours. Tax-credit bids cluster between about −$60 and −$25 with little between −$25 and −$5, so −$20 separates them from shallow negatives. Below −$20 is split into −$249 to −$50, −$50 to −$35 and −$35 to −$20, since most of it sits between −$50 and −$30. Uses the 2-day curves where the day has them, otherwise the 60-day curves.</p>
+      </div>
+    </div>
+    <div class="legend" id="rs-legend"></div>
+    <div class="chart" id="rs-wind"></div>
+    <div class="chart" id="rs-solar"></div>
+  </section>
+
+  <section class="panel panel-wide" id="curt-panel">
+    <div class="panel-head">
+      <div>
+        <h2>Wind and solar curtailment</h2>
+        <p class="note">Energy wind and solar could have produced (HSL) minus what SCED dispatched them to (base point). The 60-day disclosure (solid) and ERCOT's 2-day reports (dashed: generation summary base points against the 2-day offer curves' summed HSL) report it separately. Available MW agree almost exactly; on some days the 2-day base points run a few percent lower, so the dashed line reads higher. The middle chart uses the 60-day figure where it exists and the 2-day one otherwise, and averages each hour's curtailed MW by that hour's system lambda: the cheap energy that was available but not taken.</p>
+      </div>
+    </div>
+    <div class="legend legend-static" id="curt-legend"></div>
+    <div class="chart" id="curt-daily"></div>
+    <div class="chart" id="curt-price"></div>
+    <h3 class="sub-h">One day by hour <span class="h-note" id="curt-title-note"></span></h3>
+    <div class="ctl-row">
+      <div class="ctl">
+        <label class="lbl" for="cday">Operating day</label>
+        <div class="date-step">
+          <button type="button" class="step" id="cday-prev" aria-label="Previous day" title="Previous day">&#8249;</button>
+          <select id="cday"></select>
+          <button type="button" class="step" id="cday-next" aria-label="Next day" title="Next day">&#8250;</button>
+        </div>
+      </div>
+    </div>
+    <p class="note">MW wind and solar could have produced (HSL) minus the base point SCED sent them, averaged over each hour: the output SCED held back, for price or for congestion. From the 60-day disclosure, unit by unit; recent days with no 60-day data yet use an estimate from ERCOT's 2-day reports (the generation summary's base points against the top of the 2-day offer curves, since the summary no longer carries available output).</p>
+    <div class="legend legend-static" id="curt-day-legend"></div>
+    <div class="chart" id="curt-chart"></div>
+  </section>
+
+  <section class="panel panel-wide">
+    <div class="panel-head">
+      <div>
+        <h2>Curtailment at the node <span class="h-note" id="nc-note"></span></h2>
+        <p class="note">The same curtailed energy priced at each unit's own settlement point. An hour counts as <b>operator-directed</b> where ERCOT's HDL/LDL Manual Override Summary shows an operator lowering the unit's HDL (curtailment up to that reduction, averaged over the hour's runs), as <b>congestion</b> when the node price is at least $5/MWh below system lambda (the energy was worth less where the unit sits, often negative) and as <b>oversupply</b> otherwise (the system as a whole did not want it at the unit's offer). The split is by price, so it says what the energy was worth at the node, not which constraint SCED was managing. Units are matched to nodes through the DAM disclosure; hours with no node price are priced at lambda and counted as unmatched. Node prices load a few days per update, newest first, so early days fill in over time.</p>
+      </div>
+    </div>
+    <div class="legend legend-static" id="nc-legend"></div>
+    <div class="chart" id="nc-daily"></div>
+    <div class="chart" id="nc-value"></div>
+    <div class="chart" id="nc-bins"></div>
+    <div class="units-wrap" id="nc-units"></div>
+    <p><button type="button" class="more" id="nc-more" hidden>Show all</button></p>
+  </section>
+
+  <section class="panel panel-wide" id="fc-panel">
+    <div class="panel-head">
+      <div>
+        <h2>Forecast against what was priced out</h2>
+        <p class="note">Each day's forecast counts wind and solar energy as priced out when it is available but offered above its own node's day-ahead price. Dashed: what the forecast priced out. Solid: what SCED actually held back (the curtailment above, 60-day where the day has it, else the 2-day estimate). The forecast is the one on the Overview, read as it was made.</p>
+        <p class="note" id="fc-note"></p>
+      </div>
+    </div>
+    <div class="legend legend-static" id="fc-legend"></div>
+    <div class="chart" id="fc-chart"></div>
+  </section>
+
+  <h2 class="page-section">Hedge signals</h2>
+
+  <section class="ctl-row hedge-ctl" aria-label="Hedge signal filters">
+    <div class="ctl">
+      <span class="lbl" id="lbl-htech">Technology</span>
+      <div class="seg" role="radiogroup" aria-labelledby="lbl-htech" id="hedge-tech">
+        <button type="button" data-v="all" role="radio">Wind and solar</button>
+        <button type="button" data-v="solar" role="radio">Solar</button>
+        <button type="button" data-v="wind" role="radio">Wind</button>
+      </div>
+    </div>
+    <div class="ctl">
+      <span class="lbl" id="lbl-hshow">Show</span>
+      <div class="seg" role="radiogroup" aria-labelledby="lbl-hshow" id="hedge-show">
+        <button type="button" data-v="found" role="radio" title="Units whose offers follow a day-ahead price formula (revealed, location unclear or partial)">Units with a formula</button>
+        <button type="button" data-v="all" role="radio" title="Every wind and solar unit, with its usual floor offer and day-ahead habit">All units</button>
+      </div>
+    </div>
+    <div class="ctl">
+      <label class="lbl" for="hedge-search">Find a unit</label>
+      <input type="search" id="hedge-search" placeholder="Unit or settlement point" aria-label="Find a unit">
+    </div>
+  </section>
+
+  <section class="panel panel-wide">
+    <div class="panel-head">
+      <div>
+        <h2>What the scan found <span class="h-note" id="scan-note"></span></h2>
+        <p class="note" id="kpi-note"></p>
+      </div>
+    </div>
+    <div class="kpis" id="kpis"></div>
+  </section>
+
+  <section class="panel panel-wide">
+    <div class="panel-head">
+      <div>
+        <h2>Units <span class="h-note" id="units-note"></span></h2>
+        <p class="note">Click a column to sort and a unit to open its page, with its fit and bidding history. <b>Share</b> is the slope of offer on the DA price, <b>Intercept</b> its constant. The strike is a range: the high end assumes the intercept is all strike, the low end that the operator also counts a credit of about <span id="credit-v">$30</span>/MWh (roughly the PTC) in its break-even. <b>Floor</b> is the unit's most common offer; <b>DA share</b> is its DAM energy award as a share of its real-time base point energy.</p>
+      </div>
+    </div>
+    <div class="legend legend-static" id="tier-legend"></div>
+    <div class="units-wrap" id="units-table"></div>
+  </section>
+
+  <section class="panel panel-wide" id="changes-panel">
+    <div class="panel-head">
+      <div>
+        <h2>Bidding changes <span class="h-note" id="chg-note"></span></h2>
+        <p class="note" id="chg-text"></p>
+      </div>
+    </div>
+    <div class="ctl-row">
+      <div class="ctl"><label class="lbl" for="chg-kind">Change</label><select id="chg-kind"></select></div>
+      <div class="ctl"><label class="lbl" for="chg-year">Year</label><select id="chg-year"></select></div>
+      <div class="ctl">
+        <span class="lbl" id="lbl-moved">Dispatch</span>
+        <div class="seg seg-sm" role="radiogroup" aria-labelledby="lbl-moved" id="chg-moved">
+          <button type="button" data-v="all" role="radio">Any</button>
+          <button type="button" data-v="yes" role="radio" title="The node price fell between the old and new offer in hours the unit was online, so the old offer would have dispatched differently">Moved dispatch</button>
+          <button type="button" data-v="no" role="radio">Did not</button>
+        </div>
+      </div>
+      <div class="ctl"><label class="lbl" for="chg-ptc">PTC</label><select id="chg-ptc">
+        <option value="all">All changes</option>
+        <option value="hide">Hide PTC-level moves</option>
+        <option value="level">PTC-level moves only</option>
+        <option value="expired">PTC may have expired</option>
+      </select></div>
+      <label class="chk"><input type="checkbox" id="chg-tog"> Hide togglers</label>
+    </div>
+    <div class="legend legend-static" id="chg-legend"></div>
+    <div class="chart chart-short" id="chg-chart"></div>
+    <div class="units-wrap" id="chg-table"></div>
+    <p><button type="button" class="more" id="chg-more" hidden>Show more</button></p>
+  </section>
+
+  <section class="panel panel-wide" id="ptc-panel">
+    <div class="panel-head">
+      <div>
+        <h2>PTC floor level <span class="h-note" id="ptc-note"></span></h2>
+        <p class="note" id="ptc-text"></p>
+      </div>
+    </div>
+    <div class="legend legend-static" id="ptc-legend"></div>
+    <div class="chart chart-short" id="ptc-chart"></div>
+  </section>
+
+  <section class="panel panel-wide">
+    <details class="how">
+      <summary>How the hedge signals and changes are found, and reading them with care</summary>
+      <h3 class="sub-h">How it works</h3>
+      <p class="note">Per MWh, a plant hedged on a DA-settled, as-generated contract earns roughly the real-time price at its node, plus share × (strike − DA price at the settlement point), plus any per-MWh credit. Generating pays only when the RT price beats share × DA − (share × strike + credit), and that is the offer a QSE bidding the contract submits. Each hour's offer is the median over its SCED runs of the submitted curve's price at half its MW, kept only when it did not move within the hour (a DA-based price is hourly). A formula day has at least four such hours at four or more prices, after dropping a floor or cap the formula is clamped to. Every candidate settlement point (the unit's own node, each hub and load zone) is fitted on each formula day; the point's formula is the median over days, and its hit rate is the share of hours it predicts within <span id="hit-v">$2</span>.</p>
+      <h3 class="sub-h">How changes are found</h3>
+      <p class="note" id="chg-method"></p>
+      <h3 class="sub-h">Reading it with care</h3>
+      <p class="note">Most units never show a formula: a flat offer at −$30 or $0 says what the unit gives up by not running, not how it is hedged, and physical, as-available or fixed-shape contracts leave no trace in offers at all. A formula that only appears on high-price days (Outpost and Frye during Winter Storm Fern) is a policy the operator switched on, not a standing rule. The slope is the share of the bidder's exposure tied to that DA price, which need not match the contracted share: Phoebe's public hedge covers 89% of output, while its offers follow 100% of HB_NORTH. Where a unit's node prices like a hub or load zone, the fit cannot tell them apart, and the tier says so.</p>
+    </details>
+  </section>
+
+  <h2 class="page-section">Fleet economics</h2>
+
+  <section class="panel panel-wide" id="eco-panel">
+    <div class="panel-head">
+      <div>
+        <h2>Revenue and curtailment by month</h2>
+        <p class="note">Energy revenue as on Plant economics' default: the day-ahead award at the DA price plus the real-time deviation at the unit's node where it has day-ahead data, real-time at its node otherwise (most wind and solar), and system lambda where the node price is missing; plus ancillary services. Curtailed energy and its worth at the node are from the node-priced curtailment above. Hover a month for the split.</p>
+      </div>
+    </div>
+    <div class="legend legend-static"><span><span class="sw" style="background:var(--c3)"></span>Wind</span><span><span class="sw" style="background:var(--c4)"></span>Solar</span></div>
+    <div class="chart" id="eco-months"></div>
+    <div class="chart chart-short" id="eco-curt"></div>
+    <div class="chart chart-short" id="eco-curt-value"></div>
+  </section>
+
+  <section class="panel panel-wide" id="eco-units-panel">
+    <div class="panel-head">
+      <div>
+        <h2>Realised $/MWh by unit <span class="h-note" id="eco-note"></span></h2>
+        <p class="note">Revenue as above over the unit's energy, for every wind and solar unit over every loaded 60-day day. The dashed lines are each technology's median. Curtailed share is the unit's curtailed energy (HSL minus base point, hour by hour) over its available energy, the same figure as "Of available" in the curtailment table. Click a column to sort and a unit to open its page.</p>
+      </div>
+      <div class="panel-tools">
+        <div class="seg seg-sm" id="eco-tech" role="radiogroup" aria-label="Technology">
+          <button type="button" data-v="all" role="radio">Both</button>
+          <button type="button" data-v="wind" role="radio">Wind</button>
+          <button type="button" data-v="solar" role="radio">Solar</button>
+        </div>
+      </div>
+    </div>
+    <div class="chart" id="eco-hist"></div>
+    <div class="units-wrap" id="eco-table"></div>
+    <p><button type="button" class="more" id="eco-more" hidden>Show all</button></p>
+  </section>
+</main>
+
+<footer class="foot">
+  <p>Source: ERCOT EMIL products NP3-965-ER (60-Day SCED Disclosure), NP3-966-ER (60-Day DAM Disclosure), NP3-908-ER (2-Day SCED Energy Curves), NP3-911-ER (2-Day Generation Summary), NP6-322-CD (SCED System Lambda), the DAM and real-time settlement point prices and the HDL/LDL Manual Override Summary, and for bidding changes before the loaded 60-day days, the hourly history built from ERCOT's archive (2019 on). Built by the data update workflow from the days already loaded; the 60-day reports run about two months behind.</p>
+  <p>Made by <a href="https://currenttech.energy">currenttech.energy</a>.</p>
+</footer>
+</div>
+<div class="tip" id="tip" hidden></div>
+<script src="vendor/d3.min.js"></script>
+<script src="common.js"></script>
+<script src="renewables.js"></script>
+<script src="renewables-hedge.js"></script>
+</body>
+</html>
