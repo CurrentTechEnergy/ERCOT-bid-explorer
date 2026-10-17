@@ -16,7 +16,9 @@ const techLabel = (t) => TECHS.find((x) => x.id === t)?.label || t;
 // wind and solar offer price bands (pipeline/curve_trends.py), ordered from cheapest
 const BANDS = [
   { id: "floor", label: "At the floor (−$250)", color: "--c8" },
-  { id: "ptc", label: "Below −$20 (tax-credit range)", color: "--c2" },
+  { id: "deep", label: "−$249 to −$50", color: "--c2" },
+  { id: "ptc_mid", label: "−$50 to −$35", color: "--c6" },
+  { id: "ptc_low", label: "−$35 to −$20 (shallow tax-credit bids)", color: "--c7" },
   { id: "neg", label: "−$20 to −$1", color: "--c4" },
   { id: "zero", label: "About $0 (−$1 to $0)", color: "--c-other" },
   { id: "pos", label: "Above $0", color: "--c1" },
@@ -280,18 +282,19 @@ function drawNodeCurtail() {
     labels.map((lb, i) => [lb, N.bins.wind.mwh[i] / 1000, N.bins.solar.mwh[i] / 1000, N.bins.wind.uh[i], N.bins.solar.uh[i]]), "Curtailment by node price");
 
   // most curtailed units
-  const rows = N.units.map((r) => ({ unit: r[0], tech: r[1], sp: r[2], curt: r[3], cong: r[4], value: r[5], node: r[6], avail: r[7], days: r[8], dir: r[9] }));
+  const rows = N.units.map((r) => ({ unit: r[0], tech: r[1], sp: r[2], curt: r[3], cong: r[4], value: r[5], node: r[6], avail: r[7], days: r[8], dir: r[9], bid: bidWhenCurtailed(r[0], N.dates) }));
   const cols = [
     { h: "Unit", t: true, f: (r) => `<a href="unit.html?unit=${encodeURIComponent(r.unit)}">${esc(r.unit)}</a>` }, { h: "Technology", t: true, f: (r) => techLabel(r.tech) }, { h: "Settlement point", t: true, f: (r) => esc(r.sp || "–") },
     { h: "Curtailed GWh", f: (r) => d3.format(",.1f")(r.curt / 1000) }, { h: "Of available", f: (r) => (r.avail ? fmtPct(r.curt / r.avail) : "–") },
     { h: "Congestion share", f: (r) => (r.cong != null && r.curt ? fmtPct(r.cong / r.curt) : "–") },
     { h: "Operator-directed", f: (r) => (r.dir != null && r.curt ? fmtPct(r.dir / r.curt) : "–") },
-    { h: "Mean node price when curtailed", f: (r) => fmtPrice(r.node) }, { h: "Worth at the node", f: (r) => (r.value == null ? "–" : fmtPrice0(r.value)) }, { h: "Days priced", f: (r) => r.days },
+    { h: "Mean node price when curtailed", f: (r) => fmtPrice(r.node) },
+    { h: "Average offer on curtailed days", f: (r) => (r.bid === undefined ? "…" : fmtPrice(r.bid)) }, { h: "Worth at the node", f: (r) => (r.value == null ? "–" : fmtPrice0(r.value)) }, { h: "Days priced", f: (r) => r.days },
   ];
   uel.innerHTML = rows.length ? `<table class="data"><thead><tr>${cols.map((c) => `<th${c.t ? ' class="t"' : ""}>${c.h}</th>`).join("")}</tr></thead><tbody>` +
     rows.map((r) => `<tr>${cols.map((c) => `<td${c.t ? ' class="t"' : ""}>${c.f(r)}</td>`).join("")}</tr>`).join("") + "</tbody></table>" : "";
-  setCSV(uel, ["unit", "technology", "settlement_point", "curtailed_mwh", "available_mwh", "congestion_mwh", "directed_mwh", "value_at_node", "mean_node_price", "days"],
-    rows.map((r) => [r.unit, r.tech, r.sp, r.curt, r.avail, r.cong, r.dir, r.value, r.node, r.days]), "Most curtailed units");
+  setCSV(uel, ["unit", "technology", "settlement_point", "curtailed_mwh", "available_mwh", "congestion_mwh", "directed_mwh", "value_at_node", "mean_node_price", "avg_offer_curtailed_days", "days"],
+    rows.map((r) => [r.unit, r.tech, r.sp, r.curt, r.avail, r.cong, r.dir, r.value, r.node, r.bid ?? null, r.days]), "Most curtailed units");
 }
 
 
@@ -416,6 +419,15 @@ function curtMap() {
   const out = new Map();
   S.SIG.forEach((f) => { if (!f) return; Object.entries(f.units).forEach(([n, u]) => { const m = out.get(n) || new Map(); f.dates.forEach((d, i) => { if (u.cur[i] != null) m.set(d, u.cur[i]); }); out.set(n, m); }); });
   return out;
+}
+// a unit's average offer on the days it was curtailed: the mean of its daily median offer while
+// online (data/renew/sig-YYYY, "md") over the days in the window with a curtailed share above 0.5%;
+// undefined until the bidding-history files have loaded
+function bidWhenCurtailed(name, dates) {
+  if (!S.SIG.length) return undefined;
+  const lo = dates[0], hi = dates.at(-1), v = [];
+  S.SIG.forEach((f) => { const u = f && f.units[name]; if (!u) return; f.dates.forEach((d, i) => { if (d >= lo && d <= hi && u.md[i] != null && u.cur[i] > 0.005) v.push(u.md[i]); }); });
+  return v.length ? d3.mean(v) : null;
 }
 let ECO = null;
 function computeEco() {
@@ -599,7 +611,7 @@ async function boot() {
   // fleet economics needs the economics and bidding-history files: load them after the rest
   const lastY = +S.C.curt.dates.at(-1).slice(0, 4);
   [S.E.wind, S.E.solar, ...S.SIG] = await Promise.all([tryJSON("data/econ/wind.json.gz"), tryJSON("data/econ/solar.json.gz"), tryJSON(`data/renew/sig-${lastY - 1}.json.gz`), tryJSON(`data/renew/sig-${lastY}.json.gz`)]);
-  computeEco(); drawEcoMonths(); drawEcoUnits();
+  computeEco(); drawEcoMonths(); drawEcoUnits(); drawNodeCurtail();
   let t, lastW = 0;
   new ResizeObserver((e) => { const w = Math.round(e[0].contentRect.width); if (w === lastW) return; lastW = w; clearTimeout(t); t = setTimeout(drawAll, 120); }).observe(document.querySelector("main"));
   window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", drawAll);
