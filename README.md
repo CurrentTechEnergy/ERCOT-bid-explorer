@@ -133,7 +133,9 @@ pipeline/
                    own cutoff), thermal_dispatch (the committed set's offer curves met by the hourly
                    day-ahead price), peaker_share (combustion turbines by price level and hour),
                    renewable_floor (wind and solar forecast less what prices itself out at its
-                   node), storage_habit (not built until the battery data is loaded)
+                   node), storage_habit (the battery fleet's discharging and charging by hour from
+                   its recent habit, nudged by the day's hub price shape; python -m
+                   pipeline.models.storage_habit --backtest prints how the rule has done)
   decisions.py     hourly unit states + DAM node prices, costs and awards -> each thermal unit's
                    shutdown decisions day by day, its loss cutoff, and tomorrow's expected
                    turn-offs from the day-ahead node prices (no downloads)

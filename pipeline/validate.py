@@ -77,6 +77,7 @@ TOL = {
     "storage_bp_mw": 400,      # fleet discharging / charging vs generation summary ESR series: median hour, MW (error)
     "storage_bp_max_mw": 1000, # same, worst hour (warning)
     "soc_mwh": 1.0,            # state of charge outside [min, max] by more than this, MWh (warning)
+    "storage_fleet_mw": 20000, # forecast battery fleet discharging or charging above this, MW (warning)
 }
 
 
@@ -437,7 +438,22 @@ def _forecast_checks(day, fc):
     no_model = sum(1 for r in fc["units"]["rows"] if not r[im] or not r[iv])
     rc = fc["renewables"]["columns"]
     no_model += sum(1 for r in fc["renewables"]["rows"] if not r[rc.index("model")] or not r[rc.index("version")])
-    series = [k for k in list(groups) + list(h["tech"]) + ["fleet", "wind", "solar"] if not h["model"].get(k)]
+    series = [k for k in list(groups) + list(h["tech"]) + ["fleet", "wind", "solar"] + (["storage"] if h.get("storage") else []) if not h["model"].get(k)]
+    st = h.get("storage")
+    if st:
+        dis, chg, soc = _v(st["dis"]), -_v(st["chg"]), _v(st["soc"])
+        hs = fc["headline"].get("storage") or {}
+        both = int(((dis > 0) & (chg > 0)).sum())
+        neg = int(((dis < -tol) | (chg < -tol) | (soc < -tol)).sum())
+        eff = hs.get("eff") or 1.0
+        start = soc[0] - (chg[0] * eff - dis[0])
+        energy_ok = np.nansum(dis) <= np.nansum(chg) * eff + start + 1.0
+        day.add("forecast_storage", "error" if both or neg or not energy_ok else "ok",
+                f"{both} hour(s) charging and discharging at once, {neg} negative value(s), "
+                f"discharged {np.nansum(dis) / 1000:.1f} GWh against {np.nansum(chg) / 1000:.1f} GWh charged x {eff:.2f} + {start / 1000:.1f} GWh to start"
+                if (both or neg or not energy_ok) else
+                f"battery fleet: discharging peaks {np.nanmax(dis):,.0f} MW, charging {np.nanmax(chg):,.0f} MW, one direction per hour, energy balanced at {eff:.2f}")
+        day.limit("forecast_storage_mw", np.maximum(dis, chg), np.full(24, TOL["storage_fleet_mw"]), "battery fleet MW above the fleet bound", warn_only=True)
     day.add("forecast_model", "ok" if not no_model and not series else "error",
             f"{no_model} row(s) without a model name or version; series without one: {series}" if (no_model or series)
             else "every row and series names its model and version")

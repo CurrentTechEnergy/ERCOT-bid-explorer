@@ -79,6 +79,21 @@ def score_two_day(day: dict) -> dict:
             d = disp[ok] - act[ok]
             out[f"{t}_mae"] = _r(np.abs(d).mean()); out[f"{t}_bias"] = _r(d.mean())
             out[f"{t}_gwh_act"] = _r(np.nansum(act) / 1000, 2)
+    # batteries: fleet discharging and charging against the summary's ESR series
+    st = day["hourly"].get("storage")
+    for k, col, sign in (("dis", "sum_base_point_esr_discharging", 1.0), ("chg", "sum_base_point_esr_charging", -1.0)):
+        act = sign * _arr(h.get(col))
+        if np.isnan(act).all():
+            continue
+        out[f"storage_{k}_gwh_act"] = _r(np.nansum(act) / 1000, 2)
+        if st:
+            exp = sign * _arr(st[k])
+            ok = ~np.isnan(act) & ~np.isnan(exp)
+            if ok.any():
+                d = exp[ok] - act[ok]
+                out[f"storage_{k}_mae"] = _r(np.abs(d).mean()); out[f"storage_{k}_bias"] = _r(d.mean())
+                out[f"storage_{k}_gwh_exp"] = _r(np.nansum(exp) / 1000, 2)
+                out[f"storage_{k}_peak_err"] = _r(np.nanmax(exp) - np.nanmax(act))
     return out or None
 
 
@@ -179,6 +194,10 @@ def summarise(days: dict) -> dict:
                    "thermal_bias": _r(np.mean([s["thermal_bias"] for s in td if s.get("thermal_bias") is not None])) if td else None,
                    "wind_mae": _r(np.mean([s["wind_mae"] for s in td if s.get("wind_mae") is not None])) if any(s.get("wind_mae") is not None for s in td) else None,
                    "solar_mae": _r(np.mean([s["solar_mae"] for s in td if s.get("solar_mae") is not None])) if any(s.get("solar_mae") is not None for s in td) else None,
+                   "storage_dis_mae": _r(np.mean([s["storage_dis_mae"] for s in td if s.get("storage_dis_mae") is not None])) if any(s.get("storage_dis_mae") is not None for s in td) else None,
+                   "storage_chg_mae": _r(np.mean([s["storage_chg_mae"] for s in td if s.get("storage_chg_mae") is not None])) if any(s.get("storage_chg_mae") is not None for s in td) else None,
+                   "storage_peak_bias": _r(np.mean([s["storage_dis_peak_err"] for s in td if s.get("storage_dis_peak_err") is not None])) if any(s.get("storage_dis_peak_err") is not None for s in td) else None,
+                   "n_storage": sum(1 for s in td if s.get("storage_dis_mae") is not None),
                    "unit_hit": _r(sum(h * n for h, n in uh) / sum(n for _, n in uh), 3) if uh and sum(n for _, n in uh) else None,
                    "n_judged": int(sum(n for _, n in uh))}
             res["group"] = {g: {"mae": _r(np.mean([s["group"][g]["mae"] for s in sd])), "bias": _r(np.mean([s["group"][g]["bias"] for s in sd])), "n": len(sd)}
