@@ -769,6 +769,13 @@ async function loadDay() {
 }
 function drawDay() { drawCutoff(); drawCutUnits(); drawGroups(); drawRecord(); }
 
+// the loss axis both cutoff charts share, so a dollar loss sits at the same place in each
+const CUT_M = { l: 64, r: 16 };
+function cutDomain(U) {
+  const cs = U.filter((u) => u.kind === "cut").map((u) => u.c), ls = U.filter((u) => u.kind === "cut" && u.l != null).map((u) => u.l).sort(d3.ascending);
+  return [Math.min(0, d3.min(cs) ?? 0), Math.max(50, d3.max(cs) ?? 0, ls.length ? d3.quantile(ls, 0.9) : 0) * 1.08];
+}
+
 function drawCutoff() {
   const el = $("cut-chart"), F = S.F, byTech = S.cutBy === "tech";
   setSeg("cut-by", S.cutBy);
@@ -779,9 +786,7 @@ function drawCutoff() {
   const bands = (byTech ? CUT_TECHS : FLOOR_GROUPS).filter((b) => on.some((u) => bandOf(u) === b.id))
     .concat(on.some((u) => u.band === "nocut") ? [NOCUT] : []);
   const cuts = on.filter((u) => u.kind === "cut");
-  const cs = cuts.map((u) => u.c), ls = U.filter((u) => u.kind === "cut" && u.l != null).map((u) => u.l).sort(d3.ascending);
-  const x0 = Math.min(0, d3.min(cs) ?? 0);
-  const x1 = Math.max(50, d3.max(cs) ?? 0, ls.length ? d3.quantile(ls, 0.9) : 0) * 1.08;
+  const cs = cuts.map((u) => u.c), [x0, x1] = cutDomain(U);
   // MW of each band still on when every unit faces a loss of x per MW of LSL: flat units always,
   // a unit with a cutoff while x is at or below it (just above its cutoff it turns off)
   const xs = [x0, ...[...new Set(cs)].filter((c) => c > x0 && c < x1).sort(d3.ascending), x1];
@@ -799,7 +804,7 @@ function drawCutoff() {
     `Seasonal and multi-day units are judged on the month's price level, not a day loss, so they sit flat at the day's verdict (${fmtMW(offMW)} MW of their minimum output is judged off for the month and is not drawn). Daily units with too few decision days for a cutoff are the grey band, drawn flat. ${fmtMW(outMW)} MW on outage and peakers (they start rather than stay on) are left off. ` +
     `Every unit faces its own loss at its own node, so the day is not one point on the axis: the dashed line is the day's expected committed minimum (each unit's LSL times its chance of being on, the Overview's figure without peakers), and the dotted line is the median loss per MW the daily units faced. The chart below places every unit.`;
   staticLegend($("cut-legend"), bands);
-  const w = Math.max(280, el.clientWidth || 600), H = 320, m = { t: 22, r: 16, b: 40, l: 64 };
+  const w = Math.max(280, el.clientWidth || 600), H = 320, m = { t: 22, b: 40, ...CUT_M };
   const x = d3.scaleSymlog().constant(10).domain([x0, x1]).range([m.l, w - m.r]);
   const y = d3.scaleLinear().domain([0, Math.max(today, d3.max(tot) || 1)]).nice().range([H - m.b, m.t]);
   const xT = (w < 560 ? [0, 10, 50, 250, 1000] : [0, 5, 10, 25, 50, 100, 250, 500, 1000, 2500]).filter((v) => v >= x0 && v <= x1);
@@ -852,11 +857,10 @@ function drawCutUnits() {
     `Losses beyond the right edge are drawn at the edge. "Maybe" is a unit past its cutoff that has held a day-ahead award over its loss window on half or more of its days, since the award is not public until the 60-day disclosure. Click a unit to open it.`;
   $("cut-units-legend").innerHTML = rowsG.map((g) => `<span><span class="sw" style="background:var(${FLOOR_GROUPS.find((f) => f.id === g.id).color})"></span>${g.label}</span>`).join("") +
     `<span><span class="sw" style="background:var(--c8);height:3px"></span>Loss past the cutoff</span><span><span class="sw" style="background:var(--muted);height:3px"></span>Loss within it</span>`;
-  const cs = U.map((u) => u.c), ls = U.filter((u) => u.l != null).map((u) => u.l).sort(d3.ascending);
-  const x0 = Math.min(0, d3.min(cs)), x1 = Math.max(50, d3.max(cs), ls.length ? d3.quantile(ls, 0.9) : 0) * 1.08;
-  // on a narrow screen each group's name sits above its row instead of to the left
-  const w = Math.max(280, el.clientWidth || 600), narrow = w < 560, lane = 7, lanes = 5, rowH = lane * lanes + (narrow ? 32 : 18);
-  const m = { t: 8, r: 16, b: 30, l: narrow ? 12 : 150 }, H = m.t + m.b + rowH * rowsG.length;
+  const [x0, x1] = cutDomain(U);
+  // same margins and loss axis as the cutoff curve above; each group's name sits above its row
+  const w = Math.max(280, el.clientWidth || 600), narrow = w < 560, lane = 7, lanes = 5, rowH = lane * lanes + 32;
+  const m = { t: 8, b: 30, ...CUT_M }, H = m.t + m.b + rowH * rowsG.length;
   const x = d3.scaleSymlog().constant(10).domain([x0, x1]).range([m.l, w - m.r]).clamp(true);
   const xT = (narrow ? [0, 10, 50, 250, 1000] : [0, 5, 10, 25, 50, 100, 250, 500, 1000, 2500]).filter((v) => v >= x0 && v <= x1);
   const r = d3.scaleSqrt().domain([0, d3.max(U, (u) => u.lsl)]).range([1.5, 6]);
@@ -866,11 +870,10 @@ function drawCutUnits() {
   rowsG.forEach((g, gi) => {
     const top = m.t + gi * rowH, col = css(FLOOR_GROUPS.find((f) => f.id === g.id).color);
     const lbl = g.label.replace("Daily, ", "Daily: ");
-    if (narrow) svg.append("text").attr("class", "axis-title").attr("x", m.l).attr("y", top + 12).text(lbl);
-    else svg.append("text").attr("class", "axis-title").attr("x", m.l - 8).attr("y", top + rowH / 2).attr("text-anchor", "end").attr("dominant-baseline", "middle").text(lbl);
+    svg.append("text").attr("class", "axis-title").attr("x", m.l).attr("y", top + 12).text(lbl);
     const us = U.filter((u) => u.group === g.id).sort((a, b) => a.c - b.c);
     us.forEach((u, k) => {
-      const yy = top + (narrow ? 23 : 9) + (k % lanes) * lane + lane / 2, past = u.l != null && u.l > u.c;
+      const yy = top + 23 + (k % lanes) * lane + lane / 2, past = u.l != null && u.l > u.c;
       const gU = svg.append("g").style("cursor", "pointer")
         .on("pointermove", (ev) => showTip(ev, `<h4>${esc(u.unit)}</h4>${techLabel(u.tech)} · ${g.label}<br>LSL ${fmtMW(u.lsl)} MW<br>` +
           `Cutoff ${fmt$(u.cutoff)} (${fmtPerMW(u.c)}/MW)<br>Loss on the day ${fmt$(u.loss)} (${fmtPerMW(u.l)}/MW)<br><b>${VERDICT[u.verdict] || u.verdict}</b>` +
