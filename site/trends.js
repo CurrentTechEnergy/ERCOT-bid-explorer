@@ -1557,15 +1557,15 @@ async function drawHeat() {
       const parts = s.keys.map((k) => c[k] && c[k][h] && c[k][h][ti]).filter((v) => v != null);
       return parts.length ? d3.sum(parts) : null;
     };
-    $("heat-note").textContent = `MW of ${s.label.toLowerCase()} offered at or below ${+S.heatThr === -249 ? "the price floor" : fmtPrice0(+S.heatThr)} in each hour, from the 60-day curves as used in SCED. Click a cell to open that day and hour in the Day view.`;
+    $("heat-note").textContent = `MW of ${s.label.toLowerCase()} offered at or below ${+S.heatThr === -249 ? "the price floor" : fmtPrice0(+S.heatThr)} in each hour, from the 60-day curves as used in SCED. Click a cell to open that day and hour on Beyond baseload.`;
   } else {
     if (!I) return emptyMsg(el, "Fills in after the data update builds the intraday file.");
     dstr = I.dates;
     const ts = techsOf(S.heatTech), s = S.heatTech === "all" ? ALL_THERMAL : TECHS.find((x) => x.id === S.heatTech);
     if (meas === "lambda") val = (i, h) => I.lambda[i][h];
     else val = (i, h) => (I.tech[ts[0]].n[i] ? d3.sum(ts, (t) => I.tech[t].above[i][h] + (meas === "running" ? I.tech[t].at_min[i][h] : 0)) : null);
-    $("heat-note").textContent = meas === "lambda" ? "Hourly system lambda. Negative hours are red. Click a cell to open that day and hour in the Day view."
-      : `${meas === "running" ? "Output" : "Output above minimum (LSL)"} of running ${s.label.toLowerCase()} units, from the 60-day disclosure. Click a cell to open that day and hour in the Day view.`;
+    $("heat-note").textContent = meas === "lambda" ? "Hourly system lambda. Negative hours are red. Click a cell to open that day and hour on Beyond baseload."
+      : `${meas === "running" ? "Output" : "Output above minimum (LSL)"} of running ${s.label.toLowerCase()} units, from the 60-day disclosure. Click a cell to open that day and hour on Beyond baseload.`;
   }
   const cells = [];
   dstr.forEach((d, i) => { for (let h = 0; h < 24; h++) { const v = val(i, h); if (v != null) cells.push({ d, h, v }); } });
@@ -1592,9 +1592,9 @@ async function drawHeat() {
   svg.append("g").selectAll("rect").data(cells).join("rect")
     .attr("x", (c) => x(c.d)).attr("y", (c) => y(c.h)).attr("width", x.bandwidth()).attr("height", y.bandwidth()).attr("rx", cw > 6 ? 2 : 0)
     .attr("fill", (c) => color(c.v)).style("cursor", "pointer")
-    .on("pointermove", (ev, c) => showTip(ev, `<h4>${fmtDate(parseDate(c.d))} · HE ${c.h + 1}</h4><b>${fmtV(c.v)}</b><br><span class="tip-pin-note">Click to open in the Day view</span>`))
+    .on("pointermove", (ev, c) => showTip(ev, `<h4>${fmtDate(parseDate(c.d))} · HE ${c.h + 1}</h4><b>${fmtV(c.v)}</b><br><span class="tip-pin-note">Click to open on Beyond baseload</span>`))
     .on("pointerleave", hideTip)
-    .on("click", (ev, c) => { location.href = `index.html#date=${c.d}&he=${c.h + 1}`; });
+    .on("click", (ev, c) => { location.href = `beyond.html#date=${c.d}&he=${c.h + 1}&p=curves-panel`; });
   svg.append("g").attr("class", "axis").attr("transform", `translate(${m.l - 2},0)`)
     .call(d3.axisLeft(y).tickValues([0, 5, 11, 17, 23]).tickFormat((h) => `HE ${h + 1}`).tickSize(0)).select(".domain").remove();
   const every = Math.ceil(dstr.length / Math.max(1, Math.floor((cw * dstr.length) / 70)));
@@ -1657,10 +1657,10 @@ function drawLean() {
   $("lean-note").textContent = `The ${top.length} hours with the least ${fossil ? "fossil (coal, combined cycle, gas steam and combustion turbine)" : "thermal (fossil and nuclear)"} output, ${scope}` +
     `${S.leanPer === "day" ? ", one per day" : ""}, from the 60-day disclosure. Output counts every unit's telemetered MW, including units starting up, shutting down or online for under half the hour ("starting/stopping"). ` +
     `"Above min." is output above each running unit's LSL; the rest of the running units' output is what they could not shed without shutting down. ` +
-    `Storage is net output (negative while charging); hub avg is the HB_HUBAVG settlement point price. Click a row to open that hour in the Day view.`;
+    `Storage is net output (negative while charging); hub avg is the HB_HUBAVG settlement point price. Click a row to open that hour on Beyond baseload.`;
   if (!top.length) { el.innerHTML = `<p class="empty">No hours in this range.</p>`; setCSV(el, [], [], "Leanest thermal hours"); return; }
   el.innerHTML = `<table class="data"><thead><tr>${cols.map((c) => `<th${c.t ? ' class="t"' : ""}>${c.h}</th>`).join("")}</tr></thead><tbody>` +
-    top.map((r) => `<tr data-href="index.html#date=${r.d}&he=${r.h + 1}" style="cursor:pointer">${cols.map((c) => `<td${c.t ? ' class="t"' : ""}>${c.f(r)}</td>`).join("")}</tr>`).join("") + "</tbody></table>";
+    top.map((r) => `<tr data-href="beyond.html#date=${r.d}&he=${r.h + 1}&p=curves-panel" style="cursor:pointer">${cols.map((c) => `<td${c.t ? ' class="t"' : ""}>${c.f(r)}</td>`).join("")}</tr>`).join("") + "</tbody></table>";
   setCSV(el, cols.map((c) => c.k), top.map(val), "Leanest thermal hours");
 }
 

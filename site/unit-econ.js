@@ -188,7 +188,7 @@ async function draw() {
     `Revenue is settled two-settlement: the DA award at the DA price plus the real-time deviation at its node.` + fuelNote +
     (own ? ` DAM three-part offer on ${own} days (hot start ${fmt$(d3.median(u.start_hot.filter((v) => v != null)))}, minimum-energy ${fmt$2(d3.median(mg))}/MWh).` : "") +
     (e.est ? ` ${e.est} day${e.est === 1 ? "" : "s"} use generic start costs.` : "") +
-    ` <a href="economics.html#tech=${S.tech}&unit=${encodeURIComponent(U.name)}">Change the cost and revenue bases on Plant economics</a>.`;
+    ` <a href="fleet.html#tech=${S.tech}">Compare it with its technology on Fleet economics</a>, where the cost and revenue bases can be changed.`;
   legendHTML($("econ-legend"));
   barChart($("econ-chart"), T.dates, REV_SERIES.map((s) => ({ ...s, values: e[s.k] })), COST_SERIES.map((s) => ({ ...s, values: e[s.k] })),
     { ...MARGIN, values: e.margin }, { title: "Revenue (up) and cost (down) per day, $", yFmt: fmt$k,
