@@ -171,6 +171,7 @@ function drawHead(e) {
   const ui = e.tech === "storage" && (S.UI || []).find((u) => u.unit === e.name);
   if (ui) bits.push(...[ui.mw && `${fmtMW(ui.mw)} MW`, ui.plant && `${ui.plant}${ui.match === "site" ? " (plant)" : ""}`, ui.sp && `node ${ui.sp}`, ui.qse && `QSE ${ui.qse}`].filter(Boolean));
   $("unit-meta").textContent = bits.join(" · ");
+  drawSite(e);
   const v = $("unit-verdict");
   if (!f) { v.textContent = THERMAL.includes(e.tech) ? "Not in the latest forecast." : ""; return; }
   const g = GROUP_SHORT[f.group] || f.group;
@@ -181,6 +182,18 @@ function drawHead(e) {
     (f.off_from ? ` Expected off for ${f.off_hours} h from HE ${f.off_from}.` : "") +
     (f.reason && f.loss == null ? ` <span class="muted">${esc(f.reason)}.</span>` : "") +
     ` <a href="./#date=${esc(S.FC.date)}">Overview for that day</a>.`;
+}
+
+// every other unit at the same settlement point (a shared site: a battery beside a wind, solar or
+// gas plant, or units of one plant), linked both ways from the unit index
+function drawSite(e) {
+  const me = (S.UI || []).find((u) => u.unit === e.name);
+  const mates = me && me.sp ? S.UI.filter((u) => u.sp === me.sp && u.unit !== e.name) : [];
+  $("unit-site").hidden = !mates.length;
+  if (!mates.length) return;
+  $("unit-site").innerHTML = `Same node (${esc(me.sp)}): ` + mates.map((u) =>
+    `<a href="unit.html?unit=${encodeURIComponent(u.unit)}">${esc(u.unit)}</a> ${esc(u.tech === "storage" ? "battery" : techLabel(u.tech).toLowerCase())}` +
+    (u.mw ? ` ${fmtMW(u.mw)} MW` : "")).join(", ");
 }
 
 // ---- decision history: every day the unit started online, its loss and what it did ----------
