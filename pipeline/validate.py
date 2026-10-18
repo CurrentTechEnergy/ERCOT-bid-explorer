@@ -43,13 +43,11 @@ consistency:
   events            the unit events file (pipeline/events.py), checked once per run under the
                     pseudo-day "events": ids unique, every kind known, every unit a unit the
                     site knows (or fleet:<tech> for the fuel kind, a battery in
-                    storage/habits.json.gz, or a unit or train in trends first_seen), every date a real date inside the loaded record (thermal
+                    storage/units.json.gz, or a unit or train in trends first_seen), every date a real date inside the loaded record (thermal
                     events inside the 60-day days), a first-seen date on every event; and the
                     cutoff history file: a model name and version, cutoffs numeric per MW of
-                    LSL, every move on a unit with rows; and storage/units.json.gz and
-                    habits.json.gz: one value per day for every field of every battery, the
-                    shares charged and discharged in its top and bottom hours within 0 to 1, no
-                    negative size or MWh
+                    LSL, every move on a unit with rows; and storage/units.json.gz: one value
+                    per day for every field of every battery, no negative size or MWh
 
 A check is an "error" when the numbers cannot both be right (a parsing or mapping bug), a
 "warning" when something is worth a look, and "info" when it is only recorded.  Results that did not pass are kept per day in data/validation.json.
@@ -591,8 +589,8 @@ def check_files(index):
     for e in (read_json_gz(DATA_DIR / "renew_changes.json.gz", default={}) or {}).get("events", []):
         known.add(e.get("plant")); known |= set(e.get("units") or [])
     known |= {f"fleet:{t}" for t in FUEL}      # fleet-wide fuel events
-    hb = read_json_gz(DATA_DIR / "storage" / "habits.json.gz", default={}) or {}
-    known |= set(hb.get("units", {}))           # battery events
+    su = read_json_gz(DATA_DIR / "storage" / "units.json.gz", default={}) or {}
+    known |= set(su.get("units", {}))           # battery events
     tr = read_json_gz(DATA_DIR / "trends_60d.json.gz", default={}) or {}
     known |= {_train(u) for u in tr.get("first_seen") or {}}   # new units (combined cycle by train)
     unknown = sorted({e["unit"] for e in events if e.get("unit") not in known})
@@ -610,17 +608,14 @@ def check_files(index):
     day.add("events_dates", "error" if bad_date else "ok", f"{len(bad_date)} event(s) outside the record, e.g. {bad_date[:3]}" if bad_date else "inside the record")
     no_seen = [e["id"] for e in events if not e.get("seen")]
     day.add("events_seen", "error" if no_seen else "ok", f"{len(no_seen)} event(s) without a first-seen date" if no_seen else "every event dated")
-    for name in ("units.json.gz", "habits.json.gz"):     # per-battery daily rows (storage.py)
-        su = read_json_gz(DATA_DIR / "storage" / name, default=None)
-        if su is None:
-            continue
+    su = read_json_gz(DATA_DIR / "storage" / "units.json.gz", default=None)    # per-battery daily rows
+    if su is not None:
         n = len(su.get("dates", []))
         bad = [u for u, r in su.get("units", {}).items() if set(r) != set(su.get("fields", [])) or any(len(v) != n for v in r.values())]
-        hr = [u for u, r in su.get("units", {}).items() if any(v is not None and not 0 <= v <= 1 for k in ("chg_tb", "dis_tb") for v in r.get(k, []))]
         neg = [u for u, r in su.get("units", {}).items() if any(v is not None and v < 0 for k in ("hsl", "soc_max", "dis", "chg") for v in r.get(k, []))]
-        day.add(f"storage_{name.split('.')[0]}", "error" if bad or hr or neg else "ok",
-                f"{len(bad)} battery row(s) not one value per day per field, {len(hr)} with a share in the top or bottom hours outside 0 to 1, "
-                f"{len(neg)} with a negative size or MWh, e.g. {(bad + hr + neg)[:3]}" if bad or hr or neg else f"{len(su.get('units', {}))} batteries, {n} days")
+        day.add("storage_units", "error" if bad or neg else "ok",
+                f"{len(bad)} battery row(s) not one value per day per field, {len(neg)} with a negative size or MWh, "
+                f"e.g. {(bad + neg)[:3]}" if bad or neg else f"{len(su.get('units', {}))} batteries, {n} days")
     ch = read_json_gz(CUTOFF_PATH, default=None)
     if ch is not None:
         ok = bool(ch.get("model")) and bool(ch.get("version"))

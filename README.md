@@ -118,11 +118,11 @@ pipeline/
                    offer prices from the submitted curves (where discharge starts, where charging
                    stops, MW bid to charge and offered to discharge at set prices); plus
                    data/storage/series.json.gz, every day's fleet block for date-range charts,
-                   and units.json.gz / habits.json.gz, one row a day per battery for the Unit page
-                   and the battery events (no downloads)
+                   and units.json.gz, one row a day per battery for the Unit page and the
+                   battery events (no downloads)
   trends.py        per-unit day files -> daily trends, starts, flips, bidding changes (no downloads)
   events.py        decisions, groups, trends, renew_changes, cutoff_history and the battery
-                   habits -> one list of unit
+                   daily rows -> one list of unit
                    events in one format with the run that first found each (data/events.json.gz)
                    and Atom feeds per unit (data/feeds/, no downloads)
   unit_index.py    trends, decisions, the latest forecast, ppa and econ -> every unit the Unit page
