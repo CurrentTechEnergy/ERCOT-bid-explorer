@@ -53,7 +53,7 @@
     <div class="panel-head">
       <div>
         <h2>All units <span class="h-note" id="dir-note"></span></h2>
-        <p class="note">Type a unit, plant, county or settlement point in the Unit box above to filter, and click a unit to open its page. Thermal units, wind and solar are listed; a combined-cycle train is one entry, and a search for one of its configurations finds it. <b>Group</b> is the unit's timescale group in the latest forecast (how often it shuts down; thermal only). <b>Capacity</b> is the 95th percentile of each day's highest HSL. <b>Name</b>, county and zone come from ERCOT's Capacity, Demand and Reserves report<span id="dir-cdr"></span>, matched on the unit code; <span class="tag">plant</span> marks a unit matched only to its plant, which is how combined-cycle trains match, since the report lists each turbine. The Unit box also searches these names. Batteries are not listed yet.</p>
+        <p class="note">Type a unit, plant, county or settlement point in the Unit box above to filter, and click a unit to open its page. Thermal units, wind, solar and batteries are listed; a combined-cycle train is one entry, and a search for one of its configurations finds it. <b>Group</b> is the unit's timescale group in the latest forecast (how often it shuts down; thermal only). <b>Capacity</b> is the 95th percentile of each day's highest HSL. <b>Name</b>, county and zone come from ERCOT's Capacity, Demand and Reserves report<span id="dir-cdr"></span>, matched on the unit code; <span class="tag">plant</span> marks a unit matched only to its plant, which is how combined-cycle trains match, since the report lists each turbine. The Unit box also searches these names. Batteries renamed for RTC+B (names ending _ESR1) mostly match the report only by plant.</p>
       </div>
     </div>
     <div class="ctl-row">
@@ -158,6 +158,34 @@
     <div class="units-wrap" id="unit-changes"></div>
   </section>
 
+  <section class="panel panel-wide" id="batt-day-panel" hidden>
+    <div class="panel-head">
+      <div>
+        <h2>One day by hour <span class="h-note" id="batt-day-note"></span></h2>
+        <p class="note">What the battery did hour by hour: discharging above zero and charging below it from the base points SCED sent, averaged over each hour, against its day-ahead award (dashed). Below, its state of charge with its minimum and maximum, then the offer prices from its submitted curve against the day-ahead price at its node: <b>charging stops</b> is the highest price at which it still bids to charge, <b>discharge starts</b> the lowest price at which it offers to discharge, and the dashed lines the prices for half its charging and half its discharge range. Each is the median over the hour's SCED runs.</p>
+      </div>
+      <div class="panel-tools"><label class="lbl inline" for="batt-day">Day</label><select id="batt-day"></select></div>
+    </div>
+    <div class="legend legend-static" id="batt-day-legend"></div>
+    <div class="chart" id="batt-day-chart"></div>
+    <div class="chart chart-short" id="batt-soc-chart"></div>
+    <div class="legend legend-static" id="batt-offer-legend"></div>
+    <div class="chart" id="batt-offer-chart"></div>
+  </section>
+
+  <section class="panel panel-wide" id="batt-days-panel" hidden>
+    <div class="panel-head">
+      <div>
+        <h2>Across days <span class="h-note" id="batt-days-note"></span></h2>
+        <p class="note">Energy charged and discharged each day against its day-ahead awards, and its offer prices each day: the price where its charging stops, averaged over HE 10 to 16, and the lowest price at which it offered discharge in any hour. Batteries rebid all the time, so read the trend, not a single day. Click a day to show it above.</p>
+      </div>
+    </div>
+    <div class="legend legend-static" id="batt-mwh-legend"></div>
+    <div class="chart" id="batt-mwh-chart"></div>
+    <div class="legend legend-static" id="batt-price-legend"></div>
+    <div class="chart chart-short" id="batt-price-chart"></div>
+  </section>
+
   <section class="panel panel-wide" id="econ-panel" hidden>
     <div class="panel-head">
       <div>
@@ -181,6 +209,7 @@
 <script src="common.js"></script>
 <script src="unit.js"></script>
 <script src="unit-econ.js"></script>
+<script src="unit-battery.js"></script>
 <script src="unit-renew.js"></script>
 <script src="unit-events.js"></script>
 <script src="unit-dir.js"></script>

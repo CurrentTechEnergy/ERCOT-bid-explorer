@@ -29,7 +29,7 @@ EDITION_PATH = PATH.with_name("cdr_edition.txt")     # "December 2025", from the
 COLUMNS = ["code", "name", "tech", "fuel", "status", "county", "zone"]
 # CDR technology codes to the site's techs (ST covers nuclear, coal and gas steam alike)
 TECH = {"CC": {"combined_cycle"}, "GT": {"combustion_turbine"}, "IC": {"combustion_turbine"}, "WT": {"wind"}, "PV": {"solar"},
-        "ST": {"nuclear", "coal", "gas_steam"}}
+        "ST": {"nuclear", "coal", "gas_steam"}, "BA": {"storage"}}
 _JOINT = re.compile(r"_J\d+$")
 _NOTE = re.compile(r"\s*\((?:AS OF|AVAILABLE|EFFECTIVE|RETIRED|MOTHBALL)[^)]*\)", re.I)   # dated notes in a name
 _UNIT_WORD = re.compile(r"\s+(?:CTG|STG|CT|GT|ST|U|UNIT|G|BLK|BLOCK)\s*[0-9A-Z]{1,3}$|\s+[0-9]{1,3}[A-Z]?$")

@@ -5,7 +5,8 @@
    (data/60d-units/, data/60d-curves/) and the thermal bidding charts (data/trends_60d.json.gz),
    lifted from trends.js; the decision chart also carries the unit's cutoff refitted month by
    month (data/cutoff_history.json.gz, pipeline/models/cutoff_history.py). unit-econ.js draws revenue and cost and unit-renew.js the wind and
-   solar hedge formula and bidding history; both redraw on the "unitchange" event this file sends. */
+   solar hedge formula and bidding history, unit-battery.js a battery's day by hour, offer prices and
+   history; all redraw on the "unitchange" event this file sends. */
 (() => {
 "use strict";
 
@@ -148,6 +149,7 @@ function buildList() {
   Object.entries(S.DEC?.units || {}).forEach(([n, r]) => add(n, r[0]));
   if (S.FC) S.FC.units.rows.forEach((r) => add(r[0], r[1]));
   (S.PPA?.units || []).forEach((u) => add(u.name, u.tech));
+  (S.UI || []).filter((u) => u.tech === "storage").forEach((u) => add(u.unit, "storage"));
   S.list.forEach((e) => e.configs.sort());
   $("unit-list").innerHTML = [...S.list.values()].sort((a, b) => a.name.localeCompare(b.name))
     .map((e) => `<option value="${esc(e.name)}">${techLabel(e.tech)}</option>`).join("");
@@ -166,6 +168,8 @@ function drawHead(e) {
   if (e.configs.length > 1) bits.push(`${e.configs.length} configurations: ${e.configs.join(", ")}`);
   if (f) bits.push(`${fmtMW(f.hsl)} MW maximum, ${fmtMW(f.lsl)} MW minimum (day-ahead)`);
   if (ppa && ppa.sp) bits.push(`node ${ppa.sp}`);
+  const ui = e.tech === "storage" && (S.UI || []).find((u) => u.unit === e.name);
+  if (ui) bits.push(...[ui.mw && `${fmtMW(ui.mw)} MW`, ui.plant && `${ui.plant}${ui.match === "site" ? " (plant)" : ""}`, ui.sp && `node ${ui.sp}`, ui.qse && `QSE ${ui.qse}`].filter(Boolean));
   $("unit-meta").textContent = bits.join(" · ");
   const v = $("unit-verdict");
   if (!f) { v.textContent = THERMAL.includes(e.tech) ? "Not in the latest forecast." : ""; return; }
@@ -540,6 +544,7 @@ async function boot() {
     tryJSON("data/unit_hours_60d.json.gz"), tryJSON("data/summary_prices.json.gz"), tryJSON("data/forecast/index.json.gz"), tryJSON("data/ppa.json.gz"),
     tryJSON("data/cutoff_history.json.gz")]);
   S.FC = S.FI && S.FI.days.length ? await tryJSON(`data/forecast/${S.FI.days.at(-1)}.json.gz`) : null;
+  S.UI = await window.CX.unitIndex();
   if (S.T) { S.span = [S.T.dates[0], S.T.dates.at(-1)]; S.last60 = S.T.dates.at(-1); }
   buildList();
   $("status").textContent = `${S.list.size} units · 60-day data ${S.T ? `${S.T.dates[0]} to ${S.T.dates.at(-1)}` : "not loaded"}` + (S.FC ? ` · forecast ${S.FC.date}` : "");

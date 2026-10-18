@@ -183,8 +183,9 @@ async function draw() {
   const own = u.start_hot.filter((v) => v != null).length, mg = u.mingen.filter((v) => v != null);
   const fuelNote = FUEL[S.tech] ? ` Costs: fuel at the EIA average heat rate for the technology (${EIA_HR[S.tech]} MMBtu/MWh)` +
     (FUEL[S.tech] === "gas" ? ` × ${HUBS[unitHub(u)]} gas${u.fuel_hub ? ` (its hub: ${HUB_METHOD[u.fuel_hub_method] || u.fuel_hub_method})` : ""}` : ` × $${S.fuel[FUEL[S.tech]]}/MMBtu`) +
-    ` plus $${S.params[S.tech].vom}/MWh variable O&M, and starts at its own DAM hot-start offer where it has one, else $${fmt0(S.params[S.tech].start)}.` : " No fuel cost for wind and solar.";
-  $("econ-note").innerHTML = `${days} days, ${fmt1(mwh / 1000)} GWh, ${fmt0(nst)} starts. Margin ${fmt$(margin)}${mwh ? ` (${fmt$2(margin / mwh)} per MWh)` : ""}. ` +
+    ` plus $${S.params[S.tech].vom}/MWh variable O&M, and starts at its own DAM hot-start offer where it has one, else $${fmt0(S.params[S.tech].start)}.`
+    : S.tech === "storage" ? " Charging is in energy revenue as a negative (MWh bought at the same prices), so energy revenue is the arbitrage margin and there is no separate fuel cost." : " No fuel cost for wind and solar.";
+  $("econ-note").innerHTML = `${days} days, ${fmt1(mwh / 1000)} GWh${S.tech === "storage" ? ` discharged, ${fmt1(sum(u.chg) / 1000)} GWh charged` : `, ${fmt0(nst)} starts`}. Margin ${fmt$(margin)}${mwh ? ` (${fmt$2(margin / mwh)} per MWh)` : ""}. ` +
     `Revenue is settled two-settlement: the DA award at the DA price plus the real-time deviation at its node.` + fuelNote +
     (own ? ` DAM three-part offer on ${own} days (hot start ${fmt$(d3.median(u.start_hot.filter((v) => v != null)))}, minimum-energy ${fmt$2(d3.median(mg))}/MWh).` : "") +
     (e.est ? ` ${e.est} day${e.est === 1 ? "" : "s"} use generic start costs.` : "") +

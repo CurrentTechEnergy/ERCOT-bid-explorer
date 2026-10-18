@@ -66,6 +66,15 @@ data/storage/series.json.gz  every day's fleet block in one file, for the Batter
                               date-range charts: {format, dates, prices (OFFER_PRICES),
                               fleet: {field: [day][24]}, chg_ge / dis_le: {price: [day][24]},
                               n_units, n_online: [day]}
+data/storage/units.json.gz   one row a day per battery, for the Unit page's across-days charts
+                              and the battery events: {format, dates, fields (UNIT_DAY_FIELDS),
+                              units: {name: {field: [day]}}}, null on days the battery is absent:
+                                hsl, soc_max   the day's largest HSL (MW) and maximum state of charge (MWh)
+                                dis, chg       MWh discharged and charged (hourly base points)
+                                dam_dis, dam_chg   MWh awarded day-ahead each way
+                                dis0           lowest price at which it offered discharge in any hour
+                                chg0           price where its charging stops, mean over HE 10 to 16
+                                as_up          AS up awarded in SCED, mean MW over the day
 
   python -m pipeline.storage            # build or refresh every day with a per-unit file
   python -m pipeline.storage --all      # rebuild every day
@@ -87,6 +96,8 @@ FLEET_FIELDS = ["dis", "chg", "out_dis", "out_chg", "hsl", "lsl", "head_dis", "h
                 "as_up", "as_dn", "cap_up", "cap_dn", "dam_dis", "dam_chg"]
 OFFER_FIELDS = ["dis0", "dis50", "chg0", "chg50"]
 OFFER_PRICES = [-250, -20, 0, 10, 20, 30, 50, 100, 250]   # $/MWh for chg_ge and dis_le
+UNIT_DAY_FIELDS = ["hsl", "soc_max", "dis", "chg", "dam_dis", "dam_chg", "dis0", "chg0", "as_up"]
+MIDDAY = slice(9, 16)          # HE 10 to 16, where charging bids are read
 
 
 def _r(x, nd=1):
@@ -329,6 +340,7 @@ def build_storage(index: dict, rebuild_all: bool = False) -> list:
     })
     index["days"]["storage"] = days
     _write_series(done)
+    _write_units(done)
     print(f"storage: {len(built)} day(s) built, {len(days)} in the index"
           + (f", state of charge from {next((d for d, day in done if day.get('n_soc')), None)}" if any(day.get("n_soc") for _, day in done) else ", no state of charge yet")
           + (f", DAM battery rows from {next((d for d, day in done if day.get('n_dam')), None)}" if any(day.get("n_dam") for _, day in done) else ", no DAM battery rows yet"))
@@ -346,6 +358,36 @@ def _write_series(done: list) -> None:
     write_json_gz(OUT_DIR / "series.json.gz", {
         "format": FORMAT, "dates": [d for d, _ in done], "prices": OFFER_PRICES, "fleet": fleet, **by_price,
         "n_units": [day["n_units"] for _, day in done], "n_online": [day["n_online"] for _, day in done]})
+
+
+def _unit_day(u: dict) -> list:
+    """One battery's day as UNIT_DAY_FIELDS (see the module docstring)."""
+    def arr(k):
+        v = u.get(k)
+        return None if v is None else np.array([np.nan if x is None else x for x in v], float)
+    bp, dam, dis0, chg0, asup = arr("bp"), arr("dam"), arr("dis0"), arr("chg0"), arr("as_up")
+    with np.errstate(invalid="ignore"):
+        mid = chg0[MIDDAY] if chg0 is not None else None
+        return [u.get("hsl"), u.get("soc_max"),
+                _r(np.nansum(np.fmax(bp, 0))) if bp is not None and np.isfinite(bp).any() else None,
+                _r(-np.nansum(np.fmin(bp, 0))) if bp is not None and np.isfinite(bp).any() else None,
+                _r(np.nansum(np.fmax(dam, 0))) if dam is not None and np.isfinite(dam).any() else None,
+                _r(-np.nansum(np.fmin(dam, 0))) if dam is not None and np.isfinite(dam).any() else None,
+                _r(np.nanmin(dis0)) if dis0 is not None and np.isfinite(dis0).any() else None,
+                _r(np.nanmean(mid)) if mid is not None and np.isfinite(mid).any() else None,
+                _r(np.nanmean(asup)) if asup is not None and np.isfinite(asup).any() else None]
+
+
+def _write_units(done: list) -> None:
+    """data/storage/units.json.gz: one row a day per battery."""
+    done = sorted(done, key=lambda t: t[0])
+    names = sorted({n for _, day in done for n in day["units"]})
+    units = {n: {k: [None] * len(done) for k in UNIT_DAY_FIELDS} for n in names}
+    for i, (_, day) in enumerate(done):
+        for n, u in day["units"].items():
+            for k, v in zip(UNIT_DAY_FIELDS, _unit_day(u)):
+                units[n][k][i] = v
+    write_json_gz(OUT_DIR / "units.json.gz", {"format": FORMAT, "dates": [d for d, _ in done], "fields": UNIT_DAY_FIELDS, "units": units})
 
 
 def main(argv=None):
