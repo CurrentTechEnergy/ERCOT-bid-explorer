@@ -73,7 +73,7 @@
 
 <header class="masthead">
   <div class="brand">
-    <div class="nav-row"><nav class="nav" aria-label="Pages"><a href="index.html">Overview</a><a href="commitment.html">Commitment</a><a href="changes.html">What's changing</a><a href="beyond.html">Beyond baseload</a><a href="renewables.html">Renewables</a><a href="fleet.html">Fleet economics</a><a href="unit.html">Units</a><a href="trends.html">Trends</a><a href="builder.html">Graph builder</a><a href="guide.html" aria-current="page">How offers work</a></nav></div>
+    <div class="nav-row"><nav class="nav" aria-label="Pages"><a href="index.html">Overview</a><a href="commitment.html">Commitment</a><a href="changes.html">What's changing</a><a href="beyond.html">Beyond baseload</a><a href="renewables.html">Renewables</a><a href="batteries.html">Batteries</a><a href="fleet.html">Fleet economics</a><a href="unit.html">Units</a><a href="trends.html">Trends</a><a href="builder.html">Graph builder</a><a href="guide.html" aria-current="page">How offers work</a></nav></div>
     <h1>How offers work</h1>
     <p class="sub">Why thermal plants keep running when prices go negative. A walk through offer curves, minimum output (LSL), real-time dispatch (SCED), the day-ahead market (DAM) and on/off decisions, using one real day and real units from ERCOT's 60-day disclosures, then how the site counts revenue and reads hedges from wind and solar offers.</p>
   </div>
@@ -287,7 +287,7 @@
     <div class="prose">
       <p class="step-num">STEP 7</p>
       <h2>How hedge signals are found</h2>
-      <p>Wind and solar offers can give away how a plant is hedged. The <a href="renewables.html">Renewables</a> page scans every unit for this, and each unit's page shows its fitted formula.</p>
+      <p>Wind and solar offers can give away how a plant is hedged. The <a href="renewables.html">Renewables</a><a href="batteries.html">Batteries</a> page scans every unit for this, and each unit's page shows its fitted formula.</p>
       <p><strong>The formula.</strong> Per MWh, a plant hedged on a DA-settled, as-generated contract earns roughly the real-time price at its node, plus share × (strike − DA price at the settlement point), plus any per-MWh credit. Generating pays only when the RT price beats share × DA − (share × strike + credit), and that is the offer a QSE bidding the contract submits.</p>
       <p><strong>The fit.</strong> Each hour's offer is the median over its SCED runs of the submitted curve's price at half its MW, kept only when it did not move within the hour (a DA-based price is hourly). A formula day has at least four such hours at four or more prices, after dropping a floor or cap the formula is clamped to. Every candidate settlement point (the unit's own node, each hub and load zone) is fitted on each formula day; the point's formula is the median over days, and its hit rate is the share of hours it predicts within <span id="hit-v">$2</span>.</p>
       <p><strong>Bidding changes.</strong> <span id="chg-method">A unit's regime is its floor (one offer price most of the day), a day-ahead formula at one settlement point, or offers that move within the day. A change is a new regime that holds on most of the following online days.</span></p>
