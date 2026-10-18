@@ -22,6 +22,12 @@ Sources (each already computed by its own module; nothing is detected twice):
   renew_*          renew_changes.py events for wind and solar (floor_new, floor_back,
                    formula_on, formula_off, terms, moving_on, moving_off, episode), one event
                    per plant with its units listed
+  fuel             fleet-wide, not one unit: a technology's median first offer price above $0
+                   (trends_60d "first", the price trends.py measures each unit against its peers
+                   with, so a fuel-price move that the bidding kind removes shows here instead)
+                   shifting between K online days and the K before, by FUEL thresholds.  Unit
+                   key "fleet:<tech>"; carries the Houston Ship Channel gas price over the same
+                   two windows (gas_hubs) beside it
   outage_start, outage_end
                    an outage spell of OUTAGE_DAYS days or more in the hourly states
                    (unit_hours_60d, outages rewritten as groups.py does), when it started and
@@ -52,18 +58,27 @@ import html
 import re
 from collections import defaultdict
 
+import numpy as np
+
 from .config import DATA_DIR, SITE_URL
 from .groups import GROUPED_TECHS, GROUPS, assign_groups
 from .models.cutoff_history import PATH as CUTOFF_PATH
 from .renew_changes import KINDS as RENEW_KINDS
 from .store import read_json_gz, write_json_gz
-from .trends import SIGNALS, UNIT_TECHS
+from .trends import K, SIGNALS, UNIT_TECHS
 
 PATH = DATA_DIR / "events.json.gz"
 FEED_DIR = DATA_DIR / "feeds"
 MIN_MONTH_DAYS = 20   # days of hourly data a month needs before its group counts
 OUTAGE_DAYS = 7       # an outage this long or longer is an event when it starts and ends, ...
 OUTAGE_MAJOR = 30     # ... and a major one from this length
+# fuel: (minimum $/MWh, minimum share of the before median) a median shift must pass, and the
+# share from which it is major.  Coal's bar sits above its largest swing in the record ($7, 47%
+# from Nov 2025 to Aug 2026): 22 units, so the median steps between a few units' prices
+FUEL = {"combined_cycle": (5, 0.2, 0.5), "gas_steam": (5, 0.2, 0.5), "combustion_turbine": (5, 0.2, 0.5),
+        "coal": (12, 0.6, 0.6)}
+FUEL_MIN_UNITS = 5    # units with a price that day before its median counts
+FUEL_HUB = "hsc"      # gas hub shown beside the shift (gas_hubs.json.gz)
 FEED_ALL = 200        # entries in the all-units feed
 FEED_UNIT = 30        # entries in a unit's feed
 DAILY = ("daily1", "daily2", "daily3")
@@ -75,6 +90,7 @@ KINDS = {
     "group": "Timescale group changed",
     "bidding": "Bidding approach shifted",
     "cutoff": "Loss cutoff moved",
+    "fuel": "Fleet median offer shifted",
     "outage_start": "Outage started",
     "outage_end": "Outage ended",
     **{f"renew_{k}": v for k, v in RENEW_KINDS.items()},
@@ -149,6 +165,47 @@ def bidding_events(tr):
             title, major = f"{label}: {before:.0%} to {after:.0%} of the day", abs(after - before) >= 0.5 or sig == "noff"
             b, a = before, after
         out.append(_ev(name, date, "bidding", tech, title, major, before=b, after=a, field=sig))
+    return out
+
+
+def fuel_events(tr, hubs):
+    dates, units = tr.get("dates", []), tr.get("units", [])
+    hub = (hubs.get("hubs") or {}).get(FUEL_HUB) or {}
+    gas = dict(zip(hub.get("dates", []), hub.get("value", [])))
+
+    def gas_med(lo, hi):
+        v = [x for d, x in gas.items() if lo <= d <= hi and x is not None]
+        return round(float(np.median(v)), 2) if v else None
+    out = []
+    for tech, (thr_usd, thr_share, major_share) in FUEL.items():
+        rows = [u["first"] for u in units if u["tech"] == tech]
+        med, n = {}, {}
+        for i in range(len(dates)):
+            v = [r[i] for r in rows if r[i] is not None]
+            if len(v) >= FUEL_MIN_UNITS:
+                med[i], n[i] = float(np.median(v)), len(v)
+        idx = sorted(med)
+        cand = []
+        for j in range(K, len(idx) - K + 1):
+            b = float(np.median([med[i] for i in idx[j - K:j]]))
+            a = float(np.median([med[i] for i in idx[j:j + K]]))
+            if abs(a - b) >= thr_usd and b > 0 and abs(a - b) / b >= thr_share:
+                cand.append((abs(a - b) / b, j, b, a))
+        # the strongest point of each run of candidate days, at least K online days apart (as
+        # trends.detect_changes does for a unit)
+        taken = []
+        for share, j, b, a in sorted(cand, reverse=True):
+            if all(abs(j - t) >= K for t, *_ in taken):
+                taken.append((j, b, a, share))
+        for j, b, a, share in taken:
+            i = idx[j]
+            gb, ga = gas_med(dates[idx[j - K]], dates[idx[j - 1]]), gas_med(dates[i], dates[idx[j + K - 1]])
+            g = f"; Houston Ship Channel gas ${gb:.2f} to ${ga:.2f}/MMBtu" if gb is not None and ga is not None else ""
+            out.append(_ev(f"fleet:{tech}", dates[i], "fuel", tech,
+                           f"Median offer {_usd(b)} to {_usd(a)}/MWh over {n[i]} units{g}", share >= major_share,
+                           before=round(b, 1), after=round(a, 1), value=n[i],
+                           field="median first offer above $0, $/MWh; value: units with a price",
+                           gas_before=gb, gas_after=ga))
     return out
 
 
@@ -268,6 +325,8 @@ def write_feeds(events):
     _write_if_changed(FEED_DIR / "all.xml", _atom("ERCOT bid explorer: unit changes", SITE_URL, major))
     per = defaultdict(list)
     for e in events:
+        if e["kind"] == "fuel":       # fleet-wide: in the all-units feed only
+            continue
         for u in [e["unit"], *e.get("units", [])]:
             if len(per[u]) < FEED_UNIT:
                 per[u].append(e)
@@ -290,9 +349,10 @@ def build_events(index: dict) -> dict:
     tr = read_json_gz(DATA_DIR / "trends_60d.json.gz", default={}) or {}
     rc = read_json_gz(DATA_DIR / "renew_changes.json.gz", default={}) or {}
     ch = read_json_gz(CUTOFF_PATH, default={}) or {}
+    hubs = read_json_gz(DATA_DIR / "gas_hubs.json.gz", default={}) or {}
     tech_of = {u["unit"]: u["tech"] for u in tr.get("units", []) if u["tech"] in UNIT_TECHS}
     events = (shutdown_events(dec) + group_events(uh, tech_of) + bidding_events(tr) + cutoff_events(ch)
-              + renew_events(rc) + outage_events(uh, tech_of))
+              + renew_events(rc) + outage_events(uh, tech_of) + fuel_events(tr, hubs))
     old = read_json_gz(PATH, default=None) or {}
     seen = {e["id"]: e["seen"] for e in old.get("events", [])}
     # the first build has no earlier file to compare with, so every event it writes is history,

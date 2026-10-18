@@ -40,7 +40,7 @@ consistency:
                     least the forecast's committed minimum and the top at most its capacity
   events            the unit events file (pipeline/events.py), checked once per run under the
                     pseudo-day "events": ids unique, every kind known, every unit a unit the
-                    site knows, every date a real date inside the loaded record (thermal
+                    site knows (or fleet:<tech> for the fuel kind), every date a real date inside the loaded record (thermal
                     events inside the 60-day days), a first-seen date on every event; and the
                     cutoff history file: a model name and version, cutoffs numeric per MW of
                     LSL, every move on a unit with rows
@@ -537,7 +537,7 @@ def _forecast_checks(day, fc):
 
 def check_files(index):
     """Checks on files built once per run rather than per day (events, cutoff history)."""
-    from .events import KINDS, PATH as EVENTS_PATH
+    from .events import FUEL, KINDS, PATH as EVENTS_PATH
     from .models.cutoff_history import PATH as CUTOFF_PATH
     day = Day("events")
     ev = read_json_gz(EVENTS_PATH, default=None)
@@ -555,6 +555,7 @@ def check_files(index):
     known |= {u["unit"] for u in (read_json_gz(DATA_DIR / "trends_60d.json.gz", default={}) or {}).get("units", [])}
     for e in (read_json_gz(DATA_DIR / "renew_changes.json.gz", default={}) or {}).get("events", []):
         known.add(e.get("plant")); known |= set(e.get("units") or [])
+    known |= {f"fleet:{t}" for t in FUEL}      # fleet-wide fuel events
     unknown = sorted({e["unit"] for e in events if e.get("unit") not in known})
     day.add("events_units", "error" if unknown else "ok", f"{len(unknown)} unknown unit(s), e.g. {unknown[:5]}" if unknown else "all known")
     d60 = sorted(index["days"].get("60d", []))
