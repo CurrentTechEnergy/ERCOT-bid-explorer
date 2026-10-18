@@ -31,6 +31,10 @@ consistency:
                     expected output <= capacity, verdict counts equal the units rows, a model
                     name and version on every row and series, and (recorded) that a day with
                     an answer has been scored
+  unit_curves       thermal offer curves by hour (pipeline/unit_curves.py): every hourly index
+                    points at a stored curve, each curve's prices and MW never fall, and the
+                    unit-hours with a curve file entry are the thermal unit-hours online in the
+                    hourly unit file (data/60d-units)
   forecast_stack    dispatch stack file (pipeline/forecast/stack.py): MW never falls as the
                     price rises, groups and technologies each sum to the fleet, the floor is at
                     least the forecast's committed minimum and the top at most its capacity
@@ -311,6 +315,10 @@ def check_day(date, have):
                 if bp.size == 24 and np.isfinite(bp).any():
                     gaps.append(f"{tech} {np.nanmedian(aw - bp):+.0f}")
             day.add("dam_vs_rt", "info", "DAM award minus real-time base point, median hour MW: " + ", ".join(gaps))
+    # thermal offer curves by hour (pipeline/unit_curves)
+    cv = read_json_gz(DATA_DIR / "60d-curves" / f"{date}.json.gz") if date in have["60d"] else None
+    if cv:
+        _curve_checks(day, cv, read_json_gz(DATA_DIR / "60d-units" / f"{date}.json.gz", default=None))
     # battery day file (pipeline/storage)
     st = read_json_gz(DATA_DIR / "storage" / f"{date}.json.gz") if date in have.get("storage", ()) else None
     if st:
@@ -404,6 +412,33 @@ def _storage_checks(day, st, gen, dam):
                 else f"{n_soc} of {st['n_units']} batteries report a state of charge, all inside their windows")
     else:
         day.add("storage_soc", "info", "no state of charge for this day (per-unit file predates format 7)")
+
+
+def _curve_checks(day, cv, uh):
+    from .unit_curves import TECHS
+    bad, n_curves = [], 0
+    for name, u in cv["units"].items():
+        n = len(u["curves"])
+        n_curves += n
+        if any(not -1 <= i < n for i in u["sub"] + u["used"]):
+            bad.append(f"{name}: hourly index out of range")
+        for p, mw in u["curves"]:
+            if len(p) != len(mw) or np.any(np.diff(p) < -0.005) or np.any(np.diff(mw) < -0.05):
+                bad.append(f"{name}: a curve whose price or MW falls")
+                break
+    if uh:
+        names = [u[0] for u in uh["units"]]
+        want = {(names[r[0]], r[1]) for r in uh["rows"] if uh["units"][r[0]][2] in TECHS}
+        have_ = {(k, h + 1) for k, u in cv["units"].items() for h, v in enumerate(u["lim"]) if v is not None}
+        # a unit online without any curve all day has no entry, so only extra hours are a mismatch
+        extra = have_ - want
+        if extra:
+            bad.append(f"{len(extra)} unit-hours with curves that the hourly unit file has offline")
+        miss = {k for k in want - have_ if k[0] in cv["units"]}
+        if miss:
+            bad.append(f"{len(miss)} online unit-hours missing from units that have curves")
+    day.add("unit_curves", "error" if bad else "ok", "; ".join(bad[:5]) or
+            f"{len(cv['units'])} thermal units, {n_curves} distinct curves, indices and limits agree with the hourly unit file")
 
 
 def _stack_checks(day, fc, st):
