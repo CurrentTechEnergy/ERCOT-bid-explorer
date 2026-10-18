@@ -41,7 +41,11 @@ Sources (each already computed by its own module; nothing is detected twice):
                    more for a week, holding most of the SIZE_HOLD days after; major from SIZE_MAJOR.
                    Not in a battery's first SIZE_HOLD days charging or discharging
   battery_new      a battery's first day charging or discharging, after the fleet's first
-                   NEW_GRACE days of data
+                   NEW_GRACE days of data (every battery was renamed for RTC+B on Dec 5, 2025, so
+                   its first day in SCED says nothing)
+  new_unit         any other unit's first day in SCED (trends.py first_seen), after the record's
+                   first NEW_GRACE days; combined-cycle configurations count by train, so a new
+                   configuration of a known train is not a new unit
   outage_start, outage_end
                    an outage spell of OUTAGE_DAYS days or more in the hourly states
                    (unit_hours_60d, outages rewritten as groups.py does), when it started and
@@ -118,6 +122,7 @@ KINDS = {
     "battery_habit": "Battery habit shifted",
     "battery_size": "Battery size changed",
     "battery_new": "New battery",
+    "new_unit": "New unit",
     "outage_start": "Outage started",
     "outage_end": "Outage ended",
     **{f"renew_{k}": v for k, v in RENEW_KINDS.items()},
@@ -411,6 +416,33 @@ def battery_events(hb):
     return out
 
 
+def new_unit_events(tr):
+    seen, dates = tr.get("first_seen") or {}, tr.get("dates") or []
+    have = [d for d, h in zip(dates, tr.get("has_units") or []) if h]
+    if not seen or len(have) <= NEW_GRACE:
+        return []
+    trains = defaultdict(list)
+    for name, (d, tech, d_hsl, top) in seen.items():
+        if tech != "storage":
+            trains[_train(name)].append((d, tech, d_hsl, top))
+    out = []
+    for key, rows in sorted(trains.items()):
+        d, tech = min(rows)[:2]
+        if d <= have[NEW_GRACE - 1]:
+            continue
+        on = min((r[2] for r in rows if r[2]), default=None)
+        top = max(r[3] for r in rows)     # a train: its largest configuration
+        title = "First day in SCED" + (f", first HSL above zero {on}" if on and on != d else "") + (f"; up to {top:,.0f} MW so far" if top else ", no HSL yet")
+        out.append(_ev(key, d, "new_unit", tech, title, True, value=round(top) if top else None, field="MW",
+                       online=on))
+    return out
+
+
+def _train(u):
+    m = re.match(r"^(.*_CC\d+)_", u)
+    return m.group(1) if m else u
+
+
 # -------------------------------------------------------------------- feeds ---
 def _atom(title, link, entries):
     # the feed's own "updated" is its newest entry's, not the run time, so a feed file only
@@ -471,7 +503,8 @@ def build_events(index: dict) -> dict:
     hb = read_json_gz(DATA_DIR / "storage" / "habits.json.gz", default={}) or {}
     tech_of = {u["unit"]: u["tech"] for u in tr.get("units", []) if u["tech"] in UNIT_TECHS}
     events = (shutdown_events(dec) + group_events(uh, tech_of) + bidding_events(tr) + cutoff_events(ch)
-              + renew_events(rc) + outage_events(uh, tech_of) + fuel_events(tr, hubs) + battery_events(hb))
+              + renew_events(rc) + outage_events(uh, tech_of) + fuel_events(tr, hubs) + battery_events(hb)
+              + new_unit_events(tr))
     old = read_json_gz(PATH, default=None) or {}
     seen = {e["id"]: e["seen"] for e in old.get("events", [])}
     # the first build has no earlier file to compare with, so every event it writes is history,

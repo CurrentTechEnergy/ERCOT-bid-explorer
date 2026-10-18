@@ -42,8 +42,8 @@ consistency:
                     least the forecast's committed minimum and the top at most its capacity
   events            the unit events file (pipeline/events.py), checked once per run under the
                     pseudo-day "events": ids unique, every kind known, every unit a unit the
-                    site knows (or fleet:<tech> for the fuel kind, or a battery in
-                    storage/habits.json.gz), every date a real date inside the loaded record (thermal
+                    site knows (or fleet:<tech> for the fuel kind, a battery in
+                    storage/habits.json.gz, or a unit or train in trends first_seen), every date a real date inside the loaded record (thermal
                     events inside the 60-day days), a first-seen date on every event; and the
                     cutoff history file: a model name and version, cutoffs numeric per MW of
                     LSL, every move on a unit with rows; and storage/units.json.gz and
@@ -570,7 +570,7 @@ def _forecast_checks(day, fc):
 def check_files(index):
     """Checks on files built once per run rather than per day (events, per-battery daily rows,
     cutoff history, unit index)."""
-    from .events import FUEL, KINDS, PATH as EVENTS_PATH
+    from .events import FUEL, KINDS, PATH as EVENTS_PATH, _train
     from .models.cutoff_history import PATH as CUTOFF_PATH
     from .unit_index import PATH as UNIT_INDEX_PATH, TECHS as UNIT_INDEX_TECHS
     day = Day("events")
@@ -592,6 +592,8 @@ def check_files(index):
     known |= {f"fleet:{t}" for t in FUEL}      # fleet-wide fuel events
     hb = read_json_gz(DATA_DIR / "storage" / "habits.json.gz", default={}) or {}
     known |= set(hb.get("units", {}))           # battery events
+    tr = read_json_gz(DATA_DIR / "trends_60d.json.gz", default={}) or {}
+    known |= {_train(u) for u in tr.get("first_seen") or {}}   # new units (combined cycle by train)
     unknown = sorted({e["unit"] for e in events if e.get("unit") not in known})
     day.add("events_units", "error" if unknown else "ok", f"{len(unknown)} unknown unit(s), e.g. {unknown[:5]}" if unknown else "all known")
     d60 = sorted(index["days"].get("60d", []))
