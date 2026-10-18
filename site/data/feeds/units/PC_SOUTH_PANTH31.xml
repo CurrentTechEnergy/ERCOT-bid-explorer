@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>PC_SOUTH_PANTH31: bidding and operating changes</title>
+  <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PC_SOUTH_PANTH31"/>
+  <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PC_SOUTH_PANTH31</id>
+  <updated>2026-10-18T00:00:00Z</updated>
+  <entry>
+    <title>PC_SOUTH_PANTH: New floor (2026-03-10)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PC_SOUTH_PANTH"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PC_SOUTH_PANTH#PC_SOUTH_PANTH/2026-03-10/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$38 to floor -$37</summary>
+  </entry>
+  <entry>
+    <title>PC_SOUTH_PANTH: New floor (2026-02-06)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PC_SOUTH_PANTH"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PC_SOUTH_PANTH#PC_SOUTH_PANTH/2026-02-06/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$32 to floor -$38</summary>
+  </entry>
+  <entry>
+    <title>PC_SOUTH_PANTH: New floor (2025-11-08)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PC_SOUTH_PANTH"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PC_SOUTH_PANTH#PC_SOUTH_PANTH/2025-11-08/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$34 to floor -$32</summary>
+  </entry>
+  <entry>
+    <title>PC_SOUTH_PANTH: Back to an earlier floor (2025-04-03)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PC_SOUTH_PANTH"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PC_SOUTH_PANTH#PC_SOUTH_PANTH/2025-04-03/renew_floor_back</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Back to an earlier floor: floor -$41 to floor -$34</summary>
+  </entry>
+  <entry>
+    <title>PC_SOUTH_PANTH: New floor (2025-03-23)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PC_SOUTH_PANTH"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PC_SOUTH_PANTH#PC_SOUTH_PANTH/2025-03-23/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$34 to floor -$41</summary>
+  </entry>
+  <entry>
+    <title>PC_SOUTH_PANTH: New floor (2024-02-01)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PC_SOUTH_PANTH"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PC_SOUTH_PANTH#PC_SOUTH_PANTH/2024-02-01/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$37 to floor -$34</summary>
+  </entry>
+  <entry>
+    <title>PC_SOUTH_PANTH: New floor (2024-01-03)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PC_SOUTH_PANTH"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PC_SOUTH_PANTH#PC_SOUTH_PANTH/2024-01-03/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$35 to floor -$37</summary>
+  </entry>
+  <entry>
+    <title>PC_SOUTH_PANTH: New floor (2023-12-05)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PC_SOUTH_PANTH"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PC_SOUTH_PANTH#PC_SOUTH_PANTH/2023-12-05/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$41 to floor -$35</summary>
+  </entry>
+  <entry>
+    <title>PC_SOUTH_PANTH: New floor (2023-11-01)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PC_SOUTH_PANTH"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PC_SOUTH_PANTH#PC_SOUTH_PANTH/2023-11-01/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$39 to floor -$41</summary>
+  </entry>
+  <entry>
+    <title>PC_SOUTH_PANTH: New floor (2023-09-02)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PC_SOUTH_PANTH"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PC_SOUTH_PANTH#PC_SOUTH_PANTH/2023-09-02/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$36 to floor -$39</summary>
+  </entry>
+  <entry>
+    <title>PC_SOUTH_PANTH: New floor (2023-07-01)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PC_SOUTH_PANTH"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PC_SOUTH_PANTH#PC_SOUTH_PANTH/2023-07-01/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$37 to floor -$36</summary>
+  </entry>
+  <entry>
+    <title>PC_SOUTH_PANTH: New floor (2023-04-01)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PC_SOUTH_PANTH"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PC_SOUTH_PANTH#PC_SOUTH_PANTH/2023-04-01/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$39 to floor -$37</summary>
+  </entry>
+  <entry>
+    <title>PC_SOUTH_PANTH: New floor (2023-03-01)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PC_SOUTH_PANTH"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PC_SOUTH_PANTH#PC_SOUTH_PANTH/2023-03-01/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$36 to floor -$39</summary>
+  </entry>
+  <entry>
+    <title>PC_SOUTH_PANTH: Back to an earlier floor (2022-10-01)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PC_SOUTH_PANTH"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PC_SOUTH_PANTH#PC_SOUTH_PANTH/2022-10-01/renew_floor_back</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Back to an earlier floor: floor -$34 to floor -$36</summary>
+  </entry>
+  <entry>
+    <title>PC_SOUTH_PANTH: New floor (2022-07-07)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PC_SOUTH_PANTH"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PC_SOUTH_PANTH#PC_SOUTH_PANTH/2022-07-07/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$35 to floor -$34</summary>
+  </entry>
+  <entry>
+    <title>PC_SOUTH_PANTH: New floor (2022-05-03)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PC_SOUTH_PANTH"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PC_SOUTH_PANTH#PC_SOUTH_PANTH/2022-05-03/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$33 to floor -$35</summary>
+  </entry>
+  <entry>
+    <title>PC_SOUTH_PANTH: New floor (2022-03-09)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PC_SOUTH_PANTH"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PC_SOUTH_PANTH#PC_SOUTH_PANTH/2022-03-09/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$31 to floor -$33</summary>
+  </entry>
+  <entry>
+    <title>PC_SOUTH_PANTH: New floor (2021-10-28)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PC_SOUTH_PANTH"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PC_SOUTH_PANTH#PC_SOUTH_PANTH/2021-10-28/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$5 to floor -$31</summary>
+  </entry>
+  <entry>
+    <title>PC_SOUTH_PANTH: New floor (2021-08-04)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PC_SOUTH_PANTH"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PC_SOUTH_PANTH#PC_SOUTH_PANTH/2021-08-04/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$2 to floor -$5</summary>
+  </entry>
+</feed>

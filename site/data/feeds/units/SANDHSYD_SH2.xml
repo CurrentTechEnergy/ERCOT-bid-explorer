@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>SANDHSYD_SH2: bidding and operating changes</title>
+  <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SANDHSYD_SH2"/>
+  <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SANDHSYD_SH2</id>
+  <updated>2026-10-18T00:00:00Z</updated>
+  <entry>
+    <title>SANDHSYD_SH2: Outage ended (2026-05-07)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SANDHSYD_SH2"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SANDHSYD_SH2#SANDHSYD_SH2/2026-05-07/outage_end</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Back from a 7-day outage</summary>
+  </entry>
+  <entry>
+    <title>SANDHSYD_SH2: Outage started (2026-04-30)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SANDHSYD_SH2"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SANDHSYD_SH2#SANDHSYD_SH2/2026-04-30/outage_start</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Outage began, lasting 7 days</summary>
+  </entry>
+  <entry>
+    <title>SANDHSYD_SH2: Bidding approach shifted (2026-02-28)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SANDHSYD_SH2"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SANDHSYD_SH2#SANDHSYD_SH2/2026-02-28/bidding</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Offer price vs peer median: $0 to -$12/MWh</summary>
+  </entry>
+  <entry>
+    <title>SANDHSYD_SH2: Bidding approach shifted (2026-02-05)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SANDHSYD_SH2"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SANDHSYD_SH2#SANDHSYD_SH2/2026-02-05/bidding</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Offer price vs peer median: -$18 to -$2/MWh</summary>
+  </entry>
+  <entry>
+    <title>SANDHSYD_SH2: Bidding approach shifted (2026-01-26)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SANDHSYD_SH2"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SANDHSYD_SH2#SANDHSYD_SH2/2026-01-26/bidding</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Offer price vs peer median: -$3 to -$18/MWh</summary>
+  </entry>
+  <entry>
+    <title>SANDHSYD_SH2: Bidding approach shifted (2025-12-12)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SANDHSYD_SH2"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SANDHSYD_SH2#SANDHSYD_SH2/2025-12-12/bidding</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Offer price vs peer median: -$19 to $0/MWh</summary>
+  </entry>
+</feed>

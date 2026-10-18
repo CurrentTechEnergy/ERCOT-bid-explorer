@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>WILDWIND: bidding and operating changes</title>
+  <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=WILDWIND"/>
+  <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=WILDWIND</id>
+  <updated>2026-10-18T00:00:00Z</updated>
+  <entry>
+    <title>WILDWIND: New floor (2025-12-10)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=WILDWIND"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=WILDWIND#WILDWIND/2025-12-10/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$35 to floor -$40</summary>
+  </entry>
+  <entry>
+    <title>WILDWIND: New floor (2022-04-15)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=WILDWIND"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=WILDWIND#WILDWIND/2022-04-15/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$32 to floor -$35</summary>
+  </entry>
+</feed>

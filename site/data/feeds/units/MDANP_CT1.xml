@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>MDANP_CT1: bidding and operating changes</title>
+  <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=MDANP_CT1"/>
+  <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=MDANP_CT1</id>
+  <updated>2026-10-18T00:00:00Z</updated>
+  <entry>
+    <title>MDANP_CT1: Shut down despite a day-ahead award (2026-08-03)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=MDANP_CT1"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=MDANP_CT1#MDANP_CT1/2026-08-03/shutdown_award</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Shut down for 11 h although a day-ahead award covered 100% of the window</summary>
+  </entry>
+  <entry>
+    <title>MDANP_CT1: Shut down despite a day-ahead award (2026-07-18)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=MDANP_CT1"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=MDANP_CT1#MDANP_CT1/2026-07-18/shutdown_award</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Shut down for 8 h although a day-ahead award covered 100% of the window</summary>
+  </entry>
+  <entry>
+    <title>MDANP_CT1: Shut down despite a day-ahead award (2026-06-26)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=MDANP_CT1"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=MDANP_CT1#MDANP_CT1/2026-06-26/shutdown_award</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Shut down for 14 h although a day-ahead award covered 100% of the window</summary>
+  </entry>
+  <entry>
+    <title>MDANP_CT1: Shut down despite a day-ahead award (2026-06-20)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=MDANP_CT1"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=MDANP_CT1#MDANP_CT1/2026-06-20/shutdown_award</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Shut down for 19 h although a day-ahead award covered 100% of the window</summary>
+  </entry>
+  <entry>
+    <title>MDANP_CT1: Outage ended (2026-04-20)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=MDANP_CT1"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=MDANP_CT1#MDANP_CT1/2026-04-20/outage_end</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Back from a 9-day outage</summary>
+  </entry>
+  <entry>
+    <title>MDANP_CT1: Outage started (2026-04-12)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=MDANP_CT1"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=MDANP_CT1#MDANP_CT1/2026-04-12/outage_start</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Outage began, lasting 9 days</summary>
+  </entry>
+  <entry>
+    <title>MDANP_CT1: Shut down despite a day-ahead award (2026-02-11)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=MDANP_CT1"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=MDANP_CT1#MDANP_CT1/2026-02-11/shutdown_award</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Shut down for 17 h although a day-ahead award covered 100% of the window</summary>
+  </entry>
+  <entry>
+    <title>MDANP_CT1: Bidding approach shifted (2026-02-03)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=MDANP_CT1"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=MDANP_CT1#MDANP_CT1/2026-02-03/bidding</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Offer price vs peer median: -$12 to $1/MWh</summary>
+  </entry>
+  <entry>
+    <title>MDANP_CT1: Bidding approach shifted (2026-01-26)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=MDANP_CT1"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=MDANP_CT1#MDANP_CT1/2026-01-26/bidding</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Offer price vs peer median: $1 to -$12/MWh</summary>
+  </entry>
+  <entry>
+    <title>MDANP_CT1: Shut down despite a day-ahead award (2026-01-13)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=MDANP_CT1"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=MDANP_CT1#MDANP_CT1/2026-01-13/shutdown_award</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Shut down for 22 h although a day-ahead award covered 100% of the window</summary>
+  </entry>
+  <entry>
+    <title>MDANP_CT1: Shut down despite a day-ahead award (2025-12-15)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=MDANP_CT1"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=MDANP_CT1#MDANP_CT1/2025-12-15/shutdown_award</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Shut down for 18 h although a day-ahead award covered 100% of the window</summary>
+  </entry>
+</feed>

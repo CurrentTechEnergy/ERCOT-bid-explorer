@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>SHANNONW: bidding and operating changes</title>
+  <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SHANNONW"/>
+  <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SHANNONW</id>
+  <updated>2026-10-18T00:00:00Z</updated>
+  <entry>
+    <title>SHANNONW: New floor (2026-07-20)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SHANNONW"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SHANNONW#SHANNONW/2026-07-20/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor $0 to floor -$2</summary>
+  </entry>
+  <entry>
+    <title>SHANNONW: Episode (2021-02-14)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SHANNONW"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SHANNONW#SHANNONW/2021-02-14/renew_episode</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Episode: floor $0 to -$35 for the episode for 3 day(s)</summary>
+  </entry>
+  <entry>
+    <title>SHANNONW: New floor (2021-02-05)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SHANNONW"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SHANNONW#SHANNONW/2021-02-05/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$30 to floor $0</summary>
+  </entry>
+</feed>

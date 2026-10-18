@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>DDPEC_CC1_6: bidding and operating changes</title>
+  <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=DDPEC_CC1_6"/>
+  <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=DDPEC_CC1_6</id>
+  <updated>2026-10-18T00:00:00Z</updated>
+  <entry>
+    <title>DDPEC_CC1_6: Bidding approach shifted (2026-01-30)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=DDPEC_CC1_6"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=DDPEC_CC1_6#DDPEC_CC1_6/2026-01-30/bidding</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Offer price vs peer median: -$30 to -$5/MWh</summary>
+  </entry>
+  <entry>
+    <title>DDPEC_CC1_6: Bidding approach shifted (2026-01-21)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=DDPEC_CC1_6"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=DDPEC_CC1_6#DDPEC_CC1_6/2026-01-21/bidding</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Offer price vs peer median: -$4 to -$30/MWh</summary>
+  </entry>
+</feed>

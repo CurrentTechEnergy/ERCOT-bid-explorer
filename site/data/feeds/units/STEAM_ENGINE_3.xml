@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>STEAM_ENGINE_3: bidding and operating changes</title>
+  <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=STEAM_ENGINE_3"/>
+  <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=STEAM_ENGINE_3</id>
+  <updated>2026-10-18T00:00:00Z</updated>
+  <entry>
+    <title>STEAM_ENGINE_3: Outage started (2026-07-23)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=STEAM_ENGINE_3"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=STEAM_ENGINE_3#STEAM_ENGINE_3/2026-07-23/outage_start</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Outage began, still on at the end of the data (27 days so far)</summary>
+  </entry>
+  <entry>
+    <title>STEAM_ENGINE_3: Outage ended (2026-07-20)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=STEAM_ENGINE_3"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=STEAM_ENGINE_3#STEAM_ENGINE_3/2026-07-20/outage_end</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Back from a 8-day outage</summary>
+  </entry>
+  <entry>
+    <title>STEAM_ENGINE_3: Outage started (2026-07-12)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=STEAM_ENGINE_3"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=STEAM_ENGINE_3#STEAM_ENGINE_3/2026-07-12/outage_start</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Outage began, lasting 8 days</summary>
+  </entry>
+  <entry>
+    <title>STEAM_ENGINE_3: Outage ended (2026-07-08)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=STEAM_ENGINE_3"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=STEAM_ENGINE_3#STEAM_ENGINE_3/2026-07-08/outage_end</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Back from a 27-day outage</summary>
+  </entry>
+  <entry>
+    <title>STEAM_ENGINE_3: Outage started (2026-06-11)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=STEAM_ENGINE_3"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=STEAM_ENGINE_3#STEAM_ENGINE_3/2026-06-11/outage_start</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Outage began, lasting 27 days</summary>
+  </entry>
+  <entry>
+    <title>STEAM_ENGINE_3: Outage ended (2026-06-03)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=STEAM_ENGINE_3"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=STEAM_ENGINE_3#STEAM_ENGINE_3/2026-06-03/outage_end</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Back from a 12-day outage</summary>
+  </entry>
+  <entry>
+    <title>STEAM_ENGINE_3: Outage started (2026-05-23)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=STEAM_ENGINE_3"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=STEAM_ENGINE_3#STEAM_ENGINE_3/2026-05-23/outage_start</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Outage began, lasting 12 days</summary>
+  </entry>
+  <entry>
+    <title>STEAM_ENGINE_3: Outage ended (2026-05-22)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=STEAM_ENGINE_3"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=STEAM_ENGINE_3#STEAM_ENGINE_3/2026-05-22/outage_end</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Back from a 8-day outage</summary>
+  </entry>
+  <entry>
+    <title>STEAM_ENGINE_3: Outage started (2026-05-14)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=STEAM_ENGINE_3"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=STEAM_ENGINE_3#STEAM_ENGINE_3/2026-05-14/outage_start</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Outage began, lasting 8 days</summary>
+  </entry>
+  <entry>
+    <title>STEAM_ENGINE_3: Outage ended (2026-05-06)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=STEAM_ENGINE_3"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=STEAM_ENGINE_3#STEAM_ENGINE_3/2026-05-06/outage_end</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Back from a 8-day outage</summary>
+  </entry>
+  <entry>
+    <title>STEAM_ENGINE_3: Timescale group changed (2026-05-01)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=STEAM_ENGINE_3"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=STEAM_ENGINE_3#STEAM_ENGINE_3/2026-05-01/group</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Daily, over 2 a week in 2026-04 to Never off in 2026-05</summary>
+  </entry>
+  <entry>
+    <title>STEAM_ENGINE_3: Outage started (2026-04-28)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=STEAM_ENGINE_3"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=STEAM_ENGINE_3#STEAM_ENGINE_3/2026-04-28/outage_start</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Outage began, lasting 8 days</summary>
+  </entry>
+</feed>

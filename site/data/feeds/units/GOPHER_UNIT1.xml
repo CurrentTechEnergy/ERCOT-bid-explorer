@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>GOPHER_UNIT1: bidding and operating changes</title>
+  <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=GOPHER_UNIT1"/>
+  <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=GOPHER_UNIT1</id>
+  <updated>2026-10-18T00:00:00Z</updated>
+  <entry>
+    <title>GOPHER: New floor (2026-01-01)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=GOPHER"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=GOPHER#GOPHER/2026-01-01/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$37 to floor -$39</summary>
+  </entry>
+  <entry>
+    <title>GOPHER: New floor (2024-05-25)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=GOPHER"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=GOPHER#GOPHER/2024-05-25/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$33 to floor -$37</summary>
+  </entry>
+  <entry>
+    <title>GOPHER: New floor (2022-01-19)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=GOPHER"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=GOPHER#GOPHER/2022-01-19/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$30 to floor -$33</summary>
+  </entry>
+  <entry>
+    <title>GOPHER: New floor (2019-10-09)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=GOPHER"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=GOPHER#GOPHER/2019-10-09/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor $0 to floor -$30</summary>
+  </entry>
+</feed>

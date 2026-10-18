@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>RTS2_U2: bidding and operating changes</title>
+  <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=RTS2_U2"/>
+  <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=RTS2_U2</id>
+  <updated>2026-10-18T00:00:00Z</updated>
+  <entry>
+    <title>RTS2: New floor (2026-06-11)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=RTS2"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=RTS2#RTS2/2026-06-11/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$38 to floor -$39</summary>
+  </entry>
+  <entry>
+    <title>RTS2: New floor (2025-10-25)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=RTS2"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=RTS2#RTS2/2025-10-25/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$37 to floor -$38</summary>
+  </entry>
+  <entry>
+    <title>RTS2: New floor (2025-01-28)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=RTS2"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=RTS2#RTS2/2025-01-28/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$35 to floor -$37</summary>
+  </entry>
+  <entry>
+    <title>RTS2: New floor (2020-11-05)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=RTS2"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=RTS2#RTS2/2020-11-05/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor $0 to floor -$32</summary>
+  </entry>
+</feed>

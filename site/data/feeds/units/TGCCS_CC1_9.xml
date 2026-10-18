@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>TGCCS_CC1_9: bidding and operating changes</title>
+  <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TGCCS_CC1_9"/>
+  <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TGCCS_CC1_9</id>
+  <updated>2026-10-18T00:00:00Z</updated>
+  <entry>
+    <title>TGCCS_CC1_9: Bidding approach shifted (2026-05-31)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TGCCS_CC1_9"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TGCCS_CC1_9#TGCCS_CC1_9/2026-05-31/bidding</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Offer price vs peer median: $180 to $1/MWh</summary>
+  </entry>
+  <entry>
+    <title>TGCCS_CC1_9: Bidding approach shifted (2025-12-16)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TGCCS_CC1_9"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TGCCS_CC1_9#TGCCS_CC1_9/2025-12-16/bidding</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Offer price vs peer median: $2 to $180/MWh</summary>
+  </entry>
+</feed>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>GOAT_GOATWIND: bidding and operating changes</title>
+  <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=GOAT_GOATWIND"/>
+  <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=GOAT_GOATWIND</id>
+  <updated>2026-10-18T00:00:00Z</updated>
+  <entry>
+    <title>GOAT_GOATWIND: New floor (2019-10-19)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=GOAT_GOATWIND"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=GOAT_GOATWIND#GOAT_GOATWIND/2019-10-19/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$25 to floor $0</summary>
+  </entry>
+  <entry>
+    <title>GOAT_GOATWIND: New floor (2019-10-19)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=GOAT_GOATWIND"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=GOAT_GOATWIND#GOAT_GOATWIND/2019-10-19/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$25 to floor $0</summary>
+  </entry>
+</feed>

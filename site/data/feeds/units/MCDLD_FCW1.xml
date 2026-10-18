@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>MCDLD_FCW1: bidding and operating changes</title>
+  <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=MCDLD_FCW1"/>
+  <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=MCDLD_FCW1</id>
+  <updated>2026-10-18T00:00:00Z</updated>
+  <entry>
+    <title>MCDLD_FCW: New floor (2026-03-10)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=MCDLD_FCW"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=MCDLD_FCW#MCDLD_FCW/2026-03-10/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$2 to floor -$51</summary>
+  </entry>
+  <entry>
+    <title>MCDLD_FCW: Back to an earlier floor (2024-06-05)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=MCDLD_FCW"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=MCDLD_FCW#MCDLD_FCW/2024-06-05/renew_floor_back</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Back to an earlier floor: floor $0 to floor -$2</summary>
+  </entry>
+  <entry>
+    <title>MCDLD_FCW: New floor (2024-03-12)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=MCDLD_FCW"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=MCDLD_FCW#MCDLD_FCW/2024-03-12/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$2 to floor $0</summary>
+  </entry>
+  <entry>
+    <title>MCDLD_FCW: New floor (2024-02-01)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=MCDLD_FCW"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=MCDLD_FCW#MCDLD_FCW/2024-02-01/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$3 to floor -$2</summary>
+  </entry>
+  <entry>
+    <title>MCDLD_FCW: New floor (2023-12-05)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=MCDLD_FCW"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=MCDLD_FCW#MCDLD_FCW/2023-12-05/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$1 to floor -$3</summary>
+  </entry>
+  <entry>
+    <title>MCDLD_FCW: New floor (2023-10-03)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=MCDLD_FCW"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=MCDLD_FCW#MCDLD_FCW/2023-10-03/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$2 to floor -$1</summary>
+  </entry>
+  <entry>
+    <title>MCDLD_FCW: New floor (2023-05-02)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=MCDLD_FCW"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=MCDLD_FCW#MCDLD_FCW/2023-05-02/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$4 to floor -$2</summary>
+  </entry>
+  <entry>
+    <title>MCDLD_FCW: New floor (2023-01-04)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=MCDLD_FCW"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=MCDLD_FCW#MCDLD_FCW/2023-01-04/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$1 to floor -$4</summary>
+  </entry>
+  <entry>
+    <title>MCDLD_FCW: New floor (2022-12-03)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=MCDLD_FCW"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=MCDLD_FCW#MCDLD_FCW/2022-12-03/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$3 to floor -$1</summary>
+  </entry>
+  <entry>
+    <title>MCDLD_FCW: Back to an earlier floor (2022-10-01)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=MCDLD_FCW"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=MCDLD_FCW#MCDLD_FCW/2022-10-01/renew_floor_back</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Back to an earlier floor: floor -$2 to floor -$3</summary>
+  </entry>
+  <entry>
+    <title>MCDLD_FCW: New floor (2022-08-02)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=MCDLD_FCW"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=MCDLD_FCW#MCDLD_FCW/2022-08-02/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$3 to floor -$2</summary>
+  </entry>
+  <entry>
+    <title>MCDLD_FCW: New floor (2022-06-01)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=MCDLD_FCW"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=MCDLD_FCW#MCDLD_FCW/2022-06-01/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor $0 to floor -$3</summary>
+  </entry>
+  <entry>
+    <title>MCDLD_FCW: New floor (2022-03-09)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=MCDLD_FCW"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=MCDLD_FCW#MCDLD_FCW/2022-03-09/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$5 to floor $0</summary>
+  </entry>
+  <entry>
+    <title>MCDLD_FCW: New floor (2021-08-04)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=MCDLD_FCW"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=MCDLD_FCW#MCDLD_FCW/2021-08-04/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$2 to floor -$5</summary>
+  </entry>
+  <entry>
+    <title>MCDLD_FCW: New floor (2021-04-08)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=MCDLD_FCW"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=MCDLD_FCW#MCDLD_FCW/2021-04-08/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$1 to floor -$2</summary>
+  </entry>
+</feed>

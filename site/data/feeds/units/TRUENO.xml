@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>TRUENO: bidding and operating changes</title>
+  <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TRUENO"/>
+  <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TRUENO</id>
+  <updated>2026-10-18T00:00:00Z</updated>
+  <entry>
+    <title>TRUENO: New floor (2026-03-10)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TRUENO"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TRUENO#TRUENO/2026-03-10/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$46 to floor -$44</summary>
+  </entry>
+  <entry>
+    <title>TRUENO: New floor (2026-02-06)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TRUENO"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TRUENO#TRUENO/2026-02-06/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$38 to floor -$46</summary>
+  </entry>
+  <entry>
+    <title>TRUENO: New floor (2025-11-08)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TRUENO"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TRUENO#TRUENO/2025-11-08/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$41 to floor -$38</summary>
+  </entry>
+  <entry>
+    <title>TRUENO: Back to an earlier floor (2024-06-05)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TRUENO"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TRUENO#TRUENO/2024-06-05/renew_floor_back</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Back to an earlier floor: floor -$39 to floor -$41</summary>
+  </entry>
+  <entry>
+    <title>TRUENO: Back to an earlier floor (2024-03-12)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TRUENO"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TRUENO#TRUENO/2024-03-12/renew_floor_back</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Back to an earlier floor: floor -$41 to floor -$39</summary>
+  </entry>
+  <entry>
+    <title>TRUENO: New floor (2024-02-01)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TRUENO"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TRUENO#TRUENO/2024-02-01/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$40 to floor -$41</summary>
+  </entry>
+  <entry>
+    <title>TRUENO: New floor (2024-01-03)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TRUENO"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TRUENO#TRUENO/2024-01-03/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$39 to floor -$40</summary>
+  </entry>
+  <entry>
+    <title>TRUENO: New floor (2023-12-05)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TRUENO"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TRUENO#TRUENO/2023-12-05/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$36 to floor -$39</summary>
+  </entry>
+  <entry>
+    <title>TRUENO: New floor (2023-01-04)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TRUENO"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TRUENO#TRUENO/2023-01-04/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$35 to floor -$36</summary>
+  </entry>
+  <entry>
+    <title>TRUENO: New floor (2022-12-03)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TRUENO"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TRUENO#TRUENO/2022-12-03/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$34 to floor -$35</summary>
+  </entry>
+  <entry>
+    <title>TRUENO: Back to an earlier floor (2022-07-07)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TRUENO"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TRUENO#TRUENO/2022-07-07/renew_floor_back</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Back to an earlier floor: floor -$35 to floor -$34</summary>
+  </entry>
+  <entry>
+    <title>TRUENO: New floor (2022-05-03)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TRUENO"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TRUENO#TRUENO/2022-05-03/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$33 to floor -$35</summary>
+  </entry>
+  <entry>
+    <title>TRUENO: New floor (2022-03-09)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TRUENO"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TRUENO#TRUENO/2022-03-09/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$38 to floor -$33</summary>
+  </entry>
+  <entry>
+    <title>TRUENO: New floor (2022-01-11)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TRUENO"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TRUENO#TRUENO/2022-01-11/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$37 to floor -$38</summary>
+  </entry>
+  <entry>
+    <title>TRUENO: New floor (2021-05-05)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TRUENO"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TRUENO#TRUENO/2021-05-05/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$35 to floor -$37</summary>
+  </entry>
+</feed>

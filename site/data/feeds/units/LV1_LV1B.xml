@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>LV1_LV1B: bidding and operating changes</title>
+  <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=LV1_LV1B"/>
+  <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=LV1_LV1B</id>
+  <updated>2026-10-18T00:00:00Z</updated>
+  <entry>
+    <title>LV1_LV: New floor (2019-06-20)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=LV1_LV"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=LV1_LV#LV1_LV/2019-06-20/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$30 to floor -$32</summary>
+  </entry>
+</feed>

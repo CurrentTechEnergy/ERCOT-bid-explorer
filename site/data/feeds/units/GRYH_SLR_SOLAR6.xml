@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>GRYH_SLR_SOLAR6: bidding and operating changes</title>
+  <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=GRYH_SLR_SOLAR6"/>
+  <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=GRYH_SLR_SOLAR6</id>
+  <updated>2026-10-18T00:00:00Z</updated>
+  <entry>
+    <title>GRYH_SLR: New floor (2026-02-17)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=GRYH_SLR"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=GRYH_SLR#GRYH_SLR/2026-02-17/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$25 to floor -$3</summary>
+  </entry>
+</feed>

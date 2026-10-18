@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>MIL_MILLERG5: bidding and operating changes</title>
+  <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=MIL_MILLERG5"/>
+  <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=MIL_MILLERG5</id>
+  <updated>2026-10-18T00:00:00Z</updated>
+  <entry>
+    <title>MIL_MILLERG5: Timescale group changed (2026-07-01)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=MIL_MILLERG5"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=MIL_MILLERG5#MIL_MILLERG5/2026-07-01/group</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Multi-day: off 1–7 days in 2026-06 to Daily, 1–2 a week in 2026-07</summary>
+  </entry>
+  <entry>
+    <title>MIL_MILLERG5: Outage ended (2026-05-16)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=MIL_MILLERG5"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=MIL_MILLERG5#MIL_MILLERG5/2026-05-16/outage_end</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Back from a 12-day outage</summary>
+  </entry>
+  <entry>
+    <title>MIL_MILLERG5: Outage started (2026-05-04)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=MIL_MILLERG5"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=MIL_MILLERG5#MIL_MILLERG5/2026-05-04/outage_start</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Outage began, lasting 12 days</summary>
+  </entry>
+  <entry>
+    <title>MIL_MILLERG5: Outage ended (2026-05-01)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=MIL_MILLERG5"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=MIL_MILLERG5#MIL_MILLERG5/2026-05-01/outage_end</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Back from a 10-day outage</summary>
+  </entry>
+  <entry>
+    <title>MIL_MILLERG5: Outage started (2026-04-22)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=MIL_MILLERG5"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=MIL_MILLERG5#MIL_MILLERG5/2026-04-22/outage_start</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Outage began, lasting 10 days</summary>
+  </entry>
+  <entry>
+    <title>MIL_MILLERG5: Bidding approach shifted (2026-03-23)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=MIL_MILLERG5"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=MIL_MILLERG5#MIL_MILLERG5/2026-03-23/bidding</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Offer price vs peer median: $132 to $15/MWh</summary>
+  </entry>
+  <entry>
+    <title>MIL_MILLERG5: Shut down after a long run (2026-01-27)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=MIL_MILLERG5"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=MIL_MILLERG5#MIL_MILLERG5/2026-01-27/shutdown_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Shut down for 19 h after 43 days without a shutdown</summary>
+  </entry>
+  <entry>
+    <title>MIL_MILLERG5: Bidding approach shifted (2026-01-23)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=MIL_MILLERG5"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=MIL_MILLERG5#MIL_MILLERG5/2026-01-23/bidding</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Offer price vs peer median: $24 to $132/MWh</summary>
+  </entry>
+</feed>

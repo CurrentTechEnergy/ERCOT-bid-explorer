@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>THW_CC1_7: bidding and operating changes</title>
+  <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=THW_CC1_7"/>
+  <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=THW_CC1_7</id>
+  <updated>2026-10-18T00:00:00Z</updated>
+  <entry>
+    <title>THW_CC1_7: Bidding approach shifted (2026-05-18)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=THW_CC1_7"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=THW_CC1_7#THW_CC1_7/2026-05-18/bidding</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Running without an offer curve: 100% to 0% of the day</summary>
+  </entry>
+  <entry>
+    <title>THW_CC1_7: Bidding approach shifted (2026-03-30)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=THW_CC1_7"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=THW_CC1_7#THW_CC1_7/2026-03-30/bidding</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Running without an offer curve: 0% to 100% of the day</summary>
+  </entry>
+</feed>

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>SWEC: bidding and operating changes</title>
+  <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SWEC"/>
+  <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SWEC</id>
+  <updated>2026-10-18T00:00:00Z</updated>
+  <entry>
+    <title>SWEC: New floor (2024-04-10)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SWEC"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SWEC#SWEC/2024-04-10/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor $1 to floor $3</summary>
+  </entry>
+  <entry>
+    <title>SWEC: Back to an earlier floor (2023-02-04)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SWEC"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SWEC#SWEC/2023-02-04/renew_floor_back</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Back to an earlier floor: floor $3 to floor $1</summary>
+  </entry>
+  <entry>
+    <title>SWEC: New floor (2022-11-30)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SWEC"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SWEC#SWEC/2022-11-30/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor $1 to floor $3</summary>
+  </entry>
+  <entry>
+    <title>SWEC: New floor (2022-04-04)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SWEC"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SWEC#SWEC/2022-04-04/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor $2 to floor $1</summary>
+  </entry>
+</feed>

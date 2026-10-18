@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>QUEEN_SL_SOLAR4: bidding and operating changes</title>
+  <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=QUEEN_SL_SOLAR4"/>
+  <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=QUEEN_SL_SOLAR4</id>
+  <updated>2026-10-18T00:00:00Z</updated>
+  <entry>
+    <title>QUEEN_SL: Formula terms changed (2026-01-25)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=QUEEN_SL"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=QUEEN_SL#QUEEN_SL/2026-01-25/renew_terms</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Formula terms changed: formula to formula</summary>
+  </entry>
+  <entry>
+    <title>QUEEN_SL: Formula terms changed (2025-11-11)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=QUEEN_SL"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=QUEEN_SL#QUEEN_SL/2025-11-11/renew_terms</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Formula terms changed: formula to formula</summary>
+  </entry>
+  <entry>
+    <title>QUEEN_SL: Formula terms changed (2025-08-07)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=QUEEN_SL"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=QUEEN_SL#QUEEN_SL/2025-08-07/renew_terms</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Formula terms changed: formula to formula</summary>
+  </entry>
+  <entry>
+    <title>QUEEN_SL: Formula terms changed (2025-06-06)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=QUEEN_SL"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=QUEEN_SL#QUEEN_SL/2025-06-06/renew_terms</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Formula terms changed: formula to formula</summary>
+  </entry>
+  <entry>
+    <title>QUEEN_SL: Formula on (2025-01-14)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=QUEEN_SL"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=QUEEN_SL#QUEEN_SL/2025-01-14/renew_formula_on</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Formula on: floor -$3 to formula</summary>
+  </entry>
+  <entry>
+    <title>QUEEN_SL: Episode (2025-01-06)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=QUEEN_SL"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=QUEEN_SL#QUEEN_SL/2025-01-06/renew_episode</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Episode: floor -$3 to $5 for the episode for 5 day(s)</summary>
+  </entry>
+  <entry>
+    <title>QUEEN_SL: Formula off (2024-08-14)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=QUEEN_SL"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=QUEEN_SL#QUEEN_SL/2024-08-14/renew_formula_off</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Formula off: formula to floor -$3</summary>
+  </entry>
+  <entry>
+    <title>QUEEN_SL: Formula on (2024-08-06)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=QUEEN_SL"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=QUEEN_SL#QUEEN_SL/2024-08-06/renew_formula_on</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Formula on: floor -$3 to formula</summary>
+  </entry>
+  <entry>
+    <title>QUEEN_SL: New floor (2023-04-19)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=QUEEN_SL"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=QUEEN_SL#QUEEN_SL/2023-04-19/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$1 to floor -$3</summary>
+  </entry>
+  <entry>
+    <title>QUEEN_SL: Back to an earlier floor (2022-02-01)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=QUEEN_SL"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=QUEEN_SL#QUEEN_SL/2022-02-01/renew_floor_back</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Back to an earlier floor: floor -$10 to floor -$1</summary>
+  </entry>
+  <entry>
+    <title>QUEEN_SL: Back to an earlier floor (2022-01-13)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=QUEEN_SL"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=QUEEN_SL#QUEEN_SL/2022-01-13/renew_floor_back</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Back to an earlier floor: floor -$1 to floor -$10</summary>
+  </entry>
+  <entry>
+    <title>QUEEN_SL: Back to an earlier floor (2021-11-01)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=QUEEN_SL"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=QUEEN_SL#QUEEN_SL/2021-11-01/renew_floor_back</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Back to an earlier floor: floor -$10 to floor -$1</summary>
+  </entry>
+  <entry>
+    <title>QUEEN_SL: Back to an earlier floor (2021-08-24)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=QUEEN_SL"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=QUEEN_SL#QUEEN_SL/2021-08-24/renew_floor_back</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Back to an earlier floor: floor -$1 to floor -$10</summary>
+  </entry>
+  <entry>
+    <title>QUEEN_SL: Back to an earlier floor (2021-07-01)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=QUEEN_SL"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=QUEEN_SL#QUEEN_SL/2021-07-01/renew_floor_back</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Back to an earlier floor: floor -$10 to floor -$1</summary>
+  </entry>
+  <entry>
+    <title>QUEEN_SL: New floor (2021-05-24)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=QUEEN_SL"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=QUEEN_SL#QUEEN_SL/2021-05-24/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$5 to floor -$10</summary>
+  </entry>
+  <entry>
+    <title>QUEEN_SL: New floor (2021-04-06)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=QUEEN_SL"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=QUEEN_SL#QUEEN_SL/2021-04-06/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$1 to floor -$5</summary>
+  </entry>
+</feed>

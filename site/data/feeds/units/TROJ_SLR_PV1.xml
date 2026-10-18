@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>TROJ_SLR_PV1: bidding and operating changes</title>
+  <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TROJ_SLR_PV1"/>
+  <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TROJ_SLR_PV1</id>
+  <updated>2026-10-18T00:00:00Z</updated>
+  <entry>
+    <title>TROJ_SLR: Started moving within the day (2026-02-26)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TROJ_SLR"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TROJ_SLR#TROJ_SLR/2026-02-26/renew_moving_on</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Started moving within the day: floor -$23 to v</summary>
+  </entry>
+  <entry>
+    <title>TROJ_SLR: New floor (2026-02-12)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TROJ_SLR"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TROJ_SLR#TROJ_SLR/2026-02-12/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$3 to floor -$23</summary>
+  </entry>
+</feed>

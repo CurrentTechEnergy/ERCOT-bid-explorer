@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>CBY_CBY_G2: bidding and operating changes</title>
+  <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CBY_CBY_G2"/>
+  <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CBY_CBY_G2</id>
+  <updated>2026-10-18T00:00:00Z</updated>
+  <entry>
+    <title>CBY_CBY_G2: Shut down after a long run (2026-06-01)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CBY_CBY_G2"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CBY_CBY_G2#CBY_CBY_G2/2026-06-01/shutdown_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Shut down for 164 h after 50 days without a shutdown</summary>
+  </entry>
+  <entry>
+    <title>CBY_CBY_G2: Outage ended (2026-05-21)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CBY_CBY_G2"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CBY_CBY_G2#CBY_CBY_G2/2026-05-21/outage_end</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Back from a 21-day outage</summary>
+  </entry>
+  <entry>
+    <title>CBY_CBY_G2: Outage started (2026-05-01)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CBY_CBY_G2"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CBY_CBY_G2#CBY_CBY_G2/2026-05-01/outage_start</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Outage began, lasting 21 days</summary>
+  </entry>
+  <entry>
+    <title>CBY_CBY_G2: Shut down after a long run (2026-02-02)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CBY_CBY_G2"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CBY_CBY_G2#CBY_CBY_G2/2026-02-02/shutdown_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Shut down for 901 h after 42 days without a shutdown</summary>
+  </entry>
+  <entry>
+    <title>CBY_CBY_G2: Outage ended (2025-12-15)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CBY_CBY_G2"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CBY_CBY_G2#CBY_CBY_G2/2025-12-15/outage_end</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Back from a 16-day outage</summary>
+  </entry>
+</feed>

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>BART_SLR_SOLAR1: bidding and operating changes</title>
+  <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=BART_SLR_SOLAR1"/>
+  <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=BART_SLR_SOLAR1</id>
+  <updated>2026-10-18T00:00:00Z</updated>
+  <entry>
+    <title>BART_SLR: Back to an earlier floor (2026-07-21)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=BART_SLR"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=BART_SLR#BART_SLR/2026-07-21/renew_floor_back</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Back to an earlier floor: floor -$43 to floor -$42</summary>
+  </entry>
+  <entry>
+    <title>BART_SLR: New floor (2026-07-03)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=BART_SLR"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=BART_SLR#BART_SLR/2026-07-03/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$42 to floor -$43</summary>
+  </entry>
+  <entry>
+    <title>BART_SLR: New floor (2026-04-30)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=BART_SLR"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=BART_SLR#BART_SLR/2026-04-30/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$4 to floor -$42</summary>
+  </entry>
+</feed>

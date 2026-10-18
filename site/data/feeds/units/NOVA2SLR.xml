@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>NOVA2SLR: bidding and operating changes</title>
+  <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=NOVA2SLR"/>
+  <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=NOVA2SLR</id>
+  <updated>2026-10-18T00:00:00Z</updated>
+  <entry>
+    <title>NOVA2SLR: Episode (2025-02-26)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=NOVA2SLR"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=NOVA2SLR#NOVA2SLR/2025-02-26/renew_episode</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Episode: floor -$54 to $0 for the episode for 2 day(s)</summary>
+  </entry>
+  <entry>
+    <title>NOVA2SLR: New floor (2024-04-09)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=NOVA2SLR"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=NOVA2SLR#NOVA2SLR/2024-04-09/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$35 to floor -$54</summary>
+  </entry>
+  <entry>
+    <title>NOVA2SLR: New floor (2024-03-13)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=NOVA2SLR"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=NOVA2SLR#NOVA2SLR/2024-03-13/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor $0 to floor -$35</summary>
+  </entry>
+</feed>

@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>ROW_UNIT2: bidding and operating changes</title>
+  <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ROW_UNIT2"/>
+  <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ROW_UNIT2</id>
+  <updated>2026-10-18T00:00:00Z</updated>
+  <entry>
+    <title>ROW: Started moving within the day (2026-05-28)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ROW"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ROW#ROW/2026-05-28/renew_moving_on</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Started moving within the day: floor -$15 to v</summary>
+  </entry>
+  <entry>
+    <title>ROW: Stopped moving within the day (2026-05-15)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ROW"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ROW#ROW/2026-05-15/renew_moving_off</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Stopped moving within the day: v to floor -$15</summary>
+  </entry>
+  <entry>
+    <title>ROW: Started moving within the day (2026-04-28)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ROW"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ROW#ROW/2026-04-28/renew_moving_on</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Started moving within the day: floor -$20 to v</summary>
+  </entry>
+  <entry>
+    <title>ROW: New floor (2026-03-11)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ROW"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ROW#ROW/2026-03-11/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$26 to floor -$20</summary>
+  </entry>
+  <entry>
+    <title>ROW: New floor (2026-02-24)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ROW"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ROW#ROW/2026-02-24/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$18 to floor -$26</summary>
+  </entry>
+  <entry>
+    <title>ROW: New floor (2026-01-16)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ROW"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ROW#ROW/2026-01-16/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$8 to floor -$18</summary>
+  </entry>
+  <entry>
+    <title>ROW: Back to an earlier floor (2025-11-28)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ROW"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ROW#ROW/2025-11-28/renew_floor_back</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Back to an earlier floor: floor -$10 to floor -$8</summary>
+  </entry>
+  <entry>
+    <title>ROW: Back to an earlier floor (2025-11-09)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ROW"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ROW#ROW/2025-11-09/renew_floor_back</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Back to an earlier floor: floor -$6 to floor -$10</summary>
+  </entry>
+  <entry>
+    <title>ROW: New floor (2025-11-02)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ROW"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ROW#ROW/2025-11-02/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$8 to floor -$6</summary>
+  </entry>
+  <entry>
+    <title>ROW: New floor (2025-10-12)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ROW"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ROW#ROW/2025-10-12/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$4 to floor -$8</summary>
+  </entry>
+  <entry>
+    <title>ROW: Stopped moving within the day (2025-09-11)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ROW"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ROW#ROW/2025-09-11/renew_moving_off</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Stopped moving within the day: v to floor -$4</summary>
+  </entry>
+  <entry>
+    <title>ROW: Started moving within the day (2025-08-14)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ROW"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ROW#ROW/2025-08-14/renew_moving_on</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Started moving within the day: floor -$10 to v</summary>
+  </entry>
+  <entry>
+    <title>ROW: Stopped moving within the day (2025-07-30)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ROW"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ROW#ROW/2025-07-30/renew_moving_off</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Stopped moving within the day: v to floor -$10</summary>
+  </entry>
+  <entry>
+    <title>ROW: Started moving within the day (2025-07-21)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ROW"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ROW#ROW/2025-07-21/renew_moving_on</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Started moving within the day: floor $0 to v</summary>
+  </entry>
+  <entry>
+    <title>ROW: Stopped moving within the day (2025-07-11)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ROW"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ROW#ROW/2025-07-11/renew_moving_off</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Stopped moving within the day: v to floor $0</summary>
+  </entry>
+  <entry>
+    <title>ROW: Started moving within the day (2025-05-27)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ROW"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ROW#ROW/2025-05-27/renew_moving_on</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Started moving within the day: floor -$4 to v</summary>
+  </entry>
+  <entry>
+    <title>ROW: Stopped moving within the day (2025-05-03)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ROW"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ROW#ROW/2025-05-03/renew_moving_off</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Stopped moving within the day: v to floor -$4</summary>
+  </entry>
+  <entry>
+    <title>ROW: Started moving within the day (2025-04-16)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ROW"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ROW#ROW/2025-04-16/renew_moving_on</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Started moving within the day: floor -$2 to v</summary>
+  </entry>
+  <entry>
+    <title>ROW: Episode (2025-03-21)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ROW"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ROW#ROW/2025-03-21/renew_episode</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Episode: floor -$2 to -$8 for the episode for 5 day(s)</summary>
+  </entry>
+  <entry>
+    <title>ROW: Episode (2025-03-15)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ROW"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ROW#ROW/2025-03-15/renew_episode</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Episode: floor -$2 to -$8 for the episode for 4 day(s)</summary>
+  </entry>
+  <entry>
+    <title>ROW: Back to an earlier floor (2025-03-06)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ROW"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ROW#ROW/2025-03-06/renew_floor_back</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Back to an earlier floor: floor -$28 to floor -$2</summary>
+  </entry>
+  <entry>
+    <title>ROW: New floor (2025-01-05)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ROW"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ROW#ROW/2025-01-05/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$10 to floor -$28</summary>
+  </entry>
+  <entry>
+    <title>ROW: Back to an earlier floor (2024-12-12)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ROW"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ROW#ROW/2024-12-12/renew_floor_back</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Back to an earlier floor: floor -$2 to floor -$10</summary>
+  </entry>
+  <entry>
+    <title>ROW: Back to an earlier floor (2024-10-04)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ROW"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ROW#ROW/2024-10-04/renew_floor_back</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Back to an earlier floor: floor -$10 to floor -$2</summary>
+  </entry>
+  <entry>
+    <title>ROW: New floor (2024-08-02)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ROW"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ROW#ROW/2024-08-02/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$54 to floor -$10</summary>
+  </entry>
+  <entry>
+    <title>ROW: New floor (2024-07-10)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ROW"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ROW#ROW/2024-07-10/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$2 to floor -$54</summary>
+  </entry>
+  <entry>
+    <title>ROW: New floor (2024-04-19)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ROW"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ROW#ROW/2024-04-19/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$18 to floor -$2</summary>
+  </entry>
+  <entry>
+    <title>ROW: New floor (2024-04-05)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ROW"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ROW#ROW/2024-04-05/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$10 to floor -$18</summary>
+  </entry>
+  <entry>
+    <title>ROW: Episode (2024-03-23)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ROW"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ROW#ROW/2024-03-23/renew_episode</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Episode: floor -$10 to -$1 for the episode for 3 day(s)</summary>
+  </entry>
+</feed>

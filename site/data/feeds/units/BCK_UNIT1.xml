@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>BCK_UNIT1: bidding and operating changes</title>
+  <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=BCK_UNIT1"/>
+  <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=BCK_UNIT1</id>
+  <updated>2026-10-18T00:00:00Z</updated>
+  <entry>
+    <title>BCK: New floor (2024-08-17)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=BCK"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=BCK#BCK/2024-08-17/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$35 to floor -$38</summary>
+  </entry>
+  <entry>
+    <title>BCK: New floor (2022-12-13)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=BCK"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=BCK#BCK/2022-12-13/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$2 to floor -$35</summary>
+  </entry>
+</feed>

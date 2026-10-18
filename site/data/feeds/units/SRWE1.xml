@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>SRWE1: bidding and operating changes</title>
+  <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SRWE1"/>
+  <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SRWE1</id>
+  <updated>2026-10-18T00:00:00Z</updated>
+  <entry>
+    <title>SRWE1: New floor (2024-11-21)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SRWE1"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SRWE1#SRWE1/2024-11-21/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$37 to floor $0</summary>
+  </entry>
+  <entry>
+    <title>SRWE1: New floor (2024-07-14)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SRWE1"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SRWE1#SRWE1/2024-07-14/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$35 to floor -$37</summary>
+  </entry>
+  <entry>
+    <title>SRWE1: New floor (2023-07-02)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SRWE1"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SRWE1#SRWE1/2023-07-02/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$33 to floor -$35</summary>
+  </entry>
+  <entry>
+    <title>SRWE1: New floor (2022-05-25)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SRWE1"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SRWE1#SRWE1/2022-05-25/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$34 to floor -$33</summary>
+  </entry>
+  <entry>
+    <title>SRWE1: New floor (2022-04-20)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SRWE1"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SRWE1#SRWE1/2022-04-20/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$32 to floor -$34</summary>
+  </entry>
+  <entry>
+    <title>SRWE1: New floor (2021-10-30)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SRWE1"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SRWE1#SRWE1/2021-10-30/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$35 to floor -$32</summary>
+  </entry>
+</feed>

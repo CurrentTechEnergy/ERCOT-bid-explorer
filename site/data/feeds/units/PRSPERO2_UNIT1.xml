@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>PRSPERO2_UNIT1: bidding and operating changes</title>
+  <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PRSPERO2_UNIT1"/>
+  <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PRSPERO2_UNIT1</id>
+  <updated>2026-10-18T00:00:00Z</updated>
+  <entry>
+    <title>PRSPERO2: New floor (2026-04-01)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PRSPERO2"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PRSPERO2#PRSPERO2/2026-04-01/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$4 to floor -$8</summary>
+  </entry>
+  <entry>
+    <title>PRSPERO2: New floor (2024-10-23)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PRSPERO2"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PRSPERO2#PRSPERO2/2024-10-23/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$1 to floor -$4</summary>
+  </entry>
+  <entry>
+    <title>PRSPERO2: New floor (2024-06-22)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PRSPERO2"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PRSPERO2#PRSPERO2/2024-06-22/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$7 to floor -$1</summary>
+  </entry>
+  <entry>
+    <title>PRSPERO2: New floor (2024-04-16)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PRSPERO2"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PRSPERO2#PRSPERO2/2024-04-16/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$4 to floor -$7</summary>
+  </entry>
+  <entry>
+    <title>PRSPERO2: New floor (2023-12-12)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PRSPERO2"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PRSPERO2#PRSPERO2/2023-12-12/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$3 to floor -$4</summary>
+  </entry>
+  <entry>
+    <title>PRSPERO2: New floor (2023-10-15)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PRSPERO2"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PRSPERO2#PRSPERO2/2023-10-15/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$0 to floor -$3</summary>
+  </entry>
+  <entry>
+    <title>PRSPERO2: New floor (2023-04-22)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PRSPERO2"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PRSPERO2#PRSPERO2/2023-04-22/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$7 to floor -$0</summary>
+  </entry>
+  <entry>
+    <title>PRSPERO2: New floor (2023-02-19)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PRSPERO2"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PRSPERO2#PRSPERO2/2023-02-19/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$4 to floor -$7</summary>
+  </entry>
+  <entry>
+    <title>PRSPERO2: New floor (2023-01-07)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PRSPERO2"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PRSPERO2#PRSPERO2/2023-01-07/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor $0 to floor -$4</summary>
+  </entry>
+  <entry>
+    <title>PRSPERO2: New floor (2022-11-12)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PRSPERO2"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PRSPERO2#PRSPERO2/2022-11-12/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor $2 to floor $0</summary>
+  </entry>
+  <entry>
+    <title>PRSPERO2: New floor (2022-10-25)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PRSPERO2"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PRSPERO2#PRSPERO2/2022-10-25/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor $12 to floor $2</summary>
+  </entry>
+  <entry>
+    <title>PRSPERO2: New floor (2022-10-05)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PRSPERO2"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PRSPERO2#PRSPERO2/2022-10-05/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor $25 to floor $12</summary>
+  </entry>
+  <entry>
+    <title>PRSPERO2: Back to an earlier floor (2022-09-27)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PRSPERO2"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PRSPERO2#PRSPERO2/2022-09-27/renew_floor_back</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Back to an earlier floor: floor $30 to floor $25</summary>
+  </entry>
+  <entry>
+    <title>PRSPERO2: New floor (2022-08-06)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PRSPERO2"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PRSPERO2#PRSPERO2/2022-08-06/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor $25 to floor $30</summary>
+  </entry>
+  <entry>
+    <title>PRSPERO2: New floor (2022-06-14)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PRSPERO2"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PRSPERO2#PRSPERO2/2022-06-14/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor $20 to floor $25</summary>
+  </entry>
+  <entry>
+    <title>PRSPERO2: New floor (2022-05-19)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PRSPERO2"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PRSPERO2#PRSPERO2/2022-05-19/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor $2 to floor $20</summary>
+  </entry>
+  <entry>
+    <title>PRSPERO2: New floor (2022-05-11)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PRSPERO2"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PRSPERO2#PRSPERO2/2022-05-11/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$1 to floor $2</summary>
+  </entry>
+  <entry>
+    <title>PRSPERO2: New floor (2022-02-10)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PRSPERO2"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PRSPERO2#PRSPERO2/2022-02-10/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor $0 to floor -$1</summary>
+  </entry>
+  <entry>
+    <title>PRSPERO2: Back to an earlier floor (2021-11-03)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PRSPERO2"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PRSPERO2#PRSPERO2/2021-11-03/renew_floor_back</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Back to an earlier floor: floor $12 to floor $0</summary>
+  </entry>
+  <entry>
+    <title>PRSPERO2: New floor (2021-10-12)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PRSPERO2"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PRSPERO2#PRSPERO2/2021-10-12/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor $5 to floor $12</summary>
+  </entry>
+  <entry>
+    <title>PRSPERO2: New floor (2021-09-04)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PRSPERO2"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PRSPERO2#PRSPERO2/2021-09-04/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor $4 to floor $5</summary>
+  </entry>
+  <entry>
+    <title>PRSPERO2: New floor (2021-08-10)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PRSPERO2"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PRSPERO2#PRSPERO2/2021-08-10/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor $0 to floor $4</summary>
+  </entry>
+  <entry>
+    <title>PRSPERO2: New floor (2021-07-28)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PRSPERO2"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PRSPERO2#PRSPERO2/2021-07-28/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$3 to floor $0</summary>
+  </entry>
+  <entry>
+    <title>PRSPERO2: New floor (2021-07-19)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PRSPERO2"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PRSPERO2#PRSPERO2/2021-07-19/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$1 to floor -$3</summary>
+  </entry>
+</feed>

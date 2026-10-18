@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>LMAJADAS_UNIT1: bidding and operating changes</title>
+  <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=LMAJADAS_UNIT1"/>
+  <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=LMAJADAS_UNIT1</id>
+  <updated>2026-10-18T00:00:00Z</updated>
+  <entry>
+    <title>LMAJADAS: New floor (2026-02-14)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=LMAJADAS"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=LMAJADAS#LMAJADAS/2026-02-14/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$38 to floor -$39</summary>
+  </entry>
+  <entry>
+    <title>LMAJADAS: New floor (2025-06-25)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=LMAJADAS"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=LMAJADAS#LMAJADAS/2025-06-25/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$37 to floor -$38</summary>
+  </entry>
+  <entry>
+    <title>LMAJADAS: New floor (2024-08-01)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=LMAJADAS"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=LMAJADAS#LMAJADAS/2024-08-01/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$35 to floor -$37</summary>
+  </entry>
+  <entry>
+    <title>LMAJADAS: New floor (2023-07-06)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=LMAJADAS"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=LMAJADAS#LMAJADAS/2023-07-06/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$33 to floor -$35</summary>
+  </entry>
+  <entry>
+    <title>LMAJADAS: Back to an earlier floor (2022-05-11)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=LMAJADAS"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=LMAJADAS#LMAJADAS/2022-05-11/renew_floor_back</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Back to an earlier floor: floor -$34 to floor -$33</summary>
+  </entry>
+  <entry>
+    <title>LMAJADAS: New floor (2022-04-22)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=LMAJADAS"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=LMAJADAS#LMAJADAS/2022-04-22/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$33 to floor -$34</summary>
+  </entry>
+  <entry>
+    <title>LMAJADAS: New floor (2022-01-20)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=LMAJADAS"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=LMAJADAS#LMAJADAS/2022-01-20/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$32 to floor -$33</summary>
+  </entry>
+</feed>

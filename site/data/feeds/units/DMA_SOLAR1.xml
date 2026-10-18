@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>DMA_SOLAR1: bidding and operating changes</title>
+  <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=DMA_SOLAR1"/>
+  <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=DMA_SOLAR1</id>
+  <updated>2026-10-18T00:00:00Z</updated>
+  <entry>
+    <title>DMA: New floor (2026-03-27)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=DMA"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=DMA#DMA/2026-03-27/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor $0 to floor -$2</summary>
+  </entry>
+</feed>

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>WHMESA_UNIT2: bidding and operating changes</title>
+  <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=WHMESA_UNIT2"/>
+  <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=WHMESA_UNIT2</id>
+  <updated>2026-10-18T00:00:00Z</updated>
+  <entry>
+    <title>WHMESA_UNIT2: New floor (2026-02-12)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=WHMESA_UNIT2"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=WHMESA_UNIT2#WHMESA_UNIT2/2026-02-12/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$38 to floor -$40</summary>
+  </entry>
+  <entry>
+    <title>WHMESA_UNIT2: New floor (2025-02-22)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=WHMESA_UNIT2"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=WHMESA_UNIT2#WHMESA_UNIT2/2025-02-22/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$37 to floor -$38</summary>
+  </entry>
+  <entry>
+    <title>WHMESA_UNIT2: New floor (2024-03-23)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=WHMESA_UNIT2"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=WHMESA_UNIT2#WHMESA_UNIT2/2024-03-23/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$35 to floor -$37</summary>
+  </entry>
+  <entry>
+    <title>WHMESA_UNIT2: New floor (2023-01-18)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=WHMESA_UNIT2"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=WHMESA_UNIT2#WHMESA_UNIT2/2023-01-18/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$31 to floor -$35</summary>
+  </entry>
+</feed>

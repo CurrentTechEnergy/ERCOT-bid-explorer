@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>MDANP_CT4: bidding and operating changes</title>
+  <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=MDANP_CT4"/>
+  <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=MDANP_CT4</id>
+  <updated>2026-10-18T00:00:00Z</updated>
+  <entry>
+    <title>MDANP_CT4: Shut down after a long run (2026-08-12)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=MDANP_CT4"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=MDANP_CT4#MDANP_CT4/2026-08-12/shutdown_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Shut down for 11 h after 32 days without a shutdown</summary>
+  </entry>
+  <entry>
+    <title>MDANP_CT4: Shut down despite a day-ahead award (2026-06-20)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=MDANP_CT4"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=MDANP_CT4#MDANP_CT4/2026-06-20/shutdown_award</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Shut down for 18 h although a day-ahead award covered 100% of the window</summary>
+  </entry>
+  <entry>
+    <title>MDANP_CT4: Outage ended (2026-04-20)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=MDANP_CT4"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=MDANP_CT4#MDANP_CT4/2026-04-20/outage_end</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Back from a 7-day outage</summary>
+  </entry>
+  <entry>
+    <title>MDANP_CT4: Outage started (2026-04-14)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=MDANP_CT4"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=MDANP_CT4#MDANP_CT4/2026-04-14/outage_start</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Outage began, lasting 7 days</summary>
+  </entry>
+  <entry>
+    <title>MDANP_CT4: Shut down despite a day-ahead award (2026-04-10)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=MDANP_CT4"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=MDANP_CT4#MDANP_CT4/2026-04-10/shutdown_award</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Shut down for 9 h although a day-ahead award covered 100% of the window</summary>
+  </entry>
+  <entry>
+    <title>MDANP_CT4: Shut down despite a day-ahead award (2026-02-11)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=MDANP_CT4"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=MDANP_CT4#MDANP_CT4/2026-02-11/shutdown_award</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Shut down for 90 h although a day-ahead award covered 100% of the window</summary>
+  </entry>
+  <entry>
+    <title>MDANP_CT4: Shut down despite a day-ahead award (2026-01-22)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=MDANP_CT4"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=MDANP_CT4#MDANP_CT4/2026-01-22/shutdown_award</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Shut down for 32 h although a day-ahead award covered 100% of the window</summary>
+  </entry>
+  <entry>
+    <title>MDANP_CT4: Shut down despite a day-ahead award (2025-12-15)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=MDANP_CT4"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=MDANP_CT4#MDANP_CT4/2025-12-15/shutdown_award</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Shut down for 17 h although a day-ahead award covered 100% of the window</summary>
+  </entry>
+</feed>

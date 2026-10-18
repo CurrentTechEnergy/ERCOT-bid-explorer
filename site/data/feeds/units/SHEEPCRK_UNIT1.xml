@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>SHEEPCRK_UNIT1: bidding and operating changes</title>
+  <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SHEEPCRK_UNIT1"/>
+  <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SHEEPCRK_UNIT1</id>
+  <updated>2026-10-18T00:00:00Z</updated>
+  <entry>
+    <title>SHEEPCRK: New floor (2026-06-16)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SHEEPCRK"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SHEEPCRK#SHEEPCRK/2026-06-16/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$75 to floor -$65</summary>
+  </entry>
+  <entry>
+    <title>SHEEPCRK: New floor (2024-12-31)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SHEEPCRK"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SHEEPCRK#SHEEPCRK/2024-12-31/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$35 to floor -$75</summary>
+  </entry>
+</feed>

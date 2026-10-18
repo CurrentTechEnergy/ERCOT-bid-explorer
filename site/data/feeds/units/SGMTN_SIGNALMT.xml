@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>SGMTN_SIGNALMT: bidding and operating changes</title>
+  <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SGMTN_SIGNALMT"/>
+  <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SGMTN_SIGNALMT</id>
+  <updated>2026-10-18T00:00:00Z</updated>
+  <entry>
+    <title>SGMTN_SIGNALMT: New floor (2019-10-25)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SGMTN_SIGNALMT"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SGMTN_SIGNALMT#SGMTN_SIGNALMT/2019-10-25/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$1 to floor -$32</summary>
+  </entry>
+  <entry>
+    <title>SGMTN_SIGNALMT: New floor (2019-10-25)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SGMTN_SIGNALMT"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SGMTN_SIGNALMT#SGMTN_SIGNALMT/2019-10-25/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$1 to floor -$32</summary>
+  </entry>
+</feed>

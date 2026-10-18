@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>BRAUNIG_VHB6CT5: bidding and operating changes</title>
+  <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=BRAUNIG_VHB6CT5"/>
+  <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=BRAUNIG_VHB6CT5</id>
+  <updated>2026-10-18T00:00:00Z</updated>
+  <entry>
+    <title>BRAUNIG_VHB6CT5: Bidding approach shifted (2026-01-31)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=BRAUNIG_VHB6CT5"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=BRAUNIG_VHB6CT5#BRAUNIG_VHB6CT5/2026-01-31/bidding</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Offer price vs peer median: -$46 to -$8/MWh</summary>
+  </entry>
+  <entry>
+    <title>BRAUNIG_VHB6CT5: Bidding approach shifted (2026-01-20)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=BRAUNIG_VHB6CT5"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=BRAUNIG_VHB6CT5#BRAUNIG_VHB6CT5/2026-01-20/bidding</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Offer price vs peer median: -$8 to -$44/MWh</summary>
+  </entry>
+  <entry>
+    <title>BRAUNIG_VHB6CT5: Timescale group changed (2026-01-01)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=BRAUNIG_VHB6CT5"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=BRAUNIG_VHB6CT5#BRAUNIG_VHB6CT5/2026-01-01/group</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Multi-day: off 1–7 days in 2025-12 to Daily, over 2 a week in 2026-01</summary>
+  </entry>
+  <entry>
+    <title>BRAUNIG_VHB6CT5: Outage ended (2025-12-13)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=BRAUNIG_VHB6CT5"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=BRAUNIG_VHB6CT5#BRAUNIG_VHB6CT5/2025-12-13/outage_end</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Back from a 13-day outage</summary>
+  </entry>
+</feed>

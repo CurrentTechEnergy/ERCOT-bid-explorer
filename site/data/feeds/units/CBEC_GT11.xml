@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>CBEC_GT11: bidding and operating changes</title>
+  <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CBEC_GT11"/>
+  <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CBEC_GT11</id>
+  <updated>2026-10-18T00:00:00Z</updated>
+  <entry>
+    <title>CBEC_GT11: Timescale group changed (2026-07-01)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CBEC_GT11"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CBEC_GT11#CBEC_GT11/2026-07-01/group</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Multi-day: off 1–7 days in 2026-06 to Seasonal: off a week or more in 2026-07</summary>
+  </entry>
+  <entry>
+    <title>CBEC_GT11: Bidding approach shifted (2026-06-06)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CBEC_GT11"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CBEC_GT11#CBEC_GT11/2026-06-06/bidding</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Offer price vs peer median: $172 to $150/MWh</summary>
+  </entry>
+  <entry>
+    <title>CBEC_GT11: Timescale group changed (2026-04-01)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CBEC_GT11"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CBEC_GT11#CBEC_GT11/2026-04-01/group</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Seasonal: off a week or more in 2026-03 to Multi-day: off 1–7 days in 2026-04</summary>
+  </entry>
+  <entry>
+    <title>CBEC_GT11: Bidding approach shifted (2026-03-30)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CBEC_GT11"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CBEC_GT11#CBEC_GT11/2026-03-30/bidding</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Offer price vs peer median: $14 to $172/MWh</summary>
+  </entry>
+  <entry>
+    <title>CBEC_GT11: Timescale group changed (2026-03-01)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CBEC_GT11"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CBEC_GT11#CBEC_GT11/2026-03-01/group</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Multi-day: off 1–7 days in 2026-02 to Seasonal: off a week or more in 2026-03</summary>
+  </entry>
+  <entry>
+    <title>CBEC_GT11: Timescale group changed (2026-01-01)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CBEC_GT11"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CBEC_GT11#CBEC_GT11/2026-01-01/group</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Seasonal: off a week or more in 2025-12 to Multi-day: off 1–7 days in 2026-01</summary>
+  </entry>
+</feed>

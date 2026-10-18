@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>ROSELAND_SOLAR3: bidding and operating changes</title>
+  <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ROSELAND_SOLAR3"/>
+  <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ROSELAND_SOLAR3</id>
+  <updated>2026-10-18T00:00:00Z</updated>
+  <entry>
+    <title>ROSELAND: New floor (2024-12-18)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ROSELAND"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ROSELAND#ROSELAND/2024-12-18/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor $0 to floor -$4</summary>
+  </entry>
+  <entry>
+    <title>ROSELAND: New floor (2023-06-06)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ROSELAND"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ROSELAND#ROSELAND/2023-06-06/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$3 to floor $0</summary>
+  </entry>
+</feed>

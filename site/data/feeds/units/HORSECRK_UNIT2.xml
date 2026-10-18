@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>HORSECRK_UNIT2: bidding and operating changes</title>
+  <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=HORSECRK_UNIT2"/>
+  <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=HORSECRK_UNIT2</id>
+  <updated>2026-10-18T00:00:00Z</updated>
+  <entry>
+    <title>HORSECRK: New floor (2024-07-13)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=HORSECRK"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=HORSECRK#HORSECRK/2024-07-13/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$35 to floor -$37</summary>
+  </entry>
+  <entry>
+    <title>HORSECRK: New floor (2023-07-01)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=HORSECRK"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=HORSECRK#HORSECRK/2023-07-01/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$33 to floor -$35</summary>
+  </entry>
+  <entry>
+    <title>HORSECRK: New floor (2022-05-25)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=HORSECRK"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=HORSECRK#HORSECRK/2022-05-25/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$34 to floor -$33</summary>
+  </entry>
+  <entry>
+    <title>HORSECRK: New floor (2022-04-22)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=HORSECRK"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=HORSECRK#HORSECRK/2022-04-22/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$32 to floor -$34</summary>
+  </entry>
+  <entry>
+    <title>HORSECRK: New floor (2021-10-30)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=HORSECRK"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=HORSECRK#HORSECRK/2021-10-30/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$35 to floor -$32</summary>
+  </entry>
+</feed>

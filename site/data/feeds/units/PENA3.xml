@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>PENA3: bidding and operating changes</title>
+  <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PENA3"/>
+  <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PENA3</id>
+  <updated>2026-10-18T00:00:00Z</updated>
+  <entry>
+    <title>PENA3: New floor (2024-01-01)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PENA3"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PENA3#PENA3/2024-01-01/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$3 to floor -$2</summary>
+  </entry>
+  <entry>
+    <title>PENA3: Episode (2022-01-25)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PENA3"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PENA3#PENA3/2022-01-25/renew_episode</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Episode: floor -$3 to $16 for the episode for 1 day(s)</summary>
+  </entry>
+  <entry>
+    <title>PENA3: New floor (2021-08-12)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PENA3"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PENA3#PENA3/2021-08-12/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor $0 to floor -$3</summary>
+  </entry>
+</feed>

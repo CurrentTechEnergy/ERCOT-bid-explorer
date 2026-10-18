@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>MESQCRK_WND2: bidding and operating changes</title>
+  <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=MESQCRK_WND2"/>
+  <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=MESQCRK_WND2</id>
+  <updated>2026-10-18T00:00:00Z</updated>
+  <entry>
+    <title>MESQCRK: New floor (2026-03-26)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=MESQCRK"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=MESQCRK#MESQCRK/2026-03-26/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$30 to floor -$2</summary>
+  </entry>
+  <entry>
+    <title>MESQCRK: New floor (2023-07-04)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=MESQCRK"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=MESQCRK#MESQCRK/2023-07-04/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$15 to floor -$30</summary>
+  </entry>
+  <entry>
+    <title>MESQCRK: Episode (2021-11-09)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=MESQCRK"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=MESQCRK#MESQCRK/2021-11-09/renew_episode</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Episode: floor -$15 to -$40 for the episode for 1 day(s)</summary>
+  </entry>
+  <entry>
+    <title>MESQCRK: New floor (2020-01-10)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=MESQCRK"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=MESQCRK#MESQCRK/2020-01-10/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$35 to floor -$15</summary>
+  </entry>
+</feed>

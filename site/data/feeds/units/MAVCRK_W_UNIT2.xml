@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>MAVCRK_W_UNIT2: bidding and operating changes</title>
+  <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=MAVCRK_W_UNIT2"/>
+  <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=MAVCRK_W_UNIT2</id>
+  <updated>2026-10-18T00:00:00Z</updated>
+  <entry>
+    <title>MAVCRK_W: New floor (2024-02-28)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=MAVCRK_W"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=MAVCRK_W#MAVCRK_W/2024-02-28/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$31 to floor -$38</summary>
+  </entry>
+  <entry>
+    <title>MAVCRK_W: New floor (2023-07-26)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=MAVCRK_W"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=MAVCRK_W#MAVCRK_W/2023-07-26/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$32 to floor -$31</summary>
+  </entry>
+</feed>

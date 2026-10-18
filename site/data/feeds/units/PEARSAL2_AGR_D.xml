@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>PEARSAL2_AGR_D: bidding and operating changes</title>
+  <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PEARSAL2_AGR_D"/>
+  <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PEARSAL2_AGR_D</id>
+  <updated>2026-10-18T00:00:00Z</updated>
+  <entry>
+    <title>PEARSAL2_AGR_D: Shut down despite a day-ahead award (2026-07-15)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PEARSAL2_AGR_D"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PEARSAL2_AGR_D#PEARSAL2_AGR_D/2026-07-15/shutdown_award</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Shut down for 18 h although a day-ahead award covered 100% of the window</summary>
+  </entry>
+  <entry>
+    <title>PEARSAL2_AGR_D: Shut down despite a day-ahead award (2026-07-13)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PEARSAL2_AGR_D"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PEARSAL2_AGR_D#PEARSAL2_AGR_D/2026-07-13/shutdown_award</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Shut down for 9 h although a day-ahead award covered 100% of the window</summary>
+  </entry>
+  <entry>
+    <title>PEARSAL2_AGR_D: Shut down despite a day-ahead award (2026-07-06)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PEARSAL2_AGR_D"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PEARSAL2_AGR_D#PEARSAL2_AGR_D/2026-07-06/shutdown_award</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Shut down for 11 h although a day-ahead award covered 100% of the window</summary>
+  </entry>
+  <entry>
+    <title>PEARSAL2_AGR_D: Shut down despite a day-ahead award (2026-06-19)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PEARSAL2_AGR_D"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PEARSAL2_AGR_D#PEARSAL2_AGR_D/2026-06-19/shutdown_award</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Shut down for 4 h although a day-ahead award covered 100% of the window</summary>
+  </entry>
+  <entry>
+    <title>PEARSAL2_AGR_D: Shut down despite a day-ahead award (2026-06-16)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PEARSAL2_AGR_D"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PEARSAL2_AGR_D#PEARSAL2_AGR_D/2026-06-16/shutdown_award</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Shut down for 16 h although a day-ahead award covered 100% of the window</summary>
+  </entry>
+  <entry>
+    <title>PEARSAL2_AGR_D: Shut down despite a day-ahead award (2026-05-08)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PEARSAL2_AGR_D"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PEARSAL2_AGR_D#PEARSAL2_AGR_D/2026-05-08/shutdown_award</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Shut down for 6 h although a day-ahead award covered 100% of the window</summary>
+  </entry>
+  <entry>
+    <title>PEARSAL2_AGR_D: Shut down despite a day-ahead award (2026-04-29)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PEARSAL2_AGR_D"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PEARSAL2_AGR_D#PEARSAL2_AGR_D/2026-04-29/shutdown_award</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Shut down for 5 h although a day-ahead award covered 100% of the window</summary>
+  </entry>
+  <entry>
+    <title>PEARSAL2_AGR_D: Shut down despite a day-ahead award (2026-04-28)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PEARSAL2_AGR_D"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PEARSAL2_AGR_D#PEARSAL2_AGR_D/2026-04-28/shutdown_award</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Shut down for 6 h although a day-ahead award covered 100% of the window</summary>
+  </entry>
+  <entry>
+    <title>PEARSAL2_AGR_D: Shut down despite a day-ahead award (2026-04-25)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PEARSAL2_AGR_D"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PEARSAL2_AGR_D#PEARSAL2_AGR_D/2026-04-25/shutdown_award</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Shut down for 7 h although a day-ahead award covered 100% of the window</summary>
+  </entry>
+  <entry>
+    <title>PEARSAL2_AGR_D: Shut down despite a day-ahead award (2025-12-05)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PEARSAL2_AGR_D"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PEARSAL2_AGR_D#PEARSAL2_AGR_D/2025-12-05/shutdown_award</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Shut down for 6 h although a day-ahead award covered 100% of the window</summary>
+  </entry>
+</feed>

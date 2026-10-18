@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>STWF_T1: bidding and operating changes</title>
+  <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=STWF_T1"/>
+  <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=STWF_T1</id>
+  <updated>2026-10-18T00:00:00Z</updated>
+  <entry>
+    <title>STWF_T: New floor (2021-07-09)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=STWF_T"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=STWF_T#STWF_T/2021-07-09/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$2 to floor -$5</summary>
+  </entry>
+  <entry>
+    <title>STWF_T: New floor (2021-04-15)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=STWF_T"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=STWF_T#STWF_T/2021-04-15/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$1 to floor -$2</summary>
+  </entry>
+  <entry>
+    <title>STWF_T: New floor (2020-07-28)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=STWF_T"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=STWF_T#STWF_T/2020-07-28/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$31 to floor -$1</summary>
+  </entry>
+</feed>

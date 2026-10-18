@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>LNCRK2_G871: bidding and operating changes</title>
+  <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=LNCRK2_G871"/>
+  <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=LNCRK2_G871</id>
+  <updated>2026-10-18T00:00:00Z</updated>
+  <entry>
+    <title>LNCRK2: New floor (2026-01-21)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=LNCRK2"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=LNCRK2#LNCRK2/2026-01-21/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$4 to floor -$2</summary>
+  </entry>
+  <entry>
+    <title>LNCRK2: New floor (2022-04-15)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=LNCRK2"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=LNCRK2#LNCRK2/2022-04-15/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$5 to floor -$4</summary>
+  </entry>
+</feed>

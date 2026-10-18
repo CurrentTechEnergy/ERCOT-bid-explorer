@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>TXCTY_CC1_4: bidding and operating changes</title>
+  <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TXCTY_CC1_4"/>
+  <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TXCTY_CC1_4</id>
+  <updated>2026-10-18T00:00:00Z</updated>
+  <entry>
+    <title>TXCTY_CC1_4: Bidding approach shifted (2026-02-27)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TXCTY_CC1_4"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TXCTY_CC1_4#TXCTY_CC1_4/2026-02-27/bidding</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Offer price vs peer median: $15 to $5/MWh</summary>
+  </entry>
+</feed>

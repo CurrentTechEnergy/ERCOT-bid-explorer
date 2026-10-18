@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>STEAM1A_STEAM_1: bidding and operating changes</title>
+  <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=STEAM1A_STEAM_1"/>
+  <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=STEAM1A_STEAM_1</id>
+  <updated>2026-10-18T00:00:00Z</updated>
+  <entry>
+    <title>STEAM1A_STEAM_1: Outage started (2026-07-12)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=STEAM1A_STEAM_1"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=STEAM1A_STEAM_1#STEAM1A_STEAM_1/2026-07-12/outage_start</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Outage began, still on at the end of the data (39 days so far)</summary>
+  </entry>
+  <entry>
+    <title>STEAM1A_STEAM_1: Outage ended (2026-07-08)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=STEAM1A_STEAM_1"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=STEAM1A_STEAM_1#STEAM1A_STEAM_1/2026-07-08/outage_end</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Back from a 13-day outage</summary>
+  </entry>
+  <entry>
+    <title>STEAM1A_STEAM_1: Outage started (2026-06-25)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=STEAM1A_STEAM_1"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=STEAM1A_STEAM_1#STEAM1A_STEAM_1/2026-06-25/outage_start</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Outage began, lasting 13 days</summary>
+  </entry>
+</feed>

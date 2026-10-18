@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>HICKMAN_G2_J02: bidding and operating changes</title>
+  <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=HICKMAN_G2_J02"/>
+  <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=HICKMAN_G2_J02</id>
+  <updated>2026-10-18T00:00:00Z</updated>
+  <entry>
+    <title>HICKMAN_G2_J: Episode (2022-10-31)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=HICKMAN_G2_J"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=HICKMAN_G2_J#HICKMAN_G2_J/2022-10-31/renew_episode</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Episode: floor -$30 to -$39 for the episode for 1 day(s)</summary>
+  </entry>
+</feed>

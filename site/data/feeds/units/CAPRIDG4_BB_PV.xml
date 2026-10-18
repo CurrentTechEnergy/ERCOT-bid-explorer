@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>CAPRIDG4_BB_PV: bidding and operating changes</title>
+  <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CAPRIDG4_BB_PV"/>
+  <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CAPRIDG4_BB_PV</id>
+  <updated>2026-10-18T00:00:00Z</updated>
+  <entry>
+    <title>CAPRIDG4_BB_PV: New floor (2022-11-12)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CAPRIDG4_BB_PV"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CAPRIDG4_BB_PV#CAPRIDG4_BB_PV/2022-11-12/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$0 to floor -$4</summary>
+  </entry>
+  <entry>
+    <title>CAPRIDG4_BB_PV: New floor (2022-11-12)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CAPRIDG4_BB_PV"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CAPRIDG4_BB_PV#CAPRIDG4_BB_PV/2022-11-12/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$0 to floor -$4</summary>
+  </entry>
+</feed>

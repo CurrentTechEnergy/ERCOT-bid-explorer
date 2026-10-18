@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>RSNAKE_G2: bidding and operating changes</title>
+  <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=RSNAKE_G2"/>
+  <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=RSNAKE_G2</id>
+  <updated>2026-10-18T00:00:00Z</updated>
+  <entry>
+    <title>RSNAKE: New floor (2023-11-28)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=RSNAKE"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=RSNAKE#RSNAKE/2023-11-28/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$3 to floor -$38</summary>
+  </entry>
+  <entry>
+    <title>RSNAKE: Back to an earlier floor (2022-12-27)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=RSNAKE"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=RSNAKE#RSNAKE/2022-12-27/renew_floor_back</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Back to an earlier floor: floor -$50 to floor -$3</summary>
+  </entry>
+  <entry>
+    <title>RSNAKE: New floor (2022-12-21)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=RSNAKE"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=RSNAKE#RSNAKE/2022-12-21/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$3 to floor -$50</summary>
+  </entry>
+  <entry>
+    <title>RSNAKE: New floor (2022-09-21)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=RSNAKE"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=RSNAKE#RSNAKE/2022-09-21/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$33 to floor -$3</summary>
+  </entry>
+  <entry>
+    <title>RSNAKE: Back to an earlier floor (2022-05-17)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=RSNAKE"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=RSNAKE#RSNAKE/2022-05-17/renew_floor_back</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Back to an earlier floor: floor -$5 to floor -$33</summary>
+  </entry>
+  <entry>
+    <title>RSNAKE: Back to an earlier floor (2022-05-09)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=RSNAKE"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=RSNAKE#RSNAKE/2022-05-09/renew_floor_back</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Back to an earlier floor: floor -$33 to floor -$5</summary>
+  </entry>
+  <entry>
+    <title>RSNAKE: New floor (2022-04-05)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=RSNAKE"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=RSNAKE#RSNAKE/2022-04-05/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$5 to floor -$33</summary>
+  </entry>
+  <entry>
+    <title>RSNAKE: Episode (2022-02-02)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=RSNAKE"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=RSNAKE#RSNAKE/2022-02-02/renew_episode</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Episode: floor -$5 to -$50 for the episode for 3 day(s)</summary>
+  </entry>
+  <entry>
+    <title>RSNAKE: New floor (2021-09-23)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=RSNAKE"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=RSNAKE#RSNAKE/2021-09-23/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$4 to floor -$5</summary>
+  </entry>
+  <entry>
+    <title>RSNAKE: New floor (2021-06-23)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=RSNAKE"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=RSNAKE#RSNAKE/2021-06-23/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$2 to floor -$4</summary>
+  </entry>
+  <entry>
+    <title>RSNAKE: Episode (2021-06-19)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=RSNAKE"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=RSNAKE#RSNAKE/2021-06-19/renew_episode</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Episode: floor -$2 to -$32 for the episode for 1 day(s)</summary>
+  </entry>
+  <entry>
+    <title>RSNAKE: Episode (2021-06-09)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=RSNAKE"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=RSNAKE#RSNAKE/2021-06-09/renew_episode</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Episode: floor -$2 to -$32 for the episode for 1 day(s)</summary>
+  </entry>
+  <entry>
+    <title>RSNAKE: Episode (2021-04-10)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=RSNAKE"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=RSNAKE#RSNAKE/2021-04-10/renew_episode</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Episode: floor -$2 to -$32 for the episode for 2 day(s)</summary>
+  </entry>
+  <entry>
+    <title>RSNAKE: New floor (2021-03-19)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=RSNAKE"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=RSNAKE#RSNAKE/2021-03-19/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor $0 to floor -$2</summary>
+  </entry>
+  <entry>
+    <title>RSNAKE: Episode (2021-03-09)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=RSNAKE"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=RSNAKE#RSNAKE/2021-03-09/renew_episode</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Episode: floor $0 to -$32 for the episode for 1 day(s)</summary>
+  </entry>
+  <entry>
+    <title>RSNAKE: New floor (2021-02-21)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=RSNAKE"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=RSNAKE#RSNAKE/2021-02-21/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$32 to floor $0</summary>
+  </entry>
+  <entry>
+    <title>RSNAKE: New floor (2019-06-14)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=RSNAKE"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=RSNAKE#RSNAKE/2019-06-14/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$31 to floor -$32</summary>
+  </entry>
+</feed>

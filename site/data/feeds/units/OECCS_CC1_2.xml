@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>OECCS_CC1_2: bidding and operating changes</title>
+  <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=OECCS_CC1_2"/>
+  <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=OECCS_CC1_2</id>
+  <updated>2026-10-18T00:00:00Z</updated>
+  <entry>
+    <title>OECCS_CC1_2: Bidding approach shifted (2026-06-10)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=OECCS_CC1_2"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=OECCS_CC1_2#OECCS_CC1_2/2026-06-10/bidding</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>MW above LSL offered at or below $0: 99% to 0% of the day</summary>
+  </entry>
+  <entry>
+    <title>OECCS_CC1_2: Bidding approach shifted (2026-03-06)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=OECCS_CC1_2"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=OECCS_CC1_2#OECCS_CC1_2/2026-03-06/bidding</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>MW above LSL offered at or below $0: 0% to 100% of the day</summary>
+  </entry>
+</feed>

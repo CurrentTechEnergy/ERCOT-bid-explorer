@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>TRINITY_TH1_BUS: bidding and operating changes</title>
+  <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TRINITY_TH1_BUS"/>
+  <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TRINITY_TH1_BUS</id>
+  <updated>2026-10-18T00:00:00Z</updated>
+  <entry>
+    <title>TRINITY_TH1_BUS: New floor (2024-09-13)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TRINITY_TH1_BUS"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TRINITY_TH1_BUS#TRINITY_TH1_BUS/2024-09-13/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$36 to floor -$58</summary>
+  </entry>
+  <entry>
+    <title>TRINITY_TH1_BUS: New floor (2024-03-13)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TRINITY_TH1_BUS"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TRINITY_TH1_BUS#TRINITY_TH1_BUS/2024-03-13/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$32 to floor -$36</summary>
+  </entry>
+  <entry>
+    <title>TRINITY_TH1_BUS: New floor (2020-09-29)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TRINITY_TH1_BUS"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TRINITY_TH1_BUS#TRINITY_TH1_BUS/2020-09-29/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor $0 to floor -$32</summary>
+  </entry>
+</feed>

@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>PPEC_GT7: bidding and operating changes</title>
+  <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PPEC_GT7"/>
+  <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PPEC_GT7</id>
+  <updated>2026-10-18T00:00:00Z</updated>
+  <entry>
+    <title>PPEC_GT7: Shut down despite a day-ahead award (2026-06-16)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PPEC_GT7"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PPEC_GT7#PPEC_GT7/2026-06-16/shutdown_award</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Shut down for 43 h although a day-ahead award covered 96% of the window</summary>
+  </entry>
+  <entry>
+    <title>PPEC_GT7: Outage ended (2026-05-24)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PPEC_GT7"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PPEC_GT7#PPEC_GT7/2026-05-24/outage_end</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Back from a 18-day outage</summary>
+  </entry>
+  <entry>
+    <title>PPEC_GT7: Outage started (2026-05-06)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PPEC_GT7"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PPEC_GT7#PPEC_GT7/2026-05-06/outage_start</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Outage began, lasting 18 days</summary>
+  </entry>
+  <entry>
+    <title>PPEC_GT7: Bidding approach shifted (2026-05-06)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PPEC_GT7"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PPEC_GT7#PPEC_GT7/2026-05-06/bidding</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Running without an offer curve: 100% to 0% of the day</summary>
+  </entry>
+  <entry>
+    <title>PPEC_GT7: Outage ended (2026-04-20)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PPEC_GT7"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PPEC_GT7#PPEC_GT7/2026-04-20/outage_end</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Back from a 17-day outage</summary>
+  </entry>
+  <entry>
+    <title>PPEC_GT7: Outage started (2026-04-03)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PPEC_GT7"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PPEC_GT7#PPEC_GT7/2026-04-03/outage_start</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Outage began, lasting 17 days</summary>
+  </entry>
+  <entry>
+    <title>PPEC_GT7: Timescale group changed (2026-04-01)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PPEC_GT7"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PPEC_GT7#PPEC_GT7/2026-04-01/group</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Never off in 2026-03 to Daily, under 1 shutdown a week in 2026-04</summary>
+  </entry>
+  <entry>
+    <title>PPEC_GT7: Outage ended (2026-03-22)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PPEC_GT7"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PPEC_GT7#PPEC_GT7/2026-03-22/outage_end</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Back from a 8-day outage</summary>
+  </entry>
+  <entry>
+    <title>PPEC_GT7: Outage started (2026-03-15)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PPEC_GT7"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PPEC_GT7#PPEC_GT7/2026-03-15/outage_start</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Outage began, lasting 8 days</summary>
+  </entry>
+  <entry>
+    <title>PPEC_GT7: Outage ended (2026-03-02)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PPEC_GT7"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PPEC_GT7#PPEC_GT7/2026-03-02/outage_end</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Back from a 93-day outage</summary>
+  </entry>
+</feed>

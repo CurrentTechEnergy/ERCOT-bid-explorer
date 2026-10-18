@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>EUNICE_PV1: bidding and operating changes</title>
+  <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=EUNICE_PV1"/>
+  <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=EUNICE_PV1</id>
+  <updated>2026-10-18T00:00:00Z</updated>
+  <entry>
+    <title>EUNICE: Episode (2026-06-08)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=EUNICE"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=EUNICE#EUNICE/2026-06-08/renew_episode</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Episode: floor -$12 to $1 for the episode for 1 day(s)</summary>
+  </entry>
+  <entry>
+    <title>EUNICE: New floor (2026-06-02)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=EUNICE"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=EUNICE#EUNICE/2026-06-02/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$4 to floor -$12</summary>
+  </entry>
+  <entry>
+    <title>EUNICE: Back to an earlier floor (2026-05-19)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=EUNICE"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=EUNICE#EUNICE/2026-05-19/renew_floor_back</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Back to an earlier floor: floor $0 to floor -$4</summary>
+  </entry>
+  <entry>
+    <title>EUNICE: New floor (2026-05-13)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=EUNICE"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=EUNICE#EUNICE/2026-05-13/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$4 to floor $0</summary>
+  </entry>
+  <entry>
+    <title>EUNICE: New floor (2025-01-22)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=EUNICE"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=EUNICE#EUNICE/2025-01-22/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor $0 to floor -$4</summary>
+  </entry>
+  <entry>
+    <title>EUNICE: Episode (2024-04-03)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=EUNICE"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=EUNICE#EUNICE/2024-04-03/renew_episode</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Episode: floor $0 to -$10 for the episode for 1 day(s)</summary>
+  </entry>
+  <entry>
+    <title>EUNICE: Formula off (2023-01-01)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=EUNICE"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=EUNICE#EUNICE/2023-01-01/renew_formula_off</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Formula off: formula to floor $0</summary>
+  </entry>
+  <entry>
+    <title>EUNICE: Formula on (2022-01-01)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=EUNICE"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=EUNICE#EUNICE/2022-01-01/renew_formula_on</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Formula on: floor $0 to formula</summary>
+  </entry>
+  <entry>
+    <title>EUNICE: Stopped moving within the day (2021-09-01)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=EUNICE"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=EUNICE#EUNICE/2021-09-01/renew_moving_off</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Stopped moving within the day: v to floor $0</summary>
+  </entry>
+  <entry>
+    <title>EUNICE: Started moving within the day (2021-07-29)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=EUNICE"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=EUNICE#EUNICE/2021-07-29/renew_moving_on</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Started moving within the day: floor $0 to v</summary>
+  </entry>
+  <entry>
+    <title>EUNICE: Episode (2021-07-22)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=EUNICE"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=EUNICE#EUNICE/2021-07-22/renew_episode</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Episode: floor $0 to $27 for the episode for 6 day(s)</summary>
+  </entry>
+  <entry>
+    <title>EUNICE: Back to an earlier floor (2021-04-28)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=EUNICE"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=EUNICE#EUNICE/2021-04-28/renew_floor_back</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Back to an earlier floor: floor -$35 to floor $0</summary>
+  </entry>
+  <entry>
+    <title>EUNICE: New floor (2021-04-19)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=EUNICE"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=EUNICE#EUNICE/2021-04-19/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$3 to floor -$35</summary>
+  </entry>
+  <entry>
+    <title>EUNICE: New floor (2021-03-30)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=EUNICE"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=EUNICE#EUNICE/2021-03-30/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor $0 to floor -$3</summary>
+  </entry>
+  <entry>
+    <title>EUNICE: Episode (2021-03-26)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=EUNICE"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=EUNICE#EUNICE/2021-03-26/renew_episode</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Episode: floor $0 to -$50 for the episode for 3 day(s)</summary>
+  </entry>
+  <entry>
+    <title>EUNICE: Episode (2021-03-22)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=EUNICE"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=EUNICE#EUNICE/2021-03-22/renew_episode</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Episode: floor $0 to -$50 for the episode for 1 day(s)</summary>
+  </entry>
+  <entry>
+    <title>EUNICE: Back to an earlier floor (2021-03-19)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=EUNICE"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=EUNICE#EUNICE/2021-03-19/renew_floor_back</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Back to an earlier floor: floor -$50 to floor $0</summary>
+  </entry>
+  <entry>
+    <title>EUNICE: Episode (2021-03-15)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=EUNICE"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=EUNICE#EUNICE/2021-03-15/renew_episode</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Episode: floor -$50 to $0 for the episode for 2 day(s)</summary>
+  </entry>
+  <entry>
+    <title>EUNICE: New floor (2021-02-25)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=EUNICE"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=EUNICE#EUNICE/2021-02-25/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor $0 to floor -$50</summary>
+  </entry>
+</feed>

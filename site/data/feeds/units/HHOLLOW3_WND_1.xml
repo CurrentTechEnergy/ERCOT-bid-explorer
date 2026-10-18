@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>HHOLLOW3_WND_1: bidding and operating changes</title>
+  <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=HHOLLOW3_WND_1"/>
+  <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=HHOLLOW3_WND_1</id>
+  <updated>2026-10-18T00:00:00Z</updated>
+  <entry>
+    <title>HHOLLOW3: New floor (2023-10-23)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=HHOLLOW3"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=HHOLLOW3#HHOLLOW3/2023-10-23/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$35 to floor -$37</summary>
+  </entry>
+  <entry>
+    <title>HHOLLOW3: New floor (2022-10-25)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=HHOLLOW3"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=HHOLLOW3#HHOLLOW3/2022-10-25/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$33 to floor -$35</summary>
+  </entry>
+</feed>

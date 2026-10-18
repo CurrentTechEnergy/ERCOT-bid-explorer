@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>TYLRWIND_UNIT1: bidding and operating changes</title>
+  <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TYLRWIND_UNIT1"/>
+  <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TYLRWIND_UNIT1</id>
+  <updated>2026-10-18T00:00:00Z</updated>
+  <entry>
+    <title>TYLRWIND: New floor (2026-07-16)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TYLRWIND"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TYLRWIND#TYLRWIND/2026-07-16/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$39 to floor -$40</summary>
+  </entry>
+  <entry>
+    <title>TYLRWIND: Episode (2026-06-19)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TYLRWIND"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TYLRWIND#TYLRWIND/2026-06-19/renew_episode</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Episode: floor -$39 to $5 for the episode for 1 day(s)</summary>
+  </entry>
+  <entry>
+    <title>TYLRWIND: Episode (2026-04-15)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TYLRWIND"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TYLRWIND#TYLRWIND/2026-04-15/renew_episode</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Episode: floor -$39 to $30 for the episode for 1 day(s)</summary>
+  </entry>
+  <entry>
+    <title>TYLRWIND: Episode (2025-10-22)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TYLRWIND"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TYLRWIND#TYLRWIND/2025-10-22/renew_episode</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Episode: floor -$39 to $5 for the episode for 1 day(s)</summary>
+  </entry>
+  <entry>
+    <title>TYLRWIND: Episode (2025-06-14)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TYLRWIND"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TYLRWIND#TYLRWIND/2025-06-14/renew_episode</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Episode: floor -$39 to $5 for the episode for 1 day(s)</summary>
+  </entry>
+  <entry>
+    <title>TYLRWIND: New floor (2025-06-13)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TYLRWIND"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TYLRWIND#TYLRWIND/2025-06-13/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$37 to floor -$39</summary>
+  </entry>
+  <entry>
+    <title>TYLRWIND: Episode (2025-06-04)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TYLRWIND"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TYLRWIND#TYLRWIND/2025-06-04/renew_episode</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Episode: floor -$37 to $5 for the episode for 1 day(s)</summary>
+  </entry>
+  <entry>
+    <title>TYLRWIND: Episode (2025-05-17)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TYLRWIND"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TYLRWIND#TYLRWIND/2025-05-17/renew_episode</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Episode: floor -$37 to $5 for the episode for 1 day(s)</summary>
+  </entry>
+  <entry>
+    <title>TYLRWIND: Episode (2025-04-25)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TYLRWIND"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TYLRWIND#TYLRWIND/2025-04-25/renew_episode</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Episode: floor -$37 to $5 for the episode for 1 day(s)</summary>
+  </entry>
+  <entry>
+    <title>TYLRWIND: New floor (2024-07-15)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TYLRWIND"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TYLRWIND#TYLRWIND/2024-07-15/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$36 to floor -$37</summary>
+  </entry>
+  <entry>
+    <title>TYLRWIND: Episode (2024-01-04)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TYLRWIND"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TYLRWIND#TYLRWIND/2024-01-04/renew_episode</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Episode: floor -$36 to $5 for the episode for 1 day(s)</summary>
+  </entry>
+  <entry>
+    <title>TYLRWIND: Episode (2023-12-11)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TYLRWIND"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TYLRWIND#TYLRWIND/2023-12-11/renew_episode</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Episode: floor -$36 to $5 for the episode for 2 day(s)</summary>
+  </entry>
+  <entry>
+    <title>TYLRWIND: Episode (2023-10-15)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TYLRWIND"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TYLRWIND#TYLRWIND/2023-10-15/renew_episode</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Episode: floor -$36 to $5 for the episode for 1 day(s)</summary>
+  </entry>
+  <entry>
+    <title>TYLRWIND: New floor (2023-06-29)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TYLRWIND"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TYLRWIND#TYLRWIND/2023-06-29/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$34 to floor -$36</summary>
+  </entry>
+  <entry>
+    <title>TYLRWIND: New floor (2022-05-13)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TYLRWIND"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TYLRWIND#TYLRWIND/2022-05-13/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$35 to floor -$34</summary>
+  </entry>
+  <entry>
+    <title>TYLRWIND: New floor (2022-05-04)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TYLRWIND"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TYLRWIND#TYLRWIND/2022-05-04/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$31 to floor -$35</summary>
+  </entry>
+  <entry>
+    <title>TYLRWIND: Episode (2020-11-18)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TYLRWIND"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TYLRWIND#TYLRWIND/2020-11-18/renew_episode</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Episode: floor -$31 to -$20 for the episode for 1 day(s)</summary>
+  </entry>
+  <entry>
+    <title>TYLRWIND: New floor (2020-09-10)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TYLRWIND"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TYLRWIND#TYLRWIND/2020-09-10/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$30 to floor -$31</summary>
+  </entry>
+</feed>

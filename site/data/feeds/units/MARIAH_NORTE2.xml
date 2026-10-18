@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>MARIAH_NORTE2: bidding and operating changes</title>
+  <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=MARIAH_NORTE2"/>
+  <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=MARIAH_NORTE2</id>
+  <updated>2026-10-18T00:00:00Z</updated>
+  <entry>
+    <title>MARIAH_NORTE: New floor (2026-01-01)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=MARIAH_NORTE"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=MARIAH_NORTE#MARIAH_NORTE/2026-01-01/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$37 to floor -$39</summary>
+  </entry>
+  <entry>
+    <title>MARIAH_NORTE: New floor (2024-05-25)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=MARIAH_NORTE"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=MARIAH_NORTE#MARIAH_NORTE/2024-05-25/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$33 to floor -$37</summary>
+  </entry>
+  <entry>
+    <title>MARIAH_NORTE: New floor (2021-02-20)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=MARIAH_NORTE"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=MARIAH_NORTE#MARIAH_NORTE/2021-02-20/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor $0 to floor -$33</summary>
+  </entry>
+  <entry>
+    <title>MARIAH_NORTE: Episode (2021-02-17)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=MARIAH_NORTE"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=MARIAH_NORTE#MARIAH_NORTE/2021-02-17/renew_episode</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Episode: floor $0 to -$35 for the episode for 1 day(s)</summary>
+  </entry>
+  <entry>
+    <title>MARIAH_NORTE: New floor (2020-12-18)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=MARIAH_NORTE"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=MARIAH_NORTE#MARIAH_NORTE/2020-12-18/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$19 to floor $0</summary>
+  </entry>
+  <entry>
+    <title>MARIAH_NORTE: Back to an earlier floor (2020-07-01)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=MARIAH_NORTE"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=MARIAH_NORTE#MARIAH_NORTE/2020-07-01/renew_floor_back</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Back to an earlier floor: floor -$33 to floor -$19</summary>
+  </entry>
+  <entry>
+    <title>MARIAH_NORTE: New floor (2020-06-01)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=MARIAH_NORTE"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=MARIAH_NORTE#MARIAH_NORTE/2020-06-01/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$19 to floor -$33</summary>
+  </entry>
+</feed>

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>AEEC_ANTLP_3: bidding and operating changes</title>
+  <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=AEEC_ANTLP_3"/>
+  <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=AEEC_ANTLP_3</id>
+  <updated>2026-10-18T00:00:00Z</updated>
+  <entry>
+    <title>AEEC_ANTLP_3: Timescale group changed (2026-04-01)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=AEEC_ANTLP_3"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=AEEC_ANTLP_3#AEEC_ANTLP_3/2026-04-01/group</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Multi-day: off 1–7 days in 2026-03 to Daily, over 2 a week in 2026-04</summary>
+  </entry>
+  <entry>
+    <title>AEEC_ANTLP_3: Timescale group changed (2026-03-01)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=AEEC_ANTLP_3"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=AEEC_ANTLP_3#AEEC_ANTLP_3/2026-03-01/group</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Daily, over 2 a week in 2026-02 to Multi-day: off 1–7 days in 2026-03</summary>
+  </entry>
+  <entry>
+    <title>AEEC_ANTLP_3: Bidding approach shifted (2026-02-04)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=AEEC_ANTLP_3"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=AEEC_ANTLP_3#AEEC_ANTLP_3/2026-02-04/bidding</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Offer price vs peer median: $74 to $6/MWh</summary>
+  </entry>
+  <entry>
+    <title>AEEC_ANTLP_3: Bidding approach shifted (2026-01-24)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=AEEC_ANTLP_3"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=AEEC_ANTLP_3#AEEC_ANTLP_3/2026-01-24/bidding</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Offer price vs peer median: $0 to $74/MWh</summary>
+  </entry>
+</feed>

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>CABEZON: bidding and operating changes</title>
+  <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CABEZON"/>
+  <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CABEZON</id>
+  <updated>2026-10-18T00:00:00Z</updated>
+  <entry>
+    <title>CABEZON: New floor (2026-01-01)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CABEZON"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CABEZON#CABEZON/2026-01-01/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$38 to floor -$39</summary>
+  </entry>
+  <entry>
+    <title>CABEZON: New floor (2025-05-01)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CABEZON"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CABEZON#CABEZON/2025-05-01/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$37 to floor -$38</summary>
+  </entry>
+  <entry>
+    <title>CABEZON: New floor (2025-03-25)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CABEZON"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CABEZON#CABEZON/2025-03-25/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$1 to floor -$37</summary>
+  </entry>
+  <entry>
+    <title>CABEZON: New floor (2022-07-29)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CABEZON"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CABEZON#CABEZON/2022-07-29/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor $0 to floor -$1</summary>
+  </entry>
+  <entry>
+    <title>CABEZON: New floor (2022-07-21)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CABEZON"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CABEZON#CABEZON/2022-07-21/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$32 to floor $0</summary>
+  </entry>
+  <entry>
+    <title>CABEZON: New floor (2019-09-16)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CABEZON"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CABEZON#CABEZON/2019-09-16/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$1 to floor -$32</summary>
+  </entry>
+</feed>

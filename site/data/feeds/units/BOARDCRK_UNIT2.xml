@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>BOARDCRK_UNIT2: bidding and operating changes</title>
+  <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=BOARDCRK_UNIT2"/>
+  <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=BOARDCRK_UNIT2</id>
+  <updated>2026-10-18T00:00:00Z</updated>
+  <entry>
+    <title>BOARDCRK: New floor (2026-06-09)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=BOARDCRK"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=BOARDCRK#BOARDCRK/2026-06-09/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$54 to floor -$61</summary>
+  </entry>
+  <entry>
+    <title>BOARDCRK: New floor (2024-12-31)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=BOARDCRK"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=BOARDCRK#BOARDCRK/2024-12-31/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$35 to floor -$54</summary>
+  </entry>
+  <entry>
+    <title>BOARDCRK: New floor (2023-07-28)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=BOARDCRK"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=BOARDCRK#BOARDCRK/2023-07-28/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$2 to floor -$35</summary>
+  </entry>
+</feed>

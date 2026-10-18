@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>OECCS_CC2_4: bidding and operating changes</title>
+  <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=OECCS_CC2_4"/>
+  <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=OECCS_CC2_4</id>
+  <updated>2026-10-18T00:00:00Z</updated>
+  <entry>
+    <title>OECCS_CC2_4: Bidding approach shifted (2026-06-15)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=OECCS_CC2_4"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=OECCS_CC2_4#OECCS_CC2_4/2026-06-15/bidding</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>MW above LSL offered at or below $0: 95% to 0% of the day</summary>
+  </entry>
+  <entry>
+    <title>OECCS_CC2_4: Bidding approach shifted (2026-02-06)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=OECCS_CC2_4"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=OECCS_CC2_4#OECCS_CC2_4/2026-02-06/bidding</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>MW above LSL offered at or below $0: 0% to 100% of the day</summary>
+  </entry>
+  <entry>
+    <title>OECCS_CC2_4: Bidding approach shifted (2026-02-02)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=OECCS_CC2_4"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=OECCS_CC2_4#OECCS_CC2_4/2026-02-02/bidding</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Offer price vs peer median: -$27 to -$14/MWh</summary>
+  </entry>
+  <entry>
+    <title>OECCS_CC2_4: Bidding approach shifted (2026-01-24)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=OECCS_CC2_4"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=OECCS_CC2_4#OECCS_CC2_4/2026-01-24/bidding</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Offer price vs peer median: -$14 to -$28/MWh</summary>
+  </entry>
+  <entry>
+    <title>OECCS_CC2_4: Bidding approach shifted (2026-01-23)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=OECCS_CC2_4"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=OECCS_CC2_4#OECCS_CC2_4/2026-01-23/bidding</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>MW above LSL offered at or below $0: 100% to 0% of the day</summary>
+  </entry>
+  <entry>
+    <title>OECCS_CC2_4: Bidding approach shifted (2026-01-16)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=OECCS_CC2_4"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=OECCS_CC2_4#OECCS_CC2_4/2026-01-16/bidding</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>MW above LSL offered at or below $0: 62% to 100% of the day</summary>
+  </entry>
+  <entry>
+    <title>OECCS_CC2_4: Bidding approach shifted (2026-01-09)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=OECCS_CC2_4"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=OECCS_CC2_4#OECCS_CC2_4/2026-01-09/bidding</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>MW above LSL offered at or below $0: 100% to 62% of the day</summary>
+  </entry>
+  <entry>
+    <title>OECCS_CC2_4: Bidding approach shifted (2025-12-23)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=OECCS_CC2_4"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=OECCS_CC2_4#OECCS_CC2_4/2025-12-23/bidding</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>MW above LSL offered at or below $0: 62% to 100% of the day</summary>
+  </entry>
+  <entry>
+    <title>OECCS_CC2_4: Bidding approach shifted (2025-12-16)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=OECCS_CC2_4"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=OECCS_CC2_4#OECCS_CC2_4/2025-12-16/bidding</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>MW above LSL offered at or below $0: 100% to 62% of the day</summary>
+  </entry>
+  <entry>
+    <title>OECCS_CC2_4: Bidding approach shifted (2025-12-07)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=OECCS_CC2_4"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=OECCS_CC2_4#OECCS_CC2_4/2025-12-07/bidding</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>MW above LSL offered at or below $0: 0% to 100% of the day</summary>
+  </entry>
+</feed>

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>LHM_CVC_G4: bidding and operating changes</title>
+  <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=LHM_CVC_G4"/>
+  <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=LHM_CVC_G4</id>
+  <updated>2026-10-18T00:00:00Z</updated>
+  <entry>
+    <title>LHM_CVC_G4: Bidding approach shifted (2026-04-26)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=LHM_CVC_G4"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=LHM_CVC_G4#LHM_CVC_G4/2026-04-26/bidding</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Offer price vs peer median: -$12 to $2/MWh</summary>
+  </entry>
+  <entry>
+    <title>LHM_CVC_G4: Bidding approach shifted (2026-04-13)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=LHM_CVC_G4"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=LHM_CVC_G4#LHM_CVC_G4/2026-04-13/bidding</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Offer price vs peer median: $2 to -$12/MWh</summary>
+  </entry>
+  <entry>
+    <title>LHM_CVC_G4: Bidding approach shifted (2026-01-28)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=LHM_CVC_G4"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=LHM_CVC_G4#LHM_CVC_G4/2026-01-28/bidding</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Offer price vs peer median: -$20 to $7/MWh</summary>
+  </entry>
+  <entry>
+    <title>LHM_CVC_G4: Bidding approach shifted (2026-01-21)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=LHM_CVC_G4"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=LHM_CVC_G4#LHM_CVC_G4/2026-01-21/bidding</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Offer price vs peer median: $3 to -$20/MWh</summary>
+  </entry>
+</feed>

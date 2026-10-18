@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>AEEC_ELK_3: bidding and operating changes</title>
+  <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=AEEC_ELK_3"/>
+  <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=AEEC_ELK_3</id>
+  <updated>2026-10-18T00:00:00Z</updated>
+  <entry>
+    <title>AEEC_ELK_3: Shut down despite a day-ahead award (2026-08-02)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=AEEC_ELK_3"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=AEEC_ELK_3#AEEC_ELK_3/2026-08-02/shutdown_award</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Shut down for 44 h although a day-ahead award covered 100% of the window</summary>
+  </entry>
+  <entry>
+    <title>AEEC_ELK_3: Shut down despite a day-ahead award (2026-07-22)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=AEEC_ELK_3"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=AEEC_ELK_3#AEEC_ELK_3/2026-07-22/shutdown_award</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Shut down for 177 h although a day-ahead award covered 100% of the window</summary>
+  </entry>
+  <entry>
+    <title>AEEC_ELK_3: Timescale group changed (2026-07-01)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=AEEC_ELK_3"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=AEEC_ELK_3#AEEC_ELK_3/2026-07-01/group</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Multi-day: off 1–7 days in 2026-06 to Daily, 1–2 a week in 2026-07</summary>
+  </entry>
+  <entry>
+    <title>AEEC_ELK_3: Bidding approach shifted (2026-06-27)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=AEEC_ELK_3"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=AEEC_ELK_3#AEEC_ELK_3/2026-06-27/bidding</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Offer price vs peer median: $10 to -$3/MWh</summary>
+  </entry>
+  <entry>
+    <title>AEEC_ELK_3: Outage ended (2026-06-26)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=AEEC_ELK_3"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=AEEC_ELK_3#AEEC_ELK_3/2026-06-26/outage_end</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Back from a 22-day outage</summary>
+  </entry>
+  <entry>
+    <title>AEEC_ELK_3: Outage started (2026-06-05)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=AEEC_ELK_3"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=AEEC_ELK_3#AEEC_ELK_3/2026-06-05/outage_start</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Outage began, lasting 22 days</summary>
+  </entry>
+  <entry>
+    <title>AEEC_ELK_3: Outage ended (2026-06-03)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=AEEC_ELK_3"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=AEEC_ELK_3#AEEC_ELK_3/2026-06-03/outage_end</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Back from a 28-day outage</summary>
+  </entry>
+  <entry>
+    <title>AEEC_ELK_3: Timescale group changed (2026-06-01)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=AEEC_ELK_3"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=AEEC_ELK_3#AEEC_ELK_3/2026-06-01/group</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Seasonal: off a week or more in 2026-05 to Multi-day: off 1–7 days in 2026-06</summary>
+  </entry>
+  <entry>
+    <title>AEEC_ELK_3: Outage started (2026-05-06)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=AEEC_ELK_3"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=AEEC_ELK_3#AEEC_ELK_3/2026-05-06/outage_start</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Outage began, lasting 28 days</summary>
+  </entry>
+  <entry>
+    <title>AEEC_ELK_3: Timescale group changed (2026-05-01)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=AEEC_ELK_3"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=AEEC_ELK_3#AEEC_ELK_3/2026-05-01/group</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Multi-day: off 1–7 days in 2026-04 to Seasonal: off a week or more in 2026-05</summary>
+  </entry>
+  <entry>
+    <title>AEEC_ELK_3: Outage ended (2026-04-17)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=AEEC_ELK_3"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=AEEC_ELK_3#AEEC_ELK_3/2026-04-17/outage_end</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Back from a 8-day outage</summary>
+  </entry>
+  <entry>
+    <title>AEEC_ELK_3: Outage started (2026-04-10)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=AEEC_ELK_3"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=AEEC_ELK_3#AEEC_ELK_3/2026-04-10/outage_start</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Outage began, lasting 8 days</summary>
+  </entry>
+  <entry>
+    <title>AEEC_ELK_3: Bidding approach shifted (2026-02-20)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=AEEC_ELK_3"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=AEEC_ELK_3#AEEC_ELK_3/2026-02-20/bidding</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>MW above LSL offered at or below $0: 98% to 0% of the day</summary>
+  </entry>
+  <entry>
+    <title>AEEC_ELK_3: Bidding approach shifted (2026-02-07)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=AEEC_ELK_3"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=AEEC_ELK_3#AEEC_ELK_3/2026-02-07/bidding</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>MW above LSL offered at or below $0: 0% to 98% of the day</summary>
+  </entry>
+  <entry>
+    <title>AEEC_ELK_3: Bidding approach shifted (2026-01-31)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=AEEC_ELK_3"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=AEEC_ELK_3#AEEC_ELK_3/2026-01-31/bidding</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Offer price vs peer median: $101 to -$5/MWh</summary>
+  </entry>
+  <entry>
+    <title>AEEC_ELK_3: Bidding approach shifted (2026-01-22)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=AEEC_ELK_3"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=AEEC_ELK_3#AEEC_ELK_3/2026-01-22/bidding</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Offer price vs peer median: $14 to $101/MWh</summary>
+  </entry>
+  <entry>
+    <title>AEEC_ELK_3: Bidding approach shifted (2026-01-21)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=AEEC_ELK_3"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=AEEC_ELK_3#AEEC_ELK_3/2026-01-21/bidding</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>MW above LSL offered at or below $0: 97% to 0% of the day</summary>
+  </entry>
+  <entry>
+    <title>AEEC_ELK_3: Bidding approach shifted (2026-01-15)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=AEEC_ELK_3"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=AEEC_ELK_3#AEEC_ELK_3/2026-01-15/bidding</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Offer price vs peer median: -$10 to $14/MWh</summary>
+  </entry>
+  <entry>
+    <title>AEEC_ELK_3: Timescale group changed (2026-01-01)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=AEEC_ELK_3"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=AEEC_ELK_3#AEEC_ELK_3/2026-01-01/group</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Seasonal: off a week or more in 2025-12 to Daily, over 2 a week in 2026-01</summary>
+  </entry>
+</feed>

@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>SCSES_UNIT1A: bidding and operating changes</title>
+  <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SCSES_UNIT1A"/>
+  <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SCSES_UNIT1A</id>
+  <updated>2026-10-18T00:00:00Z</updated>
+  <entry>
+    <title>SCSES_UNIT1A: Bidding approach shifted (2026-08-05)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SCSES_UNIT1A"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SCSES_UNIT1A#SCSES_UNIT1A/2026-08-05/bidding</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Offer price vs peer median: $60 to $24/MWh</summary>
+  </entry>
+  <entry>
+    <title>SCSES_UNIT1A: Bidding approach shifted (2026-07-15)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SCSES_UNIT1A"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SCSES_UNIT1A#SCSES_UNIT1A/2026-07-15/bidding</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Offer price vs peer median: $142 to $25/MWh</summary>
+  </entry>
+  <entry>
+    <title>SCSES_UNIT1A: Bidding approach shifted (2026-06-02)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SCSES_UNIT1A"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SCSES_UNIT1A#SCSES_UNIT1A/2026-06-02/bidding</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Offer price vs peer median: $6 to $144/MWh</summary>
+  </entry>
+  <entry>
+    <title>SCSES_UNIT1A: Timescale group changed (2026-06-01)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SCSES_UNIT1A"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SCSES_UNIT1A#SCSES_UNIT1A/2026-06-01/group</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Daily, 1–2 a week in 2026-05 to Multi-day: off 1–7 days in 2026-06</summary>
+  </entry>
+  <entry>
+    <title>SCSES_UNIT1A: Bidding approach shifted (2026-04-29)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SCSES_UNIT1A"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SCSES_UNIT1A#SCSES_UNIT1A/2026-04-29/bidding</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Offer price vs peer median: $36 to $6/MWh</summary>
+  </entry>
+  <entry>
+    <title>SCSES_UNIT1A: Outage ended (2026-04-20)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SCSES_UNIT1A"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SCSES_UNIT1A#SCSES_UNIT1A/2026-04-20/outage_end</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Back from a 22-day outage</summary>
+  </entry>
+  <entry>
+    <title>SCSES_UNIT1A: Timescale group changed (2026-04-01)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SCSES_UNIT1A"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SCSES_UNIT1A#SCSES_UNIT1A/2026-04-01/group</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Multi-day: off 1–7 days in 2026-03 to Daily, under 1 shutdown a week in 2026-04</summary>
+  </entry>
+  <entry>
+    <title>SCSES_UNIT1A: Outage started (2026-03-30)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SCSES_UNIT1A"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SCSES_UNIT1A#SCSES_UNIT1A/2026-03-30/outage_start</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Outage began, lasting 22 days</summary>
+  </entry>
+  <entry>
+    <title>SCSES_UNIT1A: Timescale group changed (2026-03-01)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SCSES_UNIT1A"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SCSES_UNIT1A#SCSES_UNIT1A/2026-03-01/group</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Seasonal: off a week or more in 2026-02 to Multi-day: off 1–7 days in 2026-03</summary>
+  </entry>
+  <entry>
+    <title>SCSES_UNIT1A: Timescale group changed (2026-02-01)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SCSES_UNIT1A"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SCSES_UNIT1A#SCSES_UNIT1A/2026-02-01/group</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Multi-day: off 1–7 days in 2026-01 to Seasonal: off a week or more in 2026-02</summary>
+  </entry>
+  <entry>
+    <title>SCSES_UNIT1A: Bidding approach shifted (2026-01-27)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SCSES_UNIT1A"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SCSES_UNIT1A#SCSES_UNIT1A/2026-01-27/bidding</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Offer price vs peer median: $208 to $8/MWh</summary>
+  </entry>
+  <entry>
+    <title>SCSES_UNIT1A: Bidding approach shifted (2025-12-31)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SCSES_UNIT1A"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SCSES_UNIT1A#SCSES_UNIT1A/2025-12-31/bidding</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Offer price vs peer median: -$14 to $208/MWh</summary>
+  </entry>
+</feed>

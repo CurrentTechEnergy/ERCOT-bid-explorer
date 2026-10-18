@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>FREC_CC2_1: bidding and operating changes</title>
+  <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FREC_CC2_1"/>
+  <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FREC_CC2_1</id>
+  <updated>2026-10-18T00:00:00Z</updated>
+  <entry>
+    <title>FREC_CC2_1: Bidding approach shifted (2026-01-22)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FREC_CC2_1"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FREC_CC2_1#FREC_CC2_1/2026-01-22/bidding</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Offer price vs peer median: -$0 to $12/MWh</summary>
+  </entry>
+</feed>

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>JAD_UNIT3: bidding and operating changes</title>
+  <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=JAD_UNIT3"/>
+  <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=JAD_UNIT3</id>
+  <updated>2026-10-18T00:00:00Z</updated>
+  <entry>
+    <title>JAD_UNIT3: Timescale group changed (2026-07-01)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=JAD_UNIT3"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=JAD_UNIT3#JAD_UNIT3/2026-07-01/group</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Multi-day: off 1–7 days in 2026-06 to Daily, over 2 a week in 2026-07</summary>
+  </entry>
+  <entry>
+    <title>JAD_UNIT3: Outage ended (2026-06-24)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=JAD_UNIT3"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=JAD_UNIT3#JAD_UNIT3/2026-06-24/outage_end</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Back from a 20-day outage</summary>
+  </entry>
+  <entry>
+    <title>JAD_UNIT3: Outage started (2026-06-05)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=JAD_UNIT3"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=JAD_UNIT3#JAD_UNIT3/2026-06-05/outage_start</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Outage began, lasting 20 days</summary>
+  </entry>
+  <entry>
+    <title>JAD_UNIT3: Outage ended (2026-06-03)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=JAD_UNIT3"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=JAD_UNIT3#JAD_UNIT3/2026-06-03/outage_end</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Back from a 43-day outage</summary>
+  </entry>
+  <entry>
+    <title>JAD_UNIT3: Outage started (2026-04-22)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=JAD_UNIT3"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=JAD_UNIT3#JAD_UNIT3/2026-04-22/outage_start</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Outage began, lasting 43 days</summary>
+  </entry>
+</feed>

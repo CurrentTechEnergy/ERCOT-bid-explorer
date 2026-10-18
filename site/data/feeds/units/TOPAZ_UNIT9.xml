@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>TOPAZ_UNIT9: bidding and operating changes</title>
+  <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TOPAZ_UNIT9"/>
+  <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TOPAZ_UNIT9</id>
+  <updated>2026-10-18T00:00:00Z</updated>
+  <entry>
+    <title>TOPAZ_UNIT9: Outage started (2026-07-12)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TOPAZ_UNIT9"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TOPAZ_UNIT9#TOPAZ_UNIT9/2026-07-12/outage_start</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Outage began, still on at the end of the data (39 days so far)</summary>
+  </entry>
+  <entry>
+    <title>TOPAZ_UNIT9: Outage ended (2026-07-08)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TOPAZ_UNIT9"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TOPAZ_UNIT9#TOPAZ_UNIT9/2026-07-08/outage_end</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Back from a 34-day outage</summary>
+  </entry>
+  <entry>
+    <title>TOPAZ_UNIT9: Outage started (2026-06-05)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TOPAZ_UNIT9"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TOPAZ_UNIT9#TOPAZ_UNIT9/2026-06-05/outage_start</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Outage began, lasting 34 days</summary>
+  </entry>
+  <entry>
+    <title>TOPAZ_UNIT9: Outage ended (2026-06-03)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TOPAZ_UNIT9"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TOPAZ_UNIT9#TOPAZ_UNIT9/2026-06-03/outage_end</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Back from a 43-day outage</summary>
+  </entry>
+  <entry>
+    <title>TOPAZ_UNIT9: Outage started (2026-04-22)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TOPAZ_UNIT9"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TOPAZ_UNIT9#TOPAZ_UNIT9/2026-04-22/outage_start</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Outage began, lasting 43 days</summary>
+  </entry>
+  <entry>
+    <title>TOPAZ_UNIT9: Outage ended (2026-04-20)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TOPAZ_UNIT9"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TOPAZ_UNIT9#TOPAZ_UNIT9/2026-04-20/outage_end</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Back from a 22-day outage</summary>
+  </entry>
+  <entry>
+    <title>TOPAZ_UNIT9: Outage started (2026-03-30)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TOPAZ_UNIT9"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TOPAZ_UNIT9#TOPAZ_UNIT9/2026-03-30/outage_start</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Outage began, lasting 22 days</summary>
+  </entry>
+  <entry>
+    <title>TOPAZ_UNIT9: Timescale group changed (2026-03-01)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TOPAZ_UNIT9"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TOPAZ_UNIT9#TOPAZ_UNIT9/2026-03-01/group</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Seasonal: off a week or more in 2026-02 to Multi-day: off 1–7 days in 2026-03</summary>
+  </entry>
+  <entry>
+    <title>TOPAZ_UNIT9: Timescale group changed (2026-02-01)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TOPAZ_UNIT9"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TOPAZ_UNIT9#TOPAZ_UNIT9/2026-02-01/group</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Daily, under 1 shutdown a week in 2026-01 to Seasonal: off a week or more in 2026-02</summary>
+  </entry>
+</feed>

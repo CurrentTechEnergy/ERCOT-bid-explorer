@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>DELILA_1_G1: bidding and operating changes</title>
+  <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=DELILA_1_G1"/>
+  <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=DELILA_1_G1</id>
+  <updated>2026-10-18T00:00:00Z</updated>
+  <entry>
+    <title>DELILA_1: Back to an earlier floor (2026-01-01)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=DELILA_1"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=DELILA_1#DELILA_1/2026-01-01/renew_floor_back</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Back to an earlier floor: floor -$48 to floor -$44</summary>
+  </entry>
+  <entry>
+    <title>DELILA_1: New floor (2025-10-17)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=DELILA_1"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=DELILA_1#DELILA_1/2025-10-17/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$44 to floor -$48</summary>
+  </entry>
+  <entry>
+    <title>DELILA_1: New floor (2025-01-08)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=DELILA_1"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=DELILA_1#DELILA_1/2025-01-08/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$42 to floor -$44</summary>
+  </entry>
+  <entry>
+    <title>DELILA_1: New floor (2024-12-18)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=DELILA_1"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=DELILA_1#DELILA_1/2024-12-18/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor $0 to floor -$42</summary>
+  </entry>
+</feed>

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>REDGATE_AGR_A: bidding and operating changes</title>
+  <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=REDGATE_AGR_A"/>
+  <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=REDGATE_AGR_A</id>
+  <updated>2026-10-18T00:00:00Z</updated>
+  <entry>
+    <title>REDGATE_AGR_A: Shut down despite a day-ahead award (2026-07-06)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=REDGATE_AGR_A"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=REDGATE_AGR_A#REDGATE_AGR_A/2026-07-06/shutdown_award</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Shut down for 5 h although a day-ahead award covered 100% of the window</summary>
+  </entry>
+  <entry>
+    <title>REDGATE_AGR_A: Shut down despite a day-ahead award (2026-06-20)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=REDGATE_AGR_A"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=REDGATE_AGR_A#REDGATE_AGR_A/2026-06-20/shutdown_award</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Shut down for 66 h although a day-ahead award covered 100% of the window</summary>
+  </entry>
+  <entry>
+    <title>REDGATE_AGR_A: Shut down despite a day-ahead award (2026-06-16)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=REDGATE_AGR_A"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=REDGATE_AGR_A#REDGATE_AGR_A/2026-06-16/shutdown_award</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Shut down for 15 h although a day-ahead award covered 100% of the window</summary>
+  </entry>
+  <entry>
+    <title>REDGATE_AGR_A: Shut down despite a day-ahead award (2026-06-02)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=REDGATE_AGR_A"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=REDGATE_AGR_A#REDGATE_AGR_A/2026-06-02/shutdown_award</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Shut down for 13 h although a day-ahead award covered 100% of the window</summary>
+  </entry>
+  <entry>
+    <title>REDGATE_AGR_A: Shut down despite a day-ahead award (2026-05-28)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=REDGATE_AGR_A"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=REDGATE_AGR_A#REDGATE_AGR_A/2026-05-28/shutdown_award</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Shut down for 6 h although a day-ahead award covered 100% of the window</summary>
+  </entry>
+</feed>

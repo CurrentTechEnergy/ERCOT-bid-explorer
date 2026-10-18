@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>DANSBY_DANSBYG3: bidding and operating changes</title>
+  <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=DANSBY_DANSBYG3"/>
+  <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=DANSBY_DANSBYG3</id>
+  <updated>2026-10-18T00:00:00Z</updated>
+  <entry>
+    <title>DANSBY_DANSBYG3: Bidding approach shifted (2026-03-13)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=DANSBY_DANSBYG3"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=DANSBY_DANSBYG3#DANSBY_DANSBYG3/2026-03-13/bidding</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Offer price vs peer median: -$20 to -$31/MWh</summary>
+  </entry>
+  <entry>
+    <title>DANSBY_DANSBYG3: Bidding approach shifted (2026-02-01)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=DANSBY_DANSBYG3"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=DANSBY_DANSBYG3#DANSBY_DANSBYG3/2026-02-01/bidding</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Offer price vs peer median: -$124 to -$20/MWh</summary>
+  </entry>
+  <entry>
+    <title>DANSBY_DANSBYG3: Bidding approach shifted (2026-01-20)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=DANSBY_DANSBYG3"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=DANSBY_DANSBYG3#DANSBY_DANSBYG3/2026-01-20/bidding</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Offer price vs peer median: -$24 to -$124/MWh</summary>
+  </entry>
+  <entry>
+    <title>DANSBY_DANSBYG3: Bidding approach shifted (2025-12-16)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=DANSBY_DANSBYG3"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=DANSBY_DANSBYG3#DANSBY_DANSBYG3/2025-12-16/bidding</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Offer price vs peer median: -$46 to -$24/MWh</summary>
+  </entry>
+</feed>

@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>CASL_GAP_UNIT1: bidding and operating changes</title>
+  <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CASL_GAP_UNIT1"/>
+  <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CASL_GAP_UNIT1</id>
+  <updated>2026-10-18T00:00:00Z</updated>
+  <entry>
+    <title>CASL_GAP: Back to an earlier floor (2022-06-21)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CASL_GAP"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CASL_GAP#CASL_GAP/2022-06-21/renew_floor_back</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Back to an earlier floor: floor -$5 to floor -$4</summary>
+  </entry>
+  <entry>
+    <title>CASL_GAP: New floor (2022-04-18)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CASL_GAP"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CASL_GAP#CASL_GAP/2022-04-18/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$4 to floor -$5</summary>
+  </entry>
+  <entry>
+    <title>CASL_GAP: New floor (2022-03-07)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CASL_GAP"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CASL_GAP#CASL_GAP/2022-03-07/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$6 to floor -$4</summary>
+  </entry>
+  <entry>
+    <title>CASL_GAP: New floor (2021-12-09)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CASL_GAP"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CASL_GAP#CASL_GAP/2021-12-09/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$8 to floor -$6</summary>
+  </entry>
+  <entry>
+    <title>CASL_GAP: Back to an earlier floor (2021-09-13)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CASL_GAP"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CASL_GAP#CASL_GAP/2021-09-13/renew_floor_back</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Back to an earlier floor: floor -$10 to floor -$8</summary>
+  </entry>
+  <entry>
+    <title>CASL_GAP: New floor (2021-08-30)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CASL_GAP"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CASL_GAP#CASL_GAP/2021-08-30/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$11 to floor -$10</summary>
+  </entry>
+  <entry>
+    <title>CASL_GAP: New floor (2021-08-13)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CASL_GAP"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CASL_GAP#CASL_GAP/2021-08-13/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$8 to floor -$11</summary>
+  </entry>
+  <entry>
+    <title>CASL_GAP: New floor (2021-08-03)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CASL_GAP"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CASL_GAP#CASL_GAP/2021-08-03/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$7 to floor -$8</summary>
+  </entry>
+  <entry>
+    <title>CASL_GAP: New floor (2021-06-09)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CASL_GAP"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CASL_GAP#CASL_GAP/2021-06-09/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$6 to floor -$7</summary>
+  </entry>
+  <entry>
+    <title>CASL_GAP: New floor (2021-05-06)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CASL_GAP"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CASL_GAP#CASL_GAP/2021-05-06/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$2 to floor -$6</summary>
+  </entry>
+  <entry>
+    <title>CASL_GAP: New floor (2020-09-08)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CASL_GAP"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CASL_GAP#CASL_GAP/2020-09-08/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$1 to floor -$2</summary>
+  </entry>
+  <entry>
+    <title>CASL_GAP: Episode (2020-08-12)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CASL_GAP"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CASL_GAP#CASL_GAP/2020-08-12/renew_episode</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Episode: floor -$1 to $10 for the episode for 3 day(s)</summary>
+  </entry>
+</feed>

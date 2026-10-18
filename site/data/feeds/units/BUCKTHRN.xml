@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>BUCKTHRN: bidding and operating changes</title>
+  <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=BUCKTHRN"/>
+  <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=BUCKTHRN</id>
+  <updated>2026-10-18T00:00:00Z</updated>
+  <entry>
+    <title>BUCKTHRN: New floor (2026-07-10)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=BUCKTHRN"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=BUCKTHRN#BUCKTHRN/2026-07-10/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$38 to floor -$39</summary>
+  </entry>
+  <entry>
+    <title>BUCKTHRN: New floor (2025-06-26)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=BUCKTHRN"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=BUCKTHRN#BUCKTHRN/2025-06-26/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$37 to floor -$38</summary>
+  </entry>
+  <entry>
+    <title>BUCKTHRN: New floor (2024-07-16)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=BUCKTHRN"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=BUCKTHRN#BUCKTHRN/2024-07-16/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$35 to floor -$37</summary>
+  </entry>
+  <entry>
+    <title>BUCKTHRN: New floor (2023-07-15)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=BUCKTHRN"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=BUCKTHRN#BUCKTHRN/2023-07-15/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$33 to floor -$35</summary>
+  </entry>
+  <entry>
+    <title>BUCKTHRN: New floor (2022-05-26)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=BUCKTHRN"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=BUCKTHRN#BUCKTHRN/2022-05-26/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$35 to floor -$33</summary>
+  </entry>
+</feed>

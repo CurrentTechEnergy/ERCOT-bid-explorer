@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>JUNO: bidding and operating changes</title>
+  <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=JUNO"/>
+  <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=JUNO</id>
+  <updated>2026-10-18T00:00:00Z</updated>
+  <entry>
+    <title>JUNO: Back to an earlier floor (2024-07-16)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=JUNO"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=JUNO#JUNO/2024-07-16/renew_floor_back</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Back to an earlier floor: floor -$3 to floor -$6</summary>
+  </entry>
+  <entry>
+    <title>JUNO: New floor (2024-05-22)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=JUNO"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=JUNO#JUNO/2024-05-22/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$6 to floor -$3</summary>
+  </entry>
+  <entry>
+    <title>JUNO: New floor (2022-05-10)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=JUNO"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=JUNO#JUNO/2022-05-10/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$6 to floor -$5</summary>
+  </entry>
+  <entry>
+    <title>JUNO: New floor (2022-02-04)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=JUNO"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=JUNO#JUNO/2022-02-04/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$8 to floor -$6</summary>
+  </entry>
+  <entry>
+    <title>JUNO: New floor (2021-11-30)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=JUNO"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=JUNO#JUNO/2021-11-30/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$250 to floor -$6</summary>
+  </entry>
+  <entry>
+    <title>JUNO: New floor (2021-09-23)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=JUNO"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=JUNO#JUNO/2021-09-23/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$5 to floor -$250</summary>
+  </entry>
+  <entry>
+    <title>JUNO: New floor (2021-09-03)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=JUNO"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=JUNO#JUNO/2021-09-03/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$24 to floor -$8</summary>
+  </entry>
+  <entry>
+    <title>JUNO: New floor (2021-06-25)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=JUNO"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=JUNO#JUNO/2021-06-25/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$45 to floor -$5</summary>
+  </entry>
+  <entry>
+    <title>JUNO: New floor (2021-03-17)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=JUNO"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=JUNO#JUNO/2021-03-17/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$0 to floor -$45</summary>
+  </entry>
+  <entry>
+    <title>JUNO: New floor (2021-02-20)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=JUNO"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=JUNO#JUNO/2021-02-20/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$22 to floor -$0</summary>
+  </entry>
+</feed>

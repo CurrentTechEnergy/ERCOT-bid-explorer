@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>QALSW_CC2_1: bidding and operating changes</title>
+  <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=QALSW_CC2_1"/>
+  <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=QALSW_CC2_1</id>
+  <updated>2026-10-18T00:00:00Z</updated>
+  <entry>
+    <title>QALSW_CC2_1: Bidding approach shifted (2026-06-09)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=QALSW_CC2_1"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=QALSW_CC2_1#QALSW_CC2_1/2026-06-09/bidding</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>MW above LSL offered at or below $0: 99% to 0% of the day</summary>
+  </entry>
+  <entry>
+    <title>QALSW_CC2_1: Bidding approach shifted (2026-02-14)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=QALSW_CC2_1"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=QALSW_CC2_1#QALSW_CC2_1/2026-02-14/bidding</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>MW above LSL offered at or below $0: 0% to 97% of the day</summary>
+  </entry>
+  <entry>
+    <title>QALSW_CC2_1: Bidding approach shifted (2026-01-21)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=QALSW_CC2_1"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=QALSW_CC2_1#QALSW_CC2_1/2026-01-21/bidding</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>MW above LSL offered at or below $0: 94% to 0% of the day</summary>
+  </entry>
+</feed>

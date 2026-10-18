@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>STP_STP_G2_J03: bidding and operating changes</title>
+  <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=STP_STP_G2_J03"/>
+  <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=STP_STP_G2_J03</id>
+  <updated>2026-10-18T00:00:00Z</updated>
+  <entry>
+    <title>STP_STP_G2_J03: Outage ended (2026-06-19)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=STP_STP_G2_J03"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=STP_STP_G2_J03#STP_STP_G2_J03/2026-06-19/outage_end</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Back from a 10-day outage</summary>
+  </entry>
+  <entry>
+    <title>STP_STP_G2_J03: Outage started (2026-06-10)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=STP_STP_G2_J03"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=STP_STP_G2_J03#STP_STP_G2_J03/2026-06-10/outage_start</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Outage began, lasting 10 days</summary>
+  </entry>
+</feed>

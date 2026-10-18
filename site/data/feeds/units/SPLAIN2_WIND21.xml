@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>SPLAIN2_WIND21: bidding and operating changes</title>
+  <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SPLAIN2_WIND21"/>
+  <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SPLAIN2_WIND21</id>
+  <updated>2026-10-18T00:00:00Z</updated>
+  <entry>
+    <title>SPLAIN2: New floor (2026-06-11)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SPLAIN2"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SPLAIN2#SPLAIN2/2026-06-11/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$12 to floor -$8</summary>
+  </entry>
+  <entry>
+    <title>SPLAIN2: New floor (2026-05-02)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SPLAIN2"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SPLAIN2#SPLAIN2/2026-05-02/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$17 to floor -$12</summary>
+  </entry>
+  <entry>
+    <title>SPLAIN2: New floor (2026-04-01)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SPLAIN2"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SPLAIN2#SPLAIN2/2026-04-01/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$22 to floor -$17</summary>
+  </entry>
+  <entry>
+    <title>SPLAIN2: New floor (2026-03-25)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SPLAIN2"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SPLAIN2#SPLAIN2/2026-03-25/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$36 to floor -$22</summary>
+  </entry>
+  <entry>
+    <title>SPLAIN2: New floor (2023-04-26)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SPLAIN2"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SPLAIN2#SPLAIN2/2023-04-26/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$32 to floor -$36</summary>
+  </entry>
+  <entry>
+    <title>SPLAIN2: Episode (2021-02-20)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SPLAIN2"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SPLAIN2#SPLAIN2/2021-02-20/renew_episode</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Episode: floor -$32 to -$1 for the episode for 6 day(s)</summary>
+  </entry>
+  <entry>
+    <title>SPLAIN2: New floor (2019-06-08)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SPLAIN2"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SPLAIN2#SPLAIN2/2019-06-08/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$30 to floor -$32</summary>
+  </entry>
+</feed>

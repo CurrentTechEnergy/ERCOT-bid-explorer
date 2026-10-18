@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>NWF_NWF: bidding and operating changes</title>
+  <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=NWF_NWF"/>
+  <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=NWF_NWF</id>
+  <updated>2026-10-18T00:00:00Z</updated>
+  <entry>
+    <title>NWF_NWF: Episode (2021-11-09)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=NWF_NWF"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=NWF_NWF#NWF_NWF/2021-11-09/renew_episode</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Episode: floor $0 to -$40 for the episode for 1 day(s)</summary>
+  </entry>
+</feed>

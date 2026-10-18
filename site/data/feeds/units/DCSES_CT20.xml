@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>DCSES_CT20: bidding and operating changes</title>
+  <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=DCSES_CT20"/>
+  <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=DCSES_CT20</id>
+  <updated>2026-10-18T00:00:00Z</updated>
+  <entry>
+    <title>DCSES_CT20: Bidding approach shifted (2026-07-31)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=DCSES_CT20"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=DCSES_CT20#DCSES_CT20/2026-07-31/bidding</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Offer price vs peer median: $866 to $44/MWh</summary>
+  </entry>
+  <entry>
+    <title>DCSES_CT20: Timescale group changed (2026-05-01)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=DCSES_CT20"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=DCSES_CT20#DCSES_CT20/2026-05-01/group</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Daily, 1–2 a week in 2026-04 to Multi-day: off 1–7 days in 2026-05</summary>
+  </entry>
+  <entry>
+    <title>DCSES_CT20: Bidding approach shifted (2026-04-24)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=DCSES_CT20"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=DCSES_CT20#DCSES_CT20/2026-04-24/bidding</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Offer price vs peer median: $225 to $866/MWh</summary>
+  </entry>
+  <entry>
+    <title>DCSES_CT20: Timescale group changed (2026-04-01)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=DCSES_CT20"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=DCSES_CT20#DCSES_CT20/2026-04-01/group</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Multi-day: off 1–7 days in 2026-03 to Daily, 1–2 a week in 2026-04</summary>
+  </entry>
+  <entry>
+    <title>DCSES_CT20: Bidding approach shifted (2026-01-29)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=DCSES_CT20"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=DCSES_CT20#DCSES_CT20/2026-01-29/bidding</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Offer price vs peer median: $883 to $179/MWh</summary>
+  </entry>
+  <entry>
+    <title>DCSES_CT20: Shut down after a long run (2026-01-25)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=DCSES_CT20"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=DCSES_CT20#DCSES_CT20/2026-01-25/shutdown_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Shut down for 7 h after 41 days without a shutdown</summary>
+  </entry>
+  <entry>
+    <title>DCSES_CT20: Timescale group changed (2026-01-01)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=DCSES_CT20"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=DCSES_CT20#DCSES_CT20/2026-01-01/group</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Multi-day: off 1–7 days in 2025-12 to Daily, under 1 shutdown a week in 2026-01</summary>
+  </entry>
+</feed>

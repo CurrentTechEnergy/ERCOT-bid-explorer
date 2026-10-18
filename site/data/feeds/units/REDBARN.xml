@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>REDBARN: bidding and operating changes</title>
+  <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=REDBARN"/>
+  <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=REDBARN</id>
+  <updated>2026-10-18T00:00:00Z</updated>
+  <entry>
+    <title>REDBARN: New floor (2026-07-22)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=REDBARN"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=REDBARN#REDBARN/2026-07-22/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$10 to floor -$11</summary>
+  </entry>
+  <entry>
+    <title>REDBARN: New floor (2025-06-06)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=REDBARN"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=REDBARN#REDBARN/2025-06-06/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$5 to floor -$10</summary>
+  </entry>
+  <entry>
+    <title>REDBARN: New floor (2024-05-10)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=REDBARN"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=REDBARN#REDBARN/2024-05-10/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor $0 to floor -$5</summary>
+  </entry>
+  <entry>
+    <title>REDBARN: Episode (2021-04-29)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=REDBARN"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=REDBARN#REDBARN/2021-04-29/renew_episode</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Episode: floor $0 to -$50 for the episode for 5 day(s)</summary>
+  </entry>
+</feed>

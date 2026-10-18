@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>WIPOPA_WPP_G3: bidding and operating changes</title>
+  <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=WIPOPA_WPP_G3"/>
+  <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=WIPOPA_WPP_G3</id>
+  <updated>2026-10-18T00:00:00Z</updated>
+  <entry>
+    <title>WIPOPA_WPP_G3: Timescale group changed (2026-03-01)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=WIPOPA_WPP_G3"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=WIPOPA_WPP_G3#WIPOPA_WPP_G3/2026-03-01/group</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Seasonal: off a week or more in 2026-02 to Daily, 1–2 a week in 2026-03</summary>
+  </entry>
+  <entry>
+    <title>WIPOPA_WPP_G3: Timescale group changed (2026-02-01)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=WIPOPA_WPP_G3"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=WIPOPA_WPP_G3#WIPOPA_WPP_G3/2026-02-01/group</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Daily, 1–2 a week in 2026-01 to Seasonal: off a week or more in 2026-02</summary>
+  </entry>
+  <entry>
+    <title>WIPOPA_WPP_G3: Bidding approach shifted (2026-02-01)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=WIPOPA_WPP_G3"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=WIPOPA_WPP_G3#WIPOPA_WPP_G3/2026-02-01/bidding</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Offer price vs peer median: -$60 to -$10/MWh</summary>
+  </entry>
+  <entry>
+    <title>WIPOPA_WPP_G3: Bidding approach shifted (2026-01-20)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=WIPOPA_WPP_G3"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=WIPOPA_WPP_G3#WIPOPA_WPP_G3/2026-01-20/bidding</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Offer price vs peer median: -$4 to -$60/MWh</summary>
+  </entry>
+  <entry>
+    <title>WIPOPA_WPP_G3: Shut down after a long run (2026-01-18)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=WIPOPA_WPP_G3"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=WIPOPA_WPP_G3#WIPOPA_WPP_G3/2026-01-18/shutdown_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Shut down for 50 h after 34 days without a shutdown</summary>
+  </entry>
+  <entry>
+    <title>WIPOPA_WPP_G3: Timescale group changed (2026-01-01)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=WIPOPA_WPP_G3"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=WIPOPA_WPP_G3#WIPOPA_WPP_G3/2026-01-01/group</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Multi-day: off 1–7 days in 2025-12 to Daily, 1–2 a week in 2026-01</summary>
+  </entry>
+</feed>

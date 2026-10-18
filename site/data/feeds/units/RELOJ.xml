@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>RELOJ: bidding and operating changes</title>
+  <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=RELOJ"/>
+  <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=RELOJ</id>
+  <updated>2026-10-18T00:00:00Z</updated>
+  <entry>
+    <title>RELOJ: New floor (2025-12-10)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=RELOJ"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=RELOJ#RELOJ/2025-12-10/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$36 to floor -$40</summary>
+  </entry>
+  <entry>
+    <title>RELOJ: New floor (2023-03-01)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=RELOJ"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=RELOJ#RELOJ/2023-03-01/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$32 to floor -$36</summary>
+  </entry>
+  <entry>
+    <title>RELOJ: New floor (2022-12-07)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=RELOJ"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=RELOJ#RELOJ/2022-12-07/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$32 to floor -$36</summary>
+  </entry>
+  <entry>
+    <title>RELOJ: New floor (2022-08-23)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=RELOJ"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=RELOJ#RELOJ/2022-08-23/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$23 to floor -$32</summary>
+  </entry>
+  <entry>
+    <title>RELOJ: New floor (2022-03-25)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=RELOJ"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=RELOJ#RELOJ/2022-03-25/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$32 to floor -$23</summary>
+  </entry>
+  <entry>
+    <title>RELOJ: New floor (2021-05-20)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=RELOJ"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=RELOJ#RELOJ/2021-05-20/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$25 to floor -$32</summary>
+  </entry>
+</feed>

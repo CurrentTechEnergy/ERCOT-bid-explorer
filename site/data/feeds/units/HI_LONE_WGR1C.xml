@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>HI_LONE_WGR1C: bidding and operating changes</title>
+  <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=HI_LONE_WGR1C"/>
+  <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=HI_LONE_WGR1C</id>
+  <updated>2026-10-18T00:00:00Z</updated>
+  <entry>
+    <title>HI_LONE_WGR: New floor (2026-07-01)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=HI_LONE_WGR"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=HI_LONE_WGR#HI_LONE_WGR/2026-07-01/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$40 to floor -$41</summary>
+  </entry>
+  <entry>
+    <title>HI_LONE_WGR: New floor (2024-09-04)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=HI_LONE_WGR"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=HI_LONE_WGR#HI_LONE_WGR/2024-09-04/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$39 to floor -$40</summary>
+  </entry>
+  <entry>
+    <title>HI_LONE_WGR: New floor (2023-08-01)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=HI_LONE_WGR"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=HI_LONE_WGR#HI_LONE_WGR/2023-08-01/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$36 to floor -$39</summary>
+  </entry>
+  <entry>
+    <title>HI_LONE_WGR: New floor (2023-07-03)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=HI_LONE_WGR"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=HI_LONE_WGR#HI_LONE_WGR/2023-07-03/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$32 to floor -$36</summary>
+  </entry>
+</feed>

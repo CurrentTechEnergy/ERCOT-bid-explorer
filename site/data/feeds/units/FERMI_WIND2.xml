@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>FERMI_WIND2: bidding and operating changes</title>
+  <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FERMI_WIND2"/>
+  <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FERMI_WIND2</id>
+  <updated>2026-10-18T00:00:00Z</updated>
+  <entry>
+    <title>FERMI: Back to an earlier floor (2026-01-03)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FERMI"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FERMI#FERMI/2026-01-03/renew_floor_back</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Back to an earlier floor: floor $0 to floor -$25</summary>
+  </entry>
+  <entry>
+    <title>FERMI: New floor (2025-12-01)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FERMI"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FERMI#FERMI/2025-12-01/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$25 to floor $0</summary>
+  </entry>
+  <entry>
+    <title>FERMI: New floor (2025-01-08)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FERMI"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FERMI#FERMI/2025-01-08/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor $0 to floor -$25</summary>
+  </entry>
+  <entry>
+    <title>FERMI: New floor (2024-04-20)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FERMI"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FERMI#FERMI/2024-04-20/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$25 to floor $0</summary>
+  </entry>
+  <entry>
+    <title>FERMI: New floor (2023-01-12)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FERMI"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FERMI#FERMI/2023-01-12/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor $0 to floor -$25</summary>
+  </entry>
+  <entry>
+    <title>FERMI: New floor (2022-06-10)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FERMI"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FERMI#FERMI/2022-06-10/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$25 to floor $0</summary>
+  </entry>
+  <entry>
+    <title>FERMI: New floor (2022-01-15)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FERMI"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FERMI#FERMI/2022-01-15/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$32 to floor -$25</summary>
+  </entry>
+  <entry>
+    <title>FERMI: New floor (2020-08-20)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FERMI"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FERMI#FERMI/2020-08-20/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$30 to floor -$32</summary>
+  </entry>
+</feed>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>LON: bidding and operating changes</title>
+  <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=LON"/>
+  <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=LON</id>
+  <updated>2026-10-18T00:00:00Z</updated>
+  <entry>
+    <title>LON: New floor (2023-02-17)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=LON"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=LON#LON/2023-02-17/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor $0 to floor -$38</summary>
+  </entry>
+</feed>

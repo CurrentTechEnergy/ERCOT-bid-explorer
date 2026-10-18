@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>CHAMON_CTG_0101: bidding and operating changes</title>
+  <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CHAMON_CTG_0101"/>
+  <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CHAMON_CTG_0101</id>
+  <updated>2026-10-18T00:00:00Z</updated>
+  <entry>
+    <title>CHAMON_CTG_0101: Outage ended (2026-07-31)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CHAMON_CTG_0101"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CHAMON_CTG_0101#CHAMON_CTG_0101/2026-07-31/outage_end</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Back from a 20-day outage</summary>
+  </entry>
+  <entry>
+    <title>CHAMON_CTG_0101: Outage started (2026-07-12)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CHAMON_CTG_0101"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CHAMON_CTG_0101#CHAMON_CTG_0101/2026-07-12/outage_start</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Outage began, lasting 20 days</summary>
+  </entry>
+  <entry>
+    <title>CHAMON_CTG_0101: Outage ended (2026-07-08)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CHAMON_CTG_0101"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CHAMON_CTG_0101#CHAMON_CTG_0101/2026-07-08/outage_end</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Back from a 16-day outage</summary>
+  </entry>
+  <entry>
+    <title>CHAMON_CTG_0101: Timescale group changed (2026-07-01)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CHAMON_CTG_0101"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CHAMON_CTG_0101#CHAMON_CTG_0101/2026-07-01/group</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Multi-day: off 1–7 days in 2026-06 to Never off in 2026-07</summary>
+  </entry>
+  <entry>
+    <title>CHAMON_CTG_0101: Outage started (2026-06-23)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CHAMON_CTG_0101"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CHAMON_CTG_0101#CHAMON_CTG_0101/2026-06-23/outage_start</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Outage began, lasting 16 days</summary>
+  </entry>
+  <entry>
+    <title>CHAMON_CTG_0101: Outage ended (2026-06-03)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CHAMON_CTG_0101"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CHAMON_CTG_0101#CHAMON_CTG_0101/2026-06-03/outage_end</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Back from a 12-day outage</summary>
+  </entry>
+  <entry>
+    <title>CHAMON_CTG_0101: Timescale group changed (2026-06-01)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CHAMON_CTG_0101"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CHAMON_CTG_0101#CHAMON_CTG_0101/2026-06-01/group</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Never off in 2026-05 to Multi-day: off 1–7 days in 2026-06</summary>
+  </entry>
+  <entry>
+    <title>CHAMON_CTG_0101: Outage started (2026-05-22)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CHAMON_CTG_0101"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CHAMON_CTG_0101#CHAMON_CTG_0101/2026-05-22/outage_start</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Outage began, lasting 12 days</summary>
+  </entry>
+  <entry>
+    <title>CHAMON_CTG_0101: Outage ended (2026-05-17)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CHAMON_CTG_0101"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CHAMON_CTG_0101#CHAMON_CTG_0101/2026-05-17/outage_end</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Back from a 18-day outage</summary>
+  </entry>
+  <entry>
+    <title>CHAMON_CTG_0101: Outage started (2026-04-29)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CHAMON_CTG_0101"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CHAMON_CTG_0101#CHAMON_CTG_0101/2026-04-29/outage_start</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Outage began, lasting 18 days</summary>
+  </entry>
+  <entry>
+    <title>CHAMON_CTG_0101: Outage ended (2026-04-29)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CHAMON_CTG_0101"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CHAMON_CTG_0101#CHAMON_CTG_0101/2026-04-29/outage_end</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Back from a 8-day outage</summary>
+  </entry>
+  <entry>
+    <title>CHAMON_CTG_0101: Outage started (2026-04-22)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CHAMON_CTG_0101"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CHAMON_CTG_0101#CHAMON_CTG_0101/2026-04-22/outage_start</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Outage began, lasting 8 days</summary>
+  </entry>
+  <entry>
+    <title>CHAMON_CTG_0101: Outage ended (2026-04-20)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CHAMON_CTG_0101"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CHAMON_CTG_0101#CHAMON_CTG_0101/2026-04-20/outage_end</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Back from a 22-day outage</summary>
+  </entry>
+  <entry>
+    <title>CHAMON_CTG_0101: Timescale group changed (2026-04-01)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CHAMON_CTG_0101"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CHAMON_CTG_0101#CHAMON_CTG_0101/2026-04-01/group</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Daily, 1–2 a week in 2026-03 to Never off in 2026-04</summary>
+  </entry>
+  <entry>
+    <title>CHAMON_CTG_0101: Outage started (2026-03-30)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CHAMON_CTG_0101"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CHAMON_CTG_0101#CHAMON_CTG_0101/2026-03-30/outage_start</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Outage began, lasting 22 days</summary>
+  </entry>
+  <entry>
+    <title>CHAMON_CTG_0101: Timescale group changed (2026-03-01)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CHAMON_CTG_0101"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CHAMON_CTG_0101#CHAMON_CTG_0101/2026-03-01/group</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Seasonal: off a week or more in 2026-02 to Daily, 1–2 a week in 2026-03</summary>
+  </entry>
+  <entry>
+    <title>CHAMON_CTG_0101: Bidding approach shifted (2026-02-19)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CHAMON_CTG_0101"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CHAMON_CTG_0101#CHAMON_CTG_0101/2026-02-19/bidding</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Offer price vs peer median: -$21 to -$10/MWh</summary>
+  </entry>
+  <entry>
+    <title>CHAMON_CTG_0101: Outage ended (2026-02-12)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CHAMON_CTG_0101"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CHAMON_CTG_0101#CHAMON_CTG_0101/2026-02-12/outage_end</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Back from a 15-day outage</summary>
+  </entry>
+  <entry>
+    <title>CHAMON_CTG_0101: Timescale group changed (2026-02-01)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CHAMON_CTG_0101"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CHAMON_CTG_0101#CHAMON_CTG_0101/2026-02-01/group</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Daily, 1–2 a week in 2026-01 to Seasonal: off a week or more in 2026-02</summary>
+  </entry>
+  <entry>
+    <title>CHAMON_CTG_0101: Outage started (2026-01-28)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CHAMON_CTG_0101"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CHAMON_CTG_0101#CHAMON_CTG_0101/2026-01-28/outage_start</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Outage began, lasting 15 days</summary>
+  </entry>
+  <entry>
+    <title>CHAMON_CTG_0101: Timescale group changed (2026-01-01)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CHAMON_CTG_0101"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CHAMON_CTG_0101#CHAMON_CTG_0101/2026-01-01/group</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Multi-day: off 1–7 days in 2025-12 to Daily, 1–2 a week in 2026-01</summary>
+  </entry>
+  <entry>
+    <title>CHAMON_CTG_0101: Outage ended (2025-12-11)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CHAMON_CTG_0101"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CHAMON_CTG_0101#CHAMON_CTG_0101/2025-12-11/outage_end</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Back from a 11-day outage</summary>
+  </entry>
+</feed>

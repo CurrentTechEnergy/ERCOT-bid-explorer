@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>CANYONWD_UNIT6: bidding and operating changes</title>
+  <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CANYONWD_UNIT6"/>
+  <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CANYONWD_UNIT6</id>
+  <updated>2026-10-18T00:00:00Z</updated>
+  <entry>
+    <title>CANYONWD: Started moving within the day (2025-08-14)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CANYONWD"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CANYONWD#CANYONWD/2025-08-14/renew_moving_on</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Started moving within the day: floor -$42 to v</summary>
+  </entry>
+  <entry>
+    <title>CANYONWD: Stopped moving within the day (2025-08-08)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CANYONWD"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CANYONWD#CANYONWD/2025-08-08/renew_moving_off</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Stopped moving within the day: v to floor -$42</summary>
+  </entry>
+  <entry>
+    <title>CANYONWD: Started moving within the day (2025-07-08)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CANYONWD"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CANYONWD#CANYONWD/2025-07-08/renew_moving_on</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Started moving within the day: floor -$42 to v</summary>
+  </entry>
+  <entry>
+    <title>CANYONWD: New floor (2025-02-22)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CANYONWD"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CANYONWD#CANYONWD/2025-02-22/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: floor -$38 to floor -$42</summary>
+  </entry>
+</feed>
