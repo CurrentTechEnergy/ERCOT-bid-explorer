@@ -2,7 +2,8 @@
 
 Writes data/curve_trends.json.gz for the Trends page:
 
-  "rs":  wind and solar, share of offered MW in each price band, per day.
+  "rs":  wind and solar, share of offered MW in each price band, per day ("ptc" is the sum of
+         the three bands between −$249 and −$20, for pages that show them as one).
          Uses the 2-day curves where the day has them (they run closer to today),
          otherwise the 60-day curves as used in SCED. MW-weighted over the day's hours,
          so solar's night hours (nothing offered) drop out on their own.
@@ -32,13 +33,18 @@ from .store import read_json_gz, write_json_gz
 G = np.asarray(PRICE_GRID, dtype=float)
 # price bands for wind and solar offers. Production-tax-credit bids cluster between about
 # −$60 and −$25, with little between −$25 and −$5, so −$20 separates them from shallow negatives.
+# Below −$20 is split three ways (Blair, Oct 16): most of it sits between −$50 and −$30.
+# No separate floor band (Blair, Oct 18): wind and solar offer nothing measurable at −$250.
 BANDS = [
-    ("floor", None, -249.0),     # −$250 / −$249.99
-    ("ptc", -249.0, -20.0),      # below −$20: mostly tax-credit-driven
+    ("deep", None, -50.0),       # −$250 up to −$50
+    ("ptc_mid", -50.0, -35.0),   # −$50 up to −$35
+    ("ptc_low", -35.0, -20.0),   # −$35 up to −$20: the shallow tax-credit bids
     ("neg", -20.0, -1.0),        # −$20 up to −$1
     ("zero", -1.0, 0.0),         # (−$1, $0]
     ("pos", 0.0, None),          # above $0
 ]
+# "ptc" (everything below −$20) is the sum of the three, kept for the Trends page
+PTC_PARTS = ("deep", "ptc_mid", "ptc_low")
 RS_TECHS = ["wind", "solar"]
 PQ_TECHS = ["coal", "combined_cycle", "gas_steam", "combustion_turbine"]   # nuclear submits no curves
 QS = [0.25, 0.5, 0.9]
@@ -85,7 +91,8 @@ def build_curve_trends(index: dict) -> None:
     d60 = set(index["days"].get("60d", []))
 
     rs_dates = sorted(d2 | d60)
-    rs = {"dates": [], "src": [], "bands": [b[0] for b in BANDS], **{t: {b[0]: [] for b in BANDS} for t in RS_TECHS}}
+    names = [b[0] for b in BANDS] + ["ptc"]
+    rs = {"dates": [], "src": [], "bands": names, **{t: {n: [] for n in names} for t in RS_TECHS}}
     for d in rs_dates:
         src = "2d" if d in d2 else "60d"
         day = read_json_gz(DATA_DIR / src / f"{d}.json.gz") or {}
@@ -97,6 +104,7 @@ def build_curve_trends(index: dict) -> None:
             tot = sum(mw.values()) if mw else 0
             for name, *_ in BANDS:
                 rs[t][name].append(round(mw[name] / tot, 4) if tot > 0 else None)
+            rs[t]["ptc"].append(round(sum(mw[k] for k in PTC_PARTS) / tot, 4) if tot > 0 else None)
 
     pq_dates = sorted(d60)
     pq = {"dates": pq_dates, "q": QS, "full": [], **{t: {f"p{int(q * 100)}": [] for q in QS} for t in PQ_TECHS}}

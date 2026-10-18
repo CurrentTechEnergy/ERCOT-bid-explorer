@@ -284,7 +284,7 @@ function drawRenewBands() {
   ["wind", "solar"].forEach((t) => {
     const el = $(`rs-${t}`);
     if (!rs) return emptyMsg(el, "No curve trends yet. They are built by the data update workflow.");
-    timeChart(el, BANDS.map((b) => ({ ...b, values: rs[t][b.id] })), {
+    timeChart(el, BANDS.filter((b) => rs[t][b.id]).map((b) => ({ ...b, values: rs[t][b.id] })), {
       dates: rs.dates, stack: true, H: 220, yFmt: fmtPct, tipFmt: d3.format(".1%"),
       title: `${t === "wind" ? "Wind" : "Solar"}: share of offered MW in each price band`,
       tipNote: (i) => ` · ${rs.src[i] === "2d" ? "2-day" : "60-day"} curves`,
