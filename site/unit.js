@@ -3,7 +3,8 @@
    history behind the unit's cutoff (data/decisions.json.gz, data/forecast/), hours online and
    starts (data/unit_hours_60d.json.gz), one day by hour with the offer curve in the chosen hour
    (data/60d-units/, data/60d-curves/) and the thermal bidding charts (data/trends_60d.json.gz),
-   lifted from trends.js. unit-econ.js draws revenue and cost and unit-renew.js the wind and
+   lifted from trends.js; the decision chart also carries the unit's cutoff refitted month by
+   month (data/cutoff_history.json.gz, pipeline/models/cutoff_history.py). unit-econ.js draws revenue and cost and unit-renew.js the wind and
    solar hedge formula and bidding history; both redraw on the "unitchange" event this file sends. */
 (() => {
 "use strict";
@@ -25,7 +26,7 @@ const techLabel = (t) => (TECH_OF[t] ? TECH_OF[t].label : t === "storage" ? "Sto
 const SIG_FMT = { le0: (v) => d3.format(".0%")(v), noff: (v) => d3.format(".0%")(v), rel: (v) => (v >= 0 ? "+" : "−") + d3.format("$,.0f")(Math.abs(v)) };
 const GROUP_SHORT = { never: "Never off", seasonal: "Seasonal", multiday: "Multi-day", daily1: "Daily, under once a week", daily2: "Daily, 1 to 2 a week", daily3: "Daily, over 2 a week", ungrouped: "Not yet grouped" };
 const VERDICT = { on: "expected on", off: "expected off", maybe: "maybe: off on its loss but often holds a day-ahead award", nocut: "no cutoff yet (too few decision days)", outage: "on outage", peaker: "peaker: judged by its history at this price and hour" };
-const S = { econ: {}, day: null, hour: null, T: null, DEC: null, UH: null, SP: null, FI: null, FC: null, PPA: null, list: new Map(), unit: null, cfg: null, span: null, last60: null };
+const S = { econ: {}, day: null, hour: null, T: null, DEC: null, UH: null, SP: null, FI: null, FC: null, PPA: null, CH: null, list: new Map(), unit: null, cfg: null, span: null, last60: null };
 const { tryJSON, showTip, hideTip, setCSV, tickFormat, fmtKind, axisFmt, css, esc } = window.CX;
 const $ = (id) => document.getElementById(id);
 const fmtMW = d3.format(",.0f");
@@ -196,7 +197,11 @@ function drawDecisions(e) {
   const w = Math.max(280, el.clientWidth || 600), H = 240, m = { t: 18, r: 16, b: 26, l: 70 };
   const pts = rows.map((r) => ({ d: r[1], t: parseDate(r[1]), loss: r[2], he: r[3], h: r[4], aw: r[5], shut: r[6], off: r[7] }));
   const x = d3.scaleTime().domain([d3.timeHour.offset(parseDate(D.dates[0]), -12), d3.timeHour.offset(parseDate(D.dates.at(-1)), 12)]).range([m.l, w - m.r]);
-  const vals = pts.map((p) => p.loss).concat(g("cutoff") != null ? [g("cutoff")] : []);
+  // the cutoff refitted at each month end on the unit's last 30 decisions (cutoff_history), in $
+  const ch = S.CH && S.CH.units[e.name], lsl = ch ? ch.lsl : 0;
+  const steps = ch ? ch.rows.filter((r) => r[1] != null).map((r) => ({ m: r[0], usd: r[1] * lsl, n: r[3] })) : [];
+  const moves = ch ? S.CH.moves.filter((mv) => mv.unit === e.name) : [];
+  const vals = pts.map((p) => p.loss).concat(g("cutoff") != null ? [g("cutoff")] : [], steps.map((s) => s.usd));
   const y = d3.scaleLinear().domain([Math.min(0, d3.min(vals)), Math.max(1, d3.max(vals))]).nice().range([H - m.b, m.t]);
   const svg = d3.create("svg").attr("viewBox", `0 0 ${w} ${H}`);
   svg.append("g").attr("class", "gridline").attr("transform", `translate(${m.l},0)`).call(d3.axisLeft(y).ticks(5).tickSize(-(w - m.l - m.r)).tickFormat(""));
@@ -208,6 +213,19 @@ function drawDecisions(e) {
     svg.append("line").attr("class", "price-rule").attr("stroke-dasharray", "5 3").attr("x1", m.l).attr("x2", w - m.r).attr("y1", y(g("cutoff"))).attr("y2", y(g("cutoff")));
     svg.append("text").attr("class", "axis-title").attr("x", w - m.r - 4).attr("y", y(g("cutoff")) - 5).attr("text-anchor", "end")
       .attr("paint-order", "stroke").attr("stroke", css("--surface")).attr("stroke-width", 3).text(`cutoff ${fmt$(g("cutoff"))}`);
+  }
+  if (steps.length) {
+    // each month's refit drawn from the previous month end to its own
+    const seg = steps.map((s, i) => ({ x0: d3.timeHour.offset(i ? parseDate(steps[i - 1].m) : d3.timeMonth.offset(parseDate(s.m), -1), 12), x1: d3.timeHour.offset(parseDate(s.m), 12), y: y(s.usd) }));
+    svg.append("path").attr("class", "cutoff-step").attr("fill", "none").attr("stroke", css("--c2")).attr("stroke-width", 1.5)
+      .attr("d", seg.map((s, i) => `${i ? "L" : "M"}${x(s.x0)},${s.y}L${x(s.x1)},${s.y}`).join(""));
+    svg.append("g").selectAll("path").data(moves).join("path")
+      .attr("transform", (mv) => `translate(${x(d3.timeHour.offset(parseDate(mv.month), 12))},${y(mv.to_usd)})`)
+      .attr("d", d3.symbol(d3.symbolTriangle, 48)()).attr("fill", css("--c2")).attr("stroke", css("--surface")).attr("stroke-width", 1)
+      .on("pointermove", (ev, mv) => { ev.stopPropagation(); const nx = mv.next;
+        showTip(ev, `<h4>Cutoff moved, ${mv.month.slice(0, 7)}</h4><table><tr><td>Site's cutoff</td><td class="n">${fmt$(mv.from_usd)}</td></tr><tr><td>Refit on its last 30 decisions</td><td class="n">${fmt$(mv.to_usd)}</td></tr>` +
+          `<tr><td>Recent decisions it gains</td><td class="n">${mv.gain}</td></tr>` + (nx ? `<tr><td>Next month</td><td class="n">${nx.new_right} of ${nx.n} right, against ${nx.site_right}: ${mv.status}</td></tr>` : `<tr><td>Next month</td><td class="n">not yet tested</td></tr>`) + "</table>"); })
+      .on("pointerleave", hideTip);
   }
   const shape = (p) => (p.aw >= 0.5 ? d3.symbolSquare : d3.symbolCircle);
   svg.append("g").selectAll("path").data(pts).join("path")
@@ -227,7 +245,9 @@ function drawDecisions(e) {
   setCSV(el, ["date", "loss_usd", "window_first_he", "window_hours", "award_share", "shut", "hours_off"], pts.map((p) => [p.d, p.loss, p.he, p.h, p.aw, p.shut, p.off]), `${e.name} decision days`);
   $("dec-legend").innerHTML = `<span><span class="sw" style="background:var(--surface);border:1.5px solid var(--c1);border-radius:50%"></span>Stayed on</span>` +
     `<span><span class="sw" style="background:var(--c8);border-radius:50%"></span>Shut down</span><span><span class="sw" style="background:var(--ink-2)"></span>Square: a day-ahead award covered the stretch</span>` +
-    (g("cutoff") != null ? `<span><span class="sw sw-line"></span>Its cutoff</span>` : "");
+    (g("cutoff") != null ? `<span><span class="sw sw-line"></span>Its cutoff (all its decisions)</span>` : "") +
+    (steps.length ? `<span><span class="sw" style="height:0;border-top:2px solid var(--c2);border-radius:0;width:16px"></span>Refit each month on its last 30 decisions</span>` +
+      (moves.length ? `<span><span class="sw" style="background:var(--c2);clip-path:polygon(50% 0,100% 100%,0 100%)"></span>A move the site's cutoff had not caught up with</span>` : "") : "");
 }
 
 // ---- hours: hour by hour online, at minimum or above, with starts --------------------------
@@ -516,8 +536,9 @@ async function select(name, cfg, keepDay) {
 
 async function boot() {
   const v = window.CX.readHash();
-  [S.T, S.DEC, S.UH, S.SP, S.FI, S.PPA] = await Promise.all([tryJSON("data/trends_60d.json.gz"), tryJSON("data/decisions.json.gz"),
-    tryJSON("data/unit_hours_60d.json.gz"), tryJSON("data/summary_prices.json.gz"), tryJSON("data/forecast/index.json.gz"), tryJSON("data/ppa.json.gz")]);
+  [S.T, S.DEC, S.UH, S.SP, S.FI, S.PPA, S.CH] = await Promise.all([tryJSON("data/trends_60d.json.gz"), tryJSON("data/decisions.json.gz"),
+    tryJSON("data/unit_hours_60d.json.gz"), tryJSON("data/summary_prices.json.gz"), tryJSON("data/forecast/index.json.gz"), tryJSON("data/ppa.json.gz"),
+    tryJSON("data/cutoff_history.json.gz")]);
   S.FC = S.FI && S.FI.days.length ? await tryJSON(`data/forecast/${S.FI.days.at(-1)}.json.gz`) : null;
   if (S.T) { S.span = [S.T.dates[0], S.T.dates.at(-1)]; S.last60 = S.T.dates.at(-1); }
   buildList();

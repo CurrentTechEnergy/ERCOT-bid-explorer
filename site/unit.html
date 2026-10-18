@@ -18,6 +18,13 @@
   .tag { display: inline-block; font-size: 11px; padding: 0 5px; border: 1px solid var(--line); border-radius: 4px; color: var(--muted); margin-left: 4px; }
   .moved { color: var(--ink); font-weight: 500; }
   table.data tr.sel td { background: var(--accent-soft); }
+  .sub-form { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+  .sub-form input[type="email"] { font: inherit; color: var(--ink); background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 6px 8px; min-height: 34px; min-width: 220px; }
+  .sub-form button, .btn { font: inherit; font-weight: 500; color: var(--ink); background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 6px 12px; min-height: 34px; cursor: pointer; }
+  .sub-form button:hover, .btn:hover { background: var(--accent-soft); }
+  .sub-msg { font-size: 13px; color: var(--ink-2); margin: 6px 0 0; }
+  table.data td.ev { white-space: normal; min-width: 24ch; }
+  tr.minor td { color: var(--muted); }
 </style>
 </head>
 <body data-panel-links>
@@ -44,6 +51,19 @@
 <main>
   <section class="panel panel-wide" id="unit-empty">
     <p class="empty">Pick a unit above, or open one from a unit row on any page. Thermal units, wind and solar are listed; a combined-cycle train is one entry with its configurations under it.</p>
+  </section>
+
+  <section class="panel panel-wide" id="changes-panel" hidden>
+    <div class="panel-head">
+      <div>
+        <h2>Recent changes <span class="h-note" id="changes-count"></span></h2>
+        <p class="note">What the site's detectors found changed for this unit: shutdowns that broke its pattern, moves in or out of daily cycling, shifts in how it bids, cutoff moves, wind and solar floor or formula changes, and long outages. "Found" is the day the update first saw it; unit data runs about sixty days behind the operating day.</p>
+      </div>
+      <div class="panel-tools" id="sub-tools"></div>
+    </div>
+    <p class="sub-msg" id="sub-msg" hidden></p>
+    <div class="units-wrap" id="changes-table"></div>
+    <p><button type="button" class="btn" id="changes-more" hidden>Show all</button></p>
   </section>
 
   <section class="panel panel-wide unit-only" id="dec-panel" hidden>
@@ -150,5 +170,6 @@
 <script src="unit.js"></script>
 <script src="unit-econ.js"></script>
 <script src="unit-renew.js"></script>
+<script src="unit-events.js"></script>
 </body>
 </html>
