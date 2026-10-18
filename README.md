@@ -114,7 +114,11 @@ pipeline/
                    graph builder (data/series/, no downloads)
   storage.py       per-unit day files + DAM day files -> one battery day file per 60-day day
                    (data/storage/): fleet and per-battery charging, discharging, limits, headroom,
-                   state of charge, AS awards and capability, DAM energy and AS awards (no downloads)
+                   state of charge, AS awards and capability, DAM energy and AS awards, and the
+                   offer prices from the submitted curves (where discharge starts, where charging
+                   stops, MW bid to charge and offered to discharge at set prices); plus
+                   data/storage/series.json.gz, every day's fleet block for date-range charts
+                   (no downloads)
   trends.py        per-unit day files -> daily trends, starts, flips, bidding changes (no downloads)
   events.py        decisions, groups, trends, renew_changes and cutoff_history -> one list of unit
                    events in one format with the run that first found each (data/events.json.gz)

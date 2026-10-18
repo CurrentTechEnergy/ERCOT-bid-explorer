@@ -30,6 +30,19 @@ data/storage/<date>.json.gz
     "cap_up", "cap_dn":  AS capability telemetered, summed (format 7 files only)
     "dam_dis", "dam_chg":  DAM energy awards, summed, split by sign
     "dam_as": {"regup", "regdn", "rrs", "ecrs", "nspin": [24]}  DAM AS awards, summed
+    "dis0", "dis50", "chg0", "chg50":  $/MWh, the fleet's offer prices from the submitted
+                    curves (format 2): per battery, the median over the hour's online runs of
+                    dis0  lowest price at which it offers any discharge
+                    dis50 price at which offered discharge reaches half of HSL
+                    chg0  highest price at which it still bids to charge
+                    chg50 price below which it bids at least half of its charging range (|LSL|)
+                    then the median across batteries weighted by HSL (dis) or |LSL| (chg).
+                    ONTEST runs are left out
+    "chg_ge": {"<price>": [24]}  MW bid to charge at that price or above it (charging that
+                    continues if the price is that high), summed over online batteries, from the
+                    submitted curves capped to [LSL, 0]; hourly mean of the per-run sums
+    "dis_le": {"<price>": [24]}  MW offered to discharge at that price or below, capped to
+                    [0, HSL]; prices are OFFER_PRICES
   },
   "units": {
     "<Resource Name>": {
@@ -41,12 +54,18 @@ data/storage/<date>.json.gz
       "as_up", "as_dn", "cap_up", "cap_dn": [24] hourly means, MW (null series when unknown)
       "dam": [24] | null,  signed DAM energy award
       "dam_as": {service: [24]} | null,  "spp": [24] | null  DAM price at its node
+      "dis0", "dis50", "chg0", "chg50": [24] | null  its offer prices as above, $/MWh
     }, ...
   }
 }
 data/storage/index.json.gz   {format, days, soc_from (first day with a state of charge),
                               dam_from (first day with DAM battery rows), fields}
 The index's "days" list is also kept in data/index.json under days.storage.
+
+data/storage/series.json.gz  every day's fleet block in one file, for the Batteries page's
+                              date-range charts: {format, dates, prices (OFFER_PRICES),
+                              fleet: {field: [day][24]}, chg_ge / dis_le: {price: [day][24]},
+                              n_units, n_online: [day]}
 
   python -m pipeline.storage            # build or refresh every day with a per-unit file
   python -m pipeline.storage --all      # rebuild every day
@@ -60,12 +79,14 @@ from .config import DATA_DIR, UNIT_DATA_DIR
 from .store import load_index, read_json_gz, save_index, write_json_gz
 from .units import expand
 
-FORMAT = 1
+FORMAT = 2          # 2: offer prices and MW by price from the submitted curves; AS capability summed with RRS missing
 OUT_DIR = DATA_DIR / "storage"
 AS_UP = ("regup", "rrs", "ecrs", "nspin")
 AS_DN = ("regdn",)
 FLEET_FIELDS = ["dis", "chg", "out_dis", "out_chg", "hsl", "lsl", "head_dis", "head_chg", "soc", "soc_min", "soc_max",
                 "as_up", "as_dn", "cap_up", "cap_dn", "dam_dis", "dam_chg"]
+OFFER_FIELDS = ["dis0", "dis50", "chg0", "chg50"]
+OFFER_PRICES = [-250, -20, 0, 10, 20, 30, 50, 100, 250]   # $/MWh for chg_ge and dis_le
 
 
 def _r(x, nd=1):
@@ -94,6 +115,42 @@ def _key(date, dam_days):
     return [p.stat().st_size if p.exists() else 0, d.stat().st_size if date in dam_days and d.exists() else 0]
 
 
+def _price_at(p: np.ndarray, m: np.ndarray, target: float) -> float:
+    """Lowest price at which the curve (MW non-decreasing, linear between points) reaches
+    `target` MW; NaN if it never does."""
+    if m[-1] < target - 1e-9:
+        return np.nan
+    if m[0] >= target:
+        return float(p[0])
+    i = int(np.argmax(m >= target))
+    m0, m1, p0, p1 = m[i - 1], m[i], p[i - 1], p[i]
+    return float(p1 if m1 == m0 else p0 + (p1 - p0) * (target - m0) / (m1 - m0))
+
+
+def _offer_metrics(p, m, hsl: float, lsl: float) -> tuple:
+    """(dis0, dis50, chg0, chg50, MW at each OFFER_PRICES) of one submitted ESR curve, which
+    runs from charging (negative MW) to discharging; MW clipped to [LSL, HSL]."""
+    p = np.asarray(p, float)
+    m = np.clip(np.maximum.accumulate(np.asarray(m, float)), min(lsl, 0.0), max(hsl, 0.0))
+    chg0 = _price_at(p, m, 0.0) if m[0] < 0 else np.nan
+    chg50 = _price_at(p, m, 0.5 * lsl) if lsl < -0.5 and m[0] <= 0.5 * lsl else np.nan
+    dis0 = _price_at(p, m, 0.05) if hsl > 0.5 else np.nan
+    dis50 = _price_at(p, m, 0.5 * hsl) if hsl > 0.5 else np.nan
+    at = np.interp(OFFER_PRICES, p, m) if len(p) > 1 else np.full(len(OFFER_PRICES), m[0])
+    return dis0, dis50, chg0, chg50, at
+
+
+def _wmedian(v: np.ndarray, w: np.ndarray) -> float:
+    """Weighted median (NaN values and non-positive weights ignored)."""
+    ok = np.isfinite(v) & np.isfinite(w) & (w > 0)
+    if not ok.any():
+        return np.nan
+    v, w = v[ok], w[ok]
+    o = np.argsort(v)
+    c = np.cumsum(w[o])
+    return float(v[o][np.searchsorted(c, 0.5 * c[-1])])
+
+
 def build_day(date: str, unit_day: dict, dam: dict) -> dict:
     runs = np.asarray(unit_day["runs"], int)
     n = len(runs)
@@ -106,6 +163,10 @@ def build_day(date: str, unit_day: dict, dam: dict) -> dict:
     fleet = {k: np.zeros(24) for k in FLEET_FIELDS}
     have = {k: np.zeros(24, bool) for k in ("soc", "soc_min", "soc_max", "cap_up", "cap_dn", "as_up", "as_dn")}
     dam_as = {k: np.zeros(24) for k in AS_UP + AS_DN}
+    np_ = len(OFFER_PRICES)
+    chg_ge, dis_le, have_curve = np.zeros((np_, 24)), np.zeros((np_, 24)), np.zeros(24, bool)
+    offers = {k: [] for k in OFFER_FIELDS}        # per battery [24] arrays, for the fleet medians
+    weights = {"dis": [], "chg": []}
     units, n_online, n_soc, n_dam = {}, 0, 0, 0
     for name, u in unit_day["units"].items():
         if u.get("tech") != "storage":
@@ -130,9 +191,44 @@ def build_day(date: str, unit_day: dict, dam: dict) -> dict:
             head_chg = _hourly_mean(np.where(online, np.fmin(bp, 0) - lsl, np.nan), hour)
         asup, asdn = x.get("asup", np.full(n, np.nan)), x.get("asdn", np.full(n, np.nan))
         asup_h, asdn_h = _hourly_mean(asup, hour, online), _hourly_mean(asdn, hour, online)
-        cap_up = sum(x.get(f"cap_{k}", np.full(n, np.nan)) for k in AS_UP) if "cap_regup" in x else np.full(n, np.nan)
+        # services the file leaves blank (RRS on some days) count as 0 unless every one is blank
+        caps = np.array([x.get(f"cap_{k}", np.full(n, np.nan)) for k in AS_UP])
+        cap_up = np.where(np.isfinite(caps).any(axis=0), np.nansum(caps, axis=0), np.nan) if "cap_regup" in x else np.full(n, np.nan)
         cap_dn = x.get("cap_regdn", np.full(n, np.nan))
         cap_up_h, cap_dn_h = _hourly_mean(cap_up, hour, online), _hourly_mean(cap_dn, hour, online)
+        # offer prices and MW by price from the submitted curve, online runs other than ONTEST
+        met = np.full((n, 4), np.nan)
+        at = np.full((n, np_), np.nan)
+        cache = {}
+        for r in range(n):
+            s, c = x["status"][r], x["curve"][r]
+            if not online[r] or s == "ONTEST" or c is None or not np.isfinite(hsl[r]) or not np.isfinite(lsl[r]):
+                continue
+            key = (id(c[0]), hsl[r], lsl[r])
+            if key not in cache:
+                *mm, a = _offer_metrics(c[0], c[1], hsl[r], lsl[r])
+                cache[key] = (mm, a)
+            met[r], at[r] = cache[key]
+        off_h = {}
+        for j, k in enumerate(("dis0", "dis50", "chg0", "chg50")):
+            v = np.full(24, np.nan)
+            for h in range(24):
+                col = met[hour == h, j]
+                if np.isfinite(col).any():
+                    v[h] = np.nanmedian(col)
+            off_h[k] = v
+            offers[k].append(v)
+        weights["dis"].append(np.nan_to_num(hsl_h)); weights["chg"].append(np.nan_to_num(-lsl_h))
+        cur = np.isfinite(at[:, 0])
+        if cur.any():
+            for h in range(24):
+                sel = cur & (hour == h)
+                if sel.any():
+                    have_curve[h] = True
+                    # hourly mean over the hour's runs, counting runs without a curve as 0
+                    nh = max(int((hour == h).sum()), 1)
+                    chg_ge[:, h] += -np.fmin(at[sel], 0).sum(axis=0) / nh
+                    dis_le[:, h] += np.fmax(at[sel], 0).sum(axis=0) / nh
         soc_h = _hourly_mean(x["soc"], hour) if "soc" in x else None
         has_soc = soc_h is not None and np.isfinite(soc_h).any()
         if has_soc:
@@ -154,6 +250,8 @@ def build_day(date: str, unit_day: dict, dam: dict) -> dict:
                "dam": (d or {}).get("award")[:24] if d and d.get("award") else None,
                "dam_as": {k: v[:24] for k, v in (d.get("as") or {}).items()} if d and d.get("as") else None,
                "spp": (d or {}).get("spp")[:24] if d and d.get("spp") else None}
+        for k, v in off_h.items():
+            rec[k] = _rl(v) if np.isfinite(v).any() else None
         units[name] = rec
 
         # fleet sums (NaN counts as 0 in a sum; the have[] masks say whether anything was known)
@@ -184,6 +282,14 @@ def build_day(date: str, unit_day: dict, dam: dict) -> dict:
             v = np.full(24, np.nan)
         out_fleet[k] = _rl(v)
     out_fleet["dam_as"] = {k: _rl(v) for k, v in dam_as.items()} if n_dam else None
+    for k in OFFER_FIELDS:
+        if offers[k]:
+            v, w = np.array(offers[k]), np.array(weights[k[:3]])
+            out_fleet[k] = _rl([_wmedian(v[:, h], w[:, h]) for h in range(24)])
+        else:
+            out_fleet[k] = [None] * 24
+    for key, arr in (("chg_ge", chg_ge), ("dis_le", dis_le)):
+        out_fleet[key] = {str(p): _rl(np.where(have_curve, arr[i], np.nan), 0) for i, p in enumerate(OFFER_PRICES)}
     return {"date": date, "format": FORMAT, "n_units": len(units), "n_online": n_online, "n_soc": n_soc, "n_dam": n_dam,
             "fleet": out_fleet, "units": dict(sorted(units.items()))}
 
@@ -216,16 +322,30 @@ def build_storage(index: dict, rebuild_all: bool = False) -> list:
             p.unlink()
     days = sorted(have)
     write_json_gz(OUT_DIR / "index.json.gz", {
-        "format": FORMAT, "days": days, "fields": FLEET_FIELDS + ["dam_as"],
+        "format": FORMAT, "days": days, "fields": FLEET_FIELDS + ["dam_as"] + OFFER_FIELDS + ["chg_ge", "dis_le"],
         "soc_from": next((d for d, day in done if day.get("n_soc")), None),
         "dam_from": next((d for d, day in done if day.get("n_dam")), None),
         "n_units": {d: day["n_units"] for d, day in done},
     })
     index["days"]["storage"] = days
+    _write_series(done)
     print(f"storage: {len(built)} day(s) built, {len(days)} in the index"
           + (f", state of charge from {next((d for d, day in done if day.get('n_soc')), None)}" if any(day.get("n_soc") for _, day in done) else ", no state of charge yet")
           + (f", DAM battery rows from {next((d for d, day in done if day.get('n_dam')), None)}" if any(day.get("n_dam") for _, day in done) else ", no DAM battery rows yet"))
     return built
+
+
+def _write_series(done: list) -> None:
+    """data/storage/series.json.gz: the fleet block of every day, [day][24] per field."""
+    done = sorted(done, key=lambda t: t[0])
+    keys = FLEET_FIELDS + OFFER_FIELDS
+    blank = [None] * 24
+    fleet = {k: [day["fleet"].get(k) or blank for _, day in done] for k in keys}
+    by_price = {key: {str(p): [((day["fleet"].get(key) or {}).get(str(p))) or blank for _, day in done]
+                      for p in OFFER_PRICES} for key in ("chg_ge", "dis_le")}
+    write_json_gz(OUT_DIR / "series.json.gz", {
+        "format": FORMAT, "dates": [d for d, _ in done], "prices": OFFER_PRICES, "fleet": fleet, **by_price,
+        "n_units": [day["n_units"] for _, day in done], "n_online": [day["n_online"] for _, day in done]})
 
 
 def main(argv=None):

@@ -25,7 +25,9 @@ consistency:
                     series; every battery has 24 hours; DAM awards within each battery's HSL
                     and LSL and never charging and discharging in the same hour; the state of
                     charge inside its min / max window; (recorded) how many batteries report a
-                    state of charge and have DAM rows, and the DAM names without a SCED match
+                    state of charge and have DAM rows, and the DAM names without a SCED match;
+                    (format 2) charging bids shrink and discharge offers grow as price rises,
+                    both inside the fleet's LSL and HSL
   forecast          forecast day file (pipeline/forecast): shares between 0 and 1, group sums
                     equal technology sums equal the fleet hour by hour, committed minimum <=
                     expected output <= capacity, verdict counts equal the units rows, a model
@@ -418,6 +420,33 @@ def _storage_checks(day, st, gen, dam):
                 else f"{n_soc} of {st['n_units']} batteries report a state of charge, all inside their windows")
     else:
         day.add("storage_soc", "info", "no state of charge for this day (per-unit file predates format 7)")
+    _storage_offer_checks(day, st)
+
+
+def _storage_offer_checks(day, st):
+    """Offer prices and MW by price (storage format 2): charging bids shrink and discharge offers
+    grow as price rises, and both stay inside the fleet's limits."""
+    f = st["fleet"]
+    if not f.get("chg_ge"):
+        day.add("storage_offers", "info", "no offer metrics in this battery day file (format 1)")
+        return
+    prices = sorted(f["chg_ge"], key=float)
+    chg = np.array([_v(f["chg_ge"][p]) for p in prices])
+    dis = np.array([_v(f["dis_le"][p]) for p in prices])
+    if np.isnan(chg).all():
+        day.add("storage_offers", "warning" if st.get("n_online") else "info", "no battery offer curves on this day")
+        return
+    tol = TOL["limit_mw"]
+    with np.errstate(invalid="ignore"):
+        bad_order = int((np.diff(chg, axis=0) > tol).sum() + (np.diff(dis, axis=0) < -tol).sum())
+        over_chg = np.nanmax(chg[0] - (-_v(f["lsl"])))
+        over_dis = np.nanmax(dis[-1] - _v(f["hsl"]))
+    problems = ([f"{bad_order} hour-price step(s) where charging grows or discharge shrinks as price rises"] if bad_order else []) + \
+               ([f"charging bids {over_chg:.0f} MW above the fleet's charging limit"] if over_chg > tol * 10 else []) + \
+               ([f"discharge offers {over_dis:.0f} MW above the fleet's HSL"] if over_dis > tol * 10 else [])
+    day.add("storage_offers", "error" if problems else "ok",
+            "; ".join(problems) if problems else
+            f"offer prices for {sum(1 for u in st['units'].values() if u.get('dis0'))} batteries; charging and discharge MW by price consistent with the fleet limits")
 
 
 def _curve_checks(day, cv, uh):
