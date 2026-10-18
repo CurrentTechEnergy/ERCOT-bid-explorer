@@ -75,6 +75,11 @@ data/storage/units.json.gz   one row a day per battery, for the Unit page's acro
                                 dis0           lowest price at which it offered discharge in any hour
                                 chg0           price where its charging stops, mean over HE 10 to 16
                                 as_up          AS up awarded in SCED, mean MW over the day
+data/storage/habits.json.gz  the same shape, for the battery events (pipeline/events.py), with
+                              hsl, soc_max, dis, chg and each battery's daily habit profile:
+                                dis0_mid, dis0_pk, chg0_mid, chg0_pk   median dis0 / chg0 over HE 10 to
+                                               16 and HE 17 to 22
+                                chg_hr         hour ending by which a tenth of the day's charging is done
 
   python -m pipeline.storage            # build or refresh every day with a per-unit file
   python -m pipeline.storage --all      # rebuild every day
@@ -97,7 +102,9 @@ FLEET_FIELDS = ["dis", "chg", "out_dis", "out_chg", "hsl", "lsl", "head_dis", "h
 OFFER_FIELDS = ["dis0", "dis50", "chg0", "chg50"]
 OFFER_PRICES = [-250, -20, 0, 10, 20, 30, 50, 100, 250]   # $/MWh for chg_ge and dis_le
 UNIT_DAY_FIELDS = ["hsl", "soc_max", "dis", "chg", "dam_dis", "dam_chg", "dis0", "chg0", "as_up"]
+HABIT_FIELDS = ["dis0_mid", "dis0_pk", "chg0_mid", "chg0_pk", "chg_hr"]
 MIDDAY = slice(9, 16)          # HE 10 to 16, where charging bids are read
+PEAK = slice(16, 22)           # HE 17 to 22, where discharge offers are read
 
 
 def _r(x, nd=1):
@@ -375,19 +382,41 @@ def _unit_day(u: dict) -> list:
                 _r(-np.nansum(np.fmin(dam, 0))) if dam is not None and np.isfinite(dam).any() else None,
                 _r(np.nanmin(dis0)) if dis0 is not None and np.isfinite(dis0).any() else None,
                 _r(np.nanmean(mid)) if mid is not None and np.isfinite(mid).any() else None,
-                _r(np.nanmean(asup)) if asup is not None and np.isfinite(asup).any() else None]
+                _r(np.nanmean(asup)) if asup is not None and np.isfinite(asup).any() else None,
+                _med(dis0, MIDDAY), _med(dis0, PEAK), _med(chg0, MIDDAY), _med(chg0, PEAK), _chg_hr(bp)]
+
+
+def _med(a, sl):
+    if a is None or not np.isfinite(a[sl]).any():
+        return None
+    return _r(np.nanmedian(a[sl]))
+
+
+def _chg_hr(bp):
+    """Hour ending by which a tenth of the day's charging is done, or None below 1 MWh charged."""
+    if bp is None:
+        return None
+    c = np.nan_to_num(-np.fmin(bp, 0))
+    if c.sum() < 1:
+        return None
+    return int(np.argmax(np.cumsum(c) >= 0.1 * c.sum())) + 1
 
 
 def _write_units(done: list) -> None:
-    """data/storage/units.json.gz: one row a day per battery."""
+    """data/storage/units.json.gz (for the Unit page) and habits.json.gz (for the battery
+    events): one row a day per battery."""
     done = sorted(done, key=lambda t: t[0])
     names = sorted({n for _, day in done for n in day["units"]})
-    units = {n: {k: [None] * len(done) for k in UNIT_DAY_FIELDS} for n in names}
+    fields = UNIT_DAY_FIELDS + HABIT_FIELDS
+    units = {n: {k: [None] * len(done) for k in fields} for n in names}
     for i, (_, day) in enumerate(done):
         for n, u in day["units"].items():
-            for k, v in zip(UNIT_DAY_FIELDS, _unit_day(u)):
+            for k, v in zip(fields, _unit_day(u)):
                 units[n][k][i] = v
-    write_json_gz(OUT_DIR / "units.json.gz", {"format": FORMAT, "dates": [d for d, _ in done], "fields": UNIT_DAY_FIELDS, "units": units})
+    dates = [d for d, _ in done]
+    for path, keep in (("units.json.gz", UNIT_DAY_FIELDS), ("habits.json.gz", ["hsl", "soc_max", "dis", "chg"] + HABIT_FIELDS)):
+        write_json_gz(OUT_DIR / path, {"format": FORMAT, "dates": dates, "fields": keep,
+                                       "units": {n: {k: u[k] for k in keep} for n, u in units.items()}})
 
 
 def main(argv=None):

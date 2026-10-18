@@ -28,6 +28,20 @@ Sources (each already computed by its own module; nothing is detected twice):
                    shifting between K online days and the K before, by FUEL thresholds.  Unit
                    key "fleet:<tech>"; carries the Houston Ship Channel gas price over the same
                    two windows (gas_hubs) beside it
+  battery_habit    storage.py habits.json.gz: a lasting shift in a battery's daily habit, not its
+                   intraday rebidding.  Signals (HABIT): the median price at which it starts
+                   discharging and at which its charging stops, over HE 10 to 16 and HE 17 to 22,
+                   each taken against the fleet median that day, and the hour by which a tenth of
+                   its day's charging is done.  An event when, over HABIT_WINDOW days with a value,
+                   every day sits outside the battery's whole range over the HABIT_BASE days
+                   before, the window median has moved by at least the signal's floor, and the
+                   next HABIT_WINDOW days keep at least half that move.  One event per battery and
+                   date, listing every signal that moved ("signals"); major from HABIT_MAJOR
+  battery_size     a lasting change in a battery's HSL or maximum state of charge: SIZE_SHARE or
+                   more for a week, holding most of the SIZE_HOLD days after; major from SIZE_MAJOR.
+                   Not in a battery's first SIZE_HOLD days charging or discharging
+  battery_new      a battery's first day charging or discharging, after the fleet's first
+                   NEW_GRACE days of data
   outage_start, outage_end
                    an outage spell of OUTAGE_DAYS days or more in the hourly states
                    (unit_hours_60d, outages rewritten as groups.py does), when it started and
@@ -79,6 +93,16 @@ FUEL = {"combined_cycle": (5, 0.2, 0.5), "gas_steam": (5, 0.2, 0.5), "combustion
         "coal": (12, 0.6, 0.6)}
 FUEL_MIN_UNITS = 5    # units with a price that day before its median counts
 FUEL_HUB = "hsc"      # gas hub shown beside the shift (gas_hubs.json.gz)
+# battery events (see the docstring); a battery's prices are offered from -$250 to the $2,000 cap,
+# so a floor of $30 mostly keeps the switches between offering at the floor, at market prices and
+# only at the cap, which is what moved in the record (Dec 2025 to Aug 2026: 16% of batteries)
+HABIT = {"dis0_mid": ("Midday discharge offer", 30), "dis0_pk": ("Evening discharge offer", 30),
+         "chg0_mid": ("Midday charging bid", 30), "chg0_pk": ("Evening charging bid", 30),
+         "chg_hr": ("Charging start", 2)}
+HABIT_WINDOW, HABIT_BASE, HABIT_MIN_BASE = 7, 30, 20   # days with a value
+HABIT_MAJOR = (100, 3)          # $/MWh for prices, hours for the charging start
+SIZE_SHARE, SIZE_MW, SIZE_HOLD, SIZE_MAJOR = 0.2, 5, 30, 0.5
+NEW_GRACE = 14
 FEED_ALL = 200        # entries in the all-units feed
 FEED_UNIT = 30        # entries in a unit's feed
 DAILY = ("daily1", "daily2", "daily3")
@@ -91,6 +115,9 @@ KINDS = {
     "bidding": "Bidding approach shifted",
     "cutoff": "Loss cutoff moved",
     "fuel": "Fleet median offer shifted",
+    "battery_habit": "Battery habit shifted",
+    "battery_size": "Battery size changed",
+    "battery_new": "New battery",
     "outage_start": "Outage started",
     "outage_end": "Outage ended",
     **{f"renew_{k}": v for k, v in RENEW_KINDS.items()},
@@ -293,6 +320,97 @@ def outage_events(uh, tech_of):
     return out
 
 
+def _shifts(x, floor, rel=None, base=HABIT_BASE, hold=HABIT_WINDOW, share=None):
+    """Positions j in a daily series (only days with a value) where the HABIT_WINDOW days from j
+    moved away from the days before, held by the days after; strongest first, HABIT_BASE apart.
+    rel: the series measured against (the fleet median), else x itself.  share: a size change,
+    measured as a share of the level before instead of outside its range."""
+    y = x if rel is None else x - rel
+    W, cand = HABIT_WINDOW, []
+    for j in range(HABIT_MIN_BASE, len(y) - W - hold + 1):
+        b, w, a = y[max(0, j - base):j], y[j:j + W], y[j + W:j + W + hold]
+        mb, mw, ma = np.median(b), np.median(w), np.median(a)
+        d = mw - mb
+        if share is None:
+            moved = abs(d) >= floor and ((w > b.max()).all() if d > 0 else (w < b.min()).all())
+            kept = np.sign(ma - mb) == np.sign(d) and abs(ma - mb) >= abs(d) / 2
+        else:
+            moved = mb > 0 and abs(d) >= max(floor, share * mb) and (np.sign(w - mb) == np.sign(d)).all() \
+                and (abs(w - mb) >= abs(d) / 2).all()
+            kept = (np.sign(a - mb) == np.sign(d)).mean() >= 0.9 and abs(ma - mb) >= abs(d) / 2
+        if moved and kept:
+            cand.append((abs(d), j))
+    taken = []
+    for _, j in sorted(cand, reverse=True):
+        if all(abs(j - t) >= base for t in taken):
+            taken.append(j)
+    return taken
+
+
+def battery_events(hb):
+    dates, units = hb.get("dates") or [], hb.get("units") or {}
+    if not dates:
+        return []
+    fleet = {}
+    for f in HABIT:
+        if f == "chg_hr":
+            continue
+        fleet[f] = []
+        for i in range(len(dates)):
+            v = [u[f][i] for u in units.values() if u[f][i] is not None]
+            fleet[f].append(float(np.median(v)) if v else np.nan)
+    active = [i for i in range(len(dates)) if any((u["dis"][i] or 0) > 0 or (u["chg"][i] or 0) > 0 for u in units.values())]
+    if not active:
+        return []
+    out, W = [], HABIT_WINDOW
+    for name, u in sorted(units.items()):
+        act = [i for i in range(len(dates)) if (u["dis"][i] or 0) > 0 or (u["chg"][i] or 0) > 0]
+        if act and act[0] >= active[0] + NEW_GRACE:
+            first = act[:W]
+            mw = max((u["hsl"][i] or 0 for i in first), default=0)
+            mwh = max((u["soc_max"][i] or 0 for i in first), default=0)
+            size = ", ".join(t for t in (f"{mw:,.0f} MW" if mw else "", f"{mwh:,.0f} MWh" if mwh else "") if t)
+            out.append(_ev(name, dates[act[0]], "battery_new", "storage",
+                           "First day charging or discharging" + (f": {size}" if size else ""), True,
+                           value=mw or None, field="MW", mwh=mwh or None))
+        habit = defaultdict(list)
+        for f, (label, floor) in HABIT.items():
+            pts = [(i, x) for i, x in enumerate(u[f]) if x is not None and (f == "chg_hr" or np.isfinite(fleet[f][i]))]
+            if len(pts) < HABIT_MIN_BASE + 2 * W:
+                continue
+            idx, x = [i for i, _ in pts], np.array([v for _, v in pts], float)
+            rel = None if f == "chg_hr" else np.array([fleet[f][i] for i in idx])
+            for j in _shifts(x, floor, rel):
+                b, a = float(np.median(x[max(0, j - HABIT_BASE):j])), float(np.median(x[j:j + W]))
+                habit[idx[j]].append((f, round(b, 1), round(a, 1)))
+        for i, sig in sorted(habit.items()):
+            sig.sort(key=lambda s: -abs(s[2] - s[1]) / (HABIT_MAJOR[1] if s[0] == "chg_hr" else HABIT_MAJOR[0]))
+            parts = [f"{HABIT[f][0]} HE {b:.0f} to HE {a:.0f}" if f == "chg_hr" else f"{HABIT[f][0]} {_usd(b)} to {_usd(a)}/MWh"
+                     for f, b, a in sig]
+            major = any(abs(a - b) >= (HABIT_MAJOR[1] if f == "chg_hr" else HABIT_MAJOR[0]) for f, b, a in sig)
+            f, b, a = sig[0]
+            out.append(_ev(name, dates[i], "battery_habit", "storage", "; ".join(parts), major,
+                           before=b, after=a, field=f, signals=[list(s) for s in sig]))
+        size = defaultdict(list)
+        for f, label in (("hsl", "MW"), ("soc_max", "MWh")):
+            # a new battery ramps up to its size over its first weeks: not a change
+            pts = [(i, x) for i, x in enumerate(u[f]) if x and act and i >= act[0] + SIZE_HOLD]
+            if len(pts) < HABIT_MIN_BASE + W + SIZE_HOLD:
+                continue
+            idx, x = [i for i, _ in pts], np.array([v for _, v in pts], float)
+            for j in _shifts(x, SIZE_MW, hold=SIZE_HOLD, share=SIZE_SHARE):
+                b, a = float(np.median(x[max(0, j - HABIT_BASE):j])), float(np.median(x[j:j + W]))
+                size[idx[j]].append((f, label, round(b), round(a)))
+        for i, sig in sorted(size.items()):
+            parts = [f"{'Maximum output' if f == 'hsl' else 'Maximum state of charge'} {b:,} to {a:,} {label}"
+                     for f, label, b, a in sig]
+            f, label, b, a = sig[0]
+            out.append(_ev(name, dates[i], "battery_size", "storage", "; ".join(parts),
+                           any(abs(a - b) >= SIZE_MAJOR * b for _, _, b, a in sig), before=b, after=a, field=label,
+                           signals=[[f, b, a] for f, _, b, a in sig]))
+    return out
+
+
 # -------------------------------------------------------------------- feeds ---
 def _atom(title, link, entries):
     # the feed's own "updated" is its newest entry's, not the run time, so a feed file only
@@ -350,20 +468,24 @@ def build_events(index: dict) -> dict:
     rc = read_json_gz(DATA_DIR / "renew_changes.json.gz", default={}) or {}
     ch = read_json_gz(CUTOFF_PATH, default={}) or {}
     hubs = read_json_gz(DATA_DIR / "gas_hubs.json.gz", default={}) or {}
+    hb = read_json_gz(DATA_DIR / "storage" / "habits.json.gz", default={}) or {}
     tech_of = {u["unit"]: u["tech"] for u in tr.get("units", []) if u["tech"] in UNIT_TECHS}
     events = (shutdown_events(dec) + group_events(uh, tech_of) + bidding_events(tr) + cutoff_events(ch)
-              + renew_events(rc) + outage_events(uh, tech_of) + fuel_events(tr, hubs))
+              + renew_events(rc) + outage_events(uh, tech_of) + fuel_events(tr, hubs) + battery_events(hb))
     old = read_json_gz(PATH, default=None) or {}
     seen = {e["id"]: e["seen"] for e in old.get("events", [])}
     # the first build has no earlier file to compare with, so every event it writes is history,
     # not news: they are dated to that run and the run's date is kept as the baseline, which
     # notify.py skips, so the first email never carries years of past events
     baseline = old.get("baseline") or today
+    # likewise a kind the earlier file did not have (a detector added since, such as the battery
+    # events): its first run finds the whole record, which is history too, so it takes the baseline
+    old_kinds = {e["kind"] for e in old.get("events", [])}
     by_id = {}
     for e in events:
         if e["id"] in by_id:
             continue
-        e["seen"] = seen.get(e["id"], today)
+        e["seen"] = seen.get(e["id"], today if not old_kinds or e["kind"] in old_kinds else baseline)
         by_id[e["id"]] = e
     events = sorted(by_id.values(), key=lambda e: (e["date"], e["unit"], e["kind"]), reverse=True)
     updated = dt.datetime.now(dt.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")

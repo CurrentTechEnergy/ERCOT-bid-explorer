@@ -12,7 +12,7 @@ const $ = (id) => document.getElementById(id);
 const WEEKS = 8;        // weeks drawn before "Show more weeks"
 const TECH_LABEL = {
   nuclear: "Nuclear", coal: "Coal & lignite", combined_cycle: "Combined cycle", gas_steam: "Gas steam",
-  combustion_turbine: "Peakers (CT and recip)", wind: "Wind", solar: "Solar", hydro: "Hydro", other: "Other",
+  combustion_turbine: "Peakers (CT and recip)", wind: "Wind", solar: "Solar", storage: "Battery storage", hydro: "Hydro", other: "Other",
 };
 const TECH_ORDER = Object.keys(TECH_LABEL);
 const trainOf = (u) => { const m = /^(.*_CC\d+)_/.exec(u); return m ? m[1] : u; };
@@ -36,6 +36,8 @@ function numbers(e) {
   if (k.startsWith("shutdown")) return `loss of staying on ${fmt$(e.value)}` + (e.award != null ? `, award over ${fmtPct(e.award)} of the window` : "");
   if (k.startsWith("renew_")) return e.before != null && e.after != null ? `${fmt$(e.before)} → ${fmt$(e.after)}/MWh` : "";
   if (k.startsWith("outage")) return `${e.value} days`;
+  if (k === "battery_habit") return (e.signals || []).map(([f, b, a]) => f === "chg_hr" ? `HE ${b} → HE ${a}` : `${fmt$(b)} → ${fmt$(a)}/MWh`).join(", ");
+  if (k === "battery_size") return (e.signals || []).map(([f, b, a]) => `${d3.format(",")(b)} → ${d3.format(",")(a)} ${f === "hsl" ? "MW" : "MWh"}`).join(", ");
   if (k === "fuel") return `${fmt$(e.before)} → ${fmt$(e.after)}/MWh` + (e.gas_before != null && e.gas_after != null ? `, gas $${e.gas_before.toFixed(2)} → $${e.gas_after.toFixed(2)}` : "");
   return "";
 }
@@ -119,7 +121,7 @@ async function boot() {
   const newN = E.new_today || 0;
   $("status").textContent = `${E.n.toLocaleString()} changes, ${E.n_major.toLocaleString()} notable, ${E.first} to ${E.last} · updated ${E.updated.slice(0, 10)}` +
     (newN ? ` · ${newN} new in the latest update` : "");
-  $("feed-note").textContent = `Grouped by week of the operating day. Notable means a change the detectors rate as large: daily cycling starting or stopping, a shutdown after 30 days on or despite a day-ahead award, an offer shift of $20/MWh or more against peers or of half the day in how much is offered at or below $0, an outage of 30 days or more, a large wind or solar floor or formula change, or a technology's median offer moving by half or more. "New" marks changes the latest update found.`;
+  $("feed-note").textContent = `Grouped by week of the operating day. Notable means a change the detectors rate as large: daily cycling starting or stopping, a shutdown after 30 days on or despite a day-ahead award, an offer shift of $20/MWh or more against peers or of half the day in how much is offered at or below $0, an outage of 30 days or more, a large wind or solar floor or formula change, a technology's median offer moving by half or more, a new battery, a battery habit shift of $100/MWh or 3 hours, or a battery growing or shrinking by half. "New" marks changes the latest update found.`;
 
   const techs = [...new Set(E.events.map((e) => e.tech))].sort((a, b) => TECH_ORDER.indexOf(a) - TECH_ORDER.indexOf(b));
   options($("f-tech"), "All technologies", techs.map((t) => [t, TECH_LABEL[t] || t]));
