@@ -29,10 +29,13 @@ Sources (each already computed by its own module; nothing is detected twice):
                    key "fleet:<tech>"; carries the Houston Ship Channel gas price over the same
                    two windows (gas_hubs) beside it
   battery_habit    storage.py habits.json.gz: a lasting shift in a battery's daily habit, not its
-                   intraday rebidding.  Signals (HABIT): the median price at which it starts
-                   discharging and at which its charging stops, over HE 10 to 16 and HE 17 to 22,
-                   each taken against the fleet median that day, and the hour by which a tenth of
-                   its day's charging is done.  An event when, over HABIT_WINDOW days with a value,
+                   intraday rebidding.  Signals (HABIT), read over the day's cheapest and dearest
+                   hours by the DA price at its node, as many as its duration plus a two-hour
+                   buffer (storage.py "tb"): the price where its charging stops in the cheap hours
+                   and where its discharge starts in the dear ones, the share of its charging and
+                   of its discharging done in them, and the share of the day's TBn spread it
+                   earned; each against the fleet median that day.  An event when, over
+                   HABIT_WINDOW days with a value,
                    every day sits outside the battery's whole range over the HABIT_BASE days
                    before, the window median has moved by at least the signal's floor, and the
                    next HABIT_WINDOW days keep at least half that move.  One event per battery and
@@ -97,14 +100,15 @@ FUEL = {"combined_cycle": (5, 0.2, 0.5), "gas_steam": (5, 0.2, 0.5), "combustion
         "coal": (12, 0.6, 0.6)}
 FUEL_MIN_UNITS = 5    # units with a price that day before its median counts
 FUEL_HUB = "hsc"      # gas hub shown beside the shift (gas_hubs.json.gz)
-# battery events (see the docstring); a battery's prices are offered from -$250 to the $2,000 cap,
-# so a floor of $30 mostly keeps the switches between offering at the floor, at market prices and
-# only at the cap, which is what moved in the record (Dec 2025 to Aug 2026: 16% of batteries)
-HABIT = {"dis0_mid": ("Midday discharge offer", 30), "dis0_pk": ("Evening discharge offer", 30),
-         "chg0_mid": ("Midday charging bid", 30), "chg0_pk": ("Evening charging bid", 30),
-         "chg_hr": ("Charging start", 2)}
+# battery events (see the docstring): field -> (label with {n} for the hours read, floor, major,
+# "usd" or "share").  A battery offers from -$250 to the $2,000 cap, so a $30 floor mostly keeps
+# switches between offering at the floor, at market prices and only at the cap
+HABIT = {"chg0_tb": ("Charging bid in its {n} cheapest hours", 30, 100, "usd"),
+         "dis0_tb": ("Discharge offer in its {n} dearest hours", 30, 100, "usd"),
+         "chg_tb": ("Charging done in its {n} cheapest hours", 0.25, 0.5, "share"),
+         "dis_tb": ("Discharging done in its {n} dearest hours", 0.25, 0.5, "share"),
+         "capture": ("Share of the top-bottom spread earned", 0.25, 0.5, "share")}
 HABIT_WINDOW, HABIT_BASE, HABIT_MIN_BASE = 7, 30, 20   # days with a value
-HABIT_MAJOR = (100, 3)          # $/MWh for prices, hours for the charging start
 SIZE_SHARE, SIZE_MW, SIZE_HOLD, SIZE_MAJOR = 0.2, 5, 30, 0.5
 NEW_GRACE = 14
 FEED_ALL = 200        # entries in the all-units feed
@@ -358,8 +362,6 @@ def battery_events(hb):
         return []
     fleet = {}
     for f in HABIT:
-        if f == "chg_hr":
-            continue
         fleet[f] = []
         for i in range(len(dates)):
             v = [u[f][i] for u in units.values() if u[f][i] is not None]
@@ -379,23 +381,23 @@ def battery_events(hb):
                            "First day charging or discharging" + (f": {size}" if size else ""), True,
                            value=mw or None, field="MW", mwh=mwh or None))
         habit = defaultdict(list)
-        for f, (label, floor) in HABIT.items():
-            pts = [(i, x) for i, x in enumerate(u[f]) if x is not None and (f == "chg_hr" or np.isfinite(fleet[f][i]))]
+        n = next((t for t in reversed(u.get("tb") or []) if t), None)
+        for f, (label, floor, _, _) in HABIT.items():
+            pts = [(i, x) for i, x in enumerate(u[f]) if x is not None and np.isfinite(fleet[f][i])]
             if len(pts) < HABIT_MIN_BASE + 2 * W:
                 continue
             idx, x = [i for i, _ in pts], np.array([v for _, v in pts], float)
-            rel = None if f == "chg_hr" else np.array([fleet[f][i] for i in idx])
-            for j in _shifts(x, floor, rel):
+            for j in _shifts(x, floor, np.array([fleet[f][i] for i in idx])):
                 b, a = float(np.median(x[max(0, j - HABIT_BASE):j])), float(np.median(x[j:j + W]))
-                habit[idx[j]].append((f, round(b, 1), round(a, 1)))
+                habit[idx[j]].append((f, round(b, 2), round(a, 2)))
         for i, sig in sorted(habit.items()):
-            sig.sort(key=lambda s: -abs(s[2] - s[1]) / (HABIT_MAJOR[1] if s[0] == "chg_hr" else HABIT_MAJOR[0]))
-            parts = [f"{HABIT[f][0]} HE {b:.0f} to HE {a:.0f}" if f == "chg_hr" else f"{HABIT[f][0]} {_usd(b)} to {_usd(a)}/MWh"
+            sig.sort(key=lambda s: -abs(s[2] - s[1]) / HABIT[s[0]][2])
+            parts = [HABIT[f][0].format(n=n) + (f" {_usd(b)} to {_usd(a)}/MWh" if HABIT[f][3] == "usd" else f" {b:.0%} to {a:.0%}")
                      for f, b, a in sig]
-            major = any(abs(a - b) >= (HABIT_MAJOR[1] if f == "chg_hr" else HABIT_MAJOR[0]) for f, b, a in sig)
+            major = any(abs(a - b) >= HABIT[f][2] for f, b, a in sig)
             f, b, a = sig[0]
             out.append(_ev(name, dates[i], "battery_habit", "storage", "; ".join(parts), major,
-                           before=b, after=a, field=f, signals=[list(s) for s in sig]))
+                           before=b, after=a, field=f, signals=[list(s) for s in sig], hours=n))
         size = defaultdict(list)
         for f, label in (("hsl", "MW"), ("soc_max", "MWh")):
             # a new battery ramps up to its size over its first weeks: not a change

@@ -48,7 +48,8 @@ consistency:
                     cutoff history file: a model name and version, cutoffs numeric per MW of
                     LSL, every move on a unit with rows; and storage/units.json.gz and
                     habits.json.gz: one value per day for every field of every battery, the
-                    charging hour within 1 to 24, no negative size or MWh
+                    shares charged and discharged in its top and bottom hours within 0 to 1, no
+                    negative size or MWh
 
 A check is an "error" when the numbers cannot both be right (a parsing or mapping bug), a
 "warning" when something is worth a look, and "info" when it is only recorded.  Results that did not pass are kept per day in data/validation.json.
@@ -615,10 +616,10 @@ def check_files(index):
             continue
         n = len(su.get("dates", []))
         bad = [u for u, r in su.get("units", {}).items() if set(r) != set(su.get("fields", [])) or any(len(v) != n for v in r.values())]
-        hr = [u for u, r in su.get("units", {}).items() if any(h is not None and not 1 <= h <= 24 for h in r.get("chg_hr", []))]
+        hr = [u for u, r in su.get("units", {}).items() if any(v is not None and not 0 <= v <= 1 for k in ("chg_tb", "dis_tb") for v in r.get(k, []))]
         neg = [u for u, r in su.get("units", {}).items() if any(v is not None and v < 0 for k in ("hsl", "soc_max", "dis", "chg") for v in r.get(k, []))]
         day.add(f"storage_{name.split('.')[0]}", "error" if bad or hr or neg else "ok",
-                f"{len(bad)} battery row(s) not one value per day per field, {len(hr)} with a charging hour outside 1 to 24, "
+                f"{len(bad)} battery row(s) not one value per day per field, {len(hr)} with a share in the top or bottom hours outside 0 to 1, "
                 f"{len(neg)} with a negative size or MWh, e.g. {(bad + hr + neg)[:3]}" if bad or hr or neg else f"{len(su.get('units', {}))} batteries, {n} days")
     ch = read_json_gz(CUTOFF_PATH, default=None)
     if ch is not None:
