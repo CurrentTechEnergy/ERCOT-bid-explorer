@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>What's changing · ERCOT Bid Stack Explorer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Sans+Condensed:wght@600&display=swap">
+<link rel="stylesheet" href="style.css">
+<link rel="alternate" type="application/atom+xml" title="ERCOT bid explorer: unit changes" href="data/feeds/all.xml">
+<style>
+  .tag { display: inline-block; font-size: 11px; padding: 0 5px; border: 1px solid var(--line); border-radius: 4px; color: var(--muted); margin-left: 4px; white-space: nowrap; }
+  .tag.new { color: var(--ink); border-color: var(--ink); }
+  .btn { font: inherit; font-weight: 500; color: var(--ink); background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 6px 12px; min-height: 34px; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; }
+  .btn:hover { background: var(--accent-soft); }
+  .ctl input[type="search"] { font: inherit; color: var(--ink); background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 6px 8px; min-height: 34px; width: 180px; }
+  .kind-counts { display: flex; flex-wrap: wrap; gap: 6px 18px; margin: 0 0 12px; font-size: 13px; color: var(--ink-2); }
+  .kind-counts b { font: 500 13px var(--font-data); color: var(--ink); }
+  .kind-counts button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; text-align: left; }
+  .kind-counts button:hover { text-decoration: underline; }
+  .week { margin: 18px 0 6px; font-size: 14px; font-weight: 600; display: flex; flex-wrap: wrap; gap: 4px 12px; align-items: baseline; }
+  .week .h-note { font-weight: 400; }
+  .feed table.data td.ev { white-space: normal; min-width: 26ch; }
+  .feed table.data td.num { white-space: normal; }
+  .feed .units-wrap { max-height: none; }
+  /* every week is its own table; fixed widths keep the columns lined up down the page */
+  .feed table.data { table-layout: fixed; }
+  .feed table.data .w-date { width: 70px; } .feed table.data .w-unit { width: 19%; } .feed table.data .w-tech { width: 24%; } .feed table.data .w-num { width: 19%; }
+  .feed table.data td { overflow-wrap: anywhere; white-space: normal; }
+  .feed .num-sm { display: none; color: var(--ink-2); }
+  .feed tr.minor td { color: var(--muted); }
+  .feed tr.minor td a { color: var(--ink-2); }
+  .feed-foot { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-top: 14px; }
+  @media (max-width: 640px) {
+    .feed table.data th.hide-sm, .feed table.data td.hide-sm { display: none; }
+    .feed table.data td.ev { min-width: 0; }
+    .feed table.data .w-date { width: 62px; } .feed table.data .w-unit { width: 36%; }
+    .feed .num-sm { display: inline; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+<header class="masthead">
+  <div class="brand">
+    <div class="nav-row"><nav class="nav" aria-label="Pages"><a href="index.html">Overview</a><a href="commitment.html">Commitment</a><a href="changes.html" aria-current="page">What's changing</a><a href="beyond.html">Beyond baseload</a><a href="renewables.html">Renewables</a><a href="fleet.html">Fleet economics</a><a href="trends.html">Trends</a><a href="builder.html">Graph builder</a><a href="guide.html">How offers work</a></nav></div>
+    <h1>What's changing</h1>
+    <p class="sub">Units that changed how they bid or run, newest first: thermal units that shut down after a long run or despite a day-ahead award, moved timescale group, shifted their offers or started and ended long outages, and wind and solar plants that changed their floor or pricing formula. Each change is dated to the operating day it happened. Unit data comes from ERCOT's 60-day disclosures, so the newest changes are about two months old.</p>
+  </div>
+  <p class="status" id="status">Loading data…</p>
+</header>
+
+<section class="controls" aria-label="Filters">
+  <div class="ctl">
+    <label class="lbl" for="f-tech">Technology</label>
+    <select id="f-tech"></select>
+  </div>
+  <div class="ctl">
+    <label class="lbl" for="f-group">Timescale group</label>
+    <select id="f-group"></select>
+  </div>
+  <div class="ctl">
+    <label class="lbl" for="f-kind">Kind of change</label>
+    <select id="f-kind"></select>
+  </div>
+  <div class="ctl">
+    <span class="lbl">Period</span>
+    <div class="seg seg-sm" id="f-span" role="radiogroup" aria-label="Period">
+      <button type="button" data-v="30" role="radio">Last 30 days</button>
+      <button type="button" data-v="90" role="radio">90 days</button>
+      <button type="button" data-v="all" role="radio">All</button>
+    </div>
+  </div>
+  <div class="ctl">
+    <span class="lbl">Show</span>
+    <div class="seg seg-sm" id="f-all" role="radiogroup" aria-label="Show">
+      <button type="button" data-v="major" role="radio">Notable</button>
+      <button type="button" data-v="all" role="radio">All changes</button>
+    </div>
+  </div>
+  <div class="ctl">
+    <label class="lbl" for="f-q">Unit</label>
+    <input type="search" id="f-q" placeholder="Search units" autocomplete="off">
+  </div>
+</section>
+
+<main>
+  <section class="panel panel-wide feed" id="feed-panel">
+    <div class="panel-head">
+      <div>
+        <h2>Changes <span class="h-note" id="feed-count"></span></h2>
+        <p class="note" id="feed-note"></p>
+      </div>
+    </div>
+    <div class="kind-counts" id="kind-counts"></div>
+    <div id="feed"></div>
+    <div class="feed-foot">
+      <button type="button" class="btn" id="feed-more" hidden>Show more weeks</button>
+      <a class="btn" href="data/feeds/all.xml" title="Atom feed of the notable changes, for a feed reader">Feed of notable changes</a>
+      <span class="note">Each unit's own feed and email alerts are on its Unit page.</span>
+    </div>
+  </section>
+</main>
+
+<footer class="foot">
+  <p>Source: ERCOT EMIL products NP3-965-ER (60-Day SCED Disclosure) and NP3-966-ER (60-Day DAM Disclosure), through the site's own detectors: shutdown flags, timescale groups, bidding shifts against peers, loss cutoffs, outages and the wind and solar offer changes. Offer shifts are measured against each unit's peer median on the same day, so a fuel-price move that lifts every gas unit together is not a change here.</p>
+  <p>Made by <a href="https://currenttech.energy">currenttech.energy</a> · <a href="contact.html">Contact</a></p>
+</footer>
+</div>
+<script src="vendor/d3.min.js"></script>
+<script src="common.js"></script>
+<script src="changes.js"></script>
+</body>
+</html>
