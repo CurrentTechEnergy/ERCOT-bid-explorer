@@ -34,16 +34,16 @@ G = np.asarray(PRICE_GRID, dtype=float)
 # price bands for wind and solar offers. Production-tax-credit bids cluster between about
 # −$60 and −$25, with little between −$25 and −$5, so −$20 separates them from shallow negatives.
 # Below −$20 is split three ways (Blair, Oct 16): most of it sits between −$50 and −$30.
+# No separate floor band (Blair, Oct 18): wind and solar offer nothing measurable at −$250.
 BANDS = [
-    ("floor", None, -249.0),     # −$250 / −$249.99
-    ("deep", -249.0, -50.0),     # −$249 up to −$50
+    ("deep", None, -50.0),       # −$250 up to −$50
     ("ptc_mid", -50.0, -35.0),   # −$50 up to −$35
     ("ptc_low", -35.0, -20.0),   # −$35 up to −$20: the shallow tax-credit bids
     ("neg", -20.0, -1.0),        # −$20 up to −$1
     ("zero", -1.0, 0.0),         # (−$1, $0]
     ("pos", 0.0, None),          # above $0
 ]
-# "ptc" (below −$20 down to the floor) is the sum of the three, kept for the Trends page
+# "ptc" (everything below −$20) is the sum of the three, kept for the Trends page
 PTC_PARTS = ("deep", "ptc_mid", "ptc_low")
 RS_TECHS = ["wind", "solar"]
 PQ_TECHS = ["coal", "combined_cycle", "gas_steam", "combustion_turbine"]   # nuclear submits no curves
