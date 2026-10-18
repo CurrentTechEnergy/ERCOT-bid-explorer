@@ -25,6 +25,10 @@ data/trends_hourly_60d.json.gz   {"dates", "floor", "run"}, every series [day][2
 data/trends_60d.json.gz
   starts[tech]           thermal units' starts per day (status not starting "ON" -> starting "ON")
   has_units              per day, 1 when that day's per-unit file was read
+  first_seen             {unit: [date, tech, date with an HSL, largest HSL]}: the first day each
+                         unit (every technology) is in the per-unit files, i.e. in SCED (a new
+                         unit is often listed with no HSL first), the first day it had an HSL
+                         above 0 and its largest HSL; for the new-unit events (events.py)
   units[i]["first"]      first offer price above $0 at or above LSL, averaged over the day's online
                          runs (units.first_positive_price)
   units[i]["le0"]        share of the unit's dispatchable range (HSL - LSL) it offered at or below
@@ -176,6 +180,7 @@ def build_trends(index: dict) -> None:
     flips = []
     prev_date, prev_last = None, {}
     n_unit_days, has_units, empty = 0, [], []
+    first_seen = {}
     for di, d in enumerate(dates):
         sd = summ.get(d) or {}
         st = sd.get("stats") or {}
@@ -193,6 +198,12 @@ def build_trends(index: dict) -> None:
         ud = read_json_gz(UNIT_DATA_DIR / "60d" / f"{d}.json.gz")
         if ud:
             n_unit_days += 1
+            for nm, uu in ud["units"].items():
+                fs = first_seen.setdefault(nm, [d, uu.get("tech"), None, 0])
+                top = max((x[1] or 0 for x in uu.get("lim") or []), default=0)
+                if top > 0:
+                    fs[2] = fs[2] or d
+                    fs[3] = max(fs[3], top)
             known = prev_last if prev_date and np.datetime64(prev_date) + 1 == np.datetime64(d) else {}
             starts, prev_last, fl, pos, le0, tech_le0, le20 = unit_day_facts(ud, known)
             prev_date = d
@@ -265,7 +276,7 @@ def build_trends(index: dict) -> None:
 
     write_json_gz(DATA_DIR / "trends_hourly_60d.json.gz", {"dates": dates, "floor": floor, "run": run})
     write_json_gz(DATA_DIR / "trends_60d.json.gz", {
-        "dates": dates, "starts": starts_t, "has_units": has_units,
+        "dates": dates, "starts": starts_t, "has_units": has_units, "first_seen": first_seen,
         "signals": {k: v["label"] for k, v in SIGNALS.items()}, "window": K, "units": unit_out,
         "changes": sorted(changes, key=lambda c: c[2]),
         "flips": sorted(flips, key=lambda f: (f[2], f[0])),

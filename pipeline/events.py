@@ -28,6 +28,15 @@ Sources (each already computed by its own module; nothing is detected twice):
                    shifting between K online days and the K before, by FUEL thresholds.  Unit
                    key "fleet:<tech>"; carries the Houston Ship Channel gas price over the same
                    two windows (gas_hubs) beside it
+  battery_size     storage.py units.json.gz: a lasting change in a battery's HSL or maximum state
+                   of charge: SIZE_SHARE or more for SIZE_WINDOW days, holding most of the SIZE_HOLD days after; major from SIZE_MAJOR.
+                   Not in a battery's first SIZE_HOLD days charging or discharging
+  battery_new      a battery's first day charging or discharging, after the fleet's first
+                   NEW_GRACE days of data (every battery was renamed for RTC+B on Dec 5, 2025, so
+                   its first day in SCED says nothing)
+  new_unit         any other unit's first day in SCED (trends.py first_seen), after the record's
+                   first NEW_GRACE days; combined-cycle configurations count by train, so a new
+                   configuration of a known train is not a new unit
   outage_start, outage_end
                    an outage spell of OUTAGE_DAYS days or more in the hourly states
                    (unit_hours_60d, outages rewritten as groups.py does), when it started and
@@ -79,6 +88,10 @@ FUEL = {"combined_cycle": (5, 0.2, 0.5), "gas_steam": (5, 0.2, 0.5), "combustion
         "coal": (12, 0.6, 0.6)}
 FUEL_MIN_UNITS = 5    # units with a price that day before its median counts
 FUEL_HUB = "hsc"      # gas hub shown beside the shift (gas_hubs.json.gz)
+# battery size changes (see the docstring)
+SIZE_WINDOW, SIZE_BASE, SIZE_MIN_BASE = 7, 30, 20      # days with a value
+SIZE_SHARE, SIZE_MW, SIZE_HOLD, SIZE_MAJOR = 0.2, 5, 30, 0.5
+NEW_GRACE = 14
 FEED_ALL = 200        # entries in the all-units feed
 FEED_UNIT = 30        # entries in a unit's feed
 DAILY = ("daily1", "daily2", "daily3")
@@ -91,6 +104,9 @@ KINDS = {
     "bidding": "Bidding approach shifted",
     "cutoff": "Loss cutoff moved",
     "fuel": "Fleet median offer shifted",
+    "battery_size": "Battery size changed",
+    "battery_new": "New battery",
+    "new_unit": "New unit",
     "outage_start": "Outage started",
     "outage_end": "Outage ended",
     **{f"renew_{k}": v for k, v in RENEW_KINDS.items()},
@@ -293,6 +309,92 @@ def outage_events(uh, tech_of):
     return out
 
 
+def _size_changes(x):
+    """Positions j in a daily series (days with a value) where the SIZE_WINDOW days from j moved
+    SIZE_SHARE or more from the median of the SIZE_BASE days before, every one of them at least
+    half that far, and held by most of the SIZE_HOLD days after; strongest first, SIZE_BASE apart."""
+    W, cand = SIZE_WINDOW, []
+    for j in range(SIZE_MIN_BASE, len(x) - W - SIZE_HOLD + 1):
+        b, w, a = x[max(0, j - SIZE_BASE):j], x[j:j + W], x[j + W:j + W + SIZE_HOLD]
+        mb, mw, ma = np.median(b), np.median(w), np.median(a)
+        d = mw - mb
+        moved = mb > 0 and abs(d) >= max(SIZE_MW, SIZE_SHARE * mb) and (np.sign(w - mb) == np.sign(d)).all() \
+            and (abs(w - mb) >= abs(d) / 2).all()
+        kept = (np.sign(a - mb) == np.sign(d)).mean() >= 0.9 and abs(ma - mb) >= abs(d) / 2
+        if moved and kept:
+            cand.append((abs(d), j))
+    taken = []
+    for _, j in sorted(cand, reverse=True):
+        if all(abs(j - t) >= SIZE_BASE for t in taken):
+            taken.append(j)
+    return taken
+
+
+def battery_events(su):
+    dates, units = su.get("dates") or [], su.get("units") or {}
+    if not dates:
+        return []
+    active = [i for i in range(len(dates)) if any((u["dis"][i] or 0) > 0 or (u["chg"][i] or 0) > 0 for u in units.values())]
+    if not active:
+        return []
+    out, W = [], SIZE_WINDOW
+    for name, u in sorted(units.items()):
+        act = [i for i in range(len(dates)) if (u["dis"][i] or 0) > 0 or (u["chg"][i] or 0) > 0]
+        if act and act[0] >= active[0] + NEW_GRACE:
+            first = act[:W]
+            mw = max((u["hsl"][i] or 0 for i in first), default=0)
+            mwh = max((u["soc_max"][i] or 0 for i in first), default=0)
+            size = ", ".join(t for t in (f"{mw:,.0f} MW" if mw else "", f"{mwh:,.0f} MWh" if mwh else "") if t)
+            out.append(_ev(name, dates[act[0]], "battery_new", "storage",
+                           "First day charging or discharging" + (f": {size}" if size else ""), True,
+                           value=mw or None, field="MW", mwh=mwh or None))
+        size = defaultdict(list)
+        for f, label in (("hsl", "MW"), ("soc_max", "MWh")):
+            # a new battery ramps up to its size over its first weeks: not a change
+            pts = [(i, x) for i, x in enumerate(u[f]) if x and act and i >= act[0] + SIZE_HOLD]
+            if len(pts) < SIZE_MIN_BASE + W + SIZE_HOLD:
+                continue
+            idx, x = [i for i, _ in pts], np.array([v for _, v in pts], float)
+            for j in _size_changes(x):
+                b, a = float(np.median(x[max(0, j - SIZE_BASE):j])), float(np.median(x[j:j + W]))
+                size[idx[j]].append((f, label, round(b), round(a)))
+        for i, sig in sorted(size.items()):
+            parts = [f"{'Maximum output' if f == 'hsl' else 'Maximum state of charge'} {b:,} to {a:,} {label}"
+                     for f, label, b, a in sig]
+            f, label, b, a = sig[0]
+            out.append(_ev(name, dates[i], "battery_size", "storage", "; ".join(parts),
+                           any(abs(a - b) >= SIZE_MAJOR * b for _, _, b, a in sig), before=b, after=a, field=label,
+                           signals=[[f, b, a] for f, _, b, a in sig]))
+    return out
+
+
+def new_unit_events(tr):
+    seen, dates = tr.get("first_seen") or {}, tr.get("dates") or []
+    have = [d for d, h in zip(dates, tr.get("has_units") or []) if h]
+    if not seen or len(have) <= NEW_GRACE:
+        return []
+    trains = defaultdict(list)
+    for name, (d, tech, d_hsl, top) in seen.items():
+        if tech != "storage":
+            trains[_train(name)].append((d, tech, d_hsl, top))
+    out = []
+    for key, rows in sorted(trains.items()):
+        d, tech = min(rows)[:2]
+        if d <= have[NEW_GRACE - 1]:
+            continue
+        on = min((r[2] for r in rows if r[2]), default=None)
+        top = max(r[3] for r in rows)     # a train: its largest configuration
+        title = "First day in SCED" + (f", first HSL above zero {on}" if on and on != d else "") + (f"; up to {top:,.0f} MW so far" if top else ", no HSL yet")
+        out.append(_ev(key, d, "new_unit", tech, title, True, value=round(top) if top else None, field="MW",
+                       online=on))
+    return out
+
+
+def _train(u):
+    m = re.match(r"^(.*_CC\d+)_", u)
+    return m.group(1) if m else u
+
+
 # -------------------------------------------------------------------- feeds ---
 def _atom(title, link, entries):
     # the feed's own "updated" is its newest entry's, not the run time, so a feed file only
@@ -350,20 +452,25 @@ def build_events(index: dict) -> dict:
     rc = read_json_gz(DATA_DIR / "renew_changes.json.gz", default={}) or {}
     ch = read_json_gz(CUTOFF_PATH, default={}) or {}
     hubs = read_json_gz(DATA_DIR / "gas_hubs.json.gz", default={}) or {}
+    su = read_json_gz(DATA_DIR / "storage" / "units.json.gz", default={}) or {}
     tech_of = {u["unit"]: u["tech"] for u in tr.get("units", []) if u["tech"] in UNIT_TECHS}
     events = (shutdown_events(dec) + group_events(uh, tech_of) + bidding_events(tr) + cutoff_events(ch)
-              + renew_events(rc) + outage_events(uh, tech_of) + fuel_events(tr, hubs))
+              + renew_events(rc) + outage_events(uh, tech_of) + fuel_events(tr, hubs) + battery_events(su)
+              + new_unit_events(tr))
     old = read_json_gz(PATH, default=None) or {}
     seen = {e["id"]: e["seen"] for e in old.get("events", [])}
     # the first build has no earlier file to compare with, so every event it writes is history,
     # not news: they are dated to that run and the run's date is kept as the baseline, which
     # notify.py skips, so the first email never carries years of past events
     baseline = old.get("baseline") or today
+    # likewise a kind the earlier file did not have (a detector added since, such as the battery
+    # events): its first run finds the whole record, which is history too, so it takes the baseline
+    old_kinds = {e["kind"] for e in old.get("events", [])}
     by_id = {}
     for e in events:
         if e["id"] in by_id:
             continue
-        e["seen"] = seen.get(e["id"], today)
+        e["seen"] = seen.get(e["id"], today if not old_kinds or e["kind"] in old_kinds else baseline)
         by_id[e["id"]] = e
     events = sorted(by_id.values(), key=lambda e: (e["date"], e["unit"], e["kind"]), reverse=True)
     updated = dt.datetime.now(dt.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")

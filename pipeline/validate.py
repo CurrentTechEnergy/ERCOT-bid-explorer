@@ -42,10 +42,12 @@ consistency:
                     least the forecast's committed minimum and the top at most its capacity
   events            the unit events file (pipeline/events.py), checked once per run under the
                     pseudo-day "events": ids unique, every kind known, every unit a unit the
-                    site knows (or fleet:<tech> for the fuel kind), every date a real date inside the loaded record (thermal
+                    site knows (or fleet:<tech> for the fuel kind, a battery in
+                    storage/units.json.gz, or a unit or train in trends first_seen), every date a real date inside the loaded record (thermal
                     events inside the 60-day days), a first-seen date on every event; and the
                     cutoff history file: a model name and version, cutoffs numeric per MW of
-                    LSL, every move on a unit with rows
+                    LSL, every move on a unit with rows; and storage/units.json.gz: one value
+                    per day for every field of every battery, no negative size or MWh
 
 A check is an "error" when the numbers cannot both be right (a parsing or mapping bug), a
 "warning" when something is worth a look, and "info" when it is only recorded.  Results that did not pass are kept per day in data/validation.json.
@@ -565,8 +567,9 @@ def _forecast_checks(day, fc):
 
 
 def check_files(index):
-    """Checks on files built once per run rather than per day (events, cutoff history, unit index)."""
-    from .events import FUEL, KINDS, PATH as EVENTS_PATH
+    """Checks on files built once per run rather than per day (events, per-battery daily rows,
+    cutoff history, unit index)."""
+    from .events import FUEL, KINDS, PATH as EVENTS_PATH, _train
     from .models.cutoff_history import PATH as CUTOFF_PATH
     from .unit_index import PATH as UNIT_INDEX_PATH, TECHS as UNIT_INDEX_TECHS
     day = Day("events")
@@ -586,6 +589,10 @@ def check_files(index):
     for e in (read_json_gz(DATA_DIR / "renew_changes.json.gz", default={}) or {}).get("events", []):
         known.add(e.get("plant")); known |= set(e.get("units") or [])
     known |= {f"fleet:{t}" for t in FUEL}      # fleet-wide fuel events
+    su = read_json_gz(DATA_DIR / "storage" / "units.json.gz", default={}) or {}
+    known |= set(su.get("units", {}))           # battery events
+    tr = read_json_gz(DATA_DIR / "trends_60d.json.gz", default={}) or {}
+    known |= {_train(u) for u in tr.get("first_seen") or {}}   # new units (combined cycle by train)
     unknown = sorted({e["unit"] for e in events if e.get("unit") not in known})
     day.add("events_units", "error" if unknown else "ok", f"{len(unknown)} unknown unit(s), e.g. {unknown[:5]}" if unknown else "all known")
     d60 = sorted(index["days"].get("60d", []))
@@ -601,6 +608,14 @@ def check_files(index):
     day.add("events_dates", "error" if bad_date else "ok", f"{len(bad_date)} event(s) outside the record, e.g. {bad_date[:3]}" if bad_date else "inside the record")
     no_seen = [e["id"] for e in events if not e.get("seen")]
     day.add("events_seen", "error" if no_seen else "ok", f"{len(no_seen)} event(s) without a first-seen date" if no_seen else "every event dated")
+    su = read_json_gz(DATA_DIR / "storage" / "units.json.gz", default=None)    # per-battery daily rows
+    if su is not None:
+        n = len(su.get("dates", []))
+        bad = [u for u, r in su.get("units", {}).items() if set(r) != set(su.get("fields", [])) or any(len(v) != n for v in r.values())]
+        neg = [u for u, r in su.get("units", {}).items() if any(v is not None and v < 0 for k in ("hsl", "soc_max", "dis", "chg") for v in r.get(k, []))]
+        day.add("storage_units", "error" if bad or neg else "ok",
+                f"{len(bad)} battery row(s) not one value per day per field, {len(neg)} with a negative size or MWh, "
+                f"e.g. {(bad + neg)[:3]}" if bad or neg else f"{len(su.get('units', {}))} batteries, {n} days")
     ch = read_json_gz(CUTOFF_PATH, default=None)
     if ch is not None:
         ok = bool(ch.get("model")) and bool(ch.get("version"))

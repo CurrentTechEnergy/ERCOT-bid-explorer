@@ -46,7 +46,7 @@
   <div class="brand">
     <div class="nav-row"><nav class="nav" aria-label="Pages"><a href="index.html">Overview</a><a href="commitment.html">Commitment</a><a href="changes.html" aria-current="page">What's changing</a><a href="beyond.html">Beyond baseload</a><a href="renewables.html">Renewables</a><a href="batteries.html">Batteries</a><a href="fleet.html">Fleet economics</a><a href="unit.html">Units</a><a href="trends.html">Trends</a><a href="builder.html">Graph builder</a><a href="guide.html">How offers work</a></nav></div>
     <h1>What's changing</h1>
-    <p class="sub">Units that changed how they bid or run, newest first: thermal units that shut down after a long run or despite a day-ahead award, moved timescale group, shifted their offers or started and ended long outages, wind and solar plants that changed their floor or pricing formula, and whole fleets whose median offer price moved, as in a gas price spike. Each change is dated to the operating day it happened. Unit data comes from ERCOT's 60-day disclosures, so the newest changes are about two months old.</p>
+    <p class="sub">Units that changed how they bid or run, newest first: thermal units that shut down after a long run or despite a day-ahead award, moved timescale group, shifted their offers or started and ended long outages, wind and solar plants that changed their floor or pricing formula, batteries that came online or lastingly changed size, new units on their first day in SCED, and whole fleets whose median offer price moved, as in a gas price spike. Each change is dated to the operating day it happened. Unit data comes from ERCOT's 60-day disclosures, so the newest changes are about two months old.</p>
   </div>
   <p class="status" id="status">Loading data…</p>
 </header>
@@ -104,7 +104,7 @@
 </main>
 
 <footer class="foot">
-  <p>Source: ERCOT EMIL products NP3-965-ER (60-Day SCED Disclosure) and NP3-966-ER (60-Day DAM Disclosure), through the site's own detectors: shutdown flags, timescale groups, bidding shifts against peers, loss cutoffs, outages and the wind and solar offer changes. Offer shifts are measured against each unit's peer median on the same day, so a fuel-price move that lifts every gas unit together shows instead as a shift in that technology's median offer (combined cycle, gas steam and peakers from a 20% and $5/MWh move between one week of online days and the one before; coal only from 60% and $12/MWh, above its usual swings), beside the Houston Ship Channel gas price over the same weeks.</p>
+  <p>Source: ERCOT EMIL products NP3-965-ER (60-Day SCED Disclosure) and NP3-966-ER (60-Day DAM Disclosure), through the site's own detectors: shutdown flags, timescale groups, bidding shifts against peers, loss cutoffs, outages, the wind and solar offer changes, battery sizes and each unit's first day in SCED (combined-cycle units by train; units in the first two weeks of the record are not counted as new). Offer shifts are measured against each unit's peer median on the same day, so a fuel-price move that lifts every gas unit together shows instead as a shift in that technology's median offer (combined cycle, gas steam and peakers from a 20% and $5/MWh move between one week of online days and the one before; coal only from 60% and $12/MWh, above its usual swings), beside the Houston Ship Channel gas price over the same weeks.</p>
   <p>Made by <a href="https://currenttech.energy">currenttech.energy</a> · <a href="contact.html">Contact</a></p>
 </footer>
 </div>
