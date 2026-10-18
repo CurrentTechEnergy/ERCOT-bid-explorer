@@ -10,6 +10,8 @@ DATA_DIR = SITE_DIR / "data"
 # Full-fidelity per-unit day files (see pipeline/units.py). Too big for the site's branch:
 # in GitHub Actions this is a checkout of the orphan `data` branch. Gitignored on main.
 UNIT_DATA_DIR = Path(os.environ.get("UNIT_DATA_DIR") or (ROOT / "unitdata")).resolve()
+# Where the site is published; the feeds (pipeline/events.py) link back to it.
+SITE_URL = os.environ.get("SITE_URL") or "https://currenttechenergy.github.io/ERCOT-bid-explorer/"
 
 # Price grid ($/MWh) on which every curve is stored.
 # $1 steps where low-price behaviour lives, coarser above.
