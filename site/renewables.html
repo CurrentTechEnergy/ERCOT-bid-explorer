@@ -39,6 +39,27 @@
 </header>
 
 <main>
+  <section class="panel panel-wide" id="day-panel">
+    <div class="panel-head">
+      <div>
+        <h2>Curtailment by hour, one day <span class="h-note" id="curt-title-note"></span></h2>
+        <p class="note">MW wind and solar could have produced (HSL) minus the base point SCED sent them, averaged over each hour: the output SCED held back, for price or for congestion. From the 60-day disclosure where the day has it, otherwise the 2-day estimate. Opens on the latest day.</p>
+      </div>
+    </div>
+    <div class="ctl-row">
+      <div class="ctl">
+        <label class="lbl" for="cday">Operating day</label>
+        <div class="date-step">
+          <button type="button" class="step" id="cday-prev" aria-label="Previous day" title="Previous day">&#8249;</button>
+          <select id="cday"></select>
+          <button type="button" class="step" id="cday-next" aria-label="Next day" title="Next day">&#8250;</button>
+        </div>
+      </div>
+    </div>
+    <div class="legend legend-static" id="curt-day-legend"></div>
+    <div class="chart" id="curt-chart"></div>
+  </section>
+
   <section class="panel panel-wide">
     <div class="panel-head">
       <div>
@@ -72,20 +93,6 @@
     <div class="legend legend-static" id="nc-bins-legend"></div>
     <div class="chart" id="nc-bins"></div>
     <div class="chart" id="nc-value"></div>
-    <h3 class="sub-h">One day by hour <span class="h-note" id="curt-title-note"></span></h3>
-    <div class="ctl-row">
-      <div class="ctl">
-        <label class="lbl" for="cday">Operating day</label>
-        <div class="date-step">
-          <button type="button" class="step" id="cday-prev" aria-label="Previous day" title="Previous day">&#8249;</button>
-          <select id="cday"></select>
-          <button type="button" class="step" id="cday-next" aria-label="Next day" title="Next day">&#8250;</button>
-        </div>
-      </div>
-    </div>
-    <p class="note">MW wind and solar could have produced (HSL) minus the base point SCED sent them, averaged over each hour. From the 60-day disclosure where the day has it, otherwise the 2-day estimate.</p>
-    <div class="legend legend-static" id="curt-day-legend"></div>
-    <div class="chart" id="curt-chart"></div>
     <h3 class="sub-h">Units</h3>
     <div class="units-wrap" id="nc-units"></div>
     <p><button type="button" class="more" id="nc-more" hidden>Show all</button></p>
