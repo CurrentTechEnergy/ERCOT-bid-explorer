@@ -163,6 +163,10 @@ pipeline/
 site/
   index.html, overview.js (the Overview and landing page: the forecast files rendered, with the day
                    drill-down; overview.html redirects here),
+  commitment.html, commitment.js (which thermal units stay on when power is cheap: the cutoff curve
+                   from the day's forecast file, groups and cutoffs, the forecast against the 2-day fit and
+                   the 60-day answer, and the thermal panels lifted from Trends, plus what riding through
+                   cheap stretches cost from data/stayon_60d.json.gz and one row per unit),
   beyond.html, renewables.html, fleet.html, unit.html, builder.html and their scripts,
   guide.html, guide.js (How offers work, including how revenue is counted and how hedge signals are found),
   day.html, app.js, trends.html, trends.js, economics.html, economics.js, contracts.html, contracts.js

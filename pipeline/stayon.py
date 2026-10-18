@@ -1,5 +1,6 @@
 """Stay on or shut down: what thermal units earned or lost by running through cheap stretches,
-against what a shutdown and restart would have cost.  Needs no downloads.  Read by trends.html.
+against what a shutdown and restart would have cost.  Needs no downloads.  Read by
+commitment.html (what the decision cost, and the units table).
 
 A cheap stretch is a run of consecutive hours (across consecutive days) with system lambda
 below a threshold (intraday.CHEAP).  A unit "rode through" a stretch when it was running in
