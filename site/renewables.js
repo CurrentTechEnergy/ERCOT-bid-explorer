@@ -2,9 +2,9 @@
    panel: daily by cause, by price at lambda or at the node, value, units). Lifted from trends.js
    (drawRenewBands, drawCurtailment, drawNodeCurtail) and app.js (drawCurtail). Reads
    data/curve_trends.json.gz, data/curtail_nodes.json.gz and data/renew/sig-YYYY.json.gz (each
-   unit's offer on its curtailed days). Wind and solar economics are on the Fleet economics page.
-   The hedge signals on the same page are renewables-hedge.js. This file owns the status line and
-   the shared chart controls (CX.init). */
+   unit's offer on its curtailed days). Fleet economics moved to fleet.html. The hedge signals on
+   the same page are renewables-hedge.js. This file owns the status line and the shared chart
+   controls (CX.init). */
 (() => {
 "use strict";
 
