@@ -1,6 +1,6 @@
 /* Unit page, no unit picked: the Units directory, every unit the page can open (data/unit_index.json.gz,
-   pipeline/unit_index.py), filtered by technology and by the text in the page's Unit box, sorted by
-   any column. Enter in the Unit box opens the first unit listed. */
+   pipeline/unit_index.py) with its CDR name, county and zone, filtered by technology and by the text
+   in the page's Unit box, sorted by any column. Enter in the Unit box opens the first unit listed. */
 (() => {
 "use strict";
 const { setCSV, esc, unitIndex, findUnits } = window.CX;
@@ -18,6 +18,10 @@ const COLS = [
   { k: "tech", h: "Technology", t: 1, f: (u) => TECH_LABEL[u.tech] || esc(u.tech) },
   { k: "group", h: "Group", t: 1, f: (u) => (u.group ? GROUP_SHORT[u.group] || esc(u.group) : "–") },
   { k: "mw", h: "Capacity (MW)", f: (u) => (u.mw == null ? "–" : d3.format(",")(u.mw)) },
+  { k: "plant", h: "Name (CDR)", t: 1, f: (u) => (u.plant ? esc(u.plant) + (u.match === "site" ? ' <span class="tag" title="Matched by plant, not by unit">plant</span>' : "") : "–") },
+  { k: "county", h: "County", t: 1, f: (u) => esc(u.county || "–") },
+  { k: "zone", h: "Zone", t: 1, f: (u) => esc(u.zone || "–") },
+  { k: "qse", h: "QSE", t: 1, f: (u) => esc(u.qse || "–"), opt: 1 },
   { k: "sp", h: "Settlement point", t: 1, f: (u) => esc(u.sp || "–") },
   { k: "configs", h: "Configurations", t: 1, f: (u) => (u.configs.length ? esc(u.configs.join(", ")) : "") },
 ];
@@ -37,16 +41,18 @@ function draw() {
   if (!S.units) return;
   if (!S.units.length) { el.innerHTML = `<p class="empty">The unit list is not available.</p>`; return; }
   const us = S.shown = rows();
+  const cols = COLS.filter((c) => !c.opt || S.units.some((u) => u[c.k]));      // QSE only once the data has it
   const q = $("unit-pick").value.trim(), of = S.units.filter((u) => S.tech === "all" || u.tech === S.tech).length;
   $("dir-note").textContent = (q ? `${us.length} of ${of}` : `${of}`) + (S.tech === "all" ? " units" : ` ${TECH_LABEL[S.tech].toLowerCase()} units`) + (q ? ` matching “${q}”` : "");
-  el.innerHTML = us.length ? `<table class="data"><thead><tr>${COLS.map((c) => `<th class="sortable${c.t ? " t" : ""}" data-k="${c.k}">${c.h}${S.sort === c.k ? (S.dir < 0 ? " ▾" : " ▴") : ""}</th>`).join("")}</tr></thead><tbody>` +
-    us.map((u) => `<tr>${COLS.map((c) => `<td${c.t ? ' class="t"' : ""}>${c.f(u)}</td>`).join("")}</tr>`).join("") + "</tbody></table>"
+  el.innerHTML = us.length ? `<table class="data"><thead><tr>${cols.map((c) => `<th class="sortable${c.t ? " t" : ""}" data-k="${c.k}">${c.h}${S.sort === c.k ? (S.dir < 0 ? " ▾" : " ▴") : ""}</th>`).join("")}</tr></thead><tbody>` +
+    us.map((u) => `<tr>${cols.map((c) => `<td${c.t ? ' class="t"' : ""}>${c.f(u)}</td>`).join("")}</tr>`).join("") + "</tbody></table>"
     : `<p class="empty">No unit matches. Try part of the name or the settlement point.</p>`;
   el.querySelectorAll("th[data-k]").forEach((th) => th.addEventListener("click", () => {
     const k = th.dataset.k; if (S.sort === k) S.dir = -S.dir; else { S.sort = k; S.dir = ["mw", "configs"].includes(k) ? -1 : 1; }
     draw();
   }));
-  setCSV(el, ["unit", "technology", "group", "capacity_mw", "settlement_point", "configurations"], us.map((u) => [u.unit, u.tech, u.group, u.mw, u.sp, u.configs.join(" ")]), "Units");
+  setCSV(el, ["unit", "technology", "group", "capacity_mw", "cdr_name", "cdr_match", "county", "zone", "qse", "settlement_point", "configurations"],
+    us.map((u) => [u.unit, u.tech, u.group, u.mw, u.plant, u.match, u.county, u.zone, u.qse, u.sp, u.configs.join(" ")]), "Units");
 }
 
 async function boot() {
@@ -70,6 +76,7 @@ async function boot() {
     pick.dispatchEvent(new Event("change"));
   });
   S.units = (await unitIndex()) || [];
+  if (unitIndex.cdr) $("dir-cdr").textContent = ` (${unitIndex.cdr})`;
   draw();
 }
 boot();

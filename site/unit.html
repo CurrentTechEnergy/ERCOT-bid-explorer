@@ -43,7 +43,7 @@
 <section class="controls" aria-label="Unit">
   <div class="ctl">
     <label class="lbl" for="unit-pick">Unit</label>
-    <input type="search" class="unit-pick" id="unit-pick" list="unit-list" placeholder="Type a unit name" autocomplete="off">
+    <input type="search" class="unit-pick" id="unit-pick" list="unit-list" placeholder="Unit, plant or county" autocomplete="off">
     <datalist id="unit-list"></datalist>
   </div>
 </section>
@@ -53,7 +53,7 @@
     <div class="panel-head">
       <div>
         <h2>All units <span class="h-note" id="dir-note"></span></h2>
-        <p class="note">Type in the Unit box above to filter, and click a unit to open its page. Thermal units, wind and solar are listed; a combined-cycle train is one entry, and a search for one of its configurations finds it. <b>Group</b> is the unit's timescale group in the latest forecast (how often it shuts down; thermal only). <b>Capacity</b> is the 95th percentile of each day's highest HSL. Batteries are not listed yet.</p>
+        <p class="note">Type a unit, plant, county or settlement point in the Unit box above to filter, and click a unit to open its page. Thermal units, wind and solar are listed; a combined-cycle train is one entry, and a search for one of its configurations finds it. <b>Group</b> is the unit's timescale group in the latest forecast (how often it shuts down; thermal only). <b>Capacity</b> is the 95th percentile of each day's highest HSL. <b>Name</b>, county and zone come from ERCOT's Capacity, Demand and Reserves report<span id="dir-cdr"></span>, matched on the unit code; <span class="tag">plant</span> marks a unit matched only to its plant, which is how combined-cycle trains match, since the report lists each turbine. The Unit box also searches these names. Batteries are not listed yet.</p>
       </div>
     </div>
     <div class="ctl-row">

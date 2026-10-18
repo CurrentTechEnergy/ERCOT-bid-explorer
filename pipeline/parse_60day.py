@@ -30,6 +30,7 @@ from .dispatchable import above_lsl, block_from_arrays
 from .store import iter_csvs, thresholds_from_curves, _round
 from .units import build_unit_day
 from .log import warn
+from . import qse
 
 N_SCED_PTS = 35
 N_TPO_PTS = 10   # ESR files may carry more; detected from the header
@@ -153,6 +154,7 @@ class _Accumulator:
         t = parse_sced_time(df["SCED Time Stamp"])
         hour = t["hour"].values
         self.dates.extend(t["date"].unique().tolist())
+        qse.note("60d", df, "Resource Name", str(t["date"].iloc[0]) if len(df) else "")
         run = (df["SCED Time Stamp"].astype(str) + "|" + df["Repeated Hour Flag"].astype(str)).values
         for h in np.unique(hour):
             self.runs[int(h)].update(np.unique(run[hour == h]).tolist())
