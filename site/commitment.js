@@ -777,6 +777,8 @@ function cutDomain(U) {
 }
 
 function drawCutoff() {
+  // a surface-coloured outline so chart labels read over the stacked bands
+  const halo = (t) => t.attr("paint-order", "stroke").attr("stroke", css("--surface")).attr("stroke-width", 3).attr("stroke-linejoin", "round");
   const el = $("cut-chart"), F = S.F, byTech = S.cutBy === "tech";
   setSeg("cut-by", S.cutBy);
   if (!F) { $("cut-note").textContent = ""; $("cut-legend").innerHTML = ""; return emptyMsg(el, "No forecast file for this day."); }
@@ -823,10 +825,12 @@ function drawCutoff() {
     base = hi;
   });
   svg.append("line").attr("x1", m.l).attr("x2", w - m.r).attr("y1", y(today)).attr("y2", y(today)).attr("stroke", css("--ink")).attr("stroke-width", 1.5).attr("stroke-dasharray", "6 4");
-  svg.append("text").attr("class", "axis-title").attr("x", w - m.r - 4).attr("y", y(today) - 5).attr("text-anchor", "end").text(`Expected committed minimum: ${fmtMW(today)} MW`);
+  svg.append("text").attr("class", "axis-title").attr("x", w - m.r - 4).attr("y", y(today) - 5).attr("text-anchor", "end").call(halo).text(`Expected committed minimum: ${fmtMW(today)} MW`);
   if (typical != null && typical >= x0 && typical <= x1) {
     svg.append("line").attr("x1", x(typical)).attr("x2", x(typical)).attr("y1", m.t).attr("y2", H - m.b).attr("stroke", css("--ink")).attr("stroke-dasharray", "2 3");
-    svg.append("text").attr("class", "axis-title").attr("x", x(typical) + 4).attr("y", m.t + 10).text(`Median daily unit's loss: ${fmtPerMW(typical)}/MW`);
+    const flip = x(typical) > w - m.r - (w < 560 ? 130 : 200);
+    svg.append("text").attr("class", "axis-title").attr("x", x(typical) + (flip ? -4 : 4)).attr("y", m.t + 10).attr("text-anchor", flip ? "end" : "start").call(halo)
+      .text(`${w < 560 ? "Median loss" : "Median daily unit's loss"}: ${fmtPerMW(typical)}/MW`);
   }
   const cross = svg.append("line").attr("class", "crosshair").attr("y1", m.t).attr("y2", H - m.b).style("display", "none");
   svg.append("rect").attr("x", m.l).attr("y", m.t).attr("width", w - m.l - m.r).attr("height", H - m.t - m.b).attr("fill", "transparent")
@@ -854,10 +858,8 @@ function drawCutUnits() {
   if (!rowsG.length) { $("cut-units-note").textContent = ""; return emptyMsg(el, "No unit has a cutoff on this day."); }
   const n = (v) => U.filter((u) => u.verdict === v).length;
   $("cut-units-note").textContent = `${U.length} units with a cutoff: ${n("on")} expected on, ${n("off")} expected off and ${n("maybe")} maybe. Each dot is a unit's cutoff, sized by its LSL; the tick is the loss per MW it faced on the day at its own node, and the line between them is red where the loss is past the cutoff. ` +
-    `The hollow diamond is the hot start cost in the unit's latest day-ahead offer, per MW of LSL. Neither the loss nor the forecast uses it: the cutoff is fitted from what the unit did, so the gap between dot and diamond is how far its behaviour sits from its offered start cost. Offered start costs are capped by ERCOT's cost verification, so they are an upper bound. ` +
     `Losses beyond the right edge are drawn at the edge. "Maybe" is a unit past its cutoff that has held a day-ahead award over its loss window on half or more of its days, since the award is not public until the 60-day disclosure. Click a unit to open it.`;
   $("cut-units-legend").innerHTML = rowsG.map((g) => `<span><span class="sw" style="background:var(${FLOOR_GROUPS.find((f) => f.id === g.id).color})"></span>${g.label}</span>`).join("") +
-    `<span><span class="sw" style="background:transparent;border:1px solid var(--ink-2);transform:rotate(45deg);width:7px;height:7px"></span>Hot start offered, per MW of LSL</span>` +
     `<span><span class="sw" style="background:var(--c8);height:3px"></span>Loss past the cutoff</span><span><span class="sw" style="background:var(--muted);height:3px"></span>Loss within it</span>`;
   const [x0, x1] = cutDomain(U);
   // same margins and loss axis as the cutoff curve above; each group's name sits above its row
@@ -876,11 +878,10 @@ function drawCutUnits() {
     const us = U.filter((u) => u.group === g.id).sort((a, b) => a.c - b.c);
     us.forEach((u, k) => {
       const yy = top + 23 + (k % lanes) * lane + lane / 2, past = u.l != null && u.l > u.c;
-      const dec = decisionOf(u.unit), hs = dec?.hot && dec.lsl ? dec.hot / dec.lsl : null;
       const gU = svg.append("g").style("cursor", "pointer")
         .on("pointermove", (ev) => showTip(ev, `<h4>${esc(u.unit)}</h4>${techLabel(u.tech)} · ${g.label}<br>LSL ${fmtMW(u.lsl)} MW<br>` +
           `Cutoff ${fmt$(u.cutoff)} (${fmtPerMW(u.c)}/MW)<br>Loss on the day ${fmt$(u.loss)} (${fmtPerMW(u.l)}/MW)<br>` +
-          `Hot start offered ${hs == null ? "–" : `${fmt$(dec.hot)} (${fmtPerMW(hs)}/MW)${dec.est === 2 ? ", generic for the technology" : ""}`}<br><b>${VERDICT[u.verdict] || u.verdict}</b>` +
+          `<b>${VERDICT[u.verdict] || u.verdict}</b>` +
           (u.reason ? `<br><span class="muted">${esc(u.reason)}</span>` : "") + `<br><span class="tip-pin-note">Click to open the unit</span>`))
         .on("pointerleave", hideTip)
         .on("click", () => { location.href = unitHref(u.unit); });
@@ -888,16 +889,14 @@ function drawCutUnits() {
         gU.append("line").attr("x1", x(u.c)).attr("x2", x(u.l)).attr("y1", yy).attr("y2", yy).attr("stroke", css(past ? "--c8" : "--muted")).attr("stroke-width", 1.5);
         gU.append("line").attr("x1", x(u.l)).attr("x2", x(u.l)).attr("y1", yy - 3).attr("y2", yy + 3).attr("stroke", css("--ink")).attr("stroke-width", 1.5);
       }
-      if (hs != null) gU.append("path").attr("d", d3.symbol(d3.symbolDiamond, 22)()).attr("transform", `translate(${x(hs)},${yy})`)
-        .attr("fill", "none").attr("stroke", css("--ink-2")).attr("stroke-width", 1);
       gU.append("circle").attr("cx", x(u.c)).attr("cy", yy).attr("r", r(u.lsl)).attr("fill", col).attr("stroke", css("--surface")).attr("stroke-width", 0.5);
     });
     if (gi) svg.append("line").attr("x1", m.l).attr("x2", w - m.r).attr("y1", top).attr("y2", top).attr("stroke", css("--line"));
   });
   svg.append("text").attr("class", "axis-title").attr("x", w - m.r).attr("y", H - 2).attr("text-anchor", "end").text("$ per MW of LSL");
   el.replaceChildren(svg.node());
-  setCSV(el, ["unit", "technology", "group", "lsl_mw", "cutoff_usd", "cutoff_usd_per_mw", "loss_usd", "loss_usd_per_mw", "hot_start_usd", "verdict"],
-    U.map((u) => [u.unit, u.tech, u.group, u.lsl, u.cutoff, u.c == null ? null : +u.c.toFixed(2), u.loss, u.l == null ? null : +u.l.toFixed(2), decisionOf(u.unit)?.hot ?? null, u.verdict]), `Unit cutoffs ${F.date}`);
+  setCSV(el, ["unit", "technology", "group", "lsl_mw", "cutoff_usd", "cutoff_usd_per_mw", "loss_usd", "loss_usd_per_mw", "verdict"],
+    U.map((u) => [u.unit, u.tech, u.group, u.lsl, u.cutoff, u.c == null ? null : +u.c.toFixed(2), u.loss, u.l == null ? null : +u.l.toFixed(2), u.verdict]), `Unit cutoffs ${F.date}`);
 }
 
 // the six groups on the day (forecast capacity) with how well the daily units' cutoffs fit their
