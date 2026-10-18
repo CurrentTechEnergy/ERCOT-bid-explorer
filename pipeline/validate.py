@@ -536,9 +536,10 @@ def _forecast_checks(day, fc):
 
 
 def check_files(index):
-    """Checks on files built once per run rather than per day (events, cutoff history)."""
+    """Checks on files built once per run rather than per day (events, cutoff history, unit index)."""
     from .events import FUEL, KINDS, PATH as EVENTS_PATH
     from .models.cutoff_history import PATH as CUTOFF_PATH
+    from .unit_index import PATH as UNIT_INDEX_PATH, TECHS as UNIT_INDEX_TECHS
     day = Day("events")
     ev = read_json_gz(EVENTS_PATH, default=None)
     if ev is None:
@@ -580,6 +581,14 @@ def check_files(index):
         day.add("cutoff_rows", "error" if bad else "ok", f"{len(bad)} unit(s) with bad rows, e.g. {bad[:3]}" if bad else f"{len(ch.get('units', {}))} units")
         orphan = [m["unit"] for m in ch.get("moves", []) if m["unit"] not in ch.get("units", {}) or not isinstance(m.get("to"), (int, float))]
         day.add("cutoff_moves", "error" if orphan else "ok", f"{len(orphan)} move(s) without rows, e.g. {orphan[:3]}" if orphan else f"{len(ch.get('moves', []))} moves")
+    ui = read_json_gz(UNIT_INDEX_PATH, default=None)
+    if ui is not None:
+        rows = ui.get("rows", [])
+        names = [r[0] for r in rows]
+        dup = len(names) - len(set(names))
+        day.add("unit_index_names", "error" if dup or not rows else "ok", f"{dup} duplicate name(s)" if dup else f"{len(rows)} units" if rows else "empty")
+        bad = [r[0] for r in rows if r[1] not in UNIT_INDEX_TECHS or (r[3] is not None and not r[3] >= 0)]
+        day.add("unit_index_rows", "error" if bad else "ok", f"{len(bad)} row(s) with an unknown tech or bad MW, e.g. {bad[:3]}" if bad else "techs known, MW non-negative")
     return day
 
 

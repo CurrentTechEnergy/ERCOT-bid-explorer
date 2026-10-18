@@ -54,6 +54,7 @@ from .models.cutoff_history import build_cutoff_history
 from .events import build_events
 from .series import build_series
 from .storage import build_storage
+from .unit_index import build_unit_index
 from .store import describe_blob, iter_csvs, zip_names, load_index, read_json_gz, save_index, update_summary, write_json_gz
 from .log import warn, write_summary, WARNINGS
 
@@ -484,6 +485,7 @@ def main(argv=None):
         build_forecast(index)
     build_cutoff_history(index)
     build_events(index)
+    build_unit_index(index)
     save_index(index)
     added = {k: sorted(set(index["days"][k]) - before.get(k, set())) for k in index["days"]}
     names = {"2d": "2-day curves", "2dgen": "2-day generation summary", "60d": "60-day curves",
