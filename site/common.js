@@ -332,7 +332,8 @@ function panelFromLink() {
 }
 
 // ---------------------------------------------------------- find a unit ---
-// A search box in every page's nav row that opens a unit's page. The unit list
+// A search box in every page's nav row that opens a unit's page, by resource name, settlement
+// point, combined-cycle configuration, CDR plant name, county or QSE. The unit list
 // (data/unit_index.json.gz, pipeline/unit_index.py) loads on first focus. The Unit page has its
 // own picker and directory, so it gets no box here.
 const TECH_SHORT = { nuclear: "Nuclear", coal: "Coal", combined_cycle: "Combined cycle", gas_steam: "Gas steam", combustion_turbine: "Combustion turbine", wind: "Wind", solar: "Solar" };
@@ -342,9 +343,10 @@ async function unitIndex() {
   const ui = await tryJSON("data/unit_index.json.gz");
   if (!ui) return null;
   const c = ui.columns;
+  unitIndex.cdr = ui.cdr || "";
   return ui.rows.map((r) => {
     const u = Object.fromEntries(c.map((k, i) => [k, r[i]]));
-    u.text = [u.unit, u.sp, ...(u.configs || []), u.plant, TECH_SHORT[u.tech]].filter(Boolean).join(" ").toLowerCase();
+    u.text = [u.unit, u.sp, ...(u.configs || []), u.plant, u.county, u.qse, TECH_SHORT[u.tech]].filter(Boolean).join(" ").toLowerCase();
     return u;
   });
 }
@@ -361,7 +363,7 @@ function initUnitFind() {
   if (!row || $("unit-pick")) return;
   const box = document.createElement("div");
   box.className = "unit-find";
-  box.innerHTML = `<input type="search" id="unit-find" placeholder="Find a unit" aria-label="Find a unit by name or settlement point" autocomplete="off" spellcheck="false" role="combobox" aria-expanded="false" aria-controls="unit-find-list" aria-autocomplete="list">` +
+  box.innerHTML = `<input type="search" id="unit-find" placeholder="Find a unit" aria-label="Find a unit by name, plant, county or settlement point" autocomplete="off" spellcheck="false" role="combobox" aria-expanded="false" aria-controls="unit-find-list" aria-autocomplete="list">` +
     `<ul class="unit-find-list" id="unit-find-list" role="listbox" hidden></ul>`;
   row.appendChild(box);
   const input = box.querySelector("input"), list = box.querySelector("ul");
@@ -372,7 +374,7 @@ function initUnitFind() {
     if (!units) { list.innerHTML = `<li class="unit-find-none">Loading units…</li>`; list.hidden = !input.value.trim(); return; }
     hits = findUnits(units, input.value);
     at = hits.length ? 0 : -1;
-    list.innerHTML = hits.length ? hits.map((u, i) => `<li role="option" id="unit-find-${i}"><a href="${unitURL(u.unit)}"><span class="unit-find-name">${esc(u.unit)}</span>` +
+    list.innerHTML = hits.length ? hits.map((u, i) => `<li role="option" id="unit-find-${i}"><a href="${unitURL(u.unit)}"><span class="unit-find-name">${esc(u.unit)}${u.plant ? `<small>${esc(u.plant)}</small>` : ""}</span>` +
       `<span class="unit-find-meta">${TECH_SHORT[u.tech] || esc(u.tech)}${u.mw ? ` · ${u.mw} MW` : ""}</span></a></li>`).join("")
       : `<li class="unit-find-none">No unit matches. <a href="unit.html">Browse all units</a></li>`;
     list.hidden = !input.value.trim();

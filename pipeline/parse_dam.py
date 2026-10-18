@@ -57,6 +57,7 @@ import pandas as pd
 from .config import SIXTY_DAY_TECHS, TECH_OF_TYPE
 from .curves import to_iso_date
 from .log import warn
+from . import qse
 from .store import iter_csvs
 
 GEN_FILE = "60d_dam_gen_resource_data"
@@ -159,6 +160,7 @@ def parse_dam_frame(df: pd.DataFrame, files=None):
 
     dates = to_iso_date(df[col["date"]])
     date = dates.value_counts().idxmax()
+    qse.note("dam", df, col["unit"], str(date))
     if (dates != date).any():
         warn(f"DAM file for {date} also carries rows for {sorted(set(dates[dates != date]))[:3]}; they are dropped")
         df = df[dates == date]

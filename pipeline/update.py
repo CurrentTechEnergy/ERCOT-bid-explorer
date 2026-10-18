@@ -55,6 +55,7 @@ from .events import build_events
 from .series import build_series
 from .storage import build_storage
 from .unit_index import build_unit_index
+from . import qse
 from .store import describe_blob, iter_csvs, zip_names, load_index, read_json_gz, save_index, update_summary, write_json_gz
 from .log import warn, write_summary, WARNINGS
 
@@ -485,6 +486,7 @@ def main(argv=None):
         build_forecast(index)
     build_cutoff_history(index)
     build_events(index)
+    qse_lines = qse.save()
     build_unit_index(index)
     save_index(index)
     added = {k: sorted(set(index["days"][k]) - before.get(k, set())) for k in index["days"]}
@@ -495,6 +497,7 @@ def main(argv=None):
     for k, v in added.items():
         lines.append(f"| {names.get(k, k)} | {len(v)} | {v[0] + ' to ' + v[-1] if v else '–'} |")
     lines += unit_file_summary()
+    lines += [""] + qse_lines if qse_lines else []
     o = OVERRIDE_STATS
     if o["days"]:
         msg = (f"HDL/LDL overrides: {o['files']} file(s) read over {o['days']} day(s), "

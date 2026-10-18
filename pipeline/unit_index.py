@@ -7,23 +7,34 @@ thermal units from the 60-day trends, the decision record and the latest forecas
 cycle train is one entry, its configurations under it), and wind and solar from the hedge scan
 (ppa.json.gz).  Batteries, hydro and "other" have no Unit page yet and are left out.
 
+Names come from ERCOT's CDR report (pipeline/cdr.py, matched here on every build) and the QSE
+from the 60-day files where they carry one (pipeline/qse.py, data/unit_qse.json.gz).
+
 Writes data/unit_index.json.gz:
-  {updated, columns: ["unit", "tech", "group", "mw", "sp", "configs"], rows: [[...], ...]}
+  {updated, cdr (the CDR edition the names come from), columns: ["unit", "tech", "group", "mw", "sp", "configs", "plant", "county", "zone",
+   "match", "qse"], rows: [[...], ...]}
   unit     resource name (the train for combined cycle), sorted by name
   tech     config.TECH_OF_TYPE grouping
   group    the latest forecast's timescale group (thermal only; null when not in the forecast)
   mw       capacity: econ's hsl, the 95th percentile of each day's highest HSL (null without econ data)
   sp       settlement point, from econ or the hedge scan
   configs  combined-cycle configuration names, so a search for one finds its train ([] otherwise)
+  plant    the CDR's name: the unit's own name on a "unit" match, the plant's on a "site" match
+  county, zone   from the CDR
+  match    "unit", "site" or null (cdr.Matcher)
+  qse      the QSE last seen scheduling the unit (any configuration's, for a train); null when
+           the 60-day files carry none
 """
 import datetime as dt
 import re
 
+from . import cdr
 from .config import DATA_DIR
+from .qse import PATH as QSE_PATH
 from .store import read_json_gz, write_json_gz
 
 PATH = DATA_DIR / "unit_index.json.gz"
-COLUMNS = ["unit", "tech", "group", "mw", "sp", "configs"]
+COLUMNS = ["unit", "tech", "group", "mw", "sp", "configs", "plant", "county", "zone", "match", "qse"]
 TECHS = ("nuclear", "coal", "combined_cycle", "gas_steam", "combustion_turbine", "wind", "solar")
 _TRAIN = re.compile(r"^(.*_CC\d+)_")
 
@@ -33,7 +44,7 @@ def train_of(name: str) -> str:
     return m.group(1) if m else name
 
 
-def build(trends: dict, decisions: dict, forecast: dict, ppa: dict, econ: dict) -> dict:
+def build(trends: dict, decisions: dict, forecast: dict, ppa: dict, econ: dict, cdr_rows=(), qses=None) -> dict:
     units = {}
 
     def add(name, tech, cfg=None):
@@ -63,6 +74,7 @@ def build(trends: dict, decisions: dict, forecast: dict, ppa: dict, econ: dict) 
         if u.get("sp"):
             sp[u["name"]] = u["sp"]
 
+    matcher, qses = cdr.Matcher(list(cdr_rows)), qses or {}
     rows = []
     for name in sorted(units):
         e = units[name]
@@ -70,9 +82,12 @@ def build(trends: dict, decisions: dict, forecast: dict, ppa: dict, econ: dict) 
         cfgs = set(e["configs"]) | set(ec.get("configs") or [])
         cfgs.discard(name)
         mw = ec.get("hsl")
+        m, how = matcher.match(name, e["tech"], sorted(cfgs))
+        q = next((qses[k][0] for k in (name, *sorted(cfgs)) if k in qses), None)
         rows.append([name, e["tech"], group.get(name), round(mw) if mw else None,
-                     ec.get("sp") or sp.get(name), sorted(cfgs)])
-    return {"updated": dt.datetime.now(dt.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"), "columns": COLUMNS, "rows": rows}
+                     ec.get("sp") or sp.get(name), sorted(cfgs),
+                     m["name"] if m else None, m["county"] if m else None, m["zone"] if m else None, how, q])
+    return {"updated": dt.datetime.now(dt.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"), "cdr": cdr.edition(), "columns": COLUMNS, "rows": rows}
 
 
 def build_unit_index(index: dict) -> dict:
@@ -84,9 +99,11 @@ def build_unit_index(index: dict) -> dict:
     econ = {}
     for t in TECHS:
         econ.update((read_json_gz(DATA_DIR / "econ" / f"{t}.json.gz", default={}) or {}).get("units", {}))
-    out = build(trends, decisions, forecast, ppa, econ)
+    qses = (read_json_gz(QSE_PATH, default={}) or {}).get("units", {})
+    out = build(trends, decisions, forecast, ppa, econ, cdr.load(), qses)
     write_json_gz(PATH, out)
-    print(f"unit index: {len(out['rows'])} units")
+    named = sum(1 for r in out["rows"] if r[6])
+    print(f"unit index: {len(out['rows'])} units, {named} with a CDR name, {sum(1 for r in out['rows'] if r[10])} with a QSE")
     return out
 
 

@@ -121,8 +121,13 @@ pipeline/
                    and Atom feeds per unit (data/feeds/, no downloads)
   unit_index.py    trends, decisions, the latest forecast, ppa and econ -> every unit the Unit page
                    can open, with technology, group, capacity, settlement point and combined-cycle
-                   configurations (data/unit_index.json.gz), for the Units directory and the
-                   nav row's "Find a unit" box (no downloads)
+                   configurations, CDR name, county and zone, and QSE (data/unit_index.json.gz), for
+                   the Units directory and the nav row's "Find a unit" box (no downloads)
+  cdr.py           ERCOT's Capacity, Demand and Reserves report -> pipeline/reference/cdr_units.csv,
+                   the plant names the unit index matches on (python -m pipeline.cdr <workbook.xlsx>
+                   when a new report comes out, twice a year; needs openpyxl)
+  qse.py           the QSE column of the 60-day SCED and DAM files, where they carry one ->
+                   data/unit_qse.json.gz; the run summary says which files had it
   notify.py        events -> one digest email a day through Buttondown to the people who follow a
                    unit that changed (needs the BUTTONDOWN_API_KEY secret; a dry run without it);
                    data/notify_sent.json records what went out
