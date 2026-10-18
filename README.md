@@ -52,6 +52,8 @@ python -m pipeline.validate --all --no-fail   # re-check every day
    - `ERCOT_API_SUBSCRIPTION_KEY`: your primary subscription key
 3. Run the workflow once from the **Actions** tab (**Update ERCOT data → Run workflow**) to check it works.
 
+Subscriber emails (optional): the Unit page's Subscribe box and the daily digest go through [Buttondown](https://buttondown.com). Put the newsletter's username in `NEWSLETTER` at the top of `site/unit-events.js`, add the account's API key as the `BUTTONDOWN_API_KEY` secret, and subscribe your own address with the tag `owner` to get the owner's digest section. Set a repository *variable* `NOTIFY_DRY_RUN` = `1` to see the emails on the run summary without sending them; **Subscriber emails (manual)** in the Actions tab does the same by hand.
+
 ### Loading history
 
 From the Actions tab, run **Update ERCOT data** with a backfill start and end date (operating days). Each run processes up to `max_files` reports per report type; run it again to continue. Locally:
@@ -117,6 +119,9 @@ pipeline/
   events.py        decisions, groups, trends, renew_changes and cutoff_history -> one list of unit
                    events in one format with the run that first found each (data/events.json.gz)
                    and Atom feeds per unit (data/feeds/, no downloads)
+  notify.py        events -> one digest email a day through Buttondown to the people who follow a
+                   unit that changed (needs the BUTTONDOWN_API_KEY secret; a dry run without it);
+                   data/notify_sent.json records what went out
   intraday.py      per-unit day files -> thermal output at/above minimum in cheap hours, off spells
   unit_hours_day.py per-unit day files -> each unit's hourly rows for the Day page's Units table (data/60d-units/)
   stayon.py        per-unit day files + DAM costs -> what riding through a cheap stretch cost each
