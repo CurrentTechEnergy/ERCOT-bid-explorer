@@ -24,6 +24,8 @@ import io
 import sys
 from typing import Iterable, Tuple
 
+from zoneinfo import ZoneInfo
+
 import pandas as pd
 
 from .config import DATA_DIR, EMIL_DAM_SPP
@@ -36,6 +38,9 @@ NODES_PATH = DATA_DIR / "dam_nodes.json.gz"
 MAX_MISSES = 3
 NODE_DAYS = 14        # days of thermal node prices kept
 NODE_FROM_DAM = 5     # latest DAM disclosure files the thermal node list is read from
+CENTRAL = ZoneInfo("America/Chicago")
+DAM_POSTED = dt.time(14, 0)   # Central, on D - 1: ERCOT's 13:30 deadline plus a margin.  A day
+                              # not found before then is not a miss, since it cannot be posted yet
 
 
 def _norm(c) -> str:
@@ -139,12 +144,15 @@ def thermal_nodes(index: dict) -> set:
     return nodes
 
 
-def fetch_dam_node_prices(api, index: dict, today: dt.date = None) -> None:
-    """Thermal node DA prices for the last NODE_DAYS days up to tomorrow, those not yet stored."""
+def fetch_dam_node_prices(api, index: dict, now: dt.datetime = None) -> None:
+    """Thermal node DA prices for the last NODE_DAYS days up to tomorrow (Central), those not yet
+    stored.  A day counts towards MAX_MISSES only when it was still missing after DAM_POSTED on
+    the day before it, so the runs before the DAM posts never give up on tomorrow."""
     nodes = thermal_nodes(index)
     if not nodes:
         return
-    today = today or dt.date.today()
+    now = now or dt.datetime.now(CENTRAL)
+    today = now.date()
     store = load(NODES_PATH)
     keep_from = (today - dt.timedelta(days=NODE_DAYS - 2)).isoformat()
     store["days"] = {d: v for d, v in store["days"].items() if d >= keep_from}
@@ -166,7 +174,7 @@ def fetch_dam_node_prices(api, index: dict, today: dt.date = None) -> None:
             continue
         if date in got:
             store["days"][date] = got[date]
-        else:
+        elif now >= dt.datetime.combine(d - dt.timedelta(days=1), DAM_POSTED, tzinfo=CENTRAL):
             misses[date] = misses.get(date, 0) + 1
         if date in hubs:      # the same files carry the hubs and load zones: keep them for the
             hub_store = load()    # days ahead of the 60-day history (the forecast's price bands)
