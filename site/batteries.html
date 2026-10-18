@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Batteries · ERCOT Bid Stack Explorer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Sans+Condensed:wght@600&display=swap">
+<link rel="stylesheet" href="style.css">
+<style>
+  .page-section { grid-column: 1 / -1; margin: 18px 0 -4px; font-size: 20px; }
+  .kpis { display: flex; flex-wrap: wrap; gap: 8px 28px; }
+  .kpi { display: flex; flex-direction: column; gap: 2px; }
+  .kpi .v { font: 500 20px var(--font-data); font-variant-numeric: tabular-nums; }
+  .kpi .k { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; }
+  .tier { display: inline-flex; align-items: center; gap: 6px; }
+  .tier .sw { width: 10px; height: 10px; }
+  .muted { color: var(--muted); }
+  .ctl-row { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 10px 18px; margin: 4px 0 10px; }
+  .ctl-row .ctl { display: flex; flex-direction: column; gap: 4px; }
+  .chk { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; color: var(--ink-2); min-height: 34px; }
+  .tag { display: inline-block; font-size: 11px; padding: 0 5px; border: 1px solid var(--line); border-radius: 4px; color: var(--muted); margin-left: 4px; }
+  .moved { color: var(--ink); font-weight: 500; }
+  button.more { font: inherit; color: var(--ink); background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 6px 12px; cursor: pointer; }
+  .page-ctl { grid-column: 1 / -1; margin: 0; }
+</style>
+</head>
+<body data-panel-links>
+<div class="page">
+
+<header class="masthead">
+  <div class="brand">
+    <div class="nav-row"><nav class="nav" aria-label="Pages"><a href="index.html">Overview</a><a href="commitment.html">Commitment</a><a href="changes.html">What's changing</a><a href="beyond.html">Beyond baseload</a><a href="renewables.html">Renewables</a><a href="batteries.html" aria-current="page">Batteries</a><a href="fleet.html">Fleet economics</a><a href="unit.html">Units</a><a href="trends.html">Trends</a><a href="builder.html">Graph builder</a><a href="guide.html">How offers work</a></nav></div>
+    <h1>Batteries</h1>
+    <p class="sub">When batteries charge and discharge, what they bid to buy cheap power and offer to sell it, when the fleet fills up and how much room it leaves unused. Batteries are the other buyer of cheap midday power: their charging bids sit under midday prices until the fleet is full. Data from ERCOT's 60-day SCED and DAM disclosures, from the RTC+B start (Dec 5, 2025), when every battery began offering one curve from charging to discharging.</p>
+  </div>
+  <p class="status" id="status">Loading data…</p>
+</header>
+
+<main>
+  <section class="ctl-row page-ctl" aria-label="Day and period">
+    <div class="ctl">
+      <label class="lbl" for="bday">Operating day</label>
+      <div class="date-step">
+        <button type="button" class="step" id="bday-prev" aria-label="Previous day" title="Previous day">&#8249;</button>
+        <select id="bday"></select>
+        <button type="button" class="step" id="bday-next" aria-label="Next day" title="Next day">&#8250;</button>
+      </div>
+    </div>
+    <div class="ctl">
+      <span class="lbl" id="lbl-win">Hours averaged over</span>
+      <div class="seg" role="radiogroup" aria-labelledby="lbl-win" id="bwin">
+        <button type="button" data-v="1" role="radio">This day</button>
+        <button type="button" data-v="7" role="radio" title="The 7 days ending on the chosen day">7 days</button>
+        <button type="button" data-v="30" role="radio" title="The 30 days ending on the chosen day">30 days</button>
+        <button type="button" data-v="all" role="radio" title="Every day loaded">All days</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="panel panel-wide" id="flow-panel">
+    <div class="panel-head">
+      <div>
+        <h2>Charging and discharging by hour <span class="h-note" id="flow-note"></span></h2>
+        <p class="note">Fleet discharging above zero and charging below it, from the base points SCED sent every battery, averaged over each hour (and over the days chosen above). The dashed lines are what the fleet was awarded in the day-ahead market for the same hours, so the gap between bars and lines is what batteries changed in real time. Hover for the hour's real-time and day-ahead hub prices.</p>
+      </div>
+    </div>
+    <div class="legend legend-static" id="flow-legend"></div>
+    <div class="chart" id="flow-chart"></div>
+  </section>
+
+  <section class="panel panel-wide" id="soc-panel">
+    <div class="panel-head">
+      <div>
+        <h2>When the fleet fills up <span class="h-note" id="soc-note"></span></h2>
+        <p class="note">Fleet state of charge as a share of the fleet's maximum, summed over the batteries that report one. Once it nears full, batteries stop buying, so cheap hours after that point have one less buyer. The dashed line is the fleet's minimum state of charge.</p>
+      </div>
+    </div>
+    <p class="note" id="soc-text"></p>
+    <div class="chart chart-short" id="soc-chart"></div>
+  </section>
+
+  <section class="panel panel-wide" id="offer-panel">
+    <div class="panel-head">
+      <div>
+        <h2>Offer prices by hour <span class="h-note" id="offer-note"></span></h2>
+        <p class="note">Where the fleet's offers sit, from each battery's submitted curve: <b>charging stops</b> is the highest price at which it still bids to charge, <b>half the charging</b> the price below which it bids at least half its charging range; <b>discharge starts</b> is the lowest price at which it offers any discharge, <b>half the discharge</b> the price at which its offer reaches half its HSL. Each is the battery's median over the hour's SCED runs, then the median across batteries weighted by their size. The grey lines are the hub price, real-time (solid) and day-ahead (dashed). Log scale above $10.</p>
+      </div>
+    </div>
+    <div class="legend legend-static" id="offer-legend"></div>
+    <div class="chart" id="offer-chart"></div>
+  </section>
+
+  <section class="panel panel-wide" id="bid-panel">
+    <div class="panel-head">
+      <div>
+        <h2>Cheap power batteries will buy <span class="h-note" id="bid-note"></span></h2>
+        <p class="note" id="bid-text"></p>
+      </div>
+    </div>
+    <div class="ctl-row">
+      <div class="ctl">
+        <span class="lbl" id="lbl-bside">Side</span>
+        <div class="seg seg-sm" role="radiogroup" aria-labelledby="lbl-bside" id="bside">
+          <button type="button" data-v="chg" role="radio">Bids to charge</button>
+          <button type="button" data-v="dis" role="radio">Offers to discharge</button>
+        </div>
+      </div>
+    </div>
+    <div class="legend legend-static" id="bid-legend"></div>
+    <div class="chart" id="bid-chart"></div>
+  </section>
+
+  <section class="panel panel-wide" id="head-panel">
+    <div class="panel-head">
+      <div>
+        <h2>Room left unused <span class="h-note" id="head-note"></span></h2>
+        <p class="note">How much more the fleet could have discharged (above zero) or charged (below) within its telemetered limits, which already reflect state of charge. Part is held for ancillary services awarded in SCED (Reg-Up, RRS, ECRS and Non-Spin above, Reg-Down below); the rest was free and not used, because the battery's own offer priced it out. A full battery has no charging room and an empty one no discharge room, so neither shows here.</p>
+      </div>
+    </div>
+    <div class="legend legend-static" id="head-legend"></div>
+    <div class="chart" id="head-chart"></div>
+  </section>
+
+  <section class="panel panel-wide" id="days-panel">
+    <div class="panel-head">
+      <div>
+        <h2>Across days</h2>
+        <p class="note">Energy the fleet charged and discharged each day against its day-ahead awards and the fleet's maximum state of charge (how much it can hold), and below, the day's charging and discharge prices: the highest price at which the fleet still bids to charge, averaged over HE 10 to 16, and the lowest price at which discharge starts in any hour. The marker is the chosen day.</p>
+      </div>
+    </div>
+    <div class="legend legend-static" id="days-legend"></div>
+    <div class="chart" id="days-energy"></div>
+    <div class="legend legend-static" id="days-price-legend"></div>
+    <div class="chart" id="days-price"></div>
+  </section>
+</main>
+
+<footer class="foot">
+  <p>Source: ERCOT EMIL products NP3-965-ER (60-Day SCED Disclosure: the ESR file's submitted curves, base points, limits, state of charge and AS awards), NP3-966-ER (60-Day DAM Disclosure: the ESR Data file's energy awards), the real-time hub prices and the DAM settlement point prices. Built by the data update workflow from the days already loaded; the 60-day reports run about two months behind.</p>
+  <p>Made by <a href="https://currenttech.energy">currenttech.energy</a> · <a href="contact.html">Contact</a></p>
+</footer>
+</div>
+<div class="tip" id="tip" hidden></div>
+<script src="vendor/d3.min.js"></script>
+<script src="common.js"></script>
+<script src="batteries.js"></script>
+</body>
+</html>
