@@ -7,12 +7,14 @@ thermal units from the 60-day trends, the decision record and the latest forecas
 cycle train is one entry, its configurations under it), and wind and solar from the hedge scan
 (ppa.json.gz).  Batteries, hydro and "other" have no Unit page yet and are left out.
 
-Names come from ERCOT's CDR report (pipeline/cdr.py, matched here on every build) and the QSE
-from the 60-day files where they carry one (pipeline/qse.py, data/unit_qse.json.gz).
+Names come from ERCOT's CDR report (pipeline/cdr.py, matched here on every build), other names a
+unit goes by from pipeline/reference/unit_aliases.csv (a developer's project name the CDR does not
+use; one row per unit and name, edited by hand), and the QSE from the 60-day files where they carry
+one (pipeline/qse.py, data/unit_qse.json.gz).
 
 Writes data/unit_index.json.gz:
   {updated, cdr (the CDR edition the names come from), columns: ["unit", "tech", "group", "mw", "sp", "configs", "plant", "county", "zone",
-   "match", "qse"], rows: [[...], ...]}
+   "match", "qse", "aliases"], rows: [[...], ...]}
   unit     resource name (the train for combined cycle), sorted by name
   tech     config.TECH_OF_TYPE grouping
   group    the latest forecast's timescale group (thermal only; null when not in the forecast)
@@ -24,17 +26,23 @@ Writes data/unit_index.json.gz:
   match    "unit", "site" or null (cdr.Matcher)
   qse      the QSE last seen scheduling the unit (any configuration's, for a train); null when
            the 60-day files carry none
+  aliases  other names from unit_aliases.csv ([] for most units)
 """
+import csv
 import datetime as dt
 import re
+from collections import defaultdict
+from pathlib import Path
 
 from . import cdr
 from .config import DATA_DIR
 from .qse import PATH as QSE_PATH
+from .log import warn
 from .store import read_json_gz, write_json_gz
 
 PATH = DATA_DIR / "unit_index.json.gz"
-COLUMNS = ["unit", "tech", "group", "mw", "sp", "configs", "plant", "county", "zone", "match", "qse"]
+ALIASES_PATH = Path(__file__).parent / "reference" / "unit_aliases.csv"
+COLUMNS = ["unit", "tech", "group", "mw", "sp", "configs", "plant", "county", "zone", "match", "qse", "aliases"]
 TECHS = ("nuclear", "coal", "combined_cycle", "gas_steam", "combustion_turbine", "wind", "solar")
 _TRAIN = re.compile(r"^(.*_CC\d+)_")
 
@@ -44,7 +52,17 @@ def train_of(name: str) -> str:
     return m.group(1) if m else name
 
 
-def build(trends: dict, decisions: dict, forecast: dict, ppa: dict, econ: dict, cdr_rows=(), qses=None) -> dict:
+def load_aliases() -> dict:
+    out = defaultdict(list)
+    if ALIASES_PATH.exists():
+        with open(ALIASES_PATH, newline="") as f:
+            for r in csv.DictReader(f):
+                if r.get("unit") and r.get("alias"):
+                    out[r["unit"].strip()].append(r["alias"].strip())
+    return out
+
+
+def build(trends: dict, decisions: dict, forecast: dict, ppa: dict, econ: dict, cdr_rows=(), qses=None, aliases=None) -> dict:
     units = {}
 
     def add(name, tech, cfg=None):
@@ -74,7 +92,7 @@ def build(trends: dict, decisions: dict, forecast: dict, ppa: dict, econ: dict, 
         if u.get("sp"):
             sp[u["name"]] = u["sp"]
 
-    matcher, qses = cdr.Matcher(list(cdr_rows)), qses or {}
+    matcher, qses, aliases = cdr.Matcher(list(cdr_rows)), qses or {}, aliases or {}
     rows = []
     for name in sorted(units):
         e = units[name]
@@ -86,7 +104,8 @@ def build(trends: dict, decisions: dict, forecast: dict, ppa: dict, econ: dict, 
         q = next((qses[k][0] for k in (name, *sorted(cfgs)) if k in qses), None)
         rows.append([name, e["tech"], group.get(name), round(mw) if mw else None,
                      ec.get("sp") or sp.get(name), sorted(cfgs),
-                     m["name"] if m else None, m["county"] if m else None, m["zone"] if m else None, how, q])
+                     m["name"] if m else None, m["county"] if m else None, m["zone"] if m else None, how, q,
+                     sorted({a for k in (name, *sorted(cfgs)) for a in aliases.get(k, [])})])
     return {"updated": dt.datetime.now(dt.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"), "cdr": cdr.edition(), "columns": COLUMNS, "rows": rows}
 
 
@@ -100,7 +119,11 @@ def build_unit_index(index: dict) -> dict:
     for t in TECHS:
         econ.update((read_json_gz(DATA_DIR / "econ" / f"{t}.json.gz", default={}) or {}).get("units", {}))
     qses = (read_json_gz(QSE_PATH, default={}) or {}).get("units", {})
-    out = build(trends, decisions, forecast, ppa, econ, cdr.load(), qses)
+    aliases = load_aliases()
+    out = build(trends, decisions, forecast, ppa, econ, cdr.load(), qses, aliases)
+    unknown = sorted(set(aliases) - {r[0] for r in out["rows"]} - {c for r in out["rows"] for c in r[5]})
+    if unknown:
+        warn(f"unit_aliases.csv names units the unit index does not have: {unknown[:5]}")
     write_json_gz(PATH, out)
     named = sum(1 for r in out["rows"] if r[6])
     print(f"unit index: {len(out['rows'])} units, {named} with a CDR name, {sum(1 for r in out['rows'] if r[10])} with a QSE")
