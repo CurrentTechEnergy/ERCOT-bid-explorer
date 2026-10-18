@@ -854,8 +854,10 @@ function drawCutUnits() {
   if (!rowsG.length) { $("cut-units-note").textContent = ""; return emptyMsg(el, "No unit has a cutoff on this day."); }
   const n = (v) => U.filter((u) => u.verdict === v).length;
   $("cut-units-note").textContent = `${U.length} units with a cutoff: ${n("on")} expected on, ${n("off")} expected off and ${n("maybe")} maybe. Each dot is a unit's cutoff, sized by its LSL; the tick is the loss per MW it faced on the day at its own node, and the line between them is red where the loss is past the cutoff. ` +
+    `The hollow diamond is the hot start cost in the unit's latest day-ahead offer, per MW of LSL. Neither the loss nor the forecast uses it: the cutoff is fitted from what the unit did, so the gap between dot and diamond is how far its behaviour sits from its offered start cost. Offered start costs are capped by ERCOT's cost verification, so they are an upper bound. ` +
     `Losses beyond the right edge are drawn at the edge. "Maybe" is a unit past its cutoff that has held a day-ahead award over its loss window on half or more of its days, since the award is not public until the 60-day disclosure. Click a unit to open it.`;
   $("cut-units-legend").innerHTML = rowsG.map((g) => `<span><span class="sw" style="background:var(${FLOOR_GROUPS.find((f) => f.id === g.id).color})"></span>${g.label}</span>`).join("") +
+    `<span><span class="sw" style="background:transparent;border:1px solid var(--ink-2);transform:rotate(45deg);width:7px;height:7px"></span>Hot start offered, per MW of LSL</span>` +
     `<span><span class="sw" style="background:var(--c8);height:3px"></span>Loss past the cutoff</span><span><span class="sw" style="background:var(--muted);height:3px"></span>Loss within it</span>`;
   const [x0, x1] = cutDomain(U);
   // same margins and loss axis as the cutoff curve above; each group's name sits above its row
@@ -874,9 +876,11 @@ function drawCutUnits() {
     const us = U.filter((u) => u.group === g.id).sort((a, b) => a.c - b.c);
     us.forEach((u, k) => {
       const yy = top + 23 + (k % lanes) * lane + lane / 2, past = u.l != null && u.l > u.c;
+      const dec = decisionOf(u.unit), hs = dec?.hot && dec.lsl ? dec.hot / dec.lsl : null;
       const gU = svg.append("g").style("cursor", "pointer")
         .on("pointermove", (ev) => showTip(ev, `<h4>${esc(u.unit)}</h4>${techLabel(u.tech)} · ${g.label}<br>LSL ${fmtMW(u.lsl)} MW<br>` +
-          `Cutoff ${fmt$(u.cutoff)} (${fmtPerMW(u.c)}/MW)<br>Loss on the day ${fmt$(u.loss)} (${fmtPerMW(u.l)}/MW)<br><b>${VERDICT[u.verdict] || u.verdict}</b>` +
+          `Cutoff ${fmt$(u.cutoff)} (${fmtPerMW(u.c)}/MW)<br>Loss on the day ${fmt$(u.loss)} (${fmtPerMW(u.l)}/MW)<br>` +
+          `Hot start offered ${hs == null ? "–" : `${fmt$(dec.hot)} (${fmtPerMW(hs)}/MW)${dec.est === 2 ? ", generic for the technology" : ""}`}<br><b>${VERDICT[u.verdict] || u.verdict}</b>` +
           (u.reason ? `<br><span class="muted">${esc(u.reason)}</span>` : "") + `<br><span class="tip-pin-note">Click to open the unit</span>`))
         .on("pointerleave", hideTip)
         .on("click", () => { location.href = unitHref(u.unit); });
@@ -884,14 +888,16 @@ function drawCutUnits() {
         gU.append("line").attr("x1", x(u.c)).attr("x2", x(u.l)).attr("y1", yy).attr("y2", yy).attr("stroke", css(past ? "--c8" : "--muted")).attr("stroke-width", 1.5);
         gU.append("line").attr("x1", x(u.l)).attr("x2", x(u.l)).attr("y1", yy - 3).attr("y2", yy + 3).attr("stroke", css("--ink")).attr("stroke-width", 1.5);
       }
+      if (hs != null) gU.append("path").attr("d", d3.symbol(d3.symbolDiamond, 22)()).attr("transform", `translate(${x(hs)},${yy})`)
+        .attr("fill", "none").attr("stroke", css("--ink-2")).attr("stroke-width", 1);
       gU.append("circle").attr("cx", x(u.c)).attr("cy", yy).attr("r", r(u.lsl)).attr("fill", col).attr("stroke", css("--surface")).attr("stroke-width", 0.5);
     });
     if (gi) svg.append("line").attr("x1", m.l).attr("x2", w - m.r).attr("y1", top).attr("y2", top).attr("stroke", css("--line"));
   });
   svg.append("text").attr("class", "axis-title").attr("x", w - m.r).attr("y", H - 2).attr("text-anchor", "end").text("$ per MW of LSL");
   el.replaceChildren(svg.node());
-  setCSV(el, ["unit", "technology", "group", "lsl_mw", "cutoff_usd", "cutoff_usd_per_mw", "loss_usd", "loss_usd_per_mw", "verdict"],
-    U.map((u) => [u.unit, u.tech, u.group, u.lsl, u.cutoff, u.c == null ? null : +u.c.toFixed(2), u.loss, u.l == null ? null : +u.l.toFixed(2), u.verdict]), `Unit cutoffs ${F.date}`);
+  setCSV(el, ["unit", "technology", "group", "lsl_mw", "cutoff_usd", "cutoff_usd_per_mw", "loss_usd", "loss_usd_per_mw", "hot_start_usd", "verdict"],
+    U.map((u) => [u.unit, u.tech, u.group, u.lsl, u.cutoff, u.c == null ? null : +u.c.toFixed(2), u.loss, u.l == null ? null : +u.l.toFixed(2), decisionOf(u.unit)?.hot ?? null, u.verdict]), `Unit cutoffs ${F.date}`);
 }
 
 // the six groups on the day (forecast capacity) with how well the daily units' cutoffs fit their
@@ -1042,6 +1048,7 @@ const UNIT_COLS = [
   { k: "mw", h: "Capacity MW", f: (r) => fmtMW(r.mw) },
   { k: "lsl", h: "LSL MW", f: (r) => (r.lsl == null ? "–" : fmtMW(r.lsl)) },
   { k: "c", h: "Cutoff $/MW LSL", f: (r) => fmtPerMW(r.c) },
+  { k: "hs", h: "Hot start offered $/MW LSL", f: (r) => fmtPerMW(r.hs) + (r.hs != null && r.est === 2 ? "*" : "") },
   { k: "lift", h: "Rule right / base", f: (r) => (r.acc == null ? "–" : `${fmtPct(r.acc)} / ${fmtPct(r.base)}`) },
   { k: "days", h: "Decision days (off)", f: (r) => (r.days == null ? "–" : `${r.days} (${r.dshut})`) },
   ...STATE_KEYS.map(([s, h]) => ({ k: "st" + s, h: `${h}, share of hours`, f: (r) => (r["st" + s] == null ? "–" : fmtPct(r["st" + s])) })),
@@ -1067,6 +1074,7 @@ async function drawUnits() {
     const nh = cnt.a + cnt.m + cnt["0"] + cnt.o;
     return { unit: e.unit, pick: e.pick, tech: e.tech, group: e.group, gi: ST_GROUPS.findIndex((x) => x.id === e.group), mw: e.mw,
       lsl: dec?.lsl ?? null, cutoff: dec?.cutoff ?? null, c: dec?.cutoff != null && dec.lsl ? dec.cutoff / dec.lsl : null,
+      hs: dec?.hot && dec.lsl ? dec.hot / dec.lsl : null, est: dec?.est ?? null,
       acc: dec?.cutoff != null ? dec.acc : null, base: dec?.cutoff != null ? dec.base : null, lift: dec?.cutoff != null ? dec.acc - dec.base : null,
       days: dec?.days ?? null, dshut: dec?.shut ?? null,
       ...Object.fromEntries(STATE_KEYS.map(([s]) => ["st" + s, nh ? cnt[s] / nh : null])),
@@ -1085,13 +1093,14 @@ async function drawUnits() {
   });
   $("units-note").textContent = `${list.length} coal and gas units, combined-cycle configurations merged into their train, over the ${S.UH.dates.length} days of 60-day data. ` +
     `Cutoff is the stay-on loss per MW of LSL above which the unit has turned off on days without a day-ahead award (the cutoff curve's), with how often that rule matched what it did against the base rate of its commoner outcome. ` +
+    `Hot start is the start cost in the unit's latest day-ahead offer per MW of LSL, for comparison only (* marks a generic value for the technology); no model uses it. ` +
     `Hours are split between running above minimum, at minimum, offline but available and on outage (an off spell that is mostly outage counts as outage). "Turned off in cheap stretches" is the share of the stretches with lambda below ${fmtPrice0(+S.stThr)} it was running into that it turned off for (shown once it ran into ${ST_MIN_N}), as in the panel above; ride-throughs and the net are from the decision-cost panel at lambda below ${fmtPrice0(+S.costThr)}. ` +
     `The verdict is the chosen day's forecast. Click a column to sort, a row to open the unit.`;
   el.innerHTML = `<table class="data"><thead><tr>${UNIT_COLS.map((c) => `<th class="sortable${c.t ? " t" : ""}" data-k="${c.k}" aria-sort="${c.k === col.k ? (dir > 0 ? "ascending" : "descending") : "none"}">${c.h}${c.k === col.k ? (dir > 0 ? " ▲" : " ▼") : ""}</th>`).join("")}</tr></thead><tbody>` +
     list.map((r) => `<tr data-href="${unitHref(r.pick)}" style="cursor:pointer">${UNIT_COLS.map((c) => `<td${c.t ? ' class="t"' : ""}>${c.f(r)}</td>`).join("")}</tr>`).join("") + "</tbody></table>";
-  setCSV(el, ["unit", "technology", "group", "capacity_mw", "lsl_mw", "cutoff_usd", "cutoff_usd_per_mw_lsl", "rule_accuracy", "base_rate", "decision_days", "decision_shutdowns",
+  setCSV(el, ["unit", "technology", "group", "capacity_mw", "lsl_mw", "cutoff_usd", "cutoff_usd_per_mw_lsl", "hot_start_usd_per_mw_lsl", "rule_accuracy", "base_rate", "decision_days", "decision_shutdowns",
     "share_above_min", "share_at_min", "share_off", "share_outage", "shutdowns", "p10_hours_off", "share_turned_off_cheap", "ride_throughs", "net_shutdown_saves_usd", "verdict"],
-    list.map((r) => [r.unit, r.tech, r.group, Math.round(r.mw), r.lsl, r.cutoff, r.c == null ? null : +r.c.toFixed(2), r.acc, r.base, r.days, r.dshut,
+    list.map((r) => [r.unit, r.tech, r.group, Math.round(r.mw), r.lsl, r.cutoff, r.c == null ? null : +r.c.toFixed(2), r.hs == null ? null : +r.hs.toFixed(2), r.acc, r.base, r.days, r.dshut,
       ...STATE_KEYS.map(([s]) => (r["st" + s] == null ? null : +r["st" + s].toFixed(3))), r.shut, r.offP10, r.offShare == null ? null : +r.offShare.toFixed(3), r.rides, r.saves == null ? null : Math.round(r.saves), r.verdict]), "Commitment units");
 }
 
