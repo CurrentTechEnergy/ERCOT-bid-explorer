@@ -31,9 +31,9 @@
 
 <header class="masthead">
   <div class="brand">
-    <div class="nav-row"><nav class="nav" aria-label="Pages"><a href="overview.html">Overview</a><a href="beyond.html">Beyond baseload</a><a href="renewables.html" aria-current="page">Renewables</a><a href="index.html">Day view</a><a href="trends.html">Trends</a><a href="economics.html">Plant economics</a><a href="contracts.html">Hedge signals</a><a href="builder.html">Graph builder</a><a href="guide.html">How offers work</a></nav></div>
+    <div class="nav-row"><nav class="nav" aria-label="Pages"><a href="overview.html">Overview</a><a href="beyond.html">Beyond baseload</a><a href="renewables.html" aria-current="page">Renewables</a><a href="fleet.html">Fleet economics</a><a href="index.html">Day view</a><a href="trends.html">Trends</a><a href="economics.html">Plant economics</a><a href="contracts.html">Hedge signals</a><a href="builder.html">Graph builder</a><a href="guide.html">How offers work</a></nav></div>
     <h1>Renewables</h1>
-    <p class="sub">How wind and solar offer, how much SCED held back and where, what their offers give away about their hedges, and what they earned. Data from ERCOT's 2-day and 60-day SCED and DAM disclosures and the day-ahead forecast built from them.</p>
+    <p class="sub">How wind and solar offer, how much SCED held back and where, and what their offers give away about their hedges. What they earned is on <a href="fleet.html">Fleet economics</a>. Data from ERCOT's 2-day and 60-day SCED and DAM disclosures and the day-ahead forecast built from them.</p>
   </div>
   <p class="status" id="status">Loading data…</p>
 </header>
@@ -210,39 +210,6 @@
     </details>
   </section>
 
-  <h2 class="page-section">Fleet economics</h2>
-
-  <section class="panel panel-wide" id="eco-panel">
-    <div class="panel-head">
-      <div>
-        <h2>Revenue and curtailment by month</h2>
-        <p class="note">Energy revenue as on Plant economics' default: the day-ahead award at the DA price plus the real-time deviation at the unit's node where it has day-ahead data, real-time at its node otherwise (most wind and solar), and system lambda where the node price is missing; plus ancillary services. Curtailed energy and its worth at the node are from the curtailment panel above. Hover a month for the split.</p>
-      </div>
-    </div>
-    <div class="legend legend-static"><span><span class="sw" style="background:var(--c3)"></span>Wind</span><span><span class="sw" style="background:var(--c4)"></span>Solar</span></div>
-    <div class="chart" id="eco-months"></div>
-    <div class="chart chart-short" id="eco-curt"></div>
-    <div class="chart chart-short" id="eco-curt-value"></div>
-  </section>
-
-  <section class="panel panel-wide" id="eco-units-panel">
-    <div class="panel-head">
-      <div>
-        <h2>Realised $/MWh by unit <span class="h-note" id="eco-note"></span></h2>
-        <p class="note">Revenue as above over the unit's energy, for every wind and solar unit over every loaded 60-day day. The dashed lines are each technology's median. Curtailed share is the unit's curtailed energy (HSL minus base point, hour by hour) over its available energy, the same figure as "Of available" in the curtailment table. Click a column to sort and a unit to open its page.</p>
-      </div>
-      <div class="panel-tools">
-        <div class="seg seg-sm" id="eco-tech" role="radiogroup" aria-label="Technology">
-          <button type="button" data-v="all" role="radio">Both</button>
-          <button type="button" data-v="wind" role="radio">Wind</button>
-          <button type="button" data-v="solar" role="radio">Solar</button>
-        </div>
-      </div>
-    </div>
-    <div class="chart" id="eco-hist"></div>
-    <div class="units-wrap" id="eco-table"></div>
-    <p><button type="button" class="more" id="eco-more" hidden>Show all</button></p>
-  </section>
 </main>
 
 <footer class="foot">

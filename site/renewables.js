@@ -1,11 +1,11 @@
-/* Renewables: wind and solar offer prices, curtailment (one panel: daily by cause, by price at
-   lambda or at the node, value, one day by hour, units), the forecast against what was priced out,
-   and fleet economics. Lifted from trends.js (drawRenewBands, drawCurtailment, drawNodeCurtail)
-   and app.js (drawCurtail). Reads
-   data/curve_trends.json.gz, data/curtail_nodes.json.gz, data/forecast/ (index, scores and the day
-   files' headline), data/econ/wind and solar (pipeline/econ.py) and data/renew/sig-YYYY.json.gz.
-   The hedge signals on the same page are renewables-hedge.js. This file owns the status line and
-   the shared chart controls (CX.init). */
+/* Renewables: one day's curtailment by hour, wind and solar offer prices, curtailment (one panel:
+   daily by cause, by price at lambda or at the node, value, units) and the forecast against what
+   was priced out. Lifted from trends.js (drawRenewBands, drawCurtailment, drawNodeCurtail) and
+   app.js (drawCurtail). Reads data/curve_trends.json.gz, data/curtail_nodes.json.gz,
+   data/forecast/ (index, scores and the day files' headline) and data/renew/sig-YYYY.json.gz
+   (each unit's offer on its curtailed days). Fleet economics moved to fleet.html. The hedge
+   signals on the same page are renewables-hedge.js. This file owns the status line and the shared
+   chart controls (CX.init). */
 (() => {
 "use strict";
 
@@ -23,7 +23,7 @@ const BANDS = [
   { id: "zero", label: "About $0 (−$1 to $0)", color: "--c-other" },
   { id: "pos", label: "Above $0", color: "--c1" },
 ];
-const S = { C: null, N: null, FI: null, SC: null, E: {}, SIG: [], cday: null, span: null, last60: null, ecoTech: "all", ecoSort: "pmwh", ecoDir: -1, ecoAll: false, ncAll: false, pbasis: "lambda" };
+const S = { C: null, N: null, FI: null, SC: null, SIG: [], cday: null, span: null, last60: null, ncAll: false, pbasis: "lambda" };
 const { tryJSON, showTip, hideTip, setCSV, tickFormat, fmtKind, axisFmt, css, esc } = window.CX;
 const $ = (id) => document.getElementById(id);
 const fmtMW = d3.format(",.0f");
@@ -390,15 +390,6 @@ async function drawForecast() {
     (sum ? `Its hourly dispatch error, against ERCOT's 2-day base points, averages ${fmtMW(sum.wind_mae)} MW for wind and ${fmtMW(sum.solar_mae)} MW for solar.` : "");
 }
 
-// ---- fleet economics -------------------------------------------------------------------
-// Energy revenue as on Plant economics' default: two-settlement (the DA award at the DA price plus
-// the real-time deviation) where the unit has DA data, real-time at its node otherwise, and system
-// lambda where the node price is missing; plus ancillary services.
-function dayRevenue(u, i) {
-  const two = u.rev_da[i] != null && u.rev_rt[i] != null && u.rev_da_rt[i] != null ? u.rev_da[i] + u.rev_rt[i] - u.rev_da_rt[i] : null;
-  const e = two != null ? two : u.rev_rt[i] != null ? u.rev_rt[i] : u.rev_lam[i];
-  return e == null ? null : e + (u.rev_as[i] || 0);
-}
 // a unit's average offer on the days it was curtailed: the mean of its daily median offer while
 // online (data/renew/sig-YYYY, "md") over the days in the window with a curtailed share above 0.5%;
 // undefined until the bidding-history files have loaded
@@ -408,159 +399,16 @@ function bidWhenCurtailed(name, dates) {
   S.SIG.forEach((f) => { const u = f && f.units[name]; if (!u) return; f.dates.forEach((d, i) => { if (d >= lo && d <= hi && u.md[i] != null && u.cur[i] > 0.005) v.push(u.md[i]); }); });
   return v.length ? d3.mean(v) : null;
 }
-let ECO = null;
-function computeEco() {
-  // curtailed share of available energy (HSL), exact per unit from curtail_nodes
-  const units = [], months = new Map(), cs = new Map((S.N?.units || []).map((r) => [r[0], r[7] ? r[3] / r[7] : null]));
-  ["wind", "solar"].forEach((t) => {
-    const E = S.E[t];
-    if (!E) return;
-    Object.entries(E.units).forEach(([name, u]) => {
-      let rev = 0, mwh = 0, days = 0;
-      E.dates.forEach((d, i) => {
-        const r = dayRevenue(u, i), q = u.mwh[i];
-        if (r == null || q == null) return;
-        rev += r; mwh += q; days++;
-        const mo = d.slice(0, 7), k = `${mo}|${t}`, m = months.get(k) || { mo, t, rev: 0, mwh: 0 };
-        m.rev += r; m.mwh += q; months.set(k, m);
-      });
-      if (mwh > 0) units.push({ name, tech: t, sp: u.sp, hsl: u.hsl, rev, mwh, pmwh: rev / mwh, cf: u.hsl ? mwh / (u.hsl * 24 * days) : null, curt: cs.get(name) ?? null, days });
-    });
-  });
-  ECO = { units, months: [...months.values()] };
-}
-function drawEcoMonths() {
-  const el = $("eco-months"), N = S.N;
-  if (!ECO.months.length) return emptyMsg(el, "No economics data yet.");
-  const mos = [...new Set(ECO.months.map((m) => m.mo))].sort();
-  // curtailed energy and what it would have earned at the node, by month (curtail_nodes daily)
-  const cm = new Map();
-  if (N) N.dates.forEach((d, i) => ["wind", "solar"].forEach((t) => {
-    const k = `${d.slice(0, 7)}|${t}`, a = cm.get(k) || { mwh: 0, value: 0 };
-    a.mwh += N.daily[t].curt[i] || 0; a.value += N.daily[t].value[i] || 0; cm.set(k, a);
-  }));
-  const get = (mo, t) => ECO.months.find((m) => m.mo === mo && m.t === t) || { rev: 0, mwh: 0 };
-  const w = Math.max(280, el.clientWidth || 600), H = 240, m = { t: 18, r: 16, b: 26, l: 64 };
-  const x = d3.scaleBand().domain(mos).range([m.l, w - m.r]).paddingInner(0.2);
-  const y = d3.scaleLinear().domain([0, d3.max(mos, (mo) => get(mo, "wind").rev + get(mo, "solar").rev) / 1e6 || 1]).nice().range([H - m.b, m.t]);
-  const svg = d3.create("svg").attr("viewBox", `0 0 ${w} ${H}`);
-  svg.append("g").attr("class", "gridline").attr("transform", `translate(${m.l},0)`).call(d3.axisLeft(y).ticks(5).tickSize(-(w - m.l - m.r)).tickFormat(""));
-  svg.append("g").attr("class", "axis").attr("transform", `translate(${m.l},0)`).call(axisFmt(d3.axisLeft(y), 5, "$").tickSizeOuter(0));
-  svg.append("g").attr("class", "axis").attr("transform", `translate(0,${H - m.b})`).call(d3.axisBottom(x).tickFormat((mo) => d3.timeFormat(w < 560 ? "%b" : "%b %y")(new Date(mo + "-15T12:00:00"))).tickSizeOuter(0));
-  svg.append("text").attr("class", "axis-title").attr("x", m.l).attr("y", 10).text("Revenue by month ($ million)");
-  mos.forEach((mo) => {
-    let acc = 0;
-    TECHS.forEach((t) => { const v = get(mo, t.id).rev / 1e6; if (v > 0) svg.append("rect").attr("x", x(mo)).attr("width", x.bandwidth()).attr("y", y(acc + v)).attr("height", Math.max(0, y(acc) - y(acc + v) - 1)).attr("fill", css(t.color)); acc += v; });
-    svg.append("rect").attr("x", x(mo)).attr("width", x.bandwidth()).attr("y", m.t).attr("height", H - m.t - m.b).attr("fill", "transparent")
-      .on("pointermove", (ev) => showTip(ev, `<h4>${d3.timeFormat("%B %Y")(new Date(mo + "-15T12:00:00"))}</h4><table><tr><td></td><td></td><td class="n">Revenue</td><td class="n">$/MWh</td><td class="n">Curtailed</td><td class="n">Worth at node</td></tr>` +
-        TECHS.map((t) => { const g = get(mo, t.id), c = cm.get(`${mo}|${t.id}`); return `<tr><td><span class="sw" style="background:var(${t.color})"></span></td><td>${t.label}</td><td class="n">$${d3.format(",.1f")(g.rev / 1e6)}M</td><td class="n">${g.mwh ? fmtPrice(g.rev / g.mwh) : "–"}</td><td class="n">${c ? d3.format(",.0f")(c.mwh / 1000) + " GWh" : "–"}</td><td class="n">${c ? "$" + d3.format(",.1f")(c.value / 1e6) + "M" : "–"}</td></tr>`; }).join("") + "</table>"))
-      .on("pointerleave", hideTip);
-  });
-  el.replaceChildren(svg.node());
-  setCSV(el, ["month", "wind_revenue", "wind_mwh", "solar_revenue", "solar_mwh", "wind_curtailed_mwh", "wind_curtailed_value_at_node", "solar_curtailed_mwh", "solar_curtailed_value_at_node"],
-    mos.map((mo) => [mo, get(mo, "wind").rev, get(mo, "wind").mwh, get(mo, "solar").rev, get(mo, "solar").mwh, cm.get(`${mo}|wind`)?.mwh, cm.get(`${mo}|wind`)?.value, cm.get(`${mo}|solar`)?.mwh, cm.get(`${mo}|solar`)?.value]), "Wind and solar revenue by month");
-  // curtailed energy by month, and what it would have earned at the node
-  const tick = (mo) => d3.timeFormat(w < 560 ? "%b" : "%b %y")(new Date(mo + "-15T12:00:00"));
-  const grouped = (gel, key, k, title, tipF) => {
-    if (!N) return emptyMsg(gel, "No node-priced curtailment yet.");
-    const vals = mos.flatMap((mo) => TECHS.map((t) => (cm.get(`${mo}|${t.id}`)?.[key] || 0) / k));
-    const gy = d3.scaleLinear().domain([Math.min(0, d3.min(vals)), Math.max(0, d3.max(vals)) || 1]).nice().range([H - m.b, m.t]);
-    const g = d3.create("svg").attr("viewBox", `0 0 ${w} ${H}`);
-    g.append("g").attr("class", "gridline").attr("transform", `translate(${m.l},0)`).call(d3.axisLeft(gy).ticks(5).tickSize(-(w - m.l - m.r)).tickFormat(""));
-    g.append("g").attr("class", "axis").attr("transform", `translate(${m.l},0)`).call(axisFmt(d3.axisLeft(gy), 5).tickSizeOuter(0));
-    g.append("g").attr("class", "axis").attr("transform", `translate(0,${H - m.b})`).call(d3.axisBottom(x).tickFormat(tick).tickSizeOuter(0));
-    g.append("text").attr("class", "axis-title").attr("x", m.l).attr("y", 10).text(title);
-    if (gy.domain()[0] < 0) g.append("line").attr("class", "zero").attr("x1", m.l).attr("x2", w - m.r).attr("y1", gy(0)).attr("y2", gy(0));
-    const bw = x.bandwidth() / 2;
-    mos.forEach((mo) => TECHS.forEach((tt, j) => {
-      const v = (cm.get(`${mo}|${tt.id}`)?.[key] || 0) / k;
-      g.append("rect").attr("x", x(mo) + j * bw).attr("width", bw - 1).attr("y", gy(Math.max(0, v))).attr("height", Math.abs(gy(0) - gy(v))).attr("fill", css(tt.color));
-    }));
-    g.append("rect").attr("x", m.l).attr("y", m.t).attr("width", w - m.l - m.r).attr("height", H - m.t - m.b).attr("fill", "transparent")
-      .on("pointermove", (ev) => {
-        const px = d3.pointer(ev)[0], mo = mos[Math.max(0, Math.min(mos.length - 1, Math.floor((px - m.l) / x.step())))];
-        showTip(ev, `<h4>${d3.timeFormat("%B %Y")(new Date(mo + "-15T12:00:00"))}</h4><table>` + TECHS.map((tt) => { const c = cm.get(`${mo}|${tt.id}`); return `<tr><td><span class="sw" style="background:var(${tt.color})"></span></td><td>${tt.label}</td><td class="n">${c ? tipF(c[key]) : "–"}</td></tr>`; }).join("") + "</table>");
-      })
-      .on("pointerleave", hideTip);
-    gel.replaceChildren(g.node());
-    setCSV(gel, ["month", `wind_${key}`, `solar_${key}`], mos.map((mo) => [mo, cm.get(`${mo}|wind`)?.[key], cm.get(`${mo}|solar`)?.[key]]), title);
-  };
-  grouped($("eco-curt"), "mwh", 1000, "Curtailed energy by month (GWh)", (v) => d3.format(",.0f")(v / 1000) + " GWh");
-  grouped($("eco-curt-value"), "value", 1e6, "What the curtailed energy would have earned at the node ($ million; negative when the node price was below zero)", (v) => (v < 0 ? "−" : "") + "$" + d3.format(",.2f")(Math.abs(v) / 1e6) + "M");
-}
-const ECO_COLS = [
-  { k: "rank", h: "#", f: (u, i) => i + 1 },
-  { k: "name", h: "Unit", t: 1, f: (u) => `<a href="unit.html?unit=${encodeURIComponent(u.name)}">${esc(u.name)}</a>` },
-  { k: "tech", h: "Tech", t: 1, f: (u) => techLabel(u.tech) },
-  { k: "sp", h: "Settlement point", t: 1, f: (u) => esc(u.sp || "–") },
-  { k: "pmwh", h: "Realised $/MWh", f: (u) => fmtPrice(u.pmwh) },
-  { k: "mwh", h: "GWh", f: (u) => d3.format(",.1f")(u.mwh / 1000) },
-  { k: "rev", h: "Revenue", f: (u) => "$" + d3.format(",.2f")(u.rev / 1e6) + "M" },
-  { k: "cf", h: "Capacity factor", f: (u) => (u.cf == null ? "–" : fmtPct(u.cf)) },
-  { k: "curt", h: "Curtailed share", f: (u) => (u.curt == null ? "–" : d3.format(".1%")(u.curt)) },
-];
-function drawEcoUnits() {
-  const el = $("eco-table"), hel = $("eco-hist");
-  // units with under 1 GWh over the loaded days (new, retired or barely running) price a handful of
-  // hours and would crowd both ends of the ranking
-  const all = ECO.units.filter((u) => S.ecoTech === "all" || u.tech === S.ecoTech);
-  let us = all.filter((u) => u.mwh >= 1000);
-  const E0 = S.E.wind || S.E.solar;
-  $("eco-note").textContent = E0 ? `${E0.dates[0]} to ${E0.dates.at(-1)} (every loaded 60-day day), ${us.length} units` + (all.length > us.length ? `, leaving out ${all.length - us.length} with under 1 GWh` : "") : "";
-  if (!us.length) { emptyMsg(el, "No units."); hel.innerHTML = ""; return; }
-  // distribution: units by realised $/MWh, wind and solar side by side
-  const vals = us.map((u) => u.pmwh), lo = Math.floor(d3.quantile([...vals].sort(d3.ascending), 0.005) / 2) * 2, hi = Math.ceil(d3.quantile([...vals].sort(d3.ascending), 0.995) / 2) * 2;
-  const bin = d3.bin().domain([lo, hi]).thresholds(d3.range(lo, hi + 0.001, Math.max(1, Math.round((hi - lo) / 30))));
-  const w = Math.max(280, hel.clientWidth || 600), H = 220, m = { t: 18, r: 16, b: 34, l: 48 };
-  const groups = TECHS.filter((t) => S.ecoTech === "all" || t.id === S.ecoTech).map((t) => ({ t, b: bin(us.filter((u) => u.tech === t.id).map((u) => Math.max(lo, Math.min(hi - 1e-9, u.pmwh)))) }));
-  const x = d3.scaleLinear().domain([lo, hi]).range([m.l, w - m.r]);
-  const y = d3.scaleLinear().domain([0, d3.max(groups, (g) => d3.max(g.b, (b) => b.length)) || 1]).nice().range([H - m.b, m.t]);
-  const svg = d3.create("svg").attr("viewBox", `0 0 ${w} ${H}`);
-  svg.append("g").attr("class", "gridline").attr("transform", `translate(${m.l},0)`).call(d3.axisLeft(y).ticks(4).tickSize(-(w - m.l - m.r)).tickFormat(""));
-  svg.append("g").attr("class", "axis").attr("transform", `translate(${m.l},0)`).call(d3.axisLeft(y).ticks(4).tickFormat(d3.format(",d")).tickSizeOuter(0));
-  svg.append("g").attr("class", "axis").attr("transform", `translate(0,${H - m.b})`).call(axisFmt(d3.axisBottom(x), w < 560 ? 5 : 10, "$").tickSizeOuter(0));
-  svg.append("text").attr("class", "axis-title").attr("x", m.l).attr("y", 10).text("Units by realised revenue per MWh");
-  svg.append("text").attr("class", "axis-title").attr("x", w - m.r).attr("y", H - 2).attr("text-anchor", "end").text("$/MWh over the loaded days");
-  groups.forEach((g, j) => g.b.forEach((b) => {
-    const bw = (x(b.x1) - x(b.x0)) / groups.length;
-    if (b.length) svg.append("rect").attr("x", x(b.x0) + j * bw).attr("width", Math.max(1, bw - 1)).attr("y", y(b.length)).attr("height", y(0) - y(b.length)).attr("fill", css(g.t.color));
-  }));
-  groups.forEach((g) => { const md = d3.median(us.filter((u) => u.tech === g.t.id), (u) => u.pmwh); if (md == null) return;
-    svg.append("line").attr("x1", x(md)).attr("x2", x(md)).attr("y1", m.t).attr("y2", H - m.b).attr("stroke", css(g.t.color)).attr("stroke-dasharray", "4 3").attr("stroke-width", 1.5);
-  });
-  svg.append("rect").attr("x", m.l).attr("y", m.t).attr("width", w - m.l - m.r).attr("height", H - m.t - m.b).attr("fill", "transparent")
-    .on("pointermove", (ev) => {
-      const v = x.invert(d3.pointer(ev)[0]);
-      showTip(ev, `<table>` + groups.map((g) => { const b = g.b.find((b) => v >= b.x0 && v < b.x1); return b ? `<tr><td><span class="sw" style="background:var(${g.t.color})"></span></td><td>${g.t.label}, ${fmtPrice0(b.x0)} to ${fmtPrice0(b.x1)}</td><td class="n">${b.length} units</td></tr>` : ""; }).join("") +
-        groups.map((g) => `<tr><td></td><td>${g.t.label} median</td><td class="n">${fmtPrice(d3.median(us.filter((u) => u.tech === g.t.id), (u) => u.pmwh))}</td></tr>`).join("") + "</table>");
-    })
-    .on("pointerleave", hideTip);
-  hel.replaceChildren(svg.node());
-  setCSV(hel, ["unit", "tech", "realised_usd_per_mwh"], us.map((u) => [u.name, u.tech, u.pmwh]), "Realised $/MWh distribution");
-  // ranked table
-  const k = S.ecoSort === "rank" ? "pmwh" : S.ecoSort;
-  us = [...us].sort((a, b) => { const p = a[k], q = b[k]; if (p == null) return 1; if (q == null) return -1; return (typeof p === "string" ? p.localeCompare(q) : p - q) * S.ecoDir; });
-  const shown = S.ecoAll ? us : us.slice(0, 50);
-  el.innerHTML = `<table class="data"><thead><tr>${ECO_COLS.map((c) => `<th class="sortable${c.t ? " t" : ""}" data-k="${c.k}">${c.h}${S.ecoSort === c.k ? (S.ecoDir < 0 ? " ▾" : " ▴") : ""}</th>`).join("")}</tr></thead><tbody>` +
-    shown.map((u, i) => `<tr>${ECO_COLS.map((c) => `<td${c.t ? ' class="t"' : ""}>${c.f(u, i)}</td>`).join("")}</tr>`).join("") + "</tbody></table>";
-  $("eco-more").hidden = S.ecoAll || us.length <= 50;
-  $("eco-more").textContent = `Show all ${us.length}`;
-  el.querySelectorAll("th[data-k]").forEach((th) => th.addEventListener("click", () => {
-    const kk = th.dataset.k; if (S.ecoSort === kk) S.ecoDir = -S.ecoDir; else { S.ecoSort = kk; S.ecoDir = ["name", "tech", "sp"].includes(kk) ? 1 : -1; }
-    drawEcoUnits(); saveView();
-  }));
-  setCSV(el, ["unit", "tech", "settlement_point", "realised_usd_per_mwh", "mwh", "revenue", "capacity_factor", "curtailed_share", "days"], us.map((u) => [u.name, u.tech, u.sp, u.pmwh, u.mwh, u.rev, u.cf, u.curt, u.days]), "Wind and solar realised revenue");
-}
 
 // ---- links ------------------------------------------------------------------------
 // the hedge-signal panels (renewables-hedge.js) keep their own keys in the same address bar
-const VIEW_KEYS = { cday: "cday", et: "ecoTech", es: "ecoSort", pb: "pbasis" };
-function saveView() { window.CX.writeHash({ ...window.CX.readHash(), ...Object.fromEntries(Object.entries(VIEW_KEYS).map(([k, sk]) => [k, S[sk]])), ed: S.ecoDir < 0 ? null : 1 }); }
-function loadView() { const v = window.CX.readHash(); Object.entries(VIEW_KEYS).forEach(([k, sk]) => { if (v[k] != null) S[sk] = v[k]; }); if (v.ed === "1") S.ecoDir = 1; }
+const VIEW_KEYS = { cday: "cday", pb: "pbasis" };
+function saveView() { window.CX.writeHash({ ...window.CX.readHash(), ...Object.fromEntries(Object.entries(VIEW_KEYS).map(([k, sk]) => [k, S[sk]])) }); }
+function loadView() { const v = window.CX.readHash(); Object.entries(VIEW_KEYS).forEach(([k, sk]) => { if (v[k] != null) S[sk] = v[k]; }); }
 
 // ---- boot ---------------------------------------------------------------------------
 let fcSeen = false;
-function drawAll() { drawRenewBands(); drawCurtail(); drawNodeCurtail(); if (fcSeen) drawForecast(); if (ECO) { drawEcoMonths(); drawEcoUnits(); } }
+function drawAll() { drawRenewBands(); drawCurtail(); drawNodeCurtail(); if (fcSeen) drawForecast(); }
 
 async function boot() {
   [S.C, S.N, S.FI, S.SC] = await Promise.all([tryJSON("data/curve_trends.json.gz"), tryJSON("data/curtail_nodes.json.gz"), tryJSON("data/forecast/index.json.gz"), tryJSON("data/forecast/scores.json.gz")]);
@@ -578,8 +426,6 @@ async function boot() {
   const step = (k) => { const i = cdays.indexOf(S.cday) - k; if (i >= 0 && i < cdays.length) { S.cday = cdays[i]; $("cday").value = S.cday; drawCurtail(); saveView(); } };
   $("cday").onchange = (e) => { S.cday = e.target.value; drawCurtail(); saveView(); };
   $("cday-prev").onclick = () => step(-1); $("cday-next").onclick = () => step(1);
-  setSeg("eco-tech", S.ecoTech); bindSeg("eco-tech", "ecoTech", drawEcoUnits);
-  $("eco-more").onclick = () => { S.ecoAll = true; drawEcoUnits(); };
   bindSeg("nc-basis", "pbasis", drawCurtPrice);
   $("nc-more").onclick = () => { S.ncAll = true; drawNodeCurtail(); };
   drawAll();
@@ -587,10 +433,10 @@ async function boot() {
   saveView();
   // the forecast files are one per day: load them once the panel is about to scroll into view
   new IntersectionObserver((es, ob) => { if (es.some((e) => e.isIntersecting)) { fcSeen = true; drawForecast(); ob.disconnect(); } }, { rootMargin: "400px" }).observe($("fc-chart"));
-  // fleet economics needs the economics and bidding-history files: load them after the rest
+  // the curtailment table's offer column needs the bidding-history files: load them after the rest
   const lastY = +S.C.curt.dates.at(-1).slice(0, 4);
-  [S.E.wind, S.E.solar, ...S.SIG] = await Promise.all([tryJSON("data/econ/wind.json.gz"), tryJSON("data/econ/solar.json.gz"), tryJSON(`data/renew/sig-${lastY - 1}.json.gz`), tryJSON(`data/renew/sig-${lastY}.json.gz`)]);
-  computeEco(); drawEcoMonths(); drawEcoUnits(); drawNodeCurtail();
+  S.SIG = await Promise.all([tryJSON(`data/renew/sig-${lastY - 1}.json.gz`), tryJSON(`data/renew/sig-${lastY}.json.gz`)]);
+  drawNodeCurtail();
   let t, lastW = 0;
   new ResizeObserver((e) => { const w = Math.round(e[0].contentRect.width); if (w === lastW) return; lastW = w; clearTimeout(t); t = setTimeout(drawAll, 120); }).observe(document.querySelector("main"));
   window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", drawAll);
