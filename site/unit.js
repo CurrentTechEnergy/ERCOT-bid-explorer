@@ -184,17 +184,15 @@ function drawHead(e) {
     ` <a href="./#date=${esc(S.FC.date)}">Overview for that day</a>.`;
 }
 
-// a battery and the wind or solar units at the same settlement point (a co-located site), linked
-// both ways from the unit index
-const RENEW = ["wind", "solar"];
+// every other unit at the same settlement point (a shared site: a battery beside a wind, solar or
+// gas plant, or units of one plant), linked both ways from the unit index
 function drawSite(e) {
   const me = (S.UI || []).find((u) => u.unit === e.name);
-  const pair = (u) => e.tech === "storage" ? RENEW.includes(u.tech) : RENEW.includes(e.tech) && u.tech === "storage";
-  const mates = me && me.sp ? S.UI.filter((u) => u.sp === me.sp && u.unit !== e.name && pair(u)) : [];
+  const mates = me && me.sp ? S.UI.filter((u) => u.sp === me.sp && u.unit !== e.name) : [];
   $("unit-site").hidden = !mates.length;
   if (!mates.length) return;
-  $("unit-site").innerHTML = `Same site (node ${esc(me.sp)}): ` + mates.map((u) =>
-    `<a href="unit.html?unit=${encodeURIComponent(u.unit)}">${esc(u.unit)}</a> ${esc(u.tech === "storage" ? "battery" : u.tech)}` +
+  $("unit-site").innerHTML = `Same node (${esc(me.sp)}): ` + mates.map((u) =>
+    `<a href="unit.html?unit=${encodeURIComponent(u.unit)}">${esc(u.unit)}</a> ${esc(u.tech === "storage" ? "battery" : techLabel(u.tech).toLowerCase())}` +
     (u.mw ? ` ${fmtMW(u.mw)} MW` : "")).join(", ");
 }
 
