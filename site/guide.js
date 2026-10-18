@@ -1,6 +1,8 @@
 /* How offers work: a guided walk through offer curves, LSL, SCED, DAM and on/off decisions.
    Reads data/guide.json.gz (pipeline/guide.py: the example day and units), data/index.json (price
-   grid) and that day's 60-day technology file for the fleet view. */
+   grid) and that day's 60-day technology file for the fleet view. Steps 6 and 7 are the method notes
+   for Fleet economics and the hedge signals; step 7's thresholds come from data/ppa.json.gz and
+   data/renew_changes.json.gz. */
 (() => {
 "use strict";
 const { getJSON, tryJSON, showTip, hideTip, css, axisFmt } = window.CX;
@@ -304,7 +306,7 @@ function drawStep6() {
   $("c6-cap").textContent = S.mode === "from_lsl"
     ? `${S.g.date}, ${heLabel(h)}. Each line starts at its technology's online LSL (combined cycle: ${fmt0(cc.lsl)} MW) and rises only with MW offered above it. At this hour's price, combined cycles offered ${fmt0(at(cc, Math.round(lam)) - cc.lsl)} MW above LSL.`
     : `${S.g.date}, ${heLabel(h)}. As ERCOT prices it: combined cycle shows ${fmt0(at(cc, -20))} MW at or below −$20, almost all of it the ${fmt0(cc.lsl)} MW of LSL placed at the placeholder price.`;
-  $("s6-link").href = `index.html#date=${S.g.date}&he=${h + 1}&lsl=${S.mode}`;
+  $("s6-link").href = `beyond.html#date=${S.g.date}&he=${h + 1}&lsl=${S.mode}&p=curves-panel`;
 }
 
 // ------------------------------------------------------------------ wiring ---
@@ -312,7 +314,7 @@ function drawAll() {
   const u = U();
   $("unit-note").textContent = u.note;
   $("hour-out").textContent = heLabel(S.hour);
-  $("s2-link").href = `index.html#date=${S.g.date}&he=${S.hour + 1}&lsl=ercot`;
+  $("s2-link").href = `beyond.html#date=${S.g.date}&he=${S.hour + 1}&lsl=ercot&p=curves-panel`;
   drawStep2(); drawStep3(); drawStep4(); drawStep5(); drawStep6();
 }
 function bindSeg(id, key) {
@@ -324,6 +326,20 @@ function bindSeg(id, key) {
     box.querySelectorAll("button").forEach((x) => x.setAttribute("aria-checked", String(x === b)));
     drawAll();
   });
+}
+
+// step 7: the hedge-signal and bidding-change thresholds, from the same files Renewables reads
+async function fillHedgeMethod() {
+  const [D, R] = await Promise.all([tryJSON("data/ppa.json.gz"), tryJSON("data/renew_changes.json.gz")]);
+  if (D && D.hit_usd != null) $("hit-v").textContent = fmtP0(D.hit_usd);
+  if (!R || !R.params) return;
+  const P = R.params, fmtA = (v) => (v == null ? "–" : d3.format(".2f")(v));
+  $("chg-method").textContent = `A unit's regime is its floor (one offer price most of the day, within $${P.tol}), a day-ahead formula at one settlement point (as fitted on this step), or offers that move within the day. ` +
+    `A change is a new regime that holds on at least ${P.min_held} of the next ${P.hold} online days. A floor counts as "back" when the unit held it within the previous ${P.new_days} days. ` +
+    `Inside a formula regime, a step of ${fmtA(P.terms_a)} in the share, or of $${P.terms_b} in the offer the formula gives at a $${P.ref_da} DA price, is a terms change. An episode is 1 to ${P.ep_max} days with a median offer at least $${P.ep_usd} from the floor, then back to it. ` +
+    `Units of one plant changing the same way within a day are one row. A toggler has ${P.toggle} or more episodes or returns to an earlier floor within a year. ` +
+    `Moved dispatch: for the first ${P.hold} online days of the new regime (or the episode's days), an hour counts when the unit was online and its node price fell between the old offer and the new one. Priced up, the old offer would have run, so the energy given up is HSL minus base point; priced down, the base point is energy the old offer would not have produced. Both are valued at the node price. ` +
+    `The real-time node price is used where loaded (from ${R.live_first || "–"}); before that only the day-ahead node price is available and the estimate is marked "DA price". Hourly prices smooth over SCED's 5-minute prices, so the MWh are approximate.`;
 }
 
 async function main() {
@@ -346,4 +362,5 @@ async function main() {
   rw = window.innerWidth;
 }
 main().catch((e) => { $("status").textContent = "Could not load the example data."; console.error(e); });
+fillHedgeMethod().catch((e) => console.error(e));
 })();

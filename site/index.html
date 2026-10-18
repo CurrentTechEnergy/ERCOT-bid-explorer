@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>ERCOT Bid Stack Explorer</title>
+<title>ERCOT Overview: who is expected to run</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Sans+Condensed:wght@600&display=swap">
 <link rel="stylesheet" href="style.css">
@@ -13,14 +13,14 @@
 
 <header class="masthead">
   <div class="brand">
-    <div class="nav-row"><nav class="nav" aria-label="Pages"><a href="overview.html">Overview</a><a href="beyond.html">Beyond baseload</a><a href="renewables.html">Renewables</a><a href="fleet.html">Fleet economics</a><a href="index.html" aria-current="page">Day view</a><a href="trends.html">Trends</a><a href="economics.html">Plant economics</a><a href="contracts.html">Hedge signals</a><a href="builder.html">Graph builder</a><a href="guide.html">How offers work</a></nav></div>
+    <div class="nav-row"><nav class="nav" aria-label="Pages"><a href="index.html" aria-current="page">Overview</a><a href="beyond.html">Beyond baseload</a><a href="renewables.html">Renewables</a><a href="fleet.html">Fleet economics</a><a href="trends.html">Trends</a><a href="builder.html">Graph builder</a><a href="guide.html">How offers work</a></nav></div>
     <h1>ERCOT Bid Stack Explorer</h1>
-    <p class="sub">How resources offer energy into SCED, by technology, day and hour. Data from ERCOT's 2-Day SCED Energy Curves and 60-Day SCED Disclosure reports.</p>
+    <p class="sub">Who is expected to run on a day, from each unit's own day economics at its own node, and how that forecast held up once the day's reports arrived. Data from ERCOT's day-ahead prices and the 2-day and 60-day SCED disclosures.</p>
   </div>
   <p class="status" id="status">Loading data…</p>
 </header>
 
-<section class="controls" aria-label="Filters">
+<section class="controls" aria-label="Controls">
   <div class="ctl">
     <label class="lbl" for="date">Operating day</label>
     <div class="date-step">
@@ -30,167 +30,138 @@
     </div>
     <p class="source-note" id="source-note"></p>
   </div>
-  <div class="ctl ctl-hour">
-    <label class="lbl" for="hour">Hour <output id="hour-out">HE 13</output></label>
-    <input type="range" id="hour" min="0" max="23" step="1" value="12">
-  </div>
-  <div class="ctl" id="ctl-version">
-    <span class="lbl" id="lbl-version">Curve</span>
-    <div class="seg" role="radiogroup" aria-labelledby="lbl-version" id="version">
-      <button type="button" data-v="curves" role="radio" title="Curve used by SCED: as submitted, extended by ERCOT to the unit's limits and mitigated where a non-competitive constraint binds (SCED2; SCED1 for days processed before that was kept)">As used in SCED</button>
-      <button type="button" data-v="submitted" role="radio" title="Price-quantity pairs as submitted by the QSE">As submitted</button>
-    </div>
-  </div>
   <div class="ctl">
-    <label class="lbl" for="location">Price</label>
-    <select id="location"></select>
+    <span class="lbl">What this page knows about the day</span>
+    <div class="layers" id="layers"></div>
   </div>
 </section>
 
 <main>
-  <section class="panel panel-wide" id="day-panel">
-    <div class="panel-head">
+  <section class="panel panel-wide" id="headline-panel">
+    <div class="panel-head"><div><h2>The day at a glance <span class="h-note" id="headline-note"></span></h2></div></div>
+    <div class="headline">
       <div>
-        <h2>Pick an hour <span class="h-note" id="day-title-note"></span></h2>
-        <p class="note">Cleared price and generation mix through the selected day. Click an hour to load its bid stack in the charts below.</p>
+        <p class="lede" id="lede"></p>
+        <p class="lede-sub" id="lede-sub"></p>
+        <ul class="expect" id="expect"></ul>
+        <p class="note" id="track"></p>
+      </div>
+      <div class="sparkwrap">
+        <h3>Day-ahead hub average by hour ending ($/MWh)</h3>
+        <div class="chart chart-short" id="spark"></div>
+        <p class="note" id="spark-note">Shaded bands are the bottom quarter, middle half and top quarter of daily hub averages over the last twelve months. Real-time system lambda is drawn beside the day-ahead line once the day has happened.</p>
+        <h3>Expected generation, same hours (GW)</h3>
+        <div class="chart chart-short" id="mini"></div>
+        <div class="legend legend-static" id="mini-legend"></div>
       </div>
     </div>
-    <div class="chart chart-short" id="day-price"></div>
-    <div class="legend legend-static" id="day-legend"></div>
-    <div class="chart" id="day-mix"></div>
   </section>
 
-  <section class="panel panel-wide" id="curves-panel">
+  <section class="panel" id="groups-panel">
     <div class="panel-head">
       <div>
-        <h2>Offer curves <span class="h-note" id="curve-title-note"></span></h2>
-        <p class="note">MW offered at or below each price, averaged over the SCED runs in the hour. The line across the chart marks the cleared price for the hour; the shaded band is its range in that hour. With the 60-day report, "From LSL" draws each technology as the minimum output (LSL) of its online units plus the MW offered above that, so the curve runs flat at LSL and rises with the bids: minimum output runs however low the price goes, and only the MW above it can move by price. "As ERCOT prices it" shows the curves the way SCED sees them, with minimum output at −$20 (−$50 for some units) and the −$250 starts of some submitted curves. The Stacked view shades the LSL block from zero; hover for the split. <a href="guide.html#s6">More on what “From LSL” means</a>.</p>
+        <h2>Who is expected to run, by how often it turns off</h2>
+        <p class="note">Thermal units grouped by how often they have turned off on price. Each bar is the group's whole capacity (HSL). The online part is the units expected on, from their minimum output (the dark block, which stays on at any price) up to their maximum, with a tick at the day's expected output. Lighter is expected off, hatched is on outage, and grey is units with too few decision days to judge yet. Daily units are judged on their cutoff, the day-ahead stay-on loss above which they turn off when they hold no award; seasonal and multi-day units on the month's price level; peakers on their history at this price level and hour. Nuclear sits in the never-off group.</p>
       </div>
       <div class="panel-tools">
-        <div class="seg seg-sm" id="xrange" role="radiogroup" aria-label="Price range">
-          <button type="button" data-v="low" role="radio" title="−$50 to the hour's highest cleared price or $60, whichever is higher">−$50 to $60+</button>
-          <button type="button" data-v="mid" role="radio" title="−$50 to $300">to $300</button>
-          <button type="button" data-v="full" role="radio" title="−$250 to $5,000, compressed scale">Full range</button>
-          <button type="button" data-v="custom" role="radio">Custom</button>
-        </div>
-        <span class="price-range" id="xrange-custom" hidden>
-          <label>From $<input type="number" id="xr-min" step="5" aria-label="Lowest price on the axis"></label>
-          <label>to $<input type="number" id="xr-max" step="5" aria-label="Highest price on the axis"></label>
-        </span>
-        <div class="seg seg-sm" id="lsl-mode" role="radiogroup" aria-label="Minimum output">
-          <button type="button" data-v="from_lsl" role="radio" title="Each technology's curve starts at the minimum output (LSL) of its online units and rises with the MW offered above it">From LSL</button>
-          <button type="button" data-v="ercot" role="radio" title="The curves as SCED sees them: minimum output at −$20 (−$50 for some units), submitted curves with their sub-LSL points">As ERCOT prices it</button>
-        </div>
-        <div class="seg seg-sm" id="mode" role="radiogroup" aria-label="Chart style">
-          <button type="button" data-v="lines" role="radio">Lines</button>
-          <button type="button" data-v="stack" role="radio">Stacked</button>
-          <button type="button" data-v="share" role="radio" title="Each technology as a share of the MW it offers at any price">% of offered</button>
-        </div>
-        <div class="seg seg-sm" id="axes" role="radiogroup" aria-label="Axis orientation">
-          <button type="button" data-v="price_x" role="radio" title="Price across the bottom, MW up the side">Price on x</button>
-          <button type="button" data-v="price_y" role="radio" title="MW across the bottom, price up the side (supply-curve view)">Price on y</button>
+        <div class="seg seg-sm" id="unit-g" role="radiogroup" aria-label="Unit">
+          <button type="button" data-v="gw" role="radio">Power, GW</button>
+          <button type="button" data-v="gwh" role="radio">Energy, GWh over the day</button>
         </div>
       </div>
     </div>
-    <div class="legend" id="legend"></div>
-    <div class="chart" id="curve-chart"></div>
-    <details class="table-view"><summary>Table view</summary><div id="curve-table" class="scroll-x"></div></details>
+    <div class="legend legend-static" id="bar-legend"></div>
+    <div class="rows" id="group-rows" data-csv></div>
   </section>
 
-  <section class="panel panel-wide" id="mix-panel">
+  <section class="panel" id="tech-panel">
+    <div class="panel-head">
+      <div>
+        <h2>Who is expected to run, by technology</h2>
+        <p class="note">The same units and the same method, cut by technology. Hover a bar for the unit counts and the reasons behind the verdicts. Wind and solar bars run to nameplate: solid is expected dispatch, lighter is available but priced out at its own node, hatched is not available from the weather.</p>
+      </div>
+      <div class="panel-tools">
+        <div class="seg seg-sm" id="unit-t" role="radiogroup" aria-label="Unit">
+          <button type="button" data-v="gw" role="radio">Power, GW</button>
+          <button type="button" data-v="gwh" role="radio">Energy, GWh over the day</button>
+        </div>
+      </div>
+    </div>
+    <div class="legend legend-static" id="tech-legend"></div>
+    <div class="rows" id="tech-rows" data-csv></div>
+  </section>
+
+  <section class="panel panel-wide" id="hourly-panel">
+    <div class="panel-head">
+      <div>
+        <h2>Expected generation by hour <span class="h-note" id="hourly-note"></span></h2>
+        <p class="note">Each unit's verdict carries the hours it would be off, so the expected mix is laid out hour by hour: thermal by group, with the dashed line marking the committed minimum output that stays on whatever the price, then wind and solar from their forecasts less what prices itself out at its node. Batteries are drawn on top (discharging) and below zero (charging) once the battery data is loaded. The shaded hours are the day's cheap stretch. Once the 2-day generation summary is out, its actual thermal, wind and solar are drawn as lines over the forecast.</p>
+      </div>
+    </div>
+    <div class="legend" id="hourly-legend"></div>
+    <div class="chart" id="hourly-chart"></div>
+  </section>
+
+  <section class="panel panel-wide" id="score-panel" hidden>
+    <div class="panel-head">
+      <div>
+        <h2>How this day went <span class="h-note" id="score-note"></span></h2>
+        <p class="note">The forecast scored against the day's reports: the 2-day generation summary two days on (thermal, wind and solar energy over the day) and the per-unit 60-day disclosure sixty days on (each group's energy, and whether each unit's on or off call was right). These are the same scores the model gate uses.</p>
+      </div>
+    </div>
+    <div class="scroll-x" id="score-table" data-csv></div>
+  </section>
+
+  <section class="panel panel-wide" id="detail-head">
+    <div class="panel-head">
+      <div>
+        <h2>The day in detail</h2>
+        <p class="note">The hour below applies to the generation mix, the price duration dot and the hourly view of the units table.</p>
+      </div>
+      <div class="panel-tools ctl-hour">
+        <label class="lbl" for="hour">Hour <output id="hour-out">HE 13</output></label>
+        <input type="range" id="hour" min="0" max="23" step="1" value="12">
+      </div>
+    </div>
+  </section>
+
+  <section class="panel" id="mix-panel">
     <div class="panel-head">
       <div>
         <h2>Generation mix <span class="h-note" id="mix-title-note"></span></h2>
-        <p class="note">Output by technology in the hour and each technology's share of total generation. With the 60-day report this is measured output; with the 2-day report it is an estimate from the offer curves at the cleared price.</p>
+        <p class="note">Expected output by technology in the hour, from the forecast file. Once the 60-day disclosure is out, each bar carries a tick at the measured output; with only the 2-day summary, the ticks are its thermal total, wind and solar.</p>
       </div>
     </div>
     <div class="chart" id="mix-chart"></div>
     <details class="table-view"><summary>Table view</summary><div id="mix-table" class="scroll-x"></div></details>
   </section>
 
-  <section class="panel panel-wide" id="marg-panel">
+  <section class="panel" id="dur-panel">
     <div class="panel-head">
       <div>
-        <h2>Marginal supply <span class="h-note" id="marg-title-note"></span></h2>
-        <p class="note">Who is offering at the cleared price: MW each technology offers between the hour's lowest and highest cleared price (at least ±$1 around the average), from the hourly offer curves (it follows the Curve and Price selections), with each unit's minimum output (LSL) taken out, since SCED cannot move a unit below it. Supply shares add to 100% of supply. Batteries that stop charging as price rises are demand, so they are drawn on the other side of zero as a share of the supply in the window (it can pass 100% when little supply moves; the chart stops at 100%). It shows who stands at the margin, not which unit set each SCED price; with congestion, units can set price locally at prices away from system lambda.</p>
-      </div>
-    </div>
-    <div class="chart" id="marg-chart"></div>
-    <div class="chart" id="marg-day"></div>
-    <details class="table-view"><summary>Table view</summary><div id="marg-table" class="scroll-x"></div></details>
-  </section>
-
-  <section class="panel panel-wide" id="os-panel">
-    <div class="panel-head">
-      <div>
-        <h2>Marginal offer stack by price <span class="h-note" id="os-title-note"></span></h2>
-        <p class="note">Who would move next if price landed at each level: each technology's share of the MW offered around that price, read off the day's offer curves (the slope of the bid stack). Battery charging bids are demand, so they sit below the line as a share of the supply offered at that price. MW at the −$250 floor (units with no offer curve, mostly nuclear and hydro) are left out, and so is each unit's minimum output (LSL), which SCED cannot move: on days processed before that was done it still shows as a spike at −$20 (−$50 for some units). Ticks along the top mark each hour's system lambda. The same view across all days, by settled price, is on the <a href="trends.html">Trends</a> page.</p>
+        <h2>Price duration <span class="h-note" id="dur-title-note"></span></h2>
+        <p class="note">Hourly prices across every loaded day, highest to lowest. The dot is the selected hour and the short marks are the rest of its day.</p>
       </div>
       <div class="panel-tools">
-        <div class="seg seg-sm" id="os-view" role="radiogroup" aria-label="Hours">
-          <button type="button" data-v="hour" role="radio">Selected hour</button>
-          <button type="button" data-v="day" role="radio">Day average</button>
-        </div>
-        <div class="seg seg-sm" id="os-unit" role="radiogroup" aria-label="Measure">
-          <button type="button" data-v="share" role="radio">Share</button>
-          <button type="button" data-v="mw" role="radio">MW</button>
-        </div>
-        <span class="price-range" id="os-range">
-          <label>From $<input type="number" id="os-min" step="5" aria-label="Lowest price on the axis"></label>
-          <label>to $<input type="number" id="os-max" step="5" aria-label="Highest price on the axis"></label>
-          <button type="button" class="link-btn" id="os-reset">Reset</button>
-        </span>
-        <div class="seg seg-sm" id="os-smooth" role="radiogroup" aria-label="Detail">
-          <button type="button" data-v="smooth" role="radio">Smoothed</button>
-          <button type="button" data-v="exact" role="radio">Exact</button>
+        <div class="seg seg-sm" id="dur-loc" role="radiogroup" aria-label="Price">
+          <button type="button" data-v="hub" role="radio">Day-ahead hub average</button>
+          <button type="button" data-v="lambda" role="radio">Real-time system lambda</button>
         </div>
       </div>
     </div>
-    <div class="legend legend-static" id="os-legend"></div>
-    <div class="chart" id="os-chart"></div>
-  </section>
-
-  <section class="panel panel-wide" id="profile-panel">
-    <div class="panel-head">
-      <div>
-        <h2>Through the day <span class="h-note" id="profile-title-note"></span></h2>
-        <p class="note">MW offered at or below the threshold in each hour of the selected day, with the cleared price below. It follows the Offer curves chart's minimum output setting: "From LSL" counts each technology's online minimum output (LSL) at every threshold, since it runs however low the price goes, plus the MW offered above it at or below the threshold; "As ERCOT prices it" counts minimum output only from −$20 (−$50 for some units) up, where ERCOT prices it. The same measure for every day and hour is under Across days on the <a href="trends.html">Trends</a> page.</p>
-      </div>
-      <div class="panel-tools">
-        <label class="lbl inline" for="threshold">At or below</label>
-        <select id="threshold"></select>
-      </div>
-    </div>
-    <div class="chart" id="profile-chart"></div>
-    <div class="chart chart-short" id="price-chart"></div>
-  </section>
-
-  <section class="panel panel-wide" id="thermal-panel">
-    <div class="panel-head">
-      <div>
-        <h2>Inflexibility by technology <span class="h-note">60-day data</span></h2>
-        <p class="note">Units online, in the selected hour or averaged over the day. Minimum output (LSL) runs at any price, so it is the inflexible block; the MW offered above it at or below $0 can still be backed down by price but keeps running when prices go negative; and units with no offer curve run at their schedule whatever the price.</p>
-      </div>
-      <div class="panel-tools">
-        <div class="seg seg-sm" id="tt-view" role="radiogroup" aria-label="Hours">
-          <button type="button" data-v="hour" role="radio">Selected hour</button>
-          <button type="button" data-v="day" role="radio">Day average</button>
-        </div>
-      </div>
-    </div>
-    <div class="scroll-x" id="tech-table" data-csv></div>
+    <div class="chart chart-short" id="duration-chart"></div>
   </section>
 
   <section class="panel panel-wide" id="units-panel">
     <div class="panel-head">
       <div>
-        <h2>Units <span class="h-note">60-day data</span></h2>
-        <p class="note">One row per resource, for the operating day or the selected hour. Click a column to sort.</p>
+        <h2>Units <span class="h-note" id="units-note"></span></h2>
+        <p class="note">One row per thermal train with its verdict for the day and the reason behind it. Loss is the day-ahead stay-on loss, the worst contiguous window of running at minimum output against the unit's own node price; cutoff is the loss above which this unit has turned off when it held no award. Once the 60-day disclosure is out, the table adds the hours the unit was actually online and whether the call was right. Click a column to sort.</p>
       </div>
       <div class="panel-tools">
         <div class="seg seg-sm" id="unit-view" role="radiogroup" aria-label="Hours">
-          <button type="button" data-v="hour" role="radio">Selected hour</button>
           <button type="button" data-v="day" role="radio">Day</button>
+          <button type="button" data-v="hour" role="radio">Selected hour</button>
         </div>
         <label class="lbl inline" for="unit-tech">Technology</label>
         <select id="unit-tech"></select>
@@ -201,37 +172,16 @@
     <div class="scroll-x" id="units-table" data-csv></div>
     <p class="note" id="units-foot"></p>
   </section>
-
-  <section class="panel panel-wide" id="curt-panel">
-    <div class="panel-head">
-      <div>
-        <h2>Wind and solar curtailment <span class="h-note" id="curt-title-note"></span></h2>
-        <p class="note">MW wind and solar could have produced (HSL) minus the base point SCED sent them, averaged over each hour. This is the output SCED held back, for price or for congestion. It comes from the 60-day disclosure, unit by unit. Recent days that have no 60-day data yet use an estimate from ERCOT's 2-day reports: the generation summary's base points against the top of the 2-day offer curves, since the summary no longer carries available output (HASL).</p>
-      </div>
-    </div>
-    <div class="legend legend-static" id="curt-legend"></div>
-    <div class="chart" id="curt-chart"></div>
-  </section>
-
-  <section class="panel panel-wide" id="dur-panel">
-    <div class="panel-head">
-      <div>
-        <h2>Price duration <span class="h-note" id="dur-title-note"></span></h2>
-        <p class="note">Hourly average prices across every loaded day, highest to lowest, for the selected price location. The dot is the selected hour and the short marks are the rest of its day.</p>
-      </div>
-    </div>
-    <div class="chart chart-short" id="duration-chart"></div>
-  </section>
 </main>
 
 <footer class="foot">
-  <p>Source: ERCOT EMIL products NP3-908-ER, NP3-965-ER, NP6-322-CD and NP6-905-CD. Times are hour ending, Central prevailing time. Curves are capped at each unit's high sustainable limit for the SCED run.</p>
+  <p>Source: ERCOT day-ahead market prices (NP4-180-ER, NP4-190-CD), DAM offers (NP3-966-ER), the 2-day generation summary (NP3-965-ER), the 60-day SCED disclosure (NP3-965-ER) and the wind and solar forecasts (NP4-732-CD, NP4-737-CD). Times are hour ending, Central prevailing time. Every figure on this page is read from a forecast file written by the pipeline; the page only sums and takes shares, so a number here can be checked against <code>data/forecast/&lt;date&gt;.json.gz</code>.</p>
   <p>Made by <a href="https://currenttech.energy">currenttech.energy</a> · <a href="contact.html">Contact</a></p>
 </footer>
 </div>
 <div class="tip" id="tip" hidden></div>
 <script src="vendor/d3.min.js"></script>
 <script src="common.js"></script>
-<script src="app.js"></script>
+<script src="overview.js"></script>
 </body>
 </html>

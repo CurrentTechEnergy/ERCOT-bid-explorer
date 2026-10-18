@@ -73,9 +73,9 @@
 
 <header class="masthead">
   <div class="brand">
-    <div class="nav-row"><nav class="nav" aria-label="Pages"><a href="overview.html">Overview</a><a href="beyond.html">Beyond baseload</a><a href="renewables.html">Renewables</a><a href="fleet.html">Fleet economics</a><a href="index.html">Day view</a><a href="trends.html">Trends</a><a href="economics.html">Plant economics</a><a href="contracts.html">Hedge signals</a><a href="builder.html">Graph builder</a><a href="guide.html" aria-current="page">How offers work</a></nav></div>
+    <div class="nav-row"><nav class="nav" aria-label="Pages"><a href="index.html">Overview</a><a href="beyond.html">Beyond baseload</a><a href="renewables.html">Renewables</a><a href="fleet.html">Fleet economics</a><a href="trends.html">Trends</a><a href="builder.html">Graph builder</a><a href="guide.html" aria-current="page">How offers work</a></nav></div>
     <h1>How offers work</h1>
-    <p class="sub">Why thermal plants keep running when prices go negative. A walk through offer curves, minimum output (LSL), real-time dispatch (SCED), the day-ahead market (DAM) and on/off decisions, using one real day and real units from ERCOT's 60-day disclosures.</p>
+    <p class="sub">Why thermal plants keep running when prices go negative. A walk through offer curves, minimum output (LSL), real-time dispatch (SCED), the day-ahead market (DAM) and on/off decisions, using one real day and real units from ERCOT's 60-day disclosures, then how the site counts revenue and reads hedges from wind and solar offers.</p>
   </div>
   <p class="status" id="status">Loading data…</p>
 </header>
@@ -98,6 +98,8 @@
     <li><a href="#s4">Sidequest: Day-ahead</a></li>
     <li><a href="#s6">On this site: “From LSL”</a></li>
     <li><a href="#s7">5 Reading the site</a></li>
+    <li><a href="#revenue">6 Revenue</a></li>
+    <li><a href="#hedge">7 Hedge signals</a></li>
   </ul>
 </section>
 
@@ -139,7 +141,7 @@
       <p>Two limits matter. <strong>HSL</strong> (high sustained limit) is the most the unit can produce right now. <strong>LSL</strong> (low sustained limit) is the least it can produce and stay online: its minimum output. Rio Nogales' LSL is about <span id="s2-lsl">475</span> MW out of <span id="s2-hsl">800</span> MW.</p>
       <p>The shaded block from 0 MW to LSL is <strong>not a bid</strong>. While the unit is on, those MW run at any price; the only way to stop them is to turn the unit off (step 1). Whatever prices the curve shows below LSL never set dispatch or the market price.</p>
       <p>Switch to <strong>"As ERCOT uses it"</strong> to see the curve SCED actually ran on. ERCOT fills the space from 0 MW up to the first offered point with a placeholder price (usually −$20), so in ERCOT's version the LSL block looks like MW offered at −$20. It is minimum output, not an offer to run at −$20.</p>
-      <p class="see"><a id="s2-link" href="index.html">See the technology totals in the Day view's Offer curves chart →</a></p>
+      <p class="see"><a id="s2-link" href="beyond.html#p=curves-panel">See the technology totals in the Offer curves chart on Beyond baseload →</a></p>
     </div>
     <div class="fig">
       <div class="panel-tools">
@@ -214,13 +216,13 @@
       <p>Add up every online unit and the minimum output blocks form a large spike at the bottom of the offer stack. In ERCOT's version (step 2) the spike sits at −$20, which makes it look as though many gigawatts are bid at −$20 and are ready to move. They are not.</p>
       <p><strong>"From LSL"</strong> is how this site draws and counts offers instead. For each technology it takes the online units' total LSL and adds only the MW they offer <em>above</em> LSL at or below each price. The curve runs flat at the LSL total from the left edge, then rises with the real bids. The flat part answers "how much runs regardless of price", and the rise answers "how much moves with price". Switch views to compare.</p>
       <ul>
-        <li><strong>Offer curves (Day view):</strong> "From LSL" is the default. "As ERCOT prices it" shows the curves SCED saw, with minimum output at the placeholder price.</li>
-        <li><strong>Marginal supply and Marginal offer stack (Day view), Marginal supply by settled price and Thermal offer prices (Trends):</strong> count only MW above LSL, since only those can be marginal.</li>
+        <li><strong>Offer curves (Beyond baseload):</strong> "From LSL" is the default. "As ERCOT prices it" shows the curves SCED saw, with minimum output at the placeholder price.</li>
+        <li><strong>Marginal generation by price, Through the day and Offers against fuel (Beyond baseload):</strong> count only MW above LSL, since only those can be marginal.</li>
         <li><strong>Unit metrics:</strong> "≤ $0 as submitted" is a share of the range from LSL to HSL. "First offer price above $0", implied heat rate and the bidding-change signals read the curve from LSL up.</li>
         <li><strong>Charts that keep LSL on purpose:</strong> the Floor chart's "≤ −$20, as used", "≤ $0 as used", thermal output in cheap hours and Stay-on. These are about who is running, so minimum output belongs in them.</li>
         <li><strong>2-day days</strong> (the most recent two months) have no unit limits, so they show curves as ERCOT prices them.</li>
       </ul>
-      <p class="see"><a id="s6-link" href="index.html">Open this hour in the Day view →</a></p>
+      <p class="see"><a id="s6-link" href="beyond.html#p=curves-panel">Open this hour on Beyond baseload →</a></p>
     </div>
     <div class="fig">
       <div class="panel-tools">
@@ -246,23 +248,51 @@
         <h3>Commitment: who is on?</h3>
         <p class="lead">Decided by owners, hours or days ahead. Includes minimum output.</p>
         <ul>
+          <li><a href="./">Overview</a>: who is expected to run, by how often each group turns off and by technology</li>
           <li><a href="trends.html">Floor-priced MW</a> (≤ −$20 as used): almost all of it is LSL</li>
-          <li><a href="trends.html">Capacity by status</a>, <a href="trends.html">Running vs price</a>, <a href="trends.html">Starts per day</a></li>
-          <li><a href="trends.html">Thermal output in cheap hours</a>, <a href="trends.html">Shutdowns and two-shifting</a>, <a href="trends.html">Who turns off for cheap stretches</a></li>
-          <li><a href="index.html">Inflexibility by technology</a>: "≤ $0 as used" and "At floor"</li>
-          <li><a href="economics.html">Plant economics</a>: what running cost and earned</li>
+          <li><a href="trends.html">Capacity by status</a>, <a href="trends.html">Running vs price</a>, <a href="trends.html">Thermal output in cheap hours</a>, <a href="trends.html">Who turns off for cheap stretches</a></li>
+          <li><a href="fleet.html">Fleet economics</a> and each unit's page: what running cost and earned (<a href="#revenue">step 6</a>)</li>
         </ul>
       </div>
       <div>
         <h3>Bidding: what do the MW above LSL ask?</h3>
         <p class="lead">Set by the offer curve, read from LSL up. This is where price moves come from.</p>
         <ul>
-          <li><a href="index.html">Offer curves</a> (the rise above the flat LSL part), <a href="index.html">Marginal supply</a>, <a href="index.html">Marginal offer stack by price</a></li>
-          <li><a href="trends.html">Thermal offer prices</a>, <a href="trends.html">Natural gas and implied heat rate</a></li>
-          <li><a href="trends.html">Marginal supply by settled price</a>, <a href="trends.html">Changes in bidding approach</a></li>
-          <li><a href="trends.html">Wind and solar offer prices</a>: wind and solar have no meaningful LSL, so their whole curve is a bid</li>
+          <li><a href="beyond.html#p=curves-panel">Offer curves</a> (the rise above the flat LSL part), <a href="beyond.html#p=os-panel">Marginal generation by price</a>, <a href="beyond.html#p=profile-panel">Through the day</a></li>
+          <li><a href="beyond.html#p=fuel-panel">Offers against fuel</a>: thermal offer prices with gas and implied heat rate</li>
+          <li><a href="renewables.html">Wind and solar offer prices</a>: wind and solar have no meaningful LSL, so their whole curve is a bid</li>
+          <li><a href="renewables.html">Hedge signals and bidding changes</a>: what wind and solar offers say about their contracts (<a href="#hedge">step 7</a>)</li>
         </ul>
       </div>
+    </div>
+  </section>
+
+  <section class="panel gstep text-only" id="revenue">
+    <div class="prose">
+      <p class="step-num">STEP 6</p>
+      <h2>How revenue is counted</h2>
+      <p>The revenue and cost figures on <a href="fleet.html">Fleet economics</a> and on each unit's page are rebuilt from the public disclosures, so they are close to what a unit settled but not the same thing.</p>
+      <ul>
+        <li><strong>Energy revenue</strong> uses hourly mean prices and output, so it differs a little from settlement at 15-minute intervals. Node prices load a few days per update, newest first; days without them fall back to system lambda and are marked.</li>
+        <li><strong>Wind and solar</strong> are counted on the two-settlement basis: the day-ahead award at the day-ahead price plus the real-time deviation at the unit's node where it has day-ahead data, real time at its node otherwise (most wind and solar), and system lambda where the node price is missing.</li>
+        <li><strong>Ancillary service revenue</strong> is the DAM award at the DAM clearing price. Real-time AS awards under real-time co-optimization are not in the disclosures yet.</li>
+        <li><strong>Start-up costs</strong> count the hot start offer for every start. A unit off long enough for an intermediate or cold start cost more.</li>
+        <li><strong>Margin</strong> is energy plus ancillary revenue minus fuel, variable and start costs on the chosen bases. It leaves out fixed costs, so it is the contribution to them.</li>
+      </ul>
+      <p class="key">Submitted offers are capped by ERCOT's cost verification, so the offer basis is an upper bound on what the unit said its energy was worth, not an audited cost.</p>
+    </div>
+  </section>
+
+  <section class="panel gstep text-only" id="hedge">
+    <div class="prose">
+      <p class="step-num">STEP 7</p>
+      <h2>How hedge signals are found</h2>
+      <p>Wind and solar offers can give away how a plant is hedged. The <a href="renewables.html">Renewables</a> page scans every unit for this, and each unit's page shows its fitted formula.</p>
+      <p><strong>The formula.</strong> Per MWh, a plant hedged on a DA-settled, as-generated contract earns roughly the real-time price at its node, plus share × (strike − DA price at the settlement point), plus any per-MWh credit. Generating pays only when the RT price beats share × DA − (share × strike + credit), and that is the offer a QSE bidding the contract submits.</p>
+      <p><strong>The fit.</strong> Each hour's offer is the median over its SCED runs of the submitted curve's price at half its MW, kept only when it did not move within the hour (a DA-based price is hourly). A formula day has at least four such hours at four or more prices, after dropping a floor or cap the formula is clamped to. Every candidate settlement point (the unit's own node, each hub and load zone) is fitted on each formula day; the point's formula is the median over days, and its hit rate is the share of hours it predicts within <span id="hit-v">$2</span>.</p>
+      <p><strong>Bidding changes.</strong> <span id="chg-method">A unit's regime is its floor (one offer price most of the day), a day-ahead formula at one settlement point, or offers that move within the day. A change is a new regime that holds on most of the following online days.</span></p>
+      <p class="key">Reading it with care: most units never show a formula. A flat offer at −$30 or $0 says what the unit gives up by not running, not how it is hedged, and physical, as-available or fixed-shape contracts leave no trace in offers at all.</p>
+      <p>A formula that only appears on high-price days (Outpost and Frye during Winter Storm Fern) is a policy the operator switched on, not a standing rule. The slope is the share of the bidder's exposure tied to that DA price, which need not match the contracted share: Phoebe's public hedge covers 89% of output, while its offers follow 100% of HB_NORTH. Where a unit's node prices like a hub or load zone, the fit cannot tell them apart, and the tier says so.</p>
     </div>
   </section>
 

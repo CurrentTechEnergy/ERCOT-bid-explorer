@@ -161,9 +161,13 @@ pipeline/
   ercot_api.py     ERCOT Public API client (token, archive listing, downloads)
   update.py        command line entry point
 site/
-  overview.html, overview.js (the Overview: the forecast files rendered, with the day drill-down),
-  index.html, app.js, trends.html, trends.js, economics.html, economics.js, contracts.html, contracts.js,
-  builder.html, builder.js, guide.html, guide.js, style.css, vendor/d3.min.js
+  index.html, overview.js (the Overview and landing page: the forecast files rendered, with the day
+                   drill-down; overview.html redirects here),
+  beyond.html, renewables.html, fleet.html, unit.html, builder.html and their scripts,
+  guide.html, guide.js (How offers work, including how revenue is counted and how hedge signals are found),
+  day.html, app.js, trends.html, trends.js, economics.html, economics.js, contracts.html, contracts.js
+                   (Day view, Trends, Plant economics, Hedge signals: being retired; only Trends is in the nav),
+  style.css, vendor/d3.min.js
   data/            generated: index.json, summary_*.json.gz, marginal_*.json.gz, 2d/, 60d/, dam/, prices/,
                    curtail_nodes.json.gz, marginal_nodes.json.gz, gas.json.gz, gas_hubs.json.gz,
                    series/, storage/, forecast/, fit/

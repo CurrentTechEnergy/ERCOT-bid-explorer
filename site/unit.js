@@ -176,7 +176,7 @@ function drawHead(e) {
     (f.cutoff != null ? `, against its own cutoff of ${fmt$(f.cutoff)}.` : f.loss != null ? "." : "") +
     (f.off_from ? ` Expected off for ${f.off_hours} h from HE ${f.off_from}.` : "") +
     (f.reason && f.loss == null ? ` <span class="muted">${esc(f.reason)}.</span>` : "") +
-    ` <a href="overview.html#date=${esc(S.FC.date)}">Overview for that day</a>.`;
+    ` <a href="./#date=${esc(S.FC.date)}">Overview for that day</a>.`;
 }
 
 // ---- decision history: every day the unit started online, its loss and what it did ----------

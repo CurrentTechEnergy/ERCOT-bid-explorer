@@ -85,7 +85,6 @@ function drawKpis() {
   ].map(([v, k]) => `<div class="kpi"><span class="v">${v}</span><span class="k">${k}</span></div>`).join("");
   $("kpi-note").textContent = `A formula found on many days is a standing bidding rule; one found only on a few high-price days is a policy the operator switched on. DA hub and load zone prices cover ${D.hub_days.length ? `${D.hub_days[0]} to ${D.hub_days[D.hub_days.length - 1]}` : "no days yet"}; outside that range only the unit's own node can be tested.`;
   $("credit-v").textContent = fmt$0(D.credit);
-  $("hit-v").textContent = fmt$0(D.hit_usd);
   $("tier-legend").innerHTML = Object.entries(TIER).map(([, t]) => `<span class="has-tip" data-tip="${esc(t.tip)}"><span class="sw" style="background:var(${t.color})"></span>${t.label}</span>`).join("");
   $("tier-legend").querySelectorAll("[data-tip]").forEach((el) => {
     el.addEventListener("pointermove", (ev) => showTip(ev, `<p class="tip-body">${el.dataset.tip}</p>`));
@@ -163,7 +162,7 @@ function chgRows(R) {
 function drawChanges() {
   const R = S.R, tbl = $("chg-table"), chart = $("chg-chart");
   if (!R) { emptyMsg(chart, "No bidding change data yet. It is built by the data update workflow."); tbl.innerHTML = ""; return; }
-  const P = R.params, rs = chgRows(R);
+  const rs = chgRows(R);
   $("chg-note").textContent = `${R.first} to ${R.last}`;
   $("chg-text").textContent = `Every change in how a wind or solar unit offers: a new floor, a formula switched on or off, an episode of a few days away from its floor. ` +
     `${fmt0(rs.length)} change${rs.length === 1 ? "" : "s"} in this selection, ${fmt0(rs.filter((e) => e.moved).length)} of which moved dispatch. ` +
@@ -181,12 +180,6 @@ function drawChanges() {
   setCSV(tbl, ["date", "plant", "units", "tech", "kind", "before", "after", "episode_days", "moved", "hours", "mwh_given_up", "mwh_gained", "value_given_up", "value_gained", "share_hours_da_price", "dam_before", "dam_after", "curtailed_before", "curtailed_after", "toggler"],
     rs.map((e) => [e.date, e.plant, e.units.join(" "), e.tech, e.kind + (e.ptc ? ` (ptc ${e.ptc})` : ""), regime(e.before).replace(/&[a-z]+;/g, ""), regime(e.after).replace(/&[a-z]+;/g, ""), e.days, e.moved,
       ...(e.impact ? [e.impact.hours, e.impact.up, e.impact.dn, e.impact.v_up, e.impact.v_dn, e.impact.est] : [null, null, null, null, null, null]), ...(e.ctx || [null, null, null, null]), e.toggler]), "Bidding changes");
-  $("chg-method").textContent = `A unit's regime is its floor (one offer price most of the day, within $${P.tol}), a day-ahead formula at one settlement point (as fitted above), or offers that move within the day. ` +
-    `A change is a new regime that holds on at least ${P.min_held} of the next ${P.hold} online days. A floor counts as "back" when the unit held it within the previous ${P.new_days} days. ` +
-    `Inside a formula regime, a step of ${fmtA(P.terms_a)} in the share, or of $${P.terms_b} in the offer the formula gives at a $${P.ref_da} DA price, is a terms change. An episode is 1 to ${P.ep_max} days with a median offer at least $${P.ep_usd} from the floor, then back to it. ` +
-    `Units of one plant changing the same way within a day are one row. A toggler has ${P.toggle} or more episodes or returns to an earlier floor within a year. ` +
-    `Moved dispatch: for the first ${P.hold} online days of the new regime (or the episode's days), an hour counts when the unit was online and its node price fell between the old offer and the new one. Priced up, the old offer would have run, so the energy given up is HSL minus base point; priced down, the base point is energy the old offer would not have produced. Both are valued at the node price. ` +
-    `The real-time node price is used where loaded (from ${R.live_first || "–"}); before that only the day-ahead node price is available and the estimate is marked "DA price". Hourly prices smooth over SCED's 5-minute prices, so the MWh are approximate.`;
 }
 
 function drawChangeMonths(el, rs) {
