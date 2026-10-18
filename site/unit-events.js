@@ -10,7 +10,7 @@
 (() => {
 "use strict";
 
-const NEWSLETTER = "";          // Buttondown username; empty until the account exists
+const NEWSLETTER = "currenttech.energy";   // Buttondown username (buttondown.com/currenttech.energy)
 const SUBSCRIBE_URL = (n) => `https://buttondown.com/api/emails/embed-subscribe/${n}`;
 const SHOW = 12;                // major changes shown before "Show all"
 const { tryJSON, esc } = window.CX;
