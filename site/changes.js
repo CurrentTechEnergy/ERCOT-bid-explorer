@@ -36,6 +36,7 @@ function numbers(e) {
   if (k.startsWith("shutdown")) return `loss of staying on ${fmt$(e.value)}` + (e.award != null ? `, award over ${fmtPct(e.award)} of the window` : "");
   if (k.startsWith("renew_")) return e.before != null && e.after != null ? `${fmt$(e.before)} → ${fmt$(e.after)}/MWh` : "";
   if (k.startsWith("outage")) return `${e.value} days`;
+  if (k === "fuel") return `${fmt$(e.before)} → ${fmt$(e.after)}/MWh` + (e.gas_before != null && e.gas_after != null ? `, gas $${e.gas_before.toFixed(2)} → $${e.gas_after.toFixed(2)}` : "");
   return "";
 }
 
@@ -65,7 +66,7 @@ function drawCounts(evs) {
 function row(e) {
   // wind and solar events are per plant: the link opens its first unit, whose page lists the plant's changes
   const g = groupOfEvent(e), multi = e.units && e.units.length > 1;
-  const unit = `<a href="${unitHref((e.units && e.units[0]) || e.unit)}">${esc(e.unit)}</a>` + (multi ? ` <span class="tag">${e.units.length} units</span>` : "");
+  const unit = e.kind === "fuel" ? `${esc(TECH_LABEL[e.tech] || e.tech)} fleet <span class="tag">${e.value} units</span>` : `<a href="${unitHref((e.units && e.units[0]) || e.unit)}">${esc(e.unit)}</a>` + (multi ? ` <span class="tag">${e.units.length} units</span>` : "");
   return `<tr class="${e.major ? "" : "minor"}"><td class="t">${fmtDay(parseDate(e.date))}</td><td class="t">${unit}</td>` +
     `<td class="t hide-sm">${esc(TECH_LABEL[e.tech] || e.tech)}${g ? ` <span class="tag">${esc(S.groupLabel[g] || g)}</span>` : ""}</td>` +
     `<td class="t ev"><b>${esc(S.E.kinds[e.kind] || e.kind)}</b>${isNew(e) ? ` <span class="tag new">new</span>` : ""}<br>${esc(e.title)}${numbers(e) ? `<span class="num-sm"><br>${esc(numbers(e))}</span>` : ""}</td>` +
@@ -118,7 +119,7 @@ async function boot() {
   const newN = E.new_today || 0;
   $("status").textContent = `${E.n.toLocaleString()} changes, ${E.n_major.toLocaleString()} notable, ${E.first} to ${E.last} · updated ${E.updated.slice(0, 10)}` +
     (newN ? ` · ${newN} new in the latest update` : "");
-  $("feed-note").textContent = `Grouped by week of the operating day. Notable means a change the detectors rate as large: daily cycling starting or stopping, a shutdown after 30 days on or despite a day-ahead award, an offer shift of $20/MWh or more against peers or of half the day in how much is offered at or below $0, an outage of 30 days or more, or a large wind or solar floor or formula change. "New" marks changes the latest update found.`;
+  $("feed-note").textContent = `Grouped by week of the operating day. Notable means a change the detectors rate as large: daily cycling starting or stopping, a shutdown after 30 days on or despite a day-ahead award, an offer shift of $20/MWh or more against peers or of half the day in how much is offered at or below $0, an outage of 30 days or more, a large wind or solar floor or formula change, or a technology's median offer moving by half or more. "New" marks changes the latest update found.`;
 
   const techs = [...new Set(E.events.map((e) => e.tech))].sort((a, b) => TECH_ORDER.indexOf(a) - TECH_ORDER.indexOf(b));
   options($("f-tech"), "All technologies", techs.map((t) => [t, TECH_LABEL[t] || t]));
