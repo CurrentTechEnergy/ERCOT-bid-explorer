@@ -114,6 +114,9 @@ pipeline/
                    (data/storage/): fleet and per-battery charging, discharging, limits, headroom,
                    state of charge, AS awards and capability, DAM energy and AS awards (no downloads)
   trends.py        per-unit day files -> daily trends, starts, flips, bidding changes (no downloads)
+  events.py        decisions, groups, trends, renew_changes and cutoff_history -> one list of unit
+                   events in one format with the run that first found each (data/events.json.gz)
+                   and Atom feeds per unit (data/feeds/, no downloads)
   intraday.py      per-unit day files -> thermal output at/above minimum in cheap hours, off spells
   unit_hours_day.py per-unit day files -> each unit's hourly rows for the Day page's Units table (data/60d-units/)
   stayon.py        per-unit day files + DAM costs -> what riding through a cheap stretch cost each
@@ -135,7 +138,10 @@ pipeline/
                    renewable_floor (wind and solar forecast less what prices itself out at its
                    node), storage_habit (the battery fleet's discharging and charging by hour from
                    its recent habit, nudged by the day's hub price shape; python -m
-                   pipeline.models.storage_habit --backtest prints how the rule has done)
+                   pipeline.models.storage_habit --backtest prints how the rule has done);
+                   cutoff_history refits each thermal unit's cutoff at every month end on its
+                   last 30 decisions and records the months it moved (data/cutoff_history.json.gz;
+                   python -m pipeline.models.cutoff_history --benchmark prints how the moves held up)
                    two_day_fit (the 2-day fit, plan layer 2: the committed set inferred from the 2-day
                    thermal curve two days after the day, by unit, combined-cycle configuration and the
                    peaker fleet's hourly share; data/fit/<date>.json.gz, scored beside the forecast)

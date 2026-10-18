@@ -50,6 +50,8 @@ from .renew_forecast import fetch_renew_forecast
 from .forecast.run import build_forecast
 from .ppa import build_ppa
 from .renew_changes import build_renew_changes
+from .models.cutoff_history import build_cutoff_history
+from .events import build_events
 from .series import build_series
 from .storage import build_storage
 from .store import describe_blob, iter_csvs, zip_names, load_index, read_json_gz, save_index, update_summary, write_json_gz
@@ -409,6 +411,8 @@ def main(argv=None):
         build_series(index)
         build_storage(index)
         build_forecast(index)
+        build_cutoff_history(index)
+        build_events(index)
         save_index(index)
         return
 
@@ -478,6 +482,8 @@ def main(argv=None):
     build_storage(index)
     if "forecast" not in args.skip:
         build_forecast(index)
+    build_cutoff_history(index)
+    build_events(index)
     save_index(index)
     added = {k: sorted(set(index["days"][k]) - before.get(k, set())) for k in index["days"]}
     names = {"2d": "2-day curves", "2dgen": "2-day generation summary", "60d": "60-day curves",

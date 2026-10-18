@@ -38,6 +38,12 @@ consistency:
   forecast_stack    dispatch stack file (pipeline/forecast/stack.py): MW never falls as the
                     price rises, groups and technologies each sum to the fleet, the floor is at
                     least the forecast's committed minimum and the top at most its capacity
+  events            the unit events file (pipeline/events.py), checked once per run under the
+                    pseudo-day "events": ids unique, every kind known, every unit a unit the
+                    site knows, every date a real date inside the loaded record (thermal
+                    events inside the 60-day days), a first-seen date on every event; and the
+                    cutoff history file: a model name and version, cutoffs numeric per MW of
+                    LSL, every move on a unit with rows
 
 A check is an "error" when the numbers cannot both be right (a parsing or mapping bug), a
 "warning" when something is worth a look, and "info" when it is only recorded.  Results that did not pass are kept per day in data/validation.json.
@@ -529,6 +535,53 @@ def _forecast_checks(day, fc):
                 "scored against the 2-day answer" if s and s.get("two_day") else "has a 2-day answer but no score")
 
 
+def check_files(index):
+    """Checks on files built once per run rather than per day (events, cutoff history)."""
+    from .events import KINDS, PATH as EVENTS_PATH
+    from .models.cutoff_history import PATH as CUTOFF_PATH
+    day = Day("events")
+    ev = read_json_gz(EVENTS_PATH, default=None)
+    if ev is None:
+        return day
+    events = ev.get("events", [])
+    ids = [e.get("id") for e in events]
+    dup = len(ids) - len(set(ids))
+    day.add("events_ids", "error" if dup else "ok", f"{dup} duplicate id(s)" if dup else "unique")
+    bad_kind = sorted({e.get("kind") for e in events if e.get("kind") not in KINDS})
+    day.add("events_kinds", "error" if bad_kind else "ok", f"unknown kind(s) {bad_kind[:5]}" if bad_kind else "all known")
+    known = set()
+    for name, key in (("decisions.json.gz", "units"), ("groups_60d.json.gz", "units")):
+        known |= set((read_json_gz(DATA_DIR / name, default={}) or {}).get(key, {}))
+    known |= {u["unit"] for u in (read_json_gz(DATA_DIR / "trends_60d.json.gz", default={}) or {}).get("units", [])}
+    for e in (read_json_gz(DATA_DIR / "renew_changes.json.gz", default={}) or {}).get("events", []):
+        known.add(e.get("plant")); known |= set(e.get("units") or [])
+    unknown = sorted({e["unit"] for e in events if e.get("unit") not in known})
+    day.add("events_units", "error" if unknown else "ok", f"{len(unknown)} unknown unit(s), e.g. {unknown[:5]}" if unknown else "all known")
+    d60 = sorted(index["days"].get("60d", []))
+    last = max((max(v) for v in index["days"].values() if v), default=None)
+    bad_date = []
+    for e in events:
+        try:
+            dt.date.fromisoformat(e.get("date") or "")
+        except ValueError:
+            bad_date.append(e.get("id")); continue
+        if (last and e["date"] > last) or (not e["kind"].startswith("renew_") and d60 and not d60[0] <= e["date"] <= d60[-1]):
+            bad_date.append(e["id"])
+    day.add("events_dates", "error" if bad_date else "ok", f"{len(bad_date)} event(s) outside the record, e.g. {bad_date[:3]}" if bad_date else "inside the record")
+    no_seen = [e["id"] for e in events if not e.get("seen")]
+    day.add("events_seen", "error" if no_seen else "ok", f"{len(no_seen)} event(s) without a first-seen date" if no_seen else "every event dated")
+    ch = read_json_gz(CUTOFF_PATH, default=None)
+    if ch is not None:
+        ok = bool(ch.get("model")) and bool(ch.get("version"))
+        day.add("cutoff_model", "ok" if ok else "error", f"{ch.get('model')} {ch.get('version')}")
+        bad = [k for k, u in ch.get("units", {}).items()
+               if not (u.get("lsl") or 0) > 0 or any(not isinstance(r[1], (int, float, type(None))) or not isinstance(r[2], (int, float, type(None))) for r in u.get("rows", []))]
+        day.add("cutoff_rows", "error" if bad else "ok", f"{len(bad)} unit(s) with bad rows, e.g. {bad[:3]}" if bad else f"{len(ch.get('units', {}))} units")
+        orphan = [m["unit"] for m in ch.get("moves", []) if m["unit"] not in ch.get("units", {}) or not isinstance(m.get("to"), (int, float))]
+        day.add("cutoff_moves", "error" if orphan else "ok", f"{len(orphan)} move(s) without rows, e.g. {orphan[:3]}" if orphan else f"{len(ch.get('moves', []))} moves")
+    return day
+
+
 def _have(index):
     have = {k: set(index["days"].get(k, [])) for k in ("2d", "60d", "2dgen", "dam", "prices")}
     fc = read_json_gz(DATA_DIR / "forecast" / "index.json.gz", default=None) or {}
@@ -560,6 +613,11 @@ def run(dates, index, fail=True):
                                 "level": _level(day.results), "n_checks": len(day.results),
                                 "checks": [r for r in day.results if r[1] != "ok"]}
         checked.append(day)
+    files = check_files(index)
+    if files.results:
+        report["days"]["events"] = {"sources": ["events"], "level": _level(files.results), "n_checks": len(files.results),
+                                    "checks": [r for r in files.results if r[1] != "ok"]}
+        checked.append(files)
     if checked:     # leave the file untouched when nothing new was checked (no empty data commits)
         report["updated"] = dt.datetime.now(dt.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
         report["days"] = dict(sorted(report["days"].items()))

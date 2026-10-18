@@ -15,6 +15,10 @@ computes a model.
   renewable_floor   wind and solar: available MW from the forecasts, less what prices itself
                     out at its own node
   storage_habit     batteries: not built yet (the battery data is loaded first, build step 3)
+
+cutoff_history is a model too (NAME, VERSION, its own benchmark) but not a forecast: it refits
+each unit's cutoff month by month to show when its behaviour changed, read by the events
+list and the Unit page, never by the forecast.  So it is not in MODELS.
 """
 from . import thermal_cutoff, thermal_dispatch, peaker_share, renewable_floor, storage_habit
 
