@@ -336,7 +336,7 @@ function panelFromLink() {
 // point, combined-cycle configuration, CDR plant name, another name it goes by, county or QSE. The unit list
 // (data/unit_index.json.gz, pipeline/unit_index.py) loads on first focus. The Unit page has its
 // own picker and directory, so it gets no box here.
-const TECH_SHORT = { nuclear: "Nuclear", coal: "Coal", combined_cycle: "Combined cycle", gas_steam: "Gas steam", combustion_turbine: "Combustion turbine", wind: "Wind", solar: "Solar" };
+const TECH_SHORT = { nuclear: "Nuclear", coal: "Coal", combined_cycle: "Combined cycle", gas_steam: "Gas steam", combustion_turbine: "Combustion turbine", wind: "Wind", solar: "Solar", storage: "Battery storage ESR" };
 const unitURL = (name) => `unit.html?unit=${encodeURIComponent(name)}`;
 // rows of the unit index as objects, each with the lowercase text a search matches against
 async function unitIndex() {

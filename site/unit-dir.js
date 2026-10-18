@@ -9,6 +9,7 @@ const TECHS = [
   { id: "all", label: "All" }, { id: "nuclear", label: "Nuclear" }, { id: "coal", label: "Coal & lignite" },
   { id: "combined_cycle", label: "Combined cycle" }, { id: "gas_steam", label: "Gas steam" },
   { id: "combustion_turbine", label: "Combustion turbine" }, { id: "wind", label: "Wind" }, { id: "solar", label: "Solar" },
+  { id: "storage", label: "Battery storage" },
 ];
 const TECH_LABEL = Object.fromEntries(TECHS.map((t) => [t.id, t.label]));
 const GROUP_SHORT = { never: "Never off", seasonal: "Seasonal", multiday: "Multi-day", daily1: "Daily, under once a week", daily2: "Daily, 1 to 2 a week", daily3: "Daily, over 2 a week", ungrouped: "Not yet grouped" };

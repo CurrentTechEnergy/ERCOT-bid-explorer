@@ -4,8 +4,10 @@ the update from files already written this run.
 
 Membership is the Unit page's own list (site/unit.js buildList), so every entry opens a page:
 thermal units from the 60-day trends, the decision record and the latest forecast (a combined-
-cycle train is one entry, its configurations under it), and wind and solar from the hedge scan
-(ppa.json.gz).  Batteries, hydro and "other" have no Unit page yet and are left out.
+cycle train is one entry, its configurations under it), wind and solar from the hedge scan
+(ppa.json.gz), and batteries from their economics (data/econ/storage.json.gz).  Hydro and "other"
+have no Unit page yet and are left out.  Batteries renamed for RTC+B (..._ESR1) mostly match the
+CDR only by plant, since the CDR keeps the older ..._BESS codes.
 
 Names come from ERCOT's CDR report (pipeline/cdr.py, matched here on every build), other names a
 unit goes by from pipeline/reference/unit_aliases.csv (a developer's project name the CDR does not
@@ -43,7 +45,7 @@ from .store import read_json_gz, write_json_gz
 PATH = DATA_DIR / "unit_index.json.gz"
 ALIASES_PATH = Path(__file__).parent / "reference" / "unit_aliases.csv"
 COLUMNS = ["unit", "tech", "group", "mw", "sp", "configs", "plant", "county", "zone", "match", "qse", "aliases"]
-TECHS = ("nuclear", "coal", "combined_cycle", "gas_steam", "combustion_turbine", "wind", "solar")
+TECHS = ("nuclear", "coal", "combined_cycle", "gas_steam", "combustion_turbine", "wind", "solar", "storage")
 _TRAIN = re.compile(r"^(.*_CC\d+)_")
 
 
@@ -86,6 +88,9 @@ def build(trends: dict, decisions: dict, forecast: dict, ppa: dict, econ: dict, 
         for r in fu.get("rows", []):
             add(r[iu], r[it])
             group[r[iu]] = r[ig]
+    for name, u in econ.items():
+        if u.get("tech") == "storage" and u.get("hsl"):
+            add(name, "storage")
     sp = {}
     for u in ppa.get("units", []):
         add(u["name"], u["tech"])
