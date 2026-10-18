@@ -3,9 +3,10 @@
    findings go into; the per-unit Atom feed it writes is linked from the panel.
 
    Email sign-up goes through Buttondown's public embed endpoint, so the page needs no server:
-   the form posts the address with a tag for the unit, Buttondown sends its confirmation email
-   and keeps the list, and the send step (pipeline/notify.py) later asks it who follows each
-   unit. NEWSLETTER is the Buttondown username; until it is set the panel offers the feed only. */
+   the form posts the address with a tag for the unit (a real form post, which Buttondown's
+   docs require so its answer page can run its CAPTCHA), Buttondown sends its confirmation
+   email and keeps the list, and the send step (pipeline/notify.py) later targets each unit's
+   tag. NEWSLETTER is the Buttondown username; until it is set the panel offers the feed only. */
 (() => {
 "use strict";
 
@@ -61,23 +62,16 @@ function drawSubscribe() {
     msg("Email alerts are not switched on yet. The feed carries the same changes for a feed reader.", true);
     return;
   }
-  $("sub-tools").innerHTML = `<form class="sub-form" id="sub-form"><input type="email" id="sub-email" placeholder="you@example.com" required aria-label="Email address">` +
+  // a real form post, as Buttondown's docs require (not fetch): its answer page handles the
+  // CAPTCHA and validation, and opens in a new tab so this page stays
+  $("sub-tools").innerHTML = `<form class="sub-form" id="sub-form" method="post" action="${SUBSCRIBE_URL(NEWSLETTER)}" target="_blank">` +
+    `<input type="hidden" name="embed" value="1"><input type="hidden" name="tag" value="unit:${esc(S.unit)}">` +
+    `<input type="email" name="email" id="sub-email" placeholder="you@example.com" required aria-label="Email address">` +
     `<button type="submit">Subscribe to ${esc(S.unit)}</button></form>${feedLink}`;
   msg("");
-  $("sub-form").addEventListener("submit", async (ev) => {
-    ev.preventDefault();
+  $("sub-form").addEventListener("submit", () => {
     const email = $("sub-email").value.trim();
-    const body = new URLSearchParams({ email, tag: `unit:${S.unit}`, embed: "1" });
-    msg("Sending…", true);
-    try {
-      const r = await fetch(SUBSCRIBE_URL(NEWSLETTER), { method: "POST", body, mode: "no-cors" });
-      // the embed endpoint answers with a redirect the page cannot read (no-cors), so a sent
-      // request is taken as accepted; Buttondown's confirmation email is the real receipt
-      msg(`Check <b>${esc(email)}</b> for a confirmation email. Once confirmed, you get one email on any day the update finds a change for ${esc(S.unit)}.`, true);
-      $("sub-email").value = "";
-    } catch (err) {
-      msg(`Could not reach the sign-up service (${esc(String(err))}). The feed link works meanwhile.`, true);
-    }
+    msg(`Buttondown opens in a new tab to confirm. Check <b>${esc(email)}</b> for its confirmation email; once confirmed, you get one email on any day the update finds a change for ${esc(S.unit)}.`, true);
   });
 }
 
