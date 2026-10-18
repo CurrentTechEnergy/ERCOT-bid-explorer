@@ -33,7 +33,7 @@
   <div class="brand">
     <div class="nav-row"><nav class="nav" aria-label="Pages"><a href="overview.html">Overview</a><a href="beyond.html">Beyond baseload</a><a href="renewables.html" aria-current="page">Renewables</a><a href="index.html">Day view</a><a href="trends.html">Trends</a><a href="economics.html">Plant economics</a><a href="contracts.html">Hedge signals</a><a href="builder.html">Graph builder</a><a href="guide.html">How offers work</a></nav></div>
     <h1>Renewables</h1>
-    <p class="sub">How wind and solar offer, how much SCED held back and where, what their offers give away about their hedges, and what they earned. Data from ERCOT's 2-day and 60-day SCED and DAM disclosures and the day-ahead forecast built from them.</p>
+    <p class="sub">How wind and solar offer, how much SCED held back and where, what their offers give away about their hedges, and what they earned. Data from ERCOT's 2-day and 60-day SCED and DAM disclosures.</p>
   </div>
   <p class="status" id="status">Loading data…</p>
 </header>
@@ -96,18 +96,6 @@
     <h3 class="sub-h">Units</h3>
     <div class="units-wrap" id="nc-units"></div>
     <p><button type="button" class="more" id="nc-more" hidden>Show all</button></p>
-  </section>
-
-  <section class="panel panel-wide" id="fc-panel">
-    <div class="panel-head">
-      <div>
-        <h2>Forecast against what was priced out</h2>
-        <p class="note">Each day's forecast counts wind and solar energy as priced out when it is available but offered above its own node's day-ahead price. Dashed: what the forecast priced out. Solid: what SCED actually held back (the curtailment above, 60-day where the day has it, else the 2-day estimate). The forecast is the one on the Overview, read as it was made.</p>
-        <p class="note" id="fc-note"></p>
-      </div>
-    </div>
-    <div class="legend legend-static" id="fc-legend"></div>
-    <div class="chart" id="fc-chart"></div>
   </section>
 
   <h2 class="page-section">Hedge signals</h2>

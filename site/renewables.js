@@ -1,11 +1,9 @@
-/* Renewables: wind and solar offer prices, curtailment (one panel: daily by cause, by price at
-   lambda or at the node, value, one day by hour, units), the forecast against what was priced out,
-   and fleet economics. Lifted from trends.js (drawRenewBands, drawCurtailment, drawNodeCurtail)
-   and app.js (drawCurtail). Reads
-   data/curve_trends.json.gz, data/curtail_nodes.json.gz, data/forecast/ (index, scores and the day
-   files' headline), data/econ/wind and solar (pipeline/econ.py) and data/renew/sig-YYYY.json.gz.
-   The hedge signals on the same page are renewables-hedge.js. This file owns the status line and
-   the shared chart controls (CX.init). */
+/* Renewables: one day's curtailment by hour, wind and solar offer prices, curtailment (one panel:
+   daily by cause, by price at lambda or at the node, value, units) and fleet economics. Lifted from
+   trends.js (drawRenewBands, drawCurtailment, drawNodeCurtail) and app.js (drawCurtail). Reads
+   data/curve_trends.json.gz, data/curtail_nodes.json.gz, data/econ/wind and solar
+   (pipeline/econ.py) and data/renew/sig-YYYY.json.gz. The hedge signals on the same page are
+   renewables-hedge.js. This file owns the status line and the shared chart controls (CX.init). */
 (() => {
 "use strict";
 
@@ -23,7 +21,7 @@ const BANDS = [
   { id: "zero", label: "About $0 (−$1 to $0)", color: "--c-other" },
   { id: "pos", label: "Above $0", color: "--c1" },
 ];
-const S = { C: null, N: null, FI: null, SC: null, E: {}, SIG: [], cday: null, span: null, last60: null, ecoTech: "all", ecoSort: "pmwh", ecoDir: -1, ecoAll: false, ncAll: false, pbasis: "lambda" };
+const S = { C: null, N: null, E: {}, SIG: [], cday: null, span: null, last60: null, ecoTech: "all", ecoSort: "pmwh", ecoDir: -1, ecoAll: false, ncAll: false, pbasis: "lambda" };
 const { tryJSON, showTip, hideTip, setCSV, tickFormat, fmtKind, axisFmt, css, esc } = window.CX;
 const $ = (id) => document.getElementById(id);
 const fmtMW = d3.format(",.0f");
@@ -348,48 +346,6 @@ function hoverHours(svg, x, m, H, htmlFor) {
 }
 
 
-// ---- forecast against the priced-out record --------------------------------------------
-// Each forecast day's headline carries wind and solar energy available and expected dispatched:
-// what is available but offered above its own node's day-ahead price is "priced out". Set against
-// the energy SCED actually held back (the curtailment above). Read only: no model here.
-const FC_LINES = [
-  { id: "wind", key: "fc", label: "Wind, forecast priced out", color: "--c3", dash: "5 3", width: 1.5 },
-  { id: "wind", key: "act", label: "Wind, curtailed", color: "--c3" },
-  { id: "solar", key: "fc", label: "Solar, forecast priced out", color: "--c4", dash: "5 3", width: 1.5 },
-  { id: "solar", key: "act", label: "Solar, curtailed", color: "--c4" },
-];
-let fcRows = null;
-async function loadForecasts() {
-  if (fcRows) return fcRows;
-  const days = S.FI ? S.FI.days : [], out = new Map();
-  for (let i = 0; i < days.length; i += 12) {
-    const fs = await Promise.all(days.slice(i, i + 12).map((d) => tryJSON(`data/forecast/${d}.json.gz`)));
-    fs.forEach((f, j) => { if (f && f.headline) out.set(days[i + j], f.headline); });
-    $("fc-note").textContent = `Loading forecasts… ${Math.min(days.length, i + 12)} of ${days.length}`;
-  }
-  fcRows = out;
-  return out;
-}
-async function drawForecast() {
-  const el = $("fc-chart"), c = S.C && S.C.curt;
-  $("fc-legend").innerHTML = FC_LINES.map((s) => `<span><span class="sw" style="background:var(${s.color});${s.dash ? "opacity:.5" : ""}"></span>${s.label}</span>`).join("");
-  if (!S.FI || !c) return emptyMsg(el, "No forecasts or curtailment data yet.");
-  const H = await loadForecasts();
-  const ci = new Map(c.dates.map((d, i) => [d, i]));
-  const act = (t, d) => { const i = ci.get(d); if (i == null) return null; const v = c[t].c60[i] ?? c[t].c2d[i]; return v == null ? null : v / 1000; };
-  // every curtailment day, so days with no forecast are gaps rather than joined across
-  const dates = c.dates.filter((d) => d >= S.span[0] && d <= S.span[1]);
-  const series = FC_LINES.map((s) => ({ ...s, values: dates.map((d) => (s.key === "fc" ? H.get(d)?.[s.id]?.curt_gwh ?? null : act(s.id, d))) }));
-  timeChart(el, series, { dates, H: 240, title: "Priced out in the forecast against curtailed (GWh per day)", yFmt: d3.format(",.0f"), tipFmt: d3.format(",.1f"),
-    tipNote: (i) => { const h = H.get(dates[i]); return h && h.wind ? ` · forecast available: wind ${d3.format(",.0f")(h.wind.avail_gwh)} GWh, solar ${d3.format(",.0f")(h.solar?.avail_gwh ?? 0)} GWh` : ""; } });
-  const both = (t) => dates.filter((d) => H.get(d)?.[t]?.curt_gwh != null && act(t, d) != null);
-  const tot = (t) => { const ds = both(t); return [d3.sum(ds, (d) => H.get(d)[t].curt_gwh), d3.sum(ds, (d) => act(t, d)), ds.length]; };
-  const [wf, wa, wn] = tot("wind"), [sf, sa, sn] = tot("solar");
-  const sum = S.SC && S.SC.summary && Object.values(S.SC.summary)[0];
-  $("fc-note").textContent = `On the ${wn} days with both, the forecast priced out ${d3.format(",.0f")(wf)} GWh of wind against ${d3.format(",.0f")(wa)} GWh curtailed, and ${d3.format(",.0f")(sf)} GWh of solar against ${d3.format(",.0f")(sa)} GWh. ` +
-    (sum ? `Its hourly dispatch error, against ERCOT's 2-day base points, averages ${fmtMW(sum.wind_mae)} MW for wind and ${fmtMW(sum.solar_mae)} MW for solar.` : "");
-}
-
 // ---- fleet economics -------------------------------------------------------------------
 // Energy revenue as on Plant economics' default: two-settlement (the DA award at the DA price plus
 // the real-time deviation) where the unit has DA data, real-time at its node otherwise, and system
@@ -559,11 +515,10 @@ function saveView() { window.CX.writeHash({ ...window.CX.readHash(), ...Object.f
 function loadView() { const v = window.CX.readHash(); Object.entries(VIEW_KEYS).forEach(([k, sk]) => { if (v[k] != null) S[sk] = v[k]; }); if (v.ed === "1") S.ecoDir = 1; }
 
 // ---- boot ---------------------------------------------------------------------------
-let fcSeen = false;
-function drawAll() { drawRenewBands(); drawCurtail(); drawNodeCurtail(); if (fcSeen) drawForecast(); if (ECO) { drawEcoMonths(); drawEcoUnits(); } }
+function drawAll() { drawRenewBands(); drawCurtail(); drawNodeCurtail(); if (ECO) { drawEcoMonths(); drawEcoUnits(); } }
 
 async function boot() {
-  [S.C, S.N, S.FI, S.SC] = await Promise.all([tryJSON("data/curve_trends.json.gz"), tryJSON("data/curtail_nodes.json.gz"), tryJSON("data/forecast/index.json.gz"), tryJSON("data/forecast/scores.json.gz")]);
+  [S.C, S.N] = await Promise.all([tryJSON("data/curve_trends.json.gz"), tryJSON("data/curtail_nodes.json.gz")]);
   if (!S.C) { $("status").textContent = "No renewables data yet. It is built by the data update workflow."; return; }
   const spans = [S.C?.rs?.dates, S.C?.curt?.dates, S.N?.dates].filter((d) => d && d.length);
   S.span = [d3.min(spans, (d) => d[0]), d3.max(spans, (d) => d.at(-1))];
@@ -585,8 +540,6 @@ async function boot() {
   drawAll();
   window.CX.init();
   saveView();
-  // the forecast files are one per day: load them once the panel is about to scroll into view
-  new IntersectionObserver((es, ob) => { if (es.some((e) => e.isIntersecting)) { fcSeen = true; drawForecast(); ob.disconnect(); } }, { rootMargin: "400px" }).observe($("fc-chart"));
   // fleet economics needs the economics and bidding-history files: load them after the rest
   const lastY = +S.C.curt.dates.at(-1).slice(0, 4);
   [S.E.wind, S.E.solar, ...S.SIG] = await Promise.all([tryJSON("data/econ/wind.json.gz"), tryJSON("data/econ/solar.json.gz"), tryJSON(`data/renew/sig-${lastY - 1}.json.gz`), tryJSON(`data/renew/sig-${lastY}.json.gz`)]);
