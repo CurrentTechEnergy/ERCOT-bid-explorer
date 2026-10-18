@@ -126,6 +126,8 @@ pipeline/
   cdr.py           ERCOT's Capacity, Demand and Reserves report -> pipeline/reference/cdr_units.csv,
                    the plant names the unit index matches on (python -m pipeline.cdr <workbook.xlsx>
                    when a new report comes out, twice a year; needs openpyxl)
+                   pipeline/reference/unit_aliases.csv: other names a unit goes by (a developer's
+                   project name), one row per unit and name, edited by hand; search finds them
   qse.py           the QSE column of the 60-day SCED and DAM files, where they carry one ->
                    data/unit_qse.json.gz; the run summary says which files had it
   notify.py        events -> one digest email a day through Buttondown to the people who follow a

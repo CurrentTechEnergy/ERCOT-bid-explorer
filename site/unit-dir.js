@@ -18,7 +18,8 @@ const COLS = [
   { k: "tech", h: "Technology", t: 1, f: (u) => TECH_LABEL[u.tech] || esc(u.tech) },
   { k: "group", h: "Group", t: 1, f: (u) => (u.group ? GROUP_SHORT[u.group] || esc(u.group) : "–") },
   { k: "mw", h: "Capacity (MW)", f: (u) => (u.mw == null ? "–" : d3.format(",")(u.mw)) },
-  { k: "plant", h: "Name (CDR)", t: 1, f: (u) => (u.plant ? esc(u.plant) + (u.match === "site" ? ' <span class="tag" title="Matched by plant, not by unit">plant</span>' : "") : "–") },
+  { k: "plant", h: "Name (CDR)", t: 1, f: (u) => (u.plant ? esc(u.plant) + (u.match === "site" ? ' <span class="tag" title="Matched by plant, not by unit">plant</span>' : "") : "–") +
+    (u.aliases?.length ? `<br><span class="muted">also ${esc(u.aliases.join(", "))}</span>` : "") },
   { k: "county", h: "County", t: 1, f: (u) => esc(u.county || "–") },
   { k: "zone", h: "Zone", t: 1, f: (u) => esc(u.zone || "–") },
   { k: "qse", h: "QSE", t: 1, f: (u) => esc(u.qse || "–"), opt: 1 },
@@ -51,8 +52,8 @@ function draw() {
     const k = th.dataset.k; if (S.sort === k) S.dir = -S.dir; else { S.sort = k; S.dir = ["mw", "configs"].includes(k) ? -1 : 1; }
     draw();
   }));
-  setCSV(el, ["unit", "technology", "group", "capacity_mw", "cdr_name", "cdr_match", "county", "zone", "qse", "settlement_point", "configurations"],
-    us.map((u) => [u.unit, u.tech, u.group, u.mw, u.plant, u.match, u.county, u.zone, u.qse, u.sp, u.configs.join(" ")]), "Units");
+  setCSV(el, ["unit", "technology", "group", "capacity_mw", "cdr_name", "cdr_match", "other_names", "county", "zone", "qse", "settlement_point", "configurations"],
+    us.map((u) => [u.unit, u.tech, u.group, u.mw, u.plant, u.match, (u.aliases || []).join("; "), u.county, u.zone, u.qse, u.sp, u.configs.join(" ")]), "Units");
 }
 
 async function boot() {
