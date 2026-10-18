@@ -32,7 +32,7 @@
 
 <header class="masthead">
   <div class="brand">
-    <div class="nav-row"><nav class="nav" aria-label="Pages"><a href="index.html">Overview</a><a href="commitment.html">Commitment</a><a href="changes.html">What's changing</a><a href="beyond.html">Beyond baseload</a><a href="renewables.html">Renewables</a><a href="fleet.html">Fleet economics</a><a href="trends.html">Trends</a><a href="builder.html">Graph builder</a><a href="guide.html">How offers work</a></nav></div>
+    <div class="nav-row"><nav class="nav" aria-label="Pages"><a href="index.html">Overview</a><a href="commitment.html">Commitment</a><a href="changes.html">What's changing</a><a href="beyond.html">Beyond baseload</a><a href="renewables.html">Renewables</a><a href="fleet.html">Fleet economics</a><a href="unit.html" aria-current="page">Units</a><a href="trends.html">Trends</a><a href="builder.html">Graph builder</a><a href="guide.html">How offers work</a></nav></div>
     <h1 id="unit-title">Unit</h1>
     <p class="sub" id="unit-meta">Everything about one unit: the forecast's call and the decision history behind it, when it ran, how it bids, and what it earned.</p>
     <p class="verdict" id="unit-verdict"></p>
@@ -50,7 +50,19 @@
 
 <main>
   <section class="panel panel-wide" id="unit-empty">
-    <p class="empty">Pick a unit above, or open one from a unit row on any page. Thermal units, wind and solar are listed; a combined-cycle train is one entry with its configurations under it.</p>
+    <div class="panel-head">
+      <div>
+        <h2>All units <span class="h-note" id="dir-note"></span></h2>
+        <p class="note">Type in the Unit box above to filter, and click a unit to open its page. Thermal units, wind and solar are listed; a combined-cycle train is one entry, and a search for one of its configurations finds it. <b>Group</b> is the unit's timescale group in the latest forecast (how often it shuts down; thermal only). <b>Capacity</b> is the 95th percentile of each day's highest HSL. Batteries are not listed yet.</p>
+      </div>
+    </div>
+    <div class="ctl-row">
+      <div class="ctl">
+        <span class="lbl" id="lbl-dir-tech">Technology</span>
+        <div class="seg" role="radiogroup" aria-labelledby="lbl-dir-tech" id="dir-tech"></div>
+      </div>
+    </div>
+    <div class="units-wrap" id="dir-table" data-csv><p class="empty">Loading units…</p></div>
   </section>
 
   <section class="panel panel-wide" id="changes-panel" hidden>
@@ -171,5 +183,6 @@
 <script src="unit-econ.js"></script>
 <script src="unit-renew.js"></script>
 <script src="unit-events.js"></script>
+<script src="unit-dir.js"></script>
 </body>
 </html>

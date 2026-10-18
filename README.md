@@ -119,6 +119,10 @@ pipeline/
   events.py        decisions, groups, trends, renew_changes and cutoff_history -> one list of unit
                    events in one format with the run that first found each (data/events.json.gz)
                    and Atom feeds per unit (data/feeds/, no downloads)
+  unit_index.py    trends, decisions, the latest forecast, ppa and econ -> every unit the Unit page
+                   can open, with technology, group, capacity, settlement point and combined-cycle
+                   configurations (data/unit_index.json.gz), for the Units directory and the
+                   nav row's "Find a unit" box (no downloads)
   notify.py        events -> one digest email a day through Buttondown to the people who follow a
                    unit that changed (needs the BUTTONDOWN_API_KEY secret; a dry run without it);
                    data/notify_sent.json records what went out
@@ -167,7 +171,9 @@ site/
                    from the day's forecast file, groups and cutoffs, the forecast against the 2-day fit and
                    the 60-day answer, and the thermal panels lifted from Trends, plus what riding through
                    cheap stretches cost from data/stayon_60d.json.gz and one row per unit),
-  beyond.html, renewables.html, fleet.html, unit.html, builder.html and their scripts,
+  beyond.html, renewables.html, fleet.html, unit.html, builder.html and their scripts
+                   (unit.html with no unit shows the Units directory, unit-dir.js; common.js adds
+                   the "Find a unit" box to every page's nav row),
   guide.html, guide.js (How offers work, including how revenue is counted and how hedge signals are found),
   day.html, app.js, trends.html, trends.js, economics.html, economics.js, contracts.html, contracts.js
                    (Day view, Trends, Plant economics, Hedge signals: being retired; only Trends is in the nav),

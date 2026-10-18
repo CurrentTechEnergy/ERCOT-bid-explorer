@@ -1,5 +1,5 @@
-/* Shared helpers for both pages: data loading, tooltips that pin on click, chart downloads
-   (PNG, SVG, CSV) and links that reopen the current view. Exposed as window.CX. */
+/* Shared helpers for every page: data loading, tooltips that pin on click, chart downloads
+   (PNG, SVG, CSV), links that reopen the current view and the nav row's find-a-unit box. Exposed as window.CX. */
 (() => {
 "use strict";
 const $ = (id) => document.getElementById(id);
@@ -331,7 +331,71 @@ function panelFromLink() {
   if (el && !el.hidden) el.scrollIntoView({ block: "start" });
 }
 
+// ---------------------------------------------------------- find a unit ---
+// A search box in every page's nav row that opens a unit's page. The unit list
+// (data/unit_index.json.gz, pipeline/unit_index.py) loads on first focus. The Unit page has its
+// own picker and directory, so it gets no box here.
+const TECH_SHORT = { nuclear: "Nuclear", coal: "Coal", combined_cycle: "Combined cycle", gas_steam: "Gas steam", combustion_turbine: "Combustion turbine", wind: "Wind", solar: "Solar" };
+const unitURL = (name) => `unit.html?unit=${encodeURIComponent(name)}`;
+// rows of the unit index as objects, each with the lowercase text a search matches against
+async function unitIndex() {
+  const ui = await tryJSON("data/unit_index.json.gz");
+  if (!ui) return null;
+  const c = ui.columns;
+  return ui.rows.map((r) => {
+    const u = Object.fromEntries(c.map((k, i) => [k, r[i]]));
+    u.text = [u.unit, u.sp, ...(u.configs || []), u.plant, TECH_SHORT[u.tech]].filter(Boolean).join(" ").toLowerCase();
+    return u;
+  });
+}
+// every word of the query must appear; names that start with the query come first
+function findUnits(units, q, n = 8) {
+  const words = q.toLowerCase().split(/\s+/).filter(Boolean);
+  if (!words.length) return [];
+  const hits = units.filter((u) => words.every((w) => u.text.includes(w)));
+  const lq = q.trim().toLowerCase(), rank = (u) => (u.unit.toLowerCase() === lq ? 0 : u.unit.toLowerCase().startsWith(lq) ? 1 : 2);
+  return hits.sort((a, b) => rank(a) - rank(b) || a.unit.localeCompare(b.unit)).slice(0, n);
+}
+function initUnitFind() {
+  const row = document.querySelector(".nav-row");
+  if (!row || $("unit-pick")) return;
+  const box = document.createElement("div");
+  box.className = "unit-find";
+  box.innerHTML = `<input type="search" id="unit-find" placeholder="Find a unit" aria-label="Find a unit by name or settlement point" autocomplete="off" spellcheck="false" role="combobox" aria-expanded="false" aria-controls="unit-find-list" aria-autocomplete="list">` +
+    `<ul class="unit-find-list" id="unit-find-list" role="listbox" hidden></ul>`;
+  row.appendChild(box);
+  const input = box.querySelector("input"), list = box.querySelector("ul");
+  let units = null, hits = [], at = -1;
+  const close = () => { list.hidden = true; input.setAttribute("aria-expanded", "false"); at = -1; };
+  const mark = () => list.querySelectorAll("li").forEach((li, i) => li.setAttribute("aria-selected", String(i === at)));
+  const show = () => {
+    if (!units) { list.innerHTML = `<li class="unit-find-none">Loading units…</li>`; list.hidden = !input.value.trim(); return; }
+    hits = findUnits(units, input.value);
+    at = hits.length ? 0 : -1;
+    list.innerHTML = hits.length ? hits.map((u, i) => `<li role="option" id="unit-find-${i}"><a href="${unitURL(u.unit)}"><span class="unit-find-name">${esc(u.unit)}</span>` +
+      `<span class="unit-find-meta">${TECH_SHORT[u.tech] || esc(u.tech)}${u.mw ? ` · ${u.mw} MW` : ""}</span></a></li>`).join("")
+      : `<li class="unit-find-none">No unit matches. <a href="unit.html">Browse all units</a></li>`;
+    list.hidden = !input.value.trim();
+    input.setAttribute("aria-expanded", String(!list.hidden));
+    mark();
+  };
+  input.addEventListener("focus", async () => { if (!units) { units = (await unitIndex()) || []; if (document.activeElement === input) show(); } });
+  input.addEventListener("input", show);
+  input.addEventListener("keydown", (e) => {
+    if (e.key === "ArrowDown" || e.key === "ArrowUp") {
+      if (!hits.length) return;
+      e.preventDefault();
+      at = (at + (e.key === "ArrowDown" ? 1 : -1) + hits.length) % hits.length; mark();
+      input.setAttribute("aria-activedescendant", `unit-find-${at}`);
+    } else if (e.key === "Enter") {
+      if (at >= 0 && hits[at]) { e.preventDefault(); location.href = unitURL(hits[at].unit); }
+    } else if (e.key === "Escape") { close(); }
+  });
+  document.addEventListener("click", (e) => { if (!box.contains(e.target)) close(); });
+}
+if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", initUnitFind); else initUnitFind();
+
 function init() { initPins(); addDownloads(); addPanelLinks(); initCopyLink(); }
 
-window.CX = { getJSON, tryJSON, showTip, hideTip, clearPins, setCSV, readHash, writeHash, init, panelFromLink, css, esc, tickFormat, fmtKind, axisFmt };
+window.CX = { getJSON, tryJSON, showTip, hideTip, clearPins, setCSV, readHash, writeHash, init, panelFromLink, css, esc, tickFormat, fmtKind, axisFmt, unitIndex, findUnits };
 })();
