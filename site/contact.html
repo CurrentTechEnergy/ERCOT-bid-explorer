@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Contact</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Sans+Condensed:wght@600&display=swap">
+<link rel="stylesheet" href="style.css">
+<style>
+  .contact { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: 16px; margin-top: 16px; align-items: start; }
+  .contact form { display: flex; flex-direction: column; gap: 14px; }
+  .field { display: flex; flex-direction: column; gap: 4px; }
+  .field input, .field select, .field textarea { font: inherit; color: var(--ink); background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 7px 9px; min-height: 36px; width: 100%; }
+  .field textarea { min-height: 160px; resize: vertical; }
+  .field input:focus-visible, .field textarea:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .row2 { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 14px; }
+  .send { align-self: flex-start; font: 500 14px var(--font-ui); color: var(--surface); background: var(--ink); border: 1px solid var(--ink); border-radius: 6px; padding: 8px 18px; min-height: 38px; cursor: pointer; }
+  .send:disabled { opacity: 0.45; cursor: not-allowed; }
+  .form-msg { margin: 0; font-size: 13px; color: var(--ink-2); }
+  .form-msg.ok { color: var(--c3); }
+  .form-msg.err { color: var(--c8); }
+  .hp { position: absolute; left: -10000px; width: 1px; height: 1px; overflow: hidden; }
+  .aside-list { margin: 0; padding-left: 18px; display: flex; flex-direction: column; gap: 6px; color: var(--ink-2); }
+  .panel h2 { margin: 0; font: 600 16px var(--font-head); }
+  .panel p { margin: 0; color: var(--ink-2); }
+  .panel a { color: var(--accent); }
+  @media (max-width: 760px) {
+    .contact, .row2 { grid-template-columns: minmax(0, 1fr); }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+<header class="masthead">
+  <div class="brand">
+    <div class="nav-row"><nav class="nav" aria-label="Pages"><a href="overview.html">Overview</a><a href="beyond.html">Beyond baseload</a><a href="renewables.html">Renewables</a><a href="fleet.html">Fleet economics</a><a href="index.html">Day view</a><a href="trends.html">Trends</a><a href="economics.html">Plant economics</a><a href="contracts.html">Hedge signals</a><a href="builder.html">Graph builder</a><a href="guide.html">How offers work</a></nav></div>
+    <h1>Contact</h1>
+    <p class="sub">Questions about the data, a number that looks wrong, or an idea for the site. Messages go straight to the person who runs it.</p>
+  </div>
+</header>
+
+<main class="contact">
+  <section class="panel" aria-labelledby="form-h">
+    <h2 id="form-h">Send a message</h2>
+    <form id="contact-form" method="POST" novalidate>
+      <div class="row2">
+        <div class="field">
+          <label class="lbl" for="c-name">Name</label>
+          <input id="c-name" name="name" type="text" autocomplete="name">
+        </div>
+        <div class="field">
+          <label class="lbl" for="c-email">Email</label>
+          <input id="c-email" name="email" type="email" autocomplete="email" required>
+        </div>
+      </div>
+      <div class="field">
+        <label class="lbl" for="c-topic">About</label>
+        <select id="c-topic" name="topic">
+          <option>A question about the data</option>
+          <option>Something looks wrong</option>
+          <option>An idea for the site</option>
+          <option>Something else</option>
+        </select>
+      </div>
+      <div class="field">
+        <label class="lbl" for="c-msg">Message</label>
+        <textarea id="c-msg" name="message" required placeholder="If it's about a page or a unit, say which one (or paste the page link)."></textarea>
+      </div>
+      <input type="hidden" name="page" id="c-page">
+      <div class="hp" aria-hidden="true"><label for="c-gotcha">Leave this empty</label><input id="c-gotcha" name="_gotcha" type="text" tabindex="-1" autocomplete="off"></div>
+      <button class="send" id="c-send" type="submit">Send</button>
+      <p class="form-msg" id="c-status" role="status" aria-live="polite"></p>
+    </form>
+  </section>
+
+  <aside class="panel" aria-labelledby="tips-h">
+    <h2 id="tips-h">Before you write</h2>
+    <ul class="aside-list">
+      <li>Unit-level offers come from ERCOT's 60-day disclosures, so unit pages run about two months behind. A gap in recent days is usually that lag, not a bug.</li>
+      <li>Every page lists its ERCOT sources in its footer. <a href="guide.html">How offers work</a> explains the terms (LSL, SCED, stay-on loss) the pages use.</li>
+      <li>For a number that looks off, the page link and the date and hour you were looking at make it quick to check.</li>
+    </ul>
+  </aside>
+</main>
+
+<footer class="foot">
+  <p>Messages are delivered by <a href="https://formspree.io">Formspree</a>, which stores them only to forward them. Your email address is used only to reply to you.</p>
+  <p>Made by <a href="https://currenttech.energy">currenttech.energy</a>.</p>
+</footer>
+</div>
+<script>
+// Formspree form ID (the part after /f/ in the form's endpoint). Public by design; empty disables sending.
+const FORMSPREE_ID = "";
+
+const form = document.getElementById("contact-form");
+const send = document.getElementById("c-send");
+const status = document.getElementById("c-status");
+const ref = new URLSearchParams(location.search).get("from") || document.referrer;
+document.getElementById("c-page").value = ref || "";
+
+function say(text, kind) { status.textContent = text; status.className = "form-msg" + (kind ? " " + kind : ""); }
+
+if (!FORMSPREE_ID) {
+  send.disabled = true;
+  say("The form isn't connected yet. Please check back soon.");
+} else {
+  form.action = "https://formspree.io/f/" + FORMSPREE_ID;
+}
+
+form.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  if (!FORMSPREE_ID) return;
+  const email = form.email.value.trim(), msg = form.message.value.trim();
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { say("Please enter an email address so we can reply.", "err"); form.email.focus(); return; }
+  if (!msg) { say("Please write a message.", "err"); form.message.focus(); return; }
+  send.disabled = true;
+  say("Sending…");
+  const data = new FormData(form);
+  data.append("_subject", "Bid explorer: " + form.topic.value);
+  try {
+    const r = await fetch(form.action, { method: "POST", body: data, headers: { Accept: "application/json" } });
+    if (!r.ok) throw new Error(r.status);
+    form.reset();
+    say("Thanks, your message was sent.", "ok");
+  } catch (err) {
+    say("That didn't go through. Please try again in a minute.", "err");
+  } finally {
+    send.disabled = false;
+  }
+});
+</script>
+</body>
+</html>
