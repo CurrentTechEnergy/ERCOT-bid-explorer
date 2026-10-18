@@ -1,0 +1,52 @@
+name: Subscriber emails (manual)
+
+# Runs the send step by hand (pipeline/notify.py): a dry run by default, which prints the email
+# that would go out on the run summary and sends nothing. Untick dry_run to send for real; the
+# record of what was sent is committed. The daily send is a step of update.yml.
+on:
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Print the email that would go out; send nothing"
+        type: boolean
+        required: false
+        default: true
+
+permissions:
+  contents: write
+
+concurrency:
+  group: update-data
+  cancel-in-progress: false
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: ${{ github.ref_name }}
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install -r requirements.txt
+      - name: Send subscriber emails
+        env:
+          BUTTONDOWN_API_KEY: ${{ secrets.BUTTONDOWN_API_KEY }}
+          DRY_RUN: ${{ github.event.inputs.dry_run }}
+        run: |
+          if [ "$DRY_RUN" = "false" ]; then
+            python -m pipeline.notify
+          else
+            python -m pipeline.notify --dry-run
+          fi
+      - name: Commit the send record
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add site/data/notify_sent.json
+          if git diff --cached --quiet; then echo "Nothing to record"; exit 0; fi
+          git commit -m "Subscriber emails $(date -u +%Y-%m-%d)"
+          git pull --rebase origin "${GITHUB_REF_NAME}" && git push origin "HEAD:${GITHUB_REF_NAME}"
