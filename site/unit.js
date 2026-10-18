@@ -171,6 +171,7 @@ function drawHead(e) {
   const ui = e.tech === "storage" && (S.UI || []).find((u) => u.unit === e.name);
   if (ui) bits.push(...[ui.mw && `${fmtMW(ui.mw)} MW`, ui.plant && `${ui.plant}${ui.match === "site" ? " (plant)" : ""}`, ui.sp && `node ${ui.sp}`, ui.qse && `QSE ${ui.qse}`].filter(Boolean));
   $("unit-meta").textContent = bits.join(" · ");
+  drawSite(e);
   const v = $("unit-verdict");
   if (!f) { v.textContent = THERMAL.includes(e.tech) ? "Not in the latest forecast." : ""; return; }
   const g = GROUP_SHORT[f.group] || f.group;
@@ -181,6 +182,20 @@ function drawHead(e) {
     (f.off_from ? ` Expected off for ${f.off_hours} h from HE ${f.off_from}.` : "") +
     (f.reason && f.loss == null ? ` <span class="muted">${esc(f.reason)}.</span>` : "") +
     ` <a href="./#date=${esc(S.FC.date)}">Overview for that day</a>.`;
+}
+
+// a battery and the wind or solar units at the same settlement point (a co-located site), linked
+// both ways from the unit index
+const RENEW = ["wind", "solar"];
+function drawSite(e) {
+  const me = (S.UI || []).find((u) => u.unit === e.name);
+  const pair = (u) => e.tech === "storage" ? RENEW.includes(u.tech) : RENEW.includes(e.tech) && u.tech === "storage";
+  const mates = me && me.sp ? S.UI.filter((u) => u.sp === me.sp && u.unit !== e.name && pair(u)) : [];
+  $("unit-site").hidden = !mates.length;
+  if (!mates.length) return;
+  $("unit-site").innerHTML = `Same site (node ${esc(me.sp)}): ` + mates.map((u) =>
+    `<a href="unit.html?unit=${encodeURIComponent(u.unit)}">${esc(u.unit)}</a> ${esc(u.tech === "storage" ? "battery" : u.tech)}` +
+    (u.mw ? ` ${fmtMW(u.mw)} MW` : "")).join(", ");
 }
 
 // ---- decision history: every day the unit started online, its loss and what it did ----------
