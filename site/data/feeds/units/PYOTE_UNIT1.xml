@@ -95,4 +95,11 @@
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Outage began, lasting 55 days</summary>
   </entry>
+  <entry>
+    <title>PYOTE_UNIT1: New unit (2026-01-07)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PYOTE_UNIT1"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PYOTE_UNIT1#PYOTE_UNIT1/2026-01-07/new_unit</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>First day in SCED, first HSL above zero 2026-05-01; up to 10 MW so far</summary>
+  </entry>
 </feed>

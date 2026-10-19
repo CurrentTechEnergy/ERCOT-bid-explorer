@@ -25,4 +25,11 @@
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Outage began, lasting 13 days</summary>
   </entry>
+  <entry>
+    <title>STEAM1A_STEAM_1: New unit (2026-05-14)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=STEAM1A_STEAM_1"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=STEAM1A_STEAM_1#STEAM1A_STEAM_1/2026-05-14/new_unit</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>First day in SCED; up to 18 MW so far</summary>
+  </entry>
 </feed>

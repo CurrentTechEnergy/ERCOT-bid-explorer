@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>ELMCRK_ESR1: bidding and operating changes</title>
+  <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ELMCRK_ESR1"/>
+  <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ELMCRK_ESR1</id>
+  <updated>2026-10-18T00:00:00Z</updated>
+  <entry>
+    <title>ELMCRK_ESR1: Battery size changed (2026-05-29)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ELMCRK_ESR1"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ELMCRK_ESR1#ELMCRK_ESR1/2026-05-29/battery_size</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Maximum state of charge 17 to 26 MWh</summary>
+  </entry>
+  <entry>
+    <title>ELMCRK_ESR1: New battery (2026-02-07)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ELMCRK_ESR1"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ELMCRK_ESR1#ELMCRK_ESR1/2026-02-07/battery_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>First day charging or discharging: 1 MW, 27 MWh</summary>
+  </entry>
+</feed>

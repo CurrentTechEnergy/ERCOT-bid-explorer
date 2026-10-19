@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>VERT_ESS_ESR1: bidding and operating changes</title>
+  <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=VERT_ESS_ESR1"/>
+  <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=VERT_ESS_ESR1</id>
+  <updated>2026-10-18T00:00:00Z</updated>
+  <entry>
+    <title>VERT_ESS_ESR1: Battery size changed (2026-05-05)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=VERT_ESS_ESR1"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=VERT_ESS_ESR1#VERT_ESS_ESR1/2026-05-05/battery_size</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Maximum state of charge 39 to 274 MWh</summary>
+  </entry>
+  <entry>
+    <title>VERT_ESS_ESR1: New battery (2026-02-16)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=VERT_ESS_ESR1"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=VERT_ESS_ESR1#VERT_ESS_ESR1/2026-02-16/battery_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>First day charging or discharging: 200 MW</summary>
+  </entry>
+</feed>

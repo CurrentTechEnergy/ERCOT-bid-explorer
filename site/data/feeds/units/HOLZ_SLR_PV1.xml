@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>HOLZ_SLR_PV1: bidding and operating changes</title>
+  <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=HOLZ_SLR_PV1"/>
+  <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=HOLZ_SLR_PV1</id>
+  <updated>2026-10-18T00:00:00Z</updated>
+  <entry>
+    <title>HOLZ_SLR_PV1: New unit (2026-05-01)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=HOLZ_SLR_PV1"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=HOLZ_SLR_PV1#HOLZ_SLR_PV1/2026-05-01/new_unit</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>First day in SCED, first HSL above zero 2026-07-07; up to 17 MW so far</summary>
+  </entry>
+</feed>

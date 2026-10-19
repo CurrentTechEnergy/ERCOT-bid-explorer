@@ -11,4 +11,11 @@
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$38 to floor -$47</summary>
   </entry>
+  <entry>
+    <title>AQLA_WND_UNIT1: New unit (2026-05-01)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=AQLA_WND_UNIT1"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=AQLA_WND_UNIT1#AQLA_WND_UNIT1/2026-05-01/new_unit</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>First day in SCED, first HSL above zero 2026-06-26; up to 170 MW so far</summary>
+  </entry>
 </feed>

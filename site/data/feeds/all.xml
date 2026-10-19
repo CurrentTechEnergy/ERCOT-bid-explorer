@@ -110,11 +110,32 @@
     <summary>Offer price vs peer median: $52 to -$9/MWh</summary>
   </entry>
   <entry>
+    <title>LEAKEY_ESR1: New battery (2026-08-06)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=LEAKEY_ESR1"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=LEAKEY_ESR1#LEAKEY_ESR1/2026-08-06/battery_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>First day charging or discharging: 13 MWh</summary>
+  </entry>
+  <entry>
     <title>GRSES_UNIT1: Bidding approach shifted (2026-08-06)</title>
     <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=GRSES_UNIT1"/>
     <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=GRSES_UNIT1#GRSES_UNIT1/2026-08-06/bidding</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Offer price vs peer median: $15 to $92/MWh</summary>
+  </entry>
+  <entry>
+    <title>YCAT_WND_UNIT2: New unit (2026-08-05)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=YCAT_WND_UNIT2"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=YCAT_WND_UNIT2#YCAT_WND_UNIT2/2026-08-05/new_unit</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>First day in SCED, no HSL yet</summary>
+  </entry>
+  <entry>
+    <title>YCAT_WND_UNIT1: New unit (2026-08-05)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=YCAT_WND_UNIT1"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=YCAT_WND_UNIT1#YCAT_WND_UNIT1/2026-08-05/new_unit</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>First day in SCED, no HSL yet</summary>
   </entry>
   <entry>
     <title>SCSES_UNIT2: Bidding approach shifted (2026-08-05)</title>
@@ -145,6 +166,20 @@
     <summary>Shut down for 207 h after 44 days without a shutdown</summary>
   </entry>
   <entry>
+    <title>BRAN_ESS_ESR2: New battery (2026-08-05)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=BRAN_ESS_ESR2"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=BRAN_ESS_ESR2#BRAN_ESS_ESR2/2026-08-05/battery_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>First day charging or discharging: 100 MW, 100 MWh</summary>
+  </entry>
+  <entry>
+    <title>BRAN_ESS_ESR1: New battery (2026-08-05)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=BRAN_ESS_ESR1"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=BRAN_ESS_ESR1#BRAN_ESS_ESR1/2026-08-05/battery_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>First day charging or discharging: 100 MW, 100 MWh</summary>
+  </entry>
+  <entry>
     <title>MCSES_UNIT6: Shut down after a long run (2026-08-04)</title>
     <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=MCSES_UNIT6"/>
     <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=MCSES_UNIT6#MCSES_UNIT6/2026-08-04/shutdown_new</id>
@@ -164,6 +199,13 @@
     <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=MDANP_CT1#MDANP_CT1/2026-08-03/shutdown_award</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Shut down for 11 h although a day-ahead award covered 100% of the window</summary>
+  </entry>
+  <entry>
+    <title>C5_ESR1: New battery (2026-08-03)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=C5_ESR1"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=C5_ESR1#C5_ESR1/2026-08-03/battery_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>First day charging or discharging: 24 MWh</summary>
   </entry>
   <entry>
     <title>SKY1_SKY1B: Shut down despite a day-ahead award (2026-08-02)</title>
@@ -565,11 +607,25 @@
     <summary>Shut down for 98 h although a day-ahead award covered 100% of the window</summary>
   </entry>
   <entry>
+    <title>ESCONDID_ESR1: New battery (2026-07-15)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ESCONDID_ESR1"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ESCONDID_ESR1#ESCONDID_ESR1/2026-07-15/battery_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>First day charging or discharging: 10 MW, 13 MWh</summary>
+  </entry>
+  <entry>
     <title>WAP_WAP_G4: Shut down after a long run (2026-07-14)</title>
     <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=WAP_WAP_G4"/>
     <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=WAP_WAP_G4#WAP_WAP_G4/2026-07-14/shutdown_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Shut down for 59 h after 119 days without a shutdown</summary>
+  </entry>
+  <entry>
+    <title>SOLC_SLR_ESR1: Battery size changed (2026-07-14)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SOLC_SLR_ESR1"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SOLC_SLR_ESR1#SOLC_SLR_ESR1/2026-07-14/battery_size</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Maximum state of charge 182 to 320 MWh</summary>
   </entry>
   <entry>
     <title>GRSES_UNIT2: Bidding approach shifted (2026-07-14)</title>
@@ -852,6 +908,13 @@
     <summary>Offer price vs peer median: $61 to -$1/MWh</summary>
   </entry>
   <entry>
+    <title>MESQUITE_ESR2: New battery (2026-07-07)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=MESQUITE_ESR2"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=MESQUITE_ESR2#MESQUITE_ESR2/2026-07-07/battery_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>First day charging or discharging: 10 MW, 20 MWh</summary>
+  </entry>
+  <entry>
     <title>HLSES_UNIT3: Shut down despite a day-ahead award (2026-07-07)</title>
     <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=HLSES_UNIT3"/>
     <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=HLSES_UNIT3#HLSES_UNIT3/2026-07-07/shutdown_award</id>
@@ -892,6 +955,13 @@
     <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=LHSES_UNIT1#LHSES_UNIT1/2026-07-06/shutdown_award</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Shut down for 17 h although a day-ahead award covered 100% of the window</summary>
+  </entry>
+  <entry>
+    <title>E_HARRIS_ESR1: Battery size changed (2026-07-06)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=E_HARRIS_ESR1"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=E_HARRIS_ESR1#E_HARRIS_ESR1/2026-07-06/battery_size</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Maximum state of charge 12 to 20 MWh</summary>
   </entry>
   <entry>
     <title>SCLPCOGN_SCLPC_4: Outage ended (2026-07-05)</title>
@@ -1046,6 +1116,20 @@
     <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SCSES_UNIT2#SCSES_UNIT2/2026-07-01/group</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Daily, 1–2 a week in 2026-06 to Multi-day: off 1–7 days in 2026-07</summary>
+  </entry>
+  <entry>
+    <title>QTUM_SLR_ESR2: Battery size changed (2026-07-01)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=QTUM_SLR_ESR2"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=QTUM_SLR_ESR2#QTUM_SLR_ESR2/2026-07-01/battery_size</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Maximum output 90 to 160 MW</summary>
+  </entry>
+  <entry>
+    <title>QTUM_SLR_ESR1: Battery size changed (2026-07-01)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=QTUM_SLR_ESR1"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=QTUM_SLR_ESR1#QTUM_SLR_ESR1/2026-07-01/battery_size</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Maximum output 90 to 160 MW</summary>
   </entry>
   <entry>
     <title>PYOTE_UNIT1: Timescale group changed (2026-07-01)</title>
@@ -1293,6 +1377,20 @@
     <summary>Daily, 1–2 a week in 2026-06 to Seasonal: off a week or more in 2026-07</summary>
   </entry>
   <entry>
+    <title>ARMD_SLR_UNIT2: New unit (2026-07-01)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ARMD_SLR_UNIT2"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ARMD_SLR_UNIT2#ARMD_SLR_UNIT2/2026-07-01/new_unit</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>First day in SCED, no HSL yet</summary>
+  </entry>
+  <entry>
+    <title>ARMD_SLR_UNIT1: New unit (2026-07-01)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ARMD_SLR_UNIT1"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ARMD_SLR_UNIT1#ARMD_SLR_UNIT1/2026-07-01/new_unit</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>First day in SCED, no HSL yet</summary>
+  </entry>
+  <entry>
     <title>AEEC_ELK_3: Timescale group changed (2026-07-01)</title>
     <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=AEEC_ELK_3"/>
     <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=AEEC_ELK_3#AEEC_ELK_3/2026-07-01/group</id>
@@ -1305,103 +1403,5 @@
     <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=AEEC_ELK_1#AEEC_ELK_1/2026-07-01/group</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Daily, over 2 a week in 2026-06 to Seasonal: off a week or more in 2026-07</summary>
-  </entry>
-  <entry>
-    <title>AEEC_ANTLP_1: Timescale group changed (2026-07-01)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=AEEC_ANTLP_1"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=AEEC_ANTLP_1#AEEC_ANTLP_1/2026-07-01/group</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Daily, over 2 a week in 2026-06 to Seasonal: off a week or more in 2026-07</summary>
-  </entry>
-  <entry>
-    <title>MDANP_CT5: Loss cutoff moved (2026-06-30)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=MDANP_CT5"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=MDANP_CT5#MDANP_CT5/2026-06-30/cutoff</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Loss cutoff $2 to $122 per MW of minimum output; the next month&#x27;s decisions contradict it (6 of 10 right against 7)</summary>
-  </entry>
-  <entry>
-    <title>GIDEON_GIDEONG3: Loss cutoff moved (2026-06-30)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=GIDEON_GIDEONG3"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=GIDEON_GIDEONG3#GIDEON_GIDEONG3/2026-06-30/cutoff</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Loss cutoff $161 to $270 per MW of minimum output; the next month&#x27;s decisions confirm it (1 of 1 right against 0)</summary>
-  </entry>
-  <entry>
-    <title>FRONT_EC_CC1: Loss cutoff moved (2026-06-30)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FRONT_EC_CC1"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FRONT_EC_CC1#FRONT_EC_CC1/2026-06-30/cutoff</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Loss cutoff $0 to $58 per MW of minimum output; the next month&#x27;s decisions contradict it (9 of 11 right against 11)</summary>
-  </entry>
-  <entry>
-    <title>CEDRVALE_UNIT1: Loss cutoff moved (2026-06-30)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CEDRVALE_UNIT1"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CEDRVALE_UNIT1#CEDRVALE_UNIT1/2026-06-30/cutoff</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Loss cutoff $1,259 to $0 per MW of minimum output; the next month&#x27;s decisions confirm it (20 of 24 right against 10)</summary>
-  </entry>
-  <entry>
-    <title>OECCS_CC2_2: Bidding approach shifted (2026-06-29)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=OECCS_CC2_2"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=OECCS_CC2_2#OECCS_CC2_2/2026-06-29/bidding</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>MW above LSL offered at or below $0: 100% to 0% of the day</summary>
-  </entry>
-  <entry>
-    <title>LOSTPI_CC1: Shut down after a long run (2026-06-28)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=LOSTPI_CC1"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=LOSTPI_CC1#LOSTPI_CC1/2026-06-28/shutdown_new</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Shut down for 15 h after 99 days without a shutdown</summary>
-  </entry>
-  <entry>
-    <title>GUADG_CC2: Shut down after a long run (2026-06-28)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=GUADG_CC2"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=GUADG_CC2#GUADG_CC2/2026-06-28/shutdown_new</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Shut down for 6 h after 88 days without a shutdown</summary>
-  </entry>
-  <entry>
-    <title>BVE_CC1: Shut down after a long run (2026-06-28)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=BVE_CC1"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=BVE_CC1#BVE_CC1/2026-06-28/shutdown_new</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Shut down for 6 h after 55 days without a shutdown</summary>
-  </entry>
-  <entry>
-    <title>TNP_ONE_TNP_O_2: Bidding approach shifted (2026-06-27)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TNP_ONE_TNP_O_2"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TNP_ONE_TNP_O_2#TNP_ONE_TNP_O_2/2026-06-27/bidding</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Offer price vs peer median: $25 to -$8/MWh</summary>
-  </entry>
-  <entry>
-    <title>TNP_ONE_TNP_O_1: Bidding approach shifted (2026-06-27)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TNP_ONE_TNP_O_1"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TNP_ONE_TNP_O_1#TNP_ONE_TNP_O_1/2026-06-27/bidding</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Offer price vs peer median: $25 to -$8/MWh</summary>
-  </entry>
-  <entry>
-    <title>SOLC_SLR: New floor (2026-06-27)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SOLC_SLR"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SOLC_SLR#SOLC_SLR/2026-06-27/renew_floor_new</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: floor -$2 to floor -$42</summary>
-  </entry>
-  <entry>
-    <title>QTUM_SLR: New floor (2026-06-27)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=QTUM_SLR"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=QTUM_SLR#QTUM_SLR/2026-06-27/renew_floor_new</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: floor -$2 to floor -$45</summary>
-  </entry>
-  <entry>
-    <title>MIL_MILLERG3: Shut down despite a day-ahead award (2026-06-27)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=MIL_MILLERG3"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=MIL_MILLERG3#MIL_MILLERG3/2026-06-27/shutdown_award</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Shut down for 64 h although a day-ahead award covered 100% of the window</summary>
   </entry>
 </feed>

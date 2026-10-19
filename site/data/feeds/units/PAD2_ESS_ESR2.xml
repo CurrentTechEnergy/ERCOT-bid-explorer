@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>PAD2_ESS_ESR2: bidding and operating changes</title>
+  <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PAD2_ESS_ESR2"/>
+  <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PAD2_ESS_ESR2</id>
+  <updated>2026-10-18T00:00:00Z</updated>
+  <entry>
+    <title>PAD2_ESS_ESR2: Battery size changed (2026-06-06)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PAD2_ESS_ESR2"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PAD2_ESS_ESR2#PAD2_ESS_ESR2/2026-06-06/battery_size</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Maximum state of charge 2 to 606 MWh</summary>
+  </entry>
+  <entry>
+    <title>PAD2_ESS_ESR2: New battery (2026-02-11)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PAD2_ESS_ESR2"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PAD2_ESS_ESR2#PAD2_ESS_ESR2/2026-02-11/battery_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>First day charging or discharging: 15 MW, 600 MWh</summary>
+  </entry>
+</feed>

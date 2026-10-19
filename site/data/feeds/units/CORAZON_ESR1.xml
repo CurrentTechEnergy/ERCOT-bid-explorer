@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>CORAZON_ESR1: bidding and operating changes</title>
+  <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CORAZON_ESR1"/>
+  <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CORAZON_ESR1</id>
+  <updated>2026-10-18T00:00:00Z</updated>
+  <entry>
+    <title>CORAZON_ESR1: Battery size changed (2026-02-24)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CORAZON_ESR1"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CORAZON_ESR1#CORAZON_ESR1/2026-02-24/battery_size</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Maximum state of charge 203 to 254 MWh</summary>
+  </entry>
+</feed>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>WAL_ESR1: bidding and operating changes</title>
+  <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=WAL_ESR1"/>
+  <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=WAL_ESR1</id>
+  <updated>2026-10-18T00:00:00Z</updated>
+  <entry>
+    <title>WAL_ESR1: Battery size changed (2026-02-12)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=WAL_ESR1"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=WAL_ESR1#WAL_ESR1/2026-02-12/battery_size</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Maximum output 153 to 200 MW</summary>
+  </entry>
+  <entry>
+    <title>WAL_ESR1: Battery size changed (2026-01-31)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=WAL_ESR1"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=WAL_ESR1#WAL_ESR1/2026-01-31/battery_size</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Maximum state of charge 304 to 407 MWh</summary>
+  </entry>
+</feed>

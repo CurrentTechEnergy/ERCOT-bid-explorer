@@ -25,4 +25,11 @@
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$35 to floor $0</summary>
   </entry>
+  <entry>
+    <title>THREEW_S_SOLAR1: New unit (2026-01-07)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=THREEW_S_SOLAR1"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=THREEW_S_SOLAR1#THREEW_S_SOLAR1/2026-01-07/new_unit</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>First day in SCED, first HSL above zero 2026-03-20; up to 110 MW so far</summary>
+  </entry>
 </feed>

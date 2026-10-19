@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>SLCNHLS_ESR1: bidding and operating changes</title>
+  <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SLCNHLS_ESR1"/>
+  <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SLCNHLS_ESR1</id>
+  <updated>2026-10-18T00:00:00Z</updated>
+  <entry>
+    <title>SLCNHLS_ESR1: Battery size changed (2026-03-25)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SLCNHLS_ESR1"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SLCNHLS_ESR1#SLCNHLS_ESR1/2026-03-25/battery_size</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Maximum output 42 to 50 MW</summary>
+  </entry>
+</feed>
