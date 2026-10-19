@@ -7,7 +7,13 @@ solar-heavy spring day, all with the 60-day answer in.
   python -m pipeline.forecast.benchmark --against FILE  # compare with a saved scores.json.gz
 
 Promotion rule: a new version is promoted only if its benchmark headline hit rate and unit hit
-rate are not worse and its worst group's MAE is not worse than the version in use.
+rate are not worse, its worst group's MAE is not worse than the version in use, and its
+cheap-hour floor MAE (committed minimum in hours with the day-ahead hub at or below
+score.CHEAP_HUB, over every as-of scored day, not just the set) is not worse.  The set alone
+holds too few cheap hours to judge the floor, so that line reads all as-of days.
+
+The set is scored as chosen, hindsight days included, so the gate does not move under a
+version; the cheap-hour line and the site's track record leave hindsight days out.
 """
 import argparse
 import json
@@ -55,7 +61,12 @@ def select(ctx: C.Context) -> dict:
 def report(scores: dict, bench: dict) -> dict:
     days = {d for v in bench["days"].values() for d in v}
     sub = {d: s for d, s in scores.get("days", {}).items() if d in days}
-    return summarise(sub)
+    return summarise(sub, asof_only=False)
+
+
+def floor_report(scores: dict) -> dict:
+    """{versions key: floor summary} over every as-of scored day."""
+    return {k: s.get("floor") for k, s in summarise(scores.get("days", {})).items()}
 
 
 def main(argv=None):
@@ -70,17 +81,22 @@ def main(argv=None):
         print(f"benchmark set: {sum(len(v) for v in bench['days'].values())} days -> {BENCH}")
         return 0
     bench = json.loads(BENCH.read_text())
-    cur = report(read_json_gz(SCORES, default={"days": {}}), bench)
-    rows = [("current", cur)]
+    cur_sc = read_json_gz(SCORES, default={"days": {}})
+    rows = [("current", report(cur_sc, bench), floor_report(cur_sc))]
     if args.against:
-        rows.append(("against", report(read_json_gz(Path(args.against), default={"days": {}}), bench)))
-    for label, summ in rows:
+        old = read_json_gz(Path(args.against), default={"days": {}})
+        rows.append(("against", report(old, bench), floor_report(old)))
+    for label, summ, floors in rows:
         for k, s in summ.items():
             worst = max((g["mae"] or 0) for g in (s["group"] or {}).values()) if s["group"] else None
             print(f"{label} [{k}]: n={s['n']} headline_hit={s['headline_hit']} unit_hit={s['unit_hit']} "
                   f"thermal_mae={s['thermal_mae']} worst_group_mae={worst}")
             for b, bs in s["by_band"].items():
                 print(f"   {b:7s} n={bs['n']} headline_hit={bs['headline_hit']} unit_hit={bs['unit_hit']} thermal_mae={bs['thermal_mae']}")
+        for k, f in floors.items():
+            if f:
+                print(f"{label} [{k}] floor over all as-of days: " + "  ".join(
+                    f"{h} {f[h]['hours']}h mae={f[h]['mae']} bias={f[h]['bias']}" for h in ("all", "cheap", "neg")))
     return 0
 
 

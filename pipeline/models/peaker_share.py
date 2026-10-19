@@ -22,12 +22,13 @@ MIN_BIN = 20
 def forecast(date, ctx: C.Context) -> dict:
     units = ctx.units(date)
     hub = ctx.hub(date)
-    fleet = ctx.stats["fleet"].get("combustion_turbine")
+    stats = ctx.stats_at(date)
+    fleet = stats["fleet"].get("combustion_turbine")
     rows = {}
     for key, u in units.items():
         if u["tech"] != "combustion_turbine":
             continue
-        s = ctx.stats["units"].get(key)
+        s = stats["units"].get(key)
         p = np.zeros(24)
         src = "fleet"
         for h in range(24):

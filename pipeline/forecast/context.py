@@ -19,6 +19,15 @@ answers "what was known when the day-ahead market for day D cleared":
                         running, HSL
   curve(name, D)        the unit's SCED2 offer curve from the latest monthly snapshot that was
                         public before D cleared (UNIT_DATA_DIR/forecast/curves/)
+  asof(D)               the history point D's models may read: the latest month end (or the
+                        last day of the record) at or before known_date(D).  groups_at(D) and
+                        stats_at(D) are the timescale groups and unit stats built from the
+                        hourly states and 60-day rows up to that point only, so a backtest
+                        day never sees later behaviour.  A live day's point is the record's
+                        last day, where both equal the full-record groups and stats.  A day
+                        whose point has under MIN_ASOF_DAYS days of history before it uses the
+                        first point that has them and is flagged asof_hindsight; the scores
+                        leave such days out of the track record
 """
 import datetime as dt
 from collections import defaultdict
@@ -40,6 +49,7 @@ THERMAL = ["nuclear", "coal", "combined_cycle", "gas_steam", "combustion_turbine
 RENEW = ["wind", "solar"]
 CURVE_DIR = UNIT_DATA_DIR / "forecast" / "curves"
 CURVE_FORMAT = 1
+MIN_ASOF_DAYS = 28             # days of hourly history a backtest day's groups and stats need
 SNAP_HOUR = 15                 # the run nearest this hour on the snapshot day gives the curve
 
 
@@ -73,6 +83,9 @@ class Context:
         self._dam = {}
         self._units = {}
         self._stats = None
+        self._asof = {}
+        self._raw = None
+        self._rows60 = {}
         self._snapshots = None
         self._curves = {}
 
@@ -208,6 +221,69 @@ class Context:
             self._stats = build_unit_stats(self)
         return self._stats
 
+    # -------------------------------------------------------------- as-of --
+    def asof(self, date):
+        """(history point, hindsight): the latest month end of the hourly record at or before
+        known_date(date), or the record's last day when that is the known date; hindsight when
+        the point has fewer than MIN_ASOF_DAYS days before it (the first point that has them is
+        used instead)."""
+        dates = self.uh.get("dates", [])
+        if not dates:
+            return None, True
+        known, _ = self.known_date(date)
+        points = [d for i, d in enumerate(dates) if i + 1 == len(dates) or dates[i + 1][:7] != d[:7]]
+        first = _d(dates[0])
+        enough = [p for p in points if (_d(p) - first).days + 1 >= MIN_ASOF_DAYS]
+        if known is not None and known >= dates[-1]:
+            return dates[-1], not enough
+        ok = [p for p in enough if known is not None and p <= known]
+        if ok:
+            return ok[-1], False
+        return (enough[0] if enough else dates[-1]), True
+
+    def _at(self, date):
+        point, _ = self.asof(date)
+        if point is None or point == (self.uh.get("dates") or [None])[-1]:
+            return None
+        if point not in self._asof:
+            uh = _uh_upto(self.uh, point)
+            by, N, _ = grp.merged_states(uh, self.techs)
+            self._asof[point] = {"groups": {key: grp.group_of(st, N) for key, (t, st) in by.items()},
+                                 "stats": build_unit_stats(self, upto=point)}
+        return self._asof[point]
+
+    def groups_at(self, date):
+        """{train: group} as of asof(date) (the full-record groups for a live day)."""
+        a = self._at(date)
+        return self.groups if a is None else a["groups"]
+
+    def stats_at(self, date):
+        """Unit stats as of asof(date) (the full-record stats for a live day)."""
+        a = self._at(date)
+        return self.stats if a is None else a["stats"]
+
+    def raw_states(self):
+        """{train: (tech, state array)} merged but not outage-rewritten, on the stats' calendar."""
+        if self._raw is None:
+            self._raw = grp.merged_states(self.uh, self.techs, rewrite=False)[0]
+        return self._raw
+
+    def rows60(self, f):
+        """Thermal and renewable rows of one 60-day unit file, cached: [(key, tech, hour, hsl,
+        output, online share)]."""
+        if f not in self._rows60:
+            day = read_json_gz(f)
+            rows = []
+            if day:
+                cols = {c: i + 2 for i, c in enumerate(day["columns"])}
+                names = day["units"]
+                for r in day["rows"]:
+                    name, t = names[r[0]][0], names[r[0]][2]
+                    key = train_of(name) if t == "combined_cycle" else name
+                    rows.append((key, t, r[1], r[cols["hsl"]], r[cols["output"]], r[cols["online_share"]]))
+            self._rows60[f] = rows
+        return self._rows60[f]
+
     # ------------------------------------------------------------- curves --
     def snapshots(self):
         if self._snapshots is None:
@@ -230,15 +306,23 @@ class Context:
 
 
 # ------------------------------------------------------------------ stats --
-def build_unit_stats(ctx: Context) -> dict:
+def _uh_upto(uh: dict, upto: str) -> dict:
+    """The hourly-states record cut after day `upto` (dates and each unit's strip)."""
+    dates = [d for d in uh.get("dates", []) if d <= upto]
+    n = len(dates) * 24
+    return {**uh, "dates": dates, "units": {k: s[:n] for k, s in uh.get("units", {}).items()}}
+
+
+def build_unit_stats(ctx: Context, upto: str = None) -> dict:
     """Per unit (train for combined cycles) from the hourly states and the 60-day unit rows:
       on_bin[b][h]   online hours / hours with data, by day-ahead hub price bin b and hour h
       on_days        share of days with any online hour
       out_med        median output when running (MW)
       hsl_max        largest hourly HSL seen
       out_by_hour    wind, solar: mean HSL by hour of day over the last 30 days with rows
-    plus fleet[tech] on_bin for the technology as a whole (hours summed over units)."""
-    uh, techs = ctx.uh, ctx.techs
+    plus fleet[tech] on_bin for the technology as a whole (hours summed over units).
+    upto: build from the record up to and including that day only (ctx.stats_at)."""
+    uh, techs = (ctx.uh if upto is None else _uh_upto(ctx.uh, upto)), ctx.techs
     dates = uh.get("dates", [])
     hub_bin = {}
     for d in dates:
@@ -280,24 +364,18 @@ def build_unit_stats(ctx: Context) -> dict:
                       "last_state": None, "out_med": None, "hsl_max": 0.0}
     # output when running, HSL and wind / solar availability by hour from the 60-day unit rows
     files = sorted((DATA_DIR / "60d-units").glob("*.json.gz"))
+    if upto is not None:
+        files = [f for f in files if f.name[:10] <= upto]
     outs = defaultdict(list); hsl_max = defaultdict(float); avail = defaultdict(lambda: np.zeros(24)); navail = defaultdict(lambda: np.zeros(24))
-    recent = files[-30:]
+    recent = set(files[-30:])
     for f in files:
-        day = read_json_gz(f)
-        if not day:
-            continue
-        cols = {c: i + 2 for i, c in enumerate(day["columns"])}
-        names = day["units"]
-        for r in day["rows"]:
-            name, t = names[r[0]][0], names[r[0]][2]
-            key = train_of(name) if t == "combined_cycle" else name
-            hsl, out, share = r[cols["hsl"]], r[cols["output"]], r[cols["online_share"]]
+        for key, t, he, hsl, out, share in ctx.rows60(f):
             if hsl:
                 hsl_max[key] = max(hsl_max[key], hsl)
             if t in THERMAL and share and share >= 0.5 and out is not None:
                 outs[key].append(out)
             if t in RENEW and f in recent and hsl is not None:
-                avail[key][r[1] - 1] += hsl; navail[key][r[1] - 1] += 1
+                avail[key][he - 1] += hsl; navail[key][he - 1] += 1
     for key, u in units.items():
         u["out_med"] = float(np.median(outs[key])) if outs[key] else None
         u["hsl_max"] = float(hsl_max.get(key, 0.0))

@@ -41,6 +41,7 @@ def forecast(date, ctx: C.Context, commit: dict, peakers: dict) -> dict:
     units = ctx.units(date)
     hub = ctx.hub(date)
     month, hindsight = ctx.curve_month(date)
+    stats = ctx.stats_at(date)
     rows = {}
     n_curve = 0
     for key, row in commit["rows"].items():
@@ -57,7 +58,7 @@ def forecast(date, ctx: C.Context, commit: dict, peakers: dict) -> dict:
         if prices is None:
             prices = hub
         c = _config_curve(ctx, month, u)
-        s = ctx.stats["units"].get(key)
+        s = stats["units"].get(key)
         mw = np.zeros(24)
         floor = lsl    # the minimum the model holds the unit at when on: the snapshot configuration's LSL
         if row["tech"] == "nuclear":
