@@ -1,7 +1,8 @@
 """How far back ERCOT's report archive goes, and whether the parsers read the old files.
 
 Run by the "Probe ERCOT history" workflow (manual) before the 2019+ hourly backfill is built.
-For each report it lists the archive one week a quarter from 2016 on and reports the oldest
+For each report (60-day disclosures, prices, and the two outage reports pipeline/outages.py
+keeps) it lists the archive one week a quarter from 2016 on and reports the oldest
 quarter with documents; then it downloads one 60-day SCED and one 60-day DAM disclosure per year
 and runs parse_60day_zip / parse_dam_zip on them.  Writes nothing; the report goes to stdout and,
 in Actions, the run summary.
@@ -22,7 +23,8 @@ from .parse_dam import parse_dam_zip
 EMIL_DAM_SPP = "np4-190-cd"     # DAM settlement point prices (also added to config.py by the hedge-signals PR)
 
 REPORTS = [("60-day SCED disclosure", EMIL_60DAY, 7), ("60-day DAM disclosure", EMIL_DAM, 7),
-           ("DAM settlement point prices", EMIL_DAM_SPP, 7), ("RT settlement point prices (15-min)", EMIL_SPP, 1)]
+           ("DAM settlement point prices", EMIL_DAM_SPP, 7), ("RT settlement point prices (15-min)", EMIL_SPP, 1),
+           ("Unplanned resource outages", "np1-346-er", 7), ("Hourly resource outage capacity", "np3-233-cd", 1)]
 
 
 def _t(d: dt.date) -> dt.datetime:
