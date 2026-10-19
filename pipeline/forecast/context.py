@@ -49,6 +49,7 @@ THERMAL = ["nuclear", "coal", "combined_cycle", "gas_steam", "combustion_turbine
 RENEW = ["wind", "solar"]
 CURVE_DIR = UNIT_DATA_DIR / "forecast" / "curves"
 CURVE_FORMAT = 1
+OFF_MIN_SPELLS = 3             # off spells a train needs for its own off-spell percentile
 MIN_ASOF_DAYS = 28             # days of hourly history a backtest day's groups and stats need
 SNAP_HOUR = 15                 # the run nearest this hour on the snapshot day gives the curve
 
@@ -85,6 +86,7 @@ class Context:
         self._stats = None
         self._asof = {}
         self._raw = None
+        self._off_p10 = None
         self._rows60 = {}
         self._snapshots = None
         self._curves = {}
@@ -249,7 +251,7 @@ class Context:
             uh = _uh_upto(self.uh, point)
             by, N, _ = grp.merged_states(uh, self.techs)
             self._asof[point] = {"groups": {key: grp.group_of(st, N) for key, (t, st) in by.items()},
-                                 "stats": build_unit_stats(self, upto=point)}
+                                 "stats": build_unit_stats(self, upto=point), "off_p10": _off_p10(by)}
         return self._asof[point]
 
     def groups_at(self, date):
@@ -261,6 +263,16 @@ class Context:
         """Unit stats as of asof(date) (the full-record stats for a live day)."""
         a = self._at(date)
         return self.stats if a is None else a["stats"]
+
+    def off_p10_at(self, date):
+        """{train: 10th percentile of its off spells (hours)} as of asof(date), for trains with
+        at least OFF_MIN_SPELLS spells."""
+        a = self._at(date)
+        if a is not None:
+            return a["off_p10"]
+        if self._off_p10 is None:
+            self._off_p10 = _off_p10(grp.merged_states(self.uh, self.techs)[0])
+        return self._off_p10
 
     def raw_states(self):
         """{train: (tech, state array)} merged but not outage-rewritten, on the stats' calendar."""
@@ -306,6 +318,16 @@ class Context:
 
 
 # ------------------------------------------------------------------ stats --
+def _off_p10(by: dict) -> dict:
+    """{train: 10th percentile off-spell length} from merged states (groups.off_spells)."""
+    out = {}
+    for key, (t, st) in by.items():
+        n = [n for _, n, _ in grp.off_spells(st)]
+        if len(n) >= OFF_MIN_SPELLS:
+            out[key] = float(np.quantile(n, 0.1))
+    return out
+
+
 def _uh_upto(uh: dict, upto: str) -> dict:
     """The hourly-states record cut after day `upto` (dates and each unit's strip)."""
     dates = [d for d in uh.get("dates", []) if d <= upto]

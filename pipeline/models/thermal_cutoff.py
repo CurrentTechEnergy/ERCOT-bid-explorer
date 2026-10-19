@@ -11,13 +11,21 @@ For every thermal train in the latest DAM disclosure (pipeline.forecast.context.
   nuclear     on (output at HSL) unless on outage
   never       the never-off group: on
   daily       loss = the worst contiguous window of (minimum-energy cost - day-ahead price at
-              the unit's node) x LSL over the day, in $ (pipeline.decisions._window); cutoff =
-              the unit's own loss cutoff fitted on its decision days before this day
-              (pipeline.decisions._cutoff).  "off" for the window when the loss exceeds the
-              cutoff and the unit rarely holds a day-ahead award over such a window, "maybe"
-              when it often does (p_on = its award share), "on" at or below the cutoff.  A
-              daily unit without a cutoff ("nocut") gets p_on = its share of days with any
-              online hour.
+              the unit's node) x LSL over the day, in $ (pipeline.decisions._window).  v1 turns
+              it into p_on, the probability the unit stays on through that window: a logistic
+              fitted per technology on the decision days up to the asof point, from
+                - the loss over the unit's cutoff, per MW of LSL.  The cutoff is the unit's own
+                  (pipeline.decisions._cutoff, on its decision days before this day) pulled
+                  toward its technology's pooled cutoff by POOL_K / (decision days + POOL_K);
+                  a unit without its own but with POOL_MIN decision days gets the pooled one
+                - the window's length against the unit's 10th-percentile off spell (log ratio;
+                  MIN_OFF_DEFAULT without one).  A window reaching HE24 runs on into the next
+                  morning while the margin stays negative there, with the day's own early-hour
+                  prices standing in for the next day's, which are not known yet
+                - the margin the unit earns before and after the window, per MW
+                - the unit's award history share (the day's own award is not public yet)
+              "off" below P_OFF, "maybe" up to P_ON, "on" above.  A daily unit with no cutoff
+              at all ("nocut") gets p_on = its share of days with any online hour.
   seasonal, multiday
               rule v0 (SEASONAL_VERSION): on when the unit was running at its last known hour
               and the month's day-ahead hub average to date is not below the lowest monthly
@@ -26,8 +34,13 @@ For every thermal train in the latest DAM disclosure (pipeline.forecast.context.
   peakers     combustion turbines are not judged here (peaker_share, by hour); they get
               verdict "peaker" and p_on from that model.
 
-p_on is the probability-like weight the dispatch model applies to the unit's MW: 1 for on,
-0 for off, the award share for maybe, the history share for nocut.
+p_on is the weight the dispatch model applies to the unit's MW: 1 for on, 0 for off, the
+history share for nocut, and for a daily unit judged on its window the probability above,
+here by hour: the logistic is fitted on the window's unit-hours, with each hour's own margin and
+its distance from the window's edge added, and p_on is its mean over the window.  The hourly
+values are carried as p_window with the window (win_from, win_hours): the dispatch model holds
+the unit on outside the window and at p_window inside it.  off_from and off_hours are still set for "off"
+and "maybe" so the 2-day fit starts those units off or off for the window.
 
 Everything a verdict reads from history is as of the day's known date: groups, online shares
 and the seasonal month floor from pipeline.forecast.context's asof point (stats_at,
@@ -37,14 +50,23 @@ far, not on how it later turned out).  A live day reads the full record, as befo
 """
 import numpy as np
 
-from ..decisions import _window, _cutoff, HALF, OUT_MIN_H
+from ..config import DATA_DIR
+from ..store import read_json_gz
+
+from ..decisions import _window, _cutoff, _dam_trains, HALF, OUT_MIN_H
 from ..forecast import context as C
 
 NAME = "thermal_cutoff"
-VERSION = "v0"
+VERSION = "v1"    # v1: probability of staying on through the window, per-unit horizon, pooled cutoffs
 SEASONAL_VERSION = "v0"
 RUN_SHARE = 0.5          # a month the unit ran through: online at least this share of its hours
 LONG_OUT = 21            # days an outage must already have lasted at the last known hour to carry forward
+MIN_OFF_DEFAULT = {"combined_cycle": 7.0, "gas_steam": 16.0, "coal": 24.0}   # hours, without a p10 of its own
+POOL_K = 15              # decision days at which a unit's own cutoff and the pooled one weigh the same
+POOL_MIN = 3             # decision days a unit needs for a pooled cutoff
+P_OFF, P_ON = 0.3, 0.7   # p_on below P_OFF is "off", above P_ON "on", between "maybe"
+DAILY_TECHS = ("combined_cycle", "gas_steam", "coal")
+RIDGE = 1.0              # L2 penalty of the logistic fit (features are scaled to about unit size)
 
 
 def _month_floor(ctx, key, known):
@@ -104,6 +126,156 @@ def _decision_rows(ctx, key, known):
     return [(r[2], r[5], r[6]) for r in ctx.decisions.get("days", []) if r[0] == key and r[1] <= known]
 
 
+# ------------------------------------------------------------------ v1: p_on --
+def _span(margin, bs, nh):
+    """Hours a loss window lasts on a day that wraps: a window reaching HE24 runs on into the
+    next morning for as long as the margin stays negative there.  The next day's prices are not
+    known when the day clears, so the day's own early hours stand in for them."""
+    if nh <= 0:
+        return 0
+    if bs + nh < 24:
+        return nh
+    k = 0
+    while k < bs and margin[k] < 0:
+        k += 1
+    return nh + k
+
+
+def _features(margin, lsl, loss, bs, nh, cut, min_off, aw, on_days):
+    """The logistic's inputs for one unit-day: loss over the cutoff ($/MW of LSL, /100), the
+    window's wrapped length against the unit's shortest usual off spell (log ratio), the margin
+    earned before and after the window ($/MW, /100), the unit's award history share and its
+    share of days with any online hour."""
+    before = float(np.clip(margin[:bs], 0, None).sum()) / lsl
+    after = float(np.clip(margin[bs + nh:], 0, None).sum()) / lsl
+    span = _span(margin, bs, nh)
+    return [1.0, (loss - cut) / lsl / 100.0, float(np.log(max(span, 1) / min_off)), before / 100.0, after / 100.0,
+            aw, on_days]
+
+
+def _hourly(f, margin, lsl, bs, nh):
+    """[24, len(f) + 3]: the day's features for each hour, with that hour's margin ($/MW, /100),
+    whether it is inside the loss window, and its distance from the window's nearer edge
+    (share of the window, 0 outside): a unit that shuts is off in the window's deep middle,
+    often still on at its edges, and one that rarely runs is off outside it too."""
+    hs = np.arange(24)
+    inw = (hs >= bs) & (hs < bs + nh)
+    edge = np.where(inw, np.minimum(hs - bs, bs + nh - 1 - hs) / max(nh, 1), 0.0)
+    return np.column_stack([np.tile(f, (24, 1)), margin / lsl / 100.0, inw.astype(float), edge])
+
+
+def _logit(X, y):
+    """Ridge-penalised logistic regression by Newton steps; the intercept is not penalised."""
+    X, y = np.asarray(X, float), np.asarray(y, float)
+    w = np.zeros(X.shape[1])
+    pen = np.full(X.shape[1], RIDGE); pen[0] = 0.0
+    for _ in range(50):
+        z = np.clip(X @ w, -30, 30)
+        p = 1.0 / (1.0 + np.exp(-z))
+        g = X.T @ (p - y) + pen * w
+        H = (X * (p * (1 - p))[:, None]).T @ X + np.diag(pen) + 1e-9 * np.eye(X.shape[1])
+        step = np.linalg.solve(H, g)
+        w -= step
+        if np.abs(step).max() < 1e-6:
+            break
+    return w
+
+
+def _day_trains(ctx):
+    """{date: {train: (tech, node prices [24], mingen or None, lsl)}} for every decision date,
+    from the DAM day files (combined-cycle configurations merged as in pipeline.decisions)."""
+    if getattr(ctx, "_cut_days", None) is None:
+        out = {}
+        for d in ctx.decisions.get("dates", []):
+            dd = read_json_gz(DATA_DIR / "dam" / f"{d}.json.gz")
+            if not dd:
+                continue
+            out[d] = {key: (e["tech"], e["spp"], e["mingen"], e["lsl"]) for key, e in _dam_trains(dd).items()
+                      if e["tech"] in DAILY_TECHS and e["spp"] is not None and e["lsl"]}
+        ctx._cut_days = out
+    return ctx._cut_days
+
+
+def _min_off(ctx, date, key, tech):
+    v = ctx.off_p10_at(date).get(key)
+    return max(float(v), float(OUT_MIN_H)) if v else MIN_OFF_DEFAULT.get(tech, 12.0)
+
+
+def _pool(ctx, date):
+    """As of asof(date): per unit {key: (own cutoff $/MW or None, decision days, award share)},
+    the pooled cutoff per technology ($/MW, median of the units' own), and the logistic weights
+    per technology, fitted on every daily-group unit-day up to the point with a loss window:
+    the target is the share of the window's hours the unit was online, whatever its state when
+    the day began.  Cached per history point."""
+    point, _ = ctx.asof(date)
+    cache = ctx.__dict__.setdefault("_cut_pool", {})
+    if point in cache:
+        return cache[point]
+    units = ctx.decisions.get("units", {})
+    by = {}
+    for r in ctx.decisions.get("days", []):
+        if point is None or r[1] <= point:
+            by.setdefault(r[0], []).append(r)
+    own, pm = {}, {}
+    for key, rows in by.items():
+        u = units.get(key)
+        if not u or not u[1]:
+            continue
+        days = [(r[2], r[5], r[6]) for r in rows]
+        c = _cutoff(days)
+        aw = float(np.mean([d[1] >= HALF for d in days]))
+        own[key] = (c[0] / u[1] if c else None, len(days), aw)
+        if c:
+            pm.setdefault(u[0], []).append(c[0] / u[1])
+    pool = {t: float(np.median(v)) for t, v in pm.items()}
+    groups, stats, raw = ctx.groups_at(date), ctx.stats_at(date), ctx.raw_states()
+    day0 = ctx.stats["day0"]
+    X, y, T = [], [], []
+    for d, trains in _day_trains(ctx).items():
+        if point is not None and d > point:
+            continue
+        dn = (C._d(d) - day0).days
+        for key, (tech, spp, mg, lsl) in trains.items():
+            if not str(groups.get(key) or "").startswith("daily") or key not in own:
+                continue
+            st = raw.get(key)
+            mg = units[key][2] if mg is None else mg
+            cpm = _blend(own[key], pool.get(tech))
+            if st is None or mg is None or cpm is None or (dn + 1) * 24 > len(st[1]):
+                continue
+            margin = (spp - mg) * lsl
+            loss, bs, nh = _window(-margin)
+            seg = st[1][dn * 24:(dn + 1) * 24]
+            if nh <= 0 or (seg == "-").any() or (seg == "o").any():
+                continue
+            s = stats["units"].get(key)
+            f = _features(margin, lsl, loss, bs, nh, cpm * lsl, _min_off(ctx, date, key, tech), own[key][2],
+                          s["on_days"] if s else 0.0)
+            X.append(_hourly(f, margin, lsl, bs, nh)); y.append(np.isin(seg, ["m", "a"]).astype(float)); T += [tech] * 24
+    X = np.vstack(X) if X else np.zeros((0, 0))
+    y, T = (np.concatenate(y) if y else np.zeros(0)), np.array(T)
+    w = {}
+    if len(y):
+        w[None] = _logit(X, y)
+        for t in set(T):
+            m = T == t
+            w[t] = _logit(X[m], y[m]) if m.sum() >= 24 * 200 else w[None]
+    cache[point] = (own, pool, w)
+    return cache[point]
+
+
+def _blend(own, pool):
+    """Cutoff per MW of LSL: the unit's own pulled toward the technology's pooled cutoff by
+    POOL_K / (decision days + POOL_K); the pooled one alone for a unit without its own with at
+    least POOL_MIN decision days; None otherwise."""
+    c, n, _ = own
+    if pool is None:
+        return c
+    if c is None:
+        return pool if n >= POOL_MIN else None
+    return (n * c + POOL_K * pool) / (n + POOL_K)
+
+
 def forecast(date, ctx: C.Context) -> dict:
     units = ctx.units(date)
     known, hindsight = ctx.known_date(date)
@@ -154,26 +326,41 @@ def forecast(date, ctx: C.Context) -> dict:
                            reason="no day-ahead price at its node" if prices is None else "no costs")
                 rows[key] = row
                 continue
-            loss, bs, nh = _window((u["mingen"] - prices) * u["lsl"])
+            lsl = float(u["lsl"])
+            margin = (np.asarray(prices, float) - u["mingen"]) * lsl
+            loss, bs, nh = _window(-margin)
             days = _decision_rows(ctx, key, known)
             c = _cutoff(days) if days else None
             aw = float(np.mean([d[1] >= HALF for d in days])) if days else 0.0
+            _, pool, w = _pool(ctx, date)
+            cpm = _blend((c[0] / lsl if c else None, len(days), aw), pool.get(t))
             row["loss"] = round(float(loss))
-            if c is None:
+            if cpm is None:
                 s = stats["units"].get(key)
                 row.update(verdict="nocut", p_on=round(s["on_days"], 2) if s else 0.0,
                            reason=f"too few decision days ({len(days)}) for a cutoff; loss ${loss:,.0f}")
+            elif nh <= 0:
+                row.update(verdict="on", p_on=1.0, cutoff=round(cpm * lsl), reason="no hour below its minimum-energy cost")
             else:
-                cut = c[0]
-                row["cutoff"] = round(float(cut))
-                if loss <= cut:
-                    row.update(verdict="on", p_on=1.0, reason=f"loss ${loss:,.0f} at or below its cutoff ${cut:,.0f}")
-                elif aw >= HALF:
-                    row.update(verdict="maybe", p_on=round(aw, 2), off_from=bs + 1, off_hours=nh,
-                               reason=f"loss ${loss:,.0f} above its cutoff ${cut:,.0f}, but an award usually covers the window ({aw:.0%} of days)")
+                cut = cpm * lsl
+                mo = _min_off(ctx, date, key, t)
+                span = _span(margin, bs, nh)
+                s = stats["units"].get(key)
+                x = _hourly(_features(margin, lsl, loss, bs, nh, cut, mo, aw, s["on_days"] if s else 0.0), margin, lsl, bs, nh)
+                wt = w.get(t, w.get(None))
+                ph = 1.0 / (1.0 + np.exp(-np.clip(x @ wt, -30, 30))) if wt is not None else np.full(24, float(loss <= cut))
+                p_on = round(float(ph[bs:bs + nh].mean()), 2)
+                src = "its cutoff" if c else "the pooled cutoff"
+                row.update(cutoff=round(cut), p_on=p_on, p_hours=[round(float(v), 3) for v in ph], win_from=bs + 1, win_hours=nh)
+                why = (f"loss ${loss:,.0f} vs {src} ${cut:,.0f} over HE {bs + 1}-{bs + nh}"
+                       + (f" (lasting {span} h with the next morning)" if span > nh else "")
+                       + f", shortest usual off spell {mo:.0f} h: P(on) {p_on:.0%}")
+                if p_on < P_OFF:
+                    row.update(verdict="off", off_from=bs + 1, off_hours=nh, reason=why)
+                elif p_on <= P_ON:
+                    row.update(verdict="maybe", off_from=bs + 1, off_hours=nh, reason=why)
                 else:
-                    row.update(verdict="off", p_on=0.0, off_from=bs + 1, off_hours=nh,
-                               reason=f"loss ${loss:,.0f} above its cutoff ${cut:,.0f} over HE {bs + 1}-{bs + nh}")
+                    row.update(verdict="on", reason=why)
             if u["est"] == 2:
                 row["reason"] += " (generic costs)"
         rows[key] = row

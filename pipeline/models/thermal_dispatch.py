@@ -16,14 +16,15 @@ For a unit with weight p_on (from thermal_cutoff, or by hour from peaker_share):
                                 curve is clamped to, else the day-ahead LSL)
   off window: a unit judged "off" or "maybe" for a window is at 0 inside it (its p_on applies
             outside), since the verdict says it shuts for those hours; a whole-day "off" is 0
-            throughout; nuclear runs at HSL.
+            throughout; nuclear runs at HSL.  A unit whose commitment row carries an hourly
+            probability of being online (p_hours, thermal_cutoff v1) uses it instead.
 """
 import numpy as np
 
 from ..forecast import context as C
 
 NAME = "thermal_dispatch"
-VERSION = "v1"    # v1: committed minimum uses the configuration floor; breakpoint interpolation fix
+VERSION = "v2"    # v2: hourly p_hours rows from thermal_cutoff v1; v1: committed minimum uses the configuration floor; breakpoint interpolation fix
 
 
 def _config_curve(ctx, month, u):
@@ -51,7 +52,9 @@ def forecast(date, ctx: C.Context, commit: dict, peakers: dict) -> dict:
             p = peakers["rows"][key]["p_on"]
         else:
             p = np.full(24, float(row["p_on"]))
-        if row["off_from"]:
+        if row.get("p_hours") is not None:
+            p = np.asarray(row["p_hours"], float)
+        elif row["off_from"]:
             a = row["off_from"] - 1
             p = p.copy(); p[a:a + row["off_hours"]] = 0.0
         prices = ctx.node_price(date, u["sp"], name=u["configs"][0]) if u["sp"] else None
