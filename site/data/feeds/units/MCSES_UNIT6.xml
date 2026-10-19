@@ -3,13 +3,13 @@
   <title>MCSES_UNIT6: bidding and operating changes</title>
   <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=MCSES_UNIT6"/>
   <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=MCSES_UNIT6</id>
-  <updated>2026-10-18T00:00:00Z</updated>
+  <updated>2026-10-19T00:00:00Z</updated>
   <entry>
     <title>MCSES_UNIT6: Outage started (2026-08-07)</title>
     <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=MCSES_UNIT6"/>
     <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=MCSES_UNIT6#MCSES_UNIT6/2026-08-07/outage_start</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Outage began, still on at the end of the data (12 days so far)</summary>
+    <summary>Outage began, still on at the end of the data (13 days so far)</summary>
   </entry>
   <entry>
     <title>MCSES_UNIT6: Shut down after a long run (2026-08-04)</title>
@@ -17,6 +17,13 @@
     <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=MCSES_UNIT6#MCSES_UNIT6/2026-08-04/shutdown_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Shut down for 39 h after 32 days without a shutdown</summary>
+  </entry>
+  <entry>
+    <title>MCSES_UNIT6: Timescale group changed (2026-08-01)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=MCSES_UNIT6"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=MCSES_UNIT6#MCSES_UNIT6/2026-08-01/group</id>
+    <updated>2026-10-19T00:00:00Z</updated>
+    <summary>Never off in 2026-07 to Multi-day: off 1–7 days in 2026-08</summary>
   </entry>
   <entry>
     <title>MCSES_UNIT6: Timescale group changed (2026-07-01)</title>

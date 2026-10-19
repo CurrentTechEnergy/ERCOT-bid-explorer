@@ -3,7 +3,14 @@
   <title>BAC_CTG1: bidding and operating changes</title>
   <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=BAC_CTG1"/>
   <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=BAC_CTG1</id>
-  <updated>2026-10-18T00:00:00Z</updated>
+  <updated>2026-10-19T00:00:00Z</updated>
+  <entry>
+    <title>BAC_CTG1: Timescale group changed (2026-08-01)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=BAC_CTG1"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=BAC_CTG1#BAC_CTG1/2026-08-01/group</id>
+    <updated>2026-10-19T00:00:00Z</updated>
+    <summary>Multi-day: off 1–7 days in 2026-07 to Daily, 1–2 a week in 2026-08</summary>
+  </entry>
   <entry>
     <title>BAC_CTG1: Timescale group changed (2026-07-01)</title>
     <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=BAC_CTG1"/>

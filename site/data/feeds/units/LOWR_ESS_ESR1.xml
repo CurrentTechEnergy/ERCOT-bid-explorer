@@ -3,12 +3,12 @@
   <title>LOWR_ESS_ESR1: bidding and operating changes</title>
   <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=LOWR_ESS_ESR1"/>
   <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=LOWR_ESS_ESR1</id>
-  <updated>2026-10-18T00:00:00Z</updated>
+  <updated>2026-10-19T00:00:00Z</updated>
   <entry>
-    <title>LOWR_ESS_ESR1: Battery size changed (2026-07-14)</title>
+    <title>LOWR_ESS_ESR1: Battery size changed (2026-07-15)</title>
     <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=LOWR_ESS_ESR1"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=LOWR_ESS_ESR1#LOWR_ESS_ESR1/2026-07-14/battery_size</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Maximum output 47 to 60 MW; Maximum state of charge 87 to 121 MWh</summary>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=LOWR_ESS_ESR1#LOWR_ESS_ESR1/2026-07-15/battery_size</id>
+    <updated>2026-10-19T00:00:00Z</updated>
+    <summary>Maximum output 47 to 60 MW; Maximum state of charge 87 to 122 MWh</summary>
   </entry>
 </feed>

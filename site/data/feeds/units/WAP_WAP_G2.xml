@@ -3,7 +3,14 @@
   <title>WAP_WAP_G2: bidding and operating changes</title>
   <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=WAP_WAP_G2"/>
   <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=WAP_WAP_G2</id>
-  <updated>2026-10-18T00:00:00Z</updated>
+  <updated>2026-10-19T00:00:00Z</updated>
+  <entry>
+    <title>WAP_WAP_G2: Loss cutoff moved (2026-08-20)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=WAP_WAP_G2"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=WAP_WAP_G2#WAP_WAP_G2/2026-08-20/cutoff</id>
+    <updated>2026-10-19T00:00:00Z</updated>
+    <summary>Loss cutoff $130 to $172 per MW of minimum output; not yet tested on a following month</summary>
+  </entry>
   <entry>
     <title>WAP_WAP_G2: Shut down after a long run (2026-04-25)</title>
     <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=WAP_WAP_G2"/>

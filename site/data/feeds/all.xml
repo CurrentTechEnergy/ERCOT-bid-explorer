@@ -3,40 +3,61 @@
   <title>ERCOT bid explorer: unit changes</title>
   <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/"/>
   <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/</id>
-  <updated>2026-10-18T00:00:00Z</updated>
+  <updated>2026-10-19T00:00:00Z</updated>
   <entry>
-    <title>TRSES_UNIT6: Loss cutoff moved (2026-08-19)</title>
+    <title>WAP_WAP_G2: Loss cutoff moved (2026-08-20)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=WAP_WAP_G2"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=WAP_WAP_G2#WAP_WAP_G2/2026-08-20/cutoff</id>
+    <updated>2026-10-19T00:00:00Z</updated>
+    <summary>Loss cutoff $130 to $172 per MW of minimum output; not yet tested on a following month</summary>
+  </entry>
+  <entry>
+    <title>WAP_WAP_G1: Loss cutoff moved (2026-08-20)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=WAP_WAP_G1"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=WAP_WAP_G1#WAP_WAP_G1/2026-08-20/cutoff</id>
+    <updated>2026-10-19T00:00:00Z</updated>
+    <summary>Loss cutoff $130 to $172 per MW of minimum output; not yet tested on a following month</summary>
+  </entry>
+  <entry>
+    <title>TRSES_UNIT6: Loss cutoff moved (2026-08-20)</title>
     <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TRSES_UNIT6"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TRSES_UNIT6#TRSES_UNIT6/2026-08-19/cutoff</id>
-    <updated>2026-10-18T00:00:00Z</updated>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TRSES_UNIT6#TRSES_UNIT6/2026-08-20/cutoff</id>
+    <updated>2026-10-19T00:00:00Z</updated>
     <summary>Loss cutoff $204 to $274 per MW of minimum output; not yet tested on a following month</summary>
   </entry>
   <entry>
-    <title>PYOTE_UNIT1: Loss cutoff moved (2026-08-19)</title>
+    <title>PYOTE_UNIT1: Loss cutoff moved (2026-08-20)</title>
     <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PYOTE_UNIT1"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PYOTE_UNIT1#PYOTE_UNIT1/2026-08-19/cutoff</id>
-    <updated>2026-10-18T00:00:00Z</updated>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PYOTE_UNIT1#PYOTE_UNIT1/2026-08-20/cutoff</id>
+    <updated>2026-10-19T00:00:00Z</updated>
     <summary>Loss cutoff $1,146 to $20 per MW of minimum output; not yet tested on a following month</summary>
   </entry>
   <entry>
-    <title>MCSES_UNIT8: Loss cutoff moved (2026-08-19)</title>
+    <title>PB2SES_CT2: Loss cutoff moved (2026-08-20)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PB2SES_CT2"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PB2SES_CT2#PB2SES_CT2/2026-08-20/cutoff</id>
+    <updated>2026-10-19T00:00:00Z</updated>
+    <summary>Loss cutoff $825 to $0 per MW of minimum output; not yet tested on a following month</summary>
+  </entry>
+  <entry>
+    <title>MCSES_UNIT8: Loss cutoff moved (2026-08-20)</title>
     <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=MCSES_UNIT8"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=MCSES_UNIT8#MCSES_UNIT8/2026-08-19/cutoff</id>
-    <updated>2026-10-18T00:00:00Z</updated>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=MCSES_UNIT8#MCSES_UNIT8/2026-08-20/cutoff</id>
+    <updated>2026-10-19T00:00:00Z</updated>
     <summary>Loss cutoff $142 to $243 per MW of minimum output; not yet tested on a following month</summary>
   </entry>
   <entry>
-    <title>GRSES_UNIT1: Loss cutoff moved (2026-08-19)</title>
+    <title>GRSES_UNIT1: Loss cutoff moved (2026-08-20)</title>
     <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=GRSES_UNIT1"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=GRSES_UNIT1#GRSES_UNIT1/2026-08-19/cutoff</id>
-    <updated>2026-10-18T00:00:00Z</updated>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=GRSES_UNIT1#GRSES_UNIT1/2026-08-20/cutoff</id>
+    <updated>2026-10-19T00:00:00Z</updated>
     <summary>Loss cutoff $140 to $216 per MW of minimum output; not yet tested on a following month</summary>
   </entry>
   <entry>
-    <title>CEDRVALE_UNIT1: Loss cutoff moved (2026-08-19)</title>
+    <title>CEDRVALE_UNIT1: Loss cutoff moved (2026-08-20)</title>
     <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CEDRVALE_UNIT1"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CEDRVALE_UNIT1#CEDRVALE_UNIT1/2026-08-19/cutoff</id>
-    <updated>2026-10-18T00:00:00Z</updated>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CEDRVALE_UNIT1#CEDRVALE_UNIT1/2026-08-20/cutoff</id>
+    <updated>2026-10-19T00:00:00Z</updated>
     <summary>Loss cutoff $1,259 to $8 per MW of minimum output; not yet tested on a following month</summary>
   </entry>
   <entry>
@@ -54,10 +75,10 @@
     <summary>Back from a 36-day outage</summary>
   </entry>
   <entry>
-    <title>SJS_SJS_G2: Bidding approach shifted (2026-08-13)</title>
+    <title>SJS_SJS_G2: Bidding approach shifted (2026-08-14)</title>
     <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SJS_SJS_G2"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SJS_SJS_G2#SJS_SJS_G2/2026-08-13/bidding</id>
-    <updated>2026-10-18T00:00:00Z</updated>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SJS_SJS_G2#SJS_SJS_G2/2026-08-14/bidding</id>
+    <updated>2026-10-19T00:00:00Z</updated>
     <summary>Running without an offer curve: 0% to 100% of the day</summary>
   </entry>
   <entry>
@@ -103,11 +124,11 @@
     <summary>Running without an offer curve: 100% to 0% of the day</summary>
   </entry>
   <entry>
-    <title>TRSES_UNIT6: Bidding approach shifted (2026-08-06)</title>
+    <title>TRSES_UNIT6: Bidding approach shifted (2026-08-07)</title>
     <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TRSES_UNIT6"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TRSES_UNIT6#TRSES_UNIT6/2026-08-06/bidding</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Offer price vs peer median: $52 to -$9/MWh</summary>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TRSES_UNIT6#TRSES_UNIT6/2026-08-07/bidding</id>
+    <updated>2026-10-19T00:00:00Z</updated>
+    <summary>Offer price vs peer median: $71 to -$13/MWh</summary>
   </entry>
   <entry>
     <title>LEAKEY_ESR1: New battery (2026-08-06)</title>
@@ -250,11 +271,60 @@
     <summary>Shut down for 44 h although a day-ahead award covered 100% of the window</summary>
   </entry>
   <entry>
+    <title>WFCOGEN_CC1: Timescale group changed (2026-08-01)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=WFCOGEN_CC1"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=WFCOGEN_CC1#WFCOGEN_CC1/2026-08-01/group</id>
+    <updated>2026-10-19T00:00:00Z</updated>
+    <summary>Seasonal: off a week or more in 2026-07 to Daily, 1–2 a week in 2026-08</summary>
+  </entry>
+  <entry>
+    <title>VICTPRT2_UNIT2: Timescale group changed (2026-08-01)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=VICTPRT2_UNIT2"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=VICTPRT2_UNIT2#VICTPRT2_UNIT2/2026-08-01/group</id>
+    <updated>2026-10-19T00:00:00Z</updated>
+    <summary>Daily, under 1 shutdown a week in 2026-07 to Multi-day: off 1–7 days in 2026-08</summary>
+  </entry>
+  <entry>
+    <title>VICTPRT2_UNIT1: Timescale group changed (2026-08-01)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=VICTPRT2_UNIT1"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=VICTPRT2_UNIT1#VICTPRT2_UNIT1/2026-08-01/group</id>
+    <updated>2026-10-19T00:00:00Z</updated>
+    <summary>Daily, under 1 shutdown a week in 2026-07 to Multi-day: off 1–7 days in 2026-08</summary>
+  </entry>
+  <entry>
+    <title>THW_GT61: Timescale group changed (2026-08-01)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=THW_GT61"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=THW_GT61#THW_GT61/2026-08-01/group</id>
+    <updated>2026-10-19T00:00:00Z</updated>
+    <summary>Daily, 1–2 a week in 2026-07 to Multi-day: off 1–7 days in 2026-08</summary>
+  </entry>
+  <entry>
+    <title>STEAM_STEAM_3: Timescale group changed (2026-08-01)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=STEAM_STEAM_3"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=STEAM_STEAM_3#STEAM_STEAM_3/2026-08-01/group</id>
+    <updated>2026-10-19T00:00:00Z</updated>
+    <summary>Multi-day: off 1–7 days in 2026-07 to Daily, over 2 a week in 2026-08</summary>
+  </entry>
+  <entry>
     <title>SKY1_SKY1B: Shut down despite a day-ahead award (2026-08-01)</title>
     <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SKY1_SKY1B"/>
     <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SKY1_SKY1B#SKY1_SKY1B/2026-08-01/shutdown_award</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Shut down for 10 h although a day-ahead award covered 100% of the window</summary>
+  </entry>
+  <entry>
+    <title>SCSES_UNIT2: Timescale group changed (2026-08-01)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SCSES_UNIT2"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SCSES_UNIT2#SCSES_UNIT2/2026-08-01/group</id>
+    <updated>2026-10-19T00:00:00Z</updated>
+    <summary>Multi-day: off 1–7 days in 2026-07 to Daily, 1–2 a week in 2026-08</summary>
+  </entry>
+  <entry>
+    <title>SCSES_UNIT1A: Timescale group changed (2026-08-01)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SCSES_UNIT1A"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SCSES_UNIT1A#SCSES_UNIT1A/2026-08-01/group</id>
+    <updated>2026-10-19T00:00:00Z</updated>
+    <summary>Multi-day: off 1–7 days in 2026-07 to Daily, 1–2 a week in 2026-08</summary>
   </entry>
   <entry>
     <title>REDGATE_AGR_D: Shut down despite a day-ahead award (2026-08-01)</title>
@@ -271,18 +341,200 @@
     <summary>Shut down for 16 h although a day-ahead award covered 100% of the window</summary>
   </entry>
   <entry>
+    <title>OLINGR_OLING_3: Timescale group changed (2026-08-01)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=OLINGR_OLING_3"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=OLINGR_OLING_3#OLINGR_OLING_3/2026-08-01/group</id>
+    <updated>2026-10-19T00:00:00Z</updated>
+    <summary>Daily, 1–2 a week in 2026-07 to Multi-day: off 1–7 days in 2026-08</summary>
+  </entry>
+  <entry>
+    <title>NEDIN_CC1: Timescale group changed (2026-08-01)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=NEDIN_CC1"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=NEDIN_CC1#NEDIN_CC1/2026-08-01/group</id>
+    <updated>2026-10-19T00:00:00Z</updated>
+    <summary>Daily, 1–2 a week in 2026-07 to Multi-day: off 1–7 days in 2026-08</summary>
+  </entry>
+  <entry>
+    <title>MGSES_CT5: Timescale group changed (2026-08-01)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=MGSES_CT5"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=MGSES_CT5#MGSES_CT5/2026-08-01/group</id>
+    <updated>2026-10-19T00:00:00Z</updated>
+    <summary>Seasonal: off a week or more in 2026-07 to Daily, 1–2 a week in 2026-08</summary>
+  </entry>
+  <entry>
+    <title>MGSES_CT4: Timescale group changed (2026-08-01)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=MGSES_CT4"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=MGSES_CT4#MGSES_CT4/2026-08-01/group</id>
+    <updated>2026-10-19T00:00:00Z</updated>
+    <summary>Seasonal: off a week or more in 2026-07 to Daily, 1–2 a week in 2026-08</summary>
+  </entry>
+  <entry>
+    <title>MGSES_CT3: Timescale group changed (2026-08-01)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=MGSES_CT3"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=MGSES_CT3#MGSES_CT3/2026-08-01/group</id>
+    <updated>2026-10-19T00:00:00Z</updated>
+    <summary>Seasonal: off a week or more in 2026-07 to Daily, 1–2 a week in 2026-08</summary>
+  </entry>
+  <entry>
+    <title>MGSES_CT2: Timescale group changed (2026-08-01)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=MGSES_CT2"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=MGSES_CT2#MGSES_CT2/2026-08-01/group</id>
+    <updated>2026-10-19T00:00:00Z</updated>
+    <summary>Seasonal: off a week or more in 2026-07 to Daily, 1–2 a week in 2026-08</summary>
+  </entry>
+  <entry>
+    <title>MGSES_CT2: Bidding approach shifted (2026-08-01)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=MGSES_CT2"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=MGSES_CT2#MGSES_CT2/2026-08-01/bidding</id>
+    <updated>2026-10-19T00:00:00Z</updated>
+    <summary>Offer price vs peer median: $111 to $18/MWh</summary>
+  </entry>
+  <entry>
+    <title>MDANP_CT2: Timescale group changed (2026-08-01)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=MDANP_CT2"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=MDANP_CT2#MDANP_CT2/2026-08-01/group</id>
+    <updated>2026-10-19T00:00:00Z</updated>
+    <summary>Never off in 2026-07 to Daily, under 1 shutdown a week in 2026-08</summary>
+  </entry>
+  <entry>
+    <title>LPCCS_CC2: Timescale group changed (2026-08-01)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=LPCCS_CC2"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=LPCCS_CC2#LPCCS_CC2/2026-08-01/group</id>
+    <updated>2026-10-19T00:00:00Z</updated>
+    <summary>Daily, under 1 shutdown a week in 2026-07 to Never off in 2026-08</summary>
+  </entry>
+  <entry>
+    <title>LHSES_UNIT2A: Timescale group changed (2026-08-01)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=LHSES_UNIT2A"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=LHSES_UNIT2A#LHSES_UNIT2A/2026-08-01/group</id>
+    <updated>2026-10-19T00:00:00Z</updated>
+    <summary>Multi-day: off 1–7 days in 2026-07 to Daily, over 2 a week in 2026-08</summary>
+  </entry>
+  <entry>
+    <title>LARDVFTN_G4: Timescale group changed (2026-08-01)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=LARDVFTN_G4"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=LARDVFTN_G4#LARDVFTN_G4/2026-08-01/group</id>
+    <updated>2026-10-19T00:00:00Z</updated>
+    <summary>Daily, under 1 shutdown a week in 2026-07 to Seasonal: off a week or more in 2026-08</summary>
+  </entry>
+  <entry>
+    <title>GRSES_UNIT2: Timescale group changed (2026-08-01)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=GRSES_UNIT2"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=GRSES_UNIT2#GRSES_UNIT2/2026-08-01/group</id>
+    <updated>2026-10-19T00:00:00Z</updated>
+    <summary>Daily, 1–2 a week in 2026-07 to Never off in 2026-08</summary>
+  </entry>
+  <entry>
+    <title>FRONT_EC_CC1: Timescale group changed (2026-08-01)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FRONT_EC_CC1"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FRONT_EC_CC1#FRONT_EC_CC1/2026-08-01/group</id>
+    <updated>2026-10-19T00:00:00Z</updated>
+    <summary>Daily, under 1 shutdown a week in 2026-07 to Never off in 2026-08</summary>
+  </entry>
+  <entry>
+    <title>DCSES_CT20: Timescale group changed (2026-08-01)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=DCSES_CT20"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=DCSES_CT20#DCSES_CT20/2026-08-01/group</id>
+    <updated>2026-10-19T00:00:00Z</updated>
+    <summary>Seasonal: off a week or more in 2026-07 to Daily, over 2 a week in 2026-08</summary>
+  </entry>
+  <entry>
+    <title>DCSES_CT10: Timescale group changed (2026-08-01)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=DCSES_CT10"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=DCSES_CT10#DCSES_CT10/2026-08-01/group</id>
+    <updated>2026-10-19T00:00:00Z</updated>
+    <summary>Seasonal: off a week or more in 2026-07 to Daily, over 2 a week in 2026-08</summary>
+  </entry>
+  <entry>
+    <title>CHAMON_CTG_0301: Timescale group changed (2026-08-01)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CHAMON_CTG_0301"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CHAMON_CTG_0301#CHAMON_CTG_0301/2026-08-01/group</id>
+    <updated>2026-10-19T00:00:00Z</updated>
+    <summary>Never off in 2026-07 to Daily, over 2 a week in 2026-08</summary>
+  </entry>
+  <entry>
+    <title>CHAMON_CTG_0101: Timescale group changed (2026-08-01)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CHAMON_CTG_0101"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CHAMON_CTG_0101#CHAMON_CTG_0101/2026-08-01/group</id>
+    <updated>2026-10-19T00:00:00Z</updated>
+    <summary>Never off in 2026-07 to Daily, over 2 a week in 2026-08</summary>
+  </entry>
+  <entry>
+    <title>BOSQUESW_CC2: Timescale group changed (2026-08-01)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=BOSQUESW_CC2"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=BOSQUESW_CC2#BOSQUESW_CC2/2026-08-01/group</id>
+    <updated>2026-10-19T00:00:00Z</updated>
+    <summary>Never off in 2026-07 to Daily, under 1 shutdown a week in 2026-08</summary>
+  </entry>
+  <entry>
+    <title>BCH_UNIT7: Timescale group changed (2026-08-01)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=BCH_UNIT7"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=BCH_UNIT7#BCH_UNIT7/2026-08-01/group</id>
+    <updated>2026-10-19T00:00:00Z</updated>
+    <summary>Daily, under 1 shutdown a week in 2026-07 to Multi-day: off 1–7 days in 2026-08</summary>
+  </entry>
+  <entry>
+    <title>BAC_CTG5: Timescale group changed (2026-08-01)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=BAC_CTG5"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=BAC_CTG5#BAC_CTG5/2026-08-01/group</id>
+    <updated>2026-10-19T00:00:00Z</updated>
+    <summary>Seasonal: off a week or more in 2026-07 to Daily, 1–2 a week in 2026-08</summary>
+  </entry>
+  <entry>
+    <title>BAC_CTG1: Timescale group changed (2026-08-01)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=BAC_CTG1"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=BAC_CTG1#BAC_CTG1/2026-08-01/group</id>
+    <updated>2026-10-19T00:00:00Z</updated>
+    <summary>Multi-day: off 1–7 days in 2026-07 to Daily, 1–2 a week in 2026-08</summary>
+  </entry>
+  <entry>
+    <title>AZ_AZ_G2: Timescale group changed (2026-08-01)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=AZ_AZ_G2"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=AZ_AZ_G2#AZ_AZ_G2/2026-08-01/group</id>
+    <updated>2026-10-19T00:00:00Z</updated>
+    <summary>Daily, under 1 shutdown a week in 2026-07 to Multi-day: off 1–7 days in 2026-08</summary>
+  </entry>
+  <entry>
+    <title>AZ_AZ_G1: Timescale group changed (2026-08-01)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=AZ_AZ_G1"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=AZ_AZ_G1#AZ_AZ_G1/2026-08-01/group</id>
+    <updated>2026-10-19T00:00:00Z</updated>
+    <summary>Daily, under 1 shutdown a week in 2026-07 to Multi-day: off 1–7 days in 2026-08</summary>
+  </entry>
+  <entry>
+    <title>AEEC_ELK_3: Timescale group changed (2026-08-01)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=AEEC_ELK_3"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=AEEC_ELK_3#AEEC_ELK_3/2026-08-01/group</id>
+    <updated>2026-10-19T00:00:00Z</updated>
+    <summary>Daily, 1–2 a week in 2026-07 to Multi-day: off 1–7 days in 2026-08</summary>
+  </entry>
+  <entry>
+    <title>AEEC_ELK_1: Timescale group changed (2026-08-01)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=AEEC_ELK_1"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=AEEC_ELK_1#AEEC_ELK_1/2026-08-01/group</id>
+    <updated>2026-10-19T00:00:00Z</updated>
+    <summary>Seasonal: off a week or more in 2026-07 to Daily, over 2 a week in 2026-08</summary>
+  </entry>
+  <entry>
+    <title>AEEC_ANTLP_1: Timescale group changed (2026-08-01)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=AEEC_ANTLP_1"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=AEEC_ANTLP_1#AEEC_ANTLP_1/2026-08-01/group</id>
+    <updated>2026-10-19T00:00:00Z</updated>
+    <summary>Seasonal: off a week or more in 2026-07 to Daily, 1–2 a week in 2026-08</summary>
+  </entry>
+  <entry>
     <title>TRSES_UNIT6: Loss cutoff moved (2026-07-31)</title>
     <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TRSES_UNIT6"/>
     <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TRSES_UNIT6#TRSES_UNIT6/2026-07-31/cutoff</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Loss cutoff $0 to $204 per MW of minimum output; the next month&#x27;s decisions confirm it (3 of 7 right against 0)</summary>
+    <summary>Loss cutoff $0 to $204 per MW of minimum output; the next month&#x27;s decisions confirm it (4 of 8 right against 0)</summary>
   </entry>
   <entry>
     <title>SCSES_UNIT2: Loss cutoff moved (2026-07-31)</title>
     <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SCSES_UNIT2"/>
     <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SCSES_UNIT2#SCSES_UNIT2/2026-07-31/cutoff</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Loss cutoff $0 to $266 per MW of minimum output; the next month&#x27;s decisions confirm it (6 of 7 right against 1)</summary>
+    <summary>Loss cutoff $0 to $266 per MW of minimum output; the next month&#x27;s decisions confirm it (7 of 8 right against 1)</summary>
   </entry>
   <entry>
     <title>MGSES_CT3: Bidding approach shifted (2026-07-31)</title>
@@ -296,7 +548,7 @@
     <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=GRSES_UNIT2"/>
     <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=GRSES_UNIT2#GRSES_UNIT2/2026-07-31/cutoff</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Loss cutoff $138 to $254 per MW of minimum output; the next month&#x27;s decisions confirm it (5 of 5 right against 1)</summary>
+    <summary>Loss cutoff $138 to $254 per MW of minimum output; the next month&#x27;s decisions confirm it (6 of 6 right against 1)</summary>
   </entry>
   <entry>
     <title>GRSES_UNIT2: Bidding approach shifted (2026-07-31)</title>
@@ -579,6 +831,13 @@
     <summary>Shut down for 11 h although a day-ahead award covered 100% of the window</summary>
   </entry>
   <entry>
+    <title>SOLC_SLR_ESR1: Battery size changed (2026-07-15)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SOLC_SLR_ESR1"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SOLC_SLR_ESR1#SOLC_SLR_ESR1/2026-07-15/battery_size</id>
+    <updated>2026-10-19T00:00:00Z</updated>
+    <summary>Maximum state of charge 182 to 320 MWh</summary>
+  </entry>
+  <entry>
     <title>SCSES_UNIT1A: Bidding approach shifted (2026-07-15)</title>
     <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SCSES_UNIT1A"/>
     <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SCSES_UNIT1A#SCSES_UNIT1A/2026-07-15/bidding</id>
@@ -607,6 +866,13 @@
     <summary>Shut down for 98 h although a day-ahead award covered 100% of the window</summary>
   </entry>
   <entry>
+    <title>KEG_ESR1: Battery size changed (2026-07-15)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=KEG_ESR1"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=KEG_ESR1#KEG_ESR1/2026-07-15/battery_size</id>
+    <updated>2026-10-19T00:00:00Z</updated>
+    <summary>Maximum output 15 to 140 MW</summary>
+  </entry>
+  <entry>
     <title>ESCONDID_ESR1: New battery (2026-07-15)</title>
     <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ESCONDID_ESR1"/>
     <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ESCONDID_ESR1#ESCONDID_ESR1/2026-07-15/battery_new</id>
@@ -619,13 +885,6 @@
     <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=WAP_WAP_G4#WAP_WAP_G4/2026-07-14/shutdown_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Shut down for 59 h after 119 days without a shutdown</summary>
-  </entry>
-  <entry>
-    <title>SOLC_SLR_ESR1: Battery size changed (2026-07-14)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SOLC_SLR_ESR1"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SOLC_SLR_ESR1#SOLC_SLR_ESR1/2026-07-14/battery_size</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Maximum state of charge 182 to 320 MWh</summary>
   </entry>
   <entry>
     <title>GRSES_UNIT2: Bidding approach shifted (2026-07-14)</title>
@@ -674,28 +933,28 @@
     <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TOPAZ_UNIT9"/>
     <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TOPAZ_UNIT9#TOPAZ_UNIT9/2026-07-12/outage_start</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Outage began, still on at the end of the data (39 days so far)</summary>
+    <summary>Outage began, still on at the end of the data (40 days so far)</summary>
   </entry>
   <entry>
     <title>STEAM1A_STEAM_1: Outage started (2026-07-12)</title>
     <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=STEAM1A_STEAM_1"/>
     <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=STEAM1A_STEAM_1#STEAM1A_STEAM_1/2026-07-12/outage_start</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Outage began, still on at the end of the data (39 days so far)</summary>
+    <summary>Outage began, still on at the end of the data (40 days so far)</summary>
   </entry>
   <entry>
     <title>PNPI_GT2: Outage started (2026-07-12)</title>
     <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PNPI_GT2"/>
     <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PNPI_GT2#PNPI_GT2/2026-07-12/outage_start</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Outage began, still on at the end of the data (39 days so far)</summary>
+    <summary>Outage began, still on at the end of the data (40 days so far)</summary>
   </entry>
   <entry>
     <title>NCARBIDE_NCARBIG8: Outage started (2026-07-12)</title>
     <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=NCARBIDE_NCARBIG8"/>
     <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=NCARBIDE_NCARBIG8#NCARBIDE_NCARBIG8/2026-07-12/outage_start</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Outage began, still on at the end of the data (39 days so far)</summary>
+    <summary>Outage began, still on at the end of the data (40 days so far)</summary>
   </entry>
   <entry>
     <title>MCSES_UNIT7: Outage started (2026-07-12)</title>
@@ -716,28 +975,28 @@
     <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=JAD_UNIT6"/>
     <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=JAD_UNIT6#JAD_UNIT6/2026-07-12/outage_start</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Outage began, still on at the end of the data (39 days so far)</summary>
+    <summary>Outage began, still on at the end of the data (40 days so far)</summary>
   </entry>
   <entry>
     <title>JAD_UNIT1: Outage started (2026-07-12)</title>
     <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=JAD_UNIT1"/>
     <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=JAD_UNIT1#JAD_UNIT1/2026-07-12/outage_start</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Outage began, still on at the end of the data (39 days so far)</summary>
+    <summary>Outage began, still on at the end of the data (40 days so far)</summary>
   </entry>
   <entry>
     <title>CALHOUN_UNIT2: Outage started (2026-07-12)</title>
     <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CALHOUN_UNIT2"/>
     <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CALHOUN_UNIT2#CALHOUN_UNIT2/2026-07-12/outage_start</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Outage began, still on at the end of the data (39 days so far)</summary>
+    <summary>Outage began, still on at the end of the data (40 days so far)</summary>
   </entry>
   <entry>
     <title>CALHOUN_UNIT1: Outage started (2026-07-12)</title>
     <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CALHOUN_UNIT1"/>
     <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CALHOUN_UNIT1#CALHOUN_UNIT1/2026-07-12/outage_start</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Outage began, still on at the end of the data (39 days so far)</summary>
+    <summary>Outage began, still on at the end of the data (40 days so far)</summary>
   </entry>
   <entry>
     <title>BTM_UNIT1: Bidding approach shifted (2026-07-12)</title>
@@ -751,14 +1010,14 @@
     <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=BRAUNIG_VHB6CT7"/>
     <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=BRAUNIG_VHB6CT7#BRAUNIG_VHB6CT7/2026-07-12/outage_start</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Outage began, still on at the end of the data (39 days so far)</summary>
+    <summary>Outage began, still on at the end of the data (40 days so far)</summary>
   </entry>
   <entry>
     <title>AEEC_ELK_2: Outage started (2026-07-12)</title>
     <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=AEEC_ELK_2"/>
     <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=AEEC_ELK_2#AEEC_ELK_2/2026-07-12/outage_start</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Outage began, still on at the end of the data (39 days so far)</summary>
+    <summary>Outage began, still on at the end of the data (40 days so far)</summary>
   </entry>
   <entry>
     <title>MDANP_CT6: Shut down despite a day-ahead award (2026-07-10)</title>
@@ -1144,264 +1403,5 @@
     <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PRO_UNIT7#PRO_UNIT7/2026-07-01/group</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Multi-day: off 1–7 days in 2026-06 to Daily, 1–2 a week in 2026-07</summary>
-  </entry>
-  <entry>
-    <title>PB2SES_CT2: Timescale group changed (2026-07-01)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PB2SES_CT2"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PB2SES_CT2#PB2SES_CT2/2026-07-01/group</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Multi-day: off 1–7 days in 2026-06 to Daily, 1–2 a week in 2026-07</summary>
-  </entry>
-  <entry>
-    <title>PB2SES_CT1: Timescale group changed (2026-07-01)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PB2SES_CT1"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PB2SES_CT1#PB2SES_CT1/2026-07-01/group</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Seasonal: off a week or more in 2026-06 to Daily, 1–2 a week in 2026-07</summary>
-  </entry>
-  <entry>
-    <title>OLINGR_OLING_4: Timescale group changed (2026-07-01)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=OLINGR_OLING_4"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=OLINGR_OLING_4#OLINGR_OLING_4/2026-07-01/group</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Daily, over 2 a week in 2026-06 to Multi-day: off 1–7 days in 2026-07</summary>
-  </entry>
-  <entry>
-    <title>OLINGR_OLING_3: Timescale group changed (2026-07-01)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=OLINGR_OLING_3"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=OLINGR_OLING_3#OLINGR_OLING_3/2026-07-01/group</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Seasonal: off a week or more in 2026-06 to Daily, 1–2 a week in 2026-07</summary>
-  </entry>
-  <entry>
-    <title>OLINGR_OLING_2: Timescale group changed (2026-07-01)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=OLINGR_OLING_2"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=OLINGR_OLING_2#OLINGR_OLING_2/2026-07-01/group</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Multi-day: off 1–7 days in 2026-06 to Daily, 1–2 a week in 2026-07</summary>
-  </entry>
-  <entry>
-    <title>MIL_MILLERG5: Timescale group changed (2026-07-01)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=MIL_MILLERG5"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=MIL_MILLERG5#MIL_MILLERG5/2026-07-01/group</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Multi-day: off 1–7 days in 2026-06 to Daily, 1–2 a week in 2026-07</summary>
-  </entry>
-  <entry>
-    <title>MIL_MILLERG4: Timescale group changed (2026-07-01)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=MIL_MILLERG4"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=MIL_MILLERG4#MIL_MILLERG4/2026-07-01/group</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Multi-day: off 1–7 days in 2026-06 to Daily, 1–2 a week in 2026-07</summary>
-  </entry>
-  <entry>
-    <title>MIL_MILLERG3: Timescale group changed (2026-07-01)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=MIL_MILLERG3"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=MIL_MILLERG3#MIL_MILLERG3/2026-07-01/group</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Daily, 1–2 a week in 2026-06 to Multi-day: off 1–7 days in 2026-07</summary>
-  </entry>
-  <entry>
-    <title>MIL_MILLERG2: Timescale group changed (2026-07-01)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=MIL_MILLERG2"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=MIL_MILLERG2#MIL_MILLERG2/2026-07-01/group</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Daily, 1–2 a week in 2026-06 to Multi-day: off 1–7 days in 2026-07</summary>
-  </entry>
-  <entry>
-    <title>MDANP_CT3: Timescale group changed (2026-07-01)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=MDANP_CT3"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=MDANP_CT3#MDANP_CT3/2026-07-01/group</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Daily, under 1 shutdown a week in 2026-06 to Never off in 2026-07</summary>
-  </entry>
-  <entry>
-    <title>LPCCS_CC2: Timescale group changed (2026-07-01)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=LPCCS_CC2"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=LPCCS_CC2#LPCCS_CC2/2026-07-01/group</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Never off in 2026-06 to Daily, under 1 shutdown a week in 2026-07</summary>
-  </entry>
-  <entry>
-    <title>LGE_CC1: Timescale group changed (2026-07-01)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=LGE_CC1"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=LGE_CC1#LGE_CC1/2026-07-01/group</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Multi-day: off 1–7 days in 2026-06 to Daily, 1–2 a week in 2026-07</summary>
-  </entry>
-  <entry>
-    <title>LARDVFTN_G4: Timescale group changed (2026-07-01)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=LARDVFTN_G4"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=LARDVFTN_G4#LARDVFTN_G4/2026-07-01/group</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Seasonal: off a week or more in 2026-06 to Daily, under 1 shutdown a week in 2026-07</summary>
-  </entry>
-  <entry>
-    <title>JAD_UNIT3: Timescale group changed (2026-07-01)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=JAD_UNIT3"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=JAD_UNIT3#JAD_UNIT3/2026-07-01/group</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Multi-day: off 1–7 days in 2026-06 to Daily, over 2 a week in 2026-07</summary>
-  </entry>
-  <entry>
-    <title>HAYSEN_HAYSENG4: Timescale group changed (2026-07-01)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=HAYSEN_HAYSENG4"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=HAYSEN_HAYSENG4#HAYSEN_HAYSENG4/2026-07-01/group</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Daily, under 1 shutdown a week in 2026-06 to Never off in 2026-07</summary>
-  </entry>
-  <entry>
-    <title>HAYSEN_HAYSENG3: Timescale group changed (2026-07-01)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=HAYSEN_HAYSENG3"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=HAYSEN_HAYSENG3#HAYSEN_HAYSENG3/2026-07-01/group</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Daily, under 1 shutdown a week in 2026-06 to Never off in 2026-07</summary>
-  </entry>
-  <entry>
-    <title>HAYSEN_HAYSENG1: Timescale group changed (2026-07-01)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=HAYSEN_HAYSENG1"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=HAYSEN_HAYSENG1#HAYSEN_HAYSENG1/2026-07-01/group</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Daily, over 2 a week in 2026-06 to Never off in 2026-07</summary>
-  </entry>
-  <entry>
-    <title>GIDEON_GIDEONG3: Timescale group changed (2026-07-01)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=GIDEON_GIDEONG3"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=GIDEON_GIDEONG3#GIDEON_GIDEONG3/2026-07-01/group</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Daily, 1–2 a week in 2026-06 to Never off in 2026-07</summary>
-  </entry>
-  <entry>
-    <title>FREC_CC2: Timescale group changed (2026-07-01)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FREC_CC2"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FREC_CC2#FREC_CC2/2026-07-01/group</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Daily, under 1 shutdown a week in 2026-06 to Never off in 2026-07</summary>
-  </entry>
-  <entry>
-    <title>FEGC_UNIT1: Timescale group changed (2026-07-01)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FEGC_UNIT1"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FEGC_UNIT1#FEGC_UNIT1/2026-07-01/group</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Never off in 2026-06 to Daily, 1–2 a week in 2026-07</summary>
-  </entry>
-  <entry>
-    <title>ETCCS_CC1: Timescale group changed (2026-07-01)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ETCCS_CC1"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ETCCS_CC1#ETCCS_CC1/2026-07-01/group</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Daily, over 2 a week in 2026-06 to Never off in 2026-07</summary>
-  </entry>
-  <entry>
-    <title>DCSES_CT10: Timescale group changed (2026-07-01)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=DCSES_CT10"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=DCSES_CT10#DCSES_CT10/2026-07-01/group</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Daily, under 1 shutdown a week in 2026-06 to Seasonal: off a week or more in 2026-07</summary>
-  </entry>
-  <entry>
-    <title>CITYVICT_CTG02: Timescale group changed (2026-07-01)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CITYVICT_CTG02"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CITYVICT_CTG02#CITYVICT_CTG02/2026-07-01/group</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Daily, over 2 a week in 2026-06 to Multi-day: off 1–7 days in 2026-07</summary>
-  </entry>
-  <entry>
-    <title>CHAMON_CTG_0301: Timescale group changed (2026-07-01)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CHAMON_CTG_0301"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CHAMON_CTG_0301#CHAMON_CTG_0301/2026-07-01/group</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Daily, over 2 a week in 2026-06 to Never off in 2026-07</summary>
-  </entry>
-  <entry>
-    <title>CBEC_GT12: Timescale group changed (2026-07-01)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CBEC_GT12"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CBEC_GT12#CBEC_GT12/2026-07-01/group</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Daily, 1–2 a week in 2026-06 to Seasonal: off a week or more in 2026-07</summary>
-  </entry>
-  <entry>
-    <title>BTM_UNIT8: Timescale group changed (2026-07-01)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=BTM_UNIT8"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=BTM_UNIT8#BTM_UNIT8/2026-07-01/group</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Multi-day: off 1–7 days in 2026-06 to Daily, over 2 a week in 2026-07</summary>
-  </entry>
-  <entry>
-    <title>BOSQUESW_CC2: Timescale group changed (2026-07-01)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=BOSQUESW_CC2"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=BOSQUESW_CC2#BOSQUESW_CC2/2026-07-01/group</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Daily, over 2 a week in 2026-06 to Never off in 2026-07</summary>
-  </entry>
-  <entry>
-    <title>BAC_CTG6: Timescale group changed (2026-07-01)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=BAC_CTG6"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=BAC_CTG6#BAC_CTG6/2026-07-01/group</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Daily, over 2 a week in 2026-06 to Seasonal: off a week or more in 2026-07</summary>
-  </entry>
-  <entry>
-    <title>BAC_CTG5: Timescale group changed (2026-07-01)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=BAC_CTG5"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=BAC_CTG5#BAC_CTG5/2026-07-01/group</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Daily, over 2 a week in 2026-06 to Seasonal: off a week or more in 2026-07</summary>
-  </entry>
-  <entry>
-    <title>BAC_CTG2: Timescale group changed (2026-07-01)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=BAC_CTG2"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=BAC_CTG2#BAC_CTG2/2026-07-01/group</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Daily, over 2 a week in 2026-06 to Seasonal: off a week or more in 2026-07</summary>
-  </entry>
-  <entry>
-    <title>BAC_CTG1: Timescale group changed (2026-07-01)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=BAC_CTG1"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=BAC_CTG1#BAC_CTG1/2026-07-01/group</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Daily, over 2 a week in 2026-06 to Multi-day: off 1–7 days in 2026-07</summary>
-  </entry>
-  <entry>
-    <title>AZ_AZ_G4: Timescale group changed (2026-07-01)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=AZ_AZ_G4"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=AZ_AZ_G4#AZ_AZ_G4/2026-07-01/group</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Daily, 1–2 a week in 2026-06 to Seasonal: off a week or more in 2026-07</summary>
-  </entry>
-  <entry>
-    <title>AZ_AZ_G3: Timescale group changed (2026-07-01)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=AZ_AZ_G3"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=AZ_AZ_G3#AZ_AZ_G3/2026-07-01/group</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Daily, 1–2 a week in 2026-06 to Seasonal: off a week or more in 2026-07</summary>
-  </entry>
-  <entry>
-    <title>ARMD_SLR_UNIT2: New unit (2026-07-01)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ARMD_SLR_UNIT2"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ARMD_SLR_UNIT2#ARMD_SLR_UNIT2/2026-07-01/new_unit</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>First day in SCED, no HSL yet</summary>
-  </entry>
-  <entry>
-    <title>ARMD_SLR_UNIT1: New unit (2026-07-01)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ARMD_SLR_UNIT1"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ARMD_SLR_UNIT1#ARMD_SLR_UNIT1/2026-07-01/new_unit</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>First day in SCED, no HSL yet</summary>
-  </entry>
-  <entry>
-    <title>AEEC_ELK_3: Timescale group changed (2026-07-01)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=AEEC_ELK_3"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=AEEC_ELK_3#AEEC_ELK_3/2026-07-01/group</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Multi-day: off 1–7 days in 2026-06 to Daily, 1–2 a week in 2026-07</summary>
-  </entry>
-  <entry>
-    <title>AEEC_ELK_1: Timescale group changed (2026-07-01)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=AEEC_ELK_1"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=AEEC_ELK_1#AEEC_ELK_1/2026-07-01/group</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Daily, over 2 a week in 2026-06 to Seasonal: off a week or more in 2026-07</summary>
   </entry>
 </feed>
