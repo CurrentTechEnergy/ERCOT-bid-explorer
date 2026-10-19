@@ -1,0 +1,181 @@
+"""Backtest: rerun the forecast over the history for the working tree and another version of the
+code, side by side, without touching site/data, and report the promotion gate for both.
+
+  python -m pipeline.forecast.backtest --against main --out backtests/v1-vs-main
+  python -m pipeline.forecast.backtest --against cutoff-v1 --no-fit --days 2026-03-01 2026-06-30
+
+Each side gets its own folder under --out (current/ for the working tree, ref/ for --against):
+
+  tree/pipeline/     the code: the working tree's pipeline/ as it stands (uncommitted changes
+                     included), or `git archive <ref> pipeline`
+  tree/site/data/    the inputs: every entry of site/data linked, except forecast/ and fit/, which
+                     start empty and take this side's output (so a version of the code from
+                     before this module existed runs unchanged)
+  tree/unitdata/     a copy of UNIT_DATA_DIR (the curve snapshots the run may rewrite)
+  run.log            the side's output
+
+The two sides run in parallel, each as `pipeline.forecast.run` inside its own tree.  --no-fit
+skips the 2-day fit (most of the run time) when only the forecast itself is being judged; the
+fit lines of the report are then empty.  --days builds only the days in that range (the scores
+cover the days built).
+
+report.md (also printed): the promotion gate of pipeline/forecast/benchmark.py, line by line, for
+both sides with a pass or fail verdict for the current side, then the committed-minimum error
+(all, cheap and negative hours) and the score by technology and group over every as-of day.
+backtests/ is gitignored; the scripts in analysis/ read a side folder (see analysis/README.md).
+"""
+import argparse
+import json
+import os
+import shutil
+import subprocess
+import sys
+import time
+from pathlib import Path
+
+from ..config import DATA_DIR, ROOT, UNIT_DATA_DIR
+from ..store import read_json_gz
+
+OUTPUTS = ("forecast", "fit")       # site/data entries a forecast run writes; everything else is input
+RUNNER = """
+import sys
+sys.path.insert(0, {tree!r})
+from pipeline.forecast import run
+if {no_fit!r}:
+    run.fit_days = lambda *a, **k: []
+sys.exit(run.main({argv!r}))
+"""
+
+
+def make_tree(side_dir: Path, ref: str = None) -> Path:
+    """side_dir/tree with the code (working tree, or `ref`) and a linked copy of the inputs."""
+    tree = side_dir / "tree"
+    if tree.exists():
+        shutil.rmtree(tree)
+    tree.mkdir(parents=True)
+    if ref is None:
+        shutil.copytree(ROOT / "pipeline", tree / "pipeline", ignore=shutil.ignore_patterns("__pycache__"))
+    else:
+        tar = subprocess.run(["git", "-C", str(ROOT), "archive", ref, "pipeline"], check=True, capture_output=True).stdout
+        subprocess.run(["tar", "-x", "-C", str(tree)], input=tar, check=True)
+    data = tree / "site" / "data"
+    data.mkdir(parents=True)
+    for p in DATA_DIR.iterdir():
+        if p.name in OUTPUTS:
+            (data / p.name).mkdir()
+        else:
+            (data / p.name).symlink_to(p.resolve())
+    if UNIT_DATA_DIR.exists():
+        shutil.copytree(UNIT_DATA_DIR, tree / "unitdata", symlinks=True)
+    else:
+        (tree / "unitdata").mkdir()
+    return tree
+
+
+def start(side_dir: Path, tree: Path, no_fit: bool, days):
+    argv = ["--days", *days] if days else []
+    env = {**os.environ, "UNIT_DATA_DIR": str(tree / "unitdata"), "PYTHONDONTWRITEBYTECODE": "1"}
+    log = open(side_dir / "run.log", "w")
+    code = RUNNER.format(tree=str(tree), no_fit=no_fit, argv=argv)
+    return subprocess.Popen([sys.executable, "-c", code], cwd=tree, env=env, stdout=log, stderr=subprocess.STDOUT), log
+
+
+def _versions(scores: dict) -> str:
+    vs = {k for s in scores.get("days", {}).values() for k in [json.dumps(s.get("versions"), sort_keys=True)]}
+    return "; ".join(", ".join(f"{k}={v}" for k, v in sorted(json.loads(x).items())) for x in sorted(vs) if x != "null")
+
+
+def _cell(v, pct=False):
+    if v is None:
+        return "–"
+    return f"{v:.1%}" if pct else f"{v:,.0f}"
+
+
+def report(cur: dict, ref: dict, labels=("current", "ref")) -> str:
+    """Markdown: the promotion gate for both sides, then the floor and technology scores."""
+    from .benchmark import BENCH, report as bench_report
+    from .score import summarise
+    bench = json.loads(BENCH.read_text())
+
+    def one(scores):
+        b = list(bench_report(scores, bench).values())
+        a = list(summarise(scores.get("days", {})).values())
+        b, a = (b[0] if b else {}), (a[0] if a else {})
+        worst = max((g["mae"] or 0) for g in b["group"].values()) if b.get("group") else None
+        fl = a.get("floor") or {}
+        return {"headline": b.get("headline_hit"), "unit": b.get("unit_hit"), "worst": worst,
+                "cheap": (fl.get("cheap") or {}).get("mae"), "bench": b, "all": a, "floor": fl}
+    c, r = one(cur), one(ref)
+    gate = [("Benchmark headline hit", "headline", True, True), ("Benchmark unit hit", "unit", True, True),
+            ("Benchmark worst group MAE (MW)", "worst", False, False),
+            ("Cheap-hour floor MAE, all as-of days (MW)", "cheap", False, False)]
+    lines = [f"# Backtest: {labels[0]} vs {labels[1]}", "",
+             f"- {labels[0]}: {_versions(cur) or 'no scored days'}", f"- {labels[1]}: {_versions(ref) or 'no scored days'}", "",
+             "## Promotion gate", "", f"| Line | {labels[1]} | {labels[0]} | |", "|---|---|---|---|"]
+    ok_all = True
+    for name, k, pct, higher in gate:
+        a, b = r[k], c[k]
+        ok = a is None or (b is not None and (b >= a if higher else b <= a))
+        ok_all &= ok
+        lines.append(f"| {name} | {_cell(a, pct)} | {_cell(b, pct)} | {'pass' if ok else '**fail**'} |")
+    lines += ["", f"**{labels[0]}: {'passes' if ok_all else 'fails'} the gate.**", "",
+              "## Committed minimum against online LSL, all as-of days", "",
+              f"| Hours | {labels[1]} MAE | {labels[0]} MAE | {labels[1]} bias | {labels[0]} bias |", "|---|---|---|---|---|"]
+    for h in ("all", "cheap", "neg"):
+        fa, fb = r["floor"].get(h) or {}, c["floor"].get(h) or {}
+        lines.append(f"| {h} ({fb.get('hours', fa.get('hours', 0))} h) | {_cell(fa.get('mae'))} | {_cell(fb.get('mae'))} | "
+                     f"{_cell(fa.get('bias'))} | {_cell(fb.get('bias'))} |")
+    lines += ["", "## All as-of days", "", f"| | {labels[1]} | {labels[0]} |", "|---|---|---|"]
+    for name, k, pct in (("Days", "n", False), ("Headline hit", "headline_hit", True), ("Unit hit", "unit_hit", True),
+                         ("Thermal MAE (MW)", "thermal_mae", False), ("Thermal bias (MW)", "thermal_bias", False)):
+        lines.append(f"| {name} | {_cell(r['all'].get(k), pct)} | {_cell(c['all'].get(k), pct)} |")
+    for part in ("tech", "group"):
+        keys = sorted(set((r["all"].get(part) or {})) | set((c["all"].get(part) or {})))
+        if keys:
+            lines += ["", f"| {part.capitalize()} MAE / bias (MW) | {labels[1]} | {labels[0]} |", "|---|---|---|"]
+            for k in keys:
+                a, b = (r["all"].get(part) or {}).get(k) or {}, (c["all"].get(part) or {}).get(k) or {}
+                lines.append(f"| {k} | {_cell(a.get('mae'))} / {_cell(a.get('bias'))} | {_cell(b.get('mae'))} / {_cell(b.get('bias'))} |")
+    fa, fb = (r["all"].get("fit") or {}), (c["all"].get("fit") or {})
+    if fa.get("n") or fb.get("n"):
+        lines += ["", f"2-day fit floor MAE (MW): {labels[1]} {_cell(fa.get('lsl_mae_fit'))}, {labels[0]} {_cell(fb.get('lsl_mae_fit'))}"]
+    return "\n".join(lines) + "\n"
+
+
+def main(argv=None):
+    ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    ap.add_argument("--against", default="main", help="git ref to compare with (default main)")
+    ap.add_argument("--out", help="output folder (default backtests/<timestamp>)")
+    ap.add_argument("--no-fit", action="store_true", help="skip the 2-day fit")
+    ap.add_argument("--days", nargs=2, metavar=("START", "END"), help="only build days in this range")
+    ap.add_argument("--report-only", action="store_true", help="rewrite report.md from the sides already run")
+    args = ap.parse_args(argv)
+    out = Path(args.out or ROOT / "backtests" / time.strftime("%Y%m%d-%H%M%S")).resolve()
+    sides = {"current": None, "ref": args.against}
+    if not args.report_only:
+        t0 = time.time()
+        procs = {}
+        for side, ref in sides.items():
+            d = out / side
+            d.mkdir(parents=True, exist_ok=True)
+            procs[side] = start(d, make_tree(d, ref), args.no_fit, args.days)
+            print(f"{side}: {'working tree' if ref is None else ref} running, log {d / 'run.log'}", flush=True)
+        failed = []
+        for side, (p, log) in procs.items():
+            rc = p.wait()
+            log.close()
+            if rc:
+                failed.append(side)
+        print(f"both sides done in {time.time() - t0:.0f}s" + (f"; failed: {', '.join(failed)} (see run.log)" if failed else ""))
+        if failed:
+            return 1
+    scores = {s: read_json_gz(out / s / "tree" / "site" / "data" / "forecast" / "scores.json.gz", default={"days": {}})
+              for s in sides}
+    text = report(scores["current"], scores["ref"], ("current", args.against))
+    (out / "report.md").write_text(text)
+    print(text)
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())
