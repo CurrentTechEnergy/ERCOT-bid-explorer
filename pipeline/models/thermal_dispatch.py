@@ -14,6 +14,11 @@ For a unit with weight p_on (from thermal_cutoff, or by hour from peaker_share):
             (nuclear) or LSL
   min[h]  = p_on x floor        the committed minimum (floor = the snapshot configuration LSL the
                                 curve is clamped to, else the day-ahead LSL)
+  cheap hours: a combined-cycle train held at its configuration floor drops to its smallest
+            usual running size (Context.cc_min_lsl_at) in hours with the day-ahead hub at or
+            below C.CHEAP_HUB, for both its minimum and its output
+  out_share: a train with part of its site listed out (thermal_cutoff) has its weight scaled
+            by 1 - out_share
   off window: a unit judged "off" or "maybe" for a window is at 0 inside it (its p_on applies
             outside), since the verdict says it shuts for those hours; a whole-day "off" is 0
             throughout; nuclear runs at HSL.  A unit whose commitment row carries an hourly
@@ -24,7 +29,7 @@ import numpy as np
 from ..forecast import context as C
 
 NAME = "thermal_dispatch"
-VERSION = "v2"    # v2: hourly p_hours rows from thermal_cutoff v1; v1: committed minimum uses the configuration floor; breakpoint interpolation fix
+VERSION = "v2"    # v2: hourly p_hours rows from thermal_cutoff v1, CC smallest size in cheap hours, out_share; v1: committed minimum uses the configuration floor; breakpoint interpolation fix
 
 
 def _config_curve(ctx, month, u):
@@ -43,6 +48,7 @@ def forecast(date, ctx: C.Context, commit: dict, peakers: dict) -> dict:
     hub = ctx.hub(date)
     month, hindsight = ctx.curve_month(date)
     stats = ctx.stats_at(date)
+    cc_min = ctx.cc_min_lsl_at(date)
     rows = {}
     n_curve = 0
     for key, row in commit["rows"].items():
@@ -57,6 +63,8 @@ def forecast(date, ctx: C.Context, commit: dict, peakers: dict) -> dict:
         elif row["off_from"]:
             a = row["off_from"] - 1
             p = p.copy(); p[a:a + row["off_hours"]] = 0.0
+        if row.get("out_share"):
+            p = p * (1.0 - row["out_share"])
         prices = ctx.node_price(date, u["sp"], name=u["configs"][0]) if u["sp"] else None
         if prices is None:
             prices = hub
@@ -83,6 +91,12 @@ def forecast(date, ctx: C.Context, commit: dict, peakers: dict) -> dict:
             mw[:] = min(max(s["out_med"], lsl), hsl) if hsl > 0 else s["out_med"]
         else:
             mw[:] = hsl if row["tech"] == "nuclear" else lsl
-        rows[key] = {"exp": np.round(p * mw, 1), "min": np.round(p * floor, 1), "hsl": hsl, "p": np.round(p, 3),
+        fl = np.full(24, floor)
+        small = cc_min.get(key) if row["tech"] == "combined_cycle" else None
+        if small is not None and hub is not None and small < floor:
+            cheap = np.asarray(hub, float) <= C.CHEAP_HUB
+            fl[cheap] = small
+            mw = np.where(cheap & (mw <= floor), np.minimum(mw, small), mw)
+        rows[key] = {"exp": np.round(p * mw, 1), "min": np.round(p * fl, 1), "hsl": hsl, "p": np.round(p, 3),
                      "floor": round(floor, 1), "curve": bool(c), "model": NAME, "version": VERSION}
     return {"rows": rows, "inputs": {"curve_month": month, "curve_hindsight": hindsight, "with_curve": n_curve}}

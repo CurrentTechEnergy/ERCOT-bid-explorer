@@ -31,6 +31,10 @@ For every thermal train in the latest DAM disclosure (pipeline.forecast.context.
               and the month's day-ahead hub average to date is not below the lowest monthly
               hub average it has run through; off otherwise.  A placeholder until a
               multi-week economics rule exists.
+  listed out  a unit in ERCOT's unplanned outage report public before the day cleared
+              (Context.listed_out) is "outage" all day; a CC train at a site with part of its MW
+              listed out keeps its verdict and carries out_share, which the dispatch model takes
+              off its weight
   peakers     combustion turbines are not judged here (peaker_share, by hour); they get
               verdict "peaker" and p_on from that model.
 
@@ -57,7 +61,7 @@ from ..decisions import _window, _cutoff, _dam_trains, HALF, OUT_MIN_H
 from ..forecast import context as C
 
 NAME = "thermal_cutoff"
-VERSION = "v1"    # v1: probability of staying on through the window, per-unit horizon, pooled cutoffs
+VERSION = "v1"    # v1: listed outages; probability of staying on through the window, per-unit horizon, pooled cutoffs
 SEASONAL_VERSION = "v0"
 RUN_SHARE = 0.5          # a month the unit ran through: online at least this share of its hours
 LONG_OUT = 21            # days an outage must already have lasted at the last known hour to carry forward
@@ -364,6 +368,16 @@ def forecast(date, ctx: C.Context) -> dict:
             if u["est"] == 2:
                 row["reason"] += " (generic costs)"
         rows[key] = row
+    listed = ctx.listed_out(date)
+    for key, row in rows.items():
+        share = listed.get(key, 0.0)
+        if share >= 1.0 and row["verdict"] != "outage":
+            row.pop("p_hours", None)
+            row.update(verdict="outage", p_on=0.0, off_from=1, off_hours=24, outage=True,
+                       reason="listed out in ERCOT's unplanned outage report")
+        elif share > 0 and row["verdict"] != "outage":
+            row["out_share"] = round(share, 3)
+            row["reason"] += f"; {share:.0%} of its site listed out in ERCOT's unplanned outage report"
     return {"rows": rows, "inputs": {"known_date": known, "hindsight": hindsight, "asof": point,
                                      "asof_hindsight": asof_hind, "node_prices": node_src,
                                      "month": month, "month_hub": None if mtd is None else round(mtd, 2)}}
