@@ -22,16 +22,29 @@ Two answers per day:
              60-day online LSL, the fit's on/off calls beside the forecast's on the same units,
              and how often it named the right combined-cycle configuration
 
+  floor      (in sixty_day) the committed minimum: the forecast's fleet "min" series against
+             the summed LSL of thermal units online at least half the hour, hour by hour, over
+             all hours, the cheap hours (day-ahead hub at or below CHEAP_HUB) and the negative
+             ones; kept as sums (hours, absolute error, error, expected, actual, MW-h) so the
+             summary weights every hour alike.  This is the number that says how much thermal
+             gets out of the way when prices are low; the daily GWh call barely sees it.
+
 Per day: mean absolute error (MW over 24 hours), bias (expected minus actual), expected and
 actual GWh, and the headline call: right when expected thermal GWh is within HEADLINE_TOL of
-the 2-day answer.  Summary: hit rates and mean errors over all scored days and by price band,
-keyed by the model versions that produced the files.
+the 2-day answer.  Summary: hit rates and mean errors by price band, keyed by the model
+versions that produced the files, over the as-of days only: a day whose models read history
+it could not have had (the first LAG days, inputs.hindsight; groups and stats from a point
+with too little history, inputs.asof_hindsight; a curve snapshot from after the day,
+inputs.curve_hindsight) is scored and kept per day, flagged "asof": false, and left out of
+the summary, which counts it in n_hindsight.
 
 Writes data/forecast/scores.json.gz:
   days[date]   {"versions": {...}, "band", "two_day": {...} | null, "sixty_day": {...} | null,
                 "fit": {...} | null}
-  summary      {versions key: {n, headline_hit, thermal_mae, thermal_bias, unit_hit, n_judged,
-                wind_mae, solar_mae, by_band: {band: {...}}, group: {g: {mae, bias, n}}}}
+  days[date]["asof"]  false for a hindsight day (left out of the summary)
+  summary      {versions key: {n, n_hindsight, headline_hit, thermal_mae, thermal_bias, unit_hit,
+                n_judged, wind_mae, solar_mae, floor: {all, cheap, neg: {hours, mae, bias, exp,
+                act} (MW)}, by_band: {band: {...}}, group: {g: {mae, bias, n}}}}
 """
 import numpy as np
 
@@ -43,6 +56,7 @@ from .build import GROUPS
 
 PATH = DATA_DIR / "forecast" / "scores.json.gz"
 HEADLINE_TOL = 0.10
+CHEAP_HUB = 10.0                  # $/MWh: an hour at or below this day-ahead hub price is a cheap hour
 ESR_SPLIT_DATE = "2026-06-22"     # before this, ERCOT's "remaining resources" included storage
 
 
@@ -112,6 +126,7 @@ def score_sixty_day(day: dict, ctx: C.Context) -> dict:
     cols = {c: i + 2 for i, c in enumerate(rows_file["columns"])}
     names = rows_file["units"]
     act = {}          # train -> (output[24], online[24])
+    on_lsl = np.zeros(24)
     for r in rows_file["rows"]:
         name, t = names[r[0]][0], names[r[0]][2]
         if t not in C.THERMAL:
@@ -123,6 +138,7 @@ def score_sixty_day(day: dict, ctx: C.Context) -> dict:
             o[h] += r[cols["output"]]
         if (r[cols["online_share"]] or 0) >= 0.5:
             on[h] = 1
+            on_lsl[h] += r[cols["lsl"]] or 0.0
     uc = {c: i for i, c in enumerate(day["units"]["columns"])}
     by_g = {g: [np.zeros(24), np.zeros(24)] for g in GROUPS}
     by_t = {t: [np.zeros(24), np.zeros(24)] for t in C.THERMAL}
@@ -162,6 +178,32 @@ def score_sixty_day(day: dict, ctx: C.Context) -> dict:
     fe = sum(_arr(day["hourly"]["tech"][t]["exp"]) for t in C.THERMAL)
     fa = sum(by_t[t][1] for t in C.THERMAL)
     out["fleet"] = stat(fe, fa)
+    out["floor"] = score_floor(_arr(day["hourly"]["fleet"]["min"]), on_lsl, _arr(day["headline"].get("hub")))
+    return out
+
+
+def score_floor(exp_min, act_lsl, hub) -> dict:
+    """Committed minimum against online LSL as sums over all, cheap and negative hours."""
+    ok = ~np.isnan(exp_min) & ~np.isnan(act_lsl)
+    out = {}
+    for k, sel in (("all", ok), ("cheap", ok & (hub <= CHEAP_HUB)), ("neg", ok & (hub <= 0))):
+        d = exp_min[sel] - act_lsl[sel]
+        out[k] = {"hours": int(sel.sum()), "abs": _r(np.abs(d).sum()), "err": _r(d.sum()),
+                  "exp": _r(exp_min[sel].sum()), "act": _r(act_lsl[sel].sum())}
+    return out
+
+
+def _floor_summary(sd: list) -> dict:
+    """Hour-weighted floor errors (MW) over the days' sums."""
+    out = {}
+    for k in ("all", "cheap", "neg"):
+        parts = [s["floor"][k] for s in sd if s.get("floor")]
+        n = sum(p["hours"] for p in parts)
+        out[k] = {"hours": n,
+                  "mae": _r(sum(p["abs"] for p in parts) / n) if n else None,
+                  "bias": _r(sum(p["err"] for p in parts) / n) if n else None,
+                  "exp": _r(sum(p["exp"] for p in parts) / n) if n else None,
+                  "act": _r(sum(p["act"] for p in parts) / n) if n else None}
     return out
 
 
@@ -234,7 +276,9 @@ def score_days(days: list, ctx: C.Context, out_dir) -> dict:
         day = read_json_gz(out_dir / f"{date}.json.gz")
         if not day:
             continue
+        inp = day.get("inputs", {})
         scores["days"][date] = {"versions": day["models"], "band": day["headline"].get("band"),
+                                "asof": not (inp.get("hindsight") or inp.get("asof_hindsight") or inp.get("curve_hindsight")),
                                 "two_day": score_two_day(day), "sixty_day": score_sixty_day(day, ctx),
                                 "fit": score_fit(day, ctx)}
     scores["days"] = {d: v for d, v in sorted(scores["days"].items()) if d in set(days)}
@@ -248,10 +292,16 @@ def _vkey(versions):
     return " ".join(f"{k}={v}" for k, v in sorted(versions.items()) if v)
 
 
-def summarise(days: dict) -> dict:
-    by = {}
+def summarise(days: dict, asof_only: bool = True) -> dict:
+    """Summary per model-versions key; asof_only leaves hindsight days out (counted in
+    n_hindsight)."""
+    by, skipped = {}, {}
     for d, s in days.items():
-        by.setdefault(_vkey(s["versions"]), []).append(s)
+        k = _vkey(s["versions"])
+        if asof_only and s.get("asof") is False:
+            skipped[k] = skipped.get(k, 0) + 1
+            continue
+        by.setdefault(k, []).append(s)
     out = {}
     for k, lst in by.items():
         def agg(items):
@@ -284,8 +334,10 @@ def summarise(days: dict) -> dict:
                           "config_hit": _r(np.mean([f["config_hit"] for f in fs if f.get("config_hit") is not None]), 3) if any(f.get("config_hit") is not None for f in fs) else None} if ft else None
             res["tech"] = {t: {"mae": _r(np.mean([s["tech"][t]["mae"] for s in sd])), "bias": _r(np.mean([s["tech"][t]["bias"] for s in sd])), "n": len(sd)}
                            for t in C.THERMAL} if sd else None
+            res["floor"] = _floor_summary(sd) if sd else None
             return res
         o = agg(lst)
+        o["n_hindsight"] = skipped.get(k, 0)
         o["by_band"] = {b: agg([s for s in lst if s.get("band") == b]) for b in ("low", "medium", "high")}
         out[k] = o
     return out

@@ -45,7 +45,7 @@ def forecast(date, ctx: C.Context) -> dict:
     dd = ctx.dam(date)
     hub = ctx.hub(date)
     fc = ctx.renew_fc.get(date) or {}
-    stats = ctx.stats["renew"]
+    stats = ctx.stats_at(date)["renew"]
     # fleet forecast spread by each unit's typical HSL at the hour
     weights = {}
     for t in C.RENEW:

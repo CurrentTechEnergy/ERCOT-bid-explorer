@@ -316,6 +316,7 @@ def fit(date, ctx: C.Context, day: dict) -> dict:
     return {
         "date": date, "format": FORMAT, "model": NAME, "version": VERSION,
         "inputs": {"curve_month": month, "curve_hindsight": hindsight, "known_date": known, "forecast_models": day.get("models"),
+                   "forecast_asof": day.get("inputs", {}).get("asof"),
                    "prices": PRICES, "weights": WEIGHTS, "min_gain": MIN_GAIN, "passes": passes,
                    "n_candidates": len(cand), "n_changed": int(sum(c["changed"] for c in cand)),
                    "n_options": int(sum(len(c["states"]) for c in cand))},
@@ -337,7 +338,7 @@ def fit(date, ctx: C.Context, day: dict) -> dict:
 def fit_days(ctx: C.Context, days: list, forecast_dir) -> list:
     """Write a fit file for every day in `days` that has a forecast file and a 2-day curve;
     returns the days written.  Days whose fit is current (same forecast models, version and
-    inputs) are left alone."""
+    inputs, and a forecast built from the same as-of history point) are left alone."""
     done = []
     for d in days:
         day = read_json_gz(forecast_dir / f"{d}.json.gz")
@@ -346,7 +347,8 @@ def fit_days(ctx: C.Context, days: list, forecast_dir) -> list:
         path = OUT_DIR / f"{d}.json.gz"
         cur = read_json_gz(path) if path.exists() else None
         if (cur and cur.get("version") == VERSION and cur.get("format") == FORMAT
-                and cur["inputs"].get("forecast_models") == day.get("models") and cur["inputs"].get("curve_month") == ctx.curve_month(d)[0]):
+                and cur["inputs"].get("forecast_models") == day.get("models") and cur["inputs"].get("curve_month") == ctx.curve_month(d)[0]
+                and cur["inputs"].get("forecast_asof") == day.get("inputs", {}).get("asof")):
             continue
         out = fit(d, ctx, day)
         if out is None:

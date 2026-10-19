@@ -39,10 +39,12 @@ GROUP_LABELS = {
 RANK = {"a": 4, "m": 3, "0": 2, "o": 1, "-": 0}
 
 
-def merged_states(uh: dict, techs: dict) -> dict:
+def merged_states(uh: dict, techs: dict, rewrite: bool = True) -> dict:
     """{train: (tech, state array over the whole period, one char per hour, days in calendar
-    order with gaps as "-")} for thermal units, configurations merged, outage spells rewritten.
-    Also returns the period length in hours and the first date."""
+    order with gaps as "-")} for thermal units, configurations merged, outage spells rewritten
+    (unless rewrite is False: the raw merged states, for reading the state at a past hour
+    without the later hours of its spell).  Also returns the period length in hours and the
+    first date."""
     dates = uh.get("dates", [])
     if not dates:
         return {}, 0, None
@@ -69,6 +71,8 @@ def merged_states(uh: dict, techs: dict) -> dict:
             pick = rank(seg) > rank(cur)
             cur[pick] = seg[pick]
     for key, (t, st) in by.items():
+        if not rewrite:
+            continue
         if t == "combined_cycle":
             run = np.isin(st, ["m", "a"])
             gap = (~run[1:-1]) & run[:-2] & run[2:] & (st[1:-1] == "0")
