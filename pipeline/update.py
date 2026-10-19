@@ -367,6 +367,8 @@ def main(argv=None):
     ap.add_argument("--days", type=int, default=4, help="look back this many days of postings (default 4)")
     ap.add_argument("--backfill", nargs=2, metavar=("START", "END"), help="operating-day range to fill")
     ap.add_argument("--max-files", type=int, default=None, help="cap curve files per report per run")
+    ap.add_argument("--outages-backfill", nargs=2, metavar=("START", "END"),
+                    help="also fetch the outage reports for every operating day in this range")
     ap.add_argument("--skip", choices=["2d", "2dgen", "60d", "dam", "prices", "outages", "gas", "forecast"], action="append", default=[])
     ap.add_argument("--local", nargs="+", help="process local zip files instead of calling the API")
     ap.add_argument("--reprocess-60d", nargs="?", const="missing", choices=["missing", "all"],
@@ -460,7 +462,7 @@ def main(argv=None):
         fetch_dam_node_prices(api, index)
         fetch_renew_forecast(api, index)
     if "outages" not in args.skip:
-        fetch_outages(api, index)
+        fetch_outages(api, index, backfill=args.outages_backfill)
     if "gas" not in args.skip:
         fetch_gas()
         fetch_hubs()
