@@ -1,0 +1,19 @@
+# Predictor analysis
+
+Scripts that read one side of a backtest (`python -m pipeline.forecast.backtest`, see its
+docstring) and explain its scores.  Each imports that side's own copy of the pipeline, so it
+analyses the code that was scored, and writes `analysis-<name>.md` next to the side's `run.log`.
+
+    python -m pipeline.forecast.backtest --against main --no-fit --out backtests/mine
+    python analysis/floor_causes.py backtests/mine/current
+    python analysis/floor_causes.py backtests/mine/ref
+
+| Script | Question |
+|---|---|
+| floor_causes.py | Where does the cheap-hour committed-minimum error come from (outage, called on but off, called off but on, CC configuration)? |
+| calibration.py | Is a unit held at weight p online p of the time? (`--cheap` for cheap hours only) |
+| calls.py | Through the loss window, did off/maybe/on calls match what the unit did? |
+| outage_catch.py | How much of the cheap-hour overstatement the unplanned outage report would have removed (`--lag` days before D) |
+
+The first script on a side computes every thermal unit-hour on the scored as-of days (about three
+minutes) and caches it as `unit_hours.pkl` in the side folder; the rest reuse it.
