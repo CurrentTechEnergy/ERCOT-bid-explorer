@@ -47,6 +47,7 @@ from .fuel_hub import build_fuel_hubs
 from .econ import build_econ
 from .dam_prices import fetch_dam_prices, fetch_dam_node_prices
 from .renew_forecast import fetch_renew_forecast
+from .outages import fetch_outages
 from .forecast.run import build_forecast
 from .ppa import build_ppa
 from .renew_changes import build_renew_changes
@@ -366,7 +367,7 @@ def main(argv=None):
     ap.add_argument("--days", type=int, default=4, help="look back this many days of postings (default 4)")
     ap.add_argument("--backfill", nargs=2, metavar=("START", "END"), help="operating-day range to fill")
     ap.add_argument("--max-files", type=int, default=None, help="cap curve files per report per run")
-    ap.add_argument("--skip", choices=["2d", "2dgen", "60d", "dam", "prices", "gas", "forecast"], action="append", default=[])
+    ap.add_argument("--skip", choices=["2d", "2dgen", "60d", "dam", "prices", "outages", "gas", "forecast"], action="append", default=[])
     ap.add_argument("--local", nargs="+", help="process local zip files instead of calling the API")
     ap.add_argument("--reprocess-60d", nargs="?", const="missing", choices=["missing", "all"],
                     help="re-download and reparse 60-day SCED and DAM days already in the index: those "
@@ -458,6 +459,8 @@ def main(argv=None):
         fetch_dam_prices(api, index["days"]["60d"], index)
         fetch_dam_node_prices(api, index)
         fetch_renew_forecast(api, index)
+    if "outages" not in args.skip:
+        fetch_outages(api, index)
     if "gas" not in args.skip:
         fetch_gas()
         fetch_hubs()
