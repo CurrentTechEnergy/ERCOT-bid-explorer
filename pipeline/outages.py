@@ -152,9 +152,8 @@ def _cutoff(date: str) -> str:
     return f"{d.isoformat()}T{CUTOFF_HOUR:02d}:00:00"
 
 
-def fetch_unplanned(api, today: dt.date) -> list:
-    since = dt.datetime.combine(today - dt.timedelta(days=LOOKBACK_DAYS), dt.time())
-    until = dt.datetime.combine(today + dt.timedelta(days=1), dt.time())
+def fetch_unplanned(api, since: dt.datetime, until: dt.datetime) -> list:
+    """Every NP1-346-ER posting in [since, until) not already kept (or kept from an older posting)."""
     try:
         docs = api.list_archives(EMIL_UNPLANNED, since, until)
     except Exception as e:
@@ -183,11 +182,12 @@ def fetch_unplanned(api, today: dt.date) -> list:
     return got
 
 
-def fetch_capacity(api, today: dt.date) -> list:
+def fetch_capacity(api, want: list) -> list:
+    """NP3-233-CD for each operating day in `want`: the newest posting at or before its cutoff."""
     store = read_json_gz(CAPACITY_PATH, default=None) or {"days": {}}
     days = store["days"]
-    since = dt.datetime.combine(today - dt.timedelta(days=2), dt.time())
-    until = dt.datetime.combine(today + dt.timedelta(days=1), dt.time())
+    since = dt.datetime.combine(dt.date.fromisoformat(min(want)) - dt.timedelta(days=2), dt.time())
+    until = dt.datetime.combine(dt.date.fromisoformat(max(want)), dt.time())
     try:
         docs = api.list_archives(EMIL_CAPACITY, since, until)
     except Exception as e:
@@ -195,8 +195,7 @@ def fetch_capacity(api, today: dt.date) -> list:
         return []
     docs.sort(key=lambda d: d.get("postDatetime", ""))
     picks = {}
-    for k in range(0, 2):
-        d = (today + dt.timedelta(days=k)).isoformat()
+    for d in want:
         ok = [x for x in docs if x.get("postDatetime", "")[:19] <= _cutoff(d)]
         if ok and days.get(d, {}).get("posted", "") < ok[-1]["postDatetime"][:19]:
             picks.setdefault(ok[-1]["docId"], []).append(d)
@@ -218,10 +217,27 @@ def fetch_capacity(api, today: dt.date) -> list:
     return got
 
 
-def fetch_outages(api, index: dict, today: dt.date = None) -> None:
+def fetch_outages(api, index: dict, today: dt.date = None, backfill: tuple = None) -> None:
+    """The recent postings; with backfill=(first, last operating day), every operating day in
+    that range instead (the unplanned snapshots of those days and their outage capacity)."""
     today = today or dt.date.today()
-    un = fetch_unplanned(api, today)
-    cap = fetch_capacity(api, today)
+    if backfill:
+        first, last = (dt.date.fromisoformat(x) for x in backfill)
+        since = dt.datetime.combine(first + dt.timedelta(days=SNAPSHOT_LAG), dt.time())
+        until = dt.datetime.combine(last + dt.timedelta(days=SNAPSHOT_LAG + 1), dt.time())
+        want = [(first + dt.timedelta(days=i)).isoformat() for i in range((last - first).days + 1)]
+    else:
+        since = dt.datetime.combine(today - dt.timedelta(days=LOOKBACK_DAYS), dt.time())
+        until = dt.datetime.combine(today + dt.timedelta(days=1), dt.time())
+        want = [today.isoformat(), (today + dt.timedelta(days=1)).isoformat()]
+    un = fetch_unplanned(api, since, until)
+    cap = fetch_capacity(api, want)
     have = sorted(p.name[:10] for p in UNPLANNED_DIR.glob("20*.json.gz")) if UNPLANNED_DIR.exists() else []
     print(f"outages: {len(un)} unplanned snapshot(s) added ({len(have)} kept"
-          + (f", latest {have[-1]}" if have else "") + f"), outage capacity for {', '.join(cap) or 'no new day'}")
+          + (f", latest {have[-1]}" if have else "") + f"), outage capacity for {_span(cap)}")
+
+
+def _span(days: list) -> str:
+    if not days:
+        return "no new day"
+    return days[0] if len(days) == 1 else f"{len(days)} days, {min(days)} to {max(days)}"

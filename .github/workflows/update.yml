@@ -24,6 +24,12 @@ on:
         type: boolean
         required: false
         default: false
+      outages_start:
+        description: "Also fetch ERCOT's outage reports from operating day (YYYY-MM-DD); with a normal update"
+        required: false
+      outages_end:
+        description: "Outage reports to operating day (YYYY-MM-DD)"
+        required: false
       ignore_checks:
         description: "Commit the data even if an accuracy check fails (see the run summary for what failed)"
         type: boolean
@@ -101,12 +107,16 @@ jobs:
           BACKFILL_END: ${{ github.event.inputs.backfill_end }}
           MAX_FILES: ${{ github.event.inputs.max_files }}
           REPROCESS_60D: ${{ github.event.inputs.reprocess_60d }}
+          OUTAGES_START: ${{ github.event.inputs.outages_start }}
+          OUTAGES_END: ${{ github.event.inputs.outages_end }}
           UNIT_DATA_DIR: unitdata
         run: |
           if [ "$REPROCESS_60D" = "true" ]; then
             python -m pipeline.update --reprocess-60d --max-files "${MAX_FILES:-60}"
           elif [ -n "$BACKFILL_START" ]; then
             python -m pipeline.update --backfill "$BACKFILL_START" "${BACKFILL_END:-$BACKFILL_START}" --max-files "${MAX_FILES:-60}"
+          elif [ -n "$OUTAGES_START" ]; then
+            python -m pipeline.update --outages-backfill "$OUTAGES_START" "${OUTAGES_END:-$OUTAGES_START}"
           else
             python -m pipeline.update
           fi
