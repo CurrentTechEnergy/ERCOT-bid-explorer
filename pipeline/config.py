@@ -86,6 +86,7 @@ EMIL_DAM = "np3-966-er"          # 60-day DAM disclosure: three-part offers, awa
 EMIL_LAMBDA = "np6-322-cd"
 EMIL_SPP = "np6-905-cd"
 EMIL_DAM_SPP = "np4-190-cd"     # DAM settlement point prices (hubs and load zones kept, for pipeline/ppa.py)
+EMIL_DAM_LAMBDA = "np4-523-cd"  # DAM system lambda (pipeline/dam_lambda.py)
 
 # --- Natural gas (EIA open data, https://www.eia.gov/opendata/) ---------------------------
 # Henry Hub spot price, $/MMBtu, daily (EIA_API_KEY in the environment; skipped without one).

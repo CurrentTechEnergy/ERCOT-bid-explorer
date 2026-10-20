@@ -47,7 +47,7 @@ const PAGE_ROWS = 150;
 
 // ---------------------------------------------------------------- state ---
 const S = {
-  fc: null, index: null, scores: null, hubs: null, prices_all: null,
+  fc: null, index: null, scores: null, hubs: null, prices_all: null, dalam: null,
   date: null, day: null, gen: null, day60: null, units60: null, prices: null,
   unit: "gw", hour: 12, loc: "hub", unitView: "day", unitTech: "all", unitSearch: "", unitSort: { key: "hsl", dir: -1 }, unitShowAll: false,
   hidden: new Set(),
@@ -195,8 +195,9 @@ function drawSpark() {
   if (!H || !H.hub) return emptyMsg(el, "No day-ahead hub prices for this day.");
   const w = size(el), Hh = 190, m = { t: 12, r: 12, b: 26, l: 48 };
   const lam = S.prices && S.prices.lambda ? S.prices.lambda.hourly_mean : null;
+  const dal = (S.dalam && S.dalam.days && S.dalam.days[S.date]) || null;
   const e = H.band_edges || [0, 0];
-  const vals = [...H.hub, ...(lam || []), e[1] * 1.15].filter((v) => v != null);
+  const vals = [...H.hub, ...(lam || []), ...(dal || []), e[1] * 1.15].filter((v) => v != null);
   const x = d3.scaleLinear().domain([1, 24]).range([m.l, w - m.r]);
   const y = d3.scaleLinear().domain([Math.min(0, d3.min(vals)), d3.max(vals)]).nice().range([Hh - m.b, m.t]);
   const svg = d3.create("svg").attr("viewBox", `0 0 ${w} ${Hh}`);
@@ -212,6 +213,7 @@ function drawSpark() {
   svg.append("g").attr("class", "axis").attr("transform", `translate(0,${Hh - m.b})`).call(d3.axisBottom(x).tickValues([1, 6, 12, 18, 24]).tickFormat((d) => "HE" + d).tickSizeOuter(0));
   if (y.domain()[0] < 0) svg.append("line").attr("class", "zero").attr("x1", m.l).attr("x2", w - m.r).attr("y1", y(0)).attr("y2", y(0));
   const line = d3.line().defined((v) => v != null).x((v, i) => x(i + 1)).y((v) => y(v));
+  if (dal) svg.append("path").attr("fill", "none").attr("stroke", css("--accent")).attr("stroke-width", 1).attr("stroke-dasharray", "1 2").attr("d", line(dal));
   if (lam) svg.append("path").attr("fill", "none").attr("stroke", css("--ink")).attr("stroke-width", 1.5).attr("stroke-dasharray", "4 3").attr("opacity", 0.7).attr("d", line(lam));
   svg.append("path").attr("fill", "none").attr("stroke", css("--accent")).attr("stroke-width", 2).attr("d", line(H.hub));
   const st = cheapStretch(H.hub, e);
@@ -222,13 +224,15 @@ function drawSpark() {
       const h = Math.max(0, Math.min(23, Math.round(x.invert(d3.pointer(ev)[0])) - 1));
       cross.style("display", null).attr("x1", x(h + 1)).attr("x2", x(h + 1));
       showTip(ev, `<h4>${heLabel(h)}</h4><table><tr><td>Day-ahead hub average</td><td class="n">${fmtPrice(H.hub[h])}</td></tr>` +
+        (dal ? `<tr><td>Day-ahead system lambda</td><td class="n">${fmtPrice(dal[h])}</td></tr>` : "") +
         (lam ? `<tr><td>Real-time system lambda</td><td class="n">${fmtPrice(lam[h])}</td></tr>` : "") + `</table>`);
     }).on("pointerleave", () => { cross.style("display", "none"); hideTip(); });
   el.replaceChildren(svg.node());
-  setCSV(el, ["hour_ending", "da_hub_avg", "rt_lambda"], HRS.map((h) => [h + 1, H.hub[h], lam ? lam[h] : null]), `Hub price ${S.date}`);
+  setCSV(el, ["hour_ending", "da_hub_avg", "da_lambda", "rt_lambda"], HRS.map((h) => [h + 1, H.hub[h], dal ? dal[h] : null, lam ? lam[h] : null]), `Hub price ${S.date}`);
   $("headline-note").textContent = `${S.date} · forecast`;
   $("spark-note").textContent = `Shaded bands are the bottom quarter, middle half and top quarter of daily hub averages over ${H.band_window.from} to ${H.band_window.to}. ` +
-    (lam ? "The dashed line is the real-time system lambda." : "Real-time system lambda is drawn beside the day-ahead line once the day has happened.");
+    (dal ? "The dotted line is the day-ahead system lambda, the hub average less the hubs' congestion. " : "") +
+    (lam ? "The dashed line is the real-time system lambda." : "Real-time system lambda is drawn beside the day-ahead lines once the day has happened.");
 }
 
 function miniSeries() {
@@ -731,7 +735,7 @@ function loadView() {
 async function boot() {
   S.fc = await tryJSON("data/forecast/index.json.gz");
   if (!S.fc || !S.fc.days || !S.fc.days.length) { $("status").textContent = "No forecast files yet. They are built by the data update workflow."; return; }
-  [S.index, S.scores, S.hubs, S.prices_all] = await Promise.all([tryJSON("data/index.json"), tryJSON("data/forecast/scores.json.gz"), tryJSON("data/dam_hubs.json.gz"), tryJSON("data/summary_prices.json.gz")]);
+  [S.index, S.scores, S.hubs, S.prices_all, S.dalam] = await Promise.all([tryJSON("data/index.json"), tryJSON("data/forecast/scores.json.gz"), tryJSON("data/dam_hubs.json.gz"), tryJSON("data/summary_prices.json.gz"), tryJSON("data/dam_lambda.json.gz")]);
   S.index = S.index || { days: {} };
   const days = S.fc.days;
   loadView();
