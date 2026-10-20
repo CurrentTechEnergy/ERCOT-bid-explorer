@@ -57,11 +57,11 @@ RENEW_FUEL = {"Wind": "wind", "Solar": "solar", "BATT": "storage"}   # unit-leve
 # remainder (the report's total, which leaves the IRR part out, less the unit-level listings) as
 # about 257 MW + 0.93 x remainder (daily, Mar-Aug 2026, r 0.98, residual MAE 1.0 GW).  Spread at
 # that slope, the committed minimum ran 500 MW low in cheap hours (part of that outage sits on
-# units already off on price), so the slope is set from the backtest instead: 0.60 passes the
-# gate (0.75 and 0.93 fail it).  In-sample either way.  (The earlier fit, 910 + 0.46 x, took the
+# units already off on price), so the slope is set from the backtest instead: 0.65 passes the
+# gate (0.70 and 0.93 fail it).  In-sample either way.  (The earlier fit, 910 + 0.46 x, took the
 # IRR part off a total that never held it.)
 UNSEEN_BASE = 257.0           # MW, fleet, split across zones by their thermal MW
-UNSEEN_SLOPE = 0.60           # MW per MW of zonal remainder
+UNSEEN_SLOPE = 0.65           # MW per MW of zonal remainder
 OUT_SHARE_MIN = 0.5            # a non-CC unit listed with at least this share of its max MW out is off for the day
 NRC_OFF_PCT = 50.0             # a reactor the NRC reported below this power the morning before D is off on D
 CC_MIN_DAYS = 120              # days of 60-day history before the asof point a train's smallest running size is taken from

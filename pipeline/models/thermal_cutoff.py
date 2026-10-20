@@ -54,7 +54,8 @@ For every thermal train in the latest DAM disclosure (pipeline.forecast.context.
               (Context.unseen_out, planned outages mostly) is spread over the zone's coal, CC, gas
               steam and combustion turbine units not judged "outage", by HSL: each carries unseen_share, folded into
               out_share, which the dispatch model takes off its weight
-  peakers     combustion turbines are not judged here (peaker_share, by hour, on the hours
+  peakers     combustion turbines outside the never-off group (which are held on, as other
+              never-off units) are not judged here (peaker_share, by hour, on the hours
               they were available); they get verdict "peaker" and p_on from that model, and the
               outage calls above (long outage, listed, unseen share) as other units do.
 

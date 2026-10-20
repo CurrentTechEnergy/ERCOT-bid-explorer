@@ -19,7 +19,7 @@ data/forecast/<date>.json.gz
   capacity          group[g] and tech[t]: {cap, on, off, out, unknown, min, exp, gwh, n_on,
                     n_off, n_out, n_unknown} (MW; on, off and min weighted by each unit's mean p over the day, as exp is,
                     with a unit's outage share (out_share: listed gas turbines and the zonal unseen outage) in out, not off;
-                    out and unknown the HSL of units in those states; n_on counts p >= 0.5)
+                    out and unknown the HSL of units in those states; n_on counts p >= 0.5 of the share not on outage)
   hourly            group[g] / tech[t] / category[c] / fleet: {min, exp, hsl} [24]; wind /
                     solar: {avail, disp} [24]; storage: {dis, chg, soc} [24] (fleet discharging MW,
                     charging MW below zero, energy path MWh) or null; model: {series: "model version"}
@@ -139,8 +139,9 @@ def build_day(date, ctx: C.Context) -> dict:
         g = "never" if row["tech"] == "nuclear" else (row["group"] or "ungrouped")
         hsl, lsl = d["hsl"], float(row["lsl"] or 0.0)
         p_day = float(np.mean(d["p"]))
+        avail = 1.0 - float(row.get("out_share") or 0.0)      # counted on or off by its odds while available
         state = ("out" if row["verdict"] == "outage" else "unknown" if row["verdict"] == "nocut"
-                 else "on" if p_day >= 0.5 else "off")
+                 else "on" if p_day >= 0.5 * avail else "off")
         exp_mean = float(d["exp"].mean())
         min_mean = float(np.mean(d["min"]))
         for tgt in ((cap["group"][g] if g in cap["group"] else None), cap["tech"][row["tech"]]):
@@ -173,11 +174,11 @@ def build_day(date, ctx: C.Context) -> dict:
             c["on"] += p_day * hsl; c["min"] += min_mean
         if state == "on":
             c["n_on"] += 1
-        p_on = round(p_day, 2) if row["tech"] == "combustion_turbine" else row["p_on"]
+        p_on = round(p_day, 2) if row["verdict"] == "peaker" else row["p_on"]
         unit_rows.append([key, row["tech"], g, _r(hsl), _r(lsl), row["verdict"], p_on, row["loss"], row["cutoff"],
                           row["off_from"], row["off_hours"], row["reason"], int(d["curve"]),
-                          row["model"] if row["tech"] != "combustion_turbine" else peak["rows"].get(key, {}).get("model", row["model"]),
-                          row["version"] if row["tech"] != "combustion_turbine" else peak["rows"].get(key, {}).get("version", row["version"]),
+                          row["model"] if row["verdict"] != "peaker" else peak["rows"].get(key, {}).get("model", row["model"]),
+                          row["version"] if row["verdict"] != "peaker" else peak["rows"].get(key, {}).get("version", row["version"]),
                           row.get("win_from"), row.get("win_hours"), row.get("out_share"), d.get("small"),
                           row.get("p_base"), row.get("drivers")])
         hs = [[round(float(v), 2) for v in d["p"]], [round(float(v)) for v in d["exp"]], [round(float(v)) for v in d["min"]]]
