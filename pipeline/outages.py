@@ -1,7 +1,7 @@
 """ERCOT's resource outage reports, kept for the commitment forecast (pipeline/models/
 thermal_cutoff.py).  The 60-day disclosure shows a unit's outage about sixty days late; these two
-reports show outages within days, or ahead of time.  Collected only for now: no model reads them
-yet.
+reports show outages within days, or ahead of time.  Read by the commitment forecast through
+Context.listed_out and Context.unseen_out (pipeline/forecast/context.py).
 
 Reports (ERCOT Public API):
   NP1-346-ER  Unplanned Resource Outages Report.  Posted daily (about 05:00 Central): every

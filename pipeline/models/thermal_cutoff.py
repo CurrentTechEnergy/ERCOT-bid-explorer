@@ -37,9 +37,14 @@ For every thermal train in the latest DAM disclosure (pipeline.forecast.context.
   NRC        a nuclear unit whose reactor the NRC reported below NRC_OFF_PCT power the morning
               before (Context.nrc_off) is "outage" all day
   listed out  a unit in ERCOT's unplanned outage report public before the day cleared
-              (Context.listed_out) is "outage" all day; a CC train at a site with part of its MW
-              listed out keeps its verdict and carries out_share, which the dispatch model takes
-              off its weight
+              (Context.listed_out) is "outage" all day; a CC train counts only when all its gas
+              turbines are listed (one listed of two usually still runs, on the other).  A CC
+              train on a long outage at the last known hour that the report no longer lists is
+              judged as if off then.
+  unseen      the outage capacity by zone that the unit-level report does not explain
+              (Context.unseen_out, planned outages mostly) is spread over the zone's coal, CC and
+              gas steam units not judged "outage", by HSL: each carries unseen_share, folded into
+              out_share, which the dispatch model takes off its weight
   peakers     combustion turbines are not judged here (peaker_share, by hour); they get
               verdict "peaker" and p_on from that model.
 
@@ -57,6 +62,8 @@ groups_at), decision days on or before the known date, and the last known state 
 merged states up to that hour only (an off spell open at that hour is judged on its hours so
 far, not on how it later turned out).  A live day reads the full record, as before.
 """
+from collections import defaultdict
+
 import numpy as np
 
 from ..config import DATA_DIR
@@ -65,8 +72,9 @@ from ..store import read_json_gz
 from ..decisions import _window, _cutoff, _dam_trains, HALF, OUT_MIN_H
 from ..forecast import context as C
 
+UNSEEN_TECHS = ("coal", "combined_cycle", "gas_steam")   # spread the zonal unseen outage MW over these
 NAME = "thermal_cutoff"
-VERSION = "v1"    # v1: NRC reactor status, listed outages; probability of staying on through the window, per-unit horizon, pooled cutoffs
+VERSION = "v2"    # v2: CC outage calls by gas turbine, zonal unseen outages; v1: NRC reactor status, listed outages; probability of staying on through the window, per-unit horizon, pooled cutoffs
 SEASONAL_VERSION = "v0"
 RUN_SHARE = 0.5          # a month the unit ran through: online at least this share of its hours
 LONG_OUT = 21            # days an outage must already have lasted at the last known hour to carry forward
@@ -301,6 +309,7 @@ def forecast(date, ctx: C.Context) -> dict:
     mtd, month = ctx.month_to_date_hub(date)
     node_src = ctx.node_source(date)
     rows = {}
+    listed = ctx.listed_out(date)
     for key, u in units.items():
         t = u["tech"]
         if t not in C.THERMAL:
@@ -310,6 +319,9 @@ def forecast(date, ctx: C.Context) -> dict:
         last, out_days = _last_state(ctx, key, known)
         if last == "o" and out_days < LONG_OUT:
             last = "0"       # a short outage sixty days ago: treated as off then, judged normally
+        cleared = (last == "o" and t == "combined_cycle" and listed is not None and not listed.get(key))
+        if cleared:
+            last = "0"       # a CC outage sixty days ago the outage report no longer lists: judged normally
         row = {"tech": t, "group": g, "hsl": u["hsl"], "lsl": u["lsl"], "outage": last == "o",
                "verdict": None, "p_on": 0.0, "loss": None, "cutoff": None, "off_from": None, "off_hours": 0,
                "reason": "", "model": NAME, "version": VERSION}
@@ -381,8 +393,10 @@ def forecast(date, ctx: C.Context) -> dict:
                     row.update(verdict="on", reason=why)
             if u["est"] == 2:
                 row["reason"] += " (generic costs)"
+        if cleared:
+            row["reason"] += f"; on outage for {out_days:.0f} days at the last known hour, no longer in the outage report"
         rows[key] = row
-    listed = ctx.listed_out(date)
+    listed = listed or {}
     nrc = ctx.nrc_off(date)
     for key, row in rows.items():
         if key in nrc and row["verdict"] != "outage":
@@ -396,7 +410,22 @@ def forecast(date, ctx: C.Context) -> dict:
                        reason="listed out in ERCOT's unplanned outage report")
         elif share > 0 and row["verdict"] != "outage":
             row["out_share"] = round(share, 3)
-            row["reason"] += f"; {share:.0%} of its site listed out in ERCOT's unplanned outage report"
+            row["reason"] += f"; {share:.0%} of its gas turbines listed out in ERCOT's unplanned outage report"
+    zone_mw, pool = defaultdict(float), defaultdict(float)
+    for key, row in rows.items():
+        z = ctx.zone_of(units[key]["sp"], key) if row["tech"] in UNSEEN_TECHS else None
+        row["_zone"] = z
+        if z:
+            zone_mw[z] += row["hsl"] or 0
+            if row["verdict"] != "outage":
+                pool[z] += (row["hsl"] or 0) * (1 - row.get("out_share", 0.0))
+    unseen = ctx.unseen_out(date, zone_mw) or {}
+    for key, row in rows.items():
+        z = row.pop("_zone")
+        if z and row["verdict"] != "outage" and unseen.get(z) and pool[z] > 0:
+            sh = min(1.0, unseen[z] / pool[z])
+            row["unseen_share"] = round(sh, 3)
+            row["out_share"] = round(1 - (1 - row.get("out_share", 0.0)) * (1 - sh), 3)
     return {"rows": rows, "inputs": {"known_date": known, "hindsight": hindsight, "asof": point,
                                      "asof_hindsight": asof_hind, "node_prices": node_src,
                                      "month": month, "month_hub": None if mtd is None else round(mtd, 2)}}

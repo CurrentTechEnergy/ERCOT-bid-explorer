@@ -51,6 +51,13 @@ RENEW = ["wind", "solar"]
 CURVE_DIR = UNIT_DATA_DIR / "forecast" / "curves"
 CURVE_FORMAT = 1
 OUTAGE_SNAPSHOT_LAG = 4        # days: the NP1-346-ER snapshot of D - 4 is posted about 05:00 on D - 1, before D clears
+# Unseen outage MW (Context.unseen_out): the outage HSL the forecast missed regresses on the zonal
+# remainder as about 4,200 MW + 0.84 x remainder (daily, Mar-Aug 2026, r 0.98; slope 0.70-0.73 in
+# spring and summer alone).  Spread as a share of each unit's weight that takes off its committed
+# minimum, the full estimate overshot (bias -2.3 GW), so both terms are scaled by 0.3, the factor
+# that brought the backtest's committed-minimum bias to about zero.
+UNSEEN_BASE = 1260.0          # MW, fleet, split across zones by their thermal MW
+UNSEEN_SLOPE = 0.25           # MW per MW of zonal remainder
 OUT_SHARE_MIN = 0.5            # a non-CC unit listed with at least this share of its max MW out is off for the day
 NRC_OFF_PCT = 50.0             # a reactor the NRC reported below this power the morning before D is off on D
 CC_MIN_DAYS = 120              # days of 60-day history before the asof point a train's smallest running size is taken from
@@ -94,6 +101,9 @@ class Context:
         self._raw = None
         self._off_p10 = None
         self._listed = {}
+        self._turbines = None
+        self._cap = None
+        self._zones = None
         self._nrc = None
         self._cc_lsl = None
         self._cc_min = {}
@@ -287,41 +297,100 @@ class Context:
     def listed_out(self, date):
         """{unit or train: share out} from ERCOT's unplanned outage report public before `date`
         cleared (the snapshot of D - OUTAGE_SNAPSHOT_LAG, pipeline/outages.py), counting outages
-        not ended by the start of `date`.  A non-CC unit, matched by name, is 1.0 when its listed
-        MW out is at least OUT_SHARE_MIN of its max MW.  The report names a CC plant site, not
-        the train, so each train at the site gets the site's MW out over its total MW (the trains'
-        MW from data/groups_60d.json.gz), capped at 1.  {} when there is no snapshot."""
+        not ended by the start of `date`.  The report can list one turbine on several rows (one
+        per outage entry), so each turbine counts once, at its largest MW out.  A non-CC unit,
+        matched by name, is 1.0 when its MW out is at least OUT_SHARE_MIN of its max MW.  A CC
+        train is 1.0 when every one of its gas turbines (pipeline/sp_list.py) is listed that
+        way, and otherwise the share of its gas turbines so listed when any is; a train the
+        turbine map does not cover gets its site's MW out over the site's MW (the trains' MW from
+        data/groups_60d.json.gz), capped at 1.  None when there is no snapshot."""
         if date in self._listed:
             return self._listed[date]
         snap = (_d(date) - dt.timedelta(days=OUTAGE_SNAPSHOT_LAG)).isoformat()
         s = read_json_gz(DATA_DIR / "outages" / "unplanned" / f"{snap}.json.gz", default=None)
-        out = {}
+        out = None
         if s and s.get("rows"):
+            out = {}
             c = {n: i for i, n in enumerate(s["columns"])}
             t0 = date + "T00:00"
             live = [r for r in s["rows"] if not (r[c["actual_end"]] and r[c["actual_end"]] < t0)
                     and not (r[c["planned_end"]] and r[c["planned_end"]] < t0)]
-            by_unit, by_site = defaultdict(lambda: [0.0, 0.0]), defaultdict(float)
+            tur = {}
             for r in live:
-                e = by_unit[r[c["unit"]]]
-                e[0] += r[c["mw_out"]] or 0
-                e[1] = max(e[1], r[c["mw_max"]] or 0)
-                by_site[r[c["resource"]]] += r[c["mw_out"]] or 0
+                mw, mx, _ = tur.get(r[c["unit"]], (0.0, 0.0, None))
+                tur[r[c["unit"]]] = (max(mw, r[c["mw_out"]] or 0), max(mx, r[c["mw_max"]] or 0), r[c["resource"]])
+            down = {u for u, (mw, mx, _) in tur.items() if mx > 0 and mw >= OUT_SHARE_MIN * mx}
+            if self._turbines is None:
+                self._turbines = (read_json_gz(DATA_DIR / "outages" / "cc_turbines.json.gz", default=None) or {}).get("trains", {})
             gu = (read_json_gz(DATA_DIR / "groups_60d.json.gz", default={}) or {}).get("units", {})
-            site_mw = defaultdict(float)
+            by_site, site_mw = defaultdict(float), defaultdict(float)
+            for mw, _, site in tur.values():
+                by_site[site] += mw
             for key, v in gu.items():
                 if v[0] == "combined_cycle":
                     site_mw[_site(key)] += v[2] or 0
             for key, v in gu.items():
-                if v[0] == "combined_cycle":
+                if v[0] != "combined_cycle":
+                    continue
+                gas = self._turbines.get(key, {}).get("gas")
+                if gas:
+                    n = sum(t in down for t in gas)
+                    if n:
+                        out[key] = n / len(gas)
+                else:
                     mw = by_site.get(_site(key), 0.0)
                     if mw > 0 and site_mw[_site(key)] > 0:
                         out[key] = min(1.0, mw / site_mw[_site(key)])
-            for name, (mw, mx) in by_unit.items():
-                if name not in out and mx > 0 and mw >= OUT_SHARE_MIN * mx:
-                    out[name] = 1.0
+            for name in down:
+                out.setdefault(name, 1.0)
         self._listed[date] = out
         return out
+
+    def unseen_out(self, date, zone_mw):
+        """{zone: MW of thermal outage the unit-level report does not show}: the zonal outage
+        capacity public before `date` cleared (pipeline/outages.py, planned outages included),
+        less its renewable part, less the MW the unit-level snapshot lists in the zone, as
+        UNSEEN_BASE (split by `zone_mw`, the zones' thermal MW) + UNSEEN_SLOPE x that remainder,
+        at least 0.  None when either report is missing."""
+        self._load_zones()
+        c = self._cap.get(date)
+        snap = (_d(date) - dt.timedelta(days=OUTAGE_SNAPSHOT_LAG)).isoformat()
+        s = read_json_gz(DATA_DIR / "outages" / "unplanned" / f"{snap}.json.gz", default=None)
+        if not c or not s or not s.get("rows"):
+            return None
+        ci = {n: i for i, n in enumerate(s["columns"])}
+        t0 = date + "T00:00"
+        tur = {}
+        for r in s["rows"]:
+            if (r[ci["actual_end"]] and r[ci["actual_end"]] < t0) or (r[ci["planned_end"]] and r[ci["planned_end"]] < t0):
+                continue
+            if r[ci["fuel"]] in ("Wind", "Solar", "Storage"):
+                continue
+            z = self._zones["sub"].get(r[ci["resource"]])
+            if z:
+                tur[r[ci["unit"]]] = (z, max(tur.get(r[ci["unit"]], (z, 0.0))[1], r[ci["mw_out"]] or 0))
+        listed = defaultdict(float)
+        for z, mw in tur.values():
+            listed[z] += mw
+        tot_mw = sum(zone_mw.values()) or 1.0
+        out = {}
+        for z, v in c["total"].items():
+            irr = (c.get("irr") or {}).get(z) or [0] * 24
+            rem = float(np.mean([(a or 0) - (b or 0) for a, b in zip(v, irr)])) - listed[z]
+            out[z] = max(0.0, UNSEEN_BASE * zone_mw.get(z, 0.0) / tot_mw + UNSEEN_SLOPE * rem)
+        return out
+
+    def _load_zones(self):
+        if self._cap is None:
+            self._cap = (read_json_gz(DATA_DIR / "outages" / "capacity.json.gz", default=None) or {}).get("days", {})
+            self._zones = read_json_gz(DATA_DIR / "outages" / "sp_zones.json.gz", default=None) or {"node": {}, "sub": {}}
+
+    def zone_of(self, sp, key=""):
+        """The outage-capacity zone (houston, north, south, west) of a unit, from its resource
+        node, else its site (a CC train's node is its logical name), or None."""
+        self._load_zones()
+        return (self._zones["node"].get(sp) or self._zones["sub"].get(_site(key))
+                or self._zones["sub"].get(key.split("_")[0]))
 
     def nrc_off(self, date):
         """{nuclear unit: power %} for the units of every reactor the NRC reported below
