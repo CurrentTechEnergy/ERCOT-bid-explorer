@@ -179,11 +179,21 @@ function verdictHTML(F, f, full = false) {
   return t + driversHTML(f);
 }
 // what moved the chance of running: the trees' starting point and each input's push, adding up to p_on
+// the pipeline's driver names (thermal_cutoff DRIVERS) in market words
+const DRIVER_LABEL = {
+  "loss against its cutoff": "cost to stay on against its usual",
+  "award history": "day-ahead award history",
+  "window length against its usual off spell": "length of the cheap stretch against its usual time off",
+  "margin before and after the window": "earnings before and after the cheap stretch",
+  "share of days it ran": "how often it runs",
+  "hour-by-hour prices in the window": "prices through the cheap stretch",
+  "technology, group and month": "technology, cycling pattern and season",
+};
 function driversHTML(f) {
   if (!f.drivers || f.p_base == null) return "";
-  const pts = (v) => `${v >= 0 ? "+" : "−"}${Math.abs(Math.round(v * 100))} pts`;
+  const pts = (v) => { const n = Math.abs(Math.round(v * 100)); return `${v >= 0 ? "+" : "−"}${n} ${n === 1 ? "pt" : "pts"}`; };
   return `<br><b>What moved the odds</b> from ${fmtPct(f.p_base)} for a typical unit to ${fmtPct(f.p_on)}: ` +
-    f.drivers.map(([k, v]) => `${esc(k)} ${pts(v)}`).join(" · ") + ".";
+    f.drivers.map(([k, v]) => `${esc(DRIVER_LABEL[k] || k)} ${pts(v)}`).join(" · ") + ".";
 }
 function drawHead(e) {
   $("unit-title").textContent = e.name;
