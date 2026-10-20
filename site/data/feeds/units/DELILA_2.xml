@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
   <title>DELILA_2: bidding and operating changes</title>
-  <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=DELILA_2"/>
-  <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=DELILA_2</id>
+  <link href="https://ercotbids.currenttech.energy/unit.html?unit=DELILA_2"/>
+  <id>https://ercotbids.currenttech.energy/unit.html?unit=DELILA_2</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
     <title>DELILA_2: New floor (2025-10-31)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=DELILA_2"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=DELILA_2#DELILA_2/2025-10-31/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=DELILA_2"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=DELILA_2#DELILA_2/2025-10-31/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor $0 to floor -$42</summary>
   </entry>

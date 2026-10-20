@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
   <title>DEC_AGR_A: bidding and operating changes</title>
-  <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=DEC_AGR_A"/>
-  <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=DEC_AGR_A</id>
+  <link href="https://ercotbids.currenttech.energy/unit.html?unit=DEC_AGR_A"/>
+  <id>https://ercotbids.currenttech.energy/unit.html?unit=DEC_AGR_A</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
     <title>DEC_AGR_A: Bidding approach shifted (2026-02-01)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=DEC_AGR_A"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=DEC_AGR_A#DEC_AGR_A/2026-02-01/bidding</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=DEC_AGR_A"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=DEC_AGR_A#DEC_AGR_A/2026-02-01/bidding</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Offer price vs peer median: $23 to $10/MWh</summary>
   </entry>
   <entry>
     <title>DEC_AGR_A: Bidding approach shifted (2026-01-24)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=DEC_AGR_A"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=DEC_AGR_A#DEC_AGR_A/2026-01-24/bidding</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=DEC_AGR_A"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=DEC_AGR_A#DEC_AGR_A/2026-01-24/bidding</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Offer price vs peer median: $6 to $23/MWh</summary>
   </entry>

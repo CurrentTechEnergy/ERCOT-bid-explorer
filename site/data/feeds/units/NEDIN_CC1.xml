@@ -1,69 +1,69 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
   <title>NEDIN_CC1: bidding and operating changes</title>
-  <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=NEDIN_CC1"/>
-  <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=NEDIN_CC1</id>
+  <link href="https://ercotbids.currenttech.energy/unit.html?unit=NEDIN_CC1"/>
+  <id>https://ercotbids.currenttech.energy/unit.html?unit=NEDIN_CC1</id>
   <updated>2026-10-19T00:00:00Z</updated>
   <entry>
     <title>NEDIN_CC1: Timescale group changed (2026-08-01)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=NEDIN_CC1"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=NEDIN_CC1#NEDIN_CC1/2026-08-01/group</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=NEDIN_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=NEDIN_CC1#NEDIN_CC1/2026-08-01/group</id>
     <updated>2026-10-19T00:00:00Z</updated>
     <summary>Daily, 1–2 a week in 2026-07 to Multi-day: off 1–7 days in 2026-08</summary>
   </entry>
   <entry>
     <title>NEDIN_CC1: Shut down despite a day-ahead award (2026-06-20)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=NEDIN_CC1"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=NEDIN_CC1#NEDIN_CC1/2026-06-20/shutdown_award</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=NEDIN_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=NEDIN_CC1#NEDIN_CC1/2026-06-20/shutdown_award</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Shut down for 17 h although a day-ahead award covered 100% of the window</summary>
   </entry>
   <entry>
     <title>NEDIN_CC1: Shut down despite a day-ahead award (2026-05-03)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=NEDIN_CC1"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=NEDIN_CC1#NEDIN_CC1/2026-05-03/shutdown_award</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=NEDIN_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=NEDIN_CC1#NEDIN_CC1/2026-05-03/shutdown_award</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Shut down for 36 h although a day-ahead award covered 100% of the window</summary>
   </entry>
   <entry>
     <title>NEDIN_CC1: Shut down after a long run (2026-05-01)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=NEDIN_CC1"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=NEDIN_CC1#NEDIN_CC1/2026-05-01/shutdown_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=NEDIN_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=NEDIN_CC1#NEDIN_CC1/2026-05-01/shutdown_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Shut down for 24 h after 36 days without a shutdown</summary>
   </entry>
   <entry>
     <title>NEDIN_CC1: Timescale group changed (2026-05-01)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=NEDIN_CC1"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=NEDIN_CC1#NEDIN_CC1/2026-05-01/group</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=NEDIN_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=NEDIN_CC1#NEDIN_CC1/2026-05-01/group</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Never off in 2026-04 to Daily, 1–2 a week in 2026-05</summary>
   </entry>
   <entry>
     <title>NEDIN_CC1: Outage ended (2026-04-20)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=NEDIN_CC1"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=NEDIN_CC1#NEDIN_CC1/2026-04-20/outage_end</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=NEDIN_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=NEDIN_CC1#NEDIN_CC1/2026-04-20/outage_end</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Back from a 22-day outage</summary>
   </entry>
   <entry>
     <title>NEDIN_CC1: Timescale group changed (2026-04-01)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=NEDIN_CC1"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=NEDIN_CC1#NEDIN_CC1/2026-04-01/group</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=NEDIN_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=NEDIN_CC1#NEDIN_CC1/2026-04-01/group</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Multi-day: off 1–7 days in 2026-03 to Never off in 2026-04</summary>
   </entry>
   <entry>
     <title>NEDIN_CC1: Outage started (2026-03-30)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=NEDIN_CC1"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=NEDIN_CC1#NEDIN_CC1/2026-03-30/outage_start</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=NEDIN_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=NEDIN_CC1#NEDIN_CC1/2026-03-30/outage_start</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Outage began, lasting 22 days</summary>
   </entry>
   <entry>
     <title>NEDIN_CC1: Timescale group changed (2026-01-01)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=NEDIN_CC1"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=NEDIN_CC1#NEDIN_CC1/2026-01-01/group</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=NEDIN_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=NEDIN_CC1#NEDIN_CC1/2026-01-01/group</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Daily, 1–2 a week in 2025-12 to Multi-day: off 1–7 days in 2026-01</summary>
   </entry>

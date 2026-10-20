@@ -1,62 +1,62 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
   <title>FLTCK_SSI: bidding and operating changes</title>
-  <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FLTCK_SSI"/>
-  <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FLTCK_SSI</id>
+  <link href="https://ercotbids.currenttech.energy/unit.html?unit=FLTCK_SSI"/>
+  <id>https://ercotbids.currenttech.energy/unit.html?unit=FLTCK_SSI</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
     <title>FLTCK_SSI: New floor (2025-06-28)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FLTCK_SSI"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FLTCK_SSI#FLTCK_SSI/2025-06-28/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=FLTCK_SSI"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=FLTCK_SSI#FLTCK_SSI/2025-06-28/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$38 to floor -$140</summary>
   </entry>
   <entry>
     <title>FLTCK_SSI: New floor (2025-06-28)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FLTCK_SSI"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FLTCK_SSI#FLTCK_SSI/2025-06-28/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=FLTCK_SSI"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=FLTCK_SSI#FLTCK_SSI/2025-06-28/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$38 to floor -$140</summary>
   </entry>
   <entry>
     <title>FLTCK_SSI: New floor (2024-09-12)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FLTCK_SSI"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FLTCK_SSI#FLTCK_SSI/2024-09-12/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=FLTCK_SSI"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=FLTCK_SSI#FLTCK_SSI/2024-09-12/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$36 to floor -$38</summary>
   </entry>
   <entry>
     <title>FLTCK_SSI: New floor (2024-09-12)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FLTCK_SSI"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FLTCK_SSI#FLTCK_SSI/2024-09-12/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=FLTCK_SSI"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=FLTCK_SSI#FLTCK_SSI/2024-09-12/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$36 to floor -$38</summary>
   </entry>
   <entry>
     <title>FLTCK_SSI: New floor (2024-03-13)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FLTCK_SSI"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FLTCK_SSI#FLTCK_SSI/2024-03-13/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=FLTCK_SSI"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=FLTCK_SSI#FLTCK_SSI/2024-03-13/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$32 to floor -$36</summary>
   </entry>
   <entry>
     <title>FLTCK_SSI: New floor (2024-03-13)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FLTCK_SSI"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FLTCK_SSI#FLTCK_SSI/2024-03-13/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=FLTCK_SSI"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=FLTCK_SSI#FLTCK_SSI/2024-03-13/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$32 to floor -$36</summary>
   </entry>
   <entry>
     <title>FLTCK_SSI: New floor (2020-09-29)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FLTCK_SSI"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FLTCK_SSI#FLTCK_SSI/2020-09-29/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=FLTCK_SSI"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=FLTCK_SSI#FLTCK_SSI/2020-09-29/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor $0 to floor -$32</summary>
   </entry>
   <entry>
     <title>FLTCK_SSI: New floor (2020-09-29)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FLTCK_SSI"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FLTCK_SSI#FLTCK_SSI/2020-09-29/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=FLTCK_SSI"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=FLTCK_SSI#FLTCK_SSI/2020-09-29/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor $0 to floor -$32</summary>
   </entry>

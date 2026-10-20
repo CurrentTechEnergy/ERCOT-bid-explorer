@@ -1,41 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
   <title>HOL: bidding and operating changes</title>
-  <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=HOL"/>
-  <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=HOL</id>
+  <link href="https://ercotbids.currenttech.energy/unit.html?unit=HOL"/>
+  <id>https://ercotbids.currenttech.energy/unit.html?unit=HOL</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
     <title>HOL: New floor (2026-08-11)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=HOL"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=HOL#HOL/2026-08-11/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=HOL"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=HOL#HOL/2026-08-11/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$38 to floor -$42</summary>
   </entry>
   <entry>
     <title>HOL: New floor (2026-03-06)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=HOL"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=HOL#HOL/2026-03-06/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=HOL"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=HOL#HOL/2026-03-06/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$35 to floor -$38</summary>
   </entry>
   <entry>
     <title>HOL: Back to an earlier floor (2025-07-22)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=HOL"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=HOL#HOL/2025-07-22/renew_floor_back</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=HOL"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=HOL#HOL/2025-07-22/renew_floor_back</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Back to an earlier floor: floor -$32 to floor -$35</summary>
   </entry>
   <entry>
     <title>HOL: New floor (2025-05-16)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=HOL"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=HOL#HOL/2025-05-16/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=HOL"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=HOL#HOL/2025-05-16/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$35 to floor -$32</summary>
   </entry>
   <entry>
     <title>HOL: New floor (2024-09-25)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=HOL"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=HOL#HOL/2024-09-25/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=HOL"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=HOL#HOL/2024-09-25/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor $0 to floor -$35</summary>
   </entry>

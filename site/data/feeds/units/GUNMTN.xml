@@ -1,48 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
   <title>GUNMTN: bidding and operating changes</title>
-  <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=GUNMTN"/>
-  <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=GUNMTN</id>
+  <link href="https://ercotbids.currenttech.energy/unit.html?unit=GUNMTN"/>
+  <id>https://ercotbids.currenttech.energy/unit.html?unit=GUNMTN</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
     <title>GUNMTN: New floor (2026-06-16)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=GUNMTN"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=GUNMTN#GUNMTN/2026-06-16/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=GUNMTN"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=GUNMTN#GUNMTN/2026-06-16/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$38 to floor $0</summary>
   </entry>
   <entry>
     <title>GUNMTN: New floor (2025-06-11)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=GUNMTN"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=GUNMTN#GUNMTN/2025-06-11/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=GUNMTN"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=GUNMTN#GUNMTN/2025-06-11/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$37 to floor -$38</summary>
   </entry>
   <entry>
     <title>GUNMTN: New floor (2024-02-08)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=GUNMTN"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=GUNMTN#GUNMTN/2024-02-08/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=GUNMTN"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=GUNMTN#GUNMTN/2024-02-08/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$35 to floor -$37</summary>
   </entry>
   <entry>
     <title>GUNMTN: New floor (2023-02-25)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=GUNMTN"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=GUNMTN#GUNMTN/2023-02-25/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=GUNMTN"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=GUNMTN#GUNMTN/2023-02-25/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$33 to floor -$35</summary>
   </entry>
   <entry>
     <title>GUNMTN: New floor (2022-11-29)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=GUNMTN"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=GUNMTN#GUNMTN/2022-11-29/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=GUNMTN"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=GUNMTN#GUNMTN/2022-11-29/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$32 to floor -$33</summary>
   </entry>
   <entry>
     <title>GUNMTN: New floor (2022-04-04)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=GUNMTN"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=GUNMTN#GUNMTN/2022-04-04/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=GUNMTN"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=GUNMTN#GUNMTN/2022-04-04/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$36 to floor -$32</summary>
   </entry>

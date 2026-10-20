@@ -1,118 +1,118 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
   <title>PENA_UNIT2_J: bidding and operating changes</title>
-  <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PENA_UNIT2_J"/>
-  <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PENA_UNIT2_J</id>
+  <link href="https://ercotbids.currenttech.energy/unit.html?unit=PENA_UNIT2_J"/>
+  <id>https://ercotbids.currenttech.energy/unit.html?unit=PENA_UNIT2_J</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
     <title>PENA_UNIT2_J: New floor (2025-10-02)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PENA_UNIT2_J"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PENA_UNIT2_J#PENA_UNIT2_J/2025-10-02/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=PENA_UNIT2_J"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=PENA_UNIT2_J#PENA_UNIT2_J/2025-10-02/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$4 to floor -$2</summary>
   </entry>
   <entry>
     <title>PENA_UNIT2_J: Episode (2024-06-12)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PENA_UNIT2_J"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PENA_UNIT2_J#PENA_UNIT2_J/2024-06-12/renew_episode</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=PENA_UNIT2_J"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=PENA_UNIT2_J#PENA_UNIT2_J/2024-06-12/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Episode: floor -$4 to -$35 for the episode for 1 day(s)</summary>
   </entry>
   <entry>
     <title>PENA_UNIT2_J: Episode (2023-09-07)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PENA_UNIT2_J"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PENA_UNIT2_J#PENA_UNIT2_J/2023-09-07/renew_episode</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=PENA_UNIT2_J"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=PENA_UNIT2_J#PENA_UNIT2_J/2023-09-07/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Episode: floor -$4 to -$127 for the episode for 1 day(s)</summary>
   </entry>
   <entry>
     <title>PENA_UNIT2_J: Episode (2022-12-22)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PENA_UNIT2_J"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PENA_UNIT2_J#PENA_UNIT2_J/2022-12-22/renew_episode</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=PENA_UNIT2_J"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=PENA_UNIT2_J#PENA_UNIT2_J/2022-12-22/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Episode: floor -$4 to -$250 for the episode for 2 day(s)</summary>
   </entry>
   <entry>
     <title>PENA_UNIT2_J: Episode (2022-08-26)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PENA_UNIT2_J"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PENA_UNIT2_J#PENA_UNIT2_J/2022-08-26/renew_episode</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=PENA_UNIT2_J"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=PENA_UNIT2_J#PENA_UNIT2_J/2022-08-26/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Episode: floor -$4 to -$250 for the episode for 1 day(s)</summary>
   </entry>
   <entry>
     <title>PENA_UNIT2_J: Episode (2022-08-09)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PENA_UNIT2_J"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PENA_UNIT2_J#PENA_UNIT2_J/2022-08-09/renew_episode</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=PENA_UNIT2_J"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=PENA_UNIT2_J#PENA_UNIT2_J/2022-08-09/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Episode: floor -$4 to -$250 for the episode for 5 day(s)</summary>
   </entry>
   <entry>
     <title>PENA_UNIT2_J: Episode (2022-07-09)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PENA_UNIT2_J"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PENA_UNIT2_J#PENA_UNIT2_J/2022-07-09/renew_episode</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=PENA_UNIT2_J"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=PENA_UNIT2_J#PENA_UNIT2_J/2022-07-09/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Episode: floor -$4 to -$250 for the episode for 5 day(s)</summary>
   </entry>
   <entry>
     <title>PENA_UNIT2_J: Episode (2022-06-23)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PENA_UNIT2_J"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PENA_UNIT2_J#PENA_UNIT2_J/2022-06-23/renew_episode</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=PENA_UNIT2_J"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=PENA_UNIT2_J#PENA_UNIT2_J/2022-06-23/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Episode: floor -$4 to -$250 for the episode for 1 day(s)</summary>
   </entry>
   <entry>
     <title>PENA_UNIT2_J: Episode (2022-06-21)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PENA_UNIT2_J"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PENA_UNIT2_J#PENA_UNIT2_J/2022-06-21/renew_episode</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=PENA_UNIT2_J"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=PENA_UNIT2_J#PENA_UNIT2_J/2022-06-21/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Episode: floor -$4 to -$250 for the episode for 1 day(s)</summary>
   </entry>
   <entry>
     <title>PENA_UNIT2_J: Back to an earlier floor (2021-10-29)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PENA_UNIT2_J"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PENA_UNIT2_J#PENA_UNIT2_J/2021-10-29/renew_floor_back</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=PENA_UNIT2_J"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=PENA_UNIT2_J#PENA_UNIT2_J/2021-10-29/renew_floor_back</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Back to an earlier floor: floor -$7 to floor -$4</summary>
   </entry>
   <entry>
     <title>PENA_UNIT2_J: New floor (2021-10-18)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PENA_UNIT2_J"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PENA_UNIT2_J#PENA_UNIT2_J/2021-10-18/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=PENA_UNIT2_J"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=PENA_UNIT2_J#PENA_UNIT2_J/2021-10-18/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$4 to floor -$7</summary>
   </entry>
   <entry>
     <title>PENA_UNIT2_J: Back to an earlier floor (2021-01-23)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PENA_UNIT2_J"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PENA_UNIT2_J#PENA_UNIT2_J/2021-01-23/renew_floor_back</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=PENA_UNIT2_J"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=PENA_UNIT2_J#PENA_UNIT2_J/2021-01-23/renew_floor_back</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Back to an earlier floor: floor -$40 to floor -$4</summary>
   </entry>
   <entry>
     <title>PENA_UNIT2_J: New floor (2021-01-13)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PENA_UNIT2_J"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PENA_UNIT2_J#PENA_UNIT2_J/2021-01-13/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=PENA_UNIT2_J"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=PENA_UNIT2_J#PENA_UNIT2_J/2021-01-13/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$4 to floor -$40</summary>
   </entry>
   <entry>
     <title>PENA_UNIT2_J: Episode (2019-09-17)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PENA_UNIT2_J"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PENA_UNIT2_J#PENA_UNIT2_J/2019-09-17/renew_episode</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=PENA_UNIT2_J"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=PENA_UNIT2_J#PENA_UNIT2_J/2019-09-17/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Episode: floor -$4 to -$60 for the episode for 1 day(s)</summary>
   </entry>
   <entry>
     <title>PENA_UNIT2_J: Episode (2019-09-13)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PENA_UNIT2_J"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PENA_UNIT2_J#PENA_UNIT2_J/2019-09-13/renew_episode</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=PENA_UNIT2_J"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=PENA_UNIT2_J#PENA_UNIT2_J/2019-09-13/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Episode: floor -$4 to -$60 for the episode for 1 day(s)</summary>
   </entry>
   <entry>
     <title>PENA_UNIT2_J: New floor (2019-03-08)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PENA_UNIT2_J"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PENA_UNIT2_J#PENA_UNIT2_J/2019-03-08/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=PENA_UNIT2_J"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=PENA_UNIT2_J#PENA_UNIT2_J/2019-03-08/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor $0 to floor -$4</summary>
   </entry>

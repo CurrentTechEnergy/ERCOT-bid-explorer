@@ -1,27 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
   <title>ANCHOR_ESR1: bidding and operating changes</title>
-  <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ANCHOR_ESR1"/>
-  <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ANCHOR_ESR1</id>
+  <link href="https://ercotbids.currenttech.energy/unit.html?unit=ANCHOR_ESR1"/>
+  <id>https://ercotbids.currenttech.energy/unit.html?unit=ANCHOR_ESR1</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
     <title>ANCHOR_ESR1: Battery size changed (2026-06-09)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ANCHOR_ESR1"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ANCHOR_ESR1#ANCHOR_ESR1/2026-06-09/battery_size</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=ANCHOR_ESR1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=ANCHOR_ESR1#ANCHOR_ESR1/2026-06-09/battery_size</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Maximum state of charge 43 to 56 MWh</summary>
   </entry>
   <entry>
     <title>ANCHOR_ESR1: Battery size changed (2026-05-01)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ANCHOR_ESR1"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ANCHOR_ESR1#ANCHOR_ESR1/2026-05-01/battery_size</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=ANCHOR_ESR1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=ANCHOR_ESR1#ANCHOR_ESR1/2026-05-01/battery_size</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Maximum state of charge 57 to 40 MWh</summary>
   </entry>
   <entry>
     <title>ANCHOR_ESR1: Battery size changed (2026-03-25)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ANCHOR_ESR1"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ANCHOR_ESR1#ANCHOR_ESR1/2026-03-25/battery_size</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=ANCHOR_ESR1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=ANCHOR_ESR1#ANCHOR_ESR1/2026-03-25/battery_size</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Maximum output 35 to 28 MW</summary>
   </entry>

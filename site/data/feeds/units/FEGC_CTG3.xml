@@ -1,118 +1,118 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
   <title>FEGC_CTG3: bidding and operating changes</title>
-  <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FEGC_CTG3"/>
-  <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FEGC_CTG3</id>
+  <link href="https://ercotbids.currenttech.energy/unit.html?unit=FEGC_CTG3"/>
+  <id>https://ercotbids.currenttech.energy/unit.html?unit=FEGC_CTG3</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
     <title>FEGC_CTG3: Outage ended (2026-06-28)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FEGC_CTG3"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FEGC_CTG3#FEGC_CTG3/2026-06-28/outage_end</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=FEGC_CTG3"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=FEGC_CTG3#FEGC_CTG3/2026-06-28/outage_end</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Back from a 11-day outage</summary>
   </entry>
   <entry>
     <title>FEGC_CTG3: Outage started (2026-06-17)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FEGC_CTG3"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FEGC_CTG3#FEGC_CTG3/2026-06-17/outage_start</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=FEGC_CTG3"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=FEGC_CTG3#FEGC_CTG3/2026-06-17/outage_start</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Outage began, lasting 11 days</summary>
   </entry>
   <entry>
     <title>FEGC_CTG3: Bidding approach shifted (2026-06-02)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FEGC_CTG3"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FEGC_CTG3#FEGC_CTG3/2026-06-02/bidding</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=FEGC_CTG3"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=FEGC_CTG3#FEGC_CTG3/2026-06-02/bidding</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Offer price vs peer median: $9 to -$1/MWh</summary>
   </entry>
   <entry>
     <title>FEGC_CTG3: Timescale group changed (2026-06-01)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FEGC_CTG3"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FEGC_CTG3#FEGC_CTG3/2026-06-01/group</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=FEGC_CTG3"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=FEGC_CTG3#FEGC_CTG3/2026-06-01/group</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Never off in 2026-05 to Daily, 1–2 a week in 2026-06</summary>
   </entry>
   <entry>
     <title>FEGC_CTG3: Outage ended (2026-05-30)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FEGC_CTG3"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FEGC_CTG3#FEGC_CTG3/2026-05-30/outage_end</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=FEGC_CTG3"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=FEGC_CTG3#FEGC_CTG3/2026-05-30/outage_end</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Back from a 16-day outage</summary>
   </entry>
   <entry>
     <title>FEGC_CTG3: Outage started (2026-05-14)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FEGC_CTG3"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FEGC_CTG3#FEGC_CTG3/2026-05-14/outage_start</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=FEGC_CTG3"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=FEGC_CTG3#FEGC_CTG3/2026-05-14/outage_start</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Outage began, lasting 16 days</summary>
   </entry>
   <entry>
     <title>FEGC_CTG3: Bidding approach shifted (2026-05-07)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FEGC_CTG3"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FEGC_CTG3#FEGC_CTG3/2026-05-07/bidding</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=FEGC_CTG3"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=FEGC_CTG3#FEGC_CTG3/2026-05-07/bidding</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Offer price vs peer median: -$1 to $9/MWh</summary>
   </entry>
   <entry>
     <title>FEGC_CTG3: Outage ended (2026-04-08)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FEGC_CTG3"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FEGC_CTG3#FEGC_CTG3/2026-04-08/outage_end</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=FEGC_CTG3"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=FEGC_CTG3#FEGC_CTG3/2026-04-08/outage_end</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Back from a 8-day outage</summary>
   </entry>
   <entry>
     <title>FEGC_CTG3: Timescale group changed (2026-04-01)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FEGC_CTG3"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FEGC_CTG3#FEGC_CTG3/2026-04-01/group</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=FEGC_CTG3"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=FEGC_CTG3#FEGC_CTG3/2026-04-01/group</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Daily, over 2 a week in 2026-03 to Never off in 2026-04</summary>
   </entry>
   <entry>
     <title>FEGC_CTG3: Outage started (2026-03-31)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FEGC_CTG3"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FEGC_CTG3#FEGC_CTG3/2026-03-31/outage_start</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=FEGC_CTG3"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=FEGC_CTG3#FEGC_CTG3/2026-03-31/outage_start</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Outage began, lasting 8 days</summary>
   </entry>
   <entry>
     <title>FEGC_CTG3: Bidding approach shifted (2026-01-30)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FEGC_CTG3"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FEGC_CTG3#FEGC_CTG3/2026-01-30/bidding</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=FEGC_CTG3"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=FEGC_CTG3#FEGC_CTG3/2026-01-30/bidding</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Offer price vs peer median: $27 to $1/MWh</summary>
   </entry>
   <entry>
     <title>FEGC_CTG3: Bidding approach shifted (2026-01-25)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FEGC_CTG3"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FEGC_CTG3#FEGC_CTG3/2026-01-25/bidding</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=FEGC_CTG3"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=FEGC_CTG3#FEGC_CTG3/2026-01-25/bidding</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Running without an offer curve: 100% to 0% of the day</summary>
   </entry>
   <entry>
     <title>FEGC_CTG3: Outage ended (2026-01-02)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FEGC_CTG3"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FEGC_CTG3#FEGC_CTG3/2026-01-02/outage_end</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=FEGC_CTG3"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=FEGC_CTG3#FEGC_CTG3/2026-01-02/outage_end</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Back from a 11-day outage</summary>
   </entry>
   <entry>
     <title>FEGC_CTG3: Timescale group changed (2026-01-01)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FEGC_CTG3"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FEGC_CTG3#FEGC_CTG3/2026-01-01/group</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=FEGC_CTG3"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=FEGC_CTG3#FEGC_CTG3/2026-01-01/group</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Never off in 2025-12 to Daily, over 2 a week in 2026-01</summary>
   </entry>
   <entry>
     <title>FEGC_CTG3: Outage started (2025-12-22)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FEGC_CTG3"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FEGC_CTG3#FEGC_CTG3/2025-12-22/outage_start</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=FEGC_CTG3"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=FEGC_CTG3#FEGC_CTG3/2025-12-22/outage_start</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Outage began, lasting 11 days</summary>
   </entry>
   <entry>
     <title>FEGC_CTG3: Outage ended (2025-12-10)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FEGC_CTG3"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FEGC_CTG3#FEGC_CTG3/2025-12-10/outage_end</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=FEGC_CTG3"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=FEGC_CTG3#FEGC_CTG3/2025-12-10/outage_end</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Back from a 11-day outage</summary>
   </entry>

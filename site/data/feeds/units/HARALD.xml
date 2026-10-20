@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
   <title>HARALD: bidding and operating changes</title>
-  <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=HARALD"/>
-  <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=HARALD</id>
+  <link href="https://ercotbids.currenttech.energy/unit.html?unit=HARALD"/>
+  <id>https://ercotbids.currenttech.energy/unit.html?unit=HARALD</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
     <title>HARALD: New floor (2025-01-18)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=HARALD"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=HARALD#HARALD/2025-01-18/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=HARALD"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=HARALD#HARALD/2025-01-18/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$31 to floor -$40</summary>
   </entry>
   <entry>
     <title>HARALD: New floor (2020-09-10)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=HARALD"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=HARALD#HARALD/2020-09-10/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=HARALD"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=HARALD#HARALD/2020-09-10/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$26 to floor -$31</summary>
   </entry>

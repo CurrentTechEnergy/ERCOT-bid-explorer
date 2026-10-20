@@ -1,62 +1,62 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
   <title>LHORN_N: bidding and operating changes</title>
-  <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=LHORN_N"/>
-  <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=LHORN_N</id>
+  <link href="https://ercotbids.currenttech.energy/unit.html?unit=LHORN_N"/>
+  <id>https://ercotbids.currenttech.energy/unit.html?unit=LHORN_N</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
     <title>LHORN_N: New floor (2026-05-05)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=LHORN_N"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=LHORN_N#LHORN_N/2026-05-05/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=LHORN_N"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=LHORN_N#LHORN_N/2026-05-05/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$5 to floor -$2</summary>
   </entry>
   <entry>
     <title>LHORN_N: New floor (2025-07-31)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=LHORN_N"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=LHORN_N#LHORN_N/2025-07-31/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=LHORN_N"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=LHORN_N#LHORN_N/2025-07-31/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$35 to floor -$5</summary>
   </entry>
   <entry>
     <title>LHORN_N: Episode (2025-06-01)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=LHORN_N"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=LHORN_N#LHORN_N/2025-06-01/renew_episode</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=LHORN_N"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=LHORN_N#LHORN_N/2025-06-01/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Episode: floor -$35 to -$5 for the episode for 4 day(s)</summary>
   </entry>
   <entry>
     <title>LHORN_N: New floor (2023-07-14)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=LHORN_N"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=LHORN_N#LHORN_N/2023-07-14/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=LHORN_N"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=LHORN_N#LHORN_N/2023-07-14/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$33 to floor -$35</summary>
   </entry>
   <entry>
     <title>LHORN_N: Back to an earlier floor (2022-05-11)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=LHORN_N"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=LHORN_N#LHORN_N/2022-05-11/renew_floor_back</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=LHORN_N"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=LHORN_N#LHORN_N/2022-05-11/renew_floor_back</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Back to an earlier floor: floor -$34 to floor -$33</summary>
   </entry>
   <entry>
     <title>LHORN_N: New floor (2022-04-20)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=LHORN_N"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=LHORN_N#LHORN_N/2022-04-20/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=LHORN_N"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=LHORN_N#LHORN_N/2022-04-20/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$33 to floor -$34</summary>
   </entry>
   <entry>
     <title>LHORN_N: New floor (2022-01-19)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=LHORN_N"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=LHORN_N#LHORN_N/2022-01-19/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=LHORN_N"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=LHORN_N#LHORN_N/2022-01-19/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$32 to floor -$33</summary>
   </entry>
   <entry>
     <title>LHORN_N: New floor (2019-06-11)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=LHORN_N"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=LHORN_N#LHORN_N/2019-06-11/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=LHORN_N"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=LHORN_N#LHORN_N/2019-06-11/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$30 to floor -$32</summary>
   </entry>

@@ -1,27 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
   <title>HRNT_SLR_UNIT1: bidding and operating changes</title>
-  <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=HRNT_SLR_UNIT1"/>
-  <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=HRNT_SLR_UNIT1</id>
+  <link href="https://ercotbids.currenttech.energy/unit.html?unit=HRNT_SLR_UNIT1"/>
+  <id>https://ercotbids.currenttech.energy/unit.html?unit=HRNT_SLR_UNIT1</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
     <title>HRNT_SLR: New floor (2025-08-09)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=HRNT_SLR"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=HRNT_SLR#HRNT_SLR/2025-08-09/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=HRNT_SLR"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=HRNT_SLR#HRNT_SLR/2025-08-09/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$59 to floor -$50</summary>
   </entry>
   <entry>
     <title>HRNT_SLR: Stopped moving within the day (2025-04-11)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=HRNT_SLR"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=HRNT_SLR#HRNT_SLR/2025-04-11/renew_moving_off</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=HRNT_SLR"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=HRNT_SLR#HRNT_SLR/2025-04-11/renew_moving_off</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Stopped moving within the day: v to floor -$59</summary>
   </entry>
   <entry>
     <title>HRNT_SLR: Started moving within the day (2025-02-28)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=HRNT_SLR"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=HRNT_SLR#HRNT_SLR/2025-02-28/renew_moving_on</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=HRNT_SLR"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=HRNT_SLR#HRNT_SLR/2025-02-28/renew_moving_on</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Started moving within the day: floor -$2 to v</summary>
   </entry>

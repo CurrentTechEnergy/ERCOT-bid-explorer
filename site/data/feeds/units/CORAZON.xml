@@ -1,27 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
   <title>CORAZON: bidding and operating changes</title>
-  <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CORAZON"/>
-  <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CORAZON</id>
+  <link href="https://ercotbids.currenttech.energy/unit.html?unit=CORAZON"/>
+  <id>https://ercotbids.currenttech.energy/unit.html?unit=CORAZON</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
     <title>CORAZON: New floor (2021-08-19)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CORAZON"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CORAZON#CORAZON/2021-08-19/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=CORAZON"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=CORAZON#CORAZON/2021-08-19/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$5 to floor -$6</summary>
   </entry>
   <entry>
     <title>CORAZON: Episode (2021-08-14)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CORAZON"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CORAZON#CORAZON/2021-08-14/renew_episode</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=CORAZON"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=CORAZON#CORAZON/2021-08-14/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Episode: floor -$5 to -$40 for the episode for 3 day(s)</summary>
   </entry>
   <entry>
     <title>CORAZON: Episode (2021-08-11)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CORAZON"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CORAZON#CORAZON/2021-08-11/renew_episode</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=CORAZON"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=CORAZON#CORAZON/2021-08-11/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Episode: floor -$5 to -$40 for the episode for 1 day(s)</summary>
   </entry>

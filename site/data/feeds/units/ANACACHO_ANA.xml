@@ -1,216 +1,216 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
   <title>ANACACHO_ANA: bidding and operating changes</title>
-  <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ANACACHO_ANA"/>
-  <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ANACACHO_ANA</id>
+  <link href="https://ercotbids.currenttech.energy/unit.html?unit=ANACACHO_ANA"/>
+  <id>https://ercotbids.currenttech.energy/unit.html?unit=ANACACHO_ANA</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
     <title>ANACACHO_ANA: Back to an earlier floor (2024-04-17)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ANACACHO_ANA"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ANACACHO_ANA#ANACACHO_ANA/2024-04-17/renew_floor_back</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=ANACACHO_ANA"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=ANACACHO_ANA#ANACACHO_ANA/2024-04-17/renew_floor_back</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Back to an earlier floor: floor $0 to floor -$2</summary>
   </entry>
   <entry>
     <title>ANACACHO_ANA: Back to an earlier floor (2024-04-17)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ANACACHO_ANA"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ANACACHO_ANA#ANACACHO_ANA/2024-04-17/renew_floor_back</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=ANACACHO_ANA"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=ANACACHO_ANA#ANACACHO_ANA/2024-04-17/renew_floor_back</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Back to an earlier floor: floor $0 to floor -$2</summary>
   </entry>
   <entry>
     <title>ANACACHO_ANA: New floor (2024-03-12)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ANACACHO_ANA"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ANACACHO_ANA#ANACACHO_ANA/2024-03-12/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=ANACACHO_ANA"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=ANACACHO_ANA#ANACACHO_ANA/2024-03-12/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$2 to floor $0</summary>
   </entry>
   <entry>
     <title>ANACACHO_ANA: New floor (2024-03-12)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ANACACHO_ANA"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ANACACHO_ANA#ANACACHO_ANA/2024-03-12/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=ANACACHO_ANA"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=ANACACHO_ANA#ANACACHO_ANA/2024-03-12/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$2 to floor $0</summary>
   </entry>
   <entry>
     <title>ANACACHO_ANA: New floor (2023-12-05)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ANACACHO_ANA"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ANACACHO_ANA#ANACACHO_ANA/2023-12-05/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=ANACACHO_ANA"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=ANACACHO_ANA#ANACACHO_ANA/2023-12-05/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$4 to floor -$2</summary>
   </entry>
   <entry>
     <title>ANACACHO_ANA: New floor (2023-12-05)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ANACACHO_ANA"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ANACACHO_ANA#ANACACHO_ANA/2023-12-05/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=ANACACHO_ANA"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=ANACACHO_ANA#ANACACHO_ANA/2023-12-05/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$4 to floor -$2</summary>
   </entry>
   <entry>
     <title>ANACACHO_ANA: New floor (2023-09-02)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ANACACHO_ANA"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ANACACHO_ANA#ANACACHO_ANA/2023-09-02/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=ANACACHO_ANA"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=ANACACHO_ANA#ANACACHO_ANA/2023-09-02/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$1 to floor -$4</summary>
   </entry>
   <entry>
     <title>ANACACHO_ANA: New floor (2023-09-02)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ANACACHO_ANA"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ANACACHO_ANA#ANACACHO_ANA/2023-09-02/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=ANACACHO_ANA"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=ANACACHO_ANA#ANACACHO_ANA/2023-09-02/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$1 to floor -$4</summary>
   </entry>
   <entry>
     <title>ANACACHO_ANA: New floor (2023-07-01)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ANACACHO_ANA"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ANACACHO_ANA#ANACACHO_ANA/2023-07-01/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=ANACACHO_ANA"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=ANACACHO_ANA#ANACACHO_ANA/2023-07-01/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$2 to floor -$1</summary>
   </entry>
   <entry>
     <title>ANACACHO_ANA: New floor (2023-07-01)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ANACACHO_ANA"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ANACACHO_ANA#ANACACHO_ANA/2023-07-01/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=ANACACHO_ANA"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=ANACACHO_ANA#ANACACHO_ANA/2023-07-01/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$2 to floor -$1</summary>
   </entry>
   <entry>
     <title>ANACACHO_ANA: Back to an earlier floor (2023-04-01)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ANACACHO_ANA"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ANACACHO_ANA#ANACACHO_ANA/2023-04-01/renew_floor_back</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=ANACACHO_ANA"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=ANACACHO_ANA#ANACACHO_ANA/2023-04-01/renew_floor_back</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Back to an earlier floor: floor -$4 to floor -$2</summary>
   </entry>
   <entry>
     <title>ANACACHO_ANA: Back to an earlier floor (2023-04-01)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ANACACHO_ANA"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ANACACHO_ANA#ANACACHO_ANA/2023-04-01/renew_floor_back</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=ANACACHO_ANA"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=ANACACHO_ANA#ANACACHO_ANA/2023-04-01/renew_floor_back</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Back to an earlier floor: floor -$4 to floor -$2</summary>
   </entry>
   <entry>
     <title>ANACACHO_ANA: Episode (2023-03-13)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ANACACHO_ANA"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ANACACHO_ANA#ANACACHO_ANA/2023-03-13/renew_episode</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=ANACACHO_ANA"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=ANACACHO_ANA#ANACACHO_ANA/2023-03-13/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Episode: floor -$4 to -$37 for the episode for 1 day(s)</summary>
   </entry>
   <entry>
     <title>ANACACHO_ANA: Episode (2023-03-13)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ANACACHO_ANA"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ANACACHO_ANA#ANACACHO_ANA/2023-03-13/renew_episode</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=ANACACHO_ANA"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=ANACACHO_ANA#ANACACHO_ANA/2023-03-13/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Episode: floor -$4 to -$37 for the episode for 1 day(s)</summary>
   </entry>
   <entry>
     <title>ANACACHO_ANA: New floor (2023-03-01)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ANACACHO_ANA"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ANACACHO_ANA#ANACACHO_ANA/2023-03-01/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=ANACACHO_ANA"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=ANACACHO_ANA#ANACACHO_ANA/2023-03-01/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$1 to floor -$4</summary>
   </entry>
   <entry>
     <title>ANACACHO_ANA: New floor (2023-03-01)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ANACACHO_ANA"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ANACACHO_ANA#ANACACHO_ANA/2023-03-01/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=ANACACHO_ANA"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=ANACACHO_ANA#ANACACHO_ANA/2023-03-01/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$1 to floor -$4</summary>
   </entry>
   <entry>
     <title>ANACACHO_ANA: New floor (2023-01-04)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ANACACHO_ANA"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ANACACHO_ANA#ANACACHO_ANA/2023-01-04/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=ANACACHO_ANA"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=ANACACHO_ANA#ANACACHO_ANA/2023-01-04/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$2 to floor -$1</summary>
   </entry>
   <entry>
     <title>ANACACHO_ANA: New floor (2023-01-04)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ANACACHO_ANA"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ANACACHO_ANA#ANACACHO_ANA/2023-01-04/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=ANACACHO_ANA"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=ANACACHO_ANA#ANACACHO_ANA/2023-01-04/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$2 to floor -$1</summary>
   </entry>
   <entry>
     <title>ANACACHO_ANA: New floor (2022-12-03)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ANACACHO_ANA"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ANACACHO_ANA#ANACACHO_ANA/2022-12-03/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=ANACACHO_ANA"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=ANACACHO_ANA#ANACACHO_ANA/2022-12-03/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$37 to floor -$2</summary>
   </entry>
   <entry>
     <title>ANACACHO_ANA: New floor (2022-12-03)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ANACACHO_ANA"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ANACACHO_ANA#ANACACHO_ANA/2022-12-03/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=ANACACHO_ANA"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=ANACACHO_ANA#ANACACHO_ANA/2022-12-03/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$37 to floor -$2</summary>
   </entry>
   <entry>
     <title>ANACACHO_ANA: Back to an earlier floor (2022-10-01)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ANACACHO_ANA"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ANACACHO_ANA#ANACACHO_ANA/2022-10-01/renew_floor_back</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=ANACACHO_ANA"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=ANACACHO_ANA#ANACACHO_ANA/2022-10-01/renew_floor_back</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Back to an earlier floor: floor -$35 to floor -$37</summary>
   </entry>
   <entry>
     <title>ANACACHO_ANA: Back to an earlier floor (2022-10-01)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ANACACHO_ANA"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ANACACHO_ANA#ANACACHO_ANA/2022-10-01/renew_floor_back</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=ANACACHO_ANA"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=ANACACHO_ANA#ANACACHO_ANA/2022-10-01/renew_floor_back</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Back to an earlier floor: floor -$35 to floor -$37</summary>
   </entry>
   <entry>
     <title>ANACACHO_ANA: New floor (2022-07-07)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ANACACHO_ANA"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ANACACHO_ANA#ANACACHO_ANA/2022-07-07/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=ANACACHO_ANA"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=ANACACHO_ANA#ANACACHO_ANA/2022-07-07/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$36 to floor -$35</summary>
   </entry>
   <entry>
     <title>ANACACHO_ANA: New floor (2022-07-07)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ANACACHO_ANA"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ANACACHO_ANA#ANACACHO_ANA/2022-07-07/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=ANACACHO_ANA"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=ANACACHO_ANA#ANACACHO_ANA/2022-07-07/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$36 to floor -$35</summary>
   </entry>
   <entry>
     <title>ANACACHO_ANA: New floor (2022-05-03)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ANACACHO_ANA"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ANACACHO_ANA#ANACACHO_ANA/2022-05-03/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=ANACACHO_ANA"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=ANACACHO_ANA#ANACACHO_ANA/2022-05-03/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$34 to floor -$36</summary>
   </entry>
   <entry>
     <title>ANACACHO_ANA: New floor (2022-05-03)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ANACACHO_ANA"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ANACACHO_ANA#ANACACHO_ANA/2022-05-03/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=ANACACHO_ANA"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=ANACACHO_ANA#ANACACHO_ANA/2022-05-03/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$34 to floor -$36</summary>
   </entry>
   <entry>
     <title>ANACACHO_ANA: New floor (2022-03-09)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ANACACHO_ANA"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ANACACHO_ANA#ANACACHO_ANA/2022-03-09/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=ANACACHO_ANA"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=ANACACHO_ANA#ANACACHO_ANA/2022-03-09/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$38 to floor -$34</summary>
   </entry>
   <entry>
     <title>ANACACHO_ANA: New floor (2022-03-09)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ANACACHO_ANA"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ANACACHO_ANA#ANACACHO_ANA/2022-03-09/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=ANACACHO_ANA"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=ANACACHO_ANA#ANACACHO_ANA/2022-03-09/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$38 to floor -$34</summary>
   </entry>
   <entry>
     <title>ANACACHO_ANA: New floor (2021-08-04)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ANACACHO_ANA"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ANACACHO_ANA#ANACACHO_ANA/2021-08-04/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=ANACACHO_ANA"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=ANACACHO_ANA#ANACACHO_ANA/2021-08-04/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$36 to floor -$38</summary>
   </entry>
   <entry>
     <title>ANACACHO_ANA: New floor (2021-08-04)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ANACACHO_ANA"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ANACACHO_ANA#ANACACHO_ANA/2021-08-04/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=ANACACHO_ANA"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=ANACACHO_ANA#ANACACHO_ANA/2021-08-04/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$36 to floor -$38</summary>
   </entry>

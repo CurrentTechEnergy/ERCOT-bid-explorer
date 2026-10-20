@@ -1,76 +1,76 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
   <title>FRONT_EC_CC1: bidding and operating changes</title>
-  <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FRONT_EC_CC1"/>
-  <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FRONT_EC_CC1</id>
+  <link href="https://ercotbids.currenttech.energy/unit.html?unit=FRONT_EC_CC1"/>
+  <id>https://ercotbids.currenttech.energy/unit.html?unit=FRONT_EC_CC1</id>
   <updated>2026-10-19T00:00:00Z</updated>
   <entry>
     <title>FRONT_EC_CC1: Timescale group changed (2026-08-01)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FRONT_EC_CC1"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FRONT_EC_CC1#FRONT_EC_CC1/2026-08-01/group</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=FRONT_EC_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=FRONT_EC_CC1#FRONT_EC_CC1/2026-08-01/group</id>
     <updated>2026-10-19T00:00:00Z</updated>
     <summary>Daily, under 1 shutdown a week in 2026-07 to Never off in 2026-08</summary>
   </entry>
   <entry>
     <title>FRONT_EC_CC1: Loss cutoff moved (2026-06-30)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FRONT_EC_CC1"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FRONT_EC_CC1#FRONT_EC_CC1/2026-06-30/cutoff</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=FRONT_EC_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=FRONT_EC_CC1#FRONT_EC_CC1/2026-06-30/cutoff</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Loss cutoff $0 to $58 per MW of minimum output; the next month&#x27;s decisions contradict it (9 of 11 right against 11)</summary>
   </entry>
   <entry>
     <title>FRONT_EC_CC1: Outage ended (2026-05-01)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FRONT_EC_CC1"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FRONT_EC_CC1#FRONT_EC_CC1/2026-05-01/outage_end</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=FRONT_EC_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=FRONT_EC_CC1#FRONT_EC_CC1/2026-05-01/outage_end</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Back from a 10-day outage</summary>
   </entry>
   <entry>
     <title>FRONT_EC_CC1: Outage started (2026-04-22)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FRONT_EC_CC1"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FRONT_EC_CC1#FRONT_EC_CC1/2026-04-22/outage_start</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=FRONT_EC_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=FRONT_EC_CC1#FRONT_EC_CC1/2026-04-22/outage_start</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Outage began, lasting 10 days</summary>
   </entry>
   <entry>
     <title>FRONT_EC_CC1: Outage ended (2026-04-20)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FRONT_EC_CC1"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FRONT_EC_CC1#FRONT_EC_CC1/2026-04-20/outage_end</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=FRONT_EC_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=FRONT_EC_CC1#FRONT_EC_CC1/2026-04-20/outage_end</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Back from a 20-day outage</summary>
   </entry>
   <entry>
     <title>FRONT_EC_CC1: Outage started (2026-03-31)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FRONT_EC_CC1"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FRONT_EC_CC1#FRONT_EC_CC1/2026-03-31/outage_start</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=FRONT_EC_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=FRONT_EC_CC1#FRONT_EC_CC1/2026-03-31/outage_start</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Outage began, lasting 20 days</summary>
   </entry>
   <entry>
     <title>FRONT_EC_CC1: Shut down despite a day-ahead award (2026-03-28)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FRONT_EC_CC1"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FRONT_EC_CC1#FRONT_EC_CC1/2026-03-28/shutdown_award</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=FRONT_EC_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=FRONT_EC_CC1#FRONT_EC_CC1/2026-03-28/shutdown_award</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Shut down for 39 h although a day-ahead award covered 100% of the window</summary>
   </entry>
   <entry>
     <title>FRONT_EC_CC1: Shut down despite a day-ahead award (2026-03-24)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FRONT_EC_CC1"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FRONT_EC_CC1#FRONT_EC_CC1/2026-03-24/shutdown_award</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=FRONT_EC_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=FRONT_EC_CC1#FRONT_EC_CC1/2026-03-24/shutdown_award</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Shut down for 64 h although a day-ahead award covered 100% of the window</summary>
   </entry>
   <entry>
     <title>FRONT_EC_CC1: Shut down despite a day-ahead award (2025-12-19)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FRONT_EC_CC1"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FRONT_EC_CC1#FRONT_EC_CC1/2025-12-19/shutdown_award</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=FRONT_EC_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=FRONT_EC_CC1#FRONT_EC_CC1/2025-12-19/shutdown_award</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Shut down for 8 h although a day-ahead award covered 100% of the window</summary>
   </entry>
   <entry>
     <title>FRONT_EC_CC1: Shut down despite a day-ahead award (2025-12-09)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FRONT_EC_CC1"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FRONT_EC_CC1#FRONT_EC_CC1/2025-12-09/shutdown_award</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=FRONT_EC_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=FRONT_EC_CC1#FRONT_EC_CC1/2025-12-09/shutdown_award</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Shut down for 16 h although a day-ahead award covered 100% of the window</summary>
   </entry>

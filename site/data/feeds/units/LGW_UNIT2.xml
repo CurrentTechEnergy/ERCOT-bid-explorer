@@ -1,202 +1,202 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
   <title>LGW_UNIT2: bidding and operating changes</title>
-  <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=LGW_UNIT2"/>
-  <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=LGW_UNIT2</id>
+  <link href="https://ercotbids.currenttech.energy/unit.html?unit=LGW_UNIT2"/>
+  <id>https://ercotbids.currenttech.energy/unit.html?unit=LGW_UNIT2</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
     <title>LGW: Episode (2026-08-17)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=LGW"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=LGW#LGW/2026-08-17/renew_episode</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=LGW"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=LGW#LGW/2026-08-17/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Episode: floor -$13 to -$2 for the episode for 1 day(s)</summary>
   </entry>
   <entry>
     <title>LGW: Episode (2026-08-13)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=LGW"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=LGW#LGW/2026-08-13/renew_episode</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=LGW"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=LGW#LGW/2026-08-13/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Episode: floor -$13 to -$2 for the episode for 3 day(s)</summary>
   </entry>
   <entry>
     <title>LGW: Episode (2026-08-11)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=LGW"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=LGW#LGW/2026-08-11/renew_episode</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=LGW"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=LGW#LGW/2026-08-11/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Episode: floor -$13 to -$8 for the episode for 1 day(s)</summary>
   </entry>
   <entry>
     <title>LGW: Episode (2026-07-18)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=LGW"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=LGW#LGW/2026-07-18/renew_episode</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=LGW"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=LGW#LGW/2026-07-18/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Episode: floor -$13 to -$5 for the episode for 1 day(s)</summary>
   </entry>
   <entry>
     <title>LGW: Episode (2026-07-10)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=LGW"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=LGW#LGW/2026-07-10/renew_episode</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=LGW"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=LGW#LGW/2026-07-10/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Episode: floor -$13 to -$2 for the episode for 1 day(s)</summary>
   </entry>
   <entry>
     <title>LGW: Back to an earlier floor (2026-07-02)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=LGW"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=LGW#LGW/2026-07-02/renew_floor_back</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=LGW"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=LGW#LGW/2026-07-02/renew_floor_back</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Back to an earlier floor: floor -$2 to floor -$13</summary>
   </entry>
   <entry>
     <title>LGW: Back to an earlier floor (2026-06-24)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=LGW"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=LGW#LGW/2026-06-24/renew_floor_back</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=LGW"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=LGW#LGW/2026-06-24/renew_floor_back</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Back to an earlier floor: floor -$13 to floor -$2</summary>
   </entry>
   <entry>
     <title>LGW: Episode (2026-06-21)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=LGW"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=LGW#LGW/2026-06-21/renew_episode</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=LGW"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=LGW#LGW/2026-06-21/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Episode: floor -$13 to -$5 for the episode for 1 day(s)</summary>
   </entry>
   <entry>
     <title>LGW: Episode (2026-06-17)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=LGW"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=LGW#LGW/2026-06-17/renew_episode</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=LGW"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=LGW#LGW/2026-06-17/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Episode: floor -$13 to -$2 for the episode for 2 day(s)</summary>
   </entry>
   <entry>
     <title>LGW: Episode (2026-06-07)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=LGW"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=LGW#LGW/2026-06-07/renew_episode</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=LGW"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=LGW#LGW/2026-06-07/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Episode: floor -$13 to -$2 for the episode for 5 day(s)</summary>
   </entry>
   <entry>
     <title>LGW: Episode (2026-05-30)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=LGW"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=LGW#LGW/2026-05-30/renew_episode</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=LGW"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=LGW#LGW/2026-05-30/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Episode: floor -$13 to -$8 for the episode for 1 day(s)</summary>
   </entry>
   <entry>
     <title>LGW: Episode (2026-05-19)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=LGW"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=LGW#LGW/2026-05-19/renew_episode</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=LGW"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=LGW#LGW/2026-05-19/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Episode: floor -$13 to -$8 for the episode for 1 day(s)</summary>
   </entry>
   <entry>
     <title>LGW: Episode (2026-05-14)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=LGW"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=LGW#LGW/2026-05-14/renew_episode</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=LGW"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=LGW#LGW/2026-05-14/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Episode: floor -$13 to -$2 for the episode for 4 day(s)</summary>
   </entry>
   <entry>
     <title>LGW: Episode (2026-05-04)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=LGW"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=LGW#LGW/2026-05-04/renew_episode</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=LGW"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=LGW#LGW/2026-05-04/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Episode: floor -$13 to -$2 for the episode for 1 day(s)</summary>
   </entry>
   <entry>
     <title>LGW: Episode (2026-05-01)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=LGW"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=LGW#LGW/2026-05-01/renew_episode</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=LGW"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=LGW#LGW/2026-05-01/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Episode: floor -$13 to -$8 for the episode for 1 day(s)</summary>
   </entry>
   <entry>
     <title>LGW: Back to an earlier floor (2026-04-27)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=LGW"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=LGW#LGW/2026-04-27/renew_floor_back</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=LGW"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=LGW#LGW/2026-04-27/renew_floor_back</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Back to an earlier floor: floor -$2 to floor -$13</summary>
   </entry>
   <entry>
     <title>LGW: Episode (2026-04-19)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=LGW"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=LGW#LGW/2026-04-19/renew_episode</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=LGW"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=LGW#LGW/2026-04-19/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Episode: floor -$2 to -$13 for the episode for 3 day(s)</summary>
   </entry>
   <entry>
     <title>LGW: Back to an earlier floor (2026-04-13)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=LGW"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=LGW#LGW/2026-04-13/renew_floor_back</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=LGW"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=LGW#LGW/2026-04-13/renew_floor_back</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Back to an earlier floor: floor -$13 to floor -$2</summary>
   </entry>
   <entry>
     <title>LGW: New floor (2026-04-05)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=LGW"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=LGW#LGW/2026-04-05/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=LGW"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=LGW#LGW/2026-04-05/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$3 to floor -$13</summary>
   </entry>
   <entry>
     <title>LGW: Episode (2026-03-28)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=LGW"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=LGW#LGW/2026-03-28/renew_episode</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=LGW"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=LGW#LGW/2026-03-28/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Episode: floor -$3 to -$13 for the episode for 1 day(s)</summary>
   </entry>
   <entry>
     <title>LGW: Episode (2026-03-24)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=LGW"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=LGW#LGW/2026-03-24/renew_episode</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=LGW"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=LGW#LGW/2026-03-24/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Episode: floor -$3 to -$13 for the episode for 1 day(s)</summary>
   </entry>
   <entry>
     <title>LGW: Episode (2026-03-08)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=LGW"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=LGW#LGW/2026-03-08/renew_episode</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=LGW"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=LGW#LGW/2026-03-08/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Episode: floor -$3 to -$13 for the episode for 1 day(s)</summary>
   </entry>
   <entry>
     <title>LGW: Episode (2026-02-24)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=LGW"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=LGW#LGW/2026-02-24/renew_episode</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=LGW"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=LGW#LGW/2026-02-24/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Episode: floor -$3 to -$13 for the episode for 2 day(s)</summary>
   </entry>
   <entry>
     <title>LGW: Episode (2024-11-26)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=LGW"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=LGW#LGW/2024-11-26/renew_episode</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=LGW"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=LGW#LGW/2024-11-26/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Episode: floor -$3 to -$200 for the episode for 1 day(s)</summary>
   </entry>
   <entry>
     <title>LGW: Episode (2022-12-23)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=LGW"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=LGW#LGW/2022-12-23/renew_episode</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=LGW"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=LGW#LGW/2022-12-23/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Episode: floor -$3 to -$200 for the episode for 1 day(s)</summary>
   </entry>
   <entry>
     <title>LGW: New floor (2022-12-15)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=LGW"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=LGW#LGW/2022-12-15/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=LGW"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=LGW#LGW/2022-12-15/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$26 to floor -$3</summary>
   </entry>
   <entry>
     <title>LGW: New floor (2022-07-01)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=LGW"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=LGW#LGW/2022-07-01/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=LGW"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=LGW#LGW/2022-07-01/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$25 to floor -$26</summary>
   </entry>
   <entry>
     <title>LGW: New floor (2021-04-03)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=LGW"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=LGW#LGW/2021-04-03/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=LGW"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=LGW#LGW/2021-04-03/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$24 to floor -$25</summary>
   </entry>

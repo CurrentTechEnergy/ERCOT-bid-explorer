@@ -1,48 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
   <title>FTWIND: bidding and operating changes</title>
-  <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FTWIND"/>
-  <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FTWIND</id>
+  <link href="https://ercotbids.currenttech.energy/unit.html?unit=FTWIND"/>
+  <id>https://ercotbids.currenttech.energy/unit.html?unit=FTWIND</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
     <title>FTWIND: New floor (2026-01-01)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FTWIND"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FTWIND#FTWIND/2026-01-01/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=FTWIND"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=FTWIND#FTWIND/2026-01-01/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$37 to floor -$39</summary>
   </entry>
   <entry>
     <title>FTWIND: Back to an earlier floor (2025-12-24)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FTWIND"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FTWIND#FTWIND/2025-12-24/renew_floor_back</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=FTWIND"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=FTWIND#FTWIND/2025-12-24/renew_floor_back</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Back to an earlier floor: floor -$56 to floor -$37</summary>
   </entry>
   <entry>
     <title>FTWIND: New floor (2025-12-18)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FTWIND"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FTWIND#FTWIND/2025-12-18/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=FTWIND"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=FTWIND#FTWIND/2025-12-18/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$37 to floor -$56</summary>
   </entry>
   <entry>
     <title>FTWIND: New floor (2024-05-25)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FTWIND"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FTWIND#FTWIND/2024-05-25/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=FTWIND"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=FTWIND#FTWIND/2024-05-25/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$33 to floor -$37</summary>
   </entry>
   <entry>
     <title>FTWIND: New floor (2022-01-13)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FTWIND"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FTWIND#FTWIND/2022-01-13/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=FTWIND"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=FTWIND#FTWIND/2022-01-13/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor $0 to floor -$33</summary>
   </entry>
   <entry>
     <title>FTWIND: New floor (2021-02-26)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FTWIND"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FTWIND#FTWIND/2021-02-26/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=FTWIND"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=FTWIND#FTWIND/2021-02-26/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$30 to floor $0</summary>
   </entry>

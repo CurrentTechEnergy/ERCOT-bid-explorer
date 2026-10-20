@@ -1,27 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
   <title>BULLCRK: bidding and operating changes</title>
-  <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=BULLCRK"/>
-  <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=BULLCRK</id>
+  <link href="https://ercotbids.currenttech.energy/unit.html?unit=BULLCRK"/>
+  <id>https://ercotbids.currenttech.energy/unit.html?unit=BULLCRK</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
     <title>BULLCRK: New floor (2026-02-18)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=BULLCRK"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=BULLCRK#BULLCRK/2026-02-18/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=BULLCRK"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=BULLCRK#BULLCRK/2026-02-18/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$1 to floor -$32</summary>
   </entry>
   <entry>
     <title>BULLCRK: New floor (2024-02-23)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=BULLCRK"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=BULLCRK#BULLCRK/2024-02-23/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=BULLCRK"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=BULLCRK#BULLCRK/2024-02-23/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$4 to floor -$1</summary>
   </entry>
   <entry>
     <title>BULLCRK: New floor (2021-09-22)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=BULLCRK"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=BULLCRK#BULLCRK/2021-09-22/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=BULLCRK"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=BULLCRK#BULLCRK/2021-09-22/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor $0 to floor -$4</summary>
   </entry>

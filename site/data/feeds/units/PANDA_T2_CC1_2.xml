@@ -1,34 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
   <title>PANDA_T2_CC1_2: bidding and operating changes</title>
-  <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PANDA_T2_CC1_2"/>
-  <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PANDA_T2_CC1_2</id>
+  <link href="https://ercotbids.currenttech.energy/unit.html?unit=PANDA_T2_CC1_2"/>
+  <id>https://ercotbids.currenttech.energy/unit.html?unit=PANDA_T2_CC1_2</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
     <title>PANDA_T2_CC1_2: Bidding approach shifted (2026-04-18)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PANDA_T2_CC1_2"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PANDA_T2_CC1_2#PANDA_T2_CC1_2/2026-04-18/bidding</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=PANDA_T2_CC1_2"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=PANDA_T2_CC1_2#PANDA_T2_CC1_2/2026-04-18/bidding</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>MW above LSL offered at or below $0: 50% to 0% of the day</summary>
   </entry>
   <entry>
     <title>PANDA_T2_CC1_2: Bidding approach shifted (2026-04-11)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PANDA_T2_CC1_2"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PANDA_T2_CC1_2#PANDA_T2_CC1_2/2026-04-11/bidding</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=PANDA_T2_CC1_2"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=PANDA_T2_CC1_2#PANDA_T2_CC1_2/2026-04-11/bidding</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>MW above LSL offered at or below $0: 0% to 50% of the day</summary>
   </entry>
   <entry>
     <title>PANDA_T2_CC1_2: Bidding approach shifted (2026-01-31)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PANDA_T2_CC1_2"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PANDA_T2_CC1_2#PANDA_T2_CC1_2/2026-01-31/bidding</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=PANDA_T2_CC1_2"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=PANDA_T2_CC1_2#PANDA_T2_CC1_2/2026-01-31/bidding</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Offer price vs peer median: $43 to $8/MWh</summary>
   </entry>
   <entry>
     <title>PANDA_T2_CC1_2: Bidding approach shifted (2026-01-22)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PANDA_T2_CC1_2"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PANDA_T2_CC1_2#PANDA_T2_CC1_2/2026-01-22/bidding</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=PANDA_T2_CC1_2"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=PANDA_T2_CC1_2#PANDA_T2_CC1_2/2026-01-22/bidding</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Offer price vs peer median: $6 to $43/MWh</summary>
   </entry>

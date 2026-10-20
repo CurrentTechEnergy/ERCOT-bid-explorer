@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
   <title>JAY_UNIT1: bidding and operating changes</title>
-  <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=JAY_UNIT1"/>
-  <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=JAY_UNIT1</id>
+  <link href="https://ercotbids.currenttech.energy/unit.html?unit=JAY_UNIT1"/>
+  <id>https://ercotbids.currenttech.energy/unit.html?unit=JAY_UNIT1</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
     <title>JAY: New floor (2022-06-10)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=JAY"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=JAY#JAY/2022-06-10/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=JAY"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=JAY#JAY/2022-06-10/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$6 to floor $0</summary>
   </entry>

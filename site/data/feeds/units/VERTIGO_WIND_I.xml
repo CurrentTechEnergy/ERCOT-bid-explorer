@@ -1,104 +1,104 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
   <title>VERTIGO_WIND_I: bidding and operating changes</title>
-  <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=VERTIGO_WIND_I"/>
-  <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=VERTIGO_WIND_I</id>
+  <link href="https://ercotbids.currenttech.energy/unit.html?unit=VERTIGO_WIND_I"/>
+  <id>https://ercotbids.currenttech.energy/unit.html?unit=VERTIGO_WIND_I</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
     <title>VERTIGO_WIND_I: New floor (2025-12-04)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=VERTIGO_WIND_I"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=VERTIGO_WIND_I#VERTIGO_WIND_I/2025-12-04/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=VERTIGO_WIND_I"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=VERTIGO_WIND_I#VERTIGO_WIND_I/2025-12-04/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$29 to floor -$2</summary>
   </entry>
   <entry>
     <title>VERTIGO_WIND_I: New floor (2025-12-04)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=VERTIGO_WIND_I"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=VERTIGO_WIND_I#VERTIGO_WIND_I/2025-12-04/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=VERTIGO_WIND_I"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=VERTIGO_WIND_I#VERTIGO_WIND_I/2025-12-04/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$29 to floor -$2</summary>
   </entry>
   <entry>
     <title>VERTIGO_WIND_I: New floor (2025-05-16)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=VERTIGO_WIND_I"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=VERTIGO_WIND_I#VERTIGO_WIND_I/2025-05-16/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=VERTIGO_WIND_I"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=VERTIGO_WIND_I#VERTIGO_WIND_I/2025-05-16/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$27 to floor -$29</summary>
   </entry>
   <entry>
     <title>VERTIGO_WIND_I: New floor (2025-05-16)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=VERTIGO_WIND_I"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=VERTIGO_WIND_I#VERTIGO_WIND_I/2025-05-16/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=VERTIGO_WIND_I"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=VERTIGO_WIND_I#VERTIGO_WIND_I/2025-05-16/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$27 to floor -$29</summary>
   </entry>
   <entry>
     <title>VERTIGO_WIND_I: New floor (2025-03-13)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=VERTIGO_WIND_I"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=VERTIGO_WIND_I#VERTIGO_WIND_I/2025-03-13/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=VERTIGO_WIND_I"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=VERTIGO_WIND_I#VERTIGO_WIND_I/2025-03-13/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$31 to floor -$27</summary>
   </entry>
   <entry>
     <title>VERTIGO_WIND_I: New floor (2025-03-13)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=VERTIGO_WIND_I"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=VERTIGO_WIND_I#VERTIGO_WIND_I/2025-03-13/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=VERTIGO_WIND_I"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=VERTIGO_WIND_I#VERTIGO_WIND_I/2025-03-13/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$31 to floor -$27</summary>
   </entry>
   <entry>
     <title>VERTIGO_WIND_I: New floor (2025-03-06)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=VERTIGO_WIND_I"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=VERTIGO_WIND_I#VERTIGO_WIND_I/2025-03-06/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=VERTIGO_WIND_I"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=VERTIGO_WIND_I#VERTIGO_WIND_I/2025-03-06/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$20 to floor -$31</summary>
   </entry>
   <entry>
     <title>VERTIGO_WIND_I: New floor (2025-03-06)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=VERTIGO_WIND_I"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=VERTIGO_WIND_I#VERTIGO_WIND_I/2025-03-06/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=VERTIGO_WIND_I"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=VERTIGO_WIND_I#VERTIGO_WIND_I/2025-03-06/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$20 to floor -$31</summary>
   </entry>
   <entry>
     <title>VERTIGO_WIND_I: Back to an earlier floor (2024-12-04)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=VERTIGO_WIND_I"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=VERTIGO_WIND_I#VERTIGO_WIND_I/2024-12-04/renew_floor_back</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=VERTIGO_WIND_I"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=VERTIGO_WIND_I#VERTIGO_WIND_I/2024-12-04/renew_floor_back</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Back to an earlier floor: floor $0 to floor -$20</summary>
   </entry>
   <entry>
     <title>VERTIGO_WIND_I: Back to an earlier floor (2024-12-04)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=VERTIGO_WIND_I"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=VERTIGO_WIND_I#VERTIGO_WIND_I/2024-12-04/renew_floor_back</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=VERTIGO_WIND_I"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=VERTIGO_WIND_I#VERTIGO_WIND_I/2024-12-04/renew_floor_back</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Back to an earlier floor: floor $0 to floor -$20</summary>
   </entry>
   <entry>
     <title>VERTIGO_WIND_I: New floor (2024-11-26)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=VERTIGO_WIND_I"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=VERTIGO_WIND_I#VERTIGO_WIND_I/2024-11-26/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=VERTIGO_WIND_I"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=VERTIGO_WIND_I#VERTIGO_WIND_I/2024-11-26/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$20 to floor $0</summary>
   </entry>
   <entry>
     <title>VERTIGO_WIND_I: New floor (2024-11-26)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=VERTIGO_WIND_I"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=VERTIGO_WIND_I#VERTIGO_WIND_I/2024-11-26/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=VERTIGO_WIND_I"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=VERTIGO_WIND_I#VERTIGO_WIND_I/2024-11-26/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$20 to floor $0</summary>
   </entry>
   <entry>
     <title>VERTIGO_WIND_I: New floor (2021-04-10)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=VERTIGO_WIND_I"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=VERTIGO_WIND_I#VERTIGO_WIND_I/2021-04-10/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=VERTIGO_WIND_I"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=VERTIGO_WIND_I#VERTIGO_WIND_I/2021-04-10/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$35 to floor -$20</summary>
   </entry>
   <entry>
     <title>VERTIGO_WIND_I: New floor (2021-04-10)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=VERTIGO_WIND_I"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=VERTIGO_WIND_I#VERTIGO_WIND_I/2021-04-10/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=VERTIGO_WIND_I"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=VERTIGO_WIND_I#VERTIGO_WIND_I/2021-04-10/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$35 to floor -$20</summary>
   </entry>

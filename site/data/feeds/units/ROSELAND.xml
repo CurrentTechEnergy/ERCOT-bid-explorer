@@ -1,55 +1,55 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
   <title>ROSELAND: bidding and operating changes</title>
-  <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ROSELAND"/>
-  <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ROSELAND</id>
+  <link href="https://ercotbids.currenttech.energy/unit.html?unit=ROSELAND"/>
+  <id>https://ercotbids.currenttech.energy/unit.html?unit=ROSELAND</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
     <title>ROSELAND: Formula on (2026-01-01)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ROSELAND"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ROSELAND#ROSELAND/2026-01-01/renew_formula_on</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=ROSELAND"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=ROSELAND#ROSELAND/2026-01-01/renew_formula_on</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Formula on: floor -$5 to formula</summary>
   </entry>
   <entry>
     <title>ROSELAND: New floor (2025-06-01)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ROSELAND"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ROSELAND#ROSELAND/2025-06-01/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=ROSELAND"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=ROSELAND#ROSELAND/2025-06-01/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$2 to floor -$5</summary>
   </entry>
   <entry>
     <title>ROSELAND: New floor (2025-03-18)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ROSELAND"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ROSELAND#ROSELAND/2025-03-18/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=ROSELAND"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=ROSELAND#ROSELAND/2025-03-18/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor $0 to floor -$2</summary>
   </entry>
   <entry>
     <title>ROSELAND: Episode (2025-02-19)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ROSELAND"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ROSELAND#ROSELAND/2025-02-19/renew_episode</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=ROSELAND"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=ROSELAND#ROSELAND/2025-02-19/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Episode: floor $0 to $400 for the episode for 1 day(s)</summary>
   </entry>
   <entry>
     <title>ROSELAND: New floor (2024-12-18)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ROSELAND"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ROSELAND#ROSELAND/2024-12-18/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=ROSELAND"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=ROSELAND#ROSELAND/2024-12-18/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor $0 to floor -$4</summary>
   </entry>
   <entry>
     <title>ROSELAND: New floor (2023-06-06)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ROSELAND"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ROSELAND#ROSELAND/2023-06-06/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=ROSELAND"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=ROSELAND#ROSELAND/2023-06-06/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$3 to floor $0</summary>
   </entry>
   <entry>
     <title>ROSELAND: New floor (2023-04-18)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ROSELAND"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ROSELAND#ROSELAND/2023-04-18/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=ROSELAND"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=ROSELAND#ROSELAND/2023-04-18/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$5 to floor -$3</summary>
   </entry>

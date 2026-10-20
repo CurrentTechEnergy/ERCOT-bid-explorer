@@ -1,55 +1,55 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
   <title>RANCHERO_UNIT1: bidding and operating changes</title>
-  <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=RANCHERO_UNIT1"/>
-  <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=RANCHERO_UNIT1</id>
+  <link href="https://ercotbids.currenttech.energy/unit.html?unit=RANCHERO_UNIT1"/>
+  <id>https://ercotbids.currenttech.energy/unit.html?unit=RANCHERO_UNIT1</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
     <title>RANCHERO: New floor (2026-06-11)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=RANCHERO"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=RANCHERO#RANCHERO/2026-06-11/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=RANCHERO"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=RANCHERO#RANCHERO/2026-06-11/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$38 to floor -$39</summary>
   </entry>
   <entry>
     <title>RANCHERO: New floor (2025-10-24)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=RANCHERO"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=RANCHERO#RANCHERO/2025-10-24/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=RANCHERO"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=RANCHERO#RANCHERO/2025-10-24/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$37 to floor -$38</summary>
   </entry>
   <entry>
     <title>RANCHERO: New floor (2025-01-28)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=RANCHERO"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=RANCHERO#RANCHERO/2025-01-28/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=RANCHERO"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=RANCHERO#RANCHERO/2025-01-28/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$35 to floor -$37</summary>
   </entry>
   <entry>
     <title>RANCHERO: New floor (2024-05-22)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=RANCHERO"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=RANCHERO#RANCHERO/2024-05-22/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=RANCHERO"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=RANCHERO#RANCHERO/2024-05-22/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$34 to floor -$35</summary>
   </entry>
   <entry>
     <title>RANCHERO: New floor (2022-04-28)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=RANCHERO"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=RANCHERO#RANCHERO/2022-04-28/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=RANCHERO"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=RANCHERO#RANCHERO/2022-04-28/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$32 to floor -$34</summary>
   </entry>
   <entry>
     <title>RANCHERO: Back to an earlier floor (2019-10-29)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=RANCHERO"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=RANCHERO#RANCHERO/2019-10-29/renew_floor_back</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=RANCHERO"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=RANCHERO#RANCHERO/2019-10-29/renew_floor_back</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Back to an earlier floor: floor $0 to floor -$32</summary>
   </entry>
   <entry>
     <title>RANCHERO: New floor (2019-10-12)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=RANCHERO"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=RANCHERO#RANCHERO/2019-10-12/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=RANCHERO"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=RANCHERO#RANCHERO/2019-10-12/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$32 to floor $0</summary>
   </entry>

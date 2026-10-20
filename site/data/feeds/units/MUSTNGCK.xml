@@ -1,27 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
   <title>MUSTNGCK: bidding and operating changes</title>
-  <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=MUSTNGCK"/>
-  <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=MUSTNGCK</id>
+  <link href="https://ercotbids.currenttech.energy/unit.html?unit=MUSTNGCK"/>
+  <id>https://ercotbids.currenttech.energy/unit.html?unit=MUSTNGCK</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
     <title>MUSTNGCK: New floor (2024-02-27)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=MUSTNGCK"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=MUSTNGCK#MUSTNGCK/2024-02-27/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=MUSTNGCK"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=MUSTNGCK#MUSTNGCK/2024-02-27/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor $0 to floor -$5</summary>
   </entry>
   <entry>
     <title>MUSTNGCK: New floor (2023-06-06)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=MUSTNGCK"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=MUSTNGCK#MUSTNGCK/2023-06-06/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=MUSTNGCK"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=MUSTNGCK#MUSTNGCK/2023-06-06/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$3 to floor $0</summary>
   </entry>
   <entry>
     <title>MUSTNGCK: New floor (2023-04-19)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=MUSTNGCK"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=MUSTNGCK#MUSTNGCK/2023-04-19/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=MUSTNGCK"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=MUSTNGCK#MUSTNGCK/2023-04-19/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$5 to floor -$3</summary>
   </entry>

@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
   <title>PRTLAVS_ESR1: bidding and operating changes</title>
-  <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PRTLAVS_ESR1"/>
-  <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PRTLAVS_ESR1</id>
+  <link href="https://ercotbids.currenttech.energy/unit.html?unit=PRTLAVS_ESR1"/>
+  <id>https://ercotbids.currenttech.energy/unit.html?unit=PRTLAVS_ESR1</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
     <title>PRTLAVS_ESR1: New battery (2026-04-19)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PRTLAVS_ESR1"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PRTLAVS_ESR1#PRTLAVS_ESR1/2026-04-19/battery_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=PRTLAVS_ESR1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=PRTLAVS_ESR1#PRTLAVS_ESR1/2026-04-19/battery_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>First day charging or discharging: 6 MW, 5 MWh</summary>
   </entry>

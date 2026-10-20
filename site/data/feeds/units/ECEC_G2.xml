@@ -1,111 +1,111 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
   <title>ECEC_G2: bidding and operating changes</title>
-  <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ECEC_G2"/>
-  <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ECEC_G2</id>
+  <link href="https://ercotbids.currenttech.energy/unit.html?unit=ECEC_G2"/>
+  <id>https://ercotbids.currenttech.energy/unit.html?unit=ECEC_G2</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
     <title>ECEC_G2: Loss cutoff moved (2026-07-31)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ECEC_G2"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ECEC_G2#ECEC_G2/2026-07-31/cutoff</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=ECEC_G2"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=ECEC_G2#ECEC_G2/2026-07-31/cutoff</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Loss cutoff $0 to $21 per MW of minimum output; the next month&#x27;s decisions are split (5 of 5 right against 5)</summary>
   </entry>
   <entry>
     <title>ECEC_G2: Shut down despite a day-ahead award (2026-07-16)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ECEC_G2"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ECEC_G2#ECEC_G2/2026-07-16/shutdown_award</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=ECEC_G2"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=ECEC_G2#ECEC_G2/2026-07-16/shutdown_award</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Shut down for 11 h although a day-ahead award covered 100% of the window</summary>
   </entry>
   <entry>
     <title>ECEC_G2: Bidding approach shifted (2026-07-13)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ECEC_G2"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ECEC_G2#ECEC_G2/2026-07-13/bidding</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=ECEC_G2"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=ECEC_G2#ECEC_G2/2026-07-13/bidding</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Offer price vs peer median: $0 to $11/MWh</summary>
   </entry>
   <entry>
     <title>ECEC_G2: Bidding approach shifted (2026-06-20)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ECEC_G2"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ECEC_G2#ECEC_G2/2026-06-20/bidding</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=ECEC_G2"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=ECEC_G2#ECEC_G2/2026-06-20/bidding</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Offer price vs peer median: -$7 to $6/MWh</summary>
   </entry>
   <entry>
     <title>ECEC_G2: Bidding approach shifted (2026-06-16)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ECEC_G2"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ECEC_G2#ECEC_G2/2026-06-16/bidding</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=ECEC_G2"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=ECEC_G2#ECEC_G2/2026-06-16/bidding</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>MW above LSL offered at or below $0: 100% to 0% of the day</summary>
   </entry>
   <entry>
     <title>ECEC_G2: Bidding approach shifted (2026-06-13)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ECEC_G2"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ECEC_G2#ECEC_G2/2026-06-13/bidding</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=ECEC_G2"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=ECEC_G2#ECEC_G2/2026-06-13/bidding</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Offer price vs peer median: $234 to -$7/MWh</summary>
   </entry>
   <entry>
     <title>ECEC_G2: Bidding approach shifted (2026-05-29)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ECEC_G2"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ECEC_G2#ECEC_G2/2026-05-29/bidding</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=ECEC_G2"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=ECEC_G2#ECEC_G2/2026-05-29/bidding</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Offer price vs peer median: $235 to -$12/MWh</summary>
   </entry>
   <entry>
     <title>ECEC_G2: Bidding approach shifted (2026-04-17)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ECEC_G2"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ECEC_G2#ECEC_G2/2026-04-17/bidding</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=ECEC_G2"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=ECEC_G2#ECEC_G2/2026-04-17/bidding</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Offer price vs peer median: $235 to -$12/MWh</summary>
   </entry>
   <entry>
     <title>ECEC_G2: Bidding approach shifted (2026-03-20)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ECEC_G2"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ECEC_G2#ECEC_G2/2026-03-20/bidding</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=ECEC_G2"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=ECEC_G2#ECEC_G2/2026-03-20/bidding</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Offer price vs peer median: $235 to -$12/MWh</summary>
   </entry>
   <entry>
     <title>ECEC_G2: Bidding approach shifted (2026-03-11)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ECEC_G2"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ECEC_G2#ECEC_G2/2026-03-11/bidding</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=ECEC_G2"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=ECEC_G2#ECEC_G2/2026-03-11/bidding</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>MW above LSL offered at or below $0: 0% to 100% of the day</summary>
   </entry>
   <entry>
     <title>ECEC_G2: Bidding approach shifted (2026-02-04)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ECEC_G2"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ECEC_G2#ECEC_G2/2026-02-04/bidding</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=ECEC_G2"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=ECEC_G2#ECEC_G2/2026-02-04/bidding</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Offer price vs peer median: $154 to -$6/MWh</summary>
   </entry>
   <entry>
     <title>ECEC_G2: Bidding approach shifted (2026-01-25)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ECEC_G2"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ECEC_G2#ECEC_G2/2026-01-25/bidding</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=ECEC_G2"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=ECEC_G2#ECEC_G2/2026-01-25/bidding</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Offer price vs peer median: $0 to $154/MWh</summary>
   </entry>
   <entry>
     <title>ECEC_G2: Bidding approach shifted (2026-01-12)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ECEC_G2"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ECEC_G2#ECEC_G2/2026-01-12/bidding</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=ECEC_G2"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=ECEC_G2#ECEC_G2/2026-01-12/bidding</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Offer price vs peer median: -$4 to $9/MWh</summary>
   </entry>
   <entry>
     <title>ECEC_G2: Bidding approach shifted (2025-12-30)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ECEC_G2"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ECEC_G2#ECEC_G2/2025-12-30/bidding</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=ECEC_G2"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=ECEC_G2#ECEC_G2/2025-12-30/bidding</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Offer price vs peer median: $9 to -$4/MWh</summary>
   </entry>
   <entry>
     <title>ECEC_G2: Bidding approach shifted (2025-12-16)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ECEC_G2"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ECEC_G2#ECEC_G2/2025-12-16/bidding</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=ECEC_G2"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=ECEC_G2#ECEC_G2/2025-12-16/bidding</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Offer price vs peer median: -$3 to $9/MWh</summary>
   </entry>

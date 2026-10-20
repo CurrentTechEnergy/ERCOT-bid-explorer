@@ -1,41 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
   <title>DANSBY_DANSBYG2: bidding and operating changes</title>
-  <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=DANSBY_DANSBYG2"/>
-  <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=DANSBY_DANSBYG2</id>
+  <link href="https://ercotbids.currenttech.energy/unit.html?unit=DANSBY_DANSBYG2"/>
+  <id>https://ercotbids.currenttech.energy/unit.html?unit=DANSBY_DANSBYG2</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
     <title>DANSBY_DANSBYG2: Bidding approach shifted (2026-03-09)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=DANSBY_DANSBYG2"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=DANSBY_DANSBYG2#DANSBY_DANSBYG2/2026-03-09/bidding</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=DANSBY_DANSBYG2"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=DANSBY_DANSBYG2#DANSBY_DANSBYG2/2026-03-09/bidding</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Offer price vs peer median: -$20 to -$31/MWh</summary>
   </entry>
   <entry>
     <title>DANSBY_DANSBYG2: Bidding approach shifted (2026-02-01)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=DANSBY_DANSBYG2"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=DANSBY_DANSBYG2#DANSBY_DANSBYG2/2026-02-01/bidding</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=DANSBY_DANSBYG2"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=DANSBY_DANSBYG2#DANSBY_DANSBYG2/2026-02-01/bidding</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Offer price vs peer median: -$124 to -$20/MWh</summary>
   </entry>
   <entry>
     <title>DANSBY_DANSBYG2: Bidding approach shifted (2026-01-20)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=DANSBY_DANSBYG2"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=DANSBY_DANSBYG2#DANSBY_DANSBYG2/2026-01-20/bidding</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=DANSBY_DANSBYG2"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=DANSBY_DANSBYG2#DANSBY_DANSBYG2/2026-01-20/bidding</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Offer price vs peer median: -$24 to -$124/MWh</summary>
   </entry>
   <entry>
     <title>DANSBY_DANSBYG2: Timescale group changed (2026-01-01)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=DANSBY_DANSBYG2"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=DANSBY_DANSBYG2#DANSBY_DANSBYG2/2026-01-01/group</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=DANSBY_DANSBYG2"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=DANSBY_DANSBYG2#DANSBY_DANSBYG2/2026-01-01/group</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Multi-day: off 1–7 days in 2025-12 to Daily, over 2 a week in 2026-01</summary>
   </entry>
   <entry>
     <title>DANSBY_DANSBYG2: Bidding approach shifted (2025-12-23)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=DANSBY_DANSBYG2"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=DANSBY_DANSBYG2#DANSBY_DANSBYG2/2025-12-23/bidding</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=DANSBY_DANSBYG2"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=DANSBY_DANSBYG2#DANSBY_DANSBYG2/2025-12-23/bidding</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Offer price vs peer median: -$45 to -$24/MWh</summary>
   </entry>

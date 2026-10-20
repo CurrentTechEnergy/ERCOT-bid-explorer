@@ -1,41 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
   <title>ROUTE_66_WIND1: bidding and operating changes</title>
-  <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ROUTE_66_WIND1"/>
-  <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ROUTE_66_WIND1</id>
+  <link href="https://ercotbids.currenttech.energy/unit.html?unit=ROUTE_66_WIND1"/>
+  <id>https://ercotbids.currenttech.energy/unit.html?unit=ROUTE_66_WIND1</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
     <title>ROUTE_66: New floor (2024-11-01)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ROUTE_66"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ROUTE_66#ROUTE_66/2024-11-01/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=ROUTE_66"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=ROUTE_66#ROUTE_66/2024-11-01/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$18 to floor -$3</summary>
   </entry>
   <entry>
     <title>ROUTE_66: New floor (2024-07-06)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ROUTE_66"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ROUTE_66#ROUTE_66/2024-07-06/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=ROUTE_66"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=ROUTE_66#ROUTE_66/2024-07-06/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$3 to floor -$18</summary>
   </entry>
   <entry>
     <title>ROUTE_66: New floor (2024-06-25)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ROUTE_66"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ROUTE_66#ROUTE_66/2024-06-25/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=ROUTE_66"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=ROUTE_66#ROUTE_66/2024-06-25/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$6 to floor -$3</summary>
   </entry>
   <entry>
     <title>ROUTE_66: Back to an earlier floor (2021-03-02)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ROUTE_66"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ROUTE_66#ROUTE_66/2021-03-02/renew_floor_back</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=ROUTE_66"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=ROUTE_66#ROUTE_66/2021-03-02/renew_floor_back</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Back to an earlier floor: floor $0 to floor -$6</summary>
   </entry>
   <entry>
     <title>ROUTE_66: New floor (2021-02-20)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ROUTE_66"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ROUTE_66#ROUTE_66/2021-02-20/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=ROUTE_66"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=ROUTE_66#ROUTE_66/2021-02-20/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$7 to floor $0</summary>
   </entry>

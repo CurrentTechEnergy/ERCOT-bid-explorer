@@ -1,27 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
   <title>FOXTROT: bidding and operating changes</title>
-  <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FOXTROT"/>
-  <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FOXTROT</id>
+  <link href="https://ercotbids.currenttech.energy/unit.html?unit=FOXTROT"/>
+  <id>https://ercotbids.currenttech.energy/unit.html?unit=FOXTROT</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
     <title>FOXTROT: New floor (2024-08-16)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FOXTROT"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FOXTROT#FOXTROT/2024-08-16/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=FOXTROT"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=FOXTROT#FOXTROT/2024-08-16/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$35 to floor -$38</summary>
   </entry>
   <entry>
     <title>FOXTROT: New floor (2022-10-29)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FOXTROT"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FOXTROT#FOXTROT/2022-10-29/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=FOXTROT"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=FOXTROT#FOXTROT/2022-10-29/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$33 to floor -$35</summary>
   </entry>
   <entry>
     <title>FOXTROT: New floor (2022-06-23)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FOXTROT"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FOXTROT#FOXTROT/2022-06-23/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=FOXTROT"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=FOXTROT#FOXTROT/2022-06-23/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$25 to floor -$33</summary>
   </entry>

@@ -1,90 +1,90 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
   <title>APOGEE: bidding and operating changes</title>
-  <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=APOGEE"/>
-  <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=APOGEE</id>
+  <link href="https://ercotbids.currenttech.energy/unit.html?unit=APOGEE"/>
+  <id>https://ercotbids.currenttech.energy/unit.html?unit=APOGEE</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
     <title>APOGEE: New floor (2026-01-24)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=APOGEE"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=APOGEE#APOGEE/2026-01-24/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=APOGEE"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=APOGEE#APOGEE/2026-01-24/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$38 to floor -$39</summary>
   </entry>
   <entry>
     <title>APOGEE: New floor (2025-06-25)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=APOGEE"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=APOGEE#APOGEE/2025-06-25/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=APOGEE"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=APOGEE#APOGEE/2025-06-25/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$37 to floor -$38</summary>
   </entry>
   <entry>
     <title>APOGEE: New floor (2024-08-26)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=APOGEE"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=APOGEE#APOGEE/2024-08-26/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=APOGEE"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=APOGEE#APOGEE/2024-08-26/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$35 to floor -$37</summary>
   </entry>
   <entry>
     <title>APOGEE: New floor (2023-07-08)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=APOGEE"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=APOGEE#APOGEE/2023-07-08/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=APOGEE"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=APOGEE#APOGEE/2023-07-08/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$33 to floor -$35</summary>
   </entry>
   <entry>
     <title>APOGEE: New floor (2022-07-20)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=APOGEE"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=APOGEE#APOGEE/2022-07-20/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=APOGEE"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=APOGEE#APOGEE/2022-07-20/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$17 to floor -$33</summary>
   </entry>
   <entry>
     <title>APOGEE: Back to an earlier floor (2022-04-23)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=APOGEE"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=APOGEE#APOGEE/2022-04-23/renew_floor_back</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=APOGEE"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=APOGEE#APOGEE/2022-04-23/renew_floor_back</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Back to an earlier floor: floor -$35 to floor -$17</summary>
   </entry>
   <entry>
     <title>APOGEE: Episode (2022-04-12)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=APOGEE"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=APOGEE#APOGEE/2022-04-12/renew_episode</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=APOGEE"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=APOGEE#APOGEE/2022-04-12/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Episode: floor -$0 to -$18 for the episode for 1 day(s)</summary>
   </entry>
   <entry>
     <title>APOGEE: New floor (2022-04-10)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=APOGEE"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=APOGEE#APOGEE/2022-04-10/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=APOGEE"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=APOGEE#APOGEE/2022-04-10/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$17 to floor -$35</summary>
   </entry>
   <entry>
     <title>APOGEE: Episode (2022-04-05)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=APOGEE"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=APOGEE#APOGEE/2022-04-05/renew_episode</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=APOGEE"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=APOGEE#APOGEE/2022-04-05/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Episode: floor -$0 to -$35 for the episode for 1 day(s)</summary>
   </entry>
   <entry>
     <title>APOGEE: Back to an earlier floor (2022-04-02)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=APOGEE"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=APOGEE#APOGEE/2022-04-02/renew_floor_back</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=APOGEE"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=APOGEE#APOGEE/2022-04-02/renew_floor_back</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Back to an earlier floor: floor -$35 to floor -$0</summary>
   </entry>
   <entry>
     <title>APOGEE: New floor (2022-03-27)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=APOGEE"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=APOGEE#APOGEE/2022-03-27/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=APOGEE"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=APOGEE#APOGEE/2022-03-27/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor $0 to floor -$35</summary>
   </entry>
   <entry>
     <title>APOGEE: New floor (2022-03-24)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=APOGEE"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=APOGEE#APOGEE/2022-03-24/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=APOGEE"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=APOGEE#APOGEE/2022-03-24/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$0 to floor -$17</summary>
   </entry>

@@ -1,27 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
   <title>TIMPP_AGR5: bidding and operating changes</title>
-  <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TIMPP_AGR5"/>
-  <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TIMPP_AGR5</id>
+  <link href="https://ercotbids.currenttech.energy/unit.html?unit=TIMPP_AGR5"/>
+  <id>https://ercotbids.currenttech.energy/unit.html?unit=TIMPP_AGR5</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
     <title>TIMPP_AGR5: Bidding approach shifted (2026-04-24)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TIMPP_AGR5"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TIMPP_AGR5#TIMPP_AGR5/2026-04-24/bidding</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=TIMPP_AGR5"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=TIMPP_AGR5#TIMPP_AGR5/2026-04-24/bidding</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Running without an offer curve: 100% to 0% of the day</summary>
   </entry>
   <entry>
     <title>TIMPP_AGR5: Timescale group changed (2026-04-01)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TIMPP_AGR5"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TIMPP_AGR5#TIMPP_AGR5/2026-04-01/group</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=TIMPP_AGR5"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=TIMPP_AGR5#TIMPP_AGR5/2026-04-01/group</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Never off in 2026-03 to Daily, under 1 shutdown a week in 2026-04</summary>
   </entry>
   <entry>
     <title>TIMPP_AGR5: Outage ended (2026-02-13)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TIMPP_AGR5"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TIMPP_AGR5#TIMPP_AGR5/2026-02-13/outage_end</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=TIMPP_AGR5"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=TIMPP_AGR5#TIMPP_AGR5/2026-02-13/outage_end</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Back from a 75-day outage</summary>
   </entry>

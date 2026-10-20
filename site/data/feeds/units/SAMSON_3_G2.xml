@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
   <title>SAMSON_3_G2: bidding and operating changes</title>
-  <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SAMSON_3_G2"/>
-  <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SAMSON_3_G2</id>
+  <link href="https://ercotbids.currenttech.energy/unit.html?unit=SAMSON_3_G2"/>
+  <id>https://ercotbids.currenttech.energy/unit.html?unit=SAMSON_3_G2</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
     <title>SAMSON_3: New floor (2025-11-07)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SAMSON_3"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SAMSON_3#SAMSON_3/2025-11-07/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=SAMSON_3"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=SAMSON_3#SAMSON_3/2025-11-07/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor $0 to floor -$30</summary>
   </entry>
   <entry>
     <title>SAMSON_3: New floor (2023-01-21)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SAMSON_3"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SAMSON_3#SAMSON_3/2023-01-21/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=SAMSON_3"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=SAMSON_3#SAMSON_3/2023-01-21/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$4 to floor $0</summary>
   </entry>

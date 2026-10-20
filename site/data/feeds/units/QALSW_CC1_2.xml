@@ -1,76 +1,76 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
   <title>QALSW_CC1_2: bidding and operating changes</title>
-  <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=QALSW_CC1_2"/>
-  <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=QALSW_CC1_2</id>
+  <link href="https://ercotbids.currenttech.energy/unit.html?unit=QALSW_CC1_2"/>
+  <id>https://ercotbids.currenttech.energy/unit.html?unit=QALSW_CC1_2</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
     <title>QALSW_CC1_2: Bidding approach shifted (2026-06-16)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=QALSW_CC1_2"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=QALSW_CC1_2#QALSW_CC1_2/2026-06-16/bidding</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=QALSW_CC1_2"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=QALSW_CC1_2#QALSW_CC1_2/2026-06-16/bidding</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Offer price vs peer median: -$16 to $0/MWh</summary>
   </entry>
   <entry>
     <title>QALSW_CC1_2: Bidding approach shifted (2026-06-14)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=QALSW_CC1_2"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=QALSW_CC1_2#QALSW_CC1_2/2026-06-14/bidding</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=QALSW_CC1_2"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=QALSW_CC1_2#QALSW_CC1_2/2026-06-14/bidding</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>MW above LSL offered at or below $0: 85% to 0% of the day</summary>
   </entry>
   <entry>
     <title>QALSW_CC1_2: Bidding approach shifted (2026-02-08)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=QALSW_CC1_2"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=QALSW_CC1_2#QALSW_CC1_2/2026-02-08/bidding</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=QALSW_CC1_2"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=QALSW_CC1_2#QALSW_CC1_2/2026-02-08/bidding</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>MW above LSL offered at or below $0: 0% to 100% of the day</summary>
   </entry>
   <entry>
     <title>QALSW_CC1_2: Bidding approach shifted (2026-01-31)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=QALSW_CC1_2"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=QALSW_CC1_2#QALSW_CC1_2/2026-01-31/bidding</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=QALSW_CC1_2"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=QALSW_CC1_2#QALSW_CC1_2/2026-01-31/bidding</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Offer price vs peer median: -$5 to -$16/MWh</summary>
   </entry>
   <entry>
     <title>QALSW_CC1_2: Bidding approach shifted (2026-01-22)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=QALSW_CC1_2"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=QALSW_CC1_2#QALSW_CC1_2/2026-01-22/bidding</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=QALSW_CC1_2"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=QALSW_CC1_2#QALSW_CC1_2/2026-01-22/bidding</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>MW above LSL offered at or below $0: 99% to 0% of the day</summary>
   </entry>
   <entry>
     <title>QALSW_CC1_2: Bidding approach shifted (2026-01-15)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=QALSW_CC1_2"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=QALSW_CC1_2#QALSW_CC1_2/2026-01-15/bidding</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=QALSW_CC1_2"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=QALSW_CC1_2#QALSW_CC1_2/2026-01-15/bidding</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>MW above LSL offered at or below $0: 0% to 99% of the day</summary>
   </entry>
   <entry>
     <title>QALSW_CC1_2: Bidding approach shifted (2026-01-08)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=QALSW_CC1_2"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=QALSW_CC1_2#QALSW_CC1_2/2026-01-08/bidding</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=QALSW_CC1_2"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=QALSW_CC1_2#QALSW_CC1_2/2026-01-08/bidding</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>MW above LSL offered at or below $0: 98% to 0% of the day</summary>
   </entry>
   <entry>
     <title>QALSW_CC1_2: Bidding approach shifted (2025-12-30)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=QALSW_CC1_2"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=QALSW_CC1_2#QALSW_CC1_2/2025-12-30/bidding</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=QALSW_CC1_2"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=QALSW_CC1_2#QALSW_CC1_2/2025-12-30/bidding</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>MW above LSL offered at or below $0: 99% to 0% of the day</summary>
   </entry>
   <entry>
     <title>QALSW_CC1_2: Bidding approach shifted (2025-12-19)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=QALSW_CC1_2"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=QALSW_CC1_2#QALSW_CC1_2/2025-12-19/bidding</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=QALSW_CC1_2"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=QALSW_CC1_2#QALSW_CC1_2/2025-12-19/bidding</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Offer price vs peer median: -$25 to -$14/MWh</summary>
   </entry>
   <entry>
     <title>QALSW_CC1_2: Bidding approach shifted (2025-12-11)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=QALSW_CC1_2"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=QALSW_CC1_2#QALSW_CC1_2/2025-12-11/bidding</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=QALSW_CC1_2"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=QALSW_CC1_2#QALSW_CC1_2/2025-12-11/bidding</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>MW above LSL offered at or below $0: 0% to 98% of the day</summary>
   </entry>

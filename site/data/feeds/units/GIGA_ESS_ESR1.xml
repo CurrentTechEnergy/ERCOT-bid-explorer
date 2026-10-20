@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
   <title>GIGA_ESS_ESR1: bidding and operating changes</title>
-  <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=GIGA_ESS_ESR1"/>
-  <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=GIGA_ESS_ESR1</id>
+  <link href="https://ercotbids.currenttech.energy/unit.html?unit=GIGA_ESS_ESR1"/>
+  <id>https://ercotbids.currenttech.energy/unit.html?unit=GIGA_ESS_ESR1</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
     <title>GIGA_ESS_ESR1: Battery size changed (2026-05-27)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=GIGA_ESS_ESR1"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=GIGA_ESS_ESR1#GIGA_ESS_ESR1/2026-05-27/battery_size</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=GIGA_ESS_ESR1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=GIGA_ESS_ESR1#GIGA_ESS_ESR1/2026-05-27/battery_size</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Maximum output 125 to 100 MW</summary>
   </entry>

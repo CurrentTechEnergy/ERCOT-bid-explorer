@@ -1,97 +1,97 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
   <title>TRSES_UNIT6: bidding and operating changes</title>
-  <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TRSES_UNIT6"/>
-  <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TRSES_UNIT6</id>
+  <link href="https://ercotbids.currenttech.energy/unit.html?unit=TRSES_UNIT6"/>
+  <id>https://ercotbids.currenttech.energy/unit.html?unit=TRSES_UNIT6</id>
   <updated>2026-10-20T00:00:00Z</updated>
   <entry>
     <title>TRSES_UNIT6: Loss cutoff moved (2026-08-21)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TRSES_UNIT6"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TRSES_UNIT6#TRSES_UNIT6/2026-08-21/cutoff</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=TRSES_UNIT6"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=TRSES_UNIT6#TRSES_UNIT6/2026-08-21/cutoff</id>
     <updated>2026-10-20T00:00:00Z</updated>
     <summary>Loss cutoff $204 to $274 per MW of minimum output; not yet tested on a following month</summary>
   </entry>
   <entry>
     <title>TRSES_UNIT6: Bidding approach shifted (2026-08-08)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TRSES_UNIT6"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TRSES_UNIT6#TRSES_UNIT6/2026-08-08/bidding</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=TRSES_UNIT6"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=TRSES_UNIT6#TRSES_UNIT6/2026-08-08/bidding</id>
     <updated>2026-10-20T00:00:00Z</updated>
     <summary>Offer price vs peer median: $87 to -$13/MWh</summary>
   </entry>
   <entry>
     <title>TRSES_UNIT6: Loss cutoff moved (2026-07-31)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TRSES_UNIT6"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TRSES_UNIT6#TRSES_UNIT6/2026-07-31/cutoff</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=TRSES_UNIT6"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=TRSES_UNIT6#TRSES_UNIT6/2026-07-31/cutoff</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Loss cutoff $0 to $204 per MW of minimum output; the next month&#x27;s decisions confirm it (5 of 9 right against 0)</summary>
   </entry>
   <entry>
     <title>TRSES_UNIT6: Bidding approach shifted (2026-07-26)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TRSES_UNIT6"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TRSES_UNIT6#TRSES_UNIT6/2026-07-26/bidding</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=TRSES_UNIT6"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=TRSES_UNIT6#TRSES_UNIT6/2026-07-26/bidding</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Offer price vs peer median: $34 to $71/MWh</summary>
   </entry>
   <entry>
     <title>TRSES_UNIT6: Bidding approach shifted (2026-07-07)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TRSES_UNIT6"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TRSES_UNIT6#TRSES_UNIT6/2026-07-07/bidding</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=TRSES_UNIT6"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=TRSES_UNIT6#TRSES_UNIT6/2026-07-07/bidding</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Offer price vs peer median: $139 to $38/MWh</summary>
   </entry>
   <entry>
     <title>TRSES_UNIT6: Bidding approach shifted (2026-06-02)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TRSES_UNIT6"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TRSES_UNIT6#TRSES_UNIT6/2026-06-02/bidding</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=TRSES_UNIT6"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=TRSES_UNIT6#TRSES_UNIT6/2026-06-02/bidding</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Offer price vs peer median: -$10 to $137/MWh</summary>
   </entry>
   <entry>
     <title>TRSES_UNIT6: Timescale group changed (2026-06-01)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TRSES_UNIT6"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TRSES_UNIT6#TRSES_UNIT6/2026-06-01/group</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=TRSES_UNIT6"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=TRSES_UNIT6#TRSES_UNIT6/2026-06-01/group</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Daily, 1–2 a week in 2026-05 to Multi-day: off 1–7 days in 2026-06</summary>
   </entry>
   <entry>
     <title>TRSES_UNIT6: Bidding approach shifted (2026-05-12)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TRSES_UNIT6"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TRSES_UNIT6#TRSES_UNIT6/2026-05-12/bidding</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=TRSES_UNIT6"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=TRSES_UNIT6#TRSES_UNIT6/2026-05-12/bidding</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Offer price vs peer median: -$15 to -$4/MWh</summary>
   </entry>
   <entry>
     <title>TRSES_UNIT6: Bidding approach shifted (2026-04-25)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TRSES_UNIT6"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TRSES_UNIT6#TRSES_UNIT6/2026-04-25/bidding</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=TRSES_UNIT6"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=TRSES_UNIT6#TRSES_UNIT6/2026-04-25/bidding</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Offer price vs peer median: -$1 to -$15/MWh</summary>
   </entry>
   <entry>
     <title>TRSES_UNIT6: Timescale group changed (2026-03-01)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TRSES_UNIT6"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TRSES_UNIT6#TRSES_UNIT6/2026-03-01/group</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=TRSES_UNIT6"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=TRSES_UNIT6#TRSES_UNIT6/2026-03-01/group</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Multi-day: off 1–7 days in 2026-02 to Daily, under 1 shutdown a week in 2026-03</summary>
   </entry>
   <entry>
     <title>TRSES_UNIT6: Bidding approach shifted (2026-01-30)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TRSES_UNIT6"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TRSES_UNIT6#TRSES_UNIT6/2026-01-30/bidding</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=TRSES_UNIT6"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=TRSES_UNIT6#TRSES_UNIT6/2026-01-30/bidding</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Offer price vs peer median: -$108 to -$1/MWh</summary>
   </entry>
   <entry>
     <title>TRSES_UNIT6: Bidding approach shifted (2026-01-23)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TRSES_UNIT6"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TRSES_UNIT6#TRSES_UNIT6/2026-01-23/bidding</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=TRSES_UNIT6"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=TRSES_UNIT6#TRSES_UNIT6/2026-01-23/bidding</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Offer price vs peer median: $0 to -$108/MWh</summary>
   </entry>
   <entry>
     <title>TRSES_UNIT6: Bidding approach shifted (2025-12-13)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TRSES_UNIT6"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TRSES_UNIT6#TRSES_UNIT6/2025-12-13/bidding</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=TRSES_UNIT6"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=TRSES_UNIT6#TRSES_UNIT6/2025-12-13/bidding</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Offer price vs peer median: $86 to -$6/MWh</summary>
   </entry>

@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
   <title>GALLOWAY: bidding and operating changes</title>
-  <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=GALLOWAY"/>
-  <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=GALLOWAY</id>
+  <link href="https://ercotbids.currenttech.energy/unit.html?unit=GALLOWAY"/>
+  <id>https://ercotbids.currenttech.energy/unit.html?unit=GALLOWAY</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
     <title>GALLOWAY: New floor (2021-10-30)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=GALLOWAY"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=GALLOWAY#GALLOWAY/2021-10-30/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=GALLOWAY"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=GALLOWAY#GALLOWAY/2021-10-30/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$15 to floor $0</summary>
   </entry>
   <entry>
     <title>GALLOWAY: New floor (2021-07-01)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=GALLOWAY"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=GALLOWAY#GALLOWAY/2021-07-01/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=GALLOWAY"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=GALLOWAY#GALLOWAY/2021-07-01/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor $0 to floor -$15</summary>
   </entry>

@@ -1,34 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
   <title>TAV_UNIT2: bidding and operating changes</title>
-  <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TAV_UNIT2"/>
-  <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TAV_UNIT2</id>
+  <link href="https://ercotbids.currenttech.energy/unit.html?unit=TAV_UNIT2"/>
+  <id>https://ercotbids.currenttech.energy/unit.html?unit=TAV_UNIT2</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
     <title>TAV: New floor (2026-08-10)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TAV"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TAV#TAV/2026-08-10/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=TAV"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=TAV#TAV/2026-08-10/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$38 to floor -$40</summary>
   </entry>
   <entry>
     <title>TAV: New floor (2025-08-23)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TAV"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TAV#TAV/2025-08-23/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=TAV"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=TAV#TAV/2025-08-23/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$35 to floor -$38</summary>
   </entry>
   <entry>
     <title>TAV: Back to an earlier floor (2023-07-06)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TAV"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TAV#TAV/2023-07-06/renew_floor_back</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=TAV"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=TAV#TAV/2023-07-06/renew_floor_back</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Back to an earlier floor: floor $0 to floor -$35</summary>
   </entry>
   <entry>
     <title>TAV: New floor (2023-06-05)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TAV"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TAV#TAV/2023-06-05/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=TAV"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=TAV#TAV/2023-06-05/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$35 to floor $0</summary>
   </entry>

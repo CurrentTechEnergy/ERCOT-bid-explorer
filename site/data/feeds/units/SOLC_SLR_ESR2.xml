@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
   <title>SOLC_SLR_ESR2: bidding and operating changes</title>
-  <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SOLC_SLR_ESR2"/>
-  <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SOLC_SLR_ESR2</id>
+  <link href="https://ercotbids.currenttech.energy/unit.html?unit=SOLC_SLR_ESR2"/>
+  <id>https://ercotbids.currenttech.energy/unit.html?unit=SOLC_SLR_ESR2</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
     <title>SOLC_SLR_ESR2: Battery size changed (2026-07-14)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SOLC_SLR_ESR2"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SOLC_SLR_ESR2#SOLC_SLR_ESR2/2026-07-14/battery_size</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=SOLC_SLR_ESR2"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=SOLC_SLR_ESR2#SOLC_SLR_ESR2/2026-07-14/battery_size</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Maximum state of charge 265 to 320 MWh</summary>
   </entry>
   <entry>
     <title>SOLC_SLR_ESR2: New battery (2026-03-26)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SOLC_SLR_ESR2"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SOLC_SLR_ESR2#SOLC_SLR_ESR2/2026-03-26/battery_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=SOLC_SLR_ESR2"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=SOLC_SLR_ESR2#SOLC_SLR_ESR2/2026-03-26/battery_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>First day charging or discharging: 160 MW, 92 MWh</summary>
   </entry>

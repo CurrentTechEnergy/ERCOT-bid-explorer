@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
   <title>DOWGEN_DOW_G63: bidding and operating changes</title>
-  <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=DOWGEN_DOW_G63"/>
-  <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=DOWGEN_DOW_G63</id>
+  <link href="https://ercotbids.currenttech.energy/unit.html?unit=DOWGEN_DOW_G63"/>
+  <id>https://ercotbids.currenttech.energy/unit.html?unit=DOWGEN_DOW_G63</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
     <title>DOWGEN_DOW_G63: Outage ended (2026-05-01)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=DOWGEN_DOW_G63"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=DOWGEN_DOW_G63#DOWGEN_DOW_G63/2026-05-01/outage_end</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=DOWGEN_DOW_G63"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=DOWGEN_DOW_G63#DOWGEN_DOW_G63/2026-05-01/outage_end</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Back from a 8-day outage</summary>
   </entry>
   <entry>
     <title>DOWGEN_DOW_G63: Outage started (2026-04-23)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=DOWGEN_DOW_G63"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=DOWGEN_DOW_G63#DOWGEN_DOW_G63/2026-04-23/outage_start</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=DOWGEN_DOW_G63"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=DOWGEN_DOW_G63#DOWGEN_DOW_G63/2026-04-23/outage_start</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Outage began, lasting 8 days</summary>
   </entry>

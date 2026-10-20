@@ -1,76 +1,76 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
   <title>KMCHI_CC1: bidding and operating changes</title>
-  <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=KMCHI_CC1"/>
-  <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=KMCHI_CC1</id>
+  <link href="https://ercotbids.currenttech.energy/unit.html?unit=KMCHI_CC1"/>
+  <id>https://ercotbids.currenttech.energy/unit.html?unit=KMCHI_CC1</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
     <title>KMCHI_CC1: Shut down after a long run (2026-07-04)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=KMCHI_CC1"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=KMCHI_CC1#KMCHI_CC1/2026-07-04/shutdown_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=KMCHI_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=KMCHI_CC1#KMCHI_CC1/2026-07-04/shutdown_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Shut down for 371 h after 50 days without a shutdown</summary>
   </entry>
   <entry>
     <title>KMCHI_CC1: Timescale group changed (2026-07-01)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=KMCHI_CC1"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=KMCHI_CC1#KMCHI_CC1/2026-07-01/group</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=KMCHI_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=KMCHI_CC1#KMCHI_CC1/2026-07-01/group</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Never off in 2026-06 to Multi-day: off 1–7 days in 2026-07</summary>
   </entry>
   <entry>
     <title>KMCHI_CC1: Timescale group changed (2026-06-01)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=KMCHI_CC1"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=KMCHI_CC1#KMCHI_CC1/2026-06-01/group</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=KMCHI_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=KMCHI_CC1#KMCHI_CC1/2026-06-01/group</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Multi-day: off 1–7 days in 2026-05 to Never off in 2026-06</summary>
   </entry>
   <entry>
     <title>KMCHI_CC1: Shut down after a long run (2026-05-14)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=KMCHI_CC1"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=KMCHI_CC1#KMCHI_CC1/2026-05-14/shutdown_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=KMCHI_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=KMCHI_CC1#KMCHI_CC1/2026-05-14/shutdown_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Shut down for 98 h after 46 days without a shutdown</summary>
   </entry>
   <entry>
     <title>KMCHI_CC1: Timescale group changed (2026-05-01)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=KMCHI_CC1"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=KMCHI_CC1#KMCHI_CC1/2026-05-01/group</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=KMCHI_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=KMCHI_CC1#KMCHI_CC1/2026-05-01/group</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Never off in 2026-04 to Multi-day: off 1–7 days in 2026-05</summary>
   </entry>
   <entry>
     <title>KMCHI_CC1: Timescale group changed (2026-04-01)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=KMCHI_CC1"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=KMCHI_CC1#KMCHI_CC1/2026-04-01/group</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=KMCHI_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=KMCHI_CC1#KMCHI_CC1/2026-04-01/group</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Multi-day: off 1–7 days in 2026-03 to Never off in 2026-04</summary>
   </entry>
   <entry>
     <title>KMCHI_CC1: Outage ended (2026-03-27)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=KMCHI_CC1"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=KMCHI_CC1#KMCHI_CC1/2026-03-27/outage_end</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=KMCHI_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=KMCHI_CC1#KMCHI_CC1/2026-03-27/outage_end</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Back from a 12-day outage</summary>
   </entry>
   <entry>
     <title>KMCHI_CC1: Outage started (2026-03-15)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=KMCHI_CC1"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=KMCHI_CC1#KMCHI_CC1/2026-03-15/outage_start</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=KMCHI_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=KMCHI_CC1#KMCHI_CC1/2026-03-15/outage_start</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Outage began, lasting 12 days</summary>
   </entry>
   <entry>
     <title>KMCHI_CC1: Outage ended (2025-12-16)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=KMCHI_CC1"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=KMCHI_CC1#KMCHI_CC1/2025-12-16/outage_end</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=KMCHI_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=KMCHI_CC1#KMCHI_CC1/2025-12-16/outage_end</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Back from a 7-day outage</summary>
   </entry>
   <entry>
     <title>KMCHI_CC1: Outage started (2025-12-09)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=KMCHI_CC1"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=KMCHI_CC1#KMCHI_CC1/2025-12-09/outage_start</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=KMCHI_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=KMCHI_CC1#KMCHI_CC1/2025-12-09/outage_start</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Outage began, lasting 7 days</summary>
   </entry>
