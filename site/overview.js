@@ -175,7 +175,7 @@ function drawHeadline() {
     (hs
       ? `<div class="w"><b>${fmtGW(hs.peak_dis)} GW</b> discharging at the peak hour, <b>${fmtGW(hs.peak_chg)} GW</b> charging at most</div><div class="w"><b>${fmtGWh(hs.gwh_dis)} GWh</b> discharged, <b>${fmtGWh(hs.gwh_chg)} GWh</b> charged over the day` +
         (ghOk ? ` · actual ${fmtGWh(d3.sum(gh.discharging) / 1000)} and ${fmtGWh(-d3.sum(gh.charging) / 1000)} GWh (2-day)` : "") + `</div>` +
-        `<div class="w2">The fleet's habit by hour over the last weeks, nudged by the day's hub price shape · ${S.fc.models.storage_habit || ""}${hs.capped ? " · held to the fleet's energy" : ""}</div>`
+        `<div class="w2">The fleet's habit by hour over the last weeks, corrected for the day's hub prices by boosted trees · ${S.fc.models.storage_habit || ""}${hs.capped ? " · held to the fleet's energy" : ""}</div>`
       : (ghOk
         ? `<div class="w"><b>${fmtGW(d3.max(gh.discharging))} GW</b> discharging at most, <b>${fmtGW(-d3.min(gh.charging))} GW</b> charging at most (2-day actual)</div><div class="w"><b>${fmtGWh(-d3.sum(gh.charging) / 1000)} GWh</b> charged, <b>${fmtGWh(d3.sum(gh.discharging) / 1000)} GWh</b> discharged</div>`
         : `<div class="w">Awaiting battery data</div>`) +

@@ -548,12 +548,14 @@ def _forecast_checks(day, fc):
         neg = int(((dis < -tol) | (chg < -tol) | (soc < -tol)).sum())
         eff = hs.get("eff") or 1.0
         start = soc[0] - (chg[0] * eff - dis[0])
-        energy_ok = np.nansum(dis) <= np.nansum(chg) * eff + start + 1.0
-        day.add("forecast_storage", "error" if both or neg or not energy_ok else "ok",
-                f"{both} hour(s) charging and discharging at once, {neg} negative value(s), "
+        # eff is written to 3 decimals, so the balance carries up to 0.05% of the charged energy in rounding
+        energy_ok = np.nansum(dis) <= np.nansum(chg) * eff + start + 1.0 + 0.001 * np.nansum(chg)
+        # the fleet charges and discharges in the same hour (different batteries), so overlap is reported, not an error
+        day.add("forecast_storage", "error" if neg or not energy_ok else "ok",
+                f"{neg} negative value(s), "
                 f"discharged {np.nansum(dis) / 1000:.1f} GWh against {np.nansum(chg) / 1000:.1f} GWh charged x {eff:.2f} + {start / 1000:.1f} GWh to start"
-                if (both or neg or not energy_ok) else
-                f"battery fleet: discharging peaks {np.nanmax(dis):,.0f} MW, charging {np.nanmax(chg):,.0f} MW, one direction per hour, energy balanced at {eff:.2f}")
+                if (neg or not energy_ok) else
+                f"battery fleet: discharging peaks {np.nanmax(dis):,.0f} MW, charging {np.nanmax(chg):,.0f} MW, {both} hour(s) with both, energy balanced at {eff:.2f}")
         day.limit("forecast_storage_mw", np.maximum(dis, chg), np.full(24, TOL["storage_fleet_mw"]), "battery fleet MW above the fleet bound", warn_only=True)
     day.add("forecast_model", "ok" if not no_model and not series else "error",
             f"{no_model} row(s) without a model name or version; series without one: {series}" if (no_model or series)
