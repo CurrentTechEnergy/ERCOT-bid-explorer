@@ -79,6 +79,19 @@
     <p><button type="button" class="btn" id="changes-more" hidden>Show all</button></p>
   </section>
 
+  <section class="panel panel-wide unit-only" id="fc-panel" hidden>
+    <div class="panel-head">
+      <div>
+        <h2>Forecast by hour</h2>
+        <p class="note">What the forecast expected of this unit on one day, hour by hour: its chance of being online, the MW it expected and the minimum it held the unit at, against the day-ahead price it was judged on (its own node, else the hub average). Once the day's 60-day data is in, what the unit actually did is drawn over it. The loss window, where one is shaded, is the day's worst stretch for staying on, the hours the call is about.</p>
+        <p class="note" id="fc-note"></p>
+      </div>
+      <div class="panel-tools"><label class="lbl inline" for="fc-pick">Forecast day</label><select id="fc-pick"></select></div>
+    </div>
+    <div class="legend legend-static" id="fc-legend"></div>
+    <div class="chart" id="fc-chart"></div>
+  </section>
+
   <section class="panel panel-wide unit-only" id="dec-panel" hidden>
     <div class="panel-head">
       <div>

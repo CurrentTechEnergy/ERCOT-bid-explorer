@@ -20,7 +20,13 @@ data/forecast/<date>.json.gz
   units             columns + rows, one per thermal train: unit, tech, group, hsl, lsl,
                     verdict (on | off | maybe | nocut | outage | peaker), p_on, loss, cutoff,
                     off_from, off_hours, reason, curve (1 if dispatched on its own curve),
-                    model, version
+                    model, version, win_from / win_hours (the loss window an hourly probability
+                    was judged over), out_share (share of a CC train's site listed out),
+                    cc_small (MW a CC train is held at in cheap hours, its smallest usual size)
+  unit_hours        {"series": UNIT_SERIES, "units": {unit: [[24] per series]}}: each thermal
+                    unit's hourly weight online (p), expected MW, committed minimum MW and the
+                    day-ahead price it was dispatched against (its node, else the hub); null for a
+                    series that is zero all day or a price it did not have
   renewables        columns + rows, one per wind / solar unit: unit, tech, nameplate,
                     avail_mwh, disp_mwh, source, offer, model, version
 
@@ -47,7 +53,8 @@ OUT_DIR = DATA_DIR / "forecast"
 FORMAT = 1
 BAND_MONTHS = 12
 UNIT_COLS = ["unit", "tech", "group", "hsl", "lsl", "verdict", "p_on", "loss", "cutoff", "off_from", "off_hours",
-             "reason", "curve", "model", "version"]
+             "reason", "curve", "model", "version", "win_from", "win_hours", "out_share", "cc_small"]
+UNIT_SERIES = ["p", "exp", "min", "price"]
 RENEW_COLS = ["unit", "tech", "nameplate", "avail_mwh", "disp_mwh", "source", "offer", "model", "version"]
 CATEGORIES = {
     "baseload": "the never-off group plus nuclear",
@@ -116,7 +123,7 @@ def build_day(date, ctx: C.Context) -> dict:
     by_c = {k: blank() for k in CATEGORIES}
     cap = {"group": {g: _cap0() for g in GROUPS}, "tech": {t: _cap0() for t in C.THERMAL}}
     cat = {k: {"cap": 0.0, "on": 0.0, "min": 0.0, "exp": 0.0, "gwh": 0.0, "n_on": 0, "n_units": 0} for k in CATEGORIES}
-    unit_rows = []
+    unit_rows, unit_hours = [], {}
     for key, row in sorted(commit["rows"].items()):
         d = disp["rows"][key]
         g = "never" if row["tech"] == "nuclear" else (row["group"] or "ungrouped")
@@ -151,7 +158,11 @@ def build_day(date, ctx: C.Context) -> dict:
         unit_rows.append([key, row["tech"], g, _r(hsl), _r(lsl), row["verdict"], p_on, row["loss"], row["cutoff"],
                           row["off_from"], row["off_hours"], row["reason"], int(d["curve"]),
                           row["model"] if row["tech"] != "combustion_turbine" else peak["rows"].get(key, {}).get("model", row["model"]),
-                          row["version"] if row["tech"] != "combustion_turbine" else peak["rows"].get(key, {}).get("version", row["version"])])
+                          row["version"] if row["tech"] != "combustion_turbine" else peak["rows"].get(key, {}).get("version", row["version"]),
+                          row.get("win_from"), row.get("win_hours"), row.get("out_share"), d.get("small")])
+        hs = [[round(float(v), 2) for v in d["p"]], [round(float(v)) for v in d["exp"]], [round(float(v)) for v in d["min"]]]
+        hs = [None if not any(v) else v for v in hs]       # a unit off all day carries nulls
+        unit_hours[key] = hs + [None if d.get("price") is None else [round(float(v), 2) for v in d["price"]]]
     fleet = blank()
     for t in C.THERMAL:
         for k in fleet:
@@ -198,6 +209,7 @@ def build_day(date, ctx: C.Context) -> dict:
                    **{t: {"avail": _rl(rn[t]["avail"]), "disp": _rl(rn[t]["disp"])} if rn[t]["n"] else None for t in C.RENEW},
                    "storage": {k: sr[k] for k in ("dis", "chg", "soc")} if sr else None, "model": hourly_model},
         "units": {"columns": UNIT_COLS, "rows": unit_rows},
+        "unit_hours": {"series": UNIT_SERIES, "units": unit_hours},
         "renewables": {"columns": RENEW_COLS, "rows": renew_rows},
         # written to its own file by write_day (pipeline.forecast.stack), not into this one
         "_stack": STACK.build(date, ctx, commit, disp, GROUPS),

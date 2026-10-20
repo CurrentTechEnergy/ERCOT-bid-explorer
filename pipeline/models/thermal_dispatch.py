@@ -98,5 +98,7 @@ def forecast(date, ctx: C.Context, commit: dict, peakers: dict) -> dict:
             fl[cheap] = small
             mw = np.where(cheap & (mw <= floor), np.minimum(mw, small), mw)
         rows[key] = {"exp": np.round(p * mw, 1), "min": np.round(p * fl, 1), "hsl": hsl, "p": np.round(p, 3),
+                     "price": None if prices is None else np.round(np.asarray(prices, float), 2),
+                     "small": round(float(small), 1) if small is not None and hub is not None and small < floor else None,
                      "floor": round(floor, 1), "curve": bool(c), "model": NAME, "version": VERSION}
     return {"rows": rows, "inputs": {"curve_month": month, "curve_hindsight": hindsight, "with_curve": n_curve}}
