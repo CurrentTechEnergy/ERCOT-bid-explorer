@@ -12,8 +12,10 @@ Reports (ERCOT Public API):
               sheet is the one whose header row starts "Resource Name".  Combined-cycle units
               are listed by physical turbine, not by the configurations the 60-day data names.
   NP3-233-CD  Hourly Resource Outage Capacity.  Posted hourly for the next 168 hours: MW on
-              outage (planned, forced and maintenance) by load zone, with the intermittent
-              renewable and new-equipment parts split out.  No unit names.
+              outage (planned, forced and maintenance) by load zone: "total" for the
+              non-IRR resources (batteries included), with the intermittent renewable (IRR)
+              and new-equipment MW reported beside it, not inside it (IRR exceeds the total in
+              about a quarter of zone-days).  No unit names.
 
 Writes:
   data/outages/unplanned/<snapshot date>.json.gz   one per NP1-346-ER posting

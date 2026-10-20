@@ -29,7 +29,7 @@ import numpy as np
 from ..forecast import context as C
 
 NAME = "thermal_dispatch"
-VERSION = "v2"    # v2: hourly p_hours rows from thermal_cutoff v1, CC smallest size in cheap hours, out_share; v1: committed minimum uses the configuration floor; breakpoint interpolation fix
+VERSION = "v3"    # v3: a peaker on outage carries no weight; v2: hourly p_hours rows from thermal_cutoff v1, CC smallest size in cheap hours, out_share; v1: committed minimum uses the configuration floor; breakpoint interpolation fix
 
 
 def _config_curve(ctx, month, u):
@@ -58,7 +58,9 @@ def forecast(date, ctx: C.Context, commit: dict, peakers: dict) -> dict:
             p = peakers["rows"][key]["p_on"]
         else:
             p = np.full(24, float(row["p_on"]))
-        if row.get("p_hours") is not None:
+        if row["verdict"] == "outage":
+            p = np.zeros(24)        # a peaker on outage too: its hourly share is for when it can run
+        elif row.get("p_hours") is not None:
             p = np.asarray(row["p_hours"], float)
         elif row["off_from"]:
             a = row["off_from"] - 1
