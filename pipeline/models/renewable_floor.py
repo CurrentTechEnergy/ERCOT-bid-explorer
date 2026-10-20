@@ -82,4 +82,4 @@ def forecast(date, ctx: C.Context) -> dict:
         rows[key] = {"tech": t, "avail": np.round(avail, 1), "disp": np.round(disp, 1), "nameplate": stats.get(key, {}).get("hsl_max", 0.0) or u["hsl"],
                      "source": src, "offer": osrc, "node": node is not None, "model": NAME, "version": VERSION}
         src_count[src] = src_count.get(src, 0) + 1
-    return {"rows": rows, "inputs": {"avail": src_count, "forecast_posted": fc.get("posted")}}
+    return {"rows": rows, "inputs": {"avail": src_count, "forecast_posted": fc.get("posted") if {"stwpf", "stppf"} & set(src_count) else None}}
