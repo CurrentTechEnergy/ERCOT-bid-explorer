@@ -33,7 +33,7 @@ const TECH_COLOR = Object.fromEntries(TECHS.map(([id, , c]) => [id, c]));
 const CATS = [
   ["baseload", "Baseload", "--g1", "Units that never turn off on price, plus nuclear"],
   ["price_sensitive", "Price-sensitive", "--g4", "Units that turn off when staying on costs too much"],
-  ["peakers", "Peakers", "--c2", "Combustion turbines, from how often they ran at this price and hour"],
+  ["peakers", "Peakers", "--c2", "Combustion turbines outside the never-off group, from how often they ran at this price and hour"],
 ];
 const WIND = { id: "wind", label: "Wind", color: "--c3" }, SOLAR = { id: "solar", label: "Solar", color: "--c4" };
 const STORAGE = { id: "storage", label: "Batteries", color: "--c7" };
@@ -228,7 +228,8 @@ function drawSpark() {
       showTip(ev, `<h4>${heLabel(h)}</h4><table><tr><td>Day-ahead hub average</td><td class="n">${fmtPrice(H.hub[h])}</td></tr>` +
         (dal ? `<tr><td>Day-ahead system lambda</td><td class="n">${fmtPrice(dal[h])}</td></tr>` : "") +
         (lam ? `<tr><td>Real-time system lambda</td><td class="n">${fmtPrice(lam[h])}</td></tr>` : "") + `</table>`);
-    }).on("pointerleave", () => { cross.style("display", "none"); hideTip(); });
+    }).on("pointerleave", () => { cross.style("display", "none"); hideTip(); })
+    .on("click", (ev) => pickHour(Math.round(x.invert(d3.pointer(ev)[0])) - 1)).style("cursor", "pointer");
   el.replaceChildren(svg.node());
   setCSV(el, ["hour_ending", "da_hub_avg", "da_lambda", "rt_lambda"], HRS.map((h) => [h + 1, H.hub[h], dal ? dal[h] : null, lam ? lam[h] : null]), `Hub price ${S.date}`);
   $("headline-note").textContent = `${S.date} · forecast`;
@@ -268,7 +269,8 @@ function drawMini() {
       cross.style("display", null).attr("x1", x(h + 1)).attr("x2", x(h + 1));
       showTip(ev, `<h4>${heLabel(h)} · expected</h4><table>` + ser.map((s) => `<tr><td><span class="sw" style="background:var(${s.color})"></span></td><td>${s.label}</td><td class="n">${fmtGW(s.vals[h])} GW</td></tr>`).join("") +
         `<tr><td></td><td>Total</td><td class="n">${fmtGW(tops[h])} GW</td></tr></table>`);
-    }).on("pointerleave", () => { cross.style("display", "none"); hideTip(); });
+    }).on("pointerleave", () => { cross.style("display", "none"); hideTip(); })
+    .on("click", (ev) => pickHour(Math.round(x.invert(d3.pointer(ev)[0])) - 1)).style("cursor", "pointer");
   el.replaceChildren(svg.node());
   $("mini-legend").innerHTML = ser.map((s) => `<span><span class="sw" style="background:var(${s.color})"></span>${s.label}</span>`).join("");
   setCSV(el, ["hour_ending", ...ser.map((s) => `${s.id}_mw`)], HRS.map((h) => [h + 1, ...ser.map((s) => s.vals[h])]), `Expected mix ${S.date}`);
@@ -301,7 +303,7 @@ function barRow(name, note, color, c, why, act) {
     (c.out ? `<i style="left:${w(c.on + c.off)}%;width:${w(c.out)}%;${HATCH}"></i>` : "") +
     (c.unknown ? `<i style="left:${w(c.on + c.off + c.out)}%;width:${w(c.unknown)}%;background:var(--axis)"></i>` : "") +
     `<i class="tick" style="left:calc(${expPct}% - 1.5px)"></i>` + (actPct != null ? `<i class="act" style="left:calc(${actPct}% - 1.5px)"></i>` : "") + `</div>` +
-    `<div class="val"><b>${f(exp)} ${u}</b> expected of ${f(cap * k)} ${u} max` + (act != null ? `<br>${gwh ? fmtGWh(act) : fmtGW(act / 24 * 1000)} ${u} actual` : "") + `</div>`;
+    `<div class="val"><b>${f(exp)} ${u}</b> expected<br>of ${f(cap * k)} ${u} max` + (act != null ? `<br>${gwh ? fmtGWh(act) : fmtGW(act / 24 * 1000)} ${u} actual` : "") + `</div>`;
 }
 function drawGroups() {
   const el = $("group-rows"), D = S.day;
@@ -358,14 +360,14 @@ function drawTechs() {
       `<div class="bar" data-tip-html="${esc(tip)}"><i style="left:0;width:${w(r.avail)}%;background:var(${s.color});opacity:0.45"></i><i style="left:0;width:${w(r.disp)}%;background:var(${s.color})"></i>` +
       `<i style="left:${w(r.avail)}%;width:${w(np - r.avail)}%;${HATCH}"></i>` +
       (a2 != null ? `<i class="act" style="left:calc(${(a2 / (np * 24 / 1000)) * 100}% - 1.5px)"></i>` : "") + `</div>` +
-      `<div class="val"><b>${f(disp)} ${u}</b> expected of ${f(avail)} ${u} available` + (a2 != null ? `<br>${gwh ? fmtGWh(a2) : fmtGW(a2 / 24 * 1000)} ${u} actual` : "") + `</div>`;
+      `<div class="val"><b>${f(disp)} ${u}</b> expected<br>of ${f(avail)} ${u} available` + (a2 != null ? `<br>${gwh ? fmtGWh(a2) : fmtGW(a2 / 24 * 1000)} ${u} actual` : "") + `</div>`;
   });
   const csv = TECHS.filter(([t]) => D.capacity.tech[t]).map(([t, label]) => [label, ...CAP_KEYS.map((k) => D.capacity.tech[t][k]), act(t), null, null, null]);
   [WIND, SOLAR].forEach((s) => { const r = D.headline[s.id]; if (r) csv.push([s.label, r.nameplate, ...CAP_KEYS.slice(1).map(() => null), sc && sc.two_day ? sc.two_day[`${s.id}_gwh_act`] : null, r.avail_gwh, r.disp_gwh, r.curt_gwh]); });
   setCSV(el, ["technology", ...CAP_KEYS, "actual_gwh", "avail_gwh", "disp_gwh", "priced_out_gwh"], csv, `Expected to run by technology ${S.date}`);
   const hs = D.headline.storage;
   html += `<div class="sect">Storage</div><div class="lab"><span class="sw" style="background:var(${STORAGE.color})"></span><div>Batteries<small>${hs ? "the fleet's recent habit by hour, nudged by the day's price shape" : "no battery forecast for this day"}</small></div></div><div class="bar"></div>` +
-    `<div class="val">${hs ? `<b>${fmtGWh(hs.gwh_dis)} GWh</b> discharged, <b>${fmtGWh(hs.gwh_chg)} GWh</b> charged, peaks ${fmtGW(hs.peak_dis)} / ${fmtGW(hs.peak_chg)} GW` : "–"}</div>`;
+    `<div class="val">${hs ? `<b>${fmtGWh(hs.gwh_dis)} GWh</b> discharged<br><b>${fmtGWh(hs.gwh_chg)} GWh</b> charged<br>peaks ${fmtGW(hs.peak_dis)} / ${fmtGW(hs.peak_chg)} GW` : "–"}</div>`;
   el.innerHTML = html;
 }
 
@@ -440,7 +442,8 @@ function drawHourly() {
         [...shown].reverse().map((s) => `<tr><td><span class="sw" style="background:var(${s.color})"></span></td><td>${s.label}</td><td class="n">${fmtGW(s.vals[h])} GW</td></tr>`).join("") +
         `<tr><td></td><td>Thermal expected</td><td class="n">${fmtGW(th)} GW</td></tr><tr><td></td><td>Committed minimum</td><td class="n">${fmtGW(minLine[h])} GW</td></tr>` +
         shownLines.map((l) => `<tr><td></td><td>${l.label.replace(/ \(.*\)/, "")}</td><td class="n">${fmtGW(l.own[h])} GW</td></tr>`).join("") + `</table>`);
-    }).on("pointerleave", () => { cross.style("display", "none"); hideTip(); });
+    }).on("pointerleave", () => { cross.style("display", "none"); hideTip(); })
+    .on("click", (ev) => pickHour(Math.round(x.invert(d3.pointer(ev)[0])) - 1)).style("cursor", "pointer");
   el.replaceChildren(svg.node());
   $("hourly-note").textContent = `${S.date} · GW`;
   setCSV(el, ["hour_ending", "da_hub_avg", "committed_min_mw", ...ser.map((s) => `${s.id}_exp_mw`), ...lines.map((l) => `${l.id}_mw`)],
@@ -661,6 +664,10 @@ function render() {
   $("hour-out").textContent = `${heLabel(S.hour)} · ${String(S.hour).padStart(2, "0")}:00–${String(S.hour + 1).padStart(2, "0")}:00`;
   drawLayers(); drawHeadline(); drawSpark(); drawMini(); drawGroups(); drawTechs(); drawHourly(); drawScore(); drawMix(); drawUnits(); drawOffersLinks();
   saveView();
+}
+// a click on an hourly chart picks the hour for the generation mix and the units table
+function pickHour(h) {
+  S.hour = Math.max(0, Math.min(23, h)); $("hour").value = S.hour; renderHour();
 }
 function renderHour() {
   $("hour-out").textContent = `${heLabel(S.hour)} · ${String(S.hour).padStart(2, "0")}:00–${String(S.hour + 1).padStart(2, "0")}:00`;
