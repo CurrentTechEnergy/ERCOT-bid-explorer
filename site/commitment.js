@@ -439,6 +439,11 @@ function stretchBase() {
         k = j;
       } else k++;
     }
+    // an off stretch open at the window start is not a shutdown, but a week or more of it makes a
+    // unit that never started seasonal rather than never-off
+    { let j = 0, off = 0, gap = 0;
+      while (j < N && (st[j] === "0" || st[j] === "o" || st[j] === "-")) { if (st[j] === "0") off++; else if (st[j] === "-") gap++; j++; }
+      if (j >= 168 && gap <= off && off >= ST_OUT_MIN_H) long.push(j); }
     // daily needs two pure OFF spells under 24 h (one can be a trip and restart) and is split by
     // shutdowns per week over the period; a lone short spell does not place a unit
     const perWeek = e.shut / (N / 168);

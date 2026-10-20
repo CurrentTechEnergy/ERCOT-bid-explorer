@@ -116,10 +116,21 @@ def off_spells(st: np.ndarray):
     return out
 
 
+def lead_off(st: np.ndarray) -> int:
+    """Length of the off stretch open at the window start when it lasts a week or more (else 0).
+    It is not a shutdown, but a unit that never started is seasonal rather than never-off."""
+    N, j, off, gap = len(st), 0, 0, 0
+    while j < N and st[j] in "0o-":
+        off += st[j] == "0"
+        gap += st[j] == "-"
+        j += 1
+    return j if j >= 168 and gap <= off and off >= OUT_MIN_H else 0
+
+
 def group_of(st: np.ndarray, N: int) -> str:
     spells = off_spells(st)
     short = sum(1 for _, n, pure in spells if n < 24 and pure)
-    long = [n for _, n, _ in spells if n >= 24]
+    long = [n for _, n, _ in spells if n >= 24] + [n for n in [lead_off(st)] if n]
     per_week = len(spells) / (N / 168.0)
     if short >= 2:
         return "daily1" if per_week < 1 else "daily2" if per_week <= 2 else "daily3"
