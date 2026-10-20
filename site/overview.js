@@ -232,9 +232,8 @@ function drawSpark() {
   el.replaceChildren(svg.node());
   setCSV(el, ["hour_ending", "da_hub_avg", "da_lambda", "rt_lambda"], HRS.map((h) => [h + 1, H.hub[h], dal ? dal[h] : null, lam ? lam[h] : null]), `Hub price ${S.date}`);
   $("headline-note").textContent = `${S.date} · forecast`;
-  $("spark-note").textContent = `Shaded bands are the bottom quarter, middle half and top quarter of daily hub averages over ${H.band_window.from} to ${H.band_window.to}. ` +
-    (dal ? "The dotted line is the day-ahead system lambda, the hub average less the hubs' congestion. " : "") +
-    (lam ? "The dashed line is the real-time system lambda." : "Real-time system lambda is drawn beside the day-ahead lines once the day has happened.");
+  $("spark-note").textContent = `Bands are the low, middle and high quarters of the last twelve months' daily averages.` +
+    (dal ? " Dotted is the day-ahead system lambda." : "") + (lam ? " Dashed is real-time lambda." : "");
 }
 
 function miniSeries() {
