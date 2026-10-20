@@ -51,11 +51,10 @@ RENEW = ["wind", "solar"]
 CURVE_DIR = UNIT_DATA_DIR / "forecast" / "curves"
 CURVE_FORMAT = 1
 OUTAGE_SNAPSHOT_LAG = 4        # days: the NP1-346-ER snapshot of D - 4 is posted about 05:00 on D - 1, before D clears
-# Unseen outage MW (Context.unseen_out): the outage HSL the forecast missed regresses on the zonal
-# remainder as about 4,200 MW + 0.84 x remainder (daily, Mar-Aug 2026, r 0.98; slope 0.70-0.73 in
-# spring and summer alone).  Spread as a share of each unit's weight that takes off its committed
-# minimum, the full estimate overshot (bias -2.3 GW), so both terms are scaled by 0.3, the factor
-# that brought the backtest's committed-minimum bias to about zero.
+# Unseen outage MW (Context.unseen_out): the HSL of coal, CC and gas steam units forecast on but
+# actually on outage (the unit-level report lists unplanned outages only) regresses on the zonal
+# remainder as about 910 MW + 0.46 x remainder (daily, Mar-Aug 2026, r 0.90; most of it spring
+# planned maintenance).  Fit on the backtest's own days, so the gain it scored is in-sample.
 UNSEEN_BASE = 910.0           # MW, fleet, split across zones by their thermal MW
 UNSEEN_SLOPE = 0.46           # MW per MW of zonal remainder
 OUT_SHARE_MIN = 0.5            # a non-CC unit listed with at least this share of its max MW out is off for the day
