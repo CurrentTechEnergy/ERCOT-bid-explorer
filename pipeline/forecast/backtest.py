@@ -93,8 +93,8 @@ def _cell(v, pct=False):
 
 def report(cur: dict, ref: dict, labels=("current", "ref"), cal=None) -> str:
     """Markdown: the promotion gate for both sides, then the floor and technology scores.
-    cal: {"current": score.calibration(...), "ref": ...} adds the Brier line to the gate and
-    the reliability table."""
+    cal: {"current": score.calibration(...), "ref": ...} adds the Brier line (report only: it
+    never fails the gate) and the reliability table."""
     from .benchmark import BENCH, report as bench_report
     from .score import summarise
     bench = json.loads(BENCH.read_text())
@@ -114,7 +114,7 @@ def report(cur: dict, ref: dict, labels=("current", "ref"), cal=None) -> str:
             ("Benchmark worst group MAE (MW)", "worst", False, False),
             ("Cheap-hour floor MAE, all as-of days (MW)", "cheap", False, False)]
     if cal:
-        gate.append(("Brier score of P(on), loss-window units, all as-of days", "brier", False, False))
+        gate.append(("Brier score of P(on), loss-window units, all as-of days (report only)", "brier", False, False))
     lines = [f"# Backtest: {labels[0]} vs {labels[1]}", "",
              f"- {labels[0]}: {_versions(cur) or 'no scored days'}", f"- {labels[1]}: {_versions(ref) or 'no scored days'}", "",
              "## Promotion gate", "", f"| Line | {labels[1]} | {labels[0]} | |", "|---|---|---|---|"]
@@ -122,9 +122,12 @@ def report(cur: dict, ref: dict, labels=("current", "ref"), cal=None) -> str:
     for name, k, pct, higher in gate:
         a, b = r[k], c[k]
         ok = a is None or (b is not None and (b >= a if higher else b <= a))
+        if k == "brier":    # report only
+            f4 = lambda v: "–" if v is None else f"{v:.4f}"
+            lines.append(f"| {name} | {f4(a)} | {f4(b)} | {'better or same' if ok else 'worse'} |")
+            continue
         ok_all &= ok
-        fmt = (lambda v: "–" if v is None else f"{v:.4f}") if k == "brier" else (lambda v: _cell(v, pct))
-        lines.append(f"| {name} | {fmt(a)} | {fmt(b)} | {'pass' if ok else '**fail**'} |")
+        lines.append(f"| {name} | {_cell(a, pct)} | {_cell(b, pct)} | {'pass' if ok else '**fail**'} |")
     lines += ["", f"**{labels[0]}: {'passes' if ok_all else 'fails'} the gate.**", "",
               "## Committed minimum against online LSL, all as-of days", "",
               f"| Hours | {labels[1]} MAE | {labels[0]} MAE | {labels[1]} bias | {labels[0]} bias |", "|---|---|---|---|---|"]
