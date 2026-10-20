@@ -52,6 +52,7 @@ CURVE_DIR = UNIT_DATA_DIR / "forecast" / "curves"
 CURVE_FORMAT = 1
 OUTAGE_SNAPSHOT_LAG = 4        # days: the NP1-346-ER snapshot of D - 4 is posted about 05:00 on D - 1, before D clears
 OUT_SHARE_MIN = 0.5            # a non-CC unit listed with at least this share of its max MW out is off for the day
+NRC_OFF_PCT = 50.0             # a reactor the NRC reported below this power the morning before D is off on D
 CC_MIN_DAYS = 120              # days of 60-day history before the asof point a train's smallest running size is taken from
 CC_MIN_Q = 0.1                 # ... as this percentile of its hourly online LSL
 OFF_MIN_SPELLS = 3             # off spells a train needs for its own off-spell percentile
@@ -93,6 +94,7 @@ class Context:
         self._raw = None
         self._off_p10 = None
         self._listed = {}
+        self._nrc = None
         self._cc_lsl = None
         self._cc_min = {}
         self._rows60 = {}
@@ -320,6 +322,15 @@ class Context:
                     out[name] = 1.0
         self._listed[date] = out
         return out
+
+    def nrc_off(self, date):
+        """{nuclear unit: power %} for the units of every reactor the NRC reported below
+        NRC_OFF_PCT on the morning of D - 1 (pipeline/nrc.py, public before D cleared)."""
+        if self._nrc is None:
+            self._nrc = read_json_gz(DATA_DIR / "outages" / "nrc.json.gz", default=None) or {"days": {}, "units": {}}
+        prev = (_d(date) - dt.timedelta(days=1)).isoformat()
+        day = self._nrc["days"].get(prev) or {}
+        return {u: p for name, p in day.items() if p < NRC_OFF_PCT for u in self._nrc["units"].get(name, [])}
 
     def cc_min_lsl_at(self, date):
         """{train: smallest usual running size, MW}: the CC_MIN_Q percentile of the train's

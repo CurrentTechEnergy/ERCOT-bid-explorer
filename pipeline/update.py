@@ -48,6 +48,7 @@ from .econ import build_econ
 from .dam_prices import fetch_dam_prices, fetch_dam_node_prices
 from .renew_forecast import fetch_renew_forecast
 from .outages import fetch_outages
+from .nrc import fetch_nrc
 from .forecast.run import build_forecast
 from .ppa import build_ppa
 from .renew_changes import build_renew_changes
@@ -369,7 +370,7 @@ def main(argv=None):
     ap.add_argument("--max-files", type=int, default=None, help="cap curve files per report per run")
     ap.add_argument("--outages-backfill", nargs=2, metavar=("START", "END"),
                     help="also fetch the outage reports for every operating day in this range")
-    ap.add_argument("--skip", choices=["2d", "2dgen", "60d", "dam", "prices", "outages", "gas", "forecast"], action="append", default=[])
+    ap.add_argument("--skip", choices=["2d", "2dgen", "60d", "dam", "prices", "outages", "nrc", "gas", "forecast"], action="append", default=[])
     ap.add_argument("--local", nargs="+", help="process local zip files instead of calling the API")
     ap.add_argument("--reprocess-60d", nargs="?", const="missing", choices=["missing", "all"],
                     help="re-download and reparse 60-day SCED and DAM days already in the index: those "
@@ -463,6 +464,8 @@ def main(argv=None):
         fetch_renew_forecast(api, index)
     if "outages" not in args.skip:
         fetch_outages(api, index, backfill=args.outages_backfill)
+    if "nrc" not in args.skip:
+        fetch_nrc()
     if "gas" not in args.skip:
         fetch_gas()
         fetch_hubs()

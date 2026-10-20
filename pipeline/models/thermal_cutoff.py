@@ -34,6 +34,8 @@ For every thermal train in the latest DAM disclosure (pipeline.forecast.context.
               and the month's day-ahead hub average to date is not below the lowest monthly
               hub average it has run through; off otherwise.  A placeholder until a
               multi-week economics rule exists.
+  NRC        a nuclear unit whose reactor the NRC reported below NRC_OFF_PCT power the morning
+              before (Context.nrc_off) is "outage" all day
   listed out  a unit in ERCOT's unplanned outage report public before the day cleared
               (Context.listed_out) is "outage" all day; a CC train at a site with part of its MW
               listed out keeps its verdict and carries out_share, which the dispatch model takes
@@ -64,7 +66,7 @@ from ..decisions import _window, _cutoff, _dam_trains, HALF, OUT_MIN_H
 from ..forecast import context as C
 
 NAME = "thermal_cutoff"
-VERSION = "v1"    # v1: listed outages; probability of staying on through the window, per-unit horizon, pooled cutoffs
+VERSION = "v1"    # v1: NRC reactor status, listed outages; probability of staying on through the window, per-unit horizon, pooled cutoffs
 SEASONAL_VERSION = "v0"
 RUN_SHARE = 0.5          # a month the unit ran through: online at least this share of its hours
 LONG_OUT = 21            # days an outage must already have lasted at the last known hour to carry forward
@@ -381,7 +383,12 @@ def forecast(date, ctx: C.Context) -> dict:
                 row["reason"] += " (generic costs)"
         rows[key] = row
     listed = ctx.listed_out(date)
+    nrc = ctx.nrc_off(date)
     for key, row in rows.items():
+        if key in nrc and row["verdict"] != "outage":
+            row.update(verdict="outage", p_on=0.0, off_from=1, off_hours=24, outage=True,
+                       reason=f"reactor at {nrc[key]:.0f}% power in the NRC status report the morning before")
+            continue
         share = listed.get(key, 0.0)
         if share >= 1.0 and row["verdict"] != "outage":
             row.pop("p_hours", None)
