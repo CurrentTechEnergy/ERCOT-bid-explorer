@@ -43,12 +43,19 @@ from . import groups as grp
 
 LAG = 60                       # days between an operating day and its 60-day disclosure
 HUB = "HB_HUBAVG"
+CHEAP_HUB = 10.0               # $/MWh: an hour at or below this day-ahead hub price is a cheap hour (scored in score.py)
 PRICE_BINS = [-1e9, 0.0, 15.0, 25.0, 35.0, 50.0, 100.0, 1e9]   # $/MWh, day-ahead hub average
 BIN_LABELS = ["<0", "0-15", "15-25", "25-35", "35-50", "50-100", "100+"]
 THERMAL = ["nuclear", "coal", "combined_cycle", "gas_steam", "combustion_turbine"]
 RENEW = ["wind", "solar"]
 CURVE_DIR = UNIT_DATA_DIR / "forecast" / "curves"
 CURVE_FORMAT = 1
+OUTAGE_SNAPSHOT_LAG = 4        # days: the NP1-346-ER snapshot of D - 4 is posted about 05:00 on D - 1, before D clears
+OUT_SHARE_MIN = 0.5            # a non-CC unit listed with at least this share of its max MW out is off for the day
+NRC_OFF_PCT = 50.0             # a reactor the NRC reported below this power the morning before D is off on D
+CC_MIN_DAYS = 120              # days of 60-day history before the asof point a train's smallest running size is taken from
+CC_MIN_Q = 0.1                 # ... as this percentile of its hourly online LSL
+OFF_MIN_SPELLS = 3             # off spells a train needs for its own off-spell percentile
 MIN_ASOF_DAYS = 28             # days of hourly history a backtest day's groups and stats need
 SNAP_HOUR = 15                 # the run nearest this hour on the snapshot day gives the curve
 
@@ -85,6 +92,11 @@ class Context:
         self._stats = None
         self._asof = {}
         self._raw = None
+        self._off_p10 = None
+        self._listed = {}
+        self._nrc = None
+        self._cc_lsl = None
+        self._cc_min = {}
         self._rows60 = {}
         self._snapshots = None
         self._curves = {}
@@ -249,7 +261,7 @@ class Context:
             uh = _uh_upto(self.uh, point)
             by, N, _ = grp.merged_states(uh, self.techs)
             self._asof[point] = {"groups": {key: grp.group_of(st, N) for key, (t, st) in by.items()},
-                                 "stats": build_unit_stats(self, upto=point)}
+                                 "stats": build_unit_stats(self, upto=point), "off_p10": _off_p10(by)}
         return self._asof[point]
 
     def groups_at(self, date):
@@ -261,6 +273,85 @@ class Context:
         """Unit stats as of asof(date) (the full-record stats for a live day)."""
         a = self._at(date)
         return self.stats if a is None else a["stats"]
+
+    def off_p10_at(self, date):
+        """{train: 10th percentile of its off spells (hours)} as of asof(date), for trains with
+        at least OFF_MIN_SPELLS spells."""
+        a = self._at(date)
+        if a is not None:
+            return a["off_p10"]
+        if self._off_p10 is None:
+            self._off_p10 = _off_p10(grp.merged_states(self.uh, self.techs)[0])
+        return self._off_p10
+
+    def listed_out(self, date):
+        """{unit or train: share out} from ERCOT's unplanned outage report public before `date`
+        cleared (the snapshot of D - OUTAGE_SNAPSHOT_LAG, pipeline/outages.py), counting outages
+        not ended by the start of `date`.  A non-CC unit, matched by name, is 1.0 when its listed
+        MW out is at least OUT_SHARE_MIN of its max MW.  The report names a CC plant site, not
+        the train, so each train at the site gets the site's MW out over its total MW (the trains'
+        MW from data/groups_60d.json.gz), capped at 1.  {} when there is no snapshot."""
+        if date in self._listed:
+            return self._listed[date]
+        snap = (_d(date) - dt.timedelta(days=OUTAGE_SNAPSHOT_LAG)).isoformat()
+        s = read_json_gz(DATA_DIR / "outages" / "unplanned" / f"{snap}.json.gz", default=None)
+        out = {}
+        if s and s.get("rows"):
+            c = {n: i for i, n in enumerate(s["columns"])}
+            t0 = date + "T00:00"
+            live = [r for r in s["rows"] if not (r[c["actual_end"]] and r[c["actual_end"]] < t0)
+                    and not (r[c["planned_end"]] and r[c["planned_end"]] < t0)]
+            by_unit, by_site = defaultdict(lambda: [0.0, 0.0]), defaultdict(float)
+            for r in live:
+                e = by_unit[r[c["unit"]]]
+                e[0] += r[c["mw_out"]] or 0
+                e[1] = max(e[1], r[c["mw_max"]] or 0)
+                by_site[r[c["resource"]]] += r[c["mw_out"]] or 0
+            gu = (read_json_gz(DATA_DIR / "groups_60d.json.gz", default={}) or {}).get("units", {})
+            site_mw = defaultdict(float)
+            for key, v in gu.items():
+                if v[0] == "combined_cycle":
+                    site_mw[_site(key)] += v[2] or 0
+            for key, v in gu.items():
+                if v[0] == "combined_cycle":
+                    mw = by_site.get(_site(key), 0.0)
+                    if mw > 0 and site_mw[_site(key)] > 0:
+                        out[key] = min(1.0, mw / site_mw[_site(key)])
+            for name, (mw, mx) in by_unit.items():
+                if name not in out and mx > 0 and mw >= OUT_SHARE_MIN * mx:
+                    out[name] = 1.0
+        self._listed[date] = out
+        return out
+
+    def nrc_off(self, date):
+        """{nuclear unit: power %} for the units of every reactor the NRC reported below
+        NRC_OFF_PCT on the morning of D - 1 (pipeline/nrc.py, public before D cleared)."""
+        if self._nrc is None:
+            self._nrc = read_json_gz(DATA_DIR / "outages" / "nrc.json.gz", default=None) or {"days": {}, "units": {}}
+        prev = (_d(date) - dt.timedelta(days=1)).isoformat()
+        day = self._nrc["days"].get(prev) or {}
+        return {u: p for name, p in day.items() if p < NRC_OFF_PCT for u in self._nrc["units"].get(name, [])}
+
+    def cc_min_lsl_at(self, date):
+        """{train: smallest usual running size, MW}: the CC_MIN_Q percentile of the train's
+        hourly online LSL (configurations summed, as the 60-day data reports them) over the
+        CC_MIN_DAYS days up to asof(date)."""
+        point, _ = self.asof(date)
+        if point is None:
+            return {}
+        if point not in self._cc_min:
+            if self._cc_lsl is None:
+                self._cc_lsl = _cc_online_lsl(self.days60)
+            lo = (_d(point) - dt.timedelta(days=CC_MIN_DAYS)).isoformat()
+            out = {}
+            for key, days in self._cc_lsl.items():
+                v = [a for d, a in days if lo < d <= point]
+                v = np.concatenate(v) if v else np.array([])
+                v = v[v > 0]
+                if len(v):
+                    out[key] = float(np.quantile(v, CC_MIN_Q))
+            self._cc_min[point] = out
+        return self._cc_min[point]
 
     def raw_states(self):
         """{train: (tech, state array)} merged but not outage-rewritten, on the stats' calendar."""
@@ -306,6 +397,42 @@ class Context:
 
 
 # ------------------------------------------------------------------ stats --
+def _site(train: str) -> str:
+    """The plant site a CC train belongs to, as the outage report names it."""
+    return train.rsplit("_CC", 1)[0]
+
+
+def _cc_online_lsl(days60) -> dict:
+    """{train: [(date, hourly online LSL array)]} for every CC train in the 60-day unit files."""
+    out = defaultdict(list)
+    for d in days60:
+        f = read_json_gz(DATA_DIR / "60d-units" / f"{d}.json.gz", default=None)
+        if not f:
+            continue
+        cols = {c: i + 2 for i, c in enumerate(f["columns"])}
+        day = {}
+        for r in f["rows"]:
+            name, t = f["units"][r[0]][0], f["units"][r[0]][2]
+            if t != "combined_cycle":
+                continue
+            a = day.setdefault(train_of(name), np.zeros(24))
+            if (r[cols["online_share"]] or 0) >= 0.5 and 1 <= r[1] <= 24:
+                a[r[1] - 1] += r[cols["lsl"]] or 0
+        for k, a in day.items():
+            out[k].append((d, a))
+    return out
+
+
+def _off_p10(by: dict) -> dict:
+    """{train: 10th percentile off-spell length} from merged states (groups.off_spells)."""
+    out = {}
+    for key, (t, st) in by.items():
+        n = [n for _, n, _ in grp.off_spells(st)]
+        if len(n) >= OFF_MIN_SPELLS:
+            out[key] = float(np.quantile(n, 0.1))
+    return out
+
+
 def _uh_upto(uh: dict, upto: str) -> dict:
     """The hourly-states record cut after day `upto` (dates and each unit's strip)."""
     dates = [d for d in uh.get("dates", []) if d <= upto]

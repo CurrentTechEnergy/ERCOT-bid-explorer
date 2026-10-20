@@ -56,7 +56,7 @@ from .build import GROUPS
 
 PATH = DATA_DIR / "forecast" / "scores.json.gz"
 HEADLINE_TOL = 0.10
-CHEAP_HUB = 10.0                  # $/MWh: an hour at or below this day-ahead hub price is a cheap hour
+CHEAP_HUB = C.CHEAP_HUB          # $/MWh: an hour at or below this day-ahead hub price is a cheap hour
 ESR_SPLIT_DATE = "2026-06-22"     # before this, ERCOT's "remaining resources" included storage
 
 
