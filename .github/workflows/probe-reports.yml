@@ -1,0 +1,31 @@
+name: Probe ERCOT reports
+
+# Which ERCOT public reports carry transmission or resource outages, and what their files hold
+# (pipeline/probe_reports.py).  Writes nothing; results are in the run summary.
+on:
+  pull_request:
+    paths:
+      - pipeline/probe_reports.py
+      - .github/workflows/probe-reports.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install -r requirements.txt
+      - name: Probe the reports
+        env:
+          ERCOT_API_USERNAME: ${{ secrets.ERCOT_API_USERNAME }}
+          ERCOT_API_PASSWORD: ${{ secrets.ERCOT_API_PASSWORD }}
+          ERCOT_API_SUBSCRIPTION_KEY: ${{ secrets.ERCOT_API_SUBSCRIPTION_KEY }}
+        run: python -m pipeline.probe_reports
