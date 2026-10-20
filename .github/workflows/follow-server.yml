@@ -85,6 +85,7 @@ jobs:
           printf '{"url":"%s"}\n' "$url" > site/follow.json
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout -- worker     # drop the database id filled into wrangler.toml, or the rebase below refuses to run
           git add site/follow.json
           if git diff --cached --quiet; then echo "Address unchanged: $url"; exit 0; fi
           git commit -m "Follow server address: $url"
