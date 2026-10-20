@@ -79,7 +79,7 @@ from ..forecast import context as C
 
 UNSEEN_TECHS = ("coal", "combined_cycle", "gas_steam")   # spread the zonal unseen outage MW over these
 NAME = "thermal_cutoff"
-VERSION = "v4"    # v4: loss over the cutoff split by award history; v3: gas steam on its stay-on loss, stale gas steam outages dropped; v2: CC outage calls by gas turbine, zonal unseen outages; v1: NRC reactor status, listed outages; probability of staying on through the window, per-unit horizon, pooled cutoffs
+VERSION = "v5"    # v5: stay-on probability by boosted trees; v4: loss over the cutoff split by award history; v3: gas steam on its stay-on loss, stale gas steam outages dropped; v2: CC outage calls by gas turbine, zonal unseen outages; v1: NRC reactor status, listed outages; probability of staying on through the window, per-unit horizon, pooled cutoffs
 SEASONAL_VERSION = "v0"
 RUN_SHARE = 0.5          # a month the unit ran through: online at least this share of its hours
 LONG_OUT = 21            # days an outage must already have lasted at the last known hour to carry forward
@@ -91,6 +91,7 @@ DAILY_TECHS = ("combined_cycle", "gas_steam", "coal")
 CLEAR_TECHS = ("combined_cycle", "gas_steam")   # a 60-day outage these carry is dropped when the outage report does not list the unit
 WINDOW_TECHS = ("combined_cycle", "gas_steam")   # judged on their own stay-on cost in CC_WINDOW_GROUPS
 CC_WINDOW_GROUPS = ("daily1", "daily2", "daily3", "multiday", "seasonal")   # CC trains judged on their own stay-on cost
+GBT = dict(max_iter=300, learning_rate=0.05, max_leaf_nodes=15, min_samples_leaf=200, l2_regularization=1.0, random_state=0)
 RIDGE = 1.0              # L2 penalty of the logistic fit (features are scaled to about unit size)
 
 
@@ -191,6 +192,21 @@ def _hourly(f, margin, lsl, bs, nh):
     inw = (hs >= bs) & (hs < bs + nh)
     edge = np.where(inw, np.minimum(hs - bs, bs + nh - 1 - hs) / max(nh, 1), 0.0)
     return np.column_stack([np.tile(f, (24, 1)), margin / lsl / 100.0, inw.astype(float), edge])
+
+
+def _tree_x(x, tech, group, month, loss, lsl):
+    """The boosted trees' inputs for a unit-day's 24 hours: the logistic's (without its
+    intercept) and the technology, whether the group is a daily one, the month, the hour and
+    log(1 + loss per MW of LSL)."""
+    return np.column_stack([x[:, 1:], np.full(24, DAILY_TECHS.index(tech) if tech in DAILY_TECHS else -1),
+                            np.full(24, float(str(group or "").startswith("daily"))), np.full(24, float(month)),
+                            np.arange(24, dtype=float), np.full(24, float(np.log1p(max(loss, 0.0) / lsl)))])
+
+
+def _trees(Z, y):
+    """Boosted trees (scikit-learn) on the unit-hours, the technology a categorical input."""
+    from sklearn.ensemble import HistGradientBoostingClassifier
+    return HistGradientBoostingClassifier(categorical_features=[Z.shape[1] - 5], **GBT).fit(Z, y)
 
 
 def _logit(X, y):
@@ -304,15 +320,10 @@ def _pool(ctx, date):
             s = stats["units"].get(key)
             f = _features(margin, lsl, loss, bs, nh, cpm * lsl, _min_off(ctx, date, key, tech), own[key][2],
                           s["on_days"] if s else 0.0)
-            X.append(_hourly(f, margin, lsl, bs, nh)); y.append(np.isin(seg, ["m", "a"]).astype(float)); T += [_fit_key(tech, g)] * 24
+            X.append(_tree_x(_hourly(f, margin, lsl, bs, nh), tech, g, d[5:7], loss, lsl)); y.append(np.isin(seg, ["m", "a"]).astype(float)); T += [_fit_key(tech, g)] * 24
     X = np.vstack(X) if X else np.zeros((0, 0))
     y, T = (np.concatenate(y) if y else np.zeros(0)), np.array(T)
-    w = {}
-    if len(y):
-        w[None] = _logit(X, y)
-        for t in set(T):
-            m = T == t
-            w[t] = _logit(X[m], y[m]) if m.sum() >= 24 * 200 else w[None]
+    w = {None: _trees(X, y)} if len(y) else {}
     cache[point] = (own, pool, w)
     return cache[point]
 
@@ -398,8 +409,9 @@ def forecast(date, ctx: C.Context) -> dict:
                 span = _span(margin, bs, nh)
                 s = stats["units"].get(key)
                 x = _hourly(_features(margin, lsl, loss, bs, nh, cut, mo, aw, s["on_days"] if s else 0.0), margin, lsl, bs, nh)
-                wt = w.get(_fit_key(t, g), w.get(t, w.get(None)))
-                ph = 1.0 / (1.0 + np.exp(-np.clip(x @ wt, -30, 30))) if wt is not None else np.full(24, float(loss <= cut))
+                wt = w.get(None)
+                ph = (wt.predict_proba(_tree_x(x, t, g, date[5:7], loss, lsl))[:, 1] if wt is not None
+                      else np.full(24, float(loss <= cut)))
                 p_on = round(float(ph[bs:bs + nh].mean()), 2)
                 src = "its cutoff" if c else "the pooled cutoff"
                 row.update(cutoff=round(cut), p_on=p_on, p_hours=[round(float(v), 3) for v in ph], win_from=bs + 1, win_hours=nh)
