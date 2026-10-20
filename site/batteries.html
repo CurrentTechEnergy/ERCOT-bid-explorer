@@ -32,7 +32,7 @@
   <div class="brand">
     <div class="nav-row"><nav class="nav" aria-label="Pages"><a href="index.html">Overview</a><a href="commitment.html">Commitment</a><a href="changes.html">What's changing</a><a href="beyond.html">Beyond baseload</a><a href="renewables.html">Renewables</a><a href="batteries.html" aria-current="page">Batteries</a><a href="fleet.html">Fleet economics</a><a href="unit.html">Units</a><a href="trends.html">Trends</a><a href="builder.html">Graph builder</a><a href="guide.html">How offers work</a></nav></div>
     <h1>Batteries</h1>
-    <p class="sub">When batteries charge and discharge, what they bid to buy cheap power and offer to sell it, when the fleet fills up and how much room it leaves unused. Batteries are the other buyer of cheap midday power: their charging bids sit under midday prices until the fleet is full. Data from ERCOT's 60-day SCED and DAM disclosures, from the RTC+B start (Dec 5, 2025), when every battery began offering one curve from charging to discharging.</p>
+    <p class="sub">Batteries are the other buyer of cheap midday power: when they charge, what they bid, and when the fleet is full. Data from the RTC+B start, Dec 5, 2025.</p>
   </div>
   <p class="status" id="status">Loading data…</p>
 </header>
@@ -62,7 +62,8 @@
     <div class="panel-head">
       <div>
         <h2>Charging and discharging by hour <span class="h-note" id="flow-note"></span></h2>
-        <p class="note">Fleet discharging above zero and charging below it, from the base points SCED sent every battery, averaged over each hour (and over the days chosen above). The dashed lines are what the fleet was awarded in the day-ahead market for the same hours, so the gap between bars and lines is what batteries changed in real time. Hover for the hour's real-time and day-ahead hub prices.</p>
+        <p class="note">Fleet discharging above zero and charging below it, by hour. Dashed lines are the day-ahead awards, so the gap is what changed in real time.</p>
+        <details class="how"><summary>How it's built</summary><p class="note">Fleet discharging above zero and charging below it, from the base points SCED sent every battery, averaged over each hour (and over the days chosen above). The dashed lines are what the fleet was awarded in the day-ahead market for the same hours, so the gap between bars and lines is what batteries changed in real time. Hover for the hour's real-time and day-ahead hub prices.</p></details>
       </div>
     </div>
     <div class="legend legend-static" id="flow-legend"></div>
@@ -73,7 +74,7 @@
     <div class="panel-head">
       <div>
         <h2>When the fleet fills up <span class="h-note" id="soc-note"></span></h2>
-        <p class="note">Fleet state of charge as a share of the fleet's maximum, summed over the batteries that report one. Once it nears full, batteries stop buying, so cheap hours after that point have one less buyer. The dashed line is the fleet's minimum state of charge.</p>
+        <p class="note">How full the fleet is through the day. Once it is full, cheap hours have one less buyer.</p>
       </div>
     </div>
     <p class="note" id="soc-text"></p>
@@ -84,7 +85,8 @@
     <div class="panel-head">
       <div>
         <h2>Offer prices by hour <span class="h-note" id="offer-note"></span></h2>
-        <p class="note">Where the fleet's offers sit, from each battery's submitted curve: <b>charging stops</b> is the highest price at which it still bids to charge, <b>half the charging</b> the price below which it bids at least half its charging range; <b>discharge starts</b> is the lowest price at which it offers any discharge, <b>half the discharge</b> the price at which its offer reaches half its HSL. Each is the battery's median over the hour's SCED runs, then the median across batteries weighted by their size. The grey lines are the hub price, real-time (solid) and day-ahead (dashed). Log scale above $10.</p>
+        <p class="note">The prices at which the fleet stops charging and starts discharging, hour by hour, against the hub price.</p>
+        <details class="how"><summary>How it's built</summary><p class="note">Where the fleet's offers sit, from each battery's submitted curve: <b>charging stops</b> is the highest price at which it still bids to charge, <b>half the charging</b> the price below which it bids at least half its charging range; <b>discharge starts</b> is the lowest price at which it offers any discharge, <b>half the discharge</b> the price at which its offer reaches half its HSL. Each is the battery's median over the hour's SCED runs, then the median across batteries weighted by their size. The grey lines are the hub price, real-time (solid) and day-ahead (dashed). Log scale above $10.</p></details>
       </div>
     </div>
     <div class="legend legend-static" id="offer-legend"></div>
@@ -115,7 +117,8 @@
     <div class="panel-head">
       <div>
         <h2>Room left unused <span class="h-note" id="head-note"></span></h2>
-        <p class="note">How much more the fleet could have discharged (above zero) or charged (below) within its telemetered limits, which already reflect state of charge. Part is held for ancillary services awarded in SCED (Reg-Up, RRS, ECRS and Non-Spin above, Reg-Down below); the rest was free and not used, because the battery's own offer priced it out. A full battery has no charging room and an empty one no discharge room, so neither shows here.</p>
+        <p class="note">Room the fleet had to discharge (above zero) or charge (below) but didn't use, split into ancillary service holdback and unused.</p>
+        <details class="how"><summary>How it's built</summary><p class="note">How much more the fleet could have discharged (above zero) or charged (below) within its telemetered limits, which already reflect state of charge. Part is held for ancillary services awarded in SCED (Reg-Up, RRS, ECRS and Non-Spin above, Reg-Down below); the rest was free and not used, because the battery's own offer priced it out. A full battery has no charging room and an empty one no discharge room, so neither shows here.</p></details>
       </div>
     </div>
     <div class="legend legend-static" id="head-legend"></div>
@@ -126,7 +129,8 @@
     <div class="panel-head">
       <div>
         <h2>Across days</h2>
-        <p class="note">Energy the fleet charged and discharged each day against its day-ahead awards and the fleet's maximum state of charge (how much it can hold), and below, the day's charging and discharge prices: the highest price at which the fleet still bids to charge, averaged over HE 10 to 16, and the lowest price at which discharge starts in any hour. The marker is the chosen day.</p>
+        <p class="note">Energy charged and discharged each day against the day-ahead awards and fleet size, with the day's charging and discharge prices below.</p>
+        <details class="how"><summary>How it's built</summary><p class="note">Energy the fleet charged and discharged each day against its day-ahead awards and the fleet's maximum state of charge (how much it can hold), and below, the day's charging and discharge prices: the highest price at which the fleet still bids to charge, averaged over HE 10 to 16, and the lowest price at which discharge starts in any hour. The marker is the chosen day.</p></details>
       </div>
     </div>
     <div class="legend legend-static" id="days-legend"></div>

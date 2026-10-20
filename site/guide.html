@@ -185,7 +185,7 @@
       </ul>
       <p>The figures here use the site's Stay-on calculation. Most example units had no three-part offer that day, so their costs are generic and only a rough guide. They say cycling off would have been cheaper, and those units stayed on anyway. Common reasons are start risk and wear, minimum off times, gas already bought, ancillary service awards and the cost of being wrong about the evening ramp.</p>
       <p><strong>Quail Run</strong> is the counterexample. It is in West Texas, where Waha gas traded at −$3.21/MMBtu that day, so burning gas earned money. It offered its output below −$30, ran above its minimum through the whole stretch, and came out ahead by staying on, even before the restart it avoided.</p>
-      <p class="see"><a href="trends.html">Trends has the full Stay-on, Shutdowns and "Who turns off for cheap stretches" charts →</a></p>
+      <p class="see"><a href="commitment.html">Commitment has each unit's call for the day and how often the fleet rides through cheap hours →</a></p>
     </div>
     <div class="fig">
       <div class="kpis" id="k5"></div>
@@ -249,8 +249,8 @@
         <p class="lead">Decided by owners, hours or days ahead. Includes minimum output.</p>
         <ul>
           <li><a href="./">Overview</a>: who is expected to run, by how often each group turns off and by technology</li>
-          <li><a href="trends.html">Floor-priced MW</a> (≤ −$20 as used): almost all of it is LSL</li>
-          <li><a href="trends.html">Capacity by status</a>, <a href="trends.html">Running vs price</a>, <a href="trends.html">Thermal output in cheap hours</a>, <a href="trends.html">Who turns off for cheap stretches</a></li>
+          <li><a href="commitment.html#p=floor-panel">Floor-priced MW</a> (≤ −$20 as used): almost all of it is LSL</li>
+          <li><a href="commitment.html#p=cap-panel">Capacity by state</a>, <a href="commitment.html#p=cheap-panel">Thermal output in cheap hours</a>, <a href="commitment.html#p=stretch-panel">Who turns off for cheap stretches</a></li>
           <li><a href="fleet.html">Fleet economics</a> and each unit's page: what running cost and earned (<a href="#revenue">step 6</a>)</li>
         </ul>
       </div>
@@ -287,7 +287,7 @@
     <div class="prose">
       <p class="step-num">STEP 7</p>
       <h2>How hedge signals are found</h2>
-      <p>Wind and solar offers can give away how a plant is hedged. The <a href="renewables.html">Renewables</a><a href="batteries.html">Batteries</a> page scans every unit for this, and each unit's page shows its fitted formula.</p>
+      <p>Wind and solar offers can give away how a plant is hedged. The <a href="renewables.html">Renewables</a> page scans every unit for this, and each unit's page shows its fitted formula.</p>
       <p><strong>The formula.</strong> Per MWh, a plant hedged on a DA-settled, as-generated contract earns roughly the real-time price at its node, plus share × (strike − DA price at the settlement point), plus any per-MWh credit. Generating pays only when the RT price beats share × DA − (share × strike + credit), and that is the offer a QSE bidding the contract submits.</p>
       <p><strong>The fit.</strong> Each hour's offer is the median over its SCED runs of the submitted curve's price at half its MW, kept only when it did not move within the hour (a DA-based price is hourly). A formula day has at least four such hours at four or more prices, after dropping a floor or cap the formula is clamped to. Every candidate settlement point (the unit's own node, each hub and load zone) is fitted on each formula day; the point's formula is the median over days, and its hit rate is the share of hours it predicts within <span id="hit-v">$2</span>.</p>
       <p><strong>Bidding changes.</strong> <span id="chg-method">A unit's regime is its floor (one offer price most of the day), a day-ahead formula at one settlement point, or offers that move within the day. A change is a new regime that holds on most of the following online days.</span></p>

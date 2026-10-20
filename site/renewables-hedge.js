@@ -53,8 +53,7 @@ const COLS = [
   { k: "tech", h: "Tech", t: 1, f: (u) => (u.tech === "wind" ? "Wind" : "Solar") },
   { k: "tier", h: "Signal", t: 1, f: (u) => tierCell(u.tier) },
   { k: "point", h: "Settles at", t: 1, f: (u) => (u.point ? esc(POINT_LABEL(u.point, u)) + (u.near && u.near.length ? ` <span class="muted">(or ${esc(u.near.slice(0, 2).join(", "))})</span>` : "") : "–") },
-  { k: "a", h: "Share", f: (u) => fmtA(u.a) },
-  { k: "b", h: "Intercept", f: (u) => fmt$(u.b) },
+  { k: "a", h: "Offers at", f: (u) => (u.a == null ? "–" : `${fmtPct(u.a)} of DA ${u.b < 0 ? "−" : "+"} ${fmt$(Math.abs(u.b))}`) },
   { k: "strike_hi", h: "Implied strike", f: strike },
   { k: "hit", h: "Hit rate", f: (u) => (u.hit == null ? "–" : fmtPct(u.hit)) },
   { k: "days", h: "Formula days", f: (u) => (u.days ? `${u.days} <span class="muted">${u.first.slice(5)} to ${u.last.slice(5)}</span>` : "–") },
@@ -83,7 +82,7 @@ function drawKpis() {
     [fmt0(n("revealed")), "Revealed"], [fmt0(n("unclear")), "Location unclear"], [fmt0(n("partial")), "Partial"],
     [fmt0(standing), "Formula on 30+ days"],
   ].map(([v, k]) => `<div class="kpi"><span class="v">${v}</span><span class="k">${k}</span></div>`).join("");
-  $("kpi-note").textContent = `A formula found on many days is a standing bidding rule; one found only on a few high-price days is a policy the operator switched on. DA hub and load zone prices cover ${D.hub_days.length ? `${D.hub_days[0]} to ${D.hub_days[D.hub_days.length - 1]}` : "no days yet"}; outside that range only the unit's own node can be tested.`;
+  window.CX.setNote($("kpi-note"), "What the scan found: units whose offers follow a day-ahead price formula, and how consistently.", `A formula found on many days is a standing bidding rule; one found only on a few high-price days is a policy the operator switched on. DA hub and load zone prices cover ${D.hub_days.length ? `${D.hub_days[0]} to ${D.hub_days[D.hub_days.length - 1]}` : "no days yet"}; outside that range only the unit's own node can be tested.`);
   $("credit-v").textContent = fmt$0(D.credit);
   $("tier-legend").innerHTML = Object.entries(TIER).map(([, t]) => `<span class="has-tip" data-tip="${esc(t.tip)}"><span class="sw" style="background:var(${t.color})"></span>${t.label}</span>`).join("");
   $("tier-legend").querySelectorAll("[data-tip]").forEach((el) => {
@@ -164,9 +163,9 @@ function drawChanges() {
   if (!R) { emptyMsg(chart, "No bidding change data yet. It is built by the data update workflow."); tbl.innerHTML = ""; return; }
   const rs = chgRows(R);
   $("chg-note").textContent = `${R.first} to ${R.last}`;
-  $("chg-text").textContent = `Every change in how a wind or solar unit offers: a new floor, a formula switched on or off, an episode of a few days away from its floor. ` +
+  window.CX.setNote($("chg-text"), "Every change in how a wind or solar unit offers: a new floor, or a price formula switched on or off. Click a row to open the unit.", `Every change in how a wind or solar unit offers: a new floor, a formula switched on or off, an episode of a few days away from its floor. ` +
     `${fmt0(rs.length)} change${rs.length === 1 ? "" : "s"} in this selection, ${fmt0(rs.filter((e) => e.moved).length)} of which moved dispatch. ` +
-    `Most offer changes happen below any price the unit's node reaches, so they say something about the bidder without changing what it produced. Click a row to open the unit's page.`;
+    `Most offer changes happen below any price the unit's node reaches, so they say something about the bidder without changing what it produced. Click a row to open the unit's page.`);
   drawChangeMonths(chart, rs);
   const shown = rs.slice(0, CH.limit);
   tbl.innerHTML = rs.length ? `<table class="data"><thead><tr><th class="t">Date</th><th class="t">Plant</th><th class="t">Tech</th><th class="t">Change</th><th class="t">Before → after</th><th class="t">Moved dispatch</th><th>Worth at node price</th><th class="t">Context, 7 days before → after</th></tr></thead><tbody>` +
@@ -228,8 +227,8 @@ function drawPTC() {
   const [lo, hi] = R.ptc_band;
   const lev = R.events.filter((e) => e.ptc === "level").length, exp = R.events.filter((e) => e.ptc === "expired").length;
   $("ptc-note").textContent = `${T.months[0]} to ${T.months[T.months.length - 1]}`;
-  $("ptc-text").textContent = `A floor between ${fmt$0(lo)} and ${fmt$0(hi)} prices a per-MWh credit such as the PTC: the unit would rather be paid less than not produce. Each line is the median, across units, of each unit's typical floor that month. ` +
-    `Few units move their floor on the day the yearly inflation adjustment takes effect, but the median drifts lower year by year. In the change log, ${fmt0(lev)} changes are tagged PTC level (a move inside the band of $5 or less) and ${fmt0(exp)} PTC may have expired (the floor left the band for about $0 and never came back).`;
+  window.CX.setNote($("ptc-text"), "The typical wind and solar floor offer each month. A floor between about −$60 and −$15 prices in a per-MWh credit such as the PTC.", `A floor between ${fmt$0(lo)} and ${fmt$0(hi)} prices a per-MWh credit such as the PTC: the unit would rather be paid less than not produce. Each line is the median, across units, of each unit's typical floor that month. ` +
+    `Few units move their floor on the day the yearly inflation adjustment takes effect, but the median drifts lower year by year. In the change log, ${fmt0(lev)} changes are tagged PTC level (a move inside the band of $5 or less) and ${fmt0(exp)} PTC may have expired (the floor left the band for about $0 and never came back).`);
   const ts = T.months.map((m) => new Date(m + "-15T12:00:00"));
   const w = Math.max(280, el.clientWidth || 600), H = 220, m = { t: 18, r: 16, b: 26, l: 56 };
   const all = PTC_SERIES.flatMap((s) => T[s.id].median).filter((v) => v != null);

@@ -229,10 +229,10 @@ function drawTotals() {
     ["Margin", fmt$k(M), M < 0], ["Margin per MWh", MWH ? fmt$2(M / MWH) : "–", M < 0], ["Energy", fmt0(MWH / 1000) + " GWh"]]
     .map(([k, v, neg]) => `<div class="kpi"><span class="v${neg ? " neg" : ""}">${v}</span><span class="k">${k}</span></div>`).join("");
   const nodeDays = S.idx.has_nodes.filter(Boolean).length;
-  $("tot-note").textContent = `${names.length} units over ${D} days · node prices on ${nodeDays} days` +
+  window.CX.setNote($("tot-note"), `${names.length} units over ${D} days. Revenue up, cost down, then the running margin.`, `Node prices on ${nodeDays} days` +
     (lamDays ? ` · ${fmt0(lamDays)} unit-days priced at system lambda for want of a node price` : "") +
     (missing ? ` · ${fmt0(missing)} unit-days with no fuel price (before the first gas price)` : "") +
-    (FUEL[S.tech] === "gas" && (S.cost === "eia" || S.cost === "generic") ? ` · gas at ${gasLabel(T)}` : "") + ` · ${COST_NOTES[S.cost].split(".")[0]}.`;
+    (FUEL[S.tech] === "gas" && (S.cost === "eia" || S.cost === "generic") ? ` · gas at ${gasLabel(T)}` : ""));
   barChart(el, T.dates, REV_SERIES.map((s) => ({ ...s, values: { energy, as }[s.k] })), COST_SERIES.map((s) => ({ ...s, values: { fuel, starts }[s.k] })),
     { ...MARGIN, values: margin }, { title: "Revenue (up) and cost (down) per day, $, all units", yFmt: fmt$k });
   let cum = 0;

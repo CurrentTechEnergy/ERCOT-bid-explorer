@@ -120,7 +120,7 @@ async function boot() {
   const newN = E.new_today || 0;
   $("status").textContent = `${E.n.toLocaleString()} changes, ${E.n_major.toLocaleString()} notable, ${E.first} to ${E.last} · updated ${E.updated.slice(0, 10)}` +
     (newN ? ` · ${newN} new in the latest update` : "");
-  $("feed-note").textContent = `Grouped by week of the operating day. Notable means a change the detectors rate as large: daily cycling starting or stopping, a shutdown after 30 days on or despite a day-ahead award, an offer shift of $20/MWh or more against peers or of half the day in how much is offered at or below $0, an outage of 30 days or more, a large wind or solar floor or formula change, a technology's median offer moving by half or more, a new unit or battery, or a battery growing or shrinking by half. "New" marks changes the latest update found.`;
+  window.CX.setNote($("feed-note"), "Grouped by week, newest first. Notable changes show by default; switch to all for the rest. New marks what the latest update found.", `Grouped by week of the operating day. Notable means a change the detectors rate as large: daily cycling starting or stopping, a shutdown after 30 days on or despite a day-ahead award, an offer shift of $20/MWh or more against peers or of half the day in how much is offered at or below $0, an outage of 30 days or more, a large wind or solar floor or formula change, a technology's median offer moving by half or more, a new unit or battery, or a battery growing or shrinking by half. "New" marks changes the latest update found.`);
 
   const techs = [...new Set(E.events.map((e) => e.tech))].sort((a, b) => TECH_ORDER.indexOf(a) - TECH_ORDER.indexOf(b));
   options($("f-tech"), "All technologies", techs.map((t) => [t, TECH_LABEL[t] || t]));

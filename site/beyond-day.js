@@ -362,8 +362,7 @@ function drawStack() {
   el.replaceChildren(svg.node());
   setCSV(el, ["price", ...list.map((s) => `${s.label} (MW)`), "All committed thermal (MW)"],
     P.map((p, i) => [p, ...list.map((s) => s.mw[i]), fl[i]]), `Expected dispatch stack ${S.date} ${heLabel(h)}`);
-  $("stack-foot").textContent = `Models: ${Object.entries(D.models).map(([k, v]) => `${k} ${v}`).join(", ")}. ` +
-    `${d3.sum(list, (s) => s.n)} thermal units expected online for at least part of the day, weighted by their chance of running.`;
+  $("stack-foot").textContent = `${d3.sum(list, (s) => s.n)} thermal units expected online for at least part of the day, each weighted by its odds of running.`;
 }
 
 // ---- offer curve chart ----------------------------------------------------

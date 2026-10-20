@@ -183,7 +183,7 @@ function drawNodeCurtail() {
   staticLegend($("nc-bins-legend"), CURT);
   if (!N || !N.dates.length) { emptyMsg(el, "No node-priced curtailment yet. It is built by the data update workflow once node prices are loaded."); vel.innerHTML = bel.innerHTML = uel.innerHTML = ""; return; }
   const nNodes = N.has_nodes.filter(Boolean).length, nOv = (N.has_overrides || []).filter(Boolean).length;
-  $("nc-note").textContent = `${nNodes} of ${N.dates.length} days have node prices · ${nOv} have operator override data · ${N.n_units.wind.mapped + N.n_units.solar.mapped} units matched, ${N.n_units.wind.unmapped + N.n_units.solar.unmapped} not`;
+  $("nc-note").textContent = `${N.dates.length} days`;
   const gwh = (v) => (v == null ? null : v / 1000);
   // daily split on the full curtailment axis: 60-day days carry the node split, later days with only
   // the 2-day reports carry a dashed total

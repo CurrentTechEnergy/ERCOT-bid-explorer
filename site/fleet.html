@@ -28,7 +28,7 @@
   <div class="brand">
     <div class="nav-row"><nav class="nav" aria-label="Pages"><a href="index.html">Overview</a><a href="commitment.html">Commitment</a><a href="changes.html">What's changing</a><a href="beyond.html">Beyond baseload</a><a href="renewables.html">Renewables</a><a href="batteries.html">Batteries</a><a href="fleet.html" aria-current="page">Fleet economics</a><a href="unit.html">Units</a><a href="trends.html">Trends</a><a href="builder.html">Graph builder</a><a href="guide.html">How offers work</a></nav><button type="button" class="copy-link" id="copy-link" title="Copy a link to exactly this view">Copy link</button></div>
     <h1>ERCOT Fleet Economics</h1>
-    <p class="sub">What each technology's fleet earned and what it cost to run, day by day, from the 60-day disclosures: output at each unit's own node price, day-ahead awards and ancillary services against fuel, variable and start-up costs on a cost basis you choose. Then wind and solar by month and by unit. One unit's economics are on its Unit page.</p>
+    <p class="sub">What each technology's fleet earned and what it cost to run, day by day, on the cost basis you choose.</p>
   </div>
   <p class="status" id="status">Loading data…</p>
 </header>
@@ -99,7 +99,7 @@
     <div class="panel-head">
       <div>
         <h2>Units <span class="h-note" id="units-note"></span><a class="help-q" href="guide.html#revenue" title="How revenue is counted" aria-label="How revenue is counted">?</a></h2>
-        <p class="note">Every unit of the technology over the loaded days. Click a column to sort and a unit to open its page, with its days. Margin is energy plus ancillary revenue minus fuel, variable and start costs on the chosen bases; it leaves out fixed costs, so it is the contribution to them.</p>
+        <p class="note">Every unit of the technology. Margin is revenue less fuel, variable and start costs, before fixed costs. Click a unit to open it.</p>
       </div>
       <div class="panel-tools">
         <input type="search" id="unit-search" placeholder="Find a unit" aria-label="Find a unit">
@@ -112,21 +112,21 @@
   <section class="panel panel-wide" id="eco-panel">
     <div class="panel-head">
       <div>
-        <h2>Revenue and curtailment by month<a class="help-q" href="guide.html#revenue" title="How revenue is counted" aria-label="How revenue is counted">?</a></h2>
-        <p class="note">Energy revenue on the two-settlement basis, whatever the controls above say: the day-ahead award at the DA price plus the real-time deviation at the unit's node where it has day-ahead data, real-time at its node otherwise (most wind and solar), and system lambda where the node price is missing; plus ancillary services. Curtailed energy and its worth at the node are from the curtailment panel on <a href="renewables.html">Renewables</a><a href="batteries.html">Batteries</a>. Hover a month for the split.</p>
+        <h2>Revenue by month<a class="help-q" href="guide.html#revenue" title="How revenue is counted" aria-label="How revenue is counted">?</a></h2>
+        <p class="note">Wind and solar revenue by month, day-ahead awards plus real-time at each unit's node. Hover a month for $/MWh. Curtailment is on <a href="renewables.html">Renewables</a>.</p>
+        <details class="how"><summary>How it's built</summary><p class="note">Energy revenue on the two-settlement basis, whatever the controls above say: the day-ahead award at the DA price plus the real-time deviation at the unit's node where it has day-ahead data, real-time at its node otherwise (most wind and solar), and system lambda where the node price is missing; plus ancillary services. Curtailed energy and its worth at the node are from the curtailment panel on <a href="renewables.html">Renewables</a>. Hover a month for the split.</p></details>
       </div>
     </div>
     <div class="legend legend-static"><span><span class="sw" style="background:var(--c3)"></span>Wind</span><span><span class="sw" style="background:var(--c4)"></span>Solar</span></div>
     <div class="chart" id="eco-months"></div>
-    <div class="chart chart-short" id="eco-curt"></div>
-    <div class="chart chart-short" id="eco-curt-value"></div>
   </section>
 
   <section class="panel panel-wide" id="eco-units-panel">
     <div class="panel-head">
       <div>
         <h2>Realised $/MWh by unit <span class="h-note" id="eco-note"></span><a class="help-q" href="guide.html#revenue" title="How revenue is counted" aria-label="How revenue is counted">?</a></h2>
-        <p class="note">Revenue as above over the unit's energy, for every wind and solar unit over every loaded 60-day day. The dashed lines are each technology's median. Curtailed share is the unit's curtailed energy (HSL minus base point, hour by hour) over its available energy, the same figure as "Of available" in the curtailment table on Renewables. Click a column to sort and a unit to open its page.</p>
+        <p class="note">Each wind and solar unit's revenue per MWh produced, with its curtailed share. Dashed lines are each technology's median. Click a unit to open it.</p>
+        <details class="how"><summary>How it's built</summary><p class="note">Revenue as above over the unit's energy, for every wind and solar unit over every loaded 60-day day. The dashed lines are each technology's median. Curtailed share is the unit's curtailed energy (HSL minus base point, hour by hour) over its available energy, the same figure as "Of available" in the curtailment table on Renewables. Click a column to sort and a unit to open its page.</p></details>
       </div>
       <div class="panel-tools">
         <div class="seg seg-sm" id="eco-tech" role="radiogroup" aria-label="Technology">

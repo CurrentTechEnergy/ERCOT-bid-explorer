@@ -399,5 +399,21 @@ if (document.readyState === "loading") document.addEventListener("DOMContentLoad
 
 function init() { initPins(); addDownloads(); addPanelLinks(); initCopyLink(); }
 
-window.CX = { getJSON, tryJSON, showTip, hideTip, clearPins, setCSV, readHash, writeHash, init, panelFromLink, css, esc, tickFormat, fmtKind, axisFmt, unitIndex, findUnits };
+// a chart's one-line caption, with the method kept behind "How it's built" (a details element after it)
+function setNote(el, caption, how) {
+  if (!el) return;
+  el.textContent = caption || "";
+  let d = el.nextElementSibling;
+  if (!(d && d.matches("details.how"))) {
+    if (!how) return;
+    d = document.createElement("details");
+    d.className = "how";
+    d.innerHTML = '<summary>How it\'s built</summary><p class="note"></p>';
+    el.after(d);
+  }
+  d.hidden = !how;
+  if (how) d.querySelector("p").textContent = how;
+}
+
+window.CX = { setNote, getJSON, tryJSON, showTip, hideTip, clearPins, setCSV, readHash, writeHash, init, panelFromLink, css, esc, tickFormat, fmtKind, axisFmt, unitIndex, findUnits };
 })();
