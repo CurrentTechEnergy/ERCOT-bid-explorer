@@ -1,0 +1,95 @@
+name: Deploy the follow server
+
+# Deploys worker/ (the Cloudflare Worker that records who follows which unit) and sets up
+# everything it needs on the Cloudflare account: a workers.dev subdomain if the account has none,
+# the D1 database and its tables, and the Worker's Resend key. Then it writes the Worker's address
+# to site/follow.json, which the Unit page's form reads, and commits it.
+#
+# Needs two repository secrets: CLOUDFLARE_API_TOKEN (Workers Scripts: Edit, D1: Edit, Account
+# Settings: Read) and RESEND_API_KEY. Runs on every push to main that changes worker/, or by hand.
+on:
+  push:
+    branches: [main]
+    paths: ["worker/**", ".github/workflows/follow-server.yml"]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: follow-server
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+      WRANGLER: npx --yes wrangler@4.151.3
+      CF: https://api.cloudflare.com/client/v4
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: "22"
+
+      - name: Check the secrets
+        run: |
+          [ -n "$CLOUDFLARE_API_TOKEN" ] || { echo "::error::Add the CLOUDFLARE_API_TOKEN repository secret (see README, Subscriber emails)"; exit 1; }
+          [ -n "$RESEND_API_KEY" ] || { echo "::error::Add the RESEND_API_KEY repository secret (see README, Subscriber emails)"; exit 1; }
+
+      - name: Find the account and its workers.dev subdomain
+        run: |
+          auth=(-H "Authorization: Bearer $CLOUDFLARE_API_TOKEN")
+          acct=$(curl -sf "${auth[@]}" "$CF/accounts" | jq -r '.result[0].id // empty')
+          [ -n "$acct" ] || { echo "::error::The Cloudflare token can't see an account: give it Account Settings: Read"; exit 1; }
+          echo "CLOUDFLARE_ACCOUNT_ID=$acct" >> "$GITHUB_ENV"
+          sub=$(curl -s "${auth[@]}" "$CF/accounts/$acct/workers/subdomain" | jq -r '.result.subdomain // empty')
+          if [ -z "$sub" ]; then
+            # a new account has no workers.dev subdomain yet: claim one (names are global, so try a few)
+            for name in currenttech-energy currenttech-ercot "currenttech-$(date +%s | tail -c 6)"; do
+              sub=$(curl -s -X PUT "${auth[@]}" -H "Content-Type: application/json" -d "{\"subdomain\":\"$name\"}" \
+                "$CF/accounts/$acct/workers/subdomain" | jq -r '.result.subdomain // empty')
+              [ -n "$sub" ] && break
+            done
+          fi
+          [ -n "$sub" ] || { echo "::error::Couldn't find or create a workers.dev subdomain"; exit 1; }
+          echo "SUBDOMAIN=$sub" >> "$GITHUB_ENV"
+
+      - name: Create the database if needed and apply the tables
+        working-directory: worker
+        run: |
+          id=$($WRANGLER d1 list --json | jq -r '.[] | select(.name == "ercot-follows") | .uuid')
+          if [ -z "$id" ]; then
+            $WRANGLER d1 create ercot-follows
+            id=$($WRANGLER d1 list --json | jq -r '.[] | select(.name == "ercot-follows") | .uuid')
+          fi
+          [ -n "$id" ] || { echo "::error::Couldn't create the D1 database: give the token D1: Edit"; exit 1; }
+          sed -i "s/DATABASE_ID/$id/" wrangler.toml
+          $WRANGLER d1 execute ercot-follows --remote --file schema.sql
+
+      - name: Deploy the Worker and give it the Resend key
+        working-directory: worker
+        run: |
+          $WRANGLER deploy
+          printf '{"RESEND_API_KEY":"%s"}' "$RESEND_API_KEY" > /tmp/secrets.json
+          $WRANGLER secret bulk /tmp/secrets.json
+          rm /tmp/secrets.json
+
+      - name: Record the Worker's address for the site
+        run: |
+          url="https://ercot-follows.$SUBDOMAIN.workers.dev"
+          curl -sf "$url/" > /dev/null || echo "::warning::$url didn't answer yet; a new workers.dev subdomain can take a few minutes"
+          printf '{"url":"%s"}\n' "$url" > site/follow.json
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add site/follow.json
+          if git diff --cached --quiet; then echo "Address unchanged: $url"; exit 0; fi
+          git commit -m "Follow server address: $url"
+          for attempt in 1 2 3 4 5; do
+            git pull --rebase origin "${GITHUB_REF_NAME}" && git push origin "HEAD:${GITHUB_REF_NAME}" && exit 0
+            sleep $((attempt * 10))
+          done
+          echo "::error::Could not push site/follow.json"; exit 1

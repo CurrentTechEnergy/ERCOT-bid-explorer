@@ -2,23 +2,20 @@
    selected. Reads data/events.json.gz (pipeline/events.py), the one list every detector's
    findings go into; the per-unit Atom feed it writes is linked from the panel.
 
-   Email sign-up goes through Buttondown's public embed endpoint, so the page needs no server:
-   the form posts the address with a tag for the unit (a real form post, which Buttondown's
-   docs require so its answer page can run its CAPTCHA), Buttondown sends its confirmation
-   email and keeps the list, and the send step (pipeline/notify.py) later targets each unit's
-   tag. NEWSLETTER is the Buttondown username; until it is set the panel offers the feed only. */
+   Email sign-up goes to the follow server (worker/, a Cloudflare Worker): the form posts the
+   address and the unit, the Worker emails a confirmation link and keeps the list, and the daily
+   send (pipeline/notify.py) reads who follows what from it. site/follow.json holds the
+   Worker's address (written when it is deployed); until it exists the panel offers the feed only. */
 (() => {
 "use strict";
 
-const NEWSLETTER = "currenttech.energy";   // Buttondown username (buttondown.com/currenttech.energy)
-const SUBSCRIBE_URL = (n) => `https://buttondown.com/api/emails/embed-subscribe/${n}`;
 const SHOW = 12;                // major changes shown before "Show all"
 const { tryJSON, esc } = window.CX;
 const $ = (id) => document.getElementById(id);
 const trainOf = (u) => { const m = /^(.*_CC\d+)_/.exec(u); return m ? m[1] : u; };
 const fmt$ = (v) => (v == null || isNaN(v) ? "–" : (v < 0 ? "−" : "") + "$" + d3.format(",.0f")(Math.abs(v)));
 
-const S = { unit: null, E: null, all: false };
+const S = { unit: null, E: null, all: false, follow: null };
 let loaded = null;
 
 // events for a unit: its own, a configuration's (bidding changes are per configuration), or
@@ -58,21 +55,33 @@ function msg(text, keep) {
 function drawSubscribe() {
   const feed = `data/feeds/units/${encodeURIComponent(S.unit)}.xml`;
   const feedLink = `<a class="btn" href="${feed}" title="Atom feed of this unit's changes, for a feed reader">Feed</a>`;
-  if (!NEWSLETTER) {
+  if (!S.follow) {
     $("sub-tools").innerHTML = feedLink;
     msg("Email alerts are not switched on yet. The feed carries the same changes for a feed reader.", true);
     return;
   }
-  // a real form post, as Buttondown's docs require (not fetch): its answer page handles the
-  // CAPTCHA and validation, and opens in a new tab so this page stays
-  $("sub-tools").innerHTML = `<form class="sub-form" id="sub-form" method="post" action="${SUBSCRIBE_URL(NEWSLETTER)}" target="_blank">` +
-    `<input type="hidden" name="embed" value="1"><input type="hidden" name="tag" value="unit:${esc(S.unit)}">` +
+  // "website" is a field people never see; bots that fill it in are ignored by the server
+  $("sub-tools").innerHTML = `<form class="sub-form" id="sub-form">` +
+    `<input type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px">` +
     `<input type="email" name="email" id="sub-email" placeholder="you@example.com" required aria-label="Email address">` +
-    `<button type="submit">Subscribe to ${esc(S.unit)}</button></form>${feedLink}`;
+    `<button type="submit" id="sub-btn">Subscribe to ${esc(S.unit)}</button></form>${feedLink}`;
   msg("");
-  $("sub-form").addEventListener("submit", () => {
-    const email = $("sub-email").value.trim();
-    msg(`Buttondown opens in a new tab to confirm. Check <b>${esc(email)}</b> for its confirmation email; once confirmed, you get one email on any day the update finds a change for ${esc(S.unit)}.`, true);
+  $("sub-form").addEventListener("submit", async (ev) => {
+    ev.preventDefault();
+    const form = new FormData(ev.target), unit = S.unit;
+    form.set("unit", unit);
+    $("sub-btn").disabled = true;
+    try {
+      // form-encoded, so the browser sends it without a CORS preflight
+      const r = await fetch(`${S.follow}/follow`, { method: "POST", body: new URLSearchParams(form) });
+      const d = await r.json().catch(() => ({ msg: "The sign-up server didn't answer properly. Please try again later." }));
+      if (unit === S.unit) msg(esc(d.msg), true);
+      if (r.ok) ev.target.reset();
+    } catch (e) {
+      msg("Couldn't reach the sign-up server. Please try again later.", true);
+    } finally {
+      if ($("sub-btn")) $("sub-btn").disabled = false;
+    }
   });
 }
 
@@ -81,7 +90,10 @@ function draw(ev) {
   const u = ev && ev.detail ? ev.detail : window.UNIT;
   if (!u) return;
   S.unit = u.name; S.all = false;
-  if (!loaded) loaded = tryJSON("data/events.json.gz").then((e) => { S.E = e; });
+  if (!loaded) loaded = Promise.all([
+    tryJSON("data/events.json.gz").then((e) => { S.E = e; }),
+    fetch("follow.json").then((r) => (r.ok ? r.json() : null)).then((f) => { S.follow = f && f.url; }).catch(() => {}),
+  ]);
   loaded.then(() => {
     if (S.unit !== u.name) return;
     $("changes-panel").hidden = !S.E;

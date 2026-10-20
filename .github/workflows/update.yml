@@ -135,15 +135,18 @@ jobs:
             python -m pipeline.validate
           fi
 
-      # Subscriber emails (pipeline/notify.py): once a day, after the afternoon run, one digest to
-      # the people who follow a unit the update found a change for. Sends nothing without the
-      # BUTTONDOWN_API_KEY secret or with the NOTIFY_DRY_RUN variable set to 1; the record of what
-      # was sent (site/data/notify_sent.json) goes in with the data commit below.
+      # Subscriber emails (pipeline/notify.py): once a day, after the afternoon run, one email to
+      # each person who follows a unit the update found a change for (follows live in the follow
+      # server, worker/). Sends nothing without the RESEND_API_KEY secret or with the
+      # NOTIFY_DRY_RUN variable set to 1; the record of what was sent (site/data/notify_sent.json)
+      # goes in with the data commit below.
       - name: Send subscriber emails
         if: github.event_name == 'schedule' && github.event.schedule == '31 19 * * *'
         continue-on-error: true     # a failed email must not hold back the data commit or the deploy
         env:
-          BUTTONDOWN_API_KEY: ${{ secrets.BUTTONDOWN_API_KEY }}
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          OWNER_EMAIL: ${{ secrets.OWNER_EMAIL }}
           NOTIFY_DRY_RUN: ${{ vars.NOTIFY_DRY_RUN }}
         run: python -m pipeline.notify
 
