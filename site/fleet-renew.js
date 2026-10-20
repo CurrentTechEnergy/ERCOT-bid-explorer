@@ -1,4 +1,4 @@
-/* Fleet economics, wind and solar: revenue and curtailment by month and realised $/MWh by unit,
+/* Fleet economics, wind and solar: revenue by month and realised $/MWh by unit (curtailment itself is on Renewables),
    moved from the Renewables page. Reads data/econ/wind and solar (pipeline/econ.py) and
    data/curtail_nodes.json.gz (curtailed energy, its worth at the node and each unit's curtailed
    share). fleet.js owns the status line and CX.init; this file keeps its own keys in the address
@@ -49,15 +49,9 @@ function computeEco() {
   ECO = { units, months: [...months.values()] };
 }
 function drawEcoMonths() {
-  const el = $("eco-months"), N = S.N;
+  const el = $("eco-months");
   if (!ECO.months.length) return emptyMsg(el, "No economics data yet.");
   const mos = [...new Set(ECO.months.map((m) => m.mo))].sort();
-  // curtailed energy and what it would have earned at the node, by month (curtail_nodes daily)
-  const cm = new Map();
-  if (N) N.dates.forEach((d, i) => ["wind", "solar"].forEach((t) => {
-    const k = `${d.slice(0, 7)}|${t}`, a = cm.get(k) || { mwh: 0, value: 0 };
-    a.mwh += N.daily[t].curt[i] || 0; a.value += N.daily[t].value[i] || 0; cm.set(k, a);
-  }));
   const get = (mo, t) => ECO.months.find((m) => m.mo === mo && m.t === t) || { rev: 0, mwh: 0 };
   const w = Math.max(280, el.clientWidth || 600), H = 240, m = { t: 18, r: 16, b: 26, l: 64 };
   const x = d3.scaleBand().domain(mos).range([m.l, w - m.r]).paddingInner(0.2);
@@ -71,41 +65,13 @@ function drawEcoMonths() {
     let acc = 0;
     TECHS.forEach((t) => { const v = get(mo, t.id).rev / 1e6; if (v > 0) svg.append("rect").attr("x", x(mo)).attr("width", x.bandwidth()).attr("y", y(acc + v)).attr("height", Math.max(0, y(acc) - y(acc + v) - 1)).attr("fill", css(t.color)); acc += v; });
     svg.append("rect").attr("x", x(mo)).attr("width", x.bandwidth()).attr("y", m.t).attr("height", H - m.t - m.b).attr("fill", "transparent")
-      .on("pointermove", (ev) => showTip(ev, `<h4>${d3.timeFormat("%B %Y")(new Date(mo + "-15T12:00:00"))}</h4><table><tr><td></td><td></td><td class="n">Revenue</td><td class="n">$/MWh</td><td class="n">Curtailed</td><td class="n">Worth at node</td></tr>` +
-        TECHS.map((t) => { const g = get(mo, t.id), c = cm.get(`${mo}|${t.id}`); return `<tr><td><span class="sw" style="background:var(${t.color})"></span></td><td>${t.label}</td><td class="n">$${d3.format(",.1f")(g.rev / 1e6)}M</td><td class="n">${g.mwh ? fmtPrice(g.rev / g.mwh) : "–"}</td><td class="n">${c ? d3.format(",.0f")(c.mwh / 1000) + " GWh" : "–"}</td><td class="n">${c ? "$" + d3.format(",.1f")(c.value / 1e6) + "M" : "–"}</td></tr>`; }).join("") + "</table>"))
+      .on("pointermove", (ev) => showTip(ev, `<h4>${d3.timeFormat("%B %Y")(new Date(mo + "-15T12:00:00"))}</h4><table><tr><td></td><td></td><td class="n">Revenue</td><td class="n">$/MWh</td></tr>` +
+        TECHS.map((t) => { const g = get(mo, t.id); return `<tr><td><span class="sw" style="background:var(${t.color})"></span></td><td>${t.label}</td><td class="n">$${d3.format(",.1f")(g.rev / 1e6)}M</td><td class="n">${g.mwh ? fmtPrice(g.rev / g.mwh) : "–"}</td></tr>`; }).join("") + "</table>"))
       .on("pointerleave", hideTip);
   });
   el.replaceChildren(svg.node());
-  setCSV(el, ["month", "wind_revenue", "wind_mwh", "solar_revenue", "solar_mwh", "wind_curtailed_mwh", "wind_curtailed_value_at_node", "solar_curtailed_mwh", "solar_curtailed_value_at_node"],
-    mos.map((mo) => [mo, get(mo, "wind").rev, get(mo, "wind").mwh, get(mo, "solar").rev, get(mo, "solar").mwh, cm.get(`${mo}|wind`)?.mwh, cm.get(`${mo}|wind`)?.value, cm.get(`${mo}|solar`)?.mwh, cm.get(`${mo}|solar`)?.value]), "Wind and solar revenue by month");
-  // curtailed energy by month, and what it would have earned at the node
-  const tick = (mo) => d3.timeFormat(w < 560 ? "%b" : "%b %y")(new Date(mo + "-15T12:00:00"));
-  const grouped = (gel, key, k, title, tipF) => {
-    if (!N) return emptyMsg(gel, "No node-priced curtailment yet.");
-    const vals = mos.flatMap((mo) => TECHS.map((t) => (cm.get(`${mo}|${t.id}`)?.[key] || 0) / k));
-    const gy = d3.scaleLinear().domain([Math.min(0, d3.min(vals)), Math.max(0, d3.max(vals)) || 1]).nice().range([H - m.b, m.t]);
-    const g = d3.create("svg").attr("viewBox", `0 0 ${w} ${H}`);
-    g.append("g").attr("class", "gridline").attr("transform", `translate(${m.l},0)`).call(d3.axisLeft(gy).ticks(5).tickSize(-(w - m.l - m.r)).tickFormat(""));
-    g.append("g").attr("class", "axis").attr("transform", `translate(${m.l},0)`).call(axisFmt(d3.axisLeft(gy), 5).tickSizeOuter(0));
-    g.append("g").attr("class", "axis").attr("transform", `translate(0,${H - m.b})`).call(d3.axisBottom(x).tickFormat(tick).tickSizeOuter(0));
-    g.append("text").attr("class", "axis-title").attr("x", m.l).attr("y", 10).text(title);
-    if (gy.domain()[0] < 0) g.append("line").attr("class", "zero").attr("x1", m.l).attr("x2", w - m.r).attr("y1", gy(0)).attr("y2", gy(0));
-    const bw = x.bandwidth() / 2;
-    mos.forEach((mo) => TECHS.forEach((tt, j) => {
-      const v = (cm.get(`${mo}|${tt.id}`)?.[key] || 0) / k;
-      g.append("rect").attr("x", x(mo) + j * bw).attr("width", bw - 1).attr("y", gy(Math.max(0, v))).attr("height", Math.abs(gy(0) - gy(v))).attr("fill", css(tt.color));
-    }));
-    g.append("rect").attr("x", m.l).attr("y", m.t).attr("width", w - m.l - m.r).attr("height", H - m.t - m.b).attr("fill", "transparent")
-      .on("pointermove", (ev) => {
-        const px = d3.pointer(ev)[0], mo = mos[Math.max(0, Math.min(mos.length - 1, Math.floor((px - m.l) / x.step())))];
-        showTip(ev, `<h4>${d3.timeFormat("%B %Y")(new Date(mo + "-15T12:00:00"))}</h4><table>` + TECHS.map((tt) => { const c = cm.get(`${mo}|${tt.id}`); return `<tr><td><span class="sw" style="background:var(${tt.color})"></span></td><td>${tt.label}</td><td class="n">${c ? tipF(c[key]) : "–"}</td></tr>`; }).join("") + "</table>");
-      })
-      .on("pointerleave", hideTip);
-    gel.replaceChildren(g.node());
-    setCSV(gel, ["month", `wind_${key}`, `solar_${key}`], mos.map((mo) => [mo, cm.get(`${mo}|wind`)?.[key], cm.get(`${mo}|solar`)?.[key]]), title);
-  };
-  grouped($("eco-curt"), "mwh", 1000, "Curtailed energy by month (GWh)", (v) => d3.format(",.0f")(v / 1000) + " GWh");
-  grouped($("eco-curt-value"), "value", 1e6, "What the curtailed energy would have earned at the node ($ million; negative when the node price was below zero)", (v) => (v < 0 ? "−" : "") + "$" + d3.format(",.2f")(Math.abs(v) / 1e6) + "M");
+  setCSV(el, ["month", "wind_revenue", "wind_mwh", "solar_revenue", "solar_mwh"],
+    mos.map((mo) => [mo, get(mo, "wind").rev, get(mo, "wind").mwh, get(mo, "solar").rev, get(mo, "solar").mwh]), "Wind and solar revenue by month");
 }
 const ECO_COLS = [
   { k: "rank", h: "#", f: (u, i) => i + 1 },

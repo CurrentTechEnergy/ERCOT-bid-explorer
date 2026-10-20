@@ -22,6 +22,12 @@ const TECHS = [
 ];
 const THERMAL = ["nuclear", "coal", "combined_cycle", "gas_steam", "combustion_turbine"];
 const FLOOR_TECHS = TECHS.filter((s) => !["wind", "solar"].includes(s.id));   // wind and solar have their own chart
+const FLOOR_CAPTIONS = {
+  le20_sced: "MW offered at −$20 or below, by technology. For thermal this is almost all minimum output, so it tracks how much is committed.",
+  floor_sced: "MW at the −$250 floor in the curves SCED used: mostly nuclear and hydro, which submit no offer curve.",
+  floor_submitted: "MW the generators themselves offered at the −$250 floor.",
+  le0_sub_lsl: "MW above minimum output that the generators themselves offered at $0 or below.",
+};
 const FLOOR_NOTES = {
   le20_sced: "MW priced at or below −$20 in the curves SCED dispatched against, hour by hour. In those curves ERCOT fills in prices a unit didn't offer. Units that offer have the MW below their first offered point, usually minimum output, at −$20 (−$50 for some units). Units with no offer curve sit at −$250 with the rest of their output schedule at −$249.99 if they are nuclear or hydro, and at −$20 or −$50 otherwise. This counts all of that, plus anything generators themselves offered at or below −$20. Storage below zero is charging bid at or below −$20.",
   floor_sced: "MW priced at the −$250 floor (or −$249.99) in the curves SCED dispatched against, hour by hour. ERCOT puts only units with no offer curve there, mostly nuclear and hydro. Minimum output of units that offer sits at −$20 (−$50 for some units), so it is counted under ≤ −$20, as used, not here. Storage below zero is charging bid at the floor.",
@@ -222,7 +228,7 @@ async function drawFloor() {
   };
   const el = $("floor-chart");
   if (byGroup) {
-    $("floor-note").textContent = FLOOR_GROUP_NOTE;
+    window.CX.setNote($("floor-note"), "MW offered at −$20 or below, by cycling pattern. For thermal this is almost all minimum output, so it tracks how much is committed.", FLOOR_GROUP_NOTE);
     legend($("floor-legend"), FLOOR_GROUPS, S.hidden.floorG, drawFloor);
     if (!S.I || !S.T.units.some((u) => u.le20)) return emptyMsg(el, "Not built yet. It fills in with the next data update.");
     if (!S.UH) {
@@ -247,7 +253,7 @@ async function drawFloor() {
     const list = FLOOR_GROUPS.filter((g) => !S.hidden.floorG.has(g.id)).map((g) => ({ ...g, values: sums.get(g.id).map((v) => (v == null ? null : Math.round(v))) }));
     floorPlot(el, list, "MW at or below −$20 as used, by group");
   } else {
-    $("floor-note").textContent = FLOOR_NOTES[S.floorMode];
+    window.CX.setNote($("floor-note"), FLOOR_CAPTIONS[S.floorMode], FLOOR_NOTES[S.floorMode]);
     legend($("floor-legend"), FLOOR_TECHS, S.hidden.floor, drawFloor);
     const src = S.TH && S.TH.floor[S.floorMode];
     if (!src) return emptyMsg(el, "Not built yet. It fills in with the next data update.");
@@ -264,7 +270,7 @@ function drawCapacity() {
   const el = $("cap-chart"), s = TECHS.find((t) => t.id === S.capTech);
   const C = S.I && S.I.tech[S.capTech];
   if (C && C.cap_offer) {
-    $("cap-note").textContent = "MW of capacity (HSL) by unit status, averaged over each day's SCED runs, from the per-unit 60-day data. \"Offline but available\" is the economic choice not to run; outages are not. Units running without an offer curve (status ONOS) are held to the MW their QSE scheduled; units testing without one are under Other online states. RUC is ERCOT committing a unit for reliability, which is rare. Quick start (OFFQS) is offline capacity SCED can start within the hour; emergency only (EMR, EMRSWGR) is kept for emergencies or can be switched to another grid, so it is not economic capacity.";
+    window.CX.setNote($("cap-note"), "Capacity by unit status each day. Offline but available is the economic choice not to run; outages are not.", "MW of capacity (HSL) by unit status, averaged over each day's SCED runs, from the per-unit 60-day data. \"Offline but available\" is the economic choice not to run; outages are not. Units running without an offer curve (status ONOS) are held to the MW their QSE scheduled; units testing without one are under Other online states. RUC is ERCOT committing a unit for reliability, which is rare. Quick start (OFFQS) is offline capacity SCED can start within the hour; emergency only (EMR, EMRSWGR) is kept for emergencies or can be switched to another grid, so it is not economic capacity.");
     staticLegend($("cap-legend"), STATUS6);
     const series = STATUS6.filter((g) => C["cap_" + g.id]).map((g) => ({ ...g, values: C["cap_" + g.id] }));
     return timeChart(el, series, { stack: true, dates: S.I.dates,
@@ -337,13 +343,13 @@ function drawCheap() {
   ];
   $("cheap-legend").innerHTML = series.map((x) => `<span><span class="sw" style="background:var(${x.color});opacity:${x.opacity || 1}"></span>${x.label}</span>`).join("");
   const nDays = hrs.filter((h) => h.length).length;
-  $("cheap-note").textContent = `Average MW of ${s.label.toLowerCase()} output in the hours each day when system lambda was below ${fmtPrice0(thr)} (${nDays} of ${I.dates.length} days had such hours), split into output up to each running unit's minimum (LSL) and output above it. A unit counts as at minimum when its output is no more than ${fmtPct(I.above_eps)} of its HSL above its LSL. Output at minimum is what the unit cannot shed without shutting down. Nuclear reports a low LSL but runs flat out, so with all thermal selected it is shown whole, and on its own nearly all of it shows as above minimum.`;
+  window.CX.setNote($("cheap-note"), `Thermal output in hours with lambda below ${fmtPrice0(thr)}, split into minimum output and output above it.`, `Average MW of ${s.label.toLowerCase()} output in the hours each day when system lambda was below ${fmtPrice0(thr)} (${nDays} of ${I.dates.length} days had such hours), split into output up to each running unit's minimum (LSL) and output above it. A unit counts as at minimum when its output is no more than ${fmtPct(I.above_eps)} of its HSL above its LSL. Output at minimum is what the unit cannot shed without shutting down. Nuclear reports a low LSL but runs flat out, so with all thermal selected it is shown whole, and on its own nearly all of it shows as above minimum.`);
   dayBars(el, I.dates, series, { title: `${s.label}: average MW in hours with lambda below ${fmtPrice0(thr)}`, none: `No hours with lambda below ${fmtPrice0(thr)}`,
     tipNote: (i) => ` · ${hrs[i].length} h, ${d3.format(",.0f")(n[i])} units running` });
   // units above minimum (nuclear left out: it always is)
   const rows = I.above_units.filter((r) => r[2] === thr && r[1] !== "nuclear" && ts.includes(r[1]) && r[4] > 0)
     .map((r) => ({ unit: r[0], tech: r[1], run: r[3], above: r[4], mwh: r[5] })).sort((a, b) => b.mwh - a.mwh);
-  $("cheap-units-note").textContent = `All days together, nuclear left out. ${rows.length} unit${rows.length === 1 ? "" : "s"} ran above minimum in at least one hour with lambda below ${fmtPrice0(thr)}; the top 30 by energy above minimum are listed. Cogeneration and units carrying ancillary services are likely here. Click a row to see the unit.`;
+  window.CX.setNote($("cheap-units-note"), `Units that ran above minimum when lambda was below ${fmtPrice0(thr)}, top 30 by energy. Click a row to open the unit.`, `All days together, nuclear left out. ${rows.length} unit${rows.length === 1 ? "" : "s"} ran above minimum in at least one hour with lambda below ${fmtPrice0(thr)}; the top 30 by energy above minimum are listed. Cogeneration and units carrying ancillary services are likely here. Click a row to see the unit.`);
   $("cheap-units").innerHTML = rows.length ? unitRows(rows.slice(0, 30), [
     { h: "Unit", t: 1, f: (r) => esc(r.unit) }, { h: "Technology", t: 1, f: (r) => techLabel(r.tech) },
     { h: `Hours running below ${fmtPrice0(thr)}`, f: (r) => r.run }, { h: "Hours above minimum", f: (r) => r.above },
@@ -582,9 +588,9 @@ function drawMonths(fleet, s, thr) {
   const units = fleet.map((e) => ({ e, r: M.rows.get(e.unit) })).filter((x) => x.r && x.r.share.some((v) => v != null))
     .sort((a, b) => d3.ascending(ST_GROUPS.findIndex((g) => g.id === a.e.group), ST_GROUPS.findIndex((g) => g.id === b.e.group)) || d3.descending(a.e.mw, b.e.mw));
   const tested = M.months.map((_, i) => M.cheapH[i] >= ST_MIN_CHEAP_H);
-  $("st-month-note").textContent = `Each cell is the share of hours with system lambda below ${fmtPrice0(thr)} that month in which the unit kept running, out of the hours it was available (running or off but not on outage). ` +
+  window.CX.setNote($("st-month-note"), `Share of each month's hours with lambda below ${fmtPrice0(thr)} that each unit kept running. Dark rode through, light turned off, blank is untested.`, `Each cell is the share of hours with system lambda below ${fmtPrice0(thr)} that month in which the unit kept running, out of the hours it was available (running or off but not on outage). ` +
     `Dark means it rode through, light means it turned off. Blank cells are untested: fewer than ${ST_MIN_CHEAP_H} cheap hours while the unit was available, or the unit on outage. ` +
-    `A unit's own month can be untested in a month with cheap hours if it was on outage for them. Rows are sorted by group, then capacity. Click a row to open the unit.`;
+    `A unit's own month can be untested in a month with cheap hours if it was on outage for them. Rows are sorted by group, then capacity. Click a row to open the unit.`);
   // units whose share moved between the two most recent windows of tested months
   const changed = units.map((x) => ({ ...x, c: monthChange(x.r) })).filter((x) => x.c && Math.abs(x.c.late - x.c.early) >= ST_CHANGE)
     .sort((a, b) => d3.descending(Math.abs(b.c.late - b.c.early), Math.abs(a.c.late - a.c.early)));
@@ -642,10 +648,10 @@ async function drawStretch() {
     });
     return out;
   });
-  $("st-note").textContent = `A cheap stretch is a run of consecutive hours with system lambda below ${fmtPrice0(thr)}. There were ${nEps} from ${period}. ` +
+  window.CX.setNote($("st-note"), `Coal and gas capacity by what it did across the ${nEps} stretches of lambda below ${fmtPrice0(thr)}: turned off before or during, or ran through.`, `A cheap stretch is a run of consecutive hours with system lambda below ${fmtPrice0(thr)}. There were ${nEps} from ${period}. ` +
     `Each bar is the total capacity (HSL) of one group of ${S.stTech === "all" ? "coal and gas" : s.label.toLowerCase()} units, grouped by how they ran over the whole period: ${ST_GROUPS.map((g) => `${g.label.toLowerCase()} (${g.note})`).join("; ")}. ` +
     `Each unit's capacity is split by what it did across the ${nEps} stretches: turned off in the ${ST_LEAD} hours before, turned off during, ran at minimum or above minimum (when it was already running ${ST_LEAD} hours before the stretch began), or not running going in (offline, on outage or no data). Units that never ran in the period are left out. ` +
-    `Each combined-cycle train counts as one unit, so switching configuration is not a shutdown. Nuclear is left out. Lambda is the system price; a unit's own nodal price can differ.`;
+    `Each combined-cycle train counts as one unit, so switching configuration is not a shutdown. Nuclear is left out. Lambda is the system price; a unit's own nodal price can differ.`);
   fleetBars(el, groups, s, S.stUnit === "mw" ? "Capacity of each group, MW, split by what it did in cheap stretches" : "Share of each group's capacity, by what it did in cheap stretches");
   drawMonths(fleet, s, thr);
   // the per-unit columns (stretches, shutdowns, hours off, cutoff) are in the units table at the foot of the page
@@ -663,9 +669,9 @@ function drawFlags(B, ts, gl) {
   const rows = DEC.flags.map((f) => ({ unit: f[0], date: f[1], kind: f[2], loss: f[3], off: f[4], since: f[5], award: f[6], e: B.units.get(f[0]) }))
     .filter((r) => r.e && ts.includes(r.e.tech)).map((r) => ({ ...r, pick: r.e.pick, tech: r.e.tech, group: r.e.group, mw: r.e.mw }));
   const n = (k) => rows.filter((r) => r.kind === k).length;
-  $("st-flags-note").textContent = `Every shutdown on a decision day that was the unit's first in ${DEC.new_days} days or more (with at least ${DEC.new_days} days of data before it), or came over a window its DAM energy award covered in full: ` +
+  window.CX.setNote($("st-flags-note"), "Shutdowns that broke a unit's usual pattern, newest first. Click a unit to open it.", `Every shutdown on a decision day that was the unit's first in ${DEC.new_days} days or more (with at least ${DEC.new_days} days of data before it), or came over a window its DAM energy award covered in full: ` +
     `a unit that normally rides through starting to cycle, a seasonal layup beginning, or a unit dropping an award it held. ${n("new")} first-in-a-month and ${n("award")} despite-an-award shutdowns, newest first. ` +
-    `"Loss" is what riding through the day's worst window would have cost at its node's day-ahead price; "hours off" counts to the end of the spell, so a long one is a layup or an undeclared outage. Click a unit to open its detail.`;
+    `"Loss" is what riding through the day's worst window would have cost at its node's day-ahead price; "hours off" counts to the end of the spell, so a long one is a layup or an undeclared outage. Click a unit to open its detail.`);
   if (!rows.length) return emptyMsg(el, "No flagged shutdowns for these units.");
   el.innerHTML = unitRows(rows.map((r) => ({ ...r, name: r.unit, unit: r.pick })), [
     { h: "Date", t: 1, f: (r) => r.date }, { h: "Unit", t: 1, f: (r) => esc(r.name) }, { h: "Technology", t: 1, f: (r) => techLabel(r.tech) }, { h: "Group", t: 1, f: (r) => gl(r.group) }, { h: "MW", f: (r) => fmtMW(r.mw) },
@@ -722,10 +728,10 @@ function drawLean() {
   ];
   const val = (r) => [r.d, r.h + 1, r.v, r.above, r.transit, r.coal, r.combined_cycle, r.gas_steam, r.combustion_turbine, r.nuc, r.wind, r.solar, r.storage, r.lam, r.hub];
   const scope = S.leanMonth === "all" ? "all days" : d3.timeFormat("%B %Y")(parseDate(S.leanMonth + "-15"));
-  $("lean-note").textContent = `The ${top.length} hours with the least ${fossil ? "fossil (coal, combined cycle, gas steam and combustion turbine)" : "thermal (fossil and nuclear)"} output, ${scope}` +
+  window.CX.setNote($("lean-note"), `The ${top.length} hours with the least ${fossil ? "fossil" : "thermal"} output. Click a row to open that hour on Beyond baseload.`, `The ${top.length} hours with the least ${fossil ? "fossil (coal, combined cycle, gas steam and combustion turbine)" : "thermal (fossil and nuclear)"} output, ${scope}` +
     `${S.leanPer === "day" ? ", one per day" : ""}, from the 60-day disclosure. Output counts every unit's telemetered MW, including units starting up, shutting down or online for under half the hour ("starting/stopping"). ` +
     `"Above min." is output above each running unit's LSL; the rest of the running units' output is what they could not shed without shutting down. ` +
-    `Storage is net output (negative while charging); hub avg is the HB_HUBAVG settlement point price. Click a row to open that hour on Beyond baseload.`;
+    `Storage is net output (negative while charging); hub avg is the HB_HUBAVG settlement point price. Click a row to open that hour on Beyond baseload.`);
   if (!top.length) { el.innerHTML = `<p class="empty">No hours in this range.</p>`; setCSV(el, [], [], "Leanest thermal hours"); return; }
   el.innerHTML = `<table class="data"><thead><tr>${cols.map((c) => `<th${c.t ? ' class="t"' : ""}>${c.h}</th>`).join("")}</tr></thead><tbody>` +
     top.map((r) => `<tr data-href="beyond.html#date=${r.d}&he=${r.h + 1}&p=curves-panel" style="cursor:pointer">${cols.map((c) => `<td${c.t ? ' class="t"' : ""}>${c.f(r)}</td>`).join("")}</tr>`).join("") + "</tbody></table>";
@@ -806,10 +812,10 @@ function drawCutoff() {
   const typical = lw.length ? d3.quantile(lw.map((u) => u.l).sort(d3.ascending), 0.5) : null;
   const outMW = d3.sum(U.filter((u) => u.kind === "out"), (u) => u.lsl), offMW = d3.sum(U.filter((u) => u.kind === "off"), (u) => u.lsl);
   $("cut-title-note").textContent = fmtDate(parseDate(F.date));
-  $("cut-note").textContent = `Thermal minimum output (LSL, MW) that stays on as the stay-on loss rises. The loss is what riding through the day's worst contiguous stretch at minimum output costs a unit at its own node's day-ahead price (minimum-energy cost less price, times the hours), before any start cost, divided by its LSL so units of every size compare. ` +
+  window.CX.setNote($("cut-note"), "Minimum output (MW) that stays on as the cost of staying on rises. Each daily unit drops off at the cost it usually turns off above.", `Thermal minimum output (LSL, MW) that stays on as the stay-on loss rises. The loss is what riding through the day's worst contiguous stretch at minimum output costs a unit at its own node's day-ahead price (minimum-energy cost less price, times the hours), before any start cost, divided by its LSL so units of every size compare. ` +
     `Each daily unit leaves the curve at its own cutoff: the loss per MW above which it has turned off on days without a day-ahead award, fitted on its decision days before this one. Nuclear and the never-off group stay on at any loss, so they are the flat floor. ` +
     `Seasonal and multi-day units are judged on the month's price level, not a day loss, so they sit flat at the day's verdict (${fmtMW(offMW)} MW of their minimum output is judged off for the month and is not drawn). Daily units with too few decision days for a cutoff are the grey band, drawn flat. ${fmtMW(outMW)} MW on outage and peakers (they start rather than stay on) are left off. ` +
-    `Every unit faces its own loss at its own node, so the day is not one point on the axis: the dashed line is the day's expected committed minimum (each unit's LSL times its chance of being on, the Overview's figure without peakers), and the dotted line is the median loss per MW the daily units faced. The chart below places every unit.`;
+    `Every unit faces its own loss at its own node, so the day is not one point on the axis: the dashed line is the day's expected committed minimum (each unit's LSL times its chance of being on, the Overview's figure without peakers), and the dotted line is the median loss per MW the daily units faced. The chart below places every unit.`);
   staticLegend($("cut-legend"), bands);
   const w = Math.max(280, el.clientWidth || 600), H = 320, m = { t: 22, b: 40, ...CUT_M };
   const x = d3.scaleSymlog().constant(10).domain([x0, x1]).range([m.l, w - m.r]);
@@ -862,8 +868,8 @@ function drawCutUnits() {
   const rowsG = ST_GROUPS.filter((g) => U.some((u) => u.group === g.id));
   if (!rowsG.length) { $("cut-units-note").textContent = ""; return emptyMsg(el, "No unit has a cutoff on this day."); }
   const n = (v) => U.filter((u) => u.verdict === v).length;
-  $("cut-units-note").textContent = `${U.length} units with a cutoff: ${n("on")} expected on, ${n("off")} expected off and ${n("maybe")} maybe. Each dot is a unit's cutoff, sized by its LSL; the tick is the loss per MW it faced on the day at its own node, and the line between them is red where the loss is past the cutoff. ` +
-    `Losses beyond the right edge are drawn at the edge. "Maybe" is a unit past its cutoff that has held a day-ahead award over its loss window on half or more of its days, since the award is not public until the 60-day disclosure. Click a unit to open it.`;
+  window.CX.setNote($("cut-units-note"), `${U.length} units: ${n("on")} likely on, ${n("off")} likely off, ${n("maybe")} toss-ups. The dot is the cost a unit usually turns off above; the tick is today's cost to stay on. Click a unit to open it.`, `${U.length} units with a cutoff: ${n("on")} expected on, ${n("off")} expected off and ${n("maybe")} maybe. Each dot is a unit's cutoff, sized by its LSL; the tick is the loss per MW it faced on the day at its own node, and the line between them is red where the loss is past the cutoff. ` +
+    `Losses beyond the right edge are drawn at the edge. "Maybe" is a unit past its cutoff that has held a day-ahead award over its loss window on half or more of its days, since the award is not public until the 60-day disclosure. Click a unit to open it.`);
   $("cut-units-legend").innerHTML = rowsG.map((g) => `<span><span class="sw" style="background:var(${FLOOR_GROUPS.find((f) => f.id === g.id).color})"></span>${g.label}</span>`).join("") +
     `<span><span class="sw" style="background:var(--c8);height:3px"></span>Loss past the cutoff</span><span><span class="sw" style="background:var(--muted);height:3px"></span>Loss within it</span>`;
   const [x0, x1] = cutDomain(U);
@@ -918,8 +924,8 @@ function drawGroups() {
       acc: days ? d3.sum(d, (u) => u.acc * u.days) / days : null, base: days ? d3.sum(d, (u) => u.base * u.days) / days : null };
   });
   $("groups-title-note").textContent = fmtDate(parseDate(F.date));
-  $("groups-note").textContent = `Every coal and gas unit (combined-cycle configurations merged into their train) by how often it has turned off on price over the ${S.G ? S.G.dates.length : ""} days of 60-day data (pipeline/groups.py), with nuclear in the never-off group as on the Overview. Units, capacity (HSL), committed minimum (LSL of the units expected on, weighted by their chance of being on) and expected output are the day's forecast and include peakers, so they match the Overview. ` +
-    `The cutoff columns cover units with enough decision days for a cutoff (${S.DEC ? `${S.DEC.min_days} days with at least ${S.DEC.min_each} shutdowns and ${S.DEC.min_each} stays` : ""}): the median cutoff per MW of LSL, and how often the rule "off when no award covers the window and the loss is above the cutoff, else on" matched what the units did, weighted by decision days, against the base rate of each unit's commoner outcome. A rule well above its base rate says the day economics decide; near it, something else does. Seasonal and multi-day units are judged on the month's price level instead, and the inflexibility tracker below shows them month by month.`;
+  window.CX.setNote($("groups-note"), "Coal and gas units grouped by how often they turn off on price, with the day's expected output and minimum output online.", `Every coal and gas unit (combined-cycle configurations merged into their train) by how often it has turned off on price over the ${S.G ? S.G.dates.length : ""} days of 60-day data (pipeline/groups.py), with nuclear in the never-off group as on the Overview. Units, capacity (HSL), committed minimum (LSL of the units expected on, weighted by their chance of being on) and expected output are the day's forecast and include peakers, so they match the Overview. ` +
+    `The cutoff columns cover units with enough decision days for a cutoff (${S.DEC ? `${S.DEC.min_days} days with at least ${S.DEC.min_each} shutdowns and ${S.DEC.min_each} stays` : ""}): the median cutoff per MW of LSL, and how often the rule "off when no award covers the window and the loss is above the cutoff, else on" matched what the units did, weighted by decision days, against the base rate of each unit's commoner outcome. A rule well above its base rate says the day economics decide; near it, something else does. Seasonal and multi-day units are judged on the month's price level instead, and the inflexibility tracker below shows them month by month.`);
   el.innerHTML = `<table class="data"><thead><tr><th class="t">Group</th><th>Units</th><th>Capacity MW</th><th>On / off / outage</th><th>Committed minimum MW</th><th>Expected output MW</th><th>Units with a cutoff</th><th>Median cutoff $/MW LSL</th><th>Cutoff rule right</th><th>Base rate</th></tr></thead><tbody>` +
     rows.map((r) => `<tr><td class="t"><span class="sw" style="background:var(${FLOOR_GROUPS.find((f) => f.id === r.g)?.color || "--c-other"});margin-right:6px"></span>${GROUP_LABEL[r.g]}<br><span class="muted">${ST_GROUPS.find((g) => g.id === r.g)?.note || "too little history to place"}</span></td>` +
       `<td>${r.n}</td><td>${fmtMW(r.cap)}</td><td>${r.n_on} / ${r.n_off} / ${r.n_out}${r.n_unknown ? ` (+${r.n_unknown} unknown)` : ""}</td>` +
@@ -936,8 +942,8 @@ function drawRecord() {
   const el = $("record-table"), d = S.date, sc = S.SC?.days?.[d];
   $("record-title-note").textContent = fmtDate(parseDate(d));
   const fit = sc?.fit, fg = fit?.group || S.FIT?.groups, six = sc?.sixty_day, sg = six?.group;
-  $("record-note").textContent = `The forecast's committed minimum (LSL of the units it expected on), the minimum the 2-day fit inferred two days after the day by adjusting which units were on until their summed offer curves matched ERCOT's 2-day thermal curve, and the hourly average actually online in the 60-day disclosure, by group; then the thermal output the forecast expected over the day against the 60-day output. ` +
-    `The fit is reported by group because units with similar curves are interchangeable in it. Fit errors by group show where the cutoffs are wrong: a group the fit and the 60-day answer both put below the forecast has units staying off that their cutoffs call on. The fit holds nuclear fixed and fits peakers as one fleet share by hour, so its columns leave both out and sit below the Groups table's committed minimum, which includes them. Some days have no fit (the 2-day report or the curve snapshot it needs was missing).`;
+  window.CX.setNote($("record-note"), "The forecast's minimum output online against the 2-day estimate and the 60-day actual, by group.", `The forecast's committed minimum (LSL of the units it expected on), the minimum the 2-day fit inferred two days after the day by adjusting which units were on until their summed offer curves matched ERCOT's 2-day thermal curve, and the hourly average actually online in the 60-day disclosure, by group; then the thermal output the forecast expected over the day against the 60-day output. ` +
+    `The fit is reported by group because units with similar curves are interchangeable in it. Fit errors by group show where the cutoffs are wrong: a group the fit and the 60-day answer both put below the forecast has units staying off that their cutoffs call on. The fit holds nuclear fixed and fits peakers as one fleet share by hour, so its columns leave both out and sit below the Groups table's committed minimum, which includes them. Some days have no fit (the 2-day report or the curve snapshot it needs was missing).`);
   if (!fg && !sg) {
     $("record-summary").textContent = "";
     return emptyMsg(el, "Not scored yet: the 2-day fit arrives two days after the operating day, and the 60-day answer about sixty days after.");
@@ -998,9 +1004,9 @@ function drawCost() {
     return { g, units: us.length, n: sum("n"), mwh: sum("mwh"), loss: sum("loss"), start: sum("start"), saves: sum("saves"), paid: sum("paid"), est: sum("est") };
   }).filter((r) => r.n);
   const nStretch = S.SO.stretches[String(thr)]?.length || 0;
-  $("cost-note").textContent = `Every time a coal or gas unit ran through a stretch of hours with system lambda below ${fmtPrice0(thr)} (${nStretch} stretches of ${S.SO.min_hours} hours or more), what its output lost against lambda at its own minimum-energy cost, and what a shutdown and restart would have cost instead (hot start for stretches up to ${S.SO.hot_h} hours, intermediate up to ${S.SO.inter_h}, cold beyond). ` +
+  window.CX.setNote($("cost-note"), `Each time a coal or gas unit ran through hours with lambda below ${fmtPrice0(thr)}: what it lost, against what a shutdown and restart would have cost.`, `Every time a coal or gas unit ran through a stretch of hours with system lambda below ${fmtPrice0(thr)} (${nStretch} stretches of ${S.SO.min_hours} hours or more), what its output lost against lambda at its own minimum-energy cost, and what a shutdown and restart would have cost instead (hot start for stretches up to ${S.SO.hot_h} hours, intermediate up to ${S.SO.inter_h}, cold beyond). ` +
     `Where the loss is bigger than the restart, shutting down would have paid. Costs are the unit's own day-ahead three-part offer (capped by ERCOT's cost verification, so an upper bound), its latest within ${S.SO.cost_days} days, or a generic value for the technology; lambda is the system price, so congestion at the unit's node is not in these numbers, unlike the cutoffs, which use the node's day-ahead price. ` +
-    `A unit with a cutoff that keeps riding through stretches where shutting down would have paid may hold contracts, ancillary service obligations or start costs these numbers do not see; the units table puts each unit's net beside its cutoff.`;
+    `A unit with a cutoff that keeps riding through stretches where shutting down would have paid may hold contracts, ancillary service obligations or start costs these numbers do not see; the units table puts each unit's net beside its cutoff.`);
   const S2 = [
     { id: "loss", label: "Lost riding through (cost less revenue at lambda)", color: "--c8" },
     { id: "start", label: "Restart avoided by staying on", color: "--c1" },
@@ -1095,11 +1101,11 @@ async function drawUnits() {
     if (vb == null) return -1;
     return (typeof va === "string" ? va.localeCompare(vb) : va - vb) * dir;
   });
-  $("units-note").textContent = `${list.length} coal and gas units, combined-cycle configurations merged into their train, over the ${S.UH.dates.length} days of 60-day data. ` +
+  window.CX.setNote($("units-note"), "Every coal and gas unit with its cycling pattern, usual turn-off cost and hours in each state. Click a row to open the unit.", `${list.length} coal and gas units, combined-cycle configurations merged into their train, over the ${S.UH.dates.length} days of 60-day data. ` +
     `Cutoff is the stay-on loss per MW of LSL above which the unit has turned off on days without a day-ahead award (the cutoff curve's), with how often that rule matched what it did against the base rate of its commoner outcome. ` +
     `Hot start is the start cost in the unit's latest day-ahead offer per MW of LSL, for comparison only (* marks a generic value for the technology); no model uses it. ` +
     `Hours are split between running above minimum, at minimum, offline but available and on outage (an off spell that is mostly outage counts as outage). "Turned off in cheap stretches" is the share of the stretches with lambda below ${fmtPrice0(+S.stThr)} it was running into that it turned off for (shown once it ran into ${ST_MIN_N}), as in the panel above; ride-throughs and the net are from the decision-cost panel at lambda below ${fmtPrice0(+S.costThr)}. ` +
-    `The verdict is the chosen day's forecast. Click a column to sort, a row to open the unit.`;
+    `The verdict is the chosen day's forecast. Click a column to sort, a row to open the unit.`);
   el.innerHTML = `<table class="data"><thead><tr>${UNIT_COLS.map((c) => `<th class="sortable${c.t ? " t" : ""}" data-k="${c.k}" aria-sort="${c.k === col.k ? (dir > 0 ? "ascending" : "descending") : "none"}">${c.h}${c.k === col.k ? (dir > 0 ? " ▲" : " ▼") : ""}</th>`).join("")}</tr></thead><tbody>` +
     list.map((r) => `<tr data-href="${unitHref(r.pick)}" style="cursor:pointer">${UNIT_COLS.map((c) => `<td${c.t ? ' class="t"' : ""}>${c.f(r)}</td>`).join("")}</tr>`).join("") + "</tbody></table>";
   setCSV(el, ["unit", "technology", "group", "capacity_mw", "lsl_mw", "cutoff_usd", "cutoff_usd_per_mw_lsl", "hot_start_usd_per_mw_lsl", "rule_accuracy", "base_rate", "decision_days", "decision_shutdowns",

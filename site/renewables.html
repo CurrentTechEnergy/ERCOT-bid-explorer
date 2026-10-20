@@ -32,7 +32,7 @@
   <div class="brand">
     <div class="nav-row"><nav class="nav" aria-label="Pages"><a href="index.html">Overview</a><a href="commitment.html">Commitment</a><a href="changes.html">What's changing</a><a href="beyond.html">Beyond baseload</a><a href="renewables.html" aria-current="page">Renewables</a><a href="batteries.html">Batteries</a><a href="fleet.html">Fleet economics</a><a href="unit.html">Units</a><a href="trends.html">Trends</a><a href="builder.html">Graph builder</a><a href="guide.html">How offers work</a></nav></div>
     <h1>Renewables</h1>
-    <p class="sub">How wind and solar offer, how much SCED held back and where, and what their offers give away about their hedges. What they earned is on <a href="fleet.html">Fleet economics</a>. Data from ERCOT's 2-day and 60-day SCED and DAM disclosures.</p>
+    <p class="sub">How wind and solar offer, how much SCED held back and where, and what their offers say about their hedges.</p>
   </div>
   <p class="status" id="status">Loading data…</p>
 </header>
@@ -42,7 +42,8 @@
     <div class="panel-head">
       <div>
         <h2>Curtailment by hour, one day <span class="h-note" id="curt-title-note"></span></h2>
-        <p class="note">MW wind and solar could have produced (HSL) minus the base point SCED sent them, averaged over each hour: the output SCED held back, for price or for congestion. From the 60-day disclosure where the day has it, otherwise the 2-day estimate. Opens on the latest day.</p>
+        <p class="note">What wind and solar could have produced minus what SCED dispatched, by hour. Opens on the latest day.</p>
+        <details class="how"><summary>How it's built</summary><p class="note">MW wind and solar could have produced (HSL) minus the base point SCED sent them, averaged over each hour: the output SCED held back, for price or for congestion. From the 60-day disclosure where the day has it, otherwise the 2-day estimate. Opens on the latest day.</p></details>
       </div>
     </div>
     <div class="ctl-row">
@@ -63,7 +64,8 @@
     <div class="panel-head">
       <div>
         <h2>Wind and solar offer prices</h2>
-        <p class="note">Share of the MW wind and solar offered each day that was priced in each band, weighted by MW over the day's hours. Tax-credit bids cluster between about −$60 and −$25 with little between −$25 and −$5, so −$20 separates them from shallow negatives. Below −$20 is split into −$250 to −$50, −$50 to −$35 and −$35 to −$20, since most of it sits between −$50 and −$30. Almost nothing is offered at the −$250 floor itself. Uses the 2-day curves where the day has them, otherwise the 60-day curves.</p>
+        <p class="note">Share of wind and solar MW offered in each price band, day by day. Tax-credit bids sit between about −$60 and −$20.</p>
+        <details class="how"><summary>How it's built</summary><p class="note">Share of the MW wind and solar offered each day that was priced in each band, weighted by MW over the day's hours. Tax-credit bids cluster between about −$60 and −$25 with little between −$25 and −$5, so −$20 separates them from shallow negatives. Below −$20 is split into −$250 to −$50, −$50 to −$35 and −$35 to −$20, since most of it sits between −$50 and −$30. Almost nothing is offered at the −$250 floor itself. Uses the 2-day curves where the day has them, otherwise the 60-day curves.</p></details>
       </div>
     </div>
     <div class="legend" id="rs-legend"></div>
@@ -75,7 +77,8 @@
     <div class="panel-head">
       <div>
         <h2>Wind and solar curtailment <span class="h-note" id="nc-note"></span></h2>
-        <p class="note">Energy wind and solar could have produced (HSL) minus what SCED dispatched them to (base point), hour by hour, from the 60-day disclosure unit by unit. Each curtailed hour is priced at the unit's own settlement point and counted as <b>operator-directed</b> where ERCOT's HDL/LDL Manual Override Summary shows an operator lowering the unit's HDL (curtailment up to that reduction, averaged over the hour's runs), as <b>congestion</b> when the node price is at least $5/MWh below system lambda (the energy was worth less where the unit sits, often negative) and as <b>oversupply</b> otherwise (the system as a whole did not want it at the unit's offer). The split is by price, so it says what the energy was worth at the node, not which constraint SCED was managing. Units are matched to nodes through the DAM disclosure; hours with no node price are priced at lambda and counted as unmatched. The price chart groups the curtailed energy by each hour's system lambda (hover for the average curtailed MW over those hours) or by the price at the unit's node, which leaves out operator-directed energy. Recent days with no 60-day data yet show a dashed total estimated from ERCOT's 2-day reports (generation summary base points against the 2-day offer curves' HSL); where both exist the 2-day estimate runs a few percent higher, because the 2-day base points run a little lower.</p>
+        <p class="note">Curtailed energy by day, split into operator-directed, congestion (node at least $5 under lambda) and oversupply.</p>
+        <details class="how"><summary>How it's built</summary><p class="note">Energy wind and solar could have produced (HSL) minus what SCED dispatched them to (base point), hour by hour, from the 60-day disclosure unit by unit. Each curtailed hour is priced at the unit's own settlement point and counted as <b>operator-directed</b> where ERCOT's HDL/LDL Manual Override Summary shows an operator lowering the unit's HDL (curtailment up to that reduction, averaged over the hour's runs), as <b>congestion</b> when the node price is at least $5/MWh below system lambda (the energy was worth less where the unit sits, often negative) and as <b>oversupply</b> otherwise (the system as a whole did not want it at the unit's offer). The split is by price, so it says what the energy was worth at the node, not which constraint SCED was managing. Units are matched to nodes through the DAM disclosure; hours with no node price are priced at lambda and counted as unmatched. The price chart groups the curtailed energy by each hour's system lambda (hover for the average curtailed MW over those hours) or by the price at the unit's node, which leaves out operator-directed energy. Recent days with no 60-day data yet show a dashed total estimated from ERCOT's 2-day reports (generation summary base points against the 2-day offer curves' HSL); where both exist the 2-day estimate runs a few percent higher, because the 2-day base points run a little lower.</p></details>
       </div>
     </div>
     <div class="legend legend-static" id="nc-legend"></div>
@@ -135,7 +138,8 @@
     <div class="panel-head">
       <div>
         <h2>Units <span class="h-note" id="units-note"></span></h2>
-        <p class="note">Click a column to sort and a unit to open its page, with its fit and bidding history. <b>Share</b> is the slope of offer on the DA price, <b>Intercept</b> its constant. The strike is a range: the high end assumes the intercept is all strike, the low end that the operator also counts a credit of about <span id="credit-v">$30</span>/MWh (roughly the PTC) in its break-even. <b>Floor</b> is the unit's most common offer; <b>DA share</b> is its DAM energy award as a share of its real-time base point energy.</p>
+        <p class="note">Units whose offers track a day-ahead price. “Offers at” is the formula they follow; the implied strike is what that formula suggests the hedge is struck at. Click a unit to open it.</p>
+        <details class="how"><summary>How it's built</summary><p class="note">Click a column to sort and a unit to open its page, with its fit and bidding history. <b>Share</b> is the slope of offer on the DA price, <b>Intercept</b> its constant. The strike is a range: the high end assumes the intercept is all strike, the low end that the operator also counts a credit of about <span id="credit-v">$30</span>/MWh (roughly the PTC) in its break-even. <b>Floor</b> is the unit's most common offer; <b>DA share</b> is its DAM energy award as a share of its real-time base point energy.</p></details>
       </div>
     </div>
     <div class="legend legend-static" id="tier-legend"></div>

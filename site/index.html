@@ -15,7 +15,7 @@
   <div class="brand">
     <div class="nav-row"><nav class="nav" aria-label="Pages"><a href="index.html" aria-current="page">Overview</a><a href="commitment.html">Commitment</a><a href="changes.html">What's changing</a><a href="beyond.html">Beyond baseload</a><a href="renewables.html">Renewables</a><a href="batteries.html">Batteries</a><a href="fleet.html">Fleet economics</a><a href="unit.html">Units</a><a href="trends.html">Trends</a><a href="builder.html">Graph builder</a><a href="guide.html">How offers work</a></nav></div>
     <h1>ERCOT Bid Stack Explorer</h1>
-    <p class="sub">Who is expected to run on a day, from each unit's own day economics at its own node, and how that forecast held up once the day's reports arrived. Data from ERCOT's day-ahead prices and the 2-day and 60-day SCED disclosures.</p>
+    <p class="sub">What tomorrow in ERCOT looks like: day-ahead prices, the cheap hours, and which generators are likely to run.</p>
   </div>
   <p class="status" id="status">Loading data…</p>
 </header>
@@ -31,7 +31,7 @@
     <p class="source-note" id="source-note"></p>
   </div>
   <div class="ctl">
-    <span class="lbl">What this page knows about the day</span>
+    <span class="lbl">Data for this day</span>
     <div class="layers" id="layers"></div>
   </div>
 </section>
@@ -44,7 +44,7 @@
         <p class="lede" id="lede"></p>
         <p class="lede-sub" id="lede-sub"></p>
         <ul class="expect" id="expect"></ul>
-        <p class="note" id="track"></p>
+        <div class="note" id="track"></div>
       </div>
       <div class="sparkwrap">
         <h3>Day-ahead hub average by hour ending ($/MWh)</h3>
@@ -61,7 +61,8 @@
     <div class="panel-head">
       <div>
         <h2>Who is expected to run, by how often it turns off</h2>
-        <p class="note">Thermal units grouped by how often they have turned off on price. Each bar is the group's whole capacity (HSL). The online part is the units expected on, from their minimum output (the dark block, which stays on at any price) up to their maximum, with a tick at the day's expected output. Lighter is expected off, hatched is on outage, and grey is units with too few decision days to judge yet. Daily units are judged on their cutoff, the day-ahead stay-on loss above which they turn off when they hold no award; seasonal and multi-day units on the month's price level; peakers on their history at this price level and hour. Nuclear sits in the never-off group.</p>
+        <p class="note">Each bar is a group's full capacity. Dark is minimum output that runs at any price, the tick is expected output, light is expected off, hatched is on outage.</p>
+        <details class="how"><summary>How it's built</summary><p class="note">Thermal units are grouped by how often they have turned off on price. Daily units are called from what staying on through the day's cheap stretch would cost them at their own node against what they have walked away from before; seasonal and multi-day units from the month's price level; peakers from how often they ran at this price and hour. Grey is units with too few days to call. Nuclear sits in the never-off group.</p></details>
       </div>
       <div class="panel-tools">
         <div class="seg seg-sm" id="unit-g" role="radiogroup" aria-label="Unit">
@@ -78,7 +79,7 @@
     <div class="panel-head">
       <div>
         <h2>Who is expected to run, by technology</h2>
-        <p class="note">The same units and the same method, cut by technology. Hover a bar for the unit counts and the reasons behind the verdicts. Wind and solar bars run to nameplate: solid is expected dispatch, lighter is available but priced out at its own node, hatched is not available from the weather.</p>
+        <p class="note">The same units by technology; hover a bar for the calls behind it. Wind and solar run to nameplate: solid is expected output, lighter is curtailed on price, hatched is not available from the weather.</p>
       </div>
       <div class="panel-tools">
         <div class="seg seg-sm" id="unit-t" role="radiogroup" aria-label="Unit">
@@ -95,7 +96,8 @@
     <div class="panel-head">
       <div>
         <h2>Expected generation by hour <span class="h-note" id="hourly-note"></span></h2>
-        <p class="note">Each unit's verdict carries the hours it would be off, so the expected mix is laid out hour by hour: thermal by group, with the dashed line marking the committed minimum output that stays on whatever the price, then wind and solar from their forecasts less what prices itself out at its node. Batteries are drawn on top (discharging) and below zero (charging) once the battery data is loaded. The shaded hours are the day's cheap stretch. Once the 2-day generation summary is out, its actual thermal, wind and solar are drawn as lines over the forecast.</p>
+        <p class="note">Expected output by hour. The dashed line is minimum output that runs at any price; the shaded hours are the cheap stretch. Actuals are drawn over it once the 2-day report is out.</p>
+        <details class="how"><summary>How it's built</summary><p class="note">Each unit's call carries the hours it would be off, so thermal is laid out hour by hour by group. Wind and solar come from ERCOT's forecasts less what is offered above the day-ahead price at each unit's node. Batteries are drawn on top while discharging and below zero while charging.</p></details>
       </div>
     </div>
     <div class="legend" id="hourly-legend"></div>
@@ -106,7 +108,7 @@
     <div class="panel-head">
       <div>
         <h2>How this day went <span class="h-note" id="score-note"></span></h2>
-        <p class="note">The forecast scored against the day's reports: the 2-day generation summary two days on (thermal, wind and solar energy over the day) and the per-unit 60-day disclosure sixty days on (each group's energy, and whether each unit's on or off call was right). These are the same scores the model gate uses.</p>
+        <p class="note">The forecast against what happened: the 2-day report two days on, and each unit's actual hours from the 60-day data.</p>
       </div>
     </div>
     <div class="scroll-x" id="score-table" data-csv></div>
@@ -116,7 +118,7 @@
     <div class="panel-head">
       <div>
         <h2>The day in detail</h2>
-        <p class="note">The hour below applies to the generation mix, the price duration dot and the hourly view of the units table.</p>
+        <p class="note">The hour below applies to the generation mix and the hourly view of the units table.</p>
       </div>
       <div class="panel-tools ctl-hour">
         <label class="lbl" for="hour">Hour <output id="hour-out">HE 13</output></label>
@@ -129,34 +131,18 @@
     <div class="panel-head">
       <div>
         <h2>Generation mix <span class="h-note" id="mix-title-note"></span></h2>
-        <p class="note">Expected output by technology in the hour, from the forecast file. Once the 60-day disclosure is out, each bar carries a tick at the measured output; with only the 2-day summary, the ticks are its thermal total, wind and solar.</p>
+        <p class="note">Expected output by technology in the hour. Ticks mark actual output once it is reported.</p>
       </div>
     </div>
     <div class="chart" id="mix-chart"></div>
     <details class="table-view"><summary>Table view</summary><div id="mix-table" class="scroll-x"></div></details>
   </section>
 
-  <section class="panel" id="dur-panel">
-    <div class="panel-head">
-      <div>
-        <h2>Price duration <span class="h-note" id="dur-title-note"></span></h2>
-        <p class="note">Hourly prices across every loaded day, highest to lowest. The dot is the selected hour and the short marks are the rest of its day.</p>
-      </div>
-      <div class="panel-tools">
-        <div class="seg seg-sm" id="dur-loc" role="radiogroup" aria-label="Price">
-          <button type="button" data-v="hub" role="radio">Day-ahead hub average</button>
-          <button type="button" data-v="lambda" role="radio">Real-time system lambda</button>
-        </div>
-      </div>
-    </div>
-    <div class="chart chart-short" id="duration-chart"></div>
-  </section>
-
   <section class="panel panel-wide" id="units-panel">
     <div class="panel-head">
       <div>
         <h2>Units <span class="h-note" id="units-note"></span></h2>
-        <p class="note">One row per thermal train with its verdict for the day and the reason behind it. Loss is the day-ahead stay-on loss, the worst contiguous window of running at minimum output against the unit's own node price; cutoff is the loss above which this unit has turned off when it held no award. Once the 60-day disclosure is out, the table adds the hours the unit was actually online and whether the call was right. Click a column to sort.</p>
+        <p class="note">Each thermal unit's call for the day and the cost of staying on behind it. Hover a column for its meaning; click to sort.</p>
       </div>
       <div class="panel-tools">
         <div class="seg seg-sm" id="unit-view" role="radiogroup" aria-label="Hours">
@@ -175,7 +161,7 @@
 </main>
 
 <footer class="foot">
-  <p>Source: ERCOT day-ahead market prices (NP4-180-ER, NP4-190-CD), DAM offers (NP3-966-ER), the 2-day generation summary (NP3-965-ER), the 60-day SCED disclosure (NP3-965-ER) and the wind and solar forecasts (NP4-732-CD, NP4-737-CD). Times are hour ending, Central prevailing time. Every figure on this page is read from a forecast file written by the pipeline; the page only sums and takes shares, so a number here can be checked against <code>data/forecast/&lt;date&gt;.json.gz</code>.</p>
+  <p>Source: ERCOT day-ahead market prices (NP4-180-ER, NP4-190-CD), DAM offers (NP3-966-ER), the 2-day generation summary (NP3-965-ER), the 60-day SCED disclosure (NP3-965-ER) and the wind and solar forecasts (NP4-732-CD, NP4-737-CD). Times are hour ending, Central prevailing time. Every figure is read from the day's forecast file, <code>data/forecast/&lt;date&gt;.json.gz</code>, which also lists the model versions.</p>
   <p>Made by <a href="https://currenttech.energy">currenttech.energy</a> · <a href="contact.html">Contact</a></p>
 </footer>
 </div>

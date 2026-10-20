@@ -648,7 +648,7 @@ async function init() {
   const pd = Object.keys(D.prices || {}).sort();
   if (pd.length) $("from").max = $("to").max = pd[pd.length - 1];
   if (loadView()) { $("preset").value = ""; syncInputs(); changed(); }
-  else applyPreset(D.idx && D.idx.dates.includes("2026-01-23") ? "outpost" : "solar-curt");
+  else applyPreset("thermal");
   $("status").textContent = statusText();
   window.addEventListener("hashchange", () => { if (loadView()) { syncInputs(); render(); } });
   matchMedia("(prefers-color-scheme: dark)").addEventListener("change", render);

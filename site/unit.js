@@ -26,7 +26,7 @@ const TECH_OF = Object.fromEntries(TECHS.map((t) => [t.id, t]));
 const techLabel = (t) => (TECH_OF[t] ? TECH_OF[t].label : t === "storage" ? "Storage (ESR)" : t === "hydro" ? "Hydro" : t || "–");
 const SIG_FMT = { le0: (v) => d3.format(".0%")(v), noff: (v) => d3.format(".0%")(v), rel: (v) => (v >= 0 ? "+" : "−") + d3.format("$,.0f")(Math.abs(v)) };
 const GROUP_SHORT = { never: "Never off", seasonal: "Seasonal", multiday: "Multi-day", daily1: "Daily, under once a week", daily2: "Daily, 1 to 2 a week", daily3: "Daily, over 2 a week", ungrouped: "Not yet grouped" };
-const VERDICT = { on: "expected on", off: "expected off", maybe: "maybe: a 30 to 70% chance of staying on through its loss window", nocut: "no cutoff yet (too few decision days)", outage: "on outage", peaker: "peaker: judged by its history at this price and hour" };
+const VERDICT = { on: "likely on", off: "likely off", maybe: "toss-up", nocut: "no call yet (too few days to judge)", outage: "on outage", peaker: "peaker, called from how often it ran at this price and hour" };
 const S = { econ: {}, day: null, hour: null, T: null, DEC: null, UH: null, SP: null, FI: null, FC: null, fcDay: null, PPA: null, CH: null, list: new Map(), unit: null, cfg: null, span: null, last60: null };
 const { tryJSON, showTip, hideTip, setCSV, tickFormat, fmtKind, axisFmt, css, esc } = window.CX;
 const $ = (id) => document.getElementById(id);
@@ -161,24 +161,28 @@ function fcRow(name, F = S.FC) {
   const c = F.units.columns, r = F.units.rows.find((x) => x[0] === name);
   return r ? Object.fromEntries(c.map((k, i) => [k, r[i]])) : null;
 }
-// the forecast's call for one unit on one forecast day, in a sentence or three
-function verdictHTML(F, f) {
+// the forecast's call for one unit on one forecast day: the short version for the header,
+// and with full=true the rest (group, off hours, CC size, what moved the odds) for the forecast panel
+function verdictHTML(F, f, full = false) {
   const g = GROUP_SHORT[f.group] || f.group;
   const win = f.win_from ? `HE ${f.win_from} to ${f.win_from + f.win_hours - 1}` : f.off_from ? `HE ${f.off_from} to ${f.off_from + f.off_hours - 1}` : null;
-  return `Forecast for <b>${esc(F.date)}</b>: <b>${esc(VERDICT[f.verdict] || f.verdict)}</b>` +
-    (f.p_on != null && f.verdict !== "outage" ? ` (chance of running ${fmtPct(f.p_on)}${f.win_from ? " through its loss window" : ""}` +
-      (f.out_share ? `, scaled down by the ${fmtPct(f.out_share)} of its site listed out` : "") + ")" : "") + `. Group: <b>${esc(g)}</b>.` +
-    (f.loss != null ? ` Riding through the day's worst stretch${win ? ` (${win})` : ""} would lose it ${fmt$(f.loss)} at its own node` : "") +
-    (f.cutoff != null ? `, against its cutoff of ${fmt$(f.cutoff)}.` : f.loss != null ? "." : "") +
+  const odds = f.p_on != null && f.p_on > 0 && f.p_on < 1 && f.verdict !== "outage" ? `, ${fmtPct(f.p_on)} to stay on` : "";
+  let t = `<b>${esc(F.date)}: ${esc(VERDICT[f.verdict] || f.verdict)}${odds}.</b>` +
+    (f.loss != null ? ` Staying on through the cheap stretch${win ? ` (${win})` : ""} would cost ${fmt$(f.loss)} at its node` : "") +
+    (f.cutoff != null && f.loss != null ? `, against the ${fmt$(f.cutoff)} it usually turns off above.` : f.loss != null ? "." : "") +
+    (f.out_share ? ` ${fmtPct(f.out_share)} of the plant is listed on outage.` : "") +
+    (f.loss == null && f.reason ? ` <span class="muted">${esc(f.reason)}.</span>` : "");
+  if (!full) return t;
+  t += ` Cycling pattern: <b>${esc(g)}</b>.` +
     (f.off_from && f.verdict !== "outage" && f.off_hours < 24 ? ` Expected off for ${f.off_hours} h from HE ${f.off_from}.` : "") +
-    (f.cc_small != null ? ` In hours with the hub at $10 or below it is held at ${fmtMW(f.cc_small)} MW, its usual smallest running size.` : "") +
-    (f.reason ? ` <span class="muted">Why: ${esc(f.reason)}.</span>` : "") + driversHTML(f);
+    (f.cc_small != null ? ` With the hub at $10 or below it runs at ${fmtMW(f.cc_small)} MW, its usual smallest size.` : "");
+  return t + driversHTML(f);
 }
 // what moved the chance of running: the trees' starting point and each input's push, adding up to p_on
 function driversHTML(f) {
   if (!f.drivers || f.p_base == null) return "";
   const pts = (v) => `${v >= 0 ? "+" : "−"}${Math.abs(Math.round(v * 100))} pts`;
-  return `<br><b>What moved the chance of running</b> from ${fmtPct(f.p_base)} (the average unit-hour the model learned from) to ${fmtPct(f.p_on)}: ` +
+  return `<br><b>What moved the odds</b> from ${fmtPct(f.p_base)} for a typical unit to ${fmtPct(f.p_on)}: ` +
     f.drivers.map(([k, v]) => `${esc(k)} ${pts(v)}`).join(" · ") + ".";
 }
 function drawHead(e) {
@@ -228,7 +232,7 @@ async function drawForecast(e) {
   }
   const hOn = act ? act.filter((x) => x.on).length : null;
   const expOn = d3.sum(P);
-  $("fc-note").innerHTML = verdictHTML(F, f) + ` Expected online ${d3.format(".1f")(expOn)} of 24 hours, ${fmtMW(d3.sum(EX))} MWh.` +
+  $("fc-note").innerHTML = verdictHTML(F, f, true) + ` Expected online ${d3.format(".1f")(expOn)} of 24 hours, ${fmtMW(d3.sum(EX))} MWh.` +
     (act ? ` <b>Actual: online ${hOn} of 24 hours, ${fmtMW(d3.sum(act, (x) => x.out))} MWh.</b>` : ` The 60-day data for this day is not in yet${S.last60 ? ` (it runs to ${S.last60})` : ""}.`);
   const s = TECH_OF[e.tech] || { color: "--c-other" };
   const w = Math.max(280, el.clientWidth || 600), Hm = 210, Hp = 86, Hq = 96, m = { t: 18, r: 16, b: 26, l: 64 };
@@ -300,10 +304,10 @@ function drawDecisions(e) {
   if ($("dec-panel").hidden) return;
   if (!u || !rows.length) { $("dec-note").textContent = ""; return emptyMsg(el, "No decision days for this unit in the loaded 60-day data."); }
   const g = (k) => u[DEC_U[k]];
-  $("dec-note").textContent = `${g("days")} decision days, ${g("shut")} shutdowns, a day-ahead award over the window on ${fmtPct(g("award") || 0)} of them. ` +
-    (g("cutoff") != null ? `Cutoff ${fmt$(g("cutoff"))}: off when no award covers the window and the loss is above it. That rule calls ${fmtPct(g("acc"))} of its days right, against ${fmtPct(g("base"))} for always guessing its commoner outcome. ` +
-      `Highest loss it stayed on through: ${fmt$(g("stayMax"))}; lowest it shut on: ${fmt$(g("shutMin"))}.`
-      : "No cutoff yet: it needs 15 decision days with at least 3 shutdowns and 3 stays.") +
+  $("dec-note").textContent = `${g("days")} days it had to choose, ${g("shut")} shutdowns, a day-ahead award over the cheap stretch on ${fmtPct(g("award") || 0)} of them. ` +
+    (g("cutoff") != null ? `Best-fit turn-off cost over these days: ${fmt$(g("cutoff"))}, which explains ${fmtPct(g("acc"))} of its choices (${fmtPct(g("base"))} if you always guessed its usual one). ` +
+      `Most it stayed on through: ${fmt$(g("stayMax"))}; least it shut on: ${fmt$(g("shutMin"))}.`
+      : "Not enough choices yet to fit a turn-off cost: it needs 15 days with at least 3 shutdowns and 3 stays.") +
     (g("est") === 2 ? " Costs are the technology's generic costs (no three-part offer of its own in the window)." : "");
   const w = Math.max(280, el.clientWidth || 600), H = 240, m = { t: 18, r: 16, b: 26, l: 70 };
   const pts = rows.map((r) => ({ d: r[1], t: parseDate(r[1]), loss: r[2], he: r[3], h: r[4], aw: r[5], shut: r[6], off: r[7] }));

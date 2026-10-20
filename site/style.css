@@ -149,6 +149,11 @@ table.data td.t { font-family: var(--font-ui); }
 table.data tr:hover td { background: var(--accent-soft); }
 .bar-cell { display: inline-block; height: 8px; border-radius: 0 4px 4px 0; background: var(--accent); vertical-align: middle; margin-left: 6px; opacity: 0.7; }
 .table-view summary { cursor: pointer; color: var(--ink-2); font-size: 12px; }
+/* method detail kept out of the way: one plain caption shows, the rest sits behind "How it's built" */
+details.how { margin: 4px 0 0; max-width: 80ch; }
+details.how > summary { cursor: pointer; color: var(--muted); font-size: 12px; }
+details.how > summary:hover { color: var(--ink-2); }
+details.how > .note, details.how > p { margin-top: 4px; }
 .units-wrap { max-height: 520px; overflow: auto; }
 .heat-scale { display: flex; align-items: center; gap: 8px; font: 11px var(--font-data); color: var(--muted); }
 .heat-scale .ramp { width: 160px; height: 10px; border-radius: 3px; }
