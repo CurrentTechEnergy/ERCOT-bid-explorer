@@ -208,7 +208,7 @@ function drawHead(e) {
   drawSite(e);
   const v = $("unit-verdict");
   if (!f) { v.textContent = THERMAL.includes(e.tech) ? "Not in the latest forecast." : ""; return; }
-  v.innerHTML = verdictHTML(S.FC, f) + ` <a href="./#date=${esc(S.FC.date)}">Overview for that day</a>.`;
+  v.innerHTML = verdictHTML(S.FC, f) + ` <a href="./#date=${esc(S.FC.date)}">The forecast for that day</a>.`;
 }
 
 // ---- forecast by hour: chance online, expected MW and minimum, price; actual once known ----

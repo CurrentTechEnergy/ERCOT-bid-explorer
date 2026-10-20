@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Beyond baseload · ERCOT Bid Stack Explorer</title>
+<title>Offers · ERCOT Bid Stack Explorer</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Sans+Condensed:wght@600&display=swap">
 <link rel="stylesheet" href="style.css">
@@ -18,8 +18,8 @@
 
 <header class="masthead">
   <div class="brand">
-    <div class="nav-row"><nav class="nav" aria-label="Pages"><a href="index.html">Overview</a><a href="commitment.html">Commitment</a><a href="changes.html">What's changing</a><a href="beyond.html" aria-current="page">Beyond baseload</a><a href="renewables.html">Renewables</a><a href="batteries.html">Batteries</a><a href="fleet.html">Fleet economics</a><a href="unit.html">Units</a><a href="trends.html">Trends</a><a href="builder.html">Graph builder</a><a href="guide.html">How offers work</a></nav></div>
-    <h1>Beyond baseload</h1>
+    <div class="nav-row"><nav class="nav" aria-label="Pages"><a href="index.html">Tomorrow</a><a href="beyond.html" aria-current="page">Offers</a><a href="commitment.html">Commitment</a><a href="renewables.html">Renewables</a><a href="batteries.html">Batteries</a><a href="unit.html">Units</a><span class="nav-sep" aria-hidden="true"></span><a href="changes.html" class="aux">What's changing</a><a href="fleet.html" class="aux">Fleet economics</a><a href="trends.html" class="aux">Trends</a><a href="builder.html" class="aux">Graph builder</a><a href="guide.html" class="aux">How offers work</a></nav></div>
+    <h1>Offers</h1>
     <p class="sub">What is bid above the committed minimum, who is at the margin, and what a flexible load buys against when power is cheap.</p>
   </div>
   <p class="status" id="status">Loading data…</p>
@@ -84,6 +84,7 @@
     <div class="legend legend-static" id="stack-legend"></div>
     <div class="chart" id="stack-chart"></div>
     <p class="note" id="stack-foot"></p>
+    <p class="note step-link"><a href="commitment.html">Why these units are on: Commitment →</a></p>
   </section>
 
 <section class="panel panel-wide" id="curves-panel">
@@ -92,6 +93,7 @@
         <h2>Offer curves <span class="h-note" id="curve-title-note"></span></h2>
         <p class="note">MW offered at or below each price in the hour, by technology, with the cleared price marked. <a href="guide.html#s6">What “From LSL” means</a>.</p>
         <details class="how"><summary>How it's built</summary><p class="note">MW offered at or below each price, averaged over the SCED runs in the hour. The line across the chart marks the cleared price for the hour; the shaded band is its range in that hour. With the 60-day report, "From LSL" draws each technology as the minimum output (LSL) of its online units plus the MW offered above that, so the curve runs flat at LSL and rises with the bids: minimum output runs however low the price goes, and only the MW above it can move by price. "As ERCOT prices it" shows the curves the way SCED sees them, with minimum output at −$20 (−$50 for some units) and the −$250 starts of some submitted curves. The Stacked view shades the LSL block from zero; hover for the split. <a href="guide.html#s6">More on what “From LSL” means</a>.</p></details>
+        <p class="note step-link">Why each technology bids this way: <a href="commitment.html">coal and gas</a> · <a href="renewables.html">wind and solar</a> · <a href="batteries.html">batteries</a> →</p>
       </div>
       <div class="panel-tools">
         <div class="seg seg-sm" id="xrange" role="radiogroup" aria-label="Price range">

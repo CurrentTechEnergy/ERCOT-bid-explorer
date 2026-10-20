@@ -638,18 +638,33 @@ function drawLayers() {
   $("source-note").textContent = known ? `Forecast built ${S.fc.updated.slice(0, 10)}` : "";
 }
 
+// ---------------------------------------------------------------- the step down to the bids ---
+// the forecast day's hour in the latest offers: the 2-day curves run two days behind, so the
+// link opens the Offers page on the newest day with curves, on or before this one
+function offersHref(he) {
+  const ds = (S.index && S.index.days["2d"]) || [], d = [...ds].reverse().find((x) => x <= S.date) || ds.at(-1);
+  return d ? { href: `beyond.html#date=${d}&he=${he}`, d } : null;
+}
+function drawOffersLinks() {
+  const H = S.day && S.day.headline;
+  const cheap = H && H.hub ? d3.minIndex(H.hub.map((p) => (p == null ? Infinity : p))) + 1 : null;
+  const a = cheap && offersHref(cheap), b = offersHref(S.hour + 1);
+  $("offers-step").innerHTML = a ? `<a href="${a.href}">What is bid at the cheapest hour, HE ${cheap}: the latest offers, ${esc(a.d)} →</a>` : "";
+  $("offers-hour").innerHTML = b ? `<a href="${b.href}">What is bid in HE ${S.hour + 1}: the latest offers, ${esc(b.d)} →</a>` : "";
+}
+
 // ---------------------------------------------------------------- render ---
 function render() {
   const days = S.fc.days, di = days.indexOf(S.date);
   $("date-prev").disabled = di <= 0;
   $("date-next").disabled = di < 0 || di >= days.length - 1;
   $("hour-out").textContent = `${heLabel(S.hour)} · ${String(S.hour).padStart(2, "0")}:00–${String(S.hour + 1).padStart(2, "0")}:00`;
-  drawLayers(); drawHeadline(); drawSpark(); drawMini(); drawGroups(); drawTechs(); drawHourly(); drawScore(); drawMix(); drawUnits();
+  drawLayers(); drawHeadline(); drawSpark(); drawMini(); drawGroups(); drawTechs(); drawHourly(); drawScore(); drawMix(); drawUnits(); drawOffersLinks();
   saveView();
 }
 function renderHour() {
   $("hour-out").textContent = `${heLabel(S.hour)} · ${String(S.hour).padStart(2, "0")}:00–${String(S.hour + 1).padStart(2, "0")}:00`;
-  drawMix(); if (S.unitView === "hour") drawUnits();
+  drawMix(); drawOffersLinks(); if (S.unitView === "hour") drawUnits();
   saveView();
 }
 async function loadDay() {
