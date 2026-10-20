@@ -26,8 +26,8 @@ const TECH_OF = Object.fromEntries(TECHS.map((t) => [t.id, t]));
 const techLabel = (t) => (TECH_OF[t] ? TECH_OF[t].label : t === "storage" ? "Storage (ESR)" : t === "hydro" ? "Hydro" : t || "–");
 const SIG_FMT = { le0: (v) => d3.format(".0%")(v), noff: (v) => d3.format(".0%")(v), rel: (v) => (v >= 0 ? "+" : "−") + d3.format("$,.0f")(Math.abs(v)) };
 const GROUP_SHORT = { never: "Never off", seasonal: "Seasonal", multiday: "Multi-day", daily1: "Daily, under once a week", daily2: "Daily, 1 to 2 a week", daily3: "Daily, over 2 a week", ungrouped: "Not yet grouped" };
-const VERDICT = { on: "expected on", off: "expected off", maybe: "maybe: off on its loss but often holds a day-ahead award", nocut: "no cutoff yet (too few decision days)", outage: "on outage", peaker: "peaker: judged by its history at this price and hour" };
-const S = { econ: {}, day: null, hour: null, T: null, DEC: null, UH: null, SP: null, FI: null, FC: null, PPA: null, CH: null, list: new Map(), unit: null, cfg: null, span: null, last60: null };
+const VERDICT = { on: "expected on", off: "expected off", maybe: "maybe: a 30 to 70% chance of staying on through its loss window", nocut: "no cutoff yet (too few decision days)", outage: "on outage", peaker: "peaker: judged by its history at this price and hour" };
+const S = { econ: {}, day: null, hour: null, T: null, DEC: null, UH: null, SP: null, FI: null, FC: null, fcDay: null, PPA: null, CH: null, list: new Map(), unit: null, cfg: null, span: null, last60: null };
 const { tryJSON, showTip, hideTip, setCSV, tickFormat, fmtKind, axisFmt, css, esc } = window.CX;
 const $ = (id) => document.getElementById(id);
 const fmtMW = d3.format(",.0f");
@@ -156,10 +156,23 @@ function buildList() {
 }
 
 // ---- header: what the unit is and the latest forecast's verdict --------------------------
-function fcRow(name) {
-  if (!S.FC) return null;
-  const c = S.FC.units.columns, r = S.FC.units.rows.find((x) => x[0] === name);
+function fcRow(name, F = S.FC) {
+  if (!F) return null;
+  const c = F.units.columns, r = F.units.rows.find((x) => x[0] === name);
   return r ? Object.fromEntries(c.map((k, i) => [k, r[i]])) : null;
+}
+// the forecast's call for one unit on one forecast day, in a sentence or three
+function verdictHTML(F, f) {
+  const g = GROUP_SHORT[f.group] || f.group;
+  const win = f.win_from ? `HE ${f.win_from} to ${f.win_from + f.win_hours - 1}` : f.off_from ? `HE ${f.off_from} to ${f.off_from + f.off_hours - 1}` : null;
+  return `Forecast for <b>${esc(F.date)}</b>: <b>${esc(VERDICT[f.verdict] || f.verdict)}</b>` +
+    (f.p_on != null && f.verdict !== "outage" ? ` (chance of running ${fmtPct(f.p_on)}${f.win_from ? " through its loss window" : ""}` +
+      (f.out_share ? `, scaled down by the ${fmtPct(f.out_share)} of its site listed out` : "") + ")" : "") + `. Group: <b>${esc(g)}</b>.` +
+    (f.loss != null ? ` Riding through the day's worst stretch${win ? ` (${win})` : ""} would lose it ${fmt$(f.loss)} at its own node` : "") +
+    (f.cutoff != null ? `, against its cutoff of ${fmt$(f.cutoff)}.` : f.loss != null ? "." : "") +
+    (f.off_from && f.verdict !== "outage" && f.off_hours < 24 ? ` Expected off for ${f.off_hours} h from HE ${f.off_from}.` : "") +
+    (f.cc_small != null ? ` In hours with the hub at $10 or below it is held at ${fmtMW(f.cc_small)} MW, its usual smallest running size.` : "") +
+    (f.reason ? ` <span class="muted">Why: ${esc(f.reason)}.</span>` : "");
 }
 function drawHead(e) {
   $("unit-title").textContent = e.name;
@@ -174,14 +187,88 @@ function drawHead(e) {
   drawSite(e);
   const v = $("unit-verdict");
   if (!f) { v.textContent = THERMAL.includes(e.tech) ? "Not in the latest forecast." : ""; return; }
-  const g = GROUP_SHORT[f.group] || f.group;
-  v.innerHTML = `Forecast for <b>${esc(S.FC.date)}</b>: <b>${esc(VERDICT[f.verdict] || f.verdict)}</b>` +
-    (f.p_on != null ? ` (chance of running ${fmtPct(f.p_on)})` : "") + `. Group: <b>${esc(g)}</b>.` +
-    (f.loss != null ? ` Riding through the day's worst stretch would lose it ${fmt$(f.loss)} at its own node` : "") +
-    (f.cutoff != null ? `, against its own cutoff of ${fmt$(f.cutoff)}.` : f.loss != null ? "." : "") +
-    (f.off_from ? ` Expected off for ${f.off_hours} h from HE ${f.off_from}.` : "") +
-    (f.reason && f.loss == null ? ` <span class="muted">${esc(f.reason)}.</span>` : "") +
-    ` <a href="./#date=${esc(S.FC.date)}">Overview for that day</a>.`;
+  v.innerHTML = verdictHTML(S.FC, f) + ` <a href="./#date=${esc(S.FC.date)}">Overview for that day</a>.`;
+}
+
+// ---- forecast by hour: chance online, expected MW and minimum, price; actual once known ----
+// data/forecast/<date>.json.gz unit_hours (p, exp, min, price) and data/60d-units/<date> for the actual
+const fcCache = new Map();
+const loadFC = (d) => { if (!fcCache.has(d)) fcCache.set(d, tryJSON(`data/forecast/${d}.json.gz`)); return fcCache.get(d); };
+async function drawForecast(e) {
+  const el = $("fc-chart");
+  $("fc-panel").hidden = !THERMAL.includes(e.tech) || !S.FI || !S.FI.days.length;
+  if ($("fc-panel").hidden) return;
+  const days = S.FI.days;
+  if (!S.fcDay || !days.includes(S.fcDay)) S.fcDay = days.at(-1);
+  $("fc-pick").innerHTML = days.slice().reverse().map((d) => `<option${d === S.fcDay ? " selected" : ""}>${d}</option>`).join("");
+  const day = S.fcDay, [F, A] = await Promise.all([loadFC(day), S.T && S.T.dates.includes(day) ? loadDayUnits(day) : null]);
+  if (S.unit !== e.name || S.fcDay !== day) return;
+  const f = F && fcRow(e.name, F), hs = F && F.unit_hours && F.unit_hours.units[e.name];
+  if (!f || !hs) { $("fc-note").textContent = ""; $("fc-legend").innerHTML = ""; return emptyMsg(el, F && !F.unit_hours ? `The forecast file for ${day} predates the hourly unit detail; it fills in when the forecast is next rebuilt.` : `${e.name} is not in the forecast for ${day}.`); }
+  const ser = Object.fromEntries(F.unit_hours.series.map((k, i) => [k, hs[i] || null]));
+  const z = Array(24).fill(0), P = ser.p || z, EX = ser.exp || z, MN = ser.min || z, PR = ser.price;
+  // the actual, from the 60-day unit file: online (at least half the hour) and output, configurations summed
+  let act = null;
+  if (A) {
+    const names = new Set(e.configs.length ? e.configs : [e.name]), ci = Object.fromEntries(A.columns.map((c, i) => [c, i + 2]));
+    act = d3.range(24).map(() => ({ on: false, out: 0, lsl: 0 }));
+    A.rows.forEach((r) => {
+      if (!names.has(A.units[r[0]][0])) return;
+      const x = act[r[1] - 1];
+      x.out += r[ci.output] || 0;
+      if ((r[ci.online_share] || 0) >= 0.5) { x.on = true; x.lsl += r[ci.lsl] || 0; }
+    });
+  }
+  const hOn = act ? act.filter((x) => x.on).length : null;
+  const expOn = d3.sum(P);
+  $("fc-note").innerHTML = verdictHTML(F, f) + ` Expected online ${d3.format(".1f")(expOn)} of 24 hours, ${fmtMW(d3.sum(EX))} MWh.` +
+    (act ? ` <b>Actual: online ${hOn} of 24 hours, ${fmtMW(d3.sum(act, (x) => x.out))} MWh.</b>` : ` The 60-day data for this day is not in yet${S.last60 ? ` (it runs to ${S.last60})` : ""}.`);
+  const s = TECH_OF[e.tech] || { color: "--c-other" };
+  const w = Math.max(280, el.clientWidth || 600), Hm = 210, Hp = 86, Hq = 96, m = { t: 18, r: 16, b: 26, l: 64 };
+  const H0 = 0, H1 = Hm, H2 = Hm + Hp, HT = Hm + Hp + Hq;
+  const x = d3.scaleBand().domain(d3.range(24)).range([m.l, w - m.r]).padding(0.15), bw = x.bandwidth();
+  const top = Math.max(d3.max(EX) || 0, act ? d3.max(act, (v) => v.out) : 0, f.hsl || 0) || 1;
+  const y = d3.scaleLinear().domain([0, top]).nice().range([H1 - m.b + 8, H0 + m.t]);
+  const yq = d3.scaleLinear().domain([0, 1]).range([H2 - 18, H1 + m.t]);
+  const pv = (PR || []).filter((v) => v != null);
+  const yp = d3.scaleLinear().domain([Math.min(0, d3.min(pv) || 0), Math.max(10, d3.max(pv) || 0)]).nice().range([HT - m.b, H2 + m.t]);
+  const svg = d3.create("svg").attr("viewBox", `0 0 ${w} ${HT}`);
+  const tickH = w < 560 ? [0, 5, 11, 17, 23] : d3.range(0, 24, 2);
+  const wf = f.win_from || (f.off_from && f.off_hours < 24 ? f.off_from : null), wn = f.win_from ? f.win_hours : f.off_hours;
+  if (wf) svg.append("rect").attr("x", x(wf - 1) - x.step() * x.padding() / 2).attr("width", x.step() * wn).attr("y", m.t).attr("height", HT - m.t - m.b).attr("fill", css("--band"));
+  [[y], [yq], [yp]].forEach(([sc]) => svg.append("g").attr("class", "gridline").attr("transform", `translate(${m.l},0)`).call(d3.axisLeft(sc).ticks(sc === yq ? 2 : 4).tickSize(-(w - m.l - m.r)).tickFormat("")));
+  svg.append("g").attr("class", "axis").attr("transform", `translate(${m.l},0)`).call(axisFmt(d3.axisLeft(y), 4, "MW").tickSizeOuter(0));
+  svg.append("g").attr("class", "axis").attr("transform", `translate(${m.l},0)`).call(d3.axisLeft(yq).tickValues([0, 0.5, 1]).tickFormat(d3.format(".0%")).tickSizeOuter(0));
+  svg.append("g").attr("class", "axis").attr("transform", `translate(${m.l},0)`).call(axisFmt(d3.axisLeft(yp), 3, "$").tickSizeOuter(0));
+  svg.append("g").attr("class", "axis").attr("transform", `translate(0,${HT - m.b})`).call(d3.axisBottom(x).tickValues(tickH).tickFormat((h) => `HE ${h + 1}`).tickSizeOuter(0));
+  svg.append("text").attr("class", "axis-title").attr("x", m.l).attr("y", 10).text("Expected output and committed minimum (MW)" + (act ? ", actual output" : ""));
+  svg.append("text").attr("class", "axis-title").attr("x", m.l).attr("y", H1 + 10).text("Chance of being online" + (act ? ", actual online" : ""));
+  svg.append("text").attr("class", "axis-title").attr("x", m.l).attr("y", H2 + 10).text("Day-ahead price it was judged on ($/MWh)");
+  d3.range(24).forEach((h) => {
+    svg.append("rect").attr("x", x(h)).attr("width", bw).attr("y", y(EX[h])).attr("height", Math.max(0, y(0) - y(EX[h]))).attr("fill", css(s.color)).attr("fill-opacity", 0.3);
+    svg.append("rect").attr("x", x(h)).attr("width", bw).attr("y", y(MN[h])).attr("height", Math.max(0, y(0) - y(MN[h]))).attr("fill", css(s.color));
+    if (act) svg.append("line").attr("x1", x(h)).attr("x2", x(h) + bw).attr("y1", y(act[h].out)).attr("y2", y(act[h].out)).attr("stroke", css("--ink")).attr("stroke-width", 2);
+    if (act) svg.append("circle").attr("cx", x(h) + bw / 2).attr("cy", yq(act[h].on ? 1 : 0)).attr("r", 3.5).attr("fill", act[h].on ? css("--ink") : "none").attr("stroke", css("--ink"));
+    const v = PR && PR[h];
+    if (v != null) svg.append("rect").attr("x", x(h) + bw * 0.2).attr("width", bw * 0.6).attr("y", yp(Math.max(0, v))).attr("height", Math.abs(yp(0) - yp(v))).attr("fill", css(v <= 10 ? "--c8" : "--ink-2"));
+  });
+  svg.append("path").attr("d", d3.line().x((h) => x(h) + bw / 2).y((h) => yq(P[h]))(d3.range(24))).attr("fill", "none").attr("stroke", css(s.color)).attr("stroke-width", 2);
+  if (yp.domain()[0] < 0) svg.append("line").attr("class", "zero").attr("x1", m.l).attr("x2", w - m.r).attr("y1", yp(0)).attr("y2", yp(0));
+  svg.append("rect").attr("x", m.l).attr("y", m.t).attr("width", w - m.l - m.r).attr("height", HT - m.t - m.b).attr("fill", "transparent")
+    .on("pointermove", (ev) => {
+      const h = Math.max(0, Math.min(23, Math.floor((d3.pointer(ev)[0] - m.l) / x.step())));
+      showTip(ev, `<h4>${fmtDate(parseDate(day))} · HE ${h + 1}</h4><table>` +
+        `<tr><td>Chance online</td><td class="n">${fmtPct(P[h])}</td></tr><tr><td>Expected output</td><td class="n">${fmtMW(EX[h])} MW</td></tr>` +
+        `<tr><td>Committed minimum</td><td class="n">${fmtMW(MN[h])} MW</td></tr><tr><td>Day-ahead price</td><td class="n">${fmtPrice(PR && PR[h])}</td></tr>` +
+        (act ? `<tr><td>Actual</td><td class="n">${act[h].on ? `online, ${fmtMW(act[h].out)} MW` : "offline"}</td></tr>` : "") + `</table>`);
+    })
+    .on("pointerleave", hideTip);
+  el.replaceChildren(svg.node());
+  setCSV(el, ["hour_ending", "chance_online", "expected_mw", "committed_min_mw", "day_ahead_price", ...(act ? ["actual_online", "actual_output_mw"] : [])],
+    d3.range(24).map((h) => [h + 1, P[h], EX[h], MN[h], PR ? PR[h] : null, ...(act ? [act[h].on ? 1 : 0, act[h].out] : [])]), `${e.name} forecast ${day} by hour`);
+  $("fc-legend").innerHTML = `<span><span class="sw" style="background:var(${s.color})"></span>Committed minimum</span><span><span class="sw" style="background:var(${s.color});opacity:0.3"></span>Expected output</span>` +
+    `<span><span class="sw sw-line" style="border-top-color:var(${s.color})"></span>Chance online</span>` + (wf ? `<span><span class="sw" style="background:var(--band)"></span>Loss window</span>` : "") +
+    (act ? `<span><span class="sw sw-line" style="border-top-color:var(--ink)"></span>Actual output</span><span>● online ○ offline (actual)</span>` : "") + `<span><span class="sw" style="background:var(--c8)"></span>Price at or below $10</span>`;
 }
 
 // every other unit at the same settlement point (a shared site: a battery beside a wind, solar or
@@ -529,14 +616,15 @@ function drawBidding(e) {
 function saveView() {
   const q = S.unit ? `?unit=${encodeURIComponent(S.unit)}` : "";
   if (q !== location.search) history.replaceState(null, "", q + location.hash);
-  window.CX.writeHash({ cfg: S.cfg && S.list.get(S.unit)?.configs.length > 1 ? S.cfg : null, day: S.day, he: S.hour == null ? null : S.hour + 1 });
+  window.CX.writeHash({ cfg: S.cfg && S.list.get(S.unit)?.configs.length > 1 ? S.cfg : null, day: S.day, he: S.hour == null ? null : S.hour + 1,
+    fc: S.fcDay && S.FI && S.fcDay !== S.FI.days.at(-1) ? S.fcDay : null });
 }
 function draw() {
   const e = S.list.get(S.unit);
   $("unit-empty").hidden = !!e;
   if (!e) return;
   document.title = `${e.name} · ERCOT Bid Stack Explorer`;
-  drawHead(e); drawDecisions(e); drawHours(e); drawDay(e); drawBidding(e);
+  drawHead(e); drawForecast(e); drawDecisions(e); drawHours(e); drawDay(e); drawBidding(e);
 }
 async function select(name, cfg, keepDay) {
   if (!S.list.has(name)) return;
@@ -565,9 +653,11 @@ async function boot() {
   pick.addEventListener("change", () => select(pick.value.trim()));
   pick.addEventListener("input", () => { if (S.list.has(pick.value)) select(pick.value); });
   window.CX.init();
+  $("fc-pick").addEventListener("change", (ev) => { S.fcDay = ev.target.value; saveView(); drawForecast(S.list.get(S.unit)); });
   $("day-pick").addEventListener("change", (ev) => { S.day = ev.target.value; S.hour = null; saveView(); drawDay(S.list.get(S.unit)); });
   const want = new URLSearchParams(location.search).get("unit") || v.unit;
   S.day = v.day || null;
+  S.fcDay = v.fc || null;
   S.hour = v.he ? +v.he - 1 : null;
   if (want && S.list.has(want)) select(want, v.cfg, true); else draw();
   let t, lastW = 0;
