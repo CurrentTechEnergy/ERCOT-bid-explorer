@@ -59,6 +59,10 @@ class Buttondown:
         out, page = [], 1
         while True:
             r = self.s.get(f"{API}/subscribers", params={"tag": tag, "type": "regular", "page": page}, timeout=TIMEOUT)
+            if r.status_code == 400 and page == 1:
+                # Buttondown answers 400 for a tag no subscriber carries yet: nobody follows it
+                warn(f"notify: Buttondown refused tag {tag} ({r.text[:200]}); counted as no followers")
+                return []
             r.raise_for_status()
             d = r.json()
             out += d.get("results", [])

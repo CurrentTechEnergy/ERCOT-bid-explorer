@@ -141,6 +141,7 @@ jobs:
       # was sent (site/data/notify_sent.json) goes in with the data commit below.
       - name: Send subscriber emails
         if: github.event_name == 'schedule' && github.event.schedule == '31 19 * * *'
+        continue-on-error: true     # a failed email must not hold back the data commit or the deploy
         env:
           BUTTONDOWN_API_KEY: ${{ secrets.BUTTONDOWN_API_KEY }}
           NOTIFY_DRY_RUN: ${{ vars.NOTIFY_DRY_RUN }}
