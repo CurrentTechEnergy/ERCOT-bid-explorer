@@ -117,6 +117,17 @@ def rewrite_outages(e: dict) -> list:
     return st
 
 
+def lead_off(st) -> int:
+    """Length of the off stretch open at the window start when it lasts a week or more (else 0).
+    It is not a shutdown, but a unit that never started is seasonal rather than never-off."""
+    N, j, off, gap = len(st), 0, 0, 0
+    while j < N and st[j] in "0o-":
+        off += st[j] == "0"
+        gap += st[j] == "-"
+        j += 1
+    return j if j >= 168 and gap <= off and off >= OUT_MIN_H else 0
+
+
 def classify(e: dict, N: int) -> dict:
     """Shutdowns and group of one merged unit whose strip has been through rewrite_outages."""
     st = e["st"]
@@ -142,6 +153,9 @@ def classify(e: dict, N: int) -> dict:
             k = j
         else:
             k += 1
+    lead = lead_off(st)
+    if lead:
+        long_.append(lead)
     per_week = len(offs) / (N / 168) if N else 0.0
     if short >= 2:
         group = "daily1" if per_week < 1 else "daily2" if per_week <= 2 else "daily3"
