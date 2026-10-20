@@ -45,6 +45,7 @@ from .mitigation import build_mitigation
 from .gas import fetch_gas, fetch_hubs
 from .fuel_hub import build_fuel_hubs
 from .econ import build_econ
+from .dam_lambda import fetch_dam_lambda
 from .dam_prices import fetch_dam_prices, fetch_dam_node_prices
 from .renew_forecast import fetch_renew_forecast
 from .outages import fetch_outages
@@ -461,6 +462,7 @@ def main(argv=None):
                      node_limit=args.max_files if args.backfill and args.max_files else NODE_DAYS_PER_RUN)
         fetch_dam_prices(api, index["days"]["60d"], index)
         fetch_dam_node_prices(api, index)
+        fetch_dam_lambda(api)
         fetch_renew_forecast(api, index)
     if "outages" not in args.skip:
         fetch_outages(api, index, backfill=args.outages_backfill)
