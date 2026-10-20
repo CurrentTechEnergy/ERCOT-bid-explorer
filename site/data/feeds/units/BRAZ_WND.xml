@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
   <title>BRAZ_WND: bidding and operating changes</title>
-  <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=BRAZ_WND"/>
-  <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=BRAZ_WND</id>
+  <link href="https://ercotbids.currenttech.energy/unit.html?unit=BRAZ_WND"/>
+  <id>https://ercotbids.currenttech.energy/unit.html?unit=BRAZ_WND</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
     <title>BRAZ_WND: New floor (2023-11-22)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=BRAZ_WND"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=BRAZ_WND#BRAZ_WND/2023-11-22/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=BRAZ_WND"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=BRAZ_WND#BRAZ_WND/2023-11-22/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$1 to floor -$35</summary>
   </entry>

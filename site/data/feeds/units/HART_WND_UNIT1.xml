@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
   <title>HART_WND_UNIT1: bidding and operating changes</title>
-  <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=HART_WND_UNIT1"/>
-  <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=HART_WND_UNIT1</id>
+  <link href="https://ercotbids.currenttech.energy/unit.html?unit=HART_WND_UNIT1"/>
+  <id>https://ercotbids.currenttech.energy/unit.html?unit=HART_WND_UNIT1</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
     <title>HART_WND: Started moving within the day (2025-12-08)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=HART_WND"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=HART_WND#HART_WND/2025-12-08/renew_moving_on</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=HART_WND"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=HART_WND#HART_WND/2025-12-08/renew_moving_on</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Started moving within the day: floor -$46 to v</summary>
   </entry>

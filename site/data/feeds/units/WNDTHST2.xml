@@ -1,62 +1,62 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
   <title>WNDTHST2: bidding and operating changes</title>
-  <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=WNDTHST2"/>
-  <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=WNDTHST2</id>
+  <link href="https://ercotbids.currenttech.energy/unit.html?unit=WNDTHST2"/>
+  <id>https://ercotbids.currenttech.energy/unit.html?unit=WNDTHST2</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
     <title>WNDTHST2: New floor (2024-10-25)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=WNDTHST2"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=WNDTHST2#WNDTHST2/2024-10-25/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=WNDTHST2"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=WNDTHST2#WNDTHST2/2024-10-25/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$35 to floor -$2</summary>
   </entry>
   <entry>
     <title>WNDTHST2: New floor (2023-07-07)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=WNDTHST2"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=WNDTHST2#WNDTHST2/2023-07-07/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=WNDTHST2"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=WNDTHST2#WNDTHST2/2023-07-07/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$33 to floor -$35</summary>
   </entry>
   <entry>
     <title>WNDTHST2: New floor (2022-01-20)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=WNDTHST2"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=WNDTHST2#WNDTHST2/2022-01-20/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=WNDTHST2"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=WNDTHST2#WNDTHST2/2022-01-20/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$32 to floor -$33</summary>
   </entry>
   <entry>
     <title>WNDTHST2: New floor (2021-08-24)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=WNDTHST2"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=WNDTHST2#WNDTHST2/2021-08-24/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=WNDTHST2"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=WNDTHST2#WNDTHST2/2021-08-24/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$2 to floor -$32</summary>
   </entry>
   <entry>
     <title>WNDTHST2: New floor (2021-02-21)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=WNDTHST2"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=WNDTHST2#WNDTHST2/2021-02-21/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=WNDTHST2"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=WNDTHST2#WNDTHST2/2021-02-21/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$32 to floor -$2</summary>
   </entry>
   <entry>
     <title>WNDTHST2: Back to an earlier floor (2020-01-07)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=WNDTHST2"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=WNDTHST2#WNDTHST2/2020-01-07/renew_floor_back</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=WNDTHST2"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=WNDTHST2#WNDTHST2/2020-01-07/renew_floor_back</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Back to an earlier floor: floor -$9 to floor -$32</summary>
   </entry>
   <entry>
     <title>WNDTHST2: New floor (2019-12-07)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=WNDTHST2"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=WNDTHST2#WNDTHST2/2019-12-07/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=WNDTHST2"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=WNDTHST2#WNDTHST2/2019-12-07/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$32 to floor -$9</summary>
   </entry>
   <entry>
     <title>WNDTHST2: New floor (2019-06-12)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=WNDTHST2"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=WNDTHST2#WNDTHST2/2019-06-12/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=WNDTHST2"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=WNDTHST2#WNDTHST2/2019-06-12/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$30 to floor -$32</summary>
   </entry>

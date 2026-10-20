@@ -1,118 +1,118 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
   <title>CHALUPA: bidding and operating changes</title>
-  <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CHALUPA"/>
-  <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CHALUPA</id>
+  <link href="https://ercotbids.currenttech.energy/unit.html?unit=CHALUPA"/>
+  <id>https://ercotbids.currenttech.energy/unit.html?unit=CHALUPA</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
     <title>CHALUPA: New floor (2026-08-10)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CHALUPA"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CHALUPA#CHALUPA/2026-08-10/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=CHALUPA"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=CHALUPA#CHALUPA/2026-08-10/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$40 to floor -$41</summary>
   </entry>
   <entry>
     <title>CHALUPA: New floor (2025-07-22)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CHALUPA"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CHALUPA#CHALUPA/2025-07-22/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=CHALUPA"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=CHALUPA#CHALUPA/2025-07-22/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$38 to floor -$40</summary>
   </entry>
   <entry>
     <title>CHALUPA: New floor (2025-05-16)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CHALUPA"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CHALUPA#CHALUPA/2025-05-16/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=CHALUPA"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=CHALUPA#CHALUPA/2025-05-16/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$34 to floor -$38</summary>
   </entry>
   <entry>
     <title>CHALUPA: Back to an earlier floor (2022-07-22)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CHALUPA"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CHALUPA#CHALUPA/2022-07-22/renew_floor_back</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=CHALUPA"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=CHALUPA#CHALUPA/2022-07-22/renew_floor_back</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Back to an earlier floor: floor -$33 to floor -$34</summary>
   </entry>
   <entry>
     <title>CHALUPA: Back to an earlier floor (2022-05-07)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CHALUPA"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CHALUPA#CHALUPA/2022-05-07/renew_floor_back</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=CHALUPA"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=CHALUPA#CHALUPA/2022-05-07/renew_floor_back</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Back to an earlier floor: floor -$34 to floor -$33</summary>
   </entry>
   <entry>
     <title>CHALUPA: New floor (2022-04-22)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CHALUPA"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CHALUPA#CHALUPA/2022-04-22/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=CHALUPA"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=CHALUPA#CHALUPA/2022-04-22/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$33 to floor -$34</summary>
   </entry>
   <entry>
     <title>CHALUPA: New floor (2022-03-30)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CHALUPA"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CHALUPA#CHALUPA/2022-03-30/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=CHALUPA"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=CHALUPA#CHALUPA/2022-03-30/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$32 to floor -$33</summary>
   </entry>
   <entry>
     <title>CHALUPA: Stopped moving within the day (2022-02-12)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CHALUPA"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CHALUPA#CHALUPA/2022-02-12/renew_moving_off</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=CHALUPA"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=CHALUPA#CHALUPA/2022-02-12/renew_moving_off</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Stopped moving within the day: v to floor -$32</summary>
   </entry>
   <entry>
     <title>CHALUPA: Started moving within the day (2021-05-25)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CHALUPA"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CHALUPA#CHALUPA/2021-05-25/renew_moving_on</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=CHALUPA"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=CHALUPA#CHALUPA/2021-05-25/renew_moving_on</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Started moving within the day: floor -$24 to v</summary>
   </entry>
   <entry>
     <title>CHALUPA: New floor (2021-05-19)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CHALUPA"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CHALUPA#CHALUPA/2021-05-19/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=CHALUPA"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=CHALUPA#CHALUPA/2021-05-19/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor $0 to floor -$24</summary>
   </entry>
   <entry>
     <title>CHALUPA: Episode (2021-04-19)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CHALUPA"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CHALUPA#CHALUPA/2021-04-19/renew_episode</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=CHALUPA"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=CHALUPA#CHALUPA/2021-04-19/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Episode: floor $0 to -$5 for the episode for 1 day(s)</summary>
   </entry>
   <entry>
     <title>CHALUPA: Episode (2021-04-13)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CHALUPA"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CHALUPA#CHALUPA/2021-04-13/renew_episode</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=CHALUPA"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=CHALUPA#CHALUPA/2021-04-13/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Episode: floor $0 to -$8 for the episode for 1 day(s)</summary>
   </entry>
   <entry>
     <title>CHALUPA: New floor (2021-04-10)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CHALUPA"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CHALUPA#CHALUPA/2021-04-10/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=CHALUPA"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=CHALUPA#CHALUPA/2021-04-10/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$32 to floor $0</summary>
   </entry>
   <entry>
     <title>CHALUPA: New floor (2021-04-02)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CHALUPA"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CHALUPA#CHALUPA/2021-04-02/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=CHALUPA"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=CHALUPA#CHALUPA/2021-04-02/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$25 to floor -$32</summary>
   </entry>
   <entry>
     <title>CHALUPA: Episode (2021-02-17)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CHALUPA"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CHALUPA#CHALUPA/2021-02-17/renew_episode</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=CHALUPA"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=CHALUPA#CHALUPA/2021-02-17/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Episode: floor -$25 to -$42 for the episode for 3 day(s)</summary>
   </entry>
   <entry>
     <title>CHALUPA: New floor (2020-12-24)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CHALUPA"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CHALUPA#CHALUPA/2020-12-24/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=CHALUPA"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=CHALUPA#CHALUPA/2020-12-24/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor $0 to floor -$25</summary>
   </entry>

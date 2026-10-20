@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
   <title>AMADEUS1_UNIT1: bidding and operating changes</title>
-  <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=AMADEUS1_UNIT1"/>
-  <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=AMADEUS1_UNIT1</id>
+  <link href="https://ercotbids.currenttech.energy/unit.html?unit=AMADEUS1_UNIT1"/>
+  <id>https://ercotbids.currenttech.energy/unit.html?unit=AMADEUS1_UNIT1</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
     <title>AMADEUS1: New floor (2020-12-18)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=AMADEUS1"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=AMADEUS1#AMADEUS1/2020-12-18/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=AMADEUS1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=AMADEUS1#AMADEUS1/2020-12-18/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor $0 to floor -$32</summary>
   </entry>
   <entry>
     <title>AMADEUS1: Episode (2020-11-19)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=AMADEUS1"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=AMADEUS1#AMADEUS1/2020-11-19/renew_episode</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=AMADEUS1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=AMADEUS1#AMADEUS1/2020-11-19/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Episode: floor $0 to -$40 for the episode for 1 day(s)</summary>
   </entry>

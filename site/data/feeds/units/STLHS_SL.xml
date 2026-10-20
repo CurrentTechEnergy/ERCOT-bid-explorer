@@ -1,27 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
   <title>STLHS_SL: bidding and operating changes</title>
-  <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=STLHS_SL"/>
-  <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=STLHS_SL</id>
+  <link href="https://ercotbids.currenttech.energy/unit.html?unit=STLHS_SL"/>
+  <id>https://ercotbids.currenttech.energy/unit.html?unit=STLHS_SL</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
     <title>STLHS_SL: Formula on (2025-10-27)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=STLHS_SL"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=STLHS_SL#STLHS_SL/2025-10-27/renew_formula_on</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=STLHS_SL"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=STLHS_SL#STLHS_SL/2025-10-27/renew_formula_on</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Formula on: floor -$2 to formula</summary>
   </entry>
   <entry>
     <title>STLHS_SL: New floor (2025-09-11)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=STLHS_SL"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=STLHS_SL#STLHS_SL/2025-09-11/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=STLHS_SL"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=STLHS_SL#STLHS_SL/2025-09-11/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$1 to floor -$2</summary>
   </entry>
   <entry>
     <title>STLHS_SL: New floor (2025-08-13)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=STLHS_SL"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=STLHS_SL#STLHS_SL/2025-08-13/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=STLHS_SL"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=STLHS_SL#STLHS_SL/2025-08-13/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor $0 to floor -$1</summary>
   </entry>

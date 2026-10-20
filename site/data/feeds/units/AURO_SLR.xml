@@ -1,76 +1,76 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
   <title>AURO_SLR: bidding and operating changes</title>
-  <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=AURO_SLR"/>
-  <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=AURO_SLR</id>
+  <link href="https://ercotbids.currenttech.energy/unit.html?unit=AURO_SLR"/>
+  <id>https://ercotbids.currenttech.energy/unit.html?unit=AURO_SLR</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
     <title>AURO_SLR: New floor (2026-04-09)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=AURO_SLR"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=AURO_SLR#AURO_SLR/2026-04-09/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=AURO_SLR"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=AURO_SLR#AURO_SLR/2026-04-09/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$34 to floor -$38</summary>
   </entry>
   <entry>
     <title>AURO_SLR: Episode (2026-02-24)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=AURO_SLR"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=AURO_SLR#AURO_SLR/2026-02-24/renew_episode</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=AURO_SLR"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=AURO_SLR#AURO_SLR/2026-02-24/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Episode: floor -$34 to -$2 for the episode for 1 day(s)</summary>
   </entry>
   <entry>
     <title>AURO_SLR: Episode (2026-02-21)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=AURO_SLR"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=AURO_SLR#AURO_SLR/2026-02-21/renew_episode</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=AURO_SLR"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=AURO_SLR#AURO_SLR/2026-02-21/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Episode: floor -$34 to -$2 for the episode for 1 day(s)</summary>
   </entry>
   <entry>
     <title>AURO_SLR: Episode (2026-02-16)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=AURO_SLR"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=AURO_SLR#AURO_SLR/2026-02-16/renew_episode</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=AURO_SLR"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=AURO_SLR#AURO_SLR/2026-02-16/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Episode: floor -$34 to -$2 for the episode for 1 day(s)</summary>
   </entry>
   <entry>
     <title>AURO_SLR: Episode (2025-10-19)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=AURO_SLR"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=AURO_SLR#AURO_SLR/2025-10-19/renew_episode</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=AURO_SLR"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=AURO_SLR#AURO_SLR/2025-10-19/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Episode: floor -$34 to -$2 for the episode for 1 day(s)</summary>
   </entry>
   <entry>
     <title>AURO_SLR: Stopped moving within the day (2025-09-23)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=AURO_SLR"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=AURO_SLR#AURO_SLR/2025-09-23/renew_moving_off</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=AURO_SLR"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=AURO_SLR#AURO_SLR/2025-09-23/renew_moving_off</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Stopped moving within the day: v to floor -$34</summary>
   </entry>
   <entry>
     <title>AURO_SLR: Started moving within the day (2025-08-20)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=AURO_SLR"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=AURO_SLR#AURO_SLR/2025-08-20/renew_moving_on</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=AURO_SLR"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=AURO_SLR#AURO_SLR/2025-08-20/renew_moving_on</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Started moving within the day: floor -$34 to v</summary>
   </entry>
   <entry>
     <title>AURO_SLR: Episode (2025-03-02)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=AURO_SLR"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=AURO_SLR#AURO_SLR/2025-03-02/renew_episode</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=AURO_SLR"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=AURO_SLR#AURO_SLR/2025-03-02/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Episode: floor -$34 to -$2 for the episode for 4 day(s)</summary>
   </entry>
   <entry>
     <title>AURO_SLR: New floor (2024-12-18)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=AURO_SLR"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=AURO_SLR#AURO_SLR/2024-12-18/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=AURO_SLR"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=AURO_SLR#AURO_SLR/2024-12-18/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$39 to floor -$34</summary>
   </entry>
   <entry>
     <title>AURO_SLR: New floor (2024-10-23)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=AURO_SLR"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=AURO_SLR#AURO_SLR/2024-10-23/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=AURO_SLR"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=AURO_SLR#AURO_SLR/2024-10-23/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$2 to floor -$39</summary>
   </entry>

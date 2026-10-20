@@ -1,34 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
   <title>CORALSLR_SOLAR2: bidding and operating changes</title>
-  <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CORALSLR_SOLAR2"/>
-  <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CORALSLR_SOLAR2</id>
+  <link href="https://ercotbids.currenttech.energy/unit.html?unit=CORALSLR_SOLAR2"/>
+  <id>https://ercotbids.currenttech.energy/unit.html?unit=CORALSLR_SOLAR2</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
     <title>CORALSLR: Formula on (2026-07-23)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CORALSLR"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CORALSLR#CORALSLR/2026-07-23/renew_formula_on</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=CORALSLR"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=CORALSLR#CORALSLR/2026-07-23/renew_formula_on</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Formula on: floor -$2 to formula</summary>
   </entry>
   <entry>
     <title>CORALSLR: Stopped moving within the day (2026-05-21)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CORALSLR"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CORALSLR#CORALSLR/2026-05-21/renew_moving_off</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=CORALSLR"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=CORALSLR#CORALSLR/2026-05-21/renew_moving_off</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Stopped moving within the day: v to floor -$2</summary>
   </entry>
   <entry>
     <title>CORALSLR: Started moving within the day (2026-05-15)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CORALSLR"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CORALSLR#CORALSLR/2026-05-15/renew_moving_on</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=CORALSLR"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=CORALSLR#CORALSLR/2026-05-15/renew_moving_on</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Started moving within the day: floor -$2 to v</summary>
   </entry>
   <entry>
     <title>CORALSLR: New floor (2024-03-02)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CORALSLR"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CORALSLR#CORALSLR/2024-03-02/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=CORALSLR"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=CORALSLR#CORALSLR/2024-03-02/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor $0 to floor -$2</summary>
   </entry>

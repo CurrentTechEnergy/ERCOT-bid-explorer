@@ -1,27 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
   <title>HICKMAN_G1_J01: bidding and operating changes</title>
-  <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=HICKMAN_G1_J01"/>
-  <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=HICKMAN_G1_J01</id>
+  <link href="https://ercotbids.currenttech.energy/unit.html?unit=HICKMAN_G1_J01"/>
+  <id>https://ercotbids.currenttech.energy/unit.html?unit=HICKMAN_G1_J01</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
     <title>HICKMAN_G1_J: New floor (2024-09-04)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=HICKMAN_G1_J"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=HICKMAN_G1_J#HICKMAN_G1_J/2024-09-04/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=HICKMAN_G1_J"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=HICKMAN_G1_J#HICKMAN_G1_J/2024-09-04/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$53 to floor -$59</summary>
   </entry>
   <entry>
     <title>HICKMAN_G1_J: Episode (2024-08-31)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=HICKMAN_G1_J"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=HICKMAN_G1_J#HICKMAN_G1_J/2024-08-31/renew_episode</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=HICKMAN_G1_J"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=HICKMAN_G1_J#HICKMAN_G1_J/2024-08-31/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Episode: floor -$53 to -$59 for the episode for 1 day(s)</summary>
   </entry>
   <entry>
     <title>HICKMAN_G1_J: New floor (2019-07-17)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=HICKMAN_G1_J"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=HICKMAN_G1_J#HICKMAN_G1_J/2019-07-17/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=HICKMAN_G1_J"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=HICKMAN_G1_J#HICKMAN_G1_J/2019-07-17/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$52 to floor -$53</summary>
   </entry>

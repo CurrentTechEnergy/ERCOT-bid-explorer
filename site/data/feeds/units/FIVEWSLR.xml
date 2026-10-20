@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
   <title>FIVEWSLR: bidding and operating changes</title>
-  <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FIVEWSLR"/>
-  <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FIVEWSLR</id>
+  <link href="https://ercotbids.currenttech.energy/unit.html?unit=FIVEWSLR"/>
+  <id>https://ercotbids.currenttech.energy/unit.html?unit=FIVEWSLR</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
     <title>FIVEWSLR: New floor (2026-06-16)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FIVEWSLR"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FIVEWSLR#FIVEWSLR/2026-06-16/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=FIVEWSLR"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=FIVEWSLR#FIVEWSLR/2026-06-16/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$76 to floor -$69</summary>
   </entry>
   <entry>
     <title>FIVEWSLR: New floor (2024-12-31)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FIVEWSLR"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FIVEWSLR#FIVEWSLR/2024-12-31/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=FIVEWSLR"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=FIVEWSLR#FIVEWSLR/2024-12-31/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$35 to floor -$76</summary>
   </entry>

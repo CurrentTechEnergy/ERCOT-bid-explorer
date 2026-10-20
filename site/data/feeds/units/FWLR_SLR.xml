@@ -1,139 +1,139 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
   <title>FWLR_SLR: bidding and operating changes</title>
-  <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FWLR_SLR"/>
-  <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FWLR_SLR</id>
+  <link href="https://ercotbids.currenttech.energy/unit.html?unit=FWLR_SLR"/>
+  <id>https://ercotbids.currenttech.energy/unit.html?unit=FWLR_SLR</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
     <title>FWLR_SLR: New floor (2025-03-27)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FWLR_SLR"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FWLR_SLR#FWLR_SLR/2025-03-27/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=FWLR_SLR"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=FWLR_SLR#FWLR_SLR/2025-03-27/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$3 to floor -$5</summary>
   </entry>
   <entry>
     <title>FWLR_SLR: Back to an earlier floor (2023-02-24)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FWLR_SLR"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FWLR_SLR#FWLR_SLR/2023-02-24/renew_floor_back</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=FWLR_SLR"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=FWLR_SLR#FWLR_SLR/2023-02-24/renew_floor_back</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Back to an earlier floor: floor -$4 to floor -$3</summary>
   </entry>
   <entry>
     <title>FWLR_SLR: New floor (2023-01-04)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FWLR_SLR"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FWLR_SLR#FWLR_SLR/2023-01-04/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=FWLR_SLR"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=FWLR_SLR#FWLR_SLR/2023-01-04/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$3 to floor -$4</summary>
   </entry>
   <entry>
     <title>FWLR_SLR: New floor (2022-06-28)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FWLR_SLR"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FWLR_SLR#FWLR_SLR/2022-06-28/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=FWLR_SLR"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=FWLR_SLR#FWLR_SLR/2022-06-28/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$5 to floor -$3</summary>
   </entry>
   <entry>
     <title>FWLR_SLR: New floor (2022-05-10)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FWLR_SLR"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FWLR_SLR#FWLR_SLR/2022-05-10/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=FWLR_SLR"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=FWLR_SLR#FWLR_SLR/2022-05-10/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$8 to floor -$5</summary>
   </entry>
   <entry>
     <title>FWLR_SLR: Back to an earlier floor (2022-04-14)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FWLR_SLR"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FWLR_SLR#FWLR_SLR/2022-04-14/renew_floor_back</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=FWLR_SLR"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=FWLR_SLR#FWLR_SLR/2022-04-14/renew_floor_back</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Back to an earlier floor: floor -$7 to floor -$8</summary>
   </entry>
   <entry>
     <title>FWLR_SLR: New floor (2022-03-03)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FWLR_SLR"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FWLR_SLR#FWLR_SLR/2022-03-03/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=FWLR_SLR"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=FWLR_SLR#FWLR_SLR/2022-03-03/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$9 to floor -$7</summary>
   </entry>
   <entry>
     <title>FWLR_SLR: Back to an earlier floor (2022-02-16)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FWLR_SLR"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FWLR_SLR#FWLR_SLR/2022-02-16/renew_floor_back</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=FWLR_SLR"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=FWLR_SLR#FWLR_SLR/2022-02-16/renew_floor_back</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Back to an earlier floor: floor -$10 to floor -$9</summary>
   </entry>
   <entry>
     <title>FWLR_SLR: New floor (2022-01-14)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FWLR_SLR"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FWLR_SLR#FWLR_SLR/2022-01-14/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=FWLR_SLR"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=FWLR_SLR#FWLR_SLR/2022-01-14/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$8 to floor -$10</summary>
   </entry>
   <entry>
     <title>FWLR_SLR: Back to an earlier floor (2021-09-11)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FWLR_SLR"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FWLR_SLR#FWLR_SLR/2021-09-11/renew_floor_back</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=FWLR_SLR"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=FWLR_SLR#FWLR_SLR/2021-09-11/renew_floor_back</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Back to an earlier floor: floor -$11 to floor -$8</summary>
   </entry>
   <entry>
     <title>FWLR_SLR: Back to an earlier floor (2021-09-01)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FWLR_SLR"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FWLR_SLR#FWLR_SLR/2021-09-01/renew_floor_back</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=FWLR_SLR"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=FWLR_SLR#FWLR_SLR/2021-09-01/renew_floor_back</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Back to an earlier floor: floor -$12 to floor -$11</summary>
   </entry>
   <entry>
     <title>FWLR_SLR: New floor (2021-08-25)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FWLR_SLR"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FWLR_SLR#FWLR_SLR/2021-08-25/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=FWLR_SLR"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=FWLR_SLR#FWLR_SLR/2021-08-25/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$14 to floor -$12</summary>
   </entry>
   <entry>
     <title>FWLR_SLR: New floor (2021-08-14)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FWLR_SLR"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FWLR_SLR#FWLR_SLR/2021-08-14/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=FWLR_SLR"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=FWLR_SLR#FWLR_SLR/2021-08-14/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$11 to floor -$14</summary>
   </entry>
   <entry>
     <title>FWLR_SLR: New floor (2021-08-06)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FWLR_SLR"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FWLR_SLR#FWLR_SLR/2021-08-06/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=FWLR_SLR"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=FWLR_SLR#FWLR_SLR/2021-08-06/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$8 to floor -$11</summary>
   </entry>
   <entry>
     <title>FWLR_SLR: New floor (2021-07-07)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FWLR_SLR"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FWLR_SLR#FWLR_SLR/2021-07-07/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=FWLR_SLR"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=FWLR_SLR#FWLR_SLR/2021-07-07/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$5 to floor -$8</summary>
   </entry>
   <entry>
     <title>FWLR_SLR: New floor (2021-05-13)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FWLR_SLR"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FWLR_SLR#FWLR_SLR/2021-05-13/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=FWLR_SLR"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=FWLR_SLR#FWLR_SLR/2021-05-13/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$4 to floor -$5</summary>
   </entry>
   <entry>
     <title>FWLR_SLR: New floor (2021-05-06)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FWLR_SLR"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FWLR_SLR#FWLR_SLR/2021-05-06/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=FWLR_SLR"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=FWLR_SLR#FWLR_SLR/2021-05-06/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor $0 to floor -$4</summary>
   </entry>
   <entry>
     <title>FWLR_SLR: Back to an earlier floor (2020-11-03)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FWLR_SLR"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FWLR_SLR#FWLR_SLR/2020-11-03/renew_floor_back</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=FWLR_SLR"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=FWLR_SLR#FWLR_SLR/2020-11-03/renew_floor_back</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Back to an earlier floor: floor -$1 to floor $0</summary>
   </entry>
   <entry>
     <title>FWLR_SLR: New floor (2020-09-10)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FWLR_SLR"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FWLR_SLR#FWLR_SLR/2020-09-10/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=FWLR_SLR"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=FWLR_SLR#FWLR_SLR/2020-09-10/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor $0 to floor -$1</summary>
   </entry>

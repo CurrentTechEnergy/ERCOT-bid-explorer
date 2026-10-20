@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
   <title>NRTN_SLR: bidding and operating changes</title>
-  <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=NRTN_SLR"/>
-  <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=NRTN_SLR</id>
+  <link href="https://ercotbids.currenttech.energy/unit.html?unit=NRTN_SLR"/>
+  <id>https://ercotbids.currenttech.energy/unit.html?unit=NRTN_SLR</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
     <title>NRTN_SLR: New floor (2025-10-30)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=NRTN_SLR"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=NRTN_SLR#NRTN_SLR/2025-10-30/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=NRTN_SLR"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=NRTN_SLR#NRTN_SLR/2025-10-30/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor $0 to floor -$38</summary>
   </entry>

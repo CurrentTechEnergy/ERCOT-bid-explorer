@@ -1,41 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
   <title>HLSES_UNIT5: bidding and operating changes</title>
-  <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=HLSES_UNIT5"/>
-  <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=HLSES_UNIT5</id>
+  <link href="https://ercotbids.currenttech.energy/unit.html?unit=HLSES_UNIT5"/>
+  <id>https://ercotbids.currenttech.energy/unit.html?unit=HLSES_UNIT5</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
     <title>HLSES_UNIT5: Bidding approach shifted (2026-05-01)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=HLSES_UNIT5"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=HLSES_UNIT5#HLSES_UNIT5/2026-05-01/bidding</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=HLSES_UNIT5"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=HLSES_UNIT5#HLSES_UNIT5/2026-05-01/bidding</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Offer price vs peer median: $6 to -$5/MWh</summary>
   </entry>
   <entry>
     <title>HLSES_UNIT5: Outage ended (2026-04-17)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=HLSES_UNIT5"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=HLSES_UNIT5#HLSES_UNIT5/2026-04-17/outage_end</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=HLSES_UNIT5"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=HLSES_UNIT5#HLSES_UNIT5/2026-04-17/outage_end</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Back from a 19-day outage</summary>
   </entry>
   <entry>
     <title>HLSES_UNIT5: Outage started (2026-03-30)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=HLSES_UNIT5"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=HLSES_UNIT5#HLSES_UNIT5/2026-03-30/outage_start</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=HLSES_UNIT5"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=HLSES_UNIT5#HLSES_UNIT5/2026-03-30/outage_start</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Outage began, lasting 19 days</summary>
   </entry>
   <entry>
     <title>HLSES_UNIT5: Bidding approach shifted (2026-03-16)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=HLSES_UNIT5"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=HLSES_UNIT5#HLSES_UNIT5/2026-03-16/bidding</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=HLSES_UNIT5"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=HLSES_UNIT5#HLSES_UNIT5/2026-03-16/bidding</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Offer price vs peer median: $242 to $0/MWh</summary>
   </entry>
   <entry>
     <title>HLSES_UNIT5: Outage ended (2025-12-10)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=HLSES_UNIT5"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=HLSES_UNIT5#HLSES_UNIT5/2025-12-10/outage_end</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=HLSES_UNIT5"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=HLSES_UNIT5#HLSES_UNIT5/2025-12-10/outage_end</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Back from a 11-day outage</summary>
   </entry>

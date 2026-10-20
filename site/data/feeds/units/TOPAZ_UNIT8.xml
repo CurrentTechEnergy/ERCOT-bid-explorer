@@ -1,27 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
   <title>TOPAZ_UNIT8: bidding and operating changes</title>
-  <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TOPAZ_UNIT8"/>
-  <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TOPAZ_UNIT8</id>
+  <link href="https://ercotbids.currenttech.energy/unit.html?unit=TOPAZ_UNIT8"/>
+  <id>https://ercotbids.currenttech.energy/unit.html?unit=TOPAZ_UNIT8</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
     <title>TOPAZ_UNIT8: Bidding approach shifted (2026-02-26)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TOPAZ_UNIT8"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TOPAZ_UNIT8#TOPAZ_UNIT8/2026-02-26/bidding</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=TOPAZ_UNIT8"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=TOPAZ_UNIT8#TOPAZ_UNIT8/2026-02-26/bidding</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Offer price vs peer median: $214 to $4/MWh</summary>
   </entry>
   <entry>
     <title>TOPAZ_UNIT8: Bidding approach shifted (2026-01-25)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TOPAZ_UNIT8"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TOPAZ_UNIT8#TOPAZ_UNIT8/2026-01-25/bidding</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=TOPAZ_UNIT8"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=TOPAZ_UNIT8#TOPAZ_UNIT8/2026-01-25/bidding</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Offer price vs peer median: $239 to -$1/MWh</summary>
   </entry>
   <entry>
     <title>TOPAZ_UNIT8: Bidding approach shifted (2025-12-29)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TOPAZ_UNIT8"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TOPAZ_UNIT8#TOPAZ_UNIT8/2025-12-29/bidding</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=TOPAZ_UNIT8"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=TOPAZ_UNIT8#TOPAZ_UNIT8/2025-12-29/bidding</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Offer price vs peer median: $0 to $239/MWh</summary>
   </entry>

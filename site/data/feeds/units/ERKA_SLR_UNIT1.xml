@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
   <title>ERKA_SLR_UNIT1: bidding and operating changes</title>
-  <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ERKA_SLR_UNIT1"/>
-  <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ERKA_SLR_UNIT1</id>
+  <link href="https://ercotbids.currenttech.energy/unit.html?unit=ERKA_SLR_UNIT1"/>
+  <id>https://ercotbids.currenttech.energy/unit.html?unit=ERKA_SLR_UNIT1</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
     <title>ERKA_SLR_UNIT1: New unit (2026-04-01)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ERKA_SLR_UNIT1"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ERKA_SLR_UNIT1#ERKA_SLR_UNIT1/2026-04-01/new_unit</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=ERKA_SLR_UNIT1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=ERKA_SLR_UNIT1#ERKA_SLR_UNIT1/2026-04-01/new_unit</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>First day in SCED, first HSL above zero 2026-07-22; up to 23 MW so far</summary>
   </entry>

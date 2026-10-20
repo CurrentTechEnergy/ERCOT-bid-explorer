@@ -1,83 +1,83 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
   <title>SWEETWN3_WND3A: bidding and operating changes</title>
-  <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SWEETWN3_WND3A"/>
-  <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SWEETWN3_WND3A</id>
+  <link href="https://ercotbids.currenttech.energy/unit.html?unit=SWEETWN3_WND3A"/>
+  <id>https://ercotbids.currenttech.energy/unit.html?unit=SWEETWN3_WND3A</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
     <title>SWEETWN3: Episode (2026-06-24)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SWEETWN3"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SWEETWN3#SWEETWN3/2026-06-24/renew_episode</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=SWEETWN3"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=SWEETWN3#SWEETWN3/2026-06-24/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Episode: floor -$37 to $10 for the episode for 1 day(s)</summary>
   </entry>
   <entry>
     <title>SWEETWN3: Episode (2026-06-18)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SWEETWN3"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SWEETWN3#SWEETWN3/2026-06-18/renew_episode</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=SWEETWN3"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=SWEETWN3#SWEETWN3/2026-06-18/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Episode: floor -$37 to $8 for the episode for 1 day(s)</summary>
   </entry>
   <entry>
     <title>SWEETWN3: Episode (2026-05-06)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SWEETWN3"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SWEETWN3#SWEETWN3/2026-05-06/renew_episode</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=SWEETWN3"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=SWEETWN3#SWEETWN3/2026-05-06/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Episode: floor -$37 to -$2 for the episode for 1 day(s)</summary>
   </entry>
   <entry>
     <title>SWEETWN3: Episode (2026-04-18)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SWEETWN3"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SWEETWN3#SWEETWN3/2026-04-18/renew_episode</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=SWEETWN3"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=SWEETWN3#SWEETWN3/2026-04-18/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Episode: floor -$37 to -$2 for the episode for 1 day(s)</summary>
   </entry>
   <entry>
     <title>SWEETWN3: Back to an earlier floor (2024-09-24)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SWEETWN3"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SWEETWN3#SWEETWN3/2024-09-24/renew_floor_back</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=SWEETWN3"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=SWEETWN3#SWEETWN3/2024-09-24/renew_floor_back</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Back to an earlier floor: floor -$35 to floor -$37</summary>
   </entry>
   <entry>
     <title>SWEETWN3: Back to an earlier floor (2024-09-09)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SWEETWN3"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SWEETWN3#SWEETWN3/2024-09-09/renew_floor_back</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=SWEETWN3"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=SWEETWN3#SWEETWN3/2024-09-09/renew_floor_back</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Back to an earlier floor: floor -$37 to floor -$35</summary>
   </entry>
   <entry>
     <title>SWEETWN3: New floor (2024-09-01)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SWEETWN3"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SWEETWN3#SWEETWN3/2024-09-01/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=SWEETWN3"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=SWEETWN3#SWEETWN3/2024-09-01/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$35 to floor -$37</summary>
   </entry>
   <entry>
     <title>SWEETWN3: New floor (2022-09-22)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SWEETWN3"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SWEETWN3#SWEETWN3/2022-09-22/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=SWEETWN3"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=SWEETWN3#SWEETWN3/2022-09-22/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$38 to floor -$35</summary>
   </entry>
   <entry>
     <title>SWEETWN3: New floor (2022-04-22)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SWEETWN3"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SWEETWN3#SWEETWN3/2022-04-22/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=SWEETWN3"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=SWEETWN3#SWEETWN3/2022-04-22/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$36 to floor -$38</summary>
   </entry>
   <entry>
     <title>SWEETWN3: New floor (2021-04-21)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SWEETWN3"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SWEETWN3#SWEETWN3/2021-04-21/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=SWEETWN3"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=SWEETWN3#SWEETWN3/2021-04-21/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$31 to floor -$36</summary>
   </entry>
   <entry>
     <title>SWEETWN3: New floor (2020-10-21)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SWEETWN3"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SWEETWN3#SWEETWN3/2020-10-21/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=SWEETWN3"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=SWEETWN3#SWEETWN3/2020-10-21/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor $0 to floor -$31</summary>
   </entry>

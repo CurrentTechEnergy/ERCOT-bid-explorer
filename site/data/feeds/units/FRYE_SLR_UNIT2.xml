@@ -1,216 +1,216 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
   <title>FRYE_SLR_UNIT2: bidding and operating changes</title>
-  <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FRYE_SLR_UNIT2"/>
-  <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FRYE_SLR_UNIT2</id>
+  <link href="https://ercotbids.currenttech.energy/unit.html?unit=FRYE_SLR_UNIT2"/>
+  <id>https://ercotbids.currenttech.energy/unit.html?unit=FRYE_SLR_UNIT2</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
     <title>FRYE_SLR: Episode (2026-06-28)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FRYE_SLR"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FRYE_SLR#FRYE_SLR/2026-06-28/renew_episode</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=FRYE_SLR"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=FRYE_SLR#FRYE_SLR/2026-06-28/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Episode: floor -$51 to -$27 for the episode for 1 day(s)</summary>
   </entry>
   <entry>
     <title>FRYE_SLR: Episode (2026-06-09)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FRYE_SLR"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FRYE_SLR#FRYE_SLR/2026-06-09/renew_episode</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=FRYE_SLR"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=FRYE_SLR#FRYE_SLR/2026-06-09/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Episode: floor -$51 to -$27 for the episode for 2 day(s)</summary>
   </entry>
   <entry>
     <title>FRYE_SLR: Episode (2026-05-14)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FRYE_SLR"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FRYE_SLR#FRYE_SLR/2026-05-14/renew_episode</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=FRYE_SLR"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=FRYE_SLR#FRYE_SLR/2026-05-14/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Episode: floor -$51 to -$27 for the episode for 5 day(s)</summary>
   </entry>
   <entry>
     <title>FRYE_SLR: Episode (2026-05-03)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FRYE_SLR"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FRYE_SLR#FRYE_SLR/2026-05-03/renew_episode</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=FRYE_SLR"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=FRYE_SLR#FRYE_SLR/2026-05-03/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Episode: floor -$51 to -$27 for the episode for 2 day(s)</summary>
   </entry>
   <entry>
     <title>FRYE_SLR: Episode (2026-04-27)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FRYE_SLR"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FRYE_SLR#FRYE_SLR/2026-04-27/renew_episode</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=FRYE_SLR"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=FRYE_SLR#FRYE_SLR/2026-04-27/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Episode: floor -$51 to -$39 for the episode for 1 day(s)</summary>
   </entry>
   <entry>
     <title>FRYE_SLR: Back to an earlier floor (2026-04-19)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FRYE_SLR"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FRYE_SLR#FRYE_SLR/2026-04-19/renew_floor_back</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=FRYE_SLR"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=FRYE_SLR#FRYE_SLR/2026-04-19/renew_floor_back</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Back to an earlier floor: floor -$27 to floor -$51</summary>
   </entry>
   <entry>
     <title>FRYE_SLR: Episode (2026-04-16)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FRYE_SLR"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FRYE_SLR#FRYE_SLR/2026-04-16/renew_episode</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=FRYE_SLR"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=FRYE_SLR#FRYE_SLR/2026-04-16/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Episode: floor -$27 to -$51 for the episode for 1 day(s)</summary>
   </entry>
   <entry>
     <title>FRYE_SLR: New floor (2026-04-12)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FRYE_SLR"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FRYE_SLR#FRYE_SLR/2026-04-12/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=FRYE_SLR"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=FRYE_SLR#FRYE_SLR/2026-04-12/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$51 to floor -$27</summary>
   </entry>
   <entry>
     <title>FRYE_SLR: Episode (2026-04-09)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FRYE_SLR"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FRYE_SLR#FRYE_SLR/2026-04-09/renew_episode</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=FRYE_SLR"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=FRYE_SLR#FRYE_SLR/2026-04-09/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Episode: floor -$51 to -$27 for the episode for 1 day(s)</summary>
   </entry>
   <entry>
     <title>FRYE_SLR: Episode (2026-04-01)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FRYE_SLR"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FRYE_SLR#FRYE_SLR/2026-04-01/renew_episode</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=FRYE_SLR"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=FRYE_SLR#FRYE_SLR/2026-04-01/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Episode: floor -$51 to -$27 for the episode for 1 day(s)</summary>
   </entry>
   <entry>
     <title>FRYE_SLR: Episode (2026-03-30)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FRYE_SLR"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FRYE_SLR#FRYE_SLR/2026-03-30/renew_episode</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=FRYE_SLR"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=FRYE_SLR#FRYE_SLR/2026-03-30/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Episode: floor -$51 to -$27 for the episode for 1 day(s)</summary>
   </entry>
   <entry>
     <title>FRYE_SLR: Episode (2026-03-26)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FRYE_SLR"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FRYE_SLR#FRYE_SLR/2026-03-26/renew_episode</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=FRYE_SLR"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=FRYE_SLR#FRYE_SLR/2026-03-26/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Episode: floor -$51 to -$27 for the episode for 2 day(s)</summary>
   </entry>
   <entry>
     <title>FRYE_SLR: Episode (2026-03-22)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FRYE_SLR"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FRYE_SLR#FRYE_SLR/2026-03-22/renew_episode</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=FRYE_SLR"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=FRYE_SLR#FRYE_SLR/2026-03-22/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Episode: floor -$51 to -$27 for the episode for 1 day(s)</summary>
   </entry>
   <entry>
     <title>FRYE_SLR: Episode (2026-03-17)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FRYE_SLR"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FRYE_SLR#FRYE_SLR/2026-03-17/renew_episode</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=FRYE_SLR"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=FRYE_SLR#FRYE_SLR/2026-03-17/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Episode: floor -$51 to -$27 for the episode for 1 day(s)</summary>
   </entry>
   <entry>
     <title>FRYE_SLR: Episode (2026-03-15)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FRYE_SLR"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FRYE_SLR#FRYE_SLR/2026-03-15/renew_episode</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=FRYE_SLR"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=FRYE_SLR#FRYE_SLR/2026-03-15/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Episode: floor -$51 to -$27 for the episode for 1 day(s)</summary>
   </entry>
   <entry>
     <title>FRYE_SLR: Episode (2026-03-10)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FRYE_SLR"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FRYE_SLR#FRYE_SLR/2026-03-10/renew_episode</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=FRYE_SLR"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=FRYE_SLR#FRYE_SLR/2026-03-10/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Episode: floor -$51 to -$27 for the episode for 2 day(s)</summary>
   </entry>
   <entry>
     <title>FRYE_SLR: Episode (2026-03-06)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FRYE_SLR"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FRYE_SLR#FRYE_SLR/2026-03-06/renew_episode</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=FRYE_SLR"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=FRYE_SLR#FRYE_SLR/2026-03-06/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Episode: floor -$51 to -$27 for the episode for 1 day(s)</summary>
   </entry>
   <entry>
     <title>FRYE_SLR: Episode (2026-02-24)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FRYE_SLR"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FRYE_SLR#FRYE_SLR/2026-02-24/renew_episode</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=FRYE_SLR"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=FRYE_SLR#FRYE_SLR/2026-02-24/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Episode: floor -$51 to -$27 for the episode for 1 day(s)</summary>
   </entry>
   <entry>
     <title>FRYE_SLR: Episode (2026-02-21)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FRYE_SLR"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FRYE_SLR#FRYE_SLR/2026-02-21/renew_episode</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=FRYE_SLR"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=FRYE_SLR#FRYE_SLR/2026-02-21/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Episode: floor -$51 to -$27 for the episode for 1 day(s)</summary>
   </entry>
   <entry>
     <title>FRYE_SLR: Episode (2026-02-16)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FRYE_SLR"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FRYE_SLR#FRYE_SLR/2026-02-16/renew_episode</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=FRYE_SLR"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=FRYE_SLR#FRYE_SLR/2026-02-16/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Episode: floor -$51 to -$27 for the episode for 2 day(s)</summary>
   </entry>
   <entry>
     <title>FRYE_SLR: Episode (2026-02-02)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FRYE_SLR"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FRYE_SLR#FRYE_SLR/2026-02-02/renew_episode</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=FRYE_SLR"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=FRYE_SLR#FRYE_SLR/2026-02-02/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Episode: floor -$51 to -$27 for the episode for 1 day(s)</summary>
   </entry>
   <entry>
     <title>FRYE_SLR: Episode (2026-01-23)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FRYE_SLR"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FRYE_SLR#FRYE_SLR/2026-01-23/renew_episode</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=FRYE_SLR"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=FRYE_SLR#FRYE_SLR/2026-01-23/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Episode: floor -$51 to $382 for the episode for 5 day(s)</summary>
   </entry>
   <entry>
     <title>FRYE_SLR: Episode (2026-01-18)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FRYE_SLR"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FRYE_SLR#FRYE_SLR/2026-01-18/renew_episode</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=FRYE_SLR"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=FRYE_SLR#FRYE_SLR/2026-01-18/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Episode: floor -$51 to -$27 for the episode for 1 day(s)</summary>
   </entry>
   <entry>
     <title>FRYE_SLR: Episode (2026-01-14)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FRYE_SLR"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FRYE_SLR#FRYE_SLR/2026-01-14/renew_episode</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=FRYE_SLR"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=FRYE_SLR#FRYE_SLR/2026-01-14/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Episode: floor -$51 to -$27 for the episode for 3 day(s)</summary>
   </entry>
   <entry>
     <title>FRYE_SLR: Episode (2026-01-08)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FRYE_SLR"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FRYE_SLR#FRYE_SLR/2026-01-08/renew_episode</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=FRYE_SLR"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=FRYE_SLR#FRYE_SLR/2026-01-08/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Episode: floor -$51 to -$27 for the episode for 1 day(s)</summary>
   </entry>
   <entry>
     <title>FRYE_SLR: Episode (2025-12-18)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FRYE_SLR"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FRYE_SLR#FRYE_SLR/2025-12-18/renew_episode</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=FRYE_SLR"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=FRYE_SLR#FRYE_SLR/2025-12-18/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Episode: floor -$51 to -$27 for the episode for 2 day(s)</summary>
   </entry>
   <entry>
     <title>FRYE_SLR: Episode (2025-11-11)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FRYE_SLR"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FRYE_SLR#FRYE_SLR/2025-11-11/renew_episode</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=FRYE_SLR"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=FRYE_SLR#FRYE_SLR/2025-11-11/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Episode: floor -$51 to -$27 for the episode for 1 day(s)</summary>
   </entry>
   <entry>
     <title>FRYE_SLR: Episode (2025-11-09)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FRYE_SLR"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FRYE_SLR#FRYE_SLR/2025-11-09/renew_episode</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=FRYE_SLR"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=FRYE_SLR#FRYE_SLR/2025-11-09/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Episode: floor -$51 to -$27 for the episode for 1 day(s)</summary>
   </entry>
   <entry>
     <title>FRYE_SLR: Episode (2025-10-28)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FRYE_SLR"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FRYE_SLR#FRYE_SLR/2025-10-28/renew_episode</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=FRYE_SLR"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=FRYE_SLR#FRYE_SLR/2025-10-28/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Episode: floor -$51 to -$27 for the episode for 2 day(s)</summary>
   </entry>
   <entry>
     <title>FRYE_SLR: Episode (2025-06-21)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FRYE_SLR"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FRYE_SLR#FRYE_SLR/2025-06-21/renew_episode</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=FRYE_SLR"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=FRYE_SLR#FRYE_SLR/2025-06-21/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Episode: floor -$51 to -$27 for the episode for 2 day(s)</summary>
   </entry>

@@ -1,104 +1,104 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
   <title>COTPLNS_OLDSETLR: bidding and operating changes</title>
-  <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=COTPLNS_OLDSETLR"/>
-  <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=COTPLNS_OLDSETLR</id>
+  <link href="https://ercotbids.currenttech.energy/unit.html?unit=COTPLNS_OLDSETLR"/>
+  <id>https://ercotbids.currenttech.energy/unit.html?unit=COTPLNS_OLDSETLR</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
     <title>COTPLNS_OLDSETLR: Back to an earlier floor (2022-01-15)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=COTPLNS_OLDSETLR"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=COTPLNS_OLDSETLR#COTPLNS_OLDSETLR/2022-01-15/renew_floor_back</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=COTPLNS_OLDSETLR"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=COTPLNS_OLDSETLR#COTPLNS_OLDSETLR/2022-01-15/renew_floor_back</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Back to an earlier floor: floor $0 to floor -$30</summary>
   </entry>
   <entry>
     <title>COTPLNS_OLDSETLR: Back to an earlier floor (2022-01-15)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=COTPLNS_OLDSETLR"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=COTPLNS_OLDSETLR#COTPLNS_OLDSETLR/2022-01-15/renew_floor_back</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=COTPLNS_OLDSETLR"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=COTPLNS_OLDSETLR#COTPLNS_OLDSETLR/2022-01-15/renew_floor_back</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Back to an earlier floor: floor $0 to floor -$30</summary>
   </entry>
   <entry>
     <title>COTPLNS_OLDSETLR: New floor (2021-11-24)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=COTPLNS_OLDSETLR"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=COTPLNS_OLDSETLR#COTPLNS_OLDSETLR/2021-11-24/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=COTPLNS_OLDSETLR"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=COTPLNS_OLDSETLR#COTPLNS_OLDSETLR/2021-11-24/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$30 to floor $0</summary>
   </entry>
   <entry>
     <title>COTPLNS_OLDSETLR: New floor (2021-11-24)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=COTPLNS_OLDSETLR"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=COTPLNS_OLDSETLR#COTPLNS_OLDSETLR/2021-11-24/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=COTPLNS_OLDSETLR"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=COTPLNS_OLDSETLR#COTPLNS_OLDSETLR/2021-11-24/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$30 to floor $0</summary>
   </entry>
   <entry>
     <title>COTPLNS_OLDSETLR: Back to an earlier floor (2021-01-05)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=COTPLNS_OLDSETLR"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=COTPLNS_OLDSETLR#COTPLNS_OLDSETLR/2021-01-05/renew_floor_back</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=COTPLNS_OLDSETLR"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=COTPLNS_OLDSETLR#COTPLNS_OLDSETLR/2021-01-05/renew_floor_back</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Back to an earlier floor: floor $0 to floor -$30</summary>
   </entry>
   <entry>
     <title>COTPLNS_OLDSETLR: Back to an earlier floor (2021-01-05)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=COTPLNS_OLDSETLR"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=COTPLNS_OLDSETLR#COTPLNS_OLDSETLR/2021-01-05/renew_floor_back</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=COTPLNS_OLDSETLR"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=COTPLNS_OLDSETLR#COTPLNS_OLDSETLR/2021-01-05/renew_floor_back</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Back to an earlier floor: floor $0 to floor -$30</summary>
   </entry>
   <entry>
     <title>COTPLNS_OLDSETLR: New floor (2020-12-17)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=COTPLNS_OLDSETLR"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=COTPLNS_OLDSETLR#COTPLNS_OLDSETLR/2020-12-17/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=COTPLNS_OLDSETLR"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=COTPLNS_OLDSETLR#COTPLNS_OLDSETLR/2020-12-17/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$18 to floor $0</summary>
   </entry>
   <entry>
     <title>COTPLNS_OLDSETLR: New floor (2020-12-17)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=COTPLNS_OLDSETLR"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=COTPLNS_OLDSETLR#COTPLNS_OLDSETLR/2020-12-17/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=COTPLNS_OLDSETLR"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=COTPLNS_OLDSETLR#COTPLNS_OLDSETLR/2020-12-17/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$18 to floor $0</summary>
   </entry>
   <entry>
     <title>COTPLNS_OLDSETLR: New floor (2020-11-22)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=COTPLNS_OLDSETLR"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=COTPLNS_OLDSETLR#COTPLNS_OLDSETLR/2020-11-22/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=COTPLNS_OLDSETLR"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=COTPLNS_OLDSETLR#COTPLNS_OLDSETLR/2020-11-22/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$30 to floor -$18</summary>
   </entry>
   <entry>
     <title>COTPLNS_OLDSETLR: New floor (2020-11-22)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=COTPLNS_OLDSETLR"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=COTPLNS_OLDSETLR#COTPLNS_OLDSETLR/2020-11-22/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=COTPLNS_OLDSETLR"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=COTPLNS_OLDSETLR#COTPLNS_OLDSETLR/2020-11-22/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$30 to floor -$18</summary>
   </entry>
   <entry>
     <title>COTPLNS_OLDSETLR: New floor (2019-12-03)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=COTPLNS_OLDSETLR"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=COTPLNS_OLDSETLR#COTPLNS_OLDSETLR/2019-12-03/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=COTPLNS_OLDSETLR"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=COTPLNS_OLDSETLR#COTPLNS_OLDSETLR/2019-12-03/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$35 to floor -$30</summary>
   </entry>
   <entry>
     <title>COTPLNS_OLDSETLR: New floor (2019-12-03)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=COTPLNS_OLDSETLR"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=COTPLNS_OLDSETLR#COTPLNS_OLDSETLR/2019-12-03/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=COTPLNS_OLDSETLR"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=COTPLNS_OLDSETLR#COTPLNS_OLDSETLR/2019-12-03/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$35 to floor -$30</summary>
   </entry>
   <entry>
     <title>COTPLNS_OLDSETLR: New floor (2019-11-16)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=COTPLNS_OLDSETLR"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=COTPLNS_OLDSETLR#COTPLNS_OLDSETLR/2019-11-16/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=COTPLNS_OLDSETLR"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=COTPLNS_OLDSETLR#COTPLNS_OLDSETLR/2019-11-16/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$24 to floor -$35</summary>
   </entry>
   <entry>
     <title>COTPLNS_OLDSETLR: New floor (2019-11-16)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=COTPLNS_OLDSETLR"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=COTPLNS_OLDSETLR#COTPLNS_OLDSETLR/2019-11-16/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=COTPLNS_OLDSETLR"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=COTPLNS_OLDSETLR#COTPLNS_OLDSETLR/2019-11-16/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$24 to floor -$35</summary>
   </entry>

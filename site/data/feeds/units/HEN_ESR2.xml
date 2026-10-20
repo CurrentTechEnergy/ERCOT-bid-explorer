@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
   <title>HEN_ESR2: bidding and operating changes</title>
-  <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=HEN_ESR2"/>
-  <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=HEN_ESR2</id>
+  <link href="https://ercotbids.currenttech.energy/unit.html?unit=HEN_ESR2"/>
+  <id>https://ercotbids.currenttech.energy/unit.html?unit=HEN_ESR2</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
     <title>HEN_ESR2: New battery (2026-04-17)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=HEN_ESR2"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=HEN_ESR2#HEN_ESR2/2026-04-17/battery_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=HEN_ESR2"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=HEN_ESR2#HEN_ESR2/2026-04-17/battery_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>First day charging or discharging: 14 MW, 33 MWh</summary>
   </entry>

@@ -1,146 +1,146 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
   <title>SHAFFER_UNIT1: bidding and operating changes</title>
-  <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SHAFFER_UNIT1"/>
-  <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SHAFFER_UNIT1</id>
+  <link href="https://ercotbids.currenttech.energy/unit.html?unit=SHAFFER_UNIT1"/>
+  <id>https://ercotbids.currenttech.energy/unit.html?unit=SHAFFER_UNIT1</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
     <title>SHAFFER: Episode (2026-07-28)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SHAFFER"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SHAFFER#SHAFFER/2026-07-28/renew_episode</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=SHAFFER"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=SHAFFER#SHAFFER/2026-07-28/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Episode: floor -$35 to $0 for the episode for 1 day(s)</summary>
   </entry>
   <entry>
     <title>SHAFFER: Episode (2026-07-22)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SHAFFER"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SHAFFER#SHAFFER/2026-07-22/renew_episode</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=SHAFFER"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=SHAFFER#SHAFFER/2026-07-22/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Episode: floor -$35 to $0 for the episode for 1 day(s)</summary>
   </entry>
   <entry>
     <title>SHAFFER: Episode (2026-02-18)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SHAFFER"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SHAFFER#SHAFFER/2026-02-18/renew_episode</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=SHAFFER"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=SHAFFER#SHAFFER/2026-02-18/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Episode: floor -$35 to -$18 for the episode for 1 day(s)</summary>
   </entry>
   <entry>
     <title>SHAFFER: Episode (2026-02-10)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SHAFFER"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SHAFFER#SHAFFER/2026-02-10/renew_episode</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=SHAFFER"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=SHAFFER#SHAFFER/2026-02-10/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Episode: floor -$35 to $0 for the episode for 1 day(s)</summary>
   </entry>
   <entry>
     <title>SHAFFER: Episode (2026-02-05)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SHAFFER"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SHAFFER#SHAFFER/2026-02-05/renew_episode</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=SHAFFER"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=SHAFFER#SHAFFER/2026-02-05/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Episode: floor -$35 to -$18 for the episode for 1 day(s)</summary>
   </entry>
   <entry>
     <title>SHAFFER: Episode (2023-08-04)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SHAFFER"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SHAFFER#SHAFFER/2023-08-04/renew_episode</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=SHAFFER"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=SHAFFER#SHAFFER/2023-08-04/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Episode: floor -$35 to $0 for the episode for 1 day(s)</summary>
   </entry>
   <entry>
     <title>SHAFFER: Episode (2023-07-26)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SHAFFER"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SHAFFER#SHAFFER/2023-07-26/renew_episode</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=SHAFFER"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=SHAFFER#SHAFFER/2023-07-26/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Episode: floor -$35 to $0 for the episode for 2 day(s)</summary>
   </entry>
   <entry>
     <title>SHAFFER: New floor (2023-07-06)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SHAFFER"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SHAFFER#SHAFFER/2023-07-06/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=SHAFFER"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=SHAFFER#SHAFFER/2023-07-06/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$33 to floor -$35</summary>
   </entry>
   <entry>
     <title>SHAFFER: Episode (2022-09-17)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SHAFFER"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SHAFFER#SHAFFER/2022-09-17/renew_episode</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=SHAFFER"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=SHAFFER#SHAFFER/2022-09-17/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Episode: floor -$33 to -$25 for the episode for 2 day(s)</summary>
   </entry>
   <entry>
     <title>SHAFFER: New floor (2022-07-14)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SHAFFER"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SHAFFER#SHAFFER/2022-07-14/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=SHAFFER"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=SHAFFER#SHAFFER/2022-07-14/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$32 to floor -$33</summary>
   </entry>
   <entry>
     <title>SHAFFER: Episode (2021-06-27)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SHAFFER"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SHAFFER#SHAFFER/2021-06-27/renew_episode</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=SHAFFER"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=SHAFFER#SHAFFER/2021-06-27/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Episode: floor -$32 to -$25 for the episode for 1 day(s)</summary>
   </entry>
   <entry>
     <title>SHAFFER: New floor (2021-05-28)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SHAFFER"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SHAFFER#SHAFFER/2021-05-28/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=SHAFFER"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=SHAFFER#SHAFFER/2021-05-28/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$25 to floor -$32</summary>
   </entry>
   <entry>
     <title>SHAFFER: Episode (2020-11-12)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SHAFFER"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SHAFFER#SHAFFER/2020-11-12/renew_episode</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=SHAFFER"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=SHAFFER#SHAFFER/2020-11-12/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Episode: floor -$25 to -$0 for the episode for 2 day(s)</summary>
   </entry>
   <entry>
     <title>SHAFFER: Episode (2020-01-16)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SHAFFER"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SHAFFER#SHAFFER/2020-01-16/renew_episode</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=SHAFFER"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=SHAFFER#SHAFFER/2020-01-16/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Episode: floor -$25 to -$0 for the episode for 1 day(s)</summary>
   </entry>
   <entry>
     <title>SHAFFER: Episode (2020-01-12)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SHAFFER"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SHAFFER#SHAFFER/2020-01-12/renew_episode</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=SHAFFER"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=SHAFFER#SHAFFER/2020-01-12/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Episode: floor -$25 to $0 for the episode for 1 day(s)</summary>
   </entry>
   <entry>
     <title>SHAFFER: New floor (2019-11-22)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SHAFFER"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SHAFFER#SHAFFER/2019-11-22/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=SHAFFER"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=SHAFFER#SHAFFER/2019-11-22/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$12 to floor -$25</summary>
   </entry>
   <entry>
     <title>SHAFFER: Episode (2019-10-25)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SHAFFER"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SHAFFER#SHAFFER/2019-10-25/renew_episode</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=SHAFFER"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=SHAFFER#SHAFFER/2019-10-25/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Episode: floor -$12 to -$0 for the episode for 1 day(s)</summary>
   </entry>
   <entry>
     <title>SHAFFER: Episode (2019-10-15)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SHAFFER"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SHAFFER#SHAFFER/2019-10-15/renew_episode</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=SHAFFER"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=SHAFFER#SHAFFER/2019-10-15/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Episode: floor -$12 to -$0 for the episode for 2 day(s)</summary>
   </entry>
   <entry>
     <title>SHAFFER: New floor (2019-07-06)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SHAFFER"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SHAFFER#SHAFFER/2019-07-06/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=SHAFFER"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=SHAFFER#SHAFFER/2019-07-06/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor $0 to floor -$12</summary>
   </entry>
   <entry>
     <title>SHAFFER: Episode (2019-06-29)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SHAFFER"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SHAFFER#SHAFFER/2019-06-29/renew_episode</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=SHAFFER"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=SHAFFER#SHAFFER/2019-06-29/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Episode: floor $0 to -$12 for the episode for 5 day(s)</summary>
   </entry>

@@ -1,27 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
   <title>NOVA1SLR: bidding and operating changes</title>
-  <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=NOVA1SLR"/>
-  <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=NOVA1SLR</id>
+  <link href="https://ercotbids.currenttech.energy/unit.html?unit=NOVA1SLR"/>
+  <id>https://ercotbids.currenttech.energy/unit.html?unit=NOVA1SLR</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
     <title>NOVA1SLR: Episode (2025-02-26)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=NOVA1SLR"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=NOVA1SLR#NOVA1SLR/2025-02-26/renew_episode</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=NOVA1SLR"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=NOVA1SLR#NOVA1SLR/2025-02-26/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Episode: floor -$53 to $0 for the episode for 2 day(s)</summary>
   </entry>
   <entry>
     <title>NOVA1SLR: New floor (2024-04-09)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=NOVA1SLR"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=NOVA1SLR#NOVA1SLR/2024-04-09/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=NOVA1SLR"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=NOVA1SLR#NOVA1SLR/2024-04-09/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$35 to floor -$53</summary>
   </entry>
   <entry>
     <title>NOVA1SLR: New floor (2023-12-25)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=NOVA1SLR"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=NOVA1SLR#NOVA1SLR/2023-12-25/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=NOVA1SLR"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=NOVA1SLR#NOVA1SLR/2023-12-25/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor $0 to floor -$35</summary>
   </entry>

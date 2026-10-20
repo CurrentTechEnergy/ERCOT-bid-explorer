@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
   <title>NUECES_B_CC1_2: bidding and operating changes</title>
-  <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=NUECES_B_CC1_2"/>
-  <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=NUECES_B_CC1_2</id>
+  <link href="https://ercotbids.currenttech.energy/unit.html?unit=NUECES_B_CC1_2"/>
+  <id>https://ercotbids.currenttech.energy/unit.html?unit=NUECES_B_CC1_2</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
     <title>NUECES_B_CC1_2: Bidding approach shifted (2026-01-28)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=NUECES_B_CC1_2"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=NUECES_B_CC1_2#NUECES_B_CC1_2/2026-01-28/bidding</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=NUECES_B_CC1_2"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=NUECES_B_CC1_2#NUECES_B_CC1_2/2026-01-28/bidding</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Offer price vs peer median: $1 to $13/MWh</summary>
   </entry>

@@ -1,139 +1,139 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
   <title>CRANELL_UNIT1: bidding and operating changes</title>
-  <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CRANELL_UNIT1"/>
-  <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CRANELL_UNIT1</id>
+  <link href="https://ercotbids.currenttech.energy/unit.html?unit=CRANELL_UNIT1"/>
+  <id>https://ercotbids.currenttech.energy/unit.html?unit=CRANELL_UNIT1</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
     <title>CRANELL: New floor (2026-03-10)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CRANELL"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CRANELL#CRANELL/2026-03-10/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=CRANELL"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=CRANELL#CRANELL/2026-03-10/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$45 to floor -$43</summary>
   </entry>
   <entry>
     <title>CRANELL: New floor (2026-02-06)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CRANELL"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CRANELL#CRANELL/2026-02-06/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=CRANELL"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=CRANELL#CRANELL/2026-02-06/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$39 to floor -$45</summary>
   </entry>
   <entry>
     <title>CRANELL: New floor (2025-01-19)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CRANELL"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CRANELL#CRANELL/2025-01-19/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=CRANELL"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=CRANELL#CRANELL/2025-01-19/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$38 to floor -$39</summary>
   </entry>
   <entry>
     <title>CRANELL: New floor (2024-06-05)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CRANELL"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CRANELL#CRANELL/2024-06-05/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=CRANELL"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=CRANELL#CRANELL/2024-06-05/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$35 to floor -$38</summary>
   </entry>
   <entry>
     <title>CRANELL: Back to an earlier floor (2024-02-01)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CRANELL"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CRANELL#CRANELL/2024-02-01/renew_floor_back</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=CRANELL"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=CRANELL#CRANELL/2024-02-01/renew_floor_back</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Back to an earlier floor: floor -$37 to floor -$35</summary>
   </entry>
   <entry>
     <title>CRANELL: New floor (2024-01-03)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CRANELL"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CRANELL#CRANELL/2024-01-03/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=CRANELL"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=CRANELL#CRANELL/2024-01-03/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$36 to floor -$37</summary>
   </entry>
   <entry>
     <title>CRANELL: New floor (2023-12-05)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CRANELL"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CRANELL#CRANELL/2023-12-05/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=CRANELL"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=CRANELL#CRANELL/2023-12-05/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$39 to floor -$36</summary>
   </entry>
   <entry>
     <title>CRANELL: New floor (2023-09-02)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CRANELL"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CRANELL#CRANELL/2023-09-02/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=CRANELL"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=CRANELL#CRANELL/2023-09-02/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$36 to floor -$39</summary>
   </entry>
   <entry>
     <title>CRANELL: New floor (2023-07-01)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CRANELL"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CRANELL#CRANELL/2023-07-01/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=CRANELL"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=CRANELL#CRANELL/2023-07-01/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$38 to floor -$36</summary>
   </entry>
   <entry>
     <title>CRANELL: New floor (2023-04-01)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CRANELL"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CRANELL#CRANELL/2023-04-01/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=CRANELL"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=CRANELL#CRANELL/2023-04-01/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$40 to floor -$38</summary>
   </entry>
   <entry>
     <title>CRANELL: New floor (2023-03-01)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CRANELL"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CRANELL#CRANELL/2023-03-01/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=CRANELL"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=CRANELL#CRANELL/2023-03-01/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$37 to floor -$40</summary>
   </entry>
   <entry>
     <title>CRANELL: New floor (2023-02-01)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CRANELL"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CRANELL#CRANELL/2023-02-01/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=CRANELL"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=CRANELL#CRANELL/2023-02-01/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$36 to floor -$37</summary>
   </entry>
   <entry>
     <title>CRANELL: Back to an earlier floor (2022-10-01)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CRANELL"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CRANELL#CRANELL/2022-10-01/renew_floor_back</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=CRANELL"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=CRANELL#CRANELL/2022-10-01/renew_floor_back</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Back to an earlier floor: floor -$34 to floor -$36</summary>
   </entry>
   <entry>
     <title>CRANELL: Back to an earlier floor (2022-07-07)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CRANELL"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CRANELL#CRANELL/2022-07-07/renew_floor_back</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=CRANELL"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=CRANELL#CRANELL/2022-07-07/renew_floor_back</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Back to an earlier floor: floor -$36 to floor -$34</summary>
   </entry>
   <entry>
     <title>CRANELL: New floor (2022-06-01)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CRANELL"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CRANELL#CRANELL/2022-06-01/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=CRANELL"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=CRANELL#CRANELL/2022-06-01/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$34 to floor -$36</summary>
   </entry>
   <entry>
     <title>CRANELL: New floor (2022-03-09)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CRANELL"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CRANELL#CRANELL/2022-03-09/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=CRANELL"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=CRANELL#CRANELL/2022-03-09/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$38 to floor -$34</summary>
   </entry>
   <entry>
     <title>CRANELL: New floor (2021-08-04)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CRANELL"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CRANELL#CRANELL/2021-08-04/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=CRANELL"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=CRANELL#CRANELL/2021-08-04/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$36 to floor -$38</summary>
   </entry>
   <entry>
     <title>CRANELL: New floor (2021-05-05)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CRANELL"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CRANELL#CRANELL/2021-05-05/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=CRANELL"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=CRANELL#CRANELL/2021-05-05/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$35 to floor -$36</summary>
   </entry>
   <entry>
     <title>CRANELL: New floor (2021-02-03)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CRANELL"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CRANELL#CRANELL/2021-02-03/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=CRANELL"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=CRANELL#CRANELL/2021-02-03/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$31 to floor -$35</summary>
   </entry>

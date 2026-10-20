@@ -1,146 +1,146 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
   <title>PB2SES_CT3: bidding and operating changes</title>
-  <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PB2SES_CT3"/>
-  <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PB2SES_CT3</id>
+  <link href="https://ercotbids.currenttech.energy/unit.html?unit=PB2SES_CT3"/>
+  <id>https://ercotbids.currenttech.energy/unit.html?unit=PB2SES_CT3</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
     <title>PB2SES_CT3: Bidding approach shifted (2026-08-04)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PB2SES_CT3"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PB2SES_CT3#PB2SES_CT3/2026-08-04/bidding</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=PB2SES_CT3"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=PB2SES_CT3#PB2SES_CT3/2026-08-04/bidding</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Offer price vs peer median: $12 to -$2/MWh</summary>
   </entry>
   <entry>
     <title>PB2SES_CT3: Bidding approach shifted (2026-07-17)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PB2SES_CT3"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PB2SES_CT3#PB2SES_CT3/2026-07-17/bidding</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=PB2SES_CT3"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=PB2SES_CT3#PB2SES_CT3/2026-07-17/bidding</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Offer price vs peer median: -$10 to $19/MWh</summary>
   </entry>
   <entry>
     <title>PB2SES_CT3: Bidding approach shifted (2026-06-06)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PB2SES_CT3"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PB2SES_CT3#PB2SES_CT3/2026-06-06/bidding</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=PB2SES_CT3"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=PB2SES_CT3#PB2SES_CT3/2026-06-06/bidding</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Offer price vs peer median: -$26 to -$9/MWh</summary>
   </entry>
   <entry>
     <title>PB2SES_CT3: Loss cutoff moved (2026-05-31)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PB2SES_CT3"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PB2SES_CT3#PB2SES_CT3/2026-05-31/cutoff</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=PB2SES_CT3"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=PB2SES_CT3#PB2SES_CT3/2026-05-31/cutoff</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Loss cutoff $0 to $168 per MW of minimum output; the next month&#x27;s decisions contradict it (5 of 8 right against 8)</summary>
   </entry>
   <entry>
     <title>PB2SES_CT3: Bidding approach shifted (2026-05-31)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PB2SES_CT3"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PB2SES_CT3#PB2SES_CT3/2026-05-31/bidding</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=PB2SES_CT3"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=PB2SES_CT3#PB2SES_CT3/2026-05-31/bidding</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>MW above LSL offered at or below $0: 49% to 0% of the day</summary>
   </entry>
   <entry>
     <title>PB2SES_CT3: Bidding approach shifted (2026-05-28)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PB2SES_CT3"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PB2SES_CT3#PB2SES_CT3/2026-05-28/bidding</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=PB2SES_CT3"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=PB2SES_CT3#PB2SES_CT3/2026-05-28/bidding</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Offer price vs peer median: -$14 to -$26/MWh</summary>
   </entry>
   <entry>
     <title>PB2SES_CT3: Bidding approach shifted (2026-05-24)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PB2SES_CT3"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PB2SES_CT3#PB2SES_CT3/2026-05-24/bidding</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=PB2SES_CT3"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=PB2SES_CT3#PB2SES_CT3/2026-05-24/bidding</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>MW above LSL offered at or below $0: 0% to 49% of the day</summary>
   </entry>
   <entry>
     <title>PB2SES_CT3: Bidding approach shifted (2026-05-07)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PB2SES_CT3"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PB2SES_CT3#PB2SES_CT3/2026-05-07/bidding</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=PB2SES_CT3"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=PB2SES_CT3#PB2SES_CT3/2026-05-07/bidding</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Offer price vs peer median: $12 to -$14/MWh</summary>
   </entry>
   <entry>
     <title>PB2SES_CT3: Bidding approach shifted (2026-05-02)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PB2SES_CT3"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PB2SES_CT3#PB2SES_CT3/2026-05-02/bidding</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=PB2SES_CT3"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=PB2SES_CT3#PB2SES_CT3/2026-05-02/bidding</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>MW above LSL offered at or below $0: 100% to 0% of the day</summary>
   </entry>
   <entry>
     <title>PB2SES_CT3: Bidding approach shifted (2026-04-30)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PB2SES_CT3"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PB2SES_CT3#PB2SES_CT3/2026-04-30/bidding</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=PB2SES_CT3"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=PB2SES_CT3#PB2SES_CT3/2026-04-30/bidding</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Offer price vs peer median: -$29 to $12/MWh</summary>
   </entry>
   <entry>
     <title>PB2SES_CT3: Bidding approach shifted (2026-04-23)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PB2SES_CT3"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PB2SES_CT3#PB2SES_CT3/2026-04-23/bidding</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=PB2SES_CT3"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=PB2SES_CT3#PB2SES_CT3/2026-04-23/bidding</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>MW above LSL offered at or below $0: 0% to 100% of the day</summary>
   </entry>
   <entry>
     <title>PB2SES_CT3: Bidding approach shifted (2026-04-12)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PB2SES_CT3"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PB2SES_CT3#PB2SES_CT3/2026-04-12/bidding</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=PB2SES_CT3"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=PB2SES_CT3#PB2SES_CT3/2026-04-12/bidding</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>MW above LSL offered at or below $0: 100% to 0% of the day</summary>
   </entry>
   <entry>
     <title>PB2SES_CT3: Bidding approach shifted (2026-04-11)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PB2SES_CT3"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PB2SES_CT3#PB2SES_CT3/2026-04-11/bidding</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=PB2SES_CT3"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=PB2SES_CT3#PB2SES_CT3/2026-04-11/bidding</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Offer price vs peer median: $9 to -$29/MWh</summary>
   </entry>
   <entry>
     <title>PB2SES_CT3: Bidding approach shifted (2026-04-03)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PB2SES_CT3"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PB2SES_CT3#PB2SES_CT3/2026-04-03/bidding</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=PB2SES_CT3"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=PB2SES_CT3#PB2SES_CT3/2026-04-03/bidding</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>MW above LSL offered at or below $0: 0% to 100% of the day</summary>
   </entry>
   <entry>
     <title>PB2SES_CT3: Bidding approach shifted (2026-03-24)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PB2SES_CT3"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PB2SES_CT3#PB2SES_CT3/2026-03-24/bidding</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=PB2SES_CT3"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=PB2SES_CT3#PB2SES_CT3/2026-03-24/bidding</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Offer price vs peer median: -$21 to $9/MWh</summary>
   </entry>
   <entry>
     <title>PB2SES_CT3: Bidding approach shifted (2026-02-26)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PB2SES_CT3"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PB2SES_CT3#PB2SES_CT3/2026-02-26/bidding</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=PB2SES_CT3"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=PB2SES_CT3#PB2SES_CT3/2026-02-26/bidding</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Offer price vs peer median: -$6 to -$21/MWh</summary>
   </entry>
   <entry>
     <title>PB2SES_CT3: Bidding approach shifted (2026-02-16)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PB2SES_CT3"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PB2SES_CT3#PB2SES_CT3/2026-02-16/bidding</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=PB2SES_CT3"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=PB2SES_CT3#PB2SES_CT3/2026-02-16/bidding</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Offer price vs peer median: $56 to -$8/MWh</summary>
   </entry>
   <entry>
     <title>PB2SES_CT3: Bidding approach shifted (2026-01-21)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PB2SES_CT3"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PB2SES_CT3#PB2SES_CT3/2026-01-21/bidding</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=PB2SES_CT3"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=PB2SES_CT3#PB2SES_CT3/2026-01-21/bidding</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Offer price vs peer median: -$3 to $56/MWh</summary>
   </entry>
   <entry>
     <title>PB2SES_CT3: Bidding approach shifted (2026-01-10)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PB2SES_CT3"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PB2SES_CT3#PB2SES_CT3/2026-01-10/bidding</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=PB2SES_CT3"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=PB2SES_CT3#PB2SES_CT3/2026-01-10/bidding</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Offer price vs peer median: -$16 to $12/MWh</summary>
   </entry>
   <entry>
     <title>PB2SES_CT3: Bidding approach shifted (2025-12-17)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PB2SES_CT3"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PB2SES_CT3#PB2SES_CT3/2025-12-17/bidding</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=PB2SES_CT3"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=PB2SES_CT3#PB2SES_CT3/2025-12-17/bidding</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Offer price vs peer median: -$41 to -$13/MWh</summary>
   </entry>

@@ -1,62 +1,62 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
   <title>ANCHOR_WIND4: bidding and operating changes</title>
-  <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ANCHOR_WIND4"/>
-  <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ANCHOR_WIND4</id>
+  <link href="https://ercotbids.currenttech.energy/unit.html?unit=ANCHOR_WIND4"/>
+  <id>https://ercotbids.currenttech.energy/unit.html?unit=ANCHOR_WIND4</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
     <title>ANCHOR: Back to an earlier floor (2026-01-06)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ANCHOR"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ANCHOR#ANCHOR/2026-01-06/renew_floor_back</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=ANCHOR"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=ANCHOR#ANCHOR/2026-01-06/renew_floor_back</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Back to an earlier floor: floor -$42 to floor -$40</summary>
   </entry>
   <entry>
     <title>ANCHOR: New floor (2025-11-06)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ANCHOR"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ANCHOR#ANCHOR/2025-11-06/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=ANCHOR"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=ANCHOR#ANCHOR/2025-11-06/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$40 to floor -$42</summary>
   </entry>
   <entry>
     <title>ANCHOR: Back to an earlier floor (2025-01-01)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ANCHOR"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ANCHOR#ANCHOR/2025-01-01/renew_floor_back</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=ANCHOR"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=ANCHOR#ANCHOR/2025-01-01/renew_floor_back</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Back to an earlier floor: floor -$41 to floor -$40</summary>
   </entry>
   <entry>
     <title>ANCHOR: New floor (2024-11-01)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ANCHOR"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ANCHOR#ANCHOR/2024-11-01/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=ANCHOR"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=ANCHOR#ANCHOR/2024-11-01/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$40 to floor -$41</summary>
   </entry>
   <entry>
     <title>ANCHOR: New floor (2024-09-04)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ANCHOR"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ANCHOR#ANCHOR/2024-09-04/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=ANCHOR"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=ANCHOR#ANCHOR/2024-09-04/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$38 to floor -$40</summary>
   </entry>
   <entry>
     <title>ANCHOR: New floor (2023-08-01)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ANCHOR"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ANCHOR#ANCHOR/2023-08-01/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=ANCHOR"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=ANCHOR#ANCHOR/2023-08-01/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$36 to floor -$38</summary>
   </entry>
   <entry>
     <title>ANCHOR: New floor (2023-06-06)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ANCHOR"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ANCHOR#ANCHOR/2023-06-06/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=ANCHOR"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=ANCHOR#ANCHOR/2023-06-06/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$33 to floor -$36</summary>
   </entry>
   <entry>
     <title>ANCHOR: New floor (2023-02-13)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ANCHOR"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ANCHOR#ANCHOR/2023-02-13/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=ANCHOR"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=ANCHOR#ANCHOR/2023-02-13/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$6 to floor -$33</summary>
   </entry>

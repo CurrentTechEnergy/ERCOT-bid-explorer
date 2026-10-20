@@ -1,125 +1,125 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
   <title>DAN: bidding and operating changes</title>
-  <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=DAN"/>
-  <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=DAN</id>
+  <link href="https://ercotbids.currenttech.energy/unit.html?unit=DAN"/>
+  <id>https://ercotbids.currenttech.energy/unit.html?unit=DAN</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
     <title>DAN: Episode (2026-06-25)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=DAN"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=DAN#DAN/2026-06-25/renew_episode</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=DAN"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=DAN#DAN/2026-06-25/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Episode: floor -$14 to -$28 for the episode for 1 day(s)</summary>
   </entry>
   <entry>
     <title>DAN: New floor (2026-04-06)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=DAN"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=DAN#DAN/2026-04-06/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=DAN"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=DAN#DAN/2026-04-06/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$10 to floor -$14</summary>
   </entry>
   <entry>
     <title>DAN: Episode (2026-02-28)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=DAN"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=DAN#DAN/2026-02-28/renew_episode</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=DAN"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=DAN#DAN/2026-02-28/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Episode: floor -$41 to -$82 for the episode for 2 day(s)</summary>
   </entry>
   <entry>
     <title>DAN: Episode (2026-02-16)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=DAN"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=DAN#DAN/2026-02-16/renew_episode</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=DAN"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=DAN#DAN/2026-02-16/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Episode: floor -$41 to -$82 for the episode for 1 day(s)</summary>
   </entry>
   <entry>
     <title>DAN: Episode (2025-12-01)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=DAN"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=DAN#DAN/2025-12-01/renew_episode</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=DAN"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=DAN#DAN/2025-12-01/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Episode: floor -$10 to -$40 for the episode for 1 day(s)</summary>
   </entry>
   <entry>
     <title>DAN: New floor (2025-11-21)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=DAN"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=DAN#DAN/2025-11-21/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=DAN"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=DAN#DAN/2025-11-21/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$40 to floor -$41</summary>
   </entry>
   <entry>
     <title>DAN: New floor (2025-04-17)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=DAN"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=DAN#DAN/2025-04-17/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=DAN"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=DAN#DAN/2025-04-17/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$10 to floor -$40</summary>
   </entry>
   <entry>
     <title>DAN: Episode (2025-02-04)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=DAN"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=DAN#DAN/2025-02-04/renew_episode</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=DAN"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=DAN#DAN/2025-02-04/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Episode: floor -$10 to $0 for the episode for 1 day(s)</summary>
   </entry>
   <entry>
     <title>DAN: New floor (2025-02-03)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=DAN"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=DAN#DAN/2025-02-03/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=DAN"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=DAN#DAN/2025-02-03/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor $0 to floor -$10</summary>
   </entry>
   <entry>
     <title>DAN: New floor (2025-02-01)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=DAN"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=DAN#DAN/2025-02-01/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=DAN"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=DAN#DAN/2025-02-01/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor $0 to floor -$10</summary>
   </entry>
   <entry>
     <title>DAN: New floor (2024-08-13)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=DAN"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=DAN#DAN/2024-08-13/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=DAN"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=DAN#DAN/2024-08-13/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$7 to floor $0</summary>
   </entry>
   <entry>
     <title>DAN: Episode (2024-08-09)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=DAN"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=DAN#DAN/2024-08-09/renew_episode</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=DAN"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=DAN#DAN/2024-08-09/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Episode: floor -$7 to -$30 for the episode for 1 day(s)</summary>
   </entry>
   <entry>
     <title>DAN: Episode (2024-07-16)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=DAN"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=DAN#DAN/2024-07-16/renew_episode</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=DAN"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=DAN#DAN/2024-07-16/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Episode: floor -$6 to -$30 for the episode for 1 day(s)</summary>
   </entry>
   <entry>
     <title>DAN: New floor (2024-03-08)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=DAN"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=DAN#DAN/2024-03-08/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=DAN"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=DAN#DAN/2024-03-08/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$30 to floor -$6</summary>
   </entry>
   <entry>
     <title>DAN: New floor (2024-03-07)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=DAN"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=DAN#DAN/2024-03-07/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=DAN"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=DAN#DAN/2024-03-07/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$30 to floor -$7</summary>
   </entry>
   <entry>
     <title>DAN: Episode (2024-03-04)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=DAN"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=DAN#DAN/2024-03-04/renew_episode</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=DAN"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=DAN#DAN/2024-03-04/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Episode: floor -$30 to -$6 for the episode for 1 day(s)</summary>
   </entry>
   <entry>
     <title>DAN: Episode (2024-02-29)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=DAN"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=DAN#DAN/2024-02-29/renew_episode</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=DAN"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=DAN#DAN/2024-02-29/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Episode: floor -$30 to -$7 for the episode for 1 day(s)</summary>
   </entry>

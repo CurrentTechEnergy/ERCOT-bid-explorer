@@ -1,83 +1,83 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
   <title>BRIGHTSD: bidding and operating changes</title>
-  <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=BRIGHTSD"/>
-  <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=BRIGHTSD</id>
+  <link href="https://ercotbids.currenttech.energy/unit.html?unit=BRIGHTSD"/>
+  <id>https://ercotbids.currenttech.energy/unit.html?unit=BRIGHTSD</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
     <title>BRIGHTSD: Stopped moving within the day (2025-10-05)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=BRIGHTSD"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=BRIGHTSD#BRIGHTSD/2025-10-05/renew_moving_off</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=BRIGHTSD"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=BRIGHTSD#BRIGHTSD/2025-10-05/renew_moving_off</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Stopped moving within the day: v to floor -$20</summary>
   </entry>
   <entry>
     <title>BRIGHTSD: Started moving within the day (2025-09-17)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=BRIGHTSD"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=BRIGHTSD#BRIGHTSD/2025-09-17/renew_moving_on</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=BRIGHTSD"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=BRIGHTSD#BRIGHTSD/2025-09-17/renew_moving_on</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Started moving within the day: floor -$20 to v</summary>
   </entry>
   <entry>
     <title>BRIGHTSD: Stopped moving within the day (2025-03-14)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=BRIGHTSD"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=BRIGHTSD#BRIGHTSD/2025-03-14/renew_moving_off</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=BRIGHTSD"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=BRIGHTSD#BRIGHTSD/2025-03-14/renew_moving_off</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Stopped moving within the day: v to floor -$20</summary>
   </entry>
   <entry>
     <title>BRIGHTSD: Started moving within the day (2025-03-07)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=BRIGHTSD"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=BRIGHTSD#BRIGHTSD/2025-03-07/renew_moving_on</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=BRIGHTSD"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=BRIGHTSD#BRIGHTSD/2025-03-07/renew_moving_on</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Started moving within the day: floor -$20 to v</summary>
   </entry>
   <entry>
     <title>BRIGHTSD: Stopped moving within the day (2024-07-24)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=BRIGHTSD"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=BRIGHTSD#BRIGHTSD/2024-07-24/renew_moving_off</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=BRIGHTSD"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=BRIGHTSD#BRIGHTSD/2024-07-24/renew_moving_off</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Stopped moving within the day: v to floor -$20</summary>
   </entry>
   <entry>
     <title>BRIGHTSD: Started moving within the day (2024-07-15)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=BRIGHTSD"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=BRIGHTSD#BRIGHTSD/2024-07-15/renew_moving_on</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=BRIGHTSD"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=BRIGHTSD#BRIGHTSD/2024-07-15/renew_moving_on</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Started moving within the day: floor -$20 to v</summary>
   </entry>
   <entry>
     <title>BRIGHTSD: New floor (2024-02-13)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=BRIGHTSD"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=BRIGHTSD#BRIGHTSD/2024-02-13/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=BRIGHTSD"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=BRIGHTSD#BRIGHTSD/2024-02-13/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$25 to floor -$20</summary>
   </entry>
   <entry>
     <title>BRIGHTSD: New floor (2023-02-08)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=BRIGHTSD"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=BRIGHTSD#BRIGHTSD/2023-02-08/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=BRIGHTSD"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=BRIGHTSD#BRIGHTSD/2023-02-08/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$3 to floor -$25</summary>
   </entry>
   <entry>
     <title>BRIGHTSD: New floor (2023-01-27)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=BRIGHTSD"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=BRIGHTSD#BRIGHTSD/2023-01-27/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=BRIGHTSD"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=BRIGHTSD#BRIGHTSD/2023-01-27/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor $10 to floor -$3</summary>
   </entry>
   <entry>
     <title>BRIGHTSD: Episode (2022-01-26)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=BRIGHTSD"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=BRIGHTSD#BRIGHTSD/2022-01-26/renew_episode</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=BRIGHTSD"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=BRIGHTSD#BRIGHTSD/2022-01-26/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Episode: floor $10 to -$20 for the episode for 1 day(s)</summary>
   </entry>
   <entry>
     <title>BRIGHTSD: New floor (2022-01-07)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=BRIGHTSD"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=BRIGHTSD#BRIGHTSD/2022-01-07/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=BRIGHTSD"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=BRIGHTSD#BRIGHTSD/2022-01-07/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$6 to floor $10</summary>
   </entry>

@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
   <title>EXN_EXN_G11: bidding and operating changes</title>
-  <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=EXN_EXN_G11"/>
-  <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=EXN_EXN_G11</id>
+  <link href="https://ercotbids.currenttech.energy/unit.html?unit=EXN_EXN_G11"/>
+  <id>https://ercotbids.currenttech.energy/unit.html?unit=EXN_EXN_G11</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
     <title>EXN_EXN_G11: Outage ended (2026-02-13)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=EXN_EXN_G11"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=EXN_EXN_G11#EXN_EXN_G11/2026-02-13/outage_end</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=EXN_EXN_G11"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=EXN_EXN_G11#EXN_EXN_G11/2026-02-13/outage_end</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Back from a 16-day outage</summary>
   </entry>
   <entry>
     <title>EXN_EXN_G11: Outage started (2026-01-28)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=EXN_EXN_G11"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=EXN_EXN_G11#EXN_EXN_G11/2026-01-28/outage_start</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=EXN_EXN_G11"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=EXN_EXN_G11#EXN_EXN_G11/2026-01-28/outage_start</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Outage began, lasting 16 days</summary>
   </entry>

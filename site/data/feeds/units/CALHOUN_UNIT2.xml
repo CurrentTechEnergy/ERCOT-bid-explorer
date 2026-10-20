@@ -1,76 +1,76 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
   <title>CALHOUN_UNIT2: bidding and operating changes</title>
-  <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CALHOUN_UNIT2"/>
-  <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CALHOUN_UNIT2</id>
+  <link href="https://ercotbids.currenttech.energy/unit.html?unit=CALHOUN_UNIT2"/>
+  <id>https://ercotbids.currenttech.energy/unit.html?unit=CALHOUN_UNIT2</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
     <title>CALHOUN_UNIT2: Outage started (2026-07-12)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CALHOUN_UNIT2"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CALHOUN_UNIT2#CALHOUN_UNIT2/2026-07-12/outage_start</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=CALHOUN_UNIT2"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=CALHOUN_UNIT2#CALHOUN_UNIT2/2026-07-12/outage_start</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Outage began, still on at the end of the data (41 days so far)</summary>
   </entry>
   <entry>
     <title>CALHOUN_UNIT2: Outage ended (2026-07-08)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CALHOUN_UNIT2"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CALHOUN_UNIT2#CALHOUN_UNIT2/2026-07-08/outage_end</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=CALHOUN_UNIT2"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=CALHOUN_UNIT2#CALHOUN_UNIT2/2026-07-08/outage_end</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Back from a 34-day outage</summary>
   </entry>
   <entry>
     <title>CALHOUN_UNIT2: Outage started (2026-06-05)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CALHOUN_UNIT2"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CALHOUN_UNIT2#CALHOUN_UNIT2/2026-06-05/outage_start</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=CALHOUN_UNIT2"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=CALHOUN_UNIT2#CALHOUN_UNIT2/2026-06-05/outage_start</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Outage began, lasting 34 days</summary>
   </entry>
   <entry>
     <title>CALHOUN_UNIT2: Timescale group changed (2026-05-01)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CALHOUN_UNIT2"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CALHOUN_UNIT2#CALHOUN_UNIT2/2026-05-01/group</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=CALHOUN_UNIT2"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=CALHOUN_UNIT2#CALHOUN_UNIT2/2026-05-01/group</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Daily, 1–2 a week in 2026-04 to Seasonal: off a week or more in 2026-05</summary>
   </entry>
   <entry>
     <title>CALHOUN_UNIT2: Timescale group changed (2026-04-01)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CALHOUN_UNIT2"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CALHOUN_UNIT2#CALHOUN_UNIT2/2026-04-01/group</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=CALHOUN_UNIT2"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=CALHOUN_UNIT2#CALHOUN_UNIT2/2026-04-01/group</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Multi-day: off 1–7 days in 2026-03 to Daily, 1–2 a week in 2026-04</summary>
   </entry>
   <entry>
     <title>CALHOUN_UNIT2: Outage ended (2026-02-26)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CALHOUN_UNIT2"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CALHOUN_UNIT2#CALHOUN_UNIT2/2026-02-26/outage_end</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=CALHOUN_UNIT2"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=CALHOUN_UNIT2#CALHOUN_UNIT2/2026-02-26/outage_end</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Back from a 10-day outage</summary>
   </entry>
   <entry>
     <title>CALHOUN_UNIT2: Outage started (2026-02-16)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CALHOUN_UNIT2"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CALHOUN_UNIT2#CALHOUN_UNIT2/2026-02-16/outage_start</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=CALHOUN_UNIT2"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=CALHOUN_UNIT2#CALHOUN_UNIT2/2026-02-16/outage_start</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Outage began, lasting 10 days</summary>
   </entry>
   <entry>
     <title>CALHOUN_UNIT2: Timescale group changed (2026-02-01)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CALHOUN_UNIT2"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CALHOUN_UNIT2#CALHOUN_UNIT2/2026-02-01/group</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=CALHOUN_UNIT2"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=CALHOUN_UNIT2#CALHOUN_UNIT2/2026-02-01/group</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Daily, under 1 shutdown a week in 2026-01 to Multi-day: off 1–7 days in 2026-02</summary>
   </entry>
   <entry>
     <title>CALHOUN_UNIT2: Timescale group changed (2026-01-01)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CALHOUN_UNIT2"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CALHOUN_UNIT2#CALHOUN_UNIT2/2026-01-01/group</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=CALHOUN_UNIT2"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=CALHOUN_UNIT2#CALHOUN_UNIT2/2026-01-01/group</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Multi-day: off 1–7 days in 2025-12 to Daily, under 1 shutdown a week in 2026-01</summary>
   </entry>
   <entry>
     <title>CALHOUN_UNIT2: Bidding approach shifted (2025-12-29)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CALHOUN_UNIT2"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CALHOUN_UNIT2#CALHOUN_UNIT2/2025-12-29/bidding</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=CALHOUN_UNIT2"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=CALHOUN_UNIT2#CALHOUN_UNIT2/2025-12-29/bidding</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Offer price vs peer median: $6 to -$10/MWh</summary>
   </entry>
