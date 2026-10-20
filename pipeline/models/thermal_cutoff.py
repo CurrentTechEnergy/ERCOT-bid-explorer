@@ -51,11 +51,13 @@ For every thermal train in the latest DAM disclosure (pipeline.forecast.context.
               Never-off gas steam units are left out: their long outages are mostly mothballs,
               which the report does not carry.
   unseen      the outage capacity by zone that the unit-level report does not explain
-              (Context.unseen_out, planned outages mostly) is spread over the zone's coal, CC and
-              gas steam units not judged "outage", by HSL: each carries unseen_share, folded into
+              (Context.unseen_out, planned outages mostly) is spread over the zone's coal, CC, gas
+              steam and combustion turbine units not judged "outage", by HSL: each carries unseen_share, folded into
               out_share, which the dispatch model takes off its weight
-  peakers     combustion turbines are not judged here (peaker_share, by hour); they get
-              verdict "peaker" and p_on from that model.
+  peakers     combustion turbines outside the never-off group (which are held on, as other
+              never-off units) are not judged here (peaker_share, by hour, on the hours
+              they were available); they get verdict "peaker" and p_on from that model, and the
+              outage calls above (long outage, listed, unseen share) as other units do.
 
 p_on is the weight the dispatch model applies to the unit's MW: 1 for on, 0 for off, the
 history share for nocut, and for a daily unit judged on its window the probability above,
@@ -81,9 +83,9 @@ from ..store import read_json_gz
 from ..decisions import _window, _cutoff, _dam_trains, HALF, OUT_MIN_H
 from ..forecast import context as C
 
-UNSEEN_TECHS = ("coal", "combined_cycle", "gas_steam")   # spread the zonal unseen outage MW over these
+UNSEEN_TECHS = ("coal", "combined_cycle", "gas_steam", "combustion_turbine")   # spread the zonal unseen outage MW over these
 NAME = "thermal_cutoff"
-VERSION = "v6"    # v6: technology one-hot, drivers of each P(on); v5: stay-on probability by boosted trees; v4: loss over the cutoff split by award history; v3: gas steam on its stay-on loss, stale gas steam outages dropped; v2: CC outage calls by gas turbine, zonal unseen outages; v1: NRC reactor status, listed outages; probability of staying on through the window, per-unit horizon, pooled cutoffs
+VERSION = "v7"    # v7: combustion turbines share the zonal unseen outage; v6: technology one-hot, drivers of each P(on); v5: stay-on probability by boosted trees; v4: loss over the cutoff split by award history; v3: gas steam on its stay-on loss, stale gas steam outages dropped; v2: CC outage calls by gas turbine, zonal unseen outages; v1: NRC reactor status, listed outages; probability of staying on through the window, per-unit horizon, pooled cutoffs
 SEASONAL_VERSION = "v0"
 RUN_SHARE = 0.5          # a month the unit ran through: online at least this share of its hours
 LONG_OUT = 21            # days an outage must already have lasted at the last known hour to carry forward

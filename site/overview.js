@@ -353,21 +353,23 @@ function drawTechs() {
     const k = gwh ? 24 / 1000 : 1 / 1000, f = d3.format(gwh ? ",.0f" : ",.1f");
     const np = r.nameplate || 1, w = (v) => (v / np) * 100;
     const disp = gwh ? r.disp_gwh : r.disp / 1000, avail = gwh ? r.avail_gwh : r.avail / 1000, curt = gwh ? r.curt_gwh : (r.avail - r.disp) / 1000;
+    const out = r.out || 0, outV = gwh ? (r.out_gwh || 0) : out / 1000;
     const a2 = sc && sc.two_day ? sc.two_day[`${s.id}_gwh_act`] : null;
-    const tip = `<h4>${s.label}</h4><p class="tip-body">${f(disp)} ${u} expected dispatched of ${f(avail)} ${u} available${gwh ? "" : " on average"}, ${f(curt)} ${u} curtailed on price, ${f(np * k - avail)} ${u} not available from the weather · ${r.n_units} units` +
+    const tip = `<h4>${s.label}</h4><p class="tip-body">${f(disp)} ${u} expected dispatched of ${f(avail)} ${u} available${gwh ? "" : " on average"}, ${f(curt)} ${u} curtailed on price` + (r.out != null ? `, ${f(outV)} ${u} on outage (ERCOT's outage report)` : "") +
+      `, ${f(Math.max(0, np * k - avail - outV))} ${u} not available from the weather · ${r.n_units} units` +
       (a2 != null ? `. Actual over the day (2-day summary): ${fmtGWh(a2)} GWh` : "") + `</p>`;
     html += `<div class="lab"><span class="sw" style="background:var(${s.color})"></span><div>${s.label}<small>${s.id === "wind" ? "the weather sets what is available; the offer sets what runs" : "same, over the daylight hours"}</small></div></div>` +
       `<div class="bar" data-tip-html="${esc(tip)}"><i style="left:0;width:${w(r.avail)}%;background:var(${s.color});opacity:0.45"></i><i style="left:0;width:${w(r.disp)}%;background:var(${s.color})"></i>` +
-      `<i style="left:${w(r.avail)}%;width:${w(np - r.avail)}%;${HATCH}"></i>` +
+      (out ? `<i style="left:${w(r.avail)}%;width:${w(out)}%;${HATCH}"></i>` : "") +
       (a2 != null ? `<i class="act" style="left:calc(${(a2 / (np * 24 / 1000)) * 100}% - 1.5px)"></i>` : "") + `</div>` +
       `<div class="val"><b>${f(disp)} ${u}</b> expected<br>of ${f(avail)} ${u} available` + (a2 != null ? `<br>${gwh ? fmtGWh(a2) : fmtGW(a2 / 24 * 1000)} ${u} actual` : "") + `</div>`;
   });
   const csv = TECHS.filter(([t]) => D.capacity.tech[t]).map(([t, label]) => [label, ...CAP_KEYS.map((k) => D.capacity.tech[t][k]), act(t), null, null, null]);
-  [WIND, SOLAR].forEach((s) => { const r = D.headline[s.id]; if (r) csv.push([s.label, r.nameplate, ...CAP_KEYS.slice(1).map(() => null), sc && sc.two_day ? sc.two_day[`${s.id}_gwh_act`] : null, r.avail_gwh, r.disp_gwh, r.curt_gwh]); });
-  setCSV(el, ["technology", ...CAP_KEYS, "actual_gwh", "avail_gwh", "disp_gwh", "priced_out_gwh"], csv, `Expected to run by technology ${S.date}`);
+  [WIND, SOLAR].forEach((s) => { const r = D.headline[s.id]; if (r) csv.push([s.label, r.nameplate, ...CAP_KEYS.slice(1).map(() => null), sc && sc.two_day ? sc.two_day[`${s.id}_gwh_act`] : null, r.avail_gwh, r.disp_gwh, r.curt_gwh, r.out_gwh]); });
+  setCSV(el, ["technology", ...CAP_KEYS, "actual_gwh", "avail_gwh", "disp_gwh", "priced_out_gwh", "outage_gwh"], csv, `Expected to run by technology ${S.date}`);
   const hs = D.headline.storage;
   html += `<div class="sect">Storage</div><div class="lab"><span class="sw" style="background:var(${STORAGE.color})"></span><div>Batteries<small>${hs ? "the fleet's recent habit by hour, nudged by the day's price shape" : "no battery forecast for this day"}</small></div></div><div class="bar"></div>` +
-    `<div class="val">${hs ? `<b>${fmtGWh(hs.gwh_dis)} GWh</b> discharged<br><b>${fmtGWh(hs.gwh_chg)} GWh</b> charged<br>peaks ${fmtGW(hs.peak_dis)} / ${fmtGW(hs.peak_chg)} GW` : "–"}</div>`;
+    `<div class="val">${hs ? `<b>${fmtGWh(hs.gwh_dis)} GWh</b> discharged<br><b>${fmtGWh(hs.gwh_chg)} GWh</b> charged<br>peaks ${fmtGW(hs.peak_dis)} / ${fmtGW(hs.peak_chg)} GW` + (hs.out ? `<br>${fmtGW(hs.out)} GW on outage` : "") : "–"}</div>`;
   el.innerHTML = html;
 }
 

@@ -9,13 +9,17 @@ data/forecast/<date>.json.gz
   headline          hub_avg, band (low | medium | high), band_edges [q25, q75], hub [24];
                     baseload / price_sensitive / peakers: {cap, on, exp, min, share, gwh,
                     n_on, n_units}; wind / solar: {nameplate, avail, disp, avail_gwh,
-                    disp_gwh, curt_gwh}; storage: {peak_dis, peak_chg, gwh_dis, gwh_chg, eff,
-                    known_through, capped} (fleet MW and GWh, pipeline.models.storage_habit),
+                    disp_gwh, curt_gwh, out, out_gwh} (out: ERCOT's zonal renewable outage,
+                    planned included, split between wind and solar as the unit-level report lists
+                    them, at most nameplate - avail; null without the zonal report); storage:
+                    {peak_dis, peak_chg, gwh_dis, gwh_chg, eff, known_through, capped, out} (fleet
+                    MW and GWh, pipeline.models.storage_habit; out the battery MW the unit-level
+                    report lists out),
                     null while fewer than a week of 2-day battery actuals is known
   capacity          group[g] and tech[t]: {cap, on, off, out, unknown, min, exp, gwh, n_on,
                     n_off, n_out, n_unknown} (MW; on, off and min weighted by each unit's mean p over the day, as exp is,
                     with a unit's outage share (out_share: listed gas turbines and the zonal unseen outage) in out, not off;
-                    out and unknown the HSL of units in those states; n_on counts p >= 0.5)
+                    out and unknown the HSL of units in those states; n_on counts p >= 0.5 of the share not on outage)
   hourly            group[g] / tech[t] / category[c] / fleet: {min, exp, hsl} [24]; wind /
                     solar: {avail, disp} [24]; storage: {dis, chg, soc} [24] (fleet discharging MW,
                     charging MW below zero, energy path MWh) or null; model: {series: "model version"}
@@ -135,8 +139,9 @@ def build_day(date, ctx: C.Context) -> dict:
         g = "never" if row["tech"] == "nuclear" else (row["group"] or "ungrouped")
         hsl, lsl = d["hsl"], float(row["lsl"] or 0.0)
         p_day = float(np.mean(d["p"]))
+        avail = 1.0 - float(row.get("out_share") or 0.0)      # counted on or off by its odds while available
         state = ("out" if row["verdict"] == "outage" else "unknown" if row["verdict"] == "nocut"
-                 else "on" if p_day >= 0.5 else "off")
+                 else "on" if p_day >= 0.5 * avail else "off")
         exp_mean = float(d["exp"].mean())
         min_mean = float(np.mean(d["min"]))
         for tgt in ((cap["group"][g] if g in cap["group"] else None), cap["tech"][row["tech"]]):
@@ -169,11 +174,11 @@ def build_day(date, ctx: C.Context) -> dict:
             c["on"] += p_day * hsl; c["min"] += min_mean
         if state == "on":
             c["n_on"] += 1
-        p_on = round(p_day, 2) if row["tech"] == "combustion_turbine" else row["p_on"]
+        p_on = round(p_day, 2) if row["verdict"] == "peaker" else row["p_on"]
         unit_rows.append([key, row["tech"], g, _r(hsl), _r(lsl), row["verdict"], p_on, row["loss"], row["cutoff"],
                           row["off_from"], row["off_hours"], row["reason"], int(d["curve"]),
-                          row["model"] if row["tech"] != "combustion_turbine" else peak["rows"].get(key, {}).get("model", row["model"]),
-                          row["version"] if row["tech"] != "combustion_turbine" else peak["rows"].get(key, {}).get("version", row["version"]),
+                          row["model"] if row["verdict"] != "peaker" else peak["rows"].get(key, {}).get("model", row["model"]),
+                          row["version"] if row["verdict"] != "peaker" else peak["rows"].get(key, {}).get("version", row["version"]),
                           row.get("win_from"), row.get("win_hours"), row.get("out_share"), d.get("small"),
                           row.get("p_base"), row.get("drivers")])
         hs = [[round(float(v), 2) for v in d["p"]], [round(float(v)) for v in d["exp"]], [round(float(v)) for v in d["min"]]]
@@ -197,14 +202,26 @@ def build_day(date, ctx: C.Context) -> dict:
         headline[k] = {"cap": _r(c["cap"]), "on": _r(c["on"]), "min": _r(c["min"]), "exp": _r(c["exp"]),
                        "share": _r(c["on"] / c["cap"], 3) if c["cap"] else None, "gwh": _r(c["gwh"], 1),
                        "n_on": c["n_on"], "n_units": c["n_units"]}
+    # renewable outage: ERCOT's zonal IRR outage split between wind and solar as the unit-level
+    # report lists them (by nameplate when it lists neither), at most the gap between nameplate
+    # and available; the rest of that gap is weather
+    ro = ctx.renew_out(date)
+    lw = (ro["wind"] + ro["solar"]) if ro else 0.0
+    npl = sum(rn[t]["nameplate"] for t in C.RENEW) or 1.0
     for t in C.RENEW:
         r = rn[t]
+        if ro:
+            sh = ro[t] / lw if lw else r["nameplate"] / npl
+            r["out"] = np.minimum(np.asarray(ro["irr"], float) * sh, np.maximum(0.0, r["nameplate"] - r["avail"]))
         headline[t] = {"nameplate": _r(r["nameplate"]), "avail": _r(r["avail"].mean()), "disp": _r(r["disp"].mean()),
                        "avail_gwh": _r(r["avail"].sum() / 1000, 2), "disp_gwh": _r(r["disp"].sum() / 1000, 2),
-                       "curt_gwh": _r((r["avail"] - r["disp"]).sum() / 1000, 2), "n_units": r["n"]} if r["n"] else None
+                       "curt_gwh": _r((r["avail"] - r["disp"]).sum() / 1000, 2), "n_units": r["n"],
+                       "out": _r(r["out"].mean()) if "out" in r else None,
+                       "out_gwh": _r(r["out"].sum() / 1000, 2) if "out" in r else None} if r["n"] else None
     sr = stor["rows"]
     headline["storage"] = ({k: sr[k] for k in ("peak_dis", "peak_chg", "gwh_dis", "gwh_chg")}
-                           | {k: stor["inputs"].get(k) for k in ("eff", "known_through", "capped")}) if sr else None
+                           | {k: stor["inputs"].get(k) for k in ("eff", "known_through", "capped")}
+                           | {"out": _r(ro["storage"]) if ro else None}) if sr else None
     v = versions()
     hourly_model = {**{g: f"{v['thermal_cutoff']} / {v['thermal_dispatch']}" for g in GROUPS},
                     **{t: f"{v['thermal_cutoff']} / {v['thermal_dispatch']}" for t in C.THERMAL},

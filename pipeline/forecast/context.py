@@ -51,12 +51,17 @@ RENEW = ["wind", "solar"]
 CURVE_DIR = UNIT_DATA_DIR / "forecast" / "curves"
 CURVE_FORMAT = 1
 OUTAGE_SNAPSHOT_LAG = 4        # days: the NP1-346-ER snapshot of D - 4 is posted about 05:00 on D - 1, before D clears
-# Unseen outage MW (Context.unseen_out): the HSL of coal, CC and gas steam units forecast on but
-# actually on outage (the unit-level report lists unplanned outages only) regresses on the zonal
-# remainder as about 910 MW + 0.46 x remainder (daily, Mar-Aug 2026, r 0.90; most of it spring
-# planned maintenance).  Fit on the backtest's own days, so the gain it scored is in-sample.
-UNSEEN_BASE = 910.0           # MW, fleet, split across zones by their thermal MW
-UNSEEN_SLOPE = 0.46           # MW per MW of zonal remainder
+RENEW_FUEL = {"Wind": "wind", "Solar": "solar", "BATT": "storage"}   # unit-level report fuel -> technology
+# Unseen outage MW (Context.unseen_out): the HSL of thermal units (combustion turbines included)
+# on outage for at least half the day that the model did not call "outage" regresses on the zonal
+# remainder (the report's total, which leaves the IRR part out, less the unit-level listings) as
+# about 257 MW + 0.93 x remainder (daily, Mar-Aug 2026, r 0.98, residual MAE 1.0 GW).  Spread at
+# that slope, the committed minimum ran 500 MW low in cheap hours (part of that outage sits on
+# units already off on price), so the slope is set from the backtest instead: 0.65 passes the
+# gate (0.70 and 0.93 fail it).  In-sample either way.  (The earlier fit, 910 + 0.46 x, took the
+# IRR part off a total that never held it.)
+UNSEEN_BASE = 257.0           # MW, fleet, split across zones by their thermal MW
+UNSEEN_SLOPE = 0.65           # MW per MW of zonal remainder
 OUT_SHARE_MIN = 0.5            # a non-CC unit listed with at least this share of its max MW out is off for the day
 NRC_OFF_PCT = 50.0             # a reactor the NRC reported below this power the morning before D is off on D
 CC_MIN_DAYS = 120              # days of 60-day history before the asof point a train's smallest running size is taken from
@@ -347,8 +352,8 @@ class Context:
 
     def unseen_out(self, date, zone_mw):
         """{zone: MW of thermal outage the unit-level report does not show}: the zonal outage
-        capacity public before `date` cleared (pipeline/outages.py, planned outages included),
-        less its renewable part, less the MW the unit-level snapshot lists in the zone, as
+        capacity public before `date` cleared (pipeline/outages.py, planned outages included; its
+        "total" is the non-IRR resources, batteries in, wind and solar out), less the MW the unit-level snapshot lists in the zone, as
         UNSEEN_BASE (split by `zone_mw`, the zones' thermal MW) + UNSEEN_SLOPE x that remainder,
         at least 0.  None when either report is missing."""
         self._load_zones()
@@ -363,8 +368,8 @@ class Context:
         for r in s["rows"]:
             if (r[ci["actual_end"]] and r[ci["actual_end"]] < t0) or (r[ci["planned_end"]] and r[ci["planned_end"]] < t0):
                 continue
-            if r[ci["fuel"]] in ("Wind", "Solar", "Storage"):
-                continue
+            if r[ci["fuel"]] in RENEW_FUEL:
+                continue        # batteries ("BATT") stay: they are inside the zonal total
             z = self._zones["sub"].get(r[ci["resource"]])
             if z:
                 tur[r[ci["unit"]]] = (z, max(tur.get(r[ci["unit"]], (z, 0.0))[1], r[ci["mw_out"]] or 0))
@@ -374,9 +379,34 @@ class Context:
         tot_mw = sum(zone_mw.values()) or 1.0
         out = {}
         for z, v in c["total"].items():
-            irr = (c.get("irr") or {}).get(z) or [0] * 24
-            rem = float(np.mean([(a or 0) - (b or 0) for a, b in zip(v, irr)])) - listed[z]
+            rem = float(np.mean([a or 0 for a in v])) - listed[z]      # "total" leaves out the IRR part already
             out[z] = max(0.0, UNSEEN_BASE * zone_mw.get(z, 0.0) / tot_mw + UNSEEN_SLOPE * rem)
+        return out
+
+    def renew_out(self, date):
+        """Wind, solar and battery outage public before `date` cleared: {"irr": [24] fleet MW of
+        intermittent renewable outage from the zonal report (planned included), "wind", "solar",
+        "storage": MW the unit-level snapshot lists out for each (each unit once, at its largest
+        MW out; unplanned only)}, the lists empty without a snapshot; None without the zonal day."""
+        self._load_zones()
+        c = self._cap.get(date)
+        if not c or not c.get("irr"):
+            return None
+        irr = [sum((v[h] or 0) for v in c["irr"].values() if len(v) > h) for h in range(24)]
+        out = {"irr": irr, "wind": 0.0, "solar": 0.0, "storage": 0.0}
+        snap = (_d(date) - dt.timedelta(days=OUTAGE_SNAPSHOT_LAG)).isoformat()
+        s = read_json_gz(DATA_DIR / "outages" / "unplanned" / f"{snap}.json.gz", default=None)
+        if s and s.get("rows"):
+            ci = {n: i for i, n in enumerate(s["columns"])}
+            t0 = date + "T00:00"
+            tur = {}
+            for r in s["rows"]:
+                k = RENEW_FUEL.get(r[ci["fuel"]])
+                if k is None or (r[ci["actual_end"]] and r[ci["actual_end"]] < t0) or (r[ci["planned_end"]] and r[ci["planned_end"]] < t0):
+                    continue
+                tur[r[ci["unit"]]] = (k, max(tur.get(r[ci["unit"]], (k, 0.0))[1], r[ci["mw_out"]] or 0))
+            for k, mw in tur.values():
+                out[k] += mw
         return out
 
     def _load_zones(self):
@@ -511,6 +541,8 @@ def _uh_upto(uh: dict, upto: str) -> dict:
 def build_unit_stats(ctx: Context, upto: str = None) -> dict:
     """Per unit (train for combined cycles) from the hourly states and the 60-day unit rows:
       on_bin[b][h]   online hours / hours with data, by day-ahead hub price bin b and hour h
+                     (kept as on, tot; avail counts the hours with data not on outage, so
+                     on / avail is the online share while available)
       on_days        share of days with any online hour
       out_med        median output when running (MW)
       hsl_max        largest hourly HSL seen
@@ -537,7 +569,7 @@ def build_unit_stats(ctx: Context, upto: str = None) -> dict:
                 st[dn * 24:dn * 24 + seg.size] = seg
             by[name] = ("nuclear", st)
     for key, (t, st) in by.items():
-        on = np.zeros((nb, 24)); tot = np.zeros((nb, 24)); days_on = 0; ndays = 0
+        on = np.zeros((nb, 24)); tot = np.zeros((nb, 24)); av = np.zeros((nb, 24)); days_on = 0; ndays = 0
         for i, d in enumerate(dates):
             dn = (_d(d) - day0).days
             seg = st[dn * 24:(dn + 1) * 24]
@@ -546,16 +578,18 @@ def build_unit_stats(ctx: Context, upto: str = None) -> dict:
             ndays += 1
             run = np.isin(seg, ["m", "a"])
             has = seg != "-"
+            up = has & (seg != "o")
             if run.any():
                 days_on += 1
             for h in range(24):
                 if has[h]:
                     b = hub_bin[d][h]
                     tot[b, h] += 1
+                    av[b, h] += up[h]
                     on[b, h] += run[h]
-        f = fleet.setdefault(t, {"on": np.zeros((nb, 24)), "tot": np.zeros((nb, 24))})
-        f["on"] += on; f["tot"] += tot
-        units[key] = {"tech": t, "on": on, "tot": tot, "on_days": days_on / ndays if ndays else 0.0,
+        f = fleet.setdefault(t, {"on": np.zeros((nb, 24)), "tot": np.zeros((nb, 24)), "avail": np.zeros((nb, 24))})
+        f["on"] += on; f["tot"] += tot; f["avail"] += av
+        units[key] = {"tech": t, "on": on, "tot": tot, "avail": av, "on_days": days_on / ndays if ndays else 0.0,
                       "last_state": None, "out_med": None, "hsl_max": 0.0}
     # output when running, HSL and wind / solar availability by hour from the 60-day unit rows
     files = sorted((DATA_DIR / "60d-units").glob("*.json.gz"))
