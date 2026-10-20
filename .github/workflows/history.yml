@@ -1,12 +1,19 @@
 name: Build hourly history
 
-# Hourly wind and solar history from ERCOT's archive (pipeline/history.py), one month per job,
+# Hourly wind and solar history (kind: renewables) or thermal history (kind: thermal) from ERCOT's
+# archive (pipeline/history.py), one month per job,
 # uploaded as Parquet files to the `history` release.  Kept apart from the site data and the
 # `data` branch: this workflow never commits, never touches data/ or the data branch, and does not
 # share the update workflow's concurrency group.
 on:
   workflow_dispatch:
     inputs:
+      kind:
+        description: "renewables (units-*) or thermal (thermal-*)"
+        type: choice
+        options: [renewables, thermal]
+        required: false
+        default: renewables
       start:
         description: "First month (YYYY-MM)"
         required: false
@@ -49,13 +56,14 @@ jobs:
           MAX: ${{ inputs.max_months || '24' }}
           FORCE: ${{ inputs.force || false }}
           EVENT: ${{ github.event_name }}
+          PREFIX: ${{ inputs.kind == 'thermal' && 'thermal' || 'units' }}
         run: |
           if [ "$EVENT" = "pull_request" ]; then echo 'months=["2019-01"]' >> "$GITHUB_OUTPUT"; exit 0; fi
           if ! gh release view history -R "$GITHUB_REPOSITORY" > /dev/null 2>&1; then
             gh release create history -R "$GITHUB_REPOSITORY" --title "Hourly history" --latest=false \
-              --notes "Hourly wind and solar history built from ERCOT's archive by the Build hourly history workflow (pipeline/history.py documents the files). Data only: kept apart from the site data and the data branch."
+              --notes "Hourly wind, solar and thermal history built from ERCOT's archive by the Build hourly history workflow (pipeline/history.py documents the files). Data only: kept apart from the site data and the data branch."
           fi
-          have=$(gh release view history -R "$GITHUB_REPOSITORY" --json assets --jq '.assets[].name' | sed -n 's/^units-\(.*\)\.parquet$/\1/p')
+          have=$(gh release view history -R "$GITHUB_REPOSITORY" --json assets --jq '.assets[].name' | sed -n "s/^${PREFIX}-\(.*\)\.parquet$/\1/p")
           python3 - "$have" <<'PY' >> "$GITHUB_OUTPUT"
           import datetime as dt, json, os, sys
           have = set(sys.argv[1].split())
@@ -96,7 +104,7 @@ jobs:
           ERCOT_API_USERNAME: ${{ secrets.ERCOT_API_USERNAME }}
           ERCOT_API_PASSWORD: ${{ secrets.ERCOT_API_PASSWORD }}
           ERCOT_API_SUBSCRIPTION_KEY: ${{ secrets.ERCOT_API_SUBSCRIPTION_KEY }}
-        run: python -m pipeline.history "${{ matrix.month }}" --out out
+        run: python -m pipeline.history "${{ matrix.month }}" --out out ${{ inputs.kind == 'thermal' && '--thermal' || '' }}
       - name: Summarise
         run: |
           python3 - <<'PY'
@@ -105,7 +113,9 @@ jobs:
           for p in sorted(glob.glob("out/*.parquet")):
               f = pd.read_parquet(p)
               extra = (f", {f['unit'].nunique()} units ({', '.join(f'{k}: {v}' for k, v in f.groupby('tech', observed=True)['unit'].nunique().items())})"
-                       f", offer present {f['offer'].notna().mean():.0%}, DA node price present {f['da_node'].notna().mean():.0%}"
+                       + (f", offer present {f['offer'].notna().mean():.0%}" if "offer" in f else "")
+                       + (f", states {', '.join(f'{k}: {v:.0%}' for k, v in f['state'].value_counts(normalize=True).items())}" if "state" in f else "")
+                       + f", DA node price present {f['da_node'].notna().mean():.0%}"
                        if "unit" in f else f", {f['point'].nunique()} points")
               lines.append(f"- {os.path.basename(p)}: {len(f):,} rows, {f['date'].nunique()} days, {os.path.getsize(p) / 1e6:.1f} MB{extra}")
           text = "\n".join(lines)
@@ -117,4 +127,4 @@ jobs:
         if: github.event_name == 'workflow_dispatch'
         env:
           GH_TOKEN: ${{ github.token }}
-        run: gh release upload history out/*.parquet --clobber -R "$GITHUB_REPOSITORY"
+        run: gh release upload history out/${{ inputs.kind == 'thermal' && 'thermal-' || '' }}*.parquet --clobber -R "$GITHUB_REPOSITORY"

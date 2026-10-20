@@ -1,4 +1,5 @@
-"""Hourly wind and solar history from 2019 on, for the hedge and basis analyses.
+"""Hourly wind and solar history from 2019 on, for the hedge and basis analyses, and hourly
+thermal history (--thermal) for training the commitment model on more than one year.
 
 Kept apart from everything else the pipeline writes: it reads ERCOT's archive directly, never
 reads or writes data/ (the site) or UNIT_DATA_DIR (the `data` branch), and writes only to its
@@ -28,7 +29,20 @@ One pair of Parquet files per calendar month:
   da-hubs-YYYY-MM.parquet  date, he, point, price: DAM settlement point prices at every hub and
                            load zone (NP4-190-CD)
 
-    python -m pipeline.history 2019-01 [2019-02 ...] [--out history] [--force]
+  thermal-YYYY-MM.parquet  (--thermal) one row per thermal resource (nuclear, coal, combined-cycle
+                           configuration, gas steam, combustion turbine) and operating hour:
+    date, he, unit, tech, sp   as above
+    state       the hour's state as data/unit_hours_60d.json.gz writes it (intraday.unit_hours):
+                "m" running at minimum, "a" running above it, "0" offline, "o" outage, "-" no data
+    lsl, hsl    hourly mean LSL and HSL over the hour's online SCED runs (MW; null when not running)
+    out         hourly mean telemetered net output (MW)
+    award       DAM energy award (MW)
+    da_node     DAM settlement point price at the unit's node ($/MWh)
+    dam_lsl     LSL in the DAM disclosure (MW)
+    mingen      minimum-energy offer cost in the DAM three-part offer ($/MWh)
+    hot_start   hot start-up offer cost ($ per start)
+
+    python -m pipeline.history 2019-01 [2019-02 ...] [--out history] [--force] [--thermal]
 """
 import argparse
 import calendar
@@ -44,6 +58,7 @@ import pandas as pd
 from .config import EMIL_60DAY, EMIL_DAM, EMIL_DAM_SPP
 from .dam_prices import read_dam_spp
 from .log import warn
+from .intraday import unit_hours
 from .ppa import hourly_offers
 from .store import describe_blob, iter_csvs
 from .update import curve_source, skip_reason
@@ -52,6 +67,8 @@ OUT = Path("history")
 LAG = 60          # the 60-day disclosures post about 60 days after the operating day
 SLACK = 4         # days either side of that a file may post
 FLOAT_COLS = ["offer", "spread", "hsl", "bp", "out", "directed", "award", "dam_hsl", "da_node"]
+THERMAL_TECHS = ("nuclear", "coal", "combined_cycle", "gas_steam", "combustion_turbine")
+THERMAL_FLOAT = ["lsl", "hsl", "out", "award", "da_node", "dam_lsl", "mingen", "hot_start"]
 
 
 def _days(month: str):
@@ -117,18 +134,49 @@ def unit_rows(ud: dict, dam: dict) -> pd.DataFrame:
     return f
 
 
+def thermal_rows(ud: dict, dam: dict) -> pd.DataFrame:
+    """Hourly thermal rows for one operating day from a per-unit day file and the same day's
+    DAM day file (as unit_rows)."""
+    du = (dam or {}).get("units") or {}
+    hours = (dam or {}).get("hours", 24)
+    cols = {k: [] for k in ["unit", "tech", "sp", "he", "state"] + THERMAL_FLOAT}
+    for name, u in ud["units"].items():
+        if u.get("tech") not in THERMAL_TECHS:
+            continue
+        st, out, lsl, hsl, _ = unit_hours(u, ud["runs"])
+        d = du.get(name) or {}
+        vals = {"lsl": lsl, "hsl": hsl, "out": out, "award": _to24(d.get("award"), hours),
+                "da_node": _to24(d.get("spp"), hours), "dam_lsl": [d.get("lsl")] * 24,
+                "mingen": [d.get("mingen")] * 24, "hot_start": [(d.get("start") or [None])[0]] * 24}
+        cols["unit"] += [name] * 24
+        cols["tech"] += [u["tech"]] * 24
+        cols["sp"] += [d.get("sp")] * 24
+        cols["he"] += list(range(1, 25))
+        cols["state"] += list(st)
+        for k in THERMAL_FLOAT:
+            cols[k] += [None if x is None else x for x in (list(vals[k]) + [None] * 24)[:24]]
+    f = pd.DataFrame(cols)
+    for k in THERMAL_FLOAT:
+        f[k] = pd.to_numeric(f[k], errors="coerce").astype("float32")
+    f.insert(0, "date", ud["date"])
+    f["he"] = f["he"].astype("int8")
+    return f
+
+
 DAM_KEEP = ("sp", "award", "spp", "hsl", "hsl_h")
+DAM_KEEP_THERMAL = ("sp", "award", "spp", "lsl", "mingen", "start")
 MEM_LIMIT = 5 * 2 ** 30    # bytes of address space a parse may use (hosted runners have 7 GB)
 
 
-def _slim_dam(day: dict) -> dict:
-    """Only what unit_rows reads from a DAM day file."""
+def _slim_dam(day: dict, thermal: bool = False) -> dict:
+    """Only what unit_rows (thermal_rows) reads from a DAM day file."""
+    keep, techs = (DAM_KEEP_THERMAL, THERMAL_TECHS) if thermal else (DAM_KEEP, ("wind", "solar"))
     return {"hours": day.get("hours", 24),
-            "units": {n: {k: u[k] for k in DAM_KEEP if k in u} for n, u in (day.get("units") or {}).items()
-                      if u.get("tech") in ("wind", "solar")}}
+            "units": {n: {k: u[k] for k in keep if k in u} for n, u in (day.get("units") or {}).items()
+                      if u.get("tech") in techs}}
 
 
-def _parse(blob: bytes, source: str, dam: dict):
+def _parse(blob: bytes, source: str, dam: dict, thermal: bool = False):
     """Run in a child process: parse one disclosure and reduce it to what the month file keeps,
     -> (operating day, slim DAM day file or unit-hour frame).  The address-space cap makes a file
     too big to parse fail with MemoryError here instead of taking down the whole runner."""
@@ -139,11 +187,11 @@ def _parse(blob: bytes, source: str, dam: dict):
         raise ValueError(f"not a {source} disclosure ({describe_blob(blob)})")
     parsed = found[1](blob)
     if source == "dam":
-        return parsed[0], _slim_dam(parsed[1])
-    return parsed[0], unit_rows(parsed[3][0], dam.get(parsed[0]))
+        return parsed[0], _slim_dam(parsed[1], thermal)
+    return parsed[0], (thermal_rows if thermal else unit_rows)(parsed[3][0], dam.get(parsed[0]))
 
 
-def _disclosures(api, emil: str, days, source: str, dam=None):
+def _disclosures(api, emil: str, days, source: str, dam=None, thermal: bool = False):
     """Yield (date, result of _parse) for the month's operating days from a 60-day report,
     opening each file whose posting date maps to within SLACK days of the month.  Each file is
     parsed in a fresh child process, so its memory is returned and one file that fails (even by
@@ -168,7 +216,7 @@ def _disclosures(api, emil: str, days, source: str, dam=None):
                 continue
             t0 = time.time()
             with ProcessPoolExecutor(max_workers=1) as ex:
-                date, result = ex.submit(_parse, blob, source, dam or {}).result()
+                date, result = ex.submit(_parse, blob, source, dam or {}, thermal).result()
             print(f"  {label}: {date}, {len(blob) / 1e6:.0f} MB zip, {time.time() - t0:.0f}s", flush=True)
         except Exception as e:     # BrokenProcessPool when the child was killed
             warn(f"{label} ({len(blob) / 1e6:.0f} MB): failed: {type(e).__name__}: {e}")
@@ -196,10 +244,10 @@ def da_hubs(api, days) -> pd.DataFrame:
     return f.sort_values(["date", "point", "he"]).reset_index(drop=True)
 
 
-def build_month(api, month: str, out: Path = OUT, force: bool = False) -> None:
+def build_month(api, month: str, out: Path = OUT, force: bool = False, thermal: bool = False) -> None:
     out.mkdir(parents=True, exist_ok=True)
     days = _days(month)
-    upath, hpath = out / f"units-{month}.parquet", out / f"da-hubs-{month}.parquet"
+    upath, hpath = out / f"{'thermal' if thermal else 'units'}-{month}.parquet", out / f"da-hubs-{month}.parquet"
     if force or not hpath.exists():
         da_hubs(api, days).to_parquet(hpath, index=False)
         print(f"{hpath.name}: written")
@@ -207,13 +255,13 @@ def build_month(api, month: str, out: Path = OUT, force: bool = False) -> None:
         print(f"{upath.name}: already there")
         return
     t0 = time.time()
-    dam = dict(_disclosures(api, EMIL_DAM, days, "dam"))
-    frames = [rows for _, rows in _disclosures(api, EMIL_60DAY, days, "60d", dam)]
+    dam = dict(_disclosures(api, EMIL_DAM, days, "dam", thermal=thermal))
+    frames = [rows for _, rows in _disclosures(api, EMIL_60DAY, days, "60d", dam, thermal)]
     if not frames:
         warn(f"{month}: no 60-day SCED days found; nothing written")
         return
     f = pd.concat(frames, ignore_index=True).sort_values(["date", "unit", "he"]).reset_index(drop=True)
-    for k in ("unit", "tech", "sp"):
+    for k in ("unit", "tech", "sp") + (("state",) if thermal else ()):
         f[k] = f[k].astype("category")
     f.to_parquet(upath, index=False)
     print(f"{upath.name}: {len(f):,} rows, {f['date'].nunique()} days, {f['unit'].nunique()} units, "
@@ -225,11 +273,12 @@ def main(argv=None):
     ap.add_argument("months", nargs="+", help="YYYY-MM")
     ap.add_argument("--out", default=str(OUT))
     ap.add_argument("--force", action="store_true", help="rebuild files that already exist")
+    ap.add_argument("--thermal", action="store_true", help="build the thermal files instead of wind and solar")
     args = ap.parse_args(argv)
     from .ercot_api import ErcotAPI
     api = ErcotAPI()
     for m in args.months:
-        build_month(api, m, Path(args.out), args.force)
+        build_month(api, m, Path(args.out), args.force, args.thermal)
 
 
 if __name__ == "__main__":
