@@ -172,7 +172,14 @@ function verdictHTML(F, f) {
     (f.cutoff != null ? `, against its cutoff of ${fmt$(f.cutoff)}.` : f.loss != null ? "." : "") +
     (f.off_from && f.verdict !== "outage" && f.off_hours < 24 ? ` Expected off for ${f.off_hours} h from HE ${f.off_from}.` : "") +
     (f.cc_small != null ? ` In hours with the hub at $10 or below it is held at ${fmtMW(f.cc_small)} MW, its usual smallest running size.` : "") +
-    (f.reason ? ` <span class="muted">Why: ${esc(f.reason)}.</span>` : "");
+    (f.reason ? ` <span class="muted">Why: ${esc(f.reason)}.</span>` : "") + driversHTML(f);
+}
+// what moved the chance of running: the trees' starting point and each input's push, adding up to p_on
+function driversHTML(f) {
+  if (!f.drivers || f.p_base == null) return "";
+  const pts = (v) => `${v >= 0 ? "+" : "−"}${Math.abs(Math.round(v * 100))} pts`;
+  return `<br><b>What moved the chance of running</b> from ${fmtPct(f.p_base)} (the average unit-hour the model learned from) to ${fmtPct(f.p_on)}: ` +
+    f.drivers.map(([k, v]) => `${esc(k)} ${pts(v)}`).join(" · ") + ".";
 }
 function drawHead(e) {
   $("unit-title").textContent = e.name;

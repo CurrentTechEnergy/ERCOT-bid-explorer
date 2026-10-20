@@ -83,7 +83,7 @@ from ..forecast import context as C
 
 UNSEEN_TECHS = ("coal", "combined_cycle", "gas_steam")   # spread the zonal unseen outage MW over these
 NAME = "thermal_cutoff"
-VERSION = "v5"    # v5: stay-on probability by boosted trees; v4: loss over the cutoff split by award history; v3: gas steam on its stay-on loss, stale gas steam outages dropped; v2: CC outage calls by gas turbine, zonal unseen outages; v1: NRC reactor status, listed outages; probability of staying on through the window, per-unit horizon, pooled cutoffs
+VERSION = "v6"    # v6: technology one-hot, drivers of each P(on); v5: stay-on probability by boosted trees; v4: loss over the cutoff split by award history; v3: gas steam on its stay-on loss, stale gas steam outages dropped; v2: CC outage calls by gas turbine, zonal unseen outages; v1: NRC reactor status, listed outages; probability of staying on through the window, per-unit horizon, pooled cutoffs
 SEASONAL_VERSION = "v0"
 RUN_SHARE = 0.5          # a month the unit ran through: online at least this share of its hours
 LONG_OUT = 21            # days an outage must already have lasted at the last known hour to carry forward
@@ -199,17 +199,44 @@ def _hourly(f, margin, lsl, bs, nh):
 
 def _tree_x(x, tech, group, month, loss, lsl):
     """The boosted trees' inputs for a unit-day's 24 hours: the logistic's (without its
-    intercept) and the technology, whether the group is a daily one, the month, the hour and
-    log(1 + loss per MW of LSL)."""
-    return np.column_stack([x[:, 1:], np.full(24, DAILY_TECHS.index(tech) if tech in DAILY_TECHS else -1),
+    intercept) and the technology (one column per DAILY_TECHS), whether the group is a daily
+    one, the month, the hour and log(1 + loss per MW of LSL).  The order is DRIVERS'."""
+    return np.column_stack([x[:, 1:], np.tile([float(tech == t) for t in DAILY_TECHS], (24, 1)),
                             np.full(24, float(str(group or "").startswith("daily"))), np.full(24, float(month)),
                             np.arange(24, dtype=float), np.full(24, float(np.log1p(max(loss, 0.0) / lsl)))])
 
 
+# the trees' inputs (_tree_x columns) gathered into the drivers a unit page lists
+DRIVERS = [("loss against its cutoff", (0, 1, 16)), ("award history", (5,)),
+           ("window length against its usual off spell", (2,)), ("margin before and after the window", (3, 4)),
+           ("share of days it ran", (6,)), ("hour-by-hour prices in the window", (7, 8, 9, 15)),
+           ("technology, group and month", (10, 11, 12, 13, 14))]
+
+
 def _trees(Z, y):
-    """Boosted trees (scikit-learn) on the unit-hours, the technology a categorical input."""
+    """Boosted trees (scikit-learn) on the unit-hours.  Every input is numeric (the technology
+    one-hot), so the tree attributions in _drivers add up exactly."""
     from sklearn.ensemble import HistGradientBoostingClassifier
-    return HistGradientBoostingClassifier(categorical_features=[Z.shape[1] - 5], **GBT).fit(Z, y)
+    return HistGradientBoostingClassifier(**GBT).fit(Z, y)
+
+
+def _drivers(model, Z, bs, nh, p_on):
+    """(p_base, [[driver, points]]): how far each driver moved the unit's P(on) from the
+    trees' starting point (the training data's average, in probability).  Tree SHAP
+    attributions in log-odds, averaged over the window's hours, scaled so the points add up
+    to p_on - p_base; largest first."""
+    import shap
+    ex = model.__dict__.get("_explainer")
+    if ex is None:
+        ex = model._explainer = shap.TreeExplainer(model)
+    phi = np.asarray(ex.shap_values(Z[bs:bs + nh])).reshape(nh, -1).mean(axis=0)
+    base = float(np.ravel(ex.expected_value)[0])
+    p0 = 1.0 / (1.0 + np.exp(-base))
+    g = np.array([phi[list(ix)].sum() for _, ix in DRIVERS])
+    tot = g.sum()
+    pts = g * (p_on - p0) / tot if abs(tot) > 1e-6 else g * p0 * (1 - p0)
+    out = sorted(([name, round(float(v), 3)] for (name, _), v in zip(DRIVERS, pts)), key=lambda r: -abs(r[1]))
+    return round(p0, 3), out
 
 
 
@@ -392,14 +419,17 @@ def forecast(date, ctx: C.Context) -> dict:
                 s = stats["units"].get(key)
                 x = _hourly(_features(margin, lsl, loss, bs, nh, cut, mo, aw, s["on_days"] if s else 0.0), margin, lsl, bs, nh)
                 wt = w.get(None)
-                ph = (wt.predict_proba(_tree_x(x, t, g, date[5:7], loss, lsl))[:, 1] if wt is not None
-                      else np.full(24, float(loss <= cut)))
+                Z = _tree_x(x, t, g, date[5:7], loss, lsl)
+                ph = wt.predict_proba(Z)[:, 1] if wt is not None else np.full(24, float(loss <= cut))
                 p_on = round(float(ph[bs:bs + nh].mean()), 2)
+                if wt is not None:
+                    row["p_base"], row["drivers"] = _drivers(wt, Z, bs, nh, float(ph[bs:bs + nh].mean()))
                 src = "its cutoff" if c else "the pooled cutoff"
                 row.update(cutoff=round(cut), p_on=p_on, p_hours=[round(float(v), 3) for v in ph], win_from=bs + 1, win_hours=nh)
                 why = (f"loss ${loss:,.0f} vs {src} ${cut:,.0f} over HE {bs + 1}-{bs + nh}"
                        + (f" (lasting {span} h with the next morning)" if span > nh else "")
-                       + f", shortest usual off spell {mo:.0f} h: P(on) {p_on:.0%}")
+                       + f", shortest usual off spell {mo:.0f} h: P(on) {p_on:.0%}"
+                       + (f", mostly {row['drivers'][0][0]} ({row['drivers'][0][1] * 100:+.0f} pts)" if row.get("drivers") else ""))
                 if p_on < P_OFF:
                     row.update(verdict="off", off_from=bs + 1, off_hours=nh, reason=why)
                 elif p_on <= P_ON:
@@ -415,12 +445,13 @@ def forecast(date, ctx: C.Context) -> dict:
     nrc = ctx.nrc_off(date)
     for key, row in rows.items():
         if key in nrc and row["verdict"] != "outage":
+            row.pop("drivers", None); row.pop("p_base", None)
             row.update(verdict="outage", p_on=0.0, off_from=1, off_hours=24, outage=True,
                        reason=f"reactor at {nrc[key]:.0f}% power in the NRC status report the morning before")
             continue
         share = listed.get(key, 0.0)
         if share >= 1.0 and row["verdict"] != "outage":
-            row.pop("p_hours", None)
+            row.pop("p_hours", None); row.pop("drivers", None); row.pop("p_base", None)
             row.update(verdict="outage", p_on=0.0, off_from=1, off_hours=24, outage=True,
                        reason="listed out in ERCOT's unplanned outage report")
         elif share > 0 and row["verdict"] != "outage":
