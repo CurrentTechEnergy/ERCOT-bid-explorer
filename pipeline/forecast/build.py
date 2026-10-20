@@ -13,7 +13,8 @@ data/forecast/<date>.json.gz
                     known_through, capped} (fleet MW and GWh, pipeline.models.storage_habit),
                     null while fewer than a week of 2-day battery actuals is known
   capacity          group[g] and tech[t]: {cap, on, off, out, unknown, min, exp, gwh, n_on,
-                    n_off, n_out, n_unknown} (MW; on, off and min weighted by each unit's mean p over the day, as exp is;
+                    n_off, n_out, n_unknown} (MW; on, off and min weighted by each unit's mean p over the day, as exp is,
+                    with a unit's outage share (out_share: listed gas turbines and the zonal unseen outage) in out, not off;
                     out and unknown the HSL of units in those states; n_on counts p >= 0.5)
   hourly            group[g] / tech[t] / category[c] / fleet: {min, exp, hsl} [24]; wind /
                     solar: {avail, disp} [24]; storage: {dis, chg, soc} [24] (fleet discharging MW,
@@ -34,8 +35,9 @@ data/forecast/<date>.json.gz
                     avail_mwh, disp_mwh, source, offer, model, version
 
 Categories (one definition, used by the headline and the page): baseload = the never-off
-group plus nuclear; price-sensitive = the seasonal, multi-day and daily groups and ungrouped
-thermal units; peakers = combustion turbines.
+group (combustion turbines in it included) plus nuclear, the same units as the never-off group's
+capacity; price-sensitive = the seasonal, multi-day and daily groups and ungrouped thermal units;
+peakers = the other combustion turbines.
 """
 import datetime as dt
 
@@ -63,15 +65,15 @@ RENEW_COLS = ["unit", "tech", "nameplate", "avail_mwh", "disp_mwh", "source", "o
 CATEGORIES = {
     "baseload": "the never-off group plus nuclear",
     "price_sensitive": "the seasonal, multi-day and daily groups (and thermal units with no group yet)",
-    "peakers": "combustion turbines",
+    "peakers": "combustion turbines outside the never-off group",
 }
 
 
 def category(tech, group):
-    if tech == "combustion_turbine":
-        return "peakers"
     if tech == "nuclear" or group == "never":
         return "baseload"
+    if tech == "combustion_turbine":
+        return "peakers"
     return "price_sensitive"
 
 
@@ -142,8 +144,11 @@ def build_day(date, ctx: C.Context) -> dict:
                 continue
             tgt["cap"] += hsl; tgt["n_" + state] += 1
             if state in ("on", "off"):
-                # weighted like exp, so the bar's minimum <= expected <= maximum
-                tgt["on"] += p_day * hsl; tgt["off"] += (1 - p_day) * hsl
+                # weighted like exp, so the bar's minimum <= expected <= maximum; the part of
+                # the weight taken off for outages (out_share) is outage, the rest offline
+                osh = float(row.get("out_share") or 0.0)
+                tgt["on"] += p_day * hsl; tgt["out"] += osh * hsl
+                tgt["off"] += max(0.0, 1.0 - osh - p_day) * hsl
                 tgt["min"] += min_mean
             else:
                 tgt[state] += hsl
