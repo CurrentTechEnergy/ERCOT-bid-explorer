@@ -3,7 +3,7 @@
   <title>MCSES_UNIT7: bidding and operating changes</title>
   <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=MCSES_UNIT7"/>
   <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=MCSES_UNIT7</id>
-  <updated>2026-10-18T00:00:00Z</updated>
+  <updated>2026-10-20T00:00:00Z</updated>
   <entry>
     <title>MCSES_UNIT7: Outage ended (2026-08-16)</title>
     <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=MCSES_UNIT7"/>
@@ -89,18 +89,18 @@
     <summary>Outage began, lasting 32 days</summary>
   </entry>
   <entry>
+    <title>MCSES_UNIT7: Bidding approach shifted (2026-01-30)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=MCSES_UNIT7"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=MCSES_UNIT7#MCSES_UNIT7/2026-01-30/bidding</id>
+    <updated>2026-10-20T00:00:00Z</updated>
+    <summary>MW above LSL offered at or below $0: 29% to 0% of the day</summary>
+  </entry>
+  <entry>
     <title>MCSES_UNIT7: Shut down after a long run (2026-01-27)</title>
     <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=MCSES_UNIT7"/>
     <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=MCSES_UNIT7#MCSES_UNIT7/2026-01-27/shutdown_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Shut down for 67 h after 42 days without a shutdown</summary>
-  </entry>
-  <entry>
-    <title>MCSES_UNIT7: Bidding approach shifted (2026-01-24)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=MCSES_UNIT7"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=MCSES_UNIT7#MCSES_UNIT7/2026-01-24/bidding</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Offer price vs peer median: -$19 to $206/MWh</summary>
   </entry>
   <entry>
     <title>MCSES_UNIT7: Timescale group changed (2026-01-01)</title>

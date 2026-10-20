@@ -3,7 +3,14 @@
   <title>LIG_UNIT2: bidding and operating changes</title>
   <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=LIG_UNIT2"/>
   <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=LIG_UNIT2</id>
-  <updated>2026-10-18T00:00:00Z</updated>
+  <updated>2026-10-20T00:00:00Z</updated>
+  <entry>
+    <title>LIG_UNIT2: Outage started (2026-08-14)</title>
+    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=LIG_UNIT2"/>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=LIG_UNIT2#LIG_UNIT2/2026-08-14/outage_start</id>
+    <updated>2026-10-20T00:00:00Z</updated>
+    <summary>Outage began, still on at the end of the data (7 days so far)</summary>
+  </entry>
   <entry>
     <title>LIG_UNIT2: Outage ended (2026-06-03)</title>
     <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=LIG_UNIT2"/>

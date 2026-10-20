@@ -3,12 +3,12 @@
   <title>PB2SES_CT2: bidding and operating changes</title>
   <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PB2SES_CT2"/>
   <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PB2SES_CT2</id>
-  <updated>2026-10-19T00:00:00Z</updated>
+  <updated>2026-10-20T00:00:00Z</updated>
   <entry>
-    <title>PB2SES_CT2: Loss cutoff moved (2026-08-20)</title>
+    <title>PB2SES_CT2: Loss cutoff moved (2026-08-21)</title>
     <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PB2SES_CT2"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PB2SES_CT2#PB2SES_CT2/2026-08-20/cutoff</id>
-    <updated>2026-10-19T00:00:00Z</updated>
+    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PB2SES_CT2#PB2SES_CT2/2026-08-21/cutoff</id>
+    <updated>2026-10-20T00:00:00Z</updated>
     <summary>Loss cutoff $825 to $0 per MW of minimum output; not yet tested on a following month</summary>
   </entry>
   <entry>
