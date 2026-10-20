@@ -331,7 +331,7 @@ function drawStack() {
   svg.append("line").attr("class", "price-rule").attr("stroke-dasharray", "4 3").attr("x1", m.l).attr("x2", w - m.r).attr("y1", y(minAll)).attr("y2", y(minAll));
   svg.append("text").attr("class", "axis-title").attr("x", m.l + 4).attr("y", y(minAll) - 5)
     .attr("paint-order", "stroke").attr("stroke", css("--surface")).attr("stroke-width", 3)
-    .text(`committed minimum ${fmtMW(minAll)} MW`);
+    .text(`committed: ${fmtMW(minAll)} MW runs at any price`);
   if (hub != null && hub >= lo && hub <= hi) {
     svg.append("line").attr("class", "price-rule").attr("x1", x(hub)).attr("x2", x(hub)).attr("y1", m.t).attr("y2", H - m.b);
     const j = d3.bisectLeft(P, hub);

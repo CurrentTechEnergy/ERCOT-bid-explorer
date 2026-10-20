@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>ERCOT Overview: who is expected to run</title>
+<title>ERCOT Tomorrow: who is expected to run</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Sans+Condensed:wght@600&display=swap">
 <link rel="stylesheet" href="style.css">
@@ -13,7 +13,7 @@
 
 <header class="masthead">
   <div class="brand">
-    <div class="nav-row"><nav class="nav" aria-label="Pages"><a href="index.html" aria-current="page">Overview</a><a href="commitment.html">Commitment</a><a href="changes.html">What's changing</a><a href="beyond.html">Beyond baseload</a><a href="renewables.html">Renewables</a><a href="batteries.html">Batteries</a><a href="fleet.html">Fleet economics</a><a href="unit.html">Units</a><a href="trends.html">Trends</a><a href="builder.html">Graph builder</a><a href="guide.html">How offers work</a></nav></div>
+    <div class="nav-row"><nav class="nav" aria-label="Pages"><a href="index.html" aria-current="page">Tomorrow</a><a href="beyond.html">Offers</a><a href="commitment.html">Commitment</a><a href="renewables.html">Renewables</a><a href="batteries.html">Batteries</a><a href="unit.html">Units</a><span class="nav-sep" aria-hidden="true"></span><a href="changes.html" class="aux">What's changing</a><a href="fleet.html" class="aux">Fleet economics</a><a href="trends.html" class="aux">Trends</a><a href="builder.html" class="aux">Graph builder</a><a href="guide.html" class="aux">How offers work</a></nav></div>
     <h1>ERCOT Bid Stack Explorer</h1>
     <p class="sub">What tomorrow in ERCOT looks like: day-ahead prices, the cheap hours, and which generators are likely to run.</p>
   </div>
@@ -102,6 +102,7 @@
     </div>
     <div class="legend" id="hourly-legend"></div>
     <div class="chart" id="hourly-chart"></div>
+    <p class="note step-link" id="offers-step"></p>
   </section>
 
   <section class="panel panel-wide" id="score-panel" hidden>
@@ -119,6 +120,7 @@
       <div>
         <h2>The day in detail</h2>
         <p class="note">The hour below applies to the generation mix and the hourly view of the units table.</p>
+        <p class="note step-link" id="offers-hour"></p>
       </div>
       <div class="panel-tools ctl-hour">
         <label class="lbl" for="hour">Hour <output id="hour-out">HE 13</output></label>

@@ -57,6 +57,10 @@ h1 { font: 600 26px/1.1 var(--font-head); letter-spacing: 0.01em; margin: 0 0 4p
 .nav a { color: var(--ink-2); text-decoration: none; padding: 4px 10px; border: 1px solid var(--line); border-radius: 999px; }
 .nav a:hover { color: var(--ink); border-color: var(--muted); }
 .nav a[aria-current="page"] { background: var(--ink); color: var(--surface); border-color: var(--ink); }
+/* the reader's path first (Tomorrow to Units), then the side doors, lighter */
+.nav-sep { width: 1px; align-self: stretch; background: var(--line); margin: 2px 6px; }
+.nav a.aux { border-color: transparent; }
+.nav a.aux:hover { border-color: var(--line); }
 .sub { margin: 0; color: var(--ink-2); max-width: 70ch; }
 .status { margin: 0; font: 12px/1.4 var(--font-data); color: var(--muted); max-width: 52ch; }
 
@@ -150,6 +154,8 @@ table.data tr:hover td { background: var(--accent-soft); }
 .bar-cell { display: inline-block; height: 8px; border-radius: 0 4px 4px 0; background: var(--accent); vertical-align: middle; margin-left: 6px; opacity: 0.7; }
 .table-view summary { cursor: pointer; color: var(--ink-2); font-size: 12px; }
 /* method detail kept out of the way: one plain caption shows, the rest sits behind "How it's built" */
+/* a link one step down the reader's path (Tomorrow to Offers to a technology to a unit) */
+.step-link { margin-top: 6px; font-weight: 500; }
 details.how { margin: 4px 0 0; max-width: 80ch; }
 details.how > summary { cursor: pointer; color: var(--muted); font-size: 12px; }
 details.how > summary:hover { color: var(--ink-2); }
