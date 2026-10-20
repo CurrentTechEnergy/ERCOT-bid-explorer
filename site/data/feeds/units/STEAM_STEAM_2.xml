@@ -1,90 +1,90 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
   <title>STEAM_STEAM_2: bidding and operating changes</title>
-  <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=STEAM_STEAM_2"/>
-  <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=STEAM_STEAM_2</id>
+  <link href="https://ercotbids.currenttech.energy/unit.html?unit=STEAM_STEAM_2"/>
+  <id>https://ercotbids.currenttech.energy/unit.html?unit=STEAM_STEAM_2</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
     <title>STEAM_STEAM_2: Bidding approach shifted (2026-07-21)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=STEAM_STEAM_2"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=STEAM_STEAM_2#STEAM_STEAM_2/2026-07-21/bidding</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=STEAM_STEAM_2"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=STEAM_STEAM_2#STEAM_STEAM_2/2026-07-21/bidding</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Offer price vs peer median: $75 to $37/MWh</summary>
   </entry>
   <entry>
     <title>STEAM_STEAM_2: Outage ended (2026-07-20)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=STEAM_STEAM_2"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=STEAM_STEAM_2#STEAM_STEAM_2/2026-07-20/outage_end</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=STEAM_STEAM_2"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=STEAM_STEAM_2#STEAM_STEAM_2/2026-07-20/outage_end</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Back from a 9-day outage</summary>
   </entry>
   <entry>
     <title>STEAM_STEAM_2: Outage started (2026-07-12)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=STEAM_STEAM_2"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=STEAM_STEAM_2#STEAM_STEAM_2/2026-07-12/outage_start</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=STEAM_STEAM_2"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=STEAM_STEAM_2#STEAM_STEAM_2/2026-07-12/outage_start</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Outage began, lasting 9 days</summary>
   </entry>
   <entry>
     <title>STEAM_STEAM_2: Outage ended (2026-07-08)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=STEAM_STEAM_2"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=STEAM_STEAM_2#STEAM_STEAM_2/2026-07-08/outage_end</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=STEAM_STEAM_2"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=STEAM_STEAM_2#STEAM_STEAM_2/2026-07-08/outage_end</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Back from a 22-day outage</summary>
   </entry>
   <entry>
     <title>STEAM_STEAM_2: Timescale group changed (2026-07-01)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=STEAM_STEAM_2"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=STEAM_STEAM_2#STEAM_STEAM_2/2026-07-01/group</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=STEAM_STEAM_2"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=STEAM_STEAM_2#STEAM_STEAM_2/2026-07-01/group</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Never off in 2026-06 to Daily, 1–2 a week in 2026-07</summary>
   </entry>
   <entry>
     <title>STEAM_STEAM_2: Outage started (2026-06-16)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=STEAM_STEAM_2"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=STEAM_STEAM_2#STEAM_STEAM_2/2026-06-16/outage_start</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=STEAM_STEAM_2"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=STEAM_STEAM_2#STEAM_STEAM_2/2026-06-16/outage_start</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Outage began, lasting 22 days</summary>
   </entry>
   <entry>
     <title>STEAM_STEAM_2: Outage ended (2026-06-15)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=STEAM_STEAM_2"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=STEAM_STEAM_2#STEAM_STEAM_2/2026-06-15/outage_end</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=STEAM_STEAM_2"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=STEAM_STEAM_2#STEAM_STEAM_2/2026-06-15/outage_end</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Back from a 10-day outage</summary>
   </entry>
   <entry>
     <title>STEAM_STEAM_2: Outage started (2026-06-05)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=STEAM_STEAM_2"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=STEAM_STEAM_2#STEAM_STEAM_2/2026-06-05/outage_start</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=STEAM_STEAM_2"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=STEAM_STEAM_2#STEAM_STEAM_2/2026-06-05/outage_start</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Outage began, lasting 10 days</summary>
   </entry>
   <entry>
     <title>STEAM_STEAM_2: Outage ended (2026-06-03)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=STEAM_STEAM_2"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=STEAM_STEAM_2#STEAM_STEAM_2/2026-06-03/outage_end</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=STEAM_STEAM_2"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=STEAM_STEAM_2#STEAM_STEAM_2/2026-06-03/outage_end</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Back from a 43-day outage</summary>
   </entry>
   <entry>
     <title>STEAM_STEAM_2: Outage started (2026-04-22)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=STEAM_STEAM_2"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=STEAM_STEAM_2#STEAM_STEAM_2/2026-04-22/outage_start</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=STEAM_STEAM_2"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=STEAM_STEAM_2#STEAM_STEAM_2/2026-04-22/outage_start</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Outage began, lasting 43 days</summary>
   </entry>
   <entry>
     <title>STEAM_STEAM_2: Outage ended (2026-04-20)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=STEAM_STEAM_2"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=STEAM_STEAM_2#STEAM_STEAM_2/2026-04-20/outage_end</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=STEAM_STEAM_2"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=STEAM_STEAM_2#STEAM_STEAM_2/2026-04-20/outage_end</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Back from a 22-day outage</summary>
   </entry>
   <entry>
     <title>STEAM_STEAM_2: Outage started (2026-03-30)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=STEAM_STEAM_2"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=STEAM_STEAM_2#STEAM_STEAM_2/2026-03-30/outage_start</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=STEAM_STEAM_2"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=STEAM_STEAM_2#STEAM_STEAM_2/2026-03-30/outage_start</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Outage began, lasting 22 days</summary>
   </entry>

@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
   <title>FENCESLR_SOLAR1: bidding and operating changes</title>
-  <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FENCESLR_SOLAR1"/>
-  <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FENCESLR_SOLAR1</id>
+  <link href="https://ercotbids.currenttech.energy/unit.html?unit=FENCESLR_SOLAR1"/>
+  <id>https://ercotbids.currenttech.energy/unit.html?unit=FENCESLR_SOLAR1</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
     <title>FENCESLR: New floor (2025-03-18)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FENCESLR"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FENCESLR#FENCESLR/2025-03-18/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=FENCESLR"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=FENCESLR#FENCESLR/2025-03-18/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$4 to floor -$2</summary>
   </entry>
   <entry>
     <title>FENCESLR: New floor (2024-02-27)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FENCESLR"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=FENCESLR#FENCESLR/2024-02-27/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=FENCESLR"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=FENCESLR#FENCESLR/2024-02-27/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor $0 to floor -$4</summary>
   </entry>

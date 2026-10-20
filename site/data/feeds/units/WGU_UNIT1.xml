@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
   <title>WGU_UNIT1: bidding and operating changes</title>
-  <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=WGU_UNIT1"/>
-  <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=WGU_UNIT1</id>
+  <link href="https://ercotbids.currenttech.energy/unit.html?unit=WGU_UNIT1"/>
+  <id>https://ercotbids.currenttech.energy/unit.html?unit=WGU_UNIT1</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
     <title>WGU: New floor (2025-03-06)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=WGU"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=WGU#WGU/2025-03-06/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=WGU"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=WGU#WGU/2025-03-06/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$0 to floor -$3</summary>
   </entry>

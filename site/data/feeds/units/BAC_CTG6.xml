@@ -1,76 +1,76 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
   <title>BAC_CTG6: bidding and operating changes</title>
-  <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=BAC_CTG6"/>
-  <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=BAC_CTG6</id>
+  <link href="https://ercotbids.currenttech.energy/unit.html?unit=BAC_CTG6"/>
+  <id>https://ercotbids.currenttech.energy/unit.html?unit=BAC_CTG6</id>
   <updated>2026-10-20T00:00:00Z</updated>
   <entry>
     <title>BAC_CTG6: Timescale group changed (2026-08-01)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=BAC_CTG6"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=BAC_CTG6#BAC_CTG6/2026-08-01/group</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=BAC_CTG6"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=BAC_CTG6#BAC_CTG6/2026-08-01/group</id>
     <updated>2026-10-19T00:00:00Z</updated>
     <summary>Seasonal: off a week or more in 2026-07 to Multi-day: off 1–7 days in 2026-08</summary>
   </entry>
   <entry>
     <title>BAC_CTG6: Bidding approach shifted (2026-07-21)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=BAC_CTG6"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=BAC_CTG6#BAC_CTG6/2026-07-21/bidding</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=BAC_CTG6"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=BAC_CTG6#BAC_CTG6/2026-07-21/bidding</id>
     <updated>2026-10-20T00:00:00Z</updated>
     <summary>Offer price vs peer median: $62 to -$24/MWh</summary>
   </entry>
   <entry>
     <title>BAC_CTG6: Timescale group changed (2026-07-01)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=BAC_CTG6"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=BAC_CTG6#BAC_CTG6/2026-07-01/group</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=BAC_CTG6"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=BAC_CTG6#BAC_CTG6/2026-07-01/group</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Daily, over 2 a week in 2026-06 to Seasonal: off a week or more in 2026-07</summary>
   </entry>
   <entry>
     <title>BAC_CTG6: Outage ended (2026-06-01)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=BAC_CTG6"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=BAC_CTG6#BAC_CTG6/2026-06-01/outage_end</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=BAC_CTG6"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=BAC_CTG6#BAC_CTG6/2026-06-01/outage_end</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Back from a 16-day outage</summary>
   </entry>
   <entry>
     <title>BAC_CTG6: Outage started (2026-05-16)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=BAC_CTG6"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=BAC_CTG6#BAC_CTG6/2026-05-16/outage_start</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=BAC_CTG6"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=BAC_CTG6#BAC_CTG6/2026-05-16/outage_start</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Outage began, lasting 16 days</summary>
   </entry>
   <entry>
     <title>BAC_CTG6: Bidding approach shifted (2026-05-09)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=BAC_CTG6"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=BAC_CTG6#BAC_CTG6/2026-05-09/bidding</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=BAC_CTG6"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=BAC_CTG6#BAC_CTG6/2026-05-09/bidding</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Offer price vs peer median: $30 to $63/MWh</summary>
   </entry>
   <entry>
     <title>BAC_CTG6: Bidding approach shifted (2026-04-14)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=BAC_CTG6"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=BAC_CTG6#BAC_CTG6/2026-04-14/bidding</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=BAC_CTG6"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=BAC_CTG6#BAC_CTG6/2026-04-14/bidding</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Offer price vs peer median: $44 to $30/MWh</summary>
   </entry>
   <entry>
     <title>BAC_CTG6: Timescale group changed (2026-04-01)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=BAC_CTG6"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=BAC_CTG6#BAC_CTG6/2026-04-01/group</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=BAC_CTG6"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=BAC_CTG6#BAC_CTG6/2026-04-01/group</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Multi-day: off 1–7 days in 2026-03 to Daily, 1–2 a week in 2026-04</summary>
   </entry>
   <entry>
     <title>BAC_CTG6: Timescale group changed (2026-03-01)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=BAC_CTG6"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=BAC_CTG6#BAC_CTG6/2026-03-01/group</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=BAC_CTG6"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=BAC_CTG6#BAC_CTG6/2026-03-01/group</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Seasonal: off a week or more in 2026-02 to Multi-day: off 1–7 days in 2026-03</summary>
   </entry>
   <entry>
     <title>BAC_CTG6: Timescale group changed (2026-02-01)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=BAC_CTG6"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=BAC_CTG6#BAC_CTG6/2026-02-01/group</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=BAC_CTG6"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=BAC_CTG6#BAC_CTG6/2026-02-01/group</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Multi-day: off 1–7 days in 2026-01 to Seasonal: off a week or more in 2026-02</summary>
   </entry>

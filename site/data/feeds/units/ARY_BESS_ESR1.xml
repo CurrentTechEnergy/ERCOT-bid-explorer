@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
   <title>ARY_BESS_ESR1: bidding and operating changes</title>
-  <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ARY_BESS_ESR1"/>
-  <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ARY_BESS_ESR1</id>
+  <link href="https://ercotbids.currenttech.energy/unit.html?unit=ARY_BESS_ESR1"/>
+  <id>https://ercotbids.currenttech.energy/unit.html?unit=ARY_BESS_ESR1</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
     <title>ARY_BESS_ESR1: New battery (2026-06-29)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ARY_BESS_ESR1"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ARY_BESS_ESR1#ARY_BESS_ESR1/2026-06-29/battery_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=ARY_BESS_ESR1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=ARY_BESS_ESR1#ARY_BESS_ESR1/2026-06-29/battery_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>First day charging or discharging: 20 MW, 8 MWh</summary>
   </entry>

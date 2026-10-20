@@ -1,69 +1,69 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
   <title>STEAM_STEAM_3: bidding and operating changes</title>
-  <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=STEAM_STEAM_3"/>
-  <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=STEAM_STEAM_3</id>
+  <link href="https://ercotbids.currenttech.energy/unit.html?unit=STEAM_STEAM_3"/>
+  <id>https://ercotbids.currenttech.energy/unit.html?unit=STEAM_STEAM_3</id>
   <updated>2026-10-19T00:00:00Z</updated>
   <entry>
     <title>STEAM_STEAM_3: Timescale group changed (2026-08-01)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=STEAM_STEAM_3"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=STEAM_STEAM_3#STEAM_STEAM_3/2026-08-01/group</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=STEAM_STEAM_3"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=STEAM_STEAM_3#STEAM_STEAM_3/2026-08-01/group</id>
     <updated>2026-10-19T00:00:00Z</updated>
     <summary>Multi-day: off 1–7 days in 2026-07 to Daily, over 2 a week in 2026-08</summary>
   </entry>
   <entry>
     <title>STEAM_STEAM_3: Outage ended (2026-07-21)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=STEAM_STEAM_3"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=STEAM_STEAM_3#STEAM_STEAM_3/2026-07-21/outage_end</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=STEAM_STEAM_3"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=STEAM_STEAM_3#STEAM_STEAM_3/2026-07-21/outage_end</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Back from a 10-day outage</summary>
   </entry>
   <entry>
     <title>STEAM_STEAM_3: Outage started (2026-07-12)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=STEAM_STEAM_3"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=STEAM_STEAM_3#STEAM_STEAM_3/2026-07-12/outage_start</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=STEAM_STEAM_3"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=STEAM_STEAM_3#STEAM_STEAM_3/2026-07-12/outage_start</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Outage began, lasting 10 days</summary>
   </entry>
   <entry>
     <title>STEAM_STEAM_3: Outage ended (2026-07-08)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=STEAM_STEAM_3"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=STEAM_STEAM_3#STEAM_STEAM_3/2026-07-08/outage_end</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=STEAM_STEAM_3"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=STEAM_STEAM_3#STEAM_STEAM_3/2026-07-08/outage_end</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Back from a 15-day outage</summary>
   </entry>
   <entry>
     <title>STEAM_STEAM_3: Outage started (2026-06-23)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=STEAM_STEAM_3"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=STEAM_STEAM_3#STEAM_STEAM_3/2026-06-23/outage_start</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=STEAM_STEAM_3"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=STEAM_STEAM_3#STEAM_STEAM_3/2026-06-23/outage_start</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Outage began, lasting 15 days</summary>
   </entry>
   <entry>
     <title>STEAM_STEAM_3: Timescale group changed (2026-05-01)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=STEAM_STEAM_3"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=STEAM_STEAM_3#STEAM_STEAM_3/2026-05-01/group</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=STEAM_STEAM_3"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=STEAM_STEAM_3#STEAM_STEAM_3/2026-05-01/group</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Daily, under 1 shutdown a week in 2026-04 to Multi-day: off 1–7 days in 2026-05</summary>
   </entry>
   <entry>
     <title>STEAM_STEAM_3: Bidding approach shifted (2026-04-24)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=STEAM_STEAM_3"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=STEAM_STEAM_3#STEAM_STEAM_3/2026-04-24/bidding</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=STEAM_STEAM_3"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=STEAM_STEAM_3#STEAM_STEAM_3/2026-04-24/bidding</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Offer price vs peer median: $75 to $39/MWh</summary>
   </entry>
   <entry>
     <title>STEAM_STEAM_3: Timescale group changed (2026-04-01)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=STEAM_STEAM_3"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=STEAM_STEAM_3#STEAM_STEAM_3/2026-04-01/group</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=STEAM_STEAM_3"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=STEAM_STEAM_3#STEAM_STEAM_3/2026-04-01/group</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Seasonal: off a week or more in 2026-03 to Daily, under 1 shutdown a week in 2026-04</summary>
   </entry>
   <entry>
     <title>STEAM_STEAM_3: Shut down after a long run (2026-03-24)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=STEAM_STEAM_3"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=STEAM_STEAM_3#STEAM_STEAM_3/2026-03-24/shutdown_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=STEAM_STEAM_3"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=STEAM_STEAM_3#STEAM_STEAM_3/2026-03-24/shutdown_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Shut down for 713 h after 51 days without a shutdown</summary>
   </entry>

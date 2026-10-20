@@ -1,55 +1,55 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
   <title>KEECHI: bidding and operating changes</title>
-  <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=KEECHI"/>
-  <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=KEECHI</id>
+  <link href="https://ercotbids.currenttech.energy/unit.html?unit=KEECHI"/>
+  <id>https://ercotbids.currenttech.energy/unit.html?unit=KEECHI</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
     <title>KEECHI: New floor (2026-02-01)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=KEECHI"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=KEECHI#KEECHI/2026-02-01/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=KEECHI"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=KEECHI#KEECHI/2026-02-01/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$44 to floor -$45</summary>
   </entry>
   <entry>
     <title>KEECHI: New floor (2025-02-01)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=KEECHI"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=KEECHI#KEECHI/2025-02-01/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=KEECHI"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=KEECHI#KEECHI/2025-02-01/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$78 to floor -$44</summary>
   </entry>
   <entry>
     <title>KEECHI: New floor (2024-02-01)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=KEECHI"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=KEECHI#KEECHI/2024-02-01/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=KEECHI"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=KEECHI#KEECHI/2024-02-01/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$76 to floor -$78</summary>
   </entry>
   <entry>
     <title>KEECHI: New floor (2023-02-01)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=KEECHI"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=KEECHI#KEECHI/2023-02-01/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=KEECHI"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=KEECHI#KEECHI/2023-02-01/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$74 to floor -$76</summary>
   </entry>
   <entry>
     <title>KEECHI: New floor (2022-02-01)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=KEECHI"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=KEECHI#KEECHI/2022-02-01/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=KEECHI"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=KEECHI#KEECHI/2022-02-01/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$72 to floor -$74</summary>
   </entry>
   <entry>
     <title>KEECHI: New floor (2021-02-01)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=KEECHI"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=KEECHI#KEECHI/2021-02-01/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=KEECHI"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=KEECHI#KEECHI/2021-02-01/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$70 to floor -$72</summary>
   </entry>
   <entry>
     <title>KEECHI: New floor (2020-05-05)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=KEECHI"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=KEECHI#KEECHI/2020-05-05/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=KEECHI"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=KEECHI#KEECHI/2020-05-05/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$31 to floor -$70</summary>
   </entry>

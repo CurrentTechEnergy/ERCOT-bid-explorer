@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
   <title>INDNENR_UNIT_2B: bidding and operating changes</title>
-  <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=INDNENR_UNIT_2B"/>
-  <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=INDNENR_UNIT_2B</id>
+  <link href="https://ercotbids.currenttech.energy/unit.html?unit=INDNENR_UNIT_2B"/>
+  <id>https://ercotbids.currenttech.energy/unit.html?unit=INDNENR_UNIT_2B</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
     <title>INDNENR: New floor (2022-01-05)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=INDNENR"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=INDNENR#INDNENR/2022-01-05/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=INDNENR"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=INDNENR#INDNENR/2022-01-05/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$31 to floor -$33</summary>
   </entry>
   <entry>
     <title>INDNENR: New floor (2020-07-22)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=INDNENR"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=INDNENR#INDNENR/2020-07-22/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=INDNENR"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=INDNENR#INDNENR/2020-07-22/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$3 to floor -$31</summary>
   </entry>

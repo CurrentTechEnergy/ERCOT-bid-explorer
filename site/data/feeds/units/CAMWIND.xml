@@ -1,41 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
   <title>CAMWIND: bidding and operating changes</title>
-  <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CAMWIND"/>
-  <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CAMWIND</id>
+  <link href="https://ercotbids.currenttech.energy/unit.html?unit=CAMWIND"/>
+  <id>https://ercotbids.currenttech.energy/unit.html?unit=CAMWIND</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
     <title>CAMWIND: New floor (2025-12-16)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CAMWIND"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CAMWIND#CAMWIND/2025-12-16/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=CAMWIND"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=CAMWIND#CAMWIND/2025-12-16/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$30 to floor -$2</summary>
   </entry>
   <entry>
     <title>CAMWIND: New floor (2023-11-29)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CAMWIND"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CAMWIND#CAMWIND/2023-11-29/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=CAMWIND"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=CAMWIND#CAMWIND/2023-11-29/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$41 to floor -$30</summary>
   </entry>
   <entry>
     <title>CAMWIND: Episode (2023-05-23)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CAMWIND"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CAMWIND#CAMWIND/2023-05-23/renew_episode</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=CAMWIND"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=CAMWIND#CAMWIND/2023-05-23/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Episode: floor -$41 to -$23 for the episode for 1 day(s)</summary>
   </entry>
   <entry>
     <title>CAMWIND: New floor (2022-01-28)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CAMWIND"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CAMWIND#CAMWIND/2022-01-28/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=CAMWIND"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=CAMWIND#CAMWIND/2022-01-28/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$30 to floor -$41</summary>
   </entry>
   <entry>
     <title>CAMWIND: New floor (2019-04-24)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CAMWIND"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=CAMWIND#CAMWIND/2019-04-24/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=CAMWIND"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=CAMWIND#CAMWIND/2019-04-24/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$35 to floor -$30</summary>
   </entry>

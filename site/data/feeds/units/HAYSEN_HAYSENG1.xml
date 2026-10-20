@@ -1,90 +1,90 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
   <title>HAYSEN_HAYSENG1: bidding and operating changes</title>
-  <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=HAYSEN_HAYSENG1"/>
-  <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=HAYSEN_HAYSENG1</id>
+  <link href="https://ercotbids.currenttech.energy/unit.html?unit=HAYSEN_HAYSENG1"/>
+  <id>https://ercotbids.currenttech.energy/unit.html?unit=HAYSEN_HAYSENG1</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
     <title>HAYSEN_HAYSENG1: Timescale group changed (2026-07-01)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=HAYSEN_HAYSENG1"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=HAYSEN_HAYSENG1#HAYSEN_HAYSENG1/2026-07-01/group</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=HAYSEN_HAYSENG1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=HAYSEN_HAYSENG1#HAYSEN_HAYSENG1/2026-07-01/group</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Daily, over 2 a week in 2026-06 to Never off in 2026-07</summary>
   </entry>
   <entry>
     <title>HAYSEN_HAYSENG1: Shut down despite a day-ahead award (2026-06-20)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=HAYSEN_HAYSENG1"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=HAYSEN_HAYSENG1#HAYSEN_HAYSENG1/2026-06-20/shutdown_award</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=HAYSEN_HAYSENG1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=HAYSEN_HAYSENG1#HAYSEN_HAYSENG1/2026-06-20/shutdown_award</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Shut down for 19 h although a day-ahead award covered 100% of the window</summary>
   </entry>
   <entry>
     <title>HAYSEN_HAYSENG1: Timescale group changed (2026-06-01)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=HAYSEN_HAYSENG1"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=HAYSEN_HAYSENG1#HAYSEN_HAYSENG1/2026-06-01/group</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=HAYSEN_HAYSENG1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=HAYSEN_HAYSENG1#HAYSEN_HAYSENG1/2026-06-01/group</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Multi-day: off 1–7 days in 2026-05 to Daily, over 2 a week in 2026-06</summary>
   </entry>
   <entry>
     <title>HAYSEN_HAYSENG1: Bidding approach shifted (2026-05-17)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=HAYSEN_HAYSENG1"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=HAYSEN_HAYSENG1#HAYSEN_HAYSENG1/2026-05-17/bidding</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=HAYSEN_HAYSENG1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=HAYSEN_HAYSENG1#HAYSEN_HAYSENG1/2026-05-17/bidding</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Offer price vs peer median: -$13 to $0/MWh</summary>
   </entry>
   <entry>
     <title>HAYSEN_HAYSENG1: Outage ended (2026-05-16)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=HAYSEN_HAYSENG1"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=HAYSEN_HAYSENG1#HAYSEN_HAYSENG1/2026-05-16/outage_end</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=HAYSEN_HAYSENG1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=HAYSEN_HAYSENG1#HAYSEN_HAYSENG1/2026-05-16/outage_end</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Back from a 24-day outage</summary>
   </entry>
   <entry>
     <title>HAYSEN_HAYSENG1: Timescale group changed (2026-05-01)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=HAYSEN_HAYSENG1"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=HAYSEN_HAYSENG1#HAYSEN_HAYSENG1/2026-05-01/group</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=HAYSEN_HAYSENG1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=HAYSEN_HAYSENG1#HAYSEN_HAYSENG1/2026-05-01/group</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Daily, 1–2 a week in 2026-04 to Multi-day: off 1–7 days in 2026-05</summary>
   </entry>
   <entry>
     <title>HAYSEN_HAYSENG1: Outage started (2026-04-22)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=HAYSEN_HAYSENG1"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=HAYSEN_HAYSENG1#HAYSEN_HAYSENG1/2026-04-22/outage_start</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=HAYSEN_HAYSENG1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=HAYSEN_HAYSENG1#HAYSEN_HAYSENG1/2026-04-22/outage_start</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Outage began, lasting 24 days</summary>
   </entry>
   <entry>
     <title>HAYSEN_HAYSENG1: Bidding approach shifted (2026-04-13)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=HAYSEN_HAYSENG1"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=HAYSEN_HAYSENG1#HAYSEN_HAYSENG1/2026-04-13/bidding</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=HAYSEN_HAYSENG1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=HAYSEN_HAYSENG1#HAYSEN_HAYSENG1/2026-04-13/bidding</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Offer price vs peer median: $1 to -$13/MWh</summary>
   </entry>
   <entry>
     <title>HAYSEN_HAYSENG1: Shut down despite a day-ahead award (2026-02-12)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=HAYSEN_HAYSENG1"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=HAYSEN_HAYSENG1#HAYSEN_HAYSENG1/2026-02-12/shutdown_award</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=HAYSEN_HAYSENG1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=HAYSEN_HAYSENG1#HAYSEN_HAYSENG1/2026-02-12/shutdown_award</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Shut down for 17 h although a day-ahead award covered 100% of the window</summary>
   </entry>
   <entry>
     <title>HAYSEN_HAYSENG1: Shut down despite a day-ahead award (2026-01-14)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=HAYSEN_HAYSENG1"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=HAYSEN_HAYSENG1#HAYSEN_HAYSENG1/2026-01-14/shutdown_award</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=HAYSEN_HAYSENG1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=HAYSEN_HAYSENG1#HAYSEN_HAYSENG1/2026-01-14/shutdown_award</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Shut down for 24 h although a day-ahead award covered 100% of the window</summary>
   </entry>
   <entry>
     <title>HAYSEN_HAYSENG1: Shut down despite a day-ahead award (2026-01-07)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=HAYSEN_HAYSENG1"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=HAYSEN_HAYSENG1#HAYSEN_HAYSENG1/2026-01-07/shutdown_award</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=HAYSEN_HAYSENG1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=HAYSEN_HAYSENG1#HAYSEN_HAYSENG1/2026-01-07/shutdown_award</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Shut down for 20 h although a day-ahead award covered 100% of the window</summary>
   </entry>
   <entry>
     <title>HAYSEN_HAYSENG1: Timescale group changed (2026-01-01)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=HAYSEN_HAYSENG1"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=HAYSEN_HAYSENG1#HAYSEN_HAYSENG1/2026-01-01/group</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=HAYSEN_HAYSENG1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=HAYSEN_HAYSENG1#HAYSEN_HAYSENG1/2026-01-01/group</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Multi-day: off 1–7 days in 2025-12 to Daily, over 2 a week in 2026-01</summary>
   </entry>

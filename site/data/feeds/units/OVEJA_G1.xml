@@ -1,27 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
   <title>OVEJA_G1: bidding and operating changes</title>
-  <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=OVEJA_G1"/>
-  <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=OVEJA_G1</id>
+  <link href="https://ercotbids.currenttech.energy/unit.html?unit=OVEJA_G1"/>
+  <id>https://ercotbids.currenttech.energy/unit.html?unit=OVEJA_G1</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
     <title>OVEJA: New floor (2026-07-01)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=OVEJA"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=OVEJA#OVEJA/2026-07-01/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=OVEJA"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=OVEJA#OVEJA/2026-07-01/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$40 to floor -$41</summary>
   </entry>
   <entry>
     <title>OVEJA: New floor (2025-06-11)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=OVEJA"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=OVEJA#OVEJA/2025-06-11/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=OVEJA"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=OVEJA#OVEJA/2025-06-11/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$39 to floor -$40</summary>
   </entry>
   <entry>
     <title>OVEJA: New floor (2025-01-28)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=OVEJA"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=OVEJA#OVEJA/2025-01-28/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=OVEJA"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=OVEJA#OVEJA/2025-01-28/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$32 to floor -$39</summary>
   </entry>

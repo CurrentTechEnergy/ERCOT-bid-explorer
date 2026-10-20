@@ -1,69 +1,69 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
   <title>TRBT_SLR: bidding and operating changes</title>
-  <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TRBT_SLR"/>
-  <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TRBT_SLR</id>
+  <link href="https://ercotbids.currenttech.energy/unit.html?unit=TRBT_SLR"/>
+  <id>https://ercotbids.currenttech.energy/unit.html?unit=TRBT_SLR</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
     <title>TRBT_SLR: Episode (2026-07-18)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TRBT_SLR"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TRBT_SLR#TRBT_SLR/2026-07-18/renew_episode</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=TRBT_SLR"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=TRBT_SLR#TRBT_SLR/2026-07-18/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Episode: floor -$30 to -$37 for the episode for 1 day(s)</summary>
   </entry>
   <entry>
     <title>TRBT_SLR: Episode (2026-05-31)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TRBT_SLR"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TRBT_SLR#TRBT_SLR/2026-05-31/renew_episode</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=TRBT_SLR"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=TRBT_SLR#TRBT_SLR/2026-05-31/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Episode: floor -$30 to -$37 for the episode for 1 day(s)</summary>
   </entry>
   <entry>
     <title>TRBT_SLR: Episode (2026-05-20)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TRBT_SLR"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TRBT_SLR#TRBT_SLR/2026-05-20/renew_episode</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=TRBT_SLR"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=TRBT_SLR#TRBT_SLR/2026-05-20/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Episode: floor -$30 to -$37 for the episode for 1 day(s)</summary>
   </entry>
   <entry>
     <title>TRBT_SLR: Episode (2025-12-25)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TRBT_SLR"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TRBT_SLR#TRBT_SLR/2025-12-25/renew_episode</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=TRBT_SLR"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=TRBT_SLR#TRBT_SLR/2025-12-25/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Episode: floor -$30 to -$37 for the episode for 1 day(s)</summary>
   </entry>
   <entry>
     <title>TRBT_SLR: Episode (2025-12-16)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TRBT_SLR"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TRBT_SLR#TRBT_SLR/2025-12-16/renew_episode</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=TRBT_SLR"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=TRBT_SLR#TRBT_SLR/2025-12-16/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Episode: floor -$30 to -$37 for the episode for 1 day(s)</summary>
   </entry>
   <entry>
     <title>TRBT_SLR: Episode (2025-12-02)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TRBT_SLR"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TRBT_SLR#TRBT_SLR/2025-12-02/renew_episode</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=TRBT_SLR"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=TRBT_SLR#TRBT_SLR/2025-12-02/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Episode: floor -$30 to -$37 for the episode for 2 day(s)</summary>
   </entry>
   <entry>
     <title>TRBT_SLR: New floor (2025-11-25)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TRBT_SLR"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TRBT_SLR#TRBT_SLR/2025-11-25/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=TRBT_SLR"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=TRBT_SLR#TRBT_SLR/2025-11-25/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$37 to floor -$30</summary>
   </entry>
   <entry>
     <title>TRBT_SLR: New floor (2024-08-15)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TRBT_SLR"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TRBT_SLR#TRBT_SLR/2024-08-15/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=TRBT_SLR"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=TRBT_SLR#TRBT_SLR/2024-08-15/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$35 to floor -$37</summary>
   </entry>
   <entry>
     <title>TRBT_SLR: New floor (2024-08-09)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TRBT_SLR"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TRBT_SLR#TRBT_SLR/2024-08-09/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=TRBT_SLR"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=TRBT_SLR#TRBT_SLR/2024-08-09/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$3 to floor -$35</summary>
   </entry>

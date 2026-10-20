@@ -1,181 +1,181 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
   <title>PALMWIND: bidding and operating changes</title>
-  <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PALMWIND"/>
-  <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PALMWIND</id>
+  <link href="https://ercotbids.currenttech.energy/unit.html?unit=PALMWIND"/>
+  <id>https://ercotbids.currenttech.energy/unit.html?unit=PALMWIND</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
     <title>PALMWIND: New floor (2026-08-11)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PALMWIND"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PALMWIND#PALMWIND/2026-08-11/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=PALMWIND"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=PALMWIND#PALMWIND/2026-08-11/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$40 to floor -$41</summary>
   </entry>
   <entry>
     <title>PALMWIND: New floor (2025-07-22)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PALMWIND"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PALMWIND#PALMWIND/2025-07-22/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=PALMWIND"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=PALMWIND#PALMWIND/2025-07-22/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$38 to floor -$40</summary>
   </entry>
   <entry>
     <title>PALMWIND: New floor (2025-05-16)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PALMWIND"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PALMWIND#PALMWIND/2025-05-16/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=PALMWIND"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=PALMWIND#PALMWIND/2025-05-16/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$34 to floor -$38</summary>
   </entry>
   <entry>
     <title>PALMWIND: Back to an earlier floor (2022-07-22)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PALMWIND"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PALMWIND#PALMWIND/2022-07-22/renew_floor_back</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=PALMWIND"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=PALMWIND#PALMWIND/2022-07-22/renew_floor_back</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Back to an earlier floor: floor -$33 to floor -$34</summary>
   </entry>
   <entry>
     <title>PALMWIND: Back to an earlier floor (2022-05-07)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PALMWIND"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PALMWIND#PALMWIND/2022-05-07/renew_floor_back</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=PALMWIND"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=PALMWIND#PALMWIND/2022-05-07/renew_floor_back</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Back to an earlier floor: floor -$34 to floor -$33</summary>
   </entry>
   <entry>
     <title>PALMWIND: New floor (2022-04-22)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PALMWIND"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PALMWIND#PALMWIND/2022-04-22/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=PALMWIND"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=PALMWIND#PALMWIND/2022-04-22/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$33 to floor -$34</summary>
   </entry>
   <entry>
     <title>PALMWIND: New floor (2022-03-30)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PALMWIND"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PALMWIND#PALMWIND/2022-03-30/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=PALMWIND"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=PALMWIND#PALMWIND/2022-03-30/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$32 to floor -$33</summary>
   </entry>
   <entry>
     <title>PALMWIND: Stopped moving within the day (2022-02-16)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PALMWIND"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PALMWIND#PALMWIND/2022-02-16/renew_moving_off</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=PALMWIND"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=PALMWIND#PALMWIND/2022-02-16/renew_moving_off</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Stopped moving within the day: v to floor -$32</summary>
   </entry>
   <entry>
     <title>PALMWIND: Started moving within the day (2021-06-17)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PALMWIND"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PALMWIND#PALMWIND/2021-06-17/renew_moving_on</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=PALMWIND"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=PALMWIND#PALMWIND/2021-06-17/renew_moving_on</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Started moving within the day: floor -$24 to v</summary>
   </entry>
   <entry>
     <title>PALMWIND: Stopped moving within the day (2021-06-10)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PALMWIND"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PALMWIND#PALMWIND/2021-06-10/renew_moving_off</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=PALMWIND"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=PALMWIND#PALMWIND/2021-06-10/renew_moving_off</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Stopped moving within the day: v to floor -$24</summary>
   </entry>
   <entry>
     <title>PALMWIND: Started moving within the day (2021-05-26)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PALMWIND"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PALMWIND#PALMWIND/2021-05-26/renew_moving_on</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=PALMWIND"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=PALMWIND#PALMWIND/2021-05-26/renew_moving_on</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Started moving within the day: floor -$24 to v</summary>
   </entry>
   <entry>
     <title>PALMWIND: New floor (2021-05-18)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PALMWIND"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PALMWIND#PALMWIND/2021-05-18/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=PALMWIND"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=PALMWIND#PALMWIND/2021-05-18/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor $0 to floor -$24</summary>
   </entry>
   <entry>
     <title>PALMWIND: Episode (2021-04-13)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PALMWIND"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PALMWIND#PALMWIND/2021-04-13/renew_episode</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=PALMWIND"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=PALMWIND#PALMWIND/2021-04-13/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Episode: floor $0 to -$17 for the episode for 1 day(s)</summary>
   </entry>
   <entry>
     <title>PALMWIND: New floor (2021-04-11)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PALMWIND"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PALMWIND#PALMWIND/2021-04-11/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=PALMWIND"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=PALMWIND#PALMWIND/2021-04-11/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$32 to floor $0</summary>
   </entry>
   <entry>
     <title>PALMWIND: New floor (2021-04-02)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PALMWIND"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PALMWIND#PALMWIND/2021-04-02/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=PALMWIND"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=PALMWIND#PALMWIND/2021-04-02/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor $6 to floor -$32</summary>
   </entry>
   <entry>
     <title>PALMWIND: Episode (2021-02-14)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PALMWIND"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PALMWIND#PALMWIND/2021-02-14/renew_episode</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=PALMWIND"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=PALMWIND#PALMWIND/2021-02-14/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Episode: floor $6 to $2,562 for the episode for 6 day(s)</summary>
   </entry>
   <entry>
     <title>PALMWIND: Stopped moving within the day (2021-01-28)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PALMWIND"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PALMWIND#PALMWIND/2021-01-28/renew_moving_off</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=PALMWIND"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=PALMWIND#PALMWIND/2021-01-28/renew_moving_off</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Stopped moving within the day: v to floor $6</summary>
   </entry>
   <entry>
     <title>PALMWIND: Formula off (2020-10-27)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PALMWIND"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PALMWIND#PALMWIND/2020-10-27/renew_formula_off</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=PALMWIND"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=PALMWIND#PALMWIND/2020-10-27/renew_formula_off</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Formula off: formula to v</summary>
   </entry>
   <entry>
     <title>PALMWIND: Formula terms changed (2020-10-15)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PALMWIND"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PALMWIND#PALMWIND/2020-10-15/renew_terms</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=PALMWIND"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=PALMWIND#PALMWIND/2020-10-15/renew_terms</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Formula terms changed: formula to formula</summary>
   </entry>
   <entry>
     <title>PALMWIND: Formula terms changed (2020-08-05)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PALMWIND"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PALMWIND#PALMWIND/2020-08-05/renew_terms</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=PALMWIND"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=PALMWIND#PALMWIND/2020-08-05/renew_terms</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Formula terms changed: formula to formula</summary>
   </entry>
   <entry>
     <title>PALMWIND: Formula terms changed (2020-07-15)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PALMWIND"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PALMWIND#PALMWIND/2020-07-15/renew_terms</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=PALMWIND"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=PALMWIND#PALMWIND/2020-07-15/renew_terms</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Formula terms changed: formula to formula</summary>
   </entry>
   <entry>
     <title>PALMWIND: Formula on (2020-06-10)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PALMWIND"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PALMWIND#PALMWIND/2020-06-10/renew_formula_on</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=PALMWIND"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=PALMWIND#PALMWIND/2020-06-10/renew_formula_on</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Formula on: v to formula</summary>
   </entry>
   <entry>
     <title>PALMWIND: Started moving within the day (2020-05-29)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PALMWIND"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PALMWIND#PALMWIND/2020-05-29/renew_moving_on</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=PALMWIND"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=PALMWIND#PALMWIND/2020-05-29/renew_moving_on</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Started moving within the day: floor $0 to v</summary>
   </entry>
   <entry>
     <title>PALMWIND: Back to an earlier floor (2020-04-06)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PALMWIND"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PALMWIND#PALMWIND/2020-04-06/renew_floor_back</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=PALMWIND"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=PALMWIND#PALMWIND/2020-04-06/renew_floor_back</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Back to an earlier floor: floor -$25 to floor $0</summary>
   </entry>
   <entry>
     <title>PALMWIND: New floor (2020-01-09)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PALMWIND"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PALMWIND#PALMWIND/2020-01-09/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=PALMWIND"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=PALMWIND#PALMWIND/2020-01-09/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor $0 to floor -$25</summary>
   </entry>

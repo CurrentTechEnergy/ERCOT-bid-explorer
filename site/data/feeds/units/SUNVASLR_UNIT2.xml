@@ -1,41 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
   <title>SUNVASLR_UNIT2: bidding and operating changes</title>
-  <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SUNVASLR_UNIT2"/>
-  <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SUNVASLR_UNIT2</id>
+  <link href="https://ercotbids.currenttech.energy/unit.html?unit=SUNVASLR_UNIT2"/>
+  <id>https://ercotbids.currenttech.energy/unit.html?unit=SUNVASLR_UNIT2</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
     <title>SUNVASLR: New floor (2026-06-16)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SUNVASLR"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SUNVASLR#SUNVASLR/2026-06-16/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=SUNVASLR"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=SUNVASLR#SUNVASLR/2026-06-16/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$57 to floor -$54</summary>
   </entry>
   <entry>
     <title>SUNVASLR: New floor (2025-10-17)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SUNVASLR"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SUNVASLR#SUNVASLR/2025-10-17/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=SUNVASLR"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=SUNVASLR#SUNVASLR/2025-10-17/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$38 to floor -$57</summary>
   </entry>
   <entry>
     <title>SUNVASLR: New floor (2025-10-03)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SUNVASLR"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SUNVASLR#SUNVASLR/2025-10-03/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=SUNVASLR"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=SUNVASLR#SUNVASLR/2025-10-03/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$61 to floor -$38</summary>
   </entry>
   <entry>
     <title>SUNVASLR: New floor (2023-07-28)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SUNVASLR"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SUNVASLR#SUNVASLR/2023-07-28/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=SUNVASLR"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=SUNVASLR#SUNVASLR/2023-07-28/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$33 to floor -$35</summary>
   </entry>
   <entry>
     <title>SUNVASLR: New floor (2022-12-16)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SUNVASLR"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SUNVASLR#SUNVASLR/2022-12-16/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=SUNVASLR"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=SUNVASLR#SUNVASLR/2022-12-16/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor $0 to floor -$33</summary>
   </entry>

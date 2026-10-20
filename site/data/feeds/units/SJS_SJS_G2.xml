@@ -1,125 +1,125 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
   <title>SJS_SJS_G2: bidding and operating changes</title>
-  <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SJS_SJS_G2"/>
-  <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SJS_SJS_G2</id>
+  <link href="https://ercotbids.currenttech.energy/unit.html?unit=SJS_SJS_G2"/>
+  <id>https://ercotbids.currenttech.energy/unit.html?unit=SJS_SJS_G2</id>
   <updated>2026-10-20T00:00:00Z</updated>
   <entry>
     <title>SJS_SJS_G2: Bidding approach shifted (2026-08-15)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SJS_SJS_G2"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SJS_SJS_G2#SJS_SJS_G2/2026-08-15/bidding</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=SJS_SJS_G2"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=SJS_SJS_G2#SJS_SJS_G2/2026-08-15/bidding</id>
     <updated>2026-10-20T00:00:00Z</updated>
     <summary>Running without an offer curve: 0% to 100% of the day</summary>
   </entry>
   <entry>
     <title>SJS_SJS_G2: Outage ended (2026-08-13)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SJS_SJS_G2"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SJS_SJS_G2#SJS_SJS_G2/2026-08-13/outage_end</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=SJS_SJS_G2"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=SJS_SJS_G2#SJS_SJS_G2/2026-08-13/outage_end</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Back from a 12-day outage</summary>
   </entry>
   <entry>
     <title>SJS_SJS_G2: Outage started (2026-08-01)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SJS_SJS_G2"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SJS_SJS_G2#SJS_SJS_G2/2026-08-01/outage_start</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=SJS_SJS_G2"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=SJS_SJS_G2#SJS_SJS_G2/2026-08-01/outage_start</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Outage began, lasting 12 days</summary>
   </entry>
   <entry>
     <title>SJS_SJS_G2: Outage ended (2026-07-24)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SJS_SJS_G2"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SJS_SJS_G2#SJS_SJS_G2/2026-07-24/outage_end</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=SJS_SJS_G2"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=SJS_SJS_G2#SJS_SJS_G2/2026-07-24/outage_end</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Back from a 8-day outage</summary>
   </entry>
   <entry>
     <title>SJS_SJS_G2: Outage started (2026-07-16)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SJS_SJS_G2"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SJS_SJS_G2#SJS_SJS_G2/2026-07-16/outage_start</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=SJS_SJS_G2"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=SJS_SJS_G2#SJS_SJS_G2/2026-07-16/outage_start</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Outage began, lasting 8 days</summary>
   </entry>
   <entry>
     <title>SJS_SJS_G2: Bidding approach shifted (2026-07-16)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SJS_SJS_G2"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SJS_SJS_G2#SJS_SJS_G2/2026-07-16/bidding</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=SJS_SJS_G2"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=SJS_SJS_G2#SJS_SJS_G2/2026-07-16/bidding</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Running without an offer curve: 100% to 0% of the day</summary>
   </entry>
   <entry>
     <title>SJS_SJS_G2: Outage ended (2026-07-08)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SJS_SJS_G2"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SJS_SJS_G2#SJS_SJS_G2/2026-07-08/outage_end</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=SJS_SJS_G2"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=SJS_SJS_G2#SJS_SJS_G2/2026-07-08/outage_end</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Back from a 14-day outage</summary>
   </entry>
   <entry>
     <title>SJS_SJS_G2: Outage started (2026-06-25)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SJS_SJS_G2"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SJS_SJS_G2#SJS_SJS_G2/2026-06-25/outage_start</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=SJS_SJS_G2"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=SJS_SJS_G2#SJS_SJS_G2/2026-06-25/outage_start</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Outage began, lasting 14 days</summary>
   </entry>
   <entry>
     <title>SJS_SJS_G2: Outage ended (2026-06-03)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SJS_SJS_G2"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SJS_SJS_G2#SJS_SJS_G2/2026-06-03/outage_end</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=SJS_SJS_G2"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=SJS_SJS_G2#SJS_SJS_G2/2026-06-03/outage_end</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Back from a 40-day outage</summary>
   </entry>
   <entry>
     <title>SJS_SJS_G2: Outage started (2026-04-25)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SJS_SJS_G2"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SJS_SJS_G2#SJS_SJS_G2/2026-04-25/outage_start</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=SJS_SJS_G2"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=SJS_SJS_G2#SJS_SJS_G2/2026-04-25/outage_start</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Outage began, lasting 40 days</summary>
   </entry>
   <entry>
     <title>SJS_SJS_G2: Bidding approach shifted (2026-04-22)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SJS_SJS_G2"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SJS_SJS_G2#SJS_SJS_G2/2026-04-22/bidding</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=SJS_SJS_G2"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=SJS_SJS_G2#SJS_SJS_G2/2026-04-22/bidding</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Running without an offer curve: 0% to 100% of the day</summary>
   </entry>
   <entry>
     <title>SJS_SJS_G2: Bidding approach shifted (2026-04-14)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SJS_SJS_G2"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SJS_SJS_G2#SJS_SJS_G2/2026-04-14/bidding</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=SJS_SJS_G2"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=SJS_SJS_G2#SJS_SJS_G2/2026-04-14/bidding</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Running without an offer curve: 100% to 0% of the day</summary>
   </entry>
   <entry>
     <title>SJS_SJS_G2: Bidding approach shifted (2026-04-06)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SJS_SJS_G2"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SJS_SJS_G2#SJS_SJS_G2/2026-04-06/bidding</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=SJS_SJS_G2"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=SJS_SJS_G2#SJS_SJS_G2/2026-04-06/bidding</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Running without an offer curve: 0% to 100% of the day</summary>
   </entry>
   <entry>
     <title>SJS_SJS_G2: Bidding approach shifted (2026-03-11)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SJS_SJS_G2"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SJS_SJS_G2#SJS_SJS_G2/2026-03-11/bidding</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=SJS_SJS_G2"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=SJS_SJS_G2#SJS_SJS_G2/2026-03-11/bidding</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Running without an offer curve: 100% to 0% of the day</summary>
   </entry>
   <entry>
     <title>SJS_SJS_G2: Bidding approach shifted (2026-02-21)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SJS_SJS_G2"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SJS_SJS_G2#SJS_SJS_G2/2026-02-21/bidding</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=SJS_SJS_G2"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=SJS_SJS_G2#SJS_SJS_G2/2026-02-21/bidding</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Running without an offer curve: 0% to 100% of the day</summary>
   </entry>
   <entry>
     <title>SJS_SJS_G2: Bidding approach shifted (2026-01-09)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SJS_SJS_G2"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SJS_SJS_G2#SJS_SJS_G2/2026-01-09/bidding</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=SJS_SJS_G2"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=SJS_SJS_G2#SJS_SJS_G2/2026-01-09/bidding</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Running without an offer curve: 100% to 0% of the day</summary>
   </entry>
   <entry>
     <title>SJS_SJS_G2: Outage ended (2025-12-09)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SJS_SJS_G2"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SJS_SJS_G2#SJS_SJS_G2/2025-12-09/outage_end</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=SJS_SJS_G2"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=SJS_SJS_G2#SJS_SJS_G2/2025-12-09/outage_end</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Back from a 10-day outage</summary>
   </entry>

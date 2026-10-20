@@ -1,34 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
   <title>HRNT_SLR_UNIT3: bidding and operating changes</title>
-  <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=HRNT_SLR_UNIT3"/>
-  <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=HRNT_SLR_UNIT3</id>
+  <link href="https://ercotbids.currenttech.energy/unit.html?unit=HRNT_SLR_UNIT3"/>
+  <id>https://ercotbids.currenttech.energy/unit.html?unit=HRNT_SLR_UNIT3</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
     <title>HRNT_SLR: Back to an earlier floor (2025-04-11)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=HRNT_SLR"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=HRNT_SLR#HRNT_SLR/2025-04-11/renew_floor_back</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=HRNT_SLR"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=HRNT_SLR#HRNT_SLR/2025-04-11/renew_floor_back</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Back to an earlier floor: floor -$62 to floor -$31</summary>
   </entry>
   <entry>
     <title>HRNT_SLR: New floor (2025-02-28)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=HRNT_SLR"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=HRNT_SLR#HRNT_SLR/2025-02-28/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=HRNT_SLR"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=HRNT_SLR#HRNT_SLR/2025-02-28/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$31 to floor -$62</summary>
   </entry>
   <entry>
     <title>HRNT_SLR: New floor (2024-12-11)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=HRNT_SLR"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=HRNT_SLR#HRNT_SLR/2024-12-11/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=HRNT_SLR"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=HRNT_SLR#HRNT_SLR/2024-12-11/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$2 to floor -$31</summary>
   </entry>
   <entry>
     <title>HRNT_SLR: New floor (2024-10-18)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=HRNT_SLR"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=HRNT_SLR#HRNT_SLR/2024-10-18/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=HRNT_SLR"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=HRNT_SLR#HRNT_SLR/2024-10-18/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor $0 to floor -$2</summary>
   </entry>

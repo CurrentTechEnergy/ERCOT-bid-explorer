@@ -1,69 +1,69 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
   <title>AZ_AZ_G3: bidding and operating changes</title>
-  <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=AZ_AZ_G3"/>
-  <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=AZ_AZ_G3</id>
+  <link href="https://ercotbids.currenttech.energy/unit.html?unit=AZ_AZ_G3"/>
+  <id>https://ercotbids.currenttech.energy/unit.html?unit=AZ_AZ_G3</id>
   <updated>2026-10-19T00:00:00Z</updated>
   <entry>
     <title>AZ_AZ_G3: Timescale group changed (2026-08-01)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=AZ_AZ_G3"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=AZ_AZ_G3#AZ_AZ_G3/2026-08-01/group</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=AZ_AZ_G3"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=AZ_AZ_G3#AZ_AZ_G3/2026-08-01/group</id>
     <updated>2026-10-19T00:00:00Z</updated>
     <summary>Seasonal: off a week or more in 2026-07 to Multi-day: off 1–7 days in 2026-08</summary>
   </entry>
   <entry>
     <title>AZ_AZ_G3: Timescale group changed (2026-07-01)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=AZ_AZ_G3"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=AZ_AZ_G3#AZ_AZ_G3/2026-07-01/group</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=AZ_AZ_G3"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=AZ_AZ_G3#AZ_AZ_G3/2026-07-01/group</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Daily, 1–2 a week in 2026-06 to Seasonal: off a week or more in 2026-07</summary>
   </entry>
   <entry>
     <title>AZ_AZ_G3: Timescale group changed (2026-06-01)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=AZ_AZ_G3"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=AZ_AZ_G3#AZ_AZ_G3/2026-06-01/group</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=AZ_AZ_G3"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=AZ_AZ_G3#AZ_AZ_G3/2026-06-01/group</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Multi-day: off 1–7 days in 2026-05 to Daily, 1–2 a week in 2026-06</summary>
   </entry>
   <entry>
     <title>AZ_AZ_G3: Bidding approach shifted (2026-05-14)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=AZ_AZ_G3"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=AZ_AZ_G3#AZ_AZ_G3/2026-05-14/bidding</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=AZ_AZ_G3"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=AZ_AZ_G3#AZ_AZ_G3/2026-05-14/bidding</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Offer price vs peer median: $153 to $288/MWh</summary>
   </entry>
   <entry>
     <title>AZ_AZ_G3: Timescale group changed (2026-05-01)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=AZ_AZ_G3"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=AZ_AZ_G3#AZ_AZ_G3/2026-05-01/group</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=AZ_AZ_G3"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=AZ_AZ_G3#AZ_AZ_G3/2026-05-01/group</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Daily, 1–2 a week in 2026-04 to Multi-day: off 1–7 days in 2026-05</summary>
   </entry>
   <entry>
     <title>AZ_AZ_G3: Timescale group changed (2026-04-01)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=AZ_AZ_G3"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=AZ_AZ_G3#AZ_AZ_G3/2026-04-01/group</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=AZ_AZ_G3"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=AZ_AZ_G3#AZ_AZ_G3/2026-04-01/group</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Multi-day: off 1–7 days in 2026-03 to Daily, 1–2 a week in 2026-04</summary>
   </entry>
   <entry>
     <title>AZ_AZ_G3: Bidding approach shifted (2026-03-11)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=AZ_AZ_G3"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=AZ_AZ_G3#AZ_AZ_G3/2026-03-11/bidding</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=AZ_AZ_G3"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=AZ_AZ_G3#AZ_AZ_G3/2026-03-11/bidding</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Offer price vs peer median: $23 to $152/MWh</summary>
   </entry>
   <entry>
     <title>AZ_AZ_G3: Timescale group changed (2026-03-01)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=AZ_AZ_G3"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=AZ_AZ_G3#AZ_AZ_G3/2026-03-01/group</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=AZ_AZ_G3"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=AZ_AZ_G3#AZ_AZ_G3/2026-03-01/group</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Seasonal: off a week or more in 2026-02 to Multi-day: off 1–7 days in 2026-03</summary>
   </entry>
   <entry>
     <title>AZ_AZ_G3: Timescale group changed (2026-02-01)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=AZ_AZ_G3"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=AZ_AZ_G3#AZ_AZ_G3/2026-02-01/group</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=AZ_AZ_G3"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=AZ_AZ_G3#AZ_AZ_G3/2026-02-01/group</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Multi-day: off 1–7 days in 2026-01 to Seasonal: off a week or more in 2026-02</summary>
   </entry>

@@ -1,90 +1,90 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
   <title>TEN_CC1: bidding and operating changes</title>
-  <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TEN_CC1"/>
-  <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TEN_CC1</id>
+  <link href="https://ercotbids.currenttech.energy/unit.html?unit=TEN_CC1"/>
+  <id>https://ercotbids.currenttech.energy/unit.html?unit=TEN_CC1</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
     <title>TEN_CC1: Shut down after a long run (2026-07-08)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TEN_CC1"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TEN_CC1#TEN_CC1/2026-07-08/shutdown_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=TEN_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=TEN_CC1#TEN_CC1/2026-07-08/shutdown_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Shut down for 157 h after 55 days without a shutdown</summary>
   </entry>
   <entry>
     <title>TEN_CC1: Outage ended (2026-07-01)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TEN_CC1"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TEN_CC1#TEN_CC1/2026-07-01/outage_end</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=TEN_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=TEN_CC1#TEN_CC1/2026-07-01/outage_end</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Back from a 25-day outage</summary>
   </entry>
   <entry>
     <title>TEN_CC1: Outage started (2026-06-06)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TEN_CC1"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TEN_CC1#TEN_CC1/2026-06-06/outage_start</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=TEN_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=TEN_CC1#TEN_CC1/2026-06-06/outage_start</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Outage began, lasting 25 days</summary>
   </entry>
   <entry>
     <title>TEN_CC1: Timescale group changed (2026-06-01)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TEN_CC1"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TEN_CC1#TEN_CC1/2026-06-01/group</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=TEN_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=TEN_CC1#TEN_CC1/2026-06-01/group</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Multi-day: off 1–7 days in 2026-05 to Never off in 2026-06</summary>
   </entry>
   <entry>
     <title>TEN_CC1: Timescale group changed (2026-05-01)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TEN_CC1"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TEN_CC1#TEN_CC1/2026-05-01/group</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=TEN_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=TEN_CC1#TEN_CC1/2026-05-01/group</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Daily, under 1 shutdown a week in 2026-04 to Multi-day: off 1–7 days in 2026-05</summary>
   </entry>
   <entry>
     <title>TEN_CC1: Outage ended (2026-04-30)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TEN_CC1"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TEN_CC1#TEN_CC1/2026-04-30/outage_end</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=TEN_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=TEN_CC1#TEN_CC1/2026-04-30/outage_end</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Back from a 9-day outage</summary>
   </entry>
   <entry>
     <title>TEN_CC1: Outage started (2026-04-22)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TEN_CC1"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TEN_CC1#TEN_CC1/2026-04-22/outage_start</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=TEN_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=TEN_CC1#TEN_CC1/2026-04-22/outage_start</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Outage began, lasting 9 days</summary>
   </entry>
   <entry>
     <title>TEN_CC1: Outage ended (2026-04-20)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TEN_CC1"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TEN_CC1#TEN_CC1/2026-04-20/outage_end</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=TEN_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=TEN_CC1#TEN_CC1/2026-04-20/outage_end</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Back from a 17-day outage</summary>
   </entry>
   <entry>
     <title>TEN_CC1: Outage started (2026-04-04)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TEN_CC1"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TEN_CC1#TEN_CC1/2026-04-04/outage_start</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=TEN_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=TEN_CC1#TEN_CC1/2026-04-04/outage_start</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Outage began, lasting 17 days</summary>
   </entry>
   <entry>
     <title>TEN_CC1: Timescale group changed (2026-04-01)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TEN_CC1"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TEN_CC1#TEN_CC1/2026-04-01/group</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=TEN_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=TEN_CC1#TEN_CC1/2026-04-01/group</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Multi-day: off 1–7 days in 2026-03 to Daily, under 1 shutdown a week in 2026-04</summary>
   </entry>
   <entry>
     <title>TEN_CC1: Timescale group changed (2026-03-01)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TEN_CC1"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TEN_CC1#TEN_CC1/2026-03-01/group</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=TEN_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=TEN_CC1#TEN_CC1/2026-03-01/group</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Seasonal: off a week or more in 2026-02 to Multi-day: off 1–7 days in 2026-03</summary>
   </entry>
   <entry>
     <title>TEN_CC1: Shut down after a long run (2026-01-17)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TEN_CC1"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=TEN_CC1#TEN_CC1/2026-01-17/shutdown_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=TEN_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=TEN_CC1#TEN_CC1/2026-01-17/shutdown_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>First shutdown in the record, off 9 h</summary>
   </entry>

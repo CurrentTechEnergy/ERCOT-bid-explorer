@@ -1,34 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
   <title>DOWGEN_DOW_GT96: bidding and operating changes</title>
-  <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=DOWGEN_DOW_GT96"/>
-  <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=DOWGEN_DOW_GT96</id>
+  <link href="https://ercotbids.currenttech.energy/unit.html?unit=DOWGEN_DOW_GT96"/>
+  <id>https://ercotbids.currenttech.energy/unit.html?unit=DOWGEN_DOW_GT96</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
     <title>DOWGEN_DOW_GT96: Outage ended (2026-06-28)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=DOWGEN_DOW_GT96"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=DOWGEN_DOW_GT96#DOWGEN_DOW_GT96/2026-06-28/outage_end</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=DOWGEN_DOW_GT96"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=DOWGEN_DOW_GT96#DOWGEN_DOW_GT96/2026-06-28/outage_end</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Back from a 23-day outage</summary>
   </entry>
   <entry>
     <title>DOWGEN_DOW_GT96: Outage started (2026-06-05)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=DOWGEN_DOW_GT96"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=DOWGEN_DOW_GT96#DOWGEN_DOW_GT96/2026-06-05/outage_start</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=DOWGEN_DOW_GT96"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=DOWGEN_DOW_GT96#DOWGEN_DOW_GT96/2026-06-05/outage_start</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Outage began, lasting 23 days</summary>
   </entry>
   <entry>
     <title>DOWGEN_DOW_GT96: Outage ended (2026-06-03)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=DOWGEN_DOW_GT96"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=DOWGEN_DOW_GT96#DOWGEN_DOW_GT96/2026-06-03/outage_end</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=DOWGEN_DOW_GT96"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=DOWGEN_DOW_GT96#DOWGEN_DOW_GT96/2026-06-03/outage_end</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Back from a 34-day outage</summary>
   </entry>
   <entry>
     <title>DOWGEN_DOW_GT96: Outage started (2026-05-01)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=DOWGEN_DOW_GT96"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=DOWGEN_DOW_GT96#DOWGEN_DOW_GT96/2026-05-01/outage_start</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=DOWGEN_DOW_GT96"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=DOWGEN_DOW_GT96#DOWGEN_DOW_GT96/2026-05-01/outage_start</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Outage began, lasting 34 days</summary>
   </entry>

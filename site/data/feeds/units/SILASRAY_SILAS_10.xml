@@ -1,90 +1,90 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
   <title>SILASRAY_SILAS_10: bidding and operating changes</title>
-  <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SILASRAY_SILAS_10"/>
-  <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SILASRAY_SILAS_10</id>
+  <link href="https://ercotbids.currenttech.energy/unit.html?unit=SILASRAY_SILAS_10"/>
+  <id>https://ercotbids.currenttech.energy/unit.html?unit=SILASRAY_SILAS_10</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
     <title>SILASRAY_SILAS_10: Outage ended (2026-05-02)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SILASRAY_SILAS_10"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SILASRAY_SILAS_10#SILASRAY_SILAS_10/2026-05-02/outage_end</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=SILASRAY_SILAS_10"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=SILASRAY_SILAS_10#SILASRAY_SILAS_10/2026-05-02/outage_end</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Back from a 11-day outage</summary>
   </entry>
   <entry>
     <title>SILASRAY_SILAS_10: Outage started (2026-04-22)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SILASRAY_SILAS_10"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SILASRAY_SILAS_10#SILASRAY_SILAS_10/2026-04-22/outage_start</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=SILASRAY_SILAS_10"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=SILASRAY_SILAS_10#SILASRAY_SILAS_10/2026-04-22/outage_start</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Outage began, lasting 11 days</summary>
   </entry>
   <entry>
     <title>SILASRAY_SILAS_10: Outage ended (2026-04-20)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SILASRAY_SILAS_10"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SILASRAY_SILAS_10#SILASRAY_SILAS_10/2026-04-20/outage_end</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=SILASRAY_SILAS_10"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=SILASRAY_SILAS_10#SILASRAY_SILAS_10/2026-04-20/outage_end</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Back from a 22-day outage</summary>
   </entry>
   <entry>
     <title>SILASRAY_SILAS_10: Outage started (2026-03-30)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SILASRAY_SILAS_10"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SILASRAY_SILAS_10#SILASRAY_SILAS_10/2026-03-30/outage_start</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=SILASRAY_SILAS_10"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=SILASRAY_SILAS_10#SILASRAY_SILAS_10/2026-03-30/outage_start</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Outage began, lasting 22 days</summary>
   </entry>
   <entry>
     <title>SILASRAY_SILAS_10: Outage ended (2026-03-28)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SILASRAY_SILAS_10"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SILASRAY_SILAS_10#SILASRAY_SILAS_10/2026-03-28/outage_end</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=SILASRAY_SILAS_10"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=SILASRAY_SILAS_10#SILASRAY_SILAS_10/2026-03-28/outage_end</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Back from a 8-day outage</summary>
   </entry>
   <entry>
     <title>SILASRAY_SILAS_10: Outage started (2026-03-20)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SILASRAY_SILAS_10"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SILASRAY_SILAS_10#SILASRAY_SILAS_10/2026-03-20/outage_start</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=SILASRAY_SILAS_10"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=SILASRAY_SILAS_10#SILASRAY_SILAS_10/2026-03-20/outage_start</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Outage began, lasting 8 days</summary>
   </entry>
   <entry>
     <title>SILASRAY_SILAS_10: Outage ended (2026-03-02)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SILASRAY_SILAS_10"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SILASRAY_SILAS_10#SILASRAY_SILAS_10/2026-03-02/outage_end</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=SILASRAY_SILAS_10"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=SILASRAY_SILAS_10#SILASRAY_SILAS_10/2026-03-02/outage_end</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Back from a 35-day outage</summary>
   </entry>
   <entry>
     <title>SILASRAY_SILAS_10: Outage started (2026-01-26)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SILASRAY_SILAS_10"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SILASRAY_SILAS_10#SILASRAY_SILAS_10/2026-01-26/outage_start</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=SILASRAY_SILAS_10"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=SILASRAY_SILAS_10#SILASRAY_SILAS_10/2026-01-26/outage_start</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Outage began, lasting 35 days</summary>
   </entry>
   <entry>
     <title>SILASRAY_SILAS_10: Outage ended (2026-01-25)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SILASRAY_SILAS_10"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SILASRAY_SILAS_10#SILASRAY_SILAS_10/2026-01-25/outage_end</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=SILASRAY_SILAS_10"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=SILASRAY_SILAS_10#SILASRAY_SILAS_10/2026-01-25/outage_end</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Back from a 10-day outage</summary>
   </entry>
   <entry>
     <title>SILASRAY_SILAS_10: Outage started (2026-01-15)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SILASRAY_SILAS_10"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SILASRAY_SILAS_10#SILASRAY_SILAS_10/2026-01-15/outage_start</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=SILASRAY_SILAS_10"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=SILASRAY_SILAS_10#SILASRAY_SILAS_10/2026-01-15/outage_start</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Outage began, lasting 10 days</summary>
   </entry>
   <entry>
     <title>SILASRAY_SILAS_10: Outage ended (2026-01-15)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SILASRAY_SILAS_10"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SILASRAY_SILAS_10#SILASRAY_SILAS_10/2026-01-15/outage_end</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=SILASRAY_SILAS_10"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=SILASRAY_SILAS_10#SILASRAY_SILAS_10/2026-01-15/outage_end</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Back from a 45-day outage</summary>
   </entry>
   <entry>
     <title>SILASRAY_SILAS_10: Outage started (2025-12-01)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SILASRAY_SILAS_10"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=SILASRAY_SILAS_10#SILASRAY_SILAS_10/2025-12-01/outage_start</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=SILASRAY_SILAS_10"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=SILASRAY_SILAS_10#SILASRAY_SILAS_10/2025-12-01/outage_start</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Outage began, lasting 45 days</summary>
   </entry>

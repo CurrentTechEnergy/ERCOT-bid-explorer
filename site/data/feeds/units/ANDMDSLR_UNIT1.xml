@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
   <title>ANDMDSLR_UNIT1: bidding and operating changes</title>
-  <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ANDMDSLR_UNIT1"/>
-  <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ANDMDSLR_UNIT1</id>
+  <link href="https://ercotbids.currenttech.energy/unit.html?unit=ANDMDSLR_UNIT1"/>
+  <id>https://ercotbids.currenttech.energy/unit.html?unit=ANDMDSLR_UNIT1</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
     <title>ANDMDSLR: New floor (2025-07-25)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ANDMDSLR"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ANDMDSLR#ANDMDSLR/2025-07-25/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=ANDMDSLR"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=ANDMDSLR#ANDMDSLR/2025-07-25/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$4 to floor -$8</summary>
   </entry>
   <entry>
     <title>ANDMDSLR: Episode (2025-04-05)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ANDMDSLR"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=ANDMDSLR#ANDMDSLR/2025-04-05/renew_episode</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=ANDMDSLR"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=ANDMDSLR#ANDMDSLR/2025-04-05/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Episode: floor -$4 to -$10 for the episode for 4 day(s)</summary>
   </entry>

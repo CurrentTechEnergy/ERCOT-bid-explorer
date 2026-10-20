@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
   <title>PHO_SOLAR4: bidding and operating changes</title>
-  <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PHO_SOLAR4"/>
-  <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PHO_SOLAR4</id>
+  <link href="https://ercotbids.currenttech.energy/unit.html?unit=PHO_SOLAR4"/>
+  <id>https://ercotbids.currenttech.energy/unit.html?unit=PHO_SOLAR4</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
     <title>PHO: Formula on (2025-07-01)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PHO"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PHO#PHO/2025-07-01/renew_formula_on</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=PHO"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=PHO#PHO/2025-07-01/renew_formula_on</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Formula on: floor -$2 to formula</summary>
   </entry>
   <entry>
     <title>PHO: New floor (2025-03-18)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PHO"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PHO#PHO/2025-03-18/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=PHO"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=PHO#PHO/2025-03-18/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor $0 to floor -$2</summary>
   </entry>

@@ -1,132 +1,132 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
   <title>PYR_PYRON1: bidding and operating changes</title>
-  <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PYR_PYRON1"/>
-  <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PYR_PYRON1</id>
+  <link href="https://ercotbids.currenttech.energy/unit.html?unit=PYR_PYRON1"/>
+  <id>https://ercotbids.currenttech.energy/unit.html?unit=PYR_PYRON1</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
     <title>PYR_PYRON: New floor (2026-03-10)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PYR_PYRON"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PYR_PYRON#PYR_PYRON/2026-03-10/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=PYR_PYRON"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=PYR_PYRON#PYR_PYRON/2026-03-10/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$43 to floor -$41</summary>
   </entry>
   <entry>
     <title>PYR_PYRON: New floor (2025-11-08)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PYR_PYRON"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PYR_PYRON#PYR_PYRON/2025-11-08/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=PYR_PYRON"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=PYR_PYRON#PYR_PYRON/2025-11-08/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$35 to floor -$43</summary>
   </entry>
   <entry>
     <title>PYR_PYRON: New floor (2025-04-03)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PYR_PYRON"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PYR_PYRON#PYR_PYRON/2025-04-03/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=PYR_PYRON"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=PYR_PYRON#PYR_PYRON/2025-04-03/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$34 to floor -$35</summary>
   </entry>
   <entry>
     <title>PYR_PYRON: New floor (2024-03-12)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PYR_PYRON"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PYR_PYRON#PYR_PYRON/2024-03-12/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=PYR_PYRON"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=PYR_PYRON#PYR_PYRON/2024-03-12/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$25 to floor -$34</summary>
   </entry>
   <entry>
     <title>PYR_PYRON: New floor (2024-02-22)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PYR_PYRON"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PYR_PYRON#PYR_PYRON/2024-02-22/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=PYR_PYRON"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=PYR_PYRON#PYR_PYRON/2024-02-22/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor $0 to floor -$25</summary>
   </entry>
   <entry>
     <title>PYR_PYRON: New floor (2024-02-01)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PYR_PYRON"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PYR_PYRON#PYR_PYRON/2024-02-01/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=PYR_PYRON"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=PYR_PYRON#PYR_PYRON/2024-02-01/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$6 to floor $0</summary>
   </entry>
   <entry>
     <title>PYR_PYRON: New floor (2023-12-05)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PYR_PYRON"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PYR_PYRON#PYR_PYRON/2023-12-05/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=PYR_PYRON"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=PYR_PYRON#PYR_PYRON/2023-12-05/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$39 to floor -$6</summary>
   </entry>
   <entry>
     <title>PYR_PYRON: New floor (2023-11-01)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PYR_PYRON"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PYR_PYRON#PYR_PYRON/2023-11-01/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=PYR_PYRON"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=PYR_PYRON#PYR_PYRON/2023-11-01/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$1 to floor -$39</summary>
   </entry>
   <entry>
     <title>PYR_PYRON: New floor (2023-07-01)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PYR_PYRON"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PYR_PYRON#PYR_PYRON/2023-07-01/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=PYR_PYRON"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=PYR_PYRON#PYR_PYRON/2023-07-01/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$2 to floor -$1</summary>
   </entry>
   <entry>
     <title>PYR_PYRON: Back to an earlier floor (2023-04-01)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PYR_PYRON"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PYR_PYRON#PYR_PYRON/2023-04-01/renew_floor_back</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=PYR_PYRON"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=PYR_PYRON#PYR_PYRON/2023-04-01/renew_floor_back</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Back to an earlier floor: floor -$4 to floor -$2</summary>
   </entry>
   <entry>
     <title>PYR_PYRON: New floor (2023-03-01)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PYR_PYRON"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PYR_PYRON#PYR_PYRON/2023-03-01/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=PYR_PYRON"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=PYR_PYRON#PYR_PYRON/2023-03-01/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$1 to floor -$4</summary>
   </entry>
   <entry>
     <title>PYR_PYRON: New floor (2023-01-04)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PYR_PYRON"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PYR_PYRON#PYR_PYRON/2023-01-04/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=PYR_PYRON"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=PYR_PYRON#PYR_PYRON/2023-01-04/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$2 to floor -$1</summary>
   </entry>
   <entry>
     <title>PYR_PYRON: Back to an earlier floor (2022-10-01)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PYR_PYRON"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PYR_PYRON#PYR_PYRON/2022-10-01/renew_floor_back</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=PYR_PYRON"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=PYR_PYRON#PYR_PYRON/2022-10-01/renew_floor_back</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Back to an earlier floor: floor -$1 to floor -$2</summary>
   </entry>
   <entry>
     <title>PYR_PYRON: Back to an earlier floor (2022-07-07)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PYR_PYRON"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PYR_PYRON#PYR_PYRON/2022-07-07/renew_floor_back</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=PYR_PYRON"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=PYR_PYRON#PYR_PYRON/2022-07-07/renew_floor_back</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Back to an earlier floor: floor -$3 to floor -$1</summary>
   </entry>
   <entry>
     <title>PYR_PYRON: New floor (2022-06-01)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PYR_PYRON"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PYR_PYRON#PYR_PYRON/2022-06-01/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=PYR_PYRON"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=PYR_PYRON#PYR_PYRON/2022-06-01/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$1 to floor -$3</summary>
   </entry>
   <entry>
     <title>PYR_PYRON: New floor (2022-03-09)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PYR_PYRON"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PYR_PYRON#PYR_PYRON/2022-03-09/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=PYR_PYRON"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=PYR_PYRON#PYR_PYRON/2022-03-09/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$5 to floor -$1</summary>
   </entry>
   <entry>
     <title>PYR_PYRON: New floor (2021-08-04)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PYR_PYRON"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PYR_PYRON#PYR_PYRON/2021-08-04/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=PYR_PYRON"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=PYR_PYRON#PYR_PYRON/2021-08-04/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$2 to floor -$5</summary>
   </entry>
   <entry>
     <title>PYR_PYRON: New floor (2021-04-08)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PYR_PYRON"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=PYR_PYRON#PYR_PYRON/2021-04-08/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=PYR_PYRON"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=PYR_PYRON#PYR_PYRON/2021-04-08/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$1 to floor -$2</summary>
   </entry>

@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
   <title>H_HOLLOW: bidding and operating changes</title>
-  <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=H_HOLLOW"/>
-  <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=H_HOLLOW</id>
+  <link href="https://ercotbids.currenttech.energy/unit.html?unit=H_HOLLOW"/>
+  <id>https://ercotbids.currenttech.energy/unit.html?unit=H_HOLLOW</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
     <title>H_HOLLOW: New floor (2023-10-23)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=H_HOLLOW"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=H_HOLLOW#H_HOLLOW/2023-10-23/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=H_HOLLOW"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=H_HOLLOW#H_HOLLOW/2023-10-23/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$35 to floor -$37</summary>
   </entry>
   <entry>
     <title>H_HOLLOW: New floor (2022-10-25)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=H_HOLLOW"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=H_HOLLOW#H_HOLLOW/2022-10-25/renew_floor_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=H_HOLLOW"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=H_HOLLOW#H_HOLLOW/2022-10-25/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor -$33 to floor -$35</summary>
   </entry>

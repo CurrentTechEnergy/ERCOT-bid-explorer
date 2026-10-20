@@ -1,104 +1,104 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
   <title>WAP_WAP_G4: bidding and operating changes</title>
-  <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=WAP_WAP_G4"/>
-  <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=WAP_WAP_G4</id>
+  <link href="https://ercotbids.currenttech.energy/unit.html?unit=WAP_WAP_G4"/>
+  <id>https://ercotbids.currenttech.energy/unit.html?unit=WAP_WAP_G4</id>
   <updated>2026-10-19T00:00:00Z</updated>
   <entry>
     <title>WAP_WAP_G4: Outage ended (2026-08-04)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=WAP_WAP_G4"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=WAP_WAP_G4#WAP_WAP_G4/2026-08-04/outage_end</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=WAP_WAP_G4"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=WAP_WAP_G4#WAP_WAP_G4/2026-08-04/outage_end</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Back from a 9-day outage</summary>
   </entry>
   <entry>
     <title>WAP_WAP_G4: Timescale group changed (2026-08-01)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=WAP_WAP_G4"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=WAP_WAP_G4#WAP_WAP_G4/2026-08-01/group</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=WAP_WAP_G4"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=WAP_WAP_G4#WAP_WAP_G4/2026-08-01/group</id>
     <updated>2026-10-19T00:00:00Z</updated>
     <summary>Multi-day: off 1–7 days in 2026-07 to Never off in 2026-08</summary>
   </entry>
   <entry>
     <title>WAP_WAP_G4: Outage started (2026-07-26)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=WAP_WAP_G4"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=WAP_WAP_G4#WAP_WAP_G4/2026-07-26/outage_start</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=WAP_WAP_G4"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=WAP_WAP_G4#WAP_WAP_G4/2026-07-26/outage_start</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Outage began, lasting 9 days</summary>
   </entry>
   <entry>
     <title>WAP_WAP_G4: Shut down after a long run (2026-07-14)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=WAP_WAP_G4"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=WAP_WAP_G4#WAP_WAP_G4/2026-07-14/shutdown_new</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=WAP_WAP_G4"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=WAP_WAP_G4#WAP_WAP_G4/2026-07-14/shutdown_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Shut down for 59 h after 119 days without a shutdown</summary>
   </entry>
   <entry>
     <title>WAP_WAP_G4: Timescale group changed (2026-07-01)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=WAP_WAP_G4"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=WAP_WAP_G4#WAP_WAP_G4/2026-07-01/group</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=WAP_WAP_G4"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=WAP_WAP_G4#WAP_WAP_G4/2026-07-01/group</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Never off in 2026-06 to Multi-day: off 1–7 days in 2026-07</summary>
   </entry>
   <entry>
     <title>WAP_WAP_G4: Outage ended (2026-06-22)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=WAP_WAP_G4"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=WAP_WAP_G4#WAP_WAP_G4/2026-06-22/outage_end</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=WAP_WAP_G4"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=WAP_WAP_G4#WAP_WAP_G4/2026-06-22/outage_end</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Back from a 9-day outage</summary>
   </entry>
   <entry>
     <title>WAP_WAP_G4: Outage started (2026-06-13)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=WAP_WAP_G4"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=WAP_WAP_G4#WAP_WAP_G4/2026-06-13/outage_start</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=WAP_WAP_G4"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=WAP_WAP_G4#WAP_WAP_G4/2026-06-13/outage_start</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Outage began, lasting 9 days</summary>
   </entry>
   <entry>
     <title>WAP_WAP_G4: Outage ended (2026-05-27)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=WAP_WAP_G4"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=WAP_WAP_G4#WAP_WAP_G4/2026-05-27/outage_end</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=WAP_WAP_G4"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=WAP_WAP_G4#WAP_WAP_G4/2026-05-27/outage_end</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Back from a 36-day outage</summary>
   </entry>
   <entry>
     <title>WAP_WAP_G4: Outage started (2026-04-22)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=WAP_WAP_G4"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=WAP_WAP_G4#WAP_WAP_G4/2026-04-22/outage_start</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=WAP_WAP_G4"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=WAP_WAP_G4#WAP_WAP_G4/2026-04-22/outage_start</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Outage began, lasting 36 days</summary>
   </entry>
   <entry>
     <title>WAP_WAP_G4: Outage ended (2026-04-20)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=WAP_WAP_G4"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=WAP_WAP_G4#WAP_WAP_G4/2026-04-20/outage_end</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=WAP_WAP_G4"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=WAP_WAP_G4#WAP_WAP_G4/2026-04-20/outage_end</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Back from a 14-day outage</summary>
   </entry>
   <entry>
     <title>WAP_WAP_G4: Outage started (2026-04-06)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=WAP_WAP_G4"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=WAP_WAP_G4#WAP_WAP_G4/2026-04-06/outage_start</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=WAP_WAP_G4"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=WAP_WAP_G4#WAP_WAP_G4/2026-04-06/outage_start</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Outage began, lasting 14 days</summary>
   </entry>
   <entry>
     <title>WAP_WAP_G4: Timescale group changed (2026-04-01)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=WAP_WAP_G4"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=WAP_WAP_G4#WAP_WAP_G4/2026-04-01/group</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=WAP_WAP_G4"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=WAP_WAP_G4#WAP_WAP_G4/2026-04-01/group</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Multi-day: off 1–7 days in 2026-03 to Never off in 2026-04</summary>
   </entry>
   <entry>
     <title>WAP_WAP_G4: Timescale group changed (2026-03-01)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=WAP_WAP_G4"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=WAP_WAP_G4#WAP_WAP_G4/2026-03-01/group</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=WAP_WAP_G4"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=WAP_WAP_G4#WAP_WAP_G4/2026-03-01/group</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Seasonal: off a week or more in 2026-02 to Multi-day: off 1–7 days in 2026-03</summary>
   </entry>
   <entry>
     <title>WAP_WAP_G4: Bidding approach shifted (2025-12-17)</title>
-    <link href="https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=WAP_WAP_G4"/>
-    <id>https://currenttechenergy.github.io/ERCOT-bid-explorer/unit.html?unit=WAP_WAP_G4#WAP_WAP_G4/2025-12-17/bidding</id>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=WAP_WAP_G4"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=WAP_WAP_G4#WAP_WAP_G4/2025-12-17/bidding</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Offer price vs peer median: $4 to -$7/MWh</summary>
   </entry>
