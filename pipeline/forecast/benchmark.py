@@ -9,7 +9,10 @@ solar-heavy spring day, all with the 60-day answer in.
 Promotion rule: a new version is promoted only if its benchmark headline hit rate and unit hit
 rate are not worse, its worst group's MAE is not worse than the version in use, and its
 cheap-hour floor MAE (committed minimum in hours with the day-ahead hub at or below
-score.CHEAP_HUB, over every as-of scored day, not just the set) is not worse.  The set alone
+score.CHEAP_HUB, over every as-of scored day, not just the set) is not worse, and
+its Brier score of P(on) for the units judged on their loss window (score.calibration, every
+as-of scored day) is not worse.  The Brier line is computed by the backtest from each side's
+forecast files, so a reference side from older code is scored the same way.  The set alone
 holds too few cheap hours to judge the floor, so that line reads all as-of days.
 
 The set is scored as chosen, hindsight days included, so the gate does not move under a

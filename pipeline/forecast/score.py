@@ -182,6 +182,48 @@ def score_sixty_day(day: dict, ctx: C.Context) -> dict:
     return out
 
 
+CAL_BINS = [0.0, 0.05, 0.2, 0.4, 0.6, 0.8, 0.95, 1.0001]   # P(on) bins of the reliability table
+
+
+def calibration(days: dict, out_dir) -> dict:
+    """Brier score and reliability of P(on) for the units judged on their loss window (verdict
+    on, maybe or off with a window), over the as-of days with a 60-day answer: each unit-day's
+    P(on) against the share of the window's hours it was online.  Read from the forecast day
+    files in out_dir, so a backtest can score a side written by older code the same way.
+    {n, brier, bins: [[lo, hi, n, mean p, online share]]}."""
+    n, sq = 0, 0.0
+    bins = [[0, 0.0, 0.0] for _ in CAL_BINS[:-1]]
+    for date, s in sorted(days.items()):
+        if s.get("asof") is False or not s.get("sixty_day"):
+            continue
+        day = read_json_gz(out_dir / f"{date}.json.gz")
+        rf = read_json_gz(DATA_DIR / "60d-units" / f"{date}.json.gz")
+        if not day or not rf:
+            continue
+        cols = {c: i + 2 for i, c in enumerate(rf["columns"])}
+        on = {}
+        for r in rf["rows"]:
+            name, t = rf["units"][r[0]][0], rf["units"][r[0]][2]
+            if t not in C.THERMAL:
+                continue
+            key = train_of(name) if t == "combined_cycle" else name
+            if (r[cols["online_share"]] or 0) >= 0.5:
+                on.setdefault(key, np.zeros(24))[r[1] - 1] = 1
+        uc = {c: i for i, c in enumerate(day["units"]["columns"])}
+        for r in day["units"]["rows"]:
+            wf, wh = r[uc["win_from"]] if "win_from" in uc else None, r[uc["win_hours"]] if "win_hours" in uc else None
+            if r[uc["verdict"]] not in ("on", "maybe", "off") or not wf or not wh:
+                continue
+            p = float(r[uc["p_on"]] or 0.0)
+            yv = float(on.get(r[uc["unit"]], np.zeros(24))[wf - 1:wf - 1 + wh].mean())
+            n += 1; sq += (p - yv) ** 2
+            b = bins[min(np.searchsorted(CAL_BINS, p, side="right") - 1, len(bins) - 1)]
+            b[0] += 1; b[1] += p; b[2] += yv
+    return {"n": n, "brier": _r(sq / n, 4) if n else None,
+            "bins": [[CAL_BINS[i], min(CAL_BINS[i + 1], 1.0), b[0], _r(b[1] / b[0], 3) if b[0] else None,
+                      _r(b[2] / b[0], 3) if b[0] else None] for i, b in enumerate(bins)]}
+
+
 def score_floor(exp_min, act_lsl, hub) -> dict:
     """Committed minimum against online LSL as sums over all, cheap and negative hours."""
     ok = ~np.isnan(exp_min) & ~np.isnan(act_lsl)

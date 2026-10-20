@@ -91,8 +91,10 @@ def _cell(v, pct=False):
     return f"{v:.1%}" if pct else f"{v:,.0f}"
 
 
-def report(cur: dict, ref: dict, labels=("current", "ref")) -> str:
-    """Markdown: the promotion gate for both sides, then the floor and technology scores."""
+def report(cur: dict, ref: dict, labels=("current", "ref"), cal=None) -> str:
+    """Markdown: the promotion gate for both sides, then the floor and technology scores.
+    cal: {"current": score.calibration(...), "ref": ...} adds the Brier line to the gate and
+    the reliability table."""
     from .benchmark import BENCH, report as bench_report
     from .score import summarise
     bench = json.loads(BENCH.read_text())
@@ -106,9 +108,13 @@ def report(cur: dict, ref: dict, labels=("current", "ref")) -> str:
         return {"headline": b.get("headline_hit"), "unit": b.get("unit_hit"), "worst": worst,
                 "cheap": (fl.get("cheap") or {}).get("mae"), "bench": b, "all": a, "floor": fl}
     c, r = one(cur), one(ref)
+    cal = cal or {}
+    c["brier"], r["brier"] = (cal.get("current") or {}).get("brier"), (cal.get("ref") or {}).get("brier")
     gate = [("Benchmark headline hit", "headline", True, True), ("Benchmark unit hit", "unit", True, True),
             ("Benchmark worst group MAE (MW)", "worst", False, False),
             ("Cheap-hour floor MAE, all as-of days (MW)", "cheap", False, False)]
+    if cal:
+        gate.append(("Brier score of P(on), loss-window units, all as-of days", "brier", False, False))
     lines = [f"# Backtest: {labels[0]} vs {labels[1]}", "",
              f"- {labels[0]}: {_versions(cur) or 'no scored days'}", f"- {labels[1]}: {_versions(ref) or 'no scored days'}", "",
              "## Promotion gate", "", f"| Line | {labels[1]} | {labels[0]} | |", "|---|---|---|---|"]
@@ -117,7 +123,8 @@ def report(cur: dict, ref: dict, labels=("current", "ref")) -> str:
         a, b = r[k], c[k]
         ok = a is None or (b is not None and (b >= a if higher else b <= a))
         ok_all &= ok
-        lines.append(f"| {name} | {_cell(a, pct)} | {_cell(b, pct)} | {'pass' if ok else '**fail**'} |")
+        fmt = (lambda v: "–" if v is None else f"{v:.4f}") if k == "brier" else (lambda v: _cell(v, pct))
+        lines.append(f"| {name} | {fmt(a)} | {fmt(b)} | {'pass' if ok else '**fail**'} |")
     lines += ["", f"**{labels[0]}: {'passes' if ok_all else 'fails'} the gate.**", "",
               "## Committed minimum against online LSL, all as-of days", "",
               f"| Hours | {labels[1]} MAE | {labels[0]} MAE | {labels[1]} bias | {labels[0]} bias |", "|---|---|---|---|---|"]
@@ -136,6 +143,16 @@ def report(cur: dict, ref: dict, labels=("current", "ref")) -> str:
             for k in keys:
                 a, b = (r["all"].get(part) or {}).get(k) or {}, (c["all"].get(part) or {}).get(k) or {}
                 lines.append(f"| {k} | {_cell(a.get('mae'))} / {_cell(a.get('bias'))} | {_cell(b.get('mae'))} / {_cell(b.get('bias'))} |")
+    if cal:
+        lines += ["", "## Reliability of P(on), loss-window units", "",
+                  f"| P(on) | {labels[1]} unit-days | {labels[1]} mean p / online | {labels[0]} unit-days | {labels[0]} mean p / online |",
+                  "|---|---|---|---|---|"]
+        rb, cb = (cal.get("ref") or {}).get("bins") or [], (cal.get("current") or {}).get("bins") or []
+        for i in range(max(len(rb), len(cb))):
+            a, b = (rb[i] if i < len(rb) else None), (cb[i] if i < len(cb) else None)
+            lo, hi = (a or b)[0], (a or b)[1]
+            cellb = lambda x: "–" if not x or not x[2] else f"{x[3]:.2f} / {x[4]:.2f}"
+            lines.append(f"| {lo:.2f}–{hi:.2f} | {a[2] if a else 0:,} | {cellb(a)} | {b[2] if b else 0:,} | {cellb(b)} |")
     fa, fb = (r["all"].get("fit") or {}), (c["all"].get("fit") or {})
     if fa.get("n") or fb.get("n"):
         lines += ["", f"2-day fit floor MAE (MW): {labels[1]} {_cell(fa.get('lsl_mae_fit'))}, {labels[0]} {_cell(fb.get('lsl_mae_fit'))}"]
@@ -171,7 +188,9 @@ def main(argv=None):
             return 1
     scores = {s: read_json_gz(out / s / "tree" / "site" / "data" / "forecast" / "scores.json.gz", default={"days": {}})
               for s in sides}
-    text = report(scores["current"], scores["ref"], ("current", args.against))
+    from .score import calibration
+    cal = {s: calibration(scores[s].get("days", {}), out / s / "tree" / "site" / "data" / "forecast") for s in sides}
+    text = report(scores["current"], scores["ref"], ("current", args.against), cal)
     (out / "report.md").write_text(text)
     print(text)
     return 0
