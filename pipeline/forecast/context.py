@@ -56,8 +56,8 @@ OUTAGE_SNAPSHOT_LAG = 4        # days: the NP1-346-ER snapshot of D - 4 is poste
 # spring and summer alone).  Spread as a share of each unit's weight that takes off its committed
 # minimum, the full estimate overshot (bias -2.3 GW), so both terms are scaled by 0.3, the factor
 # that brought the backtest's committed-minimum bias to about zero.
-UNSEEN_BASE = 1260.0          # MW, fleet, split across zones by their thermal MW
-UNSEEN_SLOPE = 0.25           # MW per MW of zonal remainder
+UNSEEN_BASE = 910.0           # MW, fleet, split across zones by their thermal MW
+UNSEEN_SLOPE = 0.46           # MW per MW of zonal remainder
 OUT_SHARE_MIN = 0.5            # a non-CC unit listed with at least this share of its max MW out is off for the day
 NRC_OFF_PCT = 50.0             # a reactor the NRC reported below this power the morning before D is off on D
 CC_MIN_DAYS = 120              # days of 60-day history before the asof point a train's smallest running size is taken from
