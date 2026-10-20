@@ -79,7 +79,7 @@ from ..forecast import context as C
 
 UNSEEN_TECHS = ("coal", "combined_cycle", "gas_steam")   # spread the zonal unseen outage MW over these
 NAME = "thermal_cutoff"
-VERSION = "v3"    # v3: gas steam on its stay-on loss, stale gas steam outages dropped; v2: CC outage calls by gas turbine, zonal unseen outages; v1: NRC reactor status, listed outages; probability of staying on through the window, per-unit horizon, pooled cutoffs
+VERSION = "v4"    # v4: loss over the cutoff split by award history; v3: gas steam on its stay-on loss, stale gas steam outages dropped; v2: CC outage calls by gas turbine, zonal unseen outages; v1: NRC reactor status, listed outages; probability of staying on through the window, per-unit horizon, pooled cutoffs
 SEASONAL_VERSION = "v0"
 RUN_SHARE = 0.5          # a month the unit ran through: online at least this share of its hours
 LONG_OUT = 21            # days an outage must already have lasted at the last known hour to carry forward
@@ -167,14 +167,18 @@ def _span(margin, bs, nh):
 
 
 def _features(margin, lsl, loss, bs, nh, cut, min_off, aw, on_days):
-    """The logistic's inputs for one unit-day: loss over the cutoff ($/MW of LSL, /100), the
+    """The logistic's inputs for one unit-day: loss over the cutoff ($/MW of LSL, /100) times
+    the share of days without an award and, separately, times the award share, the
     window's wrapped length against the unit's shortest usual off spell (log ratio), the margin
     earned before and after the window ($/MW, /100), the unit's award history share and its
     share of days with any online hour."""
     before = float(np.clip(margin[:bs], 0, None).sum()) / lsl
     after = float(np.clip(margin[bs + nh:], 0, None).sum()) / lsl
     span = _span(margin, bs, nh)
-    return [1.0, (loss - cut) / lsl / 100.0, float(np.log(max(span, 1) / min_off)), before / 100.0, after / 100.0,
+    over = (loss - cut) / lsl / 100.0
+    # the cutoff is learned on days without an award, so the loss over it is split by the
+    # unit's award history: the fit decides how much it counts for a unit usually awarded
+    return [1.0, over * (1.0 - aw), over * aw, float(np.log(max(span, 1) / min_off)), before / 100.0, after / 100.0,
             aw, on_days]
 
 
