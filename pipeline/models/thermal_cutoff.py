@@ -26,8 +26,11 @@ For every thermal train in the latest DAM disclosure (pipeline.forecast.context.
                 - the unit's award history share (the day's own award is not public yet)
               "off" below P_OFF, "maybe" up to P_ON, "on" above.  A daily unit with no cutoff
               at all ("nocut") gets p_on = its share of days with any online hour.
+  CC trains   every combined-cycle train with a group other than never is judged as a daily
+              unit is, on its own stay-on loss (CC_WINDOW_GROUPS); the slow-cycling ones
+              (multiday, seasonal) get a logistic of their own (_fit_key)
   seasonal, multiday
-              rule v0 (SEASONAL_VERSION): on when the unit was running at its last known hour
+              (other technologies) rule v0 (SEASONAL_VERSION): on when the unit was running at its last known hour
               and the month's day-ahead hub average to date is not below the lowest monthly
               hub average it has run through; off otherwise.  A placeholder until a
               multi-week economics rule exists.
@@ -70,6 +73,7 @@ POOL_K = 15              # decision days at which a unit's own cutoff and the po
 POOL_MIN = 3             # decision days a unit needs for a pooled cutoff
 P_OFF, P_ON = 0.3, 0.7   # p_on below P_OFF is "off", above P_ON "on", between "maybe"
 DAILY_TECHS = ("combined_cycle", "gas_steam", "coal")
+CC_WINDOW_GROUPS = ("daily1", "daily2", "daily3", "multiday", "seasonal")   # CC trains judged on their own stay-on cost
 RIDGE = 1.0              # L2 penalty of the logistic fit (features are scaled to about unit size)
 
 
@@ -200,6 +204,12 @@ def _day_trains(ctx):
     return ctx._cut_days
 
 
+def _fit_key(tech, group):
+    """The logistic a unit-day is fitted with: its technology, with slow-cycling CC trains
+    (judged here instead of by the seasonal rule) apart from the daily ones."""
+    return tech + "/slow" if tech == "combined_cycle" and not str(group or "").startswith("daily") else tech
+
+
 def _min_off(ctx, date, key, tech):
     v = ctx.off_p10_at(date).get(key)
     return max(float(v), float(OUT_MIN_H)) if v else MIN_OFF_DEFAULT.get(tech, 12.0)
@@ -240,7 +250,8 @@ def _pool(ctx, date):
             continue
         dn = (C._d(d) - day0).days
         for key, (tech, spp, mg, lsl) in trains.items():
-            if not str(groups.get(key) or "").startswith("daily") or key not in own:
+            g = groups.get(key)
+            if not (str(g or "").startswith("daily") or (tech == "combined_cycle" and g in CC_WINDOW_GROUPS)) or key not in own:
                 continue
             st = raw.get(key)
             mg = units[key][2] if mg is None else mg
@@ -255,7 +266,7 @@ def _pool(ctx, date):
             s = stats["units"].get(key)
             f = _features(margin, lsl, loss, bs, nh, cpm * lsl, _min_off(ctx, date, key, tech), own[key][2],
                           s["on_days"] if s else 0.0)
-            X.append(_hourly(f, margin, lsl, bs, nh)); y.append(np.isin(seg, ["m", "a"]).astype(float)); T += [tech] * 24
+            X.append(_hourly(f, margin, lsl, bs, nh)); y.append(np.isin(seg, ["m", "a"]).astype(float)); T += [_fit_key(tech, g)] * 24
     X = np.vstack(X) if X else np.zeros((0, 0))
     y, T = (np.concatenate(y) if y else np.zeros(0)), np.array(T)
     w = {}
@@ -293,6 +304,7 @@ def forecast(date, ctx: C.Context) -> dict:
         if t not in C.THERMAL:
             continue
         g = "never" if t == "nuclear" else groups.get(key)
+        cc_win = t == "combined_cycle" and g in CC_WINDOW_GROUPS
         last, out_days = _last_state(ctx, key, known)
         if last == "o" and out_days < LONG_OUT:
             last = "0"       # a short outage sixty days ago: treated as off then, judged normally
@@ -301,11 +313,11 @@ def forecast(date, ctx: C.Context) -> dict:
                "reason": "", "model": NAME, "version": VERSION}
         if last == "o":
             row.update(verdict="outage", reason=f"on outage for {out_days:.0f} days at the last known hour ({known})")
-        elif t == "nuclear" or g == "never":
+        elif t == "nuclear" or (g == "never" and not cc_win):
             row.update(verdict="on", p_on=1.0, reason="never off" if g == "never" else "nuclear")
         elif t == "combustion_turbine":
             row.update(verdict="peaker", reason="judged by hour (peaker_share)")
-        elif g in ("seasonal", "multiday"):
+        elif g in ("seasonal", "multiday") and not cc_win:
             floor = _month_floor(ctx, key, known)
             running = last in "ma"
             row["version"] = f"{VERSION}+seasonal-{SEASONAL_VERSION}"
@@ -351,7 +363,7 @@ def forecast(date, ctx: C.Context) -> dict:
                 span = _span(margin, bs, nh)
                 s = stats["units"].get(key)
                 x = _hourly(_features(margin, lsl, loss, bs, nh, cut, mo, aw, s["on_days"] if s else 0.0), margin, lsl, bs, nh)
-                wt = w.get(t, w.get(None))
+                wt = w.get(_fit_key(t, g), w.get(t, w.get(None)))
                 ph = 1.0 / (1.0 + np.exp(-np.clip(x @ wt, -30, 30))) if wt is not None else np.full(24, float(loss <= cut))
                 p_on = round(float(ph[bs:bs + nh].mean()), 2)
                 src = "its cutoff" if c else "the pooled cutoff"
