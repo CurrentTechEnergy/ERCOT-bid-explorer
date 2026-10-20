@@ -1,7 +1,7 @@
 name: Subscriber emails (manual)
 
-# Runs the send step by hand (pipeline/notify.py): a dry run by default, which prints the email
-# that would go out on the run summary and sends nothing. Untick dry_run to send for real; the
+# Runs the send step by hand (pipeline/notify.py): a dry run by default, which summarises the
+# emails that would go out on the run summary and sends nothing. Untick dry_run to send for real; the
 # record of what was sent is committed. The daily send is a step of update.yml.
 on:
   workflow_dispatch:
@@ -34,7 +34,9 @@ jobs:
       - run: pip install -r requirements.txt
       - name: Send subscriber emails
         env:
-          BUTTONDOWN_API_KEY: ${{ secrets.BUTTONDOWN_API_KEY }}
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          OWNER_EMAIL: ${{ secrets.OWNER_EMAIL }}
           DRY_RUN: ${{ github.event.inputs.dry_run }}
         run: |
           if [ "$DRY_RUN" = "false" ]; then

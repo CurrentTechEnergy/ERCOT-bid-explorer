@@ -1,0 +1,15 @@
+# Cloudflare Worker that records who follows which unit (see src/index.js).
+# Deployed by .github/workflows/follow-server.yml, which fills in the database id.
+name = "ercot-follows"
+main = "src/index.js"
+compatibility_date = "2025-09-01"
+workers_dev = true
+
+[vars]
+SITE_URL = "https://ercotbids.currenttech.energy/"
+FROM = "ERCOT bid explorer <alerts@currenttech.energy>"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "ercot-follows"
+database_id = "DATABASE_ID"
