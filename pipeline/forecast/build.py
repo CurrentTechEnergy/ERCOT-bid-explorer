@@ -23,7 +23,9 @@ data/forecast/<date>.json.gz
                     off_from, off_hours, reason, curve (1 if dispatched on its own curve),
                     model, version, win_from / win_hours (the loss window an hourly probability
                     was judged over), out_share (share of a CC train's site listed out),
-                    cc_small (MW a CC train is held at in cheap hours, its smallest usual size)
+                    cc_small (MW a CC train is held at in cheap hours, its smallest usual size),
+                    p_base and drivers (a unit judged on its window: the trees' starting P(on)
+                    and [[driver, points]], how far each input moved it, adding up to p_on)
   unit_hours        {"series": UNIT_SERIES, "units": {unit: [[24] per series]}}: each thermal
                     unit's hourly weight online (p), expected MW, committed minimum MW and the
                     day-ahead price it was dispatched against (its node, else the hub); null for a
@@ -54,7 +56,8 @@ OUT_DIR = DATA_DIR / "forecast"
 FORMAT = 1
 BAND_MONTHS = 12
 UNIT_COLS = ["unit", "tech", "group", "hsl", "lsl", "verdict", "p_on", "loss", "cutoff", "off_from", "off_hours",
-             "reason", "curve", "model", "version", "win_from", "win_hours", "out_share", "cc_small"]
+             "reason", "curve", "model", "version", "win_from", "win_hours", "out_share", "cc_small", "p_base",
+             "drivers"]
 UNIT_SERIES = ["p", "exp", "min", "price"]
 RENEW_COLS = ["unit", "tech", "nameplate", "avail_mwh", "disp_mwh", "source", "offer", "model", "version"]
 CATEGORIES = {
@@ -166,7 +169,8 @@ def build_day(date, ctx: C.Context) -> dict:
                           row["off_from"], row["off_hours"], row["reason"], int(d["curve"]),
                           row["model"] if row["tech"] != "combustion_turbine" else peak["rows"].get(key, {}).get("model", row["model"]),
                           row["version"] if row["tech"] != "combustion_turbine" else peak["rows"].get(key, {}).get("version", row["version"]),
-                          row.get("win_from"), row.get("win_hours"), row.get("out_share"), d.get("small")])
+                          row.get("win_from"), row.get("win_hours"), row.get("out_share"), d.get("small"),
+                          row.get("p_base"), row.get("drivers")])
         hs = [[round(float(v), 2) for v in d["p"]], [round(float(v)) for v in d["exp"]], [round(float(v)) for v in d["min"]]]
         hs = [None if not any(v) else v for v in hs]       # a unit off all day carries nulls
         unit_hours[key] = hs + [None if d.get("price") is None else [round(float(v), 2) for v in d["price"]]]
