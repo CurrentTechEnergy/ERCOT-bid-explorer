@@ -63,6 +63,11 @@ FLIP_EPS = 0.005   # share of the dispatchable range at or below $0 that counts 
 UNIT_TECHS = ["nuclear", "coal", "combined_cycle", "gas_steam", "combustion_turbine"]
 
 
+def listed_units(tr: dict) -> set:
+    """Unit names in the trends units list (units with offers or output in the window)."""
+    return {u["unit"] for u in tr.get("units", [])}
+
+
 def unit_techs(tr: dict) -> dict:
     """{unit: tech} for every unit trends_60d has seen: the units list, plus first_seen for the
     units it leaves out (units with no output in the window, which the groups still need)."""

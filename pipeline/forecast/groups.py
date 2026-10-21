@@ -16,9 +16,10 @@ spell still open at the end of the period counts once it is a day long.
   daily2    one to two shutdowns a week
   daily3    more than two shutdowns a week
   never_on  no running hour in at least NEVER_ON_DAYS days of hourly states (mothballed or on a
-            long outage); with a shorter record the unit is placed by its off stretch as above
-            (never when the stretch is all outage), since an idle peaker a few months into the
-            window looks the same and a unit back from a long outage has mostly stayed on
+            long outage).  Units outside the trends units list (no offers or output in the
+            window) are grouped only once they are never_on: with a shorter record they stay
+            ungrouped, as before, since an idle peaker a few months into the window looks the
+            same.  Listed units with a short all-outage record are never, as before
 
 The Commitment build (PR 1, branch commitment-pipeline) writes the same groups to
 data/groups_60d.json.gz from pipeline/groups.py (units: {unit or train: [tech, group, ...]}).
@@ -32,7 +33,7 @@ import numpy as np
 from ..config import DATA_DIR
 from ..intraday import train_of
 from ..store import read_json_gz
-from ..trends import UNIT_TECHS, unit_techs
+from ..trends import UNIT_TECHS, listed_units, unit_techs
 
 OUT_MIN_H = 4
 NEVER_ON_DAYS = 120
@@ -150,20 +151,38 @@ def group_of(st: np.ndarray, N: int) -> str:
 GROUP_FILE = DATA_DIR / "groups_60d.json.gz"
 
 
-def unit_groups(uh: dict = None, techs: dict = None) -> dict:
+def listed_keys(tr: dict, techs: dict) -> set:
+    """{train or unit} of the trends units list, the units grouped whatever their record."""
+    return {train_of(n) if techs.get(n) == "combined_cycle" else n for n in listed_units(tr)}
+
+
+def groups_of(by: dict, N: int, listed: set = None) -> dict:
+    """{train: group} from merged states; with `listed`, a unit outside it is kept only as
+    never_on (see the module docstring)."""
+    out = {}
+    for key, (t, st) in by.items():
+        g = group_of(st, N)
+        if listed is None or key in listed or g == "never_on":
+            out[key] = g
+    return out
+
+
+def unit_groups(uh: dict = None, techs: dict = None, listed: set = None) -> dict:
     """{train: group} for every thermal unit or train with hourly states, from the pipeline's
     group file when it exists (PR 1), else computed here.  techs maps unit name to technology
-    (default: trends_60d, its first_seen units included)."""
+    (default: trends_60d, its first_seen units included); listed the keys grouped whatever
+    their record (default: the trends units list, see listed_keys)."""
     g = read_json_gz(GROUP_FILE, default=None)
     if g and isinstance(g.get("units"), dict):
         return {k: v[1] for k, v in g["units"].items() if v and len(v) > 1 and v[1] in GROUPS}
     if uh is None:
         uh = read_json_gz(DATA_DIR / "unit_hours_60d.json.gz", default={}) or {}
-    if techs is None:
+    if techs is None or listed is None:
         tr = read_json_gz(DATA_DIR / "trends_60d.json.gz", default={}) or {}
-        techs = unit_techs(tr)
+        techs = techs if techs is not None else unit_techs(tr)
+        listed = listed if listed is not None else listed_keys(tr, techs)
     by, N, _ = merged_states(uh, techs)
-    return {key: group_of(st, N) for key, (t, st) in by.items()}
+    return groups_of(by, N, listed)
 
 
 if __name__ == "__main__":

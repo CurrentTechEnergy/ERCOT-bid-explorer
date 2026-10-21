@@ -29,9 +29,10 @@ Rules (the same as trends.js had in stretchBase before this module):
   shortest spell of a day or more decides multi-day (under a week) or seasonal; no spell, never
   (always on when available: off only for outages).
 - a unit with no running hour in at least NEVER_ON_DAYS days of hourly states is never_on
-  (mothballed or on a long outage); with a shorter record it is placed by its off stretch as
-  above (never when the stretch is all outage), since an idle peaker a few months into the window
-  looks the same and a unit back from a long outage has mostly stayed on.
+  (mothballed or on a long outage).  Units outside the trends units list (no offers or output in
+  the window) are in the file only once they are never_on; with a shorter record they are left
+  out, as before, since an idle peaker a few months into the window looks the same.  Listed units
+  with a short all-outage record are never, as before.
 """
 import re
 
@@ -39,7 +40,7 @@ import numpy as np
 
 from .config import DATA_DIR
 from .store import read_json_gz, write_json_gz
-from .trends import unit_techs
+from .trends import listed_units, unit_techs
 
 OUT_MIN_H = 4
 GROUPS = [
@@ -199,7 +200,10 @@ def _r(x):
 def build_groups(index: dict) -> dict:
     uh = read_json_gz(DATA_DIR / "unit_hours_60d.json.gz", default={}) or {}
     tr = read_json_gz(DATA_DIR / "trends_60d.json.gz", default={}) or {}
-    N, units = assign_groups(uh, unit_techs(tr))
+    techs = unit_techs(tr)
+    listed = {key_of(n, techs[n]) for n in listed_units(tr) if n in techs}
+    N, units = assign_groups(uh, techs)
+    units = {k: e for k, e in units.items() if k in listed or e["group"] == "never_on"}
     out = {key: [e["tech"], e["group"], round(e["mw"]), e["shut"], e["off_min"], _r(e["off_p10"]),
                  _r(e["off_med"]), e["pick"], int(e["ran"])]
            for key, e in sorted(units.items())}

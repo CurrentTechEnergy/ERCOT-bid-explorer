@@ -193,7 +193,8 @@ class Context:
         self.uh = read_json_gz(DATA_DIR / "unit_hours_60d.json.gz", default={}) or {"dates": [], "units": {}, "hsl": {}}
         tr = read_json_gz(DATA_DIR / "trends_60d.json.gz", default={}) or {}
         self.techs = unit_techs(tr)
-        self.groups = grp.unit_groups(self.uh, self.techs)
+        self.listed = grp.listed_keys(tr, self.techs)
+        self.groups = grp.unit_groups(self.uh, self.techs, self.listed)
         self.decisions = read_json_gz(DATA_DIR / "decisions.json.gz", default={}) or {}
         self.dam_hubs = (read_json_gz(DATA_DIR / "dam_hubs.json.gz", default=None) or {"days": {}})["days"]
         self.dam_lambda = (read_json_gz(DATA_DIR / "dam_lambda.json.gz", default=None) or {"days": {}})["days"]
@@ -392,7 +393,7 @@ class Context:
         if point not in self._asof:
             uh = _uh_upto(self.uh, point)
             by, N, _ = grp.merged_states(uh, self.techs)
-            self._asof[point] = {"groups": {key: grp.group_of(st, N) for key, (t, st) in by.items()},
+            self._asof[point] = {"groups": grp.groups_of(by, N, self.listed),
                                  "stats": build_unit_stats(self, upto=point), "off_p10": _off_p10(by)}
         return self._asof[point]
 
