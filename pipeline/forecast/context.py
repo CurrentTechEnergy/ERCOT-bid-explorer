@@ -56,12 +56,13 @@ RENEW_FUEL = {"Wind": "wind", "Solar": "solar", "BATT": "storage"}   # unit-leve
 # on outage for at least half the day that the model did not call "outage" regresses on the zonal
 # remainder (the report's total, which leaves the IRR part out, less the unit-level listings) as
 # about 257 MW + 0.93 x remainder (daily, Mar-Aug 2026, r 0.98, residual MAE 1.0 GW).  Spread at
-# that slope, the committed minimum ran 500 MW low in cheap hours (part of that outage sits on
-# units already off on price), so the slope is set from the backtest instead: 0.65 passes the
-# gate (0.70 and 0.93 fail it).  In-sample either way.  (The earlier fit, 910 + 0.46 x, took the
+# that slope and spread over every unit by HSL, the committed minimum ran 500 MW low in cheap
+# hours (part of that outage sits on units already off on price), so v2-v9 used 0.65.  Since
+# v10 the MW goes first to the units usually out in these weeks (outage_prior), which lets the
+# fitted slope stand: 0.93 passes the gate there (0.65 fails it).  In-sample either way.  (The earlier fit, 910 + 0.46 x, took the
 # IRR part off a total that never held it.)
 UNSEEN_BASE = 257.0           # MW, fleet, split across zones by their thermal MW
-UNSEEN_SLOPE = 0.65           # MW per MW of zonal remainder
+UNSEEN_SLOPE = 0.93           # MW per MW of zonal remainder
 OUT_SHARE_MIN = 0.5            # a non-CC unit listed with at least this share of its max MW out is off for the day
 NRC_OFF_PCT = 50.0             # a reactor the NRC reported below this power the morning before D is off on D
 CC_MIN_DAYS = 120              # days of 60-day history before the asof point a train's smallest running size is taken from
@@ -84,6 +85,47 @@ def _iso(d):
 
 
 _HIST = {}
+_PRIOR = {}
+
+OUT_PRIOR_WIN = 15         # days either side of the date's calendar day, in each earlier year
+OUT_PRIOR_CHRONIC = 0.6    # a unit out more than this share of all its history days is left out (mothballs)
+
+
+def outage_prior(techs, date):
+    """{unit or train: share of its days on outage (at least half the day "o") within
+    OUT_PRIOR_WIN days of `date`'s calendar day in each earlier year of the thermal history},
+    for units out at most OUT_PRIOR_CHRONIC of all their history days.  Planned maintenance
+    recurs in the same weeks each year, so this says which units the zonal outage the
+    unit-level report does not list most likely sits on.  {} without the history."""
+    first = min((p.stem[8:] for p in HISTORY_DIR.glob("thermal-*.parquet")), default=None) if HISTORY_DIR.exists() else None
+    if not first:
+        return {}
+    ck = (tuple(techs), date[:4])
+    if ck not in _PRIOR:
+        days = defaultdict(dict)        # key -> {date: out}
+        for d, trains in history_trains(techs, date[:4] + "-01-01").items():
+            for key, (_, _, _, _, seg) in trains.items():
+                days[key][d] = bool((seg == "o").mean() >= 0.5)
+        _PRIOR[ck] = days
+    days = _PRIOR[ck]
+    md = _d(date)
+    out = {}
+    for key, by in days.items():
+        if not by or sum(by.values()) / len(by) > OUT_PRIOR_CHRONIC:
+            continue
+        n = k = 0
+        for y in range(md.year - 3, md.year):
+            try:
+                c = md.replace(year=y)
+            except ValueError:
+                c = md.replace(year=y, day=28)
+            for j in range(-OUT_PRIOR_WIN, OUT_PRIOR_WIN + 1):
+                v = by.get((c + dt.timedelta(days=j)).isoformat())
+                if v is not None:
+                    n += 1; k += v
+        if n:
+            out[key] = k / n
+    return out
 
 
 def history_trains(techs, before):

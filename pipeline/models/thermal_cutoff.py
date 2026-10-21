@@ -60,9 +60,12 @@ For every thermal train in the latest DAM disclosure (pipeline.forecast.context.
               Never-off gas steam units are left out: their long outages are mostly mothballs,
               which the report does not carry.
   unseen      the outage capacity by zone that the unit-level report does not explain
-              (Context.unseen_out, planned outages mostly) is spread over the zone's coal, CC, gas
-              steam and combustion turbine units not judged "outage", by HSL: each carries unseen_share, folded into
-              out_share, which the dispatch model takes off its weight
+              (Context.unseen_out, planned outages mostly) is placed on the zone's coal, CC, gas
+              steam and combustion turbine units not judged "outage", by free HSL x (UNSEEN_EPS +
+              the share of days the unit was out within two weeks of the date in earlier years,
+              Context.outage_prior), each capped at its free HSL (v10; spread by HSL alone
+              before): each carries unseen_share, folded into out_share, which the dispatch model
+              takes off its weight
   peakers     combustion turbines outside the never-off group (which are held on, as other
               never-off units) are not judged here (peaker_share, by hour, on the hours
               they were available); they get verdict "peaker" and p_on from that model, and the
@@ -92,9 +95,10 @@ from ..store import read_json_gz
 from ..decisions import _window, _cutoff, _dam_trains, HALF, OUT_MIN_H
 from ..forecast import context as C
 
+UNSEEN_EPS = 0.1   # unseen-outage weight of a unit never out in these weeks of earlier years, against 1.1 for one always out then
 UNSEEN_TECHS = ("coal", "combined_cycle", "gas_steam", "combustion_turbine")   # spread the zonal unseen outage MW over these
 NAME = "thermal_cutoff"
-VERSION = "v9"    # v9: the history trees also read the forecast net load, for combined cycles; v8: the P(on) of trees fitted on the 2024-25 thermal history as an input; v7: combustion turbines share the zonal unseen outage; v6: technology one-hot, drivers of each P(on); v5: stay-on probability by boosted trees; v4: loss over the cutoff split by award history; v3: gas steam on its stay-on loss, stale gas steam outages dropped; v2: CC outage calls by gas turbine, zonal unseen outages; v1: NRC reactor status, listed outages; probability of staying on through the window, per-unit horizon, pooled cutoffs
+VERSION = "v10"   # v10: the zonal unseen outage placed first on units usually out in these weeks, at the fitted slope; v9: the history trees also read the forecast net load, for combined cycles; v8: the P(on) of trees fitted on the 2024-25 thermal history as an input; v7: combustion turbines share the zonal unseen outage; v6: technology one-hot, drivers of each P(on); v5: stay-on probability by boosted trees; v4: loss over the cutoff split by award history; v3: gas steam on its stay-on loss, stale gas steam outages dropped; v2: CC outage calls by gas turbine, zonal unseen outages; v1: NRC reactor status, listed outages; probability of staying on through the window, per-unit horizon, pooled cutoffs
 SEASONAL_VERSION = "v0"
 RUN_SHARE = 0.5          # a month the unit ran through: online at least this share of its hours
 LONG_OUT = 21            # days an outage must already have lasted at the last known hour to carry forward
@@ -242,6 +246,26 @@ def _net(ctx, date, tech):
     trees a day-level input this wide would mostly tell the 60 days apart."""
     v = ctx.net_load(date) if tech == "combined_cycle" else None
     return np.full(24, float(np.nanmean(v)) / 1000.0 if v is not None and np.isfinite(v).any() else np.nan)
+
+
+def _allocate(total, units):
+    """{key: MW} placing `total` MW over `units` [(key, free MW, weight)] in proportion to weight,
+    each capped at its free MW, the overflow passed on to the rest."""
+    out, left = {}, list(units)
+    while total > 1e-6 and left:
+        w = sum(u[2] for u in left)
+        if w <= 0:
+            break
+        over = [u for u in left if total * u[2] / w >= u[1]]
+        if not over:
+            for k, _, wt in left:
+                out[k] = total * wt / w
+            break
+        for k, free, _ in over:
+            out[k] = free
+            total -= free
+        left = [u for u in left if u not in over]
+    return out
 
 
 def _stack(hist, Z, net):
@@ -529,10 +553,18 @@ def forecast(date, ctx: C.Context) -> dict:
             if row["verdict"] != "outage":
                 pool[z] += (row["hsl"] or 0) * (1 - row.get("out_share", 0.0))
     unseen = ctx.unseen_out(date, zone_mw) or {}
+    prior = C.outage_prior(UNSEEN_TECHS, date) if unseen else {}
+    by_zone = defaultdict(list)
     for key, row in rows.items():
         z = row.pop("_zone")
         if z and row["verdict"] != "outage" and unseen.get(z) and pool[z] > 0:
-            sh = min(1.0, unseen[z] / pool[z])
+            free = (row["hsl"] or 0) * (1 - row.get("out_share", 0.0))
+            if free > 0:
+                by_zone[z].append((key, free, free * (UNSEEN_EPS + prior.get(key, 0.0))))
+    for z, units_z in by_zone.items():
+        free = {k: f for k, f, _ in units_z}
+        for key, mw in _allocate(min(unseen[z], pool[z]), units_z).items():
+            row, sh = rows[key], min(1.0, mw / free[key])
             row["unseen_share"] = round(sh, 3)
             row["out_share"] = round(1 - (1 - row.get("out_share", 0.0)) * (1 - sh), 3)
     return {"rows": rows, "inputs": {"known_date": known, "hindsight": hindsight, "asof": point,
