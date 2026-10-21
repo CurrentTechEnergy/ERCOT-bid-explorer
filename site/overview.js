@@ -49,7 +49,7 @@ const PAGE_ROWS = 150;
 const S = {
   fc: null, index: null, scores: null, hubs: null, dalam: null,
   date: null, day: null, gen: null, day60: null, units60: null, prices: null,
-  unit: "gw", hour: 12, unitView: "day", pred: true, unitTech: "all", unitSearch: "", unitSort: { key: "hsl", dir: -1 }, unitShowAll: false,
+  unit: "gw", hour: 12, unitView: "day", pred: false, unitTech: "all", unitSearch: "", unitSort: { key: "hsl", dir: -1 }, unitShowAll: false,
   hidden: new Set(),
 };
 
@@ -933,14 +933,14 @@ async function loadDay() {
   S.unitShowAll = false;
 }
 async function changeDay() { await loadDay(); render(); }
-function saveView() { window.CX.writeHash({ date: S.date, he: S.hour + 1, unit: S.unit, uv: S.unitView, pred: S.pred ? undefined : 0 }); }
+function saveView() { window.CX.writeHash({ date: S.date, he: S.hour + 1, unit: S.unit, uv: S.unitView, pred: S.pred ? 1 : undefined }); }
 function loadView() {
   const v = window.CX.readHash();
   if (v.date) S.date = v.date;
   if (v.he && +v.he >= 1 && +v.he <= 24) S.hour = +v.he - 1;
   if (["gw", "gwh"].includes(v.unit)) S.unit = v.unit;
   if (["day", "hour"].includes(v.uv)) S.unitView = v.uv;
-  if (v.pred === "0") S.pred = false;
+  if (v.pred === "1") S.pred = true;
 }
 
 async function boot() {
