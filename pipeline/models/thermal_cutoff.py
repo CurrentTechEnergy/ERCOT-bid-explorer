@@ -91,7 +91,7 @@ from ..forecast import context as C
 
 UNSEEN_TECHS = ("coal", "combined_cycle", "gas_steam", "combustion_turbine")   # spread the zonal unseen outage MW over these
 NAME = "thermal_cutoff"
-VERSION = "v8"    # v8: the P(on) of trees fitted on the 2024-25 thermal history as an input; v7: combustion turbines share the zonal unseen outage; v6: technology one-hot, drivers of each P(on); v5: stay-on probability by boosted trees; v4: loss over the cutoff split by award history; v3: gas steam on its stay-on loss, stale gas steam outages dropped; v2: CC outage calls by gas turbine, zonal unseen outages; v1: NRC reactor status, listed outages; probability of staying on through the window, per-unit horizon, pooled cutoffs
+VERSION = "v9"    # v9: the forecast net load as an input; v8: the P(on) of trees fitted on the 2024-25 thermal history as an input; v7: combustion turbines share the zonal unseen outage; v6: technology one-hot, drivers of each P(on); v5: stay-on probability by boosted trees; v4: loss over the cutoff split by award history; v3: gas steam on its stay-on loss, stale gas steam outages dropped; v2: CC outage calls by gas turbine, zonal unseen outages; v1: NRC reactor status, listed outages; probability of staying on through the window, per-unit horizon, pooled cutoffs
 SEASONAL_VERSION = "v0"
 RUN_SHARE = 0.5          # a month the unit ran through: online at least this share of its hours
 LONG_OUT = 21            # days an outage must already have lasted at the last known hour to carry forward
@@ -205,21 +205,26 @@ def _hourly(f, margin, lsl, bs, nh):
     return np.column_stack([np.tile(f, (24, 1)), margin / lsl / 100.0, inw.astype(float), edge])
 
 
-def _tree_x(x, tech, group, month, loss, lsl):
+def _tree_x(x, tech, group, month, loss, lsl, net=None):
     """The boosted trees' inputs for a unit-day's 24 hours: the logistic's (without its
     intercept) and the technology (one column per DAILY_TECHS), whether the group is a daily
-    one, the month, the hour, log(1 + loss per MW of LSL).  The order is DRIVERS'."""
+    one, the month, the hour, log(1 + loss per MW of LSL) and the system's forecast net load
+    (GW) in the hour and over the day (Context.net_load; NaN where unknown, which the trees route on
+    their own).  The order is DRIVERS'."""
+    net = np.full(24, np.nan) if net is None else np.asarray(net, float) / 1000.0
+    day = float(np.nanmean(net)) if np.isfinite(net).any() else np.nan
     return np.column_stack([x[:, 1:], np.tile([float(tech == t) for t in DAILY_TECHS], (24, 1)),
                             np.full(24, float(str(group or "").startswith("daily"))), np.full(24, float(month)),
-                            np.arange(24, dtype=float), np.full(24, float(np.log1p(max(loss, 0.0) / lsl)))])
+                            np.arange(24, dtype=float), np.full(24, float(np.log1p(max(loss, 0.0) / lsl))),
+                            net, np.full(24, day)])
 
 
 # the trees' inputs (_tree_x columns) gathered into the drivers a unit page lists
 DRIVERS = [("loss against its cutoff", (0, 1, 16)), ("award history", (5,)),
            ("window length against its usual off spell", (2,)), ("margin before and after the window", (3, 4)),
            ("share of days it ran", (6,)), ("hour-by-hour prices in the window", (7, 8, 9, 15)),
-           ("technology, group and month", (10, 11, 12, 13, 14)),
-           ("how units like it ran in 2024-25", (17,))]
+           ("technology, group and month", (10, 11, 12, 13, 14)), ("net load", (17, 18)),
+           ("how units like it ran in 2024-25", (19,))]
 
 
 def _hist_view(Z):
@@ -241,7 +246,7 @@ def _trees(Z, y):
     """Boosted trees (scikit-learn) on the unit-hours.  Every input is numeric (the technology
     one-hot), so the tree attributions in _drivers add up exactly."""
     from sklearn.ensemble import HistGradientBoostingClassifier
-    Z = np.where(np.isnan(Z).all(axis=0), 0.0, Z)     # an input with no values (no history trees) cannot be binned
+    Z = np.where(np.isnan(Z).all(axis=0), 0.0, Z)     # an input with no values (no history trees, no net load) cannot be binned
     return HistGradientBoostingClassifier(**GBT).fit(Z, y)
 
 
@@ -354,7 +359,7 @@ def _pool(ctx, date):
             s = stats["units"].get(key)
             f = _features(margin, lsl, loss, bs, nh, cpm * lsl, _min_off(ctx, date, key, tech), own[key][2],
                           s["on_days"] if s else 0.0)
-            X.append(_tree_x(_hourly(f, margin, lsl, bs, nh), tech, g, d[5:7], loss, lsl)); y.append(np.isin(seg, ["m", "a"]).astype(float))
+            X.append(_tree_x(_hourly(f, margin, lsl, bs, nh), tech, g, d[5:7], loss, lsl, ctx.net_load(d))); y.append(np.isin(seg, ["m", "a"]).astype(float))
     # the thermal history before the 60-day window (pipeline/history.py), on the units'
     # attributes as of the point: the same rows from months of DAM days before and after RTC+B
     first = min(_day_trains(ctx), default=None)
@@ -374,7 +379,7 @@ def _pool(ctx, date):
             s = stats["units"].get(key)
             f = _features(margin, lsl, loss, bs, nh, cpm * lsl, _min_off(ctx, date, key, tech), own[key][2],
                           s["on_days"] if s else 0.0)
-            XH.append(_tree_x(_hourly(f, margin, lsl, bs, nh), tech, g, d[5:7], loss, lsl)); yH.append(np.isin(seg, ["m", "a"]).astype(float))
+            XH.append(_tree_x(_hourly(f, margin, lsl, bs, nh), tech, g, d[5:7], loss, lsl, ctx.net_load(d))); yH.append(np.isin(seg, ["m", "a"]).astype(float))
     X = np.vstack(X) if X else np.zeros((0, 0))
     y = np.concatenate(y) if y else np.zeros(0)
     # stacked: trees on the history alone, whose P(on) is one more input to the trees on the
@@ -467,7 +472,7 @@ def forecast(date, ctx: C.Context) -> dict:
                 s = stats["units"].get(key)
                 x = _hourly(_features(margin, lsl, loss, bs, nh, cut, mo, aw, s["on_days"] if s else 0.0), margin, lsl, bs, nh)
                 wt = w.get(None)
-                Z = _stack(w.get("hist"), _tree_x(x, t, g, date[5:7], loss, lsl))
+                Z = _stack(w.get("hist"), _tree_x(x, t, g, date[5:7], loss, lsl, net=ctx.net_load(date)))
                 ph = wt.predict_proba(Z)[:, 1] if wt is not None else np.full(24, float(loss <= cut))
                 p_on = round(float(ph[bs:bs + nh].mean()), 2)
                 if wt is not None:
