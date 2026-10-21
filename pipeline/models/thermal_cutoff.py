@@ -28,6 +28,12 @@ For every thermal train in the latest DAM disclosure (pipeline.forecast.context.
                   the loss over the cutoff split by it
                 - the technology, whether the group is a daily one, the month, the hour and
                   log(1 + loss per MW of LSL)
+                - v8: the P(on) of a first set of trees (_stack) fitted the same way on the
+                  thermal history before the 60-day window (2024 to Nov 2025, the `history`
+                  release, pipeline/history.py), without the unit's award history and share of
+                  days run (_hist_view: those are as of today, not as of the old day).  The
+                  trees on the recent days decide how far the older market's behaviour carries
+                  over past RTC+B (Dec 5, 2025)
               "off" below P_OFF, "maybe" up to P_ON, "on" above.  A daily unit with no cutoff
               at all ("nocut") gets p_on = its share of days with any online hour.
   CC trains, gas steam
@@ -85,7 +91,7 @@ from ..forecast import context as C
 
 UNSEEN_TECHS = ("coal", "combined_cycle", "gas_steam", "combustion_turbine")   # spread the zonal unseen outage MW over these
 NAME = "thermal_cutoff"
-VERSION = "v7"    # v7: combustion turbines share the zonal unseen outage; v6: technology one-hot, drivers of each P(on); v5: stay-on probability by boosted trees; v4: loss over the cutoff split by award history; v3: gas steam on its stay-on loss, stale gas steam outages dropped; v2: CC outage calls by gas turbine, zonal unseen outages; v1: NRC reactor status, listed outages; probability of staying on through the window, per-unit horizon, pooled cutoffs
+VERSION = "v8"    # v8: the P(on) of trees fitted on the 2024-25 thermal history as an input; v7: combustion turbines share the zonal unseen outage; v6: technology one-hot, drivers of each P(on); v5: stay-on probability by boosted trees; v4: loss over the cutoff split by award history; v3: gas steam on its stay-on loss, stale gas steam outages dropped; v2: CC outage calls by gas turbine, zonal unseen outages; v1: NRC reactor status, listed outages; probability of staying on through the window, per-unit horizon, pooled cutoffs
 SEASONAL_VERSION = "v0"
 RUN_SHARE = 0.5          # a month the unit ran through: online at least this share of its hours
 LONG_OUT = 21            # days an outage must already have lasted at the last known hour to carry forward
@@ -202,7 +208,7 @@ def _hourly(f, margin, lsl, bs, nh):
 def _tree_x(x, tech, group, month, loss, lsl):
     """The boosted trees' inputs for a unit-day's 24 hours: the logistic's (without its
     intercept) and the technology (one column per DAILY_TECHS), whether the group is a daily
-    one, the month, the hour and log(1 + loss per MW of LSL).  The order is DRIVERS'."""
+    one, the month, the hour, log(1 + loss per MW of LSL).  The order is DRIVERS'."""
     return np.column_stack([x[:, 1:], np.tile([float(tech == t) for t in DAILY_TECHS], (24, 1)),
                             np.full(24, float(str(group or "").startswith("daily"))), np.full(24, float(month)),
                             np.arange(24, dtype=float), np.full(24, float(np.log1p(max(loss, 0.0) / lsl)))])
@@ -212,13 +218,30 @@ def _tree_x(x, tech, group, month, loss, lsl):
 DRIVERS = [("loss against its cutoff", (0, 1, 16)), ("award history", (5,)),
            ("window length against its usual off spell", (2,)), ("margin before and after the window", (3, 4)),
            ("share of days it ran", (6,)), ("hour-by-hour prices in the window", (7, 8, 9, 15)),
-           ("technology, group and month", (10, 11, 12, 13, 14))]
+           ("technology, group and month", (10, 11, 12, 13, 14)),
+           ("how units like it ran in 2024-25", (17,))]
+
+
+def _hist_view(Z):
+    """What the history trees see of _tree_x rows: no award history and no share of days run.
+    Those are the unit's as of the forecast, not as of the history day, so on old days they
+    would mislabel the unit; its loss over the cutoff is kept whole."""
+    Z = np.array(Z, float)
+    Z[:, 0] += Z[:, 1]
+    Z[:, [1, 5, 6]] = 0.0
+    return Z
+
+
+def _stack(hist, Z):
+    """Z with the history trees' P(on) appended (NaN without history trees)."""
+    return np.column_stack([Z, hist.predict_proba(_hist_view(Z))[:, 1] if hist is not None else np.full(len(Z), np.nan)])
 
 
 def _trees(Z, y):
     """Boosted trees (scikit-learn) on the unit-hours.  Every input is numeric (the technology
     one-hot), so the tree attributions in _drivers add up exactly."""
     from sklearn.ensemble import HistGradientBoostingClassifier
+    Z = np.where(np.isnan(Z).all(axis=0), 0.0, Z)     # an input with no values (no history trees) cannot be binned
     return HistGradientBoostingClassifier(**GBT).fit(Z, y)
 
 
@@ -309,7 +332,7 @@ def _pool(ctx, date):
     pool = {t: float(np.median(v)) for t, v in pm.items()}
     groups, stats, raw = ctx.groups_at(date), ctx.stats_at(date), ctx.raw_states()
     day0 = ctx.stats["day0"]
-    X, y = [], []
+    X, y, XH, yH = [], [], [], []
     for d, trains in _day_trains(ctx).items():
         if point is not None and d > point:
             continue
@@ -332,9 +355,32 @@ def _pool(ctx, date):
             f = _features(margin, lsl, loss, bs, nh, cpm * lsl, _min_off(ctx, date, key, tech), own[key][2],
                           s["on_days"] if s else 0.0)
             X.append(_tree_x(_hourly(f, margin, lsl, bs, nh), tech, g, d[5:7], loss, lsl)); y.append(np.isin(seg, ["m", "a"]).astype(float))
+    # the thermal history before the 60-day window (pipeline/history.py), on the units'
+    # attributes as of the point: the same rows from months of DAM days before and after RTC+B
+    first = min(_day_trains(ctx), default=None)
+    for d, trains in (C.history_trains(DAILY_TECHS, first) if first else {}).items():
+        for key, (tech, spp, mg, lsl, seg) in trains.items():
+            g = groups.get(key)
+            if not (str(g or "").startswith("daily") or (tech in WINDOW_TECHS and g in CC_WINDOW_GROUPS)) or key not in own:
+                continue
+            mg = units[key][2] if mg is None else mg
+            cpm = _blend(own[key], pool.get(tech))
+            if mg is None or cpm is None or (seg == "-").any() or (seg == "o").any():
+                continue
+            margin = (spp - mg) * lsl
+            loss, bs, nh = _window(-margin)
+            if nh <= 0:
+                continue
+            s = stats["units"].get(key)
+            f = _features(margin, lsl, loss, bs, nh, cpm * lsl, _min_off(ctx, date, key, tech), own[key][2],
+                          s["on_days"] if s else 0.0)
+            XH.append(_tree_x(_hourly(f, margin, lsl, bs, nh), tech, g, d[5:7], loss, lsl)); yH.append(np.isin(seg, ["m", "a"]).astype(float))
     X = np.vstack(X) if X else np.zeros((0, 0))
     y = np.concatenate(y) if y else np.zeros(0)
-    w = {None: _trees(X, y)} if len(y) else {}
+    # stacked: trees on the history alone, whose P(on) is one more input to the trees on the
+    # 60 days, so the recent market decides how far the history's view carries over
+    hist = _trees(_hist_view(np.vstack(XH)), np.concatenate(yH)) if XH else None
+    w = {None: _trees(_stack(hist, X), y), "hist": hist} if len(y) else {}
     cache[point] = (own, pool, w)
     return cache[point]
 
@@ -421,7 +467,7 @@ def forecast(date, ctx: C.Context) -> dict:
                 s = stats["units"].get(key)
                 x = _hourly(_features(margin, lsl, loss, bs, nh, cut, mo, aw, s["on_days"] if s else 0.0), margin, lsl, bs, nh)
                 wt = w.get(None)
-                Z = _tree_x(x, t, g, date[5:7], loss, lsl)
+                Z = _stack(w.get("hist"), _tree_x(x, t, g, date[5:7], loss, lsl))
                 ph = wt.predict_proba(Z)[:, 1] if wt is not None else np.full(24, float(loss <= cut))
                 p_on = round(float(ph[bs:bs + nh].mean()), 2)
                 if wt is not None:

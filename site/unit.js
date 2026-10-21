@@ -188,6 +188,7 @@ const DRIVER_LABEL = {
   "share of days it ran": "how often it runs",
   "hour-by-hour prices in the window": "prices through the cheap stretch",
   "technology, group and month": "technology, cycling pattern and season",
+  "how units like it ran in 2024-25": "how units like it behaved in 2024-25",
 };
 function driversHTML(f) {
   if (!f.drivers || f.p_base == null) return "";
