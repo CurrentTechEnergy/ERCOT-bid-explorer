@@ -38,8 +38,8 @@ EMIL = {"wind": "np4-732-cd", "solar": "np4-737-cd"}
 FC_COL = {"wind": "stwpf", "solar": "stppf"}
 CUTOFF_HOUR = 14          # Central: the day-ahead market for D clears by about 13:30 on D - 1
 LOOKBACK_DAYS = 3
-BACKFILL_FROM = dt.date(2025, 12, 5)    # where the site's analysis starts
-BACKFILL_PER_RUN = 160                  # days; two downloads each, about 2 s apiece
+BACKFILL_FROM = dt.date(2024, 1, 1)     # the first month of the thermal history (pipeline/history.py)
+BACKFILL_PER_RUN = 400                  # days; two downloads each, about 2 s apiece
 
 
 def _norm(c) -> str:
