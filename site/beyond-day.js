@@ -59,7 +59,7 @@ const S = {
   index: null, source: "2d", date: null, hour: 12, version: "curves",
   xrange: "low", xMin: -250, xMax: 100, osMin: -100, osMax: 1000, mode: "lines", axes: "price_x", threshold: 0, location: "lambda",
   lslMode: "from_lsl",     // offer curves: "from_lsl" (LSL plus the MW offered above it) or "ercot" (as ERCOT prices them)
-  hidden: new Set(), stackBy: "group", stack: null, stackIdx: null,
+  hidden: new Set(), stackBy: "group", stack: null, stackIdx: null, dalam: null,
   day: null, prices: null, summaries: {}, osView: "hour", osUnit: "share", osSmooth: "smooth",
 };
 const $ = (id) => document.getElementById(id);
@@ -299,15 +299,20 @@ function drawStack() {
     return emptyMsg(el, S.stackIdx ? "No forecast for this day: the stack is built for days with day-ahead prices at the nodes (" +
       `${S.stackIdx.days[0]} to ${S.stackIdx.days.at(-1)}).` : "No forecast files loaded.");
   }
+  // the price rule: the hour's real-time system lambda once the day's prices are in, else the
+  // day-ahead system lambda (the stack itself is the forecast's, cleared against neither)
+  const rtLam = S.prices && S.prices.lambda && S.prices.lambda.hourly_mean ? S.prices.lambda.hourly_mean[h] : null;
+  const daLam = S.dalam && S.dalam.days && S.dalam.days[S.date] ? S.dalam.days[S.date][h] : null;
+  const rt = rtLam != null, price = rt ? rtLam : daLam;
   const byGroup = S.stackBy === "group";
   const names = byGroup ? STACK_GROUPS : STACK_TECHS;
   const block = byGroup ? D.group : D.tech;
   const list = (byGroup ? D.groups : D.techs).filter((k) => block[k] && block[k].n)
     .map((k) => ({ id: k, label: (names[k] || [k])[0], color: (names[k] || [k, "--c-other"])[1], mw: block[k].mw[h], n: block[k].n }));
   $("stack-legend").innerHTML = list.map((s) => `<span><span class="sw" style="background:var(${s.color})"></span>${s.label}</span>`).join("") +
-    `<span><span class="sw" style="height:2px;background:var(--price)"></span>Day-ahead hub average</span>` +
+    `<span><span class="sw" style="height:2px;background:var(--price)"></span>${rt ? "Real-time system lambda" : "Day-ahead system lambda"}</span>` +
     `<span><span class="sw sw-line"></span>Committed minimum</span>`;
-  const P = D.prices, hub = D.hub ? D.hub[h] : null;
+  const P = D.prices, hub = price;
   const hi = Math.min(P.at(-1), Math.max(150, hub != null ? Math.ceil((hub + 40) / 50) * 50 : 150)), lo = -30;
   const idx = P.map((p, i) => i).filter((i) => P[i] >= lo && P[i] <= hi);
   const fl = D.fleet.mw[h];
@@ -339,8 +344,8 @@ function drawStack() {
     svg.append("text").attr("class", "axis-title").attr("x", x(hub) + (right ? -5 : 5)).attr("y", m.t + 10)
       .attr("text-anchor", right ? "end" : "start")
       .attr("paint-order", "stroke").attr("stroke", css("--surface")).attr("stroke-width", 3)
-      .text(narrow ? `hub ${fmtPrice(hub)} · ${fmtMW(fl[Math.min(j, P.length - 1)])} MW`
-        : `day-ahead hub ${fmtPrice(hub)} · ${fmtMW(fl[Math.min(j, P.length - 1)])} MW offered below it`);
+      .text(narrow ? `λ ${fmtPrice(hub)} · ${fmtMW(fl[Math.min(j, P.length - 1)])} MW`
+        : `${rt ? "real-time" : "day-ahead"} lambda ${fmtPrice(hub)} · ${fmtMW(fl[Math.min(j, P.length - 1)])} MW offered below it`);
   }
   svg.append("g").attr("class", "axis").attr("transform", `translate(0,${H - m.b})`).call(axisFmt(d3.axisBottom(x), narrow ? 4 : 8, "$").tickSizeOuter(0));
   svg.append("g").attr("class", "axis").attr("transform", `translate(${m.l},0)`).call(axisFmt(d3.axisLeft(y), 5).tickSizeOuter(0));
@@ -1027,7 +1032,7 @@ async function boot() {
   }
   const [s2, s60, sp] = await Promise.all([tryJSON("data/summary_2d.json.gz"), tryJSON("data/summary_60d.json.gz"), tryJSON("data/summary_prices.json.gz")]);
   S.summaries = { "2d": s2 || {}, "60d": s60 || {}, prices: sp || {} };
-  S.stackIdx = await tryJSON("data/forecast/index.json.gz");
+  [S.stackIdx, S.dalam] = await Promise.all([tryJSON("data/forecast/index.json.gz"), tryJSON("data/dam_lambda.json.gz")]);
   const D = S.index.days;
   const last = (a) => (a.length ? [...a].sort().at(-1) : "none");
   $("status").textContent = `2-day: ${D["2d"].length} day(s), latest ${last(D["2d"])} · 60-day: ${D["60d"].length} day(s), latest ${last(D["60d"])} · prices: ${D.prices.length} day(s) · updated ${S.index.updated.replace("T", " ").replace("Z", " UTC")}`;
