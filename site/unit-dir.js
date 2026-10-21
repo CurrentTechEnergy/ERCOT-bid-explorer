@@ -1,5 +1,5 @@
 /* Unit page, no unit picked: the Units directory, every unit the page can open (data/unit_index.json.gz,
-   pipeline/unit_index.py) with its CDR name, county and zone, filtered by technology and by the text
+   pipeline/unit_index.py) with its CDR name, county, zone, decision maker and QSE, filtered by technology and by the text
    in the page's Unit box, sorted by any column. Enter in the Unit box opens the first unit listed. */
 (() => {
 "use strict";
@@ -23,12 +23,13 @@ const COLS = [
     (u.aliases?.length ? `<br><span class="muted">also ${esc(u.aliases.join(", "))}</span>` : "") },
   { k: "county", h: "County", t: 1, f: (u) => esc(u.county || "–") },
   { k: "zone", h: "Zone", t: 1, f: (u) => esc(u.zone || "–") },
-  { k: "qse", h: "QSE", t: 1, f: (u) => esc(u.qse || "–"), opt: 1 },
+  { k: "dme", h: "Decides offers", t: 1, f: (u) => esc(u.dme || "–") + (u.owner && u.owner !== u.dme ? `<br><span class="muted">owner ${esc(u.owner)}</span>` : ""), opt: 1 },
+  { k: "qse", h: "QSE", t: 1, f: (u) => (u.qse_name ? esc(u.qse_name) + `<br><span class="muted">${esc(u.qse)}</span>` : esc(u.qse || "–")), opt: 1 },
   { k: "sp", h: "Settlement point", t: 1, f: (u) => esc(u.sp || "–") },
   { k: "configs", h: "Configurations", t: 1, f: (u) => (u.configs.length ? esc(u.configs.join(", ")) : "") },
 ];
 const S = { units: null, tech: "all", sort: "unit", dir: 1, shown: [] };
-const sortVal = (u, k) => (k === "group" ? (u.group ? GROUP_ORDER.indexOf(u.group) : null) : k === "configs" ? u.configs.length : u[k]);
+const sortVal = (u, k) => (k === "group" ? (u.group ? GROUP_ORDER.indexOf(u.group) : null) : k === "configs" ? u.configs.length : k === "qse" ? u.qse_name || u.qse : u[k]);
 
 function rows() {
   const q = $("unit-pick").value.trim();
@@ -43,7 +44,7 @@ function draw() {
   if (!S.units) return;
   if (!S.units.length) { el.innerHTML = `<p class="empty">The unit list is not available.</p>`; return; }
   const us = S.shown = rows();
-  const cols = COLS.filter((c) => !c.opt || S.units.some((u) => u[c.k]));      // QSE only once the data has it
+  const cols = COLS.filter((c) => !c.opt || S.units.some((u) => u[c.k]));      // QSE and decision maker only once the data has them
   const q = $("unit-pick").value.trim(), of = S.units.filter((u) => S.tech === "all" || u.tech === S.tech).length;
   $("dir-note").textContent = (q ? `${us.length} of ${of}` : `${of}`) + (S.tech === "all" ? " units" : ` ${TECH_LABEL[S.tech].toLowerCase()} units`) + (q ? ` matching “${q}”` : "");
   el.innerHTML = us.length ? `<table class="data"><thead><tr>${cols.map((c) => `<th class="sortable${c.t ? " t" : ""}" data-k="${c.k}">${c.h}${S.sort === c.k ? (S.dir < 0 ? " ▾" : " ▴") : ""}</th>`).join("")}</tr></thead><tbody>` +
@@ -53,8 +54,8 @@ function draw() {
     const k = th.dataset.k; if (S.sort === k) S.dir = -S.dir; else { S.sort = k; S.dir = ["mw", "configs"].includes(k) ? -1 : 1; }
     draw();
   }));
-  setCSV(el, ["unit", "technology", "group", "capacity_mw", "cdr_name", "cdr_match", "other_names", "county", "zone", "qse", "settlement_point", "configurations"],
-    us.map((u) => [u.unit, u.tech, u.group, u.mw, u.plant, u.match, (u.aliases || []).join("; "), u.county, u.zone, u.qse, u.sp, u.configs.join(" ")]), "Units");
+  setCSV(el, ["unit", "technology", "group", "capacity_mw", "cdr_name", "cdr_match", "other_names", "county", "zone", "decision_maker", "owner", "qse", "qse_name", "settlement_point", "configurations"],
+    us.map((u) => [u.unit, u.tech, u.group, u.mw, u.plant, u.match, (u.aliases || []).join("; "), u.county, u.zone, u.dme, u.owner, u.qse, u.qse_name, u.sp, u.configs.join(" ")]), "Units");
 }
 
 async function boot() {
