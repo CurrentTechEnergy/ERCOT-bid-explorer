@@ -332,6 +332,12 @@ def _mcpc(ctx, date):
     return cache[date]
 
 
+def _mcpc_win(ctx, date, bs, nh):
+    """[24]: the mean upward reserve price over the loss window ($/MW, /100), every hour."""
+    v = _mcpc(ctx, date)[bs:bs + nh]
+    return np.full(24, float(np.nanmean(v)) / 100.0 if np.isfinite(v).any() else np.nan)
+
+
 def _as_share(ctx, point):
     """{train: share of the decision days up to `point` it was awarded an upward reserve in
     the DAM}: how often the unit is kept on to carry reserves (the day's own awards are not
@@ -421,7 +427,7 @@ def _pool(ctx, date):
                           s["on_days"] if s else 0.0)
             X.append(_tree_x(_hourly(f, margin, lsl, bs, nh), tech, g, d[5:7], loss, lsl)); y.append(np.isin(seg, ["m", "a"]).astype(float))
             N.append(_net(ctx, d, tech))
-            A.append(np.column_stack([np.full(24, ash.get(key, 0.0)), _mcpc(ctx, d) / 100.0]))
+            A.append(np.column_stack([np.full(24, ash.get(key, 0.0)), _mcpc_win(ctx, d, bs, nh)]))
     # the thermal history before the 60-day window (pipeline/history.py), on the units'
     # attributes as of the point: the same rows from months of DAM days before and after RTC+B
     first = min(_day_trains(ctx), default=None)
@@ -537,7 +543,7 @@ def forecast(date, ctx: C.Context) -> dict:
                 x = _hourly(_features(margin, lsl, loss, bs, nh, cut, mo, aw, s["on_days"] if s else 0.0), margin, lsl, bs, nh)
                 wt = w.get(None)
                 Z = np.column_stack([_stack(w.get("hist"), _tree_x(x, t, g, date[5:7], loss, lsl), _net(ctx, date, t)),
-                                     np.full(24, (w.get("as") or {}).get(key, 0.0)), _mcpc(ctx, date) / 100.0])
+                                     np.full(24, (w.get("as") or {}).get(key, 0.0)), _mcpc_win(ctx, date, bs, nh)])
                 ph = wt.predict_proba(Z)[:, 1] if wt is not None else np.full(24, float(loss <= cut))
                 p_on = round(float(ph[bs:bs + nh].mean()), 2)
                 if wt is not None:
