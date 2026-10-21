@@ -239,7 +239,16 @@ function render() {
   $("date-next").disabled = di < 0 || di >= days.length - 1;
   $("ctl-version").hidden = !is60;
   $("hour-out").textContent = `${heLabel(S.hour)} · ${String(S.hour).padStart(2, "0")}:00–${String(S.hour + 1).padStart(2, "0")}:00`;
-  $("curve-title-note").textContent = S.date ? `${S.date} · ${heLabel(S.hour)}${S.source !== "60d" ? "" : curvesFromLSL() ? " · from LSL" : S.lslMode === "from_lsl" ? " · as ERCOT prices them (no LSL data for this day yet)" : " · as ERCOT prices them"}` : "";
+  // 2-day days have no unit LSLs, so "From LSL" cannot be drawn: show the toggle as "As ERCOT
+  // prices it" with From LSL disabled (S.lslMode is kept for the next 60-day day) and say what
+  // the -$50/-$20 steps are
+  const lslBtn = $("lsl-mode").querySelector('[data-v="from_lsl"]');
+  lslBtn.disabled = S.source !== "60d";
+  if (!lslBtn.dataset.title) lslBtn.dataset.title = lslBtn.title;
+  lslBtn.title = lslBtn.disabled ? "Not available for 2-day days: the 2-day report has no unit minimum output (LSL)" : lslBtn.dataset.title;
+  setSeg("lsl-mode", lslBtn.disabled ? "ercot" : S.lslMode);
+  $("curve-2d-note").hidden = S.source === "60d";
+  $("curve-title-note").textContent = S.date ? `${S.date} · ${heLabel(S.hour)}${S.source !== "60d" ? " · as ERCOT prices it: the 2-day report has no unit limits" : curvesFromLSL() ? " · from LSL" : S.lslMode === "from_lsl" ? " · as ERCOT prices them (no LSL data for this day yet)" : " · as ERCOT prices them"}` : "";
   renderLegend();
   drawStack();
   drawCurves();
@@ -957,7 +966,7 @@ function drawProfile() {
     const c = seriesCurves(S.day, s, S.version);
     return c && { s, vals: c.map((r) => (r ? r[gi] : null)) };
   }).filter(Boolean);
-  $("profile-title-note").textContent = S.source !== "60d" ? "" : fromLSL ? "from LSL" : "as ERCOT prices them";
+  $("profile-title-note").textContent = S.source !== "60d" ? "as ERCOT prices them" : fromLSL ? "from LSL" : "as ERCOT prices them";
 
   const { w } = size(el);
   const H = 240, m = { t: 14, r: 16, b: 26, l: 64 };
