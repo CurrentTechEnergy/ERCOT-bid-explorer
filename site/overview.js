@@ -235,7 +235,7 @@ function drawSpark() {
   const w = size(el), Hh = 190, m = { t: 12, r: 12, b: 26, l: 48 };
   const lam = S.prices && S.prices.lambda ? S.prices.lambda.hourly_mean : null;
   const P = dayPrice(), da = P.vals;
-  $("spark-title").textContent = `${P.label} by hour ending ($/MWh)`;
+  $("spark-title").textContent = lam ? "System lambda by hour ending ($/MWh): day-ahead solid, real-time dashed" : `${P.label} by hour ending ($/MWh)`;
   const e = H.band_edges || [0, 0];
   const vals = [...da, ...(lam || []), e[1] * 1.15].filter((v) => v != null);
   const x = d3.scaleLinear().domain([1, 24]).range([m.l, w - m.r]);
@@ -268,7 +268,7 @@ function drawSpark() {
     .on("click", (ev) => pickHour(Math.round(x.invert(d3.pointer(ev)[0])) - 1)).style("cursor", "pointer");
   el.replaceChildren(svg.node());
   setCSV(el, ["hour_ending", "da_lambda", "rt_lambda"], HRS.map((h) => [h + 1, da[h], lam ? lam[h] : null]), `Day-ahead price ${S.date}`);
-  $("spark-note").textContent = `Bands are the low, middle and high quarters of the last twelve months' daily averages.` + (lam ? " Dashed is real-time lambda." : "");
+  $("spark-note").textContent = `Bands are the low, middle and high quarters of the last twelve months' daily averages.` + (lam ? " The dashed line is the real-time system lambda, averaged by hour." : "");
 }
 
 function miniSeries() {
