@@ -44,6 +44,7 @@ on:
 permissions:
   actions: write     # a reprocess run queues the next one
   contents: write
+  issues: write      # the stale-data issue (pipeline/freshness.py)
   pages: write
   id-token: write
 
@@ -184,6 +185,18 @@ jobs:
           done
           echo "::error::Could not push the data branch after 5 attempts"
           exit 1
+
+      # Is every input still arriving? Fetch failures only warn and keep the stored data, so this
+      # compares each input's newest day with its usual lag (pipeline/freshness.py), writes
+      # site/data/freshness.json and keeps one "stale-data" issue open while anything is behind.
+      # Runs even when an earlier step failed, and never fails the run itself.
+      - name: Check data freshness
+        if: always() && !inputs.backfill_start && inputs.reprocess_60d != true && !inputs.outages_start
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: python -m pipeline.freshness --issues
 
       - name: Commit new data
         run: |
