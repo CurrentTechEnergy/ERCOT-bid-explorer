@@ -3,26 +3,26 @@
   <title>GRSES_UNIT1: bidding and operating changes</title>
   <link href="https://ercotbids.currenttech.energy/unit.html?unit=GRSES_UNIT1"/>
   <id>https://ercotbids.currenttech.energy/unit.html?unit=GRSES_UNIT1</id>
-  <updated>2026-10-20T00:00:00Z</updated>
+  <updated>2026-10-21T00:00:00Z</updated>
   <entry>
-    <title>GRSES_UNIT1: Loss cutoff moved (2026-08-21)</title>
+    <title>GRSES_UNIT1: Loss cutoff moved (2026-08-22)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=GRSES_UNIT1"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=GRSES_UNIT1#GRSES_UNIT1/2026-08-21/cutoff</id>
-    <updated>2026-10-20T00:00:00Z</updated>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=GRSES_UNIT1#GRSES_UNIT1/2026-08-22/cutoff</id>
+    <updated>2026-10-21T00:00:00Z</updated>
     <summary>Loss cutoff $140 to $216 per MW of minimum output; not yet tested on a following month</summary>
   </entry>
   <entry>
-    <title>GRSES_UNIT1: Bidding approach shifted (2026-08-15)</title>
+    <title>GRSES_UNIT1: Bidding approach shifted (2026-08-16)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=GRSES_UNIT1"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=GRSES_UNIT1#GRSES_UNIT1/2026-08-15/bidding</id>
-    <updated>2026-10-20T00:00:00Z</updated>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=GRSES_UNIT1#GRSES_UNIT1/2026-08-16/bidding</id>
+    <updated>2026-10-21T00:00:00Z</updated>
     <summary>Offer price vs peer median: $92 to -$18/MWh</summary>
   </entry>
   <entry>
-    <title>GRSES_UNIT1: Bidding approach shifted (2026-08-02)</title>
+    <title>GRSES_UNIT1: Bidding approach shifted (2026-08-03)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=GRSES_UNIT1"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=GRSES_UNIT1#GRSES_UNIT1/2026-08-02/bidding</id>
-    <updated>2026-10-20T00:00:00Z</updated>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=GRSES_UNIT1#GRSES_UNIT1/2026-08-03/bidding</id>
+    <updated>2026-10-21T00:00:00Z</updated>
     <summary>Offer price vs peer median: $24 to $92/MWh</summary>
   </entry>
   <entry>
