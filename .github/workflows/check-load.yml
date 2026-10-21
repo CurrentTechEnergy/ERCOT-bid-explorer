@@ -1,0 +1,31 @@
+name: Check the load reports
+
+# Reads a few recent postings of ERCOT's load forecast and actual load reports with
+# pipeline/load.py's parsers and prints what they read.  Writes nothing.
+on:
+  pull_request:       # runs on a PR that changes the parser, so the result is on the PR before merge
+    paths:
+      - pipeline/load.py
+      - .github/workflows/check-load.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install -r requirements.txt
+      - name: Parse recent postings
+        env:
+          ERCOT_API_USERNAME: ${{ secrets.ERCOT_API_USERNAME }}
+          ERCOT_API_PASSWORD: ${{ secrets.ERCOT_API_PASSWORD }}
+          ERCOT_API_SUBSCRIPTION_KEY: ${{ secrets.ERCOT_API_SUBSCRIPTION_KEY }}
+        run: python -m pipeline.load --sample
