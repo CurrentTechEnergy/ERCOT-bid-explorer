@@ -3,7 +3,7 @@
 The heavy builders (trends, intraday, curtail_nodes, marginal_nodes, mitigation, econ) read every
 60-day day on each run, about 40 minutes in all, even when no report was added.  run() records
 the files a builder reads and writes (through store.read_json_gz / write_json_gz) and keeps, in
-data/build_memo.json.gz, a hash of the pipeline code, the index's day lists, those inputs and those
+data/build_memo.json.gz, a hash of the builder's code (its module and the pipeline modules it imports), the index's day lists, those inputs and those
 outputs.  On the next run the builder is skipped when all four still match, so its output files
 are left exactly as they are.
 
@@ -13,6 +13,7 @@ stamps (gas.json.gz carries a fetch time even when no price changed).
 
 Set REBUILD_ALL=1 (or pass --rebuild-all to pipeline.update) to run every builder regardless.
 """
+import ast
 import gzip
 import hashlib
 import json
@@ -23,11 +24,12 @@ from . import store
 from .config import DATA_DIR, ROOT, UNIT_DATA_DIR
 
 MEMO_PATH = DATA_DIR / "build_memo.json.gz"
+PIPELINE = (ROOT / "pipeline").resolve()
 STAMP_KEYS = ("updated", "built")
 SMALL = 5 << 20             # compressed bytes; smaller JSON files are hashed without their stamps
 
 _file_hashes = {}           # (path, mtime_ns, size) -> digest, for this process
-_code = None
+_code = {}                  # builder module -> code hash, for this process
 
 
 def _rel(p: Path) -> str:
@@ -76,18 +78,47 @@ def _digest(rels) -> str:
     return h.hexdigest()
 
 
-def code_hash() -> str:
-    """Every file under pipeline/ but this one, plus requirements.txt: any code change reruns every builder."""
-    global _code
-    if _code is None:
+def _imports(path: Path) -> set:
+    """pipeline modules a module imports with relative imports, anywhere in the file."""
+    pkg = PIPELINE / path.relative_to(PIPELINE).parent
+    out = set()
+    for node in ast.walk(ast.parse(path.read_text())):
+        if not isinstance(node, ast.ImportFrom) or not node.level:
+            continue
+        base = pkg
+        for _ in range(node.level - 1):
+            base = base.parent
+        names = [node.module] if node.module else [a.name for a in node.names]
+        for name in names:
+            stem = base.joinpath(*name.split("."))
+            for cand in (stem.with_suffix(".py"), stem / "__init__.py"):
+                if cand.is_file() and PIPELINE in cand.parents:
+                    out.add(cand)
+                    break
+    return out
+
+
+def code_hash(module: str) -> str:
+    """The builder's module and every pipeline module it imports, directly or not, plus the
+    non-Python files under pipeline/ (reference data) and requirements.txt.  A change to code the
+    builder never imports leaves it alone."""
+    if module not in _code:
+        start = PIPELINE.joinpath(*module.split(".")[1:]).with_suffix(".py")
+        seen, todo = set(), [start]
+        while todo:
+            f = todo.pop()
+            if f not in seen:
+                seen.add(f)
+                todo += _imports(f)
+        seen.discard(Path(__file__).resolve())
+        data = [p for p in PIPELINE.rglob("*")
+                if p.is_file() and p.suffix not in (".py", ".pyc") and "__pycache__" not in p.parts]
         h = hashlib.sha1()
-        files = [p for p in sorted((ROOT / "pipeline").rglob("*"))
-                 if p.is_file() and "__pycache__" not in p.parts and p != Path(__file__).resolve()]
-        for p in files + [ROOT / "requirements.txt"]:
+        for p in sorted(seen) + sorted(data) + [ROOT / "requirements.txt"]:
             if p.exists():
                 h.update(p.relative_to(ROOT).as_posix().encode() + b"\0" + p.read_bytes() + b"\0")
-        _code = h.hexdigest()
-    return _code
+        _code[module] = h.hexdigest()
+    return _code[module]
 
 
 def index_hash(index: dict) -> str:
@@ -107,7 +138,7 @@ def run(name: str, fn, index: dict) -> bool:
     memo = _load()
     prev = memo.get(name)
     if (prev and not os.environ.get("REBUILD_ALL")
-            and prev["code"] == code_hash() and prev["index"] == index_hash(index)
+            and prev["code"] == code_hash(fn.__module__) and prev["index"] == index_hash(index)
             and prev["reads_digest"] == _digest(prev["reads"])
             and prev["writes_digest"] == _digest(prev["writes"])):
         print(f"{name}: inputs unchanged since the last build, skipped")
@@ -120,7 +151,7 @@ def run(name: str, fn, index: dict) -> bool:
         store.TRACE = None
     writes = sorted({_rel(p) for p in trace["writes"]})
     reads = sorted({_rel(p) for p in trace["reads"]} - set(writes))    # a file it rewrites is an output
-    memo[name] = {"code": code_hash(), "index": index_hash(index),
+    memo[name] = {"code": code_hash(fn.__module__), "index": index_hash(index),
                   "reads": reads, "reads_digest": _digest(reads),
                   "writes": writes, "writes_digest": _digest(writes)}
     store.write_json_gz(MEMO_PATH, dict(sorted(memo.items())))
