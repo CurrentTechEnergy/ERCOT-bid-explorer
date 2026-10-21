@@ -105,7 +105,9 @@ jobs:
       - name: Fetch the thermal history
         env:
           GH_TOKEN: ${{ github.token }}
-        run: gh release download history -R "$GITHUB_REPOSITORY" -p 'thermal-*.parquet' -D history || echo "No thermal history: the trees train on the 60-day window only"
+        run: |
+          gh release download history -R "$GITHUB_REPOSITORY" -p 'thermal-*.parquet' -D history \
+            || echo "No thermal history, so the trees train on the 60-day window only"
 
       - name: Fetch and process new reports
         id: fetch
