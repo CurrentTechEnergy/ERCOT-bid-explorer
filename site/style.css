@@ -275,3 +275,14 @@ details.dl > summary:hover { color: var(--ink); border-color: var(--muted); }
 .unit-find-meta { color: var(--muted); white-space: nowrap; }
 .unit-find-none { padding: 7px 10px; font-size: 13px; color: var(--muted); }
 @media (max-width: 640px) { .unit-find { margin-left: 0; flex: 1 1 100%; } .unit-find input { width: 100%; } .unit-find-list { left: 0; right: 0; min-width: 0; max-width: none; } }
+
+/* ---- Overview: ERCOT data first, estimates below ---- */
+.section-h { grid-column: 1 / -1; margin-top: 8px; padding: 0 2px; }
+.section-h h2 { font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin: 0 0 2px; }
+.section-h .note { margin: 0; }
+.section-h[hidden] { display: none; }
+.rows .bar i.fc { width: 3px; background: var(--surface); border-inline: 1px solid var(--ink); }
+.sw-fc { width: 3px; height: 10px; border-radius: 0; background: var(--surface); border-inline: 1px solid var(--ink); margin-inline: 4px; }
+
+/* predictions hidden: forecast overlays and the estimates panels go away on scored days */
+body.no-pred .pred { display: none !important; }

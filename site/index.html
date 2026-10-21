@@ -41,6 +41,13 @@
     </div>
     <p class="source-note" id="source-note"></p>
   </div>
+  <div class="ctl" id="pred-ctl" hidden>
+    <span class="lbl">Predictions</span>
+    <div class="seg seg-sm" id="pred" role="radiogroup" aria-label="Predictions">
+      <button type="button" data-v="1" role="radio">Show</button>
+      <button type="button" data-v="0" role="radio">Hide</button>
+    </div>
+  </div>
   <div class="ctl">
     <span class="lbl">Data for this day</span>
     <div class="layers" id="layers"></div>
@@ -58,17 +65,52 @@
         <div class="note" id="track"></div>
       </div>
       <div class="sparkwrap">
-        <h3>Day-ahead hub average by hour ending ($/MWh)</h3>
+        <h3 id="spark-title">Day-ahead system lambda by hour ending ($/MWh)</h3>
         <div class="chart chart-short" id="spark"></div>
-        <p class="note" id="spark-note">Shaded bands are the bottom quarter, middle half and top quarter of daily hub averages over the last twelve months. Real-time system lambda is drawn beside the day-ahead line once the day has happened.</p>
+        <p class="note" id="spark-note">Shaded bands are the bottom quarter, middle half and top quarter of daily averages over the last twelve months. Real-time system lambda is drawn beside the day-ahead line once the day has happened.</p>
+        <div class="pred">
         <h3>Expected generation, same hours (GW)</h3>
         <div class="chart chart-short" id="mini"></div>
         <div class="legend legend-static" id="mini-legend"></div>
+        </div>
       </div>
     </div>
   </section>
 
-  <section class="panel" id="groups-panel">
+  <section class="panel panel-wide" id="actual-panel" hidden>
+    <div class="panel-head">
+      <div>
+        <h2>What ran, by hour <span class="h-note" id="actual-note"></span></h2>
+        <p class="note" id="actual-sub">ERCOT's reported output by hour. Batteries are drawn on top while discharging and below zero while charging. The dashed line is the forecast's total; the dotted line its committed minimum.</p>
+      </div>
+    </div>
+    <div class="legend" id="actual-legend"></div>
+    <div class="chart" id="actual-chart"></div>
+  </section>
+
+  <section class="panel panel-wide" id="actual-bars-panel" hidden>
+    <div class="panel-head">
+      <div>
+        <h2>What ran, over the day <span class="h-note" id="actual-bars-note"></span></h2>
+        <p class="note" id="actual-bars-sub">ERCOT's reported energy. The bar is what ran; the tick is what the forecast expected.</p>
+      </div>
+      <div class="panel-tools">
+        <div class="seg seg-sm" id="unit-a" role="radiogroup" aria-label="Unit">
+          <button type="button" data-v="gw" role="radio">Power, GW</button>
+          <button type="button" data-v="gwh" role="radio">Energy, GWh over the day</button>
+        </div>
+      </div>
+    </div>
+    <div class="legend legend-static" id="actual-bar-legend"></div>
+    <div class="rows" id="actual-rows" data-csv></div>
+  </section>
+
+  <div class="section-h pred" id="estimates-head" hidden>
+    <h2>Estimates</h2>
+    <p class="note" id="estimates-note">The forecast made the day before, kept below ERCOT's data for comparison. Ticks and lines on the estimates mark what actually ran.</p>
+  </div>
+
+  <section class="panel pred" id="groups-panel">
     <div class="panel-head">
       <div>
         <h2>Who is expected to run, by how often it turns off</h2>
@@ -86,7 +128,7 @@
     <div class="rows" id="group-rows" data-csv></div>
   </section>
 
-  <section class="panel" id="tech-panel">
+  <section class="panel pred" id="tech-panel">
     <div class="panel-head">
       <div>
         <h2>Who is expected to run, by technology</h2>
@@ -103,7 +145,19 @@
     <div class="rows" id="tech-rows" data-csv></div>
   </section>
 
-  <section class="panel panel-wide" id="hourly-panel">
+  <section class="panel panel-wide pred" id="fit-panel" hidden>
+    <div class="panel-head">
+      <div>
+        <h2>Who was on, by the 2-day fit <span class="h-note" id="fit-note"></span></h2>
+        <p class="note">Which units must have been committed to produce ERCOT's aggregate thermal offer curve, two days after the day. The fit starts from the forecast's set and flips units on or off until the curve matches. An inference, not a published actual: the 60-day disclosure gives the answer. Each bar is the group's full capacity; dark is the fitted set's minimum output, light its maximum, and the tick is the forecast's maximum.</p>
+        <details class="how"><summary>How it's built</summary><p class="note">The 2-day SCED energy curves report sums every non-IRR unit's offer curve for every SCED run. The MW offered at or below the floor and $0 are mostly the minimum output of the units that were on, and the MW at $10, $25, $50 and the cap say which of them it was. Units are tried off, on (in each combined-cycle configuration) and on outside their forecast off window, in order of how uncertain the forecast was about them, and a change is kept when it brings the fleet curve closer to ERCOT's. Nuclear, hydro and other are fixed; peakers carry one online share per hour.</p></details>
+      </div>
+    </div>
+    <div class="legend legend-static" id="fit-legend"></div>
+    <div class="rows" id="fit-rows" data-csv></div>
+  </section>
+
+  <section class="panel panel-wide pred" id="hourly-panel">
     <div class="panel-head">
       <div>
         <h2>Expected generation by hour <span class="h-note" id="hourly-note"></span></h2>
@@ -116,7 +170,7 @@
     <p class="note step-link" id="offers-step"></p>
   </section>
 
-  <section class="panel panel-wide" id="score-panel" hidden>
+  <section class="panel panel-wide pred" id="score-panel" hidden>
     <div class="panel-head">
       <div>
         <h2>How this day went <span class="h-note" id="score-note"></span></h2>
@@ -144,7 +198,7 @@
     <div class="panel-head">
       <div>
         <h2>Generation mix <span class="h-note" id="mix-title-note"></span></h2>
-        <p class="note">Expected output by technology in the hour. Ticks mark actual output once it is reported.</p>
+        <p class="note">Output by technology in the hour: the forecast until the day's data is in, then what ran, with the forecast as a tick.</p>
       </div>
     </div>
     <div class="chart" id="mix-chart"></div>
