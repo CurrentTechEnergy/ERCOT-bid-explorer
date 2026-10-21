@@ -1,0 +1,35 @@
+name: Probe the 60-day COP reports
+
+# Lists and reads a few postings of ERCOT's 60-day COP reports with pipeline/cop_probe.py and
+# prints what they hold.  Writes nothing.
+on:
+  pull_request:
+    paths:
+      - pipeline/cop_probe.py
+      - .github/workflows/probe-cop.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install -r requirements.txt
+      - name: Probe
+        env:
+          ERCOT_API_USERNAME: ${{ secrets.ERCOT_API_USERNAME }}
+          ERCOT_API_PASSWORD: ${{ secrets.ERCOT_API_PASSWORD }}
+          ERCOT_API_SUBSCRIPTION_KEY: ${{ secrets.ERCOT_API_SUBSCRIPTION_KEY }}
+        run: python -m pipeline.cop_probe --plans 90 "$RUNNER_TEMP/cop_plans.json.gz"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: cop-plans
+          path: ${{ runner.temp }}/cop_plans.json.gz
