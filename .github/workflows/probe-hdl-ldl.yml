@@ -1,0 +1,43 @@
+name: Probe HDL/LDL summary
+
+# One-off check of whether ERCOT's real-time HDL/LDL summary (NP6-915-CD) tracks the generator
+# floor in the per-unit 60-day files (pipeline/probe_hdl_ldl.py).  Writes nothing to the site;
+# the report is in the run summary and the hourly table is an artifact.
+on:
+  pull_request:       # runs on a PR that changes the probe, so the result is on the PR before merge
+    paths:
+      - pipeline/probe_hdl_ldl.py
+      - .github/workflows/probe-hdl-ldl.yml
+  workflow_dispatch:
+    inputs:
+      days:
+        description: "Operating days, space separated (blank: the 5th and 20th of each month)"
+        required: false
+        default: ""
+
+permissions:
+  contents: read
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install -r requirements.txt
+      - name: Probe NP6-915-CD
+        env:
+          ERCOT_API_USERNAME: ${{ secrets.ERCOT_API_USERNAME }}
+          ERCOT_API_PASSWORD: ${{ secrets.ERCOT_API_PASSWORD }}
+          ERCOT_API_SUBSCRIPTION_KEY: ${{ secrets.ERCOT_API_SUBSCRIPTION_KEY }}
+        run: python -m pipeline.probe_hdl_ldl ${{ inputs.days && format('--days {0}', inputs.days) || '' }}
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: hdl-ldl-probe
+          path: hdl_ldl_probe.csv
+          if-no-files-found: ignore
