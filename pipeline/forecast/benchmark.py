@@ -42,7 +42,7 @@ def select(ctx: C.Context) -> dict:
     have = {d for d in ctx.days60 if (DATA_DIR / "60d-units" / f"{d}.json.gz").exists()} & set(ctx.dam_days)
     daily = ctx.hub_daily()
     last = max(have)
-    edges, _ = band_edges(ctx, last)
+    edges, _ = band_edges(ctx, last, daily)   # the benchmark set is chosen on the hub average, as it always was
     by = {"low": [], "medium": [], "high": []}
     for d in sorted(have):
         if d in daily:
