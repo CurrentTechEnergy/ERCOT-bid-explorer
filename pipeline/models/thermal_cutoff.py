@@ -225,7 +225,7 @@ DRIVERS = [("loss against its cutoff", (0, 1, 16)), ("award history", (5,)),
            ("window length against its usual off spell", (2,)), ("margin before and after the window", (3, 4)),
            ("share of days it ran", (6,)), ("hour-by-hour prices in the window", (7, 8, 9, 15)),
            ("technology, group and month", (10, 11, 12, 13, 14)),
-           ("how units like it ran in 2024-25", (17,)), ("reserve award history", (18,))]
+           ("how units like it ran in 2024-25", (17,)), ("reserve award history", (18,)), ("reserve prices", (19,))]
 
 
 def _hist_view(Z):
@@ -293,6 +293,7 @@ def _day_trains(ctx):
             out[d] = {key: (e["tech"], e["spp"], e["mingen"], e["lsl"]) for key, e in _dam_trains(dd).items()
                       if e["tech"] in DAILY_TECHS and e["spp"] is not None and e["lsl"]}
             ctx.__dict__.setdefault("_as_days", {})[d] = _as_up(dd)
+            ctx.__dict__.setdefault("_mcpc", {})[d] = _mcpc_up(dd)
         ctx._cut_days = out
     return ctx._cut_days
 
@@ -309,6 +310,26 @@ def _as_up(dd):
         if up and max(up) >= AS_MIN:
             out.add(train_of(name) if u["tech"] == "combined_cycle" else name)
     return out
+
+
+def _mcpc_up(dd):
+    """[24] $/MW: the DAM's upward reserve clearing prices (Reg-Up + RRS + ECRS + Non-Spin) by
+    hour, NaN where missing."""
+    m = dd.get("mcpc") or {}
+    out = np.zeros(24)
+    for k in AS_UP:
+        v = (m.get(k) or [None] * 24)[:24]
+        out += np.array([np.nan if x is None else x for x in v] + [np.nan] * (24 - len(v)), float)
+    return out
+
+
+def _mcpc(ctx, date):
+    """[24] $/MW of upward reserve prices for `date` (_mcpc_up), from the DAM day file."""
+    cache = ctx.__dict__.setdefault("_mcpc", {})
+    if date not in cache:
+        dd = read_json_gz(DATA_DIR / "dam" / f"{date}.json.gz")
+        cache[date] = _mcpc_up(dd) if dd else np.full(24, np.nan)
+    return cache[date]
 
 
 def _as_share(ctx, point):
@@ -400,7 +421,7 @@ def _pool(ctx, date):
                           s["on_days"] if s else 0.0)
             X.append(_tree_x(_hourly(f, margin, lsl, bs, nh), tech, g, d[5:7], loss, lsl)); y.append(np.isin(seg, ["m", "a"]).astype(float))
             N.append(_net(ctx, d, tech))
-            A.append(np.full(24, ash.get(key, 0.0)))
+            A.append(np.column_stack([np.full(24, ash.get(key, 0.0)), _mcpc(ctx, d) / 100.0]))
     # the thermal history before the 60-day window (pipeline/history.py), on the units'
     # attributes as of the point: the same rows from months of DAM days before and after RTC+B
     first = min(_day_trains(ctx), default=None)
@@ -427,7 +448,7 @@ def _pool(ctx, date):
     # stacked: trees on the history alone, whose P(on) is one more input to the trees on the
     # 60 days, so the recent market decides how far the history's view carries over
     hist = _trees(np.vstack(XH), np.concatenate(yH)) if XH else None
-    w = {None: _trees(np.column_stack([_stack(hist, X, np.concatenate(N)), np.concatenate(A)]), y),
+    w = {None: _trees(np.column_stack([_stack(hist, X, np.concatenate(N)), np.vstack(A)]), y),
          "hist": hist, "as": ash} if len(y) else {}
     cache[point] = (own, pool, w)
     return cache[point]
@@ -516,7 +537,7 @@ def forecast(date, ctx: C.Context) -> dict:
                 x = _hourly(_features(margin, lsl, loss, bs, nh, cut, mo, aw, s["on_days"] if s else 0.0), margin, lsl, bs, nh)
                 wt = w.get(None)
                 Z = np.column_stack([_stack(w.get("hist"), _tree_x(x, t, g, date[5:7], loss, lsl), _net(ctx, date, t)),
-                                     np.full(24, (w.get("as") or {}).get(key, 0.0))])
+                                     np.full(24, (w.get("as") or {}).get(key, 0.0)), _mcpc(ctx, date) / 100.0])
                 ph = wt.predict_proba(Z)[:, 1] if wt is not None else np.full(24, float(loss <= cut))
                 p_on = round(float(ph[bs:bs + nh].mean()), 2)
                 if wt is not None:
