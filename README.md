@@ -17,6 +17,8 @@ An interactive dashboard of how ERCOT resources offer energy into real-time disp
 | Settlement Point Prices | NP6-905-CD | real time | 15-minute prices at hubs and load zones; hourly prices at every resource node (kept on the data branch, for days with per-unit data) |
 | DAM Settlement Point Prices | NP4-190-CD | day ahead | Hourly day-ahead prices at hubs and load zones, for the hedge signals page (history can be loaded from the yearly NP4-180-ER workbook), and at thermal resource nodes for the last two weeks, for tomorrow's shutdown verdicts |
 | Wind and solar power production, hourly averaged actual and forecasted | NP4-732-CD, NP4-737-CD | hourly | ERCOT's short-term wind and solar forecasts (STWPF, STPPF), system-wide: the available wind and solar in the Overview's forecast (the posting in force when the day-ahead market cleared), and the hourly actuals for reconciliation |
+| Resource Decision-Making Entity List | NP3-988-ER | daily | Each resource's decision-making entity (who decides how it is offered) and owning entity, by name; read from ercot.com (no key) to name the DME codes in the 60-day files |
+| Qualified Scheduling Entity List | NP16-474-M | daily | QSE names for the QSE codes in the 60-day files; read from ercot.com (no key). Only name, code and registration date are kept, not the contact columns |
 | EIA Henry Hub spot price | RNGWHHD | daily | Natural gas price, $/MMBtu, from the EIA open data API (needs an `EIA_API_KEY` secret; skipped without one) |
 | OilPriceAPI regional gas prices | NATURAL_GAS_HSC_USD, NATURAL_GAS_WAHA | daily | Houston Ship Channel and Waha (West Texas) natural gas prices, $/MMBtu (needs an `OILPRICEAPI_KEY` secret, free tier; skipped without one). Their Henry Hub series is not used: it is not the spot price |
 
@@ -134,8 +136,12 @@ pipeline/
                    when a new report comes out, twice a year; needs openpyxl)
                    pipeline/reference/unit_aliases.csv: other names a unit goes by (a developer's
                    project name), one row per unit and name, edited by hand; search finds them
-  qse.py           the QSE column of the 60-day SCED and DAM files, where they carry one ->
-                   data/unit_qse.json.gz; the run summary says which files had it
+  qse.py           the QSE and DME columns of the 60-day SCED, ESR and DAM files, where they
+                   carry them -> data/unit_qse.json.gz (latest pair per unit and a dated history
+                   of changes); the run summary says which files had them
+  entities.py      ERCOT's daily DME list (NP3-988-ER) and QSE list (NP16-474-M) from ercot.com
+                   -> data/entities.json.gz: names for the QSE and DME codes, each resource's
+                   owner; the unit index carries qse_name, dme and owner from it
   notify.py        events -> one email a day through Resend to each person who follows a unit
                    that changed, follows read from the follow server's database (needs the
                    RESEND_API_KEY and CLOUDFLARE_API_TOKEN secrets; a dry run without them);

@@ -53,6 +53,7 @@ from .renew_forecast import fetch_renew_forecast
 from .load import fetch_load
 from .outages import fetch_outages
 from .nrc import fetch_nrc
+from .entities import fetch_entities
 from .forecast.run import build_forecast
 from .ppa import build_ppa
 from .renew_changes import build_renew_changes
@@ -374,7 +375,7 @@ def main(argv=None):
     ap.add_argument("--max-files", type=int, default=None, help="cap curve files per report per run")
     ap.add_argument("--outages-backfill", nargs=2, metavar=("START", "END"),
                     help="also fetch the outage reports for every operating day in this range")
-    ap.add_argument("--skip", choices=["2d", "2dgen", "60d", "dam", "prices", "outages", "nrc", "gas", "forecast"], action="append", default=[])
+    ap.add_argument("--skip", choices=["2d", "2dgen", "60d", "dam", "prices", "outages", "nrc", "gas", "forecast", "entities"], action="append", default=[])
     ap.add_argument("--local", nargs="+", help="process local zip files instead of calling the API")
     ap.add_argument("--reprocess-60d", nargs="?", const="missing", choices=["missing", "all"],
                     help="re-download and reparse 60-day SCED and DAM days already in the index: those "
@@ -505,6 +506,8 @@ def main(argv=None):
     build_cutoff_history(index)
     build_events(index)
     qse_lines = qse.save()
+    if "entities" not in args.skip:
+        fetch_entities()     # after qse.save(): DME codes are named from the codes it saved
     build_unit_index(index)
     save_index(index)
     added = {k: sorted(set(index["days"][k]) - before.get(k, set())) for k in index["days"]}
