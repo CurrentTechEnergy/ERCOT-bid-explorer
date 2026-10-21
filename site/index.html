@@ -47,15 +47,48 @@
         <div class="note" id="track"></div>
       </div>
       <div class="sparkwrap">
-        <h3>Day-ahead hub average by hour ending ($/MWh)</h3>
+        <h3 id="spark-title">Day-ahead system lambda by hour ending ($/MWh)</h3>
         <div class="chart chart-short" id="spark"></div>
-        <p class="note" id="spark-note">Shaded bands are the bottom quarter, middle half and top quarter of daily hub averages over the last twelve months. Real-time system lambda is drawn beside the day-ahead line once the day has happened.</p>
+        <p class="note" id="spark-note">Shaded bands are the bottom quarter, middle half and top quarter of daily averages over the last twelve months. Real-time system lambda is drawn beside the day-ahead line once the day has happened.</p>
         <h3>Expected generation, same hours (GW)</h3>
         <div class="chart chart-short" id="mini"></div>
         <div class="legend legend-static" id="mini-legend"></div>
       </div>
     </div>
   </section>
+
+  <section class="panel panel-wide" id="actual-panel" hidden>
+    <div class="panel-head">
+      <div>
+        <h2>What ran, by hour <span class="h-note" id="actual-note"></span></h2>
+        <p class="note" id="actual-sub">ERCOT's reported output by hour. Batteries are drawn on top while discharging and below zero while charging. The dashed line is the forecast's total; the dotted line its committed minimum.</p>
+      </div>
+    </div>
+    <div class="legend" id="actual-legend"></div>
+    <div class="chart" id="actual-chart"></div>
+  </section>
+
+  <section class="panel panel-wide" id="actual-bars-panel" hidden>
+    <div class="panel-head">
+      <div>
+        <h2>What ran, over the day <span class="h-note" id="actual-bars-note"></span></h2>
+        <p class="note" id="actual-bars-sub">ERCOT's reported energy. The bar is what ran; the tick is what the forecast expected.</p>
+      </div>
+      <div class="panel-tools">
+        <div class="seg seg-sm" id="unit-a" role="radiogroup" aria-label="Unit">
+          <button type="button" data-v="gw" role="radio">Power, GW</button>
+          <button type="button" data-v="gwh" role="radio">Energy, GWh over the day</button>
+        </div>
+      </div>
+    </div>
+    <div class="legend legend-static" id="actual-bar-legend"></div>
+    <div class="rows" id="actual-rows" data-csv></div>
+  </section>
+
+  <div class="section-h" id="estimates-head" hidden>
+    <h2>Estimates</h2>
+    <p class="note" id="estimates-note">The forecast made the day before, kept below ERCOT's data for comparison. Ticks and lines on the estimates mark what actually ran.</p>
+  </div>
 
   <section class="panel" id="groups-panel">
     <div class="panel-head">
@@ -133,7 +166,7 @@
     <div class="panel-head">
       <div>
         <h2>Generation mix <span class="h-note" id="mix-title-note"></span></h2>
-        <p class="note">Expected output by technology in the hour. Ticks mark actual output once it is reported.</p>
+        <p class="note">Output by technology in the hour: the forecast until the day's data is in, then what ran, with the forecast as a tick.</p>
       </div>
     </div>
     <div class="chart" id="mix-chart"></div>
