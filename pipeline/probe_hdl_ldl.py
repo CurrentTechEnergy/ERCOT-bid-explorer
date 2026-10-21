@@ -33,6 +33,7 @@ from .store import iter_csvs, read_json_gz
 EMIL = "np6-915-cd"
 UNIT_DIR = DATA_DIR / "60d-units"
 CHEAP = 20.0
+BULK = 50             # the archive's bulk download takes at most 50 NP6-915-CD documents a request
 THERMAL = ("nuclear", "coal", "combined_cycle", "gas_steam", "combustion_turbine")
 MID = ("coal", "combined_cycle", "gas_steam")       # thermal without nuclear and peakers
 SERIES = ("lsl_gen", "lsl_thermal", "lsl_mid", "lsl_storage", "hsl_gen", "bp_thermal")
@@ -58,7 +59,9 @@ def ercot_hours(api, day: str) -> dict:
     d = dt.date.fromisoformat(day)
     docs = api.list_archives(EMIL, dt.datetime.combine(d, dt.time()), dt.datetime.combine(d, dt.time()) + dt.timedelta(days=1, minutes=15))
     acc = defaultdict(list)
-    for blob in api.download_many(EMIL, [x["docId"] for x in docs]):
+    ids = [x["docId"] for x in docs]
+    blobs = [b for i in range(0, len(ids), BULK) for b in api.download_many(EMIL, ids[i:i + BULK])]
+    for blob in blobs:
         for _, raw in iter_csvs(blob, "x.zip"):
             for r in csv.DictReader(io.StringIO(raw.decode("utf-8-sig"))):
                 r = {k.strip(): v for k, v in r.items()}
@@ -116,6 +119,10 @@ def main(argv=None):
             e = ercot_hours(api, day)
         except Exception as ex:
             lines.append(f"- {day}: download failed: {type(ex).__name__}: {ex}")
+            print(lines[-1], flush=True)
+            continue
+        if not e:
+            lines.append(f"- {day}: the archive lists no NP6-915-CD postings")
             print(lines[-1], flush=True)
             continue
         u = unit_hours(day)
