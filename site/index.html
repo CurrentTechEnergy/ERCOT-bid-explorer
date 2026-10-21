@@ -30,6 +30,13 @@
     </div>
     <p class="source-note" id="source-note"></p>
   </div>
+  <div class="ctl" id="pred-ctl" hidden>
+    <span class="lbl">Predictions</span>
+    <div class="seg seg-sm" id="pred" role="radiogroup" aria-label="Predictions">
+      <button type="button" data-v="1" role="radio">Show</button>
+      <button type="button" data-v="0" role="radio">Hide</button>
+    </div>
+  </div>
   <div class="ctl">
     <span class="lbl">Data for this day</span>
     <div class="layers" id="layers"></div>
@@ -50,9 +57,11 @@
         <h3 id="spark-title">Day-ahead system lambda by hour ending ($/MWh)</h3>
         <div class="chart chart-short" id="spark"></div>
         <p class="note" id="spark-note">Shaded bands are the bottom quarter, middle half and top quarter of daily averages over the last twelve months. Real-time system lambda is drawn beside the day-ahead line once the day has happened.</p>
+        <div class="pred">
         <h3>Expected generation, same hours (GW)</h3>
         <div class="chart chart-short" id="mini"></div>
         <div class="legend legend-static" id="mini-legend"></div>
+        </div>
       </div>
     </div>
   </section>
@@ -85,12 +94,12 @@
     <div class="rows" id="actual-rows" data-csv></div>
   </section>
 
-  <div class="section-h" id="estimates-head" hidden>
+  <div class="section-h pred" id="estimates-head" hidden>
     <h2>Estimates</h2>
     <p class="note" id="estimates-note">The forecast made the day before, kept below ERCOT's data for comparison. Ticks and lines on the estimates mark what actually ran.</p>
   </div>
 
-  <section class="panel" id="groups-panel">
+  <section class="panel pred" id="groups-panel">
     <div class="panel-head">
       <div>
         <h2>Who is expected to run, by how often it turns off</h2>
@@ -108,7 +117,7 @@
     <div class="rows" id="group-rows" data-csv></div>
   </section>
 
-  <section class="panel" id="tech-panel">
+  <section class="panel pred" id="tech-panel">
     <div class="panel-head">
       <div>
         <h2>Who is expected to run, by technology</h2>
@@ -125,7 +134,7 @@
     <div class="rows" id="tech-rows" data-csv></div>
   </section>
 
-  <section class="panel panel-wide" id="fit-panel" hidden>
+  <section class="panel panel-wide pred" id="fit-panel" hidden>
     <div class="panel-head">
       <div>
         <h2>Who was on, by the 2-day fit <span class="h-note" id="fit-note"></span></h2>
@@ -137,7 +146,7 @@
     <div class="rows" id="fit-rows" data-csv></div>
   </section>
 
-  <section class="panel panel-wide" id="hourly-panel">
+  <section class="panel panel-wide pred" id="hourly-panel">
     <div class="panel-head">
       <div>
         <h2>Expected generation by hour <span class="h-note" id="hourly-note"></span></h2>
@@ -150,7 +159,7 @@
     <p class="note step-link" id="offers-step"></p>
   </section>
 
-  <section class="panel panel-wide" id="score-panel" hidden>
+  <section class="panel panel-wide pred" id="score-panel" hidden>
     <div class="panel-head">
       <div>
         <h2>How this day went <span class="h-note" id="score-note"></span></h2>

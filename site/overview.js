@@ -49,7 +49,7 @@ const PAGE_ROWS = 150;
 const S = {
   fc: null, index: null, scores: null, hubs: null, dalam: null,
   date: null, day: null, gen: null, day60: null, units60: null, prices: null,
-  unit: "gw", hour: 12, unitView: "day", unitTech: "all", unitSearch: "", unitSort: { key: "hsl", dir: -1 }, unitShowAll: false,
+  unit: "gw", hour: 12, unitView: "day", pred: true, unitTech: "all", unitSearch: "", unitSort: { key: "hsl", dir: -1 }, unitShowAll: false,
   hidden: new Set(),
 };
 
@@ -100,6 +100,8 @@ function dayPrice() {
 }
 // which data leads the page for this day: the 60-day disclosure, the 2-day summary, or the forecast
 function lead() { return S.a60 ? "60d" : genHourly() ? "2d" : "fc"; }
+// whether the forecast's overlays are drawn on a day that has its data (the Predictions switch)
+const showPred = () => S.pred || lead() === "fc";
 // the day's cheap stretch: the longest run of hours whose price is in the low band
 function cheapStretch(hub, edges) {
   if (!hub || !edges) return null;
@@ -176,16 +178,16 @@ function drawHeadline() {
   $("lede-sub").innerHTML = `${P.label} <b>${fmtPrice0(P.avg)}/MWh</b>, ${place} (bottom quarter under ${fmtPrice0(e[0])}, top quarter above ${fmtPrice0(e[1])}, ${H.band_window.n} days). `
     + (stretch ? `The cheapest stretch is hours ending ${stretch.from + 1} to ${stretch.to + 1} at ${fmtPrice0(stretch.min)} to ${fmtPrice0(stretch.max)}.`
       : `No hour is priced in the low band; the cheapest is hour ending ${minH + 1} at ${fmtPrice0(P.vals[minH])}.`)
-    + (td && td.thermal_gwh_act != null ? ` Thermal and other ran <b>${fmtGWh(td.thermal_gwh_act)} GWh</b> over the day against ${fmtGWh(td.thermal_gwh_exp)} GWh expected (2-day summary).` : "");
+    + (td && td.thermal_gwh_act != null ? ` Thermal and other ran <b>${fmtGWh(td.thermal_gwh_act)} GWh</b> over the day<span class="pred"> against ${fmtGWh(td.thermal_gwh_exp)} GWh expected</span> (2-day summary).` : "");
   const tr = trackRecord();
   // each tile leads with what ran when the day has its data, and the forecast sits beneath
   const tiles = CATS.map(([k, label, color, note]) => {
     const c = H[k];
     if (!c) return "";
     const act = a60 && a60.cat[k] ? d3.sum(a60.cat[k]) / 1000 : null;
-    return `<li><div class="k"><i class="sw" style="background:var(${color})"></i>${label}</div>` +
+    return `<li${act == null && L !== "fc" ? ' class="pred"' : ""}><div class="k"><i class="sw" style="background:var(${color})"></i>${label}</div>` +
       (act != null
-        ? `<div class="v">${fmtGWh(act)} GWh</div><div class="w"><b>${fmtGW(act / 24 * 1000)} GW</b> on average over the day (60-day disclosure)</div><div class="w">Forecast: ${fmtGWh(c.gwh)} GWh, ${fmtGW(c.exp)} GW of ${fmtGW(c.cap)} GW · ${c.n_on} of ${c.n_units} units on</div>`
+        ? `<div class="v">${fmtGWh(act)} GWh</div><div class="w"><b>${fmtGW(act / 24 * 1000)} GW</b> on average over the day (60-day disclosure)</div><div class="w pred">Forecast: ${fmtGWh(c.gwh)} GWh, ${fmtGW(c.exp)} GW of ${fmtGW(c.cap)} GW · ${c.n_on} of ${c.n_units} units on</div>`
         : `<div class="v">${c.share != null ? fmtPct(c.share) : "–"}</div><div class="w"><b>${fmtGW(c.exp)} GW</b> expected output of ${fmtGW(c.cap)} GW · ${c.n_on} of ${c.n_units} units on</div><div class="w"><b>${fmtGWh(c.gwh)} GWh</b> over the day</div>`) +
       `<div class="w2">${note}</div></li>`;
   });
@@ -194,7 +196,7 @@ function drawHeadline() {
     const head = `<li><div class="k"><i class="sw" style="background:var(${s.color})"></i>${s.label}</div>`;
     if (act != null) {
       tiles.push(head + `<div class="v">${fmtGWh(act)} GWh</div><div class="w"><b>${fmtGW(act / 24 * 1000)} GW</b> on average over the day (2-day summary)</div>` +
-        (r ? `<div class="w">Forecast: ${fmtGWh(r.disp_gwh)} GWh dispatched of ${fmtGWh(r.avail_gwh)} GWh available, ${fmtGWh(r.curt_gwh)} GWh curtailed on price</div>` : `<div class="w">No ${s.label.toLowerCase()} forecast for this day</div>`) +
+        (r ? `<div class="w pred">Forecast: ${fmtGWh(r.disp_gwh)} GWh dispatched of ${fmtGWh(r.avail_gwh)} GWh available, ${fmtGWh(r.curt_gwh)} GWh curtailed on price</div>` : `<div class="w pred">No ${s.label.toLowerCase()} forecast for this day</div>`) +
         `<div class="w2">${r ? `${r.n_units} units, ${fmtGW(r.nameplate)} GW nameplate` : ""}</div></li>`);
       return;
     }
@@ -205,7 +207,7 @@ function drawHeadline() {
   const gh = genHourly();
   const hs = H.storage, ghOk = gh && gh.discharging.some((v) => v != null);
   const fcNote = hs ? `The fleet's usual pattern over recent weeks, shaped by the day's prices${hs.capped ? " · held to the fleet's energy" : ""}` : "No battery forecast for this day: fewer than a week of 2-day battery actuals before it";
-  const fcLine = hs ? `<div class="w">Forecast: <b>${fmtGWh(hs.gwh_dis)} GWh</b> discharged, <b>${fmtGWh(hs.gwh_chg)} GWh</b> charged; peaks ${fmtGW(hs.peak_dis)} and ${fmtGW(hs.peak_chg)} GW</div>` : `<div class="w">No battery forecast for this day</div>`;
+  const fcLine = hs ? `<div class="w pred">Forecast: <b>${fmtGWh(hs.gwh_dis)} GWh</b> discharged, <b>${fmtGWh(hs.gwh_chg)} GWh</b> charged; peaks ${fmtGW(hs.peak_dis)} and ${fmtGW(hs.peak_chg)} GW</div>` : `<div class="w pred">No battery forecast for this day</div>`;
   let st;
   if (a60) {
     const d = d3.sum(a60.dis) / 1000, c = -d3.sum(a60.chg) / 1000;
@@ -215,9 +217,10 @@ function drawHeadline() {
   } else if (hs) {
     st = `<div class="v">${fmtGW(hs.peak_dis)} GW</div><div class="w"><b>${fmtGW(hs.peak_dis)} GW</b> discharging at the peak hour, <b>${fmtGW(hs.peak_chg)} GW</b> charging at most</div><div class="w"><b>${fmtGWh(hs.gwh_dis)} GWh</b> discharged, <b>${fmtGWh(hs.gwh_chg)} GWh</b> charged over the day</div>`;
   } else st = `<div class="v">–</div><div class="w">Awaiting battery data</div>`;
-  tiles.push(`<li><div class="k"><i class="sw" style="background:var(${STORAGE.color})"></i>${STORAGE.label}</div>${st}<div class="w2">${fcNote}</div></li>`);
+  tiles.push(`<li><div class="k"><i class="sw" style="background:var(${STORAGE.color})"></i>${STORAGE.label}</div>${st}<div class="w2${L === "fc" ? "" : " pred"}">${fcNote}</div></li>`);
   $("expect").innerHTML = tiles.join("");
-  $("headline-note").textContent = `${S.date} · ${L === "60d" ? "60-day disclosure, forecast beneath" : L === "2d" ? "2-day summary, forecast beneath" : "forecast"}`;
+  $("headline-note").textContent = `${S.date} · ${L === "60d" ? "60-day disclosure" : L === "2d" ? "2-day summary" : "forecast"}${L !== "fc" && showPred() ? ", forecast beneath" : ""}`;
+  $("track").className = `note${L === "fc" ? "" : " pred"}`;
   $("track").innerHTML = tr
     ? `<b>Track record</b>, last ${tr.n} days: unit on/off calls right ${fmtPct(tr.unit_hit)} of the time; thermal energy within ${fmtPct(S.scores.headline_tol)} of actual on ${fmtPct(tr.headline_hit)} of days. ` +
       `<details class="how"><summary>Full record</summary><p class="note">` + `Thermal energy over the day within ${fmtPct(S.scores.headline_tol)} of the 2-day summary on ${fmtPct(tr.headline_hit)} of ${tr.n_two_day} days; each unit's on or off call right on ${fmtPct(tr.unit_hit)} of ${d3.format(",")(tr.n_judged)} unit-days against the 60-day disclosure (${tr.n_sixty_day} days); thermal output off by ${fmtGW(tr.thermal_mae)} GW on average, wind by ${fmtGW(tr.wind_mae)} GW, solar by ${fmtGW(tr.solar_mae)} GW` +
@@ -519,7 +522,7 @@ function actualSeries() {
     areas.push({ ...WIND, vals: gh.wind, kind: "renew" }); areas.push({ ...SOLAR, vals: gh.solar, kind: "renew" });
     if (gh.discharging.some((v) => v != null)) { areas.push({ ...STORAGE, id: "storage_dis", label: "Batteries discharging", vals: gh.discharging, kind: "storage" }); below.push({ ...STORAGE, id: "storage_chg", label: "Batteries charging (load)", vals: gh.charging }); }
   }
-  const fc = hourlySeries();
+  const fc = showPred() ? hourlySeries() : null;
   if (fc) {
     const total = HRS.map((h) => d3.sum(fc, (s) => s.vals[h] || 0));
     lines.push({ id: "fc_total", label: "Forecast: total supply", color: "--ink", vals: total, dash: "6 3" });
@@ -537,9 +540,10 @@ function drawActual() {
     tipTitle: (h) => `${dayPrice().label.replace("Day-ahead ", "")} ${fmtPrice(dayPrice().vals[h])}`,
     tipRows: (h, shown) => `<tr><td></td><td>Total supply</td><td class="n">${fmtGW(d3.sum(shown, (s) => s.vals[h] || 0))} GW</td></tr>` });
   $("actual-note").textContent = `${S.date} · GW · ${A.L === "60d" ? "60-day disclosure" : "2-day summary"}`;
-  $("actual-sub").textContent = A.L === "60d"
-    ? "Each unit's output from the 60-day disclosure, summed by the forecast's groups. Batteries are drawn on top while discharging and below zero while charging. The dashed line is the forecast's total supply, the solid line its thermal, the dotted line its committed minimum."
-    : "ERCOT's 2-day generation summary: thermal in total, wind, solar and batteries. Batteries are drawn on top while discharging and below zero while charging. The dashed line is the forecast's total supply, the solid line its thermal, the dotted line its committed minimum.";
+  $("actual-sub").textContent = (A.L === "60d"
+    ? "Each unit's output from the 60-day disclosure, summed by the forecast's groups. Batteries are drawn on top while discharging and below zero while charging."
+    : "ERCOT's 2-day generation summary: thermal in total, wind, solar and batteries. Batteries are drawn on top while discharging and below zero while charging.") +
+    (showPred() ? " The dashed line is the forecast's total supply, the solid line its thermal, the dotted line its committed minimum." : "");
 }
 // what ran over the day, as bars: the bar is the actual, the tick the forecast
 function actRow(name, note, color, cap, act, fc, tip) {
@@ -550,15 +554,15 @@ function actRow(name, note, color, cap, act, fc, tip) {
   return `<div class="lab"><span class="sw" style="background:var(${color})"></span><div>${esc(name)}<small>${esc(note)}</small></div></div>` +
     `<div class="bar" data-tip-html="${esc(`<h4>${esc(name)}</h4><p class="tip-body">${tip}</p>`)}">` +
     (act != null ? `<i style="left:0;width:${pct(act)}%;background:var(${color})"></i>` : "") +
-    (fc != null ? `<i class="fc" style="left:calc(${pct(fc)}% - 1.5px)"></i>` : "") + `</div>` +
-    `<div class="val"><b>${act != null ? f(v(act)) + " " + u : "–"}</b> ran` + (fc != null ? `<br>${f(v(fc))} ${u} expected` : "") + (cap ? `<br>of ${f(gwh ? capG : cap / 1000)} ${u} max` : "") + `</div>`;
+    (fc != null ? `<i class="fc pred" style="left:calc(${pct(fc)}% - 1.5px)"></i>` : "") + `</div>` +
+    `<div class="val"><b>${act != null ? f(v(act)) + " " + u : "–"}</b> ran` + (fc != null ? `<span class="pred"><br>${f(v(fc))} ${u} expected</span>` : "") + (cap ? `<br>of ${f(gwh ? capG : cap / 1000)} ${u} max` : "") + `</div>`;
 }
 function drawActualBars() {
   const panel = $("actual-bars-panel"), el = $("actual-rows"), L = lead(), D = S.day, sc = dayScore();
   panel.hidden = L === "fc";
   if (L === "fc") return;
   const gwh = S.unit === "gwh", unit = gwh ? "GWh over the day" : "GW on average";
-  $("actual-bar-legend").innerHTML = `<span><span class="sw" style="background:var(--g3)"></span>What ran</span><span><span class="sw sw-fc"></span>Forecast</span>`;
+  $("actual-bar-legend").innerHTML = `<span><span class="sw" style="background:var(--g3)"></span>What ran</span><span class="pred"><span class="sw sw-fc"></span>Forecast</span>`;
   const H = D.headline, td = sc && sc.two_day, sd = sc && sc.sixty_day, csv = [];
   const gwhOf = (mw) => d3.sum(mw) / 1000;
   let html = "";
@@ -686,8 +690,10 @@ function mixRows(h) {
   // the 2-day summary reports thermal in total, so on a 2-day day the total row carries the actual
   // and the technology rows beneath it are the forecast's split (not counted twice in the totals)
   if (!a60 && gh && gh.thermal[h] != null) {
+    const mw = d3.sum(rows, (r) => r.mw || 0);
     rows.forEach((r) => { r.sub = true; r.label = `· ${r.label}`; });
-    rows.unshift({ id: "thermal", label: "Thermal and other", color: "--g3", mw: d3.sum(rows, (r) => r.mw || 0), act: gh.thermal[h] });
+    if (!showPred()) rows.length = 0;
+    rows.unshift({ id: "thermal", label: "Thermal and other", color: "--g3", mw, act: gh.thermal[h] });
   }
   [WIND, SOLAR].forEach((s) => rows.push({ ...s, mw: D.hourly[s.id] ? D.hourly[s.id].disp[h] : null, act: a60 && a60.tech[s.id] ? a60.tech[s.id][h] : gh ? gh[s.id][h] : null }));
   // batteries, net: forecast discharging less charging in the hour; the actual from the 60-day
@@ -723,12 +729,12 @@ function drawMix() {
   svg.append("g").attr("class", "axis").attr("transform", `translate(0,${Hh - m.b})`).call(d3.axisBottom(x).ticks(narrow ? 3 : 6).tickFormat((v) => d3.format(",")(v / 1000) + " GW").tickSizeOuter(0));
   rows.forEach((r) => {
     const y0 = y(r.id), g = svg.append("g");
-    const bar = barOf(r), tick = tickOf(r);
+    const bar = barOf(r), tick = actLead && !showPred() ? null : tickOf(r);
     if (bar != null && Math.abs(x(bar) - x(0)) > 0.5) g.append("rect").attr("x", Math.min(x(0), x(bar))).attr("y", y0).attr("width", Math.abs(x(bar) - x(0))).attr("height", bh).attr("fill", css(r.color)).attr("rx", 3);
     if (tick != null) g.append("line").attr("x1", x(tick)).attr("x2", x(tick)).attr("y1", y0 - 3).attr("y2", y0 + bh + 3).attr("stroke", css("--ink")).attr("stroke-width", 3);
     g.append("text").attr("class", "mix-label").attr("x", narrow ? m.l : m.l - 10).attr("y", narrow ? y0 - 5 : y0 + bh / 2).attr("dy", narrow ? 0 : "0.35em").attr("text-anchor", narrow ? "start" : "end").text(r.label);
     const val = actLead && !r.sub
-      ? (r.act != null ? `${fmtMW(r.act)} MW` + (r.actShare != null ? ` · ${fmtPct(r.actShare)}` : "") : "no data") + (r.mw != null ? ` · expected ${fmtMW(r.mw)}` : "")
+      ? (r.act != null ? `${fmtMW(r.act)} MW` + (r.actShare != null ? ` · ${fmtPct(r.actShare)}` : "") : "no data") + (r.mw != null && showPred() ? ` · expected ${fmtMW(r.mw)}` : "")
       : r.sub ? (r.mw != null ? `${fmtMW(r.mw)} MW expected` : "no forecast")
       : (r.mw != null ? `${fmtMW(r.mw)} MW` + (r.share != null ? ` · ${fmtPct(r.share)}` : "") : "no forecast") + (r.act != null ? ` · actual ${fmtMW(r.act)}` : "");
     g.append("text").attr("class", "mix-value").attr("x", Math.max(x(0), x(r.mw ?? 0), x(r.act ?? 0)) + 6).attr("y", y0 + bh / 2).attr("dy", "0.35em").text(val);
@@ -742,7 +748,7 @@ function drawMix() {
   if (x.domain()[0] < 0) svg.append("line").attr("class", "zero").attr("x1", x(0)).attr("x2", x(0)).attr("y1", m.t).attr("y2", Hh - m.b);
   el.replaceChildren(svg.node());
   el.insertAdjacentHTML("beforeend", `<p class="note">` + (actLead
-    ? `Generation ${fmtMW(totalAct)} MW in the hour from the ${S.a60 ? "60-day disclosure (output averaged over the hour's SCED runs)" : "2-day summary (base points)"}; the forecast expected ${fmtMW(total)} MW. Ticks are the forecast.`
+    ? `Generation ${fmtMW(totalAct)} MW in the hour from the ${S.a60 ? "60-day disclosure (output averaged over the hour's SCED runs)" : "2-day summary (base points)"}` + (showPred() ? `; the forecast expected ${fmtMW(total)} MW. Ticks are the forecast.` : ".")
     : `Expected generation ${fmtMW(total)} MW in the hour.`) +
     (rows.some((r) => r.sub) ? " The 2-day summary reports thermal in total; the technology rows under it are the forecast's split." : "") + `</p>`);
   tel.innerHTML = `<table class="data"><thead><tr><th class="t">Technology</th><th>Expected (MW)</th><th>Share</th><th>Actual (MW)</th><th>Share</th></tr></thead><tbody>` +
@@ -793,6 +799,8 @@ function unitRows() {
 }
 function drawUnits() {
   const el = $("units-table"), D = S.day;
+  // nothing observed per unit until the 60-day data: with predictions hidden the panel has nothing to show
+  $("units-panel").hidden = !!D && !showPred() && !S.a60;
   if (!D) { $("units-foot").textContent = ""; return emptyMsg(el, "No forecast for this day."); }
   const hourly = S.unitView === "hour", h = S.hour, f = S.units60;
   let rows = unitRows();
@@ -815,15 +823,18 @@ function drawUnits() {
   }
   if (S.unitTech !== "all") rows = rows.filter((r) => r.tech === S.unitTech);
   if (S.unitSearch) rows = rows.filter((r) => r.unit.toLowerCase().includes(S.unitSearch.toLowerCase()));
+  if (!showPred() && ["verdict", "p_on", "loss", "cutoff", "off_hours", "reason", "fit", "hit", "state"].includes(S.unitSort.key)) S.unitSort = { key: "hsl", dir: -1 };
   const { key, dir } = S.unitSort;
   rows.sort((a, b) => {
     const va = a[key], vb = b[key];
     if (va == null) return 1; if (vb == null) return -1;
     return (typeof va === "string" ? va.localeCompare(vb) : va - vb) * dir;
   });
+  // with predictions hidden the table keeps what was observed: the unit, its size and its hours
+  const PRED_COLS = ["verdict", "p_on", "loss", "cutoff", "off_hours", "reason", "fit", "hit"];
   const order = S.a60 ? UNIT_COLS_OBSERVED : UNIT_COLS.map(([k]) => k);
   const cols = order.map((k) => UNIT_COLS.find((c) => c[0] === k))
-    .filter(([k]) => (S.a60 || !["online_h", "hit"].includes(k)) && (S.fit || k !== "fit") && !(hourly && (k === "hit" || k === "fit")))
+    .filter(([k]) => (S.a60 || !["online_h", "hit"].includes(k)) && (S.fit || k !== "fit") && !(hourly && (k === "hit" || k === "fit")) && (showPred() || !PRED_COLS.includes(k)))
     .map(([k, l, kind]) => (hourly && k === "verdict" ? ["state", `Call in ${heLabel(h)}`, "verdict"] : hourly && k === "online_h" ? ["online_h", `Online in ${heLabel(h)}`, "yn"] : [k, l, kind]));
   if (hourly && f) cols.push(["out_mw", `Output in ${heLabel(h)} (MW)`]);
   const csvKeys = [...D.units.columns, ...(S.fit ? ["fit", "fit_changed"] : []), ...(S.a60 ? ["online_h", "hit"] : []), ...(hourly ? ["state", ...(f ? ["out_mw"] : [])] : [])];
@@ -850,7 +861,7 @@ function drawUnits() {
   el.innerHTML = html + "</tbody></table></div>";
   const sc = dayScore();
   $("units-foot").innerHTML = (total > rows.length ? `Showing ${rows.length} of ${total} units. <button type="button" id="units-all" class="linkish">Show all</button>` : `Units: ${total}.`) +
-    (sc && sc.sixty_day ? ` On or off calls right on ${fmtPct(sc.sixty_day.unit_hit)} of the ${sc.sixty_day.n_judged} judged units this day.` : "") +
+    (sc && sc.sixty_day && showPred() ? ` On or off calls right on ${fmtPct(sc.sixty_day.unit_hit)} of the ${sc.sixty_day.n_judged} judged units this day.` : "") +
     " The CSV download has every column, including the model and version behind each row.";
   $("units-note").textContent = `${S.date} · ${D.units.rows.length} thermal units`;
   const b = $("units-all");
@@ -892,6 +903,9 @@ function render() {
   $("date-prev").disabled = di <= 0;
   $("date-next").disabled = di < 0 || di >= days.length - 1;
   $("hour-out").textContent = `${heLabel(S.hour)} · ${String(S.hour).padStart(2, "0")}:00–${String(S.hour + 1).padStart(2, "0")}:00`;
+  const L = lead();
+  $("pred-ctl").hidden = L === "fc";
+  document.body.classList.toggle("no-pred", !showPred());
   drawLayers(); drawHeadline(); drawSpark(); drawMini(); drawActual(); drawActualBars(); drawEstimates(); drawGroups(); drawTechs(); drawFit(); drawHourly(); drawScore(); drawMix(); drawUnits(); drawOffersLinks();
   saveView();
 }
@@ -919,13 +933,14 @@ async function loadDay() {
   S.unitShowAll = false;
 }
 async function changeDay() { await loadDay(); render(); }
-function saveView() { window.CX.writeHash({ date: S.date, he: S.hour + 1, unit: S.unit, uv: S.unitView }); }
+function saveView() { window.CX.writeHash({ date: S.date, he: S.hour + 1, unit: S.unit, uv: S.unitView, pred: S.pred ? undefined : 0 }); }
 function loadView() {
   const v = window.CX.readHash();
   if (v.date) S.date = v.date;
   if (v.he && +v.he >= 1 && +v.he <= 24) S.hour = +v.he - 1;
   if (["gw", "gwh"].includes(v.unit)) S.unit = v.unit;
   if (["day", "hour"].includes(v.uv)) S.unitView = v.uv;
+  if (v.pred === "0") S.pred = false;
 }
 
 async function boot() {
@@ -946,6 +961,8 @@ async function boot() {
   UNIT_SEGS.forEach((id) => setSeg(id, S.unit)); setSeg("unit-view", S.unitView);
   UNIT_SEGS.forEach((id) => $(id).addEventListener("click", (e) => { const b = e.target.closest("button"); if (!b) return; S.unit = b.dataset.v; UNIT_SEGS.forEach((s) => setSeg(s, S.unit)); drawActualBars(); drawGroups(); drawTechs(); saveView(); }));
   bindSeg("unit-view", "unitView", () => { S.unitShowAll = false; drawUnits(); });
+  setSeg("pred", S.pred ? "1" : "0");
+  $("pred").addEventListener("click", (e) => { const b = e.target.closest("button"); if (!b) return; S.pred = b.dataset.v === "1"; setSeg("pred", b.dataset.v); render(); });
   $("date").onchange = async (e) => { S.date = e.target.value; await changeDay(); };
   const stepDay = async (dir) => { const i = days.indexOf(S.date) + dir; if (i < 0 || i >= days.length) return; S.date = days[i]; $("date").value = S.date; await changeDay(); };
   $("date-prev").onclick = () => stepDay(-1);
