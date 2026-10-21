@@ -87,6 +87,7 @@ far, not on how it later turned out).  A live day reads the full record, as befo
 """
 from collections import defaultdict
 
+import os
 import numpy as np
 
 from ..config import DATA_DIR
@@ -274,6 +275,46 @@ def _stack(hist, Z, net):
                             if hist is not None else np.full(len(Z), np.nan)])
 
 
+VARIANT = os.environ.get("THERMAL_VARIANT", "")   # "logit": analysis-track variant, not used by the site
+
+
+def _econ(x):
+    """[24, 7] economic-only inputs from _hourly rows: loss over the cutoff (unsplit), log
+    window span over usual off spell, margin before and after, the hour's margin, in-window, edge."""
+    return np.column_stack([x[:, 1] + x[:, 2], x[:, 3], x[:, 4], x[:, 5], x[:, 8], x[:, 9], x[:, 10]])
+
+
+def _logits(LX, y):
+    """Per technology, an L2 logistic on the economic inputs plus one intercept per unit."""
+    from sklearn.linear_model import LogisticRegression
+    out, ys, i = {}, [], 0
+    for tech, key, e in LX:
+        ys.append((tech, key, e, y[i:i + 24])); i += 24
+    for tech in DAILY_TECHS:
+        rows = [r for r in ys if r[0] == tech]
+        if not rows:
+            continue
+        keys = sorted({r[1] for r in rows})
+        ix = {k: j for j, k in enumerate(keys)}
+        E = np.vstack([r[2] for r in rows])
+        mu, sd = E.mean(0), E.std(0) + 1e-9
+        U = np.zeros((len(E), len(keys)))
+        for n, r in enumerate(rows):
+            U[n * 24:(n + 1) * 24, ix[r[1]]] = 1.0
+        Y = np.concatenate([r[3] for r in rows])
+        m = LogisticRegression(C=1.0, max_iter=2000).fit(np.column_stack([(E - mu) / sd, U]), Y)
+        out[tech] = (m, ix, mu, sd)
+    return out
+
+
+def _logit_p(model, key, e):
+    m, ix, mu, sd = model
+    U = np.zeros((24, len(ix)))
+    if key in ix:
+        U[:, ix[key]] = 1.0
+    return m.predict_proba(np.column_stack([(e - mu) / sd, U]))[:, 1]
+
+
 def _trees(Z, y):
     """Boosted trees (scikit-learn) on the unit-hours.  Every input is numeric (the technology
     one-hot), so the tree attributions in _drivers add up exactly."""
@@ -369,7 +410,7 @@ def _pool(ctx, date):
     pool = {t: float(np.median(v)) for t, v in pm.items()}
     groups, stats, raw = ctx.groups_at(date), ctx.stats_at(date), ctx.raw_states()
     day0 = ctx.stats["day0"]
-    X, y, N, XH, yH = [], [], [], [], []
+    X, y, N, XH, yH, LX = [], [], [], [], [], []
     for d, trains in _day_trains(ctx).items():
         if point is not None and d > point:
             continue
@@ -391,7 +432,9 @@ def _pool(ctx, date):
             s = stats["units"].get(key)
             f = _features(margin, lsl, loss, bs, nh, cpm * lsl, _min_off(ctx, date, key, tech), own[key][2],
                           s["on_days"] if s else 0.0)
-            X.append(_tree_x(_hourly(f, margin, lsl, bs, nh), tech, g, d[5:7], loss, lsl)); y.append(np.isin(seg, ["m", "a"]).astype(float))
+            hx = _hourly(f, margin, lsl, bs, nh)
+            X.append(_tree_x(hx, tech, g, d[5:7], loss, lsl)); y.append(np.isin(seg, ["m", "a"]).astype(float))
+            LX.append((tech, key, _econ(hx)))
             N.append(_net(ctx, d, tech))
     # the thermal history before the 60-day window (pipeline/history.py), on the units'
     # attributes as of the point: the same rows from months of DAM days before and after RTC+B
@@ -420,6 +463,8 @@ def _pool(ctx, date):
     # 60 days, so the recent market decides how far the history's view carries over
     hist = _trees(np.vstack(XH), np.concatenate(yH)) if XH else None
     w = {None: _trees(_stack(hist, X, np.concatenate(N)), y), "hist": hist} if len(y) else {}
+    if VARIANT == "logit" and len(y):
+        w["logit"] = _logits(LX, y)
     cache[point] = (own, pool, w)
     return cache[point]
 
@@ -508,6 +553,8 @@ def forecast(date, ctx: C.Context) -> dict:
                 wt = w.get(None)
                 Z = _stack(w.get("hist"), _tree_x(x, t, g, date[5:7], loss, lsl), _net(ctx, date, t))
                 ph = wt.predict_proba(Z)[:, 1] if wt is not None else np.full(24, float(loss <= cut))
+                if VARIANT == "logit" and t in w.get("logit", {}):
+                    ph = _logit_p(w["logit"][t], key, _econ(x))
                 p_on = round(float(ph[bs:bs + nh].mean()), 2)
                 if wt is not None:
                     row["p_base"], row["drivers"] = _drivers(wt, Z, bs, nh, float(ph[bs:bs + nh].mean()))
