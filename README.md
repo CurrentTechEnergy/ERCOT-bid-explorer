@@ -202,9 +202,16 @@ site/
                    curtail_nodes.json.gz, marginal_nodes.json.gz, gas.json.gz, gas_hubs.json.gz,
                    series/, storage/, forecast/, fit/
   follow.json      the follow server's address (written by Deploy the follow server)
+  unit/            one link-preview page per unit (pipeline/share_pages.py): the unit's title, description
+                   and Open Graph tags, and a redirect to unit.html?unit=NAME. Served at /unit/NAME
+  share-card.png   the image every page's link preview shows
 worker/            the follow server: a Cloudflare Worker (src/index.js) that signs people up for a
                    unit's emails, confirms them and unsubscribes them; schema.sql is its D1 database
 ```
+
+### Page titles and link previews
+
+Every page carries a title in the form "Page · ERCOT Bids", a description and Open Graph / Twitter card tags with `share-card.png`, so links preview with a name, a line about the page and an image. Chat and social apps read those tags from the HTML a link returns, without running scripts, and GitHub Pages serves the same `unit.html` whatever its `?unit=` query says, so a unit's own preview comes from `site/unit/<NAME>.html`, a 1.5 KB stub with that unit's title (CDR plant name, resource name, technology and MW) that sends the browser on to the Unit page. The Unit page then shows `/unit/<NAME>` in the address bar, so a copied or shared link previews with the unit's name; a `<base>` element in `unit.html` keeps its relative URLs pointing at the site root. The update writes a stub only for a new unit or one whose name, technology, county or zone changed, or whose capacity moved by more than 10%, and commits it with the data; stubs of units that leave the index stay, so links already sent keep working. Old `unit.html?unit=NAME` links still open, with the generic Units preview.
 
 ### Day-ahead offers and costs
 

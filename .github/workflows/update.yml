@@ -187,7 +187,7 @@ jobs:
 
       - name: Commit new data
         run: |
-          git add site/data
+          git add site/data site/unit
           if git diff --cached --quiet; then
             echo "No new data"
             exit 0
