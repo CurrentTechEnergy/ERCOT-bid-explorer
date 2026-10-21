@@ -11,12 +11,13 @@ CDR only by plant, since the CDR keeps the older ..._BESS codes.
 
 Names come from ERCOT's CDR report (pipeline/cdr.py, matched here on every build), other names a
 unit goes by from pipeline/reference/unit_aliases.csv (a developer's project name the CDR does not
-use; one row per unit and name, edited by hand), and the QSE from the 60-day files where they carry
-one (pipeline/qse.py, data/unit_qse.json.gz).
+use; one row per unit and name, edited by hand), the QSE and DME codes from the 60-day files where
+they carry them (pipeline/qse.py, data/unit_qse.json.gz), and their names and the owner from ERCOT's
+daily QSE and decision-making entity lists (pipeline/entities.py, data/entities.json.gz).
 
 Writes data/unit_index.json.gz:
   {updated, cdr (the CDR edition the names come from), columns: ["unit", "tech", "group", "mw", "sp", "configs", "plant", "county", "zone",
-   "match", "qse", "aliases"], rows: [[...], ...]}
+   "match", "qse", "aliases", "qse_name", "dme", "owner"], rows: [[...], ...]}
   unit     resource name (the train for combined cycle), sorted by name
   tech     config.TECH_OF_TYPE grouping
   group    the latest forecast's timescale group (thermal only; null when not in the forecast)
@@ -29,6 +30,10 @@ Writes data/unit_index.json.gz:
   qse      the QSE last seen scheduling the unit (any configuration's, for a train); null when
            the 60-day files carry none
   aliases  other names from unit_aliases.csv ([] for most units)
+  qse_name the QSE's name from ERCOT's QSE list (null when the code is not on it)
+  dme      the decision-making entity: its name from the DME list for the unit (any configuration's,
+           for a train), else the name for the DME code the 60-day files carry, else that code
+  owner    the owning resource entity from the DME list (null when the unit is not on it)
 """
 import csv
 import datetime as dt
@@ -39,12 +44,14 @@ from pathlib import Path
 from . import cdr
 from .config import DATA_DIR
 from .qse import PATH as QSE_PATH
+from .entities import PATH as ENTITIES_PATH
 from .log import warn
 from .store import read_json_gz, write_json_gz
 
 PATH = DATA_DIR / "unit_index.json.gz"
 ALIASES_PATH = Path(__file__).parent / "reference" / "unit_aliases.csv"
-COLUMNS = ["unit", "tech", "group", "mw", "sp", "configs", "plant", "county", "zone", "match", "qse", "aliases"]
+COLUMNS = ["unit", "tech", "group", "mw", "sp", "configs", "plant", "county", "zone", "match", "qse", "aliases",
+           "qse_name", "dme", "owner"]
 TECHS = ("nuclear", "coal", "combined_cycle", "gas_steam", "combustion_turbine", "wind", "solar", "storage")
 _TRAIN = re.compile(r"^(.*_CC\d+)_")
 
@@ -64,7 +71,8 @@ def load_aliases() -> dict:
     return out
 
 
-def build(trends: dict, decisions: dict, forecast: dict, ppa: dict, econ: dict, cdr_rows=(), qses=None, aliases=None) -> dict:
+def build(trends: dict, decisions: dict, forecast: dict, ppa: dict, econ: dict, cdr_rows=(), qses=None, aliases=None,
+          entities=None) -> dict:
     units = {}
 
     def add(name, tech, cfg=None):
@@ -97,7 +105,8 @@ def build(trends: dict, decisions: dict, forecast: dict, ppa: dict, econ: dict, 
         if u.get("sp"):
             sp[u["name"]] = u["sp"]
 
-    matcher, qses, aliases = cdr.Matcher(list(cdr_rows)), qses or {}, aliases or {}
+    matcher, qses, aliases, ent = cdr.Matcher(list(cdr_rows)), qses or {}, aliases or {}, entities or {}
+    qse_names, dme_names, res = ent.get("qse") or {}, ent.get("dme") or {}, ent.get("resources") or {}
     rows = []
     for name in sorted(units):
         e = units[name]
@@ -106,11 +115,16 @@ def build(trends: dict, decisions: dict, forecast: dict, ppa: dict, econ: dict, 
         cfgs.discard(name)
         mw = ec.get("hsl")
         m, how = matcher.match(name, e["tech"], sorted(cfgs))
-        q = next((qses[k][0] for k in (name, *sorted(cfgs)) if k in qses), None)
+        keys = (name, *sorted(cfgs))
+        q = next((qses[k][0] for k in keys if k in qses), None)
+        dcode = next((qses[k][1] for k in keys if k in qses and len(qses[k]) == 3 and qses[k][1]), None)
+        r = next((res[k] for k in keys if k in res), None)
+        dme = (r[1] if r and r[1] else None) or dme_names.get(dcode) or dcode
         rows.append([name, e["tech"], group.get(name), round(mw) if mw else None,
                      ec.get("sp") or sp.get(name), sorted(cfgs),
                      m["name"] if m else None, m["county"] if m else None, m["zone"] if m else None, how, q,
-                     sorted({a for k in (name, *sorted(cfgs)) for a in aliases.get(k, [])})])
+                     sorted({a for k in keys for a in aliases.get(k, [])}),
+                     (qse_names.get(q) or [None])[0] if q else None, dme, r[0] if r else None])
     return {"updated": dt.datetime.now(dt.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"), "cdr": cdr.edition(), "columns": COLUMNS, "rows": rows}
 
 
@@ -125,13 +139,15 @@ def build_unit_index(index: dict) -> dict:
         econ.update((read_json_gz(DATA_DIR / "econ" / f"{t}.json.gz", default={}) or {}).get("units", {}))
     qses = (read_json_gz(QSE_PATH, default={}) or {}).get("units", {})
     aliases = load_aliases()
-    out = build(trends, decisions, forecast, ppa, econ, cdr.load(), qses, aliases)
+    entities = read_json_gz(ENTITIES_PATH, default={}) or {}
+    out = build(trends, decisions, forecast, ppa, econ, cdr.load(), qses, aliases, entities)
     unknown = sorted(set(aliases) - {r[0] for r in out["rows"]} - {c for r in out["rows"] for c in r[5]})
     if unknown:
         warn(f"unit_aliases.csv names units the unit index does not have: {unknown[:5]}")
     write_json_gz(PATH, out)
     named = sum(1 for r in out["rows"] if r[6])
-    print(f"unit index: {len(out['rows'])} units, {named} with a CDR name, {sum(1 for r in out['rows'] if r[10])} with a QSE")
+    print(f"unit index: {len(out['rows'])} units, {named} with a CDR name, {sum(1 for r in out['rows'] if r[10])} with a QSE, "
+          f"{sum(1 for r in out['rows'] if r[12])} with a QSE name, {sum(1 for r in out['rows'] if r[13])} with a DME")
     return out
 
 
