@@ -97,7 +97,7 @@ def outage_prior(techs, date):
     for units out at most OUT_PRIOR_CHRONIC of all their history days.  Planned maintenance
     recurs in the same weeks each year, so this says which units the zonal outage the
     unit-level report does not list most likely sits on.  {} without the history."""
-    first = min((p.stem[8:] for p in HISTORY_DIR.glob("thermal-*.parquet")), default=None) if HISTORY_DIR.exists() else None
+    first = min((p.stem[8:] for p in _history_files()), default=None)
     if not first:
         return {}
     ck = (tuple(techs), date[:4])
@@ -128,13 +128,23 @@ def outage_prior(techs, date):
     return out
 
 
+HISTORY_FROM = "2024-01"   # the forecast reads the thermal history from this month; older months are for the analysis track
+
+
+def _history_files():
+    """The thermal history files (pipeline/history.py) the forecast reads, oldest first."""
+    if not HISTORY_DIR.exists():
+        return []
+    return sorted(p for p in HISTORY_DIR.glob("thermal-*.parquet") if p.stem[8:] >= HISTORY_FROM)
+
+
 def history_trains(techs, before):
     """{date: {train: (tech, node prices [24], mingen or None, lsl, states [24])}} for the
     days before `before` in the thermal history files (pipeline/history.py), for the
     technologies in `techs`: combined-cycle configurations merged into their train (state by
     RANK, lowest LSL and mingen), DAM LSL standing in for the day file's.  {} without the
     files or pyarrow."""
-    files = sorted(HISTORY_DIR.glob("thermal-*.parquet")) if HISTORY_DIR.exists() else []
+    files = _history_files()
     ck = (tuple(f.name for f in files), tuple(techs), before)
     if ck in _HIST:
         return _HIST[ck]
