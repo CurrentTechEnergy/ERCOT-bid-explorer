@@ -34,6 +34,9 @@ For every thermal train in the latest DAM disclosure (pipeline.forecast.context.
                   days run (_hist_view: those are as of today, not as of the old day).  The
                   trees on the recent days decide how far the older market's behaviour carries
                   over past RTC+B (Dec 5, 2025)
+                - v9: those history trees also read the day's forecast net load (ERCOT's load
+                  forecast less its wind and solar forecasts, as of the day-ahead market,
+                  pipeline/load.py) for combined cycles (_net)
               "off" below P_OFF, "maybe" up to P_ON, "on" above.  A daily unit with no cutoff
               at all ("nocut") gets p_on = its share of days with any online hour.
   CC trains, gas steam
@@ -91,7 +94,7 @@ from ..forecast import context as C
 
 UNSEEN_TECHS = ("coal", "combined_cycle", "gas_steam", "combustion_turbine")   # spread the zonal unseen outage MW over these
 NAME = "thermal_cutoff"
-VERSION = "v8"    # v8: the P(on) of trees fitted on the 2024-25 thermal history as an input; v7: combustion turbines share the zonal unseen outage; v6: technology one-hot, drivers of each P(on); v5: stay-on probability by boosted trees; v4: loss over the cutoff split by award history; v3: gas steam on its stay-on loss, stale gas steam outages dropped; v2: CC outage calls by gas turbine, zonal unseen outages; v1: NRC reactor status, listed outages; probability of staying on through the window, per-unit horizon, pooled cutoffs
+VERSION = "v9"    # v9: the history trees also read the forecast net load, for combined cycles; v8: the P(on) of trees fitted on the 2024-25 thermal history as an input; v7: combustion turbines share the zonal unseen outage; v6: technology one-hot, drivers of each P(on); v5: stay-on probability by boosted trees; v4: loss over the cutoff split by award history; v3: gas steam on its stay-on loss, stale gas steam outages dropped; v2: CC outage calls by gas turbine, zonal unseen outages; v1: NRC reactor status, listed outages; probability of staying on through the window, per-unit horizon, pooled cutoffs
 SEASONAL_VERSION = "v0"
 RUN_SHARE = 0.5          # a month the unit ran through: online at least this share of its hours
 LONG_OUT = 21            # days an outage must already have lasted at the last known hour to carry forward
@@ -232,9 +235,19 @@ def _hist_view(Z):
     return Z
 
 
-def _stack(hist, Z):
-    """Z with the history trees' P(on) appended (NaN without history trees)."""
-    return np.column_stack([Z, hist.predict_proba(_hist_view(Z))[:, 1] if hist is not None else np.full(len(Z), np.nan)])
+def _net(ctx, date, tech):
+    """[24]: the history trees' net-load input, the day's mean forecast net load (GW,
+    Context.net_load) for a combined cycle, NaN otherwise or where unknown.  Only the history
+    trees read it: their 23 months hold enough days to learn from it, while in the recent
+    trees a day-level input this wide would mostly tell the 60 days apart."""
+    v = ctx.net_load(date) if tech == "combined_cycle" else None
+    return np.full(24, float(np.nanmean(v)) / 1000.0 if v is not None and np.isfinite(v).any() else np.nan)
+
+
+def _stack(hist, Z, net):
+    """Z with the history trees' P(on) appended (NaN without history trees); `net` the rows' _net."""
+    return np.column_stack([Z, hist.predict_proba(np.column_stack([_hist_view(Z), net]))[:, 1]
+                            if hist is not None else np.full(len(Z), np.nan)])
 
 
 def _trees(Z, y):
@@ -332,7 +345,7 @@ def _pool(ctx, date):
     pool = {t: float(np.median(v)) for t, v in pm.items()}
     groups, stats, raw = ctx.groups_at(date), ctx.stats_at(date), ctx.raw_states()
     day0 = ctx.stats["day0"]
-    X, y, XH, yH = [], [], [], []
+    X, y, N, XH, yH = [], [], [], [], []
     for d, trains in _day_trains(ctx).items():
         if point is not None and d > point:
             continue
@@ -355,6 +368,7 @@ def _pool(ctx, date):
             f = _features(margin, lsl, loss, bs, nh, cpm * lsl, _min_off(ctx, date, key, tech), own[key][2],
                           s["on_days"] if s else 0.0)
             X.append(_tree_x(_hourly(f, margin, lsl, bs, nh), tech, g, d[5:7], loss, lsl)); y.append(np.isin(seg, ["m", "a"]).astype(float))
+            N.append(_net(ctx, d, tech))
     # the thermal history before the 60-day window (pipeline/history.py), on the units'
     # attributes as of the point: the same rows from months of DAM days before and after RTC+B
     first = min(_day_trains(ctx), default=None)
@@ -374,13 +388,14 @@ def _pool(ctx, date):
             s = stats["units"].get(key)
             f = _features(margin, lsl, loss, bs, nh, cpm * lsl, _min_off(ctx, date, key, tech), own[key][2],
                           s["on_days"] if s else 0.0)
-            XH.append(_tree_x(_hourly(f, margin, lsl, bs, nh), tech, g, d[5:7], loss, lsl)); yH.append(np.isin(seg, ["m", "a"]).astype(float))
+            XH.append(np.column_stack([_hist_view(_tree_x(_hourly(f, margin, lsl, bs, nh), tech, g, d[5:7], loss, lsl)),
+                                       _net(ctx, d, tech)])); yH.append(np.isin(seg, ["m", "a"]).astype(float))
     X = np.vstack(X) if X else np.zeros((0, 0))
     y = np.concatenate(y) if y else np.zeros(0)
     # stacked: trees on the history alone, whose P(on) is one more input to the trees on the
     # 60 days, so the recent market decides how far the history's view carries over
-    hist = _trees(_hist_view(np.vstack(XH)), np.concatenate(yH)) if XH else None
-    w = {None: _trees(_stack(hist, X), y), "hist": hist} if len(y) else {}
+    hist = _trees(np.vstack(XH), np.concatenate(yH)) if XH else None
+    w = {None: _trees(_stack(hist, X, np.concatenate(N)), y), "hist": hist} if len(y) else {}
     cache[point] = (own, pool, w)
     return cache[point]
 
@@ -467,7 +482,7 @@ def forecast(date, ctx: C.Context) -> dict:
                 s = stats["units"].get(key)
                 x = _hourly(_features(margin, lsl, loss, bs, nh, cut, mo, aw, s["on_days"] if s else 0.0), margin, lsl, bs, nh)
                 wt = w.get(None)
-                Z = _stack(w.get("hist"), _tree_x(x, t, g, date[5:7], loss, lsl))
+                Z = _stack(w.get("hist"), _tree_x(x, t, g, date[5:7], loss, lsl), _net(ctx, date, t))
                 ph = wt.predict_proba(Z)[:, 1] if wt is not None else np.full(24, float(loss <= cut))
                 p_on = round(float(ph[bs:bs + nh].mean()), 2)
                 if wt is not None:
