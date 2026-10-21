@@ -34,7 +34,7 @@ from collections import defaultdict
 
 import numpy as np
 
-from ..config import DATA_DIR, UNIT_DATA_DIR, GENERIC_COSTS
+from ..config import DATA_DIR, HISTORY_DIR, UNIT_DATA_DIR, GENERIC_COSTS
 from ..intraday import train_of
 from ..store import read_json_gz, write_json_gz
 from ..trends import UNIT_TECHS
@@ -81,6 +81,66 @@ def _d(s):
 
 def _iso(d):
     return d.isoformat()
+
+
+_HIST = {}
+
+
+def history_trains(techs, before):
+    """{date: {train: (tech, node prices [24], mingen or None, lsl, states [24])}} for the
+    days before `before` in the thermal history files (pipeline/history.py), for the
+    technologies in `techs`: combined-cycle configurations merged into their train (state by
+    RANK, lowest LSL and mingen), DAM LSL standing in for the day file's.  {} without the
+    files or pyarrow."""
+    files = sorted(HISTORY_DIR.glob("thermal-*.parquet")) if HISTORY_DIR.exists() else []
+    ck = (tuple(f.name for f in files), tuple(techs), before)
+    if ck in _HIST:
+        return _HIST[ck]
+    out = {}
+    try:
+        import pandas as pd
+        frames = [pd.read_parquet(f, columns=["date", "unit", "tech", "he", "state", "da_node", "dam_lsl", "mingen"])
+                  for f in files]
+    except ImportError:
+        frames = []
+    rk = np.vectorize(lambda c: grp.RANK.get(c, 0))
+    for df in frames:
+        df = df[df["tech"].astype(str).isin(techs) & (df["date"] < before)]
+        if df.empty:
+            continue
+        df = df.sort_values(["date", "unit", "he"])
+        n = df.groupby(["date", "unit"], observed=True, sort=False).size()
+        n = n[n > 0]
+        full = np.repeat(n.to_numpy() == 24, n.to_numpy())
+        df = df[full]
+        idx = n[n == 24].index
+        spp = df["da_node"].to_numpy(float).reshape(-1, 24)
+        lsl = df["dam_lsl"].to_numpy(float).reshape(-1, 24)
+        mg = df["mingen"].to_numpy(float).reshape(-1, 24)
+        seg = df["state"].astype(str).to_numpy().reshape(-1, 24)
+        tech = df["tech"].astype(str).to_numpy()[::24]
+        for i, (d, name) in enumerate(idx):
+            t = tech[i]
+            key = train_of(name) if t == "combined_cycle" else name
+            p = spp[i] if np.isfinite(spp[i]).all() else None
+            l = lsl[i][lsl[i] > 0]
+            l = float(l.min()) if l.size else None
+            m = float(np.nanmin(mg[i])) if np.isfinite(mg[i]).any() else None
+            day = out.setdefault(d, {})
+            e = day.get(key)
+            if e is None:
+                day[key] = (t, p, m, l, seg[i])
+                continue
+            st = e[4].copy()
+            pick = rk(seg[i]) > rk(st)
+            st[pick] = seg[i][pick]
+            day[key] = (t, e[1] if e[1] is not None else p,
+                        m if e[2] is None else (e[2] if m is None else min(e[2], m)),
+                        l if e[3] is None else (e[3] if l is None else min(e[3], l)), st)
+    for d in list(out):
+        out[d] = {k: e for k, e in out[d].items() if e[1] is not None and e[3]}
+    _HIST[ck] = out
+    return out
 
 
 class Context:

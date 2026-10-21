@@ -10,6 +10,9 @@ DATA_DIR = SITE_DIR / "data"
 # Full-fidelity per-unit day files (see pipeline/units.py). Too big for the site's branch:
 # in GitHub Actions this is a checkout of the orphan `data` branch. Gitignored on main.
 UNIT_DATA_DIR = Path(os.environ.get("UNIT_DATA_DIR") or (ROOT / "unitdata")).resolve()
+# Monthly hourly history files (pipeline/history.py, the `history` release). Optional: the
+# boosted trees add the thermal months found here to their training rows.
+HISTORY_DIR = Path(os.environ.get("HISTORY_DIR") or (ROOT / "history")).resolve()
 # Where the site is published; the feeds (pipeline/events.py) link back to it.
 SITE_URL = os.environ.get("SITE_URL") or "https://ercotbids.currenttech.energy/"
 

@@ -99,6 +99,14 @@ jobs:
             git commit -m "Start the data branch"
           fi
 
+      # The thermal months on the `history` release (pipeline/history.py), gitignored in
+      # history/: the forecast's boosted trees add them to their training rows.  Optional: the
+      # forecast runs without them.
+      - name: Fetch the thermal history
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release download history -R "$GITHUB_REPOSITORY" -p 'thermal-*.parquet' -D history || echo "No thermal history: the trees train on the 60-day window only"
+
       - name: Fetch and process new reports
         id: fetch
         env:
