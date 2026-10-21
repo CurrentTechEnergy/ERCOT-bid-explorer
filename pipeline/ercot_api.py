@@ -97,11 +97,11 @@ class ErcotAPI:
     def download(self, emil: str, doc_id: int) -> bytes:
         return self._request("GET", f"{BASE}/archive/{emil}", params={"download": doc_id}).content
 
-    def download_many(self, emil: str, doc_ids: List[int]) -> List[bytes]:
-        """Bulk download (zip of zips), 1000 documents per request."""
+    def download_many(self, emil: str, doc_ids: List[int], per: int = 1000) -> List[bytes]:
+        """Bulk download (zip of zips), `per` documents a request (some reports allow fewer)."""
         blobs = []
-        for i in range(0, len(doc_ids), 1000):
+        for i in range(0, len(doc_ids), per):
             r = self._request("POST", f"{BASE}/archive/{emil}/download",
-                              json={"docIds": list(doc_ids[i:i + 1000])})
+                              json={"docIds": list(doc_ids[i:i + per])})
             blobs.append(r.content)
         return blobs
