@@ -61,6 +61,16 @@ LEGACY_STATS = ["n_online", "hsl", "lsl", "base_point", "output", "floor_sced", 
                 "le0_sced", "le0_submitted", "no_offer_hsl", "no_offer_output_schedule"]
 FLIP_EPS = 0.005   # share of the dispatchable range at or below $0 that counts as offering there
 UNIT_TECHS = ["nuclear", "coal", "combined_cycle", "gas_steam", "combustion_turbine"]
+
+
+def unit_techs(tr: dict) -> dict:
+    """{unit: tech} for every unit trends_60d has seen: the units list, plus first_seen for the
+    units it leaves out (units with no output in the window, which the groups still need)."""
+    techs = {u["unit"]: u["tech"] for u in tr.get("units", [])}
+    for name, fs in (tr.get("first_seen") or {}).items():
+        if name not in techs and len(fs) > 1 and fs[1]:
+            techs[name] = fs[1]
+    return techs
 # a unit's offer price is compared with the median of its own resource type (CCGT90, SCLE90, ...)
 # on days when at least PEER_MIN units of that type have one, otherwise with its technology's
 PEER_MIN = 8

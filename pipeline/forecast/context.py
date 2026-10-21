@@ -37,7 +37,7 @@ import numpy as np
 from ..config import DATA_DIR, HISTORY_DIR, UNIT_DATA_DIR, GENERIC_COSTS
 from ..intraday import train_of
 from ..store import read_json_gz, write_json_gz
-from ..trends import UNIT_TECHS
+from ..trends import UNIT_TECHS, unit_techs
 from ..units import expand
 from . import groups as grp
 
@@ -192,7 +192,7 @@ class Context:
         self.dam_days = sorted(d for d in index["days"].get("dam", []) if (DATA_DIR / "dam" / f"{d}.json.gz").exists())
         self.uh = read_json_gz(DATA_DIR / "unit_hours_60d.json.gz", default={}) or {"dates": [], "units": {}, "hsl": {}}
         tr = read_json_gz(DATA_DIR / "trends_60d.json.gz", default={}) or {}
-        self.techs = {u["unit"]: u["tech"] for u in tr.get("units", [])}
+        self.techs = unit_techs(tr)
         self.groups = grp.unit_groups(self.uh, self.techs)
         self.decisions = read_json_gz(DATA_DIR / "decisions.json.gz", default={}) or {}
         self.dam_hubs = (read_json_gz(DATA_DIR / "dam_hubs.json.gz", default=None) or {"days": {}})["days"]

@@ -40,10 +40,10 @@ data/forecast/<date>.json.gz
   renewables        columns + rows, one per wind / solar unit: unit, tech, nameplate,
                     avail_mwh, disp_mwh, source, offer, model, version
 
-Categories (one definition, used by the headline and the page): baseload = the never-off
-group (combustion turbines in it included) plus nuclear, the same units as the never-off group's
-capacity; price-sensitive = the seasonal, multi-day and daily groups and ungrouped thermal units;
-peakers = the other combustion turbines.
+Categories (one definition, used by the headline and the page): baseload = the always-on
+group (combustion turbines in it included) plus nuclear, the same units as the always-on group's
+capacity; price-sensitive = the seasonal, multi-day and daily groups, the never-on group and
+ungrouped thermal units; peakers = the other combustion turbines.
 """
 import datetime as dt
 
@@ -56,7 +56,7 @@ from . import context as C
 from . import stack as STACK
 from .groups import GROUPS as HISTORY_GROUPS, GROUP_LABELS as HISTORY_LABELS
 
-# the six timescale groups plus one for thermal units with no hourly history yet (new units)
+# the history groups (six timescales and never-on) plus one for thermal units with no hourly history yet (new units)
 GROUPS = HISTORY_GROUPS + ["ungrouped"]
 GROUP_LABELS = {**HISTORY_LABELS, "ungrouped": "Not yet grouped: no hourly history"}
 
@@ -69,9 +69,9 @@ UNIT_COLS = ["unit", "tech", "group", "hsl", "lsl", "verdict", "p_on", "loss", "
 UNIT_SERIES = ["p", "exp", "min", "price"]
 RENEW_COLS = ["unit", "tech", "nameplate", "avail_mwh", "disp_mwh", "source", "offer", "model", "version"]
 CATEGORIES = {
-    "baseload": "the never-off group plus nuclear",
-    "price_sensitive": "the seasonal, multi-day and daily groups (and thermal units with no group yet)",
-    "peakers": "combustion turbines outside the never-off group",
+    "baseload": "the always-on group plus nuclear",
+    "price_sensitive": "the seasonal, multi-day, daily and never-on groups (and thermal units with no group yet)",
+    "peakers": "combustion turbines outside the always-on group",
 }
 
 

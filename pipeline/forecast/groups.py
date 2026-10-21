@@ -9,12 +9,13 @@ before the outage, is an outage throughout.  An off spell is the offline hours a
 running hour with at least OUT_MIN_H hours OFF and no more missing hours than OFF hours; a
 spell still open at the end of the period counts once it is a day long.
 
-  never     no shutdown in the period
+  never     no shutdown on price in the period (always on when available: off only for outages)
   seasonal  every off spell lasted 7 days or more
   multiday  shortest off spell between 24 h and 7 days
   daily1    at least two off spells under 24 h, fewer than one shutdown a week
   daily2    one to two shutdowns a week
   daily3    more than two shutdowns a week
+  never_on  hourly states but no running hour in the period (mothballed or on a long outage)
 
 The Commitment build (PR 1, branch commitment-pipeline) writes the same groups to
 data/groups_60d.json.gz from pipeline/groups.py (units: {unit or train: [tech, group, ...]}).
@@ -28,13 +29,14 @@ import numpy as np
 from ..config import DATA_DIR
 from ..intraday import train_of
 from ..store import read_json_gz
-from ..trends import UNIT_TECHS
+from ..trends import UNIT_TECHS, unit_techs
 
 OUT_MIN_H = 4
-GROUPS = ["never", "seasonal", "multiday", "daily1", "daily2", "daily3"]
+GROUPS = ["never", "seasonal", "multiday", "daily1", "daily2", "daily3", "never_on"]
 GROUP_LABELS = {
-    "never": "Never off", "seasonal": "Seasonal: off a week or more", "multiday": "Multi-day: off 1–7 days",
+    "never": "Always on when available", "seasonal": "Seasonal: off a week or more", "multiday": "Multi-day: off 1–7 days",
     "daily1": "Daily, under 1 shutdown a week", "daily2": "Daily, 1–2 a week", "daily3": "Daily, over 2 a week",
+    "never_on": "Never on: no running hour in the period",
 }
 RANK = {"a": 4, "m": 3, "0": 2, "o": 1, "-": 0}
 
@@ -118,7 +120,7 @@ def off_spells(st: np.ndarray):
 
 def lead_off(st: np.ndarray) -> int:
     """Length of the off stretch open at the window start when it lasts a week or more (else 0).
-    It is not a shutdown, but a unit that never started is seasonal rather than never-off."""
+    It is not a shutdown, but a unit that started late is seasonal rather than always-on."""
     N, j, off, gap = len(st), 0, 0, 0
     while j < N and st[j] in "0o-":
         off += st[j] == "0"
@@ -128,6 +130,8 @@ def lead_off(st: np.ndarray) -> int:
 
 
 def group_of(st: np.ndarray, N: int) -> str:
+    if not np.isin(st, ["m", "a"]).any():
+        return "never_on"
     spells = off_spells(st)
     short = sum(1 for _, n, pure in spells if n < 24 and pure)
     long = [n for _, n, _ in spells if n >= 24] + [n for n in [lead_off(st)] if n]
@@ -145,7 +149,7 @@ GROUP_FILE = DATA_DIR / "groups_60d.json.gz"
 def unit_groups(uh: dict = None, techs: dict = None) -> dict:
     """{train: group} for every thermal unit or train with hourly states, from the pipeline's
     group file when it exists (PR 1), else computed here.  techs maps unit name to technology
-    (default: the trends units list)."""
+    (default: trends_60d, its first_seen units included)."""
     g = read_json_gz(GROUP_FILE, default=None)
     if g and isinstance(g.get("units"), dict):
         return {k: v[1] for k, v in g["units"].items() if v and len(v) > 1 and v[1] in GROUPS}
@@ -153,7 +157,7 @@ def unit_groups(uh: dict = None, techs: dict = None) -> dict:
         uh = read_json_gz(DATA_DIR / "unit_hours_60d.json.gz", default={}) or {}
     if techs is None:
         tr = read_json_gz(DATA_DIR / "trends_60d.json.gz", default={}) or {}
-        techs = {u["unit"]: u["tech"] for u in tr.get("units", [])}
+        techs = unit_techs(tr)
     by, N, _ = merged_states(uh, techs)
     return {key: group_of(st, N) for key, (t, st) in by.items()}
 
