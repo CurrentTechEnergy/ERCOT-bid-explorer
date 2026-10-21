@@ -157,6 +157,7 @@ class Context:
         self.dam_nodes = (read_json_gz(DATA_DIR / "dam_nodes.json.gz", default=None) or {"days": {}})["days"]
         self.renew_fc = (read_json_gz(DATA_DIR / "renew_forecast.json.gz", default=None) or {"days": {}})["days"]
         self.load = (read_json_gz(DATA_DIR / "load.json.gz", default=None) or {"days": {}})["days"]
+        self.stsa = (read_json_gz(DATA_DIR / "stsa.json.gz", default=None) or {"days": {}})["days"]
         ppa = read_json_gz(DATA_DIR / "ppa.json.gz", default={}) or {}
         self.ppa = {u["name"]: u for u in ppa.get("units", [])}
         self._dam = {}
@@ -457,6 +458,17 @@ class Context:
             v = rf.get(k)
             out -= np.array([np.nan if x is None else x for x in v], float) if v else np.nan
         return out
+
+    def cop_surplus(self, date):
+        """[24] MW: the generation capacity online in the QSEs' operating plans (pipeline/stsa.py)
+        less ERCOT's load forecast, both as public when the day-ahead market cleared; NaN in an
+        hour either lacks."""
+        on = (self.stsa.get(date) or {}).get("online")
+        ld = (self.load.get(date) or {}).get("fc")
+        if not (on and ld):
+            return np.full(24, np.nan)
+        return (np.array([np.nan if v is None else v for v in on], float)
+                - np.array([np.nan if v is None else v for v in ld], float))
 
     def renew_out(self, date):
         """Wind, solar and battery outage public before `date` cleared: {"irr": [24] fleet MW of

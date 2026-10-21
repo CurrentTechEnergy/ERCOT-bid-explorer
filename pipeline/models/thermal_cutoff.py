@@ -84,6 +84,8 @@ far, not on how it later turned out).  A live day reads the full record, as befo
 """
 from collections import defaultdict
 
+import os
+
 import numpy as np
 
 from ..config import DATA_DIR
@@ -235,13 +237,21 @@ def _hist_view(Z):
     return Z
 
 
+def _gw(v):
+    return float(np.nanmean(v)) / 1000.0 if v is not None and np.isfinite(v).any() else np.nan
+
+
 def _net(ctx, date, tech):
-    """[24]: the history trees' net-load input, the day's mean forecast net load (GW,
-    Context.net_load) for a combined cycle, NaN otherwise or where unknown.  Only the history
-    trees read it: their 23 months hold enough days to learn from it, while in the recent
-    trees a day-level input this wide would mostly tell the 60 days apart."""
-    v = ctx.net_load(date) if tech == "combined_cycle" else None
-    return np.full(24, float(np.nanmean(v)) / 1000.0 if v is not None and np.isfinite(v).any() else np.nan)
+    """[24, 2]: the history trees' day-level inputs.  The day's mean forecast net load (GW,
+    Context.net_load) for a combined cycle, NaN otherwise or where unknown; and the day's mean
+    capacity online in the QSEs' plans less the load forecast (GW, Context.cop_surplus).  Only
+    the history trees read them: their 23 months hold enough days to learn from them, while in
+    the recent trees a day-level input this wide would mostly tell the 60 days apart."""
+    net = _gw(ctx.net_load(date)) if tech == "combined_cycle" else np.nan
+    sur = _gw(ctx.cop_surplus(date))
+    if os.environ.get("STSA_CC") and tech != "combined_cycle":
+        sur = np.nan
+    return np.tile([net, sur], (24, 1))
 
 
 def _stack(hist, Z, net):
