@@ -15,7 +15,7 @@ permissions:
 jobs:
   probe:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 90
     steps:
       - uses: actions/checkout@v5
       - uses: actions/setup-python@v6
@@ -28,4 +28,8 @@ jobs:
           ERCOT_API_USERNAME: ${{ secrets.ERCOT_API_USERNAME }}
           ERCOT_API_PASSWORD: ${{ secrets.ERCOT_API_PASSWORD }}
           ERCOT_API_SUBSCRIPTION_KEY: ${{ secrets.ERCOT_API_SUBSCRIPTION_KEY }}
-        run: python -m pipeline.cop_probe
+        run: python -m pipeline.cop_probe --plans 90 "$RUNNER_TEMP/cop_plans.json.gz"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: cop-plans
+          path: ${{ runner.temp }}/cop_plans.json.gz
