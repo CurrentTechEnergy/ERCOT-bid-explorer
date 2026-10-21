@@ -125,7 +125,10 @@ function genHourly() {
     const esr = S.date < ESR_SPLIT_DATE ? v("sum_base_point_esr")[h] || 0 : 0;
     return a + b - esr;
   });
-  return { thermal, wind: v("sum_base_point_wgr"), solar: v("sum_base_point_pvgr"),
+  // ERCOT's own categories as reported: non-IRR (thermal; storage taken out before the split
+  // date), remaining resources (nuclear, hydro and the rest), wind, solar, batteries
+  const nonIrr = HRS.map((h) => { const a = v("sum_base_point_non_irr")[h]; return a == null ? null : a - (S.date < ESR_SPLIT_DATE ? v("sum_base_point_esr")[h] || 0 : 0); });
+  return { thermal, nonIrr, remaining: v("sum_base_point_remaining_res"), telem: v("sum_gen_telem_mw"), wind: v("sum_base_point_wgr"), solar: v("sum_base_point_pvgr"),
     charging: v("sum_base_point_esr_charging"), discharging: v("sum_base_point_esr_discharging") };
 }
 // 60-day actual output by group and technology, hour by hour, from the per-unit hours and the
@@ -191,6 +194,19 @@ function drawHeadline() {
         : `<div class="v">${c.share != null ? fmtPct(c.share) : "–"}</div><div class="w"><b>${fmtGW(c.exp)} GW</b> expected output of ${fmtGW(c.cap)} GW · ${c.n_on} of ${c.n_units} units on</div><div class="w"><b>${fmtGWh(c.gwh)} GWh</b> over the day</div>`) +
       `<div class="w2">${note}</div></li>`;
   });
+  // the 2-day summary's own thermal categories, once it is in
+  const gh2 = genHourly();
+  if (gh2 && gh2.nonIrr.some((v) => v != null)) {
+    const fcTh = d3.sum(S.fc.groups, (g) => (D.capacity.group[g] ? D.capacity.group[g].gwh : 0));
+    const tile = (label, color, vals, note, fcLine) => {
+      const ok = vals.filter((v) => v != null), gwh = d3.sum(ok) / 1000, pk = d3.max(ok), pkH = d3.maxIndex(vals.map((v) => (v == null ? -Infinity : v)));
+      return `<li><div class="k"><i class="sw" style="background:var(${color})"></i>${label}</div><div class="v">${fmtGWh(gwh)} GWh</div>` +
+        `<div class="w"><b>${fmtGW(gwh / 24 * 1000)} GW</b> on average over the day, <b>${fmtGW(pk)} GW</b> at most in ${heLabel(pkH)} (2-day summary)</div>` + (fcLine || "") + `<div class="w2">${note}</div></li>`;
+    };
+    tiles.push(tile("Thermal (non-IRR)", "--g3", gh2.nonIrr, "ERCOT's non-intermittent renewable resources: the gas, coal and other dispatchable units, by base point",
+      `<div class="w pred">Forecast: ${fmtGWh(fcTh)} GWh for thermal and other together</div>`));
+    tiles.push(tile("Remaining resources", "--c-other", gh2.remaining, "ERCOT's remaining resources: nuclear, hydro and the rest outside the other categories, by base point"));
+  }
   [WIND, SOLAR].forEach((s) => {
     const r = H[s.id], act = td ? td[`${s.id}_gwh_act`] : null;
     const head = `<li><div class="k"><i class="sw" style="background:var(${s.color})"></i>${s.label}</div>`;
