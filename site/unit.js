@@ -27,7 +27,7 @@ const techLabel = (t) => (TECH_OF[t] ? TECH_OF[t].label : t === "storage" ? "Sto
 const SIG_FMT = { le0: (v) => d3.format(".0%")(v), noff: (v) => d3.format(".0%")(v), rel: (v) => (v >= 0 ? "+" : "−") + d3.format("$,.0f")(Math.abs(v)) };
 const GROUP_SHORT = { never: "Never off", seasonal: "Seasonal", multiday: "Multi-day", daily1: "Daily, under once a week", daily2: "Daily, 1 to 2 a week", daily3: "Daily, over 2 a week", ungrouped: "Not yet grouped" };
 const VERDICT = { on: "likely on", off: "likely off", maybe: "toss-up", nocut: "no call yet (too few days to judge)", outage: "on outage", peaker: "peaker, called from how often it ran at this price and hour" };
-const S = { econ: {}, day: null, hour: null, T: null, DEC: null, UH: null, SP: null, FI: null, FC: null, fcDay: null, PPA: null, CH: null, list: new Map(), unit: null, cfg: null, span: null, last60: null };
+const S = { econ: {}, day: null, hour: null, T: null, DEC: null, UH: null, SP: null, FI: null, FC: null, fcDay: null, PPA: null, CH: null, list: new Map(), stubs: new Set(), unit: null, cfg: null, span: null, last60: null };
 const { tryJSON, showTip, hideTip, setCSV, tickFormat, fmtKind, axisFmt, css, esc } = window.CX;
 const $ = (id) => document.getElementById(id);
 const fmtMW = d3.format(",.0f");
@@ -640,10 +640,14 @@ function drawBidding(e) {
 }
 
 // ---- page ------------------------------------------------------------------------------
-// the unit goes in the query (unit.html?unit=NAME, the link other pages make), the view in the hash
+// the unit goes in the query (unit.html?unit=NAME, the link other pages make), the view in the hash.
+// The address bar then shows unit/NAME, the unit's link-preview page (pipeline/share_pages.py),
+// which sends a reload straight back here, so a copied or shared link previews with the unit's name.
+// Relative URLs keep resolving from the site root through the <base> unit.html sets.
 function saveView() {
-  const q = S.unit ? `?unit=${encodeURIComponent(S.unit)}` : "";
-  if (q !== location.search) history.replaceState(null, "", q + location.hash);
+  const to = !S.unit ? "unit.html" : S.stubs.has(S.unit) ? `unit/${S.unit}` : `unit.html?unit=${encodeURIComponent(S.unit)}`;
+  const at = new URL(to, document.baseURI);
+  if (at.pathname + at.search !== location.pathname + location.search) history.replaceState(null, "", at.pathname + at.search + location.hash);
   window.CX.writeHash({ cfg: S.cfg && S.list.get(S.unit)?.configs.length > 1 ? S.cfg : null, day: S.day, he: S.hour == null ? null : S.hour + 1,
     fc: S.fcDay && S.FI && S.fcDay !== S.FI.days.at(-1) ? S.fcDay : null });
 }
@@ -651,7 +655,7 @@ function draw() {
   const e = S.list.get(S.unit);
   $("unit-empty").hidden = !!e;
   if (!e) return;
-  document.title = `${e.name} · ERCOT Bid Stack Explorer`;
+  document.title = `${e.name} · ERCOT Bids`;
   drawHead(e); drawForecast(e); drawDecisions(e); drawHours(e); drawDay(e); drawBidding(e);
 }
 async function select(name, cfg, keepDay) {
@@ -674,6 +678,7 @@ async function boot() {
     tryJSON("data/cutoff_history.json.gz")]);
   S.FC = S.FI && S.FI.days.length ? await tryJSON(`data/forecast/${S.FI.days.at(-1)}.json.gz`) : null;
   S.UI = await window.CX.unitIndex();
+  S.stubs = new Set((S.UI || []).map((u) => u.unit));   // every unit in the index has a unit/NAME page
   if (S.T) { S.span = [S.T.dates[0], S.T.dates.at(-1)]; S.last60 = S.T.dates.at(-1); }
   buildList();
   $("status").textContent = `${S.list.size} units · 60-day data ${S.T ? `${S.T.dates[0]} to ${S.T.dates.at(-1)}` : "not loaded"}` + (S.FC ? ` · forecast ${S.FC.date}` : "");

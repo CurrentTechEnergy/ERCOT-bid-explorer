@@ -262,7 +262,8 @@ function addDownloads() {
 function readHash() { return Object.fromEntries(new URLSearchParams(location.hash.slice(1))); }
 function writeHash(obj) {
   const q = new URLSearchParams(Object.entries(obj).filter(([, v]) => v != null && v !== "")).toString();
-  if (q !== location.hash.slice(1)) history.replaceState(null, "", "#" + q);
+  // path and query kept explicitly: on the Unit page a <base> element points relative URLs elsewhere
+  if (q !== location.hash.slice(1)) history.replaceState(null, "", location.pathname + location.search + "#" + q);
 }
 function initCopyLink() {
   const b = $("copy-link");
@@ -320,7 +321,7 @@ function addPanelLinks() {
     b.onclick = () => {
       const q = new URLSearchParams(location.hash.slice(1));
       q.set("p", panel.id);
-      copyText(b, `${location.origin}${location.pathname}#${q}`);
+      copyText(b, `${location.origin}${location.pathname}${location.search}#${q}`);
     };
   });
 }

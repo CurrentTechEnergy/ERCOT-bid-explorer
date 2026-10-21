@@ -62,7 +62,7 @@ async function boot() {
   // a unit in the link: unit.js shows its page, or shows this panel again if the name is unknown
   if (new URLSearchParams(location.search).get("unit")) $("unit-empty").hidden = true;
   else {
-    $("unit-title").textContent = "Units"; document.title = "Units · ERCOT Bid Stack Explorer";
+    $("unit-title").textContent = "Units"; document.title = "Units · ERCOT Bids";
     $("unit-meta").textContent = "Every unit the site follows. Open one for the forecast's call and the decision history behind it, when it ran, how it bids, and what it earned.";
   }
   const seg = $("dir-tech");
