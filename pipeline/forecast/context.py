@@ -156,6 +156,7 @@ class Context:
         self.dam_hubs = (read_json_gz(DATA_DIR / "dam_hubs.json.gz", default=None) or {"days": {}})["days"]
         self.dam_nodes = (read_json_gz(DATA_DIR / "dam_nodes.json.gz", default=None) or {"days": {}})["days"]
         self.renew_fc = (read_json_gz(DATA_DIR / "renew_forecast.json.gz", default=None) or {"days": {}})["days"]
+        self.load = (read_json_gz(DATA_DIR / "load.json.gz", default=None) or {"days": {}})["days"]
         ppa = read_json_gz(DATA_DIR / "ppa.json.gz", default={}) or {}
         self.ppa = {u["name"]: u for u in ppa.get("units", [])}
         self._dam = {}
@@ -441,6 +442,20 @@ class Context:
         for z, v in c["total"].items():
             rem = float(np.mean([a or 0 for a in v])) - listed[z]      # "total" leaves out the IRR part already
             out[z] = max(0.0, UNSEEN_BASE * zone_mw.get(z, 0.0) / tot_mw + UNSEEN_SLOPE * rem)
+        return out
+
+    def net_load(self, date):
+        """[24] MW: ERCOT's load forecast less its wind and solar forecasts for `date`, all as
+        public when the day-ahead market cleared (pipeline/load.py, pipeline/renew_forecast.py);
+        NaN in an hour any of the three lacks."""
+        ld = (self.load.get(date) or {}).get("fc")
+        rf = self.renew_fc.get(date) or {}
+        if not ld:
+            return np.full(24, np.nan)
+        out = np.array([np.nan if v is None else v for v in ld], float)
+        for k in ("wind", "solar"):
+            v = rf.get(k)
+            out -= np.array([np.nan if x is None else x for x in v], float) if v else np.nan
         return out
 
     def renew_out(self, date):
