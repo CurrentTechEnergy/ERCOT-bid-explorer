@@ -154,6 +154,7 @@ class Context:
         self.groups = grp.unit_groups(self.uh, self.techs)
         self.decisions = read_json_gz(DATA_DIR / "decisions.json.gz", default={}) or {}
         self.dam_hubs = (read_json_gz(DATA_DIR / "dam_hubs.json.gz", default=None) or {"days": {}})["days"]
+        self.dam_lambda = (read_json_gz(DATA_DIR / "dam_lambda.json.gz", default=None) or {"days": {}})["days"]
         self.dam_nodes = (read_json_gz(DATA_DIR / "dam_nodes.json.gz", default=None) or {"days": {}})["days"]
         self.renew_fc = (read_json_gz(DATA_DIR / "renew_forecast.json.gz", default=None) or {"days": {}})["days"]
         self.load = (read_json_gz(DATA_DIR / "load.json.gz", default=None) or {"days": {}})["days"]
@@ -180,6 +181,20 @@ class Context:
     def hub(self, date):
         v = (self.dam_hubs.get(date) or {}).get(HUB)
         return np.array(v, float) if v and len(v) >= 24 and all(x is not None for x in v[:24]) else None
+
+    def lam(self, date):
+        """[24] $/MWh: the day-ahead system lambda for `date` (pipeline/dam_lambda.py), or None."""
+        v = self.dam_lambda.get(date)
+        return np.array(v, float) if v and len(v) >= 24 and all(x is not None for x in v[:24]) else None
+
+    def lambda_daily(self):
+        """{date: daily mean day-ahead system lambda} for every day with 24 lambdas."""
+        out = {}
+        for d in self.dam_lambda:
+            v = self.lam(d)
+            if v is not None:
+                out[d] = float(v.mean())
+        return out
 
     def hub_daily(self):
         """{date: daily mean HB_HUBAVG} for every day with 24 hub prices."""

@@ -6,7 +6,9 @@ data/forecast/<date>.json.gz
   inputs            what the models saw: node price source ("dam" | "dam_nodes"), the last
                     known 60-day day and whether it is hindsight, the curve snapshot month,
                     availability sources, the month-to-date hub average
-  headline          hub_avg, band (low | medium | high), band_edges [q25, q75], hub [24];
+  headline          hub_avg (the day-ahead system lambda's daily mean, kept under its old name),
+                    band (low | medium | high, on that mean), band_edges [q25, q75] (of the
+                    daily lambda means over the past BAND_MONTHS months), hub [24], lambda [24];
                     baseload / price_sensitive / peakers: {cap, on, exp, min, share, gwh,
                     n_on, n_units}; wind / solar: {nameplate, avail, disp, avail_gwh,
                     disp_gwh, curt_gwh, out, out_gwh} (out: ERCOT's zonal renewable outage,
@@ -81,10 +83,11 @@ def category(tech, group):
     return "price_sensitive"
 
 
-def band_edges(ctx: C.Context, date):
-    """[q25, q75] of the daily hub averages over the BAND_MONTHS months before `date`
-    (all available days when the history is shorter), and the window used."""
-    daily = ctx.hub_daily()
+def band_edges(ctx: C.Context, date, daily=None):
+    """[q25, q75] of the daily day-ahead system lambda averages (or of `daily`, {date: $/MWh})
+    over the BAND_MONTHS months before `date` (all available days when the history is
+    shorter), and the window used."""
+    daily = ctx.lambda_daily() if daily is None else daily
     d = C._d(date)
     lo = (d - dt.timedelta(days=int(BAND_MONTHS * 30.44))).isoformat()
     vals = [v for k, v in daily.items() if lo <= k < date]
@@ -122,8 +125,9 @@ def build_day(date, ctx: C.Context) -> dict:
     renew = m["renewable_floor"].forecast(date, ctx)
     stor = m["storage_habit"].forecast(date, ctx)
     hub = ctx.hub(date)
+    lam = ctx.lam(date)
     edges, window = band_edges(ctx, date)
-    hub_avg = _r(hub.mean(), 2) if hub is not None else None
+    hub_avg = _r(lam.mean(), 2) if lam is not None else None     # the band's price: lambda, under its old name
 
     # ---- aggregates ----
     def blank():
@@ -197,7 +201,7 @@ def build_day(date, ctx: C.Context) -> dict:
         renew_rows.append([key, row["tech"], _r(row["nameplate"]), _r(row["avail"].sum()), _r(row["disp"].sum()),
                            row["source"], row["offer"], row["model"], row["version"]])
     headline = {"hub_avg": hub_avg, "band": band_of(hub_avg, edges), "band_edges": edges, "band_window": window,
-                "hub": _rl(hub, 2) if hub is not None else None}
+                "hub": _rl(hub, 2) if hub is not None else None, "lambda": _rl(lam, 2) if lam is not None else None}
     for k, c in cat.items():
         headline[k] = {"cap": _r(c["cap"]), "on": _r(c["on"]), "min": _r(c["min"]), "exp": _r(c["exp"]),
                        "share": _r(c["on"] / c["cap"], 3) if c["cap"] else None, "gwh": _r(c["gwh"], 1),
