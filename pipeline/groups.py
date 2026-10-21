@@ -29,8 +29,8 @@ Rules (the same as trends.js had in stretchBase before this module):
   shortest spell of a day or more decides multi-day (under a week) or seasonal; no spell, never
   (always on when available: off only for outages).
 - a unit with no running hour in at least NEVER_ON_DAYS days of hourly states is never_on
-  (mothballed or on a long outage); with a shorter record it is placed by its off stretch as
-  above, since an idle peaker a few months into the window looks the same.
+  (mothballed or on a long outage); with a shorter record a unit that never ran is seasonal,
+  since an idle peaker a few months into the window looks the same.
 """
 import re
 
@@ -166,8 +166,8 @@ def classify(e: dict, N: int) -> dict:
         long_.append(lead)
     per_week = len(offs) / (N / 168) if N else 0.0
     ran = any(c in "ma" for c in st)
-    if not ran and sum(c != "-" for c in st) >= NEVER_ON_DAYS * 24:
-        group = "never_on"
+    if not ran:     # never ran: never_on once the record is long, seasonal before
+        group = "never_on" if sum(c != "-" for c in st) >= NEVER_ON_DAYS * 24 else "seasonal"
     elif short >= 2:
         group = "daily1" if per_week < 1 else "daily2" if per_week <= 2 else "daily3"
     elif long_:

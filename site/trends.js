@@ -1182,8 +1182,8 @@ function stretchBase() {
     // shutdowns per week over the period; a lone short spell does not place a unit
     const perWeek = e.shut / (N / 168);
     e.ran = st.some((c) => c === "m" || c === "a");
-    // never on needs a long record: an idle peaker a few months into the window looks the same
-    e.group = !e.ran && st.filter((c) => c !== "-").length >= ST_NEVER_ON_DAYS * 24 ? "never_on" : short >= 2 ? (perWeek < 1 ? "daily1" : perWeek <= 2 ? "daily2" : "daily3")
+    // never ran: never on once the record is long (an idle peaker a few months into the window looks the same), seasonal before
+    e.group = !e.ran ? (st.filter((c) => c !== "-").length >= ST_NEVER_ON_DAYS * 24 ? "never_on" : "seasonal") : short >= 2 ? (perWeek < 1 ? "daily1" : perWeek <= 2 ? "daily2" : "daily3")
       : long.length ? (d3.min(long) < 168 ? "multiday" : "seasonal") : "never";
     e.pick = e.configs.sort((a, b) => b.run - a.run)[0].name;   // config shown in Unit detail
     const o = e.off.slice().sort(d3.ascending);
