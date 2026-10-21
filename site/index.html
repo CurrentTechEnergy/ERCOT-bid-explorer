@@ -125,6 +125,18 @@
     <div class="rows" id="tech-rows" data-csv></div>
   </section>
 
+  <section class="panel panel-wide" id="fit-panel" hidden>
+    <div class="panel-head">
+      <div>
+        <h2>Who was on, by the 2-day fit <span class="h-note" id="fit-note"></span></h2>
+        <p class="note">Which units must have been committed to produce ERCOT's aggregate thermal offer curve, two days after the day. The fit starts from the forecast's set and flips units on or off until the curve matches. An inference, not a published actual: the 60-day disclosure gives the answer. Each bar is the group's full capacity; dark is the fitted set's minimum output, light its maximum, and the tick is the forecast's maximum.</p>
+        <details class="how"><summary>How it's built</summary><p class="note">The 2-day SCED energy curves report sums every non-IRR unit's offer curve for every SCED run. The MW offered at or below the floor and $0 are mostly the minimum output of the units that were on, and the MW at $10, $25, $50 and the cap say which of them it was. Units are tried off, on (in each combined-cycle configuration) and on outside their forecast off window, in order of how uncertain the forecast was about them, and a change is kept when it brings the fleet curve closer to ERCOT's. Nuclear, hydro and other are fixed; peakers carry one online share per hour.</p></details>
+      </div>
+    </div>
+    <div class="legend legend-static" id="fit-legend"></div>
+    <div class="rows" id="fit-rows" data-csv></div>
+  </section>
+
   <section class="panel panel-wide" id="hourly-panel">
     <div class="panel-head">
       <div>

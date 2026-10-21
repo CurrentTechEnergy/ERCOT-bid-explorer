@@ -603,6 +603,35 @@ function drawActualBars() {
   $("actual-bars-note").textContent = `${S.date} · ${L === "60d" ? "60-day disclosure" : "2-day summary"}`;
   setCSV(el, ["section", "name", "cap_mw", "actual_gwh", "forecast_gwh"], csv, `What ran ${S.date}`);
 }
+// the 2-day fit's committed set by group and technology against the forecast's
+// (pipeline/models/two_day_fit): MW of minimum and maximum output of the units each says were on
+function drawFit() {
+  const panel = $("fit-panel"), el = $("fit-rows"), F = S.fit, D = S.day;
+  panel.hidden = !F || !D;
+  if (panel.hidden) return;
+  $("fit-legend").innerHTML = `<span><span class="sw" style="background:var(--g3)"></span>Fitted on, minimum output (LSL)</span><span><span class="sw" style="background:var(--g3);opacity:0.45"></span>Fitted on, up to maximum (HSL)</span><span><span class="sw sw-fc"></span>Forecast's maximum on</span>`;
+  const csv = [];
+  const row = (sect, name, note, color, cap, e) => {
+    if (!e || !cap) return "";
+    const w = (v) => Math.min(100, (v / cap) * 100), flips = [];
+    if (e.n_on_added) flips.push(`${e.n_on_added} switched on`);
+    if (e.n_off_added) flips.push(`${e.n_off_added} switched off`);
+    if (e.n_reconfigured) flips.push(`${e.n_reconfigured} reconfigured`);
+    const tip = `<h4>${esc(name)}</h4><p class="tip-body">The fit has ${e.n_fit} of ${e.n} units on: ${fmtGW(e.lsl_fit)} GW minimum, ${fmtGW(e.hsl_fit)} GW maximum. The forecast had ${e.n_fc} on: ${fmtGW(e.lsl_fc)} GW minimum, ${fmtGW(e.hsl_fc)} GW maximum${flips.length ? ". " + flips.join(", ") : ""}.</p>`;
+    csv.push([sect, name, cap, e.n, e.n_fc, e.lsl_fc, e.hsl_fc, e.n_fit, e.lsl_fit, e.hsl_fit, e.n_on_added, e.n_off_added, e.n_reconfigured]);
+    return `<div class="lab"><span class="sw" style="background:var(${color})"></span><div>${esc(name)}<small>${esc(note)}</small></div></div>` +
+      `<div class="bar" data-tip-html="${esc(tip)}"><i style="left:0;width:${w(e.hsl_fit)}%;background:var(${color});opacity:0.45"></i><i style="left:0;width:${w(e.lsl_fit)}%;background:var(${color})"></i><i class="fc" style="left:calc(${w(e.hsl_fc)}% - 1.5px)"></i></div>` +
+      `<div class="val"><b>${fmtGW(e.hsl_fit)} GW</b> on in the fit (${e.n_fit} units)<br>${fmtGW(e.hsl_fc)} GW in the forecast (${e.n_fc})${flips.length ? `<br>${flips.join(", ")}` : ""}</div>`;
+  };
+  let html = `<div class="sect">Thermal · GW · by how often it turns off on price</div>`;
+  S.fc.groups.forEach((g) => { const c = D.capacity.group[g]; if (c) html += row("group", GROUP_SHORT[g] || g, GROUP_NOTES[g] || S.fc.group_labels[g] || "", GROUP_COLORS[g] || "--c-other", c.cap, F.groups[g]); });
+  html += `<div class="sect">Thermal · GW · by technology (nuclear is fixed on; peakers are fitted by the hour)</div>`;
+  TECHS.forEach(([t, label, color]) => { const c = D.capacity.tech[t]; if (c) html += row("tech", label, "", color, c.cap, F.tech[t]); });
+  el.innerHTML = html;
+  const I = F.inputs || {}, fleet = (k) => d3.sum(Object.values(F.groups), (e) => e[k] || 0);
+  $("fit-note").textContent = `${S.date} · fit ${F.version || ""} · ${fmtGW(fleet("hsl_fit"))} GW on against ${fmtGW(fleet("hsl_fc"))} GW in the forecast${I.n_changed != null ? ` · ${I.n_changed} of ${I.n_candidates} candidate units changed` : ""}`;
+  setCSV(el, ["section", "name", "cap_mw", "n_units", "n_on_forecast", "lsl_forecast_mw", "hsl_forecast_mw", "n_on_fit", "lsl_fit_mw", "hsl_fit_mw", "n_switched_on", "n_switched_off", "n_reconfigured"], csv, `2-day fit ${S.date}`);
+}
 // the estimates heading sits over the forecast panels once the day has its data
 function drawEstimates() {
   const L = lead();
@@ -723,7 +752,7 @@ function drawMix() {
 }
 
 // ---------------------------------------------------------------- drill-down: units ---
-const VERDICT_LABEL = { on: "Likely on", off: "Likely off", maybe: "Toss-up", nocut: "Too few days to call", outage: "Outage", peaker: "Peaker (by hour)" };
+const VERDICT_LABEL = { on: "Likely on", off: "Likely off", maybe: "Toss-up", nocut: "Too few days to call", outage: "Outage", peaker: "Peaker (by hour)", window: "On outside its off window" };
 const UNIT_COLS = [
   ["unit", "Unit", "t"], ["tech", "Technology", "tech"], ["group", "Group", "group"], ["hsl", "HSL (MW)"], ["lsl", "LSL (MW)"],
   ["verdict", "Call", "verdict"], ["p_on", "Odds on", "pct"], ["loss", "Cost to stay on ($)", "$"], ["cutoff", "Usually turns off above ($)", "$"],
@@ -863,7 +892,7 @@ function render() {
   $("date-prev").disabled = di <= 0;
   $("date-next").disabled = di < 0 || di >= days.length - 1;
   $("hour-out").textContent = `${heLabel(S.hour)} · ${String(S.hour).padStart(2, "0")}:00–${String(S.hour + 1).padStart(2, "0")}:00`;
-  drawLayers(); drawHeadline(); drawSpark(); drawMini(); drawActual(); drawActualBars(); drawEstimates(); drawGroups(); drawTechs(); drawHourly(); drawScore(); drawMix(); drawUnits(); drawOffersLinks();
+  drawLayers(); drawHeadline(); drawSpark(); drawMini(); drawActual(); drawActualBars(); drawEstimates(); drawGroups(); drawTechs(); drawFit(); drawHourly(); drawScore(); drawMix(); drawUnits(); drawOffersLinks();
   saveView();
 }
 // a click on an hourly chart picks the hour for the generation mix and the units table
