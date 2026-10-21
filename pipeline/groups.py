@@ -8,6 +8,7 @@ Writes data/groups_60d.json.gz:
   dates             the period the groups were judged on (unit_hours_60d dates)
   groups            [[id, label, rule], ...] in display order (GROUPS)
   out_min_h         OUT_MIN_H
+  never_on_days     NEVER_ON_DAYS
   units: {unit or train: [tech, group, MW, shutdowns, shortest off spell h, p10 h, median h,
                           configuration shown in Unit detail, 1 if it ran at all]}
     MW is the largest of its configurations' median HSL while running.
@@ -27,8 +28,9 @@ Rules (the same as trends.js had in stretchBase before this module):
   shutdowns per week over the period; a lone short spell does not place a unit.  Otherwise the
   shortest spell of a day or more decides multi-day (under a week) or seasonal; no spell, never
   (always on when available: off only for outages).
-- a unit with hourly states but no running hour in the period is never_on (mothballed or on a
-  long outage), whatever its off stretch looks like.
+- a unit with no running hour in at least NEVER_ON_DAYS days of hourly states is never_on
+  (mothballed or on a long outage); with a shorter record it is placed by its off stretch as
+  above, since an idle peaker a few months into the window looks the same.
 """
 import re
 
@@ -48,6 +50,7 @@ GROUPS = [
     ["daily3", "Daily, over 2 a week", "more than two shutdowns a week"],
     ["never_on", "Never on", "no running hour in the period"],
 ]
+NEVER_ON_DAYS = 120
 GROUPED_TECHS = ("coal", "combined_cycle", "gas_steam", "combustion_turbine")
 RANK = {"a": 4, "m": 3, "0": 2, "o": 1, "-": 0}
 _TRAIN = re.compile(r"^(.*_CC\d+)_")
@@ -163,7 +166,7 @@ def classify(e: dict, N: int) -> dict:
         long_.append(lead)
     per_week = len(offs) / (N / 168) if N else 0.0
     ran = any(c in "ma" for c in st)
-    if not ran:
+    if not ran and sum(c != "-" for c in st) >= NEVER_ON_DAYS * 24:
         group = "never_on"
     elif short >= 2:
         group = "daily1" if per_week < 1 else "daily2" if per_week <= 2 else "daily3"
@@ -200,7 +203,8 @@ def build_groups(index: dict) -> dict:
                  _r(e["off_med"]), e["pick"], int(e["ran"])]
            for key, e in sorted(units.items())}
     write_json_gz(DATA_DIR / "groups_60d.json.gz", {
-        "dates": uh.get("dates") or [], "groups": GROUPS, "out_min_h": OUT_MIN_H, "units": out})
+        "dates": uh.get("dates") or [], "groups": GROUPS, "out_min_h": OUT_MIN_H, "never_on_days": NEVER_ON_DAYS,
+        "units": out})
     counts = {g[0]: sum(1 for v in out.values() if v[1] == g[0]) for g in GROUPS}
     print(f"groups_60d: {len(out)} units or trains: {counts}")
     return {key: e["group"] for key, e in units.items()}

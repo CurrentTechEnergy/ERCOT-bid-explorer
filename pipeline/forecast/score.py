@@ -363,8 +363,9 @@ def summarise(days: dict, asof_only: bool = True) -> dict:
                    "n_storage": sum(1 for s in td if s.get("storage_dis_mae") is not None),
                    "unit_hit": _r(sum(h * n for h, n in uh) / sum(n for _, n in uh), 3) if uh and sum(n for _, n in uh) else None,
                    "n_judged": int(sum(n for _, n in uh))}
-            res["group"] = {g: {"mae": _r(np.mean([s["group"][g]["mae"] for s in sd])), "bias": _r(np.mean([s["group"][g]["bias"] for s in sd])), "n": len(sd)}
-                            for g in GROUPS} if sd else None
+            # a group scored on only some days (one added since older score files were written) averages over those days
+            res["group"] = {g: {"mae": _r(np.mean([s["group"][g]["mae"] for s in gd])), "bias": _r(np.mean([s["group"][g]["bias"] for s in gd])), "n": len(gd)}
+                            for g in GROUPS for gd in [[s for s in sd if g in s["group"]]] if gd} if sd else None
             ft = [s["fit"] for s in items if s.get("fit")]
             fs = [f for f in ft if f.get("lsl_mae_fit") is not None]
             res["fit"] = {"n": len(ft), "n_sixty_day": len(fs), "version": ft[-1].get("version") if ft else None,

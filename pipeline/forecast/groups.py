@@ -15,7 +15,9 @@ spell still open at the end of the period counts once it is a day long.
   daily1    at least two off spells under 24 h, fewer than one shutdown a week
   daily2    one to two shutdowns a week
   daily3    more than two shutdowns a week
-  never_on  hourly states but no running hour in the period (mothballed or on a long outage)
+  never_on  no running hour in at least NEVER_ON_DAYS days of hourly states (mothballed or on a
+            long outage); with a shorter record the unit is placed by its off stretch as above,
+            since an idle peaker a few months into the window looks the same
 
 The Commitment build (PR 1, branch commitment-pipeline) writes the same groups to
 data/groups_60d.json.gz from pipeline/groups.py (units: {unit or train: [tech, group, ...]}).
@@ -32,6 +34,7 @@ from ..store import read_json_gz
 from ..trends import UNIT_TECHS, unit_techs
 
 OUT_MIN_H = 4
+NEVER_ON_DAYS = 120
 GROUPS = ["never", "seasonal", "multiday", "daily1", "daily2", "daily3", "never_on"]
 GROUP_LABELS = {
     "never": "Always on when available", "seasonal": "Seasonal: off a week or more", "multiday": "Multi-day: off 1–7 days",
@@ -130,7 +133,7 @@ def lead_off(st: np.ndarray) -> int:
 
 
 def group_of(st: np.ndarray, N: int) -> str:
-    if not np.isin(st, ["m", "a"]).any():
+    if not np.isin(st, ["m", "a"]).any() and (st != "-").sum() >= NEVER_ON_DAYS * 24:
         return "never_on"
     spells = off_spells(st)
     short = sum(1 for _, n, pure in spells if n < 24 and pure)

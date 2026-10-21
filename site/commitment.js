@@ -370,6 +370,7 @@ const ST_RESP = [
   { id: "A", label: "Ran above minimum", color: null, o: 1 },
 ];
 // Groups by the finest timescale a unit has shown it will shut down on: its shortest off spell.
+const ST_NEVER_ON_DAYS = 120;              // never on needs this many days of hourly states with no running hour
 const ST_GROUPS = [
   { id: "never", label: "Always on when available", note: "no shutdown on price in the period; off only for outages" },
   { id: "seasonal", label: "Seasonal: off a week or more", note: "every off spell lasted 7 days or more" },
@@ -377,7 +378,7 @@ const ST_GROUPS = [
   { id: "daily1", label: "Daily, under 1 shutdown a week", note: "at least two off spells under 24 h, fewer than one shutdown a week" },
   { id: "daily2", label: "Daily, 1–2 a week", note: "one to two shutdowns a week" },
   { id: "daily3", label: "Daily, over 2 a week", note: "more than two shutdowns a week" },
-  { id: "never_on", label: "Never on", note: "no running hour in the period" },
+  { id: "never_on", label: "Never on", note: `no running hour in ${ST_NEVER_ON_DAYS}+ days of states` },
 ];
 const ST_OUT_MIN_H = 4;                  // an off spell with fewer OFF hours than this, or more OUT than OFF, is an outage
 const ST_FLEET = [...ST_RESP, { id: "N", label: "Not running going in", color: "--grid", o: 1 }];
@@ -455,7 +456,8 @@ function stretchBase() {
     // shutdowns per week over the period; a lone short spell does not place a unit
     const perWeek = e.shut / (N / 168);
     e.ran = st.some((c) => c === "m" || c === "a");
-    e.group = !e.ran ? "never_on" : short >= 2 ? (perWeek < 1 ? "daily1" : perWeek <= 2 ? "daily2" : "daily3")
+    // never on needs a long record: an idle peaker a few months into the window looks the same
+    e.group = !e.ran && st.filter((c) => c !== "-").length >= ST_NEVER_ON_DAYS * 24 ? "never_on" : short >= 2 ? (perWeek < 1 ? "daily1" : perWeek <= 2 ? "daily2" : "daily3")
       : long.length ? (d3.min(long) < 168 ? "multiday" : "seasonal") : "never";
     e.pick = e.configs.sort((a, b) => b.run - a.run)[0].name;   // config shown in Unit detail
     const o = e.off.slice().sort(d3.ascending);
