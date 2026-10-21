@@ -504,10 +504,10 @@ def main(argv=None):
     if "forecast" not in args.skip:
         build_forecast(index)
     build_cutoff_history(index)
-    build_events(index)
     qse_lines = qse.save()
     if "entities" not in args.skip:
         fetch_entities()     # after qse.save(): DME codes are named from the codes it saved
+    build_events(index)      # after both: decision-maker changes are events
     build_unit_index(index)
     save_index(index)
     added = {k: sorted(set(index["days"][k]) - before.get(k, set())) for k in index["days"]}

@@ -333,7 +333,8 @@ function panelFromLink() {
 
 // ---------------------------------------------------------- find a unit ---
 // A search box in every page's nav row that opens a unit's page, by resource name, settlement
-// point, combined-cycle configuration, CDR plant name, another name it goes by, county or QSE. The unit list
+// point, combined-cycle configuration, CDR plant name, another name it goes by, county, QSE (code or name),
+// decision maker or owner. The unit list
 // (data/unit_index.json.gz, pipeline/unit_index.py) loads on first focus. The Unit page has its
 // own picker and directory, so it gets no box here.
 const TECH_SHORT = { nuclear: "Nuclear", coal: "Coal", combined_cycle: "Combined cycle", gas_steam: "Gas steam", combustion_turbine: "Combustion turbine", wind: "Wind", solar: "Solar", storage: "Battery storage ESR" };
@@ -346,7 +347,7 @@ async function unitIndex() {
   unitIndex.cdr = ui.cdr || "";
   return ui.rows.map((r) => {
     const u = Object.fromEntries(c.map((k, i) => [k, r[i]]));
-    u.text = [u.unit, u.sp, ...(u.configs || []), u.plant, ...(u.aliases || []), u.county, u.qse, TECH_SHORT[u.tech]].filter(Boolean).join(" ").toLowerCase();
+    u.text = [u.unit, u.sp, ...(u.configs || []), u.plant, ...(u.aliases || []), u.county, u.qse, u.qse_name, u.dme, u.owner, TECH_SHORT[u.tech]].filter(Boolean).join(" ").toLowerCase();
     return u;
   });
 }

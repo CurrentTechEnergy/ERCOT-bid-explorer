@@ -37,6 +37,11 @@ Sources (each already computed by its own module; nothing is detected twice):
   new_unit         any other unit's first day in SCED (trends.py first_seen), after the record's
                    first NEW_GRACE days; combined-cycle configurations count by train, so a new
                    configuration of a known train is not a new unit
+  control          qse.py history (unit_qse.json.gz): the unit's decision-making entity or QSE
+                   changed (a new tolling, offtake or management agreement, or a transfer),
+                   named from entities.json.gz.  One event per plant (resource-name prefix),
+                   date and change, with its units listed.  Major when the DME changed; a QSE
+                   change alone is a new scheduling agent for the same decision maker
   outage_start, outage_end
                    an outage spell of OUTAGE_DAYS days or more in the hourly states
                    (unit_hours_60d, outages rewritten as groups.py does), when it started and
@@ -71,7 +76,9 @@ import numpy as np
 
 from .config import DATA_DIR, SITE_URL
 from .groups import GROUPED_TECHS, GROUPS, assign_groups
+from .entities import PATH as ENTITIES_PATH
 from .models.cutoff_history import PATH as CUTOFF_PATH
+from .qse import PATH as QSE_PATH
 from .renew_changes import KINDS as RENEW_KINDS
 from .store import read_json_gz, write_json_gz
 from .trends import K, SIGNALS, UNIT_TECHS
@@ -107,6 +114,7 @@ KINDS = {
     "battery_size": "Battery size changed",
     "battery_new": "New battery",
     "new_unit": "New unit",
+    "control": "Decision maker or QSE changed",
     "outage_start": "Outage started",
     "outage_end": "Outage ended",
     **{f"renew_{k}": v for k, v in RENEW_KINDS.items()},
@@ -390,6 +398,33 @@ def new_unit_events(tr):
     return out
 
 
+def control_events(qh, ent, tech_of):
+    hist, dme_names, qse_names = qh.get("history") or {}, ent.get("dme") or {}, ent.get("qse") or {}
+    def name(code, names):      # dme names are strings, qse names [name, date]; a code no list names stays a code
+        n = names.get(code)
+        n = n[0] if isinstance(n, list) else n
+        return n or (f"ERCOT code {code}" if code else "unknown")
+    plants = defaultdict(list)     # (plant, date, new qse, new dme) -> [(unit, old qse, old dme)]
+    for unit, rows in hist.items():
+        for a, b in zip(rows, rows[1:]):        # a combined-cycle configuration counts as its train
+            plants[(unit.split("_")[0], b[0], b[1], b[2])].append((_train(unit), a[1], a[2]))
+    out = []
+    for (plant, date, q1, d1), got in sorted(plants.items()):
+        units = sorted({u for u, _, _ in got})
+        d0s = sorted({d for _, _, d in got if d and d != d1})
+        q0s = sorted({q for _, q, _ in got if q and q != q1})
+        dme = bool(d1 and d0s)
+        if dme:
+            title = f"Offers now decided by {name(d1, dme_names)}, was {', '.join(name(d, dme_names) for d in d0s)}"
+        else:
+            title = f"Scheduled by {name(q1, qse_names)}, was {', '.join(name(q, qse_names) for q in q0s) or 'unknown'}"
+        key = units[0] if len(units) == 1 else plant
+        tech = next((tech_of[u] for u in units if u in tech_of), "other")
+        out.append(_ev(key, date, "control", tech, title, dme, before=[q0s, d0s], after=[q1, d1], field="QSE, DME codes",
+                       units=units))
+    return out
+
+
 def _train(u):
     m = re.match(r"^(.*_CC\d+)_", u)
     return m.group(1) if m else u
@@ -453,10 +488,19 @@ def build_events(index: dict) -> dict:
     ch = read_json_gz(CUTOFF_PATH, default={}) or {}
     hubs = read_json_gz(DATA_DIR / "gas_hubs.json.gz", default={}) or {}
     su = read_json_gz(DATA_DIR / "storage" / "units.json.gz", default={}) or {}
+    qh = read_json_gz(QSE_PATH, default={}) or {}
+    ent = read_json_gz(ENTITIES_PATH, default={}) or {}
     tech_of = {u["unit"]: u["tech"] for u in tr.get("units", []) if u["tech"] in UNIT_TECHS}
+    # every unit's technology for the control events, from the last unit index (built after this)
+    ui = read_json_gz(DATA_DIR / "unit_index.json.gz", default={}) or {}
+    ic = ui.get("columns") or []
+    tech_all = {r[ic.index("unit")]: r[ic.index("tech")] for r in ui.get("rows", [])} if "unit" in ic else {}
+    tech_all.update({u["unit"]: u["tech"] for u in tr.get("units", [])})
+    tech_all.update({_train(u["unit"]): u["tech"] for u in tr.get("units", [])})
+    tech_all.update({u: "storage" for u in (su.get("units") or {})})
     events = (shutdown_events(dec) + group_events(uh, tech_of) + bidding_events(tr) + cutoff_events(ch)
               + renew_events(rc) + outage_events(uh, tech_of) + fuel_events(tr, hubs) + battery_events(su)
-              + new_unit_events(tr))
+              + new_unit_events(tr) + control_events(qh, ent, tech_all))
     old = read_json_gz(PATH, default=None) or {}
     seen = {e["id"]: e["seen"] for e in old.get("events", [])}
     # the first build has no earlier file to compare with, so every event it writes is history,

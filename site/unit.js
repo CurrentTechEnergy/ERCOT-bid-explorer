@@ -204,8 +204,14 @@ function drawHead(e) {
   if (f) bits.push(`${fmtMW(f.hsl)} MW maximum, ${fmtMW(f.lsl)} MW minimum (day-ahead)`);
   if (ppa && ppa.sp) bits.push(`node ${ppa.sp}`);
   const ui = e.tech === "storage" && (S.UI || []).find((u) => u.unit === e.name);
-  if (ui) bits.push(...[ui.mw && `${fmtMW(ui.mw)} MW`, ui.plant && `${ui.plant}${ui.match === "site" ? " (plant)" : ""}`, ui.sp && `node ${ui.sp}`, ui.qse && `QSE ${ui.qse}`].filter(Boolean));
+  if (ui) bits.push(...[ui.mw && `${fmtMW(ui.mw)} MW`, ui.plant && `${ui.plant}${ui.match === "site" ? " (plant)" : ""}`, ui.sp && `node ${ui.sp}`].filter(Boolean));
   $("unit-meta").textContent = bits.join(" · ");
+  // who decides how it is offered, who schedules it, who owns it (ERCOT's DME and QSE lists)
+  const who = (S.UI || []).find((u) => u.unit === e.name || (u.configs || []).includes(e.name));
+  const wb = who ? [who.dme && `Offers decided by ${who.dme}`, who.qse && `scheduled by QSE ${who.qse_name ? `${who.qse_name} (${who.qse})` : who.qse}`,
+    who.owner && who.owner !== who.dme && `owned by ${who.owner}`].filter(Boolean) : [];
+  $("unit-who").textContent = wb.join(" · ");
+  $("unit-who").hidden = !wb.length;
   drawSite(e);
   const v = $("unit-verdict");
   if (!f) { v.textContent = THERMAL.includes(e.tech) ? "Not in the latest forecast." : ""; return; }
