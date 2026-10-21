@@ -91,10 +91,11 @@ from ..store import read_json_gz
 
 from ..decisions import _window, _cutoff, _dam_trains, HALF, OUT_MIN_H
 from ..forecast import context as C
+from ..intraday import train_of
 
 UNSEEN_TECHS = ("coal", "combined_cycle", "gas_steam", "combustion_turbine")   # spread the zonal unseen outage MW over these
 NAME = "thermal_cutoff"
-VERSION = "v9"    # v9: the history trees also read the forecast net load, for combined cycles; v8: the P(on) of trees fitted on the 2024-25 thermal history as an input; v7: combustion turbines share the zonal unseen outage; v6: technology one-hot, drivers of each P(on); v5: stay-on probability by boosted trees; v4: loss over the cutoff split by award history; v3: gas steam on its stay-on loss, stale gas steam outages dropped; v2: CC outage calls by gas turbine, zonal unseen outages; v1: NRC reactor status, listed outages; probability of staying on through the window, per-unit horizon, pooled cutoffs
+VERSION = "v10"   # v10: the share of days the unit was awarded upward reserves in the DAM as an input; v9: the history trees also read the forecast net load, for combined cycles; v8: the P(on) of trees fitted on the 2024-25 thermal history as an input; v7: combustion turbines share the zonal unseen outage; v6: technology one-hot, drivers of each P(on); v5: stay-on probability by boosted trees; v4: loss over the cutoff split by award history; v3: gas steam on its stay-on loss, stale gas steam outages dropped; v2: CC outage calls by gas turbine, zonal unseen outages; v1: NRC reactor status, listed outages; probability of staying on through the window, per-unit horizon, pooled cutoffs
 SEASONAL_VERSION = "v0"
 RUN_SHARE = 0.5          # a month the unit ran through: online at least this share of its hours
 LONG_OUT = 21            # days an outage must already have lasted at the last known hour to carry forward
@@ -106,6 +107,8 @@ DAILY_TECHS = ("combined_cycle", "gas_steam", "coal")
 CLEAR_TECHS = ("combined_cycle", "gas_steam")   # a 60-day outage these carry is dropped when the outage report does not list the unit
 WINDOW_TECHS = ("combined_cycle", "gas_steam")   # judged on their own stay-on cost in CC_WINDOW_GROUPS
 CC_WINDOW_GROUPS = ("daily1", "daily2", "daily3", "multiday", "seasonal")   # CC trains judged on their own stay-on cost
+AS_UP = ("regup", "rrs", "ecrs", "nspin")
+AS_MIN = 1.0   # MW of upward reserve in an hour that counts a day as a reserve award
 GBT = dict(max_iter=300, learning_rate=0.05, max_leaf_nodes=15, min_samples_leaf=200, l2_regularization=1.0, random_state=0)
 
 
@@ -222,7 +225,7 @@ DRIVERS = [("loss against its cutoff", (0, 1, 16)), ("award history", (5,)),
            ("window length against its usual off spell", (2,)), ("margin before and after the window", (3, 4)),
            ("share of days it ran", (6,)), ("hour-by-hour prices in the window", (7, 8, 9, 15)),
            ("technology, group and month", (10, 11, 12, 13, 14)),
-           ("how units like it ran in 2024-25", (17,))]
+           ("how units like it ran in 2024-25", (17,)), ("reserve award history", (18,))]
 
 
 def _hist_view(Z):
@@ -289,9 +292,35 @@ def _day_trains(ctx):
                 continue
             out[d] = {key: (e["tech"], e["spp"], e["mingen"], e["lsl"]) for key, e in _dam_trains(dd).items()
                       if e["tech"] in DAILY_TECHS and e["spp"] is not None and e["lsl"]}
+            ctx.__dict__.setdefault("_as_days", {})[d] = _as_up(dd)
         ctx._cut_days = out
     return ctx._cut_days
 
+
+
+def _as_up(dd):
+    """The trains in a DAM day file awarded AS_MIN MW or more of an upward reserve (Reg-Up,
+    RRS, ECRS, Non-Spin) in some hour (combined-cycle configurations merged)."""
+    out = set()
+    for name, u in dd.get("units", {}).items():
+        if u.get("tech") not in DAILY_TECHS:
+            continue
+        up = [v for k in AS_UP for v in (u.get("as") or {}).get(k) or [] if v is not None]
+        if up and max(up) >= AS_MIN:
+            out.add(train_of(name) if u["tech"] == "combined_cycle" else name)
+    return out
+
+
+def _as_share(ctx, point):
+    """{train: share of the decision days up to `point` it was awarded an upward reserve in
+    the DAM}: how often the unit is kept on to carry reserves (the day's own awards are not
+    public yet)."""
+    days = [v for d, v in (ctx.__dict__.get("_as_days") or {}).items() if point is None or d <= point]
+    n = defaultdict(int)
+    for v in days:
+        for k in v:
+            n[k] += 1
+    return {k: c / len(days) for k, c in n.items()} if days else {}
 
 
 def _seasonal(row, ctx, key, known, last, mtd, month):
@@ -345,7 +374,9 @@ def _pool(ctx, date):
     pool = {t: float(np.median(v)) for t, v in pm.items()}
     groups, stats, raw = ctx.groups_at(date), ctx.stats_at(date), ctx.raw_states()
     day0 = ctx.stats["day0"]
-    X, y, N, XH, yH = [], [], [], [], []
+    X, y, N, A, XH, yH = [], [], [], [], [], []
+    _day_trains(ctx)
+    ash = _as_share(ctx, point)
     for d, trains in _day_trains(ctx).items():
         if point is not None and d > point:
             continue
@@ -369,6 +400,7 @@ def _pool(ctx, date):
                           s["on_days"] if s else 0.0)
             X.append(_tree_x(_hourly(f, margin, lsl, bs, nh), tech, g, d[5:7], loss, lsl)); y.append(np.isin(seg, ["m", "a"]).astype(float))
             N.append(_net(ctx, d, tech))
+            A.append(np.full(24, ash.get(key, 0.0)))
     # the thermal history before the 60-day window (pipeline/history.py), on the units'
     # attributes as of the point: the same rows from months of DAM days before and after RTC+B
     first = min(_day_trains(ctx), default=None)
@@ -395,7 +427,8 @@ def _pool(ctx, date):
     # stacked: trees on the history alone, whose P(on) is one more input to the trees on the
     # 60 days, so the recent market decides how far the history's view carries over
     hist = _trees(np.vstack(XH), np.concatenate(yH)) if XH else None
-    w = {None: _trees(_stack(hist, X, np.concatenate(N)), y), "hist": hist} if len(y) else {}
+    w = {None: _trees(np.column_stack([_stack(hist, X, np.concatenate(N)), np.concatenate(A)]), y),
+         "hist": hist, "as": ash} if len(y) else {}
     cache[point] = (own, pool, w)
     return cache[point]
 
@@ -482,7 +515,8 @@ def forecast(date, ctx: C.Context) -> dict:
                 s = stats["units"].get(key)
                 x = _hourly(_features(margin, lsl, loss, bs, nh, cut, mo, aw, s["on_days"] if s else 0.0), margin, lsl, bs, nh)
                 wt = w.get(None)
-                Z = _stack(w.get("hist"), _tree_x(x, t, g, date[5:7], loss, lsl), _net(ctx, date, t))
+                Z = np.column_stack([_stack(w.get("hist"), _tree_x(x, t, g, date[5:7], loss, lsl), _net(ctx, date, t)),
+                                     np.full(24, (w.get("as") or {}).get(key, 0.0))])
                 ph = wt.predict_proba(Z)[:, 1] if wt is not None else np.full(24, float(loss <= cut))
                 p_on = round(float(ph[bs:bs + nh].mean()), 2)
                 if wt is not None:
