@@ -27,13 +27,14 @@ import pandas as pd
 from pathlib import Path
 
 from .config import DATA_DIR
-from .load import BACKFILL_FROM, LOOKBACK_DAYS, _bulk, _days, _frame
+from .load import BACKFILL_FROM, LOOKBACK_DAYS, _days, _frame
 from .log import warn
 from .renew_forecast import _cutoff, _find
 from .store import iter_csvs, read_json_gz, write_json_gz
 
 PATH = DATA_DIR / "stsa.json.gz"
 EMIL = "np3-763-cd"
+PER_REQUEST = 50                        # the most NP3-763-CD archives one bulk download takes
 FIELDS = {"online": "capgenrestotal", "offline": "offlineavailablemwtotal", "load_res": "caploadrestotal"}
 
 
@@ -88,7 +89,9 @@ def fetch_stsa(api, index: dict = None, today: dt.date = None, path=None) -> Non
     if picks:
         print(f"STSA: {len(picks)} day(s) to fill, {min(picks)} to {max(picks)}")
     try:
-        posted = read_postings(_bulk(api, EMIL, list({x["docId"]: x for x in picks.values()}.values())))
+        ids = sorted({x["docId"] for x in picks.values()})
+        posted = read_postings([c for b in (api.download_many(EMIL, ids, PER_REQUEST) if ids else [])
+                                for c in iter_csvs(b, "x.zip")])
     except Exception as e:
         warn(f"STSA: download failed: {type(e).__name__}: {e}")
         posted, no_post = [], set()
