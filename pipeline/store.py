@@ -61,7 +61,13 @@ def _round(a):
     return r.tolist()
 
 
+# While pipeline/memo.py records a builder, the paths it reads and writes land here.
+TRACE = None
+
+
 def write_json_gz(path: Path, obj) -> None:
+    if TRACE is not None:
+        TRACE["writes"].add(Path(path))
     path.parent.mkdir(parents=True, exist_ok=True)
     raw = json.dumps(obj, separators=(",", ":"), allow_nan=False).encode()
     # mtime=0 keeps the file byte-identical when content is unchanged (clean git diffs)
@@ -71,6 +77,8 @@ def write_json_gz(path: Path, obj) -> None:
 
 
 def read_json_gz(path: Path, default=None):
+    if TRACE is not None:
+        TRACE["reads"].add(Path(path))
     if not path.exists():
         return default
     with gzip.open(path, "rb") as f:

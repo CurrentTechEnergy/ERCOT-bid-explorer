@@ -35,6 +35,11 @@ on:
         type: boolean
         required: false
         default: false
+      rebuild_all:
+        description: "Rerun every builder, even those whose inputs are unchanged since the last build (pipeline/memo.py)"
+        type: boolean
+        required: false
+        default: false
 
 permissions:
   actions: write     # a reprocess run queues the next one
@@ -110,6 +115,7 @@ jobs:
           OUTAGES_START: ${{ github.event.inputs.outages_start }}
           OUTAGES_END: ${{ github.event.inputs.outages_end }}
           UNIT_DATA_DIR: unitdata
+          REBUILD_ALL: ${{ github.event.inputs.rebuild_all == 'true' && '1' || '' }}
         run: |
           if [ "$REPROCESS_60D" = "true" ]; then
             python -m pipeline.update --reprocess-60d --max-files "${MAX_FILES:-60}"

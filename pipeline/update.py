@@ -11,6 +11,8 @@ Usage:
 
 60-day days also write a per-unit day file to UNIT_DATA_DIR (env var; default ./unitdata).
 60-day DAM disclosure days (three-part offers, awards) are written to data/dam/.
+The history-wide builders are skipped when their inputs are unchanged (pipeline/memo.py);
+--rebuild-all runs them anyway.
 """
 import argparse
 from collections import Counter
@@ -58,7 +60,7 @@ from .events import build_events
 from .series import build_series
 from .storage import build_storage
 from .unit_index import build_unit_index
-from . import qse
+from . import memo, qse
 from .store import describe_blob, iter_csvs, zip_names, load_index, read_json_gz, save_index, update_summary, write_json_gz
 from .log import warn, write_summary, WARNINGS
 
@@ -376,7 +378,11 @@ def main(argv=None):
     ap.add_argument("--reprocess-60d", nargs="?", const="missing", choices=["missing", "all"],
                     help="re-download and reparse 60-day SCED and DAM days already in the index: those "
                          "whose file is missing or predates the current format (default), or all")
+    ap.add_argument("--rebuild-all", action="store_true",
+                    help="run every builder, even those whose inputs are unchanged (see pipeline/memo.py)")
     args = ap.parse_args(argv)
+    if args.rebuild_all:
+        os.environ["REBUILD_ALL"] = "1"
 
     index = load_index()
     before = {k: set(v) for k, v in index["days"].items()}
@@ -400,8 +406,8 @@ def main(argv=None):
             print("prices:", process_price_blobs(price_blobs, dates, index))
         build_dispatchable(index)
         build_marginal(index)
-        build_trends(index)
-        build_intraday(index)
+        memo.run("trends", build_trends, index)
+        memo.run("intraday", build_intraday, index)
         build_groups(index)
         build_unit_hour_days(index)
         build_unit_curves(index)
@@ -409,10 +415,10 @@ def main(argv=None):
         build_stayon(index)
         build_decisions(index)
         build_curve_trends(index)
-        build_node_curtail(index)
-        build_marginal_nodes(index)
-        build_mitigation(index)
-        build_econ(index)
+        memo.run("curtail_nodes", build_node_curtail, index)
+        memo.run("marginal_nodes", build_marginal_nodes, index)
+        memo.run("mitigation", build_mitigation, index)
+        memo.run("econ", build_econ, index)
         build_ppa(index)
         build_renew_changes(index)
         build_series(index)
@@ -474,8 +480,8 @@ def main(argv=None):
 
     build_dispatchable(index)
     build_marginal(index)
-    build_trends(index)
-    build_intraday(index)
+    memo.run("trends", build_trends, index)
+    memo.run("intraday", build_intraday, index)
     build_groups(index)
     build_unit_hour_days(index)
     build_unit_curves(index)
@@ -483,11 +489,11 @@ def main(argv=None):
     build_stayon(index)
     build_decisions(index)
     build_curve_trends(index)
-    build_node_curtail(index)
-    build_marginal_nodes(index)
-    build_mitigation(index)
+    memo.run("curtail_nodes", build_node_curtail, index)
+    memo.run("marginal_nodes", build_marginal_nodes, index)
+    memo.run("mitigation", build_mitigation, index)
     build_fuel_hubs(index)
-    build_econ(index)
+    memo.run("econ", build_econ, index)
     build_ppa(index)
     build_renew_changes(index)
     build_series(index)
