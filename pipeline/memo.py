@@ -1,6 +1,6 @@
 """Skip a history-wide builder when nothing it depends on has changed since it last ran.
 
-The heavy builders (trends, intraday, curtail_nodes, marginal_nodes, mitigation, econ) read every
+The heavy builders (trends, intraday, curtail_nodes, marginal_nodes, econ) read every
 60-day day on each run, about 40 minutes in all, even when no report was added.  run() records
 the files a builder reads and writes (through store.read_json_gz / write_json_gz) and keeps, in
 data/build_memo.json.gz, a hash of the builder's code (its module and the pipeline modules it imports), the index's day lists, those inputs and those

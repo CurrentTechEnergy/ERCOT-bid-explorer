@@ -43,7 +43,6 @@ from .decisions import build_decisions
 from .curve_trends import build_curve_trends
 from .nodes import build_node_curtail
 from .marginal_nodes import build_marginal_nodes
-from .mitigation import build_mitigation
 from .gas import fetch_gas, fetch_hubs
 from .fuel_hub import build_fuel_hubs
 from .econ import build_econ
@@ -421,7 +420,6 @@ def main(argv=None):
         build_curve_trends(index)
         memo.run("curtail_nodes", build_node_curtail, index)
         memo.run("marginal_nodes", build_marginal_nodes, index)
-        memo.run("mitigation", build_mitigation, index)
         memo.run("econ", build_econ, index)
         build_ppa(index)
         build_renew_changes(index)
@@ -497,7 +495,6 @@ def main(argv=None):
     build_curve_trends(index)
     memo.run("curtail_nodes", build_node_curtail, index)
     memo.run("marginal_nodes", build_marginal_nodes, index)
-    memo.run("mitigation", build_mitigation, index)
     build_fuel_hubs(index)
     memo.run("econ", build_econ, index)
     build_ppa(index)

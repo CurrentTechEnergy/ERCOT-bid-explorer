@@ -1,6 +1,6 @@
 """Within-day thermal operations from the per-unit day files: how much thermal output sits at
 minimum in cheap hours, when units shut down and restart, and an hour-by-hour state for each
-unit.  Needs no downloads.  Read by trends.html and commitment.html.
+unit.  Needs no downloads.  Read by commitment.html.
 
 Writes
   data/intraday_60d.json.gz

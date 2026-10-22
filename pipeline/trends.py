@@ -1,6 +1,6 @@
 """Long-term trends from the 60-day data already in data/: hourly floor-priced MW and capacity
 running by technology, starts per day, per-unit daily offer behaviour for thermal units, and
-detected changes in each unit's bidding approach.  Needs no downloads.  Read by trends.html.
+detected changes in each unit's bidding approach.  Needs no downloads.  Read by commitment.html, unit.html, the Offers page and pipeline/events.py.
 
 data/trends_hourly_60d.json.gz   {"dates", "floor", "run"}, every series [day][24] (MW, null where
                                  missing; a day with no thermal unit online is null throughout)
@@ -41,9 +41,6 @@ data/trends_60d.json.gz
                          group: 1 its resource type (PEER_MIN or more units with a price), 0 its
                          technology
   changes                sustained shifts in le0, noff or rel (detect_changes)
-  flips                  thermal units whose submitted curve offered some MW at or below $0
-                         above LSL in some online runs and none in others on the same day:
-                         [unit, tech, date, n_switches, first_switch "HH:MM", hours_le0]
 """
 import numpy as np
 
@@ -59,7 +56,6 @@ RUN_STATS = {"on": "hsl", "off": "hsl_off"}
 # stat order of summaries written before they carried "stat_names"
 LEGACY_STATS = ["n_online", "hsl", "lsl", "base_point", "output", "floor_sced", "floor_submitted",
                 "le0_sced", "le0_submitted", "no_offer_hsl", "no_offer_output_schedule"]
-FLIP_EPS = 0.005   # share of the dispatchable range at or below $0 that counts as offering there
 UNIT_TECHS = ["nuclear", "coal", "combined_cycle", "gas_steam", "combustion_turbine"]
 
 
@@ -121,7 +117,7 @@ def _online(s):
 
 
 def unit_day_facts(ud: dict, prev_last: dict):
-    """From one per-unit day file: starts per unit, each unit's last known status, flips, each
+    """From one per-unit day file: starts per unit, each unit's last known status, each
     thermal unit's first offer price above $0 at or above LSL (units.first_positive_price) and
     its share of the dispatchable range offered at or below $0, per technology and hour the MW
     offered at or below $0 above LSL (averaged over the hour's runs), and each thermal unit's MW
@@ -130,7 +126,7 @@ def unit_day_facts(ud: dict, prev_last: dict):
     a start in the first run of the day counts only when it is known."""
     n = len(ud["runs"])
     hr = np.minimum(np.array(ud["runs"]) // 60, 23)
-    starts, last, flips, pos, le0, tech_le0, le20 = {}, {}, [], {}, {}, {}, {}
+    starts, last, pos, le0, tech_le0, le20 = {}, {}, {}, {}, {}, {}
     for name, u in ud["units"].items():
         seq = [s for _, s in u["status"] if s]      # skip absent runs (None) and blank statuses ("")
         cnt, prev = 0, prev_last.get(name)
@@ -154,23 +150,10 @@ def unit_day_facts(ud: dict, prev_last: dict):
         ok = ~np.isnan(share)
         if ok.any():
             le0[name] = round(float(np.mean(share[ok])), 3)
-        if not (np.any(share[ok] > FLIP_EPS) and np.any(share[ok] <= FLIP_EPS)):
-            continue
-        state, n_sw, first_sw = None, 0, None
-        for r in np.flatnonzero(ok):
-            cur = "le0" if share[r] > FLIP_EPS else "gt0"
-            if state is not None and cur != state:
-                n_sw += 1
-                if first_sw is None:
-                    m = ud["runs"][r] % 1440
-                    first_sw = f"{m // 60:02d}:{m % 60:02d}"
-            state = cur
-        hours = round(float(np.sum(share[ok] > FLIP_EPS)) * 24 / max(n, 1), 1)
-        flips.append([name, u["tech"], ud["date"], n_sw, first_sw, hours])
     # per-run technology sums -> hourly means
     tech_le0 = {t: [round(float(v[hr == h].mean()), 1) if (hr == h).any() else None for h in range(24)]
                 for t, v in tech_le0.items()}
-    return starts, last, flips, pos, le0, tech_le0, le20
+    return starts, last, pos, le0, tech_le0, le20
 
 
 def _hour_rows(rows, j):
@@ -192,7 +175,6 @@ def build_trends(index: dict) -> None:
     run = {t: {k: [] for k in RUN_STATS} for t in UNIT_TECHS}
     starts_t = {t: [] for t in UNIT_TECHS}
     units = {}
-    flips = []
     prev_date, prev_last = None, {}
     n_unit_days, has_units, empty = 0, [], []
     first_seen = {}
@@ -220,9 +202,8 @@ def build_trends(index: dict) -> None:
                     fs[2] = fs[2] or d
                     fs[3] = max(fs[3], top)
             known = prev_last if prev_date and np.datetime64(prev_date) + 1 == np.datetime64(d) else {}
-            starts, prev_last, fl, pos, le0, tech_le0, le20 = unit_day_facts(ud, known)
+            starts, prev_last, pos, le0, tech_le0, le20 = unit_day_facts(ud, known)
             prev_date = d
-            flips += fl
             for t in UNIT_TECHS:
                 starts_t[t].append(sum(c for nm, c in starts.items() if ud["units"][nm]["tech"] == t))
                 floor["le0_sub_lsl"][t].append(tech_le0.get(t) or [0.0] * 24)
@@ -294,7 +275,6 @@ def build_trends(index: dict) -> None:
         "dates": dates, "starts": starts_t, "has_units": has_units, "first_seen": first_seen,
         "signals": {k: v["label"] for k, v in SIGNALS.items()}, "window": K, "units": unit_out,
         "changes": sorted(changes, key=lambda c: c[2]),
-        "flips": sorted(flips, key=lambda f: (f[2], f[0])),
     })
     print(f"trends_60d / trends_hourly_60d: {D} days, {len(unit_out)} units, {len(changes)} bidding changes; "
-          f"{n_unit_days} per-unit day file(s), {len(flips)} flips")
+          f"{n_unit_days} per-unit day file(s)")

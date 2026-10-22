@@ -95,7 +95,6 @@ pipeline/
                    resource-node prices (data branch nodes/)
   nodes.py         per-unit day files + node prices + DAM settlement points -> wind and solar
                    curtailment priced at each unit's node, split congestion / oversupply (no downloads)
-  mitigation.py     per-unit day files -> how often and how far ERCOT mitigated each offer
   marginal_nodes.py per-unit day files -> units on the interior of their offer curve, the
                    price that implies, and how it sits against lambda (no downloads)
   gas.py           EIA API -> Henry Hub daily spot price (data/gas.json.gz); OilPriceAPI -> Houston
@@ -124,7 +123,7 @@ pipeline/
                    data/storage/series.json.gz, every day's fleet block for date-range charts,
                    and units.json.gz, one row a day per battery for the Unit page and the
                    battery events (no downloads)
-  trends.py        per-unit day files -> daily trends, starts, flips, bidding changes (no downloads)
+  trends.py        per-unit day files -> daily trends, starts, bidding changes (no downloads)
   events.py        decisions, groups, trends, renew_changes, cutoff_history and the battery
                    daily rows -> one list of unit
                    events in one format with the run that first found each (data/events.json.gz)
@@ -197,8 +196,9 @@ site/
                    (unit.html with no unit shows the Units directory, unit-dir.js; common.js adds
                    the "Find a unit" box to every page's nav row),
   guide.html, guide.js (How offers work, including how revenue is counted and how hedge signals are found),
-  day.html, app.js, trends.html, trends.js, economics.html, economics.js, contracts.html, contracts.js
-                   (Day view, Trends, Plant economics, Hedge signals: being retired; only Trends is in the nav),
+  day.html, app.js, economics.html, economics.js, contracts.html, contracts.js
+                   (Day view, Plant economics, Hedge signals: being retired; none is in the nav),
+  trends.html      (retired; redirects to commitment.html),
   style.css, vendor/d3.min.js
   data/            generated: index.json, summary_*.json.gz, marginal_*.json.gz, 2d/, 60d/, dam/, prices/,
                    curtail_nodes.json.gz, marginal_nodes.json.gz, gas.json.gz, gas_hubs.json.gz,
@@ -230,10 +230,6 @@ Every page carries a title in the form "Page · ERCOT Bids", a description and O
 ### Marginality at the node
 
 `pipeline/marginal_nodes.py` finds, for every unit and SCED run, whether SCED dispatched it to the interior of its own offer curve (SCED2 from format 6, the submitted curve before): base point strictly inside the ramp-limited range it had that run (LDL to HDL, within LSL and HSL) on a segment with some width rather than a vertical step. A unit climbing at its ramp rate sits at HDL and is pinned, not marginal. The curve's price at the base point is the price SCED saw at the unit's node, so each marginal run carries an implied LMP. Against that run's system lambda the unit is **at lambda** (within $2 or 5%: setting the system price), **below** (behind an export constraint; wind and solar at negative prices are the usual case) or **above** (its node dearer than the system). The per-unit day files carry the base point, HDL and LDL of every run from format 4 on (`pipeline/units.py`); for older files the hourly mean base point stands in, which lets a unit swinging between its limits read as marginal, and storage is skipped. From format 5 the files also carry each run's ancillary service awards (up: Reg-Up, RRS, ECRS, Non-Spin; down: Reg-Down), and the scoring takes them off the HDL-to-LDL range first, except for combustion turbines, where netting made the check against node prices worse. Format 6 adds the SCED2 curve, which the scoring uses in place of the submitted one. Format 7 keeps, for batteries, the state of charge with its minimum and maximum (MWh; in ERCOT's ESR file from the February 2026 postings on) and the AS capability telemetered per service, which `pipeline/storage.py` reads. History stays at its older format until a `reprocess_60d` run redoes it.
-
-### Mitigation
-
-`pipeline/mitigation.py` reads, from the format 6 per-unit files, how far ERCOT's mitigation lowered each unit's offer in each SCED run: the SCED1 minus SCED2 price at the base point and the largest cut anywhere between LSL and HSL (stored in `disp`). A run is mitigated when any cut exceeds $0.50/MWh; it set the price when the unit was mitigated at its base point and marginal on SCED2, in which case the cut at the base point is how much mitigation lowered the node's LMP with dispatch held fixed (an upper bound on the true change, since the as-offered curve would also have moved dispatch). Those runs are checked against ERCOT's node prices with both the mitigated and the offered price. The trends page shows mitigated unit-hours per day by technology and the units most often mitigated. The dashboard checks the implied prices against ERCOT's published node prices for the days that have them.
 
 Node prices are kept at 15 minutes for every settlement point that is not a hub or load zone (ERCOT files combined-cycle trains under a type other than `RN`); `node_hourly()` gives the hourly means the curtailment and revenue figures use. Node files and per-unit day files carry a format number, and a workflow run with **reprocess_60d** (or the regular node backfill, a few days per run) redoes the older ones.
 

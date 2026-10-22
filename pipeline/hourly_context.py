@@ -1,7 +1,7 @@
 """Hourly system context for the 60-day days: wind, solar and storage output and the hub
-price, so the Trends page can show what else was happening in any hour without loading the
+price, so the Commitment page can show what else was happening in any hour without loading the
 full 60-day summary.  Built from data/summary_60d.json.gz and data/summary_prices.json.gz;
-needs no downloads.  Read by trends.html (the "Leanest thermal hours" table, which takes
+needs no downloads.  Read by commitment.html (the "Leanest thermal hours" table, which takes
 thermal output and lambda from intraday_60d).
 
 Writes data/hourly_context_60d.json.gz:
