@@ -3,6 +3,6 @@ __pycache__/
 .venv/
 *.zip
 .DS_Store
-/unitdata/
+/unitdata
 /history/
 /backtests/
