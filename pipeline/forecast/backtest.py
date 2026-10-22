@@ -20,8 +20,10 @@ fit lines of the report are then empty.  --days builds only the days in that ran
 cover the days built).
 
 report.md (also printed): the promotion gate of pipeline/forecast/benchmark.py, line by line, for
-both sides with a pass or fail verdict for the current side, then the committed-minimum error
-(all, cheap and negative hours) and the score by technology and group over every as-of day.
+both sides with a pass or fail verdict for the current side (the cheap-hour floor error both in
+total and for each of its causes, outages, on/off calls and sizing, on its own), then the
+committed-minimum error (all, cheap and negative hours, and by cause) and the score by
+technology and group over every as-of day.
 backtests/ is gitignored; the scripts in analysis/ read a side folder (see analysis/README.md).
 
 Split and cached (the Backtest workflow, .github/workflows/backtest.yml, runs it this way):
@@ -138,6 +140,11 @@ def _copy_days(src: Path, dst: Path) -> int:
     return n
 
 
+# the floor error parts (score.FLOOR_PARTS) each held to the gate on its own, so a candidate cannot
+# pass by trading an error in one for an offsetting error in another
+GATE_PARTS = {"outage": "outages", "onoff": "on/off calls", "sizing": "sizing"}
+
+
 def _versions(scores: dict) -> str:
     vs = {k for s in scores.get("days", {}).values() for k in [json.dumps(s.get("versions"), sort_keys=True)]}
     return "; ".join(", ".join(f"{k}={v}" for k, v in sorted(json.loads(x).items())) for x in sorted(vs) if x != "null")
@@ -162,15 +169,17 @@ def report(cur: dict, ref: dict, labels=("current", "ref"), cal=None) -> str:
         a = list(summarise(scores.get("days", {})).values())
         b, a = (b[0] if b else {}), (a[0] if a else {})
         worst = max((g["mae"] or 0) for g in b["group"].values()) if b.get("group") else None
-        fl = a.get("floor") or {}
+        fl, fp = a.get("floor") or {}, a.get("floor_parts") or {}
         return {"headline": b.get("headline_hit"), "unit": b.get("unit_hit"), "worst": worst,
-                "cheap": (fl.get("cheap") or {}).get("mae"), "bench": b, "all": a, "floor": fl}
+                "cheap": (fl.get("cheap") or {}).get("mae"), "bench": b, "all": a, "floor": fl, "parts": fp,
+                **{f"part_{k}": ((fp.get(k) or {}).get("cheap") or {}).get("mae") for k in GATE_PARTS}}
     c, r = one(cur), one(ref)
     cal = cal or {}
     c["brier"], r["brier"] = (cal.get("current") or {}).get("brier"), (cal.get("ref") or {}).get("brier")
     gate = [("Benchmark headline hit", "headline", True, True), ("Benchmark unit hit", "unit", True, True),
             ("Benchmark worst group MAE (MW)", "worst", False, False),
             ("Cheap-hour floor MAE, all as-of days (MW)", "cheap", False, False)]
+    gate += [(f"Cheap-hour floor MAE, {name} only (MW)", f"part_{k}", False, False) for k, name in GATE_PARTS.items()]
     if cal:
         gate.append(("Brier score of P(on), loss-window units, all as-of days (report only)", "brier", False, False))
     lines = [f"# Backtest: {labels[0]} vs {labels[1]}", "",
@@ -193,6 +202,15 @@ def report(cur: dict, ref: dict, labels=("current", "ref"), cal=None) -> str:
         fa, fb = r["floor"].get(h) or {}, c["floor"].get(h) or {}
         lines.append(f"| {h} ({fb.get('hours', fa.get('hours', 0))} h) | {_cell(fa.get('mae'))} | {_cell(fb.get('mae'))} | "
                      f"{_cell(fa.get('bias'))} | {_cell(fb.get('bias'))} |")
+    if r["parts"] or c["parts"]:
+        lines += ["", "## Committed minimum error by cause, all as-of days", "",
+                  "Each unit-hour's committed minimum less its online LSL, by cause (pipeline/forecast/score.py, "
+                  "floor_parts), so errors that cancel in the fleet line show up.", "",
+                  f"| Cause | Hours | {labels[1]} MAE | {labels[0]} MAE | {labels[1]} bias | {labels[0]} bias |", "|---|---|---|---|---|---|"]
+        for k in ("outage", "onoff", "sizing", "other"):
+            for h in ("all", "cheap"):
+                fa, fb = (r["parts"].get(k) or {}).get(h) or {}, (c["parts"].get(k) or {}).get(h) or {}
+                lines.append(f"| {k} | {h} | {_cell(fa.get('mae'))} | {_cell(fb.get('mae'))} | {_cell(fa.get('bias'))} | {_cell(fb.get('bias'))} |")
     lines += ["", "## All as-of days", "", f"| | {labels[1]} | {labels[0]} |", "|---|---|---|"]
     for name, k, pct in (("Days", "n", False), ("Headline hit", "headline_hit", True), ("Unit hit", "unit_hit", True),
                          ("Thermal MAE (MW)", "thermal_mae", False), ("Thermal bias (MW)", "thermal_bias", False)):
