@@ -51,6 +51,7 @@ from .dam_lambda import fetch_dam_lambda
 from .dam_prices import fetch_dam_prices, fetch_dam_node_prices
 from .renew_forecast import fetch_renew_forecast
 from .load import fetch_load
+from .shadow import fetch_shadow
 from .outages import fetch_outages
 from .nrc import fetch_nrc
 from .entities import fetch_entities
@@ -474,6 +475,7 @@ def main(argv=None):
         fetch_dam_lambda(api)
         fetch_renew_forecast(api, index)
         fetch_load(api, index)
+        fetch_shadow(api, index)
     if "outages" not in args.skip:
         fetch_outages(api, index, backfill=args.outages_backfill)
     if "nrc" not in args.skip:
