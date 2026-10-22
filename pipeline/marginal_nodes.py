@@ -24,10 +24,15 @@ hourly mean base point (charging and discharging averaged) says nothing about it
 
 Writes data/marginal_nodes.json.gz:
   dates, exact (per date), has_nodes (per date), band, tol (fraction of HSL), tol_mw
-  hours      columns / rows: [date, hour, lambda, tech, n_at, n_below, n_above,
-             mw_at, mw_below, mw_above]: unit-hours on the margin (a unit marginal for a
-             third of the hour's runs counts a third) and their base point MW averaged
-             over the hour
+  hours      columns / rows: [date, hour, lambda, tech, zone, n_at, n_below, n_above,
+             room_at, room_below, room_above]: unit-hours on the margin (a unit marginal for
+             a third of the hour's runs counts a third) and their room above base point
+             (HSL minus base point: the MW they can still add at about their own price;
+             for storage the whole range from charging up to HSL), averaged over the hour.  zone is the unit's CDR zone
+             (ZONES; BEXAR counted as SOUTH), "unmapped" when the CDR has no match.  The
+             CDR extract is a csv, not a tracked input: rebuild with REBUILD_ALL after
+             refreshing it
+  zones      the zone order
   units      the units most often marginal away from lambda: [name, tech, sp, hours online
              with a curve, h_at, h_below, h_above, mean implied price when marginal, mean
              node price in those runs (days with node prices), n such runs, mean HSL]
@@ -39,6 +44,7 @@ Writes data/marginal_nodes.json.gz:
 """
 import numpy as np
 
+from . import cdr
 from .config import DATA_DIR, UNIT_DATA_DIR, SIXTY_DAY_TECHS
 from .intraday import _online
 from .nodes import settlement_points
@@ -52,6 +58,9 @@ TOL_MW = 0.5
 STEP_MW = 1.0         # a curve segment narrower than this is a vertical step, not a margin
 TECHS = list(SIXTY_DAY_TECHS)
 TOP_UNITS = 60
+# CDR zones, west to east; the CDR's BEXAR (San Antonio) counts as SOUTH
+ZONES = ["WEST", "PANHANDLE", "NORTH", "SOUTH", "COASTAL", "HOUSTON", "unmapped"]
+ZONE_ALIAS = {"BEXAR": "SOUTH"}
 SAMPLE = 4000
 
 
@@ -186,6 +195,15 @@ def build_marginal_nodes(index: dict) -> None:
     node_days = set(index["days"].get("nodes", []))
     price_days = set(index["days"].get("prices", []))
     sp_of = settlement_points(index)
+    matcher, zone_of = cdr.Matcher(cdr.load()), {}
+
+    def zone(name, tech):
+        if name not in zone_of:
+            m, _ = matcher.match(name, tech)
+            z = ZONE_ALIAS.get((m or {}).get("zone"), (m or {}).get("zone"))
+            zone_of[name] = z if z in ZONES else "unmapped"
+        return zone_of[name]
+
     rows, has_nodes, exact_days, netted_days = [], [], [], []
     units = {}        # name -> [tech, sp, h_on, h_at, h_below, h_above, sum implied, sum node, n node, sum hsl]
     ever = {t: set() for t in TECHS}
@@ -211,10 +229,10 @@ def build_marginal_nodes(index: dict) -> None:
         runs_h = np.bincount(hr, minlength=24).astype(float)
         lam_r = run_lambda(lam, runs)
         lam_h = _arr(lam.get("hourly_mean") or [], 24)
-        day = {t: np.zeros((6, 24)) for t in TECHS}     # n_at, n_below, n_above, mw_at, mw_below, mw_above
+        day = {}     # (tech, zone) -> (6, 24): n_at, n_below, n_above, room_at, room_below, room_above
         for name, u in ud["units"].items():
             t = u.get("tech")
-            if t not in day or not u.get("curve") or not (u.get("disp") or u.get("bp")):
+            if t not in TECHS or not u.get("curve") or not (u.get("disp") or u.get("bp")):
                 continue
             if t == "storage" and not u.get("disp"):
                 continue
@@ -225,6 +243,7 @@ def build_marginal_nodes(index: dict) -> None:
             if not marg.any() and not on_runs.any():
                 continue
             hsl_r = np.array([u["lim"][i][1] if i >= 0 and u["lim"][i][1] is not None else np.nan for i in _ffill_index(u["lim"], n)], float)
+            acc = day.setdefault((t, zone(name, t)), np.zeros((9, 24))) if marg.any() else None
             rec = units.setdefault(name, [t, sp_of.get(name), 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0, 0.0])
             rec[2] += float(np.sum(on_runs / runs_h[hr]))
             rec[9] += float(np.nansum(np.where(on_runs, hsl_r, 0.0) / runs_h[hr]))
@@ -238,8 +257,9 @@ def build_marginal_nodes(index: dict) -> None:
                     continue
                 cls = 0 if abs(p - l) <= band(l) else (1 if p < l else 2)
                 h, w = hr[r], 1.0 / runs_h[hr[r]]
-                day[t][cls, h] += w
-                day[t][3 + cls, h] += bp[r] * w
+                acc[cls, h] += w
+                if np.isfinite(hsl_r[r]):
+                    acc[3 + cls, h] += max(0.0, hsl_r[r] - bp[r]) * w
                 rec[3 + cls] += w
                 rec[6] += p * w
                 ever[t].add(name)
@@ -257,11 +277,10 @@ def build_marginal_nodes(index: dict) -> None:
                             j = rng.integers(n_seen)
                             if j < SAMPLE:
                                 sample[j] = pt
-        for t in TECHS:
-            a = day[t]
+        for (t, z), a in sorted(day.items(), key=lambda kv: (TECHS.index(kv[0][0]), ZONES.index(kv[0][1]))):
             for h in range(24):
                 if a[:3, h].sum() > 0:
-                    rows.append([d, h, _r(lam_h[h], 2), t] + [_r(v, 2) for v in a[:3, h]] + [_r(v) for v in a[3:, h]])
+                    rows.append([d, h, _r(lam_h[h], 2), t, z] + [_r(v, 2) for v in a[:3, h]] + [_r(v) for v in a[3:, h]])
 
     top = sorted(units.items(), key=lambda kv: -(kv[1][4] + kv[1][5]))[:TOP_UNITS]
     out_units = [[name, r[0], r[1], _r(r[2]), _r(r[3]), _r(r[4]), _r(r[5]),
@@ -276,13 +295,14 @@ def build_marginal_nodes(index: dict) -> None:
              "sample": sample}
     write_json_gz(DATA_DIR / "marginal_nodes.json.gz", {
         "dates": dates, "exact": exact_days, "as_netted": netted_days, "has_nodes": has_nodes, "band": BAND, "band_rel": BAND_REL, "tol": TOL, "tol_mw": TOL_MW,
-        "hours": {"columns": ["date", "hour", "lambda", "tech", "n_at", "n_below", "n_above", "mw_at", "mw_below", "mw_above"],
+        "hours": {"columns": ["date", "hour", "lambda", "tech", "zone", "n_at", "n_below", "n_above", "room_at", "room_below", "room_above"],
                   "rows": rows},
+        "zones": ZONES,
         "units": out_units, "valid": valid,
         "n_units": {t: len(ever[t]) for t in TECHS},
     })
-    n_at = sum(r[4] for r in rows)
-    n_off = sum(r[5] + r[6] for r in rows)
+    n_at = sum(r[5] for r in rows)
+    n_off = sum(r[6] + r[7] for r in rows)
     print(f"marginal_nodes: {len(dates)} days ({sum(exact_days)} with per-run dispatch), {len(rows)} tech-hours, "
           f"{n_at:,.0f} unit-hours marginal at lambda, {n_off:,.0f} away from it; node check on {valid['n']:,} runs, "
           f"median gap {valid['median_abs']} $/MWh, {valid['within5']} within $5")

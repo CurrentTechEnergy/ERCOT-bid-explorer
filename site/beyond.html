@@ -218,15 +218,28 @@
   <section class="panel panel-wide" id="node-panel">
     <div class="panel-head">
       <div>
-        <h2>Who is marginal at the node <span class="h-note" id="mn-note"></span></h2>
-        <p class="note">Units setting price at their own node, run by run: at lambda, below it (behind an export constraint) or above it (behind an import constraint).</p>
-        <details class="how"><summary>How it's built</summary><p class="note">Which units SCED dispatched to the interior of their own offer curve, run by run: base point strictly inside the ramp-limited range it had that run (LDL to HDL) and not on a vertical step, so the curve's price at the base point is the price SCED saw at the unit's node. A unit climbing at its ramp rate sits at HDL and does not count, and on days processed with ancillary service awards (format 5 unit files) the awards come off that range first: a unit carrying Reg-Up, RRS, ECRS or Non-Spin reaches its energy limit that much below HDL, and one carrying Reg-Down that much above LDL. Combustion turbines are scored without this, since netting their awards made their check against node prices worse. <b>At lambda</b> means that implied price is within $2 (or 5%) of that run's system lambda: the unit is setting the system price. <b>Below lambda</b> means the unit sits behind an export constraint, where its node is cheaper than the system (wind and solar offering at negative prices are the usual case). <b>Above lambda</b> means its node is dearer than the system. A unit marginal for a third of the hour's runs counts a third of a unit-hour. Days processed before the per-unit files carried per-run base points use the hourly mean instead, which lets a unit swinging between its limits read as marginal, and leave storage out; the last chart checks the implied price against ERCOT's published node price on the days that have one.</p></details>
+        <h2>Who sets price, by technology <span class="h-note" id="mn-note"></span></h2>
+        <p class="note">Which technologies are on the margin, weighted by how many MW they can still add at about their own price: at the system price, or setting their own node's price behind a constraint. Batteries are drawn on their own line.</p>
+        <details class="how"><summary>How it's built</summary><p class="note">In every SCED run, a unit is on the margin when SCED dispatched it to the interior of its own offer curve: base point strictly inside the ramp-limited range it had that run (LDL to HDL) and not on a vertical step, so the curve's price at the base point is the price SCED saw at the unit's node. A unit climbing at its ramp rate sits at HDL and does not count, and on days processed with ancillary service awards the awards come off that range first (not for combustion turbines, whose check against node prices got worse with it). <b>At system lambda</b> means that implied price is within $2 (or 5%) of the run's system lambda: the unit is setting the system price. <b>Below lambda</b> means it sits behind an export constraint, setting a node price cheaper than the system. <b>Above lambda</b> means it sits behind an import constraint, where the node is dearer. Several units are on the margin in every run, so this is a share of the marginal units, not "the" marginal unit.</p>
+        <p class="note"><b>Room above base point</b> is HSL minus base point on each marginal run: the MW a unit can still add at about its own price, which is what would pick up extra load. A unit marginal for a third of an hour's runs counts a third. Generators are shown as a share of the generators' room. Batteries are on their own line because their room runs from wherever they are, charging included, all the way up to HSL: stopping charging and then discharging, which is real flexibility but would swamp the shares, and part of a battery's HSL can be held for ancillary services or limited by its state of charge. <b>Marginal units</b> counts unit-hours instead, where batteries are many and small. The lambda filter uses each hour's average system lambda. Regions are the units' zones in ERCOT's Capacity, Demand and Reserves report (Bexar counted as South); newer units the report does not list have no zone. Days processed before the per-unit files carried per-run base points use the hourly mean instead and leave batteries out.</p></details>
       </div>
       <div class="panel-tools">
-        <div class="seg seg-sm" id="mn-measure" role="radiogroup" aria-label="Measure">
-          <button type="button" data-v="units" role="radio">Units</button>
-          <button type="button" data-v="mw" role="radio">Base point MW</button>
+        <div class="seg seg-sm" id="mn-class" role="radiogroup" aria-label="Where the price sat">
+          <button type="button" data-v="at" role="radio" title="Setting the system price">At lambda</button>
+          <button type="button" data-v="below" role="radio" title="Behind an export constraint: setting its own node below lambda">Below lambda</button>
+          <button type="button" data-v="above" role="radio" title="Behind an import constraint: setting its own node above lambda">Above lambda</button>
         </div>
+        <div class="seg seg-sm" id="mn-measure" role="radiogroup" aria-label="Measure">
+          <button type="button" data-v="room" role="radio" title="MW the marginal units can still add (HSL minus base point)">Room above base point</button>
+          <button type="button" data-v="units" role="radio" title="Marginal unit-hours">Marginal units</button>
+        </div>
+        <div class="seg seg-sm" id="mn-lam" role="radiogroup" aria-label="Hours by system lambda">
+          <button type="button" data-v="all" role="radio">All hours</button>
+          <button type="button" data-v="le15" role="radio" title="Hours with an average system lambda of $15/MWh or less">λ ≤ $15</button>
+          <button type="button" data-v="gt15" role="radio" title="Hours with an average system lambda above $15/MWh">λ &gt; $15</button>
+        </div>
+        <label class="lbl inline" for="mn-zone">Region</label>
+        <select id="mn-zone"></select>
         <div class="seg seg-sm" id="mn-days" role="radiogroup" aria-label="Days">
           <button type="button" data-v="all" role="radio">All days</button>
           <button type="button" data-v="90" role="radio">Last 90</button>
@@ -236,16 +249,16 @@
     </div>
 
     <div class="legend legend-static" id="mn-legend"></div>
-    <div class="chart" id="mn-hourly"></div>
-    <div class="legend legend-static" id="mn-split-legend"></div>
-    <div class="chart" id="mn-daily"></div>
-    <div class="units-wrap" id="mn-units"></div>
+    <div class="chart" id="mn-share"></div>
+    <div class="legend legend-static" id="mn-gw-legend"></div>
+    <div class="chart" id="mn-gw"></div>
+    <details class="table-view" open><summary>By region</summary><div id="mn-zones" class="scroll-x"></div></details>
+    <details class="how"><summary>Units most often on the margin away from lambda</summary><div class="units-wrap" id="mn-units"></div></details>
     <details class="how"><summary>How well this checks against node prices</summary>
     <p class="note" id="mn-valid-note"></p>
     <p class="note"><b>Read below lambda for storage and combustion turbines with caution.</b> When their curve price is more than $5 from the node price, the node is dearer in nearly every case: the unit offered cheaper than its node and still was not dispatched up, so something the disclosure does not show held it back. A test on the 15 days with the most mismatches found that netting ancillary service awards brings coal and gas steam to about 90% within $5 but leaves storage and combustion turbines near 50%, and that ramp limits, ERCOT's SCED1 curve and, for most runs, state of charge do not explain the rest. About a fifth of the remaining gaps fall in 15-minute intervals where lambda moved by more than $5, which the 15-minute node price averages away.</p>
     <div class="chart" id="mn-valid"></div>
     </details>
-  
   </section>
 
   <section class="panel panel-wide" id="fuel-panel">

@@ -78,7 +78,7 @@ const MBP_BINS = [
 
 const S = { T: null, C: null, M: {}, floorMode: "le20_sced", floorGroup: "tech", floorHours: "all", hidden: { floor: new Set(), floorG: new Set(), partial: new Set() },
   pqTech: "coal", capTech: "coal", scTech: "coal", scX: "week", mSrc: "60d", mView: "smooth", mDays: "all",
-  unit: null, mnMeasure: "units", mnDays: "all",
+  unit: null, mnMeasure: "room", mnDays: "all", mnClass: "at", mnLam: "all", mnZone: "all",
   I: null, UH: null, idx: null, summ60: null, cheapTech: "all", cheapThr: "0", shutTech: "combined_cycle", shutPrice: "any",
   heatMeasure: "offer", heatTech: "combined_cycle", heatThr: "0", heatScale: "zero", HC: null, leanRank: "fossil", leanMonth: "all", leanPer: "day",
   stTech: "all", stThr: "0", stSort: "off", stUnit: "mw", stBase: null, stripScale: null };
@@ -431,71 +431,86 @@ const MN_SPLIT = [
   { id: "below", label: "Below lambda (behind an export constraint)", color: "--c4" },
   { id: "above", label: "Above lambda (node dearer than the system)", color: "--c8" },
 ];
-const mnHatchId = (t) => `mn-hatch-${t}`;
-function mnDefs(svg) {
-  const defs = svg.append("defs");
-  MN_TECHS.forEach((t) => defs.append("pattern").attr("id", mnHatchId(t.id)).attr("patternUnits", "userSpaceOnUse").attr("width", 6).attr("height", 6).attr("patternTransform", "rotate(45)")
-    .call((p) => { p.append("rect").attr("width", 6).attr("height", 6).attr("fill", css(t.color)).attr("opacity", 0.25); p.append("line").attr("x1", 0).attr("x2", 0).attr("y1", 0).attr("y2", 6).attr("stroke", css(t.color)).attr("stroke-width", 2.5); }));
-}
+// nuclear runs flat at its maximum and is never on the margin
+const MN_GEN = MN_TECHS.filter((t) => t.id !== "nuclear");
+const MN_CLASS = { at: { k: 0, label: "at system lambda" }, below: { k: 1, label: "below lambda, behind an export constraint" }, above: { k: 2, label: "above lambda, behind an import constraint" } };
+const MN_ZONE_LABEL = { WEST: "West", PANHANDLE: "Panhandle", NORTH: "North", SOUTH: "South", COASTAL: "Coastal", HOUSTON: "Houston", unmapped: "No zone in the CDR" };
+const MN_LAM = { all: () => true, le15: (l) => l != null && l <= 15, gt15: (l) => l != null && l > 15 };
+// Who sets price: generators' share of the marginal room above base point (or of marginal
+// unit-hours) by technology, day by day, for one class (at, below or above lambda), with
+// batteries on their own line since their room runs from charging all the way up to HSL
 function drawNodeMarginal() {
-  const D = S.MN, el = $("mn-hourly"), del = $("mn-daily"), uel = $("mn-units"), vel = $("mn-valid");
-  $("mn-legend").innerHTML = MN_TECHS.map((t) => `<span><span class="sw" style="background:var(${t.color})"></span>${t.label}</span>`).join("") +
-    `<span><span class="sw" style="background:var(--ink);opacity:.45"></span>below lambda</span><span><span class="sw" style="background:repeating-linear-gradient(45deg,var(--ink) 0 2px,transparent 2px 5px)"></span>above lambda</span>`;
-  staticLegend($("mn-split-legend"), MN_SPLIT);
-  if (!D || !D.hours.rows.length) { emptyMsg(el, "No node marginality data yet. It is built by the data update workflow."); del.innerHTML = uel.innerHTML = vel.innerHTML = $("mn-valid-note").textContent = ""; return; }
+  const D = S.MN, el = $("mn-share"), gel = $("mn-gw"), zel = $("mn-zones"), uel = $("mn-units"), vel = $("mn-valid");
+  staticLegend($("mn-legend"), MN_GEN);
+  staticLegend($("mn-gw-legend"), [{ label: "Generators", color: "--ink" }, { label: "Batteries", color: "--c7" }]);
+  const sel = $("mn-zone");
+  if (!D || !D.hours.rows.length || !D.hours.columns.includes("zone")) {
+    emptyMsg(el, "No data on who sets price yet. It is built by the data update workflow.");
+    gel.innerHTML = zel.innerHTML = uel.innerHTML = vel.innerHTML = $("mn-valid-note").textContent = $("mn-note").textContent = ""; return;
+  }
+  const zones = D.zones || [];
+  if (!sel.options.length) {
+    sel.innerHTML = `<option value="all">All regions</option>` + zones.map((z) => `<option value="${z}">${MN_ZONE_LABEL[z] || z}</option>`).join("");
+    sel.onchange = (e) => { S.mnZone = e.target.value; saveView(); drawNodeMarginal(); };
+  }
+  if (S.mnZone !== "all" && !zones.includes(S.mnZone)) S.mnZone = "all";
+  sel.value = S.mnZone;
   const ci = Object.fromEntries(D.hours.columns.map((c, i) => [c, i]));
-  const mw = S.mnMeasure === "mw", K = mw ? ["mw_at", "mw_below", "mw_above"] : ["n_at", "n_below", "n_above"];
-  let rows = D.hours.rows;
+  const room = S.mnMeasure !== "units", klass = MN_CLASS[S.mnClass] || MN_CLASS.at, lamOk = MN_LAM[S.mnLam] || MN_LAM.all;
+  const col = ci[(room ? "room_" : "n_") + ["at", "below", "above"][klass.k]];
+  let rows = D.hours.rows.filter((r) => lamOk(r[ci.lambda]));
   const last = D.dates.at(-1);
   if (S.mnDays !== "all") {
     const from = d3.timeFormat("%Y-%m-%d")(d3.timeDay.offset(parseDate(last), -(+S.mnDays - 1)));
     rows = rows.filter((r) => r[ci.date] >= from);
   }
-  const days = new Set(rows.map((r) => r[ci.date])), nDays = Math.max(1, days.size);
-  const tot = [0, 0, 0];
-  rows.forEach((r) => K.forEach((k, j) => { tot[j] += r[ci[k]] || 0; }));
-  const totAll = d3.sum(tot) || 1;
-  const nExact = (D.exact || []).filter((e, i) => e && days.has(D.dates[i])).length;
-  const nNet = (D.as_netted || []).filter((e, i) => e && days.has(D.dates[i])).length;
-  $("mn-note").textContent = `${nDays} days (${nExact} with per-run base points, ${nNet} net of ancillary service awards) · ${fmtMW(d3.sum(rows, (r) => r[ci.n_at] + r[ci.n_below] + r[ci.n_above]))} marginal unit-hours · ${fmtPct(tot[0] / totAll)} at lambda, ${fmtPct(tot[1] / totAll)} below, ${fmtPct(tot[2] / totAll)} above`;
-
-  // by hour of day: mean per day of each technology's marginal units (or base point MW), split at / below / above
+  // hours in the selection, per day (every hour has someone on the margin somewhere), to average over
+  const hours = new Map();
+  rows.forEach((r) => { const k = r[ci.date]; (hours.get(k) || hours.set(k, new Set()).get(k)).add(r[ci.hour]); });
+  const inZone = (r) => S.mnZone === "all" || r[ci.zone] === S.mnZone;
   const techOf = (t) => MN_TECHS.find((s) => s.keys.includes(t)) || MN_TECHS.at(-1);
-  const H = d3.range(24).map(() => Object.fromEntries(MN_TECHS.map((t) => [t.id, [0, 0, 0]])));
-  rows.forEach((r) => { const a = H[r[ci.hour]][techOf(r[ci.tech]).id]; K.forEach((k, j) => { a[j] += (r[ci[k]] || 0) / nDays; }); });
-  const w = Math.max(280, el.clientWidth || 600), narrow = w < 560, Hh = 300, m = { t: 18, r: 12, b: 34, l: 56 };
-  const x = d3.scaleBand().domain(d3.range(24)).range([m.l, w - m.r]).paddingInner(0.2);
-  const y = d3.scaleLinear().domain([0, Math.max(1, d3.max(H, (h) => d3.sum(MN_TECHS, (t) => d3.sum(h[t.id]))))]).nice().range([Hh - m.b, m.t]);
-  const svg = d3.create("svg").attr("viewBox", `0 0 ${w} ${Hh}`);
-  mnDefs(svg);
-  svg.append("g").attr("class", "gridline").attr("transform", `translate(${m.l},0)`).call(d3.axisLeft(y).ticks(5).tickSize(-(w - m.l - m.r)).tickFormat(""));
-  svg.append("g").attr("class", "axis").attr("transform", `translate(${m.l},0)`).call(axisFmt(d3.axisLeft(y), 5).tickSizeOuter(0));
-  svg.append("g").attr("class", "axis").attr("transform", `translate(0,${Hh - m.b})`).call(d3.axisBottom(x).tickValues(narrow ? d3.range(0, 24, 3) : d3.range(24)).tickFormat((h) => h + 1).tickSizeOuter(0));
-  svg.append("text").attr("class", "axis-title").attr("x", m.l).attr("y", 10).text(mw ? "Base point MW of the units on the margin, average day" : "Units on the margin, average day");
-  svg.append("text").attr("class", "axis-title").attr("x", w - m.r).attr("y", Hh - 2).attr("text-anchor", "end").text("Hour ending");
-  H.forEach((h, i) => {
-    const cx = x(i), bw = x.bandwidth();
-    let acc = 0;
-    MN_TECHS.forEach((t) => h[t.id].forEach((v, j) => {
-      if (v <= 0) return;
-      const r = svg.append("rect").attr("x", cx).attr("width", bw).attr("y", y(acc + v)).attr("height", Math.max(0, y(acc) - y(acc + v) - 0.5));
-      if (j === 2) r.attr("fill", `url(#${mnHatchId(t.id)})`); else r.attr("fill", css(t.color)).attr("opacity", j === 1 ? 0.45 : 1);
-      acc += v;
-    }));
-    svg.append("rect").attr("x", cx - 1).attr("width", bw + 2).attr("y", m.t).attr("height", Hh - m.t - m.b).attr("fill", "transparent")
-      .on("pointermove", (ev) => showTip(ev, `<h4>Hour ending ${i + 1}</h4><table><tr><th></th><th></th><th class="n">at</th><th class="n">below</th><th class="n">above</th></tr>` +
-        MN_TECHS.filter((t) => d3.sum(h[t.id]) > 0).map((t) => `<tr><td><span class="sw" style="background:var(${t.color})"></span></td><td>${t.label}</td>` + h[t.id].map((v) => `<td class="n">${mw ? fmtMW(v) : d3.format(".1f")(v)}</td>`).join("") + "</tr>").join("") + "</table>"))
-      .on("pointerleave", hideTip);
+  const day = new Map(), zoneTot = new Map();
+  rows.forEach((r) => {
+    const v = r[col] || 0;
+    if (!v) return;
+    const t = r[ci.tech] === "storage" ? "storage" : techOf(r[ci.tech]).id;
+    const z = zoneTot.get(r[ci.zone]) || zoneTot.set(r[ci.zone], {}).get(r[ci.zone]);
+    z[t] = (z[t] || 0) + v;
+    if (!inZone(r)) return;
+    const a = day.get(r[ci.date]) || day.set(r[ci.date], {}).get(r[ci.date]);
+    a[t] = (a[t] || 0) + v;
   });
-  el.replaceChildren(svg.node());
-  setCSV(el, ["hour_ending", ...MN_TECHS.flatMap((t) => ["at", "below", "above"].map((k) => `${t.label} ${k} lambda`))], H.map((h, i) => [i + 1, ...MN_TECHS.flatMap((t) => h[t.id])]), "Marginality at the node by hour");
+  const dts = D.dates.filter((d) => hours.has(d));
+  const gen = (a) => d3.sum(MN_GEN, (t) => a[t.id] || 0);
+  const tot = {};
+  day.forEach((a) => Object.entries(a).forEach(([t, v]) => { tot[t] = (tot[t] || 0) + v; }));
+  const gTot = gen(tot), nH = d3.sum([...hours.values()], (h) => h.size) || 1;
+  const what = room ? "room above base point" : "marginal unit-hours";
+  const where = S.mnZone === "all" ? "" : ` · ${MN_ZONE_LABEL[S.mnZone] || S.mnZone}`;
+  const top = MN_GEN.filter((t) => tot[t.id] > 0).sort((a, b) => tot[b.id] - tot[a.id]).slice(0, 3);
+  $("mn-note").textContent = `${dts.length} days, ${nH.toLocaleString()} hours${where} · generators' ${what} ${klass.label}: ` +
+    (gTot ? top.map((t) => `${t.label.split(" (")[0]} ${fmtPct(tot[t.id] / gTot)}`).join(", ") : "none") +
+    (gTot && tot.storage ? ` · batteries ${d3.format(".1f")(tot.storage / gTot)}× the generators'` : "");
+  timeChart(el, MN_GEN.map((t) => ({ ...t, values: dts.map((d) => { const a = day.get(d) || {}, g = gen(a); return g ? (a[t.id] || 0) / g : null; }) })),
+    { dates: dts, stack: true, H: 260, yFmt: fmtPct, tipFmt: d3.format(".1%"), empty: "No marginal generators in this selection.",
+      title: `Generators' share of ${what}, ${klass.label}${where}` });
+  const per = (d, k) => { const a = day.get(d) || {}, h = hours.get(d).size; return ((k === "gen" ? gen(a) : a.storage || 0) / h) / (room ? 1000 : 1); };
+  timeChart(gel, [
+    { label: "Generators", color: "--ink", values: dts.map((d) => per(d, "gen")) },
+    { label: "Batteries", color: "--c7", values: dts.map((d) => per(d, "sto")) },
+  ], { dates: dts, H: 180, yFmt: room ? d3.format(",.1f") : d3.format(",.0f"), tipFmt: room ? (v) => `${d3.format(",.2f")(v)} GW` : d3.format(",.1f"),
+    title: room ? `Room above base point on marginal units, GW (hourly average), ${klass.label}${where}` : `Marginal units, hourly average, ${klass.label}${where}` });
 
-  // daily split: share of marginal unit-hours (or MW) at, below and above lambda
-  const byDay = new Map();
-  rows.forEach((r) => { const a = byDay.get(r[ci.date]) || [0, 0, 0]; K.forEach((k, j) => { a[j] += r[ci[k]] || 0; }); byDay.set(r[ci.date], a); });
-  const dts = D.dates.filter((d) => byDay.has(d));
-  timeChart(del, MN_SPLIT.map((s, j) => ({ ...s, values: dts.map((d) => { const a = byDay.get(d), t = d3.sum(a.map(Math.abs)); return t ? Math.abs(a[j]) / t : null; }) })),
-    { dates: dts, stack: true, H: 200, yFmt: fmtPct, tipFmt: d3.format(".1%"), title: mw ? "Share of marginal base point MW by where the implied price sat" : "Share of marginal unit-hours by where the implied price sat" });
+  // by region: each zone's generator shares and batteries against generators, over the selection
+  const zcols = MN_GEN.filter((t) => zones.some((z) => (zoneTot.get(z) || {})[t.id] > 0));
+  zel.innerHTML = `<table class="data"><thead><tr><th class="t">Region</th>${zcols.map((t) => `<th>${t.label.split(" (")[0]}</th>`).join("")}<th>Generators, ${room ? "GW" : "units"}</th><th>Batteries ÷ generators</th></tr></thead><tbody>` +
+    zones.map((z) => {
+      const a = zoneTot.get(z) || {}, g = gen(a);
+      return `<tr><td class="t">${MN_ZONE_LABEL[z] || z}</td>${zcols.map((t) => `<td>${g && a[t.id] ? fmtPct(a[t.id] / g) : "–"}</td>`).join("")}` +
+        `<td>${g ? (room ? d3.format(",.2f")(g / nH / 1000) : d3.format(",.1f")(g / nH)) : "–"}</td><td>${g && a.storage ? d3.format(".1f")(a.storage / g) + "×" : "–"}</td></tr>`;
+    }).join("") + "</tbody></table>";
+  setCSV(zel, ["region", ...zcols.map((t) => `${t.label} share of generators`), room ? "generators_gw" : "generators_units", "batteries_over_generators"],
+    zones.map((z) => { const a = zoneTot.get(z) || {}, g = gen(a); return [z, ...zcols.map((t) => (g ? (a[t.id] || 0) / g : null)), g / nH / (room ? 1000 : 1), g ? (a.storage || 0) / g : null]; }), "Who sets price by region");
 
   // units most often marginal away from lambda
   const urows = D.units.map((r) => ({ unit: r[0], tech: r[1], sp: r[2], on: r[3], at: r[4], below: r[5], above: r[6], implied: r[7], node: r[8], nn: r[9], hsl: r[10] }));
@@ -535,7 +550,7 @@ function drawNodeMarginal() {
 
 // ---- links ------------------------------------------------------------------------
 // the one-day panels (beyond-day.js) keep their own keys in the same address bar
-const VIEW_KEYS = { pq: "pqTech", ms: "mSrc", mv: "mView", md: "mDays", mnm: "mnMeasure", mnd: "mnDays" };
+const VIEW_KEYS = { pq: "pqTech", ms: "mSrc", mv: "mView", md: "mDays", mnm: "mnMeasure", mnd: "mnDays", mnc: "mnClass", mnl: "mnLam", mnz: "mnZone" };
 function saveView() { window.CX.writeHash({ ...window.CX.readHash(), ...Object.fromEntries(Object.entries(VIEW_KEYS).map(([k, sk]) => [k, S[sk]])) }); }
 function loadView() { const v = window.CX.readHash(); Object.entries(VIEW_KEYS).forEach(([k, sk]) => { if (v[k] != null) S[sk] = v[k]; }); }
 
@@ -556,7 +571,7 @@ async function boot() {
   loadView();
   const thermal = TECHS.filter((s) => THERMAL.includes(s.id));
   [["mbp-src", "mSrc", drawMarginal], ["mbp-view", "mView", drawMarginal], ["mbp-days", "mDays", drawMarginal],
-   ["mn-measure", "mnMeasure", drawNodeMarginal], ["mn-days", "mnDays", drawNodeMarginal]]
+   ["mn-measure", "mnMeasure", drawNodeMarginal], ["mn-days", "mnDays", drawNodeMarginal], ["mn-class", "mnClass", drawNodeMarginal], ["mn-lam", "mnLam", drawNodeMarginal]]
     .forEach(([id, key, fn]) => { setSeg(id, S[key]); bindSeg(id, key, fn); });
   bindSelect("pq-tech", "pqTech", thermal.filter((s) => s.id !== "nuclear"), drawPriceQuantiles);
   drawAll();
