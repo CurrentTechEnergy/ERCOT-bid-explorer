@@ -236,6 +236,9 @@ def score_floor_parts(day: dict, key_lsl: dict, states: dict, hub) -> dict | Non
     for key, a in key_lsl.items():
         if key not in (uh.get("units") or {}):
             err["other"] -= a
+    pool = ((day.get("hourly") or {}).get("outage_pool") or {}).get("min")
+    if pool:        # v11 "pool": the zonal outage deduction placed on no unit nets against the outage part
+        err["outage"] -= np.nan_to_num(_arr(pool))
     ok = ~np.isnan(hub) if hub.shape == (24,) else np.zeros(24, bool)
     res = {}
     for part, e in err.items():

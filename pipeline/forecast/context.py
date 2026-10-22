@@ -539,6 +539,16 @@ class Context:
         "total" is the non-IRR resources, batteries in, wind and solar out), less the MW the unit-level snapshot lists in the zone, as
         UNSEEN_BASE (split by `zone_mw`, the zones' thermal MW) + UNSEEN_SLOPE x that remainder,
         at least 0.  None when either report is missing."""
+        rem = self.zone_remainder(date)
+        if rem is None:
+            return None
+        tot_mw = sum(zone_mw.values()) or 1.0
+        return {z: max(0.0, UNSEEN_BASE * zone_mw.get(z, 0.0) / tot_mw + UNSEEN_SLOPE * r) for z, r in rem.items()}
+
+    def zone_remainder(self, date):
+        """{zone: the zonal outage report's mean total for `date` less the MW the unit-level
+        snapshot lists out in the zone (non-renewable units)}, or None when either report is
+        missing."""
         self._load_zones()
         c = self._cap.get(date)
         snap = (_d(date) - dt.timedelta(days=OUTAGE_SNAPSHOT_LAG)).isoformat()
@@ -559,12 +569,7 @@ class Context:
         listed = defaultdict(float)
         for z, mw in tur.values():
             listed[z] += mw
-        tot_mw = sum(zone_mw.values()) or 1.0
-        out = {}
-        for z, v in c["total"].items():
-            rem = float(np.mean([a or 0 for a in v])) - listed[z]      # "total" leaves out the IRR part already
-            out[z] = max(0.0, UNSEEN_BASE * zone_mw.get(z, 0.0) / tot_mw + UNSEEN_SLOPE * rem)
-        return out
+        return {z: float(np.mean([a or 0 for a in v])) - listed[z] for z, v in c["total"].items()}      # "total" leaves out the IRR part already
 
     def net_load(self, date):
         """[24] MW: ERCOT's load forecast less its wind and solar forecasts for `date`, all as

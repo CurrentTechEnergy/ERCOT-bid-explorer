@@ -72,7 +72,10 @@ For every thermal train in the latest DAM disclosure (pipeline.forecast.context.
               listed-out verdicts and the unseen allocation give way to outage_v11's expected
               share out (into out_share).  Part "logit": a CC train or gas steam unit judged on
               its window takes P(on) inside it from a logistic with one intercept per unit
-              (_logit_fit, the year to the asof point) in place of the trees, on outside it
+              (_logit_fit, the year to the asof point) in place of the trees, on outside it.
+              Part "pool" (instead of "out"): the long-outage carry-over and the unseen
+              allocation give way to outage_pool's zonal deduction by hour (commit
+              "outage_pool"), placed on no unit; units the outage report names keep their calls
   peakers     combustion turbines outside the always-on group (which are held on, as other
               always-on units) are not judged here (peaker_share, by hour, on the hours
               they were available); they get verdict "peaker" and p_on from that model, and the
@@ -102,7 +105,7 @@ from ..store import read_json_gz
 
 from ..decisions import _window, _cutoff, _dam_trains, HALF, OUT_MIN_H
 from ..forecast import context as C
-from . import outage_v11
+from . import outage_pool, outage_v11
 
 UNSEEN_EPS = 0.1   # unseen-outage weight of a unit never out in these weeks of earlier years, against 1.1 for one always out then
 UNSEEN_TECHS = ("coal", "combined_cycle", "gas_steam", "combustion_turbine")   # spread the zonal unseen outage MW over these
@@ -522,7 +525,8 @@ def forecast(date, ctx: C.Context) -> dict:
     node_src = ctx.node_source(date)
     rows = {}
     listed = ctx.listed_out(date)
-    out11 = outage_v11.shares(ctx, date, units) if C.v11("out") else None
+    opool = outage_pool.deduction(ctx, date, units) if C.v11("pool") else None
+    out11 = outage_v11.shares(ctx, date, units) if C.v11("out") and opool is None else None
     parts = [k for k in C.V11_PARTS if C.v11(k)]
     for key, u in units.items():
         t = u["tech"]
@@ -531,8 +535,8 @@ def forecast(date, ctx: C.Context) -> dict:
         g = "never" if t == "nuclear" else groups.get(key)
         cc_win = t in WINDOW_TECHS and g in CC_WINDOW_GROUPS
         last, out_days = _last_state(ctx, key, known)
-        if last == "o" and (out_days < LONG_OUT or (out11 is not None and t in outage_v11.TECHS)):
-            last = "0"       # a short outage sixty days ago (v11: any, outage_v11 carries it): treated as off then, judged normally
+        if last == "o" and (out_days < LONG_OUT or ((out11 is not None or opool is not None) and t in outage_v11.TECHS)):
+            last = "0"       # a short outage sixty days ago (v11: any, outage_v11 or the pool carries it): treated as off then, judged normally
         cleared = (last == "o" and t in CLEAR_TECHS and (t == "combined_cycle" or g != "never")
                    and listed is not None and not listed.get(key))
         if cleared:
@@ -643,7 +647,7 @@ def forecast(date, ctx: C.Context) -> dict:
             zone_mw[z] += row["hsl"] or 0
             if row["verdict"] != "outage":
                 pool[z] += (row["hsl"] or 0) * (1 - row.get("out_share", 0.0))
-    unseen = (ctx.unseen_out(date, zone_mw) or {}) if out11 is None else {}
+    unseen = (ctx.unseen_out(date, zone_mw) or {}) if out11 is None and opool is None else {}
     prior = C.outage_prior(UNSEEN_TECHS, date) if unseen else {}
     by_zone = defaultdict(list)
     for key, row in rows.items():
@@ -658,6 +662,6 @@ def forecast(date, ctx: C.Context) -> dict:
             row, sh = rows[key], min(1.0, mw / free[key])
             row["unseen_share"] = round(sh, 3)
             row["out_share"] = round(1 - (1 - row.get("out_share", 0.0)) * (1 - sh), 3)
-    return {"rows": rows, "inputs": {"known_date": known, "hindsight": hindsight, "asof": point,
+    return {"rows": rows, "outage_pool": opool, "inputs": {"known_date": known, "hindsight": hindsight, "asof": point,
                                      "asof_hindsight": asof_hind, "node_prices": node_src,
                                      "month": month, "month_hub": None if mtd is None else round(mtd, 2)}}

@@ -188,6 +188,12 @@ def build_day(date, ctx: C.Context) -> dict:
         hs = [[round(float(v), 2) for v in d["p"]], [round(float(v)) for v in d["exp"]], [round(float(v)) for v in d["min"]]]
         hs = [None if not any(v) else v for v in hs]       # a unit off all day carries nulls
         unit_hours[key] = hs + [None if d.get("price") is None else [round(float(v), 2) for v in d["price"]]]
+    pool = commit.get("outage_pool")
+    if pool:        # v11 "pool": the zonal outage deduction, on no unit, off the technologies' lines
+        for t in C.THERMAL:
+            if t in pool["min"]:
+                by_t[t]["min"] = by_t[t]["min"] - pool["min"][t]
+                by_t[t]["exp"] = by_t[t]["exp"] - pool["exp"][t]
     fleet = blank()
     for t in C.THERMAL:
         for k in fleet:
@@ -244,7 +250,10 @@ def build_day(date, ctx: C.Context) -> dict:
         "hourly": {"group": {g: _h_out(a) for g, a in by_g.items()}, "tech": {t: _h_out(a) for t, a in by_t.items()},
                    "category": {k: _h_out(a) for k, a in by_c.items()}, "fleet": _h_out(fleet),
                    **{t: {"avail": _rl(rn[t]["avail"]), "disp": _rl(rn[t]["disp"])} if rn[t]["n"] else None for t in C.RENEW},
-                   "storage": {k: sr[k] for k in ("dis", "chg", "soc")} if sr else None, "model": hourly_model},
+                   "storage": {k: sr[k] for k in ("dis", "chg", "soc")} if sr else None, "model": hourly_model,
+                   **({"outage_pool": {"min": _rl(sum(pool["min"].values(), np.zeros(24))), "exp": _rl(sum(pool["exp"].values(), np.zeros(24))),
+                                       "zones": {z: _rl(v) for z, v in pool["zones"].items()}, "days": pool["days"]}}
+                      if pool else {})},
         "units": {"columns": UNIT_COLS, "rows": unit_rows},
         "unit_hours": {"series": UNIT_SERIES, "units": unit_hours},
         "renewables": {"columns": RENEW_COLS, "rows": renew_rows},
