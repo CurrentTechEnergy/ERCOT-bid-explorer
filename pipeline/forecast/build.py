@@ -54,6 +54,7 @@ from ..store import read_json_gz, write_json_gz
 from ..models import MODELS, versions
 from . import context as C
 from . import stack as STACK
+from ..models import outage_pool
 from .groups import GROUPS as HISTORY_GROUPS, GROUP_LABELS as HISTORY_LABELS
 
 # the history groups (six timescales and never-on) plus one for thermal units with no hourly history yet (new units)
@@ -188,7 +189,8 @@ def build_day(date, ctx: C.Context) -> dict:
         hs = [[round(float(v), 2) for v in d["p"]], [round(float(v)) for v in d["exp"]], [round(float(v)) for v in d["min"]]]
         hs = [None if not any(v) else v for v in hs]       # a unit off all day carries nulls
         unit_hours[key] = hs + [None if d.get("price") is None else [round(float(v), 2) for v in d["price"]]]
-    pool = commit.get("outage_pool")
+    pool = (outage_pool.deduction(ctx, date, ctx.units(date), {k: (r["min"], r["exp"]) for k, r in disp["rows"].items()})
+            if commit.get("outage_pool") else None)
     if pool:        # v11 "pool": the zonal outage deduction, on no unit, off the technologies' lines
         for t in C.THERMAL:
             if t in pool["min"]:

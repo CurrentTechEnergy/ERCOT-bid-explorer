@@ -76,7 +76,8 @@ For every thermal train in the latest DAM disclosure (pipeline.forecast.context.
               the asof point, on unit-days online going into the window).
               Part "pool" (instead of "out"): the long-outage carry-over and the unseen
               allocation give way to outage_pool's zonal deduction by hour (commit
-              "outage_pool"), placed on no unit; units the outage report names keep their calls
+              "outage_pool" true; the build takes it off after the dispatch), placed on no unit;
+              units the outage report names keep their calls
   peakers     combustion turbines outside the always-on group (which are held on, as other
               always-on units) are not judged here (peaker_share, by hour, on the hours
               they were available); they get verdict "peaker" and p_on from that model, and the
@@ -528,7 +529,7 @@ def forecast(date, ctx: C.Context) -> dict:
     node_src = ctx.node_source(date)
     rows = {}
     listed = ctx.listed_out(date)
-    opool = outage_pool.deduction(ctx, date, units) if C.v11("pool") else None
+    opool = True if C.v11("pool") and outage_pool.ready(ctx, date, units) else None     # the deduction itself follows the dispatch (build)
     out11 = outage_v11.shares(ctx, date, units) if C.v11("out") and opool is None else None
     parts = [k for k in C.V11_PARTS if C.v11(k)]
     for key, u in units.items():
