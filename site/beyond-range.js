@@ -1,7 +1,7 @@
 /* Beyond baseload, across days: offers against fuel (thermal offer-price quantiles, gas hubs and
    implied heat rate), marginal generation by settled price and marginality at the node, lifted
    from trends.js. Reads data/trends_60d.json.gz, data/curve_trends.json.gz,
-   data/gas.json.gz, data/gas_hubs.json.gz, data/marginal_*.json.gz, data/marginal_nodes.json.gz and
+   data/gas.json.gz, data/gas_hubs.json.gz, data/fuel_hubs.json.gz, data/marginal_*.json.gz, data/marginal_nodes.json.gz and
    data/summary_prices.json.gz.
    The one-day panels on the same page are beyond-day.js, which also owns the status line and the
    shared chart controls (CX.init). */
@@ -248,27 +248,35 @@ function drawGas() {
     { dates, H: 220, title: "Natural gas daily prices ($/MMBtu)", yFmt: d3.format("$,.2f"), tipFmt: d3.format("$,.2f") });
   const T = S.T;
   if (!T || !T.units) { hel.innerHTML = ""; return; }
-  // implied heat rate divides by Houston Ship Channel (Henry Hub when it isn't loaded): the price
-  // closest to what most ERCOT gas units burn. Gas on each trend day: last trading day on or before it.
-  const G = src.hsc || src.hh;
-  const gasBy = new Map(G.dates.map((d, i) => [d, G.value[i]]));
-  let last = null;
-  const gasOn = {};
-  const all = [...new Set([...G.dates, ...T.dates])].sort();
-  all.forEach((d) => { if (gasBy.has(d)) last = gasBy.get(d); gasOn[d] = last; });
-  // Each unit's first offer price above $0 at or above LSL (skips minimum output, which SCED
-  // cannot back down, and blocks priced at or below $0) divided by gas on the day it offered. On each day a unit uses its latest value
-  // from the last HR_CARRY_DAYS, so the median covers the fleet, not just the units that ran
-  // that day. Blank when fewer than HR_MIN_UNITS units have a value.
+  // implied heat rate: each unit's price over the gas at its own hub, Waha or Houston Ship Channel
+  // (fuel_hubs.json.gz, pipeline/fuel_hub.py; units without one use Ship Channel, and a hub with
+  // no prices loaded falls back to Ship Channel, then Henry Hub). Gas on each trend day: the last
+  // trading day before it, as gas trades the day before it flows (the timing the hub fit uses).
+  const hubOf = (name) => ((S.FH && S.FH.units && S.FH.units[name]) || {}).hub || "hsc";
+  const gasOnHub = {};
+  const gasFor = (hub) => {
+    const key = src[hub] ? hub : src.hsc ? "hsc" : "hh";
+    if (!gasOnHub[key]) {
+      const G = src[key], out = {};
+      let j = 0, last = null;
+      T.dates.forEach((d) => {
+        while (j < G.dates.length && G.dates[j] < d) { if (G.value[j] != null) last = G.value[j]; j++; }
+        out[d] = last;
+      });
+      gasOnHub[key] = out;
+    }
+    return gasOnHub[key];
+  };
   const HR_MIN_UNITS = 10, HR_CARRY_DAYS = 14, DAY_MS = 864e5;
   const t0 = T.dates.map((d) => parseDate(d).getTime());
   const hr = (t) => {
     const us = T.units.filter((u) => u.tech === t);
+    const gas = us.map((u) => gasFor(hubOf(u.unit)));
     const lastHr = us.map(() => null), lastT = us.map(() => -Infinity);
     return T.dates.map((d, i) => {
       const v = [];
       us.forEach((u, k) => {
-        const p = u.first[i], g = gasOn[d];
+        const p = u.first[i], g = gas[k][d];
         if (p != null && g > 0) { lastHr[k] = p / g; lastT[k] = t0[i]; }
         if (lastHr[k] != null && t0[i] - lastT[k] <= HR_CARRY_DAYS * DAY_MS) v.push(lastHr[k]);
       });
@@ -279,7 +287,7 @@ function drawGas() {
     { label: "Combined cycle", color: "--c1", values: hr("combined_cycle") },
     { label: "Combustion turbine", color: "--c2", values: hr("combustion_turbine") },
     { label: "Gas steam", color: "--c6", values: hr("gas_steam") },
-  ], { dates: T.dates, H: 220, title: `Implied heat rate: median unit's first offer price above $0 at or above LSL ÷ ${src.hsc ? "Houston Ship Channel" : "Henry Hub"} gas (MMBtu per MWh)`, yFmt: d3.format(",.1f"), tipFmt: d3.format(",.2f"), yTicks: [0, 5, 7, 10, 15, 20] });
+  ], { dates: T.dates, H: 220, title: `Implied heat rate: median gas unit's first offer price above $0 at or above LSL ÷ gas at its own hub, Waha or Ship Channel (MMBtu per MWh)`, yFmt: d3.format(",.1f"), tipFmt: d3.format(",.2f"), yTicks: [0, 5, 7, 10, 15, 20] });
 }
 
 function drawPriceQuantiles() {
@@ -535,9 +543,9 @@ function loadView() { const v = window.CX.readHash(); Object.entries(VIEW_KEYS).
 function drawAll() { drawPriceQuantiles(); drawGas(); drawMarginal(); drawNodeMarginal(); }
 
 async function boot() {
-  [S.T, S.C, S.G, S.GH, S.MN, S.SP] = await Promise.all([tryJSON("data/trends_60d.json.gz"), tryJSON("data/curve_trends.json.gz"),
+  [S.T, S.C, S.G, S.GH, S.MN, S.SP, S.FH] = await Promise.all([tryJSON("data/trends_60d.json.gz"), tryJSON("data/curve_trends.json.gz"),
     tryJSON("data/gas.json.gz"), tryJSON("data/gas_hubs.json.gz"), tryJSON("data/marginal_nodes.json.gz"),
-    tryJSON("data/summary_prices.json.gz")]);
+    tryJSON("data/summary_prices.json.gz"), tryJSON("data/fuel_hubs.json.gz")]);
   if (!S.T) { $("range-status").textContent = "No across-days data yet. It is built by the data update workflow."; return; }
   const D = S.T.dates;
   // one date range for every daily chart (gas is trimmed to it)
