@@ -189,14 +189,16 @@ def fetch_shadow(api, index: dict = None, today: dt.date = None) -> None:
           + (f", {len(left)} still to fill" if left else ""))
 
 
-def sample(api, hours=3):
-    """Parse the last few hours' postings and print what was read."""
+def sample(api, hours=12):
+    """Parse the last few hours' postings and print what was read.  Fails when there are none,
+    so the PR check proves the parser on a real posting.  The window is wide because the
+    archive's post times are Central while a runner's clock is UTC."""
     now = dt.datetime.now()
     docs = sorted(api.list_archives(EMIL, now - dt.timedelta(hours=hours), now), key=lambda x: x.get("postDatetime", ""))
     print(f"{EMIL}: {len(docs)} posting(s) in {hours} hours; names: {sorted({str(x.get('friendlyName'))[:60] for x in docs[:4]})}")
     docs = [x for x in docs if "xml" not in str(x.get("friendlyName", "")).lower()]
     if not docs:
-        return
+        raise SystemExit(f"{EMIL}: no CSV postings in the last {hours} hours")
     csvs = list(iter_csvs(api.download(EMIL, docs[-1]["docId"]), "x.zip"))
     f = pd.read_csv(io.BytesIO(csvs[0][1]))
     print("  columns:", list(f.columns))
