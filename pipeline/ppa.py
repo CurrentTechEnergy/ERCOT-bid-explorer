@@ -35,8 +35,8 @@ Method, per unit:
 Inferred strike: -b / a if the intercept is all strike; (-b - CREDIT) / a if the operator also
 counts a per-MWh credit worth CREDIT (the PTC is about $30/MWh) in its break-even.  Neither the
 share nor the strike is a disclosed term: the slope is the share of the bidder's exposure tied
-to that DA price, which can differ from the contracted share (Roseland's offers track 100% of
-HB_NORTH, but its one public deal, with Google, covers about 250 of 640 MW).
+to that DA price, which can differ from the contracted share (offers can track 100% of a hub
+while only part of the output is contracted).
 
 Per-day hourly offers are cached in UNIT_DATA_DIR/ppa/{date}.json.gz (rebuilt when the per-unit
 day file or this module's CACHE_FORMAT changes).
