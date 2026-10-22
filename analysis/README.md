@@ -41,3 +41,13 @@ decision table over rolling 12-month windows, scores each on the month after it,
 change in shutdowns between years into triggers and behaviour (see its docstring):
 
     python analysis/decision_model.py --table decision-table/decision-table.parquet --out decision-model [--no-award]
+
+## Combined-cycle sizing on actuals
+
+`cc_sizing.py` is the analysis track's sizing step, kept apart from the on/off decision: the size a
+combined-cycle train runs at once it is on, as each train's mean online LSL by day-ahead hub price
+band over the trailing 365 days.  It tests that against simpler rules out of sample, month by month,
+and with `--table` adds `size_band_mean` and `size_err` to the decision table's combined-cycle rows
+(see its docstring):
+
+    python analysis/cc_sizing.py --out cc-sizing [--table decision-table/decision-table.parquet]
