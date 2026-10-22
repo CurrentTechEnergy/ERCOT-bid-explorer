@@ -1,5 +1,5 @@
 {
- "checked": "2026-10-22T14:39:59Z",
+ "checked": "2026-10-22T21:18:21Z",
  "today": "2026-10-22",
  "sources": {
   "2d": {
@@ -60,37 +60,37 @@
   },
   "dam_nodes": {
    "label": "DAM node prices",
-   "latest": "2026-10-22",
-   "behind": 0,
-   "allowed": 0,
+   "latest": "2026-10-23",
+   "behind": -1,
+   "allowed": -1,
    "stale": false
   },
   "dam_lambda": {
    "label": "DAM system lambda",
-   "latest": "2026-10-22",
-   "behind": 0,
-   "allowed": 0,
+   "latest": "2026-10-23",
+   "behind": -1,
+   "allowed": -1,
    "stale": false
   },
   "load": {
    "label": "Load forecast",
    "latest": "2026-10-23",
    "behind": -1,
-   "allowed": 0,
+   "allowed": -1,
    "stale": false
   },
   "renew_forecast": {
    "label": "Wind and solar forecast",
    "latest": "2026-10-23",
    "behind": -1,
-   "allowed": 0,
+   "allowed": -1,
    "stale": false
   },
   "forecast": {
    "label": "Commitment forecast",
-   "latest": "2026-10-22",
-   "behind": 0,
-   "allowed": 0,
+   "latest": "2026-10-23",
+   "behind": -1,
+   "allowed": -1,
    "stale": false
   },
   "gas_hsc": {
@@ -116,8 +116,8 @@
   },
   "nrc": {
    "label": "NRC reactor status",
-   "latest": "2026-10-21",
-   "behind": 1,
+   "latest": "2026-10-22",
+   "behind": 0,
    "allowed": 2,
    "stale": false
   }
