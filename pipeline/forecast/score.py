@@ -28,6 +28,8 @@ Two answers per day:
              ones; kept as sums (hours, absolute error, error, expected, actual, MW-h) so the
              summary weights every hour alike.  This is the number that says how much thermal
              gets out of the way when prices are low; the daily GWh call barely sees it.
+  floor_bin  (in sixty_day) the same for the binary line (fleet "min_bin": each unit-hour in full
+             when P(on) >= 0.5, none otherwise), for a file that has it
   floor_parts  (in sixty_day) the same error split by cause, unit by unit and hour by hour,
              so errors that cancel in the fleet sum show up (v10 held about 2 GW on units that
              were out and ran about 2 GW short on units that were available): each unit-hour's
@@ -192,6 +194,8 @@ def score_sixty_day(day: dict, ctx: C.Context) -> dict:
     fa = sum(by_t[t][1] for t in C.THERMAL)
     out["fleet"] = stat(fe, fa)
     out["floor"] = score_floor(_arr(day["hourly"]["fleet"]["min"]), on_lsl, _arr(day["headline"].get("hub")))
+    if day["hourly"]["fleet"].get("min_bin") is not None:
+        out["floor_bin"] = score_floor(_arr(day["hourly"]["fleet"]["min_bin"]), on_lsl, _arr(day["headline"].get("hub")))
     out["floor_parts"] = score_floor_parts(day, key_lsl, _states(ctx, date), _arr(day["headline"].get("hub")))
     return out
 
@@ -219,6 +223,7 @@ def score_floor_parts(day: dict, key_lsl: dict, states: dict, hub) -> dict | Non
         return None
     ip, im = series.index("p"), series.index("min")
     err = {k: np.zeros(24) for k in FLOOR_PARTS}
+    held_out, held_off = np.zeros(24), np.zeros(24)
     for key, s in (uh.get("units") or {}).items():
         mn, p = _arr(s[im]), _arr(s[ip])
         if mn.shape != (24,) or p.shape != (24,):
@@ -233,9 +238,21 @@ def score_floor_parts(day: dict, key_lsl: dict, states: dict, hub) -> dict | Non
         err["outage"] += np.where(out, e, 0.0)
         err["sizing"] += np.where(sizing, e, 0.0)
         err["onoff"] += np.where(~out & ~sizing, e, 0.0)
+        held_out += np.where(out, mn, 0.0)
+        held_off += np.where(~on & ~out, mn, 0.0)
     for key, a in key_lsl.items():
         if key not in (uh.get("units") or {}):
             err["other"] -= a
+    pool = ((day.get("hourly") or {}).get("outage_pool") or {}).get("min")
+    if pool:
+        # the outage pool: the zonal outage deduction is placed on no unit, so it nets against the
+        # minimum held on units that did not run: on outage (the outage part) and offline (the
+        # on/off part), split between the two by what each held that hour
+        pool = np.nan_to_num(_arr(pool))
+        tot = held_out + held_off
+        share = np.divide(held_out, tot, out=np.ones(24), where=tot > 0)
+        err["outage"] -= pool * share
+        err["onoff"] -= pool * (1.0 - share)
     ok = ~np.isnan(hub) if hub.shape == (24,) else np.zeros(24, bool)
     res = {}
     for part, e in err.items():
@@ -298,11 +315,14 @@ def score_floor(exp_min, act_lsl, hub) -> dict:
     return out
 
 
-def _floor_summary(sd: list) -> dict:
-    """Hour-weighted floor errors (MW) over the days' sums."""
+def _floor_summary(sd: list, key="floor") -> dict | None:
+    """Hour-weighted floor errors (MW) over the days' sums (key: "floor", or "floor_bin" for the
+    binary line; None when no day has it)."""
+    if not any(s.get(key) for s in sd):
+        return None
     out = {}
     for k in ("all", "cheap", "neg"):
-        parts = [s["floor"][k] for s in sd if s.get("floor")]
+        parts = [s[key][k] for s in sd if s.get(key)]
         n = sum(p["hours"] for p in parts)
         out[k] = {"hours": n,
                   "mae": _r(sum(p["abs"] for p in parts) / n) if n else None,
@@ -457,6 +477,7 @@ def summarise(days: dict, asof_only: bool = True) -> dict:
             res["tech"] = {t: {"mae": _r(np.mean([s["tech"][t]["mae"] for s in sd])), "bias": _r(np.mean([s["tech"][t]["bias"] for s in sd])), "n": len(sd)}
                            for t in C.THERMAL} if sd else None
             res["floor"] = _floor_summary(sd) if sd else None
+            res["floor_bin"] = _floor_summary(sd, "floor_bin") if sd else None
             res["floor_parts"] = _floor_parts_summary(sd) if sd else None
             return res
         o = agg(lst)

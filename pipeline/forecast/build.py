@@ -22,7 +22,10 @@ data/forecast/<date>.json.gz
                     n_off, n_out, n_unknown} (MW; on, off and min weighted by each unit's mean p over the day, as exp is,
                     with a unit's outage share (out_share: listed gas turbines and the zonal unseen outage) in out, not off;
                     out and unknown the HSL of units in those states; n_on counts p >= 0.5 of the share not on outage)
-  hourly            group[g] / tech[t] / category[c] / fleet: {min, exp, hsl} [24]; wind /
+  hourly            group[g] / tech[t] / category[c] / fleet: {min, exp, hsl, min_bin, exp_bin} [24]
+                    (min_bin / exp_bin: the binary lines, each unit-hour in full when its P(on) >= ON_CALL
+                    and none otherwise; every line net of the outage pool); outage_pool: {min, exp,
+                    zones, days} (the zonal outage deduction placed on no unit, pipeline.models.outage_pool) or absent; wind /
                     solar: {avail, disp} [24]; storage: {dis, chg, soc} [24] (fleet discharging MW,
                     charging MW below zero, energy path MWh) or null; model: {series: "model version"}
   units             columns + rows, one per thermal train: unit, tech, group, hsl, lsl,
@@ -34,9 +37,10 @@ data/forecast/<date>.json.gz
                     p_base and drivers (a unit judged on its window: the trees' starting P(on)
                     and [[driver, points]], how far each input moved it, adding up to p_on)
   unit_hours        {"series": UNIT_SERIES, "units": {unit: [[24] per series]}}: each thermal
-                    unit's hourly weight online (p), expected MW, committed minimum MW and the
-                    day-ahead price it was dispatched against (its node, else the hub); null for a
-                    series that is zero all day or a price it did not have
+                    unit's hourly weight online (p), expected MW, committed minimum MW, the
+                    day-ahead price it was dispatched against (its node, else the hub) and its size
+                    (the minimum it is held at when on; the binary call is on when p >= ON_CALL);
+                    null for a series that is zero all day or a price it did not have
   renewables        columns + rows, one per wind / solar unit: unit, tech, nameplate,
                     avail_mwh, disp_mwh, source, offer, model, version
 
@@ -54,6 +58,7 @@ from ..store import read_json_gz, write_json_gz
 from ..models import MODELS, versions
 from . import context as C
 from . import stack as STACK
+from ..models import outage_pool
 from .groups import GROUPS as HISTORY_GROUPS, GROUP_LABELS as HISTORY_LABELS
 
 # the history groups (six timescales and never-on) plus one for thermal units with no hourly history yet (new units)
@@ -66,7 +71,8 @@ BAND_MONTHS = 12
 UNIT_COLS = ["unit", "tech", "group", "hsl", "lsl", "verdict", "p_on", "loss", "cutoff", "off_from", "off_hours",
              "reason", "curve", "model", "version", "win_from", "win_hours", "out_share", "cc_small", "p_base",
              "drivers"]
-UNIT_SERIES = ["p", "exp", "min", "price"]
+UNIT_SERIES = ["p", "exp", "min", "price", "size"]
+ON_CALL = 0.5      # P(on) at or above which a unit-hour is called on for the binary lines
 RENEW_COLS = ["unit", "tech", "nameplate", "avail_mwh", "disp_mwh", "source", "offer", "model", "version"]
 CATEGORIES = {
     "baseload": "the always-on group plus nuclear",
@@ -131,7 +137,7 @@ def build_day(date, ctx: C.Context) -> dict:
 
     # ---- aggregates ----
     def blank():
-        return {"min": np.zeros(24), "exp": np.zeros(24), "hsl": np.zeros(24)}
+        return {"min": np.zeros(24), "exp": np.zeros(24), "hsl": np.zeros(24), "min_bin": np.zeros(24), "exp_bin": np.zeros(24)}
     by_g = {g: blank() for g in GROUPS}
     by_t = {t: blank() for t in C.THERMAL}
     by_c = {k: blank() for k in CATEGORIES}
@@ -162,14 +168,18 @@ def build_day(date, ctx: C.Context) -> dict:
             else:
                 tgt[state] += hsl
             tgt["exp"] += exp_mean; tgt["gwh"] += float(d["exp"].sum()) / 1000.0
+        on = np.asarray(d["p"], float) >= ON_CALL
+        min_bin, exp_bin = np.where(on, d["size"], 0.0), np.where(on, d["mw"], 0.0)
         for agg in ((by_g[g] if g in by_g else None), by_t[row["tech"]]):
             if agg is None:
                 continue
             agg["min"] += d["min"]; agg["exp"] += d["exp"]
+            agg["min_bin"] += min_bin; agg["exp_bin"] += exp_bin
             if state != "out":
                 agg["hsl"] += hsl
         ck = category(row["tech"], g)
         by_c[ck]["min"] += d["min"]; by_c[ck]["exp"] += d["exp"]
+        by_c[ck]["min_bin"] += min_bin; by_c[ck]["exp_bin"] += exp_bin
         if state != "out":
             by_c[ck]["hsl"] += hsl
         c = cat[ck]
@@ -187,7 +197,23 @@ def build_day(date, ctx: C.Context) -> dict:
                           row.get("p_base"), row.get("drivers")])
         hs = [[round(float(v), 2) for v in d["p"]], [round(float(v)) for v in d["exp"]], [round(float(v)) for v in d["min"]]]
         hs = [None if not any(v) else v for v in hs]       # a unit off all day carries nulls
-        unit_hours[key] = hs + [None if d.get("price") is None else [round(float(v), 2) for v in d["price"]]]
+        unit_hours[key] = hs + [None if d.get("price") is None else [round(float(v), 2) for v in d["price"]],
+                                [round(float(v)) for v in d["size"]]]
+    group_of = {k: "never" if r["tech"] == "nuclear" else (r["group"] or "ungrouped") for k, r in commit["rows"].items()}
+    pool = (outage_pool.deduction(ctx, date, ctx.units(date), {k: (r["min"], r["exp"]) for k, r in disp["rows"].items()},
+                                  group_of)
+            if commit.get("outage_pool") else None)
+    def _deduct(agg, mn, ex):
+        for k, v in (("min", mn), ("min_bin", mn), ("exp", ex), ("exp_bin", ex)):
+            agg[k] = agg[k] - v
+    if pool:        # the zonal outage deduction, on no unit, off the technologies', groups' and categories' lines
+        for t in C.THERMAL:
+            if t in pool["min"]:
+                _deduct(by_t[t], pool["min"][t], pool["exp"][t])
+        for (t, g), mn in pool["pair"]["min"].items():
+            for agg in ((by_g[g] if g in by_g else None), by_c[category(t, g)]):
+                if agg is not None:
+                    _deduct(agg, mn, pool["pair"]["exp"][(t, g)])
     fleet = blank()
     for t in C.THERMAL:
         for k in fleet:
@@ -244,7 +270,10 @@ def build_day(date, ctx: C.Context) -> dict:
         "hourly": {"group": {g: _h_out(a) for g, a in by_g.items()}, "tech": {t: _h_out(a) for t, a in by_t.items()},
                    "category": {k: _h_out(a) for k, a in by_c.items()}, "fleet": _h_out(fleet),
                    **{t: {"avail": _rl(rn[t]["avail"]), "disp": _rl(rn[t]["disp"])} if rn[t]["n"] else None for t in C.RENEW},
-                   "storage": {k: sr[k] for k in ("dis", "chg", "soc")} if sr else None, "model": hourly_model},
+                   "storage": {k: sr[k] for k in ("dis", "chg", "soc")} if sr else None, "model": hourly_model,
+                   **({"outage_pool": {"min": _rl(sum(pool["min"].values(), np.zeros(24))), "exp": _rl(sum(pool["exp"].values(), np.zeros(24))),
+                                       "zones": {z: _rl(v) for z, v in pool["zones"].items()}, "days": pool["days"]}}
+                      if pool else {})},
         "units": {"columns": UNIT_COLS, "rows": unit_rows},
         "unit_hours": {"series": UNIT_SERIES, "units": unit_hours},
         "renewables": {"columns": RENEW_COLS, "rows": renew_rows},
