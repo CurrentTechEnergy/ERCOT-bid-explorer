@@ -9,7 +9,7 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=FLCNS_UNIT2"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=FLCNS_UNIT2#FLCNS_UNIT2/2026-08-04/outage_start</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Outage began, still on at the end of the data (19 days so far)</summary>
+    <summary>Outage began, still on at the end of the data (20 days so far)</summary>
   </entry>
   <entry>
     <title>FLCNS_UNIT2: Outage ended (2026-07-03)</title>
@@ -107,7 +107,7 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=FLCNS_UNIT2"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=FLCNS_UNIT2#FLCNS_UNIT2/2026-01-01/group</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Daily, 1–2 a week in 2025-12 to Never off in 2026-01</summary>
+    <summary>Daily, 1–2 a week in 2025-12 to Always on when available in 2026-01</summary>
   </entry>
   <entry>
     <title>FLCNS_UNIT2: Bidding approach shifted (2025-12-16)</title>

@@ -23,7 +23,7 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=FEGC_CTG2"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=FEGC_CTG2#FEGC_CTG2/2026-05-01/group</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Never off in 2026-04 to Daily, over 2 a week in 2026-05</summary>
+    <summary>Always on when available in 2026-04 to Daily, over 2 a week in 2026-05</summary>
   </entry>
   <entry>
     <title>FEGC_CTG2: Outage ended (2026-04-14)</title>

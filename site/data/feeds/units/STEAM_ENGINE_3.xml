@@ -9,7 +9,7 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=STEAM_ENGINE_3"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=STEAM_ENGINE_3#STEAM_ENGINE_3/2026-07-23/outage_start</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Outage began, still on at the end of the data (30 days so far)</summary>
+    <summary>Outage began, still on at the end of the data (31 days so far)</summary>
   </entry>
   <entry>
     <title>STEAM_ENGINE_3: Outage ended (2026-07-20)</title>
@@ -79,7 +79,7 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=STEAM_ENGINE_3"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=STEAM_ENGINE_3#STEAM_ENGINE_3/2026-05-01/group</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Daily, over 2 a week in 2026-04 to Never off in 2026-05</summary>
+    <summary>Daily, over 2 a week in 2026-04 to Always on when available in 2026-05</summary>
   </entry>
   <entry>
     <title>STEAM_ENGINE_3: Outage started (2026-04-28)</title>

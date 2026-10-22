@@ -3,34 +3,34 @@
   <title>TRSES_UNIT6: bidding and operating changes</title>
   <link href="https://ercotbids.currenttech.energy/unit.html?unit=TRSES_UNIT6"/>
   <id>https://ercotbids.currenttech.energy/unit.html?unit=TRSES_UNIT6</id>
-  <updated>2026-10-21T00:00:00Z</updated>
+  <updated>2026-10-22T00:00:00Z</updated>
   <entry>
-    <title>TRSES_UNIT6: Loss cutoff moved (2026-08-22)</title>
+    <title>TRSES_UNIT6: Loss cutoff moved (2026-08-23)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=TRSES_UNIT6"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=TRSES_UNIT6#TRSES_UNIT6/2026-08-22/cutoff</id>
-    <updated>2026-10-21T00:00:00Z</updated>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=TRSES_UNIT6#TRSES_UNIT6/2026-08-23/cutoff</id>
+    <updated>2026-10-22T00:00:00Z</updated>
     <summary>Loss cutoff $204 to $274 per MW of minimum output; not yet tested on a following month</summary>
   </entry>
   <entry>
-    <title>TRSES_UNIT6: Bidding approach shifted (2026-08-15)</title>
+    <title>TRSES_UNIT6: Bidding approach shifted (2026-08-16)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=TRSES_UNIT6"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=TRSES_UNIT6#TRSES_UNIT6/2026-08-15/bidding</id>
-    <updated>2026-10-21T00:00:00Z</updated>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=TRSES_UNIT6#TRSES_UNIT6/2026-08-16/bidding</id>
+    <updated>2026-10-22T00:00:00Z</updated>
     <summary>Offer price vs peer median: $98 to -$13/MWh</summary>
   </entry>
   <entry>
-    <title>TRSES_UNIT6: Bidding approach shifted (2026-08-02)</title>
+    <title>TRSES_UNIT6: Bidding approach shifted (2026-08-03)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=TRSES_UNIT6"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=TRSES_UNIT6#TRSES_UNIT6/2026-08-02/bidding</id>
-    <updated>2026-10-21T00:00:00Z</updated>
-    <summary>Offer price vs peer median: $71 to $98/MWh</summary>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=TRSES_UNIT6#TRSES_UNIT6/2026-08-03/bidding</id>
+    <updated>2026-10-22T00:00:00Z</updated>
+    <summary>Offer price vs peer median: $59 to $98/MWh</summary>
   </entry>
   <entry>
     <title>TRSES_UNIT6: Loss cutoff moved (2026-07-31)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=TRSES_UNIT6"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=TRSES_UNIT6#TRSES_UNIT6/2026-07-31/cutoff</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Loss cutoff $0 to $204 per MW of minimum output; the next month&#x27;s decisions confirm it (6 of 10 right against 0)</summary>
+    <summary>Loss cutoff $0 to $204 per MW of minimum output; the next month&#x27;s decisions confirm it (7 of 11 right against 0)</summary>
   </entry>
   <entry>
     <title>TRSES_UNIT6: Bidding approach shifted (2026-07-26)</title>

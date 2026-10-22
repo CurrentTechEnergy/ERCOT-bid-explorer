@@ -3,62 +3,69 @@
   <title>ERCOT bid explorer: unit changes</title>
   <link href="https://ercotbids.currenttech.energy/"/>
   <id>https://ercotbids.currenttech.energy/</id>
-  <updated>2026-10-21T00:00:00Z</updated>
+  <updated>2026-10-22T00:00:00Z</updated>
   <entry>
-    <title>WAP_WAP_G2: Loss cutoff moved (2026-08-22)</title>
+    <title>WAP_WAP_G2: Loss cutoff moved (2026-08-23)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=WAP_WAP_G2"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=WAP_WAP_G2#WAP_WAP_G2/2026-08-22/cutoff</id>
-    <updated>2026-10-21T00:00:00Z</updated>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=WAP_WAP_G2#WAP_WAP_G2/2026-08-23/cutoff</id>
+    <updated>2026-10-22T00:00:00Z</updated>
     <summary>Loss cutoff $130 to $172 per MW of minimum output; not yet tested on a following month</summary>
   </entry>
   <entry>
-    <title>WAP_WAP_G1: Loss cutoff moved (2026-08-22)</title>
+    <title>WAP_WAP_G1: Loss cutoff moved (2026-08-23)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=WAP_WAP_G1"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=WAP_WAP_G1#WAP_WAP_G1/2026-08-22/cutoff</id>
-    <updated>2026-10-21T00:00:00Z</updated>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=WAP_WAP_G1#WAP_WAP_G1/2026-08-23/cutoff</id>
+    <updated>2026-10-22T00:00:00Z</updated>
     <summary>Loss cutoff $130 to $172 per MW of minimum output; not yet tested on a following month</summary>
   </entry>
   <entry>
-    <title>TRSES_UNIT6: Loss cutoff moved (2026-08-22)</title>
+    <title>TRSES_UNIT6: Loss cutoff moved (2026-08-23)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=TRSES_UNIT6"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=TRSES_UNIT6#TRSES_UNIT6/2026-08-22/cutoff</id>
-    <updated>2026-10-21T00:00:00Z</updated>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=TRSES_UNIT6#TRSES_UNIT6/2026-08-23/cutoff</id>
+    <updated>2026-10-22T00:00:00Z</updated>
     <summary>Loss cutoff $204 to $274 per MW of minimum output; not yet tested on a following month</summary>
   </entry>
   <entry>
-    <title>PYOTE_UNIT1: Loss cutoff moved (2026-08-22)</title>
+    <title>PYOTE_UNIT1: Loss cutoff moved (2026-08-23)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=PYOTE_UNIT1"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=PYOTE_UNIT1#PYOTE_UNIT1/2026-08-22/cutoff</id>
-    <updated>2026-10-21T00:00:00Z</updated>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=PYOTE_UNIT1#PYOTE_UNIT1/2026-08-23/cutoff</id>
+    <updated>2026-10-22T00:00:00Z</updated>
     <summary>Loss cutoff $1,719 to $30 per MW of minimum output; not yet tested on a following month</summary>
   </entry>
   <entry>
-    <title>PB2SES_CT2: Loss cutoff moved (2026-08-22)</title>
+    <title>PB2SES_CT2: Loss cutoff moved (2026-08-23)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=PB2SES_CT2"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=PB2SES_CT2#PB2SES_CT2/2026-08-22/cutoff</id>
-    <updated>2026-10-21T00:00:00Z</updated>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=PB2SES_CT2#PB2SES_CT2/2026-08-23/cutoff</id>
+    <updated>2026-10-22T00:00:00Z</updated>
     <summary>Loss cutoff $825 to $0 per MW of minimum output; not yet tested on a following month</summary>
   </entry>
   <entry>
-    <title>MCSES_UNIT8: Loss cutoff moved (2026-08-22)</title>
+    <title>MCSES_UNIT8: Loss cutoff moved (2026-08-23)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=MCSES_UNIT8"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=MCSES_UNIT8#MCSES_UNIT8/2026-08-22/cutoff</id>
-    <updated>2026-10-21T00:00:00Z</updated>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=MCSES_UNIT8#MCSES_UNIT8/2026-08-23/cutoff</id>
+    <updated>2026-10-22T00:00:00Z</updated>
     <summary>Loss cutoff $142 to $243 per MW of minimum output; not yet tested on a following month</summary>
   </entry>
   <entry>
-    <title>GRSES_UNIT1: Loss cutoff moved (2026-08-22)</title>
+    <title>GRSES_UNIT1: Loss cutoff moved (2026-08-23)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=GRSES_UNIT1"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=GRSES_UNIT1#GRSES_UNIT1/2026-08-22/cutoff</id>
-    <updated>2026-10-21T00:00:00Z</updated>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=GRSES_UNIT1#GRSES_UNIT1/2026-08-23/cutoff</id>
+    <updated>2026-10-22T00:00:00Z</updated>
     <summary>Loss cutoff $140 to $216 per MW of minimum output; not yet tested on a following month</summary>
   </entry>
   <entry>
-    <title>CEDRVALE_UNIT1: Loss cutoff moved (2026-08-22)</title>
+    <title>CEDRVALE_UNIT1: Loss cutoff moved (2026-08-23)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=CEDRVALE_UNIT1"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=CEDRVALE_UNIT1#CEDRVALE_UNIT1/2026-08-22/cutoff</id>
-    <updated>2026-10-21T00:00:00Z</updated>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=CEDRVALE_UNIT1#CEDRVALE_UNIT1/2026-08-23/cutoff</id>
+    <updated>2026-10-22T00:00:00Z</updated>
     <summary>Loss cutoff $1,259 to $8 per MW of minimum output; not yet tested on a following month</summary>
+  </entry>
+  <entry>
+    <title>SCSES_UNIT1A: Bidding approach shifted (2026-08-17)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=SCSES_UNIT1A"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=SCSES_UNIT1A#SCSES_UNIT1A/2026-08-17/bidding</id>
+    <updated>2026-10-22T00:00:00Z</updated>
+    <summary>Offer price vs peer median: $24 to $70/MWh</summary>
   </entry>
   <entry>
     <title>JAD_UNIT8: Outage ended (2026-08-17)</title>
@@ -68,11 +75,32 @@
     <summary>Back from a 37-day outage</summary>
   </entry>
   <entry>
-    <title>SCSES_UNIT1A: Bidding approach shifted (2026-08-16)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=SCSES_UNIT1A"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=SCSES_UNIT1A#SCSES_UNIT1A/2026-08-16/bidding</id>
-    <updated>2026-10-21T00:00:00Z</updated>
-    <summary>Offer price vs peer median: $24 to $69/MWh</summary>
+    <title>GRSES_UNIT1: Bidding approach shifted (2026-08-17)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=GRSES_UNIT1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=GRSES_UNIT1#GRSES_UNIT1/2026-08-17/bidding</id>
+    <updated>2026-10-22T00:00:00Z</updated>
+    <summary>Offer price vs peer median: $92 to -$18/MWh</summary>
+  </entry>
+  <entry>
+    <title>CBY_CBY_G2: Bidding approach shifted (2026-08-17)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=CBY_CBY_G2"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=CBY_CBY_G2#CBY_CBY_G2/2026-08-17/bidding</id>
+    <updated>2026-10-22T00:00:00Z</updated>
+    <summary>Running without an offer curve: 0% to 50% of the day</summary>
+  </entry>
+  <entry>
+    <title>BAC_CTG4: Bidding approach shifted (2026-08-17)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=BAC_CTG4"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=BAC_CTG4#BAC_CTG4/2026-08-17/bidding</id>
+    <updated>2026-10-22T00:00:00Z</updated>
+    <summary>Offer price vs peer median: $32 to -$18/MWh</summary>
+  </entry>
+  <entry>
+    <title>TRSES_UNIT6: Bidding approach shifted (2026-08-16)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=TRSES_UNIT6"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=TRSES_UNIT6#TRSES_UNIT6/2026-08-16/bidding</id>
+    <updated>2026-10-22T00:00:00Z</updated>
+    <summary>Offer price vs peer median: $98 to -$13/MWh</summary>
   </entry>
   <entry>
     <title>PB2SES_CT2: Bidding approach shifted (2026-08-16)</title>
@@ -87,27 +115,6 @@
     <id>https://ercotbids.currenttech.energy/unit.html?unit=MCSES_UNIT7#MCSES_UNIT7/2026-08-16/outage_end</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Back from a 36-day outage</summary>
-  </entry>
-  <entry>
-    <title>GRSES_UNIT1: Bidding approach shifted (2026-08-16)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=GRSES_UNIT1"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=GRSES_UNIT1#GRSES_UNIT1/2026-08-16/bidding</id>
-    <updated>2026-10-21T00:00:00Z</updated>
-    <summary>Offer price vs peer median: $92 to -$18/MWh</summary>
-  </entry>
-  <entry>
-    <title>CBY_CBY_G2: Bidding approach shifted (2026-08-16)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=CBY_CBY_G2"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=CBY_CBY_G2#CBY_CBY_G2/2026-08-16/bidding</id>
-    <updated>2026-10-21T00:00:00Z</updated>
-    <summary>Running without an offer curve: 0% to 50% of the day</summary>
-  </entry>
-  <entry>
-    <title>TRSES_UNIT6: Bidding approach shifted (2026-08-15)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=TRSES_UNIT6"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=TRSES_UNIT6#TRSES_UNIT6/2026-08-15/bidding</id>
-    <updated>2026-10-21T00:00:00Z</updated>
-    <summary>Offer price vs peer median: $98 to -$13/MWh</summary>
   </entry>
   <entry>
     <title>SJS_SJS_G2: Bidding approach shifted (2026-08-15)</title>
@@ -215,11 +222,32 @@
     <summary>First day charging or discharging: 100 MW, 100 MWh</summary>
   </entry>
   <entry>
+    <title>SCSES_UNIT1A: Bidding approach shifted (2026-08-04)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=SCSES_UNIT1A"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=SCSES_UNIT1A#SCSES_UNIT1A/2026-08-04/bidding</id>
+    <updated>2026-10-22T00:00:00Z</updated>
+    <summary>Offer price vs peer median: $60 to $24/MWh</summary>
+  </entry>
+  <entry>
     <title>MCSES_UNIT6: Shut down after a long run (2026-08-04)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=MCSES_UNIT6"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=MCSES_UNIT6#MCSES_UNIT6/2026-08-04/shutdown_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Shut down for 39 h after 32 days without a shutdown</summary>
+  </entry>
+  <entry>
+    <title>GRSES_UNIT1: Bidding approach shifted (2026-08-04)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=GRSES_UNIT1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=GRSES_UNIT1#GRSES_UNIT1/2026-08-04/bidding</id>
+    <updated>2026-10-22T00:00:00Z</updated>
+    <summary>Offer price vs peer median: $24 to $92/MWh</summary>
+  </entry>
+  <entry>
+    <title>TRSES_UNIT6: Bidding approach shifted (2026-08-03)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=TRSES_UNIT6"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=TRSES_UNIT6#TRSES_UNIT6/2026-08-03/bidding</id>
+    <updated>2026-10-22T00:00:00Z</updated>
+    <summary>Offer price vs peer median: $59 to $98/MWh</summary>
   </entry>
   <entry>
     <title>SJS_SJS_G1: Bidding approach shifted (2026-08-03)</title>
@@ -236,6 +264,20 @@
     <summary>Offer price vs peer median: $4 to $115/MWh</summary>
   </entry>
   <entry>
+    <title>MGSES_CT5: Bidding approach shifted (2026-08-03)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=MGSES_CT5"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=MGSES_CT5#MGSES_CT5/2026-08-03/bidding</id>
+    <updated>2026-10-22T00:00:00Z</updated>
+    <summary>Offer price vs peer median: $160 to -$2/MWh</summary>
+  </entry>
+  <entry>
+    <title>MGSES_CT2: Bidding approach shifted (2026-08-03)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=MGSES_CT2"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=MGSES_CT2#MGSES_CT2/2026-08-03/bidding</id>
+    <updated>2026-10-22T00:00:00Z</updated>
+    <summary>Offer price vs peer median: $111 to -$2/MWh</summary>
+  </entry>
+  <entry>
     <title>MDANP_CT1: Shut down despite a day-ahead award (2026-08-03)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=MDANP_CT1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=MDANP_CT1#MDANP_CT1/2026-08-03/shutdown_award</id>
@@ -243,25 +285,11 @@
     <summary>Shut down for 11 h although a day-ahead award covered 100% of the window</summary>
   </entry>
   <entry>
-    <title>GRSES_UNIT1: Bidding approach shifted (2026-08-03)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=GRSES_UNIT1"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=GRSES_UNIT1#GRSES_UNIT1/2026-08-03/bidding</id>
-    <updated>2026-10-21T00:00:00Z</updated>
-    <summary>Offer price vs peer median: $24 to $92/MWh</summary>
-  </entry>
-  <entry>
     <title>C5_ESR1: New battery (2026-08-03)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=C5_ESR1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=C5_ESR1#C5_ESR1/2026-08-03/battery_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>First day charging or discharging: 24 MWh</summary>
-  </entry>
-  <entry>
-    <title>TRSES_UNIT6: Bidding approach shifted (2026-08-02)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=TRSES_UNIT6"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=TRSES_UNIT6#TRSES_UNIT6/2026-08-02/bidding</id>
-    <updated>2026-10-21T00:00:00Z</updated>
-    <summary>Offer price vs peer median: $71 to $98/MWh</summary>
   </entry>
   <entry>
     <title>SKY1_SKY1B: Shut down despite a day-ahead award (2026-08-02)</title>
@@ -292,13 +320,6 @@
     <summary>Shut down for 16 h although a day-ahead award covered 100% of the window</summary>
   </entry>
   <entry>
-    <title>MGSES_CT2: Bidding approach shifted (2026-08-02)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=MGSES_CT2"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=MGSES_CT2#MGSES_CT2/2026-08-02/bidding</id>
-    <updated>2026-10-21T00:00:00Z</updated>
-    <summary>Offer price vs peer median: $111 to $18/MWh</summary>
-  </entry>
-  <entry>
     <title>HLSES_UNIT3: Shut down despite a day-ahead award (2026-08-02)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=HLSES_UNIT3"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=HLSES_UNIT3#HLSES_UNIT3/2026-08-02/shutdown_award</id>
@@ -320,25 +341,11 @@
     <summary>Seasonal: off a week or more in 2026-07 to Daily, 1–2 a week in 2026-08</summary>
   </entry>
   <entry>
-    <title>VICTPORT_CTG02: Timescale group changed (2026-08-01)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=VICTPORT_CTG02"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=VICTPORT_CTG02#VICTPORT_CTG02/2026-08-01/group</id>
-    <updated>2026-10-21T00:00:00Z</updated>
-    <summary>Daily, over 2 a week in 2026-07 to Seasonal: off a week or more in 2026-08</summary>
-  </entry>
-  <entry>
-    <title>VICTPORT_CTG01: Timescale group changed (2026-08-01)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=VICTPORT_CTG01"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=VICTPORT_CTG01#VICTPORT_CTG01/2026-08-01/group</id>
-    <updated>2026-10-21T00:00:00Z</updated>
-    <summary>Daily, over 2 a week in 2026-07 to Seasonal: off a week or more in 2026-08</summary>
-  </entry>
-  <entry>
     <title>TOPAZ_UNIT10: Timescale group changed (2026-08-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=TOPAZ_UNIT10"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=TOPAZ_UNIT10#TOPAZ_UNIT10/2026-08-01/group</id>
     <updated>2026-10-19T00:00:00Z</updated>
-    <summary>Seasonal: off a week or more in 2026-07 to Daily, under 1 shutdown a week in 2026-08</summary>
+    <summary>Seasonal: off a week or more in 2026-07 to Daily, 1–2 a week in 2026-08</summary>
   </entry>
   <entry>
     <title>THW_GT61: Timescale group changed (2026-08-01)</title>
@@ -390,6 +397,13 @@
     <summary>Shut down for 16 h although a day-ahead award covered 100% of the window</summary>
   </entry>
   <entry>
+    <title>OLINGR_OLING_4: Timescale group changed (2026-08-01)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=OLINGR_OLING_4"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=OLINGR_OLING_4#OLINGR_OLING_4/2026-08-01/group</id>
+    <updated>2026-10-22T00:00:00Z</updated>
+    <summary>Multi-day: off 1–7 days in 2026-07 to Daily, 1–2 a week in 2026-08</summary>
+  </entry>
+  <entry>
     <title>NEDIN_CC1: Timescale group changed (2026-08-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=NEDIN_CC1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=NEDIN_CC1#NEDIN_CC1/2026-08-01/group</id>
@@ -401,7 +415,7 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=MGSES_CT5"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=MGSES_CT5#MGSES_CT5/2026-08-01/group</id>
     <updated>2026-10-19T00:00:00Z</updated>
-    <summary>Seasonal: off a week or more in 2026-07 to Daily, 1–2 a week in 2026-08</summary>
+    <summary>Seasonal: off a week or more in 2026-07 to Daily, over 2 a week in 2026-08</summary>
   </entry>
   <entry>
     <title>MGSES_CT4: Timescale group changed (2026-08-01)</title>
@@ -418,25 +432,32 @@
     <summary>Seasonal: off a week or more in 2026-07 to Daily, 1–2 a week in 2026-08</summary>
   </entry>
   <entry>
+    <title>MGSES_CT3: Bidding approach shifted (2026-08-01)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=MGSES_CT3"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=MGSES_CT3#MGSES_CT3/2026-08-01/bidding</id>
+    <updated>2026-10-22T00:00:00Z</updated>
+    <summary>Offer price vs peer median: $145 to $18/MWh</summary>
+  </entry>
+  <entry>
     <title>MGSES_CT2: Timescale group changed (2026-08-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=MGSES_CT2"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=MGSES_CT2#MGSES_CT2/2026-08-01/group</id>
     <updated>2026-10-19T00:00:00Z</updated>
-    <summary>Seasonal: off a week or more in 2026-07 to Daily, 1–2 a week in 2026-08</summary>
+    <summary>Seasonal: off a week or more in 2026-07 to Daily, over 2 a week in 2026-08</summary>
   </entry>
   <entry>
     <title>MDANP_CT2: Timescale group changed (2026-08-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=MDANP_CT2"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=MDANP_CT2#MDANP_CT2/2026-08-01/group</id>
     <updated>2026-10-19T00:00:00Z</updated>
-    <summary>Never off in 2026-07 to Daily, under 1 shutdown a week in 2026-08</summary>
+    <summary>Always on when available in 2026-07 to Daily, under 1 shutdown a week in 2026-08</summary>
   </entry>
   <entry>
     <title>LPCCS_CC2: Timescale group changed (2026-08-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=LPCCS_CC2"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=LPCCS_CC2#LPCCS_CC2/2026-08-01/group</id>
     <updated>2026-10-19T00:00:00Z</updated>
-    <summary>Daily, under 1 shutdown a week in 2026-07 to Never off in 2026-08</summary>
+    <summary>Daily, under 1 shutdown a week in 2026-07 to Always on when available in 2026-08</summary>
   </entry>
   <entry>
     <title>LHSES_UNIT2A: Timescale group changed (2026-08-01)</title>
@@ -457,14 +478,42 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=GRSES_UNIT2"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=GRSES_UNIT2#GRSES_UNIT2/2026-08-01/group</id>
     <updated>2026-10-19T00:00:00Z</updated>
-    <summary>Daily, 1–2 a week in 2026-07 to Never off in 2026-08</summary>
+    <summary>Daily, 1–2 a week in 2026-07 to Always on when available in 2026-08</summary>
+  </entry>
+  <entry>
+    <title>GBY_GBYGT84: Timescale group changed (2026-08-01)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=GBY_GBYGT84"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=GBY_GBYGT84#GBY_GBYGT84/2026-08-01/group</id>
+    <updated>2026-10-19T00:00:00Z</updated>
+    <summary>Seasonal: off a week or more in 2026-07 to Daily, under 1 shutdown a week in 2026-08</summary>
+  </entry>
+  <entry>
+    <title>GBY_GBYGT83: Timescale group changed (2026-08-01)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=GBY_GBYGT83"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=GBY_GBYGT83#GBY_GBYGT83/2026-08-01/group</id>
+    <updated>2026-10-22T00:00:00Z</updated>
+    <summary>Multi-day: off 1–7 days in 2026-07 to Daily, under 1 shutdown a week in 2026-08</summary>
+  </entry>
+  <entry>
+    <title>GBY_GBYGT81: Timescale group changed (2026-08-01)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=GBY_GBYGT81"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=GBY_GBYGT81#GBY_GBYGT81/2026-08-01/group</id>
+    <updated>2026-10-22T00:00:00Z</updated>
+    <summary>Multi-day: off 1–7 days in 2026-07 to Daily, under 1 shutdown a week in 2026-08</summary>
+  </entry>
+  <entry>
+    <title>GBY_GBYGT74: Timescale group changed (2026-08-01)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=GBY_GBYGT74"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=GBY_GBYGT74#GBY_GBYGT74/2026-08-01/group</id>
+    <updated>2026-10-22T00:00:00Z</updated>
+    <summary>Multi-day: off 1–7 days in 2026-07 to Daily, under 1 shutdown a week in 2026-08</summary>
   </entry>
   <entry>
     <title>FRONT_EC_CC1: Timescale group changed (2026-08-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=FRONT_EC_CC1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=FRONT_EC_CC1#FRONT_EC_CC1/2026-08-01/group</id>
     <updated>2026-10-19T00:00:00Z</updated>
-    <summary>Daily, under 1 shutdown a week in 2026-07 to Never off in 2026-08</summary>
+    <summary>Daily, under 1 shutdown a week in 2026-07 to Always on when available in 2026-08</summary>
   </entry>
   <entry>
     <title>DCSES_CT20: Timescale group changed (2026-08-01)</title>
@@ -485,21 +534,21 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=CHAMON_CTG_0301"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=CHAMON_CTG_0301#CHAMON_CTG_0301/2026-08-01/group</id>
     <updated>2026-10-19T00:00:00Z</updated>
-    <summary>Never off in 2026-07 to Daily, over 2 a week in 2026-08</summary>
+    <summary>Always on when available in 2026-07 to Daily, over 2 a week in 2026-08</summary>
   </entry>
   <entry>
     <title>CHAMON_CTG_0101: Timescale group changed (2026-08-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=CHAMON_CTG_0101"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=CHAMON_CTG_0101#CHAMON_CTG_0101/2026-08-01/group</id>
     <updated>2026-10-19T00:00:00Z</updated>
-    <summary>Never off in 2026-07 to Daily, 1–2 a week in 2026-08</summary>
+    <summary>Always on when available in 2026-07 to Daily, 1–2 a week in 2026-08</summary>
   </entry>
   <entry>
     <title>BOSQUESW_CC2: Timescale group changed (2026-08-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=BOSQUESW_CC2"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=BOSQUESW_CC2#BOSQUESW_CC2/2026-08-01/group</id>
     <updated>2026-10-19T00:00:00Z</updated>
-    <summary>Never off in 2026-07 to Daily, under 1 shutdown a week in 2026-08</summary>
+    <summary>Always on when available in 2026-07 to Daily, under 1 shutdown a week in 2026-08</summary>
   </entry>
   <entry>
     <title>BCH_UNIT7: Timescale group changed (2026-08-01)</title>
@@ -520,7 +569,7 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=BAC_CTG5"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=BAC_CTG5#BAC_CTG5/2026-08-01/group</id>
     <updated>2026-10-19T00:00:00Z</updated>
-    <summary>Seasonal: off a week or more in 2026-07 to Daily, 1–2 a week in 2026-08</summary>
+    <summary>Seasonal: off a week or more in 2026-07 to Daily, over 2 a week in 2026-08</summary>
   </entry>
   <entry>
     <title>BAC_CTG1: Timescale group changed (2026-08-01)</title>
@@ -555,28 +604,21 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=TRSES_UNIT6"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=TRSES_UNIT6#TRSES_UNIT6/2026-07-31/cutoff</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Loss cutoff $0 to $204 per MW of minimum output; the next month&#x27;s decisions confirm it (6 of 10 right against 0)</summary>
+    <summary>Loss cutoff $0 to $204 per MW of minimum output; the next month&#x27;s decisions confirm it (7 of 11 right against 0)</summary>
   </entry>
   <entry>
     <title>SCSES_UNIT2: Loss cutoff moved (2026-07-31)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=SCSES_UNIT2"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=SCSES_UNIT2#SCSES_UNIT2/2026-07-31/cutoff</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Loss cutoff $0 to $266 per MW of minimum output; the next month&#x27;s decisions confirm it (9 of 10 right against 1)</summary>
-  </entry>
-  <entry>
-    <title>MGSES_CT3: Bidding approach shifted (2026-07-31)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=MGSES_CT3"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=MGSES_CT3#MGSES_CT3/2026-07-31/bidding</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Offer price vs peer median: $145 to $18/MWh</summary>
+    <summary>Loss cutoff $0 to $266 per MW of minimum output; the next month&#x27;s decisions confirm it (10 of 11 right against 1)</summary>
   </entry>
   <entry>
     <title>GRSES_UNIT2: Loss cutoff moved (2026-07-31)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=GRSES_UNIT2"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=GRSES_UNIT2#GRSES_UNIT2/2026-07-31/cutoff</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Loss cutoff $138 to $254 per MW of minimum output; the next month&#x27;s decisions confirm it (8 of 8 right against 1)</summary>
+    <summary>Loss cutoff $138 to $254 per MW of minimum output; the next month&#x27;s decisions confirm it (9 of 9 right against 1)</summary>
   </entry>
   <entry>
     <title>GRSES_UNIT2: Bidding approach shifted (2026-07-31)</title>
@@ -590,14 +632,14 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=ECEC_G2"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=ECEC_G2#ECEC_G2/2026-07-31/cutoff</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Loss cutoff $0 to $21 per MW of minimum output; the next month&#x27;s decisions are split (6 of 6 right against 6)</summary>
+    <summary>Loss cutoff $0 to $21 per MW of minimum output; the next month&#x27;s decisions are split (7 of 7 right against 7)</summary>
   </entry>
   <entry>
     <title>ECEC_G1: Loss cutoff moved (2026-07-31)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=ECEC_G1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=ECEC_G1#ECEC_G1/2026-07-31/cutoff</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Loss cutoff $0 to $54 per MW of minimum output; the next month&#x27;s decisions are split (6 of 6 right against 6)</summary>
+    <summary>Loss cutoff $0 to $54 per MW of minimum output; the next month&#x27;s decisions are split (7 of 7 right against 7)</summary>
   </entry>
   <entry>
     <title>DIB_CC1_6: Bidding approach shifted (2026-07-31)</title>
@@ -619,13 +661,6 @@
     <id>https://ercotbids.currenttech.energy/unit.html?unit=BAC_CTG5#BAC_CTG5/2026-07-31/bidding</id>
     <updated>2026-10-20T00:00:00Z</updated>
     <summary>Offer price vs peer median: $42 to -$25/MWh</summary>
-  </entry>
-  <entry>
-    <title>SCSES_UNIT1A: Bidding approach shifted (2026-07-30)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=SCSES_UNIT1A"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=SCSES_UNIT1A#SCSES_UNIT1A/2026-07-30/bidding</id>
-    <updated>2026-10-21T00:00:00Z</updated>
-    <summary>Offer price vs peer median: $25 to $60/MWh</summary>
   </entry>
   <entry>
     <title>SANMIGL_G1: Bidding approach shifted (2026-07-30)</title>
@@ -674,7 +709,7 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=STEAM_ENGINE_3"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=STEAM_ENGINE_3#STEAM_ENGINE_3/2026-07-23/outage_start</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Outage began, still on at the end of the data (30 days so far)</summary>
+    <summary>Outage began, still on at the end of the data (31 days so far)</summary>
   </entry>
   <entry>
     <title>SKY1_SKY1B: Shut down despite a day-ahead award (2026-07-23)</title>
@@ -709,7 +744,7 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=WAP_WAP_G6"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=WAP_WAP_G6#WAP_WAP_G6/2026-07-22/outage_start</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Outage began, still on at the end of the data (31 days so far)</summary>
+    <summary>Outage began, still on at the end of the data (32 days so far)</summary>
   </entry>
   <entry>
     <title>VICTPRT2_UNIT2: Shut down after a long run (2026-07-22)</title>
@@ -766,6 +801,13 @@
     <id>https://ercotbids.currenttech.energy/unit.html?unit=FEGC_CTG4#FEGC_CTG4/2026-07-22/shutdown_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Shut down for 5 h after 38 days without a shutdown</summary>
+  </entry>
+  <entry>
+    <title>AZ_AZ_G4: Bidding approach shifted (2026-07-22)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=AZ_AZ_G4"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=AZ_AZ_G4#AZ_AZ_G4/2026-07-22/bidding</id>
+    <updated>2026-10-22T00:00:00Z</updated>
+    <summary>Offer price vs peer median: $270 to $292/MWh</summary>
   </entry>
   <entry>
     <title>AEEC_ELK_3: Shut down despite a day-ahead award (2026-07-22)</title>
@@ -838,11 +880,11 @@
     <summary>Offer price vs peer median: $62 to -$24/MWh</summary>
   </entry>
   <entry>
-    <title>AZ_AZ_G4: Bidding approach shifted (2026-07-21)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=AZ_AZ_G4"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=AZ_AZ_G4#AZ_AZ_G4/2026-07-21/bidding</id>
-    <updated>2026-10-21T00:00:00Z</updated>
-    <summary>Offer price vs peer median: $270 to $292/MWh</summary>
+    <title>AZ_AZ_G3: Bidding approach shifted (2026-07-21)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=AZ_AZ_G3"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=AZ_AZ_G3#AZ_AZ_G3/2026-07-21/bidding</id>
+    <updated>2026-10-22T00:00:00Z</updated>
+    <summary>Offer price vs peer median: $288 to $316/MWh</summary>
   </entry>
   <entry>
     <title>GRSES_UNIT1: Bidding approach shifted (2026-07-20)</title>
@@ -850,6 +892,13 @@
     <id>https://ercotbids.currenttech.energy/unit.html?unit=GRSES_UNIT1#GRSES_UNIT1/2026-07-20/bidding</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Offer price vs peer median: $102 to -$5/MWh</summary>
+  </entry>
+  <entry>
+    <title>SOLC_SLR_ESR1: Battery size changed (2026-07-18)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=SOLC_SLR_ESR1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=SOLC_SLR_ESR1#SOLC_SLR_ESR1/2026-07-18/battery_size</id>
+    <updated>2026-10-22T00:00:00Z</updated>
+    <summary>Maximum state of charge 182 to 320 MWh</summary>
   </entry>
   <entry>
     <title>SCSES_UNIT2: Bidding approach shifted (2026-07-18)</title>
@@ -864,13 +913,6 @@
     <id>https://ercotbids.currenttech.energy/unit.html?unit=MDANP_CT1#MDANP_CT1/2026-07-18/shutdown_award</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Shut down for 8 h although a day-ahead award covered 100% of the window</summary>
-  </entry>
-  <entry>
-    <title>SOLC_SLR_ESR1: Battery size changed (2026-07-17)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=SOLC_SLR_ESR1"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=SOLC_SLR_ESR1#SOLC_SLR_ESR1/2026-07-17/battery_size</id>
-    <updated>2026-10-21T00:00:00Z</updated>
-    <summary>Maximum state of charge 182 to 320 MWh</summary>
   </entry>
   <entry>
     <title>PB2SES_CT3: Bidding approach shifted (2026-07-17)</title>
@@ -1003,28 +1045,28 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=TOPAZ_UNIT9"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=TOPAZ_UNIT9#TOPAZ_UNIT9/2026-07-12/outage_start</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Outage began, still on at the end of the data (42 days so far)</summary>
+    <summary>Outage began, still on at the end of the data (43 days so far)</summary>
   </entry>
   <entry>
     <title>STEAM1A_STEAM_1: Outage started (2026-07-12)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=STEAM1A_STEAM_1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=STEAM1A_STEAM_1#STEAM1A_STEAM_1/2026-07-12/outage_start</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Outage began, still on at the end of the data (42 days so far)</summary>
+    <summary>Outage began, still on at the end of the data (43 days so far)</summary>
   </entry>
   <entry>
     <title>PNPI_GT2: Outage started (2026-07-12)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=PNPI_GT2"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=PNPI_GT2#PNPI_GT2/2026-07-12/outage_start</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Outage began, still on at the end of the data (42 days so far)</summary>
+    <summary>Outage began, still on at the end of the data (43 days so far)</summary>
   </entry>
   <entry>
     <title>NCARBIDE_NCARBIG8: Outage started (2026-07-12)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=NCARBIDE_NCARBIG8"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=NCARBIDE_NCARBIG8#NCARBIDE_NCARBIG8/2026-07-12/outage_start</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Outage began, still on at the end of the data (42 days so far)</summary>
+    <summary>Outage began, still on at the end of the data (43 days so far)</summary>
   </entry>
   <entry>
     <title>MCSES_UNIT7: Outage started (2026-07-12)</title>
@@ -1045,28 +1087,28 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=JAD_UNIT6"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=JAD_UNIT6#JAD_UNIT6/2026-07-12/outage_start</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Outage began, still on at the end of the data (42 days so far)</summary>
+    <summary>Outage began, still on at the end of the data (43 days so far)</summary>
   </entry>
   <entry>
     <title>JAD_UNIT1: Outage started (2026-07-12)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=JAD_UNIT1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=JAD_UNIT1#JAD_UNIT1/2026-07-12/outage_start</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Outage began, still on at the end of the data (42 days so far)</summary>
+    <summary>Outage began, still on at the end of the data (43 days so far)</summary>
   </entry>
   <entry>
     <title>CALHOUN_UNIT2: Outage started (2026-07-12)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=CALHOUN_UNIT2"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=CALHOUN_UNIT2#CALHOUN_UNIT2/2026-07-12/outage_start</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Outage began, still on at the end of the data (42 days so far)</summary>
+    <summary>Outage began, still on at the end of the data (43 days so far)</summary>
   </entry>
   <entry>
     <title>CALHOUN_UNIT1: Outage started (2026-07-12)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=CALHOUN_UNIT1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=CALHOUN_UNIT1#CALHOUN_UNIT1/2026-07-12/outage_start</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Outage began, still on at the end of the data (42 days so far)</summary>
+    <summary>Outage began, still on at the end of the data (43 days so far)</summary>
   </entry>
   <entry>
     <title>BTM_UNIT1: Bidding approach shifted (2026-07-12)</title>
@@ -1080,14 +1122,14 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=BRAUNIG_VHB6CT7"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=BRAUNIG_VHB6CT7#BRAUNIG_VHB6CT7/2026-07-12/outage_start</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Outage began, still on at the end of the data (42 days so far)</summary>
+    <summary>Outage began, still on at the end of the data (43 days so far)</summary>
   </entry>
   <entry>
     <title>AEEC_ELK_2: Outage started (2026-07-12)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=AEEC_ELK_2"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=AEEC_ELK_2#AEEC_ELK_2/2026-07-12/outage_start</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Outage began, still on at the end of the data (42 days so far)</summary>
+    <summary>Outage began, still on at the end of the data (43 days so far)</summary>
   </entry>
   <entry>
     <title>MDANP_CT6: Shut down despite a day-ahead award (2026-07-10)</title>
@@ -1361,47 +1403,5 @@
     <id>https://ercotbids.currenttech.energy/unit.html?unit=VICTPRT2_UNIT1#VICTPRT2_UNIT1/2026-07-01/group</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Seasonal: off a week or more in 2026-06 to Daily, under 1 shutdown a week in 2026-07</summary>
-  </entry>
-  <entry>
-    <title>THW_THWGT56: Timescale group changed (2026-07-01)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=THW_THWGT56"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=THW_THWGT56#THW_THWGT56/2026-07-01/group</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Seasonal: off a week or more in 2026-06 to Daily, 1–2 a week in 2026-07</summary>
-  </entry>
-  <entry>
-    <title>THW_THWGT55: Timescale group changed (2026-07-01)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=THW_THWGT55"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=THW_THWGT55#THW_THWGT55/2026-07-01/group</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Multi-day: off 1–7 days in 2026-06 to Daily, 1–2 a week in 2026-07</summary>
-  </entry>
-  <entry>
-    <title>THW_THWGT54: Timescale group changed (2026-07-01)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=THW_THWGT54"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=THW_THWGT54#THW_THWGT54/2026-07-01/group</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Multi-day: off 1–7 days in 2026-06 to Daily, 1–2 a week in 2026-07</summary>
-  </entry>
-  <entry>
-    <title>THW_THWGT53: Timescale group changed (2026-07-01)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=THW_THWGT53"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=THW_THWGT53#THW_THWGT53/2026-07-01/group</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Seasonal: off a week or more in 2026-06 to Daily, 1–2 a week in 2026-07</summary>
-  </entry>
-  <entry>
-    <title>THW_GT62: Timescale group changed (2026-07-01)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=THW_GT62"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=THW_GT62#THW_GT62/2026-07-01/group</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Multi-day: off 1–7 days in 2026-06 to Daily, 1–2 a week in 2026-07</summary>
-  </entry>
-  <entry>
-    <title>THW_GT61: Timescale group changed (2026-07-01)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=THW_GT61"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=THW_GT61#THW_GT61/2026-07-01/group</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Multi-day: off 1–7 days in 2026-06 to Daily, 1–2 a week in 2026-07</summary>
   </entry>
 </feed>
