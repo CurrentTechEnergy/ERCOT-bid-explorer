@@ -8,6 +8,13 @@ analyses the code that was scored, and writes `analysis-<name>.md` next to the s
     python analysis/floor_causes.py backtests/mine/current
     python analysis/floor_causes.py backtests/mine/ref
 
+For a run of the Backtest workflow (.github/workflows/backtest.yml), download its `backtest`
+artifact and rebuild both sides from its day files, with no forecasting:
+
+    gh run download <run id> -n backtest -D backtests/mine-ci
+    python -m pipeline.forecast.backtest --score-only --current <branch> --against main \
+        --seed backtests/mine-ci/seed --out backtests/mine
+
 | Script | Question |
 |---|---|
 | floor_causes.py | Where does the cheap-hour committed-minimum error come from (outage, called on but off, called off but on, CC configuration)? |
