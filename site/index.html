@@ -115,7 +115,7 @@
       <div>
         <h2>Who is expected to run, by how often it turns off</h2>
         <p class="note">Each bar is a group's full capacity. Dark is minimum output that runs at any price, the tick is expected output, light is expected off, hatched is on outage.</p>
-        <details class="how"><summary>How it's built</summary><p class="note">Thermal units are grouped by how often they have turned off on price. Daily units are called from what staying on through the day's cheap stretch would cost them at their own node against what they have walked away from before; seasonal and multi-day units from the month's price level; peakers from how often they ran at this price and hour. Grey is units with too few days to call. Nuclear sits in the always-on group, which is off only for outages, never on price. Never-on units had no running hour in the 60-day history and are held off.</p></details>
+        <details class="how"><summary>How it's built</summary><p class="note">Thermal units are grouped by how often they have turned off on price. Daily units are called from what staying on through the day's cheap stretch would cost them at their own node against what they have walked away from before. For combined-cycle and gas steam units, the chance of staying on through that stretch comes from one readable rule per technology: the cost to stay on, the earnings either side, how long the stretch runs against the unit's usual time off, overnight and season, plus each unit's own record. Combined-cycle units are sized at what they usually run at in that hour's price range; seasonal and multi-day units from the month's price level; peakers from how often they ran at this price and hour. Grey is units with too few days to call. Nuclear sits in the always-on group, which is off only for outages, never on price. Never-on units had no running hour in the 60-day history and are held off.</p></details>
       </div>
       <div class="panel-tools">
         <div class="seg seg-sm" id="unit-g" role="radiogroup" aria-label="Unit">
@@ -162,7 +162,7 @@
       <div>
         <h2>Expected generation by hour <span class="h-note" id="hourly-note"></span></h2>
         <p class="note">Expected output by hour. The dashed line is minimum output that runs at any price; the shaded hours are the cheap stretch. Actuals are drawn over it once the 2-day report is out.</p>
-        <details class="how"><summary>How it's built</summary><p class="note">Each unit's call carries the hours it would be off, so thermal is laid out hour by hour by group. Wind and solar come from ERCOT's forecasts less what is offered above the day-ahead price at each unit's node. Batteries are drawn on top while discharging and below zero while charging.</p></details>
+        <details class="how"><summary>How it's built</summary><p class="note">Each thermal unit gets a chance of running in every hour. A unit-hour at 50% or more is drawn as on, at its full size, and anything lower as off, so thermal is laid out hour by hour by group as on/off calls. Outages that ERCOT's unit-level report doesn't name are taken off each zone as a block, without being pinned to a unit. Wind and solar come from ERCOT's forecasts less what is offered above the day-ahead price at each unit's node. Batteries are drawn on top while discharging and below zero while charging.</p></details>
       </div>
     </div>
     <div class="legend" id="hourly-legend"></div>

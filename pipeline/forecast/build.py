@@ -34,8 +34,9 @@ data/forecast/<date>.json.gz
                     model, version, win_from / win_hours (the loss window an hourly probability
                     was judged over), out_share (share of a CC train's site listed out),
                     cc_small (MW a CC train is held at in cheap hours, its smallest usual size),
-                    p_base and drivers (a unit judged on its window: the trees' starting P(on)
-                    and [[driver, points]], how far each input moved it, adding up to p_on)
+                    p_base and drivers (a unit judged on its window: the starting P(on), the trees'
+                    or, for a CC train or gas steam unit on the stay-on rule, a typical unit's
+                    P(stays on), and [[driver, points]], how far each input moved it, adding up to p_on)
   unit_hours        {"series": UNIT_SERIES, "units": {unit: [[24] per series]}}: each thermal
                     unit's hourly weight online (p), expected MW, committed minimum MW, the
                     day-ahead price it was dispatched against (its node, else the hub) and its size

@@ -189,6 +189,12 @@ const DRIVER_LABEL = {
   "hour-by-hour prices in the window": "prices through the cheap stretch",
   "technology, group and month": "technology, cycling pattern and season",
   "how units like it ran in 2024-25": "how units like it behaved in 2024-25",
+  // the stay-on rule (CC trains and gas steam units judged on their window: LOGIT_DRIVERS)
+  "loss in the window": "cost to stay on through the cheap stretch",
+  "overnight window": "the cheap stretch running overnight",
+  "season": "season",
+  "its own record of staying on": "its own record of staying on",
+  "chance it is running going in": "chance it is running before the cheap stretch",
 };
 function driversHTML(f) {
   if (!f.drivers || f.p_base == null) return "";
@@ -248,8 +254,9 @@ async function drawForecast(e) {
     });
   }
   const hOn = act ? act.filter((x) => x.on).length : null;
-  const expOn = d3.sum(P);
-  $("fc-note").innerHTML = verdictHTML(F, f, true) + ` Expected online ${d3.format(".1f")(expOn)} of 24 hours, ${fmtMW(d3.sum(EX))} MWh.` +
+  // the on/off call: on in an hour its chance of being online is 50% or more (the forecast's binary lines)
+  const ON = P.map((v) => (v || 0) >= 0.5), nOn = ON.filter(Boolean).length;
+  $("fc-note").innerHTML = verdictHTML(F, f, true) + ` Called on for ${nOn} of 24 hours (a 50% or better chance), ${fmtMW(d3.sum(EX))} MWh expected.` +
     (act ? ` <b>Actual: online ${hOn} of 24 hours, ${fmtMW(d3.sum(act, (x) => x.out))} MWh.</b>` : ` The 60-day data for this day is not in yet${S.last60 ? ` (it runs to ${S.last60})` : ""}.`);
   const s = TECH_OF[e.tech] || { color: "--c-other" };
   const w = Math.max(280, el.clientWidth || 600), Hm = 210, Hp = 86, Hq = 96, m = { t: 18, r: 16, b: 26, l: 64 };
@@ -270,12 +277,13 @@ async function drawForecast(e) {
   svg.append("g").attr("class", "axis").attr("transform", `translate(${m.l},0)`).call(axisFmt(d3.axisLeft(yp), 3, "$").tickSizeOuter(0));
   svg.append("g").attr("class", "axis").attr("transform", `translate(0,${HT - m.b})`).call(d3.axisBottom(x).tickValues(tickH).tickFormat((h) => `HE ${h + 1}`).tickSizeOuter(0));
   svg.append("text").attr("class", "axis-title").attr("x", m.l).attr("y", 10).text("Expected output and committed minimum (MW)" + (act ? ", actual output" : ""));
-  svg.append("text").attr("class", "axis-title").attr("x", m.l).attr("y", H1 + 10).text("Chance of being online" + (act ? ", actual online" : ""));
+  svg.append("text").attr("class", "axis-title").attr("x", m.l).attr("y", H1 + 10).text("Chance of being online and the on/off call" + (act ? ", actual online" : ""));
   svg.append("text").attr("class", "axis-title").attr("x", m.l).attr("y", H2 + 10).text("Day-ahead price it was judged on ($/MWh)");
   d3.range(24).forEach((h) => {
     svg.append("rect").attr("x", x(h)).attr("width", bw).attr("y", y(EX[h])).attr("height", Math.max(0, y(0) - y(EX[h]))).attr("fill", css(s.color)).attr("fill-opacity", 0.3);
     svg.append("rect").attr("x", x(h)).attr("width", bw).attr("y", y(MN[h])).attr("height", Math.max(0, y(0) - y(MN[h]))).attr("fill", css(s.color));
     if (act) svg.append("line").attr("x1", x(h)).attr("x2", x(h) + bw).attr("y1", y(act[h].out)).attr("y2", y(act[h].out)).attr("stroke", css("--ink")).attr("stroke-width", 2);
+    svg.append("line").attr("x1", x(h)).attr("x2", x(h) + bw).attr("y1", yq(ON[h] ? 1 : 0)).attr("y2", yq(ON[h] ? 1 : 0)).attr("stroke", css(s.color)).attr("stroke-width", 4).attr("opacity", 0.6);
     if (act) svg.append("circle").attr("cx", x(h) + bw / 2).attr("cy", yq(act[h].on ? 1 : 0)).attr("r", 3.5).attr("fill", act[h].on ? css("--ink") : "none").attr("stroke", css("--ink"));
     const v = PR && PR[h];
     if (v != null) svg.append("rect").attr("x", x(h) + bw * 0.2).attr("width", bw * 0.6).attr("y", yp(Math.max(0, v))).attr("height", Math.abs(yp(0) - yp(v))).attr("fill", css(v <= 10 ? "--c8" : "--ink-2"));
@@ -286,16 +294,16 @@ async function drawForecast(e) {
     .on("pointermove", (ev) => {
       const h = Math.max(0, Math.min(23, Math.floor((d3.pointer(ev)[0] - m.l) / x.step())));
       showTip(ev, `<h4>${fmtDate(parseDate(day))} · HE ${h + 1}</h4><table>` +
-        `<tr><td>Chance online</td><td class="n">${fmtPct(P[h])}</td></tr><tr><td>Expected output</td><td class="n">${fmtMW(EX[h])} MW</td></tr>` +
+        `<tr><td>Chance online</td><td class="n">${fmtPct(P[h])}</td></tr><tr><td>Call</td><td class="n">${ON[h] ? "on" : "off"}</td></tr><tr><td>Expected output</td><td class="n">${fmtMW(EX[h])} MW</td></tr>` +
         `<tr><td>Committed minimum</td><td class="n">${fmtMW(MN[h])} MW</td></tr><tr><td>Day-ahead price</td><td class="n">${fmtPrice(PR && PR[h])}</td></tr>` +
         (act ? `<tr><td>Actual</td><td class="n">${act[h].on ? `online, ${fmtMW(act[h].out)} MW` : "offline"}</td></tr>` : "") + `</table>`);
     })
     .on("pointerleave", hideTip);
   el.replaceChildren(svg.node());
-  setCSV(el, ["hour_ending", "chance_online", "expected_mw", "committed_min_mw", "day_ahead_price", ...(act ? ["actual_online", "actual_output_mw"] : [])],
-    d3.range(24).map((h) => [h + 1, P[h], EX[h], MN[h], PR ? PR[h] : null, ...(act ? [act[h].on ? 1 : 0, act[h].out] : [])]), `${e.name} forecast ${day} by hour`);
+  setCSV(el, ["hour_ending", "chance_online", "call_on", "expected_mw", "committed_min_mw", "day_ahead_price", ...(act ? ["actual_online", "actual_output_mw"] : [])],
+    d3.range(24).map((h) => [h + 1, P[h], ON[h] ? 1 : 0, EX[h], MN[h], PR ? PR[h] : null, ...(act ? [act[h].on ? 1 : 0, act[h].out] : [])]), `${e.name} forecast ${day} by hour`);
   $("fc-legend").innerHTML = `<span><span class="sw" style="background:var(${s.color})"></span>Committed minimum</span><span><span class="sw" style="background:var(${s.color});opacity:0.3"></span>Expected output</span>` +
-    `<span><span class="sw sw-line" style="border-top-color:var(${s.color})"></span>Chance online</span>` + (wf ? `<span><span class="sw" style="background:var(--band)"></span>Loss window</span>` : "") +
+    `<span><span class="sw sw-line" style="border-top-color:var(${s.color})"></span>Chance online</span><span><span class="sw" style="background:var(${s.color});opacity:0.6"></span>Call: on at 50% or more, off below</span>` + (wf ? `<span><span class="sw" style="background:var(--band)"></span>Loss window</span>` : "") +
     (act ? `<span><span class="sw sw-line" style="border-top-color:var(--ink)"></span>Actual output</span><span>● online ○ offline (actual)</span>` : "") + `<span><span class="sw" style="background:var(--c8)"></span>Price at or below $10</span>`;
 }
 

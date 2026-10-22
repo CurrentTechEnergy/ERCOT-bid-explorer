@@ -290,10 +290,14 @@ function drawSpark() {
   $("spark-note").textContent = `Bands are the low, middle and high quarters of the last twelve months' daily averages.` + (lam ? " The dashed line is the real-time system lambda, averaged by hour." : "");
 }
 
+// a forecast line as on/off calls (each unit-hour in full when its chance of running is 50% or
+// more, none otherwise: the file's *_bin lines), falling back to the probability-weighted line in
+// files built before thermal v11
+const binLine = (a, k) => a[k + "_bin"] || a[k];
 function miniSeries() {
   const h = S.day && S.day.hourly;
   if (!h || !h.category) return null;
-  const out = CATS.map(([k, label, color]) => ({ id: k, label, color, vals: h.category[k].exp }));
+  const out = CATS.map(([k, label, color]) => ({ id: k, label, color, vals: binLine(h.category[k], "exp") }));
   [WIND, SOLAR].forEach((s) => { if (h[s.id]) out.push({ ...s, vals: h[s.id].disp }); });
   return out;
 }
@@ -430,7 +434,7 @@ function drawTechs() {
 function hourlySeries() {
   const h = S.day && S.day.hourly;
   if (!h) return null;
-  const out = S.fc.groups.filter((g) => h.group[g]).map((g) => ({ id: g, label: GROUP_SHORT[g] || g, color: GROUP_COLORS[g] || "--c-other", vals: h.group[g].exp, kind: "thermal" }));
+  const out = S.fc.groups.filter((g) => h.group[g]).map((g) => ({ id: g, label: GROUP_SHORT[g] || g, color: GROUP_COLORS[g] || "--c-other", vals: binLine(h.group[g], "exp"), kind: "thermal" }));
   [WIND, SOLAR].forEach((s) => { if (h[s.id]) out.push({ ...s, vals: h[s.id].disp, kind: "renew" }); });
   if (h.storage) out.push({ ...STORAGE, id: "storage_dis", label: "Batteries discharging", vals: h.storage.dis, kind: "storage" });
   return out;
@@ -499,7 +503,7 @@ function drawHourly() {
   const el = $("hourly-chart"), ser = hourlySeries();
   if (!ser) { $("hourly-legend").innerHTML = ""; return emptyMsg(el, "No forecast for this day."); }
   const gh = genHourly(), lines = [], below = [];
-  const minLine = S.day.hourly.fleet.min;
+  const minLine = binLine(S.day.hourly.fleet, "min");
   lines.push({ id: "min", label: "Committed thermal minimum (stays on at any price)", color: "--ink", vals: minLine, dash: "4 3", width: 1.5, opacity: 0.8 });
   if (gh) {
     // the actual lines are stacked the same way as the forecast (thermal, then wind on top, then
@@ -544,7 +548,7 @@ function actualSeries() {
     lines.push({ id: "fc_total", label: "Forecast: total supply", color: "--ink", vals: total, dash: "6 3" });
     const th = HRS.map((h) => d3.sum(fc.filter((s) => s.kind === "thermal"), (s) => s.vals[h] || 0));
     lines.push({ id: "fc_thermal", label: "Forecast: thermal", color: "--ink", vals: th, dash: null, width: 1.5 });
-    lines.push({ id: "fc_min", label: "Forecast: committed minimum", color: "--ink", vals: S.day.hourly.fleet.min, dash: "2 3", width: 1.5, opacity: 0.8 });
+    lines.push({ id: "fc_min", label: "Forecast: committed minimum", color: "--ink", vals: binLine(S.day.hourly.fleet, "min"), dash: "2 3", width: 1.5, opacity: 0.8 });
   }
   return { areas, below, lines, L };
 }
@@ -702,7 +706,7 @@ function mixRows(h) {
   const D = S.day;
   if (!D) return null;
   const a60 = S.a60, gh = genHourly();
-  const rows = TECHS.map(([t, label, color]) => ({ id: t, label, color, mw: D.hourly.tech[t] ? D.hourly.tech[t].exp[h] : 0, act: a60 && a60.tech[t] ? a60.tech[t][h] : null }));
+  const rows = TECHS.map(([t, label, color]) => ({ id: t, label, color, mw: D.hourly.tech[t] ? binLine(D.hourly.tech[t], "exp")[h] : 0, act: a60 && a60.tech[t] ? a60.tech[t][h] : null }));
   // the 2-day summary reports thermal in total, so on a 2-day day the total row carries the actual
   // and the technology rows beneath it are the forecast's split (not counted twice in the totals)
   if (!a60 && gh && gh.thermal[h] != null) {
