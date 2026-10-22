@@ -23,6 +23,22 @@ report.md (also printed): the promotion gate of pipeline/forecast/benchmark.py, 
 both sides with a pass or fail verdict for the current side, then the committed-minimum error
 (all, cheap and negative hours) and the score by technology and group over every as-of day.
 backtests/ is gitignored; the scripts in analysis/ read a side folder (see analysis/README.md).
+
+Split and cached (the Backtest workflow, .github/workflows/backtest.yml, runs it this way):
+
+  --side current --chunk I N   build one side only, and only the Ith of N runs of consecutive
+                               days among those with no file yet, so N jobs given the same seed
+                               build every day between them
+  --current REF                take the current side's code from REF instead of the working tree
+  --seed DIR                   copy the day files in DIR/<side>/ into each side before building:
+                               days already built (a cache, or the chunks' output) are kept
+  --emit DIR                   copy the day files this run built to DIR/<side>/
+  --score-only                 build nothing: score the seeded day files with each side's own
+                               code, then write the report
+
+The days are independent (each is forecast from what was public the day before it), so the
+chunks can run on separate machines and a side's day files can be reused for as long as its
+code and the thermal history it reads are unchanged.
 """
 import argparse
 import json
@@ -33,7 +49,7 @@ import sys
 import time
 from pathlib import Path
 
-from ..config import DATA_DIR, ROOT, UNIT_DATA_DIR
+from ..config import DATA_DIR, HISTORY_DIR, ROOT, UNIT_DATA_DIR
 from ..store import read_json_gz
 
 OUTPUTS = ("forecast", "fit")       # site/data entries a forecast run writes; everything else is input
@@ -44,6 +60,26 @@ from pipeline.forecast import run
 if {no_fit!r}:
     run.fit_days = lambda *a, **k: []
 sys.exit(run.main({argv!r}))
+"""
+# One chunk of the days with no file yet: the Ith of N runs of consecutive days, since the
+# cutoff model is fitted once per history point (a month) and reused for the days that share
+# it.  Uses only functions every version of run.py uses.
+CHUNK_RUNNER = """
+import sys
+sys.path.insert(0, {tree!r})
+from pipeline.store import load_index
+from pipeline.forecast import context as C
+from pipeline.forecast.build import OUT_DIR, forecast_days, write_day
+ctx = C.Context(load_index())
+C.update_snapshots(ctx)
+rng = {days!r}
+days = [d for d in forecast_days(ctx) if not rng or rng[0] <= d <= rng[1]]
+todo = [d for d in days if not (OUT_DIR / (d + ".json.gz")).exists()]
+todo = todo[{i} * len(todo) // {n}:({i} + 1) * len(todo) // {n}]
+print(f"chunk {i} of {n}: {{len(todo)}} of {{len(days)}} day(s) to build", flush=True)
+for d in todo:
+    write_day(d, ctx)
+    print("built", d, flush=True)
 """
 
 
@@ -72,12 +108,34 @@ def make_tree(side_dir: Path, ref: str = None) -> Path:
     return tree
 
 
-def start(side_dir: Path, tree: Path, no_fit: bool, days):
-    argv = ["--days", *days] if days else []
-    env = {**os.environ, "UNIT_DATA_DIR": str(tree / "unitdata"), "PYTHONDONTWRITEBYTECODE": "1"}
+def start(side_dir: Path, tree: Path, no_fit: bool, days, chunk=None, score_only=False, env_extra=None, n_sides=2):
+    argv = ["--score"] if score_only else (["--days", *days] if days else [])
+    tree = tree.resolve()       # the side runs with the tree as its working directory
+    env = {**os.environ, "UNIT_DATA_DIR": str(tree / "unitdata"), "PYTHONDONTWRITEBYTECODE": "1", **(env_extra or {})}
+    env.setdefault("HISTORY_DIR", str(HISTORY_DIR))     # else each side would look in tree/history, which is empty
+    # the boosted trees use every core; two sides each doing so on the same machine slow both
+    # to a crawl (OpenMP threads spinning against each other), so split the cores between them
+    env.setdefault("OMP_NUM_THREADS", str(max(1, (os.cpu_count() or 2) // n_sides)))
     log = open(side_dir / "run.log", "w")
-    code = RUNNER.format(tree=str(tree), no_fit=no_fit, argv=argv)
+    if chunk and not score_only:
+        code = CHUNK_RUNNER.format(tree=str(tree), days=list(days) if days else None, i=chunk[0], n=chunk[1])
+    else:
+        code = RUNNER.format(tree=str(tree), no_fit=no_fit, argv=argv)
     return subprocess.Popen([sys.executable, "-c", code], cwd=tree, env=env, stdout=log, stderr=subprocess.STDOUT), log
+
+
+def _day_files(forecast_dir: Path) -> list:
+    """The per-day outputs of a forecast folder, relative to it: <date>.json.gz and stack/<date>.json.gz."""
+    return sorted(p.relative_to(forecast_dir) for p in [*forecast_dir.glob("20*.json.gz"), *forecast_dir.glob("stack/20*.json.gz")])
+
+
+def _copy_days(src: Path, dst: Path) -> int:
+    n = 0
+    for rel in _day_files(src) if src.exists() else []:
+        (dst / rel).parent.mkdir(parents=True, exist_ok=True)
+        shutil.copy2(src / rel, dst / rel)
+        n += 1
+    return n
 
 
 def _versions(scores: dict) -> str:
@@ -165,20 +223,37 @@ def report(cur: dict, ref: dict, labels=("current", "ref"), cal=None) -> str:
 def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--against", default="main", help="git ref to compare with (default main)")
+    ap.add_argument("--current", help="git ref for the current side (default the working tree)")
     ap.add_argument("--out", help="output folder (default backtests/<timestamp>)")
     ap.add_argument("--no-fit", action="store_true", help="skip the 2-day fit")
     ap.add_argument("--days", nargs=2, metavar=("START", "END"), help="only build days in this range")
     ap.add_argument("--report-only", action="store_true", help="rewrite report.md from the sides already run")
+    ap.add_argument("--side", choices=("current", "ref"), help="run this side only")
+    ap.add_argument("--chunk", nargs=2, type=int, metavar=("I", "N"), help="build the Ith of N runs of the unbuilt days (no fit, no scores)")
+    ap.add_argument("--seed", help="copy DIR/<side>/ day files into each side first")
+    ap.add_argument("--emit", help="copy the day files built to DIR/<side>/")
+    ap.add_argument("--score-only", action="store_true", help="score the seeded day files, build nothing")
+    ap.add_argument("--labels", nargs=2, metavar=("CURRENT", "REF"), help="names for the two sides in the report")
+    ap.add_argument("--current-env", default="", help="NAME=VALUE pairs (space-separated) for the current side only, e.g. THERMAL_VARIANT=logit")
     args = ap.parse_args(argv)
     out = Path(args.out or ROOT / "backtests" / time.strftime("%Y%m%d-%H%M%S")).resolve()
-    sides = {"current": None, "ref": args.against}
+    sides = {"current": args.current, "ref": args.against}
+    run_sides = [args.side] if args.side else list(sides)
+    env_of = {"current": dict(kv.split("=", 1) for kv in args.current_env.split()), "ref": {}}
     if not args.report_only:
         t0 = time.time()
-        procs = {}
-        for side, ref in sides.items():
+        procs, before = {}, {}
+        for side in run_sides:
+            ref = sides[side]
             d = out / side
             d.mkdir(parents=True, exist_ok=True)
-            procs[side] = start(d, make_tree(d, ref), args.no_fit, args.days)
+            tree = make_tree(d, ref)
+            fc = tree / "site" / "data" / "forecast"
+            if args.seed:
+                print(f"{side}: {_copy_days(Path(args.seed) / side, fc)} day file(s) seeded", flush=True)
+            before[side] = set(_day_files(fc))
+            procs[side] = start(d, tree, args.no_fit or bool(args.chunk), args.days, args.chunk, args.score_only,
+                                env_of[side], len(run_sides))
             print(f"{side}: {'working tree' if ref is None else ref} running, log {d / 'run.log'}", flush=True)
         failed = []
         for side, (p, log) in procs.items():
@@ -186,18 +261,30 @@ def main(argv=None):
             log.close()
             if rc:
                 failed.append(side)
-        print(f"both sides done in {time.time() - t0:.0f}s" + (f"; failed: {', '.join(failed)} (see run.log)" if failed else ""))
+        print(f"{', '.join(procs)} done in {time.time() - t0:.0f}s" + (f"; failed: {', '.join(failed)} (see run.log)" if failed else ""))
         if failed:
             return 1
+        if args.emit:
+            for side in run_sides:
+                fc = out / side / "tree" / "site" / "data" / "forecast"
+                new = [r for r in _day_files(fc) if r not in before[side]]
+                for rel in new:
+                    (Path(args.emit) / side / rel).parent.mkdir(parents=True, exist_ok=True)
+                    shutil.copy2(fc / rel, Path(args.emit) / side / rel)
+                print(f"{side}: {len(new)} day file(s) emitted", flush=True)
+        if args.chunk or args.side:
+            return 0
     scores = {s: read_json_gz(out / s / "tree" / "site" / "data" / "forecast" / "scores.json.gz", default={"days": {}})
               for s in sides}
     from .score import calibration
     cal = {s: calibration(scores[s].get("days", {}), out / s / "tree" / "site" / "data" / "forecast") for s in sides}
-    text = report(scores["current"], scores["ref"], ("current", args.against), cal)
+    labels = list(args.labels or (args.current or "current", args.against))
+    if args.current_env:
+        labels[0] += f" ({args.current_env})"
+    text = report(scores["current"], scores["ref"], tuple(labels), cal)
     (out / "report.md").write_text(text)
     print(text)
     return 0
-
 
 if __name__ == "__main__":
     sys.exit(main())
