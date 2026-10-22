@@ -27,12 +27,12 @@ Method (v0), for one operating day with a forecast file and a 2-day curve file:
   target     the 2-day non-IRR curve, hourly mean, at PRICES
   fit        coordinate descent: units in order of how uncertain the forecast was about them
              (maybe and no-cutoff first, then daily units by how close their day loss sat to
-             their cutoff, then seasonal and multi-day, then never-off and outage last) are
+             their cutoff, then seasonal and multi-day, then always-on and outage last) are
              each tried off all day, on all day (in each configuration) and, where the
              forecast gave one, on outside its off window; a change is kept when it lowers
              the weighted residual
              sum_h sum_p w_p |fleet(h, p) - target(h, p)| by more than MIN_GAIN of the unit's
-             own contribution (MIN_GAIN_FIRM for never-off units and units on outage, where
+             own contribution (MIN_GAIN_FIRM for always-on units and units on outage, where
              the forecast is surer).  Passes repeat until nothing changes (at most MAX_PASSES).
   report     the fitted set by group and technology (MW of LSL and HSL, counts, flips), each
              unit's forecast and fitted verdict with the gain its change bought, the residual
@@ -65,7 +65,7 @@ OUT_DIR = DATA_DIR / "fit"
 PRICES = [-249.0, -20.0, 0.0, 10.0, 25.0, 50.0, float(PRICE_GRID[-1])]
 WEIGHTS = [1.0, 2.0, 2.0, 1.0, 1.0, 1.0, 0.5]       # the LSL-identifying points count double; the cap depends on HSL
 MIN_GAIN = 0.02          # a change must lower the residual by this share of the unit's own contribution
-MIN_GAIN_FIRM = 0.15     # ... and by this share for never-off units and units on outage (the forecast is surer of them)
+MIN_GAIN_FIRM = 0.15     # ... and by this share for always-on units and units on outage (the forecast is surer of them)
 CT_STEPS = 51            # peaker online share by hour: grid searched on [0, 1]
 MAX_PASSES = 4
 SIMILAR = 0.10           # "interchangeable": same technology, LSL and HSL within this share

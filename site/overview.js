@@ -17,13 +17,13 @@ const fmtPct = d3.format(".0%");
 const dayLabel = (d) => d3.timeFormat("%a %b %-d, %Y")(new Date(d + "T12:00:00"));
 
 // ---- series: colours are fixed per group, technology and category -----------------------
-const GROUP_COLORS = { never: "--g1", seasonal: "--g2", multiday: "--g3", daily1: "--g4", daily2: "--g5", daily3: "--g6", ungrouped: "--c-other" };
+const GROUP_COLORS = { never: "--g1", seasonal: "--g2", multiday: "--g3", daily1: "--g4", daily2: "--g5", daily3: "--g6", never_on: "--c-other", ungrouped: "--c-other" };
 const GROUP_NOTES = {
-  never: "has never turned off on price, plus nuclear", seasonal: "off for a week or more at a time", multiday: "shortest time off is 1 to 7 days",
+  never: "off only for outages, never on price, plus nuclear", seasonal: "off for a week or more at a time", multiday: "shortest time off is 1 to 7 days",
   daily1: "turns off within a day, under once a week", daily2: "turns off within a day, 1 to 2 a week", daily3: "turns off within a day, over 2 a week",
-  ungrouped: "no hourly history yet",
+  never_on: "no running hour in the 60-day history (mothballed or on a long outage)", ungrouped: "no hourly history yet",
 };
-const GROUP_SHORT = { never: "Never off", seasonal: "Seasonal", multiday: "Multi-day", daily1: "Daily, under once a week", daily2: "Daily, 1 to 2 a week", daily3: "Daily, over 2 a week", ungrouped: "Not yet grouped" };
+const GROUP_SHORT = { never: "Always on when available", seasonal: "Seasonal", multiday: "Multi-day", daily1: "Daily, under once a week", daily2: "Daily, 1 to 2 a week", daily3: "Daily, over 2 a week", never_on: "Never on", ungrouped: "Not yet grouped" };
 const TECHS = [
   ["nuclear", "Nuclear", "--c5"], ["coal", "Coal & lignite", "--c8"], ["combined_cycle", "Combined cycle", "--c1"],
   ["gas_steam", "Gas steam", "--c6"], ["combustion_turbine", "Combustion turbine", "--c2"],
@@ -33,7 +33,7 @@ const TECH_COLOR = Object.fromEntries(TECHS.map(([id, , c]) => [id, c]));
 const CATS = [
   ["baseload", "Baseload", "--g1", "Units that never turn off on price, plus nuclear"],
   ["price_sensitive", "Price-sensitive", "--g4", "Units that turn off when staying on costs too much"],
-  ["peakers", "Peakers", "--c2", "Combustion turbines outside the never-off group, from how often they ran at this price and hour"],
+  ["peakers", "Peakers", "--c2", "Combustion turbines outside the always-on group, from how often they ran at this price and hour"],
 ];
 const WIND = { id: "wind", label: "Wind", color: "--c3" }, SOLAR = { id: "solar", label: "Solar", color: "--c4" };
 const STORAGE = { id: "storage", label: "Batteries", color: "--c7" };

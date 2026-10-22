@@ -39,7 +39,7 @@ const FLOOR_NOTES = {
 // hourly unit strips). Only the "≤ −$20, as used" measure has per-unit values (units[i].le20).
 const FLOOR_GROUPS = [
   { id: "nuclear", label: "Nuclear (no offer curve)", color: "--c5" },
-  { id: "never", label: "Never off", color: "--c1" },
+  { id: "never", label: "Always on when available", color: "--c1" },
   { id: "seasonal", label: "Seasonal: off a week or more", color: "--c6" },
   { id: "multiday", label: "Multi-day: off 1–7 days", color: "--c2" },
   { id: "daily1", label: "Daily, under 1 shutdown a week", color: "--c8" },
@@ -370,13 +370,15 @@ const ST_RESP = [
   { id: "A", label: "Ran above minimum", color: null, o: 1 },
 ];
 // Groups by the finest timescale a unit has shown it will shut down on: its shortest off spell.
+const ST_NEVER_ON_DAYS = 120;              // never on needs this many days of hourly states with no running hour
 const ST_GROUPS = [
-  { id: "never", label: "Never off", note: "no shutdown in the period" },
+  { id: "never", label: "Always on when available", note: "no shutdown on price in the period; off only for outages" },
   { id: "seasonal", label: "Seasonal: off a week or more", note: "every off spell lasted 7 days or more" },
   { id: "multiday", label: "Multi-day: off 1–7 days", note: "shortest off spell between 24 h and 7 days" },
   { id: "daily1", label: "Daily, under 1 shutdown a week", note: "at least two off spells under 24 h, fewer than one shutdown a week" },
   { id: "daily2", label: "Daily, 1–2 a week", note: "one to two shutdowns a week" },
   { id: "daily3", label: "Daily, over 2 a week", note: "more than two shutdowns a week" },
+  { id: "never_on", label: "Never on", note: `no running hour in ${ST_NEVER_ON_DAYS}+ days of states` },
 ];
 const ST_OUT_MIN_H = 4;                  // an off spell with fewer OFF hours than this, or more OUT than OFF, is an outage
 const ST_FLEET = [...ST_RESP, { id: "N", label: "Not running going in", color: "--grid", o: 1 }];
@@ -446,17 +448,18 @@ function stretchBase() {
       } else k++;
     }
     // an off stretch open at the window start is not a shutdown, but a week or more of it makes a
-    // unit that never started seasonal rather than never-off
+    // unit that started late seasonal rather than always-on
     { let j = 0, off = 0, gap = 0;
       while (j < N && (st[j] === "0" || st[j] === "o" || st[j] === "-")) { if (st[j] === "0") off++; else if (st[j] === "-") gap++; j++; }
       if (j >= 168 && gap <= off && off >= ST_OUT_MIN_H) long.push(j); }
     // daily needs two pure OFF spells under 24 h (one can be a trip and restart) and is split by
     // shutdowns per week over the period; a lone short spell does not place a unit
     const perWeek = e.shut / (N / 168);
-    e.group = short >= 2 ? (perWeek < 1 ? "daily1" : perWeek <= 2 ? "daily2" : "daily3")
+    e.ran = st.some((c) => c === "m" || c === "a");
+    // never on needs a long record: an idle peaker a few months into the window looks the same
+    e.group = !e.ran && st.filter((c) => c !== "-").length >= ST_NEVER_ON_DAYS * 24 ? "never_on" : short >= 2 ? (perWeek < 1 ? "daily1" : perWeek <= 2 ? "daily2" : "daily3")
       : long.length ? (d3.min(long) < 168 ? "multiday" : "seasonal") : "never";
     e.pick = e.configs.sort((a, b) => b.run - a.run)[0].name;   // config shown in Unit detail
-    e.ran = st.some((c) => c === "m" || c === "a");
     const o = e.off.slice().sort(d3.ascending);
     e.offMin = o.length ? o[0] : null; e.offP10 = o.length ? d3.quantile(o, 0.1) : null; e.offMed = o.length ? d3.median(o) : null;
     // the pipeline's groups (pipeline/groups.py, the same rules) are the shared definition, also
@@ -758,7 +761,7 @@ function dayUnits(F) {
     .filter((r) => r.verdict !== "peaker" && r.lsl > 0)
     .map((r) => ({
       ...r,
-      // "cut": leaves at its own cutoff; "flat": on at any loss (nuclear, never off, seasonal and
+      // "cut": leaves at its own cutoff; "flat": on at any loss (nuclear, always on, seasonal and
       // multi-day units judged on for the month, units without a cutoff yet); "off": judged off
       // for the month; "out": on outage
       kind: r.verdict === "outage" ? "out" : r.cutoff != null ? "cut" : r.verdict === "off" ? "off" : "flat",
@@ -813,7 +816,7 @@ function drawCutoff() {
   const outMW = d3.sum(U.filter((u) => u.kind === "out"), (u) => u.lsl), offMW = d3.sum(U.filter((u) => u.kind === "off"), (u) => u.lsl);
   $("cut-title-note").textContent = fmtDate(parseDate(F.date));
   window.CX.setNote($("cut-note"), "Minimum output (MW) that stays on as the cost of staying on rises. Each daily unit drops off at the cost it usually turns off above.", `Thermal minimum output (LSL, MW) that stays on as the stay-on loss rises. The loss is what riding through the day's worst contiguous stretch at minimum output costs a unit at its own node's day-ahead price (minimum-energy cost less price, times the hours), before any start cost, divided by its LSL so units of every size compare. ` +
-    `Each daily unit leaves the curve at its own cutoff: the loss per MW above which it has turned off on days without a day-ahead award, fitted on its decision days before this one. Nuclear and the never-off group stay on at any loss, so they are the flat floor. ` +
+    `Each daily unit leaves the curve at its own cutoff: the loss per MW above which it has turned off on days without a day-ahead award, fitted on its decision days before this one. Nuclear and the always-on group stay on at any loss, so they are the flat floor. ` +
     `Seasonal and multi-day units are judged on the month's price level, not a day loss, so they sit flat at the day's verdict (${fmtMW(offMW)} MW of their minimum output is judged off for the month and is not drawn). Daily units with too few decision days for a cutoff are the grey band, drawn flat. ${fmtMW(outMW)} MW on outage and peakers (they start rather than stay on) are left off. ` +
     `Every unit faces its own loss at its own node, so the day is not one point on the axis: the dashed line is the day's expected committed minimum (each unit's LSL times its chance of being on, the Overview's figure without peakers), and the dotted line is the median loss per MW the daily units faced. The chart below places every unit.`);
   staticLegend($("cut-legend"), bands);
@@ -924,7 +927,7 @@ function drawGroups() {
       acc: days ? d3.sum(d, (u) => u.acc * u.days) / days : null, base: days ? d3.sum(d, (u) => u.base * u.days) / days : null };
   });
   $("groups-title-note").textContent = fmtDate(parseDate(F.date));
-  window.CX.setNote($("groups-note"), "Coal and gas units grouped by how often they turn off on price, with the day's expected output and minimum output online.", `Every coal and gas unit (combined-cycle configurations merged into their train) by how often it has turned off on price over the ${S.G ? S.G.dates.length : ""} days of 60-day data (pipeline/groups.py), with nuclear in the never-off group as on the Overview. Units, capacity (HSL), committed minimum (LSL of the units expected on, weighted by their chance of being on) and expected output are the day's forecast and include peakers, so they match the Overview. ` +
+  window.CX.setNote($("groups-note"), "Coal and gas units grouped by how often they turn off on price, with the day's expected output and minimum output online.", `Every coal and gas unit (combined-cycle configurations merged into their train) by how often it has turned off on price over the ${S.G ? S.G.dates.length : ""} days of 60-day data (pipeline/groups.py), with nuclear in the always-on group as on the Overview. Units, capacity (HSL), committed minimum (LSL of the units expected on, weighted by their chance of being on) and expected output are the day's forecast and include peakers, so they match the Overview. ` +
     `The cutoff columns cover units with enough decision days for a cutoff (${S.DEC ? `${S.DEC.min_days} days with at least ${S.DEC.min_each} shutdowns and ${S.DEC.min_each} stays` : ""}): the median cutoff per MW of LSL, and how often the rule "off when no award covers the window and the loss is above the cutoff, else on" matched what the units did, weighted by decision days, against the base rate of each unit's commoner outcome. A rule well above its base rate says the day economics decide; near it, something else does. Seasonal and multi-day units are judged on the month's price level instead, and the inflexibility tracker below shows them month by month.`);
   el.innerHTML = `<table class="data"><thead><tr><th class="t">Group</th><th>Units</th><th>Capacity MW</th><th>On / off / outage</th><th>Committed minimum MW</th><th>Expected output MW</th><th>Units with a cutoff</th><th>Median cutoff $/MW LSL</th><th>Cutoff rule right</th><th>Base rate</th></tr></thead><tbody>` +
     rows.map((r) => `<tr><td class="t"><span class="sw" style="background:var(${FLOOR_GROUPS.find((f) => f.id === r.g)?.color || "--c-other"});margin-right:6px"></span>${GROUP_LABEL[r.g]}<br><span class="muted">${ST_GROUPS.find((g) => g.id === r.g)?.note || "too little history to place"}</span></td>` +

@@ -9,7 +9,8 @@ For every thermal train in the latest DAM disclosure (pipeline.forecast.context.
               outage sixty days ago says little about today (most are over), so it is ignored
               and the unit is judged like any other
   nuclear     on (output at HSL) unless on outage
-  never       the never-off group: on
+  never       the always-on group (off only for outages in its history): on
+  never_on    no running hour in the 60-day history: off (p_on 0)
   daily       loss = the worst contiguous window of (minimum-energy cost - day-ahead price at
               the unit's node) x LSL over the day, in $ (pipeline.decisions._window).  v1 turns
               it into p_on, the probability the unit stays on through that window: v5 boosted
@@ -57,7 +58,7 @@ For every thermal train in the latest DAM disclosure (pipeline.forecast.context.
               turbines are listed (one listed of two usually still runs, on the other).  A CC
               train, or a gas steam unit outside the never group, on a long outage at the last
               known hour that the report does not list (CLEAR_TECHS) is judged as if off then.
-              Never-off gas steam units are left out: their long outages are mostly mothballs,
+              Always-on gas steam units are left out: their long outages are mostly mothballs,
               which the report does not carry.
   unseen      the outage capacity by zone that the unit-level report does not explain
               (Context.unseen_out, planned outages mostly) is placed on the zone's coal, CC, gas
@@ -66,8 +67,8 @@ For every thermal train in the latest DAM disclosure (pipeline.forecast.context.
               Context.outage_prior), each capped at its free HSL (v10; spread by HSL alone
               before): each carries unseen_share, folded into out_share, which the dispatch model
               takes off its weight
-  peakers     combustion turbines outside the never-off group (which are held on, as other
-              never-off units) are not judged here (peaker_share, by hour, on the hours
+  peakers     combustion turbines outside the always-on group (which are held on, as other
+              always-on units) are not judged here (peaker_share, by hour, on the hours
               they were available); they get verdict "peaker" and p_on from that model, and the
               outage calls above (long outage, listed, unseen share) as other units do.
 
@@ -463,8 +464,10 @@ def forecast(date, ctx: C.Context) -> dict:
                "reason": "", "model": NAME, "version": VERSION}
         if last == "o":
             row.update(verdict="outage", reason=f"on outage for {out_days:.0f} days at the last known hour ({known})")
+        elif g == "never_on":
+            row.update(verdict="off", p_on=0.0, reason="never on in the period")
         elif t == "nuclear" or (g == "never" and not cc_win):
-            row.update(verdict="on", p_on=1.0, reason="never off" if g == "never" else "nuclear")
+            row.update(verdict="on", p_on=1.0, reason="always on when available" if g == "never" else "nuclear")
         elif t == "combustion_turbine":
             row.update(verdict="peaker", reason="judged by hour (peaker_share)")
         elif g in ("seasonal", "multiday") and not cc_win:

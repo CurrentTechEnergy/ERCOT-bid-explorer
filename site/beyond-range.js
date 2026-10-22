@@ -32,7 +32,7 @@ const FLOOR_NOTES = {
 // hourly unit strips). Only the "≤ −$20, as used" measure has per-unit values (units[i].le20).
 const FLOOR_GROUPS = [
   { id: "nuclear", label: "Nuclear (no offer curve)", color: "--c5" },
-  { id: "never", label: "Never off", color: "--c1" },
+  { id: "never", label: "Always on when available", color: "--c1" },
   { id: "seasonal", label: "Seasonal: off a week or more", color: "--c6" },
   { id: "multiday", label: "Multi-day: off 1–7 days", color: "--c2" },
   { id: "daily1", label: "Daily, under 1 shutdown a week", color: "--c8" },

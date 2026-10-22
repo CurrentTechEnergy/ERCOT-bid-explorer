@@ -115,7 +115,7 @@
       <div>
         <h2>Who is expected to run, by how often it turns off</h2>
         <p class="note">Each bar is a group's full capacity. Dark is minimum output that runs at any price, the tick is expected output, light is expected off, hatched is on outage.</p>
-        <details class="how"><summary>How it's built</summary><p class="note">Thermal units are grouped by how often they have turned off on price. Daily units are called from what staying on through the day's cheap stretch would cost them at their own node against what they have walked away from before; seasonal and multi-day units from the month's price level; peakers from how often they ran at this price and hour. Grey is units with too few days to call. Nuclear sits in the never-off group.</p></details>
+        <details class="how"><summary>How it's built</summary><p class="note">Thermal units are grouped by how often they have turned off on price. Daily units are called from what staying on through the day's cheap stretch would cost them at their own node against what they have walked away from before; seasonal and multi-day units from the month's price level; peakers from how often they ran at this price and hour. Grey is units with too few days to call. Nuclear sits in the always-on group, which is off only for outages, never on price. Never-on units had no running hour in the 60-day history and are held off.</p></details>
       </div>
       <div class="panel-tools">
         <div class="seg seg-sm" id="unit-g" role="radiogroup" aria-label="Unit">

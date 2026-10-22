@@ -12,7 +12,7 @@ const TECHS = [
   { id: "storage", label: "Battery storage" },
 ];
 const TECH_LABEL = Object.fromEntries(TECHS.map((t) => [t.id, t.label]));
-const GROUP_SHORT = { never: "Never off", seasonal: "Seasonal", multiday: "Multi-day", daily1: "Daily, under once a week", daily2: "Daily, 1 to 2 a week", daily3: "Daily, over 2 a week", ungrouped: "Not yet grouped" };
+const GROUP_SHORT = { never: "Always on when available", seasonal: "Seasonal", multiday: "Multi-day", daily1: "Daily, under once a week", daily2: "Daily, 1 to 2 a week", daily3: "Daily, over 2 a week", never_on: "Never on", ungrouped: "Not yet grouped" };
 const GROUP_ORDER = Object.keys(GROUP_SHORT);
 const COLS = [
   { k: "unit", h: "Unit", t: 1, f: (u) => `<a href="unit.html?unit=${encodeURIComponent(u.unit)}">${esc(u.unit)}</a>` },

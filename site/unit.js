@@ -25,7 +25,7 @@ const THERMAL = ["nuclear", "coal", "combined_cycle", "gas_steam", "combustion_t
 const TECH_OF = Object.fromEntries(TECHS.map((t) => [t.id, t]));
 const techLabel = (t) => (TECH_OF[t] ? TECH_OF[t].label : t === "storage" ? "Storage (ESR)" : t === "hydro" ? "Hydro" : t || "–");
 const SIG_FMT = { le0: (v) => d3.format(".0%")(v), noff: (v) => d3.format(".0%")(v), rel: (v) => (v >= 0 ? "+" : "−") + d3.format("$,.0f")(Math.abs(v)) };
-const GROUP_SHORT = { never: "Never off", seasonal: "Seasonal", multiday: "Multi-day", daily1: "Daily, under once a week", daily2: "Daily, 1 to 2 a week", daily3: "Daily, over 2 a week", ungrouped: "Not yet grouped" };
+const GROUP_SHORT = { never: "Always on when available", seasonal: "Seasonal", multiday: "Multi-day", daily1: "Daily, under once a week", daily2: "Daily, 1 to 2 a week", daily3: "Daily, over 2 a week", never_on: "Never on", ungrouped: "Not yet grouped" };
 const VERDICT = { on: "likely on", off: "likely off", maybe: "toss-up", nocut: "no call yet (too few days to judge)", outage: "on outage", peaker: "peaker, called from how often it ran at this price and hour" };
 const S = { econ: {}, day: null, hour: null, T: null, DEC: null, UH: null, SP: null, FI: null, FC: null, fcDay: null, PPA: null, CH: null, list: new Map(), stubs: new Set(), unit: null, cfg: null, span: null, last60: null };
 const { tryJSON, showTip, hideTip, setCSV, tickFormat, fmtKind, axisFmt, css, esc } = window.CX;

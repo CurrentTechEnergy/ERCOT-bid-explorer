@@ -27,7 +27,7 @@ const FLOOR_NOTES = {
 // hourly unit strips). Only the "≤ −$20, as used" measure has per-unit values (units[i].le20).
 const FLOOR_GROUPS = [
   { id: "nuclear", label: "Nuclear (no offer curve)", color: "--c5" },
-  { id: "never", label: "Never off", color: "--c1" },
+  { id: "never", label: "Always on when available", color: "--c1" },
   { id: "seasonal", label: "Seasonal: off a week or more", color: "--c6" },
   { id: "multiday", label: "Multi-day: off 1–7 days", color: "--c2" },
   { id: "daily1", label: "Daily, under 1 shutdown a week", color: "--c8" },
@@ -1096,13 +1096,15 @@ const ST_RESP = [
   { id: "A", label: "Ran above minimum", color: null, o: 1 },
 ];
 // Groups by the finest timescale a unit has shown it will shut down on: its shortest off spell.
+const ST_NEVER_ON_DAYS = 120;              // never on needs this many days of hourly states with no running hour
 const ST_GROUPS = [
-  { id: "never", label: "Never off", note: "no shutdown in the period" },
+  { id: "never", label: "Always on when available", note: "no shutdown on price in the period; off only for outages" },
   { id: "seasonal", label: "Seasonal: off a week or more", note: "every off spell lasted 7 days or more" },
   { id: "multiday", label: "Multi-day: off 1–7 days", note: "shortest off spell between 24 h and 7 days" },
   { id: "daily1", label: "Daily, under 1 shutdown a week", note: "at least two off spells under 24 h, fewer than one shutdown a week" },
   { id: "daily2", label: "Daily, 1–2 a week", note: "one to two shutdowns a week" },
   { id: "daily3", label: "Daily, over 2 a week", note: "more than two shutdowns a week" },
+  { id: "never_on", label: "Never on", note: `no running hour in ${ST_NEVER_ON_DAYS}+ days of states` },
 ];
 const ST_OUT_MIN_H = 4;                  // an off spell with fewer OFF hours than this, or more OUT than OFF, is an outage
 const ST_FLEET = [...ST_RESP, { id: "N", label: "Not running going in", color: "--grid", o: 1 }];
@@ -1172,17 +1174,18 @@ function stretchBase() {
       } else k++;
     }
     // an off stretch open at the window start is not a shutdown, but a week or more of it makes a
-    // unit that never started seasonal rather than never-off
+    // unit that started late seasonal rather than always-on
     { let j = 0, off = 0, gap = 0;
       while (j < N && (st[j] === "0" || st[j] === "o" || st[j] === "-")) { if (st[j] === "0") off++; else if (st[j] === "-") gap++; j++; }
       if (j >= 168 && gap <= off && off >= ST_OUT_MIN_H) long.push(j); }
     // daily needs two pure OFF spells under 24 h (one can be a trip and restart) and is split by
     // shutdowns per week over the period; a lone short spell does not place a unit
     const perWeek = e.shut / (N / 168);
-    e.group = short >= 2 ? (perWeek < 1 ? "daily1" : perWeek <= 2 ? "daily2" : "daily3")
+    e.ran = st.some((c) => c === "m" || c === "a");
+    // never on needs a long record: an idle peaker a few months into the window looks the same
+    e.group = !e.ran && st.filter((c) => c !== "-").length >= ST_NEVER_ON_DAYS * 24 ? "never_on" : short >= 2 ? (perWeek < 1 ? "daily1" : perWeek <= 2 ? "daily2" : "daily3")
       : long.length ? (d3.min(long) < 168 ? "multiday" : "seasonal") : "never";
     e.pick = e.configs.sort((a, b) => b.run - a.run)[0].name;   // config shown in Unit detail
-    e.ran = st.some((c) => c === "m" || c === "a");
     const o = e.off.slice().sort(d3.ascending);
     e.offMin = o.length ? o[0] : null; e.offP10 = o.length ? d3.quantile(o, 0.1) : null; e.offMed = o.length ? d3.median(o) : null;
     // the pipeline's groups (pipeline/groups.py, the same rules) are the shared definition, also
