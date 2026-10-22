@@ -71,8 +71,9 @@ For every thermal train in the latest DAM disclosure (pipeline.forecast.context.
               coal, CC, gas steam and combustion turbines the long-outage carry-over, the
               listed-out verdicts and the unseen allocation give way to outage_v11's expected
               share out (into out_share).  Part "logit": a CC train or gas steam unit judged on
-              its window takes P(on) inside it from a logistic with one intercept per unit
-              (_logit_fit, the year to the asof point) in place of the trees, on outside it.
+              its window takes P(on) inside it as the trees' P(on) in the hour before it times
+              a logistic's P(stays on | on) with one intercept per unit (_logit_fit, the year to
+              the asof point, on unit-days online going into the window).
               Part "pool" (instead of "out"): the long-outage carry-over and the unseen
               allocation give way to outage_pool's zonal deduction by hour (commit
               "outage_pool"), placed on no unit; units the outage report names keep their calls
@@ -406,7 +407,8 @@ def _pool(ctx, date):
                           s["on_days"] if s else 0.0)
             X.append(_tree_x(_hourly(f, margin, lsl, bs, nh), tech, g, d[5:7], loss, lsl)); y.append(np.isin(seg, ["m", "a"]).astype(float))
             N.append(_net(ctx, d, tech))
-            if tech in WINDOW_TECHS:
+            k0 = dn * 24 + bs - 1       # the hour before the window (the previous day's HE24 for a window from HE1)
+            if tech in WINDOW_TECHS and k0 >= 0 and st[1][k0] in "ma":
                 L.append((key, tech, d, _logit_x(f, margin, loss, lsl, bs, nh, d), float(y[-1][bs:bs + nh].mean() < 0.5)))
     # the thermal history before the 60-day window (pipeline/history.py), on the units'
     # attributes as of the point: the same rows from months of DAM days before and after RTC+B
@@ -429,7 +431,7 @@ def _pool(ctx, date):
                           s["on_days"] if s else 0.0)
             XH.append(np.column_stack([_hist_view(_tree_x(_hourly(f, margin, lsl, bs, nh), tech, g, d[5:7], loss, lsl)),
                                        _net(ctx, d, tech)])); yH.append(np.isin(seg, ["m", "a"]).astype(float))
-            if tech in WINDOW_TECHS:
+            if tech in WINDOW_TECHS and bs > 0 and seg[bs - 1] in "ma":
                 L.append((key, tech, d, _logit_x(f, margin, loss, lsl, bs, nh, d), float(yH[-1][bs:bs + nh].mean() < 0.5)))
     X = np.vstack(X) if X else np.zeros((0, 0))
     y = np.concatenate(y) if y else np.zeros(0)
@@ -462,7 +464,8 @@ def _logit_x(f, margin, loss, lsl, bs, nh, d):
 
 
 def _logit_fit(L, point):
-    """{tech: (mean, sd, trains, model)}: a logistic for "off for most of the window" on the
+    """{tech: (mean, sd, trains, model)}: a logistic for "off for most of the window", given
+    online in the hour before it (as analysis/decision_model.py's blocks), on the
     LOGIT_DAYS days up to `point`, standardised inputs plus one intercept per train (L2, as
     analysis/decision_model.py), one fit per technology with LOGIT_MIN unit-days, else one fit
     for both under "*"."""
@@ -595,8 +598,8 @@ def forecast(date, ctx: C.Context) -> dict:
                 ph = wt.predict_proba(Z)[:, 1] if wt is not None else np.full(24, float(loss <= cut))
                 p_off = (_logit_p_off(w.get("logit") or {}, t, key, _logit_x(x[0], margin, loss, lsl, bs, nh, date))
                          if C.v11("logit") and t in WINDOW_TECHS else None)
-                if p_off is not None:       # v11: the logistic rule in the window, on outside it
-                    ph = np.ones(24); ph[bs:bs + nh] = 1.0 - p_off
+                if p_off is not None:       # v11: the trees' P(on) going into the window x the rule's P(stays on | on)
+                    ph = ph.copy(); ph[bs:bs + nh] = ph[bs - 1 if bs > 0 else min(bs + nh, 23)] * (1.0 - p_off)
                 p_on = round(float(ph[bs:bs + nh].mean()), 2)
                 if wt is not None and p_off is None:
                     row["p_base"], row["drivers"] = _drivers(wt, Z, bs, nh, float(ph[bs:bs + nh].mean()))
