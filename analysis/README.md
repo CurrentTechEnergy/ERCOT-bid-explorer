@@ -24,3 +24,12 @@ artifact and rebuild both sides from its day files, with no forecasting:
 
 The first script on a side computes every thermal unit-hour on the scored as-of days (about three
 minutes) and caches it as `unit_hours.pkl` in the side folder; the rest reuse it.
+
+## Decision table on actuals
+
+`decision_table.py` is not a backtest script: it builds the analysis track's table of every coal,
+combined-cycle and gas steam train's stay-on decision through its day-ahead loss window from
+2019 on, from the thermal history release (see its docstring for the columns):
+
+    gh release download history -R CurrentTechEnergy/ERCOT-bid-explorer -p 'thermal-*' -p 'units-*' -p 'da-hubs-*' -D history
+    python analysis/decision_table.py --out decision-table
