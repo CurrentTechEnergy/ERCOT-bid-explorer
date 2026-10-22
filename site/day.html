@@ -24,7 +24,7 @@
 
 <header class="masthead">
   <div class="brand">
-    <div class="nav-row"><nav class="nav" aria-label="Pages"><a href="index.html">Tomorrow</a><a href="beyond.html">Offers</a><a href="commitment.html">Commitment</a><a href="renewables.html">Renewables</a><a href="batteries.html">Batteries</a><a href="unit.html">Units</a><span class="nav-sep" aria-hidden="true"></span><a href="changes.html" class="aux">What's changing</a><a href="fleet.html" class="aux">Fleet economics</a><a href="trends.html" class="aux">Trends</a><a href="builder.html" class="aux">Graph builder</a><a href="guide.html" class="aux">How offers work</a></nav></div>
+    <div class="nav-row"><nav class="nav" aria-label="Pages"><a href="index.html">Tomorrow</a><a href="beyond.html">Offers</a><a href="commitment.html">Commitment</a><a href="renewables.html">Renewables</a><a href="batteries.html">Batteries</a><a href="unit.html">Units</a><span class="nav-sep" aria-hidden="true"></span><a href="changes.html" class="aux">What's changing</a><a href="fleet.html" class="aux">Fleet economics</a><a href="builder.html" class="aux">Graph builder</a><a href="guide.html" class="aux">How offers work</a></nav></div>
     <h1>ERCOT Bid Stack Explorer</h1>
     <p class="sub">How resources offer energy into SCED, by technology, day and hour. Data from ERCOT's 2-Day SCED Energy Curves and 60-Day SCED Disclosure reports.</p>
     <p class="sub retiring">Day view is being retired. Its charts now live on the <a href="./">Overview</a> (generation mix, price duration, units) and <a href="beyond.html">Beyond baseload</a> (offer curves, marginal supply, through the day).</p>
@@ -137,7 +137,7 @@
     <div class="panel-head">
       <div>
         <h2>Marginal offer stack by price <span class="h-note" id="os-title-note"></span></h2>
-        <p class="note">Who would move next if price landed at each level: each technology's share of the MW offered around that price, read off the day's offer curves (the slope of the bid stack). Battery charging bids are demand, so they sit below the line as a share of the supply offered at that price. MW at the −$250 floor (units with no offer curve, mostly nuclear and hydro) are left out, and so is each unit's minimum output (LSL), which SCED cannot move: on days processed before that was done it still shows as a spike at −$20 (−$50 for some units). Ticks along the top mark each hour's system lambda. The same view across all days, by settled price, is on the <a href="trends.html">Trends</a> page.</p>
+        <p class="note">Who would move next if price landed at each level: each technology's share of the MW offered around that price, read off the day's offer curves (the slope of the bid stack). Battery charging bids are demand, so they sit below the line as a share of the supply offered at that price. MW at the −$250 floor (units with no offer curve, mostly nuclear and hydro) are left out, and so is each unit's minimum output (LSL), which SCED cannot move: on days processed before that was done it still shows as a spike at −$20 (−$50 for some units). Ticks along the top mark each hour's system lambda. The same view across all days, by settled price, is on the <a href="beyond.html">Offers</a> page.</p>
       </div>
       <div class="panel-tools">
         <div class="seg seg-sm" id="os-view" role="radiogroup" aria-label="Hours">
@@ -167,7 +167,7 @@
     <div class="panel-head">
       <div>
         <h2>Through the day <span class="h-note" id="profile-title-note"></span></h2>
-        <p class="note">MW offered at or below the threshold in each hour of the selected day, with the cleared price below. It follows the Offer curves chart's minimum output setting: "From LSL" counts each technology's online minimum output (LSL) at every threshold, since it runs however low the price goes, plus the MW offered above it at or below the threshold; "As ERCOT prices it" counts minimum output only from −$20 (−$50 for some units) up, where ERCOT prices it. The same measure for every day and hour is under Across days on the <a href="trends.html">Trends</a> page.</p>
+        <p class="note">MW offered at or below the threshold in each hour of the selected day, with the cleared price below. It follows the Offer curves chart's minimum output setting: "From LSL" counts each technology's online minimum output (LSL) at every threshold, since it runs however low the price goes, plus the MW offered above it at or below the threshold; "As ERCOT prices it" counts minimum output only from −$20 (−$50 for some units) up, where ERCOT prices it. The same measure for every day and hour is under Across days on the <a href="beyond.html">Offers</a> page.</p>
       </div>
       <div class="panel-tools">
         <label class="lbl inline" for="threshold">At or below</label>

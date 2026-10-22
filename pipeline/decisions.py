@@ -3,7 +3,7 @@ what riding through the day's cheapest hours would have cost it at its own node'
 price, whether a DAM award covered those hours, and whether it shut down.  From that, each
 unit's own cutoff: the day-ahead loss above which it turns off when it holds no award.  The
 cutoff and tomorrow's day-ahead node prices then give the units expected to turn off tomorrow.
-Needs no downloads.  Read by trends.html, commitment.html and unit.html.
+Needs no downloads.  Read by commitment.html and unit.html.
 
 Decision days use only what was known when the day-ahead market cleared: the DAM price at the
 unit's settlement point (data/dam/), its minimum-energy cost and LSL from its three-part offer
