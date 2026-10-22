@@ -42,7 +42,14 @@ One pair of Parquet files per calendar month:
     mingen      minimum-energy offer cost in the DAM three-part offer ($/MWh)
     hot_start   hot start-up offer cost ($ per start)
 
-    python -m pipeline.history 2019-01 [2019-02 ...] [--out history] [--force] [--thermal]
+  as-YYYY-MM.parquet       (--as, from the 60-day DAM disclosure alone) one row per thermal resource
+                           and operating hour with a DAM ancillary service award:
+    date, he, unit, tech   as above
+    regup, regdn, rrs, ecrs, nspin   MW awarded per service (0 where none)
+  as-mcpc-YYYY-MM.parquet  (--as) date, he and the DAM market clearing price for capacity of each
+                           of those services ($/MW per hour)
+
+    python -m pipeline.history 2019-01 [2019-02 ...] [--out history] [--force] [--thermal | --as]
 """
 import argparse
 import calendar
@@ -69,6 +76,7 @@ SLACK = 4         # days either side of that a file may post
 FLOAT_COLS = ["offer", "spread", "hsl", "bp", "out", "directed", "award", "dam_hsl", "da_node"]
 THERMAL_TECHS = ("nuclear", "coal", "combined_cycle", "gas_steam", "combustion_turbine")
 THERMAL_FLOAT = ["lsl", "hsl", "out", "award", "da_node", "dam_lsl", "mingen", "hot_start"]
+AS_SERVICES = ["regup", "regdn", "rrs", "ecrs", "nspin"]
 
 
 def _days(month: str):
@@ -163,6 +171,31 @@ def thermal_rows(ud: dict, dam: dict) -> pd.DataFrame:
     return f
 
 
+def as_rows(dam: dict):
+    """-> (thermal AS award rows, MCPC rows) for one operating day from a DAM day file
+    (parse_dam_zip)."""
+    hours = dam.get("hours", 24)
+    rows = []
+    for name, u in (dam.get("units") or {}).items():
+        a = u.get("as") or {}
+        if u.get("tech") not in THERMAL_TECHS or not a:
+            continue
+        v = {k: _to24(a.get(k), hours) for k in AS_SERVICES}
+        for h in range(24):
+            mw = [v[k][h] or 0.0 for k in AS_SERVICES]
+            if any(mw):
+                rows.append([name, u["tech"], h + 1] + mw)
+    f = pd.DataFrame(rows, columns=["unit", "tech", "he"] + AS_SERVICES)
+    m = pd.DataFrame({k: _to24((dam.get("mcpc") or {}).get(k), hours) for k in AS_SERVICES})
+    m.insert(0, "he", range(1, 25))
+    for g in (f, m):
+        g.insert(0, "date", dam["date"])
+        g["he"] = g["he"].astype("int8")
+        for k in AS_SERVICES:
+            g[k] = pd.to_numeric(g[k], errors="coerce").astype("float32")
+    return f, m
+
+
 DAM_KEEP = ("sp", "award", "spp", "hsl", "hsl_h")
 DAM_KEEP_THERMAL = ("sp", "award", "spp", "lsl", "mingen", "start")
 MEM_LIMIT = 5 * 2 ** 30    # bytes of address space a parse may use (hosted runners have 7 GB)
@@ -176,7 +209,7 @@ def _slim_dam(day: dict, thermal: bool = False) -> dict:
                       if u.get("tech") in techs}}
 
 
-def _parse(blob: bytes, source: str, dam: dict, thermal: bool = False):
+def _parse(blob: bytes, source: str, dam: dict, thermal: bool = False, ancillary: bool = False):
     """Run in a child process: parse one disclosure and reduce it to what the month file keeps,
     -> (operating day, slim DAM day file or unit-hour frame).  The address-space cap makes a file
     too big to parse fail with MemoryError here instead of taking down the whole runner."""
@@ -187,11 +220,12 @@ def _parse(blob: bytes, source: str, dam: dict, thermal: bool = False):
         raise ValueError(f"not a {source} disclosure ({describe_blob(blob)})")
     parsed = found[1](blob)
     if source == "dam":
-        return parsed[0], _slim_dam(parsed[1], thermal)
+        return parsed[0], as_rows(parsed[1]) if ancillary else _slim_dam(parsed[1], thermal)
     return parsed[0], (thermal_rows if thermal else unit_rows)(parsed[3][0], dam.get(parsed[0]))
 
 
-def _disclosures(api, emil: str, days, source: str, dam=None, thermal: bool = False):
+def _disclosures(api, emil: str, days, source: str, dam=None, thermal: bool = False,
+                 ancillary: bool = False):
     """Yield (date, result of _parse) for the month's operating days from a 60-day report,
     opening each file whose posting date maps to within SLACK days of the month.  Each file is
     parsed in a fresh child process, so its memory is returned and one file that fails (even by
@@ -216,7 +250,7 @@ def _disclosures(api, emil: str, days, source: str, dam=None, thermal: bool = Fa
                 continue
             t0 = time.time()
             with ProcessPoolExecutor(max_workers=1) as ex:
-                date, result = ex.submit(_parse, blob, source, dam or {}, thermal).result()
+                date, result = ex.submit(_parse, blob, source, dam or {}, thermal, ancillary).result()
             print(f"  {label}: {date}, {len(blob) / 1e6:.0f} MB zip, {time.time() - t0:.0f}s", flush=True)
         except Exception as e:     # BrokenProcessPool when the child was killed
             warn(f"{label} ({len(blob) / 1e6:.0f} MB): failed: {type(e).__name__}: {e}")
@@ -268,17 +302,44 @@ def build_month(api, month: str, out: Path = OUT, force: bool = False, thermal: 
           f"{upath.stat().st_size / 1e6:.1f} MB, {time.time() - t0:.0f}s")
 
 
+def build_as_month(api, month: str, out: Path = OUT, force: bool = False) -> None:
+    out.mkdir(parents=True, exist_ok=True)
+    apath, mpath = out / f"as-{month}.parquet", out / f"as-mcpc-{month}.parquet"
+    if apath.exists() and mpath.exists() and not force:
+        print(f"{apath.name}: already there")
+        return
+    t0 = time.time()
+    got = [r for _, r in _disclosures(api, EMIL_DAM, _days(month), "dam", ancillary=True)]
+    if not got:
+        warn(f"{month}: no DAM days found; nothing written")
+        return
+    f = pd.concat([a for a, _ in got], ignore_index=True).sort_values(["date", "unit", "he"]).reset_index(drop=True)
+    for k in ("unit", "tech"):
+        f[k] = f[k].astype("category")
+    m = pd.concat([b for _, b in got], ignore_index=True).sort_values(["date", "he"]).reset_index(drop=True)
+    f.to_parquet(apath, index=False)
+    m.to_parquet(mpath, index=False)
+    print(f"{apath.name}: {len(f):,} rows, {m['date'].nunique()} days, {f['unit'].nunique()} units, "
+          f"{time.time() - t0:.0f}s")
+
+
 def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("months", nargs="+", help="YYYY-MM")
     ap.add_argument("--out", default=str(OUT))
     ap.add_argument("--force", action="store_true", help="rebuild files that already exist")
-    ap.add_argument("--thermal", action="store_true", help="build the thermal files instead of wind and solar")
+    kind = ap.add_mutually_exclusive_group()
+    kind.add_argument("--thermal", action="store_true", help="build the thermal files instead of wind and solar")
+    kind.add_argument("--as", dest="ancillary", action="store_true",
+                      help="build the thermal ancillary service award and MCPC files instead")
     args = ap.parse_args(argv)
     from .ercot_api import ErcotAPI
     api = ErcotAPI()
     for m in args.months:
-        build_month(api, m, Path(args.out), args.force, args.thermal)
+        if args.ancillary:
+            build_as_month(api, m, Path(args.out), args.force)
+        else:
+            build_month(api, m, Path(args.out), args.force, args.thermal)
 
 
 if __name__ == "__main__":
