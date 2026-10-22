@@ -22,7 +22,7 @@ const BANDS = [
   { id: "zero", label: "About $0 (−$1 to $0)", color: "--c-other" },
   { id: "pos", label: "Above $0", color: "--c1" },
 ];
-const S = { C: null, N: null, SIG: [], cday: null, span: null, last60: null, ncAll: false, pbasis: "lambda" };
+const S = { C: null, N: null, SIG: [], cday: null, span: null, last60: null, ncAll: false, pbasis: "lambda", unBy: "zone", unTech: "all", unLam: "all" };
 const { tryJSON, showTip, hideTip, setCSV, tickFormat, fmtKind, axisFmt, css, esc } = window.CX;
 const $ = (id) => document.getElementById(id);
 const fmtMW = d3.format(",.0f");
@@ -359,12 +359,57 @@ function bidWhenCurtailed(name, dates) {
 
 // ---- links ------------------------------------------------------------------------
 // the hedge-signal panels (renewables-hedge.js) keep their own keys in the same address bar
-const VIEW_KEYS = { cday: "cday", pb: "pbasis" };
+const VIEW_KEYS = { cday: "cday", pb: "pbasis", unb: "unBy", unt: "unTech", unl: "unLam" };
 function saveView() { window.CX.writeHash({ ...window.CX.readHash(), ...Object.fromEntries(Object.entries(VIEW_KEYS).map(([k, sk]) => [k, S[sk]])) }); }
 function loadView() { const v = window.CX.readHash(); Object.entries(VIEW_KEYS).forEach(([k, sk]) => { if (v[k] != null) S[sk] = v[k]; }); }
 
+
+// ---- unused wind and solar, by region and offer price ----------------------------------
+const UN_ZONES = { WEST: ["West", "--c2"], PANHANDLE: ["Panhandle", "--c4"], NORTH: ["North", "--c1"], SOUTH: ["South", "--c8"],
+  COASTAL: ["Coastal", "--c3"], HOUSTON: ["Houston", "--c7"], unmapped: ["No zone in the CDR", "--c-other"] };
+const UN_BAND_COLORS = ["--c7", "--c1", "--c3", "--c2", "--c-other"];
+const UN_LAM = { all: () => true, le15: (l) => l != null && l <= 15, gt15: (l) => l != null && l > 15 };
+function drawUnused() {
+  const U = S.N && S.N.unused, el = $("un-daily"), tel = $("un-table");
+  setSeg("un-by", S.unBy); setSeg("un-tech", S.unTech); setSeg("un-lam", S.unLam);
+  if (!U || !U.rows.length) { emptyMsg(el, "No unused wind and solar data yet. It is built by the data update workflow."); tel.innerHTML = $("un-legend").innerHTML = ""; return; }
+  const ci = Object.fromEntries(U.columns.map((c, i) => [c, i]));
+  const nb = U.bands.length, b0 = ci.b0, lamOk = UN_LAM[S.unLam] || UN_LAM.all;
+  const zones = U.zones.map((z) => ({ id: z, label: (UN_ZONES[z] || [z])[0], color: (UN_ZONES[z] || [, "--c-other"])[1] }));
+  const bands = U.bands.map((b, i) => ({ id: i, label: b, color: UN_BAND_COLORS[i] || "--c-other" }));
+  const groups = S.unBy === "band" ? bands : zones;
+  const day = new Map(), cell = new Map();
+  U.rows.forEach((r) => {
+    if ((S.unTech !== "all" && r[ci.tech] !== S.unTech) || !lamOk(r[ci.lambda])) return;
+    const a = day.get(r[ci.date]) || day.set(r[ci.date], new Array(groups.length).fill(0)).get(r[ci.date]);
+    const zi = U.zones.indexOf(r[ci.zone]);
+    const c = cell.get(r[ci.zone]) || cell.set(r[ci.zone], new Array(nb).fill(0)).get(r[ci.zone]);
+    for (let i = 0; i < nb; i++) {
+      const v = r[b0 + i] || 0;
+      if (!v) continue;
+      a[S.unBy === "band" ? i : zi] += v / 1000;
+      c[i] += v / 1000;
+    }
+  });
+  const dts = S.N.dates.filter((d) => day.has(d));
+  const total = d3.sum([...cell.values()], (c) => d3.sum(c));
+  const what = S.unTech === "all" ? "wind and solar" : S.unTech;
+  $("un-note").textContent = `${dts.length} days · ${d3.format(",.0f")(total)} GWh unused ${what}` + (S.unLam === "all" ? "" : ` in hours with λ ${S.unLam === "le15" ? "≤" : ">"} $15`);
+  staticLegend($("un-legend"), groups);
+  const series = groups.map((g, j) => ({ ...g, values: dts.map((d) => day.get(d)[j]) }));
+  timeChart(el, series, { dates: dts, stack: true, stackMax: Math.max(1, d3.max(dts, (d) => d3.sum(day.get(d)))) * 1.05, H: 240,
+    yFmt: d3.format(",.0f"), tipFmt: (v) => `${d3.format(",.1f")(v)} GWh`, empty: "No unused wind and solar in this selection.",
+    title: `Unused ${what} by ${S.unBy === "band" ? "offer price" : "region"}, GWh per day` });
+  // region by offer price, GWh over the selection, with each row's share by band
+  tel.innerHTML = `<table class="data"><thead><tr><th class="t">Region</th><th>GWh</th>${bands.map((b) => `<th>${b.label}</th>`).join("")}</tr></thead><tbody>` +
+    zones.filter((z) => cell.has(z.id)).map((z) => { const c = cell.get(z.id), t = d3.sum(c);
+      return `<tr><td class="t">${z.label}</td><td>${d3.format(",.0f")(t)}</td>${c.map((v) => `<td>${t ? fmtPct(v / t) : "–"}</td>`).join("")}</tr>`; }).join("") +
+    `<tr><td class="t"><b>All regions</b></td><td><b>${d3.format(",.0f")(total)}</b></td>${bands.map((b, i) => { const v = d3.sum([...cell.values()], (c) => c[i]); return `<td><b>${total ? fmtPct(v / total) : "–"}</b></td>`; }).join("")}</tr></tbody></table>`;
+  setCSV(tel, ["region", "gwh", ...bands.map((b) => `${b.label} GWh`)], zones.filter((z) => cell.has(z.id)).map((z) => [z.id, d3.sum(cell.get(z.id)), ...cell.get(z.id)]), "Unused wind and solar by region and offer price");
+}
+
 // ---- boot ---------------------------------------------------------------------------
-function drawAll() { drawRenewBands(); drawCurtail(); drawNodeCurtail(); }
+function drawAll() { drawRenewBands(); drawCurtail(); drawNodeCurtail(); drawUnused(); }
 
 async function boot() {
   [S.C, S.N] = await Promise.all([tryJSON("data/curve_trends.json.gz"), tryJSON("data/curtail_nodes.json.gz")]);
@@ -383,6 +428,7 @@ async function boot() {
   $("cday").onchange = (e) => { S.cday = e.target.value; drawCurtail(); saveView(); };
   $("cday-prev").onclick = () => step(-1); $("cday-next").onclick = () => step(1);
   bindSeg("nc-basis", "pbasis", drawCurtPrice);
+  [["un-by", "unBy"], ["un-tech", "unTech"], ["un-lam", "unLam"]].forEach(([id, key]) => bindSeg(id, key, drawUnused));
   $("nc-more").onclick = () => { S.ncAll = true; drawNodeCurtail(); };
   drawAll();
   window.CX.init();

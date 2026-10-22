@@ -81,6 +81,27 @@ def _site_name(names):
     return _UNIT_WORD.sub("", name).strip() or name
 
 
+# zones for the site's regional splits, west to east; the CDR's BEXAR (San Antonio) counts as SOUTH
+ZONES = ["WEST", "PANHANDLE", "NORTH", "SOUTH", "COASTAL", "HOUSTON", "unmapped"]
+ZONE_ALIAS = {"BEXAR": "SOUTH"}
+
+
+def zone_lookup():
+    """-> zone(name, tech): the unit's CDR zone (one of ZONES), "unmapped" without a match.
+    The extract is a csv, not a tracked input of the memoized builders that use this: rerun them
+    with REBUILD_ALL after refreshing it."""
+    matcher, seen = Matcher(load()), {}
+
+    def zone(name, tech):
+        if name not in seen:
+            m, _ = matcher.match(name, tech)
+            z = (m or {}).get("zone")
+            z = ZONE_ALIAS.get(z, z)
+            seen[name] = z if z in ZONES else "unmapped"
+        return seen[name]
+    return zone
+
+
 class Matcher:
     def __init__(self, rows: list):
         self.code = {r["code"]: r for r in rows}
