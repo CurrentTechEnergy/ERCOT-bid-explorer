@@ -28,6 +28,16 @@ Two answers per day:
              ones; kept as sums (hours, absolute error, error, expected, actual, MW-h) so the
              summary weights every hour alike.  This is the number that says how much thermal
              gets out of the way when prices are low; the daily GWh call barely sees it.
+  floor_parts  (in sixty_day) the same error split by cause, unit by unit and hour by hour,
+             so errors that cancel in the fleet sum show up (v10 held about 2 GW on units that
+             were out and ran about 2 GW short on units that were available): each unit-hour's
+             committed minimum (its "min" series) less its online LSL goes to
+               outage   the unit was offline and in the outage state that hour
+               onoff    offline and not on outage, or online while the forecast held it at
+                        under half weight (p < 0.5)
+               sizing   online and held at half weight or more: the size it was given
+               other    online units the forecast has no row for
+             kept as sums per part over all and cheap hours, as floor
 
 Per day: mean absolute error (MW over 24 hours), bias (expected minus actual), expected and
 actual GWh, and the headline call: right when expected thermal GWh is within HEADLINE_TOL of
@@ -44,7 +54,7 @@ Writes data/forecast/scores.json.gz:
   days[date]["asof"]  false for a hindsight day (left out of the summary)
   summary      {versions key: {n, n_hindsight, headline_hit, thermal_mae, thermal_bias, unit_hit,
                 n_judged, wind_mae, solar_mae, floor: {all, cheap, neg: {hours, mae, bias, exp,
-                act} (MW)}, by_band: {band: {...}}, group: {g: {mae, bias, n}}}}
+                act} (MW)}, floor_parts: {part: {all, cheap: {hours, mae, bias}}}, by_band: {band: {...}}, group: {g: {mae, bias, n}}}}
 """
 import numpy as np
 
@@ -55,6 +65,7 @@ from . import context as C
 from .build import GROUPS
 
 PATH = DATA_DIR / "forecast" / "scores.json.gz"
+FLOOR_PARTS = ("outage", "onoff", "sizing", "other")
 HEADLINE_TOL = 0.10
 CHEAP_HUB = C.CHEAP_HUB          # $/MWh: an hour at or below this day-ahead hub price is a cheap hour
 ESR_SPLIT_DATE = "2026-06-22"     # before this, ERCOT's "remaining resources" included storage
@@ -127,6 +138,7 @@ def score_sixty_day(day: dict, ctx: C.Context) -> dict:
     names = rows_file["units"]
     act = {}          # train -> (output[24], online[24])
     on_lsl = np.zeros(24)
+    key_lsl = {}      # train -> online LSL[24]
     for r in rows_file["rows"]:
         name, t = names[r[0]][0], names[r[0]][2]
         if t not in C.THERMAL:
@@ -139,6 +151,7 @@ def score_sixty_day(day: dict, ctx: C.Context) -> dict:
         if (r[cols["online_share"]] or 0) >= 0.5:
             on[h] = 1
             on_lsl[h] += r[cols["lsl"]] or 0.0
+            key_lsl.setdefault(key, np.zeros(24))[h] += r[cols["lsl"]] or 0.0
     uc = {c: i for i, c in enumerate(day["units"]["columns"])}
     by_g = {g: [np.zeros(24), np.zeros(24)] for g in GROUPS}
     by_t = {t: [np.zeros(24), np.zeros(24)] for t in C.THERMAL}
@@ -179,7 +192,57 @@ def score_sixty_day(day: dict, ctx: C.Context) -> dict:
     fa = sum(by_t[t][1] for t in C.THERMAL)
     out["fleet"] = stat(fe, fa)
     out["floor"] = score_floor(_arr(day["hourly"]["fleet"]["min"]), on_lsl, _arr(day["headline"].get("hub")))
+    out["floor_parts"] = score_floor_parts(day, key_lsl, _states(ctx, date), _arr(day["headline"].get("hub")))
     return out
+
+
+def _states(ctx: C.Context, date: str) -> dict:
+    """{train: [24] merged hourly states (m, a, 0, o, -)} for `date` from the 60-day unit hours,
+    outage spells not rewritten; {} when the day is outside them."""
+    dates = (ctx.uh or {}).get("dates") or []
+    if not dates:
+        return {}
+    dn = (C._d(date) - C._d(dates[0])).days
+    out = {}
+    for key, (_, st) in ctx.raw_states().items():
+        if 0 <= dn and (dn + 1) * 24 <= len(st):
+            out[key] = st[dn * 24:(dn + 1) * 24]
+    return out
+
+
+def score_floor_parts(day: dict, key_lsl: dict, states: dict, hub) -> dict | None:
+    """The floor error split by cause (FLOOR_PARTS, module docstring), as sums over all and
+    cheap hours like score_floor.  None for a forecast file without unit hours."""
+    uh = (day.get("unit_hours") or {})
+    series = uh.get("series") or []
+    if "min" not in series or "p" not in series:
+        return None
+    ip, im = series.index("p"), series.index("min")
+    err = {k: np.zeros(24) for k in FLOOR_PARTS}
+    for key, s in (uh.get("units") or {}).items():
+        mn, p = _arr(s[im]), _arr(s[ip])
+        if mn.shape != (24,) or p.shape != (24,):
+            continue
+        mn, p = np.nan_to_num(mn), np.nan_to_num(p)
+        a = key_lsl.get(key, np.zeros(24))
+        st = np.asarray(states.get(key, ["-"] * 24))
+        on = a > 0
+        out = ~on & (st == "o")
+        sizing = on & (p >= 0.5)
+        e = mn - a
+        err["outage"] += np.where(out, e, 0.0)
+        err["sizing"] += np.where(sizing, e, 0.0)
+        err["onoff"] += np.where(~out & ~sizing, e, 0.0)
+    for key, a in key_lsl.items():
+        if key not in (uh.get("units") or {}):
+            err["other"] -= a
+    ok = ~np.isnan(hub) if hub.shape == (24,) else np.zeros(24, bool)
+    res = {}
+    for part, e in err.items():
+        res[part] = {}
+        for k, sel in (("all", ok), ("cheap", ok & (np.nan_to_num(hub, nan=np.inf) <= CHEAP_HUB))):
+            res[part][k] = {"hours": int(sel.sum()), "abs": _r(np.abs(e[sel]).sum()), "err": _r(e[sel].sum())}
+    return res
 
 
 CAL_BINS = [0.0, 0.05, 0.2, 0.4, 0.6, 0.8, 0.95, 1.0001]   # P(on) bins of the reliability table
@@ -246,6 +309,22 @@ def _floor_summary(sd: list) -> dict:
                   "bias": _r(sum(p["err"] for p in parts) / n) if n else None,
                   "exp": _r(sum(p["exp"] for p in parts) / n) if n else None,
                   "act": _r(sum(p["act"] for p in parts) / n) if n else None}
+    return out
+
+
+def _floor_parts_summary(sd: list) -> dict | None:
+    """Hour-weighted MAE and bias (MW) of each floor part over the days that have them."""
+    fp = [s["floor_parts"] for s in sd if s.get("floor_parts")]
+    if not fp:
+        return None
+    out = {}
+    for part in FLOOR_PARTS:
+        out[part] = {}
+        for k in ("all", "cheap"):
+            parts = [f[part][k] for f in fp if part in f]
+            n = sum(x["hours"] for x in parts)
+            out[part][k] = {"hours": n, "mae": _r(sum(x["abs"] for x in parts) / n) if n else None,
+                            "bias": _r(sum(x["err"] for x in parts) / n) if n else None}
     return out
 
 
@@ -378,6 +457,7 @@ def summarise(days: dict, asof_only: bool = True) -> dict:
             res["tech"] = {t: {"mae": _r(np.mean([s["tech"][t]["mae"] for s in sd])), "bias": _r(np.mean([s["tech"][t]["bias"] for s in sd])), "n": len(sd)}
                            for t in C.THERMAL} if sd else None
             res["floor"] = _floor_summary(sd) if sd else None
+            res["floor_parts"] = _floor_parts_summary(sd) if sd else None
             return res
         o = agg(lst)
         o["n_hindsight"] = skipped.get(k, 0)
