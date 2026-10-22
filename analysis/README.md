@@ -33,3 +33,11 @@ combined-cycle and gas steam train's stay-on decision through its day-ahead loss
 
     gh release download history -R CurrentTechEnergy/ERCOT-bid-explorer -p 'thermal-*' -p 'units-*' -p 'da-hubs-*' -D history
     python analysis/decision_table.py --out decision-table
+
+## Decision model on actuals
+
+`decision_model.py` fits a logistic stay-on rule for combined-cycle and gas steam trains on the
+decision table over rolling 12-month windows, scores each on the month after it, and splits the
+change in shutdowns between years into triggers and behaviour (see its docstring):
+
+    python analysis/decision_model.py --table decision-table/decision-table.parquet --out decision-model [--no-award]
