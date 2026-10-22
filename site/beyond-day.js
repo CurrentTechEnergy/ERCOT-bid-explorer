@@ -57,7 +57,7 @@ const logTicks = (dom, narrow) => (narrow ? LOG_TICKS_NARROW : LOG_TICKS).filter
 // ----------------------------------------------------------------- state ---
 const S = {
   index: null, source: "2d", date: null, hour: 12, version: "curves",
-  xrange: "low", xMin: -250, xMax: 100, osMin: -100, osMax: 1000, mode: "lines", axes: "price_x", threshold: 0, location: "lambda",
+  xrange: "low", xMin: -250, xMax: 100, osMin: -100, osMax: 1000, mode: "lines", axes: "price_x", location: "lambda",
   lslMode: "from_lsl",     // offer curves: "from_lsl" (LSL plus the MW offered above it) or "ercot" (as ERCOT prices them)
   hidden: new Set(), stackBy: "group", stack: null, stackIdx: null, dalam: null,
   day: null, prices: null, summaries: {}, osView: "hour", osUnit: "share", osSmooth: "smooth",
@@ -201,12 +201,6 @@ function fillLocations() {
   S.location = $("location").value;
 }
 
-function fillThresholds() {
-  $("threshold").innerHTML = S.index.thresholds.map((t) =>
-    `<option value="${t}">${t === -249 ? "Price floor (−$250)" : fmtPrice0(t)}</option>`).join("");
-  $("threshold").value = String(S.threshold);
-}
-
 function fillTechSelects() {}
 
 // ------------------------------------------------------------ rendering ---
@@ -255,13 +249,12 @@ function render() {
   drawDay();
   drawMarginal();
   drawOfferStack();
-  drawProfile();
   saveView();
 }
 
 // the address bar carries the view, so a copied link reopens this exact day, hour and settings
-const NUM_KEYS = new Set(["threshold", "xMin", "xMax", "osMin", "osMax"]);
-const VIEW_KEYS = { loc: "location", xr: "xrange", xmin: "xMin", xmax: "xMax", osmin: "osMin", osmax: "osMax", mode: "mode", axes: "axes", lsl: "lslMode", ver: "version", sb: "stackBy", thr: "threshold", os: "osView", osu: "osUnit", osm: "osSmooth" };
+const NUM_KEYS = new Set(["xMin", "xMax", "osMin", "osMax"]);
+const VIEW_KEYS = { loc: "location", xr: "xrange", xmin: "xMin", xmax: "xMax", osmin: "osMin", osmax: "osMax", mode: "mode", axes: "axes", lsl: "lslMode", ver: "version", sb: "stackBy", os: "osView", osu: "osUnit", osm: "osSmooth" };
 // price limits go in the link only when they are in use
 const HIDE_KEY = { xMin: () => S.xrange !== "custom", xMax: () => S.xrange !== "custom",
   osMin: () => S.osMin === OS_DEFAULT[0] && S.osMax === OS_DEFAULT[1], osMax: () => S.osMin === OS_DEFAULT[0] && S.osMax === OS_DEFAULT[1] };
@@ -275,7 +268,6 @@ function loadView() {
   if (v.date) S.date = v.date;
   if (v.he && +v.he >= 1 && +v.he <= 24) S.hour = +v.he - 1;
   Object.entries(VIEW_KEYS).forEach(([k, sk]) => { if (v[k] != null) S[sk] = NUM_KEYS.has(sk) ? +v[k] : v[k]; });
-  if (!S.index.thresholds.includes(S.threshold)) S.threshold = 0;
 }
 
 function renderLegend() {
@@ -375,7 +367,7 @@ function drawStack() {
     .on("pointerleave", () => { cross.style("display", "none"); hideTip(); });
   el.replaceChildren(svg.node());
   setCSV(el, ["price", ...list.map((s) => `${s.label} (MW)`), "All committed thermal (MW)"],
-    P.map((p, i) => [p, ...list.map((s) => s.mw[i]), fl[i]]), `Expected dispatch stack ${S.date} ${heLabel(h)}`);
+    P.map((p, i) => [p, ...list.map((s) => s.mw[i]), fl[i]]), `Expected thermal dispatch stack ${S.date} ${heLabel(h)}`);
   $("stack-foot").textContent = `${d3.sum(list, (s) => s.n)} thermal units expected online for at least part of the day, each weighted by its odds of running.`;
 }
 
@@ -955,62 +947,6 @@ function drawOfferStack() {
     `Marginal offer stack by price ${S.date}`);
 }
 
-// ---- hourly profile + price ------------------------------------------------
-function drawProfile() {
-  const el = $("profile-chart"), pel = $("price-chart");
-  if (!S.day) { emptyMsg(el, "No data for this day."); pel.innerHTML = ""; return; }
-  const gi = S.index.grid.indexOf(S.threshold);
-  // follows the Offer curves chart: from LSL (online minimum output counts at every threshold, plus
-  // the MW offered above it) or the curves as ERCOT prices them (minimum output at -$20/-$50)
-  const fromLSL = curvesFromLSL();
-  const rows = seriesList().filter((s) => !S.hidden.has(s.id)).map((s) => {
-    if (fromLSL) {
-      const vals = d3.range(24).map((h) => { const c = S.day.runs[h] ? chartCurve(s, h) : null; return c ? c[gi] : null; });
-      return vals.some((v) => v != null) && { s, vals };
-    }
-    const c = seriesCurves(S.day, s, S.version);
-    return c && { s, vals: c.map((r) => (r ? r[gi] : null)) };
-  }).filter(Boolean);
-  $("profile-title-note").textContent = S.source !== "60d" ? "as ERCOT prices them" : fromLSL ? "from LSL" : "as ERCOT prices them";
-
-  const { w } = size(el);
-  const H = 240, m = { t: 14, r: 16, b: 26, l: 64 };
-  const x = d3.scaleLinear().domain([1, 24]).range([m.l, w - m.r]);
-  const all = rows.flatMap((r) => r.vals).filter((v) => v != null);
-  const y = d3.scaleLinear().domain([Math.min(0, d3.min(all) ?? 0), Math.max(1, d3.max(all) ?? 1)]).nice().range([H - m.b, m.t]);
-  const svg = d3.create("svg").attr("viewBox", `0 0 ${w} ${H}`);
-  svg.append("rect").attr("class", "price-band").attr("x", x(S.hour + 1) - 6).attr("width", 12).attr("y", m.t).attr("height", H - m.t - m.b);
-  svg.append("g").attr("class", "gridline").attr("transform", `translate(${m.l},0)`).call(d3.axisLeft(y).ticks(5).tickSize(-(w - m.l - m.r)).tickFormat(""));
-  svg.append("g").attr("class", "axis").attr("transform", `translate(0,${H - m.b})`).call(d3.axisBottom(x).tickValues([1, 4, 8, 12, 16, 20, 24]).tickFormat((d) => "HE" + d).tickSizeOuter(0));
-  svg.append("g").attr("class", "axis").attr("transform", `translate(${m.l},0)`).call(axisFmt(d3.axisLeft(y), 5).tickSizeOuter(0));
-  if (y.domain()[0] < 0) svg.append("line").attr("class", "zero").attr("x1", m.l).attr("x2", w - m.r).attr("y1", y(0)).attr("y2", y(0));
-  svg.append("text").attr("class", "axis-title").attr("x", m.l).attr("y", 10).text(`MW at or below ${S.threshold === -249 ? "the price floor" : fmtPrice0(S.threshold)}`);
-  const line = d3.line().defined((d) => d != null).x((d, i) => x(i + 1)).y((d) => y(d));
-  rows.forEach((r) => svg.append("path").attr("fill", "none").attr("stroke", css(r.s.color)).attr("stroke-width", 2).attr("d", line(r.vals)));
-  setCSV(el, ["hour_ending", ...rows.map((r) => `${r.s.label} (MW at or below ${S.threshold})`)], d3.range(24).map((i) => [i + 1, ...rows.map((r) => r.vals[i])]), `Through the day ${S.date}`);
-  hoverHours(svg, x, m, H, (i) => `<h4>${heLabel(i)}</h4><table>` + rows.map((r) =>
-    `<tr><td><span class="sw" style="background:var(${r.s.color})"></span></td><td>${r.s.label}</td><td class="n">${r.vals[i] == null ? "–" : fmtMW(r.vals[i]) + " MW"}</td></tr>`).join("") + "</table>");
-  el.replaceChildren(svg.node());
-
-  // price by hour (separate chart, never a second axis)
-  if (!S.prices) { pel.innerHTML = `<p class="note">No cleared price loaded for this day yet.</p>`; return; }
-  const hp = d3.range(24).map((i) => hourPrice(S.prices, i));
-  const H2 = 150, m2 = { t: 14, r: 16, b: 26, l: 64 };
-  const vals = hp.flatMap((p) => p ? [p.min, p.max, p.mean] : []).filter((v) => v != null);
-  const y2 = d3.scaleLinear().domain([Math.min(0, d3.min(vals) ?? 0), Math.max(10, d3.max(vals) ?? 10)]).nice().range([H2 - m2.b, m2.t]);
-  const s2 = d3.create("svg").attr("viewBox", `0 0 ${w} ${H2}`);
-  s2.append("rect").attr("class", "price-band").attr("x", x(S.hour + 1) - 6).attr("width", 12).attr("y", m2.t).attr("height", H2 - m2.t - m2.b);
-  s2.append("g").attr("class", "gridline").attr("transform", `translate(${m2.l},0)`).call(d3.axisLeft(y2).ticks(4).tickSize(-(w - m2.l - m2.r)).tickFormat(""));
-  s2.append("g").attr("class", "axis").attr("transform", `translate(0,${H2 - m2.b})`).call(d3.axisBottom(x).tickValues([1, 4, 8, 12, 16, 20, 24]).tickFormat((d) => "HE" + d).tickSizeOuter(0));
-  s2.append("g").attr("class", "axis").attr("transform", `translate(${m2.l},0)`).call(axisFmt(d3.axisLeft(y2), 4, "$").tickSizeOuter(0));
-  if (y2.domain()[0] < 0) s2.append("line").attr("class", "zero").attr("x1", m2.l).attr("x2", w - m2.r).attr("y1", y2(0)).attr("y2", y2(0));
-  s2.append("text").attr("class", "axis-title").attr("x", m2.l).attr("y", 10).text(`${S.location === "lambda" ? "System lambda" : S.location} ($/MWh), hourly average and range`);
-  s2.append("path").attr("fill", css("--band")).attr("d", d3.area().defined((p) => p && p.min != null).x((p, i) => x(i + 1)).y0((p) => y2(p.min)).y1((p) => y2(p.max))(hp));
-  s2.append("path").attr("fill", "none").attr("stroke", css("--price")).attr("stroke-width", 2).attr("d", d3.line().defined((p) => p && p.mean != null).x((p, i) => x(i + 1)).y((p) => y2(p.mean))(hp));
-  hoverHours(s2, x, m2, H2, (i) => hp[i] ? `<h4>${heLabel(i)}</h4>Average ${fmtPrice(hp[i].mean)}<br>Range ${fmtPrice(hp[i].min)} to ${fmtPrice(hp[i].max)}` : `<h4>${heLabel(i)}</h4>No price`);
-  pel.replaceChildren(s2.node());
-}
-
 function hoverHours(svg, x, m, H, htmlFor) {
   const w = +svg.attr("viewBox").split(" ")[2];
   svg.attr("data-nopin", "");   // a click here picks the hour
@@ -1049,7 +985,7 @@ async function boot() {
   loadView();
   $("hour").value = S.hour;
   setSeg("version", S.version); setSeg("xrange", S.xrange); setSeg("mode", S.mode); setSeg("axes", S.axes);
-  fillDates(); syncSource(); fillLocations(); fillThresholds(); fillTechSelects();
+  fillDates(); syncSource(); fillLocations(); fillTechSelects();
 
   bindSeg("version", "version");
   // Custom price range: the boxes start from the range that was showing
@@ -1100,7 +1036,6 @@ async function boot() {
   $("date-next").onclick = () => stepDay(1);
   $("hour").oninput = (e) => { S.hour = +e.target.value; render(); };
   $("location").onchange = (e) => { S.location = e.target.value; render(); };
-  $("threshold").onchange = (e) => { S.threshold = +e.target.value; render(); };
   $("legend").addEventListener("click", (e) => {
     const b = e.target.closest("button[data-id]");
     if (!b) return;

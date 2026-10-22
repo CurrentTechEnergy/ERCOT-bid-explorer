@@ -228,7 +228,7 @@
       <p><strong>"From LSL"</strong> is how this site draws and counts offers instead. For each technology it takes the online units' total LSL and adds only the MW they offer <em>above</em> LSL at or below each price. The curve runs flat at the LSL total from the left edge, then rises with the real bids. The flat part answers "how much runs regardless of price", and the rise answers "how much moves with price". Switch views to compare.</p>
       <ul>
         <li><strong>Offer curves (Offers page):</strong> "From LSL" is the default. "As ERCOT prices it" shows the curves SCED saw, with minimum output at the placeholder price.</li>
-        <li><strong>Marginal generation by price, Through the day and Offers against fuel (Offers page):</strong> count only MW above LSL, since only those can be marginal.</li>
+        <li><strong>Marginal generation by price and Thermal offers and fuel prices (Offers page):</strong> count only MW above LSL, since only those can be marginal.</li>
         <li><strong>Unit metrics:</strong> "≤ $0 as submitted" is a share of the range from LSL to HSL. "First offer price above $0", implied heat rate and the bidding-change signals read the curve from LSL up.</li>
         <li><strong>Charts that keep LSL on purpose:</strong> the Floor chart's "≤ −$20, as used", "≤ $0 as used", thermal output in cheap hours and Stay-on. These are about who is running, so minimum output belongs in them.</li>
         <li><strong>2-day days</strong> (the most recent two months) have no unit limits, so they show curves as ERCOT prices them and the "From LSL" button is off. The steps at −$50 and −$20 in their thermal curve are minimum output, and some minimum output is also priced between $0 and about $25.</li>
@@ -269,8 +269,8 @@
         <h3>Bidding: what do the MW above LSL ask?</h3>
         <p class="lead">Set by the offer curve, read from LSL up. This is where price moves come from.</p>
         <ul>
-          <li><a href="beyond.html#p=curves-panel">Offer curves</a> (the rise above the flat LSL part), <a href="beyond.html#p=os-panel">Marginal generation by price</a>, <a href="beyond.html#p=profile-panel">Through the day</a></li>
-          <li><a href="beyond.html#p=fuel-panel">Offers against fuel</a>: thermal offer prices with gas and implied heat rate</li>
+          <li><a href="beyond.html#p=curves-panel">Offer curves</a> (the rise above the flat LSL part), <a href="beyond.html#p=os-panel">Marginal generation by price</a>, <a href="beyond.html#p=mbp-panel">Marginal generation by settled price</a></li>
+          <li><a href="beyond.html#p=fuel-panel">Thermal offers and fuel prices</a>: thermal offer prices with gas and implied heat rate</li>
           <li><a href="renewables.html">Wind and solar offer prices</a>: wind and solar have no meaningful LSL, so their whole curve is a bid</li>
           <li><a href="renewables.html">Hedge signals and bidding changes</a>: what wind and solar offers say about their contracts (<a href="#hedge">step 7</a>)</li>
         </ul>
