@@ -23,6 +23,11 @@ For a unit with weight p_on (from thermal_cutoff, or by hour from peaker_share):
             outside), since the verdict says it shuts for those hours; a whole-day "off" is 0
             throughout; nuclear runs at HSL.  A unit whose commitment row carries an hourly
             probability of being online (p_hours, thermal_cutoff v1) uses it instead.
+  v11 candidate (THERMAL_VARIANT=v11, part "size"): a combined-cycle train's size in every hour
+            is its mean online LSL in that hour's day-ahead hub price band over the year to the
+            asof point (Context.cc_band_size_at), capped at its HSL, in place of the
+            configuration floor and the cheap-hour smallest size; an hour the curve puts at the
+            floor runs at that size, and no hour runs below it.
 """
 import numpy as np
 
@@ -49,6 +54,8 @@ def forecast(date, ctx: C.Context, commit: dict, peakers: dict) -> dict:
     month, hindsight = ctx.curve_month(date)
     stats = ctx.stats_at(date)
     cc_min = ctx.cc_min_lsl_at(date)
+    band = ctx.cc_band_size_at(date) if C.v11("size") and hub is not None else {}
+    hub_band = (np.searchsorted(C.SIZE_BANDS, np.asarray(hub, float), side="left") - 1) if band else None
     rows = {}
     n_curve = 0
     for key, row in commit["rows"].items():
@@ -95,12 +102,19 @@ def forecast(date, ctx: C.Context, commit: dict, peakers: dict) -> dict:
             mw[:] = hsl if row["tech"] == "nuclear" else lsl
         fl = np.full(24, floor)
         small = cc_min.get(key) if row["tech"] == "combined_cycle" else None
-        if small is not None and hub is not None and small < floor:
+        size = band.get(key) if row["tech"] == "combined_cycle" else None
+        if size is not None:        # v11: the band mean, not the floor or the smallest size
+            fl = np.array([size[b] for b in hub_band], float)
+            if hsl > 0:
+                fl = np.minimum(fl, hsl)
+            mw = np.where(mw <= floor, fl, np.maximum(mw, fl))
+            small = None
+        elif small is not None and hub is not None and small < floor:
             cheap = np.asarray(hub, float) <= C.CHEAP_HUB
             fl[cheap] = small
             mw = np.where(cheap & (mw <= floor), np.minimum(mw, small), mw)
         rows[key] = {"exp": np.round(p * mw, 1), "min": np.round(p * fl, 1), "hsl": hsl, "p": np.round(p, 3),
                      "price": None if prices is None else np.round(np.asarray(prices, float), 2),
                      "small": round(float(small), 1) if small is not None and hub is not None and small < floor else None,
-                     "floor": round(floor, 1), "curve": bool(c), "model": NAME, "version": VERSION}
+                     "floor": round(floor, 1), "curve": bool(c), "model": NAME, "version": VERSION + ("+v11" if band else "")}
     return {"rows": rows, "inputs": {"curve_month": month, "curve_hindsight": hindsight, "with_curve": n_curve}}

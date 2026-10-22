@@ -67,6 +67,12 @@ For every thermal train in the latest DAM disclosure (pipeline.forecast.context.
               Context.outage_prior), each capped at its free HSL (v10; spread by HSL alone
               before): each carries unseen_share, folded into out_share, which the dispatch model
               takes off its weight
+  v11         the candidate (THERMAL_VARIANT=v11, Context.v11), off unless set.  Part "out": for
+              coal, CC, gas steam and combustion turbines the long-outage carry-over, the
+              listed-out verdicts and the unseen allocation give way to outage_v11's expected
+              share out (into out_share).  Part "logit": a CC train or gas steam unit judged on
+              its window takes P(on) inside it from a logistic with one intercept per unit
+              (_logit_fit, the year to the asof point) in place of the trees, on outside it
   peakers     combustion turbines outside the always-on group (which are held on, as other
               always-on units) are not judged here (peaker_share, by hour, on the hours
               they were available); they get verdict "peaker" and p_on from that model, and the
@@ -86,6 +92,7 @@ groups_at), decision days on or before the known date, and the last known state 
 merged states up to that hour only (an off spell open at that hour is judged on its hours so
 far, not on how it later turned out).  A live day reads the full record, as before.
 """
+import datetime as dt
 from collections import defaultdict
 
 import numpy as np
@@ -95,6 +102,7 @@ from ..store import read_json_gz
 
 from ..decisions import _window, _cutoff, _dam_trains, HALF, OUT_MIN_H
 from ..forecast import context as C
+from . import outage_v11
 
 UNSEEN_EPS = 0.1   # unseen-outage weight of a unit never out in these weeks of earlier years, against 1.1 for one always out then
 UNSEEN_TECHS = ("coal", "combined_cycle", "gas_steam", "combustion_turbine")   # spread the zonal unseen outage MW over these
@@ -371,6 +379,7 @@ def _pool(ctx, date):
     groups, stats, raw = ctx.groups_at(date), ctx.stats_at(date), ctx.raw_states()
     day0 = ctx.stats["day0"]
     X, y, N, XH, yH = [], [], [], [], []
+    L = []      # v11: (train, tech, date, logistic inputs, off) per window-tech unit-day
     for d, trains in _day_trains(ctx).items():
         if point is not None and d > point:
             continue
@@ -394,6 +403,8 @@ def _pool(ctx, date):
                           s["on_days"] if s else 0.0)
             X.append(_tree_x(_hourly(f, margin, lsl, bs, nh), tech, g, d[5:7], loss, lsl)); y.append(np.isin(seg, ["m", "a"]).astype(float))
             N.append(_net(ctx, d, tech))
+            if tech in WINDOW_TECHS:
+                L.append((key, tech, d, _logit_x(f, margin, loss, lsl, bs, nh, d), float(y[-1][bs:bs + nh].mean() < 0.5)))
     # the thermal history before the 60-day window (pipeline/history.py), on the units'
     # attributes as of the point: the same rows from months of DAM days before and after RTC+B
     first = min(_day_trains(ctx), default=None)
@@ -415,14 +426,79 @@ def _pool(ctx, date):
                           s["on_days"] if s else 0.0)
             XH.append(np.column_stack([_hist_view(_tree_x(_hourly(f, margin, lsl, bs, nh), tech, g, d[5:7], loss, lsl)),
                                        _net(ctx, d, tech)])); yH.append(np.isin(seg, ["m", "a"]).astype(float))
+            if tech in WINDOW_TECHS:
+                L.append((key, tech, d, _logit_x(f, margin, loss, lsl, bs, nh, d), float(yH[-1][bs:bs + nh].mean() < 0.5)))
     X = np.vstack(X) if X else np.zeros((0, 0))
     y = np.concatenate(y) if y else np.zeros(0)
     # stacked: trees on the history alone, whose P(on) is one more input to the trees on the
     # 60 days, so the recent market decides how far the history's view carries over
     hist = _trees(np.vstack(XH), np.concatenate(yH)) if XH else None
     w = {None: _trees(_stack(hist, X, np.concatenate(N)), y), "hist": hist} if len(y) else {}
+    if C.v11("logit") and point is not None:
+        w["logit"] = _logit_fit(L, point)
     cache[point] = (own, pool, w)
     return cache[point]
+
+
+# ------------------------------------------------------- v11: logistic stay-on rule --
+LOGIT_DAYS = 365      # days up to the asof point the v11 rule is fitted on
+LOGIT_MIN = 300       # unit-days a technology needs for its own fit (else CC and gas steam together)
+SEASONS = {12: 0, 1: 0, 2: 0, 3: 1, 4: 1, 5: 1, 6: 2, 7: 2, 8: 2, 9: 3, 10: 3, 11: 3}
+
+
+def _logit_x(f, margin, loss, lsl, bs, nh, d):
+    """The v11 rule's inputs for a unit-day (analysis/decision_model.py, its no-award variant,
+    without the start offer): log(1 + loss per MW of LSL), log(1 + the margin per MW before and
+    after the window), the window's wrapped length against the unit's short off spell (log
+    ratio, from _features), whether the window is overnight (starts before HE7 or runs on into
+    the next morning), and the season (spring, summer, fall against winter)."""
+    s = SEASONS[int(d[5:7])]
+    over = float(bs < 6 or _span(margin, bs, nh) > nh)
+    return [float(np.log1p(max(loss, 0.0) / lsl)), float(np.log1p(f[4] * 100.0)), float(np.log1p(f[5] * 100.0)), f[3],
+            over, float(s == 1), float(s == 2), float(s == 3)]
+
+
+def _logit_fit(L, point):
+    """{tech: (mean, sd, trains, model)}: a logistic for "off for most of the window" on the
+    LOGIT_DAYS days up to `point`, standardised inputs plus one intercept per train (L2, as
+    analysis/decision_model.py), one fit per technology with LOGIT_MIN unit-days, else one fit
+    for both under "*"."""
+    from sklearn.linear_model import LogisticRegression
+    lo = (C._d(point) - dt.timedelta(days=LOGIT_DAYS)).isoformat()
+    rows = [r for r in L if lo < r[2] <= point]
+    out = {}
+    groups = {t: [r for r in rows if r[1] == t] for t in WINDOW_TECHS}
+    small = [t for t, g in groups.items() if len(g) < LOGIT_MIN]
+    if small:
+        groups = {**{t: g for t, g in groups.items() if t not in small}, "*": [r for r in rows if r[1] in small]}
+    for t, g in groups.items():
+        ys = np.array([r[4] for r in g])
+        if len(g) < 50 or ys.min() == ys.max():
+            continue
+        x = np.array([r[3] for r in g])
+        mu, sd = x.mean(axis=0), x.std(axis=0)
+        sd[sd == 0] = 1.0
+        trains = sorted({r[0] for r in g})
+        out[t] = (mu, sd, trains, LogisticRegression(C=1.0, max_iter=2000).fit(_logit_design(x, mu, sd, trains, [r[0] for r in g]), ys))
+    return out
+
+
+def _logit_design(x, mu, sd, trains, keys):
+    ix = {k: i for i, k in enumerate(trains)}
+    d = np.zeros((len(keys), len(trains)))
+    for j, k in enumerate(keys):
+        if k in ix:
+            d[j, ix[k]] = 1.0
+    return np.hstack([(np.asarray(x, float) - mu) / sd, d])
+
+
+def _logit_p_off(fits, tech, key, x):
+    """P(off for most of the window) from the v11 rule, or None without a fit for the tech."""
+    fit = fits.get(tech) or fits.get("*")
+    if fit is None:
+        return None
+    mu, sd, trains, m = fit
+    return float(m.predict_proba(_logit_design([x], mu, sd, trains, [key]))[0, 1])
 
 
 def _blend(own, pool):
@@ -446,6 +522,8 @@ def forecast(date, ctx: C.Context) -> dict:
     node_src = ctx.node_source(date)
     rows = {}
     listed = ctx.listed_out(date)
+    out11 = outage_v11.shares(ctx, date, units) if C.v11("out") else None
+    parts = [k for k in C.V11_PARTS if C.v11(k)]
     for key, u in units.items():
         t = u["tech"]
         if t not in C.THERMAL:
@@ -453,15 +531,15 @@ def forecast(date, ctx: C.Context) -> dict:
         g = "never" if t == "nuclear" else groups.get(key)
         cc_win = t in WINDOW_TECHS and g in CC_WINDOW_GROUPS
         last, out_days = _last_state(ctx, key, known)
-        if last == "o" and out_days < LONG_OUT:
-            last = "0"       # a short outage sixty days ago: treated as off then, judged normally
+        if last == "o" and (out_days < LONG_OUT or (out11 is not None and t in outage_v11.TECHS)):
+            last = "0"       # a short outage sixty days ago (v11: any, outage_v11 carries it): treated as off then, judged normally
         cleared = (last == "o" and t in CLEAR_TECHS and (t == "combined_cycle" or g != "never")
                    and listed is not None and not listed.get(key))
         if cleared:
             last = "0"       # a CC outage sixty days ago the outage report no longer lists: judged normally
         row = {"tech": t, "group": g, "hsl": u["hsl"], "lsl": u["lsl"], "outage": last == "o",
                "verdict": None, "p_on": 0.0, "loss": None, "cutoff": None, "off_from": None, "off_hours": 0,
-               "reason": "", "model": NAME, "version": VERSION}
+               "reason": "", "model": NAME, "version": VERSION + ("+v11:" + ",".join(parts) if parts else "")}
         if last == "o":
             row.update(verdict="outage", reason=f"on outage for {out_days:.0f} days at the last known hour ({known})")
         elif g == "never_on":
@@ -511,8 +589,12 @@ def forecast(date, ctx: C.Context) -> dict:
                 wt = w.get(None)
                 Z = _stack(w.get("hist"), _tree_x(x, t, g, date[5:7], loss, lsl), _net(ctx, date, t))
                 ph = wt.predict_proba(Z)[:, 1] if wt is not None else np.full(24, float(loss <= cut))
+                p_off = (_logit_p_off(w.get("logit") or {}, t, key, _logit_x(x[0], margin, loss, lsl, bs, nh, date))
+                         if C.v11("logit") and t in WINDOW_TECHS else None)
+                if p_off is not None:       # v11: the logistic rule in the window, on outside it
+                    ph = np.ones(24); ph[bs:bs + nh] = 1.0 - p_off
                 p_on = round(float(ph[bs:bs + nh].mean()), 2)
-                if wt is not None:
+                if wt is not None and p_off is None:
                     row["p_base"], row["drivers"] = _drivers(wt, Z, bs, nh, float(ph[bs:bs + nh].mean()))
                 src = "its cutoff" if c else "the pooled cutoff"
                 row.update(cutoff=round(cut), p_on=p_on, p_hours=[round(float(v), 3) for v in ph], win_from=bs + 1, win_hours=nh)
@@ -539,6 +621,12 @@ def forecast(date, ctx: C.Context) -> dict:
             row.update(verdict="outage", p_on=0.0, off_from=1, off_hours=24, outage=True,
                        reason=f"reactor at {nrc[key]:.0f}% power in the NRC status report the morning before")
             continue
+        if out11 is not None and row["tech"] in outage_v11.TECHS:
+            sh = out11.get(key, 0.0)
+            if sh > 0:
+                row["out_share"] = round(sh, 3)
+                row["reason"] += f"; {sh:.0%} expected out (v11 outage component)"
+            continue
         share = listed.get(key, 0.0)
         if share >= 1.0 and row["verdict"] != "outage":
             row.pop("p_hours", None); row.pop("drivers", None); row.pop("p_base", None)
@@ -555,7 +643,7 @@ def forecast(date, ctx: C.Context) -> dict:
             zone_mw[z] += row["hsl"] or 0
             if row["verdict"] != "outage":
                 pool[z] += (row["hsl"] or 0) * (1 - row.get("out_share", 0.0))
-    unseen = ctx.unseen_out(date, zone_mw) or {}
+    unseen = (ctx.unseen_out(date, zone_mw) or {}) if out11 is None else {}
     prior = C.outage_prior(UNSEEN_TECHS, date) if unseen else {}
     by_zone = defaultdict(list)
     for key, row in rows.items():
