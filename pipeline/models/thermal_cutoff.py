@@ -73,7 +73,8 @@ For every thermal train in the latest DAM disclosure (pipeline.forecast.context.
               share out (into out_share).  Part "logit": a CC train or gas steam unit judged on
               its window takes P(on) inside it as the trees' P(on) in the hour before it times
               a logistic's P(stays on | on) with one intercept per unit (_logit_fit, the year to
-              the asof point, on unit-days online going into the window).
+              the asof point, on unit-days online going into the window).  Part "plain" puts
+              the unit's own online share while available (_online_share) in place of the trees.
               Part "pool" (instead of "out"): the long-outage carry-over and the unseen
               allocation give way to outage_pool's zonal deduction by hour (commit
               "outage_pool" true; the build takes it off after the dispatch), placed on no unit;
@@ -508,6 +509,26 @@ def _logit_p_off(fits, tech, key, x):
     return float(m.predict_proba(_logit_design([x], mu, sd, trains, [key]))[0, 1])
 
 
+PLAIN_K = 48      # available hours at which a unit's own online share and its technology's weigh the same
+
+
+def _online_share(ctx, date, key, tech):
+    """[24] the unit's share of available hours online at each hour's day-ahead hub price bin
+    and hour, as of the asof point (Context.stats_at on_bin), pulled toward its technology's
+    by PLAIN_K available hours (v11 part "plain": the readable stand-in for the trees' P(on))."""
+    hub = ctx.hub(date)
+    stats = ctx.stats_at(date)
+    f = stats["fleet"].get(tech)
+    if hub is None or f is None:
+        return np.ones(24)
+    b = np.array([C.price_bin(v) for v in hub]); h = np.arange(24)
+    fs = f["on"][b, h] / np.maximum(f["avail"][b, h], 1.0)
+    u = stats["units"].get(key)
+    if u is None:
+        return fs
+    return (u["on"][b, h] + PLAIN_K * fs) / (u["avail"][b, h] + PLAIN_K)
+
+
 def _blend(own, pool):
     """Cutoff per MW of LSL: the unit's own pulled toward the technology's pooled cutoff by
     POOL_K / (decision days + POOL_K); the pooled one alone for a unit without its own with at
@@ -600,6 +621,8 @@ def forecast(date, ctx: C.Context) -> dict:
                 p_off = (_logit_p_off(w.get("logit") or {}, t, key, _logit_x(x[0], margin, loss, lsl, bs, nh, date))
                          if C.v11("logit") and t in WINDOW_TECHS else None)
                 if p_off is not None:       # v11: the trees' P(on) going into the window x the rule's P(stays on | on)
+                    if C.v11("plain"):      # ... or, all readable, the unit's own online share while available
+                        ph = _online_share(ctx, date, key, t)
                     ph = ph.copy(); ph[bs:bs + nh] = ph[bs - 1 if bs > 0 else min(bs + nh, 23)] * (1.0 - p_off)
                 p_on = round(float(ph[bs:bs + nh].mean()), 2)
                 if wt is not None and p_off is None:
