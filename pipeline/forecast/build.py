@@ -189,13 +189,20 @@ def build_day(date, ctx: C.Context) -> dict:
         hs = [[round(float(v), 2) for v in d["p"]], [round(float(v)) for v in d["exp"]], [round(float(v)) for v in d["min"]]]
         hs = [None if not any(v) else v for v in hs]       # a unit off all day carries nulls
         unit_hours[key] = hs + [None if d.get("price") is None else [round(float(v), 2) for v in d["price"]]]
-    pool = (outage_pool.deduction(ctx, date, ctx.units(date), {k: (r["min"], r["exp"]) for k, r in disp["rows"].items()})
+    group_of = {k: "never" if r["tech"] == "nuclear" else (r["group"] or "ungrouped") for k, r in commit["rows"].items()}
+    pool = (outage_pool.deduction(ctx, date, ctx.units(date), {k: (r["min"], r["exp"]) for k, r in disp["rows"].items()},
+                                  group_of)
             if commit.get("outage_pool") else None)
-    if pool:        # v11 "pool": the zonal outage deduction, on no unit, off the technologies' lines
+    if pool:        # v11 "pool": the zonal outage deduction, on no unit, off the technologies', groups' and categories' lines
         for t in C.THERMAL:
             if t in pool["min"]:
                 by_t[t]["min"] = by_t[t]["min"] - pool["min"][t]
                 by_t[t]["exp"] = by_t[t]["exp"] - pool["exp"][t]
+        for (t, g), mn in pool["pair"]["min"].items():
+            ex = pool["pair"]["exp"][(t, g)]
+            for agg in ((by_g[g] if g in by_g else None), by_c[category(t, g)]):
+                if agg is not None:
+                    agg["min"] = agg["min"] - mn; agg["exp"] = agg["exp"] - ex
     fleet = blank()
     for t in C.THERMAL:
         for k in fleet:

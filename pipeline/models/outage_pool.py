@@ -18,7 +18,8 @@ regresses on the zone's unexplained outage (Context.zone_remainder):
 
   deduction[z, h] = max(0, a_zh + b_zh x remainder_z)
 
-and is split across technologies by each one's part of the zone's target over the fitted days.
+and is split across technologies, and across technology and group pairs when the caller gives
+the groups, by each one's part of the zone's target over the fitted days.
 Without MIN_DAYS fitted days, ready() is false and v10's outage calls stand.
 """
 import datetime as dt
@@ -77,26 +78,30 @@ def ready(ctx, date, units):
     return len(_panel(ctx, date, units)) >= MIN_DAYS
 
 
-def deduction(ctx, date, units, held):
-    """{"min": {tech: [24]}, "exp": {tech: [24]}, "zones": {zone: [24] min}, "days": n} MW to
-    take off the committed minimum and expected output, given `held` {key: (min [24], exp [24])}
-    from today's dispatch; None when not ready or the day has no zonal report."""
+def deduction(ctx, date, units, held, group_of=None):
+    """{"min": {tech: [24]}, "exp": {tech: [24]}, "pair": {"min": {(tech, group): [24]}, "exp": {...}},
+    "zones": {zone: [24] min}, "days": n} MW to take off the committed minimum and expected
+    output, given `held` {key: (min [24], exp [24])} from today's dispatch and `group_of`
+    {key: group}; None when not ready or the day has no zonal report."""
     days = _panel(ctx, date, units)
     rem = ctx.zone_remainder(date)
     if len(days) < MIN_DAYS or rem is None:
         return None
     zero = np.zeros(24)
     X, Ymin, Yexp = defaultdict(list), defaultdict(list), defaultdict(list)
-    by_tech = defaultdict(lambda: defaultdict(float))
+    by_tech, by_pair = defaultdict(lambda: defaultdict(float)), defaultdict(lambda: defaultdict(float))
+    group_of = group_of or {}
     for r, outs in days:
         tmin, texp = defaultdict(lambda: np.zeros(24)), defaultdict(lambda: np.zeros(24))
         for key, z, tech, out in outs:
             mn, ex = held.get(key, (zero, zero))
             tmin[z] += out * mn; texp[z] += out * ex
             by_tech[z][tech] += float((out * mn).sum())
+            by_pair[z][(tech, group_of.get(key, "ungrouped"))] += float((out * mn).sum())
         for z, v in r.items():
             X[z].append(max(v, 0.0)); Ymin[z].append(tmin[z]); Yexp[z].append(texp[z])
-    out = {"min": defaultdict(lambda: np.zeros(24)), "exp": defaultdict(lambda: np.zeros(24)), "zones": {}, "days": len(days)}
+    out = {"min": defaultdict(lambda: np.zeros(24)), "exp": defaultdict(lambda: np.zeros(24)), "zones": {}, "days": len(days),
+           "pair": {"min": defaultdict(lambda: np.zeros(24)), "exp": defaultdict(lambda: np.zeros(24))}}
     for z, x in X.items():
         if z not in rem:
             continue
@@ -111,5 +116,9 @@ def deduction(ctx, date, units, held):
         for t, v in by_tech[z].items():
             if tot > 0:
                 out["min"][t] += v / tot * mn; out["exp"][t] += v / tot * ex
+        for tg, v in by_pair[z].items():
+            if tot > 0:
+                out["pair"]["min"][tg] += v / tot * mn; out["pair"]["exp"][tg] += v / tot * ex
     out["min"], out["exp"] = dict(out["min"]), dict(out["exp"])
+    out["pair"] = {k: dict(v) for k, v in out["pair"].items()}
     return out
