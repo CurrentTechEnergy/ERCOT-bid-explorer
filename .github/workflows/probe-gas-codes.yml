@@ -1,0 +1,34 @@
+name: Probe OilPriceAPI gas codes (manual)
+
+# Lists the natural gas series the OILPRICEAPI_KEY account can reach (GET /v1/commodities), to look
+# for regional hubs beyond Houston Ship Channel and Waha (Panhandle, Northern Natural, Permian
+# field prices). Read only: prints to the run summary and commits nothing.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: List gas codes
+        env:
+          OILPRICEAPI_KEY: ${{ secrets.OILPRICEAPI_KEY }}
+        run: |
+          curl -sSf -H "Authorization: Token $OILPRICEAPI_KEY" https://api.oilpriceapi.com/v1/commodities -o commodities.json
+          python3 - <<'EOF' | tee -a "$GITHUB_STEP_SUMMARY"
+          import json
+          d = json.load(open("commodities.json"))
+          rows = d.get("data", d)
+          rows = rows.get("commodities", rows) if isinstance(rows, dict) else rows
+          print(f"{len(rows)} codes in the catalog\n")
+          print("| code | name | category | has data | unit |")
+          print("|---|---|---|---|---|")
+          for c in rows:
+              text = " ".join(str(c.get(k, "")) for k in ("code", "name", "category", "description")).upper()
+              if any(w in text for w in ("GAS", "WAHA", "HSC", "HUB", "PANHANDLE", "PERMIAN", "NATURAL")):
+                  print(f"| {c.get('code')} | {c.get('name')} | {c.get('category')} | {c.get('has_data', '')} | {c.get('unit', '')} |")
+          EOF
