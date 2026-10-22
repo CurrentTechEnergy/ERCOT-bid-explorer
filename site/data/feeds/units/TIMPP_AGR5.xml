@@ -16,7 +16,7 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=TIMPP_AGR5"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=TIMPP_AGR5#TIMPP_AGR5/2026-04-01/group</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Never off in 2026-03 to Daily, under 1 shutdown a week in 2026-04</summary>
+    <summary>Always on when available in 2026-03 to Daily, under 1 shutdown a week in 2026-04</summary>
   </entry>
   <entry>
     <title>TIMPP_AGR5: Outage ended (2026-02-13)</title>

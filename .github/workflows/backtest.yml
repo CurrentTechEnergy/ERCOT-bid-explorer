@@ -71,6 +71,7 @@ jobs:
       days_start: ${{ steps.plan.outputs.days_start }}
       days_end: ${{ steps.plan.outputs.days_end }}
       fresh: ${{ steps.plan.outputs.fresh }}
+      history_key: ${{ steps.plan.outputs.history_key }}
     steps:
       - uses: actions/checkout@v5
         with:
@@ -94,6 +95,12 @@ jobs:
           hist=$(gh release view history -R "$GITHUB_REPOSITORY" --json assets \
                    --jq '[.assets[].name|select(startswith("thermal-"))]|sort|join(" ")' | sha1sum | cut -c1-12)
           key() { echo "backtest-$(git rev-parse "$1:pipeline" | cut -c1-12)-h$hist-e$(printf '%s' "$2" | sha1sum | cut -c1-8)"; }
+          # the history files every job reads, fetched once here and shared through the cache: each
+          # job downloading them itself is ~100 API calls a job, enough to run the repo's token out
+          # of its hourly limit (and with it the site's deploy)
+          hfiles=$(gh api "repos/$GITHUB_REPOSITORY/releases/tags/history" --jq \
+                     '[.assets[]|select((.name|startswith("thermal-")) or (.name|test("^da-hubs-202[4-9]-")))|"\(.name) \(.updated_at)"]|sort|join(" ")')
+          echo "history_key=backtest-history-$(printf '%s' "$hfiles" | sha1sum | cut -c1-12)" >> "$GITHUB_OUTPUT"
           {
             echo "data_sha=$(git rev-parse HEAD)"
             echo "current_sha=$cur"
@@ -109,6 +116,23 @@ jobs:
             echo "chunks=$(python3 -c "import json, sys; print(json.dumps(list(range(int(sys.argv[1])))))" "$CHUNKS")"
           } >> "$GITHUB_OUTPUT"
           cat "$GITHUB_OUTPUT"
+      - id: history
+        uses: actions/cache/restore@v4
+        with:
+          path: history
+          key: ${{ steps.plan.outputs.history_key }}
+          lookup-only: true
+      - name: Download the history files
+        if: steps.history.outputs.cache-hit != 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release download history -R "$GITHUB_REPOSITORY" -p 'thermal-*.parquet' -p 'da-hubs-202[4-9]-*.parquet' -D history
+      - if: steps.history.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v4
+        with:
+          path: history
+          key: ${{ steps.plan.outputs.history_key }}
 
   build:
     needs: plan
@@ -129,17 +153,19 @@ jobs:
           python-version: "3.12"
           cache: pip
       - run: pip install -r requirements.txt
-      - name: Inputs (both sides' code, the data branch, the thermal history)
-        env:
-          GH_TOKEN: ${{ github.token }}
+      - name: Inputs (both sides' code, the data branch)
         run: |
           # the harness (pipeline/ outside the sides' trees) is this workflow's own commit; each
           # side's code is taken from its commit by the harness
           git fetch --depth 1 origin "$GITHUB_SHA" ${{ needs.plan.outputs.current_sha }} ${{ needs.plan.outputs.ref_sha }}
           git checkout "$GITHUB_SHA" -- pipeline
           git fetch --depth 1 origin data && git worktree add --detach unitdata FETCH_HEAD
-          gh release download history -R "$GITHUB_REPOSITORY" -p 'thermal-*.parquet' -p 'da-hubs-202[4-9]-*.parquet' -D history \
-            || echo "No thermal history"
+      - name: The history files (from the plan job)
+        uses: actions/cache/restore@v4
+        with:
+          path: history
+          key: ${{ needs.plan.outputs.history_key }}
+          fail-on-cache-miss: true
       # the cache holds a side's day files under days/ whichever side it was saved from, so a
       # branch's cache serves main's side once the branch is merged
       - name: Restore cached days
@@ -188,17 +214,19 @@ jobs:
           python-version: "3.12"
           cache: pip
       - run: pip install -r requirements.txt
-      - name: Inputs (both sides' code, the data branch, the thermal history)
-        env:
-          GH_TOKEN: ${{ github.token }}
+      - name: Inputs (both sides' code, the data branch)
         run: |
           # the harness (pipeline/ outside the sides' trees) is this workflow's own commit; each
           # side's code is taken from its commit by the harness
           git fetch --depth 1 origin "$GITHUB_SHA" ${{ needs.plan.outputs.current_sha }} ${{ needs.plan.outputs.ref_sha }}
           git checkout "$GITHUB_SHA" -- pipeline
           git fetch --depth 1 origin data && git worktree add --detach unitdata FETCH_HEAD
-          gh release download history -R "$GITHUB_REPOSITORY" -p 'thermal-*.parquet' -p 'da-hubs-202[4-9]-*.parquet' -D history \
-            || echo "No thermal history"
+      - name: The history files (from the plan job)
+        uses: actions/cache/restore@v4
+        with:
+          path: history
+          key: ${{ needs.plan.outputs.history_key }}
+          fail-on-cache-miss: true
       - name: Restore cached days (current)
         if: needs.plan.outputs.fresh != 'true'
         uses: actions/cache/restore@v4

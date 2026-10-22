@@ -9,14 +9,14 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=CHAMON_CTG_0301"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=CHAMON_CTG_0301#CHAMON_CTG_0301/2026-08-12/outage_start</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Outage began, still on at the end of the data (10 days so far)</summary>
+    <summary>Outage began, still on at the end of the data (11 days so far)</summary>
   </entry>
   <entry>
     <title>CHAMON_CTG_0301: Timescale group changed (2026-08-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=CHAMON_CTG_0301"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=CHAMON_CTG_0301#CHAMON_CTG_0301/2026-08-01/group</id>
     <updated>2026-10-19T00:00:00Z</updated>
-    <summary>Never off in 2026-07 to Daily, over 2 a week in 2026-08</summary>
+    <summary>Always on when available in 2026-07 to Daily, over 2 a week in 2026-08</summary>
   </entry>
   <entry>
     <title>CHAMON_CTG_0301: Outage ended (2026-07-27)</title>
@@ -44,7 +44,7 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=CHAMON_CTG_0301"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=CHAMON_CTG_0301#CHAMON_CTG_0301/2026-07-01/group</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Daily, over 2 a week in 2026-06 to Never off in 2026-07</summary>
+    <summary>Daily, over 2 a week in 2026-06 to Always on when available in 2026-07</summary>
   </entry>
   <entry>
     <title>CHAMON_CTG_0301: Outage started (2026-06-26)</title>
@@ -58,7 +58,7 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=CHAMON_CTG_0301"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=CHAMON_CTG_0301#CHAMON_CTG_0301/2026-06-01/group</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Never off in 2026-05 to Daily, over 2 a week in 2026-06</summary>
+    <summary>Always on when available in 2026-05 to Daily, over 2 a week in 2026-06</summary>
   </entry>
   <entry>
     <title>CHAMON_CTG_0301: Outage ended (2026-05-27)</title>
@@ -79,14 +79,14 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=CHAMON_CTG_0301"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=CHAMON_CTG_0301#CHAMON_CTG_0301/2026-05-01/group</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Daily, over 2 a week in 2026-04 to Never off in 2026-05</summary>
+    <summary>Daily, over 2 a week in 2026-04 to Always on when available in 2026-05</summary>
   </entry>
   <entry>
     <title>CHAMON_CTG_0301: Timescale group changed (2026-03-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=CHAMON_CTG_0301"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=CHAMON_CTG_0301#CHAMON_CTG_0301/2026-03-01/group</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Never off in 2026-02 to Daily, over 2 a week in 2026-03</summary>
+    <summary>Always on when available in 2026-02 to Daily, over 2 a week in 2026-03</summary>
   </entry>
   <entry>
     <title>CHAMON_CTG_0301: Outage ended (2026-02-13)</title>
@@ -100,7 +100,7 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=CHAMON_CTG_0301"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=CHAMON_CTG_0301#CHAMON_CTG_0301/2026-02-01/group</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Daily, 1–2 a week in 2026-01 to Never off in 2026-02</summary>
+    <summary>Daily, 1–2 a week in 2026-01 to Always on when available in 2026-02</summary>
   </entry>
   <entry>
     <title>CHAMON_CTG_0301: Outage started (2026-01-28)</title>

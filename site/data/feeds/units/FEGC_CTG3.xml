@@ -30,7 +30,7 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=FEGC_CTG3"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=FEGC_CTG3#FEGC_CTG3/2026-06-01/group</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Never off in 2026-05 to Daily, 1–2 a week in 2026-06</summary>
+    <summary>Always on when available in 2026-05 to Daily, 1–2 a week in 2026-06</summary>
   </entry>
   <entry>
     <title>FEGC_CTG3: Outage ended (2026-05-30)</title>
@@ -65,7 +65,7 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=FEGC_CTG3"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=FEGC_CTG3#FEGC_CTG3/2026-04-01/group</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Daily, over 2 a week in 2026-03 to Never off in 2026-04</summary>
+    <summary>Daily, over 2 a week in 2026-03 to Always on when available in 2026-04</summary>
   </entry>
   <entry>
     <title>FEGC_CTG3: Outage started (2026-03-31)</title>
@@ -100,7 +100,7 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=FEGC_CTG3"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=FEGC_CTG3#FEGC_CTG3/2026-01-01/group</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Never off in 2025-12 to Daily, over 2 a week in 2026-01</summary>
+    <summary>Always on when available in 2025-12 to Daily, over 2 a week in 2026-01</summary>
   </entry>
   <entry>
     <title>FEGC_CTG3: Outage started (2025-12-22)</title>

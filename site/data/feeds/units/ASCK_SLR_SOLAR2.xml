@@ -5,20 +5,6 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=ASCK_SLR_SOLAR2</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
-    <title>ASCK_SLR: Formula off (2026-06-09)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=ASCK_SLR"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=ASCK_SLR#ASCK_SLR/2026-06-09/renew_formula_off</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Formula off: formula to v</summary>
-  </entry>
-  <entry>
-    <title>ASCK_SLR: Formula on (2026-06-01)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=ASCK_SLR"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=ASCK_SLR#ASCK_SLR/2026-06-01/renew_formula_on</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Formula on: v to formula</summary>
-  </entry>
-  <entry>
     <title>ASCK_SLR: Started moving within the day (2025-10-08)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=ASCK_SLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=ASCK_SLR#ASCK_SLR/2025-10-08/renew_moving_on</id>

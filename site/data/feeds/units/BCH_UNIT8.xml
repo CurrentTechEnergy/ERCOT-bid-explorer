@@ -23,7 +23,7 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=BCH_UNIT8"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=BCH_UNIT8#BCH_UNIT8/2026-05-01/group</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Never off in 2026-04 to Multi-day: off 1–7 days in 2026-05</summary>
+    <summary>Always on when available in 2026-04 to Multi-day: off 1–7 days in 2026-05</summary>
   </entry>
   <entry>
     <title>BCH_UNIT8: Outage started (2026-04-22)</title>
@@ -51,7 +51,7 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=BCH_UNIT8"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=BCH_UNIT8#BCH_UNIT8/2026-04-01/group</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Daily, over 2 a week in 2026-03 to Never off in 2026-04</summary>
+    <summary>Daily, over 2 a week in 2026-03 to Always on when available in 2026-04</summary>
   </entry>
   <entry>
     <title>BCH_UNIT8: Bidding approach shifted (2026-02-01)</title>
