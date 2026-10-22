@@ -133,7 +133,10 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          git fetch --depth 1 origin ${{ needs.plan.outputs.current_sha }} ${{ needs.plan.outputs.ref_sha }}
+          # the harness (pipeline/ outside the sides' trees) is this workflow's own commit; each
+          # side's code is taken from its commit by the harness
+          git fetch --depth 1 origin "$GITHUB_SHA" ${{ needs.plan.outputs.current_sha }} ${{ needs.plan.outputs.ref_sha }}
+          git checkout "$GITHUB_SHA" -- pipeline
           git fetch --depth 1 origin data && git worktree add --detach unitdata FETCH_HEAD
           gh release download history -R "$GITHUB_REPOSITORY" -p 'thermal-*.parquet' -D history \
             || echo "No thermal history"
@@ -189,7 +192,10 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          git fetch --depth 1 origin ${{ needs.plan.outputs.current_sha }} ${{ needs.plan.outputs.ref_sha }}
+          # the harness (pipeline/ outside the sides' trees) is this workflow's own commit; each
+          # side's code is taken from its commit by the harness
+          git fetch --depth 1 origin "$GITHUB_SHA" ${{ needs.plan.outputs.current_sha }} ${{ needs.plan.outputs.ref_sha }}
+          git checkout "$GITHUB_SHA" -- pipeline
           git fetch --depth 1 origin data && git worktree add --detach unitdata FETCH_HEAD
           gh release download history -R "$GITHUB_REPOSITORY" -p 'thermal-*.parquet' -D history \
             || echo "No thermal history"
