@@ -11,8 +11,8 @@ Thermal, wind and solar resource nodes for the most recent days, for tomorrow's 
 verdicts (pipeline/decisions.py) and the Overview's forecast (pipeline/forecast): the report
 for operating day D is posted around 13:30 Central on D - 1, sixty days before the disclosure
 gives the units' own prices.  Only the settlement points of units in the latest DAM disclosure
-files are kept, and only the last NODE_DAYS days.  Writes data/dam_nodes.json.gz in the same
-shape; the hub and load-zone prices in the same files go into data/dam_hubs.json.gz, so the
+files are kept, and only the last NODE_DAYS days, enough to reach the disclosure's own days.
+Writes data/dam_nodes.json.gz in the same shape; the hub and load-zone prices in the same files go into data/dam_hubs.json.gz, so the
 hub history runs up to tomorrow rather than stopping at the 60-day days.
 
 History before the API backfill reaches it can be loaded from ERCOT's yearly file of DAM hub and
@@ -36,7 +36,9 @@ from .store import iter_csvs, read_json_gz, write_json_gz
 PATH = DATA_DIR / "dam_hubs.json.gz"
 NODES_PATH = DATA_DIR / "dam_nodes.json.gz"
 MAX_MISSES = 3
-NODE_DAYS = 14        # days of thermal node prices kept
+NODE_DAYS = 64        # days of thermal node prices kept: past the 60-day disclosure's lag, so the
+                      # forecast has a price source for every day, not only the last two weeks
+NODE_FETCH_PER_RUN = 12   # new days fetched per run, newest first, so a gap fills over a few runs
 NODE_FROM_DAM = 5     # latest DAM disclosure files the thermal node list is read from
 CENTRAL = ZoneInfo("America/Chicago")
 DAM_POSTED = dt.time(14, 0)   # Central, on D - 1: ERCOT's 13:30 deadline plus a margin.  A day
@@ -160,7 +162,9 @@ def fetch_dam_node_prices(api, index: dict, now: dt.datetime = None) -> None:
     want = [(today + dt.timedelta(days=k)).isoformat() for k in range(1, 1 - NODE_DAYS, -1)]
     hub_have = set(load()["days"])
     todo = [d for d in want if (d not in store["days"] or d not in hub_have) and misses.get(d, 0) < MAX_MISSES]
-    for date in todo:
+    for date in todo[:NODE_FETCH_PER_RUN]:
+        if date in store["days"] and date in hub_have:     # filled by an earlier day's files
+            continue
         d = dt.date.fromisoformat(date)
         try:
             docs = api.list_archives(EMIL_DAM_SPP, dt.datetime.combine(d - dt.timedelta(days=2), dt.time()),
@@ -172,14 +176,15 @@ def fetch_dam_node_prices(api, index: dict, now: dt.datetime = None) -> None:
         except Exception as e:
             warn(f"DA node prices {date}: failed: {type(e).__name__}: {e}")
             continue
-        if date in got:
-            store["days"][date] = got[date]
-        elif now >= dt.datetime.combine(d - dt.timedelta(days=1), DAM_POSTED, tzinfo=CENTRAL):
+        for o in got.keys() & set(want) - store["days"].keys():   # the window's files carry other
+            store["days"][o] = got[o]                              # days too: keep those we lack
+        if date not in got and now >= dt.datetime.combine(d - dt.timedelta(days=1), DAM_POSTED, tzinfo=CENTRAL):
             misses[date] = misses.get(date, 0) + 1
-        if date in hubs:      # the same files carry the hubs and load zones: keep them for the
+        if hubs:              # the same files carry the hubs and load zones: keep them for the
             hub_store = load()    # days ahead of the 60-day history (the forecast's price bands)
-            merge(hub_store, {date: hubs[date]})
+            merge(hub_store, {d: v for d, v in hubs.items() if d in want})
             save(hub_store)
+            hub_have = set(hub_store["days"])
     index["dam_node_misses"] = {d: n for d, n in misses.items() if d >= keep_from}
     save(store, NODES_PATH)
     if store["days"]:
