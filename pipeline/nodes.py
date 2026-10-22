@@ -34,9 +34,17 @@ Writes data/curtail_nodes.json.gz:
                 curt MWh, cong MWh, value $, mean node price when curtailed, available MWh,
                 days with node prices, directed MWh]
   n_units[tech] {mapped, unmapped}
+  unused        what a flexible load could take: wind and solar MW available but not
+                dispatched (the same HSL minus base point as curt), by the unit's CDR zone
+                (cdr.zone_lookup) and by the price of its offer for the next MW above its
+                base point, in its submitted curve at the middle run of the hour (the price it
+                would come back at).  zones, bands (labels of UNUSED_BANDS
+                plus "No offer above base point"), columns / rows: [date, hour, lambda, tech,
+                zone, MW per band...] (hourly average MW), every day, with or without node prices
 """
 import numpy as np
 
+from . import cdr
 from .config import DATA_DIR, UNIT_DATA_DIR
 from .intraday import _online
 from .parse_prices import node_hourly
@@ -49,6 +57,12 @@ TECHS = ("wind", "solar")
 BIN_EDGES = [-np.inf, -40, -20, -5, 0, 5, 10, 15, 20, 30, 50, 100, np.inf]
 BIN_LABELS = ["< −$40", "−$40 to −20", "−$20 to −5", "−$5 to 0", "$0–5", "$5–10", "$10–15", "$15–20",
               "$20–30", "$30–50", "$50–100", "≥ $100"]
+
+
+# offer price bands for the unused MW, each (low, high], so an offer at exactly $0 is in "−$5 to $0"
+# (the nodal-marginality work: most of it sits there)
+UNUSED_EDGES = [-np.inf, -40, -5, 0, np.inf]
+UNUSED_BANDS = ["Below −$40", "−$40 to −$5", "−$5 to $0", "Above $0"]
 
 
 def _r(x, nd=0):
@@ -70,6 +84,40 @@ def hourly_hsl(u: dict, runs: list) -> np.ndarray:
         if idx.any() and on[idx].mean() >= 0.5:
             out[h] = np.nanmean(hsl[idx & on]) if np.isfinite(hsl[idx & on]).any() else np.nan
     return out
+
+
+def offer_above_bp(u: dict, runs: list, bp: np.ndarray, hsl: np.ndarray) -> np.ndarray:
+    """Per hour, the price of the unit's offer for the next MW above its hourly base point, read
+    off its submitted curve at the hour's middle run (past the curve's last point, its last
+    price; series.off_bp reads the curve the same way); NaN without a curve.  The submitted
+    curve, not SCED2: ERCOT extends SCED2 curves to the unit's limits at prices it did not offer."""
+    n = len(runs)
+    out = np.full(24, np.nan)
+    cv = u.get("curve")
+    if not cv or not n:
+        return out
+    hr = np.minimum(np.array(runs) // 60, 23)
+    ci = _ffill_index(cv, n)
+    for h in range(24):
+        idx = np.flatnonzero(hr == h)
+        if not idx.size or not np.isfinite(bp[h]) or ci[idx[len(idx) // 2]] < 0:
+            continue
+        ev = cv[ci[idx[len(idx) // 2]]]
+        if ev[1] is None:
+            continue
+        P, M = np.asarray(ev[1], float), np.asarray(ev[2], float)
+        if u.get("frac"):
+            M = M * (hsl[h] if np.isfinite(hsl[h]) else 0.0)
+        b = bp[h] + MIN_MW
+        k = int(np.searchsorted(M, b, side="left"))
+        if k >= len(M):
+            out[h] = P[-1]
+        elif k == 0 or M[k] <= M[k - 1]:
+            out[h] = P[k]
+        else:
+            out[h] = P[k - 1] + (b - M[k - 1]) / (M[k] - M[k - 1]) * (P[k] - P[k - 1])
+    # to the cent offers are priced in: a curve rising from $0 to $0.01 is an offer at $0
+    return np.round(out, 2)
 
 
 def settlement_points(index: dict) -> dict:
@@ -95,6 +143,7 @@ def build_node_curtail(index: dict) -> None:
     units = {}         # name -> [tech, sp, curt, cong, value, priced MWh, avail, days]
     mapped = {t: set() for t in TECHS}
     unmapped = {t: set() for t in TECHS}
+    zone, unused = cdr.zone_lookup(), []
 
     for d in dates:
         ud = read_json_gz(UNIT_DATA_DIR / "60d" / f"{d}.json.gz")
@@ -105,6 +154,7 @@ def build_node_curtail(index: dict) -> None:
         lam = (prices.get(d) or {}).get("lambda") or [None] * 24
         lam = np.array([np.nan if v is None else v for v in lam[:24]] + [np.nan] * (24 - len(lam[:24])), float)
         day = {t: np.zeros((7, 24)) for t in TECHS}      # curt, cong, over, unmapped, value, value_lam, directed
+        un = {}            # (tech, zone) -> (len(UNUSED_BANDS) + 1, 24) MW, the last row without an offer above base point
         node_wsum = {t: np.zeros(24) for t in TECHS}       # sum of node price x curtailed MWh
         if not ud:
             for t in TECHS:
@@ -128,6 +178,12 @@ def build_node_curtail(index: dict) -> None:
             curt = hsl - bp
             curt[~np.isfinite(curt) | (curt < MIN_MW)] = 0.0
             avail = np.where(np.isfinite(hsl), hsl, 0.0)
+            if (curt > 0).any():
+                op = offer_above_bp(u, runs, bp, hsl)
+                a = un.setdefault((t, zone(name, t)), np.zeros((len(UNUSED_BANDS) + 1, 24)))
+                for h in np.flatnonzero(curt > 0):
+                    b = len(UNUSED_BANDS) if not np.isfinite(op[h]) else int(np.searchsorted(UNUSED_EDGES, op[h], side="left")) - 1
+                    a[b, h] += curt[h]
             sp = sp_of.get(name)
             np_ = nodes.get(sp) if nodes and sp else None
             node = np.array([np.nan if v is None else v for v in np_], float) if np_ else np.full(24, np.nan)
@@ -168,6 +224,9 @@ def build_node_curtail(index: dict) -> None:
                     b = int(np.searchsorted(BIN_EDGES, p, side="right")) - 1
                     bins[t]["mwh"][b] += c
                     bins[t]["uh"][b] += 1
+        for (t, z), a in sorted(un.items(), key=lambda kv: (TECHS.index(kv[0][0]), cdr.ZONES.index(kv[0][1]))):
+            for h in np.flatnonzero(a.sum(axis=0) > 0):
+                unused.append([d, int(h), _r(lam[h], 2), t, z] + [_r(v) for v in a[:, h]])
         for t in TECHS:
             a = day[t]
             daily[t]["curt"].append(_r(a[0].sum()))
@@ -192,6 +251,8 @@ def build_node_curtail(index: dict) -> None:
         "hours": {"columns": ["date", "hour", "tech", "lambda", "curt", "cong", "over", "node", "directed"], "rows": rows},
         "units": out_units,
         "n_units": {t: {"mapped": len(mapped[t]), "unmapped": len(unmapped[t] - mapped[t])} for t in TECHS},
+        "unused": {"zones": cdr.ZONES, "bands": UNUSED_BANDS + ["No offer above base point"],
+                   "columns": ["date", "hour", "lambda", "tech", "zone"] + [f"b{i}" for i in range(len(UNUSED_BANDS) + 1)], "rows": unused},
     })
     n_nodes = sum(has_nodes)
     tot = {t: sum(v for v in daily[t]["curt"] if v) / 1000 for t in TECHS}

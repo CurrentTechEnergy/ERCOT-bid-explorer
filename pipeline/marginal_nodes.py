@@ -28,10 +28,9 @@ Writes data/marginal_nodes.json.gz:
              room_at, room_below, room_above]: unit-hours on the margin (a unit marginal for
              a third of the hour's runs counts a third) and their room above base point
              (HSL minus base point: the MW they can still add at about their own price;
-             for storage the whole range from charging up to HSL), averaged over the hour.  zone is the unit's CDR zone
-             (ZONES; BEXAR counted as SOUTH), "unmapped" when the CDR has no match.  The
-             CDR extract is a csv, not a tracked input: rebuild with REBUILD_ALL after
-             refreshing it
+             for storage the whole range from charging up to HSL), averaged over the hour.
+             zone is the unit's CDR zone (cdr.zone_lookup: BEXAR counted as SOUTH,
+             "unmapped" without a match)
   zones      the zone order
   units      the units most often marginal away from lambda: [name, tech, sp, hours online
              with a curve, h_at, h_below, h_above, mean implied price when marginal, mean
@@ -58,9 +57,7 @@ TOL_MW = 0.5
 STEP_MW = 1.0         # a curve segment narrower than this is a vertical step, not a margin
 TECHS = list(SIXTY_DAY_TECHS)
 TOP_UNITS = 60
-# CDR zones, west to east; the CDR's BEXAR (San Antonio) counts as SOUTH
-ZONES = ["WEST", "PANHANDLE", "NORTH", "SOUTH", "COASTAL", "HOUSTON", "unmapped"]
-ZONE_ALIAS = {"BEXAR": "SOUTH"}
+ZONES = cdr.ZONES
 SAMPLE = 4000
 
 
@@ -195,14 +192,7 @@ def build_marginal_nodes(index: dict) -> None:
     node_days = set(index["days"].get("nodes", []))
     price_days = set(index["days"].get("prices", []))
     sp_of = settlement_points(index)
-    matcher, zone_of = cdr.Matcher(cdr.load()), {}
-
-    def zone(name, tech):
-        if name not in zone_of:
-            m, _ = matcher.match(name, tech)
-            z = ZONE_ALIAS.get((m or {}).get("zone"), (m or {}).get("zone"))
-            zone_of[name] = z if z in ZONES else "unmapped"
-        return zone_of[name]
+    zone = cdr.zone_lookup()
 
     rows, has_nodes, exact_days, netted_days = [], [], [], []
     units = {}        # name -> [tech, sp, h_on, h_at, h_below, h_above, sum implied, sum node, n node, sum hsl]
@@ -243,7 +233,7 @@ def build_marginal_nodes(index: dict) -> None:
             if not marg.any() and not on_runs.any():
                 continue
             hsl_r = np.array([u["lim"][i][1] if i >= 0 and u["lim"][i][1] is not None else np.nan for i in _ffill_index(u["lim"], n)], float)
-            acc = day.setdefault((t, zone(name, t)), np.zeros((9, 24))) if marg.any() else None
+            acc = day.setdefault((t, zone(name, t)), np.zeros((6, 24))) if marg.any() else None
             rec = units.setdefault(name, [t, sp_of.get(name), 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0, 0.0])
             rec[2] += float(np.sum(on_runs / runs_h[hr]))
             rec[9] += float(np.nansum(np.where(on_runs, hsl_r, 0.0) / runs_h[hr]))
