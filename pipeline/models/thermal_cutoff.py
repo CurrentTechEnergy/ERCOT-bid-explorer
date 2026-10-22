@@ -75,10 +75,10 @@ For every thermal train in the latest DAM disclosure (pipeline.forecast.context.
               a logistic's P(stays on | on) with one intercept per unit (_logit_fit, the year to
               the asof point, on unit-days online going into the window).  Part "plain" puts
               the unit's own online share while available (_online_share) in place of the trees.
-              Part "pool" (instead of "out"): the long-outage carry-over and the unseen
-              allocation give way to outage_pool's zonal deduction by hour (commit
-              "outage_pool" true; the build takes it off after the dispatch), placed on no unit;
-              units the outage report names keep their calls
+              Part "pool" (instead of "out"): the long-outage carry-over for coal and CC
+              (POOL_DROP_TECHS) and the unseen allocation give way to outage_pool's zonal
+              deduction by hour (commit "outage_pool" true; the build takes it off after the
+              dispatch), placed on no unit; units the outage report names keep their calls
   peakers     combustion turbines outside the always-on group (which are held on, as other
               always-on units) are not judged here (peaker_share, by hour, on the hours
               they were available); they get verdict "peaker" and p_on from that model, and the
@@ -122,6 +122,7 @@ POOL_K = 15              # decision days at which a unit's own cutoff and the po
 POOL_MIN = 3             # decision days a unit needs for a pooled cutoff
 P_OFF, P_ON = 0.3, 0.7   # p_on below P_OFF is "off", above P_ON "on", between "maybe"
 DAILY_TECHS = ("combined_cycle", "gas_steam", "coal")
+POOL_DROP_TECHS = ("coal", "combined_cycle")    # v11 "pool": the long-outage carry-over is dropped for these only (kept for gas steam and CTs, where it was mostly right)
 CLEAR_TECHS = ("combined_cycle", "gas_steam")   # a 60-day outage these carry is dropped when the outage report does not list the unit
 WINDOW_TECHS = ("combined_cycle", "gas_steam")   # judged on their own stay-on cost in CC_WINDOW_GROUPS
 CC_WINDOW_GROUPS = ("daily1", "daily2", "daily3", "multiday", "seasonal")   # CC trains judged on their own stay-on cost
@@ -560,7 +561,8 @@ def forecast(date, ctx: C.Context) -> dict:
         g = "never" if t == "nuclear" else groups.get(key)
         cc_win = t in WINDOW_TECHS and g in CC_WINDOW_GROUPS
         last, out_days = _last_state(ctx, key, known)
-        if last == "o" and (out_days < LONG_OUT or ((out11 is not None or opool is not None) and t in outage_v11.TECHS)):
+        if last == "o" and (out_days < LONG_OUT or (out11 is not None and t in outage_v11.TECHS)
+                            or (opool is not None and t in POOL_DROP_TECHS)):
             last = "0"       # a short outage sixty days ago (v11: any, outage_v11 or the pool carries it): treated as off then, judged normally
         cleared = (last == "o" and t in CLEAR_TECHS and (t == "combined_cycle" or g != "never")
                    and listed is not None and not listed.get(key))

@@ -219,6 +219,7 @@ def score_floor_parts(day: dict, key_lsl: dict, states: dict, hub) -> dict | Non
         return None
     ip, im = series.index("p"), series.index("min")
     err = {k: np.zeros(24) for k in FLOOR_PARTS}
+    held_out, held_off = np.zeros(24), np.zeros(24)
     for key, s in (uh.get("units") or {}).items():
         mn, p = _arr(s[im]), _arr(s[ip])
         if mn.shape != (24,) or p.shape != (24,):
@@ -233,12 +234,21 @@ def score_floor_parts(day: dict, key_lsl: dict, states: dict, hub) -> dict | Non
         err["outage"] += np.where(out, e, 0.0)
         err["sizing"] += np.where(sizing, e, 0.0)
         err["onoff"] += np.where(~out & ~sizing, e, 0.0)
+        held_out += np.where(out, mn, 0.0)
+        held_off += np.where(~on & ~out, mn, 0.0)
     for key, a in key_lsl.items():
         if key not in (uh.get("units") or {}):
             err["other"] -= a
     pool = ((day.get("hourly") or {}).get("outage_pool") or {}).get("min")
-    if pool:        # v11 "pool": the zonal outage deduction placed on no unit nets against the outage part
-        err["outage"] -= np.nan_to_num(_arr(pool))
+    if pool:
+        # v11 "pool": the zonal outage deduction is placed on no unit, so it nets against the
+        # minimum held on units that did not run: on outage (the outage part) and offline (the
+        # on/off part), split between the two by what each held that hour
+        pool = np.nan_to_num(_arr(pool))
+        tot = held_out + held_off
+        share = np.divide(held_out, tot, out=np.ones(24), where=tot > 0)
+        err["outage"] -= pool * share
+        err["onoff"] -= pool * (1.0 - share)
     ok = ~np.isnan(hub) if hub.shape == (24,) else np.zeros(24, bool)
     res = {}
     for part, e in err.items():
