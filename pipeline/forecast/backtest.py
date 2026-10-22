@@ -202,6 +202,16 @@ def report(cur: dict, ref: dict, labels=("current", "ref"), cal=None) -> str:
         fa, fb = r["floor"].get(h) or {}, c["floor"].get(h) or {}
         lines.append(f"| {h} ({fb.get('hours', fa.get('hours', 0))} h) | {_cell(fa.get('mae'))} | {_cell(fb.get('mae'))} | "
                      f"{_cell(fa.get('bias'))} | {_cell(fb.get('bias'))} |")
+    rb, cb = r["all"].get("floor_bin") or {}, c["all"].get("floor_bin") or {}
+    if rb or cb:
+        lines += ["", "## Binary committed minimum against online LSL, all as-of days", "",
+                  "Each unit-hour in full when its P(on) is 0.5 or more, none otherwise, less the outage pool "
+                  "(the fleet's min_bin line; – for a side without it).", "",
+                  f"| Hours | {labels[1]} MAE | {labels[0]} MAE | {labels[1]} bias | {labels[0]} bias |", "|---|---|---|---|---|"]
+        for h in ("all", "cheap", "neg"):
+            fa, fb = rb.get(h) or {}, cb.get(h) or {}
+            lines.append(f"| {h} ({fb.get('hours', fa.get('hours', 0))} h) | {_cell(fa.get('mae'))} | {_cell(fb.get('mae'))} | "
+                         f"{_cell(fa.get('bias'))} | {_cell(fb.get('bias'))} |")
     if r["parts"] or c["parts"]:
         lines += ["", "## Committed minimum error by cause, all as-of days", "",
                   "Each unit-hour's committed minimum less its online LSL, by cause (pipeline/forecast/score.py, "

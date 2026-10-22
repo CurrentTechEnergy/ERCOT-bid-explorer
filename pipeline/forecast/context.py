@@ -72,6 +72,11 @@ MIN_ASOF_DAYS = 28             # days of hourly history a backtest day's groups 
 SNAP_HOUR = 15                 # the run nearest this hour on the snapshot day gives the curve
 
 
+SIZE_BANDS = [-np.inf, 10.0, 20.0, 30.0, 50.0, np.inf]   # $/MWh, day-ahead hub: CC size bands (thermal_dispatch v4; the first is CHEAP_HUB)
+SIZE_DAYS = 365            # days up to the asof point a train's band sizes are taken from
+SIZE_MIN_HOURS = 24        # online hours a band needs for its own mean, else the train's mean over all bands
+
+
 def price_bin(p):
     return int(np.searchsorted(PRICE_BINS, p, side="right") - 1) if p is not None else None
 
@@ -193,6 +198,41 @@ def history_trains(techs, before):
         out[d] = {k: e for k, e in out[d].items() if e[1] is not None and e[3]}
     _HIST[ck] = out
     return out
+
+
+_HSTATES = {}
+
+
+def history_states(techs, before):
+    """{unit or train: {date: states [24]}} for the days before `before` in the thermal history
+    files, every hour kept (history_trains keeps only days with a node price and an LSL, which
+    leaves out much of an outage): combined-cycle configurations merged by RANK."""
+    files = _history_files()
+    ck = (tuple(f.name for f in files), tuple(techs), before)
+    if ck not in _HSTATES:
+        out = defaultdict(dict)
+        try:
+            import pandas as pd
+        except ImportError:
+            files = []
+        code = np.array(sorted(grp.RANK, key=grp.RANK.get))      # state chars, lowest rank first
+        rank = {c: i for i, c in enumerate(code)}
+        for f in files:
+            df = pd.read_parquet(f, columns=["date", "unit", "tech", "he", "state"])
+            df = df[df["tech"].astype(str).isin(techs) & (df["date"] < before)]
+            if df.empty:
+                continue
+            t = df["tech"].astype(str)
+            key = np.where(t == "combined_cycle", df["unit"].astype(str).map(train_of), df["unit"].astype(str))
+            r = df["state"].astype(str).map(rank).fillna(0).astype(int)
+            h = pd.DataFrame({"key": key, "date": df["date"].to_numpy(), "he": df["he"].to_numpy(), "r": r.to_numpy()})
+            h = h[(h["he"] >= 1) & (h["he"] <= 24)].groupby(["key", "date", "he"])["r"].max()
+            w = h.unstack("he").reindex(columns=range(1, 25)).fillna(0).astype(int)
+            segs = code[w.to_numpy()]
+            for (k, d), seg in zip(w.index, segs):
+                out[k][d] = seg
+        _HSTATES[ck] = dict(out)
+    return _HSTATES[ck]
 
 
 class Context:
@@ -485,6 +525,16 @@ class Context:
         "total" is the non-IRR resources, batteries in, wind and solar out), less the MW the unit-level snapshot lists in the zone, as
         UNSEEN_BASE (split by `zone_mw`, the zones' thermal MW) + UNSEEN_SLOPE x that remainder,
         at least 0.  None when either report is missing."""
+        rem = self.zone_remainder(date)
+        if rem is None:
+            return None
+        tot_mw = sum(zone_mw.values()) or 1.0
+        return {z: max(0.0, UNSEEN_BASE * zone_mw.get(z, 0.0) / tot_mw + UNSEEN_SLOPE * r) for z, r in rem.items()}
+
+    def zone_remainder(self, date):
+        """{zone: the zonal outage report's mean total for `date` less the MW the unit-level
+        snapshot lists out in the zone (non-renewable units)}, or None when either report is
+        missing."""
         self._load_zones()
         c = self._cap.get(date)
         snap = (_d(date) - dt.timedelta(days=OUTAGE_SNAPSHOT_LAG)).isoformat()
@@ -505,12 +555,7 @@ class Context:
         listed = defaultdict(float)
         for z, mw in tur.values():
             listed[z] += mw
-        tot_mw = sum(zone_mw.values()) or 1.0
-        out = {}
-        for z, v in c["total"].items():
-            rem = float(np.mean([a or 0 for a in v])) - listed[z]      # "total" leaves out the IRR part already
-            out[z] = max(0.0, UNSEEN_BASE * zone_mw.get(z, 0.0) / tot_mw + UNSEEN_SLOPE * rem)
-        return out
+        return {z: float(np.mean([a or 0 for a in v])) - listed[z] for z, v in c["total"].items()}      # "total" leaves out the IRR part already
 
     def net_load(self, date):
         """[24] MW: ERCOT's load forecast less its wind and solar forecasts for `date`, all as
@@ -593,6 +638,85 @@ class Context:
                     out[key] = float(np.quantile(v, CC_MIN_Q))
             self._cc_min[point] = out
         return self._cc_min[point]
+
+    def cc_band_size_at(self, date):
+        """{train: [mean online LSL, MW, in each SIZE_BANDS band of the day-ahead hub]} over the
+        SIZE_DAYS days up to asof(date) (thermal_dispatch v4): the hourly online LSL of the thermal history
+        (pipeline/history.py, configurations merged by their largest) before the 60-day record,
+        then the 60-day unit files (configurations summed, as cc_min_lsl_at).  A band with
+        fewer than SIZE_MIN_HOURS online hours takes the train's mean over all of them."""
+        point, _ = self.asof(date)
+        if point is None:
+            return {}
+        cache = self.__dict__.setdefault("_cc_band", {})
+        if point not in cache:
+            p = self._cc_size_panel()
+            lo = (_d(point) - dt.timedelta(days=SIZE_DAYS)).isoformat()
+            w = p[(p["date"] > lo) & (p["date"] <= point)]
+            g = w.groupby(["train", "band"])["lsl"]
+            tab = g.mean().where(g.size() >= SIZE_MIN_HOURS).unstack()
+            one = w.groupby("train")["lsl"].mean()
+            out = {}
+            for train, m in one.items():
+                v = tab.loc[train].reindex(range(len(SIZE_BANDS) - 1)) if train in tab.index else None
+                out[train] = [float(m) if v is None or np.isnan(v.iloc[b]) else float(v.iloc[b])
+                              for b in range(len(SIZE_BANDS) - 1)]
+            cache[point] = out
+        return cache[point]
+
+    def _cc_size_panel(self):
+        """CC train-hours online with an LSL: train, date, lsl, band (of the day-ahead hub)."""
+        if getattr(self, "_cc_size", None) is None:
+            import pandas as pd
+            first = self.days60[0] if self.days60 else "9999"
+            parts = []
+            for f in _history_files():
+                m = f.stem[8:]
+                hf = HISTORY_DIR / f"da-hubs-{m}.parquet"
+                if m > first[:7] or not hf.exists():
+                    continue
+                t = pd.read_parquet(f, columns=["date", "unit", "tech", "he", "state", "lsl"])
+                t = t[(t["tech"].astype(str) == "combined_cycle") & t["state"].astype(str).isin(["m", "a"])
+                      & (t["lsl"] > 0) & (t["date"] < first)]
+                if t.empty:
+                    continue
+                t = t.assign(train=t["unit"].astype(str).map(train_of))
+                t = t.groupby(["train", "date", "he"], observed=True)["lsl"].max().reset_index()
+                hub = pd.read_parquet(hf).query("point == 'HB_HUBAVG'").set_index(["date", "he"])["price"].rename("hub")
+                parts.append(t.join(hub, on=["date", "he"]))
+            if self._cc_lsl is None:
+                self._cc_lsl = _cc_online_lsl(self.days60)
+            rows = []
+            for train, days in self._cc_lsl.items():
+                for d, a in days:
+                    h = self.hub(d)
+                    if h is None:
+                        continue
+                    for i in np.nonzero(a > 0)[0]:
+                        rows.append((train, d, i + 1, float(a[i]), float(h[i])))
+            parts.append(pd.DataFrame(rows, columns=["train", "date", "he", "lsl", "hub"]))
+            p = pd.concat(parts, ignore_index=True).dropna(subset=["hub"])
+            p["band"] = np.searchsorted(SIZE_BANDS, p["hub"].to_numpy(float), side="left") - 1
+            self._cc_size = p[["train", "date", "lsl", "band"]]
+        return self._cc_size
+
+    def day_states(self, key, techs):
+        """{date: states [24]} for a unit or train: the thermal history before the 60-day record
+        (history_states), then the 60-day hourly states (raw_states), for days with any data."""
+        cache = self.__dict__.setdefault("_day_states", {})
+        if key not in cache:
+            first = (self.uh.get("dates") or [None])[0]
+            out = dict(history_states(techs, first).get(key, {})) if first else {}
+            st = self.raw_states().get(key)
+            if st is not None:
+                day0 = self.stats["day0"]
+                for d in self.uh.get("dates", []):
+                    dn = (_d(d) - day0).days
+                    seg = st[1][dn * 24:(dn + 1) * 24]
+                    if seg.size == 24 and (seg != "-").any():
+                        out[d] = seg
+            cache[key] = out
+        return cache[key]
 
     def raw_states(self):
         """{train: (tech, state array)} merged but not outage-rewritten, on the stats' calendar."""
