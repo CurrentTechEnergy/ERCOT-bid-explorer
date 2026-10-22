@@ -138,7 +138,7 @@ jobs:
           git fetch --depth 1 origin "$GITHUB_SHA" ${{ needs.plan.outputs.current_sha }} ${{ needs.plan.outputs.ref_sha }}
           git checkout "$GITHUB_SHA" -- pipeline
           git fetch --depth 1 origin data && git worktree add --detach unitdata FETCH_HEAD
-          gh release download history -R "$GITHUB_REPOSITORY" -p 'thermal-*.parquet' -p 'da-hubs-*.parquet' -D history \
+          gh release download history -R "$GITHUB_REPOSITORY" -p 'thermal-*.parquet' -p 'da-hubs-202[4-9]-*.parquet' -D history \
             || echo "No thermal history"
       # the cache holds a side's day files under days/ whichever side it was saved from, so a
       # branch's cache serves main's side once the branch is merged
@@ -197,7 +197,7 @@ jobs:
           git fetch --depth 1 origin "$GITHUB_SHA" ${{ needs.plan.outputs.current_sha }} ${{ needs.plan.outputs.ref_sha }}
           git checkout "$GITHUB_SHA" -- pipeline
           git fetch --depth 1 origin data && git worktree add --detach unitdata FETCH_HEAD
-          gh release download history -R "$GITHUB_REPOSITORY" -p 'thermal-*.parquet' -p 'da-hubs-*.parquet' -D history \
+          gh release download history -R "$GITHUB_REPOSITORY" -p 'thermal-*.parquet' -p 'da-hubs-202[4-9]-*.parquet' -D history \
             || echo "No thermal history"
       - name: Restore cached days (current)
         if: needs.plan.outputs.fresh != 'true'
