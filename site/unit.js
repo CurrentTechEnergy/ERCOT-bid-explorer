@@ -656,6 +656,12 @@ function saveView() {
   const to = !S.unit ? "unit.html" : S.stubs.has(S.unit) ? `unit/${S.unit}` : `unit.html?unit=${encodeURIComponent(S.unit)}`;
   const at = new URL(to, document.baseURI);
   if (at.pathname + at.search !== location.pathname + location.search) history.replaceState(null, "", at.pathname + at.search + location.hash);
+  // the canonical link names this unit's own address, so search engines keep each unit as its own page
+  // rather than folding them all into unit.html
+  for (const el of document.querySelectorAll('link[rel="canonical"], meta[property="og:url"]')) {
+    const attr = el.tagName === "LINK" ? "href" : "content";
+    el.setAttribute(attr, new URL(to, new URL(el.getAttribute(attr)).origin + "/").href);
+  }
   window.CX.writeHash({ cfg: S.cfg && S.list.get(S.unit)?.configs.length > 1 ? S.cfg : null, day: S.day, he: S.hour == null ? null : S.hour + 1,
     fc: S.fcDay && S.FI && S.fcDay !== S.FI.days.at(-1) ? S.fcDay : null });
 }
