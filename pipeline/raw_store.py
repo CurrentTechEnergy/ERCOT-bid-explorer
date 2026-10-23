@@ -160,3 +160,46 @@ def timed(label: str, fn):
     blob = fn()
     print(f"    {label}: {len(blob) / 1e6:.1f} MB in {time.time() - t0:.1f}s", flush=True)
     return blob
+
+
+def check() -> int:
+    """A quick end-to-end check (the "Check raw store" workflow): write a small test object to the
+    bucket and read it back, then fetch the newest 2-day SCED curves file twice through ErcotAPI;
+    the second fetch must come from the bucket.  One ERCOT download at most."""
+    import sys
+    from .config import EMIL_2DAY
+    from .ercot_api import ErcotAPI
+
+    api = ErcotAPI()
+    store = api.raw
+    if not store.enabled:
+        print("raw store: R2_ENDPOINT, R2_ACCESS_KEY_ID or R2_SECRET_ACCESS_KEY is not set")
+        return 1
+    test = b"PK raw store check " + dt.datetime.now(dt.timezone.utc).isoformat().encode()
+    store.put("_check", "test", test)
+    back = store.get("_check", "test")
+    print(f"write and read back a test object: {'ok' if back == test else 'FAILED'}")
+    if back != test:
+        return 1
+    now = dt.datetime.now()
+    docs = sorted(api.list_archives(EMIL_2DAY, now - dt.timedelta(days=3), now + dt.timedelta(days=1)),
+                  key=lambda d: d.get("postDatetime", ""))
+    if not docs:
+        print(f"no {EMIL_2DAY} file posted in the last 3 days to test with")
+        return 1
+    doc = docs[-1]
+    print(f"fetching {doc.get('friendlyName', doc['docId'])} (doc {doc['docId']}) twice")
+    hits = store.stats["hit"]
+    first = api.download(EMIL_2DAY, doc["docId"])
+    second = api.download(EMIL_2DAY, doc["docId"])
+    from_store = store.stats["hit"] > hits
+    ok = first == second and first[:2] == b"PK" and from_store
+    print(f"same bytes both times: {first == second}; second fetch from the bucket: {from_store}")
+    print(store.summary())
+    print("raw store check:", "ok" if ok else "FAILED")
+    sys.stdout.flush()
+    return 0 if ok else 1
+
+
+if __name__ == "__main__":
+    raise SystemExit(check())
