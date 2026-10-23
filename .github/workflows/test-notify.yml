@@ -1,0 +1,27 @@
+name: Check subscriber email logs
+
+# Runs pipeline/test_notify.py: subscriber emails on fake follows must never print a follower's
+# address or a working link, since this repository's run logs are public.  No secrets, no network.
+on:
+  pull_request:
+    paths:
+      - pipeline/notify.py
+      - pipeline/test_notify.py
+      - .github/workflows/test-notify.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install -r requirements.txt
+      - run: python -m pipeline.test_notify
