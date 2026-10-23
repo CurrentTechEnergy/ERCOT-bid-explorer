@@ -41,12 +41,8 @@ on:
         required: false
         default: false
 
-permissions:
-  actions: write     # a reprocess run queues the next one
-  contents: write
-  issues: write      # the stale-data issue (pipeline/freshness.py)
-  pages: write
-  id-token: write
+# Each job gets only what it needs; nothing by default.
+permissions: {}
 
 concurrency:
   group: update-data
@@ -56,8 +52,12 @@ jobs:
   update:
     runs-on: ubuntu-latest
     timeout-minutes: 340
+    permissions:
+      actions: write     # a reprocess run queues the next one
+      contents: write    # the data commit and the data branch
+      issues: write      # the stale-data issue (pipeline/freshness.py)
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
         with:
           # The branch tip, not the commit that triggered the run: a run queued behind another
           # in the update-data group would otherwise start from data the earlier run replaced,
@@ -65,12 +65,12 @@ jobs:
           ref: ${{ github.ref_name }}
           fetch-depth: 1     # main's history is fetched just before the data commit is rebased
 
-      - uses: actions/setup-python@v6
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6.3.0
         with:
           python-version: "3.12"
           cache: pip
 
-      - run: pip install -r requirements.txt
+      - run: pip install --require-hashes -r requirements.lock
 
       # Per-unit day files (full-fidelity status / limits / offer curves, see pipeline/units.py)
       # live on the orphan `data` branch, checked out as a worktree in unitdata/ (gitignored on
@@ -242,16 +242,20 @@ jobs:
     needs: update
     if: vars.ENABLE_PAGES == 'true'
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
         with:
           ref: ${{ github.ref_name }}     # include the data commit made by the update job
-      - uses: actions/configure-pages@v6
-      - uses: actions/upload-pages-artifact@v5
+      - uses: actions/configure-pages@45bfe0192ca1faeb007ade9deae92b16b8254a0d # v6.0.0
+      - uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
         with:
           path: site
       - id: deployment
-        uses: actions/deploy-pages@v5
+        uses: actions/deploy-pages@368f82528645a54fb793d4d04e342629a3f51346 # v5.0.1

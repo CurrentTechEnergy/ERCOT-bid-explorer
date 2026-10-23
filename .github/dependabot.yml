@@ -1,0 +1,11 @@
+# Actions are pinned to commit SHAs (supply-chain safety); this opens a PR when one has a new
+# release, so the pins don't go stale. Python packages are locked in requirements.lock.
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: monthly
+    groups:
+      actions:
+        patterns: ["*"]
