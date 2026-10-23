@@ -54,10 +54,12 @@ function msg(text, keep) {
 }
 function drawSubscribe() {
   const feed = `data/feeds/units/${encodeURIComponent(S.unit)}.xml`;
-  const feedLink = `<a class="btn" href="${feed}" title="Atom feed of this unit's changes, for a feed reader">Feed</a>`;
+  // pipeline/events.py writes a unit's feed only once the unit has an event (fleet fuel events aside)
+  const hasFeed = S.E.events.some((e) => e.kind !== "fuel" && (e.unit === S.unit || (e.units || []).includes(S.unit)));
+  const feedLink = hasFeed ? `<a class="btn" href="${feed}" title="Atom feed of this unit's changes, for a feed reader">Feed</a>` : "";
   if (!S.follow) {
     $("sub-tools").innerHTML = feedLink;
-    msg("Email alerts are not switched on yet. The feed carries the same changes for a feed reader.", true);
+    msg(hasFeed ? "Email alerts are not switched on yet. The feed carries the same changes for a feed reader." : "Email alerts are not switched on yet.", true);
     return;
   }
   // "website" is a field people never see; bots that fill it in are ignored by the server

@@ -13,6 +13,9 @@ zone changed, or whose capacity moved by more than MW_TOLERANCE from the MW its 
 index's MW is a percentile of daily HSLs and drifts a little). Stubs of units that leave the
 index are kept, so links already sent still open. Changing TEMPLATE_VERSION rewrites every stub.
 
+write_all also writes site/sitemap.xml: the site's pages and every unit stub, for search engines
+(site/robots.txt points to it).
+
 Run from the update after the unit index (pipeline/update.py), or by hand:
   python -m pipeline.share_pages
 """
@@ -30,6 +33,10 @@ SHARE_IMAGE = f"{SITE_URL}/share-card.png"
 OUT_DIR = SITE_DIR / "unit"
 TEMPLATE_VERSION = "1"
 MW_TOLERANCE = 0.10
+SITEMAP_PATH = SITE_DIR / "sitemap.xml"
+# the pages in the nav, plus the reference pages; retired pages (redirects) are left out
+SITEMAP_PAGES = ["", "beyond.html", "commitment.html", "renewables.html", "batteries.html", "unit.html",
+                 "changes.html", "fleet.html", "builder.html", "guide.html", "contact.html", "terms.html"]
 
 TECH_LABEL = {"nuclear": "Nuclear", "coal": "Coal", "combined_cycle": "Combined cycle", "gas_steam": "Gas steam",
               "combustion_turbine": "Combustion turbine", "wind": "Wind", "solar": "Solar", "storage": "Battery"}
@@ -142,7 +149,18 @@ def write_all() -> int:
         if text != old:
             path.write_text(text)
             written += 1
+    write_sitemap(sorted(p.stem for p in OUT_DIR.glob("*.html")))
     return written
+
+
+def write_sitemap(units) -> None:
+    """site/sitemap.xml: the pages in SITEMAP_PAGES and /unit/<UNIT> for every stub, written only
+    when the list changes (no lastmod, so a run with no new unit leaves it alone)."""
+    urls = [f"{SITE_URL}/{p}" for p in SITEMAP_PAGES] + [f"{SITE_URL}/unit/{u}" for u in units]
+    text = ('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
+            + "".join(f"  <url><loc>{html.escape(u)}</loc></url>\n" for u in urls) + "</urlset>\n")
+    if not SITEMAP_PATH.exists() or SITEMAP_PATH.read_text() != text:
+        SITEMAP_PATH.write_text(text)
 
 
 if __name__ == "__main__":
