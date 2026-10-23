@@ -1,6 +1,6 @@
 /* Renewables: one day's curtailment by hour, wind and solar offer prices and curtailment (one
    panel: daily by cause, by price at lambda or at the node, value, units). Lifted from trends.js
-   (drawRenewBands, drawCurtailment, drawNodeCurtail) and app.js (drawCurtail). Reads
+   (drawRenewBands, drawCurtailment, drawNodeCurtail) and the retired Day view (drawCurtail). Reads
    data/curve_trends.json.gz, data/curtail_nodes.json.gz and data/renew/sig-YYYY.json.gz (each
    unit's offer on its curtailed days). Fleet economics moved to fleet.html. The hedge signals on
    the same page are renewables-hedge.js. This file owns the status line and the shared chart
@@ -283,7 +283,7 @@ function drawCurtPrice() {
     bins.map((b) => [b.label, b.n, b.wind / 1000, b.solar / 1000, b.n ? b.wind / b.n : null, b.n ? b.solar / b.n : null, b.wa, b.sa]), "Curtailment by system lambda");
 }
 
-// one day by hour, lifted from the Day view (app.js drawCurtail). The hours come from
+// one day by hour, lifted from the retired Day view. The hours come from
 // curve_trends' hourly rows, which already pick the 60-day disclosure where the day has it and the
 // 2-day estimate otherwise, so the day needs no day file of its own.
 function drawCurtail() {

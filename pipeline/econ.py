@@ -1,5 +1,5 @@
 """Plant economics: what each unit earned and what it cost to run, day by day, from the data
-already loaded.  Needs no downloads.  Read by economics.html.
+already loaded.  Needs no downloads.  Read by Fleet economics (fleet.html) and the Unit page.
 
 For every unit in the per-unit day files (UNIT_DATA_DIR/60d/) and each 60-day date:
 

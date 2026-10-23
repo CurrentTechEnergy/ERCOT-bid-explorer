@@ -1,6 +1,6 @@
 /* Beyond baseload, one day: the expected dispatch stack (data/forecast/stack/<date>.json.gz,
    pipeline/forecast/stack.py) and the Day view's price-setting charts (offer curves, marginal offer
-   stack, marginal supply, through the day), lifted from app.js. The across-days panels on the same
+   stack, marginal supply, through the day), lifted from the retired Day view. The across-days panels on the same
    page are beyond-range.js. */
 (() => {
 "use strict";

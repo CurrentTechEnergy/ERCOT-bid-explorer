@@ -1,5 +1,5 @@
 """Which gas price each gas-fired unit buys at: Waha (West Texas) or Houston Ship Channel.
-Needs no downloads.  Read by econ.py (and through it economics.html).
+Needs no downloads.  Read by econ.py (and through it Fleet economics and the Unit page).
 
 Two signals, from the data already loaded:
 

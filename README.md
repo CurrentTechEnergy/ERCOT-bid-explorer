@@ -196,9 +196,9 @@ site/
                    (unit.html with no unit shows the Units directory, unit-dir.js; common.js adds
                    the "Find a unit" box to every page's nav row),
   guide.html, guide.js (How offers work, including how revenue is counted and how hedge signals are found),
-  day.html, app.js, economics.html, economics.js, contracts.html, contracts.js
-                   (Day view, Plant economics, Hedge signals: being retired; none is in the nav),
-  trends.html      (retired; redirects to commitment.html),
+  trends.html, day.html, economics.html, contracts.html
+                   (retired pages, kept as redirects to commitment.html, beyond.html, fleet.html
+                   and renewables.html#hedge so old links still open),
   style.css, vendor/d3.min.js
   data/            generated: index.json, summary_*.json.gz, marginal_*.json.gz, 2d/, 60d/, dam/, prices/,
                    curtail_nodes.json.gz, marginal_nodes.json.gz, gas.json.gz, gas_hubs.json.gz,
@@ -239,7 +239,7 @@ Node prices are kept at 15 minutes for every settlement point that is not a hub 
 
 ### Hedge signals
 
-`pipeline/ppa.py` looks for wind and solar units whose real-time offers follow a contract for differences settled at a day-ahead price on generated energy: offer = share × DA price − constant, hour by hour. For each unit it fits every candidate settlement point (its own node, each hub and load zone) on the days its offer moved with the hour, picks the point whose formula predicts the most hours within $2, and grades the result (revealed, location unclear, partial, hints only). The intercept gives an implied strike range: all strike, or strike plus a per-MWh credit such as the PTC. Everything is inferred from offers; the page `contracts.html` shows the fits. Hourly offers per day are cached on the data branch under `ppa/`.
+`pipeline/ppa.py` looks for wind and solar units whose real-time offers follow a contract for differences settled at a day-ahead price on generated energy: offer = share × DA price − constant, hour by hour. For each unit it fits every candidate settlement point (its own node, each hub and load zone) on the days its offer moved with the hour, picks the point whose formula predicts the most hours within $2, and grades the result (revealed, location unclear, partial, hints only). The intercept gives an implied strike range: all strike, or strike plus a per-MWh credit such as the PTC. Everything is inferred from offers; Renewables (hedge signals) and each Unit page show the fits. Hourly offers per day are cached on the data branch under `ppa/`.
 
 ### Bidding changes (wind and solar)
 
@@ -261,7 +261,7 @@ The regular update rebuilds the loaded 60-day days. Years before that come from 
 
 ### Plant economics
 
-`pipeline/econ.py` writes, for every unit and loaded day, the energy produced, its value at the unit's node and at system lambda, the DAM energy award and its value at the day-ahead and real-time prices (so two-settlement revenue can be formed), ancillary service awards at their clearing prices, the cost implied by the unit's own DAM energy offer curve up to its output, its minimum-energy and start-up offers, starts and hours run. Combined-cycle configurations are summed into their train. The page `economics.html` turns that into revenue, cost and margin on a cost basis chosen there: the EIA average tested heat rate for the technology (Electric Power Annual table 8.2) times a gas price (each unit's own fuel hub by default, see below, or Houston Ship Channel, Waha or Henry Hub for all) plus an adder, the unit's own DAM offer, or generic per-technology inputs that can be edited on the page. Fixed costs are not included, so margin is the contribution to them. Capacity factor divides output by a capacity taken from the SCED data: the 95th percentile, over the loaded days, of each day's highest HSL (for a combined-cycle train, across its configurations). Wind and solar HSL is weather-limited available output, so a typical HSL would measure output against availability; the daily peak reaches the rating on windy or clear days.
+`pipeline/econ.py` writes, for every unit and loaded day, the energy produced, its value at the unit's node and at system lambda, the DAM energy award and its value at the day-ahead and real-time prices (so two-settlement revenue can be formed), ancillary service awards at their clearing prices, the cost implied by the unit's own DAM energy offer curve up to its output, its minimum-energy and start-up offers, starts and hours run. Combined-cycle configurations are summed into their train. Fleet economics and the Unit page turn that into revenue, cost and margin on a cost basis chosen there: the EIA average tested heat rate for the technology (Electric Power Annual table 8.2) times a gas price (each unit's own fuel hub by default, see below, or Houston Ship Channel, Waha or Henry Hub for all) plus an adder, the unit's own DAM offer, or generic per-technology inputs that can be edited on the page. Fixed costs are not included, so margin is the contribution to them. Capacity factor divides output by a capacity taken from the SCED data: the 95th percentile, over the loaded days, of each day's highest HSL (for a combined-cycle train, across its configurations). Wind and solar HSL is weather-limited available output, so a typical HSL would measure output against availability; the daily peak reaches the rating on windy or clear days.
 
 ## Caveats
 
