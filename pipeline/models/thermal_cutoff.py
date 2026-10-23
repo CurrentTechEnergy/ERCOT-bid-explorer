@@ -510,6 +510,39 @@ def _logit_p_off(fits, tech, key, x):
     return float(m.predict_proba(_logit_design([x], mu, sd, trains, [key]))[0, 1])
 
 
+# the stay-on rule's inputs (_logit_x order) grouped for the drivers, plus the unit's own intercept
+LOGIT_DRIVERS = [("loss in the window", (0,)), ("margin before and after the window", (1, 2)),
+                 ("window length against its usual off spell", (3,)), ("overnight window", (4,)), ("season", (5, 6, 7))]
+UNIT_DRIVER = "its own record of staying on"
+RUNNING_DRIVER = "chance it is running going in"
+
+
+def _logit_drivers(fits, tech, key, x, p_in):
+    """(p_base, [[driver, points]]) for a unit on the stay-on rule, as _drivers for the trees:
+    p_base is P(stays on) for a typical unit of its technology (every input at its mean, the
+    average unit intercept) given running going in; each input group's log-odds push, and the
+    unit's own intercept against the average, are scaled so they add up to its P(stays on) less
+    p_base; RUNNING_DRIVER is then what the trees' P(on) going in (p_in) takes off."""
+    fit = fits.get(tech) or fits.get("*")
+    if fit is None:
+        return None
+    mu, sd, trains, m = fit
+    k = len(mu)
+    coef, b0 = -m.coef_[0], -float(m.intercept_[0])        # signs flipped: log-odds of staying on
+    unit_c = coef[k:]
+    avg = float(unit_c.mean()) if len(unit_c) else 0.0
+    own = float(unit_c[trains.index(key)]) - avg if key in trains else 0.0
+    z = (np.asarray(x, float) - mu) / sd
+    g = [float((coef[list(ix)] * z[list(ix)]).sum()) for _, ix in LOGIT_DRIVERS] + [own]
+    sig = lambda v: 1.0 / (1.0 + np.exp(-v))
+    p0, p1 = sig(b0 + avg), sig(b0 + avg + sum(g))
+    tot = sum(g)
+    pts = [v * (p1 - p0) / tot if abs(tot) > 1e-6 else 0.0 for v in g]
+    names = [n for n, _ in LOGIT_DRIVERS] + [UNIT_DRIVER]
+    out = [[n, round(float(v), 3)] for n, v in zip(names, pts)] + [[RUNNING_DRIVER, round(float(p_in * p1 - p1), 3)]]
+    return round(float(p0), 3), sorted(out, key=lambda r: -abs(r[1]))
+
+
 def _blend(own, pool):
     """Cutoff per MW of LSL: the unit's own pulled toward the technology's pooled cutoff by
     POOL_K / (decision days + POOL_K); the pooled one alone for a unit without its own with at
@@ -602,7 +635,11 @@ def forecast(date, ctx: C.Context) -> dict:
                 if p_off is not None:       # the trees' P(on) going into the window x the stay-on rule's P(stays on | on)
                     ph = ph.copy(); ph[bs:bs + nh] = ph[bs - 1 if bs > 0 else min(bs + nh, 23)] * (1.0 - p_off)
                 p_on = round(float(ph[bs:bs + nh].mean()), 2)
-                if wt is not None and p_off is None:
+                if p_off is not None:
+                    p_in = float(ph[bs:bs + nh].mean()) / max(1.0 - p_off, 1e-9)
+                    row["p_base"], row["drivers"] = _logit_drivers(w.get("logit") or {}, t, key,
+                                                                   _logit_x(x[0], margin, loss, lsl, bs, nh, date), p_in)
+                elif wt is not None:
                     row["p_base"], row["drivers"] = _drivers(wt, Z, bs, nh, float(ph[bs:bs + nh].mean()))
                 src = "its cutoff" if c else "the pooled cutoff"
                 row.update(cutoff=round(cut), p_on=p_on, p_hours=[round(float(v), 3) for v in ph], win_from=bs + 1, win_hours=nh)

@@ -99,7 +99,7 @@
       <div>
         <h2>Forecast by hour</h2>
         <p class="note">The forecast for this unit by hour: odds online, expected and minimum MW, against the day-ahead price. Actuals are drawn over it once known.</p>
-        <details class="how"><summary>How it's built</summary><p class="note">What the forecast expected of this unit on one day, hour by hour: its chance of being online, the MW it expected and the minimum it held the unit at, against the day-ahead price it was judged on (its own node, else the hub average). Once the day's 60-day data is in, what the unit actually did is drawn over it. The loss window, where one is shaded, is the day's worst stretch for staying on, the hours the call is about.</p></details>
+        <details class="how"><summary>How it's built</summary><p class="note">What the forecast expected of this unit on one day, hour by hour: its chance of being online and the on/off call (on when that chance is 50% or more), the MW it expected and the minimum it held the unit at, against the day-ahead price it was judged on (its own node, else the hub average). Once the day's 60-day data is in, what the unit actually did is drawn over it. The loss window, where one is shaded, is the day's worst stretch for staying on, the hours the call is about.</p></details>
         <p class="note" id="fc-note"></p>
       </div>
       <div class="panel-tools"><label class="lbl inline" for="fc-pick">Forecast day</label><select id="fc-pick"></select></div>
