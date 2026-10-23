@@ -600,7 +600,11 @@ def check_files(index):
     known |= set(su.get("units", {}))           # battery events
     tr = read_json_gz(DATA_DIR / "trends_60d.json.gz", default={}) or {}
     known |= {_train(u) for u in tr.get("first_seen") or {}}   # new units (combined cycle by train)
-    unknown = sorted({e["unit"] for e in events if e.get("unit") not in known})
+    ui = read_json_gz(UNIT_INDEX_PATH, default=None) or {}
+    known |= {n for r in ui.get("rows", []) for n in (r[0], _train(r[0]))}     # every unit with a page
+    # a plant's event (several units changing control together) is keyed by the plant, named by its units
+    unknown = sorted({e["unit"] for e in events if e.get("unit") not in known
+                      and not (len(e.get("units") or []) > 1 and set(e["units"]) <= known)})
     day.add("events_units", "error" if unknown else "ok", f"{len(unknown)} unknown unit(s), e.g. {unknown[:5]}" if unknown else "all known")
     d60 = sorted(index["days"].get("60d", []))
     last = max((max(v) for v in index["days"].values() if v), default=None)
