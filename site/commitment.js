@@ -785,7 +785,8 @@ async function loadDay() {
   if (S.date !== d) return;
   const sc = S.SC?.days?.[d];
   // the 2-day fit, from the score file once the day is scored, else from its own file
-  S.FIT = sc?.fit ? null : await tryJSON(`data/fit/${d}.json.gz`);
+  const hasFit = (S.IX?.days?.fit || []).includes(d);     // no fit file until the day's 2-day report is in
+  S.FIT = sc?.fit || !hasFit ? null : await tryJSON(`data/fit/${d}.json.gz`);
   if (S.date !== d) return;
   drawDay();
 }
@@ -1147,9 +1148,9 @@ function drawRange() { drawStretch(); drawCapacity(); drawFloor(); drawCheap(); 
 function drawAll() { drawDay(); drawRange(); }
 
 async function boot() {
-  [S.FI, S.SC, S.T, S.TH, S.I, S.HC, S.DEC, S.SO] = await Promise.all([tryJSON("data/forecast/index.json.gz"), tryJSON("data/forecast/scores.json.gz"),
+  [S.FI, S.SC, S.T, S.TH, S.I, S.HC, S.DEC, S.SO, S.IX] = await Promise.all([tryJSON("data/forecast/index.json.gz"), tryJSON("data/forecast/scores.json.gz"),
     tryJSON("data/trends_60d.json.gz"), tryJSON("data/trends_hourly_60d.json.gz"), tryJSON("data/intraday_60d.json.gz"), tryJSON("data/hourly_context_60d.json.gz"),
-    tryJSON("data/decisions.json.gz"), tryJSON("data/stayon_60d.json.gz")]);
+    tryJSON("data/decisions.json.gz"), tryJSON("data/stayon_60d.json.gz"), tryJSON("data/index.json")]);
   // the groups are small and every panel reads them, so they load up front; the hourly strips follow
   const g = await tryJSON("data/groups_60d.json.gz");
   S.G = g && g.units ? g : null;
