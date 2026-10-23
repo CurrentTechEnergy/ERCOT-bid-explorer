@@ -18,6 +18,19 @@ if (GOATCOUNTER_CODE) {
 }
 
 // ------------------------------------------------------------------ data ---
+// The day pickers start at the first day of real-time co-optimization (RTC+B, Dec 5, 2025). The data
+// keep the days before it (the forecast models train on them); only the lists the pickers read are
+// cut: the days lists of the index files below, and the pickers that build from other files call
+// fromStart.
+const SITE_START = "2025-12-05";
+const fromStart = (days) => days.filter((d) => !(typeof d === "string" && /^\d{4}-\d\d-\d\d$/.test(d)) || d >= SITE_START);
+const DAY_INDEXES = ["data/index.json", "data/forecast/index.json.gz", "data/storage/index.json.gz"];
+function trimDays(url, obj) {
+  if (!obj || !DAY_INDEXES.includes(url.split("?")[0])) return obj;
+  if (Array.isArray(obj.days)) obj.days = fromStart(obj.days);
+  else if (obj.days && typeof obj.days === "object") for (const k of Object.keys(obj.days)) obj.days[k] = fromStart(obj.days[k]);
+  return obj;
+}
 const cache = new Map();
 function getJSON(url) {
   if (cache.has(url)) return cache.get(url);
@@ -27,9 +40,9 @@ function getJSON(url) {
     const buf = new Uint8Array(await r.arrayBuffer());
     if (buf[0] === 0x1f && buf[1] === 0x8b) {
       const stream = new Blob([buf]).stream().pipeThrough(new DecompressionStream("gzip"));
-      return JSON.parse(await new Response(stream).text());
+      return trimDays(url, JSON.parse(await new Response(stream).text()));
     }
-    return JSON.parse(new TextDecoder().decode(buf));
+    return trimDays(url, JSON.parse(new TextDecoder().decode(buf)));
   })();
   cache.set(url, p);
   p.catch(() => cache.delete(url));
@@ -461,5 +474,5 @@ function setNote(el, caption, how) {
   if (how) d.querySelector("p").textContent = how;
 }
 
-window.CX = { setNote, getJSON, tryJSON, showTip, hideTip, clearPins, setCSV, readHash, writeHash, init, panelFromLink, css, esc, tickFormat, fmtKind, axisFmt, unitIndex, findUnits };
+window.CX = { fromStart, SITE_START, setNote, getJSON, tryJSON, showTip, hideTip, clearPins, setCSV, readHash, writeHash, init, panelFromLink, css, esc, tickFormat, fmtKind, axisFmt, unitIndex, findUnits };
 })();

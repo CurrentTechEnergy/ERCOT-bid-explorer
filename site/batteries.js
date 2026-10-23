@@ -291,7 +291,7 @@ function drawDays() {
 const VIEW_KEYS = { day: "day", win: "win", side: "side" };
 function saveView() { window.CX.writeHash({ ...window.CX.readHash(), ...Object.fromEntries(Object.entries(VIEW_KEYS).map(([k, sk]) => [k, S[sk]])) }); }
 function loadView() { const v = window.CX.readHash(); Object.entries(VIEW_KEYS).forEach(([k, sk]) => { if (v[k] != null) S[sk] = v[k]; }); }
-function setDay(d) { S.day = d; $("bday").value = d; drawAll(); saveView(); }
+function setDay(d) { if (d < CX.SITE_START) d = CX.fromStart(S.B.dates)[0] || d; S.day = d; $("bday").value = d; drawAll(); saveView(); }
 
 function drawAll() { ["offer-note", "bid-note", "head-note"].forEach((id) => { $(id).textContent = winLabel(); }); drawFlow(); drawSoc(); drawOffers(); drawBids(); drawHeadroom(); drawDays(); }
 
@@ -307,7 +307,7 @@ async function boot() {
     ["chg_ge", "dis_le"].forEach((k) => Object.keys(S.B[k]).forEach((p) => { S.B[k][p] = cut(S.B[k][p]); }));
     S.B.n_units = cut(S.B.n_units);
   }
-  const dates = S.B.dates;
+  const dates = CX.fromStart(S.B.dates);    // the picker's days; the charts keep every day
   $("status").textContent = `Battery offers and dispatch ${dates[0]} to ${dates.at(-1)} · ${S.B.n_units.at(-1)} batteries on the last day`;
   loadView();
   if (!dates.includes(S.day)) S.day = dates.at(-1);

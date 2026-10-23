@@ -234,7 +234,7 @@ async function drawForecast(e) {
   if ($("fc-panel").hidden) return;
   const days = S.FI.days;
   if (!S.fcDay || !days.includes(S.fcDay)) S.fcDay = days.at(-1);
-  $("fc-pick").innerHTML = days.slice().reverse().map((d) => `<option${d === S.fcDay ? " selected" : ""}>${d}</option>`).join("");
+  $("fc-pick").innerHTML = CX.fromStart(days).reverse().map((d) => `<option${d === S.fcDay ? " selected" : ""}>${d}</option>`).join("");
   const day = S.fcDay, [F, A] = await Promise.all([loadFC(day), S.T && S.T.dates.includes(day) ? loadDayUnits(day) : null]);
   if (S.unit !== e.name || S.fcDay !== day) return;
   const f = F && fcRow(e.name, F), hs = F && F.unit_hours && F.unit_hours.units[e.name];
@@ -460,7 +460,7 @@ const dayCache = new Map();
 const loadDayUnits = (d) => { if (!dayCache.has(d)) dayCache.set(d, tryJSON(`data/60d-units/${d}.json.gz`)); return dayCache.get(d); };
 function defaultDay(e) {
   const str = S.UH && trainStrip(e), D = S.UH ? S.UH.dates : [];
-  for (let i = D.length - 1; str && i >= 0; i--) if (/[ma]/.test(str.slice(i * 24, i * 24 + 24))) return D[i];
+  for (let i = D.length - 1; str && i >= 0 && D[i] >= CX.SITE_START; i--) if (/[ma]/.test(str.slice(i * 24, i * 24 + 24))) return D[i];
   return D.at(-1);
 }
 async function drawDay(e) {
@@ -468,8 +468,8 @@ async function drawDay(e) {
   $("day-panel").hidden = !THERMAL.includes(e.tech) && e.tech !== "wind" && e.tech !== "solar";
   if ($("day-panel").hidden || !S.UH) return;
   const dates = S.UH.dates;
-  if (!S.day || !dates.includes(S.day)) S.day = defaultDay(e);
-  $("day-pick").innerHTML = dates.slice().reverse().map((d) => `<option${d === S.day ? " selected" : ""}>${d}</option>`).join("");
+  if (!S.day || !CX.fromStart(dates).includes(S.day)) S.day = defaultDay(e);
+  $("day-pick").innerHTML = CX.fromStart(dates).reverse().map((d) => `<option${d === S.day ? " selected" : ""}>${d}</option>`).join("");
   const day = S.day, f = await loadDayUnits(day);
   if (S.unit !== e.name || S.day !== day) return;
   if (!f) { $("day-note").textContent = ""; return emptyMsg(el, `No hourly unit file for ${day}.`); }
