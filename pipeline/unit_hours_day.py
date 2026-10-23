@@ -11,10 +11,13 @@ Writes
       "units": [[name, type, tech], ...],
       "rows": [[unit index, hour ending, ...one value per column], ...]
     }
-  A row is written for each hour a unit is online in at least one SCED run.  Values are means
-  over the unit's online runs in the hour unless noted:
-    online_share    share of the hour's SCED runs with an online status (ON...)
-    hsl, lsl        High / Low Sustained Limit (MW)
+  A row is written for each hour a unit is running in at least one SCED run: online (ON...), or
+  in STARTUP, SHUTDOWN or a blank status (intraday.RAMP) in an hour with output above 0.  Values
+  are means over the unit's online runs in the hour unless noted:
+    online_share    share of the hour's SCED runs running, as above
+    hsl, lsl        High / Low Sustained Limit (MW); in an hour mostly ramping, lsl is the output
+                    up to LSL, the minimum the unit held, and an hour with no online run carries
+                    only online_share, hsl, lsl, base_point and output
     base_point      SCED base point (MW)
     output          telemetered net output, hourly mean over the runs the unit is present in (MW)
     pinned_share    share of online runs with the base point at minimum output (as parse_60day)
@@ -23,6 +26,8 @@ Writes
     le0_submitted   MW above LSL at or below $0 in the submitted curve (units.le0_above_lsl)
     min_sub_price   lowest price of the first submitted point at or above LSL (null without a curve)
     no_offer_share  share of online runs without a submitted curve
+    ramp_share      share of the hour's runs counted as running only because the unit was ramping
+                    (online_share less it is the share online, as format 1 had it)
 The daily Units table (the day file's "units" block, from parse_60day) reads the raw disclosure;
 these rows read the per-unit file (curves of wind and solar as fractions of HSL to 0.01) and are
 rounded to whole MW, shares to 0.01 and prices to $0.1.
@@ -32,14 +37,15 @@ import numpy as np
 from .config import DATA_DIR, UNIT_DATA_DIR
 from .curves import mw_at_prices
 from .store import read_json_gz, write_json_gz
+from .intraday import RAMP
 from .units import LSL_TOL, _ffill_index, expand
 
-FORMAT = 1
+FORMAT = 2            # 2: hours ramping in STARTUP, SHUTDOWN or a blank status with output count as running
 MAX_PER_RUN = 60      # days built per update run, newest first (~10 s each), so history fills in
                       # over a few runs instead of slowing one down
 OUT_DIR = DATA_DIR / "60d-units"
 COLUMNS = ["online_share", "hsl", "lsl", "base_point", "output", "pinned_share", "floor_mw", "le0_sced",
-           "le0_submitted", "min_sub_price", "no_offer_share"]
+           "le0_submitted", "min_sub_price", "no_offer_share", "ramp_share"]
 _GRID = np.array([-249.0, 0.0])
 
 
@@ -77,7 +83,7 @@ def unit_rows(u: dict, runs: list) -> list:
     e = expand(u, n)
     hr = np.minimum(np.array(runs, int) // 60, 23)
     on = np.array([bool(s) and s.startswith("ON") for s in e["status"]])
-    if not on.any():
+    if not on.any() and not any(s in RAMP for s in e["status"]):
         return []
     hsl, lsl = np.nan_to_num(e["hsl"]), np.nan_to_num(e["lsl"])
     bp = e.get("bp")
@@ -101,23 +107,36 @@ def unit_rows(u: dict, runs: list) -> list:
     no_curve = np.array([c is None for c in e["curve"]])
     out_h = [np.nan if v is None else v for v in (u.get("out") or [None] * 24)]
     bp_h = [np.nan if v is None else v for v in (u.get("bp") or [None] * 24)]
+    # runs in STARTUP, SHUTDOWN or a blank status in an hour with output count as running
+    ramp = np.array([s in RAMP for s in e["status"]]) & (np.nan_to_num(np.array(out_h, float))[hr] > 0)
     rows = []
     for h in range(24):
         idx = hr == h
         sel = idx & on
-        if not sel.any():
+        run = idx & (on | ramp)
+        if not run.any():
+            continue
+        if not sel.any():           # ramping all hour: running at its output, capped at LSL
+            lo = np.nanmean(e["lsl"][run]) if np.isfinite(e["lsl"][run]).any() else np.nan
+            rows.append((h + 1, [
+                _r(run.sum() / idx.sum(), 2), _r(np.nanmean(e["hsl"][run]) if np.isfinite(e["hsl"][run]).any() else np.nan),
+                _r(out_h[h] if not np.isfinite(lo) or lo <= 0 else min(out_h[h], lo)), _r(bp_h[h]), _r(out_h[h]),
+                None, None, None, None, None, None, _r(run.sum() / idx.sum(), 2)]))
             continue
         with np.errstate(invalid="ignore"):
             b = np.nanmean(bp[sel]) if bp is not None and np.isfinite(bp[sel]).any() else bp_h[h]
             pinned = np.nanmean([(lsl[r] > 0) and (bp is not None and bp[r] <= lsl[r] + max(1.0, 0.01 * lsl[r]))
                                  for r in np.flatnonzero(sel)]) if bp is not None else np.nan
             fp = first[sel]
+            share, lo = run.sum() / idx.sum(), lsl[sel].mean()
+            if sel.sum() / idx.sum() < 0.5 <= share and np.isfinite(out_h[h]):
+                lo = min(out_h[h], lo)  # mostly ramping: the minimum it held is its output, up to LSL
             rows.append((h + 1, [
-                _r(sel.sum() / idx.sum(), 2), _r(hsl[sel].mean()), _r(lsl[sel].mean()), _r(b), _r(out_h[h]),
+                _r(share, 2), _r(hsl[sel].mean()), _r(lo), _r(b), _r(out_h[h]),
                 _r(pinned, 2), _r(at[sel, 0].mean()), _r(at[sel, 1].mean()),
                 _r(np.nanmean(le0_sub[sel]) if np.isfinite(le0_sub[sel]).any() else np.nan),
                 _r(np.nanmin(fp), 1) if np.isfinite(fp).any() else None,
-                _r(no_curve[sel].mean(), 2),
+                _r(no_curve[sel].mean(), 2), _r((run & ~on).sum() / idx.sum(), 2),
             ]))
     return rows
 

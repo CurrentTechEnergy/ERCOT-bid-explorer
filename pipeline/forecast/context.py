@@ -675,9 +675,9 @@ class Context:
                 hf = HISTORY_DIR / f"da-hubs-{m}.parquet"
                 if m > first[:7] or not hf.exists():
                     continue
-                t = pd.read_parquet(f, columns=["date", "unit", "tech", "he", "state", "lsl"])
+                t = pd.read_parquet(f, columns=["date", "unit", "tech", "he", "state", "lsl", "hsl"])
                 t = t[(t["tech"].astype(str) == "combined_cycle") & t["state"].astype(str).isin(["m", "a"])
-                      & (t["lsl"] > 0) & (t["date"] < first)]
+                      & (t["lsl"] > 0) & t["hsl"].notna() & (t["date"] < first)]     # no HSL: ramping
                 if t.empty:
                     continue
                 t = t.assign(train=t["unit"].astype(str).map(train_of))
@@ -781,7 +781,8 @@ def _cc_online_lsl(days60) -> dict:
             if t != "combined_cycle":
                 continue
             a = day.setdefault(train_of(name), np.zeros(24))
-            if (r[cols["online_share"]] or 0) >= 0.5 and 1 <= r[1] <= 24:
+            on = (r[cols["online_share"]] or 0) - ((r[cols["ramp_share"]] or 0) if "ramp_share" in cols else 0)
+            if on >= 0.5 and 1 <= r[1] <= 24:         # online, not ramping: the size it runs at
                 a[r[1] - 1] += r[cols["lsl"]] or 0
         for k, a in day.items():
             out[k].append((d, a))
