@@ -54,7 +54,8 @@ python -m pipeline.validate --all --no-fail   # re-check every day
    - `ERCOT_API_USERNAME`: the email you registered with
    - `ERCOT_API_PASSWORD`: that account's password
    - `ERCOT_API_SUBSCRIPTION_KEY`: your primary subscription key
-3. Run the workflow once from the **Actions** tab (**Update ERCOT data → Run workflow**) to check it works.
+3. Optional, recommended: keep a copy of every ERCOT file downloaded, so a reparse reads it from there instead of downloading it from ERCOT again (`pipeline/raw_store.py`). Create a private Cloudflare R2 bucket named `ercot-raw` and an R2 API token with Object Read & Write on that bucket only, then add the secrets `R2_ENDPOINT` (`https://<account id>.r2.cloudflarestorage.com`), `R2_ACCESS_KEY_ID` and `R2_SECRET_ACCESS_KEY`. Without them the pipeline downloads from ERCOT as before.
+4. Run the workflow once from the **Actions** tab (**Update ERCOT data → Run workflow**) to check it works.
 
 Subscriber emails (optional): the Unit page's Subscribe box signs people up with the follow server in `worker/`, a free Cloudflare Worker that confirms each follow by email and keeps the list in a D1 database; the daily send emails each follower through [Resend](https://resend.com). Setup, once: add the repository secrets `CLOUDFLARE_API_TOKEN` (a Cloudflare API token with Workers Scripts: Edit, D1: Edit and Account Settings: Read), `RESEND_API_KEY` (with your sending domain verified in Resend) and `OWNER_EMAIL` (gets a daily digest of what went out), then run **Deploy the follow server** in the Actions tab; it creates the database, deploys the Worker and writes its address to `site/follow.json`. Set a repository *variable* `NOTIFY_DRY_RUN` = `1` to see the emails on the run summary without sending them; **Subscriber emails (manual)** in the Actions tab does the same by hand.
 
