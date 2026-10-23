@@ -1,5 +1,5 @@
 """Wind and solar bidding changes: every day, every unit, when its offer changes and whether
-that change moved its dispatch.  Needs no downloads.  Read by contracts.html.
+that change moved its dispatch.  Needs no downloads.  Read by Renewables (hedge signals) and the Unit page.
 
 Each wind or solar unit-day gets a signature, from its hourly real-time offers (the median over
 the hour's SCED runs of the submitted curve's price at half its MW, as in ppa.hourly_offers),
