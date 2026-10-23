@@ -75,15 +75,16 @@ jobs:
       # Per-unit day files (full-fidelity status / limits / offer curves, see pipeline/units.py)
       # live on the orphan `data` branch, checked out as a worktree in unitdata/ (gitignored on
       # main) so they never bloat main or the Pages site.
-      # Keep the data branch small: every file on it is regenerable from ERCOT's reports, so its
-      # history can be squashed to a single commit (e.g. orphan + force-push) whenever it grows.
-      # Only its latest commit is fetched, so its history never slows the run.
+      # Every file on it is regenerable from ERCOT's reports, so the branch is ONE commit, replaced
+      # by each run (see "Commit per-unit data" below): old copies of the files never pile up in
+      # the repository.  Only that commit is fetched.
       - name: Check out the data branch
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
           if git ls-remote --exit-code --heads origin data > /dev/null; then
             git fetch --depth 1 origin data
+            echo "DATA_BASE=$(git rev-parse FETCH_HEAD)" >> "$GITHUB_ENV"   # the push below replaces only this commit
             git worktree add -B data unitdata FETCH_HEAD
           else
             echo "No data branch yet: creating it as an orphan"
@@ -175,11 +176,14 @@ jobs:
           if git diff --cached --quiet; then
             echo "No new per-unit data"
           else
-            git commit -m "Unit data update $(date -u +%Y-%m-%d)"
+            # a new root commit (no parent) in place of the old one: the branch keeps one copy of
+            # each file, not every version of it
+            git reset -q --soft "$(git commit-tree "$(git write-tree)" -m "Per-unit data as of $(date -u +%Y-%m-%d)")"
           fi
-          # push the README commit of a newly created branch too; this job is the branch's only writer
+          # push the README commit of a newly created branch too; this job is the branch's only
+          # writer, and the lease refuses the push if the branch moved since this run fetched it
           for attempt in 1 2 3 4 5; do
-            git push origin HEAD:refs/heads/data && exit 0
+            git push --force-with-lease="refs/heads/data:${DATA_BASE}" origin HEAD:refs/heads/data && exit 0
             echo "Push attempt $attempt failed; retrying"
             sleep $((attempt * 10))
           done
