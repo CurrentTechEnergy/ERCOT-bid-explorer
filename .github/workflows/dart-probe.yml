@@ -1,0 +1,55 @@
+name: Dart probe (one-off, read-only)
+
+# Downloads ERCOT LMPs by electrical bus (NP6-787-CD) for a handful of past operating days and
+# the load distribution factors (NP4-159-CD) around them, reduced to substations, for the
+# load-weighted "who is marginal" analysis (tools/dart_probe.py).  Writes a workflow artifact
+# only: no commit, no site data.  Runs on pushes to its own branch, never on main, and stays out
+# of the update-data concurrency group so it cannot cancel a queued update.
+on:
+  push:
+    branches: [dart-probe]
+    paths: [tools/dart_probe.py, .github/workflows/dart-probe.yml]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: dart-probe
+  cancel-in-progress: false
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install -r requirements.txt
+      - name: Settlement point list (public MIS, NP4-160-SG)
+        run: |
+          id=$(curl -s "https://www.ercot.com/misapp/GetReports.do?reportTypeId=10008" | grep -o 'doclookupId=[0-9]*' | head -1 | cut -d= -f2)
+          curl -s -o sp.zip "https://www.ercot.com/misdownload/servlets/mirDownload?doclookupId=$id"
+          mkdir -p sp && unzip -o -q sp.zip -d sp
+          ls -R sp | head
+      - name: Download and reduce
+        env:
+          ERCOT_API_USERNAME: ${{ secrets.ERCOT_API_USERNAME }}
+          ERCOT_API_PASSWORD: ${{ secrets.ERCOT_API_PASSWORD }}
+          ERCOT_API_SUBSCRIPTION_KEY: ${{ secrets.ERCOT_API_SUBSCRIPTION_KEY }}
+          # single-document downloads (the load distribution factors) are kept in the raw store
+          R2_ENDPOINT: ${{ secrets.R2_ENDPOINT }}
+          R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+        run: |
+          python -m tools.dart_probe "$(find sp -name 'Settlement_Points*.csv' | head -1)" \
+            2025-12-15 2026-01-10 2026-01-28 2026-02-14 2026-03-22 2026-04-08 2026-04-20 \
+            2026-05-06 2026-05-24 2026-06-10 2026-06-28 2026-07-15 2026-07-30 2026-08-12 2026-08-22
+          ls -la out/dart
+      - uses: actions/upload-artifact@v4
+        with:
+          name: dart-probe
+          path: out/dart
+          retention-days: 14
