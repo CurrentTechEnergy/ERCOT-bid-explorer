@@ -420,7 +420,7 @@ async function boot() {
   $("status").textContent = `Wind and solar offers and curtailment ${S.span[0]} to ${S.span[1]} · 60-day data through ${S.last60 || "–"}`;
   loadView();
   staticLegend($("rs-legend"), BANDS);
-  const cdays = S.C.curt.dates.slice().reverse();
+  const cdays = CX.fromStart(S.C.curt.dates).reverse();
   if (!cdays.includes(S.cday)) S.cday = cdays[0];
   $("cday").innerHTML = cdays.map((d) => `<option>${d}</option>`).join("");
   $("cday").value = S.cday;
