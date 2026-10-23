@@ -622,8 +622,16 @@ function drawMonths(fleet, s, thr) {
     units.map((x) => [x.e.unit, x.e.tech, x.e.group, Math.round(x.e.mw), ...x.r.share.map((v) => (v == null ? "" : v.toFixed(3))), ...x.r.avail]), `cheap-hours-month-by-month-${thr}`);
 }
 // pipeline/decisions.py: a unit's shutdown decisions scored day-ahead (see decisionOf)
-const DEC_F = { tech: 0, lsl: 1, mingen: 2, hot: 3, est: 4, days: 5, shut: 6, award: 7, base: 8, cutoff: 9, acc: 10, stayMax: 11, shutMin: 12 };
-const decisionOf = (key) => { const u = S.DEC?.units?.[key]; return u ? Object.fromEntries(Object.entries(DEC_F).map(([k, i]) => [k, u[i]])) : null; };
+const DEC_F = { tech: 0, lsl: 1, mingen: 2, hot: 3, est: 4, days: 5, shut: 6, award: 7, base: 8, cutoff: 9, acc: 10, stayMax: 11, shutMin: 12, accNew: 13 };
+// acc is scored on the days the cutoff was chosen from; accNew leaves each day out of its own
+// cutoff (pipeline/decisions.py), the figure to expect on a new day, so the pages show it when present
+const decisionOf = (key) => {
+  const u = S.DEC?.units?.[key];
+  if (!u) return null;
+  const d = Object.fromEntries(Object.entries(DEC_F).map(([k, i]) => [k, u[i]]));
+  if (d.accNew != null) d.acc = d.accNew;
+  return d;
+};
 const fmtK = (v) => (v == null ? "–" : (v < 0 ? "−" : "") + "$" + d3.format(",.0f")(Math.abs(v) / 1e3) + "k");
 async function drawStretch() {
   const el = $("st-group");
@@ -928,8 +936,8 @@ function drawGroups() {
   });
   $("groups-title-note").textContent = fmtDate(parseDate(F.date));
   window.CX.setNote($("groups-note"), "Coal and gas units grouped by how often they turn off on price, with the day's expected output and minimum output online.", `Every coal and gas unit (combined-cycle configurations merged into their train) by how often it has turned off on price over the ${S.G ? S.G.dates.length : ""} days of 60-day data (pipeline/groups.py), with nuclear in the always-on group as on the Overview. Units, capacity (HSL), committed minimum (LSL of the units expected on, weighted by their chance of being on) and expected output are the day's forecast and include peakers, so they match the Overview. ` +
-    `The cutoff columns cover units with enough decision days for a cutoff (${S.DEC ? `${S.DEC.min_days} days with at least ${S.DEC.min_each} shutdowns and ${S.DEC.min_each} stays` : ""}): the median cutoff per MW of LSL, and how often the rule "off when no award covers the window and the loss is above the cutoff, else on" matched what the units did, weighted by decision days, against the base rate of each unit's commoner outcome. A rule well above its base rate says the day economics decide; near it, something else does. Seasonal and multi-day units are judged on the month's price level instead, and the inflexibility tracker below shows them month by month.`);
-  el.innerHTML = `<table class="data"><thead><tr><th class="t">Group</th><th>Units</th><th>Capacity MW</th><th>On / off / outage</th><th>Committed minimum MW</th><th>Expected output MW</th><th>Units with a cutoff</th><th>Median cutoff $/MW LSL</th><th>Cutoff rule right</th><th>Base rate</th></tr></thead><tbody>` +
+    `The cutoff columns cover units with enough decision days for a cutoff (${S.DEC ? `${S.DEC.min_days} days with at least ${S.DEC.min_each} shutdowns and ${S.DEC.min_each} stays` : ""}): the median cutoff per MW of LSL, and how often the rule "off when no award covers the window and the loss is above the cutoff, else on" matched what the units did, weighted by decision days. Each day is judged with a cutoff fitted to the unit's other days, so the share is what to expect on a day the rule has not seen, not how well it fits the days it was fitted to; it is set against the base rate of each unit's commoner outcome. A rule well above its base rate says the day economics decide; near it, something else does. Seasonal and multi-day units are judged on the month's price level instead, and the inflexibility tracker below shows them month by month.`);
+  el.innerHTML = `<table class="data"><thead><tr><th class="t">Group</th><th>Units</th><th>Capacity MW</th><th>On / off / outage</th><th>Committed minimum MW</th><th>Expected output MW</th><th>Units with a cutoff</th><th>Median cutoff $/MW LSL</th><th>Cutoff rule right on new days</th><th>Base rate</th></tr></thead><tbody>` +
     rows.map((r) => `<tr><td class="t"><span class="sw" style="background:var(${FLOOR_GROUPS.find((f) => f.id === r.g)?.color || "--c-other"});margin-right:6px"></span>${GROUP_LABEL[r.g]}<br><span class="muted">${ST_GROUPS.find((g) => g.id === r.g)?.note || "too little history to place"}</span></td>` +
       `<td>${r.n}</td><td>${fmtMW(r.cap)}</td><td>${r.n_on} / ${r.n_off} / ${r.n_out}${r.n_unknown ? ` (+${r.n_unknown} unknown)` : ""}</td>` +
       `<td>${fmtMW(r.min)}</td><td>${fmtMW(r.exp)}</td><td>${r.nCut || "–"}</td><td>${fmtPerMW(r.medCut)}</td><td>${r.acc == null ? "–" : fmtPct(r.acc)}</td><td>${r.base == null ? "–" : fmtPct(r.base)}</td></tr>`).join("") +
@@ -1062,7 +1070,7 @@ const UNIT_COLS = [
   { k: "lsl", h: "LSL MW", f: (r) => (r.lsl == null ? "–" : fmtMW(r.lsl)) },
   { k: "c", h: "Cutoff $/MW LSL", f: (r) => fmtPerMW(r.c) },
   { k: "hs", h: "Hot start offered $/MW LSL", f: (r) => fmtPerMW(r.hs) + (r.hs != null && r.est === 2 ? "*" : "") },
-  { k: "lift", h: "Rule right / base", f: (r) => (r.acc == null ? "–" : `${fmtPct(r.acc)} / ${fmtPct(r.base)}`) },
+  { k: "lift", h: "Rule right on new days / base", f: (r) => (r.acc == null ? "–" : `${fmtPct(r.acc)} / ${fmtPct(r.base)}`) },
   { k: "days", h: "Decision days (off)", f: (r) => (r.days == null ? "–" : `${r.days} (${r.dshut})`) },
   ...STATE_KEYS.map(([s, h]) => ({ k: "st" + s, h: `${h}, share of hours`, f: (r) => (r["st" + s] == null ? "–" : fmtPct(r["st" + s])) })),
   { k: "shut", h: "Shutdowns", f: (r) => r.shut ?? "–" },

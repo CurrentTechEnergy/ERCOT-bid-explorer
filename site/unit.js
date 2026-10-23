@@ -321,7 +321,7 @@ function drawSite(e) {
 
 // ---- decision history: every day the unit started online, its loss and what it did ----------
 // data/decisions.json.gz days rows: [train, date, loss, first HE of the window, hours, award share, shut, hours off]
-const DEC_U = { tech: 0, lsl: 1, mingen: 2, hot: 3, est: 4, days: 5, shut: 6, award: 7, base: 8, cutoff: 9, acc: 10, stayMax: 11, shutMin: 12 };
+const DEC_U = { tech: 0, lsl: 1, mingen: 2, hot: 3, est: 4, days: 5, shut: 6, award: 7, base: 8, cutoff: 9, acc: 10, stayMax: 11, shutMin: 12, accNew: 13 };
 function drawDecisions(e) {
   const el = $("dec-chart"), D = S.DEC, u = D && D.units[e.name];
   const rows = D ? D.days.filter((r) => r[0] === e.name && r[2] != null) : [];
@@ -330,7 +330,7 @@ function drawDecisions(e) {
   if (!u || !rows.length) { $("dec-note").textContent = ""; return emptyMsg(el, "No decision days for this unit in the loaded 60-day data."); }
   const g = (k) => u[DEC_U[k]];
   $("dec-note").textContent = `${g("days")} days it had to choose, ${g("shut")} shutdowns, a day-ahead award over the cheap stretch on ${fmtPct(g("award") || 0)} of them. ` +
-    (g("cutoff") != null ? `Best-fit turn-off cost over these days: ${fmt$(g("cutoff"))}, which explains ${fmtPct(g("acc"))} of its choices (${fmtPct(g("base"))} if you always guessed its usual one). ` +
+    (g("cutoff") != null ? `Best-fit turn-off cost over these days: ${fmt$(g("cutoff"))}, which explains ${fmtPct(g("accNew") ?? g("acc"))} of its choices${g("accNew") != null ? " when each day is judged with a cutoff fitted to the other days" : ""} (${fmtPct(g("base"))} if you always guessed its usual one). ` +
       `Most it stayed on through: ${fmt$(g("stayMax"))}; least it shut on: ${fmt$(g("shutMin"))}.`
       : "Not enough choices yet to fit a turn-off cost: it needs 15 days with at least 3 shutdowns and 3 stays.") +
     (g("est") === 2 ? " Costs are the technology's generic costs (no three-part offer of its own in the window)." : "");
