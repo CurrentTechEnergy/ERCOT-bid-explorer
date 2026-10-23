@@ -272,4 +272,4 @@ The regular update rebuilds the loaded 60-day days. Years before that come from 
 
 ## Copyright
 
-© 2026 Current Tech. All rights reserved. This repository is public so the site can be built and checked, but no license is granted to copy, modify or redistribute its code, pages or derived data. See the site's [Terms and privacy](https://ercotbids.currenttech.energy/terms.html) page. ERCOT's own reports are public and available from ERCOT.
+© 2026 CurrentTech Energy. All rights reserved. This repository is public so the site can be built and checked, but no license is granted to copy, modify or redistribute its code, pages or derived data. See the site's [Terms and privacy](https://ercotbids.currenttech.energy/terms.html) page. ERCOT's own reports are public and available from ERCOT.

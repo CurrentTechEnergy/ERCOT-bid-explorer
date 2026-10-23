@@ -25,7 +25,7 @@ from .store import read_json_gz
 
 SITE_URL = "https://ercotbids.currenttech.energy"
 SITE_NAME = "ERCOT Bids"
-OG_SITE_NAME = "ERCOT Bids · Current Tech"
+OG_SITE_NAME = "ERCOT Bids · CurrentTech Energy"
 SHARE_IMAGE = f"{SITE_URL}/share-card.png"
 OUT_DIR = SITE_DIR / "unit"
 TEMPLATE_VERSION = "1"
