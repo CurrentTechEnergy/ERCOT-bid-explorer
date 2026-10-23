@@ -152,14 +152,14 @@ jobs:
         with:
           python-version: "3.12"
           cache: pip
-      - run: pip install --require-hashes -r requirements.lock
       - name: Inputs (both sides' code, the data branch)
         run: |
-          # the harness (pipeline/ outside the sides' trees) is this workflow's own commit; each
-          # side's code is taken from its commit by the harness
+          # the harness (pipeline/ outside the sides' trees) and the package lock are this
+          # workflow's own commit; each side's code is taken from its commit by the harness
           git fetch --depth 1 origin "$GITHUB_SHA" ${{ needs.plan.outputs.current_sha }} ${{ needs.plan.outputs.ref_sha }}
-          git checkout "$GITHUB_SHA" -- pipeline
+          git checkout "$GITHUB_SHA" -- pipeline requirements.lock
           git fetch --depth 1 origin data && git worktree add --detach unitdata FETCH_HEAD
+      - run: pip install --require-hashes -r requirements.lock
       - name: The history files (from the plan job)
         uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
         with:
@@ -213,14 +213,14 @@ jobs:
         with:
           python-version: "3.12"
           cache: pip
-      - run: pip install --require-hashes -r requirements.lock
       - name: Inputs (both sides' code, the data branch)
         run: |
-          # the harness (pipeline/ outside the sides' trees) is this workflow's own commit; each
-          # side's code is taken from its commit by the harness
+          # the harness (pipeline/ outside the sides' trees) and the package lock are this
+          # workflow's own commit; each side's code is taken from its commit by the harness
           git fetch --depth 1 origin "$GITHUB_SHA" ${{ needs.plan.outputs.current_sha }} ${{ needs.plan.outputs.ref_sha }}
-          git checkout "$GITHUB_SHA" -- pipeline
+          git checkout "$GITHUB_SHA" -- pipeline requirements.lock
           git fetch --depth 1 origin data && git worktree add --detach unitdata FETCH_HEAD
+      - run: pip install --require-hashes -r requirements.lock
       - name: The history files (from the plan job)
         uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
         with:
