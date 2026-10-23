@@ -3,9 +3,13 @@
 The heavy builders (trends, intraday, curtail_nodes, marginal_nodes, econ) read every
 60-day day on each run, about 40 minutes in all, even when no report was added.  run() records
 the files a builder reads and writes (through store.read_json_gz / write_json_gz) and keeps, in
-data/build_memo.json.gz, a hash of the builder's code (its module and the pipeline modules it imports), the index's day lists, those inputs and those
-outputs.  On the next run the builder is skipped when all four still match, so its output files
+data/build_memo.json.gz, a hash of the builder's code (its module and the pipeline modules it imports), the index's day lists it uses, those inputs and
+those outputs.  On the next run the builder is skipped when all four still match, so its output files
 are left exactly as they are.
+
+Only the day lists named in DAYS count, so a new 2-day or forecast day leaves a 60-day builder
+alone.  Each builder reads the other lists only for the dates in its 60-day list, so those are
+cut to the 60-day dates before hashing.
 
 A builder must depend only on the index's day lists, files read with read_json_gz and the code:
 no clock, no network.  Small JSON inputs are hashed without their top-level "updated" / "built"
@@ -121,8 +125,26 @@ def code_hash(module: str) -> str:
     return _code[module]
 
 
-def index_hash(index: dict) -> str:
-    days = {k: sorted(set(v)) for k, v in index["days"].items()}
+# builder -> (day lists hashed whole, day lists hashed only on the 60-day dates).  dam is whole
+# because nodes.settlement_points reads every DAM day.  A builder missing here hashes every list.
+DAYS = {
+    "trends": (("60d",), ()),
+    "intraday": (("60d",), ()),
+    "curtail_nodes": (("60d", "dam"), ("nodes",)),
+    "marginal_nodes": (("60d", "dam"), ("nodes", "prices")),
+    "econ": (("60d", "dam"), ("nodes",)),
+}
+
+
+def index_hash(index: dict, name: str = None) -> str:
+    lists = index["days"]
+    if name in DAYS:
+        whole, on_60d = DAYS[name]
+        sixty = set(lists.get("60d", []))
+        days = {k: sorted(set(lists.get(k, []))) for k in whole}
+        days.update({k: sorted(set(lists.get(k, [])) & sixty) for k in on_60d})
+    else:
+        days = {k: sorted(set(v)) for k, v in lists.items()}
     return hashlib.sha1(json.dumps(days, sort_keys=True).encode()).hexdigest()
 
 
@@ -138,7 +160,7 @@ def run(name: str, fn, index: dict) -> bool:
     memo = _load()
     prev = memo.get(name)
     if (prev and not os.environ.get("REBUILD_ALL")
-            and prev["code"] == code_hash(fn.__module__) and prev["index"] == index_hash(index)
+            and prev["code"] == code_hash(fn.__module__) and prev["index"] == index_hash(index, name)
             and prev["reads_digest"] == _digest(prev["reads"])
             and prev["writes_digest"] == _digest(prev["writes"])):
         print(f"{name}: inputs unchanged since the last build, skipped")
@@ -151,7 +173,7 @@ def run(name: str, fn, index: dict) -> bool:
         store.TRACE = None
     writes = sorted({_rel(p) for p in trace["writes"]})
     reads = sorted({_rel(p) for p in trace["reads"]} - set(writes))    # a file it rewrites is an output
-    memo[name] = {"code": code_hash(fn.__module__), "index": index_hash(index),
+    memo[name] = {"code": code_hash(fn.__module__), "index": index_hash(index, name),
                   "reads": reads, "reads_digest": _digest(reads),
                   "writes": writes, "writes_digest": _digest(writes)}
     store.write_json_gz(MEMO_PATH, dict(sorted(memo.items())))
