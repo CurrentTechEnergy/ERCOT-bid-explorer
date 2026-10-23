@@ -28,7 +28,9 @@ The cutoff is the loss that best separates a unit's shutdowns from its stays on 
 award (award share below HALF), chosen once a unit has MIN_DAYS decision days with at least
 MIN_EACH shutdowns and MIN_EACH stays.  The rule "off when no award covers the window and the
 loss exceeds the cutoff, else on" is scored over all the unit's days (acc) against the share of
-its commoner outcome (base).
+its commoner outcome (base).  The cutoff is chosen on those same days, so acc flatters the rule;
+each no-award day is also scored with a cutoff chosen from the unit's other days (leave one out),
+the accuracy to expect on a day the rule has not seen (acc on unseen days, shown on the pages).
 
 Tomorrow: the latest day with day-ahead node prices (data/dam_nodes.json.gz, posted the day
 before the operating day) is scored with each unit's latest costs and its cutoff.  The DAM
@@ -41,8 +43,8 @@ once its 60-day data arrives.
 Writes data/decisions.json.gz:
   dates             the decision days (60-day days with a DAM file and hourly unit states)
   units             {train: [tech, lsl, mingen, hot start, est, days, shutdowns, award share,
-                     base, cutoff ($), acc, highest loss stayed, lowest loss shut]}
-                    cutoff, acc, highest and lowest are null for a unit without a cutoff;
+                     base, cutoff ($), acc, highest loss stayed, lowest loss shut, acc on unseen days]}
+                    cutoff, both accs, highest and lowest are null for a unit without a cutoff;
                     est is 0 when the costs are the unit's own latest offer, 2 when generic
   days              [[train, date, loss, first hour ending of the window, hours, award share,
                      shut, hours off]]
@@ -224,6 +226,24 @@ def _cutoff(days):
     return c, acc, base, max(stayed), min(shut)
 
 
+def _acc_unseen(days):
+    """_cutoff's acc with each no-award day judged by a cutoff chosen from the unit's other days
+    (leave one out): the share of days to expect the rule to call right on a day it has not seen.
+    Days with an award are called "on" whatever the cutoff.  Only for the page; the forecast
+    keeps _cutoff."""
+    free = [(d[0], d[2]) for d in days if d[1] < HALF]
+    v = np.array([l for l, _ in free]); s = np.array([s for _, s in free])
+    right = sum(int(d[2] == 0) for d in days if d[1] >= HALF)
+    keep = np.ones(len(v), bool)
+    for i in range(len(v)):
+        keep[i] = False
+        cands = np.unique(np.r_[v[keep].min() - 1, v[keep]])
+        hits = ((v[keep][None, :] > cands[:, None]) == (s[keep][None, :] == 1)).mean(axis=1)
+        right += int((v[i] > cands[int(np.argmax(hits))]) == (s[i] == 1))   # lowest cutoff on a tie, as _cutoff
+        keep[i] = True
+    return right / len(days)
+
+
 def _verdict(loss, cutoff, award_share):
     if cutoff is None:
         return None
@@ -290,7 +310,8 @@ def build_decisions(index: dict) -> None:
         c = _cutoff(days)
         units[key] = [tech, _r(lsl, 1), _r(mingen, 2), _r(hot), est, len(days), int(sum(y)), _r(aw, 2),
                       _r(max(np.mean(y), 1 - np.mean(y)), 2) if days else None,
-                      _r(c[0]) if c else None, _r(c[1], 2) if c else None, _r(c[3]) if c else None, _r(c[4]) if c else None]
+                      _r(c[0]) if c else None, _r(c[1], 2) if c else None, _r(c[3]) if c else None, _r(c[4]) if c else None,
+                      _r(_acc_unseen(days), 2) if c else None]
     # tomorrow: the latest day with node prices, scored with the latest costs and cutoffs
     old = read_json_gz(PATH, default={}) or {}
     predictions = {k: v for k, v in (old.get("predictions") or {}).items()}
