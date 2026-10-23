@@ -5,6 +5,8 @@ Usage:
   python -m pipeline.update --days 10             # look further back
   python -m pipeline.update --backfill 2026-07-01 2026-07-31   # operating days in a range
   python -m pipeline.update --local FILE.zip ...  # process report zips you downloaded yourself
+  python -m pipeline.update --mis-docs ID ...     # 60-day or 2-day report files from ERCOT's website
+        (MIS document ids), for days the API doesn't serve; then the usual prices and builders
   python -m pipeline.update --reprocess-60d --max-files 40   # re-download and reparse 60-day days
         already in the index that have no per-unit day file yet (resumable); `--reprocess-60d all`
         redoes every 60-day day in the index
@@ -21,6 +23,8 @@ import sys
 import time
 import os
 import warnings
+
+import requests
 
 from .config import (DATA_DIR, UNIT_DATA_DIR, EMIL_2DAY, EMIL_2DAY_GEN, EMIL_60DAY, EMIL_DAM, EMIL_LAMBDA, EMIL_SPP,
                      NODE_DAYS_PER_RUN)
@@ -247,6 +251,32 @@ def fetch_curves(api, emil: str, posted_from: dt.datetime, posted_to: dt.datetim
                     ". Some files posted near them failed to load (see the warnings above)."))
 
 
+EMIL_OF = {"2d": EMIL_2DAY, "2dgen": EMIL_2DAY_GEN, "60d": EMIL_60DAY, "dam": EMIL_DAM}
+
+
+def fetch_mis_docs(doc_ids, index: dict) -> None:
+    """Report files from ERCOT's public website by MIS document id. The API's archive leaves out
+    some files the website has (ten 60-day SCED days in Mar to Jul 2026), and the ids are the
+    same in both, so each one is recorded as done for its report."""
+    from .entities import DOWNLOAD
+    for doc_id in doc_ids:
+        try:
+            r = requests.get(DOWNLOAD.format(doc_id), timeout=600)
+            r.raise_for_status()
+            blob = r.content
+            found = curve_source(blob)
+            if found is None:
+                raise ValueError(f"not a report zip this pipeline reads ({describe_blob(blob)})")
+            print(f"MIS document {doc_id}: {found[0]}")
+            process_curve_zip(blob, index)
+            done = index.setdefault("docs", {}).setdefault(EMIL_OF[found[0]], [])
+            if doc_id not in done:
+                done.append(doc_id)
+            save_index(index)
+        except Exception as e:  # keep going; one bad file shouldn't stop the run
+            warn(f"MIS document {doc_id}: failed: {type(e).__name__}: {e}")
+
+
 def reprocess_60d(api, index: dict, mode: str = "missing", limit=None) -> tuple:
     """Re-download and reparse 60-day days already in the index, SCED disclosure first, then the
     DAM disclosure: those whose file is missing or predates the current format (the per-unit day
@@ -378,6 +408,9 @@ def main(argv=None):
                     help="also fetch the outage reports for every operating day in this range")
     ap.add_argument("--skip", choices=["2d", "2dgen", "60d", "dam", "prices", "outages", "nrc", "gas", "forecast", "entities"], action="append", default=[])
     ap.add_argument("--local", nargs="+", help="process local zip files instead of calling the API")
+    ap.add_argument("--mis-docs", nargs="+", type=int, metavar="ID",
+                    help="download these report files from ERCOT's public website (MIS document ids) in "
+                         "place of the API's report fetch; the rest of the run is as usual")
     ap.add_argument("--reprocess-60d", nargs="?", const="missing", choices=["missing", "all"],
                     help="re-download and reparse 60-day SCED and DAM days already in the index: those "
                          "whose file is missing or predates the current format (default), or all")
@@ -435,7 +468,9 @@ def main(argv=None):
     api = ErcotAPI()
     now = dt.datetime.now()
 
-    if args.backfill:
+    if args.mis_docs:
+        fetch_mis_docs(args.mis_docs, index)
+    elif args.backfill:
         start, end = _d(args.backfill[0]), _d(args.backfill[1])
         want = {(start + dt.timedelta(days=i)).isoformat() for i in range((end - start).days + 1)}
         for source, emil, lag in (("2d", EMIL_2DAY, 2), ("2dgen", EMIL_2DAY_GEN, 2), ("60d", EMIL_60DAY, 60),
