@@ -57,6 +57,10 @@ TECH_OF_TYPE = {
     # turbines ("Peakers"); biomass and other non-intermittent renewables stay in "other"
     "DSL": "combustion_turbine", "RENEW": "other",
     "ESR": "storage",
+    # before real-time co-optimization (Dec 5, 2025) a battery's discharge side was a generation
+    # resource of type PWRSTR, its charging a separate controllable load the 60-day file doesn't
+    # carry, so storage on those days is discharge only
+    "PWRSTR": "storage",
 }
 TECH_LABELS = {
     "nuclear": "Nuclear",
