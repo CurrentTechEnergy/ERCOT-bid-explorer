@@ -49,7 +49,8 @@ def note(source: str, df, unit_col: str, date: str = "") -> None:
         return
     src["qse"], src["dme"] = (str(q) if q else src["qse"]), (str(d) if d else src["dme"])
     cols = [unit_col] + [c for c in (q, d) if c]
-    sub = df[cols].astype(str).apply(lambda s: s.str.strip())
+    # pandas 3 keeps missing values through astype(str), so a blank cell would stay a float NaN
+    sub = df[cols].fillna("").astype(str).apply(lambda s: s.str.strip())
     for vals in sub.drop_duplicates().itertuples(index=False):
         name = vals[0]
         qv = vals[1] if q else ""
