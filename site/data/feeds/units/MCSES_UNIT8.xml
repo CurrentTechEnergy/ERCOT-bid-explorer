@@ -3,20 +3,13 @@
   <title>MCSES_UNIT8: bidding and operating changes</title>
   <link href="https://ercotbids.currenttech.energy/unit.html?unit=MCSES_UNIT8"/>
   <id>https://ercotbids.currenttech.energy/unit.html?unit=MCSES_UNIT8</id>
-  <updated>2026-10-22T00:00:00Z</updated>
+  <updated>2026-10-23T00:00:00Z</updated>
   <entry>
-    <title>MCSES_UNIT8: Loss cutoff moved (2026-08-23)</title>
+    <title>MCSES_UNIT8: Loss cutoff moved (2026-08-24)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=MCSES_UNIT8"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=MCSES_UNIT8#MCSES_UNIT8/2026-08-23/cutoff</id>
-    <updated>2026-10-22T00:00:00Z</updated>
-    <summary>Loss cutoff $142 to $243 per MW of minimum output; not yet tested on a following month</summary>
-  </entry>
-  <entry>
-    <title>MCSES_UNIT8: Shut down after a long run (2026-08-05)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=MCSES_UNIT8"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=MCSES_UNIT8#MCSES_UNIT8/2026-08-05/shutdown_new</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Shut down for 207 h after 44 days without a shutdown</summary>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=MCSES_UNIT8#MCSES_UNIT8/2026-08-24/cutoff</id>
+    <updated>2026-10-23T00:00:00Z</updated>
+    <summary>Loss cutoff $63 to $243 per MW of minimum output; not yet tested on a following month</summary>
   </entry>
   <entry>
     <title>MCSES_UNIT8: Outage ended (2026-07-29)</title>
@@ -44,7 +37,7 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=MCSES_UNIT8"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=MCSES_UNIT8#MCSES_UNIT8/2026-06-12/shutdown_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Shut down for 165 h after 41 days without a shutdown</summary>
+    <summary>Shut down for 161 h after 41 days without a shutdown</summary>
   </entry>
   <entry>
     <title>MCSES_UNIT8: Outage ended (2026-06-03)</title>
@@ -79,7 +72,7 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=MCSES_UNIT8"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=MCSES_UNIT8#MCSES_UNIT8/2026-04-16/shutdown_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Shut down for 98 h after 115 days without a shutdown</summary>
+    <summary>Shut down for 97 h after 115 days without a shutdown</summary>
   </entry>
   <entry>
     <title>MCSES_UNIT8: Outage ended (2026-04-08)</title>

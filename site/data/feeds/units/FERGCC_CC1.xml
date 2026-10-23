@@ -23,14 +23,14 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=FERGCC_CC1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=FERGCC_CC1#FERGCC_CC1/2026-04-13/outage_end</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Back from a 13-day outage</summary>
+    <summary>Back from a 12-day outage</summary>
   </entry>
   <entry>
     <title>FERGCC_CC1: Outage started (2026-04-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=FERGCC_CC1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=FERGCC_CC1#FERGCC_CC1/2026-04-01/outage_start</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Outage began, lasting 13 days</summary>
+    <summary>Outage began, lasting 12 days</summary>
   </entry>
   <entry>
     <title>FERGCC_CC1: Timescale group changed (2026-04-01)</title>
@@ -44,6 +44,6 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=FERGCC_CC1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=FERGCC_CC1#FERGCC_CC1/2026-01-09/shutdown_award</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Shut down for 16 h although a day-ahead award covered 100% of the window</summary>
+    <summary>Shut down for 14 h although a day-ahead award covered 100% of the window</summary>
   </entry>
 </feed>

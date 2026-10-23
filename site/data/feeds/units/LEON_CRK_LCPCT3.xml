@@ -86,7 +86,7 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=LEON_CRK_LCPCT3"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=LEON_CRK_LCPCT3#LEON_CRK_LCPCT3/2026-01-26/shutdown_award</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Shut down for 8 h although a day-ahead award covered 100% of the window</summary>
+    <summary>Shut down for 7 h although a day-ahead award covered 100% of the window</summary>
   </entry>
   <entry>
     <title>LEON_CRK_LCPCT3: Bidding approach shifted (2026-01-23)</title>

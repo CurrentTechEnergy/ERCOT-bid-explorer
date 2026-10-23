@@ -3,20 +3,20 @@
   <title>BASTEN_CC1: bidding and operating changes</title>
   <link href="https://ercotbids.currenttech.energy/unit.html?unit=BASTEN_CC1"/>
   <id>https://ercotbids.currenttech.energy/unit.html?unit=BASTEN_CC1</id>
-  <updated>2026-10-18T00:00:00Z</updated>
+  <updated>2026-10-23T00:00:00Z</updated>
   <entry>
-    <title>BASTEN_CC1: Outage ended (2026-04-20)</title>
+    <title>BASTEN_CC1: Outage ended (2026-04-19)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=BASTEN_CC1"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=BASTEN_CC1#BASTEN_CC1/2026-04-20/outage_end</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Back from a 13-day outage</summary>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=BASTEN_CC1#BASTEN_CC1/2026-04-19/outage_end</id>
+    <updated>2026-10-23T00:00:00Z</updated>
+    <summary>Back from a 11-day outage</summary>
   </entry>
   <entry>
     <title>BASTEN_CC1: Outage started (2026-04-08)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=BASTEN_CC1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=BASTEN_CC1#BASTEN_CC1/2026-04-08/outage_start</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Outage began, lasting 13 days</summary>
+    <summary>Outage began, lasting 11 days</summary>
   </entry>
   <entry>
     <title>BASTEN_CC1: Timescale group changed (2026-04-01)</title>
@@ -30,7 +30,7 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=BASTEN_CC1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=BASTEN_CC1#BASTEN_CC1/2026-03-12/shutdown_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Shut down for 69 h after 33 days without a shutdown</summary>
+    <summary>Shut down for 57 h after 33 days without a shutdown</summary>
   </entry>
   <entry>
     <title>BASTEN_CC1: Timescale group changed (2026-03-01)</title>

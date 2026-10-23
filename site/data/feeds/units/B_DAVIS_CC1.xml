@@ -16,7 +16,7 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=B_DAVIS_CC1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=B_DAVIS_CC1#B_DAVIS_CC1/2026-05-02/outage_end</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Back from a 11-day outage</summary>
+    <summary>Back from a 10-day outage</summary>
   </entry>
   <entry>
     <title>B_DAVIS_CC1: Timescale group changed (2026-05-01)</title>
@@ -30,7 +30,7 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=B_DAVIS_CC1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=B_DAVIS_CC1#B_DAVIS_CC1/2026-04-22/outage_start</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Outage began, lasting 11 days</summary>
+    <summary>Outage began, lasting 10 days</summary>
   </entry>
   <entry>
     <title>B_DAVIS_CC1: Outage ended (2026-04-20)</title>
@@ -58,7 +58,7 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=B_DAVIS_CC1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=B_DAVIS_CC1#B_DAVIS_CC1/2026-03-09/shutdown_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Shut down for 149 h after 31 days without a shutdown</summary>
+    <summary>Shut down for 145 h after 31 days without a shutdown</summary>
   </entry>
   <entry>
     <title>B_DAVIS_CC1: Timescale group changed (2026-03-01)</title>
@@ -79,6 +79,6 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=B_DAVIS_CC1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=B_DAVIS_CC1#B_DAVIS_CC1/2025-12-12/shutdown_award</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Shut down for 53 h although a day-ahead award covered 100% of the window</summary>
+    <summary>Shut down for 51 h although a day-ahead award covered 100% of the window</summary>
   </entry>
 </feed>

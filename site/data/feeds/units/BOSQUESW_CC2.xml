@@ -9,7 +9,7 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=BOSQUESW_CC2"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=BOSQUESW_CC2#BOSQUESW_CC2/2026-08-13/shutdown_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Shut down for 7 h after 41 days without a shutdown</summary>
+    <summary>Shut down for 5 h after 42 days without a shutdown</summary>
   </entry>
   <entry>
     <title>BOSQUESW_CC2: Timescale group changed (2026-08-01)</title>
@@ -44,7 +44,7 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=BOSQUESW_CC2"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=BOSQUESW_CC2#BOSQUESW_CC2/2026-01-07/shutdown_award</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Shut down for 16 h although a day-ahead award covered 100% of the window</summary>
+    <summary>Shut down for 14 h although a day-ahead award covered 100% of the window</summary>
   </entry>
   <entry>
     <title>BOSQUESW_CC2: Timescale group changed (2026-01-01)</title>
@@ -58,6 +58,6 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=BOSQUESW_CC2"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=BOSQUESW_CC2#BOSQUESW_CC2/2025-12-26/shutdown_award</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Shut down for 51 h although a day-ahead award covered 100% of the window</summary>
+    <summary>Shut down for 48 h although a day-ahead award covered 100% of the window</summary>
   </entry>
 </feed>

@@ -3,34 +3,13 @@
   <title>MIL_MILLERG3: bidding and operating changes</title>
   <link href="https://ercotbids.currenttech.energy/unit.html?unit=MIL_MILLERG3"/>
   <id>https://ercotbids.currenttech.energy/unit.html?unit=MIL_MILLERG3</id>
-  <updated>2026-10-18T00:00:00Z</updated>
-  <entry>
-    <title>MIL_MILLERG3: Shut down despite a day-ahead award (2026-08-05)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=MIL_MILLERG3"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=MIL_MILLERG3#MIL_MILLERG3/2026-08-05/shutdown_award</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Shut down for 40 h although a day-ahead award covered 100% of the window</summary>
-  </entry>
-  <entry>
-    <title>MIL_MILLERG3: Shut down despite a day-ahead award (2026-07-24)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=MIL_MILLERG3"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=MIL_MILLERG3#MIL_MILLERG3/2026-07-24/shutdown_award</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Shut down for 66 h although a day-ahead award covered 96% of the window</summary>
-  </entry>
+  <updated>2026-10-23T00:00:00Z</updated>
   <entry>
     <title>MIL_MILLERG3: Shut down despite a day-ahead award (2026-07-15)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=MIL_MILLERG3"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=MIL_MILLERG3#MIL_MILLERG3/2026-07-15/shutdown_award</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Shut down for 98 h although a day-ahead award covered 100% of the window</summary>
-  </entry>
-  <entry>
-    <title>MIL_MILLERG3: Shut down despite a day-ahead award (2026-07-02)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=MIL_MILLERG3"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=MIL_MILLERG3#MIL_MILLERG3/2026-07-02/shutdown_award</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Shut down for 63 h although a day-ahead award covered 100% of the window</summary>
+    <summary>Shut down for 96 h although a day-ahead award covered 100% of the window</summary>
   </entry>
   <entry>
     <title>MIL_MILLERG3: Timescale group changed (2026-07-01)</title>
@@ -44,14 +23,14 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=MIL_MILLERG3"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=MIL_MILLERG3#MIL_MILLERG3/2026-06-27/shutdown_award</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Shut down for 64 h although a day-ahead award covered 100% of the window</summary>
+    <summary>Shut down for 62 h although a day-ahead award covered 100% of the window</summary>
   </entry>
   <entry>
     <title>MIL_MILLERG3: Shut down despite a day-ahead award (2026-06-20)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=MIL_MILLERG3"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=MIL_MILLERG3#MIL_MILLERG3/2026-06-20/shutdown_award</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Shut down for 20 h although a day-ahead award covered 91% of the window</summary>
+    <summary>Shut down for 18 h although a day-ahead award covered 91% of the window</summary>
   </entry>
   <entry>
     <title>MIL_MILLERG3: Timescale group changed (2026-06-01)</title>
@@ -59,6 +38,13 @@
     <id>https://ercotbids.currenttech.energy/unit.html?unit=MIL_MILLERG3#MIL_MILLERG3/2026-06-01/group</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Multi-day: off 1–7 days in 2026-05 to Daily, 1–2 a week in 2026-06</summary>
+  </entry>
+  <entry>
+    <title>MIL_MILLERG3: Shut down after a long run (2026-05-07)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=MIL_MILLERG3"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=MIL_MILLERG3#MIL_MILLERG3/2026-05-07/shutdown_new</id>
+    <updated>2026-10-23T00:00:00Z</updated>
+    <summary>First shutdown in the record, off 501 h</summary>
   </entry>
   <entry>
     <title>MIL_MILLERG3: Bidding approach shifted (2026-05-06)</title>

@@ -3,13 +3,13 @@
   <title>HAYSEN_HAYSENG4: bidding and operating changes</title>
   <link href="https://ercotbids.currenttech.energy/unit.html?unit=HAYSEN_HAYSENG4"/>
   <id>https://ercotbids.currenttech.energy/unit.html?unit=HAYSEN_HAYSENG4</id>
-  <updated>2026-10-18T00:00:00Z</updated>
+  <updated>2026-10-23T00:00:00Z</updated>
   <entry>
     <title>HAYSEN_HAYSENG4: Shut down after a long run (2026-08-12)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=HAYSEN_HAYSENG4"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=HAYSEN_HAYSENG4#HAYSEN_HAYSENG4/2026-08-12/shutdown_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Shut down for 12 h after 41 days without a shutdown</summary>
+    <summary>Shut down for 10 h after 41 days without a shutdown</summary>
   </entry>
   <entry>
     <title>HAYSEN_HAYSENG4: Timescale group changed (2026-07-01)</title>
@@ -23,7 +23,7 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=HAYSEN_HAYSENG4"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=HAYSEN_HAYSENG4#HAYSEN_HAYSENG4/2026-06-07/shutdown_award</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Shut down for 11 h although a day-ahead award covered 100% of the window</summary>
+    <summary>Shut down for 9 h although a day-ahead award covered 100% of the window</summary>
   </entry>
   <entry>
     <title>HAYSEN_HAYSENG4: Timescale group changed (2026-06-01)</title>
@@ -33,10 +33,10 @@
     <summary>Always on when available in 2026-05 to Daily, under 1 shutdown a week in 2026-06</summary>
   </entry>
   <entry>
-    <title>HAYSEN_HAYSENG4: Outage ended (2026-05-14)</title>
+    <title>HAYSEN_HAYSENG4: Outage ended (2026-05-13)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=HAYSEN_HAYSENG4"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=HAYSEN_HAYSENG4#HAYSEN_HAYSENG4/2026-05-14/outage_end</id>
-    <updated>2026-10-18T00:00:00Z</updated>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=HAYSEN_HAYSENG4#HAYSEN_HAYSENG4/2026-05-13/outage_end</id>
+    <updated>2026-10-23T00:00:00Z</updated>
     <summary>Back from a 11-day outage</summary>
   </entry>
   <entry>
@@ -68,17 +68,10 @@
     <summary>Offer price vs peer median: $1 to -$14/MWh</summary>
   </entry>
   <entry>
-    <title>HAYSEN_HAYSENG4: Shut down despite a day-ahead award (2026-01-22)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=HAYSEN_HAYSENG4"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=HAYSEN_HAYSENG4#HAYSEN_HAYSENG4/2026-01-22/shutdown_award</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Shut down for 17 h although a day-ahead award covered 100% of the window</summary>
-  </entry>
-  <entry>
     <title>HAYSEN_HAYSENG4: Shut down despite a day-ahead award (2026-01-07)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=HAYSEN_HAYSENG4"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=HAYSEN_HAYSENG4#HAYSEN_HAYSENG4/2026-01-07/shutdown_award</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Shut down for 25 h although a day-ahead award covered 100% of the window</summary>
+    <summary>Shut down for 23 h although a day-ahead award covered 100% of the window</summary>
   </entry>
 </feed>

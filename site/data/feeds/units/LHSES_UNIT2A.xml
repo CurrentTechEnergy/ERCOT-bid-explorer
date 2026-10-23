@@ -3,7 +3,7 @@
   <title>LHSES_UNIT2A: bidding and operating changes</title>
   <link href="https://ercotbids.currenttech.energy/unit.html?unit=LHSES_UNIT2A"/>
   <id>https://ercotbids.currenttech.energy/unit.html?unit=LHSES_UNIT2A</id>
-  <updated>2026-10-19T00:00:00Z</updated>
+  <updated>2026-10-23T00:00:00Z</updated>
   <entry>
     <title>LHSES_UNIT2A: Bidding approach shifted (2026-08-13)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=LHSES_UNIT2A"/>
@@ -17,6 +17,13 @@
     <id>https://ercotbids.currenttech.energy/unit.html?unit=LHSES_UNIT2A#LHSES_UNIT2A/2026-08-01/group</id>
     <updated>2026-10-19T00:00:00Z</updated>
     <summary>Multi-day: off 1–7 days in 2026-07 to Daily, over 2 a week in 2026-08</summary>
+  </entry>
+  <entry>
+    <title>LHSES_UNIT2A: Shut down after a long run (2026-07-14)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=LHSES_UNIT2A"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=LHSES_UNIT2A#LHSES_UNIT2A/2026-07-14/shutdown_new</id>
+    <updated>2026-10-23T00:00:00Z</updated>
+    <summary>Shut down for 110 h after 143 days without a shutdown</summary>
   </entry>
   <entry>
     <title>LHSES_UNIT2A: Outage ended (2026-07-08)</title>
@@ -75,11 +82,11 @@
     <summary>Outage began, lasting 14 days</summary>
   </entry>
   <entry>
-    <title>LHSES_UNIT2A: Timescale group changed (2026-02-01)</title>
+    <title>LHSES_UNIT2A: Timescale group changed (2026-03-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=LHSES_UNIT2A"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=LHSES_UNIT2A#LHSES_UNIT2A/2026-02-01/group</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Multi-day: off 1–7 days in 2026-01 to Seasonal: off a week or more in 2026-02</summary>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=LHSES_UNIT2A#LHSES_UNIT2A/2026-03-01/group</id>
+    <updated>2026-10-23T00:00:00Z</updated>
+    <summary>Multi-day: off 1–7 days in 2026-02 to Always on when available in 2026-03</summary>
   </entry>
   <entry>
     <title>LHSES_UNIT2A: Bidding approach shifted (2026-01-24)</title>

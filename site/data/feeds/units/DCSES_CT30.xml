@@ -3,7 +3,7 @@
   <title>DCSES_CT30: bidding and operating changes</title>
   <link href="https://ercotbids.currenttech.energy/unit.html?unit=DCSES_CT30"/>
   <id>https://ercotbids.currenttech.energy/unit.html?unit=DCSES_CT30</id>
-  <updated>2026-10-19T00:00:00Z</updated>
+  <updated>2026-10-23T00:00:00Z</updated>
   <entry>
     <title>DCSES_CT30: Timescale group changed (2026-08-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=DCSES_CT30"/>
@@ -12,11 +12,18 @@
     <summary>Seasonal: off a week or more in 2026-07 to Multi-day: off 1–7 days in 2026-08</summary>
   </entry>
   <entry>
+    <title>DCSES_CT30: Timescale group changed (2026-07-01)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=DCSES_CT30"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=DCSES_CT30#DCSES_CT30/2026-07-01/group</id>
+    <updated>2026-10-23T00:00:00Z</updated>
+    <summary>Daily, under 1 shutdown a week in 2026-06 to Seasonal: off a week or more in 2026-07</summary>
+  </entry>
+  <entry>
     <title>DCSES_CT30: Timescale group changed (2026-06-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=DCSES_CT30"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=DCSES_CT30#DCSES_CT30/2026-06-01/group</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Multi-day: off 1–7 days in 2026-05 to Seasonal: off a week or more in 2026-06</summary>
+    <summary>Multi-day: off 1–7 days in 2026-05 to Daily, under 1 shutdown a week in 2026-06</summary>
   </entry>
   <entry>
     <title>DCSES_CT30: Bidding approach shifted (2026-05-28)</title>
@@ -26,11 +33,11 @@
     <summary>Offer price vs peer median: $865 to $20/MWh</summary>
   </entry>
   <entry>
-    <title>DCSES_CT30: Outage ended (2026-04-08)</title>
+    <title>DCSES_CT30: Outage ended (2026-04-06)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=DCSES_CT30"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=DCSES_CT30#DCSES_CT30/2026-04-08/outage_end</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Back from a 10-day outage</summary>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=DCSES_CT30#DCSES_CT30/2026-04-06/outage_end</id>
+    <updated>2026-10-23T00:00:00Z</updated>
+    <summary>Back from a 8-day outage</summary>
   </entry>
   <entry>
     <title>DCSES_CT30: Timescale group changed (2026-04-01)</title>
@@ -44,7 +51,7 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=DCSES_CT30"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=DCSES_CT30#DCSES_CT30/2026-03-30/outage_start</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Outage began, lasting 10 days</summary>
+    <summary>Outage began, lasting 8 days</summary>
   </entry>
   <entry>
     <title>DCSES_CT30: Outage ended (2026-03-28)</title>
@@ -72,7 +79,7 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=DCSES_CT30"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=DCSES_CT30#DCSES_CT30/2026-01-25/shutdown_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Shut down for 14 h after 41 days without a shutdown</summary>
+    <summary>Shut down for 13 h after 41 days without a shutdown</summary>
   </entry>
   <entry>
     <title>DCSES_CT30: Timescale group changed (2026-01-01)</title>

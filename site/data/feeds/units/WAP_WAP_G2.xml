@@ -3,20 +3,13 @@
   <title>WAP_WAP_G2: bidding and operating changes</title>
   <link href="https://ercotbids.currenttech.energy/unit.html?unit=WAP_WAP_G2"/>
   <id>https://ercotbids.currenttech.energy/unit.html?unit=WAP_WAP_G2</id>
-  <updated>2026-10-22T00:00:00Z</updated>
-  <entry>
-    <title>WAP_WAP_G2: Loss cutoff moved (2026-08-23)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=WAP_WAP_G2"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=WAP_WAP_G2#WAP_WAP_G2/2026-08-23/cutoff</id>
-    <updated>2026-10-22T00:00:00Z</updated>
-    <summary>Loss cutoff $130 to $172 per MW of minimum output; not yet tested on a following month</summary>
-  </entry>
+  <updated>2026-10-18T00:00:00Z</updated>
   <entry>
     <title>WAP_WAP_G2: Shut down after a long run (2026-04-25)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=WAP_WAP_G2"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=WAP_WAP_G2#WAP_WAP_G2/2026-04-25/shutdown_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Shut down for 18 h after 78 days without a shutdown</summary>
+    <summary>Shut down for 13 h after 78 days without a shutdown</summary>
   </entry>
   <entry>
     <title>WAP_WAP_G2: Outage ended (2026-04-20)</title>
@@ -72,7 +65,7 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=WAP_WAP_G2"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=WAP_WAP_G2#WAP_WAP_G2/2026-01-28/shutdown_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Shut down for 41 h after 55 days without a shutdown</summary>
+    <summary>Shut down for 38 h after 54 days without a shutdown</summary>
   </entry>
   <entry>
     <title>WAP_WAP_G2: Bidding approach shifted (2026-01-26)</title>

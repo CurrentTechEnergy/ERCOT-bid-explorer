@@ -3,13 +3,20 @@
   <title>ECEC_G1: bidding and operating changes</title>
   <link href="https://ercotbids.currenttech.energy/unit.html?unit=ECEC_G1"/>
   <id>https://ercotbids.currenttech.energy/unit.html?unit=ECEC_G1</id>
-  <updated>2026-10-18T00:00:00Z</updated>
+  <updated>2026-10-23T00:00:00Z</updated>
+  <entry>
+    <title>ECEC_G1: Loss cutoff moved (2026-08-24)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=ECEC_G1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=ECEC_G1#ECEC_G1/2026-08-24/cutoff</id>
+    <updated>2026-10-23T00:00:00Z</updated>
+    <summary>Loss cutoff $0 to $21 per MW of minimum output; not yet tested on a following month</summary>
+  </entry>
   <entry>
     <title>ECEC_G1: Loss cutoff moved (2026-07-31)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=ECEC_G1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=ECEC_G1#ECEC_G1/2026-07-31/cutoff</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Loss cutoff $0 to $54 per MW of minimum output; the next month&#x27;s decisions are split (7 of 7 right against 7)</summary>
+    <summary>Loss cutoff $0 to $54 per MW of minimum output; the next month&#x27;s decisions are split (9 of 9 right against 9)</summary>
   </entry>
   <entry>
     <title>ECEC_G1: Bidding approach shifted (2026-07-13)</title>

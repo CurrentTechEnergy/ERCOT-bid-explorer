@@ -9,7 +9,7 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=MDANP_CT2"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=MDANP_CT2#MDANP_CT2/2026-08-12/shutdown_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Shut down for 13 h after 44 days without a shutdown</summary>
+    <summary>Shut down for 11 h after 44 days without a shutdown</summary>
   </entry>
   <entry>
     <title>MDANP_CT2: Timescale group changed (2026-08-01)</title>
@@ -65,7 +65,7 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=MDANP_CT2"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=MDANP_CT2#MDANP_CT2/2026-02-20/shutdown_award</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Shut down for 39 h although a day-ahead award covered 100% of the window</summary>
+    <summary>Shut down for 36 h although a day-ahead award covered 100% of the window</summary>
   </entry>
   <entry>
     <title>MDANP_CT2: Bidding approach shifted (2026-02-03)</title>
@@ -80,19 +80,5 @@
     <id>https://ercotbids.currenttech.energy/unit.html?unit=MDANP_CT2#MDANP_CT2/2026-01-26/bidding</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Offer price vs peer median: $0 to -$14/MWh</summary>
-  </entry>
-  <entry>
-    <title>MDANP_CT2: Shut down despite a day-ahead award (2026-01-22)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=MDANP_CT2"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=MDANP_CT2#MDANP_CT2/2026-01-22/shutdown_award</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Shut down for 18 h although a day-ahead award covered 100% of the window</summary>
-  </entry>
-  <entry>
-    <title>MDANP_CT2: Shut down despite a day-ahead award (2026-01-13)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=MDANP_CT2"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=MDANP_CT2#MDANP_CT2/2026-01-13/shutdown_award</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Shut down for 24 h although a day-ahead award covered 100% of the window</summary>
   </entry>
 </feed>

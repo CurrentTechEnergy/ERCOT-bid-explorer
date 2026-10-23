@@ -26,13 +26,6 @@
     <summary>Offer price vs peer median: -$6 to $9/MWh</summary>
   </entry>
   <entry>
-    <title>LHSES_UNIT1: Shut down despite a day-ahead award (2026-07-06)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=LHSES_UNIT1"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=LHSES_UNIT1#LHSES_UNIT1/2026-07-06/shutdown_award</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Shut down for 17 h although a day-ahead award covered 100% of the window</summary>
-  </entry>
-  <entry>
     <title>LHSES_UNIT1: Bidding approach shifted (2026-07-05)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=LHSES_UNIT1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=LHSES_UNIT1#LHSES_UNIT1/2026-07-05/bidding</id>
@@ -86,6 +79,6 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=LHSES_UNIT1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=LHSES_UNIT1#LHSES_UNIT1/2026-01-27/shutdown_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Shut down for 198 h after 39 days without a shutdown</summary>
+    <summary>Shut down for 195 h after 39 days without a shutdown</summary>
   </entry>
 </feed>

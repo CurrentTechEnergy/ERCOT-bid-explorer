@@ -37,7 +37,7 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=HAYSEN_HAYSENG2"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=HAYSEN_HAYSENG2#HAYSEN_HAYSENG2/2026-02-12/shutdown_award</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Shut down for 19 h although a day-ahead award covered 100% of the window</summary>
+    <summary>Shut down for 16 h although a day-ahead award covered 100% of the window</summary>
   </entry>
   <entry>
     <title>HAYSEN_HAYSENG2: Bidding approach shifted (2026-01-29)</title>
@@ -45,12 +45,5 @@
     <id>https://ercotbids.currenttech.energy/unit.html?unit=HAYSEN_HAYSENG2#HAYSEN_HAYSENG2/2026-01-29/bidding</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Offer price vs peer median: -$11 to -$1/MWh</summary>
-  </entry>
-  <entry>
-    <title>HAYSEN_HAYSENG2: Shut down despite a day-ahead award (2026-01-22)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=HAYSEN_HAYSENG2"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=HAYSEN_HAYSENG2#HAYSEN_HAYSENG2/2026-01-22/shutdown_award</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Shut down for 32 h although a day-ahead award covered 100% of the window</summary>
   </entry>
 </feed>

@@ -9,7 +9,7 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=REDGATE_AGR_C"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=REDGATE_AGR_C#REDGATE_AGR_C/2026-08-02/shutdown_award</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Shut down for 16 h although a day-ahead award covered 100% of the window</summary>
+    <summary>Shut down for 6 h although a day-ahead award covered 100% of the window</summary>
   </entry>
   <entry>
     <title>REDGATE_AGR_C: Shut down despite a day-ahead award (2026-08-01)</title>
@@ -61,25 +61,11 @@
     <summary>Shut down for 5 h although a day-ahead award covered 100% of the window</summary>
   </entry>
   <entry>
-    <title>REDGATE_AGR_C: Shut down despite a day-ahead award (2026-04-25)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=REDGATE_AGR_C"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=REDGATE_AGR_C#REDGATE_AGR_C/2026-04-25/shutdown_award</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Shut down for 7 h although a day-ahead award covered 100% of the window</summary>
-  </entry>
-  <entry>
     <title>REDGATE_AGR_C: Shut down despite a day-ahead award (2026-04-11)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=REDGATE_AGR_C"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=REDGATE_AGR_C#REDGATE_AGR_C/2026-04-11/shutdown_award</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Shut down for 76 h although a day-ahead award covered 100% of the window</summary>
-  </entry>
-  <entry>
-    <title>REDGATE_AGR_C: Shut down despite a day-ahead award (2026-04-08)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=REDGATE_AGR_C"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=REDGATE_AGR_C#REDGATE_AGR_C/2026-04-08/shutdown_award</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Shut down for 6 h although a day-ahead award covered 100% of the window</summary>
   </entry>
   <entry>
     <title>REDGATE_AGR_C: Shut down despite a day-ahead award (2026-03-24)</title>

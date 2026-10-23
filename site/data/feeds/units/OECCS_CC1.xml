@@ -16,7 +16,7 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=OECCS_CC1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=OECCS_CC1#OECCS_CC1/2026-05-18/shutdown_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Shut down for 6 h after 46 days without a shutdown</summary>
+    <summary>Shut down for 4 h after 46 days without a shutdown</summary>
   </entry>
   <entry>
     <title>OECCS_CC1: Timescale group changed (2026-05-01)</title>
@@ -44,7 +44,7 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=OECCS_CC1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=OECCS_CC1#OECCS_CC1/2026-04-01/shutdown_award</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Shut down for 5 h although a day-ahead award covered 100% of the window</summary>
+    <summary>Shut down for 4 h although a day-ahead award covered 100% of the window</summary>
   </entry>
   <entry>
     <title>OECCS_CC1: Timescale group changed (2026-04-01)</title>
@@ -58,21 +58,21 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=OECCS_CC1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=OECCS_CC1#OECCS_CC1/2026-03-26/shutdown_award</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Shut down for 5 h although a day-ahead award covered 100% of the window</summary>
+    <summary>Shut down for 4 h although a day-ahead award covered 100% of the window</summary>
   </entry>
   <entry>
     <title>OECCS_CC1: Shut down despite a day-ahead award (2026-03-25)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=OECCS_CC1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=OECCS_CC1#OECCS_CC1/2026-03-25/shutdown_award</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Shut down for 5 h although a day-ahead award covered 100% of the window</summary>
+    <summary>Shut down for 4 h although a day-ahead award covered 100% of the window</summary>
   </entry>
   <entry>
     <title>OECCS_CC1: Shut down after a long run (2026-01-02)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=OECCS_CC1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=OECCS_CC1#OECCS_CC1/2026-01-02/shutdown_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>First shutdown in the record, off 7 h</summary>
+    <summary>First shutdown in the record, off 6 h</summary>
   </entry>
   <entry>
     <title>OECCS_CC1: Timescale group changed (2026-01-01)</title>

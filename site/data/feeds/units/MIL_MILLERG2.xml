@@ -9,7 +9,7 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=MIL_MILLERG2"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=MIL_MILLERG2#MIL_MILLERG2/2026-08-01/group</id>
     <updated>2026-10-19T00:00:00Z</updated>
-    <summary>Multi-day: off 1–7 days in 2026-07 to Seasonal: off a week or more in 2026-08</summary>
+    <summary>Multi-day: off 1–7 days in 2026-07 to Always on when available in 2026-08</summary>
   </entry>
   <entry>
     <title>MIL_MILLERG2: Timescale group changed (2026-07-01)</title>
@@ -65,7 +65,7 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=MIL_MILLERG2"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=MIL_MILLERG2#MIL_MILLERG2/2026-02-02/shutdown_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>First shutdown in the record, off 1062 h</summary>
+    <summary>First shutdown in the record, off 1060 h</summary>
   </entry>
   <entry>
     <title>MIL_MILLERG2: Bidding approach shifted (2026-01-31)</title>

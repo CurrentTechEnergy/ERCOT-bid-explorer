@@ -3,7 +3,7 @@
   <title>LEON_CRK_LCPCT4: bidding and operating changes</title>
   <link href="https://ercotbids.currenttech.energy/unit.html?unit=LEON_CRK_LCPCT4"/>
   <id>https://ercotbids.currenttech.energy/unit.html?unit=LEON_CRK_LCPCT4</id>
-  <updated>2026-10-18T00:00:00Z</updated>
+  <updated>2026-10-23T00:00:00Z</updated>
   <entry>
     <title>LEON_CRK_LCPCT4: Bidding approach shifted (2026-05-18)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=LEON_CRK_LCPCT4"/>
@@ -94,5 +94,12 @@
     <id>https://ercotbids.currenttech.energy/unit.html?unit=LEON_CRK_LCPCT4#LEON_CRK_LCPCT4/2025-12-13/bidding</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Offer price vs peer median: -$32 to -$1/MWh</summary>
+  </entry>
+  <entry>
+    <title>LEON_CRK_LCPCT4: Shut down despite a day-ahead award (2025-12-06)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=LEON_CRK_LCPCT4"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=LEON_CRK_LCPCT4#LEON_CRK_LCPCT4/2025-12-06/shutdown_award</id>
+    <updated>2026-10-23T00:00:00Z</updated>
+    <summary>Shut down for 5 h although a day-ahead award covered 100% of the window</summary>
   </entry>
 </feed>

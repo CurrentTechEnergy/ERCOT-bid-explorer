@@ -3,20 +3,20 @@
   <title>CALAVERS_JKS1: bidding and operating changes</title>
   <link href="https://ercotbids.currenttech.energy/unit.html?unit=CALAVERS_JKS1"/>
   <id>https://ercotbids.currenttech.energy/unit.html?unit=CALAVERS_JKS1</id>
-  <updated>2026-10-18T00:00:00Z</updated>
+  <updated>2026-10-23T00:00:00Z</updated>
   <entry>
     <title>CALAVERS_JKS1: Outage ended (2026-05-21)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=CALAVERS_JKS1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=CALAVERS_JKS1#CALAVERS_JKS1/2026-05-21/outage_end</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Back from a 15-day outage</summary>
+    <summary>Back from a 14-day outage</summary>
   </entry>
   <entry>
-    <title>CALAVERS_JKS1: Outage started (2026-05-06)</title>
+    <title>CALAVERS_JKS1: Outage started (2026-05-07)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=CALAVERS_JKS1"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=CALAVERS_JKS1#CALAVERS_JKS1/2026-05-06/outage_start</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Outage began, lasting 15 days</summary>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=CALAVERS_JKS1#CALAVERS_JKS1/2026-05-07/outage_start</id>
+    <updated>2026-10-23T00:00:00Z</updated>
+    <summary>Outage began, lasting 14 days</summary>
   </entry>
   <entry>
     <title>CALAVERS_JKS1: Bidding approach shifted (2026-02-10)</title>
@@ -30,14 +30,14 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=CALAVERS_JKS1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=CALAVERS_JKS1#CALAVERS_JKS1/2026-02-07/outage_end</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Back from a 12-day outage</summary>
+    <summary>Back from a 11-day outage</summary>
   </entry>
   <entry>
     <title>CALAVERS_JKS1: Outage started (2026-01-27)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=CALAVERS_JKS1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=CALAVERS_JKS1#CALAVERS_JKS1/2026-01-27/outage_start</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Outage began, lasting 12 days</summary>
+    <summary>Outage began, lasting 11 days</summary>
   </entry>
   <entry>
     <title>CALAVERS_JKS1: Bidding approach shifted (2026-01-24)</title>
@@ -47,10 +47,10 @@
     <summary>Running without an offer curve: 0% to 100% of the day</summary>
   </entry>
   <entry>
-    <title>CALAVERS_JKS1: Outage ended (2025-12-18)</title>
+    <title>CALAVERS_JKS1: Outage ended (2025-12-15)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=CALAVERS_JKS1"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=CALAVERS_JKS1#CALAVERS_JKS1/2025-12-18/outage_end</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Back from a 19-day outage</summary>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=CALAVERS_JKS1#CALAVERS_JKS1/2025-12-15/outage_end</id>
+    <updated>2026-10-23T00:00:00Z</updated>
+    <summary>Back from a 16-day outage</summary>
   </entry>
 </feed>

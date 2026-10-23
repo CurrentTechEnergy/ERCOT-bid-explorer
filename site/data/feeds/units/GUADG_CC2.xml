@@ -3,13 +3,13 @@
   <title>GUADG_CC2: bidding and operating changes</title>
   <link href="https://ercotbids.currenttech.energy/unit.html?unit=GUADG_CC2"/>
   <id>https://ercotbids.currenttech.energy/unit.html?unit=GUADG_CC2</id>
-  <updated>2026-10-18T00:00:00Z</updated>
+  <updated>2026-10-23T00:00:00Z</updated>
   <entry>
     <title>GUADG_CC2: Shut down after a long run (2026-06-28)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=GUADG_CC2"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=GUADG_CC2#GUADG_CC2/2026-06-28/shutdown_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Shut down for 6 h after 88 days without a shutdown</summary>
+    <summary>Shut down for 4 h after 88 days without a shutdown</summary>
   </entry>
   <entry>
     <title>GUADG_CC2: Outage ended (2026-04-13)</title>
@@ -33,6 +33,13 @@
     <summary>Daily, over 2 a week in 2026-03 to Always on when available in 2026-04</summary>
   </entry>
   <entry>
+    <title>GUADG_CC2: Shut down despite a day-ahead award (2026-03-02)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=GUADG_CC2"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=GUADG_CC2#GUADG_CC2/2026-03-02/shutdown_award</id>
+    <updated>2026-10-23T00:00:00Z</updated>
+    <summary>Shut down for 15 h although a day-ahead award covered 100% of the window</summary>
+  </entry>
+  <entry>
     <title>GUADG_CC2: Timescale group changed (2026-02-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=GUADG_CC2"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=GUADG_CC2#GUADG_CC2/2026-02-01/group</id>
@@ -44,7 +51,7 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=GUADG_CC2"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=GUADG_CC2#GUADG_CC2/2026-01-14/shutdown_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>First shutdown in the record, off 9 h</summary>
+    <summary>First shutdown in the record, off 8 h</summary>
   </entry>
   <entry>
     <title>GUADG_CC2: Timescale group changed (2026-01-01)</title>
@@ -52,12 +59,5 @@
     <id>https://ercotbids.currenttech.energy/unit.html?unit=GUADG_CC2#GUADG_CC2/2026-01-01/group</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Always on when available in 2025-12 to Multi-day: off 1–7 days in 2026-01</summary>
-  </entry>
-  <entry>
-    <title>GUADG_CC2: Outage ended (2025-12-11)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=GUADG_CC2"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=GUADG_CC2#GUADG_CC2/2025-12-11/outage_end</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Back from a 12-day outage</summary>
   </entry>
 </feed>

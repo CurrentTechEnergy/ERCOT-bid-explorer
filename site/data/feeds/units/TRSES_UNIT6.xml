@@ -3,13 +3,13 @@
   <title>TRSES_UNIT6: bidding and operating changes</title>
   <link href="https://ercotbids.currenttech.energy/unit.html?unit=TRSES_UNIT6"/>
   <id>https://ercotbids.currenttech.energy/unit.html?unit=TRSES_UNIT6</id>
-  <updated>2026-10-22T00:00:00Z</updated>
+  <updated>2026-10-23T00:00:00Z</updated>
   <entry>
-    <title>TRSES_UNIT6: Loss cutoff moved (2026-08-23)</title>
+    <title>TRSES_UNIT6: Loss cutoff moved (2026-08-24)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=TRSES_UNIT6"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=TRSES_UNIT6#TRSES_UNIT6/2026-08-23/cutoff</id>
-    <updated>2026-10-22T00:00:00Z</updated>
-    <summary>Loss cutoff $204 to $274 per MW of minimum output; not yet tested on a following month</summary>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=TRSES_UNIT6#TRSES_UNIT6/2026-08-24/cutoff</id>
+    <updated>2026-10-23T00:00:00Z</updated>
+    <summary>Loss cutoff $58 to $274 per MW of minimum output; not yet tested on a following month</summary>
   </entry>
   <entry>
     <title>TRSES_UNIT6: Bidding approach shifted (2026-08-16)</title>
@@ -30,7 +30,7 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=TRSES_UNIT6"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=TRSES_UNIT6#TRSES_UNIT6/2026-07-31/cutoff</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Loss cutoff $0 to $204 per MW of minimum output; the next month&#x27;s decisions confirm it (7 of 11 right against 0)</summary>
+    <summary>Loss cutoff $0 to $71 per MW of minimum output; the next month&#x27;s decisions are split (1 of 13 right against 1)</summary>
   </entry>
   <entry>
     <title>TRSES_UNIT6: Bidding approach shifted (2026-07-26)</title>
@@ -73,6 +73,27 @@
     <id>https://ercotbids.currenttech.energy/unit.html?unit=TRSES_UNIT6#TRSES_UNIT6/2026-04-25/bidding</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Offer price vs peer median: -$1 to -$15/MWh</summary>
+  </entry>
+  <entry>
+    <title>TRSES_UNIT6: Shut down after a long run (2026-03-23)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=TRSES_UNIT6"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=TRSES_UNIT6#TRSES_UNIT6/2026-03-23/shutdown_new</id>
+    <updated>2026-10-23T00:00:00Z</updated>
+    <summary>Shut down for 15 h after 41 days without a shutdown</summary>
+  </entry>
+  <entry>
+    <title>TRSES_UNIT6: Outage ended (2026-03-22)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=TRSES_UNIT6"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=TRSES_UNIT6#TRSES_UNIT6/2026-03-22/outage_end</id>
+    <updated>2026-10-23T00:00:00Z</updated>
+    <summary>Back from a 8-day outage</summary>
+  </entry>
+  <entry>
+    <title>TRSES_UNIT6: Outage started (2026-03-15)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=TRSES_UNIT6"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=TRSES_UNIT6#TRSES_UNIT6/2026-03-15/outage_start</id>
+    <updated>2026-10-23T00:00:00Z</updated>
+    <summary>Outage began, lasting 8 days</summary>
   </entry>
   <entry>
     <title>TRSES_UNIT6: Timescale group changed (2026-03-01)</title>

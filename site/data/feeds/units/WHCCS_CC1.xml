@@ -3,7 +3,7 @@
   <title>WHCCS_CC1: bidding and operating changes</title>
   <link href="https://ercotbids.currenttech.energy/unit.html?unit=WHCCS_CC1"/>
   <id>https://ercotbids.currenttech.energy/unit.html?unit=WHCCS_CC1</id>
-  <updated>2026-10-18T00:00:00Z</updated>
+  <updated>2026-10-23T00:00:00Z</updated>
   <entry>
     <title>WHCCS_CC1: Timescale group changed (2026-07-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=WHCCS_CC1"/>
@@ -19,11 +19,32 @@
     <summary>Seasonal: off a week or more in 2026-03 to Multi-day: off 1–7 days in 2026-04</summary>
   </entry>
   <entry>
+    <title>WHCCS_CC1: Shut down after a long run (2026-03-22)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=WHCCS_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=WHCCS_CC1#WHCCS_CC1/2026-03-22/shutdown_new</id>
+    <updated>2026-10-23T00:00:00Z</updated>
+    <summary>Shut down for 264 h after 33 days without a shutdown</summary>
+  </entry>
+  <entry>
+    <title>WHCCS_CC1: Outage ended (2026-03-02)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=WHCCS_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=WHCCS_CC1#WHCCS_CC1/2026-03-02/outage_end</id>
+    <updated>2026-10-23T00:00:00Z</updated>
+    <summary>Back from a 10-day outage</summary>
+  </entry>
+  <entry>
     <title>WHCCS_CC1: Timescale group changed (2026-03-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=WHCCS_CC1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=WHCCS_CC1#WHCCS_CC1/2026-03-01/group</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Multi-day: off 1–7 days in 2026-02 to Seasonal: off a week or more in 2026-03</summary>
+  </entry>
+  <entry>
+    <title>WHCCS_CC1: Outage started (2026-02-21)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=WHCCS_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=WHCCS_CC1#WHCCS_CC1/2026-02-21/outage_start</id>
+    <updated>2026-10-23T00:00:00Z</updated>
+    <summary>Outage began, lasting 10 days</summary>
   </entry>
   <entry>
     <title>WHCCS_CC1: Outage ended (2025-12-24)</title>

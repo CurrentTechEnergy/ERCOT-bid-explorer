@@ -9,7 +9,7 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=DCSES_CT10"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=DCSES_CT10#DCSES_CT10/2026-08-01/group</id>
     <updated>2026-10-19T00:00:00Z</updated>
-    <summary>Seasonal: off a week or more in 2026-07 to Daily, 1–2 a week in 2026-08</summary>
+    <summary>Seasonal: off a week or more in 2026-07 to Daily, over 2 a week in 2026-08</summary>
   </entry>
   <entry>
     <title>DCSES_CT10: Bidding approach shifted (2026-08-01)</title>
@@ -23,14 +23,14 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=DCSES_CT10"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=DCSES_CT10#DCSES_CT10/2026-07-01/group</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Daily, under 1 shutdown a week in 2026-06 to Seasonal: off a week or more in 2026-07</summary>
+    <summary>Daily, 1–2 a week in 2026-06 to Seasonal: off a week or more in 2026-07</summary>
   </entry>
   <entry>
     <title>DCSES_CT10: Timescale group changed (2026-06-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=DCSES_CT10"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=DCSES_CT10#DCSES_CT10/2026-06-01/group</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Multi-day: off 1–7 days in 2026-05 to Daily, under 1 shutdown a week in 2026-06</summary>
+    <summary>Multi-day: off 1–7 days in 2026-05 to Daily, 1–2 a week in 2026-06</summary>
   </entry>
   <entry>
     <title>DCSES_CT10: Timescale group changed (2026-05-01)</title>

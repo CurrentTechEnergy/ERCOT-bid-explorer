@@ -3,13 +3,13 @@
   <title>QALSW_CC1: bidding and operating changes</title>
   <link href="https://ercotbids.currenttech.energy/unit.html?unit=QALSW_CC1"/>
   <id>https://ercotbids.currenttech.energy/unit.html?unit=QALSW_CC1</id>
-  <updated>2026-10-18T00:00:00Z</updated>
+  <updated>2026-10-23T00:00:00Z</updated>
   <entry>
-    <title>QALSW_CC1: Shut down after a long run (2026-06-17)</title>
+    <title>QALSW_CC1: Shut down after a long run (2026-06-21)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=QALSW_CC1"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=QALSW_CC1#QALSW_CC1/2026-06-17/shutdown_new</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>First shutdown in the record, off 6 h</summary>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=QALSW_CC1#QALSW_CC1/2026-06-21/shutdown_new</id>
+    <updated>2026-10-23T00:00:00Z</updated>
+    <summary>First shutdown in the record, off 15 h</summary>
   </entry>
   <entry>
     <title>QALSW_CC1: Timescale group changed (2026-06-01)</title>

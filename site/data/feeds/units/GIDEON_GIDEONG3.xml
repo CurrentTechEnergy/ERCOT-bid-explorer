@@ -3,7 +3,7 @@
   <title>GIDEON_GIDEONG3: bidding and operating changes</title>
   <link href="https://ercotbids.currenttech.energy/unit.html?unit=GIDEON_GIDEONG3"/>
   <id>https://ercotbids.currenttech.energy/unit.html?unit=GIDEON_GIDEONG3</id>
-  <updated>2026-10-18T00:00:00Z</updated>
+  <updated>2026-10-23T00:00:00Z</updated>
   <entry>
     <title>GIDEON_GIDEONG3: Outage ended (2026-07-19)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=GIDEON_GIDEONG3"/>
@@ -23,7 +23,7 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=GIDEON_GIDEONG3"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=GIDEON_GIDEONG3#GIDEON_GIDEONG3/2026-07-03/outage_end</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Back from a 9-day outage</summary>
+    <summary>Back from a 8-day outage</summary>
   </entry>
   <entry>
     <title>GIDEON_GIDEONG3: Timescale group changed (2026-07-01)</title>
@@ -40,18 +40,11 @@
     <summary>Loss cutoff $161 to $270 per MW of minimum output; the next month&#x27;s decisions confirm it (1 of 1 right against 0)</summary>
   </entry>
   <entry>
-    <title>GIDEON_GIDEONG3: Outage started (2026-06-24)</title>
+    <title>GIDEON_GIDEONG3: Outage started (2026-06-25)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=GIDEON_GIDEONG3"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=GIDEON_GIDEONG3#GIDEON_GIDEONG3/2026-06-24/outage_start</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Outage began, lasting 9 days</summary>
-  </entry>
-  <entry>
-    <title>GIDEON_GIDEONG3: Shut down despite a day-ahead award (2026-06-23)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=GIDEON_GIDEONG3"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=GIDEON_GIDEONG3#GIDEON_GIDEONG3/2026-06-23/shutdown_award</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Shut down for 15 h although a day-ahead award covered 96% of the window</summary>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=GIDEON_GIDEONG3#GIDEON_GIDEONG3/2026-06-25/outage_start</id>
+    <updated>2026-10-23T00:00:00Z</updated>
+    <summary>Outage began, lasting 8 days</summary>
   </entry>
   <entry>
     <title>GIDEON_GIDEONG3: Timescale group changed (2026-06-01)</title>
@@ -65,21 +58,35 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=GIDEON_GIDEONG3"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=GIDEON_GIDEONG3#GIDEON_GIDEONG3/2026-05-30/shutdown_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Shut down for 40 h after 67 days without a shutdown</summary>
+    <summary>Shut down for 33 h after 67 days without a shutdown</summary>
   </entry>
   <entry>
     <title>GIDEON_GIDEONG3: Outage ended (2026-05-19)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=GIDEON_GIDEONG3"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=GIDEON_GIDEONG3#GIDEON_GIDEONG3/2026-05-19/outage_end</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Back from a 28-day outage</summary>
+    <summary>Back from a 14-day outage</summary>
+  </entry>
+  <entry>
+    <title>GIDEON_GIDEONG3: Outage started (2026-05-05)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=GIDEON_GIDEONG3"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=GIDEON_GIDEONG3#GIDEON_GIDEONG3/2026-05-05/outage_start</id>
+    <updated>2026-10-23T00:00:00Z</updated>
+    <summary>Outage began, lasting 14 days</summary>
+  </entry>
+  <entry>
+    <title>GIDEON_GIDEONG3: Outage ended (2026-05-05)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=GIDEON_GIDEONG3"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=GIDEON_GIDEONG3#GIDEON_GIDEONG3/2026-05-05/outage_end</id>
+    <updated>2026-10-23T00:00:00Z</updated>
+    <summary>Back from a 14-day outage</summary>
   </entry>
   <entry>
     <title>GIDEON_GIDEONG3: Outage started (2026-04-22)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=GIDEON_GIDEONG3"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=GIDEON_GIDEONG3#GIDEON_GIDEONG3/2026-04-22/outage_start</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Outage began, lasting 28 days</summary>
+    <summary>Outage began, lasting 14 days</summary>
   </entry>
   <entry>
     <title>GIDEON_GIDEONG3: Outage ended (2026-04-20)</title>
@@ -100,7 +107,7 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=GIDEON_GIDEONG3"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=GIDEON_GIDEONG3#GIDEON_GIDEONG3/2026-03-17/shutdown_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Shut down for 82 h after 43 days without a shutdown</summary>
+    <summary>Shut down for 78 h after 66 days without a shutdown</summary>
   </entry>
   <entry>
     <title>GIDEON_GIDEONG3: Bidding approach shifted (2026-03-17)</title>

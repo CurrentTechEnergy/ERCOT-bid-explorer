@@ -12,20 +12,6 @@
     <summary>Multi-day: off 1–7 days in 2026-05 to Always on when available in 2026-06</summary>
   </entry>
   <entry>
-    <title>CBY4_CC1: Shut down despite a day-ahead award (2026-05-23)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=CBY4_CC1"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=CBY4_CC1#CBY4_CC1/2026-05-23/shutdown_award</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Shut down for 48 h although a day-ahead award covered 100% of the window</summary>
-  </entry>
-  <entry>
-    <title>CBY4_CC1: Shut down despite a day-ahead award (2026-04-08)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=CBY4_CC1"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=CBY4_CC1#CBY4_CC1/2026-04-08/shutdown_award</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Shut down for 43 h although a day-ahead award covered 100% of the window</summary>
-  </entry>
-  <entry>
     <title>CBY4_CC1: Outage ended (2026-03-28)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=CBY4_CC1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=CBY4_CC1#CBY4_CC1/2026-03-28/outage_end</id>

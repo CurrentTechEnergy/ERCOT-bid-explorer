@@ -3,7 +3,7 @@
   <title>KMCHI_CC1: bidding and operating changes</title>
   <link href="https://ercotbids.currenttech.energy/unit.html?unit=KMCHI_CC1"/>
   <id>https://ercotbids.currenttech.energy/unit.html?unit=KMCHI_CC1</id>
-  <updated>2026-10-18T00:00:00Z</updated>
+  <updated>2026-10-23T00:00:00Z</updated>
   <entry>
     <title>KMCHI_CC1: Shut down after a long run (2026-07-04)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=KMCHI_CC1"/>
@@ -30,7 +30,7 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=KMCHI_CC1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=KMCHI_CC1#KMCHI_CC1/2026-05-14/shutdown_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Shut down for 98 h after 46 days without a shutdown</summary>
+    <summary>Shut down for 96 h after 46 days without a shutdown</summary>
   </entry>
   <entry>
     <title>KMCHI_CC1: Timescale group changed (2026-05-01)</title>
@@ -51,27 +51,27 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=KMCHI_CC1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=KMCHI_CC1#KMCHI_CC1/2026-03-27/outage_end</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Back from a 12-day outage</summary>
+    <summary>Back from a 13-day outage</summary>
   </entry>
   <entry>
     <title>KMCHI_CC1: Outage started (2026-03-15)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=KMCHI_CC1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=KMCHI_CC1#KMCHI_CC1/2026-03-15/outage_start</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Outage began, lasting 12 days</summary>
+    <summary>Outage began, lasting 13 days</summary>
   </entry>
   <entry>
-    <title>KMCHI_CC1: Outage ended (2025-12-16)</title>
+    <title>KMCHI_CC1: Outage ended (2026-03-02)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=KMCHI_CC1"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=KMCHI_CC1#KMCHI_CC1/2025-12-16/outage_end</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Back from a 7-day outage</summary>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=KMCHI_CC1#KMCHI_CC1/2026-03-02/outage_end</id>
+    <updated>2026-10-23T00:00:00Z</updated>
+    <summary>Back from a 20-day outage</summary>
   </entry>
   <entry>
-    <title>KMCHI_CC1: Outage started (2025-12-09)</title>
+    <title>KMCHI_CC1: Outage started (2026-02-10)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=KMCHI_CC1"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=KMCHI_CC1#KMCHI_CC1/2025-12-09/outage_start</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Outage began, lasting 7 days</summary>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=KMCHI_CC1#KMCHI_CC1/2026-02-10/outage_start</id>
+    <updated>2026-10-23T00:00:00Z</updated>
+    <summary>Outage began, lasting 20 days</summary>
   </entry>
 </feed>

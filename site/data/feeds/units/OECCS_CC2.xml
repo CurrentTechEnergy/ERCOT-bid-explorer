@@ -3,7 +3,7 @@
   <title>OECCS_CC2: bidding and operating changes</title>
   <link href="https://ercotbids.currenttech.energy/unit.html?unit=OECCS_CC2"/>
   <id>https://ercotbids.currenttech.energy/unit.html?unit=OECCS_CC2</id>
-  <updated>2026-10-18T00:00:00Z</updated>
+  <updated>2026-10-23T00:00:00Z</updated>
   <entry>
     <title>OECCS_CC2: Shut down after a long run (2026-08-11)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=OECCS_CC2"/>
@@ -30,28 +30,28 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=OECCS_CC2"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=OECCS_CC2#OECCS_CC2/2026-05-18/shutdown_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Shut down for 7 h after 31 days without a shutdown</summary>
+    <summary>Shut down for 4 h after 31 days without a shutdown</summary>
   </entry>
   <entry>
     <title>OECCS_CC2: Outage ended (2026-05-05)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=OECCS_CC2"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=OECCS_CC2#OECCS_CC2/2026-05-05/outage_end</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Back from a 14-day outage</summary>
+    <summary>Back from a 11-day outage</summary>
   </entry>
   <entry>
-    <title>OECCS_CC2: Outage started (2026-04-22)</title>
+    <title>OECCS_CC2: Outage started (2026-04-24)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=OECCS_CC2"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=OECCS_CC2#OECCS_CC2/2026-04-22/outage_start</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Outage began, lasting 14 days</summary>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=OECCS_CC2#OECCS_CC2/2026-04-24/outage_start</id>
+    <updated>2026-10-23T00:00:00Z</updated>
+    <summary>Outage began, lasting 11 days</summary>
   </entry>
   <entry>
     <title>OECCS_CC2: Shut down despite a day-ahead award (2026-04-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=OECCS_CC2"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=OECCS_CC2#OECCS_CC2/2026-04-01/shutdown_award</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Shut down for 5 h although a day-ahead award covered 100% of the window</summary>
+    <summary>Shut down for 4 h although a day-ahead award covered 100% of the window</summary>
   </entry>
   <entry>
     <title>OECCS_CC2: Shut down despite a day-ahead award (2026-03-26)</title>
@@ -65,7 +65,7 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=OECCS_CC2"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=OECCS_CC2#OECCS_CC2/2026-03-25/shutdown_award</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Shut down for 5 h although a day-ahead award covered 100% of the window</summary>
+    <summary>Shut down for 4 h although a day-ahead award covered 100% of the window</summary>
   </entry>
   <entry>
     <title>OECCS_CC2: Shut down after a long run (2026-03-06)</title>

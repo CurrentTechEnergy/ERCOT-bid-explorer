@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>GBY_GBYGT73: bidding and operating changes</title>
+  <link href="https://ercotbids.currenttech.energy/unit.html?unit=GBY_GBYGT73"/>
+  <id>https://ercotbids.currenttech.energy/unit.html?unit=GBY_GBYGT73</id>
+  <updated>2026-10-23T00:00:00Z</updated>
+  <entry>
+    <title>GBY_GBYGT73: Timescale group changed (2026-08-01)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=GBY_GBYGT73"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=GBY_GBYGT73#GBY_GBYGT73/2026-08-01/group</id>
+    <updated>2026-10-23T00:00:00Z</updated>
+    <summary>Seasonal: off a week or more in 2026-07 to Multi-day: off 1–7 days in 2026-08</summary>
+  </entry>
+  <entry>
+    <title>GBY_GBYGT73: Shut down after a long run (2026-07-23)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=GBY_GBYGT73"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=GBY_GBYGT73#GBY_GBYGT73/2026-07-23/shutdown_new</id>
+    <updated>2026-10-23T00:00:00Z</updated>
+    <summary>Shut down for 763 h after 139 days without a shutdown</summary>
+  </entry>
+</feed>

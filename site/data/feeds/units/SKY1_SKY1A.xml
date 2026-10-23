@@ -5,13 +5,6 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=SKY1_SKY1A</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
-    <title>SKY1_SKY1A: Shut down despite a day-ahead award (2026-08-02)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=SKY1_SKY1A"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=SKY1_SKY1A#SKY1_SKY1A/2026-08-02/shutdown_award</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Shut down for 14 h although a day-ahead award covered 100% of the window</summary>
-  </entry>
-  <entry>
     <title>SKY1_SKY1A: Shut down despite a day-ahead award (2026-07-24)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=SKY1_SKY1A"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=SKY1_SKY1A#SKY1_SKY1A/2026-07-24/shutdown_award</id>
@@ -30,21 +23,21 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=SKY1_SKY1A"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=SKY1_SKY1A#SKY1_SKY1A/2026-06-16/shutdown_award</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Shut down for 16 h although a day-ahead award covered 100% of the window</summary>
+    <summary>Shut down for 4 h although a day-ahead award covered 100% of the window</summary>
   </entry>
   <entry>
     <title>SKY1_SKY1A: Shut down despite a day-ahead award (2026-06-06)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=SKY1_SKY1A"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=SKY1_SKY1A#SKY1_SKY1A/2026-06-06/shutdown_award</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Shut down for 6 h although a day-ahead award covered 100% of the window</summary>
+    <summary>Shut down for 5 h although a day-ahead award covered 100% of the window</summary>
   </entry>
   <entry>
     <title>SKY1_SKY1A: Shut down despite a day-ahead award (2026-05-27)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=SKY1_SKY1A"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=SKY1_SKY1A#SKY1_SKY1A/2026-05-27/shutdown_award</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Shut down for 9 h although a day-ahead award covered 100% of the window</summary>
+    <summary>Shut down for 7 h although a day-ahead award covered 100% of the window</summary>
   </entry>
   <entry>
     <title>SKY1_SKY1A: Shut down despite a day-ahead award (2026-05-21)</title>
@@ -58,14 +51,14 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=SKY1_SKY1A"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=SKY1_SKY1A#SKY1_SKY1A/2026-05-11/shutdown_award</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Shut down for 11 h although a day-ahead award covered 100% of the window</summary>
+    <summary>Shut down for 10 h although a day-ahead award covered 100% of the window</summary>
   </entry>
   <entry>
     <title>SKY1_SKY1A: Shut down despite a day-ahead award (2026-05-09)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=SKY1_SKY1A"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=SKY1_SKY1A#SKY1_SKY1A/2026-05-09/shutdown_award</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Shut down for 20 h although a day-ahead award covered 100% of the window</summary>
+    <summary>Shut down for 6 h although a day-ahead award covered 100% of the window</summary>
   </entry>
   <entry>
     <title>SKY1_SKY1A: Shut down despite a day-ahead award (2026-05-08)</title>
@@ -86,14 +79,14 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=SKY1_SKY1A"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=SKY1_SKY1A#SKY1_SKY1A/2026-04-18/shutdown_award</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Shut down for 16 h although a day-ahead award covered 100% of the window</summary>
+    <summary>Shut down for 15 h although a day-ahead award covered 100% of the window</summary>
   </entry>
   <entry>
     <title>SKY1_SKY1A: Shut down despite a day-ahead award (2026-04-16)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=SKY1_SKY1A"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=SKY1_SKY1A#SKY1_SKY1A/2026-04-16/shutdown_award</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Shut down for 11 h although a day-ahead award covered 100% of the window</summary>
+    <summary>Shut down for 10 h although a day-ahead award covered 100% of the window</summary>
   </entry>
   <entry>
     <title>SKY1_SKY1A: Shut down despite a day-ahead award (2026-04-12)</title>
@@ -142,6 +135,6 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=SKY1_SKY1A"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=SKY1_SKY1A#SKY1_SKY1A/2025-12-05/shutdown_award</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Shut down for 6 h although a day-ahead award covered 100% of the window</summary>
+    <summary>Shut down for 4 h although a day-ahead award covered 100% of the window</summary>
   </entry>
 </feed>

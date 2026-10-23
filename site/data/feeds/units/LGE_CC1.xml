@@ -16,41 +16,27 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=LGE_CC1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=LGE_CC1#LGE_CC1/2026-05-01/group</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Daily, 1–2 a week in 2026-04 to Multi-day: off 1–7 days in 2026-05</summary>
-  </entry>
-  <entry>
-    <title>LGE_CC1: Outage ended (2026-03-23)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=LGE_CC1"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=LGE_CC1#LGE_CC1/2026-03-23/outage_end</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Back from a 8-day outage</summary>
-  </entry>
-  <entry>
-    <title>LGE_CC1: Outage started (2026-03-15)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=LGE_CC1"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=LGE_CC1#LGE_CC1/2026-03-15/outage_start</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Outage began, lasting 8 days</summary>
+    <summary>Daily, over 2 a week in 2026-04 to Multi-day: off 1–7 days in 2026-05</summary>
   </entry>
   <entry>
     <title>LGE_CC1: Shut down despite a day-ahead award (2026-02-12)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=LGE_CC1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=LGE_CC1#LGE_CC1/2026-02-12/shutdown_award</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Shut down for 69 h although a day-ahead award covered 100% of the window</summary>
+    <summary>Shut down for 66 h although a day-ahead award covered 100% of the window</summary>
   </entry>
   <entry>
     <title>LGE_CC1: Shut down despite a day-ahead award (2026-01-09)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=LGE_CC1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=LGE_CC1#LGE_CC1/2026-01-09/shutdown_award</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Shut down for 45 h although a day-ahead award covered 100% of the window</summary>
+    <summary>Shut down for 44 h although a day-ahead award covered 100% of the window</summary>
   </entry>
   <entry>
     <title>LGE_CC1: Shut down despite a day-ahead award (2025-12-13)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=LGE_CC1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=LGE_CC1#LGE_CC1/2025-12-13/shutdown_award</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Shut down for 27 h although a day-ahead award covered 100% of the window</summary>
+    <summary>Shut down for 24 h although a day-ahead award covered 100% of the window</summary>
   </entry>
 </feed>

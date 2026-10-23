@@ -3,27 +3,13 @@
   <title>JCKCNTY2_CC1: bidding and operating changes</title>
   <link href="https://ercotbids.currenttech.energy/unit.html?unit=JCKCNTY2_CC1"/>
   <id>https://ercotbids.currenttech.energy/unit.html?unit=JCKCNTY2_CC1</id>
-  <updated>2026-10-18T00:00:00Z</updated>
-  <entry>
-    <title>JCKCNTY2_CC1: Outage ended (2026-06-03)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=JCKCNTY2_CC1"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=JCKCNTY2_CC1#JCKCNTY2_CC1/2026-06-03/outage_end</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Back from a 10-day outage</summary>
-  </entry>
+  <updated>2026-10-23T00:00:00Z</updated>
   <entry>
     <title>JCKCNTY2_CC1: Timescale group changed (2026-06-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=JCKCNTY2_CC1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=JCKCNTY2_CC1#JCKCNTY2_CC1/2026-06-01/group</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Multi-day: off 1–7 days in 2026-05 to Always on when available in 2026-06</summary>
-  </entry>
-  <entry>
-    <title>JCKCNTY2_CC1: Outage started (2026-05-25)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=JCKCNTY2_CC1"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=JCKCNTY2_CC1#JCKCNTY2_CC1/2026-05-25/outage_start</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Outage began, lasting 10 days</summary>
   </entry>
   <entry>
     <title>JCKCNTY2_CC1: Outage ended (2026-04-15)</title>
@@ -79,13 +65,34 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=JCKCNTY2_CC1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=JCKCNTY2_CC1#JCKCNTY2_CC1/2026-02-03/outage_end</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Back from a 61-day outage</summary>
+    <summary>Back from a 8-day outage</summary>
+  </entry>
+  <entry>
+    <title>JCKCNTY2_CC1: Outage started (2026-01-26)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=JCKCNTY2_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=JCKCNTY2_CC1#JCKCNTY2_CC1/2026-01-26/outage_start</id>
+    <updated>2026-10-23T00:00:00Z</updated>
+    <summary>Outage began, lasting 8 days</summary>
+  </entry>
+  <entry>
+    <title>JCKCNTY2_CC1: Outage ended (2026-01-25)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=JCKCNTY2_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=JCKCNTY2_CC1#JCKCNTY2_CC1/2026-01-25/outage_end</id>
+    <updated>2026-10-23T00:00:00Z</updated>
+    <summary>Back from a 52-day outage</summary>
+  </entry>
+  <entry>
+    <title>JCKCNTY2_CC1: Timescale group changed (2026-01-01)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=JCKCNTY2_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=JCKCNTY2_CC1#JCKCNTY2_CC1/2026-01-01/group</id>
+    <updated>2026-10-23T00:00:00Z</updated>
+    <summary>Multi-day: off 1–7 days in 2025-12 to Always on when available in 2026-01</summary>
   </entry>
   <entry>
     <title>JCKCNTY2_CC1: Outage started (2025-12-04)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=JCKCNTY2_CC1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=JCKCNTY2_CC1#JCKCNTY2_CC1/2025-12-04/outage_start</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Outage began, lasting 61 days</summary>
+    <summary>Outage began, lasting 52 days</summary>
   </entry>
 </feed>

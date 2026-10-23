@@ -3,7 +3,14 @@
   <title>FRNYPP_CC1: bidding and operating changes</title>
   <link href="https://ercotbids.currenttech.energy/unit.html?unit=FRNYPP_CC1"/>
   <id>https://ercotbids.currenttech.energy/unit.html?unit=FRNYPP_CC1</id>
-  <updated>2026-10-18T00:00:00Z</updated>
+  <updated>2026-10-23T00:00:00Z</updated>
+  <entry>
+    <title>FRNYPP_CC1: Loss cutoff moved (2026-06-30)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=FRNYPP_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=FRNYPP_CC1#FRNYPP_CC1/2026-06-30/cutoff</id>
+    <updated>2026-10-23T00:00:00Z</updated>
+    <summary>Loss cutoff $0 to $8 per MW of minimum output; the next month&#x27;s decisions are split (19 of 19 right against 19)</summary>
+  </entry>
   <entry>
     <title>FRNYPP_CC1: Shut down despite a day-ahead award (2026-05-09)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=FRNYPP_CC1"/>
@@ -16,20 +23,20 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=FRNYPP_CC1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=FRNYPP_CC1#FRNYPP_CC1/2026-04-29/outage_end</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Back from a 8-day outage</summary>
+    <summary>Back from a 7-day outage</summary>
   </entry>
   <entry>
     <title>FRNYPP_CC1: Outage started (2026-04-22)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=FRNYPP_CC1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=FRNYPP_CC1#FRNYPP_CC1/2026-04-22/outage_start</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Outage began, lasting 8 days</summary>
+    <summary>Outage began, lasting 7 days</summary>
   </entry>
   <entry>
     <title>FRNYPP_CC1: Loss cutoff moved (2026-01-31)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=FRNYPP_CC1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=FRNYPP_CC1#FRNYPP_CC1/2026-01-31/cutoff</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Loss cutoff $71 to $0 per MW of minimum output; the next month&#x27;s decisions confirm it (13 of 13 right against 11)</summary>
+    <summary>Loss cutoff $71 to $0 per MW of minimum output; the next month&#x27;s decisions confirm it (14 of 14 right against 12)</summary>
   </entry>
 </feed>
