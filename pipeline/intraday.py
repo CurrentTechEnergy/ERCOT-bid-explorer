@@ -12,7 +12,8 @@ Writes
                        above   MW of output above LSL
                        n       units running
                        transit MW of output from units not counted as running that hour
-                               (starting up, shutting down, or online for under half of it)
+                               (starting up, shutting down, or online for under half of it),
+                               including the ramping hours unit_hours marks "m"
                      and cap_<group>: [day] average MW of capacity (HSL) in each status group
                      (STATUS_GROUPS, see status_group)
     above_units      units that ran above minimum in cheap hours, all days together:
@@ -43,6 +44,7 @@ from .units import expand
 
 ABOVE_EPS = 0.05          # share of HSL above LSL that still counts as "at minimum"
 CHEAP = [0, 10]           # $/MWh thresholds for the above-minimum table
+RAMP = ("STARTUP", "SHUTDOWN", "")    # not online, but making power when the output says so (unit_hours)
 SHUT_TO = ("OFF", "SHUTDOWN", "OFFQS")   # an online unit going to one of these is a shutdown
 NEXT_H = 4                # hours after a shutdown averaged for "price when it went off"
 MAX_OFF_H = 24            # hours of an off spell averaged for "price while off"
@@ -115,11 +117,14 @@ def status_group(s):
 
 def unit_hours(u: dict, runs: list) -> tuple:
     """Per hour of the day: state char, output, LSL, HSL (NaN where not running); and the
-    expanded per-run values (units.expand)."""
+    expanded per-run values (units.expand).  An hour the unit spends mostly in STARTUP, SHUTDOWN
+    or a blank status (RAMP) counts as running at minimum ("m") when its output is above 0,
+    with its output, capped at LSL, as the minimum it held, and HSL NaN."""
     n = len(runs)
     e = expand(u, n)
     hr = np.minimum(np.array(runs) // 60, 23)
     on = np.array([_online(s) for s in e["status"]])
+    ramp = np.array([s in RAMP for s in e["status"]])
     is_out = np.array([s == "OUT" for s in e["status"]])
     present = np.array([s is not None for s in e["status"]])
     out = np.array([np.nan if v is None else v for v in u["out"]], float)
@@ -130,6 +135,11 @@ def unit_hours(u: dict, runs: list) -> tuple:
             states.append("-")
             continue
         if on[idx].mean() < 0.5 or np.isnan(out[h]):
+            if not np.isnan(out[h]) and out[h] > 0 and (on[idx] | ramp[idx]).mean() >= 0.5:
+                lsl = np.nanmean(e["lsl"][idx]) if np.isfinite(e["lsl"][idx]).any() else np.nan
+                lsl_h[h] = out[h] if np.isnan(lsl) or lsl <= 0 else min(out[h], lsl)
+                states.append("m")      # HSL left NaN: the hour is ramping (read so below)
+                continue
             states.append("o" if is_out[idx & present].mean() > 0.5 else "0")
             continue
         sel = idx & on
@@ -215,7 +225,7 @@ def build_intraday(index: dict) -> None:
             hsl_run.setdefault(name, []).extend(v for v in hsl if np.isfinite(v))
             a_min, a_above, a_n, a_tr = acc[t]
             for h, c in enumerate(st):
-                if c not in "ma":
+                if c not in "ma" or np.isnan(hsl[h]):      # not running, or ramping (unit_hours)
                     if c != "-" and np.isfinite(out[h]):
                         a_tr[h] += max(out[h], 0.0)
                     continue

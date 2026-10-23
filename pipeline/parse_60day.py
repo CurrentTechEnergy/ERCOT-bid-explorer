@@ -16,7 +16,9 @@ unit at every SCED run, as change-of-value events); schema in pipeline/units.py.
 
 Status statistics (appended to STATS): n_onruc/hsl_onruc = units with status ONRUC (these are
 also counted as online), n_off/hsl_off = status codes starting "OFF", n_out/hsl_out = "OUT".
-Their HSL is the telemetered HSL as reported, whatever the status.
+Their HSL is the telemetered HSL as reported, whatever the status.  The base point and output
+statistics also count units in STARTUP, SHUTDOWN or a blank status that are making power
+(RAMP_STATUSES), which every other statistic leaves out as offline.
 """
 import io
 import re
@@ -46,6 +48,7 @@ STATS = ["n_online", "hsl", "lsl", "base_point", "output",
 I_FLOOR = int(np.searchsorted(PRICE_GRID, -249))
 I_ZERO = int(np.searchsorted(PRICE_GRID, 0))
 TECH_INDEX = {t: i for i, t in enumerate(SIXTY_DAY_TECHS)}
+RAMP_STATUSES = ("STARTUP", "SHUTDOWN", "")   # not online, but can be making power (intraday.unit_hours)
 
 
 def _as_awards(df: pd.DataFrame, up: bool) -> np.ndarray:
@@ -175,6 +178,9 @@ class _Accumulator:
         lsl = df["LSL"].astype(float).fillna(0).values
         bp = df["Base Point"].astype(float).fillna(0).values
         out = df["Telemetered Net Output"].astype(float).fillna(0).values
+        # a unit ramping in STARTUP or SHUTDOWN, or with a blank status, still makes power: its
+        # output and base point count in the totals (its limits and curves stay out, as offline)
+        running = online | (status.isin(RAMP_STATUSES).values & ((out > 0) | (bp > 0)))
         hsl_eff = np.where(online, hsl, 0.0)
         lsl_eff = np.where(online, lsl, 0.0)
 
@@ -198,7 +204,7 @@ class _Accumulator:
         off = status.str.startswith("OFF").values
         out_ = (status == "OUT").values
         st = np.column_stack([
-            online.astype(float), hsl_eff, lsl_eff, np.where(online, bp, 0), np.where(online, out, 0),
+            online.astype(float), hsl_eff, lsl_eff, np.where(running, bp, 0), np.where(running, out, 0),
             sced[:, I_FLOOR], sub[:, I_FLOOR], sced[:, I_ZERO], sub[:, I_ZERO],
             np.where(no_offer, hsl_eff, 0), np.where(no_offer, os_, 0),
             onruc.astype(float), off.astype(float), out_.astype(float),
