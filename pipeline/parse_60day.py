@@ -40,7 +40,9 @@ STATS = ["n_online", "hsl", "lsl", "base_point", "output",
          "floor_sced", "floor_submitted", "le0_sced", "le0_submitted",
          "no_offer_hsl", "no_offer_output_schedule",
          # appended later: days processed before these existed lack them (read by name)
-         "n_onruc", "n_off", "n_out", "hsl_onruc", "hsl_off", "hsl_out"]
+         "n_onruc", "n_off", "n_out", "hsl_onruc", "hsl_off", "hsl_out",
+         "hsl_ramp"]     # HSL of the ramping units the base point and output count (RAMP_STATUSES),
+                         # at least their base point (a unit starting up may report an HSL of 0)
 # "At the floor" = offered at or below -$249/MWh.  In the SCED2 curve, units that offer
 # have the MW below their first offered point (usually minimum output) at -$20 (-$50 for
 # some), which is not at the floor.  Units with no offer curve sit at -$250 with the rest
@@ -209,6 +211,7 @@ class _Accumulator:
             np.where(no_offer, hsl_eff, 0), np.where(no_offer, os_, 0),
             onruc.astype(float), off.astype(float), out_.astype(float),
             np.where(onruc, hsl, 0), np.where(off, hsl, 0), np.where(out_, hsl, 0),
+            np.where(running & ~online, np.maximum(hsl, bp), 0),
         ])
         accumulate(self.stats, key, st)
 

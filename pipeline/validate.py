@@ -204,10 +204,12 @@ def check_day(date, have):
                 bad_top.append(f"{tech} {np.nanmax(top - hsl):+.0f}")
             if tech != "storage" and np.nanmax(lsl - floor, initial=-np.inf) > lim:
                 bad_floor.append(f"{tech} {np.nanmax(lsl - floor):+.0f}")
-            if np.nanmax(bp - hsl, initial=-np.inf) > lim:
-                bad_bp.append(f"{tech} {np.nanmax(bp - hsl):+.0f}")
+            # the base point counts ramping units too (parse_60day.RAMP_STATUSES), so their HSL with it
+            cap = hsl + (s[:, sn.index("hsl_ramp")] if "hsl_ramp" in sn else 0)
+            if np.nanmax(bp - cap, initial=-np.inf) > lim:
+                bad_bp.append(f"{tech} {np.nanmax(bp - cap):+.0f}")
         for check, bad, what in (("hsl_cap", bad_top, "curve at the cap above online HSL"),
-                                 ("base_point_hsl", bad_bp, "base point above online HSL")):
+                                 ("base_point_hsl", bad_bp, "base point above the HSL of the units it counts")):
             day.add(check, "error" if bad else "ok", f"{what}: " + ", ".join(bad) if bad else f"no {what}")
         # Recorded, not judged: the SCED-view curves hold 2-4 GW less than online LSL at the floor on
         # every day so far, so not all minimum output sits at -$250 (cause not yet known).
@@ -465,7 +467,10 @@ def _curve_checks(day, cv, uh):
                 break
     if uh:
         names = [u[0] for u in uh["units"]]
-        want = {(names[r[0]], r[1]) for r in uh["rows"] if uh["units"][r[0]][2] in TECHS}
+        ci = {c: i + 2 for i, c in enumerate(uh["columns"])}
+        online = lambda r: (r[ci["online_share"]] or 0) - ((r[ci["ramp_share"]] or 0) if "ramp_share" in ci else 0) > 0
+        # hours with an online run; an hour only ramping (unit_hours_day format 2) has no curve
+        want = {(names[r[0]], r[1]) for r in uh["rows"] if uh["units"][r[0]][2] in TECHS and online(r)}
         have_ = {(k, h + 1) for k, u in cv["units"].items() for h, v in enumerate(u["lim"]) if v is not None}
         # a unit online without any curve all day has no entry, so only extra hours are a mismatch
         extra = have_ - want
