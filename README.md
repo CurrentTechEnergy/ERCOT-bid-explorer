@@ -269,3 +269,7 @@ The regular update rebuilds the loaded 60-day days. Years before that come from 
 - The 2-day "non-IRR" curve combines all thermal, hydro and other non-wind, non-solar resources; only the 60-day data separates them.
 - Resource types not listed in `pipeline/config.py` are grouped as "Other"; the pipeline prints any it sees.
 - ERCOT market design changed in December 2025 (real-time co-optimization). Storage curves before and after that date are not directly comparable.
+
+## Copyright
+
+© 2026 CurrentTech Energy. All rights reserved. This repository is public so the site can be built and checked, but no license is granted to copy, modify or redistribute its code, pages or derived data. See the site's [Terms and privacy](https://ercotbids.currenttech.energy/terms.html) page. ERCOT's own reports are public and available from ERCOT.
