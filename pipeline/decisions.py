@@ -74,6 +74,7 @@ MIN_DAYS = 15        # decision days before a unit gets a cutoff, ...
 MIN_EACH = 3         # ... with at least this many shutdowns and this many stays
 NEW_DAYS = 30        # days without a shutdown after which the next one is new behaviour
 AWARD_FULL = 0.9     # award share of the window above which a shutdown is flagged as despite an award
+SPRING_SLOT = 2      # hour ending 3, the hour the spring-forward day skips
 PATH = DATA_DIR / "decisions.json.gz"
 NODES_PATH = DATA_DIR / "dam_nodes.json.gz"
 TECHS = [t for t in UNIT_TECHS if t != "nuclear"]
@@ -148,11 +149,25 @@ def _dam_trains(dd):
         if hot:
             e["hot"] = hot if e["hot"] is None else min(e["hot"], hot)
         spp = u.get("spp") or []
-        if e["spp"] is None and len(spp) >= 24 and all(v is not None for v in spp[:24]):
-            e["spp"] = np.array(spp[:24], dtype=float)
+        if e["spp"] is None:
+            e["spp"] = _hourly(spp)
         aw = u.get("award") or []
         e["aw"][:min(24, len(aw))] += np.array([v or 0 for v in aw[:24]], dtype=float)
     return tr
+
+
+def _hourly(p):
+    """24 hourly prices as an array, or None when any is missing. The spring-forward day has no
+    hour ending 3 (its slot is None in the day files), so a gap there alone is kept as NaN."""
+    p = list(p or [])[:24]
+    if len(p) < 24 or any(v is None for h, v in enumerate(p) if h != SPRING_SLOT):
+        return None
+    return np.array([np.nan if v is None else v for v in p], dtype=float)
+
+
+def _loss(mingen, spp, lsl):
+    """Hourly loss of staying on at minimum; an hour the clock skips loses nothing."""
+    return np.nan_to_num((mingen - spp) * lsl, nan=0.0)
 
 
 def _window(loss):
@@ -298,8 +313,9 @@ def build_decisions(index: dict) -> None:
             shut, off_h = _shutdown(st, i * 24)
             if not shut and "o" in day:
                 continue
-            loss, bs, nh = _window((mingen - e["spp"]) * lsl)
-            cov = float((e["aw"][bs:bs + nh] >= AWARD_LSL * lsl).mean()) if nh else 0.0
+            loss, bs, nh = _window(_loss(mingen, e["spp"], lsl))
+            real = ~np.isnan(e["spp"][bs:bs + nh])
+            cov = float((e["aw"][bs:bs + nh][real] >= AWARD_LSL * lsl).mean()) if real.any() else 0.0
             rows.append([key, d, _r(loss), bs + 1 if nh else None, nh, _r(cov, 2), int(shut), off_h])
             by_unit.setdefault(key, []).append((loss, cov, int(shut)))
     units = {}
@@ -321,12 +337,12 @@ def build_decisions(index: dict) -> None:
         prices = nodes["days"][nd]
         out = []
         for key, (tech, lsl, mingen, hot, est, sp) in latest.items():
-            p = prices.get(sp) if sp else None
-            if not p or any(v is None for v in p):
+            p = _hourly(prices.get(sp) if sp else None)
+            if p is None:
                 continue
             u = units.get(key)
             cutoff, aw = (u[9], u[7]) if u else (None, None)
-            loss, bs, nh = _window((mingen - np.array(p, dtype=float)) * lsl)
+            loss, bs, nh = _window(_loss(mingen, p, lsl))
             v = _verdict(loss, cutoff, aw)
             out.append([key, tech, _r(lsl, 1), _r(loss), bs + 1 if nh else None, nh, cutoff, aw, v])
         if out:
