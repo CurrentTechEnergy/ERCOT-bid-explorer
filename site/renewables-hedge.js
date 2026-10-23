@@ -131,14 +131,22 @@ function regime(r, sp) {
   if (r.k === "peak") return `${r.formula ? "formula, " : ""}up to ${fmt$(r.v)}`;
   return "moving within the day";
 }
+// the window a change's moved dispatch is measured over: its days in the new regime up to the
+// next change, at most a year (pipeline/renew_changes.py WINDOW_MAX)
+function winText(im) {
+  if (!im.days) return "";
+  return `${fmt0(im.days)} day${im.days === 1 ? "" : "s"}${im.open ? " so far" : ""}${im.capped ? ", capped at 1 year" : ""}`;
+}
+const perDay = (im) => (im.days ? ((im.up || 0) + (im.dn || 0)) / im.days : null);
 function impactText(e) {
   const im = e.impact;
   if (!im) return `<span class="muted">${e.before.k === "v" ? "no fixed old offer" : "no hourly data"}</span>`;
-  if (!e.moved) return `<span class="muted">no${im.est > 0.5 ? " (DA price)" : ""}</span>`;
+  const da = im.est > 0.5 ? ", DA price" : "", win = winText(im);
+  if (!e.moved) return `<span class="muted">no${win ? `, ${win}` : ""}${da}</span>`;
   const parts = [];
   if (im.up) parts.push(`gave up ${fmtMWh(im.up)}`);
   if (im.dn) parts.push(`ran ${fmtMWh(im.dn)} more`);
-  return `<span class="moved">${parts.join(", ")}</span> <span class="muted">${im.hours} h${im.est > 0.5 ? ", DA price" : ""}</span>`;
+  return `<span class="moved">${parts.join(", ")}</span> <span class="muted">${win ? `over ${win} (${fmt0(perDay(im))} MWh/day), ` : ""}${im.hours} h${da}</span>`;
 }
 function valueText(e) {
   const im = e.impact;
@@ -146,7 +154,7 @@ function valueText(e) {
   const v = [];
   if (im.up) v.push(fmt$0(im.v_up));
   if (im.dn) v.push(fmt$0(im.v_dn));
-  return v.join(" / ");
+  return im.days ? `<span title="${esc(`Over ${winText(im)}: ${fmt$0(((im.v_up || 0) + (im.v_dn || 0)) / im.days)} a day`)}">${v.join(" / ")}</span>` : v.join(" / ");
 }
 const pct = (v) => (v == null ? "–" : fmtPct(v));
 const ctxText = (e) => (e.ctx ? `DA ${pct(e.ctx[0])} → ${pct(e.ctx[1])} · curtailed ${pct(e.ctx[2])} → ${pct(e.ctx[3])}` : "–");
@@ -169,7 +177,8 @@ function drawChanges() {
   $("chg-note").textContent = `${R.first} to ${R.last}`;
   window.CX.setNote($("chg-text"), "Every change in how a wind or solar unit offers: a new floor, or a price formula switched on or off. Click a row to open the unit.", `Every change in how a wind or solar unit offers: a new floor, a formula switched on or off, an episode of a few days away from its floor. ` +
     `${fmt0(rs.length)} change${rs.length === 1 ? "" : "s"} in this selection, ${fmt0(rs.filter((e) => e.moved).length)} of which moved dispatch. ` +
-    `Most offer changes happen below any price the unit's node reaches, so they say something about the bidder without changing what it produced. Click a row to open the unit's page.`);
+    `Most offer changes happen below any price the unit's node reaches, so they say something about the bidder without changing what it produced. ` +
+    `Moved dispatch is counted from each change to the unit's next one, up to a year, and needs 1 MWh or more a day on average to count. Click a row to open the unit's page.`);
   drawChangeMonths(chart, rs);
   const shown = rs.slice(0, CH.limit);
   tbl.innerHTML = rs.length ? `<table class="data"><thead><tr><th class="t">Date</th><th class="t">Plant</th><th class="t">Tech</th><th class="t">Change</th><th class="t">Before → after</th><th class="t">Moved dispatch</th><th>Worth at node price</th><th class="t">Context, 7 days before → after</th></tr></thead><tbody>` +
@@ -180,9 +189,9 @@ function drawChanges() {
     "</tbody></table>" : `<p class="empty">No changes match.</p>`;
   $("chg-more").hidden = rs.length <= CH.limit;
   $("chg-more").textContent = `Show more (${fmt0(rs.length - CH.limit)} not shown)`;
-  setCSV(tbl, ["date", "plant", "units", "tech", "kind", "before", "after", "episode_days", "moved", "hours", "mwh_given_up", "mwh_gained", "value_given_up", "value_gained", "share_hours_da_price", "dam_before", "dam_after", "curtailed_before", "curtailed_after", "toggler"],
+  setCSV(tbl, ["date", "plant", "units", "tech", "kind", "before", "after", "episode_days", "moved", "hours", "mwh_given_up", "mwh_gained", "value_given_up", "value_gained", "share_hours_da_price", "window_days", "window_open", "window_capped", "mwh_per_day", "dam_before", "dam_after", "curtailed_before", "curtailed_after", "toggler"],
     rs.map((e) => [e.date, e.plant, e.units.join(" "), e.tech, e.kind + (e.ptc ? ` (ptc ${e.ptc})` : ""), regime(e.before).replace(/&[a-z]+;/g, ""), regime(e.after).replace(/&[a-z]+;/g, ""), e.days, e.moved,
-      ...(e.impact ? [e.impact.hours, e.impact.up, e.impact.dn, e.impact.v_up, e.impact.v_dn, e.impact.est] : [null, null, null, null, null, null]), ...(e.ctx || [null, null, null, null]), e.toggler]), "Bidding changes");
+      ...(e.impact ? [e.impact.hours, e.impact.up, e.impact.dn, e.impact.v_up, e.impact.v_dn, e.impact.est, e.impact.days, e.impact.open, e.impact.capped, perDay(e.impact) == null ? null : Math.round(perDay(e.impact) * 10) / 10] : [null, null, null, null, null, null, null, null, null, null]), ...(e.ctx || [null, null, null, null]), e.toggler]), "Bidding changes");
 }
 
 function drawChangeMonths(el, rs) {
