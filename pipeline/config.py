@@ -58,8 +58,8 @@ TECH_OF_TYPE = {
     "DSL": "combustion_turbine", "RENEW": "other",
     "ESR": "storage",
     # before real-time co-optimization (Dec 5, 2025) a battery's discharge side was a generation
-    # resource of type PWRSTR, its charging a separate controllable load the 60-day file doesn't
-    # carry, so storage on those days is discharge only
+    # resource of type PWRSTR and its charging a separate controllable load resource, in the
+    # zip's load resource file, which the pipeline doesn't read; storage on those days is discharge only
     "PWRSTR": "storage",
 }
 TECH_LABELS = {
