@@ -65,7 +65,7 @@ function drawSubscribe() {
     `<input type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px">` +
     `<input type="email" name="email" id="sub-email" placeholder="you@example.com" required aria-label="Email address">` +
     `<button type="submit" id="sub-btn">Subscribe to ${esc(S.unit)}</button></form>${feedLink}`;
-  msg("");
+  msg('Your address is used only for these alerts, and every email has an unsubscribe link. <a href="terms.html#privacy">Privacy</a>', true);
   $("sub-form").addEventListener("submit", async (ev) => {
     ev.preventDefault();
     const form = new FormData(ev.target), unit = S.unit;

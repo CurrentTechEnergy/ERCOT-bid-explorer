@@ -399,6 +399,50 @@ function initUnitFind() {
 }
 if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", initUnitFind); else initUnitFind();
 
+// ------------------------------------------------- days that failed checks ---
+// Days with an error in data/validation.json (pipeline/validate.py) get a mark in the day picker
+// and a warning under it while selected.  Pages fill and set #date themselves, so this watches
+// the options and checks the value on each change, step click and hash change.
+const FLAG_TEXT = [
+  [/^base_point_thermal/, "ERCOT's 60-day report and its generation summary disagree on thermal output for this day. Fuel totals, nuclear especially, may read low."],
+  [/^curve_wind/, "ERCOT's 60-day and 2-day reports disagree on wind offers for this day by more than the usual margin."],
+];
+async function initDayFlags() {
+  const sel = document.getElementById("date");
+  if (!sel) return;
+  const v = await tryJSON("data/validation.json");
+  const flagged = {};
+  Object.entries((v && v.days) || {}).forEach(([d, r]) => {
+    if (r.level !== "error") return;
+    const msgs = (r.checks || []).filter((c) => c[1] === "error").map(([check, , detail]) =>
+      (FLAG_TEXT.find(([re]) => re.test(check)) || [, `This day failed a data check: ${detail}`])[1]);
+    flagged[d] = [...new Set(msgs)];
+  });
+  if (!Object.keys(flagged).length) return;
+  const note = document.createElement("p");
+  note.className = "day-flag";
+  note.setAttribute("role", "status");
+  note.hidden = true;
+  (sel.closest(".date-step") || sel).after(note);
+  const mark = () => {
+    for (const o of sel.options) {
+      if (flagged[o.value] && !o.dataset.flagged) { o.dataset.flagged = "1"; o.textContent += " ⚠ check failed"; }
+    }
+  };
+  const show = () => {
+    const m = flagged[sel.value];
+    note.hidden = !m;
+    if (m) note.innerHTML = `<strong>Data check failed.</strong> ${m.map(esc).join(" ")} Treat this day's numbers with care.`;
+  };
+  new MutationObserver(() => { mark(); show(); }).observe(sel, { childList: true });
+  sel.addEventListener("change", show);
+  document.addEventListener("click", (e) => { if (e.target.closest(".step")) setTimeout(show); });
+  window.addEventListener("hashchange", () => setTimeout(show));
+  mark(); show();
+  setInterval(show, 1000);   // a page can also set the value directly, which fires no event
+}
+if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", initDayFlags); else initDayFlags();
+
 function init() { initPins(); addDownloads(); addPanelLinks(); initCopyLink(); }
 
 // a chart's one-line caption, with the method kept behind "How it's built" (a details element after it)
