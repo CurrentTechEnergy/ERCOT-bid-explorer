@@ -51,3 +51,17 @@ and with `--table` adds `size_band_mean` and `size_err` to the decision table's 
 (see its docstring):
 
     python analysis/cc_sizing.py --out cc-sizing [--table decision-table/decision-table.parquet]
+
+## Behaviour change on actuals
+
+`behaviour_change.py` asks whether units respond differently to the same conditions than they did
+in a base year (2024 by default). It freezes the forecast's stay-on logistic for CC and gas steam,
+and a peak-price rule for whether a CT runs, then runs them forward unit by unit, flags sustained
+changes and splits the fleet's change into triggers and behaviour (see its docstring). It reads the
+forecast's own inputs, like the update:
+
+    gh release download history -R CurrentTechEnergy/ERCOT-bid-explorer -p 'thermal-*' -p 'da-hubs-202[4-9]-*' -D history
+    python analysis/behaviour_change.py --out behaviour [--previous <an earlier run's --out>]
+
+The Behaviour change workflow (.github/workflows/behaviour.yml) runs it on the 3rd of each month and
+puts the results on the `behaviour` release, with what is new since the month before.
