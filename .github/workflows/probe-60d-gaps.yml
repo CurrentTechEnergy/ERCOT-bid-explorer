@@ -1,0 +1,28 @@
+name: Probe 60-day gaps in the ERCOT API (one-off)
+
+# Asks the ERCOT API whether it lists and serves the 60-day SCED disclosure (np3-965-er) for the ten
+# operating days missing from the site, which ERCOT's public website does have. Read only: prints
+# to the run summary and commits nothing.
+on:
+  push:
+    branches: [probe-60d-gaps]
+
+permissions:
+  contents: read
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+      - run: pip install requests
+      - name: Probe
+        env:
+          ERCOT_API_USERNAME: ${{ secrets.ERCOT_API_USERNAME }}
+          ERCOT_API_PASSWORD: ${{ secrets.ERCOT_API_PASSWORD }}
+          ERCOT_API_SUBSCRIPTION_KEY: ${{ secrets.ERCOT_API_SUBSCRIPTION_KEY }}
+        run: python probe_60d_gaps.py | tee -a "$GITHUB_STEP_SUMMARY"
