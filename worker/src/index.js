@@ -3,17 +3,23 @@
    The site is static, so this small Worker is the one place that holds who follows which unit:
      POST /follow        email + unit from the Unit page's form: saves a pending follow and emails
                          a confirmation link (Resend). Answers JSON for the page to show.
-     GET  /confirm?t=    the confirmation link: the follow becomes active.
+     GET  /confirm?t=    the confirmation link: a page with a button; POST to the same URL makes
+                         the follow active (mail scanners open links on their own, so a GET
+                         alone never confirms).
      GET  /unsubscribe?t=[&all=1]   a page with a button; POST to the same URL removes the follow
                          (or every follow of that address with all=1). Mail clients' one-click
                          unsubscribe (List-Unsubscribe-Post) POSTs here too.
    The daily send (pipeline/notify.py) reads active follows straight from the D1 database
    through Cloudflare's API, so there is no endpoint that lists addresses.
 
-   Abuse limits: a hidden "website" field bots fill in, at most SIGNUPS_PER_IP sign-ups per
-   address per day, and at most one confirmation email per follow per RESEND_AFTER_MIN. */
+   Abuse limits: a hidden "website" field bots fill in, units that have a page on the site only,
+   at most SIGNUPS_PER_IP sign-ups per IP address per day, at most CONFIRMS_PER_EMAIL
+   confirmation emails per email address per day, and at most one confirmation email per follow
+   per RESEND_AFTER_MIN. */
 
 const SIGNUPS_PER_IP = 20;
+const CONFIRMS_PER_EMAIL = 10;        // confirmation emails one address can be sent in a day
+const UNIT_CACHE_S = 86400;           // how long a unit page lookup is cached
 const RESEND_AFTER_MIN = 10;
 const PENDING_DAYS = 14;              // unconfirmed follows older than this are dropped
 const EMAIL_RE = /^[^\s@<>"]{1,64}@[^\s@<>"]{1,255}\.[a-z]{2,}$/i;
@@ -46,13 +52,23 @@ async function sendEmail(env, to, subject, html, text) {
   if (!r.ok) throw new Error(`Resend ${r.status}: ${(await r.text()).slice(0, 200)}`);
 }
 
+// Is `unit` a unit with a page on the site?  Every unit in the Units directory has a share page at
+// /unit/<NAME>.html (pipeline/share_pages.py); the answer is cached at the edge for a day.
+async function knownUnit(env, unit) {
+  if (env.SKIP_UNIT_CHECK === "1") return true;   // local tests only
+  const r = await fetch(`${env.SITE_URL}unit/${encodeURIComponent(unit)}.html`,
+                        { method: "HEAD", cf: { cacheTtl: UNIT_CACHE_S, cacheEverything: true } });
+  if (r.status >= 500) throw new Error(`unit page lookup ${r.status}`);   // the site is down: "try again later"
+  return r.ok;
+}
+
 async function follow(req, env) {
   const f = await req.formData();
   if (f.get("website")) return json({ ok: true, msg: "Thanks." });     // honeypot: say nothing useful
   const email = String(f.get("email") || "").trim().toLowerCase();
   const unit = String(f.get("unit") || "").trim();
   if (!EMAIL_RE.test(email)) return json({ ok: false, msg: "That doesn't look like an email address." }, 400);
-  if (!UNIT_RE.test(unit)) return json({ ok: false, msg: "Unknown unit." }, 400);
+  if (!UNIT_RE.test(unit) || !(await knownUnit(env, unit))) return json({ ok: false, msg: "Unknown unit." }, 400);
 
   const ip = req.headers.get("CF-Connecting-IP") || "?";
   const day = now().slice(0, 10);
@@ -61,6 +77,7 @@ async function follow(req, env) {
   if (n > SIGNUPS_PER_IP) return json({ ok: false, msg: "Too many sign-ups from here today. Try again tomorrow." }, 429);
   await env.DB.batch([
     env.DB.prepare("DELETE FROM signups WHERE day < ?").bind(day),
+    env.DB.prepare("DELETE FROM confirms WHERE day < ?").bind(day),
     env.DB.prepare("DELETE FROM follows WHERE status = 'pending' AND created < ?").bind(new Date(Date.now() - PENDING_DAYS * 864e5).toISOString()),
   ]);
 
@@ -68,6 +85,10 @@ async function follow(req, env) {
   if (row && row.status === "active") return json({ ok: true, msg: `${email} already follows ${unit}.` });
   if (row && Date.now() - Date.parse(row.created) < RESEND_AFTER_MIN * 6e4)
     return json({ ok: true, msg: `A confirmation email is already on its way to ${email}. Open the link in it to start.` });
+
+  const { m } = (await env.DB.prepare("INSERT INTO confirms (email, day, n) VALUES (?, ?, 1) ON CONFLICT (email, day) DO UPDATE SET n = n + 1 RETURNING n AS m")
+    .bind(email, day).first()) || { m: 1 };
+  if (m > CONFIRMS_PER_EMAIL) return json({ ok: false, msg: `Too many confirmation emails for ${email} today. Try again tomorrow.` }, 429);
 
   const t = row ? row.token : token();
   if (row) await env.DB.prepare("UPDATE follows SET created = ? WHERE email = ? AND unit = ?").bind(now(), email, unit).run();
@@ -89,10 +110,15 @@ async function follow(req, env) {
   return json({ ok: true, msg: `Check ${email} for a confirmation email. Once you open the link, you get one email on any day the update finds a change for ${unit}.` });
 }
 
-async function confirm(url, env) {
+async function confirm(req, url, env) {
   const t = url.searchParams.get("t") || "";
   const row = await env.DB.prepare("SELECT email, unit, status FROM follows WHERE token = ?").bind(t).first();
   if (!row) return page(env, "Link expired", "<p>This confirmation link is no longer valid. Sign up again from the unit's page.</p>", 404);
+  if (row.status !== "active" && req.method !== "POST")
+    // a page with a button, not an instant confirm: mail scanners open links on their own
+    return page(env, `Follow ${row.unit}?`,
+      `<p>Start emails to <b>${esc(row.email)}</b> about changes to <b>${esc(row.unit)}</b>?</p>` +
+      `<form method="post" action="/confirm?t=${esc(t)}"><button>Confirm</button></form>`);
   if (row.status !== "active") await env.DB.prepare("UPDATE follows SET status = 'active', confirmed = ? WHERE token = ?").bind(now(), t).run();
   const unitUrl = `${env.SITE_URL}unit.html?unit=${encodeURIComponent(row.unit)}`;
   return page(env, `Following ${row.unit}`,
@@ -123,7 +149,7 @@ export default {
     try {
       if (req.method === "OPTIONS") return new Response(null, { status: 204, headers: CORS });
       if (url.pathname === "/follow" && req.method === "POST") return await follow(req, env);
-      if (url.pathname === "/confirm" && req.method === "GET") return await confirm(url, env);
+      if (url.pathname === "/confirm" && (req.method === "GET" || req.method === "POST")) return await confirm(req, url, env);
       if (url.pathname === "/unsubscribe" && (req.method === "GET" || req.method === "POST")) return await unsubscribe(req, url, env);
       if (url.pathname === "/") return page(env, "ERCOT bid explorer follows", "<p>Follow a unit from its page on the ERCOT bid explorer.</p>");
       return new Response("Not found", { status: 404 });

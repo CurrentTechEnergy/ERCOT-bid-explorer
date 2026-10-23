@@ -17,3 +17,10 @@ CREATE TABLE IF NOT EXISTS signups (
   n   INTEGER NOT NULL DEFAULT 0,
   PRIMARY KEY (ip, day)
 );
+-- confirmation emails per email address per day, so one address can't be sent many
+CREATE TABLE IF NOT EXISTS confirms (
+  email TEXT NOT NULL,
+  day   TEXT NOT NULL,
+  n     INTEGER NOT NULL DEFAULT 0,
+  PRIMARY KEY (email, day)
+);

@@ -16,8 +16,10 @@ step, run once a day after the afternoon update:
      (counts, never addresses);
   5. records the event ids and the counts in data/notify_sent.json.
 
-Without RESEND_API_KEY, or with --dry-run / NOTIFY_DRY_RUN=1, nothing is sent: the emails that
-would go out are summarised on the run summary and the record is not touched.  The first live
+With --dry-run or NOTIFY_DRY_RUN=1 nothing is sent: the emails that would go out are summarised on
+the run summary and the record is not touched.  The repository is public, so its run logs are
+too: a dry run prints counts and one sample email with placeholder tokens, never a follower's
+address or a working link.  Without RESEND_API_KEY the step warns and sends nothing.  The first live
 run marks everything already in the events file as sent, so nobody gets years of history.
 
 Environment: RESEND_API_KEY, CLOUDFLARE_API_TOKEN, OWNER_EMAIL (repository secrets),
@@ -179,7 +181,10 @@ def run(dry_run=False):
     key = os.environ.get("RESEND_API_KEY")
     cf = os.environ.get("CLOUDFLARE_API_TOKEN")
     owner = os.environ.get("OWNER_EMAIL")
-    dry_run = dry_run or not key or os.environ.get("NOTIFY_DRY_RUN") == "1"
+    dry_run = dry_run or os.environ.get("NOTIFY_DRY_RUN") == "1"
+    if not key and not dry_run:
+        warn("notify: RESEND_API_KEY missing; nothing sent, events kept for the next run")
+        return 0
     sent = json.loads(SENT_PATH.read_text()) if SENT_PATH.exists() else None
     today = dt.date.today().isoformat()
     if sent is None and not dry_run:
@@ -218,8 +223,10 @@ def run(dry_run=False):
     skipped = len(per) - len(recipients)
     if dry_run:
         if recipients:
+            # placeholder tokens: a real one opens the follower's unsubscribe page, which shows
+            # their address, and these logs are public
             subject, _, text = build_email(today, per[recipients[0]], worker or "<worker>",
-                                           {u: tokens.get((recipients[0], u), "TOKEN") for u, _ in per[recipients[0]]})
+                                           {u: "TOKEN" for u, _ in per[recipients[0]]})
             lines += ["<details><summary>The first follower email that would go out</summary>", "", f"**{subject}**", "", "```", text, "```", "</details>"]
         write_summary(lines)
         print("\n".join(lines))
