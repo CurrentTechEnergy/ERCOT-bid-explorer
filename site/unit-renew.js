@@ -44,8 +44,10 @@ function fitChart(el, u, pts) {
   svg.append("g").selectAll("circle").data(pts).join("circle")
     .attr("cx", (p) => x(p[1])).attr("cy", (p) => y(p[2])).attr("r", 3).attr("fill", (p) => col(p[0])).attr("fill-opacity", 0.85)
     .attr("stroke", css("--surface")).attr("stroke-width", 0.5);
-  const [x0, x1] = x.domain();
-  svg.append("line").attr("x1", x(x0)).attr("x2", x(x1)).attr("y1", y(u.a * x0 + u.b)).attr("y2", y(u.a * x1 + u.b))
+  const [x0, x1] = x.domain(), fy = (v) => (u.cap != null ? Math.min(u.a * v + u.b, u.cap) : u.a * v + u.b);
+  const xk = u.cap != null ? (u.cap - u.b) / u.a : null;
+  const line = [x0, ...(xk != null && xk > x0 && xk < x1 ? [xk] : []), x1].map((v) => [x(v), y(Math.max(y.domain()[0], Math.min(y.domain()[1], fy(v))))]);
+  svg.append("path").attr("d", d3.line()(line)).attr("fill", "none")
     .attr("stroke", css("--c8")).attr("stroke-width", 1.5).attr("stroke-dasharray", "5 3");
   const ring = svg.append("circle").attr("r", 6).attr("fill", "none").attr("stroke", css("--ink")).style("display", "none");
   const tree = d3.quadtree(pts, (p) => x(p[1]), (p) => y(p[2]));
@@ -54,7 +56,7 @@ function fitChart(el, u, pts) {
       const [px, py] = d3.pointer(ev), p = tree.find(px, py, 30);
       if (!p) { ring.style("display", "none"); hideTip(); return; }
       ring.style("display", null).attr("cx", x(p[1])).attr("cy", y(p[2]));
-      const pred = u.a * p[1] + u.b;
+      const pred = fy(p[1]);
       showTip(ev, `<h4>${fmtDate(parseDate(D.dates[p[0]]))}</h4><table>` +
         `<tr><td>DA at ${esc(POINT_LABEL(u.point, u))}</td><td class="n">${fmt$(p[1])}</td></tr>` +
         `<tr><td>Offer</td><td class="n">${fmt$(p[2])}</td></tr>` +
@@ -66,7 +68,7 @@ function fitChart(el, u, pts) {
   setCSV(el, ["date", "da_price", "offer"], pts.map((p) => [D.dates[p[0]], p[1], p[2]]), `${u.name} offer vs DA`);
   const d0 = D.dates[d3.min(di)], d1 = D.dates[d3.max(di)];
   $("fit-legend").innerHTML = `<span class="dot-legend">Formula hours, by date <span class="muted">${d0}</span><span class="ramp" style="background:linear-gradient(90deg, ${css("--seq-lo")}, ${css("--seq-hi")})"></span><span class="muted">${d1}</span></span>` +
-    `<span><span class="sw-line" style="border-top-color:var(--c8)"></span>Fitted formula</span>`;
+    `<span><span class="sw-line" style="border-top-color:var(--c8)"></span>Fitted formula${u.cap != null ? `, capped at ${fmt$(u.cap)}` : ""}</span>`;
 }
 
 // share and intercept fitted on each formula day alone
@@ -118,7 +120,8 @@ function drawUnit() {
     $("ppa-note").textContent = "Not in the loaded 60-day days (it may have been renamed or retired), so only its bidding history is shown.";
     return;
   }
-  const habit = `Usual floor offer ${fmt$(u.floor)}. Day-ahead: ${u.da_share == null ? "no data" : `awards equal to ${fmtPct(u.da_share)} of its real-time energy, with an award on ${fmtPct(u.da_days || 0)} of ${u.avail_days} days`}.`;
+  const floorIsCap = u.cap != null && u.floor != null && Math.abs(u.floor - u.cap) < 0.05;
+  const habit = `${floorIsCap ? `Its most common offer, ${fmt$(u.floor)}, is the cap, not a floor` : `Usual floor offer ${fmt$(u.floor)}`}. Day-ahead: ${u.da_share == null ? "no data" : `awards equal to ${fmtPct(u.da_share)} of its real-time energy, with an award on ${fmtPct(u.da_days || 0)} of ${u.avail_days} days`}.`;
   if (u.tier === "hints") {
     $("unit-formula").textContent = "No day-ahead formula in its offers.";
     $("ppa-note").textContent = habit;
@@ -130,10 +133,14 @@ function drawUnit() {
   const strikeTxt = u.strike_lo == null
     ? `If the intercept is all strike, the strike is ${fmt$(u.strike_hi)}/MWh (a $${S.data.credit} credit would leave nothing for a strike, so the bidder likely counts none).`
     : `Implied strike ${fmt$(u.strike_lo)} to ${fmt$(u.strike_hi)}/MWh: ${fmt$(u.strike_hi)} if the intercept is all strike, ${fmt$(u.strike_lo)} if the operator also counts a $${S.data.credit}/MWh credit such as the PTC.`;
-  $("unit-formula").textContent = `offer = ${fmtA(u.a)} × DA(${POINT_LABEL(u.point, u)}) ${u.b < 0 ? "−" : "+"} ${fmt$(Math.abs(u.b))}`;
+  const fx = `${fmtA(u.a)} × DA(${POINT_LABEL(u.point, u)}) ${u.b < 0 ? "−" : "+"} ${fmt$(Math.abs(u.b))}`;
+  $("unit-formula").textContent = u.cap != null ? `offer = min(${fx}, ${fmt$(u.cap)})` : `offer = ${fx}`;
+  const capTxt = u.cap != null
+    ? `Capped at ${fmt$(u.cap)}: on ${fmt0(u.cap_hours)} formula-day hours the formula was higher and the offer sat at the cap, so it runs at any price above ${fmt$(u.cap)} even when the formula says it loses money.`
+    : u.capped === false ? "Uncapped: its offers followed the formula above $0." : "No cap tested: the formula never rose high enough to show one.";
   const alt = (u.alt || []).map(([p, h]) => `${POINT_LABEL(p, u)} ${fmtPct(h)}`).join(", ");
   $("ppa-note").textContent = `${TIER[u.tier].label}. The formula predicts ${fmtPct(u.hit)} of ${fmt0(u.hours)} formula hours within $${S.data.hit_usd}, on ${u.days} days from ${u.first} to ${u.last}` +
-    `${alt ? ` (next best: ${alt})` : ""}. ${strikeTxt} ${habit}` + (u.group ? ` Bid on the same rule as ${S.data.units.filter((v) => v.group === u.group && v.name !== u.name).map((v) => v.name).join(", ")}.` : "");
+    `${alt ? ` (next best: ${alt})` : ""}. ${capTxt} ${strikeTxt} ${habit}` + (u.group ? ` Bid on the same rule as ${S.data.units.filter((v) => v.group === u.group && v.name !== u.name).map((v) => v.name).join(", ")}.` : "");
   fitChart($("fit-chart"), u, S.data.fits[u.name]);
   dailyChart($("daily-chart"), u);
 }

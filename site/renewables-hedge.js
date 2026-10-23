@@ -46,6 +46,9 @@ function bindSeg(id, key, after) {
 }
 function emptyMsg(el, msg) { el.innerHTML = `<p class="empty">${msg}</p>`; }
 const tierCell = (t) => `<span class="tier"><span class="sw" style="background:var(${TIER[t].color})"></span>${TIER[t].label}</span>`;
+const formulaTxt = (u) => (u.a == null ? "–" : u.cap != null ? `min(${fmtPct(u.a)} of DA ${u.b < 0 ? "−" : "+"} ${fmt$(Math.abs(u.b))}, ${fmt$(u.cap)})` : `${fmtPct(u.a)} of DA ${u.b < 0 ? "−" : "+"} ${fmt$(Math.abs(u.b))}`);
+const capTxt = (u) => (u.a == null ? "–" : u.cap != null ? fmt$(u.cap) : u.capped === false ? "none" : `<span class="muted">not tested</span>`);
+const floorIsCap = (u) => u.cap != null && u.floor != null && Math.abs(u.floor - u.cap) < 0.05;
 const strike = (u) => (u.strike_hi == null ? "–" : u.strike_lo == null ? `≤ ${fmt$0(u.strike_hi)}` : `${fmt$0(u.strike_lo)}–${fmt$0(u.strike_hi)}`);
 
 const COLS = [
@@ -53,12 +56,13 @@ const COLS = [
   { k: "tech", h: "Tech", t: 1, f: (u) => (u.tech === "wind" ? "Wind" : "Solar") },
   { k: "tier", h: "Signal", t: 1, f: (u) => tierCell(u.tier) },
   { k: "point", h: "Settles at", t: 1, f: (u) => (u.point ? esc(POINT_LABEL(u.point, u)) + (u.near && u.near.length ? ` <span class="muted">(or ${esc(u.near.slice(0, 2).join(", "))})</span>` : "") : "–") },
-  { k: "a", h: "Offers at", f: (u) => (u.a == null ? "–" : `${fmtPct(u.a)} of DA ${u.b < 0 ? "−" : "+"} ${fmt$(Math.abs(u.b))}`) },
+  { k: "a", h: "Offers at", f: formulaTxt },
+  { k: "cap", h: "Cap", f: capTxt, tip: "The price the offer stops at when the formula is above it. \"none\": formula hours ran above $0 with no clamp. \"not tested\": the formula never rose high enough to tell." },
   { k: "strike_hi", h: "Implied strike", f: strike },
   { k: "hit", h: "Hit rate", f: (u) => (u.hit == null ? "–" : fmtPct(u.hit)) },
   { k: "days", h: "Formula days", f: (u) => (u.days ? `${u.days} <span class="muted">${u.first.slice(5)} to ${u.last.slice(5)}</span>` : "–") },
   { k: "group", h: "Same rule as", t: 1, f: (u) => sameRule(u) },
-  { k: "floor", h: "Floor", f: (u) => fmt$(u.floor) },
+  { k: "floor", h: "Floor", f: (u) => (floorIsCap(u) ? `<span class="muted">= cap</span>` : fmt$(u.floor)) },
   { k: "da_share", h: "DA share", f: (u) => (u.da_share == null ? "–" : fmtPct(u.da_share)) },
 ];
 function sameRule(u) {
@@ -97,15 +101,15 @@ function drawUnits() {
   if (!rs.length) return emptyMsg(el, S.show === "found" ? "No unit in this selection follows a DA formula." : "No units.");
   const key = (u) => (S.sort === "tier" ? ORDER[u.tier] * 1e6 - (u.hours || 0) : u[S.sort]);
   rs.sort((a, b) => { const x = key(a), y = key(b); if (x == null) return 1; if (y == null) return -1; return (typeof x === "string" ? x.localeCompare(y) : x - y) * S.dir; });
-  el.innerHTML = `<table class="data"><thead><tr>${COLS.map((c) => `<th class="sortable${c.t ? " t" : ""}" data-k="${c.k}">${c.h}${S.sort === c.k ? (S.dir < 0 ? " ▾" : " ▴") : ""}</th>`).join("")}</tr></thead><tbody>` +
+  el.innerHTML = `<table class="data"><thead><tr>${COLS.map((c) => `<th class="sortable${c.t ? " t" : ""}" data-k="${c.k}"${c.tip ? ` title="${esc(c.tip)}"` : ""}>${c.h}${S.sort === c.k ? (S.dir < 0 ? " ▾" : " ▴") : ""}</th>`).join("")}</tr></thead><tbody>` +
     rs.map((u) => `<tr data-unit="${esc(u.name)}" style="cursor:pointer">${COLS.map((c) => `<td${c.t ? ' class="t"' : ""}>${c.f(u)}</td>`).join("")}</tr>`).join("") + "</tbody></table>";
   el.querySelectorAll("th[data-k]").forEach((th) => th.addEventListener("click", () => {
     const k = th.dataset.k; if (S.sort === k) S.dir = -S.dir; else { S.sort = k; S.dir = ["name", "tech", "tier", "point", "group"].includes(k) ? 1 : -1; }
     drawUnits(); saveView();
   }));
   el.querySelectorAll("tr[data-unit]").forEach((tr) => tr.addEventListener("click", (ev) => { if (!ev.target.closest("a")) openUnit(tr.dataset.unit); }));
-  setCSV(el, ["unit", "tech", "tier", "sp", "point", "share", "intercept", "strike_lo", "strike_hi", "hit", "days", "hours", "first", "last", "floor", "da_share", "da_days"],
-    rs.map((u) => [u.name, u.tech, u.tier, u.sp, u.point, u.a, u.b, u.strike_lo, u.strike_hi, u.hit, u.days, u.hours, u.first, u.last, u.floor, u.da_share, u.da_days]), "Hedge signals");
+  setCSV(el, ["unit", "tech", "tier", "sp", "point", "share", "intercept", "cap", "capped", "strike_lo", "strike_hi", "hit", "days", "hours", "first", "last", "floor", "da_share", "da_days"],
+    rs.map((u) => [u.name, u.tech, u.tier, u.sp, u.point, u.a, u.b, u.cap, u.capped, u.strike_lo, u.strike_hi, u.hit, u.days, u.hours, u.first, u.last, u.floor, u.da_share, u.da_days]), "Hedge signals");
 }
 
 // ---- bidding changes (data/renew_changes.json.gz, pipeline/renew_changes.py) ----------------

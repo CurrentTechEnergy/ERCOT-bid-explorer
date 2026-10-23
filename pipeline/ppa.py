@@ -29,6 +29,12 @@ Method, per unit:
        location unclear  the same, but other points fit about as well (node and hub price alike)
        partial           >= 2 formula days, hit >= 0.5, 0.2 <= a <= 1.3
        hints only        everything else: floor offer and day-ahead habit only
+  5. Cap: on formula days, the hours where the formula sat more than HIT_USD above the offer.
+     When at least CAP_HOURS of them sit at one price (CAP_SHARE of them within 5 cents) and no
+     formula hour tracked above it, that price is the unit's cap: it offers
+     min(a x DA + b, cap).  A unit whose formula hours run above $0 with no such clamp is
+     uncapped.  A cap at about $0 lets a unit refuse negative prices while still running at any
+     positive one, which a pure contract formula would not do.
   Every unit also gets its usual floor offer and its day-ahead habit (DAM award as a share of
   its real-time base point energy, and the share of days with any award).
 
@@ -48,6 +54,8 @@ Writes data/ppa.json.gz:
            and when a formula was found: point, a, b, hit, alt [[point, hit], ...] (next best),
            near [points within 0.1 of the best hit rate], days (formula days), hours, first,
            last, strike_hi, strike_lo, group (units sharing point, a and b),
+           cap (price the offer stops at when the formula is above it, or null), cap_hours,
+           capped (true: cap found; false: formula hours ran above $0 unclamped; null: untested),
            daily [[date, a, b, rmse, hours], ...]}]
   fits: {name: [[date index, DA price at the best point, offer], ...]}   (revealed / partial)
   dates: the dates the fit date indices refer to
@@ -71,6 +79,8 @@ FLAT_USD = 0.5         # an hour counts only if its offer moved less than this w
 HIT_USD = 2.0          # a formula "hits" an hour when it predicts the offer within this
 CREDIT = 30.0          # $/MWh: about the PTC, for the lower strike estimate
 SLOPE = (0.2, 1.3)
+CAP_HOURS = 6          # formula-day hours held below the formula needed to call a cap
+CAP_SHARE = 0.8        # share of those hours at one price
 MAX_FIT_POINTS = 800   # per unit in the output, for the scatter chart
 TIERS = {"revealed": "Revealed", "unclear": "Revealed, location unclear", "partial": "Partial",
          "hints": "Hints only"}
@@ -225,6 +235,27 @@ def infer_unit(rows, points, floor=None):
     return {"best": best, "others": score[1:], "days": [d[0] for d in days], "daily": daily}
 
 
+def find_cap(rows, days, p, a, b):
+    """(cap, cap_hours, capped) for a unit offering a x DA(p) + b on the formula days."""
+    days = set(days)
+    held, tracked = [], []
+    for di, off, _, hsl, da in rows:
+        x = da.get(p)
+        if di not in days or x is None:
+            continue
+        av = np.isfinite(off) & np.isfinite(x) & (hsl >= MIN_HSL)
+        pred = a * x + b
+        held += list(off[av & (pred - off > HIT_USD)])
+        tracked += list(off[av & (np.abs(off - pred) < HIT_USD)])
+    top = max(tracked) if tracked else None
+    if len(held) >= CAP_HOURS:
+        mode = float(Counter(np.round(held, 2)).most_common(1)[0][0])
+        n = int(np.sum(np.abs(np.array(held) - mode) < 0.05))
+        if n / len(held) >= CAP_SHARE and (top is None or top <= mode + HIT_USD):
+            return mode, n, True
+    return None, 0, (False if top is not None and top > HIT_USD else None)
+
+
 def build_ppa(index: dict) -> None:
     dates = sorted(index["days"].get("60d", []))
     dam_days = set(index["days"].get("dam", []))
@@ -292,6 +323,8 @@ def build_ppa(index: dict) -> None:
                     "strike_hi": _r(-b / a), "strike_lo": _r((-b - CREDIT) / a) if -b - CREDIT > 0 else None,
                     "daily": [[dates[di], _r(da_, 3), _r(db), _r(dr), n] for di, da_, db, dr, n in res["daily"]],
                 })
+                cap, cap_h, capped = find_cap(rows, res["days"], p, a, b)
+                rec.update({"cap": _r(cap), "cap_hours": cap_h, "capped": capped})
                 if len(pts) > MAX_FIT_POINTS:
                     pts = [pts[i] for i in np.linspace(0, len(pts) - 1, MAX_FIT_POINTS).astype(int)]
                 fits[name] = [[di, _r(x), _r(y)] for di, x, y in pts]
