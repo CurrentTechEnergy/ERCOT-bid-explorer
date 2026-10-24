@@ -33,6 +33,8 @@ fit (too few rows), CALIB stands.  Offline (Apr-Aug 2026, each month fitted on t
 60 days before it) it cut the fleet's hourly combustion-turbine minimum-output error from 550 to
 507 MW, and from 1,026 to 811 MW in hours with the hub above $45.
 """
+import os
+
 import numpy as np
 
 from ..forecast import context as C
@@ -50,7 +52,8 @@ CALIB = [   # online rate while available at each share in _X, by band (v2: isot
 MIN_CELL = 10
 MIN_BIN = 20
 TRAIN_DAYS = 90     # days of the 60-day record up to the history point the v3 logistic is fitted on
-TRAIN_MIN = 20000   # available unit-hours it needs
+TRAIN_MIN = 20000
+FREQ_ONLY = os.environ.get("PEAKER_VARIANT") == "freq"   # backtest control: the same as-of fit without the cost features   # available unit-hours it needs
 FEATURES = ["share", "hub", "run", "run_pos", "hour_margin", "offer", "run_o", "run_pos_o", "hour_margin_o", "hub_30", "hub_45"]
 
 
@@ -101,7 +104,10 @@ def _x(p, hub, prices, u):
     x = np.column_stack([np.log(q / (1 - q)), np.clip(hub, -20, 200) / 50, np.arcsinh(run / 10), (run > 0).astype(float),
                          np.clip(margin, -100, 300) / 50, np.full(24, own)])
     bands = np.column_stack([hub > b for b in BANDS[1:]]).astype(float)    # an intercept for each of CALIB's upper hub bands
-    return np.column_stack([x, x[:, 2:5] * own, bands])
+    out = np.column_stack([x, x[:, 2:5] * own, bands])
+    if FREQ_ONLY:
+        out[:, 2:9] = 0.0
+    return out
 
 
 def _fit(ctx, date):
