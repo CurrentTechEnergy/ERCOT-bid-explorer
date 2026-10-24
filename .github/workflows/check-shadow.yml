@@ -28,4 +28,7 @@ jobs:
           ERCOT_API_USERNAME: ${{ secrets.ERCOT_API_USERNAME }}
           ERCOT_API_PASSWORD: ${{ secrets.ERCOT_API_PASSWORD }}
           ERCOT_API_SUBSCRIPTION_KEY: ${{ secrets.ERCOT_API_SUBSCRIPTION_KEY }}
+          R2_ENDPOINT: ${{ secrets.R2_ENDPOINT }}
+          R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
         run: python -m pipeline.shadow --sample
