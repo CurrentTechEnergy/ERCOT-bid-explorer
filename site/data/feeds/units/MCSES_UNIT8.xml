@@ -5,10 +5,10 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=MCSES_UNIT8</id>
   <updated>2026-10-24T00:00:00Z</updated>
   <entry>
-    <title>MCSES_UNIT8: Loss cutoff moved (2026-08-24)</title>
+    <title>MCSES_UNIT8: Loss cutoff moved (2026-08-25)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=MCSES_UNIT8"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=MCSES_UNIT8#MCSES_UNIT8/2026-08-24/cutoff</id>
-    <updated>2026-10-23T00:00:00Z</updated>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=MCSES_UNIT8#MCSES_UNIT8/2026-08-25/cutoff</id>
+    <updated>2026-10-24T00:00:00Z</updated>
     <summary>Loss cutoff $63 to $243 per MW of minimum output; not yet tested on a following month</summary>
   </entry>
   <entry>

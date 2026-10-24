@@ -1,115 +1,115 @@
 {
- "checked": "2026-10-23T18:21:00Z",
- "today": "2026-10-23",
+ "checked": "2026-10-24T14:14:00Z",
+ "today": "2026-10-24",
  "sources": {
   "2d": {
    "label": "2-day SCED curves (NP3-908-ER)",
-   "latest": "2026-10-21",
+   "latest": "2026-10-22",
    "behind": 2,
    "allowed": 3,
    "stale": false
   },
   "2dgen": {
    "label": "2-day generation (NP3-910-ER)",
-   "latest": "2026-10-21",
+   "latest": "2026-10-22",
    "behind": 2,
    "allowed": 3,
    "stale": false
   },
   "prices": {
    "label": "Real-time hub prices",
-   "latest": "2026-10-21",
+   "latest": "2026-10-22",
    "behind": 2,
    "allowed": 3,
    "stale": false
   },
   "nodes": {
    "label": "Real-time resource-node prices",
-   "latest": "2026-10-21",
+   "latest": "2026-10-22",
    "behind": 2,
    "allowed": 3,
    "stale": false
   },
   "fit": {
    "label": "Fitted commitment curve",
-   "latest": "2026-10-21",
+   "latest": "2026-10-22",
    "behind": 2,
    "allowed": 3,
    "stale": false
   },
   "60d": {
    "label": "60-day SCED disclosure",
-   "latest": "2026-08-24",
+   "latest": "2026-08-25",
    "behind": 60,
    "allowed": 63,
    "stale": false
   },
   "dam": {
    "label": "60-day DAM disclosure",
-   "latest": "2026-08-24",
+   "latest": "2026-08-25",
    "behind": 60,
    "allowed": 63,
    "stale": false
   },
   "storage": {
    "label": "60-day storage",
-   "latest": "2026-08-24",
+   "latest": "2026-08-25",
    "behind": 60,
    "allowed": 63,
    "stale": false
   },
   "dam_nodes": {
    "label": "DAM node prices",
-   "latest": "2026-10-23",
+   "latest": "2026-10-24",
    "behind": 0,
    "allowed": 0,
    "stale": false
   },
   "dam_lambda": {
    "label": "DAM system lambda",
-   "latest": "2026-10-23",
+   "latest": "2026-10-24",
    "behind": 0,
    "allowed": 0,
    "stale": false
   },
   "load": {
    "label": "Load forecast",
-   "latest": "2026-10-24",
+   "latest": "2026-10-25",
    "behind": -1,
    "allowed": 0,
    "stale": false
   },
   "renew_forecast": {
    "label": "Wind and solar forecast",
-   "latest": "2026-10-24",
+   "latest": "2026-10-25",
    "behind": -1,
    "allowed": 0,
    "stale": false
   },
   "forecast": {
    "label": "Commitment forecast",
-   "latest": "2026-10-23",
+   "latest": "2026-10-24",
    "behind": 0,
    "allowed": 0,
    "stale": false
   },
   "gas_hsc": {
    "label": "Gas price, Houston Ship Channel",
-   "latest": "2026-10-21",
+   "latest": "2026-10-22",
    "behind": 2,
    "allowed": 3,
    "stale": false
   },
   "gas_waha": {
    "label": "Gas price, Waha",
-   "latest": "2026-10-21",
+   "latest": "2026-10-22",
    "behind": 2,
    "allowed": 3,
    "stale": false
   },
   "unplanned": {
    "label": "Unplanned outages (NP1-346-ER)",
-   "latest": "2026-10-20",
+   "latest": "2026-10-21",
    "behind": 3,
    "allowed": 5,
    "stale": false
@@ -117,7 +117,7 @@
   "nrc": {
    "label": "NRC reactor status",
    "latest": "2026-10-23",
-   "behind": 0,
+   "behind": 1,
    "allowed": 2,
    "stale": false
   }

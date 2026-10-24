@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>FTDUNCAN_ESR1: bidding and operating changes</title>
+  <link href="https://ercotbids.currenttech.energy/unit.html?unit=FTDUNCAN_ESR1"/>
+  <id>https://ercotbids.currenttech.energy/unit.html?unit=FTDUNCAN_ESR1</id>
+  <updated>2026-10-24T00:00:00Z</updated>
+  <entry>
+    <title>FTDUNCAN_ESR1: Decision maker or QSE changed (2026-08-25)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=FTDUNCAN_ESR1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=FTDUNCAN_ESR1#FTDUNCAN_ESR1/2026-08-25/control</id>
+    <updated>2026-10-24T00:00:00Z</updated>
+    <summary>Scheduled by HEN POWER MARKETING LLC (SQ2), was TRQ26 (SQ26)</summary>
+  </entry>
+  <entry>
+    <title>FTDUNCAN_ESR1: Decision maker or QSE changed (2026-08-25)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=FTDUNCAN_ESR1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=FTDUNCAN_ESR1#FTDUNCAN_ESR1/2026-08-25/control</id>
+    <updated>2026-10-24T00:00:00Z</updated>
+    <summary>Scheduled by HEN POWER MARKETING LLC (SQ2), was TRQ26 (SQ26)</summary>
+  </entry>
+</feed>
