@@ -30,6 +30,7 @@ answers "what was known when the day-ahead market for day D cleared":
                         leave such days out of the track record
 """
 import datetime as dt
+import os
 from collections import defaultdict
 
 import numpy as np
@@ -41,6 +42,7 @@ from ..trends import UNIT_TECHS, unit_techs
 from ..units import expand
 from . import groups as grp
 
+OWN_DISCLOSURE = os.environ.get("BACKTEST_DISCLOSURE") == "own"   # every day reads its own DAM disclosure (the old backtest basis)
 LAG = 60                       # days between an operating day and its 60-day disclosure
 HUB = "HB_HUBAVG"
 CHEAP_HUB = 10.0               # $/MWh: an hour at or below this day-ahead hub price is a cheap hour (scored in score.py)
@@ -335,11 +337,14 @@ class Context:
             return ok[-1], False
         return (self.days60[0], True) if self.days60 else (None, True)
 
-    def known_dam_date(self, date):
-        """The DAM disclosure to read a unit's costs from: D's own if public... it is not (60-day
-        lag), so the latest disclosure public before D cleared; for a backtest of a day whose own
-        disclosure is in, its own three-part offer (submitted for that day, so known then)."""
-        if self.dam(date):
+    def known_dam_date(self, date, own=False):
+        """The DAM disclosure to read a unit's costs, limits and roster from: the latest public
+        before D cleared (60-day lag), as the live forecast has it, even when D's own disclosure
+        is in by now.  own: D's own when it is in, for fitting a past day after the fact
+        (two_day_fit), or for every caller with BACKTEST_DISCLOSURE=own (a backtest compared on
+        the old basis: D's own three-part offer flattered the scores, e.g. committed-minimum MAE
+        1,410 against 1,795 MW live-like, Oct 2026)."""
+        if (own or OWN_DISCLOSURE) and self.dam(date):
             return date
         cut = _iso(_d(date) - dt.timedelta(days=LAG))
         ok = [d for d in self.dam_days if d <= cut]
@@ -358,11 +363,11 @@ class Context:
         return (float(np.mean(pm)) if pm else None), prev
 
     # -------------------------------------------------------------- units --
-    def units(self, date):
+    def units(self, date, own=False):
         """{train: {tech, sp, hsl, lsl, mingen, hot, est, configs: [names]}} from the DAM
-        disclosure public before `date`, thermal and renewable resources, combined-cycle
-        configurations merged (smallest LSL, largest HSL, smallest costs)."""
-        kd = self.known_dam_date(date)
+        disclosure public before `date` (own: see known_dam_date), thermal and renewable
+        resources, combined-cycle configurations merged (smallest LSL, largest HSL, smallest costs)."""
+        kd = self.known_dam_date(date, own)
         if kd is None:
             return {}
         if kd in self._units:
