@@ -39,32 +39,41 @@ does); a floor leaving the band for PTC_OFF or above and never returning to it i
 "expired" (inferred: the credit runs 10 years from the plant's start, which the data does
 not give).  ptc_trend is the monthly median of those floors by technology.
 
-Moved dispatch.  For the first HOLD online days of a new regime (or an episode's days), each
-online hour is compared with what the old regime would have offered: the old floor, or the old
-formula at that hour's DA price.  The unit dispatched differently when the node price fell
+Moved dispatch.  A change's window is every online day the unit spent in the new regime, from the
+change up to its next change (episodes left out), at most WINDOW_MAX calendar days; an episode's
+window is its own days.  A window still running at the last data day is "open" and fills in as
+data arrives; one that ran the full WINDOW_MAX is "capped".  Each online hour of the window is
+compared with what the old regime would have offered: the old floor, or the old formula at that
+hour's DA price.  The unit dispatched differently when the node price fell
 between the two offers.  Priced up (new offer above the old): energy given up = HSL - base point.
 Priced down: energy gained = base point.  Each is valued at the node price.  The price is the
-hourly real-time node price where the per-unit data has one (UNIT_DATA_DIR/nodes/), else the DA
-node price, and "est" says what share of those hours used the DA price.  Hourly prices smooth
-over SCED's 5-minute prices, so the MWh are an approximation.
+hourly real-time node price where there is one (live: UNIT_DATA_DIR/nodes/; history: the
+release's rt-prices-YYYY-MM.parquet files), else the DA node price, and "est" says what share of
+those hours used the DA price.  A change moved dispatch when its window has at least MOVED_MWH_DAY
+MWh per window day.  Hourly prices smooth over SCED's 5-minute prices, so the MWh are an
+approximation.
 
 Sources.  The live build (build_renew_changes, run by the update) reads the 60-day per-unit data
 through the ppa cache, the DAM day files and the node prices.  The history build
 (python -m pipeline.renew_changes --history DIR) reads the hourly Parquet files of the `history`
-release (pipeline/history.py), 2019 on, which carry only DA node prices.  Days the live data
-covers always come from it.
+release (pipeline/history.py), 2019 on: units-* with DA node prices, and rt-prices-* with real-time
+ones where the release has them.  Days the live data covers always come from it.
 
 Writes:
   data/renew/sig-YYYY.json.gz   {year, dates, src (per date "l" live or "h" history), points,
                                  units: {name: {tech, sp, h, k (string, "." no data), fl, md,
                                  dam, cur, x: {date index: [point index, a, b]}}}}
-  data/renew/impacts.json.gz    {"unit|date|kind": impact}, kept between runs: each build fills
-                                 the events whose first window day it has hourly data for
+  data/renew/impacts.json.gz    {"unit|date|kind": {chunk: [hours, up, dn, v_up, v_dn, n_price,
+                                 n_da]}}, kept between runs: sums over the window days of one
+                                 chunk of data ("l" the live days, "YYYY" a history year), so each
+                                 build replaces only the chunks it has hourly data for and a
+                                 window may cross years and the history/live boundary
   data/renew_changes.json.gz    params, kinds, first, last, years, n_units, togglers,
                                  ptc_band, ptc_trend {months, wind/solar: {median, units}},
                                  events: [{date, plant, units, tech, kind, before, after, days, ptc,
                                  gap, ctx [dam before, dam after, cur before, cur after],
-                                 impact {hours, up, dn, v_up, v_dn, est} or null}], newest first
+                                 impact {hours, up, dn, v_up, v_dn, est, days, open, capped} or null}],
+                                 newest first
   monthly counts are left to the page.
 """
 import argparse
@@ -94,7 +103,8 @@ TERMS_A, TERMS_B = 0.1, 1.0   # formula terms: slope, and offer at REF_DA ($/MWh
 REF_DA = 30.0      # a typical DA price: day fits trade slope against intercept, so the
                    # intercept is compared through the offer the formula gives at this price
 TOGGLE = 4         # floor_back events or episodes in 365 days that make a toggler
-MOVED_MWH = 1.0    # an event moved dispatch when its window has at least this many MWh
+MOVED_MWH_DAY = 1.0   # an event moved dispatch when its window has at least this many MWh per window day
+WINDOW_MAX = 365   # calendar days a change's moved-dispatch window may run
 CLAMP_SHARE = 0.8  # share of a day's hours the clamped year formula must explain
 PTC_BAND = [-60.0, -15.0]   # floors here price a per-MWh credit such as the PTC
 PTC_STEP = 5.0     # a floor change inside the band of this much or less is "PTC level"
@@ -359,9 +369,9 @@ def _ctx(days, i, j):
     return [med(b, 4), med(a, 4), med(b, 5), med(a, 5)]
 
 
-def detect_unit(days):
-    """days: [(date, sig)] for one unit (any h).  Returns unit-level events:
-    (date, kind, before R, after R or peak, window dates, extra)."""
+def detect_unit(days, last=None):
+    """days: [(date, sig)] for one unit (any h); last: the last data day of the build.  Returns
+    unit-level events: (date, kind, before R, after R or peak, window dates, extra)."""
     days = [(d, s) for d, s in days if s[0] >= MIN_HOURS]
     n = len(days)
     ev = []
@@ -439,12 +449,36 @@ def detect_unit(days):
                 i = j
                 continue
         i += 1
-    return ev
+    return _windows(days, ev, last)
+
+
+def _windows(days, ev, last):
+    """The moved-dispatch window of each change (see the module doc), with extra["open"] and
+    extra["capped"]; episodes keep their own days."""
+    if not ev:
+        return ev
+    last = last or days[-1][0]
+    unit_last = days[-1][0]
+    gone = (dt.date.fromisoformat(last) - dt.date.fromisoformat(unit_last)).days > 14   # no longer in the data
+    changes = [k for k, e in enumerate(ev) if e[1] != "episode"]
+    ep_days = {dd for e in ev if e[1] == "episode" for dd in e[4]}
+    out = list(ev)
+    for n, k in enumerate(changes):
+        d, kind, R, C, _, extra = ev[k]
+        cap = (dt.date.fromisoformat(d) + dt.timedelta(days=WINDOW_MAX)).isoformat()
+        nxt = ev[changes[n + 1]][0] if n + 1 < len(changes) else None
+        end = min(cap, nxt) if nxt else cap
+        win = [dd for dd, s in days if d <= dd < end and dd not in ep_days and _same(s, C)]
+        is_open = nxt is None and cap > last and not gone
+        capped = end == cap and cap <= last and not (nxt is None and gone and unit_last < cap)
+        out[k] = (d, kind, R, C, win, dict(extra, open=is_open, capped=capped))
+    return out
 
 
 # ----------------------------------------------------------------- impacts --
-def impact(store: Store, name: str, R, window) -> dict:
-    """Moved dispatch over the window's days against the old regime R (see the module doc)."""
+def impact(store: Store, name: str, R, window):
+    """Moved dispatch over the window's days the store has, against the old regime R (see the
+    module doc): [hours, up, dn, v_up, v_dn, n_price, n_da], or None without priced hours."""
     if R[0] == "v":
         return None
     days = store.rows.get(name) or {}
@@ -483,30 +517,58 @@ def impact(store: Store, name: str, R, window) -> dict:
                     hours += 1
     if not n_price:
         return None
-    return {"hours": hours, "up": _r(up, 0), "dn": _r(dn, 0), "v_up": _r(vu, 0), "v_dn": _r(vd, 0),
-            "est": _r(n_da / n_price, 2)}
+    return [hours, _r(up, 1), _r(dn, 1), _r(vu, 0), _r(vd, 0), n_price, n_da]
+
+
+def _combine(chunks: dict, win, extra, kind) -> dict:
+    """One event's impact from its stored chunks, or None when no chunk has priced hours."""
+    got = [v for v in (chunks or {}).values() if v]
+    if not got:
+        return None
+    t = [sum(_num(v[i]) for v in got) for i in range(7)]
+    return {"hours": int(t[0]), "up": _r(t[1], 0), "dn": _r(t[2], 0), "v_up": _r(t[3], 0), "v_dn": _r(t[4], 0),
+            "est": _r(t[6] / t[5], 2) if t[5] else None, "days": len(win),
+            "open": kind != "episode" and bool(extra.get("open")), "capped": kind != "episode" and bool(extra.get("capped"))}
 
 
 def _key(name, e):
     return f"{name}|{e[0]}|{e[1]}"
 
 
-def update_impacts(store: Store, detected: dict, have_days: set) -> None:
-    """Compute the impact of every detected event whose first window day the store has hourly
-    data for, keep stored impacts for the rest, drop impacts of events no longer detected."""
-    path = OUT_DIR / "impacts.json.gz"
-    old = read_json_gz(path, default={}) or {}
-    out, n = {}, 0
+def load_impacts(detected: dict) -> dict:
+    """The stored impact chunks of the detected events (an older file's one-dict-per-event
+    entries are dropped, to be rebuilt)."""
+    keys = {_key(n, e) for n, evs in detected.items() for e in evs}
+    old = read_json_gz(OUT_DIR / "impacts.json.gz", default={}) or {}
+    return {k: v for k, v in old.items() if k in keys and isinstance(v, dict) and "hours" not in v}
+
+
+def fill_impacts(imp: dict, store: Store, detected: dict, chunk: str) -> int:
+    """Replace chunk in every detected event's impact with the sums over the window days the
+    store has (dropping it when the window has none of them).  Returns events filled."""
+    n = 0
     for name, evs in detected.items():
+        rows = store.rows.get(name) or {}
         for e in evs:
             k = _key(name, e)
-            if e[4] and e[4][0] in have_days and name in store.rows:
-                out[k] = impact(store, name, e[2], e[4])
-                n += 1
-            elif k in old:
-                out[k] = old[k]
-    write_json_gz(path, out)
-    print(f"renew_changes: moved-dispatch estimates for {n} event(s) from this build, {len(out)} kept")
+            c = imp.setdefault(k, {})
+            c.pop(chunk, None)
+            if rows and any(d in rows for d in e[4]):
+                v = impact(store, name, e[2], e[4])
+                if v is not None:
+                    c[chunk] = v
+                    n += 1
+            if not c:
+                del imp[k]
+    return n
+
+
+def update_impacts(store: Store, detected: dict) -> None:
+    """The live build's chunk of every detected event's impact; other chunks are kept."""
+    imp = load_impacts(detected)
+    n = fill_impacts(imp, store, detected, "l")
+    write_json_gz(OUT_DIR / "impacts.json.gz", imp)
+    print(f"renew_changes: moved-dispatch estimates over live days for {n} event(s), {len(imp)} kept")
 
 
 # ------------------------------------------------------------------- output --
@@ -582,7 +644,8 @@ def write_events(detected, seq, tech, src) -> None:
                 after = _desc(C)
             rows.append({"date": d, "unit": name, "plant": plant_of(name), "tech": tech.get(name), "kind": kind,
                          "before": _desc(R), "after": after, "days": len(win) if kind == "episode" else None,
-                         "gap": extra.get("gap"), "ctx": extra.get("ctx"), "impact": imp.get(_key(name, e))})
+                         "gap": extra.get("gap"), "ctx": extra.get("ctx"),
+                         "impact": _combine(imp.get(_key(name, e)), win, extra, kind)})
     # togglers: units with TOGGLE or more floor_back events or episodes in some 365 days
     toggle = {}
     by_unit = defaultdict(list)
@@ -614,6 +677,9 @@ def write_events(detected, seq, tech, src) -> None:
                     for k in ("hours", "up", "dn", "v_up", "v_dn"):
                         li[k] = _r(_num(li[k]) + _num(r["impact"][k]), 0)
                     li["est"] = max(_num(li["est"]), _num(r["impact"]["est"]))
+                    li["days"] = max(li["days"], r["impact"]["days"])
+                    li["open"] = li["open"] or r["impact"]["open"]
+                    li["capped"] = li["capped"] or r["impact"]["capped"]
             continue
         r = dict(r)
         r["units"] = [r.pop("unit")]
@@ -622,7 +688,7 @@ def write_events(detected, seq, tech, src) -> None:
         events.append(r)
     for e in events:
         im = e["impact"]
-        e["moved"] = None if im is None else bool(_num(im["up"]) + _num(im["dn"]) >= MOVED_MWH)
+        e["moved"] = None if im is None else bool(_num(im["up"]) + _num(im["dn"]) >= MOVED_MWH_DAY * max(im["days"], 1))
         e["toggler"] = any(u in toggle for u in e["units"])
     _tag_ptc(events)
     events.sort(key=lambda e: (e["date"], e["plant"]), reverse=True)
@@ -632,7 +698,7 @@ def write_events(detected, seq, tech, src) -> None:
         "updated": dt.datetime.now(dt.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
         "params": {"tol": TOL, "hold": HOLD, "min_held": MIN_HELD, "ep_usd": EP_USD, "ep_max": EP_MAX,
                    "new_days": NEW_DAYS, "terms_a": TERMS_A, "terms_b": TERMS_B, "ref_da": REF_DA, "toggle": TOGGLE,
-                   "moved_mwh": MOVED_MWH},
+                   "moved_mwh_day": MOVED_MWH_DAY, "window_max": WINDOW_MAX},
         "kinds": KINDS, "first": dates[0] if dates else None, "last": dates[-1] if dates else None,
         "live_first": min((d for d in dates if src[d] == "l"), default=None),
         "years": sorted({d[:4] for d in dates}), "n_units": dict(n_units), "togglers": toggle,
@@ -649,9 +715,9 @@ def write_events(detected, seq, tech, src) -> None:
 def _finish(store: Store, tag: str, points: list) -> None:
     merge_signatures(signatures(store, points), tag, store)
     seq, tech, sp, src = all_signatures()
-    detected = {name: detect_unit(days) for name, days in seq.items()}
-    have = {d for days in store.rows.values() for d in days}
-    update_impacts(store, detected, have)
+    last = max(src) if src else None
+    detected = {name: detect_unit(days, last) for name, days in seq.items()}
+    update_impacts(store, detected)
     write_events(detected, seq, tech, src)
 
 
@@ -689,12 +755,32 @@ def build_renew_changes(index: dict) -> None:
 
 
 # ------------------------------------------------------------ history build --
-def _year_store(files: list, skip: set) -> Store:
-    """Hourly rows of one year of the history release, without the days in skip."""
+def _rt_node(files: list, sps: set, skip: set) -> dict:
+    """{(date, settlement point): 24 hourly real-time prices} from the rt-prices files beside
+    the units files, for the points in sps; {} where the release has none."""
+    import pandas as pd
+    rt_files = [f for f in (x.replace("units-", "rt-prices-") for x in files) if Path(f).exists()]
+    if not rt_files:
+        return {}
+    r = pd.concat([pd.read_parquet(f, columns=["date", "he", "point", "price"]) for f in rt_files], ignore_index=True)
+    r["point"] = r["point"].astype(str)
+    r = r[r["point"].isin(sps) & ~r["date"].isin(skip) & r["he"].between(1, 24)]
+    out = {}
+    for (d, p), g in r.groupby(["date", "point"], sort=False):
+        a = np.full(24, np.nan, np.float32)
+        a[g["he"].to_numpy().astype(int) - 1] = g["price"].to_numpy(dtype=float)
+        out[(d, p)] = a
+    return out
+
+
+def _year_store(files: list, skip: set, rt: bool = True) -> Store:
+    """Hourly rows of one year of the history release, without the days in skip; with rt, the
+    price is the real-time node price where the release has one (rt-prices-*), else DA."""
     import pandas as pd
     store = Store()
     u = pd.concat([pd.read_parquet(f) for f in files], ignore_index=True)
     u = u[~u["date"].isin(skip)]
+    rtn = _rt_node(files, {str(x) for x in u["sp"].dropna().unique()}, skip) if rt else {}
     hub_files = [f for f in (x.replace("units-", "da-hubs-") for x in files) if Path(f).exists()]
     if hub_files:
         hf = pd.concat([pd.read_parquet(f) for f in hub_files], ignore_index=True)
@@ -714,10 +800,13 @@ def _year_store(files: list, skip: set) -> Store:
             a = np.full(24, np.nan, np.float32)
             a[he[ok] - 1] = g[c].to_numpy(dtype=float)[ok]
             arr[c] = a
-        store.rows[name][d] = (arr["offer"], arr["spread"], arr["hsl"], arr["bp"], arr["award"],
-                               arr["da_node"], np.zeros(24, bool), arr["da_node"])
-        store.tech[name] = g["tech"].iloc[0]
         sp = g["sp"].iloc[0]
+        rtv = rtn.get((d, str(sp))) if isinstance(sp, str) and sp else None
+        is_rt = np.isfinite(rtv) if rtv is not None else np.zeros(24, bool)
+        price = np.where(is_rt, rtv, arr["da_node"]) if rtv is not None else arr["da_node"]
+        store.rows[name][d] = (arr["offer"], arr["spread"], arr["hsl"], arr["bp"], arr["award"],
+                               price, is_rt, arr["da_node"])
+        store.tech[name] = g["tech"].iloc[0]
         if isinstance(sp, str) and sp:
             store.sp[name] = sp
     return store
@@ -737,28 +826,22 @@ def build_from_history(folder: str, years=None) -> None:
     for p in OUT_DIR.glob("sig-*.json.gz"):
         live |= {d for d, s in load_sig(p.name[4:8])[1].items() if s == "l"}
     for year in todo:
-        store = _year_store(by_year[year], live)
+        store = _year_store(by_year[year], live, rt=False)
         pts = sorted({p for v in store.hubs.values() for p in v})
         merge_signatures(signatures(store, ["node"] + pts), "h", store)
         print(f"renew_changes: history {year}: {len(store.rows)} units, "
               f"{len({d for r in store.rows.values() for d in r})} days")
     seq, tech, sp, src = all_signatures()
-    detected = {name: detect_unit(days) for name, days in seq.items()}
-    path = OUT_DIR / "impacts.json.gz"
-    keys = {_key(n, e) for n, evs in detected.items() for e in evs}
-    imp = {k: v for k, v in (read_json_gz(path, default={}) or {}).items() if k in keys}
-    n = 0
+    last = max(src) if src else None
+    detected = {name: detect_unit(days, last) for name, days in seq.items()}
+    imp = load_impacts(detected)
     for year in todo:
         store = _year_store(by_year[year], live)
-        for name, evs in detected.items():
-            if name not in store.rows:
-                continue
-            for e in evs:
-                if e[4] and e[4][0] in store.rows[name]:
-                    imp[_key(name, e)] = impact(store, name, e[2], e[4])
-                    n += 1
-    write_json_gz(path, imp)
-    print(f"renew_changes: moved-dispatch estimates for {n} history event(s)")
+        n = fill_impacts(imp, store, detected, year)
+        n_rt = sum(int(r[6].sum()) for days in store.rows.values() for r in days.values())
+        print(f"renew_changes: history {year}: moved-dispatch estimates for {n} event(s), "
+              f"{n_rt:,} unit-hours with a real-time node price")
+    write_json_gz(OUT_DIR / "impacts.json.gz", imp)
     write_events(detected, seq, tech, src)
 
 
