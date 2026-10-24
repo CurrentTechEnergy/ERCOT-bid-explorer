@@ -22,6 +22,8 @@ the few cheap hours give no stable map.  v2 refits CALIB on the available-hours 
 the online rate in hours the unit was not on outage (isotonic by band, the backtest's unit-hours
 above CHEAP_HUB; bias 0.009 -> 0.001, in-sample).
 """
+import os
+
 import numpy as np
 
 from ..forecast import context as C
@@ -38,6 +40,27 @@ CALIB = [   # online rate while available at each share in _X, by band (v2: isot
 ]
 MIN_CELL = 10
 MIN_BIN = 20
+LIKE = os.environ.get("PEAKER_LIKE") == "1"    # test switch: gas steam and CC units that run like peakers are judged here too
+LIKE_TECHS = ("gas_steam", "combined_cycle")
+LIKE_SHARE = 0.25     # online share of available hours below this ...
+LIKE_RUN_H = 16.0     # ... and online hours per day it ran at most this: started for the peak, not kept on
+LIKE_MIN_H = 480      # available hours of record a unit needs to be judged so
+
+
+def peaker_like(stats) -> set:
+    """Units outside the combustion turbines that run like peakers in the unit stats (empty
+    unless LIKE)."""
+    if not LIKE:
+        return set()
+    out = set()
+    for key, s in stats["units"].items():
+        av, on = s["avail"].sum(), s["on"].sum()
+        if s["tech"] not in LIKE_TECHS or av < LIKE_MIN_H or not s["on_days"]:
+            continue
+        run_h = on / (s["on_days"] * s["tot"].sum() / 24.0)
+        if on / av < LIKE_SHARE and run_h <= LIKE_RUN_H:
+            out.add(key)
+    return out
 
 
 def forecast(date, ctx: C.Context) -> dict:
@@ -45,9 +68,10 @@ def forecast(date, ctx: C.Context) -> dict:
     hub = ctx.hub(date)
     stats = ctx.stats_at(date)
     fleet = stats["fleet"].get("combustion_turbine")
+    like = peaker_like(stats)
     rows = {}
     for key, u in units.items():
-        if u["tech"] != "combustion_turbine":
+        if u["tech"] != "combustion_turbine" and key not in like:
             continue
         s = stats["units"].get(key)
         p = np.zeros(24)

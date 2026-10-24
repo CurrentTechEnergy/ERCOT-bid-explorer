@@ -108,7 +108,7 @@ from ..store import read_json_gz
 
 from ..decisions import _window, _cutoff, _dam_trains, HALF, OUT_MIN_H
 from ..forecast import context as C
-from . import outage_pool
+from . import outage_pool, peaker_share
 
 UNSEEN_EPS = 0.1   # unseen-outage weight of a unit never out in these weeks of earlier years, against 1.1 for one always out then
 UNSEEN_TECHS = ("coal", "combined_cycle", "gas_steam", "combustion_turbine")   # spread the zonal unseen outage MW over these
@@ -560,6 +560,7 @@ def forecast(date, ctx: C.Context) -> dict:
     known, hindsight = ctx.known_date(date)
     point, asof_hind = ctx.asof(date)
     groups, stats = ctx.groups_at(date), ctx.stats_at(date)
+    like = peaker_share.peaker_like(stats)
     mtd, month = ctx.month_to_date_hub(date)
     node_src = ctx.node_source(date)
     rows = {}
@@ -589,6 +590,8 @@ def forecast(date, ctx: C.Context) -> dict:
             row.update(verdict="on", p_on=1.0, reason="always on when available" if g == "never" else "nuclear")
         elif t == "combustion_turbine":
             row.update(verdict="peaker", reason="judged by hour (peaker_share)")
+        elif key in like:
+            row.update(verdict="peaker", reason="runs like a peaker: judged by hour (peaker_share)")
         elif g in ("seasonal", "multiday") and not cc_win:
             _seasonal(row, ctx, key, known, last, mtd, month)
         elif g is None:
