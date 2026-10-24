@@ -50,10 +50,11 @@ def _sign(key: bytes, msg: str) -> bytes:
 
 class RawStore:
     def __init__(self, endpoint=None, access_key=None, secret_key=None, bucket=None):
-        self.endpoint = (endpoint or os.environ.get("R2_ENDPOINT") or "").rstrip("/")
-        self.access_key = access_key or os.environ.get("R2_ACCESS_KEY_ID")
-        self.secret_key = secret_key or os.environ.get("R2_SECRET_ACCESS_KEY")
-        self.bucket = bucket or os.environ.get("R2_BUCKET") or "ercot-raw"
+        # strip: a secret pasted with a trailing newline would otherwise break the URL or signature
+        self.endpoint = (endpoint or os.environ.get("R2_ENDPOINT") or "").strip().rstrip("/")
+        self.access_key = (access_key or os.environ.get("R2_ACCESS_KEY_ID") or "").strip()
+        self.secret_key = (secret_key or os.environ.get("R2_SECRET_ACCESS_KEY") or "").strip()
+        self.bucket = (bucket or os.environ.get("R2_BUCKET") or "").strip() or "ercot-raw"
         self.enabled = bool(self.endpoint and self.access_key and self.secret_key)
         self.session = requests.Session()
         self.stats = {"hit": 0, "miss": 0, "stored": 0, "hit_bytes": 0, "stored_bytes": 0}
