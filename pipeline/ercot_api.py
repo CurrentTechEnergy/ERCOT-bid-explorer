@@ -11,6 +11,8 @@ from typing import List
 
 import requests
 
+from .raw_store import RawStore, timed
+
 BASE = "https://api.ercot.com/api/public-reports"
 TOKEN_URL = ("https://ercotb2c.b2clogin.com/ercotb2c.onmicrosoft.com/"
              "B2C_1_PUBAPI-ROPC-FLOW/oauth2/v2.0/token")
@@ -33,6 +35,8 @@ class ErcotAPI:
         self._token_time = 0.0
         self._last_call = 0.0
         self.session = requests.Session()
+        self.raw = RawStore()         # our own copy of every file downloaded (pipeline/raw_store.py)
+        self._docs = {}               # (emil, doc id) -> archive listing entry, for the copy's metadata
 
     # ------------------------------------------------------------ auth ----
     def _id_token(self) -> str:
@@ -88,6 +92,9 @@ class ErcotAPI:
             })
             js = r.json()
             out.extend(js.get("archives", []))
+            for doc in js.get("archives", []):
+                if "docId" in doc:
+                    self._docs[(emil, doc["docId"])] = doc
             total_pages = js.get("_meta", {}).get("totalPages", 1) or 1
             if page >= total_pages:
                 break
@@ -95,10 +102,19 @@ class ErcotAPI:
         return out
 
     def download(self, emil: str, doc_id: int) -> bytes:
-        return self._request("GET", f"{BASE}/archive/{emil}", params={"download": doc_id}).content
+        """One archive document: our stored copy when there is one, else from ERCOT (and kept)."""
+        blob = self.raw.get(emil, doc_id)
+        if blob is not None:
+            print(f"    doc {doc_id}: {len(blob) / 1e6:.1f} MB from the raw store", flush=True)
+            return blob
+        blob = timed(f"doc {doc_id} from ERCOT",
+                     lambda: self._request("GET", f"{BASE}/archive/{emil}", params={"download": doc_id}).content)
+        self.raw.put(emil, doc_id, blob, self._docs.get((emil, doc_id)))
+        return blob
 
     def download_many(self, emil: str, doc_ids: List[int]) -> List[bytes]:
-        """Bulk download (zip of zips), 1000 documents per request."""
+        """Bulk download (zip of zips), 1000 documents per request.  Not kept in the raw store:
+        these are the many small price and load files, quick to download again."""
         blobs = []
         for i in range(0, len(doc_ids), 1000):
             r = self._request("POST", f"{BASE}/archive/{emil}/download",

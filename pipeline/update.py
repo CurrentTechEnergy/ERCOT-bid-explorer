@@ -533,6 +533,9 @@ def main(argv=None):
         else:
             print(f"::notice::{msg}" if os.environ.get("GITHUB_ACTIONS") == "true" else msg, flush=True)
             lines += ["", msg]
+    if api.raw.enabled:
+        print(api.raw.summary(), flush=True)
+        lines += ["", api.raw.summary()]
     lines += ["", f"**{len(WARNINGS)} warning(s)**" if WARNINGS else "No warnings."]
     lines += [f"- {w}" for w in WARNINGS[:50]]
     write_summary(lines)
