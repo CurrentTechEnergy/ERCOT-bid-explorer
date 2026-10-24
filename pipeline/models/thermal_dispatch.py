@@ -29,6 +29,10 @@ For a unit with weight p_on (from thermal_cutoff, or by hour from peaker_share):
             and the cheap-hour smallest size; an hour the curve puts at the floor runs at that
             size, and no hour runs below it.  A train without a band size keeps the cheap-hour
             smallest size above.
+  band size (v5): coal, gas steam and combustion turbines (C.BAND_SIZE_TECHS) are sized the
+            same way from their own fully online hours (Context.unit_band_size_at), in place of
+            the day-ahead LSL, which often reports a unit's turndown capability rather than the
+            minimum it usually runs at (Limestone 263 MW against 363, Oct 2026)
 
 Each row also carries size[h] and mw[h], the minimum and the output the unit is held at when on
 (min[h] and exp[h] over p_on), for the binary lines (the build: in full when P(on) >= 0.5, none
@@ -39,7 +43,7 @@ import numpy as np
 from ..forecast import context as C
 
 NAME = "thermal_dispatch"
-VERSION = "v4"    # v4: CC size by hub price band, size by hour in each row; v3: a peaker on outage carries no weight, always-on combustion turbines held on; v2: hourly p_hours rows from thermal_cutoff v1, CC smallest size in cheap hours, out_share; v1: committed minimum uses the configuration floor; breakpoint interpolation fix
+VERSION = "v5"    # v5: coal, gas steam and CT size by hub price band too; v4: CC size by hub price band, size by hour in each row; v3: a peaker on outage carries no weight, always-on combustion turbines held on; v2: hourly p_hours rows from thermal_cutoff v1, CC smallest size in cheap hours, out_share; v1: committed minimum uses the configuration floor; breakpoint interpolation fix
 
 
 def _config_curve(ctx, month, u):
@@ -60,6 +64,7 @@ def forecast(date, ctx: C.Context, commit: dict, peakers: dict) -> dict:
     stats = ctx.stats_at(date)
     cc_min = ctx.cc_min_lsl_at(date)
     band = ctx.cc_band_size_at(date) if hub is not None else {}
+    unit_band = ctx.unit_band_size_at(date) if hub is not None else {}
     hub_band = (np.searchsorted(C.SIZE_BANDS, np.asarray(hub, float), side="left") - 1) if band else None
     rows = {}
     n_curve = 0
@@ -107,7 +112,9 @@ def forecast(date, ctx: C.Context, commit: dict, peakers: dict) -> dict:
             mw[:] = hsl if row["tech"] == "nuclear" else lsl
         fl = np.full(24, floor)
         small = cc_min.get(key) if row["tech"] == "combined_cycle" else None
-        size = band.get(key) if row["tech"] == "combined_cycle" else None
+        size = band.get(key) if row["tech"] == "combined_cycle" else unit_band.get(key) if row["tech"] in C.BAND_SIZE_TECHS else None
+        if size is not None and hub_band is None:
+            hub_band = np.searchsorted(C.SIZE_BANDS, np.asarray(hub, float), side="left") - 1
         if size is not None:        # the band mean, not the floor or the smallest size
             fl = np.array([size[b] for b in hub_band], float)
             if hsl > 0:
