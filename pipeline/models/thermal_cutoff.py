@@ -106,12 +106,23 @@ import numpy as np
 from ..config import DATA_DIR
 from ..store import read_json_gz
 
-from ..decisions import _window, _cutoff, _dam_trains, HALF, OUT_MIN_H
+from ..decisions import _window, _cutoff, _acc_unseen, _dam_trains, HALF, OUT_MIN_H
 from ..forecast import context as C
 from . import outage_pool
 
 UNSEEN_EPS = 0.1   # unseen-outage weight of a unit never out in these weeks of earlier years, against 1.1 for one always out then
 UNSEEN_TECHS = ("coal", "combined_cycle", "gas_steam", "combustion_turbine")   # spread the zonal unseen outage MW over these
+UNCLEAR = __import__("os").environ.get("CUTOFF_UNCLEAR")   # backtest check for a unit whose cutoff calls unseen days no better than its usual outcome: "pool" (the pooled cutoff) or "on" (stays on)
+
+
+def _unclear(days, c):
+    """True when the unit's cutoff calls its decision days, each judged by a cutoff from the
+    others, no better than always calling the outcome it has most often."""
+    if not UNCLEAR or c is None:
+        return False
+    base = max(np.mean([d[2] for d in days]), 1 - np.mean([d[2] for d in days]))
+    return _acc_unseen(days) <= base
+
 NAME = "thermal_cutoff"
 VERSION = "v11"   # v11: logistic stay-on rule in the window, zonal outage pool in place of the unseen allocation, long outages carried for gas steam and CTs only; v10: the zonal unseen outage placed first on units usually out in these weeks, at the fitted slope; v9: the history trees also read the forecast net load, for combined cycles; v8: the P(on) of trees fitted on the 2024-25 thermal history as an input; v7: combustion turbines share the zonal unseen outage; v6: technology one-hot, drivers of each P(on); v5: stay-on probability by boosted trees; v4: loss over the cutoff split by award history; v3: gas steam on its stay-on loss, stale gas steam outages dropped; v2: CC outage calls by gas turbine, zonal unseen outages; v1: NRC reactor status, listed outages; probability of staying on through the window, per-unit horizon, pooled cutoffs
 SEASONAL_VERSION = "v0"
@@ -378,6 +389,8 @@ def _pool(ctx, date):
             continue
         days = [(r[2], r[5], r[6]) for r in rows]
         c = _cutoff(days)
+        if UNCLEAR == "pool" and _unclear(days, c):
+            c = None
         aw = float(np.mean([d[1] >= HALF for d in days]))
         own[key] = (c[0] / u[1] if c else None, len(days), aw)
         if c:
@@ -607,11 +620,16 @@ def forecast(date, ctx: C.Context) -> dict:
             loss, bs, nh = _window(-margin)
             days = _decision_rows(ctx, key, known)
             c = _cutoff(days) if days else None
+            unclear = _unclear(days, c) if days else False
+            if unclear and UNCLEAR == "pool":
+                c = None
             aw = float(np.mean([d[1] >= HALF for d in days])) if days else 0.0
             _, pool, w = _pool(ctx, date)
             cpm = _blend((c[0] / lsl if c else None, len(days), aw), pool.get(t))
             row["loss"] = round(float(loss))
-            if cpm is None:
+            if unclear and UNCLEAR == "on" and np.mean([d[2] for d in days]) < 0.5:
+                row.update(verdict="on", p_on=1.0, reason=f"its cutoff calls unseen days no better than always on; loss ${loss:,.0f}")
+            elif cpm is None:
                 if t == "gas_steam" and g in ("seasonal", "multiday"):
                     _seasonal(row, ctx, key, known, last, mtd, month)    # too little to judge on its loss
                     row["reason"] += f" (too few decision days ({len(days)}) for a cutoff)"
