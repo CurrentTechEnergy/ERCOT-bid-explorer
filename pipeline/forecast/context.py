@@ -30,6 +30,7 @@ answers "what was known when the day-ahead market for day D cleared":
                         leave such days out of the track record
 """
 import datetime as dt
+import os
 from collections import defaultdict
 
 import numpy as np
@@ -41,6 +42,7 @@ from ..trends import UNIT_TECHS, unit_techs
 from ..units import expand
 from . import groups as grp
 
+LIVE_COSTS = os.environ.get("BACKTEST_COSTS") == "lagged"   # backtest check: unit costs as the live forecast has them, never the day's own offer
 LAG = 60                       # days between an operating day and its 60-day disclosure
 HUB = "HB_HUBAVG"
 CHEAP_HUB = 10.0               # $/MWh: an hour at or below this day-ahead hub price is a cheap hour (scored in score.py)
@@ -339,7 +341,7 @@ class Context:
         """The DAM disclosure to read a unit's costs from: D's own if public... it is not (60-day
         lag), so the latest disclosure public before D cleared; for a backtest of a day whose own
         disclosure is in, its own three-part offer (submitted for that day, so known then)."""
-        if self.dam(date):
+        if self.dam(date) and not LIVE_COSTS:
             return date
         cut = _iso(_d(date) - dt.timedelta(days=LAG))
         ok = [d for d in self.dam_days if d <= cut]
