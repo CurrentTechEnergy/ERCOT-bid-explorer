@@ -40,4 +40,8 @@ jobs:
           R2_ENDPOINT: ${{ secrets.R2_ENDPOINT }}
           R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
           R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
-        run: python -m pipeline.probe_history --first-year "${{ inputs.first_year || 2016 }}" --parse-from "${{ inputs.parse_from || 2019 }}"
+        run: python scratch_virtuals.py
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: virtuals
+          path: virtuals.json
