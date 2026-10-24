@@ -159,12 +159,12 @@ def fit(date, ctx: C.Context, day: dict) -> dict:
     T = _target(date)
     if T is None:
         return None
-    units = ctx.units(date)
+    units = ctx.units(date, own=True)     # fitted after the fact: the day's own disclosure
     month, hindsight = ctx.curve_month(date)
     w = np.array(WEIGHTS)
     fixed, known = _fixed_other(ctx, date)
     cols = {c: i for i, c in enumerate(day["units"]["columns"])}
-    dam_units = (ctx.dam(ctx.known_dam_date(date)) or {}).get("units", {})
+    dam_units = (ctx.dam(ctx.known_dam_date(date, own=True)) or {}).get("units", {})
     cand = []           # fittable units
     fixed_units = np.zeros((24, len(PRICES)))      # nuclear: on unless on outage
     ct_full, ct_fc = np.zeros(len(PRICES)), np.zeros(len(PRICES))   # every peaker on; peakers at the forecast's p_on

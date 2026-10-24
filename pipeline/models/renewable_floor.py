@@ -42,7 +42,7 @@ def _offer(ctx, date, name, node):
 
 def forecast(date, ctx: C.Context) -> dict:
     units = ctx.units(date)
-    dd = ctx.dam(date)
+    dd = ctx.dam(date) if C.OWN_DISCLOSURE else None     # the day's own resource limits are public only 60 days on
     hub = ctx.hub(date)
     fc = ctx.renew_fc.get(date) or {}
     stats = ctx.stats_at(date)["renew"]
