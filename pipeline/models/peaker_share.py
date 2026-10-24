@@ -53,6 +53,7 @@ MIN_CELL = 10
 MIN_BIN = 20
 TRAIN_DAYS = 90     # days of the 60-day record up to the history point the v3 logistic is fitted on
 TRAIN_MIN = 20000
+LIVE_COSTS = os.environ.get("PEAKER_COSTS") == "lagged"   # backtest check: costs as the live forecast has them
 FREQ_ONLY = os.environ.get("PEAKER_VARIANT") == "freq"   # backtest control: the same as-of fit without the cost features   # available unit-hours it needs
 FEATURES = ["share", "hub", "run", "run_pos", "hour_margin", "offer", "run_o", "run_pos_o", "hour_margin_o", "hub_30", "hub_45"]
 
@@ -110,6 +111,27 @@ def _x(p, hub, prices, u):
     return out
 
 
+def _costs(ctx, date, units):
+    """units with the costs (mingen, hot, est) the live forecast would have for `date`: from the
+    latest disclosure at least LAG days before it, not the day's own offer (LIVE_COSTS)."""
+    if not LIVE_COSTS:
+        return units
+    cut = (C._d(date) - C.dt.timedelta(days=C.LAG)).isoformat()
+    ok = [d for d in ctx.dam_days if d <= cut]
+    old = ctx.units(ok[-1]) if ok else {}
+    out = {}
+    for key, u in units.items():
+        o = old.get(key)
+        g = C.GENERIC_COSTS.get(u["tech"])
+        if o is not None and o["est"] == 0:
+            out[key] = dict(u, mingen=o["mingen"], hot=o["hot"], est=0)
+        elif g is not None:
+            out[key] = dict(u, mingen=g[3], hot=g[0], est=2)
+        else:
+            out[key] = u
+    return out
+
+
 def _fit(ctx, date):
     """The v3 logistic as of asof(date): (coef, intercept), or None.  Cached per history point."""
     point, _ = ctx.asof(date)
@@ -127,7 +149,7 @@ def _fit(ctx, date):
         stats = ctx.stats_at(d)
         fleet = stats["fleet"].get("combustion_turbine")
         dn = (C._d(d) - day0).days
-        for key, u in ctx.units(d).items():
+        for key, u in _costs(ctx, d, ctx.units(d)).items():
             st = raw.get(key)
             if u["tech"] != "combustion_turbine" or st is None or (dn + 1) * 24 > len(st[1]):
                 continue
@@ -151,7 +173,7 @@ def _fit(ctx, date):
 
 
 def forecast(date, ctx: C.Context) -> dict:
-    units = ctx.units(date)
+    units = _costs(ctx, date, ctx.units(date))
     hub = ctx.hub(date)
     stats = ctx.stats_at(date)
     fleet = stats["fleet"].get("combustion_turbine")
