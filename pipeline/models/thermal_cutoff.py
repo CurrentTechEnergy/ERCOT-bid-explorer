@@ -112,6 +112,7 @@ from . import outage_pool
 
 UNSEEN_EPS = 0.1   # unseen-outage weight of a unit never out in these weeks of earlier years, against 1.1 for one always out then
 UNSEEN_TECHS = ("coal", "combined_cycle", "gas_steam", "combustion_turbine")   # spread the zonal unseen outage MW over these
+TRAIN_LAGGED = __import__("os").environ.get("TRAIN_COSTS") == "lagged"   # backtest check: train on the costs the forecast is given
 NAME = "thermal_cutoff"
 VERSION = "v11"   # v11: logistic stay-on rule in the window, zonal outage pool in place of the unseen allocation, long outages carried for gas steam and CTs only; v10: the zonal unseen outage placed first on units usually out in these weeks, at the fitted slope; v9: the history trees also read the forecast net load, for combined cycles; v8: the P(on) of trees fitted on the 2024-25 thermal history as an input; v7: combustion turbines share the zonal unseen outage; v6: technology one-hot, drivers of each P(on); v5: stay-on probability by boosted trees; v4: loss over the cutoff split by award history; v3: gas steam on its stay-on loss, stale gas steam outages dropped; v2: CC outage calls by gas turbine, zonal unseen outages; v1: NRC reactor status, listed outages; probability of staying on through the window, per-unit horizon, pooled cutoffs
 SEASONAL_VERSION = "v0"
@@ -329,6 +330,12 @@ def _day_trains(ctx):
                 continue
             out[d] = {key: (e["tech"], e["spp"], e["mingen"], e["lsl"]) for key, e in _dam_trains(dd).items()
                       if e["tech"] in DAILY_TECHS and e["spp"] is not None and e["lsl"]}
+            if TRAIN_LAGGED:
+                # costs and LSL as the forecast of that day had them (the disclosure 60 days back),
+                # so the trees learn from the inputs they are later given
+                known = ctx.units(d)
+                out[d] = {key: (t, spp, known[key]["mingen"], known[key]["lsl"] or lsl)
+                          for key, (t, spp, mg, lsl) in out[d].items() if key in known}
         ctx._cut_days = out
     return ctx._cut_days
 
