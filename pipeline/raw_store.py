@@ -36,6 +36,9 @@ from .log import warn
 # A run stops keeping files after this many bytes (and warns), so a bug cannot fill the bucket.
 # Downloading carries on as before.  The whole 60-day history is roughly 10 to 20 GB.
 RUN_LIMIT = int(float(os.environ.get("R2_RUN_LIMIT_GB") or 20) * 1e9)
+TIMEOUT = (15, 120)          # seconds to connect, and to wait for each read
+MAX_FAILURES = 3            # reads (or uploads) failing for this many files in a row turn reading (or storing) off
+SLOW_PUT = 60               # a single upload slower than this turns storing off for the run
 REGION = "auto"             # R2 accepts "auto" for SigV4
 SERVICE = "s3"
 
@@ -57,8 +60,11 @@ class RawStore:
         self.bucket = (bucket or os.environ.get("R2_BUCKET") or "").strip() or "ercot-raw"
         self.enabled = bool(self.endpoint and self.access_key and self.secret_key)
         self.session = requests.Session()
-        self.stats = {"hit": 0, "miss": 0, "stored": 0, "hit_bytes": 0, "stored_bytes": 0}
-        self._failed = False        # warn once per run, then stop trying
+        self.stats = {"hit": 0, "miss": 0, "stored": 0, "hit_bytes": 0, "stored_bytes": 0, "put_seconds": 0.0}
+        self._failed = False        # storing turned off for the rest of the run
+        self._put_failures = 0      # failed uploads in a row
+        self._get_failures = 0      # failed reads in a row
+        self._read_off = False      # reading turned off for the rest of the run
 
     # ----------------------------------------------------------- signing ---
     def _headers(self, method: str, key: str, body: bytes = b"", extra=None, now=None) -> dict:
@@ -99,21 +105,32 @@ class RawStore:
 
     # ------------------------------------------------------------- use -----
     def get(self, emil: str, doc_id):
-        """The stored file, or None when it is not stored (or the bucket is unavailable)."""
-        if not self.enabled or self._failed:
+        """The stored file, or None when it is not stored or can't be read.  A failed read is
+        tried once more and then counts as not stored: the file is downloaded from ERCOT and
+        stored again, and the run keeps using the bucket."""
+        if not self.enabled or self._read_off:
             return None
         key = _key(emil, doc_id)
-        try:
-            r = self.session.get(self._url(key), headers=self._headers("GET", key), timeout=300)
-        except requests.RequestException as e:
-            self._give_up(f"reading {key}", e)
-            return None
-        if r.status_code == 404:
+        for attempt in (1, 2):
+            try:
+                r = self.session.get(self._url(key), headers=self._headers("GET", key), timeout=TIMEOUT)
+            except requests.RequestException as e:
+                err = e
+                continue
+            if r.status_code == 404:
+                self.stats["miss"] += 1
+                return None
+            if r.status_code == 200:
+                break
+            err = f"HTTP {r.status_code}: {r.text[:200]}"
+        else:
+            self._get_failures += 1
+            self._read_off = self._get_failures >= MAX_FAILURES     # the bucket looks down: stop asking
+            warn(f"raw store: reading {key} failed twice ({err}); downloading it from ERCOT instead"
+                 + ("; not reading the bucket for the rest of this run" if self._read_off else ""))
             self.stats["miss"] += 1
             return None
-        if r.status_code != 200:
-            self._give_up(f"reading {key}", f"HTTP {r.status_code}: {r.text[:200]}")
-            return None
+        self._get_failures = 0
         blob = r.content
         if blob[:2] != b"PK":       # never hand the parser anything but a zip
             self.stats["miss"] += 1
@@ -137,22 +154,38 @@ class RawStore:
             if v:
                 meta[f"x-amz-meta-{name}"] = quote(str(v), safe="")   # header values must be ASCII
         extra = {"content-type": "application/zip", **meta}
-        try:
-            r = self.session.put(self._url(key), data=blob,
-                                 headers=self._headers("PUT", key, blob, extra), timeout=600)
-        except requests.RequestException as e:
-            self._give_up(f"storing {key}", e)
+        t0 = time.time()
+        for attempt in (1, 2):
+            try:
+                r = self.session.put(self._url(key), data=blob,
+                                     headers=self._headers("PUT", key, blob, extra), timeout=TIMEOUT)
+                err = None if r.status_code == 200 else f"HTTP {r.status_code}: {r.text[:200]}"
+            except requests.RequestException as e:
+                err = e
+            if err is None:
+                break
+        took = time.time() - t0
+        self.stats["put_seconds"] += took
+        if err is not None:     # one file not kept; only several in a row turn storing off
+            self._put_failures += 1
+            if self._put_failures >= MAX_FAILURES:
+                self._give_up(f"storing {key} ({self._put_failures} files in a row)", err)
+            else:
+                warn(f"raw store: storing {key} failed twice ({err}); not kept, carrying on")
             return
-        if r.status_code != 200:
-            self._give_up(f"storing {key}", f"HTTP {r.status_code}: {r.text[:200]}")
-            return
+        self._put_failures = 0
         self.stats["stored"] += 1
         self.stats["stored_bytes"] += len(blob)
+        if took > SLOW_PUT:     # never let the bucket slow the run down: stop storing instead
+            warn(f"raw store: storing {key} took {took:.0f}s for {len(blob) / 1e6:.0f} MB; "
+                 "not keeping files for the rest of this run")
+            self._failed = True
 
     def summary(self) -> str:
         s = self.stats
         return (f"raw store: {s['hit']} file(s) read from the bucket ({s['hit_bytes'] / 1e6:.0f} MB), "
-                f"{s['miss']} not there, {s['stored']} stored ({s['stored_bytes'] / 1e6:.0f} MB)")
+                f"{s['miss']} not there, {s['stored']} stored ({s['stored_bytes'] / 1e6:.0f} MB "
+                f"in {s['put_seconds']:.0f}s)")
 
 
 def timed(label: str, fn):
