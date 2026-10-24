@@ -257,17 +257,27 @@ EMIL_OF = {"2d": EMIL_2DAY, "2dgen": EMIL_2DAY_GEN, "60d": EMIL_60DAY, "dam": EM
 def fetch_mis_docs(doc_ids, index: dict) -> None:
     """Report files from ERCOT's public website by MIS document id. The API's archive leaves out
     some files the website has (ten 60-day SCED days in Mar to Jul 2026), and the ids are the
-    same in both, so each one is recorded as done for its report."""
+    same in both, so each one is recorded as done for its report.  Each file is read from our raw
+    store first (pipeline/raw_store.py) and kept there once downloaded and recognised: these are
+    the files the API can't give back."""
     from .entities import DOWNLOAD
+    from .raw_store import RawStore
+    raw = RawStore()
     for doc_id in doc_ids:
         try:
-            r = requests.get(DOWNLOAD.format(doc_id), timeout=600)
-            r.raise_for_status()
-            blob = r.content
+            # the report is known only once the file is read, so look under each one it can be
+            blob = next((b for e in (EMIL_60DAY, EMIL_DAM) if (b := raw.get(e, doc_id)) is not None), None)
+            fetched = blob is None
+            if fetched:
+                r = requests.get(DOWNLOAD.format(doc_id), timeout=600)
+                r.raise_for_status()
+                blob = r.content
             found = curve_source(blob)
             if found is None:
                 raise ValueError(f"not a report zip this pipeline reads ({describe_blob(blob)})")
-            print(f"MIS document {doc_id}: {found[0]}")
+            print(f"MIS document {doc_id}: {found[0]}{'' if fetched else ' (raw store)'}")
+            if fetched:
+                raw.put(EMIL_OF[found[0]], doc_id, blob)
             process_curve_zip(blob, index)
             done = index.setdefault("docs", {}).setdefault(EMIL_OF[found[0]], [])
             if doc_id not in done:
@@ -275,6 +285,8 @@ def fetch_mis_docs(doc_ids, index: dict) -> None:
             save_index(index)
         except Exception as e:  # keep going; one bad file shouldn't stop the run
             warn(f"MIS document {doc_id}: failed: {type(e).__name__}: {e}")
+    if raw.enabled:
+        print(raw.summary())
 
 
 def reprocess_60d(api, index: dict, mode: str = "missing", limit=None) -> tuple:
