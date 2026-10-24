@@ -38,7 +38,7 @@ import numpy as np
 from ..forecast import context as C
 
 NAME = "peaker_share"
-VERSION = "v3"    # v3: logistic on the share, the hub and the unit's own run margin in place of CALIB; v2: share of available hours (outage hours left out), CALIB refit; v1: history share mapped through CALIB by hub price band
+VERSION = "v3b"   # v3b: v3 with an intercept per upper hub band (v3 under-called 30-45); v3: logistic on the share, the hub and the unit's own run margin in place of CALIB; v2: share of available hours (outage hours left out), CALIB refit; v1: history share mapped through CALIB by hub price band
 BANDS = [20.0, 30.0, 45.0]   # hub $/MWh: bands (CHEAP_HUB, 20], (20, 30], (30, 45], above 45
 _X = [0.0, 0.012, 0.034, 0.073, 0.15, 0.25, 0.35, 0.455, 0.557, 0.655, 0.752, 0.852, 0.983, 1.0]
 CALIB = [   # online rate while available at each share in _X, by band (v2: isotonic fit, Mar-Aug 2026)
@@ -51,7 +51,7 @@ MIN_CELL = 10
 MIN_BIN = 20
 TRAIN_DAYS = 90     # days of the 60-day record up to the history point the v3 logistic is fitted on
 TRAIN_MIN = 20000   # available unit-hours it needs
-FEATURES = ["share", "hub", "run", "run_pos", "hour_margin", "offer", "run_o", "run_pos_o", "hour_margin_o"]
+FEATURES = ["share", "hub", "run", "run_pos", "hour_margin", "offer", "run_o", "run_pos_o", "hour_margin_o", "hub_30", "hub_45"]
 
 
 def _share(s, fleet, hub):
@@ -100,7 +100,8 @@ def _x(p, hub, prices, u):
     own = float(u["est"] == 0)
     x = np.column_stack([np.log(q / (1 - q)), np.clip(hub, -20, 200) / 50, np.arcsinh(run / 10), (run > 0).astype(float),
                          np.clip(margin, -100, 300) / 50, np.full(24, own)])
-    return np.column_stack([x, x[:, 2:5] * own])
+    bands = np.column_stack([hub > b for b in BANDS[1:]]).astype(float)    # an intercept for each of CALIB's upper hub bands
+    return np.column_stack([x, x[:, 2:5] * own, bands])
 
 
 def _fit(ctx, date):
