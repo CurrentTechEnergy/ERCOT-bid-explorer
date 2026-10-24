@@ -35,6 +35,9 @@ on:
         type: boolean
         required: false
         default: false
+      mis_docs:
+        description: "Instead of the API's report fetch, download these report files from ERCOT's website (MIS document ids, space separated), for days the API doesn't serve"
+        required: false
       rebuild_all:
         description: "Rerun every builder, even those whose inputs are unchanged since the last build (pipeline/memo.py)"
         type: boolean
@@ -132,8 +135,13 @@ jobs:
           OUTAGES_END: ${{ github.event.inputs.outages_end }}
           UNIT_DATA_DIR: unitdata
           REBUILD_ALL: ${{ github.event.inputs.rebuild_all == 'true' && '1' || '' }}
+          MIS_DOCS: ${{ github.event.inputs.mis_docs }}
         run: |
-          if [ "$REPROCESS_60D" = "true" ]; then
+          if [ -n "$MIS_DOCS" ]; then
+            # ids only: digits and spaces
+            [[ "$MIS_DOCS" =~ ^[0-9\ ]+$ ]] || { echo "::error::mis_docs takes document ids separated by spaces"; exit 1; }
+            python -m pipeline.update --mis-docs $MIS_DOCS
+          elif [ "$REPROCESS_60D" = "true" ]; then
             python -m pipeline.update --reprocess-60d --max-files "${MAX_FILES:-60}"
           elif [ -n "$BACKFILL_START" ]; then
             python -m pipeline.update --backfill "$BACKFILL_START" "${BACKFILL_END:-$BACKFILL_START}" --max-files "${MAX_FILES:-60}"
@@ -199,7 +207,7 @@ jobs:
       # site/data/freshness.json and keeps one "stale-data" issue open while anything is behind.
       # Runs even when an earlier step failed, and never fails the run itself.
       - name: Check data freshness
-        if: always() && !inputs.backfill_start && inputs.reprocess_60d != true && !inputs.outages_start
+        if: always() && !inputs.backfill_start && inputs.reprocess_60d != true && !inputs.outages_start && !inputs.mis_docs
         continue-on-error: true
         env:
           GH_TOKEN: ${{ github.token }}
