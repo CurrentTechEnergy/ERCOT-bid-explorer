@@ -254,39 +254,105 @@ def fetch_curves(api, emil: str, posted_from: dt.datetime, posted_to: dt.datetim
 EMIL_OF = {"2d": EMIL_2DAY, "2dgen": EMIL_2DAY_GEN, "60d": EMIL_60DAY, "dam": EMIL_DAM}
 
 
+def _load_mis_doc(doc_id, index: dict, raw, emils=(EMIL_60DAY, EMIL_DAM)) -> str:
+    """Load one report file from ERCOT's public website by MIS document id, reading it from the
+    raw store first (looking under each report in `emils`, since the report is known only once
+    the file is read) and keeping it there once downloaded and recognised.  Records the id as done
+    for its report.  -> the operating day loaded"""
+    from .entities import DOWNLOAD
+    blob = next((b for e in emils if (b := raw.get(e, doc_id)) is not None), None)
+    fetched = blob is None
+    if fetched:
+        r = requests.get(DOWNLOAD.format(doc_id), timeout=600)
+        r.raise_for_status()
+        blob = r.content
+    found = curve_source(blob)
+    if found is None:
+        raise ValueError(f"not a report zip this pipeline reads ({describe_blob(blob)})")
+    print(f"MIS document {doc_id}: {found[0]}{'' if fetched else ' (raw store)'}")
+    if fetched:
+        raw.put(EMIL_OF[found[0]], doc_id, blob)
+    date = process_curve_zip(blob, index)
+    done = index.setdefault("docs", {}).setdefault(EMIL_OF[found[0]], [])
+    if doc_id not in done:
+        done.append(doc_id)
+    save_index(index)
+    return date
+
+
 def fetch_mis_docs(doc_ids, index: dict) -> None:
     """Report files from ERCOT's public website by MIS document id. The API's archive leaves out
     some files the website has (ten 60-day SCED days in Mar to Jul 2026), and the ids are the
     same in both, so each one is recorded as done for its report.  Each file is read from our raw
     store first (pipeline/raw_store.py) and kept there once downloaded and recognised: these are
     the files the API can't give back."""
-    from .entities import DOWNLOAD
     from .raw_store import RawStore
     raw = RawStore()
     for doc_id in doc_ids:
         try:
-            # the report is known only once the file is read, so look under each one it can be
-            blob = next((b for e in (EMIL_60DAY, EMIL_DAM) if (b := raw.get(e, doc_id)) is not None), None)
-            fetched = blob is None
-            if fetched:
-                r = requests.get(DOWNLOAD.format(doc_id), timeout=600)
-                r.raise_for_status()
-                blob = r.content
-            found = curve_source(blob)
-            if found is None:
-                raise ValueError(f"not a report zip this pipeline reads ({describe_blob(blob)})")
-            print(f"MIS document {doc_id}: {found[0]}{'' if fetched else ' (raw store)'}")
-            if fetched:
-                raw.put(EMIL_OF[found[0]], doc_id, blob)
-            process_curve_zip(blob, index)
-            done = index.setdefault("docs", {}).setdefault(EMIL_OF[found[0]], [])
-            if doc_id not in done:
-                done.append(doc_id)
-            save_index(index)
+            _load_mis_doc(doc_id, index, raw)
         except Exception as e:  # keep going; one bad file shouldn't stop the run
             warn(f"MIS document {doc_id}: failed: {type(e).__name__}: {e}")
     if raw.enabled:
         print(raw.summary())
+
+
+# ERCOT's public website lists each report's files by report type id, with posting time and
+# document id (the same id as the API's).  It keeps 60-day files for about 2.5 years but 2-day
+# files for only about 32 days, so the fallback runs in every normal update.
+MIS_REPORT_TYPE = {"2d": 13054, "2dgen": 13056, "60d": 13052, "dam": 13051}
+WEBSITE_LOOKBACK = 30       # operating days, counted back from the newest day each report should have
+
+
+def website_fallback(api, index: dict, sources=("2d", "2dgen", "60d", "dam"), want_dates=None) -> None:
+    """After the API pass, look for missing operating days on ERCOT's website and load them.
+
+    Missing means: not in the index, on or after the report's first loaded day, and either in
+    `want_dates` (a backfill) or within WEBSITE_LOOKBACK days of the newest day the report should
+    have by now (its usual lag).  Files are matched to days by posting date (op day = posting day
+    minus the lag, within 3 days, as fetch_curves does); a file already opened from either source is
+    never downloaded again, and every file goes through the raw store."""
+    from .entities import LIST
+    today = dt.date.today()
+    for source in sources:
+        emil, lag = EMIL_OF[source], (60 if source in ("60d", "dam") else 2)
+        have = set(index["days"].get(source, []))
+        if not have:
+            continue
+        first, newest = _d(min(have)), today - dt.timedelta(days=lag + 1)
+        if want_dates:
+            targets = {d for d in want_dates if d not in have and _d(d) >= first and _d(d) <= newest}
+        else:
+            lo = max(first, newest - dt.timedelta(days=WEBSITE_LOOKBACK))
+            targets = {(lo + dt.timedelta(days=i)).isoformat() for i in range((newest - lo).days + 1)} - have
+        if not targets:
+            continue
+        try:
+            r = requests.get(LIST.format(MIS_REPORT_TYPE[source]), timeout=120)
+            r.raise_for_status()
+            docs = [d["Document"] for d in r.json()["ListDocsByRptTypeRes"]["DocumentList"]]
+        except Exception as e:
+            warn(f"website fallback {source}: listing failed: {type(e).__name__}: {e}")
+            continue
+        done = set(index.setdefault("docs", {}).setdefault(emil, []))
+        cands = []
+        for d in docs:
+            doc_id = int(d["DocID"])
+            guess = _d(d["PublishDate"][:10]) - dt.timedelta(days=lag)
+            if doc_id not in done and any(abs((guess - _d(t)).days) <= 3 for t in targets):
+                cands.append((abs(min((guess - _d(t)).days for t in targets)), doc_id))
+        print(f"website fallback {source}: {len(targets)} day(s) missing after the API "
+              f"({', '.join(sorted(targets)[:10])}{' ...' if len(targets) > 10 else ''}); "
+              f"{len(cands)} unopened file(s) on ercot.com posted near them")
+        for _, doc_id in sorted(cands):         # files whose posting date points straight at a gap first
+            if not targets:
+                break
+            try:
+                targets.discard(_load_mis_doc(doc_id, index, api.raw, emils=(emil,)))
+            except Exception as e:
+                warn(f"website fallback {source}: document {doc_id} failed: {type(e).__name__}: {e}")
+        if targets:
+            print(f"website fallback {source}: still missing {', '.join(sorted(targets))}")
 
 
 def reprocess_60d(api, index: dict, mode: str = "missing", limit=None) -> tuple:
@@ -493,6 +559,7 @@ def main(argv=None):
                          dt.datetime.combine(start + dt.timedelta(days=lag - 1), dt.time()),
                          dt.datetime.combine(end + dt.timedelta(days=lag + 5), dt.time()),
                          index, source, want_dates=want, limit=args.max_files)
+        website_fallback(api, index, [s for s in ("2d", "2dgen", "60d", "dam") if s not in args.skip], want)
     elif args.reprocess_60d:
         start, left = reprocess_60d(api, index, args.reprocess_60d, limit=args.max_files)
         # the workflow queues another reprocess run while days are left and this one made progress
@@ -509,6 +576,7 @@ def main(argv=None):
             fetch_curves(api, EMIL_60DAY, since, now + dt.timedelta(days=1), index, "60d", limit=args.max_files)
         if "dam" not in args.skip:
             fetch_curves(api, EMIL_DAM, since, now + dt.timedelta(days=1), index, "dam", limit=args.max_files)
+        website_fallback(api, index, [s for s in ("2d", "2dgen", "60d", "dam") if s not in args.skip])
 
     if "prices" not in args.skip:
         need = set(index["days"]["2d"]) | set(index["days"]["60d"])
