@@ -15,6 +15,7 @@ Once:
 import datetime as dt
 import io
 import sys
+import zipfile
 from pathlib import Path
 
 import pandas as pd
@@ -27,8 +28,41 @@ EMIL_LDF = "np4-159-cd"
 OUT = Path("out/dart")
 
 
+def fetch_docs(api, emil, docs):
+    """Every document's zip, raw store first (Blair's rule through Oct 31: a workflow fetch reads
+    the R2 raw store first and keeps what it fetches).  Misses come from ERCOT in bulk; each inner
+    zip is matched back to its document by file name and stored.  Any the bulk zip can't be
+    matched to are fetched one by one through ErcotAPI.download, which stores them itself."""
+    blobs, miss = {}, []
+    for x in docs:
+        b = api.raw.get(emil, x["docId"])
+        if b is not None:
+            blobs[x["docId"]] = b
+        else:
+            miss.append(x)
+    by_name = {str(x.get("constructedName") or ""): x for x in miss}
+    left = {x["docId"]: x for x in miss}
+    for i in range(0, len(miss), 1000):
+        for blob in api.download_many(emil, [x["docId"] for x in miss[i:i + 1000]]):
+            with zipfile.ZipFile(io.BytesIO(blob)) as zf:
+                for info in zf.infolist():
+                    x = by_name.get(Path(info.filename).name)
+                    if x is None or x["docId"] not in left:
+                        continue
+                    inner = zf.read(info)
+                    api.raw.put(emil, x["docId"], inner, x)
+                    blobs[x["docId"]] = inner
+                    left.pop(x["docId"])
+    if left:
+        print(f"  {len(left)} of {len(miss)} not matched in the bulk zip; fetching one by one", flush=True)
+        for doc_id in list(left):
+            blobs[doc_id] = api.download(emil, doc_id)
+    print(f"  {len(docs) - len(miss)} from the raw store, {len(miss)} from ERCOT", flush=True)
+    return blobs
+
+
 def _csvs(api, emil, docs):
-    for blob in api.download_many(emil, [x["docId"] for x in docs]) if docs else []:
+    for blob in fetch_docs(api, emil, docs).values():
         for _, b in iter_csvs(blob, "x.zip"):
             yield b
 
@@ -92,6 +126,7 @@ def main(argv):
             bus_day(api, d, bus_sub)
         except Exception as e:
             print(f"{d}: failed: {type(e).__name__}: {e}", flush=True)
+    print(api.raw.summary(), flush=True)
 
 
 if __name__ == "__main__":
