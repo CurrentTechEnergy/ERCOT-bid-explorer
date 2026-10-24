@@ -77,6 +77,7 @@ SNAP_HOUR = 15                 # the run nearest this hour on the snapshot day g
 SIZE_BANDS = [-np.inf, 10.0, 20.0, 30.0, 50.0, np.inf]   # $/MWh, day-ahead hub: CC size bands (thermal_dispatch v4; the first is CHEAP_HUB)
 SIZE_DAYS = 365            # days up to the asof point a train's band sizes are taken from
 BAND_SIZE_TECHS = ("coal", "gas_steam", "combustion_turbine")   # sized by hub band like CC trains (thermal_dispatch v5)
+SIZE_SINCE = os.environ.get("SIZE_SINCE")   # backtest check: band sizes from hours after this date only (e.g. RTC+B, 2025-12-05)
 SIZE_MIN_HOURS = 24        # online hours a band needs for its own mean, else the train's mean over all bands
 
 
@@ -841,6 +842,8 @@ def _band_means(p, point) -> dict:
     """{train: [mean LSL in each SIZE_BANDS band]} over the SIZE_DAYS days up to point of a size
     panel; a band with fewer than SIZE_MIN_HOURS hours takes the train's mean over all of them."""
     lo = (_d(point) - dt.timedelta(days=SIZE_DAYS)).isoformat()
+    if SIZE_SINCE and point >= SIZE_SINCE:
+        lo = max(lo, SIZE_SINCE)
     w = p[(p["date"] > lo) & (p["date"] <= point)]
     g = w.groupby(["train", "band"])["lsl"]
     tab = g.mean().where(g.size() >= SIZE_MIN_HOURS).unstack()
