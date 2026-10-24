@@ -45,6 +45,60 @@ LIKE_TECHS = ("gas_steam", "combined_cycle")
 LIKE_SHARE = 0.25     # online share of available hours below this ...
 LIKE_RUN_H = 16.0     # ... and online hours per day it ran at most this: started for the peak, not kept on
 LIKE_MIN_H = 480      # available hours of record a unit needs to be judged so
+MIN_RUN = os.environ.get("PEAKER_MIN_RUN") == "1"   # test switch: a peaker-like unit's called hours form one block of at least its usual shortest run
+MIN_RUN_Q = 10        # percentile of the unit's completed runs taken as its shortest usual run
+MIN_RUN_N = 5         # completed runs a unit needs for its own; else MIN_RUN_DEFAULT
+MIN_RUN_DEFAULT = 5
+
+
+def _min_run(ctx, key, point):
+    """Hours: the MIN_RUN_Q percentile of the unit's completed runs in the hourly states up to
+    the end of `point`, cached per point."""
+    cache = ctx.__dict__.setdefault("_peaker_min_run", {})
+    if (key, point) not in cache:
+        st = (ctx.raw_states().get(key) or (None, None))[1]
+        runs = []
+        if st is not None and point:
+            n = min(len(st), ((C._d(point) - ctx.stats["day0"]).days + 1) * 24)
+            on = np.isin(st[:n], ["m", "a"])
+            i = 0
+            while i < n:
+                if on[i]:
+                    j = i
+                    while j < n and on[j]:
+                        j += 1
+                    if i > 0 and j < n:
+                        runs.append(j - i)
+                    i = j
+                else:
+                    i += 1
+        cache[(key, point)] = float(np.percentile(runs, MIN_RUN_Q)) if len(runs) >= MIN_RUN_N else MIN_RUN_DEFAULT
+    return cache[(key, point)]
+
+
+def _block(p, n):
+    """p with each run of hours at 0.5 or more stretched to at least n hours, one hour at a time
+    toward the likelier neighbour, the added hours at the run's mean."""
+    p = p.copy()
+    on = p >= 0.5
+    i = 0
+    while i < 24:
+        if not on[i]:
+            i += 1
+            continue
+        j = i
+        while j < 24 and on[j]:
+            j += 1
+        lo, hi, v = i, j, float(p[i:j].mean())
+        while hi - lo < n and (lo > 0 or hi < 24):
+            if hi >= 24 or (lo > 0 and p[lo - 1] >= p[hi]):
+                lo -= 1
+            else:
+                hi += 1
+        p[lo:hi] = np.maximum(p[lo:hi], v)
+        on[lo:hi] = True
+        i = hi
+    return p
 
 
 def peaker_like(stats) -> set:
@@ -94,5 +148,7 @@ def forecast(date, ctx: C.Context) -> dict:
             for h in range(24):
                 if float(hub[h]) > C.CHEAP_HUB:
                     p[h] = np.interp(p[h], _X, CALIB[int(np.searchsorted(BANDS, float(hub[h])))])
+        if MIN_RUN and key in like:
+            p = _block(p, int(round(_min_run(ctx, key, ctx.asof(date)[0]))))
         rows[key] = {"p_on": np.round(p, 3), "source": src, "model": NAME, "version": VERSION}
     return {"rows": rows, "inputs": {"hub": hub is not None}}
