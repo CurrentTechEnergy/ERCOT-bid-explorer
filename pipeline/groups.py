@@ -18,7 +18,9 @@ Rules (the same as trends.js had in stretchBase before this module):
 - A single offline hour inside a combined-cycle train is a configuration change, not a shutdown.
 - Any non-running spell that is mostly outage, or has fewer than OUT_MIN_H OFF hours before or
   around an outage, is an outage throughout (a unit returning from a refuelling outage can report
-  OFF for days).
+  OFF for days).  For coal (OUT_ANY_TECHS) any outage hour makes the spell an outage: a coal unit
+  reports OFF around planned work that the unplanned outage report doesn't list (WAP_WAP_G6,
+  Feb 12 to Mar 19 2026: 738 h OFF around a 97 h tube leak).
 - Off spells are the offline hours after a running hour: shutdowns, with outage hours inside them
   (a maintenance window slotted into an economic shutdown), at least OUT_MIN_H hours OFF and no
   more missing hours than OFF hours (a missing hour inside a spell is usually the spring clock
@@ -42,6 +44,7 @@ from .store import read_json_gz, write_json_gz
 from .trends import listed_units, unit_techs
 
 OUT_MIN_H = 4
+OUT_ANY_TECHS = ("coal",)     # any outage hour in a non-running spell makes it an outage
 GROUPS = [
     ["never", "Always on when available", "no shutdown on price in the period; off only for outages"],
     ["seasonal", "Seasonal: off a week or more", "every off spell lasted 7 days or more"],
@@ -118,7 +121,7 @@ def rewrite_outages(e: dict) -> list:
             elif st[j] == "o":
                 out += 1
             j += 1
-        if out and (off < OUT_MIN_H or out > off):
+        if out and (off < OUT_MIN_H or out > off or e["tech"] in OUT_ANY_TECHS):
             for i in range(k, j):
                 if st[i] == "0":
                     st[i] = "o"

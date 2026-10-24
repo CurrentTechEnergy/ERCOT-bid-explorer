@@ -381,6 +381,7 @@ const ST_GROUPS = [
   { id: "never_on", label: "Never on", note: `no running hour in ${ST_NEVER_ON_DAYS}+ days of states` },
 ];
 const ST_OUT_MIN_H = 4;                  // an off spell with fewer OFF hours than this, or more OUT than OFF, is an outage
+const ST_OUT_ANY = new Set(["coal"]);    // for these any outage hour makes the spell an outage (pipeline/groups.py OUT_ANY_TECHS)
 const ST_FLEET = [...ST_RESP, { id: "N", label: "Not running going in", color: "--grid", o: 1 }];
 const ST_RANK = { a: 4, m: 3, "0": 2, o: 1, "-": 0 };
 const trainOf = (u) => { const m = /^(.*_CC\d+)_/.exec(u); return m ? m[1] : u; };
@@ -432,7 +433,7 @@ function stretchBase() {
       if (st[k] === "m" || st[k] === "a") { k++; continue; }
       let j = k, off = 0, out = 0;
       while (j < N && st[j] !== "m" && st[j] !== "a") { if (st[j] === "0") off++; else if (st[j] === "o") out++; j++; }
-      if (out && (off < ST_OUT_MIN_H || out > off)) for (let i = k; i < j; i++) if (st[i] === "0") st[i] = "o";
+      if (out && (off < ST_OUT_MIN_H || out > off || ST_OUT_ANY.has(e.tech))) for (let i = k; i < j; i++) if (st[i] === "0") st[i] = "o";
       k = j;
     }
     let k = 0, short = 0, long = [];
