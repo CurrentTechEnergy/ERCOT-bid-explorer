@@ -76,6 +76,7 @@ SNAP_HOUR = 15                 # the run nearest this hour on the snapshot day g
 
 SIZE_BANDS = [-np.inf, 10.0, 20.0, 30.0, 50.0, np.inf]   # $/MWh, day-ahead hub: CC size bands (thermal_dispatch v4; the first is CHEAP_HUB)
 SIZE_DAYS = 365            # days up to the asof point a train's band sizes are taken from
+BAND_SIZE_TECHS = ("coal", "gas_steam", "combustion_turbine")   # sized by hub band like CC trains (thermal_dispatch v5)
 SIZE_MIN_HOURS = 24        # online hours a band needs for its own mean, else the train's mean over all bands
 
 
@@ -655,22 +656,32 @@ class Context:
             return {}
         cache = self.__dict__.setdefault("_cc_band", {})
         if point not in cache:
-            p = self._cc_size_panel()
-            lo = (_d(point) - dt.timedelta(days=SIZE_DAYS)).isoformat()
-            w = p[(p["date"] > lo) & (p["date"] <= point)]
-            g = w.groupby(["train", "band"])["lsl"]
-            tab = g.mean().where(g.size() >= SIZE_MIN_HOURS).unstack()
-            one = w.groupby("train")["lsl"].mean()
-            out = {}
-            for train, m in one.items():
-                v = tab.loc[train].reindex(range(len(SIZE_BANDS) - 1)) if train in tab.index else None
-                out[train] = [float(m) if v is None or np.isnan(v.iloc[b]) else float(v.iloc[b])
-                              for b in range(len(SIZE_BANDS) - 1)]
-            cache[point] = out
+            cache[point] = _band_means(self._cc_size_panel(), point)
         return cache[point]
 
-    def _cc_size_panel(self):
-        """CC train-hours online with an LSL: train, date, lsl, band (of the day-ahead hub)."""
+    def unit_band_size_at(self, date):
+        """{unit: [mean online LSL, MW, in each SIZE_BANDS band of the day-ahead hub]} for coal,
+        gas steam and combustion turbines (BAND_SIZE_TECHS), as cc_band_size_at does for CC
+        trains: hours fully online (online share less ramping share at least 0.5) over the
+        SIZE_DAYS days up to asof(date), the thermal history before the 60-day record, then the
+        60-day unit files.  A unit's turndown mode on cheap days shows up in its low bands."""
+        point, _ = self.asof(date)
+        if point is None:
+            return {}
+        cache = self.__dict__.setdefault("_unit_band", {})
+        if point not in cache:
+            cache[point] = _band_means(self._cc_size_panel(BAND_SIZE_TECHS), point)
+        return cache[point]
+
+    def _cc_size_panel(self, techs=("combined_cycle",)):
+        """CC train-hours online with an LSL: train, date, lsl, band (of the day-ahead hub); or
+        the unit-hours of techs."""
+        techs = tuple(techs)
+        panels = self.__dict__.setdefault("_size_panels", {})
+        if techs != ("combined_cycle",) and techs not in panels:
+            panels[techs] = self._size_panel(techs)
+        if techs != ("combined_cycle",):
+            return panels[techs]
         if getattr(self, "_cc_size", None) is None:
             import pandas as pd
             first = self.days60[0] if self.days60 else "9999"
@@ -704,6 +715,37 @@ class Context:
             p["band"] = np.searchsorted(SIZE_BANDS, p["hub"].to_numpy(float), side="left") - 1
             self._cc_size = p[["train", "date", "lsl", "band"]]
         return self._cc_size
+
+    def _size_panel(self, techs):
+        """Unit-hours of techs fully online with an LSL: train (the unit), date, lsl, band."""
+        import pandas as pd
+        first = self.days60[0] if self.days60 else "9999"
+        parts = []
+        for f in _history_files():
+            m = f.stem[8:]
+            hf = HISTORY_DIR / f"da-hubs-{m}.parquet"
+            if m > first[:7] or not hf.exists():
+                continue
+            t = pd.read_parquet(f, columns=["date", "unit", "tech", "he", "state", "lsl", "hsl"])
+            t = t[t["tech"].astype(str).isin(techs) & t["state"].astype(str).isin(["m", "a"])
+                  & (t["lsl"] > 0) & t["hsl"].notna() & (t["date"] < first)]     # no HSL: ramping
+            if t.empty:
+                continue
+            t = t.assign(train=t["unit"].astype(str))[["train", "date", "he", "lsl"]]
+            hub = pd.read_parquet(hf).query("point == 'HB_HUBAVG'").set_index(["date", "he"])["price"].rename("hub")
+            parts.append(t.join(hub, on=["date", "he"]))
+        rows = []
+        for unit, days in _cc_online_lsl(self.days60, techs).items():
+            for d, a in days:
+                h = self.hub(d)
+                if h is None:
+                    continue
+                for i in np.nonzero(a > 0)[0]:
+                    rows.append((unit, d, i + 1, float(a[i]), float(h[i])))
+        parts.append(pd.DataFrame(rows, columns=["train", "date", "he", "lsl", "hub"]))
+        p = pd.concat(parts, ignore_index=True).dropna(subset=["hub"])
+        p["band"] = np.searchsorted(SIZE_BANDS, p["hub"].to_numpy(float), side="left") - 1
+        return p[["train", "date", "lsl", "band"]]
 
     def day_states(self, key, techs):
         """{date: states [24]} for a unit or train: the thermal history before the 60-day record
@@ -772,8 +814,9 @@ def _site(train: str) -> str:
     return train.rsplit("_CC", 1)[0]
 
 
-def _cc_online_lsl(days60) -> dict:
-    """{train: [(date, hourly online LSL array)]} for every CC train in the 60-day unit files."""
+def _cc_online_lsl(days60, techs=("combined_cycle",)) -> dict:
+    """{train: [(date, hourly online LSL array)]} for every CC train in the 60-day unit files
+    (or every unit of techs, keyed as Context.units keys them)."""
     out = defaultdict(list)
     for d in days60:
         f = read_json_gz(DATA_DIR / "60d-units" / f"{d}.json.gz", default=None)
@@ -783,14 +826,30 @@ def _cc_online_lsl(days60) -> dict:
         day = {}
         for r in f["rows"]:
             name, t = f["units"][r[0]][0], f["units"][r[0]][2]
-            if t != "combined_cycle":
+            if t not in techs:
                 continue
-            a = day.setdefault(train_of(name), np.zeros(24))
+            a = day.setdefault(train_of(name) if t == "combined_cycle" else name, np.zeros(24))
             on = (r[cols["online_share"]] or 0) - ((r[cols["ramp_share"]] or 0) if "ramp_share" in cols else 0)
             if on >= 0.5 and 1 <= r[1] <= 24:         # online, not ramping: the size it runs at
                 a[r[1] - 1] += r[cols["lsl"]] or 0
         for k, a in day.items():
             out[k].append((d, a))
+    return out
+
+
+def _band_means(p, point) -> dict:
+    """{train: [mean LSL in each SIZE_BANDS band]} over the SIZE_DAYS days up to point of a size
+    panel; a band with fewer than SIZE_MIN_HOURS hours takes the train's mean over all of them."""
+    lo = (_d(point) - dt.timedelta(days=SIZE_DAYS)).isoformat()
+    w = p[(p["date"] > lo) & (p["date"] <= point)]
+    g = w.groupby(["train", "band"])["lsl"]
+    tab = g.mean().where(g.size() >= SIZE_MIN_HOURS).unstack()
+    one = w.groupby("train")["lsl"].mean()
+    out = {}
+    for train, m in one.items():
+        v = tab.loc[train].reindex(range(len(SIZE_BANDS) - 1)) if train in tab.index else None
+        out[train] = [float(m) if v is None or np.isnan(v.iloc[b]) else float(v.iloc[b])
+                      for b in range(len(SIZE_BANDS) - 1)]
     return out
 
 
