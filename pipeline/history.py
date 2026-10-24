@@ -393,6 +393,8 @@ def main(argv=None):
             build_rt_month(api, m, Path(args.out), args.force)
         else:
             build_month(api, m, Path(args.out), args.force, args.thermal)
+    if api.raw.enabled:
+        print(api.raw.summary(), flush=True)
 
 
 if __name__ == "__main__":
