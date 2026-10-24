@@ -18,6 +18,7 @@
   <url><loc>https://ercotbids.currenttech.energy/unit/A4_DGR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/A4_DGR2</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/ABINDUST_ESR1</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/ADL_BESS1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/ADL_ESR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/ADL_SOLAR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/AEEC_ANTLP_1</loc></url>
@@ -26,6 +27,7 @@
   <url><loc>https://ercotbids.currenttech.energy/unit/AEEC_ELK_1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/AEEC_ELK_2</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/AEEC_ELK_3</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/AE_BESS</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/AE_ESR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/AGUAYO_UNIT1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/AJAXWIND_UNIT1</loc></url>
@@ -33,14 +35,18 @@
   <url><loc>https://ercotbids.currenttech.energy/unit/ALAMO_ST_ESR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/ALGODON_UNIT1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/ALGODON_UNIT2</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/ALP_BESS_BESS1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/ALP_BESS_ESR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/ALVIN_ESR1</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/ALVIN_UNIT1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/AMADEUS1_UNIT1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/AMADEUS1_UNIT2</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/AMADEUS2_UNIT3</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/AMOCOOIL_CC1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/AMOCOOIL_CC2</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/ANACACHO_ANA</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/ANCHOR_BESS1</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/ANCHOR_BESS2</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/ANCHOR_ESR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/ANCHOR_ESR2</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/ANCHOR_WIND1</loc></url>
@@ -48,18 +54,25 @@
   <url><loc>https://ercotbids.currenttech.energy/unit/ANCHOR_WIND3</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/ANCHOR_WIND4</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/ANCHOR_WIND5</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/ANDMDSLR_BESS1</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/ANDMDSLR_BESS2</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/ANDMDSLR_ESR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/ANDMDSLR_ESR2</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/ANDMDSLR_UNIT1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/ANDMDSLR_UNIT2</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/ANEM_ESS_BESS1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/ANEM_ESS_ESR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/ANGLETON_ESR1</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/ANGLETON_UNIT1</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/ANG_SLR_BESS1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/ANG_SLR_ESR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/ANG_SLR_UNIT1</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/ANOL_ESS_BES1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/ANOL_ESS_ESR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/ANSON1_UNIT1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/ANSON1_UNIT2</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/ANSON2_UNIT1</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/ANTL_ESS_BES1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/ANTL_ESS_ESR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/APOGEE_UNIT1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/APOGEE_UNIT2</loc></url>
@@ -87,8 +100,10 @@
   <url><loc>https://ercotbids.currenttech.energy/unit/AURO_SLR_UNIT1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/AVIATOR_UNIT1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/AVIATOR_UNIT2</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/AVIL_ESS_BES1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/AVIL_ESS_ESR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/AZSP_SLR_SOLAR1</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/AZURE_BESS1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/AZURE_ESR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/AZURE_SOLAR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/AZURE_SOLAR2</loc></url>
@@ -112,7 +127,9 @@
   <url><loc>https://ercotbids.currenttech.energy/unit/BARROW_UNIT2</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/BART_SLR_SOLAR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/BASTEN_CC1</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/BATCAVE_BES1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/BATCAVE_ESR1</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/BAY_CITY_BESS</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/BAY_CITY_ESR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/BBREEZE_UNIT1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/BBREEZE_UNIT2</loc></url>
@@ -130,36 +147,46 @@
   <url><loc>https://ercotbids.currenttech.energy/unit/BCK_UNIT1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/BCK_UNIT2</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/BCNV2_ES_ESR1</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/BCNV_ESS_BESS1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/BCNV_ESS_ESR1</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/BELD_BELU1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/BELD_ESR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/BELM_SLR_UNIT1</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/BEXAR_ES_BESS1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/BEXAR_ES_ESR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/BIGSAMWD_UNIT1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/BIGSAMWD_UNIT2</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/BIG_STAR_BESS</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/BIG_STAR_ESR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/BIG_STAR_UNIT1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/BIG_STAR_UNIT2</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/BKSL_ESS_BESS1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/BKSL_ESS_ESR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/BLACKJAK_UNIT1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/BLACKJAK_UNIT2</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/BLACKSPR_ESR1</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/BLACKSPR_UNIT1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/BLSUMIT3_UNIT_17</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/BLSUMIT3_UNIT_25</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/BLSUMMIT_BATTERY</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/BLSUMMIT_BLSMT1_5</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/BLSUMMIT_BLSMT1_6</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/BLSUMMIT_ESR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/BLSUMMIT_ESR2</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/BLSUMMIT_UNIT2_17</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/BLSUMMIT_UNIT2_25</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/BLUEJAY_BESS1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/BLUEJAY_ESR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/BLUEJAY_UNIT1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/BLUEJAY_UNIT2</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/BLVN_SLR_BESS1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/BLVN_SLR_ESR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/BLVN_SLR_SOLAR2</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/BLVN_SLR_SOLAR3</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/BOARDCRK_UNIT1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/BOARDCRK_UNIT2</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/BOCO_ESS_ESR1</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/BOCO_ESS_ESS1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/BOOTLEG_UNIT1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/BORDAS2_JAVEL2_A</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/BORDAS2_JAVEL2_B</loc></url>
@@ -177,11 +204,14 @@
   <url><loc>https://ercotbids.currenttech.energy/unit/BRAUNIG_VHB6CT7</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/BRAUNIG_VHB6CT8</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/BRAZORIA_ESR1</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/BRAZORIA_UNIT1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/BRAZ_WND_WND1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/BRAZ_WND_WND2</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/BRIGHTSD_UNIT1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/BRISCOE_WIND</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/BRTSW_BCW1</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/BR_ARROW_BESS1</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/BR_ARROW_BESS2</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/BR_ARROW_ESR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/BR_ARROW_ESR2</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/BR_ARROW_UNIT1</loc></url>
@@ -210,13 +240,17 @@
   <url><loc>https://ercotbids.currenttech.energy/unit/BUZI_SLR_UNIT4</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/BVE_CC1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/BYNM_SLR_SOLAR1</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/BYP_BESS1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/BYP_ESR1</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/BYRDR_ES_BESS1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/BYRDR_ES_ESR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/BYU_CC1</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/BY_BESS1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/BY_ESR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/B_DAVIS_CC1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/CABEZON_WIND1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/CABEZON_WIND2</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/CACH_ESS_BESS1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/CACH_ESS_ESR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/CALAVERS_JKS1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/CALAVERS_JKS2</loc></url>
@@ -226,6 +260,7 @@
   <url><loc>https://ercotbids.currenttech.energy/unit/CALHOUN_UNIT2</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/CALLAHAN_WND1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/CAL_CC1</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/CAMWIND_BESS1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/CAMWIND_ESR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/CAMWIND_UNIT1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/CANYONWD_UNIT1</loc></url>
@@ -243,12 +278,17 @@
   <url><loc>https://ercotbids.currenttech.energy/unit/CAPRIDGE_CR3</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/CARA_ESS_ESR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/CARBN_BSP_1</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/CARN_ESS_BES1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/CARN_ESS_ESR1</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/CARRIZO_BESS1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/CARRIZO_ESR1</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/CARTWHL_BESS1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/CARTWHL_ESR1</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/CASL_GAP_BATTERY1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/CASL_GAP_ESR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/CASL_GAP_UNIT1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/CAST_ESS_ESR1</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/CATARINA_BESS</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/CATARINA_ESR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/CBECII_CC3</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/CBEC_CC1</loc></url>
@@ -261,6 +301,7 @@
   <url><loc>https://ercotbids.currenttech.energy/unit/CCEC_CC1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/CEDROHIL_CHW1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/CEDROHIL_CHW2</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/CEDRVALE_BESS</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/CEDRVALE_ESR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/CEDRVALE_UNIT1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/CFLATS_U1</loc></url>
@@ -275,58 +316,79 @@
   <url><loc>https://ercotbids.currenttech.energy/unit/CHAMPION_UNIT3</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/CHAR_SLR_UNIT1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/CHAR_SLR_UNIT2</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/CHERRYCR_BESS</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/CHERRYCR_ESR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/CHE_CC1</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/CHIL_SLR_BESS1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/CHIL_SLR_ESR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/CHIL_SLR_SOLAR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/CHIL_SLR_SOLAR2</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/CHISMGRD_BES1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/CHISMGRD_ESR1</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/CISC_BESS</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/CISC_ESR1</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/CITRUSCY_BESS1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/CITRUSCY_ESR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/CITYVICT_CTG01</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/CITYVICT_CTG02</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/CLO_BESS1</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/CLO_BESS2</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/CLO_ESR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/CLO_ESR2</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/CMPD_SLR_SOLAR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/CMPD_SLR_SOLAR2</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/CMPD_SLR_SOLAR3</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/CNLY_ESS_BESS_1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/CNLY_ESS_ESR1</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/CNTRY_BESS1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/CNTRY_ESR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/CNTYRDS_ESR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/CN_BRKS_UNIT_1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/COLETO_COLETOG1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/CONIGLIO_UNIT1</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/CONTINEN_BESS1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/CONTINEN_ESR1</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/CORALSLR_BESS1</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/CORALSLR_BESS2</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/CORALSLR_ESR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/CORALSLR_ESR2</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/CORALSLR_SOLAR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/CORALSLR_SOLAR2</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/CORAZON_BESS1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/CORAZON_ESR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/CORAZON_UNIT1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/COTPLNS_COTTONPL</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/COTPLNS_OLDSETLR</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/COTTON_PAP2</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/COTULLA_BESS1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/COTULLA_ESR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/COYANOSA_UNIT1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/COYOTE_W_UNIT1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/COYOTE_W_UNIT2</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/COYOTE_W_UNIT3</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/COYOTSPR_BESS</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/COYOTSPR_ESR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/CPSES_UNIT1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/CPSES_UNIT2</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/CRANELL_UNIT1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/CRAWFISH_UNIT1</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/CROSSETT_BES1</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/CROSSETT_BES2</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/CROSSETT_ESR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/CROSSETT_ESR2</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/CROSSTRL_BESS1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/CROSSTRL_ESR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/CRWN_SLR_UNIT1</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/CR_BESS1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/CR_ESR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/CSEC_CSECG1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/CSEC_CSECG2</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/CST1_SLR_SOLAR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/CST2_SLR_SOLAR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/CST2_SLR_SOLAR2</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/CS_BESS</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/CS_ESR1</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/CTW_BESS1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/CTW_ESR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/CTW_SOLAR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/CTW_SOLAR2</loc></url>
@@ -336,13 +398,20 @@
   <url><loc>https://ercotbids.currenttech.energy/unit/DANSBY_DANSBYG1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/DANSBY_DANSBYG2</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/DANSBY_DANSBYG3</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/DAN_BESS1</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/DAN_BESS2</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/DAN_ESR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/DAN_ESR2</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/DAN_UNIT1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/DAN_UNIT2</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/DAN_UNIT3</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/DA_BESS</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/DA_ESR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/DA_ESR3</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/DCSES_BES1</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/DCSES_BES2</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/DCSES_BES3</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/DCSES_BES4</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/DCSES_CT10</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/DCSES_CT20</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/DCSES_CT30</loc></url>
@@ -369,15 +438,21 @@
   <url><loc>https://ercotbids.currenttech.energy/unit/DERMOTT_UNIT2</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/DESN_ESS_ESR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/DEWOLF_UNIT1</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/DGFS_ESR_BESS1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/DGFS_ESR_ESR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/DIBOL_ESR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/DIB_CC1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/DICKNSON_ESR1</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/DICKNSON_UNIT1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/DIGBY_UNIT1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/DIGBY_UNIT2</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/DILEOSLR_UNIT1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/DIVR_SLR_SOLAR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/DIVR_SLR_SOLAR2</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/DKNS_ESS_BES1</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/DKNS_ESS_BES2</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/DKNS_ESS_BES3</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/DKNS_ESS_BES4</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/DKNS_ESS_ESR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/DKNS_ESS_ESR2</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/DKNS_ESS_ESR3</loc></url>
@@ -396,15 +471,18 @@
   <url><loc>https://ercotbids.currenttech.energy/unit/DOWGEN_DOW_ST84</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/DOWGEN_DOW_ST95</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/DPCRK_ESR1</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/DPCRK_UNIT1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/DRCK_SLR_SOLAR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/DSKYWND1_UNIT_1A</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/DSKYWND1_UNIT_1B</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/DSKYWND2_UNIT_2A</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/DSKYWND2_UNIT_2B</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/DSWL_ESS_BES1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/DSWL_ESS_ESR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/DUKE_CC1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/EBELLSL2_UNIT1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/EBELLSLR_UNIT1</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/EBNY_ESS_BESS1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/EBNY_ESS_ESR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/ECEC_G1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/ECEC_G2</loc></url>
@@ -419,19 +497,25 @@
   <url><loc>https://ercotbids.currenttech.energy/unit/ELM_ST_ESR2</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/ELSAUZ_UNIT1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/ELSAUZ_UNIT2</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/ELSA_BESS</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/ELSA_ESR1</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/ELZA_SLR_BES1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/ELZA_SLR_ESR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/ELZA_SLR_SOLAR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/EL_RAYO_UNIT1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/EL_RAYO_UNIT2</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/EMPCT_BESS1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/EMPCT_ESR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/ENDPARKS_ESR1</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/ENDPARKS_ESS1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/ERKA_SLR_UNIT1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/ESCONDID_ESR1</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/ESTONIAN_BES1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/ESTONIAN_ESR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/ESTONIAN_SOLAR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/ESTONIAN_SOLAR2</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/ETCCS_CC1</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/EUNICE_BES1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/EUNICE_ESR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/EUNICE_PV1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/EUNICE_PV2</loc></url>
@@ -453,13 +537,17 @@
   <url><loc>https://ercotbids.currenttech.energy/unit/E_HARRIS_ESR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/FAGUSSLR_UNIT2</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/FAGUSSLR_UNIT3</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/FALFUR_BESS</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/FALFUR_BESS1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/FALFUR_ESR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/FALFUR_ESR2</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/FAULKNER_BESS</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/FAULKNER_ESR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/FEGC_CTG2</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/FEGC_CTG3</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/FEGC_CTG4</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/FEGC_UNIT1</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/FENCESLR_BESS1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/FENCESLR_ESR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/FENCESLR_SOLAR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/FENCESLR_SOLAR2</loc></url>
@@ -468,13 +556,17 @@
   <url><loc>https://ercotbids.currenttech.energy/unit/FERMI_WIND1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/FERMI_WIND2</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/FILESSLR_PV1</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/FIVEWSLR_BESS1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/FIVEWSLR_ESR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/FIVEWSLR_UNIT1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/FIVEWSLR_UNIT2</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/FLAT_TOP_BESS1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/FLAT_TOP_ESR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/FLAT_TOP_ESR2</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/FLAT_TOP_FLATU1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/FLCNS_UNIT1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/FLCNS_UNIT2</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/FLOWERII_BESS1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/FLOWERII_ESR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/FLTCK_SSI</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/FLUVANNA_UNIT1</loc></url>
@@ -486,6 +578,7 @@
   <url><loc>https://ercotbids.currenttech.energy/unit/FORMOSA_FORMOSG11</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/FORMOSA_FORMOSG12</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/FORMOSA_FORMOSG8</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/FORTMA_BESS1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/FORTMA_ESR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/FOXTROT_UNIT1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/FOXTROT_UNIT2</loc></url>
@@ -497,6 +590,8 @@
   <url><loc>https://ercotbids.currenttech.energy/unit/FPPYD2_FPP_G3</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/FREC_CC1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/FREC_CC2</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/FRMRSVLW_BES2</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/FRMRSVLW_BESS</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/FRMRSVLW_ESR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/FRMRSVLW_ESR2</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/FRNYPP_CC1</loc></url>
@@ -504,6 +599,7 @@
   <url><loc>https://ercotbids.currenttech.energy/unit/FRONT_EC_CC1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/FRYE_SLR_UNIT1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/FRYE_SLR_UNIT2</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/FTDUNCAN_BESS_GEN</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/FTDUNCAN_ESR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/FTR_CC1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/FTWIND_UNIT_1</loc></url>
@@ -512,7 +608,9 @@
   <url><loc>https://ercotbids.currenttech.energy/unit/GAIA_SLR_SOLAR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/GALLOWAY_SOLAR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/GALLOWAY_SOLAR2</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/GAMBIT_BESS1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/GAMBIT_ESR1</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/GARCENO_BESS</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/GARCENO_ESR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/GBY_GBYGT73</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/GBY_GBYGT74</loc></url>
@@ -521,10 +619,13 @@
   <url><loc>https://ercotbids.currenttech.energy/unit/GBY_GBYGT83</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/GBY_GBYGT84</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/GEORSO_ESR1</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/GEORSO_ESS_1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/GIDEON_GIDEONG1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/GIDEON_GIDEONG2</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/GIDEON_GIDEONG3</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/GIGA_ESS_BESS_1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/GIGA_ESS_ESR1</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/GKS_BESS_BESS1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/GKS_BESS_ESR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/GOAT_GOATWIN2</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/GOAT_GOATWIND</loc></url>
@@ -532,9 +633,11 @@
   <url><loc>https://ercotbids.currenttech.energy/unit/GODY_SLR_SOLAR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/GODY_SLR_SOLAR2</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/GOLINDA_UNIT1</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/GOMZ_BESS</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/GOMZ_ESR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/GOODNIT1_UNIT1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/GOODNIT1_UNIT2</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/GOODWIN_BESS1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/GOODWIN_ESR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/GOPHER_UNIT1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/GOPHER_UNIT2</loc></url>
@@ -544,15 +647,18 @@
   <url><loc>https://ercotbids.currenttech.energy/unit/GRANDVW1_GV1A</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/GRANDVW1_GV1B</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/GRAN_SLR_UNIT1</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/GRDNE_BESS</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/GRDNE_ESR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/GREASWOD_UNIT1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/GREASWOD_UNIT2</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/GREGORY_BESS1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/GREGORY_ESR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/GRIF_TRL_UNIT1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/GRIF_TRL_UNIT2</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/GRIM_SLR_UNIT1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/GRIM_SLR_UNIT2</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/GRIM_SLR_UNIT3</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/GRIZZLY_BESS1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/GRIZZLY_ESR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/GRIZZLY_SOLAR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/GRND_SLR_UNIT1</loc></url>
@@ -571,9 +677,12 @@
   <url><loc>https://ercotbids.currenttech.energy/unit/GUNMTN_G1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/GUNR_BES_ESR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/GWEC_GWEC_G1</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/GZ_BESS1</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/GZ_BESS2</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/GZ_ESR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/GZ_ESR2</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/HALO_SLR_UNIT1</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/HAMILTON_BESS</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/HAMILTON_ESR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/HARALD_UNIT1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/HART_WND_UNIT1</loc></url>
@@ -581,9 +690,12 @@
   <url><loc>https://ercotbids.currenttech.energy/unit/HAYSEN_HAYSENG2</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/HAYSEN_HAYSENG3</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/HAYSEN_HAYSENG4</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/HEADCAMP_BESS1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/HEADCAMP_ESR1</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/HEARN_RD_BESS1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/HEARN_RD_ESR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/HEIGHTTN_ESR1</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/HEIGHTTN_UNIT1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/HELIOS_UNIT1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/HEN_ESR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/HEN_ESR2</loc></url>
@@ -613,10 +725,14 @@
   <url><loc>https://ercotbids.currenttech.energy/unit/HLSES_UNIT3</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/HLSES_UNIT4</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/HLSES_UNIT5</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/HLY_BESS1</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/HLY_BESS2</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/HLY_ESR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/HLY_ESR2</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/HMNG_ESS_BESS1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/HMNG_ESS_ESR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/HNY_COMB_SOLAR1</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/HOLCOMB_BESS</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/HOLCOMB_ESR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/HOLSTEIN_SOLAR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/HOLSTEIN_SOLAR2</loc></url>
@@ -628,6 +744,7 @@
   <url><loc>https://ercotbids.currenttech.energy/unit/HOPKNSLR_UNIT2</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/HORSECRK_UNIT1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/HORSECRK_UNIT2</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/HOUSEMTN_BESS1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/HOUSEMTN_ESR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/HOVEY_UNIT1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/HOVEY_UNIT2</loc></url>
@@ -641,22 +758,28 @@
   <url><loc>https://ercotbids.currenttech.energy/unit/HRNT_SLR_UNIT2</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/HRNT_SLR_UNIT3</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/HRZN_SLR_UNIT1</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/HV_BESS1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/HV_ESR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/HWF_HWFG1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/HWY6_ESR1</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/HYDR_ESS_BES1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/HYDR_ESS_ESR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/H_HOLLOW_WND1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/IMPACT_UNIT1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/INDL_ESR1</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/INDL_ESS</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/INDL_INADALE1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/INDL_INADALE2</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/INDNNWP_INDNNWP2</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/INGLCOSW_CC1</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/INRT_W_BESS_1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/INRT_W_ESR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/INRT_W_UNIT1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/INRT_W_UNIT2</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/INRT_W_UNIT3</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/JACKCNTY_CC1</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/JADE_SLR_BESS1</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/JADE_SLR_BESS2</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/JADE_SLR_ESR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/JADE_SLR_ESR2</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/JADE_SLR_UNIT1</loc></url>
@@ -669,23 +792,32 @@
   <url><loc>https://ercotbids.currenttech.energy/unit/JAD_UNIT6</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/JAD_UNIT7</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/JAD_UNIT8</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/JAG_SLR_BESS1</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/JAG_SLR_BESS2</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/JAG_SLR_ESR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/JAG_SLR_ESR2</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/JAR_BES1</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/JAR_BES2</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/JAR_ESR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/JAR_ESR2</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/JAY_UNIT1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/JAY_UNIT2</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/JCKCNTY2_CC1</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/JDKNS_BESS</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/JDKNS_ESR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/JKLP_SLR_PV1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/JKLP_SLR_PV2</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/JOHNCI_ESR1</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/JOHNCI_UNIT_1</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/JUNCTION_BESS</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/JUNCTION_ESR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/JUNG_SLR_UNIT1</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/JUNORTH_BES1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/JUNORTH_ESR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/JUNO_UNIT1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/JUNO_UNIT2</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/K0_ESR1</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/K0_UNIT1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/K2_DGR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/K2_DGR2</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/KARAKAW1_UNIT1</loc></url>
@@ -714,6 +846,7 @@
   <url><loc>https://ercotbids.currenttech.energy/unit/LARDVFTN_G5</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/LASSO_UNIT1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/LAURELES_ESR1</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/LBRA_ESS_BES1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/LBRA_ESS_ESR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/LEG_LEG_G1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/LEG_LEG_G2</loc></url>
@@ -723,6 +856,7 @@
   <url><loc>https://ercotbids.currenttech.energy/unit/LEON_CRK_LCPCT4</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/LEON_SLR_UNIT1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/LEON_SLR_UNIT2</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/LFSTH_BESS</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/LFSTH_ESR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/LGDRAW_S_UNIT1_1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/LGDRAW_S_UNIT1_2</loc></url>
@@ -735,9 +869,11 @@
   <url><loc>https://ercotbids.currenttech.energy/unit/LHORN_N_UNIT2</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/LHSES_UNIT1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/LHSES_UNIT2A</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/LIGSW_BESS1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/LIGSW_ESR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/LIG_UNIT1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/LIG_UNIT2</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/LILY_BESS1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/LILY_ESR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/LILY_SOLAR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/LK_ESR1</loc></url>
@@ -746,6 +882,7 @@
   <url><loc>https://ercotbids.currenttech.energy/unit/LMAJADAS_UNIT3</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/LMESASLR_IVORY</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/LMESASLR_UNIT1</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/LMO_BESS1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/LMO_ESR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/LMWD_SLR_SOLAR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/LNCRK2_G871</loc></url>
@@ -753,33 +890,45 @@
   <url><loc>https://ercotbids.currenttech.energy/unit/LNCRK_G83</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/LNP_SOLAR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/LOCKETT_UNIT1</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/LONESTAR_BESS</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/LONESTAR_ESR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/LONEWOLF_G1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/LONEWOLF_G2</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/LONEWOLF_G3</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/LONEWOLF_G4</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/LON_BES1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/LON_ESR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/LON_SOLAR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/LOPENO_ESR1</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/LOPENO_UNIT1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/LOSTPI_CC1</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/LOWR_ESS_BESS1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/LOWR_ESS_ESR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/LPCCS_CC1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/LPCCS_CC2</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/LUCKYBLU_ESR1</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/LUCKYBLU_UNIT1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/LV1_LV1A</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/LV2_LV2</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/LV3_UNIT_1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/LV4_UNIT_1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/LV5_UNIT_1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/LYNX_ESS_ESR1</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/LYSSY_BESS1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/LYSSY_ESR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/L_463S_ESR1</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/L_463S_UNIT1</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/L_FRESNO_BESS</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/L_FRESNO_ESR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/MADERO_ESR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/MADERO_ESR2</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/MADERO_UNIT1</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/MADERO_UNIT2</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/MAGNO_TN_ESR1</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/MAGNO_TN_UNIT1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/MAG_UNIT1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/MAG_UNIT2</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/MAINLAND_BESS</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/MAINLAND_ESR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/MAND_SLR_UNIT1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/MARIAH_NORTE1</loc></url>
@@ -794,6 +943,8 @@
   <url><loc>https://ercotbids.currenttech.energy/unit/MAVCRK_W_UNIT2</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/MAVCRK_W_UNIT3</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/MAVCRK_W_UNIT4</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/MAYBERRY_BESS</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/MAYBERRY_BESS2</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/MAYBERRY_ESR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/MAYBERRY_ESR2</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/MCDLD_FCW1</loc></url>
@@ -811,6 +962,7 @@
   <url><loc>https://ercotbids.currenttech.energy/unit/MDANP_CT5</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/MDANP_CT6</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/MDWPK_ESR1</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/MEDILA_BESS1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/MEDILA_ESR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/MERCURY_PV1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/MERCURY_PV2</loc></url>
@@ -827,10 +979,13 @@
   <url><loc>https://ercotbids.currenttech.energy/unit/MGSES_CT6</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/MIAM1_G1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/MIAM1_G2</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/MIDP_SLR_BESS1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/MIDP_SLR_ESR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/MIDP_SLR_SOLAR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/MIDWIND_UNIT1</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/MIDWY_BESS1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/MIDWY_ESR1</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/MILTON_BESS1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/MILTON_ESR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/MIL_MILLERG2</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/MIL_MILLERG3</loc></url>
@@ -849,21 +1004,29 @@
   <url><loc>https://ercotbids.currenttech.energy/unit/MLSES_UNIT1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/MLSES_UNIT2</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/MLSES_UNIT3</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/MNWLE_BESS</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/MNWLE_ESR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/MONTECR1_WIND1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/MONT_WND_UNIT1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/MONT_WND_UNIT2</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/MOORE_FL_BESS1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/MOORE_FL_ESR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/MOZART_WIND_1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/MRKM_SLR_PV1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/MROW_SLR_SOLAR1</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/MUENSTER_BESS1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/MUENSTER_ESR1</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/MUSTNGCK_BES1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/MUSTNGCK_ESR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/MUSTNGCK_SOLAR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/MUSTNGCK_SOLAR2</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/MU_BESS</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/MU_ESR1</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/MV_VALV4_BESS</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/MV_VALV4_ESR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/MWEC_G1</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/MYR_BES1</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/MYR_BES2</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/MYR_ESR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/MYR_ESR2</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/MYR_UNIT1</loc></url>
@@ -877,12 +1040,16 @@
   <url><loc>https://ercotbids.currenttech.energy/unit/NCARBIDE_NCARBIG7</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/NCARBIDE_NCARBIG8</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/NCO_ESR1</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/NCO_ESS1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/NEBULA_UNIT1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/NEDIN_CC1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/NFAL_SLR_SOLAR1</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/NF_BRP_BES1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/NF_BRP_ESR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/NHKY_SLR_UNIT1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/NHKY_SLR_UNIT2</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/NOBLESLR_BESS1</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/NOBLESLR_BESS2</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/NOBLESLR_ESR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/NOBLESLR_ESR2</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/NOBLESLR_SOLAR1</loc></url>
@@ -893,14 +1060,18 @@
   <url><loc>https://ercotbids.currenttech.energy/unit/NRTN_SLR_SOLAR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/NUECES_B_CC1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/NWF_ESR1</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/NWF_NBS</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/NWF_NWF1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/NWF_NWF2</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/N_ALAMO_BESS</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/N_ALAMO_ESR1</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/N_MERCED_BESS</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/N_MERCED_ESR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/OBERON_UNIT_1_J01</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/OBERON_UNIT_1_J02</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/OCI_ALM1_UNIT1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/ODESW_ESR1</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/ODESW_UNIT1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/OECCS_CC1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/OECCS_CC2</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/OGSES_UNIT1A</loc></url>
@@ -909,8 +1080,10 @@
   <url><loc>https://ercotbids.currenttech.energy/unit/OLINGR_OLING_2</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/OLINGR_OLING_3</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/OLINGR_OLING_4</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/OLMITO_BESS1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/OLMITO_ESR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/OLNEYTN_AGR1</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/OLNEYTN_BESS</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/OLNEYTN_ESR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/ORIANA_UNIT1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/OUTP_SLR_UNIT1</loc></url>
@@ -923,10 +1096,13 @@
   <url><loc>https://ercotbids.currenttech.energy/unit/OYST_SLR_UNIT2</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/P2_DGR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/P2_DGR2</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/PAD1_ESS_BESS1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/PAD1_ESS_ESR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/PAD2_ESS_ESR2</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/PAD3_ESS_ESR3</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/PALACIOS_BESS1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/PALACIOS_ESR1</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/PALE_ESS_BES1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/PALE_ESS_ESR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/PALMVIEW_ESR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/PALMWIND_UNIT1</loc></url>
@@ -936,7 +1112,9 @@
   <url><loc>https://ercotbids.currenttech.energy/unit/PAP1_PAP1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/PAR_UNIT1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/PAR_UNIT2</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/PAULN_BESS</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/PAULN_ESR1</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/PAVLOV_BESS</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/PAVLOV_ESR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/PAVO_ESS_ESR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/PAVO_ESS_ESR2</loc></url>
@@ -956,6 +1134,7 @@
   <url><loc>https://ercotbids.currenttech.energy/unit/PEARSAL2_AGR_B</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/PEARSAL2_AGR_C</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/PEARSAL2_AGR_D</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/PEARSALL_BES1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/PEARSALL_ESR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/PENA3_UNIT3_J01</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/PENA3_UNIT3_J02</loc></url>
@@ -974,12 +1153,15 @@
   <url><loc>https://ercotbids.currenttech.energy/unit/PHOEBE_UNIT1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/PHOEBE_UNIT2</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/PHOENIX_UNIT1</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/PHO_BES1</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/PHO_BES2</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/PHO_ESR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/PHO_ESR2</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/PHO_SOLAR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/PHO_SOLAR2</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/PHO_SOLAR3</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/PHO_SOLAR4</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/PINEFRST_BESS1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/PINEFRST_ESR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/PINEFRST_UNIT1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/PINEFRST_UNIT2</loc></url>
@@ -989,20 +1171,25 @@
   <url><loc>https://ercotbids.currenttech.energy/unit/PIN_BESS_ESR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/PIONR_DJ_UNIT1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/PIONR_DJ_UNIT2</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/PIRATE_BESS1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/PIRATE_ESR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/PISGAH_SOLAR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/PISGAH_SOLAR2</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/PITTSDDK_UNIT1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/PITTSDK2_UNIT1</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/PLATINUM_BES1</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/PLATINUM_BES2</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/PLATINUM_ESR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/PLATINUM_ESR2</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/PLN_UNIT1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/PLN_UNIT2</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/PNPI_GT2</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/PORT_SLR_UNIT1</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/POTEETS_BESS</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/POTEETS_ESR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/PPEC_GT7</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/PPEC_GT8</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/PRCRK_BESS1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/PRCRK_ESR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/PRIDDY_UNIT1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/PRIDDY_UNIT2</loc></url>
@@ -1018,17 +1205,23 @@
   <url><loc>https://ercotbids.currenttech.energy/unit/PRO_UNIT8</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/PRSPERO2_UNIT1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/PRSPERO2_UNIT2</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/PRTLAVS_BESS1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/PRTLAVS_ESR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/PR_PR_G2</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/PSA_CC1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/PSG_CC1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/PUEBLO_ESR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/PUEBLO_ESR2</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/PUEBLO_UNIT1</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/PUEBLO_UNIT2</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/PYOTE_ESR1</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/PYOTE_SWOOSEU1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/PYOTE_UNIT1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/PYR_ESR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/PYR_ESR2</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/PYR_ESR3</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/PYR_ESS2A</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/PYR_ESS2B</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/PYR_PYRON1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/PYR_PYRON2</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/Q1_DGR1</loc></url>
@@ -1051,6 +1244,8 @@
   <url><loc>https://ercotbids.currenttech.energy/unit/RAB_UNIT6</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/RAB_UNIT7</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/RAB_UNIT8</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/RADN_SLR_BESS1</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/RADN_SLR_BESS2</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/RADN_SLR_ESR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/RADN_SLR_ESR2</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/RADN_SLR_UNIT1</loc></url>
@@ -1060,6 +1255,7 @@
   <url><loc>https://ercotbids.currenttech.energy/unit/RANCHERO_UNIT2</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/RATLIFF_SOLAR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/RAYBURN_CC1</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/RBN_BESS1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/RBN_ESR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/RDCANYON_RDCNY1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/REDBARN_UNIT_1</loc></url>
@@ -1079,9 +1275,12 @@
   <url><loc>https://ercotbids.currenttech.energy/unit/RHA_ESR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/RIGGINS_UNIT1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/RIONOG_CC1</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/RIO_GRAN_BESS</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/RIO_GRAN_BESS2</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/RIO_GRAN_ESR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/RIO_GRAN_ESR2</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/RIPPEY_UNIT1</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/ROSELAND_BESS1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/ROSELAND_ESR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/ROSELAND_SOLAR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/ROSELAND_SOLAR2</loc></url>
@@ -1090,8 +1289,11 @@
   <url><loc>https://ercotbids.currenttech.energy/unit/ROW_UNIT1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/ROW_UNIT2</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/RPUBRDS_ESR1</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/RPUBRDS_ESS1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/RRANCHES_ESR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/RRANCHES_ESR2</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/RRANCHES_UNIT1</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/RRANCHES_UNIT2</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/RRC_WIND_ESR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/RRC_WIND_ESR2</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/RRC_WIND_UNIT1</loc></url>
@@ -1099,13 +1301,18 @@
   <url><loc>https://ercotbids.currenttech.energy/unit/RRC_WIND_UNIT3</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/RSNAKE_G1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/RSNAKE_G2</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/RTLSNAKE_BESS</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/RTLSNAKE_ESR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/RTS2_U1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/RTS2_U2</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/RTS_U1</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/RUSSEKST_BESS</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/RUSSEKST_ESR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/RVRVLYS_ESR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/RVRVLYS_ESR2</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/RVRVLYS_ESS1</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/RVRVLYS_ESS2</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/SADLBACK_BESS</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/SADLBACK_ESR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/SAGEDRAW_UNIT1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/SAGEDRAW_UNIT2</loc></url>
@@ -1128,11 +1335,13 @@
   <url><loc>https://ercotbids.currenttech.energy/unit/SANDHSYD_SH4</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/SANDHSYD_SH6</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/SANDHSYD_SH7</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/SANDLAKE_BESS</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/SANDLAKE_ESR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/SANMIGL_G1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/SANROMAN_WIND_1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/SANTACRU_UNIT1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/SANTACRU_UNIT2</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/SBEAN_BESS</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/SBEAN_ESR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/SBE_UNIT1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/SCES_UNIT1_J01</loc></url>
@@ -1146,18 +1355,24 @@
   <url><loc>https://ercotbids.currenttech.energy/unit/SCSES_UNIT1A</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/SCSES_UNIT2</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/SENATEWD_UNIT1</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/SEVNF_ES_BESS1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/SEVNF_ES_ESR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/SE_EDINB_ESR1</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/SGAL_BES_BESS1</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/SGAL_BES_BESS2</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/SGAL_BES_ESR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/SGAL_BES_ESR2</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/SGMTN_SIGNALMT</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/SGSA_BESS1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/SGSA_ESR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/SHAFFER_UNIT1</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/SHAMROCK_BESS1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/SHAMROCK_ESR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/SHAMROCK_UNIT1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/SHAMROCK_UNIT2</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/SHANNONW_UNIT_1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/SHAW_SLR_UNIT1</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/SHEEPCRK_BESS1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/SHEEPCRK_ESR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/SHEEPCRK_UNIT1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/SIG_SLR_UNIT1</loc></url>
@@ -1171,6 +1386,9 @@
   <url><loc>https://ercotbids.currenttech.energy/unit/SKY1_SKY1B</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/SLCNHLS_ESR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/SLCNHLS_ESR2</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/SLCNHLS_ESS1</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/SLCNHLS_ESS2</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/SLK_BESS_BESS1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/SLK_BESS_ESR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/SMTH_ESS_ESR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/SOLARA_UNIT1</loc></url>
@@ -1186,16 +1404,20 @@
   <url><loc>https://ercotbids.currenttech.energy/unit/SPLAIN2_WIND22</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/SPNCER_SPNCE_4</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/SPNCER_SPNCE_5</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/SPTX12B_BES1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/SPTX12B_ESR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/SPTX12B_UNIT1</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/SP_BESS</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/SP_ESR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/SRWE1_SRWE2</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/SRWE1_UNIT1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/SSPURTWO_SS3WIND1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/SSPURTWO_SS3WIND2</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/SSPURTWO_WIND_1</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/STADIUM_BESS</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/STADIUM_ESR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/STAGHORN_UNIT1</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/STAM_SLR_BESS1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/STAM_SLR_ESR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/STAM_SLR_SOLAR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/STAM_SLR_SOLAR2</loc></url>
@@ -1216,10 +1438,13 @@
   <url><loc>https://ercotbids.currenttech.energy/unit/STP_STP_G2_J03</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/STP_STP_G2_J04</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/STRATEGC_UNIT1</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/STRG_SLR_BESS1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/STRG_SLR_ESR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/STRG_SLR_UNIT1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/STRG_SLR_UNIT2</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/STWF_T1</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/SUNVASLR_BESS1</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/SUNVASLR_BESS2</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/SUNVASLR_ESR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/SUNVASLR_ESR2</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/SUNVASLR_UNIT1</loc></url>
@@ -1227,6 +1452,7 @@
   <url><loc>https://ercotbids.currenttech.energy/unit/SUN_SLR_UNIT_1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/SWEC_G1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/SWEENY_ESR1</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/SWEENY_UNIT1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/SWEETWN2_WND2</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/SWEETWN2_WND24</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/SWEETWN3_WND3A</loc></url>
@@ -1236,14 +1462,19 @@
   <url><loc>https://ercotbids.currenttech.energy/unit/SWEETWN5_WND5</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/SWEETWND_WND1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/SWFT_SLR_UNIT1</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/SWOOSEII_BESS1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/SWOOSEII_ESR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/SWTWR_ESR1</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/SWTWR_UNIT1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/SYBR_SLR_UNIT1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/SYBR_SLR_UNIT2</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/S_HILLS_UNIT1</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/S_SNROSA_BESS</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/S_SNROSA_ESR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/TAHOKA_UNIT_1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/TAHOKA_UNIT_2</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/TANZ_ESS_BES1</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/TANZ_ESS_BES2</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/TANZ_ESS_ESR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/TANZ_ESS_ESR2</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/TAV_UNIT1</loc></url>
@@ -1252,9 +1483,12 @@
   <url><loc>https://ercotbids.currenttech.energy/unit/TAYGETE2_UNIT2</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/TAYGETE_UNIT1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/TAYGETE_UNIT2</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/TBWF_ESS_BES1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/TBWF_ESS_ESR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/TC_GTG2</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/TC_TCHP1</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/TDWLPR_1_BESS1</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/TDWLPR_1_BESS2</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/TDWLPR_1_ESR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/TDWLPR_1_ESR2</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/TEN_CC1</loc></url>
@@ -1307,6 +1541,7 @@
   <url><loc>https://ercotbids.currenttech.energy/unit/TORR_UNIT1_25</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/TORR_UNIT2_23</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/TORR_UNIT2_25</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/TORT_ESS_BESS1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/TORT_ESS_ESR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/TRBT_SLR_PV1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/TRBT_SLR_PV2</loc></url>
@@ -1327,14 +1562,18 @@
   <url><loc>https://ercotbids.currenttech.energy/unit/TRUSGILL_UNIT2</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/TRUSGILL_UNIT3</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/TRUSGILL_UNIT4</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/TSECA_ES_BESS1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/TSECA_ES_ESR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/TTWEC_G1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/TUL_SLR_UNIT1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/TUL_SLR_UNIT2</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/TURQBESS_BESS1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/TURQBESS_ESR1</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/TV_BESS</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/TV_ESR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/TXCTY_CC1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/TYLRWIND_UNIT1</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/TYNAN_BESS1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/TYNAN_ESR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/TYSN_SLR_UNIT1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/UCC_COGN_UCC_C_2</loc></url>
@@ -1360,6 +1599,7 @@
   <url><loc>https://ercotbids.currenttech.energy/unit/VICTPRT2_UNIT1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/VICTPRT2_UNIT2</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/VISION_UNIT1</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/VORTEX_BESS1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/VORTEX_ESR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/VORTEX_WIND1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/VORTEX_WIND2</loc></url>
@@ -1369,6 +1609,7 @@
   <url><loc>https://ercotbids.currenttech.energy/unit/WAKEWE_G1_J02</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/WAKEWE_G2_J01</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/WAKEWE_G2_J02</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/WAL_BESS_1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/WAL_ESR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/WAP_WAPGT_1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/WAP_WAP_G1</loc></url>
@@ -1380,15 +1621,18 @@
   <url><loc>https://ercotbids.currenttech.energy/unit/WAP_WAP_G7</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/WAP_WAP_G8</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/WAYMARK_UNIT1</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/WCOLLOCL_BSS_U1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/WCOLLOCL_ESR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/WCPP_CC1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/WEBBER_S_WSP1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/WEC_WECG1</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/WEIL_TRC_BESS</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/WEIL_TRC_ESR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/WES_UNIT1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/WES_UNIT2</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/WFCOGEN_CC1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/WFTANK_ESR1</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/WFTANK_ESS1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/WGU_UNIT1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/WHCCS2_CC2</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/WHCCS_CC1</loc></url>
@@ -1400,6 +1644,7 @@
   <url><loc>https://ercotbids.currenttech.energy/unit/WHTTAIL_WR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/WH_WIND_UNIT1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/WH_WIND_UNIT2</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/WIG_ESS_BES1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/WIG_ESS_ESR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/WILDWIND_UNIT1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/WILDWIND_UNIT2</loc></url>
@@ -1414,14 +1659,19 @@
   <url><loc>https://ercotbids.currenttech.energy/unit/WNDTHST2_UNIT1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/WOODWRD1_WOODWRD1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/WOODWRD2_WOODWRD2</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/WORSHAM_BESS1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/WORSHAM_ESR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/WOVER_ESR1</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/WOVER_UNIT1</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/WR_BESS1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/WR_ESR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/WZRD_ESS_ESR1</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/W_HARLIN_BESS</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/W_HARLIN_ESR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/W_PECOS_UNIT1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/X1_DGR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/X4_ESR1</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/X4_SWRI</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/YAPN_SLR_PV1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/YAPN_SLR_PV2</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/YCAT_WND_UNIT1</loc></url>
@@ -1435,6 +1685,9 @@
   <url><loc>https://ercotbids.currenttech.energy/unit/Z5_DGR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/ZAPATA_ESR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/ZAPATA_ESR2</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/ZAPATA_UNIT1</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/ZAPATA_UNIT2</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/ZIER_SLR_BES1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/ZIER_SLR_ESR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/ZIER_SLR_PV1</loc></url>
 </urlset>

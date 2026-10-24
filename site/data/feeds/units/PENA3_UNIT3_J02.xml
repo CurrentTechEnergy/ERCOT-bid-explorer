@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>PENA3_UNIT3_J02: bidding and operating changes</title>
+  <link href="https://ercotbids.currenttech.energy/unit.html?unit=PENA3_UNIT3_J02"/>
+  <id>https://ercotbids.currenttech.energy/unit.html?unit=PENA3_UNIT3_J02</id>
+  <updated>2026-10-18T00:00:00Z</updated>
+  <entry>
+    <title>PENA3_UNIT3_J02: Decision maker or QSE changed (2026-08-22)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=PENA3_UNIT3_J02"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=PENA3_UNIT3_J02#PENA3_UNIT3_J02/2026-08-22/control</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Scheduled by AVANGRID POWER LLC, was SOUTH TEXAS ELECTRIC CO OP INC</summary>
+  </entry>
+  <entry>
+    <title>PENA3_UNIT3_J02: Decision maker or QSE changed (2026-08-22)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=PENA3_UNIT3_J02"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=PENA3_UNIT3_J02#PENA3_UNIT3_J02/2026-08-22/control</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Scheduled by AVANGRID POWER LLC, was SOUTH TEXAS ELECTRIC CO OP INC</summary>
+  </entry>
+</feed>

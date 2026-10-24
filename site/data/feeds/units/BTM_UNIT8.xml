@@ -47,6 +47,13 @@
     <summary>Back from a 22-day outage</summary>
   </entry>
   <entry>
+    <title>BTM: Decision maker or QSE changed (2026-04-09)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=BTM"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=BTM#BTM/2026-04-09/control</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Offers now decided by SOUTH TEXAS ELECTRIC CO OP INC, was ERCOT code YWATTB, ERCOT code YWATTX</summary>
+  </entry>
+  <entry>
     <title>BTM_UNIT8: Outage started (2026-03-30)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=BTM_UNIT8"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=BTM_UNIT8#BTM_UNIT8/2026-03-30/outage_start</id>

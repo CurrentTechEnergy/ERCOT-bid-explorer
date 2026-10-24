@@ -5,6 +5,13 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=MIL_MILLERG5</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
+    <title>MIL: Decision maker or QSE changed (2026-08-22)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=MIL"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=MIL#MIL/2026-08-22/control</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Offers now decided by NRG TEXAS POWER LLC, was ERCOT code YRWMIL</summary>
+  </entry>
+  <entry>
     <title>MIL_MILLERG5: Timescale group changed (2026-07-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=MIL_MILLERG5"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=MIL_MILLERG5#MIL_MILLERG5/2026-07-01/group</id>

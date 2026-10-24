@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>ANDMDSLR_ESR1: bidding and operating changes</title>
+  <link href="https://ercotbids.currenttech.energy/unit.html?unit=ANDMDSLR_ESR1"/>
+  <id>https://ercotbids.currenttech.energy/unit.html?unit=ANDMDSLR_ESR1</id>
+  <updated>2026-10-18T00:00:00Z</updated>
+  <entry>
+    <title>ANDMDSLR: Decision maker or QSE changed (2026-08-22)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=ANDMDSLR"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=ANDMDSLR#ANDMDSLR/2026-08-22/control</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Offers now decided by IPX POWER USA LLC, was ERCOT code YIPLU2</summary>
+  </entry>
+</feed>

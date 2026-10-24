@@ -5,6 +5,13 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=JADE_SLR_UNIT2</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
+    <title>JADE: Decision maker or QSE changed (2026-08-22)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=JADE"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=JADE#JADE/2026-08-22/control</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Offers now decided by IPX POWER USA LLC, was ERCOT code YIPLUM</summary>
+  </entry>
+  <entry>
     <title>JADE_SLR: Episode (2025-09-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=JADE_SLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=JADE_SLR#JADE_SLR/2025-09-01/renew_episode</id>

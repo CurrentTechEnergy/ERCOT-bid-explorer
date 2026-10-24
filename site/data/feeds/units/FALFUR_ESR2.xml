@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>FALFUR_ESR2: bidding and operating changes</title>
+  <link href="https://ercotbids.currenttech.energy/unit.html?unit=FALFUR_ESR2"/>
+  <id>https://ercotbids.currenttech.energy/unit.html?unit=FALFUR_ESR2</id>
+  <updated>2026-10-24T00:00:00Z</updated>
+  <entry>
+    <title>FALFUR_ESR2: New battery (2025-12-14)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=FALFUR_ESR2"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=FALFUR_ESR2#FALFUR_ESR2/2025-12-14/battery_new</id>
+    <updated>2026-10-24T00:00:00Z</updated>
+    <summary>First day charging or discharging: 10 MW, 13 MWh</summary>
+  </entry>
+</feed>

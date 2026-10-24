@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>RAB: bidding and operating changes</title>
+  <link href="https://ercotbids.currenttech.energy/unit.html?unit=RAB"/>
+  <id>https://ercotbids.currenttech.energy/unit.html?unit=RAB</id>
+  <updated>2026-10-18T00:00:00Z</updated>
+  <entry>
+    <title>RAB: Decision maker or QSE changed (2026-04-09)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=RAB"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=RAB#RAB/2026-04-09/control</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Offers now decided by SOUTH TEXAS ELECTRIC CO OP INC, was ERCOT code YWATTB</summary>
+  </entry>
+</feed>

@@ -5,6 +5,13 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=RADN_SLR_UNIT1</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
+    <title>RADN: Decision maker or QSE changed (2026-08-22)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=RADN"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=RADN#RADN/2026-08-22/control</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Offers now decided by IPX POWER USA LLC, was ERCOT code YIPRAD</summary>
+  </entry>
+  <entry>
     <title>RADN_SLR: New floor (2025-07-24)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=RADN_SLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=RADN_SLR#RADN_SLR/2025-07-24/renew_floor_new</id>
