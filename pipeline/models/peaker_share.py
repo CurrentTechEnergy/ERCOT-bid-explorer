@@ -21,13 +21,24 @@ alone and tried on Jun-Aug, it cut the fleet's hourly committed-minimum error fr
 the few cheap hours give no stable map.  v2 refits CALIB on the available-hours share against
 the online rate in hours the unit was not on outage (isotonic by band, the backtest's unit-hours
 above CHEAP_HUB; bias 0.009 -> 0.001, in-sample).
+
+v3 adds what turns a peaker on: its own run margin.  For each hour, the best contiguous run
+through it of (day-ahead node price - minimum-energy cost) x LSL, less one hot start, and the
+hour's own margin, both from the unit's costs in the DAM disclosure (generic combustion turbine
+costs without a three-part offer, flagged).  A logistic (_fit) turns the share (as a logit), the
+hub price and those margins into p_on in place of CALIB; it is fitted per history point on the
+TRAIN_DAYS days of the 60-day record up to the point, on the hours each unit was available, with
+the share as of each training day, so it knows only what the forecast of that day knew.  Without a
+fit (too few rows), CALIB stands.  Offline (Apr-Aug 2026, each month fitted on the 90 days ending
+60 days before it) it cut the fleet's hourly combustion-turbine minimum-output error from 550 to
+507 MW, and from 1,026 to 811 MW in hours with the hub above $45.
 """
 import numpy as np
 
 from ..forecast import context as C
 
 NAME = "peaker_share"
-VERSION = "v2"    # v2: share of available hours (outage hours left out), CALIB refit; v1: history share mapped through CALIB by hub price band
+VERSION = "v3"    # v3: logistic on the share, the hub and the unit's own run margin in place of CALIB; v2: share of available hours (outage hours left out), CALIB refit; v1: history share mapped through CALIB by hub price band
 BANDS = [20.0, 30.0, 45.0]   # hub $/MWh: bands (CHEAP_HUB, 20], (20, 30], (30, 45], above 45
 _X = [0.0, 0.012, 0.034, 0.073, 0.15, 0.25, 0.35, 0.455, 0.557, 0.655, 0.752, 0.852, 0.983, 1.0]
 CALIB = [   # online rate while available at each share in _X, by band (v2: isotonic fit, Mar-Aug 2026)
@@ -38,6 +49,98 @@ CALIB = [   # online rate while available at each share in _X, by band (v2: isot
 ]
 MIN_CELL = 10
 MIN_BIN = 20
+TRAIN_DAYS = 90     # days of the 60-day record up to the history point the v3 logistic is fitted on
+TRAIN_MIN = 20000   # available unit-hours it needs
+FEATURES = ["share", "hub", "run", "run_pos", "hour_margin", "offer", "run_o", "run_pos_o", "hour_margin_o"]
+
+
+def _share(s, fleet, hub):
+    """[24] online share while available, by the hour's hub bin (unit cell, unit bin, fleet cell),
+    and where it came from."""
+    p = np.zeros(24)
+    src = "fleet"
+    for h in range(24):
+        b = C.price_bin(float(hub[h])) if hub is not None else None
+        if s is None or b is None:
+            if s is not None and s["avail"].sum():
+                p[h] = s["on"].sum() / s["avail"].sum(); src = "unit-all"
+            elif fleet is not None and fleet["avail"].sum():
+                p[h] = fleet["on"].sum() / fleet["avail"].sum()
+            continue
+        if s["avail"][b, h] >= MIN_CELL:
+            p[h] = s["on"][b, h] / s["avail"][b, h]; src = "unit-cell"
+        elif s["avail"][b].sum() >= MIN_BIN:
+            p[h] = s["on"][b].sum() / s["avail"][b].sum(); src = "unit-bin"
+        elif fleet is not None and fleet["avail"][b, h]:
+            p[h] = fleet["on"][b, h] / fleet["avail"][b, h]
+    return p, src
+
+
+def _best_run(m):
+    """[24]: the best sum of m over a contiguous run of hours containing each hour."""
+    out = np.full(len(m), -np.inf)
+    for i in range(len(m)):
+        run = 0.0
+        for j in range(i, len(m)):
+            run += m[j]
+            out[i:j + 1] = np.maximum(out[i:j + 1], run)
+    return out
+
+
+def _x(p, hub, prices, u):
+    """[24, FEATURES] for one unit-day: the share as a logit, the hub, the run margin through each
+    hour per MW of LSL (less one hot start; compressed) and whether it is positive, the hour's own
+    margin, whether the costs are the unit's own offer, and the margins again for own offers."""
+    lsl = u["lsl"] or u["hsl"] or 0.0
+    if prices is None or not lsl or u["mingen"] is None:
+        return None
+    q = np.clip(p, 1e-3, 1 - 1e-3)
+    margin = prices - u["mingen"]
+    run = (_best_run(margin * lsl) - (u["hot"] or 0.0)) / lsl
+    own = float(u["est"] == 0)
+    x = np.column_stack([np.log(q / (1 - q)), np.clip(hub, -20, 200) / 50, np.arcsinh(run / 10), (run > 0).astype(float),
+                         np.clip(margin, -100, 300) / 50, np.full(24, own)])
+    return np.column_stack([x, x[:, 2:5] * own])
+
+
+def _fit(ctx, date):
+    """The v3 logistic as of asof(date): (coef, intercept), or None.  Cached per history point."""
+    point, _ = ctx.asof(date)
+    cache = ctx.__dict__.setdefault("_peaker_fit", {})
+    if point in cache:
+        return cache[point]
+    from sklearn.linear_model import LogisticRegression
+    raw, day0 = ctx.raw_states(), ctx.stats["day0"]
+    days = [d for d in ctx.uh.get("dates", []) if point is not None and d <= point][-TRAIN_DAYS:]
+    X, y = [], []
+    for d in days:
+        hub = ctx.hub(d)
+        if hub is None:
+            continue
+        stats = ctx.stats_at(d)
+        fleet = stats["fleet"].get("combustion_turbine")
+        dn = (C._d(d) - day0).days
+        for key, u in ctx.units(d).items():
+            st = raw.get(key)
+            if u["tech"] != "combustion_turbine" or st is None or (dn + 1) * 24 > len(st[1]):
+                continue
+            seg = st[1][dn * 24:(dn + 1) * 24]
+            up = np.isin(seg, ["0", "m", "a"])
+            if not up.any():
+                continue
+            x = _x(_share(stats["units"].get(key), fleet, hub)[0], hub,
+                   ctx.node_price(d, u["sp"], name=u["configs"][0]) if u["sp"] else None, u)
+            if x is None:
+                continue
+            X.append(x[up]); y.append(np.isin(seg[up], ["m", "a"]).astype(float))
+    fit = None
+    if X and sum(len(v) for v in y) >= TRAIN_MIN:
+        Y = np.concatenate(y)
+        if 0 < Y.mean() < 1:
+            m = LogisticRegression(C=1.0, max_iter=3000).fit(np.vstack(X), Y)
+            fit = (m.coef_[0], float(m.intercept_[0]))
+    cache[point] = fit
+    return fit
 
 
 def forecast(date, ctx: C.Context) -> dict:
@@ -45,30 +148,21 @@ def forecast(date, ctx: C.Context) -> dict:
     hub = ctx.hub(date)
     stats = ctx.stats_at(date)
     fleet = stats["fleet"].get("combustion_turbine")
+    fit = _fit(ctx, date) if hub is not None else None
     rows = {}
     for key, u in units.items():
         if u["tech"] != "combustion_turbine":
             continue
-        s = stats["units"].get(key)
-        p = np.zeros(24)
-        src = "fleet"
-        for h in range(24):
-            b = C.price_bin(float(hub[h])) if hub is not None else None
-            if s is None or b is None:
-                if s is not None and s["avail"].sum():
-                    p[h] = s["on"].sum() / s["avail"].sum(); src = "unit-all"
-                elif fleet is not None and fleet["avail"].sum():
-                    p[h] = fleet["on"].sum() / fleet["avail"].sum()
-                continue
-            if s["avail"][b, h] >= MIN_CELL:
-                p[h] = s["on"][b, h] / s["avail"][b, h]; src = "unit-cell"
-            elif s["avail"][b].sum() >= MIN_BIN:
-                p[h] = s["on"][b].sum() / s["avail"][b].sum(); src = "unit-bin"
-            elif fleet is not None and fleet["avail"][b, h]:
-                p[h] = fleet["on"][b, h] / fleet["avail"][b, h]
-        if hub is not None:
-            for h in range(24):
-                if float(hub[h]) > C.CHEAP_HUB:
-                    p[h] = np.interp(p[h], _X, CALIB[int(np.searchsorted(BANDS, float(hub[h])))])
-        rows[key] = {"p_on": np.round(p, 3), "source": src, "model": NAME, "version": VERSION}
-    return {"rows": rows, "inputs": {"hub": hub is not None}}
+        p, src = _share(stats["units"].get(key), fleet, hub)
+        x = _x(p, hub, ctx.node_price(date, u["sp"], name=u["configs"][0]) if u["sp"] else None, u) if fit else None
+        if x is not None:
+            p = 1.0 / (1.0 + np.exp(-(x @ fit[0] + fit[1])))
+            version = VERSION
+        else:
+            if hub is not None:
+                for h in range(24):
+                    if float(hub[h]) > C.CHEAP_HUB:
+                        p[h] = np.interp(p[h], _X, CALIB[int(np.searchsorted(BANDS, float(hub[h])))])
+            version = VERSION + "-calib"
+        rows[key] = {"p_on": np.round(p, 3), "source": src, "model": NAME, "version": version}
+    return {"rows": rows, "inputs": {"hub": hub is not None, "fit": fit is not None}}
