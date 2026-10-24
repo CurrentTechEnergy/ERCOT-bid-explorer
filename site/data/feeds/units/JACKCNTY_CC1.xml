@@ -3,21 +3,7 @@
   <title>JACKCNTY_CC1: bidding and operating changes</title>
   <link href="https://ercotbids.currenttech.energy/unit.html?unit=JACKCNTY_CC1"/>
   <id>https://ercotbids.currenttech.energy/unit.html?unit=JACKCNTY_CC1</id>
-  <updated>2026-10-23T00:00:00Z</updated>
-  <entry>
-    <title>JACKCNTY_CC1: Decision maker or QSE changed (2026-08-22)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=JACKCNTY_CC1"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=JACKCNTY_CC1#JACKCNTY_CC1/2026-08-22/control</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Offers now decided by NRG TEXAS POWER LLC, was ERCOT code YJACKC</summary>
-  </entry>
-  <entry>
-    <title>JACKCNTY_CC1: Decision maker or QSE changed (2026-08-22)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=JACKCNTY_CC1"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=JACKCNTY_CC1#JACKCNTY_CC1/2026-08-22/control</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Offers now decided by NRG TEXAS POWER LLC, was ERCOT code YJACKC</summary>
-  </entry>
+  <updated>2026-10-24T00:00:00Z</updated>
   <entry>
     <title>JACKCNTY_CC1: Outage ended (2026-07-21)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=JACKCNTY_CC1"/>
@@ -66,6 +52,48 @@
     <id>https://ercotbids.currenttech.energy/unit.html?unit=JACKCNTY_CC1#JACKCNTY_CC1/2026-05-19/outage_end</id>
     <updated>2026-10-23T00:00:00Z</updated>
     <summary>Back from a 28-day outage</summary>
+  </entry>
+  <entry>
+    <title>JACKCNTY_CC1: Decision maker or QSE changed (2026-05-19)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=JACKCNTY_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=JACKCNTY_CC1#JACKCNTY_CC1/2026-05-19/control</id>
+    <updated>2026-10-24T00:00:00Z</updated>
+    <summary>Offers now decided by NRG TEXAS POWER LLC, was ERCOT code YJACKC</summary>
+  </entry>
+  <entry>
+    <title>JACKCNTY_CC1: Decision maker or QSE changed (2026-05-19)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=JACKCNTY_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=JACKCNTY_CC1#JACKCNTY_CC1/2026-05-19/control</id>
+    <updated>2026-10-24T00:00:00Z</updated>
+    <summary>Offers now decided by NRG TEXAS POWER LLC, was ERCOT code YJACKC</summary>
+  </entry>
+  <entry>
+    <title>JACKCNTY_CC1: Decision maker or QSE changed (2026-05-06)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=JACKCNTY_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=JACKCNTY_CC1#JACKCNTY_CC1/2026-05-06/control</id>
+    <updated>2026-10-24T00:00:00Z</updated>
+    <summary>Offers now decided by NRG TEXAS POWER LLC, was ERCOT code YJACKC</summary>
+  </entry>
+  <entry>
+    <title>JACKCNTY_CC1: Decision maker or QSE changed (2026-05-06)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=JACKCNTY_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=JACKCNTY_CC1#JACKCNTY_CC1/2026-05-06/control</id>
+    <updated>2026-10-24T00:00:00Z</updated>
+    <summary>Offers now decided by NRG TEXAS POWER LLC, was ERCOT code YJACKC</summary>
+  </entry>
+  <entry>
+    <title>JACKCNTY_CC1: Decision maker or QSE changed (2026-05-01)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=JACKCNTY_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=JACKCNTY_CC1#JACKCNTY_CC1/2026-05-01/control</id>
+    <updated>2026-10-24T00:00:00Z</updated>
+    <summary>Scheduled by NRG TEXAS POWER LLC, was LINEBACKER POWER FUNDING LLC (SQ1)</summary>
+  </entry>
+  <entry>
+    <title>JACKCNTY_CC1: Decision maker or QSE changed (2026-05-01)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=JACKCNTY_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=JACKCNTY_CC1#JACKCNTY_CC1/2026-05-01/control</id>
+    <updated>2026-10-24T00:00:00Z</updated>
+    <summary>Scheduled by NRG TEXAS POWER LLC, was LINEBACKER POWER FUNDING LLC (SQ1)</summary>
   </entry>
   <entry>
     <title>JACKCNTY_CC1: Outage started (2026-04-22)</title>

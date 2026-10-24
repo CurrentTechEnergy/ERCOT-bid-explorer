@@ -3,27 +3,27 @@
   <title>SHANNONW_UNIT_1: bidding and operating changes</title>
   <link href="https://ercotbids.currenttech.energy/unit.html?unit=SHANNONW_UNIT_1"/>
   <id>https://ercotbids.currenttech.energy/unit.html?unit=SHANNONW_UNIT_1</id>
-  <updated>2026-10-18T00:00:00Z</updated>
-  <entry>
-    <title>SHANNONW_UNIT_1: Decision maker or QSE changed (2026-08-22)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=SHANNONW_UNIT_1"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=SHANNONW_UNIT_1#SHANNONW_UNIT_1/2026-08-22/control</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Offers now decided by 1370 SHANNON LLC, was INNERGEX RENEWABLE ENERGY INC</summary>
-  </entry>
-  <entry>
-    <title>SHANNONW_UNIT_1: Decision maker or QSE changed (2026-08-22)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=SHANNONW_UNIT_1"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=SHANNONW_UNIT_1#SHANNONW_UNIT_1/2026-08-22/control</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Offers now decided by 1370 SHANNON LLC, was INNERGEX RENEWABLE ENERGY INC</summary>
-  </entry>
+  <updated>2026-10-24T00:00:00Z</updated>
   <entry>
     <title>SHANNONW: New floor (2026-07-20)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=SHANNONW"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=SHANNONW#SHANNONW/2026-07-20/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor $0 to floor -$2</summary>
+  </entry>
+  <entry>
+    <title>SHANNONW_UNIT_1: Decision maker or QSE changed (2026-06-21)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=SHANNONW_UNIT_1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=SHANNONW_UNIT_1#SHANNONW_UNIT_1/2026-06-21/control</id>
+    <updated>2026-10-24T00:00:00Z</updated>
+    <summary>Offers now decided by 1370 SHANNON LLC, was INNERGEX RENEWABLE ENERGY INC</summary>
+  </entry>
+  <entry>
+    <title>SHANNONW_UNIT_1: Decision maker or QSE changed (2026-06-21)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=SHANNONW_UNIT_1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=SHANNONW_UNIT_1#SHANNONW_UNIT_1/2026-06-21/control</id>
+    <updated>2026-10-24T00:00:00Z</updated>
+    <summary>Offers now decided by 1370 SHANNON LLC, was INNERGEX RENEWABLE ENERGY INC</summary>
   </entry>
   <entry>
     <title>SHANNONW: Episode (2021-02-14)</title>

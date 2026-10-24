@@ -3,14 +3,7 @@
   <title>MIL_MILLERG5: bidding and operating changes</title>
   <link href="https://ercotbids.currenttech.energy/unit.html?unit=MIL_MILLERG5"/>
   <id>https://ercotbids.currenttech.energy/unit.html?unit=MIL_MILLERG5</id>
-  <updated>2026-10-18T00:00:00Z</updated>
-  <entry>
-    <title>MIL: Decision maker or QSE changed (2026-08-22)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=MIL"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=MIL#MIL/2026-08-22/control</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Offers now decided by NRG TEXAS POWER LLC, was ERCOT code YRWMIL</summary>
-  </entry>
+  <updated>2026-10-24T00:00:00Z</updated>
   <entry>
     <title>MIL_MILLERG5: Timescale group changed (2026-07-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=MIL_MILLERG5"/>
@@ -26,6 +19,13 @@
     <summary>Back from a 12-day outage</summary>
   </entry>
   <entry>
+    <title>MIL: Decision maker or QSE changed (2026-05-05)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=MIL"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=MIL#MIL/2026-05-05/control</id>
+    <updated>2026-10-24T00:00:00Z</updated>
+    <summary>Offers now decided by NRG TEXAS POWER LLC, was ERCOT code YRWMIL</summary>
+  </entry>
+  <entry>
     <title>MIL_MILLERG5: Outage started (2026-05-04)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=MIL_MILLERG5"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=MIL_MILLERG5#MIL_MILLERG5/2026-05-04/outage_start</id>
@@ -38,6 +38,13 @@
     <id>https://ercotbids.currenttech.energy/unit.html?unit=MIL_MILLERG5#MIL_MILLERG5/2026-05-01/outage_end</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Back from a 10-day outage</summary>
+  </entry>
+  <entry>
+    <title>MIL: Decision maker or QSE changed (2026-05-01)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=MIL"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=MIL#MIL/2026-05-01/control</id>
+    <updated>2026-10-24T00:00:00Z</updated>
+    <summary>Scheduled by NRG TEXAS POWER LLC, was LINEBACKER POWER FUNDING LLC (SQ3)</summary>
   </entry>
   <entry>
     <title>MIL_MILLERG5: Outage started (2026-04-22)</title>
