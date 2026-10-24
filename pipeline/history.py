@@ -49,7 +49,12 @@ One pair of Parquet files per calendar month:
   as-mcpc-YYYY-MM.parquet  (--as) date, he and the DAM market clearing price for capacity of each
                            of those services ($/MW per hour)
 
-    python -m pipeline.history 2019-01 [2019-02 ...] [--out history] [--force] [--thermal | --as]
+  rt-prices-YYYY-MM.parquet  (--rt, from NP6-905-CD alone) date, he, point, type, price: the real-time
+                           settlement point price at every point (resource nodes, hubs, load zones),
+                           the hourly mean of the four 15-minute prices, as parse_prices.node_hourly
+                           gives the live node files.  Joins units-* and thermal-* on sp = point.
+
+    python -m pipeline.history 2019-01 [2019-02 ...] [--out history] [--force] [--thermal | --as | --rt]
 """
 import argparse
 import calendar
@@ -62,8 +67,9 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-from .config import EMIL_60DAY, EMIL_DAM, EMIL_DAM_SPP
+from .config import EMIL_60DAY, EMIL_DAM, EMIL_DAM_SPP, EMIL_SPP
 from .dam_prices import read_dam_spp
+from .parse_prices import read_spp
 from .log import warn
 from .intraday import unit_hours
 from .ppa import hourly_offers
@@ -302,6 +308,50 @@ def build_month(api, month: str, out: Path = OUT, force: bool = False, thermal: 
           f"{upath.stat().st_size / 1e6:.1f} MB, {time.time() - t0:.0f}s")
 
 
+def rt_prices(api, days) -> pd.DataFrame:
+    """Hourly real-time price at every settlement point for the days, from NP6-905-CD: one
+    listing and one bulk download per day, as update.fetch_prices does for the live node files
+    (the last intervals of a day post just after midnight, so the listing runs to 02:00)."""
+    frames, missing = [], []
+    for d in days:
+        docs = api.list_archives(EMIL_SPP, _t(d), _t(d + dt.timedelta(days=1)) + dt.timedelta(hours=2))
+        blobs = api.download_many(EMIL_SPP, [x["docId"] for x in docs]) if docs else []
+        spp = read_spp([c for b in blobs for c in iter_csvs(b, "x.zip")])
+        spp = spp[spp["date"] == d.isoformat()]
+        if spp.empty:
+            missing.append(d.isoformat())
+            continue
+        g = spp.assign(he=spp["he"].astype(int).clip(1, 24)).groupby(["date", "he", "point", "type"], observed=True)["price"].mean()
+        frames.append(g.reset_index())
+        print(f"  {EMIL_SPP} {d}: {len(docs)} files, {g.index.get_level_values('point').nunique()} points", flush=True)
+    if missing:
+        warn(f"{EMIL_SPP}: no RT prices for {len(missing)} day(s): {', '.join(missing)}")
+    if not frames:
+        return pd.DataFrame(columns=["date", "he", "point", "type", "price"])
+    f = pd.concat(frames, ignore_index=True)
+    f["he"] = f["he"].astype("int8")
+    f["price"] = f["price"].astype("float32")
+    for k in ("point", "type"):
+        f[k] = f[k].astype("category")
+    return f.sort_values(["date", "point", "he"]).reset_index(drop=True)
+
+
+def build_rt_month(api, month: str, out: Path = OUT, force: bool = False) -> None:
+    out.mkdir(parents=True, exist_ok=True)
+    path = out / f"rt-prices-{month}.parquet"
+    if path.exists() and not force:
+        print(f"{path.name}: already there")
+        return
+    t0 = time.time()
+    f = rt_prices(api, _days(month))
+    if f.empty:
+        warn(f"{month}: no RT settlement point prices found; nothing written")
+        return
+    f.to_parquet(path, index=False)
+    print(f"{path.name}: {len(f):,} rows, {f['date'].nunique()} days, {f['point'].nunique()} points, "
+          f"{path.stat().st_size / 1e6:.1f} MB, {time.time() - t0:.0f}s")
+
+
 def build_as_month(api, month: str, out: Path = OUT, force: bool = False) -> None:
     out.mkdir(parents=True, exist_ok=True)
     apath, mpath = out / f"as-{month}.parquet", out / f"as-mcpc-{month}.parquet"
@@ -332,12 +382,15 @@ def main(argv=None):
     kind.add_argument("--thermal", action="store_true", help="build the thermal files instead of wind and solar")
     kind.add_argument("--as", dest="ancillary", action="store_true",
                       help="build the thermal ancillary service award and MCPC files instead")
+    kind.add_argument("--rt", action="store_true", help="build the real-time settlement point price files instead")
     args = ap.parse_args(argv)
     from .ercot_api import ErcotAPI
     api = ErcotAPI()
     for m in args.months:
         if args.ancillary:
             build_as_month(api, m, Path(args.out), args.force)
+        elif args.rt:
+            build_rt_month(api, m, Path(args.out), args.force)
         else:
             build_month(api, m, Path(args.out), args.force, args.thermal)
 

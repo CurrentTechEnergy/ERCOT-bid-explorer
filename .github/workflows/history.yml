@@ -1,7 +1,8 @@
 name: Build hourly history
 
-# Hourly wind and solar history (kind: renewables), thermal history (kind: thermal) or thermal
-# ancillary service awards and prices (kind: as) from ERCOT's
+# Hourly wind and solar history (kind: renewables), thermal history (kind: thermal), thermal
+# ancillary service awards and prices (kind: as) or real-time settlement point prices (kind: rt)
+# from ERCOT's
 # archive (pipeline/history.py), one month per job,
 # uploaded as Parquet files to the `history` release.  Kept apart from the site data and the
 # `data` branch: this workflow never commits, never touches data/ or the data branch, and does not
@@ -10,9 +11,9 @@ on:
   workflow_dispatch:
     inputs:
       kind:
-        description: "renewables (units-*), thermal (thermal-*) or as (as-*, as-mcpc-*)"
+        description: "renewables (units-*), thermal (thermal-*), as (as-*, as-mcpc-*) or rt (rt-prices-*)"
         type: choice
-        options: [renewables, thermal, as]
+        options: [renewables, thermal, as, rt]
         required: false
         default: renewables
       start:
@@ -57,7 +58,7 @@ jobs:
           MAX: ${{ inputs.max_months || '24' }}
           FORCE: ${{ inputs.force || false }}
           EVENT: ${{ github.event_name }}
-          PREFIX: ${{ inputs.kind == 'thermal' && 'thermal' || inputs.kind == 'as' && 'as' || 'units' }}
+          PREFIX: ${{ inputs.kind == 'thermal' && 'thermal' || inputs.kind == 'as' && 'as' || inputs.kind == 'rt' && 'rt-prices' || 'units' }}
         run: |
           if [ "$EVENT" = "pull_request" ]; then echo 'months=["2019-01"]' >> "$GITHUB_OUTPUT"; exit 0; fi
           if ! gh release view history -R "$GITHUB_REPOSITORY" > /dev/null 2>&1; then
@@ -105,7 +106,14 @@ jobs:
           ERCOT_API_USERNAME: ${{ secrets.ERCOT_API_USERNAME }}
           ERCOT_API_PASSWORD: ${{ secrets.ERCOT_API_PASSWORD }}
           ERCOT_API_SUBSCRIPTION_KEY: ${{ secrets.ERCOT_API_SUBSCRIPTION_KEY }}
-        run: python -m pipeline.history "${{ matrix.month }}" --out out ${{ inputs.kind == 'thermal' && '--thermal' || inputs.kind == 'as' && '--as' || '' }}
+        run: python -m pipeline.history "${{ matrix.month }}" --out out ${{ inputs.kind == 'thermal' && '--thermal' || inputs.kind == 'as' && '--as' || inputs.kind == 'rt' && '--rt' || '' }}
+      - name: Build ${{ matrix.month }} RT prices (smoke test)
+        if: github.event_name == 'pull_request'
+        env:
+          ERCOT_API_USERNAME: ${{ secrets.ERCOT_API_USERNAME }}
+          ERCOT_API_PASSWORD: ${{ secrets.ERCOT_API_PASSWORD }}
+          ERCOT_API_SUBSCRIPTION_KEY: ${{ secrets.ERCOT_API_SUBSCRIPTION_KEY }}
+        run: python -m pipeline.history "${{ matrix.month }}" --out out --rt
       - name: Summarise
         run: |
           python3 - <<'PY'
@@ -128,4 +136,4 @@ jobs:
         if: github.event_name == 'workflow_dispatch'
         env:
           GH_TOKEN: ${{ github.token }}
-        run: gh release upload history out/${{ inputs.kind == 'thermal' && 'thermal-' || inputs.kind == 'as' && 'as-' || '' }}*.parquet --clobber -R "$GITHUB_REPOSITORY"
+        run: gh release upload history out/${{ inputs.kind == 'thermal' && 'thermal-' || inputs.kind == 'as' && 'as-' || inputs.kind == 'rt' && 'rt-prices-' || '' }}*.parquet --clobber -R "$GITHUB_REPOSITORY"

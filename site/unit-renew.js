@@ -163,14 +163,22 @@ function regime(r, sp) {
   if (r.k === "peak") return `${r.formula ? "formula, " : ""}up to ${fmt$(r.v)}`;
   return "moving within the day";
 }
+// the window a change's moved dispatch is measured over: its days in the new regime up to the
+// next change, at most a year (pipeline/renew_changes.py WINDOW_MAX)
+function winText(im) {
+  if (!im.days) return "";
+  return `${fmt0(im.days)} day${im.days === 1 ? "" : "s"}${im.open ? " so far" : ""}${im.capped ? ", capped at 1 year" : ""}`;
+}
+const perDay = (im) => (im.days ? ((im.up || 0) + (im.dn || 0)) / im.days : null);
 function impactText(e) {
   const im = e.impact;
   if (!im) return `<span class="muted">${e.before.k === "v" ? "no fixed old offer" : "no hourly data"}</span>`;
-  if (!e.moved) return `<span class="muted">no${im.est > 0.5 ? " (DA price)" : ""}</span>`;
+  const da = im.est > 0.5 ? ", DA price" : "", win = winText(im);
+  if (!e.moved) return `<span class="muted">no${win ? `, ${win}` : ""}${da}</span>`;
   const parts = [];
   if (im.up) parts.push(`gave up ${fmtMWh(im.up)}`);
   if (im.dn) parts.push(`ran ${fmtMWh(im.dn)} more`);
-  return `<span class="moved">${parts.join(", ")}</span> <span class="muted">${im.hours} h${im.est > 0.5 ? ", DA price" : ""}</span>`;
+  return `<span class="moved">${parts.join(", ")}</span> <span class="muted">${win ? `over ${win} (${fmt0(perDay(im))} MWh/day), ` : ""}${im.hours} h${da}</span>`;
 }
 function valueText(e) {
   const im = e.impact;
@@ -178,7 +186,7 @@ function valueText(e) {
   const v = [];
   if (im.up) v.push(fmt$0(im.v_up));
   if (im.dn) v.push(fmt$0(im.v_dn));
-  return v.join(" / ");
+  return im.days ? `<span title="${esc(`Over ${winText(im)}: ${fmt$0(((im.v_up || 0) + (im.v_dn || 0)) / im.days)} a day`)}">${v.join(" / ")}</span>` : v.join(" / ");
 }
 const pct = (v) => (v == null ? "–" : fmtPct(v));
 const ctxText = (e) => (e.ctx ? `DA ${pct(e.ctx[0])} → ${pct(e.ctx[1])} · curtailed ${pct(e.ctx[2])} → ${pct(e.ctx[3])}` : "–");
