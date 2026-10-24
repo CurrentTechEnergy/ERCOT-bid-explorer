@@ -47,18 +47,18 @@
     <summary>Multi-day: off 1–7 days in 2026-04 to Daily, 1–2 a week in 2026-05</summary>
   </entry>
   <entry>
-    <title>PPEC_GT8: Outage ended (2026-04-20)</title>
+    <title>PPEC_GT8: Outage ended (2026-04-22)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=PPEC_GT8"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=PPEC_GT8#PPEC_GT8/2026-04-20/outage_end</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Back from a 17-day outage</summary>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=PPEC_GT8#PPEC_GT8/2026-04-22/outage_end</id>
+    <updated>2026-10-24T00:00:00Z</updated>
+    <summary>Back from a 19-day outage</summary>
   </entry>
   <entry>
     <title>PPEC_GT8: Outage started (2026-04-03)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=PPEC_GT8"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=PPEC_GT8#PPEC_GT8/2026-04-03/outage_start</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Outage began, lasting 17 days</summary>
+    <summary>Outage began, lasting 19 days</summary>
   </entry>
   <entry>
     <title>PPEC_GT8: Timescale group changed (2026-04-01)</title>
@@ -68,18 +68,18 @@
     <summary>Always on when available in 2026-03 to Multi-day: off 1–7 days in 2026-04</summary>
   </entry>
   <entry>
-    <title>PPEC_GT8: Outage ended (2026-03-02)</title>
+    <title>PPEC_GT8: Outage ended (2026-03-07)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=PPEC_GT8"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=PPEC_GT8#PPEC_GT8/2026-03-02/outage_end</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Back from a 65-day outage</summary>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=PPEC_GT8#PPEC_GT8/2026-03-07/outage_end</id>
+    <updated>2026-10-24T00:00:00Z</updated>
+    <summary>Back from a 69-day outage</summary>
   </entry>
   <entry>
     <title>PPEC_GT8: Outage started (2025-12-28)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=PPEC_GT8"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=PPEC_GT8#PPEC_GT8/2025-12-28/outage_start</id>
     <updated>2026-10-23T00:00:00Z</updated>
-    <summary>Outage began, lasting 65 days</summary>
+    <summary>Outage began, lasting 69 days</summary>
   </entry>
   <entry>
     <title>PPEC_GT8: Outage ended (2025-12-23)</title>

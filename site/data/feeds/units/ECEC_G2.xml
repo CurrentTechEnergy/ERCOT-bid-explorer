@@ -3,7 +3,7 @@
   <title>ECEC_G2: bidding and operating changes</title>
   <link href="https://ercotbids.currenttech.energy/unit.html?unit=ECEC_G2"/>
   <id>https://ercotbids.currenttech.energy/unit.html?unit=ECEC_G2</id>
-  <updated>2026-10-18T00:00:00Z</updated>
+  <updated>2026-10-24T00:00:00Z</updated>
   <entry>
     <title>ECEC_G2: Loss cutoff moved (2026-07-31)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=ECEC_G2"/>
@@ -19,10 +19,10 @@
     <summary>Shut down for 11 h although a day-ahead award covered 100% of the window</summary>
   </entry>
   <entry>
-    <title>ECEC_G2: Bidding approach shifted (2026-07-13)</title>
+    <title>ECEC_G2: Bidding approach shifted (2026-07-12)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=ECEC_G2"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=ECEC_G2#ECEC_G2/2026-07-13/bidding</id>
-    <updated>2026-10-18T00:00:00Z</updated>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=ECEC_G2#ECEC_G2/2026-07-12/bidding</id>
+    <updated>2026-10-24T00:00:00Z</updated>
     <summary>Offer price vs peer median: $0 to $11/MWh</summary>
   </entry>
   <entry>
@@ -72,7 +72,28 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=ECEC_G2"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=ECEC_G2#ECEC_G2/2026-03-11/bidding</id>
     <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Offer price vs peer median: -$12 to $235/MWh</summary>
+  </entry>
+  <entry>
+    <title>ECEC_G2: Bidding approach shifted (2026-03-10)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=ECEC_G2"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=ECEC_G2#ECEC_G2/2026-03-10/bidding</id>
+    <updated>2026-10-24T00:00:00Z</updated>
     <summary>MW above LSL offered at or below $0: 0% to 100% of the day</summary>
+  </entry>
+  <entry>
+    <title>ECEC_G2: Outage ended (2026-03-06)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=ECEC_G2"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=ECEC_G2#ECEC_G2/2026-03-06/outage_end</id>
+    <updated>2026-10-24T00:00:00Z</updated>
+    <summary>Back from a 9-day outage</summary>
+  </entry>
+  <entry>
+    <title>ECEC_G2: Outage started (2026-02-26)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=ECEC_G2"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=ECEC_G2#ECEC_G2/2026-02-26/outage_start</id>
+    <updated>2026-10-24T00:00:00Z</updated>
+    <summary>Outage began, lasting 9 days</summary>
   </entry>
   <entry>
     <title>ECEC_G2: Bidding approach shifted (2026-02-04)</title>

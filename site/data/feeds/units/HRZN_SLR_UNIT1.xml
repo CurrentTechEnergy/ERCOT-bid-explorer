@@ -3,7 +3,21 @@
   <title>HRZN_SLR_UNIT1: bidding and operating changes</title>
   <link href="https://ercotbids.currenttech.energy/unit.html?unit=HRZN_SLR_UNIT1"/>
   <id>https://ercotbids.currenttech.energy/unit.html?unit=HRZN_SLR_UNIT1</id>
-  <updated>2026-10-18T00:00:00Z</updated>
+  <updated>2026-10-24T00:00:00Z</updated>
+  <entry>
+    <title>HRZN_SLR: Episode (2026-03-14)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=HRZN_SLR"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=HRZN_SLR#HRZN_SLR/2026-03-14/renew_episode</id>
+    <updated>2026-10-24T00:00:00Z</updated>
+    <summary>Episode: floor -$20 to -$3 for the episode for 1 day(s)</summary>
+  </entry>
+  <entry>
+    <title>HRZN_SLR: Episode (2026-03-07)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=HRZN_SLR"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=HRZN_SLR#HRZN_SLR/2026-03-07/renew_episode</id>
+    <updated>2026-10-24T00:00:00Z</updated>
+    <summary>Episode: floor -$20 to $3 for the episode for 1 day(s)</summary>
+  </entry>
   <entry>
     <title>HRZN_SLR: Episode (2026-02-11)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=HRZN_SLR"/>

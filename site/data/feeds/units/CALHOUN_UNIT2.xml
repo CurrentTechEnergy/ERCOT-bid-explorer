@@ -3,27 +3,13 @@
   <title>CALHOUN_UNIT2: bidding and operating changes</title>
   <link href="https://ercotbids.currenttech.energy/unit.html?unit=CALHOUN_UNIT2"/>
   <id>https://ercotbids.currenttech.energy/unit.html?unit=CALHOUN_UNIT2</id>
-  <updated>2026-10-18T00:00:00Z</updated>
+  <updated>2026-10-24T00:00:00Z</updated>
   <entry>
-    <title>CALHOUN_UNIT2: Outage started (2026-07-12)</title>
+    <title>CALHOUN_UNIT2: Outage started (2026-05-30)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=CALHOUN_UNIT2"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=CALHOUN_UNIT2#CALHOUN_UNIT2/2026-07-12/outage_start</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Outage began, still on at the end of the data (44 days so far)</summary>
-  </entry>
-  <entry>
-    <title>CALHOUN_UNIT2: Outage ended (2026-07-08)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=CALHOUN_UNIT2"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=CALHOUN_UNIT2#CALHOUN_UNIT2/2026-07-08/outage_end</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Back from a 34-day outage</summary>
-  </entry>
-  <entry>
-    <title>CALHOUN_UNIT2: Outage started (2026-06-05)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=CALHOUN_UNIT2"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=CALHOUN_UNIT2#CALHOUN_UNIT2/2026-06-05/outage_start</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Outage began, lasting 34 days</summary>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=CALHOUN_UNIT2#CALHOUN_UNIT2/2026-05-30/outage_start</id>
+    <updated>2026-10-24T00:00:00Z</updated>
+    <summary>Outage began, still on at the end of the data (86 days so far)</summary>
   </entry>
   <entry>
     <title>CALHOUN_UNIT2: Timescale group changed (2026-05-01)</title>

@@ -3,7 +3,7 @@
   <title>FLCNS_UNIT2: bidding and operating changes</title>
   <link href="https://ercotbids.currenttech.energy/unit.html?unit=FLCNS_UNIT2"/>
   <id>https://ercotbids.currenttech.energy/unit.html?unit=FLCNS_UNIT2</id>
-  <updated>2026-10-18T00:00:00Z</updated>
+  <updated>2026-10-24T00:00:00Z</updated>
   <entry>
     <title>FLCNS_UNIT2: Outage started (2026-08-04)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=FLCNS_UNIT2"/>
@@ -12,18 +12,18 @@
     <summary>Outage began, still on at the end of the data (21 days so far)</summary>
   </entry>
   <entry>
+    <title>FLCNS_UNIT2: Bidding approach shifted (2026-07-09)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=FLCNS_UNIT2"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=FLCNS_UNIT2#FLCNS_UNIT2/2026-07-09/bidding</id>
+    <updated>2026-10-24T00:00:00Z</updated>
+    <summary>Offer price vs peer median: -$9 to $4/MWh</summary>
+  </entry>
+  <entry>
     <title>FLCNS_UNIT2: Outage ended (2026-07-03)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=FLCNS_UNIT2"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=FLCNS_UNIT2#FLCNS_UNIT2/2026-07-03/outage_end</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Back from a 28-day outage</summary>
-  </entry>
-  <entry>
-    <title>FLCNS_UNIT2: Bidding approach shifted (2026-06-21)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=FLCNS_UNIT2"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=FLCNS_UNIT2#FLCNS_UNIT2/2026-06-21/bidding</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Offer price vs peer median: -$11 to $4/MWh</summary>
+    <summary>Back from a 41-day outage</summary>
   </entry>
   <entry>
     <title>FLCNS_UNIT2: Bidding approach shifted (2026-06-20)</title>
@@ -33,39 +33,32 @@
     <summary>MW above LSL offered at or below $0: 98% to 0% of the day</summary>
   </entry>
   <entry>
-    <title>FLCNS_UNIT2: Outage started (2026-06-05)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=FLCNS_UNIT2"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=FLCNS_UNIT2#FLCNS_UNIT2/2026-06-05/outage_start</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Outage began, lasting 28 days</summary>
-  </entry>
-  <entry>
-    <title>FLCNS_UNIT2: Outage ended (2026-06-03)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=FLCNS_UNIT2"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=FLCNS_UNIT2#FLCNS_UNIT2/2026-06-03/outage_end</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Back from a 12-day outage</summary>
-  </entry>
-  <entry>
     <title>FLCNS_UNIT2: Outage started (2026-05-23)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=FLCNS_UNIT2"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=FLCNS_UNIT2#FLCNS_UNIT2/2026-05-23/outage_start</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Outage began, lasting 12 days</summary>
+    <summary>Outage began, lasting 41 days</summary>
   </entry>
   <entry>
-    <title>FLCNS_UNIT2: Bidding approach shifted (2026-04-02)</title>
+    <title>FLCNS_UNIT2: Bidding approach shifted (2026-04-04)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=FLCNS_UNIT2"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=FLCNS_UNIT2#FLCNS_UNIT2/2026-04-02/bidding</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>MW above LSL offered at or below $0: 52% to 89% of the day</summary>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=FLCNS_UNIT2#FLCNS_UNIT2/2026-04-04/bidding</id>
+    <updated>2026-10-24T00:00:00Z</updated>
+    <summary>MW above LSL offered at or below $0: 62% to 93% of the day</summary>
+  </entry>
+  <entry>
+    <title>FLCNS_UNIT2: Bidding approach shifted (2026-03-27)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=FLCNS_UNIT2"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=FLCNS_UNIT2#FLCNS_UNIT2/2026-03-27/bidding</id>
+    <updated>2026-10-24T00:00:00Z</updated>
+    <summary>MW above LSL offered at or below $0: 39% to 96% of the day</summary>
   </entry>
   <entry>
     <title>FLCNS_UNIT2: Bidding approach shifted (2026-03-18)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=FLCNS_UNIT2"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=FLCNS_UNIT2#FLCNS_UNIT2/2026-03-18/bidding</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>MW above LSL offered at or below $0: 86% to 39% of the day</summary>
+    <summary>MW above LSL offered at or below $0: 94% to 39% of the day</summary>
   </entry>
   <entry>
     <title>FLCNS_UNIT2: Bidding approach shifted (2026-02-13)</title>

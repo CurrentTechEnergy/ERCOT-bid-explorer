@@ -3,13 +3,13 @@
   <title>VICTPRT2_UNIT2: bidding and operating changes</title>
   <link href="https://ercotbids.currenttech.energy/unit.html?unit=VICTPRT2_UNIT2"/>
   <id>https://ercotbids.currenttech.energy/unit.html?unit=VICTPRT2_UNIT2</id>
-  <updated>2026-10-18T00:00:00Z</updated>
+  <updated>2026-10-24T00:00:00Z</updated>
   <entry>
     <title>VICTPRT2_UNIT2: Shut down after a long run (2026-07-22)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=VICTPRT2_UNIT2"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=VICTPRT2_UNIT2#VICTPRT2_UNIT2/2026-07-22/shutdown_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Shut down for 13 h after 31 days without a shutdown</summary>
+    <summary>Shut down for 13 h after 33 days without a shutdown</summary>
   </entry>
   <entry>
     <title>VICTPRT2_UNIT2: Timescale group changed (2026-07-01)</title>
@@ -33,11 +33,11 @@
     <summary>Outage began, lasting 12 days</summary>
   </entry>
   <entry>
-    <title>VICTPRT2_UNIT2: Outage ended (2026-06-03)</title>
+    <title>VICTPRT2_UNIT2: Outage ended (2026-06-05)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=VICTPRT2_UNIT2"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=VICTPRT2_UNIT2#VICTPRT2_UNIT2/2026-06-03/outage_end</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Back from a 20-day outage</summary>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=VICTPRT2_UNIT2#VICTPRT2_UNIT2/2026-06-05/outage_end</id>
+    <updated>2026-10-24T00:00:00Z</updated>
+    <summary>Back from a 21-day outage</summary>
   </entry>
   <entry>
     <title>VICTPRT2_UNIT2: Timescale group changed (2026-06-01)</title>
@@ -51,7 +51,7 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=VICTPRT2_UNIT2"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=VICTPRT2_UNIT2#VICTPRT2_UNIT2/2026-05-14/outage_start</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Outage began, lasting 20 days</summary>
+    <summary>Outage began, lasting 21 days</summary>
   </entry>
   <entry>
     <title>VICTPRT2_UNIT2: Timescale group changed (2026-04-01)</title>

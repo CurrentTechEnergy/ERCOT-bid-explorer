@@ -3,20 +3,20 @@
   <title>GUADG_CC1: bidding and operating changes</title>
   <link href="https://ercotbids.currenttech.energy/unit.html?unit=GUADG_CC1"/>
   <id>https://ercotbids.currenttech.energy/unit.html?unit=GUADG_CC1</id>
-  <updated>2026-10-23T00:00:00Z</updated>
+  <updated>2026-10-24T00:00:00Z</updated>
   <entry>
-    <title>GUADG_CC1: Outage ended (2026-06-03)</title>
+    <title>GUADG_CC1: Outage ended (2026-06-05)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=GUADG_CC1"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=GUADG_CC1#GUADG_CC1/2026-06-03/outage_end</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Back from a 8-day outage</summary>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=GUADG_CC1#GUADG_CC1/2026-06-05/outage_end</id>
+    <updated>2026-10-24T00:00:00Z</updated>
+    <summary>Back from a 10-day outage</summary>
   </entry>
   <entry>
     <title>GUADG_CC1: Outage started (2026-05-27)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=GUADG_CC1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=GUADG_CC1#GUADG_CC1/2026-05-27/outage_start</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Outage began, lasting 8 days</summary>
+    <summary>Outage began, lasting 10 days</summary>
   </entry>
   <entry>
     <title>GUADG_CC1: Timescale group changed (2026-05-01)</title>
@@ -26,11 +26,25 @@
     <summary>Daily, under 1 shutdown a week in 2026-04 to Always on when available in 2026-05</summary>
   </entry>
   <entry>
+    <title>GUADG_CC1: Outage ended (2026-03-16)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=GUADG_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=GUADG_CC1#GUADG_CC1/2026-03-16/outage_end</id>
+    <updated>2026-10-24T00:00:00Z</updated>
+    <summary>Back from a 8-day outage</summary>
+  </entry>
+  <entry>
+    <title>GUADG_CC1: Outage started (2026-03-08)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=GUADG_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=GUADG_CC1#GUADG_CC1/2026-03-08/outage_start</id>
+    <updated>2026-10-24T00:00:00Z</updated>
+    <summary>Outage began, lasting 8 days</summary>
+  </entry>
+  <entry>
     <title>GUADG_CC1: Shut down despite a day-ahead award (2026-03-02)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=GUADG_CC1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=GUADG_CC1#GUADG_CC1/2026-03-02/shutdown_award</id>
     <updated>2026-10-23T00:00:00Z</updated>
-    <summary>Shut down for 16 h although a day-ahead award covered 100% of the window</summary>
+    <summary>Shut down for 17 h although a day-ahead award covered 100% of the window</summary>
   </entry>
   <entry>
     <title>GUADG_CC1: Shut down despite a day-ahead award (2026-02-20)</title>

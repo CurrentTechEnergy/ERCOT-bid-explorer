@@ -3,41 +3,13 @@
   <title>AEEC_ELK_2: bidding and operating changes</title>
   <link href="https://ercotbids.currenttech.energy/unit.html?unit=AEEC_ELK_2"/>
   <id>https://ercotbids.currenttech.energy/unit.html?unit=AEEC_ELK_2</id>
-  <updated>2026-10-23T00:00:00Z</updated>
-  <entry>
-    <title>AEEC_ELK_2: Outage started (2026-07-12)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=AEEC_ELK_2"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=AEEC_ELK_2#AEEC_ELK_2/2026-07-12/outage_start</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Outage began, still on at the end of the data (44 days so far)</summary>
-  </entry>
-  <entry>
-    <title>AEEC_ELK_2: Outage ended (2026-07-08)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=AEEC_ELK_2"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=AEEC_ELK_2#AEEC_ELK_2/2026-07-08/outage_end</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Back from a 34-day outage</summary>
-  </entry>
-  <entry>
-    <title>AEEC_ELK_2: Outage started (2026-06-05)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=AEEC_ELK_2"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=AEEC_ELK_2#AEEC_ELK_2/2026-06-05/outage_start</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Outage began, lasting 34 days</summary>
-  </entry>
-  <entry>
-    <title>AEEC_ELK_2: Outage ended (2026-06-03)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=AEEC_ELK_2"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=AEEC_ELK_2#AEEC_ELK_2/2026-06-03/outage_end</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Back from a 22-day outage</summary>
-  </entry>
+  <updated>2026-10-24T00:00:00Z</updated>
   <entry>
     <title>AEEC_ELK_2: Outage started (2026-05-13)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=AEEC_ELK_2"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=AEEC_ELK_2#AEEC_ELK_2/2026-05-13/outage_start</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Outage began, lasting 22 days</summary>
+    <summary>Outage began, still on at the end of the data (104 days so far)</summary>
   </entry>
   <entry>
     <title>AEEC_ELK_2: Timescale group changed (2026-05-01)</title>
@@ -47,25 +19,25 @@
     <summary>Multi-day: off 1–7 days in 2026-04 to Daily, under 1 shutdown a week in 2026-05</summary>
   </entry>
   <entry>
-    <title>AEEC_ELK_2: Outage ended (2026-04-14)</title>
+    <title>AEEC_ELK_2: Outage ended (2026-04-21)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=AEEC_ELK_2"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=AEEC_ELK_2#AEEC_ELK_2/2026-04-14/outage_end</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Back from a 8-day outage</summary>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=AEEC_ELK_2#AEEC_ELK_2/2026-04-21/outage_end</id>
+    <updated>2026-10-24T00:00:00Z</updated>
+    <summary>Back from a 15-day outage</summary>
   </entry>
   <entry>
-    <title>AEEC_ELK_2: Outage started (2026-04-07)</title>
+    <title>AEEC_ELK_2: Outage started (2026-04-06)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=AEEC_ELK_2"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=AEEC_ELK_2#AEEC_ELK_2/2026-04-07/outage_start</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Outage began, lasting 8 days</summary>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=AEEC_ELK_2#AEEC_ELK_2/2026-04-06/outage_start</id>
+    <updated>2026-10-24T00:00:00Z</updated>
+    <summary>Outage began, lasting 15 days</summary>
   </entry>
   <entry>
     <title>AEEC_ELK_2: Shut down after a long run (2026-04-05)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=AEEC_ELK_2"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=AEEC_ELK_2#AEEC_ELK_2/2026-04-05/shutdown_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Shut down for 10 h after 38 days without a shutdown</summary>
+    <summary>Shut down for 10 h after 44 days without a shutdown</summary>
   </entry>
   <entry>
     <title>AEEC_ELK_2: Bidding approach shifted (2026-02-19)</title>

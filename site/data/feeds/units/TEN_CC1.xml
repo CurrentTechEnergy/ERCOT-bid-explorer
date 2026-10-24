@@ -9,7 +9,7 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=TEN_CC1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=TEN_CC1#TEN_CC1/2026-07-08/shutdown_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Shut down for 155 h after 55 days without a shutdown</summary>
+    <summary>Shut down for 203 h after 56 days without a shutdown</summary>
   </entry>
   <entry>
     <title>TEN_CC1: Outage ended (2026-07-01)</title>
@@ -44,7 +44,7 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=TEN_CC1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=TEN_CC1#TEN_CC1/2026-05-31/cutoff</id>
     <updated>2026-10-23T00:00:00Z</updated>
-    <summary>Loss cutoff $302 to $136 per MW of minimum output; the next month&#x27;s decisions are split (4 of 4 right against 4)</summary>
+    <summary>Loss cutoff $302 to $136 per MW of minimum output; the next month&#x27;s decisions are split (5 of 5 right against 5)</summary>
   </entry>
   <entry>
     <title>TEN_CC1: Decision maker or QSE changed (2026-05-06)</title>
@@ -86,28 +86,14 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=TEN_CC1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=TEN_CC1#TEN_CC1/2026-04-30/outage_end</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Back from a 9-day outage</summary>
-  </entry>
-  <entry>
-    <title>TEN_CC1: Outage started (2026-04-22)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=TEN_CC1"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=TEN_CC1#TEN_CC1/2026-04-22/outage_start</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Outage began, lasting 9 days</summary>
-  </entry>
-  <entry>
-    <title>TEN_CC1: Outage ended (2026-04-20)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=TEN_CC1"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=TEN_CC1#TEN_CC1/2026-04-20/outage_end</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Back from a 17-day outage</summary>
+    <summary>Back from a 27-day outage</summary>
   </entry>
   <entry>
     <title>TEN_CC1: Outage started (2026-04-04)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=TEN_CC1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=TEN_CC1#TEN_CC1/2026-04-04/outage_start</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Outage began, lasting 17 days</summary>
+    <summary>Outage began, lasting 27 days</summary>
   </entry>
   <entry>
     <title>TEN_CC1: Timescale group changed (2026-04-01)</title>
@@ -121,7 +107,7 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=TEN_CC1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=TEN_CC1#TEN_CC1/2026-03-11/shutdown_new</id>
     <updated>2026-10-23T00:00:00Z</updated>
-    <summary>Shut down for 93 h after 33 days without a shutdown</summary>
+    <summary>Shut down for 117 h after 37 days without a shutdown</summary>
   </entry>
   <entry>
     <title>TEN_CC1: Timescale group changed (2026-03-01)</title>

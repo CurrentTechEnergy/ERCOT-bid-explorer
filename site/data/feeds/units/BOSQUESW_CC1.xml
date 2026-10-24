@@ -3,7 +3,7 @@
   <title>BOSQUESW_CC1: bidding and operating changes</title>
   <link href="https://ercotbids.currenttech.energy/unit.html?unit=BOSQUESW_CC1"/>
   <id>https://ercotbids.currenttech.energy/unit.html?unit=BOSQUESW_CC1</id>
-  <updated>2026-10-18T00:00:00Z</updated>
+  <updated>2026-10-24T00:00:00Z</updated>
   <entry>
     <title>BOSQUESW_CC1: Timescale group changed (2026-07-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=BOSQUESW_CC1"/>
@@ -24,6 +24,13 @@
     <id>https://ercotbids.currenttech.energy/unit.html?unit=BOSQUESW_CC1#BOSQUESW_CC1/2026-05-15/shutdown_award</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Shut down for 107 h although a day-ahead award covered 100% of the window</summary>
+  </entry>
+  <entry>
+    <title>BOSQUESW_CC1: Shut down despite a day-ahead award (2026-03-28)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=BOSQUESW_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=BOSQUESW_CC1#BOSQUESW_CC1/2026-03-28/shutdown_award</id>
+    <updated>2026-10-24T00:00:00Z</updated>
+    <summary>Shut down for 19 h although a day-ahead award covered 100% of the window</summary>
   </entry>
   <entry>
     <title>BOSQUESW_CC1: Outage ended (2026-03-02)</title>

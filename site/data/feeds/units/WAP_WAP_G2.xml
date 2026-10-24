@@ -3,55 +3,34 @@
   <title>WAP_WAP_G2: bidding and operating changes</title>
   <link href="https://ercotbids.currenttech.energy/unit.html?unit=WAP_WAP_G2"/>
   <id>https://ercotbids.currenttech.energy/unit.html?unit=WAP_WAP_G2</id>
-  <updated>2026-10-18T00:00:00Z</updated>
+  <updated>2026-10-24T00:00:00Z</updated>
   <entry>
-    <title>WAP_WAP_G2: Shut down after a long run (2026-04-25)</title>
+    <title>WAP_WAP_G2: Outage ended (2026-04-21)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=WAP_WAP_G2"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=WAP_WAP_G2#WAP_WAP_G2/2026-04-25/shutdown_new</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Shut down for 13 h after 78 days without a shutdown</summary>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=WAP_WAP_G2#WAP_WAP_G2/2026-04-21/outage_end</id>
+    <updated>2026-10-24T00:00:00Z</updated>
+    <summary>Back from a 44-day outage</summary>
   </entry>
   <entry>
-    <title>WAP_WAP_G2: Outage ended (2026-04-20)</title>
+    <title>WAP_WAP_G2: Outage started (2026-03-08)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=WAP_WAP_G2"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=WAP_WAP_G2#WAP_WAP_G2/2026-04-20/outage_end</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Back from a 22-day outage</summary>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=WAP_WAP_G2#WAP_WAP_G2/2026-03-08/outage_start</id>
+    <updated>2026-10-24T00:00:00Z</updated>
+    <summary>Outage began, lasting 44 days</summary>
   </entry>
   <entry>
-    <title>WAP_WAP_G2: Outage started (2026-03-30)</title>
+    <title>WAP_WAP_G2: Outage ended (2026-03-08)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=WAP_WAP_G2"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=WAP_WAP_G2#WAP_WAP_G2/2026-03-30/outage_start</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Outage began, lasting 22 days</summary>
-  </entry>
-  <entry>
-    <title>WAP_WAP_G2: Outage ended (2026-03-28)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=WAP_WAP_G2"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=WAP_WAP_G2#WAP_WAP_G2/2026-03-28/outage_end</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Back from a 14-day outage</summary>
-  </entry>
-  <entry>
-    <title>WAP_WAP_G2: Outage started (2026-03-15)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=WAP_WAP_G2"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=WAP_WAP_G2#WAP_WAP_G2/2026-03-15/outage_start</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Outage began, lasting 14 days</summary>
-  </entry>
-  <entry>
-    <title>WAP_WAP_G2: Outage ended (2026-03-02)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=WAP_WAP_G2"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=WAP_WAP_G2#WAP_WAP_G2/2026-03-02/outage_end</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Back from a 30-day outage</summary>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=WAP_WAP_G2#WAP_WAP_G2/2026-03-08/outage_end</id>
+    <updated>2026-10-24T00:00:00Z</updated>
+    <summary>Back from a 35-day outage</summary>
   </entry>
   <entry>
     <title>WAP_WAP_G2: Outage started (2026-02-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=WAP_WAP_G2"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=WAP_WAP_G2#WAP_WAP_G2/2026-02-01/outage_start</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Outage began, lasting 30 days</summary>
+    <summary>Outage began, lasting 35 days</summary>
   </entry>
   <entry>
     <title>WAP_WAP_G2: Timescale group changed (2026-02-01)</title>
@@ -66,12 +45,5 @@
     <id>https://ercotbids.currenttech.energy/unit.html?unit=WAP_WAP_G2#WAP_WAP_G2/2026-01-28/shutdown_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Shut down for 38 h after 54 days without a shutdown</summary>
-  </entry>
-  <entry>
-    <title>WAP_WAP_G2: Bidding approach shifted (2026-01-26)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=WAP_WAP_G2"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=WAP_WAP_G2#WAP_WAP_G2/2026-01-26/bidding</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Offer price vs peer median: -$4 to $6/MWh</summary>
   </entry>
 </feed>

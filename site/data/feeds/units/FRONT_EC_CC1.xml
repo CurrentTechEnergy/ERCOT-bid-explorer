@@ -16,49 +16,35 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=FRONT_EC_CC1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=FRONT_EC_CC1#FRONT_EC_CC1/2026-06-30/cutoff</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Loss cutoff $0 to $58 per MW of minimum output; the next month&#x27;s decisions contradict it (9 of 11 right against 11)</summary>
+    <summary>Loss cutoff $0 to $58 per MW of minimum output; the next month&#x27;s decisions contradict it (10 of 12 right against 12)</summary>
   </entry>
   <entry>
     <title>FRONT_EC_CC1: Shut down after a long run (2026-05-06)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=FRONT_EC_CC1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=FRONT_EC_CC1#FRONT_EC_CC1/2026-05-06/shutdown_new</id>
     <updated>2026-10-23T00:00:00Z</updated>
-    <summary>Shut down for 13 h after 37 days without a shutdown</summary>
+    <summary>Shut down for 13 h after 39 days without a shutdown</summary>
   </entry>
   <entry>
     <title>FRONT_EC_CC1: Outage ended (2026-05-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=FRONT_EC_CC1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=FRONT_EC_CC1#FRONT_EC_CC1/2026-05-01/outage_end</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Back from a 10-day outage</summary>
-  </entry>
-  <entry>
-    <title>FRONT_EC_CC1: Outage started (2026-04-22)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=FRONT_EC_CC1"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=FRONT_EC_CC1#FRONT_EC_CC1/2026-04-22/outage_start</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Outage began, lasting 10 days</summary>
-  </entry>
-  <entry>
-    <title>FRONT_EC_CC1: Outage ended (2026-04-20)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=FRONT_EC_CC1"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=FRONT_EC_CC1#FRONT_EC_CC1/2026-04-20/outage_end</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Back from a 20-day outage</summary>
+    <summary>Back from a 31-day outage</summary>
   </entry>
   <entry>
     <title>FRONT_EC_CC1: Outage started (2026-03-31)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=FRONT_EC_CC1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=FRONT_EC_CC1#FRONT_EC_CC1/2026-03-31/outage_start</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Outage began, lasting 20 days</summary>
+    <summary>Outage began, lasting 31 days</summary>
   </entry>
   <entry>
     <title>FRONT_EC_CC1: Shut down despite a day-ahead award (2026-03-28)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=FRONT_EC_CC1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=FRONT_EC_CC1#FRONT_EC_CC1/2026-03-28/shutdown_award</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Shut down for 34 h although a day-ahead award covered 100% of the window</summary>
+    <summary>Shut down for 58 h although a day-ahead award covered 100% of the window</summary>
   </entry>
   <entry>
     <title>FRONT_EC_CC1: Shut down despite a day-ahead award (2026-03-24)</title>

@@ -3,7 +3,7 @@
   <title>SWEETWN2_WND2: bidding and operating changes</title>
   <link href="https://ercotbids.currenttech.energy/unit.html?unit=SWEETWN2_WND2"/>
   <id>https://ercotbids.currenttech.energy/unit.html?unit=SWEETWN2_WND2</id>
-  <updated>2026-10-18T00:00:00Z</updated>
+  <updated>2026-10-24T00:00:00Z</updated>
   <entry>
     <title>SWEETWN2: Episode (2026-06-24)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=SWEETWN2"/>
@@ -24,6 +24,13 @@
     <id>https://ercotbids.currenttech.energy/unit.html?unit=SWEETWN2#SWEETWN2/2026-04-18/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Episode: floor -$37 to -$2 for the episode for 1 day(s)</summary>
+  </entry>
+  <entry>
+    <title>SWEETWN2: Episode (2026-03-14)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=SWEETWN2"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=SWEETWN2#SWEETWN2/2026-03-14/renew_episode</id>
+    <updated>2026-10-24T00:00:00Z</updated>
+    <summary>Episode: floor -$37 to $225 for the episode for 1 day(s)</summary>
   </entry>
   <entry>
     <title>SWEETWN2: Episode (2026-03-08)</title>

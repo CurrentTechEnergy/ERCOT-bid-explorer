@@ -3,19 +3,19 @@
   <title>CITRUSCY_ESR1: bidding and operating changes</title>
   <link href="https://ercotbids.currenttech.energy/unit.html?unit=CITRUSCY_ESR1"/>
   <id>https://ercotbids.currenttech.energy/unit.html?unit=CITRUSCY_ESR1</id>
-  <updated>2026-10-21T00:00:00Z</updated>
+  <updated>2026-10-24T00:00:00Z</updated>
   <entry>
-    <title>CITRUSCY_ESR1: Battery size changed (2026-07-17)</title>
+    <title>CITRUSCY_ESR1: Battery size changed (2026-07-16)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=CITRUSCY_ESR1"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=CITRUSCY_ESR1#CITRUSCY_ESR1/2026-07-17/battery_size</id>
-    <updated>2026-10-21T00:00:00Z</updated>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=CITRUSCY_ESR1#CITRUSCY_ESR1/2026-07-16/battery_size</id>
+    <updated>2026-10-24T00:00:00Z</updated>
     <summary>Maximum state of charge 16 to 23 MWh</summary>
   </entry>
   <entry>
-    <title>CITRUSCY_ESR1: Battery size changed (2026-02-28)</title>
+    <title>CITRUSCY_ESR1: Battery size changed (2026-03-03)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=CITRUSCY_ESR1"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=CITRUSCY_ESR1#CITRUSCY_ESR1/2026-02-28/battery_size</id>
-    <updated>2026-10-18T00:00:00Z</updated>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=CITRUSCY_ESR1#CITRUSCY_ESR1/2026-03-03/battery_size</id>
+    <updated>2026-10-24T00:00:00Z</updated>
     <summary>Maximum state of charge 16 to 23 MWh</summary>
   </entry>
 </feed>

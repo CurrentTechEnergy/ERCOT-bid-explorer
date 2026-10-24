@@ -9,7 +9,7 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=GUADG_CC2"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=GUADG_CC2#GUADG_CC2/2026-06-28/shutdown_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Shut down for 4 h after 88 days without a shutdown</summary>
+    <summary>Shut down for 4 h after 90 days without a shutdown</summary>
   </entry>
   <entry>
     <title>GUADG_CC2: Outage ended (2026-04-13)</title>
@@ -37,7 +37,7 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=GUADG_CC2"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=GUADG_CC2#GUADG_CC2/2026-03-02/shutdown_award</id>
     <updated>2026-10-23T00:00:00Z</updated>
-    <summary>Shut down for 15 h although a day-ahead award covered 100% of the window</summary>
+    <summary>Shut down for 17 h although a day-ahead award covered 100% of the window</summary>
   </entry>
   <entry>
     <title>GUADG_CC2: Timescale group changed (2026-02-01)</title>

@@ -3,7 +3,7 @@
   <title>OLINGR_OLING_3: bidding and operating changes</title>
   <link href="https://ercotbids.currenttech.energy/unit.html?unit=OLINGR_OLING_3"/>
   <id>https://ercotbids.currenttech.energy/unit.html?unit=OLINGR_OLING_3</id>
-  <updated>2026-10-18T00:00:00Z</updated>
+  <updated>2026-10-24T00:00:00Z</updated>
   <entry>
     <title>OLINGR_OLING_3: Bidding approach shifted (2026-07-22)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=OLINGR_OLING_3"/>
@@ -30,14 +30,14 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=OLINGR_OLING_3"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=OLINGR_OLING_3#OLINGR_OLING_3/2026-03-27/outage_end</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Back from a 13-day outage</summary>
+    <summary>Back from a 20-day outage</summary>
   </entry>
   <entry>
-    <title>OLINGR_OLING_3: Outage started (2026-03-15)</title>
+    <title>OLINGR_OLING_3: Outage started (2026-03-08)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=OLINGR_OLING_3"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=OLINGR_OLING_3#OLINGR_OLING_3/2026-03-15/outage_start</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Outage began, lasting 13 days</summary>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=OLINGR_OLING_3#OLINGR_OLING_3/2026-03-08/outage_start</id>
+    <updated>2026-10-24T00:00:00Z</updated>
+    <summary>Outage began, lasting 20 days</summary>
   </entry>
   <entry>
     <title>OLINGR_OLING_3: Outage ended (2026-02-02)</title>

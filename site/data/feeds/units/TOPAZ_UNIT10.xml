@@ -3,7 +3,7 @@
   <title>TOPAZ_UNIT10: bidding and operating changes</title>
   <link href="https://ercotbids.currenttech.energy/unit.html?unit=TOPAZ_UNIT10"/>
   <id>https://ercotbids.currenttech.energy/unit.html?unit=TOPAZ_UNIT10</id>
-  <updated>2026-10-19T00:00:00Z</updated>
+  <updated>2026-10-24T00:00:00Z</updated>
   <entry>
     <title>TOPAZ_UNIT10: Timescale group changed (2026-08-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=TOPAZ_UNIT10"/>
@@ -19,11 +19,11 @@
     <summary>Multi-day: off 1–7 days in 2026-06 to Seasonal: off a week or more in 2026-07</summary>
   </entry>
   <entry>
-    <title>TOPAZ_UNIT10: Bidding approach shifted (2026-06-06)</title>
+    <title>TOPAZ_UNIT10: Bidding approach shifted (2026-06-04)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=TOPAZ_UNIT10"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=TOPAZ_UNIT10#TOPAZ_UNIT10/2026-06-06/bidding</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Offer price vs peer median: $0 to $362/MWh</summary>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=TOPAZ_UNIT10#TOPAZ_UNIT10/2026-06-04/bidding</id>
+    <updated>2026-10-24T00:00:00Z</updated>
+    <summary>Offer price vs peer median: $0 to $400/MWh</summary>
   </entry>
   <entry>
     <title>TOPAZ_UNIT10: Timescale group changed (2026-05-01)</title>

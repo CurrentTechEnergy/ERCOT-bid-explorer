@@ -3,7 +3,7 @@
   <title>CAMWIND_ESR1: bidding and operating changes</title>
   <link href="https://ercotbids.currenttech.energy/unit.html?unit=CAMWIND_ESR1"/>
   <id>https://ercotbids.currenttech.energy/unit.html?unit=CAMWIND_ESR1</id>
-  <updated>2026-10-18T00:00:00Z</updated>
+  <updated>2026-10-24T00:00:00Z</updated>
   <entry>
     <title>CAMWIND_ESR1: Battery size changed (2026-05-09)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=CAMWIND_ESR1"/>
@@ -12,10 +12,10 @@
     <summary>Maximum output 11 to 16 MW</summary>
   </entry>
   <entry>
-    <title>CAMWIND_ESR1: Battery size changed (2026-05-03)</title>
+    <title>CAMWIND_ESR1: Battery size changed (2026-05-07)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=CAMWIND_ESR1"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=CAMWIND_ESR1#CAMWIND_ESR1/2026-05-03/battery_size</id>
-    <updated>2026-10-18T00:00:00Z</updated>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=CAMWIND_ESR1#CAMWIND_ESR1/2026-05-07/battery_size</id>
+    <updated>2026-10-24T00:00:00Z</updated>
     <summary>Maximum state of charge 19 to 41 MWh</summary>
   </entry>
 </feed>

@@ -16,28 +16,14 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=HAYSEN_HAYSENG3"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=HAYSEN_HAYSENG3#HAYSEN_HAYSENG3/2026-05-12/outage_end</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Back from a 20-day outage</summary>
-  </entry>
-  <entry>
-    <title>HAYSEN_HAYSENG3: Outage started (2026-04-22)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=HAYSEN_HAYSENG3"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=HAYSEN_HAYSENG3#HAYSEN_HAYSENG3/2026-04-22/outage_start</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Outage began, lasting 20 days</summary>
-  </entry>
-  <entry>
-    <title>HAYSEN_HAYSENG3: Outage ended (2026-04-20)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=HAYSEN_HAYSENG3"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=HAYSEN_HAYSENG3#HAYSEN_HAYSENG3/2026-04-20/outage_end</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Back from a 9-day outage</summary>
+    <summary>Back from a 30-day outage</summary>
   </entry>
   <entry>
     <title>HAYSEN_HAYSENG3: Outage started (2026-04-12)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=HAYSEN_HAYSENG3"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=HAYSEN_HAYSENG3#HAYSEN_HAYSENG3/2026-04-12/outage_start</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Outage began, lasting 9 days</summary>
+    <summary>Outage began, lasting 30 days</summary>
   </entry>
   <entry>
     <title>HAYSEN_HAYSENG3: Shut down despite a day-ahead award (2026-04-08)</title>

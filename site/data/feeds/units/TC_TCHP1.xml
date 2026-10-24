@@ -3,20 +3,20 @@
   <title>TC_TCHP1: bidding and operating changes</title>
   <link href="https://ercotbids.currenttech.energy/unit.html?unit=TC_TCHP1"/>
   <id>https://ercotbids.currenttech.energy/unit.html?unit=TC_TCHP1</id>
-  <updated>2026-10-23T00:00:00Z</updated>
+  <updated>2026-10-24T00:00:00Z</updated>
   <entry>
-    <title>TC_TCHP1: Outage ended (2026-04-20)</title>
+    <title>TC_TCHP1: Outage ended (2026-04-22)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=TC_TCHP1"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=TC_TCHP1#TC_TCHP1/2026-04-20/outage_end</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Back from a 8-day outage</summary>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=TC_TCHP1#TC_TCHP1/2026-04-22/outage_end</id>
+    <updated>2026-10-24T00:00:00Z</updated>
+    <summary>Back from a 9-day outage</summary>
   </entry>
   <entry>
     <title>TC_TCHP1: Outage started (2026-04-13)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=TC_TCHP1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=TC_TCHP1#TC_TCHP1/2026-04-13/outage_start</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Outage began, lasting 8 days</summary>
+    <summary>Outage began, lasting 9 days</summary>
   </entry>
   <entry>
     <title>TC_TCHP1: Timescale group changed (2026-02-01)</title>

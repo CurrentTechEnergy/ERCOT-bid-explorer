@@ -3,7 +3,7 @@
   <title>MCSES_UNIT6: bidding and operating changes</title>
   <link href="https://ercotbids.currenttech.energy/unit.html?unit=MCSES_UNIT6"/>
   <id>https://ercotbids.currenttech.energy/unit.html?unit=MCSES_UNIT6</id>
-  <updated>2026-10-19T00:00:00Z</updated>
+  <updated>2026-10-24T00:00:00Z</updated>
   <entry>
     <title>MCSES_UNIT6: Outage started (2026-08-07)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=MCSES_UNIT6"/>
@@ -16,7 +16,7 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=MCSES_UNIT6"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=MCSES_UNIT6#MCSES_UNIT6/2026-08-04/shutdown_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Shut down for 39 h after 32 days without a shutdown</summary>
+    <summary>Shut down for 39 h after 34 days without a shutdown</summary>
   </entry>
   <entry>
     <title>MCSES_UNIT6: Timescale group changed (2026-08-01)</title>
@@ -40,10 +40,10 @@
     <summary>Daily, under 1 shutdown a week in 2026-05 to Multi-day: off 1–7 days in 2026-06</summary>
   </entry>
   <entry>
-    <title>MCSES_UNIT6: Bidding approach shifted (2026-05-12)</title>
+    <title>MCSES_UNIT6: Bidding approach shifted (2026-05-11)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=MCSES_UNIT6"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=MCSES_UNIT6#MCSES_UNIT6/2026-05-12/bidding</id>
-    <updated>2026-10-18T00:00:00Z</updated>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=MCSES_UNIT6#MCSES_UNIT6/2026-05-11/bidding</id>
+    <updated>2026-10-24T00:00:00Z</updated>
     <summary>Offer price vs peer median: -$19 to -$6/MWh</summary>
   </entry>
   <entry>

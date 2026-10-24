@@ -3,7 +3,14 @@
   <title>CFLAT_ES_ESR1: bidding and operating changes</title>
   <link href="https://ercotbids.currenttech.energy/unit.html?unit=CFLAT_ES_ESR1"/>
   <id>https://ercotbids.currenttech.energy/unit.html?unit=CFLAT_ES_ESR1</id>
-  <updated>2026-10-18T00:00:00Z</updated>
+  <updated>2026-10-24T00:00:00Z</updated>
+  <entry>
+    <title>CFLAT_ES_ESR1: Battery size changed (2026-03-31)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=CFLAT_ES_ESR1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=CFLAT_ES_ESR1#CFLAT_ES_ESR1/2026-03-31/battery_size</id>
+    <updated>2026-10-24T00:00:00Z</updated>
+    <summary>Maximum output 60 to 100 MW</summary>
+  </entry>
   <entry>
     <title>CFLAT_ES_ESR1: New battery (2026-02-02)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=CFLAT_ES_ESR1"/>

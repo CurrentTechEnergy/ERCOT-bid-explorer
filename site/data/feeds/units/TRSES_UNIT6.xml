@@ -3,7 +3,7 @@
   <title>TRSES_UNIT6: bidding and operating changes</title>
   <link href="https://ercotbids.currenttech.energy/unit.html?unit=TRSES_UNIT6"/>
   <id>https://ercotbids.currenttech.energy/unit.html?unit=TRSES_UNIT6</id>
-  <updated>2026-10-23T00:00:00Z</updated>
+  <updated>2026-10-24T00:00:00Z</updated>
   <entry>
     <title>TRSES_UNIT6: Loss cutoff moved (2026-08-24)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=TRSES_UNIT6"/>
@@ -79,21 +79,35 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=TRSES_UNIT6"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=TRSES_UNIT6#TRSES_UNIT6/2026-03-23/shutdown_new</id>
     <updated>2026-10-23T00:00:00Z</updated>
-    <summary>Shut down for 15 h after 41 days without a shutdown</summary>
+    <summary>Shut down for 15 h after 46 days without a shutdown</summary>
   </entry>
   <entry>
     <title>TRSES_UNIT6: Outage ended (2026-03-22)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=TRSES_UNIT6"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=TRSES_UNIT6#TRSES_UNIT6/2026-03-22/outage_end</id>
     <updated>2026-10-23T00:00:00Z</updated>
-    <summary>Back from a 8-day outage</summary>
+    <summary>Back from a 9-day outage</summary>
   </entry>
   <entry>
-    <title>TRSES_UNIT6: Outage started (2026-03-15)</title>
+    <title>TRSES_UNIT6: Outage started (2026-03-13)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=TRSES_UNIT6"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=TRSES_UNIT6#TRSES_UNIT6/2026-03-15/outage_start</id>
-    <updated>2026-10-23T00:00:00Z</updated>
-    <summary>Outage began, lasting 8 days</summary>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=TRSES_UNIT6#TRSES_UNIT6/2026-03-13/outage_start</id>
+    <updated>2026-10-24T00:00:00Z</updated>
+    <summary>Outage began, lasting 9 days</summary>
+  </entry>
+  <entry>
+    <title>TRSES_UNIT6: Outage ended (2026-03-08)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=TRSES_UNIT6"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=TRSES_UNIT6#TRSES_UNIT6/2026-03-08/outage_end</id>
+    <updated>2026-10-24T00:00:00Z</updated>
+    <summary>Back from a 7-day outage</summary>
+  </entry>
+  <entry>
+    <title>TRSES_UNIT6: Outage started (2026-03-01)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=TRSES_UNIT6"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=TRSES_UNIT6#TRSES_UNIT6/2026-03-01/outage_start</id>
+    <updated>2026-10-24T00:00:00Z</updated>
+    <summary>Outage began, lasting 7 days</summary>
   </entry>
   <entry>
     <title>TRSES_UNIT6: Timescale group changed (2026-03-01)</title>

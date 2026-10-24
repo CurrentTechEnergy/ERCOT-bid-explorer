@@ -3,13 +3,13 @@
   <title>QUEEN_BA_ESR1: bidding and operating changes</title>
   <link href="https://ercotbids.currenttech.energy/unit.html?unit=QUEEN_BA_ESR1"/>
   <id>https://ercotbids.currenttech.energy/unit.html?unit=QUEEN_BA_ESR1</id>
-  <updated>2026-10-18T00:00:00Z</updated>
+  <updated>2026-10-24T00:00:00Z</updated>
   <entry>
-    <title>QUEEN_BA_ESR1: Battery size changed (2026-05-18)</title>
+    <title>QUEEN_BA_ESR1: Battery size changed (2026-05-19)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=QUEEN_BA_ESR1"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=QUEEN_BA_ESR1#QUEEN_BA_ESR1/2026-05-18/battery_size</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Maximum state of charge 62 to 81 MWh</summary>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=QUEEN_BA_ESR1#QUEEN_BA_ESR1/2026-05-19/battery_size</id>
+    <updated>2026-10-24T00:00:00Z</updated>
+    <summary>Maximum state of charge 63 to 81 MWh</summary>
   </entry>
   <entry>
     <title>QUEEN_BA_ESR1: New battery (2026-02-19)</title>

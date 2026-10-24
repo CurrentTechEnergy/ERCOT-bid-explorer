@@ -3,7 +3,7 @@
   <title>PLN: bidding and operating changes</title>
   <link href="https://ercotbids.currenttech.energy/unit.html?unit=PLN"/>
   <id>https://ercotbids.currenttech.energy/unit.html?unit=PLN</id>
-  <updated>2026-10-18T00:00:00Z</updated>
+  <updated>2026-10-24T00:00:00Z</updated>
   <entry>
     <title>PLN: New floor (2026-08-14)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=PLN"/>
@@ -19,18 +19,25 @@
     <summary>Episode: floor -$10 to -$20 for the episode for 2 day(s)</summary>
   </entry>
   <entry>
-    <title>PLN: New floor (2026-07-30)</title>
+    <title>PLN: Back to an earlier floor (2026-07-30)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=PLN"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=PLN#PLN/2026-07-30/renew_floor_new</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: floor -$15 to floor -$10</summary>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=PLN#PLN/2026-07-30/renew_floor_back</id>
+    <updated>2026-10-24T00:00:00Z</updated>
+    <summary>Back to an earlier floor: floor -$15 to floor -$10</summary>
   </entry>
   <entry>
     <title>PLN: New floor (2026-07-16)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=PLN"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=PLN#PLN/2026-07-16/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: floor -$5 to floor -$15</summary>
+    <summary>New floor: floor -$10 to floor -$15</summary>
+  </entry>
+  <entry>
+    <title>PLN: New floor (2026-07-09)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=PLN"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=PLN#PLN/2026-07-09/renew_floor_new</id>
+    <updated>2026-10-24T00:00:00Z</updated>
+    <summary>New floor: floor -$5 to floor -$10</summary>
   </entry>
   <entry>
     <title>PLN: Episode (2026-06-28)</title>
@@ -54,10 +61,10 @@
     <summary>Episode: floor -$31 to $0 for the episode for 1 day(s)</summary>
   </entry>
   <entry>
-    <title>PLN: New floor (2026-03-06)</title>
+    <title>PLN: New floor (2026-03-04)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=PLN"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=PLN#PLN/2026-03-06/renew_floor_new</id>
-    <updated>2026-10-18T00:00:00Z</updated>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=PLN#PLN/2026-03-04/renew_floor_new</id>
+    <updated>2026-10-24T00:00:00Z</updated>
     <summary>New floor: floor -$21 to floor -$31</summary>
   </entry>
   <entry>

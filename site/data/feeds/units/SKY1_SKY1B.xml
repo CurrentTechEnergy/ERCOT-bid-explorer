@@ -3,7 +3,7 @@
   <title>SKY1_SKY1B: bidding and operating changes</title>
   <link href="https://ercotbids.currenttech.energy/unit.html?unit=SKY1_SKY1B"/>
   <id>https://ercotbids.currenttech.energy/unit.html?unit=SKY1_SKY1B</id>
-  <updated>2026-10-18T00:00:00Z</updated>
+  <updated>2026-10-24T00:00:00Z</updated>
   <entry>
     <title>SKY1_SKY1B: Shut down despite a day-ahead award (2026-08-02)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=SKY1_SKY1B"/>
@@ -61,17 +61,17 @@
     <summary>Shut down for 4 h although a day-ahead award covered 100% of the window</summary>
   </entry>
   <entry>
-    <title>SKY1_SKY1B: Bidding approach shifted (2026-03-30)</title>
+    <title>SKY1_SKY1B: Bidding approach shifted (2026-03-27)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=SKY1_SKY1B"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=SKY1_SKY1B#SKY1_SKY1B/2026-03-30/bidding</id>
-    <updated>2026-10-18T00:00:00Z</updated>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=SKY1_SKY1B#SKY1_SKY1B/2026-03-27/bidding</id>
+    <updated>2026-10-24T00:00:00Z</updated>
     <summary>Offer price vs peer median: -$13 to $0/MWh</summary>
   </entry>
   <entry>
-    <title>SKY1_SKY1B: Bidding approach shifted (2026-03-18)</title>
+    <title>SKY1_SKY1B: Bidding approach shifted (2026-03-17)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=SKY1_SKY1B"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=SKY1_SKY1B#SKY1_SKY1B/2026-03-18/bidding</id>
-    <updated>2026-10-18T00:00:00Z</updated>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=SKY1_SKY1B#SKY1_SKY1B/2026-03-17/bidding</id>
+    <updated>2026-10-24T00:00:00Z</updated>
     <summary>Offer price vs peer median: $0 to -$13/MWh</summary>
   </entry>
   <entry>

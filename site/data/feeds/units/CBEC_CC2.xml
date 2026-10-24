@@ -3,13 +3,20 @@
   <title>CBEC_CC2: bidding and operating changes</title>
   <link href="https://ercotbids.currenttech.energy/unit.html?unit=CBEC_CC2"/>
   <id>https://ercotbids.currenttech.energy/unit.html?unit=CBEC_CC2</id>
-  <updated>2026-10-18T00:00:00Z</updated>
+  <updated>2026-10-24T00:00:00Z</updated>
   <entry>
     <title>CBEC_CC2: Shut down despite a day-ahead award (2026-06-16)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=CBEC_CC2"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=CBEC_CC2#CBEC_CC2/2026-06-16/shutdown_award</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Shut down for 10 h although a day-ahead award covered 100% of the window</summary>
+  </entry>
+  <entry>
+    <title>CBEC_CC2: Shut down despite a day-ahead award (2026-03-28)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=CBEC_CC2"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=CBEC_CC2#CBEC_CC2/2026-03-28/shutdown_award</id>
+    <updated>2026-10-24T00:00:00Z</updated>
+    <summary>Shut down for 16 h although a day-ahead award covered 100% of the window</summary>
   </entry>
   <entry>
     <title>CBEC_CC2: Shut down despite a day-ahead award (2025-12-13)</title>

@@ -16,28 +16,14 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=CITYVICT_CTG02"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=CITYVICT_CTG02#CITYVICT_CTG02/2026-04-12/outage_end</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Back from a 14-day outage</summary>
-  </entry>
-  <entry>
-    <title>CITYVICT_CTG02: Outage started (2026-03-30)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=CITYVICT_CTG02"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=CITYVICT_CTG02#CITYVICT_CTG02/2026-03-30/outage_start</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Outage began, lasting 14 days</summary>
-  </entry>
-  <entry>
-    <title>CITYVICT_CTG02: Outage ended (2026-03-28)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=CITYVICT_CTG02"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=CITYVICT_CTG02#CITYVICT_CTG02/2026-03-28/outage_end</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Back from a 12-day outage</summary>
+    <summary>Back from a 27-day outage</summary>
   </entry>
   <entry>
     <title>CITYVICT_CTG02: Outage started (2026-03-16)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=CITYVICT_CTG02"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=CITYVICT_CTG02#CITYVICT_CTG02/2026-03-16/outage_start</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Outage began, lasting 12 days</summary>
+    <summary>Outage began, lasting 27 days</summary>
   </entry>
   <entry>
     <title>CITYVICT_CTG02: Timescale group changed (2026-03-01)</title>

@@ -3,27 +3,13 @@
   <title>GIDEON_GIDEONG2: bidding and operating changes</title>
   <link href="https://ercotbids.currenttech.energy/unit.html?unit=GIDEON_GIDEONG2"/>
   <id>https://ercotbids.currenttech.energy/unit.html?unit=GIDEON_GIDEONG2</id>
-  <updated>2026-10-19T00:00:00Z</updated>
+  <updated>2026-10-24T00:00:00Z</updated>
   <entry>
     <title>GIDEON_GIDEONG2: Timescale group changed (2026-08-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=GIDEON_GIDEONG2"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=GIDEON_GIDEONG2#GIDEON_GIDEONG2/2026-08-01/group</id>
     <updated>2026-10-19T00:00:00Z</updated>
     <summary>Multi-day: off 1–7 days in 2026-07 to Seasonal: off a week or more in 2026-08</summary>
-  </entry>
-  <entry>
-    <title>GIDEON_GIDEONG2: Timescale group changed (2026-07-01)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=GIDEON_GIDEONG2"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=GIDEON_GIDEONG2#GIDEON_GIDEONG2/2026-07-01/group</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Seasonal: off a week or more in 2026-06 to Multi-day: off 1–7 days in 2026-07</summary>
-  </entry>
-  <entry>
-    <title>GIDEON_GIDEONG2: Timescale group changed (2026-06-01)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=GIDEON_GIDEONG2"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=GIDEON_GIDEONG2#GIDEON_GIDEONG2/2026-06-01/group</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Multi-day: off 1–7 days in 2026-05 to Seasonal: off a week or more in 2026-06</summary>
   </entry>
   <entry>
     <title>GIDEON_GIDEONG2: Timescale group changed (2026-05-01)</title>
@@ -33,18 +19,18 @@
     <summary>Seasonal: off a week or more in 2026-04 to Multi-day: off 1–7 days in 2026-05</summary>
   </entry>
   <entry>
-    <title>GIDEON_GIDEONG2: Outage ended (2026-03-02)</title>
+    <title>GIDEON_GIDEONG2: Outage ended (2026-03-08)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=GIDEON_GIDEONG2"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=GIDEON_GIDEONG2#GIDEON_GIDEONG2/2026-03-02/outage_end</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Back from a 10-day outage</summary>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=GIDEON_GIDEONG2#GIDEON_GIDEONG2/2026-03-08/outage_end</id>
+    <updated>2026-10-24T00:00:00Z</updated>
+    <summary>Back from a 35-day outage</summary>
   </entry>
   <entry>
-    <title>GIDEON_GIDEONG2: Outage started (2026-02-21)</title>
+    <title>GIDEON_GIDEONG2: Outage started (2026-02-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=GIDEON_GIDEONG2"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=GIDEON_GIDEONG2#GIDEON_GIDEONG2/2026-02-21/outage_start</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Outage began, lasting 10 days</summary>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=GIDEON_GIDEONG2#GIDEON_GIDEONG2/2026-02-01/outage_start</id>
+    <updated>2026-10-24T00:00:00Z</updated>
+    <summary>Outage began, lasting 35 days</summary>
   </entry>
   <entry>
     <title>GIDEON_GIDEONG2: Timescale group changed (2026-02-01)</title>

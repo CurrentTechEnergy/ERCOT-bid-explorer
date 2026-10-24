@@ -16,7 +16,7 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=BCH_UNIT8"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=BCH_UNIT8#BCH_UNIT8/2026-05-29/outage_end</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Back from a 38-day outage</summary>
+    <summary>Back from a 58-day outage</summary>
   </entry>
   <entry>
     <title>BCH_UNIT8: Timescale group changed (2026-05-01)</title>
@@ -26,25 +26,11 @@
     <summary>Always on when available in 2026-04 to Multi-day: off 1–7 days in 2026-05</summary>
   </entry>
   <entry>
-    <title>BCH_UNIT8: Outage started (2026-04-22)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=BCH_UNIT8"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=BCH_UNIT8#BCH_UNIT8/2026-04-22/outage_start</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Outage began, lasting 38 days</summary>
-  </entry>
-  <entry>
-    <title>BCH_UNIT8: Outage ended (2026-04-20)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=BCH_UNIT8"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=BCH_UNIT8#BCH_UNIT8/2026-04-20/outage_end</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Back from a 19-day outage</summary>
-  </entry>
-  <entry>
     <title>BCH_UNIT8: Outage started (2026-04-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=BCH_UNIT8"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=BCH_UNIT8#BCH_UNIT8/2026-04-01/outage_start</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Outage began, lasting 19 days</summary>
+    <summary>Outage began, lasting 58 days</summary>
   </entry>
   <entry>
     <title>BCH_UNIT8: Timescale group changed (2026-04-01)</title>

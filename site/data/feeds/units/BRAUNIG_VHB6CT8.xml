@@ -3,20 +3,27 @@
   <title>BRAUNIG_VHB6CT8: bidding and operating changes</title>
   <link href="https://ercotbids.currenttech.energy/unit.html?unit=BRAUNIG_VHB6CT8"/>
   <id>https://ercotbids.currenttech.energy/unit.html?unit=BRAUNIG_VHB6CT8</id>
-  <updated>2026-10-23T00:00:00Z</updated>
+  <updated>2026-10-24T00:00:00Z</updated>
   <entry>
-    <title>BRAUNIG_VHB6CT8: Outage ended (2026-04-20)</title>
+    <title>BRAUNIG_VHB6CT8: Outage ended (2026-04-27)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=BRAUNIG_VHB6CT8"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=BRAUNIG_VHB6CT8#BRAUNIG_VHB6CT8/2026-04-20/outage_end</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Back from a 9-day outage</summary>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=BRAUNIG_VHB6CT8#BRAUNIG_VHB6CT8/2026-04-27/outage_end</id>
+    <updated>2026-10-24T00:00:00Z</updated>
+    <summary>Back from a 16-day outage</summary>
   </entry>
   <entry>
     <title>BRAUNIG_VHB6CT8: Outage started (2026-04-12)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=BRAUNIG_VHB6CT8"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=BRAUNIG_VHB6CT8#BRAUNIG_VHB6CT8/2026-04-12/outage_start</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Outage began, lasting 9 days</summary>
+    <summary>Outage began, lasting 16 days</summary>
+  </entry>
+  <entry>
+    <title>BRAUNIG_VHB6CT8: Bidding approach shifted (2026-02-26)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=BRAUNIG_VHB6CT8"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=BRAUNIG_VHB6CT8#BRAUNIG_VHB6CT8/2026-02-26/bidding</id>
+    <updated>2026-10-24T00:00:00Z</updated>
+    <summary>Offer price vs peer median: -$5 to -$18/MWh</summary>
   </entry>
   <entry>
     <title>BRAUNIG_VHB6CT8: Bidding approach shifted (2026-01-31)</title>

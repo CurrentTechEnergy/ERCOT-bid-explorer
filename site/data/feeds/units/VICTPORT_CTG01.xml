@@ -3,20 +3,27 @@
   <title>VICTPORT_CTG01: bidding and operating changes</title>
   <link href="https://ercotbids.currenttech.energy/unit.html?unit=VICTPORT_CTG01"/>
   <id>https://ercotbids.currenttech.energy/unit.html?unit=VICTPORT_CTG01</id>
-  <updated>2026-10-18T00:00:00Z</updated>
+  <updated>2026-10-24T00:00:00Z</updated>
   <entry>
-    <title>VICTPORT_CTG01: Bidding approach shifted (2026-04-22)</title>
+    <title>VICTPORT_CTG01: Outage ended (2026-06-11)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=VICTPORT_CTG01"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=VICTPORT_CTG01#VICTPORT_CTG01/2026-04-22/bidding</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Offer price vs peer median: -$9 to $1/MWh</summary>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=VICTPORT_CTG01#VICTPORT_CTG01/2026-06-11/outage_end</id>
+    <updated>2026-10-24T00:00:00Z</updated>
+    <summary>Back from a 11-day outage</summary>
+  </entry>
+  <entry>
+    <title>VICTPORT_CTG01: Outage started (2026-06-01)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=VICTPORT_CTG01"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=VICTPORT_CTG01#VICTPORT_CTG01/2026-06-01/outage_start</id>
+    <updated>2026-10-24T00:00:00Z</updated>
+    <summary>Outage began, lasting 11 days</summary>
   </entry>
   <entry>
     <title>VICTPORT_CTG01: Bidding approach shifted (2026-02-26)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=VICTPORT_CTG01"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=VICTPORT_CTG01#VICTPORT_CTG01/2026-02-26/bidding</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Offer price vs peer median: $4 to -$7/MWh</summary>
+    <summary>Offer price vs peer median: $4 to -$8/MWh</summary>
   </entry>
   <entry>
     <title>VICTPORT_CTG01: Bidding approach shifted (2026-02-01)</title>

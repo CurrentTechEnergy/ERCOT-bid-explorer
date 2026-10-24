@@ -3,7 +3,7 @@
   <title>WAP_WAP_G3: bidding and operating changes</title>
   <link href="https://ercotbids.currenttech.energy/unit.html?unit=WAP_WAP_G3"/>
   <id>https://ercotbids.currenttech.energy/unit.html?unit=WAP_WAP_G3</id>
-  <updated>2026-10-18T00:00:00Z</updated>
+  <updated>2026-10-24T00:00:00Z</updated>
   <entry>
     <title>WAP_WAP_G3: Timescale group changed (2026-07-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=WAP_WAP_G3"/>
@@ -19,10 +19,10 @@
     <summary>Always on when available in 2026-03 to Multi-day: off 1–7 days in 2026-04</summary>
   </entry>
   <entry>
-    <title>WAP_WAP_G3: Outage ended (2026-03-02)</title>
+    <title>WAP_WAP_G3: Outage ended (2026-03-08)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=WAP_WAP_G3"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=WAP_WAP_G3#WAP_WAP_G3/2026-03-02/outage_end</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Back from a 93-day outage</summary>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=WAP_WAP_G3#WAP_WAP_G3/2026-03-08/outage_end</id>
+    <updated>2026-10-24T00:00:00Z</updated>
+    <summary>Back from a 98-day outage</summary>
   </entry>
 </feed>

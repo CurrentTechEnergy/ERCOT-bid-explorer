@@ -9,7 +9,7 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=WIPOPA_WPP_G3"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=WIPOPA_WPP_G3#WIPOPA_WPP_G3/2026-03-01/group</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Seasonal: off a week or more in 2026-02 to Daily, 1–2 a week in 2026-03</summary>
+    <summary>Seasonal: off a week or more in 2026-02 to Daily, over 2 a week in 2026-03</summary>
   </entry>
   <entry>
     <title>WIPOPA_WPP_G3: Timescale group changed (2026-02-01)</title>
@@ -23,7 +23,7 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=WIPOPA_WPP_G3"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=WIPOPA_WPP_G3#WIPOPA_WPP_G3/2026-02-01/bidding</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Offer price vs peer median: -$60 to -$10/MWh</summary>
+    <summary>Offer price vs peer median: -$60 to -$11/MWh</summary>
   </entry>
   <entry>
     <title>WIPOPA_WPP_G3: Bidding approach shifted (2026-01-20)</title>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>PRO_UNIT2: bidding and operating changes</title>
+  <link href="https://ercotbids.currenttech.energy/unit.html?unit=PRO_UNIT2"/>
+  <id>https://ercotbids.currenttech.energy/unit.html?unit=PRO_UNIT2</id>
+  <updated>2026-10-24T00:00:00Z</updated>
+  <entry>
+    <title>PRO_UNIT2: Outage ended (2026-03-08)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=PRO_UNIT2"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=PRO_UNIT2#PRO_UNIT2/2026-03-08/outage_end</id>
+    <updated>2026-10-24T00:00:00Z</updated>
+    <summary>Back from a 8-day outage</summary>
+  </entry>
+  <entry>
+    <title>PRO_UNIT2: Outage started (2026-02-27)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=PRO_UNIT2"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=PRO_UNIT2#PRO_UNIT2/2026-02-27/outage_start</id>
+    <updated>2026-10-24T00:00:00Z</updated>
+    <summary>Outage began, lasting 8 days</summary>
+  </entry>
+</feed>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>CCEC_CC1: bidding and operating changes</title>
+  <link href="https://ercotbids.currenttech.energy/unit.html?unit=CCEC_CC1"/>
+  <id>https://ercotbids.currenttech.energy/unit.html?unit=CCEC_CC1</id>
+  <updated>2026-10-24T00:00:00Z</updated>
+  <entry>
+    <title>CCEC_CC1: Outage ended (2026-03-20)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=CCEC_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=CCEC_CC1#CCEC_CC1/2026-03-20/outage_end</id>
+    <updated>2026-10-24T00:00:00Z</updated>
+    <summary>Back from a 12-day outage</summary>
+  </entry>
+  <entry>
+    <title>CCEC_CC1: Outage started (2026-03-08)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=CCEC_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=CCEC_CC1#CCEC_CC1/2026-03-08/outage_start</id>
+    <updated>2026-10-24T00:00:00Z</updated>
+    <summary>Outage began, lasting 12 days</summary>
+  </entry>
+</feed>

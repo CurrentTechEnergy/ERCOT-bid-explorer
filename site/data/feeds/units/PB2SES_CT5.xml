@@ -3,7 +3,7 @@
   <title>PB2SES_CT5: bidding and operating changes</title>
   <link href="https://ercotbids.currenttech.energy/unit.html?unit=PB2SES_CT5"/>
   <id>https://ercotbids.currenttech.energy/unit.html?unit=PB2SES_CT5</id>
-  <updated>2026-10-18T00:00:00Z</updated>
+  <updated>2026-10-24T00:00:00Z</updated>
   <entry>
     <title>PB2SES_CT5: Bidding approach shifted (2026-08-04)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=PB2SES_CT5"/>
@@ -65,7 +65,7 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=PB2SES_CT5"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=PB2SES_CT5#PB2SES_CT5/2026-04-30/cutoff</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Loss cutoff $0 to $781 per MW of minimum output; the next month&#x27;s decisions contradict it (3 of 26 right against 24)</summary>
+    <summary>Loss cutoff $0 to $825 per MW of minimum output; the next month&#x27;s decisions contradict it (2 of 26 right against 24)</summary>
   </entry>
   <entry>
     <title>PB2SES_CT5: Bidding approach shifted (2026-04-30)</title>
@@ -75,11 +75,18 @@
     <summary>Offer price vs peer median: -$29 to $3/MWh</summary>
   </entry>
   <entry>
-    <title>PB2SES_CT5: Bidding approach shifted (2026-04-23)</title>
+    <title>PB2SES_CT5: Bidding approach shifted (2026-04-25)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=PB2SES_CT5"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=PB2SES_CT5#PB2SES_CT5/2026-04-23/bidding</id>
-    <updated>2026-10-18T00:00:00Z</updated>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=PB2SES_CT5#PB2SES_CT5/2026-04-25/bidding</id>
+    <updated>2026-10-24T00:00:00Z</updated>
     <summary>MW above LSL offered at or below $0: 0% to 100% of the day</summary>
+  </entry>
+  <entry>
+    <title>PB2SES_CT5: Bidding approach shifted (2026-04-22)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=PB2SES_CT5"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=PB2SES_CT5#PB2SES_CT5/2026-04-22/bidding</id>
+    <updated>2026-10-24T00:00:00Z</updated>
+    <summary>Offer price vs peer median: -$29 to -$11/MWh</summary>
   </entry>
   <entry>
     <title>PB2SES_CT5: Bidding approach shifted (2026-04-12)</title>

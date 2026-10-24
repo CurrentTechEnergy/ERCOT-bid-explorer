@@ -3,12 +3,19 @@
   <title>FORMOSA_CC1_11: bidding and operating changes</title>
   <link href="https://ercotbids.currenttech.energy/unit.html?unit=FORMOSA_CC1_11"/>
   <id>https://ercotbids.currenttech.energy/unit.html?unit=FORMOSA_CC1_11</id>
-  <updated>2026-10-18T00:00:00Z</updated>
+  <updated>2026-10-24T00:00:00Z</updated>
   <entry>
-    <title>FORMOSA_CC1_11: Bidding approach shifted (2026-03-06)</title>
+    <title>FORMOSA_CC1_11: Bidding approach shifted (2026-03-07)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=FORMOSA_CC1_11"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=FORMOSA_CC1_11#FORMOSA_CC1_11/2026-03-06/bidding</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Offer price vs peer median: $24 to $10/MWh</summary>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=FORMOSA_CC1_11#FORMOSA_CC1_11/2026-03-07/bidding</id>
+    <updated>2026-10-24T00:00:00Z</updated>
+    <summary>Offer price vs peer median: $36 to $9/MWh</summary>
+  </entry>
+  <entry>
+    <title>FORMOSA_CC1_11: Bidding approach shifted (2026-02-28)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=FORMOSA_CC1_11"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=FORMOSA_CC1_11#FORMOSA_CC1_11/2026-02-28/bidding</id>
+    <updated>2026-10-24T00:00:00Z</updated>
+    <summary>Offer price vs peer median: $22 to $36/MWh</summary>
   </entry>
 </feed>

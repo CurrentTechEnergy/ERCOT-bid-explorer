@@ -3,12 +3,12 @@
   <title>ANCHOR_ESR1: bidding and operating changes</title>
   <link href="https://ercotbids.currenttech.energy/unit.html?unit=ANCHOR_ESR1"/>
   <id>https://ercotbids.currenttech.energy/unit.html?unit=ANCHOR_ESR1</id>
-  <updated>2026-10-18T00:00:00Z</updated>
+  <updated>2026-10-24T00:00:00Z</updated>
   <entry>
-    <title>ANCHOR_ESR1: Battery size changed (2026-06-09)</title>
+    <title>ANCHOR_ESR1: Battery size changed (2026-06-08)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=ANCHOR_ESR1"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=ANCHOR_ESR1#ANCHOR_ESR1/2026-06-09/battery_size</id>
-    <updated>2026-10-18T00:00:00Z</updated>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=ANCHOR_ESR1#ANCHOR_ESR1/2026-06-08/battery_size</id>
+    <updated>2026-10-24T00:00:00Z</updated>
     <summary>Maximum state of charge 43 to 56 MWh</summary>
   </entry>
   <entry>
@@ -19,10 +19,10 @@
     <summary>Maximum state of charge 57 to 40 MWh</summary>
   </entry>
   <entry>
-    <title>ANCHOR_ESR1: Battery size changed (2026-03-25)</title>
+    <title>ANCHOR_ESR1: Battery size changed (2026-03-26)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=ANCHOR_ESR1"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=ANCHOR_ESR1#ANCHOR_ESR1/2026-03-25/battery_size</id>
-    <updated>2026-10-18T00:00:00Z</updated>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=ANCHOR_ESR1#ANCHOR_ESR1/2026-03-26/battery_size</id>
+    <updated>2026-10-24T00:00:00Z</updated>
     <summary>Maximum output 35 to 28 MW</summary>
   </entry>
 </feed>

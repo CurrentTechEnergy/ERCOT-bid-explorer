@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>BCNV_ESS_ESR1: bidding and operating changes</title>
+  <link href="https://ercotbids.currenttech.energy/unit.html?unit=BCNV_ESS_ESR1"/>
+  <id>https://ercotbids.currenttech.energy/unit.html?unit=BCNV_ESS_ESR1</id>
+  <updated>2026-10-24T00:00:00Z</updated>
+  <entry>
+    <title>BCNV_ESS_ESR1: Battery size changed (2026-03-24)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=BCNV_ESS_ESR1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=BCNV_ESS_ESR1#BCNV_ESS_ESR1/2026-03-24/battery_size</id>
+    <updated>2026-10-24T00:00:00Z</updated>
+    <summary>Maximum output 121 to 150 MW</summary>
+  </entry>
+</feed>

@@ -3,7 +3,7 @@
   <title>LEON_CRK_LCPCT3: bidding and operating changes</title>
   <link href="https://ercotbids.currenttech.energy/unit.html?unit=LEON_CRK_LCPCT3"/>
   <id>https://ercotbids.currenttech.energy/unit.html?unit=LEON_CRK_LCPCT3</id>
-  <updated>2026-10-18T00:00:00Z</updated>
+  <updated>2026-10-24T00:00:00Z</updated>
   <entry>
     <title>LEON_CRK_LCPCT3: Bidding approach shifted (2026-05-18)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=LEON_CRK_LCPCT3"/>
@@ -23,56 +23,28 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=LEON_CRK_LCPCT3"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=LEON_CRK_LCPCT3#LEON_CRK_LCPCT3/2026-04-30/outage_end</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Back from a 8-day outage</summary>
+    <summary>Back from a 48-day outage</summary>
   </entry>
   <entry>
-    <title>LEON_CRK_LCPCT3: Outage started (2026-04-22)</title>
+    <title>LEON_CRK_LCPCT3: Timescale group changed (2026-04-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=LEON_CRK_LCPCT3"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=LEON_CRK_LCPCT3#LEON_CRK_LCPCT3/2026-04-22/outage_start</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Outage began, lasting 8 days</summary>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=LEON_CRK_LCPCT3#LEON_CRK_LCPCT3/2026-04-01/group</id>
+    <updated>2026-10-24T00:00:00Z</updated>
+    <summary>Daily, 1–2 a week in 2026-03 to Always on when available in 2026-04</summary>
   </entry>
   <entry>
-    <title>LEON_CRK_LCPCT3: Outage ended (2026-04-20)</title>
+    <title>LEON_CRK_LCPCT3: Outage started (2026-03-13)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=LEON_CRK_LCPCT3"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=LEON_CRK_LCPCT3#LEON_CRK_LCPCT3/2026-04-20/outage_end</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Back from a 22-day outage</summary>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=LEON_CRK_LCPCT3#LEON_CRK_LCPCT3/2026-03-13/outage_start</id>
+    <updated>2026-10-24T00:00:00Z</updated>
+    <summary>Outage began, lasting 48 days</summary>
   </entry>
   <entry>
-    <title>LEON_CRK_LCPCT3: Outage started (2026-03-30)</title>
+    <title>LEON_CRK_LCPCT3: Bidding approach shifted (2026-03-02)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=LEON_CRK_LCPCT3"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=LEON_CRK_LCPCT3#LEON_CRK_LCPCT3/2026-03-30/outage_start</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Outage began, lasting 22 days</summary>
-  </entry>
-  <entry>
-    <title>LEON_CRK_LCPCT3: Outage ended (2026-03-28)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=LEON_CRK_LCPCT3"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=LEON_CRK_LCPCT3#LEON_CRK_LCPCT3/2026-03-28/outage_end</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Back from a 14-day outage</summary>
-  </entry>
-  <entry>
-    <title>LEON_CRK_LCPCT3: Outage started (2026-03-15)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=LEON_CRK_LCPCT3"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=LEON_CRK_LCPCT3#LEON_CRK_LCPCT3/2026-03-15/outage_start</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Outage began, lasting 14 days</summary>
-  </entry>
-  <entry>
-    <title>LEON_CRK_LCPCT3: Timescale group changed (2026-03-01)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=LEON_CRK_LCPCT3"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=LEON_CRK_LCPCT3#LEON_CRK_LCPCT3/2026-03-01/group</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Daily, over 2 a week in 2026-02 to Seasonal: off a week or more in 2026-03</summary>
-  </entry>
-  <entry>
-    <title>LEON_CRK_LCPCT3: Bidding approach shifted (2026-02-25)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=LEON_CRK_LCPCT3"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=LEON_CRK_LCPCT3#LEON_CRK_LCPCT3/2026-02-25/bidding</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Offer price vs peer median: -$7 to -$18/MWh</summary>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=LEON_CRK_LCPCT3#LEON_CRK_LCPCT3/2026-03-02/bidding</id>
+    <updated>2026-10-24T00:00:00Z</updated>
+    <summary>Offer price vs peer median: -$7 to -$19/MWh</summary>
   </entry>
   <entry>
     <title>LEON_CRK_LCPCT3: Bidding approach shifted (2026-02-01)</title>

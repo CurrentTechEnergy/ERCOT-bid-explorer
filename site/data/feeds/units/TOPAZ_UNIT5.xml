@@ -3,7 +3,7 @@
   <title>TOPAZ_UNIT5: bidding and operating changes</title>
   <link href="https://ercotbids.currenttech.energy/unit.html?unit=TOPAZ_UNIT5"/>
   <id>https://ercotbids.currenttech.energy/unit.html?unit=TOPAZ_UNIT5</id>
-  <updated>2026-10-18T00:00:00Z</updated>
+  <updated>2026-10-24T00:00:00Z</updated>
   <entry>
     <title>TOPAZ_UNIT5: Bidding approach shifted (2026-07-07)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=TOPAZ_UNIT5"/>
@@ -19,10 +19,10 @@
     <summary>Offer price vs peer median: -$0 to $61/MWh</summary>
   </entry>
   <entry>
-    <title>TOPAZ_UNIT5: Bidding approach shifted (2026-06-06)</title>
+    <title>TOPAZ_UNIT5: Bidding approach shifted (2026-06-04)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=TOPAZ_UNIT5"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=TOPAZ_UNIT5#TOPAZ_UNIT5/2026-06-06/bidding</id>
-    <updated>2026-10-18T00:00:00Z</updated>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=TOPAZ_UNIT5#TOPAZ_UNIT5/2026-06-04/bidding</id>
+    <updated>2026-10-24T00:00:00Z</updated>
     <summary>Offer price vs peer median: $186 to -$0/MWh</summary>
   </entry>
   <entry>
@@ -37,48 +37,34 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=TOPAZ_UNIT5"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=TOPAZ_UNIT5#TOPAZ_UNIT5/2026-05-25/shutdown_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Shut down for 37 h after 50 days without a shutdown</summary>
+    <summary>Shut down for 37 h after 51 days without a shutdown</summary>
   </entry>
   <entry>
     <title>TOPAZ_UNIT5: Outage ended (2026-05-24)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=TOPAZ_UNIT5"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=TOPAZ_UNIT5#TOPAZ_UNIT5/2026-05-24/outage_end</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Back from a 33-day outage</summary>
-  </entry>
-  <entry>
-    <title>TOPAZ_UNIT5: Outage started (2026-04-22)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=TOPAZ_UNIT5"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=TOPAZ_UNIT5#TOPAZ_UNIT5/2026-04-22/outage_start</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Outage began, lasting 33 days</summary>
-  </entry>
-  <entry>
-    <title>TOPAZ_UNIT5: Outage ended (2026-04-20)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=TOPAZ_UNIT5"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=TOPAZ_UNIT5#TOPAZ_UNIT5/2026-04-20/outage_end</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Back from a 15-day outage</summary>
+    <summary>Back from a 49-day outage</summary>
   </entry>
   <entry>
     <title>TOPAZ_UNIT5: Outage started (2026-04-06)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=TOPAZ_UNIT5"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=TOPAZ_UNIT5#TOPAZ_UNIT5/2026-04-06/outage_start</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Outage began, lasting 15 days</summary>
+    <summary>Outage began, lasting 49 days</summary>
   </entry>
   <entry>
-    <title>TOPAZ_UNIT5: Bidding approach shifted (2026-03-18)</title>
+    <title>TOPAZ_UNIT5: Bidding approach shifted (2026-03-16)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=TOPAZ_UNIT5"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=TOPAZ_UNIT5#TOPAZ_UNIT5/2026-03-18/bidding</id>
-    <updated>2026-10-18T00:00:00Z</updated>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=TOPAZ_UNIT5#TOPAZ_UNIT5/2026-03-16/bidding</id>
+    <updated>2026-10-24T00:00:00Z</updated>
     <summary>Offer price vs peer median: $118 to $0/MWh</summary>
   </entry>
   <entry>
-    <title>TOPAZ_UNIT5: Bidding approach shifted (2026-02-25)</title>
+    <title>TOPAZ_UNIT5: Bidding approach shifted (2026-02-20)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=TOPAZ_UNIT5"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=TOPAZ_UNIT5#TOPAZ_UNIT5/2026-02-25/bidding</id>
-    <updated>2026-10-18T00:00:00Z</updated>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=TOPAZ_UNIT5#TOPAZ_UNIT5/2026-02-20/bidding</id>
+    <updated>2026-10-24T00:00:00Z</updated>
     <summary>Offer price vs peer median: $2 to $118/MWh</summary>
   </entry>
   <entry>

@@ -3,7 +3,14 @@
   <title>TIMPP_AGR1: bidding and operating changes</title>
   <link href="https://ercotbids.currenttech.energy/unit.html?unit=TIMPP_AGR1"/>
   <id>https://ercotbids.currenttech.energy/unit.html?unit=TIMPP_AGR1</id>
-  <updated>2026-10-18T00:00:00Z</updated>
+  <updated>2026-10-24T00:00:00Z</updated>
+  <entry>
+    <title>TIMPP_AGR1: Shut down despite a day-ahead award (2026-04-21)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=TIMPP_AGR1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=TIMPP_AGR1#TIMPP_AGR1/2026-04-21/shutdown_award</id>
+    <updated>2026-10-24T00:00:00Z</updated>
+    <summary>Shut down for 5 h although a day-ahead award covered 96% of the window</summary>
+  </entry>
   <entry>
     <title>TIMPP_AGR1: Bidding approach shifted (2026-02-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=TIMPP_AGR1"/>

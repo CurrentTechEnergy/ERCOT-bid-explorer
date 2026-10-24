@@ -3,13 +3,13 @@
   <title>HAYSEN_HAYSENG4: bidding and operating changes</title>
   <link href="https://ercotbids.currenttech.energy/unit.html?unit=HAYSEN_HAYSENG4"/>
   <id>https://ercotbids.currenttech.energy/unit.html?unit=HAYSEN_HAYSENG4</id>
-  <updated>2026-10-23T00:00:00Z</updated>
+  <updated>2026-10-24T00:00:00Z</updated>
   <entry>
     <title>HAYSEN_HAYSENG4: Shut down after a long run (2026-08-12)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=HAYSEN_HAYSENG4"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=HAYSEN_HAYSENG4#HAYSEN_HAYSENG4/2026-08-12/shutdown_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Shut down for 10 h after 41 days without a shutdown</summary>
+    <summary>Shut down for 10 h after 43 days without a shutdown</summary>
   </entry>
   <entry>
     <title>HAYSEN_HAYSENG4: Timescale group changed (2026-07-01)</title>
@@ -58,14 +58,14 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=HAYSEN_HAYSENG4"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=HAYSEN_HAYSENG4#HAYSEN_HAYSENG4/2026-04-24/bidding</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Offer price vs peer median: -$14 to $1/MWh</summary>
+    <summary>Offer price vs peer median: -$13 to $1/MWh</summary>
   </entry>
   <entry>
-    <title>HAYSEN_HAYSENG4: Bidding approach shifted (2026-04-15)</title>
+    <title>HAYSEN_HAYSENG4: Bidding approach shifted (2026-04-13)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=HAYSEN_HAYSENG4"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=HAYSEN_HAYSENG4#HAYSEN_HAYSENG4/2026-04-15/bidding</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Offer price vs peer median: $1 to -$14/MWh</summary>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=HAYSEN_HAYSENG4#HAYSEN_HAYSENG4/2026-04-13/bidding</id>
+    <updated>2026-10-24T00:00:00Z</updated>
+    <summary>Offer price vs peer median: $1 to -$13/MWh</summary>
   </entry>
   <entry>
     <title>HAYSEN_HAYSENG4: Shut down despite a day-ahead award (2026-01-07)</title>

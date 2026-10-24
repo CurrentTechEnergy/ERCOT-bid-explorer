@@ -3,7 +3,7 @@
   <title>PRO_UNIT7: bidding and operating changes</title>
   <link href="https://ercotbids.currenttech.energy/unit.html?unit=PRO_UNIT7"/>
   <id>https://ercotbids.currenttech.energy/unit.html?unit=PRO_UNIT7</id>
-  <updated>2026-10-18T00:00:00Z</updated>
+  <updated>2026-10-24T00:00:00Z</updated>
   <entry>
     <title>PRO_UNIT7: Bidding approach shifted (2026-07-21)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=PRO_UNIT7"/>
@@ -31,5 +31,19 @@
     <id>https://ercotbids.currenttech.energy/unit.html?unit=PRO_UNIT7#PRO_UNIT7/2026-05-01/group</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Daily, over 2 a week in 2026-04 to Multi-day: off 1–7 days in 2026-05</summary>
+  </entry>
+  <entry>
+    <title>PRO_UNIT7: Outage ended (2026-03-08)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=PRO_UNIT7"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=PRO_UNIT7#PRO_UNIT7/2026-03-08/outage_end</id>
+    <updated>2026-10-24T00:00:00Z</updated>
+    <summary>Back from a 8-day outage</summary>
+  </entry>
+  <entry>
+    <title>PRO_UNIT7: Outage started (2026-02-27)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=PRO_UNIT7"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=PRO_UNIT7#PRO_UNIT7/2026-02-27/outage_start</id>
+    <updated>2026-10-24T00:00:00Z</updated>
+    <summary>Outage began, lasting 8 days</summary>
   </entry>
 </feed>

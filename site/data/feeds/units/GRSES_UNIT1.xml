@@ -3,7 +3,7 @@
   <title>GRSES_UNIT1: bidding and operating changes</title>
   <link href="https://ercotbids.currenttech.energy/unit.html?unit=GRSES_UNIT1"/>
   <id>https://ercotbids.currenttech.energy/unit.html?unit=GRSES_UNIT1</id>
-  <updated>2026-10-23T00:00:00Z</updated>
+  <updated>2026-10-24T00:00:00Z</updated>
   <entry>
     <title>GRSES_UNIT1: Loss cutoff moved (2026-08-24)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=GRSES_UNIT1"/>
@@ -33,17 +33,17 @@
     <summary>Offer price vs peer median: $102 to -$5/MWh</summary>
   </entry>
   <entry>
-    <title>GRSES_UNIT1: Bidding approach shifted (2026-06-15)</title>
+    <title>GRSES_UNIT1: Bidding approach shifted (2026-06-03)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=GRSES_UNIT1"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=GRSES_UNIT1#GRSES_UNIT1/2026-06-15/bidding</id>
-    <updated>2026-10-18T00:00:00Z</updated>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=GRSES_UNIT1#GRSES_UNIT1/2026-06-03/bidding</id>
+    <updated>2026-10-24T00:00:00Z</updated>
     <summary>Offer price vs peer median: -$10 to $102/MWh</summary>
   </entry>
   <entry>
-    <title>GRSES_UNIT1: Bidding approach shifted (2026-05-27)</title>
+    <title>GRSES_UNIT1: Bidding approach shifted (2026-05-25)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=GRSES_UNIT1"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=GRSES_UNIT1#GRSES_UNIT1/2026-05-27/bidding</id>
-    <updated>2026-10-18T00:00:00Z</updated>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=GRSES_UNIT1#GRSES_UNIT1/2026-05-25/bidding</id>
+    <updated>2026-10-24T00:00:00Z</updated>
     <summary>Offer price vs peer median: $99 to -$10/MWh</summary>
   </entry>
   <entry>
@@ -58,28 +58,14 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=GRSES_UNIT1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=GRSES_UNIT1#GRSES_UNIT1/2026-04-14/outage_end</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Back from a 15-day outage</summary>
-  </entry>
-  <entry>
-    <title>GRSES_UNIT1: Outage started (2026-03-30)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=GRSES_UNIT1"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=GRSES_UNIT1#GRSES_UNIT1/2026-03-30/outage_start</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Outage began, lasting 15 days</summary>
-  </entry>
-  <entry>
-    <title>GRSES_UNIT1: Outage ended (2026-03-28)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=GRSES_UNIT1"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=GRSES_UNIT1#GRSES_UNIT1/2026-03-28/outage_end</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Back from a 13-day outage</summary>
+    <summary>Back from a 29-day outage</summary>
   </entry>
   <entry>
     <title>GRSES_UNIT1: Outage started (2026-03-16)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=GRSES_UNIT1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=GRSES_UNIT1#GRSES_UNIT1/2026-03-16/outage_start</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Outage began, lasting 13 days</summary>
+    <summary>Outage began, lasting 29 days</summary>
   </entry>
   <entry>
     <title>GRSES_UNIT1: Timescale group changed (2026-02-01)</title>

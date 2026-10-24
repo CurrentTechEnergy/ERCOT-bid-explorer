@@ -3,7 +3,7 @@
   <title>MDANP_CT6: bidding and operating changes</title>
   <link href="https://ercotbids.currenttech.energy/unit.html?unit=MDANP_CT6"/>
   <id>https://ercotbids.currenttech.energy/unit.html?unit=MDANP_CT6</id>
-  <updated>2026-10-23T00:00:00Z</updated>
+  <updated>2026-10-24T00:00:00Z</updated>
   <entry>
     <title>MDANP_CT6: Shut down despite a day-ahead award (2026-07-10)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=MDANP_CT6"/>
@@ -61,10 +61,10 @@
     <summary>Shut down for 12 h although a day-ahead award covered 100% of the window</summary>
   </entry>
   <entry>
-    <title>MDANP_CT6: Bidding approach shifted (2026-04-24)</title>
+    <title>MDANP_CT6: Bidding approach shifted (2026-04-23)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=MDANP_CT6"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=MDANP_CT6#MDANP_CT6/2026-04-24/bidding</id>
-    <updated>2026-10-18T00:00:00Z</updated>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=MDANP_CT6#MDANP_CT6/2026-04-23/bidding</id>
+    <updated>2026-10-24T00:00:00Z</updated>
     <summary>Offer price vs peer median: -$14 to $0/MWh</summary>
   </entry>
   <entry>
@@ -86,14 +86,14 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=MDANP_CT6"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=MDANP_CT6#MDANP_CT6/2026-04-10/outage_end</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Back from a 12-day outage</summary>
+    <summary>Back from a 15-day outage</summary>
   </entry>
   <entry>
-    <title>MDANP_CT6: Outage started (2026-03-30)</title>
+    <title>MDANP_CT6: Outage started (2026-03-27)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=MDANP_CT6"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=MDANP_CT6#MDANP_CT6/2026-03-30/outage_start</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Outage began, lasting 12 days</summary>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=MDANP_CT6#MDANP_CT6/2026-03-27/outage_start</id>
+    <updated>2026-10-24T00:00:00Z</updated>
+    <summary>Outage began, lasting 15 days</summary>
   </entry>
   <entry>
     <title>MDANP_CT6: Timescale group changed (2026-02-01)</title>

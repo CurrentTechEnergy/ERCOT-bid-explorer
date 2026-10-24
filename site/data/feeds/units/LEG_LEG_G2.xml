@@ -3,7 +3,21 @@
   <title>LEG_LEG_G2: bidding and operating changes</title>
   <link href="https://ercotbids.currenttech.energy/unit.html?unit=LEG_LEG_G2"/>
   <id>https://ercotbids.currenttech.energy/unit.html?unit=LEG_LEG_G2</id>
-  <updated>2026-10-23T00:00:00Z</updated>
+  <updated>2026-10-24T00:00:00Z</updated>
+  <entry>
+    <title>LEG_LEG_G2: Outage ended (2026-06-11)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=LEG_LEG_G2"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=LEG_LEG_G2#LEG_LEG_G2/2026-06-11/outage_end</id>
+    <updated>2026-10-24T00:00:00Z</updated>
+    <summary>Back from a 8-day outage</summary>
+  </entry>
+  <entry>
+    <title>LEG_LEG_G2: Outage started (2026-06-03)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=LEG_LEG_G2"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=LEG_LEG_G2#LEG_LEG_G2/2026-06-03/outage_start</id>
+    <updated>2026-10-24T00:00:00Z</updated>
+    <summary>Outage began, lasting 8 days</summary>
+  </entry>
   <entry>
     <title>LEG_LEG_G2: Outage ended (2026-05-30)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=LEG_LEG_G2"/>
@@ -23,42 +37,28 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=LEG_LEG_G2"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=LEG_LEG_G2#LEG_LEG_G2/2026-05-03/outage_end</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Back from a 12-day outage</summary>
+    <summary>Back from a 56-day outage</summary>
   </entry>
   <entry>
-    <title>LEG_LEG_G2: Outage started (2026-04-22)</title>
+    <title>LEG_LEG_G2: Outage started (2026-03-08)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=LEG_LEG_G2"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=LEG_LEG_G2#LEG_LEG_G2/2026-04-22/outage_start</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Outage began, lasting 12 days</summary>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=LEG_LEG_G2#LEG_LEG_G2/2026-03-08/outage_start</id>
+    <updated>2026-10-24T00:00:00Z</updated>
+    <summary>Outage began, lasting 56 days</summary>
   </entry>
   <entry>
-    <title>LEG_LEG_G2: Outage ended (2026-04-20)</title>
+    <title>LEG_LEG_G2: Outage ended (2026-03-08)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=LEG_LEG_G2"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=LEG_LEG_G2#LEG_LEG_G2/2026-04-20/outage_end</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Back from a 22-day outage</summary>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=LEG_LEG_G2#LEG_LEG_G2/2026-03-08/outage_end</id>
+    <updated>2026-10-24T00:00:00Z</updated>
+    <summary>Back from a 11-day outage</summary>
   </entry>
   <entry>
-    <title>LEG_LEG_G2: Outage started (2026-03-30)</title>
+    <title>LEG_LEG_G2: Outage started (2026-02-24)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=LEG_LEG_G2"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=LEG_LEG_G2#LEG_LEG_G2/2026-03-30/outage_start</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Outage began, lasting 22 days</summary>
-  </entry>
-  <entry>
-    <title>LEG_LEG_G2: Outage ended (2026-03-28)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=LEG_LEG_G2"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=LEG_LEG_G2#LEG_LEG_G2/2026-03-28/outage_end</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Back from a 14-day outage</summary>
-  </entry>
-  <entry>
-    <title>LEG_LEG_G2: Outage started (2026-03-15)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=LEG_LEG_G2"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=LEG_LEG_G2#LEG_LEG_G2/2026-03-15/outage_start</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Outage began, lasting 14 days</summary>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=LEG_LEG_G2#LEG_LEG_G2/2026-02-24/outage_start</id>
+    <updated>2026-10-24T00:00:00Z</updated>
+    <summary>Outage began, lasting 11 days</summary>
   </entry>
   <entry>
     <title>LEG_LEG_G2: Outage ended (2026-01-21)</title>

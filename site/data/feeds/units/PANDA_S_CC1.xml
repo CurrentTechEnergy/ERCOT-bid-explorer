@@ -9,7 +9,7 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=PANDA_S_CC1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=PANDA_S_CC1#PANDA_S_CC1/2026-04-07/outage_end</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Back from a 9-day outage</summary>
+    <summary>Back from a 18-day outage</summary>
   </entry>
   <entry>
     <title>PANDA_S_CC1: Timescale group changed (2026-04-01)</title>
@@ -19,25 +19,11 @@
     <summary>Multi-day: off 1–7 days in 2026-03 to Always on when available in 2026-04</summary>
   </entry>
   <entry>
-    <title>PANDA_S_CC1: Outage started (2026-03-30)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=PANDA_S_CC1"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=PANDA_S_CC1#PANDA_S_CC1/2026-03-30/outage_start</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Outage began, lasting 9 days</summary>
-  </entry>
-  <entry>
-    <title>PANDA_S_CC1: Outage ended (2026-03-28)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=PANDA_S_CC1"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=PANDA_S_CC1#PANDA_S_CC1/2026-03-28/outage_end</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Back from a 8-day outage</summary>
-  </entry>
-  <entry>
     <title>PANDA_S_CC1: Outage started (2026-03-21)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=PANDA_S_CC1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=PANDA_S_CC1#PANDA_S_CC1/2026-03-21/outage_start</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Outage began, lasting 8 days</summary>
+    <summary>Outage began, lasting 18 days</summary>
   </entry>
   <entry>
     <title>PANDA_S_CC1: Timescale group changed (2026-02-01)</title>

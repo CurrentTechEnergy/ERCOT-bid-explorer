@@ -3,7 +3,7 @@
   <title>THW_GT61: bidding and operating changes</title>
   <link href="https://ercotbids.currenttech.energy/unit.html?unit=THW_GT61"/>
   <id>https://ercotbids.currenttech.energy/unit.html?unit=THW_GT61</id>
-  <updated>2026-10-19T00:00:00Z</updated>
+  <updated>2026-10-24T00:00:00Z</updated>
   <entry>
     <title>THW_GT61: Outage ended (2026-08-09)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=THW_GT61"/>
@@ -33,10 +33,10 @@
     <summary>Multi-day: off 1–7 days in 2026-06 to Daily, 1–2 a week in 2026-07</summary>
   </entry>
   <entry>
-    <title>THW_GT61: Bidding approach shifted (2026-06-19)</title>
+    <title>THW_GT61: Bidding approach shifted (2026-06-18)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=THW_GT61"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=THW_GT61#THW_GT61/2026-06-19/bidding</id>
-    <updated>2026-10-18T00:00:00Z</updated>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=THW_GT61#THW_GT61/2026-06-18/bidding</id>
+    <updated>2026-10-24T00:00:00Z</updated>
     <summary>Running without an offer curve: 100% to 0% of the day</summary>
   </entry>
   <entry>
@@ -79,48 +79,20 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=THW_GT61"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=THW_GT61#THW_GT61/2026-05-02/outage_end</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Back from a 10-day outage</summary>
+    <summary>Back from a 55-day outage</summary>
   </entry>
   <entry>
-    <title>THW_GT61: Outage started (2026-04-22)</title>
+    <title>THW_GT61: Outage started (2026-03-08)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=THW_GT61"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=THW_GT61#THW_GT61/2026-04-22/outage_start</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Outage began, lasting 10 days</summary>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=THW_GT61#THW_GT61/2026-03-08/outage_start</id>
+    <updated>2026-10-24T00:00:00Z</updated>
+    <summary>Outage began, lasting 55 days</summary>
   </entry>
   <entry>
-    <title>THW_GT61: Outage ended (2026-04-20)</title>
+    <title>THW_GT61: Outage ended (2026-03-03)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=THW_GT61"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=THW_GT61#THW_GT61/2026-04-20/outage_end</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Back from a 22-day outage</summary>
-  </entry>
-  <entry>
-    <title>THW_GT61: Outage started (2026-03-30)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=THW_GT61"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=THW_GT61#THW_GT61/2026-03-30/outage_start</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Outage began, lasting 22 days</summary>
-  </entry>
-  <entry>
-    <title>THW_GT61: Outage ended (2026-03-28)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=THW_GT61"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=THW_GT61#THW_GT61/2026-03-28/outage_end</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Back from a 14-day outage</summary>
-  </entry>
-  <entry>
-    <title>THW_GT61: Outage started (2026-03-15)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=THW_GT61"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=THW_GT61#THW_GT61/2026-03-15/outage_start</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Outage began, lasting 14 days</summary>
-  </entry>
-  <entry>
-    <title>THW_GT61: Outage ended (2026-03-02)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=THW_GT61"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=THW_GT61#THW_GT61/2026-03-02/outage_end</id>
-    <updated>2026-10-18T00:00:00Z</updated>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=THW_GT61#THW_GT61/2026-03-03/outage_end</id>
+    <updated>2026-10-24T00:00:00Z</updated>
     <summary>Back from a 90-day outage</summary>
   </entry>
   <entry>

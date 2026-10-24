@@ -3,12 +3,19 @@
   <title>CCEC_CC1_1: bidding and operating changes</title>
   <link href="https://ercotbids.currenttech.energy/unit.html?unit=CCEC_CC1_1"/>
   <id>https://ercotbids.currenttech.energy/unit.html?unit=CCEC_CC1_1</id>
-  <updated>2026-10-18T00:00:00Z</updated>
+  <updated>2026-10-24T00:00:00Z</updated>
   <entry>
     <title>CCEC_CC1_1: Bidding approach shifted (2026-04-23)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=CCEC_CC1_1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=CCEC_CC1_1#CCEC_CC1_1/2026-04-23/bidding</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Offer price vs peer median: $13 to $2/MWh</summary>
+  </entry>
+  <entry>
+    <title>CCEC_CC1_1: Bidding approach shifted (2026-04-16)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=CCEC_CC1_1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=CCEC_CC1_1#CCEC_CC1_1/2026-04-16/bidding</id>
+    <updated>2026-10-24T00:00:00Z</updated>
+    <summary>Offer price vs peer median: $2 to $13/MWh</summary>
   </entry>
 </feed>

@@ -3,27 +3,27 @@
   <title>FTR_CC1: bidding and operating changes</title>
   <link href="https://ercotbids.currenttech.energy/unit.html?unit=FTR_CC1"/>
   <id>https://ercotbids.currenttech.energy/unit.html?unit=FTR_CC1</id>
-  <updated>2026-10-18T00:00:00Z</updated>
+  <updated>2026-10-24T00:00:00Z</updated>
   <entry>
-    <title>FTR_CC1: Outage ended (2026-03-28)</title>
+    <title>FTR_CC1: Outage ended (2026-03-30)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=FTR_CC1"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=FTR_CC1#FTR_CC1/2026-03-28/outage_end</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Back from a 14-day outage</summary>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=FTR_CC1#FTR_CC1/2026-03-30/outage_end</id>
+    <updated>2026-10-24T00:00:00Z</updated>
+    <summary>Back from a 22-day outage</summary>
   </entry>
   <entry>
-    <title>FTR_CC1: Outage started (2026-03-15)</title>
+    <title>FTR_CC1: Outage started (2026-03-08)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=FTR_CC1"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=FTR_CC1#FTR_CC1/2026-03-15/outage_start</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Outage began, lasting 14 days</summary>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=FTR_CC1#FTR_CC1/2026-03-08/outage_start</id>
+    <updated>2026-10-24T00:00:00Z</updated>
+    <summary>Outage began, lasting 22 days</summary>
   </entry>
   <entry>
-    <title>FTR_CC1: Outage ended (2026-03-02)</title>
+    <title>FTR_CC1: Outage ended (2026-03-08)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=FTR_CC1"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=FTR_CC1#FTR_CC1/2026-03-02/outage_end</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Back from a 8-day outage</summary>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=FTR_CC1#FTR_CC1/2026-03-08/outage_end</id>
+    <updated>2026-10-24T00:00:00Z</updated>
+    <summary>Back from a 13-day outage</summary>
   </entry>
   <entry>
     <title>FTR_CC1: Timescale group changed (2026-03-01)</title>
@@ -37,7 +37,7 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=FTR_CC1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=FTR_CC1#FTR_CC1/2026-02-23/outage_start</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Outage began, lasting 8 days</summary>
+    <summary>Outage began, lasting 13 days</summary>
   </entry>
   <entry>
     <title>FTR_CC1: Timescale group changed (2026-01-01)</title>

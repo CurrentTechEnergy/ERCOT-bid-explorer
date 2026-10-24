@@ -3,7 +3,7 @@
   <title>QALSW_CC2: bidding and operating changes</title>
   <link href="https://ercotbids.currenttech.energy/unit.html?unit=QALSW_CC2"/>
   <id>https://ercotbids.currenttech.energy/unit.html?unit=QALSW_CC2</id>
-  <updated>2026-10-23T00:00:00Z</updated>
+  <updated>2026-10-24T00:00:00Z</updated>
   <entry>
     <title>QALSW_CC2: Shut down after a long run (2026-06-17)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=QALSW_CC2"/>
@@ -23,14 +23,14 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=QALSW_CC2"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=QALSW_CC2#QALSW_CC2/2026-03-23/outage_end</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Back from a 8-day outage</summary>
+    <summary>Back from a 9-day outage</summary>
   </entry>
   <entry>
-    <title>QALSW_CC2: Outage started (2026-03-15)</title>
+    <title>QALSW_CC2: Outage started (2026-03-14)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=QALSW_CC2"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=QALSW_CC2#QALSW_CC2/2026-03-15/outage_start</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Outage began, lasting 8 days</summary>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=QALSW_CC2#QALSW_CC2/2026-03-14/outage_start</id>
+    <updated>2026-10-24T00:00:00Z</updated>
+    <summary>Outage began, lasting 9 days</summary>
   </entry>
   <entry>
     <title>QALSW_CC2: Outage ended (2026-01-02)</title>

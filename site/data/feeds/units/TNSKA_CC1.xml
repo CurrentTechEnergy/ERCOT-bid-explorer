@@ -3,13 +3,13 @@
   <title>TNSKA_CC1: bidding and operating changes</title>
   <link href="https://ercotbids.currenttech.energy/unit.html?unit=TNSKA_CC1"/>
   <id>https://ercotbids.currenttech.energy/unit.html?unit=TNSKA_CC1</id>
-  <updated>2026-10-18T00:00:00Z</updated>
+  <updated>2026-10-24T00:00:00Z</updated>
   <entry>
-    <title>TNSKA_CC1: Outage ended (2026-04-20)</title>
+    <title>TNSKA_CC1: Outage ended (2026-04-24)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=TNSKA_CC1"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=TNSKA_CC1#TNSKA_CC1/2026-04-20/outage_end</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Back from a 22-day outage</summary>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=TNSKA_CC1#TNSKA_CC1/2026-04-24/outage_end</id>
+    <updated>2026-10-24T00:00:00Z</updated>
+    <summary>Back from a 43-day outage</summary>
   </entry>
   <entry>
     <title>TNSKA_CC1: Timescale group changed (2026-04-01)</title>
@@ -19,25 +19,11 @@
     <summary>Multi-day: off 1–7 days in 2026-03 to Daily, under 1 shutdown a week in 2026-04</summary>
   </entry>
   <entry>
-    <title>TNSKA_CC1: Outage started (2026-03-30)</title>
+    <title>TNSKA_CC1: Outage started (2026-03-12)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=TNSKA_CC1"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=TNSKA_CC1#TNSKA_CC1/2026-03-30/outage_start</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Outage began, lasting 22 days</summary>
-  </entry>
-  <entry>
-    <title>TNSKA_CC1: Outage ended (2026-03-28)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=TNSKA_CC1"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=TNSKA_CC1#TNSKA_CC1/2026-03-28/outage_end</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Back from a 14-day outage</summary>
-  </entry>
-  <entry>
-    <title>TNSKA_CC1: Outage started (2026-03-15)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=TNSKA_CC1"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=TNSKA_CC1#TNSKA_CC1/2026-03-15/outage_start</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Outage began, lasting 14 days</summary>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=TNSKA_CC1#TNSKA_CC1/2026-03-12/outage_start</id>
+    <updated>2026-10-24T00:00:00Z</updated>
+    <summary>Outage began, lasting 43 days</summary>
   </entry>
   <entry>
     <title>TNSKA_CC1: Timescale group changed (2026-03-01)</title>

@@ -3,7 +3,7 @@
   <title>PB2SES_CT4: bidding and operating changes</title>
   <link href="https://ercotbids.currenttech.energy/unit.html?unit=PB2SES_CT4"/>
   <id>https://ercotbids.currenttech.energy/unit.html?unit=PB2SES_CT4</id>
-  <updated>2026-10-18T00:00:00Z</updated>
+  <updated>2026-10-24T00:00:00Z</updated>
   <entry>
     <title>PB2SES_CT4: Bidding approach shifted (2026-07-21)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=PB2SES_CT4"/>
@@ -12,11 +12,18 @@
     <summary>Offer price vs peer median: -$8 to $12/MWh</summary>
   </entry>
   <entry>
-    <title>PB2SES_CT4: Bidding approach shifted (2026-06-06)</title>
+    <title>PB2SES_CT4: Bidding approach shifted (2026-06-12)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=PB2SES_CT4"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=PB2SES_CT4#PB2SES_CT4/2026-06-06/bidding</id>
-    <updated>2026-10-18T00:00:00Z</updated>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=PB2SES_CT4#PB2SES_CT4/2026-06-12/bidding</id>
+    <updated>2026-10-24T00:00:00Z</updated>
     <summary>Offer price vs peer median: -$26 to -$5/MWh</summary>
+  </entry>
+  <entry>
+    <title>PB2SES_CT4: Bidding approach shifted (2026-06-01)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=PB2SES_CT4"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=PB2SES_CT4#PB2SES_CT4/2026-06-01/bidding</id>
+    <updated>2026-10-24T00:00:00Z</updated>
+    <summary>Offer price vs peer median: -$10 to -$26/MWh</summary>
   </entry>
   <entry>
     <title>PB2SES_CT4: Bidding approach shifted (2026-05-30)</title>
@@ -54,25 +61,32 @@
     <summary>MW above LSL offered at or below $0: 100% to 0% of the day</summary>
   </entry>
   <entry>
-    <title>PB2SES_CT4: Bidding approach shifted (2026-05-01)</title>
+    <title>PB2SES_CT4: Bidding approach shifted (2026-05-02)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=PB2SES_CT4"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=PB2SES_CT4#PB2SES_CT4/2026-05-01/bidding</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Offer price vs peer median: -$29 to -$11/MWh</summary>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=PB2SES_CT4#PB2SES_CT4/2026-05-02/bidding</id>
+    <updated>2026-10-24T00:00:00Z</updated>
+    <summary>Offer price vs peer median: -$28 to -$11/MWh</summary>
   </entry>
   <entry>
-    <title>PB2SES_CT4: Bidding approach shifted (2026-04-23)</title>
+    <title>PB2SES_CT4: Bidding approach shifted (2026-04-24)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=PB2SES_CT4"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=PB2SES_CT4#PB2SES_CT4/2026-04-23/bidding</id>
-    <updated>2026-10-18T00:00:00Z</updated>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=PB2SES_CT4#PB2SES_CT4/2026-04-24/bidding</id>
+    <updated>2026-10-24T00:00:00Z</updated>
     <summary>MW above LSL offered at or below $0: 0% to 100% of the day</summary>
+  </entry>
+  <entry>
+    <title>PB2SES_CT4: Bidding approach shifted (2026-04-22)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=PB2SES_CT4"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=PB2SES_CT4#PB2SES_CT4/2026-04-22/bidding</id>
+    <updated>2026-10-24T00:00:00Z</updated>
+    <summary>Offer price vs peer median: -$29 to -$15/MWh</summary>
   </entry>
   <entry>
     <title>PB2SES_CT4: Shut down after a long run (2026-04-18)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=PB2SES_CT4"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=PB2SES_CT4#PB2SES_CT4/2026-04-18/shutdown_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Shut down for 8 h after 35 days without a shutdown</summary>
+    <summary>Shut down for 8 h after 37 days without a shutdown</summary>
   </entry>
   <entry>
     <title>PB2SES_CT4: Bidding approach shifted (2026-04-12)</title>
@@ -89,6 +103,13 @@
     <summary>MW above LSL offered at or below $0: 0% to 100% of the day</summary>
   </entry>
   <entry>
+    <title>PB2SES_CT4: Outage ended (2026-04-02)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=PB2SES_CT4"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=PB2SES_CT4#PB2SES_CT4/2026-04-02/outage_end</id>
+    <updated>2026-10-24T00:00:00Z</updated>
+    <summary>Back from a 20-day outage</summary>
+  </entry>
+  <entry>
     <title>PB2SES_CT4: Timescale group changed (2026-04-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=PB2SES_CT4"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=PB2SES_CT4#PB2SES_CT4/2026-04-01/group</id>
@@ -96,18 +117,18 @@
     <summary>Multi-day: off 1–7 days in 2026-03 to Daily, under 1 shutdown a week in 2026-04</summary>
   </entry>
   <entry>
-    <title>PB2SES_CT4: Outage ended (2026-03-28)</title>
+    <title>PB2SES_CT4: Outage started (2026-03-14)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=PB2SES_CT4"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=PB2SES_CT4#PB2SES_CT4/2026-03-28/outage_end</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Back from a 14-day outage</summary>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=PB2SES_CT4#PB2SES_CT4/2026-03-14/outage_start</id>
+    <updated>2026-10-24T00:00:00Z</updated>
+    <summary>Outage began, lasting 20 days</summary>
   </entry>
   <entry>
-    <title>PB2SES_CT4: Outage started (2026-03-15)</title>
+    <title>PB2SES_CT4: Bidding approach shifted (2026-03-07)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=PB2SES_CT4"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=PB2SES_CT4#PB2SES_CT4/2026-03-15/outage_start</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Outage began, lasting 14 days</summary>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=PB2SES_CT4#PB2SES_CT4/2026-03-07/bidding</id>
+    <updated>2026-10-24T00:00:00Z</updated>
+    <summary>Offer price vs peer median: -$6 to -$21/MWh</summary>
   </entry>
   <entry>
     <title>PB2SES_CT4: Timescale group changed (2026-03-01)</title>
@@ -115,13 +136,6 @@
     <id>https://ercotbids.currenttech.energy/unit.html?unit=PB2SES_CT4#PB2SES_CT4/2026-03-01/group</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Daily, 1–2 a week in 2026-02 to Multi-day: off 1–7 days in 2026-03</summary>
-  </entry>
-  <entry>
-    <title>PB2SES_CT4: Bidding approach shifted (2026-02-26)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=PB2SES_CT4"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=PB2SES_CT4#PB2SES_CT4/2026-02-26/bidding</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Offer price vs peer median: -$6 to -$25/MWh</summary>
   </entry>
   <entry>
     <title>PB2SES_CT4: Bidding approach shifted (2026-01-31)</title>

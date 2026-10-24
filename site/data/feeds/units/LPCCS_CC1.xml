@@ -3,7 +3,7 @@
   <title>LPCCS_CC1: bidding and operating changes</title>
   <link href="https://ercotbids.currenttech.energy/unit.html?unit=LPCCS_CC1"/>
   <id>https://ercotbids.currenttech.energy/unit.html?unit=LPCCS_CC1</id>
-  <updated>2026-10-23T00:00:00Z</updated>
+  <updated>2026-10-24T00:00:00Z</updated>
   <entry>
     <title>LPCCS_CC1: Timescale group changed (2026-08-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=LPCCS_CC1"/>
@@ -16,20 +16,20 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=LPCCS_CC1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=LPCCS_CC1#LPCCS_CC1/2026-06-30/cutoff</id>
     <updated>2026-10-23T00:00:00Z</updated>
-    <summary>Loss cutoff $0 to $24 per MW of minimum output; the next month&#x27;s decisions confirm it (10 of 12 right against 9)</summary>
+    <summary>Loss cutoff $0 to $24 per MW of minimum output; the next month&#x27;s decisions confirm it (11 of 13 right against 10)</summary>
   </entry>
   <entry>
     <title>LPCCS_CC1: Outage ended (2026-03-24)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=LPCCS_CC1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=LPCCS_CC1#LPCCS_CC1/2026-03-24/outage_end</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Back from a 10-day outage</summary>
+    <summary>Back from a 16-day outage</summary>
   </entry>
   <entry>
-    <title>LPCCS_CC1: Outage started (2026-03-15)</title>
+    <title>LPCCS_CC1: Outage started (2026-03-09)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=LPCCS_CC1"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=LPCCS_CC1#LPCCS_CC1/2026-03-15/outage_start</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Outage began, lasting 10 days</summary>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=LPCCS_CC1#LPCCS_CC1/2026-03-09/outage_start</id>
+    <updated>2026-10-24T00:00:00Z</updated>
+    <summary>Outage began, lasting 16 days</summary>
   </entry>
 </feed>

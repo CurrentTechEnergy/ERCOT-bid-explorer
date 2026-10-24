@@ -3,19 +3,19 @@
   <title>BCH_UNIT5: bidding and operating changes</title>
   <link href="https://ercotbids.currenttech.energy/unit.html?unit=BCH_UNIT5"/>
   <id>https://ercotbids.currenttech.energy/unit.html?unit=BCH_UNIT5</id>
-  <updated>2026-10-18T00:00:00Z</updated>
+  <updated>2026-10-24T00:00:00Z</updated>
   <entry>
     <title>BCH_UNIT5: Outage ended (2026-04-07)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=BCH_UNIT5"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=BCH_UNIT5#BCH_UNIT5/2026-04-07/outage_end</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Back from a 9-day outage</summary>
+    <summary>Back from a 16-day outage</summary>
   </entry>
   <entry>
-    <title>BCH_UNIT5: Outage started (2026-03-30)</title>
+    <title>BCH_UNIT5: Outage started (2026-03-22)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=BCH_UNIT5"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=BCH_UNIT5#BCH_UNIT5/2026-03-30/outage_start</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Outage began, lasting 9 days</summary>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=BCH_UNIT5#BCH_UNIT5/2026-03-22/outage_start</id>
+    <updated>2026-10-24T00:00:00Z</updated>
+    <summary>Outage began, lasting 16 days</summary>
   </entry>
 </feed>
