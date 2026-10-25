@@ -249,6 +249,10 @@ class Context:
         self.listed = grp.listed_keys(tr, self.techs)
         self.groups = grp.unit_groups(self.uh, self.techs, self.listed)
         self.decisions = read_json_gz(DATA_DIR / "decisions.json.gz", default={}) or {}
+        from .. import gascost
+        if gascost.MODE:     # experiment: the decision history rebuilt at gas cost (pipeline/gascost.py)
+            from ..decisions import build_decisions
+            self.decisions = build_decisions(index, write=False)
         self.dam_hubs = (read_json_gz(DATA_DIR / "dam_hubs.json.gz", default=None) or {"days": {}})["days"]
         self.dam_lambda = (read_json_gz(DATA_DIR / "dam_lambda.json.gz", default=None) or {"days": {}})["days"]
         self.dam_nodes = (read_json_gz(DATA_DIR / "dam_nodes.json.gz", default=None) or {"days": {}})["days"]

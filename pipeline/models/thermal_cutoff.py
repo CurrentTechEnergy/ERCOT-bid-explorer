@@ -108,6 +108,7 @@ from ..config import DATA_DIR
 from ..store import read_json_gz
 
 from ..decisions import _window, _cutoff, _dam_trains, HALF, OUT_MIN_H
+from .. import gascost
 from ..forecast import context as C
 from . import outage_pool, peaker_share
 
@@ -319,6 +320,19 @@ def _drivers(model, Z, bs, nh, p_on):
 
 
 
+def _day_cost(ctx, key, d, e):
+    """The day's minimum-energy cost: its own offer that day, or None for the carried one; with
+    the gas-cost experiment (pipeline/gascost.py) the gas cost where that applies."""
+    if not gascost.MODE:
+        return e["mingen"]
+    if e["mingen"] is not None:
+        return gascost.cost(e["tech"], key, d, e["mingen"], 0)
+    u = ctx.decisions.get("units", {}).get(key)
+    if gascost.MODE == "nooffer" and u and u[4] == 0:
+        return None      # carried own offer, as before
+    return gascost.gas_cost(e["tech"], key, d)
+
+
 def _day_trains(ctx):
     """{date: {train: (tech, node prices [24], mingen or None, lsl)}} for every decision date,
     from the DAM day files (combined-cycle configurations merged as in pipeline.decisions)."""
@@ -328,7 +342,7 @@ def _day_trains(ctx):
             dd = read_json_gz(DATA_DIR / "dam" / f"{d}.json.gz")
             if not dd:
                 continue
-            out[d] = {key: (e["tech"], e["spp"], e["mingen"], e["lsl"]) for key, e in _dam_trains(dd).items()
+            out[d] = {key: (e["tech"], e["spp"], _day_cost(ctx, key, d, e), e["lsl"]) for key, e in _dam_trains(dd).items()
                       if e["tech"] in DAILY_TECHS and e["spp"] is not None and e["lsl"]}
         ctx._cut_days = out
     return ctx._cut_days
@@ -600,14 +614,15 @@ def forecast(date, ctx: C.Context) -> dict:
             row.update(verdict="nocut", p_on=round(s["on_days"], 2) if s else 0.0, reason="no hourly history")
         else:   # daily groups: the stay-on loss at the node against the unit's own cutoff
             prices = ctx.node_price(date, u["sp"], name=u["configs"][0]) if u["sp"] else None
-            if prices is None or u["mingen"] is None or not u["lsl"]:
+            mg = gascost.cost(t, key, date, u["mingen"], u["est"])
+            if prices is None or mg is None or not u["lsl"]:
                 s = stats["units"].get(key)
                 row.update(verdict="nocut", p_on=round(s["on_days"], 2) if s else 0.0,
                            reason="no day-ahead price at its node" if prices is None else "no costs")
                 rows[key] = row
                 continue
             lsl = float(u["lsl"])
-            margin = (np.asarray(prices, float) - u["mingen"]) * lsl
+            margin = (np.asarray(prices, float) - mg) * lsl
             loss, bs, nh = _window(-margin)
             days = _decision_rows(ctx, key, known)
             c = _cutoff(days) if days else None
