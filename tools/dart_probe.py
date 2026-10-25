@@ -14,8 +14,9 @@ Once:
 """
 import datetime as dt
 import io
+import os
 import sys
-import zipfile
+import time
 from pathlib import Path
 
 import pandas as pd
@@ -30,9 +31,10 @@ OUT = Path("out/dart")
 
 def fetch_docs(api, emil, docs):
     """Every document's zip, raw store first (Blair's rule through Oct 31: a workflow fetch reads
-    the R2 raw store first and keeps what it fetches).  Misses come from ERCOT in bulk; each inner
-    zip is matched back to its document by file name and stored.  Any the bulk zip can't be
-    matched to are fetched one by one through ErcotAPI.download, which stores them itself."""
+    the R2 raw store first and keeps what it fetches).  Misses come from ERCOT one by one through
+    ErcotAPI.download, which stores each.  (The bulk endpoint's inner file names did not match the
+    listing's constructedName for NP6-787 on Oct 24, so a bulk fetch could not be stored per
+    document and only doubled the downloads.)"""
     blobs, miss = {}, []
     for x in docs:
         b = api.raw.get(emil, x["docId"])
@@ -40,23 +42,8 @@ def fetch_docs(api, emil, docs):
             blobs[x["docId"]] = b
         else:
             miss.append(x)
-    by_name = {str(x.get("constructedName") or ""): x for x in miss}
-    left = {x["docId"]: x for x in miss}
-    for i in range(0, len(miss), 1000):
-        for blob in api.download_many(emil, [x["docId"] for x in miss[i:i + 1000]]):
-            with zipfile.ZipFile(io.BytesIO(blob)) as zf:
-                for info in zf.infolist():
-                    x = by_name.get(Path(info.filename).name)
-                    if x is None or x["docId"] not in left:
-                        continue
-                    inner = zf.read(info)
-                    api.raw.put(emil, x["docId"], inner, x)
-                    blobs[x["docId"]] = inner
-                    left.pop(x["docId"])
-    if left:
-        print(f"  {len(left)} of {len(miss)} not matched in the bulk zip; fetching one by one", flush=True)
-        for doc_id in list(left):
-            blobs[doc_id] = api.download(emil, doc_id)
+    for x in miss:
+        blobs[x["docId"]] = api.download(emil, x["docId"])
     print(f"  {len(docs) - len(miss)} from the raw store, {len(miss)} from ERCOT", flush=True)
     return blobs
 
@@ -120,8 +107,14 @@ def main(argv):
     bus_sub = dict(zip(sp["ELECTRICAL_BUS"], sp["SUBSTATION"]))
     days = [dt.date.fromisoformat(d) for d in argv[1:]]
     api = ErcotAPI()
+    # stop starting new days after this long, so the artifact uploads before the job timeout; a
+    # second run with the same days reads the finished ones back from the raw store
+    stop = time.time() + float(os.environ.get("DART_MINUTES") or 1e9) * 60
     ldf(api, dt.datetime.combine(min(days) - dt.timedelta(days=120), dt.time()), dt.datetime.combine(max(days) + dt.timedelta(days=60), dt.time()))
     for d in days:
+        if time.time() > stop:
+            print(f"{d}: not started, out of time", flush=True)
+            continue
         try:
             bus_day(api, d, bus_sub)
         except Exception as e:

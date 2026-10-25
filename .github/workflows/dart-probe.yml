@@ -35,19 +35,22 @@ jobs:
           mkdir -p sp && unzip -o -q sp.zip -d sp
           ls -R sp | head
       - name: Download and reduce
+        timeout-minutes: 315
         env:
           ERCOT_API_USERNAME: ${{ secrets.ERCOT_API_USERNAME }}
           ERCOT_API_PASSWORD: ${{ secrets.ERCOT_API_PASSWORD }}
           ERCOT_API_SUBSCRIPTION_KEY: ${{ secrets.ERCOT_API_SUBSCRIPTION_KEY }}
-          # single-document downloads (the load distribution factors) are kept in the raw store
+          # every document is read from and kept in the raw store
           R2_ENDPOINT: ${{ secrets.R2_ENDPOINT }}
           R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
           R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          DART_MINUTES: "290"
         run: |
           python -m tools.dart_probe "$(find sp -name 'Settlement_Points*.csv' | head -1)" \
             2025-12-02 2025-12-06 2025-12-10 2025-12-14 2025-12-18 2025-12-22 2025-12-26 2025-12-30 2026-01-03 2026-01-07 2026-01-11 2026-01-15 2026-01-19 2026-01-23 2026-01-27 2026-01-31 2026-02-04 2026-02-08 2026-02-12 2026-02-16 2026-02-20 2026-02-24 2026-02-28 2026-03-04 2026-03-08 2026-03-12 2026-03-16 2026-03-20 2026-03-24 2026-03-28 2026-04-01 2026-04-05 2026-04-09 2026-04-13 2026-04-17 2026-04-21 2026-04-25 2026-04-29 2026-05-03 2026-05-07 2026-05-11 2026-05-15 2026-05-19 2026-05-23 2026-05-27 2026-05-31 2026-06-04 2026-06-08 2026-06-12 2026-06-16 2026-06-20 2026-06-24 2026-07-02 2026-07-06 2026-07-10 2026-07-14 2026-07-18 2026-07-22 2026-07-26 2026-08-03
           ls -la out/dart
       - uses: actions/upload-artifact@v4
+        if: always()
         with:
           name: dart-probe
           path: out/dart
