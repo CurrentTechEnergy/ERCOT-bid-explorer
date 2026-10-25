@@ -46,6 +46,28 @@ def awards(b, mw_col):
     })
 
 
+def rescue(api):
+    """Zips fetched from the ERCOT MIS on Oct 25 for a one-off count (SUBST_RESCUE_DIR, with picks.txt
+    mapping operating day -> document id; MIS and API document ids are the same).  Each is put in
+    the raw store if the store lacks it, so it is never fetched again."""
+    d = os.environ.get("SUBST_RESCUE_DIR")
+    if not d or not (Path(d) / "picks.txt").exists():
+        return
+    for line in (Path(d) / "picks.txt").read_text().split("\n"):
+        if not line.strip():
+            continue
+        day, doc = line.split()
+        f = Path(d) / f"{day}.zip"
+        if not f.exists():
+            continue
+        if api.raw.get(EMIL_DAM, doc) is not None:
+            print(f"  rescued {day} (doc {doc}): already in the raw store", flush=True)
+            continue
+        blob = f.read_bytes()
+        api.raw.put(EMIL_DAM, doc, blob, api._docs.get((EMIL_DAM, int(doc))) or api._docs.get((EMIL_DAM, doc)))
+        print(f"  rescued {day} (doc {doc}): {len(blob) / 1e6:.1f} MB put in the raw store", flush=True)
+
+
 def main(first, last):
     OUT.mkdir(parents=True, exist_ok=True)
     api = ErcotAPI()
@@ -53,6 +75,7 @@ def main(first, last):
     until = dt.datetime.combine(last + dt.timedelta(days=66), dt.time())
     docs = api.list_archives(EMIL_DAM, since, until)
     print(f"{len(docs)} documents listed", flush=True)
+    rescue(api)
     rows = []
     for x in sorted(docs, key=lambda d: str(d.get("postDatetime"))):
         doc = x["docId"]

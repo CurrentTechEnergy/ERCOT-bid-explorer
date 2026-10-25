@@ -28,6 +28,11 @@ jobs:
           python-version: "3.12"
           cache: pip
       - run: pip install -r requirements.txt
+      - name: Rescued zips (temporary branch, put once in the raw store)
+        uses: actions/checkout@v5
+        with:
+          ref: raw-rescue-2026-10-25
+          path: rescue
       - name: Read and reduce
         env:
           ERCOT_API_USERNAME: ${{ secrets.ERCOT_API_USERNAME }}
@@ -37,6 +42,7 @@ jobs:
           R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
           R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
           SUBST_FETCH_MISSING: "0"
+          SUBST_RESCUE_DIR: rescue
         run: |
           python -m tools.dam_subst 2025-11-30 2026-08-26
           ls out/subst | wc -l
