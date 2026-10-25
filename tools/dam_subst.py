@@ -8,7 +8,7 @@ From each zip:
   60d_DAM_EnergyOnlyOfferAwards  -> eoo_YYYY-MM-DD.parquet  [he, sp, qse, mw, spp]
   60d_DAM_EnergyBidAwards        -> bid_YYYY-MM-DD.parquet  [he, sp, qse, mw, spp]
   60d_DAM_Gen_Resource_Data      -> qse_YYYY-MM-DD.parquet  [resource, type, sp, qse]
-  60d_DAM_EnergyOnlyOffers       -> eoo_offer_YYYY-MM-DD.parquet  [he, sp, qse, seg, price, mw] (mw cumulative)
+  60d_DAM_EnergyOnlyOffers       -> eoo_offer_YYYY-MM-DD.parquet  [he, sp, qse, oid, seg, price, mw] (mw cumulative)
 (three-part awards, HSL and node prices are already in site/data/dam)
 Also writes docs.csv: every document, its operating day and whether it came from the store.
 
@@ -59,6 +59,7 @@ def offers(b):
             "he": pd.to_numeric(f["hour ending"], errors="coerce").astype("Int16"),
             "sp": f["settlement point"].astype(str),
             "qse": f[next(c for c in f.columns if c.startswith("qse"))].astype(str),
+            "oid": f[next(c for c in f.columns if c.startswith("energy only offer id"))].astype(str),
             "seg": i,
             "price": pd.to_numeric(f[p], errors="coerce").astype("float32"),
             "mw": pd.to_numeric(f[m], errors="coerce").astype("float32"),
