@@ -115,6 +115,10 @@ const send = document.getElementById("c-send");
 const status = document.getElementById("c-status");
 const ref = new URLSearchParams(location.search).get("from") || document.referrer;
 document.getElementById("c-page").value = ref || "";
+// a page can open the form on a topic with a first line filled in (contact.html?topic=wrong&msg=...)
+const qp = new URLSearchParams(location.search), TOPICS = { question: 0, wrong: 1, idea: 2, other: 3 };
+if (qp.get("topic") in TOPICS) form.topic.selectedIndex = TOPICS[qp.get("topic")];
+if (qp.get("msg")) form.message.value = qp.get("msg").slice(0, 500);
 
 function say(text, kind) { status.textContent = text; status.className = "form-msg" + (kind ? " " + kind : ""); }
 

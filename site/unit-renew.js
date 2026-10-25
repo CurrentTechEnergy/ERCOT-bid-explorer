@@ -127,7 +127,8 @@ function drawOfftakers(name) {
   el.innerHTML = `<table class="data"><thead><tr><th class="t">Buyer</th><th class="t">Deal, as stated</th><th>Size</th><th>Term</th><th>Announced</th><th class="t">Notes</th><th class="t">Source</th></tr></thead><tbody>` +
     rs.map((r) => `<tr${r.may_have_expired || r.pre2012_no_term ? ' class="minor"' : ""}><td class="t ev">${esc(r.buyer)}${r.quote ? `<br><span class="muted">“${esc(r.quote)}”</span>` : ""}</td>` +
       `<td class="t">${DEAL[r.deal] || DEAL.contract}</td><td>${size(r)}</td><td>${r.term_years != null ? `${fmt0(r.term_years)} yr` : "–"}</td><td>${fmtAnn(r.announced)}</td>` +
-      `<td class="t ev">${flags(r)}</td><td class="t"><a href="${esc(r.source_url)}" target="_blank" rel="noopener">${esc(SOURCE[r.source_kind] || "source")}</a></td></tr>`).join("") + "</tbody></table>";
+      `<td class="t ev">${flags(r)}</td><td class="t"><a href="${esc(r.source_url)}" target="_blank" rel="noopener">${esc(SOURCE[r.source_kind] || "source")}</a></td></tr>`).join("") + "</tbody></table>" +
+    `<p class="note"><a href="contact.html?${new URLSearchParams({ topic: "wrong", from: location.href, msg: `Public contracts for ${name}: ` })}">Report a correction</a></p>`;
   setCSV(el, ["unit", "buyer", "deal", "mw", "share_pct", "term_years", "announced", "phase", "may_have_expired", "pre2012_no_term", "source_kind", "source_url", "quote"],
     rs.map((r) => [name, r.buyer, r.deal, r.mw, r.share_pct, r.term_years, r.announced, r.phase, r.may_have_expired, r.pre2012_no_term, r.source_kind, r.source_url, r.quote]), `${name} public contracts`);
 }
