@@ -94,6 +94,7 @@ EMIL_LAMBDA = "np6-322-cd"
 EMIL_SPP = "np6-905-cd"
 EMIL_DAM_SPP = "np4-190-cd"     # DAM settlement point prices (hubs and load zones kept, for pipeline/ppa.py)
 EMIL_DAM_LAMBDA = "np4-523-cd"  # DAM system lambda (pipeline/dam_lambda.py)
+EMIL_COP = "np3-991-ex"         # 60-day COP All Updates: each QSE's resource plans with update times (pipeline/cop.py)
 
 # --- Natural gas (EIA open data, https://www.eia.gov/opendata/) ---------------------------
 # Henry Hub spot price, $/MMBtu, daily (EIA_API_KEY in the environment; skipped without one).

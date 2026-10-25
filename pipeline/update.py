@@ -56,6 +56,7 @@ from .renew_forecast import fetch_renew_forecast
 from .load import fetch_load
 from .shadow import fetch_shadow
 from .outages import fetch_outages
+from .cop import fetch_cop
 from .nrc import fetch_nrc
 from .entities import fetch_entities
 from .forecast.run import build_forecast
@@ -484,7 +485,7 @@ def main(argv=None):
     ap.add_argument("--max-files", type=int, default=None, help="cap curve files per report per run")
     ap.add_argument("--outages-backfill", nargs=2, metavar=("START", "END"),
                     help="also fetch the outage reports for every operating day in this range")
-    ap.add_argument("--skip", choices=["2d", "2dgen", "60d", "dam", "prices", "outages", "nrc", "gas", "forecast", "entities"], action="append", default=[])
+    ap.add_argument("--skip", choices=["2d", "2dgen", "60d", "dam", "cop", "prices", "outages", "nrc", "gas", "forecast", "entities"], action="append", default=[])
     ap.add_argument("--local", nargs="+", help="process local zip files instead of calling the API")
     ap.add_argument("--mis-docs", nargs="+", type=int, metavar="ID",
                     help="download these report files from ERCOT's public website (MIS document ids) in "
@@ -578,6 +579,8 @@ def main(argv=None):
             fetch_curves(api, EMIL_DAM, since, now + dt.timedelta(days=1), index, "dam", limit=args.max_files)
         website_fallback(api, index, [s for s in ("2d", "2dgen", "60d", "dam") if s not in args.skip])
 
+    if "cop" not in args.skip:
+        fetch_cop(api, index)
     if "prices" not in args.skip:
         need = set(index["days"]["2d"]) | set(index["days"]["60d"])
         node_need = set(index["days"]["60d"]) | set(index["days"].get("dam", []))
@@ -628,7 +631,7 @@ def main(argv=None):
     save_index(index)
     added = {k: sorted(set(index["days"][k]) - before.get(k, set())) for k in index["days"]}
     names = {"2d": "2-day curves", "2dgen": "2-day generation summary", "60d": "60-day curves",
-             "dam": "60-day DAM offers and awards", "prices": "prices", "nodes": "resource-node prices",
+             "dam": "60-day DAM offers and awards", "cop": "60-day COP plans", "prices": "prices", "nodes": "resource-node prices",
              "storage": "battery day files"}
     lines = ["### ERCOT data update", "", "| Data | Days added | Range |", "|---|---|---|"]
     for k, v in added.items():

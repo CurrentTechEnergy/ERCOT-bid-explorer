@@ -46,6 +46,7 @@ from collections import Counter, defaultdict
 import numpy as np
 
 from ..config import DATA_DIR, GENERIC_COSTS
+from ..cop import COP_DIR
 from ..decisions import AWARD_LSL, COST_DAYS, _dam_trains
 from ..forecast import context as C
 from ..guide import EIA_HR
@@ -64,10 +65,12 @@ ON_STATUS = ("ON", "ONOS", "ONRE", "ONDSR", "ONOPTOUT", "ONTEST", "ONEMR", "ONRU
 FEATURES = ("margin", "loss ahead", "loss ahead against its start cost", "profit ahead",
             "best margin later", "award", "award ahead", "award later", "DAM status on",
             "own offer", "overnight", "hours in its state", "short run", "hours at minimum",
-            "spring", "summer", "autumn", "award profit ahead", "award profit against its start cost")
+            "spring", "summer", "autumn", "award profit ahead", "award profit against its start cost",
+            "COP plan on", "COP plan on ahead", "COP plan known")
 DRIVERS = [("price against its cost", (0, 1, 3, 4)), ("loss against its start cost", (2,)),
            ("DAM award", (5, 6, 7, 17, 18)), ("DAM status", (8,)), ("time in its state", (11, 12)),
-           ("sitting at minimum", (13,)), ("hour and season", (10, 14, 15, 16))]
+           ("sitting at minimum", (13,)), ("hour and season", (10, 14, 15, 16)),
+           ("its own COP plan", (19, 20, 21))]
 HEAT_RATE = {"combined_cycle": EIA_HR["combined_cycle"], "gas_steam": 10.4}   # MMBtu/MWh; gas steam: EIA Electric Power Annual table 8.2, approximate
 SEASON = {12: 0, 1: 0, 2: 0, 3: 1, 4: 1, 5: 1, 6: 2, 7: 2, 8: 2, 9: 3, 10: 3, 11: 3}
 
@@ -125,6 +128,27 @@ def _gas_before(ctx, d):
     return gv[i] if i >= 0 else None
 
 
+def _cop(ctx, d, dd):
+    """{train: (da [24], live [24], known [24])} plan on (1.0) or off from the COP (pipeline/cop.py):
+    as of 14:00 D - 1, and for each hour as of an hour before it; known 0 where no plan."""
+    from ..intraday import train_of
+    day = (read_json_gz(COP_DIR / f"{d}.json.gz", default=None) or {}).get("units", {})
+    tech = {n: u.get("tech") for n, u in dd.get("units", {}).items()}
+    out = {}
+    for name, v in day.items():
+        t = tech.get(name)
+        if t not in TECHS:
+            continue
+        key = train_of(name) if t == "combined_cycle" else name
+        da, live, known = out.setdefault(key, (np.zeros(24), np.zeros(24), np.zeros(24)))
+        for h in range(24):
+            a, b = v["da"][h], v["live"][h]
+            da[h] = max(da[h], float(a.startswith("ON")))
+            live[h] = max(live[h], float((b or a).startswith("ON")))
+            known[h] = max(known[h], float(bool(a)))
+    return out
+
+
 def _days(ctx):
     """{date: {train: day record}} for every 60-day day with a DAM file: price, costs, award,
     status.  Costs carried forward as pipeline.decisions does."""
@@ -136,7 +160,7 @@ def _days(ctx):
         dd = ctx.dam(d)
         if not dd:
             continue
-        tr, stat = _dam_trains(dd), _status(dd)
+        tr, stat, cop = _dam_trains(dd), _status(dd), _cop(ctx, d, dd)
         g = _gas_before(ctx, d)
         rec = {}
         for key, e in tr.items():
@@ -155,12 +179,13 @@ def _days(ctx):
             fuel = HEAT_RATE[e["tech"]] * g if g else mingen
             rec[key] = dict(tech=e["tech"], spp=np.nan_to_num(e["spp"], nan=mingen), lsl=e["lsl"],
                             mingen=mingen, hot=hot, own=own, aw=e["aw"] >= AWARD_LSL * e["lsl"], aw_mw=e["aw"], fuel=fuel,
-                            awmin=e["aw"] <= MIN_AWARD * e["lsl"], status=stat.get(key, np.ones(24)))
+                            awmin=e["aw"] <= MIN_AWARD * e["lsl"], status=stat.get(key, np.ones(24)),
+                            cop=cop.get(key, (np.full(24, 0.5), np.full(24, 0.5), np.zeros(24))))
         cache[d] = rec
     return cache
 
 
-def _static(r, month):
+def _static(r, month, live=True):
     """[24, n] the features of each hour that do not depend on the path: all from the DAM."""
     spp, lsl, mg = r["spp"], r["lsl"], r["mingen"]
     m = spp - mg
@@ -189,6 +214,10 @@ def _static(r, month):
     prof = np.cumsum((r["aw_mw"] * (spp - r["fuel"]))[::-1])[::-1]     # DAM profit of delivering the award from h on, at gas cost
     X[:, 17] = np.sign(prof) * np.log1p(np.abs(prof) / 1000.0)
     X[:, 18] = np.clip(prof / r["hot"], -5, 5)
+    da, lv, known = r["cop"]
+    X[:, 19] = lv if live else da
+    X[:, 20] = np.array([da[h:h + AHEAD].mean() for h in range(24)])
+    X[:, 21] = known
     return X
 
 
@@ -210,20 +239,20 @@ def _run_before(st, k):
 
 
 # ------------------------------------------------------------------ fit --
-def _rows(ctx, dates):
+def _rows(ctx, dates, live=True):
     """Transition rows over `dates`: {0: (X, unit, y) from off, 1: from on}."""
-    cache = ctx.__dict__.setdefault("_oi_rows", {})
+    cache = ctx.__dict__.setdefault("_oi_rows", {}).setdefault(live, {})
     out = {0: ([], [], []), 1: ([], [], [])}
     for d in dates:
         if d not in cache:
-            cache[d] = _day_rows(ctx, d)
+            cache[d] = _day_rows(ctx, d, live)
         for s in (0, 1):
             for a, b in zip(out[s], cache[d][s]):
                 a.extend(b)
     return out
 
 
-def _day_rows(ctx, d):
+def _day_rows(ctx, d, live=True):
     states, days, day0 = _states(ctx), _days(ctx), ctx.stats["day0"]
     out = {0: ([], [], []), 1: ([], [], [])}
     dn = (C._d(d) - day0).days
@@ -234,7 +263,7 @@ def _day_rows(ctx, d):
         k0 = dn * 24
         if k0 < 1 or k0 + 24 > len(st):
             continue
-        S = _static(r, int(d[5:7]))
+        S = _static(r, int(d[5:7]), live)
         run = _run_before(st, k0)
         for h in range(24):
             k = k0 + h
@@ -279,16 +308,16 @@ def _fit_side(X, keys, y):
                 b0=float(m.intercept_[0]), slope=slope)
 
 
-def fit(ctx, month):
+def fit(ctx, month, live=True):
     """Transitions fitted on every 60-day day before `month` (YYYY-MM), cached; None when fewer
     than FIT_MIN_DAYS days."""
-    cache = ctx.__dict__.setdefault("_oi_fit", {})
+    cache = ctx.__dict__.setdefault("_oi_fit", {}).setdefault(live, {})
     if month not in cache:
         dates = [d for d in _days(ctx) if d < month + "-01"]
         if len(dates) < FIT_MIN_DAYS:
             cache[month] = None
         else:
-            R = _rows(ctx, dates)
+            R = _rows(ctx, dates, live)
             cache[month] = {s: _fit_side(*R[s]) for s in (0, 1)} if all(len(set(R[s][2])) == 2 for s in (0, 1)) else None
     return cache[month]
 
@@ -306,7 +335,7 @@ def _p(f, key, X):
 def p_day(ctx, date, key):
     """[24] P(online) by hour from the true state at HE24 of D - 1, or None."""
     r = _days(ctx).get(date, {}).get(key)
-    f = fit(ctx, date[:7])
+    f = fit(ctx, date[:7], live=False)
     states = _states(ctx)
     if r is None or f is None or key not in states:
         return None
@@ -314,7 +343,7 @@ def p_day(ctx, date, key):
     k0 = dn * 24
     if k0 < 1 or k0 > len(st) or st[k0 - 1] in "o-":
         return None
-    S = _static(r, int(date[5:7]))
+    S = _static(r, int(date[5:7]), live=False)
     awmin = r["awmin"].astype(float)
     runs = np.arange(1, RUN_CAP + 1)
     mass = np.zeros((2, RUN_CAP + 1))     # [state, hours in it]
