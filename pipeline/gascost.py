@@ -5,6 +5,7 @@ GAS_COST (environment):
   ""         off: the unit's own DAM minimum-energy offer where it filed one, else the generic cost
   "nooffer"  gas cost where the unit has no own offer (the generic cases); own offers kept
   "all"      gas cost for every gas unit
+GAS_COST_TECH (environment): comma-separated techs the mode applies to (default all gas techs)
 
 Gas cost = HEAT_RATE[tech] x the unit's own hub price (fuel_hubs.json.gz: Houston Ship Channel
 or Waha) on the latest trading day before D - 1, so it is public when the forecast for D is
@@ -18,6 +19,7 @@ from .config import DATA_DIR
 from .store import read_json_gz
 
 MODE = os.environ.get("GAS_COST", "")
+TECHS = {t for t in os.environ.get("GAS_COST_TECH", "").split(",") if t}
 HEAT_RATE = {"combined_cycle": 7.548, "gas_steam": 10.4, "combustion_turbine": 11.0}   # MMBtu/MWh
 _C = {}
 
@@ -52,7 +54,7 @@ def gas_cost(tech, key, date):
 
 def cost(tech, key, date, mingen, est):
     """The minimum-energy cost to use: `mingen` (est 0 own offer, 2 generic) or the gas cost."""
-    if not MODE or (MODE == "nooffer" and est == 0 and mingen is not None):
+    if not MODE or (TECHS and tech not in TECHS) or (MODE == "nooffer" and est == 0 and mingen is not None):
         return mingen
     g = gas_cost(tech, key, date)
     return mingen if g is None else g
