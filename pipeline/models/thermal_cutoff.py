@@ -100,6 +100,7 @@ merged states up to that hour only (an off spell open at that hour is judged on 
 far, not on how it later turned out).  A live day reads the full record, as before.
 """
 import datetime as dt
+import os
 from collections import defaultdict
 
 import numpy as np
@@ -109,7 +110,7 @@ from ..store import read_json_gz
 
 from ..decisions import _window, _cutoff, _dam_trains, HALF, OUT_MIN_H
 from ..forecast import context as C
-from . import outage_pool, peaker_share
+from . import outage_pool, peaker_share, start_chain
 
 UNSEEN_EPS = 0.1   # unseen-outage weight of a unit never out in these weeks of earlier years, against 1.1 for one always out then
 UNSEEN_TECHS = ("coal", "combined_cycle", "gas_steam", "combustion_turbine")   # spread the zonal unseen outage MW over these
@@ -453,6 +454,7 @@ def _pool(ctx, date):
 LOGIT_DAYS = 365      # days up to the asof point the stay-on rule is fitted on
 LOGIT_MIN = 300       # unit-days a technology needs for its own fit (else CC and gas steam together)
 SEASONS = {12: 0, 1: 0, 2: 0, 3: 1, 4: 1, 5: 1, 6: 2, 7: 2, 8: 2, 9: 3, 10: 3, 11: 3}
+START_CHAIN = os.environ.get("START_CHAIN") == "1"   # test switch: P(on going into the window) from start_chain, not the trees
 
 
 def _logit_x(f, margin, loss, lsl, bs, nh, d):
@@ -637,7 +639,9 @@ def forecast(date, ctx: C.Context) -> dict:
                 p_off = (_logit_p_off(w.get("logit") or {}, t, key, _logit_x(x[0], margin, loss, lsl, bs, nh, date))
                          if t in WINDOW_TECHS else None)
                 if p_off is not None:       # the trees' P(on) going into the window x the stay-on rule's P(stays on | on)
-                    ph = ph.copy(); ph[bs:bs + nh] = ph[bs - 1 if bs > 0 else min(bs + nh, 23)] * (1.0 - p_off)
+                    ph_in = ph[bs - 1 if bs > 0 else min(bs + nh, 23)]
+                    pc = start_chain.p_start(ctx, date, key) if START_CHAIN else None
+                    ph = ph.copy(); ph[bs:bs + nh] = (ph_in if pc is None else pc) * (1.0 - p_off)
                 p_on = round(float(ph[bs:bs + nh].mean()), 2)
                 if p_off is not None:
                     p_in = float(ph[bs:bs + nh].mean()) / max(1.0 - p_off, 1e-9)
