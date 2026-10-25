@@ -25,6 +25,11 @@ a chained path, is taken as the share of the last three hours whose award was at
 MIN_AWARD x LSL.  Step mode (p_step): the transition at each hour from the true state before
 it, the probability of the decision the operator faced in that hour.
 
+Each transition also has, on SLOPES (margin, loss ahead, profit ahead, award ahead), one slope
+per unit on top of the fleet's, pulled toward the fleet's by a penalty 1 / SLOPE_SCALE**2 times
+the rest: some units shrug off a loss others shut on (Oct 2026: CC Brier 0.0273 -> 0.0266, gas
+steam 0.1263 -> 0.1230, at SLOPE_SCALE 0.5; 1.0 did slightly worse).
+
 Fits are monthly and expanding: a month is judged by transitions fitted on the days before it
 (at least FIT_MIN_DAYS), so no day is judged by a fit that saw it.
 
@@ -47,12 +52,14 @@ from ..guide import EIA_HR
 from ..store import read_json_gz
 
 NAME = "operator_informed"
-VERSION = "v1"
+VERSION = "v1"   # v1: transitions with per-unit intercepts and slopes
 TECHS = ("combined_cycle", "gas_steam")
 AHEAD = 6            # hours of award looked at ahead of h
 MIN_AWARD = 1.1      # an award at most this x LSL counts as holding at minimum (day mode)
 RUN_CAP = 48         # hours in the current state are counted up to this
 FIT_MIN_DAYS = 60    # days of transitions a monthly fit needs
+SLOPES = (0, 1, 3, 6)   # features with a slope per unit: margin, loss ahead, profit ahead, award ahead
+SLOPE_SCALE = float(os.environ.get("OI_SLOPE_SCALE", "0.5"))   # 0 turns the per-unit slopes off
 ON_STATUS = ("ON", "ONOS", "ONRE", "ONDSR", "ONOPTOUT", "ONTEST", "ONEMR", "ONRUC", "ONREG", "ONRR")
 FEATURES = ("margin", "loss ahead", "loss ahead against its start cost", "profit ahead",
             "best margin later", "award", "award ahead", "award later", "DAM status on",
@@ -248,19 +255,28 @@ def _day_rows(ctx, d):
 
 
 def _fit_side(X, keys, y):
+    """Fleet slopes, one intercept per unit and, on SLOPES, one slope per unit on top of the
+    fleet's; those columns are scaled by SLOPE_SCALE, so the common L2 penalty pulls a unit's own
+    slope toward the fleet's harder than the rest (by 1 / SLOPE_SCALE**2)."""
     from sklearn.linear_model import LogisticRegression
     X = np.asarray(X)
     mu, sd = X.mean(0), X.std(0)
     sd[sd == 0] = 1.0
     units = sorted(set(keys))
     ui = {k: i for i, k in enumerate(units)}
-    Z = np.zeros((len(X), len(FEATURES) + len(units)))
-    Z[:, :len(FEATURES)] = (X - mu) / sd
-    Z[np.arange(len(X)), len(FEATURES) + np.array([ui[k] for k in keys])] = 1.0
+    nf, nu, ns = len(FEATURES), len(units), len(SLOPES) if SLOPE_SCALE else 0
+    rows, ix = np.arange(len(X)), np.array([ui[k] for k in keys])
+    Z = np.zeros((len(X), nf + nu + nu * ns), dtype=np.float32)
+    Xs = (X - mu) / sd
+    Z[:, :nf] = Xs
+    Z[rows, nf + ix] = 1.0
+    for j, c in enumerate(SLOPES[:ns]):
+        Z[rows, nf + nu + ix * ns + j] = Xs[:, c] * SLOPE_SCALE
     m = LogisticRegression(C=1.0, max_iter=3000).fit(Z, np.asarray(y))
     b = m.coef_[0]
-    return dict(mu=mu, sd=sd, coef=b[:len(FEATURES)], unit={k: float(b[len(FEATURES) + i]) for k, i in ui.items()},
-                b0=float(m.intercept_[0]))
+    slope = {k: b[nf + nu + i * ns:nf + nu + (i + 1) * ns] * SLOPE_SCALE for k, i in ui.items()} if ns else {}
+    return dict(mu=mu, sd=sd, coef=b[:nf], unit={k: float(b[nf + i]) for k, i in ui.items()},
+                b0=float(m.intercept_[0]), slope=slope)
 
 
 def fit(ctx, month):
@@ -278,7 +294,11 @@ def fit(ctx, month):
 
 
 def _p(f, key, X):
-    z = ((X - f["mu"]) / f["sd"]) @ f["coef"] + f["unit"].get(key, 0.0) + f["b0"]
+    Xs = (X - f["mu"]) / f["sd"]
+    z = Xs @ f["coef"] + f["unit"].get(key, 0.0) + f["b0"]
+    sl = f.get("slope", {}).get(key)
+    if sl is not None:
+        z = z + Xs[..., list(SLOPES)] @ sl
     return 1.0 / (1.0 + np.exp(-z))
 
 
