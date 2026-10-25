@@ -96,7 +96,7 @@ def p_start(ctx, date, key):
     fit = _fit(ctx, point) if point else None
     st = (ctx.raw_states().get(key) or (None, None))[1]
     p = None
-    if fit and st is not None and known:
+    if fit and st is not None and known and known <= (C._d(date) - dt.timedelta(days=C.LAG)).isoformat():
         day0 = ctx.stats["day0"]
         p = _end_on(st, (C._d(known) - day0).days)
         t = C._d(known) + dt.timedelta(days=1)

@@ -245,6 +245,8 @@ DRIVERS = [("loss against its cutoff", (0, 1, 16)), ("award history", (5,)),
            ("share of days it ran", (6,)), ("hour-by-hour prices in the window", (7, 8, 9, 15)),
            ("technology, group and month", (10, 11, 12, 13, 14)),
            ("how units like it ran in 2024-25", (17,))]
+if os.environ.get("START_CHAIN", "") == "input":
+    DRIVERS.append(("whether it was likely running going into the day", (18,)))
 
 
 def _hist_view(Z):
@@ -387,7 +389,7 @@ def _pool(ctx, date):
     pool = {t: float(np.median(v)) for t, v in pm.items()}
     groups, stats, raw = ctx.groups_at(date), ctx.stats_at(date), ctx.raw_states()
     day0 = ctx.stats["day0"]
-    X, y, N, XH, yH = [], [], [], [], []
+    X, y, N, XH, yH, CH = [], [], [], [], [], []
     L = []      # (train, tech, date, logistic inputs, off) per window-tech unit-day, for the stay-on logistic
     for d, trains in _day_trains(ctx).items():
         if point is not None and d > point:
@@ -411,10 +413,11 @@ def _pool(ctx, date):
             f = _features(margin, lsl, loss, bs, nh, cpm * lsl, _min_off(ctx, date, key, tech), own[key][2],
                           s["on_days"] if s else 0.0)
             X.append(_tree_x(_hourly(f, margin, lsl, bs, nh), tech, g, d[5:7], loss, lsl)); y.append(np.isin(seg, ["m", "a"]).astype(float))
+            CH.append(np.full(24, _chain(ctx, d, key)))
             N.append(_net(ctx, d, tech))
             k0 = dn * 24 + bs - 1       # the hour before the window (the previous day's HE24 for a window from HE1)
             if tech in WINDOW_TECHS and k0 >= 0 and st[1][k0] in "ma":
-                L.append((key, tech, d, _logit_x(f, margin, loss, lsl, bs, nh, d), float(y[-1][bs:bs + nh].mean() < 0.5)))
+                L.append((key, tech, d, _logit_x(f, margin, loss, lsl, bs, nh, d, ctx, key), float(y[-1][bs:bs + nh].mean() < 0.5)))
     # the thermal history before the 60-day window (pipeline/history.py), on the units'
     # attributes as of the point: the same rows from months of DAM days before and after RTC+B
     first = min(_day_trains(ctx), default=None)
@@ -437,13 +440,16 @@ def _pool(ctx, date):
             XH.append(np.column_stack([_hist_view(_tree_x(_hourly(f, margin, lsl, bs, nh), tech, g, d[5:7], loss, lsl)),
                                        _net(ctx, d, tech)])); yH.append(np.isin(seg, ["m", "a"]).astype(float))
             if tech in WINDOW_TECHS and bs > 0 and seg[bs - 1] in "ma":
-                L.append((key, tech, d, _logit_x(f, margin, loss, lsl, bs, nh, d), float(yH[-1][bs:bs + nh].mean() < 0.5)))
+                L.append((key, tech, d, _logit_x(f, margin, loss, lsl, bs, nh, d, ctx, key), float(yH[-1][bs:bs + nh].mean() < 0.5)))
     X = np.vstack(X) if X else np.zeros((0, 0))
     y = np.concatenate(y) if y else np.zeros(0)
     # stacked: trees on the history alone, whose P(on) is one more input to the trees on the
     # 60 days, so the recent market decides how far the history's view carries over
     hist = _trees(np.vstack(XH), np.concatenate(yH)) if XH else None
-    w = {None: _trees(_stack(hist, X, np.concatenate(N)), y), "hist": hist} if len(y) else {}
+    Zs = _stack(hist, X, np.concatenate(N)) if len(y) else None
+    if CHAIN_IN and len(y):
+        Zs = np.column_stack([Zs, np.concatenate(CH)])
+    w = {None: _trees(Zs, y), "hist": hist} if len(y) else {}
     if point is not None:
         w["logit"] = _logit_fit(L, point)
     cache[point] = (own, pool, w)
@@ -454,10 +460,18 @@ def _pool(ctx, date):
 LOGIT_DAYS = 365      # days up to the asof point the stay-on rule is fitted on
 LOGIT_MIN = 300       # unit-days a technology needs for its own fit (else CC and gas steam together)
 SEASONS = {12: 0, 1: 0, 2: 0, 3: 1, 4: 1, 5: 1, 6: 2, 7: 2, 8: 2, 9: 3, 10: 3, 11: 3}
-START_CHAIN = os.environ.get("START_CHAIN", "")   # test switch: "1" P(on going into the window) from start_chain, not the trees; "low" only where the chain has the unit off
+START_CHAIN = os.environ.get("START_CHAIN", "")   # "input": the chained start is an input to the recent trees and the stay-on rule
+CHAIN_IN = START_CHAIN == "input"
 
 
-def _logit_x(f, margin, loss, lsl, bs, nh, d):
+def _chain(ctx, date, key):
+    """The chained P(on at the start of the day) as a logit (clipped), NaN without one."""
+    pc = start_chain.p_start(ctx, date, key) if CHAIN_IN else None
+    return float(np.log(min(max(pc, 0.02), 0.98) / (1 - min(max(pc, 0.02), 0.98)))) if pc is not None else np.nan
+#   # test switch: "1" P(on going into the window) from start_chain, not the trees; "low" only where the chain has the unit off
+
+
+def _logit_x(f, margin, loss, lsl, bs, nh, d, ctx=None, key=None):
     """The stay-on rule's inputs for a unit-day (analysis/decision_model.py, its no-award variant,
     without the start offer): log(1 + loss per MW of LSL), log(1 + the margin per MW before and
     after the window), the window's wrapped length against the unit's short off spell (log
@@ -465,8 +479,9 @@ def _logit_x(f, margin, loss, lsl, bs, nh, d):
     the next morning), and the season (spring, summer, fall against winter)."""
     s = SEASONS[int(d[5:7])]
     over = float(bs < 6 or _span(margin, bs, nh) > nh)
-    return [float(np.log1p(max(loss, 0.0) / lsl)), float(np.log1p(f[4] * 100.0)), float(np.log1p(f[5] * 100.0)), f[3],
-            over, float(s == 1), float(s == 2), float(s == 3)]
+    x = [float(np.log1p(max(loss, 0.0) / lsl)), float(np.log1p(f[4] * 100.0)), float(np.log1p(f[5] * 100.0)), f[3],
+         over, float(s == 1), float(s == 2), float(s == 3)]
+    return x + [_chain(ctx, d, key) if ctx is not None and key else np.nan] if CHAIN_IN else x
 
 
 def _logit_fit(L, point):
@@ -488,8 +503,8 @@ def _logit_fit(L, point):
         if len(g) < 50 or ys.min() == ys.max():
             continue
         x = np.array([r[3] for r in g])
-        mu, sd = x.mean(axis=0), x.std(axis=0)
-        sd[sd == 0] = 1.0
+        mu, sd = np.nanmean(x, axis=0), np.nanstd(x, axis=0)
+        sd[~(sd > 0)] = 1.0
         trains = sorted({r[0] for r in g})
         out[t] = (mu, sd, trains, LogisticRegression(C=1.0, max_iter=2000).fit(_logit_design(x, mu, sd, trains, [r[0] for r in g]), ys))
     return out
@@ -501,7 +516,7 @@ def _logit_design(x, mu, sd, trains, keys):
     for j, k in enumerate(keys):
         if k in ix:
             d[j, ix[k]] = 1.0
-    return np.hstack([(np.asarray(x, float) - mu) / sd, d])
+    return np.hstack([np.nan_to_num((np.asarray(x, float) - mu) / sd), d])
 
 
 def _logit_p_off(fits, tech, key, x):
@@ -516,6 +531,8 @@ def _logit_p_off(fits, tech, key, x):
 # the stay-on rule's inputs (_logit_x order) grouped for the drivers, plus the unit's own intercept
 LOGIT_DRIVERS = [("loss in the window", (0,)), ("margin before and after the window", (1, 2)),
                  ("window length against its usual off spell", (3,)), ("overnight window", (4,)), ("season", (5, 6, 7))]
+if CHAIN_IN:
+    LOGIT_DRIVERS.append(("whether it was likely running going into the day", (8,)))
 UNIT_DRIVER = "its own record of staying on"
 RUNNING_DRIVER = "chance it is running going in"
 
@@ -535,7 +552,7 @@ def _logit_drivers(fits, tech, key, x, p_in):
     unit_c = coef[k:]
     avg = float(unit_c.mean()) if len(unit_c) else 0.0
     own = float(unit_c[trains.index(key)]) - avg if key in trains else 0.0
-    z = (np.asarray(x, float) - mu) / sd
+    z = np.nan_to_num((np.asarray(x, float) - mu) / sd)
     g = [float((coef[list(ix)] * z[list(ix)]).sum()) for _, ix in LOGIT_DRIVERS] + [own]
     sig = lambda v: 1.0 / (1.0 + np.exp(-v))
     p0, p1 = sig(b0 + avg), sig(b0 + avg + sum(g))
@@ -635,12 +652,14 @@ def forecast(date, ctx: C.Context) -> dict:
                 x = _hourly(_features(margin, lsl, loss, bs, nh, cut, mo, aw, s["on_days"] if s else 0.0), margin, lsl, bs, nh)
                 wt = w.get(None)
                 Z = _stack(w.get("hist"), _tree_x(x, t, g, date[5:7], loss, lsl), _net(ctx, date, t))
+                if CHAIN_IN:
+                    Z = np.column_stack([Z, np.full(24, _chain(ctx, date, key))])
                 ph = wt.predict_proba(Z)[:, 1] if wt is not None else np.full(24, float(loss <= cut))
-                p_off = (_logit_p_off(w.get("logit") or {}, t, key, _logit_x(x[0], margin, loss, lsl, bs, nh, date))
+                p_off = (_logit_p_off(w.get("logit") or {}, t, key, _logit_x(x[0], margin, loss, lsl, bs, nh, date, ctx, key))
                          if t in WINDOW_TECHS else None)
                 if p_off is not None:       # the trees' P(on) going into the window x the stay-on rule's P(stays on | on)
                     ph_in = ph[bs - 1 if bs > 0 else min(bs + nh, 23)]
-                    pc = start_chain.p_start(ctx, date, key) if START_CHAIN else None
+                    pc = start_chain.p_start(ctx, date, key) if START_CHAIN in ("1", "low") else None
                     if pc is not None and START_CHAIN == "low" and pc >= 0.5:
                         pc = None
                     ph = ph.copy(); ph[bs:bs + nh] = (ph_in if pc is None else pc) * (1.0 - p_off)
@@ -648,7 +667,7 @@ def forecast(date, ctx: C.Context) -> dict:
                 if p_off is not None:
                     p_in = float(ph[bs:bs + nh].mean()) / max(1.0 - p_off, 1e-9)
                     row["p_base"], row["drivers"] = _logit_drivers(w.get("logit") or {}, t, key,
-                                                                   _logit_x(x[0], margin, loss, lsl, bs, nh, date), p_in)
+                                                                   _logit_x(x[0], margin, loss, lsl, bs, nh, date, ctx, key), p_in)
                 elif wt is not None:
                     row["p_base"], row["drivers"] = _drivers(wt, Z, bs, nh, float(ph[bs:bs + nh].mean()))
                 src = "its cutoff" if c else "the pooled cutoff"
