@@ -82,7 +82,8 @@ For every thermal train in the latest DAM disclosure (pipeline.forecast.context.
   peakers     combustion turbines outside the always-on group (which are held on, as other
               always-on units) are not judged here (peaker_share, by hour, on the hours
               they were available); they get verdict "peaker" and p_on from that model, and the
-              outage calls above (long outage, listed, unseen share) as other units do.
+              outage calls above (long outage, listed, unseen share) as other units do.  So do
+              the gas steam and CC units that run like peakers (peaker_share.peaker_like).
 
 p_on is the weight the dispatch model applies to the unit's MW: 1 for on, 0 for off, the
 history share for nocut, and for a daily unit judged on its window the probability above,
@@ -108,7 +109,7 @@ from ..store import read_json_gz
 
 from ..decisions import _window, _cutoff, _dam_trains, HALF, OUT_MIN_H
 from ..forecast import context as C
-from . import outage_pool
+from . import outage_pool, peaker_share
 
 UNSEEN_EPS = 0.1   # unseen-outage weight of a unit never out in these weeks of earlier years, against 1.1 for one always out then
 UNSEEN_TECHS = ("coal", "combined_cycle", "gas_steam", "combustion_turbine")   # spread the zonal unseen outage MW over these
@@ -560,6 +561,7 @@ def forecast(date, ctx: C.Context) -> dict:
     known, hindsight = ctx.known_date(date)
     point, asof_hind = ctx.asof(date)
     groups, stats = ctx.groups_at(date), ctx.stats_at(date)
+    like = peaker_share.peaker_like(stats)
     mtd, month = ctx.month_to_date_hub(date)
     node_src = ctx.node_source(date)
     rows = {}
@@ -589,6 +591,8 @@ def forecast(date, ctx: C.Context) -> dict:
             row.update(verdict="on", p_on=1.0, reason="always on when available" if g == "never" else "nuclear")
         elif t == "combustion_turbine":
             row.update(verdict="peaker", reason="judged by hour (peaker_share)")
+        elif key in like:
+            row.update(verdict="peaker", reason="runs like a peaker: judged by hour (peaker_share)")
         elif g in ("seasonal", "multiday") and not cc_win:
             _seasonal(row, ctx, key, known, last, mtd, month)
         elif g is None:
