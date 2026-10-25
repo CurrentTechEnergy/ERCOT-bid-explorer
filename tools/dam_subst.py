@@ -8,6 +8,7 @@ From each zip:
   60d_DAM_EnergyOnlyOfferAwards  -> eoo_YYYY-MM-DD.parquet  [he, sp, qse, mw, spp]
   60d_DAM_EnergyBidAwards        -> bid_YYYY-MM-DD.parquet  [he, sp, qse, mw, spp]
   60d_DAM_Gen_Resource_Data      -> qse_YYYY-MM-DD.parquet  [resource, type, sp, qse]
+  60d_DAM_EnergyOnlyOffers       -> eoo_offer_YYYY-MM-DD.parquet  [he, sp, qse, seg, price, mw] (mw cumulative)
 (three-part awards, HSL and node prices are already in site/data/dam)
 Also writes docs.csv: every document, its operating day and whether it came from the store.
 
@@ -44,6 +45,26 @@ def awards(b, mw_col):
         "mw": pd.to_numeric(f[mw], errors="coerce").astype("float32"),
         "spp": pd.to_numeric(f["settlement point price"], errors="coerce").astype("float32"),
     })
+
+
+def offers(b):
+    """Energy-only offer curves, one row per point (cumulative MW at that price)."""
+    f = _norm(pd.read_csv(io.BytesIO(b), low_memory=False))
+    out = []
+    for i in range(1, 11):
+        m, p = f"energy only offer mw{i}", f"energy only offer price{i}"
+        if m not in f.columns:
+            break
+        g = pd.DataFrame({
+            "he": pd.to_numeric(f["hour ending"], errors="coerce").astype("Int16"),
+            "sp": f["settlement point"].astype(str),
+            "qse": f[next(c for c in f.columns if c.startswith("qse"))].astype(str),
+            "seg": i,
+            "price": pd.to_numeric(f[p], errors="coerce").astype("float32"),
+            "mw": pd.to_numeric(f[m], errors="coerce").astype("float32"),
+        })
+        out.append(g.dropna(subset=["price", "mw"]))
+    return pd.concat(out, ignore_index=True)
 
 
 def rescue(api):
@@ -92,6 +113,8 @@ def main(first, last):
             n = name.lower()
             if "energyonlyofferawards" in n:
                 got["eoo"] = awards(b, "energy only offer award")
+            elif "energyonlyoffers" in n:
+                got["eoo_offer"] = offers(b)
             elif "energybidawards" in n:
                 got["bid"] = awards(b, "energy only bid award")
             elif "gen_resource_data" in n:

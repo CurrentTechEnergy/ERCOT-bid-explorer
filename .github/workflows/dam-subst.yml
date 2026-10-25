@@ -1,9 +1,10 @@
 name: DAM substitution pull (one-off, read-only)
 
 # Reads the 60-Day DAM Disclosure zips for Nov 30, 2025 to Aug 26, 2026 from the R2 raw store and
-# keeps only energy-only offer awards, energy bid awards and resource QSEs (tools/dam_subst.py),
+# keeps only energy-only offers and offer awards, energy bid awards and resource QSEs (tools/dam_subst.py),
 # for the renewable DAM substitution test.  Raw store first: a document missing from the store is
-# fetched from ERCOT once and kept there (Blair's OK, Oct 25).  Writes a workflow artifact only: no commit, no site data.  Runs on pushes
+# fetched from ERCOT once and kept there (Blair's OK, Oct 25); now that the store holds all
+# 273, SUBST_FETCH_MISSING is off and a missing document is skipped.  Writes a workflow artifact only: no commit, no site data.  Runs on pushes
 # to its own branch, never on main, and stays out of the update-data concurrency group.
 on:
   push:
@@ -36,7 +37,7 @@ jobs:
           R2_ENDPOINT: ${{ secrets.R2_ENDPOINT }}
           R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
           R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
-          SUBST_FETCH_MISSING: "1"
+          SUBST_FETCH_MISSING: "0"
         run: |
           python -m tools.dam_subst 2025-11-30 2026-08-26
           ls out/subst | wc -l
