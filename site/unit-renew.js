@@ -1,7 +1,8 @@
 /* Unit page, wind and solar: the hedge formula fit, the formula by day and the bidding history
    with its changes, lifted from the Hedge signals unit detail (contracts.js) for the unit unit.js
    has selected. Reads data/ppa.json.gz (pipeline/ppa.py), data/renew_changes.json.gz and
-   data/renew/sig-YYYY.json.gz (pipeline/renew_changes.py). */
+   data/renew/sig-YYYY.json.gz (pipeline/renew_changes.py), and the buyers named in public
+   announcements from data/offtakers.json.gz (pipeline/offtakers.py). */
 (() => {
 "use strict";
 
@@ -22,7 +23,7 @@ const TIER = {
 const ORDER = { revealed: 0, unclear: 1, partial: 2, hints: 3 };
 const POINT_LABEL = (p, u) => (p === "node" ? `own node${u && u.sp ? ` (${u.sp})` : ""}` : p);
 
-const S = { unit: null, data: null, R: null };
+const S = { unit: null, data: null, R: null, O: null };
 const CH = { range: null };
 function emptyMsg(el, msg) { el.innerHTML = `<p class="empty">${msg}</p>`; }
 
@@ -107,11 +108,36 @@ function dailyChart(el, u) {
   setCSV(el, ["date", "share", "intercept", "rmse", "hours"], rs, `${u.name} daily formula`);
 }
 
+// buyers named in public announcements (pipeline/offtakers.py); kept apart from the strike, which is read from offers
+const DEAL = { vppa: "Virtual PPA", hedge: "Hedge", ppa: "PPA, type not stated", ppa_recs: "PPA, power and RECs",
+  recs: "RECs only, no power purchase", contract: "Contract, type not stated" };
+const SOURCE = { developer: "developer", owner: "owner", buyer: "buyer", utility_or_city: "utility or city", trade_press: "trade press", other: "other" };
+const fmtAnn = (d) => (d ? d3.timeFormat("%b %Y")(parseDate(d)) : "–");
+function drawOfftakers(name) {
+  const O = S.O, part = $("offtake-part"), ix = O && O.units[name];
+  part.hidden = !ix || !ix.length;
+  if (part.hidden) return;
+  const rs = ix.map((i) => Object.fromEntries(O.columns.map((k, j) => [k, O.rows[i][j]])))
+    .sort((a, b) => (b.announced || "").localeCompare(a.announced || ""));
+  const size = (r) => [r.mw != null ? `${fmt0(r.mw)} MW` : null, r.share_pct != null ? `${fmt0(r.share_pct)}% of output` : null].filter(Boolean).join(", ") || "–";
+  const flags = (r) => [r.phase === "unclear" ? "Phase not stated: the source names the project, not which phase" : null,
+    r.may_have_expired ? "May have expired: the stated term has run out" : null,
+    r.pre2012_no_term ? "Announced before 2012, term not stated" : null].filter(Boolean).map(esc).join("<br>") || "–";
+  const el = $("offtake-table");
+  el.innerHTML = `<table class="data"><thead><tr><th class="t">Buyer</th><th class="t">Deal, as stated</th><th>Size</th><th>Term</th><th>Announced</th><th class="t">Notes</th><th class="t">Source</th></tr></thead><tbody>` +
+    rs.map((r) => `<tr${r.may_have_expired || r.pre2012_no_term ? ' class="minor"' : ""}><td class="t ev">${esc(r.buyer)}${r.quote ? `<br><span class="muted">“${esc(r.quote)}”</span>` : ""}</td>` +
+      `<td class="t">${DEAL[r.deal] || DEAL.contract}</td><td>${size(r)}</td><td>${r.term_years != null ? `${fmt0(r.term_years)} yr` : "–"}</td><td>${fmtAnn(r.announced)}</td>` +
+      `<td class="t ev">${flags(r)}</td><td class="t"><a href="${esc(r.source_url)}" target="_blank" rel="noopener">${esc(SOURCE[r.source_kind] || "source")}</a></td></tr>`).join("") + "</tbody></table>";
+  setCSV(el, ["unit", "buyer", "deal", "mw", "share_pct", "term_years", "announced", "phase", "may_have_expired", "pre2012_no_term", "source_kind", "source_url", "quote"],
+    rs.map((r) => [name, r.buyer, r.deal, r.mw, r.share_pct, r.term_years, r.announced, r.phase, r.may_have_expired, r.pre2012_no_term, r.source_kind, r.source_url, r.quote]), `${name} public contracts`);
+}
+
 function drawUnit() {
   const box = $("renew-panel"), u = S.data && S.data.units.find((v) => v.name === S.unit);
   const inR = S.R && S.R.events.some((e) => e.units.includes(S.unit));
   if (!u && !inR) { box.hidden = true; return; }
   box.hidden = false;
+  drawOfftakers(S.unit);
   drawHistory(S.unit);
   $("ppa-part").hidden = !u;
   if (!u) {
@@ -308,8 +334,8 @@ async function draw() {
   const renew = U.tech === "wind" || U.tech === "solar";
   $("renew-panel").hidden = true;
   if (!renew) return;
-  if (!loaded) loaded = Promise.all([tryJSON("data/ppa.json.gz"), tryJSON("data/renew_changes.json.gz")]).then(([a, b]) => {
-    S.data = a; S.R = b;
+  if (!loaded) loaded = Promise.all([tryJSON("data/ppa.json.gz"), tryJSON("data/renew_changes.json.gz"), tryJSON("data/offtakers.json.gz")]).then(([a, b, o]) => {
+    S.data = a; S.R = b; S.O = o;
     $("hist-range").innerHTML = histRanges().map((r) => `<option value="${r.id}">${esc(r.label)}</option>`).join("");
     $("hist-range").value = CH.range || "12m";
     $("hist-range").addEventListener("change", (e) => { CH.range = e.target.value; if (S.unit) drawHistory(S.unit); });
