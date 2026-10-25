@@ -61,6 +61,7 @@ from .entities import fetch_entities
 from .forecast.run import build_forecast
 from .ppa import build_ppa
 from .renew_changes import build_renew_changes
+from .offtakers import build_offtakers
 from .models.cutoff_history import build_cutoff_history
 from .events import build_events
 from .series import build_series
@@ -534,6 +535,7 @@ def main(argv=None):
         memo.run("econ", build_econ, index)
         build_ppa(index)
         build_renew_changes(index)
+        build_offtakers(index)
         build_series(index)
         build_storage(index)
         build_forecast(index)
@@ -614,6 +616,7 @@ def main(argv=None):
     memo.run("econ", build_econ, index)
     build_ppa(index)
     build_renew_changes(index)
+    build_offtakers(index)
     build_series(index)
     build_storage(index)
     if "forecast" not in args.skip:

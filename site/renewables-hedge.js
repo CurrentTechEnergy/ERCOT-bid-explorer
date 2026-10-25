@@ -2,7 +2,8 @@
    whose units now open the Unit page (unit.html?unit=NAME). Reads data/ppa.json.gz (pipeline/ppa.py):
    for every wind and solar unit, whether its real-time offers follow share x DA price - constant at
    some settlement point. Also reads data/renew_changes.json.gz (pipeline/renew_changes.py): every
-   change in how each unit bids, whether it moved dispatch, and the PTC floor level.
+   change in how each unit bids, whether it moved dispatch, and the PTC floor level. And
+   data/offtakers.json.gz (pipeline/offtakers.py): buyers named in public announcements.
    renewables.js owns the status line and the shared chart controls (CX.init). */
 (() => {
 "use strict";
@@ -59,12 +60,28 @@ const COLS = [
   { k: "a", h: "Offers at", f: formulaTxt },
   { k: "cap", h: "Cap", f: capTxt, tip: "The price the offer stops at when the formula is above it. \"none\": formula hours ran above $0 with no clamp. \"not tested\": the formula never rose high enough to tell." },
   { k: "strike_hi", h: "Implied strike", f: strike },
+  { k: "buyer", h: "Public buyer", t: 1, f: (u) => buyerCell(u), tip: "Buyers named in public announcements, linked to the source. Many contracted units have none listed; the Unit page has the details." },
   { k: "hit", h: "Hit rate", f: (u) => (u.hit == null ? "–" : fmtPct(u.hit)) },
   { k: "days", h: "Formula days", f: (u) => (u.days ? `${u.days} <span class="muted">${u.first.slice(5)} to ${u.last.slice(5)}</span>` : "–") },
   { k: "group", h: "Same rule as", t: 1, f: (u) => sameRule(u) },
   { k: "floor", h: "Floor", f: (u) => (floorIsCap(u) ? `<span class="muted">= cap</span>` : fmt$(u.floor)) },
   { k: "da_share", h: "DA share", f: (u) => (u.da_share == null ? "–" : fmtPct(u.da_share)) },
 ];
+// buyers from data/offtakers.json.gz, newest first; u.buyer is the sort key
+function attachBuyers(O) {
+  if (!O) return;
+  const col = (k) => O.columns.indexOf(k), iB = col("buyer"), iU = col("source_url"), iA = col("announced");
+  S.data.units.forEach((u) => {
+    const rs = (O.units[u.name] || []).map((i) => O.rows[i]).sort((a, b) => (b[iA] || "").localeCompare(a[iA] || ""));
+    u.buyers = rs.map((r) => ({ name: r[iB], url: r[iU] }));
+    u.buyer = rs.length ? rs.map((r) => r[iB]).join("; ") : null;
+  });
+}
+function buyerCell(u) {
+  if (!u.buyers || !u.buyers.length) return "–";
+  const bs = u.buyers.slice(0, 2).map((b) => `<a href="${esc(b.url)}" target="_blank" rel="noopener">${esc(b.name)}</a>`).join(", ");
+  return bs + (u.buyers.length > 2 ? ` <span class="muted">+${u.buyers.length - 2}</span>` : "");
+}
 function sameRule(u) {
   if (!u.group) return "–";
   const mates = S.data.units.filter((v) => v.group === u.group && v.name !== u.name).map((v) => v.name);
@@ -73,7 +90,7 @@ function sameRule(u) {
 
 function rows() {
   return S.data.units.filter((u) => (S.tech === "all" || u.tech === S.tech) && (S.show === "all" || u.tier !== "hints")
-    && (!S.q || u.name.toLowerCase().includes(S.q) || (u.sp || "").toLowerCase().includes(S.q) || (u.point || "").toLowerCase().includes(S.q)));
+    && (!S.q || u.name.toLowerCase().includes(S.q) || (u.sp || "").toLowerCase().includes(S.q) || (u.point || "").toLowerCase().includes(S.q) || (u.buyer || "").toLowerCase().includes(S.q)));
 }
 
 function drawKpis() {
@@ -104,12 +121,12 @@ function drawUnits() {
   el.innerHTML = `<table class="data"><thead><tr>${COLS.map((c) => `<th class="sortable${c.t ? " t" : ""}" data-k="${c.k}"${c.tip ? ` title="${esc(c.tip)}"` : ""}>${c.h}${S.sort === c.k ? (S.dir < 0 ? " ▾" : " ▴") : ""}</th>`).join("")}</tr></thead><tbody>` +
     rs.map((u) => `<tr data-unit="${esc(u.name)}" style="cursor:pointer">${COLS.map((c) => `<td${c.t ? ' class="t"' : ""}>${c.f(u)}</td>`).join("")}</tr>`).join("") + "</tbody></table>";
   el.querySelectorAll("th[data-k]").forEach((th) => th.addEventListener("click", () => {
-    const k = th.dataset.k; if (S.sort === k) S.dir = -S.dir; else { S.sort = k; S.dir = ["name", "tech", "tier", "point", "group"].includes(k) ? 1 : -1; }
+    const k = th.dataset.k; if (S.sort === k) S.dir = -S.dir; else { S.sort = k; S.dir = ["name", "tech", "tier", "point", "group", "buyer"].includes(k) ? 1 : -1; }
     drawUnits(); saveView();
   }));
   el.querySelectorAll("tr[data-unit]").forEach((tr) => tr.addEventListener("click", (ev) => { if (!ev.target.closest("a")) openUnit(tr.dataset.unit); }));
-  setCSV(el, ["unit", "tech", "tier", "sp", "point", "share", "intercept", "cap", "capped", "strike_lo", "strike_hi", "hit", "days", "hours", "first", "last", "floor", "da_share", "da_days"],
-    rs.map((u) => [u.name, u.tech, u.tier, u.sp, u.point, u.a, u.b, u.cap, u.capped, u.strike_lo, u.strike_hi, u.hit, u.days, u.hours, u.first, u.last, u.floor, u.da_share, u.da_days]), "Hedge signals");
+  setCSV(el, ["unit", "tech", "tier", "sp", "point", "share", "intercept", "cap", "capped", "strike_lo", "strike_hi", "hit", "days", "hours", "first", "last", "floor", "da_share", "da_days", "public_buyers"],
+    rs.map((u) => [u.name, u.tech, u.tier, u.sp, u.point, u.a, u.b, u.cap, u.capped, u.strike_lo, u.strike_hi, u.hit, u.days, u.hours, u.first, u.last, u.floor, u.da_share, u.da_days, u.buyer]), "Hedge signals");
 }
 
 // ---- bidding changes (data/renew_changes.json.gz, pipeline/renew_changes.py) ----------------
@@ -291,8 +308,10 @@ function initChanges() {
 function redraw() { drawKpis(); drawUnits(); drawChanges(); drawPTC(); }
 
 async function boot() {
-  [S.data, S.R] = await Promise.all([tryJSON("data/ppa.json.gz"), tryJSON("data/renew_changes.json.gz")]);
+  let O;
+  [S.data, S.R, O] = await Promise.all([tryJSON("data/ppa.json.gz"), tryJSON("data/renew_changes.json.gz"), tryJSON("data/offtakers.json.gz")]);
   if (!S.data) { emptyMsg($("units-table"), "No hedge signal data yet. It is built by the data update workflow."); return; }
+  attachBuyers(O);
   loadView();
   setSeg("hedge-tech", S.tech); bindSeg("hedge-tech", "tech", redraw);
   setSeg("hedge-show", S.show); bindSeg("hedge-show", "show", drawUnits);
