@@ -454,7 +454,7 @@ def _pool(ctx, date):
 LOGIT_DAYS = 365      # days up to the asof point the stay-on rule is fitted on
 LOGIT_MIN = 300       # unit-days a technology needs for its own fit (else CC and gas steam together)
 SEASONS = {12: 0, 1: 0, 2: 0, 3: 1, 4: 1, 5: 1, 6: 2, 7: 2, 8: 2, 9: 3, 10: 3, 11: 3}
-START_CHAIN = os.environ.get("START_CHAIN") == "1"   # test switch: P(on going into the window) from start_chain, not the trees
+START_CHAIN = os.environ.get("START_CHAIN", "")   # test switch: "1" P(on going into the window) from start_chain, not the trees; "low" only where the chain has the unit off
 
 
 def _logit_x(f, margin, loss, lsl, bs, nh, d):
@@ -641,6 +641,8 @@ def forecast(date, ctx: C.Context) -> dict:
                 if p_off is not None:       # the trees' P(on) going into the window x the stay-on rule's P(stays on | on)
                     ph_in = ph[bs - 1 if bs > 0 else min(bs + nh, 23)]
                     pc = start_chain.p_start(ctx, date, key) if START_CHAIN else None
+                    if pc is not None and START_CHAIN == "low" and pc >= 0.5:
+                        pc = None
                     ph = ph.copy(); ph[bs:bs + nh] = (ph_in if pc is None else pc) * (1.0 - p_off)
                 p_on = round(float(ph[bs:bs + nh].mean()), 2)
                 if p_off is not None:
