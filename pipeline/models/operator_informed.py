@@ -8,8 +8,8 @@ states:
   from on   P(offline in hour h | online in h - 1)
   from off  P(online in hour h | offline in h - 1)
 from what the operator had before hour h (FEATURES): the unit's own day-ahead node price against
-its minimum-energy cost, the loss (or profit) of running from h through the rest of the cheap
-(or dear) stretch, that loss against its own hot start cost, its DAM award at h, over the next
+its minimum-energy cost and against its gas cost (HEAT_RATE x the day-before gas price), the
+loss (or profit) of running from h through the rest of the cheap (or dear) stretch at either cost, that loss against its own hot start cost, its DAM award at h, over the next
 AHEAD hours and later in the day, the DAM profit of delivering its award from h on at gas cost (award MW x
 (node price - HEAT_RATE x the day-before Houston Ship Channel gas price)) and that against its hot
 start cost, its DAM resource status at h, whether the costs are its own
@@ -29,6 +29,14 @@ Each transition also has, on SLOPES (margin, loss ahead, profit ahead, award ahe
 per unit on top of the fleet's, pulled toward the fleet's by a penalty 1 / SLOPE_SCALE**2 times
 the rest: some units shrug off a loss others shut on (Oct 2026: CC Brier 0.0273 -> 0.0266, gas
 steam 0.1263 -> 0.1230, at SLOPE_SCALE 0.5; 1.0 did slightly worse).
+
+The COP (pipeline/cop.py) is the operator's own written plan, so it is close to the answer it
+is meant to explain, and it is left out of the main call (plan "none").  With cop=True the
+model also takes the unit's COP plan: as of 14:00 D - 1 in day mode (plan "da", which a day-mode
+fit must also use) and as of an hour before each hour in step mode (plan "live").  Oct 2026, Jan
+to Aug: all of its gain is in unawarded hours, two thirds of it in self-commit runs, and little
+in cheap hours (CC 675 -> 566 wrong cheap hours, gas steam 78 -> 71).  cop_plan gives the plan
+to show beside the call.
 
 Fits are monthly and expanding: a month is judged by transitions fitted on the days before it
 (at least FIT_MIN_DAYS), so no day is judged by a fit that saw it.
@@ -53,7 +61,7 @@ from ..guide import EIA_HR
 from ..store import read_json_gz
 
 NAME = "operator_informed"
-VERSION = "v1"   # v1: transitions with per-unit intercepts and slopes
+VERSION = "v2"   # v1: transitions with per-unit intercepts and slopes; v2: the COP only beside the main call, margins at gas cost
 TECHS = ("combined_cycle", "gas_steam")
 AHEAD = 6            # hours of award looked at ahead of h
 MIN_AWARD = 1.1      # an award at most this x LSL counts as holding at minimum (day mode)
@@ -66,8 +74,9 @@ FEATURES = ("margin", "loss ahead", "loss ahead against its start cost", "profit
             "best margin later", "award", "award ahead", "award later", "DAM status on",
             "own offer", "overnight", "hours in its state", "short run", "hours at minimum",
             "spring", "summer", "autumn", "award profit ahead", "award profit against its start cost",
-            "COP plan on", "COP plan on ahead", "COP plan known")
-DRIVERS = [("price against its cost", (0, 1, 3, 4)), ("loss against its start cost", (2,)),
+            "COP plan on", "COP plan on ahead", "COP plan known",
+            "margin at gas cost", "loss ahead at gas cost", "profit ahead at gas cost")
+DRIVERS = [("price against its cost", (0, 1, 3, 4, 22, 23, 24)), ("loss against its start cost", (2,)),
            ("DAM award", (5, 6, 7, 17, 18)), ("DAM status", (8,)), ("time in its state", (11, 12)),
            ("sitting at minimum", (13,)), ("hour and season", (10, 14, 15, 16)),
            ("its own COP plan", (19, 20, 21))]
@@ -185,7 +194,7 @@ def _days(ctx):
     return cache
 
 
-def _static(r, month, live=True):
+def _static(r, month, plan="none"):
     """[24, n] the features of each hour that do not depend on the path: all from the DAM."""
     spp, lsl, mg = r["spp"], r["lsl"], r["mingen"]
     m = spp - mg
@@ -214,10 +223,19 @@ def _static(r, month, live=True):
     prof = np.cumsum((r["aw_mw"] * (spp - r["fuel"]))[::-1])[::-1]     # DAM profit of delivering the award from h on, at gas cost
     X[:, 17] = np.sign(prof) * np.log1p(np.abs(prof) / 1000.0)
     X[:, 18] = np.clip(prof / r["hot"], -5, 5)
-    da, lv, known = r["cop"]
-    X[:, 19] = lv if live else da
-    X[:, 20] = np.array([da[h:h + AHEAD].mean() for h in range(24)])
-    X[:, 21] = known
+    g = spp - r["fuel"]
+    gl, gg = np.zeros(24), np.zeros(24)
+    for h in range(24):
+        gl[h] = max(0.0, np.cumsum(-g[h:] * lsl).max())
+        gg[h] = max(0.0, np.cumsum(g[h:] * lsl).max())
+    X[:, 22] = np.clip(g / 50.0, -4, 4)
+    X[:, 23] = np.log1p(gl / 1000.0)
+    X[:, 24] = np.log1p(gg / 1000.0)
+    if plan != "none":
+        da, lv, known = r["cop"]
+        X[:, 19] = lv if plan == "live" else da
+        X[:, 20] = np.array([da[h:h + AHEAD].mean() for h in range(24)])
+        X[:, 21] = known
     return X
 
 
@@ -239,20 +257,20 @@ def _run_before(st, k):
 
 
 # ------------------------------------------------------------------ fit --
-def _rows(ctx, dates, live=True):
+def _rows(ctx, dates, plan="none"):
     """Transition rows over `dates`: {0: (X, unit, y) from off, 1: from on}."""
-    cache = ctx.__dict__.setdefault("_oi_rows", {}).setdefault(live, {})
+    cache = ctx.__dict__.setdefault("_oi_rows", {}).setdefault(plan, {})
     out = {0: ([], [], []), 1: ([], [], [])}
     for d in dates:
         if d not in cache:
-            cache[d] = _day_rows(ctx, d, live)
+            cache[d] = _day_rows(ctx, d, plan)
         for s in (0, 1):
             for a, b in zip(out[s], cache[d][s]):
                 a.extend(b)
     return out
 
 
-def _day_rows(ctx, d, live=True):
+def _day_rows(ctx, d, plan="none"):
     states, days, day0 = _states(ctx), _days(ctx), ctx.stats["day0"]
     out = {0: ([], [], []), 1: ([], [], [])}
     dn = (C._d(d) - day0).days
@@ -263,7 +281,7 @@ def _day_rows(ctx, d, live=True):
         k0 = dn * 24
         if k0 < 1 or k0 + 24 > len(st):
             continue
-        S = _static(r, int(d[5:7]), live)
+        S = _static(r, int(d[5:7]), plan)
         run = _run_before(st, k0)
         for h in range(24):
             k = k0 + h
@@ -308,16 +326,16 @@ def _fit_side(X, keys, y):
                 b0=float(m.intercept_[0]), slope=slope)
 
 
-def fit(ctx, month, live=True):
-    """Transitions fitted on every 60-day day before `month` (YYYY-MM), cached; None when fewer
-    than FIT_MIN_DAYS days."""
-    cache = ctx.__dict__.setdefault("_oi_fit", {}).setdefault(live, {})
+def fit(ctx, month, plan="none"):
+    """Transitions fitted on every 60-day day before `month` (YYYY-MM) with the COP `plan` ("none",
+    "da" or "live"), cached; None when fewer than FIT_MIN_DAYS days."""
+    cache = ctx.__dict__.setdefault("_oi_fit", {}).setdefault(plan, {})
     if month not in cache:
         dates = [d for d in _days(ctx) if d < month + "-01"]
         if len(dates) < FIT_MIN_DAYS:
             cache[month] = None
         else:
-            R = _rows(ctx, dates, live)
+            R = _rows(ctx, dates, plan)
             cache[month] = {s: _fit_side(*R[s]) for s in (0, 1)} if all(len(set(R[s][2])) == 2 for s in (0, 1)) else None
     return cache[month]
 
@@ -332,10 +350,11 @@ def _p(f, key, X):
 
 
 # ------------------------------------------------------------- predict --
-def p_day(ctx, date, key):
+def p_day(ctx, date, key, cop=False):
     """[24] P(online) by hour from the true state at HE24 of D - 1, or None."""
+    plan = "da" if cop else "none"
     r = _days(ctx).get(date, {}).get(key)
-    f = fit(ctx, date[:7], live=False)
+    f = fit(ctx, date[:7], plan)
     states = _states(ctx)
     if r is None or f is None or key not in states:
         return None
@@ -343,7 +362,7 @@ def p_day(ctx, date, key):
     k0 = dn * 24
     if k0 < 1 or k0 > len(st) or st[k0 - 1] in "o-":
         return None
-    S = _static(r, int(date[5:7]), live=False)
+    S = _static(r, int(date[5:7]), plan)
     awmin = r["awmin"].astype(float)
     runs = np.arange(1, RUN_CAP + 1)
     mass = np.zeros((2, RUN_CAP + 1))     # [state, hours in it]
@@ -366,15 +385,16 @@ def p_day(ctx, date, key):
     return out
 
 
-def p_step(ctx, date, key):
+def p_step(ctx, date, key, cop=False):
     """[24] P(online in h) from the true state in h - 1 (NaN for an hour after an outage or a gap)."""
+    plan = "live" if cop else "none"
     r = _days(ctx).get(date, {}).get(key)
-    f = fit(ctx, date[:7])
+    f = fit(ctx, date[:7], plan)
     states = _states(ctx)
     if r is None or f is None or key not in states:
         return None
     st, k0 = states[key][1], (C._d(date) - ctx.stats["day0"]).days * 24
-    S = _static(r, int(date[5:7]))
+    S = _static(r, int(date[5:7]), plan)
     out = np.full(24, np.nan)
     for h in range(24):
         k = k0 + h
@@ -387,9 +407,10 @@ def p_step(ctx, date, key):
     return out
 
 
-def drivers(ctx, date, key, h):
+def drivers(ctx, date, key, h, cop=False):
     """[(driver, signed push toward going off)] at hour h from the true state before it, largest first."""
-    f = fit(ctx, date[:7])
+    plan = "live" if cop else "none"
+    f = fit(ctx, date[:7], plan)
     r = _days(ctx).get(date, {}).get(key)
     states = _states(ctx)
     if f is None or r is None or key not in states:
@@ -397,13 +418,25 @@ def drivers(ctx, date, key, h):
     st, k = states[key][1], (C._d(date) - ctx.stats["day0"]).days * 24 + h
     s = int(_on(st[k - 1]))
     atmin = float(np.mean([st[j] == "m" for j in range(k - 3, k)])) if s else 0.0
-    x = _path(_static(r, int(date[5:7]))[h], _run_before(st, k), atmin)
+    x = _path(_static(r, int(date[5:7]), plan)[h], _run_before(st, k), atmin)
     c = (x - f[s]["mu"]) / f[s]["sd"] * f[s]["coef"] * (1 if s else -1)
-    out = [(name, round(float(c[list(ix)].sum()), 2)) for name, ix in DRIVERS]
+    out = [(name, round(float(c[list(ix)].sum()), 2)) for name, ix in DRIVERS if cop or 19 not in ix]
     return sorted(out, key=lambda t: -abs(t[1]))
 
 
+def cop_plan(ctx, date, key):
+    """([24] planned on as of 14:00 D - 1, [24] whether there was a plan), or None."""
+    r = _days(ctx).get(date, {}).get(key)
+    if r is None:
+        return None
+    da, _, known = r["cop"]
+    return da, known
+
+
 # --------------------------------------------------------------- score --
+W = ("forecast", "operator", "operator+COP")
+
+
 def _cls(on):
     return "on" if on.all() else ("off" if not on.any() else "cycle")
 
@@ -415,11 +448,11 @@ def score(bundle, side="ref"):
     from ..intraday import train_of
     from ..store import load_index
     ctx = C.Context(load_index())
-    hour = {w: defaultdict(Counter) for w in ("forecast", "operator")}
-    day = {w: defaultdict(Counter) for w in ("forecast", "operator")}
-    cheap_c = {w: defaultdict(Counter) for w in ("forecast", "operator")}
-    brier = {w: defaultdict(list) for w in ("forecast", "operator")}
-    run = []    # cheap-stretch run-through, CC trains: (start on, awarded, ran, p forecast, p operator)
+    hour = {w: defaultdict(Counter) for w in W}
+    day = {w: defaultdict(Counter) for w in W}
+    cheap_c = {w: defaultdict(Counter) for w in W}
+    brier = {w: defaultdict(list) for w in W}
+    run = []    # cheap-stretch run-through, CC trains: (start on, awarded, ran, p forecast, p operator, p with COP)
     files = sorted(f for f in os.listdir(f"{bundle}/seed/{side}") if f.endswith(".json.gz"))
     for fn in files:
         d = json.load(gzip.open(f"{bundle}/seed/{side}/{fn}"))
@@ -450,15 +483,15 @@ def score(bundle, side="ref"):
             t = tech.get(k)
             if t is None:
                 continue
-            po = p_day(ctx, date, k)
-            if po is None:
+            po, pc = p_day(ctx, date, k), p_day(ctx, date, k, cop=True)
+            if po is None or pc is None:
                 continue
             pf = np.nan_to_num(np.array(s[ip], float))
             if pf.shape != (24,):
                 pf = np.full(24, float(pf.mean()) if pf.size else 0.0)
             a = act[k]
             ok = np.asarray(st.get(k, ["-"] * 24)) != "o"
-            for w, p in (("forecast", pf), ("operator", po)):
+            for w, p in zip(W, (pf, po, pc)):
                 fc = p >= 0.5
                 for h in np.where(ok)[0]:
                     hour[w][t][(bool(a[h]), bool(fc[h]))] += 1
@@ -473,7 +506,8 @@ def score(bundle, side="ref"):
                 sts = _states(ctx)[k][1]
                 k0 = (C._d(date) - ctx.stats["day0"]).days * 24
                 run.append((float(_on(sts[k0 - 1])), float(days[k]["aw"][a0:a1].mean() >= 0.5),
-                            float(a[a0:a1].mean() >= 0.5), float(pf[a0:a1].mean()), float(po[a0:a1].mean())))
+                            float(a[a0:a1].mean() >= 0.5), float(pf[a0:a1].mean()), float(po[a0:a1].mean()),
+                            float(pc[a0:a1].mean())))
 
     def pr(c, pos):
         tp = c[(pos, pos)]
@@ -483,7 +517,7 @@ def score(bundle, side="ref"):
     print(f"operator_informed {VERSION} against the forecast ({bundle} {side})")
     for t in TECHS:
         print(f"\n{t}")
-        for w in ("forecast", "operator"):
+        for w in W:
             c = hour[w][t]
             n = sum(c.values())
             if not n:
@@ -491,22 +525,22 @@ def score(bundle, side="ref"):
             acc = (c[(True, True)] + c[(False, False)]) / n
             op, orc = pr(c, False)
             cp, cr = pr(cheap_c[w][t], True)
-            print(f"  {w:9s} hours {n:6d}  acc {acc:.3f}  Brier {np.mean(brier[w][t]):.4f}  off prec/recall {op:.2f}/{orc:.2f}"
+            print(f"  {w:13s} hours {n:6d}  acc {acc:.3f}  Brier {np.mean(brier[w][t]):.4f}  off prec/recall {op:.2f}/{orc:.2f}"
                   f"  cheap-hour shutdowns prec/recall {cp:.2f}/{cr:.2f} ({cheap_c[w][t][(True, True)]} caught)")
             print("            day class", {f"{x}->{y}": v for (x, y), v in sorted(day[w][t].items())})
     if run:
         R = np.array(run)
         y = R[:, 2]
         print(f"\nCC cheap-stretch run-through, {len(R)} train-days (ran through {y.mean():.2f})")
-        for name, col in (("forecast", 3), ("operator", 4)):
+        for name, col in zip(W, (3, 4, 5)):
             p = R[:, col]
-            print(f"  {name:9s} Brier {np.mean((p - y) ** 2):.4f}  accuracy {np.mean((p >= .5) == (y == 1)):.3f}")
+            print(f"  {name:13s} Brier {np.mean((p - y) ** 2):.4f}  accuracy {np.mean((p >= .5) == (y == 1)):.3f}")
         for s0 in (0, 1):
             for aw in (0, 1):
                 m = (R[:, 0] == s0) & (R[:, 1] == aw)
                 if m.sum():
-                    print(f"  on at start {s0} awarded {aw}: n {m.sum():5d} ran {y[m].mean():.3f}  accuracy forecast "
-                          f"{np.mean((R[m, 3] >= .5) == (y[m] == 1)):.3f} operator {np.mean((R[m, 4] >= .5) == (y[m] == 1)):.3f}")
+                    print(f"  on at start {s0} awarded {aw}: n {m.sum():5d} ran {y[m].mean():.3f}  accuracy " + "  ".join(
+                        f"{w} {np.mean((R[m, c] >= .5) == (y[m] == 1)):.3f}" for w, c in zip(W, (3, 4, 5))))
 
 
 if __name__ == "__main__":
