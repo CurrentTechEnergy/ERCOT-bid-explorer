@@ -9,6 +9,10 @@ on:
       - .github/workflows/probe-history.yml
   workflow_dispatch:
     inputs:
+      mode:
+        description: "scratch_cop.py mode: list or fetch"
+        required: false
+        default: "list"
       first_year:
         description: "Earliest year to list the archive for"
         required: false
@@ -24,7 +28,7 @@ permissions:
 jobs:
   probe:
     runs-on: ubuntu-latest
-    timeout-minutes: 90
+    timeout-minutes: 340
     steps:
       - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
       - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6.3.0
@@ -40,4 +44,10 @@ jobs:
           R2_ENDPOINT: ${{ secrets.R2_ENDPOINT }}
           R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
           R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
-        run: python -m pipeline.probe_history --first-year "${{ inputs.first_year || 2016 }}" --parse-from "${{ inputs.parse_from || 2019 }}"
+        run: python scratch_cop.py "${{ inputs.mode || 'list' }}"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        if: always()
+        with:
+          name: cop
+          path: cop.json.gz
+          if-no-files-found: ignore
