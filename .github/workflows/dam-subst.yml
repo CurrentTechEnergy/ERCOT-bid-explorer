@@ -1,0 +1,48 @@
+name: DAM substitution pull (one-off, read-only)
+
+# Reads the 60-Day DAM Disclosure zips for Nov 30, 2025 to Aug 26, 2026 from the R2 raw store and
+# keeps only energy-only offer awards, energy bid awards and resource QSEs (tools/dam_subst.py),
+# for the renewable DAM substitution test.  Raw store only: a document missing from the store is
+# listed, not fetched.  Writes a workflow artifact only: no commit, no site data.  Runs on pushes
+# to its own branch, never on main, and stays out of the update-data concurrency group.
+on:
+  push:
+    branches: [dam-subst]
+    paths: [tools/dam_subst.py, .github/workflows/dam-subst.yml]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: dam-subst
+  cancel-in-progress: false
+
+jobs:
+  pull:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install -r requirements.txt
+      - name: Read and reduce
+        env:
+          ERCOT_API_USERNAME: ${{ secrets.ERCOT_API_USERNAME }}
+          ERCOT_API_PASSWORD: ${{ secrets.ERCOT_API_PASSWORD }}
+          ERCOT_API_SUBSCRIPTION_KEY: ${{ secrets.ERCOT_API_SUBSCRIPTION_KEY }}
+          R2_ENDPOINT: ${{ secrets.R2_ENDPOINT }}
+          R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          SUBST_FETCH_MISSING: "0"
+        run: |
+          python -m tools.dam_subst 2025-11-30 2026-08-26
+          ls out/subst | wc -l
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: dam-subst
+          path: out/subst
+          retention-days: 14
