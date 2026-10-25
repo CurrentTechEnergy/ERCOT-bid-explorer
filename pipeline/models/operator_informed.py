@@ -8,8 +8,8 @@ states:
   from on   P(offline in hour h | online in h - 1)
   from off  P(online in hour h | offline in h - 1)
 from what the operator had before hour h (FEATURES): the unit's own day-ahead node price against
-its minimum-energy cost, the loss (or profit) of running from h through the rest of the cheap
-(or dear) stretch, that loss against its own hot start cost, its DAM award at h, over the next
+its minimum-energy cost and against its gas cost (HEAT_RATE x the day-before gas price), the
+loss (or profit) of running from h through the rest of the cheap (or dear) stretch at either cost, that loss against its own hot start cost, its DAM award at h, over the next
 AHEAD hours and later in the day, the DAM profit of delivering its award from h on at gas cost (award MW x
 (node price - HEAT_RATE x the day-before Houston Ship Channel gas price)) and that against its hot
 start cost, its DAM resource status at h, whether the costs are its own
@@ -61,7 +61,7 @@ from ..guide import EIA_HR
 from ..store import read_json_gz
 
 NAME = "operator_informed"
-VERSION = "v2"   # v1: transitions with per-unit intercepts and slopes; v2: the COP only beside the main call
+VERSION = "v2"   # v1: transitions with per-unit intercepts and slopes; v2: the COP only beside the main call, margins at gas cost
 TECHS = ("combined_cycle", "gas_steam")
 AHEAD = 6            # hours of award looked at ahead of h
 MIN_AWARD = 1.1      # an award at most this x LSL counts as holding at minimum (day mode)
@@ -74,8 +74,9 @@ FEATURES = ("margin", "loss ahead", "loss ahead against its start cost", "profit
             "best margin later", "award", "award ahead", "award later", "DAM status on",
             "own offer", "overnight", "hours in its state", "short run", "hours at minimum",
             "spring", "summer", "autumn", "award profit ahead", "award profit against its start cost",
-            "COP plan on", "COP plan on ahead", "COP plan known")
-DRIVERS = [("price against its cost", (0, 1, 3, 4)), ("loss against its start cost", (2,)),
+            "COP plan on", "COP plan on ahead", "COP plan known",
+            "margin at gas cost", "loss ahead at gas cost", "profit ahead at gas cost")
+DRIVERS = [("price against its cost", (0, 1, 3, 4, 22, 23, 24)), ("loss against its start cost", (2,)),
            ("DAM award", (5, 6, 7, 17, 18)), ("DAM status", (8,)), ("time in its state", (11, 12)),
            ("sitting at minimum", (13,)), ("hour and season", (10, 14, 15, 16)),
            ("its own COP plan", (19, 20, 21))]
@@ -222,6 +223,14 @@ def _static(r, month, plan="none"):
     prof = np.cumsum((r["aw_mw"] * (spp - r["fuel"]))[::-1])[::-1]     # DAM profit of delivering the award from h on, at gas cost
     X[:, 17] = np.sign(prof) * np.log1p(np.abs(prof) / 1000.0)
     X[:, 18] = np.clip(prof / r["hot"], -5, 5)
+    g = spp - r["fuel"]
+    gl, gg = np.zeros(24), np.zeros(24)
+    for h in range(24):
+        gl[h] = max(0.0, np.cumsum(-g[h:] * lsl).max())
+        gg[h] = max(0.0, np.cumsum(g[h:] * lsl).max())
+    X[:, 22] = np.clip(g / 50.0, -4, 4)
+    X[:, 23] = np.log1p(gl / 1000.0)
+    X[:, 24] = np.log1p(gg / 1000.0)
     if plan != "none":
         da, lv, known = r["cop"]
         X[:, 19] = lv if plan == "live" else da
