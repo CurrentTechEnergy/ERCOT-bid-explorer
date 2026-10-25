@@ -64,6 +64,7 @@ import numpy as np
 from .config import DATA_DIR, GENERIC_COSTS
 from .intraday import train_of
 from .store import read_json_gz, write_json_gz
+from . import gascost
 from .trends import UNIT_TECHS
 
 OUT_MIN_H = 4        # an off spell needs this many hours to be a shutdown; see trends.js ST_OUT_MIN_H
@@ -267,7 +268,7 @@ def _verdict(loss, cutoff, award_share):
     return "maybe" if award_share >= HALF else "off"
 
 
-def build_decisions(index: dict) -> None:
+def build_decisions(index: dict, write: bool = True):
     uh = read_json_gz(DATA_DIR / "unit_hours_60d.json.gz", default={})
     sdates, strips = uh.get("dates", []), uh.get("units", {})
     dam_dates = set(index["days"].get("dam", []))
@@ -308,6 +309,7 @@ def build_decisions(index: dict) -> None:
                 if g is None or not e["lsl"]:
                     continue
                 mingen, lsl, hot, est = g[3], e["lsl"], g[0], 2
+            mingen = gascost.cost(e["tech"], key, d, mingen, est)
             latest[key] = (e["tech"], lsl, mingen, hot, est, e["sp"])
             day = st[i * 24:(i + 1) * 24]
             shut, off_h = _shutdown(st, i * 24)
@@ -366,12 +368,15 @@ def build_decisions(index: dict) -> None:
     flags.sort(key=lambda f: f[1], reverse=True)
     known = {(r[0], r[1]): r[6] for r in rows}
     scored = [[d, key, v, known[(key, d)]] for d in sorted(predictions) for key, v, _ in predictions[d] if (key, d) in known]
-    write_json_gz(PATH, {
+    out = {
         "dates": dates, "out_min_h": OUT_MIN_H, "award_lsl": AWARD_LSL, "cost_days": COST_DAYS,
         "min_days": MIN_DAYS, "min_each": MIN_EACH,
         "units": units, "days": rows, "tomorrow": tomorrow, "predictions": predictions, "scored": scored,
         "new_days": NEW_DAYS, "award_full": AWARD_FULL, "flags": flags,
-    })
+    }
+    if not write:
+        return out
+    write_json_gz(PATH, out)
     n_cut = sum(1 for u in units.values() if u[9] is not None)
     print(f"decisions: {len(dates)} days, {len(rows)} unit-days, {len(units)} units, {n_cut} with a cutoff, {len(flags)} flags"
           + (f", tomorrow {tomorrow['date']}: {len(tomorrow['rows'])} units" if tomorrow else ", no node prices for tomorrow"))
