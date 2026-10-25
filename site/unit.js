@@ -27,7 +27,7 @@ const techLabel = (t) => (TECH_OF[t] ? TECH_OF[t].label : t === "storage" ? "Sto
 const SIG_FMT = { le0: (v) => d3.format(".0%")(v), noff: (v) => d3.format(".0%")(v), rel: (v) => (v >= 0 ? "+" : "−") + d3.format("$,.0f")(Math.abs(v)) };
 const GROUP_SHORT = { never: "Always on when available", seasonal: "Seasonal", multiday: "Multi-day", daily1: "Daily, under once a week", daily2: "Daily, 1 to 2 a week", daily3: "Daily, over 2 a week", never_on: "Never on", ungrouped: "Not yet grouped" };
 const VERDICT = { on: "likely on", off: "likely off", maybe: "toss-up", nocut: "no call yet (too few days to judge)", outage: "on outage", peaker: "peaker, called from how often it ran at this price and hour" };
-const S = { econ: {}, day: null, hour: null, T: null, DEC: null, UH: null, SP: null, FI: null, FC: null, OI: null, fcDay: null, PPA: null, CH: null, list: new Map(), stubs: new Set(), unit: null, cfg: null, span: null, last60: null };
+const S = { econ: {}, day: null, hour: null, T: null, DEC: null, UH: null, SP: null, FI: null, FC: null, OI: null, OD: null, fcDay: null, PPA: null, CH: null, list: new Map(), stubs: new Set(), unit: null, cfg: null, span: null, last60: null };
 const { tryJSON, showTip, hideTip, setCSV, tickFormat, fmtKind, axisFmt, css, esc } = window.CX;
 const $ = (id) => document.getElementById(id);
 const fmtMW = d3.format(",.0f");
@@ -425,11 +425,57 @@ function drawDecisions(e) {
     .on("pointerleave", hideTip);
   el.replaceChildren(svg.node());
   setCSV(el, ["date", "loss_usd", "window_first_he", "window_hours", "award_share", "shut", "hours_off"], pts.map((p) => [p.d, p.loss, p.he, p.h, p.aw, p.shut, p.off]), `${e.name} decision days`);
+  drawDecisionsOI(e, pts, x, w, shape);
   $("dec-legend").innerHTML = `<span><span class="sw" style="background:var(--surface);border:1.5px solid var(--c1);border-radius:50%"></span>Stayed on</span>` +
     `<span><span class="sw" style="background:var(--c8);border-radius:50%"></span>Shut down</span><span><span class="sw" style="background:var(--ink-2)"></span>Square: a day-ahead award covered the stretch</span>` +
     (g("cutoff") != null ? `<span><span class="sw sw-line"></span>Its cutoff (all its decisions)</span>` : "") +
     (steps.length ? `<span><span class="sw" style="height:0;border-top:2px solid var(--c2);border-radius:0;width:16px"></span>Refit each month on its last 30 decisions</span>` +
       (moves.length ? `<span><span class="sw" style="background:var(--c2);clip-path:polygon(50% 0,100% 100%,0 100%)"></span>A move the site's cutoff had not caught up with</span>` : "") : "");
+}
+
+// the decision days again, judged by the operator-informed model (data/operator/decisions.json.gz rows:
+// [date, average chance online over the stretch, share of it the COP plan had on or null, [top reason, push]])
+function drawDecisionsOI(e, pts, x, w, shape) {
+  const rows = S.OD && S.OD.units[e.name];
+  $("dec-oi").hidden = !rows || !rows.length;
+  if ($("dec-oi").hidden) return;
+  const by = new Map(rows.map((r) => [r[0], r]));
+  const P = pts.filter((p) => by.has(p.d)).map((p) => ({ ...p, op: by.get(p.d)[1], plan: by.get(p.d)[2], why: by.get(p.d)[3] }));
+  const el = $("dec-oi-chart"), H = 200, m = { t: 14, r: 16, b: 26, l: 70 };
+  const right = P.filter((p) => (p.op >= 0.5) === !p.shut).length, nShut = P.filter((p) => p.shut).length;
+  const caught = P.filter((p) => p.shut && p.op < 0.5).length;
+  $("dec-oi-note").innerHTML = `On ${P.length} of these days (from ${esc(P[0] ? P[0].d : "")}, once there is enough history to fit): right on <b>${right}</b> (${fmtPct(P.length ? right / P.length : 0)}), ` +
+    `and ${caught} of its ${nShut} shutdowns called.`;
+  const y = d3.scaleLinear().domain([0, 1]).range([H - m.b, m.t]);
+  const svg = d3.create("svg").attr("viewBox", `0 0 ${w} ${H}`);
+  svg.append("g").attr("class", "gridline").attr("transform", `translate(${m.l},0)`).call(d3.axisLeft(y).ticks(4).tickSize(-(w - m.l - m.r)).tickFormat(""));
+  svg.append("g").attr("class", "axis").attr("transform", `translate(0,${H - m.b})`).call(d3.axisBottom(x).ticks(w < 560 ? 4 : 8).tickSizeOuter(0));
+  svg.append("g").attr("class", "axis").attr("transform", `translate(${m.l},0)`).call(d3.axisLeft(y).tickValues([0, 0.5, 1]).tickFormat(d3.format(".0%")).tickSizeOuter(0));
+  svg.append("line").attr("class", "price-rule").attr("stroke-dasharray", "5 3").attr("x1", m.l).attr("x2", w - m.r).attr("y1", y(0.5)).attr("y2", y(0.5));
+  svg.append("text").attr("class", "axis-title").attr("x", m.l).attr("y", 10).text("Operator-informed chance of staying online through the stretch");
+  svg.append("g").selectAll("path").data(P).join("path")
+    .attr("transform", (p) => `translate(${x(p.t)},${y(p.op)})`).attr("d", (p) => d3.symbol(shape(p), 34)())
+    .attr("fill", (p) => (p.shut ? css("--c8") : css("--surface"))).attr("stroke", (p) => (p.shut ? css("--surface") : css("--c1"))).attr("stroke-width", 1.2);
+  const RW = { "price against its cost": "price against its cost", "DAM award": "day-ahead award", "DAM status": "day-ahead resource status",
+    "time in its state": "time in its state", "sitting at minimum": "sitting at minimum", "hour and season": "hour and season",
+    "loss against its start cost": "loss against its start cost", "its own habit": "its own habit" };
+  svg.append("rect").attr("x", m.l).attr("y", m.t).attr("width", w - m.l - m.r).attr("height", H - m.t - m.b).attr("fill", "transparent")
+    .on("pointermove", (ev) => {
+      const [px, py] = d3.pointer(ev);
+      const p = P[d3.minIndex(P, (q) => Math.hypot(x(q.t) - px, (y(q.op) - py) / 3))];
+      if (!p) return;
+      showTip(ev, `<h4>${fmtDate(p.t)}</h4><table><tr><td>Chance it stays online</td><td class="n">${fmtPct(p.op)}</td></tr>` +
+        `<tr><td>Loss of staying on</td><td class="n">${fmt$(p.loss)}</td></tr><tr><td>Day-ahead award over the stretch</td><td class="n">${fmtPct(p.aw)}</td></tr>` +
+        `<tr><td>COP plan on (2 pm day before)</td><td class="n">${p.plan == null ? "no plan" : fmtPct(p.plan)}</td></tr>` +
+        (p.why ? `<tr><td>Biggest pull</td><td class="n">${esc(RW[p.why[0]] || p.why[0])}, toward ${p.why[1] > 0 ? "off" : "on"}</td></tr>` : "") +
+        `<tr><td>What it did</td><td class="n">${p.shut ? `shut down, off ${p.off} h` : "stayed on"}</td></tr></table>`);
+    })
+    .on("pointerleave", hideTip);
+  el.replaceChildren(svg.node());
+  setCSV(el, ["date", "operator_chance_stays_on", "cop_plan_on_share", "loss_usd", "award_share", "shut"], P.map((p) => [p.d, p.op, p.plan, p.loss, p.aw, p.shut]), `${e.name} decision days, operator-informed`);
+  $("dec-oi-legend").innerHTML = `<span><span class="sw" style="background:var(--surface);border:1.5px solid var(--c1);border-radius:50%"></span>Stayed on</span>` +
+    `<span><span class="sw" style="background:var(--c8);border-radius:50%"></span>Shut down</span><span><span class="sw" style="background:var(--ink-2)"></span>Square: a day-ahead award covered the stretch</span>` +
+    `<span><span class="sw sw-line"></span>50%: the call</span>`;
 }
 
 // ---- hours: hour by hour online, at minimum or above, with starts --------------------------
@@ -729,9 +775,9 @@ async function select(name, cfg, keepDay) {
 
 async function boot() {
   const v = window.CX.readHash();
-  [S.T, S.DEC, S.UH, S.SP, S.FI, S.PPA, S.CH, S.OI] = await Promise.all([tryJSON("data/trends_60d.json.gz"), tryJSON("data/decisions.json.gz"),
+  [S.T, S.DEC, S.UH, S.SP, S.FI, S.PPA, S.CH, S.OI, S.OD] = await Promise.all([tryJSON("data/trends_60d.json.gz"), tryJSON("data/decisions.json.gz"),
     tryJSON("data/unit_hours_60d.json.gz"), tryJSON("data/summary_prices.json.gz"), tryJSON("data/forecast/index.json.gz"), tryJSON("data/ppa.json.gz"),
-    tryJSON("data/cutoff_history.json.gz"), tryJSON("data/operator/index.json.gz")]);
+    tryJSON("data/cutoff_history.json.gz"), tryJSON("data/operator/index.json.gz"), tryJSON("data/operator/decisions.json.gz")]);
   S.FC = S.FI && S.FI.days.length ? await tryJSON(`data/forecast/${S.FI.days.at(-1)}.json.gz`) : null;
   S.UI = await window.CX.unitIndex();
   S.stubs = new Set((S.UI || []).map((u) => u.unit));   // every unit in the index has a unit/NAME page

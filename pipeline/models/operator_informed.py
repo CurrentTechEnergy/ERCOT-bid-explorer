@@ -48,7 +48,8 @@ Writes data/operator/<date>.json.gz for the Unit page (build_days, run by the da
           where none, "award" [24] 1 where awarded at least AWARD_LSL x LSL, "why_h" the hour the
           reasons are for, "why_from" its state the hour before, "why" [[driver, push toward
           off in log-odds], ...] top three}}
-and data/operator/index.json.gz {"model", "version", "days"}.  Every day is rewritten when
+and data/operator/index.json.gz {"model", "version", "days"}, and data/operator/decisions.json.gz
+(build_decision_view) for the decision history chart.  Every day is rewritten when
 VERSION changes; otherwise only new days.  The reasons are for the hour of the unit's first
 actual switch that day, else the first hour the call switches, else its cheapest hour, from
 the true state before it (drivers).
@@ -507,8 +508,37 @@ def build_days(index: dict, rebuild: bool = False) -> list:
             done.append(d)
     days = sorted(have | set(done))
     write_json_gz(ip, {"model": NAME, "version": VERSION, "days": days})
-    print(f"{NAME} {VERSION}: {len(done)} day file(s) written, {len(days)} in all", flush=True)
+    n = build_decision_view(days)
+    print(f"{NAME} {VERSION}: {len(done)} day file(s) written, {len(days)} in all; {n} decision days judged", flush=True)
     return done
+
+
+def build_decision_view(days) -> int:
+    """data/operator/decisions.json.gz for the Unit page's decision history: for every decision
+    day (pipeline.decisions: the unit started online) with a day file, the model's average
+    chance online over the day's worst stretch, the share of those hours its COP plan had it on
+    (null where none) and the reason that pulled hardest.
+      {"model", "version", "units": {train: [[date, p, plan, [driver, push]], ...]}}"""
+    from ..decisions import PATH as DECISIONS_PATH
+    dec = read_json_gz(DECISIONS_PATH, default=None) or {}
+    have = set(days)
+    files, out, n = {}, {}, 0
+    for r in dec.get("days", []):
+        key, d, he, hrs = r[0], r[1], r[3], r[4]
+        if d not in have or not he or not hrs:
+            continue
+        if d not in files:
+            files[d] = (read_json_gz(OUT_DIR / f"{d}.json.gz", default=None) or {}).get("units", {})
+        u = files[d].get(key)
+        if not u:
+            continue
+        w = slice(he - 1, he - 1 + hrs)
+        pl = [v for v in u["plan"][w] if v is not None]
+        out.setdefault(key, []).append([d, round(float(np.mean(u["p"][w])), 3), round(float(np.mean(pl)), 2) if pl else None,
+                                        u["why"][0] if u["why"] else None])
+        n += 1
+    write_json_gz(OUT_DIR / "decisions.json.gz", {"model": NAME, "version": VERSION, "units": out})
+    return n
 
 
 # --------------------------------------------------------------- score --
