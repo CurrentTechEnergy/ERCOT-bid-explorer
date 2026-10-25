@@ -113,6 +113,9 @@ pipeline/
   renew_changes.py ppa cache + DAM day files + node prices (and the history release) -> every change in
                    how each wind and solar unit bids, and whether it moved dispatch (data/renew_changes.json.gz,
                    data/renew/, no downloads)
+  offtakers.py     pipeline/reference/offtakers.csv (buyers named in public announcements, with
+                   source and quote, curated by hand and refreshed about quarterly) -> data/offtakers.json.gz
+                   for the Unit page's "Public contracts" box and the hedge table (no downloads)
   series.py        per-unit day files + node prices + DAM awards -> hourly HSL, base point, output,
                    offer prices, award and node prices per unit, by month and technology, for the
                    graph builder (data/series/, no downloads)
