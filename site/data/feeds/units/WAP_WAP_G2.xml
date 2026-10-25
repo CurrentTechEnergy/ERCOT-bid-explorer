@@ -3,7 +3,14 @@
   <title>WAP_WAP_G2: bidding and operating changes</title>
   <link href="https://ercotbids.currenttech.energy/unit.html?unit=WAP_WAP_G2"/>
   <id>https://ercotbids.currenttech.energy/unit.html?unit=WAP_WAP_G2</id>
-  <updated>2026-10-24T00:00:00Z</updated>
+  <updated>2026-10-25T00:00:00Z</updated>
+  <entry>
+    <title>WAP_WAP_G2: Loss cutoff moved (2026-08-26)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=WAP_WAP_G2"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=WAP_WAP_G2#WAP_WAP_G2/2026-08-26/cutoff</id>
+    <updated>2026-10-25T00:00:00Z</updated>
+    <summary>Loss cutoff $43 to $172 per MW of minimum output; not yet tested on a following month</summary>
+  </entry>
   <entry>
     <title>WAP_WAP_G2: Outage ended (2026-04-21)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=WAP_WAP_G2"/>

@@ -3,7 +3,14 @@
   <title>TOPAZ_UNIT10: bidding and operating changes</title>
   <link href="https://ercotbids.currenttech.energy/unit.html?unit=TOPAZ_UNIT10"/>
   <id>https://ercotbids.currenttech.energy/unit.html?unit=TOPAZ_UNIT10</id>
-  <updated>2026-10-24T00:00:00Z</updated>
+  <updated>2026-10-25T00:00:00Z</updated>
+  <entry>
+    <title>TOPAZ_UNIT10: Bidding approach shifted (2026-08-17)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=TOPAZ_UNIT10"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=TOPAZ_UNIT10#TOPAZ_UNIT10/2026-08-17/bidding</id>
+    <updated>2026-10-25T00:00:00Z</updated>
+    <summary>Offer price vs peer median: $400 to -$0/MWh</summary>
+  </entry>
   <entry>
     <title>TOPAZ_UNIT10: Timescale group changed (2026-08-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=TOPAZ_UNIT10"/>

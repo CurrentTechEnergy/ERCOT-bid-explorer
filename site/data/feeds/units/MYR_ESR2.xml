@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>MYR_ESR2: bidding and operating changes</title>
+  <link href="https://ercotbids.currenttech.energy/unit.html?unit=MYR_ESR2"/>
+  <id>https://ercotbids.currenttech.energy/unit.html?unit=MYR_ESR2</id>
+  <updated>2026-10-25T00:00:00Z</updated>
+  <entry>
+    <title>MYR_ESR2: Battery size changed (2026-07-21)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=MYR_ESR2"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=MYR_ESR2#MYR_ESR2/2026-07-21/battery_size</id>
+    <updated>2026-10-25T00:00:00Z</updated>
+    <summary>Maximum output 46 to 72 MW; Maximum state of charge 58 to 100 MWh</summary>
+  </entry>
+</feed>

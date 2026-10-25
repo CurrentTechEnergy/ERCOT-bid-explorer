@@ -3,7 +3,14 @@
   <title>GRAN_SLR: bidding and operating changes</title>
   <link href="https://ercotbids.currenttech.energy/unit.html?unit=GRAN_SLR"/>
   <id>https://ercotbids.currenttech.energy/unit.html?unit=GRAN_SLR</id>
-  <updated>2026-10-18T00:00:00Z</updated>
+  <updated>2026-10-25T00:00:00Z</updated>
+  <entry>
+    <title>GRAN_SLR: New floor (2026-08-21)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=GRAN_SLR"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=GRAN_SLR#GRAN_SLR/2026-08-21/renew_floor_new</id>
+    <updated>2026-10-25T00:00:00Z</updated>
+    <summary>New floor: floor -$5 to floor -$3</summary>
+  </entry>
   <entry>
     <title>GRAN_SLR: New floor (2026-07-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=GRAN_SLR"/>
