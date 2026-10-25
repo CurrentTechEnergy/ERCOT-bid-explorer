@@ -5,9 +5,10 @@ cheap-stretches panel (ST_GROUPS / stretchBase), so the pipeline and the page ag
 Combined-cycle configurations are merged into their train (the "best" state of any
 configuration in the hour; a single offline hour between online hours is a configuration
 change).  A non-running spell that is mostly outage, or has fewer than OUT_MIN_H OFF hours
-before the outage, is an outage throughout.  An off spell is the offline hours after a
-running hour with at least OUT_MIN_H hours OFF and no more missing hours than OFF hours; a
-spell still open at the end of the period counts once it is a day long.
+before the outage, is an outage throughout; for coal (OUT_ANY_TECHS) any outage hour makes it
+one.  An off spell is the offline hours after a running hour with at least OUT_MIN_H hours OFF
+and no more missing hours than OFF hours; a spell still open at the end of the period counts
+once it is a day long.
 
   never     no shutdown on price in the period (always on when available: off only for outages)
   seasonal  every off spell lasted 7 days or more
@@ -31,6 +32,7 @@ import datetime as dt
 import numpy as np
 
 from ..config import DATA_DIR
+from ..groups import OUT_ANY_TECHS
 from ..intraday import train_of
 from ..store import read_json_gz
 from ..trends import UNIT_TECHS, listed_units, unit_techs
@@ -95,7 +97,7 @@ def merged_states(uh: dict, techs: dict, rewrite: bool = True) -> dict:
                 j += 1
             seg = st[k:j]
             off, out = int((seg == "0").sum()), int((seg == "o").sum())
-            if out and (off < OUT_MIN_H or out > off):
+            if out and (off < OUT_MIN_H or out > off or t in OUT_ANY_TECHS):
                 seg[seg == "0"] = "o"
             k = j
     return by, N, day0
