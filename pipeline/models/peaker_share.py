@@ -5,6 +5,13 @@ of that history (v2), so the share says how often the unit runs when it can; out
 separately, as for other thermal units (thermal_cutoff: a long outage at the last known hour,
 the unplanned outage report, and the zonal unseen outage share).
 
+v3 also judges gas steam and CC units that run like peakers (peaker_like: online under
+LIKE_SHARE of their available hours, at most LIKE_RUN_H online hours a day they run), which the
+stay-on loss test asked the wrong question of, and stretches each block of their called hours
+(p_on >= 0.5) to at least the unit's shortest usual run (_min_run).  Backtest #38/#40 (Oct 2026):
+on those 21 units the day's on/off shape was right on 494 of 1,181 unit-days against 313, cheap-
+hour shutdowns caught 94 of 100 against 89; all-hours committed-minimum MAE 1,627 against 1,601 MW.
+
   p_on[h]  the unit's own online share in the (bin, hour) cell when it has MIN_CELL available
            hours of history there; else its own share for the bin over all hours (MIN_BIN hours); else
            the combustion-turbine fleet's share for the cell.
@@ -29,7 +36,7 @@ import numpy as np
 from ..forecast import context as C
 
 NAME = "peaker_share"
-VERSION = "v2"    # v2: share of available hours (outage hours left out), CALIB refit; v1: history share mapped through CALIB by hub price band
+VERSION = "v3"    # v3: gas steam and CC units that run like peakers, their called hours in blocks of at least their shortest usual run; v2: share of available hours (outage hours left out), CALIB refit; v1: history share mapped through CALIB by hub price band
 BANDS = [20.0, 30.0, 45.0]   # hub $/MWh: bands (CHEAP_HUB, 20], (20, 30], (30, 45], above 45
 _X = [0.0, 0.012, 0.034, 0.073, 0.15, 0.25, 0.35, 0.455, 0.557, 0.655, 0.752, 0.852, 0.983, 1.0]
 CALIB = [   # online rate while available at each share in _X, by band (v2: isotonic fit, Mar-Aug 2026)
@@ -40,12 +47,12 @@ CALIB = [   # online rate while available at each share in _X, by band (v2: isot
 ]
 MIN_CELL = 10
 MIN_BIN = 20
-LIKE = os.environ.get("PEAKER_LIKE") == "1"    # test switch: gas steam and CC units that run like peakers are judged here too
+LIKE = os.environ.get("PEAKER_LIKE", "1") == "1"    # PEAKER_LIKE=0 judges combustion turbines alone (v2), for comparison
 LIKE_TECHS = ("gas_steam", "combined_cycle")
 LIKE_SHARE = 0.25     # online share of available hours below this ...
 LIKE_RUN_H = 16.0     # ... and online hours per day it ran at most this: started for the peak, not kept on
 LIKE_MIN_H = 480      # available hours of record a unit needs to be judged so
-MIN_RUN = os.environ.get("PEAKER_MIN_RUN") == "1"   # test switch: a peaker-like unit's called hours form one block of at least its usual shortest run
+MIN_RUN = os.environ.get("PEAKER_MIN_RUN", "1") == "1"   # a peaker-like unit's called hours form blocks of at least its shortest usual run (PEAKER_MIN_RUN=0: hour by hour)
 MIN_RUN_Q = 10        # percentile of the unit's completed runs taken as its shortest usual run
 MIN_RUN_N = 5         # completed runs a unit needs for its own; else MIN_RUN_DEFAULT
 MIN_RUN_DEFAULT = 5
@@ -102,8 +109,7 @@ def _block(p, n):
 
 
 def peaker_like(stats) -> set:
-    """Units outside the combustion turbines that run like peakers in the unit stats (empty
-    unless LIKE)."""
+    """Gas steam and CC units that run like peakers in the unit stats (empty when not LIKE)."""
     if not LIKE:
         return set()
     out = set()

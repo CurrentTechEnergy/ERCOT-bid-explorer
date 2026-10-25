@@ -82,7 +82,8 @@ For every thermal train in the latest DAM disclosure (pipeline.forecast.context.
   peakers     combustion turbines outside the always-on group (which are held on, as other
               always-on units) are not judged here (peaker_share, by hour, on the hours
               they were available); they get verdict "peaker" and p_on from that model, and the
-              outage calls above (long outage, listed, unseen share) as other units do.
+              outage calls above (long outage, listed, unseen share) as other units do.  So do
+              the gas steam and CC units that run like peakers (peaker_share.peaker_like).
 
 p_on is the weight the dispatch model applies to the unit's MW: 1 for on, 0 for off, the
 history share for nocut, and for a daily unit judged on its window the probability above,
