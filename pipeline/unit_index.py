@@ -13,11 +13,14 @@ Names come from ERCOT's CDR report (pipeline/cdr.py, matched here on every build
 unit goes by from pipeline/reference/unit_aliases.csv (a developer's project name the CDR does not
 use; one row per unit and name, edited by hand), the QSE and DME codes from the 60-day files where
 they carry them (pipeline/qse.py, data/unit_qse.json.gz), and their names and the owner from ERCOT's
-daily QSE and decision-making entity lists (pipeline/entities.py, data/entities.json.gz).
+daily QSE and decision-making entity lists (pipeline/entities.py, data/entities.json.gz), the public buyers from
+pipeline/reference/offtakers.csv (pipeline/offtakers.py), and operator, owner, developer and EIA plant names from
+pipeline/reference/unit_companies.csv (one row per unit, company and role; built once from the EIA-860 plant
+match and the offtaker web search's high and medium confidence answers, see that file's sources, and edited by hand).
 
 Writes data/unit_index.json.gz:
   {updated, cdr (the CDR edition the names come from), columns: ["unit", "tech", "group", "mw", "sp", "configs", "plant", "county", "zone",
-   "match", "qse", "aliases", "qse_name", "dme", "owner"], rows: [[...], ...]}
+   "match", "qse", "aliases", "qse_name", "dme", "owner", "buyers", "companies"], rows: [[...], ...]}
   unit     resource name (the train for combined cycle), sorted by name
   tech     config.TECH_OF_TYPE grouping
   group    the latest forecast's timescale group (thermal only; null when not in the forecast)
@@ -34,6 +37,10 @@ Writes data/unit_index.json.gz:
   dme      the decision-making entity: its name from the DME list for the unit (any configuration's,
            for a train), else the name for the DME code the 60-day files carry, else that code
   owner    the owning resource entity from the DME list (null when the unit is not on it)
+  buyers   public buyers named for the unit in offtakers.csv, sorted ([] for most units)
+  companies  [[name, role, source], ...] from unit_companies.csv (any configuration's, for a train): role
+           "operator" (EIA-860), "owner" or "developer" (web search, with its confidence), or "plant name"
+           (EIA-860's plant name); [] when the file has none
 """
 import csv
 import datetime as dt
@@ -43,6 +50,7 @@ from pathlib import Path
 
 from . import cdr
 from .config import DATA_DIR
+from .offtakers import CSV_PATH as OFFTAKERS_CSV
 from .qse import PATH as QSE_PATH
 from .entities import PATH as ENTITIES_PATH
 from .log import warn
@@ -50,8 +58,9 @@ from .store import read_json_gz, write_json_gz
 
 PATH = DATA_DIR / "unit_index.json.gz"
 ALIASES_PATH = Path(__file__).parent / "reference" / "unit_aliases.csv"
+COMPANIES_PATH = Path(__file__).parent / "reference" / "unit_companies.csv"
 COLUMNS = ["unit", "tech", "group", "mw", "sp", "configs", "plant", "county", "zone", "match", "qse", "aliases",
-           "qse_name", "dme", "owner"]
+           "qse_name", "dme", "owner", "buyers", "companies"]
 TECHS = ("nuclear", "coal", "combined_cycle", "gas_steam", "combustion_turbine", "wind", "solar", "storage")
 _TRAIN = re.compile(r"^(.*_CC\d+)_")
 
@@ -71,8 +80,29 @@ def load_aliases() -> dict:
     return out
 
 
+def load_buyers() -> dict:
+    out = defaultdict(set)
+    if OFFTAKERS_CSV.exists():
+        with open(OFFTAKERS_CSV, newline="") as f:
+            for r in csv.DictReader(f):
+                for u in (r.get("units") or "").split():
+                    if (r.get("buyer") or "").strip():
+                        out[u].add(r["buyer"].strip())
+    return out
+
+
+def load_companies() -> dict:
+    out = defaultdict(list)
+    if COMPANIES_PATH.exists():
+        with open(COMPANIES_PATH, newline="") as f:
+            for r in csv.DictReader(f):
+                if r.get("unit") and r.get("company"):
+                    out[r["unit"].strip()].append([r["company"].strip(), r["role"].strip(), r["source"].strip()])
+    return out
+
+
 def build(trends: dict, decisions: dict, forecast: dict, ppa: dict, econ: dict, cdr_rows=(), qses=None, aliases=None,
-          entities=None) -> dict:
+          entities=None, buyers=None, companies=None) -> dict:
     units = {}
 
     def add(name, tech, cfg=None):
@@ -106,6 +136,7 @@ def build(trends: dict, decisions: dict, forecast: dict, ppa: dict, econ: dict, 
             sp[u["name"]] = u["sp"]
 
     matcher, qses, aliases, ent = cdr.Matcher(list(cdr_rows)), qses or {}, aliases or {}, entities or {}
+    buyers, companies = buyers or {}, companies or {}
     qse_names, dme_names, res = ent.get("qse") or {}, ent.get("dme") or {}, ent.get("resources") or {}
     rows = []
     for name in sorted(units):
@@ -124,7 +155,9 @@ def build(trends: dict, decisions: dict, forecast: dict, ppa: dict, econ: dict, 
                      ec.get("sp") or sp.get(name), sorted(cfgs),
                      m["name"] if m else None, m["county"] if m else None, m["zone"] if m else None, how, q,
                      sorted({a for k in keys for a in aliases.get(k, [])}),
-                     (qse_names.get(q) or [None])[0] if q else None, dme, r[0] if r else None])
+                     (qse_names.get(q) or [None])[0] if q else None, dme, r[0] if r else None,
+                     sorted({b for k in keys for b in buyers.get(k, ())}),
+                     [list(c) for c in sorted({tuple(c) for k in keys for c in companies.get(k, ())}, key=lambda c: (c[1], c[0]))]])
     return {"updated": dt.datetime.now(dt.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"), "cdr": cdr.edition(), "columns": COLUMNS, "rows": rows}
 
 
@@ -140,14 +173,18 @@ def build_unit_index(index: dict) -> dict:
     qses = (read_json_gz(QSE_PATH, default={}) or {}).get("units", {})
     aliases = load_aliases()
     entities = read_json_gz(ENTITIES_PATH, default={}) or {}
-    out = build(trends, decisions, forecast, ppa, econ, cdr.load(), qses, aliases, entities)
-    unknown = sorted(set(aliases) - {r[0] for r in out["rows"]} - {c for r in out["rows"] for c in r[5]})
-    if unknown:
-        warn(f"unit_aliases.csv names units the unit index does not have: {unknown[:5]}")
+    companies = load_companies()
+    out = build(trends, decisions, forecast, ppa, econ, cdr.load(), qses, aliases, entities, load_buyers(), companies)
+    known = {r[0] for r in out["rows"]} | {c for r in out["rows"] for c in r[5]}
+    for what, d in (("unit_aliases.csv", aliases), ("unit_companies.csv", companies)):
+        unknown = sorted(set(d) - known)
+        if unknown:
+            warn(f"{what} names {len(unknown)} unit(s) the unit index does not have: {unknown[:5]}")
     write_json_gz(PATH, out)
     named = sum(1 for r in out["rows"] if r[6])
     print(f"unit index: {len(out['rows'])} units, {named} with a CDR name, {sum(1 for r in out['rows'] if r[10])} with a QSE, "
-          f"{sum(1 for r in out['rows'] if r[12])} with a QSE name, {sum(1 for r in out['rows'] if r[13])} with a DME")
+          f"{sum(1 for r in out['rows'] if r[12])} with a QSE name, {sum(1 for r in out['rows'] if r[13])} with a DME, "
+          f"{sum(1 for r in out['rows'] if r[15])} with a public buyer, {sum(1 for r in out['rows'] if r[16])} with a company")
     return out
 
 

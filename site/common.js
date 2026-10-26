@@ -348,7 +348,8 @@ function panelFromLink() {
 // ---------------------------------------------------------- find a unit ---
 // A search box in every page's nav row that opens a unit's page, by resource name, settlement
 // point, combined-cycle configuration, CDR plant name, another name it goes by, county, QSE (code or name),
-// decision maker or owner. The unit list
+// decision maker, owner, public buyer, or a company from unit_companies.csv (EIA-860 operator and plant
+// name, web-search owner and developer). A hit found by anything but its name says what matched. The unit list
 // (data/unit_index.json.gz, pipeline/unit_index.py) loads on first focus. The Unit page has its
 // own picker and directory, so it gets no box here.
 const TECH_SHORT = { nuclear: "Nuclear", coal: "Coal", combined_cycle: "Combined cycle", gas_steam: "Gas steam", combustion_turbine: "Combustion turbine", wind: "Wind", solar: "Solar", storage: "Battery storage ESR" };
@@ -361,9 +362,28 @@ async function unitIndex() {
   unitIndex.cdr = ui.cdr || "";
   return ui.rows.map((r) => {
     const u = Object.fromEntries(c.map((k, i) => [k, r[i]]));
-    u.text = [u.unit, u.sp, ...(u.configs || []), u.plant, ...(u.aliases || []), u.county, u.qse, u.qse_name, u.dme, u.owner, TECH_SHORT[u.tech]].filter(Boolean).join(" ").toLowerCase();
+    u.buyers = u.buyers || []; u.companies = u.companies || [];
+    u.text = [u.unit, u.sp, ...(u.configs || []), u.plant, ...(u.aliases || []), u.county, u.qse, u.qse_name, u.dme, u.owner,
+      ...u.buyers, ...u.companies.map((c) => c[0]), TECH_SHORT[u.tech]].filter(Boolean).join(" ").toLowerCase();
     return u;
   });
+}
+const COMPANY_ROLE = { operator: "Operator (EIA)", owner: "Owner (web search)", developer: "Developer (web search)", "plant name": "Plant (EIA)" };
+// what a hit matched on, as "Label: value", when the query is not in the name, CDR plant name or other names
+// the result row already shows; the field matching the most query words wins, in this order on a tie
+function matchedOn(u, q) {
+  const words = q.toLowerCase().split(/\s+/).filter(Boolean);
+  const shown = [u.unit, u.plant, ...(u.aliases || [])].filter(Boolean).join(" ").toLowerCase();
+  if (!words.length || words.every((w) => shown.includes(w))) return "";
+  const fields = [["Buyer", u.buyers], ["QSE", [u.qse_name || u.qse, u.qse_name && u.qse]], ["Decides offers", [u.dme]], ["Owner (ERCOT)", [u.owner]],
+    ...u.companies.map((c) => [COMPANY_ROLE[c[1]] || c[1], [c[0]]]), ["Configuration", u.configs || []], ["Settlement point", [u.sp]], ["County", [u.county]]];
+  let best = null, n = 0;
+  for (const [label, vals] of fields) for (const v of vals) {
+    if (!v) continue;
+    const k = words.filter((w) => !shown.includes(w) && v.toLowerCase().includes(w)).length;
+    if (k > n) { best = `${label}: ${label === "QSE" && u.qse_name ? u.qse_name : v}`; n = k; }
+  }
+  return best || "";
 }
 // every word of the query must appear; names that start with the query come first
 function findUnits(units, q, n = 8) {
@@ -378,7 +398,7 @@ function initUnitFind() {
   if (!row || $("unit-pick")) return;
   const box = document.createElement("div");
   box.className = "unit-find";
-  box.innerHTML = `<input type="search" id="unit-find" placeholder="Find a unit" aria-label="Find a unit by name, plant, county or settlement point" autocomplete="off" spellcheck="false" role="combobox" aria-expanded="false" aria-controls="unit-find-list" aria-autocomplete="list">` +
+  box.innerHTML = `<input type="search" id="unit-find" placeholder="Unit, QSE, company, buyer" aria-label="Find a unit by name, plant, county, settlement point, QSE, decision maker, owner, operator, developer or buyer" autocomplete="off" spellcheck="false" role="combobox" aria-expanded="false" aria-controls="unit-find-list" aria-autocomplete="list">` +
     `<ul class="unit-find-list" id="unit-find-list" role="listbox" hidden></ul>`;
   row.appendChild(box);
   const input = box.querySelector("input"), list = box.querySelector("ul");
@@ -389,7 +409,9 @@ function initUnitFind() {
     if (!units) { list.innerHTML = `<li class="unit-find-none">Loading units…</li>`; list.hidden = !input.value.trim(); return; }
     hits = findUnits(units, input.value);
     at = hits.length ? 0 : -1;
-    list.innerHTML = hits.length ? hits.map((u, i) => `<li role="option" id="unit-find-${i}"><a href="${unitURL(u.unit)}"><span class="unit-find-name">${esc(u.unit)}${u.plant || u.aliases?.length ? `<small>${esc([u.plant, ...(u.aliases || [])].filter(Boolean).join(" · "))}</small>` : ""}</span>` +
+    let why;
+    list.innerHTML = hits.length ? hits.map((u, i) => `<li role="option" id="unit-find-${i}"><a href="${unitURL(u.unit)}"><span class="unit-find-name">${esc(u.unit)}${u.plant || u.aliases?.length ? `<small>${esc([u.plant, ...(u.aliases || [])].filter(Boolean).join(" · "))}</small>` : ""}` +
+      `${(why = matchedOn(u, input.value)) ? `<small class="unit-find-why">${esc(why)}</small>` : ""}</span>` +
       `<span class="unit-find-meta">${TECH_SHORT[u.tech] || esc(u.tech)}${u.mw ? ` · ${u.mw} MW` : ""}</span></a></li>`).join("")
       : `<li class="unit-find-none">No unit matches. <a href="unit.html">Browse all units</a></li>`;
     list.hidden = !input.value.trim();
@@ -541,5 +563,5 @@ function drawCurtailDay(el, legendEl, noteEl, c, day, opts = {}) {
     `Wind and solar curtailment ${day}`);
 }
 
-window.CX = { fromStart, SITE_START, setNote, getJSON, tryJSON, showTip, hideTip, clearPins, setCSV, readHash, writeHash, init, panelFromLink, css, esc, tickFormat, fmtKind, axisFmt, unitIndex, findUnits, drawCurtailDay };
+window.CX = { fromStart, SITE_START, setNote, getJSON, tryJSON, showTip, hideTip, clearPins, setCSV, readHash, writeHash, init, panelFromLink, css, esc, tickFormat, fmtKind, axisFmt, unitIndex, findUnits, matchedOn, drawCurtailDay };
 })();
