@@ -740,10 +740,10 @@ function drawLean() {
   ];
   const val = (r) => [r.d, r.h + 1, r.v, r.above, r.transit, r.coal, r.combined_cycle, r.gas_steam, r.combustion_turbine, r.nuc, r.wind, r.solar, r.storage, r.lam, r.hub];
   const scope = S.leanMonth === "all" ? "all days" : d3.timeFormat("%B %Y")(parseDate(S.leanMonth + "-15"));
-  window.CX.setNote($("lean-note"), `The ${top.length} hours with the least ${fossil ? "fossil" : "thermal"} output. Click a row to open that hour on the Offers page.`, `The ${top.length} hours with the least ${fossil ? "fossil (coal, combined cycle, gas steam and combustion turbine)" : "thermal (fossil and nuclear)"} output, ${scope}` +
+  window.CX.setNote($("lean-note"), `The ${top.length} hours with the least ${fossil ? "fossil" : "thermal"} output. Click a row to open that hour on the Real-time offers page.`, `The ${top.length} hours with the least ${fossil ? "fossil (coal, combined cycle, gas steam and combustion turbine)" : "thermal (fossil and nuclear)"} output, ${scope}` +
     `${S.leanPer === "day" ? ", one per day" : ""}, from the 60-day disclosure. Output counts every unit's telemetered MW, including units starting up, shutting down or online for under half the hour ("starting/stopping"). ` +
     `"Above min." is output above each running unit's LSL; the rest of the running units' output is what they could not shed without shutting down. ` +
-    `Storage is net output (negative while charging); hub avg is the HB_HUBAVG settlement point price. Click a row to open that hour on the Offers page.`);
+    `Storage is net output (negative while charging); hub avg is the HB_HUBAVG settlement point price. Click a row to open that hour on the Real-time offers page.`);
   if (!top.length) { el.innerHTML = `<p class="empty">No hours in this range.</p>`; setCSV(el, [], [], "Leanest thermal hours"); return; }
   el.innerHTML = `<table class="data"><thead><tr>${cols.map((c) => `<th${c.t ? ' class="t"' : ""}>${c.h}</th>`).join("")}</tr></thead><tbody>` +
     top.map((r) => `<tr data-href="beyond.html#date=${r.d}&he=${r.h + 1}&p=curves-panel" style="cursor:pointer">${cols.map((c) => `<td${c.t ? ' class="t"' : ""}>${c.f(r)}</td>`).join("")}</tr>`).join("") + "</tbody></table>";

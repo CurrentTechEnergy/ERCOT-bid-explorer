@@ -87,7 +87,7 @@
 
 <header class="masthead">
   <div class="brand">
-    <div class="nav-row"><nav class="nav" aria-label="Pages"><a href="index.html">Tomorrow</a><a href="beyond.html">Offers</a><a href="commitment.html">Commitment</a><a href="dayahead.html">Day-ahead offers</a><a href="renewables.html">Renewables</a><a href="batteries.html">Batteries</a><a href="unit.html">Units</a><span class="nav-sep" aria-hidden="true"></span><a href="changes.html" class="aux">What's changing</a><a href="fleet.html" class="aux">Fleet economics</a><a href="builder.html" class="aux">Graph builder</a><a href="guide.html" class="aux" aria-current="page">How offers work</a></nav></div>
+    <div class="nav-row"><nav class="nav" aria-label="Pages"><a href="index.html">Tomorrow</a><a href="beyond.html">Real-time offers</a><a href="commitment.html">Commitment</a><a href="dayahead.html">Day-ahead offers</a><a href="renewables.html">Renewables</a><a href="batteries.html">Batteries</a><a href="unit.html">Units</a><span class="nav-sep" aria-hidden="true"></span><a href="changes.html" class="aux">What's changing</a><a href="fleet.html" class="aux">Fleet economics</a><a href="builder.html" class="aux">Graph builder</a><a href="guide.html" class="aux" aria-current="page">How offers work</a></nav></div>
     <h1>How offers work</h1>
     <p class="sub">Why thermal plants keep running when prices go negative. A walk through offer curves, minimum output (LSL), real-time dispatch (SCED), the day-ahead market (DAM) and on/off decisions, using one real day and real units from ERCOT's 60-day disclosures, then how the site counts revenue and reads hedges from wind and solar offers.</p>
   </div>
@@ -155,7 +155,7 @@
       <p>Two limits matter. <strong>HSL</strong> (high sustained limit) is the most the unit can produce right now. <strong>LSL</strong> (low sustained limit) is the least it can produce and stay online: its minimum output. Rio Nogales' LSL is about <span id="s2-lsl">475</span> MW out of <span id="s2-hsl">800</span> MW.</p>
       <p>The shaded block from 0 MW to LSL is <strong>not a bid</strong>. While the unit is on, those MW run at any price; the only way to stop them is to turn the unit off (step 1). Whatever prices the curve shows below LSL never set dispatch or the market price.</p>
       <p>Switch to <strong>"As ERCOT uses it"</strong> to see the curve SCED actually ran on. ERCOT fills the space from 0 MW up to the first offered point with a placeholder price (usually −$20), so in ERCOT's version the LSL block looks like MW offered at −$20. It is minimum output, not an offer to run at −$20.</p>
-      <p class="see"><a id="s2-link" href="beyond.html#p=curves-panel">See the technology totals in the Offer curves chart on Offers →</a></p>
+      <p class="see"><a id="s2-link" href="beyond.html#p=curves-panel">See the technology totals in the Offer curves chart on Real-time offers →</a></p>
     </div>
     <div class="fig">
       <div class="panel-tools">
@@ -230,13 +230,13 @@
       <p>Add up every online unit and the minimum output blocks form a large spike at the bottom of the offer stack. In ERCOT's version (step 2) the spike sits at −$20, which makes it look as though many gigawatts are bid at −$20 and are ready to move. They are not.</p>
       <p><strong>"From LSL"</strong> is how this site draws and counts offers instead. For each technology it takes the online units' total LSL and adds only the MW they offer <em>above</em> LSL at or below each price. The curve runs flat at the LSL total from the left edge, then rises with the real bids. The flat part answers "how much runs regardless of price", and the rise answers "how much moves with price". Switch views to compare.</p>
       <ul>
-        <li><strong>Offer curves (Offers page):</strong> "From LSL" is the default. "As ERCOT prices it" shows the curves SCED saw, with minimum output at the placeholder price.</li>
-        <li><strong>Marginal generation by price and Thermal offers and fuel prices (Offers page):</strong> count only MW above LSL, since only those can be marginal.</li>
+        <li><strong>Offer curves (Real-time offers page):</strong> "From LSL" is the default. "As ERCOT prices it" shows the curves SCED saw, with minimum output at the placeholder price.</li>
+        <li><strong>Marginal generation by price and Thermal offers and fuel prices (Real-time offers page):</strong> count only MW above LSL, since only those can be marginal.</li>
         <li><strong>Unit metrics:</strong> "≤ $0 as submitted" is a share of the range from LSL to HSL. "First offer price above $0", implied heat rate and the bidding-change signals read the curve from LSL up.</li>
         <li><strong>Charts that keep LSL on purpose:</strong> the Floor chart's "≤ −$20, as used", "≤ $0 as used", thermal output in cheap hours and Stay-on. These are about who is running, so minimum output belongs in them.</li>
         <li><strong>2-day days</strong> (the most recent two months) have no unit limits, so they show curves as ERCOT prices them and the "From LSL" button is off. The steps at −$50 and −$20 in their thermal curve are minimum output, and some minimum output is also priced between $0 and about $25.</li>
       </ul>
-      <p class="see"><a id="s6-link" href="beyond.html#p=curves-panel">Open this hour on the Offers page →</a></p>
+      <p class="see"><a id="s6-link" href="beyond.html#p=curves-panel">Open this hour on the Real-time offers page →</a></p>
     </div>
     <div class="fig">
       <div class="panel-tools">
