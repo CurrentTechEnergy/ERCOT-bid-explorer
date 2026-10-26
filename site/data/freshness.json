@@ -1,5 +1,5 @@
 {
- "checked": "2026-10-26T15:57:07Z",
+ "checked": "2026-10-26T16:13:47Z",
  "today": "2026-10-26",
  "sources": {
   "2d": {
@@ -116,10 +116,10 @@
   },
   "nrc": {
    "label": "NRC reactor status",
-   "latest": "2026-10-23",
-   "behind": 3,
+   "latest": "2026-10-26",
+   "behind": 0,
    "allowed": 2,
-   "stale": true
+   "stale": false
   }
  }
 }
