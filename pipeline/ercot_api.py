@@ -37,6 +37,7 @@ class ErcotAPI:
         self.session = requests.Session()
         self.raw = RawStore()         # our own copy of every file downloaded (pipeline/raw_store.py)
         self._docs = {}               # (emil, doc id) -> archive listing entry, for the copy's metadata
+        self.store_only = False       # download() reads only the raw store, never ERCOT (reprocess runs)
 
     # ------------------------------------------------------------ auth ----
     def _id_token(self) -> str:
@@ -102,11 +103,14 @@ class ErcotAPI:
         return out
 
     def download(self, emil: str, doc_id: int) -> bytes:
-        """One archive document: our stored copy when there is one, else from ERCOT (and kept)."""
+        """One archive document: our stored copy when there is one, else from ERCOT (and kept), unless
+        store_only is set."""
         blob = self.raw.get(emil, doc_id)
         if blob is not None:
             print(f"    doc {doc_id}: {len(blob) / 1e6:.1f} MB from the raw store", flush=True)
             return blob
+        if self.store_only:
+            raise RuntimeError(f"doc {doc_id} is not in the raw store, and this run reads only the store")
         blob = timed(f"doc {doc_id} from ERCOT",
                      lambda: self._request("GET", f"{BASE}/archive/{emil}", params={"download": doc_id}).content)
         self.raw.put(emil, doc_id, blob, self._docs.get((emil, doc_id)))

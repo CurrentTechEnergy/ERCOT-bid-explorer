@@ -24,6 +24,11 @@ on:
         type: boolean
         required: false
         default: false
+      reprocess_store_only:
+        description: "With reprocess: read the files only from the raw store (R2), never from ERCOT. Days whose file is not in the store are left for later"
+        type: boolean
+        required: false
+        default: true
       outages_start:
         description: "Also fetch ERCOT's outage reports from operating day (YYYY-MM-DD); with a normal update"
         required: false
@@ -131,6 +136,7 @@ jobs:
           BACKFILL_END: ${{ github.event.inputs.backfill_end }}
           MAX_FILES: ${{ github.event.inputs.max_files }}
           REPROCESS_60D: ${{ github.event.inputs.reprocess_60d }}
+          STORE_ONLY: ${{ github.event.inputs.reprocess_store_only }}
           OUTAGES_START: ${{ github.event.inputs.outages_start }}
           OUTAGES_END: ${{ github.event.inputs.outages_end }}
           UNIT_DATA_DIR: unitdata
@@ -142,7 +148,7 @@ jobs:
             [[ "$MIS_DOCS" =~ ^[0-9\ ]+$ ]] || { echo "::error::mis_docs takes document ids separated by spaces"; exit 1; }
             python -m pipeline.update --mis-docs $MIS_DOCS
           elif [ "$REPROCESS_60D" = "true" ]; then
-            python -m pipeline.update --reprocess-60d --max-files "${MAX_FILES:-60}"
+            python -m pipeline.update --reprocess-60d --max-files "${MAX_FILES:-60}" $([ "$STORE_ONLY" != "false" ] && echo --store-only)
           elif [ -n "$BACKFILL_START" ]; then
             python -m pipeline.update --backfill "$BACKFILL_START" "${BACKFILL_END:-$BACKFILL_START}" --max-files "${MAX_FILES:-60}"
           elif [ -n "$OUTAGES_START" ]; then
@@ -240,9 +246,11 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           MAX_FILES: ${{ github.event.inputs.max_files }}
           IGNORE_CHECKS: ${{ github.event.inputs.ignore_checks }}
+          STORE_ONLY: ${{ github.event.inputs.reprocess_store_only }}
         run: |
           gh workflow run update.yml -R "$GITHUB_REPOSITORY" --ref "$GITHUB_REF_NAME" \
-            -f reprocess_60d=true -f max_files="${MAX_FILES:-60}" -f ignore_checks="${IGNORE_CHECKS:-false}"
+            -f reprocess_60d=true -f max_files="${MAX_FILES:-60}" -f ignore_checks="${IGNORE_CHECKS:-false}" \
+            -f reprocess_store_only="${STORE_ONLY:-true}"
 
   # Publishing to GitHub Pages is optional: set the repository variable ENABLE_PAGES=true
   # (Settings > Secrets and variables > Actions > Variables) and set Pages source to "GitHub Actions".
