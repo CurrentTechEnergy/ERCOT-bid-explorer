@@ -1,5 +1,4 @@
-/* Beyond baseload, one day: the expected dispatch stack (data/forecast/stack/<date>.json.gz,
-   pipeline/forecast/stack.py) and the Day view's price-setting charts (offer curves, marginal offer
+/* Beyond baseload, one day: the Day view's price-setting charts (offer curves, marginal offer
    stack, marginal supply, through the day), lifted from the retired Day view. The across-days panels on the same
    page are beyond-range.js. */
 (() => {
@@ -59,7 +58,7 @@ const S = {
   index: null, source: "2d", date: null, hour: 12, version: "curves",
   xrange: "low", xMin: -250, xMax: 100, osMin: -100, osMax: 1000, mode: "lines", axes: "price_x", location: "lambda",
   lslMode: "from_lsl",     // offer curves: "from_lsl" (LSL plus the MW offered above it) or "ercot" (as ERCOT prices them)
-  hidden: new Set(), stackBy: "group", stack: null, stackIdx: null, dalam: null,
+  hidden: new Set(),
   day: null, prices: null, summaries: {}, osView: "hour", osUnit: "share", osSmooth: "smooth",
 };
 const $ = (id) => document.getElementById(id);
@@ -215,7 +214,6 @@ async function loadDay() {
     S.source === "2d" && has("2dgen") ? tryJSON(`data/2dgen/${S.date}.json.gz`) : null,
   ]);
   S.day = day; S.prices = prices;
-  S.stack = S.stackIdx && S.stackIdx.days.includes(S.date) ? await tryJSON(`data/forecast/stack/${S.date}.json.gz`) : null;
   S.day60 = S.source === "60d" ? day : null; S.day2 = S.source === "60d" ? null : day; S.gen = gen;
 }
 
@@ -244,7 +242,6 @@ function render() {
   $("curve-2d-note").hidden = S.source === "60d";
   $("curve-title-note").textContent = S.date ? `${S.date} · ${heLabel(S.hour)}${S.source !== "60d" ? " · as ERCOT prices it: the 2-day report has no unit limits" : curvesFromLSL() ? " · from LSL" : S.lslMode === "from_lsl" ? " · as ERCOT prices them (no LSL data for this day yet)" : " · as ERCOT prices them"}` : "";
   renderLegend();
-  drawStack();
   drawCurves();
   drawDay();
   drawMarginal();
@@ -262,7 +259,7 @@ function drawCurtailDay() {
 
 // the address bar carries the view, so a copied link reopens this exact day, hour and settings
 const NUM_KEYS = new Set(["xMin", "xMax", "osMin", "osMax"]);
-const VIEW_KEYS = { loc: "location", xr: "xrange", xmin: "xMin", xmax: "xMax", osmin: "osMin", osmax: "osMax", mode: "mode", axes: "axes", lsl: "lslMode", ver: "version", sb: "stackBy", os: "osView", osu: "osUnit", osm: "osSmooth" };
+const VIEW_KEYS = { loc: "location", xr: "xrange", xmin: "xMin", xmax: "xMax", osmin: "osMin", osmax: "osMax", mode: "mode", axes: "axes", lsl: "lslMode", ver: "version", os: "osView", osu: "osUnit", osm: "osSmooth" };
 // price limits go in the link only when they are in use
 const HIDE_KEY = { xMin: () => S.xrange !== "custom", xMax: () => S.xrange !== "custom",
   osMin: () => S.osMin === OS_DEFAULT[0] && S.osMax === OS_DEFAULT[1], osMax: () => S.osMin === OS_DEFAULT[0] && S.osMax === OS_DEFAULT[1] };
@@ -290,93 +287,6 @@ function emptyMsg(el, msg) { el.innerHTML = `<p class="empty">${msg}</p>`; }
 function size(el, h) {
   const w = Math.max(280, el.clientWidth || el.parentElement.clientWidth || 600);
   return { w, h };
-}
-
-// ---- expected dispatch stack: committed units' offers for the hour, committed set fixed for the day ----
-// Drawn from data/forecast/stack/<date>.json.gz (pipeline/forecast/stack.py); the page only stacks
-// the series it is given.
-const STACK_GROUPS = { never: ["Always on when available", "--g1"], seasonal: ["Seasonal", "--g2"], multiday: ["Multi-day", "--g3"],
-  daily1: ["Daily, under once a week", "--g4"], daily2: ["Daily, 1 to 2 a week", "--g5"], daily3: ["Daily, over 2 a week", "--g6"],
-  never_on: ["Never on", "--c-other"], ungrouped: ["Not yet grouped", "--c-other"] };
-const STACK_TECHS = { nuclear: ["Nuclear", "--c5"], coal: ["Coal & lignite", "--c8"], combined_cycle: ["Combined cycle", "--c1"],
-  gas_steam: ["Gas steam", "--c6"], combustion_turbine: ["Combustion turbine", "--c2"] };
-function drawStack() {
-  const el = $("stack-chart"), D = S.stack, h = S.hour;
-  $("stack-title-note").textContent = S.date ? `${S.date} · ${heLabel(h)}` : "";
-  if (!D) {
-    $("stack-legend").innerHTML = "";
-    return emptyMsg(el, S.stackIdx ? "No forecast for this day: the stack is built for days with day-ahead prices at the nodes (" +
-      `${S.stackIdx.days[0]} to ${S.stackIdx.days.at(-1)}).` : "No forecast files loaded.");
-  }
-  // the price rule: the hour's real-time system lambda once the day's prices are in, else the
-  // day-ahead system lambda (the stack itself is the forecast's, cleared against neither)
-  const rtLam = S.prices && S.prices.lambda && S.prices.lambda.hourly_mean ? S.prices.lambda.hourly_mean[h] : null;
-  const daLam = S.dalam && S.dalam.days && S.dalam.days[S.date] ? S.dalam.days[S.date][h] : null;
-  const rt = rtLam != null, price = rt ? rtLam : daLam;
-  const byGroup = S.stackBy === "group";
-  const names = byGroup ? STACK_GROUPS : STACK_TECHS;
-  const block = byGroup ? D.group : D.tech;
-  const list = (byGroup ? D.groups : D.techs).filter((k) => block[k] && block[k].n)
-    .map((k) => ({ id: k, label: (names[k] || [k])[0], color: (names[k] || [k, "--c-other"])[1], mw: block[k].mw[h], n: block[k].n }));
-  $("stack-legend").innerHTML = list.map((s) => `<span><span class="sw" style="background:var(${s.color})"></span>${s.label}</span>`).join("") +
-    `<span><span class="sw" style="height:2px;background:var(--price)"></span>${rt ? "Real-time system lambda" : "Day-ahead system lambda"}</span>` +
-    `<span><span class="sw sw-line"></span>Committed minimum</span>`;
-  const P = D.prices, hub = price;
-  const hi = Math.min(P.at(-1), Math.max(150, hub != null ? Math.ceil((hub + 40) / 50) * 50 : 150)), lo = -30;
-  const idx = P.map((p, i) => i).filter((i) => P[i] >= lo && P[i] <= hi);
-  const fl = D.fleet.mw[h];
-  const { w } = size(el), H = 340, m = { t: 18, r: 16, b: 40, l: 64 }, narrow = w < 560;
-  const x = d3.scaleLinear().domain([lo, hi]).range([m.l, w - m.r]);
-  const y = d3.scaleLinear().domain([0, d3.max(idx, (i) => fl[i]) || 1]).nice().range([H - m.b, m.t]);
-  const svg = d3.create("svg").attr("viewBox", `0 0 ${w} ${H}`);
-  svg.append("g").attr("class", "gridline").attr("transform", `translate(${m.l},0)`).call(d3.axisLeft(y).ticks(5).tickSize(-(w - m.l - m.r)).tickFormat(""));
-  // stacked areas, bottom series first
-  const base = idx.map(() => 0);
-  const layers = list.map((s) => {
-    const y0 = base.slice(), y1 = idx.map((i, k) => (base[k] += s.mw[i] || 0));
-    return { s, y0, y1 };
-  });
-  layers.forEach(({ s, y0, y1 }) => {
-    svg.append("path").attr("fill", css(s.color)).attr("fill-opacity", 0.85)
-      .attr("d", d3.area().x((i) => x(P[i])).y0((i, k) => y(y0[k])).y1((i, k) => y(y1[k]))(idx));
-  });
-  // committed minimum: what the stack holds at the bottom of the price grid
-  const minAll = fl[0];
-  svg.append("line").attr("class", "price-rule").attr("stroke-dasharray", "4 3").attr("x1", m.l).attr("x2", w - m.r).attr("y1", y(minAll)).attr("y2", y(minAll));
-  svg.append("text").attr("class", "axis-title").attr("x", m.l + 4).attr("y", y(minAll) - 5)
-    .attr("paint-order", "stroke").attr("stroke", css("--surface")).attr("stroke-width", 3)
-    .text(`committed: ${fmtMW(minAll)} MW runs at any price`);
-  if (hub != null && hub >= lo && hub <= hi) {
-    svg.append("line").attr("class", "price-rule").attr("x1", x(hub)).attr("x2", x(hub)).attr("y1", m.t).attr("y2", H - m.b);
-    const j = d3.bisectLeft(P, hub);
-    const right = x(hub) > (m.l + w - m.r) / 2;   // label on the side with room
-    svg.append("text").attr("class", "axis-title").attr("x", x(hub) + (right ? -5 : 5)).attr("y", m.t + 10)
-      .attr("text-anchor", right ? "end" : "start")
-      .attr("paint-order", "stroke").attr("stroke", css("--surface")).attr("stroke-width", 3)
-      .text(narrow ? `λ ${fmtPrice(hub)} · ${fmtMW(fl[Math.min(j, P.length - 1)])} MW`
-        : `${rt ? "real-time" : "day-ahead"} lambda ${fmtPrice(hub)} · ${fmtMW(fl[Math.min(j, P.length - 1)])} MW offered below it`);
-  }
-  svg.append("g").attr("class", "axis").attr("transform", `translate(0,${H - m.b})`).call(axisFmt(d3.axisBottom(x), narrow ? 4 : 8, "$").tickSizeOuter(0));
-  svg.append("g").attr("class", "axis").attr("transform", `translate(${m.l},0)`).call(axisFmt(d3.axisLeft(y), 5).tickSizeOuter(0));
-  svg.append("text").attr("class", "axis-title").attr("x", m.l).attr("y", 10).text(narrow ? "MW offered below the price" : "MW offered below the price by the units expected online");
-  svg.append("text").attr("class", "axis-title").attr("x", w - m.r).attr("y", H - 6).attr("text-anchor", "end").text("Price ($/MWh)");
-  const cross = svg.append("line").attr("class", "crosshair").attr("y1", m.t).attr("y2", H - m.b).style("display", "none");
-  svg.append("rect").attr("x", m.l).attr("y", m.t).attr("width", w - m.l - m.r).attr("height", H - m.t - m.b).attr("fill", "transparent")
-    .on("pointermove", (ev) => {
-      const p = x.invert(d3.pointer(ev)[0]);
-      const k = Math.max(0, Math.min(idx.length - 1, d3.bisectLeft(idx.map((i) => P[i]), p)));
-      const i = idx[k];
-      cross.style("display", null).attr("x1", x(P[i])).attr("x2", x(P[i]));
-      showTip(ev, `<h4>Below ${fmtPrice(P[i])} · ${heLabel(h)}</h4><table>` +
-        [...list].reverse().map((s) => `<tr><td><span class="sw" style="background:var(${s.color})"></span></td><td>${s.label}</td><td class="n">${fmtMW(s.mw[i])} MW</td><td class="n">min ${fmtMW(s.mw[0])}</td></tr>`).join("") +
-        `<tr><td></td><td><b>All committed thermal</b></td><td class="n"><b>${fmtMW(fl[i])} MW</b></td><td class="n">min ${fmtMW(fl[0])}</td></tr></table>` +
-        `<p class="tip-body">Above the committed minimum: ${fmtMW(fl[i] - fl[0])} MW. Up to ${fmtMW(D.fleet.max[h])} MW at any price.</p>`);
-    })
-    .on("pointerleave", () => { cross.style("display", "none"); hideTip(); });
-  el.replaceChildren(svg.node());
-  setCSV(el, ["price", ...list.map((s) => `${s.label} (MW)`), "All committed thermal (MW)"],
-    P.map((p, i) => [p, ...list.map((s) => s.mw[i]), fl[i]]), `Expected thermal dispatch stack ${S.date} ${heLabel(h)}`);
-  $("stack-foot").textContent = `${d3.sum(list, (s) => s.n)} thermal units expected online for at least part of the day, each weighted by its odds of running.`;
 }
 
 // ---- offer curve chart ----------------------------------------------------
@@ -985,8 +895,7 @@ async function boot() {
   }
   const [s2, s60, sp] = await Promise.all([tryJSON("data/summary_2d.json.gz"), tryJSON("data/summary_60d.json.gz"), tryJSON("data/summary_prices.json.gz")]);
   S.summaries = { "2d": s2 || {}, "60d": s60 || {}, prices: sp || {} };
-  [S.stackIdx, S.dalam, S.curt] = await Promise.all([tryJSON("data/forecast/index.json.gz"), tryJSON("data/dam_lambda.json.gz"),
-    tryJSON("data/curve_trends.json.gz").then((c) => c && c.curt)]);
+  S.curt = await tryJSON("data/curve_trends.json.gz").then((c) => c && c.curt);
   const D = S.index.days;
   const last = (a) => (a.length ? [...a].sort().at(-1) : "none");
   $("status").textContent = `2-day: ${D["2d"].length} day(s), latest ${last(D["2d"])} · 60-day: ${D["60d"].length} day(s), latest ${last(D["60d"])} · prices: ${D.prices.length} day(s) · updated ${S.index.updated.replace("T", " ").replace("Z", " UTC")}`;
@@ -1025,11 +934,9 @@ async function boot() {
   bindSeg("mode", "mode");
   bindSeg("axes", "axes");
   if (!["from_lsl", "ercot"].includes(S.lslMode)) S.lslMode = "from_lsl";
-  if (!["group", "tech"].includes(S.stackBy)) S.stackBy = "group";
   setSeg("lsl-mode", S.lslMode); bindSeg("lsl-mode", "lslMode");
   setSeg("os-view", S.osView); setSeg("os-unit", S.osUnit);
   bindSeg("os-view", "osView", drawOfferStack);
-  setSeg("stack-by", S.stackBy); bindSeg("stack-by", "stackBy", drawStack);
   bindSeg("os-unit", "osUnit", drawOfferStack);
   setSeg("os-smooth", S.osSmooth); bindSeg("os-smooth", "osSmooth", drawOfferStack);
   $("date").onchange = async (e) => { S.date = e.target.value; await changeDay(); };

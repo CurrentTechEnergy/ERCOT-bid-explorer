@@ -63,7 +63,7 @@ async function boot() {
   if (new URLSearchParams(location.search).get("unit")) $("unit-empty").hidden = true;
   else {
     $("unit-title").textContent = "Units"; document.title = "Units · ERCOT Bids";
-    $("unit-meta").textContent = "Every unit the site follows. Open one for the forecast's call and the decision history behind it, when it ran, how it bids, and what it earned.";
+    $("unit-meta").textContent = "Every unit the site follows. Open one for its turn-off decisions and the loss it rides through, when it ran, how it bids, and what it earned.";
   }
   const seg = $("dir-tech");
   seg.innerHTML = TECHS.map((t) => `<button type="button" role="radio" data-v="${t.id}" aria-checked="${t.id === S.tech}">${t.label}</button>`).join("");

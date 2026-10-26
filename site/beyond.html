@@ -32,7 +32,7 @@
 
 <header class="masthead">
   <div class="brand">
-    <div class="nav-row"><nav class="nav" aria-label="Pages"><a href="index.html">Tomorrow</a><a href="beyond.html" aria-current="page">Real-time offers</a><a href="commitment.html">Commitment</a><a href="dayahead.html">Day-ahead offers</a><a href="renewables.html">Renewables</a><a href="batteries.html">Batteries</a><a href="unit.html">Units</a><span class="nav-sep" aria-hidden="true"></span><a href="changes.html" class="aux">What's changing</a><a href="fleet.html" class="aux">Fleet economics</a><a href="builder.html" class="aux">Graph builder</a><a href="guide.html" class="aux">How offers work</a></nav></div>
+    <div class="nav-row"><nav class="nav" aria-label="Pages"><a href="index.html">A day in ERCOT</a><a href="beyond.html" aria-current="page">Real-time offers</a><a href="commitment.html">Commitment</a><a href="dayahead.html">Day-ahead offers</a><a href="renewables.html">Renewables</a><a href="batteries.html">Batteries</a><a href="unit.html">Units</a><span class="nav-sep" aria-hidden="true"></span><a href="changes.html" class="aux">What's changing</a><a href="fleet.html" class="aux">Fleet economics</a><a href="builder.html" class="aux">Graph builder</a><a href="guide.html" class="aux">How offers work</a></nav></div>
     <h1>Real-time offers</h1>
     <p class="sub">What is bid above the committed minimum, who is at the margin, and what a flexible load buys against when power is cheap.</p>
   </div>
@@ -178,26 +178,6 @@
     </div>
     <div class="legend legend-static" id="curt-day-legend"></div>
     <div class="chart" id="curt-chart"></div>
-  </section>
-
-  <section class="panel panel-wide" id="stack-panel">
-    <div class="panel-head">
-      <div>
-        <h2>Expected thermal dispatch stack <span class="h-note" id="stack-title-note"></span></h2>
-        <p class="note">Offers from the units expected online today. The flat block is minimum output that runs at any price; where the stack meets the system lambda is roughly thermal output.</p>
-        <details class="how"><summary>How it's built</summary><p class="note">Given who is committed today: the MW the thermal units expected online offer below each price in the selected hour, stacked by how often each unit turns off or by technology. The committed set is fixed for the day (the Overview's forecast: each unit's own day economics at its own node), so the flat block at the left is the minimum output that runs at any price, and only what rises above it moves with the hourly price. The vertical line is the hour's system lambda, real-time once the day's prices are in and day-ahead before that; where the stack meets it is roughly the thermal output at that price. Every unit faces the same price here, so it is close to, not equal to, the Overview's expected output, which uses each node's own price. The floor uses the minimum output of the configuration each combined-cycle train was last seen in, so it can sit above the Overview's committed minimum, which uses the day-ahead limit. Units without an offer curve sit flat at their usual output; nuclear at its maximum.</p></details>
-      </div>
-      <div class="panel-tools">
-        <div class="seg seg-sm" id="stack-by" role="radiogroup" aria-label="Stack by">
-          <button type="button" data-v="group" role="radio">By how often it turns off</button>
-          <button type="button" data-v="tech" role="radio">By technology</button>
-        </div>
-      </div>
-    </div>
-    <div class="legend legend-static" id="stack-legend"></div>
-    <div class="chart" id="stack-chart"></div>
-    <p class="note" id="stack-foot"></p>
-    <p class="note step-link"><a href="commitment.html">Why these units are on: Commitment →</a></p>
   </section>
 
   <h2 class="page-section">Across days: who sets price, and against what fuel <span class="h-note" id="range-status"></span></h2>
