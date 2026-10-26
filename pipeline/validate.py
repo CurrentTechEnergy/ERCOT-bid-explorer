@@ -36,6 +36,11 @@ consistency:
   operator          operator-informed day file (pipeline/models/operator_informed.py): a model and
                     version, every unit with 24 hours of chances between 0 and 1, awards and
                     COP plan 0 or 1 (plan null where none), the reasons' hour between 1 and 24
+  operator_scores   the operator model's scorecard (pipeline/models/operator_scores.py), checked
+                    once per run under the pseudo-day "events": a model and version, the known
+                    columns, every model in every month and technology, right at most hours,
+                    caught at most the switches, a Brier sum at most the hours, and a month for
+                    the latest operator day
   unit_curves       thermal offer curves by hour (pipeline/unit_curves.py): every hourly index
                     points at a stored curve, each curve's prices and MW never fall, and the
                     unit-hours with a curve file entry are the thermal unit-hours online in the
@@ -374,6 +379,31 @@ def _operator_checks(day, oi):
     day.add("operator", "error" if bad else "ok", "; ".join(bad[:5]) or f"{len(oi['units'])} units, 24 hours each")
 
 
+def _operator_score_checks(day):
+    from .models.operator_scores import COLUMNS, MODELS, PATH as SCORES_PATH
+    sc = read_json_gz(SCORES_PATH, default=None)
+    if sc is None:
+        return
+    bad = []
+    if not sc.get("model") or not sc.get("version"):
+        bad.append("no model or version")
+    if tuple(sc.get("columns") or ()) != COLUMNS or tuple(sc.get("models") or ()) != MODELS:
+        bad.append("columns or models not the builder's")
+    else:
+        ci = {c: i for i, c in enumerate(COLUMNS)}
+        seen = {}
+        for r in sc.get("rows", []):
+            seen.setdefault((r[ci["month"]], r[ci["tech"]]), set()).add(r[ci["model"]])
+            if r[ci["right"]] > r[ci["hours"]] or r[ci["off_caught"]] > r[ci["off_n"]] or r[ci["on_caught"]] > r[ci["on_n"]] \
+                    or (r[ci["brier"]] is not None and r[ci["brier"]] > r[ci["hours"]] + 1e-6) or min(v for v in r[6:] if v is not None) < 0:
+                bad.append(f"{r[:6]}: counts out of range")
+        bad += [f"{k}: models missing" for k, v in seen.items() if v != set(MODELS)]
+        days = (read_json_gz(DATA_DIR / "operator" / "index.json.gz", default=None) or {}).get("days", [])
+        if days and days[-1][:7] not in {m for m, _ in seen}:
+            bad.append(f"no month for the latest operator day {days[-1]}")
+    day.add("operator_scores", "error" if bad else "ok", "; ".join(bad[:5]) or f"{len(sc.get('rows', []))} rows, {len(MODELS)} models")
+
+
 def _fit_checks(day, ft):
     r = ft["residual"]
     day.add("fit_residual", "ok" if r["after"] <= r["before"] else "error",
@@ -663,6 +693,7 @@ def check_files(index):
         orphan = [m["unit"] for m in ch.get("moves", []) if m["unit"] not in ch.get("units", {}) or not isinstance(m.get("to"), (int, float))]
         day.add("cutoff_moves", "error" if orphan else "ok", f"{len(orphan)} move(s) without rows, e.g. {orphan[:3]}" if orphan else f"{len(ch.get('moves', []))} moves")
     _dam_offer_checks(day)
+    _operator_score_checks(day)
     ui = read_json_gz(UNIT_INDEX_PATH, default=None)
     if ui is not None:
         rows = ui.get("rows", [])

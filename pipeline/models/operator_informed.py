@@ -48,8 +48,9 @@ Writes data/operator/<date>.json.gz for the Unit page (build_days, run by the da
           where none, "award" [24] 1 where awarded at least AWARD_LSL x LSL, "why_h" the hour the
           reasons are for, "why_from" its state the hour before, "why" [[driver, push toward
           off in log-odds], ...] top three}}
-and data/operator/index.json.gz {"model", "version", "days"}, and data/operator/decisions.json.gz
-(build_decision_view) for the decision history chart.  Every day is rewritten when
+and data/operator/index.json.gz {"model", "version", "days"}, data/operator/decisions.json.gz
+(build_decision_view) for the decision history chart, and data/operator/scores.json.gz, the
+scorecard against the baselines (pipeline/models/operator_scores.py).  Every day is rewritten when
 VERSION changes; otherwise only new days.  The reasons are for the hour of the unit's first
 actual switch that day, else the first hour the call switches, else its cheapest hour, from
 the true state before it (drivers).
@@ -509,7 +510,10 @@ def build_days(index: dict, rebuild: bool = False) -> list:
     days = sorted(have | set(done))
     write_json_gz(ip, {"model": NAME, "version": VERSION, "days": days})
     n = build_decision_view(days)
-    print(f"{NAME} {VERSION}: {len(done)} day file(s) written, {len(days)} in all; {n} decision days judged", flush=True)
+    from .operator_scores import build_scores
+    m = build_scores(ctx, days)
+    print(f"{NAME} {VERSION}: {len(done)} day file(s) written, {len(days)} in all; {n} decision days judged; "
+          f"{m} unit-days scored against the baselines", flush=True)
     return done
 
 
