@@ -264,6 +264,8 @@ The regular update rebuilds the loaded 60-day days. Years before that come from 
 
 Changes are held steps of $5 in the minimum-energy offer (tested on the offer, so a gas move alone is not one; major when it crosses the fuel-cost line), price-outs (1 to 6 days $10 or more above the unit's 30-day median), start-cost changes of 25%, a train or unit stopping or starting three-part offers, and wind and solar DA floor steps and filing. Combustion turbine events are never major. Daily signatures are kept per year in `site/data/dam_offers/sig-YYYY.json.gz`.
 
+The **Day-ahead offers** page (`site/dayahead.html`, `dayahead.js`) shows the fleet view: combined cycle trains on each cheap day by their lowest offer and how many were kept on through the stretch, the award rate by offer less node price, the median train offer less fuel cost (kept on at the configuration that won, left out at the lowest), the trains and plants table, the wind and solar DA floor table and the recent major changes. The Unit page's **Day-ahead offer** panel (`unit-dam.js`) charts one unit's offers against its fuel-cost line by configuration, with each configuration's typical LSL, HSL and hot start, or for wind and solar the DA floor against the RT floor and the DA award share.
+
 DAM format 3 adds the hourly start-up and minimum-energy costs. A **reprocess_60d** run fills it in for older days; such runs read the raw store only (`reprocess_store_only`, on by default) and leave a day whose file is not there, since ERCOT's terms limit downloading the same report again.
 
 ### Hourly history (2019 on)

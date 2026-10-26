@@ -48,7 +48,7 @@
 
 <header class="masthead">
   <div class="brand">
-    <div class="nav-row"><nav class="nav" aria-label="Pages"><a href="index.html">Tomorrow</a><a href="beyond.html">Offers</a><a href="commitment.html">Commitment</a><a href="renewables.html">Renewables</a><a href="batteries.html">Batteries</a><a href="unit.html" aria-current="page">Units</a><span class="nav-sep" aria-hidden="true"></span><a href="changes.html" class="aux">What's changing</a><a href="fleet.html" class="aux">Fleet economics</a><a href="builder.html" class="aux">Graph builder</a><a href="guide.html" class="aux">How offers work</a></nav></div>
+    <div class="nav-row"><nav class="nav" aria-label="Pages"><a href="index.html">Tomorrow</a><a href="beyond.html">Offers</a><a href="commitment.html">Commitment</a><a href="dayahead.html">Day-ahead offers</a><a href="renewables.html">Renewables</a><a href="batteries.html">Batteries</a><a href="unit.html" aria-current="page">Units</a><span class="nav-sep" aria-hidden="true"></span><a href="changes.html" class="aux">What's changing</a><a href="fleet.html" class="aux">Fleet economics</a><a href="builder.html" class="aux">Graph builder</a><a href="guide.html" class="aux">How offers work</a></nav></div>
     <h1 id="unit-title">Unit</h1>
     <p class="sub" id="unit-meta">Everything about one unit: the forecast's call and the decision history behind it, when it ran, how it bids, and what it earned.</p>
     <p class="sub" id="unit-who" hidden></p>
@@ -173,6 +173,19 @@
     <div class="units-wrap" id="bid-changes"></div>
   </section>
 
+  <section class="panel panel-wide" id="dam-panel" hidden>
+    <div class="panel-head">
+      <div>
+        <h2>Day-ahead offer <span class="h-note" id="dam-title-note"></span><a class="help-q" href="dayahead.html" title="How three-part offers work" aria-label="How three-part offers work">?</a></h2>
+        <p class="note" id="dam-note"></p>
+      </div>
+    </div>
+    <div class="legend legend-static" id="dam-legend"></div>
+    <div class="chart" id="dam-chart"></div>
+    <div class="chart chart-short" id="dam-share" hidden></div>
+    <p class="note" id="dam-foot"></p>
+  </section>
+
   <section class="panel panel-wide" id="renew-panel" hidden>
     <div class="panel-head">
       <div>
@@ -259,6 +272,7 @@
 <script src="unit-econ.js"></script>
 <script src="unit-battery.js"></script>
 <script src="unit-renew.js"></script>
+<script src="unit-dam.js"></script>
 <script src="unit-events.js"></script>
 <script src="unit-dir.js"></script>
 </body>
