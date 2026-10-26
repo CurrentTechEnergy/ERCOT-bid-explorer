@@ -65,6 +65,7 @@ from .renew_changes import build_renew_changes
 from .dam_offers import build_dam_offers
 from .offtakers import build_offtakers
 from .models.cutoff_history import build_cutoff_history
+from .models.operator_informed import build_days as build_operator_days
 from .events import build_events
 from .series import build_series
 from .storage import build_storage
@@ -487,7 +488,7 @@ def main(argv=None):
     ap.add_argument("--max-files", type=int, default=None, help="cap curve files per report per run")
     ap.add_argument("--outages-backfill", nargs=2, metavar=("START", "END"),
                     help="also fetch the outage reports for every operating day in this range")
-    ap.add_argument("--skip", choices=["2d", "2dgen", "60d", "dam", "cop", "prices", "outages", "nrc", "gas", "forecast", "entities"], action="append", default=[])
+    ap.add_argument("--skip", choices=["2d", "2dgen", "60d", "dam", "cop", "prices", "outages", "nrc", "gas", "forecast", "operator", "entities"], action="append", default=[])
     ap.add_argument("--local", nargs="+", help="process local zip files instead of calling the API")
     ap.add_argument("--mis-docs", nargs="+", type=int, metavar="ID",
                     help="download these report files from ERCOT's public website (MIS document ids) in "
@@ -547,6 +548,7 @@ def main(argv=None):
         build_storage(index)
         build_forecast(index)
         build_cutoff_history(index)
+        build_operator_days(index)
         build_events(index)
         save_index(index)
         return
@@ -637,6 +639,8 @@ def main(argv=None):
     if "forecast" not in args.skip:
         build_forecast(index)
     build_cutoff_history(index)
+    if "operator" not in args.skip:
+        build_operator_days(index)   # after cop: the Unit page's operator-informed row, new 60-day days only
     qse_lines = qse.save()
     if "entities" not in args.skip:
         fetch_entities()     # after qse.save(): DME codes are named from the codes it saved

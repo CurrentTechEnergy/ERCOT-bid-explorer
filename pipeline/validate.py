@@ -33,6 +33,9 @@ consistency:
                     expected output <= capacity, verdict counts equal the units rows, a model
                     name and version on every row and series, and (recorded) that a day with
                     an answer has been scored
+  operator          operator-informed day file (pipeline/models/operator_informed.py): a model and
+                    version, every unit with 24 hours of chances between 0 and 1, awards and
+                    COP plan 0 or 1 (plan null where none), the reasons' hour between 1 and 24
   unit_curves       thermal offer curves by hour (pipeline/unit_curves.py): every hourly index
                     points at a stored curve, each curve's prices and MW never fall, and the
                     unit-hours with a curve file entry are the thermal unit-hours online in the
@@ -344,10 +347,31 @@ def check_day(date, have):
             _stack_checks(day, fc, st)
         else:
             day.add("forecast_stack", "warning", "forecast day without a dispatch stack file")
+    oi = read_json_gz(DATA_DIR / "operator" / f"{date}.json.gz") if date in have.get("operator", ()) else None
+    if oi:
+        _operator_checks(day, oi)
     ft = read_json_gz(DATA_DIR / "fit" / f"{date}.json.gz") if date in have.get("fit", ()) else None
     if ft:
         _fit_checks(day, ft)
     return day
+
+
+def _operator_checks(day, oi):
+    bad = []
+    if not oi.get("model") or not oi.get("version"):
+        bad.append("no model or version")
+    for k, u in (oi.get("units") or {}).items():
+        ps = [u.get("p")] + ([u["p_cop"]] if u.get("p_cop") is not None else [])
+        if any(not isinstance(p, list) or len(p) != 24 or any(v is None or not 0 <= v <= 1 for v in p) for p in ps):
+            bad.append(f"{k}: chances not 24 values in [0, 1]")
+        elif len(u.get("award") or []) != 24 or any(v not in (0, 1) for v in u["award"]) \
+                or len(u.get("plan") or []) != 24 or any(v not in (0, 1, None) for v in u["plan"]):
+            bad.append(f"{k}: award or plan not 24 hours of 0 / 1")
+        elif not 1 <= (u.get("why_h") or 0) <= 24:
+            bad.append(f"{k}: reasons' hour outside 1 to 24")
+    if not oi.get("units"):
+        bad.append("no units")
+    day.add("operator", "error" if bad else "ok", "; ".join(bad[:5]) or f"{len(oi['units'])} units, 24 hours each")
 
 
 def _fit_checks(day, ft):
@@ -712,6 +736,7 @@ def _have(index):
     have["forecast"] = set(fc.get("days", []))
     have["fit"] = set(index["days"].get("fit", []))
     have["storage"] = set(index["days"].get("storage", []))
+    have["operator"] = set((read_json_gz(DATA_DIR / "operator" / "index.json.gz", default=None) or {}).get("days", []))
     return have
 
 

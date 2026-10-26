@@ -41,8 +41,22 @@ to show beside the call.
 Fits are monthly and expanding: a month is judged by transitions fitted on the days before it
 (at least FIT_MIN_DAYS), so no day is judged by a fit that saw it.
 
+Writes data/operator/<date>.json.gz for the Unit page (build_days, run by the daily update):
+  date, model, version
+  units   {train: {"tech", "start" (on, off or out at HE24 of D - 1), "p" [24] P(online), the main
+          call, "p_cop" [24] the same with the COP, "plan" [24] COP plan on (1), off (0) or null
+          where none, "award" [24] 1 where awarded at least AWARD_LSL x LSL, "why_h" the hour the
+          reasons are for, "why_from" its state the hour before, "why" [[driver, push toward
+          off in log-odds], ...] top three}}
+and data/operator/index.json.gz {"model", "version", "days"}, and data/operator/decisions.json.gz
+(build_decision_view) for the decision history chart.  Every day is rewritten when
+VERSION changes; otherwise only new days.  The reasons are for the hour of the unit's first
+actual switch that day, else the first hour the call switches, else its cheapest hour, from
+the true state before it (drivers).
+
 python -m pipeline.models.operator_informed BUNDLE [SIDE]   scores day mode against the
 forecast in a backtest bundle's seed files (BUNDLE/seed/SIDE, default ref) on the days both have.
+python -m pipeline.models.operator_informed --write [--all]   writes the day files.
 """
 import datetime as dt
 import gzip
@@ -58,7 +72,7 @@ from ..cop import COP_DIR
 from ..decisions import AWARD_LSL, COST_DAYS, _dam_trains
 from ..forecast import context as C
 from ..guide import EIA_HR
-from ..store import read_json_gz
+from ..store import read_json_gz, write_json_gz
 
 NAME = "operator_informed"
 VERSION = "v2"   # v1: transitions with per-unit intercepts and slopes; v2: the COP only beside the main call, margins at gas cost
@@ -408,7 +422,8 @@ def p_step(ctx, date, key, cop=False):
 
 
 def drivers(ctx, date, key, h, cop=False):
-    """[(driver, signed push toward going off)] at hour h from the true state before it, largest first."""
+    """[(driver, signed push toward going off, in log-odds)] at hour h from the true state before
+    it, largest first; "its own habit" is the unit's intercept and slopes against the fleet's."""
     plan = "live" if cop else "none"
     f = fit(ctx, date[:7], plan)
     r = _days(ctx).get(date, {}).get(key)
@@ -419,8 +434,14 @@ def drivers(ctx, date, key, h, cop=False):
     s = int(_on(st[k - 1]))
     atmin = float(np.mean([st[j] == "m" for j in range(k - 3, k)])) if s else 0.0
     x = _path(_static(r, int(date[5:7]), plan)[h], _run_before(st, k), atmin)
-    c = (x - f[s]["mu"]) / f[s]["sd"] * f[s]["coef"] * (1 if s else -1)
+    fs, sign = f[s], (1 if s else -1)
+    xs = (x - fs["mu"]) / fs["sd"]
+    c = xs * fs["coef"] * sign
     out = [(name, round(float(c[list(ix)].sum()), 2)) for name, ix in DRIVERS if cop or 19 not in ix]
+    # the unit's own intercept against the fleet's average one, and its own slopes on SLOPES
+    sl = fs.get("slope", {}).get(key)
+    own = fs["unit"].get(key, 0.0) - float(np.mean(list(fs["unit"].values()))) + (float(xs[list(SLOPES)] @ sl) if sl is not None else 0.0)
+    out.append(("its own habit", round(own * sign, 2)))
     return sorted(out, key=lambda t: -abs(t[1]))
 
 
@@ -431,6 +452,93 @@ def cop_plan(ctx, date, key):
         return None
     da, _, known = r["cop"]
     return da, known
+
+
+# ---------------------------------------------------------------- days --
+OUT_DIR = DATA_DIR / "operator"
+START = {"m": "on", "a": "on", "0": "off", "o": "out"}
+
+
+def _r(a, n=3):
+    return [None if v is None or not np.isfinite(v) else round(float(v), n) for v in a]
+
+
+def day_units(ctx, date):
+    """{train: Unit page record} for one 60-day day (the format in the module docstring)."""
+    states, day0, out = _states(ctx), ctx.stats["day0"], {}
+    for key, r in _days(ctx).get(date, {}).items():
+        p = p_day(ctx, date, key)
+        if p is None:
+            continue
+        pc = p_day(ctx, date, key, cop=True)
+        st, k0 = states[key][1], (C._d(date) - day0).days * 24
+        seg = st[k0:k0 + 24]
+        on = [_on(c) if c in "ma0" else None for c in seg]
+        prev = _on(st[k0 - 1])
+        h = next((i for i, v in enumerate(on) if v is not None and v != (prev if i == 0 else on[i - 1])
+                  and (i == 0 or on[i - 1] is not None)), None)
+        if h is None:
+            c = p >= 0.5
+            h = next((i for i in range(1, 24) if c[i] != c[i - 1]), None)
+        if h is None:
+            h = int(np.argmin(r["spp"] - r["fuel"]))
+        why = drivers(ctx, date, key, h) if k0 + h >= 4 and st[k0 + h - 1] not in "o-" else []
+        da, _, known = r["cop"]
+        out[key] = {"tech": r["tech"], "start": START.get(st[k0 - 1], "unknown"), "p": _r(p), "p_cop": _r(pc) if pc is not None else None,
+                    "plan": [int(a >= 0.5) if k else None for a, k in zip(da, known)],
+                    "award": [int(v) for v in r["aw"]], "why_h": h + 1,
+                    "why_from": START.get(st[k0 + h - 1], "unknown"), "why": why[:3]}
+    return out
+
+
+def build_days(index: dict, rebuild: bool = False) -> list:
+    """Write the day files for every 60-day day that has none (all of them when VERSION changed)."""
+    from ..store import load_index
+    ip = OUT_DIR / "index.json.gz"
+    ix = read_json_gz(ip, default=None) or {}
+    rebuild = rebuild or ix.get("version") != VERSION
+    have = set() if rebuild else set(ix.get("days", []))
+    ctx = C.Context(index or load_index())
+    want = [d for d in sorted(_days(ctx)) if d not in have]
+    done = []
+    for d in want:
+        u = day_units(ctx, d)
+        if u:
+            write_json_gz(OUT_DIR / f"{d}.json.gz", {"date": d, "model": NAME, "version": VERSION, "units": u})
+            done.append(d)
+    days = sorted(have | set(done))
+    write_json_gz(ip, {"model": NAME, "version": VERSION, "days": days})
+    n = build_decision_view(days)
+    print(f"{NAME} {VERSION}: {len(done)} day file(s) written, {len(days)} in all; {n} decision days judged", flush=True)
+    return done
+
+
+def build_decision_view(days) -> int:
+    """data/operator/decisions.json.gz for the Unit page's decision history: for every decision
+    day (pipeline.decisions: the unit started online) with a day file, the model's average
+    chance online over the day's worst stretch, the share of those hours its COP plan had it on
+    (null where none) and the reason that pulled hardest.
+      {"model", "version", "units": {train: [[date, p, plan, [driver, push]], ...]}}"""
+    from ..decisions import PATH as DECISIONS_PATH
+    dec = read_json_gz(DECISIONS_PATH, default=None) or {}
+    have = set(days)
+    files, out, n = {}, {}, 0
+    for r in dec.get("days", []):
+        key, d, he, hrs = r[0], r[1], r[3], r[4]
+        if d not in have or not he or not hrs:
+            continue
+        if d not in files:
+            files[d] = (read_json_gz(OUT_DIR / f"{d}.json.gz", default=None) or {}).get("units", {})
+        u = files[d].get(key)
+        if not u:
+            continue
+        w = slice(he - 1, he - 1 + hrs)
+        pl = [v for v in u["plan"][w] if v is not None]
+        out.setdefault(key, []).append([d, round(float(np.mean(u["p"][w])), 3), round(float(np.mean(pl)), 2) if pl else None,
+                                        u["why"][0] if u["why"] else None])
+        n += 1
+    write_json_gz(OUT_DIR / "decisions.json.gz", {"model": NAME, "version": VERSION, "units": out})
+    return n
 
 
 # --------------------------------------------------------------- score --
@@ -544,4 +652,7 @@ def score(bundle, side="ref"):
 
 
 if __name__ == "__main__":
-    score(sys.argv[1], sys.argv[2] if len(sys.argv) > 2 else "ref")
+    if sys.argv[1] == "--write":
+        build_days({}, rebuild="--all" in sys.argv)
+    else:
+        score(sys.argv[1], sys.argv[2] if len(sys.argv) > 2 else "ref")
