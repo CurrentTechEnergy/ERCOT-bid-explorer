@@ -5,9 +5,9 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=KMCHI_CC1</id>
   <updated>2026-10-26T00:00:00Z</updated>
   <entry>
-    <title>KMCHI_CC1: Loss cutoff moved (2026-08-26)</title>
+    <title>KMCHI_CC1: Loss cutoff moved (2026-08-27)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=KMCHI_CC1"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=KMCHI_CC1#KMCHI_CC1/2026-08-26/cutoff</id>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=KMCHI_CC1#KMCHI_CC1/2026-08-27/cutoff</id>
     <updated>2026-10-26T00:00:00Z</updated>
     <summary>Loss cutoff $17 to $0 per MW of minimum output; not yet tested on a following month</summary>
   </entry>
