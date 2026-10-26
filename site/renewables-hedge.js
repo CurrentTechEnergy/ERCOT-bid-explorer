@@ -3,7 +3,9 @@
    for every wind and solar unit, whether its real-time offers follow share x DA price - constant at
    some settlement point. Also reads data/renew_changes.json.gz (pipeline/renew_changes.py): every
    change in how each unit bids, whether it moved dispatch, and the PTC floor level. And
-   data/offtakers.json.gz (pipeline/offtakers.py): buyers named in public announcements.
+   data/offtakers.json.gz (pipeline/offtakers.py): buyers named in public announcements. The
+   bidding changes also list day-ahead offer changes from data/dam_offers.json.gz
+   (pipeline/dam_offers.py): a wind or solar DA floor moving, or a unit stopping or starting DA curves.
    renewables.js owns the status line and the shared chart controls (CX.init). */
 (() => {
 "use strict";
@@ -28,7 +30,7 @@ const POINT_LABEL = (p, u) => (p === "node" ? `own node${u && u.sp ? ` (${u.sp})
 const S = { tech: "all", show: "found", q: "", sort: "tier", dir: 1, data: null };
 // the other panels on the page (renewables.js) keep their own keys in the same address bar
 const VIEW_KEYS = { htech: "tech", hshow: "show", hsort: "sort" };
-const CH_KEYS = { ckind: "kind", cyear: "year", cmoved: "moved", cptc: "ptc" };
+const CH_KEYS = { ckind: "kind", cyear: "year", cmoved: "moved", cptc: "ptc", cmkt: "market" };
 function saveView() {
   window.CX.writeHash({ ...window.CX.readHash(), ...Object.fromEntries(Object.entries(VIEW_KEYS).map(([k, sk]) => [k, S[sk]])),
     ...Object.fromEntries(Object.entries(CH_KEYS).map(([k, ck]) => [k, CH[ck] === "all" || CH[ck] === "12m" ? null : CH[ck]])),
@@ -130,7 +132,7 @@ function drawUnits() {
 }
 
 // ---- bidding changes (data/renew_changes.json.gz, pipeline/renew_changes.py) ----------------
-const CH = { kind: "all", year: "all", moved: "all", ptc: "all", hideTog: false, limit: 200, range: null };
+const CH = { kind: "all", year: "all", moved: "all", ptc: "all", market: "all", hideTog: false, limit: 200, range: null };
 const PTC_TAG = { level: { label: "PTC level", tip: "A floor change inside the PTC band of $5 or less: re-pricing the credit (the yearly inflation adjustment does this), not a change of approach." },
   expired: { label: "PTC may have expired", tip: "The floor left the PTC band for about $0 and never came back to it. The PTC runs 10 years from the plant's start, so this is what its end looks like; inferred, since the data has no start dates." } };
 const ptcTag = (e) => (e.ptc ? ` <span class="tag" title="${esc(PTC_TAG[e.ptc].tip)}">${PTC_TAG[e.ptc].label}</span>` : "");
@@ -138,12 +140,22 @@ const MOVED = [
   { id: "yes", label: "Moved dispatch", color: "--c1" },
   { id: "no", label: "Did not move dispatch", color: "--c-other" },
   { id: "na", label: "Not estimated", color: "--c7-soft" },
+  { id: "da", label: "Day-ahead offer change", color: "--c4" },
 ];
-const movedId = (e) => (e.moved == null ? "na" : e.moved ? "yes" : "no");
+const movedId = (e) => (e.da ? "da" : e.moved == null ? "na" : e.moved ? "yes" : "no");
+const DA_KINDS = { renew_floor: "Day-ahead floor changed", renew_off: "Stopped day-ahead offers", renew_on: "Started day-ahead offers" };
+// day-ahead offer changes in the shape of renew_changes events: the floor as a fixed offer, filing as text
+function daEvents(D) {
+  return (D && D.events ? D.events : []).filter((e) => DA_KINDS[e.kind]).map((e) => ({
+    date: e.date, plant: e.plant, tech: e.tech, kind: `da_${e.kind}`, units: e.units || [], da: true, moved: null, impact: null, ctx: null, toggler: false, ptc: null,
+    before: e.kind === "renew_floor" ? { k: "f", v: e.before, da: true } : { k: "t", t: e.before },
+    after: e.kind === "renew_floor" ? { k: "f", v: e.after, da: true } : { k: "t", t: e.after } }));
+}
 const fmtMWh = (v) => (v == null ? "–" : fmt0(v) + " MWh");
 function regime(r, sp) {
   if (!r) return "–";
-  if (r.k === "f") return `${fmt$(r.v)} floor`;
+  if (r.k === "f") return `${fmt$(r.v)} ${r.da ? "DA " : ""}floor`;
+  if (r.k === "t") return esc(r.t);
   if (r.k === "x") return `formula ${fmtA(r.a)} × ${esc(r.pt === "node" ? `own node${sp ? ` (${sp})` : ""}` : r.pt)} ${r.b < 0 ? "−" : "+"} ${fmt$(Math.abs(r.b))}`;
   if (r.k === "peak") return `${r.formula ? "formula, " : ""}up to ${fmt$(r.v)}`;
   return "moving within the day";
@@ -157,6 +169,7 @@ function winText(im) {
 const perDay = (im) => (im.days ? ((im.up || 0) + (im.dn || 0)) / im.days : null);
 function impactText(e) {
   const im = e.impact;
+  if (e.da) return `<span class="muted">day-ahead, not estimated</span>`;
   if (!im) return `<span class="muted">${e.before.k === "v" ? "no fixed old offer" : "no hourly data"}</span>`;
   const da = im.est > 0.5 ? ", DA price" : "", win = winText(im);
   if (!e.moved) return `<span class="muted">no${win ? `, ${win}` : ""}${da}</span>`;
@@ -178,10 +191,11 @@ const ctxText = (e) => (e.ctx ? `DA ${pct(e.ctx[0])} → ${pct(e.ctx[1])} · cur
 
 function chgRows(R) {
   const q = S.q;
-  return R.events.filter((e) => (S.tech === "all" || e.tech === S.tech)
+  return S.events.filter((e) => (S.tech === "all" || e.tech === S.tech)
+    && (CH.market === "all" || (CH.market === "da") === !!e.da)
     && (CH.kind === "all" || e.kind === CH.kind)
     && (CH.year === "all" || e.date.slice(0, 4) === CH.year)
-    && (CH.moved === "all" || (CH.moved === "yes" ? e.moved === true : e.moved !== true))
+    && (CH.moved === "all" || (CH.moved === "yes" ? e.moved === true : !e.da && e.moved !== true))
     && (CH.ptc === "all" || (CH.ptc === "hide" ? e.ptc !== "level" : e.ptc === CH.ptc))
     && (!CH.hideTog || !e.toggler)
     && (!q || e.plant.toLowerCase().includes(q) || e.units.some((u) => u.toLowerCase().includes(q))));
@@ -192,7 +206,8 @@ function drawChanges() {
   if (!R) { emptyMsg(chart, "No bidding change data yet. It is built by the data update workflow."); tbl.innerHTML = ""; return; }
   const rs = chgRows(R);
   $("chg-note").textContent = `${R.first} to ${R.last}`;
-  window.CX.setNote($("chg-text"), "Every change in how a wind or solar unit offers: a new floor, or a price formula switched on or off. Click a row to open the unit.", `Every change in how a wind or solar unit offers: a new floor, a formula switched on or off, an episode of a few days away from its floor. ` +
+  window.CX.setNote($("chg-text"), "Every change in how a wind or solar unit offers: a new floor, a price formula switched on or off, or a new day-ahead floor. Click a row to open the unit.", `Every change in how a wind or solar unit offers in real time: a new floor, a formula switched on or off, an episode of a few days away from its floor. ` +
+    `Day-ahead offer changes (from ${S.DA ? S.DA.first : "the DAM disclosure"} on) are the units that file a DAM energy curve: its floor moving $5 or more and holding, or the unit stopping or starting day-ahead curves; dispatch is not estimated for them. ` +
     `${fmt0(rs.length)} change${rs.length === 1 ? "" : "s"} in this selection, ${fmt0(rs.filter((e) => e.moved).length)} of which moved dispatch. ` +
     `Most offer changes happen below any price the unit's node reaches, so they say something about the bidder without changing what it produced. ` +
     `Moved dispatch is counted from each change to the unit's next one, up to a year, and needs 1 MWh or more a day on average to count. Click a row to open the unit's page.`);
@@ -201,7 +216,7 @@ function drawChanges() {
   tbl.innerHTML = rs.length ? `<table class="data"><thead><tr><th class="t">Date</th><th class="t">Plant</th><th class="t">Tech</th><th class="t">Change</th><th class="t">Before → after</th><th class="t">Moved dispatch</th><th>Worth at node price</th><th class="t">Context, 7 days before → after</th></tr></thead><tbody>` +
     shown.map((e) => `<tr data-unit="${esc(e.units[0])}" style="cursor:pointer">` +
       `<td class="t">${e.date}</td><td class="t">${esc(e.plant)}${e.units.length > 1 ? ` <span class="muted">${e.units.length} units</span>` : ""}${e.toggler ? ' <span class="tag" title="Moves between fixed offers often">toggler</span>' : ""}</td>` +
-      `<td class="t">${e.tech === "wind" ? "Wind" : "Solar"}</td><td class="t">${esc(R.kinds[e.kind])}${ptcTag(e)}${e.days ? ` <span class="muted">${e.days} day${e.days > 1 ? "s" : ""}</span>` : ""}${e.gap ? ` <span class="muted">after ${e.gap} days off</span>` : ""}</td>` +
+      `<td class="t">${e.tech === "wind" ? "Wind" : "Solar"}</td><td class="t">${esc(R.kinds[e.kind] || DA_KINDS[e.kind.slice(3)])}${ptcTag(e)}${e.days ? ` <span class="muted">${e.days} day${e.days > 1 ? "s" : ""}</span>` : ""}${e.gap ? ` <span class="muted">after ${e.gap} days off</span>` : ""}</td>` +
       `<td class="t">${regime(e.before)} → ${regime(e.after)}</td><td class="t">${impactText(e)}</td><td>${valueText(e)}</td><td class="t muted">${ctxText(e)}</td></tr>`).join("") +
     "</tbody></table>" : `<p class="empty">No changes match.</p>`;
   $("chg-more").hidden = rs.length <= CH.limit;
@@ -217,13 +232,13 @@ function drawChangeMonths(el, rs) {
   const first = CH.year === "all" ? R.first.slice(0, 7) : `${CH.year}-01`, last = CH.year === "all" ? R.last.slice(0, 7) : `${CH.year}-12`;
   const months = [];
   for (let d = new Date(first + "-15T12:00:00"); d3.timeFormat("%Y-%m")(d) <= last; d = d3.timeMonth.offset(d, 1)) months.push(d3.timeFormat("%Y-%m")(d));
-  const cnt = new Map(months.map((m) => [m, { yes: 0, no: 0, na: 0 }]));
+  const cnt = new Map(months.map((m) => [m, { yes: 0, no: 0, na: 0, da: 0 }]));
   rs.forEach((e) => { const c = cnt.get(e.date.slice(0, 7)); if (c) c[movedId(e)] += 1; });
   const data = months.map((m) => ({ m, ...cnt.get(m) }));
   const stack = d3.stack().keys(MOVED.map((s) => s.id))(data);
   const w = Math.max(280, el.clientWidth || 600), H = 200, mg = { t: 18, r: 12, b: 26, l: 44 };
   const x = d3.scaleBand().domain(months).range([mg.l, w - mg.r]).paddingInner(months.length > 60 ? 0.1 : 0.2);
-  const y = d3.scaleLinear().domain([0, d3.max(data, (d) => d.yes + d.no + d.na) || 1]).nice().range([H - mg.b, mg.t]);
+  const y = d3.scaleLinear().domain([0, d3.max(data, (d) => d.yes + d.no + d.na + d.da) || 1]).nice().range([H - mg.b, mg.t]);
   const svg = d3.create("svg").attr("viewBox", `0 0 ${w} ${H}`);
   svg.append("g").attr("class", "gridline").attr("transform", `translate(${mg.l},0)`).call(d3.axisLeft(y).ticks(4).tickSize(-(w - mg.l - mg.r)).tickFormat(""));
   const every = Math.ceil(months.length / (w < 560 ? 4 : 10));
@@ -242,7 +257,7 @@ function drawChangeMonths(el, rs) {
     .attr("x", (d) => x(d.m) - x.step() * x.paddingInner() / 2).attr("width", x.step()).attr("y", mg.t).attr("height", H - mg.t - mg.b).attr("fill", "transparent")
     .on("pointermove", (ev, d) => showTip(ev, `<h4>${d3.timeFormat("%B %Y")(new Date(d.m + "-15T12:00:00"))}</h4><table>` +
       MOVED.map((s) => `<tr><td><span class="sw" style="background:var(${s.color})"></span></td><td>${s.label}</td><td class="n">${d[s.id]}</td></tr>`).join("") +
-      `<tr><td></td><td>All changes</td><td class="n">${d.yes + d.no + d.na}</td></tr></table>`))
+      `<tr><td></td><td>All changes</td><td class="n">${d.yes + d.no + d.na + d.da}</td></tr></table>`))
     .on("pointerleave", hideTip)
     .on("click", (ev, d) => { CH.year = d.m.slice(0, 4); $("chg-year").value = CH.year; drawChanges(); });
   el.replaceChildren(svg.node());
@@ -290,7 +305,10 @@ function drawPTC() {
 function initChanges() {
   const R = S.R;
   if (!R) return;
-  $("chg-kind").innerHTML = `<option value="all">All changes</option>` + Object.entries(R.kinds).map(([k, l]) => `<option value="${k}">${esc(l)}</option>`).join("");
+  $("chg-kind").innerHTML = `<option value="all">All changes</option>` + Object.entries(R.kinds).map(([k, l]) => `<option value="${k}">${esc(l)}</option>`).join("") +
+    (S.DA ? Object.entries(DA_KINDS).map(([k, l]) => `<option value="da_${k}">${esc(l)}</option>`).join("") : "");
+  $("chg-market").value = CH.market;
+  $("chg-market").addEventListener("change", (e) => { CH.market = e.target.value; CH.limit = 200; drawChanges(); saveView(); });
   $("chg-year").innerHTML = `<option value="all">All years</option>` + R.years.slice().reverse().map((y) => `<option value="${y}">${y}</option>`).join("");
   $("chg-kind").value = CH.kind; $("chg-year").value = CH.year; $("chg-ptc").value = CH.ptc; $("chg-tog").checked = CH.hideTog;
   $("chg-ptc").addEventListener("change", (e) => { CH.ptc = e.target.value; CH.limit = 200; drawChanges(); saveView(); });
@@ -309,7 +327,8 @@ function redraw() { drawKpis(); drawUnits(); drawChanges(); drawPTC(); }
 
 async function boot() {
   let O;
-  [S.data, S.R, O] = await Promise.all([tryJSON("data/ppa.json.gz"), tryJSON("data/renew_changes.json.gz"), tryJSON("data/offtakers.json.gz")]);
+  [S.data, S.R, O, S.DA] = await Promise.all([tryJSON("data/ppa.json.gz"), tryJSON("data/renew_changes.json.gz"), tryJSON("data/offtakers.json.gz"), tryJSON("data/dam_offers.json.gz")]);
+  if (S.R) S.events = S.R.events.concat(daEvents(S.DA)).sort((a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : 0));
   if (!S.data) { emptyMsg($("units-table"), "No hedge signal data yet. It is built by the data update workflow."); return; }
   attachBuyers(O);
   loadView();
