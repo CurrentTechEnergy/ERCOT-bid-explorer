@@ -595,6 +595,8 @@ def check_files(index):
     known |= {u["unit"] for u in (read_json_gz(DATA_DIR / "trends_60d.json.gz", default={}) or {}).get("units", [])}
     for e in (read_json_gz(DATA_DIR / "renew_changes.json.gz", default={}) or {}).get("events", []):
         known.add(e.get("plant")); known |= set(e.get("units") or [])
+    for e in (read_json_gz(DATA_DIR / "dam_offers.json.gz", default={}) or {}).get("events", []):
+        known.add(e.get("plant")); known |= set(e.get("units") or [])
     known |= {f"fleet:{t}" for t in FUEL}      # fleet-wide fuel events
     su = read_json_gz(DATA_DIR / "storage" / "units.json.gz", default={}) or {}
     known |= set(su.get("units", {}))           # battery events
@@ -614,7 +616,7 @@ def check_files(index):
             dt.date.fromisoformat(e.get("date") or "")
         except ValueError:
             bad_date.append(e.get("id")); continue
-        if (last and e["date"] > last) or (not e["kind"].startswith("renew_") and d60 and not d60[0] <= e["date"] <= d60[-1]):
+        if (last and e["date"] > last) or (not e["kind"].startswith(("renew_", "dam_")) and d60 and not d60[0] <= e["date"] <= d60[-1]):
             bad_date.append(e["id"])
     day.add("events_dates", "error" if bad_date else "ok", f"{len(bad_date)} event(s) outside the record, e.g. {bad_date[:3]}" if bad_date else "inside the record")
     no_seen = [e["id"] for e in events if not e.get("seen")]
@@ -636,6 +638,7 @@ def check_files(index):
         day.add("cutoff_rows", "error" if bad else "ok", f"{len(bad)} unit(s) with bad rows, e.g. {bad[:3]}" if bad else f"{len(ch.get('units', {}))} units")
         orphan = [m["unit"] for m in ch.get("moves", []) if m["unit"] not in ch.get("units", {}) or not isinstance(m.get("to"), (int, float))]
         day.add("cutoff_moves", "error" if orphan else "ok", f"{len(orphan)} move(s) without rows, e.g. {orphan[:3]}" if orphan else f"{len(ch.get('moves', []))} moves")
+    _dam_offer_checks(day)
     ui = read_json_gz(UNIT_INDEX_PATH, default=None)
     if ui is not None:
         rows = ui.get("rows", [])
@@ -645,6 +648,62 @@ def check_files(index):
         bad = [r[0] for r in rows if r[1] not in UNIT_INDEX_TECHS or (r[3] is not None and not r[3] >= 0)]
         day.add("unit_index_rows", "error" if bad else "ok", f"{len(bad)} row(s) with an unknown tech or bad MW, e.g. {bad[:3]}" if bad else "techs known, MW non-negative")
     return day
+
+
+def _dam_offer_checks(day):
+    """Day-ahead offer signatures and events (dam_offers.py): the markup is the offer less the
+    fuel-cost line, filing matches having an offer, awards only on cheap days, fleet counts and
+    shares in range, and every offer event sits on a day its units have a signature value."""
+    from .dam_offers import FIELDS, KINDS as DAM_KINDS, PATH as DO_PATH, REF_HR, SIG_DIR, _gas_lookup
+    do = read_json_gz(DO_PATH, default=None)
+    if do is None:
+        return
+    dates, cheap = do.get("dates") or [], do.get("cheap") or []
+    pos = {d: k for k, d in enumerate(dates)}
+    sig = {}
+    for p in sorted(SIG_DIR.glob("sig-*.json.gz")):
+        s = read_json_gz(p, default={}) or {}
+        for n, u in (s.get("units") or {}).items():
+            r = sig.setdefault(n, {"tech": u["tech"], "hub": u.get("hub")})
+            for f in FIELDS["thermal"] + FIELDS["renew"]:
+                if f in u:
+                    r.setdefault(f, {}).update(zip(s["dates"], u[f]))
+    gas = _gas_lookup(read_json_gz(DATA_DIR / "gas_hubs.json.gz", default={}) or {})
+    bad_mk, bad_f, bad_aw = [], [], []
+    for n, r in sig.items():
+        if r["tech"] not in REF_HR:
+            continue
+        for d, mg in r.get("mg", {}).items():
+            f, mk, aw = r["f"].get(d), r["mk"].get(d), r["aw"].get(d)
+            if (mg is None) != (f != 1):
+                bad_f.append(f"{n} {d}")
+            g = gas(r["hub"], d) if mg is not None else None
+            if g and (mk is None or abs(mg - REF_HR[r["tech"]] * g - mk) > 0.011):
+                bad_mk.append(f"{n} {d}")
+            if aw is not None and not (d in pos and cheap[pos[d]]):
+                bad_aw.append(f"{n} {d}")
+    day.add("dam_offers_markup", "error" if bad_mk else "ok",
+            f"{len(bad_mk)} unit-day(s) whose markup is not the offer less the fuel-cost line, e.g. {bad_mk[:3]}" if bad_mk else f"{len(sig)} units")
+    day.add("dam_offers_filed", "error" if bad_f or bad_aw else "ok",
+            f"{len(bad_f)} unit-day(s) with filing not matching an offer, {len(bad_aw)} awarded off a cheap day, e.g. {(bad_f + bad_aw)[:3]}"
+            if bad_f or bad_aw else "filing and awards consistent")
+    fl, n = do.get("fleet") or {}, len(dates)
+    bad = [k for k, v in fl.items() if len(v) != n]
+    bad += [k for k in ("below_mw_share",) if any(x is not None and not 0 <= x <= 1 for x in fl.get(k, []))]
+    bad += [f"trains {dates[i]}" for i, (a, f) in enumerate(zip(fl.get("trains_aw", []), fl.get("trains_filed", [])))
+            if a is not None and not 0 <= a <= f]
+    day.add("dam_offers_fleet", "error" if bad else "ok", f"bad fleet series: {bad[:5]}" if bad else f"{n} days")
+    orphan = []
+    for e in do.get("events", []):
+        if e.get("kind") not in DAM_KINDS:
+            orphan.append(f"{e.get('plant')} {e.get('kind')}"); continue
+        if e["kind"] in ("filing_off", "filing_on", "renew_off", "renew_on"):
+            continue
+        f = "fl" if e["kind"] == "renew_floor" else "mg"
+        if not any((sig.get(u, {}).get(f) or {}).get(e["date"]) is not None for u in e.get("units") or []):
+            orphan.append(f"{e['plant']} {e['date']} {e['kind']}")
+    day.add("dam_offers_events", "error" if orphan else "ok",
+            f"{len(orphan)} event(s) on a day without a signature, e.g. {orphan[:3]}" if orphan else f"{len(do.get('events', []))} events")
 
 
 def _have(index):

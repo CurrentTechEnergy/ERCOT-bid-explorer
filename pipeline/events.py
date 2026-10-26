@@ -79,6 +79,7 @@ from .groups import GROUPED_TECHS, GROUPS, assign_groups
 from .entities import PATH as ENTITIES_PATH
 from .models.cutoff_history import PATH as CUTOFF_PATH
 from .qse import PATH as QSE_PATH
+from .dam_offers import KINDS as DAM_KINDS
 from .renew_changes import KINDS as RENEW_KINDS
 from .store import read_json_gz, write_json_gz
 from .trends import K, SIGNALS, UNIT_TECHS
@@ -118,6 +119,7 @@ KINDS = {
     "outage_start": "Outage started",
     "outage_end": "Outage ended",
     **{f"renew_{k}": v for k, v in RENEW_KINDS.items()},
+    **{f"dam_{k}": v for k, v in DAM_KINDS.items()},
 }
 _SAFE = re.compile(r"[^A-Za-z0-9_.-]")
 
@@ -276,6 +278,35 @@ def renew_events(rc):
         out.append(_ev(e["plant"], e["date"], f"renew_{kind}", e["tech"], title, major,
                        before=bv, after=av, value=e.get("days"), field="offer $/MWh; value: days",
                        units=e.get("units") or [], toggler=bool(e.get("toggler"))))
+    return out
+
+
+def dam_events(do):
+    """Day-ahead offer changes (dam_offers.py), keyed by train (combined cycle) or plant."""
+    out = []
+    for e in do.get("events", []):
+        kind, b, a = e["kind"], e.get("before"), e.get("after")
+        units = e.get("units") or []
+        if kind == "mingen_step":
+            title = f"{DAM_KINDS[kind]}: {_usd(b)} to {_usd(a)}/MWh"
+            if e.get("mk_before") is not None and e.get("mk_after") is not None:
+                title += f" ({_usd(e['mk_before'])} to {_usd(e['mk_after'])} against the fuel-cost line)"
+            field = "minimum-energy offer $/MWh"
+        elif kind == "priced_out":
+            title = f"{DAM_KINDS[kind]}: minimum energy at {_usd(a)}/MWh against a usual {_usd(b)} for {e.get('days')} day(s)"
+            field = "minimum-energy offer $/MWh; value: days"
+        elif kind == "start_change":
+            title = f"{DAM_KINDS[kind]}: hot start {_usd(b)} to {_usd(a)}"
+            field = "hot start $"
+        elif kind == "renew_floor":
+            title = f"{DAM_KINDS[kind]}: {_usd(b)} to {_usd(a)}/MWh"
+            field = "day-ahead floor $/MWh"
+        else:
+            title = f"{DAM_KINDS[kind]}: {b} to {a}"
+            field, b, a = None, None, None
+        unit = units[0] if len(units) == 1 and e["tech"] != "combined_cycle" else e["plant"]
+        out.append(_ev(unit, e["date"], f"dam_{kind}", e["tech"], title, e.get("major"), before=b, after=a,
+                       value=e.get("days"), field=field, units=units, repricer=bool(e.get("repricer"))))
     return out
 
 
@@ -485,6 +516,7 @@ def build_events(index: dict) -> dict:
     uh = read_json_gz(DATA_DIR / "unit_hours_60d.json.gz", default={}) or {}
     tr = read_json_gz(DATA_DIR / "trends_60d.json.gz", default={}) or {}
     rc = read_json_gz(DATA_DIR / "renew_changes.json.gz", default={}) or {}
+    do = read_json_gz(DATA_DIR / "dam_offers.json.gz", default={}) or {}
     ch = read_json_gz(CUTOFF_PATH, default={}) or {}
     hubs = read_json_gz(DATA_DIR / "gas_hubs.json.gz", default={}) or {}
     su = read_json_gz(DATA_DIR / "storage" / "units.json.gz", default={}) or {}
@@ -499,7 +531,7 @@ def build_events(index: dict) -> dict:
     tech_all.update({_train(u["unit"]): u["tech"] for u in tr.get("units", [])})
     tech_all.update({u: "storage" for u in (su.get("units") or {})})
     events = (shutdown_events(dec) + group_events(uh, tech_of) + bidding_events(tr) + cutoff_events(ch)
-              + renew_events(rc) + outage_events(uh, tech_of) + fuel_events(tr, hubs) + battery_events(su)
+              + renew_events(rc) + dam_events(do) + outage_events(uh, tech_of) + fuel_events(tr, hubs) + battery_events(su)
               + new_unit_events(tr) + control_events(qh, ent, tech_all))
     old = read_json_gz(PATH, default=None) or {}
     seen = {e["id"]: e["seen"] for e in old.get("events", [])}

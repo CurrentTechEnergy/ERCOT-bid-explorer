@@ -113,6 +113,9 @@ pipeline/
   renew_changes.py ppa cache + DAM day files + node prices (and the history release) -> every change in
                    how each wind and solar unit bids, and whether it moved dispatch (data/renew_changes.json.gz,
                    data/renew/, no downloads)
+  dam_offers.py    DAM day files + gas hubs + fuel hubs + renew_changes signatures -> each unit's day-ahead
+                   three-part offer against its fuel cost, offer changes, fleet series and the train
+                   table for the Day-ahead offers page (data/dam_offers.json.gz, data/dam_offers/, no downloads)
   offtakers.py     pipeline/reference/offtakers.csv (buyers named in public announcements, with
                    source and quote, curated by hand and refreshed about quarterly) -> data/offtakers.json.gz
                    for the Unit page's "Public contracts" box and the hedge table (no downloads)
@@ -128,7 +131,7 @@ pipeline/
                    and units.json.gz, one row a day per battery for the Unit page and the
                    battery events (no downloads)
   trends.py        per-unit day files -> daily trends, starts, bidding changes (no downloads)
-  events.py        decisions, groups, trends, renew_changes, cutoff_history and the battery
+  events.py        decisions, groups, trends, renew_changes, dam_offers, cutoff_history and the battery
                    daily rows -> one list of unit
                    events in one format with the run that first found each (data/events.json.gz)
                    and Atom feeds per unit (data/feeds/, no downloads)
@@ -254,6 +257,14 @@ Floors between −$60 and −$15 price a per-MWh credit such as the PTC. A floor
 Each change is checked for whether it **moved dispatch**: over every online day the unit spent in the new regime, from the change up to its next change and at most a year (or the episode's days), an hour counts when the unit was online and its node price fell between the old and the new offer. Priced up, HSL minus base point is energy given up; priced down, the base point is energy the old offer would not have produced; both are valued at the node price. A change counts as moving dispatch at 1 MWh or more per day of its window; a window still running at the last data day fills in as data arrives. The real-time node price is used where loaded (the live node files, and the history release's `rt-prices-*` files for 2019 on); estimates that fall back to the day-ahead node price for most hours are marked. Most changes never move dispatch (a floor moving from −$37 to −$39 sits below almost every price the node reaches), so the page keeps them all and lets the reader filter.
 
 The regular update rebuilds the loaded 60-day days. Years before that come from the `history` release: run **Build bidding-change history** (manual) once after the release is built, or locally `python -m pipeline.renew_changes --history history/`. Daily signatures are kept per year in `site/data/renew/sig-YYYY.json.gz` for the unit timeline, and moved-dispatch estimates in `site/data/renew/impacts.json.gz`, so the regular update never needs the history files.
+
+### Day-ahead offers
+
+`pipeline/dam_offers.py` reads each unit's three-part offer from the DAM day files: combined cycle configurations, gas steam and combustion turbines, plus the wind and solar units that file a DAM energy curve. A thermal unit's minimum-energy offer is set against a fuel-cost line, EIA's average tested heat rate for natural gas by prime mover (Electric Power Annual, Table 8.2, 2025: combined cycle 7.535, steam 10.293, gas turbine 10.975 MMBtu/MWh, full load) times the gas price at the unit's own hub (`fuel_hub.py`) on the last trading day before the operating day. The implied heat rate is the offer over that gas price, as on the Offers page. On days with cheap hours (DA lambda at or below $15) each unit also gets its cheap-stretch offer (hourly values from DAM format 3 on), its margin (node price less that offer) and whether it was awarded through the stretch. Wind and solar get their DA floor beside their real-time floor from `renew_changes.py`; energy-only offers at the plant's node are not counted, so their day-ahead sales are undercounted.
+
+Changes are held steps of $5 in the minimum-energy offer (tested on the offer, so a gas move alone is not one; major when it crosses the fuel-cost line), price-outs (1 to 6 days $10 or more above the unit's 30-day median), start-cost changes of 25%, a train or unit stopping or starting three-part offers, and wind and solar DA floor steps and filing. Combustion turbine events are never major. Daily signatures are kept per year in `site/data/dam_offers/sig-YYYY.json.gz`.
+
+DAM format 3 adds the hourly start-up and minimum-energy costs. A **reprocess_60d** run fills it in for older days; such runs read the raw store only (`reprocess_store_only`, on by default) and leave a day whose file is not there, since ERCOT's terms limit downloading the same report again.
 
 ### Hourly history (2019 on)
 

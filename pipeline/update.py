@@ -62,6 +62,7 @@ from .entities import fetch_entities
 from .forecast.run import build_forecast
 from .ppa import build_ppa
 from .renew_changes import build_renew_changes
+from .dam_offers import build_dam_offers
 from .offtakers import build_offtakers
 from .models.cutoff_history import build_cutoff_history
 from .events import build_events
@@ -494,6 +495,10 @@ def main(argv=None):
     ap.add_argument("--reprocess-60d", nargs="?", const="missing", choices=["missing", "all"],
                     help="re-download and reparse 60-day SCED and DAM days already in the index: those "
                          "whose file is missing or predates the current format (default), or all")
+    ap.add_argument("--store-only", action="store_true",
+                    help="with --reprocess-60d: read files only from the raw store (pipeline/raw_store.py), "
+                         "never from ERCOT; a day whose file is not there is left for later.  ERCOT's terms "
+                         "limit downloading the same report again, so reprocess runs default to this")
     ap.add_argument("--rebuild-all", action="store_true",
                     help="run every builder, even those whose inputs are unchanged (see pipeline/memo.py)")
     args = ap.parse_args(argv)
@@ -536,6 +541,7 @@ def main(argv=None):
         memo.run("econ", build_econ, index)
         build_ppa(index)
         build_renew_changes(index)
+        build_dam_offers(index)
         build_offtakers(index)
         build_series(index)
         build_storage(index)
@@ -564,6 +570,11 @@ def main(argv=None):
                          index, source, want_dates=want, limit=args.max_files)
         website_fallback(api, index, [s for s in ("2d", "2dgen", "60d", "dam") if s not in args.skip], want)
     elif args.reprocess_60d:
+        if args.store_only:
+            if not api.raw.enabled:
+                raise SystemExit("--store-only: the raw store is not configured (R2 secrets); nothing reprocessed")
+            api.store_only = True
+            print("reprocess: reading the raw store only, no ERCOT downloads")
         start, left = reprocess_60d(api, index, args.reprocess_60d, limit=args.max_files)
         # the workflow queues another reprocess run while days are left and this one made progress
         if os.environ.get("GITHUB_OUTPUT"):
@@ -619,6 +630,7 @@ def main(argv=None):
     memo.run("econ", build_econ, index)
     build_ppa(index)
     build_renew_changes(index)
+    build_dam_offers(index)       # after fuel hubs and the renewable signatures
     build_offtakers(index)
     build_series(index)
     build_storage(index)

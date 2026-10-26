@@ -33,8 +33,11 @@ Writes data/dam/{date}.json.gz:
                                     # and solar forecasts, temperature-dependent thermal limits)
       "start": [hot, inter, cold],  # $ per start, daily median (null = not offered)
       "start_var": true,            # only when a start cost changed during the day
+      "start_h": {"hot": [24], "inter": [24], "cold": [24]},
+                                    # hourly start costs, only with start_var (format 3 on)
       "mingen": 22.5,               # minimum-energy cost $/MWh, daily median (null = none)
       "mingen_var": true,           # only when it changed during the day
+      "mingen_h": [24],             # hourly minimum-energy cost, only with mingen_var (format 3 on)
       "award": [24],                # DAM energy award MW per hour (null = no award row);
                                     # storage: signed, negative = charging
       "spp": [24],                  # DAM settlement point price at the unit's node, $/MWh
@@ -66,7 +69,9 @@ ESR_FROM = "2025-12-06"              # first RTC+B day-ahead market: an ESR file
 # Bump when the day file gains something a reprocess of history should fill in
 # (update.reprocess_60d redoes older files).  2: hourly resource status ("status_h"), diesel /
 # recip engines (DSL) under combustion_turbine, and ESR rows for days parsed before they were read.
-DAM_FORMAT = 2
+# 3: hourly start-up and minimum-energy costs ("start_h", "mingen_h") on days they change, read by
+# dam_offers.py for the cheap-hour offer.
+DAM_FORMAT = 3
 AS_SERVICES = {
     # key -> candidate normalised award column names (summed when several match)
     "regup": ["regupawarded"],
@@ -221,8 +226,10 @@ def parse_dam_frame(df: pd.DataFrame, files=None):
         if any(np.nanmax(a[idx]) - np.nanmin(a[idx]) > 0.005 * max(1.0, abs(np.nanmax(a[idx])))
                for a in (hot, inter, cold) if np.isfinite(a[idx]).any()):
             u["start_var"] = True
+            u["start_h"] = {k: _series(a[idx], h, n_hours) for k, a in (("hot", hot), ("inter", inter), ("cold", cold))}
         if np.isfinite(mingen[idx]).any() and np.nanmax(mingen[idx]) - np.nanmin(mingen[idx]) > 0.01:
             u["mingen_var"] = True
+            u["mingen_h"] = _series(mingen[idx], h, n_hours)
         u["award"] = _series(award[idx], h, n_hours, 1)
         u["spp"] = _series(spp[idx], h, n_hours)
         as_out = {}
