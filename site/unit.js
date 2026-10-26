@@ -1,7 +1,7 @@
 /* Unit page: everything about one unit, reached from any unit row (unit.html?unit=NAME).
    This file: the unit picker, the header with the unit's latest decision day and the decision
-   history behind its cutoff (data/decisions.json.gz), the operator-informed fit of its
-   decisions (data/operator/decisions.json.gz), hours online and
+   history behind its cutoff (data/decisions.json.gz), the operator-informed call by hour and
+   fit of its decisions (data/operator/), hours online and
    starts (data/unit_hours_60d.json.gz), one day by hour with the offer curve in the chosen hour
    (data/60d-units/, data/60d-curves/) and the thermal bidding charts (data/trends_60d.json.gz),
    lifted from trends.js; the decision chart also carries the unit's cutoff refitted month by
@@ -27,7 +27,7 @@ const TECH_OF = Object.fromEntries(TECHS.map((t) => [t.id, t]));
 const techLabel = (t) => (TECH_OF[t] ? TECH_OF[t].label : t === "storage" ? "Storage (ESR)" : t === "hydro" ? "Hydro" : t || "–");
 const SIG_FMT = { le0: (v) => d3.format(".0%")(v), noff: (v) => d3.format(".0%")(v), rel: (v) => (v >= 0 ? "+" : "−") + d3.format("$,.0f")(Math.abs(v)) };
 const GROUP_SHORT = { never: "Always on when available", seasonal: "Seasonal", multiday: "Multi-day", daily1: "Daily, under once a week", daily2: "Daily, 1 to 2 a week", daily3: "Daily, over 2 a week", never_on: "Never on", ungrouped: "Not yet grouped" };
-const S = { econ: {}, day: null, hour: null, T: null, DEC: null, UH: null, SP: null, OD: null, PPA: null, CH: null, list: new Map(), stubs: new Set(), unit: null, cfg: null, span: null, last60: null };
+const S = { econ: {}, day: null, hour: null, T: null, DEC: null, UH: null, SP: null, OI: null, OD: null, fcDay: null, PPA: null, CH: null, list: new Map(), stubs: new Set(), unit: null, cfg: null, span: null, last60: null };
 const { tryJSON, showTip, hideTip, setCSV, tickFormat, fmtKind, axisFmt, css, esc } = window.CX;
 const $ = (id) => document.getElementById(id);
 const fmtMW = d3.format(",.0f");
@@ -186,6 +186,101 @@ function drawHead(e) {
       (cut != null ? `, against the ${fmt$(cut)} it usually turns off above.` : ".") +
       ` A day-ahead award covered ${fmtPct(r[5] || 0)} of the stretch.`) +
     ` <a href="commitment.html#date=${esc(r[1])}">Every unit that day</a>.`;
+}
+
+// ---- with operator info, by hour: the operator-informed call against what the unit did ----
+// the operator-informed call (pipeline/models/operator_informed.py, data/operator/<date>.json.gz): the
+// same hours judged with what the operator knew going in (its state, DAM award and status, its costs),
+// only for days whose 60-day data is in
+const oiCache = new Map();
+const loadOI = (d) => { if (!S.OI || !S.OI.days.includes(d)) return null; if (!oiCache.has(d)) oiCache.set(d, tryJSON(`data/operator/${d}.json.gz`)); return oiCache.get(d); };
+const OI_DRIVER = { "price against its cost": "the day-ahead price against its cost", "loss against its start cost": "the loss of running on against its start cost",
+  "DAM award": "its day-ahead award", "DAM status": "its day-ahead resource status", "time in its state": "how long it had been in its state",
+  "sitting at minimum": "sitting at minimum output", "hour and season": "the hour and season", "its own habit": "its own habit" };
+const START_WORD = { on: "online", off: "offline", out: "on outage", unknown: "of unknown state" };
+function oiNote(e, day, o) {
+  if (!o) return "";
+  const on = o.p.filter((v) => v >= 0.5).length, aw = o.award.filter(Boolean).length, pl = o.plan.filter((v) => v === 1).length, known = o.plan.some((v) => v != null);
+  const str = (v) => (Math.abs(v) >= 2 ? "strongly " : Math.abs(v) >= 0.75 ? "" : "slightly ");
+  const h = o.why_h - 1, aside = { "DAM award": o.award[h] ? " (awarded that hour)" : " (none that hour)" };
+  const why = o.why.filter(([, v]) => Math.abs(v) >= 0.1).slice(0, 2).map(([k, v]) => `${esc(OI_DRIVER[k] || k)}${aside[k] || ""} ${str(v)}toward off`.replace(/toward off$/, v > 0 ? "toward off" : "toward on"));
+  return ` <br><b>With operator info:</b> it went into the day ${START_WORD[o.start] || o.start}, with a day-ahead award in ${aw} of 24 hours; called on for ${on} of 24 hours.` +
+    (why.length ? ` At HE ${o.why_h}, ${START_WORD[o.why_from] || o.why_from} the hour before, it put the unit ${fmtPct(o.p[h])} likely online; the biggest pulls: ${why.join("; ")}.` : "") +
+    (known ? ` Its COP plan at 2 pm the day before had it on for ${pl} of 24 hours.` : " No COP plan was filed for it.");
+}
+async function drawForecast(e) {
+  const el = $("fc-chart");
+  $("fc-panel").hidden = !["combined_cycle", "gas_steam"].includes(e.tech) || !S.OI || !S.OI.days.length;
+  if ($("fc-panel").hidden) return;
+  const days = S.OI.days;
+  if (!S.fcDay || !days.includes(S.fcDay)) S.fcDay = days.at(-1);
+  $("fc-pick").innerHTML = [...days].reverse().map((d) => `<option${d === S.fcDay ? " selected" : ""}>${d}</option>`).join("");
+  const day = S.fcDay, [A, OD] = await Promise.all([S.T && S.T.dates.includes(day) ? loadDayUnits(day) : null, loadOI(day)]);
+  if (S.unit !== e.name || S.fcDay !== day) return;
+  const o = OD && OD.units[e.name];
+  if (!o) { $("fc-note").textContent = ""; $("fc-legend").innerHTML = ""; return emptyMsg(el, `${e.name} has no operator-informed call for ${day}.`); }
+  // the actual, from the 60-day unit file: online (at least half the hour) and output, configurations summed
+  let act = null;
+  if (A) {
+    const names = new Set(e.configs.length ? e.configs : [e.name]), ci = Object.fromEntries(A.columns.map((c, i) => [c, i + 2]));
+    act = d3.range(24).map(() => ({ on: false, out: 0, lsl: 0 }));
+    A.rows.forEach((r) => {
+      if (!names.has(A.units[r[0]][0])) return;
+      const x = act[r[1] - 1];
+      x.out += r[ci.output] || 0;
+      if ((r[ci.online_share] || 0) >= 0.5) { x.on = true; x.lsl += r[ci.lsl] || 0; }
+    });
+  }
+  const hOn = act ? act.filter((x) => x.on).length : null;
+  const dr = (S.DEC?.days || []).find((r) => r[0] === e.name && r[1] === day);
+  $("fc-note").innerHTML = (act ? `<b>${esc(day)}: online ${hOn} of 24 hours, ${fmtMW(d3.sum(act, (x) => x.out))} MWh.</b>` : `<b>${esc(day)}</b>.`) +
+    (dr && dr[4] ? ` It ${dr[6] ? `turned off${dr[7] ? ` for ${dr[7]} hours` : ""}` : "stayed on"} through its worst stretch, HE ${dr[3]} to ${dr[3] + dr[4] - 1}, which would have cost ${fmt$(dr[2])} to ride through at its node.` : "") +
+    oiNote(e, day, o);
+  const s = TECH_OF[e.tech] || { color: "--c-other" };
+  const w = Math.max(280, el.clientWidth || 600), Hm = act ? 170 : 0, Ho = 122, m = { t: 18, r: 16, b: 26, l: 64 };
+  const H1 = Hm, HT = Hm + Ho;
+  const x = d3.scaleBand().domain(d3.range(24)).range([m.l, w - m.r]).padding(0.15), bw = x.bandwidth();
+  const top = act ? Math.max(d3.max(act, (v) => v.out), d3.max(act, (v) => v.lsl)) || 1 : 1;
+  const y = d3.scaleLinear().domain([0, top]).nice().range([H1 - m.b + 8, m.t]);
+  const yo = d3.scaleLinear().domain([0, 1]).range([HT - m.b, H1 + m.t + 12]);
+  const svg = d3.create("svg").attr("viewBox", `0 0 ${w} ${HT}`);
+  const tickH = w < 560 ? [0, 5, 11, 17, 23] : d3.range(0, 24, 2);
+  if (dr && dr[4]) svg.append("rect").attr("x", x(dr[3] - 1) - x.step() * x.padding() / 2).attr("width", x.step() * dr[4]).attr("y", m.t).attr("height", HT - m.t - m.b).attr("fill", css("--band"));
+  // awarded hours shaded behind the operator-informed row
+  o.award.forEach((a, h) => { if (a) svg.append("rect").attr("x", x(h)).attr("width", bw).attr("y", H1 + m.t + 12).attr("height", HT - m.b - H1 - m.t - 12).attr("fill", css("--c3")).attr("fill-opacity", 0.18); });
+  [...(act ? [y] : []), yo].forEach((sc) => svg.append("g").attr("class", "gridline").attr("transform", `translate(${m.l},0)`).call(d3.axisLeft(sc).ticks(sc === yo ? 2 : 4).tickSize(-(w - m.l - m.r)).tickFormat("")));
+  if (act) {
+    svg.append("g").attr("class", "axis").attr("transform", `translate(${m.l},0)`).call(axisFmt(d3.axisLeft(y), 4, "MW").tickSizeOuter(0));
+    svg.append("text").attr("class", "axis-title").attr("x", m.l).attr("y", 10).text("Output and minimum output online (MW), 60-day disclosure");
+  }
+  svg.append("g").attr("class", "axis").attr("transform", `translate(${m.l},0)`).call(d3.axisLeft(yo).tickValues([0, 0.5, 1]).tickFormat(d3.format(".0%")).tickSizeOuter(0));
+  svg.append("g").attr("class", "axis").attr("transform", `translate(0,${HT - m.b})`).call(d3.axisBottom(x).tickValues(tickH).tickFormat((h) => `HE ${h + 1}`).tickSizeOuter(0));
+  svg.append("text").attr("class", "axis-title").attr("x", m.l).attr("y", H1 + 10).text("With operator info: chance online and the call" + (act ? ", actual online" : "") + ", COP plan");
+  d3.range(24).forEach((h) => {
+    if (act) {
+      svg.append("rect").attr("x", x(h)).attr("width", bw).attr("y", y(act[h].out)).attr("height", Math.max(0, y(0) - y(act[h].out))).attr("fill", css(s.color)).attr("fill-opacity", 0.3);
+      svg.append("rect").attr("x", x(h)).attr("width", bw).attr("y", y(act[h].lsl)).attr("height", Math.max(0, y(0) - y(act[h].lsl))).attr("fill", css(s.color));
+    }
+    svg.append("line").attr("x1", x(h)).attr("x2", x(h) + bw).attr("y1", yo(o.p[h] >= 0.5 ? 1 : 0)).attr("y2", yo(o.p[h] >= 0.5 ? 1 : 0)).attr("stroke", css("--c2")).attr("stroke-width", 4).attr("opacity", 0.6);
+    if (act) svg.append("circle").attr("cx", x(h) + bw / 2).attr("cy", yo(act[h].on ? 1 : 0)).attr("r", 3.5).attr("fill", act[h].on ? css("--ink") : "none").attr("stroke", css("--ink"));
+    if (o.plan[h] != null) svg.append("path").attr("d", d3.symbol(d3.symbolDiamond, 30)()).attr("transform", `translate(${x(h) + bw / 2},${yo(o.plan[h]) + (o.plan[h] ? -9 : 9)})`).attr("fill", css("--ink-2"));
+  });
+  svg.append("path").attr("d", d3.line().x((h) => x(h) + bw / 2).y((h) => yo(o.p[h]))(d3.range(24))).attr("fill", "none").attr("stroke", css("--c2")).attr("stroke-width", 2);
+  svg.append("rect").attr("x", m.l).attr("y", m.t).attr("width", w - m.l - m.r).attr("height", HT - m.t - m.b).attr("fill", "transparent")
+    .on("pointermove", (ev) => {
+      const h = Math.max(0, Math.min(23, Math.floor((d3.pointer(ev)[0] - m.l) / x.step())));
+      showTip(ev, `<h4>${fmtDate(parseDate(day))} · HE ${h + 1}</h4><table>` +
+        `<tr><td>With operator info</td><td class="n">${fmtPct(o.p[h])}, ${o.p[h] >= 0.5 ? "on" : "off"}</td></tr><tr><td>Day-ahead award</td><td class="n">${o.award[h] ? "yes" : "no"}</td></tr>` +
+        `<tr><td>COP plan (2 pm day before)</td><td class="n">${o.plan[h] == null ? "none" : o.plan[h] ? "on" : "off"}</td></tr>` +
+        (act ? `<tr><td>Actual</td><td class="n">${act[h].on ? `online, ${fmtMW(act[h].out)} MW` : "offline"}</td></tr>` : "") + `</table>`);
+    })
+    .on("pointerleave", hideTip);
+  el.replaceChildren(svg.node());
+  setCSV(el, ["hour_ending", "operator_chance_online", "operator_call_on", "operator_chance_online_with_cop", "dam_award", "cop_plan_on", ...(act ? ["actual_online", "actual_output_mw", "actual_lsl_online_mw"] : [])],
+    d3.range(24).map((h) => [h + 1, o.p[h], o.p[h] >= 0.5 ? 1 : 0, o.p_cop ? o.p_cop[h] : null, o.award[h], o.plan[h], ...(act ? [act[h].on ? 1 : 0, act[h].out, act[h].lsl] : [])]), `${e.name} with operator info ${day} by hour`);
+  $("fc-legend").innerHTML = (act ? `<span><span class="sw" style="background:var(${s.color})"></span>Minimum output online</span><span><span class="sw" style="background:var(${s.color});opacity:0.3"></span>Output</span><span>● online ○ offline (actual)</span>` : "") +
+    `<span><span class="sw sw-line" style="border-top-color:var(--c2)"></span>Chance online, with operator info</span><span><span class="sw" style="background:var(--c2);opacity:0.6"></span>Call: on at 50% or more, off below</span>` +
+    `<span><span class="sw" style="background:var(--c3);opacity:0.18"></span>Day-ahead award</span><span>◆ COP plan on (top) or off (bottom)</span>` + (dr && dr[4] ? `<span><span class="sw" style="background:var(--band)"></span>Worst stretch for staying on</span>` : "");
 }
 
 // every other unit at the same settlement point (a shared site: a battery beside a wind, solar or
@@ -590,14 +685,15 @@ function saveView() {
     const attr = el.tagName === "LINK" ? "href" : "content";
     el.setAttribute(attr, new URL(to, new URL(el.getAttribute(attr)).origin + "/").href);
   }
-  window.CX.writeHash({ cfg: S.cfg && S.list.get(S.unit)?.configs.length > 1 ? S.cfg : null, day: S.day, he: S.hour == null ? null : S.hour + 1});
+  window.CX.writeHash({ cfg: S.cfg && S.list.get(S.unit)?.configs.length > 1 ? S.cfg : null, day: S.day, he: S.hour == null ? null : S.hour + 1,
+    fc: S.fcDay && S.OI && S.fcDay !== S.OI.days.at(-1) ? S.fcDay : null });
 }
 function draw() {
   const e = S.list.get(S.unit);
   $("unit-empty").hidden = !!e;
   if (!e) return;
   document.title = `${e.name} · ERCOT Bids`;
-  drawHead(e); drawDecisions(e); drawHours(e); drawDay(e); drawBidding(e);
+  drawHead(e); drawForecast(e); drawDecisions(e); drawHours(e); drawDay(e); drawBidding(e);
 }
 async function select(name, cfg, keepDay) {
   if (!S.list.has(name)) return;
@@ -614,9 +710,9 @@ async function select(name, cfg, keepDay) {
 
 async function boot() {
   const v = window.CX.readHash();
-  [S.T, S.DEC, S.UH, S.SP, S.PPA, S.CH, S.OD] = await Promise.all([tryJSON("data/trends_60d.json.gz"), tryJSON("data/decisions.json.gz"),
+  [S.T, S.DEC, S.UH, S.SP, S.PPA, S.CH, S.OI, S.OD] = await Promise.all([tryJSON("data/trends_60d.json.gz"), tryJSON("data/decisions.json.gz"),
     tryJSON("data/unit_hours_60d.json.gz"), tryJSON("data/summary_prices.json.gz"), tryJSON("data/ppa.json.gz"),
-    tryJSON("data/cutoff_history.json.gz"), tryJSON("data/operator/decisions.json.gz")]);
+    tryJSON("data/cutoff_history.json.gz"), tryJSON("data/operator/index.json.gz"), tryJSON("data/operator/decisions.json.gz")]);
   S.UI = await window.CX.unitIndex();
   S.stubs = new Set((S.UI || []).map((u) => u.unit));   // every unit in the index has a unit/NAME page
   if (S.T) { S.span = [S.T.dates[0], S.T.dates.at(-1)]; S.last60 = S.T.dates.at(-1); }
@@ -626,9 +722,11 @@ async function boot() {
   pick.addEventListener("change", () => select(pick.value.trim()));
   pick.addEventListener("input", () => { if (S.list.has(pick.value)) select(pick.value); });
   window.CX.init();
+  $("fc-pick").addEventListener("change", (ev) => { S.fcDay = ev.target.value; saveView(); drawForecast(S.list.get(S.unit)); });
   $("day-pick").addEventListener("change", (ev) => { S.day = ev.target.value; S.hour = null; saveView(); drawDay(S.list.get(S.unit)); });
   const want = new URLSearchParams(location.search).get("unit") || v.unit;
   S.day = v.day || null;
+  S.fcDay = v.fc || null;
   S.hour = v.he ? +v.he - 1 : null;
   if (want && S.list.has(want)) select(want, v.cfg, true); else draw();
   let t, lastW = 0;

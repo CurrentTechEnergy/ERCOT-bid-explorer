@@ -99,6 +99,19 @@
 
   
 
+  <section class="panel panel-wide unit-only" id="fc-panel" hidden>
+    <div class="panel-head">
+      <div>
+        <h2>With operator info, by hour</h2>
+        <p class="note">The operator-informed call for this unit by hour, against what it actually did. It needs the 60-day data, so it runs about two months behind.</p>
+        <details class="how"><summary>How it's built</summary><p class="note">For combined cycle and gas steam units, the call made with what the operator knew going in: whether the unit was running at the end of the day before and how long it had been, its day-ahead award and resource status, the day-ahead price against its own costs and against gas cost, and its own habit. Each hour uses only what came before it. The line is the chance the unit is online and the bar is the call, on at 50% or more. Hours with a day-ahead award are shaded. The diamonds are the unit's Current Operating Plan as of 2 pm the day before. They are shown beside the call rather than used in it, since the plan is the operator writing down the decision itself. The top chart is what the unit did from the 60-day disclosure: output, and the minimum output of what was online. The wide shaded band is the day's worst stretch for staying on, the hours the decision is about. The reasons are for one hour: the unit's first actual switch that day, else the hour the call switches, else its cheapest hour.</p></details>
+        <p class="note" id="fc-note"></p>
+      </div>
+      <div class="panel-tools"><label class="lbl inline" for="fc-pick">Day</label><select id="fc-pick"></select></div>
+    </div>
+    <div class="legend legend-static" id="fc-legend"></div>
+    <div class="chart" id="fc-chart"></div>
+  </section>
   <section class="panel panel-wide unit-only" id="dec-panel" hidden>
     <div class="panel-head">
       <div>
