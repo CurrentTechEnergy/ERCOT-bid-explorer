@@ -33,6 +33,12 @@ For a unit with weight p_on (from thermal_cutoff, or by hour from peaker_share):
             same way from their own fully online hours (Context.unit_band_size_at), in place of
             the day-ahead LSL, which often reports a unit's turndown capability rather than the
             minimum it usually runs at (Limestone 263 MW against 363, Oct 2026)
+  configuration curve (v6): a combined-cycle train with a band size runs each hour on the curve
+            of the configuration whose LSL is nearest that hour's band size, unscaled and capped
+            at that configuration's HSL, in place of the most recently seen configuration's curve
+            scaled to the train's HSL (which put trains seen last in a small configuration 30-40%
+            above what they ran, Oct 2026).  A configuration missing from the latest snapshot
+            takes its curve from up to CFG_SNAPS earlier ones.
 
 Each row also carries size[h] and mw[h], the minimum and the output the unit is held at when on
 (min[h] and exp[h] over p_on), for the binary lines (the build: in full when P(on) >= 0.5, none
@@ -43,7 +49,7 @@ import numpy as np
 from ..forecast import context as C
 
 NAME = "thermal_dispatch"
-VERSION = "v5"    # v5: coal, gas steam and CT size by hub price band too; v4: CC size by hub price band, size by hour in each row; v3: a peaker on outage carries no weight, always-on combustion turbines held on; v2: hourly p_hours rows from thermal_cutoff v1, CC smallest size in cheap hours, out_share; v1: committed minimum uses the configuration floor; breakpoint interpolation fix
+VERSION = "v6"    # v6: CC output on the curve of the configuration matching its band size; v5: coal, gas steam and CT size by hub price band too; v4: CC size by hub price band, size by hour in each row; v3: a peaker on outage carries no weight, always-on combustion turbines held on; v2: hourly p_hours rows from thermal_cutoff v1, CC smallest size in cheap hours, out_share; v1: committed minimum uses the configuration floor; breakpoint interpolation fix
 
 
 def _config_curve(ctx, month, u):
@@ -55,6 +61,23 @@ def _config_curve(ctx, month, u):
         if c and c.get("p") and (best is None or (c["date"], c["n_on"]) > (best["date"], best["n_on"])):
             best = c
     return best
+
+
+CFG_SNAPS = 2      # earlier monthly snapshots a configuration's curve may come from (v6)
+
+
+def _cfg_curves(ctx, month, u):
+    """[curve] for each of a train's configurations with one, from the latest snapshot or up to
+    CFG_SNAPS before it (v6)."""
+    snaps = [m for m in ctx.snapshots() if month and m <= month][-(CFG_SNAPS + 1):][::-1]
+    out = []
+    for name in u["configs"]:
+        for m in snaps:
+            c = ctx.curves(m).get(name)
+            if c and c.get("p") and c.get("lsl") is not None:
+                out.append(c)
+                break
+    return out
 
 
 def forecast(date, ctx: C.Context, commit: dict, peakers: dict) -> dict:
@@ -119,7 +142,14 @@ def forecast(date, ctx: C.Context, commit: dict, peakers: dict) -> dict:
             fl = np.array([size[b] for b in hub_band], float)
             if hsl > 0:
                 fl = np.minimum(fl, hsl)
-            mw = np.where(mw <= floor, fl, np.maximum(mw, fl))
+            cfgs = _cfg_curves(ctx, month, u) if row["tech"] == "combined_cycle" and prices is not None else []
+            if cfgs:
+                for h in range(24):
+                    cc = min(cfgs, key=lambda c: abs(c["lsl"] - fl[h]))
+                    top = min(cc["hsl"] or hsl, hsl) if hsl > 0 else (cc["hsl"] or 0.0)
+                    mw[h] = min(max(C.curve_mw(cc["p"], cc["mw"], float(prices[h]), 0.0, top), fl[h]), max(top, fl[h]))
+            else:
+                mw = np.where(mw <= floor, fl, np.maximum(mw, fl))
             small = None
         elif small is not None and hub is not None and small < floor:
             cheap = np.asarray(hub, float) <= C.CHEAP_HUB

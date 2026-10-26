@@ -11,7 +11,8 @@ For every thermal train in the latest DAM disclosure (pipeline.forecast.context.
   nuclear     on (output at HSL) unless on outage
   never       the always-on group (off only for outages in its history): on
   never_on    no running hour in the 60-day history: off (p_on 0)
-  daily       loss = the worst contiguous window of (minimum-energy cost - day-ahead price at
+  daily       loss = the worst contiguous window of (minimum-energy cost, a combined cycle's gas
+              cost from v12 (pipeline/gascost.py), - day-ahead price at
               the unit's node) x LSL over the day, in $ (pipeline.decisions._window).  v1 turns
               it into p_on, the probability the unit stays on through that window: v5 boosted
               trees (scikit-learn, GBT settings, _trees) fitted on the decision days up to the
@@ -108,13 +109,14 @@ from ..config import DATA_DIR
 from ..store import read_json_gz
 
 from ..decisions import _window, _cutoff, _dam_trains, HALF, OUT_MIN_H
+from .. import gascost
 from ..forecast import context as C
 from . import outage_pool, peaker_share
 
 UNSEEN_EPS = 0.1   # unseen-outage weight of a unit never out in these weeks of earlier years, against 1.1 for one always out then
 UNSEEN_TECHS = ("coal", "combined_cycle", "gas_steam", "combustion_turbine")   # spread the zonal unseen outage MW over these
 NAME = "thermal_cutoff"
-VERSION = "v11"   # v11: logistic stay-on rule in the window, zonal outage pool in place of the unseen allocation, long outages carried for gas steam and CTs only; v10: the zonal unseen outage placed first on units usually out in these weeks, at the fitted slope; v9: the history trees also read the forecast net load, for combined cycles; v8: the P(on) of trees fitted on the 2024-25 thermal history as an input; v7: combustion turbines share the zonal unseen outage; v6: technology one-hot, drivers of each P(on); v5: stay-on probability by boosted trees; v4: loss over the cutoff split by award history; v3: gas steam on its stay-on loss, stale gas steam outages dropped; v2: CC outage calls by gas turbine, zonal unseen outages; v1: NRC reactor status, listed outages; probability of staying on through the window, per-unit horizon, pooled cutoffs
+VERSION = "v12"   # v12: combined cycles at gas cost (pipeline/gascost.py); v11: logistic stay-on rule in the window, zonal outage pool in place of the unseen allocation, long outages carried for gas steam and CTs only; v10: the zonal unseen outage placed first on units usually out in these weeks, at the fitted slope; v9: the history trees also read the forecast net load, for combined cycles; v8: the P(on) of trees fitted on the 2024-25 thermal history as an input; v7: combustion turbines share the zonal unseen outage; v6: technology one-hot, drivers of each P(on); v5: stay-on probability by boosted trees; v4: loss over the cutoff split by award history; v3: gas steam on its stay-on loss, stale gas steam outages dropped; v2: CC outage calls by gas turbine, zonal unseen outages; v1: NRC reactor status, listed outages; probability of staying on through the window, per-unit horizon, pooled cutoffs
 SEASONAL_VERSION = "v0"
 RUN_SHARE = 0.5          # a month the unit ran through: online at least this share of its hours
 LONG_OUT = 21            # days an outage must already have lasted at the last known hour to carry forward
@@ -319,6 +321,12 @@ def _drivers(model, Z, bs, nh, p_on):
 
 
 
+def _day_cost(ctx, key, d, e):
+    """The day's minimum-energy cost: the gas cost for a pipeline.gascost technology, else its
+    own offer that day, or None for the carried one."""
+    return gascost.cost(e["tech"], key, d, e["mingen"], 0)[0]
+
+
 def _day_trains(ctx):
     """{date: {train: (tech, node prices [24], mingen or None, lsl)}} for every decision date,
     from the DAM day files (combined-cycle configurations merged as in pipeline.decisions)."""
@@ -328,7 +336,7 @@ def _day_trains(ctx):
             dd = read_json_gz(DATA_DIR / "dam" / f"{d}.json.gz")
             if not dd:
                 continue
-            out[d] = {key: (e["tech"], e["spp"], e["mingen"], e["lsl"]) for key, e in _dam_trains(dd).items()
+            out[d] = {key: (e["tech"], e["spp"], _day_cost(ctx, key, d, e), e["lsl"]) for key, e in _dam_trains(dd).items()
                       if e["tech"] in DAILY_TECHS and e["spp"] is not None and e["lsl"]}
         ctx._cut_days = out
     return ctx._cut_days
@@ -600,14 +608,15 @@ def forecast(date, ctx: C.Context) -> dict:
             row.update(verdict="nocut", p_on=round(s["on_days"], 2) if s else 0.0, reason="no hourly history")
         else:   # daily groups: the stay-on loss at the node against the unit's own cutoff
             prices = ctx.node_price(date, u["sp"], name=u["configs"][0]) if u["sp"] else None
-            if prices is None or u["mingen"] is None or not u["lsl"]:
+            mg, est = gascost.cost(t, key, date, u["mingen"], u["est"])
+            if prices is None or mg is None or not u["lsl"]:
                 s = stats["units"].get(key)
                 row.update(verdict="nocut", p_on=round(s["on_days"], 2) if s else 0.0,
                            reason="no day-ahead price at its node" if prices is None else "no costs")
                 rows[key] = row
                 continue
             lsl = float(u["lsl"])
-            margin = (np.asarray(prices, float) - u["mingen"]) * lsl
+            margin = (np.asarray(prices, float) - mg) * lsl
             loss, bs, nh = _window(-margin)
             days = _decision_rows(ctx, key, known)
             c = _cutoff(days) if days else None
@@ -657,8 +666,10 @@ def forecast(date, ctx: C.Context) -> dict:
                     row.update(verdict="maybe", off_from=bs + 1, off_hours=nh, reason=why)
                 else:
                     row.update(verdict="on", reason=why)
-            if u["est"] == 2:
+            if est == 2:
                 row["reason"] += " (generic costs)"
+            elif est == gascost.EST:
+                row["reason"] += " (at gas cost)"
         if cleared:
             row["reason"] += f"; on outage for {out_days:.0f} days at the last known hour, no longer in the outage report"
         rows[key] = row
