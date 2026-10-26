@@ -3,7 +3,7 @@
   <title>TEN_CC1: bidding and operating changes</title>
   <link href="https://ercotbids.currenttech.energy/unit.html?unit=TEN_CC1"/>
   <id>https://ercotbids.currenttech.energy/unit.html?unit=TEN_CC1</id>
-  <updated>2026-10-24T00:00:00Z</updated>
+  <updated>2026-10-26T00:00:00Z</updated>
   <entry>
     <title>TEN_CC1: Shut down after a long run (2026-07-08)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=TEN_CC1"/>
@@ -54,25 +54,25 @@
     <summary>Daily, under 1 shutdown a week in 2026-04 to Multi-day: off 1–7 days in 2026-05</summary>
   </entry>
   <entry>
-    <title>TEN_CC1: Decision maker or QSE changed (2026-05-01)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=TEN_CC1"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=TEN_CC1#TEN_CC1/2026-05-01/control</id>
-    <updated>2026-10-24T00:00:00Z</updated>
-    <summary>Scheduled by NRG TEXAS POWER LLC, was LINEBACKER POWER FUNDING LLC (SQ2)</summary>
-  </entry>
-  <entry>
-    <title>TEN_CC1: Decision maker or QSE changed (2026-05-01)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=TEN_CC1"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=TEN_CC1#TEN_CC1/2026-05-01/control</id>
-    <updated>2026-10-24T00:00:00Z</updated>
-    <summary>Scheduled by NRG TEXAS POWER LLC, was LINEBACKER POWER FUNDING LLC (SQ2)</summary>
-  </entry>
-  <entry>
     <title>TEN_CC1: Outage ended (2026-04-30)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=TEN_CC1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=TEN_CC1#TEN_CC1/2026-04-30/outage_end</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Back from a 27-day outage</summary>
+  </entry>
+  <entry>
+    <title>TEN_CC1: Decision maker or QSE changed (2026-04-30)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=TEN_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=TEN_CC1#TEN_CC1/2026-04-30/control</id>
+    <updated>2026-10-26T00:00:00Z</updated>
+    <summary>Scheduled by NRG TEXAS POWER LLC, was LINEBACKER POWER FUNDING LLC (SQ2)</summary>
+  </entry>
+  <entry>
+    <title>TEN_CC1: Decision maker or QSE changed (2026-04-30)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=TEN_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=TEN_CC1#TEN_CC1/2026-04-30/control</id>
+    <updated>2026-10-26T00:00:00Z</updated>
+    <summary>Scheduled by NRG TEXAS POWER LLC, was LINEBACKER POWER FUNDING LLC (SQ2)</summary>
   </entry>
   <entry>
     <title>TEN_CC1: Outage started (2026-04-04)</title>

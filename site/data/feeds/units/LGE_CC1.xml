@@ -3,7 +3,7 @@
   <title>LGE_CC1: bidding and operating changes</title>
   <link href="https://ercotbids.currenttech.energy/unit.html?unit=LGE_CC1"/>
   <id>https://ercotbids.currenttech.energy/unit.html?unit=LGE_CC1</id>
-  <updated>2026-10-24T00:00:00Z</updated>
+  <updated>2026-10-26T00:00:00Z</updated>
   <entry>
     <title>LGE_CC1: Minimum-energy offer stepped (2026-07-22)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=LGE_CC1"/>
@@ -33,34 +33,6 @@
     <summary>Daily, over 2 a week in 2026-04 to Multi-day: off 1–7 days in 2026-05</summary>
   </entry>
   <entry>
-    <title>LGE_CC1: Decision maker or QSE changed (2026-04-28)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=LGE_CC1"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=LGE_CC1#LGE_CC1/2026-04-28/control</id>
-    <updated>2026-10-24T00:00:00Z</updated>
-    <summary>Scheduled by GUIDEPOST ENERGY LLC (SQ3), was CALPINE POWER MANAGEMENT LLC (SQ1)</summary>
-  </entry>
-  <entry>
-    <title>LGE_CC1: Decision maker or QSE changed (2026-04-28)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=LGE_CC1"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=LGE_CC1#LGE_CC1/2026-04-28/control</id>
-    <updated>2026-10-24T00:00:00Z</updated>
-    <summary>Scheduled by GUIDEPOST ENERGY LLC (SQ3), was CALPINE POWER MANAGEMENT LLC (SQ1)</summary>
-  </entry>
-  <entry>
-    <title>LGE_CC1: Decision maker or QSE changed (2026-04-24)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=LGE_CC1"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=LGE_CC1#LGE_CC1/2026-04-24/control</id>
-    <updated>2026-10-24T00:00:00Z</updated>
-    <summary>Scheduled by GUIDEPOST ENERGY LLC (SQ3), was CALPINE POWER MANAGEMENT LLC (SQ1)</summary>
-  </entry>
-  <entry>
-    <title>LGE_CC1: Decision maker or QSE changed (2026-04-24)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=LGE_CC1"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=LGE_CC1#LGE_CC1/2026-04-24/control</id>
-    <updated>2026-10-24T00:00:00Z</updated>
-    <summary>Scheduled by GUIDEPOST ENERGY LLC (SQ3), was CALPINE POWER MANAGEMENT LLC (SQ1)</summary>
-  </entry>
-  <entry>
     <title>LGE_CC1: Minimum-energy offer stepped (2026-04-23)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=LGE_CC1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=LGE_CC1#LGE_CC1/2026-04-23/dam_mingen_step</id>
@@ -68,31 +40,17 @@
     <summary>Minimum-energy offer stepped: $22 to $28/MWh ($5 to $11 against the fuel-cost line)</summary>
   </entry>
   <entry>
-    <title>LGE_CC1: Decision maker or QSE changed (2026-04-23)</title>
+    <title>LGE_CC1: Decision maker or QSE changed (2026-04-21)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=LGE_CC1"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=LGE_CC1#LGE_CC1/2026-04-23/control</id>
-    <updated>2026-10-24T00:00:00Z</updated>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=LGE_CC1#LGE_CC1/2026-04-21/control</id>
+    <updated>2026-10-26T00:00:00Z</updated>
     <summary>Scheduled by GUIDEPOST ENERGY LLC (SQ3), was CALPINE POWER MANAGEMENT LLC (SQ1)</summary>
   </entry>
   <entry>
-    <title>LGE_CC1: Decision maker or QSE changed (2026-04-23)</title>
+    <title>LGE_CC1: Decision maker or QSE changed (2026-04-21)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=LGE_CC1"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=LGE_CC1#LGE_CC1/2026-04-23/control</id>
-    <updated>2026-10-24T00:00:00Z</updated>
-    <summary>Scheduled by GUIDEPOST ENERGY LLC (SQ3), was CALPINE POWER MANAGEMENT LLC (SQ1)</summary>
-  </entry>
-  <entry>
-    <title>LGE_CC1: Decision maker or QSE changed (2026-04-22)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=LGE_CC1"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=LGE_CC1#LGE_CC1/2026-04-22/control</id>
-    <updated>2026-10-24T00:00:00Z</updated>
-    <summary>Scheduled by GUIDEPOST ENERGY LLC (SQ3), was CALPINE POWER MANAGEMENT LLC (SQ1)</summary>
-  </entry>
-  <entry>
-    <title>LGE_CC1: Decision maker or QSE changed (2026-04-22)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=LGE_CC1"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=LGE_CC1#LGE_CC1/2026-04-22/control</id>
-    <updated>2026-10-24T00:00:00Z</updated>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=LGE_CC1#LGE_CC1/2026-04-21/control</id>
+    <updated>2026-10-26T00:00:00Z</updated>
     <summary>Scheduled by GUIDEPOST ENERGY LLC (SQ3), was CALPINE POWER MANAGEMENT LLC (SQ1)</summary>
   </entry>
   <entry>
