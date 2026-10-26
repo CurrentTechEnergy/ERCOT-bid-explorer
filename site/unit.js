@@ -333,7 +333,8 @@ function drawDecisions(e) {
     (g("cutoff") != null ? `Best-fit turn-off cost over these days: ${fmt$(g("cutoff"))}, which explains ${fmtPct(g("accNew") ?? g("acc"))} of its choices${g("accNew") != null ? " when each day is judged with a cutoff fitted to the other days" : ""} (${fmtPct(g("base"))} if you always guessed its usual one). ` +
       `Most it stayed on through: ${fmt$(g("stayMax"))}; least it shut on: ${fmt$(g("shutMin"))}.`
       : "Not enough choices yet to fit a turn-off cost: it needs 15 days with at least 3 shutdowns and 3 stays.") +
-    (g("est") === 2 ? " Costs are the technology's generic costs (no three-part offer of its own in the window)." : "");
+    (g("est") === 2 ? " Costs are the technology's generic costs (no three-part offer of its own in the window)."
+      : g("est") === 3 ? " Its minimum-energy cost is its gas cost (heat rate × its gas hub's price the day before), not its own offer." : "");
   const w = Math.max(280, el.clientWidth || 600), H = 240, m = { t: 18, r: 16, b: 26, l: 70 };
   const pts = rows.map((r) => ({ d: r[1], t: parseDate(r[1]), loss: r[2], he: r[3], h: r[4], aw: r[5], shut: r[6], off: r[7] }));
   const x = d3.scaleTime().domain([d3.timeHour.offset(parseDate(D.dates[0]), -12), d3.timeHour.offset(parseDate(D.dates.at(-1)), 12)]).range([m.l, w - m.r]);
