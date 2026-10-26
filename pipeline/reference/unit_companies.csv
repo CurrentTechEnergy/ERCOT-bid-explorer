@@ -1,0 +1,1952 @@
+unit,company,role,source
+7RNCHSLR_UNIT1,Naturgy,developer,web search (medium)
+7RNCHSLR_UNIT2,Naturgy,developer,web search (medium)
+7RNCHSLR_UNIT3,Naturgy,developer,web search (medium)
+AGUAYO_UNIT1,Castle Gap Wind,plant name,EIA-860
+AGUAYO_UNIT1,Swift Current Energy,developer,web search (medium)
+AGUAYO_UNIT1,Swift Current Energy,owner,web search (medium)
+AJAXWIND_UNIT1,"Western Trail Wind, LLC",plant name,EIA-860
+AJAXWIND_UNIT1,Ørsted,developer,web search (medium)
+AJAXWIND_UNIT1,Ørsted,operator,EIA-860
+AJAXWIND_UNIT1,Ørsted,owner,web search (medium)
+AJAXWIND_UNIT2,"Western Trail Wind, LLC",plant name,EIA-860
+AJAXWIND_UNIT2,Ørsted,developer,web search (medium)
+AJAXWIND_UNIT2,Ørsted,operator,EIA-860
+AJAXWIND_UNIT2,Ørsted,owner,web search (medium)
+ALGODON_UNIT1,RWE Clean Energy,developer,web search (medium)
+ALGODON_UNIT1,RWE Clean Energy,owner,web search (medium)
+ALGODON_UNIT2,RWE Clean Energy,developer,web search (medium)
+ALGODON_UNIT2,RWE Clean Energy,owner,web search (medium)
+AMADEUS1_UNIT1,Amadeus Wind Farm,plant name,EIA-860
+AMADEUS1_UNIT1,BayWa r.e.,developer,web search (medium)
+AMADEUS1_UNIT2,Amadeus Wind Farm,plant name,EIA-860
+AMADEUS1_UNIT2,BayWa r.e.,developer,web search (medium)
+AMADEUS2_UNIT3,Amadeus Wind Farm,plant name,EIA-860
+AMADEUS2_UNIT3,BayWa r.e.,developer,web search (medium)
+ANACACHO_ANA,"Anacacho Wind Farm, LLC",plant name,EIA-860
+ANACACHO_ANA,RWE Clean Energy,operator,EIA-860
+ANDMDSLR_UNIT1,Lumina II Solar Project,plant name,EIA-860
+ANDMDSLR_UNIT2,Lumina II Solar Project,plant name,EIA-860
+ANG_SLR_UNIT1,Angelo Solar,plant name,EIA-860
+ANG_SLR_UNIT1,Apex Clean Energy,developer,web search (high)
+ANG_SLR_UNIT1,Apex Clean Energy,owner,web search (high)
+ANSON1_UNIT1,"ANSON Solar Center, LLC",plant name,EIA-860
+ANSON1_UNIT1,ENGIE,developer,web search (medium)
+ANSON1_UNIT1,ENGIE,operator,EIA-860
+ANSON1_UNIT1,ENGIE,owner,web search (medium)
+ANSON1_UNIT2,"ANSON Solar Center, LLC",plant name,EIA-860
+ANSON1_UNIT2,ENGIE,developer,web search (medium)
+ANSON1_UNIT2,ENGIE,operator,EIA-860
+ANSON1_UNIT2,ENGIE,owner,web search (medium)
+APPALOSA_UNIT1,Appaloosa Run Wind,plant name,EIA-860
+APPALOSA_UNIT1,NextEra Energy Resources,developer,web search (high)
+APPALOSA_UNIT1,NextEra Energy Resources,owner,web search (high)
+APPALOSA_UNIT2,Appaloosa Run Wind,plant name,EIA-860
+APPALOSA_UNIT2,NextEra Energy Resources,developer,web search (high)
+APPALOSA_UNIT2,NextEra Energy Resources,owner,web search (high)
+ARAGORN_UNIT1,Aragorn Solar Project,plant name,EIA-860
+ARAGORN_UNIT1,Intersect Power,developer,web search (medium)
+ARAGORN_UNIT1,Intersect Power,owner,web search (medium)
+ASCK_SLR_SOLAR1,Ash Creek Solar,plant name,EIA-860
+ASCK_SLR_SOLAR1,Orion Power Generation,developer,web search (high)
+ASCK_SLR_SOLAR1,Primergy Solar,owner,web search (high)
+ASCK_SLR_SOLAR2,Ash Creek Solar,plant name,EIA-860
+ASCK_SLR_SOLAR2,Orion Power Generation,developer,web search (high)
+ASCK_SLR_SOLAR2,Primergy Solar,owner,web search (high)
+ASTRA_UNIT1,Astra Wind Farm,plant name,EIA-860
+ASTRA_UNIT1,Falvez Energy,developer,web search (medium)
+ASTRA_UNIT1,Falvez Energy,owner,web search (medium)
+AVIATOR_UNIT1,Apex Clean Energy,developer,web search (medium)
+AVIATOR_UNIT1,Aviator Wind,plant name,EIA-860
+AVIATOR_UNIT1,Funds managed by Ares Infrastructure,owner,web search (medium)
+AVIATOR_UNIT2,Apex Clean Energy,developer,web search (medium)
+AVIATOR_UNIT2,Aviator Wind,plant name,EIA-860
+AVIATOR_UNIT2,Funds managed by Ares Infrastructure,owner,web search (medium)
+AZSP_SLR_SOLAR1,Azalea Springs Solar Park,plant name,EIA-860
+AZSP_SLR_SOLAR1,EDP Renewables,developer,web search (medium)
+AZSP_SLR_SOLAR1,EDP Renewables,owner,web search (medium)
+AZURE_SOLAR1,Azure Sky Solar,plant name,EIA-860
+AZURE_SOLAR1,Enel North America,developer,web search (medium)
+AZURE_SOLAR1,Enel North America,owner,web search (medium)
+AZURE_SOLAR2,Azure Sky Solar,plant name,EIA-860
+AZURE_SOLAR2,Enel North America,developer,web search (medium)
+AZURE_SOLAR2,Enel North America,owner,web search (medium)
+AZ_AZ_G1,Exelon LaPorte Generating Station,plant name,EIA-860
+AZ_AZ_G2,Exelon LaPorte Generating Station,plant name,EIA-860
+AZ_AZ_G3,Exelon LaPorte Generating Station,plant name,EIA-860
+AZ_AZ_G4,Exelon LaPorte Generating Station,plant name,EIA-860
+BAFFIN_UNIT1,Avangrid Renewables,operator,EIA-860
+BAFFIN_UNIT1,Baffin Wind,plant name,EIA-860
+BAFFIN_UNIT2,Avangrid Renewables,operator,EIA-860
+BAFFIN_UNIT2,Baffin Wind,plant name,EIA-860
+BARROW_UNIT1,ENGIE,developer,web search (medium)
+BARROW_UNIT1,ENGIE,operator,EIA-860
+BARROW_UNIT1,ENGIE,owner,web search (medium)
+BARROW_UNIT1,Jumbo Hill Wind Project,plant name,EIA-860
+BARROW_UNIT2,ENGIE,developer,web search (medium)
+BARROW_UNIT2,ENGIE,operator,EIA-860
+BARROW_UNIT2,ENGIE,owner,web search (medium)
+BARROW_UNIT2,Jumbo Hill Wind Project,plant name,EIA-860
+BASTEN_CC1,Bastrop Energy Center,plant name,EIA-860
+BBREEZE_UNIT1,Bruennings Breeze Wind Farm,plant name,EIA-860
+BBREEZE_UNIT1,E.ON,developer,web search (medium)
+BBREEZE_UNIT1,RWE Clean Energy,operator,EIA-860
+BBREEZE_UNIT1,RWE Clean Energy,owner,web search (medium)
+BBREEZE_UNIT2,Bruennings Breeze Wind Farm,plant name,EIA-860
+BBREEZE_UNIT2,E.ON,developer,web search (medium)
+BBREEZE_UNIT2,RWE Clean Energy,operator,EIA-860
+BBREEZE_UNIT2,RWE Clean Energy,owner,web search (medium)
+BCATWIND_WIND_1,Bobcat Bluff Wind Project LLC,plant name,EIA-860
+BCATWIND_WIND_1,EDF Renewables,developer,web search (medium)
+BCATWIND_WIND_1,EDF Renewables,operator,EIA-860
+BCATWIND_WIND_1,EDF Renewables,owner,web search (medium)
+BCK_UNIT1,"Old 300 Solar Center, LLC",plant name,EIA-860
+BCK_UNIT1,Ørsted,developer,web search (medium)
+BCK_UNIT1,Ørsted,owner,web search (medium)
+BCK_UNIT2,"Old 300 Solar Center, LLC",plant name,EIA-860
+BCK_UNIT2,Ørsted,developer,web search (medium)
+BCK_UNIT2,Ørsted,owner,web search (medium)
+BELM_SLR_UNIT1,Apex Clean Energy,developer,web search (medium)
+BELM_SLR_UNIT1,Apex Clean Energy,owner,web search (medium)
+BELM_SLR_UNIT1,Big Elm Solar,plant name,EIA-860
+BIGSAMWD_UNIT1,Big Sampson Wind,plant name,EIA-860
+BIGSAMWD_UNIT1,ENGIE,developer,web search (high)
+BIGSAMWD_UNIT1,ENGIE,owner,web search (high)
+BIGSAMWD_UNIT2,Big Sampson Wind,plant name,EIA-860
+BIGSAMWD_UNIT2,ENGIE,developer,web search (high)
+BIGSAMWD_UNIT2,ENGIE,owner,web search (high)
+BIG_STAR_UNIT1,"Big Star Solar, LLC (Hybrid)",plant name,EIA-860
+BIG_STAR_UNIT1,RWE Clean Energy,developer,web search (medium)
+BIG_STAR_UNIT1,RWE Clean Energy,operator,EIA-860
+BIG_STAR_UNIT1,RWE Clean Energy,owner,web search (medium)
+BIG_STAR_UNIT2,"Big Star Solar, LLC (Hybrid)",plant name,EIA-860
+BIG_STAR_UNIT2,RWE Clean Energy,developer,web search (medium)
+BIG_STAR_UNIT2,RWE Clean Energy,operator,EIA-860
+BIG_STAR_UNIT2,RWE Clean Energy,owner,web search (medium)
+BLACKJAK_UNIT1,Blackjack Creek Wind Farm,plant name,EIA-860
+BLACKJAK_UNIT1,RWE Clean Energy,operator,EIA-860
+BLACKJAK_UNIT2,Blackjack Creek Wind Farm,plant name,EIA-860
+BLACKJAK_UNIT2,RWE Clean Energy,operator,EIA-860
+BLSUMIT3_UNIT_17,Blue Summit Wind LLC,plant name,EIA-860
+BLSUMIT3_UNIT_25,Blue Summit Wind LLC,plant name,EIA-860
+BLSUMMIT_BLSMT1_5,Blue Summit Wind LLC,plant name,EIA-860
+BLSUMMIT_BLSMT1_6,Blue Summit Wind LLC,plant name,EIA-860
+BLSUMMIT_UNIT2_17,Blue Summit Wind LLC,plant name,EIA-860
+BLSUMMIT_UNIT2_25,Blue Summit Wind LLC,plant name,EIA-860
+BLUEJAY_UNIT1,"Blue Jay Solar I, LLC",plant name,EIA-860
+BLUEJAY_UNIT2,"Blue Jay Solar I, LLC",plant name,EIA-860
+BLVN_SLR_SOLAR2,Blevins Solar & Storage,plant name,EIA-860
+BLVN_SLR_SOLAR2,Geronimo Power,owner,web search (high)
+BLVN_SLR_SOLAR2,National Grid Renewables,developer,web search (high)
+BLVN_SLR_SOLAR2,National Grid Renewables,operator,EIA-860
+BLVN_SLR_SOLAR3,Blevins Solar & Storage,plant name,EIA-860
+BLVN_SLR_SOLAR3,Geronimo Power,owner,web search (high)
+BLVN_SLR_SOLAR3,National Grid Renewables,developer,web search (high)
+BLVN_SLR_SOLAR3,National Grid Renewables,operator,EIA-860
+BOOTLEG_UNIT1,East Pecos Solar,plant name,EIA-860
+BOOTLEG_UNIT1,First Solar,owner,web search (medium)
+BOOTLEG_UNIT1,Southern Power,operator,EIA-860
+BOOTLEG_UNIT1,Southern Power,owner,web search (medium)
+BORDAS2_JAVEL2_A,"Javelina Wind Energy, LLC",plant name,EIA-860
+BORDAS2_JAVEL2_A,NextEra Energy Resources,owner,web search (medium)
+BORDAS2_JAVEL2_B,"Javelina Wind Energy, LLC",plant name,EIA-860
+BORDAS2_JAVEL2_B,NextEra Energy Resources,owner,web search (medium)
+BORDAS2_JAVEL2_C,"Javelina Wind Energy, LLC",plant name,EIA-860
+BORDAS2_JAVEL2_C,NextEra Energy Resources,owner,web search (medium)
+BORDAS_JAVEL18,"Javelina Wind Energy, LLC",plant name,EIA-860
+BORDAS_JAVEL18,NextEra Energy Resources,owner,web search (medium)
+BORDAS_JAVEL20,"Javelina Wind Energy, LLC",plant name,EIA-860
+BORDAS_JAVEL20,NextEra Energy Resources,owner,web search (medium)
+BOSQUESW_CC1,Bosque County Peaking,plant name,EIA-860
+BOSQUESW_CC1,Calpine,operator,EIA-860
+BOSQUESW_CC2,Bosque County Peaking,plant name,EIA-860
+BOSQUESW_CC2,Calpine,operator,EIA-860
+BRAUNIG_CC1,Arthur Von Rosenberg,plant name,EIA-860
+BRAUNIG_CC1,CPS Energy,operator,EIA-860
+BRAUNIG_VHB3,CPS Energy,operator,EIA-860
+BRAUNIG_VHB3,V H Braunig,plant name,EIA-860
+BRAUNIG_VHB6CT5,CPS Energy,operator,EIA-860
+BRAUNIG_VHB6CT5,V H Braunig,plant name,EIA-860
+BRAUNIG_VHB6CT6,CPS Energy,operator,EIA-860
+BRAUNIG_VHB6CT6,V H Braunig,plant name,EIA-860
+BRAUNIG_VHB6CT7,CPS Energy,operator,EIA-860
+BRAUNIG_VHB6CT7,V H Braunig,plant name,EIA-860
+BRAUNIG_VHB6CT8,CPS Energy,operator,EIA-860
+BRAUNIG_VHB6CT8,V H Braunig,plant name,EIA-860
+BRAZ_WND_WND1,Brazos Wind Farm,plant name,EIA-860
+BRAZ_WND_WND1,Shell Energy,operator,EIA-860
+BRAZ_WND_WND2,Brazos Wind Farm,plant name,EIA-860
+BRAZ_WND_WND2,Shell Energy,operator,EIA-860
+BRIGHTSD_UNIT1,Brightside,plant name,EIA-860
+BRIGHTSD_UNIT1,Luminant,operator,EIA-860
+BRISCOE_WIND,Briscoe Wind Farm,plant name,EIA-860
+BRISCOE_WIND,Morgan Stanley,owner,web search (medium)
+BRTSW_BCW1,Avangrid Renewables,operator,EIA-860
+BRTSW_BCW1,Avangrid Renewables,owner,web search (medium)
+BRTSW_BCW1,Barton Chapel Wind Farm,plant name,EIA-860
+BR_ARROW_UNIT1,"Bright Arrow Solar, LLC",plant name,EIA-860
+BR_ARROW_UNIT1,RWE Clean Energy,developer,web search (medium)
+BR_ARROW_UNIT1,RWE Clean Energy,operator,EIA-860
+BR_ARROW_UNIT1,RWE Clean Energy,owner,web search (medium)
+BR_ARROW_UNIT2,"Bright Arrow Solar, LLC",plant name,EIA-860
+BR_ARROW_UNIT2,RWE Clean Energy,developer,web search (medium)
+BR_ARROW_UNIT2,RWE Clean Energy,operator,EIA-860
+BR_ARROW_UNIT2,RWE Clean Energy,owner,web search (medium)
+BTE_CC1,Baytown Energy Center,plant name,EIA-860
+BTM_UNIT1,Brotman Power Station,plant name,EIA-860
+BTM_UNIT1,ProEnergy Services,operator,EIA-860
+BTM_UNIT2,Brotman Power Station,plant name,EIA-860
+BTM_UNIT2,ProEnergy Services,operator,EIA-860
+BTM_UNIT3,Brotman Power Station,plant name,EIA-860
+BTM_UNIT3,ProEnergy Services,operator,EIA-860
+BTM_UNIT4,Brotman Power Station,plant name,EIA-860
+BTM_UNIT4,ProEnergy Services,operator,EIA-860
+BTM_UNIT5,Brotman Power Station,plant name,EIA-860
+BTM_UNIT5,ProEnergy Services,operator,EIA-860
+BTM_UNIT6,Brotman Power Station,plant name,EIA-860
+BTM_UNIT6,ProEnergy Services,operator,EIA-860
+BTM_UNIT7,Brotman Power Station,plant name,EIA-860
+BTM_UNIT7,ProEnergy Services,operator,EIA-860
+BTM_UNIT8,Brotman Power Station,plant name,EIA-860
+BTM_UNIT8,ProEnergy Services,operator,EIA-860
+BUCKTHRN_UNIT1,Buckthorn Wind,plant name,EIA-860
+BUCKTHRN_UNIT2,Buckthorn Wind,plant name,EIA-860
+BUFF_GAP_UNIT1,AES,operator,EIA-860
+BUFF_GAP_UNIT1,AES,owner,web search (medium)
+BUFF_GAP_UNIT1,Buffalo Gap Wind Farm,plant name,EIA-860
+BUFF_GAP_UNIT1,SeaWest WindPower,developer,web search (medium)
+BUFF_GAP_UNIT2_1,AES,operator,EIA-860
+BUFF_GAP_UNIT2_1,AES,owner,web search (medium)
+BUFF_GAP_UNIT2_1,Buffalo Gap Wind Farm,plant name,EIA-860
+BUFF_GAP_UNIT2_1,SeaWest WindPower,developer,web search (medium)
+BUFF_GAP_UNIT2_2,AES,operator,EIA-860
+BUFF_GAP_UNIT2_2,AES,owner,web search (medium)
+BUFF_GAP_UNIT2_2,Buffalo Gap Wind Farm,plant name,EIA-860
+BUFF_GAP_UNIT2_2,SeaWest WindPower,developer,web search (medium)
+BUFF_GAP_UNIT3,AES,operator,EIA-860
+BUFF_GAP_UNIT3,AES,owner,web search (medium)
+BUFF_GAP_UNIT3,Buffalo Gap Wind Farm,plant name,EIA-860
+BUFF_GAP_UNIT3,SeaWest WindPower,developer,web search (medium)
+BULLCRK_WND1,Bull Creek Wind,plant name,EIA-860
+BULLCRK_WND1,Eurus Energy America,developer,web search (medium)
+BULLCRK_WND1,Eurus Energy America,owner,web search (medium)
+BULLCRK_WND2,Bull Creek Wind,plant name,EIA-860
+BULLCRK_WND2,Eurus Energy America,developer,web search (medium)
+BULLCRK_WND2,Eurus Energy America,owner,web search (medium)
+B_DAVIS_CC1,Barney M Davis,plant name,EIA-860
+B_DAVIS_CC1,CPS Energy,operator,EIA-860
+CABEZON_WIND1,"Rio Bravo Windpower, LLC",plant name,EIA-860
+CABEZON_WIND2,"Rio Bravo Windpower, LLC",plant name,EIA-860
+CALAVERS_JKS1,CPS Energy,operator,EIA-860
+CALAVERS_JKS1,J K Spruce,plant name,EIA-860
+CALAVERS_JKS2,CPS Energy,operator,EIA-860
+CALAVERS_JKS2,J K Spruce,plant name,EIA-860
+CALAVERS_OWS1,CPS Energy,operator,EIA-860
+CALAVERS_OWS1,O W Sommers,plant name,EIA-860
+CALAVERS_OWS2,CPS Energy,operator,EIA-860
+CALAVERS_OWS2,O W Sommers,plant name,EIA-860
+CALHOUN_UNIT1,Port Comfort Power LLC,plant name,EIA-860
+CALHOUN_UNIT2,Port Comfort Power LLC,plant name,EIA-860
+CAMWIND_UNIT1,Apex Clean Energy,developer,web search (medium)
+CANYONWD_UNIT1,"Canyon Wind Project, LLC",plant name,EIA-860
+CANYONWD_UNIT2,"Canyon Wind Project, LLC",plant name,EIA-860
+CANYONWD_UNIT3,"Canyon Wind Project, LLC",plant name,EIA-860
+CANYONWD_UNIT4,"Canyon Wind Project, LLC",plant name,EIA-860
+CANYONWD_UNIT5,"Canyon Wind Project, LLC",plant name,EIA-860
+CANYONWD_UNIT6,"Canyon Wind Project, LLC",plant name,EIA-860
+CAPRIDG4_BB2_PV1,Bluebell Solar,plant name,EIA-860
+CAPRIDG4_BB2_PV2,Bluebell Solar,plant name,EIA-860
+CAPRIDG4_BB_PV,Bluebell Solar,plant name,EIA-860
+CAPRIDG4_CR4,Capricorn Ridge Wind LLC,plant name,EIA-860
+CAPRIDGE_CR1,Capricorn Ridge Wind LLC,plant name,EIA-860
+CAPRIDGE_CR2,Capricorn Ridge Wind LLC,plant name,EIA-860
+CAPRIDGE_CR3,Capricorn Ridge Wind LLC,plant name,EIA-860
+CASL_GAP_UNIT1,Castle Gap Solar Hybrid,plant name,EIA-860
+CASL_GAP_UNIT1,SunEdison,developer,web search (medium)
+CASL_GAP_UNIT1,Vistra,owner,web search (medium)
+CBECII_CC3,Roscommon Solar Park,plant name,EIA-860
+CBEC_CC1,Colorado Bend Energy Center,plant name,EIA-860
+CBEC_CC2,Colorado Bend Energy Center,plant name,EIA-860
+CBEC_GT11,Colorado Bend Energy Center,plant name,EIA-860
+CBEC_GT12,Colorado Bend Energy Center,plant name,EIA-860
+CBY4_CC1,Cedar Bayou 4,plant name,EIA-860
+CBY4_CC1,NRG Energy,operator,EIA-860
+CBY_CBY_G1,Cedar Bayou,plant name,EIA-860
+CBY_CBY_G1,NRG Energy,operator,EIA-860
+CBY_CBY_G2,Cedar Bayou,plant name,EIA-860
+CBY_CBY_G2,NRG Energy,operator,EIA-860
+CEDROHIL_CHW1,Cedro Hill Wind LLC,plant name,EIA-860
+CEDROHIL_CHW1,Clearway Energy Group,owner,web search (high)
+CEDROHIL_CHW1,Edison Mission Group,developer,web search (high)
+CEDROHIL_CHW2,Cedro Hill Wind LLC,plant name,EIA-860
+CEDROHIL_CHW2,Clearway Energy Group,owner,web search (high)
+CEDROHIL_CHW2,Edison Mission Group,developer,web search (high)
+CFLATS_U1,Cactus Flats Wind Energy Project,plant name,EIA-860
+CFLATS_U1,RES Americas,developer,web search (high)
+CFLATS_U1,Southern Power,operator,EIA-860
+CFLATS_U1,Southern Power,owner,web search (high)
+CHALUPA_UNIT1,Acciona Energía,operator,EIA-860
+CHALUPA_UNIT1,"La Chalupa, LLC",plant name,EIA-860
+CHAMON_CTG_0101,Chamon Power LLC,plant name,EIA-860
+CHAMON_CTG_0301,Chamon Power LLC,plant name,EIA-860
+CHAMPION_UNIT1,Champion Wind Farm LLC,plant name,EIA-860
+CHAMPION_UNIT1,RWE Clean Energy,developer,web search (high)
+CHAMPION_UNIT1,RWE Clean Energy,operator,EIA-860
+CHAMPION_UNIT1,RWE Clean Energy,owner,web search (high)
+CHAMPION_UNIT2,Champion Wind Farm LLC,plant name,EIA-860
+CHAMPION_UNIT2,RWE Clean Energy,developer,web search (high)
+CHAMPION_UNIT2,RWE Clean Energy,operator,EIA-860
+CHAMPION_UNIT2,RWE Clean Energy,owner,web search (high)
+CHAMPION_UNIT3,Champion Wind Farm LLC,plant name,EIA-860
+CHAMPION_UNIT3,RWE Clean Energy,developer,web search (high)
+CHAMPION_UNIT3,RWE Clean Energy,operator,EIA-860
+CHAMPION_UNIT3,RWE Clean Energy,owner,web search (high)
+CHE_CC1,Channel Energy Center LLC,plant name,EIA-860
+CHIL_SLR_SOLAR1,Chillingham Solar,plant name,EIA-860
+CHIL_SLR_SOLAR1,ENGIE,developer,web search (high)
+CHIL_SLR_SOLAR1,ENGIE,owner,web search (high)
+CHIL_SLR_SOLAR2,Chillingham Solar,plant name,EIA-860
+CHIL_SLR_SOLAR2,ENGIE,developer,web search (high)
+CHIL_SLR_SOLAR2,ENGIE,owner,web search (high)
+CITYVICT_CTG01,Victoria City Power LLC,plant name,EIA-860
+CITYVICT_CTG02,Victoria City Power LLC,plant name,EIA-860
+CN_BRKS_UNIT_1,"Canadian Breaks, LLC",plant name,EIA-860
+COLETO_COLETOG1,Coleto Creek,plant name,EIA-860
+CONIGLIO_UNIT1,Coniglio Solar,plant name,EIA-860
+CORALSLR_SOLAR1,"Copperhead Solar, LLC",plant name,EIA-860
+CORALSLR_SOLAR1,National Grid Renewables,developer,web search (high)
+CORALSLR_SOLAR1,National Grid Renewables,operator,EIA-860
+CORALSLR_SOLAR1,National Grid Renewables,owner,web search (high)
+CORALSLR_SOLAR2,"Copperhead Solar, LLC",plant name,EIA-860
+CORALSLR_SOLAR2,National Grid Renewables,developer,web search (high)
+CORALSLR_SOLAR2,National Grid Renewables,operator,EIA-860
+CORALSLR_SOLAR2,National Grid Renewables,owner,web search (high)
+CORAZON_UNIT1,BayWa r.e.,developer,web search (medium)
+CORAZON_UNIT1,Corazon Energy LLC,plant name,EIA-860
+CORAZON_UNIT1,Eni New Energy US Inc,owner,web search (medium)
+COTPLNS_COTTONPL,Cotton Plains Wind Farm,plant name,EIA-860
+COTPLNS_OLDSETLR,Cotton Plains Wind Farm,plant name,EIA-860
+COTTON_PAP2,E.ON,developer,web search (medium)
+COTTON_PAP2,EC&R Papalote Creek II LLC,plant name,EIA-860
+COTTON_PAP2,PensionDanmark,owner,web search (medium)
+COTTON_PAP2,RWE Clean Energy,operator,EIA-860
+COTTON_PAP2,RWE Clean Energy,owner,web search (medium)
+COYOTE_W_UNIT1,Dermott Wind,plant name,EIA-860
+COYOTE_W_UNIT2,Dermott Wind,plant name,EIA-860
+COYOTE_W_UNIT3,Dermott Wind,plant name,EIA-860
+CPSES_UNIT1,Comanche Peak,plant name,EIA-860
+CPSES_UNIT1,Luminant,operator,EIA-860
+CPSES_UNIT2,Comanche Peak,plant name,EIA-860
+CPSES_UNIT2,Luminant,operator,EIA-860
+CRANELL_UNIT1,Cranell Wind Farm LLC,plant name,EIA-860
+CRANELL_UNIT1,RWE Clean Energy,operator,EIA-860
+CRAWFISH_UNIT1,Fengate,owner,web search (medium)
+CRWN_SLR_UNIT1,BPL Crown Solar LLC,plant name,EIA-860
+CSEC_CSECG1,Invenergy,developer,web search (medium)
+CSEC_CSECG1,Invenergy,operator,EIA-860
+CSEC_CSECG1,Invenergy,owner,web search (medium)
+CSEC_CSECG1,Scurry County Wind LP,plant name,EIA-860
+CSEC_CSECG2,Invenergy,developer,web search (medium)
+CSEC_CSECG2,Invenergy,operator,EIA-860
+CSEC_CSECG2,Invenergy,owner,web search (medium)
+CSEC_CSECG2,Scurry County Wind LP,plant name,EIA-860
+CTW_SOLAR1,Cottonwood Bayou Solar,plant name,EIA-860
+CTW_SOLAR1,TotalEnergies,owner,web search (medium)
+CTW_SOLAR2,Cottonwood Bayou Solar,plant name,EIA-860
+CTW_SOLAR2,TotalEnergies,owner,web search (medium)
+CVC_CC1,Channelview Cogeneration Plant,plant name,EIA-860
+DAG_UNIT1,Brazoria County Solar Project (Danciger),plant name,EIA-860
+DAG_UNIT2,Brazoria County Solar Project (Danciger),plant name,EIA-860
+DANSBY_DANSBYG1,City of Bryan,operator,EIA-860
+DANSBY_DANSBYG1,Dansby,plant name,EIA-860
+DANSBY_DANSBYG2,City of Bryan,operator,EIA-860
+DANSBY_DANSBYG2,Dansby,plant name,EIA-860
+DANSBY_DANSBYG3,City of Bryan,operator,EIA-860
+DANSBY_DANSBYG3,Dansby,plant name,EIA-860
+DAN_UNIT1,"Danish Fields Solar, LLC",plant name,EIA-860
+DAN_UNIT1,Sunchase Power,developer,web search (medium)
+DAN_UNIT1,TotalEnergies,developer,web search (medium)
+DAN_UNIT1,TotalEnergies,owner,web search (medium)
+DAN_UNIT2,"Danish Fields Solar, LLC",plant name,EIA-860
+DAN_UNIT2,Sunchase Power,developer,web search (medium)
+DAN_UNIT2,TotalEnergies,developer,web search (medium)
+DAN_UNIT2,TotalEnergies,owner,web search (medium)
+DAN_UNIT3,"Danish Fields Solar, LLC",plant name,EIA-860
+DAN_UNIT3,Sunchase Power,developer,web search (medium)
+DAN_UNIT3,TotalEnergies,developer,web search (medium)
+DAN_UNIT3,TotalEnergies,owner,web search (medium)
+DCSES_CT10,DeCordova Steam Electric Station,plant name,EIA-860
+DCSES_CT10,Luminant,operator,EIA-860
+DCSES_CT20,DeCordova Steam Electric Station,plant name,EIA-860
+DCSES_CT20,Luminant,operator,EIA-860
+DCSES_CT30,DeCordova Steam Electric Station,plant name,EIA-860
+DCSES_CT30,Luminant,operator,EIA-860
+DCSES_CT40,DeCordova Steam Electric Station,plant name,EIA-860
+DCSES_CT40,Luminant,operator,EIA-860
+DDPEC_CC1,Deer Park Energy Center,plant name,EIA-860
+DECKER_DPGT_1,Austin Energy,operator,EIA-860
+DECKER_DPGT_1,Decker Creek,plant name,EIA-860
+DECKER_DPGT_2,Austin Energy,operator,EIA-860
+DECKER_DPGT_2,Decker Creek,plant name,EIA-860
+DECKER_DPGT_3,Austin Energy,operator,EIA-860
+DECKER_DPGT_3,Decker Creek,plant name,EIA-860
+DECKER_DPGT_4,Austin Energy,operator,EIA-860
+DECKER_DPGT_4,Decker Creek,plant name,EIA-860
+DEC_AGR_A,City of Denton,operator,EIA-860
+DEC_AGR_A,Denton Energy Center,plant name,EIA-860
+DEC_AGR_B,City of Denton,operator,EIA-860
+DEC_AGR_B,Denton Energy Center,plant name,EIA-860
+DEC_AGR_C,City of Denton,operator,EIA-860
+DEC_AGR_C,Denton Energy Center,plant name,EIA-860
+DEC_AGR_D,City of Denton,operator,EIA-860
+DEC_AGR_D,Denton Energy Center,plant name,EIA-860
+DELILA_1_G1,Invenergy,developer,web search (medium)
+DELILA_1_G1,WEC Energy Group,owner,web search (medium)
+DELILA_1_G2,Invenergy,developer,web search (medium)
+DELILA_1_G2,WEC Energy Group,owner,web search (medium)
+DELILA_2_G1,Delilah Solar Energy LLC,plant name,EIA-860
+DELILA_2_G1,Invenergy,operator,EIA-860
+DELILA_2_G2,Delilah Solar Energy LLC,plant name,EIA-860
+DELILA_2_G2,Invenergy,operator,EIA-860
+DELILA_2_G3,Delilah Solar Energy LLC,plant name,EIA-860
+DELILA_2_G3,Invenergy,operator,EIA-860
+DERMOTT_UNIT1,Dermott Wind,plant name,EIA-860
+DERMOTT_UNIT2,Dermott Wind,plant name,EIA-860
+DEWOLF_UNIT1,Apex Clean Energy,developer,web search (medium)
+DEWOLF_UNIT1,Aviator Wind,plant name,EIA-860
+DEWOLF_UNIT1,Funds managed by Ares Infrastructure,owner,web search (medium)
+DIGBY_UNIT1,Electra Wind Farm,plant name,EIA-860
+DIGBY_UNIT2,Electra Wind Farm,plant name,EIA-860
+DILEOSLR_UNIT1,Dileo Solar,plant name,EIA-860
+DIVR_SLR_SOLAR1,"Diver Solar, LLC",plant name,EIA-860
+DIVR_SLR_SOLAR1,NextEra Energy Resources,developer,web search (medium)
+DIVR_SLR_SOLAR2,"Diver Solar, LLC",plant name,EIA-860
+DIVR_SLR_SOLAR2,NextEra Energy Resources,developer,web search (medium)
+DMA_SOLAR1,Lightsource bp,developer,web search (medium)
+DRCK_SLR_SOLAR1,Vistra,owner,web search (medium)
+DSKYWND1_UNIT_1A,Desert Sky,plant name,EIA-860
+DSKYWND1_UNIT_1B,Desert Sky,plant name,EIA-860
+DSKYWND2_UNIT_2A,Desert Sky,plant name,EIA-860
+DSKYWND2_UNIT_2B,Desert Sky,plant name,EIA-860
+DUKE_CC1,Calpine,operator,EIA-860
+DUKE_CC1,Hidalgo Energy Center,plant name,EIA-860
+ECEC_G1,Ector County Energy Center,plant name,EIA-860
+ECEC_G2,Ector County Energy Center,plant name,EIA-860
+ECLIPSE_UNIT1,"OCI Alamo 4, LLC",plant name,EIA-860
+ECLIPSE_UNIT1,OCI Energy,developer,web search (medium)
+ECLIPSE_UNIT1,RWE Clean Energy,operator,EIA-860
+EGROVESL_UNIT1,Mortenson,developer,web search (medium)
+EGROVESL_UNIT1,Vistra,owner,web search (medium)
+EIFSLR_UNIT1,Eiffel Solar Project,plant name,EIA-860
+EIFSLR_UNIT1,Terras Energy Corp,owner,web search (medium)
+EIFSLR_UNIT1,Toyota Tsusho,owner,web search (medium)
+ELARA_SL_UNIT1,7X Energy,developer,web search (medium)
+ELARA_SL_UNIT1,Elara Solar,plant name,EIA-860
+ELARA_SL_UNIT1,KOMIPO America Inc,owner,web search (medium)
+ELB_ELBCREEK,Clearway Energy Group,owner,web search (medium)
+ELB_ELBCREEK,Elbow Creek Wind Project LLC,plant name,EIA-860
+ELLISSLR_UNIT1,174 Power Global,operator,EIA-860
+ELLISSLR_UNIT1,Ellis Solar LLC,plant name,EIA-860
+ELSAUZ_UNIT1,Apex Clean Energy,developer,web search (medium)
+ELSAUZ_UNIT1,JERA Americas,owner,web search (medium)
+ELSAUZ_UNIT2,Apex Clean Energy,developer,web search (medium)
+ELSAUZ_UNIT2,JERA Americas,owner,web search (medium)
+EL_RAYO_UNIT1,E.ON,developer,web search (medium)
+EL_RAYO_UNIT1,E.ON,owner,web search (medium)
+EL_RAYO_UNIT1,RWE Clean Energy,developer,web search (medium)
+EL_RAYO_UNIT1,RWE Clean Energy,owner,web search (medium)
+EL_RAYO_UNIT1,"Raymond, LLC",plant name,EIA-860
+EL_RAYO_UNIT2,E.ON,developer,web search (medium)
+EL_RAYO_UNIT2,E.ON,owner,web search (medium)
+EL_RAYO_UNIT2,RWE Clean Energy,developer,web search (medium)
+EL_RAYO_UNIT2,RWE Clean Energy,owner,web search (medium)
+EL_RAYO_UNIT2,"Raymond, LLC",plant name,EIA-860
+ESTONIAN_SOLAR1,Enel North America,developer,web search (medium)
+ESTONIAN_SOLAR1,Enel North America,owner,web search (medium)
+ESTONIAN_SOLAR2,Enel North America,developer,web search (medium)
+ESTONIAN_SOLAR2,Enel North America,owner,web search (medium)
+ETCCS_CC1,Ennis Power Company LLC,plant name,EIA-860
+EUNICE_PV1,7X Energy,developer,web search (medium)
+EUNICE_PV1,Duke Energy Renewables,owner,web search (medium)
+EUNICE_PV2,7X Energy,developer,web search (medium)
+EUNICE_PV2,Duke Energy Renewables,owner,web search (medium)
+EXGNSND_WIND_1,Constellation Energy,owner,web search (medium)
+EXGNSND_WIND_1,Sendero,plant name,EIA-860
+EXGNWTL_WIND_1,Constellation Energy,owner,web search (medium)
+EXGNWTL_WIND_1,John Hancock Life Insurance,owner,web search (medium)
+EXGNWTL_WIND_1,Whitetail,plant name,EIA-860
+E_BLACK_UNIT_1,Duke Energy Renewables,operator,EIA-860
+E_BLACK_UNIT_1,Duke Energy Renewables,owner,web search (medium)
+E_BLACK_UNIT_1,East Blackland Solar Project 1,plant name,EIA-860
+E_BLACK_UNIT_1,Recurrent Energy,developer,web search (medium)
+FAGUSSLR_UNIT2,Fagus Solar Park,plant name,EIA-860
+FAGUSSLR_UNIT3,Fagus Solar Park,plant name,EIA-860
+FEGC_CTG2,Friendswood Energy,plant name,EIA-860
+FEGC_CTG3,Friendswood Energy,plant name,EIA-860
+FEGC_CTG4,Friendswood Energy,plant name,EIA-860
+FEGC_UNIT1,Friendswood Energy,plant name,EIA-860
+FENCESLR_SOLAR1,Enel North America,developer,web search (high)
+FENCESLR_SOLAR1,Enel North America,owner,web search (high)
+FENCESLR_SOLAR1,"Fence Post Solar Hybrid Project, LLC",plant name,EIA-860
+FENCESLR_SOLAR2,Enel North America,developer,web search (high)
+FENCESLR_SOLAR2,Enel North America,owner,web search (high)
+FENCESLR_SOLAR2,"Fence Post Solar Hybrid Project, LLC",plant name,EIA-860
+FERGCC_CC1,LCRA,operator,EIA-860
+FERGCC_CC1,Thomas C Ferguson,plant name,EIA-860
+FERMI_WIND1,Akuo Energy,developer,web search (medium)
+FERMI_WIND1,Masdar,owner,web search (medium)
+FERMI_WIND2,Akuo Energy,developer,web search (medium)
+FERMI_WIND2,Masdar,owner,web search (medium)
+FILESSLR_PV1,BPL Files Solar,plant name,EIA-860
+FIVEWSLR_UNIT1,Five Wells Solar Center - Hybrid,plant name,EIA-860
+FIVEWSLR_UNIT2,Five Wells Solar Center - Hybrid,plant name,EIA-860
+FLTCK_SSI,Silver Star I Wind Power Project,plant name,EIA-860
+FLUVANNA_UNIT1,Fluvanna,plant name,EIA-860
+FLUVANNA_UNIT1,TC Energy,operator,EIA-860
+FLUVANNA_UNIT2,Fluvanna,plant name,EIA-860
+FLUVANNA_UNIT2,TC Energy,operator,EIA-860
+FOARDCTY_UNIT1,Foard City Wind,plant name,EIA-860
+FOARDCTY_UNIT1,Innergex Renewable Energy,developer,web search (medium)
+FOARDCTY_UNIT2,Foard City Wind,plant name,EIA-860
+FOARDCTY_UNIT2,Innergex Renewable Energy,developer,web search (medium)
+FPPYD1_FPP_G1_J01,Fayette Power Project,plant name,EIA-860
+FPPYD1_FPP_G1_J01,LCRA,operator,EIA-860
+FPPYD1_FPP_G1_J02,Fayette Power Project,plant name,EIA-860
+FPPYD1_FPP_G1_J02,LCRA,operator,EIA-860
+FPPYD1_FPP_G2_J01,Fayette Power Project,plant name,EIA-860
+FPPYD1_FPP_G2_J01,LCRA,operator,EIA-860
+FPPYD1_FPP_G2_J02,Fayette Power Project,plant name,EIA-860
+FPPYD1_FPP_G2_J02,LCRA,operator,EIA-860
+FPPYD2_FPP_G3,Fayette Power Project,plant name,EIA-860
+FPPYD2_FPP_G3,LCRA,operator,EIA-860
+FREC_CC1,Ratcliff Solar Park,plant name,EIA-860
+FREC_CC2,Freestone Energy Center,plant name,EIA-860
+FRNYPP_CC1,Forney Energy Center,plant name,EIA-860
+FRNYPP_CC2,Forney Energy Center,plant name,EIA-860
+FRONT_EC_CC1,Frontera Energy Center,plant name,EIA-860
+FRONT_EC_CC1,Frontera Generation Limited Partnership,operator,EIA-860
+FRYE_SLR_UNIT1,Hecate Energy,developer,web search (medium)
+FRYE_SLR_UNIT1,Hecate Energy Frye Solar LLC,plant name,EIA-860
+FRYE_SLR_UNIT1,Repsol,operator,EIA-860
+FRYE_SLR_UNIT1,Repsol,owner,web search (medium)
+FRYE_SLR_UNIT2,Hecate Energy,developer,web search (medium)
+FRYE_SLR_UNIT2,Hecate Energy Frye Solar LLC,plant name,EIA-860
+FRYE_SLR_UNIT2,Repsol,operator,EIA-860
+FRYE_SLR_UNIT2,Repsol,owner,web search (medium)
+FTR_CC1,Tenaska,operator,EIA-860
+FTR_CC1,Tenaska Frontier Generation Station,plant name,EIA-860
+FTWIND_UNIT_1,Alterra Power,owner,web search (medium)
+FTWIND_UNIT_1,BHE Renewables,operator,EIA-860
+FTWIND_UNIT_1,BHE Renewables,owner,web search (medium)
+FTWIND_UNIT_1,Flat Top Wind I,plant name,EIA-860
+FTWIND_UNIT_1,Pioneer Green Energy,developer,web search (medium)
+FWLR_SLR_UNIT1,CED Crane Solar,plant name,EIA-860
+FWLR_SLR_UNIT1,Con Edison Development,developer,web search (medium)
+FWLR_SLR_UNIT1,Starwood Energy,owner,web search (medium)
+GALLOWAY_SOLAR1,Galloway 1 Solar Farm,plant name,EIA-860
+GALLOWAY_SOLAR2,Galloway 1 Solar Farm,plant name,EIA-860
+GBY_GBYGT73,Greens Bayou,plant name,EIA-860
+GBY_GBYGT73,NRG Energy,operator,EIA-860
+GBY_GBYGT74,Greens Bayou,plant name,EIA-860
+GBY_GBYGT74,NRG Energy,operator,EIA-860
+GBY_GBYGT81,Greens Bayou,plant name,EIA-860
+GBY_GBYGT81,NRG Energy,operator,EIA-860
+GBY_GBYGT82,Greens Bayou,plant name,EIA-860
+GBY_GBYGT82,NRG Energy,operator,EIA-860
+GBY_GBYGT83,Greens Bayou,plant name,EIA-860
+GBY_GBYGT83,NRG Energy,operator,EIA-860
+GBY_GBYGT84,Greens Bayou,plant name,EIA-860
+GBY_GBYGT84,NRG Energy,operator,EIA-860
+GIDEON_GIDEONG1,LCRA,operator,EIA-860
+GIDEON_GIDEONG1,Sim Gideon,plant name,EIA-860
+GIDEON_GIDEONG2,LCRA,operator,EIA-860
+GIDEON_GIDEONG2,Sim Gideon,plant name,EIA-860
+GIDEON_GIDEONG3,LCRA,operator,EIA-860
+GIDEON_GIDEONG3,Sim Gideon,plant name,EIA-860
+GOAT_GOATWIN2,Goat Wind LP,plant name,EIA-860
+GOAT_GOATWIND,Goat Wind LP,plant name,EIA-860
+GOLINDA_UNIT1,OCI Energy,owner,web search (medium)
+GOODNIT1_UNIT1,Goodnight,plant name,EIA-860
+GOODNIT1_UNIT1,Omega Energia,developer,web search (medium)
+GOODNIT1_UNIT2,Goodnight,plant name,EIA-860
+GOODNIT1_UNIT2,Omega Energia,developer,web search (medium)
+GOPHER_UNIT1,BHE Renewables,owner,web search (medium)
+GOPHER_UNIT1,Gopher Creek Wind Farm,plant name,EIA-860
+GOPHER_UNIT1,Tri Global Energy,developer,web search (medium)
+GOPHER_UNIT2,BHE Renewables,owner,web search (medium)
+GOPHER_UNIT2,Gopher Creek Wind Farm,plant name,EIA-860
+GOPHER_UNIT2,Tri Global Energy,developer,web search (medium)
+GPASTURE_WIND_I,Capital Dynamics,owner,web search (medium)
+GPASTURE_WIND_I,Green Pastures Wind I,plant name,EIA-860
+GPASTURE_WIND_I,Pioneer Green Energy,developer,web search (medium)
+GRANDVW1_COLA,"Grandview Wind Farm, LLC",plant name,EIA-860
+GRANDVW1_COLA,RWE Clean Energy,operator,EIA-860
+GRANDVW1_COLB,"Grandview Wind Farm, LLC",plant name,EIA-860
+GRANDVW1_COLB,RWE Clean Energy,operator,EIA-860
+GRANDVW1_GV1A,"Grandview Wind Farm, LLC",plant name,EIA-860
+GRANDVW1_GV1A,RWE Clean Energy,operator,EIA-860
+GRANDVW1_GV1B,"Grandview Wind Farm, LLC",plant name,EIA-860
+GRANDVW1_GV1B,RWE Clean Energy,operator,EIA-860
+GRAN_SLR_UNIT1,Gransolar,developer,web search (medium)
+GRAN_SLR_UNIT1,Gransolar,operator,EIA-860
+GRAN_SLR_UNIT1,Gransolar,owner,web search (medium)
+GRAN_SLR_UNIT1,"Gransolar Texas One, LLC",plant name,EIA-860
+GREASWOD_UNIT1,Greasewood Solar,plant name,EIA-860
+GREASWOD_UNIT2,Greasewood Solar,plant name,EIA-860
+GRIF_TRL_UNIT1,Griffin Trail Wind,plant name,EIA-860
+GRIF_TRL_UNIT1,Innergex Renewable Energy,developer,web search (medium)
+GRIF_TRL_UNIT1,Innergex Renewable Energy,owner,web search (medium)
+GRIF_TRL_UNIT1,Irradiant Partners,owner,web search (medium)
+GRIF_TRL_UNIT2,Griffin Trail Wind,plant name,EIA-860
+GRIF_TRL_UNIT2,Innergex Renewable Energy,developer,web search (medium)
+GRIF_TRL_UNIT2,Innergex Renewable Energy,owner,web search (medium)
+GRIF_TRL_UNIT2,Irradiant Partners,owner,web search (medium)
+GRIM_SLR_UNIT1,Grimes County Solar,plant name,EIA-860
+GRIM_SLR_UNIT1,Naturgy,owner,web search (medium)
+GRIM_SLR_UNIT2,Grimes County Solar,plant name,EIA-860
+GRIM_SLR_UNIT2,Naturgy,owner,web search (medium)
+GRIM_SLR_UNIT3,Grimes County Solar,plant name,EIA-860
+GRIM_SLR_UNIT3,Naturgy,owner,web search (medium)
+GRIZZLY_SOLAR1,Diode Ventures,developer,web search (medium)
+GRIZZLY_SOLAR1,Diode Ventures,owner,web search (medium)
+GRSES_UNIT1,Graham,plant name,EIA-860
+GRSES_UNIT1,Luminant,operator,EIA-860
+GRSES_UNIT2,Graham,plant name,EIA-860
+GRSES_UNIT2,Luminant,operator,EIA-860
+GRYH_SLR_SOLAR1,Origis Energy,developer,web search (medium)
+GRYH_SLR_SOLAR1,Origis Energy,owner,web search (medium)
+GRYH_SLR_SOLAR2,Origis Energy,developer,web search (medium)
+GRYH_SLR_SOLAR2,Origis Energy,owner,web search (medium)
+GRYH_SLR_SOLAR3,Origis Energy,developer,web search (medium)
+GRYH_SLR_SOLAR3,Origis Energy,owner,web search (medium)
+GRYH_SLR_SOLAR4,Origis Energy,developer,web search (medium)
+GRYH_SLR_SOLAR4,Origis Energy,owner,web search (medium)
+GRYH_SLR_SOLAR5,Origis Energy,developer,web search (medium)
+GRYH_SLR_SOLAR5,Origis Energy,owner,web search (medium)
+GRYH_SLR_SOLAR6,Origis Energy,developer,web search (medium)
+GRYH_SLR_SOLAR6,Origis Energy,owner,web search (medium)
+GRYH_SLR_SOLAR7,Origis Energy,developer,web search (medium)
+GRYH_SLR_SOLAR7,Origis Energy,owner,web search (medium)
+GRYH_SLR_SOLAR8,Origis Energy,developer,web search (medium)
+GRYH_SLR_SOLAR8,Origis Energy,owner,web search (medium)
+GUADG_CC1,Guadalupe Generating Station,plant name,EIA-860
+GUADG_CC2,Guadalupe Generating Station,plant name,EIA-860
+GUNMTN_G1,Gunsight Mountain Wind Energy LLC,plant name,EIA-860
+GUNMTN_G1,Invenergy,developer,web search (medium)
+GUNMTN_G1,Invenergy,operator,EIA-860
+GUNMTN_G1,Invenergy,owner,web search (medium)
+GWEC_GWEC_G1,Goldthwaite Wind Energy Facility,plant name,EIA-860
+GWEC_GWEC_G1,Invenergy,operator,EIA-860
+GWEC_GWEC_G1,Invenergy,owner,web search (medium)
+HARALD_UNIT1,Bearkat,plant name,EIA-860
+HART_WND_UNIT1,Hart Wind,plant name,EIA-860
+HART_WND_UNIT1,NextEra Energy Resources,developer,web search (medium)
+HAYSEN_HAYSENG1,Hays Energy Project,plant name,EIA-860
+HAYSEN_HAYSENG2,Hays Energy Project,plant name,EIA-860
+HAYSEN_HAYSENG3,Hays Energy Project,plant name,EIA-860
+HAYSEN_HAYSENG4,Hays Energy Project,plant name,EIA-860
+HELIOS_UNIT1,OCI Alamo 5 LLC,plant name,EIA-860
+HELIOS_UNIT1,RWE Clean Energy,operator,EIA-860
+HHGT_CALLAHAN,Horse Hollow Wind Energy Center,plant name,EIA-860
+HHGT_CALLAHAN,InvestEnergyGroup,owner,web search (medium)
+HHGT_CALLAHAN,NextEra Energy Resources,developer,web search (medium)
+HHGT_CALLAHAN,NextEra Energy Resources,operator,EIA-860
+HHGT_CALLAHAN,NextEra Energy Resources,owner,web search (medium)
+HHGT_HHOLLOW1,Horse Hollow Wind Energy Center,plant name,EIA-860
+HHGT_HHOLLOW1,InvestEnergyGroup,owner,web search (medium)
+HHGT_HHOLLOW1,NextEra Energy Resources,developer,web search (medium)
+HHGT_HHOLLOW1,NextEra Energy Resources,operator,EIA-860
+HHGT_HHOLLOW1,NextEra Energy Resources,owner,web search (medium)
+HHGT_HHOLLOW2,Horse Hollow Wind Energy Center,plant name,EIA-860
+HHGT_HHOLLOW2,InvestEnergyGroup,owner,web search (medium)
+HHGT_HHOLLOW2,NextEra Energy Resources,developer,web search (medium)
+HHGT_HHOLLOW2,NextEra Energy Resources,operator,EIA-860
+HHGT_HHOLLOW2,NextEra Energy Resources,owner,web search (medium)
+HHGT_HHOLLOW3,Horse Hollow Wind Energy Center,plant name,EIA-860
+HHGT_HHOLLOW3,InvestEnergyGroup,owner,web search (medium)
+HHGT_HHOLLOW3,NextEra Energy Resources,developer,web search (medium)
+HHGT_HHOLLOW3,NextEra Energy Resources,operator,EIA-860
+HHGT_HHOLLOW3,NextEra Energy Resources,owner,web search (medium)
+HHGT_HHOLLOW4,Horse Hollow Wind Energy Center,plant name,EIA-860
+HHGT_HHOLLOW4,InvestEnergyGroup,owner,web search (medium)
+HHGT_HHOLLOW4,NextEra Energy Resources,developer,web search (medium)
+HHGT_HHOLLOW4,NextEra Energy Resources,operator,EIA-860
+HHGT_HHOLLOW4,NextEra Energy Resources,owner,web search (medium)
+HICKMAN_G1_J01,BHE Renewables,operator,EIA-860
+HICKMAN_G1_J01,BHE Renewables,owner,web search (medium)
+HICKMAN_G1_J01,Invenergy,developer,web search (medium)
+HICKMAN_G1_J01,Santa Rita Wind Energy,plant name,EIA-860
+HICKMAN_G1_J02,BHE Renewables,operator,EIA-860
+HICKMAN_G1_J02,BHE Renewables,owner,web search (medium)
+HICKMAN_G1_J02,Invenergy,developer,web search (medium)
+HICKMAN_G1_J02,Santa Rita Wind Energy,plant name,EIA-860
+HICKMAN_G2_J01,BHE Renewables,operator,EIA-860
+HICKMAN_G2_J01,BHE Renewables,owner,web search (medium)
+HICKMAN_G2_J01,Invenergy,developer,web search (medium)
+HICKMAN_G2_J01,Santa Rita Wind Energy,plant name,EIA-860
+HICKMAN_G2_J02,BHE Renewables,operator,EIA-860
+HICKMAN_G2_J02,BHE Renewables,owner,web search (medium)
+HICKMAN_G2_J02,Invenergy,developer,web search (medium)
+HICKMAN_G2_J02,Santa Rita Wind Energy,plant name,EIA-860
+HI_LONE_WGR1A,Enel North America,developer,web search (medium)
+HI_LONE_WGR1A,Enel North America,owner,web search (medium)
+HI_LONE_WGR1B,Enel North America,developer,web search (medium)
+HI_LONE_WGR1B,Enel North America,owner,web search (medium)
+HI_LONE_WGR1C,Enel North America,developer,web search (medium)
+HI_LONE_WGR1C,Enel North America,owner,web search (medium)
+HI_LONE_WGR2,Enel North America,developer,web search (medium)
+HI_LONE_WGR2,Enel North America,owner,web search (medium)
+HI_LONE_WGR2A,Enel North America,developer,web search (medium)
+HI_LONE_WGR2A,Enel North America,owner,web search (medium)
+HI_LONE_WGR3,Enel North America,developer,web search (medium)
+HI_LONE_WGR3,Enel North America,owner,web search (medium)
+HI_LONE_WGR4,Enel North America,developer,web search (medium)
+HI_LONE_WGR4,Enel North America,owner,web search (medium)
+HKSN_SLR_UNIT1,"BT Hickerson Solar, LLC",plant name,EIA-860
+HKSN_SLR_UNIT1,NextEra Energy Resources,developer,web search (high)
+HKSN_SLR_UNIT1,NextEra Energy Resources,owner,web search (high)
+HKSN_SLR_UNIT2,"BT Hickerson Solar, LLC",plant name,EIA-860
+HKSN_SLR_UNIT2,NextEra Energy Resources,developer,web search (high)
+HKSN_SLR_UNIT2,NextEra Energy Resources,owner,web search (high)
+HKSN_SLR_UNIT3,"BT Hickerson Solar, LLC",plant name,EIA-860
+HKSN_SLR_UNIT3,NextEra Energy Resources,developer,web search (high)
+HKSN_SLR_UNIT3,NextEra Energy Resources,owner,web search (high)
+HLSES_UNIT3,Exelon Power,operator,EIA-860
+HLSES_UNIT3,Handley,plant name,EIA-860
+HLSES_UNIT4,Exelon Power,operator,EIA-860
+HLSES_UNIT4,Handley,plant name,EIA-860
+HLSES_UNIT5,Exelon Power,operator,EIA-860
+HLSES_UNIT5,Handley,plant name,EIA-860
+HOLSTEIN_SOLAR1,8minute Solar Energy,developer,web search (medium)
+HOLSTEIN_SOLAR1,Duke Energy Renewables,owner,web search (medium)
+HOLSTEIN_SOLAR1,Holstein 1 Solar Farm,plant name,EIA-860
+HOLSTEIN_SOLAR2,8minute Solar Energy,developer,web search (medium)
+HOLSTEIN_SOLAR2,Duke Energy Renewables,owner,web search (medium)
+HOLSTEIN_SOLAR2,Holstein 1 Solar Farm,plant name,EIA-860
+HOPKNSLR_UNIT1,ENGIE,developer,web search (medium)
+HOPKNSLR_UNIT1,Hopkins Energy LLC,plant name,EIA-860
+HOPKNSLR_UNIT2,ENGIE,developer,web search (medium)
+HOPKNSLR_UNIT2,Hopkins Energy LLC,plant name,EIA-860
+HORSECRK_UNIT1,Horse Creek Wind Farm,plant name,EIA-860
+HORSECRK_UNIT2,Horse Creek Wind Farm,plant name,EIA-860
+HOVEY_UNIT1,East Pecos Solar,plant name,EIA-860
+HOVEY_UNIT1,First Solar,owner,web search (medium)
+HOVEY_UNIT1,Southern Power,operator,EIA-860
+HOVEY_UNIT1,Southern Power,owner,web search (medium)
+HRFDWIND_JRDWIND1,BHE Renewables,developer,web search (medium)
+HRFDWIND_JRDWIND1,BHE Renewables,owner,web search (medium)
+HRFDWIND_JRDWIND1,TX Jumbo Road Wind,plant name,EIA-860
+HRFDWIND_JRDWIND2,BHE Renewables,developer,web search (medium)
+HRFDWIND_JRDWIND2,BHE Renewables,owner,web search (medium)
+HRFDWIND_JRDWIND2,TX Jumbo Road Wind,plant name,EIA-860
+HRFDWIND_WIND_G,Boralex,owner,web search (medium)
+HRFDWIND_WIND_G,TX Hereford Wind,plant name,EIA-860
+HRFDWIND_WIND_V,Boralex,owner,web search (medium)
+HRFDWIND_WIND_V,TX Hereford Wind,plant name,EIA-860
+HRNT_SLR_UNIT1,Hornet Solar (TX),plant name,EIA-860
+HRNT_SLR_UNIT1,Vesper Energy,developer,web search (medium)
+HRNT_SLR_UNIT1,Vesper Energy,operator,EIA-860
+HRNT_SLR_UNIT1,Vesper Energy,owner,web search (medium)
+HRNT_SLR_UNIT2,Hornet Solar (TX),plant name,EIA-860
+HRNT_SLR_UNIT2,Vesper Energy,developer,web search (medium)
+HRNT_SLR_UNIT2,Vesper Energy,operator,EIA-860
+HRNT_SLR_UNIT2,Vesper Energy,owner,web search (medium)
+HRNT_SLR_UNIT3,Hornet Solar (TX),plant name,EIA-860
+HRNT_SLR_UNIT3,Vesper Energy,developer,web search (medium)
+HRNT_SLR_UNIT3,Vesper Energy,operator,EIA-860
+HRNT_SLR_UNIT3,Vesper Energy,owner,web search (medium)
+HRZN_SLR_UNIT1,Horizon Solar,plant name,EIA-860
+HRZN_SLR_UNIT1,Leeward Renewable Energy,developer,web search (high)
+HRZN_SLR_UNIT1,Leeward Renewable Energy,operator,EIA-860
+HRZN_SLR_UNIT1,Leeward Renewable Energy,owner,web search (high)
+HWF_HWFG1,Hackberry Wind Farm,plant name,EIA-860
+HWF_HWFG1,RES Americas,developer,web search (medium)
+IMPACT_UNIT1,Impact Solar 1,plant name,EIA-860
+IMPACT_UNIT1,Lightsource bp,operator,EIA-860
+INDL_INADALE1,Inadale Wind Farm LLC Hybrid,plant name,EIA-860
+INDL_INADALE1,RWE Clean Energy,operator,EIA-860
+INDL_INADALE2,Inadale Wind Farm LLC Hybrid,plant name,EIA-860
+INDL_INADALE2,RWE Clean Energy,operator,EIA-860
+INDNNWP_INDNNWP2,NWP Indian Mesa Wind Farm,plant name,EIA-860
+INDNNWP_INDNNWP2,NextEra Energy Resources,owner,web search (medium)
+INRT_W_UNIT1,Enel North America,owner,web search (medium)
+INRT_W_UNIT1,Inertia Wind Project,plant name,EIA-860
+INRT_W_UNIT1,NextEra Energy Resources,developer,web search (medium)
+INRT_W_UNIT1,NextEra Energy Resources,owner,web search (medium)
+INRT_W_UNIT2,Enel North America,owner,web search (medium)
+INRT_W_UNIT2,Inertia Wind Project,plant name,EIA-860
+INRT_W_UNIT2,NextEra Energy Resources,developer,web search (medium)
+INRT_W_UNIT2,NextEra Energy Resources,owner,web search (medium)
+INRT_W_UNIT3,Enel North America,owner,web search (medium)
+INRT_W_UNIT3,Inertia Wind Project,plant name,EIA-860
+INRT_W_UNIT3,NextEra Energy Resources,developer,web search (medium)
+INRT_W_UNIT3,NextEra Energy Resources,owner,web search (medium)
+JACKCNTY_CC1,Jack County,plant name,EIA-860
+JADE_SLR_UNIT1,Intersect Power,developer,web search (medium)
+JADE_SLR_UNIT1,Intersect Power,owner,web search (medium)
+JADE_SLR_UNIT1,Lumina Solar Project,plant name,EIA-860
+JADE_SLR_UNIT2,Intersect Power,developer,web search (medium)
+JADE_SLR_UNIT2,Intersect Power,owner,web search (medium)
+JADE_SLR_UNIT2,Lumina Solar Project,plant name,EIA-860
+JAD_UNIT1,CPS Energy,operator,EIA-860
+JAD_UNIT1,Remy Jade Power Station,plant name,EIA-860
+JAD_UNIT2,CPS Energy,operator,EIA-860
+JAD_UNIT2,Remy Jade Power Station,plant name,EIA-860
+JAD_UNIT3,CPS Energy,operator,EIA-860
+JAD_UNIT3,Remy Jade Power Station,plant name,EIA-860
+JAD_UNIT4,CPS Energy,operator,EIA-860
+JAD_UNIT4,Remy Jade Power Station,plant name,EIA-860
+JAD_UNIT5,CPS Energy,operator,EIA-860
+JAD_UNIT5,Remy Jade Power Station,plant name,EIA-860
+JAD_UNIT6,CPS Energy,operator,EIA-860
+JAD_UNIT6,Remy Jade Power Station,plant name,EIA-860
+JAD_UNIT7,CPS Energy,operator,EIA-860
+JAD_UNIT7,Remy Jade Power Station,plant name,EIA-860
+JAD_UNIT8,CPS Energy,operator,EIA-860
+JAD_UNIT8,Remy Jade Power Station,plant name,EIA-860
+JAY_UNIT1,Avondale Solar,developer,web search (medium)
+JAY_UNIT1,Copenhagen Infrastructure Partners,owner,web search (medium)
+JAY_UNIT1,Fighting Jays Solar Project,plant name,EIA-860
+JAY_UNIT1,Miller Bros,owner,web search (medium)
+JAY_UNIT1,Plus Renewable Technologies,developer,web search (medium)
+JAY_UNIT2,Avondale Solar,developer,web search (medium)
+JAY_UNIT2,Copenhagen Infrastructure Partners,owner,web search (medium)
+JAY_UNIT2,Fighting Jays Solar Project,plant name,EIA-860
+JAY_UNIT2,Miller Bros,owner,web search (medium)
+JAY_UNIT2,Plus Renewable Technologies,developer,web search (medium)
+JUNG_SLR_UNIT1,BT Jungmann,plant name,EIA-860
+JUNG_SLR_UNIT1,Pine Gate Renewables,developer,web search (medium)
+JUNG_SLR_UNIT1,Pine Gate Renewables,owner,web search (medium)
+JUNO_UNIT1,Juno Solar Project,plant name,EIA-860
+JUNO_UNIT1,SB Energy,developer,web search (medium)
+JUNO_UNIT1,SB Energy,owner,web search (medium)
+JUNO_UNIT2,Juno Solar Project,plant name,EIA-860
+JUNO_UNIT2,SB Energy,developer,web search (medium)
+JUNO_UNIT2,SB Energy,owner,web search (medium)
+KARAKAW1_UNIT1,Avangrid Renewables,developer,web search (medium)
+KARAKAW1_UNIT1,Avangrid Renewables,operator,EIA-860
+KARAKAW1_UNIT1,Avangrid Renewables,owner,web search (medium)
+KARAKAW1_UNIT1,Karankawa Wind LLC,plant name,EIA-860
+KARAKAW1_UNIT2,Avangrid Renewables,developer,web search (medium)
+KARAKAW1_UNIT2,Avangrid Renewables,operator,EIA-860
+KARAKAW1_UNIT2,Avangrid Renewables,owner,web search (medium)
+KARAKAW1_UNIT2,Karankawa Wind LLC,plant name,EIA-860
+KARAKAW2_UNIT3,Avangrid Renewables,developer,web search (medium)
+KARAKAW2_UNIT3,Avangrid Renewables,operator,EIA-860
+KARAKAW2_UNIT3,Avangrid Renewables,owner,web search (medium)
+KARAKAW2_UNIT3,Karankawa Wind LLC,plant name,EIA-860
+KEECHI_U1,Keechi Wind,plant name,EIA-860
+KELAM_SL_UNIT1,Belltown Power,developer,web search (medium)
+KELAM_SL_UNIT1,Kellam Solar,plant name,EIA-860
+KEO_SHRBINO2,Sherbino I Wind Farm,plant name,EIA-860
+KING_NE_KINGNE,King Mountain Wind Ranch 1,plant name,EIA-860
+KING_NE_KINGNE,NextEra Energy Resources,operator,EIA-860
+KING_NW_KINGNW,King Mountain Wind Ranch 1,plant name,EIA-860
+KING_NW_KINGNW,NextEra Energy Resources,operator,EIA-860
+KING_SE_KINGSE,King Mountain Wind Ranch 1,plant name,EIA-860
+KING_SE_KINGSE,NextEra Energy Resources,operator,EIA-860
+KING_SW_KINGSW,King Mountain Wind Ranch 1,plant name,EIA-860
+KING_SW_KINGSW,NextEra Energy Resources,operator,EIA-860
+LACASAWD_UNIT1,NextEra Energy Resources,developer,web search (medium)
+LACASAWD_UNIT1,NextEra Energy Resources,owner,web search (medium)
+LACASAWD_UNIT2,NextEra Energy Resources,developer,web search (medium)
+LACASAWD_UNIT2,NextEra Energy Resources,owner,web search (medium)
+LACASAWD_UNIT3,NextEra Energy Resources,developer,web search (medium)
+LACASAWD_UNIT3,NextEra Energy Resources,owner,web search (medium)
+LACY_CRK_UNIT1,Forest Creek Wind Farm LLC,plant name,EIA-860
+LACY_CRK_UNIT1,RWE Clean Energy,operator,EIA-860
+LACY_CRK_UNIT2,Forest Creek Wind Farm LLC,plant name,EIA-860
+LACY_CRK_UNIT2,RWE Clean Energy,operator,EIA-860
+LACY_CRK_UNIT3,Forest Creek Wind Farm LLC,plant name,EIA-860
+LACY_CRK_UNIT3,RWE Clean Energy,operator,EIA-860
+LACY_CRK_UNIT4,Forest Creek Wind Farm LLC,plant name,EIA-860
+LACY_CRK_UNIT4,RWE Clean Energy,operator,EIA-860
+LAPETUS_UNIT_1,7X Energy,developer,web search (medium)
+LAPETUS_UNIT_1,Duke Energy Renewables,operator,EIA-860
+LAPETUS_UNIT_1,Duke Energy Renewables,owner,web search (medium)
+LAPETUS_UNIT_1,Lapetus,plant name,EIA-860
+LARDVFTN_G4,CPS Energy,operator,EIA-860
+LARDVFTN_G4,Laredo,plant name,EIA-860
+LARDVFTN_G5,CPS Energy,operator,EIA-860
+LARDVFTN_G5,Laredo,plant name,EIA-860
+LASSO_UNIT1,ENGIE,owner,web search (medium)
+LASSO_UNIT1,Hecate Energy,developer,web search (medium)
+LASSO_UNIT1,SolaireDirect USA,developer,web search (medium)
+LASSO_UNIT1,SolaireHolman Solar Project,plant name,EIA-860
+LEG_LEG_G1,Limestone,plant name,EIA-860
+LEG_LEG_G1,NRG Energy,operator,EIA-860
+LEG_LEG_G2,Limestone,plant name,EIA-860
+LEG_LEG_G2,NRG Energy,operator,EIA-860
+LEON_CRK_LCPCT1,CPS Energy,operator,EIA-860
+LEON_CRK_LCPCT1,Leon Creek,plant name,EIA-860
+LEON_CRK_LCPCT2,CPS Energy,operator,EIA-860
+LEON_CRK_LCPCT2,Leon Creek,plant name,EIA-860
+LEON_CRK_LCPCT3,CPS Energy,operator,EIA-860
+LEON_CRK_LCPCT3,Leon Creek,plant name,EIA-860
+LEON_CRK_LCPCT4,CPS Energy,operator,EIA-860
+LEON_CRK_LCPCT4,Leon Creek,plant name,EIA-860
+LEON_SLR_UNIT1,Cypress Creek Renewables,operator,EIA-860
+LEON_SLR_UNIT1,Leon Solar,plant name,EIA-860
+LEON_SLR_UNIT2,Cypress Creek Renewables,operator,EIA-860
+LEON_SLR_UNIT2,Leon Solar,plant name,EIA-860
+LGDRAW_S_UNIT1_1,ENGIE,developer,web search (high)
+LGDRAW_S_UNIT1_1,ENGIE,operator,EIA-860
+LGDRAW_S_UNIT1_1,ENGIE,owner,web search (high)
+LGDRAW_S_UNIT1_1,ENGIE Long Draw Solar LLC,plant name,EIA-860
+LGDRAW_S_UNIT1_2,ENGIE,developer,web search (high)
+LGDRAW_S_UNIT1_2,ENGIE,operator,EIA-860
+LGDRAW_S_UNIT1_2,ENGIE,owner,web search (high)
+LGDRAW_S_UNIT1_2,ENGIE Long Draw Solar LLC,plant name,EIA-860
+LGD_LANGFORD,Clearway Energy Group,owner,web search (medium)
+LGD_LANGFORD,Langford Wind Power,plant name,EIA-860
+LGE_CC1,Gregory Power Facility,plant name,EIA-860
+LGW_UNIT1,Logans Gap Wind LLC,plant name,EIA-860
+LGW_UNIT1,Pattern Energy,developer,web search (high)
+LGW_UNIT1,Pattern Energy,operator,EIA-860
+LGW_UNIT1,Pattern Energy,owner,web search (high)
+LGW_UNIT2,Logans Gap Wind LLC,plant name,EIA-860
+LGW_UNIT2,Pattern Energy,developer,web search (high)
+LGW_UNIT2,Pattern Energy,operator,EIA-860
+LGW_UNIT2,Pattern Energy,owner,web search (high)
+LHM_CVC_G4,Channelview Cogeneration Plant,plant name,EIA-860
+LHORN_N_UNIT1,EDF Renewables,owner,web search (medium)
+LHORN_N_UNIT2,EDF Renewables,owner,web search (medium)
+LHSES_UNIT1,Lake Hubbard,plant name,EIA-860
+LHSES_UNIT1,Luminant,operator,EIA-860
+LHSES_UNIT2A,Lake Hubbard,plant name,EIA-860
+LHSES_UNIT2A,Luminant,operator,EIA-860
+LIG_UNIT1,Chamon Power LLC,plant name,EIA-860
+LIG_UNIT2,Chamon Power LLC,plant name,EIA-860
+LILY_SOLAR1,Lily Solar Hybrid,plant name,EIA-860
+LMAJADAS_UNIT1,EDF Renewables,owner,web search (high)
+LMAJADAS_UNIT1,Las Majadas Wind Farm,plant name,EIA-860
+LMAJADAS_UNIT1,Masdar,owner,web search (high)
+LMAJADAS_UNIT2,EDF Renewables,owner,web search (high)
+LMAJADAS_UNIT2,Las Majadas Wind Farm,plant name,EIA-860
+LMAJADAS_UNIT2,Masdar,owner,web search (high)
+LMAJADAS_UNIT3,EDF Renewables,owner,web search (high)
+LMAJADAS_UNIT3,Las Majadas Wind Farm,plant name,EIA-860
+LMAJADAS_UNIT3,Masdar,owner,web search (high)
+LMESASLR_IVORY,BNB Renewable Energy Holdings,developer,web search (medium)
+LMESASLR_IVORY,Lamesa Solar,plant name,EIA-860
+LMESASLR_IVORY,RES Americas,developer,web search (medium)
+LMESASLR_IVORY,Southern Power,operator,EIA-860
+LMESASLR_IVORY,Southern Power,owner,web search (medium)
+LMESASLR_UNIT1,BNB Renewable Energy Holdings,developer,web search (medium)
+LMESASLR_UNIT1,Lamesa Solar,plant name,EIA-860
+LMESASLR_UNIT1,RES Americas,developer,web search (medium)
+LMESASLR_UNIT1,Southern Power,operator,EIA-860
+LMESASLR_UNIT1,Southern Power,owner,web search (medium)
+LNCRK2_G871,EDP Renewables,owner,web search (medium)
+LNCRK2_G871,Post Oak Wind LLC,plant name,EIA-860
+LNCRK2_G871,RES Americas,developer,web search (medium)
+LNCRK2_G872,EDP Renewables,owner,web search (medium)
+LNCRK2_G872,Post Oak Wind LLC,plant name,EIA-860
+LNCRK2_G872,RES Americas,developer,web search (medium)
+LNCRK_G83,EDP Renewables,developer,web search (medium)
+LNCRK_G83,EDP Renewables,owner,web search (medium)
+LNCRK_G83,Mesquite Wind Power LLC,plant name,EIA-860
+LNCRK_G83,RES Americas,developer,web search (medium)
+LOCKETT_UNIT1,Electra Wind Farm,plant name,EIA-860
+LONEWOLF_G1,Loraine Windpark Project LLC,plant name,EIA-860
+LONEWOLF_G2,Loraine Windpark Project LLC,plant name,EIA-860
+LONEWOLF_G3,Loraine Windpark Project LLC,plant name,EIA-860
+LONEWOLF_G4,Loraine Windpark Project LLC,plant name,EIA-860
+LON_SOLAR1,Bodkin BESS,plant name,EIA-860
+LOSTPI_CC1,LCRA,operator,EIA-860
+LOSTPI_CC1,Lost Pines 1 Power Project,plant name,EIA-860
+LPCCS_CC1,Lamar Power Project,plant name,EIA-860
+LPCCS_CC2,Lamar Power Project,plant name,EIA-860
+LV1_LV1A,Duke Energy Renewables,developer,web search (medium)
+LV1_LV1A,Duke Energy Renewables,owner,web search (medium)
+LV2_LV2,Duke Energy Renewables,developer,web search (medium)
+LV2_LV2,Duke Energy Renewables,owner,web search (medium)
+LV3_UNIT_1,Duke Energy Renewables,developer,web search (medium)
+LV3_UNIT_1,Duke Energy Renewables,operator,EIA-860
+LV3_UNIT_1,Los Vientos Windpower III,plant name,EIA-860
+LV4_UNIT_1,Duke Energy Renewables,developer,web search (medium)
+LV4_UNIT_1,Duke Energy Renewables,operator,EIA-860
+LV4_UNIT_1,Los Vientos Windpower III,plant name,EIA-860
+LV5_UNIT_1,Duke Energy Renewables,developer,web search (medium)
+LV5_UNIT_1,Duke Energy Renewables,operator,EIA-860
+LV5_UNIT_1,Los Vientos Windpower III,plant name,EIA-860
+MARIAH_NORTE1,BHE Renewables,operator,EIA-860
+MARIAH_NORTE1,BHE Renewables,owner,web search (medium)
+MARIAH_NORTE1,First Reserve,developer,web search (medium)
+MARIAH_NORTE1,Mariah del Norte,plant name,EIA-860
+MARIAH_NORTE2,BHE Renewables,operator,EIA-860
+MARIAH_NORTE2,BHE Renewables,owner,web search (medium)
+MARIAH_NORTE2,First Reserve,developer,web search (medium)
+MARIAH_NORTE2,Mariah del Norte,plant name,EIA-860
+MARYNEAL_UNIT1,Duke Energy Renewables,owner,web search (medium)
+MARYNEAL_UNIT1,Leeward Renewable Energy,developer,web search (medium)
+MARYNEAL_UNIT1,Leeward Renewable Energy,operator,EIA-860
+MARYNEAL_UNIT1,Leeward Renewable Energy,owner,web search (medium)
+MARYNEAL_UNIT1,Sweetwater Wind 4 LLC,plant name,EIA-860
+MAVCRK_E_UNIT5,Algonquin,developer,web search (medium)
+MAVCRK_E_UNIT5,Algonquin,operator,EIA-860
+MAVCRK_E_UNIT5,Algonquin,owner,web search (medium)
+MAVCRK_E_UNIT5,Maverick Creek Wind,plant name,EIA-860
+MAVCRK_E_UNIT6,Algonquin,developer,web search (medium)
+MAVCRK_E_UNIT6,Algonquin,operator,EIA-860
+MAVCRK_E_UNIT6,Algonquin,owner,web search (medium)
+MAVCRK_E_UNIT6,Maverick Creek Wind,plant name,EIA-860
+MAVCRK_E_UNIT7,Algonquin,developer,web search (medium)
+MAVCRK_E_UNIT7,Algonquin,operator,EIA-860
+MAVCRK_E_UNIT7,Algonquin,owner,web search (medium)
+MAVCRK_E_UNIT7,Maverick Creek Wind,plant name,EIA-860
+MAVCRK_E_UNIT8,Algonquin,developer,web search (medium)
+MAVCRK_E_UNIT8,Algonquin,operator,EIA-860
+MAVCRK_E_UNIT8,Algonquin,owner,web search (medium)
+MAVCRK_E_UNIT8,Maverick Creek Wind,plant name,EIA-860
+MAVCRK_E_UNIT9,Algonquin,developer,web search (medium)
+MAVCRK_E_UNIT9,Algonquin,operator,EIA-860
+MAVCRK_E_UNIT9,Algonquin,owner,web search (medium)
+MAVCRK_E_UNIT9,Maverick Creek Wind,plant name,EIA-860
+MAVCRK_W_UNIT1,Algonquin,developer,web search (medium)
+MAVCRK_W_UNIT1,Algonquin,operator,EIA-860
+MAVCRK_W_UNIT1,Algonquin,owner,web search (medium)
+MAVCRK_W_UNIT1,Maverick Creek Wind,plant name,EIA-860
+MAVCRK_W_UNIT2,Algonquin,developer,web search (medium)
+MAVCRK_W_UNIT2,Algonquin,operator,EIA-860
+MAVCRK_W_UNIT2,Algonquin,owner,web search (medium)
+MAVCRK_W_UNIT2,Maverick Creek Wind,plant name,EIA-860
+MAVCRK_W_UNIT3,Algonquin,developer,web search (medium)
+MAVCRK_W_UNIT3,Algonquin,operator,EIA-860
+MAVCRK_W_UNIT3,Algonquin,owner,web search (medium)
+MAVCRK_W_UNIT3,Maverick Creek Wind,plant name,EIA-860
+MAVCRK_W_UNIT4,Algonquin,developer,web search (medium)
+MAVCRK_W_UNIT4,Algonquin,operator,EIA-860
+MAVCRK_W_UNIT4,Algonquin,owner,web search (medium)
+MAVCRK_W_UNIT4,Maverick Creek Wind,plant name,EIA-860
+MCDLD_FCW1,Forest Creek Wind Farm LLC,plant name,EIA-860
+MCDLD_FCW1,RWE Clean Energy,operator,EIA-860
+MCDLD_SB1_2,Forest Creek Wind Farm LLC,plant name,EIA-860
+MCDLD_SB1_2,RWE Clean Energy,operator,EIA-860
+MCDLD_SB3_282,Forest Creek Wind Farm LLC,plant name,EIA-860
+MCDLD_SB3_282,RWE Clean Energy,operator,EIA-860
+MCDLD_SB4_G87,Forest Creek Wind Farm LLC,plant name,EIA-860
+MCDLD_SB4_G87,RWE Clean Energy,operator,EIA-860
+MCLNSLR_UNIT1,Cypress Creek Renewables,developer,web search (medium)
+MCLNSLR_UNIT1,Cypress Creek Renewables,operator,EIA-860
+MCLNSLR_UNIT1,Cypress Creek Renewables,owner,web search (medium)
+MCLNSLR_UNIT1,Shakes Solar,plant name,EIA-860
+MCSES_UNIT6,Mountain Creek,plant name,EIA-860
+MCSES_UNIT7,Mountain Creek,plant name,EIA-860
+MCSES_UNIT8,Mountain Creek,plant name,EIA-860
+MDANP_CT1,Midlothian Energy Facility,plant name,EIA-860
+MDANP_CT2,Midlothian Energy Facility,plant name,EIA-860
+MDANP_CT3,Midlothian Energy Facility,plant name,EIA-860
+MDANP_CT4,Midlothian Energy Facility,plant name,EIA-860
+MDANP_CT5,Midlothian Energy Facility,plant name,EIA-860
+MDANP_CT6,Midlothian Energy Facility,plant name,EIA-860
+MESQCRK_WND1,Duke Energy Renewables,operator,EIA-860
+MESQCRK_WND1,Duke Energy Renewables,owner,web search (medium)
+MESQCRK_WND1,Mesquite Creek Wind,plant name,EIA-860
+MESQCRK_WND2,Duke Energy Renewables,operator,EIA-860
+MESQCRK_WND2,Duke Energy Renewables,owner,web search (medium)
+MESQCRK_WND2,Mesquite Creek Wind,plant name,EIA-860
+MESTENO_UNIT_1,Duke Energy Renewables,developer,web search (medium)
+MESTENO_UNIT_1,Duke Energy Renewables,operator,EIA-860
+MESTENO_UNIT_1,Duke Energy Renewables,owner,web search (medium)
+MESTENO_UNIT_1,Mesteno,plant name,EIA-860
+MIAM1_G1,Invenergy,developer,web search (medium)
+MIAM1_G1,Invenergy,operator,EIA-860
+MIAM1_G1,Invenergy,owner,web search (medium)
+MIAM1_G1,Miami Wind Energy Center,plant name,EIA-860
+MIAM1_G2,Invenergy,developer,web search (medium)
+MIAM1_G2,Invenergy,operator,EIA-860
+MIAM1_G2,Invenergy,owner,web search (medium)
+MIAM1_G2,Miami Wind Energy Center,plant name,EIA-860
+MIDP_SLR_SOLAR1,Sunraycer Renewables,developer,web search (medium)
+MIDP_SLR_SOLAR1,Sunraycer Renewables,owner,web search (medium)
+MIDWIND_UNIT1,Apex Clean Energy,developer,web search (medium)
+MIDWIND_UNIT1,"Midway Wind, LLC",plant name,EIA-860
+MIDWIND_UNIT1,Sammons Renewable Energy,owner,web search (medium)
+MIL_MILLERG2,R W Miller,plant name,EIA-860
+MIL_MILLERG3,R W Miller,plant name,EIA-860
+MIL_MILLERG4,R W Miller,plant name,EIA-860
+MIL_MILLERG5,R W Miller,plant name,EIA-860
+MIRASOLE_MIR11,EDP Renewables,developer,web search (medium)
+MIRASOLE_MIR11,EDP Renewables,owner,web search (medium)
+MIRASOLE_MIR11,Hidalgo Wind Farm LLC,plant name,EIA-860
+MIRASOLE_MIR12,EDP Renewables,developer,web search (medium)
+MIRASOLE_MIR12,EDP Renewables,owner,web search (medium)
+MIRASOLE_MIR12,Hidalgo Wind Farm LLC,plant name,EIA-860
+MIRASOLE_MIR13,EDP Renewables,developer,web search (medium)
+MIRASOLE_MIR13,EDP Renewables,owner,web search (medium)
+MIRASOLE_MIR13,Hidalgo Wind Farm LLC,plant name,EIA-860
+MIRASOLE_MIR21,EDP Renewables,developer,web search (medium)
+MIRASOLE_MIR21,EDP Renewables,owner,web search (medium)
+MIRASOLE_MIR21,Hidalgo Wind Farm LLC,plant name,EIA-860
+MISAE_UNIT1,Copenhagen Infrastructure Partners,developer,web search (medium)
+MISAE_UNIT1,Misae Solar,plant name,EIA-860
+MISAE_UNIT1,Shell Energy,owner,web search (medium)
+MISAE_UNIT2,Copenhagen Infrastructure Partners,developer,web search (medium)
+MISAE_UNIT2,Misae Solar,plant name,EIA-860
+MISAE_UNIT2,Shell Energy,owner,web search (medium)
+MLB_SLR_SOLAR1,EDF Renewables,developer,web search (medium)
+MLB_SLR_SOLAR1,Millers Branch Solar,plant name,EIA-860
+MLB_SLR_SOLAR1,Southern Power,operator,EIA-860
+MLB_SLR_SOLAR1,Southern Power,owner,web search (medium)
+MLB_SLR_SOLAR2,EDF Renewables,developer,web search (medium)
+MLB_SLR_SOLAR2,Millers Branch Solar,plant name,EIA-860
+MLB_SLR_SOLAR2,Southern Power,operator,EIA-860
+MLB_SLR_SOLAR2,Southern Power,owner,web search (medium)
+MLB_SLR_SOLAR3,EDF Renewables,developer,web search (medium)
+MLB_SLR_SOLAR3,Millers Branch Solar,plant name,EIA-860
+MLB_SLR_SOLAR3,Southern Power,operator,EIA-860
+MLB_SLR_SOLAR3,Southern Power,owner,web search (medium)
+MLSES_UNIT1,Luminant,operator,EIA-860
+MLSES_UNIT1,Martin Lake,plant name,EIA-860
+MLSES_UNIT2,Luminant,operator,EIA-860
+MLSES_UNIT2,Martin Lake,plant name,EIA-860
+MLSES_UNIT3,Luminant,operator,EIA-860
+MLSES_UNIT3,Martin Lake,plant name,EIA-860
+MONTECR1_WIND1,Monte Cristo 1,plant name,EIA-860
+MONTECR1_WIND1,Terra-Gen,developer,web search (medium)
+MONTECR1_WIND1,Terra-Gen,operator,EIA-860
+MONTECR1_WIND1,Terra-Gen,owner,web search (medium)
+MONT_WND_UNIT1,"Montgomery Ranch Wind Farm, LLC",plant name,EIA-860
+MONT_WND_UNIT1,RWE Clean Energy,developer,web search (medium)
+MONT_WND_UNIT1,RWE Clean Energy,operator,EIA-860
+MONT_WND_UNIT2,"Montgomery Ranch Wind Farm, LLC",plant name,EIA-860
+MONT_WND_UNIT2,RWE Clean Energy,developer,web search (medium)
+MONT_WND_UNIT2,RWE Clean Energy,operator,EIA-860
+MOZART_WIND_1,BayWa r.e Mozart LLC,plant name,EIA-860
+MOZART_WIND_1,BayWa r.e.,developer,web search (medium)
+MOZART_WIND_1,BayWa r.e.,owner,web search (medium)
+MRKM_SLR_PV1,Scout Clean Energy,developer,web search (medium)
+MRKM_SLR_PV1,Scout Clean Energy,owner,web search (medium)
+MROW_SLR_SOLAR1,Leeward Renewable Energy,developer,web search (high)
+MROW_SLR_SOLAR1,Leeward Renewable Energy,operator,EIA-860
+MROW_SLR_SOLAR1,Leeward Renewable Energy,owner,web search (high)
+MROW_SLR_SOLAR1,Morrow Lake Solar,plant name,EIA-860
+MUSTNGCK_SOLAR1,Garcitas Creek Solar,plant name,EIA-860
+MUSTNGCK_SOLAR2,Garcitas Creek Solar,plant name,EIA-860
+MWEC_G1,Invenergy,operator,EIA-860
+MWEC_G1,Invenergy,owner,web search (medium)
+MWEC_G1,McAdoo Wind Energy LLC,plant name,EIA-860
+MYR_UNIT1,"Myrtle Solar, LLC",plant name,EIA-860
+MYR_UNIT1,TotalEnergies,developer,web search (medium)
+MYR_UNIT1,TotalEnergies,owner,web search (medium)
+MYR_UNIT2,"Myrtle Solar, LLC",plant name,EIA-860
+MYR_UNIT2,TotalEnergies,developer,web search (medium)
+MYR_UNIT2,TotalEnergies,owner,web search (medium)
+NBOHR_UNIT1,Bearkat,plant name,EIA-860
+NEBULA_UNIT1,174 Power Global,developer,web search (medium)
+NEBULA_UNIT1,174 Power Global,operator,EIA-860
+NEBULA_UNIT1,174 Power Global,owner,web search (medium)
+NEBULA_UNIT1,Rayos Del Sol Solar Project,plant name,EIA-860
+NEBULA_UNIT1,TotalEnergies,owner,web search (medium)
+NEDIN_CC1,Calpine,operator,EIA-860
+NEDIN_CC1,Magic Valley Generating Station,plant name,EIA-860
+NOBLESLR_SOLAR1,National Grid Renewables,developer,web search (high)
+NOBLESLR_SOLAR1,National Grid Renewables,operator,EIA-860
+NOBLESLR_SOLAR1,National Grid Renewables,owner,web search (high)
+NOBLESLR_SOLAR1,Noble Solar,plant name,EIA-860
+NOBLESLR_SOLAR2,National Grid Renewables,developer,web search (high)
+NOBLESLR_SOLAR2,National Grid Renewables,operator,EIA-860
+NOBLESLR_SOLAR2,National Grid Renewables,owner,web search (high)
+NOBLESLR_SOLAR2,Noble Solar,plant name,EIA-860
+NOVA1SLR_UNIT1,Clearway Energy Group,developer,web search (medium)
+NOVA1SLR_UNIT1,Clearway Energy Group,owner,web search (medium)
+NOVA1SLR_UNIT1,Texas Solar Nova 1,plant name,EIA-860
+NOVA1SLR_UNIT2,Clearway Energy Group,developer,web search (medium)
+NOVA1SLR_UNIT2,Clearway Energy Group,owner,web search (medium)
+NOVA1SLR_UNIT2,Texas Solar Nova 1,plant name,EIA-860
+NOVA2SLR_UNIT1,Clearway Energy Group,developer,web search (medium)
+NOVA2SLR_UNIT1,Clearway Energy Group,owner,web search (medium)
+NOVA2SLR_UNIT1,Texas Solar Nova 1,plant name,EIA-860
+NRTN_SLR_SOLAR1,Avantus,developer,web search (high)
+NRTN_SLR_SOLAR1,Norton Solar Farm,plant name,EIA-860
+NRTN_SLR_SOLAR1,RES Americas,developer,web search (high)
+NRTN_SLR_SOLAR1,Toyota Tsusho,owner,web search (high)
+NUECES_B_CC1,CPS Energy,operator,EIA-860
+NUECES_B_CC1,Nueces Bay,plant name,EIA-860
+OBERON_UNIT_1_J01,174 Power Global,developer,web search (medium)
+OBERON_UNIT_1_J01,174 Power Global,owner,web search (medium)
+OBERON_UNIT_1_J01,Oberon IB,plant name,EIA-860
+OBERON_UNIT_1_J02,174 Power Global,developer,web search (medium)
+OBERON_UNIT_1_J02,174 Power Global,owner,web search (medium)
+OBERON_UNIT_1_J02,Oberon IB,plant name,EIA-860
+OCI_ALM1_UNIT1,"OCI Alamo 2, LLC",plant name,EIA-860
+OCI_ALM1_UNIT1,OCI Energy,operator,EIA-860
+OECCS_CC1,Odessa-Ector Power Plant,plant name,EIA-860
+OECCS_CC2,Odessa-Ector Power Plant,plant name,EIA-860
+OGSES_UNIT1A,Luminant,operator,EIA-860
+OGSES_UNIT1A,Oak Grove (TX),plant name,EIA-860
+OGSES_UNIT2,Luminant,operator,EIA-860
+OGSES_UNIT2,Oak Grove (TX),plant name,EIA-860
+OGS_SLR_UNIT1,Enbridge,developer,web search (high)
+OGS_SLR_UNIT1,Enbridge,owner,web search (high)
+OLINGR_OLING_2,City of Garland,operator,EIA-860
+OLINGR_OLING_2,Ray Olinger,plant name,EIA-860
+OLINGR_OLING_3,City of Garland,operator,EIA-860
+OLINGR_OLING_3,Ray Olinger,plant name,EIA-860
+OLINGR_OLING_4,City of Garland,operator,EIA-860
+OLINGR_OLING_4,Ray Olinger,plant name,EIA-860
+ORIANA_UNIT1,Advanced Power,developer,web search (medium)
+ORIANA_UNIT1,Sabanci Renewables,owner,web search (medium)
+OUTP_SLR_UNIT1,Hecate Energy,developer,web search (medium)
+OUTP_SLR_UNIT1,Hecate Energy Outpost Solar LLC,plant name,EIA-860
+OUTP_SLR_UNIT1,Repsol,operator,EIA-860
+OUTP_SLR_UNIT1,Repsol,owner,web search (medium)
+OUTP_SLR_UNIT2,Hecate Energy,developer,web search (medium)
+OUTP_SLR_UNIT2,Hecate Energy Outpost Solar LLC,plant name,EIA-860
+OUTP_SLR_UNIT2,Repsol,operator,EIA-860
+OUTP_SLR_UNIT2,Repsol,owner,web search (medium)
+OWF_OWF,Clearway Energy Group,owner,web search (medium)
+OWF_OWF,Duke Energy Renewables,developer,web search (medium)
+OWF_OWF,Duke Energy Renewables,operator,EIA-860
+OWF_OWF,Ocotillo Windpower,plant name,EIA-860
+PALMWIND_UNIT1,Acciona Energía,developer,web search (medium)
+PALMWIND_UNIT1,Acciona Energía,operator,EIA-860
+PALMWIND_UNIT1,Acciona Energía,owner,web search (medium)
+PALMWIND_UNIT1,"Palmas Wind, LLC",plant name,EIA-860
+PANDA_S_CC1,Panda Sherman Power Station,plant name,EIA-860
+PANDA_T1_CC1,Panda Sherman Power Station,plant name,EIA-860
+PANDA_T2_CC1,Panda Sherman Power Station,plant name,EIA-860
+PAP1_PAP1,EC&R Papalote Creek I LLC,plant name,EIA-860
+PAP1_PAP1,RWE Clean Energy,operator,EIA-860
+PAR_UNIT1,Parliament Energy Holdings,developer,web search (medium)
+PAR_UNIT1,Parliament Energy Holdings,owner,web search (medium)
+PAR_UNIT1,Parliament Solar,plant name,EIA-860
+PAR_UNIT2,Parliament Energy Holdings,developer,web search (medium)
+PAR_UNIT2,Parliament Energy Holdings,owner,web search (medium)
+PAR_UNIT2,Parliament Solar,plant name,EIA-860
+PB2SES_CT1,Luminant,operator,EIA-860
+PB2SES_CT1,Permian Basin,plant name,EIA-860
+PB2SES_CT2,Luminant,operator,EIA-860
+PB2SES_CT2,Permian Basin,plant name,EIA-860
+PB2SES_CT3,Luminant,operator,EIA-860
+PB2SES_CT3,Permian Basin,plant name,EIA-860
+PB2SES_CT4,Luminant,operator,EIA-860
+PB2SES_CT4,Permian Basin,plant name,EIA-860
+PB2SES_CT5,Luminant,operator,EIA-860
+PB2SES_CT5,Permian Basin,plant name,EIA-860
+PCT_UNIT1,E.ON,developer,web search (medium)
+PCT_UNIT1,Peyton Creek Wind Farm LLC,plant name,EIA-860
+PCT_UNIT1,RWE Clean Energy,developer,web search (medium)
+PCT_UNIT1,RWE Clean Energy,operator,EIA-860
+PCT_UNIT1,RWE Clean Energy,owner,web search (medium)
+PC_NORTH_PANTHER1,EC&R Panther Creek Wind Farm I,plant name,EIA-860
+PC_NORTH_PANTHER1,RWE Clean Energy,developer,web search (medium)
+PC_NORTH_PANTHER1,RWE Clean Energy,operator,EIA-860
+PC_NORTH_PANTHER1,RWE Clean Energy,owner,web search (medium)
+PC_SOUTH_PANTH31,EC&R Panther Creek Wind Farm II,plant name,EIA-860
+PC_SOUTH_PANTH31,RWE Clean Energy,operator,EIA-860
+PC_SOUTH_PANTH31,RWE Clean Energy,owner,web search (medium)
+PC_SOUTH_PANTH32,EC&R Panther Creek Wind Farm II,plant name,EIA-860
+PC_SOUTH_PANTH32,RWE Clean Energy,operator,EIA-860
+PC_SOUTH_PANTH32,RWE Clean Energy,owner,web search (medium)
+PC_SOUTH_PANTHER2,EC&R Panther Creek Wind Farm II,plant name,EIA-860
+PC_SOUTH_PANTHER2,RWE Clean Energy,operator,EIA-860
+PC_SOUTH_PANTHER2,RWE Clean Energy,owner,web search (medium)
+PEARSAL2_AGR_A,Pearsall,plant name,EIA-860
+PEARSAL2_AGR_A,"South Texas Electric Coop, Inc",operator,EIA-860
+PEARSAL2_AGR_B,Pearsall,plant name,EIA-860
+PEARSAL2_AGR_B,"South Texas Electric Coop, Inc",operator,EIA-860
+PEARSAL2_AGR_C,Pearsall,plant name,EIA-860
+PEARSAL2_AGR_C,"South Texas Electric Coop, Inc",operator,EIA-860
+PEARSAL2_AGR_D,Pearsall,plant name,EIA-860
+PEARSAL2_AGR_D,"South Texas Electric Coop, Inc",operator,EIA-860
+PENA3_UNIT3_J01,Avangrid Renewables,operator,EIA-860
+PENA3_UNIT3_J01,Avangrid Renewables,owner,web search (medium)
+PENA3_UNIT3_J01,Penascal Wind Power LLC,plant name,EIA-860
+PENA3_UNIT3_J02,Avangrid Renewables,operator,EIA-860
+PENA3_UNIT3_J02,Avangrid Renewables,owner,web search (medium)
+PENA3_UNIT3_J02,Penascal Wind Power LLC,plant name,EIA-860
+PENA_UNIT1,Avangrid Renewables,operator,EIA-860
+PENA_UNIT1,Avangrid Renewables,owner,web search (medium)
+PENA_UNIT1,Penascal Wind Power LLC,plant name,EIA-860
+PENA_UNIT2_J01,Avangrid Renewables,operator,EIA-860
+PENA_UNIT2_J01,Avangrid Renewables,owner,web search (medium)
+PENA_UNIT2_J01,Penascal Wind Power LLC,plant name,EIA-860
+PENA_UNIT2_J02,Avangrid Renewables,operator,EIA-860
+PENA_UNIT2_J02,Avangrid Renewables,owner,web search (medium)
+PENA_UNIT2_J02,Penascal Wind Power LLC,plant name,EIA-860
+PERE_SLR_UNIT1,Con Edison Development,developer,web search (medium)
+PERE_SLR_UNIT1,Con Edison Development,owner,web search (medium)
+PERE_SLR_UNIT1,Peregrine Solar,plant name,EIA-860
+PERE_SLR_UNIT1,RWE Clean Energy,operator,EIA-860
+PERE_SLR_UNIT1,RWE Clean Energy,owner,web search (medium)
+PERE_SLR_UNIT2,Con Edison Development,developer,web search (medium)
+PERE_SLR_UNIT2,Con Edison Development,owner,web search (medium)
+PERE_SLR_UNIT2,Peregrine Solar,plant name,EIA-860
+PERE_SLR_UNIT2,RWE Clean Energy,operator,EIA-860
+PERE_SLR_UNIT2,RWE Clean Energy,owner,web search (medium)
+PEY_UNIT1,E.ON,developer,web search (medium)
+PEY_UNIT1,Peyton Creek Wind Farm LLC,plant name,EIA-860
+PEY_UNIT1,RWE Clean Energy,developer,web search (medium)
+PEY_UNIT1,RWE Clean Energy,operator,EIA-860
+PEY_UNIT1,RWE Clean Energy,owner,web search (medium)
+PH1_UNIT1,Pattern Energy,operator,EIA-860
+PH1_UNIT1,Pattern Panhandle Wind LLC,plant name,EIA-860
+PH1_UNIT2,Pattern Energy,operator,EIA-860
+PH1_UNIT2,Pattern Panhandle Wind LLC,plant name,EIA-860
+PH2_UNIT1,Pattern Energy,operator,EIA-860
+PH2_UNIT1,Pattern Panhandle Wind LLC,plant name,EIA-860
+PH2_UNIT2,Pattern Energy,operator,EIA-860
+PH2_UNIT2,Pattern Panhandle Wind LLC,plant name,EIA-860
+PHILLWND_UNIT1,ENGIE,operator,EIA-860
+PHILLWND_UNIT1,ENGIE,owner,web search (medium)
+PHILLWND_UNIT1,Infinity Power,developer,web search (medium)
+PHILLWND_UNIT1,Prairie Hill Wind Project,plant name,EIA-860
+PHILLWND_UNIT2,ENGIE,operator,EIA-860
+PHILLWND_UNIT2,ENGIE,owner,web search (medium)
+PHILLWND_UNIT2,Infinity Power,developer,web search (medium)
+PHILLWND_UNIT2,Prairie Hill Wind Project,plant name,EIA-860
+PHOEBE_UNIT1,First Solar,owner,web search (medium)
+PHOEBE_UNIT1,Innergex Renewable Energy,owner,web search (medium)
+PHOEBE_UNIT1,Phoebe Solar,plant name,EIA-860
+PHOEBE_UNIT2,First Solar,owner,web search (medium)
+PHOEBE_UNIT2,Innergex Renewable Energy,owner,web search (medium)
+PHOEBE_UNIT2,Phoebe Solar,plant name,EIA-860
+PHOENIX_UNIT1,Pattern Energy,developer,web search (medium)
+PHOENIX_UNIT1,Pattern Energy,owner,web search (medium)
+PINEFRST_UNIT1,Clearway Energy Group,developer,web search (medium)
+PINEFRST_UNIT1,Clearway Energy Group,owner,web search (medium)
+PINEFRST_UNIT2,Clearway Energy Group,developer,web search (medium)
+PINEFRST_UNIT2,Clearway Energy Group,owner,web search (medium)
+PINN_SLR_UNIT1,Hecate Energy,developer,web search (medium)
+PINN_SLR_UNIT1,Repsol,owner,web search (medium)
+PINN_SLR_UNIT2,Hecate Energy,developer,web search (medium)
+PINN_SLR_UNIT2,Repsol,owner,web search (medium)
+PINN_SLR_UNIT3,Hecate Energy,developer,web search (medium)
+PINN_SLR_UNIT3,Repsol,owner,web search (medium)
+PIONR_DJ_UNIT1,NextEra Energy Resources,developer,web search (medium)
+PIONR_DJ_UNIT1,Pioneer Hutt Wind Energy,plant name,EIA-860
+PIONR_DJ_UNIT2,NextEra Energy Resources,developer,web search (medium)
+PIONR_DJ_UNIT2,Pioneer Hutt Wind Energy,plant name,EIA-860
+PISGAH_SOLAR1,Duke Energy Renewables,developer,web search (medium)
+PISGAH_SOLAR1,Duke Energy Renewables,operator,EIA-860
+PISGAH_SOLAR1,Duke Energy Renewables,owner,web search (medium)
+PISGAH_SOLAR1,"Pisgah Ridge Solar, LLC",plant name,EIA-860
+PISGAH_SOLAR2,Duke Energy Renewables,developer,web search (medium)
+PISGAH_SOLAR2,Duke Energy Renewables,operator,EIA-860
+PISGAH_SOLAR2,Duke Energy Renewables,owner,web search (medium)
+PISGAH_SOLAR2,"Pisgah Ridge Solar, LLC",plant name,EIA-860
+PITTSDDK_UNIT1,Pitts Dudik Solar,plant name,EIA-860
+PLN_UNIT1,Hecate Energy,developer,web search (medium)
+PLN_UNIT1,Hecate Energy,owner,web search (medium)
+PLN_UNIT2,Hecate Energy,developer,web search (medium)
+PLN_UNIT2,Hecate Energy,owner,web search (medium)
+PNPI_GT2,W.A. Parish Carbon Capture Plant,plant name,EIA-860
+PORT_SLR_UNIT1,"Porter Solar, LLC (TX)",plant name,EIA-860
+PRIDDY_UNIT1,ENGIE,developer,web search (medium)
+PRIDDY_UNIT1,ENGIE,operator,EIA-860
+PRIDDY_UNIT1,ENGIE,owner,web search (medium)
+PRIDDY_UNIT1,Priddy Wind Project,plant name,EIA-860
+PRIDDY_UNIT2,ENGIE,developer,web search (medium)
+PRIDDY_UNIT2,ENGIE,operator,EIA-860
+PRIDDY_UNIT2,ENGIE,owner,web search (medium)
+PRIDDY_UNIT2,Priddy Wind Project,plant name,EIA-860
+PROSPERO_UNIT1,AIP,owner,web search (medium)
+PROSPERO_UNIT1,Longroad Energy,developer,web search (medium)
+PROSPERO_UNIT1,Longroad Energy,operator,EIA-860
+PROSPERO_UNIT1,Longroad Energy,owner,web search (medium)
+PROSPERO_UNIT1,Prospero Solar,plant name,EIA-860
+PROSPERO_UNIT2,AIP,owner,web search (medium)
+PROSPERO_UNIT2,Longroad Energy,developer,web search (medium)
+PROSPERO_UNIT2,Longroad Energy,operator,EIA-860
+PROSPERO_UNIT2,Longroad Energy,owner,web search (medium)
+PROSPERO_UNIT2,Prospero Solar,plant name,EIA-860
+PRSPERO2_UNIT1,AIP,owner,web search (medium)
+PRSPERO2_UNIT1,Longroad Energy,developer,web search (medium)
+PRSPERO2_UNIT1,Longroad Energy,operator,EIA-860
+PRSPERO2_UNIT1,Longroad Energy,owner,web search (medium)
+PRSPERO2_UNIT1,Prospero Solar,plant name,EIA-860
+PRSPERO2_UNIT2,AIP,owner,web search (medium)
+PRSPERO2_UNIT2,Longroad Energy,developer,web search (medium)
+PRSPERO2_UNIT2,Longroad Energy,operator,EIA-860
+PRSPERO2_UNIT2,Longroad Energy,owner,web search (medium)
+PRSPERO2_UNIT2,Prospero Solar,plant name,EIA-860
+PSG_CC1,Bayou Cogen Plant,plant name,EIA-860
+PYR_PYRON1,Pyron Wind Farm LLC Hybrid,plant name,EIA-860
+PYR_PYRON1,RWE Clean Energy,operator,EIA-860
+PYR_PYRON2,Pyron Wind Farm LLC Hybrid,plant name,EIA-860
+PYR_PYRON2,RWE Clean Energy,operator,EIA-860
+Q1_DGR1,CPS Energy,operator,EIA-860
+Q1_DGR1,Mission Road,plant name,EIA-860
+QALSW_CC1,Quail Run Energy Center,plant name,EIA-860
+QALSW_CC2,Quail Run Energy Center,plant name,EIA-860
+QTUM_SLR_UNIT1,Quantum II BESS,plant name,EIA-860
+QTUM_SLR_UNIT2,Quantum II BESS,plant name,EIA-860
+RADN_SLR_UNIT1,"IP Radian, LLC",plant name,EIA-860
+RADN_SLR_UNIT2,"IP Radian, LLC",plant name,EIA-860
+RAMBLER_UNIT1,Duke Energy Renewables,operator,EIA-860
+RAMBLER_UNIT1,Duke Energy Renewables,owner,web search (medium)
+RAMBLER_UNIT1,Rambler,plant name,EIA-860
+RAMBLER_UNIT1,Recurrent Energy,developer,web search (medium)
+RANCHERO_UNIT1,Ranchero Wind Farm LLC,plant name,EIA-860
+RANCHERO_UNIT1,Scout Clean Energy,developer,web search (high)
+RANCHERO_UNIT1,Scout Clean Energy,owner,web search (high)
+RANCHERO_UNIT2,Ranchero Wind Farm LLC,plant name,EIA-860
+RANCHERO_UNIT2,Scout Clean Energy,developer,web search (high)
+RANCHERO_UNIT2,Scout Clean Energy,owner,web search (high)
+RATLIFF_SOLAR1,"Concho Valley Solar, LLC",plant name,EIA-860
+RAYBURN_CC1,Sam Rayburn,plant name,EIA-860
+RAYBURN_CC1,"South Texas Electric Coop, Inc",operator,EIA-860
+RDCANYON_RDCNY1,NextEra Energy Resources,operator,EIA-860
+RDCANYON_RDCNY1,NextEra Energy Resources,owner,web search (medium)
+RDCANYON_RDCNY1,Post Wind Farm LP,plant name,EIA-860
+REDBARN_UNIT_1,Onward Energy,operator,EIA-860
+REDBARN_UNIT_1,RE Maplewood,plant name,EIA-860
+REDBARN_UNIT_2,Onward Energy,operator,EIA-860
+REDBARN_UNIT_2,RE Maplewood,plant name,EIA-860
+REDFISH_MV1A,E.ON,developer,web search (medium)
+REDFISH_MV1A,Magic Valley Wind Farm I LLC,plant name,EIA-860
+REDFISH_MV1A,RWE Clean Energy,operator,EIA-860
+REDFISH_MV1A,RWE Clean Energy,owner,web search (medium)
+REDFISH_MV1B,E.ON,developer,web search (medium)
+REDFISH_MV1B,Magic Valley Wind Farm I LLC,plant name,EIA-860
+REDFISH_MV1B,RWE Clean Energy,operator,EIA-860
+REDFISH_MV1B,RWE Clean Energy,owner,web search (medium)
+RELOJ_UNIT1,EDP Renewables,developer,web search (medium)
+RELOJ_UNIT1,EDP Renewables,owner,web search (medium)
+RELOJ_UNIT1,Reloj del Sol Wind Farm,plant name,EIA-860
+RELOJ_UNIT2,EDP Renewables,developer,web search (medium)
+RELOJ_UNIT2,EDP Renewables,owner,web search (medium)
+RELOJ_UNIT2,Reloj del Sol Wind Farm,plant name,EIA-860
+RELOJ_UNIT3,EDP Renewables,developer,web search (medium)
+RELOJ_UNIT3,EDP Renewables,owner,web search (medium)
+RELOJ_UNIT3,Reloj del Sol Wind Farm,plant name,EIA-860
+RELOJ_UNIT4,EDP Renewables,developer,web search (medium)
+RELOJ_UNIT4,EDP Renewables,owner,web search (medium)
+RELOJ_UNIT4,Reloj del Sol Wind Farm,plant name,EIA-860
+REROCK_UNIT1,RE Roserock,plant name,EIA-860
+REROCK_UNIT1,Recurrent Energy,developer,web search (medium)
+REROCK_UNIT1,Southern Power,operator,EIA-860
+REROCK_UNIT1,Southern Power,owner,web search (medium)
+REROCK_UNIT2,RE Roserock,plant name,EIA-860
+REROCK_UNIT2,Recurrent Energy,developer,web search (medium)
+REROCK_UNIT2,Southern Power,operator,EIA-860
+REROCK_UNIT2,Southern Power,owner,web search (medium)
+RIGGINS_UNIT1,Buckthorn Westex,plant name,EIA-860
+RIGGINS_UNIT1,Clearway Energy Group,owner,web search (medium)
+RIONOG_CC1,CPS Energy,operator,EIA-860
+RIONOG_CC1,Rio Nogales Power Project,plant name,EIA-860
+RIPPEY_UNIT1,Adapture Renewables,owner,web search (medium)
+RIPPEY_UNIT1,Belltown Power,developer,web search (medium)
+RIPPEY_UNIT1,Hanwha Q CELLS,developer,web search (medium)
+ROSELAND_SOLAR1,Enel North America,developer,web search (medium)
+ROSELAND_SOLAR1,Enel North America,operator,EIA-860
+ROSELAND_SOLAR1,Enel North America,owner,web search (medium)
+ROSELAND_SOLAR1,Hecate Energy,developer,web search (medium)
+ROSELAND_SOLAR1,"Roseland Solar Project, LLC",plant name,EIA-860
+ROSELAND_SOLAR2,Enel North America,developer,web search (medium)
+ROSELAND_SOLAR2,Enel North America,operator,EIA-860
+ROSELAND_SOLAR2,Enel North America,owner,web search (medium)
+ROSELAND_SOLAR2,Hecate Energy,developer,web search (medium)
+ROSELAND_SOLAR2,"Roseland Solar Project, LLC",plant name,EIA-860
+ROSELAND_SOLAR3,Enel North America,developer,web search (medium)
+ROSELAND_SOLAR3,Enel North America,operator,EIA-860
+ROSELAND_SOLAR3,Enel North America,owner,web search (medium)
+ROSELAND_SOLAR3,Hecate Energy,developer,web search (medium)
+ROSELAND_SOLAR3,"Roseland Solar Project, LLC",plant name,EIA-860
+ROUTE_66_WIND1,Onward Energy,operator,EIA-860
+ROUTE_66_WIND1,Route 66 Wind Plant,plant name,EIA-860
+RRC_WIND_UNIT1,NextEra Energy Resources,owner,web search (medium)
+RRC_WIND_UNIT1,Roadrunner Wind Farm,plant name,EIA-860
+RRC_WIND_UNIT2,NextEra Energy Resources,owner,web search (medium)
+RRC_WIND_UNIT2,Roadrunner Wind Farm,plant name,EIA-860
+RRC_WIND_UNIT3,NextEra Energy Resources,owner,web search (medium)
+RRC_WIND_UNIT3,Roadrunner Wind Farm,plant name,EIA-860
+RSNAKE_G1,Invenergy,developer,web search (medium)
+RSNAKE_G1,Invenergy,owner,web search (medium)
+RSNAKE_G1,Rattlesnake Den,plant name,EIA-860
+RSNAKE_G2,Invenergy,developer,web search (medium)
+RSNAKE_G2,Invenergy,owner,web search (medium)
+RSNAKE_G2,Rattlesnake Den,plant name,EIA-860
+RTS2_U1,Heart of Texas Wind Project,plant name,EIA-860
+RTS2_U1,Scout Clean Energy,developer,web search (high)
+RTS2_U1,Scout Clean Energy,operator,EIA-860
+RTS2_U1,Scout Clean Energy,owner,web search (high)
+RTS2_U2,Heart of Texas Wind Project,plant name,EIA-860
+RTS2_U2,Scout Clean Energy,developer,web search (high)
+RTS2_U2,Scout Clean Energy,operator,EIA-860
+RTS2_U2,Scout Clean Energy,owner,web search (high)
+SAGEDRAW_UNIT1,BHE Renewables,owner,web search (medium)
+SAGEDRAW_UNIT1,Sage Draw Wind,plant name,EIA-860
+SAGEDRAW_UNIT1,Ørsted,developer,web search (medium)
+SAGEDRAW_UNIT1,Ørsted,owner,web search (medium)
+SAGEDRAW_UNIT2,BHE Renewables,owner,web search (medium)
+SAGEDRAW_UNIT2,Sage Draw Wind,plant name,EIA-860
+SAGEDRAW_UNIT2,Ørsted,developer,web search (medium)
+SAGEDRAW_UNIT2,Ørsted,owner,web search (medium)
+SALTFORK_UNIT1,EDF Renewables,developer,web search (medium)
+SALTFORK_UNIT1,"Salt Fork Wind Project, LLC",plant name,EIA-860
+SALTFORK_UNIT1,Southern Power,operator,EIA-860
+SALTFORK_UNIT1,Southern Power,owner,web search (medium)
+SALTFORK_UNIT2,EDF Renewables,developer,web search (medium)
+SALTFORK_UNIT2,"Salt Fork Wind Project, LLC",plant name,EIA-860
+SALTFORK_UNIT2,Southern Power,operator,EIA-860
+SALTFORK_UNIT2,Southern Power,owner,web search (medium)
+SALVTION_UNIT1,Lincoln Clean Energy,developer,web search (medium)
+SALVTION_UNIT1,Lincoln Clean Energy,owner,web search (medium)
+SALVTION_UNIT1,Willow Springs Wind Farm,plant name,EIA-860
+SALVTION_UNIT1,Ørsted,owner,web search (medium)
+SALVTION_UNIT2,Lincoln Clean Energy,developer,web search (medium)
+SALVTION_UNIT2,Lincoln Clean Energy,owner,web search (medium)
+SALVTION_UNIT2,Willow Springs Wind Farm,plant name,EIA-860
+SALVTION_UNIT2,Ørsted,owner,web search (medium)
+SAMSON_1_G1,Invenergy,developer,web search (medium)
+SAMSON_1_G1,Invenergy,operator,EIA-860
+SAMSON_1_G1,Invenergy,owner,web search (medium)
+SAMSON_1_G1,Samson Solar Energy II LLC,plant name,EIA-860
+SAMSON_1_G1,WEC Energy Group,owner,web search (medium)
+SAMSON_1_G2,Invenergy,developer,web search (medium)
+SAMSON_1_G2,Invenergy,operator,EIA-860
+SAMSON_1_G2,Invenergy,owner,web search (medium)
+SAMSON_1_G2,Samson Solar Energy II LLC,plant name,EIA-860
+SAMSON_1_G2,WEC Energy Group,owner,web search (medium)
+SAMSON_1_G3,Invenergy,developer,web search (medium)
+SAMSON_1_G3,Invenergy,operator,EIA-860
+SAMSON_1_G3,Invenergy,owner,web search (medium)
+SAMSON_1_G3,Samson Solar Energy II LLC,plant name,EIA-860
+SAMSON_1_G3,WEC Energy Group,owner,web search (medium)
+SAMSON_1_G4,Invenergy,developer,web search (medium)
+SAMSON_1_G4,Invenergy,operator,EIA-860
+SAMSON_1_G4,Invenergy,owner,web search (medium)
+SAMSON_1_G4,Samson Solar Energy II LLC,plant name,EIA-860
+SAMSON_1_G4,WEC Energy Group,owner,web search (medium)
+SAMSON_3_G1,Invenergy,developer,web search (medium)
+SAMSON_3_G1,Invenergy,operator,EIA-860
+SAMSON_3_G1,Invenergy,owner,web search (medium)
+SAMSON_3_G1,Samson Solar Energy II LLC,plant name,EIA-860
+SAMSON_3_G1,WEC Energy Group,owner,web search (medium)
+SAMSON_3_G2,Invenergy,developer,web search (medium)
+SAMSON_3_G2,Invenergy,operator,EIA-860
+SAMSON_3_G2,Invenergy,owner,web search (medium)
+SAMSON_3_G2,Samson Solar Energy II LLC,plant name,EIA-860
+SAMSON_3_G2,WEC Energy Group,owner,web search (medium)
+SANMIGL_G1,San Miguel,plant name,EIA-860
+SANMIGL_G1,"San Miguel Electric Coop, Inc",operator,EIA-860
+SANROMAN_WIND_1,Acciona Energía,operator,EIA-860
+SANROMAN_WIND_1,Acciona Energía,owner,web search (medium)
+SANROMAN_WIND_1,Pioneer Green Energy,developer,web search (medium)
+SANROMAN_WIND_1,"San Roman Wind I, LLC",plant name,EIA-860
+SANTACRU_UNIT1,Chapman Ranch Wind I,plant name,EIA-860
+SANTACRU_UNIT2,Chapman Ranch Wind I,plant name,EIA-860
+SCES_UNIT1_J01,Sandy Creek Energy Station,plant name,EIA-860
+SCES_UNIT1_J02,Sandy Creek Energy Station,plant name,EIA-860
+SCES_UNIT1_J03,Sandy Creek Energy Station,plant name,EIA-860
+SCES_UNIT1_J04,Sandy Creek Energy Station,plant name,EIA-860
+SENATEWD_UNIT1,Algonquin,operator,EIA-860
+SENATEWD_UNIT1,Senate Wind LLC,plant name,EIA-860
+SGMTN_SIGNALMT,Big Spring Wind Power Facility,plant name,EIA-860
+SGMTN_SIGNALMT,Terra-Gen,operator,EIA-860
+SHAFFER_UNIT1,Avangrid Renewables,developer,web search (medium)
+SHAFFER_UNIT1,Avangrid Renewables,operator,EIA-860
+SHAFFER_UNIT1,Avangrid Renewables,owner,web search (medium)
+SHAFFER_UNIT1,Patriot Wind Farm,plant name,EIA-860
+SHAMROCK_UNIT1,NextEra Energy Resources,owner,web search (medium)
+SHAMROCK_UNIT2,NextEra Energy Resources,owner,web search (medium)
+SHANNONW_UNIT_1,Alterra Power,developer,web search (medium)
+SHANNONW_UNIT_1,Shannon Wind,plant name,EIA-860
+SHANNONW_UNIT_1,Starwood Energy,developer,web search (medium)
+SHANNONW_UNIT_1,Starwood Energy,owner,web search (medium)
+SIG_SLR_UNIT1,BT Signal Ranch,plant name,EIA-860
+SILASRAY_SILAS_10,Brownsville Public Utilities Board,operator,EIA-860
+SILASRAY_SILAS_10,Silas Ray,plant name,EIA-860
+SIRIUS_UNIT1,Alamo 6,plant name,EIA-860
+SIRIUS_UNIT1,BHE Renewables,operator,EIA-860
+SIRIUS_UNIT1,BHE Renewables,owner,web search (medium)
+SIRIUS_UNIT1,OCI Energy,developer,web search (medium)
+SIRIUS_UNIT2,BHE Renewables,operator,EIA-860
+SIRIUS_UNIT2,BHE Renewables,owner,web search (medium)
+SIRIUS_UNIT2,OCI Energy,developer,web search (medium)
+SIRIUS_UNIT2,Pearl Solar,plant name,EIA-860
+SJS_SJS_G1,NRG Energy,operator,EIA-860
+SJS_SJS_G1,San Jacinto Steam Electric Station,plant name,EIA-860
+SJS_SJS_G2,NRG Energy,operator,EIA-860
+SJS_SJS_G2,San Jacinto Steam Electric Station,plant name,EIA-860
+SKY1_SKY1A,Kerrville Public Utility Board Public Facility Corp,operator,EIA-860
+SKY1_SKY1A,Rock Island Generation Project,plant name,EIA-860
+SKY1_SKY1B,Kerrville Public Utility Board Public Facility Corp,operator,EIA-860
+SKY1_SKY1B,Rock Island Generation Project,plant name,EIA-860
+SOLARA_UNIT1,OCI Alamo 7 LLC,plant name,EIA-860
+SOLARA_UNIT1,OCI Energy,developer,web search (medium)
+SOLARA_UNIT1,RWE Clean Energy,operator,EIA-860
+SOLARA_UNIT1,RWE Clean Energy,owner,web search (medium)
+SOLC_SLR_UNIT1,Alphabet/Google,owner,web search (medium)
+SOLC_SLR_UNIT1,Intersect Power,developer,web search (medium)
+SOLC_SLR_UNIT1,Quantum BESS,plant name,EIA-860
+SOLC_SLR_UNIT2,Alphabet/Google,owner,web search (medium)
+SOLC_SLR_UNIT2,Intersect Power,developer,web search (medium)
+SOLC_SLR_UNIT2,Quantum BESS,plant name,EIA-860
+SPARTA_UNIT1,Energy Capital Partners,owner,web search (high)
+SPARTA_UNIT1,Sparta Solar,plant name,EIA-860
+SPARTA_UNIT1,Ørsted,developer,web search (high)
+SPARTA_UNIT1,Ørsted,owner,web search (high)
+SPARTA_UNIT2,Energy Capital Partners,owner,web search (high)
+SPARTA_UNIT2,Sparta Solar,plant name,EIA-860
+SPARTA_UNIT2,Ørsted,developer,web search (high)
+SPARTA_UNIT2,Ørsted,owner,web search (high)
+SPLAIN1_WIND1,South Plains Wind Phase I,plant name,EIA-860
+SPLAIN1_WIND2,South Plains Wind Phase I,plant name,EIA-860
+SPLAIN2_WIND21,Onward Energy,operator,EIA-860
+SPLAIN2_WIND21,South Plains II,plant name,EIA-860
+SPLAIN2_WIND22,Onward Energy,operator,EIA-860
+SPLAIN2_WIND22,South Plains II,plant name,EIA-860
+SPNCER_SPNCE_4,City of Garland,operator,EIA-860
+SPNCER_SPNCE_4,Spencer,plant name,EIA-860
+SPNCER_SPNCE_5,City of Garland,operator,EIA-860
+SPNCER_SPNCE_5,Spencer,plant name,EIA-860
+SPTX12B_UNIT1,RWE Clean Energy,operator,EIA-860
+SPTX12B_UNIT1,Upton County Solar,plant name,EIA-860
+SRWE1_SRWE2,Stephens Ranch Wind Energy LLC,plant name,EIA-860
+SRWE1_UNIT1,Stephens Ranch Wind Energy LLC,plant name,EIA-860
+SSPURTWO_SS3WIND1,EDF Renewables,developer,web search (medium)
+SSPURTWO_SS3WIND1,EDF Renewables,operator,EIA-860
+SSPURTWO_SS3WIND1,EDF Renewables,owner,web search (medium)
+SSPURTWO_SS3WIND1,Spinning Spur Wind II,plant name,EIA-860
+SSPURTWO_SS3WIND2,EDF Renewables,developer,web search (medium)
+SSPURTWO_SS3WIND2,EDF Renewables,operator,EIA-860
+SSPURTWO_SS3WIND2,EDF Renewables,owner,web search (medium)
+SSPURTWO_SS3WIND2,Spinning Spur Wind II,plant name,EIA-860
+SSPURTWO_WIND_1,EDF Renewables,developer,web search (medium)
+SSPURTWO_WIND_1,EDF Renewables,operator,EIA-860
+SSPURTWO_WIND_1,EDF Renewables,owner,web search (medium)
+SSPURTWO_WIND_1,Spinning Spur Wind II,plant name,EIA-860
+STAM_SLR_SOLAR1,Enel North America,developer,web search (medium)
+STAM_SLR_SOLAR1,Enel North America,owner,web search (medium)
+STAM_SLR_SOLAR1,Nestle,owner,web search (medium)
+STAM_SLR_SOLAR2,Enel North America,developer,web search (medium)
+STAM_SLR_SOLAR2,Enel North America,owner,web search (medium)
+STAM_SLR_SOLAR2,Nestle,owner,web search (medium)
+STAR_SLR_UNIT1,Lightsource bp,developer,web search (medium)
+STAR_SLR_UNIT1,Lightsource bp,owner,web search (medium)
+STAR_SLR_UNIT2,Lightsource bp,developer,web search (medium)
+STAR_SLR_UNIT2,Lightsource bp,owner,web search (medium)
+STEAM1A_STEAM_1,City of Greenville,operator,EIA-860
+STEAM1A_STEAM_1,Powerlane Plant,plant name,EIA-860
+STEAM_ENGINE_1,City of Greenville,operator,EIA-860
+STEAM_ENGINE_1,Powerlane Plant,plant name,EIA-860
+STEAM_ENGINE_2,City of Greenville,operator,EIA-860
+STEAM_ENGINE_2,Powerlane Plant,plant name,EIA-860
+STEAM_ENGINE_3,City of Greenville,operator,EIA-860
+STEAM_ENGINE_3,Powerlane Plant,plant name,EIA-860
+STEAM_STEAM_2,City of Greenville,operator,EIA-860
+STEAM_STEAM_2,Powerlane Plant,plant name,EIA-860
+STEAM_STEAM_3,City of Greenville,operator,EIA-860
+STEAM_STEAM_3,Powerlane Plant,plant name,EIA-860
+STELLA_UNIT1,RWE Clean Energy,operator,EIA-860
+STELLA_UNIT1,Stella Wind Farm,plant name,EIA-860
+STLHS_SL_PV1,Matrix Renewables,owner,web search (medium)
+STLHS_SL_PV1,OCI Energy,developer,web search (medium)
+STLHS_SL_PV1,OCI Stillhouse Solar,plant name,EIA-860
+STP_STP_G1_J01,STP Nuclear Operating Co,operator,EIA-860
+STP_STP_G1_J01,South Texas Project,plant name,EIA-860
+STP_STP_G1_J03,STP Nuclear Operating Co,operator,EIA-860
+STP_STP_G1_J03,South Texas Project,plant name,EIA-860
+STP_STP_G1_J04,STP Nuclear Operating Co,operator,EIA-860
+STP_STP_G1_J04,South Texas Project,plant name,EIA-860
+STP_STP_G2_J01,STP Nuclear Operating Co,operator,EIA-860
+STP_STP_G2_J01,South Texas Project,plant name,EIA-860
+STP_STP_G2_J03,STP Nuclear Operating Co,operator,EIA-860
+STP_STP_G2_J03,South Texas Project,plant name,EIA-860
+STP_STP_G2_J04,STP Nuclear Operating Co,operator,EIA-860
+STP_STP_G2_J04,South Texas Project,plant name,EIA-860
+STRG_SLR_UNIT1,RWE Clean Energy,developer,web search (medium)
+STRG_SLR_UNIT1,RWE Clean Energy,operator,EIA-860
+STRG_SLR_UNIT1,RWE Clean Energy,owner,web search (medium)
+STRG_SLR_UNIT1,"Stoneridge Solar, LLC",plant name,EIA-860
+STRG_SLR_UNIT2,RWE Clean Energy,developer,web search (medium)
+STRG_SLR_UNIT2,RWE Clean Energy,operator,EIA-860
+STRG_SLR_UNIT2,RWE Clean Energy,owner,web search (medium)
+STRG_SLR_UNIT2,"Stoneridge Solar, LLC",plant name,EIA-860
+STWF_T1,NRG Energy,operator,EIA-860
+STWF_T1,NRG Energy,owner,web search (medium)
+STWF_T1,South Trent Wind Farm,plant name,EIA-860
+SUNVASLR_UNIT1,ENGIE,developer,web search (high)
+SUNVASLR_UNIT1,ENGIE,owner,web search (high)
+SUNVASLR_UNIT1,Sun Valley Solar Project,plant name,EIA-860
+SUNVASLR_UNIT2,ENGIE,developer,web search (high)
+SUNVASLR_UNIT2,ENGIE,owner,web search (high)
+SUNVASLR_UNIT2,Sun Valley Solar Project,plant name,EIA-860
+SUN_SLR_UNIT_1,AP Sunray LLC,plant name,EIA-860
+SUN_SLR_UNIT_1,Arava Power,owner,web search (medium)
+SUN_SLR_UNIT_1,OCI Energy,developer,web search (medium)
+SUN_SLR_UNIT_1,Paz Group,owner,web search (medium)
+SWEC_G1,Invenergy,operator,EIA-860
+SWEC_G1,Invenergy,owner,web search (medium)
+SWEC_G1,Stanton Wind Energy LLC,plant name,EIA-860
+SWEETWN2_WND2,Leeward Renewable Energy,developer,web search (medium)
+SWEETWN2_WND2,Leeward Renewable Energy,operator,EIA-860
+SWEETWN2_WND2,Leeward Renewable Energy,owner,web search (medium)
+SWEETWN2_WND2,Sweetwater Wind 2 LLC,plant name,EIA-860
+SWEETWN2_WND24,Leeward Renewable Energy,developer,web search (medium)
+SWEETWN2_WND24,Leeward Renewable Energy,operator,EIA-860
+SWEETWN2_WND24,Leeward Renewable Energy,owner,web search (medium)
+SWEETWN2_WND24,Sweetwater Wind 2 LLC,plant name,EIA-860
+SWEETWN3_WND3A,Leeward Renewable Energy,operator,EIA-860
+SWEETWN3_WND3A,Leeward Renewable Energy,owner,web search (medium)
+SWEETWN3_WND3A,Sweetwater Wind 3 LLC,plant name,EIA-860
+SWEETWN3_WND3B,Leeward Renewable Energy,operator,EIA-860
+SWEETWN3_WND3B,Leeward Renewable Energy,owner,web search (medium)
+SWEETWN3_WND3B,Sweetwater Wind 3 LLC,plant name,EIA-860
+SWEETWN4_WND4A,Duke Energy Renewables,owner,web search (medium)
+SWEETWN4_WND4A,Leeward Renewable Energy,developer,web search (medium)
+SWEETWN4_WND4A,Leeward Renewable Energy,operator,EIA-860
+SWEETWN4_WND4A,Leeward Renewable Energy,owner,web search (medium)
+SWEETWN4_WND4A,Sweetwater Wind 4 LLC,plant name,EIA-860
+SWEETWN4_WND4B,Duke Energy Renewables,owner,web search (medium)
+SWEETWN4_WND4B,Leeward Renewable Energy,developer,web search (medium)
+SWEETWN4_WND4B,Leeward Renewable Energy,operator,EIA-860
+SWEETWN4_WND4B,Leeward Renewable Energy,owner,web search (medium)
+SWEETWN4_WND4B,Sweetwater Wind 4 LLC,plant name,EIA-860
+SWEETWN5_WND5,Duke Energy Renewables,owner,web search (medium)
+SWEETWN5_WND5,Leeward Renewable Energy,developer,web search (medium)
+SWEETWN5_WND5,Leeward Renewable Energy,operator,EIA-860
+SWEETWN5_WND5,Leeward Renewable Energy,owner,web search (medium)
+SWEETWN5_WND5,Sweetwater Wind 4 LLC,plant name,EIA-860
+SWEETWND_WND1,Leeward Renewable Energy,operator,EIA-860
+SWEETWND_WND1,Leeward Renewable Energy,owner,web search (medium)
+SWEETWND_WND1,Sweetwater Wind  1 LLC,plant name,EIA-860
+S_HILLS_UNIT1,ENGIE,operator,EIA-860
+S_HILLS_UNIT1,ENGIE,owner,web search (medium)
+S_HILLS_UNIT1,"Seymour Hills Wind Project, LLC",plant name,EIA-860
+TAHOKA_UNIT_1,Tahoka Wind,plant name,EIA-860
+TAHOKA_UNIT_2,Tahoka Wind,plant name,EIA-860
+TAV_UNIT1,Acciona Energía,operator,EIA-860
+TAV_UNIT1,Fort Bend Solar LLC,plant name,EIA-860
+TAV_UNIT2,Acciona Energía,operator,EIA-860
+TAV_UNIT2,Fort Bend Solar LLC,plant name,EIA-860
+TAYGETE2_UNIT1,Taygete II Energy Project,plant name,EIA-860
+TAYGETE2_UNIT2,Taygete II Energy Project,plant name,EIA-860
+TAYGETE_UNIT1,7X Energy,developer,web search (medium)
+TAYGETE_UNIT1,Taygete Energy Project LLC,plant name,EIA-860
+TAYGETE_UNIT2,7X Energy,developer,web search (medium)
+TAYGETE_UNIT2,Taygete Energy Project LLC,plant name,EIA-860
+TC_TCHP1,TECO CHP-1,plant name,EIA-860
+TC_TCHP1,Texas Medical Center Central,operator,EIA-860
+TEN_CC1,Johnson County,plant name,EIA-860
+TGCCS_CC1,Tenaska,operator,EIA-860
+TGCCS_CC1,Tenaska Gateway Generating Station,plant name,EIA-860
+TGW_T1,Pattern Energy,operator,EIA-860
+TGW_T1,Pattern Energy,owner,web search (medium)
+TGW_T1,Pattern Gulf Wind,plant name,EIA-860
+TGW_T2,Pattern Energy,operator,EIA-860
+TGW_T2,Pattern Energy,owner,web search (medium)
+TGW_T2,Pattern Gulf Wind,plant name,EIA-860
+THREEW_S_SOLAR1,Mitsui,owner,web search (medium)
+THW_CC1,NRG Energy,operator,EIA-860
+THW_CC1,T H Wharton,plant name,EIA-860
+THW_CC2,NRG Energy,operator,EIA-860
+THW_CC2,T H Wharton,plant name,EIA-860
+THW_GT61,NRG Energy,operator,EIA-860
+THW_GT61,T H Wharton,plant name,EIA-860
+THW_GT62,NRG Energy,operator,EIA-860
+THW_GT62,T H Wharton,plant name,EIA-860
+THW_THWGT51,NRG Energy,operator,EIA-860
+THW_THWGT51,T H Wharton,plant name,EIA-860
+THW_THWGT52,NRG Energy,operator,EIA-860
+THW_THWGT52,T H Wharton,plant name,EIA-860
+THW_THWGT53,NRG Energy,operator,EIA-860
+THW_THWGT53,T H Wharton,plant name,EIA-860
+THW_THWGT54,NRG Energy,operator,EIA-860
+THW_THWGT54,T H Wharton,plant name,EIA-860
+THW_THWGT55,NRG Energy,operator,EIA-860
+THW_THWGT55,T H Wharton,plant name,EIA-860
+THW_THWGT56,NRG Energy,operator,EIA-860
+THW_THWGT56,T H Wharton,plant name,EIA-860
+THW_THWGT_1,NRG Energy,operator,EIA-860
+THW_THWGT_1,T H Wharton,plant name,EIA-860
+TIMPP_AGR1,LCRA,operator,EIA-860
+TIMPP_AGR1,Timmerman Power Plant,plant name,EIA-860
+TIMPP_AGR2,LCRA,operator,EIA-860
+TIMPP_AGR2,Timmerman Power Plant,plant name,EIA-860
+TIMPP_AGR3,LCRA,operator,EIA-860
+TIMPP_AGR3,Timmerman Power Plant,plant name,EIA-860
+TIMPP_AGR4,LCRA,operator,EIA-860
+TIMPP_AGR4,Timmerman Power Plant,plant name,EIA-860
+TIMPP_AGR5,LCRA,operator,EIA-860
+TIMPP_AGR5,Timmerman Power Plant,plant name,EIA-860
+TIMPP_AGR6,LCRA,operator,EIA-860
+TIMPP_AGR6,Timmerman Power Plant,plant name,EIA-860
+TIMPP_AGR7,LCRA,operator,EIA-860
+TIMPP_AGR7,Timmerman Power Plant,plant name,EIA-860
+TIMPP_AGR8,LCRA,operator,EIA-860
+TIMPP_AGR8,Timmerman Power Plant,plant name,EIA-860
+TI_SOLAR_UNIT1,Titan Solar Project,plant name,EIA-860
+TI_SOLAR_UNIT2,Titan Solar Project,plant name,EIA-860
+TKWSW1_ROSCOE,RWE Clean Energy,operator,EIA-860
+TKWSW1_ROSCOE,RWE Clean Energy,owner,web search (medium)
+TKWSW1_ROSCOE,Roscoe Wind Farm LLC,plant name,EIA-860
+TKWSW1_ROSCOE2A,RWE Clean Energy,operator,EIA-860
+TKWSW1_ROSCOE2A,RWE Clean Energy,owner,web search (medium)
+TKWSW1_ROSCOE2A,Roscoe Wind Farm LLC,plant name,EIA-860
+TNG_SOLAR1,Core Solar,developer,web search (medium)
+TNG_SOLAR2,Core Solar,developer,web search (medium)
+TNP_ONE_TNP_O_1,Major Oak Power,plant name,EIA-860
+TNP_ONE_TNP_O_2,Major Oak Power,plant name,EIA-860
+TNSKA_CC1,Paris Energy Center,plant name,EIA-860
+TNS_SLR_UNIT1,Avangrid Renewables,developer,web search (medium)
+TNS_SLR_UNIT1,Avangrid Renewables,operator,EIA-860
+TNS_SLR_UNIT1,Avangrid Renewables,owner,web search (medium)
+TNS_SLR_UNIT1,"True North Solar, LLC",plant name,EIA-860
+TNS_SLR_UNIT2,Avangrid Renewables,developer,web search (medium)
+TNS_SLR_UNIT2,Avangrid Renewables,operator,EIA-860
+TNS_SLR_UNIT2,Avangrid Renewables,owner,web search (medium)
+TNS_SLR_UNIT2,"True North Solar, LLC",plant name,EIA-860
+TOPAZ_UNIT1,CPS Energy,operator,EIA-860
+TOPAZ_UNIT1,Topaz Generating,plant name,EIA-860
+TOPAZ_UNIT10,CPS Energy,operator,EIA-860
+TOPAZ_UNIT10,Topaz Generating,plant name,EIA-860
+TOPAZ_UNIT2,CPS Energy,operator,EIA-860
+TOPAZ_UNIT2,Topaz Generating,plant name,EIA-860
+TOPAZ_UNIT3,CPS Energy,operator,EIA-860
+TOPAZ_UNIT3,Topaz Generating,plant name,EIA-860
+TOPAZ_UNIT4,CPS Energy,operator,EIA-860
+TOPAZ_UNIT4,Topaz Generating,plant name,EIA-860
+TOPAZ_UNIT5,CPS Energy,operator,EIA-860
+TOPAZ_UNIT5,Topaz Generating,plant name,EIA-860
+TOPAZ_UNIT6,CPS Energy,operator,EIA-860
+TOPAZ_UNIT6,Topaz Generating,plant name,EIA-860
+TOPAZ_UNIT7,CPS Energy,operator,EIA-860
+TOPAZ_UNIT7,Topaz Generating,plant name,EIA-860
+TOPAZ_UNIT8,CPS Energy,operator,EIA-860
+TOPAZ_UNIT8,Topaz Generating,plant name,EIA-860
+TOPAZ_UNIT9,CPS Energy,operator,EIA-860
+TOPAZ_UNIT9,Topaz Generating,plant name,EIA-860
+TORR_UNIT1_25,"Torrecillas Wind Energy, LLC",plant name,EIA-860
+TORR_UNIT2_23,"Torrecillas Wind Energy, LLC",plant name,EIA-860
+TORR_UNIT2_25,"Torrecillas Wind Energy, LLC",plant name,EIA-860
+TRBT_SLR_PV1,Ashtrom Renewable Energy,developer,web search (medium)
+TRBT_SLR_PV2,Ashtrom Renewable Energy,developer,web search (medium)
+TREB_SLR_SOLAR1,Swift Current Energy,developer,web search (medium)
+TREB_SLR_SOLAR1,Swift Current Energy,owner,web search (medium)
+TREB_SLR_SOLAR1,Tres Bahias,plant name,EIA-860
+TRENT_TRENT,AEP Renewables,owner,web search (medium)
+TRENT_TRENT,Invenergy,operator,EIA-860
+TRENT_TRENT,Trent Wind Farm LP,plant name,EIA-860
+TRENT_UNIT_1B,AEP Renewables,owner,web search (medium)
+TRENT_UNIT_1B,Invenergy,operator,EIA-860
+TRENT_UNIT_1B,Trent Wind Farm LP,plant name,EIA-860
+TRENT_UNIT_2,AEP Renewables,owner,web search (medium)
+TRENT_UNIT_2,Invenergy,operator,EIA-860
+TRENT_UNIT_2,Trent Wind Farm LP,plant name,EIA-860
+TRENT_UNIT_3A,AEP Renewables,owner,web search (medium)
+TRENT_UNIT_3A,Invenergy,operator,EIA-860
+TRENT_UNIT_3A,Trent Wind Farm LP,plant name,EIA-860
+TRENT_UNIT_3B,AEP Renewables,owner,web search (medium)
+TRENT_UNIT_3B,Invenergy,operator,EIA-860
+TRENT_UNIT_3B,Trent Wind Farm LP,plant name,EIA-860
+TRSES_UNIT6,Wensowitch Solar Park,plant name,EIA-860
+TRUENO_UNIT1,RWE Clean Energy,developer,web search (medium)
+TRUENO_UNIT1,RWE Clean Energy,operator,EIA-860
+TRUENO_UNIT1,RWE Clean Energy,owner,web search (medium)
+TRUENO_UNIT1,West Raymond Wind Farm LLC,plant name,EIA-860
+TRUENO_UNIT2,RWE Clean Energy,developer,web search (medium)
+TRUENO_UNIT2,RWE Clean Energy,operator,EIA-860
+TRUENO_UNIT2,RWE Clean Energy,owner,web search (medium)
+TRUENO_UNIT2,West Raymond Wind Farm LLC,plant name,EIA-860
+TRUSGILL_UNIT1,TG East,plant name,EIA-860
+TRUSGILL_UNIT2,TG East,plant name,EIA-860
+TRUSGILL_UNIT3,TG East,plant name,EIA-860
+TRUSGILL_UNIT4,TG East,plant name,EIA-860
+TTWEC_G1,Invenergy,developer,web search (medium)
+TTWEC_G1,Invenergy,operator,EIA-860
+TTWEC_G1,Invenergy,owner,web search (medium)
+TTWEC_G1,Turkey Track Wind Energy LLC,plant name,EIA-860
+TUL_SLR_UNIT1,ENGIE,developer,web search (medium)
+TUL_SLR_UNIT2,ENGIE,developer,web search (medium)
+TXCTY_CC1,Texas City Power Plant,plant name,EIA-860
+TYLRWIND_UNIT1,EDF Renewables,developer,web search (medium)
+TYLRWIND_UNIT1,Southern Power,operator,EIA-860
+TYLRWIND_UNIT1,Southern Power,owner,web search (medium)
+TYLRWIND_UNIT1,"Tyler Bluff Wind Project, LLC",plant name,EIA-860
+TYSN_SLR_UNIT1,AB CarVal-managed funds,owner,web search (high)
+TYSN_SLR_UNIT1,Tyson Nick,plant name,EIA-860
+VANCOURT_UNIT1,Vancourt Solar Interconnections,plant name,EIA-860
+VERTIGO_WIND_I,Capital Dynamics,owner,web search (medium)
+VERTIGO_WIND_I,Green Pastures Wind I,plant name,EIA-860
+VERTIGO_WIND_I,Pioneer Green Energy,developer,web search (medium)
+VICTORIA_CC1,Victoria,plant name,EIA-860
+VICTPORT_CTG01,Victoria Port Power LLC,plant name,EIA-860
+VICTPORT_CTG02,Victoria Port Power LLC,plant name,EIA-860
+VICTPRT2_UNIT1,Victoria Port Power LLC,plant name,EIA-860
+VICTPRT2_UNIT2,Victoria Port Power LLC,plant name,EIA-860
+WAKEWE_G1_J01,Donegal Solar Project,plant name,EIA-860
+WAKEWE_G1_J02,Donegal Solar Project,plant name,EIA-860
+WAKEWE_G2_J01,Donegal Solar Project,plant name,EIA-860
+WAKEWE_G2_J02,Donegal Solar Project,plant name,EIA-860
+WAP_WAPGT_1,NRG Energy,operator,EIA-860
+WAP_WAPGT_1,W A Parish,plant name,EIA-860
+WAP_WAP_G1,NRG Energy,operator,EIA-860
+WAP_WAP_G1,W A Parish,plant name,EIA-860
+WAP_WAP_G2,NRG Energy,operator,EIA-860
+WAP_WAP_G2,W A Parish,plant name,EIA-860
+WAP_WAP_G3,NRG Energy,operator,EIA-860
+WAP_WAP_G3,W A Parish,plant name,EIA-860
+WAP_WAP_G4,NRG Energy,operator,EIA-860
+WAP_WAP_G4,W A Parish,plant name,EIA-860
+WAP_WAP_G5,NRG Energy,operator,EIA-860
+WAP_WAP_G5,W A Parish,plant name,EIA-860
+WAP_WAP_G6,NRG Energy,operator,EIA-860
+WAP_WAP_G6,W A Parish,plant name,EIA-860
+WAP_WAP_G7,NRG Energy,operator,EIA-860
+WAP_WAP_G7,W A Parish,plant name,EIA-860
+WAP_WAP_G8,NRG Energy,operator,EIA-860
+WAP_WAP_G8,W A Parish,plant name,EIA-860
+WCPP_CC1,Wise County Power LLC,plant name,EIA-860
+WEBBER_S_WSP1,FRV,developer,web search (medium)
+WEBBER_S_WSP1,Longsol Holdings,owner,web search (medium)
+WEBBER_S_WSP1,Webberville Solar Project,plant name,EIA-860
+WEC_WECG1,ONCEnergy,owner,web search (medium)
+WEC_WECG1,RES Americas,developer,web search (medium)
+WEC_WECG1,Skyline Renewables,owner,web search (medium)
+WEC_WECG1,Whirlwind Energy Center,plant name,EIA-860
+WFCOGEN_CC1,Signal Hill Generating LLC,plant name,EIA-860
+WGU_UNIT1,Cubico Sustainable Investments,owner,web search (high)
+WGU_UNIT1,Cypress Creek Renewables,developer,web search (high)
+WGU_UNIT1,Wagyu,plant name,EIA-860
+WHCCS2_CC2,Wolf Hollow I LP,plant name,EIA-860
+WHCCS_CC1,Wolf Hollow I LP,plant name,EIA-860
+WHMESA_UNIT1,Apex Clean Energy,developer,web search (medium)
+WHMESA_UNIT1,White Mesa Wind,plant name,EIA-860
+WHMESA_UNIT2_23,Apex Clean Energy,developer,web search (medium)
+WHMESA_UNIT2_23,White Mesa Wind,plant name,EIA-860
+WHMESA_UNIT2_28,Apex Clean Energy,developer,web search (medium)
+WHMESA_UNIT2_28,White Mesa Wind,plant name,EIA-860
+WHMESA_UNIT3_23,Apex Clean Energy,developer,web search (medium)
+WHMESA_UNIT3_23,White Mesa Wind,plant name,EIA-860
+WHMESA_UNIT3_28,Apex Clean Energy,developer,web search (medium)
+WHMESA_UNIT3_28,White Mesa Wind,plant name,EIA-860
+WHTTAIL_WR1,NextEra Energy Resources,operator,EIA-860
+WHTTAIL_WR1,NextEra Energy Resources,owner,web search (medium)
+WHTTAIL_WR1,Wolf Ridge Wind,plant name,EIA-860
+WIPOPA_WPP_G1,LCRA,operator,EIA-860
+WIPOPA_WPP_G1,Winchester Power Park,plant name,EIA-860
+WIPOPA_WPP_G2,LCRA,operator,EIA-860
+WIPOPA_WPP_G2,Winchester Power Park,plant name,EIA-860
+WIPOPA_WPP_G3,LCRA,operator,EIA-860
+WIPOPA_WPP_G3,Winchester Power Park,plant name,EIA-860
+WIPOPA_WPP_G4,LCRA,operator,EIA-860
+WIPOPA_WPP_G4,Winchester Power Park,plant name,EIA-860
+WL_RANCH_UNIT1,ENGIE,developer,web search (medium)
+WL_RANCH_UNIT1,ENGIE,operator,EIA-860
+WL_RANCH_UNIT1,ENGIE,owner,web search (medium)
+WL_RANCH_UNIT1,John Laing Group,owner,web search (medium)
+WL_RANCH_UNIT1,Live Oak Wind Project,plant name,EIA-860
+WNDTHST2_UNIT1,EDF Renewables,operator,EIA-860
+WNDTHST2_UNIT1,Windthorst-2,plant name,EIA-860
+WOODWRD1_WOODWRD1,NextEra Energy Resources,developer,web search (medium)
+WOODWRD1_WOODWRD1,Woodward Mountain II,plant name,EIA-860
+WOODWRD2_WOODWRD2,NextEra Energy Resources,developer,web search (medium)
+WOODWRD2_WOODWRD2,Woodward Mountain II,plant name,EIA-860
+W_PECOS_UNIT1,E.ON,developer,web search (medium)
+W_PECOS_UNIT1,RWE Clean Energy,operator,EIA-860
+W_PECOS_UNIT1,RWE Clean Energy,owner,web search (medium)
+W_PECOS_UNIT1,West of the Pecos Solar,plant name,EIA-860
+YNG_WND_UNIT1,Young Wind,plant name,EIA-860
+YNG_WND_UNIT2,Young Wind,plant name,EIA-860
+YNG_WND_UNIT3,Young Wind,plant name,EIA-860
+Z0_DGR1,CPS Energy,operator,EIA-860
+Z0_DGR1,Mission Road,plant name,EIA-860
+Z0_DGR2,CPS Energy,operator,EIA-860
+Z0_DGR2,Mission Road,plant name,EIA-860
+ZIER_SLR_PV1,Cypress Creek Renewables,operator,EIA-860
+ZIER_SLR_PV1,Zier Solar,plant name,EIA-860
