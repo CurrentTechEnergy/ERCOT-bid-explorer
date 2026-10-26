@@ -474,5 +474,72 @@ function setNote(el, caption, how) {
   if (how) d.querySelector("p").textContent = how;
 }
 
-window.CX = { fromStart, SITE_START, setNote, getJSON, tryJSON, showTip, hideTip, clearPins, setCSV, readHash, writeHash, init, panelFromLink, css, esc, tickFormat, fmtKind, axisFmt, unitIndex, findUnits };
+// ---- wind and solar curtailment by hour, one day ---------------------------------------
+// Shared by Renewables ("Curtailment by hour, one day") and Real-time offers. `c` is
+// curve_trends' "curt" key; its hourly rows already pick the 60-day disclosure where the day has
+// it and the 2-day estimate otherwise. opts.hour marks the selected hour (the other hours are
+// lighter) and opts.onPick(hour) makes a click pick the hour.
+const CURT_TECHS = [
+  { id: "wind", label: "Wind", color: "--c3" },
+  { id: "solar", label: "Solar", color: "--c4" },
+];
+function drawCurtailDay(el, legendEl, noteEl, c, day, opts = {}) {
+  const fmtMW = d3.format(",.0f"), fmtPct = d3.format(".0%");
+  const fmtPrice = (v) => (v == null || isNaN(v) ? "–" : d3.format("$,.2f")(v));
+  const heLabel = (h) => `HE ${String(h + 1).padStart(2, "0")}`;
+  const sel = opts.hour == null ? null : opts.hour;
+  if (legendEl) legendEl.innerHTML = CURT_TECHS.map((s) => `<span><span class="sw" style="background:var(${s.color})"></span>${s.label}</span>`).join("");
+  const empty = (msg) => { el.innerHTML = `<p class="empty">${msg}</p>`; if (noteEl) noteEl.textContent = ""; };
+  if (!c) return empty("No curtailment data yet. It is built by the data update workflow.");
+  const ci = Object.fromEntries(c.hours.columns.map((k, i) => [k, i]));
+  const rows = c.hours.rows.filter((r) => r[ci.date] === day);
+  const byH = new Map(rows.map((r) => [r[ci.hour], r]));
+  const by = CURT_TECHS.map((t) => d3.range(24).map((h) => { const r = byH.get(h); return r && r[ci[t.id]] != null ? { c: r[ci[t.id]], a: r[ci[t.id + "_avail"]] } : null; }));
+  const src = rows.length ? rows[0][ci.src] : null;
+  const srcName = { "60d": "60-day disclosure", "2d": "2-day reports, estimated" };
+  if (!rows.length) return empty("No curtailment data for this day yet. The 2-day generation summary fills in recent days once the data update has fetched it.");
+  if (noteEl) noteEl.textContent = `${day}${sel == null ? "" : ` · HE ${sel + 1}`} · ${srcName[src] || src}`;
+  const hp = d3.range(24).map((h) => { const r = byH.get(h); return r ? r[ci.lambda] : null; });
+  const w = Math.max(280, el.clientWidth || 600);
+  const m = { t: 14, r: 16, b: 26, l: 64 }, H = 200;
+  const x = d3.scaleBand().domain(d3.range(1, 25)).range([m.l, w - m.r]).paddingInner(0.15);
+  const xc = d3.scaleLinear().domain([1, 24]).range([x(1) + x.bandwidth() / 2, x(24) + x.bandwidth() / 2]);
+  const tot = d3.range(24).map((h) => d3.sum(by, (r) => (r[h] ? r[h].c : 0)));
+  const y = d3.scaleLinear().domain([0, Math.max(100, d3.max(tot))]).nice().range([H - m.b, m.t]);
+  const svg = d3.create("svg").attr("viewBox", `0 0 ${w} ${H}`);
+  svg.append("g").attr("class", "gridline").attr("transform", `translate(${m.l},0)`).call(d3.axisLeft(y).ticks(4).tickSize(-(w - m.l - m.r)).tickFormat(""));
+  svg.append("g").attr("class", "axis").attr("transform", `translate(0,${H - m.b})`).call(d3.axisBottom(x).tickValues([1, 4, 8, 12, 16, 20, 24]).tickFormat((d) => "HE" + d).tickSizeOuter(0));
+  svg.append("g").attr("class", "axis").attr("transform", `translate(${m.l},0)`).call(axisFmt(d3.axisLeft(y), 4).tickSizeOuter(0));
+  svg.append("text").attr("class", "axis-title").attr("x", m.l).attr("y", 10).text("Curtailed MW, hourly average");
+  d3.range(24).forEach((h) => {
+    let acc = 0;
+    CURT_TECHS.forEach((t, j) => {
+      const r = by[j][h];
+      if (!r || !r.c) return;
+      svg.append("rect").attr("x", x(h + 1)).attr("width", x.bandwidth()).attr("y", y(acc + r.c)).attr("height", Math.max(0, y(acc) - y(acc + r.c) - 1))
+        .attr("fill", css(t.color)).attr("opacity", sel == null || h === sel ? 1 : 0.5);   // the selected hour stands out
+      acc += r.c;
+    });
+  });
+  const cell = (j, h) => { const r = by[j][h]; return r ? `${fmtMW(r.c)} MW <span class="muted">of ${fmtMW(r.a)} (${r.a > 0 ? fmtPct(r.c / r.a) : "–"})</span>` : "–"; };
+  const tip = (h) => `<h4>${heLabel(h)}</h4>System lambda: ${fmtPrice(hp[h])}<table>` +
+    CURT_TECHS.map((t, j) => `<tr><td><span class="sw" style="background:var(${t.color})"></span></td><td>${t.label}</td><td class="n">${cell(j, h)}</td></tr>`).join("") + "</table>" +
+    (src === "2d" ? `<p class="tip-body">Estimated from the 2-day reports until this day's 60-day disclosure is out.</p>` : "");
+  const hourAt = (ev) => Math.max(0, Math.min(23, Math.round(xc.invert(d3.pointer(ev)[0])) - 1));
+  const cross = svg.append("line").attr("class", "crosshair").attr("y1", m.t).attr("y2", H - m.b).style("display", "none");
+  const hit = svg.append("rect").attr("x", m.l).attr("y", m.t).attr("width", w - m.l - m.r).attr("height", H - m.t - m.b).attr("fill", "transparent")
+    .on("pointermove", (ev) => { const i = hourAt(ev); cross.style("display", null).attr("x1", xc(i + 1)).attr("x2", xc(i + 1)); showTip(ev, tip(i)); })
+    .on("pointerleave", () => { cross.style("display", "none"); hideTip(); });
+  if (opts.onPick) {
+    svg.attr("data-nopin", "");   // a click here picks the hour
+    hit.style("cursor", "pointer").on("click", (ev) => opts.onPick(hourAt(ev)));
+  }
+  el.replaceChildren(svg.node());
+  const cols = ["hour_ending", "System lambda mean"];
+  CURT_TECHS.forEach((t) => cols.push(`${t.label} curtailed MW (${src})`, `${t.label} available MW (${src})`));
+  setCSV(el, cols, d3.range(24).map((h) => [h + 1, hp[h], ...CURT_TECHS.flatMap((t, j) => { const r = by[j][h]; return [r ? r.c : null, r ? r.a : null]; })]),
+    `Wind and solar curtailment ${day}`);
+}
+
+window.CX = { fromStart, SITE_START, setNote, getJSON, tryJSON, showTip, hideTip, clearPins, setCSV, readHash, writeHash, init, panelFromLink, css, esc, tickFormat, fmtKind, axisFmt, unitIndex, findUnits, drawCurtailDay };
 })();
