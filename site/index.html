@@ -3,13 +3,13 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Tomorrow: who is expected to run · ERCOT Bids</title>
-<meta name="description" content="Which ERCOT generators are expected online tomorrow, hour by hour, how much stays on at low and negative prices, and how past forecasts scored. ERCOT Bid Stack Explorer by CurrentTech Energy.">
+<title>A day in ERCOT · ERCOT Bids</title>
+<meta name="description" content="What ran in ERCOT on a day, hour by hour: prices, thermal output by how often units turn off, wind, solar and batteries, and every thermal unit's hours, from ERCOT's own reports. ERCOT Bid Stack Explorer by CurrentTech Energy.">
 <link rel="canonical" href="https://ercotbids.currenttech.energy/">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="ERCOT Bids · CurrentTech Energy">
-<meta property="og:title" content="Tomorrow: who is expected to run">
-<meta property="og:description" content="Which ERCOT generators are expected online tomorrow, hour by hour, how much stays on at low and negative prices, and how past forecasts scored. ERCOT Bid Stack Explorer by CurrentTech Energy.">
+<meta property="og:title" content="A day in ERCOT">
+<meta property="og:description" content="What ran in ERCOT on a day, hour by hour: prices, thermal output by how often units turn off, wind, solar and batteries, and every thermal unit's hours, from ERCOT's own reports. ERCOT Bid Stack Explorer by CurrentTech Energy.">
 <meta property="og:url" content="https://ercotbids.currenttech.energy/">
 <meta property="og:image" content="https://ercotbids.currenttech.energy/share-card.png">
 <meta property="og:image:width" content="1200">
@@ -24,8 +24,8 @@
    "name": "ERCOT Bids", "alternateName": "ERCOT Bid Stack Explorer", "publisher": {"@id": "https://ercotbids.currenttech.energy/#org"}},
   {"@type": "Organization", "@id": "https://ercotbids.currenttech.energy/#org", "name": "CurrentTech Energy",
    "url": "https://currenttech.energy/", "logo": "https://ercotbids.currenttech.energy/apple-touch-icon.png"},
-  {"@type": "Dataset", "name": "ERCOT generator offers, commitment and forecasts",
-   "description": "Daily ERCOT generator and battery offer curves, dispatch, commitment at low and negative prices, curtailment and next-day run forecasts, unit by unit, built from ERCOT's public 60-day SCED and DAM disclosures and price reports.",
+  {"@type": "Dataset", "name": "ERCOT generator offers, commitment and shutdown decisions",
+   "description": "Daily ERCOT generator and battery offer curves, dispatch, commitment at low and negative prices, curtailment and shutdown decisions, unit by unit, built from ERCOT's public 60-day SCED and DAM disclosures and price reports.",
    "url": "https://ercotbids.currenttech.energy/", "creator": {"@id": "https://ercotbids.currenttech.energy/#org"},
    "isAccessibleForFree": true, "license": "https://ercotbids.currenttech.energy/terms.html",
    "keywords": ["ERCOT", "bid stack", "offer curves", "SCED", "day-ahead market", "negative prices", "curtailment", "battery storage", "Texas electricity"],
@@ -42,9 +42,9 @@
 
 <header class="masthead">
   <div class="brand">
-    <div class="nav-row"><nav class="nav" aria-label="Pages"><a href="index.html" aria-current="page">Tomorrow</a><a href="beyond.html">Real-time offers</a><a href="commitment.html">Commitment</a><a href="dayahead.html">Day-ahead offers</a><a href="renewables.html">Renewables</a><a href="batteries.html">Batteries</a><a href="unit.html">Units</a><span class="nav-sep" aria-hidden="true"></span><a href="changes.html" class="aux">What's changing</a><a href="fleet.html" class="aux">Fleet economics</a><a href="builder.html" class="aux">Graph builder</a><a href="guide.html" class="aux">How offers work</a></nav></div>
+    <div class="nav-row"><nav class="nav" aria-label="Pages"><a href="index.html" aria-current="page">A day in ERCOT</a><a href="beyond.html">Real-time offers</a><a href="commitment.html">Commitment</a><a href="dayahead.html">Day-ahead offers</a><a href="renewables.html">Renewables</a><a href="batteries.html">Batteries</a><a href="unit.html">Units</a><span class="nav-sep" aria-hidden="true"></span><a href="changes.html" class="aux">What's changing</a><a href="fleet.html" class="aux">Fleet economics</a><a href="builder.html" class="aux">Graph builder</a><a href="guide.html" class="aux">How offers work</a></nav></div>
     <h1>ERCOT Bid Stack Explorer</h1>
-    <p class="sub">What tomorrow in ERCOT looks like: day-ahead prices, the cheap hours, and which generators are likely to run.</p>
+    <p class="sub">A day in ERCOT, from ERCOT's own reports: what the day cost, what ran hour by hour, and which thermal units stayed on.</p>
   </div>
   <p class="status" id="status">Loading data…</p>
 </header>
@@ -59,17 +59,6 @@
     </div>
     <p class="source-note" id="source-note"></p>
   </div>
-  <div class="ctl" id="pred-ctl" hidden>
-    <span class="lbl">Predictions</span>
-    <div class="seg seg-sm" id="pred" role="radiogroup" aria-label="Predictions">
-      <button type="button" data-v="1" role="radio">Show</button>
-      <button type="button" data-v="0" role="radio">Hide</button>
-    </div>
-  </div>
-  <div class="ctl">
-    <span class="lbl">Data for this day</span>
-    <div class="layers" id="layers"></div>
-  </div>
 </section>
 
 <main>
@@ -80,17 +69,12 @@
         <p class="lede" id="lede"></p>
         <p class="lede-sub" id="lede-sub"></p>
         <ul class="expect" id="expect"></ul>
-        <div class="note" id="track"></div>
+        <p class="note step-link" id="decisions-link"></p>
       </div>
       <div class="sparkwrap">
-        <h3 id="spark-title">Day-ahead system lambda by hour ending ($/MWh)</h3>
+        <h3 id="spark-title">System lambda by hour ending ($/MWh)</h3>
         <div class="chart chart-short" id="spark"></div>
-        <p class="note" id="spark-note">Shaded bands are the bottom quarter, middle half and top quarter of daily averages over the last twelve months. Real-time system lambda is drawn beside the day-ahead line once the day has happened.</p>
-        <div class="pred">
-        <h3>Expected generation, same hours (GW)</h3>
-        <div class="chart chart-short" id="mini"></div>
-        <div class="legend legend-static" id="mini-legend"></div>
-        </div>
+        <p class="note" id="spark-note"></p>
       </div>
     </div>
   </section>
@@ -99,7 +83,7 @@
     <div class="panel-head">
       <div>
         <h2>What ran, by hour <span class="h-note" id="actual-note"></span></h2>
-        <p class="note" id="actual-sub">ERCOT's reported output by hour. Batteries are drawn on top while discharging and below zero while charging. The dashed line is the forecast's total; the dotted line its committed minimum.</p>
+        <p class="note" id="actual-sub"></p>
       </div>
     </div>
     <div class="legend" id="actual-legend"></div>
@@ -110,7 +94,7 @@
     <div class="panel-head">
       <div>
         <h2>What ran, over the day <span class="h-note" id="actual-bars-note"></span></h2>
-        <p class="note" id="actual-bars-sub">ERCOT's reported energy. The bar is what ran; the tick is what the forecast expected.</p>
+        <p class="note" id="actual-bars-sub"></p>
       </div>
       <div class="panel-tools">
         <div class="seg seg-sm" id="unit-a" role="radiogroup" aria-label="Unit">
@@ -121,81 +105,6 @@
     </div>
     <div class="legend legend-static" id="actual-bar-legend"></div>
     <div class="rows" id="actual-rows" data-csv></div>
-  </section>
-
-  <div class="section-h pred" id="estimates-head" hidden>
-    <h2>Estimates</h2>
-    <p class="note" id="estimates-note">The forecast made the day before, kept below ERCOT's data for comparison. Ticks and lines on the estimates mark what actually ran.</p>
-  </div>
-
-  <section class="panel pred" id="groups-panel">
-    <div class="panel-head">
-      <div>
-        <h2>Who is expected to run, by how often it turns off</h2>
-        <p class="note">Each bar is a group's full capacity. Dark is minimum output that runs at any price, the tick is expected output, light is expected off, hatched is on outage.</p>
-        <details class="how"><summary>How it's built</summary><p class="note">Thermal units are grouped by how often they have turned off on price. Daily units are called from what staying on through the day's cheap stretch would cost them at their own node against what they have walked away from before. For combined-cycle and gas steam units, the chance of staying on through that stretch comes from one readable rule per technology: the cost to stay on, the earnings either side, how long the stretch runs against the unit's usual time off, overnight and season, plus each unit's own record. Combined-cycle units are sized at what they usually run at in that hour's price range; seasonal and multi-day units from the month's price level; peakers from how often they ran at this price and hour. Grey is units with too few days to call. Nuclear sits in the always-on group, which is off only for outages, never on price. Never-on units had no running hour in the 60-day history and are held off.</p></details>
-      </div>
-      <div class="panel-tools">
-        <div class="seg seg-sm" id="unit-g" role="radiogroup" aria-label="Unit">
-          <button type="button" data-v="gw" role="radio">Power, GW</button>
-          <button type="button" data-v="gwh" role="radio">Energy, GWh over the day</button>
-        </div>
-      </div>
-    </div>
-    <div class="legend legend-static" id="bar-legend"></div>
-    <div class="rows" id="group-rows" data-csv></div>
-  </section>
-
-  <section class="panel pred" id="tech-panel">
-    <div class="panel-head">
-      <div>
-        <h2>Who is expected to run, by technology</h2>
-        <p class="note">The same units by technology; hover a bar for the calls behind it. Wind and solar run to nameplate: solid is expected output, lighter is curtailed on price, hatched is not available from the weather.</p>
-      </div>
-      <div class="panel-tools">
-        <div class="seg seg-sm" id="unit-t" role="radiogroup" aria-label="Unit">
-          <button type="button" data-v="gw" role="radio">Power, GW</button>
-          <button type="button" data-v="gwh" role="radio">Energy, GWh over the day</button>
-        </div>
-      </div>
-    </div>
-    <div class="legend legend-static" id="tech-legend"></div>
-    <div class="rows" id="tech-rows" data-csv></div>
-  </section>
-
-  <section class="panel panel-wide pred" id="fit-panel" hidden>
-    <div class="panel-head">
-      <div>
-        <h2>Who was on, by the 2-day fit <span class="h-note" id="fit-note"></span></h2>
-        <p class="note">Which units must have been committed to produce ERCOT's aggregate thermal offer curve, two days after the day. The fit starts from the forecast's set and flips units on or off until the curve matches. An inference, not a published actual: the 60-day disclosure gives the answer. Each bar is the group's full capacity; dark is the fitted set's minimum output, light its maximum, and the tick is the forecast's maximum.</p>
-        <details class="how"><summary>How it's built</summary><p class="note">The 2-day SCED energy curves report sums every non-IRR unit's offer curve for every SCED run. The MW offered at or below the floor and $0 are mostly the minimum output of the units that were on, and the MW at $10, $25, $50 and the cap say which of them it was. Units are tried off, on (in each combined-cycle configuration) and on outside their forecast off window, in order of how uncertain the forecast was about them, and a change is kept when it brings the fleet curve closer to ERCOT's. Nuclear, hydro and other are fixed; peakers carry one online share per hour.</p></details>
-      </div>
-    </div>
-    <div class="legend legend-static" id="fit-legend"></div>
-    <div class="rows" id="fit-rows" data-csv></div>
-  </section>
-
-  <section class="panel panel-wide pred" id="hourly-panel">
-    <div class="panel-head">
-      <div>
-        <h2>Expected generation by hour <span class="h-note" id="hourly-note"></span></h2>
-        <p class="note">Expected output by hour. The dashed line is minimum output that runs at any price; the shaded hours are the cheap stretch. Actuals are drawn over it once the 2-day report is out.</p>
-        <details class="how"><summary>How it's built</summary><p class="note">Each thermal unit gets a chance of running in every hour. A unit-hour at 50% or more is drawn as on, at its full size, and anything lower as off, so thermal is laid out hour by hour by group as on/off calls. Outages that ERCOT's unit-level report doesn't name are taken off each zone as a block, without being pinned to a unit. Wind and solar come from ERCOT's forecasts less what is offered above the day-ahead price at each unit's node. Batteries are drawn on top while discharging and below zero while charging.</p></details>
-      </div>
-    </div>
-    <div class="legend" id="hourly-legend"></div>
-    <div class="chart" id="hourly-chart"></div>
-    <p class="note step-link" id="offers-step"></p>
-  </section>
-
-  <section class="panel panel-wide pred" id="score-panel" hidden>
-    <div class="panel-head">
-      <div>
-        <h2>How this day went <span class="h-note" id="score-note"></span></h2>
-        <p class="note">The forecast against what happened: the 2-day report two days on, and each unit's actual hours from the 60-day data.</p>
-      </div>
-    </div>
-    <div class="scroll-x" id="score-table" data-csv></div>
   </section>
 
   <section class="panel panel-wide" id="detail-head">
@@ -216,7 +125,7 @@
     <div class="panel-head">
       <div>
         <h2>Generation mix <span class="h-note" id="mix-title-note"></span></h2>
-        <p class="note">Output by technology in the hour: the forecast until the day's data is in, then what ran, with the forecast as a tick.</p>
+        <p class="note" id="mix-sub">Output by technology in the hour, as ERCOT reported it.</p>
       </div>
     </div>
     <div class="chart" id="mix-chart"></div>
@@ -227,7 +136,7 @@
     <div class="panel-head">
       <div>
         <h2>Units <span class="h-note" id="units-note"></span></h2>
-        <p class="note">Each thermal unit's call for the day and the cost of staying on behind it. Hover a column for its meaning; click to sort.</p>
+        <p class="note">Each thermal unit's hours online and output in the 60-day disclosure, with its group: how often it has turned off on price. Combined-cycle configurations are summed into their train. Hover a column for its meaning; click to sort.</p>
       </div>
       <div class="panel-tools">
         <div class="seg seg-sm" id="unit-view" role="radiogroup" aria-label="Hours">
@@ -246,7 +155,7 @@
 </main>
 
 <footer class="foot">
-  <p>Source: ERCOT day-ahead market prices (NP4-180-ER, NP4-190-CD), DAM offers (NP3-966-ER), the 2-day generation summary (NP3-910-ER), the 60-day SCED disclosure (NP3-965-ER) and the wind and solar forecasts (NP4-732-CD, NP4-737-CD). Times are hour ending, Central prevailing time. Every figure is read from the day's forecast file, <code>data/forecast/&lt;date&gt;.json.gz</code>, which also lists the model versions.</p>
+  <p>Source: ERCOT's real-time system lambda and settlement point prices (NP6-322-CD, NP6-905-CD), day-ahead system lambda (NP4-523-CD), the 2-day generation summary (NP3-910-ER) and the 60-day SCED disclosure (NP3-965-ER). Times are hour ending, Central prevailing time. Nothing on this page is a forecast: every figure is what ERCOT reported for the day.</p>
   <p>Made by <a href="https://currenttech.energy">currenttech.energy</a> · <a href="contact.html">Contact</a></p>
   <p>Not affiliated with or endorsed by ERCOT. ERCOT is a registered trademark of the Electric Reliability Council of Texas, Inc.</p>
   <p>© 2026 CurrentTech Energy. All rights reserved. For information only; not trading or investment advice. <a href="terms.html">Terms and privacy</a></p>

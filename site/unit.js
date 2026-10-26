@@ -1,6 +1,7 @@
 /* Unit page: everything about one unit, reached from any unit row (unit.html?unit=NAME).
-   This file: the unit picker, the header with the latest forecast's verdict and the decision
-   history behind the unit's cutoff (data/decisions.json.gz, data/forecast/), hours online and
+   This file: the unit picker, the header with the unit's latest decision day and the decision
+   history behind its cutoff (data/decisions.json.gz), the operator-informed call by hour and
+   fit of its decisions (data/operator/), hours online and
    starts (data/unit_hours_60d.json.gz), one day by hour with the offer curve in the chosen hour
    (data/60d-units/, data/60d-curves/) and the thermal bidding charts (data/trends_60d.json.gz),
    lifted from trends.js; the decision chart also carries the unit's cutoff refitted month by
@@ -26,8 +27,7 @@ const TECH_OF = Object.fromEntries(TECHS.map((t) => [t.id, t]));
 const techLabel = (t) => (TECH_OF[t] ? TECH_OF[t].label : t === "storage" ? "Storage (ESR)" : t === "hydro" ? "Hydro" : t || "–");
 const SIG_FMT = { le0: (v) => d3.format(".0%")(v), noff: (v) => d3.format(".0%")(v), rel: (v) => (v >= 0 ? "+" : "−") + d3.format("$,.0f")(Math.abs(v)) };
 const GROUP_SHORT = { never: "Always on when available", seasonal: "Seasonal", multiday: "Multi-day", daily1: "Daily, under once a week", daily2: "Daily, 1 to 2 a week", daily3: "Daily, over 2 a week", never_on: "Never on", ungrouped: "Not yet grouped" };
-const VERDICT = { on: "likely on", off: "likely off", maybe: "toss-up", nocut: "no call yet (too few days to judge)", outage: "on outage", peaker: "peaker, called from how often it ran at this price and hour" };
-const S = { econ: {}, day: null, hour: null, T: null, DEC: null, UH: null, SP: null, FI: null, FC: null, OI: null, OD: null, fcDay: null, PPA: null, CH: null, list: new Map(), stubs: new Set(), unit: null, cfg: null, span: null, last60: null };
+const S = { econ: {}, day: null, hour: null, T: null, DEC: null, UH: null, SP: null, OI: null, OD: null, fcDay: null, PPA: null, CH: null, list: new Map(), stubs: new Set(), unit: null, cfg: null, span: null, last60: null };
 const { tryJSON, showTip, hideTip, setCSV, tickFormat, fmtKind, axisFmt, css, esc } = window.CX;
 const $ = (id) => document.getElementById(id);
 const fmtMW = d3.format(",.0f");
@@ -147,7 +147,6 @@ function buildList() {
   };
   (S.T?.units || []).forEach((u) => add(u.tech === "combined_cycle" ? trainOf(u.unit) : u.unit, u.tech, u.unit));
   Object.entries(S.DEC?.units || {}).forEach(([n, r]) => add(n, r[0]));
-  if (S.FC) S.FC.units.rows.forEach((r) => add(r[0], r[1]));
   (S.PPA?.units || []).forEach((u) => add(u.name, u.tech));
   (S.UI || []).filter((u) => u.tech === "storage").forEach((u) => add(u.unit, "storage"));
   S.list.forEach((e) => e.configs.sort());
@@ -155,59 +154,18 @@ function buildList() {
     .map((e) => `<option value="${esc(e.name)}">${techLabel(e.tech)}</option>`).join("");
 }
 
-// ---- header: what the unit is and the latest forecast's verdict --------------------------
-function fcRow(name, F = S.FC) {
-  if (!F) return null;
-  const c = F.units.columns, r = F.units.rows.find((x) => x[0] === name);
-  return r ? Object.fromEntries(c.map((k, i) => [k, r[i]])) : null;
-}
-// the forecast's call for one unit on one forecast day: the short version for the header,
-// and with full=true the rest (group, off hours, CC size, what moved the odds) for the forecast panel
-function verdictHTML(F, f, full = false) {
-  const g = GROUP_SHORT[f.group] || f.group;
-  const win = f.win_from ? `HE ${f.win_from} to ${f.win_from + f.win_hours - 1}` : f.off_from ? `HE ${f.off_from} to ${f.off_from + f.off_hours - 1}` : null;
-  const odds = f.p_on != null && f.p_on > 0 && f.p_on < 1 && f.verdict !== "outage" ? `, ${fmtPct(f.p_on)} to stay on` : "";
-  let t = `<b>${esc(F.date)}: ${esc(VERDICT[f.verdict] || f.verdict)}${odds}.</b>` +
-    (f.loss != null ? ` Staying on through the cheap stretch${win ? ` (${win})` : ""} would cost ${fmt$(f.loss)} at its node` : "") +
-    (f.cutoff != null && f.loss != null ? `, against the ${fmt$(f.cutoff)} it usually turns off above.` : f.loss != null ? "." : "") +
-    (f.out_share ? ` ${fmtPct(f.out_share)} of the plant is listed on outage.` : "") +
-    (f.loss == null && f.reason ? ` <span class="muted">${esc(f.reason)}.</span>` : "");
-  if (!full) return t;
-  t += ` Cycling pattern: <b>${esc(g)}</b>.` +
-    (f.off_from && f.verdict !== "outage" && f.off_hours < 24 ? ` Expected off for ${f.off_hours} h from HE ${f.off_from}.` : "") +
-    (f.cc_small != null ? ` With the hub at $10 or below it runs at ${fmtMW(f.cc_small)} MW, its usual smallest size.` : "");
-  return t + driversHTML(f);
-}
-// what moved the chance of running: the trees' starting point and each input's push, adding up to p_on
-// the pipeline's driver names (thermal_cutoff DRIVERS) in market words
-const DRIVER_LABEL = {
-  "loss against its cutoff": "cost to stay on against its usual",
-  "award history": "day-ahead award history",
-  "window length against its usual off spell": "length of the cheap stretch against its usual time off",
-  "margin before and after the window": "earnings before and after the cheap stretch",
-  "share of days it ran": "how often it runs",
-  "hour-by-hour prices in the window": "prices through the cheap stretch",
-  "technology, group and month": "technology, cycling pattern and season",
-  "how units like it ran in 2024-25": "how units like it behaved in 2024-25",
-  // the stay-on rule (CC trains and gas steam units judged on their window: LOGIT_DRIVERS)
-  "loss in the window": "cost to stay on through the cheap stretch",
-  "overnight window": "the cheap stretch running overnight",
-  "season": "season",
-  "its own record of staying on": "its own record of staying on",
-  "chance it is running going in": "chance it is running before the cheap stretch",
-};
-function driversHTML(f) {
-  if (!f.drivers || f.p_base == null) return "";
-  const pts = (v) => { const n = Math.abs(Math.round(v * 100)); return `${v >= 0 ? "+" : "−"}${n} ${n === 1 ? "pt" : "pts"}`; };
-  return `<br><b>What moved the odds</b> from ${fmtPct(f.p_base)} for a typical unit to ${fmtPct(f.p_on)}: ` +
-    f.drivers.map(([k, v]) => `${esc(DRIVER_LABEL[k] || k)} ${pts(v)}`).join(" · ") + ".";
+// ---- header: what the unit is and its latest decision ----------------------------------
+// decisions.json day rows: [train, date, loss, first hour ending, hours, award share, shut, hours off]
+function lastDecision(name) {
+  const rows = (S.DEC?.days || []).filter((r) => r[0] === name);
+  return rows.length ? rows.at(-1) : null;
 }
 function drawHead(e) {
   $("unit-title").textContent = e.name;
-  const f = fcRow(e.name), ppa = (S.PPA?.units || []).find((u) => u.name === e.name);
+  const dec = S.DEC?.units?.[e.name], ppa = (S.PPA?.units || []).find((u) => u.name === e.name);
   const bits = [techLabel(e.tech)];
   if (e.configs.length > 1) bits.push(`${e.configs.length} configurations: ${e.configs.join(", ")}`);
-  if (f) bits.push(`${fmtMW(f.hsl)} MW maximum, ${fmtMW(f.lsl)} MW minimum (day-ahead)`);
+  if (dec && dec[1]) bits.push(`${fmtMW(dec[1])} MW minimum output (LSL)`);
   if (ppa && ppa.sp) bits.push(`node ${ppa.sp}`);
   const ui = e.tech === "storage" && (S.UI || []).find((u) => u.unit === e.name);
   if (ui) bits.push(...[ui.mw && `${fmtMW(ui.mw)} MW`, ui.plant && `${ui.plant}${ui.match === "site" ? " (plant)" : ""}`, ui.sp && `node ${ui.sp}`].filter(Boolean));
@@ -219,15 +177,18 @@ function drawHead(e) {
   $("unit-who").textContent = wb.join(" · ");
   $("unit-who").hidden = !wb.length;
   drawSite(e);
-  const v = $("unit-verdict");
-  if (!f) { v.textContent = THERMAL.includes(e.tech) ? "Not in the latest forecast." : ""; return; }
-  v.innerHTML = verdictHTML(S.FC, f) + ` <a href="./#date=${esc(S.FC.date)}">The forecast for that day</a>.`;
+  const v = $("unit-verdict"), r = lastDecision(e.name);
+  if (!r) { v.textContent = THERMAL.includes(e.tech) && S.last60 ? `No decision day in the 60-day data (to ${S.last60}): it was not online going into any day with a DAM file.` : ""; return; }
+  const cut = dec && dec[9];
+  v.innerHTML = `<b>${esc(r[1])}, its latest decision day: ${r[6] ? `turned off${r[7] ? ` for ${r[7]} hours` : ""}` : "stayed on"}.</b>` +
+    (!r[4] ? " Day-ahead prices at its node covered its costs all day, so there was no loss to ride through." :
+      ` Staying on through HE ${r[3]} to ${r[3] + r[4] - 1} would have cost ${fmt$(r[2])} at its node` +
+      (cut != null ? `, against the ${fmt$(cut)} it usually turns off above.` : ".") +
+      ` A day-ahead award covered ${fmtPct(r[5] || 0)} of the stretch.`) +
+    ` <a href="commitment.html#date=${esc(r[1])}">Every unit that day</a>.`;
 }
 
-// ---- forecast by hour: chance online, expected MW and minimum, price; actual once known ----
-// data/forecast/<date>.json.gz unit_hours (p, exp, min, price) and data/60d-units/<date> for the actual
-const fcCache = new Map();
-const loadFC = (d) => { if (!fcCache.has(d)) fcCache.set(d, tryJSON(`data/forecast/${d}.json.gz`)); return fcCache.get(d); };
+// ---- with operator info, by hour: the operator-informed call against what the unit did ----
 // the operator-informed call (pipeline/models/operator_informed.py, data/operator/<date>.json.gz): the
 // same hours judged with what the operator knew going in (its state, DAM award and status, its costs),
 // only for days whose 60-day data is in
@@ -237,10 +198,8 @@ const OI_DRIVER = { "price against its cost": "the day-ahead price against its c
   "DAM award": "its day-ahead award", "DAM status": "its day-ahead resource status", "time in its state": "how long it had been in its state",
   "sitting at minimum": "sitting at minimum output", "hour and season": "the hour and season", "its own habit": "its own habit" };
 const START_WORD = { on: "online", off: "offline", out: "on outage", unknown: "of unknown state" };
-// "arrives about": the 60-day disclosures for day D are out about D + 61
-const oiDue = (d) => { const t = parseDate(d); t.setDate(t.getDate() + 61); return d3.timeFormat("%b %-d")(t); };
 function oiNote(e, day, o) {
-  if (!o) return S.OI && S.OI.days.length && day > S.OI.days.at(-1) ? `<br><b>With operator info:</b> for ${esc(day)} it arrives about ${oiDue(day)}, once the 60-day data is out.` : "";
+  if (!o) return "";
   const on = o.p.filter((v) => v >= 0.5).length, aw = o.award.filter(Boolean).length, pl = o.plan.filter((v) => v === 1).length, known = o.plan.some((v) => v != null);
   const str = (v) => (Math.abs(v) >= 2 ? "strongly " : Math.abs(v) >= 0.75 ? "" : "slightly ");
   const h = o.why_h - 1, aside = { "DAM award": o.award[h] ? " (awarded that hour)" : " (none that hour)" };
@@ -251,17 +210,15 @@ function oiNote(e, day, o) {
 }
 async function drawForecast(e) {
   const el = $("fc-chart");
-  $("fc-panel").hidden = !THERMAL.includes(e.tech) || !S.FI || !S.FI.days.length;
+  $("fc-panel").hidden = !["combined_cycle", "gas_steam"].includes(e.tech) || !S.OI || !S.OI.days.length;
   if ($("fc-panel").hidden) return;
-  const days = S.FI.days;
+  const days = S.OI.days;
   if (!S.fcDay || !days.includes(S.fcDay)) S.fcDay = days.at(-1);
-  $("fc-pick").innerHTML = CX.fromStart(days).reverse().map((d) => `<option${d === S.fcDay ? " selected" : ""}>${d}</option>`).join("");
-  const day = S.fcDay, [F, A, OD] = await Promise.all([loadFC(day), S.T && S.T.dates.includes(day) ? loadDayUnits(day) : null, loadOI(day)]);
+  $("fc-pick").innerHTML = [...days].reverse().map((d) => `<option${d === S.fcDay ? " selected" : ""}>${d}</option>`).join("");
+  const day = S.fcDay, [A, OD] = await Promise.all([S.T && S.T.dates.includes(day) ? loadDayUnits(day) : null, loadOI(day)]);
   if (S.unit !== e.name || S.fcDay !== day) return;
-  const f = F && fcRow(e.name, F), hs = F && F.unit_hours && F.unit_hours.units[e.name];
-  if (!f || !hs) { $("fc-note").textContent = ""; $("fc-legend").innerHTML = ""; return emptyMsg(el, F && !F.unit_hours ? `The forecast file for ${day} predates the hourly unit detail; it fills in when the forecast is next rebuilt.` : `${e.name} is not in the forecast for ${day}.`); }
-  const ser = Object.fromEntries(F.unit_hours.series.map((k, i) => [k, hs[i] || null]));
-  const z = Array(24).fill(0), P = ser.p || z, EX = ser.exp || z, MN = ser.min || z, PR = ser.price;
+  const o = OD && OD.units[e.name];
+  if (!o) { $("fc-note").textContent = ""; $("fc-legend").innerHTML = ""; return emptyMsg(el, `${e.name} has no operator-informed call for ${day}.`); }
   // the actual, from the 60-day unit file: online (at least half the hour) and output, configurations summed
   let act = null;
   if (A) {
@@ -275,78 +232,55 @@ async function drawForecast(e) {
     });
   }
   const hOn = act ? act.filter((x) => x.on).length : null;
-  const o = OD && OD.units[e.name];
-  // the on/off call: on in an hour its chance of being online is 50% or more (the forecast's binary lines)
-  const ON = P.map((v) => (v || 0) >= 0.5), nOn = ON.filter(Boolean).length;
-  $("fc-note").innerHTML = verdictHTML(F, f, true) + ` Called on for ${nOn} of 24 hours (a 50% or better chance), ${fmtMW(d3.sum(EX))} MWh expected.` +
-    (act ? ` <b>Actual: online ${hOn} of 24 hours, ${fmtMW(d3.sum(act, (x) => x.out))} MWh.</b>` : ` The 60-day data for this day is not in yet${S.last60 ? ` (it runs to ${S.last60})` : ""}.`) +
-    (["combined_cycle", "gas_steam"].includes(e.tech) ? oiNote(e, day, o) : "");
+  const dr = (S.DEC?.days || []).find((r) => r[0] === e.name && r[1] === day);
+  $("fc-note").innerHTML = (act ? `<b>${esc(day)}: online ${hOn} of 24 hours, ${fmtMW(d3.sum(act, (x) => x.out))} MWh.</b>` : `<b>${esc(day)}</b>.`) +
+    (dr && dr[4] ? ` It ${dr[6] ? `turned off${dr[7] ? ` for ${dr[7]} hours` : ""}` : "stayed on"} through its worst stretch, HE ${dr[3]} to ${dr[3] + dr[4] - 1}, which would have cost ${fmt$(dr[2])} to ride through at its node.` : "") +
+    oiNote(e, day, o);
   const s = TECH_OF[e.tech] || { color: "--c-other" };
-  const w = Math.max(280, el.clientWidth || 600), Hm = 210, Hp = 86, Hq = 96, Ho = o ? 96 : 0, m = { t: 18, r: 16, b: 26, l: 64 };
-  const H0 = 0, H1 = Hm, H2 = Hm + Hp, H3 = H2 + Ho, HT = H3 + Hq;
+  const w = Math.max(280, el.clientWidth || 600), Hm = act ? 170 : 0, Ho = 122, m = { t: 18, r: 16, b: 26, l: 64 };
+  const H1 = Hm, HT = Hm + Ho;
   const x = d3.scaleBand().domain(d3.range(24)).range([m.l, w - m.r]).padding(0.15), bw = x.bandwidth();
-  const top = Math.max(d3.max(EX) || 0, act ? d3.max(act, (v) => v.out) : 0, f.hsl || 0) || 1;
-  const y = d3.scaleLinear().domain([0, top]).nice().range([H1 - m.b + 8, H0 + m.t]);
-  const yq = d3.scaleLinear().domain([0, 1]).range([H2 - 18, H1 + m.t]);
-  const pv = (PR || []).filter((v) => v != null);
-  const yp = d3.scaleLinear().domain([Math.min(0, d3.min(pv) || 0), Math.max(10, d3.max(pv) || 0)]).nice().range([HT - m.b, H3 + m.t]);
-  const yo = d3.scaleLinear().domain([0, 1]).range([H3 - 18, H2 + m.t]);
+  const top = act ? Math.max(d3.max(act, (v) => v.out), d3.max(act, (v) => v.lsl)) || 1 : 1;
+  const y = d3.scaleLinear().domain([0, top]).nice().range([H1 - m.b + 8, m.t]);
+  const yo = d3.scaleLinear().domain([0, 1]).range([HT - m.b, H1 + m.t + 12]);
   const svg = d3.create("svg").attr("viewBox", `0 0 ${w} ${HT}`);
   const tickH = w < 560 ? [0, 5, 11, 17, 23] : d3.range(0, 24, 2);
-  const wf = f.win_from || (f.off_from && f.off_hours < 24 ? f.off_from : null), wn = f.win_from ? f.win_hours : f.off_hours;
-  if (wf) svg.append("rect").attr("x", x(wf - 1) - x.step() * x.padding() / 2).attr("width", x.step() * wn).attr("y", m.t).attr("height", HT - m.t - m.b).attr("fill", css("--band"));
-  [[y], [yq], [yp], ...(o ? [[yo]] : [])].forEach(([sc]) => svg.append("g").attr("class", "gridline").attr("transform", `translate(${m.l},0)`).call(d3.axisLeft(sc).ticks(sc === yq || sc === yo ? 2 : 4).tickSize(-(w - m.l - m.r)).tickFormat("")));
-  if (o) {
-    // awarded hours shaded behind the operator-informed row
-    o.award.forEach((a, h) => { if (a) svg.append("rect").attr("x", x(h)).attr("width", bw).attr("y", H2 + m.t).attr("height", H3 - 18 - H2 - m.t).attr("fill", css("--c3")).attr("fill-opacity", 0.18); });
-    svg.append("g").attr("class", "axis").attr("transform", `translate(${m.l},0)`).call(d3.axisLeft(yo).tickValues([0, 0.5, 1]).tickFormat(d3.format(".0%")).tickSizeOuter(0));
-    svg.append("text").attr("class", "axis-title").attr("x", m.l).attr("y", H2 + 10).text("With operator info: chance online and the call" + (act ? ", actual online" : "") + ", COP plan");
+  if (dr && dr[4]) svg.append("rect").attr("x", x(dr[3] - 1) - x.step() * x.padding() / 2).attr("width", x.step() * dr[4]).attr("y", m.t).attr("height", HT - m.t - m.b).attr("fill", css("--band"));
+  // awarded hours shaded behind the operator-informed row
+  o.award.forEach((a, h) => { if (a) svg.append("rect").attr("x", x(h)).attr("width", bw).attr("y", H1 + m.t + 12).attr("height", HT - m.b - H1 - m.t - 12).attr("fill", css("--c3")).attr("fill-opacity", 0.18); });
+  [...(act ? [y] : []), yo].forEach((sc) => svg.append("g").attr("class", "gridline").attr("transform", `translate(${m.l},0)`).call(d3.axisLeft(sc).ticks(sc === yo ? 2 : 4).tickSize(-(w - m.l - m.r)).tickFormat("")));
+  if (act) {
+    svg.append("g").attr("class", "axis").attr("transform", `translate(${m.l},0)`).call(axisFmt(d3.axisLeft(y), 4, "MW").tickSizeOuter(0));
+    svg.append("text").attr("class", "axis-title").attr("x", m.l).attr("y", 10).text("Output and minimum output online (MW), 60-day disclosure");
   }
-  svg.append("g").attr("class", "axis").attr("transform", `translate(${m.l},0)`).call(axisFmt(d3.axisLeft(y), 4, "MW").tickSizeOuter(0));
-  svg.append("g").attr("class", "axis").attr("transform", `translate(${m.l},0)`).call(d3.axisLeft(yq).tickValues([0, 0.5, 1]).tickFormat(d3.format(".0%")).tickSizeOuter(0));
-  svg.append("g").attr("class", "axis").attr("transform", `translate(${m.l},0)`).call(axisFmt(d3.axisLeft(yp), 3, "$").tickSizeOuter(0));
+  svg.append("g").attr("class", "axis").attr("transform", `translate(${m.l},0)`).call(d3.axisLeft(yo).tickValues([0, 0.5, 1]).tickFormat(d3.format(".0%")).tickSizeOuter(0));
   svg.append("g").attr("class", "axis").attr("transform", `translate(0,${HT - m.b})`).call(d3.axisBottom(x).tickValues(tickH).tickFormat((h) => `HE ${h + 1}`).tickSizeOuter(0));
-  svg.append("text").attr("class", "axis-title").attr("x", m.l).attr("y", 10).text("Expected output and committed minimum (MW)" + (act ? ", actual output" : ""));
-  svg.append("text").attr("class", "axis-title").attr("x", m.l).attr("y", H1 + 10).text("Chance of being online and the on/off call" + (act ? ", actual online" : ""));
-  svg.append("text").attr("class", "axis-title").attr("x", m.l).attr("y", H3 + 10).text("Day-ahead price it was judged on ($/MWh)");
+  svg.append("text").attr("class", "axis-title").attr("x", m.l).attr("y", H1 + 10).text("With operator info: chance online and the call" + (act ? ", actual online" : "") + ", COP plan");
   d3.range(24).forEach((h) => {
-    svg.append("rect").attr("x", x(h)).attr("width", bw).attr("y", y(EX[h])).attr("height", Math.max(0, y(0) - y(EX[h]))).attr("fill", css(s.color)).attr("fill-opacity", 0.3);
-    svg.append("rect").attr("x", x(h)).attr("width", bw).attr("y", y(MN[h])).attr("height", Math.max(0, y(0) - y(MN[h]))).attr("fill", css(s.color));
-    if (act) svg.append("line").attr("x1", x(h)).attr("x2", x(h) + bw).attr("y1", y(act[h].out)).attr("y2", y(act[h].out)).attr("stroke", css("--ink")).attr("stroke-width", 2);
-    svg.append("line").attr("x1", x(h)).attr("x2", x(h) + bw).attr("y1", yq(ON[h] ? 1 : 0)).attr("y2", yq(ON[h] ? 1 : 0)).attr("stroke", css(s.color)).attr("stroke-width", 4).attr("opacity", 0.6);
-    if (act) svg.append("circle").attr("cx", x(h) + bw / 2).attr("cy", yq(act[h].on ? 1 : 0)).attr("r", 3.5).attr("fill", act[h].on ? css("--ink") : "none").attr("stroke", css("--ink"));
-    if (o) {
-      svg.append("line").attr("x1", x(h)).attr("x2", x(h) + bw).attr("y1", yo(o.p[h] >= 0.5 ? 1 : 0)).attr("y2", yo(o.p[h] >= 0.5 ? 1 : 0)).attr("stroke", css("--c2")).attr("stroke-width", 4).attr("opacity", 0.6);
-      if (act) svg.append("circle").attr("cx", x(h) + bw / 2).attr("cy", yo(act[h].on ? 1 : 0)).attr("r", 3.5).attr("fill", act[h].on ? css("--ink") : "none").attr("stroke", css("--ink"));
-      if (o.plan[h] != null) svg.append("path").attr("d", d3.symbol(d3.symbolDiamond, 30)()).attr("transform", `translate(${x(h) + bw / 2},${yo(o.plan[h]) + (o.plan[h] ? -9 : 9)})`).attr("fill", css("--ink-2"));
+    if (act) {
+      svg.append("rect").attr("x", x(h)).attr("width", bw).attr("y", y(act[h].out)).attr("height", Math.max(0, y(0) - y(act[h].out))).attr("fill", css(s.color)).attr("fill-opacity", 0.3);
+      svg.append("rect").attr("x", x(h)).attr("width", bw).attr("y", y(act[h].lsl)).attr("height", Math.max(0, y(0) - y(act[h].lsl))).attr("fill", css(s.color));
     }
-    const v = PR && PR[h];
-    if (v != null) svg.append("rect").attr("x", x(h) + bw * 0.2).attr("width", bw * 0.6).attr("y", yp(Math.max(0, v))).attr("height", Math.abs(yp(0) - yp(v))).attr("fill", css(v <= 10 ? "--c8" : "--ink-2"));
+    svg.append("line").attr("x1", x(h)).attr("x2", x(h) + bw).attr("y1", yo(o.p[h] >= 0.5 ? 1 : 0)).attr("y2", yo(o.p[h] >= 0.5 ? 1 : 0)).attr("stroke", css("--c2")).attr("stroke-width", 4).attr("opacity", 0.6);
+    if (act) svg.append("circle").attr("cx", x(h) + bw / 2).attr("cy", yo(act[h].on ? 1 : 0)).attr("r", 3.5).attr("fill", act[h].on ? css("--ink") : "none").attr("stroke", css("--ink"));
+    if (o.plan[h] != null) svg.append("path").attr("d", d3.symbol(d3.symbolDiamond, 30)()).attr("transform", `translate(${x(h) + bw / 2},${yo(o.plan[h]) + (o.plan[h] ? -9 : 9)})`).attr("fill", css("--ink-2"));
   });
-  svg.append("path").attr("d", d3.line().x((h) => x(h) + bw / 2).y((h) => yq(P[h]))(d3.range(24))).attr("fill", "none").attr("stroke", css(s.color)).attr("stroke-width", 2);
-  if (o) svg.append("path").attr("d", d3.line().x((h) => x(h) + bw / 2).y((h) => yo(o.p[h]))(d3.range(24))).attr("fill", "none").attr("stroke", css("--c2")).attr("stroke-width", 2);
-  if (yp.domain()[0] < 0) svg.append("line").attr("class", "zero").attr("x1", m.l).attr("x2", w - m.r).attr("y1", yp(0)).attr("y2", yp(0));
+  svg.append("path").attr("d", d3.line().x((h) => x(h) + bw / 2).y((h) => yo(o.p[h]))(d3.range(24))).attr("fill", "none").attr("stroke", css("--c2")).attr("stroke-width", 2);
   svg.append("rect").attr("x", m.l).attr("y", m.t).attr("width", w - m.l - m.r).attr("height", HT - m.t - m.b).attr("fill", "transparent")
     .on("pointermove", (ev) => {
       const h = Math.max(0, Math.min(23, Math.floor((d3.pointer(ev)[0] - m.l) / x.step())));
       showTip(ev, `<h4>${fmtDate(parseDate(day))} · HE ${h + 1}</h4><table>` +
-        `<tr><td>Chance online</td><td class="n">${fmtPct(P[h])}</td></tr><tr><td>Call</td><td class="n">${ON[h] ? "on" : "off"}</td></tr><tr><td>Expected output</td><td class="n">${fmtMW(EX[h])} MW</td></tr>` +
-        `<tr><td>Committed minimum</td><td class="n">${fmtMW(MN[h])} MW</td></tr><tr><td>Day-ahead price</td><td class="n">${fmtPrice(PR && PR[h])}</td></tr>` +
-        (o ? `<tr><td>With operator info</td><td class="n">${fmtPct(o.p[h])}, ${o.p[h] >= 0.5 ? "on" : "off"}</td></tr><tr><td>Day-ahead award</td><td class="n">${o.award[h] ? "yes" : "no"}</td></tr>` +
-          `<tr><td>COP plan (2 pm day before)</td><td class="n">${o.plan[h] == null ? "none" : o.plan[h] ? "on" : "off"}</td></tr>` : "") +
+        `<tr><td>With operator info</td><td class="n">${fmtPct(o.p[h])}, ${o.p[h] >= 0.5 ? "on" : "off"}</td></tr><tr><td>Day-ahead award</td><td class="n">${o.award[h] ? "yes" : "no"}</td></tr>` +
+        `<tr><td>COP plan (2 pm day before)</td><td class="n">${o.plan[h] == null ? "none" : o.plan[h] ? "on" : "off"}</td></tr>` +
         (act ? `<tr><td>Actual</td><td class="n">${act[h].on ? `online, ${fmtMW(act[h].out)} MW` : "offline"}</td></tr>` : "") + `</table>`);
     })
     .on("pointerleave", hideTip);
   el.replaceChildren(svg.node());
-  setCSV(el, ["hour_ending", "chance_online", "call_on", "expected_mw", "committed_min_mw", "day_ahead_price", ...(act ? ["actual_online", "actual_output_mw"] : []),
-    ...(o ? ["operator_chance_online", "operator_call_on", "operator_chance_online_with_cop", "dam_award", "cop_plan_on"] : [])],
-    d3.range(24).map((h) => [h + 1, P[h], ON[h] ? 1 : 0, EX[h], MN[h], PR ? PR[h] : null, ...(act ? [act[h].on ? 1 : 0, act[h].out] : []),
-      ...(o ? [o.p[h], o.p[h] >= 0.5 ? 1 : 0, o.p_cop ? o.p_cop[h] : null, o.award[h], o.plan[h]] : [])]), `${e.name} forecast ${day} by hour`);
-  $("fc-legend").innerHTML = `<span><span class="sw" style="background:var(${s.color})"></span>Committed minimum</span><span><span class="sw" style="background:var(${s.color});opacity:0.3"></span>Expected output</span>` +
-    `<span><span class="sw sw-line" style="border-top-color:var(${s.color})"></span>Chance online</span><span><span class="sw" style="background:var(${s.color});opacity:0.6"></span>Call: on at 50% or more, off below</span>` + (wf ? `<span><span class="sw" style="background:var(--band)"></span>Loss window</span>` : "") +
-    (act ? `<span><span class="sw sw-line" style="border-top-color:var(--ink)"></span>Actual output</span><span>● online ○ offline (actual)</span>` : "") +
-    (o ? `<span><span class="sw sw-line" style="border-top-color:var(--c2)"></span>With operator info</span><span><span class="sw" style="background:var(--c3);opacity:0.18"></span>Day-ahead award</span><span>◆ COP plan on (top) or off (bottom)</span>` : "") +
-    `<span><span class="sw" style="background:var(--c8)"></span>Price at or below $10</span>`;
+  setCSV(el, ["hour_ending", "operator_chance_online", "operator_call_on", "operator_chance_online_with_cop", "dam_award", "cop_plan_on", ...(act ? ["actual_online", "actual_output_mw", "actual_lsl_online_mw"] : [])],
+    d3.range(24).map((h) => [h + 1, o.p[h], o.p[h] >= 0.5 ? 1 : 0, o.p_cop ? o.p_cop[h] : null, o.award[h], o.plan[h], ...(act ? [act[h].on ? 1 : 0, act[h].out, act[h].lsl] : [])]), `${e.name} with operator info ${day} by hour`);
+  $("fc-legend").innerHTML = (act ? `<span><span class="sw" style="background:var(${s.color})"></span>Minimum output online</span><span><span class="sw" style="background:var(${s.color});opacity:0.3"></span>Output</span><span>● online ○ offline (actual)</span>` : "") +
+    `<span><span class="sw sw-line" style="border-top-color:var(--c2)"></span>Chance online, with operator info</span><span><span class="sw" style="background:var(--c2);opacity:0.6"></span>Call: on at 50% or more, off below</span>` +
+    `<span><span class="sw" style="background:var(--c3);opacity:0.18"></span>Day-ahead award</span><span>◆ COP plan on (top) or off (bottom)</span>` + (dr && dr[4] ? `<span><span class="sw" style="background:var(--band)"></span>Worst stretch for staying on</span>` : "");
 }
 
 // every other unit at the same settlement point (a shared site: a battery beside a wind, solar or
@@ -752,7 +686,7 @@ function saveView() {
     el.setAttribute(attr, new URL(to, new URL(el.getAttribute(attr)).origin + "/").href);
   }
   window.CX.writeHash({ cfg: S.cfg && S.list.get(S.unit)?.configs.length > 1 ? S.cfg : null, day: S.day, he: S.hour == null ? null : S.hour + 1,
-    fc: S.fcDay && S.FI && S.fcDay !== S.FI.days.at(-1) ? S.fcDay : null });
+    fc: S.fcDay && S.OI && S.fcDay !== S.OI.days.at(-1) ? S.fcDay : null });
 }
 function draw() {
   const e = S.list.get(S.unit);
@@ -776,15 +710,14 @@ async function select(name, cfg, keepDay) {
 
 async function boot() {
   const v = window.CX.readHash();
-  [S.T, S.DEC, S.UH, S.SP, S.FI, S.PPA, S.CH, S.OI, S.OD] = await Promise.all([tryJSON("data/trends_60d.json.gz"), tryJSON("data/decisions.json.gz"),
-    tryJSON("data/unit_hours_60d.json.gz"), tryJSON("data/summary_prices.json.gz"), tryJSON("data/forecast/index.json.gz"), tryJSON("data/ppa.json.gz"),
+  [S.T, S.DEC, S.UH, S.SP, S.PPA, S.CH, S.OI, S.OD] = await Promise.all([tryJSON("data/trends_60d.json.gz"), tryJSON("data/decisions.json.gz"),
+    tryJSON("data/unit_hours_60d.json.gz"), tryJSON("data/summary_prices.json.gz"), tryJSON("data/ppa.json.gz"),
     tryJSON("data/cutoff_history.json.gz"), tryJSON("data/operator/index.json.gz"), tryJSON("data/operator/decisions.json.gz")]);
-  S.FC = S.FI && S.FI.days.length ? await tryJSON(`data/forecast/${S.FI.days.at(-1)}.json.gz`) : null;
   S.UI = await window.CX.unitIndex();
   S.stubs = new Set((S.UI || []).map((u) => u.unit));   // every unit in the index has a unit/NAME page
   if (S.T) { S.span = [S.T.dates[0], S.T.dates.at(-1)]; S.last60 = S.T.dates.at(-1); }
   buildList();
-  $("status").textContent = `${S.list.size} units · 60-day data ${S.T ? `${S.T.dates[0]} to ${S.T.dates.at(-1)}` : "not loaded"}` + (S.FC ? ` · forecast ${S.FC.date}` : "");
+  $("status").textContent = `${S.list.size} units · 60-day data ${S.T ? `${S.T.dates[0]} to ${S.T.dates.at(-1)}` : "not loaded"}`;
   const pick = $("unit-pick");
   pick.addEventListener("change", () => select(pick.value.trim()));
   pick.addEventListener("input", () => { if (S.list.has(pick.value)) select(pick.value); });
