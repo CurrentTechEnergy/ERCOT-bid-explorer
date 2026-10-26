@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Day-ahead offers · ERCOT Bids</title>
+<meta name="description" content="What ERCOT thermal units ask the day-ahead market for in their three-part offers, against fuel cost, and whether it keeps them on through cheap hours; plus wind and solar day-ahead floors.">
+<link rel="canonical" href="https://ercotbids.currenttech.energy/dayahead.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="ERCOT Bids · CurrentTech Energy">
+<meta property="og:title" content="Day-ahead offers">
+<meta property="og:description" content="What ERCOT thermal units ask the day-ahead market for in their three-part offers, against fuel cost, and whether it keeps them on through cheap hours; plus wind and solar day-ahead floors.">
+<meta property="og:url" content="https://ercotbids.currenttech.energy/dayahead.html">
+<meta property="og:image" content="https://ercotbids.currenttech.energy/share-card.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/favicon.ico" sizes="48x48">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Sans+Condensed:wght@600&display=swap">
+<link rel="stylesheet" href="style.css">
+<style>
+  .kpis { display: flex; flex-wrap: wrap; gap: 10px 32px; }
+  .kpi { display: flex; flex-direction: column; gap: 2px; max-width: 30ch; }
+  .kpi .v { font: 500 22px var(--font-data); font-variant-numeric: tabular-nums; }
+  .kpi .k { font-size: 12px; color: var(--ink-2); }
+  .primer-grid { display: grid; grid-template-columns: minmax(0, 400px) minmax(0, 1fr); gap: 20px; align-items: start; }
+  .primer-grid svg { width: 100%; height: auto; }
+  .terms { margin: 0; font-size: 13px; }
+  .terms dt { font-weight: 600; margin-top: 8px; }
+  .terms dd { margin: 2px 0 0; color: var(--ink-2); max-width: 75ch; }
+  .terms2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 28px; }
+  @media (max-width: 760px) { .primer-grid, .terms2 { grid-template-columns: minmax(0, 1fr); } }
+  .ev-list { list-style: none; margin: 0; padding: 0; font-size: 13px; }
+  .ev-list li { display: grid; grid-template-columns: 92px minmax(0, 1fr); gap: 10px; padding: 7px 0; border-bottom: 1px solid var(--line); }
+  .ev-list .d { font: 12px var(--font-data); color: var(--muted); }
+  a.u { color: var(--accent); text-decoration: none; font-weight: 500; }
+  a.u:hover { text-decoration: underline; }
+  .tag { display: inline-block; font-size: 11px; padding: 0 5px; border: 1px solid var(--line); border-radius: 4px; color: var(--muted); margin-left: 4px; font-family: var(--font-ui); }
+  .see { margin: 0; font-size: 13px; }
+  .see a { color: var(--accent); }
+</style>
+</head>
+<body data-panel-links>
+<div class="page">
+
+<header class="masthead">
+  <div class="brand">
+    <div class="nav-row"><nav class="nav" aria-label="Pages"><a href="index.html">Tomorrow</a><a href="beyond.html">Offers</a><a href="commitment.html">Commitment</a><a href="dayahead.html" aria-current="page">Day-ahead offers</a><a href="renewables.html">Renewables</a><a href="batteries.html">Batteries</a><a href="unit.html">Units</a><span class="nav-sep" aria-hidden="true"></span><a href="changes.html" class="aux">What's changing</a><a href="fleet.html" class="aux">Fleet economics</a><a href="builder.html" class="aux">Graph builder</a><a href="guide.html" class="aux">How offers work</a></nav></div>
+    <h1>Day-ahead offers</h1>
+    <p class="sub">What thermal units ask the day-ahead market for, and whether it keeps them on through cheap hours. A combined cycle that wants to ride through a cheap stretch offers its minimum energy near $0; one that wants out offers around $20 to $30 and loses the award.</p>
+  </div>
+  <p class="status" id="status">Loading data…</p>
+</header>
+
+<main>
+  <section class="panel panel-wide" id="primer-panel">
+    <div class="panel-head">
+      <div>
+        <h2>How a three-part offer works<a class="help-q" href="guide.html" title="How offers work" aria-label="How offers work">?</a></h2>
+        <p class="note">Thermal units sell into ERCOT's day-ahead market (DAM) with a three-part offer. The DAM picks which units to commit for each hour of the next day at least total cost, so it weighs all three parts together across the whole day, not hour by hour. An awarded unit is paid the day-ahead price, not its offer.</p>
+      </div>
+    </div>
+    <div class="primer-grid">
+      <svg viewBox="0 0 380 230" role="img" aria-label="Sketch of a three-part offer: a start-up cost paid once per start, a flat minimum-energy price up to the low sustained limit, and a rising energy curve up to the high sustained limit, with the fuel-cost line across.">
+        <line x1="46" y1="190" x2="366" y2="190" style="stroke:var(--axis)"/>
+        <line x1="46" y1="20" x2="46" y2="190" style="stroke:var(--axis)"/>
+        <text x="206" y="222" text-anchor="middle" style="fill:var(--muted);font:11px var(--font-ui)">MW offered</text>
+        <text x="14" y="105" text-anchor="middle" transform="rotate(-90 14 105)" style="fill:var(--muted);font:11px var(--font-ui)">$/MWh</text>
+        <line x1="46" y1="112" x2="366" y2="112" style="stroke:var(--ink);stroke-dasharray:4 3"/>
+        <text x="362" y="106" text-anchor="end" style="fill:var(--ink-2);font:11px var(--font-ui)">fuel-cost line</text>
+        <rect x="46" y="176" width="150" height="14" style="fill:var(--c3);opacity:.85"/>
+        <text x="121" y="170" text-anchor="middle" style="fill:var(--ink);font:600 11px var(--font-ui)">② minimum-energy offer</text>
+        <path d="M196 176 V140 H236 V118 H276 V92 H316 V58 H352" style="fill:none;stroke:var(--c1);stroke-width:2.2"/>
+        <text x="300" y="50" text-anchor="end" style="fill:var(--ink);font:600 11px var(--font-ui)">③ energy curve</text>
+        <line x1="196" y1="190" x2="196" y2="196" style="stroke:var(--ink-2)"/><text x="196" y="207" text-anchor="middle" style="fill:var(--muted);font:10px var(--font-data)">LSL</text>
+        <line x1="352" y1="190" x2="352" y2="196" style="stroke:var(--ink-2)"/><text x="352" y="207" text-anchor="middle" style="fill:var(--muted);font:10px var(--font-data)">HSL</text>
+        <rect x="58" y="26" width="146" height="40" rx="5" style="fill:var(--accent-soft);stroke:var(--line)"/>
+        <text x="66" y="42" style="fill:var(--ink);font:600 11px var(--font-ui)">① start-up cost</text>
+        <text x="66" y="57" style="fill:var(--ink-2);font:10.5px var(--font-ui)">$ per start: hot, inter, cold</text>
+      </svg>
+      <dl class="terms">
+        <dt>① Start-up cost</dt><dd>A lump sum per start, in three versions by how long the unit has been off (hot, intermediate, cold). A unit already running pays none, so a start cost makes staying on through cheap hours cheaper than stopping and restarting.</dd>
+        <dt>② Minimum-energy offer</dt><dd>The $/MWh price for running at minimum output (LSL, the low sustained limit). This is the part that decides cheap hours: offer it near $0 and the DAM keeps the unit on; offer $20 to $30 and the DAM usually lets it go.</dd>
+        <dt>③ Energy curve</dt><dd>Prices for each block of output above LSL, up to the unit's maximum (HSL). It sets how far the unit is dispatched up once it is on.</dd>
+      </dl>
+    </div>
+    <div class="lbl">Terms used below</div>
+    <dl class="terms terms2">
+      <div><dt>Cheap hours</dt><dd>Hours with a DA system lambda at or below $<span class="cheap-usd">15</span>. A day with any is a cheap day; its cheap hours are the cheap stretch.</dd></div>
+      <div><dt>Kept on (awarded through the stretch)</dt><dd>The DAM awarded the unit energy in at least half of the cheap hours.</dd></div>
+      <div><dt>Fuel-cost line</dt><dd>EIA's average full-load heat rate for the unit type times the gas price at the unit's own hub. An offer below it is an offer below fuel cost.</dd></div>
+      <div><dt>Implied heat rate</dt><dd>The minimum-energy offer divided by the hub gas price, in MMBtu/MWh.</dd></div>
+      <div><dt>Configuration and train</dt><dd>A combined cycle train (say 2 gas turbines and a steam turbine) offers each running mode as a separate configuration and runs one at a time. Fleet counts are by train; unit charts show each configuration.</dd></div>
+      <div><dt>Offer change</dt><dd>A minimum-energy offer that moves $5 or more and holds, a short price-out, a start-cost change, or a unit starting or stopping three-part offers. Major changes cross the fuel-cost line or fall on cheap days.</dd></div>
+    </dl>
+  </section>
+
+  <section class="panel panel-wide" id="kpi-panel" aria-label="Summary">
+    <div class="kpis" id="kpis"></div>
+  </section>
+
+  <section class="panel panel-wide" id="lead-panel">
+    <div class="panel-head">
+      <div>
+        <h2>Who offered to stay on, cheap day by cheap day</h2>
+        <p class="note" id="lead-note"></p>
+      </div>
+    </div>
+    <div class="legend legend-static" id="lead-legend"></div>
+    <div class="chart" id="lead-chart"></div>
+  </section>
+
+  <section class="panel" id="bins-panel">
+    <div class="panel-head">
+      <div>
+        <h2>Offer below the node price and you stay on</h2>
+        <p class="note">Combined cycle configuration-days grouped by the minimum-energy offer minus the node's average DA price in the cheap hours. Left of zero the offer sat below the node price, right of zero above it. Each bar is how often the DAM kept that configuration on through the cheap stretch.</p>
+      </div>
+    </div>
+    <div class="chart" id="bins-chart"></div>
+  </section>
+
+  <section class="panel" id="mk-panel">
+    <div class="panel-head">
+      <div>
+        <h2>Offer minus fuel cost</h2>
+        <p class="note">Combined cycle trains on each cheap day: the minimum-energy offer over the cheap hours minus fuel cost, median across trains. Trains kept on through the cheap stretch count at the configuration that won; trains left out at their lowest configuration offer. Below zero, the offer is under fuel cost.</p>
+      </div>
+    </div>
+    <div class="legend legend-static" id="mk-legend"></div>
+    <div class="chart" id="mk-chart"></div>
+  </section>
+
+  <section class="panel panel-wide" id="trains-panel">
+    <div class="panel-head">
+      <div>
+        <h2>Trains and plants <span class="h-note" id="trains-note"></span></h2>
+        <p class="note">Combined cycle trains and gas steam plants that file three-part offers, over the cheap days they filed on. Click a header to sort and a name to open its Unit page, which charts each configuration's offer against its fuel cost.</p>
+      </div>
+    </div>
+    <div class="units-wrap scroll-x" id="trains-table" data-csv></div>
+  </section>
+
+  <section class="panel" id="renew-panel">
+    <div class="panel-head">
+      <div>
+        <h2>Wind and solar day-ahead offers</h2>
+        <p class="note">The wind and solar units that file a DAM energy curve: their usual day-ahead floor against their real-time floor, and the share of their available energy awarded day-ahead. Click a name for its Unit page.</p>
+      </div>
+    </div>
+    <div class="units-wrap scroll-x" id="renew-table" data-csv></div>
+    <p class="note">Day-ahead sales through energy-only offers at the plant's node are not included, so this undercounts the plant's day-ahead exposure. Three-part awards are about 5% of availability; adding the plant's own energy-only sales brings it to about 13.5% (9-day sample).</p>
+  </section>
+
+  <section class="panel" id="events-panel">
+    <div class="panel-head">
+      <div>
+        <h2>Recent major offer changes</h2>
+        <p class="note" id="events-note"></p>
+      </div>
+    </div>
+    <ul class="ev-list" id="events-list"></ul>
+    <p class="see"><a href="changes.html">All offer changes on What's changing →</a></p>
+  </section>
+</main>
+
+<footer class="foot">
+  <p id="ref-note"></p>
+  <p>Source: ERCOT EMIL product NP3-966-ER (60-Day DAM Disclosure: three-part offers, energy offer curves, awards and settlement point prices), DAM system lambda, gas hub prices from OilPriceAPI and the EIA, and each unit's gas hub. Built by the data update workflow from the days already loaded; the 60-day reports run about two months behind.</p>
+  <p>Made by <a href="https://currenttech.energy">currenttech.energy</a> · <a href="contact.html">Contact</a></p>
+  <p>Not affiliated with or endorsed by ERCOT. ERCOT is a registered trademark of the Electric Reliability Council of Texas, Inc.</p>
+  <p>© 2026 CurrentTech Energy. All rights reserved. For information only; not trading or investment advice. <a href="terms.html">Terms and privacy</a></p>
+</footer>
+</div>
+<div class="tip" id="tip" hidden></div>
+<script src="vendor/d3.min.js"></script>
+<script src="common.js"></script>
+<script src="dayahead.js"></script>
+</body>
+</html>

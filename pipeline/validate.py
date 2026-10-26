@@ -716,7 +716,9 @@ def _dam_offer_checks(day):
     bad += [k for k in ("below_mw_share",) if any(x is not None and not 0 <= x <= 1 for x in fl.get(k, []))]
     bad += [f"trains {dates[i]}" for i, (a, f) in enumerate(zip(fl.get("trains_aw", []), fl.get("trains_filed", [])))
             if a is not None and not 0 <= a <= f]
-    day.add("dam_offers_fleet", "error" if bad else "ok", f"bad fleet series: {bad[:5]}" if bad else f"{n} days")
+    bad += [f"{k} row {r[0]}" for k, c in (("trains", "train_cols"), ("renew", "renew_cols")) for r in do.get(k) or [] if len(r) != len(do.get(c) or [])]
+    bad += [f"renew share {r[0]}" for r in do.get("renew") or [] if r[6] is not None and not 0 <= r[6] <= 1.5]
+    day.add("dam_offers_fleet", "error" if bad else "ok", f"bad fleet series or table rows: {bad[:5]}" if bad else f"{n} days")
     orphan = []
     for e in do.get("events", []):
         if e.get("kind") not in DAM_KINDS:

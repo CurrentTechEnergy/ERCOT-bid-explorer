@@ -28,6 +28,7 @@ date, null where the unit has no value):
             ma  cheap-stretch margin                             aw  1/0 awarded through it
             ho  hot start cost ($)                               ls  LSL (MW)
             iv  1 when the minimum-energy cost changed within the day
+            hs  HSL (MW)
   renewable fl  DA floor: first price of the day's most used curve
             rt  real-time floor that day (renew_changes signature)
             as  DA award / HSL energy over hours with HSL
@@ -52,10 +53,12 @@ stay listed.
 
 Writes data/dam_offers.json.gz: ref (heat rates and source), params, kinds, first, last, events
 (newest first), fleet (one value per day: combined cycle trains filing, awarded through the cheap
-stretch, offering a configuration at or below ZERO_USD, offering HIGH_USD or more; median markup
-awarded and not; share of three-part LSL MW below the fuel line; median margin; median renewable
+stretch, offering a configuration at or below ZERO_USD, offering HIGH_USD or more; on cheap days
+the median train cheap-stretch offer less the fuel-cost line, kept on through the stretch (its awarded configuration) and not (its
+lowest configuration); share of three-part LSL MW below the fuel line; median margin; median renewable
 DA less RT floor), bins (award rate by cheap-stretch margin), trains (per train or plant: cheap
-days filed, share awarded, median lowest offer and implied heat rate, price-outs, steps) and
+days filed, share awarded, median lowest offer and implied heat rate, price-outs, steps, Unit page
+name), renew (per wind or solar unit: days filed, median DA and RT floors, gap, award share) and
 repricers.
 """
 import bisect
@@ -97,7 +100,7 @@ KINDS = {
     "renew_off": "Stopped day-ahead offers",
     "renew_on": "Started day-ahead offers",
 }
-FIELDS = {"thermal": ["f", "mg", "mc", "ih", "mk", "ma", "aw", "ho", "ls", "iv"], "renew": ["fl", "rt", "as"]}
+FIELDS = {"thermal": ["f", "mg", "mc", "ih", "mk", "ma", "aw", "ho", "ls", "iv", "hs"], "renew": ["fl", "rt", "as"]}
 
 
 def train_of(name: str) -> str:
@@ -155,7 +158,7 @@ def unit_day(u, day, cheap, ref, gas_price, rt):
     spp = u.get("spp") or []
     if t in THERMAL:
         mg = u.get("mingen")
-        r = {"f": 1 if mg is not None else 0, "ls": u.get("lsl")}
+        r = {"f": 1 if mg is not None else 0, "ls": u.get("lsl"), "hs": u.get("hsl")}
         if mg is None:
             return r
         hot = (u.get("start") or [None])[0]
@@ -356,10 +359,19 @@ def fleet(dates, units, cheapdays):
             out["trains_filed"][k], out["trains_aw"][k], out["trains_zero"][k], out["trains_high"][k] = filed, aw, zero, high
             ma = [r["ma"][k] for r in cc.values() if r["ma"][k] is not None]
             out["margin"][k] = _r(float(np.median(ma))) if ma else None
-        mka = [r["mk"][k] for r in cc.values() if r["mk"][k] is not None and r["aw"][k] == 1]
-        mkn = [r["mk"][k] for r in cc.values() if r["mk"][k] is not None and r["aw"][k] == 0]
-        out["mk_aw"][k] = _r(float(np.median(mka))) if mka else None
-        out["mk_no"][k] = _r(float(np.median(mkn))) if mkn else None
+            # by train, since a train runs one configuration at a time: a train kept on through
+            # the stretch at its awarded configuration's markup, one left out at its lowest.  The
+            # markup here is the cheap-stretch offer less the fuel-cost line (mg less mk)
+            mka, mkn = [], []
+            for rs in trains.values():
+                mk = [(r["mc"][k] - (r["mg"][k] - r["mk"][k]), r["aw"][k]) for r in rs
+                      if r["mk"][k] is not None and r["mc"][k] is not None and r["aw"][k] is not None]
+                if not mk:
+                    continue
+                won = [m for m, a in mk if a == 1]
+                (mka if won else mkn).append(min(won) if won else min(m for m, _ in mk))
+            out["mk_aw"][k] = _r(float(np.median(mka))) if mka else None
+            out["mk_no"][k] = _r(float(np.median(mkn))) if mkn else None
         tot = below = 0.0
         for r in units.values():
             if r["tech"] in ("combined_cycle", "gas_steam") and r["mk"][k] is not None and r["ls"][k]:
@@ -384,11 +396,13 @@ def fleet(dates, units, cheapdays):
 
 def train_table(dates, units, cheapdays, events):
     """Per train (combined cycle) or plant: [plant, tech, cheap days filed, share awarded through
-    the stretch, median lowest cheap-stretch offer, median implied heat rate, price-outs, steps]."""
-    by = collections.defaultdict(list)
+    the stretch, median lowest cheap-stretch offer, median implied heat rate, price-outs, steps,
+    the unit its Unit page is under (the train, or a gas steam plant's first unit)]."""
+    by, names = collections.defaultdict(list), collections.defaultdict(list)
     for u, r in units.items():
         if r["tech"] in ("combined_cycle", "gas_steam"):
             by[r["plant"]].append(r)
+            names[r["plant"]].append(u)
     cnt = collections.Counter((e["plant"], e["kind"]) for e in events)
     rows = []
     for p, rs in sorted(by.items()):
@@ -407,7 +421,25 @@ def train_table(dates, units, cheapdays, events):
         if not days_f:
             continue
         rows.append([p, rs[0]["tech"], days_f, _r(aw / days_f, 3), _r(float(np.median(low))),
-                     _r(float(np.median(ih))) if ih else None, cnt[(p, "priced_out")], cnt[(p, "mingen_step")]])
+                     _r(float(np.median(ih))) if ih else None, cnt[(p, "priced_out")], cnt[(p, "mingen_step")],
+                     p if rs[0]["tech"] == "combined_cycle" else min(names[p])])
+    return rows
+
+
+def renew_table(units):
+    """Per wind or solar unit with a DA curve: [unit, tech, days filed, median DA floor, median RT
+    floor, median DA less RT floor, median DA award share]."""
+    rows = []
+    med = lambda xs: _r(float(np.median(xs)), 3) if xs else None
+    for n, r in sorted(units.items()):
+        if r["tech"] not in RENEW:
+            continue
+        fl = [v for v in r["fl"] if v is not None]
+        if not fl:
+            continue
+        gap = [a - b for a, b in zip(r["fl"], r["rt"]) if a is not None and b is not None]
+        rows.append([n, r["tech"], len(fl), med(fl), med([v for v in r["rt"] if v is not None]), med(gap),
+                     med([v for v in r["as"] if v is not None])])
     return rows
 
 
@@ -447,8 +479,10 @@ def build_dam_offers(index: dict) -> dict:
                       "reprice": REPRICE, "zero_usd": ZERO_USD, "high_usd": HIGH_USD},
            "kinds": KINDS, "first": dates[0], "last": dates[-1], "dates": dates, "cheap": [int(c) for c in cheapdays],
            "fleet": fl, "bins": bins,
-           "train_cols": ["plant", "tech", "cheap_days_filed", "share_awarded", "median_lowest_offer", "median_implied_hr", "priced_out", "steps"],
-           "trains": train_table(dates, units, cheapdays, events), "repricers": repricers, "events": events}
+           "train_cols": ["plant", "tech", "cheap_days_filed", "share_awarded", "median_lowest_offer", "median_implied_hr", "priced_out", "steps", "unit"],
+           "trains": train_table(dates, units, cheapdays, events),
+           "renew_cols": ["unit", "tech", "days_filed", "median_da_floor", "median_rt_floor", "median_gap", "median_award_share"],
+           "renew": renew_table(units), "repricers": repricers, "events": events}
     write_json_gz(PATH, out)
     c = collections.Counter(e["kind"] for e in events)
     print(f"dam_offers: {len(units)} units, {len(events)} event(s) ({sum(e['major'] for e in events)} major), "
