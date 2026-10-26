@@ -1,7 +1,7 @@
 /* Day-ahead offers: what thermal units ask the DAM for in their three-part offers and whether it
    keeps them on through cheap hours, with the wind and solar units' day-ahead floors.  Reads
    data/dam_offers.json.gz (pipeline/dam_offers.py): one fleet value per day, award rate by
-   cheap-stretch margin, the trains and wind/solar tables, and the offer change events.  Each unit's
+   cheap-stretch margin, the trains and wind/solar tables, and every offer change event.  Each unit's
    own history is on its Unit page (unit-dam.js). */
 (() => {
 "use strict";
@@ -189,24 +189,87 @@ function drawRenew() {
   sortableTable($("renew-table"), "renew", cols, rows, "Wind and solar day-ahead offers");
 }
 
-// ---- events ----------------------------------------------------------------------------------
+// ---- offer changes: monthly counts and the table ----------------------------------------------
+const KIND_COLOR = { mingen_step: "--c1", priced_out: "--c2", start_change: "--c7-soft", filing_off: "--c8", filing_on: "--c5", renew_floor: "--c3", renew_off: "--c6", renew_on: "--c4" };
+const CH = { kind: "all", tech: "all", major: false, hideRep: false, limit: 200 };
 function evText(e) {
   if (e.kind === "mingen_step") return `${fmt$(e.before)} to ${fmt$(e.after)}/MWh${e.mk_before != null && e.mk_after != null ? ` (${fmt$(e.mk_before)} to ${fmt$(e.mk_after)} against fuel cost)` : ""}`;
   if (e.kind === "priced_out") return `${fmt$(e.after)}/MWh against a usual ${fmt$(e.before)} for ${e.days} day${e.days === 1 ? "" : "s"}`;
-  if (e.kind === "start_change") return `hot start ${fmt$(e.before)} to ${fmt$(e.after)}`;
-  return "";
+  if (e.kind === "start_change") return `hot start ${fmt$s(Math.round(e.before))} to ${fmt$s(Math.round(e.after))}`;
+  if (e.kind === "renew_floor") return `DA floor ${fmt$(e.before)} to ${fmt$(e.after)}/MWh`;
+  return `${e.before} to ${e.after}`;
 }
-function drawEvents() {
-  const D = S.D, major = D.events.filter((e) => e.major);
-  $("events-note").textContent = `Minimum-energy steps that cross the fuel-cost line, price-outs on cheap days, and units that stop or start three-part offers: ${fmt0(major.length)} of ${fmt0(D.events.length)} offer changes. Click a unit for its Unit page.`;
-  $("events-list").innerHTML = major.slice(0, 20).map((e) => {
-    const cc = e.tech === "combined_cycle", us = e.units || [];
-    const name = cc || us.length !== 1 ? e.plant : us[0], to = cc ? e.plant : us[0] || e.plant, t = evText(e);
-    return `<li><span class="d">${e.date}</span><span><a class="u" href="${unitURL(to)}">${esc(name)}</a> · ${esc(D.kinds[e.kind])}${t ? `: ${esc(t)}` : ""}</span></li>`;
-  }).join("") || `<li><span></span><span class="muted">No major changes.</span></li>`;
+// the Unit page a change opens: the train for a combined cycle, else its (first) unit
+const evUnit = (e) => (e.tech === "combined_cycle" ? e.plant : (e.units || [])[0] || e.plant);
+const evName = (e) => (e.tech === "combined_cycle" || (e.units || []).length !== 1 ? e.plant : e.units[0]);
+function chgRows() {
+  return S.D.events.filter((e) => (CH.kind === "all" || e.kind === CH.kind) && (CH.tech === "all" || e.tech === CH.tech)
+    && (!CH.major || e.major) && (!CH.hideRep || !e.repricer));
+}
+function drawChangeMonths(el, rs) {
+  const D = S.D;
+  if (!rs.length) { emptyMsg(el, "No changes match."); $("chg-legend").innerHTML = ""; return; }
+  const kinds = Object.keys(D.kinds).filter((k) => rs.some((e) => e.kind === k));
+  const months = d3.timeMonths(d3.timeMonth.floor(parseDate(D.first)), d3.timeMonth.offset(d3.timeMonth.floor(parseDate(D.last)), 1)).map(d3.timeFormat("%Y-%m"));
+  const data = months.map((m) => Object.fromEntries([["m", m], ...kinds.map((k) => [k, rs.filter((e) => e.kind === k && e.date.startsWith(m)).length])]));
+  const stack = d3.stack().keys(kinds)(data);
+  const w = Math.max(280, el.clientWidth || 600), H = 200, mg = { t: 18, r: 12, b: 26, l: 44 };
+  const x = d3.scaleBand().domain(months).range([mg.l, w - mg.r]).paddingInner(0.2);
+  const y = d3.scaleLinear().domain([0, d3.max(stack.at(-1), (d) => d[1]) || 1]).nice().range([H - mg.b, mg.t]);
+  const svg = d3.create("svg").attr("viewBox", `0 0 ${w} ${H}`);
+  svg.append("g").attr("class", "gridline").attr("transform", `translate(${mg.l},0)`).call(d3.axisLeft(y).ticks(4).tickSize(-(w - mg.l - mg.r)).tickFormat(""));
+  svg.append("g").attr("class", "axis").attr("transform", `translate(0,${H - mg.b})`)
+    .call(d3.axisBottom(x).tickValues(months.filter((m, i) => w >= 560 || i % 2 === 0)).tickFormat((m) => d3.timeFormat("%b %y")(new Date(m + "-15T12:00:00"))).tickSizeOuter(0));
+  svg.append("g").attr("class", "axis").attr("transform", `translate(${mg.l},0)`).call(d3.axisLeft(y).ticks(4).tickFormat(d3.format(",d")).tickSizeOuter(0));
+  svg.append("text").attr("class", "axis-title").attr("x", mg.l).attr("y", 10).text("Changes per month");
+  stack.forEach((layer) => svg.append("g").selectAll("rect").data(layer).join("rect").attr("x", (d) => x(d.data.m)).attr("width", x.bandwidth())
+    .attr("y", (d) => y(d[1])).attr("height", (d) => Math.max(0, y(d[0]) - y(d[1]))).attr("fill", css(KIND_COLOR[layer.key])));
+  svg.append("g").selectAll("rect").data(data).join("rect").attr("x", (d) => x(d.m)).attr("width", x.bandwidth()).attr("y", mg.t).attr("height", H - mg.t - mg.b).attr("fill", "transparent")
+    .on("pointermove", (ev, d) => showTip(ev, `<h4>${d3.timeFormat("%B %Y")(new Date(d.m + "-15T12:00:00"))}</h4><table>` +
+      kinds.map((k) => `<tr><td><span class="sw" style="background:var(${KIND_COLOR[k]})"></span></td><td>${esc(D.kinds[k])}</td><td class="n">${d[k]}</td></tr>`).join("") +
+      `<tr><td></td><td>All</td><td class="n">${d3.sum(kinds, (k) => d[k])}</td></tr></table>`))
+    .on("pointerleave", hideTip);
+  el.replaceChildren(svg.node());
+  setCSV(el, ["month", ...kinds], data.map((d) => [d.m, ...kinds.map((k) => d[k])]), "Day-ahead offer changes by month");
+  $("chg-legend").innerHTML = kinds.map((k) => `<span><span class="sw" style="background:var(${KIND_COLOR[k]})"></span>${esc(D.kinds[k])}</span>`).join("");
+}
+function drawChanges() {
+  const D = S.D, rs = chgRows(), tbl = $("chg-table");
+  $("chg-note").textContent = `${D.first} to ${D.last}`;
+  window.CX.setNote($("chg-text"), `Every change in a three-part or wind and solar day-ahead offer: ${fmt0(rs.length)} in this selection, ${fmt0(rs.filter((e) => e.major).length)} major. Click a row to open the unit.`,
+    `Minimum-energy offer steps of $5 or more that hold for most of the next week (major when the offer crosses the fuel-cost line), price-outs of 1 to 6 days $10 or more above the unit's usual offer (major on a cheap day), ` +
+    `hot start changes of 25% or more that hold, a train or unit that stops three-part offers while running (self-scheduled) or starts them (both major), and wind and solar day-ahead floors moving $5 or more, or their DA curves stopping or starting. ` +
+    `Changes of one plant on the same or the next day are one row. Combustion turbines start rather than ride through, so their changes are never major. Re-pricers step their offer ten or more times a year.`);
+  drawChangeMonths($("chg-chart"), rs);
+  const shown = rs.slice(0, CH.limit);
+  tbl.innerHTML = rs.length ? `<table class="data"><thead><tr><th class="t">Date</th><th class="t">Train, plant or unit</th><th class="t">Tech</th><th class="t">Change</th><th class="t">Before → after</th></tr></thead><tbody>` +
+    shown.map((e) => `<tr data-unit="${esc(evUnit(e))}" style="cursor:pointer"><td class="t">${e.date}</td>` +
+      `<td class="t"><a class="u" href="${unitURL(evUnit(e))}">${esc(evName(e))}</a>${(e.units || []).length > 1 ? ` <span class="muted">${e.units.length} ${e.tech === "combined_cycle" ? "configurations" : "units"}</span>` : ""}${e.repricer ? '<span class="tag" title="Ten or more minimum-energy steps in a year">re-prices often</span>' : ""}</td>` +
+      `<td class="t">${TECH[e.tech] || esc(e.tech)}</td><td class="t">${esc(D.kinds[e.kind])}${e.major ? ' <span class="tag">major</span>' : ""}</td><td class="t">${esc(evText(e))}</td></tr>`).join("") +
+    "</tbody></table>" : `<p class="empty">No changes match.</p>`;
+  $("chg-more").hidden = rs.length <= CH.limit;
+  $("chg-more").textContent = `Show more (${fmt0(rs.length - CH.limit)} not shown)`;
+  setCSV(tbl, ["date", "plant", "units", "tech", "kind", "major", "repricer", "before", "after", "markup_before", "markup_after", "days"],
+    rs.map((e) => [e.date, e.plant, (e.units || []).join(" "), e.tech, e.kind, e.major, !!e.repricer, e.before, e.after, e.mk_before ?? null, e.mk_after ?? null, e.days ?? null]), "Day-ahead offer changes");
+}
+function initChanges() {
+  const D = S.D;
+  $("chg-kind").innerHTML = `<option value="all">All changes</option>` + Object.entries(D.kinds).map(([k, l]) => `<option value="${k}">${esc(l)}</option>`).join("");
+  const techs = [...new Set(D.events.map((e) => e.tech))].sort((a, b) => Object.keys(TECH).indexOf(a) - Object.keys(TECH).indexOf(b));
+  $("chg-tech").innerHTML = `<option value="all">All</option>` + techs.map((t) => `<option value="${t}">${TECH[t] || esc(t)}</option>`).join("");
+  const on = (id, ev, f) => $(id).addEventListener(ev, (e) => { f(e.target); CH.limit = 200; drawChanges(); });
+  on("chg-kind", "change", (t) => { CH.kind = t.value; });
+  on("chg-tech", "change", (t) => { CH.tech = t.value; });
+  on("chg-major", "change", (t) => { CH.major = t.checked; });
+  on("chg-rep", "change", (t) => { CH.hideRep = t.checked; });
+  $("chg-more").addEventListener("click", () => { CH.limit += 400; drawChanges(); });
+  $("chg-table").addEventListener("click", (e) => {
+    const tr = e.target.closest("tr[data-unit]");
+    if (tr && !e.target.closest("a")) location.href = unitURL(tr.dataset.unit);
+  });
 }
 
-function drawAll() { if (!S.D) return; drawKPIs(); drawLead(); drawBins(); drawMarkup(); drawTrains(); drawRenew(); drawEvents(); }
+function drawAll() { if (!S.D) return; drawKPIs(); drawLead(); drawBins(); drawMarkup(); drawTrains(); drawChanges(); drawRenew(); }
 
 async function boot() {
   S.D = await tryJSON("data/dam_offers.json.gz");
@@ -218,6 +281,7 @@ async function boot() {
   const hr = D.ref.hr;
   $("ref-note").innerHTML = `Fuel-cost line: <a href="${esc(D.ref.url)}">${esc(D.ref.name)}</a>: combined cycle ${hr.combined_cycle}, steam ${hr.gas_steam} and gas turbine ${hr.combustion_turbine} MMBtu/MWh at full load, ` +
     `times the gas price at the unit's own hub (Waha or Houston Ship Channel) on the last trading day before the operating day. Units burn more per MWh at minimum load, so an offer below the line is below fuel cost with room to spare.`;
+  initChanges();
   drawAll();
   window.CX.init();
   let t, lastW = 0;

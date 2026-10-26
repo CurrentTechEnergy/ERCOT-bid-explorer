@@ -51,10 +51,21 @@ function unitEvents(U, names) {
   const set = new Set(names);
   return S.D.events.filter((e) => e.plant === U.name || (e.units || []).some((u) => set.has(u)));
 }
+// the unit's day-ahead offer changes, newest first, under the chart
+function changesTable(evs) {
+  const D = S.D, el = $("dam-changes");
+  if (!evs.length) { el.innerHTML = `<p class="note">No day-ahead offer changes from ${D.first} to ${D.last}.</p>`; return; }
+  el.innerHTML = `<table class="data"><thead><tr><th class="t">Date</th><th class="t">Change</th><th class="t">Before → after</th><th class="t">Units</th></tr></thead><tbody>` +
+    evs.map((e) => `<tr><td class="t">${e.date}</td><td class="t">${esc(D.kinds[e.kind])}${e.major ? ' <span class="tag">major</span>' : ""}</td>` +
+      `<td class="t">${esc(evText(e) || `${e.before} to ${e.after}`)}</td><td class="t muted">${esc((e.units || []).join(", "))}</td></tr>`).join("") + "</tbody></table>";
+  setCSV(el, ["date", "kind", "major", "before", "after", "markup_before", "markup_after", "days", "units"],
+    evs.map((e) => [e.date, e.kind, e.major, e.before, e.after, e.mk_before ?? null, e.mk_after ?? null, e.days ?? null, (e.units || []).join(" ")]), "Day-ahead offer changes");
+}
 function evText(e) {
   if (e.kind === "mingen_step") return `${fmt$(e.before)} to ${fmt$(e.after)}/MWh${e.mk_before != null && e.mk_after != null ? ` (${fmt$(e.mk_before)} to ${fmt$(e.mk_after)} against fuel cost)` : ""}`;
   if (e.kind === "priced_out") return `${fmt$(e.after)}/MWh against a usual ${fmt$(e.before)} for ${e.days} day${e.days === 1 ? "" : "s"}`;
   if (e.kind === "start_change") return `hot start ${fmt$0(e.before)} to ${fmt$0(e.after)}`;
+  if (e.kind === "renew_floor") return `DA floor ${fmt$(e.before)} to ${fmt$(e.after)}/MWh`;
   return "";
 }
 
@@ -131,6 +142,7 @@ function drawThermal(U, list) {
     list.flatMap(([k, r]) => D.dates.map((d, i) => (r.mg[i] == null ? null : [d, k, r.mg[i], r.mc ? r.mc[i] : null, r.aw ? r.aw[i] : null, line[i], r.ls[i], r.hs ? r.hs[i] : null, r.ho[i]])).filter(Boolean)),
     `${U.name} day-ahead offer`);
   $("dam-share").hidden = true;
+  changesTable(evs);
   $("dam-foot").textContent = U.tech === "combustion_turbine" ? "Combustion turbines start for the hours they are needed rather than riding through, so their offer changes are never marked major." : "";
 }
 
@@ -191,6 +203,7 @@ function drawRenew(U, r) {
   svg2.append("g").selectAll("rect").data(d3.range(n).filter((i) => r.as[i] != null)).join("rect").attr("x", (i) => x(S.dates[i]) - bw / 2).attr("width", bw)
     .attr("y", (i) => y2(r.as[i])).attr("height", (i) => y2(0) - y2(r.as[i])).attr("fill", css("--c3"));
   el2.replaceChildren(svg2.node());
+  changesTable(evs);
   $("dam-foot").textContent = "Day-ahead sales through energy-only offers at the plant's node are not included, so this undercounts the plant's day-ahead exposure.";
 }
 

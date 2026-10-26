@@ -33,9 +33,11 @@
   .terms dd { margin: 2px 0 0; color: var(--ink-2); max-width: 75ch; }
   .terms2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 28px; }
   @media (max-width: 760px) { .primer-grid, .terms2 { grid-template-columns: minmax(0, 1fr); } }
-  .ev-list { list-style: none; margin: 0; padding: 0; font-size: 13px; }
-  .ev-list li { display: grid; grid-template-columns: 92px minmax(0, 1fr); gap: 10px; padding: 7px 0; border-bottom: 1px solid var(--line); }
-  .ev-list .d { font: 12px var(--font-data); color: var(--muted); }
+  .ctl-row { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 10px 18px; }
+  .ctl-row .ctl { display: flex; flex-direction: column; gap: 4px; }
+  .chk { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; color: var(--ink-2); min-height: 34px; }
+  .muted { color: var(--muted); }
+  button.more { font: inherit; color: var(--ink); background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 6px 12px; cursor: pointer; }
   a.u { color: var(--accent); text-decoration: none; font-weight: 500; }
   a.u:hover { text-decoration: underline; }
   .tag { display: inline-block; font-size: 11px; padding: 0 5px; border: 1px solid var(--line); border-radius: 4px; color: var(--muted); margin-left: 4px; font-family: var(--font-ui); }
@@ -144,7 +146,28 @@
     <div class="units-wrap scroll-x" id="trains-table" data-csv></div>
   </section>
 
-  <section class="panel" id="renew-panel">
+
+  <section class="panel panel-wide" id="changes-panel">
+    <div class="panel-head">
+      <div>
+        <h2>Day-ahead offer changes <span class="h-note" id="chg-note"></span></h2>
+        <p class="note" id="chg-text"></p>
+      </div>
+    </div>
+    <div class="ctl-row">
+      <div class="ctl"><label class="lbl" for="chg-kind">Change</label><select id="chg-kind"></select></div>
+      <div class="ctl"><label class="lbl" for="chg-tech">Technology</label><select id="chg-tech"></select></div>
+      <label class="chk"><input type="checkbox" id="chg-major"> Major only</label>
+      <label class="chk"><input type="checkbox" id="chg-rep"> Hide re-pricers</label>
+    </div>
+    <div class="legend legend-static" id="chg-legend"></div>
+    <div class="chart chart-short" id="chg-chart"></div>
+    <div class="units-wrap scroll-x" id="chg-table" data-csv></div>
+    <p><button type="button" class="more" id="chg-more" hidden>Show more</button></p>
+    <p class="see"><a href="changes.html">Offer changes beside every other change on What's changing →</a></p>
+  </section>
+
+  <section class="panel panel-wide" id="renew-panel">
     <div class="panel-head">
       <div>
         <h2>Wind and solar day-ahead offers</h2>
@@ -153,17 +176,6 @@
     </div>
     <div class="units-wrap scroll-x" id="renew-table" data-csv></div>
     <p class="note">Day-ahead sales through energy-only offers at the plant's node are not included, so this undercounts the plant's day-ahead exposure. Three-part awards are about 5% of availability; adding the plant's own energy-only sales brings it to about 13.5% (9-day sample).</p>
-  </section>
-
-  <section class="panel" id="events-panel">
-    <div class="panel-head">
-      <div>
-        <h2>Recent major offer changes</h2>
-        <p class="note" id="events-note"></p>
-      </div>
-    </div>
-    <ul class="ev-list" id="events-list"></ul>
-    <p class="see"><a href="changes.html">All offer changes on What's changing →</a></p>
   </section>
 </main>
 
