@@ -250,7 +250,8 @@ class Context:
         self.groups = grp.unit_groups(self.uh, self.techs, self.listed)
         self.decisions = read_json_gz(DATA_DIR / "decisions.json.gz", default={}) or {}
         from .. import gascost
-        if self.decisions.get("gas_cost") != gascost.VERSION:     # built at another cost (a backtest of main's data)
+        from ..decisions import LOSS_LSL
+        if self.decisions.get("gas_cost") != gascost.VERSION or self.decisions.get("loss_lsl") != LOSS_LSL:   # built by other code (a backtest of main's data)
             from ..decisions import build_decisions
             self.decisions = build_decisions(index, write=False)
         self.dam_hubs = (read_json_gz(DATA_DIR / "dam_hubs.json.gz", default=None) or {"days": {}})["days"]

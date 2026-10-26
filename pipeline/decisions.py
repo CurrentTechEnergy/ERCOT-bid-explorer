@@ -20,7 +20,11 @@ energy award.  For a unit online in hour ending 1:
 
 A combined-cycle train's configurations are merged: the train is online when any of them is,
 a single offline hour between online hours is a configuration change, and its LSL, costs and
-award are the smallest LSL, smallest costs and summed awards of its configurations.  An
+award are the smallest LSL, smallest costs and summed awards of its configurations.  The loss
+alone takes the LSL of the configurations online in hour ending 1 (their sum; the smallest LSL
+when none matches), what the train would actually hold at minimum through the window: the
+smallest is often a configuration it seldom runs, half or less of the one it does.  The award
+share keeps the smallest LSL, since an award of that size is enough to keep the train on.  An
 offline spell that is mostly declared outage, or has fewer than OUT_MIN_H hours OFF before
 the outage, is an outage throughout (the rule trends.js uses for the cheap-stretch groups).
 
@@ -33,7 +37,8 @@ each no-award day is also scored with a cutoff chosen from the unit's other days
 the accuracy to expect on a day the rule has not seen (acc on unseen days, shown on the pages).
 
 Tomorrow: the latest day with day-ahead node prices (data/dam_nodes.json.gz, posted the day
-before the operating day) is scored with each unit's latest costs and its cutoff.  The DAM
+before the operating day) is scored with each unit's latest costs, the median LSL of its past
+losses (the configuration it will run is not known the day before) and its cutoff.  The DAM
 award for that day is not public until the 60-day disclosure, so the verdict leans on the
 unit's award history: "off" when the loss exceeds the cutoff and the unit rarely holds an
 award over its loss window, "maybe" when it often does, "on" when the loss is at or below the
@@ -42,7 +47,7 @@ once its 60-day data arrives.
 
 Writes data/decisions.json.gz:
   dates             the decision days (60-day days with a DAM file and hourly unit states)
-  units             {train: [tech, lsl, mingen, hot start, est, days, shutdowns, award share,
+  units             {train: [tech, lsl (a CC train's: the median LSL its losses were taken at), mingen, hot start, est, days, shutdowns, award share,
                      base, cutoff ($), acc, highest loss stayed, lowest loss shut, acc on unseen days]}
                     cutoff, both accs, highest and lowest are null for a unit without a cutoff;
                     est is 0 when the costs are the unit's own latest offer, 2 when generic
@@ -70,6 +75,7 @@ from .trends import UNIT_TECHS
 OUT_MIN_H = 4        # an off spell needs this many hours to be a shutdown; see trends.js ST_OUT_MIN_H
 AWARD_LSL = 0.9      # an hour is covered by an award of at least this share of LSL
 HALF = 0.5           # award share at which a day's window counts as covered
+LOSS_LSL = "running"   # a CC train's loss at the LSL of its configurations online in HE1 (was the smallest)
 COST_DAYS = 10       # how far back a unit's own DAM costs are carried
 MIN_DAYS = 15        # decision days before a unit gets a cutoff, ...
 MIN_EACH = 3         # ... with at least this many shutdowns and this many stays
@@ -132,7 +138,7 @@ def _merge_strips(strips, techs):
 
 def _dam_trains(dd):
     """Per train from a DAM day file: tech, lsl, mingen, hot start, settlement point, node
-    prices [24], award [24]."""
+    prices [24], award [24], and each configuration's LSL {name: lsl}."""
     tr = {}
     for name, u in dd.get("units", {}).items():
         t = u.get("tech")
@@ -140,9 +146,10 @@ def _dam_trains(dd):
             continue
         key = train_of(name) if t == "combined_cycle" else name
         e = tr.setdefault(key, {"tech": t, "lsl": None, "mingen": None, "hot": None, "sp": u.get("sp") or None,
-                                "spp": None, "aw": np.zeros(24)})
+                                "spp": None, "aw": np.zeros(24), "cfg": {}})
         lsl = u.get("lsl")
         if lsl and lsl > 0:
+            e["cfg"][name] = lsl
             e["lsl"] = lsl if e["lsl"] is None else min(e["lsl"], lsl)
         if u.get("mingen") is not None:
             e["mingen"] = u["mingen"] if e["mingen"] is None else min(e["mingen"], u["mingen"])
@@ -182,6 +189,13 @@ def _window(loss):
         if cur > best:
             best, bs, be = cur, s, h
     return (best, bs, be - bs + 1) if bs >= 0 else (0.0, -1, 0)
+
+
+def _run_lsl(e, strips, k, lsl):
+    """The LSL a train holds at minimum in hour index k: the summed LSL of its configurations
+    online then, or lsl when none of them is."""
+    on = [v for name, v in e["cfg"].items() if k < len(strips.get(name, "")) and strips[name][k] in "ma"]
+    return float(sum(on)) if on else lsl
 
 
 def _shutdown(st, k0):
@@ -275,7 +289,7 @@ def build_decisions(index: dict, write: bool = True):
     si = {d: i for i, d in enumerate(sdates)}
     dates = [d for d in sdates if d in dam_dates and (DATA_DIR / "dam" / f"{d}.json.gz").exists()]
     techs, latest, rows = {}, {}, []
-    by_unit = {}
+    by_unit, run_lsl = {}, {}
     dam_days = {}
     for d in dates:
         dd = read_json_gz(DATA_DIR / "dam" / f"{d}.json.gz")
@@ -315,11 +329,17 @@ def build_decisions(index: dict, write: bool = True):
             shut, off_h = _shutdown(st, i * 24)
             if not shut and "o" in day:
                 continue
-            loss, bs, nh = _window(_loss(mingen, e["spp"], lsl))
+            run = _run_lsl(e, strips, i * 24, lsl)
+            run_lsl.setdefault(key, []).append(run)
+            loss, bs, nh = _window(_loss(mingen, e["spp"], run))
             real = ~np.isnan(e["spp"][bs:bs + nh])
             cov = float((e["aw"][bs:bs + nh][real] >= AWARD_LSL * lsl).mean()) if real.any() else 0.0
             rows.append([key, d, _r(loss), bs + 1 if nh else None, nh, _r(cov, 2), int(shut), off_h])
             by_unit.setdefault(key, []).append((loss, cov, int(shut)))
+    # the LSL a CC train's losses are usually taken at: its losses per MW and tomorrow's loss use it
+    for key, v in run_lsl.items():
+        if latest[key][0] == "combined_cycle":
+            latest[key] = latest[key][:1] + (float(np.median(v)),) + latest[key][2:]
     units = {}
     for key, days in by_unit.items():
         tech, lsl, mingen, hot, est, _ = latest[key]
@@ -370,7 +390,7 @@ def build_decisions(index: dict, write: bool = True):
     scored = [[d, key, v, known[(key, d)]] for d in sorted(predictions) for key, v, _ in predictions[d] if (key, d) in known]
     out = {
         "dates": dates, "out_min_h": OUT_MIN_H, "award_lsl": AWARD_LSL, "cost_days": COST_DAYS,
-        "min_days": MIN_DAYS, "min_each": MIN_EACH, "gas_cost": gascost.VERSION,
+        "min_days": MIN_DAYS, "min_each": MIN_EACH, "gas_cost": gascost.VERSION, "loss_lsl": LOSS_LSL,
         "units": units, "days": rows, "tomorrow": tomorrow, "predictions": predictions, "scored": scored,
         "new_days": NEW_DAYS, "award_full": AWARD_FULL, "flags": flags,
     }
