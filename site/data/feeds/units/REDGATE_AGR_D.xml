@@ -67,4 +67,46 @@
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Shut down for 20 h although a day-ahead award covered 100% of the window</summary>
   </entry>
+  <entry>
+    <title>REDGATE_AGR_D: Minimum-energy offer stepped (2026-02-03)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=REDGATE_AGR_D"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=REDGATE_AGR_D#REDGATE_AGR_D/2026-02-03/dam_mingen_step</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $47 to $26/MWh (-$5 to $2 against the fuel-cost line)</summary>
+  </entry>
+  <entry>
+    <title>REDGATE_AGR_D: Minimum-energy offer stepped (2026-02-03)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=REDGATE_AGR_D"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=REDGATE_AGR_D#REDGATE_AGR_D/2026-02-03/dam_mingen_step</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $47 to $26/MWh (-$5 to $2 against the fuel-cost line)</summary>
+  </entry>
+  <entry>
+    <title>REDGATE_AGR_D: Priced out of the day-ahead (2026-01-30)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=REDGATE_AGR_D"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=REDGATE_AGR_D#REDGATE_AGR_D/2026-01-30/dam_priced_out</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Priced out of the day-ahead: minimum energy at $47/MWh against a usual $29 for 2 day(s)</summary>
+  </entry>
+  <entry>
+    <title>REDGATE_AGR_D: Priced out of the day-ahead (2026-01-30)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=REDGATE_AGR_D"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=REDGATE_AGR_D#REDGATE_AGR_D/2026-01-30/dam_priced_out</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Priced out of the day-ahead: minimum energy at $47/MWh against a usual $29 for 2 day(s)</summary>
+  </entry>
+  <entry>
+    <title>REDGATE_AGR_D: Minimum-energy offer stepped (2025-12-17)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=REDGATE_AGR_D"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=REDGATE_AGR_D#REDGATE_AGR_D/2025-12-17/dam_mingen_step</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $43 to $31/MWh (-$4 to -$1 against the fuel-cost line)</summary>
+  </entry>
+  <entry>
+    <title>REDGATE_AGR_D: Minimum-energy offer stepped (2025-12-17)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=REDGATE_AGR_D"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=REDGATE_AGR_D#REDGATE_AGR_D/2025-12-17/dam_mingen_step</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $43 to $31/MWh (-$4 to -$1 against the fuel-cost line)</summary>
+  </entry>
 </feed>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>STEAM1A_STEAM: bidding and operating changes</title>
+  <link href="https://ercotbids.currenttech.energy/unit.html?unit=STEAM1A_STEAM"/>
+  <id>https://ercotbids.currenttech.energy/unit.html?unit=STEAM1A_STEAM</id>
+  <updated>2026-10-18T00:00:00Z</updated>
+  <entry>
+    <title>STEAM1A_STEAM: Started three-part offers (2026-05-16)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=STEAM1A_STEAM"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=STEAM1A_STEAM#STEAM1A_STEAM/2026-05-16/dam_filing_on</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Started three-part offers: no three-part offer to three-part offer</summary>
+  </entry>
+  <entry>
+    <title>STEAM1A_STEAM: Started three-part offers (2026-05-16)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=STEAM1A_STEAM"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=STEAM1A_STEAM#STEAM1A_STEAM/2026-05-16/dam_filing_on</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Started three-part offers: no three-part offer to three-part offer</summary>
+  </entry>
+</feed>

@@ -5,6 +5,27 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=RAB_UNIT4</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
+    <title>RAB_UNIT4: Minimum-energy offer stepped (2026-07-30)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=RAB_UNIT4"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=RAB_UNIT4#RAB_UNIT4/2026-07-30/dam_mingen_step</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $39 to $34/MWh ($9 to $9 against the fuel-cost line)</summary>
+  </entry>
+  <entry>
+    <title>RAB_UNIT4: Minimum-energy offer stepped (2026-07-30)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=RAB_UNIT4"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=RAB_UNIT4#RAB_UNIT4/2026-07-30/dam_mingen_step</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $39 to $34/MWh ($9 to $9 against the fuel-cost line)</summary>
+  </entry>
+  <entry>
+    <title>RAB: Start-up cost changed (2026-06-04)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=RAB"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=RAB#RAB/2026-06-04/dam_start_change</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Start-up cost changed: hot start $1,154 to $864</summary>
+  </entry>
+  <entry>
     <title>RAB: Decision maker or QSE changed (2026-04-09)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=RAB"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=RAB#RAB/2026-04-09/control</id>

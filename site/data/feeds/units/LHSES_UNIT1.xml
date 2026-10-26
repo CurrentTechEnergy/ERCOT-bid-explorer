@@ -12,6 +12,41 @@
     <summary>Offer price vs peer median: -$8 to $10/MWh</summary>
   </entry>
   <entry>
+    <title>LHSES: Minimum-energy offer stepped (2026-08-16)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=LHSES"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=LHSES#LHSES/2026-08-16/dam_mingen_step</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $39 to $2/MWh ($14 to -$23 against the fuel-cost line)</summary>
+  </entry>
+  <entry>
+    <title>LHSES_UNIT1: Start-up cost changed (2026-08-12)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=LHSES_UNIT1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=LHSES_UNIT1#LHSES_UNIT1/2026-08-12/dam_start_change</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Start-up cost changed: hot start $25,000 to $14,035</summary>
+  </entry>
+  <entry>
+    <title>LHSES_UNIT1: Start-up cost changed (2026-08-12)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=LHSES_UNIT1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=LHSES_UNIT1#LHSES_UNIT1/2026-08-12/dam_start_change</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Start-up cost changed: hot start $25,000 to $14,035</summary>
+  </entry>
+  <entry>
+    <title>LHSES_UNIT1: Minimum-energy offer stepped (2026-08-09)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=LHSES_UNIT1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=LHSES_UNIT1#LHSES_UNIT1/2026-08-09/dam_mingen_step</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $37 to $54/MWh ($12 to $30 against the fuel-cost line)</summary>
+  </entry>
+  <entry>
+    <title>LHSES_UNIT1: Minimum-energy offer stepped (2026-08-09)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=LHSES_UNIT1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=LHSES_UNIT1#LHSES_UNIT1/2026-08-09/dam_mingen_step</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $37 to $54/MWh ($12 to $30 against the fuel-cost line)</summary>
+  </entry>
+  <entry>
     <title>LHSES_UNIT1: Bidding approach shifted (2026-08-07)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=LHSES_UNIT1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=LHSES_UNIT1#LHSES_UNIT1/2026-08-07/bidding</id>

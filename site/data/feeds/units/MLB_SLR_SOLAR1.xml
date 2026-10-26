@@ -26,6 +26,20 @@
     <summary>Episode: floor -$38 to $5 for the episode for 1 day(s)</summary>
   </entry>
   <entry>
+    <title>MLB_SLR_SOLAR1: Day-ahead floor changed (2026-05-07)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=MLB_SLR_SOLAR1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=MLB_SLR_SOLAR1#MLB_SLR_SOLAR1/2026-05-07/dam_renew_floor</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Day-ahead floor changed: -$5 to $5/MWh</summary>
+  </entry>
+  <entry>
+    <title>MLB_SLR_SOLAR1: Day-ahead floor changed (2026-05-07)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=MLB_SLR_SOLAR1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=MLB_SLR_SOLAR1#MLB_SLR_SOLAR1/2026-05-07/dam_renew_floor</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Day-ahead floor changed: -$5 to $5/MWh</summary>
+  </entry>
+  <entry>
     <title>MLB_SLR: Episode (2026-04-15)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=MLB_SLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=MLB_SLR#MLB_SLR/2026-04-15/renew_episode</id>
@@ -38,5 +52,33 @@
     <id>https://ercotbids.currenttech.energy/unit.html?unit=MLB_SLR#MLB_SLR/2026-04-09/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Episode: floor -$38 to $5 for the episode for 1 day(s)</summary>
+  </entry>
+  <entry>
+    <title>MLB_SLR_SOLAR1: Day-ahead floor changed (2026-02-28)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=MLB_SLR_SOLAR1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=MLB_SLR_SOLAR1#MLB_SLR_SOLAR1/2026-02-28/dam_renew_floor</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Day-ahead floor changed: $5 to -$6/MWh</summary>
+  </entry>
+  <entry>
+    <title>MLB_SLR_SOLAR1: Day-ahead floor changed (2026-02-28)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=MLB_SLR_SOLAR1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=MLB_SLR_SOLAR1#MLB_SLR_SOLAR1/2026-02-28/dam_renew_floor</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Day-ahead floor changed: $5 to -$6/MWh</summary>
+  </entry>
+  <entry>
+    <title>MLB_SLR_SOLAR1: Started day-ahead offers (2026-02-04)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=MLB_SLR_SOLAR1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=MLB_SLR_SOLAR1#MLB_SLR_SOLAR1/2026-02-04/dam_renew_on</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Started day-ahead offers: none to day-ahead curve</summary>
+  </entry>
+  <entry>
+    <title>MLB_SLR_SOLAR1: Started day-ahead offers (2026-02-04)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=MLB_SLR_SOLAR1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=MLB_SLR_SOLAR1#MLB_SLR_SOLAR1/2026-02-04/dam_renew_on</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Started day-ahead offers: none to day-ahead curve</summary>
   </entry>
 </feed>

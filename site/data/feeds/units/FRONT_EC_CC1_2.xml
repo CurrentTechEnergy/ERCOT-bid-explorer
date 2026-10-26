@@ -5,6 +5,34 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=FRONT_EC_CC1_2</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
+    <title>FRONT_EC_CC1: Minimum-energy offer stepped (2026-07-10)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=FRONT_EC_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=FRONT_EC_CC1#FRONT_EC_CC1/2026-07-10/dam_mingen_step</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $22 to $16/MWh ($2 to -$1 against the fuel-cost line)</summary>
+  </entry>
+  <entry>
+    <title>FRONT_EC_CC1: Minimum-energy offer stepped (2026-05-25)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=FRONT_EC_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=FRONT_EC_CC1#FRONT_EC_CC1/2026-05-25/dam_mingen_step</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $27 to $21/MWh ($8 to $1 against the fuel-cost line)</summary>
+  </entry>
+  <entry>
+    <title>FRONT_EC_CC1: Minimum-energy offer stepped (2026-05-12)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=FRONT_EC_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=FRONT_EC_CC1#FRONT_EC_CC1/2026-05-12/dam_mingen_step</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $29 to $19/MWh ($9 to $1 against the fuel-cost line)</summary>
+  </entry>
+  <entry>
+    <title>FRONT_EC_CC1: Minimum-energy offer stepped (2026-02-06)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=FRONT_EC_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=FRONT_EC_CC1#FRONT_EC_CC1/2026-02-06/dam_mingen_step</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $25 to $30/MWh ($7 to $13 against the fuel-cost line)</summary>
+  </entry>
+  <entry>
     <title>FRONT_EC_CC1_2: Bidding approach shifted (2026-01-30)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=FRONT_EC_CC1_2"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=FRONT_EC_CC1_2#FRONT_EC_CC1_2/2026-01-30/bidding</id>
@@ -12,10 +40,45 @@
     <summary>Offer price vs peer median: $38 to $3/MWh</summary>
   </entry>
   <entry>
+    <title>FRONT_EC_CC1: Priced out of the day-ahead (2026-01-22)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=FRONT_EC_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=FRONT_EC_CC1#FRONT_EC_CC1/2026-01-22/dam_priced_out</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Priced out of the day-ahead: minimum energy at $33/MWh against a usual $16 for 3 day(s)</summary>
+  </entry>
+  <entry>
     <title>FRONT_EC_CC1_2: Bidding approach shifted (2026-01-09)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=FRONT_EC_CC1_2"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=FRONT_EC_CC1_2#FRONT_EC_CC1_2/2026-01-09/bidding</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Offer price vs peer median: $3 to $38/MWh</summary>
+  </entry>
+  <entry>
+    <title>FRONT_EC_CC1: Start-up cost changed (2026-01-08)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=FRONT_EC_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=FRONT_EC_CC1#FRONT_EC_CC1/2026-01-08/dam_start_change</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Start-up cost changed: hot start $2,906 to $6,350</summary>
+  </entry>
+  <entry>
+    <title>FRONT_EC_CC1: Start-up cost changed (2026-01-01)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=FRONT_EC_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=FRONT_EC_CC1#FRONT_EC_CC1/2026-01-01/dam_start_change</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Start-up cost changed: hot start $2,746 to $1,858</summary>
+  </entry>
+  <entry>
+    <title>FRONT_EC_CC1: Start-up cost changed (2025-12-25)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=FRONT_EC_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=FRONT_EC_CC1#FRONT_EC_CC1/2025-12-25/dam_start_change</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Start-up cost changed: hot start $2,937 to $1,984</summary>
+  </entry>
+  <entry>
+    <title>FRONT_EC_CC1: Minimum-energy offer stepped (2025-12-18)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=FRONT_EC_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=FRONT_EC_CC1#FRONT_EC_CC1/2025-12-18/dam_mingen_step</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $30 to $19/MWh (-$0 to -$3 against the fuel-cost line)</summary>
   </entry>
 </feed>

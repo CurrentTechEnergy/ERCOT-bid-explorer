@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>BTE_CC1_4: bidding and operating changes</title>
+  <link href="https://ercotbids.currenttech.energy/unit.html?unit=BTE_CC1_4"/>
+  <id>https://ercotbids.currenttech.energy/unit.html?unit=BTE_CC1_4</id>
+  <updated>2026-10-18T00:00:00Z</updated>
+  <entry>
+    <title>BTE_CC1: Minimum-energy offer stepped (2026-08-13)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=BTE_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=BTE_CC1#BTE_CC1/2026-08-13/dam_mingen_step</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $1 to $10/MWh (-$16 to -$7 against the fuel-cost line)</summary>
+  </entry>
+  <entry>
+    <title>BTE_CC1: Start-up cost changed (2026-04-19)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=BTE_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=BTE_CC1#BTE_CC1/2026-04-19/dam_start_change</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Start-up cost changed: hot start $5,174 to $9,235</summary>
+  </entry>
+  <entry>
+    <title>BTE_CC1: Start-up cost changed (2026-04-10)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=BTE_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=BTE_CC1#BTE_CC1/2026-04-10/dam_start_change</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Start-up cost changed: hot start $1,116 to $9,229</summary>
+  </entry>
+  <entry>
+    <title>BTE_CC1: Start-up cost changed (2026-02-14)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=BTE_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=BTE_CC1#BTE_CC1/2026-02-14/dam_start_change</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Start-up cost changed: hot start $1,650 to $1,061</summary>
+  </entry>
+  <entry>
+    <title>BTE_CC1: Start-up cost changed (2026-01-01)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=BTE_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=BTE_CC1#BTE_CC1/2026-01-01/dam_start_change</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Start-up cost changed: hot start $1,304 to $960</summary>
+  </entry>
+</feed>

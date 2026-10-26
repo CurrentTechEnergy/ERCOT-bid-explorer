@@ -12,6 +12,20 @@
     <summary>Formula on: floor $0 to formula</summary>
   </entry>
   <entry>
+    <title>PORT_SLR_UNIT1: Stopped day-ahead offers (2026-04-30)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=PORT_SLR_UNIT1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=PORT_SLR_UNIT1#PORT_SLR_UNIT1/2026-04-30/dam_renew_off</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Stopped day-ahead offers: day-ahead curve to none</summary>
+  </entry>
+  <entry>
+    <title>PORT_SLR_UNIT1: Stopped day-ahead offers (2026-04-30)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=PORT_SLR_UNIT1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=PORT_SLR_UNIT1#PORT_SLR_UNIT1/2026-04-30/dam_renew_off</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Stopped day-ahead offers: day-ahead curve to none</summary>
+  </entry>
+  <entry>
     <title>PORT_SLR: Formula off (2026-04-08)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=PORT_SLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=PORT_SLR#PORT_SLR/2026-04-08/renew_formula_off</id>

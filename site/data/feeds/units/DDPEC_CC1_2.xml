@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>DDPEC_CC1_2: bidding and operating changes</title>
+  <link href="https://ercotbids.currenttech.energy/unit.html?unit=DDPEC_CC1_2"/>
+  <id>https://ercotbids.currenttech.energy/unit.html?unit=DDPEC_CC1_2</id>
+  <updated>2026-10-18T00:00:00Z</updated>
+  <entry>
+    <title>DDPEC_CC1: Minimum-energy offer stepped (2026-08-13)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=DDPEC_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=DDPEC_CC1#DDPEC_CC1/2026-08-13/dam_mingen_step</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $3 to $10/MWh (-$14 to -$7 against the fuel-cost line)</summary>
+  </entry>
+</feed>

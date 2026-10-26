@@ -5,6 +5,20 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=PITTSDK2_UNIT1</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
+    <title>PITTSDK2_UNIT1: Started day-ahead offers (2026-07-22)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=PITTSDK2_UNIT1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=PITTSDK2_UNIT1#PITTSDK2_UNIT1/2026-07-22/dam_renew_on</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Started day-ahead offers: none to day-ahead curve</summary>
+  </entry>
+  <entry>
+    <title>PITTSDK2_UNIT1: Started day-ahead offers (2026-07-22)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=PITTSDK2_UNIT1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=PITTSDK2_UNIT1#PITTSDK2_UNIT1/2026-07-22/dam_renew_on</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Started day-ahead offers: none to day-ahead curve</summary>
+  </entry>
+  <entry>
     <title>PITTSDK2: New floor (2026-07-16)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=PITTSDK2"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=PITTSDK2#PITTSDK2/2026-07-16/renew_floor_new</id>

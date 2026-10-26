@@ -5,6 +5,20 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=HICKMAN_G2_J01</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
+    <title>HICKMAN_G2_J01: Started day-ahead offers (2026-05-24)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=HICKMAN_G2_J01"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=HICKMAN_G2_J01#HICKMAN_G2_J01/2026-05-24/dam_renew_on</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Started day-ahead offers: none to day-ahead curve</summary>
+  </entry>
+  <entry>
+    <title>HICKMAN_G2_J01: Started day-ahead offers (2026-05-24)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=HICKMAN_G2_J01"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=HICKMAN_G2_J01#HICKMAN_G2_J01/2026-05-24/dam_renew_on</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Started day-ahead offers: none to day-ahead curve</summary>
+  </entry>
+  <entry>
     <title>HICKMAN_G2_J: New floor (2024-09-04)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=HICKMAN_G2_J"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=HICKMAN_G2_J#HICKMAN_G2_J/2024-09-04/renew_floor_new</id>

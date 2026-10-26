@@ -5,6 +5,20 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=HOVEY_UNIT2</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
+    <title>HOVEY_UNIT2: Started day-ahead offers (2026-07-08)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=HOVEY_UNIT2"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=HOVEY_UNIT2#HOVEY_UNIT2/2026-07-08/dam_renew_on</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Started day-ahead offers: none to day-ahead curve</summary>
+  </entry>
+  <entry>
+    <title>HOVEY_UNIT2: Started day-ahead offers (2026-07-08)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=HOVEY_UNIT2"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=HOVEY_UNIT2#HOVEY_UNIT2/2026-07-08/dam_renew_on</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Started day-ahead offers: none to day-ahead curve</summary>
+  </entry>
+  <entry>
     <title>HOVEY: New floor (2025-08-07)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=HOVEY"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=HOVEY#HOVEY/2025-08-07/renew_floor_new</id>

@@ -40,6 +40,20 @@
     <summary>Offer price vs peer median: $24 to $311/MWh</summary>
   </entry>
   <entry>
+    <title>CBEC_GT12: Minimum-energy offer stepped (2026-04-24)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=CBEC_GT12"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=CBEC_GT12#CBEC_GT12/2026-04-24/dam_mingen_step</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $44 to $37/MWh ($22 to $11 against the fuel-cost line)</summary>
+  </entry>
+  <entry>
+    <title>CBEC_GT12: Minimum-energy offer stepped (2026-04-24)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=CBEC_GT12"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=CBEC_GT12#CBEC_GT12/2026-04-24/dam_mingen_step</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $44 to $37/MWh ($22 to $11 against the fuel-cost line)</summary>
+  </entry>
+  <entry>
     <title>CBEC_GT12: Timescale group changed (2026-04-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=CBEC_GT12"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=CBEC_GT12#CBEC_GT12/2026-04-01/group</id>

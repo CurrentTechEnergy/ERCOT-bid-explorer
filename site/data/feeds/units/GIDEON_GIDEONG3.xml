@@ -117,6 +117,20 @@
     <summary>Outage began, lasting 10 days</summary>
   </entry>
   <entry>
+    <title>GIDEON_GIDEONG3: Minimum-energy offer stepped (2026-01-10)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=GIDEON_GIDEONG3"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=GIDEON_GIDEONG3#GIDEON_GIDEONG3/2026-01-10/dam_mingen_step</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $60 to $42/MWh ($21 to $18 against the fuel-cost line)</summary>
+  </entry>
+  <entry>
+    <title>GIDEON_GIDEONG3: Minimum-energy offer stepped (2026-01-10)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=GIDEON_GIDEONG3"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=GIDEON_GIDEONG3#GIDEON_GIDEONG3/2026-01-10/dam_mingen_step</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $60 to $42/MWh ($21 to $18 against the fuel-cost line)</summary>
+  </entry>
+  <entry>
     <title>GIDEON_GIDEONG3: Bidding approach shifted (2026-01-05)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=GIDEON_GIDEONG3"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=GIDEON_GIDEONG3#GIDEON_GIDEONG3/2026-01-05/bidding</id>

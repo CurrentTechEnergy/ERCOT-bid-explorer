@@ -5,6 +5,13 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=BAC_CTG3</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
+    <title>BAC_CT: Minimum-energy offer stepped (2026-07-30)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=BAC_CT"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=BAC_CT#BAC_CT/2026-07-30/dam_mingen_step</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $69 to $63/MWh ($42 to $39 against the fuel-cost line)</summary>
+  </entry>
+  <entry>
     <title>BAC_CTG3: Outage ended (2026-06-30)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=BAC_CTG3"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=BAC_CTG3#BAC_CTG3/2026-06-30/outage_end</id>

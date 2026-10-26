@@ -5,6 +5,27 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=NOVA1SLR_UNIT2</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
+    <title>NOVA1SLR: Day-ahead floor changed (2026-07-25)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=NOVA1SLR"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=NOVA1SLR#NOVA1SLR/2026-07-25/dam_renew_floor</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Day-ahead floor changed: -$10 to $18/MWh</summary>
+  </entry>
+  <entry>
+    <title>NOVA1SLR: Day-ahead floor changed (2026-02-04)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=NOVA1SLR"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=NOVA1SLR#NOVA1SLR/2026-02-04/dam_renew_floor</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Day-ahead floor changed: -$10 to -$15/MWh</summary>
+  </entry>
+  <entry>
+    <title>NOVA1SLR: Day-ahead floor changed (2026-01-16)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=NOVA1SLR"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=NOVA1SLR#NOVA1SLR/2026-01-16/dam_renew_floor</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Day-ahead floor changed: -$10 to -$15/MWh</summary>
+  </entry>
+  <entry>
     <title>NOVA1SLR: Episode (2025-02-26)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=NOVA1SLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=NOVA1SLR#NOVA1SLR/2025-02-26/renew_episode</id>

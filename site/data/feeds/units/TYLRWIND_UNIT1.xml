@@ -19,11 +19,53 @@
     <summary>Episode: floor -$39 to $5 for the episode for 1 day(s)</summary>
   </entry>
   <entry>
+    <title>TYLRWIND_UNIT1: Day-ahead floor changed (2026-04-30)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=TYLRWIND_UNIT1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=TYLRWIND_UNIT1#TYLRWIND_UNIT1/2026-04-30/dam_renew_floor</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Day-ahead floor changed: -$7 to $5/MWh</summary>
+  </entry>
+  <entry>
+    <title>TYLRWIND_UNIT1: Day-ahead floor changed (2026-04-30)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=TYLRWIND_UNIT1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=TYLRWIND_UNIT1#TYLRWIND_UNIT1/2026-04-30/dam_renew_floor</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Day-ahead floor changed: -$7 to $5/MWh</summary>
+  </entry>
+  <entry>
     <title>TYLRWIND: Episode (2026-04-15)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=TYLRWIND"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=TYLRWIND#TYLRWIND/2026-04-15/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Episode: floor -$39 to $30 for the episode for 1 day(s)</summary>
+  </entry>
+  <entry>
+    <title>TYLRWIND_UNIT1: Day-ahead floor changed (2026-02-14)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=TYLRWIND_UNIT1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=TYLRWIND_UNIT1#TYLRWIND_UNIT1/2026-02-14/dam_renew_floor</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Day-ahead floor changed: -$0 to -$8/MWh</summary>
+  </entry>
+  <entry>
+    <title>TYLRWIND_UNIT1: Day-ahead floor changed (2026-02-14)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=TYLRWIND_UNIT1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=TYLRWIND_UNIT1#TYLRWIND_UNIT1/2026-02-14/dam_renew_floor</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Day-ahead floor changed: -$0 to -$8/MWh</summary>
+  </entry>
+  <entry>
+    <title>TYLRWIND_UNIT1: Day-ahead floor changed (2026-02-04)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=TYLRWIND_UNIT1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=TYLRWIND_UNIT1#TYLRWIND_UNIT1/2026-02-04/dam_renew_floor</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Day-ahead floor changed: -$5 to $5/MWh</summary>
+  </entry>
+  <entry>
+    <title>TYLRWIND_UNIT1: Day-ahead floor changed (2026-02-04)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=TYLRWIND_UNIT1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=TYLRWIND_UNIT1#TYLRWIND_UNIT1/2026-02-04/dam_renew_floor</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Day-ahead floor changed: -$5 to $5/MWh</summary>
   </entry>
   <entry>
     <title>TYLRWIND: Episode (2025-10-22)</title>

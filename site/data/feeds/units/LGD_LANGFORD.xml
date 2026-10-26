@@ -5,6 +5,48 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=LGD_LANGFORD</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
+    <title>LGD_LANGFORD: Started day-ahead offers (2026-07-25)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=LGD_LANGFORD"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=LGD_LANGFORD#LGD_LANGFORD/2026-07-25/dam_renew_on</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Started day-ahead offers: none to day-ahead curve</summary>
+  </entry>
+  <entry>
+    <title>LGD_LANGFORD: Started day-ahead offers (2026-07-25)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=LGD_LANGFORD"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=LGD_LANGFORD#LGD_LANGFORD/2026-07-25/dam_renew_on</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Started day-ahead offers: none to day-ahead curve</summary>
+  </entry>
+  <entry>
+    <title>LGD_LANGFORD: Stopped day-ahead offers (2026-06-12)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=LGD_LANGFORD"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=LGD_LANGFORD#LGD_LANGFORD/2026-06-12/dam_renew_off</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Stopped day-ahead offers: day-ahead curve to none</summary>
+  </entry>
+  <entry>
+    <title>LGD_LANGFORD: Stopped day-ahead offers (2026-06-12)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=LGD_LANGFORD"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=LGD_LANGFORD#LGD_LANGFORD/2026-06-12/dam_renew_off</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Stopped day-ahead offers: day-ahead curve to none</summary>
+  </entry>
+  <entry>
+    <title>LGD_LANGFORD: Day-ahead floor changed (2026-05-14)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=LGD_LANGFORD"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=LGD_LANGFORD#LGD_LANGFORD/2026-05-14/dam_renew_floor</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Day-ahead floor changed: $16 to -$5/MWh</summary>
+  </entry>
+  <entry>
+    <title>LGD_LANGFORD: Day-ahead floor changed (2026-05-14)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=LGD_LANGFORD"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=LGD_LANGFORD#LGD_LANGFORD/2026-05-14/dam_renew_floor</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Day-ahead floor changed: $16 to -$5/MWh</summary>
+  </entry>
+  <entry>
     <title>LGD_LANGFORD: New floor (2026-03-11)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=LGD_LANGFORD"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=LGD_LANGFORD#LGD_LANGFORD/2026-03-11/renew_floor_new</id>

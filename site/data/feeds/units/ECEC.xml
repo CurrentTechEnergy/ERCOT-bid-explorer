@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>ECEC: bidding and operating changes</title>
+  <link href="https://ercotbids.currenttech.energy/unit.html?unit=ECEC"/>
+  <id>https://ercotbids.currenttech.energy/unit.html?unit=ECEC</id>
+  <updated>2026-10-18T00:00:00Z</updated>
+  <entry>
+    <title>ECEC: Minimum-energy offer stepped (2026-08-14)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=ECEC"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=ECEC#ECEC/2026-08-14/dam_mingen_step</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $31 to $38/MWh ($10 to $17 against the fuel-cost line)</summary>
+  </entry>
+  <entry>
+    <title>ECEC: Minimum-energy offer stepped (2026-08-04)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=ECEC"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=ECEC#ECEC/2026-08-04/dam_mingen_step</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $25 to $31/MWh ($7 to $10 against the fuel-cost line)</summary>
+  </entry>
+  <entry>
+    <title>ECEC: Start-up cost changed (2026-07-09)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=ECEC"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=ECEC#ECEC/2026-07-09/dam_start_change</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Start-up cost changed: hot start $4,745 to $6,500</summary>
+  </entry>
+  <entry>
+    <title>ECEC: Started three-part offers (2026-07-03)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=ECEC"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=ECEC#ECEC/2026-07-03/dam_filing_on</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Started three-part offers: no three-part offer to three-part offer</summary>
+  </entry>
+  <entry>
+    <title>ECEC: Started three-part offers (2026-07-03)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=ECEC"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=ECEC#ECEC/2026-07-03/dam_filing_on</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Started three-part offers: no three-part offer to three-part offer</summary>
+  </entry>
+  <entry>
+    <title>ECEC: Started three-part offers (2026-04-19)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=ECEC"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=ECEC#ECEC/2026-04-19/dam_filing_on</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Started three-part offers: no three-part offer to three-part offer</summary>
+  </entry>
+  <entry>
+    <title>ECEC: Started three-part offers (2026-04-19)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=ECEC"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=ECEC#ECEC/2026-04-19/dam_filing_on</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Started three-part offers: no three-part offer to three-part offer</summary>
+  </entry>
+</feed>

@@ -11,4 +11,25 @@
     <updated>2026-10-24T00:00:00Z</updated>
     <summary>Scheduled by CALPINE POWER MANAGEMENT LLC MX I (SQ10), was CALPINE POWER MANAGEMENT LLC</summary>
   </entry>
+  <entry>
+    <title>PPEC: Minimum-energy offer stepped (2026-07-15)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=PPEC"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=PPEC#PPEC/2026-07-15/dam_mingen_step</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $41 to $35/MWh ($11 to $10 against the fuel-cost line)</summary>
+  </entry>
+  <entry>
+    <title>PPEC: Started three-part offers (2026-05-01)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=PPEC"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=PPEC#PPEC/2026-05-01/dam_filing_on</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Started three-part offers: no three-part offer to three-part offer</summary>
+  </entry>
+  <entry>
+    <title>PPEC: Started three-part offers (2026-05-01)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=PPEC"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=PPEC#PPEC/2026-05-01/dam_filing_on</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Started three-part offers: no three-part offer to three-part offer</summary>
+  </entry>
 </feed>

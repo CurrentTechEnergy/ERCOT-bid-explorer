@@ -5,6 +5,48 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=PITTSDDK_UNIT1</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
+    <title>PITTSDDK_UNIT1: Day-ahead floor changed (2026-07-24)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=PITTSDDK_UNIT1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=PITTSDDK_UNIT1#PITTSDDK_UNIT1/2026-07-24/dam_renew_floor</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Day-ahead floor changed: $13 to $19/MWh</summary>
+  </entry>
+  <entry>
+    <title>PITTSDDK_UNIT1: Day-ahead floor changed (2026-07-24)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=PITTSDDK_UNIT1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=PITTSDDK_UNIT1#PITTSDDK_UNIT1/2026-07-24/dam_renew_floor</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Day-ahead floor changed: $13 to $19/MWh</summary>
+  </entry>
+  <entry>
+    <title>PITTSDDK_UNIT1: Day-ahead floor changed (2026-05-01)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=PITTSDDK_UNIT1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=PITTSDDK_UNIT1#PITTSDDK_UNIT1/2026-05-01/dam_renew_floor</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Day-ahead floor changed: $8 to $16/MWh</summary>
+  </entry>
+  <entry>
+    <title>PITTSDDK_UNIT1: Day-ahead floor changed (2026-05-01)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=PITTSDDK_UNIT1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=PITTSDDK_UNIT1#PITTSDDK_UNIT1/2026-05-01/dam_renew_floor</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Day-ahead floor changed: $8 to $16/MWh</summary>
+  </entry>
+  <entry>
+    <title>PITTSDDK_UNIT1: Day-ahead floor changed (2026-02-16)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=PITTSDDK_UNIT1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=PITTSDDK_UNIT1#PITTSDDK_UNIT1/2026-02-16/dam_renew_floor</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Day-ahead floor changed: $13 to -$1/MWh</summary>
+  </entry>
+  <entry>
+    <title>PITTSDDK_UNIT1: Day-ahead floor changed (2026-02-16)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=PITTSDDK_UNIT1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=PITTSDDK_UNIT1#PITTSDDK_UNIT1/2026-02-16/dam_renew_floor</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Day-ahead floor changed: $13 to -$1/MWh</summary>
+  </entry>
+  <entry>
     <title>PITTSDDK: New floor (2025-10-17)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=PITTSDDK"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=PITTSDDK#PITTSDDK/2025-10-17/renew_floor_new</id>

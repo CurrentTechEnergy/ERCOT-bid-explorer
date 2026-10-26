@@ -5,6 +5,20 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=BRTSW_BCW1</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
+    <title>BRTSW_BCW1: Started day-ahead offers (2026-02-05)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=BRTSW_BCW1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=BRTSW_BCW1#BRTSW_BCW1/2026-02-05/dam_renew_on</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Started day-ahead offers: none to day-ahead curve</summary>
+  </entry>
+  <entry>
+    <title>BRTSW_BCW1: Started day-ahead offers (2026-02-05)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=BRTSW_BCW1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=BRTSW_BCW1#BRTSW_BCW1/2026-02-05/dam_renew_on</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Started day-ahead offers: none to day-ahead curve</summary>
+  </entry>
+  <entry>
     <title>BRTSW_BCW: Episode (2025-04-25)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=BRTSW_BCW"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=BRTSW_BCW#BRTSW_BCW/2025-04-25/renew_episode</id>

@@ -5,6 +5,20 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=DILEOSLR_UNIT1</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
+    <title>DILEOSLR_UNIT1: Day-ahead floor changed (2026-02-22)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=DILEOSLR_UNIT1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=DILEOSLR_UNIT1#DILEOSLR_UNIT1/2026-02-22/dam_renew_floor</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Day-ahead floor changed: $15 to $1/MWh</summary>
+  </entry>
+  <entry>
+    <title>DILEOSLR_UNIT1: Day-ahead floor changed (2026-02-22)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=DILEOSLR_UNIT1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=DILEOSLR_UNIT1#DILEOSLR_UNIT1/2026-02-22/dam_renew_floor</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Day-ahead floor changed: $15 to $1/MWh</summary>
+  </entry>
+  <entry>
     <title>DILEOSLR: New floor (2025-10-17)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=DILEOSLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=DILEOSLR#DILEOSLR/2025-10-17/renew_floor_new</id>

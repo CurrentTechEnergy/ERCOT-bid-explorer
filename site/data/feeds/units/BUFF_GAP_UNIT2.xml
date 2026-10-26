@@ -5,6 +5,13 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=BUFF_GAP_UNIT2</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
+    <title>BUFF_GAP_UNIT2: Stopped day-ahead offers (2026-01-01)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=BUFF_GAP_UNIT2"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=BUFF_GAP_UNIT2#BUFF_GAP_UNIT2/2026-01-01/dam_renew_off</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Stopped day-ahead offers: day-ahead curve to none</summary>
+  </entry>
+  <entry>
     <title>BUFF_GAP_UNIT2: New floor (2023-06-30)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=BUFF_GAP_UNIT2"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=BUFF_GAP_UNIT2#BUFF_GAP_UNIT2/2023-06-30/renew_floor_new</id>

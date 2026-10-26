@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>VICTPRT2: bidding and operating changes</title>
+  <link href="https://ercotbids.currenttech.energy/unit.html?unit=VICTPRT2"/>
+  <id>https://ercotbids.currenttech.energy/unit.html?unit=VICTPRT2</id>
+  <updated>2026-10-18T00:00:00Z</updated>
+  <entry>
+    <title>VICTPRT2: Minimum-energy offer stepped (2026-07-12)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=VICTPRT2"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=VICTPRT2#VICTPRT2/2026-07-12/dam_mingen_step</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $46 to $40/MWh ($17 to $14 against the fuel-cost line)</summary>
+  </entry>
+  <entry>
+    <title>VICTPRT2: Started three-part offers (2026-06-24)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=VICTPRT2"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=VICTPRT2#VICTPRT2/2026-06-24/dam_filing_on</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Started three-part offers: no three-part offer to three-part offer</summary>
+  </entry>
+  <entry>
+    <title>VICTPRT2: Started three-part offers (2026-06-24)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=VICTPRT2"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=VICTPRT2#VICTPRT2/2026-06-24/dam_filing_on</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Started three-part offers: no three-part offer to three-part offer</summary>
+  </entry>
+</feed>

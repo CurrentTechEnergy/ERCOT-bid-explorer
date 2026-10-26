@@ -5,6 +5,34 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=QALSW_CC1_2</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
+    <title>QALSW_CC1: Minimum-energy offer stepped (2026-07-24)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=QALSW_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=QALSW_CC1#QALSW_CC1/2026-07-24/dam_mingen_step</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $19 to $1/MWh ($7 to -$16 against the fuel-cost line)</summary>
+  </entry>
+  <entry>
+    <title>QALSW_CC1: Minimum-energy offer stepped (2026-07-15)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=QALSW_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=QALSW_CC1#QALSW_CC1/2026-07-15/dam_mingen_step</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $14 to $19/MWh ($7 to $7 against the fuel-cost line)</summary>
+  </entry>
+  <entry>
+    <title>QALSW_CC1: Minimum-energy offer stepped (2026-06-23)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=QALSW_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=QALSW_CC1#QALSW_CC1/2026-06-23/dam_mingen_step</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $6 to $19/MWh ($8 to $7 against the fuel-cost line)</summary>
+  </entry>
+  <entry>
+    <title>QALSW_CC1: Start-up cost changed (2026-06-18)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=QALSW_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=QALSW_CC1#QALSW_CC1/2026-06-18/dam_start_change</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Start-up cost changed: hot start $3,467 to $4,905</summary>
+  </entry>
+  <entry>
     <title>QALSW_CC1_2: Bidding approach shifted (2026-06-16)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=QALSW_CC1_2"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=QALSW_CC1_2#QALSW_CC1_2/2026-06-16/bidding</id>
@@ -17,6 +45,13 @@
     <id>https://ercotbids.currenttech.energy/unit.html?unit=QALSW_CC1_2#QALSW_CC1_2/2026-06-14/bidding</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>MW above LSL offered at or below $0: 85% to 0% of the day</summary>
+  </entry>
+  <entry>
+    <title>QALSW_CC1: Start-up cost changed (2026-04-07)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=QALSW_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=QALSW_CC1#QALSW_CC1/2026-04-07/dam_start_change</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Start-up cost changed: hot start $5,584 to $3,467</summary>
   </entry>
   <entry>
     <title>QALSW_CC1_2: Bidding approach shifted (2026-02-08)</title>

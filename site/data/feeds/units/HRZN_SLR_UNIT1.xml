@@ -3,7 +3,35 @@
   <title>HRZN_SLR_UNIT1: bidding and operating changes</title>
   <link href="https://ercotbids.currenttech.energy/unit.html?unit=HRZN_SLR_UNIT1"/>
   <id>https://ercotbids.currenttech.energy/unit.html?unit=HRZN_SLR_UNIT1</id>
-  <updated>2026-10-24T00:00:00Z</updated>
+  <updated>2026-10-26T00:00:00Z</updated>
+  <entry>
+    <title>HRZN_SLR_UNIT1: Day-ahead floor changed (2026-05-17)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=HRZN_SLR_UNIT1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=HRZN_SLR_UNIT1#HRZN_SLR_UNIT1/2026-05-17/dam_renew_floor</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Day-ahead floor changed: -$10 to $0/MWh</summary>
+  </entry>
+  <entry>
+    <title>HRZN_SLR_UNIT1: Day-ahead floor changed (2026-05-17)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=HRZN_SLR_UNIT1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=HRZN_SLR_UNIT1#HRZN_SLR_UNIT1/2026-05-17/dam_renew_floor</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Day-ahead floor changed: -$10 to $0/MWh</summary>
+  </entry>
+  <entry>
+    <title>HRZN_SLR_UNIT1: Day-ahead floor changed (2026-05-10)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=HRZN_SLR_UNIT1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=HRZN_SLR_UNIT1#HRZN_SLR_UNIT1/2026-05-10/dam_renew_floor</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Day-ahead floor changed: -$2 to -$10/MWh</summary>
+  </entry>
+  <entry>
+    <title>HRZN_SLR_UNIT1: Day-ahead floor changed (2026-05-10)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=HRZN_SLR_UNIT1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=HRZN_SLR_UNIT1#HRZN_SLR_UNIT1/2026-05-10/dam_renew_floor</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Day-ahead floor changed: -$2 to -$10/MWh</summary>
+  </entry>
   <entry>
     <title>HRZN_SLR: Episode (2026-03-14)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=HRZN_SLR"/>
@@ -19,6 +47,34 @@
     <summary>Episode: floor -$20 to $3 for the episode for 1 day(s)</summary>
   </entry>
   <entry>
+    <title>HRZN_SLR_UNIT1: Day-ahead floor changed (2026-02-23)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=HRZN_SLR_UNIT1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=HRZN_SLR_UNIT1#HRZN_SLR_UNIT1/2026-02-23/dam_renew_floor</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Day-ahead floor changed: -$4 to -$10/MWh</summary>
+  </entry>
+  <entry>
+    <title>HRZN_SLR_UNIT1: Day-ahead floor changed (2026-02-23)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=HRZN_SLR_UNIT1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=HRZN_SLR_UNIT1#HRZN_SLR_UNIT1/2026-02-23/dam_renew_floor</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Day-ahead floor changed: -$4 to -$10/MWh</summary>
+  </entry>
+  <entry>
+    <title>HRZN_SLR_UNIT1: Day-ahead floor changed (2026-02-12)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=HRZN_SLR_UNIT1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=HRZN_SLR_UNIT1#HRZN_SLR_UNIT1/2026-02-12/dam_renew_floor</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Day-ahead floor changed: -$5 to $0/MWh</summary>
+  </entry>
+  <entry>
+    <title>HRZN_SLR_UNIT1: Day-ahead floor changed (2026-02-12)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=HRZN_SLR_UNIT1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=HRZN_SLR_UNIT1#HRZN_SLR_UNIT1/2026-02-12/dam_renew_floor</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Day-ahead floor changed: -$5 to $0/MWh</summary>
+  </entry>
+  <entry>
     <title>HRZN_SLR: Episode (2026-02-11)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=HRZN_SLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=HRZN_SLR#HRZN_SLR/2026-02-11/renew_episode</id>
@@ -26,17 +82,17 @@
     <summary>Episode: floor -$20 to -$1 for the episode for 1 day(s)</summary>
   </entry>
   <entry>
-    <title>HRZN_SLR_UNIT1: Decision maker or QSE changed (2025-12-17)</title>
+    <title>HRZN_SLR_UNIT1: Decision maker or QSE changed (2025-12-16)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=HRZN_SLR_UNIT1"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=HRZN_SLR_UNIT1#HRZN_SLR_UNIT1/2025-12-17/control</id>
-    <updated>2026-10-18T00:00:00Z</updated>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=HRZN_SLR_UNIT1#HRZN_SLR_UNIT1/2025-12-16/control</id>
+    <updated>2026-10-26T00:00:00Z</updated>
     <summary>Scheduled by LRE ENERGY SERVICES LLC (SQ4), was TENASKA POWER SERVICES CO</summary>
   </entry>
   <entry>
-    <title>HRZN_SLR_UNIT1: Decision maker or QSE changed (2025-12-17)</title>
+    <title>HRZN_SLR_UNIT1: Decision maker or QSE changed (2025-12-16)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=HRZN_SLR_UNIT1"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=HRZN_SLR_UNIT1#HRZN_SLR_UNIT1/2025-12-17/control</id>
-    <updated>2026-10-18T00:00:00Z</updated>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=HRZN_SLR_UNIT1#HRZN_SLR_UNIT1/2025-12-16/control</id>
+    <updated>2026-10-26T00:00:00Z</updated>
     <summary>Scheduled by LRE ENERGY SERVICES LLC (SQ4), was TENASKA POWER SERVICES CO</summary>
   </entry>
   <entry>

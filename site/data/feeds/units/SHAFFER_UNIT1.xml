@@ -19,6 +19,20 @@
     <summary>Episode: floor -$35 to $0 for the episode for 1 day(s)</summary>
   </entry>
   <entry>
+    <title>SHAFFER_UNIT1: Day-ahead floor changed (2026-02-19)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=SHAFFER_UNIT1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=SHAFFER_UNIT1#SHAFFER_UNIT1/2026-02-19/dam_renew_floor</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Day-ahead floor changed: $0 to -$35/MWh</summary>
+  </entry>
+  <entry>
+    <title>SHAFFER_UNIT1: Day-ahead floor changed (2026-02-19)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=SHAFFER_UNIT1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=SHAFFER_UNIT1#SHAFFER_UNIT1/2026-02-19/dam_renew_floor</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Day-ahead floor changed: $0 to -$35/MWh</summary>
+  </entry>
+  <entry>
     <title>SHAFFER: Episode (2026-02-18)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=SHAFFER"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=SHAFFER#SHAFFER/2026-02-18/renew_episode</id>
@@ -31,6 +45,20 @@
     <id>https://ercotbids.currenttech.energy/unit.html?unit=SHAFFER#SHAFFER/2026-02-10/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Episode: floor -$35 to $0 for the episode for 1 day(s)</summary>
+  </entry>
+  <entry>
+    <title>SHAFFER_UNIT1: Started day-ahead offers (2026-02-05)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=SHAFFER_UNIT1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=SHAFFER_UNIT1#SHAFFER_UNIT1/2026-02-05/dam_renew_on</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Started day-ahead offers: none to day-ahead curve</summary>
+  </entry>
+  <entry>
+    <title>SHAFFER_UNIT1: Started day-ahead offers (2026-02-05)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=SHAFFER_UNIT1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=SHAFFER_UNIT1#SHAFFER_UNIT1/2026-02-05/dam_renew_on</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Started day-ahead offers: none to day-ahead curve</summary>
   </entry>
   <entry>
     <title>SHAFFER: Episode (2026-02-05)</title>

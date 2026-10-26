@@ -3,7 +3,28 @@
   <title>DUKE_CC1: bidding and operating changes</title>
   <link href="https://ercotbids.currenttech.energy/unit.html?unit=DUKE_CC1"/>
   <id>https://ercotbids.currenttech.energy/unit.html?unit=DUKE_CC1</id>
-  <updated>2026-10-24T00:00:00Z</updated>
+  <updated>2026-10-26T00:00:00Z</updated>
+  <entry>
+    <title>DUKE_CC1: Shut down despite a day-ahead award (2026-07-30)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=DUKE_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=DUKE_CC1#DUKE_CC1/2026-07-30/shutdown_award</id>
+    <updated>2026-10-26T00:00:00Z</updated>
+    <summary>Shut down for 7 h although a day-ahead award covered 100% of the window</summary>
+  </entry>
+  <entry>
+    <title>DUKE_CC1: Minimum-energy offer stepped (2026-07-26)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=DUKE_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=DUKE_CC1#DUKE_CC1/2026-07-26/dam_mingen_step</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $7 to $1/MWh (-$10 to -$17 against the fuel-cost line)</summary>
+  </entry>
+  <entry>
+    <title>DUKE_CC1: Minimum-energy offer stepped (2026-07-19)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=DUKE_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=DUKE_CC1#DUKE_CC1/2026-07-19/dam_mingen_step</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $21 to $1/MWh ($3 to -$17 against the fuel-cost line)</summary>
+  </entry>
   <entry>
     <title>DUKE_CC1: Outage ended (2026-03-16)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=DUKE_CC1"/>
@@ -19,6 +40,34 @@
     <summary>Outage began, lasting 8 days</summary>
   </entry>
   <entry>
+    <title>DUKE_CC1: Minimum-energy offer stepped (2026-02-04)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=DUKE_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=DUKE_CC1#DUKE_CC1/2026-02-04/dam_mingen_step</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $2 to $22/MWh (-$32 to $4 against the fuel-cost line)</summary>
+  </entry>
+  <entry>
+    <title>DUKE_CC1: Shut down despite a day-ahead award (2026-01-31)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=DUKE_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=DUKE_CC1#DUKE_CC1/2026-01-31/shutdown_award</id>
+    <updated>2026-10-26T00:00:00Z</updated>
+    <summary>Shut down for 5 h although a day-ahead award covered 100% of the window</summary>
+  </entry>
+  <entry>
+    <title>DUKE_CC1: Minimum-energy offer stepped (2026-01-28)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=DUKE_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=DUKE_CC1#DUKE_CC1/2026-01-28/dam_mingen_step</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $23 to $0/MWh ($3 to -$22 against the fuel-cost line)</summary>
+  </entry>
+  <entry>
+    <title>DUKE_CC1: Priced out of the day-ahead (2026-01-22)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=DUKE_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=DUKE_CC1#DUKE_CC1/2026-01-22/dam_priced_out</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Priced out of the day-ahead: minimum energy at $39/MWh against a usual $23 for 1 day(s)</summary>
+  </entry>
+  <entry>
     <title>DUKE_CC1: Timescale group changed (2026-01-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=DUKE_CC1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=DUKE_CC1#DUKE_CC1/2026-01-01/group</id>
@@ -26,11 +75,18 @@
     <summary>Multi-day: off 1–7 days in 2025-12 to Daily, over 2 a week in 2026-01</summary>
   </entry>
   <entry>
-    <title>DUKE_CC1: Shut down despite a day-ahead award (2025-12-26)</title>
+    <title>DUKE_CC1: Minimum-energy offer stepped (2026-01-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=DUKE_CC1"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=DUKE_CC1#DUKE_CC1/2025-12-26/shutdown_award</id>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=DUKE_CC1#DUKE_CC1/2026-01-01/dam_mingen_step</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Shut down for 86 h although a day-ahead award covered 100% of the window</summary>
+    <summary>Minimum-energy offer stepped: $25 to $19/MWh ($3 to $3 against the fuel-cost line)</summary>
+  </entry>
+  <entry>
+    <title>DUKE_CC1: Minimum-energy offer stepped (2025-12-24)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=DUKE_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=DUKE_CC1#DUKE_CC1/2025-12-24/dam_mingen_step</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $27 to $22/MWh ($1 to $3 against the fuel-cost line)</summary>
   </entry>
   <entry>
     <title>DUKE_CC1: Shut down despite a day-ahead award (2025-12-18)</title>
@@ -38,5 +94,19 @@
     <id>https://ercotbids.currenttech.energy/unit.html?unit=DUKE_CC1#DUKE_CC1/2025-12-18/shutdown_award</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Shut down for 49 h although a day-ahead award covered 100% of the window</summary>
+  </entry>
+  <entry>
+    <title>DUKE_CC1: Minimum-energy offer stepped (2025-12-17)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=DUKE_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=DUKE_CC1#DUKE_CC1/2025-12-17/dam_mingen_step</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $35 to $26/MWh ($4 to $4 against the fuel-cost line)</summary>
+  </entry>
+  <entry>
+    <title>DUKE_CC1: Minimum-energy offer stepped (2025-12-14)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=DUKE_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=DUKE_CC1#DUKE_CC1/2025-12-14/dam_mingen_step</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $34 to $26/MWh ($1 to $3 against the fuel-cost line)</summary>
   </entry>
 </feed>

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>CCEC_CC1_4: bidding and operating changes</title>
+  <link href="https://ercotbids.currenttech.energy/unit.html?unit=CCEC_CC1_4"/>
+  <id>https://ercotbids.currenttech.energy/unit.html?unit=CCEC_CC1_4</id>
+  <updated>2026-10-18T00:00:00Z</updated>
+  <entry>
+    <title>CCEC_CC1: Minimum-energy offer stepped (2026-07-29)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=CCEC_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=CCEC_CC1#CCEC_CC1/2026-07-29/dam_mingen_step</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $1 to $9/MWh (-$17 to -$8 against the fuel-cost line)</summary>
+  </entry>
+  <entry>
+    <title>CCEC_CC1: Minimum-energy offer stepped (2026-07-22)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=CCEC_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=CCEC_CC1#CCEC_CC1/2026-07-22/dam_mingen_step</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $8 to $1/MWh (-$11 to -$17 against the fuel-cost line)</summary>
+  </entry>
+  <entry>
+    <title>CCEC_CC1: Minimum-energy offer stepped (2026-07-14)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=CCEC_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=CCEC_CC1#CCEC_CC1/2026-07-14/dam_mingen_step</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $9 to $1/MWh (-$11 to -$17 against the fuel-cost line)</summary>
+  </entry>
+  <entry>
+    <title>CCEC_CC1: Priced out of the day-ahead (2026-05-30)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=CCEC_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=CCEC_CC1#CCEC_CC1/2026-05-30/dam_priced_out</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Priced out of the day-ahead: minimum energy at $22/MWh against a usual $9 for 1 day(s)</summary>
+  </entry>
+  <entry>
+    <title>CCEC_CC1: Priced out of the day-ahead (2026-05-19)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=CCEC_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=CCEC_CC1#CCEC_CC1/2026-05-19/dam_priced_out</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Priced out of the day-ahead: minimum energy at $21/MWh against a usual $9 for 1 day(s)</summary>
+  </entry>
+  <entry>
+    <title>CCEC_CC1: Start-up cost changed (2026-05-06)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=CCEC_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=CCEC_CC1#CCEC_CC1/2026-05-06/dam_start_change</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Start-up cost changed: hot start $3,292 to $9,915</summary>
+  </entry>
+</feed>

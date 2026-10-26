@@ -5,11 +5,60 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=HAYSEN_HAYSENG3</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
+    <title>HAYSEN_HAYSENG3: Minimum-energy offer stepped (2026-07-31)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=HAYSEN_HAYSENG3"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=HAYSEN_HAYSENG3#HAYSEN_HAYSENG3/2026-07-31/dam_mingen_step</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $10 to $16/MWh (-$16 to -$9 against the fuel-cost line)</summary>
+  </entry>
+  <entry>
+    <title>HAYSEN_HAYSENG3: Minimum-energy offer stepped (2026-07-31)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=HAYSEN_HAYSENG3"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=HAYSEN_HAYSENG3#HAYSEN_HAYSENG3/2026-07-31/dam_mingen_step</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $10 to $16/MWh (-$16 to -$9 against the fuel-cost line)</summary>
+  </entry>
+  <entry>
+    <title>HAYSEN_HAYSEN: Minimum-energy offer stepped (2026-07-18)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=HAYSEN_HAYSEN"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=HAYSEN_HAYSEN#HAYSEN_HAYSEN/2026-07-18/dam_mingen_step</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $16 to $1/MWh (-$10 to -$25 against the fuel-cost line)</summary>
+  </entry>
+  <entry>
     <title>HAYSEN_HAYSENG3: Timescale group changed (2026-07-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=HAYSEN_HAYSENG3"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=HAYSEN_HAYSENG3#HAYSEN_HAYSENG3/2026-07-01/group</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Daily, under 1 shutdown a week in 2026-06 to Always on when available in 2026-07</summary>
+  </entry>
+  <entry>
+    <title>HAYSEN_HAYSENG3: Minimum-energy offer stepped (2026-06-24)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=HAYSEN_HAYSENG3"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=HAYSEN_HAYSENG3#HAYSEN_HAYSENG3/2026-06-24/dam_mingen_step</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $16 to $22/MWh (-$13 to -$8 against the fuel-cost line)</summary>
+  </entry>
+  <entry>
+    <title>HAYSEN_HAYSENG3: Minimum-energy offer stepped (2026-06-24)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=HAYSEN_HAYSENG3"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=HAYSEN_HAYSENG3#HAYSEN_HAYSENG3/2026-06-24/dam_mingen_step</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $16 to $22/MWh (-$13 to -$8 against the fuel-cost line)</summary>
+  </entry>
+  <entry>
+    <title>HAYSEN_HAYSENG3: Minimum-energy offer stepped (2026-06-16)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=HAYSEN_HAYSENG3"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=HAYSEN_HAYSENG3#HAYSEN_HAYSENG3/2026-06-16/dam_mingen_step</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $17 to $10/MWh (-$12 to -$18 against the fuel-cost line)</summary>
+  </entry>
+  <entry>
+    <title>HAYSEN_HAYSENG3: Minimum-energy offer stepped (2026-06-16)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=HAYSEN_HAYSENG3"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=HAYSEN_HAYSENG3#HAYSEN_HAYSENG3/2026-06-16/dam_mingen_step</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $17 to $10/MWh (-$12 to -$18 against the fuel-cost line)</summary>
   </entry>
   <entry>
     <title>HAYSEN_HAYSENG3: Outage ended (2026-05-12)</title>
@@ -40,6 +89,20 @@
     <summary>Shut down for 7 h although a day-ahead award covered 100% of the window</summary>
   </entry>
   <entry>
+    <title>HAYSEN_HAYSENG3: Minimum-energy offer stepped (2026-03-26)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=HAYSEN_HAYSENG3"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=HAYSEN_HAYSENG3#HAYSEN_HAYSENG3/2026-03-26/dam_mingen_step</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $26 to $21/MWh (-$3 to -$6 against the fuel-cost line)</summary>
+  </entry>
+  <entry>
+    <title>HAYSEN_HAYSENG3: Minimum-energy offer stepped (2026-03-26)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=HAYSEN_HAYSENG3"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=HAYSEN_HAYSENG3#HAYSEN_HAYSENG3/2026-03-26/dam_mingen_step</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $26 to $21/MWh (-$3 to -$6 against the fuel-cost line)</summary>
+  </entry>
+  <entry>
     <title>HAYSEN_HAYSENG3: Shut down despite a day-ahead award (2026-02-12)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=HAYSEN_HAYSENG3"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=HAYSEN_HAYSENG3#HAYSEN_HAYSENG3/2026-02-12/shutdown_award</id>
@@ -54,10 +117,45 @@
     <summary>Shut down for 54 h although a day-ahead award covered 100% of the window</summary>
   </entry>
   <entry>
+    <title>HAYSEN_HAYSENG3: Minimum-energy offer stepped (2026-01-14)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=HAYSEN_HAYSENG3"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=HAYSEN_HAYSENG3#HAYSEN_HAYSENG3/2026-01-14/dam_mingen_step</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $19 to $24/MWh (-$4 to -$5 against the fuel-cost line)</summary>
+  </entry>
+  <entry>
+    <title>HAYSEN_HAYSENG3: Minimum-energy offer stepped (2026-01-14)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=HAYSEN_HAYSENG3"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=HAYSEN_HAYSENG3#HAYSEN_HAYSENG3/2026-01-14/dam_mingen_step</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $19 to $24/MWh (-$4 to -$5 against the fuel-cost line)</summary>
+  </entry>
+  <entry>
     <title>HAYSEN_HAYSENG3: Shut down despite a day-ahead award (2026-01-07)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=HAYSEN_HAYSENG3"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=HAYSEN_HAYSENG3#HAYSEN_HAYSENG3/2026-01-07/shutdown_award</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Shut down for 18 h although a day-ahead award covered 100% of the window</summary>
+  </entry>
+  <entry>
+    <title>HAYSEN_HAYSENG3: Minimum-energy offer stepped (2026-01-03)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=HAYSEN_HAYSENG3"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=HAYSEN_HAYSENG3#HAYSEN_HAYSENG3/2026-01-03/dam_mingen_step</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $26 to $19/MWh (-$6 to -$4 against the fuel-cost line)</summary>
+  </entry>
+  <entry>
+    <title>HAYSEN_HAYSENG3: Minimum-energy offer stepped (2026-01-03)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=HAYSEN_HAYSENG3"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=HAYSEN_HAYSENG3#HAYSEN_HAYSENG3/2026-01-03/dam_mingen_step</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $26 to $19/MWh (-$6 to -$4 against the fuel-cost line)</summary>
+  </entry>
+  <entry>
+    <title>HAYSEN_HAYSEN: Minimum-energy offer stepped (2025-12-15)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=HAYSEN_HAYSEN"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=HAYSEN_HAYSEN#HAYSEN_HAYSEN/2025-12-15/dam_mingen_step</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $39 to $29/MWh (-$8 to -$5 against the fuel-cost line)</summary>
   </entry>
 </feed>

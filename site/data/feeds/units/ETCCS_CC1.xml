@@ -19,13 +19,6 @@
     <summary>Multi-day: off 1–7 days in 2026-04 to Daily, over 2 a week in 2026-05</summary>
   </entry>
   <entry>
-    <title>ETCCS_CC1: Loss cutoff moved (2026-04-30)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=ETCCS_CC1"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=ETCCS_CC1#ETCCS_CC1/2026-04-30/cutoff</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Loss cutoff $27 to $151 per MW of minimum output; the next month&#x27;s decisions confirm it (19 of 27 right against 15)</summary>
-  </entry>
-  <entry>
     <title>ETCCS_CC1: Outage ended (2026-04-19)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=ETCCS_CC1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=ETCCS_CC1#ETCCS_CC1/2026-04-19/outage_end</id>
@@ -51,6 +44,6 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=ETCCS_CC1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=ETCCS_CC1#ETCCS_CC1/2026-01-31/cutoff</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Loss cutoff $4 to $64 per MW of minimum output; the next month&#x27;s decisions are split (12 of 14 right against 12)</summary>
+    <summary>Loss cutoff $13 to $24 per MW of minimum output; the next month&#x27;s decisions are split (13 of 14 right against 13)</summary>
   </entry>
 </feed>

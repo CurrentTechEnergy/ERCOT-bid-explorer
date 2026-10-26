@@ -5,6 +5,34 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=SILASRAY_SILAS_10</id>
   <updated>2026-10-24T00:00:00Z</updated>
   <entry>
+    <title>SILASRAY_SILAS_10: Priced out of the day-ahead (2026-06-07)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=SILASRAY_SILAS_10"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=SILASRAY_SILAS_10#SILASRAY_SILAS_10/2026-06-07/dam_priced_out</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Priced out of the day-ahead: minimum energy at $63/MWh against a usual $36 for 1 day(s)</summary>
+  </entry>
+  <entry>
+    <title>SILASRAY_SILAS_10: Priced out of the day-ahead (2026-06-07)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=SILASRAY_SILAS_10"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=SILASRAY_SILAS_10#SILASRAY_SILAS_10/2026-06-07/dam_priced_out</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Priced out of the day-ahead: minimum energy at $63/MWh against a usual $36 for 1 day(s)</summary>
+  </entry>
+  <entry>
+    <title>SILASRAY_SILAS_10: Minimum-energy offer stepped (2026-05-13)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=SILASRAY_SILAS_10"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=SILASRAY_SILAS_10#SILASRAY_SILAS_10/2026-05-13/dam_mingen_step</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $49 to $36/MWh ($9 to $9 against the fuel-cost line)</summary>
+  </entry>
+  <entry>
+    <title>SILASRAY_SILAS_10: Minimum-energy offer stepped (2026-05-13)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=SILASRAY_SILAS_10"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=SILASRAY_SILAS_10#SILASRAY_SILAS_10/2026-05-13/dam_mingen_step</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $49 to $36/MWh ($9 to $9 against the fuel-cost line)</summary>
+  </entry>
+  <entry>
     <title>SILASRAY_SILAS_10: Outage ended (2026-05-02)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=SILASRAY_SILAS_10"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=SILASRAY_SILAS_10#SILASRAY_SILAS_10/2026-05-02/outage_end</id>

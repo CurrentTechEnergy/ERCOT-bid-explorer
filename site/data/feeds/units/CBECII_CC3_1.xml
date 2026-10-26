@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>CBECII_CC3_1: bidding and operating changes</title>
+  <link href="https://ercotbids.currenttech.energy/unit.html?unit=CBECII_CC3_1"/>
+  <id>https://ercotbids.currenttech.energy/unit.html?unit=CBECII_CC3_1</id>
+  <updated>2026-10-18T00:00:00Z</updated>
+  <entry>
+    <title>CBECII_CC3: Minimum-energy offer stepped (2026-03-05)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=CBECII_CC3"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=CBECII_CC3#CBECII_CC3/2026-03-05/dam_mingen_step</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $7 to $25/MWh (-$12 to $6 against the fuel-cost line)</summary>
+  </entry>
+</feed>

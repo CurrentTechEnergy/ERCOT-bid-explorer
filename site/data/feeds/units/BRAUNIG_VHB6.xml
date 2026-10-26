@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>BRAUNIG_VHB6: bidding and operating changes</title>
+  <link href="https://ercotbids.currenttech.energy/unit.html?unit=BRAUNIG_VHB6"/>
+  <id>https://ercotbids.currenttech.energy/unit.html?unit=BRAUNIG_VHB6</id>
+  <updated>2026-10-18T00:00:00Z</updated>
+  <entry>
+    <title>BRAUNIG_VHB6: Minimum-energy offer stepped (2026-08-08)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=BRAUNIG_VHB6"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=BRAUNIG_VHB6#BRAUNIG_VHB6/2026-08-08/dam_mingen_step</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $15 to $21/MWh (-$10 to -$4 against the fuel-cost line)</summary>
+  </entry>
+  <entry>
+    <title>BRAUNIG_VHB6: Minimum-energy offer stepped (2026-08-01)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=BRAUNIG_VHB6"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=BRAUNIG_VHB6#BRAUNIG_VHB6/2026-08-01/dam_mingen_step</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $12 to $23/MWh (-$14 to -$2 against the fuel-cost line)</summary>
+  </entry>
+  <entry>
+    <title>BRAUNIG_VHB6: Minimum-energy offer stepped (2026-06-15)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=BRAUNIG_VHB6"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=BRAUNIG_VHB6#BRAUNIG_VHB6/2026-06-15/dam_mingen_step</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $18 to $12/MWh (-$12 to -$16 against the fuel-cost line)</summary>
+  </entry>
+  <entry>
+    <title>BRAUNIG_VHB6: Minimum-energy offer stepped (2026-06-05)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=BRAUNIG_VHB6"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=BRAUNIG_VHB6#BRAUNIG_VHB6/2026-06-05/dam_mingen_step</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $12 to $18/MWh (-$15 to -$12 against the fuel-cost line)</summary>
+  </entry>
+  <entry>
+    <title>BRAUNIG_VHB6: Started three-part offers (2026-03-15)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=BRAUNIG_VHB6"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=BRAUNIG_VHB6#BRAUNIG_VHB6/2026-03-15/dam_filing_on</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Started three-part offers: no three-part offer to three-part offer</summary>
+  </entry>
+  <entry>
+    <title>BRAUNIG_VHB6: Started three-part offers (2026-03-15)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=BRAUNIG_VHB6"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=BRAUNIG_VHB6#BRAUNIG_VHB6/2026-03-15/dam_filing_on</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Started three-part offers: no three-part offer to three-part offer</summary>
+  </entry>
+</feed>

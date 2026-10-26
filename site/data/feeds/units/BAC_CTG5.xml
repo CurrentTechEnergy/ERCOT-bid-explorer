@@ -19,11 +19,25 @@
     <summary>Offer price vs peer median: $42 to -$25/MWh</summary>
   </entry>
   <entry>
+    <title>BAC_CT: Minimum-energy offer stepped (2026-07-30)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=BAC_CT"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=BAC_CT#BAC_CT/2026-07-30/dam_mingen_step</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $69 to $63/MWh ($42 to $39 against the fuel-cost line)</summary>
+  </entry>
+  <entry>
     <title>BAC_CTG5: Timescale group changed (2026-07-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=BAC_CTG5"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=BAC_CTG5#BAC_CTG5/2026-07-01/group</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Daily, over 2 a week in 2026-06 to Seasonal: off a week or more in 2026-07</summary>
+  </entry>
+  <entry>
+    <title>BAC_CT: Minimum-energy offer stepped (2026-06-02)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=BAC_CT"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=BAC_CT#BAC_CT/2026-06-02/dam_mingen_step</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $66 to $75/MWh ($39 to $45 against the fuel-cost line)</summary>
   </entry>
   <entry>
     <title>BAC_CTG5: Outage ended (2026-06-01)</title>
@@ -68,11 +82,46 @@
     <summary>Offer price vs peer median: $42 to -$18/MWh</summary>
   </entry>
   <entry>
+    <title>BAC_CTG5: Minimum-energy offer stepped (2026-04-03)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=BAC_CTG5"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=BAC_CTG5#BAC_CTG5/2026-04-03/dam_mingen_step</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $70 to $63/MWh ($42 to $38 against the fuel-cost line)</summary>
+  </entry>
+  <entry>
+    <title>BAC_CTG5: Minimum-energy offer stepped (2026-04-03)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=BAC_CTG5"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=BAC_CTG5#BAC_CTG5/2026-04-03/dam_mingen_step</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $70 to $63/MWh ($42 to $38 against the fuel-cost line)</summary>
+  </entry>
+  <entry>
     <title>BAC_CTG5: Timescale group changed (2026-04-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=BAC_CTG5"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=BAC_CTG5#BAC_CTG5/2026-04-01/group</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Multi-day: off 1–7 days in 2026-03 to Daily, 1–2 a week in 2026-04</summary>
+  </entry>
+  <entry>
+    <title>BAC_CTG5: Minimum-energy offer stepped (2026-03-25)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=BAC_CTG5"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=BAC_CTG5#BAC_CTG5/2026-03-25/dam_mingen_step</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $73 to $68/MWh ($44 to $41 against the fuel-cost line)</summary>
+  </entry>
+  <entry>
+    <title>BAC_CTG5: Minimum-energy offer stepped (2026-03-25)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=BAC_CTG5"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=BAC_CTG5#BAC_CTG5/2026-03-25/dam_mingen_step</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $73 to $68/MWh ($44 to $41 against the fuel-cost line)</summary>
+  </entry>
+  <entry>
+    <title>BAC_CT: Minimum-energy offer stepped (2026-03-06)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=BAC_CT"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=BAC_CT#BAC_CT/2026-03-06/dam_mingen_step</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $58 to $73/MWh ($38 to $44 against the fuel-cost line)</summary>
   </entry>
   <entry>
     <title>BAC_CTG5: Timescale group changed (2026-03-01)</title>
@@ -82,10 +131,24 @@
     <summary>Seasonal: off a week or more in 2026-02 to Multi-day: off 1–7 days in 2026-03</summary>
   </entry>
   <entry>
+    <title>BAC_CT: Minimum-energy offer stepped (2026-02-14)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=BAC_CT"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=BAC_CT#BAC_CT/2026-02-14/dam_mingen_step</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $64 to $55/MWh ($39 to $35 against the fuel-cost line)</summary>
+  </entry>
+  <entry>
     <title>BAC_CTG5: Timescale group changed (2026-02-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=BAC_CTG5"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=BAC_CTG5#BAC_CTG5/2026-02-01/group</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Multi-day: off 1–7 days in 2026-01 to Seasonal: off a week or more in 2026-02</summary>
+  </entry>
+  <entry>
+    <title>BAC_CT: Minimum-energy offer stepped (2026-01-13)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=BAC_CT"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=BAC_CT#BAC_CT/2026-01-13/dam_mingen_step</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $56 to $62/MWh ($32 to $33 against the fuel-cost line)</summary>
   </entry>
 </feed>

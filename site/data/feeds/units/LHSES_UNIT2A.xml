@@ -5,11 +5,32 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=LHSES_UNIT2A</id>
   <updated>2026-10-24T00:00:00Z</updated>
   <entry>
+    <title>LHSES: Minimum-energy offer stepped (2026-08-16)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=LHSES"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=LHSES#LHSES/2026-08-16/dam_mingen_step</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $39 to $2/MWh ($14 to -$23 against the fuel-cost line)</summary>
+  </entry>
+  <entry>
     <title>LHSES_UNIT2A: Bidding approach shifted (2026-08-13)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=LHSES_UNIT2A"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=LHSES_UNIT2A#LHSES_UNIT2A/2026-08-13/bidding</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Offer price vs peer median: $3 to -$11/MWh</summary>
+  </entry>
+  <entry>
+    <title>LHSES_UNIT2A: Priced out of the day-ahead (2026-08-11)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=LHSES_UNIT2A"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=LHSES_UNIT2A#LHSES_UNIT2A/2026-08-11/dam_priced_out</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Priced out of the day-ahead: minimum energy at $69/MWh against a usual $34 for 1 day(s)</summary>
+  </entry>
+  <entry>
+    <title>LHSES_UNIT2A: Priced out of the day-ahead (2026-08-11)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=LHSES_UNIT2A"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=LHSES_UNIT2A#LHSES_UNIT2A/2026-08-11/dam_priced_out</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Priced out of the day-ahead: minimum energy at $69/MWh against a usual $34 for 1 day(s)</summary>
   </entry>
   <entry>
     <title>LHSES_UNIT2A: Timescale group changed (2026-08-01)</title>

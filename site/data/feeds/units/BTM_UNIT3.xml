@@ -19,6 +19,13 @@
     <summary>Seasonal: off a week or more in 2026-03 to Daily, over 2 a week in 2026-04</summary>
   </entry>
   <entry>
+    <title>BTM: Minimum-energy offer stepped (2026-02-06)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=BTM"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=BTM#BTM/2026-02-06/dam_mingen_step</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $57 to $34/MWh ($7 to $9 against the fuel-cost line)</summary>
+  </entry>
+  <entry>
     <title>BTM_UNIT3: Timescale group changed (2026-02-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=BTM_UNIT3"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=BTM_UNIT3#BTM_UNIT3/2026-02-01/group</id>
@@ -26,10 +33,38 @@
     <summary>Daily, under 1 shutdown a week in 2026-01 to Seasonal: off a week or more in 2026-02</summary>
   </entry>
   <entry>
+    <title>BTM: Minimum-energy offer stepped (2026-01-14)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=BTM"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=BTM#BTM/2026-01-14/dam_mingen_step</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $33 to $38/MWh ($9 to $9 against the fuel-cost line)</summary>
+  </entry>
+  <entry>
     <title>BTM_UNIT3: Timescale group changed (2026-01-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=BTM_UNIT3"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=BTM_UNIT3#BTM_UNIT3/2026-01-01/group</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Multi-day: off 1–7 days in 2025-12 to Daily, under 1 shutdown a week in 2026-01</summary>
+  </entry>
+  <entry>
+    <title>BTM: Minimum-energy offer stepped (2026-01-01)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=BTM"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=BTM#BTM/2026-01-01/dam_mingen_step</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $40 to $32/MWh ($9 to $9 against the fuel-cost line)</summary>
+  </entry>
+  <entry>
+    <title>BTM: Minimum-energy offer stepped (2025-12-25)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=BTM"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=BTM#BTM/2025-12-25/dam_mingen_step</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $43 to $32/MWh ($8 to $9 against the fuel-cost line)</summary>
+  </entry>
+  <entry>
+    <title>BTM: Minimum-energy offer stepped (2025-12-17)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=BTM"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=BTM#BTM/2025-12-17/dam_mingen_step</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $53 to $40/MWh ($7 to $9 against the fuel-cost line)</summary>
   </entry>
 </feed>

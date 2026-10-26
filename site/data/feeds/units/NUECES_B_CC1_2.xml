@@ -5,10 +5,24 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=NUECES_B_CC1_2</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
+    <title>NUECES_B_CC1: Priced out of the day-ahead (2026-01-29)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=NUECES_B_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=NUECES_B_CC1#NUECES_B_CC1/2026-01-29/dam_priced_out</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Priced out of the day-ahead: minimum energy at $53/MWh against a usual $35 for 1 day(s)</summary>
+  </entry>
+  <entry>
     <title>NUECES_B_CC1_2: Bidding approach shifted (2026-01-28)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=NUECES_B_CC1_2"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=NUECES_B_CC1_2#NUECES_B_CC1_2/2026-01-28/bidding</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Offer price vs peer median: $1 to $13/MWh</summary>
+  </entry>
+  <entry>
+    <title>NUECES_B_CC1: Minimum-energy offer stepped (2026-01-18)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=NUECES_B_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=NUECES_B_CC1#NUECES_B_CC1/2026-01-18/dam_mingen_step</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $35 to $40/MWh ($18 to $20 against the fuel-cost line)</summary>
   </entry>
 </feed>

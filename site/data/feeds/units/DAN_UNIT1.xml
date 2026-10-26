@@ -12,11 +12,39 @@
     <summary>Episode: floor -$41 to -$82 for the episode for 2 day(s)</summary>
   </entry>
   <entry>
+    <title>DAN_UNIT1: Day-ahead floor changed (2026-02-17)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=DAN_UNIT1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=DAN_UNIT1#DAN_UNIT1/2026-02-17/dam_renew_floor</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Day-ahead floor changed: -$62 to -$82/MWh</summary>
+  </entry>
+  <entry>
+    <title>DAN_UNIT1: Day-ahead floor changed (2026-02-17)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=DAN_UNIT1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=DAN_UNIT1#DAN_UNIT1/2026-02-17/dam_renew_floor</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Day-ahead floor changed: -$62 to -$82/MWh</summary>
+  </entry>
+  <entry>
     <title>DAN: Episode (2026-02-16)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=DAN"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=DAN#DAN/2026-02-16/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Episode: floor -$41 to -$82 for the episode for 1 day(s)</summary>
+  </entry>
+  <entry>
+    <title>DAN_UNIT1: Day-ahead floor changed (2026-02-10)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=DAN_UNIT1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=DAN_UNIT1#DAN_UNIT1/2026-02-10/dam_renew_floor</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Day-ahead floor changed: -$41 to -$82/MWh</summary>
+  </entry>
+  <entry>
+    <title>DAN_UNIT1: Day-ahead floor changed (2026-02-10)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=DAN_UNIT1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=DAN_UNIT1#DAN_UNIT1/2026-02-10/dam_renew_floor</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Day-ahead floor changed: -$41 to -$82/MWh</summary>
   </entry>
   <entry>
     <title>DAN: New floor (2025-11-21)</title>

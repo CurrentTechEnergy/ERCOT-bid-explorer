@@ -12,6 +12,13 @@
     <summary>Offer price vs peer median: $50 to $34/MWh</summary>
   </entry>
   <entry>
+    <title>SPNCER_SPNCE: Minimum-energy offer stepped (2026-07-12)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=SPNCER_SPNCE"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=SPNCER_SPNCE#SPNCER_SPNCE/2026-07-12/dam_mingen_step</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $83 to $77/MWh ($56 to $53 against the fuel-cost line)</summary>
+  </entry>
+  <entry>
     <title>SPNCER_SPNCE_4: Timescale group changed (2026-07-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=SPNCER_SPNCE_4"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=SPNCER_SPNCE_4#SPNCER_SPNCE_4/2026-07-01/group</id>
@@ -38,6 +45,20 @@
     <id>https://ercotbids.currenttech.energy/unit.html?unit=SPNCER_SPNCE_4#SPNCER_SPNCE_4/2026-05-01/outage_end</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Back from a 46-day outage</summary>
+  </entry>
+  <entry>
+    <title>SPNCER_SPNCE_4: Minimum-energy offer stepped (2026-04-01)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=SPNCER_SPNCE_4"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=SPNCER_SPNCE_4#SPNCER_SPNCE_4/2026-04-01/dam_mingen_step</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $82 to $77/MWh ($54 to $53 against the fuel-cost line)</summary>
+  </entry>
+  <entry>
+    <title>SPNCER_SPNCE_4: Minimum-energy offer stepped (2026-04-01)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=SPNCER_SPNCE_4"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=SPNCER_SPNCE_4#SPNCER_SPNCE_4/2026-04-01/dam_mingen_step</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $82 to $77/MWh ($54 to $53 against the fuel-cost line)</summary>
   </entry>
   <entry>
     <title>SPNCER_SPNCE_4: Outage started (2026-03-17)</title>

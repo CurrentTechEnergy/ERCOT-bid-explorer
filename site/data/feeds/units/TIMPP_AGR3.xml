@@ -5,11 +5,74 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=TIMPP_AGR3</id>
   <updated>2026-10-24T00:00:00Z</updated>
   <entry>
+    <title>TIMPP_AGR: Minimum-energy offer stepped (2026-07-14)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=TIMPP_AGR"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=TIMPP_AGR#TIMPP_AGR/2026-07-14/dam_mingen_step</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $58 to $53/MWh ($29 to $26 against the fuel-cost line)</summary>
+  </entry>
+  <entry>
+    <title>TIMPP_AGR3: Start-up cost changed (2026-05-28)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=TIMPP_AGR3"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=TIMPP_AGR3#TIMPP_AGR3/2026-05-28/dam_start_change</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Start-up cost changed: hot start $85 to $172</summary>
+  </entry>
+  <entry>
+    <title>TIMPP_AGR3: Start-up cost changed (2026-05-28)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=TIMPP_AGR3"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=TIMPP_AGR3#TIMPP_AGR3/2026-05-28/dam_start_change</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Start-up cost changed: hot start $85 to $172</summary>
+  </entry>
+  <entry>
+    <title>TIMPP_AGR: Start-up cost changed (2026-05-19)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=TIMPP_AGR"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=TIMPP_AGR#TIMPP_AGR/2026-05-19/dam_start_change</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Start-up cost changed: hot start $165 to $86</summary>
+  </entry>
+  <entry>
+    <title>TIMPP_AGR: Start-up cost changed (2026-05-12)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=TIMPP_AGR"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=TIMPP_AGR#TIMPP_AGR/2026-05-12/dam_start_change</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Start-up cost changed: hot start $167 to $85</summary>
+  </entry>
+  <entry>
     <title>TIMPP_AGR3: Shut down despite a day-ahead award (2026-04-21)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=TIMPP_AGR3"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=TIMPP_AGR3#TIMPP_AGR3/2026-04-21/shutdown_award</id>
     <updated>2026-10-24T00:00:00Z</updated>
     <summary>Shut down for 5 h although a day-ahead award covered 96% of the window</summary>
+  </entry>
+  <entry>
+    <title>TIMPP_AGR: Minimum-energy offer stepped (2026-03-04)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=TIMPP_AGR"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=TIMPP_AGR#TIMPP_AGR/2026-03-04/dam_mingen_step</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $33 to $55/MWh ($12 to $26 against the fuel-cost line)</summary>
+  </entry>
+  <entry>
+    <title>TIMPP_AGR: Minimum-energy offer stepped (2026-02-26)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=TIMPP_AGR"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=TIMPP_AGR#TIMPP_AGR/2026-02-26/dam_mingen_step</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $33 to $46/MWh ($12 to $21 against the fuel-cost line)</summary>
+  </entry>
+  <entry>
+    <title>TIMPP_AGR: Minimum-energy offer stepped (2026-02-11)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=TIMPP_AGR"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=TIMPP_AGR#TIMPP_AGR/2026-02-11/dam_mingen_step</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $40 to $35/MWh ($13 to $13 against the fuel-cost line)</summary>
+  </entry>
+  <entry>
+    <title>TIMPP_AGR: Minimum-energy offer stepped (2026-02-04)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=TIMPP_AGR"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=TIMPP_AGR#TIMPP_AGR/2026-02-04/dam_mingen_step</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $59 to $37/MWh ($24 to $12 against the fuel-cost line)</summary>
   </entry>
   <entry>
     <title>TIMPP_AGR3: Bidding approach shifted (2026-02-01)</title>
@@ -24,5 +87,33 @@
     <id>https://ercotbids.currenttech.energy/unit.html?unit=TIMPP_AGR3#TIMPP_AGR3/2026-01-24/bidding</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Offer price vs peer median: $0 to -$34/MWh</summary>
+  </entry>
+  <entry>
+    <title>TIMPP_AGR: Priced out of the day-ahead (2026-01-23)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=TIMPP_AGR"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=TIMPP_AGR#TIMPP_AGR/2026-01-23/dam_priced_out</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Priced out of the day-ahead: minimum energy at $125/MWh against a usual $53 for 5 day(s)</summary>
+  </entry>
+  <entry>
+    <title>TIMPP_AGR: Minimum-energy offer stepped (2026-01-10)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=TIMPP_AGR"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=TIMPP_AGR#TIMPP_AGR/2026-01-10/dam_mingen_step</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $48 to $54/MWh ($25 to $29 against the fuel-cost line)</summary>
+  </entry>
+  <entry>
+    <title>TIMPP_AGR: Minimum-energy offer stepped (2026-01-03)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=TIMPP_AGR"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=TIMPP_AGR#TIMPP_AGR/2026-01-03/dam_mingen_step</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $61 to $48/MWh ($32 to $25 against the fuel-cost line)</summary>
+  </entry>
+  <entry>
+    <title>TIMPP_AGR: Minimum-energy offer stepped (2025-12-18)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=TIMPP_AGR"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=TIMPP_AGR#TIMPP_AGR/2025-12-18/dam_mingen_step</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $79 to $62/MWh ($34 to $31 against the fuel-cost line)</summary>
   </entry>
 </feed>

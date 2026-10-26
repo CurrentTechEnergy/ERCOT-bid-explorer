@@ -12,6 +12,13 @@
     <summary>Shut down for 13 h after 33 days without a shutdown</summary>
   </entry>
   <entry>
+    <title>VICTPRT2: Minimum-energy offer stepped (2026-07-12)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=VICTPRT2"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=VICTPRT2#VICTPRT2/2026-07-12/dam_mingen_step</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $46 to $40/MWh ($17 to $14 against the fuel-cost line)</summary>
+  </entry>
+  <entry>
     <title>VICTPRT2_UNIT1: Timescale group changed (2026-07-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=VICTPRT2_UNIT1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=VICTPRT2_UNIT1#VICTPRT2_UNIT1/2026-07-01/group</id>

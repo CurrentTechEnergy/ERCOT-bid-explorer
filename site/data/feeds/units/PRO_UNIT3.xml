@@ -5,6 +5,13 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=PRO_UNIT3</id>
   <updated>2026-10-24T00:00:00Z</updated>
   <entry>
+    <title>PRO: Minimum-energy offer stepped (2026-03-12)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=PRO"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=PRO#PRO/2026-03-12/dam_mingen_step</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $28 to $37/MWh ($8 to $8 against the fuel-cost line)</summary>
+  </entry>
+  <entry>
     <title>PRO_UNIT3: Outage ended (2026-03-08)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=PRO_UNIT3"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=PRO_UNIT3#PRO_UNIT3/2026-03-08/outage_end</id>
@@ -17,5 +24,40 @@
     <id>https://ercotbids.currenttech.energy/unit.html?unit=PRO_UNIT3#PRO_UNIT3/2026-02-27/outage_start</id>
     <updated>2026-10-24T00:00:00Z</updated>
     <summary>Outage began, lasting 8 days</summary>
+  </entry>
+  <entry>
+    <title>PRO: Minimum-energy offer stepped (2026-02-15)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=PRO"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=PRO#PRO/2026-02-15/dam_mingen_step</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $38 to $28/MWh ($8 to $8 against the fuel-cost line)</summary>
+  </entry>
+  <entry>
+    <title>PRO: Minimum-energy offer stepped (2026-02-03)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=PRO"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=PRO#PRO/2026-02-03/dam_mingen_step</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $54 to $34/MWh ($8 to $8 against the fuel-cost line)</summary>
+  </entry>
+  <entry>
+    <title>PRO: Minimum-energy offer stepped (2026-01-15)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=PRO"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=PRO#PRO/2026-01-15/dam_mingen_step</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $32 to $37/MWh ($8 to $8 against the fuel-cost line)</summary>
+  </entry>
+  <entry>
+    <title>PRO: Minimum-energy offer stepped (2025-12-27)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=PRO"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=PRO#PRO/2025-12-27/dam_mingen_step</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $43 to $31/MWh ($8 to $8 against the fuel-cost line)</summary>
+  </entry>
+  <entry>
+    <title>PRO: Minimum-energy offer stepped (2025-12-17)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=PRO"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=PRO#PRO/2025-12-17/dam_mingen_step</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $52 to $39/MWh ($7 to $8 against the fuel-cost line)</summary>
   </entry>
 </feed>

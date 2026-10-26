@@ -12,6 +12,76 @@
     <summary>Shut down for 11 h although a day-ahead award covered 100% of the window</summary>
   </entry>
   <entry>
+    <title>STEAM_ENGINE_1: Priced out of the day-ahead (2026-04-25)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=STEAM_ENGINE_1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=STEAM_ENGINE_1#STEAM_ENGINE_1/2026-04-25/dam_priced_out</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Priced out of the day-ahead: minimum energy at $74/MWh against a usual $31 for 1 day(s)</summary>
+  </entry>
+  <entry>
+    <title>STEAM_ENGINE_1: Priced out of the day-ahead (2026-04-25)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=STEAM_ENGINE_1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=STEAM_ENGINE_1#STEAM_ENGINE_1/2026-04-25/dam_priced_out</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Priced out of the day-ahead: minimum energy at $74/MWh against a usual $31 for 1 day(s)</summary>
+  </entry>
+  <entry>
+    <title>STEAM_ENGINE: Priced out of the day-ahead (2026-04-18)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=STEAM_ENGINE"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=STEAM_ENGINE#STEAM_ENGINE/2026-04-18/dam_priced_out</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Priced out of the day-ahead: minimum energy at $43/MWh against a usual $31 for 1 day(s)</summary>
+  </entry>
+  <entry>
+    <title>STEAM_ENGINE: Priced out of the day-ahead (2026-04-12)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=STEAM_ENGINE"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=STEAM_ENGINE#STEAM_ENGINE/2026-04-12/dam_priced_out</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Priced out of the day-ahead: minimum energy at $71/MWh against a usual $30 for 1 day(s)</summary>
+  </entry>
+  <entry>
+    <title>STEAM_ENGINE_1: Priced out of the day-ahead (2026-03-27)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=STEAM_ENGINE_1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=STEAM_ENGINE_1#STEAM_ENGINE_1/2026-03-27/dam_priced_out</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Priced out of the day-ahead: minimum energy at $65/MWh against a usual $37 for 1 day(s)</summary>
+  </entry>
+  <entry>
+    <title>STEAM_ENGINE_1: Priced out of the day-ahead (2026-03-27)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=STEAM_ENGINE_1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=STEAM_ENGINE_1#STEAM_ENGINE_1/2026-03-27/dam_priced_out</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Priced out of the day-ahead: minimum energy at $65/MWh against a usual $37 for 1 day(s)</summary>
+  </entry>
+  <entry>
+    <title>STEAM_ENGINE: Minimum-energy offer stepped (2026-03-19)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=STEAM_ENGINE"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=STEAM_ENGINE#STEAM_ENGINE/2026-03-19/dam_mingen_step</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $39 to $29/MWh ($9 to $0 against the fuel-cost line)</summary>
+  </entry>
+  <entry>
+    <title>STEAM_ENGINE: Priced out of the day-ahead (2026-02-25)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=STEAM_ENGINE"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=STEAM_ENGINE#STEAM_ENGINE/2026-02-25/dam_priced_out</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Priced out of the day-ahead: minimum energy at $58/MWh against a usual $41 for 1 day(s)</summary>
+  </entry>
+  <entry>
+    <title>STEAM_ENGINE_1: Priced out of the day-ahead (2026-02-22)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=STEAM_ENGINE_1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=STEAM_ENGINE_1#STEAM_ENGINE_1/2026-02-22/dam_priced_out</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Priced out of the day-ahead: minimum energy at $60/MWh against a usual $40 for 1 day(s)</summary>
+  </entry>
+  <entry>
+    <title>STEAM_ENGINE_1: Priced out of the day-ahead (2026-02-22)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=STEAM_ENGINE_1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=STEAM_ENGINE_1#STEAM_ENGINE_1/2026-02-22/dam_priced_out</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Priced out of the day-ahead: minimum energy at $60/MWh against a usual $40 for 1 day(s)</summary>
+  </entry>
+  <entry>
     <title>STEAM_ENGINE_1: Outage ended (2026-02-03)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=STEAM_ENGINE_1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=STEAM_ENGINE_1#STEAM_ENGINE_1/2026-02-03/outage_end</id>
@@ -24,5 +94,33 @@
     <id>https://ercotbids.currenttech.energy/unit.html?unit=STEAM_ENGINE_1#STEAM_ENGINE_1/2026-01-07/outage_start</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Outage began, lasting 27 days</summary>
+  </entry>
+  <entry>
+    <title>STEAM_ENGINE: Priced out of the day-ahead (2025-12-23)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=STEAM_ENGINE"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=STEAM_ENGINE#STEAM_ENGINE/2025-12-23/dam_priced_out</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Priced out of the day-ahead: minimum energy at $54/MWh against a usual $43 for 1 day(s)</summary>
+  </entry>
+  <entry>
+    <title>STEAM_ENGINE_1: Priced out of the day-ahead (2025-12-20)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=STEAM_ENGINE_1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=STEAM_ENGINE_1#STEAM_ENGINE_1/2025-12-20/dam_priced_out</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Priced out of the day-ahead: minimum energy at $54/MWh against a usual $41 for 2 day(s)</summary>
+  </entry>
+  <entry>
+    <title>STEAM_ENGINE_1: Priced out of the day-ahead (2025-12-20)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=STEAM_ENGINE_1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=STEAM_ENGINE_1#STEAM_ENGINE_1/2025-12-20/dam_priced_out</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Priced out of the day-ahead: minimum energy at $54/MWh against a usual $41 for 2 day(s)</summary>
+  </entry>
+  <entry>
+    <title>STEAM_ENGINE: Minimum-energy offer stepped (2025-12-14)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=STEAM_ENGINE"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=STEAM_ENGINE#STEAM_ENGINE/2025-12-14/dam_mingen_step</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $44 to $34/MWh (-$5 to -$2 against the fuel-cost line)</summary>
   </entry>
 </feed>

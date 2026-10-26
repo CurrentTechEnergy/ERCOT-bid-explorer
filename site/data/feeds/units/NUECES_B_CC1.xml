@@ -12,6 +12,34 @@
     <summary>Multi-day: off 1–7 days in 2026-04 to Always on when available in 2026-05</summary>
   </entry>
   <entry>
+    <title>NUECES_B_CC1: Stopped three-part offers (2026-04-23)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=NUECES_B_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=NUECES_B_CC1#NUECES_B_CC1/2026-04-23/dam_filing_off</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Stopped three-part offers: three-part offer to self-scheduled while on</summary>
+  </entry>
+  <entry>
+    <title>NUECES_B_CC1: Stopped three-part offers (2026-04-23)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=NUECES_B_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=NUECES_B_CC1#NUECES_B_CC1/2026-04-23/dam_filing_off</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Stopped three-part offers: three-part offer to self-scheduled while on</summary>
+  </entry>
+  <entry>
+    <title>NUECES_B_CC1: Started three-part offers (2026-03-30)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=NUECES_B_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=NUECES_B_CC1#NUECES_B_CC1/2026-03-30/dam_filing_on</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Started three-part offers: no three-part offer to three-part offer</summary>
+  </entry>
+  <entry>
+    <title>NUECES_B_CC1: Started three-part offers (2026-03-30)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=NUECES_B_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=NUECES_B_CC1#NUECES_B_CC1/2026-03-30/dam_filing_on</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Started three-part offers: no three-part offer to three-part offer</summary>
+  </entry>
+  <entry>
     <title>NUECES_B_CC1: Shut down after a long run (2026-03-29)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=NUECES_B_CC1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=NUECES_B_CC1#NUECES_B_CC1/2026-03-29/shutdown_new</id>
@@ -45,6 +73,20 @@
     <id>https://ercotbids.currenttech.energy/unit.html?unit=NUECES_B_CC1#NUECES_B_CC1/2026-01-29/outage_start</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Outage began, lasting 38 days</summary>
+  </entry>
+  <entry>
+    <title>NUECES_B_CC1: Priced out of the day-ahead (2026-01-29)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=NUECES_B_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=NUECES_B_CC1#NUECES_B_CC1/2026-01-29/dam_priced_out</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Priced out of the day-ahead: minimum energy at $53/MWh against a usual $35 for 1 day(s)</summary>
+  </entry>
+  <entry>
+    <title>NUECES_B_CC1: Minimum-energy offer stepped (2026-01-18)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=NUECES_B_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=NUECES_B_CC1#NUECES_B_CC1/2026-01-18/dam_mingen_step</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $35 to $40/MWh ($18 to $20 against the fuel-cost line)</summary>
   </entry>
   <entry>
     <title>NUECES_B_CC1: Timescale group changed (2026-01-01)</title>

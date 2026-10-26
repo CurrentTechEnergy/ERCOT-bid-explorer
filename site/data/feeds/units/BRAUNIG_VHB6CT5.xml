@@ -5,6 +5,62 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=BRAUNIG_VHB6CT5</id>
   <updated>2026-10-24T00:00:00Z</updated>
   <entry>
+    <title>BRAUNIG_VHB6: Minimum-energy offer stepped (2026-08-08)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=BRAUNIG_VHB6"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=BRAUNIG_VHB6#BRAUNIG_VHB6/2026-08-08/dam_mingen_step</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $15 to $21/MWh (-$10 to -$4 against the fuel-cost line)</summary>
+  </entry>
+  <entry>
+    <title>BRAUNIG_VHB6: Minimum-energy offer stepped (2026-08-01)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=BRAUNIG_VHB6"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=BRAUNIG_VHB6#BRAUNIG_VHB6/2026-08-01/dam_mingen_step</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $12 to $23/MWh (-$14 to -$2 against the fuel-cost line)</summary>
+  </entry>
+  <entry>
+    <title>BRAUNIG_VHB6: Minimum-energy offer stepped (2026-06-15)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=BRAUNIG_VHB6"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=BRAUNIG_VHB6#BRAUNIG_VHB6/2026-06-15/dam_mingen_step</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $18 to $12/MWh (-$12 to -$16 against the fuel-cost line)</summary>
+  </entry>
+  <entry>
+    <title>BRAUNIG_VHB6: Minimum-energy offer stepped (2026-06-05)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=BRAUNIG_VHB6"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=BRAUNIG_VHB6#BRAUNIG_VHB6/2026-06-05/dam_mingen_step</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $12 to $18/MWh (-$15 to -$12 against the fuel-cost line)</summary>
+  </entry>
+  <entry>
+    <title>BRAUNIG_VHB6CT5: Minimum-energy offer stepped (2026-04-16)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=BRAUNIG_VHB6CT5"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=BRAUNIG_VHB6CT5#BRAUNIG_VHB6CT5/2026-04-16/dam_mingen_step</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $18 to $12/MWh (-$9 to -$12 against the fuel-cost line)</summary>
+  </entry>
+  <entry>
+    <title>BRAUNIG_VHB6CT5: Minimum-energy offer stepped (2026-04-16)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=BRAUNIG_VHB6CT5"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=BRAUNIG_VHB6CT5#BRAUNIG_VHB6CT5/2026-04-16/dam_mingen_step</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $18 to $12/MWh (-$9 to -$12 against the fuel-cost line)</summary>
+  </entry>
+  <entry>
+    <title>BRAUNIG_VHB6CT5: Priced out of the day-ahead (2026-04-14)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=BRAUNIG_VHB6CT5"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=BRAUNIG_VHB6CT5#BRAUNIG_VHB6CT5/2026-04-14/dam_priced_out</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Priced out of the day-ahead: minimum energy at $34/MWh against a usual $19 for 1 day(s)</summary>
+  </entry>
+  <entry>
+    <title>BRAUNIG_VHB6CT5: Priced out of the day-ahead (2026-04-14)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=BRAUNIG_VHB6CT5"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=BRAUNIG_VHB6CT5#BRAUNIG_VHB6CT5/2026-04-14/dam_priced_out</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Priced out of the day-ahead: minimum energy at $34/MWh against a usual $19 for 1 day(s)</summary>
+  </entry>
+  <entry>
     <title>BRAUNIG_VHB6CT5: Bidding approach shifted (2026-02-26)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=BRAUNIG_VHB6CT5"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=BRAUNIG_VHB6CT5#BRAUNIG_VHB6CT5/2026-02-26/bidding</id>

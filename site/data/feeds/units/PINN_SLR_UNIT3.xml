@@ -5,6 +5,27 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=PINN_SLR_UNIT3</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
+    <title>PINN_SLR: Started day-ahead offers (2026-08-04)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=PINN_SLR"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=PINN_SLR#PINN_SLR/2026-08-04/dam_renew_on</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Started day-ahead offers: none to day-ahead curve</summary>
+  </entry>
+  <entry>
+    <title>PINN_SLR: Stopped day-ahead offers (2026-06-24)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=PINN_SLR"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=PINN_SLR#PINN_SLR/2026-06-24/dam_renew_off</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Stopped day-ahead offers: day-ahead curve to none</summary>
+  </entry>
+  <entry>
+    <title>PINN_SLR: Started day-ahead offers (2026-04-30)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=PINN_SLR"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=PINN_SLR#PINN_SLR/2026-04-30/dam_renew_on</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Started day-ahead offers: none to day-ahead curve</summary>
+  </entry>
+  <entry>
     <title>PINN_SLR: New floor (2025-11-22)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=PINN_SLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=PINN_SLR#PINN_SLR/2025-11-22/renew_floor_new</id>

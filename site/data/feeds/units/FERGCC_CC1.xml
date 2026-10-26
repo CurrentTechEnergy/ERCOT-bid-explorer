@@ -3,7 +3,7 @@
   <title>FERGCC_CC1: bidding and operating changes</title>
   <link href="https://ercotbids.currenttech.energy/unit.html?unit=FERGCC_CC1"/>
   <id>https://ercotbids.currenttech.energy/unit.html?unit=FERGCC_CC1</id>
-  <updated>2026-10-18T00:00:00Z</updated>
+  <updated>2026-10-26T00:00:00Z</updated>
   <entry>
     <title>FERGCC_CC1: Timescale group changed (2026-06-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=FERGCC_CC1"/>
@@ -40,10 +40,66 @@
     <summary>Daily, over 2 a week in 2026-03 to Always on when available in 2026-04</summary>
   </entry>
   <entry>
+    <title>FERGCC_CC1: Start-up cost changed (2026-03-06)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=FERGCC_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=FERGCC_CC1#FERGCC_CC1/2026-03-06/dam_start_change</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Start-up cost changed: hot start $11,373 to $15,378</summary>
+  </entry>
+  <entry>
+    <title>FERGCC_CC1: Minimum-energy offer stepped (2026-03-06)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=FERGCC_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=FERGCC_CC1#FERGCC_CC1/2026-03-06/dam_mingen_step</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $15 to $21/MWh ($0 to $0 against the fuel-cost line)</summary>
+  </entry>
+  <entry>
+    <title>FERGCC_CC1: Loss cutoff moved (2026-02-28)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=FERGCC_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=FERGCC_CC1#FERGCC_CC1/2026-02-28/cutoff</id>
+    <updated>2026-10-26T00:00:00Z</updated>
+    <summary>Loss cutoff $76 to $39 per MW of minimum output; the next month&#x27;s decisions confirm it (13 of 13 right against 9)</summary>
+  </entry>
+  <entry>
+    <title>FERGCC_CC1: Start-up cost changed (2026-02-27)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=FERGCC_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=FERGCC_CC1#FERGCC_CC1/2026-02-27/dam_start_change</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Start-up cost changed: hot start $9,874 to $12,929</summary>
+  </entry>
+  <entry>
+    <title>FERGCC_CC1: Priced out of the day-ahead (2026-01-31)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=FERGCC_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=FERGCC_CC1#FERGCC_CC1/2026-01-31/dam_priced_out</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Priced out of the day-ahead: minimum energy at $36/MWh against a usual $19 for 3 day(s)</summary>
+  </entry>
+  <entry>
+    <title>FERGCC_CC1: Stopped three-part offers (2026-01-22)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=FERGCC_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=FERGCC_CC1#FERGCC_CC1/2026-01-22/dam_filing_off</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Stopped three-part offers: three-part offer to self-scheduled while on</summary>
+  </entry>
+  <entry>
+    <title>FERGCC_CC1: Stopped three-part offers (2026-01-22)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=FERGCC_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=FERGCC_CC1#FERGCC_CC1/2026-01-22/dam_filing_off</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Stopped three-part offers: three-part offer to self-scheduled while on</summary>
+  </entry>
+  <entry>
     <title>FERGCC_CC1: Shut down despite a day-ahead award (2026-01-09)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=FERGCC_CC1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=FERGCC_CC1#FERGCC_CC1/2026-01-09/shutdown_award</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Shut down for 14 h although a day-ahead award covered 100% of the window</summary>
+  </entry>
+  <entry>
+    <title>FERGCC_CC1: Minimum-energy offer stepped (2026-01-03)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=FERGCC_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=FERGCC_CC1#FERGCC_CC1/2026-01-03/dam_mingen_step</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $23 to $17/MWh ($2 to $1 against the fuel-cost line)</summary>
   </entry>
 </feed>

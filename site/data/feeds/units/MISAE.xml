@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>MISAE: bidding and operating changes</title>
+  <link href="https://ercotbids.currenttech.energy/unit.html?unit=MISAE"/>
+  <id>https://ercotbids.currenttech.energy/unit.html?unit=MISAE</id>
+  <updated>2026-10-18T00:00:00Z</updated>
+  <entry>
+    <title>MISAE: Day-ahead floor changed (2026-04-24)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=MISAE"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=MISAE#MISAE/2026-04-24/dam_renew_floor</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Day-ahead floor changed: $16 to $21/MWh</summary>
+  </entry>
+  <entry>
+    <title>MISAE: Started day-ahead offers (2026-04-01)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=MISAE"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=MISAE#MISAE/2026-04-01/dam_renew_on</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Started day-ahead offers: none to day-ahead curve</summary>
+  </entry>
+</feed>

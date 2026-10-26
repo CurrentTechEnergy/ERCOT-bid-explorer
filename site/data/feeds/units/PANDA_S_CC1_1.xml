@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>PANDA_S_CC1_1: bidding and operating changes</title>
+  <link href="https://ercotbids.currenttech.energy/unit.html?unit=PANDA_S_CC1_1"/>
+  <id>https://ercotbids.currenttech.energy/unit.html?unit=PANDA_S_CC1_1</id>
+  <updated>2026-10-18T00:00:00Z</updated>
+  <entry>
+    <title>PANDA_S_CC1: Start-up cost changed (2026-03-12)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=PANDA_S_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=PANDA_S_CC1#PANDA_S_CC1/2026-03-12/dam_start_change</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Start-up cost changed: hot start $17,074 to $9,020</summary>
+  </entry>
+</feed>

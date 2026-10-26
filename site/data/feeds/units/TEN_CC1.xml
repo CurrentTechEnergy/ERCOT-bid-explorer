@@ -19,13 +19,6 @@
     <summary>Back from a 25-day outage</summary>
   </entry>
   <entry>
-    <title>TEN_CC1: Loss cutoff moved (2026-06-30)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=TEN_CC1"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=TEN_CC1#TEN_CC1/2026-06-30/cutoff</id>
-    <updated>2026-10-23T00:00:00Z</updated>
-    <summary>Loss cutoff $302 to $69 per MW of minimum output; the next month&#x27;s decisions are split (19 of 20 right against 19)</summary>
-  </entry>
-  <entry>
     <title>TEN_CC1: Outage started (2026-06-06)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=TEN_CC1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=TEN_CC1#TEN_CC1/2026-06-06/outage_start</id>
@@ -38,13 +31,6 @@
     <id>https://ercotbids.currenttech.energy/unit.html?unit=TEN_CC1#TEN_CC1/2026-06-01/group</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Multi-day: off 1–7 days in 2026-05 to Always on when available in 2026-06</summary>
-  </entry>
-  <entry>
-    <title>TEN_CC1: Loss cutoff moved (2026-05-31)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=TEN_CC1"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=TEN_CC1#TEN_CC1/2026-05-31/cutoff</id>
-    <updated>2026-10-23T00:00:00Z</updated>
-    <summary>Loss cutoff $302 to $136 per MW of minimum output; the next month&#x27;s decisions are split (5 of 5 right against 5)</summary>
   </entry>
   <entry>
     <title>TEN_CC1: Decision maker or QSE changed (2026-05-06)</title>

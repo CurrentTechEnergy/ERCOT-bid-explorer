@@ -3,7 +3,21 @@
   <title>FRONT_EC_CC1: bidding and operating changes</title>
   <link href="https://ercotbids.currenttech.energy/unit.html?unit=FRONT_EC_CC1"/>
   <id>https://ercotbids.currenttech.energy/unit.html?unit=FRONT_EC_CC1</id>
-  <updated>2026-10-23T00:00:00Z</updated>
+  <updated>2026-10-26T00:00:00Z</updated>
+  <entry>
+    <title>FRONT_EC_CC1: Stopped three-part offers (2026-08-13)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=FRONT_EC_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=FRONT_EC_CC1#FRONT_EC_CC1/2026-08-13/dam_filing_off</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Stopped three-part offers: three-part offer to self-scheduled while on</summary>
+  </entry>
+  <entry>
+    <title>FRONT_EC_CC1: Stopped three-part offers (2026-08-13)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=FRONT_EC_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=FRONT_EC_CC1#FRONT_EC_CC1/2026-08-13/dam_filing_off</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Stopped three-part offers: three-part offer to self-scheduled while on</summary>
+  </entry>
   <entry>
     <title>FRONT_EC_CC1: Timescale group changed (2026-08-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=FRONT_EC_CC1"/>
@@ -12,11 +26,95 @@
     <summary>Daily, under 1 shutdown a week in 2026-07 to Always on when available in 2026-08</summary>
   </entry>
   <entry>
+    <title>FRONT_EC_CC1: Minimum-energy offer stepped (2026-07-29)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=FRONT_EC_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=FRONT_EC_CC1#FRONT_EC_CC1/2026-07-29/dam_mingen_step</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $24 to $18/MWh ($6 to $1 against the fuel-cost line)</summary>
+  </entry>
+  <entry>
+    <title>FRONT_EC_CC1: Minimum-energy offer stepped (2026-07-10)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=FRONT_EC_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=FRONT_EC_CC1#FRONT_EC_CC1/2026-07-10/dam_mingen_step</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $22 to $16/MWh ($2 to -$1 against the fuel-cost line)</summary>
+  </entry>
+  <entry>
     <title>FRONT_EC_CC1: Loss cutoff moved (2026-06-30)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=FRONT_EC_CC1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=FRONT_EC_CC1#FRONT_EC_CC1/2026-06-30/cutoff</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Loss cutoff $0 to $58 per MW of minimum output; the next month&#x27;s decisions contradict it (10 of 12 right against 12)</summary>
+    <summary>Loss cutoff $0 to $31 per MW of minimum output; the next month&#x27;s decisions are split (6 of 7 right against 6)</summary>
+  </entry>
+  <entry>
+    <title>FRONT_EC_CC1: Stopped three-part offers (2026-06-09)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=FRONT_EC_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=FRONT_EC_CC1#FRONT_EC_CC1/2026-06-09/dam_filing_off</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Stopped three-part offers: three-part offer to self-scheduled while on</summary>
+  </entry>
+  <entry>
+    <title>FRONT_EC_CC1: Stopped three-part offers (2026-06-09)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=FRONT_EC_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=FRONT_EC_CC1#FRONT_EC_CC1/2026-06-09/dam_filing_off</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Stopped three-part offers: three-part offer to self-scheduled while on</summary>
+  </entry>
+  <entry>
+    <title>FRONT_EC_CC1: Start-up cost changed (2026-06-06)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=FRONT_EC_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=FRONT_EC_CC1#FRONT_EC_CC1/2026-06-06/dam_start_change</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Start-up cost changed: hot start $3,334 to $2,492</summary>
+  </entry>
+  <entry>
+    <title>FRONT_EC_CC1: Shut down despite a day-ahead award (2026-05-26)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=FRONT_EC_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=FRONT_EC_CC1#FRONT_EC_CC1/2026-05-26/shutdown_award</id>
+    <updated>2026-10-26T00:00:00Z</updated>
+    <summary>Shut down for 5 h although a day-ahead award covered 100% of the window</summary>
+  </entry>
+  <entry>
+    <title>FRONT_EC_CC1: Minimum-energy offer stepped (2026-05-25)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=FRONT_EC_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=FRONT_EC_CC1#FRONT_EC_CC1/2026-05-25/dam_mingen_step</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $27 to $21/MWh ($8 to $1 against the fuel-cost line)</summary>
+  </entry>
+  <entry>
+    <title>FRONT_EC_CC1: Minimum-energy offer stepped (2026-05-22)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=FRONT_EC_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=FRONT_EC_CC1#FRONT_EC_CC1/2026-05-22/dam_mingen_step</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $22 to $16/MWh ($4 to -$2 against the fuel-cost line)</summary>
+  </entry>
+  <entry>
+    <title>FRONT_EC_CC1: Minimum-energy offer stepped (2026-05-12)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=FRONT_EC_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=FRONT_EC_CC1#FRONT_EC_CC1/2026-05-12/dam_mingen_step</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $29 to $19/MWh ($9 to $1 against the fuel-cost line)</summary>
+  </entry>
+  <entry>
+    <title>FRONT_EC_CC1: Minimum-energy offer stepped (2026-05-07)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=FRONT_EC_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=FRONT_EC_CC1#FRONT_EC_CC1/2026-05-07/dam_mingen_step</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $27 to $22/MWh ($8 to $3 against the fuel-cost line)</summary>
+  </entry>
+  <entry>
+    <title>FRONT_EC_CC1: Started three-part offers (2026-05-07)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=FRONT_EC_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=FRONT_EC_CC1#FRONT_EC_CC1/2026-05-07/dam_filing_on</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Started three-part offers: no three-part offer to three-part offer</summary>
+  </entry>
+  <entry>
+    <title>FRONT_EC_CC1: Started three-part offers (2026-05-07)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=FRONT_EC_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=FRONT_EC_CC1#FRONT_EC_CC1/2026-05-07/dam_filing_on</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Started three-part offers: no three-part offer to three-part offer</summary>
   </entry>
   <entry>
     <title>FRONT_EC_CC1: Shut down after a long run (2026-05-06)</title>
@@ -40,31 +138,80 @@
     <summary>Outage began, lasting 31 days</summary>
   </entry>
   <entry>
-    <title>FRONT_EC_CC1: Shut down despite a day-ahead award (2026-03-28)</title>
+    <title>FRONT_EC_CC1: Shut down despite a day-ahead award (2026-03-19)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=FRONT_EC_CC1"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=FRONT_EC_CC1#FRONT_EC_CC1/2026-03-28/shutdown_award</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Shut down for 58 h although a day-ahead award covered 100% of the window</summary>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=FRONT_EC_CC1#FRONT_EC_CC1/2026-03-19/shutdown_award</id>
+    <updated>2026-10-26T00:00:00Z</updated>
+    <summary>Shut down for 82 h although a day-ahead award covered 100% of the window</summary>
   </entry>
   <entry>
-    <title>FRONT_EC_CC1: Shut down despite a day-ahead award (2026-03-24)</title>
+    <title>FRONT_EC_CC1: Minimum-energy offer stepped (2026-02-06)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=FRONT_EC_CC1"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=FRONT_EC_CC1#FRONT_EC_CC1/2026-03-24/shutdown_award</id>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=FRONT_EC_CC1#FRONT_EC_CC1/2026-02-06/dam_mingen_step</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Shut down for 59 h although a day-ahead award covered 100% of the window</summary>
+    <summary>Minimum-energy offer stepped: $25 to $30/MWh ($7 to $13 against the fuel-cost line)</summary>
   </entry>
   <entry>
-    <title>FRONT_EC_CC1: Shut down despite a day-ahead award (2025-12-19)</title>
+    <title>FRONT_EC_CC1: Stopped three-part offers (2026-01-24)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=FRONT_EC_CC1"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=FRONT_EC_CC1#FRONT_EC_CC1/2025-12-19/shutdown_award</id>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=FRONT_EC_CC1#FRONT_EC_CC1/2026-01-24/dam_filing_off</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Shut down for 6 h although a day-ahead award covered 100% of the window</summary>
+    <summary>Stopped three-part offers: three-part offer to self-scheduled while on</summary>
   </entry>
   <entry>
-    <title>FRONT_EC_CC1: Shut down despite a day-ahead award (2025-12-09)</title>
+    <title>FRONT_EC_CC1: Stopped three-part offers (2026-01-24)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=FRONT_EC_CC1"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=FRONT_EC_CC1#FRONT_EC_CC1/2025-12-09/shutdown_award</id>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=FRONT_EC_CC1#FRONT_EC_CC1/2026-01-24/dam_filing_off</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Shut down for 14 h although a day-ahead award covered 100% of the window</summary>
+    <summary>Stopped three-part offers: three-part offer to self-scheduled while on</summary>
+  </entry>
+  <entry>
+    <title>FRONT_EC_CC1: Priced out of the day-ahead (2026-01-22)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=FRONT_EC_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=FRONT_EC_CC1#FRONT_EC_CC1/2026-01-22/dam_priced_out</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Priced out of the day-ahead: minimum energy at $33/MWh against a usual $16 for 3 day(s)</summary>
+  </entry>
+  <entry>
+    <title>FRONT_EC_CC1: Start-up cost changed (2026-01-17)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=FRONT_EC_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=FRONT_EC_CC1#FRONT_EC_CC1/2026-01-17/dam_start_change</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Start-up cost changed: hot start $2,048 to $3,683</summary>
+  </entry>
+  <entry>
+    <title>FRONT_EC_CC1: Minimum-energy offer stepped (2026-01-15)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=FRONT_EC_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=FRONT_EC_CC1#FRONT_EC_CC1/2026-01-15/dam_mingen_step</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $15 to $26/MWh (-$2 to $6 against the fuel-cost line)</summary>
+  </entry>
+  <entry>
+    <title>FRONT_EC_CC1: Start-up cost changed (2026-01-08)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=FRONT_EC_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=FRONT_EC_CC1#FRONT_EC_CC1/2026-01-08/dam_start_change</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Start-up cost changed: hot start $2,906 to $6,350</summary>
+  </entry>
+  <entry>
+    <title>FRONT_EC_CC1: Start-up cost changed (2026-01-01)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=FRONT_EC_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=FRONT_EC_CC1#FRONT_EC_CC1/2026-01-01/dam_start_change</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Start-up cost changed: hot start $2,746 to $1,858</summary>
+  </entry>
+  <entry>
+    <title>FRONT_EC_CC1: Start-up cost changed (2025-12-25)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=FRONT_EC_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=FRONT_EC_CC1#FRONT_EC_CC1/2025-12-25/dam_start_change</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Start-up cost changed: hot start $2,937 to $1,984</summary>
+  </entry>
+  <entry>
+    <title>FRONT_EC_CC1: Minimum-energy offer stepped (2025-12-25)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=FRONT_EC_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=FRONT_EC_CC1#FRONT_EC_CC1/2025-12-25/dam_mingen_step</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $22 to $16/MWh (-$2 to $0 against the fuel-cost line)</summary>
   </entry>
 </feed>

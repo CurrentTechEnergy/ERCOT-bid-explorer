@@ -5,10 +5,38 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=WCPP_CC1_4</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
+    <title>WCPP_CC1: Minimum-energy offer stepped (2026-08-17)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=WCPP_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=WCPP_CC1#WCPP_CC1/2026-08-17/dam_mingen_step</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $22 to $15/MWh ($5 to -$2 against the fuel-cost line)</summary>
+  </entry>
+  <entry>
+    <title>WCPP_CC1: Minimum-energy offer stepped (2026-07-16)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=WCPP_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=WCPP_CC1#WCPP_CC1/2026-07-16/dam_mingen_step</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $17 to $23/MWh (-$1 to $5 against the fuel-cost line)</summary>
+  </entry>
+  <entry>
+    <title>WCPP_CC1: Minimum-energy offer stepped (2026-06-07)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=WCPP_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=WCPP_CC1#WCPP_CC1/2026-06-07/dam_mingen_step</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $22 to $28/MWh ($2 to $7 against the fuel-cost line)</summary>
+  </entry>
+  <entry>
     <title>WCPP_CC1_4: Bidding approach shifted (2026-01-24)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=WCPP_CC1_4"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=WCPP_CC1_4#WCPP_CC1_4/2026-01-24/bidding</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Offer price vs peer median: -$6 to $7/MWh</summary>
+  </entry>
+  <entry>
+    <title>WCPP_CC1: Priced out of the day-ahead (2026-01-22)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=WCPP_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=WCPP_CC1#WCPP_CC1/2026-01-22/dam_priced_out</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Priced out of the day-ahead: minimum energy at $37/MWh against a usual $26 for 1 day(s)</summary>
   </entry>
 </feed>

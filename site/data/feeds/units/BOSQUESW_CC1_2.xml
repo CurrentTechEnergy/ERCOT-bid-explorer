@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>BOSQUESW_CC1_2: bidding and operating changes</title>
+  <link href="https://ercotbids.currenttech.energy/unit.html?unit=BOSQUESW_CC1_2"/>
+  <id>https://ercotbids.currenttech.energy/unit.html?unit=BOSQUESW_CC1_2</id>
+  <updated>2026-10-18T00:00:00Z</updated>
+  <entry>
+    <title>BOSQUESW_CC1: Minimum-energy offer stepped (2026-06-24)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=BOSQUESW_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=BOSQUESW_CC1#BOSQUESW_CC1/2026-06-24/dam_mingen_step</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $11 to $0/MWh (-$9 to -$21 against the fuel-cost line)</summary>
+  </entry>
+  <entry>
+    <title>BOSQUESW_CC1: Minimum-energy offer stepped (2026-06-17)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=BOSQUESW_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=BOSQUESW_CC1#BOSQUESW_CC1/2026-06-17/dam_mingen_step</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $23 to $0/MWh ($3 to -$20 against the fuel-cost line)</summary>
+  </entry>
+</feed>

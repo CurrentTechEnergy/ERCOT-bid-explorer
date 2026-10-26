@@ -3,19 +3,33 @@
   <title>COLETO_COLETOG1: bidding and operating changes</title>
   <link href="https://ercotbids.currenttech.energy/unit.html?unit=COLETO_COLETOG1"/>
   <id>https://ercotbids.currenttech.energy/unit.html?unit=COLETO_COLETOG1</id>
-  <updated>2026-10-18T00:00:00Z</updated>
+  <updated>2026-10-26T00:00:00Z</updated>
   <entry>
-    <title>COLETO_COLETOG1: Outage ended (2026-02-14)</title>
+    <title>COLETO_COLETOG1: Outage ended (2026-03-16)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=COLETO_COLETOG1"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=COLETO_COLETOG1#COLETO_COLETOG1/2026-02-14/outage_end</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Back from a 8-day outage</summary>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=COLETO_COLETOG1#COLETO_COLETOG1/2026-03-16/outage_end</id>
+    <updated>2026-10-26T00:00:00Z</updated>
+    <summary>Back from a 9-day outage</summary>
+  </entry>
+  <entry>
+    <title>COLETO_COLETOG1: Outage started (2026-03-08)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=COLETO_COLETOG1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=COLETO_COLETOG1#COLETO_COLETOG1/2026-03-08/outage_start</id>
+    <updated>2026-10-26T00:00:00Z</updated>
+    <summary>Outage began, lasting 9 days</summary>
+  </entry>
+  <entry>
+    <title>COLETO_COLETOG1: Outage ended (2026-03-08)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=COLETO_COLETOG1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=COLETO_COLETOG1#COLETO_COLETOG1/2026-03-08/outage_end</id>
+    <updated>2026-10-26T00:00:00Z</updated>
+    <summary>Back from a 29-day outage</summary>
   </entry>
   <entry>
     <title>COLETO_COLETOG1: Outage started (2026-02-07)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=COLETO_COLETOG1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=COLETO_COLETOG1#COLETO_COLETOG1/2026-02-07/outage_start</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Outage began, lasting 8 days</summary>
+    <summary>Outage began, lasting 29 days</summary>
   </entry>
 </feed>

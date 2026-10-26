@@ -5,6 +5,34 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=BCATWIND_WIND_1</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
+    <title>BCATWIND_WIND_1: Day-ahead floor changed (2026-08-20)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=BCATWIND_WIND_1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=BCATWIND_WIND_1#BCATWIND_WIND_1/2026-08-20/dam_renew_floor</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Day-ahead floor changed: $21 to $26/MWh</summary>
+  </entry>
+  <entry>
+    <title>BCATWIND_WIND_1: Day-ahead floor changed (2026-08-20)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=BCATWIND_WIND_1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=BCATWIND_WIND_1#BCATWIND_WIND_1/2026-08-20/dam_renew_floor</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Day-ahead floor changed: $21 to $26/MWh</summary>
+  </entry>
+  <entry>
+    <title>BCATWIND_WIND_1: Day-ahead floor changed (2026-08-04)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=BCATWIND_WIND_1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=BCATWIND_WIND_1#BCATWIND_WIND_1/2026-08-04/dam_renew_floor</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Day-ahead floor changed: $28 to $21/MWh</summary>
+  </entry>
+  <entry>
+    <title>BCATWIND_WIND_1: Day-ahead floor changed (2026-08-04)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=BCATWIND_WIND_1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=BCATWIND_WIND_1#BCATWIND_WIND_1/2026-08-04/dam_renew_floor</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Day-ahead floor changed: $28 to $21/MWh</summary>
+  </entry>
+  <entry>
     <title>BCATWIND: New floor (2026-07-13)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=BCATWIND"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=BCATWIND#BCATWIND/2026-07-13/renew_floor_new</id>

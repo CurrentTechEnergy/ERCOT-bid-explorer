@@ -5,11 +5,32 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=RADN_SLR_UNIT2</id>
   <updated>2026-10-24T00:00:00Z</updated>
   <entry>
+    <title>RADN_SLR: Day-ahead floor changed (2026-05-12)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=RADN_SLR"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=RADN_SLR#RADN_SLR/2026-05-12/dam_renew_floor</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Day-ahead floor changed: $4 to -$2/MWh</summary>
+  </entry>
+  <entry>
     <title>RADN: Decision maker or QSE changed (2026-04-17)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=RADN"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=RADN#RADN/2026-04-17/control</id>
     <updated>2026-10-24T00:00:00Z</updated>
     <summary>Offers now decided by IPX POWER USA LLC, was ERCOT code YIPRAD</summary>
+  </entry>
+  <entry>
+    <title>RADN_SLR: Day-ahead floor changed (2026-04-03)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=RADN_SLR"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=RADN_SLR#RADN_SLR/2026-04-03/dam_renew_floor</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Day-ahead floor changed: $8 to $0/MWh</summary>
+  </entry>
+  <entry>
+    <title>RADN_SLR: Day-ahead floor changed (2026-02-17)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=RADN_SLR"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=RADN_SLR#RADN_SLR/2026-02-17/dam_renew_floor</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Day-ahead floor changed: $17 to $0/MWh</summary>
   </entry>
   <entry>
     <title>RADN_SLR: Episode (2025-09-01)</title>

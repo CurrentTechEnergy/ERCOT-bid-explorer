@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>TXCTY_CC1_8: bidding and operating changes</title>
+  <link href="https://ercotbids.currenttech.energy/unit.html?unit=TXCTY_CC1_8"/>
+  <id>https://ercotbids.currenttech.energy/unit.html?unit=TXCTY_CC1_8</id>
+  <updated>2026-10-18T00:00:00Z</updated>
+  <entry>
+    <title>TXCTY_CC1: Start-up cost changed (2026-07-07)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=TXCTY_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=TXCTY_CC1#TXCTY_CC1/2026-07-07/dam_start_change</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Start-up cost changed: hot start $3,960 to $7,254</summary>
+  </entry>
+  <entry>
+    <title>TXCTY_CC1: Minimum-energy offer stepped (2026-07-07)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=TXCTY_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=TXCTY_CC1#TXCTY_CC1/2026-07-07/dam_mingen_step</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $7 to $1/MWh (-$10 to -$19 against the fuel-cost line)</summary>
+  </entry>
+  <entry>
+    <title>TXCTY_CC1: Start-up cost changed (2026-06-30)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=TXCTY_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=TXCTY_CC1#TXCTY_CC1/2026-06-30/dam_start_change</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Start-up cost changed: hot start $655 to $7,254</summary>
+  </entry>
+  <entry>
+    <title>TXCTY_CC1: Minimum-energy offer stepped (2026-06-30)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=TXCTY_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=TXCTY_CC1#TXCTY_CC1/2026-06-30/dam_mingen_step</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $16 to $1/MWh ($1 to -$19 against the fuel-cost line)</summary>
+  </entry>
+  <entry>
+    <title>TXCTY_CC1: Minimum-energy offer stepped (2026-02-10)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=TXCTY_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=TXCTY_CC1#TXCTY_CC1/2026-02-10/dam_mingen_step</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $9 to $17/MWh (-$10 to $1 against the fuel-cost line)</summary>
+  </entry>
+  <entry>
+    <title>TXCTY_CC1: Start-up cost changed (2026-02-03)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=TXCTY_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=TXCTY_CC1#TXCTY_CC1/2026-02-03/dam_start_change</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Start-up cost changed: hot start $1,314 to $675</summary>
+  </entry>
+  <entry>
+    <title>TXCTY_CC1: Minimum-energy offer stepped (2026-02-03)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=TXCTY_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=TXCTY_CC1#TXCTY_CC1/2026-02-03/dam_mingen_step</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $3 to $17/MWh (-$32 to -$1 against the fuel-cost line)</summary>
+  </entry>
+</feed>

@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>HAYSEN_HAYSEN: bidding and operating changes</title>
+  <link href="https://ercotbids.currenttech.energy/unit.html?unit=HAYSEN_HAYSEN"/>
+  <id>https://ercotbids.currenttech.energy/unit.html?unit=HAYSEN_HAYSEN</id>
+  <updated>2026-10-18T00:00:00Z</updated>
+  <entry>
+    <title>HAYSEN_HAYSEN: Minimum-energy offer stepped (2026-08-17)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=HAYSEN_HAYSEN"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=HAYSEN_HAYSEN#HAYSEN_HAYSEN/2026-08-17/dam_mingen_step</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $22 to $15/MWh (-$3 to -$10 against the fuel-cost line)</summary>
+  </entry>
+  <entry>
+    <title>HAYSEN_HAYSEN: Minimum-energy offer stepped (2026-07-18)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=HAYSEN_HAYSEN"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=HAYSEN_HAYSEN#HAYSEN_HAYSEN/2026-07-18/dam_mingen_step</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $16 to $1/MWh (-$10 to -$25 against the fuel-cost line)</summary>
+  </entry>
+  <entry>
+    <title>HAYSEN_HAYSEN: Minimum-energy offer stepped (2026-03-28)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=HAYSEN_HAYSEN"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=HAYSEN_HAYSEN#HAYSEN_HAYSEN/2026-03-28/dam_mingen_step</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $27 to $22/MWh (-$1 to -$5 against the fuel-cost line)</summary>
+  </entry>
+  <entry>
+    <title>HAYSEN_HAYSEN: Priced out of the day-ahead (2026-02-02)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=HAYSEN_HAYSEN"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=HAYSEN_HAYSEN#HAYSEN_HAYSEN/2026-02-02/dam_priced_out</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Priced out of the day-ahead: minimum energy at $30/MWh against a usual $8 for 4 day(s)</summary>
+  </entry>
+  <entry>
+    <title>HAYSEN_HAYSEN: Priced out of the day-ahead (2026-01-29)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=HAYSEN_HAYSEN"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=HAYSEN_HAYSEN#HAYSEN_HAYSEN/2026-01-29/dam_priced_out</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Priced out of the day-ahead: minimum energy at $41/MWh against a usual $24 for 4 day(s)</summary>
+  </entry>
+  <entry>
+    <title>HAYSEN_HAYSEN: Minimum-energy offer stepped (2025-12-26)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=HAYSEN_HAYSEN"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=HAYSEN_HAYSEN#HAYSEN_HAYSEN/2025-12-26/dam_mingen_step</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $12 to $5/MWh (-$23 to -$18 against the fuel-cost line)</summary>
+  </entry>
+  <entry>
+    <title>HAYSEN_HAYSEN: Minimum-energy offer stepped (2025-12-15)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=HAYSEN_HAYSEN"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=HAYSEN_HAYSEN#HAYSEN_HAYSEN/2025-12-15/dam_mingen_step</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $39 to $29/MWh (-$8 to -$5 against the fuel-cost line)</summary>
+  </entry>
+</feed>

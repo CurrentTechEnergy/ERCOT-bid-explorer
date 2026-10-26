@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>FRNYPP_CC1_4: bidding and operating changes</title>
+  <link href="https://ercotbids.currenttech.energy/unit.html?unit=FRNYPP_CC1_4"/>
+  <id>https://ercotbids.currenttech.energy/unit.html?unit=FRNYPP_CC1_4</id>
+  <updated>2026-10-18T00:00:00Z</updated>
+  <entry>
+    <title>FRNYPP_CC1: Minimum-energy offer stepped (2026-02-09)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=FRNYPP_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=FRNYPP_CC1#FRNYPP_CC1/2026-02-09/dam_mingen_step</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $33 to $25/MWh ($11 to $10 against the fuel-cost line)</summary>
+  </entry>
+  <entry>
+    <title>FRNYPP_CC1: Minimum-energy offer stepped (2026-02-02)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=FRNYPP_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=FRNYPP_CC1#FRNYPP_CC1/2026-02-02/dam_mingen_step</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $36 to $28/MWh ($4 to $10 against the fuel-cost line)</summary>
+  </entry>
+  <entry>
+    <title>FRNYPP_CC1: Minimum-energy offer stepped (2025-12-14)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=FRNYPP_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=FRNYPP_CC1#FRNYPP_CC1/2025-12-14/dam_mingen_step</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $37 to $29/MWh ($5 to $5 against the fuel-cost line)</summary>
+  </entry>
+</feed>

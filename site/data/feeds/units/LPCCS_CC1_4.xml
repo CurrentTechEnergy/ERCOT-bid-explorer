@@ -5,10 +5,31 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=LPCCS_CC1_4</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
+    <title>LPCCS_CC1: Minimum-energy offer stepped (2026-08-20)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=LPCCS_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=LPCCS_CC1#LPCCS_CC1/2026-08-20/dam_mingen_step</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $20 to $15/MWh ($3 to -$2 against the fuel-cost line)</summary>
+  </entry>
+  <entry>
+    <title>LPCCS_CC1: Minimum-energy offer stepped (2026-02-09)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=LPCCS_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=LPCCS_CC1#LPCCS_CC1/2026-02-09/dam_mingen_step</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $31 to $24/MWh ($10 to $9 against the fuel-cost line)</summary>
+  </entry>
+  <entry>
     <title>LPCCS_CC1_4: Bidding approach shifted (2026-01-31)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=LPCCS_CC1_4"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=LPCCS_CC1_4#LPCCS_CC1_4/2026-01-31/bidding</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Offer price vs peer median: -$14 to -$2/MWh</summary>
+  </entry>
+  <entry>
+    <title>LPCCS_CC1: Minimum-energy offer stepped (2025-12-14)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=LPCCS_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=LPCCS_CC1#LPCCS_CC1/2025-12-14/dam_mingen_step</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $38 to $31/MWh ($6 to $7 against the fuel-cost line)</summary>
   </entry>
 </feed>

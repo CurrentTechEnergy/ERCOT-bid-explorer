@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>OLINGR_OLIN: bidding and operating changes</title>
+  <link href="https://ercotbids.currenttech.energy/unit.html?unit=OLINGR_OLIN"/>
+  <id>https://ercotbids.currenttech.energy/unit.html?unit=OLINGR_OLIN</id>
+  <updated>2026-10-18T00:00:00Z</updated>
+  <entry>
+    <title>OLINGR_OLIN: Minimum-energy offer stepped (2026-07-12)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=OLINGR_OLIN"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=OLINGR_OLIN#OLINGR_OLIN/2026-07-12/dam_mingen_step</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $87 to $78/MWh ($58 to $52 against the fuel-cost line)</summary>
+  </entry>
+  <entry>
+    <title>OLINGR_OLIN: Minimum-energy offer stepped (2026-03-05)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=OLINGR_OLIN"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=OLINGR_OLIN#OLINGR_OLIN/2026-03-05/dam_mingen_step</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $78 to $84/MWh ($59 to $57 against the fuel-cost line)</summary>
+  </entry>
+  <entry>
+    <title>OLINGR_OLIN: Minimum-energy offer stepped (2026-02-17)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=OLINGR_OLIN"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=OLINGR_OLIN#OLINGR_OLIN/2026-02-17/dam_mingen_step</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $84 to $78/MWh ($60 to $59 against the fuel-cost line)</summary>
+  </entry>
+  <entry>
+    <title>OLINGR_OLIN: Stopped three-part offers (2026-01-24)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=OLINGR_OLIN"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=OLINGR_OLIN#OLINGR_OLIN/2026-01-24/dam_filing_off</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Stopped three-part offers: three-part offer to self-scheduled while on</summary>
+  </entry>
+  <entry>
+    <title>OLINGR_OLIN: Stopped three-part offers (2026-01-24)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=OLINGR_OLIN"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=OLINGR_OLIN#OLINGR_OLIN/2026-01-24/dam_filing_off</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Stopped three-part offers: three-part offer to self-scheduled while on</summary>
+  </entry>
+</feed>

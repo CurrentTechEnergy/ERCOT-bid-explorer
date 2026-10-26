@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>CHE_CC1_7: bidding and operating changes</title>
+  <link href="https://ercotbids.currenttech.energy/unit.html?unit=CHE_CC1_7"/>
+  <id>https://ercotbids.currenttech.energy/unit.html?unit=CHE_CC1_7</id>
+  <updated>2026-10-18T00:00:00Z</updated>
+  <entry>
+    <title>CHE_CC1: Minimum-energy offer stepped (2026-08-13)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=CHE_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=CHE_CC1#CHE_CC1/2026-08-13/dam_mingen_step</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $1 to $10/MWh (-$16 to -$7 against the fuel-cost line)</summary>
+  </entry>
+  <entry>
+    <title>CHE_CC1: Start-up cost changed (2026-04-17)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=CHE_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=CHE_CC1#CHE_CC1/2026-04-17/dam_start_change</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Start-up cost changed: hot start $4,840 to $9,161</summary>
+  </entry>
+  <entry>
+    <title>CHE_CC1: Start-up cost changed (2026-04-10)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=CHE_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=CHE_CC1#CHE_CC1/2026-04-10/dam_start_change</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Start-up cost changed: hot start $742 to $8,946</summary>
+  </entry>
+  <entry>
+    <title>CHE_CC1: Start-up cost changed (2026-02-03)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=CHE_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=CHE_CC1#CHE_CC1/2026-02-03/dam_start_change</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Start-up cost changed: hot start $1,121 to $720</summary>
+  </entry>
+</feed>

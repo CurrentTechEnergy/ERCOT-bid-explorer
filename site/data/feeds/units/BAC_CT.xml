@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>BAC_CT: bidding and operating changes</title>
+  <link href="https://ercotbids.currenttech.energy/unit.html?unit=BAC_CT"/>
+  <id>https://ercotbids.currenttech.energy/unit.html?unit=BAC_CT</id>
+  <updated>2026-10-18T00:00:00Z</updated>
+  <entry>
+    <title>BAC_CT: Minimum-energy offer stepped (2026-07-30)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=BAC_CT"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=BAC_CT#BAC_CT/2026-07-30/dam_mingen_step</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $69 to $63/MWh ($42 to $39 against the fuel-cost line)</summary>
+  </entry>
+  <entry>
+    <title>BAC_CT: Minimum-energy offer stepped (2026-07-11)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=BAC_CT"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=BAC_CT#BAC_CT/2026-07-11/dam_mingen_step</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $73 to $64/MWh ($44 to $38 against the fuel-cost line)</summary>
+  </entry>
+  <entry>
+    <title>BAC_CT: Minimum-energy offer stepped (2026-06-02)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=BAC_CT"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=BAC_CT#BAC_CT/2026-06-02/dam_mingen_step</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $66 to $75/MWh ($39 to $45 against the fuel-cost line)</summary>
+  </entry>
+  <entry>
+    <title>BAC_CT: Minimum-energy offer stepped (2026-05-30)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=BAC_CT"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=BAC_CT#BAC_CT/2026-05-30/dam_mingen_step</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $66 to $72/MWh ($39 to $43 against the fuel-cost line)</summary>
+  </entry>
+  <entry>
+    <title>BAC_CT: Minimum-energy offer stepped (2026-03-06)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=BAC_CT"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=BAC_CT#BAC_CT/2026-03-06/dam_mingen_step</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $58 to $73/MWh ($38 to $44 against the fuel-cost line)</summary>
+  </entry>
+  <entry>
+    <title>BAC_CT: Minimum-energy offer stepped (2026-02-14)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=BAC_CT"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=BAC_CT#BAC_CT/2026-02-14/dam_mingen_step</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $64 to $55/MWh ($39 to $35 against the fuel-cost line)</summary>
+  </entry>
+  <entry>
+    <title>BAC_CT: Minimum-energy offer stepped (2026-01-13)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=BAC_CT"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=BAC_CT#BAC_CT/2026-01-13/dam_mingen_step</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $56 to $62/MWh ($32 to $33 against the fuel-cost line)</summary>
+  </entry>
+</feed>

@@ -3,7 +3,35 @@
   <title>WCPP_CC1: bidding and operating changes</title>
   <link href="https://ercotbids.currenttech.energy/unit.html?unit=WCPP_CC1"/>
   <id>https://ercotbids.currenttech.energy/unit.html?unit=WCPP_CC1</id>
-  <updated>2026-10-23T00:00:00Z</updated>
+  <updated>2026-10-26T00:00:00Z</updated>
+  <entry>
+    <title>WCPP_CC1: Minimum-energy offer stepped (2026-08-17)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=WCPP_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=WCPP_CC1#WCPP_CC1/2026-08-17/dam_mingen_step</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $22 to $15/MWh ($5 to -$2 against the fuel-cost line)</summary>
+  </entry>
+  <entry>
+    <title>WCPP_CC1: Minimum-energy offer stepped (2026-07-16)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=WCPP_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=WCPP_CC1#WCPP_CC1/2026-07-16/dam_mingen_step</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $17 to $23/MWh (-$1 to $5 against the fuel-cost line)</summary>
+  </entry>
+  <entry>
+    <title>WCPP_CC1: Shut down despite a day-ahead award (2026-06-23)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=WCPP_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=WCPP_CC1#WCPP_CC1/2026-06-23/shutdown_award</id>
+    <updated>2026-10-26T00:00:00Z</updated>
+    <summary>Shut down for 4 h although a day-ahead award covered 100% of the window</summary>
+  </entry>
+  <entry>
+    <title>WCPP_CC1: Minimum-energy offer stepped (2026-06-07)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=WCPP_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=WCPP_CC1#WCPP_CC1/2026-06-07/dam_mingen_step</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $22 to $28/MWh ($2 to $7 against the fuel-cost line)</summary>
+  </entry>
   <entry>
     <title>WCPP_CC1: Timescale group changed (2026-05-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=WCPP_CC1"/>
@@ -33,10 +61,52 @@
     <summary>Daily, over 2 a week in 2026-03 to Multi-day: off 1–7 days in 2026-04</summary>
   </entry>
   <entry>
-    <title>WCPP_CC1: Shut down despite a day-ahead award (2026-03-28)</title>
+    <title>WCPP_CC1: Minimum-energy offer stepped (2026-02-19)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=WCPP_CC1"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=WCPP_CC1#WCPP_CC1/2026-03-28/shutdown_award</id>
-    <updated>2026-10-23T00:00:00Z</updated>
-    <summary>Shut down for 64 h although a day-ahead award covered 100% of the window</summary>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=WCPP_CC1#WCPP_CC1/2026-02-19/dam_mingen_step</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $31 to $25/MWh ($15 to $11 against the fuel-cost line)</summary>
+  </entry>
+  <entry>
+    <title>WCPP_CC1: Shut down despite a day-ahead award (2026-01-23)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=WCPP_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=WCPP_CC1#WCPP_CC1/2026-01-23/shutdown_award</id>
+    <updated>2026-10-26T00:00:00Z</updated>
+    <summary>Shut down for 7 h although a day-ahead award covered 100% of the window</summary>
+  </entry>
+  <entry>
+    <title>WCPP_CC1: Priced out of the day-ahead (2026-01-22)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=WCPP_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=WCPP_CC1#WCPP_CC1/2026-01-22/dam_priced_out</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Priced out of the day-ahead: minimum energy at $37/MWh against a usual $26 for 1 day(s)</summary>
+  </entry>
+  <entry>
+    <title>WCPP_CC1: Shut down despite a day-ahead award (2026-01-20)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=WCPP_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=WCPP_CC1#WCPP_CC1/2026-01-20/shutdown_award</id>
+    <updated>2026-10-26T00:00:00Z</updated>
+    <summary>Shut down for 5 h although a day-ahead award covered 100% of the window</summary>
+  </entry>
+  <entry>
+    <title>WCPP_CC1: Minimum-energy offer stepped (2026-01-06)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=WCPP_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=WCPP_CC1#WCPP_CC1/2026-01-06/dam_mingen_step</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $32 to $27/MWh ($13 to $10 against the fuel-cost line)</summary>
+  </entry>
+  <entry>
+    <title>WCPP_CC1: Shut down despite a day-ahead award (2025-12-15)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=WCPP_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=WCPP_CC1#WCPP_CC1/2025-12-15/shutdown_award</id>
+    <updated>2026-10-26T00:00:00Z</updated>
+    <summary>Shut down for 5 h although a day-ahead award covered 100% of the window</summary>
+  </entry>
+  <entry>
+    <title>WCPP_CC1: Minimum-energy offer stepped (2025-12-15)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=WCPP_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=WCPP_CC1#WCPP_CC1/2025-12-15/dam_mingen_step</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $40 to $33/MWh ($8 to $10 against the fuel-cost line)</summary>
   </entry>
 </feed>

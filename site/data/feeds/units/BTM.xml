@@ -5,10 +5,59 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=BTM</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
+    <title>BTM: Started three-part offers (2026-04-10)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=BTM"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=BTM#BTM/2026-04-10/dam_filing_on</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Started three-part offers: no three-part offer to three-part offer</summary>
+  </entry>
+  <entry>
+    <title>BTM: Started three-part offers (2026-04-10)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=BTM"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=BTM#BTM/2026-04-10/dam_filing_on</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Started three-part offers: no three-part offer to three-part offer</summary>
+  </entry>
+  <entry>
     <title>BTM: Decision maker or QSE changed (2026-04-09)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=BTM"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=BTM#BTM/2026-04-09/control</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Offers now decided by SOUTH TEXAS ELECTRIC CO OP INC, was ERCOT code YWATTB, ERCOT code YWATTX</summary>
+  </entry>
+  <entry>
+    <title>BTM: Minimum-energy offer stepped (2026-02-06)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=BTM"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=BTM#BTM/2026-02-06/dam_mingen_step</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $57 to $34/MWh ($7 to $9 against the fuel-cost line)</summary>
+  </entry>
+  <entry>
+    <title>BTM: Minimum-energy offer stepped (2026-01-14)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=BTM"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=BTM#BTM/2026-01-14/dam_mingen_step</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $33 to $38/MWh ($9 to $9 against the fuel-cost line)</summary>
+  </entry>
+  <entry>
+    <title>BTM: Minimum-energy offer stepped (2026-01-01)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=BTM"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=BTM#BTM/2026-01-01/dam_mingen_step</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $40 to $32/MWh ($9 to $9 against the fuel-cost line)</summary>
+  </entry>
+  <entry>
+    <title>BTM: Minimum-energy offer stepped (2025-12-25)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=BTM"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=BTM#BTM/2025-12-25/dam_mingen_step</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $43 to $32/MWh ($8 to $9 against the fuel-cost line)</summary>
+  </entry>
+  <entry>
+    <title>BTM: Minimum-energy offer stepped (2025-12-17)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=BTM"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=BTM#BTM/2025-12-17/dam_mingen_step</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $53 to $40/MWh ($7 to $9 against the fuel-cost line)</summary>
   </entry>
 </feed>

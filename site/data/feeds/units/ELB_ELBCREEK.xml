@@ -5,6 +5,20 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=ELB_ELBCREEK</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
+    <title>ELB_ELBCREEK: Stopped day-ahead offers (2026-06-30)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=ELB_ELBCREEK"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=ELB_ELBCREEK#ELB_ELBCREEK/2026-06-30/dam_renew_off</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Stopped day-ahead offers: day-ahead curve to none</summary>
+  </entry>
+  <entry>
+    <title>ELB_ELBCREEK: Stopped day-ahead offers (2026-06-30)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=ELB_ELBCREEK"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=ELB_ELBCREEK#ELB_ELBCREEK/2026-06-30/dam_renew_off</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Stopped day-ahead offers: day-ahead curve to none</summary>
+  </entry>
+  <entry>
     <title>ELB_ELBCREEK: New floor (2026-03-11)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=ELB_ELBCREEK"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=ELB_ELBCREEK#ELB_ELBCREEK/2026-03-11/renew_floor_new</id>

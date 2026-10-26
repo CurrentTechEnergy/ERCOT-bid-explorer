@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>SPNCER_SPNCE: bidding and operating changes</title>
+  <link href="https://ercotbids.currenttech.energy/unit.html?unit=SPNCER_SPNCE"/>
+  <id>https://ercotbids.currenttech.energy/unit.html?unit=SPNCER_SPNCE</id>
+  <updated>2026-10-18T00:00:00Z</updated>
+  <entry>
+    <title>SPNCER_SPNCE: Minimum-energy offer stepped (2026-07-12)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=SPNCER_SPNCE"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=SPNCER_SPNCE#SPNCER_SPNCE/2026-07-12/dam_mingen_step</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $83 to $77/MWh ($56 to $53 against the fuel-cost line)</summary>
+  </entry>
+  <entry>
+    <title>SPNCER_SPNCE: Started three-part offers (2026-03-02)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=SPNCER_SPNCE"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=SPNCER_SPNCE#SPNCER_SPNCE/2026-03-02/dam_filing_on</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Started three-part offers: no three-part offer to three-part offer</summary>
+  </entry>
+  <entry>
+    <title>SPNCER_SPNCE: Started three-part offers (2026-03-02)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=SPNCER_SPNCE"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=SPNCER_SPNCE#SPNCER_SPNCE/2026-03-02/dam_filing_on</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Started three-part offers: no three-part offer to three-part offer</summary>
+  </entry>
+</feed>

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>AEEC_ANTLP: bidding and operating changes</title>
+  <link href="https://ercotbids.currenttech.energy/unit.html?unit=AEEC_ANTLP"/>
+  <id>https://ercotbids.currenttech.energy/unit.html?unit=AEEC_ANTLP</id>
+  <updated>2026-10-18T00:00:00Z</updated>
+  <entry>
+    <title>AEEC_ANTLP: Priced out of the day-ahead (2026-06-21)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=AEEC_ANTLP"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=AEEC_ANTLP#AEEC_ANTLP/2026-06-21/dam_priced_out</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Priced out of the day-ahead: minimum energy at $53/MWh against a usual $39 for 2 day(s)</summary>
+  </entry>
+  <entry>
+    <title>AEEC_ANTLP: Minimum-energy offer stepped (2026-01-06)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=AEEC_ANTLP"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=AEEC_ANTLP#AEEC_ANTLP/2026-01-06/dam_mingen_step</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $46 to $40/MWh ($23 to $17 against the fuel-cost line)</summary>
+  </entry>
+  <entry>
+    <title>AEEC_ANTLP: Minimum-energy offer stepped (2025-12-17)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=AEEC_ANTLP"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=AEEC_ANTLP#AEEC_ANTLP/2025-12-17/dam_mingen_step</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $60 to $46/MWh ($13 to $14 against the fuel-cost line)</summary>
+  </entry>
+</feed>

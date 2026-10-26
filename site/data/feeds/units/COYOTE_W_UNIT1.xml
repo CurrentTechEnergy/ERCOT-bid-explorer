@@ -5,6 +5,20 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=COYOTE_W_UNIT1</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
+    <title>COYOTE_W: Day-ahead floor changed (2026-08-20)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=COYOTE_W"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=COYOTE_W#COYOTE_W/2026-08-20/dam_renew_floor</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Day-ahead floor changed: $21 to $26/MWh</summary>
+  </entry>
+  <entry>
+    <title>COYOTE_W: Day-ahead floor changed (2026-08-04)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=COYOTE_W"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=COYOTE_W#COYOTE_W/2026-08-04/dam_renew_floor</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Day-ahead floor changed: $26 to $21/MWh</summary>
+  </entry>
+  <entry>
     <title>COYOTE_W: New floor (2025-06-25)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=COYOTE_W"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=COYOTE_W#COYOTE_W/2025-06-25/renew_floor_new</id>

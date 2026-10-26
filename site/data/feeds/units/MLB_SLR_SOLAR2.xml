@@ -5,6 +5,20 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=MLB_SLR_SOLAR2</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
+    <title>MLB_SLR_SOLAR2: Started day-ahead offers (2026-07-31)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=MLB_SLR_SOLAR2"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=MLB_SLR_SOLAR2#MLB_SLR_SOLAR2/2026-07-31/dam_renew_on</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Started day-ahead offers: none to day-ahead curve</summary>
+  </entry>
+  <entry>
+    <title>MLB_SLR_SOLAR2: Started day-ahead offers (2026-07-31)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=MLB_SLR_SOLAR2"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=MLB_SLR_SOLAR2#MLB_SLR_SOLAR2/2026-07-31/dam_renew_on</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Started day-ahead offers: none to day-ahead curve</summary>
+  </entry>
+  <entry>
     <title>MLB_SLR: New floor (2026-07-16)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=MLB_SLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=MLB_SLR#MLB_SLR/2026-07-16/renew_floor_new</id>

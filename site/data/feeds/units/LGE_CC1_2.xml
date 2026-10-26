@@ -5,6 +5,34 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=LGE_CC1_2</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
+    <title>LGE_CC1: Minimum-energy offer stepped (2026-07-22)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=LGE_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=LGE_CC1#LGE_CC1/2026-07-22/dam_mingen_step</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $29 to $23/MWh ($11 to $6 against the fuel-cost line)</summary>
+  </entry>
+  <entry>
+    <title>LGE_CC1: Minimum-energy offer stepped (2026-04-23)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=LGE_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=LGE_CC1#LGE_CC1/2026-04-23/dam_mingen_step</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $22 to $28/MWh ($5 to $11 against the fuel-cost line)</summary>
+  </entry>
+  <entry>
+    <title>LGE_CC1: Minimum-energy offer stepped (2026-03-03)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=LGE_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=LGE_CC1#LGE_CC1/2026-03-03/dam_mingen_step</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $18 to $26/MWh ($4 to $6 against the fuel-cost line)</summary>
+  </entry>
+  <entry>
+    <title>LGE_CC1: Minimum-energy offer stepped (2026-02-03)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=LGE_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=LGE_CC1#LGE_CC1/2026-02-03/dam_mingen_step</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $45 to $23/MWh ($5 to $5 against the fuel-cost line)</summary>
+  </entry>
+  <entry>
     <title>LGE_CC1_2: Bidding approach shifted (2026-02-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=LGE_CC1_2"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=LGE_CC1_2#LGE_CC1_2/2026-02-01/bidding</id>
@@ -17,5 +45,26 @@
     <id>https://ercotbids.currenttech.energy/unit.html?unit=LGE_CC1_2#LGE_CC1_2/2026-01-21/bidding</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Offer price vs peer median: $5 to $25/MWh</summary>
+  </entry>
+  <entry>
+    <title>LGE_CC1: Minimum-energy offer stepped (2026-01-01)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=LGE_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=LGE_CC1#LGE_CC1/2026-01-01/dam_mingen_step</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $27 to $20/MWh ($6 to $5 against the fuel-cost line)</summary>
+  </entry>
+  <entry>
+    <title>LGE_CC1: Minimum-energy offer stepped (2025-12-25)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=LGE_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=LGE_CC1#LGE_CC1/2025-12-25/dam_mingen_step</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $30 to $20/MWh ($6 to $4 against the fuel-cost line)</summary>
+  </entry>
+  <entry>
+    <title>LGE_CC1: Minimum-energy offer stepped (2025-12-17)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=LGE_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=LGE_CC1#LGE_CC1/2025-12-17/dam_mingen_step</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $40 to $29/MWh ($9 to $6 against the fuel-cost line)</summary>
   </entry>
 </feed>

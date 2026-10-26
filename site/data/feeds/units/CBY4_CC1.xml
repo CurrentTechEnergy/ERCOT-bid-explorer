@@ -5,11 +5,32 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=CBY4_CC1</id>
   <updated>2026-10-24T00:00:00Z</updated>
   <entry>
+    <title>CBY4_CC1: Stopped three-part offers (2026-06-20)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=CBY4_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=CBY4_CC1#CBY4_CC1/2026-06-20/dam_filing_off</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Stopped three-part offers: three-part offer to self-scheduled while on</summary>
+  </entry>
+  <entry>
+    <title>CBY4_CC1: Stopped three-part offers (2026-06-20)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=CBY4_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=CBY4_CC1#CBY4_CC1/2026-06-20/dam_filing_off</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Stopped three-part offers: three-part offer to self-scheduled while on</summary>
+  </entry>
+  <entry>
     <title>CBY4_CC1: Timescale group changed (2026-06-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=CBY4_CC1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=CBY4_CC1#CBY4_CC1/2026-06-01/group</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Multi-day: off 1–7 days in 2026-05 to Always on when available in 2026-06</summary>
+  </entry>
+  <entry>
+    <title>CBY4_CC1: Minimum-energy offer stepped (2026-04-12)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=CBY4_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=CBY4_CC1#CBY4_CC1/2026-04-12/dam_mingen_step</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $28 to $22/MWh ($11 to $5 against the fuel-cost line)</summary>
   </entry>
   <entry>
     <title>CBY4_CC1: Outage ended (2026-04-01)</title>
@@ -31,6 +52,20 @@
     <id>https://ercotbids.currenttech.energy/unit.html?unit=CBY4_CC1#CBY4_CC1/2026-03-01/group</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Daily, under 1 shutdown a week in 2026-02 to Multi-day: off 1–7 days in 2026-03</summary>
+  </entry>
+  <entry>
+    <title>CBY4_CC1: Started three-part offers (2026-02-24)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=CBY4_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=CBY4_CC1#CBY4_CC1/2026-02-24/dam_filing_on</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Started three-part offers: no three-part offer to three-part offer</summary>
+  </entry>
+  <entry>
+    <title>CBY4_CC1: Started three-part offers (2026-02-24)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=CBY4_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=CBY4_CC1#CBY4_CC1/2026-02-24/dam_filing_on</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Started three-part offers: no three-part offer to three-part offer</summary>
   </entry>
   <entry>
     <title>CBY4_CC1: Timescale group changed (2026-02-01)</title>

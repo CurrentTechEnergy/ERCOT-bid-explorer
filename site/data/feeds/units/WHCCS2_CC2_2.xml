@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>WHCCS2_CC2_2: bidding and operating changes</title>
+  <link href="https://ercotbids.currenttech.energy/unit.html?unit=WHCCS2_CC2_2"/>
+  <id>https://ercotbids.currenttech.energy/unit.html?unit=WHCCS2_CC2_2</id>
+  <updated>2026-10-18T00:00:00Z</updated>
+  <entry>
+    <title>WHCCS2_CC2: Minimum-energy offer stepped (2026-08-02)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=WHCCS2_CC2"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=WHCCS2_CC2#WHCCS2_CC2/2026-08-02/dam_mingen_step</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $13 to $22/MWh (-$5 to $5 against the fuel-cost line)</summary>
+  </entry>
+  <entry>
+    <title>WHCCS2_CC2: Minimum-energy offer stepped (2026-04-26)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=WHCCS2_CC2"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=WHCCS2_CC2#WHCCS2_CC2/2026-04-26/dam_mingen_step</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $19 to $12/MWh ($1 to -$6 against the fuel-cost line)</summary>
+  </entry>
+  <entry>
+    <title>WHCCS2_CC2: Priced out of the day-ahead (2026-03-31)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=WHCCS2_CC2"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=WHCCS2_CC2#WHCCS2_CC2/2026-03-31/dam_priced_out</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Priced out of the day-ahead: minimum energy at $34/MWh against a usual $24 for 1 day(s)</summary>
+  </entry>
+  <entry>
+    <title>WHCCS2_CC2: Minimum-energy offer stepped (2026-02-05)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=WHCCS2_CC2"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=WHCCS2_CC2#WHCCS2_CC2/2026-02-05/dam_mingen_step</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $19 to $26/MWh (-$5 to $9 against the fuel-cost line)</summary>
+  </entry>
+</feed>

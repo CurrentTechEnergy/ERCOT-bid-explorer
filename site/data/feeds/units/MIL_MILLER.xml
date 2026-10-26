@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>MIL_MILLER: bidding and operating changes</title>
+  <link href="https://ercotbids.currenttech.energy/unit.html?unit=MIL_MILLER"/>
+  <id>https://ercotbids.currenttech.energy/unit.html?unit=MIL_MILLER</id>
+  <updated>2026-10-18T00:00:00Z</updated>
+  <entry>
+    <title>MIL_MILLER: Stopped three-part offers (2026-08-17)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=MIL_MILLER"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=MIL_MILLER#MIL_MILLER/2026-08-17/dam_filing_off</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Stopped three-part offers: three-part offer to self-scheduled while on</summary>
+  </entry>
+  <entry>
+    <title>MIL_MILLER: Stopped three-part offers (2026-08-17)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=MIL_MILLER"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=MIL_MILLER#MIL_MILLER/2026-08-17/dam_filing_off</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Stopped three-part offers: three-part offer to self-scheduled while on</summary>
+  </entry>
+  <entry>
+    <title>MIL_MILLER: Started three-part offers (2026-06-18)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=MIL_MILLER"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=MIL_MILLER#MIL_MILLER/2026-06-18/dam_filing_on</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Started three-part offers: no three-part offer to three-part offer</summary>
+  </entry>
+  <entry>
+    <title>MIL_MILLER: Started three-part offers (2026-06-18)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=MIL_MILLER"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=MIL_MILLER#MIL_MILLER/2026-06-18/dam_filing_on</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Started three-part offers: no three-part offer to three-part offer</summary>
+  </entry>
+</feed>

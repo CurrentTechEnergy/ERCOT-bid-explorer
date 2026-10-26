@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>ATKINS_ATKINS: bidding and operating changes</title>
+  <link href="https://ercotbids.currenttech.energy/unit.html?unit=ATKINS_ATKINS"/>
+  <id>https://ercotbids.currenttech.energy/unit.html?unit=ATKINS_ATKINS</id>
+  <updated>2026-10-18T00:00:00Z</updated>
+  <entry>
+    <title>ATKINS_ATKINS: Stopped three-part offers (2026-04-27)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=ATKINS_ATKINS"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=ATKINS_ATKINS#ATKINS_ATKINS/2026-04-27/dam_filing_off</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Stopped three-part offers: three-part offer to self-scheduled while on</summary>
+  </entry>
+  <entry>
+    <title>ATKINS_ATKINS: Stopped three-part offers (2026-04-27)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=ATKINS_ATKINS"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=ATKINS_ATKINS#ATKINS_ATKINS/2026-04-27/dam_filing_off</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Stopped three-part offers: three-part offer to self-scheduled while on</summary>
+  </entry>
+</feed>

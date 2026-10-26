@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>PSG_CC1_1: bidding and operating changes</title>
+  <link href="https://ercotbids.currenttech.energy/unit.html?unit=PSG_CC1_1"/>
+  <id>https://ercotbids.currenttech.energy/unit.html?unit=PSG_CC1_1</id>
+  <updated>2026-10-18T00:00:00Z</updated>
+  <entry>
+    <title>PSG_CC1: Priced out of the day-ahead (2026-05-12)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=PSG_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=PSG_CC1#PSG_CC1/2026-05-12/dam_priced_out</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Priced out of the day-ahead: minimum energy at $22/MWh against a usual $3 for 1 day(s)</summary>
+  </entry>
+</feed>

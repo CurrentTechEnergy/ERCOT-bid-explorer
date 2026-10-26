@@ -5,6 +5,34 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=CBEC_CC1_2</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
+    <title>CBEC_CC1: Minimum-energy offer stepped (2026-01-13)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=CBEC_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=CBEC_CC1#CBEC_CC1/2026-01-13/dam_mingen_step</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $35 to $27/MWh ($17 to $8 against the fuel-cost line)</summary>
+  </entry>
+  <entry>
+    <title>CBEC_CC1: Minimum-energy offer stepped (2026-01-06)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=CBEC_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=CBEC_CC1#CBEC_CC1/2026-01-06/dam_mingen_step</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $36 to $30/MWh ($19 to $14 against the fuel-cost line)</summary>
+  </entry>
+  <entry>
+    <title>CBEC_CC1: Start-up cost changed (2026-01-02)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=CBEC_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=CBEC_CC1#CBEC_CC1/2026-01-02/dam_start_change</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Start-up cost changed: hot start $6,223 to $3,937</summary>
+  </entry>
+  <entry>
+    <title>CBEC_CC1: Minimum-energy offer stepped (2025-12-25)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=CBEC_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=CBEC_CC1#CBEC_CC1/2025-12-25/dam_mingen_step</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $44 to $34/MWh ($15 to $19 against the fuel-cost line)</summary>
+  </entry>
+  <entry>
     <title>CBEC_CC1_2: Bidding approach shifted (2025-12-14)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=CBEC_CC1_2"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=CBEC_CC1_2#CBEC_CC1_2/2025-12-14/bidding</id>

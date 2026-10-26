@@ -5,6 +5,20 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=SWEETWND_WND1</id>
   <updated>2026-10-24T00:00:00Z</updated>
   <entry>
+    <title>SWEETWND_WND1: Day-ahead floor changed (2026-07-03)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=SWEETWND_WND1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=SWEETWND_WND1#SWEETWND_WND1/2026-07-03/dam_renew_floor</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Day-ahead floor changed: $1 to -$5/MWh</summary>
+  </entry>
+  <entry>
+    <title>SWEETWND_WND1: Day-ahead floor changed (2026-07-03)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=SWEETWND_WND1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=SWEETWND_WND1#SWEETWND_WND1/2026-07-03/dam_renew_floor</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Day-ahead floor changed: $1 to -$5/MWh</summary>
+  </entry>
+  <entry>
     <title>SWEETWND: Episode (2026-06-24)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=SWEETWND"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=SWEETWND#SWEETWND/2026-06-24/renew_episode</id>

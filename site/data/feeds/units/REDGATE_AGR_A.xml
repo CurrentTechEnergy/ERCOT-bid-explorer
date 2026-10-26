@@ -39,4 +39,18 @@
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Shut down for 6 h although a day-ahead award covered 100% of the window</summary>
   </entry>
+  <entry>
+    <title>REDGATE_AGR_A: Started three-part offers (2026-04-12)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=REDGATE_AGR_A"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=REDGATE_AGR_A#REDGATE_AGR_A/2026-04-12/dam_filing_on</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Started three-part offers: no three-part offer to three-part offer</summary>
+  </entry>
+  <entry>
+    <title>REDGATE_AGR_A: Started three-part offers (2026-04-12)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=REDGATE_AGR_A"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=REDGATE_AGR_A#REDGATE_AGR_A/2026-04-12/dam_filing_on</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Started three-part offers: no three-part offer to three-part offer</summary>
+  </entry>
 </feed>

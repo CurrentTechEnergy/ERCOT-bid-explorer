@@ -5,6 +5,20 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=LGE_CC1</id>
   <updated>2026-10-24T00:00:00Z</updated>
   <entry>
+    <title>LGE_CC1: Minimum-energy offer stepped (2026-07-22)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=LGE_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=LGE_CC1#LGE_CC1/2026-07-22/dam_mingen_step</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $29 to $23/MWh ($11 to $6 against the fuel-cost line)</summary>
+  </entry>
+  <entry>
+    <title>LGE_CC1: Minimum-energy offer stepped (2026-07-12)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=LGE_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=LGE_CC1#LGE_CC1/2026-07-12/dam_mingen_step</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $42 to $37/MWh ($22 to $20 against the fuel-cost line)</summary>
+  </entry>
+  <entry>
     <title>LGE_CC1: Timescale group changed (2026-07-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=LGE_CC1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=LGE_CC1#LGE_CC1/2026-07-01/group</id>
@@ -45,6 +59,13 @@
     <id>https://ercotbids.currenttech.energy/unit.html?unit=LGE_CC1#LGE_CC1/2026-04-24/control</id>
     <updated>2026-10-24T00:00:00Z</updated>
     <summary>Scheduled by GUIDEPOST ENERGY LLC (SQ3), was CALPINE POWER MANAGEMENT LLC (SQ1)</summary>
+  </entry>
+  <entry>
+    <title>LGE_CC1: Minimum-energy offer stepped (2026-04-23)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=LGE_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=LGE_CC1#LGE_CC1/2026-04-23/dam_mingen_step</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $22 to $28/MWh ($5 to $11 against the fuel-cost line)</summary>
   </entry>
   <entry>
     <title>LGE_CC1: Decision maker or QSE changed (2026-04-23)</title>
@@ -96,11 +117,25 @@
     <summary>Back from a 8-day outage</summary>
   </entry>
   <entry>
+    <title>LGE_CC1: Minimum-energy offer stepped (2026-03-03)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=LGE_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=LGE_CC1#LGE_CC1/2026-03-03/dam_mingen_step</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $18 to $26/MWh ($4 to $6 against the fuel-cost line)</summary>
+  </entry>
+  <entry>
     <title>LGE_CC1: Outage started (2026-02-28)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=LGE_CC1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=LGE_CC1#LGE_CC1/2026-02-28/outage_start</id>
     <updated>2026-10-24T00:00:00Z</updated>
     <summary>Outage began, lasting 8 days</summary>
+  </entry>
+  <entry>
+    <title>LGE_CC1: Minimum-energy offer stepped (2026-02-17)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=LGE_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=LGE_CC1#LGE_CC1/2026-02-17/dam_mingen_step</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $27 to $21/MWh ($9 to $7 against the fuel-cost line)</summary>
   </entry>
   <entry>
     <title>LGE_CC1: Shut down despite a day-ahead award (2026-02-12)</title>
@@ -110,6 +145,20 @@
     <summary>Shut down for 66 h although a day-ahead award covered 100% of the window</summary>
   </entry>
   <entry>
+    <title>LGE_CC1: Minimum-energy offer stepped (2026-02-03)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=LGE_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=LGE_CC1#LGE_CC1/2026-02-03/dam_mingen_step</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $45 to $23/MWh ($5 to $5 against the fuel-cost line)</summary>
+  </entry>
+  <entry>
+    <title>LGE_CC1: Minimum-energy offer stepped (2026-01-14)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=LGE_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=LGE_CC1#LGE_CC1/2026-01-14/dam_mingen_step</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $24 to $30/MWh ($8 to $10 against the fuel-cost line)</summary>
+  </entry>
+  <entry>
     <title>LGE_CC1: Shut down despite a day-ahead award (2026-01-09)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=LGE_CC1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=LGE_CC1#LGE_CC1/2026-01-09/shutdown_award</id>
@@ -117,10 +166,24 @@
     <summary>Shut down for 44 h although a day-ahead award covered 100% of the window</summary>
   </entry>
   <entry>
-    <title>LGE_CC1: Shut down despite a day-ahead award (2025-12-13)</title>
+    <title>LGE_CC1: Minimum-energy offer stepped (2026-01-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=LGE_CC1"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=LGE_CC1#LGE_CC1/2025-12-13/shutdown_award</id>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=LGE_CC1#LGE_CC1/2026-01-01/dam_mingen_step</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Shut down for 24 h although a day-ahead award covered 100% of the window</summary>
+    <summary>Minimum-energy offer stepped: $27 to $20/MWh ($6 to $5 against the fuel-cost line)</summary>
+  </entry>
+  <entry>
+    <title>LGE_CC1: Minimum-energy offer stepped (2025-12-25)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=LGE_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=LGE_CC1#LGE_CC1/2025-12-25/dam_mingen_step</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $30 to $20/MWh ($6 to $4 against the fuel-cost line)</summary>
+  </entry>
+  <entry>
+    <title>LGE_CC1: Minimum-energy offer stepped (2025-12-17)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=LGE_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=LGE_CC1#LGE_CC1/2025-12-17/dam_mingen_step</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $40 to $29/MWh ($9 to $6 against the fuel-cost line)</summary>
   </entry>
 </feed>

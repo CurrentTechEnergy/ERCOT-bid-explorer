@@ -5,6 +5,20 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=MROW_SLR_SOLAR1</id>
   <updated>2026-10-24T00:00:00Z</updated>
   <entry>
+    <title>MROW_SLR_SOLAR1: Day-ahead floor changed (2026-08-08)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=MROW_SLR_SOLAR1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=MROW_SLR_SOLAR1#MROW_SLR_SOLAR1/2026-08-08/dam_renew_floor</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Day-ahead floor changed: -$6 to $0/MWh</summary>
+  </entry>
+  <entry>
+    <title>MROW_SLR_SOLAR1: Day-ahead floor changed (2026-08-08)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=MROW_SLR_SOLAR1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=MROW_SLR_SOLAR1#MROW_SLR_SOLAR1/2026-08-08/dam_renew_floor</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Day-ahead floor changed: -$6 to $0/MWh</summary>
+  </entry>
+  <entry>
     <title>MROW_SLR_SOLAR1: Decision maker or QSE changed (2026-08-05)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=MROW_SLR_SOLAR1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=MROW_SLR_SOLAR1#MROW_SLR_SOLAR1/2026-08-05/control</id>
@@ -24,6 +38,62 @@
     <id>https://ercotbids.currenttech.energy/unit.html?unit=MROW_SLR#MROW_SLR/2026-08-05/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Episode: floor -$20 to -$38 for the episode for 1 day(s)</summary>
+  </entry>
+  <entry>
+    <title>MROW_SLR_SOLAR1: Day-ahead floor changed (2026-02-10)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=MROW_SLR_SOLAR1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=MROW_SLR_SOLAR1#MROW_SLR_SOLAR1/2026-02-10/dam_renew_floor</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Day-ahead floor changed: $0 to -$5/MWh</summary>
+  </entry>
+  <entry>
+    <title>MROW_SLR_SOLAR1: Day-ahead floor changed (2026-02-10)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=MROW_SLR_SOLAR1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=MROW_SLR_SOLAR1#MROW_SLR_SOLAR1/2026-02-10/dam_renew_floor</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Day-ahead floor changed: $0 to -$5/MWh</summary>
+  </entry>
+  <entry>
+    <title>MROW_SLR_SOLAR1: Day-ahead floor changed (2026-02-03)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=MROW_SLR_SOLAR1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=MROW_SLR_SOLAR1#MROW_SLR_SOLAR1/2026-02-03/dam_renew_floor</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Day-ahead floor changed: $5 to -$5/MWh</summary>
+  </entry>
+  <entry>
+    <title>MROW_SLR_SOLAR1: Day-ahead floor changed (2026-02-03)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=MROW_SLR_SOLAR1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=MROW_SLR_SOLAR1#MROW_SLR_SOLAR1/2026-02-03/dam_renew_floor</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Day-ahead floor changed: $5 to -$5/MWh</summary>
+  </entry>
+  <entry>
+    <title>MROW_SLR_SOLAR1: Day-ahead floor changed (2026-01-22)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=MROW_SLR_SOLAR1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=MROW_SLR_SOLAR1#MROW_SLR_SOLAR1/2026-01-22/dam_renew_floor</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Day-ahead floor changed: $0 to $5/MWh</summary>
+  </entry>
+  <entry>
+    <title>MROW_SLR_SOLAR1: Day-ahead floor changed (2026-01-22)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=MROW_SLR_SOLAR1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=MROW_SLR_SOLAR1#MROW_SLR_SOLAR1/2026-01-22/dam_renew_floor</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Day-ahead floor changed: $0 to $5/MWh</summary>
+  </entry>
+  <entry>
+    <title>MROW_SLR_SOLAR1: Started day-ahead offers (2026-01-08)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=MROW_SLR_SOLAR1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=MROW_SLR_SOLAR1#MROW_SLR_SOLAR1/2026-01-08/dam_renew_on</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Started day-ahead offers: none to day-ahead curve</summary>
+  </entry>
+  <entry>
+    <title>MROW_SLR_SOLAR1: Started day-ahead offers (2026-01-08)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=MROW_SLR_SOLAR1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=MROW_SLR_SOLAR1#MROW_SLR_SOLAR1/2026-01-08/dam_renew_on</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Started day-ahead offers: none to day-ahead curve</summary>
   </entry>
   <entry>
     <title>MROW_SLR: Stopped moving within the day (2025-06-24)</title>

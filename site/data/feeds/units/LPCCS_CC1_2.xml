@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>LPCCS_CC1_2: bidding and operating changes</title>
+  <link href="https://ercotbids.currenttech.energy/unit.html?unit=LPCCS_CC1_2"/>
+  <id>https://ercotbids.currenttech.energy/unit.html?unit=LPCCS_CC1_2</id>
+  <updated>2026-10-18T00:00:00Z</updated>
+  <entry>
+    <title>LPCCS_CC1: Start-up cost changed (2026-02-09)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=LPCCS_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=LPCCS_CC1#LPCCS_CC1/2026-02-09/dam_start_change</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Start-up cost changed: hot start $6,986 to $5,109</summary>
+  </entry>
+  <entry>
+    <title>LPCCS_CC1: Minimum-energy offer stepped (2026-02-04)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=LPCCS_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=LPCCS_CC1#LPCCS_CC1/2026-02-04/dam_mingen_step</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $41 to $30/MWh ($14 to $12 against the fuel-cost line)</summary>
+  </entry>
+  <entry>
+    <title>LPCCS_CC1: Minimum-energy offer stepped (2025-12-14)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=LPCCS_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=LPCCS_CC1#LPCCS_CC1/2025-12-14/dam_mingen_step</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $38 to $31/MWh ($6 to $7 against the fuel-cost line)</summary>
+  </entry>
+</feed>
