@@ -249,7 +249,15 @@ function render() {
   drawDay();
   drawMarginal();
   drawOfferStack();
+  drawCurtailDay();
   saveView();
+}
+
+// wind and solar curtailment by hour for the page's day (common.js draws it, as on Renewables);
+// curve_trends.json.gz is the file beyond-range.js also reads, fetched once through the shared cache
+function drawCurtailDay() {
+  CX.drawCurtailDay($("curt-chart"), $("curt-day-legend"), $("curt-title-note"), S.curt, S.date,
+    { hour: S.hour, onPick: (h) => { S.hour = h; $("hour").value = h; render(); } });
 }
 
 // the address bar carries the view, so a copied link reopens this exact day, hour and settings
@@ -977,7 +985,8 @@ async function boot() {
   }
   const [s2, s60, sp] = await Promise.all([tryJSON("data/summary_2d.json.gz"), tryJSON("data/summary_60d.json.gz"), tryJSON("data/summary_prices.json.gz")]);
   S.summaries = { "2d": s2 || {}, "60d": s60 || {}, prices: sp || {} };
-  [S.stackIdx, S.dalam] = await Promise.all([tryJSON("data/forecast/index.json.gz"), tryJSON("data/dam_lambda.json.gz")]);
+  [S.stackIdx, S.dalam, S.curt] = await Promise.all([tryJSON("data/forecast/index.json.gz"), tryJSON("data/dam_lambda.json.gz"),
+    tryJSON("data/curve_trends.json.gz").then((c) => c && c.curt)]);
   const D = S.index.days;
   const last = (a) => (a.length ? [...a].sort().at(-1) : "none");
   $("status").textContent = `2-day: ${D["2d"].length} day(s), latest ${last(D["2d"])} · 60-day: ${D["60d"].length} day(s), latest ${last(D["60d"])} · prices: ${D.prices.length} day(s) · updated ${S.index.updated.replace("T", " ").replace("Z", " UTC")}`;

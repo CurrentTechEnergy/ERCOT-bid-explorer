@@ -168,6 +168,18 @@
 
   </section>
 
+  <section class="panel panel-wide" id="curt-day-panel">
+    <div class="panel-head">
+      <div>
+        <h2>Curtailment by hour, one day <span class="h-note" id="curt-title-note"></span></h2>
+        <p class="note">What wind and solar could have produced minus what SCED dispatched, by hour. Click an hour to pick it for the page.</p>
+        <details class="how"><summary>How it's built</summary><p class="note">MW wind and solar could have produced (HSL) minus the base point SCED sent them, averaged over each hour: the output SCED held back, for price or for congestion. From the 60-day disclosure where the day has it, otherwise the 2-day estimate. The same chart as on <a href="renewables.html">Renewables</a>, for the day and hour picked on this page.</p></details>
+      </div>
+    </div>
+    <div class="legend legend-static" id="curt-day-legend"></div>
+    <div class="chart" id="curt-chart"></div>
+  </section>
+
   <section class="panel panel-wide" id="stack-panel">
     <div class="panel-head">
       <div>
