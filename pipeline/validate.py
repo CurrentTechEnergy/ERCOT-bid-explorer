@@ -40,7 +40,10 @@ consistency:
                     once per run under the pseudo-day "events": a model and version, the known
                     columns, every model in every month and technology, right at most hours,
                     caught at most the switches, a Brier sum at most the hours, and a month for
-                    the latest operator day
+                    the latest operator day; and the turn-off points
+                    (pipeline/models/operator_cutoffs.py): the known columns, a row set for
+                    every operator day, award 0 to 2, off 0 or 1, a positive LSL and minimum
+                    down time
   unit_curves       thermal offer curves by hour (pipeline/unit_curves.py): every hourly index
                     points at a stored curve, each curve's prices and MW never fall, and the
                     unit-hours with a curve file entry are the thermal unit-hours online in the
@@ -379,6 +382,27 @@ def _operator_checks(day, oi):
     day.add("operator", "error" if bad else "ok", "; ".join(bad[:5]) or f"{len(oi['units'])} units, 24 hours each")
 
 
+def _operator_cutoff_checks(day):
+    from .models.operator_cutoffs import COLUMNS, PATH as CUTOFFS_PATH
+    oc = read_json_gz(CUTOFFS_PATH, default=None)
+    if oc is None:
+        return
+    bad = []
+    if not oc.get("model") or not oc.get("version") or tuple(oc.get("columns") or ()) != COLUMNS:
+        bad.append("no model or version, or columns not the builder's")
+    days = (read_json_gz(DATA_DIR / "operator" / "index.json.gz", default=None) or {}).get("days", [])
+    missing = [d for d in days if d not in oc.get("days", {})]
+    if missing:
+        bad.append(f"{len(missing)} operator day(s) without rows, e.g. {missing[:3]}")
+    for d, rows in oc.get("days", {}).items():
+        for r in rows:
+            if len(r) != len(COLUMNS) or not (r[2] or 0) > 0 or r[3] not in (0, 1, 2) or not isinstance(r[4], (int, float)) \
+                    or not isinstance(r[5], (int, float, type(None))) or r[6] not in (0, 1) or not (r[7] or 0) >= 1:
+                bad.append(f"{d} {r[0]}: bad row")
+                break
+    day.add("operator_cutoffs", "error" if bad else "ok", "; ".join(bad[:5]) or f"{len(oc.get('days', {}))} days")
+
+
 def _operator_score_checks(day):
     from .models.operator_scores import COLUMNS, MODELS, PATH as SCORES_PATH
     sc = read_json_gz(SCORES_PATH, default=None)
@@ -694,6 +718,7 @@ def check_files(index):
         day.add("cutoff_moves", "error" if orphan else "ok", f"{len(orphan)} move(s) without rows, e.g. {orphan[:3]}" if orphan else f"{len(ch.get('moves', []))} moves")
     _dam_offer_checks(day)
     _operator_score_checks(day)
+    _operator_cutoff_checks(day)
     ui = read_json_gz(UNIT_INDEX_PATH, default=None)
     if ui is not None:
         rows = ui.get("rows", [])
