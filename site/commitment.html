@@ -69,7 +69,7 @@
     </div>
     <div class="legend legend-static" id="cut-legend"></div>
     <div class="chart" id="cut-chart"></div>
-    <h3 class="sub-h">Each daily unit: its cutoff and the day's loss</h3>
+    <h3 class="sub-h">Each CC and gas steam unit: where the model turns it off, and what being off would have saved</h3>
     <p class="note" id="cut-units-note"></p>
     <div class="legend legend-static" id="cut-units-legend"></div>
     <div class="chart" id="cut-units"></div>
@@ -78,11 +78,32 @@
   <section class="panel panel-wide" id="groups-panel">
     <div class="panel-head">
       <div>
-        <h2>Groups and cutoffs <span class="h-note" id="groups-title-note"></span></h2>
+        <h2>Groups and turn-off points <span class="h-note" id="groups-title-note"></span></h2>
         <p class="note" id="groups-note"></p>
       </div>
     </div>
     <div class="units-wrap" id="groups-table"></div>
+  </section>
+
+  <section class="panel panel-wide" id="sc-panel">
+    <div class="panel-head">
+      <div>
+        <h2>How well the operator model calls it</h2>
+        <p class="note" id="sc-note"></p>
+      </div>
+      <div class="panel-tools">
+        <label class="lbl inline" for="sc-tech">Technology</label>
+        <select id="sc-tech"></select>
+        <div class="seg seg-sm" id="sc-cell" role="radiogroup" aria-label="Hours">
+          <button type="button" data-v="all" role="radio">All hours</button>
+          <button type="button" data-v="cheap" role="radio">Cheap hours</button>
+          <button type="button" data-v="noaward" role="radio">Unawarded hours</button>
+          <button type="button" data-v="on" role="radio">On going in</button>
+          <button type="button" data-v="off" role="radio">Off going in</button>
+        </div>
+      </div>
+    </div>
+    <div class="units-wrap" id="sc-table"></div>
   </section>
 
   <h2 class="page-section">Across days <span class="h-note" id="range-status"></span></h2>

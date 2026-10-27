@@ -50,7 +50,8 @@ Writes data/operator/<date>.json.gz for the Unit page (build_days, run by the da
           off in log-odds], ...] top three}}
 and data/operator/index.json.gz {"model", "version", "days"}, data/operator/decisions.json.gz
 (build_decision_view) for the decision history chart, and data/operator/scores.json.gz, the
-scorecard against the baselines (pipeline/models/operator_scores.py).  Every day is rewritten when
+scorecard against the baselines (pipeline/models/operator_scores.py), and data/operator/cutoffs.json.gz,
+each unit's turn-off point for the Commitment cutoff curve (pipeline/models/operator_cutoffs.py).  Every day is rewritten when
 VERSION changes; otherwise only new days.  The reasons are for the hour of the unit's first
 actual switch that day, else the first hour the call switches, else its cheapest hour, from
 the true state before it (drivers).
@@ -373,7 +374,13 @@ def p_day(ctx, date, key, cop=False):
     states = _states(ctx)
     if r is None or f is None or key not in states:
         return None
-    st, dn = states[key][1], (C._d(date) - ctx.stats["day0"]).days
+    return _p_day(ctx, date, key, r, f, plan)
+
+
+def _p_day(ctx, date, key, r, f, plan="none"):
+    """p_day for the day record r (pipeline.models.operator_cutoffs passes one with its prices
+    shifted) and the fit f."""
+    st, dn = _states(ctx)[key][1], (C._d(date) - ctx.stats["day0"]).days
     k0 = dn * 24
     if k0 < 1 or k0 > len(st) or st[k0 - 1] in "o-":
         return None
@@ -511,9 +518,11 @@ def build_days(index: dict, rebuild: bool = False) -> list:
     write_json_gz(ip, {"model": NAME, "version": VERSION, "days": days})
     n = build_decision_view(days)
     from .operator_scores import build_scores
+    from .operator_cutoffs import build_cutoffs
     m = build_scores(ctx, days)
+    c = build_cutoffs(ctx, days)
     print(f"{NAME} {VERSION}: {len(done)} day file(s) written, {len(days)} in all; {n} decision days judged; "
-          f"{m} unit-days scored against the baselines", flush=True)
+          f"{m} unit-days scored against the baselines; turn-off points for {c} new day(s)", flush=True)
     return done
 
 

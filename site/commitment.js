@@ -59,7 +59,7 @@ const STATUS6 = [
   { id: "out", label: "On outage", color: "--ink-2" },
 ];
 
-const S = { F: null, FIT: null, FI: null, SC: null, T: null, TH: null, I: null, UH: null, G: null, HC: null, DEC: null, SO: null, days: [], date: null,
+const S = { OC: null, OSC: null, scTech: "combined_cycle", scCell: "all", F: null, FIT: null, FI: null, SC: null, T: null, TH: null, I: null, UH: null, G: null, HC: null, DEC: null, SO: null, days: [], date: null,
   cutBy: "group", floorMode: "le20_sced", floorGroup: "behaviour", floorHours: "all", hidden: { floor: new Set(), floorG: new Set() },
   capTech: "coal", cheapTech: "all", cheapThr: "0", leanRank: "fossil", leanMonth: "all", leanPer: "day",
   stTech: "all", stThr: "0", stUnit: "mw", stBase: null, costThr: "0", uTech: "all", uGroup: "all", uSort: "mw", uDir: "desc", uSeen: false };
@@ -749,18 +749,23 @@ function drawLean() {
   setCSV(el, cols.map((c) => c.k), top.map(val), "Leanest thermal hours");
 }
 
-// ==== one day: the cutoff curve, groups and cutoffs, what each unit did ===================
-// Every figure here is read from data/decisions.json.gz (pipeline/decisions.py): the units online
-// going into a 60-day day, the loss each faced at its own node's day-ahead price, its cutoff and
-// what it then did. Nothing is a forecast; the page only sums.
-const NOCUT = { id: "nocut", label: "No cutoff yet (too few decision days)", color: "--c-other" };
+// ==== one day: the cutoff curve, groups and turn-off points, what each unit did ============
+// The units online going into a 60-day day and what they did come from data/decisions.json.gz
+// (pipeline/decisions.py). Each CC train's and gas steam unit's turn-off point that day comes from
+// the operator-informed model (data/operator/cutoffs.json.gz, pipeline/models/operator_cutoffs.py):
+// how much being off would have to save before the model's day call turns it off. Coal and the
+// always-on peakers are drawn flat: they do not cycle within a day.
+const UNMODELLED = { id: "nomodel", label: "No turn-off point (before Feb 2026 or too little history)", color: "--c-other" };
 const CUT_TECHS = ["coal", "gas_steam", "combined_cycle", "combustion_turbine"].map((id) => TECHS.find((t) => t.id === id));
 const GROUP_LABEL = Object.fromEntries([...ST_GROUPS.map((g) => [g.id, g.label]), ["ungrouped", "Not yet grouped"]]);
 const DID = { off: "Turned off", on: "Stayed on" };
+// the day-ahead award in the day: none, some hours, every hour (operator_cutoffs "award")
+const AWARD = [{ id: 0, label: "No day-ahead award that day", color: "--c1" }, { id: 1, label: "Awarded some hours", color: "--c3" }, { id: 2, label: "Awarded every hour", color: "--c2" }];
 const fmt$ = (v) => (v == null || isNaN(v) ? "–" : (v < 0 ? "−" : "") + "$" + d3.format(",.0f")(Math.abs(v)));
 const fmtPerMW = (v) => (v == null || isNaN(v) ? "–" : (v < 0 ? "−" : "") + "$" + d3.format(",.1f")(Math.abs(v)));
 const fmtGW = (v) => d3.format(",.1f")(v / 1e3) + " GW";
 const unitHref = (u) => `unit.html?unit=${encodeURIComponent(trainOf(u))}`;   // a combined-cycle configuration opens its train
+const SAVING_NOTE = "The saving is what being off would have saved over the best stretch of the day at least the unit's minimum down time long (its shortest off spell before the month, at least 3 hours; to the end of the day if less is left), at its own node's day-ahead price against its minimum-energy cost, times its LSL, divided by its LSL so units of every size compare. Negative means staying on paid. The day stops at HE 24: the next day's prices are not known when the operator decides.";
 
 // decisions.json day rows: [train, date, loss, first hour ending, hours, award share, shut, hours off]
 const DAY_F = { unit: 0, date: 1, loss: 2, he: 3, hours: 4, award: 5, shut: 6, hoff: 7 };
@@ -769,37 +774,45 @@ function decisionDays() {
   S.byDate = d3.group(S.DEC.days, (r) => r[DAY_F.date]);
   return S.byDate;
 }
+// operator_cutoffs rows for a day, by unit: [unit, tech, lsl, award, saving, turn_off, off, min_down]
+function opDay(d) {
+  const rows = S.OC?.days?.[d];
+  return rows ? new Map(rows.map((r) => [r[0], r])) : null;
+}
 // the units online going into the day that the cutoff curve is about: coal, gas steam and
 // combined cycles, and combustion turbines only in the always-on group (other peakers start
 // rather than stay on)
 function dayUnits(d) {
-  const rows = decisionDays().get(d) || [];
+  const rows = decisionDays().get(d) || [], op = opDay(d);
   return rows.map((r) => {
     const dec = decisionOf(r[DAY_F.unit]);
     if (!dec || !(dec.lsl > 0)) return null;
     const group = S.G?.units?.[r[DAY_F.unit]]?.[1] || "ungrouped";
     if (dec.tech === "combustion_turbine" && group !== "never") return null;
+    const o = op?.get(r[DAY_F.unit]), modelled = ["combined_cycle", "gas_steam"].includes(dec.tech);
     return {
-      unit: r[DAY_F.unit], tech: dec.tech, group, lsl: dec.lsl, cutoff: dec.cutoff, loss: r[DAY_F.loss], he: r[DAY_F.he], hours: r[DAY_F.hours],
-      award: r[DAY_F.award], did: r[DAY_F.shut] ? "off" : "on", hoff: r[DAY_F.hoff],
-      // "cut": a unit with its own cutoff; "flat": on at any loss in this chart (always on,
-      // seasonal and multi-day units, and units without a cutoff yet)
-      kind: dec.cutoff != null ? "cut" : "flat",
-      band: dec.cutoff == null && String(group).startsWith("daily") ? "nocut" : group,
-      c: dec.cutoff != null ? dec.cutoff / dec.lsl : null,
-      l: r[DAY_F.loss] != null ? r[DAY_F.loss] / dec.lsl : null,
+      unit: r[DAY_F.unit], tech: dec.tech, group, lsl: o ? o[2] : dec.lsl, he: r[DAY_F.he], hours: r[DAY_F.hours],
+      did: (o ? o[6] : r[DAY_F.shut]) ? "off" : "on", hoff: r[DAY_F.hoff],
+      award: o ? o[3] : null, md: o ? o[7] : null,
+      // "cut": a turn-off point; "flat": on at any saving in this chart (the model says it rides
+      // through anything tested, or it is coal or an always-on peaker); "none": a CC or gas steam
+      // unit without a model row that day (its own grey band)
+      kind: o ? (o[5] != null ? "cut" : "flat") : modelled ? "none" : "flat",
+      c: o ? o[5] : null, l: o ? o[4] : null,
     };
   }).filter(Boolean);
 }
 
 function drawDay() { drawCutoff(); drawCutUnits(); drawGroups(); }
 
-// the loss axis both cutoff charts share, so a dollar loss sits at the same place in each
+// the saving axis both cutoff charts share, so a dollar sits at the same place in each
 const CUT_M = { l: 64, r: 16 };
 function cutDomain(U) {
-  const cs = U.filter((u) => u.kind === "cut").map((u) => u.c), ls = U.filter((u) => u.kind === "cut" && u.l != null).map((u) => u.l).sort(d3.ascending);
-  return [Math.min(0, d3.min(cs) ?? 0), Math.max(50, d3.max(cs) ?? 0, ls.length ? d3.quantile(ls, 0.9) : 0) * 1.08];
+  const cs = U.filter((u) => u.kind === "cut").map((u) => u.c), ls = U.filter((u) => u.l != null).map((u) => u.l).sort(d3.ascending);
+  const lo = Math.min(0, d3.min(cs) ?? 0, ls.length ? d3.quantile(ls, 0.02) : 0);
+  return [lo * 1.08, Math.max(50, d3.max(cs) ?? 0, ls.length ? d3.quantile(ls, 0.95) : 0) * 1.08];
 }
+const cutTicks = (x0, x1, narrow) => (narrow ? [-250, -50, 0, 10, 50, 250, 1000] : [-500, -250, -100, -25, 0, 10, 25, 50, 100, 250, 500, 1000, 2500]).filter((v) => v >= x0 && v <= x1);
 
 function drawCutoff() {
   // a surface-coloured outline so chart labels read over the stacked bands
@@ -808,149 +821,160 @@ function drawCutoff() {
   setSeg("cut-by", S.cutBy);
   const U = dayUnits(S.date);
   if (!U.length) { $("cut-note").textContent = ""; $("cut-legend").innerHTML = ""; return emptyMsg(el, "No decision data for this day."); }
-  // units without a cutoff yet are their own grey band in both views
-  const bandOf = (u) => (u.band === "nocut" ? "nocut" : byTech ? u.tech : u.band);
+  if (!opDay(S.date)) { $("cut-note").textContent = ""; $("cut-legend").innerHTML = ""; return emptyMsg(el, `The operator model's turn-off points run ${S.OC ? Object.keys(S.OC.days)[0] : "–"} to ${S.OC ? Object.keys(S.OC.days).at(-1) : "–"}; pick a day in that range.`); }
+  const bandOf = (u) => (u.kind === "none" ? "nomodel" : byTech ? u.tech : u.group);
   const bands = (byTech ? CUT_TECHS : FLOOR_GROUPS).filter((b) => U.some((u) => bandOf(u) === b.id))
-    .concat(U.some((u) => u.band === "nocut") ? [NOCUT] : []);
+    .concat(U.some((u) => u.kind === "none") ? [UNMODELLED] : []);
   const cuts = U.filter((u) => u.kind === "cut");
   const cs = cuts.map((u) => u.c), [x0, x1] = cutDomain(U);
-  // MW of each band still on when every unit faces a loss of x per MW of LSL: flat units always,
-  // a unit with a cutoff while x is at or below it (just above its cutoff it turns off)
+  // MW of each band still on when every unit faces a saving of x per MW of LSL: flat units always,
+  // a unit with a turn-off point while x is at or below it
   const xs = [x0, ...[...new Set(cs)].filter((c) => c > x0 && c < x1).sort(d3.ascending), x1];
-  const stay = (u, x, i) => u.kind === "flat" || (i === 0 ? u.c >= x : u.c > x);
+  const stay = (u, x, i) => u.kind !== "cut" || (i === 0 ? u.c >= x : u.c > x);
   const vals = bands.map((b) => xs.map((x, i) => d3.sum(U, (u) => (bandOf(u) === b.id && stay(u, x, i) ? u.lsl : 0))));
   const tot = xs.map((_, i) => d3.sum(vals, (v) => v[i]));
-  // what actually stayed on: the minimum output of the units that rode through the day
+  // what actually stayed on, and what the model keeps on at each unit's own saving that day
   const stayed = d3.sum(U.filter((u) => u.did === "on"), (u) => u.lsl), going = d3.sum(U, (u) => u.lsl);
-  const lw = U.filter((u) => u.kind === "cut" && u.l != null);
-  const typical = lw.length ? d3.quantile(lw.map((u) => u.l).sort(d3.ascending), 0.5) : null;
+  const kept = d3.sum(U.filter((u) => u.kind !== "cut" || u.l <= u.c), (u) => u.lsl);
   $("cut-title-note").textContent = fmtDate(parseDate(S.date));
-  window.CX.setNote($("cut-note"), "Minimum output (MW) online going into the day that stays on as the cost of staying on rises. Each daily unit drops off at the cost it usually turns off above.", `Thermal minimum output (LSL, MW) of the units online going into the day, as the stay-on loss rises. The loss is what riding through the day's worst contiguous stretch at minimum output costs a unit at its own node's day-ahead price (minimum-energy cost less price, times the hours), before any start cost, divided by its LSL so units of every size compare. ` +
-    `Each daily unit leaves the curve at its own cutoff: the loss per MW above which it has turned off on days without a day-ahead award, fitted on its decision days in the 60-day data. The always-on, seasonal and multi-day groups and daily units with too few decision days for a cutoff (the grey band) are drawn flat. Peakers outside the always-on group start rather than stay on, so they are left off. ` +
-    `Every unit faces its own loss at its own node, so the day is not one point on the axis: the dashed line is the minimum output that actually stayed on through the day (${fmtMW(stayed)} of ${fmtMW(going)} MW online going in), and the dotted line is the median loss per MW the daily units faced. The chart below places every unit and what it did.`);
+  window.CX.setNote($("cut-note"), "Minimum output (MW) online going into the day that stays on as the saving from being off rises. Each CC and gas steam unit drops off where the operator model turns it off that day.", `Thermal minimum output (LSL, MW) of the units online going into the day, as the saving from being off rises. ${SAVING_NOTE} ` +
+    `Each CC train and gas steam unit leaves the curve at its turn-off point that day: every hour's price is shifted by the same amount until the operator-informed model's day call (fitted only on earlier months) first turns it off, with its award, its state and everything else as they were, and the point is read as the saving at that shift. A turn-off point below zero means the model turns it off even when staying on would pay, for reasons beyond the day's prices (the season, how long it has run, its own habit). Units it keeps on through every shift tested, coal and the always-on peakers are drawn flat. Peakers outside the always-on group start rather than stay on, so they are left off. ` +
+    `Every unit faces its own saving at its own node, so the day is not one point on the axis: the dashed line is the minimum output that actually stayed on through the day (${fmtMW(stayed)} of ${fmtMW(going)} MW online going in). At each unit's own saving that day the model keeps ${fmtMW(kept)} MW on. The chart below places every unit and what it did.`);
   staticLegend($("cut-legend"), bands);
   const w = Math.max(280, el.clientWidth || 600), H = 320, m = { t: 22, b: 40, ...CUT_M };
   const x = d3.scaleSymlog().constant(10).domain([x0, x1]).range([m.l, w - m.r]);
   const y = d3.scaleLinear().domain([0, Math.max(stayed, d3.max(tot) || 1)]).nice().range([H - m.b, m.t]);
-  const xT = (w < 560 ? [0, 10, 50, 250, 1000] : [0, 5, 10, 25, 50, 100, 250, 500, 1000, 2500]).filter((v) => v >= x0 && v <= x1);
   const svg = d3.create("svg").attr("viewBox", `0 0 ${w} ${H}`);
   svg.append("g").attr("class", "gridline").attr("transform", `translate(${m.l},0)`).call(d3.axisLeft(y).ticks(5).tickSize(-(w - m.l - m.r)).tickFormat(""));
-  svg.append("g").attr("class", "axis").attr("transform", `translate(0,${H - m.b})`).call(d3.axisBottom(x).tickValues(xT).tickFormat(fmtPrice0).tickSizeOuter(0));
+  svg.append("g").attr("class", "axis").attr("transform", `translate(0,${H - m.b})`).call(d3.axisBottom(x).tickValues(cutTicks(x0, x1, w < 560)).tickFormat(fmtPrice0).tickSizeOuter(0));
   svg.append("g").attr("class", "axis").attr("transform", `translate(${m.l},0)`).call(axisFmt(d3.axisLeft(y), 5).tickSizeOuter(0));
   svg.append("text").attr("class", "axis-title").attr("x", m.l).attr("y", 10).text("Minimum output that stays on (MW)");
-  svg.append("text").attr("class", "axis-title").attr("x", w - m.r).attr("y", H - 6).attr("text-anchor", "end").text("Stay-on loss over the day's worst stretch, $ per MW of LSL");
+  svg.append("text").attr("class", "axis-title").attr("x", w - m.r).attr("y", H - 6).attr("text-anchor", "end").text("Saving from being off, $ per MW of LSL");
   let base = xs.map(() => 0);
   const area = d3.area().curve(d3.curveStepAfter).x((_, i) => x(xs[i]));
   vals.forEach((v, bi) => {
     const lo = base, hi = lo.map((b, i) => b + v[i]);
-    svg.append("path").attr("fill", css(bands[bi].color)).attr("fill-opacity", bands[bi].id === "nocut" ? 0.55 : 0.9)
+    svg.append("path").attr("fill", css(bands[bi].color)).attr("fill-opacity", bands[bi].id === "nomodel" ? 0.55 : 0.9)
       .attr("d", area.y0((_, i) => y(lo[i])).y1((_, i) => y(hi[i]))(xs));
     base = hi;
   });
+  if (x0 < 0) svg.append("line").attr("x1", x(0)).attr("x2", x(0)).attr("y1", m.t).attr("y2", H - m.b).attr("stroke", css("--muted")).attr("stroke-width", 1);
   svg.append("line").attr("x1", m.l).attr("x2", w - m.r).attr("y1", y(stayed)).attr("y2", y(stayed)).attr("stroke", css("--ink")).attr("stroke-width", 1.5).attr("stroke-dasharray", "6 4");
   svg.append("text").attr("class", "axis-title").attr("x", w - m.r - 4).attr("y", y(stayed) - 5).attr("text-anchor", "end").call(halo).text(`Stayed on through the day: ${fmtMW(stayed)} MW`);
-  if (typical != null && typical >= x0 && typical <= x1) {
-    svg.append("line").attr("x1", x(typical)).attr("x2", x(typical)).attr("y1", m.t).attr("y2", H - m.b).attr("stroke", css("--ink")).attr("stroke-dasharray", "2 3");
-    const flip = x(typical) > w - m.r - (w < 560 ? 130 : 200);
-    svg.append("text").attr("class", "axis-title").attr("x", x(typical) + (flip ? -4 : 4)).attr("y", m.t + 10).attr("text-anchor", flip ? "end" : "start").call(halo)
-      .text(`${w < 560 ? "Median loss" : "Median daily unit's loss"}: ${fmtPerMW(typical)}/MW`);
-  }
   const cross = svg.append("line").attr("class", "crosshair").attr("y1", m.t).attr("y2", H - m.b).style("display", "none");
   svg.append("rect").attr("x", m.l).attr("y", m.t).attr("width", w - m.l - m.r).attr("height", H - m.t - m.b).attr("fill", "transparent")
     .on("pointermove", (ev) => {
       const xv = x.invert(d3.pointer(ev)[0]), i = Math.max(0, d3.bisectRight(xs, xv) - 1);
       cross.style("display", null).attr("x1", x(xv)).attr("x2", x(xv));
       const left = cuts.filter((u) => u.c > xv).length;
-      showTip(ev, `<h4>Loss of ${fmtPerMW(xv)} per MW of LSL</h4><table>` + [...bands].reverse().map((b, k) => {
+      showTip(ev, `<h4>Saving of ${fmtPerMW(xv)} per MW of LSL</h4><table>` + [...bands].reverse().map((b, k) => {
         const v = vals[bands.length - 1 - k][i];
         return `<tr><td><span class="sw" style="background:var(${b.color})"></span></td><td>${b.label}</td><td class="n">${fmtMW(v)} MW</td></tr>`;
-      }).join("") + `<tr><td></td><td><b>Total</b></td><td class="n"><b>${fmtMW(tot[i])} MW</b></td></tr></table>${left} of ${cuts.length} units with a cutoff still on`);
+      }).join("") + `<tr><td></td><td><b>Total</b></td><td class="n"><b>${fmtMW(tot[i])} MW</b></td></tr></table>${left} of ${cuts.length} units with a turn-off point still on`);
     })
     .on("pointerleave", () => { cross.style("display", "none"); hideTip(); });
   el.replaceChildren(svg.node());
-  setCSV(el, ["loss_usd_per_mw_lsl", ...bands.map((b) => b.label), "total_mw"], xs.map((xv, i) => [+xv.toFixed(2), ...vals.map((v) => Math.round(v[i])), Math.round(tot[i])]), `Cutoff curve ${S.date}`);
+  setCSV(el, ["saving_usd_per_mw_lsl", ...bands.map((b) => b.label), "total_mw"], xs.map((xv, i) => [+xv.toFixed(2), ...vals.map((v) => Math.round(v[i])), Math.round(tot[i])]), `Cutoff curve ${S.date}`);
 }
 
-// one row per daily group: each unit with a cutoff as a dot at its cutoff, joined to a tick at
-// the day's loss; the join is red where the loss is past the cutoff, and the dot is hollow where
-// the unit turned off
+// one row per unit the model covers, grouped by how often it turns off: a diamond at its turn-off
+// point (coloured by its day-ahead award), a circle at the day's saving (hollow where it turned
+// off), joined in red where the saving was past the turn-off point
 function drawCutUnits() {
   const el = $("cut-units");
-  const U = dayUnits(S.date).filter((u) => u.kind === "cut");
-  const rowsG = ST_GROUPS.filter((g) => U.some((u) => u.group === g.id));
-  if (!rowsG.length) { $("cut-units-note").textContent = ""; $("cut-units-legend").innerHTML = ""; return emptyMsg(el, "No unit with a cutoff was online going into this day."); }
-  const past = (u) => u.l != null && u.l > u.c;
-  const n = (f) => U.filter(f).length;
-  const nOff = n((u) => u.did === "off"), nPast = n(past), nPastOff = n((u) => past(u) && u.did === "off"), nInOff = n((u) => !past(u) && u.did === "off");
-  window.CX.setNote($("cut-units-note"), `${U.length} units with a cutoff were online going in; ${nOff} turned off. ${nPast} faced a loss past their cutoff and ${nPastOff} of those turned off. The dot is the cost a unit usually turns off above, the tick the day's cost to stay on; a hollow dot turned off. Click a unit to open it.`, `${U.length} units with a cutoff were online going into the day. Each dot is a unit's cutoff, sized by its LSL; the tick is the loss per MW it faced on the day at its own node, and the line between them is red where the loss is past the cutoff. ` +
-    `A filled dot stayed on through the day; a hollow dot turned off (${nOff} units: ${nPastOff} past their cutoff, ${nInOff} within it). A unit past its cutoff that stayed on often held a day-ahead award over the stretch; the tooltip gives its award share. Losses beyond the right edge are drawn at the edge. Click a unit to open it.`);
-  $("cut-units-legend").innerHTML = rowsG.map((g) => `<span><span class="sw" style="background:var(${FLOOR_GROUPS.find((f) => f.id === g.id).color})"></span>${g.label}</span>`).join("") +
-    `<span><span class="sw" style="background:transparent;border:1.5px solid var(--ink);border-radius:50%"></span>Turned off</span>` +
-    `<span><span class="sw" style="background:var(--c8);height:3px"></span>Loss past the cutoff</span><span><span class="sw" style="background:var(--muted);height:3px"></span>Loss within it</span>`;
+  const U = dayUnits(S.date).filter((u) => u.l != null);
+  const rowsG = ST_GROUPS.filter((g) => U.some((u) => u.group === g.id)).concat(U.some((u) => u.group === "ungrouped") ? [{ id: "ungrouped", label: GROUP_LABEL.ungrouped }] : []);
+  if (!rowsG.length) { $("cut-units-note").textContent = ""; $("cut-units-legend").innerHTML = ""; return emptyMsg(el, "No unit with a turn-off point was online going into this day."); }
+  const past = (u) => u.kind === "cut" && u.l > u.c, n = (f) => U.filter(f).length;
+  const nOff = n((u) => u.did === "off"), right = n((u) => past(u) === (u.did === "off"));
+  window.CX.setNote($("cut-units-note"), `${U.length} CC and gas steam units were online going in; ${nOff} turned off. The diamond is where the operator model turns a unit off that day, the circle what being off would have saved; a hollow circle turned off. The model called ${right} of ${U.length} right. Click a unit to open it.`, `${U.length} CC trains and gas steam units were online going into the day. The diamond is each unit's turn-off point that day from the operator-informed model, coloured by its day-ahead award; the circle is the saving it actually faced, and the line between them is red where the saving was past the turn-off point. An arrow at the right edge is a unit the model keeps on through every shift tested (an award every hour holds it on). ` +
+    `A filled circle stayed on through the day; a hollow one was offline in some hour (outages aside). Read at its own saving, the model called ${right} of ${U.length} units right. ${SAVING_NOTE} Savings beyond the edges are drawn at the edge. Click a unit to open it.`);
+  $("cut-units-legend").innerHTML = AWARD.map((a) => `<span><span class="sw" style="background:var(${a.color});transform:rotate(45deg) scale(0.8)"></span>Turns off when savings are greater than this: ${a.label.toLowerCase()}</span>`).join("") +
+    `<span>→ rides through anything tested</span><span><span class="sw" style="background:var(--ink);border-radius:50%"></span>Saving that day, stayed on</span>` +
+    `<span><span class="sw" style="background:transparent;border:1.5px solid var(--ink);border-radius:50%"></span>Turned off</span><span><span class="sw" style="background:var(--c8);height:3px"></span>Saving past the turn-off point</span>`;
   const [x0, x1] = cutDomain(U);
-  // same margins and loss axis as the cutoff curve above; each group's name sits above its row
-  const w = Math.max(280, el.clientWidth || 600), narrow = w < 560, lane = 7, lanes = 5, rowH = lane * lanes + 32;
-  const m = { t: 8, b: 30, ...CUT_M }, H = m.t + m.b + rowH * rowsG.length;
+  const w = Math.max(280, el.clientWidth || 600), narrow = w < 560, lane = 8, rowGap = 26;
+  const per = rowsG.map((g) => U.filter((u) => u.group === g.id).sort((a, b) => (a.kind === "cut" ? a.c : Infinity) - (b.kind === "cut" ? b.c : Infinity) || a.l - b.l));
+  const m = { t: 8, b: 30, ...CUT_M }, H = m.t + m.b + d3.sum(per, (us) => rowGap + us.length * lane);
   const x = d3.scaleSymlog().constant(10).domain([x0, x1]).range([m.l, w - m.r]).clamp(true);
-  const xT = (narrow ? [0, 10, 50, 250, 1000] : [0, 5, 10, 25, 50, 100, 250, 500, 1000, 2500]).filter((v) => v >= x0 && v <= x1);
-  const r = d3.scaleSqrt().domain([0, d3.max(U, (u) => u.lsl)]).range([1.5, 6]);
+  const xT = cutTicks(x0, x1, narrow);
   const svg = d3.create("svg").attr("viewBox", `0 0 ${w} ${H}`).attr("data-nopin", "");
   svg.append("g").attr("class", "gridline").attr("transform", `translate(0,${H - m.b})`).call(d3.axisBottom(x).tickValues(xT).tickSize(-(H - m.t - m.b)).tickFormat(""));
   svg.append("g").attr("class", "axis").attr("transform", `translate(0,${H - m.b})`).call(d3.axisBottom(x).tickValues(xT).tickFormat(fmtPrice0).tickSizeOuter(0));
+  const diamond = d3.symbol(d3.symbolDiamond, 34)();
+  let top = m.t;
   rowsG.forEach((g, gi) => {
-    const top = m.t + gi * rowH, col = css(FLOOR_GROUPS.find((f) => f.id === g.id).color);
-    const lbl = g.label.replace("Daily, ", "Daily: ");
-    svg.append("text").attr("class", "axis-title").attr("x", m.l).attr("y", top + 12).text(lbl);
-    const us = U.filter((u) => u.group === g.id).sort((a, b) => a.c - b.c);
+    const us = per[gi];
+    if (gi) svg.append("line").attr("x1", m.l).attr("x2", w - m.r).attr("y1", top).attr("y2", top).attr("stroke", css("--line"));
+    svg.append("text").attr("class", "axis-title").attr("x", m.l).attr("y", top + 14).text(g.label.replace("Daily, ", "Daily: "));
     us.forEach((u, k) => {
-      const yy = top + 23 + (k % lanes) * lane + lane / 2;
+      const yy = top + rowGap - 4 + k * lane + lane / 2, col = css(AWARD[u.award ?? 0].color);
       const gU = svg.append("g").style("cursor", "pointer")
-        .on("pointermove", (ev) => showTip(ev, `<h4>${esc(u.unit)}</h4>${techLabel(u.tech)} · ${g.label}<br>LSL ${fmtMW(u.lsl)} MW<br>` +
-          `Cutoff ${fmt$(u.cutoff)} (${fmtPerMW(u.c)}/MW)<br>Loss on the day ${fmt$(u.loss)} (${fmtPerMW(u.l)}/MW), hours ending ${u.he} to ${u.he + u.hours - 1}<br>` +
-          `Day-ahead award over the stretch: ${fmtPct(u.award || 0)}<br><b>${DID[u.did]}</b>${u.did === "off" && u.hoff ? ` for ${u.hoff} hours` : ""}` +
-          `<br><span class="tip-pin-note">Click to open the unit</span>`))
+        .on("pointermove", (ev) => showTip(ev, `<h4>${esc(u.unit)}</h4>${techLabel(u.tech)} · ${g.label}<br>LSL ${fmtMW(u.lsl)} MW, minimum down time ${u.md} h<br>` +
+          `${AWARD[u.award ?? 0].label}<br>Saving from being off that day ${fmtPerMW(u.l)}/MW (${fmt$(u.l * u.lsl)})<br>` +
+          (u.kind === "cut" ? `The model turns it off once being off saves ${fmtPerMW(u.c)}/MW (${fmt$(u.c * u.lsl)})` : "The model keeps it on through every shift tested") +
+          `<br><b>${DID[u.did]}</b><br><span class="tip-pin-note">Click to open the unit</span>`))
         .on("pointerleave", hideTip)
         .on("click", () => { location.href = unitHref(u.unit); });
-      if (u.l != null) {
-        gU.append("line").attr("x1", x(u.c)).attr("x2", x(u.l)).attr("y1", yy).attr("y2", yy).attr("stroke", css(past(u) ? "--c8" : "--muted")).attr("stroke-width", 1.5);
-        gU.append("line").attr("x1", x(u.l)).attr("x2", x(u.l)).attr("y1", yy - 3).attr("y2", yy + 3).attr("stroke", css("--ink")).attr("stroke-width", 1.5);
-      }
-      const dot = gU.append("circle").attr("cx", x(u.c)).attr("cy", yy).attr("r", r(u.lsl));
-      if (u.did === "off") dot.attr("fill", css("--surface")).attr("stroke", col).attr("stroke-width", 1.5);
-      else dot.attr("fill", col).attr("stroke", css("--surface")).attr("stroke-width", 0.5);
+      const end = u.kind === "cut" ? u.c : x1;
+      gU.append("line").attr("x1", x(Math.min(end, u.l))).attr("x2", x(Math.max(end, u.l))).attr("y1", yy).attr("y2", yy).attr("stroke", css(past(u) ? "--c8" : "--line")).attr("stroke-width", 1.2);
+      if (u.kind === "cut") gU.append("path").attr("d", diamond).attr("transform", `translate(${x(u.c)},${yy})`).attr("fill", col);
+      else gU.append("path").attr("d", `M${x(x1) - 12},${yy}h10m-4,-3l4,3l-4,3`).attr("fill", "none").attr("stroke", col).attr("stroke-width", 1.5);
+      const dot = gU.append("circle").attr("cx", x(u.l)).attr("cy", yy).attr("r", 3);
+      if (u.did === "off") dot.attr("fill", css("--surface")).attr("stroke", css("--ink")).attr("stroke-width", 1.2);
+      else dot.attr("fill", css("--ink"));
     });
-    if (gi) svg.append("line").attr("x1", m.l).attr("x2", w - m.r).attr("y1", top).attr("y2", top).attr("stroke", css("--line"));
+    top += rowGap + us.length * lane;
   });
-  svg.append("text").attr("class", "axis-title").attr("x", w - m.r).attr("y", H - 2).attr("text-anchor", "end").text("$ per MW of LSL");
+  svg.append("text").attr("class", "axis-title").attr("x", w - m.r).attr("y", H - 2).attr("text-anchor", "end").text("Saving from being off, $ per MW of LSL");
   el.replaceChildren(svg.node());
-  setCSV(el, ["unit", "technology", "group", "lsl_mw", "cutoff_usd", "cutoff_usd_per_mw", "loss_usd", "loss_usd_per_mw", "award_share", "did", "hours_off"],
-    U.map((u) => [u.unit, u.tech, u.group, u.lsl, u.cutoff, u.c == null ? null : +u.c.toFixed(2), u.loss, u.l == null ? null : +u.l.toFixed(2), u.award, u.did, u.hoff]), `Unit cutoffs ${S.date}`);
+  setCSV(el, ["unit", "technology", "group", "lsl_mw", "min_down_h", "award", "saving_usd_per_mw_lsl", "turn_off_usd_per_mw_lsl", "did"],
+    U.map((u) => [u.unit, u.tech, u.group, u.lsl, u.md, ["none", "some hours", "every hour"][u.award ?? 0], u.l, u.c, u.did]), `Turn-off points ${S.date}`);
 }
 
-// the groups on the day: the units online going in and what they did, with how well the daily
-// units' cutoffs fit their history (decisions.json: share of decision days the cutoff rule
-// called, against the base rate)
+// the groups on the day: the units online going in and what they did, with the model's
+// turn-off points and how many of its calls that day were right
 function drawGroups() {
   const el = $("groups-table"), U = dayUnits(S.date);
   if (!U.length) { $("groups-note").textContent = ""; return emptyMsg(el, "No decision data for this day."); }
   const byG = d3.group(U, (u) => u.group);
   const ids = [...ST_GROUPS.map((g) => g.id), "ungrouped"].filter((g) => byG.has(g));
-  const decBy = d3.group(Object.entries(S.DEC?.units || {}).map(([k, u]) => ({ k, ...decisionOf(k) })).filter((u) => u.cutoff != null), (u) => S.G?.units?.[u.k]?.[1] || "ungrouped");
   const rows = ids.map((g) => {
-    const us = byG.get(g), off = us.filter((u) => u.did === "off"), d = decBy.get(g) || [], days = d3.sum(d, (u) => u.days);
-    return { g, n: us.length, lsl: d3.sum(us, (u) => u.lsl), nOff: off.length, lslOff: d3.sum(off, (u) => u.lsl), nCut: d.length,
-      medCut: d.length ? d3.median(d.filter((u) => u.lsl > 0), (u) => u.cutoff / u.lsl) : null,
-      acc: days ? d3.sum(d, (u) => u.acc * u.days) / days : null, base: days ? d3.sum(d, (u) => u.base * u.days) / days : null };
+    const us = byG.get(g), off = us.filter((u) => u.did === "off"), mod = us.filter((u) => u.l != null), cut = mod.filter((u) => u.kind === "cut");
+    return { g, n: us.length, lsl: d3.sum(us, (u) => u.lsl), nOff: off.length, lslOff: d3.sum(off, (u) => u.lsl), nMod: mod.length,
+      medCut: cut.length ? d3.median(cut, (u) => u.c) : null, medSave: mod.length ? d3.median(mod, (u) => u.l) : null,
+      right: mod.filter((u) => (u.kind === "cut" && u.l > u.c) === (u.did === "off")).length };
   });
   $("groups-title-note").textContent = fmtDate(parseDate(S.date));
-  window.CX.setNote($("groups-note"), "Coal and gas units online going into the day, by how often they turn off on price, and how many turned off.", `Coal and gas units online going into the day (combined-cycle configurations merged into their train), by how often they have turned off on price over the ${S.G ? S.G.dates.length : ""} days of 60-day data (pipeline/groups.py). Peakers outside the always-on group are left out, as on the cutoff curve. Minimum output is the unit's LSL; turned off counts units that shut during the day's worst stretch. ` +
-    `The cutoff columns cover units with enough decision days for a cutoff (${S.DEC ? `${S.DEC.min_days} days with at least ${S.DEC.min_each} shutdowns and ${S.DEC.min_each} stays` : ""}): the median cutoff per MW of LSL, and how often the rule "off when no award covers the window and the loss is above the cutoff, else on" matched what the units did, weighted by decision days. Each day is judged with a cutoff fitted to the unit's other days, so the share is what to expect on a day the rule has not seen, not how well it fits the days it was fitted to; it is set against the base rate of each unit's commoner outcome. A rule well above its base rate says the day economics decide; near it, something else does.`);
-  el.innerHTML = `<table class="data"><thead><tr><th class="t">Group</th><th>Online going in</th><th>Minimum output MW</th><th>Turned off</th><th>Minimum output turned off MW</th><th>Units with a cutoff</th><th>Median cutoff $/MW LSL</th><th>Cutoff rule right on new days</th><th>Base rate</th></tr></thead><tbody>` +
+  window.CX.setNote($("groups-note"), "Coal and gas units online going into the day, by how often they turn off on price, and how many turned off.", `Coal and gas units online going into the day (combined-cycle configurations merged into their train), by how often they have turned off on price over the ${S.G ? S.G.dates.length : ""} days of 60-day data (pipeline/groups.py). Peakers outside the always-on group are left out, as on the cutoff curve. Minimum output is the unit's LSL; turned off counts units offline in some hour of the day. ` +
+    `The model columns cover the CC trains and gas steam units with a turn-off point that day: the median turn-off point and the median saving they faced, per MW of LSL, and how many the model called right (off when the saving was past its turn-off point). ${SAVING_NOTE}`);
+  el.innerHTML = `<table class="data"><thead><tr><th class="t">Group</th><th>Online going in</th><th>Minimum output MW</th><th>Turned off</th><th>Minimum output turned off MW</th><th>Units the model covers</th><th>Median turn-off point $/MW LSL</th><th>Median saving $/MW LSL</th><th>Model right</th></tr></thead><tbody>` +
     rows.map((r) => `<tr><td class="t"><span class="sw" style="background:var(${FLOOR_GROUPS.find((f) => f.id === r.g)?.color || "--c-other"});margin-right:6px"></span>${GROUP_LABEL[r.g]}<br><span class="muted">${ST_GROUPS.find((g) => g.id === r.g)?.note || "too little history to place"}</span></td>` +
-      `<td>${r.n}</td><td>${fmtMW(r.lsl)}</td><td>${r.nOff}</td><td>${fmtMW(r.lslOff)}</td><td>${r.nCut || "–"}</td><td>${fmtPerMW(r.medCut)}</td><td>${r.acc == null ? "–" : fmtPct(r.acc)}</td><td>${r.base == null ? "–" : fmtPct(r.base)}</td></tr>`).join("") +
-    `<tr><td class="t"><b>All thermal</b></td><td><b>${d3.sum(rows, (r) => r.n)}</b></td><td><b>${fmtMW(d3.sum(rows, (r) => r.lsl))}</b></td><td><b>${d3.sum(rows, (r) => r.nOff)}</b></td><td><b>${fmtMW(d3.sum(rows, (r) => r.lslOff))}</b></td><td><b>${d3.sum(rows, (r) => r.nCut)}</b></td><td></td><td></td><td></td></tr></tbody></table>`;
-  setCSV(el, ["group", "online_going_in", "lsl_mw", "turned_off", "lsl_turned_off_mw", "units_with_cutoff", "median_cutoff_usd_per_mw_lsl", "cutoff_rule_right", "base_rate"],
-    rows.map((r) => [r.g, r.n, r.lsl, r.nOff, r.lslOff, r.nCut, r.medCut, r.acc, r.base]), `Groups ${S.date}`);
+      `<td>${r.n}</td><td>${fmtMW(r.lsl)}</td><td>${r.nOff}</td><td>${fmtMW(r.lslOff)}</td><td>${r.nMod || "–"}</td><td>${fmtPerMW(r.medCut)}</td><td>${fmtPerMW(r.medSave)}</td><td>${r.nMod ? `${r.right} of ${r.nMod}` : "–"}</td></tr>`).join("") +
+    `<tr><td class="t"><b>All thermal</b></td><td><b>${d3.sum(rows, (r) => r.n)}</b></td><td><b>${fmtMW(d3.sum(rows, (r) => r.lsl))}</b></td><td><b>${d3.sum(rows, (r) => r.nOff)}</b></td><td><b>${fmtMW(d3.sum(rows, (r) => r.lslOff))}</b></td><td><b>${d3.sum(rows, (r) => r.nMod)}</b></td><td></td><td></td><td><b>${d3.sum(rows, (r) => r.right)} of ${d3.sum(rows, (r) => r.nMod)}</b></td></tr></tbody></table>`;
+  setCSV(el, ["group", "online_going_in", "lsl_mw", "turned_off", "lsl_turned_off_mw", "units_modelled", "median_turn_off_usd_per_mw_lsl", "median_saving_usd_per_mw_lsl", "model_right"],
+    rows.map((r) => [r.g, r.n, r.lsl, r.nOff, r.lslOff, r.nMod, r.medCut, r.medSave, r.right]), `Groups ${S.date}`);
+}
+
+// ==== the operator model's scorecard (data/operator/scores.json.gz, pipeline/models/operator_scores.py) ====
+const SC_MODELS = { operator: "Operator-informed model" };
+function drawScores() {
+  const el = $("sc-table"), sc = S.OSC;
+  if (!sc || !sc.rows?.length) { $("sc-note").textContent = ""; return emptyMsg(el, "No scorecard yet. It is built by the data update workflow."); }
+  setSeg("sc-cell", S.scCell);
+  const ci = Object.fromEntries(sc.columns.map((c, i) => [c, i])), months = [...new Set(sc.rows.map((r) => r[ci.month]))].sort();
+  const keep = (r) => r[ci.tech] === S.scTech && (S.scCell === "all" || (S.scCell === "cheap" ? r[ci.cheap] === 1 : S.scCell === "noaward" ? r[ci.award] === 0 : r[ci.start] === S.scCell));
+  const T = Object.fromEntries(sc.models.map((m) => [m, {}]));
+  sc.rows.filter(keep).forEach((r) => { const t = T[r[ci.model]]; sc.columns.slice(6).forEach((c) => { t[c] = (t[c] || 0) + (r[ci[c]] || 0); }); });
+  const pct = (a, b) => (b ? fmtPct(a / b) : "–");
+  const ev = (t, k) => (t[`${k}_n`] ? `${d3.format(",")(t[`${k}_caught`])} of ${d3.format(",")(t[`${k}_n`])}` : "–");
+  const fl = (t, k) => (t[`${k}_n`] != null ? d3.format(",")(t[`${k}_false`] || 0) : "–");
+  const shown = ["operator"];   // the baselines stay in the file, scored for the model's version gate
+  window.CX.setNote($("sc-note"), `How often the operator-informed model called each hour right, and the turn-offs and turn-ons they caught, ${fmtDate(parseDate(months[0] + "-01"))} to the latest 60-day day.`, `Every hour of every CC train or gas steam unit on a day with an operator day file, scored against what it did (outage and unknown hours left out, and days a unit went into on outage). The model's call is on when its chance online is 50% or more; it is fitted monthly on earlier days only. A turn-off or turn-on is caught when the call switches the same way within ${1} hour of the actual switch; a call's switch that matches none is false. "Cheap" is an hour with the day-ahead hub at $${sc.cheap}/MWh or less, and for a switch, any such hour within 3 hours of it. Brier is the mean squared error of the model's chance (lower is better).`);
+  el.innerHTML = `<table class="data"><thead><tr><th class="t">Model</th><th>Hours right</th><th>Turn-offs caught</th><th>False turn-offs</th><th>Turn-ons caught</th><th>False turn-ons</th><th>Brier</th></tr></thead><tbody>` +
+    shown.map((m) => { const t = T[m]; return `<tr><td class="t">${SC_MODELS[m]}</td><td>${pct(t.right, t.hours)}</td><td>${ev(t, "off")}</td><td>${fl(t, "off")}</td><td>${ev(t, "on")}</td><td>${fl(t, "on")}</td><td>${m === "operator" && t.hours ? d3.format(".3f")(t.brier / t.hours) : "–"}</td></tr>`; }).join("") + `</tbody></table>`;
+  setCSV(el, ["model", "hours", "hours_right", "off_n", "off_caught", "off_false", "on_n", "on_caught", "on_false", "brier_sum"],
+    shown.map((m) => [m, T[m].hours, T[m].right, T[m].off_n, T[m].off_caught, T[m].off_false, T[m].on_n, T[m].on_caught, T[m].on_false, m === "operator" ? T[m].brier : null]), `Operator model scorecard ${S.scTech} ${S.scCell}`);
 }
 
 // ==== across days: what the decision cost ==================================================
@@ -1108,16 +1132,16 @@ function setDate(d) {
   if (S.uSeen) drawUnits();
 }
 const VIEW_KEYS = { cb: "cutBy", fg: "floorGroup", fh: "floorHours", f: "floorMode", stt: "stTech", stp: "stThr", stu: "stUnit", cht: "cheapTech", chthr: "cheapThr",
-  lr: "leanRank", lm: "leanMonth", lp: "leanPer", cap: "capTech", ct: "costThr", ut: "uTech", ug: "uGroup", us: "uSort", ud: "uDir" };
+  sct: "scTech", scc: "scCell", lr: "leanRank", lm: "leanMonth", lp: "leanPer", cap: "capTech", ct: "costThr", ut: "uTech", ug: "uGroup", us: "uSort", ud: "uDir" };
 function saveView() { window.CX.writeHash({ ...window.CX.readHash(), date: S.date, ...Object.fromEntries(Object.entries(VIEW_KEYS).map(([k, sk]) => [k, S[sk]])) }); }
 function loadView() { const v = window.CX.readHash(); Object.entries(VIEW_KEYS).forEach(([k, sk]) => { if (v[k] != null) S[sk] = v[k]; }); return v; }
 
 function drawRange() { drawStretch(); drawCapacity(); drawFloor(); drawCheap(); drawLean(); drawCost(); if (S.uSeen) drawUnits(); }
-function drawAll() { drawDay(); drawRange(); }
+function drawAll() { drawDay(); drawScores(); drawRange(); }
 
 async function boot() {
-  [S.T, S.TH, S.I, S.HC, S.DEC, S.SO, S.IX] = await Promise.all([tryJSON("data/trends_60d.json.gz"), tryJSON("data/trends_hourly_60d.json.gz"), tryJSON("data/intraday_60d.json.gz"), tryJSON("data/hourly_context_60d.json.gz"),
-    tryJSON("data/decisions.json.gz"), tryJSON("data/stayon_60d.json.gz"), tryJSON("data/index.json")]);
+  [S.T, S.TH, S.I, S.HC, S.DEC, S.SO, S.IX, S.OC, S.OSC] = await Promise.all([tryJSON("data/trends_60d.json.gz"), tryJSON("data/trends_hourly_60d.json.gz"), tryJSON("data/intraday_60d.json.gz"), tryJSON("data/hourly_context_60d.json.gz"),
+    tryJSON("data/decisions.json.gz"), tryJSON("data/stayon_60d.json.gz"), tryJSON("data/index.json"), tryJSON("data/operator/cutoffs.json.gz"), tryJSON("data/operator/scores.json.gz")]);
   // the groups are small and every panel reads them, so they load up front; the hourly strips follow
   const g = await tryJSON("data/groups_60d.json.gz");
   S.G = g && g.units ? g : null;
@@ -1141,8 +1165,9 @@ async function boot() {
   [["cut-by", "cutBy", drawDay], ["floor-mode", "floorMode", drawFloor], ["floor-hours", "floorHours", drawFloor], ["floor-group", "floorGroup", drawFloor],
    ["cheap-thr", "cheapThr", drawCheap], ["lean-rank", "leanRank", drawLean], ["lean-per", "leanPer", drawLean],
    ["st-thr", "stThr", () => { drawStretch(); if (S.uSeen) drawUnits(); }], ["st-unit", "stUnit", drawStretch],
-   ["cost-thr", "costThr", () => { drawCost(); if (S.uSeen) drawUnits(); }]].forEach(([id, key, fn]) => { setSeg(id, S[key]); bindSeg(id, key, fn); });
+   ["cost-thr", "costThr", () => { drawCost(); if (S.uSeen) drawUnits(); }], ["sc-cell", "scCell", drawScores]].forEach(([id, key, fn]) => { setSeg(id, S[key]); bindSeg(id, key, fn); });
   bindSelect("cap-tech", "capTech", thermal, drawCapacity);
+  bindSelect("sc-tech", "scTech", thermal.filter((t) => ["combined_cycle", "gas_steam"].includes(t.id)), drawScores);
   bindSelect("cheap-tech", "cheapTech", [ALL_THERMAL, ...thermal], drawCheap);
   bindSelect("st-tech", "stTech", [ALL_THERMAL, ...thermal.filter((t) => t.id !== "nuclear")], drawStretch);
   bindSelect("u-tech", "uTech", [{ id: "all", label: "All" }, ...thermal.filter((t) => t.id !== "nuclear")], drawUnits);
@@ -1161,7 +1186,8 @@ async function boot() {
   // the units table needs the hourly strips: draw it once it is about to scroll into view
   new IntersectionObserver((es, ob) => { if (es.some((e) => e.isIntersecting)) { S.uSeen = true; drawUnits(); ob.disconnect(); } }, { rootMargin: "400px" })
     .observe($("units-table"));
-  setDate(v.date || S.days.at(-1));
+  setDate(v.date || (S.OC && Object.keys(S.OC.days).at(-1)) || S.days.at(-1));
+  drawScores();
   drawRange();
   window.CX.init();
   window.CX.panelFromLink?.();
