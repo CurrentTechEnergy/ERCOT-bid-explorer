@@ -51,6 +51,7 @@ CONGESTED = 5.0       # $/MWh: a unit's DA node this far below the DA bus averag
 CURT_MIN = 0.5        # MW: smaller unit-hour curtailment is noise
 OVER_CURT_MIN = 100.0  # MW of uncongested curtailment for an oversupply hour to count in the fossil split
 AWARD_LSL = 0.9
+MIDDAY = (8, 19)      # hours ending of the cheap midday stretch (question 2's award chart)
 OUT_MIN_H = 4         # offline hours an off spell needs (pipeline.forecast.groups)
 FOSSIL = ("coal", "combined_cycle", "gas_steam")
 REASONS = ("coal", "never off", "held by its award", "rode through", "against the model", "no model call")
@@ -260,6 +261,7 @@ def _year(year, months, cache, before=None, losing=None):
     # question 2: minimum online in cheap hours, by reason
     c = h[h["cheap"] & atmin]
     q2rows = [[year, t, w, round(float(v))] for (t, w), v in c.groupby(["tech", "why"])["lsl"].sum().items()]
+    q2award = _award_stretches(year, h)
     # question 4: curtailment, and fossil at minimum in oversupply hours
     q4 = None
     if ren:
@@ -289,8 +291,51 @@ def _year(year, months, cache, before=None, losing=None):
                        r[r["over"]].groupby("he")["free"].sum().reindex(range(1, 25), fill_value=0.0)]],
               "atmin": atm, "avoid": avoid}
     days = sorted(h["date"].unique())
-    return {"q1": q1rows, "q2": q2rows, "q4": q4, "cheap_hours": cheap_hours, "from": days[0], "to": days[-1],
+    return {"q1": q1rows, "q2": q2rows, "q2award": q2award, "q4": q4, "cheap_hours": cheap_hours, "from": days[0], "to": days[-1],
             "states": h[h["tech"].isin(FOSSIL)][["train", "date", "he", "state"]]}
+
+
+def _award_stretches(year, h):
+    """[[year, group, stretches, stayed]]: combined-cycle trains online in the hour before the day's
+    day's first run of two or more cheap midday hours (MIDDAY), with no outage or missing hour in it, and
+    whether they stayed online through all of it.  group: "award" (a DAM award over 0.5 MW in at
+    least half the stretch's hours), "self" (no award, DAM resource status on at the first cheap
+    hour), "neither", or "no award" where the day has no DAM day file (data/dam) to give the
+    status (before Dec 2025)."""
+    from .models.operator_informed import _status
+    hours = h[["date", "he", "cheap"]].drop_duplicates(["date", "he"]).sort_values(["date", "he"]).reset_index(drop=True)
+    idx = {k: i for i, k in enumerate(zip(hours["date"], hours["he"]))}
+    runs = []
+    for d, g in hours.groupby("date", sort=True):
+        c = g.index[g["cheap"].to_numpy() & g["he"].between(*MIDDAY).to_numpy()]
+        if len(c) and c[0] > 0:
+            e = c[0] + 1
+            while e in set(c):
+                e += 1                  # the first run of cheap hours in a row
+            if e - c[0] >= 2:
+                runs.append((d, int(hours.at[c[0], "he"]), c[0], e))
+    status = {}
+    for d in {r[0] for r in runs}:
+        dd = read_json_gz(DATA_DIR / "dam" / f"{d}.json.gz", default=None)
+        status[d] = _status(dd) if dd else None
+    out = defaultdict(lambda: [0, 0])
+    n = len(hours)
+    for tr, g in h[h["tech"] == "combined_cycle"].groupby("train", sort=False):
+        st = np.full(n, "-", dtype=object)
+        aw = np.zeros(n, bool)
+        k = np.array([idx[x] for x in zip(g["date"], g["he"])])
+        st[k] = g["state"].to_numpy()
+        aw[k] = (g["award"] > 0.5).to_numpy()
+        for d, he, a, b in runs:
+            if st[a - 1] not in ("m", "a") or np.isin(st[a:b], ["o", "-"]).any():
+                continue
+            sd = status[d]
+            grp = "award" if aw[a:b].mean() >= 0.5 else "no award" if sd is None else \
+                "self" if tr in sd and sd[tr][he - 1] > 0 else "neither"
+            r = out[grp]
+            r[0] += 1
+            r[1] += int(not (st[a:b] == "0").any())
+    return [[year, grp, n_, stayed] for grp, (n_, stayed) in sorted(out.items())]
 
 
 def _rule(table):
@@ -322,7 +367,8 @@ def build(cache: Path, end=None, table=None) -> dict:
       {"version", "built", "through", "cheap", "over_price",
        "years": {year: {"from", "to", "cheap_hours"}},
        "q1": {"columns": [year, tech, group, trains, capacity_mw, off_mwh], "rows"},
-       "q2": {"columns": [year, tech, reason, mwh], "rows", "reasons"},
+       "q2": {"columns": [year, tech, reason, mwh], "rows", "reasons",
+              "award": [[year, group, stretches, stayed]]},
        "q3": {"off": [[year, tech, small (0: losing more than a restart), awarded, windows, off_share,
                         minimum_online_mwh, minimum_offline_mwh]],
               "mix": [[year, tech, windows, overnight, midday, off_rate, median_loss_per_mw]]},
@@ -336,7 +382,7 @@ def build(cache: Path, end=None, table=None) -> dict:
     out = {"version": VERSION, "built": dt.datetime.now(dt.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
            "cheap": CHEAP, "over_price": OVER_PRICE, "years": {},
            "q1": {"columns": ["year", "tech", "group", "trains", "capacity_mw", "off_mwh"], "rows": [], "groups": list(GROUPS)},
-           "q2": {"columns": ["year", "tech", "reason", "mwh"], "rows": [], "reasons": list(REASONS)},
+           "q2": {"columns": ["year", "tech", "reason", "mwh"], "rows": [], "reasons": list(REASONS), "award": []},
            "q4": {"years": [], "atmin": [], "avoid": [], "scenarios": [s for s, _ in SCENARIOS] + ["all fossil at minimum"], "econ": list(ECON)}}
     if table is None:
         from .decision_table import build as build_table
@@ -352,6 +398,7 @@ def build(cache: Path, end=None, table=None) -> dict:
         out["years"][y] = {"from": r["from"], "to": r["to"], "cheap_hours": r["cheap_hours"]}
         out["q1"]["rows"] += r["q1"]
         out["q2"]["rows"] += r["q2"]
+        out["q2"]["award"] += r["q2award"]
         if r["q4"]:
             out["q4"]["years"].append(r["q4"]["year"])
             out["q4"]["atmin"] += r["q4"]["atmin"]

@@ -116,7 +116,33 @@ function drawQ2() {
   const y = fullYears().at(-1), tot = d3.sum(Q2_KEYS, (k) => val(y, k));
   $("q2-answer").innerHTML = `In ${y}, <b>${fmtGW(tot)} GW of coal and gas minimum ran through the average cheap hour.</b> ${fmtGW(val(y, "coal"))} GW was coal, ${fmtGW(val(y, "held by its award"))} GW was held by its day-ahead award, ${fmtGW(val(y, "never off"))} GW never turns off, and ${fmtGW(val(y, "rode through"))} GW rode through, as the model also called it. Only ${d3.format(",.0f")(val(y, "against the model"))} MW stayed on when the model said it would turn off.`;
   setNote($("q2-note"), `Coal, combined-cycle and gas steam units online at minimum in cheap hours, by the first reason that applies. * part year.`,
-    `A unit at minimum is online with output within 5% of its HSL above its LSL, from the 60-day SCED disclosure; its MW is its LSL. The reasons, in order: coal (it does not cycle within a day); never off (no off spell all year, as in question 1); held by its award (a day-ahead energy award of at least 90% of its LSL that hour); rode through (the operator-informed model, which judges each hour with the unit's own prices, costs, award and state, also called it on); stayed on, model said off (the model's chance online was under 50%); no model call (no operator day file, mostly Jan to Mar 2019, before the model's first fit). Before Feb 2026 the model is fitted on the 12 months before each month, without the day-ahead resource status. A cheap hour has a day-ahead hub average of $${S.G.cheap}/MWh or less.`);
+    `A unit at minimum is online with output within 5% of its HSL above its LSL, from the 60-day SCED disclosure; its MW is its LSL. The reasons, in order: coal (it does not cycle within a day); never off (no off spell all year, as in question 1); held by its award (a day-ahead energy award of at least 90% of its LSL that hour); rode through (the operator-informed model, which judges each hour with the unit's own prices, costs, award and state, also called it on); stayed on, model said off (the model's chance online was under 50%); no model call (no operator day file, mostly Jan to Mar 2019, before the model's first fit). Before Feb 2026 the model is fitted on the 12 months before each month, without the day-ahead resource status. A cheap hour has a day-ahead hub average of $${S.G.cheap}/MWh or less. The bar chart counts combined-cycle train-days online in the hour before the day's first run of two or more cheap hours between HE8 and HE19, with no outage in it, and whether the train stayed online through the run. DAM award: an award over 0.5 MW in at least half its hours. Self-committed: no award, and its DAM resource status on (in the 60-day DAM disclosure from Dec 2025; earlier years have no status, so they split only by award).`);
+}
+
+// the day-ahead award against staying on through a cheap midday stretch
+const AWARD_GROUPS = [["award", "DAM award", "--c1"], ["self", "Self-committed, no award", "--c3"], ["neither", "Neither", "--c2"], ["no award", "No award", "--c-other"]];
+function drawQ2Award() {
+  const R = S.G.q2.award.map(([year, group, n, stayed]) => ({ year, group, n, stayed }));
+  const el = $("q2a-chart");
+  if (!R.length) return emptyMsg(el, "No cheap midday stretches.");
+  const y = d3.max(R.filter((r) => r.group === "self"), (r) => r.year) || d3.max(R, (r) => r.year);
+  const G = AWARD_GROUPS.map(([k, label, c]) => ({ k, label, c, ...(R.find((r) => r.year === y && r.group === k) || { n: 0, stayed: 0 }) })).filter((g) => g.n);
+  $("q2a-title").textContent = `Combined-cycle trains online going into a cheap midday stretch, ${yearLabel(y)}: share that stayed online through it`;
+  const w = Math.max(300, el.clientWidth || 700), m = { t: 6, r: 60, b: 26, l: 160 }, H = m.t + m.b + G.length * 50;
+  const x = d3.scaleLinear().domain([0, 1]).range([m.l, w - m.r]), yb = d3.scaleBand().domain(G.map((g) => g.k)).range([m.t, H - m.b]).padding(0.3);
+  const svg = d3.create("svg").attr("viewBox", `0 0 ${w} ${H}`);
+  svg.append("g").attr("class", "gridline").attr("transform", `translate(0,${H - m.b})`).call(d3.axisBottom(x).ticks(w < 500 ? 2 : 4).tickSize(-(H - m.t - m.b)).tickFormat(""));
+  svg.append("g").attr("class", "axis").attr("transform", `translate(0,${H - m.b})`).call(d3.axisBottom(x).ticks(w < 500 ? 2 : 4).tickFormat(fmtPct).tickSizeOuter(0));
+  G.forEach((g) => {
+    const v = g.stayed / g.n;
+    svg.append("rect").attr("x", x(0)).attr("y", yb(g.k)).attr("width", x(v) - x(0)).attr("height", yb.bandwidth()).attr("fill", css(g.c));
+    svg.append("text").attr("x", x(v) + 6).attr("y", yb(g.k) + yb.bandwidth() / 2).attr("dy", "0.35em").attr("class", "bar-val").style("font-weight", 600).text(d3.format(".1%")(v));
+    const t = svg.append("text").attr("x", m.l - 8).attr("y", yb(g.k) + yb.bandwidth() / 2).attr("text-anchor", "end").attr("class", "axis-label");
+    t.append("tspan").attr("x", m.l - 8).attr("dy", "-0.2em").text(g.label);
+    t.append("tspan").attr("x", m.l - 8).attr("dy", "1.2em").attr("fill", css("--muted")).text(`${d3.format(",")(g.n)} train-days`);
+  });
+  el.replaceChildren(svg.node());
+  setCSV(el, ["year", "group", "stretches", "stayed_online"], R.map((r) => [r.year, r.group, r.n, r.stayed]), "Award and staying on");
 }
 
 // ==== 3. Is behaviour changing: triggers against behaviour, and where the loss windows fall ==
@@ -209,7 +235,7 @@ function drawQ4() {
     `Curtailment is a wind or solar unit's HSL above its base point (0.5 MW or more), from the 60-day SCED disclosure. An oversupply hour has a real-time hub average (HB_HUBAVG) of $${S.G.over_price}/MWh or less. A unit is behind congestion when its day-ahead node price sits $5 or more below the day-ahead bus average; most curtailment is (West and Panhandle), and shutting a gas unit elsewhere does not make room for it. The fossil split covers oversupply hours with at least 100 MW curtailed not behind congestion. A unit is losing money in the hours of its day's worst loss window: the longest run of hours in which its minimum-energy cost beat its day-ahead node price, times its LSL. It loses more than a restart when that window's loss beats its hot start offer (a generic $15,000 for combined cycles, $10,000 for gas steam and $30,000 for coal when none is offered). Units outside such a window are covering their costs at day-ahead prices. "Runs" sums, hour by hour, the smaller of that curtailment and the minimum of the units shut.`);
 }
 
-function drawAll() { drawQ1(); drawQ2(); drawQ3(); drawQ4(); }
+function drawAll() { drawQ1(); drawQ2(); drawQ2Award(); drawQ3(); drawQ4(); }
 
 (async function boot() {
   window.CX.init();
