@@ -70,24 +70,32 @@ def start_point(b, prices):
     return float(prices.max() + (thr - prices).min())
 
 
+def node_prices(dates, units) -> dict:
+    """{unit: [len(dates), 24] hourly real-time price at its resource node, NaN for a day without
+    all 24} for the units with a node (unit_index.json.gz) and at least one such day.  Also read
+    by events.py (run_price)."""
+    ui = read_json_gz(DATA_DIR / "unit_index.json.gz", default={}) or {}
+    ic = ui.get("columns") or []
+    sp = {r[ic.index("unit")]: r[ic.index("sp")] for r in ui.get("rows", [])} if "sp" in ic else {}
+    node = {}
+    for i, d in enumerate(dates):
+        pts = node_hourly(read_json_gz(UNIT_DATA_DIR / "nodes" / f"{d}.json.gz", default=None))
+        for u in units:
+            v = pts.get(sp.get(u))
+            if v and len(v) == 24 and None not in v:
+                node.setdefault(u, np.full((len(dates), 24), np.nan))[i] = v
+    return node
+
+
 def build_peaker_rt(index=None) -> int:
     uh = read_json_gz(DATA_DIR / "unit_hours_60d.json.gz", default={}) or {}
     tr = read_json_gz(DATA_DIR / "trends_60d.json.gz", default={}) or {}
     dates = uh.get("dates") or []
     cts = [u["unit"] for u in tr.get("units", []) if u["tech"] == "combustion_turbine" and u["unit"] in uh.get("units", {})]
-    ui = read_json_gz(DATA_DIR / "unit_index.json.gz", default={}) or {}
-    ic = ui.get("columns") or []
-    sp = {r[ic.index("unit")]: r[ic.index("sp")] for r in ui.get("rows", [])} if "sp" in ic else {}
     if not dates or not cts:
         return 0
     N = len(dates)
-    node = {}      # unit: [N, 24] real-time node prices
-    for i, d in enumerate(dates):
-        pts = node_hourly(read_json_gz(UNIT_DATA_DIR / "nodes" / f"{d}.json.gz", default=None))
-        for u in cts:
-            v = pts.get(sp.get(u))
-            if v and len(v) == 24 and None not in v:
-                node.setdefault(u, np.full((N, 24), np.nan))[i] = v
+    node = node_prices(dates, cts)
     hh = np.broadcast_to(np.arange(24), (N, 24))
     months = sorted({d[:7] for d in dates})
     rows_of = {m: [i for i, d in enumerate(dates) if d[:7] == m] for m in months}

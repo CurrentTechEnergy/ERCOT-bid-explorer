@@ -19,19 +19,21 @@ Sources (each already computed by its own module; nothing is detected twice):
                    peers (signal in "field")
   cutoff           models/cutoff_history.py: the unit's recent loss cutoff moved away from the
                    cutoff the site showed (status confirmed / contradicted / pending).  CC and gas
-                   steam only: combustion turbines start rather than stay on, so they get run_price
-  run_price        combustion turbines: running at a new price.  For each calendar month with
+                   steam only: combustion turbines start rather than stay on, so they get rt_price
+  rt_price         combustion turbines: running at a new price.  For each calendar month with
                    RUN_MONTH_DAYS days of hourly states, the unit's online share of its available
-                   hours (outage hours left out) in each day-ahead hub price bin
-                   (forecast.context.PRICE_BINS, HB_HUBAVG), against the RUN_BEFORE days before
-                   the month.  An event when a bin with RUN_MIN_NOW and RUN_MIN_BEFORE available
-                   hours crossed from under RUN_LO to RUN_HI or more (now runs at a price it used
-                   to skip) or the reverse; the cheapest such bin is reported.  Dated to the
-                   month's first day so a month in progress keeps one id.  Status from the next
-                   month in the same bin: confirmed when its share sits nearer the new one,
-                   contradicted when nearer the old, else pending.  Backtest on Jan-Aug 2026
-                   (245 CTs): 58 events, about 7 a month; 40 of the 47 with a next month to test
-                   held up
+                   hours (outage hours left out) in each bin of the real-time price at its own node
+                   (forecast.context.PRICE_BINS edges; hourly means from UNIT_DATA_DIR/nodes, as
+                   models/peaker_rt.py fits on), against the RUN_BEFORE days before the month.  An
+                   event when a bin with RUN_MIN_NOW and RUN_MIN_BEFORE available hours crossed
+                   from under RUN_LO to RUN_HI or more (now runs at a price it used to skip) or
+                   the reverse; the cheapest such bin is reported.  Dated to the month's first day
+                   so a month in progress keeps one id.  Status from the next month in the same
+                   bin: confirmed when its share sits nearer the new one, contradicted when nearer
+                   the old, else pending.  Backtest on Jan-Aug 2026 (245 CTs): 60 events, 30 of the
+                   44 with a next month to test held up (on day-ahead hub bins: 58 and 40 of 47;
+                   real-time prices follow what peakers do, so a month's shares are noisier).  The
+                   kind replaced run_price (the day-ahead hub version) so its first run is history
   renew_*          renew_changes.py events for wind and solar (floor_new, floor_back,
                    formula_on, formula_off, terms, moving_on, moving_off, episode), one event
                    per plant with its units listed
@@ -88,7 +90,8 @@ from collections import defaultdict
 import numpy as np
 
 from .config import DATA_DIR, SITE_URL
-from .forecast.context import BIN_LABELS, HUB as RUN_HUB, PRICE_BINS
+from .forecast.context import BIN_LABELS, PRICE_BINS
+from .models.peaker_rt import node_prices
 from .groups import GROUPED_TECHS, GROUPS, assign_groups
 from .entities import PATH as ENTITIES_PATH
 from .models.cutoff_history import PATH as CUTOFF_PATH
@@ -114,7 +117,7 @@ FUEL_HUB = "hsc"      # gas hub shown beside the shift (gas_hubs.json.gz)
 SIZE_WINDOW, SIZE_BASE, SIZE_MIN_BASE = 7, 30, 20      # days with a value
 SIZE_SHARE, SIZE_MW, SIZE_HOLD, SIZE_MAJOR = 0.2, 5, 30, 0.5
 NEW_GRACE = 14
-# run_price (combustion turbines; see the docstring)
+# rt_price (combustion turbines; see the docstring)
 RUN_MONTH_DAYS, RUN_BEFORE = 20, 60            # days of states the month needs; days before it compared
 RUN_MIN_NOW, RUN_MIN_BEFORE, RUN_MIN_NEXT = 30, 60, 20   # available hours a price bin needs
 RUN_HI, RUN_LO = 0.5, 0.2                      # online share it crosses between
@@ -129,7 +132,7 @@ KINDS = {
     "group": "Timescale group changed",
     "bidding": "Bidding approach shifted",
     "cutoff": "Loss cutoff moved",
-    "run_price": "Running at a new price",
+    "rt_price": "Running at a new price",
     "fuel": "Fleet median offer shifted",
     "battery_size": "Battery size changed",
     "battery_new": "New battery",
@@ -257,7 +260,7 @@ def fuel_events(tr, hubs):
 def cutoff_events(ch):
     out = []
     for mv in ch.get("moves", []):
-        if mv.get("tech") == "combustion_turbine":   # peakers get run_price instead
+        if mv.get("tech") == "combustion_turbine":   # peakers get rt_price instead
             continue
         nx = mv.get("next")
         tail = (f"; the next month's decisions {'confirm it' if mv['status'] == 'confirmed' else 'contradict it' if mv['status'] == 'contradicted' else 'are split'}"
@@ -269,23 +272,21 @@ def cutoff_events(ch):
     return out
 
 
-def run_price_events(uh, dam_hubs, tech_of):
+def run_price_events(uh, tech_of):
     dates = uh.get("dates") or []
     cts = [n for n, t in tech_of.items() if t == "combustion_turbine" and n in uh.get("units", {})]
     if not dates or not cts:
         return []
     N = len(dates)
-    hub = np.full((N, 24), np.nan)
-    for i, d in enumerate(dates):
-        p = (dam_hubs.get(d) or {}).get(RUN_HUB)
-        if p and len(p) == 24:
-            hub[i] = [np.nan if v is None else v for v in p]
+    node = node_prices(dates, cts)
     nb = len(PRICE_BINS) - 1
-    b = np.where(np.isnan(hub), -1, np.searchsorted(PRICE_BINS, np.nan_to_num(hub), side="right") - 1)
     months = sorted({d[:7] for d in dates})
     rows_of = {m: [i for i, d in enumerate(dates) if d[:7] == m] for m in months}
     out = []
     for n in cts:
+        if n not in node:
+            continue
+        b = np.where(np.isnan(node[n]), -1, np.searchsorted(PRICE_BINS, np.nan_to_num(node[n]), side="right") - 1)
         st = np.array(list(uh["units"][n][:N * 24].ljust(N * 24, "-"))).reshape(N, 24)
         on, av = np.isin(st, ["m", "a"]), np.isin(st, ["m", "a", "0"]) & (b >= 0)
 
@@ -318,11 +319,11 @@ def run_price_events(uh, dam_hubs, tech_of):
                 lab = BIN_LABELS[k]
                 price = {"<0": "below $0", "100+": "above $100"}.get(lab, "$" + lab.replace("-", "–$"))
                 mon = dt.date.fromisoformat(m + "-01").strftime("%B")
-                title = (f"Online {s1:.0%} of its hours at a {price} hub in {mon}, up from {s0:.0%}" if up
-                         else f"Online {s1:.0%} of its hours at a {price} hub in {mon}, down from {s0:.0%}")
-                out.append(_ev(n, m + "-01", "run_price", "combustion_turbine", title, True,
+                title = (f"Online {s1:.0%} of its hours at {price} real-time at its node in {mon}, up from {s0:.0%}" if up
+                         else f"Online {s1:.0%} of its hours at {price} real-time at its node in {mon}, down from {s0:.0%}")
+                out.append(_ev(n, m + "-01", "rt_price", "combustion_turbine", title, True,
                                before=round(s0, 3), after=round(s1, 3), value=lab,
-                               field="online share of available hours in the hub price bin; value: the bin",
+                               field="online share of available hours in the real-time node price bin; value: the bin",
                                status=status, next_share=None if s2 is None else round(s2, 3),
                                direction="up" if up else "down", hours=int(A1[k])))
                 break
@@ -599,7 +600,6 @@ def build_events(index: dict) -> dict:
     rc = read_json_gz(DATA_DIR / "renew_changes.json.gz", default={}) or {}
     do = read_json_gz(DATA_DIR / "dam_offers.json.gz", default={}) or {}
     ch = read_json_gz(CUTOFF_PATH, default={}) or {}
-    dh = (read_json_gz(DATA_DIR / "dam_hubs.json.gz", default={}) or {}).get("days", {})
     hubs = read_json_gz(DATA_DIR / "gas_hubs.json.gz", default={}) or {}
     su = read_json_gz(DATA_DIR / "storage" / "units.json.gz", default={}) or {}
     qh = read_json_gz(QSE_PATH, default={}) or {}
@@ -612,7 +612,7 @@ def build_events(index: dict) -> dict:
     tech_all.update({u["unit"]: u["tech"] for u in tr.get("units", [])})
     tech_all.update({_train(u["unit"]): u["tech"] for u in tr.get("units", [])})
     tech_all.update({u: "storage" for u in (su.get("units") or {})})
-    events = (shutdown_events(dec) + group_events(uh, tech_of) + bidding_events(tr) + cutoff_events(ch) + run_price_events(uh, dh, tech_of)
+    events = (shutdown_events(dec) + group_events(uh, tech_of) + bidding_events(tr) + cutoff_events(ch) + run_price_events(uh, tech_of)
               + renew_events(rc) + dam_events(do) + outage_events(uh, tech_of) + fuel_events(tr, hubs) + battery_events(su)
               + new_unit_events(tr) + control_events(qh, ent, tech_all))
     old = read_json_gz(PATH, default=None) or {}

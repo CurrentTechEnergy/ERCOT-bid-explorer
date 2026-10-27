@@ -88,7 +88,7 @@
       <div>
         <h2>Recent changes <span class="h-note" id="changes-count"></span></h2>
         <p class="note">Changes found in how this unit bids or runs, newest first. Unit data runs about 60 days behind.</p>
-        <details class="how"><summary>How it's built</summary><p class="note">What the site's detectors found changed for this unit: shutdowns that broke its pattern, moves in or out of daily cycling, shifts in how it bids, loss cutoff moves (CC and gas steam), peakers running at a new hub price, wind and solar floor or formula changes, long outages, and for batteries lasting size changes and the first day online. A unit's first day in SCED shows here too. "Found" is the day the update first saw it; unit data runs about sixty days behind the operating day.</p></details>
+        <details class="how"><summary>How it's built</summary><p class="note">What the site's detectors found changed for this unit: shutdowns that broke its pattern, moves in or out of daily cycling, shifts in how it bids, loss cutoff moves (CC and gas steam), peakers running at a new real-time price at their node, wind and solar floor or formula changes, long outages, and for batteries lasting size changes and the first day online. A unit's first day in SCED shows here too. "Found" is the day the update first saw it; unit data runs about sixty days behind the operating day.</p></details>
       </div>
       <div class="panel-tools" id="sub-tools"></div>
     </div>
@@ -116,8 +116,8 @@
     <div class="panel-head">
       <div>
         <h2>Decision history</h2>
-        <p class="note">Each point is a day the unit started online: what staying on through the cheap stretch would have cost it, and whether it stayed on or shut down.</p>
-        <details class="how"><summary>How it's built</summary><p class="note">Each point is a day the unit started online, with what the day-ahead prices at its node said it would lose by staying on through the day's worst stretch (energy at its node price against its costs at minimum output), and what it did. The forecast's cutoff for the unit is the loss that best separates its shutdowns from its stays.</p></details>
+        <p class="note" id="dec-lead">Each point is a day the unit started online: what staying on through the cheap stretch would have cost it, and whether it stayed on or shut down.</p>
+        <details class="how" id="dec-how"><summary>How it's built</summary><p class="note">Each point is a day the unit started online, with what the day-ahead prices at its node said it would lose by staying on through the day's worst stretch (energy at its node price against its costs at minimum output), and what it did. The forecast's cutoff for the unit is the loss that best separates its shutdowns from its stays.</p></details>
         <p class="note" id="dec-note"></p>
       </div>
     </div>
@@ -125,7 +125,7 @@
     <div class="chart" id="dec-chart"></div>
     <div id="dec-oi" hidden>
       <h3>With operator info</h3>
-      <p class="note">The same days judged with what the operator knew going in (its state, day-ahead award and status, the price against its own cost and its gas cost, and its own habit): the chance it stays online through the stretch. A shutdown (red) above 50% or a stay (open) below it is a day the operator-informed call got wrong.</p>
+      <p class="note">The same days judged with what the operator knew going in (its state, day-ahead award and status, the price against its own cost and its gas cost, and its own habit): the chance it stays online through the stretch. A shutdown (hollow) above 50% or a stay (filled) below it is a day the operator-informed call got wrong.</p>
       <p class="note" id="dec-oi-note"></p>
       <div class="legend legend-static" id="dec-oi-legend"></div>
       <div class="chart" id="dec-oi-chart"></div>
