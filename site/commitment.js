@@ -957,7 +957,7 @@ function drawGroups() {
 }
 
 // ==== the operator model's scorecard (data/operator/scores.json.gz, pipeline/models/operator_scores.py) ====
-const SC_MODELS = { operator: "Operator-informed model", award: "Award only: on in awarded hours", ridethrough: "Award, then ride through up to a hot start", own_cutoff: "Award, then its own cutoff (fitted on earlier months)", state: "Stays as it went in" };
+const SC_MODELS = { operator: "Operator-informed model" };
 function drawScores() {
   const el = $("sc-table"), sc = S.OSC;
   if (!sc || !sc.rows?.length) { $("sc-note").textContent = ""; return emptyMsg(el, "No scorecard yet. It is built by the data update workflow."); }
@@ -969,11 +969,12 @@ function drawScores() {
   const pct = (a, b) => (b ? fmtPct(a / b) : "–");
   const ev = (t, k) => (t[`${k}_n`] ? `${d3.format(",")(t[`${k}_caught`])} of ${d3.format(",")(t[`${k}_n`])}` : "–");
   const fl = (t, k) => (t[`${k}_n`] != null ? d3.format(",")(t[`${k}_false`] || 0) : "–");
-  window.CX.setNote($("sc-note"), `How often the operator-informed model and four simple rules called each hour right, and the turn-offs and turn-ons they caught, ${fmtDate(parseDate(months[0] + "-01"))} to the latest 60-day day.`, `Every hour of every CC train or gas steam unit on a day with an operator day file, scored against what it did (outage and unknown hours left out, and days a unit went into on outage). The model's call is on when its chance online is 50% or more; it is fitted monthly on earlier days only, and so is the own-cutoff rule. A turn-off or turn-on is caught when the call switches the same way within ${1} hour of the actual switch; a call's switch that matches none is false. "Cheap" is an hour with the day-ahead hub at $${sc.cheap}/MWh or less, and for a switch, any such hour within 3 hours of it. Brier is the mean squared error of the model's chance (lower is better).`);
+  const shown = ["operator"];   // the baselines stay in the file, scored for the model's version gate
+  window.CX.setNote($("sc-note"), `How often the operator-informed model called each hour right, and the turn-offs and turn-ons they caught, ${fmtDate(parseDate(months[0] + "-01"))} to the latest 60-day day.`, `Every hour of every CC train or gas steam unit on a day with an operator day file, scored against what it did (outage and unknown hours left out, and days a unit went into on outage). The model's call is on when its chance online is 50% or more; it is fitted monthly on earlier days only. A turn-off or turn-on is caught when the call switches the same way within ${1} hour of the actual switch; a call's switch that matches none is false. "Cheap" is an hour with the day-ahead hub at $${sc.cheap}/MWh or less, and for a switch, any such hour within 3 hours of it. Brier is the mean squared error of the model's chance (lower is better).`);
   el.innerHTML = `<table class="data"><thead><tr><th class="t">Model</th><th>Hours right</th><th>Turn-offs caught</th><th>False turn-offs</th><th>Turn-ons caught</th><th>False turn-ons</th><th>Brier</th></tr></thead><tbody>` +
-    sc.models.map((m) => { const t = T[m]; return `<tr><td class="t">${m === "operator" ? "<b>" + SC_MODELS[m] + "</b>" : SC_MODELS[m]}</td><td>${pct(t.right, t.hours)}</td><td>${ev(t, "off")}</td><td>${fl(t, "off")}</td><td>${ev(t, "on")}</td><td>${fl(t, "on")}</td><td>${m === "operator" && t.hours ? d3.format(".3f")(t.brier / t.hours) : "–"}</td></tr>`; }).join("") + `</tbody></table>`;
+    shown.map((m) => { const t = T[m]; return `<tr><td class="t">${SC_MODELS[m]}</td><td>${pct(t.right, t.hours)}</td><td>${ev(t, "off")}</td><td>${fl(t, "off")}</td><td>${ev(t, "on")}</td><td>${fl(t, "on")}</td><td>${m === "operator" && t.hours ? d3.format(".3f")(t.brier / t.hours) : "–"}</td></tr>`; }).join("") + `</tbody></table>`;
   setCSV(el, ["model", "hours", "hours_right", "off_n", "off_caught", "off_false", "on_n", "on_caught", "on_false", "brier_sum"],
-    sc.models.map((m) => [m, T[m].hours, T[m].right, T[m].off_n, T[m].off_caught, T[m].off_false, T[m].on_n, T[m].on_caught, T[m].on_false, m === "operator" ? T[m].brier : null]), `Operator model scorecard ${S.scTech} ${S.scCell}`);
+    shown.map((m) => [m, T[m].hours, T[m].right, T[m].off_n, T[m].off_caught, T[m].off_false, T[m].on_n, T[m].on_caught, T[m].on_false, m === "operator" ? T[m].brier : null]), `Operator model scorecard ${S.scTech} ${S.scCell}`);
 }
 
 // ==== across days: what the decision cost ==================================================
