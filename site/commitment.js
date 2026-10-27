@@ -804,7 +804,7 @@ function dayUnits(d) {
   }).filter(Boolean);
 }
 
-function drawDay() { drawCutoff(); drawCutUnits(); drawGroups(); }
+function drawDay() { drawCutoff(); drawCutUnits(); drawCtUnits(); drawGroups(); }
 
 // the saving axis both cutoff charts share, so a dollar sits at the same place in each
 const CUT_M = { l: 64, r: 16 };
@@ -929,6 +929,62 @@ function drawCutUnits() {
   el.replaceChildren(svg.node());
   setCSV(el, ["unit", "technology", "group", "lsl_mw", "min_down_h", "award", "saving_usd_per_mw_lsl", "turn_off_usd_per_mw_lsl", "did"],
     U.map((u) => [u.unit, u.tech, u.group, u.lsl, u.md, ["none", "some hours", "every hour"][u.award ?? 0], u.l, u.c, u.did]), `Turn-off points ${S.date}`);
+}
+
+// one row per combustion turbine with a real-time fit that day (data/peaker/rt_fit.json.gz,
+// pipeline/models/peaker_rt.py), grouped by how often it turns off: a diamond at the day's highest
+// node price at which the fit starts it, a circle at the day's actual highest price (filled ran,
+// hollow stayed off), joined in red where it did the opposite of the fit
+function drawCtUnits() {
+  const el = $("ct-units"), P = S.PRT, rows = P?.days?.[S.date];
+  if (!rows || !rows.length) { $("ct-units-note").textContent = ""; $("ct-units-legend").innerHTML = "";
+    return emptyMsg(el, P ? `The peaker fit runs ${Object.keys(P.days)[0]} to ${Object.keys(P.days).at(-1)}; pick a day in that range.` : "No peaker fit loaded."); }
+  const C = Object.fromEntries(P.columns.map((c, i) => [c, i]));
+  const U = rows.map((r) => ({ unit: r[C.unit], s: r[C.start], p: r[C.peak], ran: !!r[C.ran], on: r[C.hours_on], av: r[C.hours_avail],
+    group: S.G?.units?.[r[C.unit]]?.[1] || "ungrouped" }));
+  const says = (u) => u.s <= u.p, surprise = (u) => says(u) !== u.ran;
+  const rowsG = ST_GROUPS.filter((g) => U.some((u) => u.group === g.id)).concat(U.some((u) => u.group === "ungrouped") ? [{ id: "ungrouped", label: GROUP_LABEL.ungrouped }] : []);
+  const nRan = U.filter((u) => u.ran).length, right = U.filter((u) => !surprise(u)).length;
+  window.CX.setNote($("ct-units-note"), `${U.length} peakers were available; ${nRan} ran. The diamond is the highest real-time price at its node at which the fit starts it, the circle the day's actual highest price there; filled ran, hollow stayed off; red marks a surprise. The fit called ${right} of ${U.length} right. Click a unit to open it.`,
+    `${U.length} combustion turbines were available in some hour of the day and have a fit for the month (peakers too new, or that never both ran and sat off in the 90 days before, have none). Each is fitted on the 90 days before the month: its chance of being online in an hour against the real-time price at its own node and the hour of day. ` +
+    `The diamond shifts every hour's price by the same amount until the fit calls the unit on in some hour, and reads it as the day's highest price at that shift; the circle is the day's actual highest hourly price at its node. A diamond left of the circle means the fit says it ran. ` +
+    `This is a fit of what peakers did, not a forecast: the real-time price is not known when a peaker decides, and peakers starting move it. Against the day-ahead hub price bands the forecast uses, it calls more starts (39% against 32% of starts, Mar to Aug 2026) and as many hours right (91%). Prices beyond the edges are drawn at the edge.`);
+  $("ct-units-legend").innerHTML = `<span><span class="sw" style="background:var(--c1);transform:rotate(45deg) scale(0.8)"></span>Fit starts it above this price</span>` +
+    window.CX.onOffLegend("Day's highest price, ran", "Day's highest price, stayed off") +
+    `<span><span class="sw" style="background:var(--c8);height:3px"></span>Surprise: the unit did the opposite of the fit</span>`;
+  const vals = U.flatMap((u) => [u.s, u.p]);
+  const x0 = Math.min(0, d3.quantile(vals.sort(d3.ascending), 0.01)), x1 = Math.max(100, d3.quantile(vals, 0.99));
+  const w = Math.max(280, el.clientWidth || 600), lane = 6, rowGap = 26;
+  const per = rowsG.map((g) => U.filter((u) => u.group === g.id).sort((a, b) => a.s - b.s));
+  const m = { t: 8, b: 30, ...CUT_M }, H = m.t + m.b + d3.sum(per, (us) => rowGap + us.length * lane);
+  const x = d3.scaleSymlog().constant(10).domain([x0, x1]).range([m.l, w - m.r]).clamp(true);
+  const xT = [-100, -25, 0, 10, 25, 50, 100, 250, 500, 1000, 2500, 5000].filter((v) => v >= x0 && v <= x1);
+  const svg = d3.create("svg").attr("viewBox", `0 0 ${w} ${H}`).attr("data-nopin", "");
+  svg.append("g").attr("class", "gridline").attr("transform", `translate(0,${H - m.b})`).call(d3.axisBottom(x).tickValues(xT).tickSize(-(H - m.t - m.b)).tickFormat(""));
+  svg.append("g").attr("class", "axis").attr("transform", `translate(0,${H - m.b})`).call(d3.axisBottom(x).tickValues(w < 560 ? xT.filter((v, i) => i % 2 === 0) : xT).tickFormat(fmtPrice0).tickSizeOuter(0));
+  const diamond = d3.symbol(d3.symbolDiamond, 26)();
+  let top = m.t;
+  rowsG.forEach((g, gi) => {
+    const us = per[gi];
+    if (gi) svg.append("line").attr("x1", m.l).attr("x2", w - m.r).attr("y1", top).attr("y2", top).attr("stroke", css("--line"));
+    svg.append("text").attr("class", "axis-title").attr("x", m.l).attr("y", top + 14).text(g.label.replace("Daily, ", "Daily: "));
+    us.forEach((u, k) => {
+      const yy = top + rowGap - 4 + k * lane + lane / 2, bad = surprise(u);
+      const gU = svg.append("g").style("cursor", "pointer")
+        .on("pointermove", (ev) => showTip(ev, `<h4>${esc(u.unit)}</h4>${g.label}<br>Fit starts it once the day's highest node price reaches ${fmt$(u.s)}/MWh<br>` +
+          `Day's highest real-time price at its node ${fmt$(u.p)}/MWh<br><b>${u.ran ? `Ran ${u.on} of ${u.av} available hours` : "Stayed off"}</b>${bad ? "<br>Did the opposite of the fit" : ""}<br><span class="tip-pin-note">Click to open the unit</span>`))
+        .on("pointerleave", hideTip)
+        .on("click", () => { location.href = unitHref(u.unit); });
+      gU.append("line").attr("x1", x(Math.min(u.s, u.p))).attr("x2", x(Math.max(u.s, u.p))).attr("y1", yy).attr("y2", yy).attr("stroke", css(bad ? "--c8" : "--line")).attr("stroke-width", bad ? 1.8 : 1.2);
+      gU.append("path").attr("d", diamond).attr("transform", `translate(${x(u.s)},${yy})`).attr("fill", css("--c1"));
+      window.CX.onOffDot(gU.append("circle").attr("cx", x(u.p)).attr("cy", yy), u.ran, 3);
+    });
+    top += rowGap + us.length * lane;
+  });
+  svg.append("text").attr("class", "axis-title").attr("x", w - m.r).attr("y", H - 2).attr("text-anchor", "end").text("Real-time price at the unit's node, $/MWh");
+  el.replaceChildren(svg.node());
+  setCSV(el, ["unit", "group", "start_usd_mwh", "day_peak_usd_mwh", "ran", "hours_on", "hours_available"],
+    U.map((u) => [u.unit, u.group, u.s, u.p, u.ran ? 1 : 0, u.on, u.av]), `Peaker start points ${S.date}`);
 }
 
 // the groups on the day: the units online going in and what they did, with the model's
@@ -1150,8 +1206,8 @@ function drawRange() { drawStretch(); drawCapacity(); drawFloor(); drawCheap(); 
 function drawAll() { drawDay(); drawScores(); drawRange(); }
 
 async function boot() {
-  [S.T, S.TH, S.I, S.HC, S.DEC, S.SO, S.IX, S.OC, S.OSC] = await Promise.all([tryJSON("data/trends_60d.json.gz"), tryJSON("data/trends_hourly_60d.json.gz"), tryJSON("data/intraday_60d.json.gz"), tryJSON("data/hourly_context_60d.json.gz"),
-    tryJSON("data/decisions.json.gz"), tryJSON("data/stayon_60d.json.gz"), tryJSON("data/index.json"), tryJSON("data/operator/cutoffs.json.gz"), tryJSON("data/operator/scores.json.gz")]);
+  [S.T, S.TH, S.I, S.HC, S.DEC, S.SO, S.IX, S.OC, S.OSC, S.PRT] = await Promise.all([tryJSON("data/trends_60d.json.gz"), tryJSON("data/trends_hourly_60d.json.gz"), tryJSON("data/intraday_60d.json.gz"), tryJSON("data/hourly_context_60d.json.gz"),
+    tryJSON("data/decisions.json.gz"), tryJSON("data/stayon_60d.json.gz"), tryJSON("data/index.json"), tryJSON("data/operator/cutoffs.json.gz"), tryJSON("data/operator/scores.json.gz"), tryJSON("data/peaker/rt_fit.json.gz")]);
   // the groups are small and every panel reads them, so they load up front; the hourly strips follow
   const g = await tryJSON("data/groups_60d.json.gz");
   S.G = g && g.units ? g : null;
