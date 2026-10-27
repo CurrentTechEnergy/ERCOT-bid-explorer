@@ -1117,7 +1117,7 @@ function drawCost() {
 }
 
 // ==== the units table ======================================================================
-// one row per coal and gas unit or train: its group and the cutoff behind it, how its hours
+// one row per coal and gas unit or train: its group and its operator-informed turn-off point, how its hours
 // split between states, what it did in cheap stretches and what riding through them cost,
 // and what it did on the chosen day. Rows open the Unit page.
 const STATE_KEYS = [["a", "Above min"], ["m", "At min"], ["0", "Off"], ["o", "Outage"]];
@@ -1127,9 +1127,9 @@ const UNIT_COLS = [
   { k: "gi", h: "Group", t: 1, f: (r) => GROUP_LABEL[r.group] || "–" },
   { k: "mw", h: "Capacity MW", f: (r) => fmtMW(r.mw) },
   { k: "lsl", h: "LSL MW", f: (r) => (r.lsl == null ? "–" : fmtMW(r.lsl)) },
-  { k: "c", h: "Cutoff $/MW LSL", f: (r) => fmtPerMW(r.c) },
+  { k: "c", h: "Turn-off point, no award, $/MW LSL", f: (r) => (r.ride ? "rides through" : fmtPerMW(r.c)) },
   { k: "hs", h: "Hot start offered $/MW LSL", f: (r) => fmtPerMW(r.hs) + (r.hs != null && r.est === 2 ? "*" : "") },
-  { k: "lift", h: "Rule right on new days / base", f: (r) => (r.acc == null ? "–" : `${fmtPct(r.acc)} / ${fmtPct(r.base)}`) },
+  { k: "acc", h: "Model right", f: (r) => (r.acc == null ? "–" : `${fmtPct(r.acc)} of ${r.nOp}`) },
   { k: "days", h: "Decision days (off)", f: (r) => (r.days == null ? "–" : `${r.days} (${r.dshut})`) },
   ...STATE_KEYS.map(([s, h]) => ({ k: "st" + s, h: `${h}, share of hours`, f: (r) => (r["st" + s] == null ? "–" : fmtPct(r["st" + s])) })),
   { k: "shut", h: "Shutdowns", f: (r) => r.shut ?? "–" },
@@ -1139,6 +1139,22 @@ const UNIT_COLS = [
   { k: "saves", h: "Net: shutting down would have saved", f: (r) => (r.rides ? fmt$(r.saves) : "–") },
   { k: "vi", h: "On the day", t: 1, f: (r) => (r.did ? DID[r.did] : "–") },
 ];
+// each unit's operator-informed turn-off point (median over its no-award days in the 60-day data,
+// riding through when most of them have none) and how often the model's day call was right
+function operatorSummary() {
+  if (S._opSum) return S._opSum;
+  const out = new Map(), C = S.OC ? Object.fromEntries(S.OC.columns.map((c, i) => [c, i])) : null;
+  if (C) for (const rows of Object.values(S.OC.days)) for (const r of rows) {
+    const u = r[C.unit];
+    if (!out.has(u)) out.set(u, { t: [], n: 0, right: 0 });
+    const o = out.get(u), cut = r[C.turn_off];
+    if (r[C.award] === 0) o.t.push(cut == null ? Infinity : cut);
+    o.n++;
+    if ((cut != null && r[C.saving] > cut) === !!r[C.off]) o.right++;
+  }
+  for (const o of out.values()) o.med = o.t.length ? d3.median(o.t) : null;
+  return (S._opSum = out);
+}
 async function drawUnits() {
   const el = $("units-table");
   if (!S.I) return emptyMsg(el, "Fills in after the data update builds the intraday file.");
@@ -1148,14 +1164,14 @@ async function drawUnits() {
   const rides = ridesBy(+S.costThr) || new Map();
   const today = new Map((decisionDays().get(S.date) || []).map((r) => [r[DAY_F.unit], r[DAY_F.shut] ? "off" : "on"]));
   let list = [...B.units.values()].filter((e) => e.ran && e.mw > 0).map((e) => {
-    const dec = decisionOf(e.unit), g = by.get(e.unit) || [], n = g.length, ri = rides.get(e.unit), f = fc.get(e.unit);
+    const dec = decisionOf(e.unit), g = by.get(e.unit) || [], n = g.length, ri = rides.get(e.unit), f = fc.get(e.unit), op = operatorSummary().get(e.unit);
     const cnt = { a: 0, m: 0, "0": 0, o: 0 };
     for (const c of e.st) if (c in cnt) cnt[c]++;
     const nh = cnt.a + cnt.m + cnt["0"] + cnt.o;
     return { unit: e.unit, pick: e.pick, tech: e.tech, group: e.group, gi: ST_GROUPS.findIndex((x) => x.id === e.group), mw: e.mw,
-      lsl: dec?.lsl ?? null, cutoff: dec?.cutoff ?? null, c: dec?.cutoff != null && dec.lsl ? dec.cutoff / dec.lsl : null,
+      lsl: dec?.lsl ?? null, ride: op?.med === Infinity, c: op?.med == null ? null : op.med === Infinity ? Infinity : op.med,
       hs: dec?.hot && dec.lsl ? dec.hot / dec.lsl : null, est: dec?.est ?? null,
-      acc: dec?.cutoff != null ? dec.acc : null, base: dec?.cutoff != null ? dec.base : null, lift: dec?.cutoff != null ? dec.acc - dec.base : null,
+      acc: op?.n ? op.right / op.n : null, nOp: op?.n ?? 0,
       days: dec?.days ?? null, dshut: dec?.shut ?? null,
       ...Object.fromEntries(STATE_KEYS.map(([s]) => ["st" + s, nh ? cnt[s] / nh : null])),
       shut: e.shut, offP10: e.offP10, offShare: n >= ST_MIN_N ? g.filter((z) => z.r === "B" || z.r === "D").length / n : null,
@@ -1172,15 +1188,15 @@ async function drawUnits() {
     return (typeof va === "string" ? va.localeCompare(vb) : va - vb) * dir;
   });
   window.CX.setNote($("units-note"), "Every coal and gas unit with its cycling pattern, usual turn-off cost and hours in each state. Click a row to open the unit.", `${list.length} coal and gas units, combined-cycle configurations merged into their train, over the ${S.UH.dates.length} days of 60-day data. ` +
-    `Cutoff is the stay-on loss per MW of LSL above which the unit has turned off on days without a day-ahead award (the cutoff curve's), with how often that rule matched what it did against the base rate of its commoner outcome. ` +
+    `Turn-off point is the operator-informed model's, as in the chart at the top of the page: what being off has to save, per MW of LSL, before the model turns the unit off, the median over its days online going in without a day-ahead award ("rides through" when the model keeps it on through every shift on most of them). Model right is how often the model's call at the unit's own saving matched what it did, over its days online going in. CC trains and gas steam units only. ` +
     `Hot start is the start cost in the unit's latest day-ahead offer per MW of LSL, for comparison only (* marks a generic value for the technology); no model uses it. ` +
     `Hours are split between running above minimum, at minimum, offline but available and on outage (an off spell that is mostly outage counts as outage). "Turned off in cheap stretches" is the share of the stretches with lambda below ${fmtPrice0(+S.stThr)} it was running into that it turned off for (shown once it ran into ${ST_MIN_N}), as in the panel above; ride-throughs and the net are from the decision-cost panel at lambda below ${fmtPrice0(+S.costThr)}. ` +
     `"On the day" is what the unit did on the chosen day if it was online going in: turned off during the day's worst stretch, or stayed on. Click a column to sort, a row to open the unit.`);
   el.innerHTML = `<table class="data"><thead><tr>${UNIT_COLS.map((c) => `<th class="sortable${c.t ? " t" : ""}" data-k="${c.k}" aria-sort="${c.k === col.k ? (dir > 0 ? "ascending" : "descending") : "none"}">${c.h}${c.k === col.k ? (dir > 0 ? " ▲" : " ▼") : ""}</th>`).join("")}</tr></thead><tbody>` +
     list.map((r) => `<tr data-href="${unitHref(r.pick)}" style="cursor:pointer">${UNIT_COLS.map((c) => `<td${c.t ? ' class="t"' : ""}>${c.f(r)}</td>`).join("")}</tr>`).join("") + "</tbody></table>";
-  setCSV(el, ["unit", "technology", "group", "capacity_mw", "lsl_mw", "cutoff_usd", "cutoff_usd_per_mw_lsl", "hot_start_usd_per_mw_lsl", "rule_accuracy", "base_rate", "decision_days", "decision_shutdowns",
+  setCSV(el, ["unit", "technology", "group", "capacity_mw", "lsl_mw", "turn_off_usd_per_mw_lsl_no_award", "hot_start_usd_per_mw_lsl", "model_right", "model_days", "decision_days", "decision_shutdowns",
     "share_above_min", "share_at_min", "share_off", "share_outage", "shutdowns", "p10_hours_off", "share_turned_off_cheap", "ride_throughs", "net_shutdown_saves_usd", "on_the_day"],
-    list.map((r) => [r.unit, r.tech, r.group, Math.round(r.mw), r.lsl, r.cutoff, r.c == null ? null : +r.c.toFixed(2), r.hs == null ? null : +r.hs.toFixed(2), r.acc, r.base, r.days, r.dshut,
+    list.map((r) => [r.unit, r.tech, r.group, Math.round(r.mw), r.lsl, r.c == null ? null : r.ride ? "rides through" : +r.c.toFixed(2), r.hs == null ? null : +r.hs.toFixed(2), r.acc == null ? null : +r.acc.toFixed(3), r.nOp, r.days, r.dshut,
       ...STATE_KEYS.map(([s]) => (r["st" + s] == null ? null : +r["st" + s].toFixed(3))), r.shut, r.offP10, r.offShare == null ? null : +r.offShare.toFixed(3), r.rides, r.saves == null ? null : Math.round(r.saves), r.did]), "Commitment units");
 }
 

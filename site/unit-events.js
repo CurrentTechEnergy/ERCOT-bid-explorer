@@ -26,7 +26,7 @@ function eventsFor(name) {
 
 function numbers(e) {
   const k = e.kind;
-  if (k === "cutoff") return `${fmt$(e.before_usd)} → ${fmt$(e.after_usd)} for the day`;
+  if (k === "turnoff") return `${e.before_usd == null ? "rides through" : fmt$(e.before_usd)} → ${e.after_usd == null ? "rides through" : fmt$(e.after_usd)} for the day`;
   if (k === "rt_price") return `online ${d3.format(".0%")(e.before)} → ${d3.format(".0%")(e.after)} at that real-time node price`;
   if (k === "bidding") return e.field === "rel" ? `${fmt$(e.before)} → ${fmt$(e.after)}/MWh` : `${d3.format(".0%")(e.before)} → ${d3.format(".0%")(e.after)}`;
   if (k.startsWith("shutdown")) return `loss of staying on ${fmt$(e.value)}` + (e.award != null ? `, award over ${d3.format(".0%")(e.award)} of the window` : "");
