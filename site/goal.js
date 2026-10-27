@@ -24,7 +24,7 @@ const S = { G: null, year: null, tech: "combined_cycle", vs: "first" };
 
 function emptyMsg(el, msg) { el.innerHTML = `<p class="empty">${msg}</p>`; }
 function setSeg(id, value) { $(id).querySelectorAll("button").forEach((b) => b.setAttribute("aria-checked", String(b.dataset.v === value))); }
-const yearLabel = (y) => { const r = S.G.years[y]; return r && r.to.slice(5) !== "12-31" ? `${y} to ${d3.timeFormat("%b %-d")(new Date(r.to + "T12:00:00"))}` : String(y); };
+const yearLabel = (y) => { const r = S.G.years[y]; return r && r.to.slice(5) !== "12-31" ? `${y} (Jan 1 to ${d3.timeFormat("%b %-d")(new Date(r.to + "T12:00:00"))})` : String(y); };
 const years = () => Object.keys(S.G.years).map(Number).sort();
 const fullYears = () => years().filter((y) => S.G.years[y].to.slice(5) === "12-31");
 const rowsOf = (q) => S.G[q].rows.map((r) => Object.fromEntries(S.G[q].columns.map((c, i) => [c, r[i]])));
