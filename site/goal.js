@@ -78,13 +78,14 @@ function drawQ1() {
 
 // ==== 2. Why the rest stays on: minimum online in cheap hours, by reason, by year =============
 function stack(el, ys, keys, val, opts) {
+  const tip = opts.tip || ((v) => `${d3.format(",.0f")(v)} MW`);
   const w = Math.max(300, el.clientWidth || 700), m = { t: 14, r: 14, b: 26, l: 56 }, H = 260;
   const x = d3.scaleBand().domain(ys).range([m.l, w - m.r]).padding(0.25);
   const tops = ys.map((y) => d3.sum(keys, (k) => val(y, k)));
   const yy = d3.scaleLinear().domain([0, Math.max(d3.max(tops) || 1, opts.mark ? d3.max(ys, opts.mark) || 0 : 0)]).nice().range([H - m.b, m.t]);
   const svg = d3.create("svg").attr("viewBox", `0 0 ${w} ${H}`);
   svg.append("g").attr("class", "gridline").attr("transform", `translate(${m.l},0)`).call(d3.axisLeft(yy).ticks(5).tickSize(-(w - m.l - m.r)).tickFormat(""));
-  svg.append("g").attr("class", "axis").attr("transform", `translate(${m.l},0)`).call(d3.axisLeft(yy).ticks(5).tickFormat((v) => d3.format(",.0f")(v / 1000)).tickSizeOuter(0));
+  svg.append("g").attr("class", "axis").attr("transform", `translate(${m.l},0)`).call(d3.axisLeft(yy).ticks(5).tickFormat(opts.axis || ((v) => d3.format(",.0f")(v / 1000))).tickSizeOuter(0));
   svg.append("g").attr("class", "axis").attr("transform", `translate(0,${H - m.b})`).call(d3.axisBottom(x).tickFormat((y) => (S.G.years[y].to.slice(5) === "12-31" ? y : `${y}*`)).tickSizeOuter(0));
   svg.append("text").attr("class", "axis-title").attr("x", m.l).attr("y", 9).text(opts.title);
   ys.forEach((y) => {
@@ -100,8 +101,8 @@ function stack(el, ys, keys, val, opts) {
       [[css("--surface"), 5.5], [css("--ink"), 2.5]].forEach(([c, sw]) => svg.append("line").attr("x1", x(y) - 4).attr("x2", x(y) + x.bandwidth() + 4).attr("y1", yy(v)).attr("y2", yy(v)).attr("stroke", c).attr("stroke-width", sw));
     }
     svg.append("rect").attr("x", x(y)).attr("width", x.bandwidth()).attr("y", m.t).attr("height", H - m.t - m.b).attr("fill", "transparent")
-      .on("pointermove", (ev) => showTip(ev, `<h4>${yearLabel(y)}</h4><table>` + keys.filter((k) => val(y, k)).reverse().map((k) => `<tr><td>${(opts.labels || REASON)[k].label}</td><td class="n">${d3.format(",.0f")(val(y, k))} MW</td></tr>`).join("") +
-        `<tr><td><b>Total</b></td><td class="n"><b>${d3.format(",.0f")(d3.sum(keys, (k) => val(y, k)))} MW</b></td></tr>` + (opts.mark ? `<tr><td>${opts.markLabel}</td><td class="n">${d3.format(",.0f")(opts.mark(y))} MW</td></tr>` : "") + `</table>`))
+      .on("pointermove", (ev) => showTip(ev, `<h4>${yearLabel(y)}</h4><table>` + keys.filter((k) => val(y, k)).reverse().map((k) => `<tr><td>${(opts.labels || REASON)[k].label}</td><td class="n">${tip(val(y, k))}</td></tr>`).join("") +
+        `<tr><td><b>Total</b></td><td class="n"><b>${tip(d3.sum(keys, (k) => val(y, k)))}</b></td></tr>` + (opts.mark ? `<tr><td>${opts.markLabel}</td><td class="n">${tip(opts.mark(y))}</td></tr>` : "") + `</table>`))
       .on("pointerleave", hideTip);
   });
   el.replaceChildren(svg.node());
@@ -177,6 +178,13 @@ function drawQ3() {
 
 // ==== 4. Curtailment and the fossil minimum beside it ========================================
 const Q4_KEYS = ["losing more than a restart", "losing, less than a restart", "covering its costs", "combustion_turbine"];
+const RUN_KEYS = ["restart", "losing", "all", "none"];
+const RUN = {
+  restart: { label: "Runs if units losing more than a restart shut", color: "--c3" },
+  losing: { label: "… if every unit losing money shut", color: "--c1" },
+  all: { label: "… only if all fossil at minimum shut", color: "--c-other" },
+  none: { label: "Stays curtailed", color: "--c8" },
+};
 const ECON = {
   "losing more than a restart": { label: "Losing more than a restart costs", color: "--c7" },
   "losing, less than a restart": { label: "Losing, but less than a restart", color: "--c7-soft" },
@@ -188,11 +196,12 @@ function drawQ4() {
   const A = S.G.q4.atmin.map(([year, tech, econ, mwh]) => ({ year, tech, econ, mwh }));
   const ys = Y.map((r) => r.year), cnt = Object.fromEntries(Y.map((r) => [r.year, r.counted || 1]));
   const val = (y, k) => d3.sum(A.filter((r) => r.year === y && r.tech !== "nuclear" && r.econ === k), (r) => r.mwh) / cnt[y];
-  const mark = (y) => { const r = Y.find((v) => v.year === y); return r.freeCounted / Math.max(1, r.counted); };
-  stack(el, ys, Q4_KEYS, val, { title: "In oversupply hours: fossil minimum online, and curtailment not behind congestion (GW)", mark, markLabel: "Curtailed, not behind congestion (average)", labels: ECON });
-  legend("q4-legend", Q4_KEYS.map((k) => [ECON[k].label, ECON[k].color]));
-  $("q4-legend").innerHTML += `<span><span class="sw sw-line" style="border-top-color:var(--ink)"></span>Wind and solar curtailed, not behind congestion</span>`;
   const V = S.G.q4.avoid.map(([year, s, mwh]) => ({ year, s, mwh })), sc = S.G.q4.scenarios;
+  const run = (y, i) => (V.find((r) => r.year === y && r.s === sc[i]) || { mwh: 0 }).mwh;
+  const part = (y, k) => { const r = Y.find((q) => q.year === y), i = RUN_KEYS.indexOf(k); return i === 3 ? Math.max(0, r.free - run(y, 2)) : run(y, i) - (i ? run(y, i - 1) : 0); };
+  stack(el, ys, RUN_KEYS, part, { title: "Wind and solar curtailment fossil could make room for (TWh), by the shutdown that would let it run", labels: RUN,
+    axis: (v) => d3.format(".1f")(v / 1e6), tip: (v) => `${fmtTWh(v)} TWh` });
+  legend("q4-legend", RUN_KEYS.map((k) => [RUN[k].label, RUN[k].color]));
   const nuc = (y) => d3.sum(A.filter((r) => r.year === y && r.tech === "nuclear"), (r) => r.mwh) / cnt[y];
   const v = (y, s) => (V.find((r) => r.year === y && r.s === s) || { mwh: 0 }).mwh;
   $("q4-table").innerHTML = `<table class="data"><thead><tr><th class="t">Year</th><th>Curtailed</th><th>Fossil could make room for</th><th>Would run: units losing more than a restart shut</th><th>Would run: every unit losing money shut</th><th>Would run: all fossil at minimum shut</th></tr></thead><tbody>` +
@@ -201,10 +210,10 @@ function drawQ4() {
   setCSV(el, ["year", "available_mwh", "curtailed_mwh", "uncongested_oversupply_mwh", "oversupply_hours", "counted_hours", "nuclear_mw", ...Q4_KEYS.map((k) => `${k.replace(/[ ,]+/g, "_")}_mw`), ...sc.map((s) => `would_run_${s.replace(/[ ,]+/g, "_")}_mwh`)],
     Y.map((r) => [r.year, r.avail, r.curt, r.free, r.overH, r.counted, Math.round(nuc(r.year)), ...Q4_KEYS.map((k) => Math.round(val(r.year, k))), ...sc.map((s) => v(r.year, s))]), "Curtailment and fossil minimum");
   const y = fullYears().at(-1), r = Y.find((q) => q.year === y), fossil = d3.sum(Q4_KEYS, (k) => val(y, k));
-  const run = (s) => `${fmtTWh(v(y, s))} TWh (${fmtPct(v(y, s) / r.free)})`;
-  $("q4-answer").innerHTML = `In ${y}, ${fmtTWh(r.curt)} TWh of wind and solar was curtailed, and fossil units could have made room for ${fmtTWh(r.free)} TWh of it (${fmtPct(r.free / r.curt)}): the curtailment in oversupply hours at wind and solar not behind congestion. In those hours ${fmtGW(fossil)} GW of fossil sat at minimum, beside ${fmtGW(nuc(y))} GW of nuclear. <b>${fmtGW(val(y, Q4_KEYS[0]))} GW of it was losing more than a restart would cost.</b> Had those units shut, ${run(sc[0])} of that curtailment would have run instead. Had every unit losing money shut, ${run(sc[1])} would have; shutting all fossil at minimum, ${run(sc[2])}.`;
-  setNote($("q4-note"), `Wind and solar curtailment in oversupply hours, beside the fossil minimum online then, by whether each unit was losing money, by year. * part year.`,
-    `Curtailment is a wind or solar unit's HSL above its base point (0.5 MW or more), from the 60-day SCED disclosure. An oversupply hour has a real-time hub average (HB_HUBAVG) of $${S.G.over_price}/MWh or less. A unit is behind congestion when its day-ahead node price sits $5 or more below the day-ahead bus average; most curtailment is (West and Panhandle), and shutting a gas unit elsewhere does not make room for it. The fossil split covers oversupply hours with at least 100 MW curtailed not behind congestion. A unit is losing money in the hours of its day's worst loss window: the longest run of hours in which its minimum-energy cost beat its day-ahead node price, times its LSL. It loses more than a restart when that window's loss beats its hot start offer (a generic $15,000 for combined cycles, $10,000 for gas steam and $30,000 for coal when none is offered). Units outside such a window are covering their costs at day-ahead prices. "Would run" sums, hour by hour, the smaller of that curtailment and the minimum of the units shut. Nuclear is shown in the tooltip total only: it runs regardless. The black line is the curtailment not behind congestion in the average such hour.`);
+  const runs = (s) => `${fmtTWh(v(y, s))} TWh (${fmtPct(v(y, s) / r.free)})`;
+  $("q4-answer").innerHTML = `In ${y}, ${fmtTWh(r.curt)} TWh of wind and solar was curtailed, and fossil units could have made room for ${fmtTWh(r.free)} TWh of it (${fmtPct(r.free / r.curt)}): the curtailment in oversupply hours at wind and solar not behind congestion. In those hours ${fmtGW(fossil)} GW of fossil sat at minimum, beside ${fmtGW(nuc(y))} GW of nuclear. <b>${fmtGW(val(y, Q4_KEYS[0]))} GW of it was losing more than a restart would cost.</b> Had those units shut, ${runs(sc[0])} of that curtailment would have run instead. Had every unit losing money shut, ${runs(sc[1])} would have; shutting all fossil at minimum, ${runs(sc[2])}.`;
+  setNote($("q4-note"), `The curtailment fossil units could make room for, by year, split by the shutdown that would have let it run. Each hour counts the smaller of its curtailment and the minimum of the units shut, so a year's average fossil minimum and average curtailment can't simply be compared. * part year.`,
+    `Curtailment is a wind or solar unit's HSL above its base point (0.5 MW or more), from the 60-day SCED disclosure. An oversupply hour has a real-time hub average (HB_HUBAVG) of $${S.G.over_price}/MWh or less. A unit is behind congestion when its day-ahead node price sits $5 or more below the day-ahead bus average; most curtailment is (West and Panhandle), and shutting a gas unit elsewhere does not make room for it. The fossil split covers oversupply hours with at least 100 MW curtailed not behind congestion. A unit is losing money in the hours of its day's worst loss window: the longest run of hours in which its minimum-energy cost beat its day-ahead node price, times its LSL. It loses more than a restart when that window's loss beats its hot start offer (a generic $15,000 for combined cycles, $10,000 for gas steam and $30,000 for coal when none is offered). Units outside such a window are covering their costs at day-ahead prices. "Runs" sums, hour by hour, the smaller of that curtailment and the minimum of the units shut.`);
 }
 
 function drawAll() { drawQ1(); drawQ2(); drawQ3(); drawQ4(); }
