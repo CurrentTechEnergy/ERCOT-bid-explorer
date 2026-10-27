@@ -880,7 +880,7 @@ function drawCutoff() {
 
 // one row per unit the model covers, grouped by how often it turns off: a diamond at its turn-off
 // point (coloured by its day-ahead award), a circle at the day's saving (hollow where it turned
-// off), joined in red where the saving was past the turn-off point
+// off), joined in red where the unit did the opposite of what the model expected
 function drawCutUnits() {
   const el = $("cut-units");
   const U = dayUnits(S.date).filter((u) => u.l != null);
@@ -888,11 +888,11 @@ function drawCutUnits() {
   if (!rowsG.length) { $("cut-units-note").textContent = ""; $("cut-units-legend").innerHTML = ""; return emptyMsg(el, "No unit with a turn-off point was online going into this day."); }
   const past = (u) => u.kind === "cut" && u.l > u.c, n = (f) => U.filter(f).length;
   const nOff = n((u) => u.did === "off"), right = n((u) => past(u) === (u.did === "off"));
-  window.CX.setNote($("cut-units-note"), `${U.length} CC and gas steam units were online going in; ${nOff} turned off. The diamond is where the operator model turns a unit off that day, the circle what being off would have saved; a hollow circle turned off. The model called ${right} of ${U.length} right. Click a unit to open it.`, `${U.length} CC trains and gas steam units were online going into the day. The diamond is each unit's turn-off point that day from the operator-informed model, coloured by its day-ahead award; the circle is the saving it actually faced, and the line between them is red where the saving was past the turn-off point. An arrow at the right edge is a unit the model keeps on through every shift tested (an award every hour holds it on). ` +
+  window.CX.setNote($("cut-units-note"), `${U.length} CC and gas steam units were online going in; ${nOff} turned off. The diamond is where the operator model turns a unit off that day, the circle what being off would have saved; a hollow circle turned off; red marks a surprise. The model called ${right} of ${U.length} right. Click a unit to open it.`, `${U.length} CC trains and gas steam units were online going into the day. The diamond is each unit's turn-off point that day from the operator-informed model, coloured by its day-ahead award; the circle is the saving it actually faced, and the line between them is red where the unit did the opposite of the model: stayed on past its turn-off point, or turned off short of it. An arrow at the right edge is a unit the model keeps on through every shift tested (an award every hour holds it on). ` +
     `A filled circle stayed on through the day; a hollow one was offline in some hour (outages aside). Read at its own saving, the model called ${right} of ${U.length} units right. ${SAVING_NOTE} Savings beyond the edges are drawn at the edge. Click a unit to open it.`);
   $("cut-units-legend").innerHTML = AWARD.map((a) => `<span><span class="sw" style="background:var(${a.color});transform:rotate(45deg) scale(0.8)"></span>Turns off when savings are greater than this: ${a.label.toLowerCase()}</span>`).join("") +
-    `<span>→ rides through anything tested</span><span><span class="sw" style="background:var(--ink);border-radius:50%"></span>Saving that day, stayed on</span>` +
-    `<span><span class="sw" style="background:transparent;border:1.5px solid var(--ink);border-radius:50%"></span>Turned off</span><span><span class="sw" style="background:var(--c8);height:3px"></span>Saving past the turn-off point</span>`;
+    `<span>→ rides through anything tested</span>` + window.CX.onOffLegend("Saving that day, stayed on", "Saving that day, turned off") +
+    `<span><span class="sw" style="background:var(--c8);height:3px"></span>Surprise: the unit did the opposite of the model</span>`;
   const [x0, x1] = cutDomain(U);
   const w = Math.max(280, el.clientWidth || 600), narrow = w < 560, lane = 8, rowGap = 26;
   const per = rowsG.map((g) => U.filter((u) => u.group === g.id).sort((a, b) => (a.kind === "cut" ? a.c : Infinity) - (b.kind === "cut" ? b.c : Infinity) || a.l - b.l));
@@ -918,12 +918,10 @@ function drawCutUnits() {
         .on("pointerleave", hideTip)
         .on("click", () => { location.href = unitHref(u.unit); });
       const end = u.kind === "cut" ? u.c : x1;
-      gU.append("line").attr("x1", x(Math.min(end, u.l))).attr("x2", x(Math.max(end, u.l))).attr("y1", yy).attr("y2", yy).attr("stroke", css(past(u) ? "--c8" : "--line")).attr("stroke-width", 1.2);
+      gU.append("line").attr("x1", x(Math.min(end, u.l))).attr("x2", x(Math.max(end, u.l))).attr("y1", yy).attr("y2", yy).attr("stroke", css(past(u) !== (u.did === "off") ? "--c8" : "--line")).attr("stroke-width", past(u) !== (u.did === "off") ? 1.8 : 1.2);
       if (u.kind === "cut") gU.append("path").attr("d", diamond).attr("transform", `translate(${x(u.c)},${yy})`).attr("fill", col);
       else gU.append("path").attr("d", `M${x(x1) - 12},${yy}h10m-4,-3l4,3l-4,3`).attr("fill", "none").attr("stroke", col).attr("stroke-width", 1.5);
-      const dot = gU.append("circle").attr("cx", x(u.l)).attr("cy", yy).attr("r", 3);
-      if (u.did === "off") dot.attr("fill", css("--surface")).attr("stroke", css("--ink")).attr("stroke-width", 1.2);
-      else dot.attr("fill", css("--ink"));
+      window.CX.onOffDot(gU.append("circle").attr("cx", x(u.l)).attr("cy", yy), u.did !== "off");
     });
     top += rowGap + us.length * lane;
   });

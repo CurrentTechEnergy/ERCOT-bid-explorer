@@ -266,7 +266,7 @@ async function drawForecast(e) {
       svg.append("rect").attr("x", x(h)).attr("width", bw).attr("y", y(act[h].lsl)).attr("height", Math.max(0, y(0) - y(act[h].lsl))).attr("fill", css(s.color));
     }
     svg.append("line").attr("x1", x(h)).attr("x2", x(h) + bw).attr("y1", yo(o.p[h] >= 0.5 ? 1 : 0)).attr("y2", yo(o.p[h] >= 0.5 ? 1 : 0)).attr("stroke", css("--c2")).attr("stroke-width", 4).attr("opacity", 0.6);
-    if (onl && onl[h] != null) svg.append("circle").attr("cx", x(h) + bw / 2).attr("cy", yo(onl[h] ? 1 : 0)).attr("r", 3.5).attr("fill", onl[h] ? css("--ink") : "none").attr("stroke", css("--ink"));
+    if (onl && onl[h] != null) window.CX.onOffDot(svg.append("circle").attr("cx", x(h) + bw / 2).attr("cy", yo(onl[h] ? 1 : 0)), onl[h]);
     if (o.plan[h] != null) svg.append("path").attr("d", d3.symbol(d3.symbolDiamond, 30)()).attr("transform", `translate(${x(h) + bw / 2},${yo(o.plan[h]) + (o.plan[h] ? -9 : 9)})`).attr("fill", css("--ink-2"));
   });
   svg.append("path").attr("d", d3.line().x((h) => x(h) + bw / 2).y((h) => yo(o.p[h]))(d3.range(24))).attr("fill", "none").attr("stroke", css("--c2")).attr("stroke-width", 2);
@@ -282,7 +282,7 @@ async function drawForecast(e) {
   el.replaceChildren(svg.node());
   setCSV(el, ["hour_ending", "operator_chance_online", "operator_call_on", "operator_chance_online_with_cop", "dam_award", "cop_plan_on", ...(onl ? ["actual_online", "actual_output_mw", "actual_lsl_online_mw"] : [])],
     d3.range(24).map((h) => [h + 1, o.p[h], o.p[h] >= 0.5 ? 1 : 0, o.p_cop ? o.p_cop[h] : null, o.award[h], o.plan[h], ...(act ? [act[h].on ? 1 : 0, act[h].out, act[h].lsl] : onl ? [onl[h] == null ? null : +onl[h], null, null] : [])]), `${e.name} with operator info ${day} by hour`);
-  $("fc-legend").innerHTML = (act ? `<span><span class="sw" style="background:var(${s.color})"></span>Minimum output online</span><span><span class="sw" style="background:var(${s.color});opacity:0.3"></span>Output</span>` : "") + (onl ? `<span>● online ○ offline (actual)</span>` : "") +
+  $("fc-legend").innerHTML = (act ? `<span><span class="sw" style="background:var(${s.color})"></span>Minimum output online</span><span><span class="sw" style="background:var(${s.color});opacity:0.3"></span>Output</span>` : "") + (onl ? window.CX.onOffLegend("Online (actual)", "Offline (actual)") : "") +
     `<span><span class="sw sw-line" style="border-top-color:var(--c2)"></span>Chance online, with operator info</span><span><span class="sw" style="background:var(--c2);opacity:0.6"></span>Call: on at 50% or more, off below</span>` +
     `<span><span class="sw" style="background:var(--c3);opacity:0.18"></span>Day-ahead award</span><span>◆ COP plan on (top) or off (bottom)</span>` + (dr && dr[4] ? `<span><span class="sw" style="background:var(--band)"></span>Worst stretch for staying on</span>` : "");
 }
@@ -351,7 +351,7 @@ function drawDecisions(e) {
   const shape = (p) => (p.aw >= 0.5 ? d3.symbolSquare : d3.symbolCircle);
   svg.append("g").selectAll("path").data(pts).join("path")
     .attr("transform", (p) => `translate(${x(p.t)},${y(p.loss)})`).attr("d", (p) => d3.symbol(shape(p), 34)())
-    .attr("fill", (p) => (p.shut ? css("--c8") : css("--surface"))).attr("stroke", (p) => (p.shut ? css("--surface") : css("--c1"))).attr("stroke-width", 1.2);
+    .attr("fill", (p) => css(p.shut ? "--surface" : "--ink")).attr("stroke", css("--ink")).attr("stroke-width", 1.5);   // filled stayed on, hollow shut down (as site-wide)
   const ts = pts.map((p) => p.t);
   svg.append("rect").attr("x", m.l).attr("y", m.t).attr("width", w - m.l - m.r).attr("height", H - m.t - m.b).attr("fill", "transparent")
     .on("pointermove", (ev) => {
@@ -365,8 +365,8 @@ function drawDecisions(e) {
   el.replaceChildren(svg.node());
   setCSV(el, ["date", "loss_usd", "window_first_he", "window_hours", "award_share", "shut", "hours_off"], pts.map((p) => [p.d, p.loss, p.he, p.h, p.aw, p.shut, p.off]), `${e.name} decision days`);
   drawDecisionsOI(e, pts, x, w, shape);
-  $("dec-legend").innerHTML = `<span><span class="sw" style="background:var(--surface);border:1.5px solid var(--c1);border-radius:50%"></span>Stayed on</span>` +
-    `<span><span class="sw" style="background:var(--c8);border-radius:50%"></span>Shut down</span><span><span class="sw" style="background:var(--ink-2)"></span>Square: a day-ahead award covered the stretch</span>` +
+  $("dec-legend").innerHTML = window.CX.onOffLegend("Stayed on", "Shut down") +
+    `<span><span class="sw" style="background:var(--ink-2)"></span>Square: a day-ahead award covered the stretch</span>` +
     (g("cutoff") != null ? `<span><span class="sw sw-line"></span>Its cutoff (all its decisions)</span>` : "") +
     (steps.length ? `<span><span class="sw" style="height:0;border-top:2px solid var(--c2);border-radius:0;width:16px"></span>Refit each month on its last 30 decisions</span>` +
       (moves.length ? `<span><span class="sw" style="background:var(--c2);clip-path:polygon(50% 0,100% 100%,0 100%)"></span>A move the site's cutoff had not caught up with</span>` : "") : "");
@@ -394,7 +394,7 @@ function drawDecisionsOI(e, pts, x, w, shape) {
   svg.append("text").attr("class", "axis-title").attr("x", m.l).attr("y", 10).text("Operator-informed chance of staying online through the stretch");
   svg.append("g").selectAll("path").data(P).join("path")
     .attr("transform", (p) => `translate(${x(p.t)},${y(p.op)})`).attr("d", (p) => d3.symbol(shape(p), 34)())
-    .attr("fill", (p) => (p.shut ? css("--c8") : css("--surface"))).attr("stroke", (p) => (p.shut ? css("--surface") : css("--c1"))).attr("stroke-width", 1.2);
+    .attr("fill", (p) => css(p.shut ? "--surface" : "--ink")).attr("stroke", css("--ink")).attr("stroke-width", 1.5);   // filled stayed on, hollow shut down (as site-wide)
   const RW = { "price against its cost": "price against its cost", "DAM award": "day-ahead award", "DAM status": "day-ahead resource status",
     "time in its state": "time in its state", "sitting at minimum": "sitting at minimum", "hour and season": "hour and season",
     "loss against its start cost": "loss against its start cost", "its own habit": "its own habit" };
@@ -412,8 +412,8 @@ function drawDecisionsOI(e, pts, x, w, shape) {
     .on("pointerleave", hideTip);
   el.replaceChildren(svg.node());
   setCSV(el, ["date", "operator_chance_stays_on", "cop_plan_on_share", "loss_usd", "award_share", "shut"], P.map((p) => [p.d, p.op, p.plan, p.loss, p.aw, p.shut]), `${e.name} decision days, operator-informed`);
-  $("dec-oi-legend").innerHTML = `<span><span class="sw" style="background:var(--surface);border:1.5px solid var(--c1);border-radius:50%"></span>Stayed on</span>` +
-    `<span><span class="sw" style="background:var(--c8);border-radius:50%"></span>Shut down</span><span><span class="sw" style="background:var(--ink-2)"></span>Square: a day-ahead award covered the stretch</span>` +
+  $("dec-oi-legend").innerHTML = window.CX.onOffLegend("Stayed on", "Shut down") +
+    `<span><span class="sw" style="background:var(--ink-2)"></span>Square: a day-ahead award covered the stretch</span>` +
     `<span><span class="sw sw-line"></span>50%: the call</span>`;
 }
 
