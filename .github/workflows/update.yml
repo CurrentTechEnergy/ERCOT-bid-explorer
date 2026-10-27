@@ -109,14 +109,15 @@ jobs:
             git commit -m "Start the data branch"
           fi
 
-      # The thermal months on the `history` release (pipeline/history.py), gitignored in
-      # history/: the forecast's boosted trees add them to their training rows.  Optional: the
-      # forecast runs without them.
+      # The thermal months and day-ahead hub prices on the `history` release (pipeline/history.py),
+      # gitignored in history/: the forecast's boosted trees add them to their training rows, and
+      # the operator-informed model judges the days before the 60-day window on them
+      # (pipeline/models/operator_history.py).  Optional: both run without them.
       - name: Fetch the thermal history
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh release download history -R "$GITHUB_REPOSITORY" -p 'thermal-*.parquet' -D history \
+          gh release download history -R "$GITHUB_REPOSITORY" -p 'thermal-*.parquet' -p 'da-hubs-*.parquet' -D history \
             || echo "No thermal history, so the trees train on the 60-day window only"
 
       - name: Fetch and process new reports

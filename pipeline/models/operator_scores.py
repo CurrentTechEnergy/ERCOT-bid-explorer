@@ -22,10 +22,12 @@ switch), cheap (the day-ahead hub at CHEAP $/MWh or less that hour, or within CH
 of the switch).
 
 Writes data/operator/scores.json.gz:
-  {"model", "version", "cheap", "models": [...], "columns": [...], "rows": [[month, tech, start,
+  {"model", "version", "cheap", "models": [...], "live_from", "columns": [...], "rows": [[month, tech, start,
    award, cheap, model, hours, right, brier, off_n, off_caught, off_false, on_n, on_caught,
    on_false], ...]}
 brier is the summed squared error of the chance (the model only; null for the baselines).
+live_from is the first day of the 60-day fits; months before it are history days, judged by the
+reduced fits (operator_history.py).
 Rebuilt in full by every update after the day files (a few seconds).
 """
 from collections import defaultdict
@@ -147,8 +149,9 @@ def build_scores(ctx, days) -> int:
             n += 1
     rows = [list(k) + [int(v[0]), int(v[1]), round(float(v[2]), 3) if k[5] == "operator" else None] + [int(x) for x in v[3:]]
             for k, v in sorted(T.items())]
+    live = (read_json_gz(OUT_DIR / "index.json.gz", default=None) or {}).get("days") or [None]
     write_json_gz(PATH, {"model": NAME, "version": VERSION, "cheap": CHEAP, "models": list(MODELS),
-                                                "columns": list(COLUMNS), "rows": rows})
+                         "live_from": live[0], "columns": list(COLUMNS), "rows": rows})
     return n
 
 

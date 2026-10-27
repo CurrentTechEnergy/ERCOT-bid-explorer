@@ -73,6 +73,7 @@ const fmtPrice = (v) => (v == null || isNaN(v) ? "–" : d3.format("$,.2f")(v));
 const fmtPrice0 = (v) => d3.format("$,.0f")(v);
 const parseDate = (d) => new Date(d + "T12:00:00");
 const fmtDate = d3.timeFormat("%a %b %-d, %Y");
+const fmtMonth = (m) => d3.timeFormat("%b %Y")(parseDate(m + "-01"));
 const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 
 function setSeg(id, value) { $(id).querySelectorAll("button").forEach((b) => b.setAttribute("aria-checked", String(b.dataset.v === value))); }
@@ -957,24 +958,35 @@ function drawGroups() {
 }
 
 // ==== the operator model's scorecard (data/operator/scores.json.gz, pipeline/models/operator_scores.py) ====
-const SC_MODELS = { operator: "Operator-informed model" };
+// one row per period: the months of the 60-day fits, then each year before them, judged by the
+// reduced fits on the thermal history (no day-ahead resource status)
 function drawScores() {
   const el = $("sc-table"), sc = S.OSC;
   if (!sc || !sc.rows?.length) { $("sc-note").textContent = ""; return emptyMsg(el, "No scorecard yet. It is built by the data update workflow."); }
   setSeg("sc-cell", S.scCell);
-  const ci = Object.fromEntries(sc.columns.map((c, i) => [c, i])), months = [...new Set(sc.rows.map((r) => r[ci.month]))].sort();
-  const keep = (r) => r[ci.tech] === S.scTech && (S.scCell === "all" || (S.scCell === "cheap" ? r[ci.cheap] === 1 : S.scCell === "noaward" ? r[ci.award] === 0 : r[ci.start] === S.scCell));
-  const T = Object.fromEntries(sc.models.map((m) => [m, {}]));
-  sc.rows.filter(keep).forEach((r) => { const t = T[r[ci.model]]; sc.columns.slice(6).forEach((c) => { t[c] = (t[c] || 0) + (r[ci[c]] || 0); }); });
-  const pct = (a, b) => (b ? fmtPct(a / b) : "–");
+  const ci = Object.fromEntries(sc.columns.map((c, i) => [c, i]));
+  const liveM = (sc.live_from || "0000-00").slice(0, 7);
+  const period = (m) => (m >= liveM ? "live" : m.slice(0, 4));
+  const keep = (r) => r[ci.model] === "operator" && r[ci.tech] === S.scTech && (S.scCell === "all" || (S.scCell === "cheap" ? r[ci.cheap] === 1 : S.scCell === "noaward" ? r[ci.award] === 0 : r[ci.start] === S.scCell));
+  const T = new Map();
+  sc.rows.filter(keep).forEach((r) => {
+    const k = period(r[ci.month]);
+    if (!T.has(k)) T.set(k, { months: [] });
+    const t = T.get(k);
+    t.months.push(r[ci.month]);
+    sc.columns.slice(6).forEach((c) => { t[c] = (t[c] || 0) + (r[ci[c]] || 0); });
+  });
+  const keys = [...T.keys()].sort((a, b) => (a === "live" ? -1 : b === "live" ? 1 : b.localeCompare(a)));
+  const span = (t) => { const ms = t.months.sort(); return ms[0] === ms.at(-1) ? fmtMonth(ms[0]) : `${fmtMonth(ms[0])} to ${fmtMonth(ms.at(-1))}`; };
+  const label = (k) => (k === "live" ? `${span(T.get(k))}, 60-day fits` : new Set(T.get(k).months).size < 12 ? span(T.get(k)) : k);
+  const pct = (a, b) => (b ? d3.format(".1%")(a / b) : "–");
   const ev = (t, k) => (t[`${k}_n`] ? `${d3.format(",")(t[`${k}_caught`])} of ${d3.format(",")(t[`${k}_n`])}` : "–");
   const fl = (t, k) => (t[`${k}_n`] != null ? d3.format(",")(t[`${k}_false`] || 0) : "–");
-  const shown = ["operator"];   // the baselines stay in the file, scored for the model's version gate
-  window.CX.setNote($("sc-note"), `How often the operator-informed model called each hour right, and the turn-offs and turn-ons they caught, ${fmtDate(parseDate(months[0] + "-01"))} to the latest 60-day day.`, `Every hour of every CC train or gas steam unit on a day with an operator day file, scored against what it did (outage and unknown hours left out, and days a unit went into on outage). The model's call is on when its chance online is 50% or more; it is fitted monthly on earlier days only. A turn-off or turn-on is caught when the call switches the same way within ${1} hour of the actual switch; a call's switch that matches none is false. "Cheap" is an hour with the day-ahead hub at $${sc.cheap}/MWh or less, and for a switch, any such hour within 3 hours of it. Brier is the mean squared error of the model's chance (lower is better).`);
-  el.innerHTML = `<table class="data"><thead><tr><th class="t">Model</th><th>Hours right</th><th>Turn-offs caught</th><th>False turn-offs</th><th>Turn-ons caught</th><th>False turn-ons</th><th>Brier</th></tr></thead><tbody>` +
-    shown.map((m) => { const t = T[m]; return `<tr><td class="t">${SC_MODELS[m]}</td><td>${pct(t.right, t.hours)}</td><td>${ev(t, "off")}</td><td>${fl(t, "off")}</td><td>${ev(t, "on")}</td><td>${fl(t, "on")}</td><td>${m === "operator" && t.hours ? d3.format(".3f")(t.brier / t.hours) : "–"}</td></tr>`; }).join("") + `</tbody></table>`;
-  setCSV(el, ["model", "hours", "hours_right", "off_n", "off_caught", "off_false", "on_n", "on_caught", "on_false", "brier_sum"],
-    shown.map((m) => [m, T[m].hours, T[m].right, T[m].off_n, T[m].off_caught, T[m].off_false, T[m].on_n, T[m].on_caught, T[m].on_false, m === "operator" ? T[m].brier : null]), `Operator model scorecard ${S.scTech} ${S.scCell}`);
+  window.CX.setNote($("sc-note"), `How often the operator-informed model called each hour right, and the turn-offs and turn-ons it caught: the months of the 60-day fits, then each year before them.`, `Every hour of every CC train or gas steam unit on a day with an operator day file, scored against what it did (outage and unknown hours left out, and days a unit went into on outage). The model's call is on when its chance online is 50% or more; it is fitted monthly on earlier days only. From ${fmtDate(parseDate(sc.live_from || liveM + "-01"))} it is fitted on the 60-day data since Dec 2025. Before that, each month is fitted on the 12 months before it from the thermal history files, which lack the day-ahead resource status (on Feb to Aug 2026, leaving it out moves CC hours right from 96.9% to 96.5%), with Henry Hub standing in for the Ship Channel gas price where none is stored. A turn-off or turn-on is caught when the call switches the same way within 1 hour of the actual switch; a call's switch that matches none is false. "Cheap" is an hour with the day-ahead hub at $${sc.cheap}/MWh or less, and for a switch, any such hour within 3 hours of it. Brier is the mean squared error of the model's chance (lower is better).`);
+  el.innerHTML = `<table class="data"><thead><tr><th class="t">Period</th><th>Hours right</th><th>Turn-offs caught</th><th>False turn-offs</th><th>Turn-ons caught</th><th>False turn-ons</th><th>Brier</th></tr></thead><tbody>` +
+    keys.map((k) => { const t = T.get(k); return `<tr><td class="t">${label(k)}</td><td>${pct(t.right, t.hours)}</td><td>${ev(t, "off")}</td><td>${fl(t, "off")}</td><td>${ev(t, "on")}</td><td>${fl(t, "on")}</td><td>${t.hours ? d3.format(".3f")(t.brier / t.hours) : "–"}</td></tr>`; }).join("") + `</tbody></table>`;
+  setCSV(el, ["period", "hours", "hours_right", "off_n", "off_caught", "off_false", "on_n", "on_caught", "on_false", "brier_sum"],
+    keys.map((k) => { const t = T.get(k); return [k === "live" ? span(t) : k, t.hours, t.right, t.off_n, t.off_caught, t.off_false, t.on_n, t.on_caught, t.on_false, t.brier]; }), `Operator model scorecard ${S.scTech} ${S.scCell}`);
 }
 
 // ==== across days: what the decision cost ==================================================
