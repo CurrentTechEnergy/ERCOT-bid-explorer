@@ -622,8 +622,8 @@ const STORAGE_SPLIT = [
   { id: "storage_charging", keys: ["storage"], part: "chg", label: "Storage charging (bids to buy)", color: "--c7-soft" },
   { id: "storage_discharging", keys: ["storage"], part: "dis", label: "Storage discharging", color: "--c7" },
 ];
-// charging as a share of supply can pass 100% when little supply moves, so the charts draw it
-// no deeper than 100% (the readouts give the real value)
+// in the offer stack, charging as a share of supply can pass 100% when little supply moves, so
+// the chart draws it no deeper than 100% (the readouts give the real value)
 const CHG_AXIS_MAX = 1;
 function marginalSeries(list) { return list.flatMap((s) => (s.id === "storage" ? STORAGE_SPLIT : [s])); }
 
@@ -639,13 +639,12 @@ function marginalRows(h, hp) {
     const mw = s.part === "chg" ? Math.min(b, 0) - Math.min(a, 0) : s.part === "dis" ? Math.max(b, 0) - Math.max(a, 0) : b - a;
     return { s, mw: Math.max(0, mw) };
   }).filter(Boolean);
-  // supply shares add to 100% of supply; battery charging is demand, so it is kept out of them
-  // and shown as a share of that supply (it can pass 100% when little supply moves)
+  // shares are of all MW that moves in the window: supply plus battery charging that stops, so
+  // they add to 100% and an hour where only charging moves (cheap hours) still has a margin
   const supply = rows.filter((r) => r.s.part !== "chg"), chg = rows.find((r) => r.s.part === "chg");
-  const total = d3.sum(supply, (r) => r.mw), chgMW = chg ? chg.mw : 0;
-  supply.forEach((r) => (r.share = total > 0 ? r.mw / total : null));
-  if (chg) chg.share = total > 0 ? chgMW / total : null;
-  return { rows, supply, chg, total, chgMW, lo, hi };
+  const total = d3.sum(supply, (r) => r.mw), chgMW = chg ? chg.mw : 0, moved = total + chgMW;
+  rows.forEach((r) => (r.share = moved > 0 ? r.mw / moved : null));
+  return { rows, supply, chg, total, chgMW, moved, lo, hi };
 }
 
 function drawMarginal() {
@@ -659,46 +658,45 @@ function drawMarginal() {
   const hp = hourPrice(S.prices, h);
   if (!S.day.runs[h] || !hp || hp.mean == null) return clear(`No SCED runs or price recorded in ${heLabel(h)}.`);
 
-  const m0 = marginalRows(h, hp), { total, chg, chgMW, lo, hi } = m0;
+  const m0 = marginalRows(h, hp), { total, chg, chgMW, moved, lo, hi } = m0;
   // technologies with nothing at the margin are left off the bars (they stay in the table)
   const all = m0.supply.sort((a, b) => b.mw - a.mw), rows = all.filter((r) => r.mw >= 1);
   if (!rows.length && chgMW < 1) return clear(`No MW offered within ${heLabel(h)}'s cleared price range.`);
   const win = `${fmtPrice(lo)} to ${fmtPrice(hi)}`;
   // battery charging is drawn on the other side of zero: it is demand that drops out as price rises
-  const bars = rows.concat(chg && chgMW >= 1 ? [{ ...chg, mw: -chgMW, valText: `${fmtMW(chgMW)} MW · ${d3.format(".0%")(chg.share)} of supply` }] : []);
+  const bars = rows.concat(chg && chgMW >= 1 ? [{ ...chg, mw: -chgMW, valText: `${fmtMW(chgMW)} MW · ${d3.format(".0%")(chg.share)}` }] : []);
   el.replaceChildren(hBars(el, bars, (r) => r.s.part === "chg"
     ? `<h4>${r.s.label} · ${heLabel(h)}</h4><table>
       <tr><td>Charging that stops from ${win}</td><td class="n">${fmtMW(chgMW)} MW</td></tr>
-      <tr><td>As a share of supply in the window</td><td class="n">${d3.format(".1%")(r.share)}</td></tr></table>
-      <p class="tip-body">Batteries bidding to charge below this price stop charging as price rises. That is demand stepping back, not supply, so it is kept out of the supply shares.</p>`
+      <tr><td>Share of all marginal MW</td><td class="n">${d3.format(".1%")(r.share)}</td></tr></table>
+      <p class="tip-body">Batteries bidding to charge below this price stop charging as price rises. That is demand stepping back, not supply, so it is drawn below zero.</p>`
     : `<h4>${r.s.label} · ${heLabel(h)}</h4><table>
       <tr><td>Offered from ${win}</td><td class="n">${fmtMW(r.mw)} MW</td></tr>
-      <tr><td>Share of marginal supply</td><td class="n">${r.share != null ? d3.format(".1%")(r.share) : "–"}</td></tr></table>`));
+      <tr><td>Share of all marginal MW</td><td class="n">${r.share != null ? d3.format(".1%")(r.share) : "–"}</td></tr></table>`));
   el.insertAdjacentHTML("beforeend", `<p class="note">${fmtMW(total)} MW of supply offered from ${win}${chgMW >= 1 ? `, and ${fmtMW(chgMW)} MW of battery charging that stops in the same window` : ""} (${pname} averaged ${fmtPrice(hp.mean)} in ${heLabel(h)}).</p>`);
-  tel.innerHTML = barTable(all, `MW offered ${win}`, "Share of marginal supply", "Total supply", total) +
-    (chg ? `<p class="note">Storage charging (bids to buy) that stops in the window: ${fmtMW(chgMW)} MW (${chg.share != null ? d3.format(".1%")(chg.share) : "–"} of supply).</p>` : "");
-  setCSV(el, ["technology", `MW from ${lo} to ${hi}`, "share_of_marginal_supply"], all.map((r) => [r.s.label, r.mw, r.share])
-    .concat(chg ? [[chg.s.label, chgMW, null], ["storage charging as share of supply", null, chg.share]] : []), `Marginal supply ${S.date} ${heLabel(h)}`);
+  tel.innerHTML = barTable(all.concat(chg ? [chg] : []), `MW ${win}`, "Share of all marginal MW", "Total (supply + charging that stops)", moved);
+  setCSV(el, ["technology", `MW from ${lo} to ${hi}`, "share_of_all_marginal_mw"], all.map((r) => [r.s.label, r.mw, r.share])
+    .concat(chg ? [[chg.s.label, chgMW, chg.share]] : []), `Marginal supply ${S.date} ${heLabel(h)}`);
 
-  // by hour: supply shares above zero (100% stacked), charging below as a share of supply
+  // by hour: shares of all marginal MW, supply stacked above zero and charging below (together 100%)
   const list = marginalSeries(seriesList()).filter((s) => s.part !== "chg");
   const hours = d3.range(24).map((i) => {
     const p = hourPrice(S.prices, i);
     if (!S.day.runs[i] || !p || p.mean == null) return null;
     const m = marginalRows(i, p);
-    if (!(m.total > 0) && !(m.chgMW > 0)) return null;
+    if (!(m.moved > 0)) return null;
     return { sh: Object.fromEntries(m.supply.map((r) => [r.s.id, r.share || 0])), chg: m.chg ? m.chg.share || 0 : 0 };
   });
   const { w } = size(del);
   const H = 230, m = { t: 14, r: 16, b: 26, l: 64 };
   const x = d3.scaleBand().domain(d3.range(1, 25)).range([m.l, w - m.r]).paddingInner(0.15);
-  const lowest = -Math.min(CHG_AXIS_MAX, Math.max(0.25, d3.max(hours, (d) => (d ? d.chg : 0)) || 0));
+  const lowest = -Math.max(0.25, d3.max(hours, (d) => (d ? d.chg : 0)) || 0);
   const y = d3.scaleLinear().domain([lowest, 1]).nice().range([H - m.b, m.t]);
   const svg = d3.create("svg").attr("viewBox", `0 0 ${w} ${H}`);
   svg.append("g").attr("class", "gridline").attr("transform", `translate(${m.l},0)`).call(d3.axisLeft(y).ticks(5).tickSize(-(w - m.l - m.r)).tickFormat(""));
   svg.append("g").attr("class", "axis").attr("transform", `translate(0,${H - m.b})`).call(d3.axisBottom(x).tickValues([1, 4, 8, 12, 16, 20, 24]).tickFormat((d) => "HE" + d).tickSizeOuter(0));
   svg.append("g").attr("class", "axis").attr("transform", `translate(${m.l},0)`).call(axisFmt(d3.axisLeft(y), 5, "%", true).tickSizeOuter(0));
-  svg.append("text").attr("class", "axis-title").attr("x", m.l).attr("y", 10).text("Share of marginal supply by hour (above) · battery charging that stops (below)");
+  svg.append("text").attr("class", "axis-title").attr("x", m.l).attr("y", 10).text("Share of all marginal MW by hour: supply (above) · battery charging that stops (below)");
   hours.forEach((d, i) => {
     const cx = x(i + 1), bw = x.bandwidth();
     if (!d) return;
@@ -712,7 +710,7 @@ function drawMarginal() {
       svg.append("rect").attr("x", cx).attr("width", bw).attr("y", y1).attr("height", Math.max(0, y0 - y1 - 1)).attr("fill", css(s.color)).attr("opacity", op);
       acc += v;
     });
-    if (d.chg > 0) svg.append("rect").attr("x", cx).attr("width", bw).attr("y", y(0) + 1).attr("height", Math.max(0, y(-Math.min(d.chg, -lowest)) - y(0) - 1))
+    if (d.chg > 0) svg.append("rect").attr("x", cx).attr("width", bw).attr("y", y(0) + 1).attr("height", Math.max(0, y(-d.chg) - y(0) - 1))
       .attr("fill", css(STORAGE_SPLIT[0].color)).attr("opacity", op);
   });
   svg.append("line").attr("class", "zero").attr("x1", m.l).attr("x2", w - m.r).attr("y1", y(0)).attr("y2", y(0));
@@ -721,10 +719,10 @@ function drawMarginal() {
     if (!d) return `<h4>${heLabel(i)}</h4>No price or curve data`;
     return `<h4>${heLabel(i)}</h4><table>` + list.filter((s) => d.sh[s.id] > 0).sort((a, b) => d.sh[b.id] - d.sh[a.id]).map((s) =>
       `<tr><td><span class="sw" style="background:var(${s.color})"></span></td><td>${s.label}</td><td class="n">${d3.format(".0%")(d.sh[s.id])}</td></tr>`).join("") +
-      (d.chg > 0 ? `<tr><td><span class="sw" style="background:var(${STORAGE_SPLIT[0].color})"></span></td><td>Storage charging (bids to buy)</td><td class="n">${d3.format(".0%")(d.chg)} of supply</td></tr>` : "") + "</table>";
+      (d.chg > 0 ? `<tr><td><span class="sw" style="background:var(${STORAGE_SPLIT[0].color})"></span></td><td>Storage charging (bids to buy)</td><td class="n">${d3.format(".0%")(d.chg)}</td></tr>` : "") + "</table>";
   });
   del.replaceChildren(svg.node());
-  setCSV(del, ["hour_ending", ...list.map((s) => `${s.label} share of marginal supply`), "storage charging as share of supply"],
+  setCSV(del, ["hour_ending", ...list.map((s) => `${s.label} share of all marginal MW`), "Storage charging share of all marginal MW"],
     hours.map((d, i) => [i + 1, ...list.map((s) => (d ? d.sh[s.id] ?? 0 : null)), d ? d.chg : null]), `Marginal supply by hour ${S.date}`);
 }
 
