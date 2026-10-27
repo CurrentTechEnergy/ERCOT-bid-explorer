@@ -308,10 +308,13 @@ function drawDecisions(e) {
   $("dec-panel").hidden = !THERMAL.includes(e.tech) || e.tech === "nuclear";
   if ($("dec-panel").hidden) return;
   if (!u || !rows.length) { $("dec-note").textContent = ""; return emptyMsg(el, "No decision days for this unit in the loaded 60-day data."); }
-  const g = (k) => u[DEC_U[k]];
+  // peakers start rather than stay on: no loss cutoff for them (their changes are "Running at a new price")
+  const peaker = e.tech === "combustion_turbine";
+  const g = (k) => (peaker && ["cutoff", "acc", "accNew", "base"].includes(k) ? null : u[DEC_U[k]]);
   $("dec-note").textContent = `${g("days")} days it had to choose, ${g("shut")} shutdowns, a day-ahead award over the cheap stretch on ${fmtPct(g("award") || 0)} of them. ` +
     (g("cutoff") != null ? `Best-fit turn-off cost over these days: ${fmt$(g("cutoff"))}, which explains ${fmtPct(g("accNew") ?? g("acc"))} of its choices${g("accNew") != null ? " when each day is judged with a cutoff fitted to the other days" : ""} (${fmtPct(g("base"))} if you always guessed its usual one). ` +
       `Most it stayed on through: ${fmt$(g("stayMax"))}; least it shut on: ${fmt$(g("shutMin"))}.`
+      : peaker ? "A peaker starts when running pays rather than riding through a loss, so it gets no turn-off cost; its changes show as running at a new hub price under Recent changes."
       : "Not enough choices yet to fit a turn-off cost: it needs 15 days with at least 3 shutdowns and 3 stays.") +
     (g("est") === 2 ? " Costs are the technology's generic costs (no three-part offer of its own in the window)."
       : g("est") === 3 ? " Its minimum-energy cost is its gas cost (heat rate × its gas hub's price the day before), not its own offer." : "");
@@ -319,7 +322,7 @@ function drawDecisions(e) {
   const pts = rows.map((r) => ({ d: r[1], t: parseDate(r[1]), loss: r[2], he: r[3], h: r[4], aw: r[5], shut: r[6], off: r[7] }));
   const x = d3.scaleTime().domain([d3.timeHour.offset(parseDate(D.dates[0]), -12), d3.timeHour.offset(parseDate(D.dates.at(-1)), 12)]).range([m.l, w - m.r]);
   // the cutoff refitted at each month end on the unit's last 30 decisions (cutoff_history), in $
-  const ch = S.CH && S.CH.units[e.name], lsl = ch ? ch.lsl : 0;
+  const ch = !peaker && S.CH && S.CH.units[e.name], lsl = ch ? ch.lsl : 0;
   const steps = ch ? ch.rows.filter((r) => r[1] != null).map((r) => ({ m: r[0], usd: r[1] * lsl, n: r[3] })) : [];
   const moves = ch ? S.CH.moves.filter((mv) => mv.unit === e.name) : [];
   const vals = pts.map((p) => p.loss).concat(g("cutoff") != null ? [g("cutoff")] : [], steps.map((s) => s.usd));

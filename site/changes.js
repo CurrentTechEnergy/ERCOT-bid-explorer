@@ -32,6 +32,7 @@ const S = { E: null, G: null, groupOf: new Map(), groupLabel: {}, latestSeen: nu
 function numbers(e) {
   const k = e.kind;
   if (k === "cutoff") return `${fmt$(e.before_usd)} → ${fmt$(e.after_usd)} for the day`;
+  if (k === "run_price") return `online ${fmtPct(e.before)} → ${fmtPct(e.after)} of its hours at that hub price`;
   if (k === "bidding") return e.field === "rel" ? `${fmt$(e.before)} → ${fmt$(e.after)}/MWh against peers` : `${fmtPct(e.before)} → ${fmtPct(e.after)}`;
   if (k.startsWith("shutdown")) return `loss of staying on ${fmt$(e.value)}` + (e.award != null ? `, award over ${fmtPct(e.award)} of the window` : "");
   if (k.startsWith("renew_")) return e.before != null && e.after != null ? `${fmt$(e.before)} → ${fmt$(e.after)}/MWh` : "";
