@@ -446,6 +446,23 @@ def _operator_history_checks(day):
     day.add("operator_history", "error" if bad else "ok", "; ".join(bad) or f"{len(hist)} history days, {hist[0]} to {hist[-1]}")
 
 
+def _goal_checks(day):
+    """The goal page's data (pipeline/goal.py): a row for every year in each question."""
+    g = read_json_gz(DATA_DIR / "goal.json.gz", default=None)
+    if g is None:
+        return
+    years = sorted(g.get("years") or {})
+    bad = [] if years else ["no years"]
+    for q, rows in (("q1", g.get("q1", {}).get("rows")), ("q2", g.get("q2", {}).get("rows")),
+                    ("q4", g.get("q4", {}).get("years"))):
+        have = {str(r[0]) for r in rows or []}
+        if not set(map(str, years)) <= have:
+            bad.append(f"{q} missing {sorted(set(map(str, years)) - have)[:3]}")
+    if not (g.get("q3") or {}).get("off"):
+        bad.append("q3 has no off rows")
+    day.add("goal", "error" if bad else "ok", "; ".join(bad) or f"{years[0]} to {g.get('through')}")
+
+
 def _fit_checks(day, ft):
     r = ft["residual"]
     day.add("fit_residual", "ok" if r["after"] <= r["before"] else "error",
@@ -738,6 +755,7 @@ def check_files(index):
     _operator_score_checks(day)
     _operator_cutoff_checks(day)
     _operator_history_checks(day)
+    _goal_checks(day)
     ui = read_json_gz(UNIT_INDEX_PATH, default=None)
     if ui is not None:
         rows = ui.get("rows", [])

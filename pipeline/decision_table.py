@@ -2,13 +2,15 @@
 window, from 2019 on, for the analysis track (fitting the decision model, and asking whether
 units changed behaviour or only met their turn-off triggers more often).
 
-    python analysis/decision_table.py [--from 2019-01] [--to 2026-08] [--out decision-table]
+    python -m pipeline.decision_table [--from 2019-01] [--to 2026-08] [--out decision-table]
+
+Run monthly by the Goal page workflow (pipeline/goal.py), which reads the table.
 
 Reads the monthly thermal and renewable history (pipeline/history.py, the `history` release, in
 HISTORY_DIR) and, for months the release does not hold yet, builds the same rows from the
 per-unit 60-day day files (UNIT_DATA_DIR/60d) and the DAM day files (data/dam), cached as
-<out>/months/.  Henry Hub daily prices come from EIA's public history file (no key), cached as
-<out>/henry-hub.csv.
+<out>/months/.  Henry Hub daily prices come from the site's EIA series (henry_hub), else EIA's
+public history file (no key), cached as <out>/henry-hub.csv.
 
 One row per train and decision block with a loss window: a block runs from HE7 of the day to
 HE6 of the next, so the night's cheap hours and an evening shutdown ahead of them fall in the
@@ -49,16 +51,14 @@ share of windows ridden through by loss band and year).
 """
 import argparse
 import io
-import sys
 from pathlib import Path
 
 import numpy as np
 import pandas as pd
 
-sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
-from pipeline.config import DATA_DIR, GENERIC_COSTS, HISTORY_DIR, UNIT_DATA_DIR  # noqa: E402
-from pipeline.decisions import COST_DAYS, OUT_MIN_H, RANK, _window  # noqa: E402
-from pipeline.intraday import train_of  # noqa: E402
+from .config import DATA_DIR, GENERIC_COSTS, HISTORY_DIR, UNIT_DATA_DIR
+from .decisions import COST_DAYS, OUT_MIN_H, RANK, _window
+from .intraday import train_of
 
 TECHS = ("coal", "combined_cycle", "gas_steam")      # the units judged on a daily stay-on loss
 HH_URL = "https://www.eia.gov/dnav/ng/hist_xls/RNGWHHDd.xls"
@@ -92,8 +92,8 @@ def month_file(kind: str, month: str, out: Path):
     cache = out / "months" / f"{kind}-{month}.parquet"
     if cache.exists():
         return pd.read_parquet(cache)
-    from pipeline.history import thermal_rows, unit_rows
-    from pipeline.store import read_json_gz
+    from .history import thermal_rows, unit_rows
+    from .store import read_json_gz
     frames = []
     for day in sorted((UNIT_DATA_DIR / "60d").glob(f"{month}-*.json.gz")):
         ud = read_json_gz(day)
@@ -110,6 +110,18 @@ def month_file(kind: str, month: str, out: Path):
 
 
 def henry_hub(out: Path) -> pd.Series:
+    """Daily Henry Hub ($/MMBtu): the site's EIA series (data/gas_history.json.gz before
+    data/gas.json.gz, pipeline/gas.py) when it reaches back to the table's start, else EIA's
+    public history file, cached as <out>/henry-hub.csv."""
+    from .store import read_json_gz
+    hist = (read_json_gz(DATA_DIR / "gas_history.json.gz", default=None) or {}).get("henry_hub") or {}
+    live = read_json_gz(DATA_DIR / "gas.json.gz", default=None) or {}
+    v = dict(zip(hist.get("dates", []), hist.get("value", [])))
+    v.update(zip(live.get("dates", []), live.get("value", [])))
+    if v and min(v) <= "2019-01-02":
+        x = pd.Series(v, dtype=float)
+        x.index = pd.to_datetime(x.index)
+        return x.sort_index()
     p = out / "henry-hub.csv"
     if not p.exists():
         import requests

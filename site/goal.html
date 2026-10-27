@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Will fossil turn off? · ERCOT Bids</title>
+<meta name="description" content="Whether ERCOT coal and gas units turn off as renewables and batteries grow: what turns off, why the rest stays on, whether behaviour is changing, and where it holds back curtailed wind and solar.">
+<link rel="canonical" href="https://ercotbids.currenttech.energy/goal.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="ERCOT Bids · CurrentTech Energy">
+<meta property="og:title" content="Will fossil turn off?">
+<meta property="og:description" content="Whether ERCOT coal and gas units turn off as renewables and batteries grow: what turns off, why the rest stays on, whether behaviour is changing, and where it holds back curtailed wind and solar.">
+<meta property="og:url" content="https://ercotbids.currenttech.energy/goal.html">
+<meta property="og:image" content="https://ercotbids.currenttech.energy/share-card.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/favicon.ico" sizes="48x48">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Sans+Condensed:wght@600&display=swap">
+<link rel="stylesheet" href="style.css">
+<style>
+  .panel .lead { font-size: 16px; line-height: 1.45; margin: 4px 0 8px; max-width: 72ch; }
+  .panel .lead b { font-weight: 600; }
+  .panel .sub-h { font-size: 14px; font-weight: 600; margin: 22px 0 4px; }
+  .panel .detail { font-size: 13px; color: var(--muted); margin: 10px 0 0; }
+</style>
+</head>
+<body data-panel-links>
+<div class="page">
+
+<header class="masthead">
+  <div class="brand">
+    <div class="nav-row"><nav class="nav" aria-label="Pages"><a href="goal.html" aria-current="page">Will fossil turn off?</a><a href="index.html">A day in ERCOT</a><a href="beyond.html">Real-time offers</a><a href="commitment.html">Commitment</a><a href="dayahead.html">Day-ahead offers</a><a href="renewables.html">Renewables</a><a href="batteries.html">Batteries</a><a href="unit.html">Units</a><span class="nav-sep" aria-hidden="true"></span><a href="changes.html" class="aux">What's changing</a><a href="fleet.html" class="aux">Fleet economics</a><a href="builder.html" class="aux">Graph builder</a><a href="guide.html" class="aux">How offers work</a></nav></div>
+    <h1>Will fossil turn off?</h1>
+    <p class="sub">As wind, solar and batteries grow, do Texas coal and gas units turn off when power is cheap? Four questions, each answered by year from 2019.</p>
+  </div>
+  <p class="status" id="status">Loading data…</p>
+</header>
+<main>
+  <section class="panel panel-wide" id="q1-panel">
+    <div class="panel-head">
+      <div>
+        <h2>1. What turns off, and what doesn't?</h2>
+        <p class="lead" id="q1-answer"></p>
+        <p class="note" id="q1-note"></p>
+      </div>
+      <div class="panel-tools">
+        <label class="lbl inline" for="q1-year">Year</label>
+        <select id="q1-year"></select>
+      </div>
+    </div>
+    <div class="legend" id="q1-legend"></div>
+    <div class="chart" id="q1-chart"></div>
+    <p class="detail">See the detail: <a href="commitment.html">Commitment</a> for each unit's group and today's call, and <a href="unit.html">Units</a> for any one unit.</p>
+  </section>
+  <section class="panel panel-wide" id="q2-panel">
+    <div class="panel-head">
+      <div>
+        <h2>2. Why does the rest stay on?</h2>
+        <p class="lead" id="q2-answer"></p>
+        <p class="note" id="q2-note"></p>
+      </div>
+      <div class="panel-tools"></div>
+    </div>
+    <h3 class="sub-h" id="q2a-title"></h3>
+    <div class="chart" id="q2a-chart"></div>
+    <p class="detail">See the detail: <a href="commitment.html">Commitment</a> for which units stay on, and <a href="dayahead.html">Day-ahead offers</a> for the awards that hold them.</p>
+  </section>
+  <section class="panel panel-wide" id="q3-panel">
+    <div class="panel-head">
+      <div>
+        <h2>3. Is behaviour changing as renewables and batteries grow?</h2>
+        <p class="lead" id="q3-answer"></p>
+        <p class="note" id="q3-note"></p>
+      </div>
+      <div class="panel-tools">
+        <label class="lbl inline" for="q3-tech">Technology</label>
+        <select id="q3-tech"><option value="combined_cycle">Combined cycle</option><option value="gas_steam">Gas steam</option></select>
+      </div>
+    </div>
+    <div class="legend" id="q3-legend"></div>
+    <div class="chart" id="q3-chart"></div>
+    <div class="legend" id="q3m-legend"></div>
+    <div class="chart" id="q3m-chart"></div>
+    <p class="detail">See the detail: <a href="changes.html">What's changing</a> for unit by unit changes in offers and behaviour.</p>
+  </section>
+  <section class="panel panel-wide" id="q4-panel">
+    <div class="panel-head">
+      <div>
+        <h2>4. Where do fossil decisions slow decarbonization?</h2>
+        <p class="lead" id="q4-answer"></p>
+        <p class="note" id="q4-note"></p>
+      </div>
+      <div class="panel-tools"></div>
+    </div>
+    <div class="legend" id="q4-legend"></div>
+    <div class="chart" id="q4-chart"></div>
+    <div class="units-wrap" id="q4-table"></div>
+    <p class="detail">See the detail: <a href="renewables.html">Renewables</a> for curtailment by unit, and <a href="index.html">A day in ERCOT</a> for the hours it happens.</p>
+  </section>
+</main>
+
+<footer class="foot">
+  <p>Source: ERCOT EMIL products NP3-965-ER (60-Day SCED Disclosure), NP3-966-ER (60-Day DAM Disclosure), NP4-190-CD (DAM Settlement Point Prices) and NP6-905-CD (Settlement Point Prices at Resource Nodes, Hubs and Load Zones), Jan 2019 on; Henry Hub from EIA. Built monthly. Every unit-level number comes from the 60-day reports, so the page runs about two months behind.</p>
+  <p>Made by <a href="https://currenttech.energy">currenttech.energy</a> · <a href="contact.html">Contact</a></p>
+  <p>Not affiliated with or endorsed by ERCOT. ERCOT is a registered trademark of the Electric Reliability Council of Texas, Inc.</p>
+  <p>© 2026 CurrentTech Energy. All rights reserved. For information only; not trading or investment advice. <a href="terms.html">Terms and privacy</a></p>
+</footer>
+</div>
+<div class="tip" id="tip" hidden></div>
+<script src="vendor/d3.min.js"></script>
+<script src="common.js"></script>
+<script src="goal.js"></script>
+</body>
+</html>
