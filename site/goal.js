@@ -120,32 +120,27 @@ function drawQ2() {
 }
 
 // ==== 3. Is behaviour changing: triggers against behaviour, and where the loss windows fall ==
+const Q3_KEYS = ["off", "more", "less", "award"];
+const Q3 = {
+  off: { label: "Turned off", color: "--c3" },
+  more: { label: "Rode through, losing more than a restart", color: "--c7" },
+  less: { label: "Rode through, losing less than a restart", color: "--c7-soft" },
+  award: { label: "Held on by a day-ahead award", color: "--c-other" },
+};
 function drawQ3() {
   $("q3-tech").value = S.tech;
-  const el = $("q3-chart"), O = S.G.q3.off.map(([year, tech, small, awarded, n, off]) => ({ year, tech, small, awarded, n, off })).filter((r) => r.tech === S.tech && !r.awarded);
+  const el = $("q3-chart"), O = S.G.q3.off.map(([year, tech, small, awarded, n, off, onMwh, offMwh]) => ({ year, tech, small, awarded, n, off, onMwh, offMwh })).filter((r) => r.tech === S.tech);
   const ys = [...new Set(O.map((r) => r.year))].sort();
   if (!ys.length) return emptyMsg(el, "No loss windows.");
-  const get = (y, sm) => O.find((r) => r.year === y && r.small === sm) || { n: 0, off: NaN };
-  const w = Math.max(300, el.clientWidth || 700), m = { t: 14, r: 14, b: 26, l: 56 }, H = 220;
-  const x = d3.scalePoint().domain(ys).range([m.l + 20, w - m.r - 20]);
-  const yy = d3.scaleLinear().domain([0, Math.max(0.5, d3.max(O, (r) => r.off))]).nice().range([H - m.b, m.t]);
-  const svg = d3.create("svg").attr("viewBox", `0 0 ${w} ${H}`);
-  svg.append("g").attr("class", "gridline").attr("transform", `translate(${m.l},0)`).call(d3.axisLeft(yy).ticks(5).tickSize(-(w - m.l - m.r)).tickFormat(""));
-  svg.append("g").attr("class", "axis").attr("transform", `translate(${m.l},0)`).call(d3.axisLeft(yy).ticks(5).tickFormat(fmtPct).tickSizeOuter(0));
-  svg.append("g").attr("class", "axis").attr("transform", `translate(0,${H - m.b})`).call(d3.axisBottom(x).tickFormat((y) => (S.G.years[y]?.to.slice(5) === "12-31" ? y : `${y}*`)).tickSizeOuter(0));
-  svg.append("text").attr("class", "axis-title").attr("x", m.l).attr("y", 9).text(`Share of loss windows ${TECH[S.tech].toLowerCase()} units turned off for (no day-ahead award)`);
-  const LINES = [[0, "Losing more than a restart costs", "--c7"], [1, "Losing, but less than a restart", "--c7-soft"]];
-  LINES.forEach(([sm, , c]) => {
-    const pts = ys.map((y) => [y, get(y, sm).off]).filter(([, v]) => Number.isFinite(v));
-    svg.append("path").attr("d", d3.line().x(([y]) => x(y)).y(([, v]) => yy(v))(pts)).attr("fill", "none").attr("stroke", css(c)).attr("stroke-width", 2.5);
-    pts.forEach(([y, v]) => svg.append("circle").attr("cx", x(y)).attr("cy", yy(v)).attr("r", 3.5).attr("fill", css(c)));
-  });
-  ys.forEach((y) => svg.append("rect").attr("x", x(y) - 20).attr("width", 40).attr("y", m.t).attr("height", H - m.t - m.b).attr("fill", "transparent")
-    .on("pointermove", (ev) => showTip(ev, `<h4>${yearLabel(y)}</h4><table>` + LINES.map(([sm, label]) => `<tr><td>${label}</td><td class="n">${fmtPct(get(y, sm).off)} of ${d3.format(",")(get(y, sm).n)}</td></tr>`).join("") + `</table>`))
-    .on("pointerleave", hideTip));
-  el.replaceChildren(svg.node());
-  legend("q3-legend", LINES.map(([, label, c]) => [label, c]));
-  setCSV(el, ["year", "losing", "windows", "turned_off"], ys.flatMap((y) => LINES.map(([sm]) => [y, sm ? "less than a restart" : "more than a restart", get(y, sm).n, get(y, sm).off])), `Turn-offs when losing money ${S.tech}`);
+  const sum = (y, f, get) => d3.sum(O.filter((r) => r.year === y && f(r)), get);
+  const part = (y, k) => k === "off" ? sum(y, () => true, (r) => r.offMwh) : k === "award" ? sum(y, (r) => r.awarded, (r) => r.onMwh)
+    : sum(y, (r) => !r.awarded && r.small === (k === "less" ? 1 : 0), (r) => r.onMwh);
+  const share = (y, sm) => { const r = O.find((q) => q.year === y && !q.awarded && q.small === sm); return r ? r.off : NaN; };
+  const w = Math.max(300, el.clientWidth || 700), m = { t: 14, r: 14, b: 26, l: 56 };
+  stack(el, ys, Q3_KEYS, part, { title: `${TECH[S.tech]} minimum output in its day-ahead loss windows (TWh)`, labels: Q3,
+    axis: (v) => d3.format(".0f")(v / 1e6), tip: (v) => `${fmtTWh(v)} TWh` });
+  legend("q3-legend", Q3_KEYS.map((k) => [Q3[k].label, Q3[k].color]));
+  setCSV(el, ["year", ...Q3_KEYS.map((k) => `${k}_mwh`)], ys.map((y) => [y, ...Q3_KEYS.map((k) => Math.round(part(y, k)))]), `Loss windows ${S.tech}`);
   // where the loss windows fall
   const M = S.G.q3.mix.map(([year, tech, n, overnight, midday, off, loss]) => ({ year, tech, n, overnight, midday, off, loss })).filter((r) => r.tech === S.tech);
   const el2 = $("q3m-chart"), H2 = 170, x2 = d3.scalePoint().domain(M.map((r) => r.year)).range([m.l + 20, w - m.r - 20]);
@@ -165,12 +160,13 @@ function drawQ3() {
   el2.replaceChildren(s2.node());
   legend("q3m-legend", [["Starting overnight (after midnight)", "--c1"], ["Starting midday (HE 9 to 17)", "--c4"]]);
   setCSV(el2, ["year", "windows", "overnight", "midday", "turned_off", "median_loss_per_mw"], M.map((r) => [r.year, r.n, r.overnight, r.midday, r.off, r.loss]), `Loss windows ${S.tech}`);
-  const f = M[0], l = M.at(-1), y0 = ys[0], y1 = fullYears().at(-1), a = get(y0, 0).off, b = get(y1, 0).off, now = ys.at(-1);
-  const dir = b > a + 0.03 ? "more" : b < a - 0.03 ? "less" : "no more";
-  $("q3-answer").innerHTML = `<b>${TECH[S.tech]} units losing money are turning off ${dir} often than in ${y0}.</b> When a unit without a day-ahead award was losing more than a restart would cost, it turned off for ${fmtPct(a)} of those windows in ${y0}, ${fmtPct(b)} in ${y1}` +
-    (now !== y1 ? ` and ${fmtPct(get(now, 0).off)} in ${yearLabel(now)}` : "") + `. Meanwhile the cheap hours moved to midday: ${fmtPct(f.overnight)} of loss windows started overnight in ${f.year}, ${fmtPct(l.overnight)} in ${yearLabel(l.year)}.`;
-  setNote($("q3-note"), `Of the days a unit was losing money at minimum, the share it turned off, by year, for units without a day-ahead award. * part year.`,
-    `One row per unit and day it started online: its worst stretch of day-ahead losses at minimum over HE7 to HE6 the next day (minimum-energy cost above its day-ahead node price, times its LSL), and whether it was off for most of it (60-day SCED and DAM disclosures, from 2019). Losing more than a restart means that loss beat its hot start offer (a generic $15,000 for combined cycles and $10,000 for gas steam when none is offered). Windows where a day-ahead award covered half the hours or more are left out: those units almost never turn off (under 1%). 2021 and 2022 include Winter Storm Uri and the 2022 gas price spike.`);
+  const f = M[0], l = M.at(-1), y0 = ys[0], y1 = fullYears().at(-1), now = ys.at(-1);
+  const dir = part(y1, "more") > part(y0, "more") * 1.1 ? "more" : part(y1, "more") < part(y0, "more") * 0.9 ? "less" : "about as much";
+  $("q3-answer").innerHTML = `<b>${TECH[S.tech]} units ride through ${dir} of their losses than in ${y0}.</b> Units without a day-ahead award, losing more than a restart would cost, rode through ${fmtTWh(part(y0, "more"))} TWh of minimum output in ${y0} and ${fmtTWh(part(y1, "more"))} TWh in ${y1}, while the output turned off across all loss windows went from ${fmtTWh(part(y0, "off"))} to ${fmtTWh(part(y1, "off"))} TWh. ` +
+    `They turned off for ${fmtPct(share(y0, 0))} of such windows in ${y0} and ${fmtPct(share(y1, 0))} in ${y1}` + (now !== y1 ? ` (${fmtPct(share(now, 0))} so far in ${now})` : "") +
+    `. Meanwhile the cheap hours moved to midday: ${fmtPct(f.overnight)} of loss windows started overnight in ${f.year}, ${fmtPct(l.overnight)} in ${yearLabel(l.year)}.`;
+  setNote($("q3-note"), `Each unit's minimum output over its day's worst day-ahead loss window, by year: what was turned off, and what ran through it and why. * part year.`,
+    `One row per unit and day it started online: its worst stretch of day-ahead losses at minimum over HE7 to HE6 the next day (minimum-energy cost above its day-ahead node price, times its LSL), and the hours it was online through it (60-day SCED and DAM disclosures, from 2019). Output is the LSL times the window's hours, online or offline. Losing more than a restart means that loss beat its hot start offer (a generic $15,000 for combined cycles and $10,000 for gas steam when none is offered). Held on by a day-ahead award: an award covered half the window's hours or more; those units almost never turn off. 2021 and 2022 include Winter Storm Uri and the 2022 gas price spike.`);
 }
 
 // ==== 4. Curtailment and the fossil minimum beside it ========================================

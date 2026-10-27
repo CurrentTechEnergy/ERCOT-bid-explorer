@@ -302,7 +302,10 @@ def _rule(table):
     x["small"] = (x["loss"] <= start).astype(int)          # 0: losing more than a restart
     x["awarded"] = (x["award_share"] >= 0.5).astype(int)
     x["off"] = x["on_share"] < 0.5
-    off = [[int(y), t, int(sm), int(aw), len(g), round(float(g["off"].mean()), 4)]
+    mwh = x["lsl"] * x["win_h"]                              # minimum output over the window
+    x["on_mwh"], x["off_mwh"] = mwh * x["on_share"], mwh * (1 - x["on_share"])
+    off = [[int(y), t, int(sm), int(aw), len(g), round(float(g["off"].mean()), 4),
+            round(float(g["on_mwh"].sum())), round(float(g["off_mwh"].sum()))]
            for (y, t, sm, aw), g in x.groupby(["year", "tech", "small", "awarded"])]
     he = (x["win_from"] - 1) % 24 + 1
     mix = []
@@ -320,7 +323,8 @@ def build(cache: Path, end=None, table=None) -> dict:
        "years": {year: {"from", "to", "cheap_hours"}},
        "q1": {"columns": [year, tech, group, trains, capacity_mw, off_mwh], "rows"},
        "q2": {"columns": [year, tech, reason, mwh], "rows", "reasons"},
-       "q3": {"off": [[year, tech, small (0: losing more than a restart), awarded, windows, off_share]],
+       "q3": {"off": [[year, tech, small (0: losing more than a restart), awarded, windows, off_share,
+                        minimum_online_mwh, minimum_offline_mwh]],
               "mix": [[year, tech, windows, overnight, midday, off_rate, median_loss_per_mw]]},
        "q4": {"years": [[year, available_mwh, curtailed_mwh, in_oversupply_mwh, uncongested_mwh,
                          oversupply_hours, counted_hours, uncongested_in_counted_mwh, uncongested_by_he[24]]],
