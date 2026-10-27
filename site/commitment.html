@@ -57,20 +57,10 @@
   <section class="panel panel-wide" id="cutoff-panel">
     <div class="panel-head">
       <div>
-        <h2>Cutoff curve <span class="h-note" id="cut-title-note"></span></h2>
-        <p class="note" id="cut-note"></p>
-      </div>
-      <div class="panel-tools">
-        <div class="seg seg-sm" id="cut-by" role="radiogroup" aria-label="Stack by">
-          <button type="button" data-v="group" role="radio">By how often it turns off</button>
-          <button type="button" data-v="tech" role="radio">By technology</button>
-        </div>
+        <h2>CC and gas steam: where the model turns each unit off<span id="cut-units-stayed"></span> <span class="h-note" id="cut-title-note"></span></h2>
+        <p class="note" id="cut-units-note"></p>
       </div>
     </div>
-    <div class="legend legend-static" id="cut-legend"></div>
-    <div class="chart" id="cut-chart"></div>
-    <h3 class="sub-h">Each CC and gas steam unit: where the model turns it off, and what being off would have saved</h3>
-    <p class="note" id="cut-units-note"></p>
     <div class="legend legend-static" id="cut-units-legend"></div>
     <div class="chart" id="cut-units"></div>
     <h3 class="sub-h">Each peaker: the real-time price at its node where the fit starts it, and the day's highest price there</h3>
@@ -165,7 +155,7 @@
       </div>
       <div class="panel-tools">
         <div class="seg seg-sm" id="floor-group" role="radiogroup" aria-label="Group by">
-          <button type="button" data-v="behaviour" role="radio" title="Thermal units grouped by how often they turn off, as in the cutoff curve">By how often it turns off</button>
+          <button type="button" data-v="behaviour" role="radio" title="Thermal units grouped by how often they turn off, as in the turn-off chart">By how often it turns off</button>
           <button type="button" data-v="tech" role="radio">By technology</button>
         </div>
         <div class="seg seg-sm" id="floor-hours" role="radiogroup" aria-label="Hours shown">
