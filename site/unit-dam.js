@@ -85,15 +85,15 @@ function drawThermal(U, list) {
   const cc = U.tech === "combined_cycle";
   $("dam-title-note").textContent = `${D.first} to ${D.last}`;
   $("dam-note").innerHTML = `Its three-part offer to the day-ahead market each day${cc ? ", one colour per configuration" : ""}. ` +
-    `Large dots are cheap days (DA lambda at or below $${D.cheap_usd}) at the offer over the cheap hours: filled when the DAM kept it on through the cheap stretch, hollow when not. Small faint dots are other days, at the day's offer. ` +
+    `Large squares are cheap days (DA lambda at or below $${D.cheap_usd}) at the offer over the cheap hours: filled when a DAM award kept it on through the cheap stretch, hollow when not. Small faint squares are other days, at the day's offer. ` +
     `The black line is its fuel cost (the EIA heat rate times its hub gas price), and dashed rules mark offer changes. ` +
     (filed.length ? `On ${filed.length} cheap days with an offer it was kept on through ${fmtPct(kept.length / filed.length)} of them; median lowest offer ${fmt$(med(lows))}/MWh. ` : "") +
     `<a href="dayahead.html">Compare it with the fleet on Day-ahead offers</a>.`;
   const sz = (s) => [s.lsl != null ? `${fmt0(s.lsl)}${s.hsl != null ? `–${fmt0(s.hsl)}` : ""} MW` : null, s.hot ? `hot start ${fmt$0(s.hot)}${s.lsl ? `, ${fmt$0(s.hot / s.lsl)}/MW` : ""}` : null].filter(Boolean).join(", ");
   $("dam-legend").innerHTML = list.map(([k], j) => `<span><span class="sw" style="background:${col(j)};border-radius:50%"></span>${esc(k)}${sz(size[j]) ? ` <span class="muted">(${sz(size[j])})</span>` : ""}</span>`).join("") +
     `<span><span class="sw-line" style="border-top:2px solid var(--ink)"></span>Fuel cost</span>` +
-    `<span><span class="sw" style="background:var(--ink-2);border-radius:50%"></span>Cheap day, kept on</span>` +
-    `<span><span class="sw" style="border:1.5px solid var(--ink-2);border-radius:50%;background:none"></span>Cheap day, left out</span>` +
+    `<span><span class="sw" style="background:var(--ink-2);width:9px;height:9px;border-radius:1px"></span>Cheap day, DAM award kept it on</span>` +
+    `<span><span class="sw" style="border:1.5px solid var(--ink-2);width:9px;height:9px;border-radius:1px;background:none;box-sizing:border-box"></span>Cheap day, no award</span>` +
     `<span><span class="mk" style="border-color:var(--c8)"></span>Offer change</span>`;
   const pts = [];
   list.forEach(([k, r], j) => r.mg.forEach((v, i) => {
@@ -119,8 +119,10 @@ function drawThermal(U, list) {
     .attr("y1", m.t).attr("y2", H - m.b).attr("stroke", css("--c8")).attr("stroke-dasharray", "3 3").attr("opacity", 0.75);
   svg.append("path").attr("d", d3.line().defined((v) => v != null).x((_, i) => x(S.dates[i])).y((v) => y(v))(line))
     .attr("fill", "none").attr("stroke", css("--ink")).attr("stroke-width", 1.3);
-  svg.append("g").selectAll("circle").data(pts).join("circle").attr("cx", (p) => x(S.dates[p.i])).attr("cy", (p) => y(p.v))
-    .attr("r", (p) => (p.ch ? 3 : 1.5)).attr("opacity", (p) => (p.ch ? 1 : 0.4))
+  // squares, not circles: circles mean online and offline across the site
+  const sq = d3.symbol(d3.symbolSquare);
+  svg.append("g").selectAll("path").data(pts).join("path").attr("transform", (p) => `translate(${x(S.dates[p.i])},${y(p.v)})`)
+    .attr("d", (p) => sq.size(p.ch ? 32 : 8)()).attr("opacity", (p) => (p.ch ? 1 : 0.4))
     .attr("fill", (p) => (!p.ch || p.aw === 1 ? col(p.j) : css("--surface"))).attr("stroke", (p) => col(p.j)).attr("stroke-width", (p) => (p.ch ? 1.3 : 0));
   const tree = d3.quadtree(pts, (p) => x(S.dates[p.i]), (p) => y(p.v));
   const ring = svg.append("circle").attr("r", 6).attr("fill", "none").attr("stroke", css("--ink")).style("display", "none");

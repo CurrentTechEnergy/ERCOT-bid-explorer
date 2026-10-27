@@ -563,5 +563,10 @@ function drawCurtailDay(el, legendEl, noteEl, c, day, opts = {}) {
     `Wind and solar curtailment ${day}`);
 }
 
-window.CX = { fromStart, SITE_START, setNote, getJSON, tryJSON, showTip, hideTip, clearPins, setCSV, readHash, writeHash, init, panelFromLink, css, esc, tickFormat, fmtKind, axisFmt, unitIndex, findUnits, matchedOn, drawCurtailDay };
+// on/off dots, the same on every chart: filled when the unit was online, hollow when offline
+function onOffDot(sel, on, r = 3.5) {
+  return sel.attr("r", r).attr("fill", css(on ? "--ink" : "--surface")).attr("stroke", css("--ink")).attr("stroke-width", 1.5);
+}
+const onOffLegend = (on = "Online", off = "Offline") => `<span><span class="sw sw-on"></span>${on}</span><span><span class="sw sw-off"></span>${off}</span>`;
+window.CX = { onOffDot, onOffLegend, fromStart, SITE_START, setNote, getJSON, tryJSON, showTip, hideTip, clearPins, setCSV, readHash, writeHash, init, panelFromLink, css, esc, tickFormat, fmtKind, axisFmt, unitIndex, findUnits, matchedOn, drawCurtailDay };
 })();
