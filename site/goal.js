@@ -16,8 +16,8 @@ const REASON = {
   "never off": { label: "Never off", color: "--c-other" },
   "held by its award": { label: "Held by its award", color: "--c3" },
   "rode through": { label: "Rode through", color: "--c1" },
-  "against the model": { label: "Stayed on, model said off", color: "--c2" },
-  "no model call": { label: "No model call", color: "--c7-soft" },
+  "against the model": { label: "Stayed on, model said off", color: "--c7" },
+  "no model call": { label: "No model call", color: "--c5" },
   combustion_turbine: { label: "Combustion turbines", color: "--c4" },
 };
 const S = { G: null, year: null, tech: "combined_cycle", vs: "first" };
@@ -111,7 +111,7 @@ function drawQ2() {
   const el = $("q2-chart"), R = rowsOf("q2").filter((r) => ["coal", "combined_cycle", "gas_steam"].includes(r.tech)), ys = years();
   const val = (y, k) => d3.sum(R.filter((r) => r.year === y && r.reason === k), (r) => r.mwh) / (S.G.years[y].cheap_hours || 1);
   stack(el, ys, Q2_KEYS, val, { title: "Fossil minimum online in the average cheap hour (GW)" });
-  legend("q2-legend", Q2_KEYS.slice().reverse().map((k) => [REASON[k].label, REASON[k].color]));
+  legend("q2-legend", Q2_KEYS.map((k) => [REASON[k].label, REASON[k].color]));
   setCSV(el, ["year", "reason", "mw_per_cheap_hour"], ys.flatMap((y) => Q2_KEYS.map((k) => [y, k, Math.round(val(y, k))])), "Why the rest stays on");
   const y = fullYears().at(-1), tot = d3.sum(Q2_KEYS, (k) => val(y, k));
   $("q2-answer").innerHTML = `In ${y}, <b>${fmtGW(tot)} GW of coal and gas minimum ran through the average cheap hour.</b> ${fmtGW(val(y, "coal"))} GW was coal, ${fmtGW(val(y, "held by its award"))} GW was held by its day-ahead award, ${fmtGW(val(y, "never off"))} GW never turns off, and ${fmtGW(val(y, "rode through"))} GW rode through, as the model also called it. Only ${d3.format(",.0f")(val(y, "against the model"))} MW stayed on when the model said it would turn off.`;
@@ -185,7 +185,7 @@ function drawQ4() {
   const val = (y, k) => d3.sum(A.filter((r) => r.year === y && r.tech !== "nuclear" && key(r) === k), (r) => r.mwh) / cnt[y];
   const mark = (y) => { const r = Y.find((v) => v.year === y); return r.freeCounted / Math.max(1, r.counted); };
   stack(el, ys, Q4_KEYS, val, { title: "In oversupply hours: fossil minimum online, and curtailment not behind congestion (GW)", mark, markLabel: "Curtailed, not behind congestion (average)" });
-  legend("q4-legend", [...Q4_KEYS.slice().reverse().map((k) => [REASON[k].label, REASON[k].color])]);
+  legend("q4-legend", [...Q4_KEYS.map((k) => [REASON[k].label, REASON[k].color])]);
   $("q4-legend").innerHTML += `<span><span class="sw sw-line" style="border-top-color:var(--ink)"></span>Wind and solar curtailed, not behind congestion</span>`;
   const V = S.G.q4.avoid.map(([year, s, mwh]) => ({ year, s, mwh })), sc = S.G.q4.scenarios;
   const nuc = (y) => d3.sum(A.filter((r) => r.year === y && r.tech === "nuclear"), (r) => r.mwh) / cnt[y];
