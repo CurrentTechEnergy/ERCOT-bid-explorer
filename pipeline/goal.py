@@ -12,16 +12,16 @@ built from the 60-day day files, pipeline/decision_table.month_file):
      energy award of at least AWARD_LSL x its running LSL that hour); rode through (the
      operator-informed model, pipeline/models/operator_informed.py, also called it on); turned
      down against the model (the model called it off); no model call (no day file).
-  3. Is behaviour changing?  The stay-on rule fitted on each year's loss windows (decision table,
-     pipeline/decision_table.py; rule, pipeline/decision_rule.py, no-award variant), and the change
-     in the CC and gas steam off rate split into triggers (the losses changed) and behaviour (the
-     rule changed), each year against 2019 and against the year before; and where the loss
-     windows fall (overnight or midday).
+  3. Is behaviour changing?  Of the CC and gas steam loss windows (decision table,
+     pipeline/decision_table.py), the share each year the unit was off for most of the window,
+     split by whether the window's loss beat a restart (its hot start offer, else the generic) and
+     whether a DAM award held at least half its hours; and where the loss windows fall (overnight
+     or midday).
   4. Where do fossil decisions slow decarbonization?  Wind and solar curtailment (HSL above base
      point), the part in oversupply hours (real-time hub average at OVER_PRICE or less) at units not
      behind congestion (DA node within CONGESTED of the DA bus average), and the fossil minimum
-     online in those hours by the same reasons, with how much of that curtailment shutting each
-     group would have freed (hour by hour, the smaller of the two).
+     online in those hours by whether each unit was losing money (ECON, _losing), with how much of
+     that curtailment shutting each group would have let run (hour by hour, the smaller of the two).
 
 "Cheap" is a day-ahead hub average (HB_HUBAVG) of CHEAP $/MWh or less, as on the Commitment
 scorecard.  Writes data/goal.json.gz (format in build()).  Run monthly by the Goal page workflow
@@ -294,28 +294,24 @@ def _year(year, months, cache, before=None, losing=None):
 
 
 def _rule(table):
-    """Question 3: year-pair splits and where the loss windows fall, from the decision table."""
-    from . import decision_rule as R
-    x = table.copy()
-    keep = R.Rule.features
-    R.Rule.features = [f for f in R.FEATURES if f != "award"]
-    try:
-        xx, z, _, _ = R.load(x)
-        dec = R.decompose(xx, z)
-    finally:
-        R.Rule.features = keep
-    y0 = int(dec["a"].min())
-    pairs = [[r.tech, int(r.a), int(r.b), int(r.trains), round(r.off_a, 4), round(r.off_b, 4), round(r.triggers, 4), round(r.behaviour, 4)]
-             for r in dec.itertuples() if r.a == y0 or r.b == r.a + 1]
-    x = x[x["tech"].isin(["combined_cycle", "gas_steam"])]
+    """Question 3, from the decision table: how often units losing money turned off, and where the
+    loss windows fall."""
+    from .config import GENERIC_COSTS
+    x = table[table["tech"].isin(["combined_cycle", "gas_steam"])].copy()
+    start = x["hot_start"].fillna(x["tech"].map(lambda t: GENERIC_COSTS[t][0]))
+    x["small"] = (x["loss"] <= start).astype(int)          # 0: losing more than a restart
+    x["awarded"] = (x["award_share"] >= 0.5).astype(int)
+    x["off"] = x["on_share"] < 0.5
+    off = [[int(y), t, int(sm), int(aw), len(g), round(float(g["off"].mean()), 4)]
+           for (y, t, sm, aw), g in x.groupby(["year", "tech", "small", "awarded"])]
     he = (x["win_from"] - 1) % 24 + 1
     mix = []
     for (y, t), g in x.groupby(["year", "tech"]):
         h = he[g.index]
         mix.append([int(y), t, len(g), round(float((g["win_from"] >= 25).mean()), 4),
                     round(float(((h >= 9) & (h <= 17) & (g["win_from"] < 25)).mean()), 4),
-                    round(float((g["on_share"] < 0.5).mean()), 4), round(float(g["loss_per_mw"].median()), 1)])
-    return {"pairs": pairs, "mix": mix}
+                    round(float(g["off"].mean()), 4), round(float(g["loss_per_mw"].median()), 1)])
+    return {"off": off, "mix": mix}
 
 
 def build(cache: Path, end=None, table=None) -> dict:
@@ -324,7 +320,7 @@ def build(cache: Path, end=None, table=None) -> dict:
        "years": {year: {"from", "to", "cheap_hours"}},
        "q1": {"columns": [year, tech, group, trains, capacity_mw, off_mwh], "rows"},
        "q2": {"columns": [year, tech, reason, mwh], "rows", "reasons"},
-       "q3": {"pairs": [[tech, from, to, trains, off_from, off_to, triggers, behaviour]],
+       "q3": {"off": [[year, tech, small (0: losing more than a restart), awarded, windows, off_share]],
               "mix": [[year, tech, windows, overnight, midday, off_rate, median_loss_per_mw]]},
        "q4": {"years": [[year, available_mwh, curtailed_mwh, in_oversupply_mwh, uncongested_mwh,
                          oversupply_hours, counted_hours, uncongested_in_counted_mwh, uncongested_by_he[24]]],

@@ -20,10 +20,9 @@ const REASON = {
   "no model call": { label: "No model call", color: "--c5" },
   combustion_turbine: { label: "Combustion turbines", color: "--c4" },
 };
-const S = { G: null, year: null, tech: "combined_cycle", vs: "first" };
+const S = { G: null, year: null, tech: "combined_cycle" };
 
 function emptyMsg(el, msg) { el.innerHTML = `<p class="empty">${msg}</p>`; }
-function setSeg(id, value) { $(id).querySelectorAll("button").forEach((b) => b.setAttribute("aria-checked", String(b.dataset.v === value))); }
 const yearLabel = (y) => { const r = S.G.years[y]; return r && r.to.slice(5) !== "12-31" ? `${y} (Jan 1 to ${d3.timeFormat("%b %-d")(new Date(r.to + "T12:00:00"))})` : String(y); };
 const years = () => Object.keys(S.G.years).map(Number).sort();
 const fullYears = () => years().filter((y) => S.G.years[y].to.slice(5) === "12-31");
@@ -122,34 +121,31 @@ function drawQ2() {
 
 // ==== 3. Is behaviour changing: triggers against behaviour, and where the loss windows fall ==
 function drawQ3() {
-  setSeg("q3-vs", S.vs);
   $("q3-tech").value = S.tech;
-  const el = $("q3-chart"), P = S.G.q3.pairs.map(([tech, a, b, trains, offA, offB, trig, beh]) => ({ tech, a, b, trains, offA, offB, trig, beh })).filter((p) => p.tech === S.tech);
-  const y0 = d3.min(P, (p) => p.a);
-  const sel = P.filter((p) => (S.vs === "first" ? p.a === y0 : p.b === p.a + 1)).sort((p, q) => p.b - q.b);
-  if (!sel.length) return emptyMsg(el, "No year pairs.");
-  const w = Math.max(300, el.clientWidth || 700), m = { t: 14, r: 14, b: 26, l: 56 }, H = 240;
-  const x = d3.scaleBand().domain(sel.map((p) => p.b)).range([m.l, w - m.r]).padding(0.3), bw = x.bandwidth() / 2;
-  const lo = d3.min(sel, (p) => Math.min(0, p.trig, p.beh, p.offB - p.offA)), hi = d3.max(sel, (p) => Math.max(0, p.trig, p.beh, p.offB - p.offA));
-  const yy = d3.scaleLinear().domain([lo * 1.1, hi * 1.1]).nice().range([H - m.b, m.t]);
+  const el = $("q3-chart"), O = S.G.q3.off.map(([year, tech, small, awarded, n, off]) => ({ year, tech, small, awarded, n, off })).filter((r) => r.tech === S.tech && !r.awarded);
+  const ys = [...new Set(O.map((r) => r.year))].sort();
+  if (!ys.length) return emptyMsg(el, "No loss windows.");
+  const get = (y, sm) => O.find((r) => r.year === y && r.small === sm) || { n: 0, off: NaN };
+  const w = Math.max(300, el.clientWidth || 700), m = { t: 14, r: 14, b: 26, l: 56 }, H = 220;
+  const x = d3.scalePoint().domain(ys).range([m.l + 20, w - m.r - 20]);
+  const yy = d3.scaleLinear().domain([0, Math.max(0.5, d3.max(O, (r) => r.off))]).nice().range([H - m.b, m.t]);
   const svg = d3.create("svg").attr("viewBox", `0 0 ${w} ${H}`);
   svg.append("g").attr("class", "gridline").attr("transform", `translate(${m.l},0)`).call(d3.axisLeft(yy).ticks(5).tickSize(-(w - m.l - m.r)).tickFormat(""));
-  svg.append("g").attr("class", "axis").attr("transform", `translate(${m.l},0)`).call(d3.axisLeft(yy).ticks(5).tickFormat((v) => d3.format("+.0f")(v * 100)).tickSizeOuter(0));
-  const star = (y) => (S.G.years[y]?.to.slice(5) === "12-31" ? `${y}` : `${y}*`);
-  svg.append("g").attr("class", "axis").attr("transform", `translate(0,${yy(0)})`).call(d3.axisBottom(x).tickFormat((b) => (S.vs === "first" ? star(b) : `${b - 1}→${star(b)}`)).tickSize(0).tickPadding(H - m.b - yy(0) + 8));
-  svg.append("line").attr("x1", m.l).attr("x2", w - m.r).attr("y1", yy(0)).attr("y2", yy(0)).attr("stroke", css("--ink-2"));
-  svg.append("text").attr("class", "axis-title").attr("x", m.l).attr("y", 9).text(`Change in the share of loss windows ${TECH[S.tech].toLowerCase()} units turned off for (points)`);
-  sel.forEach((p) => {
-    [["trig", "--c4"], ["beh", "--c2"]].forEach(([k, c], i) => svg.append("rect").attr("x", x(p.b) + i * bw).attr("width", bw - 2).attr("y", yy(Math.max(0, p[k]))).attr("height", Math.abs(yy(p[k]) - yy(0))).attr("fill", css(c)));
-    svg.append("circle").attr("cx", x(p.b) + x.bandwidth() / 2).attr("cy", yy(p.offB - p.offA)).attr("r", 4).attr("fill", css("--ink"));
-    svg.append("rect").attr("x", x(p.b)).attr("width", x.bandwidth()).attr("y", m.t).attr("height", H - m.t - m.b).attr("fill", "transparent")
-      .on("pointermove", (ev) => showTip(ev, `<h4>${p.a} to ${yearLabel(p.b)}</h4><table><tr><td>Turned off for the window</td><td class="n">${fmtPct(p.offA)} → ${fmtPct(p.offB)}</td></tr><tr><td>Change</td><td class="n">${fmtPt(p.offB - p.offA)}</td></tr><tr><td>Triggers (the losses changed)</td><td class="n">${fmtPt(p.trig)}</td></tr><tr><td>Behaviour (the rule changed)</td><td class="n">${fmtPt(p.beh)}</td></tr><tr><td>Units in both years</td><td class="n">${p.trains}</td></tr></table>`))
-      .on("pointerleave", hideTip);
+  svg.append("g").attr("class", "axis").attr("transform", `translate(${m.l},0)`).call(d3.axisLeft(yy).ticks(5).tickFormat(fmtPct).tickSizeOuter(0));
+  svg.append("g").attr("class", "axis").attr("transform", `translate(0,${H - m.b})`).call(d3.axisBottom(x).tickFormat((y) => (S.G.years[y]?.to.slice(5) === "12-31" ? y : `${y}*`)).tickSizeOuter(0));
+  svg.append("text").attr("class", "axis-title").attr("x", m.l).attr("y", 9).text(`Share of loss windows ${TECH[S.tech].toLowerCase()} units turned off for (no day-ahead award)`);
+  const LINES = [[0, "Losing more than a restart costs", "--c7"], [1, "Losing, but less than a restart", "--c7-soft"]];
+  LINES.forEach(([sm, , c]) => {
+    const pts = ys.map((y) => [y, get(y, sm).off]).filter(([, v]) => Number.isFinite(v));
+    svg.append("path").attr("d", d3.line().x(([y]) => x(y)).y(([, v]) => yy(v))(pts)).attr("fill", "none").attr("stroke", css(c)).attr("stroke-width", 2.5);
+    pts.forEach(([y, v]) => svg.append("circle").attr("cx", x(y)).attr("cy", yy(v)).attr("r", 3.5).attr("fill", css(c)));
   });
+  ys.forEach((y) => svg.append("rect").attr("x", x(y) - 20).attr("width", 40).attr("y", m.t).attr("height", H - m.t - m.b).attr("fill", "transparent")
+    .on("pointermove", (ev) => showTip(ev, `<h4>${yearLabel(y)}</h4><table>` + LINES.map(([sm, label]) => `<tr><td>${label}</td><td class="n">${fmtPct(get(y, sm).off)} of ${d3.format(",")(get(y, sm).n)}</td></tr>`).join("") + `</table>`))
+    .on("pointerleave", hideTip));
   el.replaceChildren(svg.node());
-  legend("q3-legend", [["Triggers: the losses changed", "--c4"], ["Behaviour: the rule changed", "--c2"]]);
-  $("q3-legend").innerHTML += `<span>● change in the share turned off</span>`;
-  setCSV(el, ["from", "to", "units", "off_from", "off_to", "triggers", "behaviour"], sel.map((p) => [p.a, p.b, p.trains, p.offA, p.offB, p.trig, p.beh]), `Triggers and behaviour ${S.tech}`);
+  legend("q3-legend", LINES.map(([, label, c]) => [label, c]));
+  setCSV(el, ["year", "losing", "windows", "turned_off"], ys.flatMap((y) => LINES.map(([sm]) => [y, sm ? "less than a restart" : "more than a restart", get(y, sm).n, get(y, sm).off])), `Turn-offs when losing money ${S.tech}`);
   // where the loss windows fall
   const M = S.G.q3.mix.map(([year, tech, n, overnight, midday, off, loss]) => ({ year, tech, n, overnight, midday, off, loss })).filter((r) => r.tech === S.tech);
   const el2 = $("q3m-chart"), H2 = 170, x2 = d3.scalePoint().domain(M.map((r) => r.year)).range([m.l + 20, w - m.r - 20]);
@@ -159,7 +155,7 @@ function drawQ3() {
   s2.append("g").attr("class", "axis").attr("transform", `translate(${m.l},0)`).call(d3.axisLeft(y2).ticks(4).tickFormat(fmtPct).tickSizeOuter(0));
   s2.append("g").attr("class", "axis").attr("transform", `translate(0,${H2 - m.b})`).call(d3.axisBottom(x2).tickFormat((y) => (S.G.years[y]?.to.slice(5) === "12-31" ? y : `${y}*`)).tickSizeOuter(0));
   s2.append("text").attr("class", "axis-title").attr("x", m.l).attr("y", 9).text("Where the day's worst loss window starts: share of windows");
-  [["overnight", "--c7"], ["midday", "--c4"]].forEach(([k, c]) => {
+  [["overnight", "--c1"], ["midday", "--c4"]].forEach(([k, c]) => {
     s2.append("path").attr("d", d3.line().x((r) => x2(r.year)).y((r) => y2(r[k]))(M)).attr("fill", "none").attr("stroke", css(c)).attr("stroke-width", 2);
     M.forEach((r) => s2.append("circle").attr("cx", x2(r.year)).attr("cy", y2(r[k])).attr("r", 3).attr("fill", css(c)));
   });
@@ -167,13 +163,14 @@ function drawQ3() {
     .on("pointermove", (ev) => showTip(ev, `<h4>${yearLabel(r.year)}</h4><table><tr><td>Windows</td><td class="n">${d3.format(",")(r.n)}</td></tr><tr><td>Starting overnight</td><td class="n">${fmtPct(r.overnight)}</td></tr><tr><td>Starting midday (HE 9 to 17)</td><td class="n">${fmtPct(r.midday)}</td></tr><tr><td>Turned off for the window</td><td class="n">${fmtPct(r.off)}</td></tr><tr><td>Median loss of riding through</td><td class="n">$${d3.format(",.0f")(r.loss)}/MW</td></tr></table>`))
     .on("pointerleave", hideTip));
   el2.replaceChildren(s2.node());
-  legend("q3m-legend", [["Starting overnight (after midnight)", "--c7"], ["Starting midday (HE 9 to 17)", "--c4"]]);
+  legend("q3m-legend", [["Starting overnight (after midnight)", "--c1"], ["Starting midday (HE 9 to 17)", "--c4"]]);
   setCSV(el2, ["year", "windows", "overnight", "midday", "turned_off", "median_loss_per_mw"], M.map((r) => [r.year, r.n, r.overnight, r.midday, r.off, r.loss]), `Loss windows ${S.tech}`);
-  const all = P.filter((p) => p.b === p.a + 1).sort((p, q) => p.b - q.b), last = all.at(-1), f = M[0], l = M.at(-1);
-  $("q3-answer").innerHTML = `<b>The cheap hours moved to midday:</b> ${fmtPct(f.overnight)} of ${TECH[S.tech].toLowerCase()} loss windows started overnight in ${f.year}, ${fmtPct(l.overnight)} in ${yearLabel(l.year)}. ` +
-    (last ? `From ${last.a} to ${yearLabel(last.b)} the share turned off moved ${fmtPt(last.offB - last.offA)}: ${fmtPt(last.trig)} from the losses and <b>${fmtPt(last.beh)} from behaviour</b>.` : "");
-  setNote($("q3-note"), `Each year's change in how often units turned off through their worst day-ahead loss window, split into what changed in the losses (triggers) and in the units' response (behaviour). * part year.`,
-    `One row per unit and day it started online: its worst stretch of day-ahead losses at minimum over HE7 to HE6 the next day, against its own minimum-energy cost, and whether it was off for most of it (60-day SCED and DAM disclosures, from 2019). A stay-on rule (a logistic with one intercept per unit, on the loss, the margins before and after, the window against the unit's usual off spell, its start cost, overnight and season) is fitted on each year. The change in the off rate from year A to year B splits into triggers, A's rule on B's windows against A's own, and behaviour, B's rule against A's on the same windows, averaged both ways so the two add up; only units present in both years. The rule leaves out the day-ahead award, which is the unit's own offer, so bidding differently counts as behaviour. 2020 to 2022 include Winter Storm Uri and the 2022 gas price spike.`);
+  const f = M[0], l = M.at(-1), y0 = ys[0], y1 = fullYears().at(-1), a = get(y0, 0).off, b = get(y1, 0).off, now = ys.at(-1);
+  const dir = b > a + 0.03 ? "more" : b < a - 0.03 ? "less" : "no more";
+  $("q3-answer").innerHTML = `<b>${TECH[S.tech]} units losing money are turning off ${dir} often than in ${y0}.</b> When a unit without a day-ahead award was losing more than a restart would cost, it turned off for ${fmtPct(a)} of those windows in ${y0}, ${fmtPct(b)} in ${y1}` +
+    (now !== y1 ? ` and ${fmtPct(get(now, 0).off)} in ${yearLabel(now)}` : "") + `. Meanwhile the cheap hours moved to midday: ${fmtPct(f.overnight)} of loss windows started overnight in ${f.year}, ${fmtPct(l.overnight)} in ${yearLabel(l.year)}.`;
+  setNote($("q3-note"), `Of the days a unit was losing money at minimum, the share it turned off, by year, for units without a day-ahead award. * part year.`,
+    `One row per unit and day it started online: its worst stretch of day-ahead losses at minimum over HE7 to HE6 the next day (minimum-energy cost above its day-ahead node price, times its LSL), and whether it was off for most of it (60-day SCED and DAM disclosures, from 2019). Losing more than a restart means that loss beat its hot start offer (a generic $15,000 for combined cycles and $10,000 for gas steam when none is offered). Windows where a day-ahead award covered half the hours or more are left out: those units almost never turn off (under 1%). 2021 and 2022 include Winter Storm Uri and the 2022 gas price spike.`);
 }
 
 // ==== 4. Curtailment and the fossil minimum beside it ========================================
@@ -226,12 +223,10 @@ function drawAll() { drawQ1(); drawQ2(); drawQ3(); drawQ4(); }
   const ys = years();
   S.year = ys.includes(+v.y) ? +v.y : fullYears().at(-1) || ys.at(-1);
   if (["combined_cycle", "gas_steam"].includes(v.t)) S.tech = v.t;
-  if (["first", "prev"].includes(v.vs)) S.vs = v.vs;
   $("status").textContent = `60-day data, ${S.G.years[ys[0]].from} to ${S.G.through}. Built ${S.G.built.slice(0, 10)}.`;
   $("q1-year").innerHTML = ys.slice().reverse().map((y) => `<option value="${y}"${y === S.year ? " selected" : ""}>${yearLabel(y)}</option>`).join("");
-  $("q1-year").addEventListener("change", (e) => { S.year = +e.target.value; writeHash({ y: S.year, t: S.tech, vs: S.vs }); drawQ1(); });
-  $("q3-tech").addEventListener("change", (e) => { S.tech = e.target.value; writeHash({ y: S.year, t: S.tech, vs: S.vs }); drawQ3(); });
-  $("q3-vs").addEventListener("click", (e) => { const b = e.target.closest("button"); if (!b) return; S.vs = b.dataset.v; writeHash({ y: S.year, t: S.tech, vs: S.vs }); drawQ3(); });
+  $("q1-year").addEventListener("change", (e) => { S.year = +e.target.value; writeHash({ y: S.year, t: S.tech }); drawQ1(); });
+  $("q3-tech").addEventListener("change", (e) => { S.tech = e.target.value; writeHash({ y: S.year, t: S.tech }); drawQ3(); });
   drawAll();
   let rw = 0;
   addEventListener("resize", () => { clearTimeout(rw); rw = setTimeout(drawAll, 150); });

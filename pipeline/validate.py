@@ -458,8 +458,8 @@ def _goal_checks(day):
         have = {str(r[0]) for r in rows or []}
         if not set(map(str, years)) <= have:
             bad.append(f"{q} missing {sorted(set(map(str, years)) - have)[:3]}")
-    if not (g.get("q3") or {}).get("pairs"):
-        bad.append("q3 has no pairs")
+    if not (g.get("q3") or {}).get("off"):
+        bad.append("q3 has no off rows")
     day.add("goal", "error" if bad else "ok", "; ".join(bad) or f"{years[0]} to {g.get('through')}")
 
 
