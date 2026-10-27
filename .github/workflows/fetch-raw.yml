@@ -1,0 +1,72 @@
+name: Fetch raw files to the store
+
+# One-time fill of the R2 raw store (pipeline/raw_fetch.py) with a 60-day report's files, one job
+# per year, one at a time.  Files already in the bucket are never downloaded again; a file that
+# can't be stored stops the run.  Run first with dry_run to see how many are already stored.
+on:
+  workflow_dispatch:
+    inputs:
+      emil:
+        description: "Report (EMIL id)"
+        required: false
+        default: "np3-966-er"
+      first_year:
+        description: "First operating year"
+        required: false
+        default: "2019"
+      last_year:
+        description: "Last operating year"
+        required: false
+        default: "2025"
+      dry_run:
+        description: "Only count what is stored; download nothing"
+        type: boolean
+        required: false
+        default: true
+
+permissions:
+  contents: read
+
+concurrency:
+  group: fetch-raw
+  cancel-in-progress: false
+
+jobs:
+  plan:
+    runs-on: ubuntu-latest
+    outputs:
+      years: ${{ steps.plan.outputs.years }}
+    steps:
+      - id: plan
+        env:
+          FIRST: ${{ inputs.first_year }}
+          LAST: ${{ inputs.last_year }}
+        run: python3 -c "import json, os; print('years=' + json.dumps([str(y) for y in range(int(os.environ['FIRST']), int(os.environ['LAST']) + 1)]))" >> "$GITHUB_OUTPUT"
+  fetch:
+    needs: plan
+    runs-on: ubuntu-latest
+    timeout-minutes: 300
+    strategy:
+      max-parallel: 1
+      fail-fast: true
+      matrix:
+        year: ${{ fromJSON(needs.plan.outputs.years) }}
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6.3.0
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install --require-hashes -r requirements.lock
+      - name: Fetch ${{ matrix.year }}
+        env:
+          ERCOT_API_USERNAME: ${{ secrets.ERCOT_API_USERNAME }}
+          ERCOT_API_PASSWORD: ${{ secrets.ERCOT_API_PASSWORD }}
+          ERCOT_API_SUBSCRIPTION_KEY: ${{ secrets.ERCOT_API_SUBSCRIPTION_KEY }}
+          R2_ENDPOINT: ${{ secrets.R2_ENDPOINT }}
+          R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          EMIL: ${{ inputs.emil }}
+          YEAR: ${{ matrix.year }}
+          DRY: ${{ inputs.dry_run && '--dry-run' || '' }}
+        run: python -m pipeline.raw_fetch --emil "$EMIL" --start "$YEAR-01-01" --end "$YEAR-12-31" $DRY
