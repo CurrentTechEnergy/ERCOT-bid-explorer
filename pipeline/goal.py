@@ -296,13 +296,13 @@ def _year(year, months, cache, before=None, losing=None):
 
 
 def _award_stretches(year, h):
-    """[[year, group, stretches, stayed]]: combined-cycle trains online in the hour before the day's
+    """[[year, tech, group, stretches, stayed]]: coal, combined-cycle, gas steam and combustion
+    turbine trains online in the hour before the day's
     day's first run of two or more cheap midday hours (MIDDAY), with no outage or missing hour in it, and
     whether they stayed online through all of it.  group: "award" (a DAM award over 0.5 MW in at
     least half the stretch's hours), "self" (no award, DAM resource status on at the first cheap
     hour), "neither", or "no award" where the day has no DAM day file (data/dam) to give the
     status (before Dec 2025)."""
-    from .models.operator_informed import _status
     hours = h[["date", "he", "cheap"]].drop_duplicates(["date", "he"]).sort_values(["date", "he"]).reset_index(drop=True)
     idx = {k: i for i, k in enumerate(zip(hours["date"], hours["he"]))}
     runs = []
@@ -317,10 +317,12 @@ def _award_stretches(year, h):
     status = {}
     for d in {r[0] for r in runs}:
         dd = read_json_gz(DATA_DIR / "dam" / f"{d}.json.gz", default=None)
-        status[d] = _status(dd) if dd else None
+        status[d] = _dam_status(dd) if dd else None
     out = defaultdict(lambda: [0, 0])
+    techs = FOSSIL + ("combustion_turbine",)
     n = len(hours)
-    for tr, g in h[h["tech"] == "combined_cycle"].groupby("train", sort=False):
+    for tr, g in h[h["tech"].isin(techs)].groupby("train", sort=False):
+        tech = g["tech"].iat[0]
         st = np.full(n, "-", dtype=object)
         aw = np.zeros(n, bool)
         k = np.array([idx[x] for x in zip(g["date"], g["he"])])
@@ -331,11 +333,26 @@ def _award_stretches(year, h):
                 continue
             sd = status[d]
             grp = "award" if aw[a:b].mean() >= 0.5 else "no award" if sd is None else \
-                "self" if tr in sd and sd[tr][he - 1] > 0 else "neither"
-            r = out[grp]
+                "self" if tr in sd and sd[tr][he - 1] else "neither"
+            r = out[(tech, grp)]
             r[0] += 1
             r[1] += int(not (st[a:b] == "0").any())
-    return [[year, grp, n_, stayed] for grp, (n_, stayed) in sorted(out.items())]
+    return [[year, t, grp, n_, stayed] for (t, grp), (n_, stayed) in sorted(out.items())]
+
+
+def _dam_status(dd):
+    """{train: [24] True when any of its units' DAM resource status is on}, from a DAM day file."""
+    from .models.operator_informed import ON_STATUS
+    out = {}
+    for name, u in dd.get("units", {}).items():
+        t = u.get("tech")
+        if t not in FOSSIL + ("combustion_turbine",):
+            continue
+        key = train_of(name) if t == "combined_cycle" else name
+        sh = u.get("status_h") or [u.get("status") or ""] * 24
+        on = np.array([str(x).upper() in ON_STATUS for x in (list(sh) + [""] * 24)[:24]])
+        out[key] = out[key] | on if key in out else on
+    return out
 
 
 def _rule(table):
@@ -368,7 +385,7 @@ def build(cache: Path, end=None, table=None) -> dict:
        "years": {year: {"from", "to", "cheap_hours"}},
        "q1": {"columns": [year, tech, group, trains, capacity_mw, off_mwh], "rows"},
        "q2": {"columns": [year, tech, reason, mwh], "rows", "reasons",
-              "award": [[year, group, stretches, stayed]]},
+              "award": [[year, tech, group, stretches, stayed]]},
        "q3": {"off": [[year, tech, small (0: losing more than a restart), awarded, windows, off_share,
                         minimum_online_mwh, minimum_offline_mwh]],
               "mix": [[year, tech, windows, overnight, midday, off_rate, median_loss_per_mw]]},

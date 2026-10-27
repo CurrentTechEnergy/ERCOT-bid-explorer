@@ -106,43 +106,39 @@ function stack(el, ys, keys, val, opts) {
   });
   el.replaceChildren(svg.node());
 }
-const Q2_KEYS = ["coal", "never off", "held by its award", "rode through", "against the model", "no model call"];
-function drawQ2() {
-  const el = $("q2-chart"), R = rowsOf("q2").filter((r) => ["coal", "combined_cycle", "gas_steam"].includes(r.tech)), ys = years();
-  const val = (y, k) => d3.sum(R.filter((r) => r.year === y && r.reason === k), (r) => r.mwh) / (S.G.years[y].cheap_hours || 1);
-  stack(el, ys, Q2_KEYS, val, { title: "Fossil minimum online in the average cheap hour (GW)" });
-  legend("q2-legend", Q2_KEYS.map((k) => [REASON[k].label, REASON[k].color]));
-  setCSV(el, ["year", "reason", "mw_per_cheap_hour"], ys.flatMap((y) => Q2_KEYS.map((k) => [y, k, Math.round(val(y, k))])), "Why the rest stays on");
-  const y = fullYears().at(-1), tot = d3.sum(Q2_KEYS, (k) => val(y, k));
-  $("q2-answer").innerHTML = `In ${y}, <b>${fmtGW(tot)} GW of coal and gas minimum ran through the average cheap hour.</b> ${fmtGW(val(y, "coal"))} GW was coal, ${fmtGW(val(y, "held by its award"))} GW was held by its day-ahead award, ${fmtGW(val(y, "never off"))} GW never turns off, and ${fmtGW(val(y, "rode through"))} GW rode through, as the model also called it. Only ${d3.format(",.0f")(val(y, "against the model"))} MW stayed on when the model said it would turn off.`;
-  setNote($("q2-note"), `Coal, combined-cycle and gas steam units online at minimum in cheap hours, by the first reason that applies. * part year.`,
-    `A unit at minimum is online with output within 5% of its HSL above its LSL, from the 60-day SCED disclosure; its MW is its LSL. The reasons, in order: coal (it does not cycle within a day); never off (no off spell all year, as in question 1); held by its award (a day-ahead energy award of at least 90% of its LSL that hour); rode through (the operator-informed model, which judges each hour with the unit's own prices, costs, award and state, also called it on); stayed on, model said off (the model's chance online was under 50%); no model call (no operator day file, mostly Jan to Mar 2019, before the model's first fit). Before Feb 2026 the model is fitted on the 12 months before each month, without the day-ahead resource status. A cheap hour has a day-ahead hub average of $${S.G.cheap}/MWh or less. The bar chart counts combined-cycle train-days online in the hour before the day's first run of two or more cheap hours between HE8 and HE19, with no outage in it, and whether the train stayed online through the run. DAM award: an award over 0.5 MW in at least half its hours. Self-committed: no award, and its DAM resource status on (in the 60-day DAM disclosure from Dec 2025; earlier years have no status, so they split only by award).`);
-}
-
-// the day-ahead award against staying on through a cheap midday stretch
+// the day-ahead award against staying on through a cheap midday stretch, by technology
 const AWARD_GROUPS = [["award", "DAM award", "--c1"], ["self", "Self-committed, no award", "--c3"], ["neither", "Neither", "--c2"], ["no award", "No award", "--c-other"]];
-function drawQ2Award() {
-  const R = S.G.q2.award.map(([year, group, n, stayed]) => ({ year, group, n, stayed }));
+const Q2_TECHS = ["combined_cycle", "gas_steam", "coal", "combustion_turbine"];
+function drawQ2() {
+  const R = S.G.q2.award.map(([year, tech, group, n, stayed]) => ({ year, tech, group, n, stayed }));
   const el = $("q2a-chart");
   if (!R.length) return emptyMsg(el, "No cheap midday stretches.");
   const y = d3.max(R.filter((r) => r.group === "self"), (r) => r.year) || d3.max(R, (r) => r.year);
-  const G = AWARD_GROUPS.map(([k, label, c]) => ({ k, label, c, ...(R.find((r) => r.year === y && r.group === k) || { n: 0, stayed: 0 }) })).filter((g) => g.n);
-  $("q2a-title").textContent = `Combined-cycle trains online going into a cheap midday stretch, ${yearLabel(y)}: share that stayed online through it`;
-  const w = Math.max(300, el.clientWidth || 700), m = { t: 6, r: 60, b: 26, l: 160 }, H = m.t + m.b + G.length * 50;
-  const x = d3.scaleLinear().domain([0, 1]).range([m.l, w - m.r]), yb = d3.scaleBand().domain(G.map((g) => g.k)).range([m.t, H - m.b]).padding(0.3);
+  const get = (t, k) => R.find((r) => r.year === y && r.tech === t && r.group === k) || { n: 0, stayed: 0 };
+  const rows = Q2_TECHS.flatMap((t) => AWARD_GROUPS.filter(([k]) => get(t, k).n).map(([k, label, c]) => ({ t, k, label, c, ...get(t, k) })));
+  $("q2a-title").textContent = `Units online going into a cheap midday stretch, ${yearLabel(y)}: share that stayed online through it`;
+  const w = Math.max(300, el.clientWidth || 700), m = { t: 6, r: 60, b: 26, l: 160 }, band = 40, gap = 30;
+  let yy = m.t;
+  const pos = rows.map((r, i) => { if (i === 0 || rows[i - 1].t !== r.t) yy += gap; const p = yy; yy += band; return p; });
+  const H = yy + m.b, x = d3.scaleLinear().domain([0, 1]).range([m.l, w - m.r]);
   const svg = d3.create("svg").attr("viewBox", `0 0 ${w} ${H}`);
   svg.append("g").attr("class", "gridline").attr("transform", `translate(0,${H - m.b})`).call(d3.axisBottom(x).ticks(w < 500 ? 2 : 4).tickSize(-(H - m.t - m.b)).tickFormat(""));
   svg.append("g").attr("class", "axis").attr("transform", `translate(0,${H - m.b})`).call(d3.axisBottom(x).ticks(w < 500 ? 2 : 4).tickFormat(fmtPct).tickSizeOuter(0));
-  G.forEach((g) => {
-    const v = g.stayed / g.n;
-    svg.append("rect").attr("x", x(0)).attr("y", yb(g.k)).attr("width", x(v) - x(0)).attr("height", yb.bandwidth()).attr("fill", css(g.c));
-    svg.append("text").attr("x", x(v) + 6).attr("y", yb(g.k) + yb.bandwidth() / 2).attr("dy", "0.35em").attr("class", "bar-val").style("font-weight", 600).text(d3.format(".1%")(v));
-    const t = svg.append("text").attr("x", m.l - 8).attr("y", yb(g.k) + yb.bandwidth() / 2).attr("text-anchor", "end").attr("class", "axis-label");
-    t.append("tspan").attr("x", m.l - 8).attr("dy", "-0.2em").text(g.label);
-    t.append("tspan").attr("x", m.l - 8).attr("dy", "1.2em").attr("fill", css("--muted")).text(`${d3.format(",")(g.n)} train-days`);
+  rows.forEach((r, i) => {
+    if (i === 0 || rows[i - 1].t !== r.t) svg.append("text").attr("x", 0).attr("y", pos[i] - 10).attr("class", "axis-label").style("font-weight", 600).text(TECH[r.t]);
+    const v = r.stayed / r.n, top = pos[i] + 4, bh = band - 10;
+    svg.append("rect").attr("x", x(0)).attr("y", top).attr("width", x(v) - x(0)).attr("height", bh).attr("fill", css(r.c));
+    svg.append("text").attr("x", x(v) + 6).attr("y", top + bh / 2).attr("dy", "0.35em").attr("class", "bar-val").style("font-weight", 600).text(d3.format(".1%")(v));
+    const t = svg.append("text").attr("x", m.l - 8).attr("y", top + bh / 2).attr("text-anchor", "end").attr("class", "axis-label");
+    t.append("tspan").attr("x", m.l - 8).attr("dy", "-0.2em").text(r.label);
+    t.append("tspan").attr("x", m.l - 8).attr("dy", "1.2em").attr("fill", css("--muted")).text(`${d3.format(",")(r.n)} unit-days`);
   });
   el.replaceChildren(svg.node());
-  setCSV(el, ["year", "group", "stretches", "stayed_online"], R.map((r) => [r.year, r.group, r.n, r.stayed]), "Award and staying on");
+  setCSV(el, ["year", "tech", "group", "unit_days", "stayed_online"], R.map((r) => [r.year, r.tech, r.group, r.n, r.stayed]), "Award and staying on");
+  const p = (t, k) => d3.format(".1%")(get(t, k).stayed / Math.max(1, get(t, k).n));
+  $("q2-answer").innerHTML = `<b>A day-ahead award or a self-commitment keeps a unit on.</b> In ${yearLabel(y)}, combined cycles going into a cheap midday stretch with a DAM award stayed online through it ${p("combined_cycle", "award")} of the time, and self-committed ones ${p("combined_cycle", "self")}. With neither, only ${p("combined_cycle", "neither")} did. Coal and gas steam stay on almost regardless: ${p("coal", "self")} of self-committed coal and ${p("gas_steam", "self")} of gas steam rode through.`;
+  setNote($("q2-note"), `Units online going into the day's first cheap midday stretch, by whether a day-ahead award or their own commitment had them on, and the share that stayed online through it. Combined-cycle configurations count as one train. * part year.`,
+    `Counted: unit-days online in the hour before the day's first run of two or more cheap hours (day-ahead hub average of $${S.G.cheap}/MWh or less) between HE8 and HE19, with no outage hour in it; stayed online means no offline hour in the run (60-day SCED and DAM disclosures). DAM award: an energy award over 0.5 MW in at least half the run's hours. Self-committed: no award, and the unit's DAM resource status on at the run's first hour. The status is in the 60-day DAM disclosure from Dec 2025; the history before has none, so earlier years split only by award (in the CSV).`);
 }
 
 // ==== 3. Is behaviour changing: triggers against behaviour, and where the loss windows fall ==
@@ -235,7 +231,7 @@ function drawQ4() {
     `Curtailment is a wind or solar unit's HSL above its base point (0.5 MW or more), from the 60-day SCED disclosure. An oversupply hour has a real-time hub average (HB_HUBAVG) of $${S.G.over_price}/MWh or less. A unit is behind congestion when its day-ahead node price sits $5 or more below the day-ahead bus average; most curtailment is (West and Panhandle), and shutting a gas unit elsewhere does not make room for it. The fossil split covers oversupply hours with at least 100 MW curtailed not behind congestion. A unit is losing money in the hours of its day's worst loss window: the longest run of hours in which its minimum-energy cost beat its day-ahead node price, times its LSL. It loses more than a restart when that window's loss beats its hot start offer (a generic $15,000 for combined cycles, $10,000 for gas steam and $30,000 for coal when none is offered). Units outside such a window are covering their costs at day-ahead prices. "Runs" sums, hour by hour, the smaller of that curtailment and the minimum of the units shut.`);
 }
 
-function drawAll() { drawQ1(); drawQ2(); drawQ2Award(); drawQ3(); drawQ4(); }
+function drawAll() { drawQ1(); drawQ2(); drawQ3(); drawQ4(); }
 
 (async function boot() {
   window.CX.init();
