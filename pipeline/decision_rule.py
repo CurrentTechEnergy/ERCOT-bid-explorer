@@ -1,8 +1,8 @@
 """Decision model on actuals: a logistic stay-on rule for combined-cycle and gas steam trains,
-fitted on the decision table (analysis/decision_table.py) over rolling 12-month windows, and the
+fitted on the decision table (pipeline/decision_table.py) over rolling 12-month windows, and the
 split of the change in shutdowns into behaviour (the rule moved) and triggers (the inputs moved).
 
-    python analysis/decision_model.py [--table decision-table/decision-table.parquet] [--out decision-model]
+    python -m pipeline.decision_rule [--table decision-table/decision-table.parquet] [--out decision-model]
 
 Outcome: the train was off for most of its loss window (on_share < 0.5).  Inputs, standardised
 once over the whole table so coefficients compare across windows:
@@ -79,7 +79,8 @@ def trailing_off_p10(x):
 
 
 def load(path):
-    x = pd.read_parquet(path)
+    """The table (a parquet path or a DataFrame) with the outcome, month index and inputs."""
+    x = path if isinstance(path, pd.DataFrame) else pd.read_parquet(path)
     x = x[x.tech.isin(TECHS)].reset_index(drop=True)
     x["off"] = (x.on_share < 0.5).astype(int)
     x["ym"] = x.year.astype(int) * 12 + x.month.astype(int) - 1

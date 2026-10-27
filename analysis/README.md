@@ -27,20 +27,20 @@ minutes) and caches it as `unit_hours.pkl` in the side folder; the rest reuse it
 
 ## Decision table on actuals
 
-`decision_table.py` is not a backtest script: it builds the analysis track's table of every coal,
+`pipeline/decision_table.py` (moved from here for the goal page) builds the analysis track's table of every coal,
 combined-cycle and gas steam train's stay-on decision through its day-ahead loss window from
 2019 on, from the thermal history release (see its docstring for the columns):
 
     gh release download history -R CurrentTechEnergy/ERCOT-bid-explorer -p 'thermal-*' -p 'units-*' -p 'da-hubs-*' -D history
-    python analysis/decision_table.py --out decision-table
+    python -m pipeline.decision_table --out decision-table
 
 ## Decision model on actuals
 
-`decision_model.py` fits a logistic stay-on rule for combined-cycle and gas steam trains on the
+`pipeline/decision_rule.py` (moved from here as decision_model.py) fits a logistic stay-on rule for combined-cycle and gas steam trains on the
 decision table over rolling 12-month windows, scores each on the month after it, and splits the
 change in shutdowns between years into triggers and behaviour (see its docstring):
 
-    python analysis/decision_model.py --table decision-table/decision-table.parquet --out decision-model [--no-award]
+    python -m pipeline.decision_rule --table decision-table/decision-table.parquet --out decision-model [--no-award]
 
 ## Combined-cycle sizing on actuals
 

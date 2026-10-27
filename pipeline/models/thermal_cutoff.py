@@ -464,7 +464,7 @@ SEASONS = {12: 0, 1: 0, 2: 0, 3: 1, 4: 1, 5: 1, 6: 2, 7: 2, 8: 2, 9: 3, 10: 3, 1
 
 
 def _logit_x(f, margin, loss, lsl, bs, nh, d):
-    """The stay-on rule's inputs for a unit-day (analysis/decision_model.py, its no-award variant,
+    """The stay-on rule's inputs for a unit-day (pipeline/decision_rule.py, its no-award variant,
     without the start offer): log(1 + loss per MW of LSL), log(1 + the margin per MW before and
     after the window), the window's wrapped length against the unit's short off spell (log
     ratio, from _features), whether the window is overnight (starts before HE7 or runs on into
@@ -477,9 +477,9 @@ def _logit_x(f, margin, loss, lsl, bs, nh, d):
 
 def _logit_fit(L, point):
     """{tech: (mean, sd, trains, model)}: a logistic for "off for most of the window", given
-    online in the hour before it (as analysis/decision_model.py's blocks), on the
+    online in the hour before it (as pipeline/decision_rule.py's blocks), on the
     LOGIT_DAYS days up to `point`, standardised inputs plus one intercept per train (L2, as
-    analysis/decision_model.py), one fit per technology with LOGIT_MIN unit-days, else one fit
+    pipeline/decision_rule.py), one fit per technology with LOGIT_MIN unit-days, else one fit
     for both under "*"."""
     from sklearn.linear_model import LogisticRegression
     lo = (C._d(point) - dt.timedelta(days=LOGIT_DAYS)).isoformat()

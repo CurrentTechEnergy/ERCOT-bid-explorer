@@ -5,7 +5,7 @@ on/off decision, for the analysis track.
         [--table decision-table/decision-table.parquet]
 
 The size of an online train is its online LSL (the running configuration's LSL), read from the
-same monthly thermal rows as analysis/decision_table.py (the history release in HISTORY_DIR, else
+same monthly thermal rows as pipeline/decision_table.py (the history release in HISTORY_DIR, else
 the 60-day day files).  The size step is a table: each train's mean online LSL in each day-ahead
 hub price band (BANDS, HB_HUBAVG), over the DAYS days up to a point, from bands with at least
 MIN_HOURS online hours; a band with fewer takes the train's mean over all its online hours.  The
@@ -38,7 +38,7 @@ import pandas as pd
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
-from decision_table import _months, month_file, train_days  # noqa: E402
+from pipeline.decision_table import _months, month_file, train_days  # noqa: E402
 from pipeline.config import DATA_DIR, HISTORY_DIR, UNIT_DATA_DIR  # noqa: E402
 from pipeline.store import read_json_gz  # noqa: E402
 
