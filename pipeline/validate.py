@@ -428,6 +428,24 @@ def _operator_score_checks(day):
     day.add("operator_scores", "error" if bad else "ok", "; ".join(bad[:5]) or f"{len(sc.get('rows', []))} rows, {len(MODELS)} models")
 
 
+def _operator_history_checks(day):
+    """History days (operator_history.py) come before the 60-day days, each with a reduced day file."""
+    ix = read_json_gz(DATA_DIR / "operator" / "index.json.gz", default=None) or {}
+    hist, live = ix.get("history_days") or [], ix.get("days") or []
+    if not hist:
+        return
+    bad = []
+    if live and hist[-1] >= live[0]:
+        bad.append(f"history day {hist[-1]} not before the first 60-day day {live[0]}")
+    if hist != sorted(set(hist)):
+        bad.append("history days not sorted and unique")
+    for d in (hist[0], hist[-1]):
+        f = read_json_gz(DATA_DIR / "operator" / f"{d}.json.gz", default=None)
+        if not f or not f.get("reduced") or not f.get("units"):
+            bad.append(f"{d}: no reduced day file")
+    day.add("operator_history", "error" if bad else "ok", "; ".join(bad) or f"{len(hist)} history days, {hist[0]} to {hist[-1]}")
+
+
 def _fit_checks(day, ft):
     r = ft["residual"]
     day.add("fit_residual", "ok" if r["after"] <= r["before"] else "error",
@@ -719,6 +737,7 @@ def check_files(index):
     _dam_offer_checks(day)
     _operator_score_checks(day)
     _operator_cutoff_checks(day)
+    _operator_history_checks(day)
     ui = read_json_gz(UNIT_INDEX_PATH, default=None)
     if ui is not None:
         rows = ui.get("rows", [])

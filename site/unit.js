@@ -193,7 +193,8 @@ function drawHead(e) {
 // same hours judged with what the operator knew going in (its state, DAM award and status, its costs),
 // only for days whose 60-day data is in
 const oiCache = new Map();
-const loadOI = (d) => { if (!S.OI || !S.OI.days.includes(d)) return null; if (!oiCache.has(d)) oiCache.set(d, tryJSON(`data/operator/${d}.json.gz`)); return oiCache.get(d); };
+const oiDays = () => (S.OI ? [...(S.OI.history_days || []), ...S.OI.days] : []);
+const loadOI = (d) => { if (!S.OI || !oiDays().includes(d)) return null; if (!oiCache.has(d)) oiCache.set(d, tryJSON(`data/operator/${d}.json.gz`)); return oiCache.get(d); };
 const OI_DRIVER = { "price against its cost": "the day-ahead price against its cost", "loss against its start cost": "the loss of running on against its start cost",
   "DAM award": "its day-ahead award", "DAM status": "its day-ahead resource status", "time in its state": "how long it had been in its state",
   "sitting at minimum": "sitting at minimum output", "hour and season": "the hour and season", "its own habit": "its own habit" };
@@ -206,13 +207,13 @@ function oiNote(e, day, o) {
   const why = o.why.filter(([, v]) => Math.abs(v) >= 0.1).slice(0, 2).map(([k, v]) => `${esc(OI_DRIVER[k] || k)}${aside[k] || ""} ${str(v)}toward off`.replace(/toward off$/, v > 0 ? "toward off" : "toward on"));
   return ` <br><b>With operator info:</b> it went into the day ${START_WORD[o.start] || o.start}, with a day-ahead award in ${aw} of 24 hours; called on for ${on} of 24 hours.` +
     (why.length ? ` At HE ${o.why_h}, ${START_WORD[o.why_from] || o.why_from} the hour before, it put the unit ${fmtPct(o.p[h])} likely online; the biggest pulls: ${why.join("; ")}.` : "") +
-    (known ? ` Its COP plan at 2 pm the day before had it on for ${pl} of 24 hours.` : " No COP plan was filed for it.");
+    (known ? ` Its COP plan at 2 pm the day before had it on for ${pl} of 24 hours.` : o.state ? "" : " No COP plan was filed for it.");
 }
 async function drawForecast(e) {
   const el = $("fc-chart");
-  $("fc-panel").hidden = !["combined_cycle", "gas_steam"].includes(e.tech) || !S.OI || !S.OI.days.length;
+  $("fc-panel").hidden = !["combined_cycle", "gas_steam"].includes(e.tech) || !S.OI || !oiDays().length;
   if ($("fc-panel").hidden) return;
-  const days = S.OI.days;
+  const days = oiDays();
   if (!S.fcDay || !days.includes(S.fcDay)) S.fcDay = days.at(-1);
   $("fc-pick").innerHTML = [...days].reverse().map((d) => `<option${d === S.fcDay ? " selected" : ""}>${d}</option>`).join("");
   const day = S.fcDay, [A, OD] = await Promise.all([S.T && S.T.dates.includes(day) ? loadDayUnits(day) : null, loadOI(day)]);
@@ -231,9 +232,12 @@ async function drawForecast(e) {
       if ((r[ci.online_share] || 0) >= 0.5) { x.on = true; x.lsl += r[ci.lsl] || 0; }
     });
   }
-  const hOn = act ? act.filter((x) => x.on).length : null;
+  // a history day (before the 60-day window) has no unit file: its hourly state comes with the call
+  const onl = act ? act.map((x) => x.on) : o.state ? [...o.state].map((c) => (c === "m" || c === "a" ? true : c === "0" ? false : null)) : null;
+  const hOn = onl ? onl.filter((v) => v === true).length : null;
   const dr = (S.DEC?.days || []).find((r) => r[0] === e.name && r[1] === day);
-  $("fc-note").innerHTML = (act ? `<b>${esc(day)}: online ${hOn} of 24 hours, ${fmtMW(d3.sum(act, (x) => x.out))} MWh.</b>` : `<b>${esc(day)}</b>.`) +
+  $("fc-note").innerHTML = (act ? `<b>${esc(day)}: online ${hOn} of 24 hours, ${fmtMW(d3.sum(act, (x) => x.out))} MWh.</b>` : onl ? `<b>${esc(day)}: online ${hOn} of 24 hours.</b>` : `<b>${esc(day)}</b>.`) +
+    (OD.reduced ? ` Before the 60-day window: judged on the 12 months before it, without the day-ahead resource status, which the history files lack.` : "") +
     (dr && dr[4] ? ` It ${dr[6] ? `turned off${dr[7] ? ` for ${dr[7]} hours` : ""}` : "stayed on"} through its worst stretch, HE ${dr[3]} to ${dr[3] + dr[4] - 1}, which would have cost ${fmt$(dr[2])} to ride through at its node.` : "") +
     oiNote(e, day, o);
   const s = TECH_OF[e.tech] || { color: "--c-other" };
@@ -255,14 +259,14 @@ async function drawForecast(e) {
   }
   svg.append("g").attr("class", "axis").attr("transform", `translate(${m.l},0)`).call(d3.axisLeft(yo).tickValues([0, 0.5, 1]).tickFormat(d3.format(".0%")).tickSizeOuter(0));
   svg.append("g").attr("class", "axis").attr("transform", `translate(0,${HT - m.b})`).call(d3.axisBottom(x).tickValues(tickH).tickFormat((h) => `HE ${h + 1}`).tickSizeOuter(0));
-  svg.append("text").attr("class", "axis-title").attr("x", m.l).attr("y", H1 + 10).text("With operator info: chance online and the call" + (act ? ", actual online" : "") + ", COP plan");
+  svg.append("text").attr("class", "axis-title").attr("x", m.l).attr("y", H1 + 10).text("With operator info: chance online and the call" + (onl ? ", actual online" : "") + ", COP plan");
   d3.range(24).forEach((h) => {
     if (act) {
       svg.append("rect").attr("x", x(h)).attr("width", bw).attr("y", y(act[h].out)).attr("height", Math.max(0, y(0) - y(act[h].out))).attr("fill", css(s.color)).attr("fill-opacity", 0.3);
       svg.append("rect").attr("x", x(h)).attr("width", bw).attr("y", y(act[h].lsl)).attr("height", Math.max(0, y(0) - y(act[h].lsl))).attr("fill", css(s.color));
     }
     svg.append("line").attr("x1", x(h)).attr("x2", x(h) + bw).attr("y1", yo(o.p[h] >= 0.5 ? 1 : 0)).attr("y2", yo(o.p[h] >= 0.5 ? 1 : 0)).attr("stroke", css("--c2")).attr("stroke-width", 4).attr("opacity", 0.6);
-    if (act) svg.append("circle").attr("cx", x(h) + bw / 2).attr("cy", yo(act[h].on ? 1 : 0)).attr("r", 3.5).attr("fill", act[h].on ? css("--ink") : "none").attr("stroke", css("--ink"));
+    if (onl && onl[h] != null) svg.append("circle").attr("cx", x(h) + bw / 2).attr("cy", yo(onl[h] ? 1 : 0)).attr("r", 3.5).attr("fill", onl[h] ? css("--ink") : "none").attr("stroke", css("--ink"));
     if (o.plan[h] != null) svg.append("path").attr("d", d3.symbol(d3.symbolDiamond, 30)()).attr("transform", `translate(${x(h) + bw / 2},${yo(o.plan[h]) + (o.plan[h] ? -9 : 9)})`).attr("fill", css("--ink-2"));
   });
   svg.append("path").attr("d", d3.line().x((h) => x(h) + bw / 2).y((h) => yo(o.p[h]))(d3.range(24))).attr("fill", "none").attr("stroke", css("--c2")).attr("stroke-width", 2);
@@ -272,13 +276,13 @@ async function drawForecast(e) {
       showTip(ev, `<h4>${fmtDate(parseDate(day))} · HE ${h + 1}</h4><table>` +
         `<tr><td>With operator info</td><td class="n">${fmtPct(o.p[h])}, ${o.p[h] >= 0.5 ? "on" : "off"}</td></tr><tr><td>Day-ahead award</td><td class="n">${o.award[h] ? "yes" : "no"}</td></tr>` +
         `<tr><td>COP plan (2 pm day before)</td><td class="n">${o.plan[h] == null ? "none" : o.plan[h] ? "on" : "off"}</td></tr>` +
-        (act ? `<tr><td>Actual</td><td class="n">${act[h].on ? `online, ${fmtMW(act[h].out)} MW` : "offline"}</td></tr>` : "") + `</table>`);
+        (act ? `<tr><td>Actual</td><td class="n">${act[h].on ? `online, ${fmtMW(act[h].out)} MW` : "offline"}</td></tr>` : onl ? `<tr><td>Actual</td><td class="n">${onl[h] == null ? "outage or no data" : onl[h] ? "online" : "offline"}</td></tr>` : "") + `</table>`);
     })
     .on("pointerleave", hideTip);
   el.replaceChildren(svg.node());
-  setCSV(el, ["hour_ending", "operator_chance_online", "operator_call_on", "operator_chance_online_with_cop", "dam_award", "cop_plan_on", ...(act ? ["actual_online", "actual_output_mw", "actual_lsl_online_mw"] : [])],
-    d3.range(24).map((h) => [h + 1, o.p[h], o.p[h] >= 0.5 ? 1 : 0, o.p_cop ? o.p_cop[h] : null, o.award[h], o.plan[h], ...(act ? [act[h].on ? 1 : 0, act[h].out, act[h].lsl] : [])]), `${e.name} with operator info ${day} by hour`);
-  $("fc-legend").innerHTML = (act ? `<span><span class="sw" style="background:var(${s.color})"></span>Minimum output online</span><span><span class="sw" style="background:var(${s.color});opacity:0.3"></span>Output</span><span>● online ○ offline (actual)</span>` : "") +
+  setCSV(el, ["hour_ending", "operator_chance_online", "operator_call_on", "operator_chance_online_with_cop", "dam_award", "cop_plan_on", ...(onl ? ["actual_online", "actual_output_mw", "actual_lsl_online_mw"] : [])],
+    d3.range(24).map((h) => [h + 1, o.p[h], o.p[h] >= 0.5 ? 1 : 0, o.p_cop ? o.p_cop[h] : null, o.award[h], o.plan[h], ...(act ? [act[h].on ? 1 : 0, act[h].out, act[h].lsl] : onl ? [onl[h] == null ? null : +onl[h], null, null] : [])]), `${e.name} with operator info ${day} by hour`);
+  $("fc-legend").innerHTML = (act ? `<span><span class="sw" style="background:var(${s.color})"></span>Minimum output online</span><span><span class="sw" style="background:var(${s.color});opacity:0.3"></span>Output</span>` : "") + (onl ? `<span>● online ○ offline (actual)</span>` : "") +
     `<span><span class="sw sw-line" style="border-top-color:var(--c2)"></span>Chance online, with operator info</span><span><span class="sw" style="background:var(--c2);opacity:0.6"></span>Call: on at 50% or more, off below</span>` +
     `<span><span class="sw" style="background:var(--c3);opacity:0.18"></span>Day-ahead award</span><span>◆ COP plan on (top) or off (bottom)</span>` + (dr && dr[4] ? `<span><span class="sw" style="background:var(--band)"></span>Worst stretch for staying on</span>` : "");
 }
@@ -686,7 +690,7 @@ function saveView() {
     el.setAttribute(attr, new URL(to, new URL(el.getAttribute(attr)).origin + "/").href);
   }
   window.CX.writeHash({ cfg: S.cfg && S.list.get(S.unit)?.configs.length > 1 ? S.cfg : null, day: S.day, he: S.hour == null ? null : S.hour + 1,
-    fc: S.fcDay && S.OI && S.fcDay !== S.OI.days.at(-1) ? S.fcDay : null });
+    fc: S.fcDay && S.OI && S.fcDay !== oiDays().at(-1) ? S.fcDay : null });
 }
 function draw() {
   const e = S.list.get(S.unit);
