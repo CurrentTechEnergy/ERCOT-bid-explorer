@@ -43,7 +43,7 @@ from .intraday import train_of
 from .store import read_json_gz, write_json_gz
 
 PATH = DATA_DIR / "goal.json.gz"
-VERSION = "v1"
+VERSION = "v2"
 START = "2019-01"
 CHEAP = 10.0          # $/MWh, day-ahead hub average: a cheap hour
 OVER_PRICE = 5.0      # $/MWh, real-time hub average: an oversupply hour
@@ -54,9 +54,11 @@ AWARD_LSL = 0.9
 OUT_MIN_H = 4         # offline hours an off spell needs (pipeline.forecast.groups)
 FOSSIL = ("coal", "combined_cycle", "gas_steam")
 REASONS = ("coal", "never off", "held by its award", "rode through", "against the model", "no model call")
-SCENARIOS = (("against the model", ("against the model",)),
-             ("all CC and gas steam without an award", ("against the model", "rode through", "no model call")),
-             ("those and coal", ("against the model", "rode through", "no model call", "coal")))
+# question 4: a fossil unit at minimum in an hour of its day's loss window (decision table) is losing
+# money; it loses more than a restart costs when the window's loss beats its hot start offer (the
+# generic one when it submits none)
+ECON = ("losing more than a restart", "losing, less than a restart", "covering its costs")
+SCENARIOS = (("losing more than a restart", ECON[:1]), ("losing money", ECON[:2]))
 RANK = {"a": 4, "m": 3, "0": 2, "o": 1, "-": 0}
 CODE = np.array(sorted(RANK, key=RANK.get))
 
@@ -174,9 +176,23 @@ GROUPS = ("daily, over 2 a week", "daily, 1 to 2 a week", "daily, under 1 a week
 
 
 # ---------------------------------------------------------------- build --
-def _year(year, months, cache, before=None):
+def _losing(table):
+    """{(train, date, he): ECON index} for the hours of each decision block's loss window."""
+    from .config import GENERIC_COSTS
+    start = table["hot_start"].fillna(table["tech"].map(lambda t: GENERIC_COSTS[t][0]))
+    worth = (table["loss"] > start).to_numpy()
+    out = {}
+    for tr, d, f, n, w in zip(table["train"], table["date"], table["win_from"], table["win_h"], worth):
+        d0 = dt.date.fromisoformat(str(d)[:10])
+        for i in range(int(f), int(f) + int(n)):
+            out[(tr, (d0 + dt.timedelta(days=(i - 1) // 24)).isoformat(), (i - 1) % 24 + 1)] = 0 if w else 1
+    return out
+
+
+def _year(year, months, cache, before=None, losing=None):
     """Questions 1, 2 and 4 for one calendar year; `before` is the year before's train states
-    (train, date, he, state), so a part year's groups still read a full year of states."""
+    (train, date, he, state), so a part year's groups still read a full year of states, and
+    `losing` the loss-window hours (_losing)."""
     th, ren, hubs, op = [], [], {}, {}
     for m in months:
         f = month_file("thermal", m, cache)
@@ -254,12 +270,14 @@ def _year(year, months, cache, before=None):
         oh = r[r["over"] & (r["free"] >= OVER_CURT_MIN)][["date", "he", "free"]]
         s = h[atmin].merge(oh[["date", "he"]], on=["date", "he"])
         nuc = h[(h["tech"] == "nuclear") & h["state"].isin(["m", "a"])].merge(oh[["date", "he"]], on=["date", "he"])
-        by = s.groupby(["tech", "why"])["lsl"].sum()
+        s["econ"] = [t if t not in FOSSIL else ECON[(losing or {}).get((tr, d, he), 2)]
+                     for tr, d, he, t in zip(s["train"], s["date"], s["he"], s["tech"])]
+        by = s.groupby(["tech", "econ"])["lsl"].sum()
         atm = [[year, t, w, round(float(v))] for (t, w), v in by.items() if t != "nuclear"]
         atm.append([year, "nuclear", "nuclear output", round(float(nuc["out"].sum()))])
         avoid = []
         for name, whys in SCENARIOS:
-            mw = s[s["why"].isin(whys) & s["tech"].isin(FOSSIL)].groupby(["date", "he"])["lsl"].sum()
+            mw = s[s["econ"].isin(whys)].groupby(["date", "he"])["lsl"].sum()
             j = oh.set_index(["date", "he"]).join(mw.rename("x")).fillna({"x": 0.0})
             avoid.append([year, name, round(float(np.minimum(j["free"], j["x"]).sum()))])
         mw = s[s["tech"].isin(FOSSIL + ("combustion_turbine",))].groupby(["date", "he"])["lsl"].sum()
@@ -310,7 +328,7 @@ def build(cache: Path, end=None, table=None) -> dict:
               "mix": [[year, tech, windows, overnight, midday, off_rate, median_loss_per_mw]]},
        "q4": {"years": [[year, available_mwh, curtailed_mwh, in_oversupply_mwh, uncongested_mwh,
                          oversupply_hours, counted_hours, uncongested_in_counted_mwh, uncongested_by_he[24]]],
-              "atmin": [[year, tech, reason, mwh]], "avoid": [[year, scenario, mwh]], "scenarios"}}
+              "atmin": [[year, tech, ECON or the tech, mwh]], "avoid": [[year, scenario, mwh]], "scenarios", "econ"}}
     MWh sums over the year's hours; the page divides by the hours for means."""
     end = end or max((p.name[:7] for p in (UNIT_DATA_DIR / "60d").glob("20*.json.gz")), default=None) \
         or max(p.stem[8:] for p in HISTORY_DIR.glob("thermal-*.parquet"))
@@ -319,10 +337,14 @@ def build(cache: Path, end=None, table=None) -> dict:
            "cheap": CHEAP, "over_price": OVER_PRICE, "years": {},
            "q1": {"columns": ["year", "tech", "group", "trains", "capacity_mw", "off_mwh"], "rows": [], "groups": list(GROUPS)},
            "q2": {"columns": ["year", "tech", "reason", "mwh"], "rows": [], "reasons": list(REASONS)},
-           "q4": {"years": [], "atmin": [], "avoid": [], "scenarios": [s for s, _ in SCENARIOS] + ["all fossil at minimum"]}}
+           "q4": {"years": [], "atmin": [], "avoid": [], "scenarios": [s for s, _ in SCENARIOS] + ["all fossil at minimum"], "econ": list(ECON)}}
+    if table is None:
+        from .decision_table import build as build_table
+        table = build_table(months, cache)
+    losing = _losing(table)
     before = None
     for y in sorted({m[:4] for m in months}):
-        r = _year(int(y), [m for m in months if m[:4] == y], cache, before)
+        r = _year(int(y), [m for m in months if m[:4] == y], cache, before, losing)
         if r is None:
             continue
         before = r["states"]
@@ -335,9 +357,6 @@ def build(cache: Path, end=None, table=None) -> dict:
             out["q4"]["atmin"] += r["q4"]["atmin"]
             out["q4"]["avoid"] += r["q4"]["avoid"]
         out["through"] = r["to"]
-    if table is None:
-        from .decision_table import build as build_table
-        table = build_table(months, cache)
     out["q3"] = _rule(table)
     write_json_gz(PATH, out)
     return out

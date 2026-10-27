@@ -92,7 +92,7 @@ function stack(el, ys, keys, val, opts) {
     keys.forEach((k) => {
       const v = val(y, k);
       if (!v) return;
-      svg.append("rect").attr("x", x(y)).attr("width", x.bandwidth()).attr("y", yy(acc + v)).attr("height", Math.max(0, yy(acc) - yy(acc + v) - 0.5)).attr("fill", css(REASON[k].color));
+      svg.append("rect").attr("x", x(y)).attr("width", x.bandwidth()).attr("y", yy(acc + v)).attr("height", Math.max(0, yy(acc) - yy(acc + v) - 0.5)).attr("fill", css((opts.labels || REASON)[k].color));
       acc += v;
     });
     if (opts.mark) {
@@ -100,7 +100,7 @@ function stack(el, ys, keys, val, opts) {
       [[css("--surface"), 5.5], [css("--ink"), 2.5]].forEach(([c, sw]) => svg.append("line").attr("x1", x(y) - 4).attr("x2", x(y) + x.bandwidth() + 4).attr("y1", yy(v)).attr("y2", yy(v)).attr("stroke", c).attr("stroke-width", sw));
     }
     svg.append("rect").attr("x", x(y)).attr("width", x.bandwidth()).attr("y", m.t).attr("height", H - m.t - m.b).attr("fill", "transparent")
-      .on("pointermove", (ev) => showTip(ev, `<h4>${yearLabel(y)}</h4><table>` + keys.filter((k) => val(y, k)).reverse().map((k) => `<tr><td>${REASON[k].label}</td><td class="n">${d3.format(",.0f")(val(y, k))} MW</td></tr>`).join("") +
+      .on("pointermove", (ev) => showTip(ev, `<h4>${yearLabel(y)}</h4><table>` + keys.filter((k) => val(y, k)).reverse().map((k) => `<tr><td>${(opts.labels || REASON)[k].label}</td><td class="n">${d3.format(",.0f")(val(y, k))} MW</td></tr>`).join("") +
         `<tr><td><b>Total</b></td><td class="n"><b>${d3.format(",.0f")(d3.sum(keys, (k) => val(y, k)))} MW</b></td></tr>` + (opts.mark ? `<tr><td>${opts.markLabel}</td><td class="n">${d3.format(",.0f")(opts.mark(y))} MW</td></tr>` : "") + `</table>`))
       .on("pointerleave", hideTip);
   });
@@ -176,29 +176,35 @@ function drawQ3() {
 }
 
 // ==== 4. Curtailment and the fossil minimum beside it ========================================
-const Q4_KEYS = ["coal", "never off", "held by its award", "rode through", "against the model", "no model call", "combustion_turbine"];
+const Q4_KEYS = ["losing more than a restart", "losing, less than a restart", "covering its costs", "combustion_turbine"];
+const ECON = {
+  "losing more than a restart": { label: "Losing more than a restart costs", color: "--c7" },
+  "losing, less than a restart": { label: "Losing, but less than a restart", color: "--c7-soft" },
+  "covering its costs": { label: "Covering its costs", color: "--c-other" },
+  combustion_turbine: { label: "Combustion turbines", color: "--c4" },
+};
 function drawQ4() {
   const el = $("q4-chart"), Y = S.G.q4.years.map(([year, avail, curt, over, free, overH, counted, freeCounted, byHe]) => ({ year, avail, curt, over, free, overH, counted, freeCounted, byHe }));
-  const A = S.G.q4.atmin.map(([year, tech, reason, mwh]) => ({ year, tech, reason, mwh }));
-  const key = (r) => (r.tech === "combustion_turbine" ? "combustion_turbine" : r.reason);
+  const A = S.G.q4.atmin.map(([year, tech, econ, mwh]) => ({ year, tech, econ, mwh }));
   const ys = Y.map((r) => r.year), cnt = Object.fromEntries(Y.map((r) => [r.year, r.counted || 1]));
-  const val = (y, k) => d3.sum(A.filter((r) => r.year === y && r.tech !== "nuclear" && key(r) === k), (r) => r.mwh) / cnt[y];
+  const val = (y, k) => d3.sum(A.filter((r) => r.year === y && r.tech !== "nuclear" && r.econ === k), (r) => r.mwh) / cnt[y];
   const mark = (y) => { const r = Y.find((v) => v.year === y); return r.freeCounted / Math.max(1, r.counted); };
-  stack(el, ys, Q4_KEYS, val, { title: "In oversupply hours: fossil minimum online, and curtailment not behind congestion (GW)", mark, markLabel: "Curtailed, not behind congestion (average)" });
-  legend("q4-legend", [...Q4_KEYS.map((k) => [REASON[k].label, REASON[k].color])]);
+  stack(el, ys, Q4_KEYS, val, { title: "In oversupply hours: fossil minimum online, and curtailment not behind congestion (GW)", mark, markLabel: "Curtailed, not behind congestion (average)", labels: ECON });
+  legend("q4-legend", Q4_KEYS.map((k) => [ECON[k].label, ECON[k].color]));
   $("q4-legend").innerHTML += `<span><span class="sw sw-line" style="border-top-color:var(--ink)"></span>Wind and solar curtailed, not behind congestion</span>`;
   const V = S.G.q4.avoid.map(([year, s, mwh]) => ({ year, s, mwh })), sc = S.G.q4.scenarios;
   const nuc = (y) => d3.sum(A.filter((r) => r.year === y && r.tech === "nuclear"), (r) => r.mwh) / cnt[y];
   const v = (y, s) => (V.find((r) => r.year === y && r.s === s) || { mwh: 0 }).mwh;
-  $("q4-table").innerHTML = `<table class="data"><thead><tr><th class="t">Year</th><th>Curtailed</th><th>Fossil could make room for</th><th>Would run: model's off calls shut</th><th>Would run: CC, gas steam without award shut</th><th>Would run: those and coal shut</th></tr></thead><tbody>` +
+  $("q4-table").innerHTML = `<table class="data"><thead><tr><th class="t">Year</th><th>Curtailed</th><th>Fossil could make room for</th><th>Would run: units losing more than a restart shut</th><th>Would run: every unit losing money shut</th><th>Would run: all fossil at minimum shut</th></tr></thead><tbody>` +
     Y.slice().reverse().map((r) => `<tr><td class="t">${yearLabel(r.year)}</td><td>${fmtTWh(r.curt)} TWh (${fmtPct(r.curt / r.avail)})</td><td>${fmtTWh(r.free)} TWh (${fmtPct(r.free / r.curt)}), ${d3.format(",")(r.overH)} hours</td>` +
-      [sc[0], sc[1], sc[2]].map((s) => `<td>${fmtTWh(v(r.year, s))} TWh (${fmtPct(v(r.year, s) / (r.free || 1))})</td>`).join("") + `</tr>`).join("") + `</tbody></table>`;
-  setCSV(el, ["year", "available_mwh", "curtailed_mwh", "uncongested_oversupply_mwh", "oversupply_hours", "counted_hours", "nuclear_mw", ...Q4_KEYS.map((k) => `${k}_mw`), ...sc.map((s) => `would_run_${s}_mwh`)],
+      sc.map((s) => `<td>${fmtTWh(v(r.year, s))} TWh (${fmtPct(v(r.year, s) / (r.free || 1))})</td>`).join("") + `</tr>`).join("") + `</tbody></table>`;
+  setCSV(el, ["year", "available_mwh", "curtailed_mwh", "uncongested_oversupply_mwh", "oversupply_hours", "counted_hours", "nuclear_mw", ...Q4_KEYS.map((k) => `${k.replace(/[ ,]+/g, "_")}_mw`), ...sc.map((s) => `would_run_${s.replace(/[ ,]+/g, "_")}_mwh`)],
     Y.map((r) => [r.year, r.avail, r.curt, r.free, r.overH, r.counted, Math.round(nuc(r.year)), ...Q4_KEYS.map((k) => Math.round(val(r.year, k))), ...sc.map((s) => v(r.year, s))]), "Curtailment and fossil minimum");
   const y = fullYears().at(-1), r = Y.find((q) => q.year === y), fossil = d3.sum(Q4_KEYS, (k) => val(y, k));
-  $("q4-answer").innerHTML = `In ${y}, ${fmtTWh(r.curt)} TWh of wind and solar was curtailed. <b>Fossil units could have made room for ${fmtTWh(r.free)} TWh of it (${fmtPct(r.free / r.curt)})</b>: the curtailment in oversupply hours at wind and solar not behind congestion. In those hours ${fmtGW(fossil)} GW of fossil sat at minimum, beside ${fmtGW(nuc(y))} GW of nuclear. Had the units the model called off shut, ${fmtTWh(v(y, sc[0]))} TWh (${fmtPct(v(y, sc[0]) / r.free)} of those ${fmtTWh(r.free)} TWh) would have run instead. Had every combined-cycle and gas steam unit without an award shut, ${fmtTWh(v(y, sc[1]))} TWh (${fmtPct(v(y, sc[1]) / r.free)}) would have, and ${fmtTWh(v(y, sc[2]))} TWh (${fmtPct(v(y, sc[2]) / r.free)}) with coal shut too.`;
-  setNote($("q4-note"), `Wind and solar curtailment in oversupply hours, beside the fossil minimum online then, by the reasons in question 2, by year. * part year.`,
-    `Curtailment is a wind or solar unit's HSL above its base point (0.5 MW or more), from the 60-day SCED disclosure. An oversupply hour has a real-time hub average (HB_HUBAVG) of $${S.G.over_price}/MWh or less. A unit is behind congestion when its day-ahead node price sits $5 or more below the day-ahead bus average; most curtailment is (West and Panhandle), and shutting a gas unit elsewhere does not make room for it. The fossil split covers oversupply hours with at least 100 MW curtailed not behind congestion. "Would have run" sums, hour by hour, the smaller of that curtailment and the minimum of the units shut. Nuclear is shown in the tooltip total only: it runs regardless. The black line is the curtailment not behind congestion in the average such hour.`);
+  const run = (s) => `${fmtTWh(v(y, s))} TWh (${fmtPct(v(y, s) / r.free)})`;
+  $("q4-answer").innerHTML = `In ${y}, ${fmtTWh(r.curt)} TWh of wind and solar was curtailed, and fossil units could have made room for ${fmtTWh(r.free)} TWh of it (${fmtPct(r.free / r.curt)}): the curtailment in oversupply hours at wind and solar not behind congestion. In those hours ${fmtGW(fossil)} GW of fossil sat at minimum, beside ${fmtGW(nuc(y))} GW of nuclear. <b>${fmtGW(val(y, Q4_KEYS[0]))} GW of it was losing more than a restart would cost.</b> Had those units shut, ${run(sc[0])} of that curtailment would have run instead. Had every unit losing money shut, ${run(sc[1])} would have; shutting all fossil at minimum, ${run(sc[2])}.`;
+  setNote($("q4-note"), `Wind and solar curtailment in oversupply hours, beside the fossil minimum online then, by whether each unit was losing money, by year. * part year.`,
+    `Curtailment is a wind or solar unit's HSL above its base point (0.5 MW or more), from the 60-day SCED disclosure. An oversupply hour has a real-time hub average (HB_HUBAVG) of $${S.G.over_price}/MWh or less. A unit is behind congestion when its day-ahead node price sits $5 or more below the day-ahead bus average; most curtailment is (West and Panhandle), and shutting a gas unit elsewhere does not make room for it. The fossil split covers oversupply hours with at least 100 MW curtailed not behind congestion. A unit is losing money in the hours of its day's worst loss window: the longest run of hours in which its minimum-energy cost beat its day-ahead node price, times its LSL. It loses more than a restart when that window's loss beats its hot start offer (a generic $15,000 for combined cycles, $10,000 for gas steam and $30,000 for coal when none is offered). Units outside such a window are covering their costs at day-ahead prices. "Would run" sums, hour by hour, the smaller of that curtailment and the minimum of the units shut. Nuclear is shown in the tooltip total only: it runs regardless. The black line is the curtailment not behind congestion in the average such hour.`);
 }
 
 function drawAll() { drawQ1(); drawQ2(); drawQ3(); drawQ4(); }
