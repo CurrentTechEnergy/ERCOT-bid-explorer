@@ -1,60 +1,60 @@
 {
- "checked": "2026-10-27T08:27:37Z",
+ "checked": "2026-10-27T15:01:36Z",
  "today": "2026-10-27",
  "sources": {
   "2d": {
    "label": "2-day SCED curves (NP3-908-ER)",
-   "latest": "2026-10-24",
-   "behind": 3,
+   "latest": "2026-10-25",
+   "behind": 2,
    "allowed": 3,
    "stale": false
   },
   "2dgen": {
    "label": "2-day generation (NP3-910-ER)",
-   "latest": "2026-10-24",
-   "behind": 3,
+   "latest": "2026-10-25",
+   "behind": 2,
    "allowed": 3,
    "stale": false
   },
   "prices": {
    "label": "Real-time hub prices",
-   "latest": "2026-10-24",
-   "behind": 3,
+   "latest": "2026-10-25",
+   "behind": 2,
    "allowed": 3,
    "stale": false
   },
   "nodes": {
    "label": "Real-time resource-node prices",
-   "latest": "2026-10-24",
-   "behind": 3,
+   "latest": "2026-10-25",
+   "behind": 2,
    "allowed": 3,
    "stale": false
   },
   "fit": {
    "label": "Fitted commitment curve",
-   "latest": "2026-10-24",
-   "behind": 3,
+   "latest": "2026-10-25",
+   "behind": 2,
    "allowed": 3,
    "stale": false
   },
   "60d": {
    "label": "60-day SCED disclosure",
-   "latest": "2026-08-27",
-   "behind": 61,
+   "latest": "2026-08-28",
+   "behind": 60,
    "allowed": 63,
    "stale": false
   },
   "dam": {
    "label": "60-day DAM disclosure",
-   "latest": "2026-08-27",
-   "behind": 61,
+   "latest": "2026-08-28",
+   "behind": 60,
    "allowed": 63,
    "stale": false
   },
   "storage": {
    "label": "60-day storage",
-   "latest": "2026-08-27",
-   "behind": 61,
+   "latest": "2026-08-28",
+   "behind": 60,
    "allowed": 63,
    "stale": false
   },
@@ -109,8 +109,8 @@
   },
   "unplanned": {
    "label": "Unplanned outages (NP1-346-ER)",
-   "latest": "2026-10-23",
-   "behind": 4,
+   "latest": "2026-10-24",
+   "behind": 3,
    "allowed": 5,
    "stale": false
   },

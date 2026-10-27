@@ -3,13 +3,13 @@
   <title>MGSES_CT3: bidding and operating changes</title>
   <link href="https://ercotbids.currenttech.energy/unit.html?unit=MGSES_CT3"/>
   <id>https://ercotbids.currenttech.energy/unit.html?unit=MGSES_CT3</id>
-  <updated>2026-10-25T00:00:00Z</updated>
+  <updated>2026-10-27T00:00:00Z</updated>
   <entry>
-    <title>MGSES_CT3: Bidding approach shifted (2026-08-02)</title>
+    <title>MGSES_CT3: Bidding approach shifted (2026-08-16)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=MGSES_CT3"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=MGSES_CT3#MGSES_CT3/2026-08-02/bidding</id>
-    <updated>2026-10-25T00:00:00Z</updated>
-    <summary>Offer price vs peer median: $145 to $18/MWh</summary>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=MGSES_CT3#MGSES_CT3/2026-08-16/bidding</id>
+    <updated>2026-10-27T00:00:00Z</updated>
+    <summary>Offer price vs peer median: $145 to $16/MWh</summary>
   </entry>
   <entry>
     <title>MGSES_CT3: Timescale group changed (2026-08-01)</title>
@@ -24,6 +24,13 @@
     <id>https://ercotbids.currenttech.energy/unit.html?unit=MGSES_CT3#MGSES_CT3/2026-04-24/outage_end</id>
     <updated>2026-10-24T00:00:00Z</updated>
     <summary>Back from a 16-day outage</summary>
+  </entry>
+  <entry>
+    <title>MGSES_CT3: Bidding approach shifted (2026-04-24)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=MGSES_CT3"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=MGSES_CT3#MGSES_CT3/2026-04-24/bidding</id>
+    <updated>2026-10-27T00:00:00Z</updated>
+    <summary>Offer price vs peer median: $55 to $145/MWh</summary>
   </entry>
   <entry>
     <title>MGSES_CT3: Outage started (2026-04-09)</title>

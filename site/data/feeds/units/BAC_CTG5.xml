@@ -3,7 +3,14 @@
   <title>BAC_CTG5: bidding and operating changes</title>
   <link href="https://ercotbids.currenttech.energy/unit.html?unit=BAC_CTG5"/>
   <id>https://ercotbids.currenttech.energy/unit.html?unit=BAC_CTG5</id>
-  <updated>2026-10-20T00:00:00Z</updated>
+  <updated>2026-10-27T00:00:00Z</updated>
+  <entry>
+    <title>BAC_CTG5: Bidding approach shifted (2026-08-22)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=BAC_CTG5"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=BAC_CTG5#BAC_CTG5/2026-08-22/bidding</id>
+    <updated>2026-10-27T00:00:00Z</updated>
+    <summary>Offer price vs peer median: -$25 to -$4/MWh</summary>
+  </entry>
   <entry>
     <title>BAC_CTG5: Timescale group changed (2026-08-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=BAC_CTG5"/>
