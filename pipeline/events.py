@@ -17,9 +17,18 @@ Sources (each already computed by its own module; nothing is detected twice):
   bidding          trends.py detect_changes: a sustained shift in the share offered at or
                    below $0, in running without an offer curve, or in offer price against
                    peers (signal in "field")
-  cutoff           models/cutoff_history.py: the unit's recent loss cutoff moved away from the
-                   cutoff the site showed (status confirmed / contradicted / pending).  CC and gas
-                   steam only: combustion turbines start rather than stay on, so they get rt_price
+  turnoff          CC trains and gas steam units: the operator-informed model's turn-off point
+                   (models/operator_cutoffs.py, $ per MW of LSL, as on Commitment), its median over a
+                   month's days in one day-ahead condition (no award, an award some hours, an award
+                   every hour; each tracked on its own, never pooled; TURNOFF_MIN_DAYS days of it;
+                   "never" counts as riding through), moved from the month before by TURNOFF_MOVE and TURNOFF_SHARE
+                   of the old value, or between a number and riding through.  Dated to the month's
+                   first day.  Status from the next month's median: confirmed when nearer the new
+                   one, contradicted when nearer the old (riding through counted as TURNOFF_CAP).
+                   Backtest Feb-Aug 2026, events / held up of those with a next month to test:
+                   no award 26 / 8 of 11, some hours 26 / 10 of 15, every hour 13 / 7 of 9 (the
+                   loss cutoff it replaced, cutoff_history.py: 21 / 6 of 8).  Combustion
+                   turbines get rt_price
   rt_price         combustion turbines: running at a new price.  For each calendar month with
                    RUN_MONTH_DAYS days of hourly states, the unit's online share of its available
                    hours (outage hours left out) in each bin of the real-time price at its own node
@@ -94,7 +103,7 @@ from .forecast.context import BIN_LABELS, PRICE_BINS
 from .models.peaker_rt import node_prices
 from .groups import GROUPED_TECHS, GROUPS, assign_groups
 from .entities import PATH as ENTITIES_PATH
-from .models.cutoff_history import PATH as CUTOFF_PATH
+from .models.operator_informed import OUT_DIR as OPERATOR_DIR
 from .qse import PATH as QSE_PATH
 from .dam_offers import KINDS as DAM_KINDS
 from .renew_changes import KINDS as RENEW_KINDS
@@ -117,6 +126,9 @@ FUEL_HUB = "hsc"      # gas hub shown beside the shift (gas_hubs.json.gz)
 SIZE_WINDOW, SIZE_BASE, SIZE_MIN_BASE = 7, 30, 20      # days with a value
 SIZE_SHARE, SIZE_MW, SIZE_HOLD, SIZE_MAJOR = 0.2, 5, 30, 0.5
 NEW_GRACE = 14
+# turnoff (CC and gas steam; see the docstring)
+TURNOFF_MIN_DAYS, TURNOFF_MOVE, TURNOFF_SHARE, TURNOFF_CAP = 5, 50.0, 0.5, 1e5
+TURNOFF_AWARD = {0: "without an award", 1: "with an award some hours", 2: "with an award every hour"}
 # rt_price (combustion turbines; see the docstring)
 RUN_MONTH_DAYS, RUN_BEFORE = 20, 60            # days of states the month needs; days before it compared
 RUN_MIN_NOW, RUN_MIN_BEFORE, RUN_MIN_NEXT = 30, 60, 20   # available hours a price bin needs
@@ -131,7 +143,7 @@ KINDS = {
     "shutdown_award": "Shut down despite a day-ahead award",
     "group": "Timescale group changed",
     "bidding": "Bidding approach shifted",
-    "cutoff": "Loss cutoff moved",
+    "turnoff": "Turn-off point moved",
     "rt_price": "Running at a new price",
     "fuel": "Fleet median offer shifted",
     "battery_size": "Battery size changed",
@@ -257,18 +269,54 @@ def fuel_events(tr, hubs):
     return out
 
 
-def cutoff_events(ch):
+def turnoff_events(oc):
+    """CC and gas steam: each unit's month median operator-informed turn-off point, kept apart for
+    each day-ahead condition (TURNOFF_AWARD), against the same condition's month before (see the
+    docstring)."""
+    C = {c: i for i, c in enumerate(oc.get("columns") or [])}
+    if not C:
+        return []
+    by = defaultdict(lambda: defaultdict(list))
+    tech, lsl = {}, defaultdict(list)
+    for day, rows in (oc.get("days") or {}).items():
+        for r in rows:
+            u = r[C["unit"]]
+            tech[u] = r[C["tech"]]
+            lsl[u].append(r[C["lsl"]])
+            by[(u, r[C["award"]])][day[:7]].append(np.inf if r[C["turn_off"]] is None else r[C["turn_off"]])
+    months = sorted({m for v in by.values() for m in v})
+
+    def med(k, m):
+        v = by[k].get(m, [])
+        return float(np.median(v)) if len(v) >= TURNOFF_MIN_DAYS else None
+
+    def fmt(x):
+        return "riding through" if np.isinf(x) else _usd(x)
     out = []
-    for mv in ch.get("moves", []):
-        if mv.get("tech") == "combustion_turbine":   # peakers get rt_price instead
-            continue
-        nx = mv.get("next")
-        tail = (f"; the next month's decisions {'confirm it' if mv['status'] == 'confirmed' else 'contradict it' if mv['status'] == 'contradicted' else 'are split'}"
-                f" ({nx['new_right']} of {nx['n']} right against {nx['site_right']})" if nx else "; not yet tested on a following month")
-        out.append(_ev(mv["unit"], mv["month"], "cutoff", mv["tech"],
-                       f"Loss cutoff {_usd(mv['from'])} to {_usd(mv['to'])} per MW of minimum output{tail}", True,
-                       before=mv["from"], after=mv["to"], value=mv["gain"], field="$ per MW of LSL; value: recent decisions gained",
-                       status=mv["status"], before_usd=mv["from_usd"], after_usd=mv["to_usd"]))
+    for k in by:
+        u, aw = k
+        cond = TURNOFF_AWARD[aw]
+        for j in range(1, len(months)):
+            a, b = med(k, months[j - 1]), med(k, months[j])
+            if a is None or b is None or (np.isinf(a) and np.isinf(b)):
+                continue
+            if not (np.isinf(a) or np.isinf(b) or abs(b - a) >= max(TURNOFF_MOVE, TURNOFF_SHARE * abs(a))):
+                continue
+            status, nx = "pending", med(k, months[j + 1]) if j + 1 < len(months) else None
+            if nx is not None:
+                cap = lambda x: min(x, TURNOFF_CAP)
+                status = "confirmed" if abs(cap(nx) - cap(b)) < abs(cap(nx) - cap(a)) else "contradicted"
+            mon = dt.date.fromisoformat(months[j] + "-01").strftime("%B")
+            tail = {"confirmed": "; the next month held it", "contradicted": "; the next month went back"}.get(status, "")
+            L = float(np.median(lsl[u]))
+            usd = lambda x: None if np.isinf(x) else round(x * L)
+            e = _ev(u, months[j] + "-01", "turnoff", tech[u],
+                    f"Turn-off point {cond} {fmt(a)} to {fmt(b)} per MW of minimum output in {mon}{tail}", True,
+                    before=None if np.isinf(a) else round(a, 1), after=None if np.isinf(b) else round(b, 1),
+                    value=len(by[k][months[j]]), field=f"$ per MW of LSL, median over the month's days {cond} (null: rides through); value: days",
+                    status=status, before_usd=usd(a), after_usd=usd(b), award=aw)
+            e["id"] += f"|{aw}"
+            out.append(e)
     return out
 
 
@@ -599,7 +647,7 @@ def build_events(index: dict) -> dict:
     tr = read_json_gz(DATA_DIR / "trends_60d.json.gz", default={}) or {}
     rc = read_json_gz(DATA_DIR / "renew_changes.json.gz", default={}) or {}
     do = read_json_gz(DATA_DIR / "dam_offers.json.gz", default={}) or {}
-    ch = read_json_gz(CUTOFF_PATH, default={}) or {}
+    oc = read_json_gz(OPERATOR_DIR / "cutoffs.json.gz", default={}) or {}
     hubs = read_json_gz(DATA_DIR / "gas_hubs.json.gz", default={}) or {}
     su = read_json_gz(DATA_DIR / "storage" / "units.json.gz", default={}) or {}
     qh = read_json_gz(QSE_PATH, default={}) or {}
@@ -612,7 +660,7 @@ def build_events(index: dict) -> dict:
     tech_all.update({u["unit"]: u["tech"] for u in tr.get("units", [])})
     tech_all.update({_train(u["unit"]): u["tech"] for u in tr.get("units", [])})
     tech_all.update({u: "storage" for u in (su.get("units") or {})})
-    events = (shutdown_events(dec) + group_events(uh, tech_of) + bidding_events(tr) + cutoff_events(ch) + run_price_events(uh, tech_of)
+    events = (shutdown_events(dec) + group_events(uh, tech_of) + bidding_events(tr) + turnoff_events(oc) + run_price_events(uh, tech_of)
               + renew_events(rc) + dam_events(do) + outage_events(uh, tech_of) + fuel_events(tr, hubs) + battery_events(su)
               + new_unit_events(tr) + control_events(qh, ent, tech_all))
     old = read_json_gz(PATH, default=None) or {}
