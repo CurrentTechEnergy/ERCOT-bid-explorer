@@ -180,6 +180,26 @@
     <div class="chart" id="curt-chart"></div>
   </section>
 
+  <section class="panel panel-wide" id="stack-panel">
+    <div class="panel-head">
+      <div>
+        <h2>Thermal dispatch stack <span class="h-note" id="stack-title-note"></span></h2>
+        <p class="note">Offers from the thermal units that were online in the hour. The flat block is minimum output that runs at any price; only what rises above it moves with price, and where the stack meets the system lambda is roughly thermal output.</p>
+        <details class="how"><summary>How it's built</summary><p class="note">From the 60-day SCED disclosure: every thermal unit online in a SCED run of the hour, its offer curve as SCED dispatched against it (after ERCOT's extension to its limits and any mitigation), held at or above its minimum output (LSL) and at or below its maximum (HSL), averaged over the hour's runs and stacked by how often each unit turns off or by technology. A unit online without an offer curve sits flat at its output that hour. The flat block at the left is the minimum output online, which SCED cannot move at any price; only what rises above it moves with the price. The vertical line is the hour's real-time system lambda; every unit faces that same price here, so where the stack meets it is close to, not equal to, the thermal output, which SCED sets against each node's price and ramp limits. 60-day days only, about two months behind.</p></details>
+      </div>
+      <div class="panel-tools">
+        <div class="seg seg-sm" id="stack-by" role="radiogroup" aria-label="Stack by">
+          <button type="button" data-v="group" role="radio">By how often it turns off</button>
+          <button type="button" data-v="tech" role="radio">By technology</button>
+        </div>
+      </div>
+    </div>
+    <div class="legend legend-static" id="stack-legend"></div>
+    <div class="chart" id="stack-chart"></div>
+    <p class="note" id="stack-foot"></p>
+    <p class="note step-link"><a href="commitment.html">Why these units are on: Commitment →</a></p>
+  </section>
+
   <h2 class="page-section">Across days: who sets price, and against what fuel <span class="h-note" id="range-status"></span></h2>
 
   <section class="panel panel-wide" id="mbp-panel">
