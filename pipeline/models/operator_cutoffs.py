@@ -12,9 +12,12 @@ the next day's prices are not known when the operator decides.
 
 The turn-off point: every hour's price shifted down by the same $/MWh until the model's day call
 (p_day under 0.5 in any hour) first turns the unit off, found by bisection on SHIFT, with the
-award, state and everything else as they were; reported as the saving at that shift.  "never" when
-it stays on at the top of SHIFT (an award all day holds it on), and below 0 when the model turns it
-off even with nothing saved.  An Oct 2026 check on 8,731 decision days: the saving ranks CC days
+award, state and everything else as they were; reported as the saving at that shift.  The search
+starts from the day's own prices and goes one way only: down (toward a bigger saving) when the
+model keeps the unit on at them, up when it turns it off at them, so a model that turns a unit off
+only at prices far above the day's (JCKCNTY2_CC1 in summer 2026: off at +$200, on at every price
+below) reads "never", not the bottom of SHIFT.  "never" when it stays on through the top of SHIFT
+(an award all day holds it on), and below 0 when the model turns it off even with nothing saved.  An Oct 2026 check on 8,731 decision days: the saving ranks CC days
 that shut above those that stayed on better than the loss over the worst stretch (0.861 against
 0.835); subtracting the hot start, or costing at gas, does worse.
 
@@ -23,7 +26,7 @@ Writes data/operator/cutoffs.json.gz:
    saving, turn_off, off, min_down], ...]}}
 award 0 none, 1 some hours, 2 every hour; saving and turn_off in $ per MW of LSL (turn_off null
 for never); off 1 when the unit was offline in any hour of the day (outage hours aside).
-Only days without a row are computed, all of them when VERSION changes.
+Only days without a row are computed, all of them when VERSION or CUT_VERSION changes.
 """
 import numpy as np
 
@@ -36,6 +39,7 @@ MIN_SPELLS = 3     # off spells a unit needs before its own minimum down time is
 SHIFT = (-200.0, 400.0)   # $/MWh, the range searched
 TOL = 2.0          # $/MWh, bisection stops when the bracket is this narrow
 COLUMNS = ("unit", "tech", "lsl", "award", "saving", "turn_off", "off", "min_down")
+CUT_VERSION = "c2"   # c2: the search goes one way from the day's prices
 MEASURE = "saving from being off over the best stretch at least its minimum down time long, $/MW of LSL"
 
 
@@ -68,17 +72,22 @@ def _min_down(st, k_month):
 
 
 def turn_off(ctx, date, key, r, f):
-    """The shift ($/MWh) at which the day call first turns the unit off: SHIFT[0] when it is off
-    already there, None when it stays on through SHIFT[1]."""
+    """The shift ($/MWh) at which the day call first turns the unit off, searched one way from the
+    day's own prices (shift 0): SHIFT[0] when it is off even there, None when it stays on through
+    SHIFT[1]."""
     def off(x):
         rr = dict(r, spp=r["spp"] - x)
         p = _p_day(ctx, date, key, rr, f)
         return p is not None and bool((p < 0.5).any())
     lo, hi = SHIFT
-    if off(lo):
-        return lo
-    if not off(hi):
-        return None
+    if off(0.0):
+        if off(lo):
+            return lo
+        hi = 0.0
+    else:
+        if not off(hi):
+            return None
+        lo = 0.0
     while hi - lo > TOL:
         mid = (lo + hi) / 2
         lo, hi = (lo, mid) if off(mid) else (mid, hi)
@@ -114,12 +123,12 @@ def day_rows(ctx, date):
 def build_cutoffs(ctx, days) -> int:
     """Rows for every operator day without them; returns the days computed."""
     old = read_json_gz(PATH, default=None) or {}
-    have = old.get("days", {}) if old.get("version") == VERSION and tuple(old.get("columns") or ()) == COLUMNS else {}
+    have = old.get("days", {}) if (old.get("version"), old.get("cut_version")) == (VERSION, CUT_VERSION) and tuple(old.get("columns") or ()) == COLUMNS else {}
     out = {d: have[d] for d in days if d in have}
     new = [d for d in days if d not in out]
     for d in new:
         out[d] = day_rows(ctx, d)
-    write_json_gz(PATH, {"model": NAME, "version": VERSION, "measure": MEASURE, "columns": list(COLUMNS),
+    write_json_gz(PATH, {"model": NAME, "version": VERSION, "cut_version": CUT_VERSION, "measure": MEASURE, "columns": list(COLUMNS),
                          "days": dict(sorted(out.items()))})
     return len(new)
 

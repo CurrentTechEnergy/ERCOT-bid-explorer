@@ -873,28 +873,30 @@ function drawCutUnits() {
 // one row per combustion turbine with a real-time fit that day (data/peaker/rt_fit.json.gz,
 // pipeline/models/peaker_rt.py), grouped by how often it turns off: a diamond at the day's highest
 // node price at which the fit starts it, a circle at the day's actual highest price (filled ran,
-// hollow stayed off), joined in red where it did the opposite of the fit
+// hollow stayed off), joined in red where it did the opposite of the fit; start null (runs at any
+// price it has seen) drawn at the left edge
 function drawCtUnits() {
   const el = $("ct-units"), P = S.PRT, rows = P?.days?.[S.date];
   if (!rows || !rows.length) { $("ct-units-note").textContent = ""; $("ct-units-legend").innerHTML = "";
     return emptyMsg(el, P ? `The peaker fit runs ${Object.keys(P.days)[0]} to ${Object.keys(P.days).at(-1)}; pick a day in that range.` : "No peaker fit loaded."); }
   const C = Object.fromEntries(P.columns.map((c, i) => [c, i]));
-  const U = rows.map((r) => ({ unit: r[C.unit], s: r[C.start], p: r[C.peak], ran: !!r[C.ran], on: r[C.hours_on], av: r[C.hours_avail],
+  const U = rows.map((r) => ({ unit: r[C.unit], s: r[C.start], p: r[C.peak], ran: !!r[C.ran], on: r[C.hours_on], av: r[C.hours_avail], win: r[C.window],
     group: S.G?.units?.[r[C.unit]]?.[1] || "ungrouped" }));
-  const says = (u) => u.s <= u.p, surprise = (u) => says(u) !== u.ran;
+  const says = (u) => u.s == null || u.s <= u.p, surprise = (u) => says(u) !== u.ran;
   const rowsG = ST_GROUPS.filter((g) => U.some((u) => u.group === g.id)).concat(U.some((u) => u.group === "ungrouped") ? [{ id: "ungrouped", label: GROUP_LABEL.ungrouped }] : []);
   const nRan = U.filter((u) => u.ran).length, right = U.filter((u) => !surprise(u)).length;
   window.CX.setNote($("ct-units-note"), `${U.length} peakers were available; ${nRan} ran. The diamond is the highest real-time price at its node at which the fit starts it, the circle the day's actual highest price there; filled ran, hollow stayed off; red marks a surprise. The fit called ${right} of ${U.length} right. Click a unit to open it.`,
     `${U.length} combustion turbines were available in some hour of the day and have a fit for the month (peakers too new, or that never both ran and sat off in the 90 days before, have none). Each is fitted on the 90 days before the month: its chance of being online in an hour against the real-time price at its own node and the hour of day. ` +
     `The diamond shifts every hour's price by the same amount until the fit calls the unit on in some hour, and reads it as the day's highest price at that shift; the circle is the day's actual highest hourly price at its node. A diamond left of the circle means the fit says it ran. ` +
+    `When the 90 days never show a price the unit would sit off at, it is fitted on every day before the month instead; if those don't either, it runs at any price it has seen and its diamond sits at the left edge. The diamond stays between the lowest price it ran at and the highest it sat off at in the days fitted. ` +
     `This is a fit of what peakers did, not a forecast: the real-time price is not known when a peaker decides, and peakers starting move it. Against the day-ahead hub price bands the forecast uses, it calls more starts (39% against 32% of starts, Mar to Aug 2026) and as many hours right (91%). Prices beyond the edges are drawn at the edge.`);
   $("ct-units-legend").innerHTML = `<span><span class="sw" style="background:var(--c1);transform:rotate(45deg) scale(0.8)"></span>Fit starts it above this price</span>` +
     window.CX.onOffLegend("Day's highest price, ran", "Day's highest price, stayed off") +
     `<span><span class="sw" style="background:var(--c8);height:3px"></span>Surprise: the unit did the opposite of the fit</span>`;
-  const vals = U.flatMap((u) => [u.s, u.p]);
+  const vals = U.flatMap((u) => (u.s == null ? [u.p] : [u.s, u.p]));
   const x0 = Math.min(0, d3.quantile(vals.sort(d3.ascending), 0.01)), x1 = Math.max(100, d3.quantile(vals, 0.99));
   const w = Math.max(280, el.clientWidth || 600), lane = 6, rowGap = 26;
-  const per = rowsG.map((g) => U.filter((u) => u.group === g.id).sort((a, b) => a.s - b.s));
+  const per = rowsG.map((g) => U.filter((u) => u.group === g.id).sort((a, b) => (a.s ?? -Infinity) - (b.s ?? -Infinity)));
   const m = { t: 8, b: 30, ...CUT_M }, H = m.t + m.b + d3.sum(per, (us) => rowGap + us.length * lane);
   const x = d3.scaleSymlog().constant(10).domain([x0, x1]).range([m.l, w - m.r]).clamp(true);
   const xT = [-100, -25, 0, 10, 25, 50, 100, 250, 500, 1000, 2500, 5000].filter((v) => v >= x0 && v <= x1);
@@ -910,20 +912,21 @@ function drawCtUnits() {
     us.forEach((u, k) => {
       const yy = top + rowGap - 4 + k * lane + lane / 2, bad = surprise(u);
       const gU = svg.append("g").style("cursor", "pointer")
-        .on("pointermove", (ev) => showTip(ev, `<h4>${esc(u.unit)}</h4>${g.label}<br>Fit starts it once the day's highest node price reaches ${fmt$(u.s)}/MWh<br>` +
+        .on("pointermove", (ev) => showTip(ev, `<h4>${esc(u.unit)}</h4>${g.label}<br>${u.s == null ? "Fit runs it at any price it has seen" : `Fit starts it once the day's highest node price reaches ${fmt$(u.s)}/MWh`}${u.win > 90 ? ` (fitted on ${u.win} days)` : ""}<br>` +
           `Day's highest real-time price at its node ${fmt$(u.p)}/MWh<br><b>${u.ran ? `Ran ${u.on} of ${u.av} available hours` : "Stayed off"}</b>${bad ? "<br>Did the opposite of the fit" : ""}<br><span class="tip-pin-note">Click to open the unit</span>`))
         .on("pointerleave", hideTip)
         .on("click", () => { location.href = unitHref(u.unit); });
-      gU.append("line").attr("x1", x(Math.min(u.s, u.p))).attr("x2", x(Math.max(u.s, u.p))).attr("y1", yy).attr("y2", yy).attr("stroke", css(bad ? "--c8" : "--line")).attr("stroke-width", bad ? 1.8 : 1.2);
-      gU.append("path").attr("d", diamond).attr("transform", `translate(${x(u.s)},${yy})`).attr("fill", css("--c1"));
+      const xs = u.s == null ? m.l : x(u.s);
+      gU.append("line").attr("x1", Math.min(xs, x(u.p))).attr("x2", Math.max(xs, x(u.p))).attr("y1", yy).attr("y2", yy).attr("stroke", css(bad ? "--c8" : "--line")).attr("stroke-width", bad ? 1.8 : 1.2);
+      gU.append("path").attr("d", diamond).attr("transform", `translate(${xs},${yy})`).attr("fill", css("--c1"));
       window.CX.onOffDot(gU.append("circle").attr("cx", x(u.p)).attr("cy", yy), u.ran, 3);
     });
     top += rowGap + us.length * lane;
   });
   svg.append("text").attr("class", "axis-title").attr("x", w - m.r).attr("y", H - 2).attr("text-anchor", "end").text("Real-time price at the unit's node, $/MWh");
   el.replaceChildren(svg.node());
-  setCSV(el, ["unit", "group", "start_usd_mwh", "day_peak_usd_mwh", "ran", "hours_on", "hours_available"],
-    U.map((u) => [u.unit, u.group, u.s, u.p, u.ran ? 1 : 0, u.on, u.av]), `Peaker start points ${S.date}`);
+  setCSV(el, ["unit", "group", "start_usd_mwh", "day_peak_usd_mwh", "ran", "hours_on", "hours_available", "fit_days"],
+    U.map((u) => [u.unit, u.group, u.s, u.p, u.ran ? 1 : 0, u.on, u.av, u.win]), `Peaker start points ${S.date}`);
 }
 
 // the groups on the day: the units online going in and what they did, with the model's
