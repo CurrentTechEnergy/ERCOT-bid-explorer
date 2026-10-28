@@ -52,8 +52,10 @@ CT_LIKE = os.environ.get("PEAKER_CT_LIKE", "0") == "1"   # PEAKER_CT_LIKE=1: com
 LIKE_TECHS = ("gas_steam", "combined_cycle") + (("combustion_turbine",) if CT_LIKE else ())
 LIKE_SHARE = float(os.environ.get("PEAKER_LIKE_SHARE", "0.25"))    # online share of available hours below this ...
 LIKE_RUN_H = float(os.environ.get("PEAKER_LIKE_RUN_H", "16"))      # ... and online hours per day it ran at most this: started for the peak, not kept on
-LIKE_SHARE_BY = {"gas_steam": float(os.environ.get("PEAKER_GS_SHARE", LIKE_SHARE))}   # PEAKER_GS_SHARE: a gas steam unit's own share cutoff
-LIKE_RUN_BY = {"gas_steam": float(os.environ.get("PEAKER_GS_RUN_H", LIKE_RUN_H))}
+LIKE_SHARE_BY = {"gas_steam": float(os.environ.get("PEAKER_GS_SHARE", LIKE_SHARE)),     # PEAKER_GS_SHARE, PEAKER_CC_SHARE: a technology's own share cutoff
+                 "combined_cycle": float(os.environ.get("PEAKER_CC_SHARE", LIKE_SHARE))}
+LIKE_RUN_BY = {"gas_steam": float(os.environ.get("PEAKER_GS_RUN_H", LIKE_RUN_H)),
+               "combined_cycle": float(os.environ.get("PEAKER_CC_RUN_H", LIKE_RUN_H))}
 LIKE_MIN_H = 480      # available hours of record a unit needs to be judged so
 MIN_RUN = os.environ.get("PEAKER_MIN_RUN", "1") == "1"   # a peaker-like unit's called hours form blocks of at least its shortest usual run (PEAKER_MIN_RUN=0: hour by hour)
 MIN_RUN_Q = 10        # percentile of the unit's completed runs taken as its shortest usual run
