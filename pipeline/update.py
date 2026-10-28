@@ -35,6 +35,7 @@ from .units import UNIT_FORMAT
 from .parse_dam import DAM_FORMAT, parse_dam_zip, has_dam_gen
 from .parse_prices import NODE_FORMAT, build_price_day, node_prices, read_lambda, read_spp
 from .marginal import build_marginal
+from .actual_stack import build_actual_stack
 from .dispatchable import build_dispatchable
 from .trends import build_trends
 from .intraday import build_intraday
@@ -532,6 +533,7 @@ def main(argv=None):
         memo.run("trends", build_trends, index)
         memo.run("intraday", build_intraday, index)
         build_groups(index)
+        build_actual_stack(index)
         build_unit_hour_days(index)
         build_unit_curves(index)
         build_hourly_context(index)
@@ -623,6 +625,7 @@ def main(argv=None):
     memo.run("trends", build_trends, index)
     memo.run("intraday", build_intraday, index)
     build_groups(index)
+    build_actual_stack(index)
     build_unit_hour_days(index)
     build_unit_curves(index)
     build_hourly_context(index)

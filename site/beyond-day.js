@@ -60,6 +60,7 @@ const S = {
   lslMode: "from_lsl",     // offer curves: "from_lsl" (LSL plus the MW offered above it) or "ercot" (as ERCOT prices them)
   hidden: new Set(),
   day: null, prices: null, summaries: {}, osView: "hour", osUnit: "share", osSmooth: "smooth",
+  stackBy: "group", stack: null,
 };
 const $ = (id) => document.getElementById(id);
 const fmtMW = d3.format(",.0f");
@@ -208,12 +209,13 @@ async function loadDay() {
   const has = (k) => (S.index.days[k] || []).includes(S.date);
   // a day uses the 60-day report whenever it has it, so curtailment needs the 2-day files only
   // for days without it
-  const [day, prices, gen] = await Promise.all([
+  const [day, prices, gen, stack] = await Promise.all([
     tryJSON(`data/${S.source}/${S.date}.json.gz`),
     tryJSON(`data/prices/${S.date}.json.gz`),
     S.source === "2d" && has("2dgen") ? tryJSON(`data/2dgen/${S.date}.json.gz`) : null,
+    S.source === "60d" ? tryJSON(`data/stack/${S.date}.json.gz`) : null,
   ]);
-  S.day = day; S.prices = prices;
+  S.day = day; S.prices = prices; S.stack = stack;
   S.day60 = S.source === "60d" ? day : null; S.day2 = S.source === "60d" ? null : day; S.gen = gen;
 }
 
@@ -246,11 +248,96 @@ function render() {
   drawDay();
   drawMarginal();
   drawOfferStack();
+  drawStack();
   drawCurtailDay();
   saveView();
 }
 
 // wind and solar curtailment by hour for the page's day (common.js draws it, as on Renewables);
+// ---- thermal dispatch stack: the offers of the thermal units online in the hour ----------------
+// Drawn from data/stack/<date>.json.gz (pipeline/actual_stack.py, 60-day days only); the page only
+// stacks the series it is given.
+const STACK_GROUPS = { never: ["Always on when available", "--g1"], seasonal: ["Seasonal", "--g2"], multiday: ["Multi-day", "--g3"],
+  daily1: ["Daily, under once a week", "--g4"], daily2: ["Daily, 1 to 2 a week", "--g5"], daily3: ["Daily, over 2 a week", "--g6"],
+  never_on: ["Never on", "--c-other"], ungrouped: ["Not yet grouped", "--c-other"] };
+const STACK_TECHS = { nuclear: ["Nuclear", "--c5"], coal: ["Coal & lignite", "--c8"], combined_cycle: ["Combined cycle", "--c1"],
+  gas_steam: ["Gas steam", "--c6"], combustion_turbine: ["Combustion turbine", "--c2"] };
+function drawStack() {
+  const el = $("stack-chart"), D = S.stack, h = S.hour;
+  $("stack-title-note").textContent = S.date ? `${S.date} · ${heLabel(h)}` : "";
+  if (!D) {
+    $("stack-legend").innerHTML = "";
+    return emptyMsg(el, S.source !== "60d" ? "The stack is built from the 60-day report, about two months behind: pick a day it covers."
+      : "No stack for this day yet: it is built in the next data update.");
+  }
+  // the price rule: the hour's real-time system lambda
+  const price = S.prices && S.prices.lambda && S.prices.lambda.hourly_mean ? S.prices.lambda.hourly_mean[h] : null, rt = true;
+  const byGroup = S.stackBy === "group";
+  const names = byGroup ? STACK_GROUPS : STACK_TECHS;
+  const block = byGroup ? D.group : D.tech;
+  const list = (byGroup ? D.groups : D.techs).filter((k) => block[k] && block[k].n[h])
+    .map((k) => ({ id: k, label: (names[k] || [k])[0], color: (names[k] || [k, "--c-other"])[1], mw: block[k].mw[h], n: block[k].n[h] }));
+  $("stack-legend").innerHTML = list.map((s) => `<span><span class="sw" style="background:var(${s.color})"></span>${s.label}</span>`).join("") +
+    `<span><span class="sw" style="height:2px;background:var(--price)"></span>${rt ? "Real-time system lambda" : "Day-ahead system lambda"}</span>` +
+    `<span><span class="sw sw-line"></span>Minimum output online</span>`;
+  const P = D.prices, hub = price;
+  const hi = Math.min(P.at(-1), Math.max(150, hub != null ? Math.ceil((hub + 40) / 50) * 50 : 150)), lo = -30;
+  const idx = P.map((p, i) => i).filter((i) => P[i] >= lo && P[i] <= hi);
+  const fl = D.fleet.mw[h];
+  const { w } = size(el), H = 340, m = { t: 18, r: 16, b: 40, l: 64 }, narrow = w < 560;
+  const x = d3.scaleLinear().domain([lo, hi]).range([m.l, w - m.r]);
+  const y = d3.scaleLinear().domain([0, d3.max(idx, (i) => fl[i]) || 1]).nice().range([H - m.b, m.t]);
+  const svg = d3.create("svg").attr("viewBox", `0 0 ${w} ${H}`);
+  svg.append("g").attr("class", "gridline").attr("transform", `translate(${m.l},0)`).call(d3.axisLeft(y).ticks(5).tickSize(-(w - m.l - m.r)).tickFormat(""));
+  // stacked areas, bottom series first
+  const base = idx.map(() => 0);
+  const layers = list.map((s) => {
+    const y0 = base.slice(), y1 = idx.map((i, k) => (base[k] += s.mw[i] || 0));
+    return { s, y0, y1 };
+  });
+  layers.forEach(({ s, y0, y1 }) => {
+    svg.append("path").attr("fill", css(s.color)).attr("fill-opacity", 0.85)
+      .attr("d", d3.area().x((i) => x(P[i])).y0((i, k) => y(y0[k])).y1((i, k) => y(y1[k]))(idx));
+  });
+  // minimum output online: what SCED cannot take below, at any price
+  const minAll = D.fleet.min[h];
+  svg.append("line").attr("class", "price-rule").attr("stroke-dasharray", "4 3").attr("x1", m.l).attr("x2", w - m.r).attr("y1", y(minAll)).attr("y2", y(minAll));
+  svg.append("text").attr("class", "axis-title").attr("x", m.l + 4).attr("y", y(minAll) - 5)
+    .attr("paint-order", "stroke").attr("stroke", css("--surface")).attr("stroke-width", 3)
+    .text(narrow ? `minimum ${fmtMW(minAll)} MW` : `minimum output online: ${fmtMW(minAll)} MW runs at any price`);
+  if (hub != null && hub >= lo && hub <= hi) {
+    svg.append("line").attr("class", "price-rule").attr("x1", x(hub)).attr("x2", x(hub)).attr("y1", m.t).attr("y2", H - m.b);
+    const j = d3.bisectLeft(P, hub);
+    const right = x(hub) > (m.l + w - m.r) / 2;   // label on the side with room
+    svg.append("text").attr("class", "axis-title").attr("x", x(hub) + (right ? -5 : 5)).attr("y", m.t + 10)
+      .attr("text-anchor", right ? "end" : "start")
+      .attr("paint-order", "stroke").attr("stroke", css("--surface")).attr("stroke-width", 3)
+      .text(narrow ? `λ ${fmtPrice(hub)} · ${fmtMW(fl[Math.min(j, P.length - 1)])} MW`
+        : `${rt ? "real-time" : "day-ahead"} lambda ${fmtPrice(hub)} · ${fmtMW(fl[Math.min(j, P.length - 1)])} MW offered below it`);
+  }
+  svg.append("g").attr("class", "axis").attr("transform", `translate(0,${H - m.b})`).call(axisFmt(d3.axisBottom(x), narrow ? 4 : 8, "$").tickSizeOuter(0));
+  svg.append("g").attr("class", "axis").attr("transform", `translate(${m.l},0)`).call(axisFmt(d3.axisLeft(y), 5).tickSizeOuter(0));
+  svg.append("text").attr("class", "axis-title").attr("x", m.l).attr("y", 10).text(narrow ? "MW offered below the price" : "MW offered below the price by the thermal units online");
+  svg.append("text").attr("class", "axis-title").attr("x", w - m.r).attr("y", H - 6).attr("text-anchor", "end").text("Price ($/MWh)");
+  const cross = svg.append("line").attr("class", "crosshair").attr("y1", m.t).attr("y2", H - m.b).style("display", "none");
+  svg.append("rect").attr("x", m.l).attr("y", m.t).attr("width", w - m.l - m.r).attr("height", H - m.t - m.b).attr("fill", "transparent")
+    .on("pointermove", (ev) => {
+      const p = x.invert(d3.pointer(ev)[0]);
+      const k = Math.max(0, Math.min(idx.length - 1, d3.bisectLeft(idx.map((i) => P[i]), p)));
+      const i = idx[k];
+      cross.style("display", null).attr("x1", x(P[i])).attr("x2", x(P[i]));
+      showTip(ev, `<h4>Below ${fmtPrice(P[i])} · ${heLabel(h)}</h4><table>` +
+        [...list].reverse().map((s) => `<tr><td><span class="sw" style="background:var(${s.color})"></span></td><td>${s.label}</td><td class="n">${fmtMW(s.mw[i])} MW</td><td class="n">min ${fmtMW(block[s.id].min[h])}</td></tr>`).join("") +
+        `<tr><td></td><td><b>All thermal online</b></td><td class="n"><b>${fmtMW(fl[i])} MW</b></td><td class="n">min ${fmtMW(minAll)}</td></tr></table>` +
+        `<p class="tip-body">Above minimum output: ${fmtMW(fl[i] - minAll)} MW. Up to ${fmtMW(D.fleet.max[h])} MW at any price.</p>`);
+    })
+    .on("pointerleave", () => { cross.style("display", "none"); hideTip(); });
+  el.replaceChildren(svg.node());
+  setCSV(el, ["price", ...list.map((s) => `${s.label} (MW)`), "All thermal online (MW)"],
+    P.map((p, i) => [p, ...list.map((s) => s.mw[i]), fl[i]]), `Thermal dispatch stack ${S.date} ${heLabel(h)}`);
+  $("stack-foot").textContent = `${D.fleet.n[h]} thermal units online in ${heLabel(h)} (combined-cycle configurations counted one by one).`;
+}
+
 // curve_trends.json.gz is the file beyond-range.js also reads, fetched once through the shared cache
 function drawCurtailDay() {
   CX.drawCurtailDay($("curt-chart"), $("curt-day-legend"), $("curt-title-note"), S.curt, S.date,
@@ -259,7 +346,7 @@ function drawCurtailDay() {
 
 // the address bar carries the view, so a copied link reopens this exact day, hour and settings
 const NUM_KEYS = new Set(["xMin", "xMax", "osMin", "osMax"]);
-const VIEW_KEYS = { loc: "location", xr: "xrange", xmin: "xMin", xmax: "xMax", osmin: "osMin", osmax: "osMax", mode: "mode", axes: "axes", lsl: "lslMode", ver: "version", os: "osView", osu: "osUnit", osm: "osSmooth" };
+const VIEW_KEYS = { loc: "location", xr: "xrange", xmin: "xMin", xmax: "xMax", osmin: "osMin", osmax: "osMax", mode: "mode", axes: "axes", lsl: "lslMode", ver: "version", os: "osView", osu: "osUnit", osm: "osSmooth", sb: "stackBy" };
 // price limits go in the link only when they are in use
 const HIDE_KEY = { xMin: () => S.xrange !== "custom", xMax: () => S.xrange !== "custom",
   osMin: () => S.osMin === OS_DEFAULT[0] && S.osMax === OS_DEFAULT[1], osMax: () => S.osMin === OS_DEFAULT[0] && S.osMax === OS_DEFAULT[1] };
@@ -937,6 +1024,8 @@ async function boot() {
   bindSeg("os-view", "osView", drawOfferStack);
   bindSeg("os-unit", "osUnit", drawOfferStack);
   setSeg("os-smooth", S.osSmooth); bindSeg("os-smooth", "osSmooth", drawOfferStack);
+  if (!["group", "tech"].includes(S.stackBy)) S.stackBy = "group";
+  setSeg("stack-by", S.stackBy); bindSeg("stack-by", "stackBy", drawStack);
   $("date").onchange = async (e) => { S.date = e.target.value; await changeDay(); };
   // step one available day older (-1) or newer (+1)
   const stepDay = async (dir) => {
