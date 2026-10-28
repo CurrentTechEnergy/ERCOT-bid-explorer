@@ -124,6 +124,8 @@ function actual60() {
   // online LSL and HSL hour by hour (MW summed over the units online), by group and technology
   const lslG = {}, hslG = {}, lslT = {}, hslT = {};
   const add = (o, k, h, v) => ((o[k] = o[k] || zero())[h] += v || 0);
+  // the same by hour for the hourly limits panel, with peakers taken out of their groups
+  const limOut = {}, limLsl = {}, limHsl = {}, limOn = {};
   // per train and hour: online (any configuration online at least half the hour's runs), output, HSL, LSL
   const units = {};
   f.rows.forEach((r) => {
@@ -138,8 +140,10 @@ function actual60() {
     (byG[g] = byG[g] || zero())[h] += out;
     const c = catOf(t, g);
     (byC[c] = byC[c] || zero())[h] += out;
-    const u = units[name] || (units[name] = { unit: name, tech: t, group: g, on: zero(), out: zero(), hsl: zero(), lsl: zero() });
-    if (online) { add(lslG, g, h, r[ci.lsl]); add(hslG, g, h, r[ci.hsl]); }
+    const k = c === "peakers" ? "peakers" : g;
+    const u = units[name] || (units[name] = { unit: name, tech: t, group: g, lim: k, on: zero(), out: zero(), hsl: zero(), lsl: zero() });
+    if (online) { add(lslG, g, h, r[ci.lsl]); add(hslG, g, h, r[ci.hsl]); add(limLsl, k, h, r[ci.lsl]); add(limHsl, k, h, r[ci.hsl]); }
+    add(limOut, k, h, out);
     if (online) { u.on[h] = 1; u.lsl[h] += r[ci.lsl] || 0; }
     u.out[h] += out; u.hsl[h] += r[ci.hsl] || 0;
   });
@@ -149,9 +153,9 @@ function actual60() {
   Object.values(units).forEach((u) => {
     u.hslMax = d3.max(u.hsl); u.lslMax = d3.max(u.lsl); u.online_h = d3.sum(u.on); u.mwh = d3.sum(u.out);
     capG[u.group] = (capG[u.group] || 0) + u.hslMax; capT[u.tech] = (capT[u.tech] || 0) + u.hslMax;
-    HRS.forEach((h) => { add(onG, u.group, h, u.on[h]); add(onT, u.tech, h, u.on[h]); });
+    HRS.forEach((h) => { add(onG, u.group, h, u.on[h]); add(onT, u.tech, h, u.on[h]); add(limOn, u.lim, h, u.on[h]); });
   });
-  return { group: byG, tech: byT, cat: byC, capG, capT, lslG, hslG, lslT, hslT, onG, onT, dis, chg, units };
+  return { group: byG, tech: byT, cat: byC, capG, capT, lslG, hslG, lslT, hslT, onG, onT, lim: { out: limOut, lsl: limLsl, hsl: limHsl, on: limOn }, dis, chg, units };
 }
 
 // ---------------------------------------------------------------- headline ---
@@ -367,11 +371,15 @@ function drawActualBars() {
 function limitSeries() {
   const a = S.a60;
   if (!a) return [];
-  if (S.limBy === "tech") return [
-    ...TECHS.filter(([t]) => a.tech[t]).map(([t, label, color]) => ({ id: t, label, color, out: a.tech[t], lsl: a.lslT[t], hsl: a.hslT[t], on: a.onT[t] })),
-    ...[WIND, SOLAR].filter((s) => a.tech[s.id]).map((s) => ({ id: s.id, label: s.label, color: s.color, out: a.tech[s.id], lsl: null, hsl: a.hslT[s.id], on: null })),
+  const renew = [WIND, SOLAR].filter((s) => a.tech[s.id]).map((s) => ({ id: s.id, label: s.label, color: s.color, out: a.tech[s.id], lsl: null, hsl: a.hslT[s.id], on: null }));
+  if (S.limBy === "tech") return [...TECHS.filter(([t]) => a.tech[t]).map(([t, label, color]) => ({ id: t, label, color, out: a.tech[t], lsl: a.lslT[t], hsl: a.hslT[t], on: a.onT[t] })), ...renew];
+  // by group: thermal groups without their peakers, then peakers, then wind and solar
+  const L = a.lim, peak = CATS.find(([c]) => c === "peakers");
+  return [
+    ...GROUPS.filter((g) => L.out[g] && L.hsl[g]).map((g) => ({ id: g, label: GROUP_SHORT[g] || g, color: GROUP_COLORS[g] || "--c-other", out: L.out[g], lsl: L.lsl[g], hsl: L.hsl[g], on: L.on[g] })),
+    ...(L.out.peakers && L.hsl.peakers ? [{ id: "peakers", label: peak[1], color: peak[2], out: L.out.peakers, lsl: L.lsl.peakers, hsl: L.hsl.peakers, on: L.on.peakers }] : []),
+    ...renew,
   ];
-  return GROUPS.filter((g) => a.group[g] && a.hslG[g]).map((g) => ({ id: g, label: GROUP_SHORT[g] || g, color: GROUP_COLORS[g] || "--c-other", out: a.group[g], lsl: a.lslG[g], hsl: a.hslG[g], on: a.onG[g] }));
 }
 function limitChart(s, w0) {
   const zero = HRS.map(() => 0), lsl = s.lsl || zero, hsl = s.hsl || zero;
