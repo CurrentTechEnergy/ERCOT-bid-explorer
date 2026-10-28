@@ -1,7 +1,8 @@
 name: Build hourly history
 
 # Hourly wind and solar history (kind: renewables), thermal history (kind: thermal), thermal
-# ancillary service awards and prices (kind: as) or real-time settlement point prices (kind: rt)
+# ancillary service awards and prices (kind: as), real-time settlement point prices (kind: rt) or
+# real-time AS awards and prices with every technology's DAM AS awards (kind: rtas, Dec 2025 on)
 # from ERCOT's
 # archive (pipeline/history.py), one month per job,
 # uploaded as Parquet files to the `history` release.  Kept apart from the site data and the
@@ -11,9 +12,9 @@ on:
   workflow_dispatch:
     inputs:
       kind:
-        description: "renewables (units-*), thermal (thermal-*), as (as-*, as-mcpc-*) or rt (rt-prices-*)"
+        description: "renewables (units-*), thermal (thermal-*), as (as-*, as-mcpc-*), rt (rt-prices-*) or rtas (rt-as-*, rt-mcpc-*, dam-as-*)"
         type: choice
-        options: [renewables, thermal, as, rt]
+        options: [renewables, thermal, as, rt, rtas]
         required: false
         default: renewables
       start:
@@ -35,6 +36,7 @@ on:
   pull_request:       # smoke test on a PR that changes the history code: one month, nothing uploaded
     paths:
       - pipeline/history.py
+      - pipeline/rt_as.py
       - .github/workflows/history.yml
 
 permissions:
@@ -58,7 +60,8 @@ jobs:
           MAX: ${{ inputs.max_months || '24' }}
           FORCE: ${{ inputs.force || false }}
           EVENT: ${{ github.event_name }}
-          PREFIX: ${{ inputs.kind == 'thermal' && 'thermal' || inputs.kind == 'as' && 'as' || inputs.kind == 'rt' && 'rt-prices' || 'units' }}
+          PREFIX: ${{ inputs.kind == 'thermal' && 'thermal' || inputs.kind == 'as' && 'as' || inputs.kind == 'rt' && 'rt-prices' || inputs.kind == 'rtas' && 'rt-as' || 'units' }}
+          KIND: ${{ inputs.kind }}
         run: |
           if [ "$EVENT" = "pull_request" ]; then echo 'months=["2019-01"]' >> "$GITHUB_OUTPUT"; exit 0; fi
           if ! gh release view history -R "$GITHUB_REPOSITORY" > /dev/null 2>&1; then
@@ -73,7 +76,8 @@ jobs:
           # before the month that (today - 62 days) falls in
           last = (dt.date.today() - dt.timedelta(days=62)).replace(day=1) - dt.timedelta(days=1)
           end = min(os.environ["END"] or "9999-12", last.isoformat()[:7])
-          y, m = map(int, os.environ["START"].split("-"))
+          start = max(os.environ["START"], "2025-12") if os.environ["KIND"] == "rtas" else os.environ["START"]   # RTC+B began Dec 5, 2025
+          y, m = map(int, start.split("-"))
           months = []
           while f"{y:04d}-{m:02d}" <= end:
               months.append(f"{y:04d}-{m:02d}")
@@ -109,14 +113,19 @@ jobs:
           R2_ENDPOINT: ${{ secrets.R2_ENDPOINT }}
           R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
           R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
-        run: python -m pipeline.history "${{ matrix.month }}" --out out ${{ inputs.kind == 'thermal' && '--thermal' || inputs.kind == 'as' && '--as' || inputs.kind == 'rt' && '--rt' || '' }}
-      - name: Build ${{ matrix.month }} RT prices (smoke test)
+        run: python -m pipeline.history "${{ matrix.month }}" --out out ${{ inputs.kind == 'thermal' && '--thermal' || inputs.kind == 'as' && '--as' || inputs.kind == 'rt' && '--rt' || inputs.kind == 'rtas' && '--rtas' || '' }}
+      # No RT settlement point price smoke test: those files come in bulk downloads that the raw
+      # store does not keep, so every PR run would download the same month from ERCOT again.
+      - name: RT AS, first 2 days of Dec 2025 (smoke test)
         if: github.event_name == 'pull_request'
         env:
           ERCOT_API_USERNAME: ${{ secrets.ERCOT_API_USERNAME }}
           ERCOT_API_PASSWORD: ${{ secrets.ERCOT_API_PASSWORD }}
           ERCOT_API_SUBSCRIPTION_KEY: ${{ secrets.ERCOT_API_SUBSCRIPTION_KEY }}
-        run: python -m pipeline.history "${{ matrix.month }}" --out out --rt
+          R2_ENDPOINT: ${{ secrets.R2_ENDPOINT }}
+          R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+        run: python -m pipeline.history 2025-12 --out out --rtas --days 2
       - name: Summarise
         run: |
           python3 - <<'PY'
@@ -139,4 +148,4 @@ jobs:
         if: github.event_name == 'workflow_dispatch'
         env:
           GH_TOKEN: ${{ github.token }}
-        run: gh release upload history out/${{ inputs.kind == 'thermal' && 'thermal-' || inputs.kind == 'as' && 'as-' || inputs.kind == 'rt' && 'rt-prices-' || '' }}*.parquet --clobber -R "$GITHUB_REPOSITORY"
+        run: gh release upload history ${{ inputs.kind == 'rtas' && 'out/rt-as-*.parquet out/rt-mcpc-*.parquet out/dam-as-*.parquet' || format('out/{0}*.parquet', inputs.kind == 'thermal' && 'thermal-' || inputs.kind == 'as' && 'as-' || inputs.kind == 'rt' && 'rt-prices-' || '') }} --clobber -R "$GITHUB_REPOSITORY"

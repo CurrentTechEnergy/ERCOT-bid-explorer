@@ -92,6 +92,7 @@ EMIL_60DAY = "np3-965-er"
 EMIL_DAM = "np3-966-er"          # 60-day DAM disclosure: three-part offers, awards, AS awards
 EMIL_LAMBDA = "np6-322-cd"
 EMIL_SPP = "np6-905-cd"
+EMIL_RT_MCPC = "np6-331-cd"   # real-time MCPC by 15-minute interval, since RTC+B (pipeline/rt_as.py)
 EMIL_DAM_SPP = "np4-190-cd"     # DAM settlement point prices (hubs and load zones kept, for pipeline/ppa.py)
 EMIL_DAM_LAMBDA = "np4-523-cd"  # DAM system lambda (pipeline/dam_lambda.py)
 EMIL_COP = "np3-991-ex"         # 60-day COP All Updates: each QSE's resource plans with update times (pipeline/cop.py)
