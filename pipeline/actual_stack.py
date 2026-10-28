@@ -4,7 +4,7 @@ technology.  Read by the Real-time offers page; the page draws it and computes n
 the forecast's expected stack (pipeline/forecast/stack.py, removed with the forecasts in #202).
 
 From the per-unit day file (pipeline/units.py), for every SCED run a thermal unit is online
-(status "ON..."), its SCED2 curve (what SCED dispatched against; the submitted curve before
+(status "ON...", unless it has no output and no HSL: intraday.empty_hour), its SCED2 curve (what SCED dispatched against; the submitted curve before
 format 6) evaluated on PRICES the way parse_60day evaluates curves (0 MW below the first point,
 clipped to [0, HSL]), then raised to its LSL, since SCED cannot take it below that:
 
@@ -35,7 +35,7 @@ from .store import read_json_gz, write_json_gz
 from .units import _ffill_index
 
 OUT_DIR = DATA_DIR / "stack"
-FORMAT = 2
+FORMAT = 3   # 2: minimum at the -$250 floor; 3: units online with no output and no HSL left out
 FLOOR = -249.99
 PRICES = np.concatenate([
     [-250, -100, -75, -50, -40, -30, -25, -20, -15, -10, -5],
@@ -69,6 +69,11 @@ def day_stack(ud: dict, group_of: dict) -> dict:
         li = _ffill_index(u["lim"], n)
         hsl = np.array([float(u["lim"][i][1] or 0.0) if i >= 0 else 0.0 for i in li])
         lsl = np.array([float(u["lim"][i][2] or 0.0) if i >= 0 else 0.0 for i in li])
+        out = u.get("out") or [None] * 24
+        flat = np.array([out[h] or 0.0 for h in hr])         # a unit without a curve: its output
+        online &= ~((hsl <= 0) & (flat <= 0))                # online in name only (intraday.empty_hour)
+        if not online.any():
+            continue
         cv = u.get("curve2") or u.get("curve") or []
         ci = _ffill_index(cv, n) if cv else np.full(n, -1)
         rows, floor = np.zeros((n, G)), lsl.copy()
@@ -87,8 +92,6 @@ def day_stack(ud: dict, group_of: dict) -> dict:
                 M[j, :len(ev[2])] = np.array(ev[2], float) * (hsl[r0] if u.get("frac") else 1.0)
             ev = np.clip(mw_at_prices(P, M, np.append(PRICES, FLOOR), "zero")[inv], lsl[idx][:, None], np.maximum(hsl[idx], lsl[idx])[:, None])
             rows[idx], floor[idx] = ev[:, :-1], ev[:, -1]
-        out = u.get("out") or [None] * 24
-        flat = np.array([out[h] or 0.0 for h in hr])         # a unit without a curve: its output
         rows[online & ~has] = flat[online & ~has][:, None]
         lo_r, hi_r = np.where(has, floor, flat), np.where(has, np.maximum(hsl, lsl), flat)
         w = np.zeros((24, n))

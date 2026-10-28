@@ -92,6 +92,7 @@ MIN_AWARD = 1.1      # an award at most this x LSL counts as holding at minimum 
 RUN_CAP = 48         # hours in the current state are counted up to this
 FIT_MIN_DAYS = 60    # days of transitions a monthly fit needs
 HISTORY_WINDOW = 12  # months of history days a reduced fit (before the 60-day fits) is fitted on
+LIVE_VERSION = "s2"   # 60-day day files only (s2: a thermal unit online with no output and no HSL is offline, intraday.empty_hour)
 HISTORY_VERSION = "h2"   # history day files only (h2: with the DAM resource status); a change rewrites them, newest first
 HISTORY_BUDGET = 75 * 60   # seconds a run may spend writing history day files
 SAVE_EVERY = 30      # history day files between index writes
@@ -547,7 +548,7 @@ def day_units(ctx, date):
 
 
 def build_days(index: dict, rebuild: bool = False) -> list:
-    """Write the day files for every 60-day day that has none (all of them when VERSION changed),
+    """Write the day files for every 60-day day that has none (all of them when VERSION or LIVE_VERSION changed),
     then, from the thermal history files (operator_history.py), the days before the 60-day fits
     begin, newest first, for at most HISTORY_BUDGET seconds a run.  The scores cover both; the
     turn-off points only the 60-day days, which the Commitment day view shows."""
@@ -557,7 +558,7 @@ def build_days(index: dict, rebuild: bool = False) -> list:
     ip = OUT_DIR / "index.json.gz"
     ix = read_json_gz(ip, default=None) or {}
     rebuild = rebuild or ix.get("version") != VERSION
-    have = set() if rebuild else set(ix.get("days", []))
+    have = set() if rebuild or ix.get("live_version") != LIVE_VERSION else set(ix.get("days", []))
     hist_old = set() if rebuild else set(ix.get("history_days", []))     # files on hand, any history version
     hist_have = (set(ix.get("history_current", ix.get("history_days", []))) if ix.get("history_version") == HISTORY_VERSION
                  else set()) & hist_old                                  # those written by this history version
@@ -571,7 +572,7 @@ def build_days(index: dict, rebuild: bool = False) -> list:
             done.append(d)
     days = sorted(have | set(done))
     def save_index():      # also every SAVE_EVERY history days, so a run cut short keeps its work
-        write_json_gz(ip, {"model": NAME, "version": VERSION, "days": days, "history_days": sorted(hist_old | hist_have | set(hist_new)),
+        write_json_gz(ip, {"model": NAME, "version": VERSION, "live_version": LIVE_VERSION, "days": days, "history_days": sorted(hist_old | hist_have | set(hist_new)),
                            "history_version": HISTORY_VERSION, "history_current": sorted(hist_have | set(hist_new)),
                            "reduced": REDUCED_NOTE})
     hctx, t0, hist_new = history_context(ctx), time.time(), []
