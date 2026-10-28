@@ -4,18 +4,17 @@ window, from the thermal history files (pipeline/history.py, the `history` relea
 HistoryContext stands in for the forecast Context the model reads (dates, raw states, DAM day
 records, hub prices), covering the history days and then the live 60-day days on one calendar.
 A history day's DAM record is rebuilt from the thermal file's columns: node price, award, DAM LSL,
-minimum-energy cost and hot start per configuration, as the DAM day file gives them.  Two inputs
-the history lacks:
-  DAM resource status   not kept in the history files, so the reduced fits leave it out (zero
-                        for every hour); Feb to Aug 2026 test: CC hours right 96.9% -> 96.5%,
-                        cheap-hour turn-offs caught 318 -> 311 of 428
+minimum-energy cost and hot start per configuration, as the DAM day file gives them, and its DAM
+resource status by hour from the dam-status files (history.py --dam-status, built from our own
+copies of the 60-day DAM disclosure in the raw store).  Without those files the reduced fits
+leave the status out (zero for every hour).  One input the history lacks:
   gas price             the live Houston Ship Channel series starts Nov 2025; before it, the
                         Ship Channel as far back as OilPriceAPI has it, then Henry Hub from EIA
                         (data/gas_history.json.gz, pipeline/gas.py)
 
 The model itself picks the fit (operator_informed.fit): a month the 60-day fits cover keeps the
 live fit (the history adds nothing to it), and an earlier month gets a reduced fit on the
-HISTORY_WINDOW months before it, without the DAM status.
+HISTORY_WINDOW months before it, with the DAM status when the dam-status files are there.
 """
 import datetime as dt
 from collections import defaultdict
@@ -79,6 +78,19 @@ class HistoryContext:
                                      "mingen": float(np.nanmin(mg)) if np.isfinite(mg).any() else None,
                                      "start": [float(np.nanmin(hot))] if np.isfinite(hot).any() else [],
                                      "spp": _l(spp), "award": [0.0 if not np.isfinite(v) else float(v) for v in aw]}
+        # DAM resource status by hour (history.py --dam-status), onto the same records
+        self.has_status = False
+        for f in _files("dam-status"):
+            st = pd.read_parquet(f)
+            st = st[st["tech"].astype(str).isin(TECHS) & (st["date"] < before) & st["he"].between(1, 24)]
+            for (d, name), u in st.groupby(["date", "unit"], observed=True, sort=False):
+                rec = dam.get(d, {}).get(str(name))
+                if rec is not None:
+                    sh = [""] * 24
+                    for h, v in zip(u["he"].to_numpy(), u["status"].astype(str)):
+                        sh[h - 1] = v
+                    rec["status_h"] = sh
+                    self.has_status = True
         hist = sorted(dam)
         self.hist_dates = hist
         self.uh = {"dates": hist + list(live.uh.get("dates", []))}

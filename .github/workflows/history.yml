@@ -12,7 +12,7 @@ on:
   workflow_dispatch:
     inputs:
       kind:
-        description: "renewables (units-*), thermal (thermal-*), as (as-*, as-mcpc-*), rt (rt-prices-*) rtas (rt-as-*, rt-mcpc-*, dam-as-*) or dam-status (dam-status-*, read only from the raw store)"
+        description: "renewables (units-*), thermal (thermal-*), as (as-*, as-mcpc-*), rt (rt-prices-*), rtas (rt-as-*, rt-mcpc-*, dam-as-*) or dam-status (dam-status-*, read only from the raw store)"
         type: choice
         options: [renewables, thermal, as, rt, rtas, dam-status]
         required: false

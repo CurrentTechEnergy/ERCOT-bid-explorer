@@ -90,6 +90,7 @@ MIN_AWARD = 1.1      # an award at most this x LSL counts as holding at minimum 
 RUN_CAP = 48         # hours in the current state are counted up to this
 FIT_MIN_DAYS = 60    # days of transitions a monthly fit needs
 HISTORY_WINDOW = 12  # months of history days a reduced fit (before the 60-day fits) is fitted on
+HISTORY_VERSION = "h2"   # history day files only (h2: with the DAM resource status); a change rewrites them, newest first
 HISTORY_BUDGET = 75 * 60   # seconds a run may spend writing history day files
 SAVE_EVERY = 30      # history day files between index writes
 REDUCED_NOTE = ("days before the 60-day fits: fitted on the 12 months before, from the thermal history files, "
@@ -386,7 +387,9 @@ def _reduced_fit(ctx, month):
         else:
             R = _rows(ctx, dates)
             ok = all(len(set(R[s][2])) == 2 for s in (0, 1))
-            cache[month] = {s: _fit_side(_no_status(R[s][0]), *R[s][1:]) for s in (0, 1)} if ok else None
+            # the DAM status where the history has it (operator_history.py); OI_HISTORY_STATUS=0 leaves it out
+            keep = getattr(ctx, "has_status", False) and os.environ.get("OI_HISTORY_STATUS", "1") != "0"
+            cache[month] = {s: _fit_side(R[s][0] if keep else _no_status(R[s][0]), *R[s][1:]) for s in (0, 1)} if ok else None
     return cache[month]
 
 
@@ -553,7 +556,9 @@ def build_days(index: dict, rebuild: bool = False) -> list:
     ix = read_json_gz(ip, default=None) or {}
     rebuild = rebuild or ix.get("version") != VERSION
     have = set() if rebuild else set(ix.get("days", []))
-    hist_have = set() if rebuild else set(ix.get("history_days", []))
+    hist_old = set() if rebuild else set(ix.get("history_days", []))     # files on hand, any history version
+    hist_have = (set(ix.get("history_current", ix.get("history_days", []))) if ix.get("history_version") == HISTORY_VERSION
+                 else set()) & hist_old                                  # those written by this history version
     ctx = C.Context(index or load_index())
     want = [d for d in sorted(_days(ctx)) if d not in have]
     done = []
@@ -564,7 +569,8 @@ def build_days(index: dict, rebuild: bool = False) -> list:
             done.append(d)
     days = sorted(have | set(done))
     def save_index():      # also every SAVE_EVERY history days, so a run cut short keeps its work
-        write_json_gz(ip, {"model": NAME, "version": VERSION, "days": days, "history_days": sorted(hist_have | set(hist_new)),
+        write_json_gz(ip, {"model": NAME, "version": VERSION, "days": days, "history_days": sorted(hist_old | hist_have | set(hist_new)),
+                           "history_version": HISTORY_VERSION, "history_current": sorted(hist_have | set(hist_new)),
                            "reduced": REDUCED_NOTE})
     hctx, t0, hist_new = history_context(ctx), time.time(), []
     if hctx is not None:
@@ -580,7 +586,7 @@ def build_days(index: dict, rebuild: bool = False) -> list:
                 hist_new.append(d)
                 if len(hist_new) % SAVE_EVERY == 0:
                     save_index()
-    hist = sorted(hist_have | set(hist_new))
+    hist = sorted(hist_old | hist_have | set(hist_new))
     save_index()
     n = build_decision_view(days)
     from .operator_scores import build_scores
