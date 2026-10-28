@@ -68,6 +68,7 @@ import re
 
 import numpy as np
 
+from . import private
 from .config import DATA_DIR
 from .log import warn
 from .renew_changes import plant_of as renew_plant
@@ -192,7 +193,7 @@ def build_signatures(days):
     """-> (dates, {unit: {"tech", "plant", "hub", field: [per date]}}, cheap-day flags, node prices kept per unit-day)"""
     lam = (read_json_gz(DATA_DIR / "dam_lambda.json.gz", default={}) or {}).get("days") or {}
     fh = (read_json_gz(DATA_DIR / "fuel_hubs.json.gz", default={}) or {}).get("units") or {}
-    gas = _gas_lookup(read_json_gz(DATA_DIR / "gas_hubs.json.gz", default={}) or {})
+    gas = _gas_lookup(private.read("gas_hubs.json.gz", default={}) or {})
     rt = _rt_floors()
     units, cheapdays, status = {}, [], {}
     for k, day in enumerate(days):

@@ -25,6 +25,7 @@ from zoneinfo import ZoneInfo
 
 import numpy as np
 
+from . import private
 from .config import DATA_DIR
 from .log import warn, write_summary
 from .store import read_json_gz
@@ -89,7 +90,7 @@ def check(now=None) -> dict:
                            behind(fc[-1]) if fc else None, allowed)
 
     # gas hubs post on trading days, a day or so late
-    hubs = (read_json_gz(DATA_DIR / "gas_hubs.json.gz") or {}).get("hubs") or {}
+    hubs = (private.read("gas_hubs.json.gz") or {}).get("hubs") or {}
     for code, h in hubs.items():
         latest = max(h.get("dates") or [""]) or None
         lag = int(np.busday_count(latest, today.isoformat())) if latest else None

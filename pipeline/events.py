@@ -51,8 +51,8 @@ Sources (each already computed by its own module; nothing is detected twice):
                    (trends_60d "first", the price trends.py measures each unit against its peers
                    with, so a fuel-price move that the bidding kind removes shows here instead)
                    shifting between K online days and the K before, by FUEL thresholds.  Unit
-                   key "fleet:<tech>"; carries the Houston Ship Channel gas price over the same
-                   two windows (gas_hubs) beside it
+                   key "fleet:<tech>"; carries the Henry Hub gas price (gas.json.gz) over the
+                   same two windows beside it (the Ship Channel price is licensed and not published)
   battery_size     storage.py units.json.gz: a lasting change in a battery's HSL or maximum state
                    of charge: SIZE_SHARE or more for SIZE_WINDOW days, holding most of the SIZE_HOLD days after; major from SIZE_MAJOR.
                    Not in a battery's first SIZE_HOLD days charging or discharging
@@ -123,7 +123,6 @@ OUTAGE_MAJOR = 30     # ... and a major one from this length
 FUEL = {"combined_cycle": (5, 0.2, 0.5), "gas_steam": (5, 0.2, 0.5), "combustion_turbine": (5, 0.2, 0.5),
         "coal": (12, 0.6, 0.6)}
 FUEL_MIN_UNITS = 5    # units with a price that day before its median counts
-FUEL_HUB = "hsc"      # gas hub shown beside the shift (gas_hubs.json.gz)
 # battery size changes (see the docstring)
 SIZE_WINDOW, SIZE_BASE, SIZE_MIN_BASE = 7, 30, 20      # days with a value
 SIZE_SHARE, SIZE_MW, SIZE_HOLD, SIZE_MAJOR = 0.2, 5, 30, 0.5
@@ -246,10 +245,9 @@ def bidding_events(tr):
     return out
 
 
-def fuel_events(tr, hubs):
+def fuel_events(tr, hh):
     dates, units = tr.get("dates", []), tr.get("units", [])
-    hub = (hubs.get("hubs") or {}).get(FUEL_HUB) or {}
-    gas = dict(zip(hub.get("dates", []), hub.get("value", [])))
+    gas = dict(zip(hh.get("dates", []), hh.get("value", [])))
 
     def gas_med(lo, hi):
         v = [x for d, x in gas.items() if lo <= d <= hi and x is not None]
@@ -278,7 +276,7 @@ def fuel_events(tr, hubs):
         for j, b, a, share in taken:
             i = idx[j]
             gb, ga = gas_med(dates[idx[j - K]], dates[idx[j - 1]]), gas_med(dates[i], dates[idx[j + K - 1]])
-            g = f"; Houston Ship Channel gas ${gb:.2f} to ${ga:.2f}/MMBtu" if gb is not None and ga is not None else ""
+            g = f"; Henry Hub gas ${gb:.2f} to ${ga:.2f}/MMBtu" if gb is not None and ga is not None else ""
             out.append(_ev(f"fleet:{tech}", dates[i], "fuel", tech,
                            f"Median offer {_usd(b)} to {_usd(a)}/MWh over {n[i]} units{g}", share >= major_share,
                            before=round(b, 1), after=round(a, 1), value=n[i],
@@ -666,7 +664,7 @@ def build_events(index: dict) -> dict:
     rc = read_json_gz(DATA_DIR / "renew_changes.json.gz", default={}) or {}
     do = read_json_gz(DATA_DIR / "dam_offers.json.gz", default={}) or {}
     oc = read_json_gz(OPERATOR_DIR / "cutoffs.json.gz", default={}) or {}
-    hubs = read_json_gz(DATA_DIR / "gas_hubs.json.gz", default={}) or {}
+    hh = read_json_gz(DATA_DIR / "gas.json.gz", default={}) or {}
     su = read_json_gz(DATA_DIR / "storage" / "units.json.gz", default={}) or {}
     qh = read_json_gz(QSE_PATH, default={}) or {}
     ent = read_json_gz(ENTITIES_PATH, default={}) or {}
@@ -679,7 +677,7 @@ def build_events(index: dict) -> dict:
     tech_all.update({_train(u["unit"]): u["tech"] for u in tr.get("units", [])})
     tech_all.update({u: "storage" for u in (su.get("units") or {})})
     events = (shutdown_events(dec) + group_events(uh, tech_of) + bidding_events(tr) + turnoff_events(oc) + run_price_events(uh, tech_of)
-              + renew_events(rc) + dam_events(do) + outage_events(uh, tech_of) + fuel_events(tr, hubs) + battery_events(su)
+              + renew_events(rc) + dam_events(do) + outage_events(uh, tech_of) + fuel_events(tr, hh) + battery_events(su)
               + new_unit_events(tr) + control_events(qh, ent, tech_all))
     old = read_json_gz(PATH, default=None) or {}
     seen = {e["id"]: e["seen"] for e in old.get("events", [])}

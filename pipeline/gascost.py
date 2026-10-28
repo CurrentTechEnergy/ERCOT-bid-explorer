@@ -16,6 +16,7 @@ this drops; the spring maintenance season is where that costs most.
 import bisect
 import datetime as dt
 
+from . import private
 from .config import DATA_DIR
 from .store import read_json_gz
 
@@ -29,7 +30,7 @@ _C = {}
 def _load():
     if not _C:
         from .intraday import train_of
-        h = (read_json_gz(DATA_DIR / "gas_hubs.json.gz", default={}) or {}).get("hubs", {})
+        h = (private.read("gas_hubs.json.gz", default={}) or {}).get("hubs", {})
         _C["gas"] = {k: (v.get("dates") or [], v.get("value") or []) for k, v in h.items()}
         hub = {}
         for name, u in ((read_json_gz(DATA_DIR / "fuel_hubs.json.gz", default={}) or {}).get("units") or {}).items():

@@ -63,7 +63,7 @@ const ECON = {
 // ---------------------------------------------------------------- state ---
 const S = {
   index: null, dalam: null, groups: null, days: [],
-  date: null, gen: null, units60: null, prices: null, a60: null, dam: null, rtNodes: null, fuelHubs: null, gasHubs: null, gasHH: null,
+  date: null, gen: null, units60: null, prices: null, a60: null, dam: null, rtNodes: null, fuelCost: null, gasHH: null,
   limBy: "group", hour: 12, unitView: "day", unitTech: "all", unitSearch: "", unitSort: { key: "hsl", dir: -1 }, unitShowAll: false,
   hidden: new Set(),
 };
@@ -613,8 +613,9 @@ function priceOn(src, d) {
 // each thermal train's profit by hour and over the day ($), settled two-settlement as on the Unit
 // page: the DAM award at its day-ahead price plus the real-time deviation (output less award) at
 // the unit's real-time node price (system lambda where the node has no price), plus ancillary
-// service awards at their clearing prices, less fuel (EIA heat rate x the unit's gas hub, Henry
-// Hub without one) and variable O&M on the output; the day also less its starts (the DAM hot
+// service awards at their clearing prices, less fuel (EIA heat rate x the unit's gas hub, as the
+// pipeline prices it in fuel_cost_60d, the hub prices themselves being licensed; EIA heat rate x
+// Henry Hub without one) and variable O&M on the output; the day also less its starts (the DAM hot
 // start offer, else the generic one). Hourly profit has no start costs.
 function unitProfit() {
   const f = S.units60, a = S.a60;
@@ -622,9 +623,8 @@ function unitProfit() {
   const ci = Object.fromEntries(f.columns.map((c, i) => [c, i + 2]));
   const dam = (S.dam && S.dam.units) || {}, mcpc = (S.dam && S.dam.mcpc) || {};
   const rt = S.rtNodes && S.rtNodes.points, lam = dayPrices().rt;
-  const hubs = (S.gasHubs && S.gasHubs.hubs) || {}, hh = priceOn(S.gasHH, S.date);
-  const hubPrice = Object.fromEntries(Object.keys(hubs).map((k) => [k, priceOn(hubs[k], S.date)]));
-  const fh = (S.fuelHubs && S.fuelHubs.units) || {};
+  const hh = priceOn(S.gasHH, S.date), fc = S.fuelCost || {}, fi = (fc.dates || []).indexOf(S.date);
+  const ownFuel = (name) => (fi >= 0 && fc.units && fc.units[name] ? fc.units[name][fi] : null);     // $/MWh
   const out = {};     // configuration -> [24] MW
   f.rows.forEach((r) => { const h = r[1] - 1; if (h >= 0 && h < 24) (out[r[0]] = out[r[0]] || HRS.map(() => 0))[h] += r[ci.output] || 0; });
   Object.values(a.units).forEach((u) => { u.profit = HRS.map(() => 0); u.startCost = 0; u.rtShare = 0; u.hot = null; u.noFuel = false; });
@@ -633,9 +633,9 @@ function unitProfit() {
     const e = ECON[t], u = a.units[trainOf(name, t)];
     if (!e || !u) return;
     const du = dam[name] || {}, o = out[i] || HRS.map(() => 0), node = rt && du.sp ? rt[du.sp] : null;
-    const hub = (fh[name] || {}).hub, gas = hub && hubPrice[hub] != null ? hubPrice[hub] : hh;
-    const fp = e.fuel != null ? e.fuel : gas;
-    if (fp == null) u.noFuel = true;
+    const own = e.fuel != null ? null : ownFuel(name);
+    const fuelMWh = e.fuel != null ? e.fuel * e.hr : own != null ? own : hh != null ? hh * e.hr : null;
+    if (fuelMWh == null) u.noFuel = true;
     if (du.start && du.start[0] != null) u.hot = Math.max(u.hot || 0, du.start[0]);
     HRS.forEach((h) => {
       const p = node && node[h] != null ? node[h] : lam ? lam[h] : null;
@@ -644,7 +644,7 @@ function unitProfit() {
       const aw = du.award && du.award[h] != null ? du.award[h] : 0, spp = du.spp ? du.spp[h] : null;
       let v = aw && spp != null ? aw * spp + (o[h] - aw) * p : o[h] * p;
       Object.entries(du.as || {}).forEach(([k, q]) => { if (q && q[h] && mcpc[k] && mcpc[k][h] != null) v += q[h] * mcpc[k][h]; });
-      v -= Math.max(0, o[h]) * ((fp || 0) * e.hr + e.vom);
+      v -= Math.max(0, o[h]) * ((fuelMWh || 0) + e.vom);
       u.profit[h] += v;
     });
   });
@@ -700,8 +700,8 @@ function loadView() {
 }
 
 async function boot() {
-  [S.index, S.dalam, S.groups, S.fuelHubs, S.gasHubs, S.gasHH] = await Promise.all([tryJSON("data/index.json"), tryJSON("data/dam_lambda.json.gz"), tryJSON("data/groups_60d.json.gz"),
-    tryJSON("data/fuel_hubs.json.gz"), tryJSON("data/gas_hubs.json.gz"), tryJSON("data/gas.json.gz")]);
+  [S.index, S.dalam, S.groups, S.fuelCost, S.gasHH] = await Promise.all([tryJSON("data/index.json"), tryJSON("data/dam_lambda.json.gz"), tryJSON("data/groups_60d.json.gz"),
+    tryJSON("data/fuel_cost_60d.json.gz"), tryJSON("data/gas.json.gz")]);
   S.index = S.index || { days: {} };
   // every day with ERCOT data for it: prices, the 2-day summary or the 60-day disclosure
   const days = [...new Set(["prices", "2dgen", "60d"].flatMap((k) => S.index.days[k] || []))].sort();

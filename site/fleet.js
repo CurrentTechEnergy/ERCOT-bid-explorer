@@ -52,11 +52,11 @@ const fmt$2 = (v) => (v == null || isNaN(v) ? "–" : (v < 0 ? "−" : "") + "$"
 const parseDate = (d) => new Date(d + "T12:00:00");
 const fmtDate = d3.timeFormat("%a %b %-d, %Y");
 
-// gas price used for gas-fired fuel cost: Houston Ship Channel and Waha from OilPriceAPI, Henry Hub
-// from the EIA, or "unit": each unit's own fuel hub (Waha or Houston Ship Channel, from
-// pipeline/fuel_hub.py). A hub with no prices in the loaded data falls back to Henry Hub.
+// gas price used for gas-fired fuel cost: "unit", each unit's own fuel hub (Waha or Houston Ship
+// Channel, from pipeline/fuel_hub.py), costed in the pipeline (econ.py gas_own) because the hub
+// prices are licensed and not published; or "hh", Henry Hub from the EIA
 const HUBS = { hsc: "Houston Ship Channel", waha: "Waha", hh: "Henry Hub" };
-const HUB_CHOICES = { unit: "each unit's own hub", ...HUBS };
+const HUB_CHOICES = { unit: "each unit's own hub", hh: HUBS.hh };
 const S = { tech: "combined_cycle", cost: "eia", rev: "two", hub: "unit", adder: 0, sort: "margin", dir: -1, q: "",
   params: JSON.parse(JSON.stringify(DEFAULTS)), fuel: { ...FUEL_PRICE }, idx: null, data: {} };
 const VIEW_KEYS = { tech: "tech", cost: "cost", rev: "rev", gas: "hub", adder: "adder", sort: "sort" };
@@ -70,10 +70,16 @@ function emptyMsg(el, msg) { el.innerHTML = `<p class="empty">${msg}</p>`; }
 
 // ---- economics of one unit on the chosen bases -------------------------------------
 // returns per-day arrays: energy, as, fuel (fuel + VOM), starts (start cost), margin, and flags
+// gas: the Henry Hub series, or null to cost gas at the unit's own hub from its gas_own (the day's gas
+// bill per 1 MMBtu/MWh of heat rate, built by the pipeline, which does not publish the hub prices)
 function unitEcon(u, D, gas) {
   const t = S.tech, p = S.params[t] || {}, fuelKind = FUEL[t];
-  const gasPrice = (i) => (gas[i] == null ? null : gas[i] + S.adder);
-  const fuelPrice = (i) => (fuelKind === "gas" ? gasPrice(i) : fuelKind ? S.fuel[fuelKind] : 0);
+  // the day's fuel bill at heat rate hr ($, before variable O&M), or null with no fuel price
+  const fuelBill = (i, mwh, hr) => {
+    if (fuelKind !== "gas") return mwh * hr * (fuelKind ? S.fuel[fuelKind] : 0);
+    if (!gas) return u.gas_own[i] == null ? null : u.gas_own[i] * hr + mwh * hr * S.adder;
+    return gas[i] == null ? null : mwh * hr * (gas[i] + S.adder);
+  };
   const out = { energy: [], as: [], fuel: [], starts: [], margin: [], lamDays: 0, missing: 0, est: 0 };
   for (let i = 0; i < D; i++) {
     const mwh = u.mwh[i];
@@ -86,19 +92,18 @@ function unitEcon(u, D, gas) {
     const as = u.rev_as[i] || 0;
     let fuel = 0, starts = 0, estimated = false;
     if (fuelKind) {
-      const fp = fuelPrice(i);
       const n = u.starts[i] || 0;
       const own = u.start_hot[i] != null ? u.start_hot[i] : null;
       if (S.cost === "offer" || S.cost === "inc") {
         const own_cost = S.cost === "inc" ? u.cost_inc[i] : u.cost_off[i];
         if (own_cost != null) fuel = own_cost;
         else if (S.cost === "offer" && u.mingen[i] != null) fuel = mwh * u.mingen[i];
-        else if (fp != null) { fuel = mwh * (p.hr * fp + p.vom); estimated = true; }
-        else fuel = null;
+        else { const b = fuelBill(i, mwh, p.hr); fuel = b == null ? null : b + mwh * p.vom; estimated = b != null; }
         starts = n * (own != null ? own : p.start);
       } else {
         const hr = S.cost === "eia" ? EIA_HR[t] : p.hr;
-        fuel = fp == null ? null : mwh * (hr * fp + p.vom);
+        const b = fuelBill(i, mwh, hr);
+        fuel = b == null ? null : b + mwh * p.vom;
         starts = n * (own != null && S.cost === "eia" ? own : p.start);
         if (own == null && n) estimated = true;
       }
@@ -193,17 +198,13 @@ function legendHTML(el) {
 
 // ---- panels --------------------------------------------------------------------------
 let ECON = {};     // unit name -> unitEcon result, for the current tech and bases
-// the gas price series for one hub in this tech's data and its label; Henry Hub when the hub has none
-function hubSeries(T, hub) {
-  const h = T.hubs && T.hubs[hub];
-  if (hub !== "hh" && h && h.some((v) => v != null)) return { values: h, label: HUBS[hub] };
-  return { values: T.gas, label: HUBS.hh + (hub !== "hh" ? ` (no ${HUBS[hub]} prices loaded)` : "") };
-}
-// the hub a unit is costed at under the current choice: its own fuel hub, else Houston Ship Channel
-const unitHub = (u) => (S.hub === "unit" ? u.fuel_hub || "hsc" : S.hub);
+// the gas series for a unit under the current choice: null (its own hub, from gas_own) or Henry Hub
+const ownHub = (u) => S.hub === "unit" && !!u.gas_own;
+const gasFor = (T, u) => (ownHub(u) ? null : T.gas);
 function gasLabel(T) {
-  if (S.hub !== "unit") return hubSeries(T, S.hub).label;
-  const n = Object.values(T.units).filter((u) => u.fuel_hub === "waha").length;
+  if (S.hub !== "unit") return HUBS.hh;
+  const us = Object.values(T.units), n = us.filter((u) => u.gas_hub === "waha").length;
+  if (!us.some((u) => u.gas_own)) return `${HUBS.hh} (no own-hub costs in this data)`;
   return `each unit's own hub (${n} on Waha, the rest Houston Ship Channel)`;
 }
 function compute() {
@@ -211,7 +212,7 @@ function compute() {
   ECON = {};
   if (!T) return;
   const D = T.dates.length;
-  Object.entries(T.units).forEach(([name, u]) => { ECON[name] = unitEcon(u, D, hubSeries(T, unitHub(u)).values); });
+  Object.entries(T.units).forEach(([name, u]) => { ECON[name] = unitEcon(u, D, gasFor(T, u)); });
 }
 
 function drawTotals() {
@@ -303,8 +304,7 @@ function redraw() { compute(); drawTotals(); drawInputs(); drawUnits(); }
 async function changeTech() { $("status").textContent = "Loading…"; await loadTech(); status(); redraw(); }
 function status() {
   const I = S.idx, D = I.dates;
-  $("status").textContent = `60-day data: ${D.length} days, ${D[0]} to ${D[D.length - 1]} · node prices on ${I.has_nodes.filter(Boolean).length} days · DAM on ${I.has_dam.filter(Boolean).length} · gas prices on ${I.gas_days} days (Henry Hub)` +
-    Object.entries(I.hub_days || {}).map(([h, n]) => `, ${n} (${HUBS[h] || h})`).join("");
+  $("status").textContent = `60-day data: ${D.length} days, ${D[0]} to ${D[D.length - 1]} · node prices on ${I.has_nodes.filter(Boolean).length} days · DAM on ${I.has_dam.filter(Boolean).length} · Henry Hub gas prices on ${I.gas_days} days`;
 }
 
 async function boot() {

@@ -7,11 +7,12 @@ the fetch is skipped and any gas file already present is kept.  Writes data/gas.
    "updated": ISO timestamp}
 with one entry per trading day (EIA posts no weekend or holiday prices), merged with what
 was already stored so a short outage at EIA loses nothing.  fetch_gas_history() writes the
-series before GAS_START, and the Ship Channel and Waha as far back as OilPriceAPI has them, to
-data/gas_history.json.gz.
+series before GAS_START to data/gas_history.json.gz, and the Ship Channel and Waha as far back
+as OilPriceAPI has them to the private gas_hub_history.json.gz.
 
-fetch_hubs() needs OILPRICEAPI_KEY (free key from https://www.oilpriceapi.com/) and writes
-data/gas_hubs.json.gz:
+fetch_hubs() needs OILPRICEAPI_KEY (free key from https://www.oilpriceapi.com/) and writes the
+private gas_hubs.json.gz (pipeline/private.py: OilPriceAPI's terms do not allow publishing the
+prices, so the site gets only values derived from them):
   {"source": "OilPriceAPI", "unit": "$/MMBtu", "updated": ISO timestamp,
    "hubs": {"hsc": {"code": ..., "name": "Houston Ship Channel", "dates": [...], "value": [...]},
             "waha": {...}}}
@@ -23,6 +24,7 @@ import os
 import requests
 
 from .config import DATA_DIR, EIA_ROUTE, EIA_SERIES, GAS_HUBS, GAS_START
+from . import private
 from .log import warn
 from .store import read_json_gz, write_json_gz
 
@@ -31,7 +33,8 @@ GAS_HISTORY_PATH = DATA_DIR / "gas_history.json.gz"
 HISTORY_GAS_START = "2018-12-01"   # a month before the thermal history begins
 HISTORY_CALLS = 20       # OilPriceAPI calls fetch_gas_history may spend in a run
 HISTORY_WINDOW_DAYS = 140    # calendar days per hub history request: about 100 trading days, one page
-HUBS_PATH = DATA_DIR / "gas_hubs.json.gz"
+HUBS = "gas_hubs.json.gz"                   # private (pipeline/private.py)
+HUB_HISTORY = "gas_hub_history.json.gz"     # private
 API = "https://api.eia.gov/v2"
 PAGE = 5000
 OPA = "https://api.oilpriceapi.com/v1/prices/historical"
@@ -107,14 +110,16 @@ def fetch_gas(key=None, start=None) -> bool:
 def fetch_gas_history(eia_key=None, opa_key=None) -> bool:
     """Gas prices before the live series begin, for the operator-informed model's days before the
     60-day window (pipeline/models/operator_history.py), into data/gas_history.json.gz:
-      {"henry_hub": {"dates", "value"}, "hsc"|"waha": {"dates", "value", "cursor", "done"}, "updated"}
+      {"henry_hub": {"dates", "value"}, "updated"}
+    and the private gas_hub_history.json.gz: {"hsc"|"waha": {"dates", "value", "cursor", "done"}}.
     Henry Hub from EIA, from HISTORY_GAS_START to GAS_START, fetched once.  Houston Ship Channel,
-    then Waha, from OilPriceAPI backwards from the start of each in data/gas_hubs.json.gz,
+    then Waha, from OilPriceAPI backwards from the start of each in the private gas_hubs.json.gz,
     HISTORY_WINDOW_DAYS at a time and at most HISTORY_CALLS calls a run between them (the free plan allows 50 a day and the daily
     fetches use about 2 a run), until it reaches HISTORY_GAS_START or a window comes back empty
-    (done: older days use Henry Hub).  Returns True when the file was written."""
+    (done: older days use Henry Hub).  Returns True when a file was written."""
     have = read_json_gz(GAS_HISTORY_PATH, default=None) or {}
-    changed = False
+    hist = private.read(HUB_HISTORY, default=None) or {}
+    changed = hub_changed = False
     eia_key = eia_key or os.environ.get("EIA_API_KEY")
     if not have.get("henry_hub") and eia_key:
         rows, offset = [], 0
@@ -144,8 +149,8 @@ def fetch_gas_history(eia_key=None, opa_key=None) -> bool:
     opa_key = opa_key or os.environ.get("OILPRICEAPI_KEY")
     calls = 0
     for hub in ("hsc", "waha"):
-        h = have.get(hub) or {}
-        live = ((read_json_gz(HUBS_PATH, default=None) or {}).get("hubs", {}).get(hub) or {}).get("dates") or []
+        h = hist.get(hub) or {}
+        live = ((private.read(HUBS, default=None) or {}).get("hubs", {}).get(hub) or {}).get("dates") or []
         if not opa_key or h.get("done") or not live or calls >= HISTORY_CALLS:
             continue
         code, name = GAS_HUBS[hub][0], GAS_HUBS[hub][1]
@@ -172,12 +177,14 @@ def fetch_gas_history(eia_key=None, opa_key=None) -> bool:
             cursor = start
         h["done"] = h.get("done") or cursor <= HISTORY_GAS_START
         dates = sorted(series)
-        have[hub] = {"dates": dates, "value": [series[d] for d in dates], "cursor": cursor, "done": h["done"]}
-        changed = True
+        hist[hub] = {"dates": dates, "value": [series[d] for d in dates], "cursor": cursor, "done": h["done"]}
+        hub_changed = True
         print(f"gas history: {name} {len(dates)} day(s) stored{f', from {dates[0]}' if dates else ''}"
               f"{' (done)' if h['done'] else f', next run continues before {cursor}'}")
+    if hub_changed:
+        private.write(HUB_HISTORY, hist)
     if not changed:
-        return False
+        return hub_changed
     have["updated"] = dt.datetime.now(dt.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
     write_json_gz(GAS_HISTORY_PATH, have)
     return True
@@ -227,7 +234,7 @@ def fetch_hubs(key=None) -> bool:
     if not key:
         print("gas hubs: no OILPRICEAPI_KEY, skipped")
         return False
-    have = (read_json_gz(HUBS_PATH, default=None) or {}).get("hubs", {})
+    have = (private.read(HUBS, default=None) or {}).get("hubs", {})
     end = dt.date.today().isoformat()
     hubs, changed = {}, False
     for hub, (code, name) in GAS_HUBS.items():
@@ -250,7 +257,7 @@ def fetch_hubs(key=None) -> bool:
             warn(f"gas hubs: no {name} ({code}) prices since {start}")
     if not changed:
         return False
-    write_json_gz(HUBS_PATH, {
+    private.write(HUBS, {
         "source": "OilPriceAPI", "unit": "$/MMBtu", "hubs": hubs,
         "updated": dt.datetime.now(dt.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
     })

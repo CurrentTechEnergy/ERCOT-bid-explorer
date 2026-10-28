@@ -31,20 +31,28 @@ For every unit in the per-unit day files (UNIT_DATA_DIR/60d/) and each 60-day da
 Prices are hourly means of the 15-minute (node) or 5-minute (lambda) values, so settlement
 at the real intervals differs a little.  Written per technology to data/econ/<tech>.json.gz:
   {dates, gas: [Henry Hub $/MMBtu per date, last trading day carried forward, null before
-   the first], hubs: {hsc: [Houston Ship Channel, likewise], waha: [Waha, likewise]},
-   units: {name: {type, sp, hsl, configs (combined cycle: the configuration names summed into
-   this train, else null), fuel_hub ("waha" | "hsc" for gas-fired units, from fuel_hubs.json.gz:
-   a train takes the hub most of its configurations got; null without one), fuel_hub_method,
-   series...}}}
+   the first], units: {name: {type, sp, hsl, configs (combined cycle: the configuration names
+   summed into this train, else null), fuel_hub ("waha" | "hsc" for gas-fired units, from
+   fuel_hubs.json.gz: a train takes the hub most of its configurations got; null without one),
+   fuel_hub_method, gas_hub, gas_own, series...}}}
+`gas_own` (gas-fired units) is the day's gas bill at the unit's own hub per 1 MMBtu/MWh of heat
+rate: mwh x that hub's price (last trading day carried forward), so fuel = gas_own x heat rate.
+The hub prices are licensed (OilPriceAPI) and are not published themselves (pipeline/private.py);
+`gas_hub` is the hub it was costed at: its fuel_hub (Houston Ship Channel without one), or "hh",
+Henry Hub, when that hub has no prices loaded.  A day with no price is null.
 `hsl` is the unit's capacity for capacity factors (MW): the 95th percentile, over the loaded days,
 of each day's highest HSL in any SCED run the unit is present in (for a combined-cycle train, the
 highest across its configurations).  Wind and solar HSL is weather-limited output, so a typical
 HSL would measure availability rather than capacity; the daily peak reaches the rating on windy
 or clear days, and the 95th percentile keeps a stray telemetry spike from setting it.
-and an index data/econ_index.json.gz {dates, techs: {tech: [names]}, has_nodes, has_dam}.
+and an index data/econ_index.json.gz {dates, techs: {tech: [names]}, has_nodes, has_dam, gas_days}.
+data/fuel_cost_60d.json.gz {dates, heat_rate: {tech: EIA MMBtu/MWh}, units: {configuration: [fuel
+$/MWh per date: the EIA heat rate x its own hub's price, Henry Hub on a day the hub has none]}}
+is the gas fuel cost the A day in ERCOT page takes off each unit's profit.
 """
 import numpy as np
 
+from . import private
 from .config import DATA_DIR, SIXTY_DAY_TECHS, UNIT_DATA_DIR
 from .intraday import _online, train_of
 from .parse_prices import node_hourly
@@ -53,6 +61,9 @@ from .units import _ffill_index
 
 SERIES = ("mwh", "chg", "rev_rt", "rev_lam", "da_mwh", "rev_da", "rev_da_rt", "rev_as", "cost_off", "cost_inc",
           "mingen", "start_hot", "start_inter", "start_cold", "starts", "hours_on")
+GAS_TECHS = ("combined_cycle", "combustion_turbine", "gas_steam")
+# EIA average tested heat rates (Electric Power Annual table 8.2, 2024, MMBtu/MWh), as the site uses
+EIA_HR = {"combined_cycle": 7.548, "combustion_turbine": 10.999, "gas_steam": 10.337}
 AS_KEYS = ("regup", "regdn", "rrs", "ecrs", "nspin")
 
 
@@ -104,6 +115,61 @@ def _peak_hsl(u: dict, n: int):
     return max(hsl) if hsl else None
 
 
+HR_MIN_UNITS, HR_CARRY_DAYS = 10, 14
+
+
+def build_implied_hr(hub_files: dict, hh: dict, fh: dict) -> None:
+    """The heat rate gas units' offers imply, for Beyond the range (beyond-range.js), written to
+    data/implied_hr_60d.json.gz {dates (trends_60d's), techs: {tech: [MMBtu/MWh or null]}}.
+
+    Each unit's first offer price above $0 at or above LSL (trends_60d "first") over the gas at its
+    own hub (fuel_hubs.json.gz; Houston Ship Channel without one, then Henry Hub when the hub has no
+    prices) on the last trading day before the day, as gas trades the day before it flows.  Each day
+    takes every unit's most recent value from the last HR_CARRY_DAYS days and the median across
+    units, blank with fewer than HR_MIN_UNITS.  Built here, not in the browser, because the hub
+    prices are licensed and not published (pipeline/private.py)."""
+    import datetime as dt
+    tr = read_json_gz(DATA_DIR / "trends_60d.json.gz", default={}) or {}
+    days = tr.get("dates") or []
+    src = {k: v for k, v in hub_files.items() if v.get("dates")}
+    if hh.get("dates"):
+        src["hh"] = hh
+    on_hub = {}
+
+    def gas_for(hub):
+        key = hub if hub in src else "hsc" if "hsc" in src else "hh" if "hh" in src else None
+        if key is None:
+            return {}
+        if key not in on_hub:
+            g, out, j, last = src[key], {}, 0, None
+            for d in days:
+                while j < len(g["dates"]) and g["dates"][j] < d:
+                    if g["value"][j] is not None:
+                        last = g["value"][j]
+                    j += 1
+                out[d] = last
+            on_hub[key] = out
+        return on_hub[key]
+
+    t0 = [dt.date.fromisoformat(d).toordinal() for d in days]
+    techs = {}
+    for t in GAS_TECHS:
+        us = [u for u in tr.get("units", []) if u.get("tech") == t]
+        gas = [gas_for((fh.get(u["unit"]) or {}).get("hub") or "hsc") for u in us]
+        last_hr, last_t, vals = [None] * len(us), [None] * len(us), []
+        for i, d in enumerate(days):
+            v = []
+            for k, u in enumerate(us):
+                p, g = u["first"][i], gas[k].get(d)
+                if p is not None and g is not None and g > 0:
+                    last_hr[k], last_t[k] = p / g, t0[i]
+                if last_hr[k] is not None and t0[i] - last_t[k] <= HR_CARRY_DAYS:
+                    v.append(last_hr[k])
+            vals.append(round(float(np.median(v)), 3) if len(v) >= HR_MIN_UNITS else None)
+        techs[t] = vals
+    write_json_gz(DATA_DIR / "implied_hr_60d.json.gz", {"dates": days, "techs": techs})
+
+
 def build_econ(index: dict) -> None:
     dates = sorted(index["days"].get("60d", []))
     D = len(dates)
@@ -121,7 +187,7 @@ def build_econ(index: dict) -> None:
         return out
 
     gas_series = carried(read_json_gz(DATA_DIR / "gas.json.gz", default=None) or {})
-    hub_files = (read_json_gz(DATA_DIR / "gas_hubs.json.gz", default=None) or {}).get("hubs", {})
+    hub_files = (private.read("gas_hubs.json.gz", default=None) or {}).get("hubs", {})
     hubs = {h: carried(v) for h, v in hub_files.items()}
 
     units = {}      # name -> {"type", "tech", "sp", "hsl": [D] daily peak HSL, series: [D]}
@@ -259,17 +325,32 @@ def build_econ(index: dict) -> None:
         t = r["tech"] if r["tech"] in SIXTY_DAY_TECHS else "other"
         peaks = [v for v in r["hsl"] if v is not None]
         r["hsl"] = _r(np.percentile(peaks, 95)) if peaks else None
+        if t in GAS_TECHS:
+            hub = r.get("fuel_hub") or "hsc"
+            own = hubs.get(hub)
+            r["gas_hub"] = hub if own and any(v is not None for v in own) else "hh"
+            g = own if r["gas_hub"] != "hh" else gas_series
+            r["gas_own"] = [None if m is None or p is None else _r(m * p, 1) for m, p in zip(r["mwh"], g)]
         by_tech.setdefault(t, {})[name] = r
     out_dir = DATA_DIR / "econ"
     for t in SIXTY_DAY_TECHS:
         us = by_tech.get(t, {})
-        write_json_gz(out_dir / f"{t}.json.gz", {"dates": dates, "gas": gas_series, "hubs": hubs,
+        write_json_gz(out_dir / f"{t}.json.gz", {"dates": dates, "gas": gas_series,
                                                      "units": dict(sorted(us.items()))})
     write_json_gz(DATA_DIR / "econ_index.json.gz", {
         "dates": dates, "techs": {t: sorted(by_tech.get(t, {})) for t in SIXTY_DAY_TECHS},
         "has_nodes": [d in node_days for d in dates], "has_dam": [d in dam_days for d in dates],
         "gas_days": sum(1 for g in gas_series if g is not None),
-        "hub_days": {h: sum(1 for g in v if g is not None) for h, v in hubs.items()},
     })
+    # each gas configuration's fuel cost per MWh at its own hub and the EIA heat rate, for the A day
+    # in ERCOT page's unit profit (overview.js): Henry Hub where its hub has no price that day
+    fuel = {}
+    for name, g in sorted(fh.items()):
+        if g.get("tech") in EIA_HR:
+            src = hubs.get(g.get("hub")) or [None] * D
+            fuel[name] = [None if v is None else round(EIA_HR[g["tech"]] * v, 2)
+                          for v in (h if h is not None else hh for h, hh in zip(src, gas_series))]
+    write_json_gz(DATA_DIR / "fuel_cost_60d.json.gz", {"dates": dates, "heat_rate": EIA_HR, "units": fuel})
+    build_implied_hr(hub_files, read_json_gz(DATA_DIR / "gas.json.gz", default=None) or {}, fh)
     print(f"econ: {D} days, {len(units)} units, {sum(1 for d in dates if d in node_days)} days with node prices, "
           f"{sum(1 for d in dates if d in dam_days)} with DAM")

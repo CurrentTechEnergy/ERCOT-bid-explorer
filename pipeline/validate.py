@@ -77,6 +77,7 @@ import warnings
 
 import numpy as np
 
+from . import private
 from .config import DATA_DIR, PRICE_GRID, TECH_OF_TYPE, UNIT_DATA_DIR
 from .log import warn, write_summary
 from .store import read_json_gz
@@ -807,7 +808,7 @@ def _dam_offer_checks(day):
             for f in FIELDS["thermal"] + FIELDS["renew"]:
                 if f in u:
                     r.setdefault(f, {}).update(zip(s["dates"], u[f]))
-    gas = _gas_lookup(read_json_gz(DATA_DIR / "gas_hubs.json.gz", default={}) or {})
+    gas = _gas_lookup(private.read("gas_hubs.json.gz", default={}) or {})
     bad_mk, bad_f, bad_aw = [], [], []
     for n, r in sig.items():
         if r["tech"] not in REF_HR:

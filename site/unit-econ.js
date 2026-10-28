@@ -41,10 +41,16 @@ function emptyMsg(el, msg) { el.innerHTML = `<p class="empty">${msg}</p>`; }
 
 // ---- economics of one unit on the chosen bases -------------------------------------
 // returns per-day arrays: energy, as, fuel (fuel + VOM), starts (start cost), margin, and flags
+// gas: the Henry Hub series, or null to cost gas at the unit's own hub from its gas_own (the day's gas
+// bill per 1 MMBtu/MWh of heat rate, built by the pipeline, which does not publish the hub prices)
 function unitEcon(u, D, gas) {
   const t = S.tech, p = S.params[t] || {}, fuelKind = FUEL[t];
-  const gasPrice = (i) => (gas[i] == null ? null : gas[i] + S.adder);
-  const fuelPrice = (i) => (fuelKind === "gas" ? gasPrice(i) : fuelKind ? S.fuel[fuelKind] : 0);
+  // the day's fuel bill at heat rate hr ($, before variable O&M), or null with no fuel price
+  const fuelBill = (i, mwh, hr) => {
+    if (fuelKind !== "gas") return mwh * hr * (fuelKind ? S.fuel[fuelKind] : 0);
+    if (!gas) return u.gas_own[i] == null ? null : u.gas_own[i] * hr + mwh * hr * S.adder;
+    return gas[i] == null ? null : mwh * hr * (gas[i] + S.adder);
+  };
   const out = { energy: [], as: [], fuel: [], starts: [], margin: [], lamDays: 0, missing: 0, est: 0 };
   for (let i = 0; i < D; i++) {
     const mwh = u.mwh[i];
@@ -57,19 +63,18 @@ function unitEcon(u, D, gas) {
     const as = u.rev_as[i] || 0;
     let fuel = 0, starts = 0, estimated = false;
     if (fuelKind) {
-      const fp = fuelPrice(i);
       const n = u.starts[i] || 0;
       const own = u.start_hot[i] != null ? u.start_hot[i] : null;
       if (S.cost === "offer" || S.cost === "inc") {
         const own_cost = S.cost === "inc" ? u.cost_inc[i] : u.cost_off[i];
         if (own_cost != null) fuel = own_cost;
         else if (S.cost === "offer" && u.mingen[i] != null) fuel = mwh * u.mingen[i];
-        else if (fp != null) { fuel = mwh * (p.hr * fp + p.vom); estimated = true; }
-        else fuel = null;
+        else { const b = fuelBill(i, mwh, p.hr); fuel = b == null ? null : b + mwh * p.vom; estimated = b != null; }
         starts = n * (own != null ? own : p.start);
       } else {
         const hr = S.cost === "eia" ? EIA_HR[t] : p.hr;
-        fuel = fp == null ? null : mwh * (hr * fp + p.vom);
+        const b = fuelBill(i, mwh, hr);
+        fuel = b == null ? null : b + mwh * p.vom;
         starts = n * (own != null && S.cost === "eia" ? own : p.start);
         if (own == null && n) estimated = true;
       }
@@ -162,12 +167,8 @@ function legendHTML(el) {
   el.innerHTML = [...REV_SERIES, ...COST_SERIES, MARGIN].map((s) => `<span><span class="sw" style="background:var(${s.color})"></span>${s.label}</span>`).join("");
 }
 
-function hubSeries(T, hub) {
-  const h = T.hubs && T.hubs[hub];
-  if (hub !== "hh" && h && h.some((v) => v != null)) return { values: h, label: HUBS[hub] };
-  return { values: T.gas, label: HUBS.hh + (hub !== "hh" ? ` (no ${HUBS[hub]} prices loaded)` : "") };
-}
-const unitHub = (u) => (S.hub === "unit" ? u.fuel_hub || "hsc" : S.hub);
+// the hub a unit is costed at: its own (gas_own, built by the pipeline) unless Henry Hub is chosen
+const unitHub = (u) => (S.hub === "unit" && u.gas_own ? u.gas_hub || "hsc" : "hh");
 
 async function draw() {
   const U = window.UNIT, box = $("econ-panel");
@@ -178,11 +179,11 @@ async function draw() {
   const T = S.data[S.tech], u = T && T.units[U.name];
   box.hidden = !u;
   if (!u) return;
-  const D = T.dates.length, e = unitEcon(u, D, FUEL[S.tech] === "gas" ? hubSeries(T, unitHub(u)).values : []);
+  const D = T.dates.length, e = unitEcon(u, D, unitHub(u) === "hh" ? T.gas : null);
   const days = u.mwh.filter((v) => v != null).length, mwh = sum(u.mwh), nst = sum(u.starts), margin = sum(e.margin);
   const own = u.start_hot.filter((v) => v != null).length, mg = u.mingen.filter((v) => v != null);
   const fuelNote = FUEL[S.tech] ? ` Costs: fuel at the EIA average heat rate for the technology (${EIA_HR[S.tech]} MMBtu/MWh)` +
-    (FUEL[S.tech] === "gas" ? ` × ${HUBS[unitHub(u)]} gas${u.fuel_hub ? ` (its hub: ${HUB_METHOD[u.fuel_hub_method] || u.fuel_hub_method})` : ""}` : ` × $${S.fuel[FUEL[S.tech]]}/MMBtu`) +
+    (FUEL[S.tech] === "gas" ? ` × ${HUBS[unitHub(u)]} gas${u.fuel_hub && unitHub(u) !== "hh" ? ` (its hub: ${HUB_METHOD[u.fuel_hub_method] || u.fuel_hub_method})` : ""}` : ` × $${S.fuel[FUEL[S.tech]]}/MMBtu`) +
     ` plus $${S.params[S.tech].vom}/MWh variable O&M, and starts at its own DAM hot-start offer where it has one, else $${fmt0(S.params[S.tech].start)}.`
     : S.tech === "storage" ? " Charging is in energy revenue as a negative (MWh bought at the same prices), so energy revenue is the arbitrage margin and there is no separate fuel cost." : " No fuel cost for wind and solar.";
   $("econ-note").innerHTML = `${days} days, ${fmt1(mwh / 1000)} GWh${S.tech === "storage" ? ` discharged, ${fmt1(sum(u.chg) / 1000)} GWh charged` : `, ${fmt0(nst)} starts`}. Margin ${fmt$(margin)}${mwh ? ` (${fmt$2(margin / mwh)} per MWh)` : ""}. ` +
