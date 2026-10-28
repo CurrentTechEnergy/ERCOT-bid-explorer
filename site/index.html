@@ -64,17 +64,12 @@
 <main>
   <section class="panel panel-wide" id="headline-panel">
     <div class="panel-head"><div><h2>The day at a glance <span class="h-note" id="headline-note"></span></h2></div></div>
-    <div class="headline">
+    <div class="headline headline-solo">
       <div>
         <p class="lede" id="lede"></p>
         <p class="lede-sub" id="lede-sub"></p>
         <ul class="expect" id="expect"></ul>
         <p class="note step-link" id="decisions-link"></p>
-      </div>
-      <div class="sparkwrap">
-        <h3 id="spark-title">System lambda by hour ending ($/MWh)</h3>
-        <div class="chart chart-short" id="spark"></div>
-        <p class="note" id="spark-note"></p>
       </div>
     </div>
   </section>
@@ -85,9 +80,25 @@
         <h2>What ran, by hour <span class="h-note" id="actual-note"></span></h2>
         <p class="note" id="actual-sub"></p>
       </div>
+      <div class="panel-tools ctl-hour">
+        <label class="lbl" for="hour">Hour <output id="hour-out">HE 13</output></label>
+        <input type="range" id="hour" min="0" max="23" step="1" value="12">
+      </div>
+    </div>
+    <div class="sparkwrap">
+      <h3 id="spark-title">System lambda by hour ending ($/MWh)</h3>
+      <div class="chart chart-short" id="spark"></div>
+      <p class="note" id="spark-note"></p>
     </div>
     <div class="legend" id="actual-legend"></div>
     <div class="chart" id="actual-chart"></div>
+    <div class="sub-panel" id="mix-panel">
+      <h3>Generation mix <span class="h-note" id="mix-title-note"></span></h3>
+      <p class="note" id="mix-sub">Output by technology in the hour picked on the chart above (click an hour, or use the slider), as ERCOT reported it. The hour also sets the hourly view of the units table.</p>
+      <p class="note step-link" id="offers-hour"></p>
+      <div class="chart" id="mix-chart"></div>
+      <details class="table-view"><summary>Table view</summary><div id="mix-table" class="scroll-x"></div></details>
+    </div>
   </section>
 
   <section class="panel panel-wide" id="actual-bars-panel" hidden>
@@ -116,31 +127,6 @@
     </div>
     <div class="legend legend-static"><span><span class="sw" style="background:var(--g3)"></span>Online LSL</span><span><span class="sw" style="background:var(--g3);opacity:.3"></span>Online HSL</span><span><span class="sw" style="background:var(--ink);height:3px"></span>What ran</span><span><span class="sw price-band-sw"></span>Lambda $10 or less</span></div>
     <div class="mults" id="limits-grid" data-csv></div>
-  </section>
-
-  <section class="panel panel-wide" id="detail-head">
-    <div class="panel-head">
-      <div>
-        <h2>The day in detail</h2>
-        <p class="note">The hour below applies to the generation mix and the hourly view of the units table. Click an hour on any chart above to pick it.</p>
-        <p class="note step-link" id="offers-hour"></p>
-      </div>
-      <div class="panel-tools ctl-hour">
-        <label class="lbl" for="hour">Hour <output id="hour-out">HE 13</output></label>
-        <input type="range" id="hour" min="0" max="23" step="1" value="12">
-      </div>
-    </div>
-  </section>
-
-  <section class="panel" id="mix-panel">
-    <div class="panel-head">
-      <div>
-        <h2>Generation mix <span class="h-note" id="mix-title-note"></span></h2>
-        <p class="note" id="mix-sub">Output by technology in the hour, as ERCOT reported it.</p>
-      </div>
-    </div>
-    <div class="chart" id="mix-chart"></div>
-    <details class="table-view"><summary>Table view</summary><div id="mix-table" class="scroll-x"></div></details>
   </section>
 
   <section class="panel panel-wide" id="units-panel">
