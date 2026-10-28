@@ -7,7 +7,7 @@ the fetch is skipped and any gas file already present is kept.  Writes data/gas.
    "updated": ISO timestamp}
 with one entry per trading day (EIA posts no weekend or holiday prices), merged with what
 was already stored so a short outage at EIA loses nothing.  fetch_gas_history() writes the
-series before GAS_START, and the Ship Channel as far back as OilPriceAPI has it, to
+series before GAS_START, and the Ship Channel and Waha as far back as OilPriceAPI has them, to
 data/gas_history.json.gz.
 
 fetch_hubs() needs OILPRICEAPI_KEY (free key from https://www.oilpriceapi.com/) and writes
@@ -30,7 +30,7 @@ GAS_PATH = DATA_DIR / "gas.json.gz"
 GAS_HISTORY_PATH = DATA_DIR / "gas_history.json.gz"
 HISTORY_GAS_START = "2018-12-01"   # a month before the thermal history begins
 HISTORY_CALLS = 20       # OilPriceAPI calls fetch_gas_history may spend in a run
-HISTORY_WINDOW_DAYS = 140    # calendar days per Ship Channel history request: about 100 trading days, one page
+HISTORY_WINDOW_DAYS = 140    # calendar days per hub history request: about 100 trading days, one page
 HUBS_PATH = DATA_DIR / "gas_hubs.json.gz"
 API = "https://api.eia.gov/v2"
 PAGE = 5000
@@ -107,10 +107,10 @@ def fetch_gas(key=None, start=None) -> bool:
 def fetch_gas_history(eia_key=None, opa_key=None) -> bool:
     """Gas prices before the live series begin, for the operator-informed model's days before the
     60-day window (pipeline/models/operator_history.py), into data/gas_history.json.gz:
-      {"henry_hub": {"dates", "value"}, "hsc": {"dates", "value", "cursor", "done"}, "updated"}
-    Henry Hub from EIA, from HISTORY_GAS_START to GAS_START, fetched once.  Houston Ship Channel
-    from OilPriceAPI backwards from the start of data/gas_hubs.json.gz, HISTORY_WINDOW_DAYS at a
-    time and at most HISTORY_CALLS calls a run (the free plan allows 50 a day and the daily
+      {"henry_hub": {"dates", "value"}, "hsc"|"waha": {"dates", "value", "cursor", "done"}, "updated"}
+    Henry Hub from EIA, from HISTORY_GAS_START to GAS_START, fetched once.  Houston Ship Channel,
+    then Waha, from OilPriceAPI backwards from the start of each in data/gas_hubs.json.gz,
+    HISTORY_WINDOW_DAYS at a time and at most HISTORY_CALLS calls a run between them (the free plan allows 50 a day and the daily
     fetches use about 2 a run), until it reaches HISTORY_GAS_START or a window comes back empty
     (done: older days use Henry Hub).  Returns True when the file was written."""
     have = read_json_gz(GAS_HISTORY_PATH, default=None) or {}
@@ -142,36 +142,40 @@ def fetch_gas_history(eia_key=None, opa_key=None) -> bool:
         except Exception as e:
             warn(f"gas history: EIA fetch failed: {type(e).__name__}: {e}")
     opa_key = opa_key or os.environ.get("OILPRICEAPI_KEY")
-    hsc = have.get("hsc") or {}
-    live = ((read_json_gz(HUBS_PATH, default=None) or {}).get("hubs", {}).get("hsc") or {}).get("dates") or []
-    if opa_key and not hsc.get("done") and live:
-        code = GAS_HUBS["hsc"][0]
-        series = dict(zip(hsc.get("dates", []), hsc.get("value", [])))
-        cursor, calls = hsc.get("cursor") or live[0], 0
+    calls = 0
+    for hub in ("hsc", "waha"):
+        h = have.get(hub) or {}
+        live = ((read_json_gz(HUBS_PATH, default=None) or {}).get("hubs", {}).get(hub) or {}).get("dates") or []
+        if not opa_key or h.get("done") or not live or calls >= HISTORY_CALLS:
+            continue
+        code, name = GAS_HUBS[hub][0], GAS_HUBS[hub][1]
+        series = dict(zip(h.get("dates", []), h.get("value", [])))
+        cursor = h.get("cursor") or live[0]
         while calls < HISTORY_CALLS and cursor > HISTORY_GAS_START:
             start = max(HISTORY_GAS_START, (dt.date.fromisoformat(cursor) - dt.timedelta(days=HISTORY_WINDOW_DAYS)).isoformat())
             end = (dt.date.fromisoformat(cursor) - dt.timedelta(days=1)).isoformat()
             try:
                 got = _fetch_hub(code, opa_key, start, end)
             except Exception as e:
-                warn(f"gas history: Ship Channel {start} to {end} failed: {type(e).__name__}: {e}")
+                warn(f"gas history: {name} {start} to {end} failed: {type(e).__name__}: {e}")
                 if str(e).startswith("HTTP 4") and not str(e).startswith("HTTP 429"):
-                    hsc["done"] = True      # the plan does not reach this far back: stop asking
+                    h["done"] = True        # the plan does not reach this far back: stop asking
+                calls += 1
                 break
             calls += 1 + len(got) // OPA_PAGE
             got = {d: v for d, v in got.items() if start <= d <= end}
             if not got:
-                hsc["done"] = True
-                print(f"gas history: no Ship Channel prices before {cursor}; Henry Hub stands in")
+                h["done"] = True
+                print(f"gas history: no {name} prices before {cursor}; Henry Hub stands in")
                 break
             series.update(got)
             cursor = start
-        hsc["done"] = hsc.get("done") or cursor <= HISTORY_GAS_START
+        h["done"] = h.get("done") or cursor <= HISTORY_GAS_START
         dates = sorted(series)
-        have["hsc"] = {"dates": dates, "value": [series[d] for d in dates], "cursor": cursor, "done": hsc["done"]}
+        have[hub] = {"dates": dates, "value": [series[d] for d in dates], "cursor": cursor, "done": h["done"]}
         changed = True
-        print(f"gas history: Ship Channel {len(dates)} day(s) stored{f', from {dates[0]}' if dates else ''}"
-              f"{' (done)' if hsc['done'] else f', next run continues before {cursor}'}")
+        print(f"gas history: {name} {len(dates)} day(s) stored{f', from {dates[0]}' if dates else ''}"
+              f"{' (done)' if h['done'] else f', next run continues before {cursor}'}")
     if not changed:
         return False
     have["updated"] = dt.datetime.now(dt.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
