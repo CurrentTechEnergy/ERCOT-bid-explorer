@@ -9,7 +9,17 @@ prices, UNIT_DATA_DIR/nodes; the node from unit_index.json.gz), through
 asinh(price / SCALE) so a $5 move counts for more near $20 than near $500) and the hour of day
 (two harmonics), over its available hours (outage hours left out) in the FIT_DAYS days before the
 month.  Ridge L2 on everything but the intercept.  A unit needs MIN_AVAIL available hours and
-MIN_EACH hours both online and offline in the window, and a positive price slope; else no row.
+MIN_EACH hours both online and offline in the window; else no row.
+
+What the window proves: a fit has a price limit when, at the lowest price in its window, it calls
+the unit off in every hour.  When the FIT_DAYS fit has none (PB2SES_CT5 ran round the clock in
+April 2026, at -$30 too, so its July fit on April to June put the start at -$2.4 billion), the
+unit is fitted again on every day before the month (real-time node prices start Dec 2025).  Still
+none: it runs at any price it has seen, start null.  A fit that never calls it on at any price in
+its window has no row.  With a limit, the start is held between the lowest price at which the unit
+was online in the window and the highest at which it sat off: the fit knows nothing past them.
+Oct 2026 against v1, Feb-Aug 2026: 80% of unit-days right either way; the 22 unit-months whose start
+ran off the scale (v1) refit on the longer window or run at any price (30 unit-months in all).
 
 The start point: every hour's real-time price shifted by the same $/MWh until the fit calls the
 unit on (chance 0.5 or more) in some hour, found exactly from the fit (each hour's threshold price
@@ -23,8 +33,10 @@ hub price bands (the forecast's peaker_share inputs) 90.1% / 32% / 89.0%; every 
 
 Writes data/peaker/rt_fit.json.gz:
   {"model", "version", "columns": [...], "fit_days", "days": {date: [[unit, start, peak, ran,
-   hours_on, hours_avail], ...]}}
-start and peak in $/MWh (real-time at the unit's node, highest hour of the day); ran 1 when online in any hour.
+   hours_on, hours_avail, window], ...]}}
+start and peak in $/MWh (real-time at the unit's node, highest hour of the day), start null when
+it runs at any price; ran 1 when online in any hour; window the days the fit used (FIT_DAYS, or
+more when it was fitted again on every day before the month).
 Units on outage all day, and days without the node's 24 prices, are left out.  Rebuilt in full each run (a few seconds).
 """
 
@@ -35,9 +47,9 @@ from ..parse_prices import node_hourly
 from ..store import read_json_gz, write_json_gz
 
 NAME = "peaker_rt"
-VERSION = "v1"
+VERSION = "v2"   # v2: the fit window proves a price limit, else the longer window, else any price
 PATH = DATA_DIR / "peaker" / "rt_fit.json.gz"
-COLUMNS = ("unit", "start", "peak", "ran", "hours_on", "hours_avail")
+COLUMNS = ("unit", "start", "peak", "ran", "hours_on", "hours_avail", "window")
 SCALE = 10.0         # $/MWh in asinh(price / SCALE)
 FIT_DAYS = 90        # days before the month the fit uses ...
 MIN_FIT_DAYS = 45    # ... and the fewest with prices it may use
@@ -61,11 +73,24 @@ def _fit(X, y, it=30):
     return b
 
 
+def _rest(b):
+    a = 2 * np.pi * np.arange(24) / 24
+    return b[0] + b[2] * np.sin(a) + b[3] * np.cos(a) + b[4] * np.sin(2 * a) + b[5] * np.cos(2 * a)
+
+
+def limit(b, pmin):
+    """"limit" when the fit calls the unit off in every hour at the window's lowest price pmin,
+    "any" when it calls it on in some hour there and so at every lower price too (a non-positive
+    price slope), "never" when it calls it on at no price."""
+    on_low = bool((_rest(b) + b[1] * np.arcsinh(pmin / SCALE) >= 0).any())
+    if on_low:
+        return "any"
+    return "limit" if b[1] > 0 else "never"
+
+
 def start_point(b, prices):
     """The day's highest price at the smallest shift that calls the unit on in some hour."""
-    h = np.arange(24)
-    a = 2 * np.pi * h / 24
-    rest = b[0] + b[2] * np.sin(a) + b[3] * np.cos(a) + b[4] * np.sin(2 * a) + b[5] * np.cos(2 * a)
+    rest = _rest(b)
     thr = SCALE * np.sinh(np.clip(-rest / b[1], -20, 20))    # price at which each hour turns on
     return float(prices.max() + (thr - prices).min())
 
@@ -109,26 +134,38 @@ def build_peaker_rt(index=None) -> int:
         F = np.arcsinh(np.nan_to_num(P) / SCALE)
         st = np.array(list(uh["units"][u][:N * 24].ljust(N * 24, "-"))).reshape(N, 24)
         on, av = np.isin(st, ["m", "a"]), np.isin(st, ["m", "a", "0"])
+
+        def fit_window(win):
+            """(b, limit kind, lowest price online, highest price off, days) over the days in win, or None."""
+            if win.sum() < MIN_FIT_DAYS:
+                return None
+            mk = av & win[:, None]
+            y = on[mk]
+            if mk.sum() < MIN_AVAIL or y.sum() < MIN_EACH or (~y).sum() < MIN_EACH:
+                return None
+            b = _fit(_design(F[mk], hh[mk]), y.astype(float))
+            p = P[mk]
+            return b, limit(b, float(p.min())), float(p[y].min()), float(p[~y].max()), int(win.sum())
         for m in months:
             rows = rows_of[m]
             win = np.zeros(N, bool)
             win[max(0, rows[0] - FIT_DAYS):rows[0]] = True
             win &= have
-            if win.sum() < MIN_FIT_DAYS:
+            fit = fit_window(win)
+            if fit is not None and fit[1] == "any":
+                longer = have.copy()
+                longer[rows[0]:] = False
+                fit = (fit_window(longer) or fit) if longer.sum() > win.sum() else fit
+            if fit is None or fit[1] == "never":
                 continue
-            mk = av & win[:, None]
-            y = on[mk]
-            if mk.sum() < MIN_AVAIL or y.sum() < MIN_EACH or (~y).sum() < MIN_EACH:
-                continue
-            b = _fit(_design(F[mk], hh[mk]), y.astype(float))
-            if b[1] <= 0:
-                continue
+            b, kind, lo_on, hi_off, nd = fit
             n_fit += 1
             for i in rows:
                 if not have[i] or not av[i].any():
                     continue
-                out.setdefault(dates[i], []).append([u, round(start_point(b, P[i]), 2), round(float(P[i].max()), 2),
-                                                     int(on[i].any()), int(on[i].sum()), int(av[i].sum())])
+                s = None if kind == "any" else round(float(np.clip(start_point(b, P[i]), min(lo_on, hi_off), max(lo_on, hi_off))), 2)
+                out.setdefault(dates[i], []).append([u, s, round(float(P[i].max()), 2),
+                                                     int(on[i].any()), int(on[i].sum()), int(av[i].sum()), nd])
     write_json_gz(PATH, {"model": NAME, "version": VERSION, "columns": list(COLUMNS), "fit_days": FIT_DAYS,
                          "days": dict(sorted(out.items()))})
     print(f"{NAME} {VERSION}: {n_fit} unit-month fits, {len(out)} days", flush=True)

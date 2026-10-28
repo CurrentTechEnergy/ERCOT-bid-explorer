@@ -360,48 +360,53 @@ function drawDecisions(e) {
 
 // peakers: each day's start point from the real-time fit at its node against the day's highest
 // price there (data/peaker/rt_fit.json.gz, pipeline/models/peaker_rt.py), with its
-// "Running at a new price" changes marked
+// "Running at a new price" changes marked; start null when the fit runs it at any price it has seen
+// (drawn on the "any price" row at the bottom)
 async function drawDecisionsRT(e) {
   const el = $("dec-chart"), P = S.PRT;
   const C = P ? Object.fromEntries(P.columns.map((c, i) => [c, i])) : {};
-  const pts = P ? Object.entries(P.days).flatMap(([d, rs]) => rs.filter((r) => r[C.unit] === e.name).map((r) => ({ d, t: parseDate(d), s: r[C.start], p: r[C.peak], ran: !!r[C.ran], on: r[C.hours_on], av: r[C.hours_avail] }))) : [];
+  const pts = P ? Object.entries(P.days).flatMap(([d, rs]) => rs.filter((r) => r[C.unit] === e.name).map((r) => ({ d, t: parseDate(d), s: r[C.start], p: r[C.peak], ran: !!r[C.ran], on: r[C.hours_on], av: r[C.hours_avail], win: r[C.window] }))) : [];
   if (!pts.length) { $("dec-note").textContent = ""; $("dec-legend").innerHTML = ""; return emptyMsg(el, "No real-time fit for this peaker: it needs 90 days in which it both ran and sat off."); }
-  const says = (p) => p.s <= p.p, bad = (p) => says(p) !== p.ran, right = pts.filter((p) => !bad(p)).length, ran = pts.filter((p) => p.ran).length;
+  const says = (p) => p.s == null || p.s <= p.p, bad = (p) => says(p) !== p.ran, right = pts.filter((p) => !bad(p)).length, ran = pts.filter((p) => p.ran).length;
   const caught = pts.filter((p) => p.ran && says(p)).length;
   $("dec-note").textContent = `A peaker starts when running pays, so it is judged on the real-time price at its own node: each month it is fitted on the 90 days before, its chance of being online against that price and the hour of day. ` +
-    `The diamond is the day's highest price at which the fit starts it, the circle the day's actual highest price at its node. On ${pts.length} days available it ran on ${ran}; the fit called ${right} right (${fmtPct(right / pts.length)}), ${caught} of the ${ran} days it ran. A fit of what it did, not a forecast: the real-time price is not known when it decides.`;
+    `The diamond is the day's highest price at which the fit starts it, the circle the day's actual highest price at its node. On ${pts.length} days available it ran on ${ran}; the fit called ${right} right (${fmtPct(right / pts.length)}), ${caught} of the ${ran} days it ran. A fit of what it did, not a forecast: the real-time price is not known when it decides. ` +
+    `When those 90 days never show a price it would sit off at, it is fitted on every day before the month instead; if those don't either, it runs at any price it has seen (the bottom row). The diamond stays between the lowest price it ran at and the highest it sat off at in the days fitted.`;
   $("dec-legend").innerHTML = `<span><span class="sw" style="background:var(--c1);transform:rotate(45deg) scale(0.8)"></span>Fit starts it above this price</span>` +
     window.CX.onOffLegend("Day's highest price, ran", "Day's highest price, stayed off") +
     `<span><span class="sw" style="background:var(--c8);height:3px"></span>Did the opposite of the fit</span><span><span class="sw sw-line"></span>Running at a new price</span>`;
-  const w = Math.max(280, el.clientWidth || 600), H = 260, m = { t: 18, r: 16, b: 26, l: 56 };
+  const anyP = pts.some((p) => p.s == null);
+  const w = Math.max(280, el.clientWidth || 600), H = 260, m = { t: 18, r: 16, b: 26, l: 64 }, LOWY = H - m.b - 6;
   const D0 = S.DEC?.dates || Object.keys(P.days);
   const x = d3.scaleTime().domain([d3.timeHour.offset(parseDate(D0[0]), -12), d3.timeHour.offset(parseDate(D0.at(-1)), 12)]).range([m.l, w - m.r]);
-  const vals = pts.flatMap((p) => [p.s, p.p]).sort(d3.ascending);
-  const lo = Math.min(0, d3.quantile(vals, 0.02)), hi = Math.max(100, d3.quantile(vals, 0.98));
-  const y = d3.scaleSymlog().constant(10).domain([lo, hi]).range([H - m.b, m.t]).clamp(true);
-  const yT = [-100, -25, 0, 10, 25, 50, 100, 250, 500, 1000, 2500, 5000].filter((v) => v >= lo && v <= hi);
+  const vals = pts.flatMap((p) => (p.s == null ? [p.p] : [p.s, p.p])).sort(d3.ascending);
+  const lo = Math.max(-250, Math.min(0, d3.min(vals))), hi = Math.max(100, d3.quantile(vals, 0.98));
+  const y = d3.scaleSymlog().constant(10).domain([lo, hi]).range([anyP ? LOWY - 18 : H - m.b, m.t]).clamp(true);
+  const ys = (v) => (v == null ? LOWY : y(v));
+  const yT = [-250, -100, -25, -10, 0, 10, 25, 50, 100, 250, 500, 1000, 2500, 5000].filter((v) => v >= lo && v <= hi);
   const svg = d3.create("svg").attr("viewBox", `0 0 ${w} ${H}`);
   svg.append("g").attr("class", "gridline").attr("transform", `translate(${m.l},0)`).call(d3.axisLeft(y).tickValues(yT).tickSize(-(w - m.l - m.r)).tickFormat(""));
   svg.append("g").attr("class", "axis").attr("transform", `translate(0,${H - m.b})`).call(d3.axisBottom(x).ticks(w < 560 ? 4 : 8).tickSizeOuter(0));
   svg.append("g").attr("class", "axis").attr("transform", `translate(${m.l},0)`).call(d3.axisLeft(y).tickValues(yT).tickFormat((v) => fmt$(v)).tickSizeOuter(0));
   svg.append("text").attr("class", "axis-title").attr("x", m.l).attr("y", 10).text("Real-time price at its node ($/MWh): where the fit starts it, and the day's highest");
+  if (anyP) svg.append("text").attr("class", "axis-label").attr("x", m.l - 6).attr("y", LOWY + 3).attr("text-anchor", "end").attr("font-size", 10).attr("fill", css("--ink-2")).text("any price");
   const ev = ((await tryJSON("data/events.json.gz"))?.events || []).filter((v) => v.unit === e.name && v.kind === "rt_price");
   svg.append("g").selectAll("line").data(ev).join("line").attr("class", "price-rule").attr("stroke-dasharray", "4 3")
     .attr("x1", (v) => x(parseDate(v.date))).attr("x2", (v) => x(parseDate(v.date))).attr("y1", m.t).attr("y2", H - m.b);
   const g = svg.append("g");
-  g.selectAll("line").data(pts).join("line").attr("x1", (p) => x(p.t)).attr("x2", (p) => x(p.t)).attr("y1", (p) => y(p.s)).attr("y2", (p) => y(p.p))
+  g.selectAll("line").data(pts).join("line").attr("x1", (p) => x(p.t)).attr("x2", (p) => x(p.t)).attr("y1", (p) => ys(p.s)).attr("y2", (p) => y(p.p))
     .attr("stroke", (p) => css(bad(p) ? "--c8" : "--line")).attr("stroke-width", (p) => (bad(p) ? 1.6 : 1));
-  g.selectAll("path").data(pts).join("path").attr("d", d3.symbol(d3.symbolDiamond, 22)()).attr("transform", (p) => `translate(${x(p.t)},${y(p.s)})`).attr("fill", css("--c1"));
+  g.selectAll("path").data(pts).join("path").attr("d", d3.symbol(d3.symbolDiamond, 22)()).attr("transform", (p) => `translate(${x(p.t)},${ys(p.s)})`).attr("fill", css("--c1"));
   g.selectAll("circle").data(pts).join("circle").attr("cx", (p) => x(p.t)).attr("cy", (p) => y(p.p)).each(function (p) { window.CX.onOffDot(d3.select(this), p.ran, 2.8); });
   svg.append("rect").attr("x", m.l).attr("y", m.t).attr("width", w - m.l - m.r).attr("height", H - m.t - m.b).attr("fill", "transparent")
     .on("pointermove", (evt) => {
       const [px] = d3.pointer(evt), p = pts[d3.minIndex(pts, (q) => Math.abs(x(q.t) - px))], vv = ev.find((v) => v.date.slice(0, 7) === p.d.slice(0, 7));
-      showTip(evt, `<h4>${fmtDate(p.t)}</h4><table><tr><td>Fit starts it at</td><td class="n">${fmt$(p.s)}/MWh</td></tr><tr><td>Day's highest node price</td><td class="n">${fmt$(p.p)}/MWh</td></tr>` +
+      showTip(evt, `<h4>${fmtDate(p.t)}</h4><table><tr><td>Fit starts it at</td><td class="n">${p.s == null ? "any price" : `${fmt$(p.s)}/MWh`}</td></tr><tr><td>Fitted on</td><td class="n">${p.win ?? "–"} days before the month</td></tr><tr><td>Day's highest node price</td><td class="n">${fmt$(p.p)}/MWh</td></tr>` +
         `<tr><td>What it did</td><td class="n">${p.ran ? `ran ${p.on} of ${p.av} h` : "stayed off"}</td></tr></table>${bad(p) ? "Did the opposite of the fit" : ""}${vv ? `<br><b>${esc(vv.title)}</b>` : ""}`);
     })
     .on("pointerleave", hideTip);
   el.replaceChildren(svg.node());
-  setCSV(el, ["date", "start_usd_mwh", "day_peak_usd_mwh", "ran", "hours_on", "hours_available"], pts.map((p) => [p.d, p.s, p.p, p.ran ? 1 : 0, p.on, p.av]), `${e.name} real-time starts`);
+  setCSV(el, ["date", "start_usd_mwh", "day_peak_usd_mwh", "ran", "hours_on", "hours_available", "fit_days"], pts.map((p) => [p.d, p.s, p.p, p.ran ? 1 : 0, p.on, p.av, p.win]), `${e.name} real-time starts`);
 }
 
 // CC trains and gas steam: each day it started online, the operator-informed turn-off point (diamond)

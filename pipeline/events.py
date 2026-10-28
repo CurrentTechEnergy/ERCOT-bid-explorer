@@ -77,7 +77,8 @@ Every event:
             unit-level data comes from the 60-day disclosure)
   seen      the date of the update run that first wrote the event (UTC); the emails go by this.
             Events written by the first build carry its date, kept in the file as "baseline",
-            and count as history rather than news
+            and count as history rather than news; so do the new ids of a kind whose detector
+            changed (KIND_REV, kept in the file as "kind_rev")
   unit      train or unit key as the Unit page uses it (plant for renewable events, with
             "units" listing the members)
   tech, kind, major (true for the changes shown by default; the rest sit behind "show all")
@@ -86,7 +87,7 @@ Every event:
   field     what before / after / value are, in the kind's own terms
 
 Writes
-  data/events.json.gz        {updated, baseline, kinds, first, last, n, n_major, new_today,
+  data/events.json.gz        {updated, baseline, kind_rev, kinds, first, last, n, n_major, new_today,
                               events: [...]}, newest first
   data/feeds/all.xml         Atom feed of the latest FEED_ALL major events
   data/feeds/units/<unit>.xml  Atom feed per unit with at least one event (latest FEED_UNIT)
@@ -128,6 +129,9 @@ SIZE_SHARE, SIZE_MW, SIZE_HOLD, SIZE_MAJOR = 0.2, 5, 30, 0.5
 NEW_GRACE = 14
 # turnoff (CC and gas steam; see the docstring)
 TURNOFF_MIN_DAYS, TURNOFF_MOVE, TURNOFF_SHARE, TURNOFF_CAP = 5, 50.0, 0.5, 1e5
+# a kind's revision: when it changes, the ids that kind finds anew are history, not news
+# (turnoff c2: the turn-off point search goes one way from the day's prices, operator_cutoffs.py)
+KIND_REV = {"turnoff": "c2"}
 TURNOFF_AWARD = {0: "without an award", 1: "with an award some hours", 2: "with an award every hour"}
 # rt_price (combustion turbines; see the docstring)
 RUN_MONTH_DAYS, RUN_BEFORE = 20, 60            # days of states the month needs; days before it compared
@@ -671,16 +675,18 @@ def build_events(index: dict) -> dict:
     baseline = old.get("baseline") or today
     # likewise a kind the earlier file did not have (a detector added since, such as the battery
     # events): its first run finds the whole record, which is history too, so it takes the baseline
-    old_kinds = {e["kind"] for e in old.get("events", [])}
+    # and a kind whose detector changed (KIND_REV), whose ids found anew come from the change
+    old_rev = old.get("kind_rev") or {}
+    old_kinds = {e["kind"] for e in old.get("events", [])} - {k for k, v in KIND_REV.items() if old_rev.get(k) != v}
     by_id = {}
     for e in events:
         if e["id"] in by_id:
             continue
-        e["seen"] = seen.get(e["id"], today if not old_kinds or e["kind"] in old_kinds else baseline)
+        e["seen"] = seen.get(e["id"], today if not old.get("events") or e["kind"] in old_kinds else baseline)
         by_id[e["id"]] = e
     events = sorted(by_id.values(), key=lambda e: (e["date"], e["unit"], e["kind"]), reverse=True)
     updated = dt.datetime.now(dt.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
-    out = {"updated": updated, "kinds": KINDS, "baseline": baseline,
+    out = {"updated": updated, "kinds": KINDS, "baseline": baseline, "kind_rev": KIND_REV,
            "first": events[-1]["date"] if events else None, "last": events[0]["date"] if events else None,
            "n": len(events), "n_major": sum(e["major"] for e in events),
            "new_today": sum(e["seen"] == today for e in events) if today != baseline else 0,
