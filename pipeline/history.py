@@ -53,6 +53,11 @@ One pair of Parquet files per calendar month:
                            15-minute interval, RT MCPCs and DAM AS awards of every technology;
                            pipeline/rt_as.py documents them.
 
+  dam-status-YYYY-MM.parquet (--dam-status, from the 60-day DAM disclosure alone) date, he,
+                           unit, tech, status: every thermal resource's DAM resource status by hour
+                           (blank where the file has none), for the operator model's history fits
+                           (models/operator_history.py)
+
   rt-prices-YYYY-MM.parquet  (--rt, from NP6-905-CD alone) date, he, point, type, price: the real-time
                            settlement point price at every point (resource nodes, hubs, load zones),
                            the hourly mean of the four 15-minute prices, as parse_prices.node_hourly
@@ -181,6 +186,21 @@ def thermal_rows(ud: dict, dam: dict) -> pd.DataFrame:
     return f
 
 
+def status_rows(dam: dict) -> pd.DataFrame:
+    """DAM resource status by hour for every thermal resource in a DAM day file (parse_dam_zip):
+    its hourly "status_h", else the day's one "status" for every hour."""
+    rows = []
+    for name, u in (dam.get("units") or {}).items():
+        if u.get("tech") not in THERMAL_TECHS:
+            continue
+        sh = (list(u.get("status_h") or [u.get("status") or ""] * 24) + [""] * 24)[:24]
+        rows += [(name, u["tech"], h + 1, str(sh[h] or "")) for h in range(24)]
+    f = pd.DataFrame(rows, columns=["unit", "tech", "he", "status"])
+    f.insert(0, "date", dam["date"])
+    f["he"] = f["he"].astype("int8")
+    return f
+
+
 def as_rows(dam: dict, techs=THERMAL_TECHS):
     """-> (AS award rows for the techs, every technology when None; MCPC rows) for one operating
     day from a DAM day file (parse_dam_zip)."""
@@ -223,7 +243,8 @@ def _parse(blob: bytes, source: str, dam: dict, thermal: bool = False, ancillary
     """Run in a child process: parse one disclosure and reduce it to what the month file keeps,
     -> (operating day, slim DAM day file or unit-hour frame).  The address-space cap makes a file
     too big to parse fail with MemoryError here instead of taking down the whole runner.
-    ancillary="all" keeps DAM AS awards of every technology; rtas reads only the SCED AS awards
+    ancillary="all" keeps DAM AS awards of every technology, ancillary="status" the thermal DAM
+    resource status instead (status_rows); rtas reads only the SCED AS awards
     (pipeline/rt_as.py)."""
     import resource
     resource.setrlimit(resource.RLIMIT_AS, (MEM_LIMIT, MEM_LIMIT))
@@ -235,6 +256,8 @@ def _parse(blob: bytes, source: str, dam: dict, thermal: bool = False, ancillary
         return sced_awards(blob)
     parsed = found[1](blob)
     if source == "dam":
+        if ancillary == "status":
+            return parsed[0], status_rows(parsed[1])
         if ancillary:
             return parsed[0], as_rows(parsed[1], None if ancillary == "all" else THERMAL_TECHS)
         return parsed[0], _slim_dam(parsed[1], thermal)
@@ -384,6 +407,26 @@ def build_as_month(api, month: str, out: Path = OUT, force: bool = False) -> Non
           f"{time.time() - t0:.0f}s")
 
 
+def build_status_month(api, month: str, out: Path = OUT, force: bool = False) -> None:
+    out.mkdir(parents=True, exist_ok=True)
+    path = out / f"dam-status-{month}.parquet"
+    if path.exists() and not force:
+        print(f"{path.name}: already there")
+        return
+    t0 = time.time()
+    got = [r for _, r in _disclosures(api, EMIL_DAM, _days(month), "dam", ancillary="status")]
+    if not got:
+        warn(f"{month}: no DAM days found; nothing written")
+        return
+    f = pd.concat(got, ignore_index=True).sort_values(["date", "unit", "he"]).reset_index(drop=True)
+    for k in ("unit", "tech", "status"):
+        f[k] = f[k].astype("category")
+    f.to_parquet(path, index=False)
+    print(f"{path.name}: {len(f):,} rows, {f['date'].nunique()} days, {f['unit'].nunique()} units, statuses "
+          + ", ".join(f"{k or 'blank'} {v:.0%}" for k, v in f["status"].value_counts(normalize=True).head(6).items())
+          + f", {time.time() - t0:.0f}s")
+
+
 def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("months", nargs="+", help="YYYY-MM")
@@ -396,11 +439,19 @@ def main(argv=None):
     kind.add_argument("--rt", action="store_true", help="build the real-time settlement point price files instead")
     kind.add_argument("--rtas", action="store_true",
                       help="build the RT AS award, RT MCPC and all-technology DAM AS files instead (pipeline/rt_as.py)")
+    kind.add_argument("--dam-status", action="store_true",
+                      help="build the thermal DAM resource status files instead (60-day DAM disclosure alone)")
+    ap.add_argument("--store-only", action="store_true",
+                    help="read ERCOT's files only from the raw store (pipeline/raw_store.py); never download one")
     ap.add_argument("--days", type=int, help="--rtas only: build just the first N days of each month (smoke test)")
     args = ap.parse_args(argv)
     from .ercot_api import ErcotAPI
     api = ErcotAPI()
+    api.store_only = args.store_only
     for m in args.months:
+        if args.dam_status:
+            build_status_month(api, m, Path(args.out), args.force)
+            continue
         if args.ancillary:
             build_as_month(api, m, Path(args.out), args.force)
         elif args.rt:
