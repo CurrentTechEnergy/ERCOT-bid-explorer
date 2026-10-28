@@ -49,12 +49,16 @@ One pair of Parquet files per calendar month:
   as-mcpc-YYYY-MM.parquet  (--as) date, he and the DAM market clearing price for capacity of each
                            of those services ($/MW per hour)
 
+  rt-as-, rt-mcpc-, dam-as-YYYY-MM.parquet  (--rtas, from Dec 2025 on) real-time AS awards per
+                           15-minute interval, RT MCPCs and DAM AS awards of every technology;
+                           pipeline/rt_as.py documents them.
+
   rt-prices-YYYY-MM.parquet  (--rt, from NP6-905-CD alone) date, he, point, type, price: the real-time
                            settlement point price at every point (resource nodes, hubs, load zones),
                            the hourly mean of the four 15-minute prices, as parse_prices.node_hourly
                            gives the live node files.  Joins units-* and thermal-* on sp = point.
 
-    python -m pipeline.history 2019-01 [2019-02 ...] [--out history] [--force] [--thermal | --as | --rt]
+    python -m pipeline.history 2019-01 [2019-02 ...] [--out history] [--force] [--thermal | --as | --rt | --rtas [--days N]]
 """
 import argparse
 import calendar
@@ -177,14 +181,14 @@ def thermal_rows(ud: dict, dam: dict) -> pd.DataFrame:
     return f
 
 
-def as_rows(dam: dict):
-    """-> (thermal AS award rows, MCPC rows) for one operating day from a DAM day file
-    (parse_dam_zip)."""
+def as_rows(dam: dict, techs=THERMAL_TECHS):
+    """-> (AS award rows for the techs, every technology when None; MCPC rows) for one operating
+    day from a DAM day file (parse_dam_zip)."""
     hours = dam.get("hours", 24)
     rows = []
     for name, u in (dam.get("units") or {}).items():
         a = u.get("as") or {}
-        if u.get("tech") not in THERMAL_TECHS or not a:
+        if (techs is not None and u.get("tech") not in techs) or not a:
             continue
         v = {k: _to24(a.get(k), hours) for k in AS_SERVICES}
         for h in range(24):
@@ -215,23 +219,30 @@ def _slim_dam(day: dict, thermal: bool = False) -> dict:
                       if u.get("tech") in techs}}
 
 
-def _parse(blob: bytes, source: str, dam: dict, thermal: bool = False, ancillary: bool = False):
+def _parse(blob: bytes, source: str, dam: dict, thermal: bool = False, ancillary=False, rtas: bool = False):
     """Run in a child process: parse one disclosure and reduce it to what the month file keeps,
     -> (operating day, slim DAM day file or unit-hour frame).  The address-space cap makes a file
-    too big to parse fail with MemoryError here instead of taking down the whole runner."""
+    too big to parse fail with MemoryError here instead of taking down the whole runner.
+    ancillary="all" keeps DAM AS awards of every technology; rtas reads only the SCED AS awards
+    (pipeline/rt_as.py)."""
     import resource
     resource.setrlimit(resource.RLIMIT_AS, (MEM_LIMIT, MEM_LIMIT))
     found = curve_source(blob)
     if found is None or found[0] != source:
         raise ValueError(f"not a {source} disclosure ({describe_blob(blob)})")
+    if rtas:
+        from .rt_as import sced_awards
+        return sced_awards(blob)
     parsed = found[1](blob)
     if source == "dam":
-        return parsed[0], as_rows(parsed[1]) if ancillary else _slim_dam(parsed[1], thermal)
+        if ancillary:
+            return parsed[0], as_rows(parsed[1], None if ancillary == "all" else THERMAL_TECHS)
+        return parsed[0], _slim_dam(parsed[1], thermal)
     return parsed[0], (thermal_rows if thermal else unit_rows)(parsed[3][0], dam.get(parsed[0]))
 
 
 def _disclosures(api, emil: str, days, source: str, dam=None, thermal: bool = False,
-                 ancillary: bool = False):
+                 ancillary=False, rtas: bool = False):
     """Yield (date, result of _parse) for the month's operating days from a 60-day report,
     opening each file whose posting date maps to within SLACK days of the month.  Each file is
     parsed in a fresh child process, so its memory is returned and one file that fails (even by
@@ -256,7 +267,7 @@ def _disclosures(api, emil: str, days, source: str, dam=None, thermal: bool = Fa
                 continue
             t0 = time.time()
             with ProcessPoolExecutor(max_workers=1) as ex:
-                date, result = ex.submit(_parse, blob, source, dam or {}, thermal, ancillary).result()
+                date, result = ex.submit(_parse, blob, source, dam or {}, thermal, ancillary, rtas).result()
             print(f"  {label}: {date}, {len(blob) / 1e6:.0f} MB zip, {time.time() - t0:.0f}s", flush=True)
         except Exception as e:     # BrokenProcessPool when the child was killed
             warn(f"{label} ({len(blob) / 1e6:.0f} MB): failed: {type(e).__name__}: {e}")
@@ -383,6 +394,9 @@ def main(argv=None):
     kind.add_argument("--as", dest="ancillary", action="store_true",
                       help="build the thermal ancillary service award and MCPC files instead")
     kind.add_argument("--rt", action="store_true", help="build the real-time settlement point price files instead")
+    kind.add_argument("--rtas", action="store_true",
+                      help="build the RT AS award, RT MCPC and all-technology DAM AS files instead (pipeline/rt_as.py)")
+    ap.add_argument("--days", type=int, help="--rtas only: build just the first N days of each month (smoke test)")
     args = ap.parse_args(argv)
     from .ercot_api import ErcotAPI
     api = ErcotAPI()
@@ -391,6 +405,9 @@ def main(argv=None):
             build_as_month(api, m, Path(args.out), args.force)
         elif args.rt:
             build_rt_month(api, m, Path(args.out), args.force)
+        elif args.rtas:
+            from .rt_as import build_month as build_rtas_month
+            build_rtas_month(api, m, Path(args.out), args.force, args.days)
         else:
             build_month(api, m, Path(args.out), args.force, args.thermal)
     if api.raw.enabled:
