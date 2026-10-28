@@ -1,7 +1,7 @@
 /* Beyond baseload, across days: offers against fuel (thermal offer-price quantiles, gas hubs and
    implied heat rate), marginal generation by settled price and marginality at the node, lifted
    from trends.js. Reads data/trends_60d.json.gz, data/curve_trends.json.gz,
-   data/gas.json.gz, data/gas_hubs.json.gz, data/fuel_hubs.json.gz, data/marginal_*.json.gz, data/marginal_nodes.json.gz and
+   data/gas.json.gz, data/gas_hub_avg.json.gz, data/implied_hr_60d.json.gz, data/marginal_*.json.gz, data/marginal_nodes.json.gz and
    data/summary_prices.json.gz.
    The one-day panels on the same page are beyond-day.js, which also owns the status line and the
    shared chart controls (CX.init). */
@@ -216,77 +216,43 @@ function timeChart(el, series, opts) {
     })
     .on("pointerleave", () => { cross.style("display", "none"); hideTip(); });
   el.replaceChildren(svg.node());
+  if (opts.noCSV) return;
   if (opts.hourly) setCSV(el, ["date", "hour_ending", ...series.map((s) => s.label)], dates.map((_, i) => [dstr[Math.floor(i / 24)], i % 24 + 1, ...series.map((s) => s.values[i])]), opts.title);
   else setCSV(el, ["date", ...series.map((s) => s.label)], dstr.map((d, i) => [d, ...series.map((s) => s.values[i])]), opts.title);
 }
 
 // ---- natural gas ----------------------------------------------------------------------
-// Henry Hub from the EIA (gas.json.gz); Houston Ship Channel and Waha from OilPriceAPI (gas_hubs.json.gz)
+// Henry Hub daily from the EIA (gas.json.gz). The Houston Ship Channel and Waha prices are licensed
+// (OilPriceAPI) and published only as a 7-trading-day average (gas_hub_avg.json.gz, gas.py), and the
+// chart offers no download; the implied heat rate against each unit's own daily hub price is built
+// by the pipeline (implied_hr_60d.json.gz, econ.build_implied_hr)
 const GAS_LINES = [
-  { key: "hsc", label: "Houston Ship Channel", color: "--c1" },
-  { key: "waha", label: "Waha", color: "--c3" },
+  { key: "hsc", label: "Houston Ship Channel (7-day average)", color: "--c1" },
+  { key: "waha", label: "Waha (7-day average)", color: "--c3" },
   { key: "hh", label: "Henry Hub", color: "--c2", dash: "6 3" },
 ];
-function gasSources() {
-  const out = {};
-  if (S.G && S.G.dates && S.G.dates.length) out.hh = { dates: S.G.dates, value: S.G.value };
-  const H = (S.GH && S.GH.hubs) || {};
-  Object.entries(H).forEach(([k, v]) => { if (v.dates && v.dates.length) out[k] = v; });
-  return out;
-}
 function drawGas() {
-  const src = gasSources(), el = $("gas-chart"), hel = $("gas-hr");
-  if (!Object.keys(src).length) { emptyMsg(el, "No gas prices yet. The data update workflow fetches Henry Hub from the EIA when an EIA_API_KEY secret is set, and Houston Ship Channel and Waha from OilPriceAPI when an OILPRICEAPI_KEY secret is set."); hel.innerHTML = ""; $("gas-legend").innerHTML = ""; return; }
-  // all series on one date axis: every date any of them has, each carrying no value where it has none
-  const dates = [...new Set(Object.values(src).flatMap((g) => g.dates))].sort();
-  const on = (g) => { const by = new Map(g.dates.map((d, i) => [d, g.value[i]])); return dates.map((d) => (by.has(d) ? by.get(d) : null)); };
-  const lines = GAS_LINES.filter((l) => src[l.key]);
-  staticLegend($("gas-legend"), lines);
-  $("gas-note").textContent = lines.map((l) => `${l.label} through ${src[l.key].dates.at(-1)}`).join(" · ");
-  timeChart(el, lines.map((l) => ({ label: l.label, color: l.color, dash: l.dash, values: on(src[l.key]) })),
-    { dates, H: 220, title: "Natural gas daily prices ($/MMBtu)", yFmt: d3.format("$,.2f"), tipFmt: d3.format("$,.2f") });
-  const T = S.T;
-  if (!T || !T.units) { hel.innerHTML = ""; return; }
-  // implied heat rate: each unit's price over the gas at its own hub, Waha or Houston Ship Channel
-  // (fuel_hubs.json.gz, pipeline/fuel_hub.py; units without one use Ship Channel, and a hub with
-  // no prices loaded falls back to Ship Channel, then Henry Hub). Gas on each trend day: the last
-  // trading day before it, as gas trades the day before it flows (the timing the hub fit uses).
-  const hubOf = (name) => ((S.FH && S.FH.units && S.FH.units[name]) || {}).hub || "hsc";
-  const gasOnHub = {};
-  const gasFor = (hub) => {
-    const key = src[hub] ? hub : src.hsc ? "hsc" : "hh";
-    if (!gasOnHub[key]) {
-      const G = src[key], out = {};
-      let j = 0, last = null;
-      T.dates.forEach((d) => {
-        while (j < G.dates.length && G.dates[j] < d) { if (G.value[j] != null) last = G.value[j]; j++; }
-        out[d] = last;
-      });
-      gasOnHub[key] = out;
-    }
-    return gasOnHub[key];
-  };
-  const HR_MIN_UNITS = 10, HR_CARRY_DAYS = 14, DAY_MS = 864e5;
-  const t0 = T.dates.map((d) => parseDate(d).getTime());
-  const hr = (t) => {
-    const us = T.units.filter((u) => u.tech === t);
-    const gas = us.map((u) => gasFor(hubOf(u.unit)));
-    const lastHr = us.map(() => null), lastT = us.map(() => -Infinity);
-    return T.dates.map((d, i) => {
-      const v = [];
-      us.forEach((u, k) => {
-        const p = u.first[i], g = gas[k][d];
-        if (p != null && g > 0) { lastHr[k] = p / g; lastT[k] = t0[i]; }
-        if (lastHr[k] != null && t0[i] - lastT[k] <= HR_CARRY_DAYS * DAY_MS) v.push(lastHr[k]);
-      });
-      return v.length >= HR_MIN_UNITS ? d3.median(v) : null;
-    });
-  };
+  const el = $("gas-chart"), hel = $("gas-hr"), src = {};
+  if (S.G && S.G.dates && S.G.dates.length) src.hh = S.G;
+  Object.entries((S.HA && S.HA.hubs) || {}).forEach(([k, v]) => { if (v.dates && v.dates.length) src[k] = v; });
+  if (!Object.keys(src).length) { emptyMsg(el, "No gas prices yet. The data update workflow fetches Henry Hub from the EIA when an EIA_API_KEY secret is set."); $("gas-legend").innerHTML = ""; }
+  else {
+    // all series on one date axis: every date any of them has, each carrying no value where it has none
+    const dates = [...new Set(Object.values(src).flatMap((g) => g.dates))].sort();
+    const on = (g) => { const by = new Map(g.dates.map((d, i) => [d, g.value[i]])); return dates.map((d) => (by.has(d) ? by.get(d) : null)); };
+    const lines = GAS_LINES.filter((l) => src[l.key]);
+    staticLegend($("gas-legend"), lines);
+    $("gas-note").textContent = lines.map((l) => `${l.label} through ${src[l.key].dates.at(-1)}`).join(" · ");
+    timeChart(el, lines.map((l) => ({ label: l.label, color: l.color, dash: l.dash, values: on(src[l.key]) })),
+      { dates, H: 220, title: "Natural gas prices ($/MMBtu): Henry Hub daily, the Texas hubs as a 7-trading-day average", yFmt: d3.format("$,.2f"), tipFmt: d3.format("$,.2f"), noCSV: true });
+  }
+  const H = S.IHR;
+  if (!H || !H.dates || !H.dates.length) { hel.innerHTML = ""; return; }
   timeChart(hel, [
-    { label: "Combined cycle", color: "--c1", values: hr("combined_cycle") },
-    { label: "Combustion turbine", color: "--c2", values: hr("combustion_turbine") },
-    { label: "Gas steam", color: "--c6", values: hr("gas_steam") },
-  ], { dates: T.dates, H: 220, title: `Implied heat rate: median gas unit's first offer price above $0 at or above LSL ÷ gas at its own hub, Waha or Ship Channel (MMBtu per MWh)`, yFmt: d3.format(",.1f"), tipFmt: d3.format(",.2f"), yTicks: [0, 5, 7, 10, 15, 20] });
+    { label: "Combined cycle", color: "--c1", values: H.techs.combined_cycle },
+    { label: "Combustion turbine", color: "--c2", values: H.techs.combustion_turbine },
+    { label: "Gas steam", color: "--c6", values: H.techs.gas_steam },
+  ], { dates: H.dates, H: 220, title: `Implied heat rate: median gas unit's first offer price above $0 at or above LSL ÷ gas at its own hub, Waha or Ship Channel (MMBtu per MWh)`, yFmt: d3.format(",.1f"), tipFmt: d3.format(",.2f"), yTicks: [0, 5, 7, 10, 15, 20] });
 }
 
 function drawPriceQuantiles() {
@@ -557,9 +523,9 @@ function loadView() { const v = window.CX.readHash(); Object.entries(VIEW_KEYS).
 function drawAll() { drawPriceQuantiles(); drawGas(); drawMarginal(); drawNodeMarginal(); }
 
 async function boot() {
-  [S.T, S.C, S.G, S.GH, S.MN, S.SP, S.FH] = await Promise.all([tryJSON("data/trends_60d.json.gz"), tryJSON("data/curve_trends.json.gz"),
-    tryJSON("data/gas.json.gz"), tryJSON("data/gas_hubs.json.gz"), tryJSON("data/marginal_nodes.json.gz"),
-    tryJSON("data/summary_prices.json.gz"), tryJSON("data/fuel_hubs.json.gz")]);
+  [S.T, S.C, S.G, S.HA, S.IHR, S.MN, S.SP] = await Promise.all([tryJSON("data/trends_60d.json.gz"), tryJSON("data/curve_trends.json.gz"),
+    tryJSON("data/gas.json.gz"), tryJSON("data/gas_hub_avg.json.gz"), tryJSON("data/implied_hr_60d.json.gz"), tryJSON("data/marginal_nodes.json.gz"),
+    tryJSON("data/summary_prices.json.gz")]);
   if (!S.T) { $("range-status").textContent = "No across-days data yet. It is built by the data update workflow."; return; }
   const D = S.T.dates;
   // one date range for every daily chart (gas is trimmed to it)

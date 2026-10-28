@@ -77,6 +77,7 @@ from collections import Counter, defaultdict
 
 import numpy as np
 
+from .. import private
 from ..config import DATA_DIR, GENERIC_COSTS
 from ..cop import COP_DIR
 from ..decisions import AWARD_LSL, COST_DAYS, _dam_trains
@@ -155,7 +156,7 @@ def _status(dd):
 def _gas(ctx):
     """(dates, $/MMBtu) of the Houston Ship Channel daily gas price."""
     if "_oi_gas" not in ctx.__dict__:
-        h = (read_json_gz(DATA_DIR / "gas_hubs.json.gz", default={}) or {}).get("hubs", {}).get("hsc") or {}
+        h = (private.read("gas_hubs.json.gz", default={}) or {}).get("hubs", {}).get("hsc") or {}
         ctx._oi_gas = (h.get("dates") or [], h.get("value") or [])
     return ctx._oi_gas
 

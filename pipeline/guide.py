@@ -26,6 +26,7 @@ Writes data/guide.json.gz:
 """
 import numpy as np
 
+from . import private
 from .config import DATA_DIR, UNIT_DATA_DIR
 from .store import read_json_gz, write_json_gz
 from .stayon import HOT_H, INTER_H
@@ -138,7 +139,7 @@ def build():
                 per_mw.setdefault(v.get("tech"), {}).setdefault(unit, []).append(st[kind] / v["hsl"])
     # one value per unit (its median), and only where enough units offer one to call it a range
     per_mw = {t: [float(np.median(x)) for x in us.values()] for t, us in per_mw.items() if len(us) >= 10}
-    hubs = (read_json_gz(DATA_DIR / "gas_hubs.json.gz") or {}).get("hubs", {})
+    hubs = (private.read("gas_hubs.json.gz") or {}).get("hubs", {})
 
     units = []
     for name, (label, note) in UNITS.items():

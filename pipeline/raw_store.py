@@ -196,6 +196,39 @@ class RawStore:
                  "not keeping files for the rest of this run")
             self._failed = True
 
+    def get_object(self, key: str):
+        """Any object's bytes by its full key, None when it is not stored; raises RuntimeError
+        when the bucket can't be read (for the private files, pipeline/private.py; the ERCOT
+        files go through get())."""
+        if not self.enabled:
+            return None
+        for attempt in (1, 2):
+            try:
+                r = self.session.get(self._url(key), headers=self._headers("GET", key), timeout=TIMEOUT)
+            except requests.RequestException:
+                continue
+            if r.status_code == 404:
+                return None
+            if r.status_code == 200:
+                return r.content
+        raise RuntimeError(f"raw store: reading {key} failed twice")
+
+    def put_object(self, key: str, blob: bytes, content_type="application/octet-stream") -> bool:
+        """Store any object by its full key.  True when stored; failures only warn."""
+        if not self.enabled:
+            return False
+        for attempt in (1, 2):
+            try:
+                r = self.session.put(self._url(key), data=blob, timeout=TIMEOUT,
+                                     headers=self._headers("PUT", key, blob, {"content-type": content_type}))
+                if r.status_code == 200:
+                    return True
+                err = f"HTTP {r.status_code}: {r.text[:200]}"
+            except requests.RequestException as e:
+                err = e
+        warn(f"raw store: storing {key} failed twice ({err})")
+        return False
+
     def summary(self) -> str:
         s = self.stats
         return (f"raw store: {s['hit']} file(s) read from the bucket ({s['hit_bytes'] / 1e6:.0f} MB), "

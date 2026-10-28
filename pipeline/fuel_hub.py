@@ -30,6 +30,7 @@ import warnings
 
 import numpy as np
 
+from . import private
 from .config import DATA_DIR, GAS_HUBS, UNIT_DATA_DIR
 from .nodes import settlement_points
 from .parse_prices import node_hourly
@@ -123,7 +124,7 @@ def nearest_hubs(sps: set, node_days: list) -> dict:
 
 
 def build_fuel_hubs(index: dict) -> None:
-    hub_file = (read_json_gz(DATA_DIR / "gas_hubs.json.gz", default=None) or {}).get("hubs", {})
+    hub_file = (private.read("gas_hubs.json.gz", default=None) or {}).get("hubs", {})
     if not all(h in hub_file for h in GAS_HUBS):
         print("fuel hubs: no Waha / Houston Ship Channel prices yet, skipped")
         return

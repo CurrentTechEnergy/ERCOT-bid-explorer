@@ -52,7 +52,8 @@ Sources (each already computed by its own module; nothing is detected twice):
                    with, so a fuel-price move that the bidding kind removes shows here instead)
                    shifting between K online days and the K before, by FUEL thresholds.  Unit
                    key "fleet:<tech>"; carries the Houston Ship Channel gas price over the same
-                   two windows (gas_hubs) beside it
+                   two windows (the private gas_hubs, pipeline/private.py) beside it: one
+                   quoted data point per event, not the price series
   battery_size     storage.py units.json.gz: a lasting change in a battery's HSL or maximum state
                    of charge: SIZE_SHARE or more for SIZE_WINDOW days, holding most of the SIZE_HOLD days after; major from SIZE_MAJOR.
                    Not in a battery's first SIZE_HOLD days charging or discharging
@@ -100,6 +101,7 @@ from collections import defaultdict
 
 import numpy as np
 
+from . import private
 from .config import DATA_DIR, SITE_URL
 from .forecast.context import BIN_LABELS, PRICE_BINS
 from .models.peaker_rt import node_prices
@@ -123,7 +125,7 @@ OUTAGE_MAJOR = 30     # ... and a major one from this length
 FUEL = {"combined_cycle": (5, 0.2, 0.5), "gas_steam": (5, 0.2, 0.5), "combustion_turbine": (5, 0.2, 0.5),
         "coal": (12, 0.6, 0.6)}
 FUEL_MIN_UNITS = 5    # units with a price that day before its median counts
-FUEL_HUB = "hsc"      # gas hub shown beside the shift (gas_hubs.json.gz)
+FUEL_HUB = "hsc"      # gas hub shown beside the shift (the private gas_hubs.json.gz)
 # battery size changes (see the docstring)
 SIZE_WINDOW, SIZE_BASE, SIZE_MIN_BASE = 7, 30, 20      # days with a value
 SIZE_SHARE, SIZE_MW, SIZE_HOLD, SIZE_MAJOR = 0.2, 5, 30, 0.5
@@ -666,7 +668,7 @@ def build_events(index: dict) -> dict:
     rc = read_json_gz(DATA_DIR / "renew_changes.json.gz", default={}) or {}
     do = read_json_gz(DATA_DIR / "dam_offers.json.gz", default={}) or {}
     oc = read_json_gz(OPERATOR_DIR / "cutoffs.json.gz", default={}) or {}
-    hubs = read_json_gz(DATA_DIR / "gas_hubs.json.gz", default={}) or {}
+    hubs = private.read("gas_hubs.json.gz", default={}) or {}
     su = read_json_gz(DATA_DIR / "storage" / "units.json.gz", default={}) or {}
     qh = read_json_gz(QSE_PATH, default={}) or {}
     ent = read_json_gz(ENTITIES_PATH, default={}) or {}

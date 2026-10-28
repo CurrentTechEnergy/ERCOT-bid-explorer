@@ -49,7 +49,7 @@ from .decisions import build_decisions
 from .curve_trends import build_curve_trends
 from .nodes import build_node_curtail
 from .marginal_nodes import build_marginal_nodes
-from .gas import fetch_gas, fetch_gas_history, fetch_hubs
+from .gas import fetch_gas, fetch_gas_history, fetch_hubs, write_hub_averages
 from .fuel_hub import build_fuel_hubs
 from .econ import build_econ
 from .dam_lambda import fetch_dam_lambda
@@ -621,6 +621,7 @@ def main(argv=None):
         fetch_gas()
         fetch_gas_history()
         fetch_hubs()
+        write_hub_averages()
 
     build_dispatchable(index)
     build_marginal(index)

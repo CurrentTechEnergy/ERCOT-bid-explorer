@@ -21,6 +21,7 @@ from collections import defaultdict
 
 import numpy as np
 
+from .. import private
 from ..config import DATA_DIR, HISTORY_DIR
 from ..forecast import groups as grp
 from ..intraday import train_of
@@ -127,10 +128,11 @@ class HistoryContext:
                 a[off:off + len(st)] = st
             self._raw[k] = (techs.get(k, live_raw.get(k, ("", None))[0]), a)
         # gas: the live Ship Channel series, then its history from OilPriceAPI, then Henry Hub
-        hsc = (read_json_gz(DATA_DIR / "gas_hubs.json.gz", default={}) or {}).get("hubs", {}).get("hsc") or {}
+        hsc = (private.read("gas_hubs.json.gz", default={}) or {}).get("hubs", {}).get("hsc") or {}
         gh = read_json_gz(DATA_DIR / "gas_history.json.gz", default={}) or {}
+        ph = private.read("gas_hub_history.json.gz", default={}) or {}
         gas, first = {}, "9999"
-        for s in (hsc, gh.get("hsc") or {}, gh.get("henry_hub") or {}):
+        for s in (hsc, ph.get("hsc") or {}, gh.get("henry_hub") or {}):
             d0 = min(first, (s.get("dates") or ["9999"])[0])
             gas.update({d: v for d, v in zip(s.get("dates", []), s.get("value", [])) if d < first})
             first = d0
