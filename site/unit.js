@@ -386,12 +386,14 @@ async function drawDecisionsRT(e) {
   const el = $("dec-chart"), P = S.PRT;
   const C = P ? Object.fromEntries(P.columns.map((c, i) => [c, i])) : {};
   const pts = P ? Object.entries(P.days).flatMap(([d, rs]) => rs.filter((r) => r[C.unit] === e.name).map((r) => ({ d, t: parseDate(d), s: r[C.start], p: r[C.peak], ran: !!r[C.ran], on: r[C.hours_on], av: r[C.hours_avail], win: r[C.window] }))) : [];
-  if (!pts.length) { $("dec-note").textContent = ""; $("dec-legend").innerHTML = ""; return emptyMsg(el, "No real-time fit for this peaker: it needs 90 days in which it both ran and sat off."); }
+  const odd = Object.entries(P?.unexplained || {}).filter(([, us]) => us.some((r) => r[0] === e.name)).map(([mo, us]) => [mo, us.find((r) => r[0] === e.name)[1]]);
+  const oddNote = odd.length ? ` Price doesn't explain its running in ${odd.map(([mo, sh]) => `${d3.timeFormat("%b %Y")(parseDate(mo + "-01"))} (online ${fmtPct(sh)} of its hours)`).join(", ")}: the fit finds no price it sits off at, or runs it more at low prices than high, yet it sat off most hours, so those months have no diamonds.` : "";
+  if (!pts.length) { $("dec-note").textContent = oddNote.trim(); $("dec-legend").innerHTML = ""; return emptyMsg(el, odd.length ? "Price doesn't explain this peaker's running in any month fitted." : "No real-time fit for this peaker: it needs 45 days in which it both ran and sat off."); }
   const says = (p) => p.s == null || p.s <= p.p, bad = (p) => says(p) !== p.ran, right = pts.filter((p) => !bad(p)).length, ran = pts.filter((p) => p.ran).length;
   const caught = pts.filter((p) => p.ran && says(p)).length;
-  $("dec-note").textContent = `A peaker starts when running pays, so it is judged on the real-time price at its own node: each month it is fitted on the 90 days before, its chance of being online against that price and the hour of day. ` +
+  $("dec-note").textContent = `A peaker starts when running pays, so it is judged on the real-time price at its own node: each month it is fitted on every day before, recent days counting most (a day 30 days back counts half), its chance of being online against that price and the hour of day. ` +
     `The diamond is the day's highest price at which the fit starts it, the circle the day's actual highest price at its node. On ${pts.length} days available it ran on ${ran}; the fit called ${right} right (${fmtPct(right / pts.length)}), ${caught} of the ${ran} days it ran. A fit of what it did, not a forecast: the real-time price is not known when it decides. ` +
-    `When those 90 days never show a price it would sit off at, it is fitted on every day before the month instead; if those don't either, it runs at any price it has seen (the bottom row). The diamond stays between the lowest price it ran at and the highest it sat off at in the days fitted.`;
+    `When those days never show a price it would sit off at, it runs at any price it has seen (the bottom row), if it was online at least half its hours. The diamond stays between the lowest price it ran at and the highest it sat off at in the days fitted.` + oddNote;
   $("dec-legend").innerHTML = `<span><span class="sw" style="background:var(--c1);transform:rotate(45deg) scale(0.8)"></span>Fit starts it above this price</span>` +
     window.CX.onOffLegend("Day's highest price, ran", "Day's highest price, stayed off") +
     `<span><span class="sw" style="background:var(--c8);height:3px"></span>Did the opposite of the fit</span><span><span class="sw sw-line"></span>Running at a new price</span>`;
@@ -421,7 +423,7 @@ async function drawDecisionsRT(e) {
   svg.append("rect").attr("x", m.l).attr("y", m.t).attr("width", w - m.l - m.r).attr("height", H - m.t - m.b).attr("fill", "transparent")
     .on("pointermove", (evt) => {
       const [px] = d3.pointer(evt), p = pts[d3.minIndex(pts, (q) => Math.abs(x(q.t) - px))], vv = ev.find((v) => v.date.slice(0, 7) === p.d.slice(0, 7));
-      showTip(evt, `<h4>${fmtDate(p.t)}</h4><table><tr><td>Fit starts it at</td><td class="n">${p.s == null ? "any price" : `${fmt$(p.s)}/MWh`}</td></tr><tr><td>Fitted on</td><td class="n">${p.win ?? "–"} days before the month</td></tr><tr><td>Day's highest node price</td><td class="n">${fmt$(p.p)}/MWh</td></tr>` +
+      showTip(evt, `<h4>${fmtDate(p.t)}</h4><table><tr><td>Fit starts it at</td><td class="n">${p.s == null ? "any price" : `${fmt$(p.s)}/MWh`}</td></tr><tr><td>Fitted on</td><td class="n">${p.win ?? "–"} days before the month, recent ones counting most</td></tr><tr><td>Day's highest node price</td><td class="n">${fmt$(p.p)}/MWh</td></tr>` +
         `<tr><td>What it did</td><td class="n">${p.ran ? `ran ${p.on} of ${p.av} h` : "stayed off"}</td></tr></table>${bad(p) ? "Did the opposite of the fit" : ""}${vv ? `<br><b>${esc(vv.title)}</b>` : ""}`);
     })
     .on("pointerleave", hideTip);
