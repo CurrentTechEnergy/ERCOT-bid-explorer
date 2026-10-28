@@ -303,3 +303,4 @@ details.dl > summary:hover { color: var(--ink); border-color: var(--muted); }
 
 /* predictions hidden: forecast overlays and the estimates panels go away on scored days */
 body.no-pred .pred { display: none !important; }
+.data td .neg { color: var(--c8); }

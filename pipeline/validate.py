@@ -361,7 +361,29 @@ def check_day(date, have):
     ft = read_json_gz(DATA_DIR / "fit" / f"{date}.json.gz") if date in have.get("fit", ()) else None
     if ft:
         _fit_checks(day, ft)
+    rt = read_json_gz(DATA_DIR / "rt-nodes" / f"{date}.json.gz", default=None)
+    if rt:
+        _rt_node_checks(day, rt, dam)
     return day
+
+
+def _rt_node_checks(day, rt, dam):
+    """Real-time node prices by hour (pipeline/rt_nodes): 24 hours per point, prices inside
+    ERCOT's offer floor and cap plus adders, and a price for nearly every DAM unit's settlement point."""
+    pts = rt.get("points") or {}
+    short = [p for p, v in pts.items() if len(v) != 24]
+    vals = np.array([x for v in pts.values() for x in v if x is not None], float)
+    bad = int(((vals < -300) | (vals > 10000)).sum()) if vals.size else 0
+    if short or bad or not pts:
+        day.add("rt_nodes", "error", f"{len(pts)} points, {len(short)} without 24 hours, {bad} prices outside -$300 to $10,000")
+    else:
+        day.add("rt_nodes", "ok", f"{len(pts)} points, prices ${vals.min():,.0f} to ${vals.max():,.0f}")
+    sps = {u.get("sp") for u in ((dam or {}).get("units") or {}).values() if u.get("sp")}
+    if sps:
+        miss = sorted(sps - set(pts))
+        level = "ok" if len(miss) <= 0.02 * len(sps) else "warning"
+        day.add("rt_nodes_cover", level, f"{len(sps) - len(miss)} of {len(sps)} DAM settlement points have RT prices"
+                + (f"; missing e.g. {', '.join(miss[:5])}" if miss else ""))
 
 
 def _operator_checks(day, oi):

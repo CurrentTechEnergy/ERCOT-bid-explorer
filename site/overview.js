@@ -51,11 +51,19 @@ const ESR_SPLIT_DATE = "2026-06-22";
 // the 60-day disclosure posts about this many days after the operating day
 const LAG_60D = 60;
 const PAGE_ROWS = 150;
+// profit in the Units table, on the Unit page's default bases (unit-econ.js): EIA average heat
+// rates (Electric Power Annual table 8.2, 2024, MMBtu/MWh), generic variable O&M ($/MWh) and hot
+// start ($) where the unit has no DAM start offer, coal and nuclear fuel at a flat $/MMBtu
+const ECON = {
+  combined_cycle: { hr: 7.548, vom: 3.0, start: 15000 }, combustion_turbine: { hr: 10.999, vom: 5.0, start: 3000 },
+  gas_steam: { hr: 10.337, vom: 4.0, start: 10000 }, coal: { hr: 10.018, vom: 5.0, start: 30000, fuel: 2.0 },
+  nuclear: { hr: 10.443, vom: 2.5, start: 0, fuel: 0.7 },
+};
 
 // ---------------------------------------------------------------- state ---
 const S = {
   index: null, dalam: null, groups: null, days: [],
-  date: null, gen: null, units60: null, prices: null, a60: null,
+  date: null, gen: null, units60: null, prices: null, a60: null, dam: null, rtNodes: null, fuelHubs: null, gasHubs: null, gasHH: null,
   limBy: "group", hour: 12, unitView: "day", unitTech: "all", unitSearch: "", unitSort: { key: "hsl", dir: -1 }, unitShowAll: false,
   hidden: new Set(),
 };
@@ -496,7 +504,7 @@ function drawMix() {
 // ---------------------------------------------------------------- drill-down: units ---
 const UNIT_COLS = [
   ["unit", "Unit", "t"], ["tech", "Technology", "tech"], ["group", "Group", "group"], ["hsl", "HSL (MW)"], ["lsl", "LSL online (MW)"],
-  ["online_h", "Hours online"], ["mwh", "Output (MWh)"],
+  ["online_h", "Hours online"], ["mwh", "Output (MWh)"], ["profit", "Profit ($)", "usd"],
 ];
 const UNIT_TIPS = {
   group: "How often the unit has turned off on price over the 60-day data: always on when available, seasonal, multi-day, or daily at three frequencies.",
@@ -504,6 +512,7 @@ const UNIT_TIPS = {
   lsl: "The unit's largest minimum output (LSL) in an hour it was online.",
   online_h: "Hours the unit was online in the 60-day disclosure (at least half of the hour's SCED runs).",
   mwh: "Energy produced over the day.",
+  profit: "Energy revenue settled two-settlement (DAM award at its day-ahead price, the real-time deviation at the unit's real-time node price), plus ancillary services, less fuel at the EIA average heat rate and the unit's gas hub, variable O&M and, over the day, starts at its DAM hot start offer. The selected-hour view has no start costs. Same bases as the Unit page's revenue and cost panel; an estimate, not the unit's books.",
 };
 function unitRows() {
   const a60 = S.a60;
@@ -512,6 +521,7 @@ function unitRows() {
   return Object.values(a60.units).map((u) => ({
     unit: u.unit, tech: u.tech, group: u.group, hsl: hourly ? u.hsl[h] : u.hslMax, lsl: hourly ? u.lsl[h] : u.lslMax,
     online_h: hourly ? u.on[h] : u.online_h, mwh: hourly ? u.out[h] : u.mwh,
+    profit: !u.profit || u.noFuel ? null : hourly ? u.profit[h] : u.profitDay,
   }));
 }
 function drawUnits() {
@@ -531,7 +541,7 @@ function drawUnits() {
     if (va == null) return 1; if (vb == null) return -1;
     return (typeof va === "string" ? va.localeCompare(vb) : va - vb) * dir;
   });
-  const cols = UNIT_COLS.map(([k, l, kind]) => (hourly && k === "online_h" ? [k, `Online in ${heLabel(h)}`, "yn"] : hourly && k === "mwh" ? [k, `Output in ${heLabel(h)} (MW)`] : [k, l, kind]));
+  const cols = UNIT_COLS.map(([k, l, kind]) => (hourly && k === "online_h" ? [k, `Online in ${heLabel(h)}`, "yn"] : hourly && k === "mwh" ? [k, `Output in ${heLabel(h)} (MW)`] : hourly && k === "profit" ? [k, `Profit in ${heLabel(h)} ($)`, kind] : [k, l, kind]));
   setCSV(el, cols.map(([k]) => k), rows.map((r) => cols.map(([k]) => r[k])), `Units ${S.date}${hourly ? " " + heLabel(h) : ""}`);
   const total = rows.length;
   if (!S.unitShowAll) rows = rows.slice(0, PAGE_ROWS);
@@ -543,6 +553,7 @@ function drawUnits() {
     if (kind === "group") return GROUP_SHORT[v] || esc(v);
     if (kind === "yn") return v ? "yes" : "no";
     if (k === "online_h") return d3.format(",.0f")(v);
+    if (kind === "usd") return `<span class="${v < 0 ? "neg" : ""}">${v < 0 ? "−" : ""}$${d3.format(",.0f")(Math.abs(v))}</span>`;
     return d3.format(",.0f")(v);
   };
   const tcls = (kind) => (["t", "tech", "group"].includes(kind) ? "t" : "");
@@ -551,7 +562,8 @@ function drawUnits() {
   html += rows.map((r) => `<tr>${cols.map(([k, , kind]) => `<td class="${tcls(kind)}">${fmt(r, k, kind)}</td>`).join("")}</tr>`).join("");
   el.innerHTML = html + "</tbody></table></div>";
   $("units-foot").innerHTML = (total > rows.length ? `Showing ${rows.length} of ${total} units. <button type="button" id="units-all" class="linkish">Show all</button>` : `Units: ${total}.`) +
-    ` Groups are from the full 60-day data. Which units turned off on the day, and at what loss, is on <a href="commitment.html#date=${S.date}">Commitment</a>.`;
+    ` Groups are from the full 60-day data. Which units turned off on the day, and at what loss, is on <a href="commitment.html#date=${S.date}">Commitment</a>.` +
+    ` Profit is an estimate on generic costs (coal at $2/MMBtu, so lignite at its own mine reads low)${S.rtNodes ? "" : "; real-time node prices for this day are not in yet, so the real-time part settles at system lambda"}.`;
   $("units-note").textContent = `${S.date} · ${Object.keys(S.a60.units).length} thermal units`;
   const b = $("units-all");
   if (b) b.onclick = () => { S.unitShowAll = true; drawUnits(); };
@@ -571,6 +583,60 @@ function drawOffersLinks() {
 function drawSource() {
   const d = S.date;
   $("source-note").textContent = has("60d") ? "60-day disclosure: each unit's hours" : has("2dgen") ? `2-day summary; unit detail about ${dayLabel(addDays(d, LAG_60D))}` : "Prices only so far";
+}
+
+// ---------------------------------------------------------------- profit ---
+// a gas price for the day: the latest trading day on or before it in {dates, value}
+function priceOn(src, d) {
+  if (!src || !src.dates) return null;
+  let v = null;
+  for (let i = 0; i < src.dates.length && src.dates[i] <= d; i++) if (src.value[i] != null) v = src.value[i];
+  return v;
+}
+// each thermal train's profit by hour and over the day ($), settled two-settlement as on the Unit
+// page: the DAM award at its day-ahead price plus the real-time deviation (output less award) at
+// the unit's real-time node price (system lambda where the node has no price), plus ancillary
+// service awards at their clearing prices, less fuel (EIA heat rate x the unit's gas hub, Henry
+// Hub without one) and variable O&M on the output; the day also less its starts (the DAM hot
+// start offer, else the generic one). Hourly profit has no start costs.
+function unitProfit() {
+  const f = S.units60, a = S.a60;
+  if (!f || !a) return;
+  const ci = Object.fromEntries(f.columns.map((c, i) => [c, i + 2]));
+  const dam = (S.dam && S.dam.units) || {}, mcpc = (S.dam && S.dam.mcpc) || {};
+  const rt = S.rtNodes && S.rtNodes.points, lam = dayPrices().rt;
+  const hubs = (S.gasHubs && S.gasHubs.hubs) || {}, hh = priceOn(S.gasHH, S.date);
+  const hubPrice = Object.fromEntries(Object.keys(hubs).map((k) => [k, priceOn(hubs[k], S.date)]));
+  const fh = (S.fuelHubs && S.fuelHubs.units) || {};
+  const out = {};     // configuration -> [24] MW
+  f.rows.forEach((r) => { const h = r[1] - 1; if (h >= 0 && h < 24) (out[r[0]] = out[r[0]] || HRS.map(() => 0))[h] += r[ci.output] || 0; });
+  Object.values(a.units).forEach((u) => { u.profit = HRS.map(() => 0); u.startCost = 0; u.rtShare = 0; u.hot = null; u.noFuel = false; });
+  const seen = {};
+  f.units.forEach(([name, , t], i) => {
+    const e = ECON[t], u = a.units[trainOf(name, t)];
+    if (!e || !u) return;
+    const du = dam[name] || {}, o = out[i] || HRS.map(() => 0), node = rt && du.sp ? rt[du.sp] : null;
+    const hub = (fh[name] || {}).hub, gas = hub && hubPrice[hub] != null ? hubPrice[hub] : hh;
+    const fp = e.fuel != null ? e.fuel : gas;
+    if (fp == null) u.noFuel = true;
+    if (du.start && du.start[0] != null) u.hot = Math.max(u.hot || 0, du.start[0]);
+    HRS.forEach((h) => {
+      const p = node && node[h] != null ? node[h] : lam ? lam[h] : null;
+      if (p == null) return;
+      if (node && node[h] != null && o[h]) seen[u.unit] = (seen[u.unit] || 0) + 1;
+      const aw = du.award && du.award[h] != null ? du.award[h] : 0, spp = du.spp ? du.spp[h] : null;
+      let v = aw && spp != null ? aw * spp + (o[h] - aw) * p : o[h] * p;
+      Object.entries(du.as || {}).forEach(([k, q]) => { if (q && q[h] && mcpc[k] && mcpc[k][h] != null) v += q[h] * mcpc[k][h]; });
+      v -= Math.max(0, o[h]) * ((fp || 0) * e.hr + e.vom);
+      u.profit[h] += v;
+    });
+  });
+  Object.values(a.units).forEach((u) => {
+    const e = ECON[u.tech] || {}, n = HRS.filter((h) => h > 0 && u.on[h] && !u.on[h - 1]).length;
+    u.starts = n; u.startCost = n * (u.hot != null ? u.hot : e.start || 0);
+    u.profitDay = d3.sum(u.profit) - u.startCost;
+    u.rtShare = u.online_h ? (seen[u.unit] || 0) / u.online_h : 0;
+  });
 }
 
 // ---------------------------------------------------------------- render ---
@@ -593,14 +659,17 @@ function renderHour() {
 }
 async function loadDay() {
   const d = S.date;
-  const [gen, units60, prices] = await Promise.all([
+  const [gen, units60, prices, dam, rtNodes] = await Promise.all([
     has("2dgen") ? tryJSON(`data/2dgen/${d}.json.gz`) : null,
     has("60d") ? tryJSON(`data/60d-units/${d}.json.gz`) : null,
     has("prices") ? tryJSON(`data/prices/${d}.json.gz`) : null,
+    has("60d") && has("dam") ? tryJSON(`data/dam/${d}.json.gz`) : null,
+    has("60d") ? tryJSON(`data/rt-nodes/${d}.json.gz`) : null,
   ]);
   if (d !== S.date) return;    // a newer pick took over
-  S.gen = gen; S.units60 = units60; S.prices = prices;
+  S.gen = gen; S.units60 = units60; S.prices = prices; S.dam = dam; S.rtNodes = rtNodes;
   S.a60 = actual60();
+  unitProfit();
   S.unitShowAll = false;
 }
 async function changeDay() { await loadDay(); render(); }
@@ -614,7 +683,8 @@ function loadView() {
 }
 
 async function boot() {
-  [S.index, S.dalam, S.groups] = await Promise.all([tryJSON("data/index.json"), tryJSON("data/dam_lambda.json.gz"), tryJSON("data/groups_60d.json.gz")]);
+  [S.index, S.dalam, S.groups, S.fuelHubs, S.gasHubs, S.gasHH] = await Promise.all([tryJSON("data/index.json"), tryJSON("data/dam_lambda.json.gz"), tryJSON("data/groups_60d.json.gz"),
+    tryJSON("data/fuel_hubs.json.gz"), tryJSON("data/gas_hubs.json.gz"), tryJSON("data/gas.json.gz")]);
   S.index = S.index || { days: {} };
   // every day with ERCOT data for it: prices, the 2-day summary or the 60-day disclosure
   const days = [...new Set(["prices", "2dgen", "60d"].flatMap((k) => S.index.days[k] || []))].sort();
