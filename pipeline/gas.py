@@ -17,6 +17,11 @@ prices, so the site gets only values derived from them):
    "hubs": {"hsc": {"code": ..., "name": "Houston Ship Channel", "dates": [...], "value": [...]},
             "waha": {...}}}
 one entry per day OilPriceAPI has a daily price (trading days), merged with what was stored.
+
+write_hub_averages() publishes only a smoothed form of the hubs, for the Real-time offers gas
+chart (no download there): data/gas_hub_avg.json.gz {"days": SMOOTH_DAYS, "unit": "$/MMBtu",
+"hubs": {"hsc"|"waha": {"dates", "value"}}}, each value the mean of the last SMOOTH_DAYS trading
+days' prices (history then live series), rounded to SMOOTH_ROUND.
 """
 import datetime as dt
 import os
@@ -35,6 +40,8 @@ HISTORY_CALLS = 20       # OilPriceAPI calls fetch_gas_history may spend in a ru
 HISTORY_WINDOW_DAYS = 140    # calendar days per hub history request: about 100 trading days, one page
 HUBS = "gas_hubs.json.gz"                   # private (pipeline/private.py)
 HUB_HISTORY = "gas_hub_history.json.gz"     # private
+HUB_AVG_PATH = DATA_DIR / "gas_hub_avg.json.gz"
+SMOOTH_DAYS, SMOOTH_ROUND = 7, 0.05
 API = "https://api.eia.gov/v2"
 PAGE = 5000
 OPA = "https://api.oilpriceapi.com/v1/prices/historical"
@@ -262,3 +269,21 @@ def fetch_hubs(key=None) -> bool:
         "updated": dt.datetime.now(dt.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
     })
     return True
+
+
+def write_hub_averages() -> None:
+    live = (private.read(HUBS, default=None) or {}).get("hubs", {})
+    hist = private.read(HUB_HISTORY, default=None) or {}
+    out = {}
+    for hub in ("hsc", "waha"):
+        by = {}
+        for s in (hist.get(hub) or {}, live.get(hub) or {}):
+            by.update({d: v for d, v in zip(s.get("dates", []), s.get("value", [])) if v is not None})
+        dates = sorted(by)
+        if len(dates) < SMOOTH_DAYS:
+            continue
+        vals = [by[d] for d in dates]
+        avg = [round(round(sum(vals[i - SMOOTH_DAYS + 1:i + 1]) / SMOOTH_DAYS / SMOOTH_ROUND) * SMOOTH_ROUND, 2)
+               for i in range(SMOOTH_DAYS - 1, len(vals))]
+        out[hub] = {"dates": dates[SMOOTH_DAYS - 1:], "value": avg}
+    write_json_gz(HUB_AVG_PATH, {"days": SMOOTH_DAYS, "unit": "$/MMBtu", "hubs": out})

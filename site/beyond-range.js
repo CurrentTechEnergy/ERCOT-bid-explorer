@@ -1,7 +1,7 @@
-/* Beyond baseload, across days: offers against fuel (thermal offer-price quantiles, Henry Hub gas and
+/* Beyond baseload, across days: offers against fuel (thermal offer-price quantiles, gas hubs and
    implied heat rate), marginal generation by settled price and marginality at the node, lifted
    from trends.js. Reads data/trends_60d.json.gz, data/curve_trends.json.gz,
-   data/gas.json.gz, data/implied_hr_60d.json.gz, data/marginal_*.json.gz, data/marginal_nodes.json.gz and
+   data/gas.json.gz, data/gas_hub_avg.json.gz, data/implied_hr_60d.json.gz, data/marginal_*.json.gz, data/marginal_nodes.json.gz and
    data/summary_prices.json.gz.
    The one-day panels on the same page are beyond-day.js, which also owns the status line and the
    shared chart controls (CX.init). */
@@ -216,23 +216,35 @@ function timeChart(el, series, opts) {
     })
     .on("pointerleave", () => { cross.style("display", "none"); hideTip(); });
   el.replaceChildren(svg.node());
+  if (opts.noCSV) return;
   if (opts.hourly) setCSV(el, ["date", "hour_ending", ...series.map((s) => s.label)], dates.map((_, i) => [dstr[Math.floor(i / 24)], i % 24 + 1, ...series.map((s) => s.values[i])]), opts.title);
   else setCSV(el, ["date", ...series.map((s) => s.label)], dstr.map((d, i) => [d, ...series.map((s) => s.values[i])]), opts.title);
 }
 
 // ---- natural gas ----------------------------------------------------------------------
-// Henry Hub from the EIA (gas.json.gz). The Houston Ship Channel and Waha prices are licensed and
-// not published, so the implied heat rate against each unit's own hub is built by the pipeline
-// (implied_hr_60d.json.gz, econ.build_implied_hr)
-const GAS_LINES = [{ key: "hh", label: "Henry Hub", color: "--c2" }];
+// Henry Hub daily from the EIA (gas.json.gz). The Houston Ship Channel and Waha prices are licensed
+// (OilPriceAPI) and published only as a 7-trading-day average (gas_hub_avg.json.gz, gas.py), and the
+// chart offers no download; the implied heat rate against each unit's own daily hub price is built
+// by the pipeline (implied_hr_60d.json.gz, econ.build_implied_hr)
+const GAS_LINES = [
+  { key: "hsc", label: "Houston Ship Channel (7-day average)", color: "--c1" },
+  { key: "waha", label: "Waha (7-day average)", color: "--c3" },
+  { key: "hh", label: "Henry Hub", color: "--c2", dash: "6 3" },
+];
 function drawGas() {
-  const G = S.G, el = $("gas-chart"), hel = $("gas-hr");
-  if (!G || !G.dates || !G.dates.length) { emptyMsg(el, "No gas prices yet. The data update workflow fetches Henry Hub from the EIA when an EIA_API_KEY secret is set."); $("gas-legend").innerHTML = ""; }
+  const el = $("gas-chart"), hel = $("gas-hr"), src = {};
+  if (S.G && S.G.dates && S.G.dates.length) src.hh = S.G;
+  Object.entries((S.HA && S.HA.hubs) || {}).forEach(([k, v]) => { if (v.dates && v.dates.length) src[k] = v; });
+  if (!Object.keys(src).length) { emptyMsg(el, "No gas prices yet. The data update workflow fetches Henry Hub from the EIA when an EIA_API_KEY secret is set."); $("gas-legend").innerHTML = ""; }
   else {
-    staticLegend($("gas-legend"), GAS_LINES);
-    $("gas-note").textContent = `Henry Hub through ${G.dates.at(-1)}`;
-    timeChart(el, GAS_LINES.map((l) => ({ label: l.label, color: l.color, values: G.value })),
-      { dates: G.dates, H: 220, title: "Henry Hub natural gas daily price ($/MMBtu)", yFmt: d3.format("$,.2f"), tipFmt: d3.format("$,.2f") });
+    // all series on one date axis: every date any of them has, each carrying no value where it has none
+    const dates = [...new Set(Object.values(src).flatMap((g) => g.dates))].sort();
+    const on = (g) => { const by = new Map(g.dates.map((d, i) => [d, g.value[i]])); return dates.map((d) => (by.has(d) ? by.get(d) : null)); };
+    const lines = GAS_LINES.filter((l) => src[l.key]);
+    staticLegend($("gas-legend"), lines);
+    $("gas-note").textContent = lines.map((l) => `${l.label} through ${src[l.key].dates.at(-1)}`).join(" · ");
+    timeChart(el, lines.map((l) => ({ label: l.label, color: l.color, dash: l.dash, values: on(src[l.key]) })),
+      { dates, H: 220, title: "Natural gas prices ($/MMBtu): Henry Hub daily, the Texas hubs as a 7-trading-day average", yFmt: d3.format("$,.2f"), tipFmt: d3.format("$,.2f"), noCSV: true });
   }
   const H = S.IHR;
   if (!H || !H.dates || !H.dates.length) { hel.innerHTML = ""; return; }
@@ -511,8 +523,8 @@ function loadView() { const v = window.CX.readHash(); Object.entries(VIEW_KEYS).
 function drawAll() { drawPriceQuantiles(); drawGas(); drawMarginal(); drawNodeMarginal(); }
 
 async function boot() {
-  [S.T, S.C, S.G, S.IHR, S.MN, S.SP] = await Promise.all([tryJSON("data/trends_60d.json.gz"), tryJSON("data/curve_trends.json.gz"),
-    tryJSON("data/gas.json.gz"), tryJSON("data/implied_hr_60d.json.gz"), tryJSON("data/marginal_nodes.json.gz"),
+  [S.T, S.C, S.G, S.HA, S.IHR, S.MN, S.SP] = await Promise.all([tryJSON("data/trends_60d.json.gz"), tryJSON("data/curve_trends.json.gz"),
+    tryJSON("data/gas.json.gz"), tryJSON("data/gas_hub_avg.json.gz"), tryJSON("data/implied_hr_60d.json.gz"), tryJSON("data/marginal_nodes.json.gz"),
     tryJSON("data/summary_prices.json.gz")]);
   if (!S.T) { $("range-status").textContent = "No across-days data yet. It is built by the data update workflow."; return; }
   const D = S.T.dates;
