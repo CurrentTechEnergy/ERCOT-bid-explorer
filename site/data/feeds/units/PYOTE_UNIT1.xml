@@ -37,7 +37,7 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=PYOTE_UNIT1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=PYOTE_UNIT1#PYOTE_UNIT1/2026-07-03/shutdown_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>First shutdown in the record, off 5 h</summary>
+    <summary>Shut down for 5 h after 42 days without a shutdown</summary>
   </entry>
   <entry>
     <title>PYOTE_UNIT1: Timescale group changed (2026-07-01)</title>
@@ -47,18 +47,32 @@
     <summary>Always on when available in 2026-06 to Daily, over 2 a week in 2026-07</summary>
   </entry>
   <entry>
-    <title>PYOTE_UNIT1: Outage ended (2026-04-16)</title>
+    <title>PYOTE_UNIT1: Running at a new price (2026-06-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=PYOTE_UNIT1"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=PYOTE_UNIT1#PYOTE_UNIT1/2026-04-16/outage_end</id>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=PYOTE_UNIT1#PYOTE_UNIT1/2026-06-01/rt_price</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Back from a 39-day outage</summary>
+    <summary>Online 100% of its hours at below $0 real-time at its node in June, up from 0%</summary>
+  </entry>
+  <entry>
+    <title>PYOTE_UNIT1: Timescale group changed (2026-06-01)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=PYOTE_UNIT1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=PYOTE_UNIT1#PYOTE_UNIT1/2026-06-01/group</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Daily, 1–2 a week in 2026-05 to Always on when available in 2026-06</summary>
+  </entry>
+  <entry>
+    <title>PYOTE_UNIT1: Outage ended (2026-05-01)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=PYOTE_UNIT1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=PYOTE_UNIT1#PYOTE_UNIT1/2026-05-01/outage_end</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Back from a 54-day outage</summary>
   </entry>
   <entry>
     <title>PYOTE_UNIT1: Outage started (2026-03-08)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=PYOTE_UNIT1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=PYOTE_UNIT1#PYOTE_UNIT1/2026-03-08/outage_start</id>
     <updated>2026-10-24T00:00:00Z</updated>
-    <summary>Outage began, lasting 39 days</summary>
+    <summary>Outage began, lasting 54 days</summary>
   </entry>
   <entry>
     <title>PYOTE_UNIT1: Outage ended (2026-03-08)</title>

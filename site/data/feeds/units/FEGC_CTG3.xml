@@ -79,7 +79,7 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=FEGC_CTG3"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=FEGC_CTG3#FEGC_CTG3/2026-01-02/outage_end</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Back from a 11-day outage</summary>
+    <summary>Back from a 12-day outage</summary>
   </entry>
   <entry>
     <title>FEGC_CTG3: Timescale group changed (2026-01-01)</title>
@@ -89,11 +89,11 @@
     <summary>Always on when available in 2025-12 to Daily, over 2 a week in 2026-01</summary>
   </entry>
   <entry>
-    <title>FEGC_CTG3: Outage started (2025-12-22)</title>
+    <title>FEGC_CTG3: Outage started (2025-12-21)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=FEGC_CTG3"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=FEGC_CTG3#FEGC_CTG3/2025-12-22/outage_start</id>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=FEGC_CTG3#FEGC_CTG3/2025-12-21/outage_start</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Outage began, lasting 11 days</summary>
+    <summary>Outage began, lasting 12 days</summary>
   </entry>
   <entry>
     <title>FEGC_CTG3: Outage ended (2025-12-10)</title>

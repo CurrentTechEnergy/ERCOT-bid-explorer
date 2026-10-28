@@ -16,14 +16,7 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=LPCCS_CC1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=LPCCS_CC1#LPCCS_CC1/2026-08-01/turnoff/1</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Turn-off point with an award some hours $9 to $583 per MW of minimum output in August</summary>
-  </entry>
-  <entry>
-    <title>LPCCS_CC1: Turn-off point moved (2026-08-01)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=LPCCS_CC1"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=LPCCS_CC1#LPCCS_CC1/2026-08-01/turnoff/2</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Turn-off point with an award every hour $3,520 to $5,444 per MW of minimum output in August</summary>
+    <summary>Turn-off point with an award some hours $12 to $75 per MW of minimum output in August</summary>
   </entry>
   <entry>
     <title>LPCCS_CC1: Timescale group changed (2026-08-01)</title>
@@ -37,14 +30,21 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=LPCCS_CC1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=LPCCS_CC1#LPCCS_CC1/2026-07-01/turnoff/1</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Turn-off point with an award some hours $128 to $9 per MW of minimum output in July; the next month went back</summary>
+    <summary>Turn-off point with an award some hours $128 to $12 per MW of minimum output in July; the next month went back</summary>
   </entry>
   <entry>
     <title>LPCCS_CC1: Turn-off point moved (2026-06-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=LPCCS_CC1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=LPCCS_CC1#LPCCS_CC1/2026-06-01/turnoff/1</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Turn-off point with an award some hours -$20 to $128 per MW of minimum output in June; the next month went back</summary>
+    <summary>Turn-off point with an award some hours -$22 to $128 per MW of minimum output in June; the next month went back</summary>
+  </entry>
+  <entry>
+    <title>LPCCS_CC1: Turn-off point moved (2026-05-01)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=LPCCS_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=LPCCS_CC1#LPCCS_CC1/2026-05-01/turnoff/2</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Turn-off point with an award every hour $2,978 to $4,515 per MW of minimum output in May; the next month held it</summary>
   </entry>
   <entry>
     <title>LPCCS_CC1: Outage ended (2026-03-24)</title>

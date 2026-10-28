@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>PR_PR_G2: bidding and operating changes</title>
+  <link href="https://ercotbids.currenttech.energy/unit.html?unit=PR_PR_G2"/>
+  <id>https://ercotbids.currenttech.energy/unit.html?unit=PR_PR_G2</id>
+  <updated>2026-10-18T00:00:00Z</updated>
+  <entry>
+    <title>PR_PR_G2: Timescale group changed (2026-06-01)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=PR_PR_G2"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=PR_PR_G2#PR_PR_G2/2026-06-01/group</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Multi-day: off 1–7 days in 2026-05 to Daily, 1–2 a week in 2026-06</summary>
+  </entry>
+  <entry>
+    <title>PR_PR_G2: Timescale group changed (2026-05-01)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=PR_PR_G2"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=PR_PR_G2#PR_PR_G2/2026-05-01/group</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Daily, 1–2 a week in 2026-04 to Multi-day: off 1–7 days in 2026-05</summary>
+  </entry>
+  <entry>
+    <title>PR_PR_G2: Timescale group changed (2026-04-01)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=PR_PR_G2"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=PR_PR_G2#PR_PR_G2/2026-04-01/group</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Multi-day: off 1–7 days in 2026-03 to Daily, 1–2 a week in 2026-04</summary>
+  </entry>
+  <entry>
+    <title>PR_PR_G2: Timescale group changed (2026-03-01)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=PR_PR_G2"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=PR_PR_G2#PR_PR_G2/2026-03-01/group</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Daily, 1–2 a week in 2026-02 to Multi-day: off 1–7 days in 2026-03</summary>
+  </entry>
+</feed>

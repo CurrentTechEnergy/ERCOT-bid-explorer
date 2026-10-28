@@ -16,7 +16,7 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=FRNYPP_CC1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=FRNYPP_CC1#FRNYPP_CC1/2026-08-01/turnoff/1</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Turn-off point with an award some hours $634 to $1,944 per MW of minimum output in August</summary>
+    <summary>Turn-off point with an award some hours $67 to $1,119 per MW of minimum output in August</summary>
   </entry>
   <entry>
     <title>FRNYPP_CC1: Minimum-energy offer stepped (2026-07-15)</title>
@@ -33,6 +33,13 @@
     <summary>Minimum-energy offer stepped: $12 to $21/MWh (-$8 to $3 against the fuel-cost line)</summary>
   </entry>
   <entry>
+    <title>FRNYPP_CC1: Turn-off point moved (2026-07-01)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=FRNYPP_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=FRNYPP_CC1#FRNYPP_CC1/2026-07-01/turnoff/1</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Turn-off point with an award some hours $1,077 to $67 per MW of minimum output in July; the next month went back</summary>
+  </entry>
+  <entry>
     <title>FRNYPP_CC1: Minimum-energy offer stepped (2026-06-30)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=FRNYPP_CC1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=FRNYPP_CC1#FRNYPP_CC1/2026-06-30/dam_mingen_step</id>
@@ -44,7 +51,7 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=FRNYPP_CC1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=FRNYPP_CC1#FRNYPP_CC1/2026-06-01/turnoff/1</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Turn-off point with an award some hours -$61 to $890 per MW of minimum output in June; the next month held it</summary>
+    <summary>Turn-off point with an award some hours -$66 to $1,077 per MW of minimum output in June; the next month went back</summary>
   </entry>
   <entry>
     <title>FRNYPP_CC1: Shut down despite a day-ahead award (2026-05-09)</title>

@@ -5,53 +5,25 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=NCARBIDE_NCARBIG8</id>
   <updated>2026-10-24T00:00:00Z</updated>
   <entry>
-    <title>NCARBIDE_NCARBIG8: Outage started (2026-05-03)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=NCARBIDE_NCARBIG8"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=NCARBIDE_NCARBIG8#NCARBIDE_NCARBIG8/2026-05-03/outage_start</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Outage began, still on at the end of the data (119 days so far)</summary>
-  </entry>
-  <entry>
-    <title>NCARBIDE_NCARBIG8: Outage ended (2026-05-03)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=NCARBIDE_NCARBIG8"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=NCARBIDE_NCARBIG8#NCARBIDE_NCARBIG8/2026-05-03/outage_end</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Back from a 16-day outage</summary>
-  </entry>
-  <entry>
-    <title>NCARBIDE_NCARBIG8: Outage started (2026-04-17)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=NCARBIDE_NCARBIG8"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=NCARBIDE_NCARBIG8#NCARBIDE_NCARBIG8/2026-04-17/outage_start</id>
-    <updated>2026-10-24T00:00:00Z</updated>
-    <summary>Outage began, lasting 16 days</summary>
-  </entry>
-  <entry>
-    <title>NCARBIDE_NCARBIG8: Outage ended (2026-04-17)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=NCARBIDE_NCARBIG8"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=NCARBIDE_NCARBIG8#NCARBIDE_NCARBIG8/2026-04-17/outage_end</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Back from a 28-day outage</summary>
-  </entry>
-  <entry>
     <title>NCARBIDE_NCARBIG8: Outage started (2026-03-20)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=NCARBIDE_NCARBIG8"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=NCARBIDE_NCARBIG8#NCARBIDE_NCARBIG8/2026-03-20/outage_start</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Outage began, lasting 28 days</summary>
+    <summary>Outage began, still on at the end of the data (162 days so far)</summary>
   </entry>
   <entry>
-    <title>NCARBIDE_NCARBIG8: Outage ended (2026-03-18)</title>
+    <title>NCARBIDE_NCARBIG8: Outage ended (2026-03-19)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=NCARBIDE_NCARBIG8"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=NCARBIDE_NCARBIG8#NCARBIDE_NCARBIG8/2026-03-18/outage_end</id>
-    <updated>2026-10-24T00:00:00Z</updated>
-    <summary>Back from a 10-day outage</summary>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=NCARBIDE_NCARBIG8#NCARBIDE_NCARBIG8/2026-03-19/outage_end</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Back from a 11-day outage</summary>
   </entry>
   <entry>
     <title>NCARBIDE_NCARBIG8: Outage started (2026-03-08)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=NCARBIDE_NCARBIG8"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=NCARBIDE_NCARBIG8#NCARBIDE_NCARBIG8/2026-03-08/outage_start</id>
     <updated>2026-10-24T00:00:00Z</updated>
-    <summary>Outage began, lasting 10 days</summary>
+    <summary>Outage began, lasting 11 days</summary>
   </entry>
   <entry>
     <title>NCARBIDE_NCARBIG8: Outage ended (2026-03-08)</title>
@@ -61,6 +33,13 @@
     <summary>Back from a 11-day outage</summary>
   </entry>
   <entry>
+    <title>NCARBIDE_NCARBIG8: Timescale group changed (2026-03-01)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=NCARBIDE_NCARBIG8"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=NCARBIDE_NCARBIG8#NCARBIDE_NCARBIG8/2026-03-01/group</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Daily, 1–2 a week in 2026-02 to Always on when available in 2026-03</summary>
+  </entry>
+  <entry>
     <title>NCARBIDE_NCARBIG8: Outage started (2026-02-25)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=NCARBIDE_NCARBIG8"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=NCARBIDE_NCARBIG8#NCARBIDE_NCARBIG8/2026-02-25/outage_start</id>
@@ -68,17 +47,45 @@
     <summary>Outage began, lasting 11 days</summary>
   </entry>
   <entry>
-    <title>NCARBIDE_NCARBIG8: Outage ended (2026-02-12)</title>
+    <title>NCARBIDE_NCARBIG8: Outage ended (2026-02-15)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=NCARBIDE_NCARBIG8"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=NCARBIDE_NCARBIG8#NCARBIDE_NCARBIG8/2026-02-12/outage_end</id>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=NCARBIDE_NCARBIG8#NCARBIDE_NCARBIG8/2026-02-15/outage_end</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Back from a 15-day outage</summary>
+    <summary>Back from a 18-day outage</summary>
+  </entry>
+  <entry>
+    <title>NCARBIDE_NCARBIG8: Running at a new price (2026-02-01)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=NCARBIDE_NCARBIG8"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=NCARBIDE_NCARBIG8#NCARBIDE_NCARBIG8/2026-02-01/rt_price</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Online 11% of its hours at $0–$15 real-time at its node in February, down from 94%</summary>
+  </entry>
+  <entry>
+    <title>NCARBIDE_NCARBIG8: Timescale group changed (2026-02-01)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=NCARBIDE_NCARBIG8"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=NCARBIDE_NCARBIG8#NCARBIDE_NCARBIG8/2026-02-01/group</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Always on when available in 2026-01 to Daily, 1–2 a week in 2026-02</summary>
   </entry>
   <entry>
     <title>NCARBIDE_NCARBIG8: Outage started (2026-01-28)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=NCARBIDE_NCARBIG8"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=NCARBIDE_NCARBIG8#NCARBIDE_NCARBIG8/2026-01-28/outage_start</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Outage began, lasting 15 days</summary>
+    <summary>Outage began, lasting 18 days</summary>
+  </entry>
+  <entry>
+    <title>NCARBIDE_NCARBIG8: Running at a new price (2026-01-01)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=NCARBIDE_NCARBIG8"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=NCARBIDE_NCARBIG8#NCARBIDE_NCARBIG8/2026-01-01/rt_price</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Online 100% of its hours at $50–$100 real-time at its node in January, up from 11%</summary>
+  </entry>
+  <entry>
+    <title>NCARBIDE_NCARBIG8: Timescale group changed (2026-01-01)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=NCARBIDE_NCARBIG8"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=NCARBIDE_NCARBIG8#NCARBIDE_NCARBIG8/2026-01-01/group</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Daily, under 1 shutdown a week in 2025-12 to Always on when available in 2026-01</summary>
   </entry>
 </feed>

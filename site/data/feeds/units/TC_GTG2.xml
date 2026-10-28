@@ -5,13 +5,6 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=TC_GTG2</id>
   <updated>2026-10-24T00:00:00Z</updated>
   <entry>
-    <title>TC_GTG2: Running at a new price (2026-07-01)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=TC_GTG2"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=TC_GTG2#TC_GTG2/2026-07-01/rt_price</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Online 64% of its hours at $50–$100 real-time at its node in July, up from 14%</summary>
-  </entry>
-  <entry>
     <title>TC_GTG2: Timescale group changed (2026-06-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=TC_GTG2"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=TC_GTG2#TC_GTG2/2026-06-01/group</id>
@@ -40,32 +33,11 @@
     <summary>Outage began, lasting 11 days</summary>
   </entry>
   <entry>
-    <title>TC_GTG2: Running at a new price (2026-04-01)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=TC_GTG2"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=TC_GTG2#TC_GTG2/2026-04-01/rt_price</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Online 3% of its hours at $0–$15 real-time at its node in April, down from 69%</summary>
-  </entry>
-  <entry>
     <title>TC_GTG2: Timescale group changed (2026-04-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=TC_GTG2"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=TC_GTG2#TC_GTG2/2026-04-01/group</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Multi-day: off 1–7 days in 2026-03 to Daily, 1–2 a week in 2026-04</summary>
-  </entry>
-  <entry>
-    <title>TC_GTG2: Running at a new price (2026-03-01)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=TC_GTG2"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=TC_GTG2#TC_GTG2/2026-03-01/rt_price</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Online 17% of its hours at $0–$15 real-time at its node in March, down from 100%</summary>
-  </entry>
-  <entry>
-    <title>TC_GTG2: Timescale group changed (2026-03-01)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=TC_GTG2"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=TC_GTG2#TC_GTG2/2026-03-01/group</id>
-    <updated>2026-10-24T00:00:00Z</updated>
-    <summary>Always on when available in 2026-02 to Multi-day: off 1–7 days in 2026-03</summary>
   </entry>
   <entry>
     <title>TC_GTG2: Outage ended (2026-02-02)</title>

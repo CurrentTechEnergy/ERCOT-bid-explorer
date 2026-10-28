@@ -89,18 +89,25 @@
     <summary>Always on when available in 2026-04 to Daily, over 2 a week in 2026-05</summary>
   </entry>
   <entry>
-    <title>CEDRVALE_UNIT1: Outage ended (2026-02-20)</title>
+    <title>CEDRVALE_UNIT1: Outage ended (2026-03-03)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=CEDRVALE_UNIT1"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=CEDRVALE_UNIT1#CEDRVALE_UNIT1/2026-02-20/outage_end</id>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=CEDRVALE_UNIT1#CEDRVALE_UNIT1/2026-03-03/outage_end</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Back from a 21-day outage</summary>
+    <summary>Back from a 32-day outage</summary>
+  </entry>
+  <entry>
+    <title>CEDRVALE_UNIT1: Running at a new price (2026-03-01)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=CEDRVALE_UNIT1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=CEDRVALE_UNIT1#CEDRVALE_UNIT1/2026-03-01/rt_price</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Online 94% of its hours at below $0 real-time at its node in March, up from 11%</summary>
   </entry>
   <entry>
     <title>CEDRVALE_UNIT1: Outage started (2026-01-30)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=CEDRVALE_UNIT1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=CEDRVALE_UNIT1#CEDRVALE_UNIT1/2026-01-30/outage_start</id>
     <updated>2026-10-23T00:00:00Z</updated>
-    <summary>Outage began, lasting 21 days</summary>
+    <summary>Outage began, lasting 32 days</summary>
   </entry>
   <entry>
     <title>CEDRVALE_UNIT1: Outage ended (2026-01-26)</title>

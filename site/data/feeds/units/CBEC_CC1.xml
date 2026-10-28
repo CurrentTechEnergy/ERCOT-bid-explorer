@@ -9,14 +9,21 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=CBEC_CC1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=CBEC_CC1#CBEC_CC1/2026-08-01/turnoff/2</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Turn-off point with an award every hour $6,767 to riding through per MW of minimum output in August</summary>
+    <summary>Turn-off point with an award every hour $6,129 to riding through per MW of minimum output in August</summary>
   </entry>
   <entry>
     <title>CBEC_CC1: Turn-off point moved (2026-07-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=CBEC_CC1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=CBEC_CC1#CBEC_CC1/2026-07-01/turnoff/2</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Turn-off point with an award every hour riding through to $6,767 per MW of minimum output in July; the next month went back</summary>
+    <summary>Turn-off point with an award every hour riding through to $6,129 per MW of minimum output in July; the next month went back</summary>
+  </entry>
+  <entry>
+    <title>CBEC_CC1: Turn-off point moved (2026-05-01)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=CBEC_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=CBEC_CC1#CBEC_CC1/2026-05-01/turnoff/1</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Turn-off point with an award some hours -$58 to -$120 per MW of minimum output in May; the next month held it</summary>
   </entry>
   <entry>
     <title>CBEC_CC1: Minimum-energy offer stepped (2026-01-13)</title>

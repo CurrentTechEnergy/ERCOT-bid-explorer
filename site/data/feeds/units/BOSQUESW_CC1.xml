@@ -44,7 +44,14 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=BOSQUESW_CC1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=BOSQUESW_CC1#BOSQUESW_CC1/2026-05-01/turnoff/1</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Turn-off point with an award some hours -$44 to $8 per MW of minimum output in May</summary>
+    <summary>Turn-off point with an award some hours -$42 to $8 per MW of minimum output in May</summary>
+  </entry>
+  <entry>
+    <title>BOSQUESW_CC1: Turn-off point moved (2026-05-01)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=BOSQUESW_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=BOSQUESW_CC1#BOSQUESW_CC1/2026-05-01/turnoff/2</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Turn-off point with an award every hour $2,909 to $4,547 per MW of minimum output in May; the next month went back</summary>
   </entry>
   <entry>
     <title>BOSQUESW_CC1: Start-up cost changed (2026-04-24)</title>

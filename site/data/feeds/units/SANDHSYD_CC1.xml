@@ -5,39 +5,39 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=SANDHSYD_CC1</id>
   <updated>2026-10-24T00:00:00Z</updated>
   <entry>
-    <title>SANDHSYD_CC1: Turn-off point moved (2026-07-01)</title>
+    <title>SANDHSYD_CC1: Outage ended (2026-05-29)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=SANDHSYD_CC1"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=SANDHSYD_CC1#SANDHSYD_CC1/2026-07-01/turnoff/0</id>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=SANDHSYD_CC1#SANDHSYD_CC1/2026-05-29/outage_end</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Turn-off point without an award riding through to $4,785 per MW of minimum output in July; the next month held it</summary>
+    <summary>Back from a 15-day outage</summary>
   </entry>
   <entry>
-    <title>SANDHSYD_CC1: Outage ended (2026-05-28)</title>
+    <title>SANDHSYD_CC1: Outage started (2026-05-14)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=SANDHSYD_CC1"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=SANDHSYD_CC1#SANDHSYD_CC1/2026-05-28/outage_end</id>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=SANDHSYD_CC1#SANDHSYD_CC1/2026-05-14/outage_start</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Back from a 13-day outage</summary>
+    <summary>Outage began, lasting 15 days</summary>
   </entry>
   <entry>
-    <title>SANDHSYD_CC1: Outage started (2026-05-15)</title>
+    <title>SANDHSYD_CC1: Timescale group changed (2026-05-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=SANDHSYD_CC1"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=SANDHSYD_CC1#SANDHSYD_CC1/2026-05-15/outage_start</id>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=SANDHSYD_CC1#SANDHSYD_CC1/2026-05-01/group</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Outage began, lasting 13 days</summary>
+    <summary>Daily, under 1 shutdown a week in 2026-04 to Always on when available in 2026-05</summary>
   </entry>
   <entry>
     <title>SANDHSYD_CC1: Outage ended (2026-04-27)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=SANDHSYD_CC1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=SANDHSYD_CC1#SANDHSYD_CC1/2026-04-27/outage_end</id>
     <updated>2026-10-24T00:00:00Z</updated>
-    <summary>Back from a 50-day outage</summary>
+    <summary>Back from a 51-day outage</summary>
   </entry>
   <entry>
     <title>SANDHSYD_CC1: Outage started (2026-03-08)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=SANDHSYD_CC1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=SANDHSYD_CC1#SANDHSYD_CC1/2026-03-08/outage_start</id>
     <updated>2026-10-24T00:00:00Z</updated>
-    <summary>Outage began, lasting 50 days</summary>
+    <summary>Outage began, lasting 51 days</summary>
   </entry>
   <entry>
     <title>SANDHSYD_CC1: Outage ended (2026-03-08)</title>
