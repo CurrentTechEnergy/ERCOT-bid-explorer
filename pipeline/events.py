@@ -130,8 +130,11 @@ NEW_GRACE = 14
 # turnoff (CC and gas steam; see the docstring)
 TURNOFF_MIN_DAYS, TURNOFF_MOVE, TURNOFF_SHARE, TURNOFF_CAP = 5, 50.0, 0.5, 1e5
 # a kind's revision: when it changes, the ids that kind finds anew are history, not news
-# (turnoff c2: the turn-off point search goes one way from the day's prices, operator_cutoffs.py)
-KIND_REV = {"turnoff": "c2"}
+# (turnoff c2: the turn-off point search goes one way from the day's prices, operator_cutoffs.py;
+# s2 on the kinds read from the hourly states: a thermal unit online with no output and no HSL is
+# offline, intraday.empty_hour, which finds spells and moves that were there all along)
+KIND_REV = {"turnoff": "c3", "shutdown_new": "s2", "shutdown_award": "s2", "group": "s2", "outage_start": "s2",
+            "outage_end": "s2", "rt_price": "s2"}
 TURNOFF_AWARD = {0: "without an award", 1: "with an award some hours", 2: "with an award every hour"}
 # rt_price (combustion turbines; see the docstring)
 RUN_MONTH_DAYS, RUN_BEFORE = 20, 60            # days of states the month needs; days before it compared

@@ -12,7 +12,8 @@ Writes
       "rows": [[unit index, hour ending, ...one value per column], ...]
     }
   A row is written for each hour a unit is running in at least one SCED run: online (ON...), or
-  in STARTUP, SHUTDOWN or a blank status (intraday.RAMP) in an hour with output above 0.  Values
+  in STARTUP, SHUTDOWN or a blank status (intraday.RAMP) in an hour with output above 0; but not
+  for a thermal unit online with no output and no HSL that hour (intraday.empty_hour).  Values
   are means over the unit's online runs in the hour unless noted:
     online_share    share of the hour's SCED runs running, as above
     hsl, lsl        High / Low Sustained Limit (MW); in an hour mostly ramping, lsl is the output
@@ -37,10 +38,11 @@ import numpy as np
 from .config import DATA_DIR, UNIT_DATA_DIR
 from .curves import mw_at_prices
 from .store import read_json_gz, write_json_gz
-from .intraday import RAMP
+from .intraday import RAMP, empty_hour
 from .units import LSL_TOL, _ffill_index, expand
 
-FORMAT = 2            # 2: hours ramping in STARTUP, SHUTDOWN or a blank status with output count as running
+FORMAT = 3            # 2: hours ramping in STARTUP, SHUTDOWN or a blank status with output count as running
+                      # 3: a thermal unit online with no output and no HSL is offline (intraday.empty_hour)
 MAX_PER_RUN = 60      # days built per update run, newest first (~10 s each), so history fills in
                       # over a few runs instead of slowing one down
 OUT_DIR = DATA_DIR / "60d-units"
@@ -122,6 +124,8 @@ def unit_rows(u: dict, runs: list) -> list:
                 _r(run.sum() / idx.sum(), 2), _r(np.nanmean(e["hsl"][run]) if np.isfinite(e["hsl"][run]).any() else np.nan),
                 _r(out_h[h] if not np.isfinite(lo) or lo <= 0 else min(out_h[h], lo)), _r(bp_h[h]), _r(out_h[h]),
                 None, None, None, None, None, None, _r(run.sum() / idx.sum(), 2)]))
+            continue
+        if empty_hour(u["tech"], out_h[h], hsl[sel].mean()):
             continue
         with np.errstate(invalid="ignore"):
             b = np.nanmean(bp[sel]) if bp is not None and np.isfinite(bp[sel]).any() else bp_h[h]

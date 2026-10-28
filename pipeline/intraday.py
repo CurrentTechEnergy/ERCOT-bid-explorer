@@ -29,8 +29,11 @@ Writes
       "-" no data, "0" offline, "o" on outage, "m" running at minimum, "a" running above minimum
     hsl: {unit: median HSL in the hours it ran (MW)}
 
-A unit runs in an hour when most of its SCED runs in that hour have an online status (ON...);
-an hour it does not run counts as an outage when most of its runs that hour are OUT.
+A unit runs in an hour when most of its SCED runs in that hour have an online status (ON...),
+unless a thermal unit has nothing to give: no output and no HSL that hour (empty_hour; an
+industrial unit netted against its site's load, or a train left "online" at 0/0 limits after a
+failed start, AMOCOOIL_CC1 on 2026-08-29), which counts as offline.  An hour it does not run counts
+as an outage when most of its runs that hour are OUT.
 "At minimum" means hourly output no more than ABOVE_EPS of HSL above the hour's LSL.
 """
 import re
@@ -79,6 +82,11 @@ def _spell_units(units: dict) -> dict:
 
 def _online(s):
     return bool(s) and s.startswith("ON")
+
+
+def empty_hour(tech, out, hsl) -> bool:
+    """A thermal unit online in name only: no output and no HSL in the hour (read as offline)."""
+    return tech in UNIT_TECHS and not (np.isfinite(out) and out > 0) and not (np.isfinite(hsl) and hsl > 0)
 
 
 def _r(x, nd=1):
@@ -144,6 +152,9 @@ def unit_hours(u: dict, runs: list) -> tuple:
             continue
         sel = idx & on
         lsl, hsl = np.nanmean(e["lsl"][sel]), np.nanmean(e["hsl"][sel])
+        if empty_hour(u["tech"], out[h], hsl):
+            states.append("0")
+            continue
         lsl = 0.0 if np.isnan(lsl) else lsl
         lsl_h[h], hsl_h[h] = lsl, hsl
         above = out[h] - lsl > ABOVE_EPS * (hsl if hsl > 0 else 1.0)

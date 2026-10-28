@@ -39,7 +39,7 @@ MIN_SPELLS = 3     # off spells a unit needs before its own minimum down time is
 SHIFT = (-200.0, 400.0)   # $/MWh, the range searched
 TOL = 2.0          # $/MWh, bisection stops when the bracket is this narrow
 COLUMNS = ("unit", "tech", "lsl", "award", "saving", "turn_off", "off", "min_down")
-CUT_VERSION = "c2"   # c2: the search goes one way from the day's prices
+CUT_VERSION = "c3"   # c2: the search goes one way from the day's prices; c3: states with intraday.empty_hour
 MEASURE = "saving from being off over the best stretch at least its minimum down time long, $/MW of LSL"
 
 
