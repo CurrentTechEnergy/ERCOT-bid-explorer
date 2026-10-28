@@ -41,6 +41,7 @@ import requests
 from .config import DATA_DIR, SITE_URL
 from .events import KINDS, PATH as EVENTS_PATH
 from .log import warn, write_summary
+from .share_pages import unit_labels
 from .store import read_json_gz
 
 SENT_PATH = DATA_DIR / "notify_sent.json"
@@ -96,19 +97,23 @@ INTRO = ("Today's update found changes for units you follow. Unit-level data com
          "disclosure, so these are dated about two months back.")
 
 
-def build_email(today, sections, worker, tokens):
-    """(subject, html, text) for one follower.  sections: [(unit, [events])]; tokens: {unit: row token}."""
+def build_email(today, sections, worker, tokens, labels=None):
+    """(subject, html, text) for one follower.  sections: [(unit, [events])]; tokens: {unit: row token};
+    labels: {unit: "Plant name (CODE)"} from share_pages.unit_labels (a unit not in it shows its code)."""
     units = [u for u, _ in sections]
-    subject = f"ERCOT bid explorer: {', '.join(units[:3])}{' and more' if len(units) > 3 else ''} changed ({today})"
+    name = lambda u: (labels or {}).get(u, u)
+    more = len(units) - 2
+    subject = (f"ERCOT bid explorer: {' and '.join(map(name, units))} changed ({today})" if more <= 0 else
+               f"ERCOT bid explorer: {', '.join(map(name, units[:2]))} and {more} more changed ({today})")
     h = [f"<p>{html.escape(INTRO)}</p>"]
     t = [INTRO, ""]
     for u, evs in sections:
         evs = sorted(evs, key=lambda e: e["date"], reverse=True)
-        h.append(f'<h3><a href="{html.escape(_unit_link(u))}">{html.escape(u)}</a></h3><ul>')
+        h.append(f'<h3><a href="{html.escape(_unit_link(u))}">{html.escape(name(u))}</a></h3><ul>')
         h += [f"<li><b>{e['date']}</b> · {html.escape(_kind(e))}: {html.escape(e['title'])}</li>" for e in evs]
-        h.append(f'</ul><p style="font-size:12px"><a href="{worker}/unsubscribe?t={tokens[u]}">Stop following {html.escape(u)}</a></p>')
-        t += [f"{u}  {_unit_link(u)}"] + [f"- {e['date']} · {_kind(e)}: {e['title']}" for e in evs]
-        t += [f"Stop following {u}: {worker}/unsubscribe?t={tokens[u]}", ""]
+        h.append(f'</ul><p style="font-size:12px"><a href="{worker}/unsubscribe?t={tokens[u]}">Stop following {html.escape(name(u))}</a></p>')
+        t += [f"{name(u)}  {_unit_link(u)}"] + [f"- {e['date']} · {_kind(e)}: {e['title']}" for e in evs]
+        t += [f"Stop following {name(u)}: {worker}/unsubscribe?t={tokens[u]}", ""]
     any_tok = tokens[units[0]]
     foot = (f"You get at most one of these a day, only when a unit you follow changed. Follow more units from their pages on "
             f"{SITE_URL}, or stop all emails: {worker}/unsubscribe?t={any_tok}&all=1")
@@ -119,18 +124,19 @@ def build_email(today, sections, worker, tokens):
     return subject, "\n".join(h), "\n".join(t)
 
 
-def build_owner_email(today, todo, followers, sent_to, skipped):
+def build_owner_email(today, todo, followers, sent_to, skipped, labels=None):
     """Every unit with a change today, and every followed unit that changed (a configuration or
     plant follow can differ from the event's unit), with follower and event counts."""
+    name = lambda u: (labels or {}).get(u, u)
     subject = f"ERCOT bid explorer: owner's digest ({today})"
     units = sorted({e["unit"] for e in todo} | set(followers))
     rows = [(u, followers.get(u, 0), sum(1 for e in todo if matches(e, u))) for u in units]
     head = (f"{len(todo)} event(s) on {len({e['unit'] for e in todo})} unit(s) were found today. "
             f"{sent_to} follower email(s) went out" + (f"; {skipped} waited for tomorrow (daily cap)" if skipped else "") + ".")
     h = [f"<p>{html.escape(head)}</p>", "<table><tr><th align=left>Unit</th><th>Followers</th><th>Events</th></tr>"]
-    h += [f'<tr><td><a href="{html.escape(_unit_link(u))}">{html.escape(u)}</a></td><td align=right>{f}</td><td align=right>{n}</td></tr>' for u, f, n in rows]
+    h += [f'<tr><td><a href="{html.escape(_unit_link(u))}">{html.escape(name(u))}</a></td><td align=right>{f}</td><td align=right>{n}</td></tr>' for u, f, n in rows]
     h.append("</table>")
-    t = [head, ""] + [f"{u}: {f} follower(s), {n} event(s)" for u, f, n in rows]
+    t = [head, ""] + [f"{name(u)}: {f} follower(s), {n} event(s)" for u, f, n in rows]
     return subject, "\n".join(h), "\n".join(t)
 
 
@@ -215,6 +221,7 @@ def run(dry_run=False):
         warn("notify: CLOUDFLARE_API_TOKEN or site/follow.json missing; no follower emails, owner digest only")
     per, followers = plan(todo, follows)
     tokens = {(e, u): t for e, u, t in follows}
+    labels = unit_labels()
 
     lines = ["### Subscriber emails", "",
              f"{len(todo)} new event(s) on {len(by_unit)} unit(s); {len(per)} follower(s) to email, "
@@ -226,7 +233,7 @@ def run(dry_run=False):
             # placeholder tokens: a real one opens the follower's unsubscribe page, which shows
             # their address, and these logs are public
             subject, _, text = build_email(today, per[recipients[0]], worker or "<worker>",
-                                           {u: "TOKEN" for u, _ in per[recipients[0]]})
+                                           {u: "TOKEN" for u, _ in per[recipients[0]]}, labels)
             lines += ["<details><summary>The first follower email that would go out</summary>", "", f"**{subject}**", "", "```", text, "```", "</details>"]
         write_summary(lines)
         print("\n".join(lines))
@@ -236,7 +243,7 @@ def run(dry_run=False):
     ok, failed = 0, []
     for email in recipients:
         toks = {u: tokens[(email, u)] for u, _ in per[email]}
-        subject, h, t = build_email(today, per[email], worker, toks)
+        subject, h, t = build_email(today, per[email], worker, toks, labels)
         try:
             api.send(email, subject, h, t, unsubscribe=f"{worker}/unsubscribe?t={next(iter(toks.values()))}&all=1")
             ok += 1
@@ -248,7 +255,7 @@ def run(dry_run=False):
         return 1
     if owner:
         try:
-            api.send(owner, *build_owner_email(today, todo, followers, ok, skipped))
+            api.send(owner, *build_owner_email(today, todo, followers, ok, skipped, labels))
         except Exception as ex:
             warn(f"notify: owner digest failed: {ex}")
     # events go in the record once the day's emails are out; a capped or failed follower misses them
