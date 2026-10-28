@@ -19,14 +19,17 @@ const dayLabel = (d) => d3.timeFormat("%a %b %-d, %Y")(new Date(d + "T12:00:00")
 const addDays = (d, n) => { const t = new Date(d + "T12:00:00"); t.setDate(t.getDate() + n); return t.toISOString().slice(0, 10); };
 
 // ---- series: colours are fixed per group, technology and category -----------------------
-const GROUP_COLORS = { never: "--g1", seasonal: "--g2", multiday: "--g3", daily1: "--g4", daily2: "--g5", daily3: "--g6", never_on: "--c-other", ungrouped: "--c-other" };
+const GROUP_COLORS = { never: "--g1", seasonal: "--g2", multiday: "--g3", daily1: "--g4", daily2: "--g5", daily3: "--g6", peakers: "--c2", never_on: "--c-other", ungrouped: "--c-other" };
 const GROUP_NOTES = {
   never: "off only for outages, never on price, plus nuclear", seasonal: "off for a week or more at a time", multiday: "shortest time off is 1 to 7 days",
   daily1: "turns off within a day, under once a week", daily2: "turns off within a day, 1 to 2 a week", daily3: "turns off within a day, over 2 a week",
+  peakers: "combustion turbines outside the always-on group",
   never_on: "no running hour in the 60-day history (mothballed or on a long outage)", ungrouped: "no hourly history yet",
 };
-const GROUP_SHORT = { never: "Always on when available", seasonal: "Seasonal", multiday: "Multi-day", daily1: "Daily, under once a week", daily2: "Daily, 1 to 2 a week", daily3: "Daily, over 2 a week", never_on: "Never on", ungrouped: "Not yet grouped" };
-const GROUPS = ["never", "seasonal", "multiday", "daily1", "daily2", "daily3", "never_on", "ungrouped"];
+const GROUP_SHORT = { never: "Always on when available", seasonal: "Seasonal", multiday: "Multi-day", daily1: "Daily, under once a week", daily2: "Daily, 1 to 2 a week", daily3: "Daily, over 2 a week", peakers: "Peakers", never_on: "Never on", ungrouped: "Not yet grouped" };
+// "peakers" is not a timescale group: combustion turbines outside the always-on group, taken out of
+// their groups wherever thermal output is shown by group
+const GROUPS = ["never", "seasonal", "multiday", "daily1", "daily2", "daily3", "peakers", "never_on", "ungrouped"];
 const TECHS = [
   ["nuclear", "Nuclear", "--c5"], ["coal", "Coal & lignite", "--c8"], ["combined_cycle", "Combined cycle", "--c1"],
   ["gas_steam", "Gas steam", "--c6"], ["combustion_turbine", "Combustion turbine", "--c2"],
@@ -124,8 +127,8 @@ function actual60() {
   // online LSL and HSL hour by hour (MW summed over the units online), by group and technology
   const lslG = {}, hslG = {}, lslT = {}, hslT = {};
   const add = (o, k, h, v) => ((o[k] = o[k] || zero())[h] += v || 0);
-  // the same by hour for the hourly limits panel, with peakers taken out of their groups
-  const limOut = {}, limLsl = {}, limHsl = {}, limOn = {};
+  // wind and solar: each unit's largest hourly HSL over the day
+  const renMax = {};
   // per train and hour: online (any configuration online at least half the hour's runs), output, HSL, LSL
   const units = {};
   f.rows.forEach((r) => {
@@ -135,27 +138,30 @@ function actual60() {
     if (t === "storage") (out >= 0 ? dis : chg)[h] += out;
     const online = (r[ci.online_share] || 0) >= 0.5;
     if (online && t !== "storage") { add(lslT, t, h, r[ci.lsl]); add(hslT, t, h, r[ci.hsl]); }
+    if (t === "wind" || t === "solar") { const m = renMax[t] = renMax[t] || {}; m[name0] = Math.max(m[name0] || 0, r[ci.hsl] || 0); }
     if (!THERMAL.has(t)) return;
     const name = trainOf(name0, t), g = t === "nuclear" ? "never" : groupOf(name);
-    (byG[g] = byG[g] || zero())[h] += out;
     const c = catOf(t, g);
     (byC[c] = byC[c] || zero())[h] += out;
+    // output by group, with peakers taken out of their groups into their own
     const k = c === "peakers" ? "peakers" : g;
-    const u = units[name] || (units[name] = { unit: name, tech: t, group: g, lim: k, on: zero(), out: zero(), hsl: zero(), lsl: zero() });
-    if (online) { add(lslG, g, h, r[ci.lsl]); add(hslG, g, h, r[ci.hsl]); add(limLsl, k, h, r[ci.lsl]); add(limHsl, k, h, r[ci.hsl]); }
-    add(limOut, k, h, out);
+    (byG[k] = byG[k] || zero())[h] += out;
+    const u = units[name] || (units[name] = { unit: name, tech: t, group: g, gk: k, on: zero(), out: zero(), hsl: zero(), lsl: zero() });
+    if (online) { add(lslG, k, h, r[ci.lsl]); add(hslG, k, h, r[ci.hsl]); }
     if (online) { u.on[h] = 1; u.lsl[h] += r[ci.lsl] || 0; }
     u.out[h] += out; u.hsl[h] += r[ci.hsl] || 0;
   });
-  // capacity: each train's largest hourly HSL over the day, summed by group and technology; and
+  // capacity: each train's largest hourly HSL over the day, summed by group and technology (wind
+  // and solar likewise, by unit); and
   // the thermal trains online in each hour
   const onG = {}, onT = {};
   Object.values(units).forEach((u) => {
     u.hslMax = d3.max(u.hsl); u.lslMax = d3.max(u.lsl); u.online_h = d3.sum(u.on); u.mwh = d3.sum(u.out);
-    capG[u.group] = (capG[u.group] || 0) + u.hslMax; capT[u.tech] = (capT[u.tech] || 0) + u.hslMax;
-    HRS.forEach((h) => { add(onG, u.group, h, u.on[h]); add(onT, u.tech, h, u.on[h]); add(limOn, u.lim, h, u.on[h]); });
+    capG[u.gk] = (capG[u.gk] || 0) + u.hslMax; capT[u.tech] = (capT[u.tech] || 0) + u.hslMax;
+    HRS.forEach((h) => { add(onG, u.gk, h, u.on[h]); add(onT, u.tech, h, u.on[h]); });
   });
-  return { group: byG, tech: byT, cat: byC, capG, capT, lslG, hslG, lslT, hslT, onG, onT, lim: { out: limOut, lsl: limLsl, hsl: limHsl, on: limOn }, dis, chg, units };
+  Object.entries(renMax).forEach(([t, m]) => (capT[t] = d3.sum(Object.values(m))));
+  return { group: byG, tech: byT, cat: byC, capG, capT, lslG, hslG, lslT, hslT, onG, onT, dis, chg, units };
 }
 
 // ---------------------------------------------------------------- headline ---
@@ -203,7 +209,7 @@ function drawHeadline() {
 function drawSpark() {
   const el = $("spark"), { rt, da, ref } = dayPrices();
   if (!ref) { $("spark-note").textContent = ""; return emptyMsg(el, "No prices for this day."); }
-  const w = size(el), Hh = 190, m = { t: 12, r: 12, b: 26, l: 48 };
+  const w = size(el), Hh = 170, m = { t: 16, r: 16, b: 26, l: 56 };   // same side margins as the generation chart below, so the hours line up
   $("spark-title").textContent = rt && da ? "System lambda by hour ending ($/MWh): real-time solid, day-ahead dashed" : `${rt ? "Real-time" : "Day-ahead"} system lambda by hour ending ($/MWh)`;
   const vals = [...(rt || []), ...(da || []), CHEAP * 2].filter((v) => v != null);
   const x = d3.scaleLinear().domain([1, 24]).range([m.l, w - m.r]);
@@ -212,11 +218,12 @@ function drawSpark() {
   cheapRuns().forEach((r) => svg.append("rect").attr("class", "price-band").attr("x", x(r.from + 1) - 4).attr("width", x(r.to + 1) - x(r.from + 1) + 8).attr("y", m.t).attr("height", Hh - m.t - m.b));
   svg.append("g").attr("class", "gridline").attr("transform", `translate(${m.l},0)`).call(d3.axisLeft(y).ticks(4).tickSize(-(w - m.l - m.r)).tickFormat(""));
   svg.append("g").attr("class", "axis").attr("transform", `translate(${m.l},0)`).call(axisFmt(d3.axisLeft(y), 4, "$").tickSizeOuter(0));
-  svg.append("g").attr("class", "axis").attr("transform", `translate(0,${Hh - m.b})`).call(d3.axisBottom(x).tickValues([1, 6, 12, 18, 24]).tickFormat((d) => "HE" + d).tickSizeOuter(0));
+  svg.append("g").attr("class", "axis").attr("transform", `translate(0,${Hh - m.b})`).call(d3.axisBottom(x).tickValues([1, 4, 8, 12, 16, 20, 24]).tickFormat((d) => "HE" + d).tickSizeOuter(0));
   if (y.domain()[0] < 0) svg.append("line").attr("class", "zero").attr("x1", m.l).attr("x2", w - m.r).attr("y1", y(0)).attr("y2", y(0));
   const line = d3.line().defined((v) => v != null).x((v, i) => x(i + 1)).y((v) => y(v));
   if (rt && da) svg.append("path").attr("fill", "none").attr("stroke", css("--ink")).attr("stroke-width", 1.5).attr("stroke-dasharray", "4 3").attr("opacity", 0.6).attr("d", line(da));
   svg.append("path").attr("fill", "none").attr("stroke", css("--accent")).attr("stroke-width", 2).attr("d", line(ref));
+  svg.append("line").attr("class", "crosshair pin-mark").attr("x1", x(S.hour + 1)).attr("x2", x(S.hour + 1)).attr("y1", m.t).attr("y2", Hh - m.b);
   const cross = svg.append("line").attr("class", "crosshair").attr("y1", m.t).attr("y2", Hh - m.b).style("display", "none");
   svg.append("rect").attr("x", m.l).attr("y", m.t).attr("width", w - m.l - m.r).attr("height", Hh - m.t - m.b).attr("fill", "transparent")
     .on("pointermove", (ev) => {
@@ -270,6 +277,9 @@ function areaChart({ el, legendEl, areas, below = [], prefix, tipRows, csvName }
   };
   stack(shown, 1); stack(shownBelow, -1);
   if (ymin < 0) svg.append("line").attr("class", "zero").attr("x1", m.l).attr("x2", w - m.r).attr("y1", y(0)).attr("y2", y(0));
+  // the picked hour, which the generation mix below shows
+  svg.append("line").attr("class", "crosshair pin-mark").attr("x1", x(S.hour + 1)).attr("x2", x(S.hour + 1)).attr("y1", m.t).attr("y2", Hh - m.b);
+  svg.append("text").attr("class", "axis-title").attr("x", x(S.hour + 1)).attr("y", m.t - 4).attr("text-anchor", S.hour > 20 ? "end" : S.hour < 3 ? "start" : "middle").text(heLabel(S.hour));
   const cross = svg.append("line").attr("class", "crosshair").attr("y1", m.t).attr("y2", Hh - m.b).style("display", "none");
   svg.append("rect").attr("x", m.l).attr("y", m.t).attr("width", w - m.l - m.r).attr("height", Hh - m.t - m.b).attr("fill", "transparent")
     .on("pointermove", (ev) => {
@@ -317,13 +327,15 @@ function drawActual() {
 // what ran over the day, as GWh bars: the bar is what ran, the full bar the units' largest hourly
 // HSL over all 24 hours (wind and solar: their HSL hour by hour); rows without a maximum share
 // `scale` (GWh) with the rest of their section
-function actRow(name, note, color, max, act, tip, scale) {
+function actRow(name, note, color, max, act, tip, scale, avail) {
   const capG = max || scale || Math.max(act || 0, 1) * 1.1;
-  const pct = Math.min(100, ((act || 0) / capG) * 100);
+  const pct = Math.min(100, ((act || 0) / capG) * 100), pa = avail != null ? Math.min(100, (avail / capG) * 100) : null;
   return `<div class="lab"><span class="sw" style="background:var(${color})"></span><div>${esc(name)}<small>${esc(note)}</small></div></div>` +
     `<div class="bar" data-tip-html="${esc(`<h4>${esc(name)}</h4><p class="tip-body">${tip}</p>`)}">` +
+    (pa != null ? `<i style="left:0;width:${pa}%;background:var(${color});opacity:.35"></i>` : "") +
     (act != null ? `<i style="left:0;width:${pct}%;background:var(${color})"></i>` : "") + `</div>` +
-    `<div class="val"><b>${act != null ? d3.format(",.1f")(act) + " GWh" : "–"}</b> ran` + (max ? `<br>of ${d3.format(",.0f")(max)} GWh max` : "") + `</div>`;
+    `<div class="val"><b>${act != null ? d3.format(",.1f")(act) + " GWh" : "–"}</b> ran` +
+    (avail != null ? `, ${d3.format(",.1f")(Math.max(0, avail - (act || 0)))} curtailed` : "") + (max ? `<br>of ${d3.format(",.0f")(max)} GWh max` : "") + `</div>`;
 }
 // "x–y units online" over the day's hours, for a group's or technology's trains online
 const onRange = (on) => { if (!on) return ""; const a = d3.min(on), b = d3.max(on); return `${a === b ? a : `${a}–${b}`} unit${b === 1 ? "" : "s"} online`; };
@@ -332,16 +344,19 @@ function drawActualBars() {
   panel.hidden = !L;
   if (!L) return;
   $("actual-bar-legend").innerHTML = `<span><span class="sw" style="background:var(--g3)"></span>What ran</span>` +
-    (L === "60d" ? `<span><span class="sw" style="background:var(--track)"></span>Max: thermal units' largest hourly HSL × 24 hours; wind and solar their HSL each hour</span>` : "");
-  $("actual-bars-sub").textContent = L === "60d" ? "ERCOT's reported energy for the day. The solid bar is what ran; the full bar is the most the units could have made: thermal at their largest hourly maximum (HSL) for all 24 hours, wind and solar at their HSL each hour. Online minimum and maximum hour by hour are in the next panel." : "ERCOT's reported energy, from the 2-day summary. Thermal is reported in total until the 60-day disclosure.";
+    (L === "60d" ? `<span><span class="sw" style="background:var(--g3);opacity:.35"></span>Wind and solar: curtailed (available, did not run)</span><span><span class="sw" style="background:var(--track)"></span>Up to the units' largest hourly HSL × 24 hours (wind and solar: not available from the weather)</span>` : "");
+  $("actual-bars-sub").textContent = L === "60d" ? "ERCOT's reported energy for the day. The solid bar is what ran; the full bar is the most the units could have made at their largest hourly maximum (HSL) for all 24 hours. For wind and solar, the light bar is the rest of what the weather made available (their HSL each hour) and was curtailed; the gray beyond it was not available from the weather. Peakers are combustion turbines outside the always-on group, shown on their own. Online minimum and maximum hour by hour are in the next panel." : "ERCOT's reported energy, from the 2-day summary. Thermal is reported in total until the 60-day disclosure.";
   const csv = [], gwhOf = (mw) => d3.sum(mw.filter((v) => v != null)) / 1000, sumOf = (a) => (a ? d3.sum(a) / 1000 : null);
   let html = "";
   const push = (sect, name, note, color, cap, act, lsl, hsl, scale) => {
-    // most it could have made: thermal at the units' largest hourly HSL all day, wind and solar at their HSL each hour
-    const max = cap ? cap * 24 / 1000 : (sect === "wind" || sect === "solar") && hsl ? hsl : null;
+    // most it could have made: the units' largest hourly HSL all day; for wind and solar the HSL
+    // each hour is what the weather made available, and what was available but did not run was curtailed
+    const max = cap ? cap * 24 / 1000 : null, ren = sect === "wind" || sect === "solar";
+    const avail = ren && hsl != null && act != null ? Math.max(hsl, act) : null;
     const tip = `${act != null ? `${fmtGWh(act)} GWh ran (${fmtGW(act / 24 * 1000)} GW on average)` : "no data"}` +
-      (max ? `; ${fmtGWh(max)} GWh max (${cap ? "the units' largest hourly HSL all day" : "their HSL each hour"}), ${d3.format(".0%")(act / max)} of it ran` : "");
-    html += actRow(name, note, color, max, act, tip, scale); csv.push([sect, name, cap, max, act, lsl, hsl]);
+      (avail != null ? `<br>${fmtGWh(avail)} GWh available from the weather (HSL each hour), ${fmtGWh(avail - act)} GWh curtailed` : "") +
+      (max ? `<br>${fmtGWh(max)} GWh max at the units' largest hourly HSL all day${avail != null ? `, ${fmtGWh(max - avail)} GWh of it not available from the weather` : ""}` : "");
+    html += actRow(name, note, color, max, act, tip, scale, avail); csv.push([sect, name, cap, max, act, lsl, hsl]);
   };
   const a60 = S.a60, gh = genHourly();
   if (L === "60d") {
@@ -357,7 +372,7 @@ function drawActualBars() {
   html += `<div class="sect">Wind and solar · GWh (${a60 ? "60-day disclosure" : "2-day summary"})</div>`;
   const ren = [WIND, SOLAR].map((s) => { const vals = a60 && a60.tech[s.id] ? a60.tech[s.id] : gh ? gh[s.id] : null; return [s, vals ? gwhOf(vals) : null]; });
   const renScale = (d3.max(ren, ([, v]) => v) || 1) * 1.1;
-  ren.forEach(([s, v]) => push(s.id, s.label, "", s.color, null, v, null, a60 ? sumOf(a60.hslT[s.id]) : null, renScale));
+  ren.forEach(([s, v]) => push(s.id, s.label, "", s.color, a60 ? a60.capT[s.id] : null, v, null, a60 ? sumOf(a60.hslT[s.id]) : null, renScale));
   const dis = a60 && a60.tech.storage ? gwhOf(a60.dis) : gh && gh.discharging.some((v) => v != null) ? gwhOf(gh.discharging) : null;
   const chg = a60 && a60.tech.storage ? -gwhOf(a60.chg) : gh && gh.charging.some((v) => v != null) ? -gwhOf(gh.charging) : null;
   if (dis != null) {
@@ -377,13 +392,8 @@ function limitSeries() {
   if (!a) return [];
   const renew = [WIND, SOLAR].filter((s) => a.tech[s.id]).map((s) => ({ id: s.id, label: s.label, color: s.color, out: a.tech[s.id], lsl: null, hsl: a.hslT[s.id], on: null }));
   if (S.limBy === "tech") return [...TECHS.filter(([t]) => a.tech[t]).map(([t, label, color]) => ({ id: t, label, color, out: a.tech[t], lsl: a.lslT[t], hsl: a.hslT[t], on: a.onT[t] })), ...renew];
-  // by group: thermal groups without their peakers, then peakers, then wind and solar
-  const L = a.lim, peak = CATS.find(([c]) => c === "peakers");
-  return [
-    ...GROUPS.filter((g) => L.out[g] && L.hsl[g]).map((g) => ({ id: g, label: GROUP_SHORT[g] || g, color: GROUP_COLORS[g] || "--c-other", out: L.out[g], lsl: L.lsl[g], hsl: L.hsl[g], on: L.on[g] })),
-    ...(L.out.peakers && L.hsl.peakers ? [{ id: "peakers", label: peak[1], color: peak[2], out: L.out.peakers, lsl: L.lsl.peakers, hsl: L.hsl.peakers, on: L.on.peakers }] : []),
-    ...renew,
-  ];
+  // by group (peakers on their own), then wind and solar
+  return [...GROUPS.filter((g) => a.group[g] && a.hslG[g]).map((g) => ({ id: g, label: GROUP_SHORT[g] || g, color: GROUP_COLORS[g] || "--c-other", out: a.group[g], lsl: a.lslG[g], hsl: a.hslG[g], on: a.onG[g] })), ...renew];
 }
 function limitChart(s, w0) {
   const zero = HRS.map(() => 0), lsl = s.lsl || zero, hsl = s.hsl || zero;
@@ -578,7 +588,7 @@ function pickHour(h) {
 }
 function renderHour() {
   $("hour-out").textContent = `${heLabel(S.hour)} · ${String(S.hour).padStart(2, "0")}:00–${String(S.hour + 1).padStart(2, "0")}:00`;
-  drawMix(); drawOffersLinks(); if (S.unitView === "hour") drawUnits();
+  drawSpark(); drawActual(); drawMix(); drawOffersLinks(); if (S.unitView === "hour") drawUnits();
   saveView();
 }
 async function loadDay() {
