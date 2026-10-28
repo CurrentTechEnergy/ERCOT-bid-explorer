@@ -42,8 +42,10 @@ Fits are monthly and expanding: a month is judged by transitions fitted on the d
 (at least FIT_MIN_DAYS), so no day is judged by a fit that saw it.
 
 Days before the 60-day fits (Jan 2019 to Jan 2026) are judged from the thermal history files
-(operator_history.py) by reduced fits: each month on the HISTORY_WINDOW months before it, without
-the DAM resource status, which the history lacks.  Their day files carry "reduced": true and the
+(operator_history.py) by reduced fits: each month on the HISTORY_WINDOW months before it, with the
+DAM resource status from the history's dam-status files (Apr 2019 to Nov 2025, every 5th day: CC
+hours right 96.35% -> 96.75%, turn-offs caught 2,759 -> 2,985 of 5,081 with 1,398 -> 1,331 false;
+gas steam 95.05% -> 95.43%).  Their day files carry "reduced": true and the
 hourly "state" (no 60-day unit file shows what they did), and the index lists them apart as
 history_days.
 
@@ -90,10 +92,11 @@ MIN_AWARD = 1.1      # an award at most this x LSL counts as holding at minimum 
 RUN_CAP = 48         # hours in the current state are counted up to this
 FIT_MIN_DAYS = 60    # days of transitions a monthly fit needs
 HISTORY_WINDOW = 12  # months of history days a reduced fit (before the 60-day fits) is fitted on
+HISTORY_VERSION = "h2"   # history day files only (h2: with the DAM resource status); a change rewrites them, newest first
 HISTORY_BUDGET = 75 * 60   # seconds a run may spend writing history day files
 SAVE_EVERY = 30      # history day files between index writes
-REDUCED_NOTE = ("days before the 60-day fits: fitted on the 12 months before, from the thermal history files, "
-                "without the DAM resource status; gas at Henry Hub where no Ship Channel price is stored")
+REDUCED_NOTE = ("days before the 60-day fits: fitted on the 12 months before, from the thermal history files "
+                "and the DAM resource status; gas at Henry Hub where no Ship Channel price is stored")
 SLOPES = (0, 1, 3, 6)   # features with a slope per unit: margin, loss ahead, profit ahead, award ahead
 SLOPE_SCALE = float(os.environ.get("OI_SLOPE_SCALE", "0.5"))   # 0 turns the per-unit slopes off
 ON_STATUS = ("ON", "ONOS", "ONRE", "ONDSR", "ONOPTOUT", "ONTEST", "ONEMR", "ONRUC", "ONREG", "ONRR")
@@ -375,7 +378,7 @@ def fit(ctx, month, plan="none"):
 
 def _reduced_fit(ctx, month):
     """A month before the 60-day fits: transitions fitted on the HISTORY_WINDOW months of
-    history days before it, without the DAM status (the history files lack it), or None."""
+    history days before it, with the DAM status when the history has it, or None."""
     cache = ctx.__dict__.setdefault("_oi_rfit", {})
     if month not in cache:
         y, m = int(month[:4]), int(month[5:7]) - HISTORY_WINDOW
@@ -386,7 +389,9 @@ def _reduced_fit(ctx, month):
         else:
             R = _rows(ctx, dates)
             ok = all(len(set(R[s][2])) == 2 for s in (0, 1))
-            cache[month] = {s: _fit_side(_no_status(R[s][0]), *R[s][1:]) for s in (0, 1)} if ok else None
+            # the DAM status where the history has it (operator_history.py); OI_HISTORY_STATUS=0 leaves it out
+            keep = getattr(ctx, "has_status", False) and os.environ.get("OI_HISTORY_STATUS", "1") != "0"
+            cache[month] = {s: _fit_side(R[s][0] if keep else _no_status(R[s][0]), *R[s][1:]) for s in (0, 1)} if ok else None
     return cache[month]
 
 
@@ -553,7 +558,9 @@ def build_days(index: dict, rebuild: bool = False) -> list:
     ix = read_json_gz(ip, default=None) or {}
     rebuild = rebuild or ix.get("version") != VERSION
     have = set() if rebuild else set(ix.get("days", []))
-    hist_have = set() if rebuild else set(ix.get("history_days", []))
+    hist_old = set() if rebuild else set(ix.get("history_days", []))     # files on hand, any history version
+    hist_have = (set(ix.get("history_current", ix.get("history_days", []))) if ix.get("history_version") == HISTORY_VERSION
+                 else set()) & hist_old                                  # those written by this history version
     ctx = C.Context(index or load_index())
     want = [d for d in sorted(_days(ctx)) if d not in have]
     done = []
@@ -564,7 +571,8 @@ def build_days(index: dict, rebuild: bool = False) -> list:
             done.append(d)
     days = sorted(have | set(done))
     def save_index():      # also every SAVE_EVERY history days, so a run cut short keeps its work
-        write_json_gz(ip, {"model": NAME, "version": VERSION, "days": days, "history_days": sorted(hist_have | set(hist_new)),
+        write_json_gz(ip, {"model": NAME, "version": VERSION, "days": days, "history_days": sorted(hist_old | hist_have | set(hist_new)),
+                           "history_version": HISTORY_VERSION, "history_current": sorted(hist_have | set(hist_new)),
                            "reduced": REDUCED_NOTE})
     hctx, t0, hist_new = history_context(ctx), time.time(), []
     if hctx is not None:
@@ -580,7 +588,7 @@ def build_days(index: dict, rebuild: bool = False) -> list:
                 hist_new.append(d)
                 if len(hist_new) % SAVE_EVERY == 0:
                     save_index()
-    hist = sorted(hist_have | set(hist_new))
+    hist = sorted(hist_old | hist_have | set(hist_new))
     save_index()
     n = build_decision_view(days)
     from .operator_scores import build_scores

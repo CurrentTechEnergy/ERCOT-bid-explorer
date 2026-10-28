@@ -12,9 +12,9 @@ on:
   workflow_dispatch:
     inputs:
       kind:
-        description: "renewables (units-*), thermal (thermal-*), as (as-*, as-mcpc-*), rt (rt-prices-*) or rtas (rt-as-*, rt-mcpc-*, dam-as-*)"
+        description: "renewables (units-*), thermal (thermal-*), as (as-*, as-mcpc-*), rt (rt-prices-*), rtas (rt-as-*, rt-mcpc-*, dam-as-*) or dam-status (dam-status-*, read only from the raw store)"
         type: choice
-        options: [renewables, thermal, as, rt, rtas]
+        options: [renewables, thermal, as, rt, rtas, dam-status]
         required: false
         default: renewables
       start:
@@ -60,7 +60,7 @@ jobs:
           MAX: ${{ inputs.max_months || '24' }}
           FORCE: ${{ inputs.force || false }}
           EVENT: ${{ github.event_name }}
-          PREFIX: ${{ inputs.kind == 'thermal' && 'thermal' || inputs.kind == 'as' && 'as' || inputs.kind == 'rt' && 'rt-prices' || inputs.kind == 'rtas' && 'rt-as' || 'units' }}
+          PREFIX: ${{ inputs.kind == 'thermal' && 'thermal' || inputs.kind == 'as' && 'as' || inputs.kind == 'rt' && 'rt-prices' || inputs.kind == 'rtas' && 'rt-as' || inputs.kind == 'dam-status' && 'dam-status' || 'units' }}
           KIND: ${{ inputs.kind }}
         run: |
           if [ "$EVENT" = "pull_request" ]; then echo 'months=["2019-01"]' >> "$GITHUB_OUTPUT"; exit 0; fi
@@ -113,7 +113,7 @@ jobs:
           R2_ENDPOINT: ${{ secrets.R2_ENDPOINT }}
           R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
           R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
-        run: python -m pipeline.history "${{ matrix.month }}" --out out ${{ inputs.kind == 'thermal' && '--thermal' || inputs.kind == 'as' && '--as' || inputs.kind == 'rt' && '--rt' || inputs.kind == 'rtas' && '--rtas' || '' }}
+        run: python -m pipeline.history "${{ matrix.month }}" --out out ${{ inputs.kind == 'thermal' && '--thermal' || inputs.kind == 'as' && '--as' || inputs.kind == 'rt' && '--rt' || inputs.kind == 'rtas' && '--rtas' || inputs.kind == 'dam-status' && '--dam-status --store-only' || '' }}
       # No RT settlement point price smoke test: those files come in bulk downloads that the raw
       # store does not keep, so every PR run would download the same month from ERCOT again.
       - name: RT AS, first 2 days of Dec 2025 (smoke test)

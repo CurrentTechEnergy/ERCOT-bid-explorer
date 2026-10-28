@@ -237,7 +237,7 @@ async function drawForecast(e) {
   const hOn = onl ? onl.filter((v) => v === true).length : null;
   const dr = (S.DEC?.days || []).find((r) => r[0] === e.name && r[1] === day);
   $("fc-note").innerHTML = (act ? `<b>${esc(day)}: online ${hOn} of 24 hours, ${fmtMW(d3.sum(act, (x) => x.out))} MWh.</b>` : onl ? `<b>${esc(day)}: online ${hOn} of 24 hours.</b>` : `<b>${esc(day)}</b>.`) +
-    (OD.reduced ? ` Before the 60-day window: judged on the 12 months before it, without the day-ahead resource status, which the history files lack.` : "") +
+    (OD.reduced ? ` Before the 60-day window: judged on a fit to the 12 months before it, from the thermal history files.` : "") +
     (dr && dr[4] ? ` It ${dr[6] ? `turned off${dr[7] ? ` for ${dr[7]} hours` : ""}` : "stayed on"} through its worst stretch, HE ${dr[3]} to ${dr[3] + dr[4] - 1}, which would have cost ${fmt$(dr[2])} to ride through at its node.` : "") +
     oiNote(e, day, o);
   const s = TECH_OF[e.tech] || { color: "--c-other" };
