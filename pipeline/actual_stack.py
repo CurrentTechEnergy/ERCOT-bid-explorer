@@ -11,8 +11,11 @@ clipped to [0, HSL]), then raised to its LSL, since SCED cannot take it below th
   mw(P) = clamp(curve(P), LSL, HSL)       a unit with a curve
         = its hourly mean output          a unit online without one (runs whatever the price)
 
-averaged over each hour's runs.  So at the bottom of the grid the stack is the minimum output
-online, and at the top it is the online maximum.
+averaged over each hour's runs.  `min` is what the units online run at whatever the price: their
+MW offered just above the -$250 offer floor (FLOOR), at least their LSL.  That is more than the
+LSL alone for units that offer their whole output at the floor, such as nuclear (LSL about 1,450
+MW in all, about 5,000 MW offered at -$249.99), so the line meets the stack's left edge.  `max`
+is the online maximum.
 
 data/stack/<date>.json.gz
   date, format
@@ -32,7 +35,8 @@ from .store import read_json_gz, write_json_gz
 from .units import _ffill_index
 
 OUT_DIR = DATA_DIR / "stack"
-FORMAT = 1
+FORMAT = 2
+FLOOR = -249.99
 PRICES = np.concatenate([
     [-250, -100, -75, -50, -40, -30, -25, -20, -15, -10, -5],
     np.arange(0, 100, 2.5),
@@ -67,7 +71,7 @@ def day_stack(ud: dict, group_of: dict) -> dict:
         lsl = np.array([float(u["lim"][i][2] or 0.0) if i >= 0 else 0.0 for i in li])
         cv = u.get("curve2") or u.get("curve") or []
         ci = _ffill_index(cv, n) if cv else np.full(n, -1)
-        rows = np.zeros((n, G))
+        rows, floor = np.zeros((n, G)), lsl.copy()
         has = np.array([ci[r] >= 0 and cv[ci[r]][1] is not None for r in range(n)])
         idx = np.where(online & has)[0]
         if idx.size:
@@ -81,11 +85,12 @@ def day_stack(ud: dict, group_of: dict) -> dict:
                 r0 = idx[np.argmax(inv == j)]
                 P[j, :len(ev[1])] = ev[1]
                 M[j, :len(ev[2])] = np.array(ev[2], float) * (hsl[r0] if u.get("frac") else 1.0)
-            rows[idx] = np.clip(mw_at_prices(P, M, PRICES, "zero")[inv], lsl[idx][:, None], np.maximum(hsl[idx], lsl[idx])[:, None])
+            ev = np.clip(mw_at_prices(P, M, np.append(PRICES, FLOOR), "zero")[inv], lsl[idx][:, None], np.maximum(hsl[idx], lsl[idx])[:, None])
+            rows[idx], floor[idx] = ev[:, :-1], ev[:, -1]
         out = u.get("out") or [None] * 24
         flat = np.array([out[h] or 0.0 for h in hr])         # a unit without a curve: its output
         rows[online & ~has] = flat[online & ~has][:, None]
-        lo_r, hi_r = np.where(has, lsl, flat), np.where(has, np.maximum(hsl, lsl), flat)
+        lo_r, hi_r = np.where(has, floor, flat), np.where(has, np.maximum(hsl, lsl), flat)
         w = np.zeros((24, n))
         w[hr[online], np.where(online)[0]] = 1.0
         mw, mn, mx, cnt = w @ rows, w @ lo_r, w @ hi_r, (w.sum(1) > 0).astype(float)
