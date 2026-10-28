@@ -41,6 +41,7 @@ from .trends import build_trends
 from .intraday import build_intraday
 from .groups import build_groups
 from .unit_hours_day import build_unit_hour_days
+from .rt_nodes import build_rt_nodes
 from .unit_curves import build_unit_curves
 from .hourly_context import build_hourly_context
 from .stayon import build_stayon
@@ -535,6 +536,7 @@ def main(argv=None):
         build_groups(index)
         build_actual_stack(index)
         build_unit_hour_days(index)
+        build_rt_nodes(index)
         build_unit_curves(index)
         build_hourly_context(index)
         build_stayon(index)
@@ -627,6 +629,7 @@ def main(argv=None):
     build_groups(index)
     build_actual_stack(index)
     build_unit_hour_days(index)
+    build_rt_nodes(index)
     build_unit_curves(index)
     build_hourly_context(index)
     build_stayon(index)
