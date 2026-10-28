@@ -78,11 +78,32 @@ def _names_unit(u: dict) -> bool:
     return u["match"] == "unit" or u["tech"] == "combined_cycle" or (u["tech"] == "storage" and bool(re.search(r"\b(BESS|ESS|STORAGE|BATTERY)\b", p)))
 
 
+def label(u: dict) -> str:
+    """How a unit is named in text: "Colorado Bend Energy Center CTG 12 (CBEC_GT12)" when the CDR
+    name is the unit's own, else its code (the Unit page heading and the alert emails)."""
+    return f"{display_name(u['plant'])} ({u['unit']})" if _names_unit(u) else u["unit"]
+
+
+def unit_labels() -> dict:
+    """{unit: label} for every unit in the index, and each combined-cycle configuration under its
+    train's label; {} without an index."""
+    ui = read_json_gz(UNIT_INDEX_PATH, default=None)
+    if not ui:
+        return {}
+    out = {}
+    for r in ui["rows"]:
+        u = dict(zip(ui["columns"], r))
+        out[u["unit"]] = label(u)
+        for c in u.get("configs") or []:
+            out.setdefault(c, out[u["unit"]])
+    return out
+
+
 def card(u: dict, mw) -> dict:
     """Title, preview headline and description for one unit-index row, at capacity mw."""
     tech = TECH_LABEL.get(u["tech"], u["tech"])
     named = _names_unit(u)
-    head = f"{display_name(u['plant'])} ({u['unit']})" if named else u["unit"]
+    head = label(u)
     size = f"{tech}, {mw:,} MW" if mw else tech
     where = ", ".join(x for x in [u.get("county") and f"{u['county'].title()} County", u.get("zone") and f"{u['zone'].title()} zone"] if x)
     bits = [f"{size}{', ' + where if where else ''}."]
