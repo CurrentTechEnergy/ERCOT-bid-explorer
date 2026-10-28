@@ -1,6 +1,7 @@
 /* Will fossil turn off? Four questions, each by year from 2019, from data/goal.json.gz
-   (pipeline/goal.py, built monthly from the 60-day reports): what turns off, why the rest stays on
-   in cheap hours, whether behaviour is changing, and where fossil minimums sit beside curtailed wind
+   (pipeline/goal.py, built monthly from the 60-day reports): the floor fossil output holds against
+   net load and what sits at it, why the rest stays on in cheap hours and what that costs, whether
+   behaviour is changing, and where fossil minimums sit beside curtailed wind
    and solar.  The page only sums and divides what the file holds. */
 const { tryJSON, showTip, hideTip, setCSV, setNote, axisFmt, css, esc, readHash, writeHash } = window.CX;
 const $ = (id) => document.getElementById(id);
@@ -9,7 +10,6 @@ const fmtPct = d3.format(".0%");
 const fmtPt = (v) => `${v >= 0 ? "+" : "−"}${d3.format(".1f")(Math.abs(v) * 100)} pt`;
 const fmtTWh = (mwh) => d3.format(",.2f")(mwh / 1e6);
 const TECH = { combined_cycle: "Combined cycle", gas_steam: "Gas steam", coal: "Coal", combustion_turbine: "Combustion turbine", nuclear: "Nuclear" };
-const GROUP_COLOR = { "daily, over 2 a week": "--c1", "daily, 1 to 2 a week": "--c7", "daily, under 1 a week": "--c7-soft", "multi-day": "--c4", seasonal: "--c5", "never off": "--c-other" };
 // one vocabulary for why a unit at minimum stayed on (the Unit and Commitment pages use the same words)
 const REASON = {
   coal: { label: "Coal", color: "--c8" },
@@ -20,7 +20,7 @@ const REASON = {
   "no model call": { label: "No model call", color: "--c5" },
   combustion_turbine: { label: "Combustion turbines", color: "--c4" },
 };
-const S = { G: null, year: null, tech: "combined_cycle" };
+const S = { G: null, year: "all", tech: "combined_cycle", q2cost: "" };
 
 function emptyMsg(el, msg) { el.innerHTML = `<p class="empty">${msg}</p>`; }
 const yearLabel = (y) => { const r = S.G.years[y]; return r && r.to.slice(5) !== "12-31" ? `${y} (Jan 1 to ${d3.timeFormat("%b %-d")(new Date(r.to + "T12:00:00"))})` : String(y); };
@@ -31,48 +31,106 @@ function legend(id, items) {
   $(id).innerHTML = items.map(([label, color, op]) => `<span><span class="sw" style="background:var(${color})${op ? `;opacity:${op}` : ""}"></span>${esc(label)}</span>`).join("");
 }
 
-// ==== 1. What turns off: capacity and the minimum taken offline in cheap hours, by group ======
+// ==== 1. What turns off: the floor fossil output does not go below, and what sits at it ========
+const TECH_COLOR = { coal: "--c8", combined_cycle: "--c1", gas_steam: "--c7", combustion_turbine: "--c4" };
+const STUCK_TECHS = ["coal", "combined_cycle", "gas_steam", "combustion_turbine"];
+const LOW_NET = 8;             // GW: "low net load" in the answer
+const MIN_STUCK_HOURS = 15;    // a stuck-on bar needs this many hours
+const isAll = () => S.year === "all";
+const yearName = (y) => (y === "all" ? "all years" : yearLabel(y));
 function drawQ1() {
-  const el = $("q1-chart"), y = S.year, R = rowsOf("q1").filter((r) => r.year === y);
-  if (!R.length) return emptyMsg(el, "No data for this year.");
-  const groups = S.G.q1.groups, techs = ["combined_cycle", "gas_steam", "coal"];
-  const share = (t, k) => { const rs = R.filter((r) => r.tech === t), tot = d3.sum(rs, (r) => r[k]) || 1; return groups.map((g) => ({ g, v: d3.sum(rs.filter((r) => r.group === g), (r) => r[k]) / tot, mw: d3.sum(rs.filter((r) => r.group === g), (r) => r[k]), n: d3.sum(rs.filter((r) => r.group === g), (r) => r.trains) })); };
-  const cheapH = S.G.years[y].cheap_hours || 1;
-  const bars = techs.flatMap((t) => [{ t, k: "capacity_mw", label: "Capacity", parts: share(t, "capacity_mw") }, { t, k: "off_mwh", label: "Minimum taken offline in cheap hours", parts: share(t, "off_mwh") }]);
-  const w = Math.max(300, el.clientWidth || 700), narrow = w < 560, m = { t: 8, r: 12, b: 26, l: narrow ? 128 : 250 }, bh = 18, gap = 6, tg = 22;
-  const H = m.t + techs.length * (2 * bh + gap + tg) + m.b;
-  const x = d3.scaleLinear().domain([0, 1]).range([m.l, w - m.r]);
+  const F = S.G.floor, el = $("q1-chart"), sel = S.year;
+  if (!F || !F.grid.length) { emptyMsg(el, "No data yet."); $("q1s-chart").innerHTML = ""; return; }
+  const cells = d3.rollup(F.grid, (v) => d3.sum(v, (r) => r[3]), (r) => r[1], (r) => r[2]);
+  const mine = isAll() ? null : d3.rollup(F.grid.filter((r) => r[0] === sel), (v) => d3.sum(v, (r) => r[3]), (r) => r[1], (r) => r[2]);
+  const all = [...cells].flatMap(([gx, m]) => [...m].map(([gy, n]) => [gx, gy, n]));
+  const w = Math.max(300, el.clientWidth || 700), H = 340, m = { t: 16, r: 14, b: 40, l: 52 };
+  const x = d3.scaleLinear().domain([Math.min(-5, d3.min(all, (c) => c[0])), d3.max(all, (c) => c[0] + 1)]).nice().range([m.l, w - m.r]);
+  const y = d3.scaleLinear().domain([0, d3.max(all, (c) => c[1] + 1)]).nice().range([H - m.b, m.t]);
   const svg = d3.create("svg").attr("viewBox", `0 0 ${w} ${H}`);
-  svg.append("g").attr("class", "gridline").attr("transform", `translate(0,${H - m.b})`).call(d3.axisBottom(x).ticks(5).tickSize(-(H - m.t - m.b)).tickFormat(""));
-  svg.append("g").attr("class", "axis").attr("transform", `translate(0,${H - m.b})`).call(d3.axisBottom(x).ticks(5).tickFormat(fmtPct).tickSizeOuter(0));
-  bars.forEach((b, i) => {
-    const ti = Math.floor(i / 2), y0 = m.t + ti * (2 * bh + gap + tg) + tg + (i % 2) * (bh + gap);
-    if (i % 2 === 0) svg.append("text").attr("x", 0).attr("y", y0 - 7).attr("font-weight", 600).attr("class", "axis-title").text(TECH[b.t]);
-    svg.append("text").attr("x", m.l - 6).attr("y", y0 + bh / 2 + 4).attr("text-anchor", "end").attr("font-size", 12).attr("fill", css("--ink-2")).text(narrow ? (b.k === "capacity_mw" ? "Capacity" : "Taken offline") : b.label);
-    let acc = 0;
-    const tot = d3.sum(b.parts, (p) => p.mw);
-    if (!tot) svg.append("text").attr("x", m.l + 4).attr("y", y0 + bh / 2 + 4).attr("font-size", 12).attr("fill", css("--muted")).text("none");
-    b.parts.forEach((p) => {
-      if (!p.v) return;
-      const x0 = x(acc), x1 = x(acc + p.v);
-      acc += p.v;
-      svg.append("rect").attr("x", x0).attr("y", y0).attr("width", Math.max(0, x1 - x0 - 1)).attr("height", bh).attr("fill", css(GROUP_COLOR[p.g]))
-        .on("pointermove", (ev) => showTip(ev, `<h4>${TECH[b.t]} · ${esc(p.g)} · ${yearLabel(y)}</h4><table><tr><td>${b.label}</td><td class="n">${fmtPct(p.v)}</td></tr>` +
-          (b.k === "capacity_mw" ? `<tr><td>Capacity</td><td class="n">${fmtGW(p.mw)} GW, ${p.n} units</td></tr>` : `<tr><td>Average per cheap hour</td><td class="n">${d3.format(",.0f")(p.mw / cheapH)} MW</td></tr>`) + `</table>`))
-        .on("pointerleave", hideTip);
-      if (x1 - x0 > 34) svg.append("text").attr("x", (x0 + x1) / 2).attr("y", y0 + bh / 2 + 4).attr("text-anchor", "middle").attr("font-size", 11).attr("fill", "#fff").attr("pointer-events", "none").text(fmtPct(p.v));
-    });
-  });
+  svg.append("g").attr("class", "gridline").attr("transform", `translate(${m.l},0)`).call(d3.axisLeft(y).ticks(6).tickSize(-(w - m.l - m.r)).tickFormat(""));
+  svg.append("g").attr("class", "axis").attr("transform", `translate(${m.l},0)`).call(d3.axisLeft(y).ticks(6).tickSizeOuter(0));
+  svg.append("g").attr("class", "axis").attr("transform", `translate(0,${H - m.b})`).call(d3.axisBottom(x).ticks(w < 560 ? 5 : 10).tickSizeOuter(0));
+  svg.append("text").attr("class", "axis-title").attr("x", m.l).attr("y", 9).text("Fossil output (GW), each hour");
+  svg.append("text").attr("class", "axis-title").attr("x", w - m.r).attr("y", H - 6).attr("text-anchor", "end").text("Net load: load less the wind and solar available (GW)");
+  const cw = x(1) - x(0), ch = y(0) - y(1), col = isAll() ? css("--ink") : css("--c1");
+  const op = (n, mx) => 0.12 + 0.88 * Math.log1p(n) / Math.log1p(mx);
+  const back = svg.append("g"), front = svg.append("g");
+  const mxAll = d3.max(all, (c) => c[2]);
+  all.forEach(([gx, gy, n]) => back.append("rect").attr("x", x(gx)).attr("y", y(gy + 1)).attr("width", cw).attr("height", ch)
+    .attr("fill", isAll() ? col : css("--c-other")).attr("opacity", isAll() ? op(n, mxAll) : 0.25 * op(n, mxAll)));
+  if (mine) {
+    const mm = d3.max([...mine.values()].flatMap((v) => [...v.values()])) || 1;
+    mine.forEach((v, gx) => v.forEach((n, gy) => front.append("rect").attr("x", x(gx)).attr("y", y(gy + 1)).attr("width", cw).attr("height", ch).attr("fill", col).attr("opacity", op(n, mm))));
+  }
+  // fossil can't go below net load less nuclear: the line it would sit on with no other units
+  const nuc = 5;
+  svg.append("line").attr("x1", x(Math.max(x.domain()[0], nuc))).attr("x2", x(x.domain()[1])).attr("y1", y(Math.max(x.domain()[0], nuc) - nuc)).attr("y2", y(x.domain()[1] - nuc))
+    .attr("stroke", css("--muted")).attr("stroke-dasharray", "5 4").attr("stroke-width", 1.2);
+  const med = F.median[isAll() ? "all" : String(sel)] || [];
+  const half = F.bin / 2;
+  svg.append("path").attr("d", d3.line().x((r) => x(r[0] + half)).y((r) => y(r[1] / 1000))(med)).attr("fill", "none").attr("stroke", css("--surface")).attr("stroke-width", 5.5);
+  svg.append("path").attr("d", d3.line().x((r) => x(r[0] + half)).y((r) => y(r[1] / 1000))(med)).attr("fill", "none").attr("stroke", isAll() ? css("--c2") : css("--c2")).attr("stroke-width", 2.5);
+  svg.append("rect").attr("x", m.l).attr("y", m.t).attr("width", w - m.l - m.r).attr("height", H - m.t - m.b).attr("fill", "transparent")
+    .on("pointermove", (ev) => {
+      const nx = x.invert(d3.pointer(ev)[0]), r = med.find((q) => nx >= q[0] && nx < q[0] + F.bin);
+      if (!r) return hideTip();
+      showTip(ev, `<h4>Net load ${r[0]} to ${r[0] + F.bin} GW · ${yearName(sel)}</h4><table><tr><td>Median fossil output</td><td class="n">${fmtGW(r[1])} GW</td></tr><tr><td>Hours</td><td class="n">${d3.format(",")(r[2])}</td></tr></table>`);
+    })
+    .on("pointerleave", hideTip);
   el.replaceChildren(svg.node());
-  legend("q1-legend", groups.filter((g) => R.some((r) => r.group === g)).map((g) => [g[0].toUpperCase() + g.slice(1), GROUP_COLOR[g]]));
-  setCSV(el, ["year", "tech", "group", "units", "capacity_mw", "minimum_offline_in_cheap_hours_mwh"], R.map((r) => [r.year, r.tech, r.group, r.trains, r.capacity_mw, r.off_mwh]), `What turns off ${y}`);
-  // the answer, from the chosen year
-  const cc = share("combined_cycle", "capacity_mw"), co = share("combined_cycle", "off_mwh");
-  const daily = (a) => d3.sum(a.filter((p) => p.g.startsWith("daily")), (p) => p.v), never = (a) => (a.find((p) => p.g === "never off") || { v: 0 }).v;
-  const coalOff = d3.sum(R.filter((r) => r.tech === "coal"), (r) => r.off_mwh) / cheapH, coalCap = d3.sum(R.filter((r) => r.tech === "coal"), (r) => r.capacity_mw);
-  $("q1-answer").innerHTML = `In ${yearLabel(y)}, <b>daily-cycling combined cycles were ${fmtPct(daily(cc))} of combined-cycle capacity and took ${fmtPct(daily(co))} of the combined-cycle minimum that went offline in cheap hours.</b> Never-off combined cycles, ${fmtPct(never(cc))} of capacity, took ${fmtPct(never(co))}. Coal took ${d3.format(",.0f")(coalOff)} MW offline in the average cheap hour, out of ${fmtGW(coalCap)} GW.`;
-  setNote($("q1-note"), `Each unit's share of its technology's capacity, and of the minimum output that went offline in cheap hours, by how often it turns off. ${d3.format(",")(S.G.years[y].cheap_hours)} cheap hours in ${yearLabel(y)}.`,
-    `Every coal, combined-cycle and gas steam unit (combined-cycle configurations merged into their train), from the hourly states in the 60-day SCED disclosure. Its group comes from its off spells over the year (for a part year, the 365 days to its end): an off spell is at least ${4} offline hours after a running hour, not mostly outage. Daily: two or more spells under 24 hours, split by how many a week; multi-day: the shortest lasted a day to a week; seasonal: every one lasted a week or more; never off: none. Capacity is the unit's 95th-percentile HSL while online. A cheap hour has a day-ahead hub average (HB_HUBAVG) of $${S.G.cheap}/MWh or less. Minimum taken offline counts each cheap hour a unit was offline inside one of its off spells, having run in the 24 hours before, at its median LSL while online.`);
+  legend("q1-legend", [[isAll() ? "Hours, all years (darker: more hours)" : `Hours in ${yearName(sel)} (other years grey)`, isAll() ? "--ink" : "--c1"], ["Median fossil output", "--c2"]]);
+  $("q1-legend").insertAdjacentHTML("beforeend", `<span><span class="sw sw-line"></span>Net load less about 5 GW of nuclear</span>`);
+  // what is stuck on: average fossil output by net load, at minimum and above it
+  const sb = F.stuck_bin, pick = (r) => isAll() || r[0] === sel;
+  const hours = d3.rollup(F.hours.filter(pick), (v) => d3.sum(v, (r) => r[2]), (r) => r[1]);
+  const bins = [...hours].filter(([, n]) => n >= MIN_STUCK_HOURS).map(([b]) => b).sort((a, b) => a - b);
+  const part = (b, t, k) => d3.sum(F.stuck.filter((r) => pick(r) && r[1] === b && r[2] === t), (r) => r[k]) / hours.get(b);
+  const keys = [...STUCK_TECHS.map((t) => [t, 3, 1]), ...STUCK_TECHS.map((t) => [t, 4, 0.35])];
+  const el2 = $("q1s-chart"), H2 = 280, m2 = { t: 16, r: 14, b: 40, l: 52 };
+  const xb = d3.scaleBand().domain(bins).range([m2.l, w - m2.r]).padding(0.15);
+  const tops = bins.map((b) => d3.sum(keys, ([t, k]) => part(b, t, k)));
+  const y2 = d3.scaleLinear().domain([0, d3.max(tops) || 1]).nice().range([H2 - m2.b, m2.t]);
+  const s2 = d3.create("svg").attr("viewBox", `0 0 ${w} ${H2}`);
+  s2.append("g").attr("class", "gridline").attr("transform", `translate(${m2.l},0)`).call(d3.axisLeft(y2).ticks(5).tickSize(-(w - m2.l - m2.r)).tickFormat(""));
+  s2.append("g").attr("class", "axis").attr("transform", `translate(${m2.l},0)`).call(d3.axisLeft(y2).ticks(5).tickFormat((v) => d3.format(",.0f")(v / 1000)).tickSizeOuter(0));
+  const every = Math.ceil(bins.length / (w < 560 ? 6 : 12));
+  s2.append("g").attr("class", "axis").attr("transform", `translate(0,${H2 - m2.b})`).call(d3.axisBottom(xb).tickValues(bins.filter((_, i) => i % every === 0)).tickFormat((b) => `${b}`).tickSizeOuter(0));
+  s2.append("text").attr("class", "axis-title").attr("x", m2.l).attr("y", 9).text(`Average fossil output (GW) by net load, ${yearName(sel)}`);
+  s2.append("text").attr("class", "axis-title").attr("x", w - m2.r).attr("y", H2 - 6).attr("text-anchor", "end").text(`Net load (GW), ${sb} GW bins`);
+  bins.forEach((b) => {
+    let acc = 0;
+    keys.forEach(([t, k, o]) => {
+      const v = part(b, t, k);
+      if (!v) return;
+      s2.append("rect").attr("x", xb(b)).attr("width", xb.bandwidth()).attr("y", y2(acc + v)).attr("height", Math.max(0, y2(acc) - y2(acc + v) - 0.5)).attr("fill", css(TECH_COLOR[t])).attr("opacity", o);
+      acc += v;
+    });
+    s2.append("rect").attr("x", xb(b)).attr("width", xb.bandwidth()).attr("y", m2.t).attr("height", H2 - m2.t - m2.b).attr("fill", "transparent")
+      .on("pointermove", (ev) => showTip(ev, `<h4>Net load ${b} to ${b + sb} GW · ${yearName(sel)}</h4><table><tr><td></td><td class="n">At minimum, GW</td><td class="n">Above, GW</td></tr>` +
+        STUCK_TECHS.map((t) => `<tr><td><span class="sw" style="background:var(${TECH_COLOR[t]})"></span> ${TECH[t]}</td><td class="n">${fmtGW(part(b, t, 3))}</td><td class="n">${fmtGW(part(b, t, 4))}</td></tr>`).join("") +
+        `<tr><td><b>All fossil</b></td><td class="n"><b>${fmtGW(d3.sum(STUCK_TECHS, (t) => part(b, t, 3)))}</b></td><td class="n"><b>${fmtGW(d3.sum(STUCK_TECHS, (t) => part(b, t, 4)))}</b></td></tr><tr><td>Hours</td><td class="n" colspan="2">${d3.format(",")(hours.get(b))}</td></tr></table>`))
+      .on("pointerleave", hideTip);
+  });
+  el2.replaceChildren(s2.node());
+  legend("q1s-legend", [...STUCK_TECHS.map((t) => [`${TECH[t]} at minimum`, TECH_COLOR[t]]), ["Lighter: above minimum", "--c-other", 0.35]]);
+  setCSV(el2, ["net_load_bin_gw", "hours", ...STUCK_TECHS.flatMap((t) => [`${t}_at_minimum_mw`, `${t}_above_minimum_mw`])],
+    bins.map((b) => [b, hours.get(b), ...STUCK_TECHS.flatMap((t) => [Math.round(part(b, t, 3)), Math.round(part(b, t, 4))])]), `What is stuck on ${yearName(sel)}`);
+  setCSV(el, ["net_load_bin_gw", "median_fossil_mw", "hours"], med, `Fossil against net load ${yearName(sel)}`);
+  // the answer: the floor in low net load hours, and what sits at it
+  const low = (rs) => rs.filter((r) => r[0] + F.bin <= LOW_NET);
+  const floorOf = (k) => { const rs = low(F.median[k] || []), n = d3.sum(rs, (r) => r[2]); return n ? d3.sum(rs, (r) => r[1] * r[2]) / n : null; };
+  const lowBins = bins.filter((b) => b + sb <= LOW_NET), lh = d3.sum(lowBins, (b) => hours.get(b));
+  const lowPart = (t, k) => (lh ? d3.sum(lowBins, (b) => part(b, t, k) * hours.get(b)) / lh : 0);
+  const atMin = d3.sum(STUCK_TECHS, (t) => lowPart(t, 3)), above = d3.sum(STUCK_TECHS, (t) => lowPart(t, 4));
+  const yrs = years().filter((q) => floorOf(String(q)) != null);
+  const f = floorOf(isAll() ? "all" : String(sel));
+  $("q1-answer").innerHTML = f == null ? `Too few hours with net load under ${LOW_NET} GW in ${yearName(sel)} to say.` :
+    `<b>Fossil output has a floor it doesn't go below.</b> In hours when net load was under ${LOW_NET} GW, fossil still ran a median of about ${fmtGW(f)} GW (${yearName(sel)}), ` +
+    `and in those hours ${fmtGW(atMin)} GW of it was units at their minimum, against ${fmtGW(above)} GW above it: coal ${fmtGW(lowPart("coal", 3))} GW and combined cycles ${fmtGW(lowPart("combined_cycle", 3))} GW. ` +
+    `By year the floor was ${yrs.map((q) => `${fmtGW(floorOf(String(q)))} GW in ${q}`).join(", ")}.`;
+  setNote($("q1-note"), `Every hour since ${d3.timeFormat("%b %Y")(new Date(S.G.years[years()[0]].from + "T12:00:00"))}: fossil output against net load, the load left once the wind and solar available are counted. Where fossil could turn off, its output would follow net load down to the dashed line; instead it flattens. Below, the average fossil output in each band of net load, split into units at their minimum and output above it.`,
+    `From the 60-day SCED disclosure, hour by hour. Fossil is coal, combined cycle, gas steam and combustion turbines. Net load is the output of every thermal unit (fossil and nuclear) plus wind and solar output, less the wind and solar available (their HSL), so load less what wind and solar could have supplied; storage and imports are left out. The median line uses ${F.bin} GW bands of net load with at least 10 hours. At minimum is the smaller of a running unit's output and its LSL (combined-cycle configurations merged into their train). The dashed line is net load less about 5 GW of nuclear.`);
 }
 
 // ==== 2. Why the rest stays on: minimum online in cheap hours, by reason, by year =============
@@ -109,7 +167,24 @@ function stack(el, ys, keys, val, opts) {
 // the day-ahead award against staying on through a cheap midday stretch, by technology
 const AWARD_GROUPS = [["award", "DAM award", "--c1"], ["self", "Self-committed, no award", "--c3"], ["neither", "Neither", "--c2"], ["no award", "No award", "--c-other"]];
 const Q2_TECHS = ["combined_cycle", "gas_steam", "coal", "combustion_turbine"];
+const COST_REASONS = ["coal", "never off", "held by its award", "rode through", "against the model", "no model call"];
+function drawQ2Cost() {
+  const el = $("q2c-chart"), Q = rowsOf("q2").filter((r) => COST_REASONS.includes(r.reason) && r.cost_usd != null);
+  if (!Q.length) return emptyMsg(el, "No cost yet.");
+  const ys = years(), val = (y, k) => d3.sum(Q.filter((r) => r.year === y && r.reason === k), (r) => r.cost_usd);
+  stack(el, ys, COST_REASONS, val, { title: "What staying on at minimum cost in cheap hours ($ million)", axis: (v) => d3.format(",.0f")(v / 1e6), tip: (v) => `$${d3.format(",.1f")(v / 1e6)}M` });
+  legend("q2c-legend", COST_REASONS.map((k) => [REASON[k].label, REASON[k].color]));
+  setCSV(el, ["year", ...COST_REASONS.map((k) => `${k.replace(/ /g, "_")}_usd`), "minimum_mwh"], ys.map((y) => [y, ...COST_REASONS.map((k) => Math.round(val(y, k))), d3.sum(Q.filter((r) => r.year === y), (r) => r.mwh)]), "Cost of staying on");
+  const tot = (y) => d3.sum(COST_REASONS, (k) => val(y, k)), fy = fullYears(), now = ys.at(-1);
+  const big = fy.reduce((a, b) => (tot(b) > tot(a) ? b : a), fy[0]), all = d3.sum(ys, tot), coal = d3.sum(ys, (y) => val(y, "coal"));
+  const perMWh = (k) => d3.sum(Q.filter((r) => r.reason === k), (r) => r.cost_usd) / (d3.sum(Q.filter((r) => r.reason === k), (r) => r.mwh) || 1);
+  S.q2cost = `Staying on at minimum through cheap hours cost these units $${d3.format(",.0f")(tot(big) / 1e6)}M in ${big}` + (now !== fy.at(-1) ? ` and $${d3.format(",.0f")(tot(now) / 1e6)}M so far in ${now}` : "") +
+    `; coal carries $${d3.format(",.0f")(coal / 1e6)}M of the $${d3.format(",.0f")(all / 1e6)}M since ${ys[0]}. Units that stayed on when the model said off paid the most per MWh, about $${d3.format(",.0f")(perMWh("against the model"))}, and units held by an award the least, about $${d3.format(",.0f")(perMWh("held by its award"))}.`;
+  setNote($("q2c-note"), `What it cost fossil units at their minimum to stay on through cheap hours, by why they stayed on. * part year.`,
+    `Coal, combined cycle and gas steam units at minimum in a cheap hour (day-ahead hub average of $${S.G.cheap}/MWh or less). Each hour costs its minimum-energy cost less its day-ahead node price, times its LSL; an hour where the node paid more than the cost counts as negative. The minimum-energy cost is the unit's own DAM offer that day, else its latest within 10 days, else Henry Hub times a typical offer heat rate (7.6 for combined cycles, 17 for gas steam), else a generic cost ($25/MWh for coal, which submits no such offer), as in the decision table. Only output up to the minimum is counted. The reasons are the same as in the chart below and on the Commitment page.`);
+}
 function drawQ2() {
+  drawQ2Cost();
   const R = S.G.q2.award.map(([year, tech, group, n, stayed]) => ({ year, tech, group, n, stayed }));
   const el = $("q2a-chart");
   if (!R.length) return emptyMsg(el, "No cheap midday stretches.");
@@ -136,7 +211,7 @@ function drawQ2() {
   el.replaceChildren(svg.node());
   setCSV(el, ["year", "tech", "group", "unit_days", "stayed_online"], R.map((r) => [r.year, r.tech, r.group, r.n, r.stayed]), "Award and staying on");
   const p = (t, k) => d3.format(".1%")(get(t, k).stayed / Math.max(1, get(t, k).n));
-  $("q2-answer").innerHTML = `<b>A day-ahead award or a self-commitment keeps a unit on.</b> In ${yearLabel(y)}, combined cycles going into a cheap midday stretch with a DAM award stayed online through it ${p("combined_cycle", "award")} of the time, and self-committed ones ${p("combined_cycle", "self")}. With neither, only ${p("combined_cycle", "neither")} did. Coal and gas steam stay on almost regardless: ${p("coal", "self")} of self-committed coal and ${p("gas_steam", "self")} of gas steam rode through.`;
+  $("q2-answer").innerHTML = (S.q2cost ? `${S.q2cost} ` : "") + `<b>A day-ahead award or a self-commitment keeps a unit on.</b> In ${yearLabel(y)}, combined cycles going into a cheap midday stretch with a DAM award stayed online through it ${p("combined_cycle", "award")} of the time, and self-committed ones ${p("combined_cycle", "self")}. With neither, only ${p("combined_cycle", "neither")} did. Coal and gas steam stay on almost regardless: ${p("coal", "self")} of self-committed coal and ${p("gas_steam", "self")} of gas steam rode through.`;
   setNote($("q2-note"), `Units online going into the day's first cheap midday stretch, by whether a day-ahead award or their own commitment had them on, and the share that stayed online through it. Combined-cycle configurations count as one train. * part year.`,
     `Counted: unit-days online in the hour before the day's first run of two or more cheap hours (day-ahead hub average of $${S.G.cheap}/MWh or less) between HE8 and HE19, with no outage hour in it; stayed online means no offline hour in the run (60-day SCED and DAM disclosures). DAM award: an energy award over 0.5 MW in at least half the run's hours. Self-committed: no award, and the unit's DAM resource status on at the run's first hour. The status is in the 60-day DAM disclosure from Dec 2025; the history before has none, so earlier years split only by award (in the CSV).`);
 }
@@ -239,11 +314,11 @@ function drawAll() { drawQ1(); drawQ2(); drawQ3(); drawQ4(); }
   if (!S.G) { $("status").textContent = "Not built yet. The goal page's data is built monthly by its own workflow."; return; }
   const v = readHash();
   const ys = years();
-  S.year = ys.includes(+v.y) ? +v.y : fullYears().at(-1) || ys.at(-1);
+  S.year = v.y === "all" || !v.y ? "all" : ys.includes(+v.y) ? +v.y : "all";
   if (["combined_cycle", "gas_steam"].includes(v.t)) S.tech = v.t;
   $("status").textContent = `60-day data, ${S.G.years[ys[0]].from} to ${S.G.through}. Built ${S.G.built.slice(0, 10)}.`;
-  $("q1-year").innerHTML = ys.slice().reverse().map((y) => `<option value="${y}"${y === S.year ? " selected" : ""}>${yearLabel(y)}</option>`).join("");
-  $("q1-year").addEventListener("change", (e) => { S.year = +e.target.value; writeHash({ y: S.year, t: S.tech }); drawQ1(); });
+  $("q1-year").innerHTML = [`<option value="all"${isAll() ? " selected" : ""}>All years</option>`, ...ys.slice().reverse().map((y) => `<option value="${y}"${y === S.year ? " selected" : ""}>${yearLabel(y)}</option>`)].join("");
+  $("q1-year").addEventListener("change", (e) => { S.year = e.target.value === "all" ? "all" : +e.target.value; writeHash({ y: S.year, t: S.tech }); drawQ1(); });
   $("q3-tech").addEventListener("change", (e) => { S.tech = e.target.value; writeHash({ y: S.year, t: S.tech }); drawQ3(); });
   drawAll();
   let rw = 0;

@@ -3,11 +3,13 @@ Four questions, each answered by year from Jan 2019, from the 60-day data alone 
 release's monthly files, pipeline/history.py, and for months it does not hold yet, the same rows
 built from the 60-day day files, pipeline/decision_table.month_file):
 
-  1. What turns off?  Each coal, combined-cycle and gas steam unit's group (_group: from its off
-     spells over the year, or for a part year the 365 days to its end), its capacity (95th
+  1. What turns off?  Fossil output against net load hour by hour (_floor): the floor it does not
+     go below, and how much of it sits at minimum.  Also each coal, combined-cycle and gas steam
+     unit's group (_group: from its off spells over the year, or for a part year the 365 days to its end), its capacity (95th
      percentile HSL online), and the minimum output it took offline in cheap hours (offline, and
      online at some hour in the 24 before, inside one of its off spells, at its median LSL online).
-  2. Why does the rest stay on?  Fossil minimum output online in cheap hours, by reason, the
+  2. Why does the rest stay on?  Fossil minimum output online in cheap hours and what it cost to
+     stay on (_day_cost: minimum-energy cost less the DA node price, times LSL), by reason, the
      first that applies (REASONS): coal; never off (its group that year); held by its award (a DAM
      energy award of at least AWARD_LSL x its running LSL that hour); rode through (the
      operator-informed model, pipeline/models/operator_informed.py, also called it on); turned
@@ -43,7 +45,7 @@ from .intraday import train_of
 from .store import read_json_gz, write_json_gz
 
 PATH = DATA_DIR / "goal.json.gz"
-VERSION = "v2"
+VERSION = "v3"
 START = "2019-01"
 CHEAP = 10.0          # $/MWh, day-ahead hub average: a cheap hour
 OVER_PRICE = 5.0      # $/MWh, real-time hub average: an oversupply hour
@@ -60,6 +62,9 @@ REASONS = ("coal", "never off", "held by its award", "rode through", "against th
 # generic one when it submits none)
 ECON = ("losing more than a restart", "losing, less than a restart", "covering its costs")
 SCENARIOS = (("losing more than a restart", ECON[:1]), ("losing money", ECON[:2]))
+# question 1's floor: hours binned by net load (load less the wind and solar available), GW
+FLOOR_BIN, STUCK_BIN, MIN_BIN_HOURS = 2, 4, 10
+FOSSIL_MIN = 1000.0   # MW: fossil has not run below this since 2019; an hour under it is a gap in the data
 RANK = {"a": 4, "m": 3, "0": 2, "o": 1, "-": 0}
 CODE = np.array(sorted(RANK, key=RANK.get))
 
@@ -108,7 +113,8 @@ def _operator(month):
 
 def _train_hours(f):
     """Thermal unit-hours merged into trains (combined-cycle configurations): state by RANK,
-    running LSL and HSL summed over the running configurations, award summed."""
+    running LSL and HSL summed over the running configurations, award summed, the smallest
+    minimum-energy offer and the mean DA node price."""
     f = f[f["tech"].astype(str).isin(FOSSIL + ("combustion_turbine", "nuclear"))].copy()
     t = f["tech"].astype(str)
     f["train"] = np.where(t == "combined_cycle", f["unit"].astype(str).map(train_of), f["unit"].astype(str))
@@ -122,20 +128,20 @@ def _train_hours(f):
     f["out"] = f["out"].fillna(0.0)
     g = f.groupby(["train", "date", "he"], sort=True)
     h = g.agg(tech=("tech", "first"), r=("r", "max"), lsl=("lsl_run", "sum"), hsl=("hsl_run", "sum"),
-              award=("award", "sum"), out=("out", "sum")).reset_index()
+              award=("award", "sum"), out=("out", "sum"), mingen=("mingen", "min"), da_node=("da_node", "mean")).reset_index()
     h["state"] = CODE[h["r"].to_numpy()]
     return h.drop(columns="r")
 
 
 def _renewables(u, hubs):
-    """[(date, he, curtailed MW, of it uncongested, available MW)] for wind and solar."""
+    """[(date, he, curtailed MW, of it uncongested, available MW, output MW)] for wind and solar."""
     u = u[u["tech"].astype(str).isin(["wind", "solar"])]
     curt = (u["hsl"] - u["bp"]).clip(lower=0).fillna(0.0)
     curt = curt.where(curt >= CURT_MIN, 0.0)
     bus = np.array([hubs[(d, int(he))][1] for d, he in zip(u["date"], u["he"])])
     free = curt.where((u["da_node"].to_numpy() - bus) > -CONGESTED, 0.0)
     r = pd.DataFrame({"date": u["date"].to_numpy(), "he": u["he"].astype(int).to_numpy(), "curt": curt.to_numpy(),
-                      "free": free.to_numpy(), "avail": u["hsl"].fillna(0.0).to_numpy()})
+                      "free": free.to_numpy(), "avail": u["hsl"].fillna(0.0).to_numpy(), "out": u["out"].fillna(0.0).to_numpy()})
     return r.groupby(["date", "he"]).sum().reset_index()
 
 
@@ -190,10 +196,59 @@ def _losing(table):
     return out
 
 
-def _year(year, months, cache, before=None, losing=None):
+def _day_cost(h, gas):
+    """{(train, date): minimum-energy cost $/MWh} for the fossil trains, by the decision table's
+    rule (pipeline/decision_table.py): the day's own offer, else its latest within COST_DAYS days,
+    else the day's Henry Hub at HEAT_RATE for gas units, else the generic cost (coal, which
+    offers none)."""
+    from .config import GENERIC_COSTS
+    from .decision_table import HEAT_RATE
+    from .decisions import COST_DAYS
+    d = h[h["tech"].isin(FOSSIL)].groupby(["train", "date"], sort=True).agg(tech=("tech", "first"), own=("mingen", "min")).reset_index()
+    d["day"] = pd.to_datetime(d["date"])
+    d["seen"] = d["day"].where(d["own"].notna())
+    d[["last", "seen"]] = d.groupby("train")[["own", "seen"]].ffill()
+    fresh = ((d["day"] - d["seen"]).dt.days <= COST_DAYS).to_numpy()
+    gas_cost = d["tech"].map(HEAT_RATE) * d["date"].map(gas)
+    generic = d["tech"].map(lambda t: GENERIC_COSTS[t][3])
+    cost = np.where(fresh, d["last"], np.where(gas_cost.notna(), gas_cost, generic))
+    return dict(zip(zip(d["train"], d["date"]), cost.astype(float)))
+
+
+def _floor(year, h, r):
+    """Question 1: each hour's net load (thermal and wind and solar output less the wind and solar
+    available, so the load the other units had to carry) and fossil output (coal, combined cycle,
+    gas steam, combustion turbines), and fossil output split into minimum (the smaller of output
+    and running LSL) and above it, by technology."""
+    th = h.groupby(["date", "he"])["out"].sum()
+    fos = h[h["tech"].isin(FOSSIL + ("combustion_turbine",))].copy()
+    run = fos["state"].isin(["m", "a"]).to_numpy()
+    fos["min"] = np.where(run, np.minimum(fos["out"], fos["lsl"]), 0.0)
+    fos["above"] = (fos["out"] - fos["min"]).clip(lower=0.0)
+    fo = fos.groupby(["date", "he"])["out"].sum()
+    x = pd.concat([th.rename("thermal"), fo.rename("fossil")], axis=1).join(r.set_index(["date", "he"])[["out", "avail"]], how="inner")
+    x["net"] = x["thermal"] + x["out"] - x["avail"]
+    x = x[x["fossil"] >= FOSSIL_MIN].reset_index()      # an hour with almost no fossil is missing rows
+    grid = x.assign(gx=np.floor(x["net"] / 1000).astype(int), gy=np.floor(x["fossil"] / 1000).astype(int)).groupby(["gx", "gy"]).size()
+    sb = (np.floor(x["net"] / 1000 / STUCK_BIN) * STUCK_BIN).astype(int)
+    st = fos.merge(x[["date", "he"]].assign(sb=sb), on=["date", "he"]).groupby(["sb", "tech"])[["min", "above"]].sum()
+    return {"net": x["net"].to_numpy(), "fossil": x["fossil"].to_numpy(),
+            "grid": [[year, int(a), int(b), int(n)] for (a, b), n in grid.items()],
+            "stuck": [[year, int(b), t, round(float(v["min"])), round(float(v["above"]))] for (b, t), v in st.iterrows()],
+            "hours": [[year, int(b), int(n)] for b, n in sb.value_counts().sort_index().items()]}
+
+
+def _medians(net, fossil):
+    """[[net load bin's lower edge GW, median fossil MW, hours]] by FLOOR_BIN GW of net load."""
+    b = (np.floor(np.asarray(net) / 1000 / FLOOR_BIN) * FLOOR_BIN).astype(int)
+    s = pd.Series(np.asarray(fossil)).groupby(b)
+    return [[int(k), round(float(m)), int(n)] for (k, m), n in zip(s.median().items(), s.size()) if n >= MIN_BIN_HOURS]
+
+
+def _year(year, months, cache, before=None, losing=None, gas=None):
     """Questions 1, 2 and 4 for one calendar year; `before` is the year before's train states
     (train, date, he, state), so a part year's groups still read a full year of states, and
-    `losing` the loss-window hours (_losing)."""
+    `losing` the loss-window hours (_losing) and `gas` Henry Hub by date for the cost of staying on."""
     th, ren, hubs, op = [], [], {}, {}
     for m in months:
         f = month_file("thermal", m, cache)
@@ -258,14 +313,19 @@ def _year(year, months, cache, before=None, losing=None):
         r[1] += cap if np.isfinite(cap) else 0.0
         r[2] += q1[tr]
     q1rows = [[year, t, grp, n, round(c), round(o)] for (t, grp), (n, c, o) in sorted(rows1.items())]
-    # question 2: minimum online in cheap hours, by reason
-    c = h[h["cheap"] & atmin]
-    q2rows = [[year, t, w, round(float(v))] for (t, w), v in c.groupby(["tech", "why"])["lsl"].sum().items()]
+    # question 2: minimum online in cheap hours, by reason, and what staying on cost: the day's
+    # minimum-energy cost (_day_cost) less the DA node price, times the LSL (negative where the
+    # node paid more)
+    c = h[h["cheap"] & atmin].copy()
+    dc = _day_cost(h, gas or {})
+    c["cost"] = (np.array([dc.get(k, np.nan) for k in zip(c["train"], c["date"])]) - c["da_node"].to_numpy()) * c["lsl"].to_numpy()
+    q2rows = [[year, t, w, round(float(g["lsl"].sum())), round(float(g["cost"].sum()))] for (t, w), g in c.groupby(["tech", "why"])]
     q2award = _award_stretches(year, h)
     # question 4: curtailment, and fossil at minimum in oversupply hours
-    q4 = None
+    q4 = floor = None
     if ren:
         r = pd.concat(ren, ignore_index=True)
+        floor = _floor(year, h, r)
         r["rt"] = [hubs.get((d, int(he)), [np.nan] * 3)[2] for d, he in zip(r["date"], r["he"])]
         r["over"] = r["rt"] <= OVER_PRICE
         r["free"] = r["free"].where(r["over"], 0.0)
@@ -291,7 +351,7 @@ def _year(year, months, cache, before=None, losing=None):
                        r[r["over"]].groupby("he")["free"].sum().reindex(range(1, 25), fill_value=0.0)]],
               "atmin": atm, "avoid": avoid}
     days = sorted(h["date"].unique())
-    return {"q1": q1rows, "q2": q2rows, "q2award": q2award, "q4": q4, "cheap_hours": cheap_hours, "from": days[0], "to": days[-1],
+    return {"q1": q1rows, "q2": q2rows, "q2award": q2award, "q4": q4, "floor": floor, "cheap_hours": cheap_hours, "from": days[0], "to": days[-1],
             "states": h[h["tech"].isin(FOSSIL)][["train", "date", "he", "state"]]}
 
 
@@ -384,7 +444,11 @@ def build(cache: Path, end=None, table=None) -> dict:
       {"version", "built", "through", "cheap", "over_price",
        "years": {year: {"from", "to", "cheap_hours"}},
        "q1": {"columns": [year, tech, group, trains, capacity_mw, off_mwh], "rows"},
-       "q2": {"columns": [year, tech, reason, mwh], "rows", "reasons",
+       "floor": {"grid": [[year, net load GW, fossil GW, hours]] (1 GW cells, lower edges),
+                 "median": {"all" | year: [[net load bin GW, median fossil MW, hours]]} (FLOOR_BIN),
+                 "stuck": [[year, net load bin GW, tech, minimum_mwh, above_minimum_mwh]],
+                 "hours": [[year, net load bin GW, hours]] (STUCK_BIN), "bin", "stuck_bin"},
+       "q2": {"columns": [year, tech, reason, mwh, cost_usd], "rows", "reasons",
               "award": [[year, tech, group, stretches, stayed]]},
        "q3": {"off": [[year, tech, small (0: losing more than a restart), awarded, windows, off_share,
                         minimum_online_mwh, minimum_offline_mwh]],
@@ -399,15 +463,20 @@ def build(cache: Path, end=None, table=None) -> dict:
     out = {"version": VERSION, "built": dt.datetime.now(dt.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
            "cheap": CHEAP, "over_price": OVER_PRICE, "years": {},
            "q1": {"columns": ["year", "tech", "group", "trains", "capacity_mw", "off_mwh"], "rows": [], "groups": list(GROUPS)},
-           "q2": {"columns": ["year", "tech", "reason", "mwh"], "rows": [], "reasons": list(REASONS), "award": []},
+           "floor": {"grid": [], "median": {}, "stuck": [], "hours": [], "bin": FLOOR_BIN, "stuck_bin": STUCK_BIN},
+           "q2": {"columns": ["year", "tech", "reason", "mwh", "cost_usd"], "rows": [], "reasons": list(REASONS), "award": []},
            "q4": {"years": [], "atmin": [], "avoid": [], "scenarios": [s for s, _ in SCENARIOS] + ["all fossil at minimum"], "econ": list(ECON)}}
     if table is None:
         from .decision_table import build as build_table
         table = build_table(months, cache)
     losing = _losing(table)
-    before = None
+    from .decision_table import henry_hub
+    hh = henry_hub(cache)
+    hh = hh.reindex(pd.date_range(hh.index.min(), pd.Timestamp.today()), method="ffill")
+    gas = {d.strftime("%Y-%m-%d"): float(v) for d, v in hh.items() if np.isfinite(v)}
+    before, nets, fos = None, [], []
     for y in sorted({m[:4] for m in months}):
-        r = _year(int(y), [m for m in months if m[:4] == y], cache, before, losing)
+        r = _year(int(y), [m for m in months if m[:4] == y], cache, before, losing, gas)
         if r is None:
             continue
         before = r["states"]
@@ -416,11 +485,20 @@ def build(cache: Path, end=None, table=None) -> dict:
         out["q1"]["rows"] += r["q1"]
         out["q2"]["rows"] += r["q2"]
         out["q2"]["award"] += r["q2award"]
+        if r["floor"]:
+            f = r["floor"]
+            for k in ("grid", "stuck", "hours"):
+                out["floor"][k] += f[k]
+            out["floor"]["median"][y] = _medians(f["net"], f["fossil"])
+            nets.append(f["net"])
+            fos.append(f["fossil"])
         if r["q4"]:
             out["q4"]["years"].append(r["q4"]["year"])
             out["q4"]["atmin"] += r["q4"]["atmin"]
             out["q4"]["avoid"] += r["q4"]["avoid"]
         out["through"] = r["to"]
+    if nets:
+        out["floor"]["median"]["all"] = _medians(np.concatenate(nets), np.concatenate(fos))
     out["q3"] = _rule(table)
     write_json_gz(PATH, out)
     return out
