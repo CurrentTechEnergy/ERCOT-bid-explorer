@@ -29,6 +29,7 @@ here under raw/np6-331-cd/day-YYYY-MM-DD and read from there before ERCOT is ask
 import datetime as dt
 import io
 import time
+import zipfile
 from pathlib import Path
 
 import numpy as np
@@ -159,6 +160,27 @@ def read_rt_mcpc(csvs) -> pd.DataFrame:
     return g.reindex(columns=SERVICES).reset_index()
 
 
+def _bulk(api, ids: list, d) -> bytes:
+    """One bulk download of the documents.  ERCOT refuses the whole request (HTTP 400) when one
+    document in it can't be served, so on a failure the list is split in halves until the bad
+    documents are found and left out; the parts are packed into one zip of zips."""
+    try:
+        return api.download_many(EMIL_RT_MCPC, ids)[0]
+    except RuntimeError as e:
+        if len(ids) == 1:
+            warn(f"{EMIL_RT_MCPC} {d}: document {ids[0]} left out ({str(e)[:120]})")
+            return b""
+    half = len(ids) // 2
+    parts = [b for b in (_bulk(api, ids[:half], d), _bulk(api, ids[half:], d)) if b]
+    if not parts:
+        return b""
+    buf = io.BytesIO()
+    with zipfile.ZipFile(buf, "w") as z:
+        for i, b in enumerate(parts):
+            z.writestr(f"part-{i}.zip", b)
+    return buf.getvalue()
+
+
 def rt_mcpc(api, days) -> pd.DataFrame:
     """15-minute RT MCPCs for the days.  Each day's bulk download is kept in the raw store and
     read from there first, so a rebuild never asks ERCOT for the same day again."""
@@ -178,7 +200,10 @@ def rt_mcpc(api, days) -> pd.DataFrame:
                 continue
             if len(docs) > 1000:
                 warn(f"{EMIL_RT_MCPC} {d}: {len(docs)} documents, only the first 1,000 read")
-            blob = api.download_many(EMIL_RT_MCPC, [x["docId"] for x in docs][:1000])[0]
+            blob = _bulk(api, [x["docId"] for x in docs][:1000], d)
+            if not blob:
+                missing.append(d.isoformat())
+                continue
             api.raw.put(EMIL_RT_MCPC, key, blob, {"friendlyName": f"bulk download of {len(docs)} documents posted {d}"})
             src = f"ERCOT, {len(docs)} files"
         m = read_rt_mcpc(iter_csvs(blob, "x.zip"))
