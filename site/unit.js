@@ -309,6 +309,7 @@ function drawDecisions(e) {
   if ($("dec-panel").hidden) return;
   $("dec-lead").hidden = $("dec-how").hidden = e.tech === "combustion_turbine";
   if (e.tech === "combustion_turbine") { $("dec-oi").hidden = true; return drawDecisionsRT(e); }
+  if (e.tech === "combined_cycle" || e.tech === "gas_steam") { $("dec-oi").hidden = true; $("dec-lead").hidden = $("dec-how").hidden = true; return drawDecisionsTO(e); }
   if (!u || !rows.length) { $("dec-note").textContent = ""; return emptyMsg(el, "No decision days for this unit in the loaded 60-day data."); }
   const g = (k) => u[DEC_U[k]];
   $("dec-note").textContent = `${g("days")} days it had to choose, ${g("shut")} shutdowns, a day-ahead award over the cheap stretch on ${fmtPct(g("award") || 0)} of them. ` +
@@ -401,6 +402,65 @@ async function drawDecisionsRT(e) {
     .on("pointerleave", hideTip);
   el.replaceChildren(svg.node());
   setCSV(el, ["date", "start_usd_mwh", "day_peak_usd_mwh", "ran", "hours_on", "hours_available"], pts.map((p) => [p.d, p.s, p.p, p.ran ? 1 : 0, p.on, p.av]), `${e.name} real-time starts`);
+}
+
+// CC trains and gas steam: each day it started online, the operator-informed turn-off point (diamond)
+// against what being off would have saved (circle; square on a day-ahead award day), both in $ per MW
+// of LSL (data/operator/cutoffs.json.gz rows: [unit, tech, lsl, award, saving, turn_off, off, min_down];
+// turn_off null when the model keeps it on through every shift: drawn on the "rides through" row)
+const AWARD_COND = ["no day-ahead award", "an award some hours", "an award every hour"];
+async function drawDecisionsTO(e) {
+  const el = $("dec-chart");
+  if (S.CO === undefined) S.CO = await tryJSON("data/operator/cutoffs.json.gz");
+  const P = S.CO, C = P ? Object.fromEntries(P.columns.map((c, i) => [c, i])) : {};
+  const pts = P ? Object.entries(P.days).flatMap(([d, rs]) => rs.filter((r) => r[C.unit] === e.name).map((r) => ({ d, t: parseDate(d),
+    s: r[C.saving], c: r[C.turn_off], aw: r[C.award], off: !!r[C.off], lsl: r[C.lsl], md: r[C.min_down] }))) : [];
+  if (!pts.length) { $("dec-note").textContent = ""; $("dec-legend").innerHTML = ""; return emptyMsg(el, "No operator-informed turn-off points for this unit in the loaded 60-day data."); }
+  const says = (p) => p.c != null && p.s > p.c, bad = (p) => says(p) !== p.off;
+  const right = pts.filter((p) => !bad(p)).length, nOff = pts.filter((p) => p.off).length, caught = pts.filter((p) => p.off && says(p)).length;
+  $("dec-note").textContent = `Each day it started online: what being off would have saved over the day's best off stretch at least its minimum down time long (its minimum-energy cost against the day-ahead price at its node, before any restart cost), and the operator-informed model's turn-off point, the saving it would need before the model turns it off. ` +
+    `A circle above its diamond is a day the model turns it off. On ${pts.length} days it shut on ${nOff}; the model called ${right} right (${fmtPct(right / pts.length)}), ${caught} of the ${nOff} shutdowns. Dashed lines mark the months its turn-off point moved, for each day-ahead condition on its own.`;
+  $("dec-legend").innerHTML = `<span><span class="sw" style="background:var(--c1);transform:rotate(45deg) scale(0.8)"></span>Turn-off point</span>` +
+    window.CX.onOffLegend("Saving, stayed on", "Saving, shut down") + `<span><span class="sw" style="background:var(--ink-2)"></span>Square: a day-ahead award that day</span>` +
+    `<span><span class="sw" style="background:var(--c8);height:3px"></span>Did the opposite of the model</span><span><span class="sw sw-line"></span>Turn-off point moved</span>`;
+  const w = Math.max(280, el.clientWidth || 600), H = 280, m = { t: 18, r: 16, b: 26, l: 76 }, TOPY = m.t + 8;
+  const D0 = Object.keys(P.days).sort();
+  const x = d3.scaleTime().domain([d3.timeHour.offset(parseDate(D0[0]), -12), d3.timeHour.offset(parseDate(D0.at(-1)), 12)]).range([m.l, w - m.r]);
+  const vals = pts.flatMap((p) => (p.c == null ? [p.s] : [p.s, p.c]));
+  const lo = Math.max(-3000, Math.min(-25, d3.min(vals) * 1.1)), hi = Math.min(30000, Math.max(100, d3.max(vals) * 1.1));
+  const y = d3.scaleSymlog().constant(25).domain([lo, hi]).range([H - m.b, TOPY + 18]).clamp(true);
+  const yc = (v) => (v == null ? TOPY : y(v));
+  const yT = [-1000, -300, -100, -30, 0, 30, 100, 300, 1000, 3000, 10000].filter((v) => v >= lo && v <= hi);
+  const svg = d3.create("svg").attr("viewBox", `0 0 ${w} ${H}`);
+  svg.append("g").attr("class", "gridline").attr("transform", `translate(${m.l},0)`).call(d3.axisLeft(y).tickValues(yT).tickSize(-(w - m.l - m.r)).tickFormat(""));
+  svg.append("g").attr("class", "axis").attr("transform", `translate(0,${H - m.b})`).call(d3.axisBottom(x).ticks(w < 560 ? 4 : 8).tickSizeOuter(0));
+  svg.append("g").attr("class", "axis").attr("transform", `translate(${m.l},0)`).call(d3.axisLeft(y).tickValues(yT).tickFormat((v) => fmt$(v)).tickSizeOuter(0));
+  svg.append("line").attr("class", "zero").attr("x1", m.l).attr("x2", w - m.r).attr("y1", y(0)).attr("y2", y(0));
+  svg.append("text").attr("class", "axis-label").attr("x", m.l - 6).attr("y", TOPY + 3).attr("text-anchor", "end").attr("font-size", 10).attr("fill", css("--ink-2")).text("rides through");
+  svg.append("text").attr("class", "axis-title").attr("x", m.l).attr("y", 10).text(w < 560 ? "$ per MW of minimum output" : "$ per MW of minimum output: what being off would have saved, and the model's turn-off point");
+  const ev = ((await tryJSON("data/events.json.gz"))?.events || []).filter((v) => v.unit === e.name && v.kind === "turnoff");
+  svg.append("g").selectAll("line").data(ev).join("line").attr("class", "price-rule").attr("stroke-dasharray", "4 3")
+    .attr("x1", (v) => x(parseDate(v.date))).attr("x2", (v) => x(parseDate(v.date))).attr("y1", m.t).attr("y2", H - m.b);
+  const g = svg.append("g");
+  g.selectAll("line").data(pts).join("line").attr("x1", (p) => x(p.t)).attr("x2", (p) => x(p.t)).attr("y1", (p) => yc(p.c)).attr("y2", (p) => y(p.s))
+    .attr("stroke", (p) => css(bad(p) ? "--c8" : "--line")).attr("stroke-width", (p) => (bad(p) ? 1.6 : 1));
+  g.selectAll("path.to").data(pts).join("path").attr("class", "to").attr("d", d3.symbol(d3.symbolDiamond, 22)()).attr("transform", (p) => `translate(${x(p.t)},${yc(p.c)})`).attr("fill", css("--c1"));
+  g.selectAll("path.sv").data(pts).join("path").attr("class", "sv").attr("d", (p) => d3.symbol(p.aw ? d3.symbolSquare : d3.symbolCircle, 30)())
+    .attr("transform", (p) => `translate(${x(p.t)},${y(p.s)})`)
+    .attr("fill", (p) => css(p.off ? "--surface" : "--ink")).attr("stroke", css("--ink")).attr("stroke-width", 1.5);   // filled stayed on, hollow shut down (as site-wide)
+  svg.append("rect").attr("x", m.l).attr("y", m.t).attr("width", w - m.l - m.r).attr("height", H - m.t - m.b).attr("fill", "transparent")
+    .on("pointermove", (evt) => {
+      const [px] = d3.pointer(evt), p = pts[d3.minIndex(pts, (q) => Math.abs(x(q.t) - px))];
+      const vv = ev.filter((v) => v.date.slice(0, 7) === p.d.slice(0, 7) && v.award === p.aw);
+      showTip(evt, `<h4>${fmtDate(p.t)}</h4><table><tr><td>Being off would have saved</td><td class="n">${fmt$(p.s)}/MW (${fmt$(p.s * p.lsl)})</td></tr>` +
+        `<tr><td>Turn-off point</td><td class="n">${p.c == null ? "rides through" : `${fmt$(p.c)}/MW (${fmt$(p.c * p.lsl)})`}</td></tr>` +
+        `<tr><td>Day-ahead</td><td class="n">${AWARD_COND[p.aw] || "–"}</td></tr><tr><td>Model</td><td class="n">${says(p) ? "turns it off" : "keeps it on"}</td></tr>` +
+        `<tr><td>What it did</td><td class="n">${p.off ? "shut down" : "stayed on"}</td></tr></table>${bad(p) ? "Did the opposite of the model" : ""}${vv.map((v) => `<br><b>${esc(v.title)}</b>`).join("")}`);
+    })
+    .on("pointerleave", hideTip);
+  el.replaceChildren(svg.node());
+  setCSV(el, ["date", "saving_usd_per_mw_lsl", "turn_off_usd_per_mw_lsl", "award", "shut", "lsl_mw", "min_down_h"],
+    pts.map((p) => [p.d, p.s, p.c, ["none", "some hours", "every hour"][p.aw], p.off ? 1 : 0, p.lsl, p.md]), `${e.name} turn-off points`);
 }
 
 // the decision days again, judged by the operator-informed model (data/operator/decisions.json.gz rows:
