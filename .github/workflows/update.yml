@@ -65,7 +65,7 @@ jobs:
       contents: write    # the data commit and the data branch
       issues: write      # the stale-data issue (pipeline/freshness.py)
     steps:
-      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           # The branch tip, not the commit that triggered the run: a run queued behind another
           # in the update-data group would otherwise start from data the earlier run replaced,
@@ -73,7 +73,7 @@ jobs:
           ref: ${{ github.ref_name }}
           fetch-depth: 1     # main's history is fetched just before the data commit is rebased
 
-      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6.3.0
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
         with:
           python-version: "3.12"
           cache: pip
@@ -267,7 +267,7 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           ref: ${{ github.ref_name }}     # include the data commit made by the update job
       - uses: actions/configure-pages@45bfe0192ca1faeb007ade9deae92b16b8254a0d # v6.0.0
