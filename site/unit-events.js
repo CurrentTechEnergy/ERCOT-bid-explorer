@@ -58,16 +58,18 @@ function drawSubscribe() {
   // pipeline/events.py writes a unit's feed only once the unit has an event (fleet fuel events aside)
   const hasFeed = S.E.events.some((e) => e.kind !== "fuel" && (e.unit === S.unit || (e.units || []).includes(S.unit)));
   const feedLink = hasFeed ? `<a class="btn" href="${feed}" title="Atom feed of this unit's changes, for a feed reader">Feed</a>` : "";
+  // the Feed button sits in the panel's tool slot; the email box sits with its note under the heading
+  $("sub-tools").innerHTML = feedLink;
   if (!S.follow) {
-    $("sub-tools").innerHTML = feedLink;
+    $("sub-email-tools").innerHTML = "";
     msg(hasFeed ? "Email alerts are not switched on yet. The feed carries the same changes for a feed reader." : "Email alerts are not switched on yet.", true);
     return;
   }
   // "website" is a field people never see; bots that fill it in are ignored by the server
-  $("sub-tools").innerHTML = `<form class="sub-form" id="sub-form">` +
+  $("sub-email-tools").innerHTML = `<form class="sub-form" id="sub-form">` +
     `<input type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px">` +
     `<input type="email" name="email" id="sub-email" placeholder="you@example.com" required aria-label="Email address">` +
-    `<button type="submit" id="sub-btn">Subscribe to ${esc(S.unit)}</button></form>${feedLink}`;
+    `<button type="submit" id="sub-btn">Subscribe to ${esc(S.unit)}</button></form>`;
   msg('Your address is used only for these alerts, and every email has an unsubscribe link. <a href="terms.html#privacy">Privacy</a>', true);
   $("sub-form").addEventListener("submit", async (ev) => {
     ev.preventDefault();

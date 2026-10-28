@@ -38,6 +38,8 @@
   .sub-form input[type="email"] { font: inherit; color: var(--ink); background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 6px 8px; min-height: 34px; min-width: 220px; }
   .sub-form button, .btn { font: inherit; font-weight: 500; color: var(--ink); background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 6px 12px; min-height: 34px; cursor: pointer; }
   .sub-form button:hover, .btn:hover { background: var(--accent-soft); }
+  .sub-box { margin: 8px 0 10px; }
+  .sub-box .sub-form input[type="email"] { min-width: min(220px, 100%); flex: 0 1 260px; }
   .sub-msg { font-size: 13px; color: var(--ink-2); margin: 6px 0 0; }
   table.data td.ev { white-space: normal; min-width: 24ch; }
   tr.minor td { color: var(--muted); }
@@ -92,7 +94,10 @@
       </div>
       <div class="panel-tools" id="sub-tools"></div>
     </div>
-    <p class="sub-msg" id="sub-msg" hidden></p>
+    <div class="sub-box">
+      <div id="sub-email-tools"></div>
+      <p class="sub-msg" id="sub-msg" hidden></p>
+    </div>
     <div class="units-wrap" id="changes-table"></div>
     <p><button type="button" class="btn" id="changes-more" hidden>Show all</button></p>
   </section>
