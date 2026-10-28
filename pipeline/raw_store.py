@@ -139,6 +139,21 @@ class RawStore:
         self.stats["hit_bytes"] += len(blob)
         return blob
 
+    def has(self, emil: str, doc_id):
+        """True when the file is stored, False when not, None when the bucket can't be asked
+        (a HEAD request: nothing is downloaded)."""
+        if not self.enabled:
+            return None
+        key = _key(emil, doc_id)
+        for attempt in (1, 2):
+            try:
+                r = self.session.head(self._url(key), headers=self._headers("HEAD", key), timeout=TIMEOUT)
+            except requests.RequestException:
+                continue
+            if r.status_code in (200, 404):
+                return r.status_code == 200
+        return None
+
     def put(self, emil: str, doc_id, blob: bytes, doc=None) -> None:
         """Keep a downloaded file. Only zips are kept; failures only warn."""
         if not self.enabled or self._failed or blob[:2] != b"PK":
