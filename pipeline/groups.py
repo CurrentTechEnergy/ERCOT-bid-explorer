@@ -195,7 +195,8 @@ def classify(e: dict, N: int) -> dict:
     o = sorted(offs)
     q = (lambda p: float(np.quantile(o, p))) if o else (lambda p: None)
     return {"group": group, "peaker": is_peaker(st, e["tech"], group),
-            "week": bool(long_) and min(long_) >= 168,      # every long spell a week or more (the old seasonal group) "shut": len(offs), "off_min": o[0] if o else None,
+            "week": bool(long_) and min(long_) >= 168,      # every long spell a week or more (the old seasonal group)
+            "shut": len(offs), "off_min": o[0] if o else None,
             "off_p10": q(0.1), "off_med": q(0.5),
             "pick": sorted(e["configs"], key=lambda c: -c[1])[0][0],
             "ran": ran}
