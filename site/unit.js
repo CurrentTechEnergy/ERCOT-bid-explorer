@@ -160,18 +160,35 @@ function lastDecision(name) {
   const rows = (S.DEC?.days || []).filter((r) => r[0] === name);
   return rows.length ? rows.at(-1) : null;
 }
+// the CDR name as a title, the way pipeline/share_pages.py writes the unit's share page: capitals
+// kept for acronyms, numbers, single letters and roman numerals, bracketed notes dropped
+const NAME_ACRONYMS = new Set(["BESS", "ESS", "CTG", "STG", "CT", "CC", "GT", "BRP", "DGR", "SLF", "TNP", "PHR", "IC", "OCI", "CSG", "SES",
+  "RTS", "SMT", "LLC", "LP", "LCP", "BAC", "RMR", "BNB", "DJ", "WP", "FS", "SP", "TG", "RE", "XE", "LCRA", "CPS", "NRG", "AEP", "ERCOT", "TX", "USA"]);
+const NAME_LOWER = new Set(["OF", "AND", "AT", "THE"]);
+const nameWord = (w, first) => w.includes("-") ? w.split("-").map((p, i) => nameWord(p, first && i === 0)).join("-") :
+  !w || /\d/.test(w) || NAME_ACRONYMS.has(w) || w.length === 1 || /^(?=[IVX]+$)X{0,3}(IX|IV|V?I{0,3})$/.test(w) ? w :
+  NAME_LOWER.has(w) && !first ? w.toLowerCase() : w[0] + w.slice(1).toLowerCase();
+const displayName = (plant) => plant.replace(/\([^)]*\)|\[[^\]]*\]/g, " ").replace(/\s+/g, " ").trim().split(" ").map((w, i) => nameWord(w, i === 0)).join(" ");
+// whether the CDR name is the unit's own (share_pages._names_unit): a unit match, a combined-cycle train's
+// plant, or a battery matched by a site whose name is itself a battery's (not the solar farm beside it)
+const namesUnit = (u) => !!u.plant && (u.match === "unit" || (u.match === "site" && (u.tech === "combined_cycle" ||
+  (u.tech === "storage" && /\b(BESS|ESS|STORAGE|BATTERY)\b/.test(u.plant)))));
 function drawHead(e) {
-  $("unit-title").textContent = e.name;
+  const who = (S.UI || []).find((u) => u.unit === e.name || (u.configs || []).includes(e.name));
+  const named = who && namesUnit(who);
+  $("unit-title").innerHTML = named ? `${esc(displayName(who.plant))} <span class="unit-code">${esc(e.name)}</span>` : esc(e.name);
+  document.title = `${named ? `${displayName(who.plant)} (${e.name})` : e.name} · ERCOT Bids`;
   const dec = S.DEC?.units?.[e.name], ppa = (S.PPA?.units || []).find((u) => u.name === e.name);
   const bits = [techLabel(e.tech)];
   if (e.configs.length > 1) bits.push(`${e.configs.length} configurations: ${e.configs.join(", ")}`);
   if (dec && dec[1]) bits.push(`${fmtMW(dec[1])} MW minimum output (LSL)`);
   if (ppa && ppa.sp) bits.push(`node ${ppa.sp}`);
-  const ui = e.tech === "storage" && (S.UI || []).find((u) => u.unit === e.name);
-  if (ui) bits.push(...[ui.mw && `${fmtMW(ui.mw)} MW`, ui.plant && `${ui.plant}${ui.match === "site" ? " (plant)" : ""}`, ui.sp && `node ${ui.sp}`].filter(Boolean));
+  const ui = e.tech === "storage" && who;
+  if (ui) bits.push(...[ui.mw && `${fmtMW(ui.mw)} MW`, ui.sp && `node ${ui.sp}`].filter(Boolean));
+  if (who && who.plant && !named) bits.push(`at the ${displayName(who.plant)} site`);
+  if (who && who.aliases?.length) bits.push(`also known as ${who.aliases.join(", ")}`);
   $("unit-meta").textContent = bits.join(" · ");
   // who decides how it is offered, who schedules it, who owns it (ERCOT's DME and QSE lists)
-  const who = (S.UI || []).find((u) => u.unit === e.name || (u.configs || []).includes(e.name));
   const wb = who ? [who.dme && `Offers decided by ${who.dme}`, who.qse && `scheduled by QSE ${who.qse_name ? `${who.qse_name} (${who.qse})` : who.qse}`,
     who.owner && who.owner !== who.dme && `owned by ${who.owner}`].filter(Boolean) : [];
   $("unit-who").textContent = wb.join(" · ");
@@ -792,7 +809,6 @@ function draw() {
   const e = S.list.get(S.unit);
   $("unit-empty").hidden = !!e;
   if (!e) return;
-  document.title = `${e.name} · ERCOT Bids`;
   drawHead(e); drawForecast(e); drawDecisions(e); drawHours(e); drawDay(e); drawBidding(e);
 }
 async function select(name, cfg, keepDay) {

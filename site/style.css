@@ -94,6 +94,7 @@ main { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16p
 .panel-head > div:first-child { min-width: 0; flex: 1 1 320px; }
 .panel-tools { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
 h2 { font: 600 17px/1.2 var(--font-head); margin: 0 0 4px; letter-spacing: 0.01em; }
+.unit-code { font: 500 15px var(--font-data); color: var(--muted); margin-left: 8px; letter-spacing: 0; white-space: nowrap; }
 .h-note { font: 500 11px var(--font-data); color: var(--muted); margin-left: 6px; letter-spacing: 0; }
 .help-q { display: inline-flex; align-items: center; justify-content: center; width: 18px; height: 18px; margin-left: 6px; vertical-align: 2px; border: 1px solid var(--line); border-radius: 50%; font: 600 11px var(--font-ui); color: var(--muted); text-decoration: none; }
 .help-q:hover { color: var(--accent); border-color: var(--accent); }
