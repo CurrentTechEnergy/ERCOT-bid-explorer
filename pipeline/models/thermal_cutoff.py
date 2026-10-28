@@ -128,6 +128,9 @@ DAILY_TECHS = ("combined_cycle", "gas_steam", "coal")
 POOL_DROP_TECHS = ("coal", "combined_cycle")    # with the outage pool, the long-outage carry-over is dropped for these only (kept for gas steam and CTs, where it was mostly right)
 CLEAR_TECHS = ("combined_cycle", "gas_steam")   # a 60-day outage these carry is dropped when the outage report does not list the unit
 WINDOW_TECHS = ("combined_cycle", "gas_steam")   # judged on their own stay-on cost in CC_WINDOW_GROUPS
+if peaker_share.CT_LIKE:      # combustion turbines that fail the run test are judged on their stay-on loss, as gas steam
+    DAILY_TECHS += ("combustion_turbine",)
+    WINDOW_TECHS += ("combustion_turbine",)
 CC_WINDOW_GROUPS = ("daily1", "daily2", "daily3", "multiday", "seasonal")   # CC trains judged on their own stay-on cost
 GBT = dict(max_iter=300, learning_rate=0.05, max_leaf_nodes=15, min_samples_leaf=200, l2_regularization=1.0, random_state=0)
 
@@ -393,6 +396,7 @@ def _pool(ctx, date):
             pm.setdefault(u[0], []).append(c[0] / u[1])
     pool = {t: float(np.median(v)) for t, v in pm.items()}
     groups, stats, raw = ctx.groups_at(date), ctx.stats_at(date), ctx.raw_states()
+    like = peaker_share.peaker_like(stats)
     day0 = ctx.stats["day0"]
     X, y, N, XH, yH = [], [], [], [], []
     L = []      # (train, tech, date, logistic inputs, off) per window-tech unit-day, for the stay-on logistic
@@ -404,6 +408,8 @@ def _pool(ctx, date):
             g = groups.get(key)
             if not (str(g or "").startswith("daily") or (tech in WINDOW_TECHS and g in CC_WINDOW_GROUPS)) or key not in own:
                 continue
+            if tech == "combustion_turbine" and peaker_share.judged_here(key, tech, like, stats):
+                continue        # a peaker: not one of the stay-on fit's units
             st = raw.get(key)
             mg = units[key][2] if mg is None else mg
             cpm = _blend(own[key], pool.get(tech))
@@ -430,6 +436,8 @@ def _pool(ctx, date):
             g = groups.get(key)
             if not (str(g or "").startswith("daily") or (tech in WINDOW_TECHS and g in CC_WINDOW_GROUPS)) or key not in own:
                 continue
+            if tech == "combustion_turbine" and peaker_share.judged_here(key, tech, like, stats):
+                continue        # a peaker: not one of the stay-on fit's units
             mg = units[key][2] if mg is None else mg
             cpm = _blend(own[key], pool.get(tech))
             if mg is None or cpm is None or (seg == "-").any() or (seg == "o").any():
@@ -597,7 +605,7 @@ def forecast(date, ctx: C.Context) -> dict:
             row.update(verdict="off", p_on=0.0, reason="never on in the period")
         elif t == "nuclear" or (g == "never" and not cc_win):
             row.update(verdict="on", p_on=1.0, reason="always on when available" if g == "never" else "nuclear")
-        elif t == "combustion_turbine":
+        elif t == "combustion_turbine" and peaker_share.judged_here(key, t, like, stats):
             row.update(verdict="peaker", reason="judged by hour (peaker_share)")
         elif key in like:
             row.update(verdict="peaker", reason="runs like a peaker: judged by hour (peaker_share)")

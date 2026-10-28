@@ -48,9 +48,10 @@ CALIB = [   # online rate while available at each share in _X, by band (v2: isot
 MIN_CELL = 10
 MIN_BIN = 20
 LIKE = os.environ.get("PEAKER_LIKE", "1") == "1"    # PEAKER_LIKE=0 judges combustion turbines alone (v2), for comparison
-LIKE_TECHS = ("gas_steam", "combined_cycle")
-LIKE_SHARE = 0.25     # online share of available hours below this ...
-LIKE_RUN_H = 16.0     # ... and online hours per day it ran at most this: started for the peak, not kept on
+CT_LIKE = os.environ.get("PEAKER_CT_LIKE", "0") == "1"   # PEAKER_CT_LIKE=1: combustion turbines take the run test too; one that fails it is judged on its stay-on loss (thermal_cutoff)
+LIKE_TECHS = ("gas_steam", "combined_cycle") + (("combustion_turbine",) if CT_LIKE else ())
+LIKE_SHARE = float(os.environ.get("PEAKER_LIKE_SHARE", "0.25"))    # online share of available hours below this ...
+LIKE_RUN_H = float(os.environ.get("PEAKER_LIKE_RUN_H", "16"))      # ... and online hours per day it ran at most this: started for the peak, not kept on
 LIKE_MIN_H = 480      # available hours of record a unit needs to be judged so
 MIN_RUN = os.environ.get("PEAKER_MIN_RUN", "1") == "1"   # a peaker-like unit's called hours form blocks of at least its shortest usual run (PEAKER_MIN_RUN=0: hour by hour)
 MIN_RUN_Q = 10        # percentile of the unit's completed runs taken as its shortest usual run
@@ -115,12 +116,24 @@ def peaker_like(stats) -> set:
     out = set()
     for key, s in stats["units"].items():
         av, on = s["avail"].sum(), s["on"].sum()
-        if s["tech"] not in LIKE_TECHS or av < LIKE_MIN_H or not s["on_days"]:
+        if s["tech"] not in LIKE_TECHS:
+            continue
+        if av < LIKE_MIN_H or not s["on_days"]:
+            if s["tech"] == "combustion_turbine":
+                out.add(key)        # too little record to judge: a combustion turbine stays a peaker
             continue
         run_h = on / (s["on_days"] * s["tot"].sum() / 24.0)
         if on / av < LIKE_SHARE and run_h <= LIKE_RUN_H:
             out.add(key)
     return out
+
+
+def judged_here(key, tech, like, stats) -> bool:
+    """Whether this model judges the unit: a combustion turbine unless CT_LIKE and it has a record
+    that fails the run test, else a unit in `like`."""
+    if tech == "combustion_turbine":
+        return not CT_LIKE or key in like or key not in stats["units"]
+    return key in like
 
 
 def forecast(date, ctx: C.Context) -> dict:
@@ -131,7 +144,7 @@ def forecast(date, ctx: C.Context) -> dict:
     like = peaker_like(stats)
     rows = {}
     for key, u in units.items():
-        if u["tech"] != "combustion_turbine" and key not in like:
+        if not judged_here(key, u["tech"], like, stats):
             continue
         s = stats["units"].get(key)
         p = np.zeros(24)
@@ -154,7 +167,7 @@ def forecast(date, ctx: C.Context) -> dict:
             for h in range(24):
                 if float(hub[h]) > C.CHEAP_HUB:
                     p[h] = np.interp(p[h], _X, CALIB[int(np.searchsorted(BANDS, float(hub[h])))])
-        if MIN_RUN and key in like:
+        if MIN_RUN and key in like and u["tech"] != "combustion_turbine":
             p = _block(p, int(round(_min_run(ctx, key, ctx.asof(date)[0]))))
         rows[key] = {"p_on": np.round(p, 3), "source": src, "model": NAME, "version": VERSION}
     return {"rows": rows, "inputs": {"hub": hub is not None}}
