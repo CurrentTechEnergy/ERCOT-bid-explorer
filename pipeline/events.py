@@ -9,7 +9,8 @@ Sources (each already computed by its own module; nothing is detected twice):
   shutdown_award   decisions.py flags "award": a shutdown over a window a day-ahead award
                    covered in full
   group            groups.py rules applied to each calendar month: the unit moved between the
-                   stays-on family (never, seasonal), multi-day and daily (both months need
+                   stays-on family (never, and multi-day months whose every off spell lasted a
+                   week or more: the old seasonal group), multi-day and daily (both months need
                    MIN_MONTH_DAYS days of data).  Major when daily cycling starts or stops; a
                    month without a shutdown says little about a seasonal or multi-day unit,
                    and the daily sub-groups move with the month's prices, so neither is an
@@ -143,8 +144,9 @@ RUN_HI, RUN_LO = 0.5, 0.2                      # online share it crosses between
 FEED_ALL = 200        # entries in the all-units feed
 FEED_UNIT = 30        # entries in a unit's feed
 DAILY = ("daily1", "daily2", "daily3")
-FAMILY = {"never": "on", "seasonal": "on", "multiday": "multiday", "daily1": "daily", "daily2": "daily", "daily3": "daily"}
+FAMILY = {"never": "on", "multiday": "multiday", "daily1": "daily", "daily2": "daily", "daily3": "daily"}
 GROUP_LABEL = {g[0]: g[1] for g in GROUPS}
+WEEK_LABEL = "Off a week or more"       # a multi-day month whose every off spell lasted a week or more
 KINDS = {
     "shutdown_new": "Shut down after a long run",
     "shutdown_award": "Shut down despite a day-ahead award",
@@ -193,6 +195,14 @@ def shutdown_events(dec):
     return out
 
 
+def _family(e) -> str:
+    """FAMILY of a unit's month; a multi-day month whose every off spell lasted a week or more
+    (or that only started late) stays in the stays-on family, as the seasonal group did."""
+    if e["group"] == "multiday" and e["week"]:
+        return "on"
+    return FAMILY[e["group"]]
+
+
 def group_events(uh, tech_of):
     """Each unit's group month by month, and an event where it differs from the month before."""
     dates = uh.get("dates") or []
@@ -207,16 +217,17 @@ def group_events(uh, tech_of):
                "units": {n: "".join(s[i * 24:(i + 1) * 24] for i in idx) for n, s in uh.get("units", {}).items()},
                "hsl": uh.get("hsl") or {}}
         _, units = assign_groups(sub, tech_of)
-        groups[m] = {k: (e["group"], e["tech"]) for k, e in units.items() if e["ran"]}
+        groups[m] = {k: (e["group"], e["tech"], _family(e), WEEK_LABEL if e["group"] == "multiday" and e["week"] else GROUP_LABEL[e["group"]])
+                     for k, e in units.items() if e["ran"]}
     out = []
     for prev, m in zip(months, months[1:]):
-        for key, (g, tech) in groups[m].items():
+        for key, (g, tech, fam, label) in groups[m].items():
             p = groups[prev].get(key)
-            if p is None or FAMILY[p[0]] == FAMILY[g]:
+            if p is None or p[2] == fam:
                 continue
-            major = "daily" in (FAMILY[p[0]], FAMILY[g])
+            major = "daily" in (p[2], fam)
             out.append(_ev(key, by_month[m] and dates[by_month[m][0]], "group", tech,
-                           f"{GROUP_LABEL[p[0]]} in {prev} to {GROUP_LABEL[g]} in {m}", major,
+                           f"{p[3]} in {prev} to {label} in {m}", major,
                            before=p[0], after=g, field="timescale group", month=m))
     return out
 

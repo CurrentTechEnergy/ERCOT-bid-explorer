@@ -35,7 +35,7 @@ from .store import read_json_gz, write_json_gz
 from .units import _ffill_index
 
 OUT_DIR = DATA_DIR / "stack"
-FORMAT = 3   # 2: minimum at the -$250 floor; 3: units online with no output and no HSL left out
+FORMAT = 4   # 2: minimum at the -$250 floor; 3: units online with no output and no HSL left out; 4: seasonal folded into multiday
 FLOOR = -249.99
 PRICES = np.concatenate([
     [-250, -100, -75, -50, -40, -30, -25, -20, -15, -10, -5],
@@ -44,7 +44,7 @@ PRICES = np.concatenate([
     [200, 250, 300, 400, 500, 750, 1000, 1500, 2000, 3000, 5000],
 ]).astype(float)
 TECHS = ["nuclear", "coal", "combined_cycle", "gas_steam", "combustion_turbine"]
-GROUPS = ["never", "seasonal", "multiday", "daily1", "daily2", "daily3", "never_on", "ungrouped"]
+GROUPS = ["never", "multiday", "daily1", "daily2", "daily3", "never_on", "ungrouped"]
 
 
 def _r(a, nd=1):

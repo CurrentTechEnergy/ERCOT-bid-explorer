@@ -11,8 +11,8 @@ and no more missing hours than OFF hours; a spell still open at the end of the p
 once it is a day long.
 
   never     no shutdown on price in the period (always on when available: off only for outages)
-  seasonal  every off spell lasted 7 days or more
-  multiday  shortest off spell between 24 h and 7 days
+  multiday  an off spell of a day or more and fewer than two short ones (seasonal, every spell a
+            week or more, was folded in Oct 2026)
   daily1    at least two off spells under 24 h, fewer than one shutdown a week
   daily2    one to two shutdowns a week
   daily3    more than two shutdowns a week
@@ -39,9 +39,9 @@ from ..trends import UNIT_TECHS, listed_units, unit_techs
 
 OUT_MIN_H = 4
 NEVER_ON_DAYS = 120
-GROUPS = ["never", "seasonal", "multiday", "daily1", "daily2", "daily3", "never_on"]
+GROUPS = ["never", "multiday", "daily1", "daily2", "daily3", "never_on"]
 GROUP_LABELS = {
-    "never": "Always on when available", "seasonal": "Seasonal: off a week or more", "multiday": "Multi-day: off 1–7 days",
+    "never": "Always on when available", "multiday": "Multi-day: off a day or more",
     "daily1": "Daily, under 1 shutdown a week", "daily2": "Daily, 1–2 a week", "daily3": "Daily, over 2 a week",
     "never_on": "Never on: no running hour in the period",
 }
@@ -127,7 +127,7 @@ def off_spells(st: np.ndarray):
 
 def lead_off(st: np.ndarray) -> int:
     """Length of the off stretch open at the window start when it lasts a week or more (else 0).
-    It is not a shutdown, but a unit that started late is seasonal rather than always-on."""
+    It is not a shutdown, but a unit that started late is multi-day rather than always-on."""
     N, j, off, gap = len(st), 0, 0, 0
     while j < N and st[j] in "0o-":
         off += st[j] == "0"
@@ -146,7 +146,7 @@ def group_of(st: np.ndarray, N: int) -> str:
     if short >= 2:
         return "daily1" if per_week < 1 else "daily2" if per_week <= 2 else "daily3"
     if long:
-        return "multiday" if min(long) < 168 else "seasonal"
+        return "multiday"
     return "never"
 
 
@@ -169,6 +169,13 @@ def groups_of(by: dict, N: int, listed: set = None) -> dict:
     return out
 
 
+def unit_peakers() -> set:
+    """The units pipeline/groups.py flags as peakers (by how they run), from the group file; empty
+    without it or for a file written before the flag."""
+    g = read_json_gz(GROUP_FILE, default=None) or {}
+    return {k for k, v in (g.get("units") or {}).items() if v and len(v) > 9 and v[9]}
+
+
 def unit_groups(uh: dict = None, techs: dict = None, listed: set = None) -> dict:
     """{train: group} for every thermal unit or train with hourly states, from the pipeline's
     group file when it exists (PR 1), else computed here.  techs maps unit name to technology
@@ -176,7 +183,8 @@ def unit_groups(uh: dict = None, techs: dict = None, listed: set = None) -> dict
     their record (default: the trends units list, see listed_keys)."""
     g = read_json_gz(GROUP_FILE, default=None)
     if g and isinstance(g.get("units"), dict):
-        return {k: v[1] for k, v in g["units"].items() if v and len(v) > 1 and v[1] in GROUPS}
+        legacy = {"seasonal": "multiday"}     # a file written before seasonal was folded in
+        return {k: legacy.get(v[1], v[1]) for k, v in g["units"].items() if v and len(v) > 1 and legacy.get(v[1], v[1]) in GROUPS}
     if uh is None:
         uh = read_json_gz(DATA_DIR / "unit_hours_60d.json.gz", default={}) or {}
     if techs is None or listed is None:
