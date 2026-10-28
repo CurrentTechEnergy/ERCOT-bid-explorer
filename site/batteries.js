@@ -2,14 +2,15 @@
    charge, offer prices, MW bid to charge (or offered to discharge) at set prices, unused room, and
    the same across days.  Reads data/storage/series.json.gz (pipeline/storage.py: every day's
    fleet block, [day][24] per field), data/hourly_context_60d.json.gz (real-time hub price) and
-   data/dam_hubs.json.gz (day-ahead hub price).  Hour profiles are for one day or averaged over the
+   data/dam_hubs.json.gz (day-ahead hub price); the across-days charts also read
+   data/storage/bench.json.gz (pipeline/battery_bench.py: the fleet against a perfect battery).  Hour profiles are for one day or averaged over the
    7 / 30 days ending on it, or every day: MW are means across days, prices medians. */
 (() => {
 "use strict";
 
 const { tryJSON, showTip, hideTip, setCSV, tickFormat, fmtKind, axisFmt, css } = window.CX;
 const $ = (id) => document.getElementById(id);
-const S = { B: null, H: null, D: null, day: null, win: "1", side: "chg" };
+const S = { B: null, H: null, D: null, BB: null, day: null, win: "1", side: "chg" };
 const HUB = "HB_HUBAVG";
 const fmtMW = d3.format(",.0f");
 const fmtGW = d3.format(",.1f");
@@ -30,7 +31,7 @@ function bindSeg(id, key, after) {
 }
 function emptyMsg(el, msg) { el.innerHTML = `<p class="empty">${msg}</p>`; }
 function staticLegend(el, list) {
-  el.innerHTML = list.map((s) => `<span><span class="sw" style="background:var(${s.color});${s.dash ? "opacity:.55" : ""}"></span>${s.label}</span>`).join("");
+  el.innerHTML = list.map((s) => `<span><span class="sw" style="background:var(${s.color});${s.dash || s.faint ? "opacity:.55" : ""}"></span>${s.label}</span>`).join("");
 }
 
 // ---- the chosen days --------------------------------------------------------------
@@ -230,64 +231,113 @@ function drawHeadroom() {
 }
 
 // ---- across days ------------------------------------------------------------------------
+// opts.bars: [{label, color, values}] stacked from zero (positive values); series: lines, with
+// optional dash, width and faint (drawn light, behind)
 function dayChart(el, series, opts) {
-  const dates = S.B.dates.map(parseDate);
+  const dates = S.B.dates.map(parseDate), bars = opts.bars || [];
   const w = Math.max(280, el.clientWidth || 600), H = opts.H || 240, m = { t: 18, r: 14, b: 26, l: 64 };
   const x = d3.scaleTime().domain([d3.timeHour.offset(dates[0], -12), d3.timeHour.offset(dates.at(-1), 12)]).range([m.l, w - m.r]);
-  const all = series.flatMap((s) => s.values).filter((v) => v != null);
+  const tops = dates.map((_, i) => d3.sum(bars, (b) => b.values[i] || 0));
+  const all = series.flatMap((s) => s.values).concat(bars.length ? tops : []).filter((v) => v != null);
   if (!all.length) return emptyMsg(el, "No data.");
-  const y = d3.scaleLinear().domain([Math.min(0, d3.min(all)), d3.max(all)]).nice().range([H - m.b, m.t]);
+  const lo = opts.yMin != null ? Math.max(opts.yMin, Math.min(0, d3.min(all))) : Math.min(0, d3.min(all));
+  const y = d3.scaleLinear().domain([lo, opts.yMax != null ? Math.min(opts.yMax, d3.max(all)) : d3.max(all)]).nice().range([H - m.b, m.t]);
   const svg = d3.create("svg").attr("viewBox", `0 0 ${w} ${H}`);
   svg.append("g").attr("class", "gridline").attr("transform", `translate(${m.l},0)`).call(d3.axisLeft(y).ticks(5).tickSize(-(w - m.l - m.r)).tickFormat(""));
   svg.append("g").attr("class", "axis").attr("transform", `translate(${m.l},0)`).call(axisFmt(d3.axisLeft(y), 5, fmtKind(opts.yFmt)).tickSizeOuter(0));
   svg.append("g").attr("class", "axis").attr("transform", `translate(0,${H - m.b})`).call(d3.axisBottom(x).ticks(w < 560 ? 4 : 8).tickSizeOuter(0));
   svg.append("text").attr("class", "axis-title").attr("x", m.l).attr("y", 10).text(opts.title);
   if (y.domain()[0] < 0) svg.append("line").attr("class", "zero").attr("x1", m.l).attr("x2", w - m.r).attr("y1", y(0)).attr("y2", y(0));
+  const bw = Math.max(1, (w - m.l - m.r) / dates.length - 1);
+  const plot = svg.append("g").attr("clip-path", null);
+  bars.forEach((b, j) => dates.forEach((d, i) => {
+    const v = b.values[i];
+    if (v == null || v <= 0) return;
+    const base = d3.sum(bars.slice(0, j), (o) => Math.max(0, o.values[i] || 0));
+    const y0 = y(Math.min(base, y.domain()[1])), y1 = y(Math.min(base + v, y.domain()[1]));
+    plot.append("rect").attr("x", x(d) - bw / 2).attr("width", bw).attr("y", y1).attr("height", Math.max(0, y0 - y1)).attr("fill", css(b.color));
+  }));
   const xm = x(parseDate(S.day));
   svg.append("line").attr("class", "crosshair").attr("x1", xm).attr("x2", xm).attr("y1", m.t).attr("y2", H - m.b).style("stroke", css("--accent"));
-  const line = d3.line().defined((v) => v != null).x((_, i) => x(dates[i])).y((v) => y(v));
+  const clamp = (v) => (v == null ? null : Math.max(y.domain()[0], Math.min(y.domain()[1], v)));
+  const line = d3.line().defined((v) => v != null).x((_, i) => x(dates[i])).y((v) => y(clamp(v)));
   series.forEach((s) => svg.append("path").attr("fill", "none").attr("stroke", css(s.color)).attr("stroke-width", s.width || 1.6)
-    .attr("stroke-dasharray", s.dash || null).attr("d", line(s.values)));
-  const tf = opts.tipFmt || fmtGW;
+    .attr("stroke-opacity", s.faint ? 0.35 : 1).attr("stroke-dasharray", s.dash || null).attr("d", line(s.values)));
+  const tf = opts.tipFmt || fmtGW, shown = bars.concat(series);
   const cross = svg.append("line").attr("class", "crosshair").attr("y1", m.t).attr("y2", H - m.b).style("display", "none");
   svg.append("rect").attr("x", m.l).attr("y", m.t).attr("width", w - m.l - m.r).attr("height", H - m.t - m.b).attr("fill", "transparent")
     .on("pointermove", (ev) => {
       const t = x.invert(d3.pointer(ev)[0]), i = d3.minIndex(dates, (d) => Math.abs(d - t));
       cross.style("display", null).attr("x1", x(dates[i])).attr("x2", x(dates[i]));
-      showTip(ev, `<h4>${fmtDate(dates[i])}</h4><table>` + series.filter((s) => s.values[i] != null).map((s) =>
-        `<tr><td><span class="sw" style="background:var(${s.color})"></span></td><td>${s.label}</td><td class="n">${tf(s.values[i])}</td></tr>`).join("") + "</table>" +
+      showTip(ev, `<h4>${fmtDate(dates[i])}</h4><table>` + shown.filter((s) => s.values[i] != null).map((s) =>
+        `<tr><td><span class="sw" style="background:var(${s.color})"></span></td><td>${s.label}</td><td class="n">${(s.fmt || tf)(s.values[i])}</td></tr>`).join("") + "</table>" +
         `<p class="tip-body">Click to show this day above.</p>`);
     })
     .on("click", (ev) => { const t = x.invert(d3.pointer(ev)[0]); setDay(S.B.dates[d3.minIndex(dates, (d) => Math.abs(d - t))]); })
     .on("pointerleave", () => { cross.style("display", "none"); hideTip(); });
   el.replaceChildren(svg.node());
-  setCSV(el, ["date", ...series.map((s) => s.label)], S.B.dates.map((d, i) => [d, ...series.map((s) => s.values[i])]), opts.title);
+  setCSV(el, ["date", ...shown.map((s) => s.label)], S.B.dates.map((d, i) => [d, ...shown.map((s) => s.values[i])]), opts.title);
 }
+
+// trailing sum of num over sum of den across `n` days (days with either missing are skipped)
+const rolling = (num, den, n = 7) => num.map((_, i) => {
+  let a = 0, b = 0;
+  for (let j = Math.max(0, i - n + 1); j <= i; j++) if (num[j] != null && den[j] != null) { a += num[j]; b += den[j]; }
+  return b ? a / b : null;
+});
+const ratio = (num, den) => num.map((v, i) => (v == null || !den[i] ? null : v / den[i]));
 
 function drawDays() {
-  const f = S.B.fleet;
-  const sum = (rows) => rows.map((r) => (r && r.some((v) => v != null) ? d3.sum(r, (v) => v || 0) / 1000 : null));
-  const maxOf = (rows) => rows.map((r) => (r && r.some((v) => v != null) ? d3.max(r) / 1000 : null));
-  const energy = [
-    { label: "Charged (GWh)", color: "--c7-soft", values: sum(f.chg) },
-    { label: "Discharged (GWh)", color: "--c7", values: sum(f.dis) },
-    { label: "Day-ahead charging award (GWh)", color: "--c1", dash: "4 3", values: sum(f.dam_chg) },
-    { label: "Day-ahead discharge award (GWh)", color: "--c2", dash: "4 3", values: sum(f.dam_dis) },
-    { label: "Fleet maximum state of charge (GWh)", color: "--c-other", width: 1.2, values: maxOf(f.soc_max) },
+  const bb = S.BB;
+  if (!bb) { ["days-size", "days-cycles", "days-value", "days-capture", "days-price"].forEach((id) => emptyMsg($(id), "No benchmark yet. It is built by the data update workflow.")); return; }
+  // the benchmark's days on the series file's days
+  const at = new Map(bb.dates.map((d, i) => [d, i]));
+  const f = Object.fromEntries(Object.entries(bb.fleet).map(([k, v]) => [k, S.B.dates.map((d) => (at.has(d) ? v[at.get(d)] : null))]));
+  const k = (a, by) => a.map((v) => (v == null ? null : v / by));
+  const size = [
+    { label: "Power, GW", color: "--c7", values: k(f.mw, 1000), fmt: (v) => `${fmtGW(v)} GW` },
+    { label: "Energy, GWh", color: "--c-other", values: k(f.mwh, 1000), fmt: (v) => `${fmtGW(v)} GWh` },
   ];
-  staticLegend($("days-legend"), energy);
-  dayChart($("days-energy"), energy, { title: "Energy each day (GWh)", tipFmt: (v) => `${fmtGW(v)} GWh` });
-  const mid = (rows) => rows.map((r) => { const v = (r || []).slice(9, 16).filter((x) => x != null); return v.length ? d3.mean(v) : null; });
-  const minOf = (rows) => rows.map((r) => { const v = (r || []).filter((x) => x != null); return v.length ? d3.min(v) : null; });
+  staticLegend($("days-size-legend"), size);
+  dayChart($("days-size"), size, { title: "Fleet size (GW of power, GWh it can hold)", H: 170 });
+  const cyc = ratio(f.dis_mwh, f.mwh), fmtC = d3.format(".2f");
+  const cycles = [
+    { label: "Each day", color: "--c7", faint: true, width: 1.2, values: cyc, fmt: fmtC },
+    { label: "7-day average", color: "--c7", width: 2, values: rolling(f.dis_mwh, f.mwh), fmt: fmtC },
+  ];
+  staticLegend($("days-cycles-legend"), cycles);
+  dayChart($("days-cycles"), cycles, { title: "Full cycles a day (energy discharged ÷ energy it can hold)", H: 170, tipFmt: fmtC });
+  const M = (a) => k(a, 1e6), fmtM = (v) => `$${d3.format(",.2f")(v)}M`;
+  const value = [{ label: "Perfect battery, energy", color: "--ink-2", width: 1.4, values: M(f.perfect), fmt: fmtM }];
+  const bars = [
+    { label: "Energy earned", color: "--c7", values: M(f.actual), fmt: fmtM },
+    { label: "Day-ahead AS earned", color: "--c7-soft", values: M(f.dam_as), fmt: fmtM },
+  ];
+  staticLegend($("days-value-legend"), bars.concat(value));
+  const top = d3.quantile(M(f.perfect).filter((v) => v != null).sort(d3.ascending), 0.98);
+  dayChart($("days-value"), value, { bars, title: "Earned each day against the perfect battery ($M; scale stops at the 98th percentile day)", yFmt: d3.format("$,.1f"), yMax: top, tipFmt: fmtM });
+  const cap = [
+    { label: "Each day", color: "--c3", faint: true, width: 1.2, values: ratio(f.actual, f.perfect), fmt: fmtPct },
+    { label: "7-day", color: "--c3", width: 2, values: rolling(f.actual, f.perfect), fmt: fmtPct },
+  ];
+  staticLegend($("days-capture-legend"), cap);
+  dayChart($("days-capture"), cap, { title: "Share of the perfect battery's energy revenue earned (scale stops at -50% and 150%)", H: 170, yMin: -0.5, yMax: 1.5, yFmt: d3.format(".0%"), tipFmt: fmtPct });
   const prices = [
-    { label: "Charging stops, HE 10 to 16 average", color: "--c1", values: mid(f.chg0) },
-    { label: "Discharge starts, cheapest hour", color: "--c7", values: minOf(f.dis0) },
+    { label: "Charged at", color: "--c1", values: ratio(f.chg_usd, f.chg_mwh) },
+    { label: "Discharged at", color: "--c7", values: ratio(f.dis_usd, f.dis_mwh) },
+    { label: "Perfect battery charged at", color: "--c1", dash: "4 3", width: 1.2, values: ratio(f.p_chg_usd, f.p_chg_mwh) },
+    { label: "Perfect battery discharged at", color: "--c7", dash: "4 3", width: 1.2, values: ratio(f.p_dis_usd, f.p_dis_mwh) },
   ];
   staticLegend($("days-price-legend"), prices);
-  dayChart($("days-price"), prices, { title: "Fleet offer prices each day ($/MWh)", yFmt: d3.format("$,.0f"), tipFmt: fmtPrice, H: 200 });
+  const ptop = d3.quantile(prices.flatMap((s) => s.values).filter((v) => v != null).sort(d3.ascending), 0.98);
+  dayChart($("days-price"), prices, { title: "Average price paid to charge and earned discharging ($/MWh, real-time at each battery's node)", yFmt: d3.format("$,.0f"), yMax: ptop, tipFmt: fmtPrice, H: 220 });
+  const sum = (a) => d3.sum(a.filter((v) => v != null));
+  const tot = (a) => sum(a.filter((_, i) => f.perfect[i] != null && f.actual[i] != null));
+  $("days-note").textContent = `Over ${bb.fleet.perfect.filter((v) => v != null).length} days: batteries earned ${fmtPct(tot(f.actual) / tot(f.perfect))} of what a perfect battery would have on energy, ` +
+    `charging at ${fmtPrice(sum(f.chg_usd) / sum(f.chg_mwh))} against ${fmtPrice(sum(f.p_chg_usd) / sum(f.p_chg_mwh))} and discharging at ` +
+    `${fmtPrice(sum(f.dis_usd) / sum(f.dis_mwh))} against ${fmtPrice(sum(f.p_dis_usd) / sum(f.p_dis_mwh))}.`;
 }
 
-// ---- view state -------------------------------------------------------------------------
 const VIEW_KEYS = { day: "day", win: "win", side: "side" };
 function saveView() { window.CX.writeHash({ ...window.CX.readHash(), ...Object.fromEntries(Object.entries(VIEW_KEYS).map(([k, sk]) => [k, S[sk]])) }); }
 function loadView() { const v = window.CX.readHash(); Object.entries(VIEW_KEYS).forEach(([k, sk]) => { if (v[k] != null) S[sk] = v[k]; }); }
@@ -296,7 +346,7 @@ function setDay(d) { if (d < CX.SITE_START) d = CX.fromStart(S.B.dates)[0] || d;
 function drawAll() { ["offer-note", "bid-note", "head-note"].forEach((id) => { $(id).textContent = winLabel(); }); drawFlow(); drawSoc(); drawOffers(); drawBids(); drawHeadroom(); drawDays(); }
 
 async function boot() {
-  [S.B, S.H, S.D] = await Promise.all([tryJSON("data/storage/series.json.gz"), tryJSON("data/hourly_context_60d.json.gz"), tryJSON("data/dam_hubs.json.gz")]);
+  [S.B, S.H, S.D, S.BB] = await Promise.all([tryJSON("data/storage/series.json.gz"), tryJSON("data/hourly_context_60d.json.gz"), tryJSON("data/dam_hubs.json.gz"), tryJSON("data/storage/bench.json.gz")]);
   if (!S.B || !S.B.dates.length) { $("status").textContent = "No battery data yet. It is built by the data update workflow."; return; }
   // the series file starts before RTC+B; keep the days with batteries on the single-curve model
   const first = S.B.dates.findIndex((_, i) => (S.B.fleet.dis0[i] || []).some((v) => v != null));

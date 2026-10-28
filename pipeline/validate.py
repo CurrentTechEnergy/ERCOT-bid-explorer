@@ -58,7 +58,10 @@ consistency:
                     events inside the 60-day days), a first-seen date on every event; and the
                     cutoff history file: a model name and version, cutoffs numeric per MW of
                     LSL, every move on a unit with rows; and storage/units.json.gz: one value
-                    per day for every field of every battery, no negative size or MWh
+                    per day for every field of every battery, no negative size or MWh; and
+                    storage/bench.json.gz (battery_bench.py): one value per day per field, the
+                    perfect battery at least zero and within one cycle a day, cycles per day
+                    within 0 to 3 and average prices within -$1,000 to $10,000
 
 A check is an "error" when the numbers cannot both be right (a parsing or mapping bug), a
 "warning" when something is worth a look, and "info" when it is only recorded.  Results that did not pass are kept per day in data/validation.json.
@@ -765,6 +768,7 @@ def check_files(index):
         day.add("storage_units", "error" if bad or neg else "ok",
                 f"{len(bad)} battery row(s) not one value per day per field, {len(neg)} with a negative size or MWh, "
                 f"e.g. {(bad + neg)[:3]}" if bad or neg else f"{len(su.get('units', {}))} batteries, {n} days")
+    _battery_bench_checks(day)
     ch = read_json_gz(CUTOFF_PATH, default=None)
     if ch is not None:
         ok = bool(ch.get("model")) and bool(ch.get("version"))
@@ -788,6 +792,39 @@ def check_files(index):
         bad = [r[0] for r in rows if r[1] not in UNIT_INDEX_TECHS or (r[3] is not None and not r[3] >= 0)]
         day.add("unit_index_rows", "error" if bad else "ok", f"{len(bad)} row(s) with an unknown tech or bad MW, e.g. {bad[:3]}" if bad else "techs known, MW non-negative")
     return day
+
+
+def _battery_bench_checks(day):
+    """Batteries against a perfect battery (battery_bench.py): one value per day per field, the
+    perfect battery never below zero, cycles and average prices in a sane range."""
+    from .battery_bench import FIELDS as BB_FIELDS, PATH as BB_PATH, UNITS_PATH as BB_UNITS_PATH
+    bb = read_json_gz(BB_PATH, default=None)
+    if bb is None:
+        return
+    n, f = len(bb.get("dates", [])), bb.get("fleet", {})
+    bad_len = [k for k in BB_FIELDS if len(f.get(k, [])) != n]
+    day.add("bench_rows", "error" if bad_len else "ok", f"field(s) {bad_len} not one value per day" if bad_len else f"{n} days")
+    if bad_len:
+        return
+    bad = []
+    for i, d in enumerate(bb["dates"]):
+        r = {k: f[k][i] for k in BB_FIELDS}
+        if r["n"] is None:
+            continue
+        cyc = r["dis_mwh"] / r["mwh"] if r["mwh"] else None
+        prices = [r[a] / r[b] for a, b in (("dis_usd", "dis_mwh"), ("chg_usd", "chg_mwh"), ("p_dis_usd", "p_dis_mwh"), ("p_chg_usd", "p_chg_mwh")) if r[b]]
+        if r["perfect"] < 0 or r["p_dis_mwh"] > r["mwh"] * 1.01 or (cyc is not None and not 0 <= cyc <= 3) \
+                or any(not -1000 <= p <= 10000 for p in prices):
+            bad.append(d)
+    bu = read_json_gz(BB_UNITS_PATH, default=None)
+    if bu is not None:
+        rows = [u for u, r in bu.get("units", {}).items() if set(r) != set(bu.get("fields", [])) or any(len(v) != n for v in r.values())]
+        day.add("bench_units", "error" if rows or bu.get("dates") != bb["dates"] else "ok",
+                f"{len(rows)} battery row(s) not one value per day per field, e.g. {rows[:3]}" if rows
+                else "dates differ from bench.json.gz" if bu.get("dates") != bb["dates"] else f"{len(bu.get('units', {}))} batteries")
+    day.add("bench_values", "error" if bad else "ok",
+            f"{len(bad)} day(s) with a negative perfect battery, over one cycle, cycles outside 0 to 3 or prices outside "
+            f"-$1,000 to $10,000, e.g. {bad[:3]}" if bad else "perfect battery >= 0 and within one cycle; cycles and prices in range")
 
 
 def _dam_offer_checks(day):

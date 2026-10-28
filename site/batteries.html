@@ -143,19 +143,26 @@
     <div class="panel-head">
       <div>
         <h2>Across days</h2>
-        <p class="note">Energy charged and discharged each day against the day-ahead awards and fleet size, with the day's charging and discharge prices below.</p>
-        <details class="how"><summary>How it's built</summary><p class="note">Energy the fleet charged and discharged each day against its day-ahead awards and the fleet's maximum state of charge (how much it can hold), and below, the day's charging and discharge prices: the highest price at which the fleet still bids to charge, averaged over HE 10 to 16, and the lowest price at which discharge starts in any hour. The marker is the chosen day.</p></details>
+        <p class="note">How big the fleet is, how hard it works, and how much of the best possible energy revenue it earned, against a perfect battery that knew the day's real-time prices in advance. The marker is the chosen day.</p>
+        <details class="how"><summary>How it's built</summary><p class="note">Every battery of 5 MW or more that reports a state of charge and has a real-time price at its settlement point, each day. <b>Fleet size</b> sums their largest HSL (power) and their usable state of charge range, maximum less minimum (energy). <b>Full cycles</b> is the energy they discharged (telemetered output) over that range. <b>Energy earned</b> is two-settlement: the day-ahead award at the day-ahead price at the battery's node, plus output less the award at the real-time node price, hourly. <b>Day-ahead AS earned</b> is each day-ahead AS award at the day-ahead clearing price; real-time AS changes it by little and is left out. The <b>perfect battery</b> is, for each battery, the best schedule against that day's hourly real-time node prices known in advance: same MW, same usable range, its own round-trip efficiency (fitted from how its state of charge moves, about 86% for the median battery), the MW it actually held for AS taken out of its limits, the day starting at its actual state of charge and ending at least at its actual end-of-day state of charge, and at most one full cycle a day. Hourly prices understate what a 15-minute perfect battery could earn. The <b>share earned</b> is energy earned over the perfect battery's energy revenue; single days swing widely, so the 7-day line sums both over the week first. <b>Charged at</b> and <b>discharged at</b> are MWh-weighted real-time node prices of what the fleet charged and discharged, against the same for the perfect battery (dashed).</p></details>
+        <p class="note" id="days-note"></p>
       </div>
     </div>
-    <div class="legend legend-static" id="days-legend"></div>
-    <div class="chart" id="days-energy"></div>
+    <div class="legend legend-static" id="days-size-legend"></div>
+    <div class="chart" id="days-size"></div>
+    <div class="legend legend-static" id="days-cycles-legend"></div>
+    <div class="chart" id="days-cycles"></div>
+    <div class="legend legend-static" id="days-value-legend"></div>
+    <div class="chart" id="days-value"></div>
+    <div class="legend legend-static" id="days-capture-legend"></div>
+    <div class="chart" id="days-capture"></div>
     <div class="legend legend-static" id="days-price-legend"></div>
     <div class="chart" id="days-price"></div>
   </section>
 </main>
 
 <footer class="foot">
-  <p>Source: ERCOT EMIL products NP3-965-ER (60-Day SCED Disclosure: the ESR file's submitted curves, base points, limits, state of charge and AS awards), NP3-966-ER (60-Day DAM Disclosure: the ESR Data file's energy awards), the real-time hub prices and the DAM settlement point prices. Built by the data update workflow from the days already loaded; the 60-day reports run about two months behind.</p>
+  <p>Source: ERCOT EMIL products NP3-965-ER (60-Day SCED Disclosure: the ESR file's submitted curves, base points, limits, state of charge and AS awards), NP3-966-ER (60-Day DAM Disclosure: the ESR Data file's energy and AS awards and the AS clearing prices), the real-time hub and resource node prices and the DAM settlement point prices. Built by the data update workflow from the days already loaded; the 60-day reports run about two months behind.</p>
   <p>Made by <a href="https://currenttech.energy">currenttech.energy</a> · <a href="contact.html">Contact</a></p>
   <p>Not affiliated with or endorsed by ERCOT. ERCOT is a registered trademark of the Electric Reliability Council of Texas, Inc.</p>
   <p>© 2026 CurrentTech Energy. All rights reserved. For information only; not trading or investment advice. <a href="terms.html">Terms and privacy</a></p>

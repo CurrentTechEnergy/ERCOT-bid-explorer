@@ -72,6 +72,7 @@ from .models.peaker_rt import build_peaker_rt
 from .events import build_events
 from .series import build_series
 from .storage import build_storage
+from .battery_bench import build_battery_bench
 from .unit_index import build_unit_index
 from . import share_pages
 from . import memo, qse
@@ -551,6 +552,7 @@ def main(argv=None):
         build_offtakers(index)
         build_series(index)
         build_storage(index)
+        build_battery_bench(index)     # after series (node prices) and storage
         build_forecast(index)
         build_cutoff_history(index)
         build_operator_days(index)
@@ -646,6 +648,7 @@ def main(argv=None):
     build_offtakers(index)
     build_series(index)
     build_storage(index)
+    build_battery_bench(index)     # after series (node prices) and storage
     if "forecast" not in args.skip:
         build_forecast(index)
     build_cutoff_history(index)

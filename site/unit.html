@@ -243,11 +243,16 @@
     <div class="panel-head">
       <div>
         <h2>Across days <span class="h-note" id="batt-days-note"></span></h2>
-        <p class="note">Energy charged and discharged each day against its day-ahead awards, and its offer prices each day: the price where its charging stops, averaged over HE 10 to 16, and the lowest price at which it offered discharge in any hour. Batteries rebid all the time, so read the trend, not a single day. Click a day to show it above.</p>
+        <p class="note">What the battery earned each day against a perfect battery of the same size that knew the day's real-time prices at its node in advance, how many full cycles it ran, and the average prices it charged and discharged at against the perfect battery's. Click a day to show it above.</p>
+        <details class="how"><summary>How it's built</summary><p class="note"><b>Energy earned</b> is two-settlement: its day-ahead award at the day-ahead price at its node, plus output less the award at the real-time node price, hourly. <b>Day-ahead AS earned</b> is each day-ahead AS award at the day-ahead clearing price. The <b>perfect battery</b> has the same MW and usable state of charge range, its own round-trip efficiency (fitted from how its state of charge moves), the MW it actually held for AS taken out of its limits, the day's actual starting state of charge and at least its actual ending one, and at most one full cycle a day, scheduled against that day's hourly real-time node prices known in advance. Single days swing widely, so the 7-day line sums both over the week first. <b>Full cycles</b> is the energy it discharged over its usable range. <b>Charged at</b> and <b>discharged at</b> are MWh-weighted real-time node prices, with the perfect battery's dashed.</p></details>
       </div>
     </div>
-    <div class="legend legend-static" id="batt-mwh-legend"></div>
-    <div class="chart" id="batt-mwh-chart"></div>
+    <div class="legend legend-static" id="batt-value-legend"></div>
+    <div class="chart" id="batt-value-chart"></div>
+    <div class="legend legend-static" id="batt-capture-legend"></div>
+    <div class="chart chart-short" id="batt-capture-chart"></div>
+    <div class="legend legend-static" id="batt-cycles-legend"></div>
+    <div class="chart chart-short" id="batt-cycles-chart"></div>
     <div class="legend legend-static" id="batt-price-legend"></div>
     <div class="chart chart-short" id="batt-price-chart"></div>
   </section>
