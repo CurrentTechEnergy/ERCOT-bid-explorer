@@ -257,6 +257,12 @@ details.dl > summary:hover { color: var(--ink); border-color: var(--muted); }
 .rows .bar i.act { width: 3px; background: var(--surface); border-inline: 1px solid var(--ink); }
 .rows .val { font: 12px var(--font-data); color: var(--ink-2); white-space: nowrap; text-align: right; }
 .rows .val b { color: var(--ink); font-weight: 500; }
+.mults { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 18px 24px; }
+.mult h3 { font-size: 13.5px; font-weight: 500; margin: 0; display: flex; align-items: center; gap: 7px; }
+.mult h3 .sw { width: 10px; height: 10px; flex: none; }
+.mult .sub { font: 11.5px var(--font-data); color: var(--muted); margin: 2px 0 2px; }
+.mult svg { display: block; width: 100%; height: auto; }
+.price-band-sw { background: var(--band); }
 .rows .sect { grid-column: 1 / -1; font-size: 11px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); padding-top: 6px; }
 @media (max-width: 480px) { .rows { grid-template-columns: minmax(0, 1fr); row-gap: 4px; } .rows .val { text-align: left; white-space: normal; margin-bottom: 6px; } }
 .sw-act { width: 3px; height: 10px; border-radius: 0; background: var(--surface); border-inline: 1px solid var(--ink); margin-inline: 4px; }

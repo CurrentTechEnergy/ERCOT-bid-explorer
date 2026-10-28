@@ -96,15 +96,26 @@
         <h2>What ran, over the day <span class="h-note" id="actual-bars-note"></span></h2>
         <p class="note" id="actual-bars-sub"></p>
       </div>
-      <div class="panel-tools">
-        <div class="seg seg-sm" id="unit-a" role="radiogroup" aria-label="Unit">
-          <button type="button" data-v="gw" role="radio">Power, GW</button>
-          <button type="button" data-v="gwh" role="radio">Energy, GWh over the day</button>
-        </div>
-      </div>
     </div>
     <div class="legend legend-static" id="actual-bar-legend"></div>
     <div class="rows" id="actual-rows" data-csv></div>
+  </section>
+
+  <section class="panel panel-wide" id="limits-panel" hidden>
+    <div class="panel-head">
+      <div>
+        <h2>Online minimum and maximum, by hour <span class="h-note" id="limits-note"></span></h2>
+        <p class="note">For the units online in each hour: the solid bar is their summed minimum (LSL), the light bar runs up to their summed maximum (HSL), both from SCED, and the dark line is what they ran. Wind and solar show HSL only. Shaded hours had system lambda at $10 or less. Each chart has its own scale; click an hour to pick it below.</p>
+      </div>
+      <div class="panel-tools">
+        <div class="seg seg-sm" id="lim-by" role="radiogroup" aria-label="Group by">
+          <button type="button" data-v="group" role="radio">By how often it turns off</button>
+          <button type="button" data-v="tech" role="radio">By technology</button>
+        </div>
+      </div>
+    </div>
+    <div class="legend legend-static"><span><span class="sw" style="background:var(--g3)"></span>Online LSL</span><span><span class="sw" style="background:var(--g3);opacity:.3"></span>Online HSL</span><span><span class="sw" style="background:var(--ink);height:3px"></span>What ran</span><span><span class="sw price-band-sw"></span>Lambda $10 or less</span></div>
+    <div class="mults" id="limits-grid" data-csv></div>
   </section>
 
   <section class="panel panel-wide" id="detail-head">

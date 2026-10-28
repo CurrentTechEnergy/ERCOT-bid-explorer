@@ -53,7 +53,7 @@ const PAGE_ROWS = 150;
 const S = {
   index: null, dalam: null, groups: null, days: [],
   date: null, gen: null, units60: null, prices: null, a60: null,
-  unit: "gw", hour: 12, unitView: "day", unitTech: "all", unitSearch: "", unitSort: { key: "hsl", dir: -1 }, unitShowAll: false,
+  limBy: "group", hour: 12, unitView: "day", unitTech: "all", unitSearch: "", unitSort: { key: "hsl", dir: -1 }, unitShowAll: false,
   hidden: new Set(),
 };
 
@@ -121,8 +121,9 @@ function actual60() {
   const ci = Object.fromEntries(f.columns.map((c, i) => [c, i + 2]));
   const zero = () => HRS.map(() => 0);
   const byG = {}, byT = {}, byC = {}, capG = {}, capT = {}, dis = zero(), chg = zero();
-  // online LSL and HSL over the day (MWh: MW summed over the hours online), by group and technology
+  // online LSL and HSL hour by hour (MW summed over the units online), by group and technology
   const lslG = {}, hslG = {}, lslT = {}, hslT = {};
+  const add = (o, k, h, v) => ((o[k] = o[k] || zero())[h] += v || 0);
   // per train and hour: online (any configuration online at least half the hour's runs), output, HSL, LSL
   const units = {};
   f.rows.forEach((r) => {
@@ -131,23 +132,26 @@ function actual60() {
     (byT[t] = byT[t] || zero())[h] += out;
     if (t === "storage") (out >= 0 ? dis : chg)[h] += out;
     const online = (r[ci.online_share] || 0) >= 0.5;
-    if (online && t !== "storage") { lslT[t] = (lslT[t] || 0) + (r[ci.lsl] || 0); hslT[t] = (hslT[t] || 0) + (r[ci.hsl] || 0); }
+    if (online && t !== "storage") { add(lslT, t, h, r[ci.lsl]); add(hslT, t, h, r[ci.hsl]); }
     if (!THERMAL.has(t)) return;
     const name = trainOf(name0, t), g = t === "nuclear" ? "never" : groupOf(name);
     (byG[g] = byG[g] || zero())[h] += out;
     const c = catOf(t, g);
     (byC[c] = byC[c] || zero())[h] += out;
     const u = units[name] || (units[name] = { unit: name, tech: t, group: g, on: zero(), out: zero(), hsl: zero(), lsl: zero() });
-    if (online) { lslG[g] = (lslG[g] || 0) + (r[ci.lsl] || 0); hslG[g] = (hslG[g] || 0) + (r[ci.hsl] || 0); }
+    if (online) { add(lslG, g, h, r[ci.lsl]); add(hslG, g, h, r[ci.hsl]); }
     if (online) { u.on[h] = 1; u.lsl[h] += r[ci.lsl] || 0; }
     u.out[h] += out; u.hsl[h] += r[ci.hsl] || 0;
   });
-  // capacity: each train's largest hourly HSL over the day, summed by group and technology
+  // capacity: each train's largest hourly HSL over the day, summed by group and technology; and
+  // the thermal trains online in each hour
+  const onG = {}, onT = {};
   Object.values(units).forEach((u) => {
     u.hslMax = d3.max(u.hsl); u.lslMax = d3.max(u.lsl); u.online_h = d3.sum(u.on); u.mwh = d3.sum(u.out);
     capG[u.group] = (capG[u.group] || 0) + u.hslMax; capT[u.tech] = (capT[u.tech] || 0) + u.hslMax;
+    HRS.forEach((h) => { add(onG, u.group, h, u.on[h]); add(onT, u.tech, h, u.on[h]); });
   });
-  return { group: byG, tech: byT, cat: byC, capG, capT, lslG, hslG, lslT, hslT, dis, chg, units };
+  return { group: byG, tech: byT, cat: byC, capG, capT, lslG, hslG, lslT, hslT, onG, onT, dis, chg, units };
 }
 
 // ---------------------------------------------------------------- headline ---
@@ -306,62 +310,119 @@ function drawActual() {
     ? "Each unit's output from the 60-day disclosure, thermal units summed by how often they turn off on price. Batteries are drawn on top while discharging and below zero while charging. Shaded hours had system lambda at $10 or less."
     : `ERCOT's 2-day generation summary: thermal in total, wind, solar and batteries. Unit detail arrives with the 60-day disclosure, about ${dayLabel(addDays(S.date, LAG_60D))}. Shaded hours had system lambda at $10 or less.`;
 }
-// what ran over the day, as bars: the bar is what ran, the full bar the group's capacity
-function actRow(name, note, color, cap, act, tip, lim) {
-  const gwh = S.unit === "gwh", f = d3.format(gwh ? ",.0f" : ",.1f"), u = gwh ? "GWh" : "GW";
-  const v = (x) => (x == null ? null : gwh ? x : x / 24);   // GWh over the day -> GW on average
-  const capG = cap ? cap * 24 / 1000 : Math.max(act || 0, lim && lim.hsl ? lim.hsl / 1000 : 0, 1) * 1.1;   // full bar: capacity over the day, else a little above what ran or could
-  const pct = (x) => (x == null ? null : Math.min(100, (x / capG) * 100));
+// what ran over the day, as GWh bars: the bar is what ran, the full bar the units' largest hourly
+// HSL over all 24 hours; rows without a capacity share `scale` (GWh) with the rest of their section
+function actRow(name, note, color, cap, act, tip, scale) {
+  const capG = cap ? cap * 24 / 1000 : scale || Math.max(act || 0, 1) * 1.1;
+  const pct = Math.min(100, ((act || 0) / capG) * 100);
   return `<div class="lab"><span class="sw" style="background:var(${color})"></span><div>${esc(name)}<small>${esc(note)}</small></div></div>` +
     `<div class="bar" data-tip-html="${esc(`<h4>${esc(name)}</h4><p class="tip-body">${tip}</p>`)}">` +
-    (lim && lim.hsl != null ? `<i style="left:0;width:${pct(lim.hsl / 1000)}%;background:var(${color});opacity:.3"></i>` : "") +
-    (act != null ? `<i style="left:0;width:${pct(act)}%;background:var(${color})"></i>` : "") +
-    (lim && lim.lsl ? `<i class="tick" style="left:calc(${pct(lim.lsl / 1000)}% - 1.5px)"></i>` : "") + `</div>` +
-    `<div class="val"><b>${act != null ? f(v(act)) + " " + u : "–"}</b> ran` + (cap ? `<br>of ${f(gwh ? capG : cap / 1000)} ${u} max` : "") + `</div>`;
+    (act != null ? `<i style="left:0;width:${pct}%;background:var(${color})"></i>` : "") + `</div>` +
+    `<div class="val"><b>${act != null ? d3.format(",.1f")(act) + " GWh" : "–"}</b>` + (cap ? ` of ${d3.format(",.0f")(capG)}` : "") + `</div>`;
 }
+// "x–y units online" over the day's hours, for a group's or technology's trains online
+const onRange = (on) => { if (!on) return ""; const a = d3.min(on), b = d3.max(on); return `${a === b ? a : `${a}–${b}`} unit${b === 1 ? "" : "s"} online`; };
 function drawActualBars() {
   const panel = $("actual-bars-panel"), el = $("actual-rows"), L = lead();
   panel.hidden = !L;
   if (!L) return;
-  const gwh = S.unit === "gwh", unit = gwh ? "GWh over the day" : "GW on average";
   $("actual-bar-legend").innerHTML = `<span><span class="sw" style="background:var(--g3)"></span>What ran</span>` +
-    (L === "60d" ? `<span><span class="sw" style="background:var(--g3);opacity:.3"></span>Online units' maximum (HSL)</span><span><span class="sw" style="background:var(--ink);width:3px"></span>Online units' minimum (LSL)</span>` : "") +
-    `<span><span class="sw" style="background:var(--track)"></span>Up to the units' largest maximum</span>`;
-  $("actual-bars-sub").textContent = L === "60d" ? "ERCOT's reported energy. The solid bar is what ran; the light bar is the most the units online could have run (their HSL, from SCED), and the black tick the least they could run while online (their LSL). The full bar is the units' largest hourly HSL over the day, online or not." : "ERCOT's reported energy, from the 2-day summary. Thermal is reported in total until the 60-day disclosure.";
-  const csv = [], gwhOf = (mw) => d3.sum(mw.filter((v) => v != null)) / 1000;
+    (L === "60d" ? `<span><span class="sw" style="background:var(--track)"></span>Units' largest hourly HSL × 24 hours</span>` : "");
+  $("actual-bars-sub").textContent = L === "60d" ? "ERCOT's reported energy for the day. The solid bar is what ran; the full bar is what the units could have made at their largest hourly maximum (HSL) for all 24 hours. Online minimum and maximum hour by hour are in the next panel." : "ERCOT's reported energy, from the 2-day summary. Thermal is reported in total until the 60-day disclosure.";
+  const csv = [], gwhOf = (mw) => d3.sum(mw.filter((v) => v != null)) / 1000, sumOf = (a) => (a ? d3.sum(a) / 1000 : null);
   let html = "";
-  const push = (sect, name, note, color, cap, act, lim) => {
-    const tip = `${act != null ? `${fmtGWh(act)} GWh ran (${fmtGW(act / 24 * 1000)} GW on average)` : "no data"}${cap ? `; ${fmtGW(cap)} GW maximum` : ""}` +
-      (lim ? `<br>Units online: ${lim.lsl != null ? `${fmtGWh(lim.lsl / 1000)} GWh at their minimum (LSL), ` : ""}${fmtGWh(lim.hsl / 1000)} GWh at their maximum (HSL), from SCED` : "");
-    html += actRow(name, note, color, cap, act, tip, lim); csv.push([sect, name, cap, act, lim ? lim.lsl / 1000 : null, lim ? lim.hsl / 1000 : null]);
+  const push = (sect, name, note, color, cap, act, lsl, hsl, scale) => {
+    const tip = `${act != null ? `${fmtGWh(act)} GWh ran (${fmtGW(act / 24 * 1000)} GW on average)` : "no data"}${cap ? `; ${fmtGWh(cap * 24 / 1000)} GWh at the units' largest hourly HSL all day` : ""}`;
+    html += actRow(name, note, color, cap, act, tip, scale); csv.push([sect, name, cap, act, lsl, hsl]);
   };
-  const limG = (g) => (S.a60 && S.a60.hslG[g] != null ? { lsl: S.a60.lslG[g], hsl: S.a60.hslG[g] } : null);
-  const limT = (t) => (S.a60 && S.a60.hslT[t] != null ? { lsl: S.a60.lslT[t], hsl: S.a60.hslT[t] } : null);
   const a60 = S.a60, gh = genHourly();
   if (L === "60d") {
-    html += `<div class="sect">Thermal · ${unit} · by how often it turns off on price (60-day disclosure)</div>`;
-    GROUPS.forEach((g) => { if (a60.group[g]) push("group", GROUP_SHORT[g] || g, GROUP_NOTES[g] || "", GROUP_COLORS[g] || "--c-other", a60.capG[g], gwhOf(a60.group[g]), limG(g)); });
-    html += `<div class="sect">Thermal · ${unit} · by technology</div>`;
-    TECHS.forEach(([t, label, color]) => { if (a60.tech[t]) push("tech", label, "", color, a60.capT[t], gwhOf(a60.tech[t]), limT(t)); });
+    html += `<div class="sect">Thermal · GWh · by how often it turns off on price (60-day disclosure)</div>`;
+    GROUPS.forEach((g) => { if (a60.group[g]) push("group", GROUP_SHORT[g] || g, onRange(a60.onG[g]), GROUP_COLORS[g] || "--c-other", a60.capG[g], gwhOf(a60.group[g]), sumOf(a60.lslG[g]), sumOf(a60.hslG[g])); });
+    html += `<div class="sect">Thermal · GWh · by technology</div>`;
+    TECHS.forEach(([t, label, color]) => { if (a60.tech[t]) push("tech", label, onRange(a60.onT[t]), color, a60.capT[t], gwhOf(a60.tech[t]), sumOf(a60.lslT[t]), sumOf(a60.hslT[t])); });
   } else {
-    html += `<div class="sect">Thermal · ${unit} (2-day summary, reported in total)</div>`;
-    push("thermal", "Thermal and other", "non-IRR plus remaining resources; by-group output arrives with the 60-day disclosure", "--g3", null, gwhOf(gh.thermal));
+    html += `<div class="sect">Thermal · GWh (2-day summary, reported in total)</div>`;
+    const th = gwhOf(gh.thermal);
+    push("thermal", "Thermal and other", "non-IRR plus remaining resources; by-group output arrives with the 60-day disclosure", "--g3", null, th, null, null, th * 1.1);
   }
-  html += `<div class="sect">Wind and solar · ${unit} (${a60 ? "60-day disclosure" : "2-day summary"})</div>`;
-  [WIND, SOLAR].forEach((s) => {
-    const vals = a60 && a60.tech[s.id] ? a60.tech[s.id] : gh ? gh[s.id] : null;
-    push(s.id, s.label, "", s.color, null, vals ? gwhOf(vals) : null, a60 && limT(s.id) ? { ...limT(s.id), lsl: null } : null);   // wind and solar: no minimum to mark
-  });
+  html += `<div class="sect">Wind and solar · GWh (${a60 ? "60-day disclosure" : "2-day summary"})</div>`;
+  const ren = [WIND, SOLAR].map((s) => { const vals = a60 && a60.tech[s.id] ? a60.tech[s.id] : gh ? gh[s.id] : null; return [s, vals ? gwhOf(vals) : null]; });
+  const renScale = (d3.max(ren, ([, v]) => v) || 1) * 1.1;
+  ren.forEach(([s, v]) => push(s.id, s.label, "", s.color, null, v, null, a60 ? sumOf(a60.hslT[s.id]) : null, renScale));
   const dis = a60 && a60.tech.storage ? gwhOf(a60.dis) : gh && gh.discharging.some((v) => v != null) ? gwhOf(gh.discharging) : null;
   const chg = a60 && a60.tech.storage ? -gwhOf(a60.chg) : gh && gh.charging.some((v) => v != null) ? -gwhOf(gh.charging) : null;
   if (dis != null) {
-    html += `<div class="sect">Batteries · ${unit} (${a60 ? "60-day disclosure" : "2-day summary"})</div>`;
-    push("storage", "Discharged", "supply", STORAGE.color, null, dis);
-    push("storage", "Charged", "load", STORAGE.color, null, chg);
+    html += `<div class="sect">Batteries · GWh (${a60 ? "60-day disclosure" : "2-day summary"})</div>`;
+    const batScale = Math.max(dis, chg || 0, 0.1) * 1.1;
+    push("storage", "Discharged", "supply", STORAGE.color, null, dis, null, null, batScale);
+    push("storage", "Charged", "load", STORAGE.color, null, chg, null, null, batScale);
   }
   el.innerHTML = html;
-  $("actual-bars-note").textContent = `${S.date} · ${L === "60d" ? "60-day disclosure" : "2-day summary"}`;
+  $("actual-bars-note").textContent = `${S.date} · GWh · ${L === "60d" ? "60-day disclosure" : "2-day summary"}`;
   setCSV(el, ["section", "name", "cap_mw", "actual_gwh", "online_lsl_gwh", "online_hsl_gwh"], csv, `What ran ${S.date}`);
+}
+// online minimum and maximum by hour: one small chart per group or technology, with the online
+// units' summed LSL as a solid bar, their summed HSL as a light bar above it, and what ran as a line
+function limitSeries() {
+  const a = S.a60;
+  if (!a) return [];
+  if (S.limBy === "tech") return [
+    ...TECHS.filter(([t]) => a.tech[t]).map(([t, label, color]) => ({ id: t, label, color, out: a.tech[t], lsl: a.lslT[t], hsl: a.hslT[t], on: a.onT[t] })),
+    ...[WIND, SOLAR].filter((s) => a.tech[s.id]).map((s) => ({ id: s.id, label: s.label, color: s.color, out: a.tech[s.id], lsl: null, hsl: a.hslT[s.id], on: null })),
+  ];
+  return GROUPS.filter((g) => a.group[g] && a.hslG[g]).map((g) => ({ id: g, label: GROUP_SHORT[g] || g, color: GROUP_COLORS[g] || "--c-other", out: a.group[g], lsl: a.lslG[g], hsl: a.hslG[g], on: a.onG[g] }));
+}
+function limitChart(s, w0) {
+  const zero = HRS.map(() => 0), lsl = s.lsl || zero, hsl = s.hsl || zero;
+  const wrap = document.createElement("div"); wrap.className = "mult";
+  const fmtMW = d3.format(",.0f"), rng = (a) => `${fmtMW(d3.min(a))}–${fmtMW(d3.max(a))} MW`;
+  wrap.innerHTML = `<h3><span class="sw" style="background:var(${s.color})"></span>${esc(s.label)}</h3>` +
+    `<p class="sub">${s.lsl ? `${onRange(s.on)} · LSL ${rng(lsl)}` : `${fmtGWh(d3.sum(s.out) / 1000)} GWh ran · online HSL ${rng(hsl)}`}</p>`;
+  const w = Math.max(240, w0 || 320), Hh = 170, m = { t: 8, r: 6, b: 24, l: 40 };
+  const x = d3.scaleBand().domain(HRS).range([m.l, w - m.r]).paddingInner(0.12);
+  const y = d3.scaleLinear().domain([0, d3.max([...hsl, ...s.out]) * 1.04 || 1]).nice().range([Hh - m.b, m.t]);
+  const svg = d3.create("svg").attr("viewBox", `0 0 ${w} ${Hh}`).attr("role", "img").attr("aria-label", `${s.label}: online minimum, maximum and output by hour`);
+  const { ref } = dayPrices();
+  cheapRuns().forEach((r) => svg.append("rect").attr("class", "price-band").attr("x", x(r.from) - 1).attr("width", x(r.to) + x.bandwidth() - x(r.from) + 2).attr("y", m.t).attr("height", Hh - m.t - m.b));
+  svg.append("g").attr("class", "gridline").attr("transform", `translate(${m.l},0)`).call(d3.axisLeft(y).ticks(4).tickSize(-(w - m.l - m.r)).tickFormat(""));
+  svg.append("g").attr("class", "axis").attr("transform", `translate(${m.l},0)`).call(d3.axisLeft(y).ticks(4).tickFormat((v) => (v >= 1000 ? d3.format(",")(v / 1000) + "k" : v)).tickSizeOuter(0));
+  svg.append("g").attr("class", "axis").attr("transform", `translate(0,${Hh - m.b})`).call(d3.axisBottom(x).tickValues([0, 5, 11, 17, 23]).tickFormat((h) => h + 1).tickSizeOuter(0));
+  const col = css(s.color), bw = x.bandwidth();
+  HRS.forEach((h) => {
+    svg.append("rect").attr("x", x(h)).attr("width", bw).attr("y", y(hsl[h])).attr("height", y(0) - y(hsl[h])).attr("fill", col).attr("fill-opacity", 0.28).attr("stroke", col).attr("stroke-opacity", 0.7).attr("stroke-width", 0.75);
+    if (s.lsl) {
+      svg.append("rect").attr("x", x(h)).attr("width", bw).attr("y", y(lsl[h])).attr("height", y(0) - y(lsl[h])).attr("fill", col);
+      if (lsl[h] > 0) svg.append("line").attr("x1", x(h)).attr("x2", x(h) + bw).attr("y1", y(lsl[h])).attr("y2", y(lsl[h])).attr("stroke", css("--ink")).attr("stroke-width", 1.25);
+    }
+  });
+  svg.append("path").attr("fill", "none").attr("stroke", css("--ink")).attr("stroke-width", 2).attr("stroke-linejoin", "round")
+    .attr("d", d3.line().x((h) => x(h) + bw / 2).y((h) => y(s.out[h] || 0))(HRS));
+  svg.append("rect").attr("x", m.l).attr("y", m.t).attr("width", w - m.l - m.r).attr("height", Hh - m.t - m.b).attr("fill", "transparent").style("cursor", "pointer")
+    .on("pointermove", (ev) => {
+      const h = Math.max(0, Math.min(23, Math.floor((d3.pointer(ev)[0] - m.l) / x.step())));
+      const row = (l, v) => `<tr><td>${l}</td><td class="n">${v}</td></tr>`;
+      showTip(ev, `<h4>${esc(s.label)} · ${heLabel(h)} · lambda ${ref ? fmtPrice(ref[h]) : "–"}</h4><table>` +
+        (s.lsl ? row("Units online", s.on[h]) + row("Online LSL", `${fmtMW(lsl[h])} MW`) : "") + row("Online HSL", `${fmtMW(hsl[h])} MW`) +
+        row("What ran", `${fmtMW(s.out[h] || 0)} MW`) + (s.lsl ? row("Above LSL", `${fmtMW((s.out[h] || 0) - lsl[h])} MW`) : "") + `</table>`);
+    }).on("pointerleave", hideTip)
+    .on("click", (ev) => pickHour(Math.floor((d3.pointer(ev)[0] - m.l) / x.step())));
+  wrap.append(svg.node());
+  return wrap;
+}
+function drawLimits() {
+  const panel = $("limits-panel"), el = $("limits-grid");
+  panel.hidden = !S.a60;
+  if (!S.a60) return;
+  const series = limitSeries();
+  // draw once to lay out the grid, then again at each cell's width
+  el.replaceChildren(...series.map((s) => limitChart(s)));
+  const cells = [...el.querySelectorAll(".mult")];
+  el.replaceChildren(...series.map((s, i) => limitChart(s, cells[i].clientWidth)));
+  $("limits-note").textContent = `${S.date} · MW · hour ending · 60-day disclosure`;
+  const csv = [];
+  series.forEach((s) => HRS.forEach((h) => csv.push([S.limBy, s.id, h + 1, s.on ? s.on[h] : null, s.lsl ? s.lsl[h] : null, s.hsl ? s.hsl[h] : null, s.out[h] || 0])));
+  setCSV(el, ["by", "name", "hour_ending", "units_online", "online_lsl_mw", "online_hsl_mw", "output_mw"], csv, `Online minimum and maximum ${S.date}`);
 }
 
 // ---------------------------------------------------------------- drill-down: mix ---
@@ -496,7 +557,7 @@ function render() {
   $("date-prev").disabled = di <= 0;
   $("date-next").disabled = di < 0 || di >= days.length - 1;
   $("hour-out").textContent = `${heLabel(S.hour)} · ${String(S.hour).padStart(2, "0")}:00–${String(S.hour + 1).padStart(2, "0")}:00`;
-  drawSource(); drawHeadline(); drawSpark(); drawActual(); drawActualBars(); drawMix(); drawUnits(); drawOffersLinks();
+  drawSource(); drawHeadline(); drawSpark(); drawActual(); drawActualBars(); drawLimits(); drawMix(); drawUnits(); drawOffersLinks();
   saveView();
 }
 // a click on an hourly chart picks the hour for the generation mix and the units table
@@ -521,12 +582,12 @@ async function loadDay() {
   S.unitShowAll = false;
 }
 async function changeDay() { await loadDay(); render(); }
-function saveView() { window.CX.writeHash({ date: S.date, he: S.hour + 1, unit: S.unit, uv: S.unitView }); }
+function saveView() { window.CX.writeHash({ date: S.date, he: S.hour + 1, lb: S.limBy, uv: S.unitView }); }
 function loadView() {
   const v = window.CX.readHash();
   if (v.date) S.date = v.date;
   if (v.he && +v.he >= 1 && +v.he <= 24) S.hour = +v.he - 1;
-  if (["gw", "gwh"].includes(v.unit)) S.unit = v.unit;
+  if (["group", "tech"].includes(v.lb)) S.limBy = v.lb;
   if (["day", "hour"].includes(v.uv)) S.unitView = v.uv;
 }
 
@@ -546,8 +607,8 @@ async function boot() {
   $("unit-tech").innerHTML = `<option value="all">All</option>` + TECHS.map(([id, l]) => `<option value="${id}">${l}</option>`).join("");
   $("unit-tech").value = S.unitTech;
   $("hour").value = S.hour;
-  setSeg("unit-a", S.unit); setSeg("unit-view", S.unitView);
-  bindSeg("unit-a", "unit", drawActualBars);
+  setSeg("lim-by", S.limBy); setSeg("unit-view", S.unitView);
+  bindSeg("lim-by", "limBy", drawLimits);
   bindSeg("unit-view", "unitView", () => { S.unitShowAll = false; drawUnits(); });
   $("date").onchange = async (e) => { S.date = e.target.value; await changeDay(); };
   const stepDay = async (dir) => { const i = days.indexOf(S.date) + dir; if (i < 0 || i >= days.length) return; S.date = days[i]; $("date").value = S.date; await changeDay(); };
