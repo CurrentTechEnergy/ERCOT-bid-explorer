@@ -136,7 +136,7 @@ function actual60() {
   const lslG = {}, hslG = {}, lslT = {}, hslT = {};
   const add = (o, k, h, v) => ((o[k] = o[k] || zero())[h] += v || 0);
   // wind and solar: each unit's largest hourly HSL over the day
-  const renMax = {};
+  const renMax = {}, onT = {};
   // per train and hour: online (any configuration online at least half the hour's runs), output, HSL, LSL
   const units = {};
   f.rows.forEach((r) => {
@@ -146,7 +146,10 @@ function actual60() {
     if (t === "storage") (out >= 0 ? dis : chg)[h] += out;
     const online = (r[ci.online_share] || 0) >= 0.5;
     if (online && t !== "storage") { add(lslT, t, h, r[ci.lsl]); add(hslT, t, h, r[ci.hsl]); }
-    if (t === "wind" || t === "solar") { const m = renMax[t] = renMax[t] || {}; m[name0] = Math.max(m[name0] || 0, r[ci.hsl] || 0); }
+    if (t === "wind" || t === "solar") {
+      const m = renMax[t] = renMax[t] || {}; m[name0] = Math.max(m[name0] || 0, r[ci.hsl] || 0);
+      if (out > 0) add(onT, t, h, 1);    // wind and solar: a unit counts as running in an hour with output
+    }
     if (!THERMAL.has(t)) return;
     const name = trainOf(name0, t), g = t === "nuclear" ? "never" : groupOf(name);
     const c = catOf(t, g);
@@ -162,14 +165,26 @@ function actual60() {
   // capacity: each train's largest hourly HSL over the day, summed by group and technology (wind
   // and solar likewise, by unit); and
   // the thermal trains online in each hour
-  const onG = {}, onT = {};
+  const onG = {};
   Object.values(units).forEach((u) => {
     u.hslMax = d3.max(u.hsl); u.lslMax = d3.max(u.lsl); u.online_h = d3.sum(u.on); u.mwh = d3.sum(u.out);
     capG[u.gk] = (capG[u.gk] || 0) + u.hslMax; capT[u.tech] = (capT[u.tech] || 0) + u.hslMax;
     HRS.forEach((h) => { add(onG, u.gk, h, u.on[h]); add(onT, u.tech, h, u.on[h]); });
   });
   Object.entries(renMax).forEach(([t, m]) => (capT[t] = d3.sum(Object.values(m))));
-  return { group: byG, tech: byT, cat: byC, capG, capT, lslG, hslG, lslT, hslT, onG, onT, dis, chg, units };
+  // how many units each group and technology has, for "x of n units online": every grouped thermal
+  // unit or train but the never-on ones, plus any seen in the day that has no group yet (nuclear);
+  // wind and solar, every unit in the day's file
+  const setG = {}, setT = {}, put = (o, k, n) => (o[k] = o[k] || new Set()).add(n);
+  Object.entries((S.groups && S.groups.units) || {}).forEach(([n, v]) => {
+    const [t, g] = v;
+    if (g === "never_on") return;
+    put(setG, catOf(t, g) === "peakers" ? "peakers" : g, n); put(setT, t, n);
+  });
+  Object.values(units).forEach((u) => { put(setG, u.gk, u.unit); put(setT, u.tech, u.unit); });
+  Object.keys(renMax).forEach((t) => Object.keys(renMax[t]).forEach((n) => put(setT, t, n)));
+  const count = (o) => Object.fromEntries(Object.entries(o).map(([k, v]) => [k, v.size]));
+  return { group: byG, tech: byT, cat: byC, capG, capT, lslG, hslG, lslT, hslT, onG, onT, nG: count(setG), nT: count(setT), dis, chg, units };
 }
 
 // ---------------------------------------------------------------- headline ---
@@ -346,7 +361,7 @@ function actRow(name, note, color, max, act, tip, scale, avail) {
     (avail != null ? `, ${d3.format(",.1f")(Math.max(0, avail - (act || 0)))} curtailed` : "") + (max ? `<br>of ${d3.format(",.0f")(max)} GWh max` : "") + `</div>`;
 }
 // "x–y units online" over the day's hours, for a group's or technology's trains online
-const onRange = (on) => { if (!on) return ""; const a = d3.min(on), b = d3.max(on); return `${a === b ? a : `${a}–${b}`} unit${b === 1 ? "" : "s"} online`; };
+const onRange = (on, n) => { if (!on) return ""; const a = d3.min(on), b = d3.max(on); return `${a === b ? a : `${a}–${b}`}${n ? ` of ${n}` : ""} unit${(n || b) === 1 ? "" : "s"} online`; };
 function drawActualBars() {
   const panel = $("actual-bars-panel"), el = $("actual-rows"), L = lead();
   panel.hidden = !L;
@@ -369,9 +384,9 @@ function drawActualBars() {
   const a60 = S.a60, gh = genHourly();
   if (L === "60d") {
     html += `<div class="sect">Thermal · GWh · by how often it turns off on price (60-day disclosure)</div>`;
-    GROUPS.forEach((g) => { if (a60.group[g]) push("group", GROUP_SHORT[g] || g, onRange(a60.onG[g]), GROUP_COLORS[g] || "--c-other", a60.capG[g], gwhOf(a60.group[g]), sumOf(a60.lslG[g]), sumOf(a60.hslG[g])); });
+    GROUPS.forEach((g) => { if (a60.group[g]) push("group", GROUP_SHORT[g] || g, onRange(a60.onG[g], a60.nG[g]), GROUP_COLORS[g] || "--c-other", a60.capG[g], gwhOf(a60.group[g]), sumOf(a60.lslG[g]), sumOf(a60.hslG[g])); });
     html += `<div class="sect">Thermal · GWh · by technology</div>`;
-    TECHS.forEach(([t, label, color]) => { if (a60.tech[t]) push("tech", label, onRange(a60.onT[t]), color, a60.capT[t], gwhOf(a60.tech[t]), sumOf(a60.lslT[t]), sumOf(a60.hslT[t])); });
+    TECHS.forEach(([t, label, color]) => { if (a60.tech[t]) push("tech", label, onRange(a60.onT[t], a60.nT[t]), color, a60.capT[t], gwhOf(a60.tech[t]), sumOf(a60.lslT[t]), sumOf(a60.hslT[t])); });
   } else {
     html += `<div class="sect">Thermal · GWh (2-day summary, reported in total)</div>`;
     const th = gwhOf(gh.thermal);
@@ -398,17 +413,17 @@ function drawActualBars() {
 function limitSeries() {
   const a = S.a60;
   if (!a) return [];
-  const renew = [WIND, SOLAR].filter((s) => a.tech[s.id]).map((s) => ({ id: s.id, label: s.label, color: s.color, out: a.tech[s.id], lsl: null, hsl: a.hslT[s.id], on: null }));
-  if (S.limBy === "tech") return [...TECHS.filter(([t]) => a.tech[t]).map(([t, label, color]) => ({ id: t, label, color, out: a.tech[t], lsl: a.lslT[t], hsl: a.hslT[t], on: a.onT[t] })), ...renew];
+  const renew = [WIND, SOLAR].filter((s) => a.tech[s.id]).map((s) => ({ id: s.id, label: s.label, color: s.color, out: a.tech[s.id], lsl: null, hsl: a.hslT[s.id], on: a.onT[s.id], n: a.nT[s.id] }));
+  if (S.limBy === "tech") return [...TECHS.filter(([t]) => a.tech[t]).map(([t, label, color]) => ({ id: t, label, color, out: a.tech[t], lsl: a.lslT[t], hsl: a.hslT[t], on: a.onT[t], n: a.nT[t] })), ...renew];
   // by group (peakers on their own), then wind and solar
-  return [...GROUPS.filter((g) => a.group[g] && a.hslG[g]).map((g) => ({ id: g, label: GROUP_SHORT[g] || g, color: GROUP_COLORS[g] || "--c-other", out: a.group[g], lsl: a.lslG[g], hsl: a.hslG[g], on: a.onG[g] })), ...renew];
+  return [...GROUPS.filter((g) => a.group[g] && a.hslG[g]).map((g) => ({ id: g, label: GROUP_SHORT[g] || g, color: GROUP_COLORS[g] || "--c-other", out: a.group[g], lsl: a.lslG[g], hsl: a.hslG[g], on: a.onG[g], n: a.nG[g] })), ...renew];
 }
 function limitChart(s, w0) {
   const zero = HRS.map(() => 0), lsl = s.lsl || zero, hsl = s.hsl || zero;
   const wrap = document.createElement("div"); wrap.className = "mult";
   const fmtMW = d3.format(",.0f"), rng = (a) => `${fmtMW(d3.min(a))}–${fmtMW(d3.max(a))} MW`;
   wrap.innerHTML = `<h3><span class="sw" style="background:var(${s.color})"></span>${esc(s.label)}</h3>` +
-    `<p class="sub">${s.lsl ? `${onRange(s.on)} · LSL ${rng(lsl)}` : `${fmtGWh(d3.sum(s.out) / 1000)} GWh ran · online HSL ${rng(hsl)}`}</p>`;
+    `<p class="sub">${s.lsl ? `${onRange(s.on, s.n)} · LSL ${rng(lsl)}` : `${onRange(s.on, s.n).replace("online", "producing")} · ${fmtGWh(d3.sum(s.out) / 1000)} GWh ran · online HSL ${rng(hsl)}`}</p>`;
   const w = Math.max(240, w0 || 320), Hh = 170, m = { t: 8, r: 6, b: 24, l: 40 };
   const x = d3.scaleBand().domain(HRS).range([m.l, w - m.r]).paddingInner(0.12);
   const y = d3.scaleLinear().domain([0, d3.max([...hsl, ...s.out]) * 1.04 || 1]).nice().range([Hh - m.b, m.t]);
@@ -433,7 +448,8 @@ function limitChart(s, w0) {
       const h = Math.max(0, Math.min(23, Math.floor((d3.pointer(ev)[0] - m.l) / x.step())));
       const row = (l, v) => `<tr><td>${l}</td><td class="n">${v}</td></tr>`;
       showTip(ev, `<h4>${esc(s.label)} · ${heLabel(h)} · lambda ${ref ? fmtPrice(ref[h]) : "–"}</h4><table>` +
-        (s.lsl ? row("Units online", s.on[h]) + row("Online LSL", `${fmtMW(lsl[h])} MW`) : "") + row("Online HSL", `${fmtMW(hsl[h])} MW`) +
+        (s.on ? row(s.lsl ? "Units online" : "Units producing", `${s.on[h] || 0}${s.n ? ` of ${s.n} (${d3.format(".0%")((s.on[h] || 0) / s.n)})` : ""}`) : "") +
+        (s.lsl ? row("Online LSL", `${fmtMW(lsl[h])} MW`) : "") + row("Online HSL", `${fmtMW(hsl[h])} MW`) +
         row("What ran", `${fmtMW(s.out[h] || 0)} MW`) + (s.lsl ? row("Above LSL", `${fmtMW((s.out[h] || 0) - lsl[h])} MW`) : "") + `</table>`);
     }).on("pointerleave", hideTip)
     .on("click", (ev) => pickHour(Math.floor((d3.pointer(ev)[0] - m.l) / x.step())));
