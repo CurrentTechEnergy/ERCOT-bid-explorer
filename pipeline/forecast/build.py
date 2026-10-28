@@ -47,8 +47,10 @@ data/forecast/<date>.json.gz
 
 Categories (one definition, used by the headline and the page): baseload = the always-on
 group (combustion turbines in it included) plus nuclear, the same units as the always-on group's
-capacity; price-sensitive = the seasonal, multi-day and daily groups, the never-on group and
-ungrouped thermal units; peakers = the other combustion turbines.
+capacity; peakers = the units pipeline/groups.py flags as peakers by how they run (online under
+its PEAKER_SHARE of available hours, at most PEAKER_RUN_H hours a day when on), whatever their
+technology; price-sensitive = the rest: the multi-day and daily groups' other units, the never-on
+group and ungrouped thermal units.  A label only: the models choose how each unit is predicted.
 """
 import datetime as dt
 
@@ -60,7 +62,7 @@ from ..models import MODELS, versions
 from . import context as C
 from . import stack as STACK
 from ..models import outage_pool
-from .groups import GROUPS as HISTORY_GROUPS, GROUP_LABELS as HISTORY_LABELS
+from .groups import GROUPS as HISTORY_GROUPS, GROUP_LABELS as HISTORY_LABELS, unit_peakers
 
 # the history groups (six timescales and never-on) plus one for thermal units with no hourly history yet (new units)
 GROUPS = HISTORY_GROUPS + ["ungrouped"]
@@ -77,15 +79,15 @@ ON_CALL = 0.5      # P(on) at or above which a unit-hour is called on for the bi
 RENEW_COLS = ["unit", "tech", "nameplate", "avail_mwh", "disp_mwh", "source", "offer", "model", "version"]
 CATEGORIES = {
     "baseload": "the always-on group plus nuclear",
-    "price_sensitive": "the seasonal, multi-day, daily and never-on groups (and thermal units with no group yet)",
-    "peakers": "combustion turbines outside the always-on group",
+    "price_sensitive": "the multi-day, daily and never-on groups' units that are not peakers (and thermal units with no group yet)",
+    "peakers": "units that run like peakers: online under 30% of available hours, at most 16 h a day when on",
 }
 
 
-def category(tech, group):
+def category(tech, group, peaker=False):
     if tech == "nuclear" or group == "never":
         return "baseload"
-    if tech == "combustion_turbine":
+    if peaker:
         return "peakers"
     return "price_sensitive"
 
@@ -126,6 +128,9 @@ def _rl(a, nd=1):
 
 def build_day(date, ctx: C.Context) -> dict:
     m = MODELS
+    if getattr(ctx, "_peakers", None) is None:
+        ctx._peakers = unit_peakers()       # the units pipeline/groups.py flags as peakers
+    pk = ctx._peakers
     commit = m["thermal_cutoff"].forecast(date, ctx)
     peak = m["peaker_share"].forecast(date, ctx)
     disp = m["thermal_dispatch"].forecast(date, ctx, commit, peak)
@@ -178,7 +183,7 @@ def build_day(date, ctx: C.Context) -> dict:
             agg["min_bin"] += min_bin; agg["exp_bin"] += exp_bin
             if state != "out":
                 agg["hsl"] += hsl
-        ck = category(row["tech"], g)
+        ck = category(row["tech"], g, key in pk)
         by_c[ck]["min"] += d["min"]; by_c[ck]["exp"] += d["exp"]
         by_c[ck]["min_bin"] += min_bin; by_c[ck]["exp_bin"] += exp_bin
         if state != "out":
@@ -200,7 +205,7 @@ def build_day(date, ctx: C.Context) -> dict:
         hs = [None if not any(v) else v for v in hs]       # a unit off all day carries nulls
         unit_hours[key] = hs + [None if d.get("price") is None else [round(float(v), 2) for v in d["price"]],
                                 [round(float(v)) for v in d["size"]]]
-    group_of = {k: "never" if r["tech"] == "nuclear" else (r["group"] or "ungrouped") for k, r in commit["rows"].items()}
+    group_of = {k: ("never" if r["tech"] == "nuclear" else (r["group"] or "ungrouped"), k in pk) for k, r in commit["rows"].items()}
     pool = (outage_pool.deduction(ctx, date, ctx.units(date), {k: (r["min"], r["exp"]) for k, r in disp["rows"].items()},
                                   group_of)
             if commit.get("outage_pool") else None)
@@ -211,10 +216,11 @@ def build_day(date, ctx: C.Context) -> dict:
         for t in C.THERMAL:
             if t in pool["min"]:
                 _deduct(by_t[t], pool["min"][t], pool["exp"][t])
-        for (t, g), mn in pool["pair"]["min"].items():
-            for agg in ((by_g[g] if g in by_g else None), by_c[category(t, g)]):
+        for (t, gp), mn in pool["pair"]["min"].items():
+            g, p = gp if isinstance(gp, tuple) else (gp, False)
+            for agg in ((by_g[g] if g in by_g else None), by_c[category(t, g, p)]):
                 if agg is not None:
-                    _deduct(agg, mn, pool["pair"]["exp"][(t, g)])
+                    _deduct(agg, mn, pool["pair"]["exp"][(t, gp)])
     fleet = blank()
     for t in C.THERMAL:
         for k in fleet:

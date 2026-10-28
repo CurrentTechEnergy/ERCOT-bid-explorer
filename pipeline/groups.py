@@ -8,8 +8,9 @@ Writes data/groups_60d.json.gz:
   groups            [[id, label, rule], ...] in display order (GROUPS)
   out_min_h         OUT_MIN_H
   never_on_days     NEVER_ON_DAYS
+  peaker            {share, run_h, min_h}: the run test below (PEAKER_SHARE, PEAKER_RUN_H, PEAKER_MIN_H)
   units: {unit or train: [tech, group, MW, shutdowns, shortest off spell h, p10 h, median h,
-                          configuration shown in Unit detail, 1 if it ran at all]}
+                          configuration shown in Unit detail, 1 if it ran at all, 1 if a peaker]}
     MW is the largest of its configurations' median HSL while running.
 
 Rules (the same as trends.js had in stretchBase before this module):
@@ -26,14 +27,25 @@ Rules (the same as trends.js had in stretchBase before this module):
   more missing hours than OFF hours (a missing hour inside a spell is usually the spring clock
   change).  A spell still open at the end of the period counts once it is a day long.
 - daily needs two pure OFF spells under 24 h (one can be a trip and restart) and is split by
-  shutdowns per week over the period; a lone short spell does not place a unit.  Otherwise the
-  shortest spell of a day or more decides multi-day (under a week) or seasonal; no spell, never
-  (always on when available: off only for outages).
+  shutdowns per week over the period; a lone short spell does not place a unit.  Otherwise a
+  spell of a day or more makes it multi-day (the seasonal group, every spell a week or more, was
+  folded in: by Oct 2026 it held one unit outside the peakers); no spell, never (always on when
+  available: off only for outages).
 - a unit with no running hour in at least NEVER_ON_DAYS days of hourly states is never_on
   (mothballed or on a long outage).  Units outside the trends units list (no offers or output in
   the window) are in the file only once they are never_on; with a shorter record they are left
   out, as before, since an idle peaker a few months into the window looks the same.  Listed units
   with a short all-outage record are never, as before.
+
+Peakers are a flag beside the group, not a group: a unit is a peaker by how it runs, whatever its
+technology or timescale (Blair, Oct 28 2026).  Outside the always-on and never-on groups, with at
+least PEAKER_MIN_H available hours (running or OFF, outage hours left out), it is online under
+PEAKER_SHARE of them and at most PEAKER_RUN_H hours a day on the days it ran: started for the
+peak rather than kept on.  A combustion turbine with too short a record stays a peaker.  The
+Overview's Baseload / Price-sensitive / Peakers split and the forecast's categories read the
+flag.  It is a label: which model predicts a unit is the forecast's own choice (peaker_share
+judges every combustion turbine outside the always-on group, the backtests of Oct 28 2026
+finding it beats the stay-on rule on them).
 """
 import re
 
@@ -47,14 +59,16 @@ OUT_MIN_H = 4
 OUT_ANY_TECHS = ("coal",)     # any outage hour in a non-running spell makes it an outage
 GROUPS = [
     ["never", "Always on when available", "no shutdown on price in the period; off only for outages"],
-    ["seasonal", "Seasonal: off a week or more", "every off spell lasted 7 days or more"],
-    ["multiday", "Multi-day: off 1–7 days", "shortest off spell between 24 h and 7 days"],
+    ["multiday", "Multi-day: off a day or more", "shortest off spell a day or more"],
     ["daily1", "Daily, under 1 shutdown a week", "at least two off spells under 24 h, fewer than one shutdown a week"],
     ["daily2", "Daily, 1–2 a week", "one to two shutdowns a week"],
     ["daily3", "Daily, over 2 a week", "more than two shutdowns a week"],
     ["never_on", "Never on", "no running hour in the period"],
 ]
 NEVER_ON_DAYS = 120
+PEAKER_SHARE = 0.30   # online share of available hours below this ...
+PEAKER_RUN_H = 16.0   # ... and online hours per day it ran at most this
+PEAKER_MIN_H = 480    # available hours a unit needs to be judged so
 GROUPED_TECHS = ("coal", "combined_cycle", "gas_steam", "combustion_turbine")
 RANK = {"a": 4, "m": 3, "0": 2, "o": 1, "-": 0}
 _TRAIN = re.compile(r"^(.*_CC\d+)_")
@@ -131,7 +145,7 @@ def rewrite_outages(e: dict) -> list:
 
 def lead_off(st) -> int:
     """Length of the off stretch open at the window start when it lasts a week or more (else 0).
-    It is not a shutdown, but a unit that started late is seasonal rather than always-on."""
+    It is not a shutdown, but a unit that started late is multi-day rather than always-on."""
     N, j, off, gap = len(st), 0, 0, 0
     while j < N and st[j] in "0o-":
         off += st[j] == "0"
@@ -175,15 +189,28 @@ def classify(e: dict, N: int) -> dict:
     elif short >= 2:
         group = "daily1" if per_week < 1 else "daily2" if per_week <= 2 else "daily3"
     elif long_:
-        group = "multiday" if min(long_) < 168 else "seasonal"
+        group = "multiday"
     else:
         group = "never"
     o = sorted(offs)
     q = (lambda p: float(np.quantile(o, p))) if o else (lambda p: None)
-    return {"group": group, "shut": len(offs), "off_min": o[0] if o else None,
+    return {"group": group, "peaker": is_peaker(st, e["tech"], group),
+            "week": bool(long_) and min(long_) >= 168,      # every long spell a week or more (the old seasonal group) "shut": len(offs), "off_min": o[0] if o else None,
             "off_p10": q(0.1), "off_med": q(0.5),
             "pick": sorted(e["configs"], key=lambda c: -c[1])[0][0],
             "ran": ran}
+
+
+def is_peaker(st, tech: str, group: str) -> bool:
+    """The run test (module docstring) on a strip that has been through rewrite_outages."""
+    if group in ("never", "never_on"):
+        return False
+    on = sum(c in "ma" for c in st)
+    avail = on + sum(c == "0" for c in st)
+    days_on = sum(any(c in "ma" for c in st[i:i + 24]) for i in range(0, len(st), 24))
+    if avail < PEAKER_MIN_H or not days_on:
+        return tech == "combustion_turbine"
+    return on / avail < PEAKER_SHARE and on / days_on <= PEAKER_RUN_H
 
 
 def assign_groups(uh: dict, tech_of: dict) -> tuple:
@@ -207,11 +234,12 @@ def build_groups(index: dict) -> dict:
     N, units = assign_groups(uh, techs)
     units = {k: e for k, e in units.items() if k in listed or e["group"] == "never_on"}
     out = {key: [e["tech"], e["group"], round(e["mw"]), e["shut"], e["off_min"], _r(e["off_p10"]),
-                 _r(e["off_med"]), e["pick"], int(e["ran"])]
+                 _r(e["off_med"]), e["pick"], int(e["ran"]), int(e["peaker"])]
            for key, e in sorted(units.items())}
     write_json_gz(DATA_DIR / "groups_60d.json.gz", {
         "dates": uh.get("dates") or [], "groups": GROUPS, "out_min_h": OUT_MIN_H, "never_on_days": NEVER_ON_DAYS,
+        "peaker": {"share": PEAKER_SHARE, "run_h": PEAKER_RUN_H, "min_h": PEAKER_MIN_H},
         "units": out})
     counts = {g[0]: sum(1 for v in out.values() if v[1] == g[0]) for g in GROUPS}
-    print(f"groups_60d: {len(out)} units or trains: {counts}")
+    print(f"groups_60d: {len(out)} units or trains: {counts}; {sum(v[9] for v in out.values())} peakers")
     return {key: e["group"] for key, e in units.items()}

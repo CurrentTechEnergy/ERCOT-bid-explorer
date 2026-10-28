@@ -39,13 +39,12 @@ const FLOOR_NOTES = {
 const FLOOR_GROUPS = [
   { id: "nuclear", label: "Nuclear (no offer curve)", color: "--c5" },
   { id: "never", label: "Always on when available", color: "--c1" },
-  { id: "seasonal", label: "Seasonal: off a week or more", color: "--c6" },
-  { id: "multiday", label: "Multi-day: off 1–7 days", color: "--c2" },
+  { id: "multiday", label: "Multi-day: off a day or more", color: "--c2" },
   { id: "daily1", label: "Daily, under 1 shutdown a week", color: "--c8" },
   { id: "daily2", label: "Daily, 1–2 a week", color: "--c3" },
   { id: "daily3", label: "Daily, over 2 a week", color: "--c4" },
 ];
-const FLOOR_GROUP_NOTE = "MW priced at or below −$20 in the curves SCED dispatched against, summed over thermal units grouped by how they ran over the whole period (the groups of the turn-off chart and the cheap-stretches panel above; nuclear separately, since it has no offer curve and its whole output sits at the floor). For units that offer, this is almost entirely minimum output (LSL) at ERCOT's placeholder price, so the chart tracks how much minimum load is committed: day-to-day movement is which units are online: the daily groups drive the day-to-day swing and the seasonal group the slow one. Storage, hydro and other resources are left out. Each unit's MW at or below −$20 is its average over the runs it was online that day, counted in the hours it ran.";
+const FLOOR_GROUP_NOTE = "MW priced at or below −$20 in the curves SCED dispatched against, summed over thermal units grouped by how they ran over the whole period (the groups of the turn-off chart and the cheap-stretches panel above; nuclear separately, since it has no offer curve and its whole output sits at the floor). For units that offer, this is almost entirely minimum output (LSL) at ERCOT's placeholder price, so the chart tracks how much minimum load is committed: day-to-day movement is which units are online: the daily groups drive the day-to-day swing and the multi-day group the slow one. Storage, hydro and other resources are left out. Each unit's MW at or below −$20 is its average over the runs it was online that day, counted in the hours it ran.";
 
 // capacity by status from the intraday file (pipeline/intraday.py status_group)
 const STATUS6 = [
@@ -373,8 +372,7 @@ const ST_RESP = [
 const ST_NEVER_ON_DAYS = 120;              // never on needs this many days of hourly states with no running hour
 const ST_GROUPS = [
   { id: "never", label: "Always on when available", note: "no shutdown on price in the period; off only for outages" },
-  { id: "seasonal", label: "Seasonal: off a week or more", note: "every off spell lasted 7 days or more" },
-  { id: "multiday", label: "Multi-day: off 1–7 days", note: "shortest off spell between 24 h and 7 days" },
+  { id: "multiday", label: "Multi-day: off a day or more", note: "shortest off spell a day or more" },
   { id: "daily1", label: "Daily, under 1 shutdown a week", note: "at least two off spells under 24 h, fewer than one shutdown a week" },
   { id: "daily2", label: "Daily, 1–2 a week", note: "one to two shutdowns a week" },
   { id: "daily3", label: "Daily, over 2 a week", note: "more than two shutdowns a week" },
@@ -449,7 +447,7 @@ function stretchBase() {
       } else k++;
     }
     // an off stretch open at the window start is not a shutdown, but a week or more of it makes a
-    // unit that started late seasonal rather than always-on
+    // unit that started late multi-day rather than always-on
     { let j = 0, off = 0, gap = 0;
       while (j < N && (st[j] === "0" || st[j] === "o" || st[j] === "-")) { if (st[j] === "0") off++; else if (st[j] === "-") gap++; j++; }
       if (j >= 168 && gap <= off && off >= ST_OUT_MIN_H) long.push(j); }
@@ -459,7 +457,7 @@ function stretchBase() {
     e.ran = st.some((c) => c === "m" || c === "a");
     // never on needs a long record: an idle peaker a few months into the window looks the same
     e.group = !e.ran && st.filter((c) => c !== "-").length >= ST_NEVER_ON_DAYS * 24 ? "never_on" : short >= 2 ? (perWeek < 1 ? "daily1" : perWeek <= 2 ? "daily2" : "daily3")
-      : long.length ? (d3.min(long) < 168 ? "multiday" : "seasonal") : "never";
+      : long.length ? "multiday" : "never";
     e.pick = e.configs.sort((a, b) => b.run - a.run)[0].name;   // config shown in Unit detail
     const o = e.off.slice().sort(d3.ascending);
     e.offMin = o.length ? o[0] : null; e.offP10 = o.length ? d3.quantile(o, 0.1) : null; e.offMed = o.length ? d3.median(o) : null;

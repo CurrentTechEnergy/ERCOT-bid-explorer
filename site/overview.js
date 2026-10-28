@@ -19,17 +19,17 @@ const dayLabel = (d) => d3.timeFormat("%a %b %-d, %Y")(new Date(d + "T12:00:00")
 const addDays = (d, n) => { const t = new Date(d + "T12:00:00"); t.setDate(t.getDate() + n); return t.toISOString().slice(0, 10); };
 
 // ---- series: colours are fixed per group, technology and category -----------------------
-const GROUP_COLORS = { never: "--g1", seasonal: "--g2", multiday: "--g3", daily1: "--g4", daily2: "--g5", daily3: "--g6", peakers: "--c2", never_on: "--c-other", ungrouped: "--c-other" };
+const GROUP_COLORS = { never: "--g1", multiday: "--g3", daily1: "--g4", daily2: "--g5", daily3: "--g6", peakers: "--c2", never_on: "--c-other", ungrouped: "--c-other" };
 const GROUP_NOTES = {
-  never: "off only for outages, never on price, plus nuclear", seasonal: "off for a week or more at a time", multiday: "shortest time off is 1 to 7 days",
+  never: "off only for outages, never on price, plus nuclear", multiday: "shortest time off is a day or more",
   daily1: "turns off within a day, under once a week", daily2: "turns off within a day, 1 to 2 a week", daily3: "turns off within a day, over 2 a week",
-  peakers: "combustion turbines outside the always-on group",
+  peakers: "run like peakers: online under 30% of available hours, at most 16 hours a day when on",
   never_on: "no running hour in the 60-day history (mothballed or on a long outage)", ungrouped: "no hourly history yet",
 };
-const GROUP_SHORT = { never: "Always on when available", seasonal: "Seasonal", multiday: "Multi-day", daily1: "Daily, under once a week", daily2: "Daily, 1 to 2 a week", daily3: "Daily, over 2 a week", peakers: "Peakers", never_on: "Never on", ungrouped: "Not yet grouped" };
-// "peakers" is not a timescale group: combustion turbines outside the always-on group, taken out of
+const GROUP_SHORT = { never: "Always on when available", multiday: "Multi-day", daily1: "Daily, under once a week", daily2: "Daily, 1 to 2 a week", daily3: "Daily, over 2 a week", peakers: "Peakers", never_on: "Never on", ungrouped: "Not yet grouped" };
+// "peakers" is not a timescale group: the units groups_60d flags as peakers by how they run, taken out of
 // their groups wherever thermal output is shown by group
-const GROUPS = ["never", "seasonal", "multiday", "daily1", "daily2", "daily3", "peakers", "never_on", "ungrouped"];
+const GROUPS = ["never", "multiday", "daily1", "daily2", "daily3", "peakers", "never_on", "ungrouped"];
 const TECHS = [
   ["nuclear", "Nuclear", "--c5"], ["coal", "Coal & lignite", "--c8"], ["combined_cycle", "Combined cycle", "--c1"],
   ["gas_steam", "Gas steam", "--c6"], ["combustion_turbine", "Combustion turbine", "--c2"],
@@ -37,8 +37,8 @@ const TECHS = [
 const TECH_LABEL = Object.fromEntries(TECHS.map(([id, l]) => [id, l]));
 const CATS = [
   ["baseload", "Baseload", "--g1", "Units that never turn off on price, plus nuclear"],
-  ["price_sensitive", "Price-sensitive", "--g4", "Coal, gas steam and combined cycles that turn off when staying on costs too much"],
-  ["peakers", "Peakers", "--c2", "Combustion turbines outside the always-on group"],
+  ["price_sensitive", "Price-sensitive", "--g4", "Units outside the always-on group that run more than peakers: they turn off when staying on costs too much"],
+  ["peakers", "Peakers", "--c2", "Units that run like peakers, whatever their technology: online under 30% of available hours, at most 16 hours a day when on"],
 ];
 const WIND = { id: "wind", label: "Wind", color: "--c3" }, SOLAR = { id: "solar", label: "Solar", color: "--c4" };
 const STORAGE = { id: "storage", label: "Batteries", color: "--c7" };
@@ -121,9 +121,10 @@ function genHourly() {
 // groups and the units table judge the train (NAME_CC1)
 const trainOf = (name, t) => (t === "combined_cycle" ? (name.match(/^(.*_CC\d+)_/) || [])[1] || name : name);
 const groupOf = (name) => (S.groups && S.groups.units[name] ? S.groups.units[name][1] : "ungrouped");
-// nuclear and the always-on group are baseload, other combustion turbines are peakers, the rest
-// of the thermal fleet is price-sensitive
-const catOf = (t, g) => (t === "nuclear" || g === "never" ? "baseload" : t === "combustion_turbine" ? "peakers" : "price_sensitive");
+// nuclear and the always-on group are baseload, the units groups_60d flags as peakers (by how they
+// run: pipeline/groups.py is_peaker) are peakers, the rest of the thermal fleet is price-sensitive
+const isPeaker = (name) => !!(S.groups && S.groups.units[name] && S.groups.units[name][9]);
+const catOf = (t, g, name) => (t === "nuclear" || g === "never" ? "baseload" : isPeaker(name) ? "peakers" : "price_sensitive");
 const THERMAL = new Set(TECHS.map(([t]) => t));
 // 60-day output by group, technology and category, hour by hour, and each thermal train's hours
 function actual60() {
@@ -152,7 +153,7 @@ function actual60() {
     }
     if (!THERMAL.has(t)) return;
     const name = trainOf(name0, t), g = t === "nuclear" ? "never" : groupOf(name);
-    const c = catOf(t, g);
+    const c = catOf(t, g, name);
     (byC[c] = byC[c] || zero())[h] += out;
     // output by group, with peakers taken out of their groups into their own
     const k = c === "peakers" ? "peakers" : g;
@@ -179,7 +180,7 @@ function actual60() {
   Object.entries((S.groups && S.groups.units) || {}).forEach(([n, v]) => {
     const [t, g] = v;
     if (g === "never_on") return;
-    put(setG, catOf(t, g) === "peakers" ? "peakers" : g, n); put(setT, t, n);
+    put(setG, catOf(t, g, n) === "peakers" ? "peakers" : g, n); put(setT, t, n);
   });
   Object.values(units).forEach((u) => { put(setG, u.gk, u.unit); put(setT, u.tech, u.unit); });
   Object.keys(renMax).forEach((t) => Object.keys(renMax[t]).forEach((n) => put(setT, t, n)));
@@ -368,7 +369,7 @@ function drawActualBars() {
   if (!L) return;
   $("actual-bar-legend").innerHTML = `<span><span class="sw" style="background:var(--g3)"></span>What ran</span>` +
     (L === "60d" ? `<span><span class="sw" style="background:var(--g3);opacity:.35"></span>Wind and solar: curtailed (available, did not run)</span><span><span class="sw" style="background:var(--track)"></span>Up to the units' largest hourly HSL × 24 hours (wind and solar: not available from the weather)</span>` : "");
-  $("actual-bars-sub").textContent = L === "60d" ? "ERCOT's reported energy for the day. The solid bar is what ran; the full bar is the most the units could have made at their largest hourly maximum (HSL) for all 24 hours. For wind and solar, the light bar is the rest of what the weather made available (their HSL each hour) and was curtailed; the gray beyond it was not available from the weather. Peakers are combustion turbines outside the always-on group, shown on their own. Online minimum and maximum hour by hour are in the next panel." : "ERCOT's reported energy, from the 2-day summary. Thermal is reported in total until the 60-day disclosure.";
+  $("actual-bars-sub").textContent = L === "60d" ? "ERCOT's reported energy for the day. The solid bar is what ran; the full bar is the most the units could have made at their largest hourly maximum (HSL) for all 24 hours. For wind and solar, the light bar is the rest of what the weather made available (their HSL each hour) and was curtailed; the gray beyond it was not available from the weather. Peakers are the units that run like peakers (online under 30% of available hours, at most 16 hours a day when on), shown on their own. Online minimum and maximum hour by hour are in the next panel." : "ERCOT's reported energy, from the 2-day summary. Thermal is reported in total until the 60-day disclosure.";
   const csv = [], gwhOf = (mw) => d3.sum(mw.filter((v) => v != null)) / 1000, sumOf = (a) => (a ? d3.sum(a) / 1000 : null);
   let html = "";
   const push = (sect, name, note, color, cap, act, lsl, hsl, scale) => {
@@ -523,7 +524,7 @@ const UNIT_COLS = [
   ["online_h", "Hours online"], ["mwh", "Output (MWh)"], ["profit", "Profit ($)", "usd"],
 ];
 const UNIT_TIPS = {
-  group: "How often the unit has turned off on price over the 60-day data: always on when available, seasonal, multi-day, or daily at three frequencies.",
+  group: "How often the unit has turned off on price over the 60-day data: always on when available, multi-day, or daily at three frequencies.",
   hsl: "The unit's largest hourly maximum output (HSL) over the day, configurations of a combined-cycle train summed.",
   lsl: "The unit's largest minimum output (LSL) in an hour it was online.",
   online_h: "Hours the unit was online in the 60-day disclosure (at least half of the hour's SCED runs).",

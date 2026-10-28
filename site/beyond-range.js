@@ -33,13 +33,12 @@ const FLOOR_NOTES = {
 const FLOOR_GROUPS = [
   { id: "nuclear", label: "Nuclear (no offer curve)", color: "--c5" },
   { id: "never", label: "Always on when available", color: "--c1" },
-  { id: "seasonal", label: "Seasonal: off a week or more", color: "--c6" },
-  { id: "multiday", label: "Multi-day: off 1–7 days", color: "--c2" },
+  { id: "multiday", label: "Multi-day: off a day or more", color: "--c2" },
   { id: "daily1", label: "Daily, under 1 shutdown a week", color: "--c8" },
   { id: "daily2", label: "Daily, 1–2 a week", color: "--c3" },
   { id: "daily3", label: "Daily, over 2 a week", color: "--c4" },
 ];
-const FLOOR_GROUP_NOTE = "MW priced at or below −$20 in the curves SCED dispatched against, summed over thermal units grouped by how they ran over the whole period (the groups of the cheap-stretches panel below; nuclear separately, since it has no offer curve and its whole output sits at the floor). For units that offer, this is almost entirely minimum output (LSL) at ERCOT's placeholder price, so the chart tracks how much minimum load is committed: day-to-day movement is which units are online: the daily groups drive the day-to-day swing and the seasonal group the slow one. Storage, hydro and other resources are left out. Each unit's MW at or below −$20 is its average over the runs it was online that day, counted in the hours it ran.";
+const FLOOR_GROUP_NOTE = "MW priced at or below −$20 in the curves SCED dispatched against, summed over thermal units grouped by how they ran over the whole period (the groups of the cheap-stretches panel below; nuclear separately, since it has no offer curve and its whole output sits at the floor). For units that offer, this is almost entirely minimum output (LSL) at ERCOT's placeholder price, so the chart tracks how much minimum load is committed: day-to-day movement is which units are online: the daily groups drive the day-to-day swing and the multi-day group the slow one. Storage, hydro and other resources are left out. Each unit's MW at or below −$20 is its average over the runs it was online that day, counted in the hours it ran.";
 // wind and solar offer price bands (pipeline/curve_trends.py), ordered from cheapest
 const BANDS = [
   { id: "floor", label: "At the floor (−$250)", color: "--c8" },
