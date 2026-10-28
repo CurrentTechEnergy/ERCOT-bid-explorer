@@ -256,7 +256,7 @@ async function drawHistory(name) {
   const evs = R.events.filter((e) => e.units.includes(name));
   const evIn = evs.filter((e) => (!t0 || parseDate(e.date) >= t0) && years.includes(e.date.slice(0, 4)));
   $("hist-note").textContent = `${evs.length} change${evs.length === 1 ? "" : "s"} since ${R.first.slice(0, 4)}`;
-  $("hist-text").textContent = `Each dot is a day's median offer while online. Formula days are filled; the vertical lines mark detected changes, solid where the change moved dispatch. Days with offers beyond the axis are drawn as triangles at its edge (hover for the value). ` +
+  $("hist-text").textContent = `Each mark is a day's median offer while online: a dash on a floor day, a square on a formula day or one whose offer moved within the day; the vertical lines mark detected changes, solid where the change moved dispatch. Days with offers beyond the axis are drawn as triangles at its edge (hover for the value). ` +
     (R.togglers[name] ? `This unit is a toggler: ${R.togglers[name]} returns or episodes within a year. ` : "") + "Click a line to jump to the change in the table below.";
   if (!P.length) { emptyMsg(el, "No online days with an offer in this range."); }
   else histChart(el, name, P, evIn);
@@ -296,10 +296,15 @@ function histChart(el, name, P, evs) {
     .attr("d", (p) => (p.md > y1 ? "M0,-4L4,3L-4,3Z" : "M0,4L4,-3L-4,-3Z"))
     .attr("transform", (p) => `translate(${x(p.t)},${p.md > y1 ? m.t + 4 : H - m.b - 4})`)
     .attr("fill", (p) => (p.k === "x" ? css("--c3") : p.k === "v" ? css("--c4") : css("--ink-2")));
-  svg.append("g").selectAll("circle").data(P.filter((p) => p.md != null && inside(p.md))).join("circle")
-    .attr("cx", (p) => x(p.t)).attr("cy", (p) => clamp(p.md)).attr("r", r)
-    .attr("fill", (p) => (p.k === "x" ? css("--c3") : p.k === "v" ? css("--c4") : css("--surface")))
-    .attr("stroke", (p) => (p.k === "x" ? css("--surface") : p.k === "v" ? css("--surface") : css("--ink-2"))).attr("stroke-width", (p) => (p.k === "f" ? 1 : 0.5));
+  // floor days a short grey dash (a flat price), formula and moving days coloured squares: circles
+  // on this site mean online (filled) or offline (hollow), so none here
+  const inP = P.filter((p) => p.md != null && inside(p.md));
+  svg.append("g").selectAll("line").data(inP.filter((p) => p.k === "f")).join("line")
+    .attr("x1", (p) => x(p.t) - r - 0.5).attr("x2", (p) => x(p.t) + r + 0.5).attr("y1", (p) => clamp(p.md)).attr("y2", (p) => clamp(p.md))
+    .attr("stroke", css("--ink-2")).attr("stroke-width", 1.5);
+  svg.append("g").selectAll("rect").data(inP.filter((p) => p.k !== "f")).join("rect")
+    .attr("x", (p) => x(p.t) - r).attr("y", (p) => clamp(p.md) - r).attr("width", 2 * r).attr("height", 2 * r)
+    .attr("fill", (p) => css(p.k === "x" ? "--c3" : "--c4"));
   const cross = svg.append("line").attr("class", "crosshair").attr("y1", m.t).attr("y2", H - m.b).style("display", "none");
   const ts = P.map((p) => p.t);
   const KL = { f: "Floor", x: "Formula day", v: "Moving within the day" };
@@ -323,8 +328,8 @@ function histChart(el, name, P, evs) {
   el.replaceChildren(svg.node());
   setCSV(el, ["date", "kind", "median_offer", "most_common_offer", "formula_point", "formula_share", "formula_intercept", "hours_online", "dam_share", "curtailed_share", "source"],
     P.map((p) => [p.d, p.k, p.md, p.fl, ...(p.x || [null, null, null]), p.h, p.dam, p.cur, p.src === "l" ? "60-day" : "history"]), `${name} bidding history`);
-  $("hist-legend").innerHTML = `<span><span class="sw" style="background:var(--surface);border:1px solid var(--ink-2);border-radius:50%"></span>Floor day</span>` +
-    `<span><span class="sw" style="background:var(--c3);border-radius:50%"></span>Formula day</span><span><span class="sw" style="background:var(--c4);border-radius:50%"></span>Moving within the day</span>` +
+  $("hist-legend").innerHTML = `<span><span class="sw" style="background:var(--ink-2);height:2px"></span>Floor day</span>` +
+    `<span><span class="sw" style="background:var(--c3)"></span>Formula day</span><span><span class="sw" style="background:var(--c4)"></span>Moving within the day</span>` +
     `<span><span class="mk" style="border-color:var(--c1);border-left-style:solid"></span>Change that moved dispatch</span><span><span class="mk" style="border-color:var(--c-other)"></span>Other change</span>`;
 }
 
