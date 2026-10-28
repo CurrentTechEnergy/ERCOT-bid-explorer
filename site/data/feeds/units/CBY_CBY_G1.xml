@@ -19,6 +19,13 @@
     <summary>Outage began, lasting 13 days</summary>
   </entry>
   <entry>
+    <title>CBY_CBY_G1: Turn-off point moved (2026-06-01)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=CBY_CBY_G1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=CBY_CBY_G1#CBY_CBY_G1/2026-06-01/turnoff/0</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Turn-off point without an award $1,967 to $4,363 per MW of minimum output in June; the next month held it</summary>
+  </entry>
+  <entry>
     <title>CBY_CBY_G1: Outage ended (2026-05-06)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=CBY_CBY_G1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=CBY_CBY_G1#CBY_CBY_G1/2026-05-06/outage_end</id>

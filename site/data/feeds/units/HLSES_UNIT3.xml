@@ -19,13 +19,6 @@
     <summary>Priced out of the day-ahead: minimum energy at $71/MWh against a usual $43 for 1 day(s)</summary>
   </entry>
   <entry>
-    <title>HLSES_UNIT3: Loss cutoff moved (2026-07-31)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=HLSES_UNIT3"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=HLSES_UNIT3#HLSES_UNIT3/2026-07-31/cutoff</id>
-    <updated>2026-10-24T00:00:00Z</updated>
-    <summary>Loss cutoff $129 to $258 per MW of minimum output; the next month&#x27;s decisions are split (1 of 1 right against 1)</summary>
-  </entry>
-  <entry>
     <title>HLSES_UNIT3: Minimum-energy offer stepped (2026-07-28)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=HLSES_UNIT3"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=HLSES_UNIT3#HLSES_UNIT3/2026-07-28/dam_mingen_step</id>

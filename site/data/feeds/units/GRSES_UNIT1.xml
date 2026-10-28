@@ -3,14 +3,7 @@
   <title>GRSES_UNIT1: bidding and operating changes</title>
   <link href="https://ercotbids.currenttech.energy/unit.html?unit=GRSES_UNIT1"/>
   <id>https://ercotbids.currenttech.energy/unit.html?unit=GRSES_UNIT1</id>
-  <updated>2026-10-27T00:00:00Z</updated>
-  <entry>
-    <title>GRSES_UNIT1: Loss cutoff moved (2026-08-28)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=GRSES_UNIT1"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=GRSES_UNIT1#GRSES_UNIT1/2026-08-28/cutoff</id>
-    <updated>2026-10-27T00:00:00Z</updated>
-    <summary>Loss cutoff $75 to $216 per MW of minimum output; not yet tested on a following month</summary>
-  </entry>
+  <updated>2026-10-24T00:00:00Z</updated>
   <entry>
     <title>GRSES_UNIT1: Bidding approach shifted (2026-08-17)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=GRSES_UNIT1"/>
@@ -24,6 +17,13 @@
     <id>https://ercotbids.currenttech.energy/unit.html?unit=GRSES_UNIT1#GRSES_UNIT1/2026-08-04/bidding</id>
     <updated>2026-10-22T00:00:00Z</updated>
     <summary>Offer price vs peer median: $24 to $92/MWh</summary>
+  </entry>
+  <entry>
+    <title>GRSES_UNIT1: Turn-off point moved (2026-08-01)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=GRSES_UNIT1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=GRSES_UNIT1#GRSES_UNIT1/2026-08-01/turnoff/0</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Turn-off point without an award $86 to $183 per MW of minimum output in August</summary>
   </entry>
   <entry>
     <title>GRSES_UNIT1: Bidding approach shifted (2026-07-20)</title>
@@ -52,6 +52,13 @@
     <id>https://ercotbids.currenttech.energy/unit.html?unit=GRSES_UNIT1#GRSES_UNIT1/2026-05-07/bidding</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Offer price vs peer median: -$14 to $95/MWh</summary>
+  </entry>
+  <entry>
+    <title>GRSES_UNIT1: Turn-off point moved (2026-05-01)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=GRSES_UNIT1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=GRSES_UNIT1#GRSES_UNIT1/2026-05-01/turnoff/0</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Turn-off point without an award $268 to $112 per MW of minimum output in May; the next month held it</summary>
   </entry>
   <entry>
     <title>GRSES_UNIT1: Outage ended (2026-04-14)</title>

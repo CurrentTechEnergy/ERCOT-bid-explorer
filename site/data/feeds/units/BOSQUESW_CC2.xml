@@ -40,6 +40,13 @@
     <summary>Minimum-energy offer stepped: $24 to $0/MWh ($4 to -$20 against the fuel-cost line)</summary>
   </entry>
   <entry>
+    <title>BOSQUESW_CC2: Turn-off point moved (2026-06-01)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=BOSQUESW_CC2"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=BOSQUESW_CC2#BOSQUESW_CC2/2026-06-01/turnoff/1</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Turn-off point with an award some hours $5 to $118 per MW of minimum output in June</summary>
+  </entry>
+  <entry>
     <title>BOSQUESW_CC2: Shut down despite a day-ahead award (2026-05-17)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=BOSQUESW_CC2"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=BOSQUESW_CC2#BOSQUESW_CC2/2026-05-17/shutdown_award</id>
@@ -66,6 +73,13 @@
     <id>https://ercotbids.currenttech.energy/unit.html?unit=BOSQUESW_CC2#BOSQUESW_CC2/2026-04-10/dam_start_change</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Start-up cost changed: hot start $7,656 to $9,665</summary>
+  </entry>
+  <entry>
+    <title>BOSQUESW_CC2: Turn-off point moved (2026-04-01)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=BOSQUESW_CC2"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=BOSQUESW_CC2#BOSQUESW_CC2/2026-04-01/turnoff/1</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Turn-off point with an award some hours -$44 to $31 per MW of minimum output in April; the next month held it</summary>
   </entry>
   <entry>
     <title>BOSQUESW_CC2: Minimum-energy offer stepped (2026-03-11)</title>

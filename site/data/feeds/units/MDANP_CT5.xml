@@ -12,13 +12,6 @@
     <summary>Minimum-energy offer stepped: $20 to $15/MWh (-$5 to -$11 against the fuel-cost line)</summary>
   </entry>
   <entry>
-    <title>MDANP_CT5: Loss cutoff moved (2026-06-30)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=MDANP_CT5"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=MDANP_CT5#MDANP_CT5/2026-06-30/cutoff</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Loss cutoff $2 to $122 per MW of minimum output; the next month&#x27;s decisions contradict it (7 of 11 right against 8)</summary>
-  </entry>
-  <entry>
     <title>MDANP_CT5: Minimum-energy offer stepped (2026-06-24)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=MDANP_CT5"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=MDANP_CT5#MDANP_CT5/2026-06-24/dam_mingen_step</id>
@@ -80,6 +73,13 @@
     <id>https://ercotbids.currenttech.energy/unit.html?unit=MDANP_CT5#MDANP_CT5/2026-04-11/outage_end</id>
     <updated>2026-10-23T00:00:00Z</updated>
     <summary>Back from a 32-day outage</summary>
+  </entry>
+  <entry>
+    <title>MDANP_CT5: Running at a new price (2026-04-01)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=MDANP_CT5"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=MDANP_CT5#MDANP_CT5/2026-04-01/rt_price</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Online 64% of its hours at $0–$15 real-time at its node in April, up from 14%</summary>
   </entry>
   <entry>
     <title>MDANP_CT5: Outage started (2026-03-11)</title>

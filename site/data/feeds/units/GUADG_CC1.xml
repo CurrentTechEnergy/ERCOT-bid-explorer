@@ -12,6 +12,20 @@
     <summary>Minimum-energy offer stepped: $1 to $10/MWh (-$16 to -$7 against the fuel-cost line)</summary>
   </entry>
   <entry>
+    <title>GUADG_CC1: Turn-off point moved (2026-08-01)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=GUADG_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=GUADG_CC1#GUADG_CC1/2026-08-01/turnoff/2</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Turn-off point with an award every hour $6,589 to riding through per MW of minimum output in August</summary>
+  </entry>
+  <entry>
+    <title>GUADG_CC1: Turn-off point moved (2026-07-01)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=GUADG_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=GUADG_CC1#GUADG_CC1/2026-07-01/turnoff/2</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Turn-off point with an award every hour riding through to $6,589 per MW of minimum output in July; the next month went back</summary>
+  </entry>
+  <entry>
     <title>GUADG_CC1: Outage ended (2026-06-05)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=GUADG_CC1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=GUADG_CC1#GUADG_CC1/2026-06-05/outage_end</id>
@@ -80,6 +94,13 @@
     <id>https://ercotbids.currenttech.energy/unit.html?unit=GUADG_CC1#GUADG_CC1/2026-03-02/shutdown_award</id>
     <updated>2026-10-23T00:00:00Z</updated>
     <summary>Shut down for 17 h although a day-ahead award covered 100% of the window</summary>
+  </entry>
+  <entry>
+    <title>GUADG_CC1: Turn-off point moved (2026-03-01)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=GUADG_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=GUADG_CC1#GUADG_CC1/2026-03-01/turnoff/1</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Turn-off point with an award some hours $2,147 to -$34 per MW of minimum output in March</summary>
   </entry>
   <entry>
     <title>GUADG_CC1: Minimum-energy offer stepped (2026-02-10)</title>

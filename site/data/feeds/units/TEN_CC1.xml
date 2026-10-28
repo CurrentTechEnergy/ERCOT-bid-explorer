@@ -5,11 +5,25 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=TEN_CC1</id>
   <updated>2026-10-26T00:00:00Z</updated>
   <entry>
+    <title>TEN_CC1: Turn-off point moved (2026-08-01)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=TEN_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=TEN_CC1#TEN_CC1/2026-08-01/turnoff/0</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Turn-off point without an award $492 to $894 per MW of minimum output in August</summary>
+  </entry>
+  <entry>
     <title>TEN_CC1: Shut down after a long run (2026-07-08)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=TEN_CC1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=TEN_CC1#TEN_CC1/2026-07-08/shutdown_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Shut down for 203 h after 56 days without a shutdown</summary>
+  </entry>
+  <entry>
+    <title>TEN_CC1: Turn-off point moved (2026-07-01)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=TEN_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=TEN_CC1#TEN_CC1/2026-07-01/turnoff/0</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Turn-off point without an award $1,024 to $492 per MW of minimum output in July; the next month went back</summary>
   </entry>
   <entry>
     <title>TEN_CC1: Outage ended (2026-07-01)</title>
@@ -24,6 +38,13 @@
     <id>https://ercotbids.currenttech.energy/unit.html?unit=TEN_CC1#TEN_CC1/2026-06-06/outage_start</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Outage began, lasting 25 days</summary>
+  </entry>
+  <entry>
+    <title>TEN_CC1: Turn-off point moved (2026-06-01)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=TEN_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=TEN_CC1#TEN_CC1/2026-06-01/turnoff/0</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Turn-off point without an award $3,135 to $1,024 per MW of minimum output in June; the next month held it</summary>
   </entry>
   <entry>
     <title>TEN_CC1: Timescale group changed (2026-06-01)</title>

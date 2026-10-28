@@ -68,6 +68,13 @@
     <summary>Shut down for 6 h although a day-ahead award covered 100% of the window</summary>
   </entry>
   <entry>
+    <title>PEARSAL2_AGR_D: Running at a new price (2026-04-01)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=PEARSAL2_AGR_D"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=PEARSAL2_AGR_D#PEARSAL2_AGR_D/2026-04-01/rt_price</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Online 53% of its hours at $25–$35 real-time at its node in April, up from 17%</summary>
+  </entry>
+  <entry>
     <title>PEARSAL2_AGR_D: Minimum-energy offer stepped (2026-03-30)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=PEARSAL2_AGR_D"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=PEARSAL2_AGR_D#PEARSAL2_AGR_D/2026-03-30/dam_mingen_step</id>

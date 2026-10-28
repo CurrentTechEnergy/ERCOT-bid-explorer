@@ -5,6 +5,13 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=TGS_GT01</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
+    <title>TGS_GT01: Running at a new price (2026-08-01)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=TGS_GT01"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=TGS_GT01#TGS_GT01/2026-08-01/rt_price</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Online 51% of its hours at $50–$100 real-time at its node in August, up from 12%</summary>
+  </entry>
+  <entry>
     <title>TGS_GT01: Minimum-energy offer stepped (2026-07-12)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=TGS_GT01"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=TGS_GT01#TGS_GT01/2026-07-12/dam_mingen_step</id>

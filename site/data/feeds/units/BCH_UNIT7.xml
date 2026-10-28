@@ -5,6 +5,13 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=BCH_UNIT7</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
+    <title>BCH_UNIT7: Running at a new price (2026-03-01)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=BCH_UNIT7"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=BCH_UNIT7#BCH_UNIT7/2026-03-01/rt_price</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Online 55% of its hours at $50–$100 real-time at its node in March, up from 18%</summary>
+  </entry>
+  <entry>
     <title>BCH_UNIT7: Timescale group changed (2026-03-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=BCH_UNIT7"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=BCH_UNIT7#BCH_UNIT7/2026-03-01/group</id>

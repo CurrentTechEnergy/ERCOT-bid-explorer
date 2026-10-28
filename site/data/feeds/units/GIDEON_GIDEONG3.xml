@@ -26,6 +26,13 @@
     <summary>Back from a 8-day outage</summary>
   </entry>
   <entry>
+    <title>GIDEON_GIDEONG3: Turn-off point moved (2026-07-01)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=GIDEON_GIDEONG3"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=GIDEON_GIDEONG3#GIDEON_GIDEONG3/2026-07-01/turnoff/1</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Turn-off point with an award some hours $1,826 to riding through per MW of minimum output in July; the next month held it</summary>
+  </entry>
+  <entry>
     <title>GIDEON_GIDEONG3: Timescale group changed (2026-07-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=GIDEON_GIDEONG3"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=GIDEON_GIDEONG3#GIDEON_GIDEONG3/2026-07-01/group</id>
@@ -33,18 +40,18 @@
     <summary>Daily, 1–2 a week in 2026-06 to Always on when available in 2026-07</summary>
   </entry>
   <entry>
-    <title>GIDEON_GIDEONG3: Loss cutoff moved (2026-06-30)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=GIDEON_GIDEONG3"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=GIDEON_GIDEONG3#GIDEON_GIDEONG3/2026-06-30/cutoff</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Loss cutoff $161 to $270 per MW of minimum output; the next month&#x27;s decisions confirm it (1 of 1 right against 0)</summary>
-  </entry>
-  <entry>
     <title>GIDEON_GIDEONG3: Outage started (2026-06-25)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=GIDEON_GIDEONG3"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=GIDEON_GIDEONG3#GIDEON_GIDEONG3/2026-06-25/outage_start</id>
     <updated>2026-10-23T00:00:00Z</updated>
     <summary>Outage began, lasting 8 days</summary>
+  </entry>
+  <entry>
+    <title>GIDEON_GIDEONG3: Turn-off point moved (2026-06-01)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=GIDEON_GIDEONG3"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=GIDEON_GIDEONG3#GIDEON_GIDEONG3/2026-06-01/turnoff/1</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Turn-off point with an award some hours riding through to $1,826 per MW of minimum output in June; the next month went back</summary>
   </entry>
   <entry>
     <title>GIDEON_GIDEONG3: Timescale group changed (2026-06-01)</title>

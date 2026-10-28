@@ -3,21 +3,7 @@
   <title>CEDRVALE_UNIT1: bidding and operating changes</title>
   <link href="https://ercotbids.currenttech.energy/unit.html?unit=CEDRVALE_UNIT1"/>
   <id>https://ercotbids.currenttech.energy/unit.html?unit=CEDRVALE_UNIT1</id>
-  <updated>2026-10-27T00:00:00Z</updated>
-  <entry>
-    <title>CEDRVALE_UNIT1: Loss cutoff moved (2026-08-28)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=CEDRVALE_UNIT1"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=CEDRVALE_UNIT1#CEDRVALE_UNIT1/2026-08-28/cutoff</id>
-    <updated>2026-10-27T00:00:00Z</updated>
-    <summary>Loss cutoff $1,259 to $21 per MW of minimum output; not yet tested on a following month</summary>
-  </entry>
-  <entry>
-    <title>CEDRVALE_UNIT1: Loss cutoff moved (2026-07-31)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=CEDRVALE_UNIT1"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=CEDRVALE_UNIT1#CEDRVALE_UNIT1/2026-07-31/cutoff</id>
-    <updated>2026-10-23T00:00:00Z</updated>
-    <summary>Loss cutoff $1,259 to $8 per MW of minimum output; the next month&#x27;s decisions confirm it (13 of 14 right against 3)</summary>
-  </entry>
+  <updated>2026-10-23T00:00:00Z</updated>
   <entry>
     <title>CEDRVALE_UNIT1: Start-up cost changed (2026-07-10)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=CEDRVALE_UNIT1"/>
@@ -75,11 +61,18 @@
     <summary>Minimum-energy offer stepped: $12 to $18/MWh (-$4 to $11 against the fuel-cost line)</summary>
   </entry>
   <entry>
-    <title>CEDRVALE_UNIT1: Loss cutoff moved (2026-06-30)</title>
+    <title>CEDRVALE_UNIT1: Running at a new price (2026-07-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=CEDRVALE_UNIT1"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=CEDRVALE_UNIT1#CEDRVALE_UNIT1/2026-06-30/cutoff</id>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=CEDRVALE_UNIT1#CEDRVALE_UNIT1/2026-07-01/rt_price</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Loss cutoff $1,259 to $0 per MW of minimum output; the next month&#x27;s decisions confirm it (20 of 26 right against 12)</summary>
+    <summary>Online 11% of its hours at $0–$15 real-time at its node in July, down from 68%</summary>
+  </entry>
+  <entry>
+    <title>CEDRVALE_UNIT1: Running at a new price (2026-06-01)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=CEDRVALE_UNIT1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=CEDRVALE_UNIT1#CEDRVALE_UNIT1/2026-06-01/rt_price</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Online 15% of its hours at below $0 real-time at its node in June, down from 75%</summary>
   </entry>
   <entry>
     <title>CEDRVALE_UNIT1: Bidding approach shifted (2026-05-10)</title>

@@ -12,6 +12,13 @@
     <summary>Shut down for 43 h although a day-ahead award covered 100% of the window</summary>
   </entry>
   <entry>
+    <title>AEEC_ELK_3: Running at a new price (2026-08-01)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=AEEC_ELK_3"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=AEEC_ELK_3#AEEC_ELK_3/2026-08-01/rt_price</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Online 11% of its hours at $35–$50 real-time at its node in August, down from 52%</summary>
+  </entry>
+  <entry>
     <title>AEEC_ELK_3: Timescale group changed (2026-08-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=AEEC_ELK_3"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=AEEC_ELK_3#AEEC_ELK_3/2026-08-01/group</id>
@@ -38,6 +45,13 @@
     <id>https://ercotbids.currenttech.energy/unit.html?unit=AEEC_ELK_3#AEEC_ELK_3/2026-07-14/dam_mingen_step</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Minimum-energy offer stepped: $20 to $27/MWh (-$7 to $2 against the fuel-cost line)</summary>
+  </entry>
+  <entry>
+    <title>AEEC_ELK_3: Running at a new price (2026-07-01)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=AEEC_ELK_3"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=AEEC_ELK_3#AEEC_ELK_3/2026-07-01/rt_price</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Online 56% of its hours at $25–$35 real-time at its node in July, up from 10%</summary>
   </entry>
   <entry>
     <title>AEEC_ELK_3: Timescale group changed (2026-07-01)</title>
@@ -199,19 +213,5 @@
     <id>https://ercotbids.currenttech.energy/unit.html?unit=AEEC_ELK_3#AEEC_ELK_3/2026-01-16/dam_mingen_step</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Minimum-energy offer stepped: $59 to $0/MWh ($20 to -$29 against the fuel-cost line)</summary>
-  </entry>
-  <entry>
-    <title>AEEC_ELK_3: Bidding approach shifted (2026-01-15)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=AEEC_ELK_3"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=AEEC_ELK_3#AEEC_ELK_3/2026-01-15/bidding</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Offer price vs peer median: -$10 to $14/MWh</summary>
-  </entry>
-  <entry>
-    <title>AEEC_ELK_3: Timescale group changed (2026-01-01)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=AEEC_ELK_3"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=AEEC_ELK_3#AEEC_ELK_3/2026-01-01/group</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Seasonal: off a week or more in 2025-12 to Daily, over 2 a week in 2026-01</summary>
   </entry>
 </feed>

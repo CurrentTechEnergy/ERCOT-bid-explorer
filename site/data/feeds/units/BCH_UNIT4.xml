@@ -5,6 +5,13 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=BCH_UNIT4</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
+    <title>BCH_UNIT4: Running at a new price (2026-03-01)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=BCH_UNIT4"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=BCH_UNIT4#BCH_UNIT4/2026-03-01/rt_price</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Online 56% of its hours at $35–$50 real-time at its node in March, up from 12%</summary>
+  </entry>
+  <entry>
     <title>BCH: Minimum-energy offer stepped (2026-02-11)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=BCH"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=BCH#BCH/2026-02-11/dam_mingen_step</id>

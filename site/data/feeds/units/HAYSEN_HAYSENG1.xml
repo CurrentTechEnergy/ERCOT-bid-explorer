@@ -103,6 +103,13 @@
     <summary>Priced out of the day-ahead: minimum energy at $30/MWh against a usual $8 for 4 day(s)</summary>
   </entry>
   <entry>
+    <title>HAYSEN_HAYSENG1: Running at a new price (2026-02-01)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=HAYSEN_HAYSENG1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=HAYSEN_HAYSENG1#HAYSEN_HAYSENG1/2026-02-01/rt_price</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Online 12% of its hours at below $0 real-time at its node in February, down from 54%</summary>
+  </entry>
+  <entry>
     <title>HAYSEN_HAYSEN: Priced out of the day-ahead (2026-01-29)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=HAYSEN_HAYSEN"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=HAYSEN_HAYSEN#HAYSEN_HAYSEN/2026-01-29/dam_priced_out</id>

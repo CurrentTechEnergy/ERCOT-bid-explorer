@@ -40,13 +40,6 @@
     <summary>Minimum-energy offer stepped: $22 to $16/MWh ($2 to -$1 against the fuel-cost line)</summary>
   </entry>
   <entry>
-    <title>FRONT_EC_CC1: Loss cutoff moved (2026-06-30)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=FRONT_EC_CC1"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=FRONT_EC_CC1#FRONT_EC_CC1/2026-06-30/cutoff</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Loss cutoff $0 to $31 per MW of minimum output; the next month&#x27;s decisions are split (6 of 7 right against 6)</summary>
-  </entry>
-  <entry>
     <title>FRONT_EC_CC1: Stopped three-part offers (2026-06-09)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=FRONT_EC_CC1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=FRONT_EC_CC1#FRONT_EC_CC1/2026-06-09/dam_filing_off</id>
@@ -213,5 +206,12 @@
     <id>https://ercotbids.currenttech.energy/unit.html?unit=FRONT_EC_CC1#FRONT_EC_CC1/2025-12-25/dam_mingen_step</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Minimum-energy offer stepped: $22 to $16/MWh (-$2 to $0 against the fuel-cost line)</summary>
+  </entry>
+  <entry>
+    <title>FRONT_EC_CC1: Minimum-energy offer stepped (2025-12-18)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=FRONT_EC_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=FRONT_EC_CC1#FRONT_EC_CC1/2025-12-18/dam_mingen_step</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $30 to $19/MWh (-$0 to -$3 against the fuel-cost line)</summary>
   </entry>
 </feed>

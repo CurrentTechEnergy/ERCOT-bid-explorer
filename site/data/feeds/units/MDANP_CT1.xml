@@ -82,6 +82,13 @@
     <summary>Outage began, lasting 12 days</summary>
   </entry>
   <entry>
+    <title>MDANP_CT1: Running at a new price (2026-04-01)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=MDANP_CT1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=MDANP_CT1#MDANP_CT1/2026-04-01/rt_price</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Online 60% of its hours at $0–$15 real-time at its node in April, up from 16%</summary>
+  </entry>
+  <entry>
     <title>MDANP: Minimum-energy offer stepped (2026-02-11)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=MDANP"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=MDANP#MDANP/2026-02-11/dam_mingen_step</id>

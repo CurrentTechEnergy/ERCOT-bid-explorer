@@ -5,6 +5,13 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=TOPAZ_UNIT8</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
+    <title>TOPAZ_UNIT8: Running at a new price (2026-04-01)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=TOPAZ_UNIT8"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=TOPAZ_UNIT8#TOPAZ_UNIT8/2026-04-01/rt_price</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Online 51% of its hours at $35–$50 real-time at its node in April, up from 20%</summary>
+  </entry>
+  <entry>
     <title>TOPAZ: Minimum-energy offer stepped (2026-03-03)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=TOPAZ"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=TOPAZ#TOPAZ/2026-03-03/dam_mingen_step</id>

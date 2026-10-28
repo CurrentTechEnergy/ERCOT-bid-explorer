@@ -9,7 +9,7 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=NEDIN_CC1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=NEDIN_CC1#NEDIN_CC1/2026-08-17/outage_start</id>
     <updated>2026-10-23T00:00:00Z</updated>
-    <summary>Outage began, still on at the end of the data (11 days so far)</summary>
+    <summary>Outage began, still on at the end of the data (12 days so far)</summary>
   </entry>
   <entry>
     <title>NEDIN_CC1: Stopped three-part offers (2026-08-17)</title>
@@ -40,11 +40,11 @@
     <summary>Shut down for 258 h although a day-ahead award covered 100% of the window</summary>
   </entry>
   <entry>
-    <title>NEDIN_CC1: Loss cutoff moved (2026-05-31)</title>
+    <title>NEDIN_CC1: Turn-off point moved (2026-06-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=NEDIN_CC1"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=NEDIN_CC1#NEDIN_CC1/2026-05-31/cutoff</id>
-    <updated>2026-10-26T00:00:00Z</updated>
-    <summary>Loss cutoff $0 to $10 per MW of minimum output; the next month&#x27;s decisions are split (10 of 11 right against 10)</summary>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=NEDIN_CC1#NEDIN_CC1/2026-06-01/turnoff/1</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Turn-off point with an award some hours $92 to -$11 per MW of minimum output in June</summary>
   </entry>
   <entry>
     <title>NEDIN_CC1: Start-up cost changed (2026-05-14)</title>
@@ -59,6 +59,13 @@
     <id>https://ercotbids.currenttech.energy/unit.html?unit=NEDIN_CC1#NEDIN_CC1/2026-05-03/shutdown_award</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Shut down for 34 h although a day-ahead award covered 100% of the window</summary>
+  </entry>
+  <entry>
+    <title>NEDIN_CC1: Turn-off point moved (2026-05-01)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=NEDIN_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=NEDIN_CC1#NEDIN_CC1/2026-05-01/turnoff/0</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Turn-off point without an award $1,322 to $151 per MW of minimum output in May</summary>
   </entry>
   <entry>
     <title>NEDIN_CC1: Shut down after a long run (2026-05-01)</title>

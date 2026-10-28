@@ -47,6 +47,13 @@
     <summary>Shut down for 7 h although a day-ahead award covered 100% of the window</summary>
   </entry>
   <entry>
+    <title>MDANP_CT4: Running at a new price (2026-04-01)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=MDANP_CT4"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=MDANP_CT4#MDANP_CT4/2026-04-01/rt_price</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Online 53% of its hours at $0–$15 real-time at its node in April, up from 15%</summary>
+  </entry>
+  <entry>
     <title>MDANP: Minimum-energy offer stepped (2026-02-11)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=MDANP"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=MDANP#MDANP/2026-02-11/dam_mingen_step</id>

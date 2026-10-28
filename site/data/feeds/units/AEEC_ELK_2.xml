@@ -3,7 +3,14 @@
   <title>AEEC_ELK_2: bidding and operating changes</title>
   <link href="https://ercotbids.currenttech.energy/unit.html?unit=AEEC_ELK_2"/>
   <id>https://ercotbids.currenttech.energy/unit.html?unit=AEEC_ELK_2</id>
-  <updated>2026-10-26T00:00:00Z</updated>
+  <updated>2026-10-28T00:00:00Z</updated>
+  <entry>
+    <title>AEEC_ELK_2: Shut down after a long run (2026-08-28)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=AEEC_ELK_2"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=AEEC_ELK_2#AEEC_ELK_2/2026-08-28/shutdown_new</id>
+    <updated>2026-10-28T00:00:00Z</updated>
+    <summary>Shut down for 27 h after 108 days without a shutdown</summary>
+  </entry>
   <entry>
     <title>AEEC_ELK_2: Outage ended (2026-08-27)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=AEEC_ELK_2"/>
@@ -87,6 +94,13 @@
     <id>https://ercotbids.currenttech.energy/unit.html?unit=AEEC_ELK_2#AEEC_ELK_2/2026-01-06/dam_mingen_step</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Minimum-energy offer stepped: $0 to $46/MWh (-$22 to $21 against the fuel-cost line)</summary>
+  </entry>
+  <entry>
+    <title>AEEC_ELK_2: Running at a new price (2026-01-01)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=AEEC_ELK_2"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=AEEC_ELK_2#AEEC_ELK_2/2026-01-01/rt_price</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Online 8% of its hours at below $0 real-time at its node in January, down from 62%</summary>
   </entry>
   <entry>
     <title>AEEC_ELK_2: Bidding approach shifted (2025-12-29)</title>

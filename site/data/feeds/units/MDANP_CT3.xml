@@ -159,6 +159,13 @@
     <summary>Minimum-energy offer stepped: $8 to $35/MWh (-$41 to $7 against the fuel-cost line)</summary>
   </entry>
   <entry>
+    <title>MDANP_CT3: Running at a new price (2026-02-01)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=MDANP_CT3"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=MDANP_CT3#MDANP_CT3/2026-02-01/rt_price</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Online 20% of its hours at $0–$15 real-time at its node in February, down from 50%</summary>
+  </entry>
+  <entry>
     <title>MDANP_CT3: Timescale group changed (2026-01-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=MDANP_CT3"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=MDANP_CT3#MDANP_CT3/2026-01-01/group</id>

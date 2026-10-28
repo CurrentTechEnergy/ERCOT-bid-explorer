@@ -12,6 +12,13 @@
     <summary>Minimum-energy offer stepped: $15 to $21/MWh (-$2 to $3 against the fuel-cost line)</summary>
   </entry>
   <entry>
+    <title>FRNYPP_CC1: Turn-off point moved (2026-08-01)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=FRNYPP_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=FRNYPP_CC1#FRNYPP_CC1/2026-08-01/turnoff/1</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Turn-off point with an award some hours $625 to $1,316 per MW of minimum output in August</summary>
+  </entry>
+  <entry>
     <title>FRNYPP_CC1: Minimum-energy offer stepped (2026-07-15)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=FRNYPP_CC1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=FRNYPP_CC1#FRNYPP_CC1/2026-07-15/dam_mingen_step</id>
@@ -33,11 +40,11 @@
     <summary>Minimum-energy offer stepped: $22 to $10/MWh ($2 to -$10 against the fuel-cost line)</summary>
   </entry>
   <entry>
-    <title>FRNYPP_CC1: Loss cutoff moved (2026-06-30)</title>
+    <title>FRNYPP_CC1: Turn-off point moved (2026-06-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=FRNYPP_CC1"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=FRNYPP_CC1#FRNYPP_CC1/2026-06-30/cutoff</id>
-    <updated>2026-10-23T00:00:00Z</updated>
-    <summary>Loss cutoff $0 to $2 per MW of minimum output; the next month&#x27;s decisions are split (18 of 19 right against 18)</summary>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=FRNYPP_CC1#FRNYPP_CC1/2026-06-01/turnoff/1</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Turn-off point with an award some hours -$61 to $1,166 per MW of minimum output in June; the next month held it</summary>
   </entry>
   <entry>
     <title>FRNYPP_CC1: Shut down despite a day-ahead award (2026-05-09)</title>

@@ -3,21 +3,7 @@
   <title>TNSKA_CC1: bidding and operating changes</title>
   <link href="https://ercotbids.currenttech.energy/unit.html?unit=TNSKA_CC1"/>
   <id>https://ercotbids.currenttech.energy/unit.html?unit=TNSKA_CC1</id>
-  <updated>2026-10-27T00:00:00Z</updated>
-  <entry>
-    <title>TNSKA_CC1: Loss cutoff moved (2026-08-28)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=TNSKA_CC1"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=TNSKA_CC1#TNSKA_CC1/2026-08-28/cutoff</id>
-    <updated>2026-10-27T00:00:00Z</updated>
-    <summary>Loss cutoff $5 to $46 per MW of minimum output; not yet tested on a following month</summary>
-  </entry>
-  <entry>
-    <title>TNSKA_CC1: Loss cutoff moved (2026-07-31)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=TNSKA_CC1"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=TNSKA_CC1#TNSKA_CC1/2026-07-31/cutoff</id>
-    <updated>2026-10-26T00:00:00Z</updated>
-    <summary>Loss cutoff $0 to $30 per MW of minimum output; the next month&#x27;s decisions are split (5 of 6 right against 5)</summary>
-  </entry>
+  <updated>2026-10-24T00:00:00Z</updated>
   <entry>
     <title>TNSKA_CC1: Outage ended (2026-04-24)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=TNSKA_CC1"/>

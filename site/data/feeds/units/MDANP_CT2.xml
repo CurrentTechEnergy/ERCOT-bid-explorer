@@ -75,6 +75,13 @@
     <summary>Offer price vs peer median: -$1 to -$15/MWh</summary>
   </entry>
   <entry>
+    <title>MDANP_CT2: Running at a new price (2026-04-01)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=MDANP_CT2"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=MDANP_CT2#MDANP_CT2/2026-04-01/rt_price</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Online 62% of its hours at $0–$15 real-time at its node in April, up from 17%</summary>
+  </entry>
+  <entry>
     <title>MDANP_CT2: Shut down despite a day-ahead award (2026-02-20)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=MDANP_CT2"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=MDANP_CT2#MDANP_CT2/2026-02-20/shutdown_award</id>

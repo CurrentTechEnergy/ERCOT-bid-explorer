@@ -54,6 +54,13 @@
     <summary>Minimum-energy offer stepped: $47 to $34/MWh ($6 to $7 against the fuel-cost line)</summary>
   </entry>
   <entry>
+    <title>BCH_UNIT8: Running at a new price (2026-03-01)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=BCH_UNIT8"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=BCH_UNIT8#BCH_UNIT8/2026-03-01/rt_price</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Online 57% of its hours at $35–$50 real-time at its node in March, up from 20%</summary>
+  </entry>
+  <entry>
     <title>BCH_UNIT8: Bidding approach shifted (2026-02-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=BCH_UNIT8"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=BCH_UNIT8#BCH_UNIT8/2026-02-01/bidding</id>

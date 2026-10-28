@@ -19,6 +19,13 @@
     <summary>Minimum-energy offer stepped: $41 to $35/MWh ($11 to $10 against the fuel-cost line)</summary>
   </entry>
   <entry>
+    <title>PPEC_GT8: Running at a new price (2026-07-01)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=PPEC_GT8"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=PPEC_GT8#PPEC_GT8/2026-07-01/rt_price</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Online 58% of its hours at $25–$35 real-time at its node in July, up from 19%</summary>
+  </entry>
+  <entry>
     <title>PPEC_GT8: Shut down despite a day-ahead award (2026-06-16)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=PPEC_GT8"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=PPEC_GT8#PPEC_GT8/2026-06-16/shutdown_award</id>
@@ -45,6 +52,13 @@
     <id>https://ercotbids.currenttech.energy/unit.html?unit=PPEC_GT8#PPEC_GT8/2026-05-05/bidding</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Running without an offer curve: 100% to 0% of the day</summary>
+  </entry>
+  <entry>
+    <title>PPEC_GT8: Running at a new price (2026-05-01)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=PPEC_GT8"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=PPEC_GT8#PPEC_GT8/2026-05-01/rt_price</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Online 0% of its hours at $0–$15 real-time at its node in May, down from 82%</summary>
   </entry>
   <entry>
     <title>PPEC_GT8: Timescale group changed (2026-05-01)</title>

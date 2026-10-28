@@ -82,6 +82,13 @@
     <summary>Outage began, lasting 7 days</summary>
   </entry>
   <entry>
+    <title>FEGC_CTG4: Running at a new price (2026-02-01)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=FEGC_CTG4"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=FEGC_CTG4#FEGC_CTG4/2026-02-01/rt_price</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Online 13% of its hours at $0–$15 real-time at its node in February, down from 55%</summary>
+  </entry>
+  <entry>
     <title>FEGC_CTG4: Bidding approach shifted (2026-01-29)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=FEGC_CTG4"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=FEGC_CTG4#FEGC_CTG4/2026-01-29/bidding</id>

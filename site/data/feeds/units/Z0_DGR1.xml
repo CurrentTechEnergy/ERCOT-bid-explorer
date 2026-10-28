@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>Z0_DGR1: bidding and operating changes</title>
+  <link href="https://ercotbids.currenttech.energy/unit.html?unit=Z0_DGR1"/>
+  <id>https://ercotbids.currenttech.energy/unit.html?unit=Z0_DGR1</id>
+  <updated>2026-10-18T00:00:00Z</updated>
+  <entry>
+    <title>Z0_DGR1: Running at a new price (2026-03-01)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=Z0_DGR1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=Z0_DGR1#Z0_DGR1/2026-03-01/rt_price</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Online 54% of its hours at $0–$15 real-time at its node in March, up from 0%</summary>
+  </entry>
+</feed>

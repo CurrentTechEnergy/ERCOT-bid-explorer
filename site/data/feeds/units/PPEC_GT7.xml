@@ -47,6 +47,13 @@
     <summary>Running without an offer curve: 100% to 0% of the day</summary>
   </entry>
   <entry>
+    <title>PPEC_GT7: Running at a new price (2026-05-01)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=PPEC_GT7"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=PPEC_GT7#PPEC_GT7/2026-05-01/rt_price</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Online 13% of its hours at $15–$25 real-time at its node in May, down from 83%</summary>
+  </entry>
+  <entry>
     <title>PPEC_GT7: Outage ended (2026-04-20)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=PPEC_GT7"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=PPEC_GT7#PPEC_GT7/2026-04-20/outage_end</id>

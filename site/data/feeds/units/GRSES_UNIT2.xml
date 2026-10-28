@@ -3,14 +3,7 @@
   <title>GRSES_UNIT2: bidding and operating changes</title>
   <link href="https://ercotbids.currenttech.energy/unit.html?unit=GRSES_UNIT2"/>
   <id>https://ercotbids.currenttech.energy/unit.html?unit=GRSES_UNIT2</id>
-  <updated>2026-10-27T00:00:00Z</updated>
-  <entry>
-    <title>GRSES_UNIT2: Loss cutoff moved (2026-08-28)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=GRSES_UNIT2"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=GRSES_UNIT2#GRSES_UNIT2/2026-08-28/cutoff</id>
-    <updated>2026-10-27T00:00:00Z</updated>
-    <summary>Loss cutoff $0 to $218 per MW of minimum output; not yet tested on a following month</summary>
-  </entry>
+  <updated>2026-10-25T00:00:00Z</updated>
   <entry>
     <title>GRSES_UNIT2: Bidding approach shifted (2026-08-20)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=GRSES_UNIT2"/>
@@ -33,11 +26,18 @@
     <summary>Outage began, lasting 12 days</summary>
   </entry>
   <entry>
+    <title>GRSES_UNIT2: Turn-off point moved (2026-08-01)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=GRSES_UNIT2"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=GRSES_UNIT2#GRSES_UNIT2/2026-08-01/turnoff/0</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Turn-off point without an award $88 to $260 per MW of minimum output in August</summary>
+  </entry>
+  <entry>
     <title>GRSES_UNIT2: Timescale group changed (2026-08-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=GRSES_UNIT2"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=GRSES_UNIT2#GRSES_UNIT2/2026-08-01/group</id>
     <updated>2026-10-19T00:00:00Z</updated>
-    <summary>Daily, 1–2 a week in 2026-07 to Always on when available in 2026-08</summary>
+    <summary>Daily, 1–2 a week in 2026-07 to Multi-day: off 1–7 days in 2026-08</summary>
   </entry>
   <entry>
     <title>GRSES_UNIT2: Bidding approach shifted (2026-07-31)</title>
@@ -59,13 +59,6 @@
     <id>https://ercotbids.currenttech.energy/unit.html?unit=GRSES_UNIT2#GRSES_UNIT2/2026-06-04/bidding</id>
     <updated>2026-10-24T00:00:00Z</updated>
     <summary>Offer price vs peer median: -$18 to $119/MWh</summary>
-  </entry>
-  <entry>
-    <title>GRSES_UNIT2: Loss cutoff moved (2026-05-31)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=GRSES_UNIT2"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=GRSES_UNIT2#GRSES_UNIT2/2026-05-31/cutoff</id>
-    <updated>2026-10-23T00:00:00Z</updated>
-    <summary>Loss cutoff $281 to $0 per MW of minimum output; the next month&#x27;s decisions confirm it (3 of 3 right against 0)</summary>
   </entry>
   <entry>
     <title>GRSES_UNIT2: Bidding approach shifted (2026-05-24)</title>

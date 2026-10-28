@@ -75,6 +75,20 @@
     <summary>Minimum-energy offer stepped: $20 to $11/MWh ($0 to -$6 against the fuel-cost line)</summary>
   </entry>
   <entry>
+    <title>LPCCS_CC2: Turn-off point moved (2026-03-01)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=LPCCS_CC2"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=LPCCS_CC2#LPCCS_CC2/2026-03-01/turnoff/2</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Turn-off point with an award every hour riding through to $5,032 per MW of minimum output in March; the next month held it</summary>
+  </entry>
+  <entry>
+    <title>LPCCS_CC2: Turn-off point moved (2026-03-01)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=LPCCS_CC2"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=LPCCS_CC2#LPCCS_CC2/2026-03-01/turnoff/1</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Turn-off point with an award some hours -$95 to -$24 per MW of minimum output in March; the next month held it</summary>
+  </entry>
+  <entry>
     <title>LPCCS_CC2: Priced out of the day-ahead (2026-02-07)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=LPCCS_CC2"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=LPCCS_CC2#LPCCS_CC2/2026-02-07/dam_priced_out</id>

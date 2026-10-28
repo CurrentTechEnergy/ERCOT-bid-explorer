@@ -12,6 +12,13 @@
     <summary>Start-up cost changed: hot start $1,154 to $864</summary>
   </entry>
   <entry>
+    <title>RAB_UNIT8: Running at a new price (2026-06-01)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=RAB_UNIT8"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=RAB_UNIT8#RAB_UNIT8/2026-06-01/rt_price</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Online 56% of its hours at $50–$100 real-time at its node in June, up from 7%</summary>
+  </entry>
+  <entry>
     <title>RAB_UNIT8: Timescale group changed (2026-06-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=RAB_UNIT8"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=RAB_UNIT8#RAB_UNIT8/2026-06-01/group</id>

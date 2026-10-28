@@ -33,11 +33,11 @@
     <summary>Offer price vs peer median: -$26 to -$9/MWh</summary>
   </entry>
   <entry>
-    <title>PB2SES_CT3: Loss cutoff moved (2026-05-31)</title>
+    <title>PB2SES_CT3: Running at a new price (2026-06-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=PB2SES_CT3"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=PB2SES_CT3#PB2SES_CT3/2026-05-31/cutoff</id>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=PB2SES_CT3#PB2SES_CT3/2026-06-01/rt_price</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Loss cutoff $0 to $168 per MW of minimum output; the next month&#x27;s decisions contradict it (5 of 9 right against 9)</summary>
+    <summary>Online 1% of its hours at below $0 real-time at its node in June, down from 76%</summary>
   </entry>
   <entry>
     <title>PB2SES_CT3: Bidding approach shifted (2026-05-31)</title>
@@ -73,6 +73,13 @@
     <id>https://ercotbids.currenttech.energy/unit.html?unit=PB2SES_CT3#PB2SES_CT3/2026-05-02/bidding</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>MW above LSL offered at or below $0: 100% to 0% of the day</summary>
+  </entry>
+  <entry>
+    <title>PB2SES_CT3: Running at a new price (2026-05-01)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=PB2SES_CT3"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=PB2SES_CT3#PB2SES_CT3/2026-05-01/rt_price</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Online 19% of its hours at $0–$15 real-time at its node in May, down from 56%</summary>
   </entry>
   <entry>
     <title>PB2SES_CT3: Bidding approach shifted (2026-04-30)</title>
@@ -117,6 +124,13 @@
     <summary>MW above LSL offered at or below $0: 0% to 100% of the day</summary>
   </entry>
   <entry>
+    <title>PB2SES_CT3: Running at a new price (2026-04-01)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=PB2SES_CT3"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=PB2SES_CT3#PB2SES_CT3/2026-04-01/rt_price</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Online 90% of its hours at below $0 real-time at its node in April, up from 5%</summary>
+  </entry>
+  <entry>
     <title>PB2SES_CT3: Bidding approach shifted (2026-03-24)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=PB2SES_CT3"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=PB2SES_CT3#PB2SES_CT3/2026-03-24/bidding</id>
@@ -129,6 +143,13 @@
     <id>https://ercotbids.currenttech.energy/unit.html?unit=PB2SES_CT3#PB2SES_CT3/2026-03-07/bidding</id>
     <updated>2026-10-24T00:00:00Z</updated>
     <summary>Offer price vs peer median: -$6 to -$21/MWh</summary>
+  </entry>
+  <entry>
+    <title>PB2SES_CT3: Running at a new price (2026-03-01)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=PB2SES_CT3"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=PB2SES_CT3#PB2SES_CT3/2026-03-01/rt_price</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Online 50% of its hours at $25–$35 real-time at its node in March, up from 17%</summary>
   </entry>
   <entry>
     <title>PB2SES_CT3: Bidding approach shifted (2026-02-16)</title>

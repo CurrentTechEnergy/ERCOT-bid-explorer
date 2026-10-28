@@ -75,6 +75,13 @@
     <summary>Outage began, lasting 25 days</summary>
   </entry>
   <entry>
+    <title>SJS_SJS_G2: Running at a new price (2026-05-01)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=SJS_SJS_G2"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=SJS_SJS_G2#SJS_SJS_G2/2026-05-01/rt_price</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Online 2% of its hours at $15–$25 real-time at its node in May, down from 100%</summary>
+  </entry>
+  <entry>
     <title>SJS_SJS_G2: Bidding approach shifted (2026-04-21)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=SJS_SJS_G2"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=SJS_SJS_G2#SJS_SJS_G2/2026-04-21/bidding</id>
