@@ -5,13 +5,6 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=OECCS_CC1</id>
   <updated>2026-10-24T00:00:00Z</updated>
   <entry>
-    <title>OECCS_CC1: Turn-off point moved (2026-08-01)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=OECCS_CC1"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=OECCS_CC1#OECCS_CC1/2026-08-01/turnoff/1</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Turn-off point with an award some hours $1,374 to $2,066 per MW of minimum output in August</summary>
-  </entry>
-  <entry>
     <title>OECCS_CC1: Start-up cost changed (2026-07-23)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=OECCS_CC1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=OECCS_CC1#OECCS_CC1/2026-07-23/dam_start_change</id>
@@ -24,13 +17,6 @@
     <id>https://ercotbids.currenttech.energy/unit.html?unit=OECCS_CC1#OECCS_CC1/2026-07-23/dam_mingen_step</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Minimum-energy offer stepped: $23 to $31/MWh ($13 to $14 against the fuel-cost line)</summary>
-  </entry>
-  <entry>
-    <title>OECCS_CC1: Turn-off point moved (2026-07-01)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=OECCS_CC1"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=OECCS_CC1#OECCS_CC1/2026-07-01/turnoff/1</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Turn-off point with an award some hours $312 to $1,374 per MW of minimum output in July; the next month held it</summary>
   </entry>
   <entry>
     <title>OECCS_CC1: Start-up cost changed (2026-06-21)</title>
@@ -213,5 +199,19 @@
     <id>https://ercotbids.currenttech.energy/unit.html?unit=OECCS_CC1#OECCS_CC1/2026-01-17/dam_mingen_step</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Minimum-energy offer stepped: $0 to $7/MWh ($9 to $11 against the fuel-cost line)</summary>
+  </entry>
+  <entry>
+    <title>OECCS_CC1: Shut down after a long run (2026-01-02)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=OECCS_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=OECCS_CC1#OECCS_CC1/2026-01-02/shutdown_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>First shutdown in the record, off 6 h</summary>
+  </entry>
+  <entry>
+    <title>OECCS_CC1: Timescale group changed (2026-01-01)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=OECCS_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=OECCS_CC1#OECCS_CC1/2026-01-01/group</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Always on when available in 2025-12 to Daily, 1–2 a week in 2026-01</summary>
   </entry>
 </feed>

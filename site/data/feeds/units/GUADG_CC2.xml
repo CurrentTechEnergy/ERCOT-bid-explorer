@@ -12,6 +12,13 @@
     <summary>Minimum-energy offer stepped: $1 to $10/MWh (-$16 to -$7 against the fuel-cost line)</summary>
   </entry>
   <entry>
+    <title>GUADG_CC2: Turn-off point moved (2026-08-01)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=GUADG_CC2"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=GUADG_CC2#GUADG_CC2/2026-08-01/turnoff/2</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Turn-off point with an award every hour $1,972 to $3,283 per MW of minimum output in August</summary>
+  </entry>
+  <entry>
     <title>GUADG_CC2: Shut down after a long run (2026-06-28)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=GUADG_CC2"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=GUADG_CC2#GUADG_CC2/2026-06-28/shutdown_new</id>

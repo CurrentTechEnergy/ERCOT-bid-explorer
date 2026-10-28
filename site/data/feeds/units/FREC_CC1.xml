@@ -5,6 +5,13 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=FREC_CC1</id>
   <updated>2026-10-26T00:00:00Z</updated>
   <entry>
+    <title>FREC_CC1: Turn-off point moved (2026-08-01)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=FREC_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=FREC_CC1#FREC_CC1/2026-08-01/turnoff/2</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Turn-off point with an award every hour $4,064 to riding through per MW of minimum output in August</summary>
+  </entry>
+  <entry>
     <title>FREC_CC1: Minimum-energy offer stepped (2026-06-20)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=FREC_CC1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=FREC_CC1#FREC_CC1/2026-06-20/dam_mingen_step</id>
@@ -59,6 +66,13 @@
     <id>https://ercotbids.currenttech.energy/unit.html?unit=FREC_CC1#FREC_CC1/2026-04-17/dam_start_change</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Start-up cost changed: hot start $6,935 to $9,514</summary>
+  </entry>
+  <entry>
+    <title>FREC_CC1: Turn-off point moved (2026-04-01)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=FREC_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=FREC_CC1#FREC_CC1/2026-04-01/turnoff/2</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Turn-off point with an award every hour riding through to $5,865 per MW of minimum output in April; the next month held it</summary>
   </entry>
   <entry>
     <title>FREC_CC1: Outage ended (2026-03-15)</title>

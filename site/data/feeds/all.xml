@@ -513,21 +513,21 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=WAP_WAP_G2"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=WAP_WAP_G2#WAP_WAP_G2/2026-08-01/turnoff/0</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Turn-off point without an award $37 to $111 per MW of minimum output in August</summary>
+    <summary>Turn-off point without an award $34 to $109 per MW of minimum output in August</summary>
   </entry>
   <entry>
     <title>WAP_WAP_G1: Turn-off point moved (2026-08-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=WAP_WAP_G1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=WAP_WAP_G1#WAP_WAP_G1/2026-08-01/turnoff/0</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Turn-off point without an award $32 to $130 per MW of minimum output in August</summary>
+    <summary>Turn-off point without an award $34 to $142 per MW of minimum output in August</summary>
   </entry>
   <entry>
     <title>TRSES_UNIT6: Turn-off point moved (2026-08-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=TRSES_UNIT6"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=TRSES_UNIT6#TRSES_UNIT6/2026-08-01/turnoff/0</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Turn-off point without an award $58 to $192 per MW of minimum output in August</summary>
+    <summary>Turn-off point without an award $64 to $181 per MW of minimum output in August</summary>
   </entry>
   <entry>
     <title>TOPAZ_UNIT10: Timescale group changed (2026-08-01)</title>
@@ -548,7 +548,7 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=TEN_CC1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=TEN_CC1#TEN_CC1/2026-08-01/turnoff/0</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Turn-off point without an award $492 to $894 per MW of minimum output in August</summary>
+    <summary>Turn-off point without an award $492 to $781 per MW of minimum output in August</summary>
   </entry>
   <entry>
     <title>STEAM_STEAM_3: Timescale group changed (2026-08-01)</title>
@@ -569,7 +569,7 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=SCSES_UNIT2"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=SCSES_UNIT2#SCSES_UNIT2/2026-08-01/turnoff/0</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Turn-off point without an award $138 to $392 per MW of minimum output in August</summary>
+    <summary>Turn-off point without an award $140 to $378 per MW of minimum output in August</summary>
   </entry>
   <entry>
     <title>SCSES_UNIT2: Timescale group changed (2026-08-01)</title>
@@ -632,14 +632,7 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=OECCS_CC2"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=OECCS_CC2#OECCS_CC2/2026-08-01/turnoff/2</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Turn-off point with an award every hour $7,736 to riding through per MW of minimum output in August</summary>
-  </entry>
-  <entry>
-    <title>OECCS_CC1: Turn-off point moved (2026-08-01)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=OECCS_CC1"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=OECCS_CC1#OECCS_CC1/2026-08-01/turnoff/1</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Turn-off point with an award some hours $1,374 to $2,066 per MW of minimum output in August</summary>
+    <summary>Turn-off point with an award every hour $8,898 to riding through per MW of minimum output in August</summary>
   </entry>
   <entry>
     <title>NEDIN_CC1: Timescale group changed (2026-08-01)</title>
@@ -684,6 +677,13 @@
     <summary>Always on when available in 2026-07 to Daily, under 1 shutdown a week in 2026-08</summary>
   </entry>
   <entry>
+    <title>LPCCS_CC2: Turn-off point moved (2026-08-01)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=LPCCS_CC2"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=LPCCS_CC2#LPCCS_CC2/2026-08-01/turnoff/2</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Turn-off point with an award every hour $2,679 to $4,073 per MW of minimum output in August</summary>
+  </entry>
+  <entry>
     <title>LPCCS_CC2: Timescale group changed (2026-08-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=LPCCS_CC2"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=LPCCS_CC2#LPCCS_CC2/2026-08-01/group</id>
@@ -695,7 +695,14 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=LPCCS_CC1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=LPCCS_CC1#LPCCS_CC1/2026-08-01/turnoff/1</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Turn-off point with an award some hours $9 to $71 per MW of minimum output in August</summary>
+    <summary>Turn-off point with an award some hours $9 to $583 per MW of minimum output in August</summary>
+  </entry>
+  <entry>
+    <title>LPCCS_CC1: Turn-off point moved (2026-08-01)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=LPCCS_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=LPCCS_CC1#LPCCS_CC1/2026-08-01/turnoff/2</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Turn-off point with an award every hour $3,520 to $5,444 per MW of minimum output in August</summary>
   </entry>
   <entry>
     <title>LPCCS_CC1: Timescale group changed (2026-08-01)</title>
@@ -709,14 +716,14 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=LOSTPI_CC1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=LOSTPI_CC1#LOSTPI_CC1/2026-08-01/turnoff/1</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Turn-off point with an award some hours $349 to $828 per MW of minimum output in August</summary>
+    <summary>Turn-off point with an award some hours $356 to $6,514 per MW of minimum output in August</summary>
   </entry>
   <entry>
     <title>LHSES_UNIT2A: Turn-off point moved (2026-08-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=LHSES_UNIT2A"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=LHSES_UNIT2A#LHSES_UNIT2A/2026-08-01/turnoff/0</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Turn-off point without an award $3 to -$186 per MW of minimum output in August</summary>
+    <summary>Turn-off point without an award $11 to $239 per MW of minimum output in August</summary>
   </entry>
   <entry>
     <title>LHSES_UNIT2A: Timescale group changed (2026-08-01)</title>
@@ -730,28 +737,35 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=LHSES_UNIT1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=LHSES_UNIT1#LHSES_UNIT1/2026-08-01/turnoff/2</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Turn-off point with an award every hour $2,664 to riding through per MW of minimum output in August</summary>
+    <summary>Turn-off point with an award every hour $2,673 to riding through per MW of minimum output in August</summary>
   </entry>
   <entry>
     <title>HLSES_UNIT5: Turn-off point moved (2026-08-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=HLSES_UNIT5"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=HLSES_UNIT5#HLSES_UNIT5/2026-08-01/turnoff/1</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Turn-off point with an award some hours -$45 to $18 per MW of minimum output in August</summary>
+    <summary>Turn-off point with an award some hours -$47 to $4 per MW of minimum output in August</summary>
+  </entry>
+  <entry>
+    <title>GUADG_CC2: Turn-off point moved (2026-08-01)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=GUADG_CC2"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=GUADG_CC2#GUADG_CC2/2026-08-01/turnoff/2</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Turn-off point with an award every hour $1,972 to $3,283 per MW of minimum output in August</summary>
   </entry>
   <entry>
     <title>GUADG_CC1: Turn-off point moved (2026-08-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=GUADG_CC1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=GUADG_CC1#GUADG_CC1/2026-08-01/turnoff/2</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Turn-off point with an award every hour $6,589 to riding through per MW of minimum output in August</summary>
+    <summary>Turn-off point with an award every hour $7,716 to riding through per MW of minimum output in August</summary>
   </entry>
   <entry>
     <title>GRSES_UNIT2: Turn-off point moved (2026-08-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=GRSES_UNIT2"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=GRSES_UNIT2#GRSES_UNIT2/2026-08-01/turnoff/0</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Turn-off point without an award $88 to $260 per MW of minimum output in August</summary>
+    <summary>Turn-off point without an award $94 to $260 per MW of minimum output in August</summary>
   </entry>
   <entry>
     <title>GRSES_UNIT2: Timescale group changed (2026-08-01)</title>
@@ -765,7 +779,7 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=GRSES_UNIT1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=GRSES_UNIT1#GRSES_UNIT1/2026-08-01/turnoff/0</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Turn-off point without an award $86 to $183 per MW of minimum output in August</summary>
+    <summary>Turn-off point without an award $86 to $163 per MW of minimum output in August</summary>
   </entry>
   <entry>
     <title>GBY_GBYGT84: Timescale group changed (2026-08-01)</title>
@@ -814,14 +828,21 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=FRNYPP_CC1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=FRNYPP_CC1#FRNYPP_CC1/2026-08-01/turnoff/1</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Turn-off point with an award some hours $625 to $1,316 per MW of minimum output in August</summary>
+    <summary>Turn-off point with an award some hours $634 to $1,944 per MW of minimum output in August</summary>
+  </entry>
+  <entry>
+    <title>FREC_CC1: Turn-off point moved (2026-08-01)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=FREC_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=FREC_CC1#FREC_CC1/2026-08-01/turnoff/2</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Turn-off point with an award every hour $4,064 to riding through per MW of minimum output in August</summary>
   </entry>
   <entry>
     <title>ETCCS_CC1: Turn-off point moved (2026-08-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=ETCCS_CC1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=ETCCS_CC1#ETCCS_CC1/2026-08-01/turnoff/0</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Turn-off point without an award $53 to $106 per MW of minimum output in August</summary>
+    <summary>Turn-off point without an award $53 to $119 per MW of minimum output in August</summary>
   </entry>
   <entry>
     <title>DCSES_CT20: Timescale group changed (2026-08-01)</title>
@@ -866,13 +887,6 @@
     <summary>Always on when available in 2026-07 to Daily, 1–2 a week in 2026-08</summary>
   </entry>
   <entry>
-    <title>CBY4_CC1: Turn-off point moved (2026-08-01)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=CBY4_CC1"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=CBY4_CC1#CBY4_CC1/2026-08-01/turnoff/0</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Turn-off point without an award $204 to $336 per MW of minimum output in August</summary>
-  </entry>
-  <entry>
     <title>CBEC_GT12: Timescale group changed (2026-08-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=CBEC_GT12"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=CBEC_GT12#CBEC_GT12/2026-08-01/group</id>
@@ -891,7 +905,7 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=CBEC_CC1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=CBEC_CC1#CBEC_CC1/2026-08-01/turnoff/2</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Turn-off point with an award every hour $6,842 to riding through per MW of minimum output in August</summary>
+    <summary>Turn-off point with an award every hour $6,767 to riding through per MW of minimum output in August</summary>
   </entry>
   <entry>
     <title>BOSQUESW_CC2: Timescale group changed (2026-08-01)</title>
@@ -1389,19 +1403,5 @@
     <id>https://ercotbids.currenttech.energy/unit.html?unit=WCPP_CC1#WCPP_CC1/2026-07-16/dam_mingen_step</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Minimum-energy offer stepped: $17 to $23/MWh (-$1 to $5 against the fuel-cost line)</summary>
-  </entry>
-  <entry>
-    <title>SJS_SJS_G2: Bidding approach shifted (2026-07-16)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=SJS_SJS_G2"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=SJS_SJS_G2#SJS_SJS_G2/2026-07-16/bidding</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Running without an offer curve: 100% to 0% of the day</summary>
-  </entry>
-  <entry>
-    <title>PITTSDK2: New floor (2026-07-16)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=PITTSDK2"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=PITTSDK2#PITTSDK2/2026-07-16/renew_floor_new</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: floor -$2 to floor -$20</summary>
   </entry>
 </feed>

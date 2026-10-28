@@ -23,7 +23,7 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=FRNYPP_CC2"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=FRNYPP_CC2#FRNYPP_CC2/2026-07-01/turnoff/1</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Turn-off point with an award some hours $91 to $36 per MW of minimum output in July</summary>
+    <summary>Turn-off point with an award some hours $100 to $43 per MW of minimum output in July</summary>
   </entry>
   <entry>
     <title>FRNYPP_CC2: Minimum-energy offer stepped (2026-06-20)</title>
@@ -44,7 +44,7 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=FRNYPP_CC2"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=FRNYPP_CC2#FRNYPP_CC2/2026-06-01/turnoff/1</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Turn-off point with an award some hours -$23 to $91 per MW of minimum output in June; the next month held it</summary>
+    <summary>Turn-off point with an award some hours -$22 to $100 per MW of minimum output in June; the next month held it</summary>
   </entry>
   <entry>
     <title>FRNYPP_CC2: Minimum-energy offer stepped (2026-05-02)</title>
@@ -59,6 +59,13 @@
     <id>https://ercotbids.currenttech.energy/unit.html?unit=FRNYPP_CC2#FRNYPP_CC2/2026-04-13/outage_end</id>
     <updated>2026-10-23T00:00:00Z</updated>
     <summary>Back from a 12-day outage</summary>
+  </entry>
+  <entry>
+    <title>FRNYPP_CC2: Turn-off point moved (2026-04-01)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=FRNYPP_CC2"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=FRNYPP_CC2#FRNYPP_CC2/2026-04-01/turnoff/2</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Turn-off point with an award every hour riding through to $4,114 per MW of minimum output in April; the next month held it</summary>
   </entry>
   <entry>
     <title>FRNYPP_CC2: Outage started (2026-04-01)</title>

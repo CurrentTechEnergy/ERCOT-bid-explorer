@@ -1,5 +1,5 @@
 {
- "checked": "2026-10-28T16:06:58Z",
+ "checked": "2026-10-28T18:21:41Z",
  "today": "2026-10-28",
  "sources": {
   "2d": {
@@ -60,15 +60,15 @@
   },
   "dam_nodes": {
    "label": "DAM node prices",
-   "latest": "2026-10-28",
-   "behind": 0,
+   "latest": "2026-10-29",
+   "behind": -1,
    "allowed": 0,
    "stale": false
   },
   "dam_lambda": {
    "label": "DAM system lambda",
-   "latest": "2026-10-28",
-   "behind": 0,
+   "latest": "2026-10-29",
+   "behind": -1,
    "allowed": 0,
    "stale": false
   },
@@ -88,8 +88,8 @@
   },
   "forecast": {
    "label": "Commitment forecast",
-   "latest": "2026-10-28",
-   "behind": 0,
+   "latest": "2026-10-29",
+   "behind": -1,
    "allowed": 0,
    "stale": false
   },
@@ -116,8 +116,8 @@
   },
   "nrc": {
    "label": "NRC reactor status",
-   "latest": "2026-10-27",
-   "behind": 1,
+   "latest": "2026-10-28",
+   "behind": 0,
    "allowed": 2,
    "stale": false
   }
