@@ -315,14 +315,15 @@ function drawActual() {
     : `ERCOT's 2-day generation summary: thermal in total, wind, solar and batteries. Unit detail arrives with the 60-day disclosure, about ${dayLabel(addDays(S.date, LAG_60D))}. Shaded hours had system lambda at $10 or less.`;
 }
 // what ran over the day, as GWh bars: the bar is what ran, the full bar the units' largest hourly
-// HSL over all 24 hours; rows without a capacity share `scale` (GWh) with the rest of their section
-function actRow(name, note, color, cap, act, tip, scale) {
-  const capG = cap ? cap * 24 / 1000 : scale || Math.max(act || 0, 1) * 1.1;
+// HSL over all 24 hours (wind and solar: their HSL hour by hour); rows without a maximum share
+// `scale` (GWh) with the rest of their section
+function actRow(name, note, color, max, act, tip, scale) {
+  const capG = max || scale || Math.max(act || 0, 1) * 1.1;
   const pct = Math.min(100, ((act || 0) / capG) * 100);
   return `<div class="lab"><span class="sw" style="background:var(${color})"></span><div>${esc(name)}<small>${esc(note)}</small></div></div>` +
     `<div class="bar" data-tip-html="${esc(`<h4>${esc(name)}</h4><p class="tip-body">${tip}</p>`)}">` +
     (act != null ? `<i style="left:0;width:${pct}%;background:var(${color})"></i>` : "") + `</div>` +
-    `<div class="val"><b>${act != null ? d3.format(",.1f")(act) + " GWh" : "–"}</b>` + (cap ? ` of ${d3.format(",.0f")(capG)}` : "") + `</div>`;
+    `<div class="val"><b>${act != null ? d3.format(",.1f")(act) + " GWh" : "–"}</b> ran` + (max ? `<br>of ${d3.format(",.0f")(max)} GWh max` : "") + `</div>`;
 }
 // "x–y units online" over the day's hours, for a group's or technology's trains online
 const onRange = (on) => { if (!on) return ""; const a = d3.min(on), b = d3.max(on); return `${a === b ? a : `${a}–${b}`} unit${b === 1 ? "" : "s"} online`; };
@@ -331,13 +332,16 @@ function drawActualBars() {
   panel.hidden = !L;
   if (!L) return;
   $("actual-bar-legend").innerHTML = `<span><span class="sw" style="background:var(--g3)"></span>What ran</span>` +
-    (L === "60d" ? `<span><span class="sw" style="background:var(--track)"></span>Units' largest hourly HSL × 24 hours</span>` : "");
-  $("actual-bars-sub").textContent = L === "60d" ? "ERCOT's reported energy for the day. The solid bar is what ran; the full bar is what the units could have made at their largest hourly maximum (HSL) for all 24 hours. Online minimum and maximum hour by hour are in the next panel." : "ERCOT's reported energy, from the 2-day summary. Thermal is reported in total until the 60-day disclosure.";
+    (L === "60d" ? `<span><span class="sw" style="background:var(--track)"></span>Max: thermal units' largest hourly HSL × 24 hours; wind and solar their HSL each hour</span>` : "");
+  $("actual-bars-sub").textContent = L === "60d" ? "ERCOT's reported energy for the day. The solid bar is what ran; the full bar is the most the units could have made: thermal at their largest hourly maximum (HSL) for all 24 hours, wind and solar at their HSL each hour. Online minimum and maximum hour by hour are in the next panel." : "ERCOT's reported energy, from the 2-day summary. Thermal is reported in total until the 60-day disclosure.";
   const csv = [], gwhOf = (mw) => d3.sum(mw.filter((v) => v != null)) / 1000, sumOf = (a) => (a ? d3.sum(a) / 1000 : null);
   let html = "";
   const push = (sect, name, note, color, cap, act, lsl, hsl, scale) => {
-    const tip = `${act != null ? `${fmtGWh(act)} GWh ran (${fmtGW(act / 24 * 1000)} GW on average)` : "no data"}${cap ? `; ${fmtGWh(cap * 24 / 1000)} GWh at the units' largest hourly HSL all day` : ""}`;
-    html += actRow(name, note, color, cap, act, tip, scale); csv.push([sect, name, cap, act, lsl, hsl]);
+    // most it could have made: thermal at the units' largest hourly HSL all day, wind and solar at their HSL each hour
+    const max = cap ? cap * 24 / 1000 : (sect === "wind" || sect === "solar") && hsl ? hsl : null;
+    const tip = `${act != null ? `${fmtGWh(act)} GWh ran (${fmtGW(act / 24 * 1000)} GW on average)` : "no data"}` +
+      (max ? `; ${fmtGWh(max)} GWh max (${cap ? "the units' largest hourly HSL all day" : "their HSL each hour"}), ${d3.format(".0%")(act / max)} of it ran` : "");
+    html += actRow(name, note, color, max, act, tip, scale); csv.push([sect, name, cap, max, act, lsl, hsl]);
   };
   const a60 = S.a60, gh = genHourly();
   if (L === "60d") {
@@ -364,7 +368,7 @@ function drawActualBars() {
   }
   el.innerHTML = html;
   $("actual-bars-note").textContent = `${S.date} · GWh · ${L === "60d" ? "60-day disclosure" : "2-day summary"}`;
-  setCSV(el, ["section", "name", "cap_mw", "actual_gwh", "online_lsl_gwh", "online_hsl_gwh"], csv, `What ran ${S.date}`);
+  setCSV(el, ["section", "name", "cap_mw", "max_gwh", "actual_gwh", "online_lsl_gwh", "online_hsl_gwh"], csv, `What ran ${S.date}`);
 }
 // online minimum and maximum by hour: one small chart per group or technology, with the online
 // units' summed LSL as a solid bar, their summed HSL as a light bar above it, and what ran as a line
