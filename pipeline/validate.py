@@ -348,9 +348,10 @@ def _rt_node_checks(day, rt, dam):
     pts = rt.get("points") or {}
     short = [p for p, v in pts.items() if len(v) != 24]
     vals = np.array([x for v in pts.values() for x in v if x is not None], float)
-    bad = int(((vals < -300) | (vals > 10000)).sum()) if vals.size else 0
+    # node prices run past the $5,000 offer cap with congestion (Brownsville nodes near $11,100 at HE17 on 2026-05-09)
+    bad = int(((vals < -5000) | (vals > 25000)).sum()) if vals.size else 0
     if short or bad or not pts:
-        day.add("rt_nodes", "error", f"{len(pts)} points, {len(short)} without 24 hours, {bad} prices outside -$300 to $10,000")
+        day.add("rt_nodes", "error", f"{len(pts)} points, {len(short)} without 24 hours, {bad} prices outside -$5,000 to $25,000")
     else:
         day.add("rt_nodes", "ok", f"{len(pts)} points, prices ${vals.min():,.0f} to ${vals.max():,.0f}")
     sps = {u.get("sp") for u in ((dam or {}).get("units") or {}).values() if u.get("sp")}
@@ -564,10 +565,13 @@ def _curve_checks(day, cv, uh):
         have_ = {(k, h + 1) for k, u in cv["units"].items() for h, v in enumerate(u["lim"]) if v is not None}
         # a unit online without any curve all day has no entry, so only extra hours are a mismatch
         extra = have_ - want
-        if extra:
+        # hours online with no output and no HSL: in curve files before format 2 and hourly unit
+        # files before format 3, both rebuilt over a few runs, so the check waits for both
+        same = (cv.get("format", 1) >= 2) == (uh.get("format", 1) >= 3)
+        if extra and same:
             bad.append(f"{len(extra)} unit-hours with curves that the hourly unit file has offline")
         miss = {k for k in want - have_ if k[0] in cv["units"]}
-        if miss:
+        if miss and same:
             bad.append(f"{len(miss)} online unit-hours missing from units that have curves")
     day.add("unit_curves", "error" if bad else "ok", "; ".join(bad[:5]) or
             f"{len(cv['units'])} thermal units, {n_curves} distinct curves, indices and limits agree with the hourly unit file")
@@ -603,11 +607,14 @@ def check_files(index):
     known |= {_train(u) for u in tr.get("first_seen") or {}}   # new units (combined cycle by train)
     ui = read_json_gz(UNIT_INDEX_PATH, default=None) or {}
     known |= {n for r in ui.get("rows", []) for n in (r[0], _train(r[0]))}     # every unit with a page
+    d60 = sorted(index["days"].get("60d", []))
+    # control events from the QSE/DME history merge reach back to 2019, before the 60-day record,
+    # and can name units retired since: the unit and window checks cover them only inside the record
+    hist = lambda e: e.get("kind") == "control" and d60 and (e.get("date") or "") < d60[0]
     # a plant's event (several units changing control together) is keyed by the plant, named by its units
-    unknown = sorted({e["unit"] for e in events if e.get("unit") not in known
+    unknown = sorted({e["unit"] for e in events if not hist(e) and e.get("unit") not in known
                       and not (len(e.get("units") or []) > 1 and set(e["units"]) <= known)})
     day.add("events_units", "error" if unknown else "ok", f"{len(unknown)} unknown unit(s), e.g. {unknown[:5]}" if unknown else "all known")
-    d60 = sorted(index["days"].get("60d", []))
     last = max((max(v) for v in index["days"].values() if v), default=None)
     bad_date = []
     for e in events:
@@ -615,7 +622,7 @@ def check_files(index):
             dt.date.fromisoformat(e.get("date") or "")
         except ValueError:
             bad_date.append(e.get("id")); continue
-        if (last and e["date"] > last) or (not e["kind"].startswith(("renew_", "dam_")) and d60 and not d60[0] <= e["date"] <= d60[-1]):
+        if (last and e["date"] > last) or (not e["kind"].startswith(("renew_", "dam_")) and not hist(e) and d60 and not d60[0] <= e["date"] <= d60[-1]):
             bad_date.append(e["id"])
     day.add("events_dates", "error" if bad_date else "ok", f"{len(bad_date)} event(s) outside the record, e.g. {bad_date[:3]}" if bad_date else "inside the record")
     no_seen = [e["id"] for e in events if not e.get("seen")]

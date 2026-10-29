@@ -20,7 +20,9 @@ Writes
       }
     }
   An hour's curve is the one in force for the most of its online runs (ties to the later one);
-  -1 where the unit is not online in any run of the hour or has no curve then.  Only thermal
+  -1 where the unit is not online in any run of the hour or has no curve then, and (format 2)
+  where it is online with no output and no HSL (intraday.empty_hour), as the hourly unit file
+  (pipeline/unit_hours_day.py) reads that hour as offline.  Only thermal
   units (config.THERMAL_TECHS); wind, solar and storage would add about 240 KB a day.
 """
 from collections import Counter
@@ -28,10 +30,11 @@ from collections import Counter
 import numpy as np
 
 from .config import DATA_DIR, UNIT_DATA_DIR
+from .intraday import empty_hour
 from .store import read_json_gz, write_json_gz
 from .units import _ffill_index, expand
 
-FORMAT = 1
+FORMAT = 2            # 2: hours online with no output and no HSL (intraday.empty_hour) have no curve
 MAX_PER_RUN = 60      # days built per update run, newest first, so history fills in over a few runs
 OUT_DIR = DATA_DIR / "60d-curves"
 TECHS = ("coal", "combined_cycle", "gas_steam", "combustion_turbine", "nuclear")
@@ -66,6 +69,15 @@ def unit_curves(u: dict, runs: list) -> dict | None:
     if not on.any():
         return None
     hr = np.minimum(np.array(runs, int) // 60, 23)
+    # an hour online with no output and no HSL is offline, as in the hourly unit file
+    out_h = [np.nan if v is None else v for v in (u.get("out") or [None] * 24)]
+    hsl0 = np.nan_to_num(e["hsl"])
+    for h in range(24):
+        sel = (hr == h) & on
+        if sel.any() and empty_hour(u["tech"], out_h[h], hsl0[sel].mean()):
+            on[sel] = False
+    if not on.any():
+        return None
     curves, key = [], {}
     sub = _hourly(u.get("curve") or [], on, hr, curves, key)
     used = _hourly(u.get("curve2") or [], on, hr, curves, key)
