@@ -43,7 +43,10 @@ def _published(name):
 
 
 def _unpublish(name):
-    """Take the published copy out of site/data, once the bucket holds it."""
+    """Take the published copy out of site/data, once the bucket holds it (a no-op when site/data
+    has none)."""
+    if _published(name) is None:
+        return False
     if name == "gas_hub_history.json.gz":
         pub = DATA_DIR / "gas_history.json.gz"
         h = read_json_gz(pub, default=None) or {}
@@ -52,6 +55,7 @@ def _unpublish(name):
         write_json_gz(pub, h)
     else:
         (DATA_DIR / name).unlink(missing_ok=True)
+    return True
 
 
 def read(name, default=None):
@@ -67,12 +71,13 @@ def read(name, default=None):
     if blob:
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_bytes(blob)
+        if _unpublish(name):
+            print(f"private: removed site/data's copy of {name}, which the bucket already holds")
         return read_json_gz(path, default=default)
     obj = _published(name)
     if obj is None:
         return default
-    if write(name, obj):
-        _unpublish(name)
+    if write(name, obj):                     # write() takes the site/data copy out
         print(f"private: moved {name} out of site/data")
     else:
         warn(f"private: {name} stays in site/data until the bucket can hold it")
@@ -92,4 +97,6 @@ def write(name, obj) -> bool:
     if not _bucket().put_object(PREFIX + name, path.read_bytes(), "application/gzip"):
         warn(f"private: {name} not stored in the bucket; it lasts only this run")
         return False
+    if _unpublish(name):
+        print(f"private: removed site/data's copy of {name}, now in the bucket")
     return True
