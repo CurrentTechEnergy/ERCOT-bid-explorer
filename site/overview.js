@@ -392,7 +392,7 @@ function actRow(name, note, color, max, act, tip, scale, avail, outG) {
     (act != null ? `<i style="left:0;width:${pct}%;background:var(${color})"></i>` : "") +
     (og ? `<i class="outage" style="left:${pm}%;width:${100 - pm}%;color:var(${color})"></i>` : "") + `</div>` +
     `<div class="val"><b>${act != null ? d3.format(",.1f")(act) + " GWh" : "–"}</b> ran` +
-    (avail != null ? `, ${d3.format(",.1f")(Math.max(0, avail - (act || 0)))} GWh curtailed<br>of ${d3.format(",.0f")(avail)} GWh available` : "") + (max ? `<br>of ${d3.format(",.0f")(max)} GWh max` : "") +
+    (avail != null ? `, ${d3.format(",.1f")(Math.max(0, avail - (act || 0)))} GWh curtailed<br>of ${d3.format(",.0f")(avail)} GWh available` : "") + (max ? `<br>of ${d3.format(",.0f")(max)} GWh max available` : "") +
     (og ? `<br>${fmtGWh(og)} GWh max on outage (${outG.units.length} unit${outG.units.length === 1 ? "" : "s"})` : "") + `</div>`;
 }
 // "x–y units online" over the day's hours, for a group's or technology's trains online
