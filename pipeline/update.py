@@ -54,19 +54,15 @@ from .fuel_hub import build_fuel_hubs
 from .econ import build_econ
 from .dam_lambda import fetch_dam_lambda
 from .dam_prices import fetch_dam_prices, fetch_dam_node_prices
-from .renew_forecast import fetch_renew_forecast
-from .load import fetch_load
 from .shadow import fetch_shadow
 from .outages import fetch_outages
 from .cop import fetch_cop
 from .nrc import fetch_nrc
 from .entities import fetch_entities
-from .forecast.run import build_forecast
 from .ppa import build_ppa
 from .renew_changes import build_renew_changes
 from .dam_offers import build_dam_offers
 from .offtakers import build_offtakers
-from .models.cutoff_history import build_cutoff_history
 from .models.operator_informed import build_days as build_operator_days
 from .models.peaker_rt import build_peaker_rt
 from .events import build_events
@@ -492,7 +488,7 @@ def main(argv=None):
     ap.add_argument("--max-files", type=int, default=None, help="cap curve files per report per run")
     ap.add_argument("--outages-backfill", nargs=2, metavar=("START", "END"),
                     help="also fetch the outage reports for every operating day in this range")
-    ap.add_argument("--skip", choices=["2d", "2dgen", "60d", "dam", "cop", "prices", "outages", "nrc", "gas", "forecast", "operator", "entities"], action="append", default=[])
+    ap.add_argument("--skip", choices=["2d", "2dgen", "60d", "dam", "cop", "prices", "outages", "nrc", "gas", "operator", "entities"], action="append", default=[])
     ap.add_argument("--local", nargs="+", help="process local zip files instead of calling the API")
     ap.add_argument("--mis-docs", nargs="+", type=int, metavar="ID",
                     help="download these report files from ERCOT's public website (MIS document ids) in "
@@ -553,8 +549,6 @@ def main(argv=None):
         build_series(index)
         build_storage(index)
         build_battery_bench(index)     # after series (node prices) and storage
-        build_forecast(index)
-        build_cutoff_history(index)
         build_operator_days(index)
         build_peaker_rt(index)
         build_events(index)
@@ -612,8 +606,6 @@ def main(argv=None):
         fetch_dam_prices(api, index["days"]["60d"], index)
         fetch_dam_node_prices(api, index)
         fetch_dam_lambda(api)
-        fetch_renew_forecast(api, index)
-        fetch_load(api, index)
         fetch_shadow(api, index)
     if "outages" not in args.skip:
         fetch_outages(api, index, backfill=args.outages_backfill)
@@ -649,9 +641,6 @@ def main(argv=None):
     build_series(index)
     build_storage(index)
     build_battery_bench(index)     # after series (node prices) and storage
-    if "forecast" not in args.skip:
-        build_forecast(index)
-    build_cutoff_history(index)
     if "operator" not in args.skip:
         build_operator_days(index)   # after cop: the Unit page's operator-informed row, new 60-day days only
     build_peaker_rt(index)           # the Commitment page's peaker start chart

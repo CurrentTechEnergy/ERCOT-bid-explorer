@@ -24,7 +24,7 @@ if (GOATCOUNTER_CODE) {
 // fromStart.
 const SITE_START = "2025-12-05";
 const fromStart = (days) => days.filter((d) => !(typeof d === "string" && /^\d{4}-\d\d-\d\d$/.test(d)) || d >= SITE_START);
-const DAY_INDEXES = ["data/index.json", "data/forecast/index.json.gz", "data/storage/index.json.gz"];
+const DAY_INDEXES = ["data/index.json", "data/storage/index.json.gz"];
 function trimDays(url, obj) {
   if (!obj || !DAY_INDEXES.includes(url.split("?")[0])) return obj;
   if (Array.isArray(obj.days)) obj.days = fromStart(obj.days);

@@ -1,31 +1,9 @@
-# Predictor analysis
+# Analysis
 
-Scripts that read one side of a backtest (`python -m pipeline.forecast.backtest`, see its
-docstring) and explain its scores.  Each imports that side's own copy of the pipeline, so it
-analyses the code that was scored, and writes `analysis-<name>.md` next to the side's `run.log`.
+The forecast backtest and the scripts that read it were retired with the forecast layer. What
+remains are the analysis track's builders, now in the pipeline:
 
-    python -m pipeline.forecast.backtest --against main --no-fit --out backtests/mine
-    python analysis/floor_causes.py backtests/mine/current
-    python analysis/floor_causes.py backtests/mine/ref
-
-For a run of the Backtest workflow (.github/workflows/backtest.yml), download its `backtest`
-artifact and rebuild both sides from its day files, with no forecasting:
-
-    gh run download <run id> -n backtest -D backtests/mine-ci
-    python -m pipeline.forecast.backtest --score-only --current <branch> --against main \
-        --seed backtests/mine-ci/seed --out backtests/mine
-
-| Script | Question |
-|---|---|
-| floor_causes.py | Where does the cheap-hour committed-minimum error come from (outage, called on but off, called off but on, CC configuration)? |
-| calibration.py | Is a unit held at weight p online p of the time? (`--cheap` for cheap hours only) |
-| calls.py | Through the loss window, did off/maybe/on calls match what the unit did? |
-| outage_catch.py | How much of the cheap-hour overstatement the unplanned outage report would have removed (`--lag` days before D) |
-
-The first script on a side computes every thermal unit-hour on the scored as-of days (about three
-minutes) and caches it as `unit_hours.pkl` in the side folder; the rest reuse it.
-
-## Decision table on actuals
+### Decision table on actuals
 
 `pipeline/decision_table.py` (moved from here for the goal page) builds the analysis track's table of every coal,
 combined-cycle and gas steam train's stay-on decision through its day-ahead loss window from
@@ -34,34 +12,10 @@ combined-cycle and gas steam train's stay-on decision through its day-ahead loss
     gh release download history -R CurrentTechEnergy/ERCOT-bid-explorer -p 'thermal-*' -p 'units-*' -p 'da-hubs-*' -D history
     python -m pipeline.decision_table --out decision-table
 
-## Decision model on actuals
+### Decision model on actuals
 
 `pipeline/decision_rule.py` (moved from here as decision_model.py) fits a logistic stay-on rule for combined-cycle and gas steam trains on the
 decision table over rolling 12-month windows, scores each on the month after it, and splits the
 change in shutdowns between years into triggers and behaviour (see its docstring):
 
     python -m pipeline.decision_rule --table decision-table/decision-table.parquet --out decision-model [--no-award]
-
-## Combined-cycle sizing on actuals
-
-`cc_sizing.py` is the analysis track's sizing step, kept apart from the on/off decision: the size a
-combined-cycle train runs at once it is on, as each train's mean online LSL by day-ahead hub price
-band over the trailing 365 days.  It tests that against simpler rules out of sample, month by month,
-and with `--table` adds `size_band_mean` and `size_err` to the decision table's combined-cycle rows
-(see its docstring):
-
-    python analysis/cc_sizing.py --out cc-sizing [--table decision-table/decision-table.parquet]
-
-## Behaviour change on actuals
-
-`behaviour_change.py` asks whether units respond differently to the same conditions than they did
-in a base year (2024 by default). It freezes the forecast's stay-on logistic for CC and gas steam,
-and a peak-price rule for whether a CT runs, then runs them forward unit by unit, flags sustained
-changes and splits the fleet's change into triggers and behaviour (see its docstring). It reads the
-forecast's own inputs, like the update:
-
-    gh release download history -R CurrentTechEnergy/ERCOT-bid-explorer -p 'thermal-*' -p 'da-hubs-202[4-9]-*' -D history
-    python analysis/behaviour_change.py --out behaviour [--previous <an earlier run's --out>]
-
-The Behaviour change workflow (.github/workflows/behaviour.yml) runs it on the 3rd of each month and
-puts the results on the `behaviour` release, with what is new since the month before.

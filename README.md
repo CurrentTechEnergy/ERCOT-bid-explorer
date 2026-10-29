@@ -16,7 +16,6 @@ An interactive dashboard of how ERCOT resources offer energy into real-time disp
 | SCED System Lambda | NP6-322-CD | real time | System energy price for each SCED run |
 | Settlement Point Prices | NP6-905-CD | real time | 15-minute prices at hubs and load zones; hourly prices at every resource node (kept on the data branch, for days with per-unit data) |
 | DAM Settlement Point Prices | NP4-190-CD | day ahead | Hourly day-ahead prices at hubs and load zones, for the hedge signals page (history can be loaded from the yearly NP4-180-ER workbook), and at thermal resource nodes for the last two weeks, for tomorrow's shutdown verdicts |
-| Wind and solar power production, hourly averaged actual and forecasted | NP4-732-CD, NP4-737-CD | hourly | ERCOT's short-term wind and solar forecasts (STWPF, STPPF), system-wide: the available wind and solar in the Overview's forecast (the posting in force when the day-ahead market cleared), and the hourly actuals for reconciliation |
 | Resource Decision-Making Entity List | NP3-988-ER | daily | Each resource's decision-making entity (who decides how it is offered) and owning entity, by name; read from ercot.com (no key) to name the DME codes in the 60-day files |
 | Qualified Scheduling Entity List | NP16-474-M | daily | QSE names for the QSE codes in the 60-day files; read from ercot.com (no key). Only name, code and registration date are kept, not the contact columns |
 | EIA Henry Hub spot price | RNGWHHD | daily | Natural gas price, $/MMBtu, from the EIA open data API (needs an `EIA_API_KEY` secret; skipped without one) |
@@ -131,11 +130,11 @@ pipeline/
                    and units.json.gz, one row a day per battery for the Unit page and the
                    battery events (no downloads)
   trends.py        per-unit day files -> daily trends, starts, bidding changes (no downloads)
-  events.py        decisions, groups, trends, renew_changes, dam_offers, cutoff_history and the battery
+  events.py        decisions, groups, trends, renew_changes, dam_offers, operator turn-off points and the battery
                    daily rows -> one list of unit
                    events in one format with the run that first found each (data/events.json.gz)
                    and Atom feeds per unit (data/feeds/, no downloads)
-  unit_index.py    trends, decisions, the latest forecast, ppa and econ -> every unit the Unit page
+  unit_index.py    trends, decisions, groups, ppa and econ -> every unit the Unit page
                    can open, with technology, group, capacity, settlement point and combined-cycle
                    configurations, CDR name, county and zone, and QSE (data/unit_index.json.gz), for
                    the Units directory and the nav row's "Find a unit" box (no downloads)
@@ -158,28 +157,10 @@ pipeline/
   unit_hours_day.py per-unit day files -> each unit's hourly rows for the Day page's Units table (data/60d-units/)
   stayon.py        per-unit day files + DAM costs -> what riding through a cheap stretch cost each
                    thermal unit against a shutdown and restart (no downloads)
-  renew_forecast.py NP4-732-CD, NP4-737-CD -> ERCOT's wind and solar forecasts for the days ahead
-                   (data/renew_forecast.json.gz)
-  forecast/        the Overview's forecast files (data/forecast/<date>.json.gz, index, scores): one
-                   file per operating day in a fixed schema, written from the models below and read
-                   by the page, which does sums and shares only.  context.py gathers what was known
-                   when the day-ahead market cleared (prices, units, 60-day-old states, curve
-                   snapshots on the data branch), build.py assembles a day, score.py scores every
-                   day against the 2-day and 60-day answers, benchmark.py holds the fixed 30-day set
-                   a model version must beat (python -m pipeline.forecast, python -m
-                   pipeline.forecast.benchmark); groups.py ports the timescale groups
-  models/          one module per model, each with NAME, VERSION and forecast(date, ctx):
-                   thermal_cutoff (commitment on the stay-on loss at the node against the unit's
-                   own cutoff), thermal_dispatch (the committed set's offer curves met by the hourly
-                   day-ahead price), peaker_share (combustion turbines by price level and hour),
-                   renewable_floor (wind and solar forecast less what prices itself out at its
-                   node);
-                   cutoff_history refits each thermal unit's cutoff at every month end on its
-                   last 30 decisions and records the months it moved (data/cutoff_history.json.gz;
-                   python -m pipeline.models.cutoff_history --benchmark prints how the moves held up)
-                   two_day_fit (the 2-day fit, plan layer 2: the committed set inferred from the 2-day
-                   thermal curve two days after the day, by unit, combined-cycle configuration and the
-                   peaker fleet's hourly share; data/fit/<date>.json.gz, scored beside the forecast)
+  forecast/        context.py: the unit states, DAM files and hub prices the operator-informed
+                   model reads (the daily forecast it once served was retired in Oct 2026)
+  models/          the operator-informed on/off model (operator_informed.py, with its history days,
+                   turn-off points and scorecard) and the peaker real-time fit (peaker_rt.py)
   decisions.py     hourly unit states + DAM node prices, costs and awards -> each thermal unit's
                    shutdown decisions day by day, its loss cutoff, and tomorrow's expected
                    turn-offs from the day-ahead node prices (no downloads)
@@ -191,12 +172,12 @@ pipeline/
   ercot_api.py     ERCOT Public API client (token, archive listing, downloads)
   update.py        command line entry point
 site/
-  index.html, overview.js (the Overview and landing page: the forecast files rendered, with the day
-                   drill-down; overview.html redirects here),
-  commitment.html, commitment.js (which thermal units stay on when power is cheap: the cutoff curve
-                   from the day's forecast file, groups and cutoffs, the forecast against the 2-day fit and
-                   the 60-day answer, and the thermal panels lifted from Trends, plus what riding through
-                   cheap stretches cost from data/stayon_60d.json.gz and one row per unit),
+  index.html, overview.js (A day in ERCOT, the landing page: one past day's prices, generation and
+                   units; overview.html redirects here),
+  commitment.html, commitment.js (which thermal units stay on when power is cheap: the operator
+                   model's turn-off points and scorecard (data/operator/), groups and cutoffs, the
+                   thermal panels lifted from Trends, what riding through cheap stretches cost from
+                   data/stayon_60d.json.gz, and one row per unit),
   beyond.html, renewables.html, fleet.html, unit.html, builder.html and their scripts
                    (unit.html with no unit shows the Units directory, unit-dir.js; common.js adds
                    the "Find a unit" box to every page's nav row),
@@ -207,7 +188,7 @@ site/
   style.css, vendor/d3.min.js
   data/            generated: index.json, summary_*.json.gz, marginal_*.json.gz, 2d/, 60d/, dam/, prices/,
                    curtail_nodes.json.gz, marginal_nodes.json.gz, gas.json.gz, gas_hubs.json.gz,
-                   series/, storage/, forecast/, fit/
+                   series/, storage/, operator/
   follow.json      the follow server's address (written by Deploy the follow server)
   unit/            one link-preview page per unit (pipeline/share_pages.py): the unit's title, description
                    and Open Graph tags, and a redirect to unit.html?unit=NAME. Served at /unit/NAME

@@ -110,8 +110,7 @@ jobs:
           fi
 
       # The thermal months, day-ahead hub prices, DAM resource status and QSE/DME months on the `history` release (pipeline/history.py),
-      # gitignored in history/: the forecast's boosted trees add them to their training rows, and
-      # the operator-informed model judges the days before the 60-day window on them
+      # gitignored in history/: the operator-informed model judges the days before the 60-day window on them
       # (pipeline/models/operator_history.py), and qse.py merges the QSE/DME months into the unit
       # histories once each.  Optional: all run without them.
       - name: Fetch the thermal history
@@ -119,7 +118,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           gh release download history -R "$GITHUB_REPOSITORY" -p 'thermal-*.parquet' -p 'da-hubs-*.parquet' -p 'dam-status-*.parquet' -p 'control-*.parquet' -D history \
-            || echo "No thermal history, so the trees train on the 60-day window only"
+            || echo "No thermal history, so the operator model skips the days before the 60-day window"
 
       - name: Fetch and process new reports
         id: fetch

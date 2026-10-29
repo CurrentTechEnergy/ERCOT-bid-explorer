@@ -8,7 +8,7 @@ Hours are hour ending 1..24 stored at index 0..23; on the fall-back day the repe
 dropped (as in the per-unit day files, which average it into one).
 
 Thermal, wind and solar resource nodes for the most recent days, for tomorrow's shutdown
-verdicts (pipeline/decisions.py) and the Overview's forecast (pipeline/forecast): the report
+verdicts (pipeline/decisions.py): the report
 for operating day D is posted around 13:30 Central on D - 1, sixty days before the disclosure
 gives the units' own prices.  Only the settlement points of units in the latest DAM disclosure
 files are kept, and only the last NODE_DAYS days, enough to reach the disclosure's own days.
@@ -136,7 +136,7 @@ NODE_TECHS = ("nuclear", "coal", "combined_cycle", "gas_steam", "combustion_turb
 
 def thermal_nodes(index: dict) -> set:
     """Settlement points of the thermal, wind and solar units in the latest DAM disclosure
-    files (wind and solar for the Overview's priced-out share, pipeline/models/renewable_floor.py)."""
+    files."""
     nodes = set()
     for d in sorted(index["days"].get("dam", []))[-NODE_FROM_DAM:]:
         dd = read_json_gz(DATA_DIR / "dam" / f"{d}.json.gz")

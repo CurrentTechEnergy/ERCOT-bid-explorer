@@ -41,11 +41,8 @@ Peakers are a flag beside the group, not a group: a unit is a peaker by how it r
 technology or timescale (Blair, Oct 28 2026).  Outside the always-on and never-on groups, with at
 least PEAKER_MIN_H available hours (running or OFF, outage hours left out), it is online under
 PEAKER_SHARE of them and at most PEAKER_RUN_H hours a day on the days it ran: started for the
-peak rather than kept on.  A combustion turbine with too short a record stays a peaker.  The
-Overview's Baseload / Price-sensitive / Peakers split and the forecast's categories read the
-flag.  It is a label: which model predicts a unit is the forecast's own choice (peaker_share
-judges every combustion turbine outside the always-on group, the backtests of Oct 28 2026
-finding it beats the stay-on rule on them).
+peak rather than kept on.  A combustion turbine with too short a record stays a peaker.  It is a
+label the pages show beside the group.
 """
 import re
 

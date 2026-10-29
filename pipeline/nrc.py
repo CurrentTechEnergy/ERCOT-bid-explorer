@@ -1,6 +1,6 @@
-"""The NRC's daily power reactor status for ERCOT's nuclear units, kept for the commitment
-forecast (pipeline/models/thermal_cutoff.py): the 60-day disclosure shows a refuelling outage
-about sixty days late, the NRC report the morning it is under way.
+"""The NRC's daily power reactor status for ERCOT's nuclear units, collected as a record (the
+commitment forecast that read it was retired in Oct 2026): the 60-day disclosure shows a
+refuelling outage about sixty days late, the NRC report the morning it is under way.
 
 Source: the NRC "Power Reactor Status Report" for the last 365 days, a pipe-separated text file
 (ReportDt|Unit|Power), one row per reactor per day: its power level (% of rated) at about 04:00
