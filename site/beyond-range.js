@@ -227,9 +227,15 @@ function timeChart(el, series, opts) {
 // chart offers no download; the implied heat rate against each unit's own daily hub price is built
 // by the pipeline (implied_hr_60d.json.gz, econ.build_implied_hr)
 const GAS_LINES = [
-  { key: "hsc", label: "Houston Ship Channel (7-day average)", color: "--c1" },
-  { key: "waha", label: "Waha (7-day average)", color: "--c3" },
-  { key: "hh", label: "Henry Hub", color: "--c2", dash: "6 3" },
+  { key: "hsc", label: "Houston Ship Channel (7-day average)", color: "--c7" },
+  { key: "waha", label: "Waha (7-day average)", color: "--c4" },
+  { key: "hh", label: "Henry Hub", color: "--c-other", dash: "6 3" },
+];
+// the heat rate lines keep the site's technology colors, which the hub colors above avoid
+const HR_LINES = [
+  { key: "combined_cycle", label: "Combined cycle", color: "--c1" },
+  { key: "combustion_turbine", label: "Combustion turbine", color: "--c2" },
+  { key: "gas_steam", label: "Gas steam", color: "--c6" },
 ];
 function drawGas() {
   const el = $("gas-chart"), hel = $("gas-hr"), src = {};
@@ -247,12 +253,9 @@ function drawGas() {
       { dates, H: 220, title: "Natural gas prices ($/MMBtu): Henry Hub daily, the Texas hubs as a 7-trading-day average", yFmt: d3.format("$,.2f"), tipFmt: d3.format("$,.2f"), noCSV: true });
   }
   const H = S.IHR;
-  if (!H || !H.dates || !H.dates.length) { hel.innerHTML = ""; return; }
-  timeChart(hel, [
-    { label: "Combined cycle", color: "--c1", values: H.techs.combined_cycle },
-    { label: "Combustion turbine", color: "--c2", values: H.techs.combustion_turbine },
-    { label: "Gas steam", color: "--c6", values: H.techs.gas_steam },
-  ], { dates: H.dates, H: 220, title: `Implied heat rate: median gas unit's first offer price above $0 at or above LSL ÷ gas at its own hub, Waha or Ship Channel (MMBtu per MWh)`, yFmt: d3.format(",.1f"), tipFmt: d3.format(",.2f"), yTicks: [0, 5, 7, 10, 15, 20] });
+  if (!H || !H.dates || !H.dates.length) { hel.innerHTML = ""; $("gas-hr-legend").innerHTML = ""; return; }
+  staticLegend($("gas-hr-legend"), HR_LINES);
+  timeChart(hel, HR_LINES.map((l) => ({ label: l.label, color: l.color, values: H.techs[l.key] })), { dates: H.dates, H: 220, title: `Implied heat rate: median gas unit's first offer price above $0 at or above LSL ÷ gas at its own hub, Waha or Ship Channel (MMBtu per MWh)`, yFmt: d3.format(",.1f"), tipFmt: d3.format(",.2f"), yTicks: [0, 5, 7, 10, 15, 20] });
 }
 
 function drawPriceQuantiles() {
