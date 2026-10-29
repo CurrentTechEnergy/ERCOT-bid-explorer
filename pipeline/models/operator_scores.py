@@ -18,7 +18,7 @@ on outage is left out.  A turn-off or turn-on counts as caught when the call swi
 within MATCH hours of the actual switch; a call's switch that matches none is false.
 
 Cells: month, technology, state going in (on or off), awarded (that hour, or the hour of the
-switch), cheap (the day-ahead hub at CHEAP $/MWh or less that hour, or within CHEAP_NEAR hours
+switch), cheap (DAM system lambda at CHEAP $/MWh or less that hour, or within CHEAP_NEAR hours
 of the switch).
 
 Writes data/operator/scores.json.gz:
@@ -40,7 +40,7 @@ from ..store import read_json_gz, write_json_gz
 from .operator_informed import NAME, OUT_DIR, VERSION, _days, _on, _states
 
 PATH = OUT_DIR / "scores.json.gz"
-CHEAP = 10.0           # $/MWh, day-ahead hub average
+CHEAP = 10.0           # $/MWh, DAM system lambda
 CHEAP_NEAR = 3         # hours either side of a switch that make it a cheap-stretch switch
 MATCH = 1              # hours a call's switch may be off the actual one and still catch it
 MODELS = ("operator", "state", "award", "ridethrough", "own_cutoff")
@@ -103,8 +103,8 @@ def build_scores(ctx, days) -> int:
     n = 0
     for d in days:
         units = (read_json_gz(OUT_DIR / f"{d}.json.gz", default=None) or {}).get("units", {})
-        hub = ctx.hub(d)
-        cheap = hub <= CHEAP if hub is not None else np.zeros(24, bool)
+        lam = ctx.lam(d)
+        cheap = lam <= CHEAP if lam is not None else np.zeros(24, bool)
         m = d[:7]
         for key, u in units.items():
             r = recs.get(d, {}).get(key)
