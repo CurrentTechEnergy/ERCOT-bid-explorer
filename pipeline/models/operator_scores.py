@@ -14,7 +14,9 @@ times its LSL, from the same day records the model uses.
 
 Scored hour by hour on the days with an operator day file, in day mode (the model's call is on
 at a chance of 0.5 or more).  Outage and unknown hours never count, and a day whose unit went in
-on outage is left out.  A turn-off or turn-on counts as caught when the call switches the same way
+on outage is left out.  Hours ERCOT had the unit committed by RUC (operator_informed.ruc_hours)
+are not the operator's decision: they count only in ruc_hours, and a switch into or out of one
+(actual or called) is neither caught nor false.  A turn-off or turn-on counts as caught when the call switches the same way
 within MATCH hours of the actual switch; a call's switch that matches none is false.
 
 Cells: month, technology, state going in (on or off), awarded (that hour, or the hour of the
@@ -24,7 +26,7 @@ of the switch).
 Writes data/operator/scores.json.gz:
   {"model", "version", "cheap", "models": [...], "live_from", "columns": [...], "rows": [[month, tech, start,
    award, cheap, model, hours, right, brier, off_n, off_caught, off_false, on_n, on_caught,
-   on_false], ...]}
+   on_false, ruc_hours], ...]}
 brier is the summed squared error of the chance (the model only; null for the baselines).
 live_from is the first day of the 60-day fits; months before it are history days, judged by the
 reduced fits (operator_history.py).
@@ -37,7 +39,7 @@ import numpy as np
 from ..decisions import PATH as DECISIONS_PATH, _cutoff
 from ..forecast import context as C
 from ..store import read_json_gz, write_json_gz
-from .operator_informed import NAME, OUT_DIR, VERSION, _days, _on, _states
+from .operator_informed import NAME, OUT_DIR, VERSION, _days, _on, _states, ruc_hours
 
 PATH = OUT_DIR / "scores.json.gz"
 CHEAP = 10.0           # $/MWh, day-ahead hub average
@@ -45,7 +47,7 @@ CHEAP_NEAR = 3         # hours either side of a switch that make it a cheap-stre
 MATCH = 1              # hours a call's switch may be off the actual one and still catch it
 MODELS = ("operator", "state", "award", "ridethrough", "own_cutoff")
 COLUMNS = ("month", "tech", "start", "award", "cheap", "model", "hours", "right", "brier",
-           "off_n", "off_caught", "off_false", "on_n", "on_caught", "on_false")
+           "off_n", "off_caught", "off_false", "on_n", "on_caught", "on_false", "ruc_hours")
 
 
 def baseline(kind, r, on0, thr=None):
@@ -98,7 +100,7 @@ def _cutoffs():
 
 def build_scores(ctx, days) -> int:
     """Write the score file for the operator day files `days`; returns the unit-days scored."""
-    states, recs, day0, cutoff = _states(ctx), _days(ctx), ctx.stats["day0"], _cutoffs()
+    states, recs, day0, cutoff, ruc = _states(ctx), _days(ctx), ctx.stats["day0"], _cutoffs(), ruc_hours(ctx)
     T = defaultdict(lambda: np.zeros(len(COLUMNS) - 6))   # (month, tech, start, award, cheap, model) -> counts
     n = 0
     for d in days:
@@ -116,6 +118,9 @@ def build_scores(ctx, days) -> int:
                 continue
             seg = st[k0:k0 + 24]
             valid, truth, on0 = np.isin(seg, list("ma0")), np.isin(seg, list("ma")), _on(st[k0 - 1])
+            rk = ruc.get(key, ())
+            in_ruc = np.array([k0 + h in rk for h in range(24)]) & valid
+            near_ruc = in_ruc | np.array([k0 + h - 1 in rk for h in range(24)])     # a switch into or out of RUC
             if not valid.any():
                 continue
             p = np.array([np.nan if v is None else v for v in u["p"]], float)
@@ -127,7 +132,9 @@ def build_scores(ctx, days) -> int:
             actual = _switches(on0, truth, valid)
             for name in MODELS:
                 call = calls[name]
-                for h in np.flatnonzero(valid):
+                for h in np.flatnonzero(in_ruc):
+                    T[(m, t, start, int(aw[h]), int(cheap[h]), name)][9] += 1
+                for h in np.flatnonzero(valid & ~in_ruc):
                     v = T[(m, t, start, int(aw[h]), int(cheap[h]), name)]
                     v[0] += 1
                     v[1] += call[h] == truth[h]
@@ -135,6 +142,8 @@ def build_scores(ctx, days) -> int:
                         v[2] += (p[h] - truth[h]) ** 2
                 mine, used = _switches(on0, call, np.ones(24, bool)), set()
                 for h, kind in actual:
+                    if near_ruc[h]:
+                        continue
                     v = T[(m, t, start, int(aw[h]), int(cheap[max(0, h - CHEAP_NEAR):h + CHEAP_NEAR + 1].any()), name)]
                     j = 3 if kind == "off" else 6
                     v[j] += 1
@@ -143,7 +152,7 @@ def build_scores(ctx, days) -> int:
                         used.add(hit)
                         v[j + 1] += 1
                 for i, (h, kind) in enumerate(mine):
-                    if i not in used and valid[h]:
+                    if i not in used and valid[h] and not near_ruc[h]:
                         v = T[(m, t, start, int(aw[h]), int(cheap[max(0, h - CHEAP_NEAR):h + CHEAP_NEAR + 1].any()), name)]
                         v[(3 if kind == "off" else 6) + 2] += 1
             n += 1

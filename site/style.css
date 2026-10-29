@@ -115,6 +115,7 @@ h2 { font: 600 17px/1.2 var(--font-head); margin: 0 0 4px; letter-spacing: 0.01e
 .sw-on, .sw-off { width: 9px; height: 9px; border-radius: 50%; box-sizing: border-box; border: 1.5px solid var(--ink); }
 .sw-on { background: var(--ink); }
 .sw-off { background: var(--surface); }
+.sw-ruc { width: 11px; height: 11px; border-radius: 50%; box-sizing: border-box; border: 2px solid var(--c7); background: none; }
 .sw-line { width: 16px; height: 0; border-top: 2px dashed var(--c-other); border-radius: 0; }
 .mk { display: inline-block; width: 0; height: 11px; border-left: 2px dashed; margin: 0 5px -1px 2px; }
 .sw-neg { width: 3px; height: 10px; border-radius: 0; background: var(--ink); margin-inline: 4px; }
