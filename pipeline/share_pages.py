@@ -39,7 +39,7 @@ SITEMAP_PAGES = ["", "goal.html", "beyond.html", "commitment.html", "dayahead.ht
                  "changes.html", "fleet.html", "builder.html", "guide.html", "contact.html", "terms.html"]
 
 TECH_LABEL = {"nuclear": "Nuclear", "coal": "Coal", "combined_cycle": "Combined cycle", "gas_steam": "Gas steam",
-              "combustion_turbine": "Combustion turbine", "wind": "Wind", "solar": "Solar", "storage": "Battery"}
+              "combustion_turbine": "Combustion turbine and recip", "wind": "Wind", "solar": "Solar", "storage": "Battery"}
 ABOUT = {"storage": "How it charges and discharges, what it offers and bids, and its state of charge, from ERCOT's SCED and DAM disclosures.",
          "wind": "How it offers into ERCOT, how much is curtailed at low prices, and the hedge signals in its bids.",
          "solar": "How it offers into ERCOT, how much is curtailed at low prices, and the hedge signals in its bids."}

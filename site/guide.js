@@ -17,7 +17,7 @@ const FLEET = [
   { id: "coal", label: "Coal & lignite", color: "--c8" },
   { id: "combined_cycle", label: "Combined cycle", color: "--c1" },
   { id: "gas_steam", label: "Gas steam", color: "--c6" },
-  { id: "combustion_turbine", label: "Peakers (CT and recip)", color: "--c2" },
+  { id: "combustion_turbine", label: "Combustion turbine and recip", color: "--c2" },
 ];
 const TECH_COLOR = { combined_cycle: "--c1", coal: "--c8", combustion_turbine: "--c2", gas_steam: "--c6", nuclear: "--c5" };
 const S = { g: null, grid: null, day: null, unit: 0, hour: 12, ver: "sub", price: 0, mode: "from_lsl" };

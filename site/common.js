@@ -352,7 +352,7 @@ function panelFromLink() {
 // name, web-search owner and developer). A hit found by anything but its name says what matched. The unit list
 // (data/unit_index.json.gz, pipeline/unit_index.py) loads on first focus. The Unit page has its
 // own picker and directory, so it gets no box here.
-const TECH_SHORT = { nuclear: "Nuclear", coal: "Coal", combined_cycle: "Combined cycle", gas_steam: "Gas steam", combustion_turbine: "Combustion turbine", wind: "Wind", solar: "Solar", storage: "Battery storage ESR" };
+const TECH_SHORT = { nuclear: "Nuclear", coal: "Coal", combined_cycle: "Combined cycle", gas_steam: "Gas steam", combustion_turbine: "Combustion turbine and recip", wind: "Wind", solar: "Solar", storage: "Battery storage ESR" };
 const unitURL = (name) => `unit.html?unit=${encodeURIComponent(name)}`;
 // rows of the unit index as objects, each with the lowercase text a search matches against
 async function unitIndex() {
@@ -579,5 +579,11 @@ function rucDays(uh, names) {
 const rucRing = (sel, r) => sel.attr("r", r).attr("fill", "none").attr("stroke", css("--c7")).attr("stroke-width", 2).attr("pointer-events", "none");
 const rucLegend = (label = "ERCOT committed it (RUC)") => `<span><span class="sw sw-ruc"></span>${label}</span>`;
 const rucNote = (n, what = "days") => (n ? ` ${n} ${what} ERCOT committed it by RUC (purple ring) are left out of these counts: RUC is ERCOT's call, not the operator's.` : "");
-window.CX = { onOffDot, onOffLegend, rucDays, rucRing, rucLegend, rucNote, fromStart, SITE_START, setNote, getJSON, tryJSON, showTip, hideTip, clearPins, setCSV, readHash, writeHash, init, panelFromLink, css, esc, tickFormat, fmtKind, axisFmt, unitIndex, findUnits, matchedOn, drawCurtailDay };
+// "Peaker" is how a unit runs, whatever its technology: the groups file's flag (pipeline/groups.py
+// is_peaker, groups_60d units[9]), shown as a tag beside the unit's group
+const peakerNote = (G) => { const p = G?.peaker || { share: 0.3, run_h: 16 };
+  return `Runs like a peaker: online under ${Math.round(p.share * 100)}% of available hours, at most ${+p.run_h} hours a day when on`; };
+const isPeaker = (G, name) => !!G?.units?.[name]?.[9];
+const peakerTag = (G, name) => (isPeaker(G, name) ? ` <span class="tag" title="${peakerNote(G)}">Peaker</span>` : "");
+window.CX = { isPeaker, peakerTag, peakerNote, onOffDot, onOffLegend, rucDays, rucRing, rucLegend, rucNote, fromStart, SITE_START, setNote, getJSON, tryJSON, showTip, hideTip, clearPins, setCSV, readHash, writeHash, init, panelFromLink, css, esc, tickFormat, fmtKind, axisFmt, unitIndex, findUnits, matchedOn, drawCurtailDay };
 })();

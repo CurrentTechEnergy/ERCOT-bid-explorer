@@ -1,6 +1,7 @@
-"""Peakers on real-time prices: a fit of each combustion turbine's hours online against the
+"""Combustion turbines on real-time prices (the set is the technology, combustion turbines and recip
+engines, not the groups file's Peaker flag): a fit of each one's hours online against the
 real-time price at its own node, for the Commitment page's per-unit start chart.  A fit of past decisions,
-not a forecast: the real-time price is not known when a peaker decides, and peakers starting
+not a forecast: the real-time price is not known when a unit decides to start, and units starting
 move it.
 
 The fit, per unit and month: a logistic regression of online (SCED "m"/"a") on the hour's

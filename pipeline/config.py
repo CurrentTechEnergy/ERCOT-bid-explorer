@@ -54,7 +54,7 @@ TECH_OF_TYPE = {
     "PVGR": "solar",
     "HYDRO": "hydro",
     # diesel and reciprocating engines run like peakers, so they are grouped with combustion
-    # turbines ("Peakers"); biomass and other non-intermittent renewables stay in "other"
+    # turbines ("Combustion turbine and recip"; "Peaker" is the run flag in groups.py); biomass and other non-intermittent renewables stay in "other"
     "DSL": "combustion_turbine", "RENEW": "other",
     "ESR": "storage",
     # before real-time co-optimization (Dec 5, 2025) a battery's discharge side was a generation
@@ -67,7 +67,7 @@ TECH_LABELS = {
     "coal": "Coal & lignite",
     "combined_cycle": "Combined cycle",
     "gas_steam": "Gas steam",
-    "combustion_turbine": "Peakers (CT and recip)",
+    "combustion_turbine": "Combustion turbine and recip",
     "wind": "Wind",
     "solar": "Solar",
     "storage": "Storage (ESR)",

@@ -11,7 +11,7 @@
 
 const TECHS = [
   { id: "combined_cycle", keys: ["combined_cycle"], label: "Combined cycle", color: "--c1" },
-  { id: "combustion_turbine", keys: ["combustion_turbine"], label: "Peakers (CT and recip)", color: "--c2" },
+  { id: "combustion_turbine", keys: ["combustion_turbine"], label: "Combustion turbine and recip", color: "--c2" },
   { id: "wind", keys: ["wind"], label: "Wind", color: "--c3" },
   { id: "solar", keys: ["solar"], label: "Solar", color: "--c4" },
   { id: "nuclear", keys: ["nuclear"], label: "Nuclear", color: "--c5" },
@@ -325,6 +325,8 @@ const techsOf = (id) => (id === "all" ? THERMAL : [id]);
 const unitRows = (rows, cols) => `<table class="data"><thead><tr>${cols.map((c) => `<th${c.t ? ' class="t"' : ""}>${c.h}</th>`).join("")}</tr></thead><tbody>` +
   rows.map((r) => `<tr data-unit="${esc(r.unit)}" style="cursor:pointer">${cols.map((c) => `<td${c.t ? ' class="t"' : ""}>${c.f(r)}</td>`).join("")}</tr>`).join("") + "</tbody></table>";
 const techLabel = (t) => TECHS.find((x) => x.id === t)?.label || t;
+// the Peaker tag (how the unit runs, common.js peakerTag) for a unit or a CC configuration's train
+const pTag = (n) => window.CX.peakerTag(S.G, S.G?.units?.[n] ? n : trainOf(n));
 
 function drawCheap() {
   const I = S.I, el = $("cheap-chart");
@@ -350,7 +352,7 @@ function drawCheap() {
     .map((r) => ({ unit: r[0], tech: r[1], run: r[3], above: r[4], mwh: r[5] })).sort((a, b) => b.mwh - a.mwh);
   window.CX.setNote($("cheap-units-note"), `Units that ran above minimum when lambda was below ${fmtPrice0(thr)}, top 30 by energy. Click a row to open the unit.`, `All days together, nuclear left out. ${rows.length} unit${rows.length === 1 ? "" : "s"} ran above minimum in at least one hour with lambda below ${fmtPrice0(thr)}; the top 30 by energy above minimum are listed. Cogeneration and units carrying ancillary services are likely here. Click a row to see the unit.`);
   $("cheap-units").innerHTML = rows.length ? unitRows(rows.slice(0, 30), [
-    { h: "Unit", t: 1, f: (r) => esc(r.unit) }, { h: "Technology", t: 1, f: (r) => techLabel(r.tech) },
+    { h: "Unit", t: 1, f: (r) => esc(r.unit) }, { h: "Technology", t: 1, f: (r) => techLabel(r.tech) + pTag(r.unit) },
     { h: `Hours running below ${fmtPrice0(thr)}`, f: (r) => r.run }, { h: "Hours above minimum", f: (r) => r.above },
     { h: "Share", f: (r) => fmtPct(r.above / r.run) }, { h: "Avg MW above minimum", f: (r) => fmtMW(r.mwh / r.above) },
     { h: "MWh above minimum", f: (r) => fmtMW(r.mwh) },
@@ -615,7 +617,7 @@ function drawMonths(fleet, s, thr) {
   $("st-changed").innerHTML = changed.length
     ? `<p class="note">Changed behaviour: units whose run-through share moved by ${fmtPct(ST_CHANGE)} or more between their two most recent windows of ${ST_WINDOW} tested months.</p>` +
       unitRows(changed.map((x) => ({ ...x.e, unit: x.e.pick, c: x.c })), [
-        { h: "Unit", t: 1, f: (r) => esc(r.unit === r.pick ? r.unit : `${r.unit} (${r.unit})`) }, { h: "Technology", t: 1, f: (r) => techLabel(r.tech) }, { h: "Group", t: 1, f: (r) => gl(r.group) },
+        { h: "Unit", t: 1, f: (r) => esc(r.unit === r.pick ? r.unit : `${r.unit} (${r.unit})`) }, { h: "Technology", t: 1, f: (r) => techLabel(r.tech) }, { h: "Group", t: 1, f: (r) => gl(r.group) + pTag(r.unit) },
         { h: "MW", f: (r) => fmtMW(r.mw) }, { h: "Earlier window", t: 1, f: (r) => win(r.c.earlyIx) }, { h: "Ran through", f: (r) => fmtPct(r.c.early) },
         { h: "Latest window", t: 1, f: (r) => win(r.c.lateIx) }, { h: "Ran through", f: (r) => fmtPct(r.c.late) },
         { h: "Change", f: (r) => (r.c.late >= r.c.early ? "+" : "−") + fmtPct(Math.abs(r.c.late - r.c.early)) },
@@ -699,7 +701,7 @@ function drawFlags(B, ts, gl) {
     `"Loss" is what riding through the day's worst window would have cost at its node's day-ahead price; "hours off" counts to the end of the spell, so a long one is a layup or an undeclared outage. Click a unit to open its detail.`);
   if (!rows.length) return emptyMsg(el, "No flagged shutdowns for these units.");
   el.innerHTML = unitRows(rows.map((r) => ({ ...r, name: r.unit, unit: r.pick })), [
-    { h: "Date", t: 1, f: (r) => r.date }, { h: "Unit", t: 1, f: (r) => esc(r.name) }, { h: "Technology", t: 1, f: (r) => techLabel(r.tech) }, { h: "Group", t: 1, f: (r) => gl(r.group) }, { h: "MW", f: (r) => fmtMW(r.mw) },
+    { h: "Date", t: 1, f: (r) => r.date }, { h: "Unit", t: 1, f: (r) => esc(r.name) }, { h: "Technology", t: 1, f: (r) => techLabel(r.tech) }, { h: "Group", t: 1, f: (r) => gl(r.group) + pTag(r.name) }, { h: "MW", f: (r) => fmtMW(r.mw) },
     { h: "Why flagged", t: 1, f: (r) => FLAG_KIND[r.kind] }, { h: "Days since last shutdown", f: (r) => (r.since == null ? "none in data" : r.since) }, { h: "Loss riding through", f: (r) => fmtK(r.loss) },
     { h: "Award over window", f: (r) => fmtPct(r.award) }, { h: "Hours off", f: (r) => fmtMW(r.off) },
   ]);
@@ -768,7 +770,7 @@ function drawLean() {
 // (pipeline/decisions.py). Each CC train's and gas steam unit's turn-off point that day comes from
 // the operator-informed model (data/operator/cutoffs.json.gz, pipeline/models/operator_cutoffs.py):
 // how much being off would have to save before the model's day call turns it off. Coal and the
-// always-on peakers are drawn flat: they do not cycle within a day.
+// always-on combustion turbines are drawn flat: they do not cycle within a day.
 const GROUP_LABEL = Object.fromEntries([...ST_GROUPS.map((g) => [g.id, g.label]), ["ungrouped", "Not yet grouped"]]);
 const DID = { off: "Turned off", on: "Stayed on" };
 // the day-ahead award in the day: none, some hours, every hour (operator_cutoffs "award")
@@ -864,7 +866,7 @@ function drawCutUnits() {
     us.forEach((u, k) => {
       const yy = top + rowGap - 4 + k * lane + lane / 2, col = css(AWARD[u.award ?? 0].color);
       const gU = svg.append("g").style("cursor", "pointer")
-        .on("pointermove", (ev) => showTip(ev, `<h4>${esc(u.unit)}</h4>${techLabel(u.tech)} · ${g.label}<br>LSL ${fmtMW(u.lsl)} MW, minimum down time ${u.md} h<br>` +
+        .on("pointermove", (ev) => showTip(ev, `<h4>${esc(u.unit)}</h4>${techLabel(u.tech)} · ${g.label}${window.CX.isPeaker(S.G, u.unit) ? " · Peaker" : ""}<br>LSL ${fmtMW(u.lsl)} MW, minimum down time ${u.md} h<br>` +
           `${AWARD[u.award ?? 0].label}<br>Saving from being off that day ${fmtPerMW(u.l)}/MW (${fmt$(u.l * u.lsl)})<br>` +
           (u.kind === "cut" ? `The model turns it off once being off saves ${fmtPerMW(u.c)}/MW (${fmt$(u.c * u.lsl)})` : "The model keeps it on through every shift tested") +
           `<br><b>${DID[u.did]}</b>${u.ruc ? `<br>Committed by ERCOT (RUC) ${u.ruc} h: not counted for or against the model` : ""}<br><span class="tip-pin-note">Click to open the unit</span>`))
@@ -885,7 +887,7 @@ function drawCutUnits() {
     U.map((u) => [u.unit, u.tech, u.group, u.lsl, u.md, ["none", "some hours", "every hour"][u.award ?? 0], u.l, u.c, u.did, u.ruc]), `Turn-off points ${S.date}`);
 }
 
-// one row per combustion turbine with a real-time fit that day (data/peaker/rt_fit.json.gz,
+// one row per combustion turbine (and recip engine) with a real-time fit that day (data/peaker/rt_fit.json.gz,
 // pipeline/models/peaker_rt.py), grouped by how often it turns off: a diamond at the day's highest
 // node price at which the fit starts it, a circle at the day's actual highest price (filled ran,
 // hollow stayed off), joined in red where it did the opposite of the fit; start null (runs at any
@@ -893,7 +895,7 @@ function drawCutUnits() {
 function drawCtUnits() {
   const el = $("ct-units"), P = S.PRT, rows = P?.days?.[S.date];
   if (!rows || !rows.length) { $("ct-units-note").textContent = ""; $("ct-units-legend").innerHTML = "";
-    return emptyMsg(el, P ? `The peaker fit runs ${Object.keys(P.days)[0]} to ${Object.keys(P.days).at(-1)}; pick a day in that range.` : "No peaker fit loaded."); }
+    return emptyMsg(el, P ? `The combustion turbine start fit runs ${Object.keys(P.days)[0]} to ${Object.keys(P.days).at(-1)}; pick a day in that range.` : "No combustion turbine start fit loaded."); }
   const C = Object.fromEntries(P.columns.map((c, i) => [c, i]));
   const U = rows.map((r) => ({ unit: r[C.unit], s: r[C.start], p: r[C.peak], ran: !!r[C.ran], on: r[C.hours_on], av: r[C.hours_avail], win: r[C.window],
     group: S.G?.units?.[r[C.unit]]?.[1] || "ungrouped", ruc: rucOn(r[C.unit], S.date) }));
@@ -901,11 +903,11 @@ function drawCtUnits() {
   const rowsG = ST_GROUPS.filter((g) => U.some((u) => u.group === g.id)).concat(U.some((u) => u.group === "ungrouped") ? [{ id: "ungrouped", label: GROUP_LABEL.ungrouped }] : []);
   const nRuc = U.filter((u) => u.ruc).length, rn = window.CX.rucNote(nRuc, nRuc === 1 ? "unit" : "units");
   const nRan = U.filter((u) => u.ran).length, right = U.filter((u) => !u.ruc && !surprise(u)).length, odd = P.unexplained?.[S.date.slice(0, 7)] || [];
-  window.CX.setNote($("ct-units-note"), `${U.length} peakers were available; ${nRan} ran. The diamond is the highest real-time price at its node at which the fit starts it, the circle the day's actual highest price there; filled ran, hollow stayed off; red marks a surprise. The fit called ${right} of ${U.length - nRuc} right.${rn} Click a unit to open it.`,
-    `${U.length} combustion turbines were available in some hour of the day and have a fit for the month (peakers too new, or that never both ran and sat off before the month, have none). Each is fitted on every day before the month, recent days counting most (a day 30 days back counts half): its chance of being online in an hour against the real-time price at its own node and the hour of day. ` +
+  window.CX.setNote($("ct-units-note"), `${U.length} combustion turbines were available; ${nRan} ran. The diamond is the highest real-time price at its node at which the fit starts it, the circle the day's actual highest price there; filled ran, hollow stayed off; red marks a surprise. The fit called ${right} of ${U.length - nRuc} right.${rn} Click a unit to open it.`,
+    `${U.length} combustion turbines were available in some hour of the day and have a fit for the month (units too new, or that never both ran and sat off before the month, have none; Peaker marks the ones that run like peakers). Each is fitted on every day before the month, recent days counting most (a day 30 days back counts half): its chance of being online in an hour against the real-time price at its own node and the hour of day. ` +
     `The diamond shifts every hour's price by the same amount until the fit calls the unit on in some hour, and reads it as the day's highest price at that shift; the circle is the day's actual highest hourly price at its node. A diamond left of the circle means the fit says it ran. ` +
     `When those days never show a price the unit would sit off at, it runs at any price it has seen and its diamond sits at the left edge, if it was online at least half its hours. If it sat off most hours, or the fit runs it more at low prices than high, price doesn't explain its running and it is left out${odd.length ? ` (${odd.length} this month: ${odd.map((r) => r[0]).join(", ")})` : ""}. The diamond stays between the lowest price it ran at and the highest it sat off at in the days fitted. ` +
-    `This is a fit of what peakers did, not a forecast: the real-time price is not known when a peaker decides, and peakers starting move it. Against the day-ahead hub price bands the forecast uses, it calls more starts (39% against 32% of starts, Mar to Aug 2026) and as many hours right (91%). Prices beyond the edges are drawn at the edge.`);
+    `This is a fit of what these units did, not a forecast: the real-time price is not known when a unit decides to start, and units starting move it. Against the day-ahead hub price bands the forecast uses, it calls more starts (39% against 32% of starts, Mar to Aug 2026) and as many hours right (91%). Prices beyond the edges are drawn at the edge.`);
   $("ct-units-legend").innerHTML = `<span><span class="sw" style="background:var(--c1);transform:rotate(45deg) scale(0.8)"></span>Fit starts it above this price</span>` +
     window.CX.onOffLegend("Day's highest price, ran", "Day's highest price, stayed off") +
     `<span><span class="sw" style="background:var(--c8);height:3px"></span>Surprise: the unit did the opposite of the fit</span>` + (nRuc ? window.CX.rucLegend() : "");
@@ -928,7 +930,7 @@ function drawCtUnits() {
     us.forEach((u, k) => {
       const yy = top + rowGap - 4 + k * lane + lane / 2, bad = surprise(u);
       const gU = svg.append("g").style("cursor", "pointer")
-        .on("pointermove", (ev) => showTip(ev, `<h4>${esc(u.unit)}</h4>${g.label}<br>${u.s == null ? "Fit runs it at any price it has seen" : `Fit starts it once the day's highest node price reaches ${fmt$(u.s)}/MWh`}${u.win > 90 ? ` (fitted on ${u.win} days)` : ""}<br>` +
+        .on("pointermove", (ev) => showTip(ev, `<h4>${esc(u.unit)}</h4>${g.label}${window.CX.isPeaker(S.G, u.unit) ? " · Peaker" : ""}<br>${u.s == null ? "Fit runs it at any price it has seen" : `Fit starts it once the day's highest node price reaches ${fmt$(u.s)}/MWh`}${u.win > 90 ? ` (fitted on ${u.win} days)` : ""}<br>` +
           `Day's highest real-time price at its node ${fmt$(u.p)}/MWh<br><b>${u.ran ? `Ran ${u.on} of ${u.av} available hours` : "Stayed off"}</b>${bad ? "<br>Did the opposite of the fit" : ""}${u.ruc ? `<br>Committed by ERCOT (RUC) ${u.ruc} h: not counted for or against the fit` : ""}<br><span class="tip-pin-note">Click to open the unit</span>`))
         .on("pointerleave", hideTip)
         .on("click", () => { location.href = unitHref(u.unit); });
@@ -1087,7 +1089,7 @@ const STATE_KEYS = [["a", "Above min"], ["m", "At min"], ["0", "Off"], ["o", "Ou
 const UNIT_COLS = [
   { k: "unit", h: "Unit", t: 1, f: (r) => esc(r.unit) },
   { k: "tech", h: "Technology", t: 1, f: (r) => techLabel(r.tech) },
-  { k: "gi", h: "Group", t: 1, f: (r) => GROUP_LABEL[r.group] || "–" },
+  { k: "gi", h: "Group", t: 1, f: (r) => (GROUP_LABEL[r.group] || "–") + pTag(r.unit) },
   { k: "mw", h: "Capacity MW", f: (r) => fmtMW(r.mw) },
   { k: "lsl", h: "LSL MW", f: (r) => (r.lsl == null ? "–" : fmtMW(r.lsl)) },
   ...["no award", "award some hours", "award every hour"].map((h, a) => ({ k: "c" + a, h: `Turn-off point, ${h}, $/MW LSL`, f: (r) => (r["c" + a] === Infinity ? "rides through" : fmtPerMW(r["c" + a])) })),

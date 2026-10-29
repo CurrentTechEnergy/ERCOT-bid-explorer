@@ -32,7 +32,7 @@ const GROUP_SHORT = { never: "Always on when available", multiday: "Multi-day", 
 const GROUPS = ["never", "multiday", "daily1", "daily2", "daily3", "peakers", "never_on", "ungrouped"];
 const TECHS = [
   ["nuclear", "Nuclear", "--c5"], ["coal", "Coal & lignite", "--c8"], ["combined_cycle", "Combined cycle", "--c1"],
-  ["gas_steam", "Gas steam", "--c6"], ["combustion_turbine", "Combustion turbine", "--c2"],
+  ["gas_steam", "Gas steam", "--c6"], ["combustion_turbine", "Combustion turbine and recip", "--c2"],
 ];
 const TECH_LABEL = Object.fromEntries(TECHS.map(([id, l]) => [id, l]));
 const CATS = [

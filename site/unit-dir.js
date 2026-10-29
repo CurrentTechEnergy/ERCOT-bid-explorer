@@ -8,7 +8,7 @@ const $ = (id) => document.getElementById(id);
 const TECHS = [
   { id: "all", label: "All" }, { id: "nuclear", label: "Nuclear" }, { id: "coal", label: "Coal & lignite" },
   { id: "combined_cycle", label: "Combined cycle" }, { id: "gas_steam", label: "Gas steam" },
-  { id: "combustion_turbine", label: "Combustion turbine" }, { id: "wind", label: "Wind" }, { id: "solar", label: "Solar" },
+  { id: "combustion_turbine", label: "Combustion turbine and recip" }, { id: "wind", label: "Wind" }, { id: "solar", label: "Solar" },
   { id: "storage", label: "Battery storage" },
 ];
 const TECH_LABEL = Object.fromEntries(TECHS.map((t) => [t.id, t.label]));
