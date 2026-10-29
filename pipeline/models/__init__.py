@@ -14,16 +14,14 @@ computes a model.
   peaker_share      combustion turbines: online share by day-ahead price level and hour
   renewable_floor   wind and solar: available MW from the forecasts, less what prices itself
                     out at its own node
-  storage_habit     batteries, fleet: charging and discharging by hour from the fleet's habit and
-                    the day-ahead hub price shape, corrected by boosted trees (v1)
 
 cutoff_history is a model too (NAME, VERSION, its own benchmark) but not a forecast: it refits
 each unit's cutoff month by month to show when its behaviour changed, read by the events
 list and the Unit page, never by the forecast.  So it is not in MODELS.
 """
-from . import thermal_cutoff, thermal_dispatch, peaker_share, renewable_floor, storage_habit
+from . import thermal_cutoff, thermal_dispatch, peaker_share, renewable_floor
 
-MODELS = {m.NAME: m for m in (thermal_cutoff, thermal_dispatch, peaker_share, renewable_floor, storage_habit)}
+MODELS = {m.NAME: m for m in (thermal_cutoff, thermal_dispatch, peaker_share, renewable_floor)}
 
 
 def versions() -> dict:

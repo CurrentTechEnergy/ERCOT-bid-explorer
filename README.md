@@ -173,9 +173,7 @@ pipeline/
                    own cutoff), thermal_dispatch (the committed set's offer curves met by the hourly
                    day-ahead price), peaker_share (combustion turbines by price level and hour),
                    renewable_floor (wind and solar forecast less what prices itself out at its
-                   node), storage_habit (the battery fleet's discharging and charging by hour from
-                   its recent habit, nudged by the day's hub price shape; python -m
-                   pipeline.models.storage_habit --backtest prints how the rule has done);
+                   node);
                    cutoff_history refits each thermal unit's cutoff at every month end on its
                    last 30 decisions and records the months it moved (data/cutoff_history.json.gz;
                    python -m pipeline.models.cutoff_history --benchmark prints how the moves held up)

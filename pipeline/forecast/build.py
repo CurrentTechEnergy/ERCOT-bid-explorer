@@ -13,11 +13,7 @@ data/forecast/<date>.json.gz
                     n_on, n_units}; wind / solar: {nameplate, avail, disp, avail_gwh,
                     disp_gwh, curt_gwh, out, out_gwh} (out: ERCOT's zonal renewable outage,
                     planned included, split between wind and solar as the unit-level report lists
-                    them, at most nameplate - avail; null without the zonal report); storage:
-                    {peak_dis, peak_chg, gwh_dis, gwh_chg, eff, known_through, capped, out} (fleet
-                    MW and GWh, pipeline.models.storage_habit; out the battery MW the unit-level
-                    report lists out),
-                    null while fewer than a week of 2-day battery actuals is known
+                    them, at most nameplate - avail; null without the zonal report)
   capacity          group[g] and tech[t]: {cap, on, off, out, unknown, min, exp, gwh, n_on,
                     n_off, n_out, n_unknown} (MW; on, off and min weighted by each unit's mean p over the day, as exp is,
                     with a unit's outage share (out_share: listed gas turbines and the zonal unseen outage) in out, not off;
@@ -26,8 +22,7 @@ data/forecast/<date>.json.gz
                     (min_bin / exp_bin: the binary lines, each unit-hour in full when its P(on) >= ON_CALL
                     and none otherwise; every line net of the outage pool); outage_pool: {min, exp,
                     zones, days} (the zonal outage deduction placed on no unit, pipeline.models.outage_pool) or absent; wind /
-                    solar: {avail, disp} [24]; storage: {dis, chg, soc} [24] (fleet discharging MW,
-                    charging MW below zero, energy path MWh) or null; model: {series: "model version"}
+                    solar: {avail, disp} [24]; model: {series: "model version"}
   units             columns + rows, one per thermal train: unit, tech, group, hsl, lsl,
                     verdict (on | off | maybe | nocut | outage | peaker), p_on, loss, cutoff,
                     off_from, off_hours, reason, curve (1 if dispatched on its own curve),
@@ -135,7 +130,6 @@ def build_day(date, ctx: C.Context) -> dict:
     peak = m["peaker_share"].forecast(date, ctx)
     disp = m["thermal_dispatch"].forecast(date, ctx, commit, peak)
     renew = m["renewable_floor"].forecast(date, ctx)
-    stor = m["storage_habit"].forecast(date, ctx)
     hub = ctx.hub(date)
     lam = ctx.lam(date)
     edges, window = band_edges(ctx, date)
@@ -255,29 +249,24 @@ def build_day(date, ctx: C.Context) -> dict:
                        "curt_gwh": _r((r["avail"] - r["disp"]).sum() / 1000, 2), "n_units": r["n"],
                        "out": _r(r["out"].mean()) if "out" in r else None,
                        "out_gwh": _r(r["out"].sum() / 1000, 2) if "out" in r else None} if r["n"] else None
-    sr = stor["rows"]
-    headline["storage"] = ({k: sr[k] for k in ("peak_dis", "peak_chg", "gwh_dis", "gwh_chg")}
-                           | {k: stor["inputs"].get(k) for k in ("eff", "known_through", "capped")}
-                           | {"out": _r(ro["storage"]) if ro else None}) if sr else None
     v = versions()
     hourly_model = {**{g: f"{v['thermal_cutoff']} / {v['thermal_dispatch']}" for g in GROUPS},
                     **{t: f"{v['thermal_cutoff']} / {v['thermal_dispatch']}" for t in C.THERMAL},
                     "combustion_turbine": f"{v['peaker_share']} / {v['thermal_dispatch']}",
                     "fleet": f"{v['thermal_cutoff']} / {v['peaker_share']} / {v['thermal_dispatch']}",
-                    "wind": v["renewable_floor"], "solar": v["renewable_floor"], "storage": v["storage_habit"] if sr else None}
+                    "wind": v["renewable_floor"], "solar": v["renewable_floor"]}
     out = {
         "date": date, "format": FORMAT,
         "models": {k: val for k, val in v.items()},
         "inputs": {**commit["inputs"], **disp["inputs"], "avail": renew["inputs"]["avail"],
-                   "forecast_posted": renew["inputs"].get("forecast_posted"), "hub": hub is not None,
-                   "storage": stor["inputs"]},
+                   "forecast_posted": renew["inputs"].get("forecast_posted"), "hub": hub is not None},
         "headline": headline,
         "capacity": {"group": {g: _cap_out(c) for g, c in cap["group"].items()},
                      "tech": {t: _cap_out(c) for t, c in cap["tech"].items()}},
         "hourly": {"group": {g: _h_out(a) for g, a in by_g.items()}, "tech": {t: _h_out(a) for t, a in by_t.items()},
                    "category": {k: _h_out(a) for k, a in by_c.items()}, "fleet": _h_out(fleet),
                    **{t: {"avail": _rl(rn[t]["avail"]), "disp": _rl(rn[t]["disp"])} if rn[t]["n"] else None for t in C.RENEW},
-                   "storage": {k: sr[k] for k in ("dis", "chg", "soc")} if sr else None, "model": hourly_model,
+                   "model": hourly_model,
                    **({"outage_pool": {"min": _rl(sum(pool["min"].values(), np.zeros(24))), "exp": _rl(sum(pool["exp"].values(), np.zeros(24))),
                                        "zones": {z: _rl(v) for z, v in pool["zones"].items()}, "days": pool["days"]}}
                       if pool else {})},
