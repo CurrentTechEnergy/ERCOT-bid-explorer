@@ -34,7 +34,7 @@ function legend(id, items) {
 // ==== 1. What turns off: the floor fossil output does not go below, and what sits at it ========
 const TECH_COLOR = { coal: "--c8", combined_cycle: "--c1", gas_steam: "--c7", combustion_turbine: "--c4" };
 const STUCK_TECHS = ["coal", "combined_cycle", "gas_steam", "combustion_turbine"];
-const LOW_NET = 8;             // GW: "low net load" in the answer
+const LOW_NET = 4;             // GW: low load left for fossil, in the answer
 const MIN_STUCK_HOURS = 15;    // a stuck-on bar needs this many hours
 const isAll = () => S.year === "all";
 const yearName = (y) => (y === "all" ? "all years" : yearLabel(y));
@@ -52,7 +52,7 @@ function drawQ1() {
   svg.append("g").attr("class", "axis").attr("transform", `translate(${m.l},0)`).call(d3.axisLeft(y).ticks(6).tickSizeOuter(0));
   svg.append("g").attr("class", "axis").attr("transform", `translate(0,${H - m.b})`).call(d3.axisBottom(x).ticks(w < 560 ? 5 : 10).tickSizeOuter(0));
   svg.append("text").attr("class", "axis-title").attr("x", m.l).attr("y", 9).text("Fossil output (GW), each hour");
-  svg.append("text").attr("class", "axis-title").attr("x", w - m.r).attr("y", H - 6).attr("text-anchor", "end").text("Net load: load less the wind and solar available (GW)");
+  svg.append("text").attr("class", "axis-title").attr("x", w - m.r).attr("y", H - 6).attr("text-anchor", "end").text("Load less wind and solar HSL less nuclear (GW)");
   const cw = x(1) - x(0), ch = y(0) - y(1), col = isAll() ? css("--ink") : css("--c1");
   const op = (n, mx) => 0.12 + 0.88 * Math.log1p(n) / Math.log1p(mx);
   const back = svg.append("g"), front = svg.append("g");
@@ -63,9 +63,9 @@ function drawQ1() {
     const mm = d3.max([...mine.values()].flatMap((v) => [...v.values()])) || 1;
     mine.forEach((v, gx) => v.forEach((n, gy) => front.append("rect").attr("x", x(gx)).attr("y", y(gy + 1)).attr("width", cw).attr("height", ch).attr("fill", col).attr("opacity", op(n, mm))));
   }
-  // fossil can't go below net load less nuclear: the line it would sit on with no other units
-  const nuc = 5;
-  svg.append("line").attr("x1", x(Math.max(x.domain()[0], nuc))).attr("x2", x(x.domain()[1])).attr("y1", y(Math.max(x.domain()[0], nuc) - nuc)).attr("y2", y(x.domain()[1] - nuc))
+  // fossil equal to the load left for it: where it would sit if it followed load down
+  const x0 = Math.max(x.domain()[0], 0);
+  svg.append("line").attr("x1", x(x0)).attr("x2", x(x.domain()[1])).attr("y1", y(x0)).attr("y2", y(x.domain()[1]))
     .attr("stroke", css("--muted")).attr("stroke-dasharray", "5 4").attr("stroke-width", 1.2);
   const med = F.median[isAll() ? "all" : String(sel)] || [];
   const half = F.bin / 2;
@@ -75,12 +75,12 @@ function drawQ1() {
     .on("pointermove", (ev) => {
       const nx = x.invert(d3.pointer(ev)[0]), r = med.find((q) => nx >= q[0] && nx < q[0] + F.bin);
       if (!r) return hideTip();
-      showTip(ev, `<h4>Net load ${r[0]} to ${r[0] + F.bin} GW · ${yearName(sel)}</h4><table><tr><td>Median fossil output</td><td class="n">${fmtGW(r[1])} GW</td></tr><tr><td>Hours</td><td class="n">${d3.format(",")(r[2])}</td></tr></table>`);
+      showTip(ev, `<h4>Load left for fossil ${r[0]} to ${r[0] + F.bin} GW · ${yearName(sel)}</h4><table><tr><td>Median fossil output</td><td class="n">${fmtGW(r[1])} GW</td></tr><tr><td>Hours</td><td class="n">${d3.format(",")(r[2])}</td></tr></table>`);
     })
     .on("pointerleave", hideTip);
   el.replaceChildren(svg.node());
   legend("q1-legend", [[isAll() ? "Hours, all years (darker: more hours)" : `Hours in ${yearName(sel)} (other years grey)`, isAll() ? "--ink" : "--c1"], ["Median fossil output", "--c2"]]);
-  $("q1-legend").insertAdjacentHTML("beforeend", `<span><span class="sw sw-line"></span>Net load less about 5 GW of nuclear</span>`);
+  $("q1-legend").insertAdjacentHTML("beforeend", `<span><span class="sw sw-line"></span>Fossil equal to the load left for it</span>`);
   // what is stuck on: average fossil output by net load, at minimum and above it
   const sb = F.stuck_bin, pick = (r) => isAll() || r[0] === sel;
   const hours = d3.rollup(F.hours.filter(pick), (v) => d3.sum(v, (r) => r[2]), (r) => r[1]);
@@ -96,8 +96,8 @@ function drawQ1() {
   s2.append("g").attr("class", "axis").attr("transform", `translate(${m2.l},0)`).call(d3.axisLeft(y2).ticks(5).tickFormat((v) => d3.format(",.0f")(v / 1000)).tickSizeOuter(0));
   const every = Math.ceil(bins.length / (w < 560 ? 6 : 12));
   s2.append("g").attr("class", "axis").attr("transform", `translate(0,${H2 - m2.b})`).call(d3.axisBottom(xb).tickValues(bins.filter((_, i) => i % every === 0)).tickFormat((b) => `${b}`).tickSizeOuter(0));
-  s2.append("text").attr("class", "axis-title").attr("x", m2.l).attr("y", 9).text(`Average fossil output (GW) by net load, ${yearName(sel)}`);
-  s2.append("text").attr("class", "axis-title").attr("x", w - m2.r).attr("y", H2 - 6).attr("text-anchor", "end").text(`Net load (GW), ${sb} GW bins`);
+  s2.append("text").attr("class", "axis-title").attr("x", m2.l).attr("y", 9).text(`Average fossil output (GW) by load left for fossil, ${yearName(sel)}`);
+  s2.append("text").attr("class", "axis-title").attr("x", w - m2.r).attr("y", H2 - 6).attr("text-anchor", "end").text(`Load less wind and solar HSL less nuclear (GW), ${sb} GW bins`);
   bins.forEach((b) => {
     let acc = 0;
     keys.forEach(([t, k, o]) => {
@@ -107,7 +107,7 @@ function drawQ1() {
       acc += v;
     });
     s2.append("rect").attr("x", xb(b)).attr("width", xb.bandwidth()).attr("y", m2.t).attr("height", H2 - m2.t - m2.b).attr("fill", "transparent")
-      .on("pointermove", (ev) => showTip(ev, `<h4>Net load ${b} to ${b + sb} GW · ${yearName(sel)}</h4><table><tr><td></td><td class="n">At minimum, GW</td><td class="n">Above, GW</td></tr>` +
+      .on("pointermove", (ev) => showTip(ev, `<h4>Load left for fossil ${b} to ${b + sb} GW · ${yearName(sel)}</h4><table><tr><td></td><td class="n">At minimum, GW</td><td class="n">Above, GW</td></tr>` +
         STUCK_TECHS.map((t) => `<tr><td><span class="sw" style="background:var(${TECH_COLOR[t]})"></span> ${TECH[t]}</td><td class="n">${fmtGW(part(b, t, 3))}</td><td class="n">${fmtGW(part(b, t, 4))}</td></tr>`).join("") +
         `<tr><td><b>All fossil</b></td><td class="n"><b>${fmtGW(d3.sum(STUCK_TECHS, (t) => part(b, t, 3)))}</b></td><td class="n"><b>${fmtGW(d3.sum(STUCK_TECHS, (t) => part(b, t, 4)))}</b></td></tr><tr><td>Hours</td><td class="n" colspan="2">${d3.format(",")(hours.get(b))}</td></tr></table>`))
       .on("pointerleave", hideTip);
@@ -116,7 +116,7 @@ function drawQ1() {
   legend("q1s-legend", [...STUCK_TECHS.map((t) => [`${TECH[t]} at minimum`, TECH_COLOR[t]]), ["Lighter: above minimum", "--c-other", 0.35]]);
   setCSV(el2, ["net_load_bin_gw", "hours", ...STUCK_TECHS.flatMap((t) => [`${t}_at_minimum_mw`, `${t}_above_minimum_mw`])],
     bins.map((b) => [b, hours.get(b), ...STUCK_TECHS.flatMap((t) => [Math.round(part(b, t, 3)), Math.round(part(b, t, 4))])]), `What is stuck on ${yearName(sel)}`);
-  setCSV(el, ["net_load_bin_gw", "median_fossil_mw", "hours"], med, `Fossil against net load ${yearName(sel)}`);
+  setCSV(el, ["load_left_for_fossil_bin_gw", "median_fossil_mw", "hours"], med, `Fossil against the load left for it ${yearName(sel)}`);
   // the answer: the floor in low net load hours, and what sits at it
   const low = (rs) => rs.filter((r) => r[0] + F.bin <= LOW_NET);
   const floorOf = (k) => { const rs = low(F.median[k] || []), n = d3.sum(rs, (r) => r[2]); return n ? d3.sum(rs, (r) => r[1] * r[2]) / n : null; };
@@ -125,12 +125,12 @@ function drawQ1() {
   const atMin = d3.sum(STUCK_TECHS, (t) => lowPart(t, 3)), above = d3.sum(STUCK_TECHS, (t) => lowPart(t, 4));
   const yrs = years().filter((q) => floorOf(String(q)) != null);
   const f = floorOf(isAll() ? "all" : String(sel));
-  $("q1-answer").innerHTML = f == null ? `Too few hours with net load under ${LOW_NET} GW in ${yearName(sel)} to say.` :
-    `<b>Fossil output has a floor it doesn't go below.</b> In hours when net load was under ${LOW_NET} GW, fossil still ran a median of about ${fmtGW(f)} GW (${yearName(sel)}), ` +
+  $("q1-answer").innerHTML = f == null ? `Too few hours with under ${LOW_NET} GW of load left for fossil in ${yearName(sel)} to say.` :
+    `<b>Fossil output has a floor it doesn't go below.</b> In hours when the load left for fossil (load less wind and solar available, less nuclear) was under ${LOW_NET} GW, fossil still ran a median of about ${fmtGW(f)} GW (${yearName(sel)}), ` +
     `and in those hours ${fmtGW(atMin)} GW of it was units at their minimum, against ${fmtGW(above)} GW above it: coal ${fmtGW(lowPart("coal", 3))} GW and combined cycles ${fmtGW(lowPart("combined_cycle", 3))} GW. ` +
     `By year the floor was ${yrs.map((q) => `${fmtGW(floorOf(String(q)))} GW in ${q}`).join(", ")}.`;
-  setNote($("q1-note"), `Every hour since ${d3.timeFormat("%b %Y")(new Date(S.G.years[years()[0]].from + "T12:00:00"))}: fossil output against net load, the load left once the wind and solar available are counted. Where fossil could turn off, its output would follow net load down to the dashed line; instead it flattens. Below, the average fossil output in each band of net load, split into units at their minimum and output above it.`,
-    `From the 60-day SCED disclosure, hour by hour. Fossil is coal, combined cycle, gas steam and combustion turbines. Net load is the output of every thermal unit (fossil and nuclear) plus wind and solar output, less the wind and solar available (their HSL), so load less what wind and solar could have supplied; storage and imports are left out. The median line uses ${F.bin} GW bands of net load with at least 10 hours. At minimum is the smaller of a running unit's output and its LSL (combined-cycle configurations merged into their train). The dashed line is net load less about 5 GW of nuclear.`);
+  setNote($("q1-note"), `Every hour since ${d3.timeFormat("%b %Y")(new Date(S.G.years[years()[0]].from + "T12:00:00"))}: fossil output against the load left for it: load less what wind and solar could have supplied (their HSL), less nuclear, which runs flat at about 5 GW. Where fossil could turn off, its output would follow that load down the dashed line; instead it flattens, and runs above the line into the hours where it pushes wind and solar off. Below, the average fossil output in each band of that load, split into units at their minimum and output above it.`,
+    `From the 60-day SCED disclosure, hour by hour. Fossil is coal, combined cycle, gas steam and combustion turbines. The load left for fossil is the output of every fossil unit plus wind and solar output, less the wind and solar available (their HSL): load less what wind and solar could have supplied and less each hour's actual nuclear output; storage and imports are left out. The median line uses ${F.bin} GW bands of it with at least 10 hours. At minimum is the smaller of a running unit's output and its LSL (combined-cycle configurations merged into their train). The dashed line is fossil output equal to the load left for it.`);
 }
 
 // ==== 2. Why the rest stays on: minimum online in cheap hours, by reason, by year =============
