@@ -26,8 +26,8 @@ built from the 60-day day files, pipeline/decision_table.month_file):
      online in those hours by whether each unit was losing money (ECON, _losing), with how much of
      that curtailment shutting each group would have let run (hour by hour, the smaller of the two).
 
-"Cheap" is a day-ahead hub average (HB_HUBAVG) of CHEAP $/MWh or less, as on the Commitment
-scorecard.  Writes data/goal.json.gz (format in build()).  Run monthly by the Goal page workflow
+"Cheap" is a day-ahead system lambda (NP4-523-CD; the history release's da-lambda files, else
+data/dam_lambda.json.gz) of CHEAP $/MWh or less, as on the Commitment scorecard.  Writes data/goal.json.gz (format in build()).  Run monthly by the Goal page workflow
 (.github/workflows/goal.yml): about 30 minutes, most of it the decision table.
 
     python -m pipeline.goal [--cache goal-cache]
@@ -46,9 +46,9 @@ from .intraday import train_of
 from .store import read_json_gz, write_json_gz
 
 PATH = DATA_DIR / "goal.json.gz"
-VERSION = "v4"
+VERSION = "v5"   # v5: cheap hours on DA system lambda (was the DA hub average)
 START = "2019-01"
-CHEAP = 10.0          # $/MWh, day-ahead hub average: a cheap hour
+CHEAP = 10.0          # $/MWh, day-ahead system lambda: a cheap hour
 OVER_PRICE = 5.0      # $/MWh, real-time hub average: an oversupply hour
 CONGESTED = 5.0       # $/MWh: a unit's DA node this far below the DA bus average is behind congestion
 CURT_MIN = 0.5        # MW: smaller unit-hour curtailment is noise
@@ -72,8 +72,8 @@ CODE = np.array(sorted(RANK, key=RANK.get))
 
 # ------------------------------------------------------------------ inputs --
 def _hubs(month):
-    """{(date, he): (DA hub average, DA bus average, RT hub average)} for the month."""
-    out = defaultdict(lambda: [np.nan, np.nan, np.nan])
+    """{(date, he): (DA hub average, DA bus average, RT hub average, DA system lambda)} for the month."""
+    out = defaultdict(lambda: [np.nan, np.nan, np.nan, np.nan])
     p = HISTORY_DIR / f"da-hubs-{month}.parquet"
     if p.exists():
         h = pd.read_parquet(p)
@@ -87,6 +87,16 @@ def _hubs(month):
                     for h, x in enumerate((v.get(pt) or [])[:24]):
                         if x is not None:
                             out[(d, h + 1)][col] = float(x)
+    p = HISTORY_DIR / f"da-lambda-{month}.parquet"
+    if p.exists():
+        for d, he, v in pd.read_parquet(p)[["date", "he", "price"]].itertuples(index=False):
+            out[(d, int(he))][3] = float(v)
+    else:
+        for d, v in (read_json_gz(DATA_DIR / "dam_lambda.json.gz", default={}) or {}).get("days", {}).items():
+            if d[:7] == month:
+                for h, x in enumerate(v[:24]):
+                    if x is not None:
+                        out[(d, h + 1)][3] = float(x)
     p = HISTORY_DIR / f"rt-prices-{month}.parquet"
     if p.exists():
         r = pd.read_parquet(p, columns=["date", "he", "point", "price"])
@@ -282,8 +292,8 @@ def _year(year, months, cache, before=None, losing=None, gas=None):
     h = pd.concat(th, ignore_index=True)
     h = h.sort_values(["train", "date", "he"]).reset_index(drop=True)
     key = list(zip(h["date"], h["he"]))
-    h["da"] = [hubs.get(k, [np.nan] * 3)[0] for k in key]
-    h["rt"] = [hubs.get(k, [np.nan] * 3)[2] for k in key]
+    h["da"] = [hubs.get(k, [np.nan] * 4)[3] for k in key]       # DA system lambda
+    h["rt"] = [hubs.get(k, [np.nan] * 4)[2] for k in key]
     h["cheap"] = h["da"] <= CHEAP
     # each fossil train's group, capacity and typical minimum over the year
     info = {}
@@ -357,7 +367,7 @@ def _year(year, months, cache, before=None, losing=None, gas=None):
     if ren:
         r = pd.concat(ren, ignore_index=True)
         floor = _floor(year, h, r)
-        r["rt"] = [hubs.get((d, int(he)), [np.nan] * 3)[2] for d, he in zip(r["date"], r["he"])]
+        r["rt"] = [hubs.get((d, int(he)), [np.nan] * 4)[2] for d, he in zip(r["date"], r["he"])]
         r["over"] = r["rt"] <= OVER_PRICE
         r["free"] = r["free"].where(r["over"], 0.0)
         oh = r[r["over"] & (r["free"] >= OVER_CURT_MIN)][["date", "he", "free"]]

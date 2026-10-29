@@ -2,13 +2,15 @@
 operating days, without parsing them: the one-time fetch of the 60-day DAM disclosure for 2019 to
 2025 (Blair, Oct 27 2026), so the history fits can read DAM resource status from our own copy.
 
-Every file the archive lists for posting dates LAG days (+/- SLACK) after the span is first looked
+Every file the archive lists for posting dates LAG days (+/- SLACK) after the span (--lag for a
+report that posts on another lag: -1 for the day-ahead reports, posted the day before) is first looked
 up in the bucket with a HEAD request; only files not there are downloaded from ERCOT, and each is
 stored before the next is fetched.  If a file can't be stored, or the bucket can't be asked, the
 run stops: ERCOT's terms allow about three downloads of a report a year, so nothing is downloaded
 that isn't kept.  --dry-run only counts what is stored and what is not.
 
     python -m pipeline.raw_fetch --emil np3-966-er --start 2019-01-01 --end 2019-12-31 [--dry-run]
+    python -m pipeline.raw_fetch --emil np4-523-cd --lag -1 --start 2019-01-01 --end 2019-12-31
 """
 import argparse
 import datetime as dt
@@ -23,6 +25,7 @@ def main(argv=None) -> int:
     ap.add_argument("--emil", required=True)
     ap.add_argument("--start", required=True, help="first operating day, YYYY-MM-DD")
     ap.add_argument("--end", required=True, help="last operating day, YYYY-MM-DD")
+    ap.add_argument("--lag", type=int, default=LAG, help=f"days from operating day to posting (default {LAG})")
     ap.add_argument("--dry-run", action="store_true")
     a = ap.parse_args(argv)
     api = ErcotAPI()
@@ -32,7 +35,7 @@ def main(argv=None) -> int:
         return 1
     lo, hi = dt.date.fromisoformat(a.start), dt.date.fromisoformat(a.end)
     t = lambda d: dt.datetime(d.year, d.month, d.day)
-    docs = api.list_archives(a.emil, t(lo + dt.timedelta(days=LAG - SLACK)), t(hi + dt.timedelta(days=LAG + SLACK + 1)))
+    docs = api.list_archives(a.emil, t(lo + dt.timedelta(days=a.lag - SLACK)), t(hi + dt.timedelta(days=a.lag + SLACK + 1)))
     docs.sort(key=lambda d: d.get("postDatetime", ""))
     print(f"{a.emil}: {len(docs)} files posted {docs[0]['postDatetime'][:10] if docs else '-'} to "
           f"{docs[-1]['postDatetime'][:10] if docs else '-'}", flush=True)

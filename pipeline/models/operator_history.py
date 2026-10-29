@@ -2,7 +2,7 @@
 window, from the thermal history files (pipeline/history.py, the `history` release: Jan 2019 on).
 
 HistoryContext stands in for the forecast Context the model reads (dates, raw states, DAM day
-records, hub prices), covering the history days and then the live 60-day days on one calendar.
+records, DA system lambda), covering the history days and then the live 60-day days on one calendar.
 A history day's DAM record is rebuilt from the thermal file's columns: node price, award, DAM LSL,
 minimum-energy cost and hot start per configuration, as the DAM day file gives them, and its DAM
 resource status by hour from the dam-status files (history.py --dam-status, built from our own
@@ -29,7 +29,6 @@ from ..intraday import train_of
 from ..store import read_json_gz
 
 TECHS = ("combined_cycle", "gas_steam")
-HUB = "HB_HUBAVG"
 COLS = ["date", "unit", "tech", "sp", "he", "state", "award", "da_node", "dam_lsl", "mingen", "hot_start"]
 
 
@@ -99,14 +98,14 @@ class HistoryContext:
         day0 = dt.date.fromisoformat(hist[0]) if hist else self.live_day0
         self.stats = {"day0": day0}
         self._dam = {d: {"hours": 24, "units": u} for d, u in dam.items()}
-        self._hub = {}
-        for f in _files("da-hubs"):
+        self._lam = {}
+        for f in _files("da-lambda"):
             h = pd.read_parquet(f)
-            h = h[(h["point"] == HUB) & (h["date"] < before)]
+            h = h[h["date"] < before]
             for d, g in h.groupby("date"):
                 v = np.full(24, np.nan)
                 v[g["he"].to_numpy() - 1] = g["price"].to_numpy(float)
-                self._hub[d] = v
+                self._lam[d] = v
         # states on one calendar: the history, then the live raw states from the live day0 on
         off = (self.live_day0 - day0).days * 24
         live_raw = live.raw_states()
@@ -148,10 +147,10 @@ class HistoryContext:
     def dam(self, date):
         return self._dam.get(date) if date in self._dam else self.live.dam(date)
 
-    def hub(self, date):
-        v = self._hub.get(date)
+    def lam(self, date):
+        v = self._lam.get(date)
         if v is None:
-            return self.live.hub(date)
+            return self.live.lam(date)
         return v if np.isfinite(v).sum() >= 23 else None
 
 

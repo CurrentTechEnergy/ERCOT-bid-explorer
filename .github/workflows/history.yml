@@ -4,6 +4,7 @@ name: Build hourly history
 # ancillary service awards and prices (kind: as), real-time settlement point prices (kind: rt) or
 # real-time AS awards and prices with every technology's DAM AS awards (kind: rtas, Dec 2025 on)
 # or each resource's QSE and decision-making entity (kind: control, read only from the raw store)
+# or the DAM system lambda (kind: da-lambda, read only from the raw store)
 # from ERCOT's
 # archive (pipeline/history.py), one month per job,
 # uploaded as Parquet files to the `history` release.  Kept apart from the site data and the
@@ -13,9 +14,9 @@ on:
   workflow_dispatch:
     inputs:
       kind:
-        description: "renewables (units-*), thermal (thermal-*), as (as-*, as-mcpc-*), rt (rt-prices-*), rtas (rt-as-*, rt-mcpc-*, dam-as-*) dam-status (dam-status-*, read only from the raw store) or control (control-*, read only from the raw store)"
+        description: "renewables (units-*), thermal (thermal-*), as (as-*, as-mcpc-*), rt (rt-prices-*), rtas (rt-as-*, rt-mcpc-*, dam-as-*) dam-status (dam-status-*, read only from the raw store), control (control-*, read only from the raw store) or da-lambda (da-lambda-*, read only from the raw store)"
         type: choice
-        options: [renewables, thermal, as, rt, rtas, dam-status, control]
+        options: [renewables, thermal, as, rt, rtas, dam-status, control, da-lambda]
         required: false
         default: renewables
       start:
@@ -61,7 +62,7 @@ jobs:
           MAX: ${{ inputs.max_months || '24' }}
           FORCE: ${{ inputs.force || false }}
           EVENT: ${{ github.event_name }}
-          PREFIX: ${{ inputs.kind == 'thermal' && 'thermal' || inputs.kind == 'as' && 'as' || inputs.kind == 'rt' && 'rt-prices' || inputs.kind == 'rtas' && 'rt-as' || inputs.kind == 'dam-status' && 'dam-status' || inputs.kind == 'control' && 'control' || 'units' }}
+          PREFIX: ${{ inputs.kind == 'thermal' && 'thermal' || inputs.kind == 'as' && 'as' || inputs.kind == 'rt' && 'rt-prices' || inputs.kind == 'rtas' && 'rt-as' || inputs.kind == 'dam-status' && 'dam-status' || inputs.kind == 'control' && 'control' || inputs.kind == 'da-lambda' && 'da-lambda' || 'units' }}
           KIND: ${{ inputs.kind }}
         run: |
           if [ "$EVENT" = "pull_request" ]; then echo 'months=["2019-01"]' >> "$GITHUB_OUTPUT"; exit 0; fi
@@ -114,7 +115,7 @@ jobs:
           R2_ENDPOINT: ${{ secrets.R2_ENDPOINT }}
           R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
           R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
-        run: python -m pipeline.history "${{ matrix.month }}" --out out ${{ inputs.kind == 'thermal' && '--thermal' || inputs.kind == 'as' && '--as' || inputs.kind == 'rt' && '--rt' || inputs.kind == 'rtas' && '--rtas' || inputs.kind == 'dam-status' && '--dam-status --store-only' || inputs.kind == 'control' && '--control --store-only' || github.event_name == 'pull_request' && '--store-only' || '' }}
+        run: python -m pipeline.history "${{ matrix.month }}" --out out ${{ inputs.kind == 'thermal' && '--thermal' || inputs.kind == 'as' && '--as' || inputs.kind == 'rt' && '--rt' || inputs.kind == 'rtas' && '--rtas' || inputs.kind == 'dam-status' && '--dam-status --store-only' || inputs.kind == 'control' && '--control --store-only' || inputs.kind == 'da-lambda' && '--da-lambda --store-only' || github.event_name == 'pull_request' && '--store-only' || '' }}
       - name: QSE and DME, 2019-01 (smoke test, raw store only)
         if: github.event_name == 'pull_request'
         env:

@@ -311,7 +311,7 @@ function loadView() { const v = window.CX.readHash(); Object.entries(VIEW_KEYS).
 const UN_ZONES = { WEST: ["West", "--c2"], PANHANDLE: ["Panhandle", "--c4"], NORTH: ["North", "--c1"], SOUTH: ["South", "--c8"],
   COASTAL: ["Coastal", "--c3"], HOUSTON: ["Houston", "--c7"], unmapped: ["No zone in the CDR", "--c-other"] };
 const UN_BAND_COLORS = ["--c7", "--c1", "--c3", "--c2", "--c-other"];
-const UN_LAM = { all: () => true, le15: (l) => l != null && l <= 15, gt15: (l) => l != null && l > 15 };
+const UN_LAM = { all: () => true, le10: (l) => l != null && l <= 10, gt10: (l) => l != null && l > 10 };
 function drawUnused() {
   const U = S.N && S.N.unused, el = $("un-daily"), tel = $("un-table");
   setSeg("un-by", S.unBy); setSeg("un-tech", S.unTech); setSeg("un-lam", S.unLam);
@@ -337,7 +337,7 @@ function drawUnused() {
   const dts = S.N.dates.filter((d) => day.has(d));
   const total = d3.sum([...cell.values()], (c) => d3.sum(c));
   const what = S.unTech === "all" ? "wind and solar" : S.unTech;
-  $("un-note").textContent = `${dts.length} days · ${d3.format(",.0f")(total)} GWh unused ${what}` + (S.unLam === "all" ? "" : ` in hours with λ ${S.unLam === "le15" ? "≤" : ">"} $15`);
+  $("un-note").textContent = `${dts.length} days · ${d3.format(",.0f")(total)} GWh unused ${what}` + (S.unLam === "all" ? "" : ` in hours with λ ${S.unLam === "le10" ? "≤" : ">"} $10`);
   staticLegend($("un-legend"), groups);
   const series = groups.map((g, j) => ({ ...g, values: dts.map((d) => day.get(d)[j]) }));
   timeChart(el, series, { dates: dts, stack: true, stackMax: Math.max(1, d3.max(dts, (d) => d3.sum(day.get(d)))) * 1.05, H: 240,

@@ -64,12 +64,15 @@ One pair of Parquet files per calendar month:
                            the resource appears and the days its pair changes.  qse.py merges them into
                            the dated history in data/unit_qse.json.gz.
 
+  da-lambda-YYYY-MM.parquet  (--da-lambda, from NP4-523-CD alone) date, he, price: the DAM system
+                           lambda by hour, for the cheap-hour test (DA system lambda <= $10)
+
   rt-prices-YYYY-MM.parquet  (--rt, from NP6-905-CD alone) date, he, point, type, price: the real-time
                            settlement point price at every point (resource nodes, hubs, load zones),
                            the hourly mean of the four 15-minute prices, as parse_prices.node_hourly
                            gives the live node files.  Joins units-* and thermal-* on sp = point.
 
-    python -m pipeline.history 2019-01 [2019-02 ...] [--out history] [--force] [--thermal | --as | --rt | --rtas [--days N] | --dam-status | --control]
+    python -m pipeline.history 2019-01 [2019-02 ...] [--out history] [--force] [--thermal | --as | --rt | --rtas [--days N] | --dam-status | --control | --da-lambda]
 """
 import argparse
 import calendar
@@ -83,8 +86,9 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-from .config import EMIL_60DAY, EMIL_DAM, EMIL_DAM_SPP, EMIL_SPP
+from .config import EMIL_60DAY, EMIL_DAM, EMIL_DAM_LAMBDA, EMIL_DAM_SPP, EMIL_SPP
 from .curves import to_iso_date
+from .dam_lambda import read_dam_lambda
 from .dam_prices import read_dam_spp
 from .parse_prices import read_spp
 from .log import warn
@@ -359,6 +363,32 @@ def da_hubs(api, days) -> pd.DataFrame:
     return f.sort_values(["date", "point", "he"]).reset_index(drop=True)
 
 
+def build_lambda_month(api, month: str, out: Path = OUT, force: bool = False) -> None:
+    out.mkdir(parents=True, exist_ok=True)
+    path = out / f"da-lambda-{month}.parquet"
+    if path.exists() and not force:
+        print(f"{path.name}: already there")
+        return
+    days = _days(month)
+    docs = api.list_archives(EMIL_DAM_LAMBDA, _t(days[0] - dt.timedelta(days=2)), _t(days[-1] + dt.timedelta(days=1)))
+    # one file at a time through the raw store (download_many bypasses it)
+    blobs = [api.download(EMIL_DAM_LAMBDA, d["docId"]) for d in docs]
+    got = read_dam_lambda([c for b in blobs for c in iter_csvs(b, "x.zip")])
+    want = {d.isoformat() for d in days}
+    f = pd.DataFrame([(d, h + 1, v) for d, vs in got.items() if d in want for h, v in enumerate(vs) if v is not None],
+                     columns=["date", "he", "price"])
+    if f.empty:
+        warn(f"{month}: no DAM system lambda found; nothing written")
+        return
+    missing = sorted(want - set(f["date"]))
+    if missing:
+        warn(f"{EMIL_DAM_LAMBDA}: no DA system lambda for {len(missing)} day(s): {', '.join(missing)}")
+    f["he"] = f["he"].astype("int8")
+    f["price"] = f["price"].astype("float32")
+    f.sort_values(["date", "he"]).reset_index(drop=True).to_parquet(path, index=False)
+    print(f"{path.name}: {len(f):,} hours, {f['date'].nunique()} days")
+
+
 def build_month(api, month: str, out: Path = OUT, force: bool = False, thermal: bool = False) -> None:
     out.mkdir(parents=True, exist_ok=True)
     days = _days(month)
@@ -512,6 +542,8 @@ def main(argv=None):
                       help="build the thermal DAM resource status files instead (60-day DAM disclosure alone)")
     kind.add_argument("--control", action="store_true",
                       help="build each resource's QSE and DME files instead (60-day DAM disclosure alone)")
+    kind.add_argument("--da-lambda", action="store_true",
+                      help="build the DAM system lambda files instead (NP4-523-CD)")
     ap.add_argument("--store-only", action="store_true",
                     help="read ERCOT's files only from the raw store (pipeline/raw_store.py); never download one")
     ap.add_argument("--days", type=int, help="--rtas only: build just the first N days of each month (smoke test)")
@@ -520,6 +552,9 @@ def main(argv=None):
     api = ErcotAPI()
     api.store_only = args.store_only
     for m in args.months:
+        if args.da_lambda:
+            build_lambda_month(api, m, Path(args.out), args.force)
+            continue
         if args.dam_status:
             build_status_month(api, m, Path(args.out), args.force)
             continue
