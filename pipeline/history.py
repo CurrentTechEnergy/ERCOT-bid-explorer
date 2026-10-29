@@ -58,16 +58,23 @@ One pair of Parquet files per calendar month:
                            (blank where the file has none), for the operator model's history fits
                            (models/operator_history.py)
 
+  control-YYYY-MM.parquet  (--control, from the 60-day DAM disclosure alone) date, unit, qse, dme:
+                           each resource's QSE and decision-making entity (ERCOT's short codes; null
+                           where the file has no such column), only on the month's first and last day
+                           the resource appears and the days its pair changes.  qse.py merges them into
+                           the dated history in data/unit_qse.json.gz.
+
   rt-prices-YYYY-MM.parquet  (--rt, from NP6-905-CD alone) date, he, point, type, price: the real-time
                            settlement point price at every point (resource nodes, hubs, load zones),
                            the hourly mean of the four 15-minute prices, as parse_prices.node_hourly
                            gives the live node files.  Joins units-* and thermal-* on sp = point.
 
-    python -m pipeline.history 2019-01 [2019-02 ...] [--out history] [--force] [--thermal | --as | --rt | --rtas [--days N]]
+    python -m pipeline.history 2019-01 [2019-02 ...] [--out history] [--force] [--thermal | --as | --rt | --rtas [--days N] | --dam-status | --control]
 """
 import argparse
 import calendar
 import datetime as dt
+import io
 import sys
 import time
 from concurrent.futures import ProcessPoolExecutor
@@ -77,6 +84,7 @@ import numpy as np
 import pandas as pd
 
 from .config import EMIL_60DAY, EMIL_DAM, EMIL_DAM_SPP, EMIL_SPP
+from .curves import to_iso_date
 from .dam_prices import read_dam_spp
 from .parse_prices import read_spp
 from .log import warn
@@ -226,6 +234,33 @@ def as_rows(dam: dict, techs=THERMAL_TECHS):
     return f, m
 
 
+def control_day(blob: bytes):
+    """-> (operating day, frame of unit, qse, dme) from a 60-day DAM zip: the generation resource and
+    ESR data files, read for those columns alone (qse.py finds them by name, as for the live files)."""
+    from .parse_dam import GEN_FILE, is_esr_data
+    from .qse import _DME, _QSE, _norm
+    want = {"resourcename", "deliverydate"} | set(_QSE) | set(_DME)
+    frames = []
+    for name, data in iter_csvs(blob, "x.zip"):
+        if name.lower().startswith(GEN_FILE) or is_esr_data(name):
+            frames.append(pd.read_csv(io.BytesIO(data), dtype=str, usecols=lambda c: _norm(c) in want))
+    if not frames:
+        raise ValueError("No DAM generation resource file in the 60-day DAM zip")
+    f = pd.concat(frames, ignore_index=True)
+    col = {_norm(c): c for c in f.columns}
+    if "resourcename" not in col or "deliverydate" not in col:
+        raise ValueError(f"DAM file lacks Resource Name or Delivery Date; read {list(f.columns)}")
+    pick = lambda names: next((col[n] for n in names if n in col), None)
+    out = pd.DataFrame({"unit": f[col["resourcename"]].str.strip()})
+    for k, names in (("qse", _QSE), ("dme", _DME)):
+        c = pick(names)
+        out[k] = f[c].str.strip().mask(lambda v: v.eq("")) if c else None
+    dates = to_iso_date(f[col["deliverydate"]])
+    date = dates.value_counts().idxmax()
+    out = out[(dates == date).values & out["unit"].notna().values & (out["unit"] != "").values]
+    return date, out.drop_duplicates("unit", keep="last").reset_index(drop=True)
+
+
 DAM_KEEP = ("sp", "award", "spp", "hsl", "hsl_h")
 DAM_KEEP_THERMAL = ("sp", "award", "spp", "lsl", "mingen", "start")
 MEM_LIMIT = 5 * 2 ** 30    # bytes of address space a parse may use (hosted runners have 7 GB)
@@ -254,6 +289,8 @@ def _parse(blob: bytes, source: str, dam: dict, thermal: bool = False, ancillary
     if rtas:
         from .rt_as import sced_awards
         return sced_awards(blob)
+    if ancillary == "control":
+        return control_day(blob)
     parsed = found[1](blob)
     if source == "dam":
         if ancillary == "status":
@@ -427,6 +464,31 @@ def build_status_month(api, month: str, out: Path = OUT, force: bool = False) ->
           + f", {time.time() - t0:.0f}s")
 
 
+def build_control_month(api, month: str, out: Path = OUT, force: bool = False) -> None:
+    out.mkdir(parents=True, exist_ok=True)
+    path = out / f"control-{month}.parquet"
+    if path.exists() and not force:
+        print(f"{path.name}: already there")
+        return
+    t0 = time.time()
+    got = [r.assign(date=d) for d, r in _disclosures(api, EMIL_DAM, _days(month), "dam", ancillary="control")]
+    if not got:
+        warn(f"{month}: no DAM days found; nothing written")
+        return
+    f = pd.concat(got, ignore_index=True).sort_values(["unit", "date"]).reset_index(drop=True)
+    days = f["date"].nunique()
+    no_dme = f.groupby("date")["dme"].apply(lambda s: s.isna().all())
+    pair = f["qse"].fillna("") + "|" + f["dme"].fillna("")
+    changed = pair.groupby(f["unit"]).nunique().gt(1).sum()
+    same = f["unit"].eq(f["unit"].shift()) & pair.eq(pair.shift())
+    last = f["unit"].ne(f["unit"].shift(-1))
+    f = f[~same | last][["date", "unit", "qse", "dme"]].reset_index(drop=True)
+    f.to_parquet(path, index=False)
+    print(f"{path.name}: {len(f):,} rows, {days} days, {f['unit'].nunique()} units, "
+          f"{changed} with a change, DME column on {days - no_dme.sum()} of {days} days, "
+          f"{time.time() - t0:.0f}s")
+
+
 def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("months", nargs="+", help="YYYY-MM")
@@ -441,6 +503,8 @@ def main(argv=None):
                       help="build the RT AS award, RT MCPC and all-technology DAM AS files instead (pipeline/rt_as.py)")
     kind.add_argument("--dam-status", action="store_true",
                       help="build the thermal DAM resource status files instead (60-day DAM disclosure alone)")
+    kind.add_argument("--control", action="store_true",
+                      help="build each resource's QSE and DME files instead (60-day DAM disclosure alone)")
     ap.add_argument("--store-only", action="store_true",
                     help="read ERCOT's files only from the raw store (pipeline/raw_store.py); never download one")
     ap.add_argument("--days", type=int, help="--rtas only: build just the first N days of each month (smoke test)")
@@ -451,6 +515,9 @@ def main(argv=None):
     for m in args.months:
         if args.dam_status:
             build_status_month(api, m, Path(args.out), args.force)
+            continue
+        if args.control:
+            build_control_month(api, m, Path(args.out), args.force)
             continue
         if args.ancillary:
             build_as_month(api, m, Path(args.out), args.force)
