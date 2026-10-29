@@ -70,9 +70,8 @@ def read(name, default=None):
         return default
     if blob:
         path.parent.mkdir(parents=True, exist_ok=True)
-        path.write_bytes(blob)
-        if _unpublish(name):
-            print(f"private: removed site/data's copy of {name}, which the bucket already holds")
+        path.write_bytes(blob)     # a site/data copy goes at the next write(), not here: workflows
+                                   # that only read must not leave site/data changed
         return read_json_gz(path, default=default)
     obj = _published(name)
     if obj is None:
