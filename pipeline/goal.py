@@ -321,11 +321,9 @@ def _year(year, months, cache, before=None, losing=None, gas=None):
     c["cost"] = (np.array([dc.get(k, np.nan) for k in zip(c["train"], c["date"])]) - c["da_node"].to_numpy()) * c["lsl"].to_numpy()
     q2rows = [[year, t, w, round(float(g["lsl"].sum())), round(float(g["cost"].sum()))] for (t, w), g in c.groupby(["tech", "why"])]
     # ... and by the same groups as the award chart, hour by hour: a DAM award over 0.5 MW that
-    # hour; else self-committed (DAM resource status on) or neither, on days with a DAM day file
-    status = {}
-    for d in c["date"].unique():
-        dd = read_json_gz(DATA_DIR / "dam" / f"{d}.json.gz", default=None)
-        status[d] = _dam_status(dd) if dd else None
+    # hour; else self-committed (DAM resource status on) or neither (_status_for)
+    status = _status_for(c["date"].unique())
+
     def grp(tr, d, he, aw):
         if aw > 0.5:
             return "award"
@@ -375,8 +373,8 @@ def _award_stretches(year, h):
     day's first run of two or more cheap midday hours (MIDDAY), with no outage or missing hour in it, and
     whether they stayed online through all of it.  group: "award" (a DAM award over 0.5 MW in at
     least half the stretch's hours), "self" (no award, DAM resource status on at the first cheap
-    hour), "neither", or "no award" where the day has no DAM day file (data/dam) to give the
-    status (before Dec 2025)."""
+    hour), "neither", or "no award" where neither the DAM day file nor the history's dam-status
+    file gives the status (_status_for)."""
     hours = h[["date", "he", "cheap"]].drop_duplicates(["date", "he"]).sort_values(["date", "he"]).reset_index(drop=True)
     idx = {k: i for i, k in enumerate(zip(hours["date"], hours["he"]))}
     runs = []
@@ -388,10 +386,7 @@ def _award_stretches(year, h):
                 e += 1                  # the first run of cheap hours in a row
             if e - c[0] >= 2:
                 runs.append((d, int(hours.at[c[0], "he"]), c[0], e))
-    status = {}
-    for d in {r[0] for r in runs}:
-        dd = read_json_gz(DATA_DIR / "dam" / f"{d}.json.gz", default=None)
-        status[d] = _dam_status(dd) if dd else None
+    status = _status_for([r[0] for r in runs])
     out = defaultdict(lambda: [0, 0])
     techs = FOSSIL + ("combustion_turbine",)
     n = len(hours)
@@ -412,6 +407,40 @@ def _award_stretches(year, h):
             r[0] += 1
             r[1] += int(not (st[a:b] == "0").any())
     return [[year, t, grp, n_, stayed] for (t, grp), (n_, stayed) in sorted(out.items())]
+
+
+def _status_for(dates):
+    """{date: {train: [24] DAM resource status on} or None}: the DAM day file (data/dam) where there
+    is one, else the history's dam-status file for the month (pipeline/history.py --dam-status,
+    from our own copies of the 60-day DAM disclosure), else None."""
+    out, months = {}, {}
+    for d in sorted(set(dates)):
+        dd = read_json_gz(DATA_DIR / "dam" / f"{d}.json.gz", default=None)
+        if dd:
+            out[d] = _dam_status(dd)
+            continue
+        m = d[:7]
+        if m not in months:
+            p = HISTORY_DIR / f"dam-status-{m}.parquet"
+            months[m] = _status_month(pd.read_parquet(p)) if p.exists() else {}
+        out[d] = months[m].get(d)
+    return out
+
+
+def _status_month(st):
+    """{date: {train: [24] on}} from a history dam-status file."""
+    from .models.operator_informed import ON_STATUS
+    st = st[st["tech"].astype(str).isin(FOSSIL + ("combustion_turbine",)) & st["he"].between(1, 24)]
+    t, u = st["tech"].astype(str), st["unit"].astype(str)
+    st = st.assign(train=np.where(t == "combined_cycle", u.map(train_of), u),
+                   on=st["status"].astype(str).str.upper().isin(ON_STATUS))
+    g = st.groupby(["date", "train", "he"])["on"].any()
+    out = {}
+    for (d, tr), v in g.groupby(level=[0, 1]):
+        a = np.zeros(24, bool)
+        a[v.index.get_level_values(2).to_numpy() - 1] = v.to_numpy()
+        out.setdefault(str(d), {})[tr] = a
+    return out
 
 
 def _dam_status(dd):

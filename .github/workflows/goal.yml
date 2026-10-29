@@ -37,7 +37,7 @@ jobs:
         run: |
           git fetch --depth 1 origin data && git worktree add --detach unitdata FETCH_HEAD
           gh release download history -R "$GITHUB_REPOSITORY" -p 'thermal-*.parquet' -p 'units-*.parquet' \
-            -p 'da-hubs-*.parquet' -p 'rt-prices-*.parquet' -D history
+            -p 'da-hubs-*.parquet' -p 'rt-prices-*.parquet' -p 'dam-status-*.parquet' -D history
       - name: Build
         env:
           PYTHONUNBUFFERED: "1"
