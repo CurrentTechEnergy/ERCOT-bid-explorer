@@ -359,7 +359,7 @@ function actRow(name, note, color, max, act, tip, scale, avail) {
     (pa != null ? `<i style="left:0;width:${pa}%;background:var(${color});opacity:.35"></i>` : "") +
     (act != null ? `<i style="left:0;width:${pct}%;background:var(${color})"></i>` : "") + `</div>` +
     `<div class="val"><b>${act != null ? d3.format(",.1f")(act) + " GWh" : "–"}</b> ran` +
-    (avail != null ? `, ${d3.format(",.1f")(Math.max(0, avail - (act || 0)))} curtailed` : "") + (max ? `<br>of ${d3.format(",.0f")(max)} GWh max` : "") + `</div>`;
+    (avail != null ? `, ${d3.format(",.1f")(Math.max(0, avail - (act || 0)))} GWh curtailed<br>of ${d3.format(",.0f")(avail)} GWh available` : "") + (max ? `<br>of ${d3.format(",.0f")(max)} GWh max` : "") + `</div>`;
 }
 // "x–y units online" over the day's hours, for a group's or technology's trains online
 const onRange = (on, n) => { if (!on) return ""; const a = d3.min(on), b = d3.max(on); return `${a === b ? a : `${a}–${b}`}${n ? ` of ${n}` : ""} unit${(n || b) === 1 ? "" : "s"} online`; };
@@ -368,18 +368,18 @@ function drawActualBars() {
   panel.hidden = !L;
   if (!L) return;
   $("actual-bar-legend").innerHTML = `<span><span class="sw" style="background:var(--g3)"></span>What ran</span>` +
-    (L === "60d" ? `<span><span class="sw" style="background:var(--g3);opacity:.35"></span>Wind and solar: curtailed (available, did not run)</span><span><span class="sw" style="background:var(--track)"></span>Up to the units' largest hourly HSL × 24 hours (wind and solar: not available from the weather)</span>` : "");
-  $("actual-bars-sub").textContent = L === "60d" ? "ERCOT's reported energy for the day. The solid bar is what ran; the full bar is the most the units could have made at their largest hourly maximum (HSL) for all 24 hours. For wind and solar, the light bar is the rest of what the weather made available (their HSL each hour) and was curtailed; the gray beyond it was not available from the weather. Peakers are the units that run like peakers (online under 30% of available hours, at most 16 hours a day when on), shown on their own. Online minimum and maximum hour by hour are in the next panel." : "ERCOT's reported energy, from the 2-day summary. Thermal is reported in total until the 60-day disclosure.";
+    (L === "60d" ? `<span><span class="sw" style="background:var(--g3);opacity:.35"></span>Wind and solar: curtailed (available, did not run)</span><span><span class="sw" style="background:var(--track)"></span>Thermal: up to the units' largest hourly HSL × 24 hours</span>` : "");
+  $("actual-bars-sub").textContent = L === "60d" ? "ERCOT's reported energy for the day. The solid bar is what ran; the full bar is the most the units could have made at their largest hourly maximum (HSL) for all 24 hours. For wind and solar, the full bar is what the weather made available (their HSL each hour), and the light part of it was curtailed. Peakers are the units that run like peakers (online under 30% of available hours, at most 16 hours a day when on), shown on their own. Online minimum and maximum hour by hour are in the next panel." : "ERCOT's reported energy, from the 2-day summary. Thermal is reported in total until the 60-day disclosure.";
   const csv = [], gwhOf = (mw) => d3.sum(mw.filter((v) => v != null)) / 1000, sumOf = (a) => (a ? d3.sum(a) / 1000 : null);
   let html = "";
   const push = (sect, name, note, color, cap, act, lsl, hsl, scale) => {
     // most it could have made: the units' largest hourly HSL all day; for wind and solar the HSL
     // each hour is what the weather made available, and what was available but did not run was curtailed
-    const max = cap ? cap * 24 / 1000 : null, ren = sect === "wind" || sect === "solar";
+    const ren = sect === "wind" || sect === "solar", max = cap && !ren ? cap * 24 / 1000 : null;
     const avail = ren && hsl != null && act != null ? Math.max(hsl, act) : null;
     const tip = `${act != null ? `${fmtGWh(act)} GWh ran (${fmtGW(act / 24 * 1000)} GW on average)` : "no data"}` +
       (avail != null ? `<br>${fmtGWh(avail)} GWh available from the weather (HSL each hour), ${fmtGWh(avail - act)} GWh curtailed` : "") +
-      (max ? `<br>${fmtGWh(max)} GWh max at the units' largest hourly HSL all day${avail != null ? `, ${fmtGWh(max - avail)} GWh of it not available from the weather` : ""}` : "");
+      (max ? `<br>${fmtGWh(max)} GWh max at the units' largest hourly HSL all day` : "");
     html += actRow(name, note, color, max, act, tip, scale, avail); csv.push([sect, name, cap, max, act, lsl, hsl]);
   };
   const a60 = S.a60, gh = genHourly();
@@ -395,7 +395,7 @@ function drawActualBars() {
   }
   html += `<div class="sect">Wind and solar · GWh (${a60 ? "60-day disclosure" : "2-day summary"})</div>`;
   const ren = [WIND, SOLAR].map((s) => { const vals = a60 && a60.tech[s.id] ? a60.tech[s.id] : gh ? gh[s.id] : null; return [s, vals ? gwhOf(vals) : null]; });
-  const renScale = (d3.max(ren, ([, v]) => v) || 1) * 1.1;
+  const renScale = (d3.max(ren, ([s, v]) => Math.max(v || 0, a60 && a60.hslT[s.id] ? d3.sum(a60.hslT[s.id]) / 1000 : 0)) || 1) * 1.1;
   ren.forEach(([s, v]) => push(s.id, s.label, "", s.color, a60 ? a60.capT[s.id] : null, v, null, a60 ? sumOf(a60.hslT[s.id]) : null, renScale));
   const dis = a60 && a60.tech.storage ? gwhOf(a60.dis) : gh && gh.discharging.some((v) => v != null) ? gwhOf(gh.discharging) : null;
   const chg = a60 && a60.tech.storage ? -gwhOf(a60.chg) : gh && gh.charging.some((v) => v != null) ? -gwhOf(gh.charging) : null;
