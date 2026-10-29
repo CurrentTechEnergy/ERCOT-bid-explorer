@@ -1002,10 +1002,10 @@ function drawGroups() {
   const SH = ["Online going in", "Minimum output MW", "Turned off", "Minimum output turned off MW"];
   el.innerHTML = `<table class="data"><thead><tr>${head(["Coal, gas steam and CC", ...SH, "Units the model covers", "Median turn-off point $/MW LSL", "Median saving $/MW LSL", "Model right"])}</tr></thead><tbody>` +
     rows.map((r) => `<tr>${tdG(r)}${tdS(r)}<td>${r.nMod || "–"}</td><td>${fmtPerMW(r.medCut)}</td><td>${fmtPerMW(r.medSave)}</td><td>${r.nMod ? `${r.right} of ${r.nJudged}` : "–"}</td></tr>`).join("") +
-    tot("Coal, gas steam and CC", rows, `<td>${b(sum(rows, "nMod"))}</td><td></td><td></td><td>${b(`${sum(rows, "right")} of ${sum(rows, "nJudged")}`)}</td>`) +
+    tot("Coal, gas steam and CC", rows, `<td>${b(sum(rows, "nMod") || "–")}</td><td></td><td></td><td>${b(sum(rows, "nJudged") ? `${sum(rows, "right")} of ${sum(rows, "nJudged")}` : "–")}</td>`) +
     (ctRows.length ? `<tr>${head(["Combustion turbines (start on price)", ...SH, "Available (ran)", "Median start price $/MWh", "Median day's highest price $/MWh", "Fit right"])}</tr>` +
       ctRows.map((r) => `<tr>${tdG(r)}${tdS(r)}<td>${r.nFit ? `${r.nFit} (${r.nRan})` : "–"}</td><td>${r.nFit ? fmt$(r.medStart) : "–"}</td><td>${r.nFit ? fmt$(r.medPeak) : "–"}</td><td>${r.nJudged ? `${r.right} of ${r.nJudged}` : "–"}</td></tr>`).join("") +
-      tot("Combustion turbines", ctRows, `<td>${b(`${sum(ctRows, "nFit")} (${sum(ctRows, "nRan")})`)}</td><td></td><td></td><td>${b(`${sum(ctRows, "right")} of ${sum(ctRows, "nJudged")}`)}</td>`) : "") +
+      tot("Combustion turbines", ctRows, `<td>${b(sum(ctRows, "nFit") ? `${sum(ctRows, "nFit")} (${sum(ctRows, "nRan")})` : "–")}</td><td></td><td></td><td>${b(sum(ctRows, "nJudged") ? `${sum(ctRows, "right")} of ${sum(ctRows, "nJudged")}` : "–")}</td>`) : "") +
     tot("All thermal", rows.concat(ctRows), `<td></td><td></td><td></td><td></td>`) + `</tbody></table>`;
   setCSV(el, ["block", "group", "online_going_in", "lsl_mw", "turned_off", "lsl_turned_off_mw", "units_modelled", "median_turn_off_usd_per_mw_lsl", "median_saving_usd_per_mw_lsl", "model_right",
     "available_with_fit", "ran", "median_start_usd_mwh", "median_day_peak_usd_mwh", "fit_right"],
