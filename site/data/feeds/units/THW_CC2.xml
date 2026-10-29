@@ -9,27 +9,27 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=THW_CC2"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=THW_CC2#THW_CC2/2026-07-01/group</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Seasonal: off a week or more in 2026-06 to Daily, over 2 a week in 2026-07</summary>
+    <summary>Off a week or more in 2026-06 to Daily, over 2 a week in 2026-07</summary>
   </entry>
   <entry>
     <title>THW_CC2: Timescale group changed (2026-06-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=THW_CC2"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=THW_CC2#THW_CC2/2026-06-01/group</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Daily, over 2 a week in 2026-05 to Seasonal: off a week or more in 2026-06</summary>
+    <summary>Daily, over 2 a week in 2026-05 to Off a week or more in 2026-06</summary>
   </entry>
   <entry>
     <title>THW_CC2: Timescale group changed (2026-03-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=THW_CC2"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=THW_CC2#THW_CC2/2026-03-01/group</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Seasonal: off a week or more in 2026-02 to Daily, 1–2 a week in 2026-03</summary>
+    <summary>Off a week or more in 2026-02 to Daily, 1–2 a week in 2026-03</summary>
   </entry>
   <entry>
     <title>THW_CC2: Timescale group changed (2026-02-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=THW_CC2"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=THW_CC2#THW_CC2/2026-02-01/group</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Multi-day: off 1–7 days in 2026-01 to Seasonal: off a week or more in 2026-02</summary>
+    <summary>Multi-day: off a day or more in 2026-01 to Off a week or more in 2026-02</summary>
   </entry>
 </feed>

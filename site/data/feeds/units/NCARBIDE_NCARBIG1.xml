@@ -16,14 +16,14 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=NCARBIDE_NCARBIG1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=NCARBIDE_NCARBIG1#NCARBIDE_NCARBIG1/2026-08-01/group</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Daily, 1–2 a week in 2026-07 to Multi-day: off 1–7 days in 2026-08</summary>
+    <summary>Daily, 1–2 a week in 2026-07 to Multi-day: off a day or more in 2026-08</summary>
   </entry>
   <entry>
     <title>NCARBIDE_NCARBIG1: Timescale group changed (2026-07-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=NCARBIDE_NCARBIG1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=NCARBIDE_NCARBIG1#NCARBIDE_NCARBIG1/2026-07-01/group</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Multi-day: off 1–7 days in 2026-06 to Daily, 1–2 a week in 2026-07</summary>
+    <summary>Multi-day: off a day or more in 2026-06 to Daily, 1–2 a week in 2026-07</summary>
   </entry>
   <entry>
     <title>NCARBIDE_NCARBIG1: Running at a new price (2026-06-01)</title>
@@ -37,7 +37,7 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=NCARBIDE_NCARBIG1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=NCARBIDE_NCARBIG1#NCARBIDE_NCARBIG1/2026-06-01/group</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Daily, 1–2 a week in 2026-05 to Multi-day: off 1–7 days in 2026-06</summary>
+    <summary>Daily, 1–2 a week in 2026-05 to Multi-day: off a day or more in 2026-06</summary>
   </entry>
   <entry>
     <title>NCARBIDE_NCARBIG1: Outage ended (2026-05-26)</title>

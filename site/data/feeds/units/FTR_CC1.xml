@@ -44,7 +44,7 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=FTR_CC1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=FTR_CC1#FTR_CC1/2026-03-01/group</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Multi-day: off 1–7 days in 2026-02 to Always on when available in 2026-03</summary>
+    <summary>Multi-day: off a day or more in 2026-02 to Always on when available in 2026-03</summary>
   </entry>
   <entry>
     <title>FTR_CC1: Outage started (2026-02-23)</title>
@@ -58,6 +58,6 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=FTR_CC1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=FTR_CC1#FTR_CC1/2026-01-01/group</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Seasonal: off a week or more in 2025-12 to Multi-day: off 1–7 days in 2026-01</summary>
+    <summary>Off a week or more in 2025-12 to Multi-day: off a day or more in 2026-01</summary>
   </entry>
 </feed>

@@ -30,14 +30,14 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=MDANP_CT2"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=MDANP_CT2#MDANP_CT2/2026-07-01/group</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Multi-day: off 1–7 days in 2026-06 to Always on when available in 2026-07</summary>
+    <summary>Multi-day: off a day or more in 2026-06 to Always on when available in 2026-07</summary>
   </entry>
   <entry>
     <title>MDANP_CT2: Timescale group changed (2026-06-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=MDANP_CT2"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=MDANP_CT2#MDANP_CT2/2026-06-01/group</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Daily, over 2 a week in 2026-05 to Multi-day: off 1–7 days in 2026-06</summary>
+    <summary>Daily, over 2 a week in 2026-05 to Multi-day: off a day or more in 2026-06</summary>
   </entry>
   <entry>
     <title>MDANP: Minimum-energy offer stepped (2026-05-10)</title>

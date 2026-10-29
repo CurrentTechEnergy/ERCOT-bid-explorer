@@ -16,7 +16,7 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=WAP_WAP_G4"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=WAP_WAP_G4#WAP_WAP_G4/2026-08-01/group</id>
     <updated>2026-10-19T00:00:00Z</updated>
-    <summary>Multi-day: off 1–7 days in 2026-07 to Always on when available in 2026-08</summary>
+    <summary>Multi-day: off a day or more in 2026-07 to Always on when available in 2026-08</summary>
   </entry>
   <entry>
     <title>WAP_WAP_G4: Outage started (2026-07-26)</title>
@@ -37,7 +37,7 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=WAP_WAP_G4"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=WAP_WAP_G4#WAP_WAP_G4/2026-07-01/group</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Always on when available in 2026-06 to Multi-day: off 1–7 days in 2026-07</summary>
+    <summary>Always on when available in 2026-06 to Multi-day: off a day or more in 2026-07</summary>
   </entry>
   <entry>
     <title>WAP_WAP_G4: Outage ended (2026-06-22)</title>
@@ -79,14 +79,14 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=WAP_WAP_G4"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=WAP_WAP_G4#WAP_WAP_G4/2026-04-01/group</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Multi-day: off 1–7 days in 2026-03 to Always on when available in 2026-04</summary>
+    <summary>Multi-day: off a day or more in 2026-03 to Always on when available in 2026-04</summary>
   </entry>
   <entry>
     <title>WAP_WAP_G4: Timescale group changed (2026-03-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=WAP_WAP_G4"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=WAP_WAP_G4#WAP_WAP_G4/2026-03-01/group</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Seasonal: off a week or more in 2026-02 to Multi-day: off 1–7 days in 2026-03</summary>
+    <summary>Off a week or more in 2026-02 to Multi-day: off a day or more in 2026-03</summary>
   </entry>
   <entry>
     <title>WAP_WAP_G4: Shut down after a long run (2026-02-02)</title>

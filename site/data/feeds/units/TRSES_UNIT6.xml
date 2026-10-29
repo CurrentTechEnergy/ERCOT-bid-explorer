@@ -51,7 +51,7 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=TRSES_UNIT6"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=TRSES_UNIT6#TRSES_UNIT6/2026-06-01/group</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Daily, 1–2 a week in 2026-05 to Multi-day: off 1–7 days in 2026-06</summary>
+    <summary>Daily, 1–2 a week in 2026-05 to Multi-day: off a day or more in 2026-06</summary>
   </entry>
   <entry>
     <title>TRSES_UNIT6: Bidding approach shifted (2026-05-12)</title>
@@ -114,7 +114,7 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=TRSES_UNIT6"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=TRSES_UNIT6#TRSES_UNIT6/2026-03-01/group</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Multi-day: off 1–7 days in 2026-02 to Daily, under 1 shutdown a week in 2026-03</summary>
+    <summary>Multi-day: off a day or more in 2026-02 to Daily, under 1 shutdown a week in 2026-03</summary>
   </entry>
   <entry>
     <title>TRSES_UNIT6: Bidding approach shifted (2026-01-30)</title>

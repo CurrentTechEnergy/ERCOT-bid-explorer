@@ -37,7 +37,7 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=GRSES_UNIT2"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=GRSES_UNIT2#GRSES_UNIT2/2026-08-01/group</id>
     <updated>2026-10-19T00:00:00Z</updated>
-    <summary>Daily, 1–2 a week in 2026-07 to Multi-day: off 1–7 days in 2026-08</summary>
+    <summary>Daily, 1–2 a week in 2026-07 to Multi-day: off a day or more in 2026-08</summary>
   </entry>
   <entry>
     <title>GRSES_UNIT2: Bidding approach shifted (2026-07-31)</title>
@@ -107,7 +107,7 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=GRSES_UNIT2"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=GRSES_UNIT2#GRSES_UNIT2/2026-03-01/group</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Multi-day: off 1–7 days in 2026-02 to Daily, 1–2 a week in 2026-03</summary>
+    <summary>Multi-day: off a day or more in 2026-02 to Daily, 1–2 a week in 2026-03</summary>
   </entry>
   <entry>
     <title>GRSES_UNIT2: Bidding approach shifted (2026-02-03)</title>

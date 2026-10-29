@@ -51,7 +51,7 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=TEN_CC1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=TEN_CC1#TEN_CC1/2026-06-01/group</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Multi-day: off 1–7 days in 2026-05 to Always on when available in 2026-06</summary>
+    <summary>Multi-day: off a day or more in 2026-05 to Always on when available in 2026-06</summary>
   </entry>
   <entry>
     <title>TEN_CC1: Decision maker or QSE changed (2026-05-06)</title>
@@ -72,7 +72,7 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=TEN_CC1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=TEN_CC1#TEN_CC1/2026-05-01/group</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Daily, under 1 shutdown a week in 2026-04 to Multi-day: off 1–7 days in 2026-05</summary>
+    <summary>Daily, under 1 shutdown a week in 2026-04 to Multi-day: off a day or more in 2026-05</summary>
   </entry>
   <entry>
     <title>TEN_CC1: Outage ended (2026-04-30)</title>
@@ -107,7 +107,7 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=TEN_CC1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=TEN_CC1#TEN_CC1/2026-04-01/group</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Multi-day: off 1–7 days in 2026-03 to Daily, under 1 shutdown a week in 2026-04</summary>
+    <summary>Multi-day: off a day or more in 2026-03 to Daily, under 1 shutdown a week in 2026-04</summary>
   </entry>
   <entry>
     <title>TEN_CC1: Shut down after a long run (2026-03-11)</title>
@@ -121,7 +121,7 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=TEN_CC1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=TEN_CC1#TEN_CC1/2026-03-01/group</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Seasonal: off a week or more in 2026-02 to Multi-day: off 1–7 days in 2026-03</summary>
+    <summary>Off a week or more in 2026-02 to Multi-day: off a day or more in 2026-03</summary>
   </entry>
   <entry>
     <title>TEN_CC1: Shut down after a long run (2026-01-27)</title>

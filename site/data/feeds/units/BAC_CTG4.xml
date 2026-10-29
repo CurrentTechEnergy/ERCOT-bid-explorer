@@ -30,7 +30,7 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=BAC_CTG4"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=BAC_CTG4#BAC_CTG4/2026-06-01/group</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Multi-day: off 1–7 days in 2026-05 to Daily, over 2 a week in 2026-06</summary>
+    <summary>Multi-day: off a day or more in 2026-05 to Daily, over 2 a week in 2026-06</summary>
   </entry>
   <entry>
     <title>BAC_CTG4: Outage ended (2026-05-31)</title>
@@ -58,7 +58,7 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=BAC_CTG4"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=BAC_CTG4#BAC_CTG4/2026-05-01/group</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Daily, over 2 a week in 2026-04 to Multi-day: off 1–7 days in 2026-05</summary>
+    <summary>Daily, over 2 a week in 2026-04 to Multi-day: off a day or more in 2026-05</summary>
   </entry>
   <entry>
     <title>BAC_CTG4: Minimum-energy offer stepped (2026-04-25)</title>
@@ -86,6 +86,6 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=BAC_CTG4"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=BAC_CTG4#BAC_CTG4/2026-04-01/group</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Multi-day: off 1–7 days in 2026-03 to Daily, over 2 a week in 2026-04</summary>
+    <summary>Multi-day: off a day or more in 2026-03 to Daily, over 2 a week in 2026-04</summary>
   </entry>
 </feed>
