@@ -39,6 +39,12 @@ to Aug: all of its gain is in unawarded hours, two thirds of it in self-commit r
 in cheap hours (CC 675 -> 566 wrong cheap hours, gas steam 78 -> 71).  cop_plan gives the plan
 to show beside the call.
 
+Hours ERCOT had a unit committed by RUC (unit_hours_60d "ruc", pipeline/intraday.py) are not the
+operator's decision: a transition into, out of or within one is left out of the fits (Oct 2026,
+Feb to Aug: cheap turn-offs caught 318 -> 322 of 443, false 101 -> 95; all hours 4.23% -> 4.25%
+wrong), and the scorecard leaves them out too.  The history days (before Dec 2025) have no unit
+status, so nothing is left out there.
+
 Fits are monthly and expanding: a month is judged by transitions fitted on the days before it
 (at least FIT_MIN_DAYS), so no day is judged by a fit that saw it.
 
@@ -146,6 +152,21 @@ def _status(dd):
         on = np.array([float(str(s).upper() in ON_STATUS) for s in (list(sh) + [""] * 24)[:24]])
         out[key] = np.maximum(out.get(key, np.zeros(24)), on)
     return out
+
+
+def ruc_hours(ctx):
+    """{train: set of hour indices on the stats' calendar} in RUC (unit_hours_60d "ruc"),
+    configurations merged into their train; empty where the file has none (history days)."""
+    from ..intraday import train_of
+    cache = ctx.__dict__.setdefault("_oi_ruc", {})
+    if not cache and ctx.uh.get("ruc"):
+        day0 = ctx.stats["day0"]
+        for name, days in ctx.uh["ruc"].items():
+            key = train_of(name)
+            for d, hes in days:
+                k0 = (C._d(d) - day0).days * 24
+                cache.setdefault(key, set()).update(k0 + he - 1 for he in hes)
+    return cache
 
 
 def _gas(ctx):
@@ -301,13 +322,13 @@ def _rows(ctx, dates, plan="none"):
 
 
 def _day_rows(ctx, d, plan="none"):
-    states, days, day0 = _states(ctx), _days(ctx), ctx.stats["day0"]
+    states, days, day0, ruc = _states(ctx), _days(ctx), ctx.stats["day0"], ruc_hours(ctx)
     out = {0: ([], [], []), 1: ([], [], [])}
     dn = (C._d(d) - day0).days
     for key, r in days.get(d, {}).items():
         if key not in states:
             continue
-        st = states[key][1]
+        st, rk = states[key][1], ruc.get(key, ())
         k0 = dn * 24
         if k0 < 1 or k0 + 24 > len(st):
             continue
@@ -316,7 +337,7 @@ def _day_rows(ctx, d, plan="none"):
         for h in range(24):
             k = k0 + h
             a, b = st[k - 1], st[k]
-            if a in "o-" or b in "o-":
+            if a in "o-" or b in "o-" or k in rk or k - 1 in rk:
                 run = 0
                 continue
             if run == 0:

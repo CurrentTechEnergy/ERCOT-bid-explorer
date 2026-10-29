@@ -253,10 +253,12 @@ async function drawForecast(e) {
   const onl = act ? act.map((x) => x.on) : o.state ? [...o.state].map((c) => (c === "m" || c === "a" ? true : c === "0" ? false : null)) : null;
   const hOn = onl ? onl.filter((v) => v === true).length : null;
   const dr = (S.DEC?.days || []).find((r) => r[0] === e.name && r[1] === day);
+  const rucH = new Set(window.CX.rucDays(S.UH, e.configs.length ? e.configs : [e.name]).get(day) || []);   // hours ending
   $("fc-note").innerHTML = (act ? `<b>${esc(day)}: online ${hOn} of 24 hours, ${fmtMW(d3.sum(act, (x) => x.out))} MWh.</b>` : onl ? `<b>${esc(day)}: online ${hOn} of 24 hours.</b>` : `<b>${esc(day)}</b>.`) +
     (OD.reduced ? ` Before the 60-day window: judged on a fit to the 12 months before it, from the thermal history files.` : "") +
     (dr && dr[4] ? ` It ${dr[6] ? `turned off${dr[7] ? ` for ${dr[7]} hours` : ""}` : "stayed on"} through its worst stretch, HE ${dr[3]} to ${dr[3] + dr[4] - 1}, which would have cost ${fmt$(dr[2])} to ride through at its node.` : "") +
-    oiNote(e, day, o);
+    oiNote(e, day, o) +
+    (rucH.size ? ` <br><b>ERCOT committed it by RUC</b> in ${rucH.size} hour${rucH.size === 1 ? "" : "s"} (purple rings): ERCOT's call, not the operator's, so the model is not fitted or scored on ${rucH.size === 1 ? "it" : "them"}.` : "");
   const s = TECH_OF[e.tech] || { color: "--c-other" };
   const w = Math.max(280, el.clientWidth || 600), Hm = act ? 170 : 0, Ho = 122, m = { t: 18, r: 16, b: 26, l: 64 };
   const H1 = Hm, HT = Hm + Ho;
@@ -286,6 +288,7 @@ async function drawForecast(e) {
     }
     svg.append("line").attr("x1", x(h)).attr("x2", x(h) + bw).attr("y1", yo(o.p[h] >= 0.5 ? 1 : 0)).attr("y2", yo(o.p[h] >= 0.5 ? 1 : 0)).attr("stroke", css("--c2")).attr("stroke-width", 4).attr("opacity", 0.6);
     if (onl && onl[h] != null) window.CX.onOffDot(svg.append("circle").attr("cx", x(h) + bw / 2).attr("cy", yo(onl[h] ? 1 : 0)), onl[h]);
+    if (rucH.has(h + 1)) window.CX.rucRing(svg.append("circle").attr("cx", x(h) + bw / 2).attr("cy", yo(onl && onl[h] === false ? 0 : 1)), 7);
     if (o.plan[h] != null) svg.append("path").attr("d", d3.symbol(d3.symbolDiamond, 30)()).attr("transform", `translate(${x(h) + bw / 2},${yo(o.plan[h]) + (o.plan[h] ? -9 : 9)})`).attr("fill", css("--ink-2"));
   });
   svg.append("path").attr("d", d3.line().x((h) => x(h) + bw / 2).y((h) => yo(o.p[h]))(d3.range(24))).attr("fill", "none").attr("stroke", css("--c2")).attr("stroke-width", 2);
@@ -295,6 +298,7 @@ async function drawForecast(e) {
       showTip(ev, `<h4>${fmtDate(parseDate(day))} · HE ${h + 1}</h4><table>` +
         `<tr><td>With operator info</td><td class="n">${fmtPct(o.p[h])}, ${o.p[h] >= 0.5 ? "on" : "off"}</td></tr><tr><td>Day-ahead award</td><td class="n">${o.award[h] ? "yes" : "no"}</td></tr>` +
         `<tr><td>COP plan (2 pm day before)</td><td class="n">${o.plan[h] == null ? "none" : o.plan[h] ? "on" : "off"}</td></tr>` +
+        (rucH.has(h + 1) ? `<tr><td>Committed by ERCOT (RUC)</td><td class="n">yes: not fitted or scored</td></tr>` : "") +
         (act ? `<tr><td>Actual</td><td class="n">${act[h].on ? (act[h].lsl > 0 && act[h].out <= 0 ? `online with no output (minimum ${fmtMW(act[h].lsl)} MW)` : `online, ${fmtMW(act[h].out)} MW`) : "offline"}</td></tr>` : onl ? `<tr><td>Actual</td><td class="n">${onl[h] == null ? "outage or no data" : onl[h] ? "online" : "offline"}</td></tr>` : "") + `</table>`);
     })
     .on("pointerleave", hideTip);
@@ -304,7 +308,8 @@ async function drawForecast(e) {
   $("fc-legend").innerHTML = (act ? `<span><span class="sw" style="background:var(${s.color})"></span>Minimum output online</span><span><span class="sw" style="background:var(${s.color});opacity:0.3"></span>Output</span>` : "") +
     (act && act.some((v) => v.on && v.lsl > 0 && v.out <= 0) ? `<span><span class="sw" style="border:1px dashed var(--c8);background:none"></span>Online with no output</span>` : "") + (onl ? window.CX.onOffLegend("Online (actual)", "Offline (actual)") : "") +
     `<span><span class="sw sw-line" style="border-top-color:var(--c2)"></span>Chance online, with operator info</span><span><span class="sw" style="background:var(--c2);opacity:0.6"></span>Call: on at 50% or more, off below</span>` +
-    `<span><span class="sw" style="background:var(--c3);opacity:0.18"></span>Day-ahead award</span><span>◆ COP plan on (top) or off (bottom)</span>` + (dr && dr[4] ? `<span><span class="sw" style="background:var(--band)"></span>Worst stretch for staying on</span>` : "");
+    `<span><span class="sw" style="background:var(--c3);opacity:0.18"></span>Day-ahead award</span><span>◆ COP plan on (top) or off (bottom)</span>` + (dr && dr[4] ? `<span><span class="sw" style="background:var(--band)"></span>Worst stretch for staying on</span>` : "") +
+    (rucH.size ? window.CX.rucLegend("Committed by ERCOT (RUC)") : "");
 }
 
 // every other unit at the same settlement point (a shared site: a battery beside a wind, solar or
@@ -338,7 +343,9 @@ function drawDecisions(e) {
     (g("est") === 2 ? " Costs are the technology's generic costs (no three-part offer of its own in the window)."
       : g("est") === 3 ? " Its minimum-energy cost is its gas cost (heat rate × its gas hub's price the day before), not its own offer." : "");
   const w = Math.max(280, el.clientWidth || 600), H = 240, m = { t: 18, r: 16, b: 26, l: 70 };
-  const pts = rows.map((r) => ({ d: r[1], t: parseDate(r[1]), loss: r[2], he: r[3], h: r[4], aw: r[5], shut: r[6], off: r[7] }));
+  const ruc = window.CX.rucDays(S.UH, e.configs.length ? e.configs : [e.name]);
+  const pts = rows.map((r) => ({ d: r[1], t: parseDate(r[1]), loss: r[2], he: r[3], h: r[4], aw: r[5], shut: r[6], off: r[7],
+    ruc: (ruc.get(r[1]) || []).filter((he) => he >= r[3] && he < r[3] + r[4]).length }));   // RUC hours in the worst stretch
   const x = d3.scaleTime().domain([d3.timeHour.offset(parseDate(D.dates[0]), -12), d3.timeHour.offset(parseDate(D.dates.at(-1)), 12)]).range([m.l, w - m.r]);
   const vals = pts.map((p) => p.loss);
   const y = d3.scaleLinear().domain([Math.min(0, d3.min(vals)), Math.max(1, d3.max(vals))]).nice().range([H - m.b, m.t]);
@@ -360,6 +367,7 @@ function drawDecisions(e) {
   svg.append("g").selectAll("path").data(pts).join("path")
     .attr("transform", (p) => `translate(${x(p.t)},${y(p.loss)})`).attr("d", (p) => d3.symbol(shape(p), 34)())
     .attr("fill", (p) => css(p.shut ? "--surface" : "--ink")).attr("stroke", css("--ink")).attr("stroke-width", 1.5);   // filled stayed on, hollow shut down (as site-wide)
+  svg.append("g").selectAll("circle").data(pts.filter((p) => p.ruc)).join("circle").attr("cx", (p) => x(p.t)).attr("cy", (p) => y(p.loss)).call(window.CX.rucRing, 7);
   const ts = pts.map((p) => p.t);
   svg.append("rect").attr("x", m.l).attr("y", m.t).attr("width", w - m.l - m.r).attr("height", H - m.t - m.b).attr("fill", "transparent")
     .on("pointermove", (ev) => {
@@ -367,15 +375,16 @@ function drawDecisions(e) {
       const i = d3.minIndex(pts, (p) => Math.hypot(x(p.t) - px, (y(p.loss) - py) / 3)), p = pts[i];
       showTip(ev, `<h4>${fmtDate(p.t)}</h4><table><tr><td>Loss of staying on</td><td class="n">${fmt$(p.loss)}</td></tr>` +
         `<tr><td>Worst stretch</td><td class="n">${p.h} h from HE ${p.he}</td></tr><tr><td>Day-ahead award over it</td><td class="n">${fmtPct(p.aw)}</td></tr>` +
-        `<tr><td>What it did</td><td class="n">${p.shut ? `shut down, off ${p.off} h` : "stayed on"}</td></tr></table>`);
+        `<tr><td>What it did</td><td class="n">${p.shut ? `shut down, off ${p.off} h` : "stayed on"}</td></tr>` +
+        (p.ruc ? `<tr><td>Committed by ERCOT (RUC) in the stretch</td><td class="n">${p.ruc} h</td></tr>` : "") + `</table>`);
     })
     .on("pointerleave", hideTip);
   el.replaceChildren(svg.node());
-  setCSV(el, ["date", "loss_usd", "window_first_he", "window_hours", "award_share", "shut", "hours_off"], pts.map((p) => [p.d, p.loss, p.he, p.h, p.aw, p.shut, p.off]), `${e.name} decision days`);
+  setCSV(el, ["date", "loss_usd", "window_first_he", "window_hours", "award_share", "shut", "hours_off", "ruc_hours_in_window"], pts.map((p) => [p.d, p.loss, p.he, p.h, p.aw, p.shut, p.off, p.ruc]), `${e.name} decision days`);
   drawDecisionsOI(e, pts, x, w, shape);
   $("dec-legend").innerHTML = window.CX.onOffLegend("Stayed on", "Shut down") +
     `<span><span class="sw" style="background:var(--ink-2)"></span>Square: a day-ahead award covered the stretch</span>` +
-    `<span><span class="sw sw-line"></span>Turn-off point moved</span>`;
+    `<span><span class="sw sw-line"></span>Turn-off point moved</span>` + (pts.some((p) => p.ruc) ? window.CX.rucLegend() : "");
 }
 
 // peakers: each day's start point from the real-time fit at its node against the day's highest
@@ -389,14 +398,18 @@ async function drawDecisionsRT(e) {
   const odd = Object.entries(P?.unexplained || {}).filter(([, us]) => us.some((r) => r[0] === e.name)).map(([mo, us]) => [mo, us.find((r) => r[0] === e.name)[1]]);
   const oddNote = odd.length ? ` Price doesn't explain its running in ${odd.map(([mo, sh]) => `${d3.timeFormat("%b %Y")(parseDate(mo + "-01"))} (online ${fmtPct(sh)} of its hours)`).join(", ")}: the fit finds no price it sits off at, or runs it more at low prices than high, yet it sat off most hours, so those months have no diamonds.` : "";
   if (!pts.length) { $("dec-note").textContent = oddNote.trim(); $("dec-legend").innerHTML = ""; return emptyMsg(el, odd.length ? "Price doesn't explain this peaker's running in any month fitted." : "No real-time fit for this peaker: it needs 45 days in which it both ran and sat off."); }
-  const says = (p) => p.s == null || p.s <= p.p, bad = (p) => says(p) !== p.ran, right = pts.filter((p) => !bad(p)).length, ran = pts.filter((p) => p.ran).length;
-  const caught = pts.filter((p) => p.ran && says(p)).length;
+  const ruc = window.CX.rucDays(S.UH, e.configs.length ? e.configs : [e.name]);
+  pts.forEach((p) => { p.ruc = ruc.get(p.d)?.length || 0; });
+  const J = pts.filter((p) => !p.ruc);
+  const says = (p) => p.s == null || p.s <= p.p, bad = (p) => !p.ruc && says(p) !== p.ran, right = J.filter((p) => !bad(p)).length, ran = J.filter((p) => p.ran).length;
+  const caught = J.filter((p) => p.ran && says(p)).length;
   $("dec-note").textContent = `A peaker starts when running pays, so it is judged on the real-time price at its own node: each month it is fitted on every day before, recent days counting most (a day 30 days back counts half), its chance of being online against that price and the hour of day. ` +
-    `The diamond is the day's highest price at which the fit starts it, the circle the day's actual highest price at its node. On ${pts.length} days available it ran on ${ran}; the fit called ${right} right (${fmtPct(right / pts.length)}), ${caught} of the ${ran} days it ran. A fit of what it did, not a forecast: the real-time price is not known when it decides. ` +
+    `The diamond is the day's highest price at which the fit starts it, the circle the day's actual highest price at its node. On ${J.length} days available it ran on ${ran}; the fit called ${right} right (${fmtPct(right / J.length)}), ${caught} of the ${ran} days it ran.${window.CX.rucNote(pts.length - J.length)} A fit of what it did, not a forecast: the real-time price is not known when it decides. ` +
     `When those days never show a price it would sit off at, it runs at any price it has seen (the bottom row), if it was online at least half its hours. The diamond stays between the lowest price it ran at and the highest it sat off at in the days fitted.` + oddNote;
   $("dec-legend").innerHTML = `<span><span class="sw" style="background:var(--c1);transform:rotate(45deg) scale(0.8)"></span>Fit starts it above this price</span>` +
     window.CX.onOffLegend("Day's highest price, ran", "Day's highest price, stayed off") +
-    `<span><span class="sw" style="background:var(--c8);height:3px"></span>Did the opposite of the fit</span><span><span class="sw sw-line"></span>Running at a new price</span>`;
+    `<span><span class="sw" style="background:var(--c8);height:3px"></span>Did the opposite of the fit</span><span><span class="sw sw-line"></span>Running at a new price</span>` +
+    (J.length < pts.length ? window.CX.rucLegend() : "");
   const anyP = pts.some((p) => p.s == null);
   const w = Math.max(280, el.clientWidth || 600), H = 260, m = { t: 18, r: 16, b: 26, l: 64 }, LOWY = H - m.b - 6;
   const D0 = S.DEC?.dates || Object.keys(P.days);
@@ -419,16 +432,18 @@ async function drawDecisionsRT(e) {
   g.selectAll("line").data(pts).join("line").attr("x1", (p) => x(p.t)).attr("x2", (p) => x(p.t)).attr("y1", (p) => ys(p.s)).attr("y2", (p) => y(p.p))
     .attr("stroke", (p) => css(bad(p) ? "--c8" : "--line")).attr("stroke-width", (p) => (bad(p) ? 1.6 : 1));
   g.selectAll("path").data(pts).join("path").attr("d", d3.symbol(d3.symbolDiamond, 22)()).attr("transform", (p) => `translate(${x(p.t)},${ys(p.s)})`).attr("fill", css("--c1"));
-  g.selectAll("circle").data(pts).join("circle").attr("cx", (p) => x(p.t)).attr("cy", (p) => y(p.p)).each(function (p) { window.CX.onOffDot(d3.select(this), p.ran, 2.8); });
+  g.selectAll("circle.d").data(pts).join("circle").attr("class", "d").attr("cx", (p) => x(p.t)).attr("cy", (p) => y(p.p)).each(function (p) { window.CX.onOffDot(d3.select(this), p.ran, 2.8); });
+  g.selectAll("circle.ruc").data(pts.filter((p) => p.ruc)).join("circle").attr("class", "ruc").attr("cx", (p) => x(p.t)).attr("cy", (p) => y(p.p)).call(window.CX.rucRing, 6);
   svg.append("rect").attr("x", m.l).attr("y", m.t).attr("width", w - m.l - m.r).attr("height", H - m.t - m.b).attr("fill", "transparent")
     .on("pointermove", (evt) => {
       const [px] = d3.pointer(evt), p = pts[d3.minIndex(pts, (q) => Math.abs(x(q.t) - px))], vv = ev.find((v) => v.date.slice(0, 7) === p.d.slice(0, 7));
       showTip(evt, `<h4>${fmtDate(p.t)}</h4><table><tr><td>Fit starts it at</td><td class="n">${p.s == null ? "any price" : `${fmt$(p.s)}/MWh`}</td></tr><tr><td>Fitted on</td><td class="n">${p.win ?? "–"} days before the month, recent ones counting most</td></tr><tr><td>Day's highest node price</td><td class="n">${fmt$(p.p)}/MWh</td></tr>` +
-        `<tr><td>What it did</td><td class="n">${p.ran ? `ran ${p.on} of ${p.av} h` : "stayed off"}</td></tr></table>${bad(p) ? "Did the opposite of the fit" : ""}${vv ? `<br><b>${esc(vv.title)}</b>` : ""}`);
+        `<tr><td>What it did</td><td class="n">${p.ran ? `ran ${p.on} of ${p.av} h` : "stayed off"}</td></tr>` + (p.ruc ? `<tr><td>Committed by ERCOT (RUC)</td><td class="n">${p.ruc} h</td></tr>` : "") +
+        `</table>${bad(p) ? "Did the opposite of the fit" : p.ruc ? "RUC day: not counted for or against the fit" : ""}${vv ? `<br><b>${esc(vv.title)}</b>` : ""}`);
     })
     .on("pointerleave", hideTip);
   el.replaceChildren(svg.node());
-  setCSV(el, ["date", "start_usd_mwh", "day_peak_usd_mwh", "ran", "hours_on", "hours_available", "fit_days"], pts.map((p) => [p.d, p.s, p.p, p.ran ? 1 : 0, p.on, p.av, p.win]), `${e.name} real-time starts`);
+  setCSV(el, ["date", "start_usd_mwh", "day_peak_usd_mwh", "ran", "hours_on", "hours_available", "fit_days", "ruc_hours"], pts.map((p) => [p.d, p.s, p.p, p.ran ? 1 : 0, p.on, p.av, p.win, p.ruc]), `${e.name} real-time starts`);
 }
 
 // CC trains and gas steam: each day it started online, the operator-informed turn-off point (diamond)
@@ -443,13 +458,16 @@ async function drawDecisionsTO(e) {
   const pts = P ? Object.entries(P.days).flatMap(([d, rs]) => rs.filter((r) => r[C.unit] === e.name).map((r) => ({ d, t: parseDate(d),
     s: r[C.saving], c: r[C.turn_off], aw: r[C.award], off: !!r[C.off], lsl: r[C.lsl], md: r[C.min_down] }))) : [];
   if (!pts.length) { $("dec-note").textContent = ""; $("dec-legend").innerHTML = ""; return emptyMsg(el, "No operator-informed turn-off points for this unit in the loaded 60-day data."); }
-  const says = (p) => p.c != null && p.s > p.c, bad = (p) => says(p) !== p.off;
-  const right = pts.filter((p) => !bad(p)).length, nOff = pts.filter((p) => p.off).length, caught = pts.filter((p) => p.off && says(p)).length;
+  const ruc = window.CX.rucDays(S.UH, e.configs.length ? e.configs : [e.name]);
+  pts.forEach((p) => { p.ruc = ruc.get(p.d)?.length || 0; });
+  const says = (p) => p.c != null && p.s > p.c, bad = (p) => !p.ruc && says(p) !== p.off, J = pts.filter((p) => !p.ruc);
+  const right = J.filter((p) => !bad(p)).length, nOff = J.filter((p) => p.off).length, caught = J.filter((p) => p.off && says(p)).length;
   $("dec-note").textContent = `Each day it started online: what being off would have saved over the day's best off stretch at least its minimum down time long (its minimum-energy cost against the day-ahead price at its node, before any restart cost), and the operator-informed model's turn-off point, the saving it would need before the model turns it off. ` +
-    `A circle above its diamond is a day the model turns it off. On ${pts.length} days it shut on ${nOff}; the model called ${right} right (${fmtPct(right / pts.length)}), ${caught} of the ${nOff} shutdowns. Dashed lines mark the months its turn-off point moved, for each day-ahead condition on its own.`;
+    `A circle above its diamond is a day the model turns it off. On ${J.length} days it shut on ${nOff}; the model called ${right} right (${fmtPct(right / J.length)}), ${caught} of the ${nOff} shutdowns.${window.CX.rucNote(pts.length - J.length)} Dashed lines mark the months its turn-off point moved, for each day-ahead condition on its own.`;
   $("dec-legend").innerHTML = `<span><span class="sw" style="background:var(--c1);transform:rotate(45deg) scale(0.8)"></span>Turn-off point</span>` +
     window.CX.onOffLegend("Saving, stayed on", "Saving, shut down") + `<span><span class="sw" style="background:var(--ink-2)"></span>Square: a day-ahead award that day</span>` +
-    `<span><span class="sw" style="background:var(--c8);height:3px"></span>Did the opposite of the model</span><span><span class="sw sw-line"></span>Turn-off point moved</span>`;
+    `<span><span class="sw" style="background:var(--c8);height:3px"></span>Did the opposite of the model</span><span><span class="sw sw-line"></span>Turn-off point moved</span>` +
+    (J.length < pts.length ? window.CX.rucLegend() : "");
   const w = Math.max(280, el.clientWidth || 600), H = 280, m = { t: 18, r: 16, b: 26, l: 76 }, TOPY = m.t + 8;
   const D0 = Object.keys(P.days).sort();
   const x = d3.scaleTime().domain([d3.timeHour.offset(parseDate(D0[0]), -12), d3.timeHour.offset(parseDate(D0.at(-1)), 12)]).range([m.l, w - m.r]);
@@ -475,6 +493,7 @@ async function drawDecisionsTO(e) {
   g.selectAll("path.sv").data(pts).join("path").attr("class", "sv").attr("d", (p) => d3.symbol(p.aw ? d3.symbolSquare : d3.symbolCircle, 30)())
     .attr("transform", (p) => `translate(${x(p.t)},${y(p.s)})`)
     .attr("fill", (p) => css(p.off ? "--surface" : "--ink")).attr("stroke", css("--ink")).attr("stroke-width", 1.5);   // filled stayed on, hollow shut down (as site-wide)
+  g.selectAll("circle.ruc").data(pts.filter((p) => p.ruc)).join("circle").attr("class", "ruc").attr("cx", (p) => x(p.t)).attr("cy", (p) => y(p.s)).call(window.CX.rucRing, 6.5);
   svg.append("rect").attr("x", m.l).attr("y", m.t).attr("width", w - m.l - m.r).attr("height", H - m.t - m.b).attr("fill", "transparent")
     .on("pointermove", (evt) => {
       const [px] = d3.pointer(evt), p = pts[d3.minIndex(pts, (q) => Math.abs(x(q.t) - px))];
@@ -482,12 +501,13 @@ async function drawDecisionsTO(e) {
       showTip(evt, `<h4>${fmtDate(p.t)}</h4><table><tr><td>Being off would have saved</td><td class="n">${fmt$(p.s)}/MW (${fmt$(p.s * p.lsl)})</td></tr>` +
         `<tr><td>Turn-off point</td><td class="n">${p.c == null ? "rides through" : `${fmt$(p.c)}/MW (${fmt$(p.c * p.lsl)})`}</td></tr>` +
         `<tr><td>Day-ahead</td><td class="n">${AWARD_COND[p.aw] || "–"}</td></tr><tr><td>Model</td><td class="n">${says(p) ? "turns it off" : "keeps it on"}</td></tr>` +
-        `<tr><td>What it did</td><td class="n">${p.off ? "shut down" : "stayed on"}</td></tr></table>${bad(p) ? "Did the opposite of the model" : ""}${vv.map((v) => `<br><b>${esc(v.title)}</b>`).join("")}`);
+        `<tr><td>What it did</td><td class="n">${p.off ? "shut down" : "stayed on"}</td></tr>` + (p.ruc ? `<tr><td>Committed by ERCOT (RUC)</td><td class="n">${p.ruc} h</td></tr>` : "") +
+        `</table>${bad(p) ? "Did the opposite of the model" : p.ruc ? "RUC day: not counted for or against the model" : ""}${vv.map((v) => `<br><b>${esc(v.title)}</b>`).join("")}`);
     })
     .on("pointerleave", hideTip);
   el.replaceChildren(svg.node());
-  setCSV(el, ["date", "saving_usd_per_mw_lsl", "turn_off_usd_per_mw_lsl", "award", "shut", "lsl_mw", "min_down_h"],
-    pts.map((p) => [p.d, p.s, p.c, ["none", "some hours", "every hour"][p.aw], p.off ? 1 : 0, p.lsl, p.md]), `${e.name} turn-off points`);
+  setCSV(el, ["date", "saving_usd_per_mw_lsl", "turn_off_usd_per_mw_lsl", "award", "shut", "lsl_mw", "min_down_h", "ruc_hours"],
+    pts.map((p) => [p.d, p.s, p.c, ["none", "some hours", "every hour"][p.aw], p.off ? 1 : 0, p.lsl, p.md, p.ruc]), `${e.name} turn-off points`);
 }
 
 // the decision days again, judged by the operator-informed model (data/operator/decisions.json.gz rows:
@@ -550,8 +570,10 @@ function drawHours(e) {
   $("hours-panel").hidden = !THERMAL.includes(e.tech);
   if ($("hours-panel").hidden) return;
   if (!S.UH) return emptyMsg(el, "No hourly data loaded.");
-  const str = trainStrip(e);
+  const str = trainStrip(e), ruc = window.CX.rucDays(S.UH, e.configs.length ? e.configs : [e.name]);
+  const isRuc = (d, h) => (ruc.get(d) || []).includes(h + 1);
   $("hours-legend").innerHTML = [["--grid", 1, "Offline"], ["--ink-2", 0.35, "On outage"], [s.color, 0.4, "Running at minimum (LSL)"], [s.color, 1, "Running above minimum"]]
+    .concat(ruc.size ? [["--c7", 1, "Committed by ERCOT (RUC)"]] : [])
     .map(([c, o, l]) => `<span><span class="sw" style="background:var(${c});opacity:${o}"></span>${l}</span>`).join("") +
     `<span><span class="sw sw-neg"></span>Hour with lambda below $0</span>`;
   if (!str) { $("hours-note").textContent = ""; return emptyMsg(el, "No hourly data for this unit."); }
@@ -576,8 +598,9 @@ function drawHours(e) {
   for (let i = 0; i < D; i++) for (let h = 0; h < 24; h++) {
     const c = str[i * 24 + h];
     if (c === "-" || c === undefined) continue;
+    const r = isRuc(dstr[i], h);
     gg.append("rect").attr("x", x(dates[i]) - cw / 2).attr("y", m.t + h * ch).attr("width", cw + 0.3).attr("height", ch - 0.5)
-      .attr("fill", col[c]).attr("fill-opacity", c === "m" ? 0.4 : c === "o" ? 0.35 : 1);
+      .attr("fill", r ? css("--c7") : col[c]).attr("fill-opacity", r ? 1 : c === "m" ? 0.4 : c === "o" ? 0.35 : 1);
   }
   const t = svg.append("g");
   dstr.forEach((d, i) => (lam.get(d) || []).forEach((v, h) => {
@@ -592,12 +615,12 @@ function drawHours(e) {
       const [px, py] = d3.pointer(ev);
       const i = d3.minIndex(dates, (d) => Math.abs(d - x.invert(px))), h = Math.max(0, Math.min(23, Math.floor((py - m.t) / ch)));
       const L = (lam.get(dstr[i]) || [])[h];
-      showTip(ev, `<h4>${fmtDate(dates[i])} · HE ${h + 1}</h4>${STRIP_STATES[str[i * 24 + h]] || "No data"}<br>Lambda ${fmtPrice(L)}` +
+      showTip(ev, `<h4>${fmtDate(dates[i])} · HE ${h + 1}</h4>${STRIP_STATES[str[i * 24 + h]] || "No data"}${isRuc(dstr[i], h) ? ", committed by ERCOT (RUC)" : ""}<br>Lambda ${fmtPrice(L)}` +
         (startsByDay[i] ? `<br>${startsByDay[i]} start${startsByDay[i] === 1 ? "" : "s"} this day` : ""));
     })
     .on("pointerleave", hideTip);
   el.replaceChildren(svg.node());
-  setCSV(el, ["date", "hour_ending", "state"], dstr.flatMap((d, i) => d3.range(24).map((h) => [d, h + 1, STRIP_STATES[str[i * 24 + h]] || ""])), `${e.name} hourly state`);
+  setCSV(el, ["date", "hour_ending", "state", "ruc"], dstr.flatMap((d, i) => d3.range(24).map((h) => [d, h + 1, STRIP_STATES[str[i * 24 + h]] || "", isRuc(d, h) ? 1 : 0])), `${e.name} hourly state`);
 }
 
 // ---- one day by hour: output, base point and limits, with lambda (data/60d-units/<date>) ----
