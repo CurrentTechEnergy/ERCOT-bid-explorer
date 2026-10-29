@@ -9,8 +9,8 @@ built from the 60-day day files, pipeline/decision_table.month_file):
      percentile HSL online), and the minimum output it took offline in cheap hours (offline, and
      online at some hour in the 24 before, inside one of its off spells, at its median LSL online).
   2. Why does the rest stay on?  Fossil minimum output online in cheap hours and what it cost to
-     stay on (_day_cost: gas cost at the unit's own hub, or coal's generic cost, less the DA node
-     price, times LSL; not the DAM minimum-energy offer), by reason, the
+     stay on (_day_cost: gas cost at the unit's own hub, or coal's generic cost, less the real-time
+     node price, times LSL; not the DAM minimum-energy offer), by reason, the
      first that applies (REASONS): coal; never off (its group that year); held by its award (a DAM
      energy award of at least AWARD_LSL x its running LSL that hour); rode through (the
      operator-informed model, pipeline/models/operator_informed.py, also called it on); turned
@@ -103,6 +103,26 @@ def _hubs(month):
     return out
 
 
+def _rt_nodes(month):
+    """The month's real-time settlement point prices by hour: a DataFrame of sp, date, he, rt_node.
+    The `history` release's rt-prices file, else the live node files (UNIT_DATA_DIR/nodes,
+    from Nov 2025)."""
+    p = HISTORY_DIR / f"rt-prices-{month}.parquet"
+    if p.exists():
+        r = pd.read_parquet(p, columns=["date", "he", "point", "price"])
+        r = r.rename(columns={"point": "sp", "price": "rt_node"})
+        r["sp"] = r["sp"].astype(str)
+        r["he"] = r["he"].astype(int)
+        return r
+    from .parse_prices import node_hourly
+    rows = []
+    for f in sorted((UNIT_DATA_DIR / "nodes").glob(f"{month}-*.json.gz")):
+        d = f.name[:10]
+        for sp, v in node_hourly(read_json_gz(f, default=None)).items():
+            rows += [(sp, d, h + 1, x) for h, x in enumerate(v[:24]) if x is not None]
+    return pd.DataFrame(rows, columns=["sp", "date", "he", "rt_node"])
+
+
 def _operator(month):
     """{(date, train): [24] P(online)} from the operator day files of the month."""
     out = {}
@@ -112,11 +132,14 @@ def _operator(month):
     return out
 
 
-def _train_hours(f):
+def _train_hours(f, rt=None):
     """Thermal unit-hours merged into trains (combined-cycle configurations): state by RANK,
     running LSL and HSL summed over the running configurations, award summed, the smallest
-    minimum-energy offer and the mean DA node price."""
+    minimum-energy offer and the mean DA and RT node prices (`rt`, _rt_nodes)."""
     f = f[f["tech"].astype(str).isin(FOSSIL + ("combustion_turbine", "nuclear"))].copy()
+    f["sp"] = f["sp"].astype(str)
+    f["he"] = f["he"].astype(int)
+    f = f.merge(rt, on=["sp", "date", "he"], how="left") if rt is not None and len(rt) else f.assign(rt_node=np.nan)
     t = f["tech"].astype(str)
     f["train"] = np.where(t == "combined_cycle", f["unit"].astype(str).map(train_of), f["unit"].astype(str))
     f["tech"] = t
@@ -129,7 +152,8 @@ def _train_hours(f):
     f["out"] = f["out"].fillna(0.0)
     g = f.groupby(["train", "date", "he"], sort=True)
     h = g.agg(tech=("tech", "first"), r=("r", "max"), lsl=("lsl_run", "sum"), hsl=("hsl_run", "sum"),
-              award=("award", "sum"), out=("out", "sum"), mingen=("mingen", "min"), da_node=("da_node", "mean")).reset_index()
+              award=("award", "sum"), out=("out", "sum"), mingen=("mingen", "min"), da_node=("da_node", "mean"),
+              rt_node=("rt_node", "mean")).reset_index()
     h["state"] = CODE[h["r"].to_numpy()]
     return h.drop(columns="r")
 
@@ -248,7 +272,7 @@ def _year(year, months, cache, before=None, losing=None, gas=None):
             continue
         hb = _hubs(m)
         hubs.update(hb)
-        th.append(_train_hours(f))
+        th.append(_train_hours(f, _rt_nodes(m)))
         u = month_file("units", m, cache)
         if u is not None:
             ren.append(_renewables(u, hb))
@@ -306,11 +330,14 @@ def _year(year, months, cache, before=None, losing=None, gas=None):
         r[2] += q1[tr]
     q1rows = [[year, t, grp, n, round(c), round(o)] for (t, grp), (n, c, o) in sorted(rows1.items())]
     # question 2: minimum online in cheap hours, by reason, and what staying on cost: the day's
-    # cost of running at minimum (_day_cost: gas cost, not the offer) less the DA node price, times the LSL (negative where the
-    # node paid more)
+    # cost of running at minimum (_day_cost: gas cost, not the offer) less the real-time node
+    # price, times the LSL (negative where the node paid more): a DAM award pays the same whether
+    # or not the unit runs, so in every hour the choice is to generate or buy the energy back in
+    # real time.  The DA node price stands in where the RT one is missing
     c = h[h["cheap"] & atmin].copy()
     dc = _day_cost(h, *(gas or ({}, {})))
-    c["cost"] = (np.array([dc.get(k, np.nan) for k in zip(c["train"], c["date"])]) - c["da_node"].to_numpy()) * c["lsl"].to_numpy()
+    node = c["rt_node"].fillna(c["da_node"]).to_numpy()
+    c["cost"] = (np.array([dc.get(k, np.nan) for k in zip(c["train"], c["date"])]) - node) * c["lsl"].to_numpy()
     q2rows = [[year, t, w, round(float(g["lsl"].sum())), round(float(g["cost"].sum()))] for (t, w), g in c.groupby(["tech", "why"])]
     # ... and by the same groups as the award chart, hour by hour: a DAM award over 0.5 MW that
     # hour; else self-committed (DAM resource status on) or neither (_status_for)
