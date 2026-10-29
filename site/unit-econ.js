@@ -34,7 +34,7 @@ const parseDate = (d) => new Date(d + "T12:00:00");
 const fmtDate = d3.timeFormat("%a %b %-d, %Y");
 
 const HUBS = { hsc: "Houston Ship Channel", waha: "Waha", hh: "Henry Hub" };
-const HUB_METHOD = { offers: "its offers follow that price", location: "by its node's location", default: "no signal, default" };
+const HUB_METHOD = { offers: "its offers follow that price", location: "by its node's location", default: "no signal, default", refit: "moved from Waha, which its node location gave it, because its on/off calls fit Ship Channel gas better" };
 // the Plant economics page's default bases; that page lets you change them
 const S = { tech: null, cost: "eia", rev: "two", hub: "unit", adder: 0, params: JSON.parse(JSON.stringify(DEFAULTS)), fuel: { ...FUEL_PRICE }, data: {} };
 function emptyMsg(el, msg) { el.innerHTML = `<p class="empty">${msg}</p>`; }

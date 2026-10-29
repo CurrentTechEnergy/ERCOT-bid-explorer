@@ -18,9 +18,11 @@ Two signals, from the data already loaded:
             everything else to Houston Ship Channel.
 
 The offers decide when the votes agree (or only one series votes); otherwise location does.
+REFIT overrides both for a unit whose location hub the operator model (pipeline/models/
+operator_informed.py) fits clearly worse than the other hub; its method is "refit".
 Writes data/fuel_hubs.json.gz:
   {"hubs": {"waha": "Waha", "hsc": "Houston Ship Channel"},
-   "units": {name: {"tech", "sp", "hub": "waha"|"hsc", "method": "offers"|"location"|"default",
+   "units": {name: {"tech", "sp", "hub": "waha"|"hsc", "method": "offers"|"location"|"default"|"refit",
                     "loc": nearest electrical hub or null,
                     "fits": {"first"|"mingen": {"n", "r2": {"waha", "hsc"}, "hr": {"waha", "hsc"},
                                                 "vote": hub or null}}}}}
@@ -43,6 +45,14 @@ MIN_DAYS = 15
 MIN_R2 = 0.3
 R2_MARGIN = 0.1
 HR_RANGE = (3.0, 25.0)
+# Units moved off the hub their location gave them, because the operator model fits their on/off
+# calls clearly better at the other hub.  Graham (Oct 2026, Feb to Aug, RUC hours left out): its
+# node tracks HB_PAN, so it took Waha, and its offers gave no clear vote (unit 2's first offer
+# fits Ship Channel a little better, below R2_MARGIN).  Waha was below $0 on 126 of 241 days,
+# so its gas cost reached -$93/MWh; at Ship Channel the model's Brier for Graham drops from
+# 0.123 to 0.101, hours wrong 18.4% -> 14.0%, false turn-offs 78 -> 49, with the rest of the
+# fleet unchanged or slightly better.
+REFIT = {"GRSES_UNIT1": "hsc", "GRSES_UNIT2": "hsc"}
 
 
 def _gas_before(hub: dict, dates: list) -> np.ndarray:
@@ -165,7 +175,9 @@ def build_fuel_hubs(index: dict) -> None:
         votes = {f["vote"] for f in fits.values() if f["vote"]}
         sp = sp_of.get(name)
         loc = loc_of.get(sp) if sp else None
-        if len(votes) == 1:
+        if name in REFIT:
+            hub, method = REFIT[name], "refit"
+        elif len(votes) == 1:
             hub, method = votes.pop(), "offers"
         elif loc:
             hub, method = ("waha" if loc in WAHA_LOCS else "hsc"), "location"
