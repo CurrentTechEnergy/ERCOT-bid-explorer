@@ -2,11 +2,17 @@ name: Update ERCOT data
 
 on:
   schedule:
-    # ERCOT posts the 2-day curves around 04:15 and the 60-day disclosure around 05:45 Central;
-    # the day-ahead market results (tomorrow's node prices) by 13:30 Central.
-    - cron: "41 12 * * *"   # ~07:41 Central
-    - cron: "31 19 * * *"   # 14:31 Central in summer, 13:31 in winter: after the DAM posts, and the
-                            # retry in case a morning report posted late
+    # ERCOT posts the 2-day reports around 03:30-04:50 Central and the 60-day SCED and DAM
+    # disclosures around 05:20-06:05 Central; the day-ahead market results (tomorrow's node
+    # prices) by 13:30 Central.  Cron is in UTC, so local times are an hour later in summer
+    # (CDT/MDT) than in winter (CST/MST); GitHub usually starts scheduled runs 30-60 min late.
+    # The morning run is 06:17 Central / 05:17 Mountain all year: both crons fire, and the
+    # "when" job skips the one that is wrong for the season (11:17 UTC in daylight time, 12:17 in
+    # standard time).
+    - cron: "17 11 * * *"   # 06:17 CDT / 05:17 MDT; skipped in winter
+    - cron: "17 12 * * *"   # 06:17 CST / 05:17 MST; skipped in summer
+    - cron: "31 19 * * *"   # 14:31 Central / 13:31 Mountain in summer, 13:31 / 12:31 in winter:
+                            # after the DAM posts, and the retry for any morning report posted late
   workflow_dispatch:
     inputs:
       backfill_start:
@@ -52,12 +58,34 @@ on:
 # Each job gets only what it needs; nothing by default.
 permissions: {}
 
-concurrency:
-  group: update-data
-  cancel-in-progress: false
-
 jobs:
+  # Cron is in UTC: of the two morning crons, run only the one that lands at 06:17 Central today.
+  when:
+    runs-on: ubuntu-latest
+    outputs:
+      run: ${{ steps.check.outputs.run }}
+    steps:
+      - id: check
+        env:
+          SCHEDULE: ${{ github.event.schedule }}
+        run: |
+          zone=$(TZ=America/Chicago date +%Z)      # CDT or CST
+          case "$SCHEDULE" in
+            "17 11 * * *") [ "$zone" = CDT ] && run=true || run=false ;;
+            "17 12 * * *") [ "$zone" = CST ] && run=true || run=false ;;
+            *) run=true ;;
+          esac
+          echo "Schedule '${SCHEDULE:-none}', Central is on $zone: run=$run"
+          echo "run=$run" >> "$GITHUB_OUTPUT"
+
   update:
+    needs: when
+    if: needs.when.outputs.run == 'true'
+    # On the job, not the workflow, so a skipped morning run never takes the one pending slot
+    # from a queued run (a reprocess run's successor, say).
+    concurrency:
+      group: update-data
+      cancel-in-progress: false
     runs-on: ubuntu-latest
     timeout-minutes: 340
     permissions:
@@ -258,6 +286,9 @@ jobs:
   deploy:
     needs: update
     if: vars.ENABLE_PAGES == 'true'
+    concurrency:
+      group: update-deploy
+      cancel-in-progress: false
     runs-on: ubuntu-latest
     permissions:
       contents: read
