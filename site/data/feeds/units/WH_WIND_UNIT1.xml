@@ -96,6 +96,13 @@
     <summary>New floor: floor -$32 to floor -$38</summary>
   </entry>
   <entry>
+    <title>WH: Decision maker or QSE changed (2020-12-01)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=WH"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=WH#WH/2020-12-01/control</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Scheduled by TRQ21 (SQ21), was TENASKA POWER SERVICES CO</summary>
+  </entry>
+  <entry>
     <title>WH_WIND: New floor (2020-11-21)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=WH_WIND"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=WH_WIND#WH_WIND/2020-11-21/renew_floor_new</id>

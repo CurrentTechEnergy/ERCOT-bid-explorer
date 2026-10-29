@@ -54,6 +54,20 @@
     <summary>Episode: floor -$54 to $0 for the episode for 2 day(s)</summary>
   </entry>
   <entry>
+    <title>NOVA2SLR_UNIT1: Decision maker or QSE changed (2025-02-25)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=NOVA2SLR_UNIT1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=NOVA2SLR_UNIT1#NOVA2SLR_UNIT1/2025-02-25/control</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Scheduled by TRQ21 (SQ21), was BOSTON ENERGY TRADING AND MARKETING LLC (SQ15)</summary>
+  </entry>
+  <entry>
+    <title>NOVA2SLR_UNIT1: Decision maker or QSE changed (2025-02-25)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=NOVA2SLR_UNIT1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=NOVA2SLR_UNIT1#NOVA2SLR_UNIT1/2025-02-25/control</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Scheduled by TRQ21 (SQ21), was BOSTON ENERGY TRADING AND MARKETING LLC (SQ15)</summary>
+  </entry>
+  <entry>
     <title>NOVA2SLR: New floor (2024-04-09)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=NOVA2SLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=NOVA2SLR#NOVA2SLR/2024-04-09/renew_floor_new</id>
@@ -66,5 +80,19 @@
     <id>https://ercotbids.currenttech.energy/unit.html?unit=NOVA2SLR#NOVA2SLR/2024-03-13/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>New floor: floor $0 to floor -$35</summary>
+  </entry>
+  <entry>
+    <title>NOVA2SLR_UNIT1: Decision maker or QSE changed (2023-11-15)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=NOVA2SLR_UNIT1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=NOVA2SLR_UNIT1#NOVA2SLR_UNIT1/2023-11-15/control</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Scheduled by BOSTON ENERGY TRADING AND MARKETING LLC (SQ15), was BOSTON ENERGY TRADING AND MARKETING LLC</summary>
+  </entry>
+  <entry>
+    <title>NOVA2SLR_UNIT1: Decision maker or QSE changed (2023-11-15)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=NOVA2SLR_UNIT1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=NOVA2SLR_UNIT1#NOVA2SLR_UNIT1/2023-11-15/control</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Scheduled by BOSTON ENERGY TRADING AND MARKETING LLC (SQ15), was BOSTON ENERGY TRADING AND MARKETING LLC</summary>
   </entry>
 </feed>

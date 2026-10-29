@@ -82,13 +82,6 @@
     <summary>Minimum-energy offer stepped: $18 to $26/MWh ($4 to $6 against the fuel-cost line)</summary>
   </entry>
   <entry>
-    <title>LGE_CC1: Turn-off point moved (2026-03-01)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=LGE_CC1"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=LGE_CC1#LGE_CC1/2026-03-01/turnoff/1</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Turn-off point with an award some hours -$122 to -$56 per MW of minimum output in March; the next month held it</summary>
-  </entry>
-  <entry>
     <title>LGE_CC1: Outage started (2026-02-28)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=LGE_CC1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=LGE_CC1#LGE_CC1/2026-02-28/outage_start</id>
@@ -150,5 +143,33 @@
     <id>https://ercotbids.currenttech.energy/unit.html?unit=LGE_CC1#LGE_CC1/2025-12-17/dam_mingen_step</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Minimum-energy offer stepped: $40 to $29/MWh ($9 to $6 against the fuel-cost line)</summary>
+  </entry>
+  <entry>
+    <title>LGE_CC1: Decision maker or QSE changed (2024-04-09)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=LGE_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=LGE_CC1#LGE_CC1/2024-04-09/control</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Scheduled by CALPINE POWER MANAGEMENT LLC (SQ1), was CALPINE POWER MANAGEMENT LLC</summary>
+  </entry>
+  <entry>
+    <title>LGE_CC1: Decision maker or QSE changed (2024-04-09)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=LGE_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=LGE_CC1#LGE_CC1/2024-04-09/control</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Scheduled by CALPINE POWER MANAGEMENT LLC (SQ1), was CALPINE POWER MANAGEMENT LLC</summary>
+  </entry>
+  <entry>
+    <title>LGE_CC1: Decision maker or QSE changed (2024-03-26)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=LGE_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=LGE_CC1#LGE_CC1/2024-03-26/control</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Scheduled by CALPINE POWER MANAGEMENT LLC, was NRG TEXAS POWER LLC</summary>
+  </entry>
+  <entry>
+    <title>LGE_CC1: Decision maker or QSE changed (2024-03-26)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=LGE_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=LGE_CC1#LGE_CC1/2024-03-26/control</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Scheduled by CALPINE POWER MANAGEMENT LLC, was NRG TEXAS POWER LLC</summary>
   </entry>
 </feed>

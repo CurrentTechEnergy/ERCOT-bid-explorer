@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>CITYVICT: bidding and operating changes</title>
+  <link href="https://ercotbids.currenttech.energy/unit.html?unit=CITYVICT"/>
+  <id>https://ercotbids.currenttech.energy/unit.html?unit=CITYVICT</id>
+  <updated>2026-10-18T00:00:00Z</updated>
+  <entry>
+    <title>CITYVICT: Decision maker or QSE changed (2022-05-24)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=CITYVICT"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=CITYVICT#CITYVICT/2022-05-24/control</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Scheduled by TENASKA POWER SERVICES CO, was SHELL ENERGY NORTH AMERICA (US) LP (SQ2)</summary>
+  </entry>
+</feed>

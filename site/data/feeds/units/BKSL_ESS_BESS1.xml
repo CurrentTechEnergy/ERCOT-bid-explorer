@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>BKSL_ESS_BESS1: bidding and operating changes</title>
+  <link href="https://ercotbids.currenttech.energy/unit.html?unit=BKSL_ESS_BESS1"/>
+  <id>https://ercotbids.currenttech.energy/unit.html?unit=BKSL_ESS_BESS1</id>
+  <updated>2026-10-18T00:00:00Z</updated>
+  <entry>
+    <title>BKSL_ESS_BESS1: Decision maker or QSE changed (2025-04-08)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=BKSL_ESS_BESS1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=BKSL_ESS_BESS1#BKSL_ESS_BESS1/2025-04-08/control</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Scheduled by ESV ENERGY MANAGEMENT LLC, was GRIDMATIC EQUISETUM LLC (SQ4)</summary>
+  </entry>
+  <entry>
+    <title>BKSL_ESS_BESS1: Decision maker or QSE changed (2025-04-08)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=BKSL_ESS_BESS1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=BKSL_ESS_BESS1#BKSL_ESS_BESS1/2025-04-08/control</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Scheduled by ESV ENERGY MANAGEMENT LLC, was GRIDMATIC EQUISETUM LLC (SQ4)</summary>
+  </entry>
+</feed>

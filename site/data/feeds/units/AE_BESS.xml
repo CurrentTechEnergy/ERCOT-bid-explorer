@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>AE_BESS: bidding and operating changes</title>
+  <link href="https://ercotbids.currenttech.energy/unit.html?unit=AE_BESS"/>
+  <id>https://ercotbids.currenttech.energy/unit.html?unit=AE_BESS</id>
+  <updated>2026-10-18T00:00:00Z</updated>
+  <entry>
+    <title>AE_BESS: Decision maker or QSE changed (2025-09-03)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=AE_BESS"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=AE_BESS#AE_BESS/2025-09-03/control</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Scheduled by TRQ26 (SQ26), was TYR ENERGY LLC (SQ2)</summary>
+  </entry>
+  <entry>
+    <title>AE_BESS: Decision maker or QSE changed (2025-09-03)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=AE_BESS"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=AE_BESS#AE_BESS/2025-09-03/control</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Scheduled by TRQ26 (SQ26), was TYR ENERGY LLC (SQ2)</summary>
+  </entry>
+</feed>

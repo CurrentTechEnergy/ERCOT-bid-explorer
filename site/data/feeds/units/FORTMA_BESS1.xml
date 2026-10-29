@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>FORTMA_BESS1: bidding and operating changes</title>
+  <link href="https://ercotbids.currenttech.energy/unit.html?unit=FORTMA_BESS1"/>
+  <id>https://ercotbids.currenttech.energy/unit.html?unit=FORTMA_BESS1</id>
+  <updated>2026-10-18T00:00:00Z</updated>
+  <entry>
+    <title>FORTMA_BESS1: Decision maker or QSE changed (2025-07-01)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=FORTMA_BESS1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=FORTMA_BESS1#FORTMA_BESS1/2025-07-01/control</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Scheduled by TRQ30 (SQ30), was TYR ENERGY LLC (SQ1)</summary>
+  </entry>
+  <entry>
+    <title>FORTMA_BESS1: Decision maker or QSE changed (2025-07-01)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=FORTMA_BESS1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=FORTMA_BESS1#FORTMA_BESS1/2025-07-01/control</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Scheduled by TRQ30 (SQ30), was TYR ENERGY LLC (SQ1)</summary>
+  </entry>
+</feed>

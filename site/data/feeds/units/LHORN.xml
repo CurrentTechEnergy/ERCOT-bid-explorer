@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>LHORN: bidding and operating changes</title>
+  <link href="https://ercotbids.currenttech.energy/unit.html?unit=LHORN"/>
+  <id>https://ercotbids.currenttech.energy/unit.html?unit=LHORN</id>
+  <updated>2026-10-18T00:00:00Z</updated>
+  <entry>
+    <title>LHORN: Decision maker or QSE changed (2022-07-19)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=LHORN"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=LHORN#LHORN/2022-07-19/control</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Scheduled by TENASKA POWER SERVICES CO, was EDF NORTH AMERICA (SQ30)</summary>
+  </entry>
+</feed>

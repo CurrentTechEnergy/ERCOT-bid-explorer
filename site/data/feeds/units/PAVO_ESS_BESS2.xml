@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>PAVO_ESS_BESS2: bidding and operating changes</title>
+  <link href="https://ercotbids.currenttech.energy/unit.html?unit=PAVO_ESS_BESS2"/>
+  <id>https://ercotbids.currenttech.energy/unit.html?unit=PAVO_ESS_BESS2</id>
+  <updated>2026-10-18T00:00:00Z</updated>
+  <entry>
+    <title>PAVO: Decision maker or QSE changed (2024-04-30)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=PAVO"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=PAVO#PAVO/2024-04-30/control</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Offers now decided by ENGIE ENERGY MARKETING NA INC, was BRP INTERMEDIATECO I LLC</summary>
+  </entry>
+</feed>

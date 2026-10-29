@@ -18,4 +18,32 @@
     <updated>2026-10-26T00:00:00Z</updated>
     <summary>Scheduled by NRG TEXAS POWER LLC, was LINEBACKER POWER FUNDING LLC (SQ3)</summary>
   </entry>
+  <entry>
+    <title>MIL: Decision maker or QSE changed (2024-08-13)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=MIL"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=MIL#MIL/2024-08-13/control</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Scheduled by LINEBACKER POWER FUNDING LLC (SQ3), was EDF TRADING (SQ3)</summary>
+  </entry>
+  <entry>
+    <title>MIL: Decision maker or QSE changed (2023-06-13)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=MIL"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=MIL#MIL/2023-06-13/control</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Offers now decided by ERCOT code YRWMIL, was ERCOT code YBECC</summary>
+  </entry>
+  <entry>
+    <title>MIL: Decision maker or QSE changed (2023-06-06)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=MIL"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=MIL#MIL/2023-06-06/control</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Scheduled by EDF TRADING (SQ3), was ERCOT code QBRAZP</summary>
+  </entry>
+  <entry>
+    <title>MIL: Decision maker or QSE changed (2021-03-09)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=MIL"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=MIL#MIL/2021-03-09/control</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Scheduled by ERCOT code QBRAZP, was ERCOT code QBRAZO</summary>
+  </entry>
 </feed>

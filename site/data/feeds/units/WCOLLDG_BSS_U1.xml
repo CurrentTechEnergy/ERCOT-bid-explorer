@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>WCOLLDG_BSS_U1: bidding and operating changes</title>
+  <link href="https://ercotbids.currenttech.energy/unit.html?unit=WCOLLDG_BSS_U1"/>
+  <id>https://ercotbids.currenttech.energy/unit.html?unit=WCOLLDG_BSS_U1</id>
+  <updated>2026-10-18T00:00:00Z</updated>
+  <entry>
+    <title>WCOLLDG_BSS_U1: Decision maker or QSE changed (2023-03-23)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=WCOLLDG_BSS_U1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=WCOLLDG_BSS_U1#WCOLLDG_BSS_U1/2023-03-23/control</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Offers now decided by GLIDEPATH STORAGE OPERATIONS LLC, was ERCOT code YWESTC</summary>
+  </entry>
+  <entry>
+    <title>WCOLLDG_BSS_U1: Decision maker or QSE changed (2023-03-23)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=WCOLLDG_BSS_U1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=WCOLLDG_BSS_U1#WCOLLDG_BSS_U1/2023-03-23/control</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Offers now decided by GLIDEPATH STORAGE OPERATIONS LLC, was ERCOT code YWESTC</summary>
+  </entry>
+  <entry>
+    <title>WCOLLDG_BSS_U1: Decision maker or QSE changed (2021-10-12)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=WCOLLDG_BSS_U1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=WCOLLDG_BSS_U1#WCOLLDG_BSS_U1/2021-10-12/control</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Scheduled by ERCOT code QEONG3, was ERCOT code QTWER6</summary>
+  </entry>
+  <entry>
+    <title>WCOLLDG_BSS_U1: Decision maker or QSE changed (2021-10-12)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=WCOLLDG_BSS_U1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=WCOLLDG_BSS_U1#WCOLLDG_BSS_U1/2021-10-12/control</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Scheduled by ERCOT code QEONG3, was ERCOT code QTWER6</summary>
+  </entry>
+</feed>

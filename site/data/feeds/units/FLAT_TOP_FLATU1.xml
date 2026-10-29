@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>FLAT_TOP_FLATU1: bidding and operating changes</title>
+  <link href="https://ercotbids.currenttech.energy/unit.html?unit=FLAT_TOP_FLATU1"/>
+  <id>https://ercotbids.currenttech.energy/unit.html?unit=FLAT_TOP_FLATU1</id>
+  <updated>2026-10-18T00:00:00Z</updated>
+  <entry>
+    <title>FLAT_TOP_FLATU1: Decision maker or QSE changed (2025-04-01)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=FLAT_TOP_FLATU1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=FLAT_TOP_FLATU1#FLAT_TOP_FLATU1/2025-04-01/control</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Scheduled by JUPITER POWER ENERGY MANAGEMENT LLC, was TRQ22 (SQ22)</summary>
+  </entry>
+  <entry>
+    <title>FLAT_TOP_FLATU1: Decision maker or QSE changed (2025-04-01)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=FLAT_TOP_FLATU1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=FLAT_TOP_FLATU1#FLAT_TOP_FLATU1/2025-04-01/control</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Scheduled by JUPITER POWER ENERGY MANAGEMENT LLC, was TRQ22 (SQ22)</summary>
+  </entry>
+</feed>

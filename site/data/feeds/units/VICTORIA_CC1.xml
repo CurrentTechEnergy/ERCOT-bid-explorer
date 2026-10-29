@@ -53,4 +53,32 @@
     <updated>2026-10-24T00:00:00Z</updated>
     <summary>Outage began, lasting 7 days</summary>
   </entry>
+  <entry>
+    <title>VICTORIA_CC1: Decision maker or QSE changed (2025-09-03)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=VICTORIA_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=VICTORIA_CC1#VICTORIA_CC1/2025-09-03/control</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Offers now decided by NRG TEXAS POWER LLC, was ERCOT code YVICTR</summary>
+  </entry>
+  <entry>
+    <title>VICTORIA_CC1: Decision maker or QSE changed (2025-09-03)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=VICTORIA_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=VICTORIA_CC1#VICTORIA_CC1/2025-09-03/control</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Offers now decided by NRG TEXAS POWER LLC, was ERCOT code YVICTR</summary>
+  </entry>
+  <entry>
+    <title>VICTORIA_CC1: Decision maker or QSE changed (2025-06-03)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=VICTORIA_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=VICTORIA_CC1#VICTORIA_CC1/2025-06-03/control</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Scheduled by NRG TEXAS POWER LLC, was TRQ4 (SQ4)</summary>
+  </entry>
+  <entry>
+    <title>VICTORIA_CC1: Decision maker or QSE changed (2025-06-03)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=VICTORIA_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=VICTORIA_CC1#VICTORIA_CC1/2025-06-03/control</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Scheduled by NRG TEXAS POWER LLC, was TRQ4 (SQ4)</summary>
+  </entry>
 </feed>

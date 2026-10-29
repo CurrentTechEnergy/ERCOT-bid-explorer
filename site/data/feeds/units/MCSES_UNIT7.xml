@@ -67,4 +67,18 @@
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Back from a 13-day outage</summary>
   </entry>
+  <entry>
+    <title>MCSES: Decision maker or QSE changed (2024-08-09)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=MCSES"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=MCSES#MCSES/2024-08-09/control</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Offers now decided by MOUNTAIN CREEK POWER LLC, was EXGEN TEXAS POWER LLC</summary>
+  </entry>
+  <entry>
+    <title>MCSES: Decision maker or QSE changed (2020-12-01)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=MCSES"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=MCSES#MCSES/2020-12-01/control</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Scheduled by TRQ20 (SQ20), was TENASKA POWER SERVICES CO</summary>
+  </entry>
 </feed>

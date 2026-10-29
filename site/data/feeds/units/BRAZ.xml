@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>BRAZ: bidding and operating changes</title>
+  <link href="https://ercotbids.currenttech.energy/unit.html?unit=BRAZ"/>
+  <id>https://ercotbids.currenttech.energy/unit.html?unit=BRAZ</id>
+  <updated>2026-10-18T00:00:00Z</updated>
+  <entry>
+    <title>BRAZ: Decision maker or QSE changed (2020-12-29)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=BRAZ"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=BRAZ#BRAZ/2020-12-29/control</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Scheduled by SHELL ENERGY NORTH AMERICA (US) LP (SQ1), was LUMINANT ENERGY COMPANY LLC (SQ1)</summary>
+  </entry>
+</feed>

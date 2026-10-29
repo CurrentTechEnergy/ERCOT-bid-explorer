@@ -109,4 +109,18 @@
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Minimum-energy offer stepped: $72 to $58/MWh ($27 to $25 against the fuel-cost line)</summary>
   </entry>
+  <entry>
+    <title>AZ: Decision maker or QSE changed (2025-02-04)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=AZ"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=AZ#AZ/2025-02-04/control</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Scheduled by TRQ31 (SQ31), was TRQ20 (SQ20)</summary>
+  </entry>
+  <entry>
+    <title>AZ: Decision maker or QSE changed (2020-12-01)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=AZ"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=AZ#AZ/2020-12-01/control</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Scheduled by TRQ20 (SQ20), was TENASKA POWER SERVICES CO</summary>
+  </entry>
 </feed>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>CHISMGRD_BES1: bidding and operating changes</title>
+  <link href="https://ercotbids.currenttech.energy/unit.html?unit=CHISMGRD_BES1"/>
+  <id>https://ercotbids.currenttech.energy/unit.html?unit=CHISMGRD_BES1</id>
+  <updated>2026-10-18T00:00:00Z</updated>
+  <entry>
+    <title>CHISMGRD_BES1: Decision maker or QSE changed (2021-11-16)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=CHISMGRD_BES1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=CHISMGRD_BES1#CHISMGRD_BES1/2021-11-16/control</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Scheduled by TRQ25 (SQ25), was TENASKA POWER SERVICES CO</summary>
+  </entry>
+  <entry>
+    <title>CHISMGRD_BES1: Decision maker or QSE changed (2021-11-16)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=CHISMGRD_BES1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=CHISMGRD_BES1#CHISMGRD_BES1/2021-11-16/control</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Scheduled by TRQ25 (SQ25), was TENASKA POWER SERVICES CO</summary>
+  </entry>
+</feed>

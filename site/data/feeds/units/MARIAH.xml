@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>MARIAH: bidding and operating changes</title>
+  <link href="https://ercotbids.currenttech.energy/unit.html?unit=MARIAH"/>
+  <id>https://ercotbids.currenttech.energy/unit.html?unit=MARIAH</id>
+  <updated>2026-10-18T00:00:00Z</updated>
+  <entry>
+    <title>MARIAH: Decision maker or QSE changed (2025-04-28)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=MARIAH"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=MARIAH#MARIAH/2025-04-28/control</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Offers now decided by MARIAH DEL NORTE LLC, was ERCOT code YTRAIL</summary>
+  </entry>
+</feed>

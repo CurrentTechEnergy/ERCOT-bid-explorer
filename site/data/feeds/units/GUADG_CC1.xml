@@ -12,20 +12,6 @@
     <summary>Minimum-energy offer stepped: $1 to $10/MWh (-$16 to -$7 against the fuel-cost line)</summary>
   </entry>
   <entry>
-    <title>GUADG_CC1: Turn-off point moved (2026-08-01)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=GUADG_CC1"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=GUADG_CC1#GUADG_CC1/2026-08-01/turnoff/2</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Turn-off point with an award every hour $7,140 to riding through per MW of minimum output in August</summary>
-  </entry>
-  <entry>
-    <title>GUADG_CC1: Turn-off point moved (2026-07-01)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=GUADG_CC1"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=GUADG_CC1#GUADG_CC1/2026-07-01/turnoff/2</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Turn-off point with an award every hour riding through to $7,140 per MW of minimum output in July; the next month went back</summary>
-  </entry>
-  <entry>
     <title>GUADG_CC1: Outage ended (2026-06-05)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=GUADG_CC1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=GUADG_CC1#GUADG_CC1/2026-06-05/outage_end</id>

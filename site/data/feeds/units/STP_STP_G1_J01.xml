@@ -18,4 +18,18 @@
     <updated>2026-10-24T00:00:00Z</updated>
     <summary>Outage began, lasting 34 days</summary>
   </entry>
+  <entry>
+    <title>STP: Decision maker or QSE changed (2024-01-31)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=STP"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=STP#STP/2024-01-31/control</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Scheduled by CONSTELLATION ENERGY GENERATION LLC, was NRG TEXAS POWER LLC</summary>
+  </entry>
+  <entry>
+    <title>STP: Decision maker or QSE changed (2024-01-03)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=STP"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=STP#STP/2024-01-03/control</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Offers now decided by CONSTELLATION ENERGY GENERATION LLC, was NRG TEXAS POWER LLC</summary>
+  </entry>
 </feed>

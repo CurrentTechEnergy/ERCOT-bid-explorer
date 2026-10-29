@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>SLCNHLS_ESS1: bidding and operating changes</title>
+  <link href="https://ercotbids.currenttech.energy/unit.html?unit=SLCNHLS_ESS1"/>
+  <id>https://ercotbids.currenttech.energy/unit.html?unit=SLCNHLS_ESS1</id>
+  <updated>2026-10-18T00:00:00Z</updated>
+  <entry>
+    <title>SLCNHLS: Decision maker or QSE changed (2021-12-14)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=SLCNHLS"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=SLCNHLS#SLCNHLS/2021-12-14/control</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Scheduled by SHELL ENERGY NORTH AMERICA (US) LP (SQ2), was MP2 ENERGY LLC (SQ1)</summary>
+  </entry>
+</feed>

@@ -74,4 +74,11 @@
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Offer price vs peer median: $8 to -$14/MWh</summary>
   </entry>
+  <entry>
+    <title>BCH: Decision maker or QSE changed (2025-09-25)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=BCH"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=BCH#BCH/2025-09-25/control</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Offers now decided by CPS ENERGY, was ERCOT code YWATTB, ERCOT code YWATTX</summary>
+  </entry>
 </feed>

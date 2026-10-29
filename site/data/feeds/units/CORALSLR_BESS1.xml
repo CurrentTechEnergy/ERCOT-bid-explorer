@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>CORALSLR_BESS1: bidding and operating changes</title>
+  <link href="https://ercotbids.currenttech.energy/unit.html?unit=CORALSLR_BESS1"/>
+  <id>https://ercotbids.currenttech.energy/unit.html?unit=CORALSLR_BESS1</id>
+  <updated>2026-10-18T00:00:00Z</updated>
+  <entry>
+    <title>CORALSLR: Decision maker or QSE changed (2023-08-01)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=CORALSLR"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=CORALSLR#CORALSLR/2023-08-01/control</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Scheduled by GERONIMO POWER SERVICES LLC CH (SQ1), was GERONIMO POWER SERVICES LLC</summary>
+  </entry>
+</feed>

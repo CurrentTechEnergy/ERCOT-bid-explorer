@@ -9,7 +9,7 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=CBEC_CC2"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=CBEC_CC2#CBEC_CC2/2026-05-01/turnoff/1</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Turn-off point with an award some hours -$66 to -$137 per MW of minimum output in May; the next month held it</summary>
+    <summary>Turn-off point with an award some hours -$76 to -$196 per MW of minimum output in May; the next month held it</summary>
   </entry>
   <entry>
     <title>CBEC_CC2: Minimum-energy offer stepped (2026-02-01)</title>
@@ -45,5 +45,26 @@
     <id>https://ercotbids.currenttech.energy/unit.html?unit=CBEC_CC2#CBEC_CC2/2025-12-25/dam_mingen_step</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Minimum-energy offer stepped: $45 to $34/MWh ($15 to $18 against the fuel-cost line)</summary>
+  </entry>
+  <entry>
+    <title>CBEC: Decision maker or QSE changed (2025-02-04)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=CBEC"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=CBEC#CBEC/2025-02-04/control</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Scheduled by TRQ31 (SQ31), was TRQ20 (SQ20)</summary>
+  </entry>
+  <entry>
+    <title>CBEC: Decision maker or QSE changed (2024-03-06)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=CBEC"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=CBEC#CBEC/2024-03-06/control</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Offers now decided by EXGEN TEXAS POWER LLC, was ERCOT code YNAVWH</summary>
+  </entry>
+  <entry>
+    <title>CBEC: Decision maker or QSE changed (2020-12-01)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=CBEC"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=CBEC#CBEC/2020-12-01/control</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Scheduled by TRQ20 (SQ20), was TENASKA POWER SERVICES CO</summary>
   </entry>
 </feed>

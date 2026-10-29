@@ -130,4 +130,25 @@
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Shut down for 51 h although a day-ahead award covered 100% of the window</summary>
   </entry>
+  <entry>
+    <title>B: Decision maker or QSE changed (2024-12-03)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=B"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=B#B/2024-12-03/control</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Scheduled by CPS ENERGY, was EDF NORTH AMERICA (SQ20)</summary>
+  </entry>
+  <entry>
+    <title>B: Decision maker or QSE changed (2024-05-03)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=B"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=B#B/2024-05-03/control</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Offers now decided by CPS ENERGY, was ERCOT code YBDAV</summary>
+  </entry>
+  <entry>
+    <title>B: Decision maker or QSE changed (2021-06-02)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=B"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=B#B/2021-06-02/control</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Scheduled by EDF NORTH AMERICA (SQ20), was ERCOT code QTWER9</summary>
+  </entry>
 </feed>

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>TURQBESS_BESS1: bidding and operating changes</title>
+  <link href="https://ercotbids.currenttech.energy/unit.html?unit=TURQBESS_BESS1"/>
+  <id>https://ercotbids.currenttech.energy/unit.html?unit=TURQBESS_BESS1</id>
+  <updated>2026-10-18T00:00:00Z</updated>
+  <entry>
+    <title>TURQBESS_BESS1: Decision maker or QSE changed (2024-10-15)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=TURQBESS_BESS1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=TURQBESS_BESS1#TURQBESS_BESS1/2024-10-15/control</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Scheduled by HEI3 INC, was HABITAT ENERGY INC</summary>
+  </entry>
+  <entry>
+    <title>TURQBESS_BESS1: Decision maker or QSE changed (2024-10-15)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=TURQBESS_BESS1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=TURQBESS_BESS1#TURQBESS_BESS1/2024-10-15/control</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Scheduled by HEI3 INC, was HABITAT ENERGY INC</summary>
+  </entry>
+  <entry>
+    <title>TURQBESS_BESS1: Decision maker or QSE changed (2024-06-04)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=TURQBESS_BESS1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=TURQBESS_BESS1#TURQBESS_BESS1/2024-06-04/control</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Scheduled by HABITAT ENERGY INC, was BOSTON ENERGY TRADING AND MARKETING LLC (SQ10)</summary>
+  </entry>
+  <entry>
+    <title>TURQBESS_BESS1: Decision maker or QSE changed (2024-06-04)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=TURQBESS_BESS1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=TURQBESS_BESS1#TURQBESS_BESS1/2024-06-04/control</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Scheduled by HABITAT ENERGY INC, was BOSTON ENERGY TRADING AND MARKETING LLC (SQ10)</summary>
+  </entry>
+</feed>

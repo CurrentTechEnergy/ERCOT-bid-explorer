@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>TAYGETE_UNIT2: bidding and operating changes</title>
+  <link href="https://ercotbids.currenttech.energy/unit.html?unit=TAYGETE_UNIT2"/>
+  <id>https://ercotbids.currenttech.energy/unit.html?unit=TAYGETE_UNIT2</id>
+  <updated>2026-10-18T00:00:00Z</updated>
+  <entry>
+    <title>TAYGETE: Decision maker or QSE changed (2024-01-18)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=TAYGETE"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=TAYGETE#TAYGETE/2024-01-18/control</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Offers now decided by TAYGETE ENERGY PROJECT LLC, was 7X DEV LLC</summary>
+  </entry>
+</feed>

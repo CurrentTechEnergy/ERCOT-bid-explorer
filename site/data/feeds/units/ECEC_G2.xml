@@ -151,4 +151,18 @@
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Offer price vs peer median: -$3 to $9/MWh</summary>
   </entry>
+  <entry>
+    <title>ECEC: Decision maker or QSE changed (2022-08-02)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=ECEC"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=ECEC#ECEC/2022-08-02/control</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Scheduled by TENASKA POWER SERVICES CO, was ERCOT code QECTOR</summary>
+  </entry>
+  <entry>
+    <title>ECEC: Decision maker or QSE changed (2022-07-16)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=ECEC"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=ECEC#ECEC/2022-07-16/control</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Offers now decided by ECTOR COUNTY GENERATION LLC, was ERCOT code YECTOR</summary>
+  </entry>
 </feed>

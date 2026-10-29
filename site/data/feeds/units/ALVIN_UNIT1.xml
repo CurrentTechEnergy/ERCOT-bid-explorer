@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>ALVIN_UNIT1: bidding and operating changes</title>
+  <link href="https://ercotbids.currenttech.energy/unit.html?unit=ALVIN_UNIT1"/>
+  <id>https://ercotbids.currenttech.energy/unit.html?unit=ALVIN_UNIT1</id>
+  <updated>2026-10-18T00:00:00Z</updated>
+  <entry>
+    <title>ALVIN_UNIT1: Decision maker or QSE changed (2024-04-30)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=ALVIN_UNIT1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=ALVIN_UNIT1#ALVIN_UNIT1/2024-04-30/control</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Offers now decided by ENGIE ENERGY MARKETING NA INC, was BRP INTERMEDIATECO I LLC</summary>
+  </entry>
+  <entry>
+    <title>ALVIN_UNIT1: Decision maker or QSE changed (2024-04-30)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=ALVIN_UNIT1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=ALVIN_UNIT1#ALVIN_UNIT1/2024-04-30/control</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Offers now decided by ENGIE ENERGY MARKETING NA INC, was BRP INTERMEDIATECO I LLC</summary>
+  </entry>
+  <entry>
+    <title>ALVIN_UNIT1: Decision maker or QSE changed (2023-10-09)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=ALVIN_UNIT1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=ALVIN_UNIT1#ALVIN_UNIT1/2023-10-09/control</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Offers now decided by BRP INTERMEDIATECO I LLC, was ERCOT code YBROAD</summary>
+  </entry>
+  <entry>
+    <title>ALVIN_UNIT1: Decision maker or QSE changed (2023-10-09)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=ALVIN_UNIT1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=ALVIN_UNIT1#ALVIN_UNIT1/2023-10-09/control</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Offers now decided by BRP INTERMEDIATECO I LLC, was ERCOT code YBROAD</summary>
+  </entry>
+  <entry>
+    <title>ALVIN_UNIT1: Decision maker or QSE changed (2023-04-25)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=ALVIN_UNIT1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=ALVIN_UNIT1#ALVIN_UNIT1/2023-04-25/control</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Scheduled by BROAD REACH QSE I LLC (SQ1), was ERCOT code QBROAD</summary>
+  </entry>
+  <entry>
+    <title>ALVIN_UNIT1: Decision maker or QSE changed (2023-04-25)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=ALVIN_UNIT1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=ALVIN_UNIT1#ALVIN_UNIT1/2023-04-25/control</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Scheduled by BROAD REACH QSE I LLC (SQ1), was ERCOT code QBROAD</summary>
+  </entry>
+</feed>

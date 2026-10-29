@@ -32,4 +32,46 @@
     <updated>2026-10-24T00:00:00Z</updated>
     <summary>Outage began, lasting 11 days</summary>
   </entry>
+  <entry>
+    <title>PANDA_T2_CC1: Decision maker or QSE changed (2024-01-03)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=PANDA_T2_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=PANDA_T2_CC1#PANDA_T2_CC1/2024-01-03/control</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Scheduled by EDF NORTH AMERICA (SQ39), was TENASKA POWER SERVICES CO</summary>
+  </entry>
+  <entry>
+    <title>PANDA_T2_CC1: Decision maker or QSE changed (2024-01-03)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=PANDA_T2_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=PANDA_T2_CC1#PANDA_T2_CC1/2024-01-03/control</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Scheduled by EDF NORTH AMERICA (SQ39), was TENASKA POWER SERVICES CO</summary>
+  </entry>
+  <entry>
+    <title>PANDA_T2_CC1: Decision maker or QSE changed (2022-07-26)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=PANDA_T2_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=PANDA_T2_CC1#PANDA_T2_CC1/2022-07-26/control</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Offers now decided by ERCOT code YCXATE, was ERCOT code YPAND2</summary>
+  </entry>
+  <entry>
+    <title>PANDA_T2_CC1: Decision maker or QSE changed (2022-07-26)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=PANDA_T2_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=PANDA_T2_CC1#PANDA_T2_CC1/2022-07-26/control</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Offers now decided by ERCOT code YCXATE, was ERCOT code YPAND2</summary>
+  </entry>
+  <entry>
+    <title>PANDA_T2_CC1: Decision maker or QSE changed (2021-12-21)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=PANDA_T2_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=PANDA_T2_CC1#PANDA_T2_CC1/2021-12-21/control</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Scheduled by TENASKA POWER SERVICES CO, was NEXTERA ENERGY MARKETING LLC (SQ16)</summary>
+  </entry>
+  <entry>
+    <title>PANDA_T2_CC1: Decision maker or QSE changed (2021-12-21)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=PANDA_T2_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=PANDA_T2_CC1#PANDA_T2_CC1/2021-12-21/control</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Scheduled by TENASKA POWER SERVICES CO, was NEXTERA ENERGY MARKETING LLC (SQ16)</summary>
+  </entry>
 </feed>

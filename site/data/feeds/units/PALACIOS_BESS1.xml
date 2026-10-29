@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>PALACIOS_BESS1: bidding and operating changes</title>
+  <link href="https://ercotbids.currenttech.energy/unit.html?unit=PALACIOS_BESS1"/>
+  <id>https://ercotbids.currenttech.energy/unit.html?unit=PALACIOS_BESS1</id>
+  <updated>2026-10-18T00:00:00Z</updated>
+  <entry>
+    <title>PALACIOS_BESS1: Decision maker or QSE changed (2025-06-17)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=PALACIOS_BESS1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=PALACIOS_BESS1#PALACIOS_BESS1/2025-06-17/control</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Scheduled by TRQ30 (SQ30), was TYR ENERGY LLC (SQ1)</summary>
+  </entry>
+  <entry>
+    <title>PALACIOS_BESS1: Decision maker or QSE changed (2025-06-17)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=PALACIOS_BESS1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=PALACIOS_BESS1#PALACIOS_BESS1/2025-06-17/control</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Scheduled by TRQ30 (SQ30), was TYR ENERGY LLC (SQ1)</summary>
+  </entry>
+</feed>

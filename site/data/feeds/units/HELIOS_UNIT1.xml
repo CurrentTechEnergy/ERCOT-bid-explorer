@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>HELIOS_UNIT1: bidding and operating changes</title>
+  <link href="https://ercotbids.currenttech.energy/unit.html?unit=HELIOS_UNIT1"/>
+  <id>https://ercotbids.currenttech.energy/unit.html?unit=HELIOS_UNIT1</id>
+  <updated>2026-10-18T00:00:00Z</updated>
+  <entry>
+    <title>HELIOS_UNIT1: Decision maker or QSE changed (2023-03-16)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=HELIOS_UNIT1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=HELIOS_UNIT1#HELIOS_UNIT1/2023-03-16/control</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Offers now decided by RWE CLEAN ENERGY LLC, was ERCOT code YCONSO</summary>
+  </entry>
+  <entry>
+    <title>HELIOS_UNIT1: Decision maker or QSE changed (2023-03-16)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=HELIOS_UNIT1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=HELIOS_UNIT1#HELIOS_UNIT1/2023-03-16/control</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Offers now decided by RWE CLEAN ENERGY LLC, was ERCOT code YCONSO</summary>
+  </entry>
+</feed>

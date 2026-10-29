@@ -109,4 +109,11 @@
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Minimum-energy offer stepped: $84 to $75/MWh ($43 to $44 against the fuel-cost line)</summary>
   </entry>
+  <entry>
+    <title>STEAM: Decision maker or QSE changed (2022-04-12)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=STEAM"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=STEAM#STEAM/2022-04-12/control</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Scheduled by GEUS, was CITY OF GARLAND (SQ2)</summary>
+  </entry>
 </feed>

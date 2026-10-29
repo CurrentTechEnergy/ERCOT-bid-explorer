@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>PES1_UNIT8: bidding and operating changes</title>
+  <link href="https://ercotbids.currenttech.energy/unit.html?unit=PES1_UNIT8"/>
+  <id>https://ercotbids.currenttech.energy/unit.html?unit=PES1_UNIT8</id>
+  <updated>2026-10-18T00:00:00Z</updated>
+  <entry>
+    <title>PES1: Decision maker or QSE changed (2021-10-05)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=PES1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=PES1#PES1/2021-10-05/control</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Scheduled by TRQ23 (SQ23), was TENASKA POWER SERVICES CO</summary>
+  </entry>
+</feed>

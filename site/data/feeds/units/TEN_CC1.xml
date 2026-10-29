@@ -9,7 +9,7 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=TEN_CC1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=TEN_CC1#TEN_CC1/2026-08-01/turnoff/0</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Turn-off point without an award $470 to $968 per MW of minimum output in August</summary>
+    <summary>Turn-off point without an award $780 to $5,361 per MW of minimum output in August</summary>
   </entry>
   <entry>
     <title>TEN_CC1: Shut down after a long run (2026-07-08)</title>
@@ -23,7 +23,7 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=TEN_CC1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=TEN_CC1#TEN_CC1/2026-07-01/turnoff/0</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Turn-off point without an award $1,405 to $470 per MW of minimum output in July; the next month went back</summary>
+    <summary>Turn-off point without an award $3,138 to $780 per MW of minimum output in July; the next month went back</summary>
   </entry>
   <entry>
     <title>TEN_CC1: Outage ended (2026-07-01)</title>
@@ -44,7 +44,7 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=TEN_CC1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=TEN_CC1#TEN_CC1/2026-06-01/turnoff/0</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Turn-off point without an award $4,467 to $1,405 per MW of minimum output in June; the next month held it</summary>
+    <summary>Turn-off point without an award riding through to $3,138 per MW of minimum output in June; the next month held it</summary>
   </entry>
   <entry>
     <title>TEN_CC1: Timescale group changed (2026-06-01)</title>
@@ -129,5 +129,61 @@
     <id>https://ercotbids.currenttech.energy/unit.html?unit=TEN_CC1#TEN_CC1/2026-01-27/shutdown_new</id>
     <updated>2026-10-23T00:00:00Z</updated>
     <summary>First shutdown in the record, off 18 h</summary>
+  </entry>
+  <entry>
+    <title>TEN_CC1: Decision maker or QSE changed (2024-08-13)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=TEN_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=TEN_CC1#TEN_CC1/2024-08-13/control</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Scheduled by LINEBACKER POWER FUNDING LLC (SQ2), was EDF TRADING (SQ3)</summary>
+  </entry>
+  <entry>
+    <title>TEN_CC1: Decision maker or QSE changed (2024-08-13)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=TEN_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=TEN_CC1#TEN_CC1/2024-08-13/control</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Scheduled by LINEBACKER POWER FUNDING LLC (SQ2), was EDF TRADING (SQ3)</summary>
+  </entry>
+  <entry>
+    <title>TEN_CC1: Decision maker or QSE changed (2023-06-13)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=TEN_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=TEN_CC1#TEN_CC1/2023-06-13/control</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Offers now decided by ERCOT code YJOHNS, was ERCOT code YBECC</summary>
+  </entry>
+  <entry>
+    <title>TEN_CC1: Decision maker or QSE changed (2023-06-13)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=TEN_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=TEN_CC1#TEN_CC1/2023-06-13/control</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Offers now decided by ERCOT code YJOHNS, was ERCOT code YBECC</summary>
+  </entry>
+  <entry>
+    <title>TEN_CC1: Decision maker or QSE changed (2023-06-06)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=TEN_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=TEN_CC1#TEN_CC1/2023-06-06/control</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Scheduled by EDF TRADING (SQ3), was ERCOT code QBRAZP</summary>
+  </entry>
+  <entry>
+    <title>TEN_CC1: Decision maker or QSE changed (2023-06-06)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=TEN_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=TEN_CC1#TEN_CC1/2023-06-06/control</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Scheduled by EDF TRADING (SQ3), was ERCOT code QBRAZP</summary>
+  </entry>
+  <entry>
+    <title>TEN_CC1: Decision maker or QSE changed (2021-03-09)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=TEN_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=TEN_CC1#TEN_CC1/2021-03-09/control</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Scheduled by ERCOT code QBRAZP, was ERCOT code QBRAZO</summary>
+  </entry>
+  <entry>
+    <title>TEN_CC1: Decision maker or QSE changed (2021-03-09)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=TEN_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=TEN_CC1#TEN_CC1/2021-03-09/control</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Scheduled by ERCOT code QBRAZP, was ERCOT code QBRAZO</summary>
   </entry>
 </feed>

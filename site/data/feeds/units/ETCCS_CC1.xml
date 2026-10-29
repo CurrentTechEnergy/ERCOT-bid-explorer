@@ -3,7 +3,14 @@
   <title>ETCCS_CC1: bidding and operating changes</title>
   <link href="https://ercotbids.currenttech.energy/unit.html?unit=ETCCS_CC1"/>
   <id>https://ercotbids.currenttech.energy/unit.html?unit=ETCCS_CC1</id>
-  <updated>2026-10-24T00:00:00Z</updated>
+  <updated>2026-10-29T00:00:00Z</updated>
+  <entry>
+    <title>ETCCS_CC1: Turn-off point moved (2026-08-01)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=ETCCS_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=ETCCS_CC1#ETCCS_CC1/2026-08-01/turnoff/0</id>
+    <updated>2026-10-29T00:00:00Z</updated>
+    <summary>Turn-off point without an award $58 to $120 per MW of minimum output in August</summary>
+  </entry>
   <entry>
     <title>ETCCS_CC1: Timescale group changed (2026-07-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=ETCCS_CC1"/>

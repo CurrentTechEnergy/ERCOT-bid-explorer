@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>QALSW: bidding and operating changes</title>
+  <link href="https://ercotbids.currenttech.energy/unit.html?unit=QALSW"/>
+  <id>https://ercotbids.currenttech.energy/unit.html?unit=QALSW</id>
+  <updated>2026-10-18T00:00:00Z</updated>
+  <entry>
+    <title>QALSW: Decision maker or QSE changed (2025-01-31)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=QALSW"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=QALSW#QALSW/2025-01-31/control</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Offers now decided by CALPINE POWER MANAGEMENT LLC, was ERCOT code YQUAIL</summary>
+  </entry>
+  <entry>
+    <title>QALSW: Decision maker or QSE changed (2024-11-12)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=QALSW"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=QALSW#QALSW/2024-11-12/control</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Scheduled by CALPINE POWER MANAGEMENT LLC, was EDF NORTH AMERICA (SQ28)</summary>
+  </entry>
+</feed>

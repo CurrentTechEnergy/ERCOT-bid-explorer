@@ -19,25 +19,11 @@
     <summary>Shut down for 8 h after 45 days without a shutdown</summary>
   </entry>
   <entry>
-    <title>OECCS_CC2: Turn-off point moved (2026-08-01)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=OECCS_CC2"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=OECCS_CC2#OECCS_CC2/2026-08-01/turnoff/2</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Turn-off point with an award every hour $6,177 to riding through per MW of minimum output in August</summary>
-  </entry>
-  <entry>
     <title>OECCS_CC2: Priced out of the day-ahead (2026-07-09)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=OECCS_CC2"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=OECCS_CC2#OECCS_CC2/2026-07-09/dam_priced_out</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Priced out of the day-ahead: minimum energy at $20/MWh against a usual $6 for 2 day(s)</summary>
-  </entry>
-  <entry>
-    <title>OECCS_CC2: Turn-off point moved (2026-07-01)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=OECCS_CC2"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=OECCS_CC2#OECCS_CC2/2026-07-01/turnoff/2</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Turn-off point with an award every hour $3,156 to $6,177 per MW of minimum output in July; the next month held it</summary>
   </entry>
   <entry>
     <title>OECCS_CC2: Timescale group changed (2026-07-01)</title>
@@ -52,13 +38,6 @@
     <id>https://ercotbids.currenttech.energy/unit.html?unit=OECCS_CC2#OECCS_CC2/2026-06-20/dam_start_change</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Start-up cost changed: hot start $9,500 to $5,413</summary>
-  </entry>
-  <entry>
-    <title>OECCS_CC2: Turn-off point moved (2026-06-01)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=OECCS_CC2"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=OECCS_CC2#OECCS_CC2/2026-06-01/turnoff/2</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Turn-off point with an award every hour riding through to $3,156 per MW of minimum output in June; the next month held it</summary>
   </entry>
   <entry>
     <title>OECCS_CC2: Timescale group changed (2026-06-01)</title>

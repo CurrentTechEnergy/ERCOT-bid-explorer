@@ -3,13 +3,20 @@
   <title>CBY_CBY_G2: bidding and operating changes</title>
   <link href="https://ercotbids.currenttech.energy/unit.html?unit=CBY_CBY_G2"/>
   <id>https://ercotbids.currenttech.energy/unit.html?unit=CBY_CBY_G2</id>
-  <updated>2026-10-25T00:00:00Z</updated>
+  <updated>2026-10-29T00:00:00Z</updated>
   <entry>
     <title>CBY_CBY_G2: Bidding approach shifted (2026-08-20)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=CBY_CBY_G2"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=CBY_CBY_G2#CBY_CBY_G2/2026-08-20/bidding</id>
     <updated>2026-10-25T00:00:00Z</updated>
     <summary>Running without an offer curve: 0% to 100% of the day</summary>
+  </entry>
+  <entry>
+    <title>CBY_CBY_G2: Turn-off point moved (2026-08-01)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=CBY_CBY_G2"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=CBY_CBY_G2#CBY_CBY_G2/2026-08-01/turnoff/0</id>
+    <updated>2026-10-29T00:00:00Z</updated>
+    <summary>Turn-off point without an award $4,745 to riding through per MW of minimum output in August</summary>
   </entry>
   <entry>
     <title>CBY_CBY_G2: Shut down after a long run (2026-06-01)</title>

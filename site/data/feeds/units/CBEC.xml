@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>CBEC: bidding and operating changes</title>
+  <link href="https://ercotbids.currenttech.energy/unit.html?unit=CBEC"/>
+  <id>https://ercotbids.currenttech.energy/unit.html?unit=CBEC</id>
+  <updated>2026-10-18T00:00:00Z</updated>
+  <entry>
+    <title>CBEC: Decision maker or QSE changed (2025-02-04)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=CBEC"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=CBEC#CBEC/2025-02-04/control</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Scheduled by TRQ31 (SQ31), was TRQ20 (SQ20)</summary>
+  </entry>
+  <entry>
+    <title>CBEC: Decision maker or QSE changed (2024-03-06)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=CBEC"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=CBEC#CBEC/2024-03-06/control</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Offers now decided by EXGEN TEXAS POWER LLC, was ERCOT code YNAVWH</summary>
+  </entry>
+  <entry>
+    <title>CBEC: Decision maker or QSE changed (2020-12-01)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=CBEC"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=CBEC#CBEC/2020-12-01/control</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Scheduled by TRQ20 (SQ20), was TENASKA POWER SERVICES CO</summary>
+  </entry>
+</feed>

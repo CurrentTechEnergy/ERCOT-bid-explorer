@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>FLCNS_CC1: bidding and operating changes</title>
+  <link href="https://ercotbids.currenttech.energy/unit.html?unit=FLCNS_CC1"/>
+  <id>https://ercotbids.currenttech.energy/unit.html?unit=FLCNS_CC1</id>
+  <updated>2026-10-18T00:00:00Z</updated>
+  <entry>
+    <title>FLCNS_CC1: Decision maker or QSE changed (2024-03-26)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=FLCNS_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=FLCNS_CC1#FLCNS_CC1/2024-03-26/control</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Scheduled by BHER POWER RESOURCES INC, was EDF NORTH AMERICA (SQ22)</summary>
+  </entry>
+  <entry>
+    <title>FLCNS_CC1: Decision maker or QSE changed (2024-03-26)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=FLCNS_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=FLCNS_CC1#FLCNS_CC1/2024-03-26/control</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Scheduled by BHER POWER RESOURCES INC, was EDF NORTH AMERICA (SQ22)</summary>
+  </entry>
+</feed>

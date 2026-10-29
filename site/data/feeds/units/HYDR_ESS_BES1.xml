@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>HYDR_ESS_BES1: bidding and operating changes</title>
+  <link href="https://ercotbids.currenttech.energy/unit.html?unit=HYDR_ESS_BES1"/>
+  <id>https://ercotbids.currenttech.energy/unit.html?unit=HYDR_ESS_BES1</id>
+  <updated>2026-10-18T00:00:00Z</updated>
+  <entry>
+    <title>HYDR_ESS_BES1: Decision maker or QSE changed (2024-04-30)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=HYDR_ESS_BES1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=HYDR_ESS_BES1#HYDR_ESS_BES1/2024-04-30/control</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Offers now decided by ENGIE ENERGY MARKETING NA INC, was BRP INTERMEDIATECO I LLC</summary>
+  </entry>
+  <entry>
+    <title>HYDR_ESS_BES1: Decision maker or QSE changed (2024-04-30)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=HYDR_ESS_BES1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=HYDR_ESS_BES1#HYDR_ESS_BES1/2024-04-30/control</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Offers now decided by ENGIE ENERGY MARKETING NA INC, was BRP INTERMEDIATECO I LLC</summary>
+  </entry>
+</feed>

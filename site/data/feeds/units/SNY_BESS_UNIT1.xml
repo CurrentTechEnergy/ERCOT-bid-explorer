@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>SNY_BESS_UNIT1: bidding and operating changes</title>
+  <link href="https://ercotbids.currenttech.energy/unit.html?unit=SNY_BESS_UNIT1"/>
+  <id>https://ercotbids.currenttech.energy/unit.html?unit=SNY_BESS_UNIT1</id>
+  <updated>2026-10-18T00:00:00Z</updated>
+  <entry>
+    <title>SNY_BESS_UNIT1: Decision maker or QSE changed (2023-06-27)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=SNY_BESS_UNIT1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=SNY_BESS_UNIT1#SNY_BESS_UNIT1/2023-06-27/control</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Scheduled by TRQ26 (SQ26), was ERCOT code QPERFT</summary>
+  </entry>
+  <entry>
+    <title>SNY_BESS_UNIT1: Decision maker or QSE changed (2023-06-27)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=SNY_BESS_UNIT1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=SNY_BESS_UNIT1#SNY_BESS_UNIT1/2023-06-27/control</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Scheduled by TRQ26 (SQ26), was ERCOT code QPERFT</summary>
+  </entry>
+</feed>

@@ -53,4 +53,11 @@
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Minimum-energy offer stepped: $48 to $31/MWh ($7 to $8 against the fuel-cost line)</summary>
   </entry>
+  <entry>
+    <title>JAD: Decision maker or QSE changed (2025-09-25)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=JAD"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=JAD#JAD/2025-09-25/control</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Offers now decided by CPS ENERGY, was ERCOT code YWATTB</summary>
+  </entry>
 </feed>

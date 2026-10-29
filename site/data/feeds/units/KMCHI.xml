@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>KMCHI: bidding and operating changes</title>
+  <link href="https://ercotbids.currenttech.energy/unit.html?unit=KMCHI"/>
+  <id>https://ercotbids.currenttech.energy/unit.html?unit=KMCHI</id>
+  <updated>2026-10-18T00:00:00Z</updated>
+  <entry>
+    <title>KMCHI: Decision maker or QSE changed (2021-03-31)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=KMCHI"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=KMCHI#KMCHI/2021-03-31/control</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Offers now decided by ERCOT code YKIOWA, was SHELL ENERGY NORTH AMERICA (US) LP</summary>
+  </entry>
+</feed>

@@ -60,4 +60,25 @@
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Offer price vs peer median: $6 to -$10/MWh</summary>
   </entry>
+  <entry>
+    <title>CALHOUN: Decision maker or QSE changed (2025-07-08)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=CALHOUN"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=CALHOUN#CALHOUN/2025-07-08/control</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Offers now decided by NRG TEXAS POWER LLC, was ERCOT code YPORT</summary>
+  </entry>
+  <entry>
+    <title>CALHOUN: Decision maker or QSE changed (2025-06-03)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=CALHOUN"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=CALHOUN#CALHOUN/2025-06-03/control</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Scheduled by NRG TEXAS POWER LLC, was SHELL ENERGY NORTH AMERICA (US) LP (SQ19)</summary>
+  </entry>
+  <entry>
+    <title>CALHOUN: Decision maker or QSE changed (2024-11-19)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=CALHOUN"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=CALHOUN#CALHOUN/2024-11-19/control</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Scheduled by SHELL ENERGY NORTH AMERICA (US) LP (SQ19), was SHELL ENERGY NORTH AMERICA (US) LP (SQ2)</summary>
+  </entry>
 </feed>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>SBEAN_BESS: bidding and operating changes</title>
+  <link href="https://ercotbids.currenttech.energy/unit.html?unit=SBEAN_BESS"/>
+  <id>https://ercotbids.currenttech.energy/unit.html?unit=SBEAN_BESS</id>
+  <updated>2026-10-18T00:00:00Z</updated>
+  <entry>
+    <title>SBEAN_BESS: Decision maker or QSE changed (2022-11-30)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=SBEAN_BESS"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=SBEAN_BESS#SBEAN_BESS/2022-11-30/control</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Scheduled by HEN POWER MARKETING LLC (SQ1), was HEN POWER MARKETING LLC</summary>
+  </entry>
+  <entry>
+    <title>SBEAN_BESS: Decision maker or QSE changed (2022-11-30)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=SBEAN_BESS"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=SBEAN_BESS#SBEAN_BESS/2022-11-30/control</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Scheduled by HEN POWER MARKETING LLC (SQ1), was HEN POWER MARKETING LLC</summary>
+  </entry>
+</feed>

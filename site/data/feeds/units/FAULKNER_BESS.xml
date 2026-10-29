@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>FAULKNER_BESS: bidding and operating changes</title>
+  <link href="https://ercotbids.currenttech.energy/unit.html?unit=FAULKNER_BESS"/>
+  <id>https://ercotbids.currenttech.energy/unit.html?unit=FAULKNER_BESS</id>
+  <updated>2026-10-18T00:00:00Z</updated>
+  <entry>
+    <title>FAULKNER_BESS: Decision maker or QSE changed (2022-05-24)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=FAULKNER_BESS"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=FAULKNER_BESS#FAULKNER_BESS/2022-05-24/control</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Offers now decided by HEN INFRASTRUCTURE LLC 2, was HEN INFRASTRUCTURE LLC</summary>
+  </entry>
+  <entry>
+    <title>FAULKNER_BESS: Decision maker or QSE changed (2022-05-24)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=FAULKNER_BESS"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=FAULKNER_BESS#FAULKNER_BESS/2022-05-24/control</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Offers now decided by HEN INFRASTRUCTURE LLC 2, was HEN INFRASTRUCTURE LLC</summary>
+  </entry>
+</feed>

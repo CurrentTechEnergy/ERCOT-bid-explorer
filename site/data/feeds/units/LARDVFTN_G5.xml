@@ -39,4 +39,25 @@
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Multi-day: off a day or more in 2026-01 to Daily, 1–2 a week in 2026-02</summary>
   </entry>
+  <entry>
+    <title>LARDVFTN: Decision maker or QSE changed (2024-12-03)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=LARDVFTN"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=LARDVFTN#LARDVFTN/2024-12-03/control</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Scheduled by CPS ENERGY, was EDF NORTH AMERICA (SQ20)</summary>
+  </entry>
+  <entry>
+    <title>LARDVFTN: Decision maker or QSE changed (2024-05-03)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=LARDVFTN"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=LARDVFTN#LARDVFTN/2024-05-03/control</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Offers now decided by CPS ENERGY, was ERCOT code YTALEN</summary>
+  </entry>
+  <entry>
+    <title>LARDVFTN: Decision maker or QSE changed (2021-06-02)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=LARDVFTN"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=LARDVFTN#LARDVFTN/2021-06-02/control</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Scheduled by EDF NORTH AMERICA (SQ20), was ERCOT code QTWER9</summary>
+  </entry>
 </feed>

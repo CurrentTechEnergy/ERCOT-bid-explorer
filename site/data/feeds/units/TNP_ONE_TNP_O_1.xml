@@ -32,4 +32,25 @@
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Offer price vs peer median: -$7 to $27/MWh</summary>
   </entry>
+  <entry>
+    <title>TNP: Decision maker or QSE changed (2023-10-10)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=TNP"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=TNP#TNP/2023-10-10/control</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Scheduled by EDF TRADING (SQ4), was ERCOT code QLONE2</summary>
+  </entry>
+  <entry>
+    <title>TNP: Decision maker or QSE changed (2023-08-15)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=TNP"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=TNP#TNP/2023-08-15/control</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Offers now decided by MAJOR OAK POWER LLC, was ERCOT code YKINDL</summary>
+  </entry>
+  <entry>
+    <title>TNP: Decision maker or QSE changed (2023-04-18)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=TNP"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=TNP#TNP/2023-04-18/control</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Offers now decided by ERCOT code YKINDL, was ERCOT code YCOMPV</summary>
+  </entry>
 </feed>

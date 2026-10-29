@@ -3,7 +3,7 @@
   <title>WCPP_CC1: bidding and operating changes</title>
   <link href="https://ercotbids.currenttech.energy/unit.html?unit=WCPP_CC1"/>
   <id>https://ercotbids.currenttech.energy/unit.html?unit=WCPP_CC1</id>
-  <updated>2026-10-26T00:00:00Z</updated>
+  <updated>2026-10-29T00:00:00Z</updated>
   <entry>
     <title>WCPP_CC1: Minimum-energy offer stepped (2026-08-17)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=WCPP_CC1"/>
@@ -17,6 +17,13 @@
     <id>https://ercotbids.currenttech.energy/unit.html?unit=WCPP_CC1#WCPP_CC1/2026-07-16/dam_mingen_step</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Minimum-energy offer stepped: $17 to $23/MWh (-$1 to $5 against the fuel-cost line)</summary>
+  </entry>
+  <entry>
+    <title>WCPP_CC1: Turn-off point moved (2026-07-01)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=WCPP_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=WCPP_CC1#WCPP_CC1/2026-07-01/turnoff/1</id>
+    <updated>2026-10-29T00:00:00Z</updated>
+    <summary>Turn-off point with an award some hours -$81 to -$27 per MW of minimum output in July; the next month held it</summary>
   </entry>
   <entry>
     <title>WCPP_CC1: Shut down despite a day-ahead award (2026-06-23)</title>

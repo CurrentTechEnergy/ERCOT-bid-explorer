@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>RBN_BESS1: bidding and operating changes</title>
+  <link href="https://ercotbids.currenttech.energy/unit.html?unit=RBN_BESS1"/>
+  <id>https://ercotbids.currenttech.energy/unit.html?unit=RBN_BESS1</id>
+  <updated>2026-10-18T00:00:00Z</updated>
+  <entry>
+    <title>RBN_BESS1: Decision maker or QSE changed (2024-11-12)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=RBN_BESS1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=RBN_BESS1#RBN_BESS1/2024-11-12/control</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Scheduled by TRQ19 (SQ19), was TRQ26 (SQ26)</summary>
+  </entry>
+  <entry>
+    <title>RBN_BESS1: Decision maker or QSE changed (2024-11-12)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=RBN_BESS1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=RBN_BESS1#RBN_BESS1/2024-11-12/control</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Scheduled by TRQ19 (SQ19), was TRQ26 (SQ26)</summary>
+  </entry>
+  <entry>
+    <title>RBN_BESS1: Decision maker or QSE changed (2024-01-03)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=RBN_BESS1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=RBN_BESS1#RBN_BESS1/2024-01-03/control</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Scheduled by TRQ26 (SQ26), was TENASKA POWER SERVICES CO</summary>
+  </entry>
+  <entry>
+    <title>RBN_BESS1: Decision maker or QSE changed (2024-01-03)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=RBN_BESS1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=RBN_BESS1#RBN_BESS1/2024-01-03/control</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Scheduled by TRQ26 (SQ26), was TENASKA POWER SERVICES CO</summary>
+  </entry>
+</feed>

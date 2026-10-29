@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>WND_WHITNEY1: bidding and operating changes</title>
+  <link href="https://ercotbids.currenttech.energy/unit.html?unit=WND_WHITNEY1"/>
+  <id>https://ercotbids.currenttech.energy/unit.html?unit=WND_WHITNEY1</id>
+  <updated>2026-10-18T00:00:00Z</updated>
+  <entry>
+    <title>WND: Decision maker or QSE changed (2024-07-08)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=WND"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=WND#WND/2024-07-08/control</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Offers now decided by WHITNEY ALLOCATION COOPERATIVES, was ERCOT code YBECC</summary>
+  </entry>
+  <entry>
+    <title>WND: Decision maker or QSE changed (2024-02-29)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=WND"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=WND#WND/2024-02-29/control</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Scheduled by TENASKA POWER SERVICES CO, was BOSTON ENERGY TRADING AND MARKETING LLC (SQ12)</summary>
+  </entry>
+  <entry>
+    <title>WND: Decision maker or QSE changed (2023-02-28)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=WND"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=WND#WND/2023-02-28/control</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Scheduled by BOSTON ENERGY TRADING AND MARKETING LLC (SQ12), was ERCOT code QBRAZP</summary>
+  </entry>
+  <entry>
+    <title>WND: Decision maker or QSE changed (2021-03-09)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=WND"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=WND#WND/2021-03-09/control</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Scheduled by ERCOT code QBRAZP, was ERCOT code QBRAZO</summary>
+  </entry>
+</feed>

@@ -186,4 +186,11 @@
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Shut down for 4 h although a day-ahead award covered 100% of the window</summary>
   </entry>
+  <entry>
+    <title>SKY1: Decision maker or QSE changed (2024-05-21)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=SKY1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=SKY1#SKY1/2024-05-21/control</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Scheduled by TENASKA POWER SERVICES CO, was CITY OF GARLAND (SQ14)</summary>
+  </entry>
 </feed>

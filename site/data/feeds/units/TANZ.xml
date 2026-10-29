@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>TANZ: bidding and operating changes</title>
+  <link href="https://ercotbids.currenttech.energy/unit.html?unit=TANZ"/>
+  <id>https://ercotbids.currenttech.energy/unit.html?unit=TANZ</id>
+  <updated>2026-10-18T00:00:00Z</updated>
+  <entry>
+    <title>TANZ: Decision maker or QSE changed (2025-08-05)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=TANZ"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=TANZ#TANZ/2025-08-05/control</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Scheduled by ENGIE ENERGY MARKETING NA INC (SQ99), was ENGIE ENERGY MARKETING NA INC (SQ79)</summary>
+  </entry>
+</feed>

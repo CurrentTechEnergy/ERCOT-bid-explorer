@@ -30,7 +30,7 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=QALSW_CC2"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=QALSW_CC2#QALSW_CC2/2026-07-01/turnoff/1</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Turn-off point with an award some hours riding through to $3,105 per MW of minimum output in July; the next month held it</summary>
+    <summary>Turn-off point with an award some hours riding through to $2,521 per MW of minimum output in July; the next month held it</summary>
   </entry>
   <entry>
     <title>QALSW_CC2: Minimum-energy offer stepped (2026-06-30)</title>
@@ -79,7 +79,7 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=QALSW_CC2"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=QALSW_CC2#QALSW_CC2/2026-04-01/turnoff/0</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Turn-off point without an award $537 to riding through per MW of minimum output in April; the next month held it</summary>
+    <summary>Turn-off point without an award $633 to $1,236 per MW of minimum output in April; the next month held it</summary>
   </entry>
   <entry>
     <title>QALSW_CC2: Outage ended (2026-03-23)</title>
@@ -136,5 +136,19 @@
     <id>https://ercotbids.currenttech.energy/unit.html?unit=QALSW_CC2#QALSW_CC2/2025-12-02/outage_start</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Outage began, lasting 31 days</summary>
+  </entry>
+  <entry>
+    <title>QALSW: Decision maker or QSE changed (2025-01-31)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=QALSW"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=QALSW#QALSW/2025-01-31/control</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Offers now decided by CALPINE POWER MANAGEMENT LLC, was ERCOT code YQUAIL</summary>
+  </entry>
+  <entry>
+    <title>QALSW: Decision maker or QSE changed (2024-11-12)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=QALSW"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=QALSW#QALSW/2024-11-12/control</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Scheduled by CALPINE POWER MANAGEMENT LLC, was EDF NORTH AMERICA (SQ28)</summary>
   </entry>
 </feed>

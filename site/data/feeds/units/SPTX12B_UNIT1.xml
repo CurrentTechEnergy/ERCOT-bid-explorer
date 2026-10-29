@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>SPTX12B_UNIT1: bidding and operating changes</title>
+  <link href="https://ercotbids.currenttech.energy/unit.html?unit=SPTX12B_UNIT1"/>
+  <id>https://ercotbids.currenttech.energy/unit.html?unit=SPTX12B_UNIT1</id>
+  <updated>2026-10-18T00:00:00Z</updated>
+  <entry>
+    <title>SPTX12B_UNIT1: Decision maker or QSE changed (2023-03-16)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=SPTX12B_UNIT1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=SPTX12B_UNIT1#SPTX12B_UNIT1/2023-03-16/control</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Offers now decided by RWE CLEAN ENERGY LLC, was ERCOT code YCEDUP</summary>
+  </entry>
+  <entry>
+    <title>SPTX12B_UNIT1: Decision maker or QSE changed (2023-03-16)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=SPTX12B_UNIT1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=SPTX12B_UNIT1#SPTX12B_UNIT1/2023-03-16/control</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Offers now decided by RWE CLEAN ENERGY LLC, was ERCOT code YCEDUP</summary>
+  </entry>
+</feed>

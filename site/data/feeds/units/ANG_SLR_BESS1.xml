@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>ANG_SLR_BESS1: bidding and operating changes</title>
+  <link href="https://ercotbids.currenttech.energy/unit.html?unit=ANG_SLR_BESS1"/>
+  <id>https://ercotbids.currenttech.energy/unit.html?unit=ANG_SLR_BESS1</id>
+  <updated>2026-10-18T00:00:00Z</updated>
+  <entry>
+    <title>ANG: Decision maker or QSE changed (2024-05-03)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=ANG"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=ANG#ANG/2024-05-03/control</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Offers now decided by APEX CLEAN ENERGY HOLDINGS LLC, was ERCOT code YANGSO, ERCOT code YANGST</summary>
+  </entry>
+</feed>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>MADERO: bidding and operating changes</title>
+  <link href="https://ercotbids.currenttech.energy/unit.html?unit=MADERO"/>
+  <id>https://ercotbids.currenttech.energy/unit.html?unit=MADERO</id>
+  <updated>2026-10-18T00:00:00Z</updated>
+  <entry>
+    <title>MADERO: Decision maker or QSE changed (2024-04-16)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=MADERO"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=MADERO#MADERO/2024-04-16/control</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Scheduled by TRQ25 (SQ25), was ENGIE ENERGY MARKETING NA INC (SQ41), ENGIE ENERGY MARKETING NA INC (SQ42)</summary>
+  </entry>
+</feed>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>TY_COOKE_GT2: bidding and operating changes</title>
+  <link href="https://ercotbids.currenttech.energy/unit.html?unit=TY_COOKE_GT2"/>
+  <id>https://ercotbids.currenttech.energy/unit.html?unit=TY_COOKE_GT2</id>
+  <updated>2026-10-18T00:00:00Z</updated>
+  <entry>
+    <title>TY: Decision maker or QSE changed (2021-08-03)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=TY"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=TY#TY/2021-08-03/control</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Scheduled by TRQ10 (SQ10), was TENASKA POWER SERVICES CO</summary>
+  </entry>
+</feed>

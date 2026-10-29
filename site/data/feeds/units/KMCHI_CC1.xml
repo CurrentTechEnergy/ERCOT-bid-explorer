@@ -37,7 +37,7 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=KMCHI_CC1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=KMCHI_CC1#KMCHI_CC1/2026-05-01/turnoff/2</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Turn-off point with an award every hour $3,951 to riding through per MW of minimum output in May; the next month held it</summary>
+    <summary>Turn-off point with an award every hour $3,764 to riding through per MW of minimum output in May; the next month held it</summary>
   </entry>
   <entry>
     <title>KMCHI_CC1: Timescale group changed (2026-05-01)</title>
@@ -80,5 +80,12 @@
     <id>https://ercotbids.currenttech.energy/unit.html?unit=KMCHI_CC1#KMCHI_CC1/2026-02-10/outage_start</id>
     <updated>2026-10-23T00:00:00Z</updated>
     <summary>Outage began, lasting 26 days</summary>
+  </entry>
+  <entry>
+    <title>KMCHI: Decision maker or QSE changed (2021-03-31)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=KMCHI"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=KMCHI#KMCHI/2021-03-31/control</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Offers now decided by ERCOT code YKIOWA, was SHELL ENERGY NORTH AMERICA (US) LP</summary>
   </entry>
 </feed>

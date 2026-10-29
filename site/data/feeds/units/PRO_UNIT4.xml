@@ -88,4 +88,18 @@
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Minimum-energy offer stepped: $52 to $39/MWh ($7 to $8 against the fuel-cost line)</summary>
   </entry>
+  <entry>
+    <title>PRO: Decision maker or QSE changed (2025-09-25)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=PRO"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=PRO#PRO/2025-09-25/control</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Offers now decided by CPS ENERGY, was ERCOT code YWATTB</summary>
+  </entry>
+  <entry>
+    <title>PRO: Decision maker or QSE changed (2022-08-31)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=PRO"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=PRO#PRO/2022-08-31/control</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Scheduled by EDF NORTH AMERICA (SQ21), was TRQ23 (SQ23)</summary>
+  </entry>
 </feed>

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>WFTANK_ESS1: bidding and operating changes</title>
+  <link href="https://ercotbids.currenttech.energy/unit.html?unit=WFTANK_ESS1"/>
+  <id>https://ercotbids.currenttech.energy/unit.html?unit=WFTANK_ESS1</id>
+  <updated>2026-10-18T00:00:00Z</updated>
+  <entry>
+    <title>WFTANK_ESS1: Decision maker or QSE changed (2024-04-23)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=WFTANK_ESS1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=WFTANK_ESS1#WFTANK_ESS1/2024-04-23/control</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Offers now decided by WOLF TANK STORAGE LLC, was BOSTON ENERGY TRADING AND MARKETING LLC</summary>
+  </entry>
+  <entry>
+    <title>WFTANK_ESS1: Decision maker or QSE changed (2024-04-23)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=WFTANK_ESS1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=WFTANK_ESS1#WFTANK_ESS1/2024-04-23/control</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Offers now decided by WOLF TANK STORAGE LLC, was BOSTON ENERGY TRADING AND MARKETING LLC</summary>
+  </entry>
+  <entry>
+    <title>WFTANK_ESS1: Decision maker or QSE changed (2024-04-16)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=WFTANK_ESS1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=WFTANK_ESS1#WFTANK_ESS1/2024-04-16/control</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Scheduled by TRQ28 (SQ28), was BOSTON ENERGY TRADING AND MARKETING LLC (SQ11)</summary>
+  </entry>
+  <entry>
+    <title>WFTANK_ESS1: Decision maker or QSE changed (2024-04-16)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=WFTANK_ESS1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=WFTANK_ESS1#WFTANK_ESS1/2024-04-16/control</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Scheduled by TRQ28 (SQ28), was BOSTON ENERGY TRADING AND MARKETING LLC (SQ11)</summary>
+  </entry>
+</feed>

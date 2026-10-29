@@ -67,4 +67,18 @@
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Outage began, lasting 18 days</summary>
   </entry>
+  <entry>
+    <title>CARBN_BSP_1: Decision maker or QSE changed (2021-12-14)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=CARBN_BSP_1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=CARBN_BSP_1#CARBN_BSP_1/2021-12-14/control</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Scheduled by PRIORITY POWER MANAGEMENT LLC (SQ1), was MP2 ENERGY LLC</summary>
+  </entry>
+  <entry>
+    <title>CARBN_BSP_1: Decision maker or QSE changed (2021-12-14)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=CARBN_BSP_1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=CARBN_BSP_1#CARBN_BSP_1/2021-12-14/control</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Scheduled by PRIORITY POWER MANAGEMENT LLC (SQ1), was MP2 ENERGY LLC</summary>
+  </entry>
 </feed>
