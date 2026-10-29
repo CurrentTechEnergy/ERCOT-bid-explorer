@@ -9,7 +9,8 @@ built from the 60-day day files, pipeline/decision_table.month_file):
      percentile HSL online), and the minimum output it took offline in cheap hours (offline, and
      online at some hour in the 24 before, inside one of its off spells, at its median LSL online).
   2. Why does the rest stay on?  Fossil minimum output online in cheap hours and what it cost to
-     stay on (_day_cost: minimum-energy cost less the DA node price, times LSL), by reason, the
+     stay on (_day_cost: gas cost at the unit's own hub, or coal's generic cost, less the DA node
+     price, times LSL; not the DAM minimum-energy offer), by reason, the
      first that applies (REASONS): coal; never off (its group that year); held by its award (a DAM
      energy award of at least AWARD_LSL x its running LSL that hour); rode through (the
      operator-informed model, pipeline/models/operator_informed.py, also called it on); turned
@@ -45,7 +46,7 @@ from .intraday import train_of
 from .store import read_json_gz, write_json_gz
 
 PATH = DATA_DIR / "goal.json.gz"
-VERSION = "v3"
+VERSION = "v4"
 START = "2019-01"
 CHEAP = 10.0          # $/MWh, day-ahead hub average: a cheap hour
 OVER_PRICE = 5.0      # $/MWh, real-time hub average: an oversupply hour
@@ -196,23 +197,13 @@ def _losing(table):
     return out
 
 
-def _day_cost(h, gas):
-    """{(train, date): minimum-energy cost $/MWh} for the fossil trains, by the decision table's
-    rule (pipeline/decision_table.py): the day's own offer, else its latest within COST_DAYS days,
-    else the day's Henry Hub at HEAT_RATE for gas units, else the generic cost (coal, which
-    offers none)."""
-    from .config import GENERIC_COSTS
-    from .decision_table import HEAT_RATE
-    from .decisions import COST_DAYS
-    d = h[h["tech"].isin(FOSSIL)].groupby(["train", "date"], sort=True).agg(tech=("tech", "first"), own=("mingen", "min")).reset_index()
-    d["day"] = pd.to_datetime(d["date"])
-    d["seen"] = d["day"].where(d["own"].notna())
-    d[["last", "seen"]] = d.groupby("train")[["own", "seen"]].ffill()
-    fresh = ((d["day"] - d["seen"]).dt.days <= COST_DAYS).to_numpy()
-    gas_cost = d["tech"].map(HEAT_RATE) * d["date"].map(gas)
-    generic = d["tech"].map(lambda t: GENERIC_COSTS[t][3])
-    cost = np.where(fresh, d["last"], np.where(gas_cost.notna(), gas_cost, generic))
-    return dict(zip(zip(d["train"], d["date"]), cost.astype(float)))
+def _day_cost(h, gas, hubs):
+    """{(train, date): cost of running at minimum $/MWh} for the fossil trains, by the decision
+    table's rule (pipeline/decision_table.run_cost): gas units at their gas cost at their own hub,
+    coal at the generic cost.  Not the DAM minimum-energy offer."""
+    from .decision_table import run_cost
+    d = h.loc[h["tech"].isin(FOSSIL), ["train", "date", "tech"]].drop_duplicates(["train", "date"])
+    return {(tr, dd): run_cost(t, tr, dd, gas, hubs)[0] for tr, dd, t in zip(d["train"], d["date"], d["tech"])}
 
 
 def _floor(year, h, r):
@@ -248,7 +239,8 @@ def _medians(net, fossil):
 def _year(year, months, cache, before=None, losing=None, gas=None):
     """Questions 1, 2 and 4 for one calendar year; `before` is the year before's train states
     (train, date, he, state), so a part year's groups still read a full year of states, and
-    `losing` the loss-window hours (_losing) and `gas` Henry Hub by date for the cost of staying on."""
+    `losing` the loss-window hours (_losing) and `gas` (gas by hub and date, the unit hubs) for the
+    cost of staying on."""
     th, ren, hubs, op = [], [], {}, {}
     for m in months:
         f = month_file("thermal", m, cache)
@@ -314,10 +306,10 @@ def _year(year, months, cache, before=None, losing=None, gas=None):
         r[2] += q1[tr]
     q1rows = [[year, t, grp, n, round(c), round(o)] for (t, grp), (n, c, o) in sorted(rows1.items())]
     # question 2: minimum online in cheap hours, by reason, and what staying on cost: the day's
-    # minimum-energy cost (_day_cost) less the DA node price, times the LSL (negative where the
+    # cost of running at minimum (_day_cost: gas cost, not the offer) less the DA node price, times the LSL (negative where the
     # node paid more)
     c = h[h["cheap"] & atmin].copy()
-    dc = _day_cost(h, gas or {})
+    dc = _day_cost(h, *(gas or ({}, {})))
     c["cost"] = (np.array([dc.get(k, np.nan) for k in zip(c["train"], c["date"])]) - c["da_node"].to_numpy()) * c["lsl"].to_numpy()
     q2rows = [[year, t, w, round(float(g["lsl"].sum())), round(float(g["cost"].sum()))] for (t, w), g in c.groupby(["tech", "why"])]
     # ... and by the same groups as the award chart, hour by hour: a DAM award over 0.5 MW that
@@ -514,10 +506,8 @@ def build(cache: Path, end=None, table=None) -> dict:
         from .decision_table import build as build_table
         table = build_table(months, cache)
     losing = _losing(table)
-    from .decision_table import henry_hub
-    hh = henry_hub(cache)
-    hh = hh.reindex(pd.date_range(hh.index.min(), pd.Timestamp.today()), method="ffill")
-    gas = {d.strftime("%Y-%m-%d"): float(v) for d, v in hh.items() if np.isfinite(v)}
+    from .decision_table import gas_by_hub, hub_of
+    gas = (gas_by_hub(cache), hub_of())
     before, nets, fos = None, [], []
     for y in sorted({m[:4] for m in months}):
         r = _year(int(y), [m for m in months if m[:4] == y], cache, before, losing, gas)

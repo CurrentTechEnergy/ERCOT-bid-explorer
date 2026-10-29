@@ -10,23 +10,29 @@ Reads the monthly thermal and renewable history (pipeline/history.py, the `histo
 HISTORY_DIR) and, for months the release does not hold yet, builds the same rows from the
 per-unit 60-day day files (UNIT_DATA_DIR/60d) and the DAM day files (data/dam), cached as
 <out>/months/.  Henry Hub daily prices come from the site's EIA series (henry_hub), else EIA's
-public history file (no key), cached as <out>/henry-hub.csv.
+public history file (no key), cached as <out>/henry-hub.csv; the Houston Ship Channel and Waha
+prices from the private hub files (pipeline/private.py), and each unit's hub from
+data/fuel_hubs.json.gz.
 
 One row per train and decision block with a loss window: a block runs from HE7 of the day to
 HE6 of the next, so the night's cheap hours and an evening shutdown ahead of them fall in the
 same block.  A row needs the train online at the block's first hour and available through the
 block: no outage or missing hour, except inside an off spell that began with OUT_MIN_H or more
 offline hours (a shutdown the unit then used for maintenance still counts as a decision).  Combined-cycle configurations are merged into their train (as
-pipeline/decisions.py does): online when any configuration is, the smallest DAM LSL and
-minimum-energy cost, awards summed.
+pipeline/decisions.py does): online when any configuration is, the smallest DAM LSL, awards
+summed.
 
   train, tech, date, year, month, season
   lsl          the train's smallest DAM LSL that day (MW; days below MIN_LSL are left out)
-  mingen       minimum-energy offer cost ($/MWh): the day's own, else its latest within
-               COST_DAYS days, else (mingen_est true) the day's Henry Hub price at HEAT_RATE
-               for gas units and the generic cost for coal, which submits no such offer
+  cost         the cost of running at minimum ($/MWh): for gas units the gas cost, GAS_HR x the
+               train's own hub price (gas_by_hub), with Henry Hub standing in (cost_est true)
+               before the hub's series starts; for coal the generic cost (cost_est true).  Not
+               the DAM minimum-energy offer, which units often set to win or avoid commitment
+               rather than at cost
+  offer        the DAM minimum-energy offer ($/MWh), for reference: the day's own, else its
+               latest within COST_DAYS days (blank without one; coal submits none)
   hot_start    hot start-up offer ($), per MW of LSL as start_per_mw
-  loss         worst contiguous window of (mingen - DAM node price) x LSL over the day ($,
+  loss         worst contiguous window of (cost - DAM node price) x LSL over the day ($,
                pipeline.decisions._window); loss_per_mw = loss / LSL
   win_from, win_h   the window's first hour ending, counted from the block day's HE1 (7 to 30;
                25 and later are the next morning), and its length (hours)
@@ -58,16 +64,14 @@ import pandas as pd
 
 from .config import DATA_DIR, GENERIC_COSTS, HISTORY_DIR, UNIT_DATA_DIR
 from .decisions import COST_DAYS, OUT_MIN_H, RANK, _window
+from .gascost import HEAT_RATE as GAS_HR
 from .intraday import train_of
 
 TECHS = ("coal", "combined_cycle", "gas_steam")      # the units judged on a daily stay-on loss
 HH_URL = "https://www.eia.gov/dnav/ng/hist_xls/RNGWHHDd.xls"
 AWARD_LSL = 0.9
 MIN_LSL = 5.0       # MW: a smaller DAM LSL is a placeholder, not the unit's minimum
-# $/MWh of minimum-energy offer per $/MMBtu of Henry Hub, the median over the trains' own offers
-# 2019-26 (combined cycle 7.1 to 7.8 in every year; gas steam 14 to 20): stands in for a train
-# without an offer, so its cost follows the gas price instead of a fixed generic one
-HEAT_RATE = {"combined_cycle": 7.6, "gas_steam": 17.0}
+GAS_TOLERANCE = 7   # days a hub price carries over a gap in its series before Henry Hub stands in
 BLOCK_START = 6     # hour index (HE7) a decision block starts: HE7 to HE6 the next day, so a night's
                     # cheap hours and the evening shutdown ahead of them fall in one block
 SEASON = {12: "winter", 1: "winter", 2: "winter", 3: "spring", 4: "spring", 5: "spring",
@@ -134,6 +138,60 @@ def henry_hub(out: Path) -> pd.Series:
     return x.set_index("date")["hh"].sort_index()
 
 
+def gas_by_hub(out: Path) -> dict:
+    """{hub: {date: $/MMBtu}} for every day from 2019: the price on the last trading day before
+    the day (gas trades the day before it flows), for Henry Hub ("hh", henry_hub) and, where their
+    series reach, Houston Ship Channel ("hsc") and Waha ("waha"): the private gas_hub_history and
+    gas_hubs files (pipeline/gas.py, OilPriceAPI).  A price carries at most GAS_TOLERANCE days."""
+    from . import private
+    series = {"hh": henry_hub(out)}
+    hist = private.read("gas_hub_history.json.gz", default=None) or {}
+    live = (private.read("gas_hubs.json.gz", default=None) or {}).get("hubs", {})
+    for k in ("hsc", "waha"):
+        v = {}
+        for src in (hist.get(k) or {}, live.get(k) or {}):
+            v.update((d, x) for d, x in zip(src.get("dates") or [], src.get("value") or []) if x is not None)
+        if v:
+            x = pd.Series(v, dtype=float)
+            x.index = pd.to_datetime(x.index)
+            series[k] = x.sort_index()
+    days = pd.date_range("2019-01-01", pd.Timestamp.today().normalize())
+    keys = days.strftime("%Y-%m-%d")
+    out_ = {}
+    for k, x in series.items():
+        x = x.dropna()
+        x = x[~x.index.duplicated(keep="last")]
+        lag = x.reindex(days - pd.Timedelta(days=1), method="ffill", tolerance=pd.Timedelta(days=GAS_TOLERANCE))
+        out_[k] = {d: float(p) for d, p in zip(keys, lag.to_numpy()) if np.isfinite(p)}
+    return out_
+
+
+def hub_of() -> dict:
+    """{unit or CC train: "hsc" | "waha"}: each unit's gas hub (data/fuel_hubs.json.gz); a train
+    takes its first configuration's."""
+    from .store import read_json_gz
+    hub = {}
+    for name, u in ((read_json_gz(DATA_DIR / "fuel_hubs.json.gz", default={}) or {}).get("units") or {}).items():
+        hub[name] = u.get("hub") or "hsc"
+        if u.get("tech") == "combined_cycle":
+            hub.setdefault(train_of(name), hub[name])
+    return hub
+
+
+def run_cost(tech, train, date, gas, hubs):
+    """($/MWh, estimated) of running at minimum on `date`: gas units at GAS_HR x the train's own
+    hub price (Houston Ship Channel without one), Henry Hub standing in (estimated) where the hub
+    has no price; coal, and any unit without a gas price, at the generic cost (estimated)."""
+    if tech in GAS_HR:
+        p = gas.get(hubs.get(train, "hsc"), {}).get(date)
+        if p is not None:
+            return GAS_HR[tech] * p, False
+        p = gas.get("hh", {}).get(date)
+        if p is not None:
+            return GAS_HR[tech] * p, True
+    return float(GENERIC_COSTS[tech][3]), True
+
+
 def train_days(f: pd.DataFrame) -> pd.DataFrame:
     """The month's thermal rows merged to one row per train, day and hour."""
     f = f[f["tech"].astype(str).isin(TECHS)].copy()
@@ -188,6 +246,7 @@ def _excused(codes):
 
 def build(months, out: Path) -> pd.DataFrame:
     hh = henry_hub(out)
+    by_hub, unit_hub = gas_by_hub(out), hub_of()
     per, system = [], []
     for m in months:
         f = month_file("thermal", m, out)
@@ -241,21 +300,17 @@ def build(months, out: Path) -> pd.DataFrame:
         for s, ln in spells:
             p10.setdefault(years[s // 24], []).append(ln)
         p10 = {y: float(np.percentile(v, 10)) for y, v in p10.items()}
-        # each day's cost and LSL: the day's own minimum-energy cost, else its latest within
-        # COST_DAYS days, else the day's gas price at the technology's offer heat rate, else
-        # the generic cost
-        cost, est, lsl = np.full(n, np.nan), np.zeros(n, bool), np.full(n, np.nan)
+        # each day's cost (run_cost), LSL and, for reference, minimum-energy offer: the day's
+        # own, else its latest within COST_DAYS days
+        cost, est, lsl, offer = np.full(n, np.nan), np.zeros(n, bool), np.full(n, np.nan), np.full(n, np.nan)
         last_mg, last_mg_day = None, -10 ** 6
         for i in range(n):
             lsl[i] = np.nanmin(dl[i]) if np.isfinite(dl[i]).any() else np.nan
             if np.isfinite(mg[i]).any():
                 last_mg, last_mg_day = float(np.nanmin(mg[i])), di[i]
             if last_mg is not None and di[i] - last_mg_day <= COST_DAYS:
-                cost[i] = last_mg
-            elif tech in HEAT_RATE and np.isfinite(gas.get(dates[i], np.nan)):
-                cost[i], est[i] = HEAT_RATE[tech] * gas[dates[i]], True
-            else:
-                cost[i], est[i] = GENERIC_COSTS[tech][3], True
+                offer[i] = last_mg
+            cost[i], est[i] = run_cost(tech, train, dates[i], by_hub, unit_hub)
         excused = _excused(flat)
         for i, d in enumerate(dates[:-1]):
             if di[i + 1] != di[i] + 1:
@@ -287,13 +342,13 @@ def build(months, out: Path) -> pd.DataFrame:
                             sysd.get(dates[i + 1], np.full((24, 4), np.nan))[:BLOCK_START]])[win]
             sy = np.nanmean(sy, axis=0) if np.isfinite(sy).any() else np.full(4, np.nan)
             mp = margin / l
-            rows.append((train, tech, d, cost[i], bool(est[i]), l, float(np.nanmin(hot[i])) if np.isfinite(hot[i]).any() else np.nan,
+            rows.append((train, tech, d, cost[i], bool(est[i]), offer[i], l, float(np.nanmin(hot[i])) if np.isfinite(hot[i]).any() else np.nan,
                          loss, BLOCK_START + bs + 1, nh, float(mp[:bs][mp[:bs] > 0].sum()), float(mp[bs + nh:][mp[bs + nh:] > 0].sum()),
                          float((two(aw)[win] >= AWARD_LSL * l).mean()), p10.get(years[i], np.nan),
                          float(on.mean()), bool(shut), BLOCK_START + shut[0][0] + 1 if shut else 0, shut[0][1] if shut else 0,
                          float(np.nanmean(rl)) if rl.size and np.isfinite(rl).any() else np.nan,
                          gas.get(d, np.nan), *map(float, sy)))
-    x = pd.DataFrame(rows, columns=["train", "tech", "date", "mingen", "mingen_est", "lsl", "hot_start", "loss", "win_from",
+    x = pd.DataFrame(rows, columns=["train", "tech", "date", "cost", "cost_est", "offer", "lsl", "hot_start", "loss", "win_from",
                                     "win_h", "before_per_mw", "after_per_mw", "award_share", "off_p10", "on_share", "shut",
                                     "shut_he", "off_h", "run_lsl", "gas_hh", "hub_win", "wind_win", "solar_win", "thermal_win"])
     dt_ = pd.to_datetime(x["date"])
@@ -333,14 +388,14 @@ def summary(x: pd.DataFrame) -> str:
         for b in tab.index:
             lines.append(f"| {b} | " + " | ".join("–" if not cnt.loc[b, c] or pd.isna(tab.loc[b, c]) else f"{tab.loc[b, c]:.0%} ({int(cnt.loc[b, c])})"
                                                  for c in tab.columns) + " |")
-    lines += ["", "## Share of rows on an estimated cost (no offer of the train's own within COST_DAYS days)", "",
+    lines += ["", "## Share of rows on an estimated cost (Henry Hub before the train's own hub series starts; coal generic)", "",
               "| Tech | " + " | ".join(str(y) for y in sorted(x["year"].unique())) + " |", "|---|" + "---|" * x["year"].nunique()]
-    est = x.groupby(["tech", "year"])["mingen_est"].mean().unstack()
+    est = x.groupby(["tech", "year"])["cost_est"].mean().unstack()
     for t in est.index:
         lines.append(f"| {t} | " + " | ".join(f"{v:.0%}" for v in est.loc[t]) + " |")
-    lines += ["", "Coal submits no minimum-energy offer, so its loss rests on the generic cost, and its shutdowns are mostly",
+    lines += ["", "Coal's loss rests on the generic cost, and its shutdowns are mostly",
               "declared as outages straight away (left out here as unavailable): coal is better judged on the seasonal rule."]
-    lines += ["", "Windows and costs are day-ahead (DAM node price against the unit's minimum-energy offer), as pipeline/decisions.py.",
+    lines += ["", "Windows are day-ahead: the DAM node price against the unit's gas cost at minimum (run_cost), not its minimum-energy offer.",
               "Blocks run HE7 to HE6 the next day; the predictor instead takes the calendar day and carries a window reaching HE24 into the next morning."]
     return "\n".join(lines) + "\n"
 
