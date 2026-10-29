@@ -3,18 +3,18 @@
 The fleet's recent actuals, ERCOT's 2-day generation summary (sum of ESR base points, split into
 discharging and charging), carry most of the signal: the fleet discharges into the evening peak
 and charges through the solar hours, on a clock that moves slowly, while the fleet itself grows
-month by month.  The day-ahead system lambda's shape adds a little (v2; the hub average before): on a given day the cheapest hours
+month by month.  The day-ahead hub price shape adds a little: on a given day the cheapest hours
 charge and the dearest discharge.  Tested on 243 days (Dec 2025 to Oct 2026, pipeline.models
 .storage_habit --backtest): a trailing clock-hour mean is off by about 440 MW an hour on
 discharging; a price-rank shape alone by 560 MW; the 70 / 30 blend used here by 430 MW
 (charging 480 MW).  The day's price spread adds nothing measurable to the fleet's peak.
 
-  dis[h]  = BLEND x habit_dis[h] + (1 - BLEND) x peak_dis x shape_dis[rank(lambda[h])]
+  dis[h]  = BLEND x habit_dis[h] + (1 - BLEND) x peak_dis x shape_dis[rank(hub[h])]
   chg[h]  = the same for charging (held positive here, written negative into the forecast)
   habit   the clock-hour mean over the last WINDOW known days, weighted exp(-age / DECAY),
           scaled so its peak equals the weighted mean of the daily peaks (a mean of days whose
           peak hours differ sits below any one day's peak)
-  shape   the mean share of the day's peak by hour rank in the day-ahead system lambda (0 =
+  shape   the mean share of the day's peak by hour rank in the day-ahead hub price (0 =
           cheapest) over the last SHAPE_WINDOW known days; peak = the mean daily peak
   known   2-day summaries posted before the day cleared: operating days up to D - LAG2
   v0 only: an hour charges or discharges, never both (the smaller side is zeroed); v1 keeps both,
@@ -27,7 +27,7 @@ discharging; a price-rank shape alone by 560 MW; the 70 / 30 blend used here by 
 
 v1 (Oct 20, 2026) corrects that rule with boosted trees, one for discharging and one for
 charging (scikit-learn, as thermal_cutoff), fitted on the fleet's known days: each training row is
-one hour of one known day, with the rule's own value for it, the hour, the day-ahead system lambda at
+one hour of one known day, with the rule's own value for it, the hour, the day-ahead hub price at
 the hour and either side of it, its rank in the day, the day's max, min and mean, the mean daily
 peak over the last 7 known days, month and weekday; the label is the 2-day summary's MW.  The
 trees are refit every REFIT days on the days known at the block's start, so a block of days
@@ -51,7 +51,7 @@ import numpy as np
 from ..config import DATA_DIR
 
 NAME = "storage_habit"
-VERSION = "v2"    # v2: day-ahead system lambda in place of the hub average (a fleet-level model reads the system price); v1: boosted-tree correction
+VERSION = "v1"
 
 LAG2 = 3              # the 2-day summary for day X is posted on X + 2; the forecast for D is made on D - 1
 WINDOW = 60           # days of habit considered
@@ -102,15 +102,14 @@ def actuals(date):
 
 
 class Habit:
-    """The fleet's known actuals with their day-ahead system lambda, loaded once per run.  (The
-    `hub` names below hold that lambda: a fleet-level model reads the system price.)"""
+    """The fleet's known actuals with their day-ahead hub prices, loaded once per run."""
 
     def __init__(self, ctx):
         self.ctx = ctx
         self.days = {}
         for d in sorted(ctx.index["days"].get("2dgen", [])):
             a = actuals(d)
-            hub = ctx.lam(d)
+            hub = ctx.hub(d)
             if a is None or hub is None:
                 continue
             self.days[d] = (np.asarray(hub, float), a[0], a[1])
@@ -267,10 +266,10 @@ def forecast(date, ctx, habit: Habit = None) -> dict:
     habit = habit or getattr(ctx, "_storage_habit", None)
     if habit is None:
         habit = ctx._storage_habit = Habit(ctx)
-    hub = ctx.lam(date)
+    hub = ctx.hub(date)
     out = predict_v1(habit, date, hub)
     if out is None:
-        return {"rows": None, "inputs": {"reason": "fewer than %d known 2-day summaries" % MIN_DAYS if hub is not None else "no day-ahead system lambda"}}
+        return {"rows": None, "inputs": {"reason": "fewer than %d known 2-day summaries" % MIN_DAYS if hub is not None else "no hub prices"}}
     dis, chg, eff, inputs = out
     cap, cap_day = _energy_cap(ctx, date)
     soc, dis, capped = _soc_path(dis, chg, eff, cap)
