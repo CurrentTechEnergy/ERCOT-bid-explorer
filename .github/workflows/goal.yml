@@ -37,11 +37,15 @@ jobs:
         run: |
           git fetch --depth 1 origin data && git worktree add --detach unitdata FETCH_HEAD
           gh release download history -R "$GITHUB_REPOSITORY" -p 'thermal-*.parquet' -p 'units-*.parquet' \
-            -p 'da-hubs-*.parquet' -p 'rt-prices-*.parquet' -D history
+            -p 'da-hubs-*.parquet' -p 'rt-prices-*.parquet' -p 'dam-status-*.parquet' -D history
       - name: Build
         env:
           PYTHONUNBUFFERED: "1"
           UNIT_DATA_DIR: unitdata
+          # read-only use: the licensed hub gas prices (pipeline/private.py) for the gas cost at minimum
+          R2_ENDPOINT: ${{ secrets.R2_ENDPOINT }}
+          R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
         run: python -m pipeline.goal --cache goal-cache
       - name: Commit
         run: |
