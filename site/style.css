@@ -257,6 +257,7 @@ details.dl > summary:hover { color: var(--ink); border-color: var(--muted); }
 .rows .bar { position: relative; height: 18px; background: var(--track); border-radius: 3px; overflow: hidden; min-width: 0; }
 .rows .bar i { position: absolute; top: 0; bottom: 0; left: 0; }
 .rows .bar i.tick { width: 3px; background: var(--ink); }
+.rows .bar i.outage, .sw.outage { background: repeating-linear-gradient(135deg, currentColor 0 2px, transparent 2px 5px); opacity: .55; }
 .rows .bar i.act { width: 3px; background: var(--surface); border-inline: 1px solid var(--ink); }
 .rows .val { font: 12px var(--font-data); color: var(--ink-2); white-space: nowrap; text-align: right; }
 .rows .val b { color: var(--ink); font-weight: 500; }
