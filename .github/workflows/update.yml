@@ -6,7 +6,9 @@ on:
     # disclosures around 05:20-06:05 Central; the day-ahead market results (tomorrow's node
     # prices) by 13:30 Central.  Cron is in UTC, so local times are an hour later in summer
     # (CDT/MDT) than in winter (CST/MST); GitHub usually starts scheduled runs 30-60 min late.
-    - cron: "17 11 * * *"   # 06:17 Central / 05:17 Mountain in summer, 05:17 / 04:17 in winter
+    # Winter time (Nov-Mar): 06:17 CST / 05:17 MST.  When daylight time starts (Mar 8, 2027),
+    # change it to "17 11 * * *" to keep 06:17 CDT / 05:17 MDT.
+    - cron: "17 12 * * *"
     - cron: "31 19 * * *"   # 14:31 Central / 13:31 Mountain in summer, 13:31 / 12:31 in winter:
                             # after the DAM posts, and the retry for any morning report posted late
   workflow_dispatch:
