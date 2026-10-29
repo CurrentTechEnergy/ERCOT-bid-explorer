@@ -568,5 +568,16 @@ function onOffDot(sel, on, r = 3.5) {
   return sel.attr("r", r).attr("fill", css(on ? "--ink" : "--surface")).attr("stroke", css("--ink")).attr("stroke-width", 1.5);
 }
 const onOffLegend = (on = "Online", off = "Offline") => `<span><span class="sw sw-on"></span>${on}</span><span><span class="sw sw-off"></span>${off}</span>`;
-window.CX = { onOffDot, onOffLegend, fromStart, SITE_START, setNote, getJSON, tryJSON, showTip, hideTip, clearPins, setCSV, readHash, writeHash, init, panelFromLink, css, esc, tickFormat, fmtKind, axisFmt, unitIndex, findUnits, matchedOn, drawCurtailDay };
+// hours ERCOT had a unit committed by RUC (data/unit_hours_60d.json.gz "ruc", pipeline/intraday.py):
+// Map date -> [hour ending, ...], the named configurations merged.  Purple (--c7) everywhere: red
+// is kept for surprises.  RUC days are left out of the decision charts' "called right" counts.
+function rucDays(uh, names) {
+  const out = new Map();
+  for (const n of names) for (const [d, hs] of uh?.ruc?.[n] || []) out.set(d, [...new Set([...(out.get(d) || []), ...hs])].sort((a, b) => a - b));
+  return out;
+}
+const rucRing = (sel, r) => sel.attr("r", r).attr("fill", "none").attr("stroke", css("--c7")).attr("stroke-width", 2).attr("pointer-events", "none");
+const rucLegend = (label = "ERCOT committed it (RUC)") => `<span><span class="sw sw-ruc"></span>${label}</span>`;
+const rucNote = (n, what = "days") => (n ? ` ${n} ${what} ERCOT committed it by RUC (purple ring) are left out of these counts: RUC is ERCOT's call, not the operator's.` : "");
+window.CX = { onOffDot, onOffLegend, rucDays, rucRing, rucLegend, rucNote, fromStart, SITE_START, setNote, getJSON, tryJSON, showTip, hideTip, clearPins, setCSV, readHash, writeHash, init, panelFromLink, css, esc, tickFormat, fmtKind, axisFmt, unitIndex, findUnits, matchedOn, drawCurtailDay };
 })();

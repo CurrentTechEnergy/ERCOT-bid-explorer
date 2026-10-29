@@ -28,6 +28,10 @@ Writes
     dates, units: {unit: "one character per hour, 24 per day"}:
       "-" no data, "0" offline, "o" on outage, "m" running at minimum, "a" running above minimum
     hsl: {unit: median HSL in the hours it ran (MW)}
+    ruc: {unit: [[date, [hour ending, ...]], ...]}: the hours ERCOT had the unit committed by
+      RUC (ONRUC or ONOPTOUT in at least half the hour's SCED runs), only units and days with
+      any.  Combined cycles by configuration, as the strips.  The operator model leaves these
+      hours out of its fits and its scorecard, and the decision charts mark them.
 
 A unit runs in an hour when most of its SCED runs in that hour have an online status (ON...),
 unless a thermal unit has nothing to give: no output and no HSL that hour (empty_hour; an
@@ -123,6 +127,17 @@ def status_group(s):
     return "other_on"
 
 
+def ruc_hours(status: list, runs: list) -> list:
+    """Hours ending (1 to 24) with ONRUC or ONOPTOUT in at least half the hour's SCED runs, from a
+    unit's expanded per-run status (units.expand)."""
+    n, k = np.zeros(24), np.zeros(24)
+    for s, m in zip(status, runs):
+        h = min(m // 60, 23)
+        n[h] += 1
+        k[h] += s in ("ONRUC", "ONOPTOUT")
+    return [h + 1 for h in range(24) if k[h] and k[h] >= 0.5 * n[h]]
+
+
 def unit_hours(u: dict, runs: list) -> tuple:
     """Per hour of the day: state char, output, LSL, HSL (NaN where not running); and the
     expanded per-run values (units.expand).  An hour the unit spends mostly in STARTUP, SHUTDOWN
@@ -177,6 +192,7 @@ def build_intraday(index: dict) -> None:
     tech = {t: {k: [None] * D for k in ["at_min", "above", "n", "transit"] + ["cap_" + g for g in STATUS_GROUPS]}
             for t in UNIT_TECHS}
     strips = {}
+    ruc = {}                  # unit -> [[date, [hour ending, ...]], ...]
     hsl_run = {}              # unit -> list of hourly HSL while running
     above_acc = {}            # (unit, thr) -> [tech, hours running, hours above, MWh above]
     spells = []
@@ -233,6 +249,9 @@ def build_intraday(index: dict) -> None:
                 if g and np.isfinite(h_):
                     sacc[g] += h_
             strips.setdefault(name, ["-" * 24] * di).append(st)
+            rh = ruc_hours(e["status"], runs)
+            if rh:
+                ruc.setdefault(name, []).append([d, rh])
             hsl_run.setdefault(name, []).extend(v for v in hsl if np.isfinite(v))
             a_min, a_above, a_n, a_tr = acc[t]
             for h, c in enumerate(st):
@@ -302,6 +321,7 @@ def build_intraday(index: dict) -> None:
     write_json_gz(DATA_DIR / "unit_hours_60d.json.gz", {
         "dates": dates, "units": {k: "".join(v) for k, v in sorted(strips.items())},
         "hsl": {k: round(float(np.median(v))) for k, v in sorted(hsl_run.items()) if v},
+        "ruc": dict(sorted(ruc.items())),
     })
     print(f"intraday_60d: {D} days, {n_files} per-unit day file(s), {len(spells)} off spells, "
           f"{len(strips)} unit strips")
