@@ -46,7 +46,7 @@ from .intraday import train_of
 from .store import read_json_gz, write_json_gz
 
 PATH = DATA_DIR / "goal.json.gz"
-VERSION = "v5"   # v5: cheap hours on DA system lambda (was the DA hub average)
+VERSION = "v6"   # v5: cheap hours on DA system lambda (was the DA hub average)
 START = "2019-01"
 CHEAP = 10.0          # $/MWh, day-ahead system lambda: a cheap hour
 OVER_PRICE = 5.0      # $/MWh, real-time hub average: an oversupply hour
@@ -241,18 +241,20 @@ def _day_cost(h, gas, hubs):
 
 
 def _floor(year, h, r):
-    """Question 1: each hour's net load (thermal and wind and solar output less the wind and solar
-    available, so the load the other units had to carry) and fossil output (coal, combined cycle,
-    gas steam, combustion turbines), and fossil output split into minimum (the smaller of output
-    and running LSL) and above it, by technology."""
+    """Question 1: each hour's load left for fossil (thermal and wind and solar output less the
+    wind and solar available and less the hour's nuclear output, so the load fossil had to carry
+    if wind and solar ran at what they could) and fossil output (coal, combined cycle, gas steam,
+    combustion turbines), and fossil output split into minimum (the smaller of output and running
+    LSL) and above it, by technology.  `net` below is that load left for fossil."""
     th = h.groupby(["date", "he"])["out"].sum()
+    nuc = h[h["tech"] == "nuclear"].groupby(["date", "he"])["out"].sum()
     fos = h[h["tech"].isin(FOSSIL + ("combustion_turbine",))].copy()
     run = fos["state"].isin(["m", "a"]).to_numpy()
     fos["min"] = np.where(run, np.minimum(fos["out"], fos["lsl"]), 0.0)
     fos["above"] = (fos["out"] - fos["min"]).clip(lower=0.0)
     fo = fos.groupby(["date", "he"])["out"].sum()
-    x = pd.concat([th.rename("thermal"), fo.rename("fossil")], axis=1).join(r.set_index(["date", "he"])[["out", "avail"]], how="inner")
-    x["net"] = x["thermal"] + x["out"] - x["avail"]
+    x = pd.concat([th.rename("thermal"), fo.rename("fossil"), nuc.rename("nuclear")], axis=1).join(r.set_index(["date", "he"])[["out", "avail"]], how="inner")
+    x["net"] = x["thermal"] - x["nuclear"].fillna(0.0) + x["out"] - x["avail"]
     x = x[x["fossil"] >= FOSSIL_MIN].reset_index()      # an hour with almost no fossil is missing rows
     grid = x.assign(gx=np.floor(x["net"] / 1000).astype(int), gy=np.floor(x["fossil"] / 1000).astype(int)).groupby(["gx", "gy"]).size()
     sb = (np.floor(x["net"] / 1000 / STUCK_BIN) * STUCK_BIN).astype(int)
