@@ -769,8 +769,8 @@ function drawLean() {
 // The units online going into a 60-day day and what they did come from data/decisions.json.gz
 // (pipeline/decisions.py). Each CC train's and gas steam unit's turn-off point that day comes from
 // the operator-informed model (data/operator/cutoffs.json.gz, pipeline/models/operator_cutoffs.py):
-// how much being off would have to save before the model's day call turns it off. Coal and the
-// always-on combustion turbines are drawn flat: they do not cycle within a day.
+// how much being off would have to save before the model's day call turns it off. Coal is
+// drawn flat: it does not cycle within a day.
 const GROUP_LABEL = Object.fromEntries([...ST_GROUPS.map((g) => [g.id, g.label]), ["ungrouped", "Not yet grouped"]]);
 const DID = { off: "Turned off", on: "Stayed on" };
 // the day-ahead award in the day: none, some hours, every hour (operator_cutoffs "award")
@@ -793,23 +793,22 @@ function opDay(d) {
   const rows = S.OC?.days?.[d];
   return rows ? new Map(rows.map((r) => [r[0], r])) : null;
 }
-// the units online going into the day that the turn-off chart and groups table cover: coal, gas steam and
-// combined cycles, and combustion turbines only in the always-on group (other peakers start
-// rather than stay on)
+// the units online going into the day that the turn-off chart and the groups table's turn-off rows
+// cover: coal, gas steam and combined cycles. Combustion turbines mostly start rather than stay on,
+// so they have their own rows (ctDay)
 function dayUnits(d) {
   const rows = decisionDays().get(d) || [], op = opDay(d);
   return rows.map((r) => {
     const dec = decisionOf(r[DAY_F.unit]);
-    if (!dec || !(dec.lsl > 0)) return null;
+    if (!dec || !(dec.lsl > 0) || dec.tech === "combustion_turbine") return null;
     const group = S.G?.units?.[r[DAY_F.unit]]?.[1] || "ungrouped";
-    if (dec.tech === "combustion_turbine" && group !== "never") return null;
     const o = op?.get(r[DAY_F.unit]), modelled = ["combined_cycle", "gas_steam"].includes(dec.tech);
     return {
       unit: r[DAY_F.unit], tech: dec.tech, group, lsl: o ? o[2] : dec.lsl, he: r[DAY_F.he], hours: r[DAY_F.hours],
       did: (o ? o[6] : r[DAY_F.shut]) ? "off" : "on", hoff: r[DAY_F.hoff],
       award: o ? o[3] : null, md: o ? o[7] : null,
       // "cut": a turn-off point; "flat": on at any saving in this chart (the model says it rides
-      // through anything tested, or it is coal or an always-on peaker); "none": a CC or gas steam
+      // through anything tested, or it is coal); "none": a CC or gas steam
       // unit without a model row that day (its own grey band)
       kind: o ? (o[5] != null ? "cut" : "flat") : modelled ? "none" : "flat",
       c: o ? o[5] : null, l: o ? o[4] : null,
@@ -948,29 +947,70 @@ function drawCtUnits() {
     U.map((u) => [u.unit, u.group, u.s, u.p, u.ran ? 1 : 0, u.on, u.av, u.win, u.ruc]), `Peaker start points ${S.date}`);
 }
 
-// the groups on the day: the units online going in and what they did, with the model's
-// turn-off points and how many of its calls that day were right
+// the combustion turbines on the day: those online going in (data/decisions.json.gz) and those with a
+// real-time fit (data/peaker/rt_fit.json.gz, the start-point chart above), each with its group
+function ctDay(d) {
+  const M = new Map(), P = S.PRT, rows = P?.days?.[d] || [];
+  const at = (u) => M.get(u) || M.set(u, { unit: u, group: S.G?.units?.[u]?.[1] || "ungrouped", ruc: rucOn(u, d) }).get(u);
+  (decisionDays().get(d) || []).forEach((r) => {
+    const dec = decisionOf(r[DAY_F.unit]);
+    if (!dec || !(dec.lsl > 0) || dec.tech !== "combustion_turbine") return;
+    Object.assign(at(r[DAY_F.unit]), { going: true, lsl: dec.lsl, did: r[DAY_F.shut] ? "off" : "on" });
+  });
+  if (P) {
+    const C = Object.fromEntries(P.columns.map((c, i) => [c, i]));
+    rows.forEach((r) => Object.assign(at(r[C.unit]), { fit: true, s: r[C.start], p: r[C.peak], ran: !!r[C.ran] }));
+  }
+  return [...M.values()];
+}
+
+// the groups on the day: the coal, gas steam and CC units online going in and what they did, with the
+// model's turn-off points and how many of its calls that day were right; then the combustion turbines
+// with the fit's start prices; then all thermal on the columns the two share
 function drawGroups() {
-  const el = $("groups-table"), U = dayUnits(S.date);
-  if (!U.length) { $("groups-note").textContent = ""; return emptyMsg(el, "No decision data for this day."); }
-  const byG = d3.group(U, (u) => u.group);
-  const ids = [...ST_GROUPS.map((g) => g.id), "ungrouped"].filter((g) => byG.has(g));
-  const rows = ids.map((g) => {
-    const us = byG.get(g), off = us.filter((u) => u.did === "off"), mod = us.filter((u) => u.l != null), cut = mod.filter((u) => u.kind === "cut");
-    return { g, n: us.length, lsl: d3.sum(us, (u) => u.lsl), nOff: off.length, lslOff: d3.sum(off, (u) => u.lsl), nMod: mod.length,
+  const el = $("groups-table"), U = dayUnits(S.date), V = ctDay(S.date);
+  if (!U.length && !V.length) { $("groups-note").textContent = ""; return emptyMsg(el, "No decision data for this day."); }
+  const ids = (byG) => [...ST_GROUPS.map((g) => g.id), "ungrouped"].filter((g) => byG.has(g));
+  const shared = (us) => { const on = us.filter((u) => u.going !== false), off = on.filter((u) => u.did === "off");
+    return { n: on.length, lsl: d3.sum(on, (u) => u.lsl), nOff: off.length, lslOff: d3.sum(off, (u) => u.lsl) }; };
+  const byU = d3.group(U, (u) => u.group);
+  const rows = ids(byU).map((g) => {
+    const us = byU.get(g), mod = us.filter((u) => u.l != null), cut = mod.filter((u) => u.kind === "cut");
+    return { b: "turn_off", g, ...shared(us), nMod: mod.length,
       medCut: cut.length ? d3.median(cut, (u) => u.c) : null, medSave: mod.length ? d3.median(mod, (u) => u.l) : null,
       right: mod.filter((u) => !rucOn(u.unit, S.date) && (u.kind === "cut" && u.l > u.c) === (u.did === "off")).length,
       nJudged: mod.filter((u) => !rucOn(u.unit, S.date)).length };
   });
+  const byV = d3.group(V, (u) => u.group);
+  const ctRows = ids(byV).map((g) => {
+    const us = byV.get(g), fit = us.filter((u) => u.fit), judged = fit.filter((u) => !u.ruc);
+    return { b: "combustion_turbine", g, ...shared(us.filter((u) => u.going)), nFit: fit.length, nRan: fit.filter((u) => u.ran).length,
+      medStart: fit.some((u) => u.s != null) ? d3.median(fit.filter((u) => u.s != null), (u) => u.s) : null, medPeak: fit.length ? d3.median(fit, (u) => u.p) : null,
+      right: judged.filter((u) => (u.s == null || u.s <= u.p) === u.ran).length, nJudged: judged.length };
+  });
+  const sum = (rs, k) => d3.sum(rs, (r) => r[k]);
+  const nAny = V.filter((u) => u.fit).length;
   $("groups-title-note").textContent = fmtDate(parseDate(S.date));
-  window.CX.setNote($("groups-note"), "Coal and gas units online going into the day, by how often they turn off on price, and how many turned off.", `Coal and gas units online going into the day (combined-cycle configurations merged into their train), by how often they have turned off on price over the ${S.G ? S.G.dates.length : ""} days of 60-day data (pipeline/groups.py). Peakers outside the always-on group are left out; they have their own chart above. Minimum output is the unit's LSL; turned off counts units offline in some hour of the day. ` +
-    `The model columns cover the CC trains and gas steam units with a turn-off point that day: the median turn-off point and the median saving they faced, per MW of LSL, and how many the model called right (off when the saving was past its turn-off point), leaving out units ERCOT committed by RUC that day. ${SAVING_NOTE}`);
-  el.innerHTML = `<table class="data"><thead><tr><th class="t">Group</th><th>Online going in</th><th>Minimum output MW</th><th>Turned off</th><th>Minimum output turned off MW</th><th>Units the model covers</th><th>Median turn-off point $/MW LSL</th><th>Median saving $/MW LSL</th><th>Model right</th></tr></thead><tbody>` +
-    rows.map((r) => `<tr><td class="t"><span class="sw" style="background:var(${FLOOR_GROUPS.find((f) => f.id === r.g)?.color || "--c-other"});margin-right:6px"></span>${GROUP_LABEL[r.g]}<br><span class="muted">${ST_GROUPS.find((g) => g.id === r.g)?.note || "too little history to place"}</span></td>` +
-      `<td>${r.n}</td><td>${fmtMW(r.lsl)}</td><td>${r.nOff}</td><td>${fmtMW(r.lslOff)}</td><td>${r.nMod || "–"}</td><td>${fmtPerMW(r.medCut)}</td><td>${fmtPerMW(r.medSave)}</td><td>${r.nMod ? `${r.right} of ${r.nJudged}` : "–"}</td></tr>`).join("") +
-    `<tr><td class="t"><b>All thermal</b></td><td><b>${d3.sum(rows, (r) => r.n)}</b></td><td><b>${fmtMW(d3.sum(rows, (r) => r.lsl))}</b></td><td><b>${d3.sum(rows, (r) => r.nOff)}</b></td><td><b>${fmtMW(d3.sum(rows, (r) => r.lslOff))}</b></td><td><b>${d3.sum(rows, (r) => r.nMod)}</b></td><td></td><td></td><td><b>${d3.sum(rows, (r) => r.right)} of ${d3.sum(rows, (r) => r.nJudged)}</b></td></tr></tbody></table>`;
-  setCSV(el, ["group", "online_going_in", "lsl_mw", "turned_off", "lsl_turned_off_mw", "units_modelled", "median_turn_off_usd_per_mw_lsl", "median_saving_usd_per_mw_lsl", "model_right"],
-    rows.map((r) => [r.g, r.n, r.lsl, r.nOff, r.lslOff, r.nMod, r.medCut, r.medSave, r.right]), `Groups ${S.date}`);
+  window.CX.setNote($("groups-note"), `Thermal units by how often they turn off on price. Coal, gas steam and combined cycles get a turn-off point; combustion turbines mostly start from off, so they get a start price from the fit above instead.`, `Thermal units by how often they have turned off on price over the ${S.G ? S.G.dates.length : ""} days of 60-day data (pipeline/groups.py). Minimum output is the unit's LSL; online going in and turned off count units online going into the day and offline in some hour of it (combined-cycle configurations merged into their train). ` +
+    `The turn-off rows cover coal, gas steam and combined cycles; their model columns cover the CC trains and gas steam units with a turn-off point that day: the median turn-off point and the median saving they faced, per MW of LSL, and how many the model called right (off when the saving was past its turn-off point), leaving out units ERCOT committed by RUC that day. ${SAVING_NOTE} ` +
+    `Combustion turbines mostly start from off rather than stay on, so instead of a turn-off point their rows count the ${nAny} with a real-time fit that day (available in some hour) and how many ran, the median price at which the fit starts them and the median of the day's highest real-time price at their nodes, and how many the fit called right (RUC left out), as in the start-point chart above. Some units that run like peakers are gas steam or combined cycles; they stay in the turn-off rows.`);
+  const tdG = (r) => `<td class="t"><span class="sw" style="background:var(${FLOOR_GROUPS.find((f) => f.id === r.g)?.color || "--c-other"});margin-right:6px"></span>${GROUP_LABEL[r.g]}<br><span class="muted">${ST_GROUPS.find((g) => g.id === r.g)?.note || "too little history to place"}</span></td>`;
+  const tdS = (r) => `<td>${r.n || "–"}</td><td>${r.n ? fmtMW(r.lsl) : "–"}</td><td>${r.n ? r.nOff : "–"}</td><td>${r.n ? fmtMW(r.lslOff) : "–"}</td>`;
+  const b = (v) => `<b>${v}</b>`;
+  const tot = (label, rs, rest) => `<tr><td class="t">${b(label)}</td><td>${b(sum(rs, "n"))}</td><td>${b(fmtMW(sum(rs, "lsl")))}</td><td>${b(sum(rs, "nOff"))}</td><td>${b(fmtMW(sum(rs, "lslOff")))}</td>${rest}</tr>`;
+  const head = (cols) => cols.map((c, i) => `<th${i ? "" : ' class="t"'} style="position:static">${c}</th>`).join("");
+  const SH = ["Online going in", "Minimum output MW", "Turned off", "Minimum output turned off MW"];
+  el.innerHTML = `<table class="data"><thead><tr>${head(["Coal, gas steam and CC", ...SH, "Units the model covers", "Median turn-off point $/MW LSL", "Median saving $/MW LSL", "Model right"])}</tr></thead><tbody>` +
+    rows.map((r) => `<tr>${tdG(r)}${tdS(r)}<td>${r.nMod || "–"}</td><td>${fmtPerMW(r.medCut)}</td><td>${fmtPerMW(r.medSave)}</td><td>${r.nMod ? `${r.right} of ${r.nJudged}` : "–"}</td></tr>`).join("") +
+    tot("Coal, gas steam and CC", rows, `<td>${b(sum(rows, "nMod"))}</td><td></td><td></td><td>${b(`${sum(rows, "right")} of ${sum(rows, "nJudged")}`)}</td>`) +
+    (ctRows.length ? `<tr>${head(["Combustion turbines (start on price)", ...SH, "Available (ran)", "Median start price $/MWh", "Median day's highest price $/MWh", "Fit right"])}</tr>` +
+      ctRows.map((r) => `<tr>${tdG(r)}${tdS(r)}<td>${r.nFit ? `${r.nFit} (${r.nRan})` : "–"}</td><td>${r.nFit ? fmt$(r.medStart) : "–"}</td><td>${r.nFit ? fmt$(r.medPeak) : "–"}</td><td>${r.nJudged ? `${r.right} of ${r.nJudged}` : "–"}</td></tr>`).join("") +
+      tot("Combustion turbines", ctRows, `<td>${b(`${sum(ctRows, "nFit")} (${sum(ctRows, "nRan")})`)}</td><td></td><td></td><td>${b(`${sum(ctRows, "right")} of ${sum(ctRows, "nJudged")}`)}</td>`) : "") +
+    tot("All thermal", rows.concat(ctRows), `<td></td><td></td><td></td><td></td>`) + `</tbody></table>`;
+  setCSV(el, ["block", "group", "online_going_in", "lsl_mw", "turned_off", "lsl_turned_off_mw", "units_modelled", "median_turn_off_usd_per_mw_lsl", "median_saving_usd_per_mw_lsl", "model_right",
+    "available_with_fit", "ran", "median_start_usd_mwh", "median_day_peak_usd_mwh", "fit_right"],
+    rows.map((r) => [r.b, r.g, r.n, r.lsl, r.nOff, r.lslOff, r.nMod, r.medCut, r.medSave, r.right, null, null, null, null, null])
+      .concat(ctRows.map((r) => [r.b, r.g, r.n, r.lsl, r.nOff, r.lslOff, null, null, null, null, r.nFit, r.nRan, r.medStart, r.medPeak, r.right])), `Groups ${S.date}`);
 }
 
 // ==== the operator model's scorecard (data/operator/scores.json.gz, pipeline/models/operator_scores.py) ====
