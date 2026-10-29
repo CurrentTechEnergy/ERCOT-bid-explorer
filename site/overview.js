@@ -63,7 +63,7 @@ const ECON = {
 // ---------------------------------------------------------------- state ---
 const S = {
   index: null, dalam: null, groups: null, days: [],
-  date: null, gen: null, units60: null, prices: null, a60: null, dam: null, rtNodes: null, fuelCost: null, gasHH: null,
+  date: null, gen: null, units60: null, unitHours: null, prices: null, a60: null, dam: null, rtNodes: null, fuelCost: null, gasHH: null,
   limBy: "group", hour: 12, unitView: "day", unitTech: "all", unitSearch: "", unitSort: { key: "hsl", dir: -1 }, unitShowAll: false,
   hidden: new Set(),
 };
@@ -186,6 +186,36 @@ function actual60() {
   Object.keys(renMax).forEach((t) => Object.keys(renMax[t]).forEach((n) => put(setT, t, n)));
   const count = (o) => Object.fromEntries(Object.entries(o).map(([k, v]) => [k, v.size]));
   return { group: byG, tech: byT, cat: byC, capG, capT, lslG, hslG, lslT, hslT, onG, onT, nG: count(setG), nT: count(setT), dis, chg, units };
+}
+
+// the most thermal output outages took on the day: each unit's or train's hours on outage (ERCOT's
+// OUT status, unit_hours_60d "o") with no configuration running, at its full output (its largest
+// configuration's median HSL when running, or the day's largest HSL if higher), by group (peakers
+// on their own) and technology; never-on units (mothballed or on a long outage) are left out. A unit
+// out for part of the day is also in the day's max (its largest HSL x 24 h): those hours come off
+// the max (overlap) so the two don't count them twice
+function outages60() {
+  const uh = S.unitHours, i = uh ? uh.dates.indexOf(S.date) : -1;
+  if (i < 0 || !S.groups) return null;
+  const trains = {};
+  Object.entries(uh.units).forEach(([n, strip]) => {
+    const cc = /_CC\d+_/.test(n), name = cc ? trainOf(n, "combined_cycle") : n, gu = S.groups.units[name], du = S.a60.units[name];
+    const tech = gu ? gu[0] : du ? du.tech : null;    // nuclear has no group
+    if (!tech || (gu && gu[1] === "never_on")) return;
+    const e = trains[name] || (trains[name] = { name, tech, run: HRS.map(() => false), out: HRS.map(() => false), mw: (du && du.hslMax) || 0 });
+    const day = strip.slice(i * 24, i * 24 + 24);
+    HRS.forEach((h) => { const c = day[h]; if (c === "m" || c === "a") e.run[h] = true; if (c === "o") e.out[h] = true; });
+    e.mw = Math.max(e.mw, (uh.hsl && uh.hsl[n]) || 0);
+  });
+  const G = {}, T = {}, add = (o, k, u) => { const x = o[k] || (o[k] = { gwh: 0, overlap: 0, units: [] }); x.gwh += u.h * u.mw / 1000; x.overlap += u.h * u.dayMax / 1000; x.units.push(u); };
+  Object.values(trains).forEach((e) => {
+    const h = d3.sum(HRS, (k) => (e.out[k] && !e.run[k] ? 1 : 0)), mw = e.mw || (S.groups.units[e.name] || [])[2] || 0;
+    if (!h || !mw) return;
+    const g = e.tech === "nuclear" ? "never" : groupOf(e.name), u = { name: e.name, h, mw, dayMax: (S.a60.units[e.name] && S.a60.units[e.name].hslMax) || 0 };
+    add(G, catOf(e.tech, g, e.name) === "peakers" ? "peakers" : g, u); add(T, e.tech, u);
+  });
+  [G, T].forEach((o) => Object.values(o).forEach((x) => x.units.sort((a, b) => b.h * b.mw - a.h * a.mw)));
+  return { group: G, tech: T };
 }
 
 // ---------------------------------------------------------------- headline ---
@@ -351,15 +381,19 @@ function drawActual() {
 // what ran over the day, as GWh bars: the bar is what ran, the full bar the units' largest hourly
 // HSL over all 24 hours (wind and solar: their HSL hour by hour); rows without a maximum share
 // `scale` (GWh) with the rest of their section
-function actRow(name, note, color, max, act, tip, scale, avail) {
-  const capG = max || scale || Math.max(act || 0, 1) * 1.1;
+function actRow(name, note, color, max, act, tip, scale, avail, outG) {
+  const og = outG && outG.gwh >= 0.5 ? outG.gwh : 0;
+  const capG = (max || scale || Math.max(act || 0, 1) * 1.1) + og;
   const pct = Math.min(100, ((act || 0) / capG) * 100), pa = avail != null ? Math.min(100, (avail / capG) * 100) : null;
+  const pm = max ? Math.min(100, (max / capG) * 100) : 0;
   return `<div class="lab"><span class="sw" style="background:var(${color})"></span><div>${esc(name)}<small>${esc(note)}</small></div></div>` +
     `<div class="bar" data-tip-html="${esc(`<h4>${esc(name)}</h4><p class="tip-body">${tip}</p>`)}">` +
     (pa != null ? `<i style="left:0;width:${pa}%;background:var(${color});opacity:.35"></i>` : "") +
-    (act != null ? `<i style="left:0;width:${pct}%;background:var(${color})"></i>` : "") + `</div>` +
+    (act != null ? `<i style="left:0;width:${pct}%;background:var(${color})"></i>` : "") +
+    (og ? `<i class="outage" style="left:${pm}%;width:${100 - pm}%;color:var(${color})"></i>` : "") + `</div>` +
     `<div class="val"><b>${act != null ? d3.format(",.1f")(act) + " GWh" : "–"}</b> ran` +
-    (avail != null ? `, ${d3.format(",.1f")(Math.max(0, avail - (act || 0)))} GWh curtailed<br>of ${d3.format(",.0f")(avail)} GWh available` : "") + (max ? `<br>of ${d3.format(",.0f")(max)} GWh max` : "") + `</div>`;
+    (avail != null ? `, ${d3.format(",.1f")(Math.max(0, avail - (act || 0)))} GWh curtailed<br>of ${d3.format(",.0f")(avail)} GWh available` : "") + (max ? `<br>of ${d3.format(",.0f")(max)} GWh max` : "") +
+    (og ? `<br>${fmtGWh(og)} GWh max on outage (${outG.units.length} unit${outG.units.length === 1 ? "" : "s"})` : "") + `</div>`;
 }
 // "x–y units online" over the day's hours, for a group's or technology's trains online
 const onRange = (on, n) => { if (!on) return ""; const a = d3.min(on), b = d3.max(on); return `${a === b ? a : `${a}–${b}`}${n ? ` of ${n}` : ""} unit${(n || b) === 1 ? "" : "s"} online`; };
@@ -368,26 +402,28 @@ function drawActualBars() {
   panel.hidden = !L;
   if (!L) return;
   $("actual-bar-legend").innerHTML = `<span><span class="sw" style="background:var(--g3)"></span>What ran</span>` +
-    (L === "60d" ? `<span><span class="sw" style="background:var(--g3);opacity:.35"></span>Wind and solar: curtailed (available, did not run)</span><span><span class="sw" style="background:var(--track)"></span>Thermal: up to the units' largest hourly HSL × 24 hours</span>` : "");
-  $("actual-bars-sub").textContent = L === "60d" ? "ERCOT's reported energy for the day. The solid bar is what ran; the full bar is the most the units could have made at their largest hourly maximum (HSL) for all 24 hours. For wind and solar, the full bar is what the weather made available (their HSL each hour), and the light part of it was curtailed. Peakers are the units that run like peakers (online under 30% of available hours, at most 16 hours a day when on), shown on their own. Online minimum and maximum hour by hour are in the next panel." : "ERCOT's reported energy, from the 2-day summary. Thermal is reported in total until the 60-day disclosure.";
+    (L === "60d" ? `<span><span class="sw" style="background:var(--g3);opacity:.35"></span>Wind and solar: curtailed (available, did not run)</span><span><span class="sw" style="background:var(--track)"></span>Thermal: up to the units' largest hourly HSL × 24 hours</span><span><span class="sw outage" style="color:var(--g3)"></span>Thermal: max on outage</span>` : "");
+  $("actual-bars-sub").textContent = L === "60d" ? "ERCOT's reported energy for the day. The solid bar is what ran; the full bar is the most the units could have made at their largest hourly maximum (HSL) for all 24 hours. For wind and solar, the full bar is what the weather made available (their HSL each hour), and the light part of it was curtailed. The hatched segment past a thermal bar is the most outages took: each unit's hours reporting OUT, at its full output (HSL when running). Peakers are the units that run like peakers (online under 30% of available hours, at most 16 hours a day when on), shown on their own. Online minimum and maximum hour by hour are in the next panel." : "ERCOT's reported energy, from the 2-day summary. Thermal is reported in total until the 60-day disclosure.";
   const csv = [], gwhOf = (mw) => d3.sum(mw.filter((v) => v != null)) / 1000, sumOf = (a) => (a ? d3.sum(a) / 1000 : null);
   let html = "";
-  const push = (sect, name, note, color, cap, act, lsl, hsl, scale) => {
+  const push = (sect, name, note, color, cap, act, lsl, hsl, scale, outG) => {
     // most it could have made: the units' largest hourly HSL all day; for wind and solar the HSL
     // each hour is what the weather made available, and what was available but did not run was curtailed
-    const ren = sect === "wind" || sect === "solar", max = cap && !ren ? cap * 24 / 1000 : null;
+    const ren = sect === "wind" || sect === "solar", max = cap && !ren ? cap * 24 / 1000 - (outG ? outG.overlap : 0) : null;
     const avail = ren && hsl != null && act != null ? Math.max(hsl, act) : null;
     const tip = `${act != null ? `${fmtGWh(act)} GWh ran (${fmtGW(act / 24 * 1000)} GW on average)` : "no data"}` +
       (avail != null ? `<br>${fmtGWh(avail)} GWh available from the weather (HSL each hour), ${fmtGWh(avail - act)} GWh curtailed` : "") +
-      (max ? `<br>${fmtGWh(max)} GWh max at the units' largest hourly HSL all day` : "");
-    html += actRow(name, note, color, max, act, tip, scale, avail); csv.push([sect, name, cap, max, act, lsl, hsl]);
+      (max ? `<br>${fmtGWh(max)} GWh max at the units' largest hourly HSL all day${outG && outG.overlap >= 0.05 ? `, outage hours left out` : ""}` : "") +
+      (outG && outG.gwh >= 0.5 ? `<br>${fmtGWh(outG.gwh)} GWh max on outage: ${outG.units.length} unit${outG.units.length === 1 ? "" : "s"} reporting OUT, at full output (HSL when running)<br>` +
+        outG.units.slice(0, 5).map((u) => `${esc(u.name)}: ${u.h} h × ${d3.format(",.0f")(u.mw)} MW`).join("<br>") + (outG.units.length > 5 ? `<br>and ${outG.units.length - 5} more` : "") : "");
+    html += actRow(name, note, color, max, act, tip, scale, avail, outG); csv.push([sect, name, cap, max, act, lsl, hsl, outG ? outG.gwh : null]);
   };
-  const a60 = S.a60, gh = genHourly();
+  const a60 = S.a60, gh = genHourly(), o60 = S.out60 || { group: {}, tech: {} };
   if (L === "60d") {
     html += `<div class="sect">Thermal · GWh · by how often it turns off on price (60-day disclosure)</div>`;
-    GROUPS.forEach((g) => { if (a60.group[g]) push("group", GROUP_SHORT[g] || g, onRange(a60.onG[g], a60.nG[g]), GROUP_COLORS[g] || "--c-other", a60.capG[g], gwhOf(a60.group[g]), sumOf(a60.lslG[g]), sumOf(a60.hslG[g])); });
+    GROUPS.forEach((g) => { if (a60.group[g]) push("group", GROUP_SHORT[g] || g, onRange(a60.onG[g], a60.nG[g]), GROUP_COLORS[g] || "--c-other", a60.capG[g], gwhOf(a60.group[g]), sumOf(a60.lslG[g]), sumOf(a60.hslG[g]), null, o60.group[g]); });
     html += `<div class="sect">Thermal · GWh · by technology</div>`;
-    TECHS.forEach(([t, label, color]) => { if (a60.tech[t]) push("tech", label, onRange(a60.onT[t], a60.nT[t]), color, a60.capT[t], gwhOf(a60.tech[t]), sumOf(a60.lslT[t]), sumOf(a60.hslT[t])); });
+    TECHS.forEach(([t, label, color]) => { if (a60.tech[t]) push("tech", label, onRange(a60.onT[t], a60.nT[t]), color, a60.capT[t], gwhOf(a60.tech[t]), sumOf(a60.lslT[t]), sumOf(a60.hslT[t]), null, o60.tech[t]); });
   } else {
     html += `<div class="sect">Thermal · GWh (2-day summary, reported in total)</div>`;
     const th = gwhOf(gh.thermal);
@@ -407,7 +443,7 @@ function drawActualBars() {
   }
   el.innerHTML = html;
   $("actual-bars-note").textContent = `${S.date} · GWh · ${L === "60d" ? "60-day disclosure" : "2-day summary"}`;
-  setCSV(el, ["section", "name", "cap_mw", "max_gwh", "actual_gwh", "online_lsl_gwh", "online_hsl_gwh"], csv, `What ran ${S.date}`);
+  setCSV(el, ["section", "name", "cap_mw", "max_gwh", "actual_gwh", "online_lsl_gwh", "online_hsl_gwh", "outage_gwh"], csv, `What ran ${S.date}`);
 }
 // online minimum and maximum by hour: one small chart per group or technology, with the online
 // units' summed LSL as a solid bar, their summed HSL as a light bar above it, and what ran as a line
@@ -685,7 +721,7 @@ async function loadDay() {
   ]);
   if (d !== S.date) return;    // a newer pick took over
   S.gen = gen; S.units60 = units60; S.prices = prices; S.dam = dam; S.rtNodes = rtNodes;
-  S.a60 = actual60();
+  S.a60 = actual60(); S.out60 = S.a60 ? outages60() : null;
   unitProfit();
   S.unitShowAll = false;
 }
@@ -700,8 +736,8 @@ function loadView() {
 }
 
 async function boot() {
-  [S.index, S.dalam, S.groups, S.fuelCost, S.gasHH] = await Promise.all([tryJSON("data/index.json"), tryJSON("data/dam_lambda.json.gz"), tryJSON("data/groups_60d.json.gz"),
-    tryJSON("data/fuel_cost_60d.json.gz"), tryJSON("data/gas.json.gz")]);
+  [S.index, S.dalam, S.groups, S.fuelCost, S.gasHH, S.unitHours] = await Promise.all([tryJSON("data/index.json"), tryJSON("data/dam_lambda.json.gz"), tryJSON("data/groups_60d.json.gz"),
+    tryJSON("data/fuel_cost_60d.json.gz"), tryJSON("data/gas.json.gz"), tryJSON("data/unit_hours_60d.json.gz")]);
   S.index = S.index || { days: {} };
   // every day with ERCOT data for it: prices, the 2-day summary or the 60-day disclosure
   const days = [...new Set(["prices", "2dgen", "60d"].flatMap((k) => S.index.days[k] || []))].sort();
