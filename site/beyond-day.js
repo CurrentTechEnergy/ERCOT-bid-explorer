@@ -15,7 +15,7 @@ const SERIES = {
   ],
   "60d": [
     { id: "combined_cycle", keys: ["combined_cycle"], label: "Combined cycle", color: "--c1" },
-    { id: "combustion_turbine", keys: ["combustion_turbine"], label: "Combustion turbine", color: "--c2" },
+    { id: "combustion_turbine", keys: ["combustion_turbine"], label: "Combustion turbine and recip", color: "--c2" },
     { id: "wind", keys: ["wind"], label: "Wind", color: "--c3" },
     { id: "solar", keys: ["solar"], label: "Solar", color: "--c4" },
     { id: "nuclear", keys: ["nuclear"], label: "Nuclear", color: "--c5" },
@@ -261,7 +261,7 @@ const STACK_GROUPS = { never: ["Always on when available", "--g1"], seasonal: ["
   daily1: ["Daily, under once a week", "--g4"], daily2: ["Daily, 1 to 2 a week", "--g5"], daily3: ["Daily, over 2 a week", "--g6"],
   never_on: ["Never on", "--c-other"], ungrouped: ["Not yet grouped", "--c-other"] };
 const STACK_TECHS = { nuclear: ["Nuclear", "--c5"], coal: ["Coal & lignite", "--c8"], combined_cycle: ["Combined cycle", "--c1"],
-  gas_steam: ["Gas steam", "--c6"], combustion_turbine: ["Combustion turbine", "--c2"] };
+  gas_steam: ["Gas steam", "--c6"], combustion_turbine: ["Combustion turbine and recip", "--c2"] };
 function drawStack() {
   const el = $("stack-chart"), D = S.stack, h = S.hour;
   $("stack-title-note").textContent = S.date ? `${S.date} · ${heLabel(h)}` : "";

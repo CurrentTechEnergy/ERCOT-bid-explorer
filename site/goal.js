@@ -9,7 +9,7 @@ const fmtGW = (mw) => d3.format(",.1f")(mw / 1000);
 const fmtPct = d3.format(".0%");
 const fmtPt = (v) => `${v >= 0 ? "+" : "−"}${d3.format(".1f")(Math.abs(v) * 100)} pt`;
 const fmtTWh = (mwh) => d3.format(",.2f")(mwh / 1e6);
-const TECH = { combined_cycle: "Combined cycle", gas_steam: "Gas steam", coal: "Coal", combustion_turbine: "Combustion turbine", nuclear: "Nuclear" };
+const TECH = { combined_cycle: "Combined cycle", gas_steam: "Gas steam", coal: "Coal", combustion_turbine: "Combustion turbine and recip", nuclear: "Nuclear" };
 // one vocabulary for why a unit at minimum stayed on (the Unit and Commitment pages use the same words)
 const REASON = {
   coal: { label: "Coal", color: "--c8" },

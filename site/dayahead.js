@@ -14,7 +14,7 @@ const fmt$s = (v) => (v == null || isNaN(v) ? "–" : (v < 0 ? "−" : "") + "$"
 const parseDate = (d) => new Date(d + "T12:00:00");
 const fmtDate = d3.timeFormat("%a %b %-d, %Y");
 const unitURL = (name) => `unit.html?unit=${encodeURIComponent(name)}`;
-const TECH = { combined_cycle: "Combined cycle", gas_steam: "Gas steam", combustion_turbine: "Combustion turbine", wind: "Wind", solar: "Solar" };
+const TECH = { combined_cycle: "Combined cycle", gas_steam: "Gas steam", combustion_turbine: "Combustion turbine and recip", wind: "Wind", solar: "Solar" };
 const S = { D: null, sort: { trains: [3, -1], renew: [5, -1] } };
 
 function emptyMsg(el, msg) { el.innerHTML = `<p class="empty">${msg}</p>`; }

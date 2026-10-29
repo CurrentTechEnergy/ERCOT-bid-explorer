@@ -11,7 +11,7 @@
 // Colors are fixed per technology and match the day view.
 const TECHS = [
   { id: "combined_cycle", keys: ["combined_cycle"], label: "Combined cycle", color: "--c1" },
-  { id: "combustion_turbine", keys: ["combustion_turbine"], label: "Combustion turbine", color: "--c2" },
+  { id: "combustion_turbine", keys: ["combustion_turbine"], label: "Combustion turbine and recip", color: "--c2" },
   { id: "wind", keys: ["wind"], label: "Wind", color: "--c3" },
   { id: "solar", keys: ["solar"], label: "Solar", color: "--c4" },
   { id: "nuclear", keys: ["nuclear"], label: "Nuclear", color: "--c5" },
@@ -234,7 +234,7 @@ const GAS_LINES = [
 // the heat rate lines keep the site's technology colors, which the hub colors above avoid
 const HR_LINES = [
   { key: "combined_cycle", label: "Combined cycle", color: "--c1" },
-  { key: "combustion_turbine", label: "Combustion turbine", color: "--c2" },
+  { key: "combustion_turbine", label: "Combustion turbine and recip", color: "--c2" },
   { key: "gas_steam", label: "Gas steam", color: "--c6" },
 ];
 function drawGas() {

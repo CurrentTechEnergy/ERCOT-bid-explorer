@@ -12,7 +12,7 @@ const $ = (id) => document.getElementById(id);
 const WEEKS = 8;        // weeks drawn before "Show more weeks"
 const TECH_LABEL = {
   nuclear: "Nuclear", coal: "Coal & lignite", combined_cycle: "Combined cycle", gas_steam: "Gas steam",
-  combustion_turbine: "Peakers (CT and recip)", wind: "Wind", solar: "Solar", storage: "Battery storage", hydro: "Hydro", other: "Other",
+  combustion_turbine: "Combustion turbine and recip", wind: "Wind", solar: "Solar", storage: "Battery storage", hydro: "Hydro", other: "Other",
 };
 const TECH_ORDER = Object.keys(TECH_LABEL);
 const trainOf = (u) => { const m = /^(.*_CC\d+)_/.exec(u); return m ? m[1] : u; };
@@ -70,7 +70,7 @@ function row(e) {
   const g = groupOfEvent(e), multi = e.units && e.units.length > 1;
   const unit = e.kind === "fuel" ? `${esc(TECH_LABEL[e.tech] || e.tech)} fleet <span class="tag">${e.value} units</span>` : `<a href="${unitHref((e.units && e.units[0]) || e.unit)}">${esc(e.unit)}</a>` + (multi ? ` <span class="tag">${e.units.length} units</span>` : "");
   return `<tr class="${e.major ? "" : "minor"}"><td class="t">${fmtDay(parseDate(e.date))}</td><td class="t">${unit}</td>` +
-    `<td class="t hide-sm">${esc(TECH_LABEL[e.tech] || e.tech)}${g ? ` <span class="tag">${esc(S.groupLabel[g] || g)}</span>` : ""}</td>` +
+    `<td class="t hide-sm">${esc(TECH_LABEL[e.tech] || e.tech)}${g ? ` <span class="tag">${esc(S.groupLabel[g] || g)}</span>` : ""}${e.kind === "fuel" ? "" : window.CX.peakerTag(S.G, S.G?.units?.[e.unit] ? e.unit : trainOf(e.unit))}</td>` +
     `<td class="t ev"><b>${esc(S.E.kinds[e.kind] || e.kind)}</b>${isNew(e) ? ` <span class="tag new">new</span>` : ""}<br>${esc(e.title)}${numbers(e) ? `<span class="num-sm"><br>${esc(numbers(e))}</span>` : ""}</td>` +
     `<td class="t num hide-sm">${esc(numbers(e))}</td></tr>`;
 }
@@ -115,6 +115,7 @@ async function boot() {
   S.E = E;
   S.latestSeen = d3.max(E.events, (e) => e.seen);
   if (G && G.units) {
+    S.G = G;
     for (const [u, r] of Object.entries(G.units)) S.groupOf.set(u, r[1]);
     S.groupLabel = Object.fromEntries(G.groups.map((g) => [g[0], g[1]]));
   }

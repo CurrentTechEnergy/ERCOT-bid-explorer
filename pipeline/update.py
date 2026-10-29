@@ -643,7 +643,7 @@ def main(argv=None):
     build_battery_bench(index)     # after series (node prices) and storage
     if "operator" not in args.skip:
         build_operator_days(index)   # after cop: the Unit page's operator-informed row, new 60-day days only
-    build_peaker_rt(index)           # the Commitment page's peaker start chart
+    build_peaker_rt(index)           # the Commitment page's combustion turbine start chart
     qse_lines = qse.save()
     if "entities" not in args.skip:
         fetch_entities()     # after qse.save(): DME codes are named from the codes it saved
