@@ -63,9 +63,9 @@ function drawQ1() {
     const mm = d3.max([...mine.values()].flatMap((v) => [...v.values()])) || 1;
     mine.forEach((v, gx) => v.forEach((n, gy) => front.append("rect").attr("x", x(gx)).attr("y", y(gy + 1)).attr("width", cw).attr("height", ch).attr("fill", col).attr("opacity", op(n, mm))));
   }
-  // fossil can't go below net load less nuclear: the line it would sit on with no other units
-  const nuc = 5;
-  svg.append("line").attr("x1", x(Math.max(x.domain()[0], nuc))).attr("x2", x(x.domain()[1])).attr("y1", y(Math.max(x.domain()[0], nuc) - nuc)).attr("y2", y(x.domain()[1] - nuc))
+  // net load itself: fossil plus nuclear serve it, so fossil runs about nuclear's 5 GW below it
+  const x0 = Math.max(x.domain()[0], 0);
+  svg.append("line").attr("x1", x(x0)).attr("x2", x(x.domain()[1])).attr("y1", y(x0)).attr("y2", y(x.domain()[1]))
     .attr("stroke", css("--muted")).attr("stroke-dasharray", "5 4").attr("stroke-width", 1.2);
   const med = F.median[isAll() ? "all" : String(sel)] || [];
   const half = F.bin / 2;
@@ -80,7 +80,7 @@ function drawQ1() {
     .on("pointerleave", hideTip);
   el.replaceChildren(svg.node());
   legend("q1-legend", [[isAll() ? "Hours, all years (darker: more hours)" : `Hours in ${yearName(sel)} (other years grey)`, isAll() ? "--ink" : "--c1"], ["Median fossil output", "--c2"]]);
-  $("q1-legend").insertAdjacentHTML("beforeend", `<span><span class="sw sw-line"></span>Net load less about 5 GW of nuclear</span>`);
+  $("q1-legend").insertAdjacentHTML("beforeend", `<span><span class="sw sw-line"></span>Net load (fossil equal to it)</span>`);
   // what is stuck on: average fossil output by net load, at minimum and above it
   const sb = F.stuck_bin, pick = (r) => isAll() || r[0] === sel;
   const hours = d3.rollup(F.hours.filter(pick), (v) => d3.sum(v, (r) => r[2]), (r) => r[1]);
@@ -129,8 +129,8 @@ function drawQ1() {
     `<b>Fossil output has a floor it doesn't go below.</b> In hours when net load was under ${LOW_NET} GW, fossil still ran a median of about ${fmtGW(f)} GW (${yearName(sel)}), ` +
     `and in those hours ${fmtGW(atMin)} GW of it was units at their minimum, against ${fmtGW(above)} GW above it: coal ${fmtGW(lowPart("coal", 3))} GW and combined cycles ${fmtGW(lowPart("combined_cycle", 3))} GW. ` +
     `By year the floor was ${yrs.map((q) => `${fmtGW(floorOf(String(q)))} GW in ${q}`).join(", ")}.`;
-  setNote($("q1-note"), `Every hour since ${d3.timeFormat("%b %Y")(new Date(S.G.years[years()[0]].from + "T12:00:00"))}: fossil output against net load, the load left once the wind and solar available are counted. Where fossil could turn off, its output would follow net load down to the dashed line; instead it flattens. Below, the average fossil output in each band of net load, split into units at their minimum and output above it.`,
-    `From the 60-day SCED disclosure, hour by hour. Fossil is coal, combined cycle, gas steam and combustion turbines. Net load is the output of every thermal unit (fossil and nuclear) plus wind and solar output, less the wind and solar available (their HSL), so load less what wind and solar could have supplied; storage and imports are left out. The median line uses ${F.bin} GW bands of net load with at least 10 hours. At minimum is the smaller of a running unit's output and its LSL (combined-cycle configurations merged into their train). The dashed line is net load less about 5 GW of nuclear.`);
+  setNote($("q1-note"), `Every hour since ${d3.timeFormat("%b %Y")(new Date(S.G.years[years()[0]].from + "T12:00:00"))}: fossil output against net load, the load left once the wind and solar available are counted. The dashed line is net load itself. Fossil and nuclear serve it between them, and nuclear runs flat at about 5 GW, so where fossil can turn off it runs about 5 GW below the line and follows it down. At low net load it flattens instead. Below, the average fossil output in each band of net load, split into units at their minimum and output above it.`,
+    `From the 60-day SCED disclosure, hour by hour. Fossil is coal, combined cycle, gas steam and combustion turbines. Net load is the output of every thermal unit (fossil and nuclear) plus wind and solar output, less the wind and solar available (their HSL), so load less what wind and solar could have supplied; storage and imports are left out. The median line uses ${F.bin} GW bands of net load with at least 10 hours. At minimum is the smaller of a running unit's output and its LSL (combined-cycle configurations merged into their train). The dashed line is fossil output equal to net load; nuclear (about 5 GW, Comanche Peak and South Texas, less in refuelling outages) fills the gap below it.`);
 }
 
 // ==== 2. Why the rest stays on: minimum online in cheap hours, by reason, by year =============
