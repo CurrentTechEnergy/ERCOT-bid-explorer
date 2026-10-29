@@ -400,7 +400,7 @@ const MN_SPLIT = [
 const MN_GEN = MN_TECHS.filter((t) => t.id !== "nuclear");
 const MN_CLASS = { at: { k: 0, label: "at system lambda" }, below: { k: 1, label: "below lambda, behind an export constraint" }, above: { k: 2, label: "above lambda, behind an import constraint" } };
 const MN_ZONE_LABEL = { WEST: "West", PANHANDLE: "Panhandle", NORTH: "North", SOUTH: "South", COASTAL: "Coastal", HOUSTON: "Houston", unmapped: "No zone in the CDR" };
-const MN_LAM = { all: () => true, le15: (l) => l != null && l <= 15, gt15: (l) => l != null && l > 15 };
+const MN_LAM = { all: () => true, le10: (l) => l != null && l <= 10, gt10: (l) => l != null && l > 10 };
 // Who sets price: generators' share of the marginal room above base point (or of marginal
 // unit-hours) by technology, day by day, for one class (at, below or above lambda), with
 // batteries on their own line since their room runs from charging all the way up to HSL
