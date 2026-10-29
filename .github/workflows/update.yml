@@ -2,11 +2,13 @@ name: Update ERCOT data
 
 on:
   schedule:
-    # ERCOT posts the 2-day curves around 04:15 and the 60-day disclosure around 05:45 Central;
-    # the day-ahead market results (tomorrow's node prices) by 13:30 Central.
-    - cron: "41 12 * * *"   # ~07:41 Central
-    - cron: "31 19 * * *"   # 14:31 Central in summer, 13:31 in winter: after the DAM posts, and the
-                            # retry in case a morning report posted late
+    # ERCOT posts the 2-day reports around 03:30-04:50 Central and the 60-day SCED and DAM
+    # disclosures around 05:20-06:05 Central; the day-ahead market results (tomorrow's node
+    # prices) by 13:30 Central.  Cron is in UTC, so local times are an hour later in summer
+    # (CDT/MDT) than in winter (CST/MST); GitHub usually starts scheduled runs 30-60 min late.
+    - cron: "17 11 * * *"   # 06:17 Central / 05:17 Mountain in summer, 05:17 / 04:17 in winter
+    - cron: "31 19 * * *"   # 14:31 Central / 13:31 Mountain in summer, 13:31 / 12:31 in winter:
+                            # after the DAM posts, and the retry for any morning report posted late
   workflow_dispatch:
     inputs:
       backfill_start:
