@@ -87,7 +87,7 @@ from ..guide import EIA_HR
 from ..store import read_json_gz, write_json_gz
 
 NAME = "operator_informed"
-VERSION = "v3"   # v3: gas at each unit's own hub (Waha or Houston Ship Channel), not Houston Ship Channel for all; v1: transitions with per-unit intercepts and slopes; v2: the COP only beside the main call, margins at gas cost
+VERSION = "v4"   # v4: Graham at Houston Ship Channel (fuel_hub.REFIT), and RUC left out of the scores as well as the fits; v3: gas at each unit's own hub (Waha or Houston Ship Channel), not Houston Ship Channel for all; v1: transitions with per-unit intercepts and slopes; v2: the COP only beside the main call, margins at gas cost
 TECHS = ("combined_cycle", "gas_steam")
 AHEAD = 6            # hours of award looked at ahead of h
 MIN_AWARD = 1.1      # an award at most this x LSL counts as holding at minimum (day mode)
@@ -156,12 +156,15 @@ def _status(dd):
 
 def ruc_hours(ctx):
     """{train: set of hour indices on the stats' calendar} in RUC (unit_hours_60d "ruc"),
-    configurations merged into their train; empty where the file has none (history days)."""
+    configurations merged into their train; empty where the file has none (history days).  A
+    HistoryContext (operator_history.py) takes its live context's, on its own calendar, so the
+    scores, which run on it, leave RUC out too (before v4 they did not: ruc_hours was 0 throughout)."""
     from ..intraday import train_of
     cache = ctx.__dict__.setdefault("_oi_ruc", {})
-    if not cache and ctx.uh.get("ruc"):
+    ruc = getattr(ctx, "live", ctx).uh.get("ruc")     # a HistoryContext's own uh has none: take its live context's
+    if not cache and ruc:
         day0 = ctx.stats["day0"]
-        for name, days in ctx.uh["ruc"].items():
+        for name, days in ruc.items():
             key = train_of(name)
             for d, hes in days:
                 k0 = (C._d(d) - day0).days * 24
