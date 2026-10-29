@@ -371,7 +371,8 @@ def build_lambda_month(api, month: str, out: Path = OUT, force: bool = False) ->
         return
     days = _days(month)
     docs = api.list_archives(EMIL_DAM_LAMBDA, _t(days[0] - dt.timedelta(days=2)), _t(days[-1] + dt.timedelta(days=1)))
-    blobs = api.download_many(EMIL_DAM_LAMBDA, [d["docId"] for d in docs]) if docs else []
+    # one file at a time through the raw store (download_many bypasses it)
+    blobs = [api.download(EMIL_DAM_LAMBDA, d["docId"]) for d in docs]
     got = read_dam_lambda([c for b in blobs for c in iter_csvs(b, "x.zip")])
     want = {d.isoformat() for d in days}
     f = pd.DataFrame([(d, h + 1, v) for d, vs in got.items() if d in want for h, v in enumerate(vs) if v is not None],
