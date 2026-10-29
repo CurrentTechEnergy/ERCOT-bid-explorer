@@ -144,7 +144,8 @@ jobs:
           lines = []
           for p in sorted(glob.glob("out/*.parquet")):
               f = pd.read_parquet(p)
-              extra = (f", {f['unit'].nunique()} units ({', '.join(f'{k}: {v}' for k, v in f.groupby('tech', observed=True)['unit'].nunique().items())})"
+              extra = (f", {f['unit'].nunique()} units"
+                     + (f" ({', '.join(f'{k}: {v}' for k, v in f.groupby('tech', observed=True)['unit'].nunique().items())})" if "tech" in f else "")
                        + (f", offer present {f['offer'].notna().mean():.0%}" if "offer" in f else "")
                        + (f", states {', '.join(f'{k}: {v:.0%}' for k, v in f['state'].value_counts(normalize=True).items())}" if "state" in f else "")
                        + (f", DA node price present {f['da_node'].notna().mean():.0%}" if "da_node" in f else "")

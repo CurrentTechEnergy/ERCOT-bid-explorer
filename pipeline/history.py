@@ -240,10 +240,12 @@ def control_day(blob: bytes):
     from .parse_dam import GEN_FILE, is_esr_data
     from .qse import _DME, _QSE, _norm
     want = {"resourcename", "deliverydate"} | set(_QSE) | set(_DME)
-    frames = []
+    frames, header = [], None
     for name, data in iter_csvs(blob, "x.zip"):
         if name.lower().startswith(GEN_FILE) or is_esr_data(name):
             frames.append(pd.read_csv(io.BytesIO(data), dtype=str, usecols=lambda c: _norm(c) in want))
+            if name.lower().startswith(GEN_FILE):
+                header = list(pd.read_csv(io.BytesIO(data), nrows=0).columns)
     if not frames:
         raise ValueError("No DAM generation resource file in the 60-day DAM zip")
     f = pd.concat(frames, ignore_index=True)
@@ -258,7 +260,9 @@ def control_day(blob: bytes):
     dates = to_iso_date(f[col["deliverydate"]])
     date = dates.value_counts().idxmax()
     out = out[(dates == date).values & out["unit"].notna().values & (out["unit"] != "").values]
-    return date, out.drop_duplicates("unit", keep="last").reset_index(drop=True)
+    out = out.drop_duplicates("unit", keep="last").reset_index(drop=True)
+    out.attrs["header"] = header       # the month build shows it when no file has a DME column
+    return date, out
 
 
 DAM_KEEP = ("sp", "award", "spp", "hsl", "hsl_h")
@@ -471,10 +475,11 @@ def build_control_month(api, month: str, out: Path = OUT, force: bool = False) -
         print(f"{path.name}: already there")
         return
     t0 = time.time()
-    got = [r.assign(date=d) for d, r in _disclosures(api, EMIL_DAM, _days(month), "dam", ancillary="control")]
+    got = [(r.attrs.get("header"), r.assign(date=d)) for d, r in _disclosures(api, EMIL_DAM, _days(month), "dam", ancillary="control")]
     if not got:
         warn(f"{month}: no DAM days found; nothing written")
         return
+    header, got = got[-1][0], [r for _, r in got]
     f = pd.concat(got, ignore_index=True).sort_values(["unit", "date"]).reset_index(drop=True)
     days = f["date"].nunique()
     no_dme = f.groupby("date")["dme"].apply(lambda s: s.isna().all())
@@ -487,6 +492,8 @@ def build_control_month(api, month: str, out: Path = OUT, force: bool = False) -
     print(f"{path.name}: {len(f):,} rows, {days} days, {f['unit'].nunique()} units, "
           f"{changed} with a change, DME column on {days - no_dme.sum()} of {days} days, "
           f"{time.time() - t0:.0f}s")
+    if no_dme.all():
+        print(f"  no DME column in {month}; the generation resource file's columns: {header}")
 
 
 def main(argv=None):
