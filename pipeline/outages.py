@@ -1,7 +1,6 @@
-"""ERCOT's resource outage reports, kept for the commitment forecast (pipeline/models/
-thermal_cutoff.py).  The 60-day disclosure shows a unit's outage about sixty days late; these two
-reports show outages within days, or ahead of time.  Read by the commitment forecast through
-Context.listed_out and Context.unseen_out (pipeline/forecast/context.py).
+"""ERCOT's resource outage reports, collected as a record.  The 60-day disclosure shows a unit's
+outage about sixty days late; these two reports show outages within days, or ahead of time.  The
+commitment forecast that read them was retired in Oct 2026; no page reads them yet.
 
 Reports (ERCOT Public API):
   NP1-346-ER  Unplanned Resource Outages Report.  Posted daily (about 05:00 Central): every
@@ -27,8 +26,8 @@ Writes:
       {"days": {date: {"posted": ts, "zones": [...], "total": {zone: [24]}, "irr": {...},
                        "new": {...}}}}
       for each operating day D, the newest NP3-233-CD posting at or before CUTOFF_HOUR on D - 1
-      (what was public when the day-ahead market for D cleared, as pipeline/renew_forecast.py
-      does), so a day's outage MW does not drift as later postings arrive.
+      (what was public when the day-ahead market for D cleared), so a day's outage MW does not
+      drift as later postings arrive.
 """
 import datetime as dt
 import io

@@ -3,7 +3,7 @@ unit" box on every page and the Units directory on unit.html.  Needs no download
 the update from files already written this run.
 
 Membership is the Unit page's own list (site/unit.js buildList), so every entry opens a page:
-thermal units from the 60-day trends, the decision record and the latest forecast (a combined-
+thermal units from the 60-day trends, the decision record and the timescale groups (a combined-
 cycle train is one entry, its configurations under it), wind and solar from the hedge scan
 (ppa.json.gz), and batteries from their economics (data/econ/storage.json.gz).  Hydro and "other"
 have no Unit page yet and are left out.  Batteries renamed for RTC+B (..._ESR1) mostly match the
@@ -23,7 +23,8 @@ Writes data/unit_index.json.gz:
    "match", "qse", "aliases", "qse_name", "dme", "owner", "buyers", "companies"], rows: [[...], ...]}
   unit     resource name (the train for combined cycle), sorted by name
   tech     config.TECH_OF_TYPE grouping
-  group    the latest forecast's timescale group (thermal only; null when not in the forecast)
+  group    the timescale group (pipeline/groups.py, data/groups_60d.json.gz; nuclear "never";
+           thermal only, null for units without one)
   mw       capacity: econ's hsl, the 95th percentile of each day's highest HSL (null without econ data)
   sp       settlement point, from econ or the hedge scan
   configs  combined-cycle configuration names, so a search for one finds its train ([] otherwise)
@@ -101,7 +102,7 @@ def load_companies() -> dict:
     return out
 
 
-def build(trends: dict, decisions: dict, forecast: dict, ppa: dict, econ: dict, cdr_rows=(), qses=None, aliases=None,
+def build(trends: dict, decisions: dict, groups: dict, ppa: dict, econ: dict, cdr_rows=(), qses=None, aliases=None,
           entities=None, buyers=None, companies=None) -> dict:
     units = {}
 
@@ -118,14 +119,14 @@ def build(trends: dict, decisions: dict, forecast: dict, ppa: dict, econ: dict, 
         add(train_of(u["unit"]) if u["tech"] == "combined_cycle" else u["unit"], u["tech"], u["unit"])
     for name, r in (decisions.get("units") or {}).items():
         add(name, r[0])
-    fu = (forecast.get("units") or {})
-    cols = fu.get("columns") or []
     group = {}
-    if "unit" in cols and "group" in cols:
-        iu, it, ig = cols.index("unit"), cols.index("tech"), cols.index("group")
-        for r in fu.get("rows", []):
-            add(r[iu], r[it])
-            group[r[iu]] = r[ig]
+    for name, g in (groups.get("units") or {}).items():
+        if g and len(g) > 1:
+            add(name, g[0])
+            group[name] = g[1]
+    for name, e in units.items():
+        if e["tech"] == "nuclear":
+            group.setdefault(name, "never")      # nuclear is not grouped; it never cycles
     for name, u in econ.items():
         if u.get("tech") == "storage" and u.get("hsl"):
             add(name, "storage")
@@ -164,8 +165,7 @@ def build(trends: dict, decisions: dict, forecast: dict, ppa: dict, econ: dict, 
 def build_unit_index(index: dict) -> dict:
     trends = read_json_gz(DATA_DIR / "trends_60d.json.gz", default={}) or {}
     decisions = read_json_gz(DATA_DIR / "decisions.json.gz", default={}) or {}
-    fi = read_json_gz(DATA_DIR / "forecast" / "index.json.gz", default={}) or {}
-    forecast = (read_json_gz(DATA_DIR / "forecast" / f"{fi['days'][-1]}.json.gz", default={}) or {}) if fi.get("days") else {}
+    groups = read_json_gz(DATA_DIR / "groups_60d.json.gz", default={}) or {}
     ppa = read_json_gz(DATA_DIR / "ppa.json.gz", default={}) or {}
     econ = {}
     for t in TECHS:
@@ -174,7 +174,7 @@ def build_unit_index(index: dict) -> dict:
     aliases = load_aliases()
     entities = read_json_gz(ENTITIES_PATH, default={}) or {}
     companies = load_companies()
-    out = build(trends, decisions, forecast, ppa, econ, cdr.load(), qses, aliases, entities, load_buyers(), companies)
+    out = build(trends, decisions, groups, ppa, econ, cdr.load(), qses, aliases, entities, load_buyers(), companies)
     known = {r[0] for r in out["rows"]} | {c for r in out["rows"] for c in r[5]}
     for what, d in (("unit_aliases.csv", aliases), ("unit_companies.csv", companies)):
         unknown = sorted(set(d) - known)

@@ -46,7 +46,7 @@ const STORAGE = { id: "storage", label: "Batteries", color: "--c7" };
 const CHEAP = 10;
 // the 2-day generation summary's thermal total: non-IRR plus "remaining resources" (nuclear and
 // the rest); before this date the summary folded storage into non-IRR, so storage is taken back
-// out (the same rule pipeline/forecast/score.py applies)
+// out (the rule the retired forecast scores applied)
 const ESR_SPLIT_DATE = "2026-06-22";
 // the 60-day disclosure posts about this many days after the operating day
 const LAG_60D = 60;

@@ -9,8 +9,7 @@ Report (ERCOT Public API):
              ToStationkV, CCTStatus)
 Columns are matched loosely by name; a file whose columns are not recognised is skipped with a
 warning naming them.  A posting can repeat runs, so rows are de-duplicated on run timestamp,
-constraint, contingency and stations.  Rows in the repeated DST hour are dropped, as in
-pipeline/load.py.
+constraint, contingency and stations.  Rows in the repeated DST hour are dropped.
 
 A run's hour ending is its timestamp's hour + 1.  For each operating day, hour and constraint
 (name, contingency, from and to station) the store keeps the mean and the largest shadow price
@@ -39,7 +38,6 @@ import pandas as pd
 
 from .config import DATA_DIR
 from .log import warn
-from .renew_forecast import _find
 from .store import iter_csvs, read_json_gz, write_json_gz
 
 DIR = DATA_DIR / "shadow"
@@ -49,6 +47,17 @@ DAYS_PER_RUN = 45
 BACKFILL_FROM = dt.date(2025, 11, 30)     # the first 60-day day on the site
 KEY = ["name", "cont", "frm", "to"]
 
+
+def _norm(c) -> str:
+    return "".join(ch for ch in str(c).lower() if ch.isalnum())
+
+
+def _find(cols, *parts, exclude=()):
+    for c in cols:
+        n = _norm(c)
+        if all(p in n for p in parts) and not any(x in n for x in exclude):
+            return c
+    return None
 
 def read_runs(csvs) -> pd.DataFrame:
     """CSVs of NP6-86-CD -> one row per run and binding constraint (date, he, ts, name, cont,

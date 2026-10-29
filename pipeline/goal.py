@@ -55,7 +55,7 @@ CURT_MIN = 0.5        # MW: smaller unit-hour curtailment is noise
 OVER_CURT_MIN = 100.0  # MW of uncongested curtailment for an oversupply hour to count in the fossil split
 AWARD_LSL = 0.9
 MIDDAY = (8, 19)      # hours ending of the cheap midday stretch (question 2's award chart)
-OUT_MIN_H = 4         # offline hours an off spell needs (pipeline.forecast.groups)
+OUT_MIN_H = 4         # offline hours an off spell needs (as pipeline/groups.py)
 FOSSIL = ("coal", "combined_cycle", "gas_steam")
 REASONS = ("coal", "never off", "held by its award", "rode through", "against the model", "no model call")
 # question 4: a fossil unit at minimum in an hour of its day's loss window (decision table) is losing
@@ -173,7 +173,7 @@ def _renewables(u, hubs):
 # --------------------------------------------------------------- groups --
 def _group(seq):
     """A train's group over a year of hourly states, as the site's timescale groups
-    (pipeline/forecast/groups.py): from its off spells (OUT_MIN_H offline hours or more after a
+    (pipeline/groups.py): from its off spells (OUT_MIN_H offline hours or more after a
     running hour, not mostly outage), never off with none, seasonal when every one lasted a week or
     more, multi-day when the shortest lasted a day to a week, daily with two or more under a day,
     split by how many a week; None when it never ran.  Also the hours inside those spells."""

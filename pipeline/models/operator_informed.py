@@ -1,6 +1,6 @@
 """Operator-informed on/off model: each CC train's and gas steam unit's hourly on/off call judged
 with what its operator knew, scored only on days whose 60-day disclosures are in (D + LAG).
-Not a forecast: the forecast (thermal_cutoff, peaker_share) keeps to what is public by D - 1.
+Not a forecast.
 Proposal: "Operator-informed unit predictor" (Oct 2026).
 
 Two hourly transitions, each a logistic with one intercept per unit, fitted on the 60-day hourly
@@ -65,16 +65,10 @@ VERSION changes; otherwise only new days.  The reasons are for the hour of the u
 actual switch that day, else the first hour the call switches, else its cheapest hour, from
 the true state before it (drivers).
 
-python -m pipeline.models.operator_informed BUNDLE [SIDE]   scores day mode against the
-forecast in a backtest bundle's seed files (BUNDLE/seed/SIDE, default ref) on the days both have.
-python -m pipeline.models.operator_informed --write [--all]   writes the day files.
+python -m pipeline.models.operator_informed [--all]   writes the day files.
 """
-import datetime as dt
-import gzip
-import json
 import os
 import sys
-from collections import Counter, defaultdict
 
 import numpy as np
 
@@ -638,118 +632,5 @@ def build_decision_view(days) -> int:
     return n
 
 
-# --------------------------------------------------------------- score --
-W = ("forecast", "operator", "operator+COP")
-
-
-def _cls(on):
-    return "on" if on.all() else ("off" if not on.any() else "cycle")
-
-
-def score(bundle, side="ref"):
-    """Day mode against the forecast on the CC and gas steam unit-days both have, outage hours
-    left out (as analysis/decision-score.py)."""
-    from ..forecast.score import _states as day_states
-    from ..intraday import train_of
-    from ..store import load_index
-    ctx = C.Context(load_index())
-    hour = {w: defaultdict(Counter) for w in W}
-    day = {w: defaultdict(Counter) for w in W}
-    cheap_c = {w: defaultdict(Counter) for w in W}
-    brier = {w: defaultdict(list) for w in W}
-    run = []    # cheap-stretch run-through, CC trains: (start on, awarded, ran, p forecast, p operator, p with COP)
-    files = sorted(f for f in os.listdir(f"{bundle}/seed/{side}") if f.endswith(".json.gz"))
-    for fn in files:
-        d = json.load(gzip.open(f"{bundle}/seed/{side}/{fn}"))
-        date = d["date"]
-        if d["inputs"].get("hindsight"):
-            continue
-        uf = f"site/data/60d-units/{date}.json.gz"
-        st = day_states(ctx, date)
-        if not os.path.exists(uf) or not st:
-            continue
-        u = json.load(gzip.open(uf))
-        cols = {c: i + 2 for i, c in enumerate(u["columns"])}
-        act, tech = defaultdict(lambda: np.zeros(24, bool)), {}
-        for row in u["rows"]:
-            name, t = u["units"][row[0]][0], u["units"][row[0]][2]
-            if t not in TECHS:
-                continue
-            k = train_of(name) if t == "combined_cycle" else name
-            tech[k] = t
-            if (row[cols["online_share"]] or 0) >= 0.5:
-                act[k][row[1] - 1] = True
-        hub = np.nan_to_num(np.array(d["headline"]["hub"], float), nan=99)
-        cheap = hub <= 10
-        uh = d["unit_hours"]
-        ip = uh["series"].index("p")
-        days = _days(ctx).get(date, {})
-        for k, s in uh["units"].items():
-            t = tech.get(k)
-            if t is None:
-                continue
-            po, pc = p_day(ctx, date, k), p_day(ctx, date, k, cop=True)
-            if po is None or pc is None:
-                continue
-            pf = np.nan_to_num(np.array(s[ip], float))
-            if pf.shape != (24,):
-                pf = np.full(24, float(pf.mean()) if pf.size else 0.0)
-            a = act[k]
-            ok = np.asarray(st.get(k, ["-"] * 24)) != "o"
-            for w, p in zip(W, (pf, po, pc)):
-                fc = p >= 0.5
-                for h in np.where(ok)[0]:
-                    hour[w][t][(bool(a[h]), bool(fc[h]))] += 1
-                    brier[w][t].append((p[h] - a[h]) ** 2)
-                if ok.all():
-                    day[w][t][(_cls(a), _cls(fc))] += 1
-                    if cheap.any():
-                        cheap_c[w][t][(bool((~a & cheap).any()), bool((~fc & cheap).any()))] += 1
-            if t == "combined_cycle" and ok.all() and cheap.sum() >= 2 and k in days:
-                ix = np.where(cheap)[0]
-                a0, a1 = ix[0], ix[-1] + 1
-                sts = _states(ctx)[k][1]
-                k0 = (C._d(date) - ctx.stats["day0"]).days * 24
-                run.append((float(_on(sts[k0 - 1])), float(days[k]["aw"][a0:a1].mean() >= 0.5),
-                            float(a[a0:a1].mean() >= 0.5), float(pf[a0:a1].mean()), float(po[a0:a1].mean()),
-                            float(pc[a0:a1].mean())))
-
-    def pr(c, pos):
-        tp = c[(pos, pos)]
-        fp = sum(v for (x, y), v in c.items() if y == pos and x != pos)
-        fn = sum(v for (x, y), v in c.items() if x == pos and y != pos)
-        return tp / max(tp + fp, 1), tp / max(tp + fn, 1)
-    print(f"operator_informed {VERSION} against the forecast ({bundle} {side})")
-    for t in TECHS:
-        print(f"\n{t}")
-        for w in W:
-            c = hour[w][t]
-            n = sum(c.values())
-            if not n:
-                continue
-            acc = (c[(True, True)] + c[(False, False)]) / n
-            op, orc = pr(c, False)
-            cp, cr = pr(cheap_c[w][t], True)
-            print(f"  {w:13s} hours {n:6d}  acc {acc:.3f}  Brier {np.mean(brier[w][t]):.4f}  off prec/recall {op:.2f}/{orc:.2f}"
-                  f"  cheap-hour shutdowns prec/recall {cp:.2f}/{cr:.2f} ({cheap_c[w][t][(True, True)]} caught)")
-            print("            day class", {f"{x}->{y}": v for (x, y), v in sorted(day[w][t].items())})
-    if run:
-        R = np.array(run)
-        y = R[:, 2]
-        print(f"\nCC cheap-stretch run-through, {len(R)} train-days (ran through {y.mean():.2f})")
-        for name, col in zip(W, (3, 4, 5)):
-            p = R[:, col]
-            print(f"  {name:13s} Brier {np.mean((p - y) ** 2):.4f}  accuracy {np.mean((p >= .5) == (y == 1)):.3f}")
-        for s0 in (0, 1):
-            for aw in (0, 1):
-                m = (R[:, 0] == s0) & (R[:, 1] == aw)
-                if m.sum():
-                    print(f"  on at start {s0} awarded {aw}: n {m.sum():5d} ran {y[m].mean():.3f}  accuracy " + "  ".join(
-                        f"{w} {np.mean((R[m, c] >= .5) == (y[m] == 1)):.3f}" for w, c in zip(W, (3, 4, 5))))
-
-
 if __name__ == "__main__":
-    if sys.argv[1] == "--write":
-        build_days({}, rebuild="--all" in sys.argv)
-    else:
-        score(sys.argv[1], sys.argv[2] if len(sys.argv) > 2 else "ref")
+    build_days({}, rebuild="--all" in sys.argv)

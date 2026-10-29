@@ -104,6 +104,7 @@ def load_index() -> dict:
 def save_index(index: dict) -> None:
     from .config import SIXTY_DAY_TECHS, TECH_LABELS, TWO_DAY_CURVES
     import datetime as dt
+    index["days"].pop("fit", None)     # the retired 2-day fit's days
     for k in index["days"]:
         index["days"][k] = sorted(set(index["days"][k]))
     index["grid"] = PRICE_GRID.tolist()

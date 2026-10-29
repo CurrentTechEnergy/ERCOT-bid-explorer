@@ -1,7 +1,7 @@
 """Peakers on real-time prices: a fit of each combustion turbine's hours online against the
 real-time price at its own node, for the Commitment page's per-unit start chart.  A fit of past decisions,
 not a forecast: the real-time price is not known when a peaker decides, and peakers starting
-move it.  The forecast keeps peaker_share (day-ahead hub price bands).
+move it.
 
 The fit, per unit and month: a logistic regression of online (SCED "m"/"a") on the hour's
 real-time settlement point price at the unit's resource node (the mean of its four 15-minute
@@ -36,7 +36,7 @@ circle: the fit says it ran.
 
 v1 backtest Mar-Aug 2026, 245 CTs, each month fitted on the three before, hours right / starts caught /
 on-calls right: real-time node 91.1% / 39% / 90.8%; real-time hub 90.7% / 37% / 89.6%; day-ahead
-hub price bands (the forecast's peaker_share inputs) 90.1% / 32% / 89.0%; every hour off 70.4%.
+hub price bands (the retired forecast's peaker_share inputs) 90.1% / 32% / 89.0%; every hour off 70.4%.
 
 Writes data/peaker/rt_fit.json.gz:
   {"model", "version", "columns": [...], "half_life", "days": {date: [[unit, start, peak, ran,

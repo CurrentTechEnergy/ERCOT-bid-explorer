@@ -24,7 +24,7 @@ import numpy as np
 
 from .. import private
 from ..config import DATA_DIR, HISTORY_DIR
-from ..forecast import groups as grp
+from ..forecast import context as grp
 from ..intraday import train_of
 from ..store import read_json_gz
 

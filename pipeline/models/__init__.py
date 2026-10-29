@@ -1,30 +1,8 @@
-"""The forecast models, one module each, behind one contract:
+"""Fits of past unit decisions, each written to files the pages read; none is a forecast.
 
-    forecast(date, ctx) -> dict          (ctx: pipeline.forecast.context.Context)
-
-Every module carries NAME and VERSION, and every row the pipeline writes from it carries both,
-so two versions can be run over the same days and compared before one is promoted
-(python -m pipeline.forecast.benchmark).  The page reads the files the models write; it never
-computes a model.
-
-  thermal_cutoff    which thermal units are committed for the day (the commitment clock): the
-                    stay-on loss at the unit's own node against its own cutoff, in dollars
-  thermal_dispatch  the shape within the day for the committed set (the dispatch clock): each
-                    unit's offer curve met by the hourly day-ahead price, between LSL and HSL
-  peaker_share      combustion turbines: online share by day-ahead price level and hour
-  renewable_floor   wind and solar: available MW from the forecasts, less what prices itself
-                    out at its own node
-  storage_habit     batteries, fleet: charging and discharging by hour from the fleet's habit and
-                    the day-ahead hub price shape, corrected by boosted trees (v1)
-
-cutoff_history is a model too (NAME, VERSION, its own benchmark) but not a forecast: it refits
-each unit's cutoff month by month to show when its behaviour changed, read by the events
-list and the Unit page, never by the forecast.  So it is not in MODELS.
+  operator_informed  each CC train's and gas steam unit's hourly on/off call judged with what its
+                     operator knew (data/operator/), with its history days (operator_history),
+                     turn-off points (operator_cutoffs) and scorecard (operator_scores)
+  peaker_rt          each combustion turbine's hours online against the real-time price at its
+                     own node (the Commitment page's start chart)
 """
-from . import thermal_cutoff, thermal_dispatch, peaker_share, renewable_floor, storage_habit
-
-MODELS = {m.NAME: m for m in (thermal_cutoff, thermal_dispatch, peaker_share, renewable_floor, storage_habit)}
-
-
-def versions() -> dict:
-    return {m.NAME: m.VERSION for m in MODELS.values()}

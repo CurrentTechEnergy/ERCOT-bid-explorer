@@ -41,7 +41,6 @@ INDEX_SOURCES = {
     "2dgen": ("2-day generation (NP3-910-ER)", 3),
     "prices": ("Real-time hub prices", 3),
     "nodes": ("Real-time resource-node prices", 3),
-    "fit": ("Fitted commitment curve", 3),
     "60d": ("60-day SCED disclosure", 63),
     "dam": ("60-day DAM disclosure", 63),
     "storage": ("60-day storage", 63),
@@ -50,8 +49,6 @@ INDEX_SOURCES = {
 FORWARD_SOURCES = {
     "dam_nodes.json.gz": "DAM node prices",
     "dam_lambda.json.gz": "DAM system lambda",
-    "load.json.gz": "Load forecast",
-    "renew_forecast.json.gz": "Wind and solar forecast",
 }
 
 
@@ -85,9 +82,6 @@ def check(now=None) -> dict:
         days = _days(DATA_DIR / name)
         latest = max(days) if days else None
         out[name.split(".")[0]] = _row(label, latest, behind(latest) if latest else None, allowed)
-    fc = sorted(p.name[:10] for p in (DATA_DIR / "forecast").glob("20*.json.gz"))
-    out["forecast"] = _row("Commitment forecast", fc[-1] if fc else None,
-                           behind(fc[-1]) if fc else None, allowed)
 
     # gas hubs post on trading days, a day or so late
     hubs = (private.read("gas_hubs.json.gz") or {}).get("hubs") or {}

@@ -1,6 +1,6 @@
-"""The minimum-energy cost of a combined-cycle train at its gas cost (thermal_cutoff v12), in place
-of its own DAM minimum-energy offer or the generic $/MWh (config.GENERIC_COSTS), for the forecast
-and for the decision history behind its cutoffs and stay-on rule.
+"""The minimum-energy cost of a combined-cycle train at its gas cost, in place of its own DAM
+minimum-energy offer or the generic $/MWh (config.GENERIC_COSTS), for the decision history
+behind its cutoffs and stay-on rule.
 
 Gas cost = HEAT_RATE[tech] x the train's own hub price (fuel_hubs.json.gz: Houston Ship Channel
 or Waha) on the latest trading day before D - 1, so it is public when the forecast for D is
