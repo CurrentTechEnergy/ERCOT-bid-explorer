@@ -80,7 +80,8 @@ Every event:
   seen      the date of the update run that first wrote the event (UTC); the emails go by this.
             Events written by the first build carry its date, kept in the file as "baseline",
             and count as history rather than news; so do the new ids of a kind whose detector
-            changed (KIND_REV, kept in the file as "kind_rev")
+            changed (KIND_REV, kept in the file as "kind_rev"), and the older control events found
+            once QSE/DME history months are merged ("control_backfill")
   unit      train or unit key as the Unit page uses it (plant for renewable events, with
             "units" listing the members)
   tech, kind, major (true for the changes shown by default; the rest sit behind "show all")
@@ -138,6 +139,7 @@ TURNOFF_MIN_DAYS, TURNOFF_MOVE, TURNOFF_SHARE, TURNOFF_CAP = 5, 50.0, 0.5, 1e5
 # offline, intraday.empty_hour, which finds spells and moves that were there all along)
 KIND_REV = {"turnoff": "c3", "shutdown_new": "s2", "shutdown_award": "s2", "group": "s2", "outage_start": "s2",
             "outage_end": "s2", "rt_price": "s2"}
+BACKFILL_NEWS_DAYS = 75    # a control event older than this, found by a history merge, is not news
 TURNOFF_AWARD = {0: "without an award", 1: "with an award some hours", 2: "with an award every hour"}
 # rt_price (combustion turbines; see the docstring)
 RUN_MONTH_DAYS, RUN_BEFORE = 20, 60            # days of states the month needs; days before it compared
@@ -694,15 +696,23 @@ def build_events(index: dict) -> dict:
     # and a kind whose detector changed (KIND_REV), whose ids found anew come from the change
     old_rev = old.get("kind_rev") or {}
     old_kinds = {e["kind"] for e in old.get("events", [])} - {k for k, v in KIND_REV.items() if old_rev.get(k) != v}
+    # and so are the control events a build finds after QSE/DME history months were merged
+    # (qse.backfill: the history reaches back to 2019, and its old changes are not news): the new
+    # ids dated before the 60-day files' usual lag, BACKFILL_NEWS_DAYS
+    backfill = qh.get("backfill") or []
+    news_from = ((dt.date.today() - dt.timedelta(days=BACKFILL_NEWS_DAYS)).isoformat()
+                 if set(backfill) - set(old.get("control_backfill") or []) else "")
     by_id = {}
     for e in events:
         if e["id"] in by_id:
             continue
         e["seen"] = seen.get(e["id"], today if not old.get("events") or e["kind"] in old_kinds else baseline)
+        if e["kind"] == "control" and e["id"] not in seen and e["date"] < news_from:
+            e["seen"] = baseline
         by_id[e["id"]] = e
     events = sorted(by_id.values(), key=lambda e: (e["date"], e["unit"], e["kind"]), reverse=True)
     updated = dt.datetime.now(dt.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
-    out = {"updated": updated, "kinds": KINDS, "baseline": baseline, "kind_rev": KIND_REV,
+    out = {"updated": updated, "kinds": KINDS, "baseline": baseline, "kind_rev": KIND_REV, "control_backfill": backfill,
            "first": events[-1]["date"] if events else None, "last": events[0]["date"] if events else None,
            "n": len(events), "n_major": sum(e["major"] for e in events),
            "new_today": sum(e["seen"] == today for e in events) if today != baseline else 0,

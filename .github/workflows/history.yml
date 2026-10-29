@@ -3,6 +3,7 @@ name: Build hourly history
 # Hourly wind and solar history (kind: renewables), thermal history (kind: thermal), thermal
 # ancillary service awards and prices (kind: as), real-time settlement point prices (kind: rt) or
 # real-time AS awards and prices with every technology's DAM AS awards (kind: rtas, Dec 2025 on)
+# or each resource's QSE and decision-making entity (kind: control, read only from the raw store)
 # from ERCOT's
 # archive (pipeline/history.py), one month per job,
 # uploaded as Parquet files to the `history` release.  Kept apart from the site data and the
@@ -12,9 +13,9 @@ on:
   workflow_dispatch:
     inputs:
       kind:
-        description: "renewables (units-*), thermal (thermal-*), as (as-*, as-mcpc-*), rt (rt-prices-*), rtas (rt-as-*, rt-mcpc-*, dam-as-*) or dam-status (dam-status-*, read only from the raw store)"
+        description: "renewables (units-*), thermal (thermal-*), as (as-*, as-mcpc-*), rt (rt-prices-*), rtas (rt-as-*, rt-mcpc-*, dam-as-*) dam-status (dam-status-*, read only from the raw store) or control (control-*, read only from the raw store)"
         type: choice
-        options: [renewables, thermal, as, rt, rtas, dam-status]
+        options: [renewables, thermal, as, rt, rtas, dam-status, control]
         required: false
         default: renewables
       start:
@@ -60,7 +61,7 @@ jobs:
           MAX: ${{ inputs.max_months || '24' }}
           FORCE: ${{ inputs.force || false }}
           EVENT: ${{ github.event_name }}
-          PREFIX: ${{ inputs.kind == 'thermal' && 'thermal' || inputs.kind == 'as' && 'as' || inputs.kind == 'rt' && 'rt-prices' || inputs.kind == 'rtas' && 'rt-as' || inputs.kind == 'dam-status' && 'dam-status' || 'units' }}
+          PREFIX: ${{ inputs.kind == 'thermal' && 'thermal' || inputs.kind == 'as' && 'as' || inputs.kind == 'rt' && 'rt-prices' || inputs.kind == 'rtas' && 'rt-as' || inputs.kind == 'dam-status' && 'dam-status' || inputs.kind == 'control' && 'control' || 'units' }}
           KIND: ${{ inputs.kind }}
         run: |
           if [ "$EVENT" = "pull_request" ]; then echo 'months=["2019-01"]' >> "$GITHUB_OUTPUT"; exit 0; fi
@@ -113,7 +114,17 @@ jobs:
           R2_ENDPOINT: ${{ secrets.R2_ENDPOINT }}
           R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
           R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
-        run: python -m pipeline.history "${{ matrix.month }}" --out out ${{ inputs.kind == 'thermal' && '--thermal' || inputs.kind == 'as' && '--as' || inputs.kind == 'rt' && '--rt' || inputs.kind == 'rtas' && '--rtas' || inputs.kind == 'dam-status' && '--dam-status --store-only' || '' }}
+        run: python -m pipeline.history "${{ matrix.month }}" --out out ${{ inputs.kind == 'thermal' && '--thermal' || inputs.kind == 'as' && '--as' || inputs.kind == 'rt' && '--rt' || inputs.kind == 'rtas' && '--rtas' || inputs.kind == 'dam-status' && '--dam-status --store-only' || inputs.kind == 'control' && '--control --store-only' || github.event_name == 'pull_request' && '--store-only' || '' }}
+      - name: QSE and DME, 2019-01 (smoke test, raw store only)
+        if: github.event_name == 'pull_request'
+        env:
+          ERCOT_API_USERNAME: ${{ secrets.ERCOT_API_USERNAME }}
+          ERCOT_API_PASSWORD: ${{ secrets.ERCOT_API_PASSWORD }}
+          ERCOT_API_SUBSCRIPTION_KEY: ${{ secrets.ERCOT_API_SUBSCRIPTION_KEY }}
+          R2_ENDPOINT: ${{ secrets.R2_ENDPOINT }}
+          R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+        run: python -m pipeline.history 2019-01 --out out --control --store-only
       # No RT settlement point price smoke test: those files come in bulk downloads that the raw
       # store does not keep, so every PR run would download the same month from ERCOT again.
       - name: RT AS, first 2 days of Dec 2025 (smoke test)
@@ -133,10 +144,12 @@ jobs:
           lines = []
           for p in sorted(glob.glob("out/*.parquet")):
               f = pd.read_parquet(p)
-              extra = (f", {f['unit'].nunique()} units ({', '.join(f'{k}: {v}' for k, v in f.groupby('tech', observed=True)['unit'].nunique().items())})"
+              extra = (f", {f['unit'].nunique()} units"
+                     + (f" ({', '.join(f'{k}: {v}' for k, v in f.groupby('tech', observed=True)['unit'].nunique().items())})" if "tech" in f else "")
                        + (f", offer present {f['offer'].notna().mean():.0%}" if "offer" in f else "")
                        + (f", states {', '.join(f'{k}: {v:.0%}' for k, v in f['state'].value_counts(normalize=True).items())}" if "state" in f else "")
                        + (f", DA node price present {f['da_node'].notna().mean():.0%}" if "da_node" in f else "")
+                       + (f", QSE present {f['qse'].notna().mean():.0%}, DME present {f['dme'].notna().mean():.0%}" if "dme" in f else "")
                        if "unit" in f else f", {f['point'].nunique()} points" if "point" in f else "")
               lines.append(f"- {os.path.basename(p)}: {len(f):,} rows, {f['date'].nunique()} days, {os.path.getsize(p) / 1e6:.1f} MB{extra}")
           text = "\n".join(lines)
@@ -148,4 +161,4 @@ jobs:
         if: github.event_name == 'workflow_dispatch'
         env:
           GH_TOKEN: ${{ github.token }}
-        run: gh release upload history ${{ inputs.kind == 'rtas' && 'out/rt-as-*.parquet out/rt-mcpc-*.parquet out/dam-as-*.parquet' || format('out/{0}*.parquet', inputs.kind == 'thermal' && 'thermal-' || inputs.kind == 'as' && 'as-' || inputs.kind == 'rt' && 'rt-prices-' || '') }} --clobber -R "$GITHUB_REPOSITORY"
+        run: gh release upload history ${{ inputs.kind == 'rtas' && 'out/rt-as-*.parquet out/rt-mcpc-*.parquet out/dam-as-*.parquet' || format('out/{0}*.parquet', inputs.kind == 'thermal' && 'thermal-' || inputs.kind == 'as' && 'as-' || inputs.kind == 'rt' && 'rt-prices-' || inputs.kind == 'control' && 'control-' || '') }} --clobber -R "$GITHUB_REPOSITORY"
