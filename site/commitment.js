@@ -984,9 +984,10 @@ function drawScores() {
 }
 
 // ==== across days: what the decision cost ==================================================
-// pipeline/stayon.py: each ride-through of a cheap stretch, what it lost against system lambda
-// at the unit's minimum-energy cost, and the restart a shutdown would have needed instead
-const RIDE = { unit: 0, tech: 1, thr: 2, stretch: 3, mwh: 4, rev: 5, cost: 6, loss: 7, start: 8, saves: 9, est: 10 };
+// pipeline/stayon.py: each ride-through of a cheap stretch, what it lost at its own real-time node
+// price against its minimum-energy cost, and the restart a shutdown would have needed instead
+// (px 0: no node price for the ride, priced at system lambda)
+const RIDE = { unit: 0, tech: 1, thr: 2, stretch: 3, mwh: 4, rev: 5, cost: 6, loss: 7, start: 8, saves: 9, est: 10, px: 11 };
 function ridesBy(thr) {
   const SO = S.SO;
   if (!SO) return null;
@@ -996,10 +997,11 @@ function ridesBy(thr) {
     if (r[RIDE.thr] !== ti || r[RIDE.tech] === "nuclear") continue;
     const key = r[RIDE.tech] === "combined_cycle" ? trainOf(r[RIDE.unit]) : r[RIDE.unit];
     let e = out.get(key);
-    if (!e) out.set(key, (e = { unit: key, tech: r[RIDE.tech], n: 0, mwh: 0, loss: 0, start: 0, saves: 0, paid: 0, est: 0 }));
+    if (!e) out.set(key, (e = { unit: key, tech: r[RIDE.tech], n: 0, mwh: 0, loss: 0, start: 0, saves: 0, paid: 0, est: 0, lam: 0 }));
     e.n++; e.mwh += r[RIDE.mwh]; e.loss += r[RIDE.loss]; e.start += r[RIDE.start]; e.saves += r[RIDE.saves];
     if (r[RIDE.saves] > 0) e.paid++;
     if (r[RIDE.est]) e.est++;
+    if (r[RIDE.px] === 0) e.lam++;
   }
   return out;
 }
@@ -1011,14 +1013,14 @@ function drawCost() {
   const rows = ids.map((g) => {
     const us = [...by.values()].filter((e) => groupOf(e.unit) === g);
     const sum = (k) => d3.sum(us, (e) => e[k]);
-    return { g, units: us.length, n: sum("n"), mwh: sum("mwh"), loss: sum("loss"), start: sum("start"), saves: sum("saves"), paid: sum("paid"), est: sum("est") };
+    return { g, units: us.length, n: sum("n"), mwh: sum("mwh"), loss: sum("loss"), start: sum("start"), saves: sum("saves"), paid: sum("paid"), est: sum("est"), lam: sum("lam") };
   }).filter((r) => r.n);
   const nStretch = S.SO.stretches[String(thr)]?.length || 0;
-  window.CX.setNote($("cost-note"), `Each time a coal or gas unit ran through hours with lambda below ${fmtPrice0(thr)}: what it lost, against what a shutdown and restart would have cost.`, `Every time a coal or gas unit ran through a stretch of hours with system lambda below ${fmtPrice0(thr)} (${nStretch} stretches of ${S.SO.min_hours} hours or more), what its output lost against lambda at its own minimum-energy cost, and what a shutdown and restart would have cost instead (hot start for stretches up to ${S.SO.hot_h} hours, intermediate up to ${S.SO.inter_h}, cold beyond). ` +
-    `Where the loss is bigger than the restart, shutting down would have paid. Costs are the unit's own day-ahead three-part offer (capped by ERCOT's cost verification, so an upper bound), its latest within ${S.SO.cost_days} days, or a generic value for the technology; lambda is the system price, so congestion at the unit's node is not in these numbers, unlike the cutoffs, which use the node's day-ahead price. ` +
+  window.CX.setNote($("cost-note"), `Each time a coal or gas unit ran through hours with lambda below ${fmtPrice0(thr)}: what it lost, against what a shutdown and restart would have cost.`, `Every time a coal or gas unit ran through a stretch of hours with system lambda below ${fmtPrice0(thr)} (${nStretch} stretches of ${S.SO.min_hours} hours or more), what its output lost at its own real-time node price against its own minimum-energy cost, and what a shutdown and restart would have cost instead (hot start for stretches up to ${S.SO.hot_h} hours, intermediate up to ${S.SO.inter_h}, cold beyond). ` +
+    `Where the loss is bigger than the restart, shutting down would have paid. Costs are the unit's own day-ahead three-part offer (capped by ERCOT's cost verification, so an upper bound), its latest within ${S.SO.cost_days} days, or a generic value for the technology. Revenue is at the unit's own node, so a unit behind congestion is credited what its energy was worth where it sits; ${(() => { const n = d3.sum(rows, (r) => r.n), l = d3.sum(rows, (r) => r.lam); return l ? `${fmtPct(l / n)} of ride-throughs had no node price and are valued at system lambda` : "every ride-through here has a node price"; })()}. ` +
     `A unit with a cutoff that keeps riding through stretches where shutting down would have paid may hold contracts, ancillary service obligations or start costs these numbers do not see; the units table puts each unit's net beside its cutoff.`);
   const S2 = [
-    { id: "loss", label: "Lost riding through (cost less revenue at lambda)", color: "--c8" },
+    { id: "loss", label: "Lost riding through (cost less revenue at its node)", color: "--c8" },
     { id: "start", label: "Restart avoided by staying on", color: "--c1" },
   ];
   staticLegend($("cost-legend"), S2);

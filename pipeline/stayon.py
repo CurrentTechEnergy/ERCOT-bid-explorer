@@ -6,11 +6,15 @@ A cheap stretch is a run of consecutive hours (across consecutive days) with sys
 below a threshold (intraday.CHEAP).  A unit "rode through" a stretch when it was running in
 every hour of it and in the hour before and the hour after.  For each such unit and stretch:
 
-  revenue   sum over the stretch of output x system lambda ($)
+  revenue   sum over the stretch of output x the unit's own real-time resource-node price ($;
+            the hourly mean of the 15-minute prices at its settlement point from the DAM
+            disclosure).  A ride with no node price for every hour of it (no node file that
+            day, or a unit with no settlement point) is priced at system lambda instead, and
+            marked (px 0)
   cost      sum of output x minimum-energy cost ($): the DAM three-part offer's $/MWh at
             minimum output, applied to all MW produced (output above minimum is usually small
             in these hours; the unit's incremental offer would be a closer cost for it)
-  loss      cost - revenue (positive when running through lost money against lambda)
+  loss      cost - revenue (positive when running through lost money at its node)
   start     the cost of restarting after the stretch: the DAM hot start cost when the stretch
             is at most HOT_H hours, intermediate up to INTER_H, cold beyond (ERCOT's own
             hot / intermediate / cold boundaries are set per unit by the QSE and not disclosed)
@@ -19,16 +23,18 @@ every hour of it and in the hour before and the hour after.  For each such unit 
 
 Costs come from the unit's DAM three-part offer that day (data/dam/).  A unit with none that
 day uses its own most recent offer within COST_DAYS days (est = 1), or the technology's
-generic value from config.GENERIC_COSTS (est = 2).  Lambda is the system price, not the unit's
-node price, so congestion is not in these numbers.
+generic value from config.GENERIC_COSTS (est = 2).  Revenue is at the unit's own node, so a
+unit behind congestion is credited what its energy was worth where it sits.
 
 Writes data/stayon_60d.json.gz:
   dates, cheap (thresholds), min_hours, hot_h, inter_h
   stretches[thr]      [start date, start hour ending, hours, mean lambda]
-  rides               [unit, tech, thr, stretch index, MWh, revenue, cost, loss, start, saves, est]
+  rides               [unit, tech, thr, stretch index, MWh, revenue, cost, loss, start, saves, est, px]
+                      px: 1 revenue at the unit's node, 0 at system lambda (no node price)
   tech[thr][tech]     {n: ride-throughs, mwh, loss, saves_pos: total of positive saves,
                        share_saves_pos: share of ride-throughs where shutting down would have
-                       paid, est_share: share using estimated costs}
+                       paid, est_share: share using estimated costs, lam_share: share priced
+                       at system lambda for want of a node price}
   costs               daily medians by technology from the DAM summaries:
                       {tech: {start_hot: [day], start_inter: [day], start_cold: [day],
                               mingen: [day], n_offer: [day]}} (null where no DAM file)
@@ -37,6 +43,7 @@ import numpy as np
 
 from .config import DATA_DIR, GENERIC_COSTS, UNIT_DATA_DIR
 from .intraday import CHEAP
+from .parse_prices import node_hourly
 from .store import read_json_gz, write_json_gz
 from .trends import UNIT_TECHS
 
@@ -51,14 +58,16 @@ def _r(x, nd=0):
 
 
 def _costs_by_day(dates):
-    """{date: {unit: (hot, inter, cold, mingen, tech)}} from the DAM day files, and the daily
-    technology medians for the trend series."""
+    """{date: {unit: (hot, inter, cold, mingen, tech)}} from the DAM day files, the daily
+    technology medians for the trend series, and {unit: settlement point} (its latest)."""
     by_day, series = {}, {t: {k: [] for k in ("start_hot", "start_inter", "start_cold", "mingen", "n_offer")}
                           for t in UNIT_TECHS}
+    sps = {}
     summ = read_json_gz(DATA_DIR / "summary_dam.json.gz", default={})
     for d in dates:
         dd = read_json_gz(DATA_DIR / "dam" / f"{d}.json.gz")
         if dd:
+            sps.update({name: u["sp"] for name, u in dd["units"].items() if u.get("sp")})
             by_day[d] = {name: (u["start"][0], u["start"][1], u["start"][2], u["mingen"], u["tech"])
                          for name, u in dd["units"].items()
                          if u.get("mingen") is not None or any(x is not None for x in u.get("start", []))}
@@ -69,7 +78,7 @@ def _costs_by_day(dates):
                 q = e.get(k)
                 series[t][k].append(q[1] if q else None)
             series[t]["n_offer"].append(e.get("n_offer"))
-    return by_day, series
+    return by_day, series, sps
 
 
 def _unit_costs(by_day, dates, di, name, tech):
@@ -124,7 +133,19 @@ def build_stayon(index: dict) -> None:
             found.append(cur)
         stretches[thr] = [s for s in found if s[2] >= MIN_HOURS]
 
-    costs_by_day, cost_series = _costs_by_day(dates)
+    costs_by_day, cost_series, sps = _costs_by_day(dates)
+    node_days = set(index["days"].get("nodes", []))
+    node_cache = {}
+
+    def node_at(i, name):
+        """[24] real-time prices at the unit's settlement point on day index i, or None."""
+        if i not in node_cache:
+            d = dates[i]
+            node_cache[i] = node_hourly(read_json_gz(UNIT_DATA_DIR / "nodes" / f"{d}.json.gz", default=None)) \
+                if d in node_days else {}
+            while len(node_cache) > 5:
+                node_cache.pop(next(iter(node_cache)))
+        return node_cache[i].get(sps.get(name, ""))
 
     def running(name, i, h):
         s = strips.get(name)
@@ -133,7 +154,7 @@ def build_stayon(index: dict) -> None:
     # hourly output and technology per unit come from the per-unit day files; a few days are
     # kept in memory at a time
     rides = []
-    agg = {thr: {t: [0, 0.0, 0.0, 0.0, 0, 0] for t in UNIT_TECHS} for thr in CHEAP}   # n, mwh, loss, saves+, n_saves+, n_est
+    agg = {thr: {t: [0, 0.0, 0.0, 0.0, 0, 0, 0] for t in UNIT_TECHS} for thr in CHEAP}   # n, mwh, loss, saves+, n_saves+, n_est, n_lambda
     cache = {}
 
     def day_units(i):
@@ -155,8 +176,8 @@ def build_stayon(index: dict) -> None:
                     continue
                 if not (running(name, *before) and running(name, *after)):
                     continue
-                mwh = rev = 0.0
-                tech, ok = None, True
+                mwh = rev = rev_lam = 0.0
+                tech, ok, px = None, True, 1
                 for i, h in hours:
                     tu = day_units(i).get(name)
                     if not tu or not tu[1] or tu[1][h] is None or not np.isfinite(lam[i, h]):
@@ -164,9 +185,16 @@ def build_stayon(index: dict) -> None:
                         break
                     tech = tu[0]
                     mwh += tu[1][h]
-                    rev += tu[1][h] * lam[i, h]
+                    rev_lam += tu[1][h] * lam[i, h]
+                    nd = node_at(i, name) if px else None
+                    if nd and h < len(nd) and nd[h] is not None:
+                        rev += tu[1][h] * nd[h]
+                    else:
+                        px = 0
                 if not ok or mwh <= 0 or tech not in UNIT_TECHS:
                     continue
+                if not px:
+                    rev = rev_lam       # no node price for the whole ride: system lambda throughout
                 c = _unit_costs(costs_by_day, dates, i0, name, tech)
                 if c is None:
                     continue
@@ -175,7 +203,7 @@ def build_stayon(index: dict) -> None:
                 loss = cost - rev
                 start = hot if n_h <= HOT_H else inter if n_h <= INTER_H else cold
                 saves = loss - start
-                rides.append([name, tech, thr, si, _r(mwh), _r(rev), _r(cost), _r(loss), _r(start), _r(saves), est])
+                rides.append([name, tech, thr, si, _r(mwh), _r(rev), _r(cost), _r(loss), _r(start), _r(saves), est, px])
                 a = agg[thr][tech]
                 a[0] += 1
                 a[1] += mwh
@@ -185,10 +213,13 @@ def build_stayon(index: dict) -> None:
                     a[4] += 1
                 if est:
                     a[5] += 1
+                if not px:
+                    a[6] += 1
 
     tech_out = {str(thr): {t: {"n": a[0], "mwh": _r(a[1]), "loss": _r(a[2]), "saves_pos": _r(a[3]),
                                "share_saves_pos": _r(a[4] / a[0], 3) if a[0] else None,
-                               "est_share": _r(a[5] / a[0], 3) if a[0] else None}
+                               "est_share": _r(a[5] / a[0], 3) if a[0] else None,
+                               "lam_share": _r(a[6] / a[0], 3) if a[0] else None}
                            for t, a in agg[thr].items()} for thr in CHEAP}
     write_json_gz(DATA_DIR / "stayon_60d.json.gz", {
         "dates": dates, "cheap": CHEAP, "min_hours": MIN_HOURS, "hot_h": HOT_H, "inter_h": INTER_H,
