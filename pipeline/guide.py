@@ -110,7 +110,7 @@ def build():
     for r in stay.get("rides", []):
         if r[2] == 0 and r[3] in si:
             rides[r[0]] = {"mwh": r[4], "revenue": r[5], "cost": r[6], "loss": r[7], "start": r[8],
-                           "saves": r[9], "est": r[10]}
+                           "saves": r[9], "est": r[10], "px": r[11] if len(r) > 11 else 0}
 
     # fleet: thermal units online in every run of the stretch, and how much of their LSL a DAM
     # energy award covered

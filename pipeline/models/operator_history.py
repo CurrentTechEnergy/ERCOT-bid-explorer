@@ -8,8 +8,9 @@ minimum-energy cost and hot start per configuration, as the DAM day file gives t
 resource status by hour from the dam-status files (history.py --dam-status, built from our own
 copies of the 60-day DAM disclosure in the raw store).  Without those files the reduced fits
 leave the status out (zero for every hour).  One input the history lacks:
-  gas price             the live Houston Ship Channel series starts Nov 2025; before it, the
-                        Ship Channel as far back as OilPriceAPI has it, then Henry Hub from EIA
+  gas price             at each unit's own hub (Houston Ship Channel or Waha, as the live model
+                        reads it): the live hub series starts Nov 2025; before it, that hub as
+                        far back as OilPriceAPI has it, then Henry Hub from EIA
                         (data/gas_history.json.gz, pipeline/gas.py)
 
 The model itself picks the fit (operator_informed.fit): a month the 60-day fits cover keeps the
@@ -127,17 +128,19 @@ class HistoryContext:
                 st = live_raw[k][1]
                 a[off:off + len(st)] = st
             self._raw[k] = (techs.get(k, live_raw.get(k, ("", None))[0]), a)
-        # gas: the live Ship Channel series, then its history from OilPriceAPI, then Henry Hub
-        hsc = (private.read("gas_hubs.json.gz", default={}) or {}).get("hubs", {}).get("hsc") or {}
+        # gas at each hub: the live series, then its history from OilPriceAPI, then Henry Hub
+        live_hubs = (private.read("gas_hubs.json.gz", default={}) or {}).get("hubs", {})
         gh = read_json_gz(DATA_DIR / "gas_history.json.gz", default={}) or {}
         ph = private.read("gas_hub_history.json.gz", default={}) or {}
-        gas, first = {}, "9999"
-        for s in (hsc, ph.get("hsc") or {}, gh.get("henry_hub") or {}):
-            d0 = min(first, (s.get("dates") or ["9999"])[0])
-            gas.update({d: v for d, v in zip(s.get("dates", []), s.get("value", [])) if d < first})
-            first = d0
-        dates = sorted(gas)
-        self._oi_gas = (dates, [gas[d] for d in dates])
+        self._oi_gas = {}
+        for hub in sorted(set(live_hubs) | {"hsc", "waha"}):
+            gas, first = {}, "9999"
+            for s in (live_hubs.get(hub) or {}, ph.get(hub) or {}, gh.get("henry_hub") or {}):
+                d0 = min(first, (s.get("dates") or ["9999"])[0])
+                gas.update({d: v for d, v in zip(s.get("dates", []), s.get("value", [])) if d < first})
+                first = d0
+            dates = sorted(gas)
+            self._oi_gas[hub] = (dates, [gas[d] for d in dates])
 
     def raw_states(self):
         return self._raw

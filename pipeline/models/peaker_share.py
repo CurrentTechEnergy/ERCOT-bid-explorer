@@ -1,6 +1,7 @@
 """Peakers: combustion turbines start rather than stay on, so they are judged by hour: the
-share of its available history a unit was online at this hour of day with the day-ahead hub
-average in this price bin (pipeline.forecast.context.PRICE_BINS).  Hours on outage are left out
+share of its available history a unit was online at this hour of day with the day-ahead price
+at its own node in this price bin (pipeline.forecast.context.PRICE_BINS; v4, before it the hub
+average).  Hours on outage are left out
 of that history (v2), so the share says how often the unit runs when it can; outage comes in
 separately, as for other thermal units (thermal_cutoff: a long outage at the last known hour,
 the unplanned outage report, and the zonal unseen outage share).
@@ -16,8 +17,10 @@ hour shutdowns caught 94 of 100 against 89; all-hours committed-minimum MAE 1,62
            hours of history there; else its own share for the bin over all hours (MIN_BIN hours); else
            the combustion-turbine fleet's share for the cell.
 
-The hub price for the day is the day-ahead HB_HUBAVG; without it, the unit's overall online
-share applies to every hour.
+The price for the day is the day-ahead price at the unit's own settlement point (v4; the DAM
+disclosure, else the day-ahead node prices); without it, the unit's overall online share
+applies to every hour.  CALIB below was fitted on hub bands and is applied to the node price
+unchanged until a refit.
 
 v1 maps that share through CALIB, the online rate actually seen at each level of it in the
 hour's hub price band.  The share comes from history at least sixty days old, and peakers ran
@@ -36,8 +39,8 @@ import numpy as np
 from ..forecast import context as C
 
 NAME = "peaker_share"
-VERSION = "v3"    # v3: gas steam and CC units that run like peakers, their called hours in blocks of at least their shortest usual run; v2: share of available hours (outage hours left out), CALIB refit; v1: history share mapped through CALIB by hub price band
-BANDS = [20.0, 30.0, 45.0]   # hub $/MWh: bands (CHEAP_HUB, 20], (20, 30], (30, 45], above 45
+VERSION = "v4"    # v4: the day-ahead price at the unit's own node in place of the hub average, for its history and its day; v3: gas steam and CC units that run like peakers, their called hours in blocks of at least their shortest usual run; v2: share of available hours (outage hours left out), CALIB refit; v1: history share mapped through CALIB by hub price band
+BANDS = [20.0, 30.0, 45.0]   # node $/MWh: bands (CHEAP_HUB, 20], (20, 30], (30, 45], above 45
 _X = [0.0, 0.012, 0.034, 0.073, 0.15, 0.25, 0.35, 0.455, 0.557, 0.655, 0.752, 0.852, 0.983, 1.0]
 CALIB = [   # online rate while available at each share in _X, by band (v2: isotonic fit, Mar-Aug 2026)
     [0.024, 0.029, 0.055, 0.1, 0.247, 0.247, 0.379, 0.549, 0.588, 0.621, 0.621, 0.621, 0.621, 0.926],
@@ -125,14 +128,16 @@ def peaker_like(stats) -> set:
 
 def forecast(date, ctx: C.Context) -> dict:
     units = ctx.units(date)
-    hub = ctx.hub(date)
+    nodes = ctx.node_day(date)
     stats = ctx.stats_at(date)
     fleet = stats["fleet"].get("combustion_turbine")
     like = peaker_like(stats)
-    rows = {}
+    rows, n_node = {}, 0
     for key, u in units.items():
         if u["tech"] != "combustion_turbine" and key not in like:
             continue
+        hub = nodes.get(u["sp"]) if u["sp"] else None     # the unit's own day-ahead node price
+        n_node += hub is not None
         s = stats["units"].get(key)
         p = np.zeros(24)
         src = "fleet"
@@ -157,4 +162,4 @@ def forecast(date, ctx: C.Context) -> dict:
         if MIN_RUN and key in like:
             p = _block(p, int(round(_min_run(ctx, key, ctx.asof(date)[0]))))
         rows[key] = {"p_on": np.round(p, 3), "source": src, "model": NAME, "version": VERSION}
-    return {"rows": rows, "inputs": {"hub": hub is not None}}
+    return {"rows": rows, "inputs": {"node": n_node, "units": len(rows)}}

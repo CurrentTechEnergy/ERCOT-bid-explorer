@@ -210,7 +210,7 @@ function drawStep5() {
   } else {
     const k = [
       ["Output in the stretch", fmt0(r.mwh) + " MWh"],
-      ["Paid at the system price", fmt$k(r.revenue), r.revenue < 0],
+      [r.px ? "Paid at its node price" : "Paid at the system price", fmt$k(r.revenue), r.revenue < 0],
       ["Fuel and running cost" + (r.est || r.fuel ? " (est.)" : ""), fmt$k(r.cost), r.cost < 0],
       ["Restart cost if it had cycled off" + (r.est === 2 ? " (generic)" : r.est === 0 ? " (own offer)" : " (est.)"), fmt$k(r.start)],
       [r.saves > 0 ? "Cycling off would have saved" : "Staying on saved", fmt$k(Math.abs(r.saves))],

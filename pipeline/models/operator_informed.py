@@ -11,7 +11,8 @@ from what the operator had before hour h (FEATURES): the unit's own day-ahead no
 its minimum-energy cost and against its gas cost (HEAT_RATE x the day-before gas price), the
 loss (or profit) of running from h through the rest of the cheap (or dear) stretch at either cost, that loss against its own hot start cost, its DAM award at h, over the next
 AHEAD hours and later in the day, the DAM profit of delivering its award from h on at gas cost (award MW x
-(node price - HEAT_RATE x the day-before Houston Ship Channel gas price)) and that against its hot
+(node price - HEAT_RATE x the day-before gas price at the unit's own hub, Waha or Houston Ship Channel,
+from fuel_hubs.json.gz as pipeline/gascost.py reads it)) and that against its hot
 start cost, its DAM resource status at h, whether the costs are its own
 three-part offer, the hour, the season, how long it has been in its current state, and (from on)
 the share of the last three hours it sat at minimum.  Nothing from hour h on is used.
@@ -77,7 +78,7 @@ from collections import Counter, defaultdict
 
 import numpy as np
 
-from .. import private
+from .. import gascost, private
 from ..config import DATA_DIR, GENERIC_COSTS
 from ..cop import COP_DIR
 from ..decisions import AWARD_LSL, COST_DAYS, _dam_trains
@@ -86,7 +87,7 @@ from ..guide import EIA_HR
 from ..store import read_json_gz, write_json_gz
 
 NAME = "operator_informed"
-VERSION = "v2"   # v1: transitions with per-unit intercepts and slopes; v2: the COP only beside the main call, margins at gas cost
+VERSION = "v3"   # v3: gas at each unit's own hub (Waha or Houston Ship Channel), not Houston Ship Channel for all; v1: transitions with per-unit intercepts and slopes; v2: the COP only beside the main call, margins at gas cost
 TECHS = ("combined_cycle", "gas_steam")
 AHEAD = 6            # hours of award looked at ahead of h
 MIN_AWARD = 1.1      # an award at most this x LSL counts as holding at minimum (day mode)
@@ -154,18 +155,21 @@ def _status(dd):
 
 
 def _gas(ctx):
-    """(dates, $/MMBtu) of the Houston Ship Channel daily gas price."""
+    """{hub: (dates, $/MMBtu)} of the daily gas price at each hub ("hsc", "waha")."""
     if "_oi_gas" not in ctx.__dict__:
-        h = (private.read("gas_hubs.json.gz", default={}) or {}).get("hubs", {}).get("hsc") or {}
-        ctx._oi_gas = (h.get("dates") or [], h.get("value") or [])
+        h = (private.read("gas_hubs.json.gz", default={}) or {}).get("hubs", {})
+        ctx._oi_gas = {k: (v.get("dates") or [], v.get("value") or []) for k, v in h.items()}
     return ctx._oi_gas
 
 
-def _gas_before(ctx, d):
-    """The latest gas price strictly before `d` (public when the DAM for d clears), or None."""
+def _gas_before(ctx, d, key):
+    """The latest gas price strictly before `d` (public when the DAM for d clears) at the unit's
+    own hub (gascost: fuel_hubs.json.gz, Houston Ship Channel without one), or None."""
     import bisect
-    gd, gv = _gas(ctx)
+    gd, gv = _gas(ctx).get(gascost.hub_of(key), ([], []))
     i = bisect.bisect_left(gd, d) - 1
+    while i >= 0 and gv[i] is None:
+        i -= 1
     return gv[i] if i >= 0 else None
 
 
@@ -202,7 +206,6 @@ def _days(ctx):
         if not dd:
             continue
         tr, stat, cop = _dam_trains(dd), _status(dd), _cop(ctx, d, dd)
-        g = _gas_before(ctx, d)
         rec = {}
         for key, e in tr.items():
             if e["tech"] not in TECHS:
@@ -217,6 +220,7 @@ def _days(ctx):
                 mingen, hot, own = c[1], c[3] or gc[0], 1.0
             else:
                 mingen, hot, own = gc[3], gc[0], 0.0
+            g = _gas_before(ctx, d, key)
             fuel = HEAT_RATE[e["tech"]] * g if g else mingen
             rec[key] = dict(tech=e["tech"], spp=np.nan_to_num(e["spp"], nan=mingen), lsl=e["lsl"],
                             mingen=mingen, hot=hot, own=own, aw=e["aw"] >= AWARD_LSL * e["lsl"], aw_mw=e["aw"], fuel=fuel,

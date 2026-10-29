@@ -41,6 +41,11 @@ def _load():
     return _C
 
 
+def hub_of(key):
+    """The gas hub ("hsc" or "waha") of unit or train `key` (fuel_hubs.json.gz; "hsc" without one)."""
+    return _load()["hub"].get(key, "hsc")
+
+
 def gas_cost(tech, key, date):
     """$/MWh at gas for unit or train `key` on operating day `date`, or None."""
     hr = HEAT_RATE.get(tech)

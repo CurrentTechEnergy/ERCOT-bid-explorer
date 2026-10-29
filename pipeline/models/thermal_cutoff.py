@@ -48,10 +48,10 @@ For every thermal train in the latest DAM disclosure (pipeline.forecast.context.
               by the daily-group input.  A gas steam unit with too few decision days for a cutoff
               falls back to the seasonal rule.
   seasonal, multiday
-              (coal, and gas steam without a cutoff) rule v0 (SEASONAL_VERSION): on when the unit was running at its last known hour
-              and the month's day-ahead hub average to date is not below the lowest monthly
-              hub average it has run through; off otherwise.  A placeholder until a
-              multi-week economics rule exists.
+              (coal, and gas steam without a cutoff) rule v1 (SEASONAL_VERSION): on when the unit was running at its last known hour
+              and the month's mean day-ahead price at its own node to date is not below the
+              lowest monthly mean at that node it has run through; off otherwise (v0 read the
+              hub average for both).  A placeholder until a multi-week economics rule exists.
   NRC        a nuclear unit whose reactor the NRC reported below NRC_OFF_PCT power the morning
               before (Context.nrc_off) is "outage" all day
   listed out  a unit in ERCOT's unplanned outage report public before the day cleared
@@ -117,7 +117,7 @@ UNSEEN_EPS = 0.1   # unseen-outage weight of a unit never out in these weeks of 
 UNSEEN_TECHS = ("coal", "combined_cycle", "gas_steam", "combustion_turbine")   # spread the zonal unseen outage MW over these
 NAME = "thermal_cutoff"
 VERSION = "v13"   # v13: CC cutoffs from day-ahead losses at the LSL of the configuration running in HE1 (pipeline/decisions.py), not the smallest; v12: combined cycles at gas cost (pipeline/gascost.py); v11: logistic stay-on rule in the window, zonal outage pool in place of the unseen allocation, long outages carried for gas steam and CTs only; v10: the zonal unseen outage placed first on units usually out in these weeks, at the fitted slope; v9: the history trees also read the forecast net load, for combined cycles; v8: the P(on) of trees fitted on the 2024-25 thermal history as an input; v7: combustion turbines share the zonal unseen outage; v6: technology one-hot, drivers of each P(on); v5: stay-on probability by boosted trees; v4: loss over the cutoff split by award history; v3: gas steam on its stay-on loss, stale gas steam outages dropped; v2: CC outage calls by gas turbine, zonal unseen outages; v1: NRC reactor status, listed outages; probability of staying on through the window, per-unit horizon, pooled cutoffs
-SEASONAL_VERSION = "v0"
+SEASONAL_VERSION = "v1"    # v1: the unit's own day-ahead node price; v0: the day-ahead hub average
 RUN_SHARE = 0.5          # a month the unit ran through: online at least this share of its hours
 LONG_OUT = 21            # days an outage must already have lasted at the last known hour to carry forward
 MIN_OFF_DEFAULT = {"combined_cycle": 7.0, "gas_steam": 16.0, "coal": 24.0}   # hours, without a p10 of its own
@@ -132,25 +132,25 @@ CC_WINDOW_GROUPS = ("daily1", "daily2", "daily3", "multiday", "seasonal")   # CC
 GBT = dict(max_iter=300, learning_rate=0.05, max_leaf_nodes=15, min_samples_leaf=200, l2_regularization=1.0, random_state=0)
 
 
-def _month_floor(ctx, key, known):
-    """Lowest monthly mean day-ahead hub average over the months the unit ran through, from
-    the days up to the known date."""
+def _month_floor(ctx, key, known, sp):
+    """Lowest monthly mean day-ahead price at the unit's own settlement point `sp` over the
+    months the unit ran through, from the days up to the known date."""
     st = ctx.stats["states"].get(key)
-    if st is None or known is None:
+    if st is None or known is None or not sp:
         return None
     tech, states = st
     dates, day0 = ctx.uh["dates"], ctx.stats["day0"]
-    hub = ctx.hub_daily()
+    px = ctx.node_daily(sp)
     by_month = {}
     for d in dates:
         if d > known:
             break
         dn = (C._d(d) - day0).days
         seg = states[dn * 24:(dn + 1) * 24]
-        if d not in hub or seg.size < 24:
+        if d not in px or seg.size < 24:
             continue
         m = by_month.setdefault(d[:7], [0, 0, []])
-        m[0] += int(np.isin(seg, ["m", "a"]).sum()); m[1] += int((seg != "-").sum()); m[2].append(hub[d])
+        m[0] += int(np.isin(seg, ["m", "a"]).sum()); m[1] += int((seg != "-").sum()); m[2].append(px[d])
     ran = [float(np.mean(v[2])) for v in by_month.values() if v[1] and v[0] / v[1] >= RUN_SHARE]
     return min(ran) if ran else None
 
@@ -343,19 +343,21 @@ def _day_trains(ctx):
 
 
 
-def _seasonal(row, ctx, key, known, last, mtd, month):
-    """The seasonal rule (SEASONAL_VERSION) for a seasonal or multiday unit, into `row`."""
-    floor = _month_floor(ctx, key, known)
+def _seasonal(row, ctx, key, known, last, date, sp):
+    """The seasonal rule (SEASONAL_VERSION) for a seasonal or multiday unit, into `row`: the
+    month's day-ahead price at its own node `sp` against the lowest month it ran through."""
+    mtd, month = ctx.month_to_date_node(date, sp)
+    floor = _month_floor(ctx, key, known, sp)
     running = last in "ma"
     row["version"] = f"{VERSION}+seasonal-{SEASONAL_VERSION}"
     if mtd is None:
-        row.update(verdict="nocut", p_on=1.0 if running else 0.0, reason="no hub prices for the month")
+        row.update(verdict="nocut", p_on=1.0 if running else 0.0, reason="no day-ahead prices at its node for the month")
     elif running and (floor is None or mtd >= floor):
         row.update(verdict="on", p_on=1.0,
-                   reason=f"running at {known}; {month} hub ${mtd:.0f} vs lowest month run through ${floor:.0f}" if floor is not None else f"running at {known}")
+                   reason=f"running at {known}; {month} node ${mtd:.0f} vs lowest month run through ${floor:.0f}" if floor is not None else f"running at {known}")
     elif running:
         row.update(verdict="off", p_on=0.0, off_from=1, off_hours=24,
-                   reason=f"{month} hub ${mtd:.0f} below the lowest month it ran through (${floor:.0f})")
+                   reason=f"{month} node ${mtd:.0f} below the lowest month it ran through (${floor:.0f})")
     else:
         row.update(verdict="off", p_on=0.0, off_from=1, off_hours=24, reason=f"off at {known}")
 
@@ -570,7 +572,6 @@ def forecast(date, ctx: C.Context) -> dict:
     point, asof_hind = ctx.asof(date)
     groups, stats = ctx.groups_at(date), ctx.stats_at(date)
     like = peaker_share.peaker_like(stats)
-    mtd, month = ctx.month_to_date_hub(date)
     node_src = ctx.node_source(date)
     rows = {}
     listed = ctx.listed_out(date)
@@ -602,7 +603,7 @@ def forecast(date, ctx: C.Context) -> dict:
         elif key in like:
             row.update(verdict="peaker", reason="runs like a peaker: judged by hour (peaker_share)")
         elif g in ("seasonal", "multiday") and not cc_win:
-            _seasonal(row, ctx, key, known, last, mtd, month)
+            _seasonal(row, ctx, key, known, last, date, u["sp"])
         elif g is None:
             s = stats["units"].get(key)
             row.update(verdict="nocut", p_on=round(s["on_days"], 2) if s else 0.0, reason="no hourly history")
@@ -626,7 +627,7 @@ def forecast(date, ctx: C.Context) -> dict:
             row["loss"] = round(float(loss))
             if cpm is None:
                 if t == "gas_steam" and g in ("seasonal", "multiday"):
-                    _seasonal(row, ctx, key, known, last, mtd, month)    # too little to judge on its loss
+                    _seasonal(row, ctx, key, known, last, date, u["sp"])    # too little to judge on its loss
                     row["reason"] += f" (too few decision days ({len(days)}) for a cutoff)"
                 else:
                     s = stats["units"].get(key)
@@ -714,4 +715,4 @@ def forecast(date, ctx: C.Context) -> dict:
             row["out_share"] = round(1 - (1 - row.get("out_share", 0.0)) * (1 - sh), 3)
     return {"rows": rows, "outage_pool": opool, "inputs": {"known_date": known, "hindsight": hindsight, "asof": point,
                                      "asof_hindsight": asof_hind, "node_prices": node_src,
-                                     "month": month, "month_hub": None if mtd is None else round(mtd, 2)}}
+                                     "month": date[:7]}}
