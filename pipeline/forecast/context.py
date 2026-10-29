@@ -15,8 +15,8 @@ answers "what was known when the day-ahead market for day D cleared":
   units(D)              every generation resource in the latest DAM disclosure at or before
                         D, merged into trains: tech, sp, hsl, lsl, costs
   stats                 per-unit history from the hourly states and the 60-day unit rows:
-                        online share by bin of the day-ahead price at the unit's own node and
-                        hour, typical output when running, HSL
+                        online share by day-ahead hub price bin and hour, typical output when
+                        running, HSL
   curve(name, D)        the unit's SCED2 offer curve from the latest monthly snapshot that was
                         public before D cleared (UNIT_DATA_DIR/forecast/curves/)
   asof(D)               the history point D's models may read: the latest month end (or the
@@ -46,7 +46,7 @@ OWN_DISCLOSURE = os.environ.get("BACKTEST_DISCLOSURE") == "own"   # every day re
 LAG = 60                       # days between an operating day and its 60-day disclosure
 HUB = "HB_HUBAVG"
 CHEAP_HUB = 10.0               # $/MWh: an hour at or below this day-ahead hub price is a cheap hour (scored in score.py)
-PRICE_BINS = [-1e9, 0.0, 15.0, 25.0, 35.0, 50.0, 100.0, 1e9]   # $/MWh, day-ahead price at the unit's own node
+PRICE_BINS = [-1e9, 0.0, 15.0, 25.0, 35.0, 50.0, 100.0, 1e9]   # $/MWh, day-ahead hub average
 BIN_LABELS = ["<0", "0-15", "15-25", "25-35", "35-50", "50-100", "100+"]
 THERMAL = ["nuclear", "coal", "combined_cycle", "gas_steam", "combustion_turbine"]
 RENEW = ["wind", "solar"]
@@ -356,54 +356,11 @@ class Context:
         ok = [d for d in self.dam_days if d <= cut]
         return ok[-1] if ok else (self.dam_days[0] if self.dam_days else None)
 
-    def node_day(self, date):
-        """{settlement point: [24] day-ahead $/MWh} for `date`: the DAM disclosure's price at each
-        unit's point, else the day-ahead node prices (data/dam_nodes.json.gz); {} without either.
-        Only complete days (24 prices) are kept."""
-        cache = self.__dict__.setdefault("_node_day", {})
-        if date not in cache:
-            out = {}
-            for sp, v in (self.dam_nodes.get(date) or {}).items():
-                if v and len(v) >= 24 and all(x is not None for x in v[:24]):
-                    out[sp] = np.array(v[:24], float)
-            for u in ((self.dam(date) or {}).get("units") or {}).values():
-                sp, v = u.get("sp"), u.get("spp") or []
-                if sp and len(v) >= 24 and all(x is not None for x in v[:24]):
-                    out[sp] = np.array(v[:24], float)
-            cache[date] = out
-        return cache[date]
-
-    def node_daily(self, sp):
-        """{date: daily mean day-ahead price at settlement point `sp`} for every day with one."""
-        cache = self.__dict__.setdefault("_node_daily", {})
-        if sp not in cache:
-            out = {}
-            for d in sorted(set(self.dam_days) | set(self.dam_nodes)):
-                v = self.node_day(d).get(sp)
-                if v is not None:
-                    out[d] = float(v.mean())
-            cache[sp] = out
-        return cache[sp]
-
-    def sp_of(self):
-        """{unit, or combined-cycle train: settlement point} from the DAM disclosures, the latest
-        one naming it."""
-        if "_sp_of" not in self.__dict__:
-            out = {}
-            for d in self.dam_days:
-                for name, u in ((self.dam(d) or {}).get("units") or {}).items():
-                    if u.get("sp"):
-                        out[name] = u["sp"]
-                        if u.get("tech") == "combined_cycle":
-                            out[train_of(name)] = u["sp"]
-            self._sp_of = out
-        return self._sp_of
-
-    def month_to_date_node(self, date, sp):
-        """Mean daily day-ahead price at the unit's own settlement point `sp` over the days of D's
-        month before D (the previous month when D is its first day), and the month's label."""
+    def month_to_date_hub(self, date):
+        """Mean daily hub average over the days of D's month before D (the previous month when
+        D is its first day), and the month's label."""
         d = _d(date)
-        days = self.node_daily(sp) if sp else {}
+        days = {k: v for k, v in self.hub_daily().items()}
         mtd = [v for k, v in days.items() if k[:7] == date[:7] and k < date]
         if mtd:
             return float(np.mean(mtd)), date[:7]
@@ -920,9 +877,7 @@ def _uh_upto(uh: dict, upto: str) -> dict:
 
 def build_unit_stats(ctx: Context, upto: str = None) -> dict:
     """Per unit (train for combined cycles) from the hourly states and the 60-day unit rows:
-      on_bin[b][h]   online hours / hours with data, by bin b of the day-ahead price at the
-                     unit's own node (Context.sp_of, Context.node_day) and hour h; a day with no
-                     price at its node is left out of the unit's counts
+      on_bin[b][h]   online hours / hours with data, by day-ahead hub price bin b and hour h
                      (kept as on, tot; avail counts the hours with data not on outage, so
                      on / avail is the online share while available)
       on_days        share of days with any online hour
@@ -933,15 +888,10 @@ def build_unit_stats(ctx: Context, upto: str = None) -> dict:
     upto: build from the record up to and including that day only (ctx.stats_at)."""
     uh, techs = (ctx.uh if upto is None else _uh_upto(ctx.uh, upto)), ctx.techs
     dates = uh.get("dates", [])
-    sps = ctx.sp_of()
-    node_bin = {}
-
-    def bins(d, sp):
-        """[24] price bins at settlement point sp on day d, or None."""
-        if (d, sp) not in node_bin:
-            v = ctx.node_day(d).get(sp) if sp else None
-            node_bin[(d, sp)] = [price_bin(x) for x in v] if v is not None else None
-        return node_bin[(d, sp)]
+    hub_bin = {}
+    for d in dates:
+        h = ctx.hub(d)
+        hub_bin[d] = [price_bin(v) for v in h] if h is not None else None
     nb = len(BIN_LABELS)
     units, fleet = {}, {}
     by, N, day0 = grp.merged_states(uh, techs)
@@ -957,11 +907,10 @@ def build_unit_stats(ctx: Context, upto: str = None) -> dict:
             by[name] = ("nuclear", st)
     for key, (t, st) in by.items():
         on = np.zeros((nb, 24)); tot = np.zeros((nb, 24)); av = np.zeros((nb, 24)); days_on = 0; ndays = 0
-        sp = sps.get(key)
         for i, d in enumerate(dates):
             dn = (_d(d) - day0).days
             seg = st[dn * 24:(dn + 1) * 24]
-            if seg.size < 24:
+            if seg.size < 24 or hub_bin.get(d) is None:
                 continue
             ndays += 1
             run = np.isin(seg, ["m", "a"])
@@ -969,12 +918,9 @@ def build_unit_stats(ctx: Context, upto: str = None) -> dict:
             up = has & (seg != "o")
             if run.any():
                 days_on += 1
-            bd = bins(d, sp)
-            if bd is None:
-                continue
             for h in range(24):
                 if has[h]:
-                    b = bd[h]
+                    b = hub_bin[d][h]
                     tot[b, h] += 1
                     av[b, h] += up[h]
                     on[b, h] += run[h]
