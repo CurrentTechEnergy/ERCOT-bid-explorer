@@ -393,7 +393,7 @@ function actRow(name, note, color, act, tip, scale, seg) {
   const f1 = d3.format(",.1f"), f0 = d3.format(",.0f");
   return `<div class="lab"><span class="sw" style="background:var(${color})"></span><div>${esc(name)}<small>${esc(note)}</small></div></div>` +
     `<div class="bar" data-tip-html="${esc(`<h4>${esc(name)}</h4><p class="tip-body">${tip}</p>`)}">` +
-    (seg && seg.light != null ? `<i style="left:0;width:${w(seg.light)}%;background:var(${color});opacity:.35"></i>` : "") +
+    (seg && seg.light != null ? `<i style="left:0;width:${w(seg.light)}%;background:var(${color});opacity:${seg.ren ? 0.35 : 0.2}"></i>` : "") +
     (act != null ? `<i style="left:0;width:${w(act)}%;background:var(${color})"></i>` : "") +
     (og ? `<i class="outage" style="left:${w(max)}%;width:${100 - w(max)}%;color:var(${color})"></i>` : "") + `</div>` +
     `<div class="val"><b>${act != null ? f1(act) + " GWh" : "–"}</b> ran` +
@@ -408,7 +408,7 @@ function drawActualBars() {
   panel.hidden = !L;
   if (!L) return;
   $("actual-bar-legend").innerHTML = `<span><span class="sw" style="background:var(--g3)"></span>What ran</span>` +
-    (L === "60d" ? `<span><span class="sw" style="background:var(--g3);opacity:.35"></span>Thermal: online, not used (HSL each hour) · Wind and solar: curtailed</span><span><span class="sw" style="background:var(--track)"></span>Thermal: offline but available</span><span><span class="sw outage" style="color:var(--g3)"></span>Thermal: max on outage</span>` : "");
+    (L === "60d" ? `<span><span class="sw" style="background:var(--g3);opacity:.2"></span>Thermal: online, not used (HSL each hour)</span><span><span class="sw" style="background:var(--g3);opacity:.35"></span>Wind and solar: curtailed</span><span><span class="sw" style="background:var(--track)"></span>Thermal: offline but available</span><span><span class="sw outage" style="color:var(--g3)"></span>Thermal: max on outage</span>` : "");
   $("actual-bars-sub").textContent = L === "60d" ? "ERCOT's reported energy for the day. The solid bar is what ran. For thermal, the light bar runs to the online units' maximum (HSL) each hour, summed over the day; the gray beyond it is units offline but available, at full output (their HSL when running, as the 60-day data gives no HSL while offline); together they are the max available. The hatched segment is the most outages took: each unit's hours reporting OUT, at full output. For wind and solar, the full bar is what the weather made available (their HSL each hour), and the light part of it was curtailed. Peakers are the units that run like peakers (online under 30% of available hours, at most 16 hours a day when on), shown on their own. Online minimum and maximum hour by hour are in the next panel." : "ERCOT's reported energy, from the 2-day summary. Thermal is reported in total until the 60-day disclosure.";
   const csv = [], gwhOf = (mw) => d3.sum(mw.filter((v) => v != null)) / 1000, sumOf = (a) => (a ? d3.sum(a) / 1000 : null);
   let html = "";
