@@ -20,7 +20,7 @@ const REASON = {
   "no model call": { label: "No model call", color: "--c5" },
   combustion_turbine: { label: "Combustion turbines", color: "--c4" },
 };
-const S = { G: null, year: "all", tech: "combined_cycle", q2cost: "" };
+const S = { G: null, year: "all", tech: "combined_cycle", fuel: "all", q2cost: "" };
 
 function emptyMsg(el, msg) { el.innerHTML = `<p class="empty">${msg}</p>`; }
 const yearLabel = (y) => { const r = S.G.years[y]; return r && r.to.slice(5) !== "12-31" ? `${y} (Jan 1 to ${d3.timeFormat("%b %-d")(new Date(r.to + "T12:00:00"))})` : String(y); };
@@ -169,19 +169,21 @@ const AWARD_GROUPS = [["award", "DAM award", "--c1"], ["self", "Self-committed, 
 const Q2_TECHS = ["combined_cycle", "gas_steam", "coal", "combustion_turbine"];
 // the cost chart uses the award chart's groups and colors (AWARD_GROUPS, below)
 function drawQ2Cost() {
-  const el = $("q2c-chart"), Q = (S.G.q2.cost || []).map(([year, tech, group, mwh, cost]) => ({ year, tech, group, mwh, cost }));
+  $("q2c-fuel").querySelectorAll("button").forEach((b) => b.setAttribute("aria-checked", String(b.dataset.v === S.fuel)));
+  const gasOnly = S.fuel === "gas", el = $("q2c-chart");
+  const Q = (S.G.q2.cost || []).map(([year, tech, group, mwh, cost]) => ({ year, tech, group, mwh, cost })).filter((r) => !gasOnly || r.tech !== "coal");
   if (!Q.length) return emptyMsg(el, "No cost yet.");
   const ys = years(), keys = AWARD_GROUPS.map((g) => g[0]), labels = Object.fromEntries(AWARD_GROUPS.map(([k, label, color]) => [k, { label, color }]));
   const val = (y, k) => d3.sum(Q.filter((r) => r.year === y && r.group === k), (r) => r.cost);
-  stack(el, ys, keys, val, { title: "What staying on at minimum cost in cheap hours ($ million)", labels, axis: (v) => d3.format(",.0f")(v / 1e6), tip: (v) => `$${d3.format(",.1f")(v / 1e6)}M` });
+  stack(el, ys, keys, val, { title: `What staying on at minimum cost ${gasOnly ? "gas units" : "fossil units"} in cheap hours ($ million)`, labels, axis: (v) => d3.format(",.0f")(v / 1e6), tip: (v) => `$${d3.format(",.1f")(v / 1e6)}M` });
   legend("q2c-legend", AWARD_GROUPS.filter(([k]) => Q.some((r) => r.group === k)).map(([, label, c]) => [label, c]));
   setCSV(el, ["year", "tech", "group", "minimum_mwh", "cost_usd"], Q.map((r) => [r.year, r.tech, r.group, r.mwh, r.cost]), "Cost of staying on");
   const tot = (y) => d3.sum(keys, (k) => val(y, k)), fy = fullYears(), now = ys.at(-1);
   const big = fy.reduce((a, b) => (tot(b) > tot(a) ? b : a), fy[0]), all = d3.sum(ys, tot);
-  const coal = d3.sum(Q.filter((r) => r.tech === "coal"), (r) => r.cost);
+  const coal = d3.sum((S.G.q2.cost || []).filter((r) => r[1] === "coal"), (r) => r[4]);
   const per = (f) => d3.sum(Q.filter(f), (r) => r.cost) / (d3.sum(Q.filter(f), (r) => r.mwh) || 1);
-  S.q2cost = `Staying on at minimum through cheap hours cost these units $${d3.format(",.0f")(tot(big) / 1e6)}M in ${big}` + (now !== fy.at(-1) ? ` and $${d3.format(",.0f")(tot(now) / 1e6)}M so far in ${now}` : "") +
-    `; coal carries $${d3.format(",.0f")(coal / 1e6)}M of the $${d3.format(",.0f")(all / 1e6)}M since ${ys[0]}. Hours held by a day-ahead award cost about $${d3.format(",.0f")(per((r) => r.group === "award"))}/MWh, against $${d3.format(",.0f")(per((r) => r.group !== "award"))} without one.`;
+  S.q2cost = `Staying on at minimum through cheap hours cost ${gasOnly ? "gas" : "fossil"} units $${d3.format(",.0f")(tot(big) / 1e6)}M in ${big}` + (now !== fy.at(-1) ? ` and $${d3.format(",.0f")(tot(now) / 1e6)}M so far in ${now}` : "") +
+    (gasOnly ? `; $${d3.format(",.0f")(all / 1e6)}M since ${ys[0]}, leaving out coal's $${d3.format(",.0f")(coal / 1e6)}M.` : `; coal carries $${d3.format(",.0f")(coal / 1e6)}M of the $${d3.format(",.0f")(all / 1e6)}M since ${ys[0]}.`) + ` Hours held by a day-ahead award cost about $${d3.format(",.0f")(per((r) => r.group === "award"))}/MWh, against $${d3.format(",.0f")(per((r) => r.group !== "award"))} without one.`;
   setNote($("q2c-note"), `What it cost fossil units at their minimum to stay on through cheap hours, by the same groups as the chart below. * part year.`,
     `Coal, combined cycle and gas steam units at minimum in a cheap hour (day-ahead hub average of $${S.G.cheap}/MWh or less). Each hour costs its minimum-energy cost less its day-ahead node price, times its LSL; an hour where the node paid more than the cost counts as negative. The minimum-energy cost is the unit's own DAM offer that day, else its latest within 10 days, else Henry Hub times a typical offer heat rate (7.6 for combined cycles, 17 for gas steam), else a generic cost ($25/MWh for coal, which submits no such offer), as in the decision table. Only output up to the minimum is counted. Groups go hour by hour: a DAM energy award over 0.5 MW that hour; else self-committed when the unit's DAM resource status is on, else neither (from the 60-day DAM disclosure).`);
 }
@@ -321,6 +323,7 @@ function drawAll() { drawQ1(); drawQ2(); drawQ3(); drawQ4(); }
   $("status").textContent = `60-day data, ${S.G.years[ys[0]].from} to ${S.G.through}. Built ${S.G.built.slice(0, 10)}.`;
   $("q1-year").innerHTML = [`<option value="all"${isAll() ? " selected" : ""}>All years</option>`, ...ys.slice().reverse().map((y) => `<option value="${y}"${y === S.year ? " selected" : ""}>${yearLabel(y)}</option>`)].join("");
   $("q1-year").addEventListener("change", (e) => { S.year = e.target.value === "all" ? "all" : +e.target.value; writeHash({ y: S.year, t: S.tech }); drawQ1(); });
+  $("q2c-fuel").addEventListener("click", (e) => { const b = e.target.closest("button"); if (!b) return; S.fuel = b.dataset.v; drawQ2(); });
   $("q3-tech").addEventListener("change", (e) => { S.tech = e.target.value; writeHash({ y: S.year, t: S.tech }); drawQ3(); });
   drawAll();
   let rw = 0;
