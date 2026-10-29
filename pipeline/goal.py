@@ -320,6 +320,20 @@ def _year(year, months, cache, before=None, losing=None, gas=None):
     dc = _day_cost(h, gas or {})
     c["cost"] = (np.array([dc.get(k, np.nan) for k in zip(c["train"], c["date"])]) - c["da_node"].to_numpy()) * c["lsl"].to_numpy()
     q2rows = [[year, t, w, round(float(g["lsl"].sum())), round(float(g["cost"].sum()))] for (t, w), g in c.groupby(["tech", "why"])]
+    # ... and by the same groups as the award chart, hour by hour: a DAM award over 0.5 MW that
+    # hour; else self-committed (DAM resource status on) or neither, on days with a DAM day file
+    status = {}
+    for d in c["date"].unique():
+        dd = read_json_gz(DATA_DIR / "dam" / f"{d}.json.gz", default=None)
+        status[d] = _dam_status(dd) if dd else None
+    def grp(tr, d, he, aw):
+        if aw > 0.5:
+            return "award"
+        sd = status[d]
+        return "no award" if sd is None else "self" if tr in sd and sd[tr][he - 1] else "neither"
+    c["grp"] = [grp(*k) for k in zip(c["train"], c["date"], c["he"], c["award"])]
+    q2cost = [[year, t, k, round(float(g["lsl"].sum())), round(float(g["cost"].sum()))]
+              for (t, k), g in c[c["tech"].isin(FOSSIL)].groupby(["tech", "grp"])]
     q2award = _award_stretches(year, h)
     # question 4: curtailment, and fossil at minimum in oversupply hours
     q4 = floor = None
@@ -351,7 +365,7 @@ def _year(year, months, cache, before=None, losing=None, gas=None):
                        r[r["over"]].groupby("he")["free"].sum().reindex(range(1, 25), fill_value=0.0)]],
               "atmin": atm, "avoid": avoid}
     days = sorted(h["date"].unique())
-    return {"q1": q1rows, "q2": q2rows, "q2award": q2award, "q4": q4, "floor": floor, "cheap_hours": cheap_hours, "from": days[0], "to": days[-1],
+    return {"q1": q1rows, "q2": q2rows, "q2award": q2award, "q2cost": q2cost, "q4": q4, "floor": floor, "cheap_hours": cheap_hours, "from": days[0], "to": days[-1],
             "states": h[h["tech"].isin(FOSSIL)][["train", "date", "he", "state"]]}
 
 
@@ -449,7 +463,8 @@ def build(cache: Path, end=None, table=None) -> dict:
                  "stuck": [[year, net load bin GW, tech, minimum_mwh, above_minimum_mwh]],
                  "hours": [[year, net load bin GW, hours]] (STUCK_BIN), "bin", "stuck_bin"},
        "q2": {"columns": [year, tech, reason, mwh, cost_usd], "rows", "reasons",
-              "award": [[year, tech, group, stretches, stayed]]},
+              "award": [[year, tech, group, stretches, stayed]],
+              "cost": [[year, tech, group (as award), minimum_mwh, cost_usd]]},
        "q3": {"off": [[year, tech, small (0: losing more than a restart), awarded, windows, off_share,
                         minimum_online_mwh, minimum_offline_mwh]],
               "mix": [[year, tech, windows, overnight, midday, off_rate, median_loss_per_mw]]},
@@ -464,7 +479,7 @@ def build(cache: Path, end=None, table=None) -> dict:
            "cheap": CHEAP, "over_price": OVER_PRICE, "years": {},
            "q1": {"columns": ["year", "tech", "group", "trains", "capacity_mw", "off_mwh"], "rows": [], "groups": list(GROUPS)},
            "floor": {"grid": [], "median": {}, "stuck": [], "hours": [], "bin": FLOOR_BIN, "stuck_bin": STUCK_BIN},
-           "q2": {"columns": ["year", "tech", "reason", "mwh", "cost_usd"], "rows": [], "reasons": list(REASONS), "award": []},
+           "q2": {"columns": ["year", "tech", "reason", "mwh", "cost_usd"], "rows": [], "reasons": list(REASONS), "award": [], "cost": []},
            "q4": {"years": [], "atmin": [], "avoid": [], "scenarios": [s for s, _ in SCENARIOS] + ["all fossil at minimum"], "econ": list(ECON)}}
     if table is None:
         from .decision_table import build as build_table
@@ -485,6 +500,7 @@ def build(cache: Path, end=None, table=None) -> dict:
         out["q1"]["rows"] += r["q1"]
         out["q2"]["rows"] += r["q2"]
         out["q2"]["award"] += r["q2award"]
+        out["q2"]["cost"] += r["q2cost"]
         if r["floor"]:
             f = r["floor"]
             for k in ("grid", "stuck", "hours"):

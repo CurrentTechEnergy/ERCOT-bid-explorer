@@ -167,21 +167,23 @@ function stack(el, ys, keys, val, opts) {
 // the day-ahead award against staying on through a cheap midday stretch, by technology
 const AWARD_GROUPS = [["award", "DAM award", "--c1"], ["self", "Self-committed, no award", "--c3"], ["neither", "Neither", "--c2"], ["no award", "No award", "--c-other"]];
 const Q2_TECHS = ["combined_cycle", "gas_steam", "coal", "combustion_turbine"];
-const COST_REASONS = ["coal", "never off", "held by its award", "rode through", "against the model", "no model call"];
+// the cost chart uses the award chart's groups and colors (AWARD_GROUPS, below)
 function drawQ2Cost() {
-  const el = $("q2c-chart"), Q = rowsOf("q2").filter((r) => COST_REASONS.includes(r.reason) && r.cost_usd != null);
+  const el = $("q2c-chart"), Q = (S.G.q2.cost || []).map(([year, tech, group, mwh, cost]) => ({ year, tech, group, mwh, cost }));
   if (!Q.length) return emptyMsg(el, "No cost yet.");
-  const ys = years(), val = (y, k) => d3.sum(Q.filter((r) => r.year === y && r.reason === k), (r) => r.cost_usd);
-  stack(el, ys, COST_REASONS, val, { title: "What staying on at minimum cost in cheap hours ($ million)", axis: (v) => d3.format(",.0f")(v / 1e6), tip: (v) => `$${d3.format(",.1f")(v / 1e6)}M` });
-  legend("q2c-legend", COST_REASONS.map((k) => [REASON[k].label, REASON[k].color]));
-  setCSV(el, ["year", ...COST_REASONS.map((k) => `${k.replace(/ /g, "_")}_usd`), "minimum_mwh"], ys.map((y) => [y, ...COST_REASONS.map((k) => Math.round(val(y, k))), d3.sum(Q.filter((r) => r.year === y), (r) => r.mwh)]), "Cost of staying on");
-  const tot = (y) => d3.sum(COST_REASONS, (k) => val(y, k)), fy = fullYears(), now = ys.at(-1);
-  const big = fy.reduce((a, b) => (tot(b) > tot(a) ? b : a), fy[0]), all = d3.sum(ys, tot), coal = d3.sum(ys, (y) => val(y, "coal"));
-  const perMWh = (k) => d3.sum(Q.filter((r) => r.reason === k), (r) => r.cost_usd) / (d3.sum(Q.filter((r) => r.reason === k), (r) => r.mwh) || 1);
+  const ys = years(), keys = AWARD_GROUPS.map((g) => g[0]), labels = Object.fromEntries(AWARD_GROUPS.map(([k, label, color]) => [k, { label, color }]));
+  const val = (y, k) => d3.sum(Q.filter((r) => r.year === y && r.group === k), (r) => r.cost);
+  stack(el, ys, keys, val, { title: "What staying on at minimum cost in cheap hours ($ million)", labels, axis: (v) => d3.format(",.0f")(v / 1e6), tip: (v) => `$${d3.format(",.1f")(v / 1e6)}M` });
+  legend("q2c-legend", AWARD_GROUPS.filter(([k]) => Q.some((r) => r.group === k)).map(([, label, c]) => [label, c]));
+  setCSV(el, ["year", "tech", "group", "minimum_mwh", "cost_usd"], Q.map((r) => [r.year, r.tech, r.group, r.mwh, r.cost]), "Cost of staying on");
+  const tot = (y) => d3.sum(keys, (k) => val(y, k)), fy = fullYears(), now = ys.at(-1);
+  const big = fy.reduce((a, b) => (tot(b) > tot(a) ? b : a), fy[0]), all = d3.sum(ys, tot);
+  const coal = d3.sum(Q.filter((r) => r.tech === "coal"), (r) => r.cost);
+  const per = (f) => d3.sum(Q.filter(f), (r) => r.cost) / (d3.sum(Q.filter(f), (r) => r.mwh) || 1);
   S.q2cost = `Staying on at minimum through cheap hours cost these units $${d3.format(",.0f")(tot(big) / 1e6)}M in ${big}` + (now !== fy.at(-1) ? ` and $${d3.format(",.0f")(tot(now) / 1e6)}M so far in ${now}` : "") +
-    `; coal carries $${d3.format(",.0f")(coal / 1e6)}M of the $${d3.format(",.0f")(all / 1e6)}M since ${ys[0]}. Units that stayed on when the model said off paid the most per MWh, about $${d3.format(",.0f")(perMWh("against the model"))}, and units held by an award the least, about $${d3.format(",.0f")(perMWh("held by its award"))}.`;
-  setNote($("q2c-note"), `What it cost fossil units at their minimum to stay on through cheap hours, by why they stayed on. * part year.`,
-    `Coal, combined cycle and gas steam units at minimum in a cheap hour (day-ahead hub average of $${S.G.cheap}/MWh or less). Each hour costs its minimum-energy cost less its day-ahead node price, times its LSL; an hour where the node paid more than the cost counts as negative. The minimum-energy cost is the unit's own DAM offer that day, else its latest within 10 days, else Henry Hub times a typical offer heat rate (7.6 for combined cycles, 17 for gas steam), else a generic cost ($25/MWh for coal, which submits no such offer), as in the decision table. Only output up to the minimum is counted. The reasons are the same as in the chart below and on the Commitment page.`);
+    `; coal carries $${d3.format(",.0f")(coal / 1e6)}M of the $${d3.format(",.0f")(all / 1e6)}M since ${ys[0]}. Hours held by a day-ahead award cost about $${d3.format(",.0f")(per((r) => r.group === "award"))}/MWh, against $${d3.format(",.0f")(per((r) => r.group !== "award"))} without one.`;
+  setNote($("q2c-note"), `What it cost fossil units at their minimum to stay on through cheap hours, by the same groups as the chart below. Self-committed and neither can be told apart from Dec 2025; before that, hours without an award are grey. * part year.`,
+    `Coal, combined cycle and gas steam units at minimum in a cheap hour (day-ahead hub average of $${S.G.cheap}/MWh or less). Each hour costs its minimum-energy cost less its day-ahead node price, times its LSL; an hour where the node paid more than the cost counts as negative. The minimum-energy cost is the unit's own DAM offer that day, else its latest within 10 days, else Henry Hub times a typical offer heat rate (7.6 for combined cycles, 17 for gas steam), else a generic cost ($25/MWh for coal, which submits no such offer), as in the decision table. Only output up to the minimum is counted. Groups go hour by hour: a DAM energy award over 0.5 MW that hour; else self-committed when the unit's DAM resource status is on, else neither (the status is in the 60-day DAM disclosure from Dec 2025).`);
 }
 function drawQ2() {
   drawQ2Cost();
