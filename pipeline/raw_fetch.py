@@ -11,6 +11,7 @@ that isn't kept.  --dry-run only counts what is stored and what is not.
 
     python -m pipeline.raw_fetch --emil np3-966-er --start 2019-01-01 --end 2019-12-31 [--dry-run]
     python -m pipeline.raw_fetch --emil np4-523-cd --lag -1 --start 2019-01-01 --end 2019-12-31
+    python -m pipeline.raw_fetch --emil np6-970-cd --lag 0 --start 2026-10-01 --end 2026-10-01 --max-files 1
 """
 import argparse
 import datetime as dt
@@ -27,6 +28,7 @@ def main(argv=None) -> int:
     ap.add_argument("--end", required=True, help="last operating day, YYYY-MM-DD")
     ap.add_argument("--lag", type=int, default=LAG, help=f"days from operating day to posting (default {LAG})")
     ap.add_argument("--dry-run", action="store_true")
+    ap.add_argument("--max-files", type=int, default=0, help="stop after fetching this many files from ERCOT (0: no limit)")
     a = ap.parse_args(argv)
     api = ErcotAPI()
     store = api.raw
@@ -58,7 +60,11 @@ def main(argv=None) -> int:
             print(store.summary())
             return 1
         fetched += 1
-    missing = len(docs) - have - fetched
+        if a.max_files and fetched >= a.max_files:
+            print(f"stopping at --max-files {a.max_files}: last file {doc.get('friendlyName', '')}, "
+                  f"posted {doc.get('postDatetime', '')[:16]}, {len(blob) / 1e3:.1f} kB", flush=True)
+            break
+    missing = 0 if a.max_files else len(docs) - have - fetched
     print(f"{a.emil} {lo} to {hi}: {len(docs)} files, {have} already stored, {fetched} fetched from ERCOT and stored"
           + (f", {missing} not stored (dry run)" if a.dry_run else ""))
     print(store.summary())

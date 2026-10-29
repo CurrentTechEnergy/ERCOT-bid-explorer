@@ -22,6 +22,10 @@ on:
         description: "Last operating year"
         required: false
         default: "2025"
+      max_files:
+        description: "Stop each year after fetching this many files (0: no limit)"
+        required: false
+        default: "0"
       dry_run:
         description: "Only count what is stored; download nothing"
         type: boolean
@@ -74,4 +78,5 @@ jobs:
           YEAR: ${{ matrix.year }}
           LAG: ${{ inputs.lag }}
           DRY: ${{ inputs.dry_run && '--dry-run' || '' }}
-        run: python -m pipeline.raw_fetch --emil "$EMIL" --lag "$LAG" --start "$YEAR-01-01" --end "$YEAR-12-31" $DRY
+          MAX: ${{ inputs.max_files || '0' }}
+        run: python -m pipeline.raw_fetch --emil "$EMIL" --lag "$LAG" --start "$YEAR-01-01" --end "$YEAR-12-31" --max-files "$MAX" $DRY
