@@ -27,13 +27,26 @@ Writes data/operator/cutoffs.json.gz:
 award 0 none, 1 some hours, 2 every hour; saving and turn_off in $ per MW of LSL (turn_off null
 for never); off 1 when the unit was offline in any hour of the day (outage hours aside).
 Only days without a row are computed, all of them when VERSION or CUT_VERSION changes.
+
+The days before the 60-day fits (Apr 2019 to Jan 2026, the operator model's history days) get the
+same rows from the reduced fits on the thermal history files (operator_history.py), for the Unit
+page's decision history only (Blair, Oct 30 2026): data/operator/cutoffs_history.json.gz, the same
+shape plus "history_version", and one file per unit, data/operator/cutoffs_unit/<train>.json.gz
+{"columns": [date, lsl, award, saving, turn_off, off, min_down], "rows": [...]}, so the page loads
+only its own unit.  The Commitment page and the turn-off point events keep reading cutoffs.json.gz.
+At most HISTORY_BUDGET seconds a run, newest first (Oct 30 2026, locally: 2019 to Jan 2026 about
+53 minutes, most of it the monthly reduced fits).
 """
 import numpy as np
 
 from ..store import read_json_gz, write_json_gz
-from .operator_informed import NAME, OUT_DIR, VERSION, _days, _on, _p_day, _states, fit
+from .operator_informed import HISTORY_VERSION, NAME, OUT_DIR, VERSION, _days, _on, _p_day, _states, fit
 
 PATH = OUT_DIR / "cutoffs.json.gz"
+HIST_PATH = OUT_DIR / "cutoffs_history.json.gz"
+UNIT_DIR = OUT_DIR / "cutoffs_unit"
+HISTORY_BUDGET = 60 * 60   # seconds a run may spend on history days (all of them took 53 min locally, Oct 30 2026)
+SAVE_EVERY = 60            # history days between saves, so a run cut short keeps its work
 MIN_DOWN = 3       # hours: the shortest off spell that counts, and the minimum down time until a unit has enough
 MIN_SPELLS = 3     # off spells a unit needs before its own minimum down time is used
 SHIFT = (-200.0, 400.0)   # $/MWh, the range searched
@@ -131,6 +144,44 @@ def build_cutoffs(ctx, days) -> int:
     write_json_gz(PATH, {"model": NAME, "version": VERSION, "cut_version": CUT_VERSION, "measure": MEASURE, "columns": list(COLUMNS),
                          "days": dict(sorted(out.items()))})
     return len(new)
+
+
+def build_cutoffs_history(hctx, days, budget=HISTORY_BUDGET) -> int:
+    """Rows for the history days without them (hctx: operator_history.HistoryContext), newest
+    first, for at most `budget` seconds; then the per-unit files.  Returns the days computed."""
+    import time
+    old = read_json_gz(HIST_PATH, default=None) or {}
+    same = (old.get("version"), old.get("cut_version"), old.get("history_version")) == (VERSION, CUT_VERSION, HISTORY_VERSION)
+    have = old.get("days", {}) if same and tuple(old.get("columns") or ()) == COLUMNS else {}
+    out = {d: have[d] for d in days if d in have}
+    todo = sorted((d for d in days if d not in out), reverse=True)
+    def save():
+        write_json_gz(HIST_PATH, {"model": NAME, "version": VERSION, "cut_version": CUT_VERSION, "history_version": HISTORY_VERSION,
+                                  "measure": MEASURE, "columns": list(COLUMNS), "days": dict(sorted(out.items()))})
+    t0, n = time.time(), 0
+    for d in todo:
+        if time.time() - t0 > budget:
+            print(f"{NAME} turn-off points: history budget spent, {len(todo) - n} history day(s) left for the next run", flush=True)
+            break
+        out[d] = day_rows(hctx, d)
+        n += 1
+        if n % SAVE_EVERY == 0:
+            save()
+    if n or not HIST_PATH.exists():
+        save()
+    if n or not UNIT_DIR.exists():
+        units = {}
+        for d in sorted(out):
+            for r in out[d]:
+                units.setdefault(r[0], []).append([d] + [r[i] for i in (2, 3, 4, 5, 6, 7)])
+        UNIT_DIR.mkdir(parents=True, exist_ok=True)
+        for f in UNIT_DIR.glob("*.json.gz"):
+            if f.name[:-len(".json.gz")] not in units:
+                f.unlink()
+        for key, rows in units.items():
+            write_json_gz(UNIT_DIR / f"{key}.json.gz", {"model": NAME, "version": VERSION, "reduced": True,
+                                                        "columns": ["date", "lsl", "award", "saving", "turn_off", "off", "min_down"], "rows": rows})
+    return n
 
 
 if __name__ == "__main__":
