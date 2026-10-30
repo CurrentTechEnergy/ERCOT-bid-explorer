@@ -435,7 +435,7 @@ async function drawDecisionsCT(e) {
   svg.append("rect").attr("x", m.l).attr("y", m.t).attr("width", w - m.l - m.r).attr("height", H - m.t - m.b).attr("fill", "transparent")
     .on("pointermove", (evt) => {
       const [px] = d3.pointer(evt), p = pts[d3.minIndex(pts, (q) => Math.abs(x(q.t) - px))], vv = ev.find((v) => v.date.slice(0, 7) === p.d.slice(0, 7));
-      showTip(evt, `<h4>${fmtDate(p.t)}</h4><table><tr><td>Model starts it at</td><td class="n">${p.s == null ? "no shift up to $5,000" : `${fmt$(p.s)}/MWh`}</td></tr><tr><td>Fitted on</td><td class="n">${p.win ?? "–"} days before the month, recent ones counting most</td></tr><tr><td>Day's highest day-ahead price</td><td class="n">${fmt$(p.p)}/MWh</td></tr>` +
+      showTip(evt, `<h4>${fmtDate(p.t)}</h4><table><tr><td>Model starts it at</td><td class="n">${p.s == null ? "no shift up to $5,000" : `${fmt$(p.s)}/MWh`}</td></tr><tr><td>Day's highest day-ahead price</td><td class="n">${fmt$(p.p)}/MWh</td></tr>` +
         `<tr><td>What it did</td><td class="n">${p.ran ? `started; online ${p.on} of ${p.av} h judged` : `stayed off (${p.off} h)`}</td></tr>` + (p.ruc ? `<tr><td>Committed by ERCOT (RUC)</td><td class="n">${p.ruc} h</td></tr>` : "") +
         `</table>${bad(p) ? "Did the opposite of the model" : p.ruc ? "RUC day: not counted for or against the model" : ""}${vv ? `<br><b>${esc(vv.title)}</b>` : ""}`);
     })
