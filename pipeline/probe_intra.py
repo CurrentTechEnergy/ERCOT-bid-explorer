@@ -175,11 +175,14 @@ def main():
                                 ("rev_wind", (r["wind"] - fc[1]) / 2000.0), ("rev_solar", (r["solar"] - fc[2]) / 2000.0),
                                 ("rev_nl", (nl_in - nl_da) / 2000.0)):
                     feats[name].append(v)
-                meta.append((U[u], i, h, int(prev), int(s[k] in "ma"), np.log1p(run) / 4.0, d[:7]))
+                meta.append((U[u], i, h, int(prev), int(s[k] in "ma"), np.log1p(run) / 4.0, d[:7],
+                             lam[h] is not None and lam[h] <= 10.0))
     R = {k: np.array(v, float) for k, v in feats.items()}
     ui_, di, hi, prev, on, runf = (np.array([m[j] for m in meta]) for j in range(6))
     ui_, di, hi, prev, on = ui_.astype(int), di.astype(int), hi.astype(int), prev.astype(int), on.astype(int)
     mon = np.array([m[6] for m in meta])
+    cheap = np.array([m[7] for m in meta], bool)
+    say(f"{int(cheap.sum())} of them in cheap hours (day-ahead lambda <= $10)")
     say(f"{len(meta)} unit-hours with intra-hour features")
     nU = len(cts)
     B = ["da", "dmax", "aw", "awa", "st_on", "st_qs", "lam", "rt1", "rt3", "rtd1"]
@@ -210,9 +213,7 @@ def main():
         return b
 
     first = {m: int(np.min(di[mon == m])) for m in MONTHS if (mon == m).any()}
-    say("")
-    say("| Model | Starts caught | False starts | Stops caught | False stops | Brier, from offline | Brier, from online |")
-    say("| --- | --- | --- | --- | --- | --- | --- |")
+    preds = {}
     for name, fs in MODELS.items():
         pred = np.full(len(meta), np.nan)
         for m, f0 in first.items():
@@ -224,13 +225,21 @@ def main():
                 w = w_all[trs] / w_all[trs].mean()
                 b = fit(X, (on[trs] != side).astype(float), w, nfix)
                 pred[tes] = 1 / (1 + np.exp(-design(fs, tes)[0] @ b))
-        ok = ~np.isnan(pred)
-        p, pv, nx = pred[ok], prev[ok], on[ok]
-        sw, call = nx != pv, p >= 0.5
-        st, sp = pv == 0, pv == 1
-        say(f"| {name} | {int((sw & st & call).sum())} of {int((sw & st).sum())} | {int((~sw & st & call).sum())} | "
-            f"{int((sw & sp & call).sum())} of {int((sw & sp).sum())} | {int((~sw & sp & call).sum())} | "
-            f"{np.mean((p[st] - sw[st]) ** 2):.4f} | {np.mean((p[sp] - sw[sp]) ** 2):.4f} |")
+        preds[name] = pred
+    for title, only in (("All hours", None), ("Cheap hours (day-ahead lambda <= $10)", cheap)):
+        say("")
+        say(f"**{title}**")
+        say("")
+        say("| Model | Starts caught | False starts | Stops caught | False stops | Brier, from offline | Brier, from online |")
+        say("| --- | --- | --- | --- | --- | --- | --- |")
+        for name, pred in preds.items():
+            ok = ~np.isnan(pred) & (only if only is not None else True)
+            p, pv, nx = pred[ok], prev[ok], on[ok]
+            sw, call = nx != pv, p >= 0.5
+            st, sp = pv == 0, pv == 1
+            say(f"| {name} | {int((sw & st & call).sum())} of {int((sw & st).sum())} | {int((~sw & st & call).sum())} | "
+                f"{int((sw & sp & call).sum())} of {int((sw & sp).sum())} | {int((~sw & sp & call).sum())} | "
+                f"{np.mean((p[st] - sw[st]) ** 2):.4f} | {np.mean((p[sp] - sw[sp]) ** 2):.4f} |")
     out = os.environ.get("GITHUB_STEP_SUMMARY")
     if out:
         with open(out, "a") as f:
