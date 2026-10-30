@@ -43,4 +43,4 @@ jobs:
           R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
           R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
           UNIT_DATA_DIR: unitdata
-        run: python -m pipeline.probe_rtd   # branch probe-rtd only: RTD indicative LMPs in the peaker model
+        run: python -m pipeline.probe_intra   # branch probe-intra only
