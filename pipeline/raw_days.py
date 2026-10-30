@@ -6,6 +6,10 @@ per report and posting day, for the operator-informed peaker model (Blair, Oct 2
   np4-752-cd  Intra-Hour Solar Power Forecast by Geographical Region  (archive from Mar 26 2026)
   np3-562-cd  Intra-Hour Load Forecast by Weather Zone               (archive from Mar 26 2026)
 
+The daily run keeps only the three intra-hour forecasts.  RTD (about 25 MB a day) is fetched only
+when asked for by --emil: in the Apr-Aug 2026 peaker backtest it added little over the previous
+hour's real-time price (Blair, Oct 30 2026).
+
 Each posts 288 small files a day (RTD about 86 kB zipped, the forecasts about 3 kB), too many to
 fetch one request at a time.  So, as pipeline/rt_as.py does for the 15-minute MCPCs, each day's
 files come in one bulk download and the zip of zips is kept under raw/<emil>/day-YYYY-MM-DD
@@ -15,7 +19,7 @@ complete days (before today) are fetched.  Nothing is parsed here.
 
   python -m pipeline.raw_days --emil np4-751-cd,np4-752-cd,np3-562-cd --start 2026-03-26 --end 2026-10-28
   python -m pipeline.raw_days --emil np6-970-cd --start 2026-03-01 --end 2026-08-31 [--dry-run]
-  python -m pipeline.raw_days --days 7          # the daily run: the last 7 complete days, every report
+  python -m pipeline.raw_days --days 7          # the daily run: the last 7 complete days, the three forecasts
 """
 import argparse
 import datetime as dt
@@ -26,7 +30,7 @@ import zipfile
 from .ercot_api import ErcotAPI
 from .log import warn
 
-EMILS = ("np6-970-cd", "np4-751-cd", "np4-752-cd", "np3-562-cd")
+EMILS = ("np4-751-cd", "np4-752-cd", "np3-562-cd")      # the default; RTD (np6-970-cd) only by --emil
 
 
 def day_key(d: dt.date) -> str:
