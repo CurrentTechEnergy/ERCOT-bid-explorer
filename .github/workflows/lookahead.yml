@@ -2,8 +2,8 @@ name: Keep look-ahead reports
 
 # Keeps ERCOT's 5-minute look-ahead reports (RTD indicative LMPs, the intra-hour wind, solar and
 # load forecasts) in the R2 raw store, one bulk zip per report and posting day
-# (pipeline/raw_days.py).  Daily, the last 7 complete days (days already stored are skipped); by
-# hand, any span, for the backfill.  Writes nothing to the repository.
+# (pipeline/raw_days.py).  Daily, the last 7 complete days of the three forecasts (days already
+# stored are skipped); by hand, any span or report (RTD only this way), for the backfill.  Writes nothing to the repository.
 on:
   pull_request:       # a PR that changes the job keeps one real day of one forecast, to check the bulk path
     paths:
@@ -14,7 +14,7 @@ on:
   workflow_dispatch:
     inputs:
       emil:
-        description: "Reports (comma-separated EMIL ids; blank for all four)"
+        description: "Reports (comma-separated EMIL ids; blank for the three intra-hour forecasts; np6-970-cd for RTD)"
         required: false
         default: ""
       start:
