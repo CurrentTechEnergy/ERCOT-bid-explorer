@@ -623,6 +623,9 @@ def build_days(index: dict, rebuild: bool = False) -> list:
     else:
         m = build_scores(hctx or ctx, hist + days)
         c = build_cutoffs(ctx, days)     # the Commitment day view covers the 60-day days only
+        if hctx is not None:             # the Unit page's decision history reaches back over the history days
+            from .operator_cutoffs import build_cutoffs_history
+            c += build_cutoffs_history(hctx, hist)
     print(f"{NAME} {VERSION}: {len(done)} day file(s) written, {len(days)} in all; {len(hist_new)} history day file(s) written, "
           f"{len(hist)} in all; {n} decision days judged; {m} unit-days scored against the baselines; turn-off points for {c} new day(s)", flush=True)
     return done

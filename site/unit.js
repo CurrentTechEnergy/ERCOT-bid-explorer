@@ -334,6 +334,7 @@ function drawDecisions(e) {
   $("dec-panel").hidden = !THERMAL.includes(e.tech) || e.tech === "nuclear";
   if ($("dec-panel").hidden) return;
   $("dec-lead").hidden = $("dec-how").hidden = e.tech === "combustion_turbine";
+  $("dec-range-row").hidden = true;
   if (e.tech === "combustion_turbine") { $("dec-oi").hidden = true; return drawDecisionsCT(e); }
   if (e.tech === "combined_cycle" || e.tech === "gas_steam") { $("dec-oi").hidden = true; $("dec-lead").hidden = $("dec-how").hidden = true; return drawDecisionsTO(e); }
   if (!u || !rows.length) { $("dec-note").textContent = ""; return emptyMsg(el, "No decision days for this unit in the loaded 60-day data."); }
@@ -449,25 +450,47 @@ async function drawDecisionsCT(e) {
 // of LSL (data/operator/cutoffs.json.gz rows: [unit, tech, lsl, award, saving, turn_off, off, min_down];
 // turn_off null when the model keeps it on through every shift: drawn on the "rides through" row)
 const AWARD_COND = ["no day-ahead award", "an award some hours", "an award every hour"];
+// The days before the 60-day fits (Apr 2019 to Jan 2026) come from data/operator/cutoffs_unit/<train>.json.gz,
+// judged by the reduced fits (operator_history.py) and drawn lighter; a range control picks the days shown.
+const DEC_RANGE_ALL = "all", DEC_RANGE_12 = "12m";
 async function drawDecisionsTO(e) {
   const el = $("dec-chart");
   if (S.CO === undefined) S.CO = await tryJSON("data/operator/cutoffs.json.gz");
+  S.COH ??= {};
+  if (!(e.name in S.COH)) S.COH[e.name] = await tryJSON(`data/operator/cutoffs_unit/${encodeURIComponent(e.name)}.json.gz`);
   const P = S.CO, C = P ? Object.fromEntries(P.columns.map((c, i) => [c, i])) : {};
-  const pts = P ? Object.entries(P.days).flatMap(([d, rs]) => rs.filter((r) => r[C.unit] === e.name).map((r) => ({ d, t: parseDate(d),
+  const live = P ? Object.entries(P.days).flatMap(([d, rs]) => rs.filter((r) => r[C.unit] === e.name).map((r) => ({ d, t: parseDate(d),
     s: r[C.saving], c: r[C.turn_off], aw: r[C.award], off: !!r[C.off], lsl: r[C.lsl], md: r[C.min_down] }))) : [];
-  if (!pts.length) { $("dec-note").textContent = ""; $("dec-legend").innerHTML = ""; return emptyMsg(el, "No operator-informed turn-off points for this unit in the loaded 60-day data."); }
+  const HU = S.COH[e.name], HC = HU ? Object.fromEntries(HU.columns.map((c, i) => [c, i])) : {};
+  const first = live.length ? live[0].d : "9999";
+  const hist = HU ? HU.rows.filter((r) => r[HC.date] < first).map((r) => ({ d: r[HC.date], t: parseDate(r[HC.date]),
+    s: r[HC.saving], c: r[HC.turn_off], aw: r[HC.award], off: !!r[HC.off], lsl: r[HC.lsl], md: r[HC.min_down], red: true })) : [];
+  const all = [...hist, ...live];
+  if (!all.length) { $("dec-note").textContent = ""; $("dec-legend").innerHTML = ""; return emptyMsg(el, "No operator-informed turn-off points for this unit."); }
+  // range: the last 12 months, a calendar year, or all
+  const years = [...new Set(all.map((p) => p.d.slice(0, 4)))].sort().reverse();
+  const opts = [[DEC_RANGE_12, "Last 12 months"], ...years.map((y) => [y, y]), [DEC_RANGE_ALL, "All"]];
+  if (!opts.some(([v]) => v === S.decRange)) S.decRange = DEC_RANGE_12;
+  $("dec-range-row").hidden = years.length < 2;
+  $("dec-range").innerHTML = opts.map(([v, l]) => `<button type="button" role="radio" data-v="${v}" aria-checked="${v === S.decRange}">${l}</button>`).join("");
+  $("dec-range").onclick = (ev) => { const b = ev.target.closest("button"); if (!b) return; S.decRange = b.dataset.v; drawDecisionsTO(e); };
+  const lastD = all.at(-1).d, from12 = d3.timeFormat("%Y-%m-%d")(d3.timeDay.offset(parseDate(lastD), -364));
+  const inRange = S.decRange === DEC_RANGE_ALL ? () => true : S.decRange === DEC_RANGE_12 ? (p) => p.d >= from12 : (p) => p.d.startsWith(S.decRange);
+  const pts = all.filter(inRange);
   const ruc = window.CX.rucDays(S.UH, e.configs.length ? e.configs : [e.name]);
   pts.forEach((p) => { p.ruc = ruc.get(p.d)?.length || 0; });
+  const nRed = pts.filter((p) => p.red).length;
   const says = (p) => p.c != null && p.s > p.c, bad = (p) => !p.ruc && says(p) !== p.off, J = pts.filter((p) => !p.ruc);
   const right = J.filter((p) => !bad(p)).length, nOff = J.filter((p) => p.off).length, caught = J.filter((p) => p.off && says(p)).length;
   $("dec-note").textContent = `Each day it started online: what being off would have saved over the day's best off stretch at least its minimum down time long (its minimum-energy cost against the day-ahead price at its node, before any restart cost), and the operator-informed model's turn-off point, the saving it would need before the model turns it off. ` +
-    `A circle above its diamond is a day the model turns it off. On ${J.length} days it shut on ${nOff}; the model called ${right} right (${fmtPct(right / J.length)}), ${caught} of the ${nOff} shutdowns.${window.CX.rucNote(pts.length - J.length)} Dashed lines mark the months its turn-off point moved, for each day-ahead condition on its own.`;
+    `A circle above its diamond is a day the model turns it off. On ${J.length} days it shut on ${nOff}; the model called ${right} right (${fmtPct(right / J.length)}), ${caught} of the ${nOff} shutdowns.${window.CX.rucNote(pts.length - J.length)} Dashed lines mark the months its turn-off point moved, for each day-ahead condition on its own.` +
+    (nRed ? ` The ${nRed} lighter days, before the 60-day fits begin (Feb 2026), are judged by fits on the 12 months before each from the thermal history files: no RUC data, and Henry Hub gas before Sep 2025.` : "");
   $("dec-legend").innerHTML = `<span><span class="sw" style="background:var(--c1);transform:rotate(45deg) scale(0.8)"></span>Turn-off point</span>` +
     window.CX.onOffLegend("Saving, stayed on", "Saving, shut down") + `<span><span class="sw" style="background:var(--ink-2)"></span>Square: a day-ahead award that day</span>` +
     `<span><span class="sw" style="background:var(--c8);height:3px"></span>Did the opposite of the model</span><span><span class="sw sw-line"></span>Turn-off point moved</span>` +
     (J.length < pts.length ? window.CX.rucLegend() : "");
   const w = Math.max(280, el.clientWidth || 600), H = 280, m = { t: 18, r: 16, b: 26, l: 76 }, TOPY = m.t + 8;
-  const D0 = Object.keys(P.days).sort();
+  const D0 = S.decRange === DEC_RANGE_12 ? [from12, lastD] : S.decRange === DEC_RANGE_ALL ? [all[0].d, lastD] : [pts[0].d, pts.at(-1).d];
   const x = d3.scaleTime().domain([d3.timeHour.offset(parseDate(D0[0]), -12), d3.timeHour.offset(parseDate(D0.at(-1)), 12)]).range([m.l, w - m.r]);
   const vals = pts.flatMap((p) => (p.c == null ? [p.s] : [p.s, p.c]));
   const lo = Math.max(-3000, Math.min(-25, d3.min(vals) * 1.1)), hi = Math.min(30000, Math.max(100, d3.max(vals) * 1.1));
@@ -481,14 +504,14 @@ async function drawDecisionsTO(e) {
   svg.append("line").attr("class", "zero").attr("x1", m.l).attr("x2", w - m.r).attr("y1", y(0)).attr("y2", y(0));
   svg.append("text").attr("class", "axis-label").attr("x", m.l - 6).attr("y", TOPY + 3).attr("text-anchor", "end").attr("font-size", 10).attr("fill", css("--ink-2")).text("rides through");
   svg.append("text").attr("class", "axis-title").attr("x", m.l).attr("y", 10).text(w < 560 ? "$ per MW of minimum output" : "$ per MW of minimum output: what being off would have saved, and the model's turn-off point");
-  const ev = ((await tryJSON("data/events.json.gz"))?.events || []).filter((v) => v.unit === e.name && v.kind === "turnoff");
+  const ev = ((await tryJSON("data/events.json.gz"))?.events || []).filter((v) => v.unit === e.name && v.kind === "turnoff" && v.date >= D0[0] && v.date <= D0.at(-1));
   svg.append("g").selectAll("line").data(ev).join("line").attr("class", "price-rule").attr("stroke-dasharray", "4 3")
     .attr("x1", (v) => x(parseDate(v.date))).attr("x2", (v) => x(parseDate(v.date))).attr("y1", m.t).attr("y2", H - m.b);
   const g = svg.append("g");
-  g.selectAll("line").data(pts).join("line").attr("x1", (p) => x(p.t)).attr("x2", (p) => x(p.t)).attr("y1", (p) => yc(p.c)).attr("y2", (p) => y(p.s))
+  g.selectAll("line").data(pts).join("line").attr("opacity", (p) => (p.red ? 0.5 : 1)).attr("x1", (p) => x(p.t)).attr("x2", (p) => x(p.t)).attr("y1", (p) => yc(p.c)).attr("y2", (p) => y(p.s))
     .attr("stroke", (p) => css(bad(p) ? "--c8" : "--line")).attr("stroke-width", (p) => (bad(p) ? 1.6 : 1));
-  g.selectAll("path.to").data(pts).join("path").attr("class", "to").attr("d", d3.symbol(d3.symbolDiamond, 22)()).attr("transform", (p) => `translate(${x(p.t)},${yc(p.c)})`).attr("fill", css("--c1"));
-  g.selectAll("path.sv").data(pts).join("path").attr("class", "sv").attr("d", (p) => d3.symbol(p.aw ? d3.symbolSquare : d3.symbolCircle, 30)())
+  g.selectAll("path.to").data(pts).join("path").attr("class", "to").attr("opacity", (p) => (p.red ? 0.5 : 1)).attr("d", d3.symbol(d3.symbolDiamond, 22)()).attr("transform", (p) => `translate(${x(p.t)},${yc(p.c)})`).attr("fill", css("--c1"));
+  g.selectAll("path.sv").data(pts).join("path").attr("class", "sv").attr("opacity", (p) => (p.red ? 0.5 : 1)).attr("d", (p) => d3.symbol(p.aw ? d3.symbolSquare : d3.symbolCircle, 30)())
     .attr("transform", (p) => `translate(${x(p.t)},${y(p.s)})`)
     .attr("fill", (p) => css(p.off ? "--surface" : "--ink")).attr("stroke", css("--ink")).attr("stroke-width", 1.5);   // filled stayed on, hollow shut down (as site-wide)
   g.selectAll("circle.ruc").data(pts.filter((p) => p.ruc)).join("circle").attr("class", "ruc").attr("cx", (p) => x(p.t)).attr("cy", (p) => y(p.s)).call(window.CX.rucRing, 6.5);
@@ -500,12 +523,12 @@ async function drawDecisionsTO(e) {
         `<tr><td>Turn-off point</td><td class="n">${p.c == null ? "rides through" : `${fmt$(p.c)}/MW (${fmt$(p.c * p.lsl)})`}</td></tr>` +
         `<tr><td>Day-ahead</td><td class="n">${AWARD_COND[p.aw] || "–"}</td></tr><tr><td>Model</td><td class="n">${says(p) ? "turns it off" : "keeps it on"}</td></tr>` +
         `<tr><td>What it did</td><td class="n">${p.off ? "shut down" : "stayed on"}</td></tr>` + (p.ruc ? `<tr><td>Committed by ERCOT (RUC)</td><td class="n">${p.ruc} h</td></tr>` : "") +
-        `</table>${bad(p) ? "Did the opposite of the model" : p.ruc ? "RUC day: not counted for or against the model" : ""}${vv.map((v) => `<br><b>${esc(v.title)}</b>`).join("")}`);
+        `</table>${bad(p) ? "Did the opposite of the model" : p.ruc ? "RUC day: not counted for or against the model" : ""}${p.red ? `${bad(p) ? "<br>" : ""}Fitted on the 12 months before (history files)` : ""}${vv.map((v) => `<br><b>${esc(v.title)}</b>`).join("")}`);
     })
     .on("pointerleave", hideTip);
   el.replaceChildren(svg.node());
-  setCSV(el, ["date", "saving_usd_per_mw_lsl", "turn_off_usd_per_mw_lsl", "award", "shut", "lsl_mw", "min_down_h", "ruc_hours"],
-    pts.map((p) => [p.d, p.s, p.c, ["none", "some hours", "every hour"][p.aw], p.off ? 1 : 0, p.lsl, p.md, p.ruc]), `${e.name} turn-off points`);
+  setCSV(el, ["date", "saving_usd_per_mw_lsl", "turn_off_usd_per_mw_lsl", "award", "shut", "lsl_mw", "min_down_h", "ruc_hours", "fit"],
+    pts.map((p) => [p.d, p.s, p.c, ["none", "some hours", "every hour"][p.aw], p.off ? 1 : 0, p.lsl, p.md, p.ruc, p.red ? "history" : "60-day"]), `${e.name} turn-off points`);
 }
 
 // the decision days again, judged by the operator-informed model (data/operator/decisions.json.gz rows:
