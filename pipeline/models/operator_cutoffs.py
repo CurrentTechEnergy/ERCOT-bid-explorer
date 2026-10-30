@@ -35,7 +35,7 @@ shape plus "history_version", and one file per unit, data/operator/cutoffs_unit/
 {"columns": [date, lsl, award, saving, turn_off, off, min_down], "rows": [...]}, so the page loads
 only its own unit.  The Commitment page and the turn-off point events keep reading cutoffs.json.gz.
 At most HISTORY_BUDGET seconds a run, newest first (Oct 30 2026, locally: 2019 to Jan 2026 about
-75 minutes, most of it the monthly reduced fits).
+53 minutes, most of it the monthly reduced fits).
 """
 import numpy as np
 
@@ -45,7 +45,7 @@ from .operator_informed import HISTORY_VERSION, NAME, OUT_DIR, VERSION, _days, _
 PATH = OUT_DIR / "cutoffs.json.gz"
 HIST_PATH = OUT_DIR / "cutoffs_history.json.gz"
 UNIT_DIR = OUT_DIR / "cutoffs_unit"
-HISTORY_BUDGET = 45 * 60   # seconds a run may spend on history days
+HISTORY_BUDGET = 60 * 60   # seconds a run may spend on history days (all of them took 53 min locally, Oct 30 2026)
 SAVE_EVERY = 60            # history days between saves, so a run cut short keeps its work
 MIN_DOWN = 3       # hours: the shortest off spell that counts, and the minimum down time until a unit has enough
 MIN_SPELLS = 3     # off spells a unit needs before its own minimum down time is used

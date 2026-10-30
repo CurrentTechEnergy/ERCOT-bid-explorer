@@ -484,7 +484,7 @@ async function drawDecisionsTO(e) {
   const right = J.filter((p) => !bad(p)).length, nOff = J.filter((p) => p.off).length, caught = J.filter((p) => p.off && says(p)).length;
   $("dec-note").textContent = `Each day it started online: what being off would have saved over the day's best off stretch at least its minimum down time long (its minimum-energy cost against the day-ahead price at its node, before any restart cost), and the operator-informed model's turn-off point, the saving it would need before the model turns it off. ` +
     `A circle above its diamond is a day the model turns it off. On ${J.length} days it shut on ${nOff}; the model called ${right} right (${fmtPct(right / J.length)}), ${caught} of the ${nOff} shutdowns.${window.CX.rucNote(pts.length - J.length)} Dashed lines mark the months its turn-off point moved, for each day-ahead condition on its own.` +
-    (nRed ? ` The ${nRed} lighter days, before the 60-day fits begin (Feb 2026), are judged by fits on the 12 months before each from the thermal history files: no RUC data, and Henry Hub gas before Sep 2025.` : "");
+    (nRed ? ` The ${d3.format(",")(nRed)} lighter days, before the 60-day fits begin (Feb 2026), are judged by fits on the 12 months before each from the thermal history files: no RUC data, and Henry Hub gas before Sep 2025.` : "");
   $("dec-legend").innerHTML = `<span><span class="sw" style="background:var(--c1);transform:rotate(45deg) scale(0.8)"></span>Turn-off point</span>` +
     window.CX.onOffLegend("Saving, stayed on", "Saving, shut down") + `<span><span class="sw" style="background:var(--ink-2)"></span>Square: a day-ahead award that day</span>` +
     `<span><span class="sw" style="background:var(--c8);height:3px"></span>Did the opposite of the model</span><span><span class="sw sw-line"></span>Turn-off point moved</span>` +
@@ -523,7 +523,7 @@ async function drawDecisionsTO(e) {
         `<tr><td>Turn-off point</td><td class="n">${p.c == null ? "rides through" : `${fmt$(p.c)}/MW (${fmt$(p.c * p.lsl)})`}</td></tr>` +
         `<tr><td>Day-ahead</td><td class="n">${AWARD_COND[p.aw] || "–"}</td></tr><tr><td>Model</td><td class="n">${says(p) ? "turns it off" : "keeps it on"}</td></tr>` +
         `<tr><td>What it did</td><td class="n">${p.off ? "shut down" : "stayed on"}</td></tr>` + (p.ruc ? `<tr><td>Committed by ERCOT (RUC)</td><td class="n">${p.ruc} h</td></tr>` : "") +
-        `</table>${bad(p) ? "Did the opposite of the model" : p.ruc ? "RUC day: not counted for or against the model" : ""}${p.red ? `${bad(p) ? "<br>" : ""}Fitted on the 12 months before (history files)` : ""}${vv.map((v) => `<br><b>${esc(v.title)}</b>`).join("")}`);
+        `</table>${bad(p) ? "Did the opposite of the model" : p.ruc ? "RUC day: not counted for or against the model" : ""}${p.red ? `${bad(p) ? "<br>" : ""}History-file fit` : ""}${vv.map((v) => `<br><b>${esc(v.title)}</b>`).join("")}`);
     })
     .on("pointerleave", hideTip);
   el.replaceChildren(svg.node());
