@@ -33,7 +33,7 @@ function drawKPIs() {
   const k = [
     [`${fmt0(med(ci.map((i) => F.trains_aw[i])))} of ${fmt0(med(ci.map((i) => F.trains_filed[i])))}`, "combined cycle trains kept on through the cheap stretch on a median cheap day"],
     [fmtPct(med(F.below_mw_share)), "of three-part CC and gas steam minimum output offered below its fuel cost on a median day"],
-    [`${fmt$(med(F.mk_aw))} / ${fmt$(med(F.mk_no))}`, "median CC train offer minus fuel cost on cheap days ($/MWh), kept on / left out"],
+    [`${fmt$(med(F.mk_aw))} / ${fmt$(med(F.mk_no))}`, "median CC train offer minus fuel cost on cheap days ($/MWh), DAM award through the cheap hours / none"],
     [fmt0(major), `major offer changes in ${months} months (${fmt0(D.events.length)} in all)`],
   ];
   $("kpis").innerHTML = k.map(([v, t]) => `<div class="kpi"><span class="v">${v}</span><span class="k">${t}</span></div>`).join("");
@@ -108,35 +108,48 @@ function drawBins() {
   setCSV(el, ["offer_minus_node", "config_days", "kept_on", "share"], rows.map((r) => [r.lab, r.n, r.aw, r.r]), "Kept on by offer minus node price");
 }
 
-// ---- offer minus fuel cost, kept on against left out ----------------------------------------
+// ---- offer minus fuel cost, awarded against not: pooled over every cheap train-day -------------
 function drawMarkup() {
-  const D = S.D, F = D.fleet, el = $("mk-chart");
-  const sets = [{ k: "mk_aw", color: "--c3", label: "Trains kept on through the cheap stretch" }, { k: "mk_no", color: "--c2", label: "Trains left out" }];
-  staticLegend($("mk-legend"), [...sets.map((s) => ({ ...s, line: true })), { color: "--ink-2", label: "Offer equals fuel cost", line: true, dash: true }]);
-  const pts = sets.map((s) => D.dates.map((d, i) => [parseDate(d), F[s.k][i]]).filter((p) => p[1] != null));
-  if (!pts.some((p) => p.length)) return emptyMsg(el, "No cheap days loaded.");
-  const w = Math.max(280, el.clientWidth || 500), H = 280, m = { t: 22, r: 12, b: 28, l: 56 };
-  const x = d3.scaleTime().domain(d3.extent(D.dates, parseDate)).range([m.l, w - m.r]);
-  const y = d3.scaleLinear().domain(d3.extent([0, ...pts.flat().map((p) => p[1])])).nice().range([H - m.b, m.t]);
+  const D = S.D, Hm = D.mk_hist, el = $("mk-chart");
+  const sets = [{ k: "aw", med: "med_aw", color: "--c3", label: "DAM award through the cheap hours" }, { k: "no", med: "med_no", color: "--c2", label: "No DAM award" }];
+  if (!Hm || !Hm.edges) { $("mk-legend").innerHTML = ""; return emptyMsg(el, "The distribution appears after the next data update."); }
+  const e = Hm.edges, nb = e.length - 1, tot = Object.fromEntries(sets.map((s) => [s.k, d3.sum(Hm[s.k])]));
+  staticLegend($("mk-legend"), [...sets.map((s) => ({ ...s, label: `${s.label} (${fmt0(tot[s.k])} train-days, median ${fmt$s(Math.round(Hm[s.med]))})` })),
+    { color: "--ink-2", label: "Offer equals fuel cost", line: true, dash: true }]);
+  if (!tot.aw && !tot.no) return emptyMsg(el, "No cheap days loaded.");
+  const share = (s, k) => (tot[s.k] ? Hm[s.k][k] / tot[s.k] : 0);
+  const w = Math.max(280, el.clientWidth || 500), H = 280, m = { t: 22, r: 12, b: 40, l: 44 };
+  const x = d3.scaleLinear().domain([e[0], e[nb]]).range([m.l, w - m.r]);
+  const y = d3.scaleLinear().domain([0, d3.max(sets, (s) => d3.max(d3.range(nb), (k) => share(s, k))) * 1.06]).nice().range([H - m.b, m.t]);
   const svg = d3.create("svg").attr("viewBox", `0 0 ${w} ${H}`);
   svg.append("g").attr("class", "gridline").attr("transform", `translate(${m.l},0)`).call(d3.axisLeft(y).ticks(5).tickSize(-(w - m.l - m.r)).tickFormat(""));
-  svg.append("g").attr("class", "axis").attr("transform", `translate(${m.l},0)`).call(axisFmt(d3.axisLeft(y), 5, "$").tickSizeOuter(0));
-  svg.append("g").attr("class", "axis").attr("transform", `translate(0,${H - m.b})`).call(d3.axisBottom(x).ticks(w < 560 ? 4 : 7).tickSizeOuter(0));
-  svg.append("text").attr("class", "axis-title").attr("x", m.l).attr("y", 10).text("Offer minus fuel cost, $/MWh");
-  svg.append("line").attr("x1", m.l).attr("x2", w - m.r).attr("y1", y(0)).attr("y2", y(0)).attr("stroke", css("--ink-2")).attr("stroke-dasharray", "4 3");
-  const line = d3.line().x((p) => x(p[0])).y((p) => y(p[1]));
-  sets.forEach((s, j) => svg.append("path").attr("d", line(pts[j])).attr("fill", "none").attr("stroke", css(s.color)).attr("stroke-width", 1.6));
-  const days = D.cheap.map((c, i) => (c && (F.mk_aw[i] != null || F.mk_no[i] != null) ? i : -1)).filter((i) => i >= 0);
-  const cross = svg.append("line").attr("class", "crosshair").attr("y1", m.t).attr("y2", H - m.b).style("display", "none");
+  svg.append("g").attr("class", "axis").attr("transform", `translate(${m.l},0)`).call(d3.axisLeft(y).ticks(5).tickFormat(fmtPct).tickSizeOuter(0));
+  svg.append("g").attr("class", "axis").attr("transform", `translate(0,${H - m.b})`).call(axisFmt(d3.axisBottom(x), w < 560 ? 5 : 8, "$").tickSizeOuter(0));
+  svg.append("text").attr("class", "axis-title").attr("x", m.l).attr("y", 10).text("Share of train-days");
+  svg.append("text").attr("class", "axis-title").attr("x", w - m.r).attr("y", H - 4).attr("text-anchor", "end").text("Offer minus fuel cost, $/MWh");
+  // a step outline per group, each bin at its share of that group's train-days
+  const steps = (s) => d3.range(nb).flatMap((k) => [[e[k], share(s, k)], [e[k + 1], share(s, k)]]);
+  sets.forEach((s) => {
+    const pts = [[e[0], 0], ...steps(s), [e[nb], 0]];
+    svg.append("path").attr("d", d3.area().x((p) => x(p[0])).y0(y(0)).y1((p) => y(p[1]))(pts)).attr("fill", css(s.color)).attr("fill-opacity", 0.18);
+    svg.append("path").attr("d", d3.line().x((p) => x(p[0])).y((p) => y(p[1]))(pts)).attr("fill", "none").attr("stroke", css(s.color)).attr("stroke-width", 1.6);
+    if (Hm[s.med] != null) svg.append("line").attr("x1", x(Hm[s.med])).attr("x2", x(Hm[s.med])).attr("y1", m.t).attr("y2", H - m.b)
+      .attr("stroke", css(s.color)).attr("stroke-dasharray", "1 3").attr("stroke-width", 1.4);
+  });
+  svg.append("line").attr("x1", x(0)).attr("x2", x(0)).attr("y1", m.t).attr("y2", H - m.b).attr("stroke", css("--ink-2")).attr("stroke-dasharray", "4 3");
+  const lab = (k) => (k === 0 ? `${fmt$s(e[1])} or less` : k === nb - 1 ? `${fmt$s(e[k])} or more` : `${fmt$s(e[k])} to ${fmt$s(e[k + 1])}`);
+  const band = svg.append("rect").attr("y", m.t).attr("height", H - m.t - m.b).attr("fill", css("--ink-2")).attr("fill-opacity", 0.08).style("display", "none");
   svg.append("rect").attr("x", m.l).attr("y", m.t).attr("width", w - m.l - m.r).attr("height", H - m.t - m.b).attr("fill", "transparent")
     .on("pointermove", (ev) => {
-      const t = x.invert(d3.pointer(ev)[0]), i = days[d3.minIndex(days, (q) => Math.abs(parseDate(D.dates[q]) - t))];
-      cross.style("display", null).attr("x1", x(parseDate(D.dates[i]))).attr("x2", x(parseDate(D.dates[i])));
-      showTip(ev, `<h4>${fmtDate(parseDate(D.dates[i]))}</h4><table>${sets.map((s) => `<tr><td><span class="sw" style="background:var(${s.color})"></span></td><td>${s.label}</td><td class="n">${fmt$(F[s.k][i])}</td></tr>`).join("")}</table>`);
+      const k = Math.min(nb - 1, Math.max(0, Math.floor((x.invert(d3.pointer(ev)[0]) - e[0]) / (e[1] - e[0]))));
+      band.style("display", null).attr("x", x(e[k])).attr("width", x(e[k + 1]) - x(e[k]));
+      showTip(ev, `<h4>Offer minus fuel cost ${lab(k)}</h4><table>${sets.map((s) => `<tr><td><span class="sw" style="background:var(${s.color})"></span></td><td>${s.label}</td>` +
+        `<td class="n">${fmtPct(share(s, k))}</td><td class="n">${fmt0(Hm[s.k][k])}</td></tr>`).join("")}</table>`);
     })
-    .on("pointerleave", () => { cross.style("display", "none"); hideTip(); });
+    .on("pointerleave", () => { band.style("display", "none"); hideTip(); });
   el.replaceChildren(svg.node());
-  setCSV(el, ["date", "kept_on", "left_out"], days.map((i) => [D.dates[i], F.mk_aw[i], F.mk_no[i]]), "Offer minus fuel cost by train");
+  setCSV(el, ["offer_minus_fuel_from", "offer_minus_fuel_to", "awarded_train_days", "not_awarded_train_days"],
+    d3.range(nb).map((k) => [k === 0 ? null : e[k], k === nb - 1 ? null : e[k + 1], Hm.aw[k], Hm.no[k]]), "Offer minus fuel cost, awarded and not");
 }
 
 // ---- tables ---------------------------------------------------------------------------------
