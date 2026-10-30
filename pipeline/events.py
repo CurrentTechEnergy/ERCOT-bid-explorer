@@ -138,7 +138,8 @@ TURNOFF_MIN_DAYS, TURNOFF_MOVE, TURNOFF_SHARE, TURNOFF_CAP = 5, 50.0, 0.5, 1e5
 # s2 on the kinds read from the hourly states: a thermal unit online with no output and no HSL is
 # offline, intraday.empty_hour, which finds spells and moves that were there all along)
 KIND_REV = {"turnoff": "c3", "shutdown_new": "s2", "shutdown_award": "s2", "group": "s2", "outage_start": "s2",
-            "outage_end": "s2", "rt_price": "s2"}
+            "outage_end": "s2", "rt_price": "s2", "dam_mingen_step": "d2", "dam_start_change": "d2",
+            "dam_renew_floor": "d2"}
 BACKFILL_NEWS_DAYS = 75    # a control event older than this, found by a history merge, is not news
 TURNOFF_AWARD = {0: "without an award", 1: "with an award some hours", 2: "with an award every hour"}
 # rt_price (combustion turbines; see the docstring)

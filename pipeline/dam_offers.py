@@ -34,10 +34,10 @@ date, null where the unit has no value):
             as  DA award / HSL energy over hours with HSL
 
 Changes, on each unit's filing days in date order (thresholds below):
-  mingen_step   the offer moves STEP_USD or more from its prior PRIOR-day median and at least
-                MIN_HELD of the next HOLD filing days stay within STEP_TOL of the new level.  Tested
-                on the offer, so a gas move alone is not a step; major when its markup crosses the
-                fuel-cost line
+  mingen_step   the offer moves STEP_USD or more from its prior PRIOR-day median (never reaching
+                back past its last step) and at least MIN_HELD of the next HOLD filing days stay
+                within STEP_TOL of the new level.  Tested on the offer, so a gas move alone is not a
+                step; major when its markup crosses the fuel-cost line
   priced_out    1 to EP_MAX filing days PO_USD or more above the unit's prior 30-day median, then
                 back within PO_USD / 2; major when it covers a cheap day
   start_change  the hot start moves START_PCT or more and holds the same way
@@ -228,16 +228,18 @@ def build_signatures(days):
 
 # ------------------------------------------------------------------ changes --
 def _held(days, v, step, tol, rel=False):
-    """Indices where a held step starts, with (prior median, new median)."""
-    out, i = [], PRIOR
+    """Indices where a held step starts, with (prior median, new median).  The prior window never
+    reaches back past the last step, so a window straddling both levels can't re-report it."""
+    out, i, last = [], PRIOR, 0
     while i <= len(v) - HOLD:
-        prior = float(np.median(v[i - PRIOR:i]))
+        prior = float(np.median(v[max(last, i - PRIOR):i]))
         post = v[i:i + HOLD]
         new = float(np.median(post))
         mv = (new - prior) / prior if rel and prior else new - prior
         t = tol * abs(new) if rel else tol
         if abs(mv) >= step and (np.abs(post - new) <= t).sum() >= MIN_HELD and abs(v[i] - new) <= t:
             out.append((i, prior, new))
+            last = i
             i += HOLD
         else:
             i += 1
@@ -259,8 +261,10 @@ def detect(dates, units, cheapdays, status):
                 continue
             mg = np.array([rec["mg"][k] for k in ks], float)
             mk = np.array([rec["mk"][k] if rec["mk"][k] is not None else np.nan for k in ks], float)
+            last = 0
             for i, a, b in _held(ks, mg, STEP_USD, STEP_TOL):
-                ma, mb = np.nanmedian(mk[max(0, i - PRIOR):i]), np.nanmedian(mk[i:i + HOLD])
+                ma, mb = np.nanmedian(mk[max(last, i - PRIOR):i]), np.nanmedian(mk[i:i + HOLD])
+                last = i
                 cross = np.isfinite(ma) and np.isfinite(mb) and (ma < 0) != (mb < 0)
                 add(n, rec, ks[i], "mingen_step", _r(a), _r(b), cross, mk_before=_r(ma), mk_after=_r(mb))
             med = [None] * len(mg)
