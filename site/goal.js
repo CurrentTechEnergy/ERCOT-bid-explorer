@@ -82,7 +82,7 @@ function drawQ1() {
     })
     .on("pointerleave", hideTip);
   el.replaceChildren(svg.node());
-  legend("q1-legend", [[isAll() ? "Hours, all years (darker: more hours)" : `Hours in ${yearName(sel)} (other years grey)`, isAll() ? "--ink" : "--c1"], ["Median fossil output", "--c2"]]);
+  legend("q1-legend", [[isAll() ? "Hours, all years (darker: more hours)" : `Hours in ${sel} (other years grey)`, isAll() ? "--ink" : "--c1"], ["Median fossil output", "--c2"]]);
   $("q1-legend").insertAdjacentHTML("beforeend", `<span><span class="sw sw-line"></span>Fossil equal to the load left for it</span>`);
   // what is stuck on: average fossil output by net load, at minimum and above it
   const sb = F.stuck_bin, pick = (r) => isAll() || r[0] === sel;
@@ -134,7 +134,8 @@ function drawQ1() {
   const atMin = d3.sum(STUCK_TECHS, (t) => lowPart(t, 3)), above = d3.sum(STUCK_TECHS, (t) => lowPart(t, 4));
   const yrs = years().filter((q) => floorOf(String(q)) != null);
   const f = floorOf(isAll() ? "all" : String(sel));
-  $("q1-answer").innerHTML = f == null ? `Too few hours with under ${LOW_NET} GW of load left for fossil in ${yearName(sel)} to say.` :
+  // while the years play the text holds still, so the chart below it doesn't move
+  if (!S.playing) $("q1-answer").innerHTML = f == null ? `Too few hours with under ${LOW_NET} GW of load left for fossil in ${yearName(sel)} to say.` :
     `<b>Fossil output has a floor it doesn't go below.</b> In hours when the load left for fossil (load less wind and solar available, less nuclear) was under ${LOW_NET} GW, fossil still ran a median of about ${fmtGW(f)} GW (${yearName(sel)}), ` +
     `and in those hours ${fmtGW(atMin)} GW of it was units at their minimum, against ${fmtGW(above)} GW above it: coal ${fmtGW(lowPart("coal", 3))} GW and combined cycles ${fmtGW(lowPart("combined_cycle", 3))} GW. ` +
     `By year the floor was ${yrs.map((q) => `${fmtGW(floorOf(String(q)))} GW in ${q}`).join(", ")}.`;
@@ -334,14 +335,19 @@ function drawAll() { drawQ1(); drawQ2(); drawQ3(); drawQ4(); }
   $("q1-year").addEventListener("change", (e) => { S.year = e.target.value === "all" ? "all" : +e.target.value; writeHash({ y: S.year, t: S.tech }); drawQ1(); });
   // play: step the scatter through the years, 2019 first, and stop on the latest
   let play = null;
-  const stop = () => { clearInterval(play); play = null; $("q1-play").innerHTML = "&#9654;"; };
+  const stop = () => {
+    if (!play) return;
+    clearInterval(play); play = null; S.playing = false; $("q1-play").innerHTML = "&#9654;";
+    drawQ1();
+  };
   $("q1-play").addEventListener("click", () => {
     if (play) return stop();
     let i = 0;
+    S.playing = true;
     const show = () => { S.year = ys[i]; $("q1-year").value = String(S.year); writeHash({ y: S.year, t: S.tech }); drawQ1(); if (++i >= ys.length) stop(); };
     $("q1-play").innerHTML = "&#10073;&#10073;";
-    show();
     play = setInterval(show, PLAY_MS);
+    show();
   });
   $("q1-year").addEventListener("mousedown", stop);
   $("q2c-fuel").addEventListener("click", (e) => { const b = e.target.closest("button"); if (!b) return; S.fuel = b.dataset.v; drawQ2(); });
