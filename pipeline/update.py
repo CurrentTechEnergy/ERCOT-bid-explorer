@@ -64,7 +64,7 @@ from .renew_changes import build_renew_changes
 from .dam_offers import build_dam_offers
 from .offtakers import build_offtakers
 from .models.operator_informed import build_days as build_operator_days
-from .models.peaker_rt import build_peaker_rt
+from .models.peaker_oi import build_peaker_oi
 from .events import build_events
 from .series import build_series
 from .storage import build_storage
@@ -550,7 +550,7 @@ def main(argv=None):
         build_storage(index)
         build_battery_bench(index)     # after series (node prices) and storage
         build_operator_days(index)
-        build_peaker_rt(index)
+        build_peaker_oi(index)
         build_events(index)
         save_index(index)
         return
@@ -643,7 +643,7 @@ def main(argv=None):
     build_battery_bench(index)     # after series (node prices) and storage
     if "operator" not in args.skip:
         build_operator_days(index)   # after cop: the Unit page's operator-informed row, new 60-day days only
-    build_peaker_rt(index)           # the Commitment page's combustion turbine start chart
+    build_peaker_oi(index)           # the Commitment and Unit pages' combustion turbine turn-on points
     qse_lines = qse.save()
     if "entities" not in args.skip:
         fetch_entities()     # after qse.save(): DME codes are named from the codes it saved
