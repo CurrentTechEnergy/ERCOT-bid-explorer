@@ -421,7 +421,9 @@ def _mk_hist(aw, no):
 def train_table(dates, units, cheapdays, events):
     """Per train (combined cycle) or plant: [plant, tech, cheap days filed, share awarded through
     the stretch, median lowest cheap-stretch offer, median implied heat rate, price-outs, steps,
-    the unit its Unit page is under (the train, or a gas steam plant's first unit)]."""
+    the unit its Unit page is under (the train, or a gas steam plant's first unit), share of cheap
+    days offered below the fuel-cost line (as fleet: the awarded configuration, else the lowest),
+    gas hub]."""
     by, names = collections.defaultdict(list), collections.defaultdict(list)
     for u, r in units.items():
         if r["tech"] in ("combined_cycle", "gas_steam"):
@@ -431,7 +433,7 @@ def train_table(dates, units, cheapdays, events):
     rows = []
     for p, rs in sorted(by.items()):
         days_f = aw = 0
-        low, ih = [], []
+        low, ih, below = [], [], []
         for k in range(len(dates)):
             offers = [(r["mc"][k], r["ih"][k]) for r in rs if r["mc"][k] is not None]
             if not cheapdays[k] or not offers:
@@ -442,11 +444,17 @@ def train_table(dates, units, cheapdays, events):
             low.append(lo[0])
             if lo[1] is not None:
                 ih.append(lo[1])
+            mk = [(r["mc"][k] - (r["mg"][k] - r["mk"][k]), r["aw"][k]) for r in rs
+                  if r["mk"][k] is not None and r["mc"][k] is not None and r["aw"][k] is not None]
+            if mk:
+                won = [m for m, a in mk if a == 1]
+                below.append((min(won) if won else min(m for m, _ in mk)) < 0)
         if not days_f:
             continue
         rows.append([p, rs[0]["tech"], days_f, _r(aw / days_f, 3), _r(float(np.median(low))),
                      _r(float(np.median(ih))) if ih else None, cnt[(p, "priced_out")], cnt[(p, "mingen_step")],
-                     p if rs[0]["tech"] == "combined_cycle" else min(names[p])])
+                     p if rs[0]["tech"] == "combined_cycle" else min(names[p]),
+                     _r(sum(below) / len(below), 3) if below else None, rs[0].get("hub")])
     return rows
 
 
@@ -503,7 +511,7 @@ def build_dam_offers(index: dict) -> dict:
                       "reprice": REPRICE, "zero_usd": ZERO_USD, "high_usd": HIGH_USD},
            "kinds": KINDS, "first": dates[0], "last": dates[-1], "dates": dates, "cheap": [int(c) for c in cheapdays],
            "fleet": fl, "bins": bins, "mk_hist": mk_hist,
-           "train_cols": ["plant", "tech", "cheap_days_filed", "share_awarded", "median_lowest_offer", "median_implied_hr", "priced_out", "steps", "unit"],
+           "train_cols": ["plant", "tech", "cheap_days_filed", "share_awarded", "median_lowest_offer", "median_implied_hr", "priced_out", "steps", "unit", "share_below_fuel", "hub"],
            "trains": train_table(dates, units, cheapdays, events),
            "renew_cols": ["unit", "tech", "days_filed", "median_da_floor", "median_rt_floor", "median_gap", "median_award_share"],
            "renew": renew_table(units), "repricers": repricers, "events": events}

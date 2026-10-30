@@ -15,7 +15,8 @@ const parseDate = (d) => new Date(d + "T12:00:00");
 const fmtDate = d3.timeFormat("%a %b %-d, %Y");
 const unitURL = (name) => `unit.html?unit=${encodeURIComponent(name)}`;
 const TECH = { combined_cycle: "Combined cycle", gas_steam: "Gas steam", combustion_turbine: "Combustion turbine and recip", wind: "Wind", solar: "Solar" };
-const S = { D: null, sort: { trains: [3, -1], renew: [5, -1] } };
+const BF_MIN_DAYS = 10, BF_MOST = 0.75, BF_LOW = 0.25;   // trains filing on fewer cheap days are left off; "most days" is over 75%; a callout for awarded trains under 25%
+const S = { D: null, G: null, sort: { trains: [3, -1], renew: [5, -1] } };
 
 function emptyMsg(el, msg) { el.innerHTML = `<p class="empty">${msg}</p>`; }
 function staticLegend(el, list) {
@@ -152,6 +153,64 @@ function drawMarkup() {
     d3.range(nb).map((k) => [k === 0 ? null : e[k], k === nb - 1 ? null : e[k + 1], Hm.aw[k], Hm.no[k]]), "Offer minus fuel cost, awarded and not");
 }
 
+// ---- who offers below fuel cost, by the Commitment page's flexibility group ------------------------
+function drawBelowFuel() {
+  const D = S.D, G = S.G, el = $("bf-chart"), c = Object.fromEntries(D.train_cols.map((k, i) => [k, i]));
+  if (c.share_below_fuel == null) { $("bf-legend").innerHTML = ""; return emptyMsg(el, "This chart appears after the next data update."); }
+  if (!G || !G.units) { $("bf-legend").innerHTML = ""; return emptyMsg(el, "Flexibility groups not loaded."); }
+  const label = Object.fromEntries((G.groups || []).map(([id, l]) => [id, l]));
+  const order = ["never", "multiday", "daily1", "daily2", "daily3"].filter((g) => label[g]);
+  const rows = D.trains.filter((r) => r[c.tech] === "combined_cycle" && r[c.share_below_fuel] != null && r[c.cheap_days_filed] >= BF_MIN_DAYS)
+    .map((r) => ({ name: r[c.plant], unit: r[c.unit] || r[c.plant], b: r[c.share_below_fuel], aw: r[c.share_awarded], days: r[c.cheap_days_filed],
+      hub: r[c.hub], g: (G.units[r[c.plant]] || [])[1], mw: (G.units[r[c.plant]] || [])[2] || 0 }))
+    .filter((r) => order.includes(r.g));
+  const legend = [{ color: "--c3", label: "DAM award through the cheap hours on most cheap days", dot: true }, { color: "--c2", label: "On fewer than half", dot: true }];
+  staticLegend($("bf-legend"), legend);
+  $("bf-legend").insertAdjacentHTML("beforeend", `<span><span class="sw" style="border:1.5px solid var(--ink);border-radius:50%;width:8px;height:8px;background:none"></span>Priced off Waha gas</span>`);
+  if (!rows.length) return emptyMsg(el, "No combined cycle trains with three-part offers on cheap days.");
+  const narrow = (el.clientWidth || 600) < 560;
+  const w = Math.max(280, el.clientWidth || 600), rowH = narrow ? 70 : 62, m = { t: 12, r: 16, b: 34, l: narrow ? 12 : 270 };
+  const H = m.t + m.b + rowH * order.length + (narrow ? 22 * order.length : 0);
+  const band = (i) => m.t + i * (rowH + (narrow ? 22 : 0)) + (narrow ? 22 : 0);
+  const x = d3.scaleLinear().domain([0, 1]).range([m.l + 10, w - m.r - 10]);
+  const rad = d3.scaleSqrt().domain([0, d3.max(rows, (r) => r.mw) || 1]).range([0, narrow ? 10 : 13]);
+  const svg = d3.create("svg").attr("viewBox", `0 0 ${w} ${H}`);
+  svg.append("g").attr("class", "gridline").attr("transform", `translate(0,${H - m.b})`).call(d3.axisBottom(x).ticks(5).tickSize(-(H - m.t - m.b)).tickFormat(""));
+  svg.append("g").attr("class", "axis").attr("transform", `translate(0,${H - m.b})`).call(d3.axisBottom(x).ticks(5).tickFormat(fmtPct).tickSizeOuter(0));
+  svg.append("text").attr("class", "axis-title").attr("x", w - m.r).attr("y", H - 4).attr("text-anchor", "end").text("Share of cheap days offered below fuel cost");
+  order.forEach((g, i) => {
+    const rs = rows.filter((r) => r.g === g), most = rs.filter((r) => r.b > BF_MOST);
+    const y0 = band(i), note = `${most.length} of ${rs.length} trains, ${d3.format(".1f")(d3.sum(most, (r) => r.mw) / 1e3)} of ${d3.format(".1f")(d3.sum(rs, (r) => r.mw) / 1e3)} GW mostly below`;
+    const lx = narrow ? m.l : 0, ly = narrow ? y0 - 8 : y0 + rowH / 2 - 4;
+    svg.append("text").attr("class", "dlabel").attr("x", lx).attr("y", ly).style("font-weight", 600).style("fill", css("--ink")).text(label[g].replace(/: .*/, "").replace(" when available", ""));
+    svg.append("text").attr("class", "axis-title").attr("x", narrow ? w - m.r : lx).attr("y", narrow ? ly : ly + 15).attr("text-anchor", narrow ? "end" : "start").text(narrow ? `${most.length} of ${rs.length} mostly below` : note);
+    svg.append("line").attr("x1", x(0)).attr("x2", x(1)).attr("y1", y0 + rowH / 2).attr("y2", y0 + rowH / 2).attr("stroke", css("--ink-2")).attr("stroke-opacity", 0.25);
+    // spread dots up and down their row by name so they don't sit on top of each other, the same way every load
+    rs.forEach((r) => { let h = 0; for (const ch of r.name) h = (h * 31 + ch.charCodeAt(0)) % 997; r.y = y0 + rowH / 2 + ((h / 997) - 0.5) * (rowH - 2 * rad(r.mw) - 6); });
+  });
+  svg.append("g").selectAll("circle").data(rows.sort((a, b) => b.mw - a.mw)).join("circle")
+    .attr("cx", (r) => x(r.b)).attr("cy", (r) => r.y).attr("r", (r) => Math.max(3, rad(r.mw)))
+    .attr("fill", (r) => css(r.aw >= 0.5 ? "--c3" : "--c2")).attr("fill-opacity", 0.8).attr("stroke", css("--surface")).attr("stroke-width", 1).style("cursor", "pointer")
+    .on("pointermove", (ev, r) => showTip(ev, `<h4>${esc(r.name)}</h4><table><tr><td>Group</td><td class="n">${esc(label[r.g])}</td></tr>` +
+      `<tr><td>Cheap days below fuel cost</td><td class="n">${fmtPct(r.b)}</td></tr><tr><td>DAM award through the cheap hours</td><td class="n">${fmtPct(r.aw)}</td></tr>` +
+      `<tr><td>Cheap days filed</td><td class="n">${fmt0(r.days)}</td></tr><tr><td>Size</td><td class="n">${fmt0(r.mw)} MW</td></tr>` +
+      `<tr><td>Gas hub</td><td class="n">${r.hub === "waha" ? "Waha" : "Houston Ship Channel"}</td></tr></table>`))
+    .on("pointerleave", hideTip).on("click", (ev, r) => { location.href = unitURL(r.unit); });
+  svg.selectAll("circle").filter((r) => r.hub === "waha").attr("stroke", css("--ink")).attr("stroke-width", 1.5);
+  // call out trains awarded on most cheap days without offering below fuel cost: they won on a cheap
+  // fuel (Waha) or a high node price, not by under-bidding
+  if (!narrow) order.forEach((g, i) => {
+    const rs = rows.filter((r) => r.g === g && r.aw >= 0.5 && r.b < BF_LOW);
+    if (rs.length < 2) return;
+    const x0 = d3.max(rs, (r) => x(r.b) + Math.max(3, rad(r.mw))) + 10, y0 = band(i) + rowH / 2;
+    svg.append("text").attr("class", "axis-title").attr("x", x0).attr("y", y0 + 4).style("fill", css("--ink-2"))
+      .text(`← awarded without bidding below fuel cost: ${rs.filter((r) => r.hub === "waha").length ? "Waha gas or a high node price" : "a high node price"}`);
+  });
+  el.replaceChildren(svg.node());
+  setCSV(el, ["train", "group", "share_below_fuel", "share_awarded", "cheap_days_filed", "mw", "gas_hub"],
+    rows.map((r) => [r.name, r.g, r.b, r.aw, r.days, r.mw, r.hub]), "Below fuel cost by flexibility group");
+}
+
 // ---- tables ---------------------------------------------------------------------------------
 function sortableTable(el, key, cols, rows, csvName) {
   const [k, dir] = S.sort[key];
@@ -179,6 +238,7 @@ function drawTrains() {
     { h: "Tech", i: c.tech, t: true, csv: "tech", f: (v) => (v === "combined_cycle" ? "CC" : TECH[v] || v) },
     { h: "Cheap days filed", i: c.cheap_days_filed, csv: "cheap_days_filed", f: fmt0 },
     { h: "Kept on", i: c.share_awarded, csv: "share_kept_on", tip: "Share of those cheap days the DAM kept it on through the cheap stretch", f: bar },
+    ...(c.share_below_fuel == null ? [] : [{ h: "Below fuel cost", i: c.share_below_fuel, csv: "share_below_fuel", tip: "Share of those cheap days its offer sat below fuel cost (the awarded configuration, else the lowest)", f: bar }]),
     { h: "Median lowest offer", i: c.median_lowest_offer, csv: "median_lowest_offer", tip: "Median over cheap days of its lowest configuration's cheap-hour minimum-energy offer, $/MWh", f: fmt$ },
     { h: "Implied heat rate", i: c.median_implied_hr, csv: "median_implied_heat_rate", tip: "That offer over the hub gas price, MMBtu/MWh", f: (v) => (v == null ? "–" : d3.format(".1f")(v)) },
     { h: "Price-outs", i: c.priced_out, csv: "price_outs", tip: "Short spells offered $10 or more above its usual level", f: fmt0 },
@@ -282,10 +342,10 @@ function initChanges() {
   });
 }
 
-function drawAll() { if (!S.D) return; drawKPIs(); drawLead(); drawBins(); drawMarkup(); drawTrains(); drawChanges(); drawRenew(); }
+function drawAll() { if (!S.D) return; drawKPIs(); drawLead(); drawBins(); drawMarkup(); drawBelowFuel(); drawTrains(); drawChanges(); drawRenew(); }
 
 async function boot() {
-  S.D = await tryJSON("data/dam_offers.json.gz");
+  [S.D, S.G] = await Promise.all([tryJSON("data/dam_offers.json.gz"), tryJSON("data/groups_60d.json.gz")]);
   const D = S.D;
   if (!D || !D.renew) { $("status").textContent = "Day-ahead offer data not loaded yet."; return; }
   const nCheap = D.cheap.filter(Boolean).length;
