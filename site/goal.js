@@ -36,7 +36,7 @@ const TECH_COLOR = { coal: "--c8", combined_cycle: "--c1", gas_steam: "--c7", co
 const STUCK_TECHS = ["coal", "combined_cycle", "gas_steam", "combustion_turbine"];
 const LOW_NET = 4;             // GW: low load left for fossil, in the answer
 const MIN_STUCK_HOURS = 15;
-const PLAY_MS = 1500;          // each year's frame when the scatter plays    // a stuck-on bar needs this many hours
+const PLAY_MS = 800;           // each year's frame when the scatter plays    // a stuck-on bar needs this many hours
 const isAll = () => S.year === "all";
 const yearName = (y) => (y === "all" ? "all years" : yearLabel(y));
 function drawQ1() {
