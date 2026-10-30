@@ -34,6 +34,11 @@ jobs:
       - run: pip install --require-hashes -r requirements.lock
       - name: Per-unit data (the data branch)
         run: git fetch --depth 1 origin data && git worktree add --detach unitdata FETCH_HEAD
+      - name: Day-ahead hourly forecasts (from before #242 retired them)
+        run: |
+          git fetch --depth 2 origin 8ff0e9a36054ca3ffbbbbbd6ca52a207544bda94
+          git show 8ff0e9a36054ca3ffbbbbbd6ca52a207544bda94^:site/data/renew_forecast.json.gz > "$RUNNER_TEMP/renew.json.gz"
+          git show 8ff0e9a36054ca3ffbbbbbd6ca52a207544bda94^:site/data/load.json.gz > "$RUNNER_TEMP/load.json.gz"
       - name: Probe the archive
         env:
           ERCOT_API_USERNAME: ${{ secrets.ERCOT_API_USERNAME }}
@@ -43,4 +48,6 @@ jobs:
           R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
           R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
           UNIT_DATA_DIR: unitdata
+          RENEW: ${{ runner.temp }}/renew.json.gz
+          LOAD: ${{ runner.temp }}/load.json.gz
         run: python -m pipeline.probe_intra   # branch probe-intra only
