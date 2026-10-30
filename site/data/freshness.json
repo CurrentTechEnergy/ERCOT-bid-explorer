@@ -1,5 +1,5 @@
 {
- "checked": "2026-10-30T17:56:54Z",
+ "checked": "2026-10-30T20:35:24Z",
  "today": "2026-10-30",
  "sources": {
   "2d": {
@@ -53,16 +53,16 @@
   },
   "dam_nodes": {
    "label": "DAM node prices",
-   "latest": "2026-10-30",
-   "behind": 0,
-   "allowed": 0,
+   "latest": "2026-10-31",
+   "behind": -1,
+   "allowed": -1,
    "stale": false
   },
   "dam_lambda": {
    "label": "DAM system lambda",
-   "latest": "2026-10-30",
-   "behind": 0,
-   "allowed": 0,
+   "latest": "2026-10-31",
+   "behind": -1,
+   "allowed": -1,
    "stale": false
   },
   "gas_hsc": {
