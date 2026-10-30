@@ -15,7 +15,7 @@ const parseDate = (d) => new Date(d + "T12:00:00");
 const fmtDate = d3.timeFormat("%a %b %-d, %Y");
 const unitURL = (name) => `unit.html?unit=${encodeURIComponent(name)}`;
 const TECH = { combined_cycle: "Combined cycle", gas_steam: "Gas steam", combustion_turbine: "Combustion turbine and recip", wind: "Wind", solar: "Solar" };
-const BF_MIN_DAYS = 10, BF_MOST = 0.75;   // trains filing on fewer cheap days are left off; "most days" is over 75%
+const BF_MIN_DAYS = 10, BF_MOST = 0.75, BF_LOW = 0.25;   // trains filing on fewer cheap days are left off; "most days" is over 75%; a callout for awarded trains under 25%
 const S = { D: null, G: null, sort: { trains: [3, -1], renew: [5, -1] } };
 
 function emptyMsg(el, msg) { el.innerHTML = `<p class="empty">${msg}</p>`; }
@@ -166,6 +166,7 @@ function drawBelowFuel() {
     .filter((r) => order.includes(r.g));
   const legend = [{ color: "--c3", label: "DAM award through the cheap hours on most cheap days", dot: true }, { color: "--c2", label: "On fewer than half", dot: true }];
   staticLegend($("bf-legend"), legend);
+  $("bf-legend").insertAdjacentHTML("beforeend", `<span><span class="sw" style="border:1.5px solid var(--ink);border-radius:50%;width:8px;height:8px;background:none"></span>Priced off Waha gas</span>`);
   if (!rows.length) return emptyMsg(el, "No combined cycle trains with three-part offers on cheap days.");
   const narrow = (el.clientWidth || 600) < 560;
   const w = Math.max(280, el.clientWidth || 600), rowH = narrow ? 70 : 62, m = { t: 12, r: 16, b: 34, l: narrow ? 12 : 270 };
@@ -195,6 +196,16 @@ function drawBelowFuel() {
       `<tr><td>Cheap days filed</td><td class="n">${fmt0(r.days)}</td></tr><tr><td>Size</td><td class="n">${fmt0(r.mw)} MW</td></tr>` +
       `<tr><td>Gas hub</td><td class="n">${r.hub === "waha" ? "Waha" : "Houston Ship Channel"}</td></tr></table>`))
     .on("pointerleave", hideTip).on("click", (ev, r) => { location.href = unitURL(r.unit); });
+  svg.selectAll("circle").filter((r) => r.hub === "waha").attr("stroke", css("--ink")).attr("stroke-width", 1.5);
+  // call out trains awarded on most cheap days without offering below fuel cost: they won on a cheap
+  // fuel (Waha) or a high node price, not by under-bidding
+  if (!narrow) order.forEach((g, i) => {
+    const rs = rows.filter((r) => r.g === g && r.aw >= 0.5 && r.b < BF_LOW);
+    if (rs.length < 2) return;
+    const x0 = d3.max(rs, (r) => x(r.b) + Math.max(3, rad(r.mw))) + 10, y0 = band(i) + rowH / 2;
+    svg.append("text").attr("class", "axis-title").attr("x", x0).attr("y", y0 + 4).style("fill", css("--ink-2"))
+      .text(`← awarded without bidding below fuel cost: ${rs.filter((r) => r.hub === "waha").length ? "Waha gas or a high node price" : "a high node price"}`);
+  });
   el.replaceChildren(svg.node());
   setCSV(el, ["train", "group", "share_below_fuel", "share_awarded", "cheap_days_filed", "mw", "gas_hub"],
     rows.map((r) => [r.name, r.g, r.b, r.aw, r.days, r.mw, r.hub]), "Below fuel cost by flexibility group");
