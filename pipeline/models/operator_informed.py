@@ -87,7 +87,7 @@ from ..guide import EIA_HR
 from ..store import read_json_gz, write_json_gz
 
 NAME = "operator_informed"
-VERSION = "v4"   # v4: Graham at Houston Ship Channel (fuel_hub.REFIT), and RUC left out of the scores as well as the fits; v3: gas at each unit's own hub (Waha or Houston Ship Channel), not Houston Ship Channel for all; v1: transitions with per-unit intercepts and slopes; v2: the COP only beside the main call, margins at gas cost
+VERSION = "v5"   # v5: v4 again, with Graham really at Ship Channel (the v4 run read the hubs from before fuel_hub.REFIT); v4: Graham at Houston Ship Channel (fuel_hub.REFIT), and RUC left out of the scores as well as the fits; v3: gas at each unit's own hub (Waha or Houston Ship Channel), not Houston Ship Channel for all; v1: transitions with per-unit intercepts and slopes; v2: the COP only beside the main call, margins at gas cost
 TECHS = ("combined_cycle", "gas_steam")
 AHEAD = 6            # hours of award looked at ahead of h
 MIN_AWARD = 1.1      # an award at most this x LSL counts as holding at minimum (day mode)
