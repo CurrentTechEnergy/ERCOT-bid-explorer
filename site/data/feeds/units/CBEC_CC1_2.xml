@@ -5,18 +5,11 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=CBEC_CC1_2</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
-    <title>CBEC_CC1: Minimum-energy offer stepped (2026-01-13)</title>
+    <title>CBEC_CC1: Minimum-energy offer stepped (2026-01-08)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=CBEC_CC1"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=CBEC_CC1#CBEC_CC1/2026-01-13/dam_mingen_step</id>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=CBEC_CC1#CBEC_CC1/2026-01-08/dam_mingen_step</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Minimum-energy offer stepped: $35 to $27/MWh ($17 to $8 against the fuel-cost line)</summary>
-  </entry>
-  <entry>
-    <title>CBEC_CC1: Minimum-energy offer stepped (2026-01-06)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=CBEC_CC1"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=CBEC_CC1#CBEC_CC1/2026-01-06/dam_mingen_step</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Minimum-energy offer stepped: $36 to $30/MWh ($19 to $14 against the fuel-cost line)</summary>
+    <summary>Minimum-energy offer stepped: $34 to $29/MWh ($19 to $11 against the fuel-cost line)</summary>
   </entry>
   <entry>
     <title>CBEC_CC1: Start-up cost changed (2026-01-02)</title>

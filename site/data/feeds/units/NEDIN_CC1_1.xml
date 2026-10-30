@@ -33,13 +33,6 @@
     <summary>Priced out of the day-ahead: minimum energy at $52/MWh against a usual $33 for 4 day(s)</summary>
   </entry>
   <entry>
-    <title>NEDIN_CC1: Minimum-energy offer stepped (2026-01-01)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=NEDIN_CC1"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=NEDIN_CC1#NEDIN_CC1/2026-01-01/dam_mingen_step</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Minimum-energy offer stepped: $37 to $31/MWh ($16 to $15 against the fuel-cost line)</summary>
-  </entry>
-  <entry>
     <title>NEDIN_CC1: Minimum-energy offer stepped (2025-12-24)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=NEDIN_CC1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=NEDIN_CC1#NEDIN_CC1/2025-12-24/dam_mingen_step</id>

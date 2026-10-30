@@ -3,13 +3,20 @@
   <title>CBEC_CC2: bidding and operating changes</title>
   <link href="https://ercotbids.currenttech.energy/unit.html?unit=CBEC_CC2"/>
   <id>https://ercotbids.currenttech.energy/unit.html?unit=CBEC_CC2</id>
-  <updated>2026-10-18T00:00:00Z</updated>
+  <updated>2026-10-30T00:00:00Z</updated>
   <entry>
     <title>CBEC_CC2: Turn-off point moved (2026-05-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=CBEC_CC2"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=CBEC_CC2#CBEC_CC2/2026-05-01/turnoff/1</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Turn-off point with an award some hours -$77 to -$196 per MW of minimum output in May; the next month held it</summary>
+    <summary>Turn-off point with an award some hours -$84 to -$142 per MW of minimum output in May; the next month held it</summary>
+  </entry>
+  <entry>
+    <title>CBEC_CC2: Turn-off point moved (2026-03-01)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=CBEC_CC2"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=CBEC_CC2#CBEC_CC2/2026-03-01/turnoff/1</id>
+    <updated>2026-10-30T00:00:00Z</updated>
+    <summary>Turn-off point with an award some hours -$107 to -$45 per MW of minimum output in March; the next month went back</summary>
   </entry>
   <entry>
     <title>CBEC_CC2: Minimum-energy offer stepped (2026-02-01)</title>

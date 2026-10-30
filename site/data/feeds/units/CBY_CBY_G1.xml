@@ -3,13 +3,20 @@
   <title>CBY_CBY_G1: bidding and operating changes</title>
   <link href="https://ercotbids.currenttech.energy/unit.html?unit=CBY_CBY_G1"/>
   <id>https://ercotbids.currenttech.energy/unit.html?unit=CBY_CBY_G1</id>
-  <updated>2026-10-24T00:00:00Z</updated>
+  <updated>2026-10-30T00:00:00Z</updated>
+  <entry>
+    <title>CBY_CBY_G1: Turn-off point moved (2026-08-01)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=CBY_CBY_G1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=CBY_CBY_G1#CBY_CBY_G1/2026-08-01/turnoff/0</id>
+    <updated>2026-10-30T00:00:00Z</updated>
+    <summary>Turn-off point without an award $9,376 to $3,712 per MW of minimum output in August</summary>
+  </entry>
   <entry>
     <title>CBY_CBY_G1: Turn-off point moved (2026-07-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=CBY_CBY_G1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=CBY_CBY_G1#CBY_CBY_G1/2026-07-01/turnoff/0</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Turn-off point without an award riding through to $4,540 per MW of minimum output in July; the next month held it</summary>
+    <summary>Turn-off point without an award riding through to $9,376 per MW of minimum output in July; the next month held it</summary>
   </entry>
   <entry>
     <title>CBY_CBY_G1: Outage ended (2026-06-19)</title>
@@ -30,7 +37,7 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=CBY_CBY_G1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=CBY_CBY_G1#CBY_CBY_G1/2026-06-01/turnoff/0</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Turn-off point without an award $1,960 to riding through per MW of minimum output in June; the next month went back</summary>
+    <summary>Turn-off point without an award $1,917 to riding through per MW of minimum output in June; the next month went back</summary>
   </entry>
   <entry>
     <title>CBY_CBY_G1: Outage ended (2026-05-06)</title>

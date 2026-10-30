@@ -19,6 +19,13 @@
     <summary>Offer price vs peer median: -$30 to -$7/MWh</summary>
   </entry>
   <entry>
+    <title>CHE_CC1: Minimum-energy offer stepped (2026-01-29)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=CHE_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=CHE_CC1#CHE_CC1/2026-01-29/dam_mingen_step</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $3 to $12/MWh (-$74 to -$5 against the fuel-cost line)</summary>
+  </entry>
+  <entry>
     <title>CHE_CC1: Priced out of the day-ahead (2026-01-28)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=CHE_CC1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=CHE_CC1#CHE_CC1/2026-01-28/dam_priced_out</id>

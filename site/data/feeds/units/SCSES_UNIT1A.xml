@@ -3,35 +3,7 @@
   <title>SCSES_UNIT1A: bidding and operating changes</title>
   <link href="https://ercotbids.currenttech.energy/unit.html?unit=SCSES_UNIT1A"/>
   <id>https://ercotbids.currenttech.energy/unit.html?unit=SCSES_UNIT1A</id>
-  <updated>2026-10-28T00:00:00Z</updated>
-  <entry>
-    <title>SCSES_UNIT1A: Minimum-energy offer stepped (2026-08-23)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=SCSES_UNIT1A"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=SCSES_UNIT1A#SCSES_UNIT1A/2026-08-23/dam_mingen_step</id>
-    <updated>2026-10-28T00:00:00Z</updated>
-    <summary>Minimum-energy offer stepped: $25 to $2/MWh ($1 to -$23 against the fuel-cost line)</summary>
-  </entry>
-  <entry>
-    <title>SCSES_UNIT1A: Minimum-energy offer stepped (2026-08-23)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=SCSES_UNIT1A"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=SCSES_UNIT1A#SCSES_UNIT1A/2026-08-23/dam_mingen_step</id>
-    <updated>2026-10-28T00:00:00Z</updated>
-    <summary>Minimum-energy offer stepped: $25 to $2/MWh ($1 to -$23 against the fuel-cost line)</summary>
-  </entry>
-  <entry>
-    <title>SCSES_UNIT1A: Start-up cost changed (2026-08-19)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=SCSES_UNIT1A"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=SCSES_UNIT1A#SCSES_UNIT1A/2026-08-19/dam_start_change</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Start-up cost changed: hot start $19,277 to $13,516</summary>
-  </entry>
-  <entry>
-    <title>SCSES_UNIT1A: Start-up cost changed (2026-08-19)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=SCSES_UNIT1A"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=SCSES_UNIT1A#SCSES_UNIT1A/2026-08-19/dam_start_change</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Start-up cost changed: hot start $19,277 to $13,516</summary>
-  </entry>
+  <updated>2026-10-24T00:00:00Z</updated>
   <entry>
     <title>SCSES_UNIT1A: Bidding approach shifted (2026-08-18)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=SCSES_UNIT1A"/>

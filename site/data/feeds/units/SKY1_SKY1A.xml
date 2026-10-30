@@ -124,20 +124,6 @@
     <summary>Offer price vs peer median: $1 to -$14/MWh</summary>
   </entry>
   <entry>
-    <title>SKY1_SKY1A: Minimum-energy offer stepped (2026-02-10)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=SKY1_SKY1A"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=SKY1_SKY1A#SKY1_SKY1A/2026-02-10/dam_mingen_step</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Minimum-energy offer stepped: $35 to $29/MWh ($5 to $7 against the fuel-cost line)</summary>
-  </entry>
-  <entry>
-    <title>SKY1_SKY1A: Minimum-energy offer stepped (2026-02-10)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=SKY1_SKY1A"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=SKY1_SKY1A#SKY1_SKY1A/2026-02-10/dam_mingen_step</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Minimum-energy offer stepped: $35 to $29/MWh ($5 to $7 against the fuel-cost line)</summary>
-  </entry>
-  <entry>
     <title>SKY1_SKY: Minimum-energy offer stepped (2026-02-03)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=SKY1_SKY"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=SKY1_SKY#SKY1_SKY/2026-02-03/dam_mingen_step</id>
@@ -164,13 +150,6 @@
     <id>https://ercotbids.currenttech.energy/unit.html?unit=SKY1_SKY1A#SKY1_SKY1A/2025-12-31/bidding</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Offer price vs peer median: $0 to -$14/MWh</summary>
-  </entry>
-  <entry>
-    <title>SKY1_SKY: Minimum-energy offer stepped (2025-12-24)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=SKY1_SKY"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=SKY1_SKY#SKY1_SKY/2025-12-24/dam_mingen_step</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Minimum-energy offer stepped: $36 to $31/MWh ($1 to $9 against the fuel-cost line)</summary>
   </entry>
   <entry>
     <title>SKY1_SKY: Minimum-energy offer stepped (2025-12-14)</title>

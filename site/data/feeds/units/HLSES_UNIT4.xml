@@ -23,14 +23,14 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=HLSES_UNIT4"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=HLSES_UNIT4#HLSES_UNIT4/2026-08-06/dam_start_change</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Start-up cost changed: hot start $20,275 to $35,378</summary>
+    <summary>Start-up cost changed: hot start $19,676 to $35,378</summary>
   </entry>
   <entry>
     <title>HLSES_UNIT4: Start-up cost changed (2026-08-06)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=HLSES_UNIT4"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=HLSES_UNIT4#HLSES_UNIT4/2026-08-06/dam_start_change</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Start-up cost changed: hot start $20,275 to $35,378</summary>
+    <summary>Start-up cost changed: hot start $19,676 to $35,378</summary>
   </entry>
   <entry>
     <title>HLSES_UNIT4: Start-up cost changed (2026-07-27)</title>
@@ -47,18 +47,18 @@
     <summary>Start-up cost changed: hot start $27,750 to $19,624</summary>
   </entry>
   <entry>
-    <title>HLSES_UNIT4: Minimum-energy offer stepped (2026-07-12)</title>
+    <title>HLSES_UNIT4: Minimum-energy offer stepped (2026-07-13)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=HLSES_UNIT4"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=HLSES_UNIT4#HLSES_UNIT4/2026-07-12/dam_mingen_step</id>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=HLSES_UNIT4#HLSES_UNIT4/2026-07-13/dam_mingen_step</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Minimum-energy offer stepped: $49 to $42/MWh ($21 to $18 against the fuel-cost line)</summary>
+    <summary>Minimum-energy offer stepped: $47 to $42/MWh ($20 to $18 against the fuel-cost line)</summary>
   </entry>
   <entry>
-    <title>HLSES_UNIT4: Minimum-energy offer stepped (2026-07-12)</title>
+    <title>HLSES_UNIT4: Minimum-energy offer stepped (2026-07-13)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=HLSES_UNIT4"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=HLSES_UNIT4#HLSES_UNIT4/2026-07-12/dam_mingen_step</id>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=HLSES_UNIT4#HLSES_UNIT4/2026-07-13/dam_mingen_step</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Minimum-energy offer stepped: $49 to $42/MWh ($21 to $18 against the fuel-cost line)</summary>
+    <summary>Minimum-energy offer stepped: $47 to $42/MWh ($20 to $18 against the fuel-cost line)</summary>
   </entry>
   <entry>
     <title>HLSES_UNIT4: Minimum-energy offer stepped (2026-07-03)</title>
@@ -129,6 +129,20 @@
     <id>https://ercotbids.currenttech.energy/unit.html?unit=HLSES_UNIT4#HLSES_UNIT4/2026-05-01/outage_start</id>
     <updated>2026-10-23T00:00:00Z</updated>
     <summary>Outage began, lasting 8 days</summary>
+  </entry>
+  <entry>
+    <title>HLSES_UNIT4: Start-up cost changed (2026-04-29)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=HLSES_UNIT4"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=HLSES_UNIT4#HLSES_UNIT4/2026-04-29/dam_start_change</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Start-up cost changed: hot start $45,453 to $29,858</summary>
+  </entry>
+  <entry>
+    <title>HLSES_UNIT4: Start-up cost changed (2026-04-29)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=HLSES_UNIT4"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=HLSES_UNIT4#HLSES_UNIT4/2026-04-29/dam_start_change</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Start-up cost changed: hot start $45,453 to $29,858</summary>
   </entry>
   <entry>
     <title>HLSES_UNIT4: Start-up cost changed (2026-04-19)</title>

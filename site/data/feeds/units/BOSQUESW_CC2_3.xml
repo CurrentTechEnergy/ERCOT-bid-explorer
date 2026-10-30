@@ -5,13 +5,6 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=BOSQUESW_CC2_3</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
-    <title>BOSQUESW_CC2: Minimum-energy offer stepped (2026-06-24)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=BOSQUESW_CC2"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=BOSQUESW_CC2#BOSQUESW_CC2/2026-06-24/dam_mingen_step</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Minimum-energy offer stepped: $12 to $0/MWh (-$8 to -$21 against the fuel-cost line)</summary>
-  </entry>
-  <entry>
     <title>BOSQUESW_CC2: Minimum-energy offer stepped (2026-06-17)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=BOSQUESW_CC2"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=BOSQUESW_CC2#BOSQUESW_CC2/2026-06-17/dam_mingen_step</id>
@@ -40,18 +33,18 @@
     <summary>Minimum-energy offer stepped: $20 to $15/MWh ($6 to -$0 against the fuel-cost line)</summary>
   </entry>
   <entry>
-    <title>BOSQUESW_CC2: Minimum-energy offer stepped (2026-02-10)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=BOSQUESW_CC2"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=BOSQUESW_CC2#BOSQUESW_CC2/2026-02-10/dam_mingen_step</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Minimum-energy offer stepped: $14 to $20/MWh (-$9 to $5 against the fuel-cost line)</summary>
-  </entry>
-  <entry>
     <title>BOSQUESW_CC2: Minimum-energy offer stepped (2026-02-03)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=BOSQUESW_CC2"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=BOSQUESW_CC2#BOSQUESW_CC2/2026-02-03/dam_mingen_step</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Minimum-energy offer stepped: $0 to $23/MWh (-$33 to $6 against the fuel-cost line)</summary>
+    <summary>Minimum-energy offer stepped: $2 to $23/MWh (-$38 to $6 against the fuel-cost line)</summary>
+  </entry>
+  <entry>
+    <title>BOSQUESW_CC2: Start-up cost changed (2026-02-01)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=BOSQUESW_CC2"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=BOSQUESW_CC2#BOSQUESW_CC2/2026-02-01/dam_start_change</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Start-up cost changed: hot start $13,053 to $8,350</summary>
   </entry>
   <entry>
     <title>BOSQUESW_CC2: Start-up cost changed (2026-01-24)</title>
@@ -66,13 +59,6 @@
     <id>https://ercotbids.currenttech.energy/unit.html?unit=BOSQUESW_CC2#BOSQUESW_CC2/2026-01-22/dam_mingen_step</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Minimum-energy offer stepped: $14 to $5/MWh (-$3 to -$91 against the fuel-cost line)</summary>
-  </entry>
-  <entry>
-    <title>BOSQUESW_CC2: Minimum-energy offer stepped (2025-12-26)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=BOSQUESW_CC2"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=BOSQUESW_CC2#BOSQUESW_CC2/2025-12-26/dam_mingen_step</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Minimum-energy offer stepped: $10 to $17/MWh (-$12 to $1 against the fuel-cost line)</summary>
   </entry>
   <entry>
     <title>BOSQUESW_CC2: Minimum-energy offer stepped (2025-12-19)</title>

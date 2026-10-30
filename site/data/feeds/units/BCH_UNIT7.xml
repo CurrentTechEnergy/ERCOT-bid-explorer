@@ -19,32 +19,11 @@
     <summary>Multi-day: off a day or more in 2026-02 to Daily, over 2 a week in 2026-03</summary>
   </entry>
   <entry>
-    <title>BCH: Minimum-energy offer stepped (2026-02-11)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=BCH"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=BCH#BCH/2026-02-11/dam_mingen_step</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Minimum-energy offer stepped: $38 to $31/MWh ($10 to $10 against the fuel-cost line)</summary>
-  </entry>
-  <entry>
     <title>BCH: Minimum-energy offer stepped (2026-02-04)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=BCH"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=BCH#BCH/2026-02-04/dam_mingen_step</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Minimum-energy offer stepped: $53 to $35/MWh ($4 to $9 against the fuel-cost line)</summary>
-  </entry>
-  <entry>
-    <title>BCH_UNIT7: Minimum-energy offer stepped (2026-01-06)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=BCH_UNIT7"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=BCH_UNIT7#BCH_UNIT7/2026-01-06/dam_mingen_step</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Minimum-energy offer stepped: $61 to $54/MWh ($29 to $29 against the fuel-cost line)</summary>
-  </entry>
-  <entry>
-    <title>BCH_UNIT7: Minimum-energy offer stepped (2026-01-06)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=BCH_UNIT7"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=BCH_UNIT7#BCH_UNIT7/2026-01-06/dam_mingen_step</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Minimum-energy offer stepped: $61 to $54/MWh ($29 to $29 against the fuel-cost line)</summary>
   </entry>
   <entry>
     <title>BCH_UNIT7: Timescale group changed (2026-01-01)</title>
@@ -54,11 +33,11 @@
     <summary>Daily, 1–2 a week in 2025-12 to Multi-day: off a day or more in 2026-01</summary>
   </entry>
   <entry>
-    <title>BCH: Minimum-energy offer stepped (2025-12-26)</title>
+    <title>BCH: Minimum-energy offer stepped (2025-12-29)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=BCH"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=BCH#BCH/2025-12-26/dam_mingen_step</id>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=BCH#BCH/2025-12-29/dam_mingen_step</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Minimum-energy offer stepped: $47 to $38/MWh ($7 to $14 against the fuel-cost line)</summary>
+    <summary>Minimum-energy offer stepped: $42 to $36/MWh ($9 to $13 against the fuel-cost line)</summary>
   </entry>
   <entry>
     <title>BCH: Decision maker or QSE changed (2025-09-25)</title>

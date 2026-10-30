@@ -5,18 +5,11 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=QALSW_CC2_1</id>
   <updated>2026-10-24T00:00:00Z</updated>
   <entry>
-    <title>QALSW_CC2: Minimum-energy offer stepped (2026-07-31)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=QALSW_CC2"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=QALSW_CC2#QALSW_CC2/2026-07-31/dam_mingen_step</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Minimum-energy offer stepped: $10 to $1/MWh (-$2 to -$13 against the fuel-cost line)</summary>
-  </entry>
-  <entry>
     <title>QALSW_CC2: Minimum-energy offer stepped (2026-07-24)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=QALSW_CC2"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=QALSW_CC2#QALSW_CC2/2026-07-24/dam_mingen_step</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Minimum-energy offer stepped: $19 to $1/MWh ($7 to -$16 against the fuel-cost line)</summary>
+    <summary>Minimum-energy offer stepped: $20 to $1/MWh ($7 to -$16 against the fuel-cost line)</summary>
   </entry>
   <entry>
     <title>QALSW_CC2: Minimum-energy offer stepped (2026-07-15)</title>
@@ -30,7 +23,7 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=QALSW_CC2"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=QALSW_CC2#QALSW_CC2/2026-06-30/dam_mingen_step</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Minimum-energy offer stepped: $19 to $14/MWh ($8 to $9 against the fuel-cost line)</summary>
+    <summary>Minimum-energy offer stepped: $19 to $14/MWh ($7 to $9 against the fuel-cost line)</summary>
   </entry>
   <entry>
     <title>QALSW_CC2: Minimum-energy offer stepped (2026-06-23)</title>

@@ -12,20 +12,6 @@
     <summary>Off a week or more in 2026-07 to Daily, over 2 a week in 2026-08</summary>
   </entry>
   <entry>
-    <title>AZ_AZ_G4: Start-up cost changed (2026-07-31)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=AZ_AZ_G4"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=AZ_AZ_G4#AZ_AZ_G4/2026-07-31/dam_start_change</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Start-up cost changed: hot start $2,125 to $3,250</summary>
-  </entry>
-  <entry>
-    <title>AZ_AZ_G4: Start-up cost changed (2026-07-31)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=AZ_AZ_G4"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=AZ_AZ_G4#AZ_AZ_G4/2026-07-31/dam_start_change</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Start-up cost changed: hot start $2,125 to $3,250</summary>
-  </entry>
-  <entry>
     <title>AZ_AZ_G4: Bidding approach shifted (2026-07-22)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=AZ_AZ_G4"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=AZ_AZ_G4#AZ_AZ_G4/2026-07-22/bidding</id>
@@ -152,18 +138,11 @@
     <summary>Minimum-energy offer stepped: $45 to $50/MWh ($20 to $21 against the fuel-cost line)</summary>
   </entry>
   <entry>
-    <title>AZ_AZ: Minimum-energy offer stepped (2026-01-01)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=AZ_AZ"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=AZ_AZ#AZ_AZ/2026-01-01/dam_mingen_step</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Minimum-energy offer stepped: $56 to $47/MWh ($25 to $24 against the fuel-cost line)</summary>
-  </entry>
-  <entry>
     <title>AZ_AZ: Minimum-energy offer stepped (2025-12-25)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=AZ_AZ"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=AZ_AZ#AZ_AZ/2025-12-25/dam_mingen_step</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Minimum-energy offer stepped: $59 to $47/MWh ($26 to $25 against the fuel-cost line)</summary>
+    <summary>Minimum-energy offer stepped: $57 to $47/MWh ($25 to $25 against the fuel-cost line)</summary>
   </entry>
   <entry>
     <title>AZ_AZ: Minimum-energy offer stepped (2025-12-17)</title>

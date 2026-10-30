@@ -12,13 +12,6 @@
     <summary>Multi-day: off a day or more in 2026-02 to Daily, over 2 a week in 2026-03</summary>
   </entry>
   <entry>
-    <title>BCH: Minimum-energy offer stepped (2026-02-11)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=BCH"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=BCH#BCH/2026-02-11/dam_mingen_step</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Minimum-energy offer stepped: $38 to $31/MWh ($10 to $10 against the fuel-cost line)</summary>
-  </entry>
-  <entry>
     <title>BCH: Minimum-energy offer stepped (2026-02-04)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=BCH"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=BCH#BCH/2026-02-04/dam_mingen_step</id>
@@ -33,18 +26,11 @@
     <summary>Daily, 1–2 a week in 2026-01 to Multi-day: off a day or more in 2026-02</summary>
   </entry>
   <entry>
-    <title>BCH: Minimum-energy offer stepped (2026-01-03)</title>
+    <title>BCH: Minimum-energy offer stepped (2025-12-29)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=BCH"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=BCH#BCH/2026-01-03/dam_mingen_step</id>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=BCH#BCH/2025-12-29/dam_mingen_step</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Minimum-energy offer stepped: $41 to $35/MWh ($9 to $13 against the fuel-cost line)</summary>
-  </entry>
-  <entry>
-    <title>BCH: Minimum-energy offer stepped (2025-12-26)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=BCH"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=BCH#BCH/2025-12-26/dam_mingen_step</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Minimum-energy offer stepped: $47 to $38/MWh ($7 to $14 against the fuel-cost line)</summary>
+    <summary>Minimum-energy offer stepped: $42 to $36/MWh ($9 to $13 against the fuel-cost line)</summary>
   </entry>
   <entry>
     <title>BCH: Minimum-energy offer stepped (2025-12-14)</title>

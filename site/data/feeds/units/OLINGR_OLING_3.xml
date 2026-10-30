@@ -33,18 +33,11 @@
     <summary>Multi-day: off a day or more in 2026-05 to Off a week or more in 2026-06</summary>
   </entry>
   <entry>
-    <title>OLINGR_OLING_3: Minimum-energy offer stepped (2026-04-10)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=OLINGR_OLING_3"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=OLINGR_OLING_3#OLINGR_OLING_3/2026-04-10/dam_mingen_step</id>
+    <title>OLINGR_OLIN: Minimum-energy offer stepped (2026-04-03)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=OLINGR_OLIN"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=OLINGR_OLIN#OLINGR_OLIN/2026-04-03/dam_mingen_step</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Minimum-energy offer stepped: $81 to $76/MWh ($55 to $53 against the fuel-cost line)</summary>
-  </entry>
-  <entry>
-    <title>OLINGR_OLING_3: Minimum-energy offer stepped (2026-04-10)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=OLINGR_OLING_3"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=OLINGR_OLING_3#OLINGR_OLING_3/2026-04-10/dam_mingen_step</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Minimum-energy offer stepped: $81 to $76/MWh ($55 to $53 against the fuel-cost line)</summary>
+    <summary>Minimum-energy offer stepped: $82 to $76/MWh ($55 to $51 against the fuel-cost line)</summary>
   </entry>
   <entry>
     <title>OLINGR_OLING_3: Outage ended (2026-03-27)</title>
@@ -61,11 +54,11 @@
     <summary>Outage began, lasting 20 days</summary>
   </entry>
   <entry>
-    <title>OLINGR_OLIN: Minimum-energy offer stepped (2026-03-05)</title>
+    <title>OLINGR_OLIN: Minimum-energy offer stepped (2026-03-04)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=OLINGR_OLIN"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=OLINGR_OLIN#OLINGR_OLIN/2026-03-05/dam_mingen_step</id>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=OLINGR_OLIN#OLINGR_OLIN/2026-03-04/dam_mingen_step</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Minimum-energy offer stepped: $78 to $84/MWh ($59 to $57 against the fuel-cost line)</summary>
+    <summary>Minimum-energy offer stepped: $77 to $83/MWh ($53 to $55 against the fuel-cost line)</summary>
   </entry>
   <entry>
     <title>OLINGR_OLING_3: Priced out of the day-ahead (2026-02-26)</title>

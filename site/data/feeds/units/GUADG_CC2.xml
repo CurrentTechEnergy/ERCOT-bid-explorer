@@ -16,7 +16,7 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=GUADG_CC2"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=GUADG_CC2#GUADG_CC2/2026-08-01/turnoff/2</id>
     <updated>2026-10-29T00:00:00Z</updated>
-    <summary>Turn-off point with an award every hour $4,217 to $7,134 per MW of minimum output in August</summary>
+    <summary>Turn-off point with an award every hour $3,284 to $5,094 per MW of minimum output in August</summary>
   </entry>
   <entry>
     <title>GUADG_CC2: Shut down after a long run (2026-06-28)</title>
@@ -26,11 +26,11 @@
     <summary>Shut down for 4 h after 90 days without a shutdown</summary>
   </entry>
   <entry>
-    <title>GUADG_CC2: Turn-off point moved (2026-06-01)</title>
+    <title>GUADG_CC2: Minimum-energy offer stepped (2026-06-06)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=GUADG_CC2"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=GUADG_CC2#GUADG_CC2/2026-06-01/turnoff/2</id>
-    <updated>2026-10-29T00:00:00Z</updated>
-    <summary>Turn-off point with an award every hour $2,494 to $4,244 per MW of minimum output in June; the next month held it</summary>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=GUADG_CC2#GUADG_CC2/2026-06-06/dam_mingen_step</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $4 to $11/MWh (-$17 to -$9 against the fuel-cost line)</summary>
   </entry>
   <entry>
     <title>GUADG_CC2: Minimum-energy offer stepped (2026-05-30)</title>
@@ -40,18 +40,18 @@
     <summary>Minimum-energy offer stepped: $10 to $4/MWh (-$8 to -$17 against the fuel-cost line)</summary>
   </entry>
   <entry>
-    <title>GUADG_CC2: Minimum-energy offer stepped (2026-05-23)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=GUADG_CC2"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=GUADG_CC2#GUADG_CC2/2026-05-23/dam_mingen_step</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Minimum-energy offer stepped: $8 to $0/MWh (-$10 to -$18 against the fuel-cost line)</summary>
-  </entry>
-  <entry>
     <title>GUADG_CC2: Minimum-energy offer stepped (2026-05-16)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=GUADG_CC2"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=GUADG_CC2#GUADG_CC2/2026-05-16/dam_mingen_step</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Minimum-energy offer stepped: $20 to $0/MWh ($2 to -$18 against the fuel-cost line)</summary>
+    <summary>Minimum-energy offer stepped: $21 to $0/MWh ($2 to -$18 against the fuel-cost line)</summary>
+  </entry>
+  <entry>
+    <title>GUADG_CC2: Minimum-energy offer stepped (2026-05-08)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=GUADG_CC2"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=GUADG_CC2#GUADG_CC2/2026-05-08/dam_mingen_step</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $0 to $21/MWh (-$17 to $2 against the fuel-cost line)</summary>
   </entry>
   <entry>
     <title>GUADG_CC2: Minimum-energy offer stepped (2026-04-25)</title>
@@ -101,13 +101,6 @@
     <id>https://ercotbids.currenttech.energy/unit.html?unit=GUADG_CC2#GUADG_CC2/2026-03-02/shutdown_award</id>
     <updated>2026-10-23T00:00:00Z</updated>
     <summary>Shut down for 17 h although a day-ahead award covered 100% of the window</summary>
-  </entry>
-  <entry>
-    <title>GUADG_CC2: Minimum-energy offer stepped (2026-02-12)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=GUADG_CC2"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=GUADG_CC2#GUADG_CC2/2026-02-12/dam_mingen_step</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Minimum-energy offer stepped: $2 to $21/MWh (-$20 to $6 against the fuel-cost line)</summary>
   </entry>
   <entry>
     <title>GUADG_CC2: Priced out of the day-ahead (2026-02-03)</title>

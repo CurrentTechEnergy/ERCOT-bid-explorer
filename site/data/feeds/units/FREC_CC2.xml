@@ -3,7 +3,7 @@
   <title>FREC_CC2: bidding and operating changes</title>
   <link href="https://ercotbids.currenttech.energy/unit.html?unit=FREC_CC2"/>
   <id>https://ercotbids.currenttech.energy/unit.html?unit=FREC_CC2</id>
-  <updated>2026-10-18T00:00:00Z</updated>
+  <updated>2026-10-30T00:00:00Z</updated>
   <entry>
     <title>FREC_CC2: Timescale group changed (2026-07-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=FREC_CC2"/>
@@ -12,18 +12,11 @@
     <summary>Daily, under 1 shutdown a week in 2026-06 to Always on when available in 2026-07</summary>
   </entry>
   <entry>
-    <title>FREC_CC2: Minimum-energy offer stepped (2026-06-20)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=FREC_CC2"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=FREC_CC2#FREC_CC2/2026-06-20/dam_mingen_step</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Minimum-energy offer stepped: $12 to $0/MWh (-$8 to -$20 against the fuel-cost line)</summary>
-  </entry>
-  <entry>
     <title>FREC_CC2: Minimum-energy offer stepped (2026-06-13)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=FREC_CC2"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=FREC_CC2#FREC_CC2/2026-06-13/dam_mingen_step</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Minimum-energy offer stepped: $12 to $0/MWh (-$9 to -$20 against the fuel-cost line)</summary>
+    <summary>Minimum-energy offer stepped: $23 to $0/MWh ($3 to -$20 against the fuel-cost line)</summary>
   </entry>
   <entry>
     <title>FREC_CC2: Minimum-energy offer stepped (2026-06-06)</title>
@@ -37,14 +30,14 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=FREC_CC2"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=FREC_CC2#FREC_CC2/2026-06-01/turnoff/1</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Turn-off point with an award some hours $19 to $1,301 per MW of minimum output in June</summary>
+    <summary>Turn-off point with an award some hours $27 to $608 per MW of minimum output in June</summary>
   </entry>
   <entry>
-    <title>FREC_CC2: Minimum-energy offer stepped (2026-05-15)</title>
+    <title>FREC_CC2: Minimum-energy offer stepped (2026-05-13)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=FREC_CC2"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=FREC_CC2#FREC_CC2/2026-05-15/dam_mingen_step</id>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=FREC_CC2#FREC_CC2/2026-05-13/dam_mingen_step</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Minimum-energy offer stepped: $20 to $0/MWh ($4 to -$18 against the fuel-cost line)</summary>
+    <summary>Minimum-energy offer stepped: $21 to $0/MWh ($4 to -$18 against the fuel-cost line)</summary>
   </entry>
   <entry>
     <title>FREC_CC2: Start-up cost changed (2026-05-11)</title>
@@ -52,13 +45,6 @@
     <id>https://ercotbids.currenttech.energy/unit.html?unit=FREC_CC2#FREC_CC2/2026-05-11/dam_start_change</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Start-up cost changed: hot start $13,137 to $18,419</summary>
-  </entry>
-  <entry>
-    <title>FREC_CC2: Minimum-energy offer stepped (2026-05-08)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=FREC_CC2"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=FREC_CC2#FREC_CC2/2026-05-08/dam_mingen_step</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Minimum-energy offer stepped: $10 to $21/MWh (-$6 to $3 against the fuel-cost line)</summary>
   </entry>
   <entry>
     <title>FREC_CC2: Minimum-energy offer stepped (2026-05-01)</title>
@@ -96,6 +82,13 @@
     <summary>Outage began, lasting 9 days</summary>
   </entry>
   <entry>
+    <title>FREC_CC2: Turn-off point moved (2026-03-01)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=FREC_CC2"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=FREC_CC2#FREC_CC2/2026-03-01/turnoff/1</id>
+    <updated>2026-10-30T00:00:00Z</updated>
+    <summary>Turn-off point with an award some hours -$45 to $10 per MW of minimum output in March</summary>
+  </entry>
+  <entry>
     <title>FREC_CC2: Minimum-energy offer stepped (2026-02-10)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=FREC_CC2"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=FREC_CC2#FREC_CC2/2026-02-10/dam_mingen_step</id>
@@ -108,13 +101,6 @@
     <id>https://ercotbids.currenttech.energy/unit.html?unit=FREC_CC2#FREC_CC2/2025-12-26/shutdown_award</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Shut down for 50 h although a day-ahead award covered 100% of the window</summary>
-  </entry>
-  <entry>
-    <title>FREC_CC2: Minimum-energy offer stepped (2025-12-26)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=FREC_CC2"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=FREC_CC2#FREC_CC2/2025-12-26/dam_mingen_step</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Minimum-energy offer stepped: $11 to $19/MWh (-$10 to $4 against the fuel-cost line)</summary>
   </entry>
   <entry>
     <title>FREC_CC2: Minimum-energy offer stepped (2025-12-19)</title>

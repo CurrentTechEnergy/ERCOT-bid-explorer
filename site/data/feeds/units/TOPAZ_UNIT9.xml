@@ -12,9 +12,16 @@
     <summary>Outage began, still on at the end of the data (158 days so far)</summary>
   </entry>
   <entry>
-    <title>TOPAZ: Minimum-energy offer stepped (2026-03-03)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=TOPAZ"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=TOPAZ#TOPAZ/2026-03-03/dam_mingen_step</id>
+    <title>TOPAZ_UNIT9: Minimum-energy offer stepped (2026-03-03)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=TOPAZ_UNIT9"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=TOPAZ_UNIT9#TOPAZ_UNIT9/2026-03-03/dam_mingen_step</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $53 to $58/MWh ($28 to $30 against the fuel-cost line)</summary>
+  </entry>
+  <entry>
+    <title>TOPAZ_UNIT9: Minimum-energy offer stepped (2026-03-03)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=TOPAZ_UNIT9"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=TOPAZ_UNIT9#TOPAZ_UNIT9/2026-03-03/dam_mingen_step</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Minimum-energy offer stepped: $53 to $58/MWh ($28 to $30 against the fuel-cost line)</summary>
   </entry>
@@ -51,14 +58,14 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=TOPAZ_UNIT9"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=TOPAZ_UNIT9#TOPAZ_UNIT9/2026-01-02/dam_mingen_step</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Minimum-energy offer stepped: $61 to $51/MWh ($28 to $28 against the fuel-cost line)</summary>
+    <summary>Minimum-energy offer stepped: $59 to $51/MWh ($28 to $28 against the fuel-cost line)</summary>
   </entry>
   <entry>
     <title>TOPAZ_UNIT9: Minimum-energy offer stepped (2026-01-02)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=TOPAZ_UNIT9"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=TOPAZ_UNIT9#TOPAZ_UNIT9/2026-01-02/dam_mingen_step</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Minimum-energy offer stepped: $61 to $51/MWh ($28 to $28 against the fuel-cost line)</summary>
+    <summary>Minimum-energy offer stepped: $59 to $51/MWh ($28 to $28 against the fuel-cost line)</summary>
   </entry>
   <entry>
     <title>TOPAZ: Minimum-energy offer stepped (2025-12-17)</title>

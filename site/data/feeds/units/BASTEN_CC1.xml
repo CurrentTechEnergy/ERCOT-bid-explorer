@@ -3,20 +3,13 @@
   <title>BASTEN_CC1: bidding and operating changes</title>
   <link href="https://ercotbids.currenttech.energy/unit.html?unit=BASTEN_CC1"/>
   <id>https://ercotbids.currenttech.energy/unit.html?unit=BASTEN_CC1</id>
-  <updated>2026-10-30T00:00:00Z</updated>
-  <entry>
-    <title>BASTEN_CC1: Turn-off point moved (2026-08-01)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=BASTEN_CC1"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=BASTEN_CC1#BASTEN_CC1/2026-08-01/turnoff/0</id>
-    <updated>2026-10-30T00:00:00Z</updated>
-    <summary>Turn-off point without an award $496 to $847 per MW of minimum output in August</summary>
-  </entry>
+  <updated>2026-10-29T00:00:00Z</updated>
   <entry>
     <title>BASTEN_CC1: Turn-off point moved (2026-06-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=BASTEN_CC1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=BASTEN_CC1#BASTEN_CC1/2026-06-01/turnoff/0</id>
     <updated>2026-10-29T00:00:00Z</updated>
-    <summary>Turn-off point without an award $546 to $917 per MW of minimum output in June; the next month went back</summary>
+    <summary>Turn-off point without an award $669 to $1,272 per MW of minimum output in June; the next month went back</summary>
   </entry>
   <entry>
     <title>BASTEN_CC1: Outage ended (2026-04-19)</title>

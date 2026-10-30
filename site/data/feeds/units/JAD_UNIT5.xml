@@ -5,18 +5,18 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=JAD_UNIT5</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
-    <title>JAD: Minimum-energy offer stepped (2026-03-04)</title>
+    <title>JAD: Minimum-energy offer stepped (2026-03-03)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=JAD"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=JAD#JAD/2026-03-04/dam_mingen_step</id>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=JAD#JAD/2026-03-03/dam_mingen_step</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Minimum-energy offer stepped: $31 to $39/MWh ($9 to $10 against the fuel-cost line)</summary>
+    <summary>Minimum-energy offer stepped: $33 to $38/MWh ($10 to $10 against the fuel-cost line)</summary>
   </entry>
   <entry>
-    <title>JAD: Minimum-energy offer stepped (2026-02-25)</title>
+    <title>JAD: Minimum-energy offer stepped (2026-02-24)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=JAD"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=JAD#JAD/2026-02-25/dam_mingen_step</id>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=JAD#JAD/2026-02-24/dam_mingen_step</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Minimum-energy offer stepped: $28 to $34/MWh ($8 to $10 against the fuel-cost line)</summary>
+    <summary>Minimum-energy offer stepped: $28 to $33/MWh ($8 to $10 against the fuel-cost line)</summary>
   </entry>
   <entry>
     <title>JAD: Minimum-energy offer stepped (2026-02-15)</title>
@@ -38,13 +38,6 @@
     <id>https://ercotbids.currenttech.energy/unit.html?unit=JAD#JAD/2026-01-14/dam_mingen_step</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Minimum-energy offer stepped: $31 to $37/MWh ($8 to $8 against the fuel-cost line)</summary>
-  </entry>
-  <entry>
-    <title>JAD: Minimum-energy offer stepped (2026-01-02)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=JAD"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=JAD#JAD/2026-01-02/dam_mingen_step</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Minimum-energy offer stepped: $40 to $31/MWh ($8 to $8 against the fuel-cost line)</summary>
   </entry>
   <entry>
     <title>JAD: Minimum-energy offer stepped (2025-12-26)</title>

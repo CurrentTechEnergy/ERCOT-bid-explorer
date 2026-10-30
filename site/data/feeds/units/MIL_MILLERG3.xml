@@ -3,7 +3,14 @@
   <title>MIL_MILLERG3: bidding and operating changes</title>
   <link href="https://ercotbids.currenttech.energy/unit.html?unit=MIL_MILLERG3"/>
   <id>https://ercotbids.currenttech.energy/unit.html?unit=MIL_MILLERG3</id>
-  <updated>2026-10-26T00:00:00Z</updated>
+  <updated>2026-10-30T00:00:00Z</updated>
+  <entry>
+    <title>MIL_MILLERG3: Turn-off point moved (2026-08-01)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=MIL_MILLERG3"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=MIL_MILLERG3#MIL_MILLERG3/2026-08-01/turnoff/1</id>
+    <updated>2026-10-30T00:00:00Z</updated>
+    <summary>Turn-off point with an award some hours riding through to $9,649 per MW of minimum output in August</summary>
+  </entry>
   <entry>
     <title>MIL_MILLERG3: Shut down despite a day-ahead award (2026-07-15)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=MIL_MILLERG3"/>

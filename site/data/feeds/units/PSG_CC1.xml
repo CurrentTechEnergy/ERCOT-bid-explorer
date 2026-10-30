@@ -5,13 +5,6 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=PSG_CC1</id>
   <updated>2026-10-24T00:00:00Z</updated>
   <entry>
-    <title>PSG_CC1: Minimum-energy offer stepped (2026-06-19)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=PSG_CC1"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=PSG_CC1#PSG_CC1/2026-06-19/dam_mingen_step</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Minimum-energy offer stepped: $6 to $0/MWh (-$15 to -$20 against the fuel-cost line)</summary>
-  </entry>
-  <entry>
     <title>PSG_CC1: Minimum-energy offer stepped (2026-06-12)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=PSG_CC1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=PSG_CC1#PSG_CC1/2026-06-12/dam_mingen_step</id>
@@ -65,7 +58,7 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=PSG_CC1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=PSG_CC1#PSG_CC1/2026-02-04/dam_mingen_step</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Minimum-energy offer stepped: $3 to $9/MWh (-$27 to -$8 against the fuel-cost line)</summary>
+    <summary>Minimum-energy offer stepped: $2 to $9/MWh (-$40 to -$8 against the fuel-cost line)</summary>
   </entry>
   <entry>
     <title>PSG_CC1: Priced out of the day-ahead (2026-01-28)</title>

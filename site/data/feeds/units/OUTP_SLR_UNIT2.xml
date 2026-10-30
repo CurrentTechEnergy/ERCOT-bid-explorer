@@ -5,25 +5,11 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=OUTP_SLR_UNIT2</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
-    <title>OUTP_SLR: Day-ahead floor changed (2026-07-11)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=OUTP_SLR"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=OUTP_SLR#OUTP_SLR/2026-07-11/dam_renew_floor</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Day-ahead floor changed: -$8 to -$2/MWh</summary>
-  </entry>
-  <entry>
     <title>OUTP_SLR: Day-ahead floor changed (2026-07-04)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=OUTP_SLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=OUTP_SLR#OUTP_SLR/2026-07-04/dam_renew_floor</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Day-ahead floor changed: -$14 to -$2/MWh</summary>
-  </entry>
-  <entry>
-    <title>OUTP_SLR: Day-ahead floor changed (2026-03-24)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=OUTP_SLR"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=OUTP_SLR#OUTP_SLR/2026-03-24/dam_renew_floor</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Day-ahead floor changed: -$7 to -$14/MWh</summary>
   </entry>
   <entry>
     <title>OUTP_SLR: Day-ahead floor changed (2026-03-17)</title>

@@ -5,13 +5,6 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=DANSBY_DANSBYG3</id>
   <updated>2026-10-24T00:00:00Z</updated>
   <entry>
-    <title>DANSBY_DANSBY: Minimum-energy offer stepped (2026-04-12)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=DANSBY_DANSBY"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=DANSBY_DANSBY#DANSBY_DANSBY/2026-04-12/dam_mingen_step</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Minimum-energy offer stepped: $144 to $138/MWh ($118 to $113 against the fuel-cost line)</summary>
-  </entry>
-  <entry>
     <title>DANSBY_DANSBY: Minimum-energy offer stepped (2026-04-03)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=DANSBY_DANSBY"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=DANSBY_DANSBY#DANSBY_DANSBY/2026-04-03/dam_mingen_step</id>
@@ -19,11 +12,11 @@
     <summary>Minimum-energy offer stepped: $148 to $141/MWh ($121 to $115 against the fuel-cost line)</summary>
   </entry>
   <entry>
-    <title>DANSBY_DANSBY: Minimum-energy offer stepped (2026-03-27)</title>
+    <title>DANSBY_DANSBY: Minimum-energy offer stepped (2026-03-25)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=DANSBY_DANSBY"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=DANSBY_DANSBY#DANSBY_DANSBY/2026-03-27/dam_mingen_step</id>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=DANSBY_DANSBY#DANSBY_DANSBY/2026-03-25/dam_mingen_step</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Minimum-energy offer stepped: $152 to $147/MWh ($123 to $121 against the fuel-cost line)</summary>
+    <summary>Minimum-energy offer stepped: $128 to $122/MWh ($99 to $95 against the fuel-cost line)</summary>
   </entry>
   <entry>
     <title>DANSBY_DANSBY: Minimum-energy offer stepped (2026-03-17)</title>
@@ -38,13 +31,6 @@
     <id>https://ercotbids.currenttech.energy/unit.html?unit=DANSBY_DANSBYG3#DANSBY_DANSBYG3/2026-03-04/bidding</id>
     <updated>2026-10-24T00:00:00Z</updated>
     <summary>Offer price vs peer median: -$20 to -$31/MWh</summary>
-  </entry>
-  <entry>
-    <title>DANSBY_DANSBY: Minimum-energy offer stepped (2026-02-10)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=DANSBY_DANSBY"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=DANSBY_DANSBY#DANSBY_DANSBY/2026-02-10/dam_mingen_step</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Minimum-energy offer stepped: $129 to $66/MWh ($94 to $43 against the fuel-cost line)</summary>
   </entry>
   <entry>
     <title>DANSBY_DANSBY: Minimum-energy offer stepped (2026-02-03)</title>

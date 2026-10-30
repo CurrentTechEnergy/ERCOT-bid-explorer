@@ -3,14 +3,7 @@
   <title>WAP_WAP_G3: bidding and operating changes</title>
   <link href="https://ercotbids.currenttech.energy/unit.html?unit=WAP_WAP_G3"/>
   <id>https://ercotbids.currenttech.energy/unit.html?unit=WAP_WAP_G3</id>
-  <updated>2026-10-30T00:00:00Z</updated>
-  <entry>
-    <title>WAP_WAP_G3: Turn-off point moved (2026-08-01)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=WAP_WAP_G3"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=WAP_WAP_G3#WAP_WAP_G3/2026-08-01/turnoff/0</id>
-    <updated>2026-10-30T00:00:00Z</updated>
-    <summary>Turn-off point without an award $1,648 to $2,728 per MW of minimum output in August</summary>
-  </entry>
+  <updated>2026-10-29T00:00:00Z</updated>
   <entry>
     <title>WAP_WAP_G3: Timescale group changed (2026-07-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=WAP_WAP_G3"/>
@@ -23,14 +16,14 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=WAP_WAP_G3"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=WAP_WAP_G3#WAP_WAP_G3/2026-06-01/turnoff/0</id>
     <updated>2026-10-29T00:00:00Z</updated>
-    <summary>Turn-off point without an award $1,397 to $3,149 per MW of minimum output in June; the next month went back</summary>
+    <summary>Turn-off point without an award $2,017 to $5,024 per MW of minimum output in June; the next month went back</summary>
   </entry>
   <entry>
     <title>WAP_WAP_G3: Turn-off point moved (2026-05-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=WAP_WAP_G3"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=WAP_WAP_G3#WAP_WAP_G3/2026-05-01/turnoff/0</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Turn-off point without an award riding through to $1,397 per MW of minimum output in May; the next month held it</summary>
+    <summary>Turn-off point without an award riding through to $2,017 per MW of minimum output in May; the next month held it</summary>
   </entry>
   <entry>
     <title>WAP_WAP_G3: Timescale group changed (2026-04-01)</title>

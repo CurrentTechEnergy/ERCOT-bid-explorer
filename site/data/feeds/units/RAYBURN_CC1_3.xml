@@ -5,13 +5,6 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=RAYBURN_CC1_3</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
-    <title>RAYBURN_CC1: Minimum-energy offer stepped (2026-02-27)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=RAYBURN_CC1"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=RAYBURN_CC1#RAYBURN_CC1/2026-02-27/dam_mingen_step</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Minimum-energy offer stepped: $39 to $32/MWh ($19 to $15 against the fuel-cost line)</summary>
-  </entry>
-  <entry>
     <title>RAYBURN_CC1: Minimum-energy offer stepped (2026-02-03)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=RAYBURN_CC1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=RAYBURN_CC1#RAYBURN_CC1/2026-02-03/dam_mingen_step</id>
@@ -24,13 +17,6 @@
     <id>https://ercotbids.currenttech.energy/unit.html?unit=RAYBURN_CC1#RAYBURN_CC1/2026-01-30/dam_priced_out</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Priced out of the day-ahead: minimum energy at $52/MWh against a usual $33 for 2 day(s)</summary>
-  </entry>
-  <entry>
-    <title>RAYBURN_CC1: Minimum-energy offer stepped (2025-12-24)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=RAYBURN_CC1"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=RAYBURN_CC1#RAYBURN_CC1/2025-12-24/dam_mingen_step</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Minimum-energy offer stepped: $37 to $31/MWh ($13 to $16 against the fuel-cost line)</summary>
   </entry>
   <entry>
     <title>RAYBURN_CC1: Minimum-energy offer stepped (2025-12-17)</title>

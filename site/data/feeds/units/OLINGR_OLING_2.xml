@@ -117,6 +117,13 @@
     <summary>Outage began, lasting 21 days</summary>
   </entry>
   <entry>
+    <title>OLINGR_OLIN: Minimum-energy offer stepped (2026-03-04)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=OLINGR_OLIN"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=OLINGR_OLIN#OLINGR_OLIN/2026-03-04/dam_mingen_step</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $77 to $83/MWh ($53 to $55 against the fuel-cost line)</summary>
+  </entry>
+  <entry>
     <title>OLINGR_OLING_2: Minimum-energy offer stepped (2026-02-11)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=OLINGR_OLING_2"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=OLINGR_OLING_2#OLINGR_OLING_2/2026-02-11/dam_mingen_step</id>

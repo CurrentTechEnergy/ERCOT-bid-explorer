@@ -96,13 +96,6 @@
     <summary>Episode: floor -$51 to -$27 for the episode for 2 day(s)</summary>
   </entry>
   <entry>
-    <title>FRYE_SLR: Day-ahead floor changed (2026-03-24)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=FRYE_SLR"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=FRYE_SLR#FRYE_SLR/2026-03-24/dam_renew_floor</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Day-ahead floor changed: -$7 to -$14/MWh</summary>
-  </entry>
-  <entry>
     <title>FRYE_SLR: Episode (2026-03-22)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=FRYE_SLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=FRYE_SLR#FRYE_SLR/2026-03-22/renew_episode</id>
@@ -211,6 +204,13 @@
     <title>FRYE_SLR: Episode (2025-11-11)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=FRYE_SLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=FRYE_SLR#FRYE_SLR/2025-11-11/renew_episode</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Episode: floor -$51 to -$27 for the episode for 1 day(s)</summary>
+  </entry>
+  <entry>
+    <title>FRYE_SLR: Episode (2025-11-09)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=FRYE_SLR"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=FRYE_SLR#FRYE_SLR/2025-11-09/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Episode: floor -$51 to -$27 for the episode for 1 day(s)</summary>
   </entry>

@@ -16,7 +16,7 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=WH_WIND"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=WH_WIND#WH_WIND/2026-05-22/dam_renew_floor</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Day-ahead floor changed: $2 to $24/MWh</summary>
+    <summary>Day-ahead floor changed: -$1 to $24/MWh</summary>
   </entry>
   <entry>
     <title>WH_WIND: Day-ahead floor changed (2026-05-13)</title>

@@ -3,7 +3,14 @@
   <title>BVE_CC1: bidding and operating changes</title>
   <link href="https://ercotbids.currenttech.energy/unit.html?unit=BVE_CC1"/>
   <id>https://ercotbids.currenttech.energy/unit.html?unit=BVE_CC1</id>
-  <updated>2026-10-29T00:00:00Z</updated>
+  <updated>2026-10-30T00:00:00Z</updated>
+  <entry>
+    <title>BVE_CC1: Turn-off point moved (2026-07-01)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=BVE_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=BVE_CC1#BVE_CC1/2026-07-01/turnoff/2</id>
+    <updated>2026-10-30T00:00:00Z</updated>
+    <summary>Turn-off point with an award every hour $3,806 to $7,206 per MW of minimum output in July; the next month held it</summary>
+  </entry>
   <entry>
     <title>BVE_CC1: Shut down after a long run (2026-06-28)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=BVE_CC1"/>
@@ -23,7 +30,7 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=BVE_CC1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=BVE_CC1#BVE_CC1/2026-05-01/turnoff/2</id>
     <updated>2026-10-29T00:00:00Z</updated>
-    <summary>Turn-off point with an award every hour $3,398 to $5,838 per MW of minimum output in May; the next month held it</summary>
+    <summary>Turn-off point with an award every hour $3,848 to $6,955 per MW of minimum output in May; the next month went back</summary>
   </entry>
   <entry>
     <title>BVE_CC1: Timescale group changed (2026-05-01)</title>
@@ -51,7 +58,7 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=BVE_CC1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=BVE_CC1#BVE_CC1/2026-04-01/turnoff/2</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Turn-off point with an award every hour riding through to $3,398 per MW of minimum output in April; the next month held it</summary>
+    <summary>Turn-off point with an award every hour riding through to $3,848 per MW of minimum output in April; the next month held it</summary>
   </entry>
   <entry>
     <title>BVE_CC1: Timescale group changed (2026-04-01)</title>
