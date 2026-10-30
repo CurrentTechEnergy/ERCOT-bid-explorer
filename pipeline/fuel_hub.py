@@ -32,7 +32,7 @@ import warnings
 
 import numpy as np
 
-from . import private
+from . import gascost, private
 from .config import DATA_DIR, GAS_HUBS, UNIT_DATA_DIR
 from .nodes import settlement_points
 from .parse_prices import node_hourly
@@ -188,6 +188,7 @@ def build_fuel_hubs(index: dict) -> None:
         "hubs": {h: name for h, (_, name) in GAS_HUBS.items()}, "units": units,
         "built": dt.datetime.now(dt.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
     })
+    gascost._C.clear()     # a step earlier in the run (decisions) may have loaded the old hubs: reread them
     count = {}
     for u in units.values():
         count[(u["hub"], u["method"])] = count.get((u["hub"], u["method"]), 0) + 1
