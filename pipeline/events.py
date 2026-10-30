@@ -34,7 +34,7 @@ Sources (each already computed by its own module; nothing is detected twice):
                    RUN_MONTH_DAYS days of hourly states, the unit's online share of its available
                    hours (outage hours left out) in each bin of the real-time price at its own node
                    (forecast.context.PRICE_BINS edges; hourly means from UNIT_DATA_DIR/nodes, as
-                   models/peaker_rt.py fits on), against the RUN_BEFORE days before the month.  An
+                   models/peaker_oi.py reads), against the RUN_BEFORE days before the month.  An
                    event when a bin with RUN_MIN_NOW and RUN_MIN_BEFORE available hours crossed
                    from under RUN_LO to RUN_HI or more (now runs at a price it used to skip) or
                    the reverse; the cheapest such bin is reported.  Dated to the month's first day
@@ -105,7 +105,7 @@ import numpy as np
 from . import private
 from .config import DATA_DIR, SITE_URL
 from .forecast.context import BIN_LABELS, PRICE_BINS
-from .models.peaker_rt import node_prices
+from .models.peaker_oi import node_prices
 from .groups import GROUPED_TECHS, GROUPS, assign_groups
 from .entities import PATH as ENTITIES_PATH
 from .models.operator_informed import OUT_DIR as OPERATOR_DIR

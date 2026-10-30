@@ -886,34 +886,34 @@ function drawCutUnits() {
     U.map((u) => [u.unit, u.tech, u.group, u.lsl, u.md, ["none", "some hours", "every hour"][u.award ?? 0], u.l, u.c, u.did, u.ruc]), `Turn-off points ${S.date}`);
 }
 
-// one row per combustion turbine (and recip engine) with a real-time fit that day (data/peaker/rt_fit.json.gz,
-// pipeline/models/peaker_rt.py), grouped by how often it turns off: a diamond at the day's highest
-// node price at which the fit starts it, a circle at the day's actual highest price (filled ran,
-// hollow stayed off), joined in red where it did the opposite of the fit; start null (runs at any
-// price it has seen) drawn at the left edge
+// one row per combustion turbine (and recip engine) that went into some hour of the day offline
+// (data/peaker/oi.json.gz, pipeline/models/peaker_oi.py), grouped by how often it turns off: a
+// diamond at the day's highest day-ahead node price at which the operator-informed model starts it,
+// a circle at the day's actual highest (filled started, hollow stayed off), joined in red where it
+// did the opposite of the model; turn_on null (no shift tested starts it) drawn at the right edge
+const CT_NOTE = "Each month the model is fitted on every day before it, recent days counting most (a day 30 days back counts half), pooled over the turbines with one intercept each: the chance a unit offline in the hour before starts in an hour, from what its operator had before the hour starts: its day-ahead node price that hour and its highest over the next four, its day-ahead award and resource status, day-ahead system lambda, the real-time price at its node in the hours before and how far that ran above or below day-ahead, the hour of day and how long it has been off. Hours ERCOT had it committed by RUC, and the hour after, are left out. ";
 function drawCtUnits() {
-  const el = $("ct-units"), P = S.PRT, rows = P?.days?.[S.date];
+  const el = $("ct-units"), P = S.POI, rows = P?.days?.[S.date];
   if (!rows || !rows.length) { $("ct-units-note").textContent = ""; $("ct-units-legend").innerHTML = "";
-    return emptyMsg(el, P ? `The combustion turbine start fit runs ${Object.keys(P.days)[0]} to ${Object.keys(P.days).at(-1)}; pick a day in that range.` : "No combustion turbine start fit loaded."); }
+    return emptyMsg(el, P ? `The combustion turbine model's turn-on points run ${Object.keys(P.days)[0]} to ${Object.keys(P.days).at(-1)}; pick a day in that range.` : "No combustion turbine model loaded."); }
   const C = Object.fromEntries(P.columns.map((c, i) => [c, i]));
-  const U = rows.map((r) => ({ unit: r[C.unit], s: r[C.start], p: r[C.peak], ran: !!r[C.ran], on: r[C.hours_on], av: r[C.hours_avail], win: r[C.window],
+  const U = rows.map((r) => ({ unit: r[C.unit], s: r[C.turn_on], p: r[C.peak], ran: !!r[C.started], on: r[C.hours_on], av: r[C.hours_avail], off: r[C.hours_off], win: r[C.window],
     group: S.G?.units?.[r[C.unit]]?.[1] || "ungrouped", ruc: rucOn(r[C.unit], S.date) }));
-  const says = (u) => u.s == null || u.s <= u.p, surprise = (u) => !u.ruc && says(u) !== u.ran;
+  const says = (u) => u.s != null && u.s <= u.p, surprise = (u) => !u.ruc && says(u) !== u.ran;
   const rowsG = ST_GROUPS.filter((g) => U.some((u) => u.group === g.id)).concat(U.some((u) => u.group === "ungrouped") ? [{ id: "ungrouped", label: GROUP_LABEL.ungrouped }] : []);
   const nRuc = U.filter((u) => u.ruc).length, rn = window.CX.rucNote(nRuc, nRuc === 1 ? "unit" : "units");
-  const nRan = U.filter((u) => u.ran).length, right = U.filter((u) => !u.ruc && !surprise(u)).length, odd = P.unexplained?.[S.date.slice(0, 7)] || [];
-  window.CX.setNote($("ct-units-note"), `${U.length} combustion turbines were available; ${nRan} ran. The diamond is the highest real-time price at its node at which the fit starts it, the circle the day's actual highest price there; filled ran, hollow stayed off; red marks a surprise. The fit called ${right} of ${U.length - nRuc} right.${rn} Click a unit to open it.`,
-    `${U.length} combustion turbines were available in some hour of the day and have a fit for the month (units too new, or that never both ran and sat off before the month, have none; Peaker marks the ones that run like peakers). Each is fitted on every day before the month, recent days counting most (a day 30 days back counts half): its chance of being online in an hour against the real-time price at its own node and the hour of day. ` +
-    `The diamond shifts every hour's price by the same amount until the fit calls the unit on in some hour, and reads it as the day's highest price at that shift; the circle is the day's actual highest hourly price at its node. A diamond left of the circle means the fit says it ran. ` +
-    `When those days never show a price the unit would sit off at, it runs at any price it has seen and its diamond sits at the left edge, if it was online at least half its hours. If it sat off most hours, or the fit runs it more at low prices than high, price doesn't explain its running and it is left out${odd.length ? ` (${odd.length} this month: ${odd.map((r) => r[0]).join(", ")})` : ""}. The diamond stays between the lowest price it ran at and the highest it sat off at in the days fitted. ` +
-    `This is a fit of what these units did, not a forecast: the real-time price is not known when a unit decides to start, and units starting move it. Against the day-ahead hub price bands the forecast uses, it calls more starts (39% against 32% of starts, Mar to Aug 2026) and as many hours right (91%). Prices beyond the edges are drawn at the edge.`);
-  $("ct-units-legend").innerHTML = `<span><span class="sw" style="background:var(--c1);transform:rotate(45deg) scale(0.8)"></span>Fit starts it above this price</span>` +
-    window.CX.onOffLegend("Day's highest price, ran", "Day's highest price, stayed off") +
-    `<span><span class="sw" style="background:var(--c8);height:3px"></span>Surprise: the unit did the opposite of the fit</span>` + (nRuc ? window.CX.rucLegend() : "");
+  const nRan = U.filter((u) => u.ran).length, right = U.filter((u) => !u.ruc && !surprise(u)).length;
+  window.CX.setNote($("ct-units-note"), `${U.length} combustion turbines were offline going into some hour of the day; ${nRan} started. The diamond is the day's highest day-ahead price at its node at which the operator-informed model starts it, the circle the day's actual highest; filled started, hollow stayed off; red marks a surprise. The model called ${right} of ${U.length - nRuc} right.${rn} Click a unit to open it.`,
+    `${U.length} combustion turbines were available and offline going into some hour of the day (Peaker marks the ones that run like peakers). ${CT_NOTE}` +
+    `The diamond shifts every price at the unit's node, day-ahead and real-time alike, by the same amount until the model's chance that it starts at some point in the hours it was offline going into reaches 50%, and reads it as the day's highest day-ahead price at that shift; the circle is the day's actual highest day-ahead price at its node. A diamond left of the circle means the model starts it that day. A diamond at the right edge: no shift up to $5,000/MWh starts it. ` +
+    `Most starts can't be called to the hour: Mar to Aug 2026, hour by hour, the model caught about 15% of starts in the hour they came, and three of every five starts it called happened (the real-time fit it replaced caught more by calling four false starts for every one it caught). Over the whole day it does better: Feb to Aug 2026 it called 45% of the days a unit started, and four of every five days it called a start, the unit started. Prices beyond the edges are drawn at the edge.`);
+  $("ct-units-legend").innerHTML = `<span><span class="sw" style="background:var(--c1);transform:rotate(45deg) scale(0.8)"></span>Model starts it above this day-ahead price</span>` +
+    window.CX.onOffLegend("Day's highest day-ahead price, started", "Day's highest day-ahead price, stayed off") +
+    `<span><span class="sw" style="background:var(--c8);height:3px"></span>Surprise: the unit did the opposite of the model</span>` + (nRuc ? window.CX.rucLegend() : "");
   const vals = U.flatMap((u) => (u.s == null ? [u.p] : [u.s, u.p]));
   const x0 = Math.min(0, d3.quantile(vals.sort(d3.ascending), 0.01)), x1 = Math.max(100, d3.quantile(vals, 0.99));
   const w = Math.max(280, el.clientWidth || 600), lane = 6, rowGap = 26;
-  const per = rowsG.map((g) => U.filter((u) => u.group === g.id).sort((a, b) => (a.s ?? -Infinity) - (b.s ?? -Infinity)));
+  const per = rowsG.map((g) => U.filter((u) => u.group === g.id).sort((a, b) => (a.s ?? Infinity) - (b.s ?? Infinity)));
   const m = { t: 8, b: 30, ...CUT_M }, H = m.t + m.b + d3.sum(per, (us) => rowGap + us.length * lane);
   const x = d3.scaleSymlog().constant(10).domain([x0, x1]).range([m.l, w - m.r]).clamp(true);
   const xT = [-100, -25, 0, 10, 25, 50, 100, 250, 500, 1000, 2500, 5000].filter((v) => v >= x0 && v <= x1);
@@ -929,11 +929,11 @@ function drawCtUnits() {
     us.forEach((u, k) => {
       const yy = top + rowGap - 4 + k * lane + lane / 2, bad = surprise(u);
       const gU = svg.append("g").style("cursor", "pointer")
-        .on("pointermove", (ev) => showTip(ev, `<h4>${esc(u.unit)}</h4>${g.label}${window.CX.isPeaker(S.G, u.unit) ? " · Peaker" : ""}<br>${u.s == null ? "Fit runs it at any price it has seen" : `Fit starts it once the day's highest node price reaches ${fmt$(u.s)}/MWh`}${u.win > 90 ? ` (fitted on ${u.win} days)` : ""}<br>` +
-          `Day's highest real-time price at its node ${fmt$(u.p)}/MWh<br><b>${u.ran ? `Ran ${u.on} of ${u.av} available hours` : "Stayed off"}</b>${bad ? "<br>Did the opposite of the fit" : ""}${u.ruc ? `<br>Committed by ERCOT (RUC) ${u.ruc} h: not counted for or against the fit` : ""}<br><span class="tip-pin-note">Click to open the unit</span>`))
+        .on("pointermove", (ev) => showTip(ev, `<h4>${esc(u.unit)}</h4>${g.label}${window.CX.isPeaker(S.G, u.unit) ? " · Peaker" : ""}<br>${u.s == null ? "No shift up to $5,000/MWh starts it" : `Model starts it once the day's highest day-ahead node price reaches ${fmt$(u.s)}/MWh`} (fitted on ${u.win} days)<br>` +
+          `Day's highest day-ahead price at its node ${fmt$(u.p)}/MWh<br><b>${u.ran ? `Started; online ${u.on} of ${u.av} hours judged` : `Stayed off (${u.off} hours offline going in)`}</b>${bad ? "<br>Did the opposite of the model" : ""}${u.ruc ? `<br>Committed by ERCOT (RUC) ${u.ruc} h: not counted for or against the model` : ""}<br><span class="tip-pin-note">Click to open the unit</span>`))
         .on("pointerleave", hideTip)
         .on("click", () => { location.href = unitHref(u.unit); });
-      const xs = u.s == null ? m.l : x(u.s);
+      const xs = u.s == null ? w - m.r : x(u.s);
       gU.append("line").attr("x1", Math.min(xs, x(u.p))).attr("x2", Math.max(xs, x(u.p))).attr("y1", yy).attr("y2", yy).attr("stroke", css(bad ? "--c8" : "--line")).attr("stroke-width", bad ? 1.8 : 1.2);
       gU.append("path").attr("d", diamond).attr("transform", `translate(${xs},${yy})`).attr("fill", css("--c1"));
       window.CX.onOffDot(gU.append("circle").attr("cx", x(u.p)).attr("cy", yy), u.ran, 3);
@@ -941,16 +941,16 @@ function drawCtUnits() {
     });
     top += rowGap + us.length * lane;
   });
-  svg.append("text").attr("class", "axis-title").attr("x", w - m.r).attr("y", H - 2).attr("text-anchor", "end").text("Real-time price at the unit's node, $/MWh");
+  svg.append("text").attr("class", "axis-title").attr("x", w - m.r).attr("y", H - 2).attr("text-anchor", "end").text("Day-ahead price at the unit's node, $/MWh");
   el.replaceChildren(svg.node());
-  setCSV(el, ["unit", "group", "start_usd_mwh", "day_peak_usd_mwh", "ran", "hours_on", "hours_available", "fit_days", "ruc_hours"],
-    U.map((u) => [u.unit, u.group, u.s, u.p, u.ran ? 1 : 0, u.on, u.av, u.win, u.ruc]), `Peaker start points ${S.date}`);
+  setCSV(el, ["unit", "group", "turn_on_usd_mwh", "day_peak_da_usd_mwh", "started", "hours_on", "hours_judged", "hours_off_going_in", "fit_days", "ruc_hours"],
+    U.map((u) => [u.unit, u.group, u.s, u.p, u.ran ? 1 : 0, u.on, u.av, u.off, u.win, u.ruc]), `Peaker turn-on points ${S.date}`);
 }
 
 // the combustion turbines on the day: those online going in (data/decisions.json.gz) and those with a
-// real-time fit (data/peaker/rt_fit.json.gz, the start-point chart above), each with its group
+// turn-on point (data/peaker/oi.json.gz, the chart above), each with its group
 function ctDay(d) {
-  const M = new Map(), P = S.PRT, rows = P?.days?.[d] || [];
+  const M = new Map(), P = S.POI, rows = P?.days?.[d] || [];
   const at = (u) => M.get(u) || M.set(u, { unit: u, group: S.G?.units?.[u]?.[1] || "ungrouped", ruc: rucOn(u, d) }).get(u);
   (decisionDays().get(d) || []).forEach((r) => {
     const dec = decisionOf(r[DAY_F.unit]);
@@ -959,14 +959,14 @@ function ctDay(d) {
   });
   if (P) {
     const C = Object.fromEntries(P.columns.map((c, i) => [c, i]));
-    rows.forEach((r) => Object.assign(at(r[C.unit]), { fit: true, s: r[C.start], p: r[C.peak], ran: !!r[C.ran] }));
+    rows.forEach((r) => Object.assign(at(r[C.unit]), { fit: true, s: r[C.turn_on], p: r[C.peak], ran: !!r[C.started] }));
   }
   return [...M.values()];
 }
 
 // the groups on the day: the coal, gas steam and CC units online going in and what they did, with the
 // model's turn-off points and how many of its calls that day were right; then the combustion turbines
-// with the fit's start prices; then all thermal on the columns the two share
+// with the model's turn-on points; then all thermal on the columns the two share
 function drawGroups() {
   const el = $("groups-table"), U = dayUnits(S.date), V = ctDay(S.date);
   if (!U.length && !V.length) { $("groups-note").textContent = ""; return emptyMsg(el, "No decision data for this day."); }
@@ -986,14 +986,14 @@ function drawGroups() {
     const us = byV.get(g), fit = us.filter((u) => u.fit), judged = fit.filter((u) => !u.ruc);
     return { b: "combustion_turbine", g, ...shared(us.filter((u) => u.going)), nFit: fit.length, nRan: fit.filter((u) => u.ran).length,
       medStart: fit.some((u) => u.s != null) ? d3.median(fit.filter((u) => u.s != null), (u) => u.s) : null, medPeak: fit.length ? d3.median(fit, (u) => u.p) : null,
-      right: judged.filter((u) => (u.s == null || u.s <= u.p) === u.ran).length, nJudged: judged.length };
+      right: judged.filter((u) => (u.s != null && u.s <= u.p) === u.ran).length, nJudged: judged.length };
   });
   const sum = (rs, k) => d3.sum(rs, (r) => r[k]);
   const nAny = V.filter((u) => u.fit).length;
   $("groups-title-note").textContent = fmtDate(parseDate(S.date));
-  window.CX.setNote($("groups-note"), `Thermal units by how often they turn off on price. Coal, gas steam and combined cycles get a turn-off point; combustion turbines mostly start from off, so they get a start price from the fit above instead.`, `Thermal units by how often they have turned off on price over the ${S.G ? S.G.dates.length : ""} days of 60-day data (pipeline/groups.py). Minimum output is the unit's LSL; online going in and turned off count units online going into the day and offline in some hour of it (combined-cycle configurations merged into their train). ` +
+  window.CX.setNote($("groups-note"), `Thermal units by how often they turn off on price. Coal, gas steam and combined cycles get a turn-off point; combustion turbines mostly start from off, so they get a turn-on point from the model above instead.`, `Thermal units by how often they have turned off on price over the ${S.G ? S.G.dates.length : ""} days of 60-day data (pipeline/groups.py). Minimum output is the unit's LSL; online going in and turned off count units online going into the day and offline in some hour of it (combined-cycle configurations merged into their train). ` +
     `The turn-off rows cover coal, gas steam and combined cycles; their model columns cover the CC trains and gas steam units with a turn-off point that day: the median turn-off point and the median saving they faced, per MW of LSL, and how many the model called right (off when the saving was past its turn-off point), leaving out units ERCOT committed by RUC that day. ${SAVING_NOTE} ` +
-    `Combustion turbines mostly start from off rather than stay on, so instead of a turn-off point their rows count the ${nAny} with a real-time fit that day (available in some hour) and how many ran, the median price at which the fit starts them and the median of the day's highest real-time price at their nodes, and how many the fit called right (RUC left out), as in the start-point chart above. Some units that run like peakers are gas steam or combined cycles; they stay in the turn-off rows.`);
+    `Combustion turbines mostly start from off rather than stay on, so instead of a turn-off point their rows count the ${nAny} offline going into some hour of the day and how many started, the median of the operator-informed model's turn-on points and of the day's highest day-ahead price at their nodes, and how many the model called right (RUC left out), as in the turn-on chart above. Some units that run like peakers are gas steam or combined cycles; they stay in the turn-off rows.`);
   const tdG = (r) => `<td class="t"><span class="sw" style="background:var(${FLOOR_GROUPS.find((f) => f.id === r.g)?.color || "--c-other"});margin-right:6px"></span>${GROUP_LABEL[r.g]}<br><span class="muted">${ST_GROUPS.find((g) => g.id === r.g)?.note || "too little history to place"}</span></td>`;
   const tdS = (r) => `<td>${r.n || "–"}</td><td>${r.n ? fmtMW(r.lsl) : "–"}</td><td>${r.n ? r.nOff : "–"}</td><td>${r.n ? fmtMW(r.lslOff) : "–"}</td>`;
   const b = (v) => `<b>${v}</b>`;
@@ -1003,26 +1003,28 @@ function drawGroups() {
   el.innerHTML = `<table class="data"><thead><tr>${head(["Coal, gas steam and CC", ...SH, "Units the model covers", "Median turn-off point $/MW LSL", "Median saving $/MW LSL", "Model right"])}</tr></thead><tbody>` +
     rows.map((r) => `<tr>${tdG(r)}${tdS(r)}<td>${r.nMod || "–"}</td><td>${fmtPerMW(r.medCut)}</td><td>${fmtPerMW(r.medSave)}</td><td>${r.nMod ? `${r.right} of ${r.nJudged}` : "–"}</td></tr>`).join("") +
     tot("Coal, gas steam and CC", rows, `<td>${b(sum(rows, "nMod") || "–")}</td><td></td><td></td><td>${b(sum(rows, "nJudged") ? `${sum(rows, "right")} of ${sum(rows, "nJudged")}` : "–")}</td>`) +
-    (ctRows.length ? `<tr>${head(["Combustion turbines (start on price)", ...SH, "Available (ran)", "Median start price $/MWh", "Median day's highest price $/MWh", "Fit right"])}</tr>` +
+    (ctRows.length ? `<tr>${head(["Combustion turbines (start on price)", ...SH, "Offline in some hour (started)", "Median turn-on point $/MWh", "Median day's highest day-ahead $/MWh", "Model right"])}</tr>` +
       ctRows.map((r) => `<tr>${tdG(r)}${tdS(r)}<td>${r.nFit ? `${r.nFit} (${r.nRan})` : "–"}</td><td>${r.nFit ? fmt$(r.medStart) : "–"}</td><td>${r.nFit ? fmt$(r.medPeak) : "–"}</td><td>${r.nJudged ? `${r.right} of ${r.nJudged}` : "–"}</td></tr>`).join("") +
       tot("Combustion turbines", ctRows, `<td>${b(sum(ctRows, "nFit") ? `${sum(ctRows, "nFit")} (${sum(ctRows, "nRan")})` : "–")}</td><td></td><td></td><td>${b(sum(ctRows, "nJudged") ? `${sum(ctRows, "right")} of ${sum(ctRows, "nJudged")}` : "–")}</td>`) : "") +
     tot("All thermal", rows.concat(ctRows), `<td></td><td></td><td></td><td></td>`) + `</tbody></table>`;
   setCSV(el, ["block", "group", "online_going_in", "lsl_mw", "turned_off", "lsl_turned_off_mw", "units_modelled", "median_turn_off_usd_per_mw_lsl", "median_saving_usd_per_mw_lsl", "model_right",
-    "available_with_fit", "ran", "median_start_usd_mwh", "median_day_peak_usd_mwh", "fit_right"],
+    "offline_some_hour", "started", "median_turn_on_usd_mwh", "median_day_peak_da_usd_mwh", "model_right"],
     rows.map((r) => [r.b, r.g, r.n, r.lsl, r.nOff, r.lslOff, r.nMod, r.medCut, r.medSave, r.right, null, null, null, null, null])
       .concat(ctRows.map((r) => [r.b, r.g, r.n, r.lsl, r.nOff, r.lslOff, null, null, null, null, r.nFit, r.nRan, r.medStart, r.medPeak, r.right])), `Groups ${S.date}`);
 }
 
 // ==== the operator model's scorecard (data/operator/scores.json.gz, pipeline/models/operator_scores.py) ====
 // one row per period: the months of the 60-day fits, then each year before them, judged by the
-// reduced fits on the thermal history and its day-ahead resource status
+// reduced fits on the thermal history and its day-ahead resource status; combustion turbines from
+// the peaker model's own scores (data/peaker/oi.json.gz, pipeline/models/peaker_oi.py), same columns
 function drawScores() {
-  const el = $("sc-table"), sc = S.OSC;
+  const ct = S.scTech === "combustion_turbine";
+  const el = $("sc-table"), sc = ct ? (S.POI ? { rows: S.POI.scores, columns: S.POI.score_columns, cheap: 10, live_from: S.OSC?.live_from } : null) : S.OSC;
   if (!sc || !sc.rows?.length) { $("sc-note").textContent = ""; return emptyMsg(el, "No scorecard yet. It is built by the data update workflow."); }
   setSeg("sc-cell", S.scCell);
   const ci = Object.fromEntries(sc.columns.map((c, i) => [c, i]));
   const liveM = (sc.live_from || "0000-00").slice(0, 7);
-  const period = (m) => (m >= liveM ? "live" : m.slice(0, 4));
+  const period = (m) => (ct ? m : m >= liveM ? "live" : m.slice(0, 4));     // combustion turbines: month by month
   const keep = (r) => r[ci.model] === "operator" && r[ci.tech] === S.scTech && (S.scCell === "all" || (S.scCell === "cheap" ? r[ci.cheap] === 1 : S.scCell === "noaward" ? r[ci.award] === 0 : r[ci.start] === S.scCell));
   const T = new Map();
   sc.rows.filter(keep).forEach((r) => {
@@ -1034,12 +1036,13 @@ function drawScores() {
   });
   const keys = [...T.keys()].sort((a, b) => (a === "live" ? -1 : b === "live" ? 1 : b.localeCompare(a)));
   const span = (t) => { const ms = t.months.sort(); return ms[0] === ms.at(-1) ? fmtMonth(ms[0]) : `${fmtMonth(ms[0])} to ${fmtMonth(ms.at(-1))}`; };
-  const label = (k) => (k === "live" ? `${span(T.get(k))}, 60-day fits` : new Set(T.get(k).months).size < 12 ? span(T.get(k)) : k);
+  const label = (k) => (ct ? fmtMonth(k) : k === "live" ? `${span(T.get(k))}, 60-day fits` : new Set(T.get(k).months).size < 12 ? span(T.get(k)) : k);
   const pct = (a, b) => (b ? d3.format(".1%")(a / b) : "–");
   const ev = (t, k) => (t[`${k}_n`] ? `${d3.format(",")(t[`${k}_caught`])} of ${d3.format(",")(t[`${k}_n`])}` : "–");
   const fl = (t, k) => (t[`${k}_n`] != null ? d3.format(",")(t[`${k}_false`] || 0) : "–");
   const nRuc = d3.sum([...T.values()], (t) => t.ruc_hours || 0);
-  window.CX.setNote($("sc-note"), `How often the operator-informed model called each hour right, and the turn-offs and turn-ons it caught: the months of the 60-day fits, then each year before them.`, `Every hour of every CC train or gas steam unit on a day with an operator day file, scored against what it did (outage and unknown hours left out, and days a unit went into on outage). Hours ERCOT had the unit committed by RUC are ERCOT's call, not the operator's: they are left out of the fits and of every column here, and a switch into or out of one counts neither as caught nor as false${nRuc ? ` (${d3.format(",")(nRuc)} RUC hours in the rows shown; ERCOT's unit status before Dec 2025 isn't kept, so earlier years can't leave them out)` : ""}. The model's call is on when its chance online is 50% or more; it is fitted monthly on earlier days only. From ${fmtDate(parseDate(sc.live_from || liveM + "-01"))} it is fitted on the 60-day data since Dec 2025. Before that, each month is fitted on the 12 months before it from the thermal history files and the day-ahead resource status (read from our own copies of the 60-day DAM disclosure), with Henry Hub standing in for the unit's own gas hub (Ship Channel or Waha) where none is stored. A turn-off or turn-on is caught when the call switches the same way within 1 hour of the actual switch; a call's switch that matches none is false. "Cheap" is an hour with day-ahead system lambda at $${sc.cheap}/MWh or less, and for a switch, any such hour within 3 hours of it. Brier is the mean squared error of the model's chance (lower is better).`);
+  if (ct) window.CX.setNote($("sc-note"), `How often the operator-informed model called each combustion turbine hour right, and the starts (turn-ons) and stops (turn-offs) it caught, month by month.`, `Every hour of every combustion turbine (and recip engine) that was online or offline in SCED both in it and the hour before, with its day-ahead record and the three real-time hours before at its node, scored against what it did. Unlike the CC and gas steam rows, each hour is judged from the true state before it, the decision its operator faced that hour: the call is a start (from offline) or a stop (from online) when the model's chance of one is 50% or more, and it is caught only in the hour it happened. ${CT_NOTE}${nRuc ? `${d3.format(",")(nRuc)} RUC hours in the rows shown are left out. ` : ""}Staying as it was would get about 97% of hours right and catch nothing, so the turn-ons and turn-offs are the test. "Cheap" is an hour with day-ahead system lambda at $${sc.cheap}/MWh or less; On going in and Off going in are the state before the hour. Brier is the mean squared error of the model's chance online (lower is better).`);
+  else window.CX.setNote($("sc-note"), `How often the operator-informed model called each hour right, and the turn-offs and turn-ons it caught: the months of the 60-day fits, then each year before them.`, `Every hour of every CC train or gas steam unit on a day with an operator day file, scored against what it did (outage and unknown hours left out, and days a unit went into on outage). Hours ERCOT had the unit committed by RUC are ERCOT's call, not the operator's: they are left out of the fits and of every column here, and a switch into or out of one counts neither as caught nor as false${nRuc ? ` (${d3.format(",")(nRuc)} RUC hours in the rows shown; ERCOT's unit status before Dec 2025 isn't kept, so earlier years can't leave them out)` : ""}. The model's call is on when its chance online is 50% or more; it is fitted monthly on earlier days only. From ${fmtDate(parseDate(sc.live_from || liveM + "-01"))} it is fitted on the 60-day data since Dec 2025. Before that, each month is fitted on the 12 months before it from the thermal history files and the day-ahead resource status (read from our own copies of the 60-day DAM disclosure), with Henry Hub standing in for the unit's own gas hub (Ship Channel or Waha) where none is stored. A turn-off or turn-on is caught when the call switches the same way within 1 hour of the actual switch; a call's switch that matches none is false. "Cheap" is an hour with day-ahead system lambda at $${sc.cheap}/MWh or less, and for a switch, any such hour within 3 hours of it. Brier is the mean squared error of the model's chance (lower is better).`);
   el.innerHTML = `<table class="data"><thead><tr><th class="t">Period</th><th>Hours right</th><th>Turn-offs caught</th><th>False turn-offs</th><th>Turn-ons caught</th><th>False turn-ons</th><th>Brier</th></tr></thead><tbody>` +
     keys.map((k) => { const t = T.get(k); return `<tr><td class="t">${label(k)}</td><td>${pct(t.right, t.hours)}</td><td>${ev(t, "off")}</td><td>${fl(t, "off")}</td><td>${ev(t, "on")}</td><td>${fl(t, "on")}</td><td>${t.hours ? d3.format(".3f")(t.brier / t.hours) : "–"}</td></tr>`; }).join("") + `</tbody></table>`;
   setCSV(el, ["period", "hours", "hours_right", "off_n", "off_caught", "off_false", "on_n", "on_caught", "on_false", "brier_sum"],
@@ -1228,8 +1231,8 @@ function drawRange() { drawStretch(); drawCapacity(); drawFloor(); drawCheap(); 
 function drawAll() { drawDay(); drawScores(); drawRange(); }
 
 async function boot() {
-  [S.T, S.TH, S.I, S.HC, S.DEC, S.SO, S.IX, S.OC, S.OSC, S.PRT] = await Promise.all([tryJSON("data/trends_60d.json.gz"), tryJSON("data/trends_hourly_60d.json.gz"), tryJSON("data/intraday_60d.json.gz"), tryJSON("data/hourly_context_60d.json.gz"),
-    tryJSON("data/decisions.json.gz"), tryJSON("data/stayon_60d.json.gz"), tryJSON("data/index.json"), tryJSON("data/operator/cutoffs.json.gz"), tryJSON("data/operator/scores.json.gz"), tryJSON("data/peaker/rt_fit.json.gz")]);
+  [S.T, S.TH, S.I, S.HC, S.DEC, S.SO, S.IX, S.OC, S.OSC, S.POI] = await Promise.all([tryJSON("data/trends_60d.json.gz"), tryJSON("data/trends_hourly_60d.json.gz"), tryJSON("data/intraday_60d.json.gz"), tryJSON("data/hourly_context_60d.json.gz"),
+    tryJSON("data/decisions.json.gz"), tryJSON("data/stayon_60d.json.gz"), tryJSON("data/index.json"), tryJSON("data/operator/cutoffs.json.gz"), tryJSON("data/operator/scores.json.gz"), tryJSON("data/peaker/oi.json.gz")]);
   // the groups are small and every panel reads them, so they load up front; the hourly strips follow
   const g = await tryJSON("data/groups_60d.json.gz");
   S.G = g && g.units ? g : null;
@@ -1255,7 +1258,7 @@ async function boot() {
    ["st-thr", "stThr", () => { drawStretch(); if (S.uSeen) drawUnits(); }], ["st-unit", "stUnit", drawStretch],
    ["cost-thr", "costThr", () => { drawCost(); if (S.uSeen) drawUnits(); }], ["sc-cell", "scCell", drawScores]].forEach(([id, key, fn]) => { setSeg(id, S[key]); bindSeg(id, key, fn); });
   bindSelect("cap-tech", "capTech", thermal, drawCapacity);
-  bindSelect("sc-tech", "scTech", thermal.filter((t) => ["combined_cycle", "gas_steam"].includes(t.id)), drawScores);
+  bindSelect("sc-tech", "scTech", thermal.filter((t) => ["combined_cycle", "gas_steam", "combustion_turbine"].includes(t.id)), drawScores);
   bindSelect("cheap-tech", "cheapTech", [ALL_THERMAL, ...thermal], drawCheap);
   bindSelect("st-tech", "stTech", [ALL_THERMAL, ...thermal.filter((t) => t.id !== "nuclear")], drawStretch);
   bindSelect("u-tech", "uTech", [{ id: "all", label: "All" }, ...thermal.filter((t) => t.id !== "nuclear")], drawUnits);

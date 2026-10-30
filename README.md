@@ -160,7 +160,7 @@ pipeline/
   forecast/        context.py: the unit states, DAM files and hub prices the operator-informed
                    model reads (the daily forecast it once served was retired in Oct 2026)
   models/          the operator-informed on/off model (operator_informed.py, with its history days,
-                   turn-off points and scorecard) and the combustion turbine real-time fit (peaker_rt.py)
+                   turn-off points and scorecard) and its combustion turbine counterpart (peaker_oi.py)
   decisions.py     hourly unit states + DAM node prices, costs and awards -> each thermal unit's
                    shutdown decisions day by day, its loss cutoff, and tomorrow's expected
                    turn-offs from the day-ahead node prices (no downloads)

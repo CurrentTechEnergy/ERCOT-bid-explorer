@@ -5,7 +5,7 @@
    starts (data/unit_hours_60d.json.gz), one day by hour with the offer curve in the chosen hour
    (data/60d-units/, data/60d-curves/) and the thermal bidding charts (data/trends_60d.json.gz),
    lifted from trends.js; the decision chart marks the months its operator-informed turn-off point
-   moved (data/events.json.gz) and, for a combustion turbine, is the real-time fit (data/peaker/). unit-econ.js draws revenue and cost and unit-renew.js the wind and
+   moved (data/events.json.gz) and, for a combustion turbine, is the operator-informed peaker model (data/peaker/). unit-econ.js draws revenue and cost and unit-renew.js the wind and
    solar hedge formula and bidding history, unit-battery.js a battery's day by hour, offer prices and
    history; all redraw on the "unitchange" event this file sends. */
 (() => {
@@ -334,7 +334,7 @@ function drawDecisions(e) {
   $("dec-panel").hidden = !THERMAL.includes(e.tech) || e.tech === "nuclear";
   if ($("dec-panel").hidden) return;
   $("dec-lead").hidden = $("dec-how").hidden = e.tech === "combustion_turbine";
-  if (e.tech === "combustion_turbine") { $("dec-oi").hidden = true; return drawDecisionsRT(e); }
+  if (e.tech === "combustion_turbine") { $("dec-oi").hidden = true; return drawDecisionsCT(e); }
   if (e.tech === "combined_cycle" || e.tech === "gas_steam") { $("dec-oi").hidden = true; $("dec-lead").hidden = $("dec-how").hidden = true; return drawDecisionsTO(e); }
   if (!u || !rows.length) { $("dec-note").textContent = ""; return emptyMsg(el, "No decision days for this unit in the loaded 60-day data."); }
   const g = (k) => u[DEC_U[k]];
@@ -388,44 +388,41 @@ function drawDecisions(e) {
     `<span><span class="sw sw-line"></span>Turn-off point moved</span>` + (pts.some((p) => p.ruc) ? window.CX.rucLegend() : "");
 }
 
-// combustion turbines: each day's start point from the real-time fit at its node against the day's highest
-// price there (data/peaker/rt_fit.json.gz, pipeline/models/peaker_rt.py), with its
-// "Running at a new price" changes marked; start null when the fit runs it at any price it has seen
-// (drawn on the "any price" row at the bottom)
-async function drawDecisionsRT(e) {
-  const el = $("dec-chart"), P = S.PRT;
+// combustion turbines: each day it went into some hour offline, the operator-informed model's
+// turn-on point against the day's highest day-ahead price at its node (data/peaker/oi.json.gz,
+// pipeline/models/peaker_oi.py), with its "Running at a new price" changes marked; turn_on null
+// when no shift tested starts it (drawn on the "no start" row at the top)
+async function drawDecisionsCT(e) {
+  const el = $("dec-chart"), P = S.POI;
   const C = P ? Object.fromEntries(P.columns.map((c, i) => [c, i])) : {};
-  const pts = P ? Object.entries(P.days).flatMap(([d, rs]) => rs.filter((r) => r[C.unit] === e.name).map((r) => ({ d, t: parseDate(d), s: r[C.start], p: r[C.peak], ran: !!r[C.ran], on: r[C.hours_on], av: r[C.hours_avail], win: r[C.window] }))) : [];
-  const odd = Object.entries(P?.unexplained || {}).filter(([, us]) => us.some((r) => r[0] === e.name)).map(([mo, us]) => [mo, us.find((r) => r[0] === e.name)[1]]);
-  const oddNote = odd.length ? ` Price doesn't explain its running in ${odd.map(([mo, sh]) => `${d3.timeFormat("%b %Y")(parseDate(mo + "-01"))} (online ${fmtPct(sh)} of its hours)`).join(", ")}: the fit finds no price it sits off at, or runs it more at low prices than high, yet it sat off most hours, so those months have no diamonds.` : "";
-  if (!pts.length) { $("dec-note").textContent = oddNote.trim(); $("dec-legend").innerHTML = ""; return emptyMsg(el, odd.length ? "Price doesn't explain this unit's running in any month fitted." : "No real-time fit for this unit: it needs 45 days in which it both ran and sat off."); }
+  const pts = P ? Object.entries(P.days).flatMap(([d, rs]) => rs.filter((r) => r[C.unit] === e.name).map((r) => ({ d, t: parseDate(d), s: r[C.turn_on], p: r[C.peak], ran: !!r[C.started], on: r[C.hours_on], av: r[C.hours_avail], off: r[C.hours_off], win: r[C.window] }))) : [];
+  if (!pts.length) { $("dec-note").textContent = ""; $("dec-legend").innerHTML = ""; return emptyMsg(el, "No operator-informed turn-on points for this unit: it needs a day-ahead record, real-time prices at its node and an hour it went into offline, in a month with 45 days before it."); }
   const ruc = window.CX.rucDays(S.UH, e.configs.length ? e.configs : [e.name]);
   pts.forEach((p) => { p.ruc = ruc.get(p.d)?.length || 0; });
   const J = pts.filter((p) => !p.ruc);
-  const says = (p) => p.s == null || p.s <= p.p, bad = (p) => !p.ruc && says(p) !== p.ran, right = J.filter((p) => !bad(p)).length, ran = J.filter((p) => p.ran).length;
+  const says = (p) => p.s != null && p.s <= p.p, bad = (p) => !p.ruc && says(p) !== p.ran, right = J.filter((p) => !bad(p)).length, ran = J.filter((p) => p.ran).length;
   const caught = J.filter((p) => p.ran && says(p)).length;
-  $("dec-note").textContent = `A combustion turbine starts when running pays, so it is judged on the real-time price at its own node: each month it is fitted on every day before, recent days counting most (a day 30 days back counts half), its chance of being online against that price and the hour of day. ` +
-    `The diamond is the day's highest price at which the fit starts it, the circle the day's actual highest price at its node. On ${J.length} days available it ran on ${ran}; the fit called ${right} right (${fmtPct(right / J.length)}), ${caught} of the ${ran} days it ran.${window.CX.rucNote(pts.length - J.length)} A fit of what it did, not a forecast: the real-time price is not known when it decides. ` +
-    `When those days never show a price it would sit off at, it runs at any price it has seen (the bottom row), if it was online at least half its hours. The diamond stays between the lowest price it ran at and the highest it sat off at in the days fitted.` + oddNote;
-  $("dec-legend").innerHTML = `<span><span class="sw" style="background:var(--c1);transform:rotate(45deg) scale(0.8)"></span>Fit starts it above this price</span>` +
-    window.CX.onOffLegend("Day's highest price, ran", "Day's highest price, stayed off") +
-    `<span><span class="sw" style="background:var(--c8);height:3px"></span>Did the opposite of the fit</span><span><span class="sw sw-line"></span>Running at a new price</span>` +
+  $("dec-note").textContent = `Each day it went into some hour offline: the operator-informed model's turn-on point, the day's highest day-ahead price at its node at which the model starts it (every price at its node, day-ahead and real-time, shifted by the same amount until its chance of starting at some point in those hours reaches 50%), and the day's actual highest day-ahead price there. ` +
+    `The model reads only what its operator had before each hour: the day-ahead market and the real-time price at its node up to the hour before. On ${J.length} days it started on ${ran}; the model called ${right} right (${fmtPct(right / J.length)}), ${caught} of the ${ran} days it started.${window.CX.rucNote(pts.length - J.length)} Most combustion turbine starts can't be called an hour ahead.`;
+  $("dec-legend").innerHTML = `<span><span class="sw" style="background:var(--c1);transform:rotate(45deg) scale(0.8)"></span>Model starts it above this day-ahead price</span>` +
+    window.CX.onOffLegend("Day's highest day-ahead price, started", "Day's highest day-ahead price, stayed off") +
+    `<span><span class="sw" style="background:var(--c8);height:3px"></span>Did the opposite of the model</span><span><span class="sw sw-line"></span>Running at a new price</span>` +
     (J.length < pts.length ? window.CX.rucLegend() : "");
-  const anyP = pts.some((p) => p.s == null);
-  const w = Math.max(280, el.clientWidth || 600), H = 260, m = { t: 18, r: 16, b: 26, l: 64 }, LOWY = H - m.b - 6;
+  const noS = pts.some((p) => p.s == null);
+  const w = Math.max(280, el.clientWidth || 600), H = 260, m = { t: 18, r: 16, b: 26, l: 64 }, TOPY = m.t + 6;
   const D0 = S.DEC?.dates || Object.keys(P.days);
   const x = d3.scaleTime().domain([d3.timeHour.offset(parseDate(D0[0]), -12), d3.timeHour.offset(parseDate(D0.at(-1)), 12)]).range([m.l, w - m.r]);
   const vals = pts.flatMap((p) => (p.s == null ? [p.p] : [p.s, p.p])).sort(d3.ascending);
   const lo = Math.max(-250, Math.min(0, d3.min(vals))), hi = Math.max(100, d3.quantile(vals, 0.98));
-  const y = d3.scaleSymlog().constant(10).domain([lo, hi]).range([anyP ? LOWY - 18 : H - m.b, m.t]).clamp(true);
-  const ys = (v) => (v == null ? LOWY : y(v));
+  const y = d3.scaleSymlog().constant(10).domain([lo, hi]).range([H - m.b, noS ? TOPY + 18 : m.t]).clamp(true);
+  const ys = (v) => (v == null ? TOPY : y(v));
   const yT = [-250, -100, -25, -10, 0, 10, 25, 50, 100, 250, 500, 1000, 2500, 5000].filter((v) => v >= lo && v <= hi);
   const svg = d3.create("svg").attr("viewBox", `0 0 ${w} ${H}`);
   svg.append("g").attr("class", "gridline").attr("transform", `translate(${m.l},0)`).call(d3.axisLeft(y).tickValues(yT).tickSize(-(w - m.l - m.r)).tickFormat(""));
   svg.append("g").attr("class", "axis").attr("transform", `translate(0,${H - m.b})`).call(d3.axisBottom(x).ticks(w < 560 ? 4 : 8).tickSizeOuter(0));
   svg.append("g").attr("class", "axis").attr("transform", `translate(${m.l},0)`).call(d3.axisLeft(y).tickValues(yT).tickFormat((v) => fmt$(v)).tickSizeOuter(0));
-  svg.append("text").attr("class", "axis-title").attr("x", m.l).attr("y", 10).text("Real-time price at its node ($/MWh): where the fit starts it, and the day's highest");
-  if (anyP) svg.append("text").attr("class", "axis-label").attr("x", m.l - 6).attr("y", LOWY + 3).attr("text-anchor", "end").attr("font-size", 10).attr("fill", css("--ink-2")).text("any price");
+  svg.append("text").attr("class", "axis-title").attr("x", m.l).attr("y", 10).text("Day-ahead price at its node ($/MWh): where the model starts it, and the day's highest");
+  if (noS) svg.append("text").attr("class", "axis-label").attr("x", m.l - 6).attr("y", TOPY + 3).attr("text-anchor", "end").attr("font-size", 10).attr("fill", css("--ink-2")).text("no start");
   const ev = ((await tryJSON("data/events.json.gz"))?.events || []).filter((v) => v.unit === e.name && v.kind === "rt_price");
   svg.append("g").selectAll("line").data(ev).join("line").attr("class", "price-rule").attr("stroke-dasharray", "4 3")
     .attr("x1", (v) => x(parseDate(v.date))).attr("x2", (v) => x(parseDate(v.date))).attr("y1", m.t).attr("y2", H - m.b);
@@ -438,13 +435,13 @@ async function drawDecisionsRT(e) {
   svg.append("rect").attr("x", m.l).attr("y", m.t).attr("width", w - m.l - m.r).attr("height", H - m.t - m.b).attr("fill", "transparent")
     .on("pointermove", (evt) => {
       const [px] = d3.pointer(evt), p = pts[d3.minIndex(pts, (q) => Math.abs(x(q.t) - px))], vv = ev.find((v) => v.date.slice(0, 7) === p.d.slice(0, 7));
-      showTip(evt, `<h4>${fmtDate(p.t)}</h4><table><tr><td>Fit starts it at</td><td class="n">${p.s == null ? "any price" : `${fmt$(p.s)}/MWh`}</td></tr><tr><td>Fitted on</td><td class="n">${p.win ?? "–"} days before the month, recent ones counting most</td></tr><tr><td>Day's highest node price</td><td class="n">${fmt$(p.p)}/MWh</td></tr>` +
-        `<tr><td>What it did</td><td class="n">${p.ran ? `ran ${p.on} of ${p.av} h` : "stayed off"}</td></tr>` + (p.ruc ? `<tr><td>Committed by ERCOT (RUC)</td><td class="n">${p.ruc} h</td></tr>` : "") +
-        `</table>${bad(p) ? "Did the opposite of the fit" : p.ruc ? "RUC day: not counted for or against the fit" : ""}${vv ? `<br><b>${esc(vv.title)}</b>` : ""}`);
+      showTip(evt, `<h4>${fmtDate(p.t)}</h4><table><tr><td>Model starts it at</td><td class="n">${p.s == null ? "no shift up to $5,000" : `${fmt$(p.s)}/MWh`}</td></tr><tr><td>Fitted on</td><td class="n">${p.win ?? "–"} days before the month, recent ones counting most</td></tr><tr><td>Day's highest day-ahead price</td><td class="n">${fmt$(p.p)}/MWh</td></tr>` +
+        `<tr><td>What it did</td><td class="n">${p.ran ? `started; online ${p.on} of ${p.av} h judged` : `stayed off (${p.off} h)`}</td></tr>` + (p.ruc ? `<tr><td>Committed by ERCOT (RUC)</td><td class="n">${p.ruc} h</td></tr>` : "") +
+        `</table>${bad(p) ? "Did the opposite of the model" : p.ruc ? "RUC day: not counted for or against the model" : ""}${vv ? `<br><b>${esc(vv.title)}</b>` : ""}`);
     })
     .on("pointerleave", hideTip);
   el.replaceChildren(svg.node());
-  setCSV(el, ["date", "start_usd_mwh", "day_peak_usd_mwh", "ran", "hours_on", "hours_available", "fit_days", "ruc_hours"], pts.map((p) => [p.d, p.s, p.p, p.ran ? 1 : 0, p.on, p.av, p.win, p.ruc]), `${e.name} real-time starts`);
+  setCSV(el, ["date", "turn_on_usd_mwh", "day_peak_da_usd_mwh", "started", "hours_on", "hours_judged", "hours_off_going_in", "fit_days", "ruc_hours"], pts.map((p) => [p.d, p.s, p.p, p.ran ? 1 : 0, p.on, p.av, p.off, p.win, p.ruc]), `${e.name} turn-on points`);
 }
 
 // CC trains and gas steam: each day it started online, the operator-informed turn-off point (diamond)
@@ -860,9 +857,9 @@ async function select(name, cfg, keepDay) {
 
 async function boot() {
   const v = window.CX.readHash();
-  [S.T, S.DEC, S.UH, S.SP, S.PPA, S.OI, S.OD, S.PRT, S.G] = await Promise.all([tryJSON("data/trends_60d.json.gz"), tryJSON("data/decisions.json.gz"),
+  [S.T, S.DEC, S.UH, S.SP, S.PPA, S.OI, S.OD, S.POI, S.G] = await Promise.all([tryJSON("data/trends_60d.json.gz"), tryJSON("data/decisions.json.gz"),
     tryJSON("data/unit_hours_60d.json.gz"), tryJSON("data/summary_prices.json.gz"), tryJSON("data/ppa.json.gz"),
-    tryJSON("data/operator/index.json.gz"), tryJSON("data/operator/decisions.json.gz"), tryJSON("data/peaker/rt_fit.json.gz"),
+    tryJSON("data/operator/index.json.gz"), tryJSON("data/operator/decisions.json.gz"), tryJSON("data/peaker/oi.json.gz"),
     tryJSON("data/groups_60d.json.gz")]);
   S.UI = await window.CX.unitIndex();
   S.stubs = new Set((S.UI || []).map((u) => u.unit));   // every unit in the index has a unit/NAME page
