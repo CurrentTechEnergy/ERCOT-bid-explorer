@@ -35,7 +35,8 @@ function legend(id, items) {
 const TECH_COLOR = { coal: "--c8", combined_cycle: "--c1", gas_steam: "--c7", combustion_turbine: "--c4" };
 const STUCK_TECHS = ["coal", "combined_cycle", "gas_steam", "combustion_turbine"];
 const LOW_NET = 4;             // GW: low load left for fossil, in the answer
-const MIN_STUCK_HOURS = 15;    // a stuck-on bar needs this many hours
+const MIN_STUCK_HOURS = 15;
+const PLAY_MS = 1500;          // each year's frame when the scatter plays    // a stuck-on bar needs this many hours
 const isAll = () => S.year === "all";
 const yearName = (y) => (y === "all" ? "all years" : yearLabel(y));
 function drawQ1() {
@@ -67,6 +68,8 @@ function drawQ1() {
   const x0 = Math.max(x.domain()[0], 0);
   svg.append("line").attr("x1", x(x0)).attr("x2", x(x.domain()[1])).attr("y1", y(x0)).attr("y2", y(x.domain()[1]))
     .attr("stroke", css("--muted")).attr("stroke-dasharray", "5 4").attr("stroke-width", 1.2);
+  if (!isAll()) svg.append("text").attr("x", m.l + 14).attr("y", m.t + 34).attr("fill", css("--muted"))
+    .style("font", "600 30px var(--font-ui)").text(yearLabel(sel));
   const med = F.median[isAll() ? "all" : String(sel)] || [];
   const half = F.bin / 2;
   svg.append("path").attr("d", d3.line().x((r) => x(r[0] + half)).y((r) => y(r[1] / 1000))(med)).attr("fill", "none").attr("stroke", css("--surface")).attr("stroke-width", 5.5);
@@ -88,14 +91,20 @@ function drawQ1() {
   const part = (b, t, k) => d3.sum(F.stuck.filter((r) => pick(r) && r[1] === b && r[2] === t), (r) => r[k]) / hours.get(b);
   const keys = [...STUCK_TECHS.map((t) => [t, 3, 1]), ...STUCK_TECHS.map((t) => [t, 4, 0.35])];
   const el2 = $("q1s-chart"), H2 = 280, m2 = { t: 16, r: 14, b: 40, l: 52 };
-  const xb = d3.scaleBand().domain(bins).range([m2.l, w - m2.r]).padding(0.15);
-  const tops = bins.map((b) => d3.sum(keys, ([t, k]) => part(b, t, k)));
-  const y2 = d3.scaleLinear().domain([0, d3.max(tops) || 1]).nice().range([H2 - m2.b, m2.t]);
+  // both axes span every year, so they hold still when the year changes (and while it plays)
+  const allHours = d3.rollup(F.hours, (v) => d3.sum(v, (r) => r[2]), (r) => r[1]);
+  const allBins = [...allHours].filter(([, n]) => n >= MIN_STUCK_HOURS).map(([b]) => b).sort((a, b) => a - b);
+  const xb = d3.scaleBand().domain(allBins).range([m2.l, w - m2.r]).padding(0.15);
+  const top = d3.max(F.stuck, (r) => r[3] + r[4]) ? d3.max([...new Set(F.hours.map((r) => r[0]))], (yr) => {
+    const hy = d3.rollup(F.hours.filter((r) => r[0] === yr), (v) => d3.sum(v, (r) => r[2]), (r) => r[1]);
+    return d3.max([...hy].filter(([, n]) => n >= MIN_STUCK_HOURS), ([b, n]) => d3.sum(F.stuck.filter((r) => r[0] === yr && r[1] === b), (r) => r[3] + r[4]) / n);
+  }) : 1;
+  const y2 = d3.scaleLinear().domain([0, top || 1]).nice().range([H2 - m2.b, m2.t]);
   const s2 = d3.create("svg").attr("viewBox", `0 0 ${w} ${H2}`);
   s2.append("g").attr("class", "gridline").attr("transform", `translate(${m2.l},0)`).call(d3.axisLeft(y2).ticks(5).tickSize(-(w - m2.l - m2.r)).tickFormat(""));
   s2.append("g").attr("class", "axis").attr("transform", `translate(${m2.l},0)`).call(d3.axisLeft(y2).ticks(5).tickFormat((v) => d3.format(",.0f")(v / 1000)).tickSizeOuter(0));
-  const every = Math.ceil(bins.length / (w < 560 ? 6 : 12));
-  s2.append("g").attr("class", "axis").attr("transform", `translate(0,${H2 - m2.b})`).call(d3.axisBottom(xb).tickValues(bins.filter((_, i) => i % every === 0)).tickFormat((b) => `${b}`).tickSizeOuter(0));
+  const every = Math.ceil(allBins.length / (w < 560 ? 6 : 12));
+  s2.append("g").attr("class", "axis").attr("transform", `translate(0,${H2 - m2.b})`).call(d3.axisBottom(xb).tickValues(allBins.filter((_, i) => i % every === 0)).tickFormat((b) => `${b}`).tickSizeOuter(0));
   s2.append("text").attr("class", "axis-title").attr("x", m2.l).attr("y", 9).text(`Average fossil output (GW) by load left for fossil, ${yearName(sel)}`);
   s2.append("text").attr("class", "axis-title").attr("x", w - m2.r).attr("y", H2 - 6).attr("text-anchor", "end").text(`Load less wind and solar HSL less nuclear (GW), ${sb} GW bins`);
   bins.forEach((b) => {
@@ -323,6 +332,18 @@ function drawAll() { drawQ1(); drawQ2(); drawQ3(); drawQ4(); }
   $("status").textContent = `60-day data, ${S.G.years[ys[0]].from} to ${S.G.through}. Built ${S.G.built.slice(0, 10)}.`;
   $("q1-year").innerHTML = [`<option value="all"${isAll() ? " selected" : ""}>All years</option>`, ...ys.slice().reverse().map((y) => `<option value="${y}"${y === S.year ? " selected" : ""}>${yearLabel(y)}</option>`)].join("");
   $("q1-year").addEventListener("change", (e) => { S.year = e.target.value === "all" ? "all" : +e.target.value; writeHash({ y: S.year, t: S.tech }); drawQ1(); });
+  // play: step the scatter through the years, 2019 first, and stop on the latest
+  let play = null;
+  const stop = () => { clearInterval(play); play = null; $("q1-play").innerHTML = "&#9654;"; };
+  $("q1-play").addEventListener("click", () => {
+    if (play) return stop();
+    let i = 0;
+    const show = () => { S.year = ys[i]; $("q1-year").value = String(S.year); writeHash({ y: S.year, t: S.tech }); drawQ1(); if (++i >= ys.length) stop(); };
+    $("q1-play").innerHTML = "&#10073;&#10073;";
+    show();
+    play = setInterval(show, PLAY_MS);
+  });
+  $("q1-year").addEventListener("mousedown", stop);
   $("q2c-fuel").addEventListener("click", (e) => { const b = e.target.closest("button"); if (!b) return; S.fuel = b.dataset.v; drawQ2(); });
   $("q3-tech").addEventListener("change", (e) => { S.tech = e.target.value; writeHash({ y: S.year, t: S.tech }); drawQ3(); });
   drawAll();
