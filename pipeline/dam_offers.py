@@ -56,7 +56,9 @@ Writes data/dam_offers.json.gz: ref (heat rates and source), params, kinds, firs
 stretch, offering a configuration at or below ZERO_USD, offering HIGH_USD or more; on cheap days
 the median train cheap-stretch offer less the fuel-cost line, kept on through the stretch (its awarded configuration) and not (its
 lowest configuration); share of three-part LSL MW below the fuel line; median margin; median renewable
-DA less RT floor), bins (award rate by cheap-stretch margin), trains (per train or plant: cheap
+DA less RT floor), bins (award rate by cheap-stretch margin), mk_hist (the trains' offer less the
+fuel-cost line, as in fleet, pooled over every cheap day: counts per MK_STEP bin, awarded through
+the stretch and not, with each group's median), trains (per train or plant: cheap
 days filed, share awarded, median lowest offer and implied heat rate, price-outs, steps, Unit page
 name), renew (per wind or solar unit: days filed, median DA and RT floors, gap, award share) and
 repricers.
@@ -90,6 +92,7 @@ PRIOR, HOLD, MIN_HELD, MIN_DAYS = 14, 7, 5, 20
 FILE_SHARE, RENEW_OFF = 0.7, 14
 REPRICE = 10
 ZERO_USD, HIGH_USD = 1.0, 20.0
+MK_LO, MK_HI, MK_STEP = -40, 30, 2      # offer less fuel cost histogram ($/MWh); values beyond fall in the end bins
 BINS = [-10, -5, -2, 0, 2, 5, 10]
 KINDS = {
     "mingen_step": "Minimum-energy offer stepped",
@@ -350,6 +353,7 @@ def fleet(dates, units, cheapdays):
         trains[r["plant"]].append(r)
     keys = ("trains_filed", "trains_aw", "trains_zero", "trains_high", "mk_aw", "mk_no", "below_mw_share", "margin", "renew_gap")
     out = {k: [None] * n for k in keys}
+    pool_a, pool_n = [], []
     for k in range(n):
         if cheapdays[k]:
             filed = aw = zero = high = 0
@@ -377,6 +381,8 @@ def fleet(dates, units, cheapdays):
                 (mka if won else mkn).append(min(won) if won else min(m for m, _ in mk))
             out["mk_aw"][k] = _r(float(np.median(mka))) if mka else None
             out["mk_no"][k] = _r(float(np.median(mkn))) if mkn else None
+            pool_a += mka
+            pool_n += mkn
         tot = below = 0.0
         for r in units.values():
             if r["tech"] in ("combined_cycle", "gas_steam") and r["mk"][k] is not None and r["ls"][k]:
@@ -396,7 +402,20 @@ def fleet(dates, units, cheapdays):
             nb[b] += 1
             ab[b] += a
     bins = {"edges": BINS, "n": nb, "aw": ab}
-    return out, bins
+    return out, bins, _mk_hist(pool_a, pool_n)
+
+
+def _mk_hist(aw, no):
+    """Offer less fuel cost over every cheap train-day, pooled: counts per MK_STEP bin from MK_LO
+    to MK_HI (the end bins take everything beyond), with each group's median."""
+    edges = list(range(MK_LO, MK_HI + 1, MK_STEP))
+    def count(xs):
+        c = [0] * (len(edges) - 1)
+        for x in xs:
+            c[min(max(bisect.bisect_right(edges, x) - 1, 0), len(c) - 1)] += 1
+        return c
+    return {"edges": edges, "aw": count(aw), "no": count(no),
+            "med_aw": _r(float(np.median(aw))) if aw else None, "med_no": _r(float(np.median(no))) if no else None}
 
 
 def train_table(dates, units, cheapdays, events):
@@ -475,7 +494,7 @@ def build_dam_offers(index: dict) -> dict:
     repricers = sorted({p for (p, _), c in steps.items() if c >= REPRICE})
     for e in events:
         e["repricer"] = e["plant"] in repricers
-    fl, bins = fleet(dates, units, cheapdays)
+    fl, bins, mk_hist = fleet(dates, units, cheapdays)
     write_signatures(dates, units)
     out = {"updated": dt.datetime.now(dt.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
            "ref": {"hr": REF_HR, **REF_SOURCE}, "cheap_usd": CHEAP_USD,
@@ -483,7 +502,7 @@ def build_dam_offers(index: dict) -> dict:
                       "prior": PRIOR, "hold": HOLD, "min_held": MIN_HELD, "file_share": FILE_SHARE, "renew_off": RENEW_OFF,
                       "reprice": REPRICE, "zero_usd": ZERO_USD, "high_usd": HIGH_USD},
            "kinds": KINDS, "first": dates[0], "last": dates[-1], "dates": dates, "cheap": [int(c) for c in cheapdays],
-           "fleet": fl, "bins": bins,
+           "fleet": fl, "bins": bins, "mk_hist": mk_hist,
            "train_cols": ["plant", "tech", "cheap_days_filed", "share_awarded", "median_lowest_offer", "median_implied_hr", "priced_out", "steps", "unit"],
            "trains": train_table(dates, units, cheapdays, events),
            "renew_cols": ["unit", "tech", "days_filed", "median_da_floor", "median_rt_floor", "median_gap", "median_award_share"],
