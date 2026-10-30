@@ -3,7 +3,8 @@ name: Keep look-ahead reports
 # Keeps ERCOT's 5-minute look-ahead reports (RTD indicative LMPs, the intra-hour wind, solar and
 # load forecasts) in the R2 raw store, one bulk zip per report and posting day
 # (pipeline/raw_days.py).  Daily, the last 7 complete days of the three forecasts (days already
-# stored are skipped); by hand, any span or report (RTD only this way), for the backfill.  Writes nothing to the repository.
+# stored are skipped); by hand, any span or report (RTD only this way), for the backfill.
+# Writes nothing to the repository.
 on:
   pull_request:       # a PR that changes the job keeps one real day of one forecast, to check the bulk path
     paths:
@@ -34,12 +35,13 @@ on:
 permissions:
   contents: read
 
-concurrency:
-  group: lookahead
+concurrency:            # PR checks queue apart, so one can't cancel a waiting daily run or backfill
+  group: lookahead-${{ github.event_name == 'pull_request' && github.ref || 'store' }}
   cancel-in-progress: false
 
 jobs:
   keep:
+    if: github.actor != 'dependabot[bot]'     # Dependabot PRs get no ERCOT or R2 secrets
     runs-on: ubuntu-latest
     timeout-minutes: 300
     steps:
