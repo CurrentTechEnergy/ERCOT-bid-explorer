@@ -3,7 +3,14 @@
   <title>MCLNSLR: bidding and operating changes</title>
   <link href="https://ercotbids.currenttech.energy/unit.html?unit=MCLNSLR"/>
   <id>https://ercotbids.currenttech.energy/unit.html?unit=MCLNSLR</id>
-  <updated>2026-10-18T00:00:00Z</updated>
+  <updated>2026-10-30T00:00:00Z</updated>
+  <entry>
+    <title>MCLNSLR: Started moving within the day (2026-08-26)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=MCLNSLR"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=MCLNSLR#MCLNSLR/2026-08-26/renew_moving_on</id>
+    <updated>2026-10-30T00:00:00Z</updated>
+    <summary>Started moving within the day: floor -$2 to v</summary>
+  </entry>
   <entry>
     <title>MCLNSLR: Stopped moving within the day (2026-06-20)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=MCLNSLR"/>

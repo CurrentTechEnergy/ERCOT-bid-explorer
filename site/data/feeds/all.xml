@@ -3,7 +3,28 @@
   <title>ERCOT bid explorer: unit changes</title>
   <link href="https://ercotbids.currenttech.energy/"/>
   <id>https://ercotbids.currenttech.energy/</id>
-  <updated>2026-10-29T00:00:00Z</updated>
+  <updated>2026-10-30T00:00:00Z</updated>
+  <entry>
+    <title>BIRD_BES_ESR1: New battery (2026-08-31)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=BIRD_BES_ESR1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=BIRD_BES_ESR1#BIRD_BES_ESR1/2026-08-31/battery_new</id>
+    <updated>2026-10-30T00:00:00Z</updated>
+    <summary>First day charging or discharging</summary>
+  </entry>
+  <entry>
+    <title>MDANP_CT1: Shut down despite a day-ahead award (2026-08-30)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=MDANP_CT1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=MDANP_CT1#MDANP_CT1/2026-08-30/shutdown_award</id>
+    <updated>2026-10-30T00:00:00Z</updated>
+    <summary>Shut down for 11 h although a day-ahead award covered 100% of the window</summary>
+  </entry>
+  <entry>
+    <title>MIL_MILLERG2: Shut down after a long run (2026-08-29)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=MIL_MILLERG2"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=MIL_MILLERG2#MIL_MILLERG2/2026-08-29/shutdown_new</id>
+    <updated>2026-10-30T00:00:00Z</updated>
+    <summary>Shut down for 39 h after 36 days without a shutdown</summary>
+  </entry>
   <entry>
     <title>REDGATE_AGR_C: Shut down despite a day-ahead award (2026-08-28)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=REDGATE_AGR_C"/>
@@ -37,7 +58,7 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=AEEC_ELK_2"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=AEEC_ELK_2#AEEC_ELK_2/2026-08-28/shutdown_new</id>
     <updated>2026-10-28T00:00:00Z</updated>
-    <summary>Shut down for 27 h after 108 days without a shutdown</summary>
+    <summary>Shut down for 75 h after 108 days without a shutdown</summary>
   </entry>
   <entry>
     <title>TOPAZ_UNIT7: Shut down despite a day-ahead award (2026-08-27)</title>
@@ -68,6 +89,20 @@
     <summary>Back from a 107-day outage</summary>
   </entry>
   <entry>
+    <title>BAC_CTG5: Bidding approach shifted (2026-08-25)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=BAC_CTG5"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=BAC_CTG5#BAC_CTG5/2026-08-25/bidding</id>
+    <updated>2026-10-30T00:00:00Z</updated>
+    <summary>Offer price vs peer median: -$23 to $32/MWh</summary>
+  </entry>
+  <entry>
+    <title>TRSES_UNIT6: Bidding approach shifted (2026-08-24)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=TRSES_UNIT6"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=TRSES_UNIT6#TRSES_UNIT6/2026-08-24/bidding</id>
+    <updated>2026-10-30T00:00:00Z</updated>
+    <summary>Offer price vs peer median: -$13 to $56/MWh</summary>
+  </entry>
+  <entry>
     <title>MDANP_CT1: Shut down despite a day-ahead award (2026-08-24)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=MDANP_CT1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=MDANP_CT1#MDANP_CT1/2026-08-24/shutdown_award</id>
@@ -75,25 +110,18 @@
     <summary>Shut down for 4 h although a day-ahead award covered 100% of the window</summary>
   </entry>
   <entry>
+    <title>BAC_CTG6: Bidding approach shifted (2026-08-24)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=BAC_CTG6"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=BAC_CTG6#BAC_CTG6/2026-08-24/bidding</id>
+    <updated>2026-10-30T00:00:00Z</updated>
+    <summary>Offer price vs peer median: -$28 to $32/MWh</summary>
+  </entry>
+  <entry>
     <title>SCSES_UNIT1A: Minimum-energy offer stepped (2026-08-23)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=SCSES_UNIT1A"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=SCSES_UNIT1A#SCSES_UNIT1A/2026-08-23/dam_mingen_step</id>
     <updated>2026-10-28T00:00:00Z</updated>
     <summary>Minimum-energy offer stepped: $25 to $2/MWh ($1 to -$23 against the fuel-cost line)</summary>
-  </entry>
-  <entry>
-    <title>BAC_CTG6: Bidding approach shifted (2026-08-23)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=BAC_CTG6"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=BAC_CTG6#BAC_CTG6/2026-08-23/bidding</id>
-    <updated>2026-10-28T00:00:00Z</updated>
-    <summary>Offer price vs peer median: -$28 to $7/MWh</summary>
-  </entry>
-  <entry>
-    <title>BAC_CTG5: Bidding approach shifted (2026-08-23)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=BAC_CTG5"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=BAC_CTG5#BAC_CTG5/2026-08-23/bidding</id>
-    <updated>2026-10-28T00:00:00Z</updated>
-    <summary>Offer price vs peer median: -$25 to $6/MWh</summary>
   </entry>
   <entry>
     <title>SCSES_UNIT2: Bidding approach shifted (2026-08-22)</title>
@@ -509,25 +537,39 @@
     <summary>Off a week or more in 2026-07 to Daily, over 2 a week in 2026-08</summary>
   </entry>
   <entry>
+    <title>WAP_WAP_G3: Turn-off point moved (2026-08-01)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=WAP_WAP_G3"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=WAP_WAP_G3#WAP_WAP_G3/2026-08-01/turnoff/0</id>
+    <updated>2026-10-30T00:00:00Z</updated>
+    <summary>Turn-off point without an award $1,648 to $2,728 per MW of minimum output in August</summary>
+  </entry>
+  <entry>
     <title>WAP_WAP_G2: Turn-off point moved (2026-08-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=WAP_WAP_G2"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=WAP_WAP_G2#WAP_WAP_G2/2026-08-01/turnoff/0</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Turn-off point without an award $47 to $109 per MW of minimum output in August</summary>
+    <summary>Turn-off point without an award $50 to $109 per MW of minimum output in August</summary>
   </entry>
   <entry>
     <title>WAP_WAP_G1: Turn-off point moved (2026-08-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=WAP_WAP_G1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=WAP_WAP_G1#WAP_WAP_G1/2026-08-01/turnoff/0</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Turn-off point without an award $24 to $142 per MW of minimum output in August</summary>
+    <summary>Turn-off point without an award $28 to $142 per MW of minimum output in August</summary>
   </entry>
   <entry>
     <title>TRSES_UNIT6: Turn-off point moved (2026-08-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=TRSES_UNIT6"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=TRSES_UNIT6#TRSES_UNIT6/2026-08-01/turnoff/0</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Turn-off point without an award $64 to $195 per MW of minimum output in August</summary>
+    <summary>Turn-off point without an award $64 to $197 per MW of minimum output in August</summary>
+  </entry>
+  <entry>
+    <title>TRSES_UNIT6: Timescale group changed (2026-08-01)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=TRSES_UNIT6"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=TRSES_UNIT6#TRSES_UNIT6/2026-08-01/group</id>
+    <updated>2026-10-30T00:00:00Z</updated>
+    <summary>Multi-day: off a day or more in 2026-07 to Daily, 1–2 a week in 2026-08</summary>
   </entry>
   <entry>
     <title>TOPAZ_UNIT10: Timescale group changed (2026-08-01)</title>
@@ -537,18 +579,11 @@
     <summary>Off a week or more in 2026-07 to Daily, 1–2 a week in 2026-08</summary>
   </entry>
   <entry>
-    <title>TGS_GT01: Running at a new price (2026-08-01)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=TGS_GT01"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=TGS_GT01#TGS_GT01/2026-08-01/rt_price</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Online 51% of its hours at $50–$100 real-time at its node in August, up from 12%</summary>
-  </entry>
-  <entry>
     <title>TEN_CC1: Turn-off point moved (2026-08-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=TEN_CC1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=TEN_CC1#TEN_CC1/2026-08-01/turnoff/0</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Turn-off point without an award $780 to $5,361 per MW of minimum output in August</summary>
+    <summary>Turn-off point without an award $837 to $5,323 per MW of minimum output in August</summary>
   </entry>
   <entry>
     <title>STEAM_STEAM_3: Timescale group changed (2026-08-01)</title>
@@ -562,14 +597,14 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=SPNCER_SPNCE_5"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=SPNCER_SPNCE_5#SPNCER_SPNCE_5/2026-08-01/turnoff/0</id>
     <updated>2026-10-29T00:00:00Z</updated>
-    <summary>Turn-off point without an award -$88 to -$9 per MW of minimum output in August</summary>
+    <summary>Turn-off point without an award -$96 to -$9 per MW of minimum output in August</summary>
   </entry>
   <entry>
     <title>SPNCER_SPNCE_4: Turn-off point moved (2026-08-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=SPNCER_SPNCE_4"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=SPNCER_SPNCE_4#SPNCER_SPNCE_4/2026-08-01/turnoff/0</id>
     <updated>2026-10-29T00:00:00Z</updated>
-    <summary>Turn-off point without an award -$108 to -$51 per MW of minimum output in August</summary>
+    <summary>Turn-off point without an award -$114 to -$51 per MW of minimum output in August</summary>
   </entry>
   <entry>
     <title>SKY1_SKY1B: Shut down despite a day-ahead award (2026-08-01)</title>
@@ -583,7 +618,7 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=SCSES_UNIT2"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=SCSES_UNIT2#SCSES_UNIT2/2026-08-01/turnoff/0</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Turn-off point without an award $177 to $378 per MW of minimum output in August</summary>
+    <summary>Turn-off point without an award $187 to $378 per MW of minimum output in August</summary>
   </entry>
   <entry>
     <title>SCSES_UNIT2: Timescale group changed (2026-08-01)</title>
@@ -597,28 +632,28 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=SCSES_UNIT1A"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=SCSES_UNIT1A#SCSES_UNIT1A/2026-08-01/group</id>
     <updated>2026-10-19T00:00:00Z</updated>
-    <summary>Multi-day: off a day or more in 2026-07 to Daily, under 1 shutdown a week in 2026-08</summary>
+    <summary>Multi-day: off a day or more in 2026-07 to Daily, 1–2 a week in 2026-08</summary>
   </entry>
   <entry>
     <title>SCLPCOGN_SCLPC_3: Running at a new price (2026-08-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=SCLPCOGN_SCLPC_3"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=SCLPCOGN_SCLPC_3#SCLPCOGN_SCLPC_3/2026-08-01/rt_price</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Online 89% of its hours at $15–$25 real-time at its node in August, up from 0%</summary>
+    <summary>Online 90% of its hours at $15–$25 real-time at its node in August, up from 0%</summary>
   </entry>
   <entry>
     <title>SCLPCOGN_SCLPC_2: Running at a new price (2026-08-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=SCLPCOGN_SCLPC_2"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=SCLPCOGN_SCLPC_2#SCLPCOGN_SCLPC_2/2026-08-01/rt_price</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Online 89% of its hours at $15–$25 real-time at its node in August, up from 0%</summary>
+    <summary>Online 90% of its hours at $15–$25 real-time at its node in August, up from 0%</summary>
   </entry>
   <entry>
     <title>SCLPCOGN_SCLPC_1: Running at a new price (2026-08-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=SCLPCOGN_SCLPC_1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=SCLPCOGN_SCLPC_1#SCLPCOGN_SCLPC_1/2026-08-01/rt_price</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Online 89% of its hours at $15–$25 real-time at its node in August, up from 0%</summary>
+    <summary>Online 90% of its hours at $15–$25 real-time at its node in August, up from 0%</summary>
   </entry>
   <entry>
     <title>REDGATE_AGR_D: Shut down despite a day-ahead award (2026-08-01)</title>
@@ -660,7 +695,7 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=OLINGR_OLING_4"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=OLINGR_OLING_4#OLINGR_OLING_4/2026-08-01/group</id>
     <updated>2026-10-22T00:00:00Z</updated>
-    <summary>Multi-day: off a day or more in 2026-07 to Daily, 1–2 a week in 2026-08</summary>
+    <summary>Multi-day: off a day or more in 2026-07 to Daily, over 2 a week in 2026-08</summary>
   </entry>
   <entry>
     <title>NEDIN_CC1: Timescale group changed (2026-08-01)</title>
@@ -737,7 +772,7 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=LPCCS_CC1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=LPCCS_CC1#LPCCS_CC1/2026-08-01/turnoff/1</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Turn-off point with an award some hours $9 to $1,150 per MW of minimum output in August</summary>
+    <summary>Turn-off point with an award some hours $7 to $1,150 per MW of minimum output in August</summary>
   </entry>
   <entry>
     <title>LPCCS_CC1: Timescale group changed (2026-08-01)</title>
@@ -758,7 +793,7 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=LHSES_UNIT1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=LHSES_UNIT1#LHSES_UNIT1/2026-08-01/turnoff/2</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Turn-off point with an award every hour $2,823 to riding through per MW of minimum output in August</summary>
+    <summary>Turn-off point with an award every hour $3,310 to riding through per MW of minimum output in August</summary>
   </entry>
   <entry>
     <title>LGE_CC1: Timescale group changed (2026-08-01)</title>
@@ -768,18 +803,25 @@
     <summary>Multi-day: off a day or more in 2026-07 to Daily, 1–2 a week in 2026-08</summary>
   </entry>
   <entry>
+    <title>HLSES_UNIT5: Turn-off point moved (2026-08-01)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=HLSES_UNIT5"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=HLSES_UNIT5#HLSES_UNIT5/2026-08-01/turnoff/1</id>
+    <updated>2026-10-30T00:00:00Z</updated>
+    <summary>Turn-off point with an award some hours -$35 to $25 per MW of minimum output in August</summary>
+  </entry>
+  <entry>
     <title>GUADG_CC2: Turn-off point moved (2026-08-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=GUADG_CC2"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=GUADG_CC2#GUADG_CC2/2026-08-01/turnoff/2</id>
     <updated>2026-10-29T00:00:00Z</updated>
-    <summary>Turn-off point with an award every hour $3,720 to $6,503 per MW of minimum output in August</summary>
+    <summary>Turn-off point with an award every hour $4,217 to $7,134 per MW of minimum output in August</summary>
   </entry>
   <entry>
     <title>GRSES_UNIT2: Turn-off point moved (2026-08-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=GRSES_UNIT2"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=GRSES_UNIT2#GRSES_UNIT2/2026-08-01/turnoff/0</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Turn-off point without an award $72 to $130 per MW of minimum output in August</summary>
+    <summary>Turn-off point without an award $64 to $130 per MW of minimum output in August</summary>
   </entry>
   <entry>
     <title>GRSES_UNIT2: Timescale group changed (2026-08-01)</title>
@@ -793,21 +835,21 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=GBY_GBYGT84"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=GBY_GBYGT84#GBY_GBYGT84/2026-08-01/group</id>
     <updated>2026-10-19T00:00:00Z</updated>
-    <summary>Off a week or more in 2026-07 to Daily, 1–2 a week in 2026-08</summary>
+    <summary>Off a week or more in 2026-07 to Daily, over 2 a week in 2026-08</summary>
   </entry>
   <entry>
     <title>GBY_GBYGT83: Timescale group changed (2026-08-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=GBY_GBYGT83"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=GBY_GBYGT83#GBY_GBYGT83/2026-08-01/group</id>
     <updated>2026-10-22T00:00:00Z</updated>
-    <summary>Multi-day: off a day or more in 2026-07 to Daily, 1–2 a week in 2026-08</summary>
+    <summary>Multi-day: off a day or more in 2026-07 to Daily, over 2 a week in 2026-08</summary>
   </entry>
   <entry>
     <title>GBY_GBYGT82: Timescale group changed (2026-08-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=GBY_GBYGT82"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=GBY_GBYGT82#GBY_GBYGT82/2026-08-01/group</id>
     <updated>2026-10-19T00:00:00Z</updated>
-    <summary>Off a week or more in 2026-07 to Daily, under 1 shutdown a week in 2026-08</summary>
+    <summary>Off a week or more in 2026-07 to Daily, 1–2 a week in 2026-08</summary>
   </entry>
   <entry>
     <title>GBY_GBYGT81: Timescale group changed (2026-08-01)</title>
@@ -831,25 +873,18 @@
     <summary>Daily, under 1 shutdown a week in 2026-07 to Always on when available in 2026-08</summary>
   </entry>
   <entry>
-    <title>FRNYPP_CC1: Turn-off point moved (2026-08-01)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=FRNYPP_CC1"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=FRNYPP_CC1#FRNYPP_CC1/2026-08-01/turnoff/1</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Turn-off point with an award some hours $2,795 to riding through per MW of minimum output in August</summary>
-  </entry>
-  <entry>
     <title>ETCCS_CC1: Turn-off point moved (2026-08-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=ETCCS_CC1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=ETCCS_CC1#ETCCS_CC1/2026-08-01/turnoff/0</id>
     <updated>2026-10-29T00:00:00Z</updated>
-    <summary>Turn-off point without an award $58 to $120 per MW of minimum output in August</summary>
+    <summary>Turn-off point without an award $58 to $119 per MW of minimum output in August</summary>
   </entry>
   <entry>
     <title>DIB_CC1: Turn-off point moved (2026-08-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=DIB_CC1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=DIB_CC1#DIB_CC1/2026-08-01/turnoff/0</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Turn-off point without an award $3,834 to riding through per MW of minimum output in August</summary>
+    <summary>Turn-off point without an award $6,829 to riding through per MW of minimum output in August</summary>
   </entry>
   <entry>
     <title>DCSES_CT20: Timescale group changed (2026-08-01)</title>
@@ -898,14 +933,14 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=CBY_CBY_G2"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=CBY_CBY_G2#CBY_CBY_G2/2026-08-01/turnoff/0</id>
     <updated>2026-10-29T00:00:00Z</updated>
-    <summary>Turn-off point without an award $4,745 to riding through per MW of minimum output in August</summary>
+    <summary>Turn-off point without an award $3,939 to riding through per MW of minimum output in August</summary>
   </entry>
   <entry>
     <title>CBY4_CC1: Turn-off point moved (2026-08-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=CBY4_CC1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=CBY4_CC1#CBY4_CC1/2026-08-01/turnoff/0</id>
     <updated>2026-10-29T00:00:00Z</updated>
-    <summary>Turn-off point without an award $218 to $338 per MW of minimum output in August</summary>
+    <summary>Turn-off point without an award $220 to $353 per MW of minimum output in August</summary>
   </entry>
   <entry>
     <title>CBEC_GT12: Timescale group changed (2026-08-01)</title>
@@ -929,6 +964,13 @@
     <summary>Always on when available in 2026-07 to Daily, under 1 shutdown a week in 2026-08</summary>
   </entry>
   <entry>
+    <title>BASTEN_CC1: Turn-off point moved (2026-08-01)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=BASTEN_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=BASTEN_CC1#BASTEN_CC1/2026-08-01/turnoff/0</id>
+    <updated>2026-10-30T00:00:00Z</updated>
+    <summary>Turn-off point without an award $496 to $847 per MW of minimum output in August</summary>
+  </entry>
+  <entry>
     <title>BAC_CTG6: Timescale group changed (2026-08-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=BAC_CTG6"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=BAC_CTG6#BAC_CTG6/2026-08-01/group</id>
@@ -943,18 +985,25 @@
     <summary>Off a week or more in 2026-07 to Daily, over 2 a week in 2026-08</summary>
   </entry>
   <entry>
+    <title>BAC_CTG2: Timescale group changed (2026-08-01)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=BAC_CTG2"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=BAC_CTG2#BAC_CTG2/2026-08-01/group</id>
+    <updated>2026-10-19T00:00:00Z</updated>
+    <summary>Off a week or more in 2026-07 to Daily, 1–2 a week in 2026-08</summary>
+  </entry>
+  <entry>
     <title>BAC_CTG1: Timescale group changed (2026-08-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=BAC_CTG1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=BAC_CTG1#BAC_CTG1/2026-08-01/group</id>
     <updated>2026-10-19T00:00:00Z</updated>
-    <summary>Multi-day: off a day or more in 2026-07 to Daily, 1–2 a week in 2026-08</summary>
+    <summary>Multi-day: off a day or more in 2026-07 to Daily, over 2 a week in 2026-08</summary>
   </entry>
   <entry>
     <title>AZ_AZ_G4: Timescale group changed (2026-08-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=AZ_AZ_G4"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=AZ_AZ_G4#AZ_AZ_G4/2026-08-01/group</id>
     <updated>2026-10-19T00:00:00Z</updated>
-    <summary>Off a week or more in 2026-07 to Daily, 1–2 a week in 2026-08</summary>
+    <summary>Off a week or more in 2026-07 to Daily, over 2 a week in 2026-08</summary>
   </entry>
   <entry>
     <title>AZ_AZ_G3: Timescale group changed (2026-08-01)</title>
@@ -968,7 +1017,7 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=AEEC_ELK_3"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=AEEC_ELK_3#AEEC_ELK_3/2026-08-01/rt_price</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Online 11% of its hours at $35–$50 real-time at its node in August, down from 52%</summary>
+    <summary>Online 10% of its hours at $35–$50 real-time at its node in August, down from 52%</summary>
   </entry>
   <entry>
     <title>AEEC_ELK_3: Timescale group changed (2026-08-01)</title>
@@ -976,6 +1025,13 @@
     <id>https://ercotbids.currenttech.energy/unit.html?unit=AEEC_ELK_3#AEEC_ELK_3/2026-08-01/group</id>
     <updated>2026-10-19T00:00:00Z</updated>
     <summary>Daily, over 2 a week in 2026-07 to Multi-day: off a day or more in 2026-08</summary>
+  </entry>
+  <entry>
+    <title>AEEC_ELK_1: Running at a new price (2026-08-01)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=AEEC_ELK_1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=AEEC_ELK_1#AEEC_ELK_1/2026-08-01/rt_price</id>
+    <updated>2026-10-30T00:00:00Z</updated>
+    <summary>Online 18% of its hours at $50–$100 real-time at its node in August, down from 54%</summary>
   </entry>
   <entry>
     <title>AEEC_ELK_1: Timescale group changed (2026-08-01)</title>
@@ -989,14 +1045,14 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=AEEC_ANTLP_3"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=AEEC_ANTLP_3#AEEC_ANTLP_3/2026-08-01/rt_price</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Online 20% of its hours at $50–$100 real-time at its node in August, down from 54%</summary>
+    <summary>Online 17% of its hours at $50–$100 real-time at its node in August, down from 54%</summary>
   </entry>
   <entry>
     <title>AEEC_ANTLP_2: Running at a new price (2026-08-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=AEEC_ANTLP_2"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=AEEC_ANTLP_2#AEEC_ANTLP_2/2026-08-01/rt_price</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Online 7% of its hours at $50–$100 real-time at its node in August, down from 60%</summary>
+    <summary>Online 6% of its hours at $50–$100 real-time at its node in August, down from 60%</summary>
   </entry>
   <entry>
     <title>AEEC_ANTLP_1: Timescale group changed (2026-08-01)</title>
@@ -1004,6 +1060,13 @@
     <id>https://ercotbids.currenttech.energy/unit.html?unit=AEEC_ANTLP_1#AEEC_ANTLP_1/2026-08-01/group</id>
     <updated>2026-10-19T00:00:00Z</updated>
     <summary>Off a week or more in 2026-07 to Daily, under 1 shutdown a week in 2026-08</summary>
+  </entry>
+  <entry>
+    <title>STEAM1A_STEAM_1: Outage started (2026-07-31)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=STEAM1A_STEAM_1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=STEAM1A_STEAM_1#STEAM1A_STEAM_1/2026-07-31/outage_start</id>
+    <updated>2026-10-23T00:00:00Z</updated>
+    <summary>Outage began, still on at the end of the data (31 days so far)</summary>
   </entry>
   <entry>
     <title>STEAM1A_STEAM_1: Outage ended (2026-07-31)</title>
@@ -1111,11 +1174,25 @@
     <summary>Offer price vs peer median: $34 to $71/MWh</summary>
   </entry>
   <entry>
+    <title>MYR_ESR2: Battery size changed (2026-07-26)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=MYR_ESR2"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=MYR_ESR2#MYR_ESR2/2026-07-26/battery_size</id>
+    <updated>2026-10-30T00:00:00Z</updated>
+    <summary>Maximum output 46 to 73 MW; Maximum state of charge 58 to 104 MWh</summary>
+  </entry>
+  <entry>
     <title>LEON_CRK_LCPCT2: Outage ended (2026-07-26)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=LEON_CRK_LCPCT2"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=LEON_CRK_LCPCT2#LEON_CRK_LCPCT2/2026-07-26/outage_end</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Back from a 135-day outage</summary>
+  </entry>
+  <entry>
+    <title>KEG_ESR1: Battery size changed (2026-07-26)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=KEG_ESR1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=KEG_ESR1#KEG_ESR1/2026-07-26/battery_size</id>
+    <updated>2026-10-30T00:00:00Z</updated>
+    <summary>Maximum output 18 to 145 MW</summary>
   </entry>
   <entry>
     <title>CITYVICT_CTG02: Bidding approach shifted (2026-07-25)</title>
@@ -1146,18 +1223,11 @@
     <summary>Minimum-energy offer stepped: $19 to $1/MWh ($7 to -$16 against the fuel-cost line)</summary>
   </entry>
   <entry>
-    <title>MYR_ESR2: Battery size changed (2026-07-24)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=MYR_ESR2"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=MYR_ESR2#MYR_ESR2/2026-07-24/battery_size</id>
-    <updated>2026-10-28T00:00:00Z</updated>
-    <summary>Maximum output 46 to 72 MW; Maximum state of charge 58 to 104 MWh</summary>
-  </entry>
-  <entry>
     <title>STEAM_ENGINE_3: Outage started (2026-07-23)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=STEAM_ENGINE_3"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=STEAM_ENGINE_3#STEAM_ENGINE_3/2026-07-23/outage_start</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Outage began, still on at the end of the data (37 days so far)</summary>
+    <summary>Outage began, still on at the end of the data (39 days so far)</summary>
   </entry>
   <entry>
     <title>SANMIGL_G1: Bidding approach shifted (2026-07-23)</title>
@@ -1206,7 +1276,7 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=WAP_WAP_G6"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=WAP_WAP_G6#WAP_WAP_G6/2026-07-22/outage_start</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Outage began, still on at the end of the data (38 days so far)</summary>
+    <summary>Outage began, still on at the end of the data (40 days so far)</summary>
   </entry>
   <entry>
     <title>VICTPRT2_UNIT2: Shut down after a long run (2026-07-22)</title>
@@ -1333,75 +1403,5 @@
     <id>https://ercotbids.currenttech.energy/unit.html?unit=OLINGR_OLING_4#OLINGR_OLING_4/2026-07-21/bidding</id>
     <updated>2026-10-20T00:00:00Z</updated>
     <summary>Offer price vs peer median: $65 to $39/MWh</summary>
-  </entry>
-  <entry>
-    <title>CALAVERS_JKS2: Bidding approach shifted (2026-07-21)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=CALAVERS_JKS2"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=CALAVERS_JKS2#CALAVERS_JKS2/2026-07-21/bidding</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Running without an offer curve: 60% to 0% of the day</summary>
-  </entry>
-  <entry>
-    <title>BAC_CTG6: Bidding approach shifted (2026-07-21)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=BAC_CTG6"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=BAC_CTG6#BAC_CTG6/2026-07-21/bidding</id>
-    <updated>2026-10-20T00:00:00Z</updated>
-    <summary>Offer price vs peer median: $62 to -$24/MWh</summary>
-  </entry>
-  <entry>
-    <title>AZ_AZ_G3: Bidding approach shifted (2026-07-21)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=AZ_AZ_G3"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=AZ_AZ_G3#AZ_AZ_G3/2026-07-21/bidding</id>
-    <updated>2026-10-22T00:00:00Z</updated>
-    <summary>Offer price vs peer median: $288 to $316/MWh</summary>
-  </entry>
-  <entry>
-    <title>STEAM_STEAM_2: Outage ended (2026-07-20)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=STEAM_STEAM_2"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=STEAM_STEAM_2#STEAM_STEAM_2/2026-07-20/outage_end</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Back from a 34-day outage</summary>
-  </entry>
-  <entry>
-    <title>STEAM_ENGINE_3: Outage ended (2026-07-20)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=STEAM_ENGINE_3"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=STEAM_ENGINE_3#STEAM_ENGINE_3/2026-07-20/outage_end</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Back from a 39-day outage</summary>
-  </entry>
-  <entry>
-    <title>SCSES_UNIT1A: Bidding approach shifted (2026-07-20)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=SCSES_UNIT1A"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=SCSES_UNIT1A#SCSES_UNIT1A/2026-07-20/bidding</id>
-    <updated>2026-10-24T00:00:00Z</updated>
-    <summary>Offer price vs peer median: $146 to $25/MWh</summary>
-  </entry>
-  <entry>
-    <title>GRSES_UNIT1: Bidding approach shifted (2026-07-20)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=GRSES_UNIT1"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=GRSES_UNIT1#GRSES_UNIT1/2026-07-20/bidding</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Offer price vs peer median: $102 to -$5/MWh</summary>
-  </entry>
-  <entry>
-    <title>DUKE_CC1: Minimum-energy offer stepped (2026-07-19)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=DUKE_CC1"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=DUKE_CC1#DUKE_CC1/2026-07-19/dam_mingen_step</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Minimum-energy offer stepped: $21 to $1/MWh ($3 to -$17 against the fuel-cost line)</summary>
-  </entry>
-  <entry>
-    <title>MDANP_CT1: Shut down despite a day-ahead award (2026-07-18)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=MDANP_CT1"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=MDANP_CT1#MDANP_CT1/2026-07-18/shutdown_award</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Shut down for 6 h although a day-ahead award covered 100% of the window</summary>
-  </entry>
-  <entry>
-    <title>SOLC_SLR_ESR1: Battery size changed (2026-07-17)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=SOLC_SLR_ESR1"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=SOLC_SLR_ESR1#SOLC_SLR_ESR1/2026-07-17/battery_size</id>
-    <updated>2026-10-24T00:00:00Z</updated>
-    <summary>Maximum state of charge 182 to 320 MWh</summary>
   </entry>
 </feed>

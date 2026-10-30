@@ -3,7 +3,14 @@
   <title>LGE_CC1: bidding and operating changes</title>
   <link href="https://ercotbids.currenttech.energy/unit.html?unit=LGE_CC1"/>
   <id>https://ercotbids.currenttech.energy/unit.html?unit=LGE_CC1</id>
-  <updated>2026-10-26T00:00:00Z</updated>
+  <updated>2026-10-30T00:00:00Z</updated>
+  <entry>
+    <title>LGE_CC1: Minimum-energy offer stepped (2026-08-16)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=LGE_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=LGE_CC1#LGE_CC1/2026-08-16/dam_mingen_step</id>
+    <updated>2026-10-30T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $30 to $25/MWh ($12 to $7 against the fuel-cost line)</summary>
+  </entry>
   <entry>
     <title>LGE_CC1: Timescale group changed (2026-08-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=LGE_CC1"/>

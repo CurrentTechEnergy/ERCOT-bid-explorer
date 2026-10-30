@@ -688,6 +688,7 @@
   <url><loc>https://ercotbids.currenttech.energy/unit/HAMILTON_BESS</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/HAMILTON_ESR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/HARALD_UNIT1</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/HARLIN_1_ESR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/HART_WND_UNIT1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/HAYSEN_HAYSENG1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/HAYSEN_HAYSENG2</loc></url>
@@ -1046,6 +1047,7 @@
   <url><loc>https://ercotbids.currenttech.energy/unit/NCO_ESS1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/NEBULA_UNIT1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/NEDIN_CC1</loc></url>
+  <url><loc>https://ercotbids.currenttech.energy/unit/NEDIN_ESR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/NFAL_SLR_SOLAR1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/NF_BRP_BES1</loc></url>
   <url><loc>https://ercotbids.currenttech.energy/unit/NF_BRP_ESR1</loc></url>

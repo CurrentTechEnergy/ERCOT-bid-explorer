@@ -3,7 +3,14 @@
   <title>MDANP_CT1: bidding and operating changes</title>
   <link href="https://ercotbids.currenttech.energy/unit.html?unit=MDANP_CT1"/>
   <id>https://ercotbids.currenttech.energy/unit.html?unit=MDANP_CT1</id>
-  <updated>2026-10-24T00:00:00Z</updated>
+  <updated>2026-10-30T00:00:00Z</updated>
+  <entry>
+    <title>MDANP_CT1: Shut down despite a day-ahead award (2026-08-30)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=MDANP_CT1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=MDANP_CT1#MDANP_CT1/2026-08-30/shutdown_award</id>
+    <updated>2026-10-30T00:00:00Z</updated>
+    <summary>Shut down for 11 h although a day-ahead award covered 100% of the window</summary>
+  </entry>
   <entry>
     <title>MDANP_CT1: Shut down despite a day-ahead award (2026-08-24)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=MDANP_CT1"/>

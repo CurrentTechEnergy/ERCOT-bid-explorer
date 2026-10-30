@@ -3,13 +3,13 @@
   <title>MIL_MILLERG2: bidding and operating changes</title>
   <link href="https://ercotbids.currenttech.energy/unit.html?unit=MIL_MILLERG2"/>
   <id>https://ercotbids.currenttech.energy/unit.html?unit=MIL_MILLERG2</id>
-  <updated>2026-10-26T00:00:00Z</updated>
+  <updated>2026-10-30T00:00:00Z</updated>
   <entry>
-    <title>MIL_MILLERG2: Timescale group changed (2026-08-01)</title>
+    <title>MIL_MILLERG2: Shut down after a long run (2026-08-29)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=MIL_MILLERG2"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=MIL_MILLERG2#MIL_MILLERG2/2026-08-01/group</id>
-    <updated>2026-10-19T00:00:00Z</updated>
-    <summary>Multi-day: off a day or more in 2026-07 to Always on when available in 2026-08</summary>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=MIL_MILLERG2#MIL_MILLERG2/2026-08-29/shutdown_new</id>
+    <updated>2026-10-30T00:00:00Z</updated>
+    <summary>Shut down for 39 h after 36 days without a shutdown</summary>
   </entry>
   <entry>
     <title>MIL_MILLERG2: Timescale group changed (2026-07-01)</title>

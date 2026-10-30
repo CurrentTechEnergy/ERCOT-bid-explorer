@@ -3,7 +3,7 @@
   <title>BOSQUESW_CC2: bidding and operating changes</title>
   <link href="https://ercotbids.currenttech.energy/unit.html?unit=BOSQUESW_CC2"/>
   <id>https://ercotbids.currenttech.energy/unit.html?unit=BOSQUESW_CC2</id>
-  <updated>2026-10-29T00:00:00Z</updated>
+  <updated>2026-10-26T00:00:00Z</updated>
   <entry>
     <title>BOSQUESW_CC2: Shut down after a long run (2026-08-13)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=BOSQUESW_CC2"/>
@@ -44,7 +44,7 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=BOSQUESW_CC2"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=BOSQUESW_CC2#BOSQUESW_CC2/2026-06-01/turnoff/1</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Turn-off point with an award some hours $2 to $228 per MW of minimum output in June</summary>
+    <summary>Turn-off point with an award some hours $2 to $209 per MW of minimum output in June</summary>
   </entry>
   <entry>
     <title>BOSQUESW_CC2: Shut down despite a day-ahead award (2026-05-17)</title>
@@ -52,13 +52,6 @@
     <id>https://ercotbids.currenttech.energy/unit.html?unit=BOSQUESW_CC2#BOSQUESW_CC2/2026-05-17/shutdown_award</id>
     <updated>2026-10-26T00:00:00Z</updated>
     <summary>Shut down for 4 h although a day-ahead award covered 100% of the window</summary>
-  </entry>
-  <entry>
-    <title>BOSQUESW_CC2: Turn-off point moved (2026-05-01)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=BOSQUESW_CC2"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=BOSQUESW_CC2#BOSQUESW_CC2/2026-05-01/turnoff/2</id>
-    <updated>2026-10-29T00:00:00Z</updated>
-    <summary>Turn-off point with an award every hour $7,490 to riding through per MW of minimum output in May; the next month held it</summary>
   </entry>
   <entry>
     <title>BOSQUESW_CC2: Outage ended (2026-04-26)</title>
@@ -84,16 +77,9 @@
   <entry>
     <title>BOSQUESW_CC2: Turn-off point moved (2026-04-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=BOSQUESW_CC2"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=BOSQUESW_CC2#BOSQUESW_CC2/2026-04-01/turnoff/2</id>
-    <updated>2026-10-29T00:00:00Z</updated>
-    <summary>Turn-off point with an award every hour riding through to $7,490 per MW of minimum output in April; the next month went back</summary>
-  </entry>
-  <entry>
-    <title>BOSQUESW_CC2: Turn-off point moved (2026-04-01)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=BOSQUESW_CC2"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=BOSQUESW_CC2#BOSQUESW_CC2/2026-04-01/turnoff/1</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Turn-off point with an award some hours -$58 to $25 per MW of minimum output in April; the next month held it</summary>
+    <summary>Turn-off point with an award some hours -$59 to $25 per MW of minimum output in April; the next month held it</summary>
   </entry>
   <entry>
     <title>BOSQUESW_CC2: Minimum-energy offer stepped (2026-03-11)</title>
