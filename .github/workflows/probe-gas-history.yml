@@ -1,7 +1,7 @@
 name: Probe OilPriceAPI gas history
 
 # How far back the Houston Ship Channel codes go on OilPriceAPI, before buying credits
-# (pipeline/probe_gas_history.py).  About 7 calls; responses kept in R2, so a rerun spends none.
+# (pipeline/probe_gas_history.py).  About 4 calls; responses kept in R2 (empty ones asked again).
 # The report has counts and dates only, never prices.
 on:
   pull_request:       # runs on a PR that changes the probe, so the result is on the PR before merge

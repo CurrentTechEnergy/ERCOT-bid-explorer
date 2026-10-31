@@ -1,14 +1,14 @@
 """How far back OilPriceAPI's Houston Ship Channel series go, before paying for credits.
 
-The live Ship Channel code (NATURAL_GAS_HSC_USD) came back empty before 2025-09-02, while Waha on
-the same key reaches 2019 (pipeline/gas.py fetch_gas_history).  This asks for one month in 2024
-and one in 2019 on each Ship Channel code the account lists, and checks that the basis code plus
-the EIA Henry Hub spot reproduces the stored Ship Channel prices where both exist.
+The Ship Channel code (NATURAL_GAS_HSC_USD) came back empty before 2025-09-02 until OilPriceAPI
+loaded 2019-07-03 to 2024-05-31 on Oct 31, 2026.  This asks for four months across that range and
+the gap after it, and checks the new days against the EIA Henry Hub spot (a scale or unit slip
+would show as days far from it).
 
-Run by the "Probe OilPriceAPI gas history" workflow.  About 7 calls of the free plan's 50 a day.
+Run by the "Probe OilPriceAPI gas history" workflow.  About 4 calls of the free plan's 50 a day.
 Every response is kept in R2 under raw/oilpriceapi/<code>/<start>_<end>_p<page>.json and read from
-there first, so a rerun spends nothing.  The repository is public, so the report gives only row
-counts, first and last dates and a median difference, never a price (pipeline/private.py).
+there first (an empty answer is asked again), so a rerun spends little.  The repository is public,
+so the report gives only counts, dates and a correlation, never a price (pipeline/private.py).
 
   python -m pipeline.probe_gas_history
 """
@@ -20,14 +20,15 @@ import statistics
 import requests
 
 from .config import GAS_HUBS
-from .gas import GAS_HISTORY_PATH, HUB_HISTORY, OPA, OPA_PAGE, parse_hub_rows
-from . import private
+from .gas import GAS_HISTORY_PATH, OPA, OPA_PAGE, parse_hub_rows
 from .raw_store import RawStore
 from .store import read_json_gz
 
-CODES = [GAS_HUBS["hsc"][0], "NATURAL_GAS_HSC_DAY_AHEAD_USD", "NATURAL_GAS_BASIS_HSC_USD"]
-WINDOWS = [("2024-03-01", "2024-03-31"), ("2019-09-01", "2019-09-30")]
-BASIS_CHECK = ("2025-09-02", "2025-10-31")    # stored Ship Channel history overlaps EIA Henry Hub here
+CODES = [GAS_HUBS["hsc"][0]]
+# Ship Channel was extended Oct 31 (2019-07-03 to 2024-05-31, then 2025-09-02 on): the start, the
+# middle, the last month before the gap and a month inside the gap (expected empty)
+WINDOWS = [("2019-07-01", "2019-07-31"), ("2024-03-01", "2024-03-31"), ("2024-05-01", "2024-05-31"),
+           ("2025-01-01", "2025-01-31")]
 
 
 def fetch(store, key, code, start, end):
@@ -37,6 +38,8 @@ def fetch(store, key, code, start, end):
     while True:
         obj = f"raw/oilpriceapi/{code}/{start}_{end}_p{page}.json"
         blob = store.get_object(obj) if store.enabled else None
+        if blob is not None and not _rows(blob):
+            blob = None         # a kept empty answer is refetched: OilPriceAPI adds history later
         if blob is None:
             r = requests.get(OPA, headers={"Authorization": f"Token {key}"}, params={
                 "by_code": code, "start_date": start, "end_date": end, "per_page": OPA_PAGE, "page": page,
@@ -47,13 +50,17 @@ def fetch(store, key, code, start, end):
             blob = r.content
             if store.enabled:
                 store.put_object(obj, blob, "application/json")
-        data = json.loads(blob).get("data") or {}
-        got = data.get("prices", []) if isinstance(data, dict) else data
+        got = _rows(blob)
         rows += got
         if len(got) < OPA_PAGE:
             break
         page += 1
     return {d: v for d, v in parse_hub_rows(rows).items() if start <= d <= end}, calls, None
+
+
+def _rows(blob):
+    data = json.loads(blob).get("data") or {}
+    return data.get("prices", []) if isinstance(data, dict) else data
 
 
 def describe(prices):
@@ -79,21 +86,17 @@ def main() -> int:
             prices, calls, err = fetch(store, key, code, start, end)
             spent += calls
             print(f"| {code} | {start} to {end} | {err or describe(prices)} |")
-    # basis + EIA Henry Hub against the stored Ship Channel prices
-    basis, calls, err = fetch(store, key, CODES[2], *BASIS_CHECK)
-    spent += calls
+    # the new Ship Channel days against EIA Henry Hub: a scale or unit slip would show here
     hh = (read_json_gz(GAS_HISTORY_PATH, default=None) or {}).get("henry_hub") or {}
     hh = dict(zip(hh.get("dates", []), hh.get("value", [])))
-    hsc = (private.read(HUB_HISTORY, default=None) or {}).get("hsc") or {}
-    hsc = dict(zip(hsc.get("dates", []), hsc.get("value", [])))
-    both = [d for d in basis if d in hh and d in hsc]
-    print(f"\nBasis check {BASIS_CHECK[0]} to {BASIS_CHECK[1]}: basis {err or describe(basis)}; ", end="")
-    if both:
-        diff = [abs(hh[d] + basis[d] - hsc[d]) for d in both]
-        print(f"{len(both)} days with Henry Hub and stored Ship Channel; |HH + basis - HSC| "
-              f"median {statistics.median(diff):.3f}, max {max(diff):.3f} $/MMBtu")
-    else:
-        print("no days overlap Henry Hub and the stored Ship Channel history")
+    for start, end in WINDOWS[:3]:
+        hsc, calls, err = fetch(store, key, CODES[0], start, end)
+        spent += calls
+        both = [d for d in hsc if d in hh]
+        if both:
+            near = sum(abs(hsc[d] - hh[d]) <= 1 for d in both)
+            r = statistics.correlation([hsc[d] for d in both], [hh[d] for d in both]) if len(both) > 2 else float("nan")
+            print(f"\n{start[:7]}: {len(both)} days with Henry Hub; within $1 of it on {near}; correlation {r:.2f}")
     print(f"\nOilPriceAPI calls spent this run: {spent} "
           f"({dt.datetime.now(dt.timezone.utc):%Y-%m-%d %H:%M} UTC)")
     return 0
