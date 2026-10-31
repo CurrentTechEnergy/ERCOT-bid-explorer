@@ -10,8 +10,10 @@ copies of the 60-day DAM disclosure in the raw store).  Without those files the 
 leave the status out (zero for every hour).  One input the history lacks:
   gas price             at each unit's own hub (Houston Ship Channel or Waha, as the live model
                         reads it): the live hub series starts Nov 2025; before it, that hub as
-                        far back as OilPriceAPI has it, then Henry Hub from EIA
-                        (data/gas_history.json.gz, pipeline/gas.py)
+                        far back as OilPriceAPI has it; where the hub has no price (before it,
+                        or a gap such as Ship Channel's Jun 2024 to Aug 2025), Henry Hub from EIA
+                        (data/gas_history.json.gz), plus Ship Channel's median basis for the
+                        calendar month (pipeline/gas.py hub_with_basis)
 
 The model itself picks the fit (operator_informed.fit): a month the 60-day fits cover keeps the
 live fit (the history adds nothing to it), and an earlier month gets a reduced fit on the
@@ -25,6 +27,7 @@ import numpy as np
 from .. import private
 from ..config import DATA_DIR, HISTORY_DIR
 from ..forecast import context as grp
+from ..gas import hub_with_basis
 from ..intraday import train_of
 from ..store import read_json_gz
 
@@ -127,17 +130,20 @@ class HistoryContext:
                 st = live_raw[k][1]
                 a[off:off + len(st)] = st
             self._raw[k] = (techs.get(k, live_raw.get(k, ("", None))[0]), a)
-        # gas at each hub: the live series, then its history from OilPriceAPI, then Henry Hub
+        # gas at each hub: its history and live series from OilPriceAPI; Henry Hub where the hub has
+        # no price (before it begins, or a gap over GAP_DAYS), plus the monthly basis for Ship Channel
         live_hubs = (private.read("gas_hubs.json.gz", default={}) or {}).get("hubs", {})
-        gh = read_json_gz(DATA_DIR / "gas_history.json.gz", default={}) or {}
         ph = private.read("gas_hub_history.json.gz", default={}) or {}
+        hh = {}
+        for s in ((read_json_gz(DATA_DIR / "gas_history.json.gz", default={}) or {}).get("henry_hub") or {},
+                  read_json_gz(DATA_DIR / "gas.json.gz", default={}) or {}):
+            hh.update(zip(s.get("dates", []), s.get("value", [])))
         self._oi_gas = {}
         for hub in sorted(set(live_hubs) | {"hsc", "waha"}):
-            gas, first = {}, "9999"
-            for s in (live_hubs.get(hub) or {}, ph.get(hub) or {}, gh.get("henry_hub") or {}):
-                d0 = min(first, (s.get("dates") or ["9999"])[0])
-                gas.update({d: v for d, v in zip(s.get("dates", []), s.get("value", [])) if d < first})
-                first = d0
+            own = {}
+            for s in (ph.get(hub) or {}, live_hubs.get(hub) or {}):
+                own.update(zip(s.get("dates", []), s.get("value", [])))
+            gas, _ = hub_with_basis(own, hh, None if hub == "hsc" else {})
             dates = sorted(gas)
             self._oi_gas[hub] = (dates, [gas[d] for d in dates])
 

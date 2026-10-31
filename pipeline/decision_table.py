@@ -64,6 +64,7 @@ import pandas as pd
 
 from .config import DATA_DIR, GENERIC_COSTS, HISTORY_DIR, UNIT_DATA_DIR
 from .decisions import COST_DAYS, OUT_MIN_H, RANK, _window
+from .gas import monthly_basis
 from .gascost import HEAT_RATE as GAS_HR
 from .intraday import train_of
 
@@ -142,7 +143,8 @@ def gas_by_hub(out: Path) -> dict:
     """{hub: {date: $/MMBtu}} for every day from 2019: the price on the last trading day before
     the day (gas trades the day before it flows), for Henry Hub ("hh", henry_hub) and, where their
     series reach, Houston Ship Channel ("hsc") and Waha ("waha"): the private gas_hub_history and
-    gas_hubs files (pipeline/gas.py, OilPriceAPI).  A price carries at most GAS_TOLERANCE days."""
+    gas_hubs files (pipeline/gas.py, OilPriceAPI).  A price carries at most GAS_TOLERANCE days.
+    "hsc_fill" has Henry Hub plus Ship Channel's monthly median basis on the days "hsc" lacks."""
     from . import private
     series = {"hh": henry_hub(out)}
     hist = private.read("gas_hub_history.json.gz", default=None) or {}
@@ -163,6 +165,9 @@ def gas_by_hub(out: Path) -> dict:
         x = x[~x.index.duplicated(keep="last")]
         lag = x.reindex(days - pd.Timedelta(days=1), method="ffill", tolerance=pd.Timedelta(days=GAS_TOLERANCE))
         out_[k] = {d: float(p) for d, p in zip(keys, lag.to_numpy()) if np.isfinite(p)}
+    if out_.get("hsc"):     # Ship Channel's gaps: Henry Hub plus its median basis that calendar month
+        basis = monthly_basis(out_["hsc"], out_["hh"])
+        out_["hsc_fill"] = {d: v + basis.get(int(d[5:7]), 0.0) for d, v in out_["hh"].items() if d not in out_["hsc"]}
     return out_
 
 
@@ -181,12 +186,16 @@ def hub_of() -> dict:
 def run_cost(tech, train, date, gas, hubs):
     """($/MWh, estimated) of running at minimum on `date`: gas units at GAS_HR x the train's own
     hub price (Houston Ship Channel without one), Henry Hub standing in (estimated) where the hub
-    has no price; coal, and any unit without a gas price, at the generic cost (estimated)."""
+    has no price, plus the monthly basis for Ship Channel (gas_by_hub); coal, and any unit without
+    a gas price, at the generic cost (estimated)."""
     if tech in GAS_HR:
-        p = gas.get(hubs.get(train, "hsc"), {}).get(date)
+        hub = hubs.get(train, "hsc")
+        p = gas.get(hub, {}).get(date)
         if p is not None:
             return GAS_HR[tech] * p, False
-        p = gas.get("hh", {}).get(date)
+        p = gas.get(f"{hub}_fill", {}).get(date)
+        if p is None:
+            p = gas.get("hh", {}).get(date)
         if p is not None:
             return GAS_HR[tech] * p, True
     return float(GENERIC_COSTS[tech][3]), True
