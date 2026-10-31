@@ -15,7 +15,18 @@ AHEAD hours and later in the day, the DAM profit of delivering its award from h 
 from fuel_hubs.json.gz as pipeline/gascost.py reads it)) and that against its hot
 start cost, its DAM resource status at h, whether the costs are its own
 three-part offer, the hour, the season, how long it has been in its current state, and (from on)
-the share of the last three hours it sat at minimum.  Nothing from hour h on is used.
+the share of the last three hours it sat at minimum, and its own recent days at that hour (_habit):
+online at h the day before, the share of the last seven days online at h, and the shares of those
+days it turned on and turned off at h.  Nothing from hour h on is used.
+
+The recent days (v6, Oct 2026) catch the units that cycle on a daily pattern the day-ahead
+market doesn't show, such as ETCCS_CC1, off for the midday solar trough and back on in the
+afternoon on most days with its DAM status OFF.  Day mode, Feb-Aug 2026, CC turn-offs caught
+1,091 -> 1,130 of 1,804 with 465 -> 438 false (cheap hours 425 -> 435 of 564, false 104 -> 97),
+turn-ons 1,030 -> 1,045 of 1,778 with 332 -> 353 false, Brier 0.0230 -> 0.0222; gas steam
+turn-offs 207 -> 230 of 540 with 246 -> 229 false.  Timing inputs (hours to the next profitable
+hour against the unit's usual start lead, the trough against its shortest off spell) did not help;
+a per-unit slope on the 7-day share caught a few more with as many more false.
 
 Costs: the unit's own minimum-energy cost, LSL and hot start from its most recent three-part
 offer within COST_DAYS days (pipeline.decisions), else the technology's generic costs.
@@ -87,7 +98,7 @@ from ..guide import EIA_HR
 from ..store import read_json_gz, write_json_gz
 
 NAME = "operator_informed"
-VERSION = "v5"   # v5: v4 again, with Graham really at Ship Channel (the v4 run read the hubs from before fuel_hub.REFIT); v4: Graham at Houston Ship Channel (fuel_hub.REFIT), and RUC left out of the scores as well as the fits; v3: gas at each unit's own hub (Waha or Houston Ship Channel), not Houston Ship Channel for all; v1: transitions with per-unit intercepts and slopes; v2: the COP only beside the main call, margins at gas cost
+VERSION = "v6"   # v6: the unit's own recent days at each hour (_habit); v5: v4 again, with Graham really at Ship Channel (the v4 run read the hubs from before fuel_hub.REFIT); v4: Graham at Houston Ship Channel (fuel_hub.REFIT), and RUC left out of the scores as well as the fits; v3: gas at each unit's own hub (Waha or Houston Ship Channel), not Houston Ship Channel for all; v1: transitions with per-unit intercepts and slopes; v2: the COP only beside the main call, margins at gas cost
 TECHS = ("combined_cycle", "gas_steam")
 AHEAD = 6            # hours of award looked at ahead of h
 MIN_AWARD = 1.1      # an award at most this x LSL counts as holding at minimum (day mode)
@@ -108,11 +119,14 @@ FEATURES = ("margin", "loss ahead", "loss ahead against its start cost", "profit
             "own offer", "overnight", "hours in its state", "short run", "hours at minimum",
             "spring", "summer", "autumn", "award profit ahead", "award profit against its start cost",
             "COP plan on", "COP plan on ahead", "COP plan known",
-            "margin at gas cost", "loss ahead at gas cost", "profit ahead at gas cost")
+            "margin at gas cost", "loss ahead at gas cost", "profit ahead at gas cost",
+            "on this hour yesterday", "on this hour, last 7 days", "turned on this hour, last 7 days",
+            "turned off this hour, last 7 days")
+HABIT = 25           # first of the four recent-days columns (_habit)
 DRIVERS = [("price against its cost", (0, 1, 3, 4, 22, 23, 24)), ("loss against its start cost", (2,)),
            ("DAM award", (5, 6, 7, 17, 18)), ("DAM status", (8,)), ("time in its state", (11, 12)),
            ("sitting at minimum", (13,)), ("hour and season", (10, 14, 15, 16)),
-           ("its own COP plan", (19, 20, 21))]
+           ("its own COP plan", (19, 20, 21)), ("its recent days", (25, 26, 27, 28))]
 HEAT_RATE = {"combined_cycle": EIA_HR["combined_cycle"], "gas_steam": 10.4}   # MMBtu/MWh; gas steam: EIA Electric Power Annual table 8.2, approximate
 SEASON = {12: 0, 1: 0, 2: 0, 3: 1, 4: 1, 5: 1, 6: 2, 7: 2, 8: 2, 9: 3, 10: 3, 11: 3}
 
@@ -212,13 +226,33 @@ def _cop(ctx, d, dd):
     return out
 
 
+def _habit(st, k0):
+    """[24, 4] the unit's own recent days at each hour of the day starting at hour index k0, all
+    from the days before: online at h the day before (0.5 when unknown), the share of the last 7
+    days online at h (0.5 with none), and of those days the shares it turned on and turned off at h."""
+    H = np.zeros((24, 4))
+    for h in range(24):
+        k, ons, son, soff = k0 + h, [], [], []
+        for n in range(1, 8):
+            j = k - 24 * n
+            if j < 1 or j >= len(st) or st[j] not in "ma0" or st[j - 1] not in "ma0":
+                continue
+            a, b = _on(st[j - 1]), _on(st[j])
+            ons.append(b)
+            (son if not a else soff).append(a != b)
+        y = k - 24
+        H[h] = [float(_on(st[y])) if 1 <= y < len(st) and st[y] in "ma0" else 0.5,
+                np.mean(ons) if ons else 0.5, np.mean(son) if son else 0.0, np.mean(soff) if soff else 0.0]
+    return H
+
+
 def _days(ctx):
     """{date: {train: day record}} for every 60-day day with a DAM file: price, costs, award,
     status.  Costs carried forward as pipeline.decisions does."""
     cache = ctx.__dict__.setdefault("_oi_days", {})
     if cache:
         return cache
-    carried = {}
+    carried, states, day0 = {}, _states(ctx), ctx.stats["day0"]
     for i, d in enumerate(ctx.uh.get("dates", [])):
         dd = ctx.dam(d)
         if not dd:
@@ -243,7 +277,8 @@ def _days(ctx):
             rec[key] = dict(tech=e["tech"], spp=np.nan_to_num(e["spp"], nan=mingen), lsl=e["lsl"],
                             mingen=mingen, hot=hot, own=own, aw=e["aw"] >= AWARD_LSL * e["lsl"], aw_mw=e["aw"], fuel=fuel,
                             awmin=e["aw"] <= MIN_AWARD * e["lsl"], status=stat.get(key, np.ones(24)),
-                            cop=cop.get(key, (np.full(24, 0.5), np.full(24, 0.5), np.zeros(24))))
+                            cop=cop.get(key, (np.full(24, 0.5), np.full(24, 0.5), np.zeros(24))),
+                            habit=_habit(states[key][1], (C._d(d) - day0).days * 24) if key in states else np.tile([0.5, 0.5, 0.0, 0.0], (24, 1)))
         cache[d] = rec
     return cache
 
@@ -285,6 +320,7 @@ def _static(r, month, plan="none"):
     X[:, 22] = np.clip(g / 50.0, -4, 4)
     X[:, 23] = np.log1p(gl / 1000.0)
     X[:, 24] = np.log1p(gg / 1000.0)
+    X[:, HABIT:HABIT + 4] = r["habit"]
     if plan != "none":
         da, lv, known = r["cop"]
         X[:, 19] = lv if plan == "live" else da

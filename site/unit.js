@@ -215,7 +215,7 @@ const oiDays = () => (S.OI ? [...(S.OI.history_days || []), ...S.OI.days] : []);
 const loadOI = (d) => { if (!S.OI || !oiDays().includes(d)) return null; if (!oiCache.has(d)) oiCache.set(d, tryJSON(`data/operator/${d}.json.gz`)); return oiCache.get(d); };
 const OI_DRIVER = { "price against its cost": "the day-ahead price against its cost", "loss against its start cost": "the loss of running on against its start cost",
   "DAM award": "its day-ahead award", "DAM status": "its day-ahead resource status", "time in its state": "how long it had been in its state",
-  "sitting at minimum": "sitting at minimum output", "hour and season": "the hour and season", "its own habit": "its own habit" };
+  "sitting at minimum": "sitting at minimum output", "hour and season": "the hour and season", "its recent days": "what it did at this hour on recent days", "its own habit": "its own habit" };
 const START_WORD = { on: "online", off: "offline", out: "on outage", unknown: "of unknown state" };
 function oiNote(e, day, o) {
   if (!o) return "";
@@ -556,7 +556,7 @@ function drawDecisionsOI(e, pts, x, w, shape) {
     .attr("fill", (p) => css(p.shut ? "--surface" : "--ink")).attr("stroke", css("--ink")).attr("stroke-width", 1.5);   // filled stayed on, hollow shut down (as site-wide)
   const RW = { "price against its cost": "price against its cost", "DAM award": "day-ahead award", "DAM status": "day-ahead resource status",
     "time in its state": "time in its state", "sitting at minimum": "sitting at minimum", "hour and season": "hour and season",
-    "loss against its start cost": "loss against its start cost", "its own habit": "its own habit" };
+    "loss against its start cost": "loss against its start cost", "its recent days": "its recent days", "its own habit": "its own habit" };
   svg.append("rect").attr("x", m.l).attr("y", m.t).attr("width", w - m.l - m.r).attr("height", H - m.t - m.b).attr("fill", "transparent")
     .on("pointermove", (ev) => {
       const [px, py] = d3.pointer(ev);
