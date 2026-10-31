@@ -3,7 +3,21 @@
   <title>BOSQUESW_CC1: bidding and operating changes</title>
   <link href="https://ercotbids.currenttech.energy/unit.html?unit=BOSQUESW_CC1"/>
   <id>https://ercotbids.currenttech.energy/unit.html?unit=BOSQUESW_CC1</id>
-  <updated>2026-10-30T00:00:00Z</updated>
+  <updated>2026-10-31T00:00:00Z</updated>
+  <entry>
+    <title>BOSQUESW_CC1: Turn-off point moved (2026-08-01)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=BOSQUESW_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=BOSQUESW_CC1#BOSQUESW_CC1/2026-08-01/turnoff/2</id>
+    <updated>2026-10-31T00:00:00Z</updated>
+    <summary>Turn-off point with an award every hour riding through to $4,416 per MW of minimum output in August</summary>
+  </entry>
+  <entry>
+    <title>BOSQUESW_CC1: Turn-off point moved (2026-07-01)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=BOSQUESW_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=BOSQUESW_CC1#BOSQUESW_CC1/2026-07-01/turnoff/2</id>
+    <updated>2026-10-31T00:00:00Z</updated>
+    <summary>Turn-off point with an award every hour $4,533 to riding through per MW of minimum output in July; the next month went back</summary>
+  </entry>
   <entry>
     <title>BOSQUESW_CC1: Timescale group changed (2026-07-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=BOSQUESW_CC1"/>
@@ -17,6 +31,13 @@
     <id>https://ercotbids.currenttech.energy/unit.html?unit=BOSQUESW_CC1#BOSQUESW_CC1/2026-06-17/dam_mingen_step</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Minimum-energy offer stepped: $23 to $0/MWh ($3 to -$20 against the fuel-cost line)</summary>
+  </entry>
+  <entry>
+    <title>BOSQUESW_CC1: Turn-off point moved (2026-06-01)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=BOSQUESW_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=BOSQUESW_CC1#BOSQUESW_CC1/2026-06-01/turnoff/2</id>
+    <updated>2026-10-31T00:00:00Z</updated>
+    <summary>Turn-off point with an award every hour riding through to $4,533 per MW of minimum output in June; the next month went back</summary>
   </entry>
   <entry>
     <title>BOSQUESW_CC1: Timescale group changed (2026-06-01)</title>
@@ -35,16 +56,9 @@
   <entry>
     <title>BOSQUESW_CC1: Turn-off point moved (2026-05-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=BOSQUESW_CC1"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=BOSQUESW_CC1#BOSQUESW_CC1/2026-05-01/turnoff/1</id>
-    <updated>2026-10-30T00:00:00Z</updated>
-    <summary>Turn-off point with an award some hours -$48 to $2 per MW of minimum output in May</summary>
-  </entry>
-  <entry>
-    <title>BOSQUESW_CC1: Turn-off point moved (2026-05-01)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=BOSQUESW_CC1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=BOSQUESW_CC1#BOSQUESW_CC1/2026-05-01/turnoff/2</id>
     <updated>2026-10-30T00:00:00Z</updated>
-    <summary>Turn-off point with an award every hour $3,359 to $5,979 per MW of minimum output in May; the next month went back</summary>
+    <summary>Turn-off point with an award every hour $4,446 to riding through per MW of minimum output in May; the next month went back</summary>
   </entry>
   <entry>
     <title>BOSQUESW_CC1: Start-up cost changed (2026-04-10)</title>

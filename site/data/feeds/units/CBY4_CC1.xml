@@ -3,13 +3,20 @@
   <title>CBY4_CC1: bidding and operating changes</title>
   <link href="https://ercotbids.currenttech.energy/unit.html?unit=CBY4_CC1"/>
   <id>https://ercotbids.currenttech.energy/unit.html?unit=CBY4_CC1</id>
-  <updated>2026-10-29T00:00:00Z</updated>
+  <updated>2026-10-31T00:00:00Z</updated>
+  <entry>
+    <title>CBY4_CC1: Turn-off point moved (2026-08-01)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=CBY4_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=CBY4_CC1#CBY4_CC1/2026-08-01/turnoff/0</id>
+    <updated>2026-10-31T00:00:00Z</updated>
+    <summary>Turn-off point without an award $249 to $406 per MW of minimum output in August</summary>
+  </entry>
   <entry>
     <title>CBY4_CC1: Turn-off point moved (2026-07-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=CBY4_CC1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=CBY4_CC1#CBY4_CC1/2026-07-01/turnoff/0</id>
     <updated>2026-10-29T00:00:00Z</updated>
-    <summary>Turn-off point without an award $119 to $219 per MW of minimum output in July; the next month held it</summary>
+    <summary>Turn-off point without an award $119 to $249 per MW of minimum output in July; the next month held it</summary>
   </entry>
   <entry>
     <title>CBY4_CC1: Stopped three-part offers (2026-06-20)</title>
@@ -38,6 +45,13 @@
     <id>https://ercotbids.currenttech.energy/unit.html?unit=CBY4_CC1#CBY4_CC1/2026-04-12/dam_mingen_step</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Minimum-energy offer stepped: $28 to $22/MWh ($11 to $5 against the fuel-cost line)</summary>
+  </entry>
+  <entry>
+    <title>CBY4_CC1: Turn-off point moved (2026-04-01)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=CBY4_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=CBY4_CC1#CBY4_CC1/2026-04-01/turnoff/1</id>
+    <updated>2026-10-31T00:00:00Z</updated>
+    <summary>Turn-off point with an award some hours -$4 to $55 per MW of minimum output in April; the next month held it</summary>
   </entry>
   <entry>
     <title>CBY4_CC1: Outage ended (2026-04-01)</title>

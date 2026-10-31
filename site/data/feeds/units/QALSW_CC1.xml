@@ -3,7 +3,14 @@
   <title>QALSW_CC1: bidding and operating changes</title>
   <link href="https://ercotbids.currenttech.energy/unit.html?unit=QALSW_CC1"/>
   <id>https://ercotbids.currenttech.energy/unit.html?unit=QALSW_CC1</id>
-  <updated>2026-10-30T00:00:00Z</updated>
+  <updated>2026-10-31T00:00:00Z</updated>
+  <entry>
+    <title>QALSW_CC1: Turn-off point moved (2026-08-01)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=QALSW_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=QALSW_CC1#QALSW_CC1/2026-08-01/turnoff/1</id>
+    <updated>2026-10-31T00:00:00Z</updated>
+    <summary>Turn-off point with an award some hours $2,316 to $1,140 per MW of minimum output in August</summary>
+  </entry>
   <entry>
     <title>QALSW_CC1: Shut down despite a day-ahead award (2026-07-31)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=QALSW_CC1"/>
@@ -72,7 +79,7 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=QALSW_CC1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=QALSW_CC1#QALSW_CC1/2026-04-01/turnoff/0</id>
     <updated>2026-10-30T00:00:00Z</updated>
-    <summary>Turn-off point without an award $564 to $877 per MW of minimum output in April; the next month went back</summary>
+    <summary>Turn-off point without an award $571 to $877 per MW of minimum output in April; the next month went back</summary>
   </entry>
   <entry>
     <title>QALSW_CC1: Outage ended (2026-03-30)</title>

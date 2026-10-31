@@ -3,7 +3,7 @@
   <title>SCSES_UNIT2: bidding and operating changes</title>
   <link href="https://ercotbids.currenttech.energy/unit.html?unit=SCSES_UNIT2"/>
   <id>https://ercotbids.currenttech.energy/unit.html?unit=SCSES_UNIT2</id>
-  <updated>2026-10-27T00:00:00Z</updated>
+  <updated>2026-10-31T00:00:00Z</updated>
   <entry>
     <title>SCSES_UNIT2: Bidding approach shifted (2026-08-22)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=SCSES_UNIT2"/>
@@ -30,7 +30,7 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=SCSES_UNIT2"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=SCSES_UNIT2#SCSES_UNIT2/2026-08-01/turnoff/0</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Turn-off point without an award $177 to $378 per MW of minimum output in August</summary>
+    <summary>Turn-off point without an award $173 to $378 per MW of minimum output in August</summary>
   </entry>
   <entry>
     <title>SCSES_UNIT2: Timescale group changed (2026-08-01)</title>
@@ -52,6 +52,13 @@
     <id>https://ercotbids.currenttech.energy/unit.html?unit=SCSES_UNIT2#SCSES_UNIT2/2026-07-03/bidding</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Offer price vs peer median: $134 to $46/MWh</summary>
+  </entry>
+  <entry>
+    <title>SCSES_UNIT2: Turn-off point moved (2026-07-01)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=SCSES_UNIT2"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=SCSES_UNIT2#SCSES_UNIT2/2026-07-01/turnoff/0</id>
+    <updated>2026-10-31T00:00:00Z</updated>
+    <summary>Turn-off point without an award $111 to $173 per MW of minimum output in July; the next month held it</summary>
   </entry>
   <entry>
     <title>SCSES_UNIT2: Timescale group changed (2026-07-01)</title>

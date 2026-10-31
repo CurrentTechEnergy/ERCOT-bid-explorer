@@ -3,7 +3,7 @@
   <title>LGE_CC1: bidding and operating changes</title>
   <link href="https://ercotbids.currenttech.energy/unit.html?unit=LGE_CC1"/>
   <id>https://ercotbids.currenttech.energy/unit.html?unit=LGE_CC1</id>
-  <updated>2026-10-30T00:00:00Z</updated>
+  <updated>2026-10-31T00:00:00Z</updated>
   <entry>
     <title>LGE_CC1: Minimum-energy offer stepped (2026-08-16)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=LGE_CC1"/>
@@ -61,6 +61,13 @@
     <summary>Scheduled by GUIDEPOST ENERGY LLC (SQ3), was CALPINE POWER MANAGEMENT LLC (SQ1)</summary>
   </entry>
   <entry>
+    <title>LGE_CC1: Turn-off point moved (2026-04-01)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=LGE_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=LGE_CC1#LGE_CC1/2026-04-01/turnoff/1</id>
+    <updated>2026-10-31T00:00:00Z</updated>
+    <summary>Turn-off point with an award some hours -$43 to -$95 per MW of minimum output in April</summary>
+  </entry>
+  <entry>
     <title>LGE_CC1: Outage ended (2026-03-18)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=LGE_CC1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=LGE_CC1#LGE_CC1/2026-03-18/outage_end</id>
@@ -93,7 +100,7 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=LGE_CC1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=LGE_CC1#LGE_CC1/2026-03-01/turnoff/1</id>
     <updated>2026-10-30T00:00:00Z</updated>
-    <summary>Turn-off point with an award some hours -$100 to -$45 per MW of minimum output in March; the next month went back</summary>
+    <summary>Turn-off point with an award some hours -$106 to -$43 per MW of minimum output in March; the next month went back</summary>
   </entry>
   <entry>
     <title>LGE_CC1: Outage started (2026-02-28)</title>
