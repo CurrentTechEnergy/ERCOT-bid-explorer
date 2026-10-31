@@ -3,7 +3,14 @@
   <title>ERCOT bid explorer: unit changes</title>
   <link href="https://ercotbids.currenttech.energy/"/>
   <id>https://ercotbids.currenttech.energy/</id>
-  <updated>2026-10-30T00:00:00Z</updated>
+  <updated>2026-10-31T00:00:00Z</updated>
+  <entry>
+    <title>GUNR_BES_ESR1: New battery (2026-09-01)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=GUNR_BES_ESR1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=GUNR_BES_ESR1#GUNR_BES_ESR1/2026-09-01/battery_new</id>
+    <updated>2026-10-31T00:00:00Z</updated>
+    <summary>First day charging or discharging: 150 MW</summary>
+  </entry>
   <entry>
     <title>BIRD_BES_ESR1: New battery (2026-08-31)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=BIRD_BES_ESR1"/>
@@ -58,7 +65,7 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=AEEC_ELK_2"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=AEEC_ELK_2#AEEC_ELK_2/2026-08-28/shutdown_new</id>
     <updated>2026-10-28T00:00:00Z</updated>
-    <summary>Shut down for 75 h after 108 days without a shutdown</summary>
+    <summary>Shut down for 99 h after 108 days without a shutdown</summary>
   </entry>
   <entry>
     <title>TOPAZ_UNIT7: Shut down despite a day-ahead award (2026-08-27)</title>
@@ -87,6 +94,20 @@
     <id>https://ercotbids.currenttech.energy/unit.html?unit=AEEC_ELK_2#AEEC_ELK_2/2026-08-27/outage_end</id>
     <updated>2026-10-26T00:00:00Z</updated>
     <summary>Back from a 107-day outage</summary>
+  </entry>
+  <entry>
+    <title>BAC_CTG4: Bidding approach shifted (2026-08-26)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=BAC_CTG4"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=BAC_CTG4#BAC_CTG4/2026-08-26/bidding</id>
+    <updated>2026-10-31T00:00:00Z</updated>
+    <summary>Offer price vs peer median: -$23 to $32/MWh</summary>
+  </entry>
+  <entry>
+    <title>SCSES_UNIT1A: Bidding approach shifted (2026-08-25)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=SCSES_UNIT1A"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=SCSES_UNIT1A#SCSES_UNIT1A/2026-08-25/bidding</id>
+    <updated>2026-10-31T00:00:00Z</updated>
+    <summary>Offer price vs peer median: $73 to $35/MWh</summary>
   </entry>
   <entry>
     <title>BAC_CTG5: Bidding approach shifted (2026-08-25)</title>
@@ -152,10 +173,10 @@
     <summary>Running without an offer curve: 0% to 100% of the day</summary>
   </entry>
   <entry>
-    <title>BAC_CTG4: Bidding approach shifted (2026-08-20)</title>
+    <title>BAC_CTG4: Bidding approach shifted (2026-08-19)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=BAC_CTG4"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=BAC_CTG4#BAC_CTG4/2026-08-20/bidding</id>
-    <updated>2026-10-25T00:00:00Z</updated>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=BAC_CTG4#BAC_CTG4/2026-08-19/bidding</id>
+    <updated>2026-10-31T00:00:00Z</updated>
     <summary>Offer price vs peer median: $32 to -$23/MWh</summary>
   </entry>
   <entry>
@@ -1052,7 +1073,7 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=STEAM1A_STEAM_1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=STEAM1A_STEAM_1#STEAM1A_STEAM_1/2026-07-31/outage_start</id>
     <updated>2026-10-23T00:00:00Z</updated>
-    <summary>Outage began, still on at the end of the data (31 days so far)</summary>
+    <summary>Outage began, still on at the end of the data (32 days so far)</summary>
   </entry>
   <entry>
     <title>STEAM1A_STEAM_1: Outage ended (2026-07-31)</title>
@@ -1139,6 +1160,20 @@
     <summary>Running without an offer curve: 0% to 100% of the day</summary>
   </entry>
   <entry>
+    <title>MYR_ESR2: Battery size changed (2026-07-27)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=MYR_ESR2"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=MYR_ESR2#MYR_ESR2/2026-07-27/battery_size</id>
+    <updated>2026-10-31T00:00:00Z</updated>
+    <summary>Maximum output 46 to 73 MW; Maximum state of charge 58 to 104 MWh</summary>
+  </entry>
+  <entry>
+    <title>KEG_ESR1: Battery size changed (2026-07-27)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=KEG_ESR1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=KEG_ESR1#KEG_ESR1/2026-07-27/battery_size</id>
+    <updated>2026-10-31T00:00:00Z</updated>
+    <summary>Maximum output 18 to 155 MW</summary>
+  </entry>
+  <entry>
     <title>CORALSLR: Formula on (2026-07-27)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=CORALSLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=CORALSLR#CORALSLR/2026-07-27/renew_formula_on</id>
@@ -1160,25 +1195,11 @@
     <summary>Offer price vs peer median: $34 to $71/MWh</summary>
   </entry>
   <entry>
-    <title>MYR_ESR2: Battery size changed (2026-07-26)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=MYR_ESR2"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=MYR_ESR2#MYR_ESR2/2026-07-26/battery_size</id>
-    <updated>2026-10-30T00:00:00Z</updated>
-    <summary>Maximum output 46 to 73 MW; Maximum state of charge 58 to 104 MWh</summary>
-  </entry>
-  <entry>
     <title>LEON_CRK_LCPCT2: Outage ended (2026-07-26)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=LEON_CRK_LCPCT2"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=LEON_CRK_LCPCT2#LEON_CRK_LCPCT2/2026-07-26/outage_end</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Back from a 135-day outage</summary>
-  </entry>
-  <entry>
-    <title>KEG_ESR1: Battery size changed (2026-07-26)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=KEG_ESR1"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=KEG_ESR1#KEG_ESR1/2026-07-26/battery_size</id>
-    <updated>2026-10-30T00:00:00Z</updated>
-    <summary>Maximum output 18 to 145 MW</summary>
   </entry>
   <entry>
     <title>CITYVICT_CTG02: Bidding approach shifted (2026-07-25)</title>
@@ -1213,7 +1234,7 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=STEAM_ENGINE_3"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=STEAM_ENGINE_3#STEAM_ENGINE_3/2026-07-23/outage_start</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Outage began, still on at the end of the data (39 days so far)</summary>
+    <summary>Outage began, still on at the end of the data (40 days so far)</summary>
   </entry>
   <entry>
     <title>SANMIGL_G1: Bidding approach shifted (2026-07-23)</title>
@@ -1262,7 +1283,7 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=WAP_WAP_G6"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=WAP_WAP_G6#WAP_WAP_G6/2026-07-22/outage_start</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Outage began, still on at the end of the data (40 days so far)</summary>
+    <summary>Outage began, still on at the end of the data (41 days so far)</summary>
   </entry>
   <entry>
     <title>VICTPRT2_UNIT2: Shut down after a long run (2026-07-22)</title>
@@ -1382,26 +1403,5 @@
     <id>https://ercotbids.currenttech.energy/unit.html?unit=PB2SES_CT1#PB2SES_CT1/2026-07-21/bidding</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Offer price vs peer median: -$13 to $17/MWh</summary>
-  </entry>
-  <entry>
-    <title>OLINGR_OLING_4: Bidding approach shifted (2026-07-21)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=OLINGR_OLING_4"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=OLINGR_OLING_4#OLINGR_OLING_4/2026-07-21/bidding</id>
-    <updated>2026-10-20T00:00:00Z</updated>
-    <summary>Offer price vs peer median: $65 to $39/MWh</summary>
-  </entry>
-  <entry>
-    <title>CALAVERS_JKS2: Bidding approach shifted (2026-07-21)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=CALAVERS_JKS2"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=CALAVERS_JKS2#CALAVERS_JKS2/2026-07-21/bidding</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Running without an offer curve: 60% to 0% of the day</summary>
-  </entry>
-  <entry>
-    <title>BAC_CTG6: Bidding approach shifted (2026-07-21)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=BAC_CTG6"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=BAC_CTG6#BAC_CTG6/2026-07-21/bidding</id>
-    <updated>2026-10-20T00:00:00Z</updated>
-    <summary>Offer price vs peer median: $62 to -$24/MWh</summary>
   </entry>
 </feed>

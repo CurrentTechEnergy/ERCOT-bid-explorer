@@ -1,5 +1,5 @@
 {
- "checked": "2026-10-31T12:14:43Z",
+ "checked": "2026-10-31T15:24:42Z",
  "today": "2026-10-31",
  "sources": {
   "2d": {
@@ -32,8 +32,8 @@
   },
   "60d": {
    "label": "60-day SCED disclosure",
-   "latest": "2026-08-31",
-   "behind": 61,
+   "latest": "2026-09-01",
+   "behind": 60,
    "allowed": 63,
    "stale": false
   },
@@ -46,8 +46,8 @@
   },
   "storage": {
    "label": "60-day storage",
-   "latest": "2026-08-31",
-   "behind": 61,
+   "latest": "2026-09-01",
+   "behind": 60,
    "allowed": 63,
    "stale": false
   },

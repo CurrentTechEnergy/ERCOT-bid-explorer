@@ -3,7 +3,14 @@
   <title>CANYONWD_UNIT1: bidding and operating changes</title>
   <link href="https://ercotbids.currenttech.energy/unit.html?unit=CANYONWD_UNIT1"/>
   <id>https://ercotbids.currenttech.energy/unit.html?unit=CANYONWD_UNIT1</id>
-  <updated>2026-10-18T00:00:00Z</updated>
+  <updated>2026-10-31T00:00:00Z</updated>
+  <entry>
+    <title>CANYONWD: Stopped moving within the day (2026-08-26)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=CANYONWD"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=CANYONWD#CANYONWD/2026-08-26/renew_moving_off</id>
+    <updated>2026-10-31T00:00:00Z</updated>
+    <summary>Stopped moving within the day: v to floor -$42</summary>
+  </entry>
   <entry>
     <title>CANYONWD: Started moving within the day (2025-08-14)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=CANYONWD"/>

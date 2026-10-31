@@ -3,7 +3,14 @@
   <title>BUZI_SLR_UNIT3: bidding and operating changes</title>
   <link href="https://ercotbids.currenttech.energy/unit.html?unit=BUZI_SLR_UNIT3"/>
   <id>https://ercotbids.currenttech.energy/unit.html?unit=BUZI_SLR_UNIT3</id>
-  <updated>2026-10-18T00:00:00Z</updated>
+  <updated>2026-10-31T00:00:00Z</updated>
+  <entry>
+    <title>BUZI_SLR: Stopped moving within the day (2026-08-26)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=BUZI_SLR"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=BUZI_SLR#BUZI_SLR/2026-08-26/renew_moving_off</id>
+    <updated>2026-10-31T00:00:00Z</updated>
+    <summary>Stopped moving within the day: v to floor $0</summary>
+  </entry>
   <entry>
     <title>BUZI_SLR: Started moving within the day (2026-01-28)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=BUZI_SLR"/>

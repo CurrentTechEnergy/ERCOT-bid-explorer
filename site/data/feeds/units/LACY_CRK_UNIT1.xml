@@ -3,7 +3,14 @@
   <title>LACY_CRK_UNIT1: bidding and operating changes</title>
   <link href="https://ercotbids.currenttech.energy/unit.html?unit=LACY_CRK_UNIT1"/>
   <id>https://ercotbids.currenttech.energy/unit.html?unit=LACY_CRK_UNIT1</id>
-  <updated>2026-10-24T00:00:00Z</updated>
+  <updated>2026-10-30T00:00:00Z</updated>
+  <entry>
+    <title>LACY_CRK: Stopped moving within the day (2026-08-26)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=LACY_CRK"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=LACY_CRK#LACY_CRK/2026-08-26/renew_moving_off</id>
+    <updated>2026-10-30T00:00:00Z</updated>
+    <summary>Stopped moving within the day: v to floor -$38</summary>
+  </entry>
   <entry>
     <title>LACY_CRK: Started moving within the day (2026-06-07)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=LACY_CRK"/>

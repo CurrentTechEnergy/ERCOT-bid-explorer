@@ -3,7 +3,14 @@
   <title>ECEC_G1: bidding and operating changes</title>
   <link href="https://ercotbids.currenttech.energy/unit.html?unit=ECEC_G1"/>
   <id>https://ercotbids.currenttech.energy/unit.html?unit=ECEC_G1</id>
-  <updated>2026-10-24T00:00:00Z</updated>
+  <updated>2026-10-31T00:00:00Z</updated>
+  <entry>
+    <title>ECEC_G1: Bidding approach shifted (2026-08-26)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=ECEC_G1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=ECEC_G1#ECEC_G1/2026-08-26/bidding</id>
+    <updated>2026-10-31T00:00:00Z</updated>
+    <summary>Offer price vs peer median: $12 to $2/MWh</summary>
+  </entry>
   <entry>
     <title>ECEC: Minimum-energy offer stepped (2026-08-14)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=ECEC"/>
