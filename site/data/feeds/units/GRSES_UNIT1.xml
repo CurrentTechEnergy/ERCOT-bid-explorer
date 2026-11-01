@@ -3,7 +3,14 @@
   <title>GRSES_UNIT1: bidding and operating changes</title>
   <link href="https://ercotbids.currenttech.energy/unit.html?unit=GRSES_UNIT1"/>
   <id>https://ercotbids.currenttech.energy/unit.html?unit=GRSES_UNIT1</id>
-  <updated>2026-10-31T00:00:00Z</updated>
+  <updated>2026-11-01T00:00:00Z</updated>
+  <entry>
+    <title>GRSES_UNIT1: Bidding approach shifted (2026-08-24)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=GRSES_UNIT1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=GRSES_UNIT1#GRSES_UNIT1/2026-08-24/bidding</id>
+    <updated>2026-11-01T00:00:00Z</updated>
+    <summary>Offer price vs peer median: -$18 to $12/MWh</summary>
+  </entry>
   <entry>
     <title>GRSES_UNIT1: Bidding approach shifted (2026-08-17)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=GRSES_UNIT1"/>

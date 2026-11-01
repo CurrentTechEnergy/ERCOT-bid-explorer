@@ -3,7 +3,14 @@
   <title>DIVR_SLR_SOLAR1: bidding and operating changes</title>
   <link href="https://ercotbids.currenttech.energy/unit.html?unit=DIVR_SLR_SOLAR1"/>
   <id>https://ercotbids.currenttech.energy/unit.html?unit=DIVR_SLR_SOLAR1</id>
-  <updated>2026-10-18T00:00:00Z</updated>
+  <updated>2026-11-01T00:00:00Z</updated>
+  <entry>
+    <title>DIVR_SLR: Stopped moving within the day (2026-08-28)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=DIVR_SLR"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=DIVR_SLR#DIVR_SLR/2026-08-28/renew_moving_off</id>
+    <updated>2026-11-01T00:00:00Z</updated>
+    <summary>Stopped moving within the day: v to floor $0</summary>
+  </entry>
   <entry>
     <title>DIVR_SLR: Started moving within the day (2026-01-15)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=DIVR_SLR"/>

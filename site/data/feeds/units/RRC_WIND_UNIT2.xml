@@ -3,7 +3,14 @@
   <title>RRC_WIND_UNIT2: bidding and operating changes</title>
   <link href="https://ercotbids.currenttech.energy/unit.html?unit=RRC_WIND_UNIT2"/>
   <id>https://ercotbids.currenttech.energy/unit.html?unit=RRC_WIND_UNIT2</id>
-  <updated>2026-10-18T00:00:00Z</updated>
+  <updated>2026-11-01T00:00:00Z</updated>
+  <entry>
+    <title>RRC_WIND: Stopped moving within the day (2026-08-28)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=RRC_WIND"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=RRC_WIND#RRC_WIND/2026-08-28/renew_moving_off</id>
+    <updated>2026-11-01T00:00:00Z</updated>
+    <summary>Stopped moving within the day: v to floor -$44</summary>
+  </entry>
   <entry>
     <title>RRC_WIND: Started moving within the day (2025-09-25)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=RRC_WIND"/>

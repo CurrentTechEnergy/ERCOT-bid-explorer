@@ -3,7 +3,14 @@
   <title>INRT_W_UNIT3: bidding and operating changes</title>
   <link href="https://ercotbids.currenttech.energy/unit.html?unit=INRT_W_UNIT3"/>
   <id>https://ercotbids.currenttech.energy/unit.html?unit=INRT_W_UNIT3</id>
-  <updated>2026-10-18T00:00:00Z</updated>
+  <updated>2026-11-01T00:00:00Z</updated>
+  <entry>
+    <title>INRT_W: Stopped moving within the day (2026-08-28)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=INRT_W"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=INRT_W#INRT_W/2026-08-28/renew_moving_off</id>
+    <updated>2026-11-01T00:00:00Z</updated>
+    <summary>Stopped moving within the day: v to floor -$38</summary>
+  </entry>
   <entry>
     <title>INRT_W: Started moving within the day (2025-08-26)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=INRT_W"/>

@@ -3,7 +3,14 @@
   <title>TORR_UNIT2: bidding and operating changes</title>
   <link href="https://ercotbids.currenttech.energy/unit.html?unit=TORR_UNIT2"/>
   <id>https://ercotbids.currenttech.energy/unit.html?unit=TORR_UNIT2</id>
-  <updated>2026-10-18T00:00:00Z</updated>
+  <updated>2026-11-01T00:00:00Z</updated>
+  <entry>
+    <title>TORR_UNIT2: Stopped moving within the day (2026-08-28)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=TORR_UNIT2"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=TORR_UNIT2#TORR_UNIT2/2026-08-28/renew_moving_off</id>
+    <updated>2026-11-01T00:00:00Z</updated>
+    <summary>Stopped moving within the day: v to floor -$40</summary>
+  </entry>
   <entry>
     <title>TORR_UNIT2: Started moving within the day (2026-02-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=TORR_UNIT2"/>

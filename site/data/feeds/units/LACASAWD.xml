@@ -3,7 +3,14 @@
   <title>LACASAWD: bidding and operating changes</title>
   <link href="https://ercotbids.currenttech.energy/unit.html?unit=LACASAWD"/>
   <id>https://ercotbids.currenttech.energy/unit.html?unit=LACASAWD</id>
-  <updated>2026-10-18T00:00:00Z</updated>
+  <updated>2026-11-01T00:00:00Z</updated>
+  <entry>
+    <title>LACASAWD: Stopped moving within the day (2026-08-28)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=LACASAWD"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=LACASAWD#LACASAWD/2026-08-28/renew_moving_off</id>
+    <updated>2026-11-01T00:00:00Z</updated>
+    <summary>Stopped moving within the day: v to floor -$46</summary>
+  </entry>
   <entry>
     <title>LACASAWD: Started moving within the day (2026-03-10)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=LACASAWD"/>
