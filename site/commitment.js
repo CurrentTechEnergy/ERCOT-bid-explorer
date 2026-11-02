@@ -1,9 +1,8 @@
 /* Commitment: which thermal units stay on when power is cheap, and why (site layout plan section
    2.2). One day of the 60-day data: the turn-off points by unit, the groups with their cutoffs, and what each
    unit online going in did, from data/decisions.json.gz. Across days: who turns off for cheap
-   stretches with the inflexibility tracker, capacity by state, floor-priced MW, thermal output in
-   cheap hours and the leanest thermal hours, lifted from trends.js (data/trends_60d.json.gz,
-   trends_hourly_60d.json.gz, intraday_60d.json.gz, unit_hours_60d.json.gz, groups_60d.json.gz,
+   stretches with the inflexibility tracker, capacity by state, thermal output in cheap hours and
+   the leanest thermal hours, lifted from trends.js (data/trends_60d.json.gz, intraday_60d.json.gz, unit_hours_60d.json.gz, groups_60d.json.gz,
    hourly_context_60d.json.gz, decisions.json.gz); what the decision cost (data/stayon_60d.json.gz);
    and one row per unit. Rows open the Unit page. */
 (() => {
@@ -20,22 +19,8 @@ const TECHS = [
   { id: "other", keys: ["hydro", "other"], label: "Other (hydro, biomass)", color: "--c-other" },
 ];
 const THERMAL = ["nuclear", "coal", "combined_cycle", "gas_steam", "combustion_turbine"];
-const FLOOR_TECHS = TECHS.filter((s) => !["wind", "solar"].includes(s.id));   // wind and solar have their own chart
-const FLOOR_CAPTIONS = {
-  le20_sced: "MW offered at −$20 or below, by technology. For thermal this is almost all minimum output, so it tracks how much is committed.",
-  floor_sced: "MW at the −$250 floor in the curves SCED used: mostly nuclear and hydro, which submit no offer curve.",
-  floor_submitted: "MW the generators themselves offered at the −$250 floor.",
-  le0_sub_lsl: "MW above minimum output that the generators themselves offered at $0 or below.",
-};
-const FLOOR_NOTES = {
-  le20_sced: "MW priced at or below −$20 in the curves SCED dispatched against, hour by hour. In those curves ERCOT fills in prices a unit didn't offer. Units that offer have the MW below their first offered point, usually minimum output, at −$20 (−$50 for some units). Units with no offer curve sit at −$250 with the rest of their output schedule at −$249.99 if they are nuclear or hydro, and at −$20 or −$50 otherwise. This counts all of that, plus anything generators themselves offered at or below −$20. Storage below zero is charging bid at or below −$20.",
-  floor_sced: "MW priced at the −$250 floor (or −$249.99) in the curves SCED dispatched against, hour by hour. ERCOT puts only units with no offer curve there, mostly nuclear and hydro. Minimum output of units that offer sits at −$20 (−$50 for some units), so it is counted under ≤ −$20, as used, not here. Storage below zero is charging bid at the floor.",
-  floor_submitted: "MW the generators themselves priced at the −$250 floor in the offer curves they submitted, hour by hour.",
-  le0_sub_lsl: "MW above minimum output (LSL) that the generators themselves priced at or below $0 in the offer curves they submitted, averaged over each hour's SCED runs. Thermal technologies only. Minimum output is left out because SCED cannot dispatch below it: many curves start at 0 MW at −$250 and climb to the unit's real price, which puts MW at or below $0 by interpolation, all of it below LSL.",
-};
-// floor chart grouped by shutdown behaviour: nuclear on its own (no offer curve, never moves),
-// the other thermal units by the groups of the cheap-stretches panel (ST_GROUPS, from the
-// hourly unit strips). Only the "≤ −$20, as used" measure has per-unit values (units[i].le20).
+// group colours for the tables: nuclear on its own (no offer curve, never moves), the other
+// thermal units by the groups of the cheap-stretches panel (ST_GROUPS, from the hourly unit strips)
 const FLOOR_GROUPS = [
   { id: "nuclear", label: "Nuclear (no offer curve)", color: "--c5" },
   { id: "never", label: "Always on when available", color: "--c1" },
@@ -44,7 +29,7 @@ const FLOOR_GROUPS = [
   { id: "daily2", label: "Daily, 1–2 a week", color: "--c3" },
   { id: "daily3", label: "Daily, over 2 a week", color: "--c4" },
 ];
-const FLOOR_GROUP_NOTE = "MW priced at or below −$20 in the curves SCED dispatched against, summed over thermal units grouped by how they ran over the whole period (the groups of the turn-off chart and the cheap-stretches panel above; nuclear separately, since it has no offer curve and its whole output sits at the floor). For units that offer, this is almost entirely minimum output (LSL) at ERCOT's placeholder price, so the chart tracks how much minimum load is committed: day-to-day movement is which units are online: the daily groups drive the day-to-day swing and the multi-day group the slow one. Storage, hydro and other resources are left out. Each unit's MW at or below −$20 is its average over the runs it was online that day, counted in the hours it ran.";
+
 
 // capacity by status from the intraday file (pipeline/intraday.py status_group)
 const STATUS6 = [
@@ -59,7 +44,7 @@ const STATUS6 = [
 ];
 
 const S = { OC: null, OSC: null, scTech: "combined_cycle", scCell: "all", F: null, FIT: null, FI: null, SC: null, T: null, TH: null, I: null, UH: null, G: null, HC: null, DEC: null, SO: null, days: [], date: null,
-  floorMode: "le20_sced", floorGroup: "behaviour", floorHours: "all", hidden: { floor: new Set(), floorG: new Set(), runs: new Set(["combustion_turbine"]) },
+  hidden: { runs: new Set(["combustion_turbine"]) },
   capTech: "coal", cheapTech: "all", cheapThr: "0", leanRank: "fossil", leanMonth: "all", leanPer: "day",
   stTech: "all", stThr: "0", stUnit: "mw", stBase: null, costThr: "0", uTech: "all", uGroup: "all", uSort: "mw", uDir: "desc", uSeen: false };
 
@@ -102,16 +87,6 @@ function legend(el, list, hidden, redraw) {
   };
 }
 
-// hourly series of a technology group from trends_hourly_60d ([day][24] per key), flattened to
-// one value per hour (null when every part is missing)
-function techHours(s, src) {
-  return S.TH.dates.flatMap((_, i) => d3.range(24).map((h) => {
-    const parts = s.keys.map((k) => src[k]?.[i]?.[h]).filter((v) => v != null);
-    return parts.length ? d3.sum(parts) : null;
-  }));
-}
-// hourly system lambda on the same days, flattened
-const lamHours = () => { const by = new Map(S.I.dates.map((d, i) => [d, S.I.lambda[i]])); return S.TH.dates.flatMap((d) => d3.range(24).map((h) => by.get(d)?.[h] ?? null)); };
 const HOUR_MS = 36e5;
 const hourTime = (d, h) => new Date(parseDate(d).getTime() + (h - 11.5) * HOUR_MS);   // middle of hour ending h + 1
 const heLabel = (h) => `HE ${String(h + 1).padStart(2, "0")}`;
@@ -211,59 +186,6 @@ function timeChart(el, series, opts) {
 }
 
 // ---- panels ----------------------------------------------------------------------
-// hours the floor chart shows: all, or only those with system lambda below a price
-const floorKeep = () => { const lam = lamHours(), thr = S.floorHours === "all" ? null : +S.floorHours; return lam.map((v) => thr == null || (v != null && v < thr)); };
-async function drawFloor() {
-  const byGroup = S.floorGroup === "behaviour";
-  $("floor-mode").querySelectorAll("button").forEach((b) => (b.disabled = byGroup && b.dataset.v !== "le20_sced"));
-  // all hours: a line per hour; a price filter: one stacked bar per day, averaged over that day's hours below it
-  const floorPlot = (el, list, what) => {
-    if (S.floorHours === "all") return timeChart(el, list, { title: `${what}, hourly`, H: 280, dates: S.TH.dates, hourly: true });
-    const keep = floorKeep(), D = S.TH.dates, thr = fmtPrice0(+S.floorHours);
-    const hrs = D.map((_, i) => d3.range(24).filter((h) => keep[i * 24 + h]));
-    const day = (vals) => D.map((_, i) => { const v = hrs[i].map((h) => vals[i * 24 + h]).filter((x) => x != null); return v.length ? d3.mean(v) : null; });
-    dayBars(el, D, list.map((s) => ({ ...s, values: day(s.values) })), { H: 280, title: `${what}, average over each day's hours with lambda below ${thr}`,
-      none: `No hours with lambda below ${thr}`, tipNote: (i) => ` · ${hrs[i].length} hour${hrs[i].length === 1 ? "" : "s"}` });
-  };
-  const el = $("floor-chart");
-  if (byGroup) {
-    window.CX.setNote($("floor-note"), "MW offered at −$20 or below, by cycling pattern. For thermal this is almost all minimum output, so it tracks how much is committed.", FLOOR_GROUP_NOTE);
-    legend($("floor-legend"), FLOOR_GROUPS, S.hidden.floorG, drawFloor);
-    if (!S.I || !S.T.units.some((u) => u.le20)) return emptyMsg(el, "Not built yet. It fills in with the next data update.");
-    if (!S.UH) {
-      emptyMsg(el, "Loading hourly data…");
-      await loadUnitHours();
-      if (S.floorGroup !== "behaviour") return;
-    }
-    // each unit's MW while online, in every hour it ran (unit_hours_60d), summed by group
-    const B = stretchBase(), D = S.TH.dates, uh = new Map(S.UH.dates.map((d, i) => [d, i]));
-    const ti = new Map(S.T.dates.map((d, i) => [d, i]));
-    const sums = new Map(FLOOR_GROUPS.map((g) => [g.id, D.flatMap((d) => d3.range(24).map(() => (S.T.has_units[ti.get(d)] && uh.has(d) ? 0 : null)))]));
-    for (const u of S.T.units) {
-      const g = u.tech === "nuclear" ? "nuclear" : B.units.get(u.tech === "combined_cycle" ? trainOf(u.unit) : u.unit)?.group;
-      const acc = g && sums.get(g), str = S.UH.units[u.unit];
-      if (!acc || !u.le20 || !str) continue;
-      D.forEach((d, i) => {
-        const v = u.le20[ti.get(d)], j = uh.get(d);
-        if (v == null || j == null) return;
-        for (let h = 0; h < 24; h++) { const c = str[j * 24 + h]; if ((c === "m" || c === "a") && acc[i * 24 + h] != null) acc[i * 24 + h] += v; }
-      });
-    }
-    const list = FLOOR_GROUPS.filter((g) => !S.hidden.floorG.has(g.id)).map((g) => ({ ...g, values: sums.get(g.id).map((v) => (v == null ? null : Math.round(v))) }));
-    floorPlot(el, list, "MW at or below −$20 as used, by group");
-  } else {
-    window.CX.setNote($("floor-note"), FLOOR_CAPTIONS[S.floorMode], FLOOR_NOTES[S.floorMode]);
-    legend($("floor-legend"), FLOOR_TECHS, S.hidden.floor, drawFloor);
-    const src = S.TH && S.TH.floor[S.floorMode];
-    if (!src) return emptyMsg(el, "Not built yet. It fills in with the next data update.");
-    const list = FLOOR_TECHS.filter((s) => !S.hidden.floor.has(s.id) && s.keys.some((k) => src[k]));
-    floorPlot(el, list.map((s) => ({ ...s, values: techHours(s, src) })), "MW");
-  }
-  const thr = S.floorHours === "all" ? null : +S.floorHours;
-  timeChart($("floor-price"), [{ label: "System lambda", color: "--price", values: lamHours() }],
-    { title: `System lambda ($/MWh), hourly${thr == null ? "" : `; the chart above averages the hours below ${fmtPrice0(thr)}`}`, H: 160, dates: S.TH.dates, hourly: true,
-      yScale: "symlog", yTicks: [-250, -50, -10, 0, 10, 25, 50, 100, 250, 1000, 5000], yFmt: fmtPrice0, tipFmt: fmtPrice });
-}
 
 function drawCapacity() {
   const el = $("cap-chart"), s = TECHS.find((t) => t.id === S.capTech);
@@ -278,6 +200,7 @@ function drawCapacity() {
   }
   emptyMsg(el, "No capacity data yet. It is built by the data update workflow.");
 }
+
 
 
 // ---- intraday: thermal output in cheap hours ---------------------------------------
@@ -347,16 +270,6 @@ function drawCheap() {
   window.CX.setNote($("cheap-note"), `Thermal output in hours with lambda below ${fmtPrice0(thr)}, split into minimum output and output above it.`, `Average MW of ${s.label.toLowerCase()} output in the hours each day when system lambda was below ${fmtPrice0(thr)} (${nDays} of ${I.dates.length} days had such hours), split into output up to each running unit's minimum (LSL) and output above it. A unit counts as at minimum when its output is no more than ${fmtPct(I.above_eps)} of its HSL above its LSL. Output at minimum is what the unit cannot shed without shutting down. Nuclear reports a low LSL but runs flat out, so with all thermal selected it is shown whole, and on its own nearly all of it shows as above minimum.`);
   dayBars(el, I.dates, series, { title: `${s.label}: average MW in hours with lambda below ${fmtPrice0(thr)}`, none: `No hours with lambda below ${fmtPrice0(thr)}`,
     tipNote: (i) => ` · ${hrs[i].length} h, ${d3.format(",.0f")(n[i])} units running` });
-  // units above minimum (nuclear left out: it always is)
-  const rows = I.above_units.filter((r) => r[2] === thr && r[1] !== "nuclear" && ts.includes(r[1]) && r[4] > 0)
-    .map((r) => ({ unit: r[0], tech: r[1], run: r[3], above: r[4], mwh: r[5] })).sort((a, b) => b.mwh - a.mwh);
-  window.CX.setNote($("cheap-units-note"), `Units that ran above minimum when lambda was below ${fmtPrice0(thr)}, top 30 by energy. Click a row to open the unit.`, `All days together, nuclear left out. ${rows.length} unit${rows.length === 1 ? "" : "s"} ran above minimum in at least one hour with lambda below ${fmtPrice0(thr)}; the top 30 by energy above minimum are listed. Cogeneration and units carrying ancillary services are likely here. Click a row to see the unit.`);
-  $("cheap-units").innerHTML = rows.length ? unitRows(rows.slice(0, 30), [
-    { h: "Unit", t: 1, f: (r) => esc(r.unit) }, { h: "Technology", t: 1, f: (r) => techLabel(r.tech) + pTag(r.unit) },
-    { h: `Hours running below ${fmtPrice0(thr)}`, f: (r) => r.run }, { h: "Hours above minimum", f: (r) => r.above },
-    { h: "Share", f: (r) => fmtPct(r.above / r.run) }, { h: "Avg MW above minimum", f: (r) => fmtMW(r.mwh / r.above) },
-    { h: "MWh above minimum", f: (r) => fmtMW(r.mwh) },
-  ]) : `<p class="empty">No units ran above minimum in those hours.</p>`;
 }
 
 
@@ -682,31 +595,7 @@ async function drawStretch() {
   fleetBars(el, groups, s, S.stUnit === "mw" ? "Capacity of each group, MW, split by what it did in cheap stretches" : "Share of each group's capacity, by what it did in cheap stretches");
   drawMonths(fleet, s, thr);
   // the per-unit columns (stretches, shutdowns, hours off, cutoff) are in the units table at the foot of the page
-  const gl = (id) => ST_GROUPS.find((g) => g.id === id).label;
   setCSV(el, ["group", "units", "capacity_mw", ...ST_FLEET.map((r) => r.label)], groups.map((g) => [g.label, g.n, Math.round(g.total), ...ST_FLEET.map((r) => Math.round(g.mw[r.id]))]), `Cheap stretches, lambda below ${thr}`);
-  drawFlags(B, ts, gl);
-}
-
-// Shutdowns that broke a unit's pattern (pipeline/decisions.py flags): the first after a month
-// or more without one, or one over a window its DAM award covered in full.
-const FLAG_KIND = { new: "First in a month or more", award: "Despite a DAM award" };
-function drawFlags(B, ts, gl) {
-  const el = $("st-flags"), DEC = S.DEC;
-  if (!DEC?.flags) { $("st-flags-note").textContent = ""; return emptyMsg(el, "Fills in after the data update builds the decisions file."); }
-  const rows = DEC.flags.map((f) => ({ unit: f[0], date: f[1], kind: f[2], loss: f[3], off: f[4], since: f[5], award: f[6], e: B.units.get(f[0]) }))
-    .filter((r) => r.e && ts.includes(r.e.tech)).map((r) => ({ ...r, pick: r.e.pick, tech: r.e.tech, group: r.e.group, mw: r.e.mw }));
-  const n = (k) => rows.filter((r) => r.kind === k).length;
-  window.CX.setNote($("st-flags-note"), "Shutdowns that broke a unit's usual pattern, newest first. Click a unit to open it.", `Every shutdown on a decision day that was the unit's first in ${DEC.new_days} days or more (with at least ${DEC.new_days} days of data before it), or came over a window its DAM energy award covered in full: ` +
-    `a unit that normally rides through starting to cycle, a seasonal layup beginning, or a unit dropping an award it held. ${n("new")} first-in-a-month and ${n("award")} despite-an-award shutdowns, newest first. ` +
-    `"Loss" is what riding through the day's worst window would have cost at its node's day-ahead price; "hours off" counts to the end of the spell, so a long one is a layup or an undeclared outage. Click a unit to open its detail.`);
-  if (!rows.length) return emptyMsg(el, "No flagged shutdowns for these units.");
-  el.innerHTML = unitRows(rows.map((r) => ({ ...r, name: r.unit, unit: r.pick })), [
-    { h: "Date", t: 1, f: (r) => r.date }, { h: "Unit", t: 1, f: (r) => esc(r.name) }, { h: "Technology", t: 1, f: (r) => techLabel(r.tech) }, { h: "Group", t: 1, f: (r) => gl(r.group) + pTag(r.name) }, { h: "MW", f: (r) => fmtMW(r.mw) },
-    { h: "Why flagged", t: 1, f: (r) => FLAG_KIND[r.kind] }, { h: "Days since last shutdown", f: (r) => (r.since == null ? "none in data" : r.since) }, { h: "Loss riding through", f: (r) => fmtK(r.loss) },
-    { h: "Award over window", f: (r) => fmtPct(r.award) }, { h: "Hours off", f: (r) => fmtMW(r.off) },
-  ]);
-  setCSV(el, ["date", "unit", "technology", "group", "mw", "kind", "days_since_last_shutdown", "loss_usd", "award_share", "hours_off"],
-    rows.map((r) => [r.date, r.unit, r.tech, r.group, r.mw, r.kind, r.since, r.loss, r.award, r.off]), "Shutdowns that broke a pattern");
 }
 
 // ---- leanest thermal hours: the hours with the least thermal output, with what else ran --
@@ -1369,16 +1258,16 @@ function setDate(d) {
   drawDay();
   if (S.uSeen) drawUnits();
 }
-const VIEW_KEYS = { fg: "floorGroup", fh: "floorHours", f: "floorMode", stt: "stTech", stp: "stThr", stu: "stUnit", cht: "cheapTech", chthr: "cheapThr",
+const VIEW_KEYS = { stt: "stTech", stp: "stThr", stu: "stUnit", cht: "cheapTech", chthr: "cheapThr",
   sct: "scTech", scc: "scCell", lr: "leanRank", lm: "leanMonth", lp: "leanPer", cap: "capTech", ct: "costThr", ut: "uTech", ug: "uGroup", us: "uSort", ud: "uDir" };
 function saveView() { window.CX.writeHash({ ...window.CX.readHash(), date: S.date, ...Object.fromEntries(Object.entries(VIEW_KEYS).map(([k, sk]) => [k, S[sk]])) }); }
 function loadView() { const v = window.CX.readHash(); Object.entries(VIEW_KEYS).forEach(([k, sk]) => { if (v[k] != null) S[sk] = v[k]; }); return v; }
 
-function drawRange() { drawStretch(); drawCapacity(); drawFloor(); drawCheap(); drawLean(); drawCost(); drawRuns(); if (S.uSeen) drawUnits(); }
+function drawRange() { drawStretch(); drawCapacity(); drawCheap(); drawLean(); drawCost(); drawRuns(); if (S.uSeen) drawUnits(); }
 function drawAll() { drawDay(); drawScores(); drawRange(); }
 
 async function boot() {
-  [S.T, S.TH, S.I, S.HC, S.DEC, S.SO, S.IX, S.OC, S.OSC, S.POI] = await Promise.all([tryJSON("data/trends_60d.json.gz"), tryJSON("data/trends_hourly_60d.json.gz"), tryJSON("data/intraday_60d.json.gz"), tryJSON("data/hourly_context_60d.json.gz"),
+  [S.T, S.I, S.HC, S.DEC, S.SO, S.IX, S.OC, S.OSC, S.POI] = await Promise.all([tryJSON("data/trends_60d.json.gz"), tryJSON("data/intraday_60d.json.gz"), tryJSON("data/hourly_context_60d.json.gz"),
     tryJSON("data/decisions.json.gz"), tryJSON("data/stayon_60d.json.gz"), tryJSON("data/index.json"), tryJSON("data/operator/cutoffs.json.gz"), tryJSON("data/operator/scores.json.gz"), tryJSON("data/peaker/oi.json.gz")]);
   S.MR = await tryJSON("data/min_run_60d.json.gz");
   // the groups are small and every panel reads them, so they load up front; the hourly strips follow
@@ -1393,16 +1282,13 @@ async function boot() {
   $("status").textContent = `60-day data: ${D.length} days, ${D[0]} to ${D.at(-1)}`;
   $("range-status").textContent = `${fmtDate(parseDate(D[0]))} to ${fmtDate(parseDate(D.at(-1)))}, the days with 60-day data`;
   const v = loadView();
-  if (!FLOOR_NOTES[S.floorMode]) S.floorMode = "le20_sced";
-  if (!["all", "10", "0"].includes(S.floorHours)) S.floorHours = "all";
   $("date").innerHTML = [...S.days].reverse().map((d) => `<option value="${d}">${fmtDate(parseDate(d))}</option>`).join("");
   $("date").onchange = (e) => setDate(e.target.value);
   const step = (k) => { const i = S.days.indexOf(S.date) + k; if (i >= 0 && i < S.days.length) setDate(S.days[i]); };
   $("date-prev").onclick = () => step(-1);
   $("date-next").onclick = () => step(1);
   const thermal = TECHS.filter((s) => THERMAL.includes(s.id));
-  [["floor-mode", "floorMode", drawFloor], ["floor-hours", "floorHours", drawFloor], ["floor-group", "floorGroup", drawFloor],
-   ["cheap-thr", "cheapThr", drawCheap], ["lean-rank", "leanRank", drawLean], ["lean-per", "leanPer", drawLean],
+  [["cheap-thr", "cheapThr", drawCheap], ["lean-rank", "leanRank", drawLean], ["lean-per", "leanPer", drawLean],
    ["st-thr", "stThr", () => { drawStretch(); if (S.uSeen) drawUnits(); }], ["st-unit", "stUnit", drawStretch],
    ["cost-thr", "costThr", () => { drawCost(); if (S.uSeen) drawUnits(); }], ["sc-cell", "scCell", drawScores]].forEach(([id, key, fn]) => { setSeg(id, S[key]); bindSeg(id, key, fn); });
   bindSelect("cap-tech", "capTech", thermal, drawCapacity);
@@ -1419,7 +1305,7 @@ async function boot() {
   });
   $("lean-table").addEventListener("click", (e) => { const tr = e.target.closest("tr[data-href]"); if (tr) location.href = tr.dataset.href; });
   $("runs-sort").onchange = drawRuns;
-  ["cheap-units", "st-changed", "st-months", "st-flags", "runs-nr-table"].forEach((id) => $(id).addEventListener("click", (e) => {
+  ["st-changed", "st-months", "runs-nr-table"].forEach((id) => $(id).addEventListener("click", (e) => {
     const tr = e.target.closest("tr[data-unit]");
     if (tr) location.href = unitHref(tr.dataset.unit);
   }));

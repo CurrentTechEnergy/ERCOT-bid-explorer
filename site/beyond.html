@@ -302,6 +302,24 @@
   
   </section>
 
+  <section class="panel panel-wide" id="above-panel">
+    <div class="panel-head">
+      <div>
+        <h2>Thermal units above minimum in cheap hours</h2>
+        <p class="note" id="above-note"></p>
+      </div>
+      <div class="panel-tools">
+        <label class="lbl inline" for="above-tech">Technology</label>
+        <select id="above-tech"></select>
+        <div class="seg seg-sm" id="above-thr" role="radiogroup" aria-label="Cheap means lambda below">
+          <button type="button" data-v="10" role="radio">Lambda below $10</button>
+          <button type="button" data-v="0" role="radio">Below $0</button>
+        </div>
+      </div>
+    </div>
+    <div class="units-wrap" id="above-table"></div>
+  </section>
+
 </main>
 
 <footer class="foot">
