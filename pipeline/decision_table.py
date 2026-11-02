@@ -20,7 +20,7 @@ ride-through-review-2026-11-02.md in the project files):
                 spell: a shutdown the unit then used for maintenance still counts)
   lsl           LSL of the configuration online going in (the last online hour before the window
                 or the shutdown), else the train's smallest DAM LSL that day; below MIN_LSL left out
-  cost          gas cost at minimum ($/MWh), GAS_HR x MIN_LOAD x the train's own hub price (run_cost)
+  cost          gas cost at minimum ($/MWh), the train's heat rate at minimum (pipeline/heat_rates) x its own hub price (run_cost)
   loss          sum over the window of (cost - DA node price) x lsl ($): the expected loss
   min_off       the train's minimum off time: the 10th percentile of its clean off spells (every
                 hour offline-available, between online hours, OFF_MIN_H hours or more) ending in the
@@ -76,9 +76,10 @@ from .config import DATA_DIR, GENERIC_COSTS, HISTORY_DIR, UNIT_DATA_DIR
 from .decisions import COST_DAYS
 from .gas import monthly_basis
 from .gascost import HEAT_RATE as GAS_HR
+from . import heat_rates
 from .intraday import train_of
 
-VERSION = "d2"      # d2: operator's-view windows (Nov 2026); d1: HE7-to-HE6 blocks
+VERSION = "d3"      # d3: each unit's measured heat rate at minimum, coal at fuel (Nov 2026); d2: operator's-view windows; d1: HE7-to-HE6 blocks
 TECHS = ("combined_cycle", "gas_steam")      # coal is out (Blair, Nov 2 2026): generic cost, seasonal shutdowns
 HH_URL = "https://www.eia.gov/dnav/ng/hist_xls/RNGWHHDd.xls"
 AWARD_LSL = 0.9
@@ -95,9 +96,11 @@ DA_KNOWN = 13       # hour index (HE14) by which the next day's DA prices are pu
 SLOTS = (("day", 7, 18), ("night", 19, 30))   # first hour index of a window, from the day's HE1
 FORCED = 0.5        # share of the window held by a DAM commitment, AS or RUC that takes it out
 MARGIN_H = 12       # hours before and after the window for before_per_mw / after_per_mw
-MIN_LOAD = {"gas_steam": 1.28}   # gas cost at minimum against full-load GAS_HR: gas steam's DAM offer
-                                 # price at LSL + 1 MW is a median 1.28 x GAS_HR x hub gas over its unit-days
-                                 # within 0.8 to 1.5 of it (Dec 2025 to Sep 2026); combined cycles 0.96, so none
+MIN_LOAD = {"gas_steam": 1.28}   # gas cost at minimum against full-load GAS_HR, for callers that take one
+                                 # heat rate per technology (the predictor): gas steam's DAM offer price at
+                                 # LSL + 1 MW is a median 1.28 x GAS_HR x hub gas (Dec 2025 to Sep 2026); EPA
+                                 # heat input over ERCOT net gives 1.29 (pipeline/heat_rates, Nov 2026).
+                                 # run_cost uses each unit's own measured value instead.
 SEASON = {12: "winter", 1: "winter", 2: "winter", 3: "spring", 4: "spring", 5: "spring",
           6: "summer", 7: "summer", 8: "summer", 9: "fall", 10: "fall", 11: "fall"}
 CODE = {"-": 0, "o": 1, "0": 2, "m": 3, "a": 4}     # same order as decisions.RANK
@@ -207,12 +210,17 @@ def hub_of() -> dict:
 
 
 def run_cost(tech, train, date, gas, hubs):
-    """($/MWh, estimated) of running at minimum on `date`: gas units at GAS_HR x the train's own
-    hub price (Houston Ship Channel without one), Henry Hub standing in (estimated) where the hub
-    has no price, plus the monthly basis for Ship Channel (gas_by_hub); coal, and any unit without
-    a gas price, at the generic cost (estimated)."""
+    """($/MWh, estimated) of running at minimum on `date`: gas units at their heat rate at minimum
+    (combined cycles and gas steam: the unit's or train's measured value, else its technology's,
+    pipeline/heat_rates; others GAS_HR) x the train's own hub price (Houston Ship Channel without
+    one), Henry Hub standing in (estimated) where the hub has no price, plus the monthly basis for
+    Ship Channel (gas_by_hub); coal at its heat rate at minimum x heat_rates.COAL_PRICE
+    (estimated: an assumed coal price); any unit without a gas price at the generic cost
+    (estimated)."""
+    if tech == "coal":
+        return heat_rates.at_min(tech, train)[0] * heat_rates.COAL_PRICE, True
     if tech in GAS_HR:
-        hr = GAS_HR[tech] * MIN_LOAD.get(tech, 1.0)
+        hr = heat_rates.at_min(tech, train)[0] if tech in ("combined_cycle", "gas_steam") else GAS_HR[tech]
         hub = hubs.get(train, "hsc")
         p = gas.get(hub, {}).get(date)
         if p is not None:
