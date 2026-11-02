@@ -1,4 +1,6 @@
-"""Hourly series for every unit, for the graph builder (site/builder.html).  Needs no downloads.
+"""Hourly series for every unit, read by the change charts on What's changing and the Unit page
+(site/event-chart.js), the Renewables "Across the years" panel (renew_years.py) and the battery
+benchmark (battery_bench.py).  Needs no downloads.
 
 The per-unit day files on the data branch hold everything at SCED-run resolution and are about
 4 MB a day, too heavy for a browser.  This reduces each 60-day day to one value per unit, hour

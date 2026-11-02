@@ -120,7 +120,7 @@ pipeline/
                    for the Unit page's "Public contracts" box and the hedge table (no downloads)
   series.py        per-unit day files + node prices + DAM awards -> hourly HSL, base point, output,
                    offer prices, award and node prices per unit, by month and technology, for the
-                   graph builder (data/series/, no downloads)
+                   change charts (data/series/, no downloads)
   storage.py       per-unit day files + DAM day files -> one battery day file per 60-day day
                    (data/storage/): fleet and per-battery charging, discharging, limits, headroom,
                    state of charge, AS awards and capability, DAM energy and AS awards, and the
@@ -178,7 +178,7 @@ site/
                    model's turn-off points and scorecard (data/operator/), groups and cutoffs, the
                    thermal panels lifted from Trends, what riding through cheap stretches cost from
                    data/stayon_60d.json.gz, and one row per unit),
-  beyond.html, renewables.html, fleet.html, unit.html, builder.html and their scripts
+  beyond.html, renewables.html, fleet.html, unit.html and their scripts
                    (unit.html with no unit shows the Units directory, unit-dir.js; common.js adds
                    the "Find a unit" box to every page's nav row),
   guide.html, guide.js (How offers work, including how revenue is counted and how hedge signals are found),
@@ -253,7 +253,7 @@ DAM format 3 adds the hourly start-up and minimum-energy costs. A **reprocess_60
 
 ### Hourly unit series
 
-`pipeline/series.py` reduces each 60-day per-unit day file to one value per unit and hour: mean HSL while online, base point, telemetered output, three readings of the submitted offer curve (its first price, the price at half its MW, and the price it puts on the base point, each the median over the hour's online runs), MW taken off HDL by operator override, the DAM award and the DA price at the unit's settlement point, plus the real-time price at each settlement point. It writes `data/series/YYYY-MM/<tech>.json.gz` and an index of units, read by the graph builder (`builder.html`), for charts of any unit or plant without loading the full day files (about 185 KB a day for all units). Per-day results are cached on the data branch under `series/`, keyed on the sizes of the files they came from, so each update only redoes new or reprocessed days.
+`pipeline/series.py` reduces each 60-day per-unit day file to one value per unit and hour: mean HSL while online, base point, telemetered output, three readings of the submitted offer curve (its first price, the price at half its MW, and the price it puts on the base point, each the median over the hour's online runs), MW taken off HDL by operator override, the DAM award and the DA price at the unit's settlement point, plus the real-time price at each settlement point. It writes `data/series/YYYY-MM/<tech>.json.gz` and an index of units, read by the change charts on What's changing and the Unit page (`event-chart.js`), the Renewables "Across the years" panel and the battery benchmark, for charts of any unit or plant without loading the full day files (about 185 KB a day for all units). Per-day results are cached on the data branch under `series/`, keyed on the sizes of the files they came from, so each update only redoes new or reprocessed days.
 
 `pipeline/battery_bench.py` compares every battery with a perfect battery of the same size: one linear program per battery and day that knows the day's hourly real-time prices at its node in advance, with its own fitted round-trip efficiency, the MW it held for ancillary services taken out, its actual starting and ending state of charge, and at most one full cycle a day. It writes the fleet's daily totals (`data/storage/bench.json.gz`, the Batteries page's across-days charts) and each battery's (`data/storage/bench_units.json.gz`, the Unit page): energy earned (two-settlement), day-ahead AS earned, the perfect battery's energy revenue, and MWh and dollars each way for both. It also writes the fleet's daily top-bottom spreads: the mean of the day's top 1, 2 and 4 hourly prices less the mean of the bottom 1, 2 and 4, real-time and day-ahead at each battery's node, weighted by MW. Per-day results are cached on the data branch under `bench/`.
 
