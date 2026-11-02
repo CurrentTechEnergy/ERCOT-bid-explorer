@@ -10,6 +10,11 @@
      data/summary_prices.json.gz   hourly real-time hub and load-zone prices and lambda
      data/dam_hubs.json.gz         hourly day-ahead hub and load-zone prices
      data/events.json.gz           every change the site's detectors found (the What's changing feed)
+     data/econ/<tech>.json.gz      per unit and day: MWh, energy revenue (RT node, DA award), DA AS revenue,
+                                   starts, hours on, own-hub gas bill per unit of heat rate (pipeline/econ.py)
+     data/fuel_cost_60d.json.gz    EIA heat rates by gas technology
+     data/storage/bench_units.json.gz   per battery and day: energy revenue, DA AS revenue, MWh each way,
+                                   and a perfect battery's revenue (pipeline/battery_bench.py)
 
    Each tool returns { text, events?, units? }: text goes back to the model; events and units are
    what the answer may link to (index.js keeps only references a tool returned). */
@@ -184,6 +189,21 @@ export const TOOLS = [
       notable_only: { type: "boolean", description: "Only the changes the detectors rate as large" },
     }, required: [], additionalProperties: false },
   },
+  {
+    name: "rank_units",
+    description: "Rank every unit of one technology over a date range (from Nov 30, 2025, about 60 days behind) by revenue, revenue per MW, energy, capacity factor, realised price, gas margin or, for batteries, the share of a perfect battery's revenue captured and cycles. Revenue is computed by the site from ERCOT's disclosures: energy = day-ahead award x DA price plus real-time deviation x RT node price (two-settlement; batteries net of charging); as_rev = day-ahead ancillary service awards x clearing prices. Not settlement statements: no real-time AS, uplift, fees or contracts. Returns the top (or bottom) n with every column, so one call answers most 'which units did best' questions; combined-cycle trains are ranked as one unit.",
+    input_schema: { type: "object", properties: {
+      tech: { type: "string", enum: TECHS },
+      metric: { type: "string", enum: ["total_rev", "energy_rev", "as_rev", "rev_per_mw", "mwh", "capacity_factor", "realised_price", "gas_margin", "gas_margin_per_mw", "starts", "perfect_share", "cycles"],
+        description: "total_rev = energy_rev + as_rev ($); rev_per_mw = total_rev / capacity ($/MW over the range); realised_price = energy_rev / MWh; gas_margin = total_rev - gas fuel (EIA heat rate x the unit's own-hub gas price; gas units only, fuel only); perfect_share and cycles for storage only" },
+      from: { type: "string", description: "YYYY-MM-DD; default: first day with data" },
+      to: { type: "string", description: "YYYY-MM-DD; default: latest day with data" },
+      n: { type: "integer", description: "How many to return, 1 to 25 (default 10)" },
+      lowest: { type: "boolean", description: "Rank from the bottom instead" },
+      min_mw: { type: "number", description: "Leave out units smaller than this (default 10 MW, so per-MW and share metrics aren't led by tiny units)" },
+      zone: { type: "string", description: "Optional load zone filter: NORTH, SOUTH, WEST, HOUSTON, PAN" },
+    }, required: ["tech", "metric"], additionalProperties: false },
+  },
 ];
 
 async function find_units(env, { query, tech }) {
@@ -328,7 +348,77 @@ async function changes(env, { unit, tech, kind, from, to, notable_only }) {
   return { text, events: shown };
 }
 
-const RUN = { find_units, unit_hours, fleet_days, prices, changes };
+const GAS = ["combined_cycle", "gas_steam", "combustion_turbine"];
+async function rank_units(env, { tech, metric, from, to, n, lowest, min_mw, zone }) {
+  if (!TECHS.includes(tech)) throw new Error(`tech must be one of ${TECHS.join(", ")}`);
+  const storage = tech === "storage", gas = GAS.includes(tech);
+  if ((metric === "perfect_share" || metric === "cycles") && !storage) throw new Error(`${metric} is for storage only`);
+  if (String(metric).startsWith("gas_margin") && !gas) throw new Error(`gas margin is for ${GAS.join(", ")} only`);
+  const [E, fc, B, rows] = await Promise.all([getJSON(env, `data/econ/${tech}.json.gz`), gas ? getJSON(env, "data/fuel_cost_60d.json.gz") : null,
+    storage ? getJSON(env, "data/storage/bench_units.json.gz") : null, unitIndex(env)]);
+  if (!E) throw new Error(`no plant economics for ${tech}`);
+  const first = E.dates[0], last = E.dates[E.dates.length - 1], notes = [];
+  from = isDate(from) ? from : first; to = isDate(to) ? to : last;
+  if (from > to) [from, to] = [to, from];
+  if (to < first || from > last) throw new Error(`plant economics run from ${first} to ${last}`);
+  if (from < first) { notes.push(`starts ${first}`); from = first; }
+  if (to > last) { notes.push(`ends ${last}, the latest day with unit data`); to = last; }
+  const ix = E.dates.map((d, i) => [d, i]).filter(([d]) => d >= from && d <= to).map(([, i]) => i);
+  const hr = gas && fc && fc.heat_rate ? fc.heat_rate[tech] : null;
+  const bix = B ? Object.fromEntries(B.dates.map((d, i) => [d, i])) : {};
+  const byName = new Map();
+  for (const u of rows) { byName.set(u.unit, u); for (const c of u.configs || []) if (!byName.has(c)) byName.set(c, u); }
+  const minMW = min_mw == null ? 10 : +min_mw, Z = zone ? String(zone).toUpperCase() : "";
+  const out = [];
+  for (const [name, u] of Object.entries(E.units)) {
+    const mw = u.hsl || 0, ui = byName.get(name) || {};
+    if (mw < minMW || (Z && ui.zone !== Z)) continue;
+    let days = 0, mwh = 0, chg = 0, energy = 0, as = 0, fuel = 0, fuelDays = 0, starts = 0, hours = 0;
+    for (const i of ix) {
+      if (u.mwh[i] == null) continue;
+      days++; mwh += u.mwh[i]; chg += (u.chg && u.chg[i]) || 0;
+      const rt = u.rev_rt[i] ?? u.rev_lam[i] ?? 0;
+      energy += u.rev_da[i] != null ? u.rev_da[i] + rt - (u.rev_da_rt[i] ?? 0) : rt;
+      as += u.rev_as[i] || 0; starts += (u.starts && u.starts[i]) || 0; hours += (u.hours_on && u.hours_on[i]) || 0;
+      if (hr && u.gas_own && u.gas_own[i] != null) { fuel += u.gas_own[i] * hr; fuelDays++; }
+    }
+    if (!days) continue;
+    const r = { name, plant: ui.plant || "", zone: ui.zone || "", mw, days, mwh, energy, as, total: energy + as };
+    r.per_mw = r.total / mw; r.cf = mwh / (mw * 24 * days); r.price = mwh >= 1 ? energy / mwh : null;
+    if (storage) r.chg = chg;
+    if (gas) { r.fuel = fuelDays ? fuel : null; r.margin = fuelDays ? r.total - fuel : null; r.margin_mw = r.margin == null ? null : r.margin / mw; r.starts = starts; r.hours = hours; }
+    if (storage && B && B.units[name]) {
+      const v = B.units[name];
+      let act = 0, perf = 0, dis = 0, cap = 0;
+      for (const i of ix) {
+        const j = bix[E.dates[i]]; if (j == null) continue;
+        const a = v.actual[j], p = v.perfect[j]; if (a == null || p == null) continue;
+        act += a; perf += p; dis += v.dis_mwh[j] || 0; cap = Math.max(cap, v.mwh[j] || 0);
+      }
+      r.share = perf > 0 ? act / perf : null; r.cycles = cap > 0 ? dis / cap : null; r.cap_mwh = cap || null;
+    }
+    out.push(r);
+  }
+  const key = { total_rev: "total", energy_rev: "energy", as_rev: "as", rev_per_mw: "per_mw", mwh: "mwh", capacity_factor: "cf", realised_price: "price",
+    gas_margin: "margin", gas_margin_per_mw: "margin_mw", starts: "starts", perfect_share: "share", cycles: "cycles" }[metric];
+  if (!key) throw new Error("unknown metric");
+  const ranked = out.filter((r) => r[key] != null).sort((a, b) => (lowest ? a[key] - b[key] : b[key] - a[key]));
+  const N = Math.max(1, Math.min(25, +n || 10)), top = ranked.slice(0, N);
+  const $ = (v) => (v == null ? "" : Math.round(v));
+  const cols = ["rank", "unit", "plant", "zone", "mw", "days", "mwh", "energy_rev", "as_rev", "total_rev", "rev_per_mw", "capacity_factor", "realised_price",
+    ...(gas ? ["gas_fuel", "gas_margin", "gas_margin_per_mw", "starts", "hours_on"] : []), ...(storage ? ["charged_mwh", "energy_mwh_cap", "perfect_share", "cycles"] : [])];
+  const body = csv([cols, ...top.map((r, k) => [k + 1, r.name, String(r.plant).replace(/,/g, " "), r.zone, $(r.mw), r.days, $(r.mwh), $(r.energy), $(r.as), $(r.total), $(r.per_mw), r2(r.cf), r2(r.price),
+    ...(gas ? [$(r.fuel), $(r.margin), $(r.margin_mw), r.starts, r.hours] : []), ...(storage ? [$(r.chg), $(r.cap_mwh), r2(r.share), r1(r.cycles)] : [])])]);
+  const tot = (k) => sum(out.map((r) => r[k]));
+  const head = `${tech}, ${from} to ${to}${notes.length ? " (" + notes.join("; ") + ")" : ""}: ${out.length} units of ${minMW} MW or more${Z ? " in " + Z : ""}, ${ranked.length} with a ${metric} value, ranked${lowest ? " lowest first" : ""}; ${top.length} shown.` +
+    ` All ${out.length} together: ${t1(tot("mwh"))} MWh, energy revenue $${$(tot("energy"))}, AS revenue $${$(tot("as"))}.` +
+    ` $ figures are totals over the whole range; mw is capacity (95th percentile of the daily peak HSL); capacity_factor = mwh / (mw x 24 x days)` +
+    (storage ? "; storage mwh is discharged energy, energy_rev is net of charging, perfect_share = energy revenue / a perfect battery's of the same size on the same days, cycles = discharged MWh / usable energy capacity; perfect_share can pass 1 because the perfect battery sees real-time prices only and is held to one full cycle a day" : "") +
+    (gas ? `; gas_fuel = EIA heat rate ${hr} MMBtu/MWh x the unit's own-hub gas price, fuel only (no VOM, start or fixed costs)` : "") + ".";
+  return { text: `${head}\n${body}`, units: top.map((r) => r.name) };
+}
+
+const RUN = { find_units, unit_hours, fleet_days, prices, changes, rank_units };
 
 export async function runTool(env, name, input) {
   const f = RUN[name];
