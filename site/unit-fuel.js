@@ -1,6 +1,6 @@
 /* Unit page, heat rate and fuel cost: the unit's measured heat rate and station use (EPA hourly
    stack data against ERCOT telemetry), and its cost of running at minimum by day (heat rate at
-   minimum x its gas hub's price the day before, or its delivered coal price) against its own DAM
+   minimum x the 7-day average of its gas hub's price, or its delivered coal price) against its own DAM
    minimum-energy offer. Reads data/unit_fuel.json.gz (pipeline/unit_fuel.py); the hub prices
    themselves are licensed and not in it. */
 (() => {
@@ -14,7 +14,7 @@ const parseDate = (d) => new Date(d + "T12:00:00");
 const fmtDate = d3.timeFormat("%a %b %-d, %Y");
 const TECH_NAME = { coal: "coal", gas_steam: "gas steam", combined_cycle: "combined cycle", combustion_turbine: "combustion turbine" };
 const SERIES = [
-  { k: "cost", label: "Cost at minimum (heat rate × fuel)", color: "--c1" },
+  { k: "cost", label: "Cost at minimum (heat rate × 7-day hub gas)", color: "--c1" },
   { k: "offer", label: "Its DAM minimum-energy offer", color: "--c2" },
 ];
 const S = { data: undefined };

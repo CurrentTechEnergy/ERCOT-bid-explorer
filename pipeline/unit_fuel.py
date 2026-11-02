@@ -9,10 +9,12 @@ minimum-energy offer.  Needs no downloads.
                 ERCOT net output at minimum and at full load, gas steam and coal per unit, combined
                 cycles per train (share only at full load); joint-ownership units carry the plant
                 unit's numbers
-  cost          $/MWh at minimum on each 60-day day: decision_table.run_cost, the unit's heat rate at
-                minimum x its own hub's gas price the trading day before (Henry Hub where the hub
-                has none, est 1) or its delivered EIA-923 coal price; a combustion turbine at its
-                measured heat rate at minimum (the CT turn-on model itself reads 11.0)
+  cost          $/MWh at minimum on each 60-day day: the unit's heat rate at minimum (a combustion
+                turbine's measured one: the CT turn-on model itself reads 11.0) x the 7-day average
+                of its own hub's gas price (the day-before prices of the day and the 6 before it,
+                gas_by_hub; Henry Hub, with Ship Channel's monthly basis for Ship Channel units, on
+                the days the hub has none, est 1 when any day of the 7 is filled), or for coal its
+                delivered EIA-923 price that month (est 1 for the Texas average)
   offer         its DAM minimum-energy offer that day ($/MWh; a train's lowest configuration's)
 
 The hub prices are licensed and are not published (pipeline/private.py): only the cost, a value
@@ -41,8 +43,33 @@ def _num(v, kind=float):
     return None if v in (None, "") else kind(float(v))
 
 
+AVG_DAYS = 7     # the gas price is the average of the day's and the 6 days before (Blair, Nov 2 2026)
+
+
+def _gas_avg(gas, hub, dates):
+    """{date: ($/MMBtu, estimated)}: the AVG_DAYS-day average of `hub`'s day-before price, filled
+    from hub_fill and then Henry Hub on the days it has none."""
+    import datetime as dt
+    out = {}
+    for d in dates:
+        day = dt.date.fromisoformat(d)
+        v, est = [], False
+        for k in range(AVG_DAYS):
+            x = (day - dt.timedelta(days=k)).isoformat()
+            p = gas.get(hub, {}).get(x)
+            if p is None:
+                p = gas.get(f"{hub}_fill", {}).get(x)
+                if p is None:
+                    p = gas.get("hh", {}).get(x)
+                est = est or p is not None
+            if p is not None:
+                v.append(p)
+        out[d] = (sum(v) / len(v), est) if v else (None, True)
+    return out
+
+
 def build_unit_fuel(index=None) -> int:
-    from .decision_table import GAS_HR, gas_by_hub, hub_of, run_cost
+    from .decision_table import gas_by_hub, hub_of
     uh = read_json_gz(DATA_DIR / "unit_hours_60d.json.gz", default={}) or {}
     dates = [d for d in (uh.get("dates") or []) if (DATA_DIR / "dam" / f"{d}.json.gz").exists()]
     if not dates:
@@ -59,6 +86,7 @@ def build_unit_fuel(index=None) -> int:
     with tempfile.TemporaryDirectory() as tmp:
         gas = gas_by_hub(Path(tmp))
     hubs = hub_of()
+    avg = {h: _gas_avg(gas, h, dates) for h in ("hsc", "waha")}
     units = {}
     for i, d in enumerate(dates):
         for key, e in _dam_trains(read_json_gz(DATA_DIR / "dam" / f"{d}.json.gz") or {}).items():
@@ -75,9 +103,12 @@ def build_unit_fuel(index=None) -> int:
                                   "min_hours": _num(s["min_hours"], int) if own else None, "basis": s["basis"],
                                   "epa": (r or {}).get("epa") or None, "note": (r or fb)["note"] or None,
                                   "su": su.get(key), "cost": [None] * len(dates), "est": [0] * len(dates), "offer": [None] * len(dates)}
-            c, est = run_cost(t, key, d, gas, hubs)
-            if t == "combustion_turbine" and c is not None:
-                c = c * heat_rates.at_min(t, key)[0] / GAS_HR[t]
+            if t == "coal":
+                p, own = heat_rates.coal_price(key, d)
+                c, est = heat_rates.at_min(t, key)[0] * p, not own
+            else:
+                p, est = avg[hubs.get(key, "hsc")][d]
+                c = None if p is None else heat_rates.at_min(t, key)[0] * p
             u["cost"][i] = None if c is None else round(c, 2)
             u["est"][i] = int(bool(est))
             u["offer"][i] = None if e["mingen"] is None else round(e["mingen"], 2)
