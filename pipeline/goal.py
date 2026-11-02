@@ -12,11 +12,12 @@ built from the 60-day day files, pipeline/decision_table.month_file):
      stay on (_day_cost: gas cost at the unit's own hub, or coal's generic cost, less the real-time
      node price, times LSL; not the DAM minimum-energy offer), by whether a DAM award or the
      unit's own commitment had it on.
-  3. Is behaviour changing?  Of the CC and gas steam loss windows (decision table,
-     pipeline/decision_table.py), the share each year the unit was off for most of the window,
-     split by whether the window's loss beat a restart (its hot start offer, else the generic) and
-     whether a DAM award held at least half its hours; and where the loss windows fall (overnight
-     or midday).
+  3. Is behaviour changing?  The CC and gas steam loss windows of the decision table
+     (pipeline/decision_table.py: the operator's view at the time, DA prices only), by bucket:
+     held on by a DAM commitment, AS or RUC; too short to cycle; losing less than a restart;
+     losing more than a restart (a shutdown of at least the unit's minimum off time would have
+     beaten the restart); the share of each the unit turned off for, and the minimum output it
+     ran through or took off; and whether the windows fall at night or in the day.
   4. Where do fossil decisions slow decarbonization?  Wind and solar curtailment (HSL above base
      point), the part in oversupply hours (real-time hub average at OVER_PRICE or less) at units not
      behind congestion (DA node within CONGESTED of the DA bus average), and the fossil minimum
@@ -43,7 +44,7 @@ from .intraday import train_of
 from .store import read_json_gz, write_json_gz
 
 PATH = DATA_DIR / "goal.json.gz"
-VERSION = "v6"   # v5: cheap hours on DA system lambda (was the DA hub average)
+VERSION = "v7"   # v7: decision table d2 (operator's-view loss windows, buckets, coal out); v5: cheap hours on DA system lambda (was the DA hub average)
 START = "2019-01"
 CHEAP = 10.0          # $/MWh, day-ahead system lambda: a cheap hour
 OVER_PRICE = 5.0      # $/MWh, real-time hub average: an oversupply hour
@@ -53,10 +54,13 @@ OVER_CURT_MIN = 100.0  # MW of uncongested curtailment for an oversupply hour to
 MIDDAY = (8, 19)      # hours ending of the cheap midday stretch (question 2's award chart)
 OUT_MIN_H = 4         # offline hours an off spell needs (as pipeline/groups.py)
 FOSSIL = ("coal", "combined_cycle", "gas_steam")
-# question 4: a fossil unit at minimum in an hour of its day's loss window (decision table) is losing
-# money; it loses more than a restart costs when the window's loss beats its hot start offer (the
-# generic one when it submits none)
-ECON = ("losing more than a restart", "losing, less than a restart", "covering its costs")
+# question 4: a CC or gas steam unit at minimum in an hour of one of its loss windows (decision table)
+# is held on (a DAM commitment, AS or RUC), losing more than a restart costs (bucket "more"), or
+# losing but with no shutdown that would pay ("less" and "short"); outside a window it covers its
+# costs at DA prices.  Coal is shown on its own (out of the decision table)
+ECON = ("losing more than a restart", "losing, shutting would not pay", "held on by a DAM commitment, AS or RUC",
+        "covering its costs")
+BUCKET_ECON = {"more": 0, "less": 1, "short": 1, "held": 2}
 SCENARIOS = (("losing more than a restart", ECON[:1]), ("losing money", ECON[:2]))
 # question 1's floor: hours binned by net load (load less the wind and solar available), GW
 FLOOR_BIN, STUCK_BIN, MIN_BIN_HOURS = 2, 4, 10
@@ -206,14 +210,11 @@ GROUPS = ("daily, over 2 a week", "daily, 1 to 2 a week", "daily, under 1 a week
 # ---------------------------------------------------------------- build --
 def _losing(table):
     """{(train, date, he): ECON index} for the hours of each decision block's loss window."""
-    from .config import GENERIC_COSTS
-    start = table["hot_start"].fillna(table["tech"].map(lambda t: GENERIC_COSTS[t][0]))
-    worth = (table["loss"] > start).to_numpy()
     out = {}
-    for tr, d, f, n, w in zip(table["train"], table["date"], table["win_from"], table["win_h"], worth):
+    for tr, d, f, n, b in zip(table["train"], table["date"], table["win_from"], table["win_h"], table["bucket"]):
         d0 = dt.date.fromisoformat(str(d)[:10])
         for i in range(int(f), int(f) + int(n)):
-            out[(tr, (d0 + dt.timedelta(days=(i - 1) // 24)).isoformat(), (i - 1) % 24 + 1)] = 0 if w else 1
+            out[(tr, (d0 + dt.timedelta(days=(i - 1) // 24)).isoformat(), (i - 1) % 24 + 1)] = BUCKET_ECON[b]
     return out
 
 
@@ -350,7 +351,7 @@ def _year(year, months, cache, before=None, losing=None, gas=None):
         oh = r[r["over"] & (r["free"] >= OVER_CURT_MIN)][["date", "he", "free"]]
         s = h[atmin].merge(oh[["date", "he"]], on=["date", "he"])
         nuc = h[(h["tech"] == "nuclear") & h["state"].isin(["m", "a"])].merge(oh[["date", "he"]], on=["date", "he"])
-        s["econ"] = [t if t not in FOSSIL else ECON[(losing or {}).get((tr, d, he), 2)]
+        s["econ"] = [t if t not in ("combined_cycle", "gas_steam") else ECON[(losing or {}).get((tr, d, he), 3)]
                      for tr, d, he, t in zip(s["train"], s["date"], s["he"], s["tech"])]
         by = s.groupby(["tech", "econ"])["lsl"].sum()
         atm = [[year, t, w, round(float(v))] for (t, w), v in by.items() if t != "nuclear"]
@@ -465,26 +466,18 @@ def _dam_status(dd):
 
 
 def _rule(table):
-    """Question 3, from the decision table: how often units losing money turned off, and where the
-    loss windows fall."""
-    from .config import GENERIC_COSTS
+    """Question 3, from the decision table: each bucket's windows, the share turned off (an off
+    spell of at least the unit's minimum off time over the window), and the minimum output over
+    the windows (LSL x hours) split by the share of hours online; and where the windows fall."""
     x = table[table["tech"].isin(["combined_cycle", "gas_steam"])].copy()
-    start = x["hot_start"].fillna(x["tech"].map(lambda t: GENERIC_COSTS[t][0]))
-    x["small"] = (x["loss"] <= start).astype(int)          # 0: losing more than a restart
-    x["awarded"] = (x["award_share"] >= 0.5).astype(int)
-    x["off"] = x["on_share"] < 0.5
-    mwh = x["lsl"] * x["win_h"]                              # minimum output over the window
+    mwh = x["lsl"] * x["win_h"]
     x["on_mwh"], x["off_mwh"] = mwh * x["on_share"], mwh * (1 - x["on_share"])
-    off = [[int(y), t, int(sm), int(aw), len(g), round(float(g["off"].mean()), 4),
+    off = [[int(y), t, b, len(g), round(float(g["shut"].mean()), 4),
             round(float(g["on_mwh"].sum())), round(float(g["off_mwh"].sum()))]
-           for (y, t, sm, aw), g in x.groupby(["year", "tech", "small", "awarded"])]
-    he = (x["win_from"] - 1) % 24 + 1
-    mix = []
-    for (y, t), g in x.groupby(["year", "tech"]):
-        h = he[g.index]
-        mix.append([int(y), t, len(g), round(float((g["win_from"] >= 25).mean()), 4),
-                    round(float(((h >= 9) & (h <= 17) & (g["win_from"] < 25)).mean()), 4),
-                    round(float(g["off"].mean()), 4), round(float(g["loss_per_mw"].median()), 1)])
+           for (y, t, b), g in x.groupby(["year", "tech", "bucket"])]
+    mix = [[int(y), t, len(g), round(float((g["slot"] == "night").mean()), 4), round(float((g["slot"] == "day").mean()), 4),
+            round(float(g["shut"].mean()), 4), round(float(g["loss_per_mw"].median()), 1)]
+           for (y, t), g in x.groupby(["year", "tech"])]
     return {"off": off, "mix": mix}
 
 
@@ -499,9 +492,9 @@ def build(cache: Path, end=None, table=None) -> dict:
                  "hours": [[year, net load bin GW, hours]] (STUCK_BIN), "bin", "stuck_bin"},
        "q2": {"award": [[year, tech, group, stretches, stayed]],
               "cost": [[year, tech, group (as award), minimum_mwh, cost_usd]]},
-       "q3": {"off": [[year, tech, small (0: losing more than a restart), awarded, windows, off_share,
+       "q3": {"off": [[year, tech, bucket (held | short | less | more), windows, off_share,
                         minimum_online_mwh, minimum_offline_mwh]],
-              "mix": [[year, tech, windows, overnight, midday, off_rate, median_loss_per_mw]]},
+              "mix": [[year, tech, windows, night, day, off_rate, median_loss_per_mw]]},
        "q4": {"years": [[year, available_mwh, curtailed_mwh, in_oversupply_mwh, uncongested_mwh,
                          oversupply_hours, counted_hours, uncongested_in_counted_mwh, uncongested_by_he[24]]],
               "atmin": [[year, tech, ECON or the tech, mwh]], "avoid": [[year, scenario, mwh]], "scenarios", "econ"}}

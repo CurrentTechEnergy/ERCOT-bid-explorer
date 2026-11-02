@@ -4,18 +4,18 @@ split of the change in shutdowns into behaviour (the rule moved) and triggers (t
 
     python -m pipeline.decision_rule [--table decision-table/decision-table.parquet] [--out decision-model]
 
-Outcome: the train was off for most of its loss window (on_share < 0.5).  Inputs, standardised
+Outcome: the train turned off for its loss window (the table's shut: an off spell of at least its
+minimum off time over the window).  Inputs, standardised
 once over the whole table so coefficients compare across windows:
 
   log_loss     log1p(loss_per_mw), the window's loss at minimum per MW of LSL
   log_before, log_after   log1p of the margin earned before and after the window, per MW
   award        award_share, share of the window covered by a DAM energy award
-  win_vs_off   log(window hours / the train's short off spell), the 10th percentile of its off
-               spells over the 365 days before the block (the table's own off_p10 uses the same
-               calendar year, so it knows whether the train shut that year); 0 with a flag when the
-               train had no off spell in that year
+  win_vs_off   log(window hours / the train's minimum off time), the table's min_off: the 10th
+               percentile of its off spells over the 365 days before the day (a default without
+               three of them, flagged)
   log_start    log1p(start_per_mw), the hot start offer, tech median with a flag when unknown
-  overnight    the window starts after midnight (win_from >= 25)
+  overnight    the window starts at night (slot "night": HE20 to HE7)
   season       spring, summer, fall against winter
 plus one intercept per train (L2-penalised like the rest).  Henry Hub is left out: it barely moves
 inside a 12-month window, so its slope trades off against the intercepts and the rules stop being
@@ -54,37 +54,24 @@ def features(x):
     f["log_before"] = np.log1p(x.before_per_mw)
     f["log_after"] = np.log1p(x.after_per_mw)
     f["award"] = x.award_share
-    wvo = np.log(x.win_h / x.off_p10_lag)
-    f["win_vs_off_na"] = wvo.isna().astype(float)
+    wvo = np.log(x.win_h / x.min_off)
+    f["win_vs_off_na"] = x.min_off_est.astype(float)
     f["win_vs_off"] = wvo.fillna(0.0)
     sp = np.log1p(x.start_per_mw)
     f["log_start_na"] = sp.isna().astype(float)
     f["log_start"] = sp.fillna(sp.groupby(x.tech).transform("median"))
-    f["overnight"] = (x.win_from >= 25).astype(float)
+    f["overnight"] = (x.slot == "night").astype(float)
     for s in ("spring", "summer", "fall"):
         f[s] = (x.season == s).astype(float)
     return f
-
-
-def trailing_off_p10(x):
-    """Each block's 10th-percentile off spell (hours) over the train's shutdowns in the 365 days
-    before it."""
-    out = pd.Series(np.nan, index=x.index)
-    for _, g in x.groupby("train"):
-        g = g.sort_values("date")
-        h = pd.Series(np.where(g.shut, g.off_h, np.nan), index=pd.to_datetime(g.date))
-        q = h.rolling("365D", closed="left", min_periods=1).quantile(0.1)
-        out[g.index] = q.to_numpy()
-    return out
 
 
 def load(path):
     """The table (a parquet path or a DataFrame) with the outcome, month index and inputs."""
     x = path if isinstance(path, pd.DataFrame) else pd.read_parquet(path)
     x = x[x.tech.isin(TECHS)].reset_index(drop=True)
-    x["off"] = (x.on_share < 0.5).astype(int)
+    x["off"] = x.shut.astype(int)
     x["ym"] = x.year.astype(int) * 12 + x.month.astype(int) - 1
-    x["off_p10_lag"] = trailing_off_p10(x)
     f = features(x)
     mu, sd = f.mean(), f.std().replace(0, 1)
     z = (f - mu) / sd
