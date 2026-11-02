@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Prices · ERCOT Bids</title>
+<meta name="description" content="How ERCOT's highest and lowest prices have moved since 2019, year by year, beside battery growth, Ship Channel gas and gas units riding through cheap hours.">
+<link rel="canonical" href="https://ercotbids.currenttech.energy/prices.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="ERCOT Bids · CurrentTech Energy">
+<meta property="og:title" content="Prices">
+<meta property="og:description" content="How ERCOT's highest and lowest prices have moved since 2019, year by year, beside battery growth, Ship Channel gas and gas units riding through cheap hours.">
+<meta property="og:url" content="https://ercotbids.currenttech.energy/prices.html">
+<meta property="og:image" content="https://ercotbids.currenttech.energy/share-card.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/favicon.ico" sizes="48x48">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Sans+Condensed:wght@600&display=swap">
+<link rel="stylesheet" href="style.css">
+<style>
+  /* years run amber (2019) through slate to deep blue (latest); gas is the burnt orange line */
+  :root { --yr-old: #e0a83c; --yr-mid: #8fa3b8; --yr-new: #0d366b; --gas-line: #a8551c; }
+  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --yr-old: #c98a1e; --yr-mid: #6f7f92; --yr-new: #cfe2fa; --gas-line: #e08a4f; } }
+  :root[data-theme="dark"] { --yr-old: #c98a1e; --yr-mid: #6f7f92; --yr-new: #cfe2fa; --gas-line: #e08a4f; }
+  .yrs { display: flex; flex-wrap: wrap; gap: 4px; }
+  .yrs button { font: 500 12px var(--font-data); border: 1px solid var(--line); background: var(--surface); color: var(--ink-2); border-radius: 999px; padding: 3px 9px; cursor: pointer; display: inline-flex; gap: 6px; align-items: center; min-height: 28px; }
+  .yrs button i { width: 14px; height: 3px; border-radius: 2px; display: inline-block; }
+  .yrs button[aria-pressed="false"] { opacity: 0.4; }
+  .minis { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 12px; }
+  .mini h3 { font: 500 13px var(--font-ui); margin: 0 0 2px; }
+  .mini .chart { min-height: 150px; }
+  @media (max-width: 900px) { .minis { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  .table-wrap { overflow-x: auto; }
+</style>
+</head>
+<body data-panel-links>
+<div class="page">
+
+<header class="masthead">
+  <div class="brand">
+    <div class="nav-row"><nav class="nav" aria-label="Pages"><a href="goal.html">Will fossil turn off?</a><a href="index.html">A day in ERCOT</a><a href="prices.html" aria-current="page">Prices</a><a href="dayahead.html">Day-ahead offers</a><a href="commitment.html">Turn-ons and Turn-offs</a><a href="beyond.html">Real-time offers</a><a href="renewables.html">Renewables</a><a href="batteries.html">Batteries</a><a href="unit.html">Units</a><span class="nav-sep" aria-hidden="true"></span><a href="changes.html" class="aux">What's changing</a><a href="fleet.html" class="aux">Fleet economics</a><a href="builder.html" class="aux">Graph builder</a><a href="guide.html" class="aux">How offers work</a></nav></div>
+    <h1>Prices</h1>
+    <p class="sub">How ERCOT's highest and lowest prices have moved since 2019, year by year, beside the growth in batteries and the price of gas.</p>
+  </div>
+  <p class="status" id="status">Loading data…</p>
+</header>
+
+<section class="controls" aria-label="Controls">
+  <div class="ctl"><span class="lbl">Market</span><div class="seg" role="radiogroup" aria-label="Market" id="c-mkt"><button type="button" role="radio" data-v="rt">Real-time</button><button type="button" role="radio" data-v="da">Day-ahead</button></div></div>
+  <div class="ctl"><label class="lbl" for="c-hub">Hub</label><select id="c-hub"><option value="HB_HUBAVG">Hub average</option><option value="HB_NORTH">North</option><option value="HB_WEST">West</option><option value="HB_HOUSTON">Houston</option><option value="HB_SOUTH">South</option></select></div>
+  <div class="ctl"><span class="lbl">Months</span><div class="seg" role="radiogroup" aria-label="Months" id="c-per"><button type="button" role="radio" data-v="full">Whole year</button><button type="button" role="radio" data-v="ytd" id="c-ytd">Same months every year</button></div></div>
+  <div class="ctl"><span class="lbl">Units</span><div class="seg" role="radiogroup" aria-label="Units" id="c-unit"><button type="button" role="radio" data-v="usd">$/MWh</button><button type="button" role="radio" data-v="hr">÷ Ship Channel gas</button></div></div>
+  <div class="ctl"><span class="lbl">Years</span><div class="yrs" id="c-years"></div></div>
+</section>
+
+<main>
+  <section class="panel panel-wide" id="pdc-panel">
+    <div class="panel-head">
+      <div><h2>Price duration curve</h2><p class="note" id="pdc-note"></p></div>
+      <div class="panel-tools"><div class="seg seg-sm" role="radiogroup" aria-label="Zoom" id="c-zoom"><button type="button" role="radio" data-v="all">Whole year</button><button type="button" role="radio" data-v="top">Top 5% of hours</button><button type="button" role="radio" data-v="bot">Bottom 15%</button></div></div>
+    </div>
+    <div class="chart" id="pdc"></div>
+  </section>
+
+  <section class="panel panel-wide" id="tails-panel">
+    <div class="panel-head"><div><h2>Batteries, gas and hours in the tails</h2><p class="note" id="tails-note"></p></div></div>
+    <div class="minis" id="tails"></div>
+  </section>
+
+  <section class="panel panel-wide" id="ride-panel">
+    <div class="panel-head"><div><h2>Gas units riding through cheap hours</h2><p class="note" id="ride-note"></p></div></div>
+    <div class="chart" id="ride"></div>
+  </section>
+
+  <section class="panel" id="spread-panel">
+    <div class="panel-head"><div><h2>Spread between the tails</h2><p class="note">Top 1% less bottom 1% of hours, top 5% less bottom 5%, and the average day's highest less lowest hour.</p></div></div>
+    <div class="chart" id="spread"></div>
+  </section>
+
+  <section class="panel" id="hod-panel">
+    <div class="panel-head">
+      <div><h2>Price by hour of day</h2><p class="note">One line per year, hour ending in Central time. The median keeps a few extreme days (Winter Storm Uri in 2021) from lifting a whole year.</p></div>
+      <div class="panel-tools"><div class="seg seg-sm" role="radiogroup" aria-label="Measure" id="c-hod"><button type="button" role="radio" data-v="hod_p50">Median</button><button type="button" role="radio" data-v="hod_mean">Average</button><button type="button" role="radio" data-v="hod_p95">95th pct</button><button type="button" role="radio" data-v="hod_p05">5th pct</button></div></div>
+    </div>
+    <div class="chart" id="hod"></div>
+  </section>
+
+  <section class="panel panel-wide" id="table-panel">
+    <div class="panel-head"><div><h2>Year by year</h2><p class="note" id="table-note"></p></div></div>
+    <div class="table-wrap"><table class="data" id="tbl" data-csv></table></div>
+  </section>
+</main>
+
+<footer class="foot">
+  <p>Source: ERCOT EMIL products NP6-905-CD (Settlement Point Prices at Resource Nodes, Hubs and Load Zones), NP4-190-CD (DAM Settlement Point Prices), NP3-965-ER (60-Day SCED Disclosure) and the Capacity, Demand and Reserves report (December 2025), Jan 2019 on; Henry Hub from EIA; gas at Houston Ship Channel from OilPriceAPI daily prices, which are licensed and not published here (only 7-day, monthly and yearly averages and price divided by gas). Real-time prices are hourly means of the 15-minute hub prices. Updated with every data run; earlier years are rebuilt monthly.</p>
+  <p>Made by <a href="https://currenttech.energy">currenttech.energy</a> · <a href="contact.html">Contact</a></p>
+  <p>Not affiliated with or endorsed by ERCOT. ERCOT is a registered trademark of the Electric Reliability Council of Texas, Inc.</p>
+  <p>© 2026 CurrentTech Energy. All rights reserved. For information only; not trading or investment advice. <a href="terms.html">Terms and privacy</a></p>
+</footer>
+</div>
+<div class="tip" id="tip" hidden></div>
+<script src="vendor/d3.min.js"></script>
+<script src="common.js"></script>
+<script src="prices.js"></script>
+</body>
+</html>
