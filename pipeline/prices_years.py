@@ -18,7 +18,7 @@ Inputs (no ERCOT download; everything is already in the repository or on the `hi
   battery capacity       pipeline/reference/battery_capacity.csv (CDR year ends), and for the latest
                          year the site's battery HSL total on the latest day of storage/units.json.gz
 
-Two files, one writer each.  The monthly Goal workflow downloads the real-time months and runs
+Two files, one writer each.  The weekly Goal workflow downloads the real-time months and runs
 `--full`: every year and month from the history release, into prices_years_hist.json.gz, and it
 moves the "same months" cut ("ytd": January to the last complete month) forward.  The update run
 starts from that file and adds what it lacks (the latest year, and any year it has no entry for)
