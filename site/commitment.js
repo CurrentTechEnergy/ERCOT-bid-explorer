@@ -1315,7 +1315,10 @@ async function drawUnits() {
   if (!S.UH.dates.length) return emptyMsg(el, "No hourly data.");
   const B = stretchBase(), { rows: resp } = stretchResponses(+S.stThr), by = d3.group(resp, (r) => r.unit);
   const rides = ridesBy(+S.costThr) || new Map();
-  const today = new Map((decisionDays().get(S.date) || []).map((r) => [r[DAY_F.unit], r[DAY_F.shut] ? "off" : "on"]));
+  // what each unit did on the day, by the turn-off chart's rule: the operator model's flag (offline in
+  // any hour, outages aside) where it has a row, else the 4-hour shutdown flag (coal, turbines)
+  const opD = opDay(S.date);
+  const today = new Map((decisionDays().get(S.date) || []).map((r) => { const o = opD?.get(r[DAY_F.unit]); return [r[DAY_F.unit], (o ? o[6] : r[DAY_F.shut]) ? "off" : "on"]; }));
   let list = [...B.units.values()].filter((e) => e.ran && e.mw > 0).map((e) => {
     const dec = decisionOf(e.unit), g = by.get(e.unit) || [], n = g.length, ri = rides.get(e.unit), did = today.get(e.unit), op = operatorSummary().get(e.unit);
     const cnt = { a: 0, m: 0, "0": 0, o: 0 };
@@ -1344,7 +1347,7 @@ async function drawUnits() {
     `Turn-off point is the operator-informed model's, as in the chart at the top of the page: what being off has to save, per MW of LSL, before the model turns the unit off, the median over its days online going in, kept separate for days with no day-ahead award, an award some hours and an award every hour ("rides through" when the model keeps it on through every shift on most of them). Model right is how often the model's call at the unit's own saving matched what it did, over its days online going in, leaving out days ERCOT committed it by RUC. CC trains and gas steam units only. ` +
     `Hot start is the start cost in the unit's latest day-ahead offer per MW of LSL, for comparison only (* marks a generic value for the technology); no model uses it. ` +
     `Hours are split between running above minimum, at minimum, offline but available and on outage (an off spell that is mostly outage counts as outage). "Turned off in cheap stretches" is the share of the stretches with lambda below ${fmtPrice0(+S.stThr)} it was running into that it turned off for (shown once it ran into ${ST_MIN_N}), as in the panel above; ride-throughs and the net are from the decision-cost panel at lambda below ${fmtPrice0(+S.costThr)}. ` +
-    `"On the day" is what the unit did on the chosen day if it was online going in: turned off during the day's worst stretch, or stayed on. Click a column to sort, a row to open the unit.`);
+    `"On the day" is what the unit did on the chosen day if it was online going in: turned off (offline in some hour of the day, outages aside; for units without an operator model row, coal and combustion turbines, a shutdown of 4 hours or more starting that day), or stayed on, as in the turn-off chart. Click a column to sort, a row to open the unit.`);
   el.innerHTML = `<table class="data"><thead><tr>${UNIT_COLS.map((c) => `<th class="sortable${c.t ? " t" : ""}" data-k="${c.k}" aria-sort="${c.k === col.k ? (dir > 0 ? "ascending" : "descending") : "none"}">${c.h}${c.k === col.k ? (dir > 0 ? " ▲" : " ▼") : ""}</th>`).join("")}</tr></thead><tbody>` +
     list.map((r) => `<tr data-href="${unitHref(r.pick)}" style="cursor:pointer">${UNIT_COLS.map((c) => `<td${c.t ? ' class="t"' : ""}>${c.f(r)}</td>`).join("")}</tr>`).join("") + "</tbody></table>";
   setCSV(el, ["unit", "technology", "group", "capacity_mw", "lsl_mw", "turn_off_usd_per_mw_lsl_no_award", "turn_off_usd_per_mw_lsl_award_some_hours", "turn_off_usd_per_mw_lsl_award_every_hour", "hot_start_usd_per_mw_lsl", "model_right", "model_days", "decision_days", "decision_shutdowns",

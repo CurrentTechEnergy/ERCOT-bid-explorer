@@ -257,7 +257,7 @@ function render() {
 // ---- thermal dispatch stack: the offers of the thermal units online in the hour ----------------
 // Drawn from data/stack/<date>.json.gz (pipeline/actual_stack.py, 60-day days only); the page only
 // stacks the series it is given.
-const STACK_GROUPS = { never: ["Always on when available", "--g1"], seasonal: ["Seasonal", "--g2"], multiday: ["Multi-day", "--g3"],
+const STACK_GROUPS = { never: ["Always on when available", "--g1"], multiday: ["Multi-day", "--g3"],
   daily1: ["Daily, under once a week", "--g4"], daily2: ["Daily, 1 to 2 a week", "--g5"], daily3: ["Daily, over 2 a week", "--g6"],
   never_on: ["Never on", "--c-other"], ungrouped: ["Not yet grouped", "--c-other"] };
 const STACK_TECHS = { nuclear: ["Nuclear", "--c5"], coal: ["Coal & lignite", "--c8"], combined_cycle: ["Combined cycle", "--c1"],
