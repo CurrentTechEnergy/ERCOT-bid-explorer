@@ -24,7 +24,7 @@ built from the 60-day day files, pipeline/decision_table.month_file):
      that curtailment shutting each group would have let run (hour by hour, the smaller of the two).
 
 "Cheap" is a day-ahead system lambda (NP4-523-CD; the history release's da-lambda files, else
-data/dam_lambda.json.gz) of CHEAP $/MWh or less, as on the Commitment scorecard.  Writes data/goal.json.gz (format in build()).  Run monthly by the Goal page workflow
+data/dam_lambda.json.gz) of CHEAP $/MWh or less, as on the Commitment scorecard.  Writes data/goal.json.gz (format in build()).  Run weekly (Sunday mornings) by the Goal page workflow
 (.github/workflows/goal.yml): about 30 minutes, most of it the decision table.
 
     python -m pipeline.goal [--cache goal-cache]

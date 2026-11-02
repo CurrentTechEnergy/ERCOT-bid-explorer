@@ -7,7 +7,7 @@ name: Goal page
 # wrote meanwhile.
 on:
   schedule:
-    - cron: "23 16 4 * *"     # the 4th of each month, between the update's two runs
+    - cron: "23 8 * * 0"      # Sundays 08:23 UTC (01:23 MST / 02:23 MDT): the 05:17 MT update deploys it
   workflow_dispatch:
 
 permissions:

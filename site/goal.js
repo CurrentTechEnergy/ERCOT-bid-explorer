@@ -1,5 +1,5 @@
 /* Will fossil turn off? Four questions, each by year from 2019, from data/goal.json.gz
-   (pipeline/goal.py, built monthly from the 60-day reports): the floor fossil output holds against
+   (pipeline/goal.py, built weekly from the 60-day reports): the floor fossil output holds against
    net load and what sits at it, why the rest stays on in cheap hours and what that costs, whether
    behaviour is changing, and where fossil minimums sit beside curtailed wind
    and solar.  The page only sums and divides what the file holds. */
@@ -315,7 +315,7 @@ function drawAll() { drawQ1(); drawQ2(); drawQ3(); drawQ4(); }
 (async function boot() {
   window.CX.init();
   S.G = await tryJSON("data/goal.json.gz");
-  if (!S.G) { $("status").textContent = "Not built yet. The goal page's data is built monthly by its own workflow."; return; }
+  if (!S.G) { $("status").textContent = "Not built yet. The goal page's data is built weekly by its own workflow."; return; }
   const v = readHash();
   const ys = years();
   S.year = v.y === "all" || !v.y ? "all" : ys.includes(+v.y) ? +v.y : "all";
