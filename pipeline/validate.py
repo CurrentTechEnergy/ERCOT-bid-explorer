@@ -721,7 +721,7 @@ def _renew_years_checks(day):
                 hours = 24 * (calendar.monthrange(*map(int, p.split("-")[:2]))[1] if kind == "monthly" else 1)
                 if (r["gw"] is not None and (r["gw"] < 0 or r["gen"] > r["gw"] * hours * 1.02)) or r["gen"] < 0 or r["curt"] < 0 \
                         or (r["neg"] is not None and not 0 <= r["neg"] <= 1) \
-                        or any(r[c] is not None and not -1000 <= r[c] <= 10000 for c in ("capture", "rt_capture", "avg", "rt_avg", "hub_da", "hub_rt")):
+                        or any(r[c] is not None and not -1000 <= r[c] <= 10000 for c in ("capture", "rt_capture", "avg", "rt_avg", "hub_da", "hub_rt", "hub_da_gen", "hub_rt_gen")):
                     bad.append(f"{t} {p}")
     day.add("renew_years_rows", "error" if bad_len else "ok",
             f"{bad_len[:3]} not one value per period" if bad_len else f"{len(ry.get('months', []))} months, {len(ry.get('dates', []))} days")

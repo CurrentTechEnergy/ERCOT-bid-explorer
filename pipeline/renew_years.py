@@ -3,7 +3,8 @@ how much of their output landed in hours priced at $0 or below.  Read by the Ren
 "Across the years" panel.  Needs no ERCOT downloads:
   - monthly, from Jan 2019: the wind and solar months of the hourly history (units-YYYY-MM.parquet
     on the `history` release, pipeline/history.py) with the same months' hourly real-time prices
-    (rt-prices-, to Nov 2025) and day-ahead hub prices (da-hubs-), fetched with the gh CLI
+    (rt-prices-, to Nov 2025), day-ahead hub prices (da-hubs-) and thermal output (thermal-, to Nov
+    2025, for the hours' total generation), fetched with the gh CLI
   - daily, from the series month files (data/series/YYYY-MM/{wind,solar}.json.gz, pipeline/series.py),
     which also give each month they cover completely (Dec 2025 on): the history misses a day or
     two in a few months, so a history month short of days has its energy scaled up to the month
@@ -21,7 +22,11 @@ Per technology and period:
   rt_capture  output-weighted real-time price at each unit's settlement point, $/MWh
   rt_avg      plain average real-time price over the same unit-hours, $/MWh
   hub_da, hub_rt   plain average of the ERCOT hub average (HB_HUBAVG) over the period's hours, DA
-              and real-time, $/MWh (capture / hub: timing and location, the usual capture rate)
+              and real-time, $/MWh (capture / hub: timing and location)
+  hub_da_gen, hub_rt_gen   the same hub prices weighted by each hour's ERCOT generation (every
+              unit's telemetered output in the 60-day data, storage left out; the history's
+              thermal plus wind and solar months, to Nov 2025): what the average MWh sold earned
+              at the hub, $/MWh (capture / this: against the average MWh)
   neg         share of output in hours whose DA price at the unit's settlement point was $0 or below
 
 data/renewables/years.json.gz
@@ -49,9 +54,10 @@ PATH = DATA_DIR / "renewables" / "years.json.gz"
 CACHE = UNIT_DATA_DIR / "renew_years"
 HISTORY = Path("history")
 TECHS = ("wind", "solar")
-FIELDS = ["gw", "units", "gen", "curt", "capture", "avg", "neg", "rt_capture", "rt_avg", "hub_da", "hub_rt"]
+FIELDS = ["gw", "units", "gen", "curt", "capture", "avg", "neg", "rt_capture", "rt_avg", "hub_da", "hub_rt",
+          "hub_da_gen", "hub_rt_gen"]
 HUB = "HB_HUBAVG"
-KINDS = ("units", "rt-prices", "da-hubs")
+KINDS = ("units", "rt-prices", "da-hubs", "thermal")
 WINDOW = 30
 REPO = os.environ.get("GITHUB_REPOSITORY", "CurrentTechEnergy/ERCOT-bid-explorer")
 
@@ -69,9 +75,16 @@ def _hourly(v15) -> np.ndarray:
     return np.where(n > 0, np.nansum(a, axis=1) / np.maximum(n, 1), np.nan)
 
 
+def _weighted(p, w) -> float:
+    p, w = np.asarray(p, float), np.asarray(w, float)
+    ok = np.isfinite(p) & np.isfinite(w)
+    return round(float((p[ok] * w[ok]).sum() / w[ok].sum()), 2) if ok.any() and w[ok].sum() > 0 else None
+
+
 def summarize(units: dict, cap: dict, hub: dict) -> dict:
     """{unit: (hsl, bp, out, da, rt) arrays over the period's hours}, {unit: fleet-size MW},
-    {"da", "rt": the hub average's hourly prices over the period} -> FIELDS."""
+    {"da", "rt": the hub average's hourly prices over the period, "gen": ERCOT generation in the
+    same hours (optional)} -> FIELDS."""
     gen = curt = wsum = psum = neg = rsum = rpsum = 0.0
     for hsl, bp, out, da, rt in units.values():
         o = np.clip(np.nan_to_num(out), 0, None)
@@ -92,7 +105,9 @@ def summarize(units: dict, cap: dict, hub: dict) -> dict:
             "avg": _mean(allp),
             "neg": round(float(neg / wsum), 4) if wsum else None,
             "rt_capture": round(float(rpsum / rsum), 2) if rsum else None, "rt_avg": _mean(allr),
-            "hub_da": _mean(hub.get("da", [])), "hub_rt": _mean(hub.get("rt", []))}
+            "hub_da": _mean(hub.get("da", [])), "hub_rt": _mean(hub.get("rt", [])),
+            "hub_da_gen": _weighted(hub["da"], hub["gen"]) if "gen" in hub and "da" in hub else None,
+            "hub_rt_gen": _weighted(hub["rt"], hub["gen"]) if "gen" in hub and "rt" in hub else None}
 
 
 def _month_from_parquet(paths: dict, month: str) -> dict:
@@ -100,16 +115,22 @@ def _month_from_parquet(paths: dict, month: str) -> dict:
     import pandas as pd
     d = pd.read_parquet(paths["units"], columns=["date", "he", "unit", "tech", "sp", "hsl", "bp", "out", "da_node"])
     d = d[d.tech.isin(TECHS)]
-    hub = {}
+    # the month's hours, with the hub prices and (with the thermal month) ERCOT generation in each
+    hours = d[["date", "he"]].drop_duplicates().set_index(["date", "he"]).sort_index()
     if "rt-prices" in paths:
         rt = pd.read_parquet(paths["rt-prices"], columns=["date", "he", "point", "price"])
-        hub["rt"] = rt[rt.point == HUB].price.to_numpy(float)
+        hours["rt"] = rt[rt.point == HUB].set_index(["date", "he"]).price
         d = d.merge(rt.rename(columns={"point": "sp", "price": "rt"}), on=["date", "he", "sp"], how="left")
     else:
         d["rt"] = np.nan
     if "da-hubs" in paths:
-        dh = pd.read_parquet(paths["da-hubs"], columns=["point", "price"])
-        hub["da"] = dh[dh.point == HUB].price.to_numpy(float)
+        dh = pd.read_parquet(paths["da-hubs"], columns=["date", "he", "point", "price"])
+        hours["da"] = dh[dh.point == HUB].set_index(["date", "he"]).price
+    if "thermal" in paths:
+        th = pd.read_parquet(paths["thermal"], columns=["date", "he", "out"])
+        gen = pd.concat([th, d[["date", "he", "out"]]]).assign(out=lambda x: x.out.clip(lower=0))
+        hours["gen"] = gen.groupby(["date", "he"]).out.sum()
+    hub = {k: hours[k].to_numpy(float) for k in ("rt", "da", "gen") if k in hours}
     y, m = map(int, month.split("-"))
     scale = calendar.monthrange(y, m)[1] / max(d.date.nunique(), 1)
     out = {}
@@ -130,7 +151,7 @@ def history_months() -> dict:
     """{YYYY-MM: {tech: FIELDS}} from the history release's units months (cached)."""
     try:
         assets = json.loads(_gh("api", f"repos/{REPO}/releases/tags/history", "--jq",
-                                '[.assets[] | select(.name | test("^(units|rt-prices|da-hubs)-[0-9]{4}-[0-9]{2}\\\\.parquet$")) | {id, name, size}]'))
+                                '[.assets[] | select(.name | test("^(units|rt-prices|da-hubs|thermal)-[0-9]{4}-[0-9]{2}\\\\.parquet$")) | {id, name, size}]'))
     except (OSError, subprocess.CalledProcessError, ValueError) as e:
         warn(f"renew_years: can't list the history release ({e}); using cached months only")
         assets = None
@@ -183,12 +204,26 @@ def series_days() -> tuple:
                 continue
             per[t][month] = f
     all_dates = sorted({d for t in TECHS for f in per[t].values() for d in f["dates"]})
-    hubs = {}       # date -> {"da", "rt": 24 hourly hub-average prices}
+    gen = {}        # date -> 24 hourly MW of ERCOT generation (every technology but storage)
+    for month in idx.get("months", []):
+        for t in idx.get("techs", []):
+            if t == "storage":
+                continue
+            f = per[t].get(month) if t in per else read_json_gz(DATA_DIR / "series" / month / f"{t}.json.gz")
+            if not f:
+                continue
+            for v in f["units"].values():
+                o = np.clip(np.nan_to_num(np.array([np.nan if x is None else x for x in v["out"]], float)), 0, None)
+                for i, d in enumerate(f["dates"]):
+                    gen[d] = gen.get(d, 0) + o[24 * i:24 * i + 24]
+    hubs = {}       # date -> {"da", "rt": 24 hourly hub-average prices, "gen"}
     for d in all_dates:
         da = (dam_hubs.get(d) or {}).get(HUB)
         rt = ((read_json_gz(DATA_DIR / "prices" / f"{d}.json.gz") or {}).get("spp15") or {}).get(HUB)
         hubs[d] = {"da": np.array([np.nan if x is None else x for x in da], float) if da else np.full(24, np.nan),
                    "rt": _hourly(rt) if rt and len(rt) == 96 else np.full(24, np.nan)}
+        if d in gen:
+            hubs[d]["gen"] = gen[d]
     for t in TECHS:
         # date -> {unit: (hsl, bp, out, da, rt) 24-hour arrays}
         days = {}
@@ -227,6 +262,8 @@ def series_days() -> tuple:
             units = {u: tuple(np.concatenate([x[i] for x in xs]) for i in range(5)) for u, xs in units.items()}
             cap = {u: float(np.nanmax(v[0])) if np.isfinite(v[0]).any() else 0.0 for u, v in units.items()}
             hub = {k: np.concatenate([hubs[d][k] for d in sorted(ds)]) for k in ("da", "rt")}
+            if all("gen" in hubs[d] for d in ds):
+                hub["gen"] = np.concatenate([hubs[d]["gen"] for d in sorted(ds)])
             months.setdefault(month, {})[t] = summarize(units, cap, hub)
     dates = all_dates
     return dates, daily, {m: v for m, v in months.items() if all(t in v for t in TECHS)}
