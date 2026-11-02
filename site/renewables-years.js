@@ -126,13 +126,11 @@ function draw() {
       { label: day ? label : `${label}, monthly`, color, faint: !day, width: day ? 2 : 1.4, values: rate(c, hub), fmt: fmtPct },
     ];
     if (!day) {
-      // the year: its monthly rates averaged, weighted by the fleet's energy each month, so it sits
-      // among the months; the year's own ratio (earned over hub, both over the whole year) is in the
-      // tooltip and is pulled down by a single extreme month (Uri, Feb 2021)
-      const m = rate(D[t].rt_capture, D[t].hub_rt_gen), y = annual(m, D[t].gen);
-      const e = annual(D[t].rt_capture, D[t].gen), h = annual(D[t].hub_rt_gen, D[t].sys_gen);
-      out.push({ label: `${label}, year`, color, width: 2.6, groups: y.groups, values: y.values, fmt: fmtPct },
-        { label: `${label}, year's earned ÷ year's hub`, color, hide: true, values: rate(e.values, h.values), fmt: fmtPct });
+      // the year: its earned price over the hub price, both weighted by the fleet's own output, so
+      // it is the monthly rates weighted by each month's output x hub price and always sits among
+      // them (a storm month like Uri, Feb 2021, counts for more because its MWh were worth more)
+      const e = annual(D[t].rt_capture, D[t].gen), h = annual(D[t].hub_rt_gen, D[t].gen);
+      out.push({ label: `${label}, year`, color, width: 2.6, groups: e.groups, values: rate(e.values, h.values), fmt: fmtPct });
     }
     out.push({ label: `${label} earned`, color, hide: true, values: c, fmt: fmtPrice });
     return out;
