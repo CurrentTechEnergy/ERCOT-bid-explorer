@@ -269,6 +269,9 @@ details.dl > summary:hover { color: var(--ink); border-color: var(--muted); }
 .mult h3 .sw { width: 10px; height: 10px; flex: none; }
 .mult .sub { font: 11.5px var(--font-data); color: var(--muted); margin: 2px 0 2px; }
 .mult svg { display: block; width: 100%; height: auto; }
+.floor-block { margin: 4px 0 22px; padding-bottom: 18px; border-bottom: 1px solid var(--line); }
+.floor-block h3 { font-size: 15px; font-weight: 600; margin: 0 0 4px; }
+.floor-block .sub { font: 12.5px var(--font-data); margin: 6px 0; }
 .price-band-sw { background: var(--band); }
 .sub-panel { border-top: 1px solid var(--line); margin-top: 18px; padding-top: 14px; }
 .sub-panel h3 { font: 600 15px/1.2 var(--font-head); margin: 0 0 4px; }

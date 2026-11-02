@@ -138,6 +138,10 @@ function actual60() {
   const add = (o, k, h, v) => ((o[k] = o[k] || zero())[h] += v || 0);
   // wind and solar: each unit's largest hourly HSL over the day
   const renMax = {}, onT = {};
+  // the system floor, as the Turn-ons and Turn-offs page's daily minimum (pipeline/lsl_floor.py):
+  // online and not starting up or shutting down (online_share less ramp_share at least half the
+  // hour's runs), fossil units at their LSL, nuclear at its output
+  const floorT = {};
   // per train and hour: online (any configuration online at least half the hour's runs), output, HSL, LSL
   const units = {};
   f.rows.forEach((r) => {
@@ -147,6 +151,7 @@ function actual60() {
     if (t === "storage") (out >= 0 ? dis : chg)[h] += out;
     const online = (r[ci.online_share] || 0) >= 0.5;
     if (online && t !== "storage") { add(lslT, t, h, r[ci.lsl]); add(hslT, t, h, r[ci.hsl]); }
+    if (THERMAL.has(t) && (r[ci.online_share] || 0) - (r[ci.ramp_share] || 0) >= 0.5) add(floorT, t, h, t === "nuclear" ? out : r[ci.lsl]);
     if (t === "wind" || t === "solar") {
       const m = renMax[t] = renMax[t] || {}; m[name0] = Math.max(m[name0] || 0, r[ci.hsl] || 0);
       if (out > 0) add(onT, t, h, 1);    // wind and solar: a unit counts as running in an hour with output
@@ -185,7 +190,7 @@ function actual60() {
   Object.values(units).forEach((u) => { put(setG, u.gk, u.unit); put(setT, u.tech, u.unit); });
   Object.keys(renMax).forEach((t) => Object.keys(renMax[t]).forEach((n) => put(setT, t, n)));
   const count = (o) => Object.fromEntries(Object.entries(o).map(([k, v]) => [k, v.size]));
-  return { group: byG, tech: byT, cat: byC, capG, capT, lslG, hslG, lslT, hslT, onG, onT, nG: count(setG), nT: count(setT), dis, chg, units };
+  return { floorT, group: byG, tech: byT, cat: byC, capG, capT, lslG, hslG, lslT, hslT, onG, onT, nG: count(setG), nT: count(setT), dis, chg, units };
 }
 
 // thermal capacity that was not online, hour by hour: each unit's or train's hours offline but
@@ -504,10 +509,64 @@ function limitChart(s, w0) {
   wrap.append(svg.node());
   return wrap;
 }
+// the system floor by hour: every online fossil unit at its LSL stacked on nuclear output, against
+// what the thermal fleet ran; the day's lowest fossil hour is marked, picked as the Turn-ons and
+// Turn-offs page picks it (hours under 40% of the day's median fossil floor are gaps and skipped)
+const FLOOR_ORDER = ["nuclear", "coal", "combined_cycle", "gas_steam", "combustion_turbine"];
+function floorLowHour(fos) {
+  const med = d3.median(fos), ok = HRS.filter((h) => fos[h] >= 0.4 * med);
+  return ok.length >= 20 ? d3.least(ok, (h) => fos[h]) : null;
+}
+function drawFloor() {
+  const el = $("floor-chart"), a = S.a60;
+  if (!a) return;
+  const zero = HRS.map(() => 0), F = Object.fromEntries(FLOOR_ORDER.map((t) => [t, a.floorT[t] || zero]));
+  const fos = HRS.map((h) => d3.sum(FLOOR_ORDER.slice(1), (t) => F[t][h]));
+  const tot = HRS.map((h) => fos[h] + F.nuclear[h]);
+  const ran = HRS.map((h) => d3.sum(FLOOR_ORDER, (t) => (a.tech[t] || zero)[h]));
+  const lo = floorLowHour(fos), { ref } = dayPrices();
+  const w = size(el), narrow = w < 560, Hh = narrow ? 220 : 260, m = { t: 22, r: 8, b: 24, l: 44 };
+  const x = d3.scaleBand().domain(HRS).range([m.l, w - m.r]).paddingInner(0.12), bw = x.bandwidth();
+  const y = d3.scaleLinear().domain([0, d3.max([...tot, ...ran]) * 1.06 || 1]).nice().range([Hh - m.b, m.t]);
+  const svg = d3.create("svg").attr("viewBox", `0 0 ${w} ${Hh}`).attr("role", "img").attr("aria-label", "System floor by hour: online fossil LSL and nuclear output, against what thermal units ran");
+  cheapRuns().forEach((r) => svg.append("rect").attr("class", "price-band").attr("x", x(r.from) - 1).attr("width", x(r.to) + bw - x(r.from) + 2).attr("y", m.t).attr("height", Hh - m.t - m.b));
+  svg.append("g").attr("class", "gridline").attr("transform", `translate(${m.l},0)`).call(d3.axisLeft(y).ticks(5).tickSize(-(w - m.l - m.r)).tickFormat(""));
+  svg.append("g").attr("class", "axis").attr("transform", `translate(${m.l},0)`).call(d3.axisLeft(y).ticks(5).tickFormat((v) => d3.format(",")(v / 1000) + " GW").tickSizeOuter(0));
+  svg.append("g").attr("class", "axis").attr("transform", `translate(0,${Hh - m.b})`).call(d3.axisBottom(x).tickValues(narrow ? [0, 5, 11, 17, 23] : HRS.filter((h) => h % 2 === 0)).tickFormat((h) => h + 1).tickSizeOuter(0));
+  HRS.forEach((h) => {
+    let y0 = 0;
+    FLOOR_ORDER.forEach((t) => {
+      const v = F[t][h];
+      if (v > 0) svg.append("rect").attr("x", x(h)).attr("width", bw).attr("y", y(y0 + v)).attr("height", y(y0) - y(y0 + v)).attr("fill", css(TECHS.find((d) => d[0] === t)[2]));
+      y0 += v;
+    });
+  });
+  if (lo != null) {
+    svg.append("rect").attr("x", x(lo) - 1.5).attr("width", bw + 3).attr("y", y(tot[lo])).attr("height", y(0) - y(tot[lo])).attr("fill", "none").attr("stroke", css("--ink")).attr("stroke-width", 1.5);
+  }
+  svg.append("path").attr("fill", "none").attr("stroke", css("--ink")).attr("stroke-width", 2).attr("stroke-linejoin", "round")
+    .attr("d", d3.line().x((h) => x(h) + bw / 2).y((h) => y(ran[h]))(HRS));
+  svg.append("rect").attr("x", m.l).attr("y", m.t).attr("width", w - m.l - m.r).attr("height", Hh - m.t - m.b).attr("fill", "transparent").style("cursor", "pointer")
+    .on("pointermove", (ev) => {
+      const h = Math.max(0, Math.min(23, Math.floor((d3.pointer(ev)[0] - m.l) / x.step())));
+      const row = (l, v) => `<tr><td>${l}</td><td class="n">${v}</td></tr>`;
+      showTip(ev, `<h4>System floor · ${heLabel(h)} · lambda ${ref ? fmtPrice(ref[h]) : "–"}</h4><table>` +
+        [...FLOOR_ORDER].reverse().map((t) => row(`${TECH_LABEL[t]}${t === "nuclear" ? " (output)" : " LSL"}`, `${fmtMW(F[t][h])} MW`)).join("") +
+        row("<b>Fossil floor</b>", `<b>${fmtMW(fos[h])} MW</b>`) + row("Floor with nuclear", `${fmtMW(tot[h])} MW`) +
+        row("What thermal ran", `${fmtMW(ran[h])} MW`) + row("Above the floor", `${fmtMW(ran[h] - tot[h])} MW`) + `</table>`);
+    }).on("pointerleave", hideTip)
+    .on("click", (ev) => pickHour(Math.floor((d3.pointer(ev)[0] - m.l) / x.step())));
+  el.replaceChildren(svg.node());
+  $("floor-sub").textContent = lo == null ? "Too many hours missing to pick the lowest hour." :
+    `Lowest fossil floor ${fmtGW(fos[lo])} GW at ${heLabel(lo)}${ref && ref[lo] != null ? ` (lambda ${fmtPrice0(ref[lo])})` : ""}, ${fmtGW(tot[lo])} GW with nuclear; thermal ran ${fmtGW(ran[lo] - tot[lo])} GW above it.`;
+  const csv = HRS.map((h) => [h + 1, ...FLOOR_ORDER.map((t) => Math.round(F[t][h])), Math.round(fos[h]), Math.round(tot[h]), Math.round(ran[h])]);
+  setCSV(el, ["hour_ending", "nuclear_output_mw", ...FLOOR_ORDER.slice(1).map((t) => `${t}_lsl_mw`), "fossil_floor_mw", "floor_with_nuclear_mw", "thermal_output_mw"], csv, `System floor ${S.date}`);
+}
 function drawLimits() {
   const panel = $("limits-panel"), el = $("limits-grid");
   panel.hidden = !S.a60;
   if (!S.a60) return;
+  drawFloor();
   const series = limitSeries();
   // draw once to lay out the grid, then again at each cell's width
   el.replaceChildren(...series.map((s) => limitChart(s)));
