@@ -144,7 +144,7 @@
       <div>
         <h2>Across days</h2>
         <p class="note">How big the fleet is, how hard it works, and how much of the best possible energy revenue it earned, against a perfect battery that knew the day's real-time prices in advance. The marker is the chosen day.</p>
-        <details class="how"><summary>How it's built</summary><p class="note">Every battery of 5 MW or more that reports a state of charge and has a real-time price at its settlement point, each day. <b>Fleet size</b> sums their largest HSL (power) and their usable state of charge range, maximum less minimum (energy). <b>Full cycles</b> is the energy they discharged (telemetered output) over that range. <b>Energy earned</b> is two-settlement: the day-ahead award at the day-ahead price at the battery's node, plus output less the award at the real-time node price, hourly. <b>Day-ahead AS earned</b> is each day-ahead AS award at the day-ahead clearing price; real-time AS changes it by little and is left out. The <b>perfect battery</b> is, for each battery, the best schedule against that day's hourly real-time node prices known in advance: same MW, same usable range, its own round-trip efficiency (fitted from how its state of charge moves, about 86% for the median battery), the MW it actually held for AS taken out of its limits, the day starting at its actual state of charge and ending at least at its actual end-of-day state of charge, and at most one full cycle a day. Hourly prices understate what a 15-minute perfect battery could earn. The <b>share earned</b> is energy earned over the perfect battery's energy revenue; single days swing widely, so the 7-day line sums both over the week first. <b>Charged at</b> and <b>discharged at</b> are MWh-weighted real-time node prices of what the fleet charged and discharged, against the same for the perfect battery (dashed).</p></details>
+        <details class="how"><summary>How it's built</summary><p class="note">Every battery of 5 MW or more that reports a state of charge and has a real-time price at its settlement point, each day. <b>Fleet size</b> sums their largest HSL (power) and their usable state of charge range, maximum less minimum (energy). <b>Full cycles</b> is the energy they discharged (telemetered output) over that range. <b>Energy earned</b> is two-settlement: the day-ahead award at the day-ahead price at the battery's node, plus output less the award at the real-time node price, hourly. <b>Day-ahead AS earned</b> is each day-ahead AS award at the day-ahead clearing price; real-time AS changes it by little and is left out. The <b>perfect battery</b> is, for each battery, the best schedule against that day's hourly real-time node prices known in advance: same MW, same usable range, its own round-trip efficiency (fitted from how its state of charge moves, about 86% for the median battery), the MW it actually held for AS taken out of its limits, the day starting at its actual state of charge and ending at least at its actual end-of-day state of charge, and at most one full cycle a day. Hourly prices understate what a 15-minute perfect battery could earn. The <b>share earned</b> is energy earned over the perfect battery's energy revenue; single days swing widely, so the 7-day line sums both over the week first. The <b>top-bottom spread</b> is, for each battery, the average of the day's top 1, 2 or 4 hourly prices at its node less the average of its bottom 1, 2 or 4, averaged over the fleet weighted by each battery's MW: the most a 1, 2 or 4-hour battery could make per MWh moved in one cycle, before losses. The lines are 7-day averages; hover for each day's values. <b>Charged at</b> and <b>discharged at</b> are MWh-weighted real-time node prices of what the fleet charged and discharged, against the same for the perfect battery (dashed).</p></details>
         <p class="note" id="days-note"></p>
       </div>
     </div>
@@ -154,6 +154,17 @@
     <div class="chart" id="days-cycles"></div>
     <div class="legend legend-static" id="days-value-legend"></div>
     <div class="chart" id="days-value"></div>
+    <div class="ctl-row">
+      <div class="ctl">
+        <span class="lbl" id="lbl-tbm">Prices</span>
+        <div class="seg seg-sm" role="radiogroup" aria-labelledby="lbl-tbm" id="tbm">
+          <button type="button" data-v="rt" role="radio">Real-time</button>
+          <button type="button" data-v="da" role="radio">Day-ahead</button>
+        </div>
+      </div>
+    </div>
+    <div class="legend legend-static" id="days-tb-legend"></div>
+    <div class="chart" id="days-tb"></div>
     <div class="legend legend-static" id="days-capture-legend"></div>
     <div class="chart" id="days-capture"></div>
     <div class="legend legend-static" id="days-price-legend"></div>

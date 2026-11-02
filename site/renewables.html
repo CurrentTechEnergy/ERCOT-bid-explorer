@@ -46,12 +46,36 @@
   <div class="brand">
     <div class="nav-row"><nav class="nav" aria-label="Pages"><a href="goal.html">Will fossil turn off?</a><a href="index.html">A day in ERCOT</a><a href="beyond.html">Real-time offers</a><a href="commitment.html">Commitment</a><a href="dayahead.html">Day-ahead offers</a><a href="renewables.html" aria-current="page">Renewables</a><a href="batteries.html">Batteries</a><a href="unit.html">Units</a><span class="nav-sep" aria-hidden="true"></span><a href="changes.html" class="aux">What's changing</a><a href="fleet.html" class="aux">Fleet economics</a><a href="builder.html" class="aux">Graph builder</a><a href="guide.html" class="aux">How offers work</a></nav></div>
     <h1>Renewables</h1>
-    <p class="sub">How wind and solar offer, how much SCED held back and where, and what their offers say about their hedges.</p>
+    <p class="sub">How fast wind and solar have grown, how they offer, how much SCED held back and where, and what their offers say about their hedges.</p>
   </div>
   <p class="status" id="status">Loading data…</p>
 </header>
 
 <main>
+  <section class="panel panel-wide" id="years-panel">
+    <div class="panel-head">
+      <div>
+        <h2>Across the years</h2>
+        <p class="note">How fast wind and solar have grown, how much they make and how much is held back, what price they actually earn against the average at their nodes, and how much of their output lands in hours priced at $0 or below.</p>
+        <details class="how"><summary>How it's built</summary><p class="note">Every wind and solar unit in ERCOT's 60-day disclosure, hour by hour: monthly from January 2019 from the site's hourly history (built from ERCOT's archive), and daily (and each whole month) since the 60-day data loaded here starts. <b>Fleet size</b> sums each unit's highest hourly HSL in the month (daily: over the last 30 days, so a calm or cloudy day doesn't shrink it); HSL is what SCED saw the unit could produce, a little under nameplate. <b>Energy</b> is telemetered output; <b>curtailed</b> is HSL above base point, the energy SCED held back. A few history months are missing a day or two; their energy is scaled up to the whole month. <b>Capture rate</b> is the output-weighted day-ahead price at each unit's settlement point over the plain average day-ahead price at the same units' nodes and hours: below 100% means the fleet produces most when its own prices are lowest (daily, both are 7-day averages first). <b>$0 or below</b> is the share of output in hours whose day-ahead price at the unit's node was $0 or less: energy a flexible load at those nodes could have taken for free or been paid to take. Day-ahead prices are used because the history carries them for every year; real-time is close and is on the curtailment charts below.</p></details>
+        <p class="note" id="yr-note"></p>
+      </div>
+      <div class="panel-tools">
+        <div class="seg seg-sm" id="yr-by" role="radiogroup" aria-label="Periods">
+          <button type="button" data-v="month" role="radio">Monthly since 2019</button>
+          <button type="button" data-v="day" role="radio">Daily, recent</button>
+        </div>
+      </div>
+    </div>
+    <div class="legend legend-static" id="yr-size-legend"></div>
+    <div class="chart" id="yr-size"></div>
+    <div class="legend legend-static" id="yr-energy-legend"></div>
+    <div class="chart" id="yr-energy"></div>
+    <div class="legend legend-static" id="yr-capture-legend"></div>
+    <div class="chart" id="yr-capture"></div>
+    <div class="legend legend-static" id="yr-neg-legend"></div>
+    <div class="chart" id="yr-neg"></div>
+  </section>
   <section class="panel panel-wide" id="day-panel">
     <div class="panel-head">
       <div>
@@ -241,7 +265,7 @@
 </main>
 
 <footer class="foot">
-  <p>Source: ERCOT EMIL products NP3-965-ER (60-Day SCED Disclosure), NP3-966-ER (60-Day DAM Disclosure), NP3-908-ER (2-Day SCED Energy Curves), NP3-911-ER (2-Day Generation Summary), NP6-322-CD (SCED System Lambda), the DAM and real-time settlement point prices and the HDL/LDL Manual Override Summary, and for bidding changes before the loaded 60-day days, the hourly history built from ERCOT's archive (2019 on). Built by the data update workflow from the days already loaded; the 60-day reports run about two months behind.</p>
+  <p>Source: ERCOT EMIL products NP3-965-ER (60-Day SCED Disclosure), NP3-966-ER (60-Day DAM Disclosure), NP3-908-ER (2-Day SCED Energy Curves), NP3-911-ER (2-Day Generation Summary), NP6-322-CD (SCED System Lambda), the DAM and real-time settlement point prices and the HDL/LDL Manual Override Summary, and for the across-the-years charts and bidding changes before the loaded 60-day days, the hourly history built from ERCOT's archive (2019 on). Built by the data update workflow from the days already loaded; the 60-day reports run about two months behind.</p>
   <p>Made by <a href="https://currenttech.energy">currenttech.energy</a> · <a href="contact.html">Contact</a></p>
   <p>Not affiliated with or endorsed by ERCOT. ERCOT is a registered trademark of the Electric Reliability Council of Texas, Inc.</p>
   <p>© 2026 CurrentTech Energy. All rights reserved. For information only; not trading or investment advice. <a href="terms.html">Terms and privacy</a></p>
@@ -252,5 +276,6 @@
 <script src="common.js"></script>
 <script src="renewables.js"></script>
 <script src="renewables-hedge.js"></script>
+<script src="renewables-years.js"></script>
 </body>
 </html>

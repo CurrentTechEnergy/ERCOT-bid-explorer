@@ -31,7 +31,7 @@ function bindSeg(id, key, after) {
 }
 function emptyMsg(el, msg) { el.innerHTML = `<p class="empty">${msg}</p>`; }
 function staticLegend(el, list) {
-  el.innerHTML = list.map((s) => `<span><span class="sw" style="background:var(${s.color});${s.dash || s.faint ? "opacity:.55" : ""}"></span>${s.label}</span>`).join("");
+  el.innerHTML = list.filter((s) => !s.hide).map((s) => `<span><span class="sw" style="background:var(${s.color});${s.dash || s.faint ? "opacity:.55" : ""}"></span>${s.label}</span>`).join("");
 }
 
 // ---- the chosen days --------------------------------------------------------------
@@ -238,7 +238,7 @@ function dayChart(el, series, opts) {
   const w = Math.max(280, el.clientWidth || 600), H = opts.H || 240, m = { t: 18, r: 14, b: 26, l: 64 };
   const x = d3.scaleTime().domain([d3.timeHour.offset(dates[0], -12), d3.timeHour.offset(dates.at(-1), 12)]).range([m.l, w - m.r]);
   const tops = dates.map((_, i) => d3.sum(bars, (b) => b.values[i] || 0));
-  const all = series.flatMap((s) => s.values).concat(bars.length ? tops : []).filter((v) => v != null);
+  const all = series.filter((s) => !s.hide).flatMap((s) => s.values).concat(bars.length ? tops : []).filter((v) => v != null);
   if (!all.length) return emptyMsg(el, "No data.");
   const lo = opts.yMin != null ? Math.max(opts.yMin, Math.min(0, d3.min(all))) : Math.min(0, d3.min(all));
   const y = d3.scaleLinear().domain([lo, opts.yMax != null ? Math.min(opts.yMax, d3.max(all)) : d3.max(all)]).nice().range([H - m.b, m.t]);
@@ -259,10 +259,13 @@ function dayChart(el, series, opts) {
   }));
   const xm = x(parseDate(S.day));
   svg.append("line").attr("class", "crosshair").attr("x1", xm).attr("x2", xm).attr("y1", m.t).attr("y2", H - m.b).style("stroke", css("--accent"));
-  const clamp = (v) => (v == null ? null : Math.max(y.domain()[0], Math.min(y.domain()[1], v)));
+  // lines past the scale run off the chart (opts.overrun, clipped to the plot) or flatten at its edge
+  const clamp = (v) => (v == null ? null : opts.overrun ? v : Math.max(y.domain()[0], Math.min(y.domain()[1], v)));
   const line = d3.line().defined((v) => v != null).x((_, i) => x(dates[i])).y((v) => y(clamp(v)));
-  series.forEach((s) => svg.append("path").attr("fill", "none").attr("stroke", css(s.color)).attr("stroke-width", s.width || 1.6)
-    .attr("stroke-opacity", s.faint ? 0.35 : 1).attr("stroke-dasharray", s.dash || null).attr("d", line(s.values)));
+  const clipId = `clip-${el.id}`;
+  if (opts.overrun) svg.append("clipPath").attr("id", clipId).append("rect").attr("x", m.l).attr("y", m.t - 2).attr("width", w - m.l - m.r).attr("height", H - m.t - m.b + 2);
+  series.filter((s) => !s.hide).forEach((s) => svg.append("path").attr("fill", "none").attr("stroke", css(s.color)).attr("stroke-width", s.width || 1.6)
+    .attr("stroke-opacity", s.faint ? 0.35 : 1).attr("stroke-dasharray", s.dash || null).attr("clip-path", opts.overrun ? `url(#${clipId})` : null).attr("d", line(s.values)));
   const tf = opts.tipFmt || fmtGW, shown = bars.concat(series);
   const cross = svg.append("line").attr("class", "crosshair").attr("y1", m.t).attr("y2", H - m.b).style("display", "none");
   svg.append("rect").attr("x", m.l).attr("y", m.t).attr("width", w - m.l - m.r).attr("height", H - m.t - m.b).attr("fill", "transparent")
@@ -285,11 +288,13 @@ const rolling = (num, den, n = 7) => num.map((_, i) => {
   for (let j = Math.max(0, i - n + 1); j <= i; j++) if (num[j] != null && den[j] != null) { a += num[j]; b += den[j]; }
   return b ? a / b : null;
 });
+// trailing mean of the days with a value across `n` days
+const rollMean = (a, n = 7) => rolling(a, a.map((v) => (v == null ? null : 1)), n);
 const ratio = (num, den) => num.map((v, i) => (v == null || !den[i] ? null : v / den[i]));
 
 function drawDays() {
   const bb = S.BB;
-  if (!bb) { ["days-size", "days-cycles", "days-value", "days-capture", "days-price"].forEach((id) => emptyMsg($(id), "No benchmark yet. It is built by the data update workflow.")); return; }
+  if (!bb) { ["days-size", "days-cycles", "days-value", "days-tb", "days-capture", "days-price"].forEach((id) => emptyMsg($(id), "No benchmark yet. It is built by the data update workflow.")); return; }
   // the benchmark's days on the series file's days
   const at = new Map(bb.dates.map((d, i) => [d, i]));
   const f = Object.fromEntries(Object.entries(bb.fleet).map(([k, v]) => [k, S.B.dates.map((d) => (at.has(d) ? v[at.get(d)] : null))]));
@@ -316,6 +321,14 @@ function drawDays() {
   staticLegend($("days-value-legend"), bars.concat(value));
   const top = d3.quantile(M(f.perfect).filter((v) => v != null).sort(d3.ascending), 0.98);
   dayChart($("days-value"), value, { bars, title: "Earned each day against the perfect battery ($M; scale stops at the 98th percentile day)", yFmt: d3.format("$,.1f"), yMax: top, tipFmt: fmtM });
+  const TB = { 1: "--c7", 2: "--c7-soft", 4: "--c3" }, mk = S.tb === "da" ? "da" : "rt";
+  const tbs = [1, 2, 4].flatMap((n) => [
+    { label: `${n}-hour, 7-day average`, color: TB[n], width: 2, values: rollMean(f[`tb_${mk}${n}`]), fmt: fmtPrice },
+    { label: `${n}-hour, this day`, color: TB[n], hide: true, values: f[`tb_${mk}${n}`], fmt: fmtPrice },
+  ]);
+  staticLegend($("days-tb-legend"), tbs);
+  const tbtop = d3.quantile(tbs.filter((s) => s.hide).flatMap((s) => s.values).filter((v) => v != null).sort(d3.ascending), 0.98);
+  dayChart($("days-tb"), tbs, { title: `Top-bottom spread at the batteries' nodes, ${mk === "da" ? "day-ahead" : "real-time"} ($/MWh: top N hours less bottom N hours; scale stops at the 98th percentile day)`, H: 200, yFmt: d3.format("$,.0f"), yMax: tbtop, overrun: true, tipFmt: fmtPrice });
   const cap = [
     { label: "Each day", color: "--c3", faint: true, width: 1.2, values: ratio(f.actual, f.perfect), fmt: fmtPct },
     { label: "7-day", color: "--c3", width: 2, values: rolling(f.actual, f.perfect), fmt: fmtPct },
@@ -338,7 +351,7 @@ function drawDays() {
     `${fmtPrice(sum(f.dis_usd) / sum(f.dis_mwh))} against ${fmtPrice(sum(f.p_dis_usd) / sum(f.p_dis_mwh))}.`;
 }
 
-const VIEW_KEYS = { day: "day", win: "win", side: "side" };
+const VIEW_KEYS = { day: "day", win: "win", side: "side", tb: "tb" };
 function saveView() { window.CX.writeHash({ ...window.CX.readHash(), ...Object.fromEntries(Object.entries(VIEW_KEYS).map(([k, sk]) => [k, S[sk]])) }); }
 function loadView() { const v = window.CX.readHash(); Object.entries(VIEW_KEYS).forEach(([k, sk]) => { if (v[k] != null) S[sk] = v[k]; }); }
 function setDay(d) { if (d < CX.SITE_START) d = CX.fromStart(S.B.dates)[0] || d; S.day = d; $("bday").value = d; drawAll(); saveView(); }
@@ -363,6 +376,7 @@ async function boot() {
   if (!dates.includes(S.day)) S.day = dates.at(-1);
   if (!["1", "7", "30", "all"].includes(S.win)) S.win = "1";
   if (!["chg", "dis"].includes(S.side)) S.side = "chg";
+  if (!["rt", "da"].includes(S.tb)) S.tb = "rt";
   const rev = dates.slice().reverse();
   $("bday").innerHTML = rev.map((d) => `<option>${d}</option>`).join("");
   $("bday").value = S.day;
@@ -372,6 +386,8 @@ async function boot() {
   setSeg("bwin", S.win);
   bindSeg("bwin", "win", drawAll);
   bindSeg("bside", "side", drawBids);
+  setSeg("tbm", S.tb);
+  bindSeg("tbm", "tb", drawDays);
   drawAll();
   window.CX.init();
   saveView();

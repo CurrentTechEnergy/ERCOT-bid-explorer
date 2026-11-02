@@ -70,6 +70,7 @@ from .events import build_events
 from .series import build_series
 from .storage import build_storage
 from .battery_bench import build_battery_bench
+from .renew_years import build_renew_years
 from .unit_index import build_unit_index
 from . import share_pages
 from . import memo, qse
@@ -551,6 +552,7 @@ def main(argv=None):
         build_series(index)
         build_storage(index)
         build_battery_bench(index)     # after series (node prices) and storage
+        build_renew_years(index)       # after series
         build_operator_days(index)
         build_peaker_oi(index)
         build_events(index)
@@ -644,6 +646,7 @@ def main(argv=None):
     build_series(index)
     build_storage(index)
     build_battery_bench(index)     # after series (node prices) and storage
+    build_renew_years(index)       # after series; reads the history release with the gh CLI
     if "operator" not in args.skip:
         build_operator_days(index)   # after cop: the Unit page's operator-informed row, new 60-day days only
     build_peaker_oi(index)           # the Commitment and Unit pages' combustion turbine turn-on points

@@ -32,6 +32,9 @@ data/storage/bench.json.gz
     dis_mwh, dis_usd, chg_mwh, chg_usd     MWh discharged / charged and $ earned / paid at the
                     RT node price, from telemetered output
     p_dis_mwh, p_dis_usd, p_chg_mwh, p_chg_usd   the same for the perfect battery
+    tb_rt1, tb_rt2, tb_rt4, tb_da1, tb_da2, tb_da4   top-bottom spread: the mean of the day's top N
+                    hourly prices less the mean of its bottom N, at each battery's node (real-time
+                    and DA), averaged over every battery with HSL >= MIN_HSL weighted by its HSL
 }
 data/storage/bench_units.json.gz   the same per battery, for the Unit page:
   {"format", "dates", "fields" (UNIT_FIELDS: FIELDS but n and mw), "units": {name: {field: [day]}}},
@@ -50,7 +53,7 @@ import numpy as np
 from .config import DATA_DIR, UNIT_DATA_DIR
 from .store import read_json_gz, write_json_gz
 
-FORMAT = 1
+FORMAT = 2
 PATH = DATA_DIR / "storage" / "bench.json.gz"
 CACHE = UNIT_DATA_DIR / "bench"
 FIELDS = ["n", "mw", "mwh", "actual", "dam_as", "perfect", "dis_mwh", "dis_usd", "chg_mwh", "chg_usd",
@@ -58,6 +61,8 @@ FIELDS = ["n", "mw", "mwh", "actual", "dam_as", "perfect", "dis_mwh", "dis_usd",
 MIN_HSL = 5.0
 RTE_DEFAULT, RTE_RANGE, MIN_RTE_HOURS = 0.86, (0.75, 0.95), 500
 UNIT_FIELDS = [k for k in FIELDS if k not in ("n", "mw")]
+TB_HOURS = (1, 2, 4)
+TB_FIELDS = [f"tb_{m}{n}" for m in ("rt", "da") for n in TB_HOURS]
 UNITS_PATH = DATA_DIR / "storage" / "bench_units.json.gz"
 N = 24
 
@@ -91,6 +96,12 @@ def fit_rte(dates) -> dict:
     return out
 
 
+def top_bottom(p, n: int) -> float:
+    """Mean of the top n hourly prices less the mean of the bottom n (nan with under 20 hours)."""
+    p = np.sort(p[np.isfinite(p)])
+    return float(p[-n:].mean() - p[:n].mean()) if len(p) >= 20 else float("nan")
+
+
 def perfect_day(p, dis_mw, chg_mw, smin, smax, s0, s_end, eta, dcap):
     """-> (revenue, hourly net MW) of the best schedule against prices p, or (nan, None)."""
     from scipy.optimize import linprog
@@ -121,9 +132,20 @@ def day_bench(date: str, rte: dict) -> tuple:
     dam = read_json_gz(DATA_DIR / "dam" / f"{date}.json.gz") or {}
     mcpc = {k: _a(v) for k, v in (dam.get("mcpc") or {}).items()}
     tot = dict.fromkeys(FIELDS, 0.0)
+    tbs = {k: [0.0, 0.0] for k in TB_FIELDS}
     units = {}
     for name, u in (st.get("units") or {}).items():
         price = rt.get(u.get("sp"))
+        if (u.get("hsl") or 0) >= MIN_HSL:
+            for m, v in (("rt", price), ("da", u.get("spp"))):
+                if not v:
+                    continue
+                pa = _a(v)
+                for n in TB_HOURS:
+                    x = top_bottom(pa, n)
+                    if np.isfinite(x):
+                        tbs[f"tb_{m}{n}"][0] += u["hsl"] * x
+                        tbs[f"tb_{m}{n}"][1] += u["hsl"]
         if not u.get("soc") or not u.get("soc_max") or not price or (u.get("hsl") or 0) < MIN_HSL:
             continue
         p = _a(price)
@@ -159,7 +181,9 @@ def day_bench(date: str, rte: dict) -> tuple:
         units[name] = [round(r[k]) for k in UNIT_FIELDS]
     if not tot["n"]:
         return {}, {}
-    return {k: round(v, 1) for k, v in tot.items()}, units
+    out = {k: round(v, 1) for k, v in tot.items()}
+    out.update({k: round(a / b, 2) if b else None for k, (a, b) in tbs.items()})
+    return out, units
 
 
 def _key(date: str, rte: dict) -> list:
@@ -194,11 +218,11 @@ def build_battery_bench(index: dict) -> None:
         print(f"battery_bench: perfect battery for {len(todo)} day(s), {len(rte)} fitted efficiencies")
         with ProcessPoolExecutor(max_workers=os.cpu_count() or 2) as ex:
             list(ex.map(_fill, [(d, keys[d], rte) for d in todo]))
-    fleet, units = {k: [] for k in FIELDS}, {}
+    fleet, units = {k: [] for k in FIELDS + TB_FIELDS}, {}
     for i, d in enumerate(dates):
         c = read_json_gz(CACHE / f"{d}.json.gz") or {}
         f = c.get("fleet") or {}
-        for k in FIELDS:
+        for k in FIELDS + TB_FIELDS:
             fleet[k].append(f.get(k))
         for name, row in (c.get("units") or {}).items():
             u = units.setdefault(name, {k: [None] * len(dates) for k in UNIT_FIELDS})
