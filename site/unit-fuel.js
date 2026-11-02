@@ -106,12 +106,14 @@ async function draw() {
   $("fuel-lead").innerHTML = lead(u, S.data.dates);
   // the key draws each mark as the chart does: a line for the cost, a dot for each day's offer
   const est = u.est.some((v, i) => v && u.cost[i] != null);
-  const fuel = u.tech === "coal" ? "its plant's delivered coal price that month" : "the 7-day average of its hub's gas price";
+  const fuel = u.tech === "coal" ? "delivered coal price" : "7-day hub gas price";
   $("fuel-legend").innerHTML =
-    `<span><span class="sw sw-line" style="border-color:var(--c1)"></span>Fuel cost at minimum output: heat rate × ${fuel}</span>` +
-    (est ? `<span><span class="sw sw-line sw-dash" style="border-color:var(--c1)"></span>Same, ${u.tech === "coal" ? "at the Texas coal average (plant price not reported)" : "with Henry Hub filling missing hub days"}</span>` : "") +
-    `<span><span class="sw sw-dot" style="background:var(--c2)"></span>Its day-ahead minimum-energy offer that day</span>`;
+    `<span><span class="sw sw-line" style="border-color:var(--c1)"></span>Fuel cost at minimum output (heat rate × ${fuel})</span>` +
+    `<span><span class="sw sw-dot" style="background:var(--c2)"></span>Day-ahead minimum-energy offer</span>`;
   chart($("fuel-chart"), S.data.dates, u);
+  $("fuel-foot").textContent = !est ? "" : u.tech === "coal"
+    ? "Dashed: months its plant reported no coal price to the EIA, costed at the Texas average for reporting plants."
+    : "Dashed: weeks with a day its hub had no price, filled with Henry Hub (plus Ship Channel's usual basis for Ship Channel units).";
 }
 window.addEventListener("unitchange", draw);
 window.addEventListener("unitresize", draw);
