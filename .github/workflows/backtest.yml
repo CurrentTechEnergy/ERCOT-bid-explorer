@@ -14,7 +14,7 @@ on:
         type: choice
         options: [oi, ct, cuts]
       variants:
-        description: "space-separated: oi base unit_hr | ct base spark | cuts base unit_hr"
+        description: "space-separated: oi base unit_hr | ct base spark spark_full spark_min | cuts base unit_hr"
         required: true
         default: base unit_hr
       from_month:

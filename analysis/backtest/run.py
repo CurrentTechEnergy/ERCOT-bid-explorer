@@ -16,6 +16,8 @@ ct  CT turn-on model (pipeline/models/peaker_oi.py), monthly expanding fits.  Va
       base     the model as it is
       spark    every node price (day-ahead and real-time) less the unit's gas cost the day before
                (gascost.gas_cost: 11.0 x its own hub, Henry Hub where it has none)
+      spark_full, spark_min  the same at each unit's measured full-load or minimum heat rate
+               (analysis/epa_heat_rates/ct_hr.csv), the measured median for the rest
 
 cuts  combined-cycle turn-off cutoffs (pipeline/decisions.py), each train's no-award days judged
     by a cutoff chosen from its other days (leave one out, as "acc on unseen days").  Variants:
@@ -98,14 +100,23 @@ def run_oi(variant, frm, out):
 def run_ct(variant, out):
     from pipeline.models import peaker_oi as pk
     pk.PATH = out / "oi.json.gz"
-    if variant == "spark":
+    if variant in ("spark", "spark_full", "spark_min"):
         hh = _hh()
         _rows = pk._rows
+        hr = collections.defaultdict(lambda: 11.0)
+        if variant != "spark":     # measured per unit (analysis/epa_heat_rates/ct_hr.py), else the measured median
+            import csv
+            col, n_min = ("hr_full", "hours") if variant == "spark_full" else ("hr_min", "min_hours")
+            rs = [r for r in csv.DictReader(open(Path(__file__).parents[1] / "epa_heat_rates" / "ct_hr.csv"))
+                  if r[col] and int(r[n_min]) >= (50 if variant == "spark_full" else 30)]
+            med = float(np.median([float(r[col]) for r in rs]))
+            hr = collections.defaultdict(lambda: med, {r["unit"]: float(r[col]) for r in rs})
+            print(f"  {variant}: {len(rs)} units measured, others {med:.2f}", flush=True)
 
         def rows(uh, cts, dates, node, lamd, ruc):
             R, n = _rows(uh, cts, dates, node, lamd, ruc)
-            gc = np.array([gascost.gas_cost("combustion_turbine", cts[u], dates[i]) or
-                           (11.0 * (hh(dates[i]) or np.nan)) for u, i in zip(R["u"], R["i"])], float)
+            gc = np.array([hr[cts[u]] / 11.0 * (gascost.gas_cost("combustion_turbine", cts[u], dates[i]) or
+                           (11.0 * (hh(dates[i]) or np.nan))) for u, i in zip(R["u"], R["i"])], float)
             gc = np.where(np.isnan(gc), np.nanmedian(gc), gc)
             for c in ("da", "da_ahead", "rt1", "rt3", "da1", "peak"):
                 R[c] = R[c] - gc
