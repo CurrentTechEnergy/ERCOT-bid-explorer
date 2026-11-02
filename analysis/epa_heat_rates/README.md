@@ -27,3 +27,11 @@ coal 11.9 (22 EPA units), CC 7.8 (52 trains). Station use is about 8% of gross a
 steam and 11% for coal, against 3% and 6% at full load, and about half of it is fixed MW. Cogeneration
 trains, Dansby (EPA gross implausible) and units with under 200 hours at minimum take the
 technology median.
+
+Combustion turbines (Nov 2026): `ct_match.py` matches each ERCOT CT unit to the EPA unit (or pair)
+whose hourly gross load tracks its telemetered output (correlation at least 0.85, gross/net 0.9 to
+1.25) over the history release's 2024-06 to 2025-11 months; `ct_hr.py` then takes heat input over
+ERCOT net output in steady hours (the hour before also running). 145 units matched, 107 with at
+least 30 hours at minimum go into `unit_heat_rates.csv`. `reference_tables.py` writes those rows
+and `pipeline/reference/station_use.csv` (from `net.py` and `cc_net.py` outputs) for the Unit page
+(pipeline/unit_fuel.py).
