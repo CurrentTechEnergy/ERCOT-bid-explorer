@@ -171,15 +171,14 @@ function allDays() { return [...new Set([...S.index.days["2d"], ...S.index.days[
 // the 60-day disclosure is more detailed (per unit, measured output), so use it whenever the day has it
 function sourceFor(d) { return S.index.days["60d"].includes(d) ? "60d" : "2d"; }
 
+// the page opens on the latest day with 60-day data unless the link names a day
 function fillDates() {
-  const days = allDays().reverse();
+  const days = allDays(), D60 = S.index.days["60d"];
   const withPrices = new Set(S.index.days.prices);
-  $("date").innerHTML = days.map((d) => {
-    const label = d3.timeFormat("%a %b %-d, %Y")(new Date(d + "T12:00:00"));
-    return `<option value="${d}">${label}${withPrices.has(d) ? "" : " (no prices yet)"}</option>`;
-  }).join("");
-  if (!days.includes(S.date)) S.date = days[0] || null;
-  $("date").value = S.date || "";
+  S.picker = window.CX.dayPicker("date", { days, main: true, value: days.includes(S.date) ? S.date : D60.at(-1) || days.at(-1),
+    note: (d) => (withPrices.has(d) ? "" : "no prices yet"),
+    onChange: async (d) => { S.date = d; await changeDay(); } });
+  S.date = S.picker.get();
 }
 
 // pick the report for the selected day; reset per-report choices when it changes
@@ -227,10 +226,6 @@ async function changeDay() {
 
 function render() {
   const is60 = S.source === "60d";
-  const days = S.index ? allDays() : [];
-  const di = days.indexOf(S.date);
-  $("date-prev").disabled = di <= 0;
-  $("date-next").disabled = di < 0 || di >= days.length - 1;
   $("ctl-version").hidden = !is60;
   $("hour-out").textContent = `${heLabel(S.hour)} · ${String(S.hour).padStart(2, "0")}:00–${String(S.hour + 1).padStart(2, "0")}:00`;
   // 2-day days have no unit LSLs, so "From LSL" cannot be drawn: show the toggle as "As ERCOT
@@ -1026,17 +1021,6 @@ async function boot() {
   setSeg("os-smooth", S.osSmooth); bindSeg("os-smooth", "osSmooth", drawOfferStack);
   if (!["group", "tech"].includes(S.stackBy)) S.stackBy = "group";
   setSeg("stack-by", S.stackBy); bindSeg("stack-by", "stackBy", drawStack);
-  $("date").onchange = async (e) => { S.date = e.target.value; await changeDay(); };
-  // step one available day older (-1) or newer (+1)
-  const stepDay = async (dir) => {
-    const days = allDays();
-    const i = days.indexOf(S.date) + dir;
-    if (i < 0 || i >= days.length) return;
-    S.date = days[i]; $("date").value = S.date;
-    await changeDay();
-  };
-  $("date-prev").onclick = () => stepDay(-1);
-  $("date-next").onclick = () => stepDay(1);
   $("hour").oninput = (e) => { S.hour = +e.target.value; render(); };
   $("location").onchange = (e) => { S.location = e.target.value; render(); };
   $("legend").addEventListener("click", (e) => {

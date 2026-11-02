@@ -1246,13 +1246,9 @@ async function drawUnits() {
 }
 
 // ==== controls, links, boot ================================================================
+// d: a day from the picker, or any day (the picker settles it on the nearest listed day on or before it)
 function setDate(d) {
-  const days = S.days;
-  if (!days.includes(d)) d = days.at(-1);
-  S.date = d; $("date").value = d;
-  const di = days.indexOf(d);
-  $("date-prev").disabled = di <= 0;
-  $("date-next").disabled = di >= days.length - 1;
+  S.date = S.picker.set(d);
   $("source-note").textContent = "60-day disclosure: each unit's loss, award and what it did";
   saveView();
   drawDay();
@@ -1282,11 +1278,7 @@ async function boot() {
   $("status").textContent = `60-day data: ${D.length} days, ${D[0]} to ${D.at(-1)}`;
   $("range-status").textContent = `${fmtDate(parseDate(D[0]))} to ${fmtDate(parseDate(D.at(-1)))}, the days with 60-day data`;
   const v = loadView();
-  $("date").innerHTML = [...S.days].reverse().map((d) => `<option value="${d}">${fmtDate(parseDate(d))}</option>`).join("");
-  $("date").onchange = (e) => setDate(e.target.value);
-  const step = (k) => { const i = S.days.indexOf(S.date) + k; if (i >= 0 && i < S.days.length) setDate(S.days[i]); };
-  $("date-prev").onclick = () => step(-1);
-  $("date-next").onclick = () => step(1);
+  S.picker = window.CX.dayPicker("date", { days: S.days, main: true, onChange: setDate });
   const thermal = TECHS.filter((s) => THERMAL.includes(s.id));
   [["cheap-thr", "cheapThr", drawCheap], ["lean-rank", "leanRank", drawLean], ["lean-per", "leanPer", drawLean],
    ["st-thr", "stThr", () => { drawStretch(); if (S.uSeen) drawUnits(); }], ["st-unit", "stUnit", drawStretch],
@@ -1312,7 +1304,7 @@ async function boot() {
   // the units table needs the hourly strips: draw it once it is about to scroll into view
   new IntersectionObserver((es, ob) => { if (es.some((e) => e.isIntersecting)) { S.uSeen = true; drawUnits(); ob.disconnect(); } }, { rootMargin: "400px" })
     .observe($("units-table"));
-  setDate(v.date || (S.OC && Object.keys(S.OC.days).at(-1)) || S.days.at(-1));
+  setDate(v.date || await window.CX.latest60() || S.days.at(-1));
   drawScores();
   drawRange();
   window.CX.init();

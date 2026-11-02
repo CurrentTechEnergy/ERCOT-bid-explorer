@@ -193,6 +193,8 @@ th.sortable.has-tip { cursor: pointer; }
   min-width: 34px; min-height: 34px; padding: 0 8px; cursor: pointer; }
 .step:hover:not(:disabled) { background: var(--accent-soft); }
 .step:disabled { opacity: 0.35; cursor: not-allowed; }
+/* the shared day picker (common.js dayPicker): one width everywhere, room for "Thu Sep 30, 2026 · unit detail" */
+.date-step select.day-pick { width: 17em; max-width: 100%; min-width: 0; }
 
 /* pinned chart readouts, download menu, copy link */
 .tip.tip-pinned { position: absolute; z-index: 15; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.12); }

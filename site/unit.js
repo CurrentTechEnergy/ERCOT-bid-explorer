@@ -232,8 +232,7 @@ async function drawForecast(e) {
   $("fc-panel").hidden = !["combined_cycle", "gas_steam"].includes(e.tech) || !S.OI || !oiDays().length;
   if ($("fc-panel").hidden) return;
   const days = oiDays();
-  if (!S.fcDay || !days.includes(S.fcDay)) S.fcDay = days.at(-1);
-  $("fc-pick").innerHTML = [...days].reverse().map((d) => `<option${d === S.fcDay ? " selected" : ""}>${d}</option>`).join("");
+  S.fcDay = S.fcPicker.setDays(days, S.fcDay || S.last60);
   const day = S.fcDay, [A, OD] = await Promise.all([S.T && S.T.dates.includes(day) ? loadDayUnits(day) : null, loadOI(day)]);
   if (S.unit !== e.name || S.fcDay !== day) return;
   const o = OD && OD.units[e.name];
@@ -690,18 +689,12 @@ function drawRuns(e) {
 // ---- one day by hour: output, base point and limits, with lambda (data/60d-units/<date>) ----
 const dayCache = new Map();
 const loadDayUnits = (d) => { if (!dayCache.has(d)) dayCache.set(d, tryJSON(`data/60d-units/${d}.json.gz`)); return dayCache.get(d); };
-function defaultDay(e) {
-  const str = S.UH && trainStrip(e), D = S.UH ? S.UH.dates : [];
-  for (let i = D.length - 1; str && i >= 0 && D[i] >= CX.SITE_START; i--) if (/[ma]/.test(str.slice(i * 24, i * 24 + 24))) return D[i];
-  return D.at(-1);
-}
 async function drawDay(e) {
   const el = $("day-chart");
   $("day-panel").hidden = !THERMAL.includes(e.tech) && e.tech !== "wind" && e.tech !== "solar";
   if ($("day-panel").hidden || !S.UH) return;
   const dates = S.UH.dates;
-  if (!S.day || !CX.fromStart(dates).includes(S.day)) S.day = defaultDay(e);
-  $("day-pick").innerHTML = CX.fromStart(dates).reverse().map((d) => `<option${d === S.day ? " selected" : ""}>${d}</option>`).join("");
+  S.day = S.dayPicker.setDays(dates, S.day || S.last60);
   const day = S.day, f = await loadDayUnits(day);
   if (S.unit !== e.name || S.day !== day) return;
   if (!f) { $("day-note").textContent = ""; return emptyMsg(el, `No hourly unit file for ${day}.`); }
@@ -900,7 +893,7 @@ function saveView() {
     el.setAttribute(attr, new URL(to, new URL(el.getAttribute(attr)).origin + "/").href);
   }
   window.CX.writeHash({ cfg: S.cfg && S.list.get(S.unit)?.configs.length > 1 ? S.cfg : null, day: S.day, he: S.hour == null ? null : S.hour + 1,
-    fc: S.fcDay && S.OI && S.fcDay !== oiDays().at(-1) ? S.fcDay : null });
+    fc: S.fcDay && S.OI && S.fcDay !== CX.pickDay(oiDays(), S.last60) ? S.fcDay : null });
 }
 function draw() {
   const e = S.list.get(S.unit);
@@ -936,8 +929,10 @@ async function boot() {
   pick.addEventListener("change", () => select(pick.value.trim()));
   pick.addEventListener("input", () => { if (S.list.has(pick.value)) select(pick.value); });
   window.CX.init();
-  $("fc-pick").addEventListener("change", (ev) => { S.fcDay = ev.target.value; saveView(); drawForecast(S.list.get(S.unit)); });
-  $("day-pick").addEventListener("change", (ev) => { S.day = ev.target.value; S.hour = null; saveView(); drawDay(S.list.get(S.unit)); });
+  // two pickers can show at once here, so the arrow keys step a picker only while it has focus;
+  // the forecast panel keeps its backtest days from 2019
+  S.fcPicker = CX.dayPicker("fc-pick", { all: true, onChange: (d) => { S.fcDay = d; saveView(); drawForecast(S.list.get(S.unit)); } });
+  S.dayPicker = CX.dayPicker("day-pick", { onChange: (d) => { S.day = d; S.hour = null; saveView(); drawDay(S.list.get(S.unit)); } });
   const want = new URLSearchParams(location.search).get("unit") || v.unit;
   S.day = v.day || null;
   S.fcDay = v.fc || null;

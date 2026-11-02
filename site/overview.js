@@ -705,9 +705,6 @@ function unitProfit() {
 
 // ---------------------------------------------------------------- render ---
 function render() {
-  const days = S.days, di = days.indexOf(S.date);
-  $("date-prev").disabled = di <= 0;
-  $("date-next").disabled = di < 0 || di >= days.length - 1;
   $("hour-out").textContent = `${heLabel(S.hour)} · ${String(S.hour).padStart(2, "0")}:00–${String(S.hour + 1).padStart(2, "0")}:00`;
   drawSource(); drawHeadline(); drawSpark(); drawActual(); drawActualBars(); drawLimits(); drawMix(); drawUnits(); drawOffersLinks();
   saveView();
@@ -756,9 +753,10 @@ async function boot() {
   if (!days.length) { $("status").textContent = "No data yet. It is built by the data update workflow."; return; }
   loadView();
   // the page opens on the latest day with each unit's hours
-  if (!days.includes(S.date)) S.date = last60() || days.at(-1);
-  $("date").innerHTML = [...days].reverse().map((d) => `<option value="${d}">${dayLabel(d)}${has("60d", d) ? " · unit detail" : has("2dgen", d) ? " · 2-day" : ""}</option>`).join("");
-  $("date").value = S.date;
+  S.picker = window.CX.dayPicker("date", { days, value: days.includes(S.date) ? S.date : last60() || days.at(-1), main: true,
+    note: (d) => (has("60d", d) ? "unit detail" : has("2dgen", d) ? "2-day" : ""),
+    onChange: async (d) => { S.date = d; await changeDay(); } });
+  S.date = S.picker.get();
   $("status").textContent = `${days.length} days, ${days[0]} to ${days.at(-1)} · unit detail through ${last60()} · updated ${(S.index.updated || "").replace("T", " ").replace("Z", " UTC")}`;
   $("unit-tech").innerHTML = `<option value="all">All</option>` + TECHS.map(([id, l]) => `<option value="${id}">${l}</option>`).join("");
   $("unit-tech").value = S.unitTech;
@@ -766,10 +764,6 @@ async function boot() {
   setSeg("lim-by", S.limBy); setSeg("unit-view", S.unitView);
   bindSeg("lim-by", "limBy", drawLimits);
   bindSeg("unit-view", "unitView", () => { S.unitShowAll = false; drawUnits(); });
-  $("date").onchange = async (e) => { S.date = e.target.value; await changeDay(); };
-  const stepDay = async (dir) => { const i = days.indexOf(S.date) + dir; if (i < 0 || i >= days.length) return; S.date = days[i]; $("date").value = S.date; await changeDay(); };
-  $("date-prev").onclick = () => stepDay(-1);
-  $("date-next").onclick = () => stepDay(1);
   $("hour").oninput = (e) => { S.hour = +e.target.value; renderHour(); };
   $("unit-tech").onchange = (e) => { S.unitTech = e.target.value; S.unitShowAll = false; drawUnits(); };
   $("unit-search").oninput = (e) => { S.unitSearch = e.target.value; drawUnits(); };
