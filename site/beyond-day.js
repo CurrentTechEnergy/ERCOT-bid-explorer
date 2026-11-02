@@ -258,7 +258,7 @@ function render() {
 // Drawn from data/stack/<date>.json.gz (pipeline/actual_stack.py, 60-day days only); the page only
 // stacks the series it is given.
 const STACK_GROUPS = { never: ["Always on when available", "--g1"], multiday: ["Multi-day", "--g3"],
-  daily1: ["Daily, under once a week", "--g4"], daily2: ["Daily, 1 to 2 a week", "--g5"], daily3: ["Daily, over 2 a week", "--g6"],
+  daily1: ["Daily, under once a week", "--g4"], daily2: ["Daily, 1 to 2 a week", "--g5"], daily3: ["Daily, over 2 a week", "--g6"], peakers: ["Peakers", "--c2"],
   never_on: ["Never on", "--c-other"], ungrouped: ["Not yet grouped", "--c-other"] };
 const STACK_TECHS = { nuclear: ["Nuclear", "--c5"], coal: ["Coal & lignite", "--c8"], combined_cycle: ["Combined cycle", "--c1"],
   gas_steam: ["Gas steam", "--c6"], combustion_turbine: ["Combustion turbine and recip", "--c2"] };
