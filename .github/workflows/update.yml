@@ -161,6 +161,8 @@ jobs:
           R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
           EIA_API_KEY: ${{ secrets.EIA_API_KEY }}
           OILPRICEAPI_KEY: ${{ secrets.OILPRICEAPI_KEY }}
+          # the wind and solar months on the history release (pipeline/renew_years.py)
+          GH_TOKEN: ${{ github.token }}
           BACKFILL_START: ${{ github.event.inputs.backfill_start }}
           BACKFILL_END: ${{ github.event.inputs.backfill_end }}
           MAX_FILES: ${{ github.event.inputs.max_files }}

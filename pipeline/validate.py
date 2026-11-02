@@ -46,7 +46,11 @@ consistency:
                     per day for every field of every battery, no negative size or MWh; and
                     storage/bench.json.gz (battery_bench.py): one value per day per field, the
                     perfect battery at least zero and within one cycle a day, cycles per day
-                    within 0 to 3 and average prices within -$1,000 to $10,000
+                    within 0 to 3, average prices within -$1,000 to $10,000, and the 1-, 2- and
+                    4-hour top-bottom spreads in that order and never below zero; and
+                    renewables/years.json.gz (renew_years.py): one value per month and day per
+                    field, no negative size or energy, no more energy than the fleet could make,
+                    capture prices and the $0-or-below share in range
 
 A check is an "error" when the numbers cannot both be right (a parsing or mapping bug), a
 "warning" when something is worth a look, and "info" when it is only recorded.  Results that did not pass are kept per day in data/validation.json.
@@ -696,6 +700,7 @@ def check_files(index):
                 f"{len(bad)} battery row(s) not one value per day per field, {len(neg)} with a negative size or MWh, "
                 f"e.g. {(bad + neg)[:3]}" if bad or neg else f"{len(su.get('units', {}))} batteries, {n} days")
     _battery_bench_checks(day)
+    _renew_years_checks(day)
     _dam_offer_checks(day)
     _operator_score_checks(day)
     _operator_cutoff_checks(day)
@@ -716,13 +721,13 @@ def check_files(index):
 
 def _battery_bench_checks(day):
     """Batteries against a perfect battery (battery_bench.py): one value per day per field, the
-    perfect battery never below zero, cycles and average prices in a sane range."""
-    from .battery_bench import FIELDS as BB_FIELDS, PATH as BB_PATH, UNITS_PATH as BB_UNITS_PATH
+    perfect battery never below zero, cycles and average prices in a sane range, spreads in order."""
+    from .battery_bench import FIELDS as BB_FIELDS, PATH as BB_PATH, TB_FIELDS, UNITS_PATH as BB_UNITS_PATH
     bb = read_json_gz(BB_PATH, default=None)
     if bb is None:
         return
     n, f = len(bb.get("dates", [])), bb.get("fleet", {})
-    bad_len = [k for k in BB_FIELDS if len(f.get(k, [])) != n]
+    bad_len = [k for k in BB_FIELDS + TB_FIELDS if len(f.get(k, [])) != n]
     day.add("bench_rows", "error" if bad_len else "ok", f"field(s) {bad_len} not one value per day" if bad_len else f"{n} days")
     if bad_len:
         return
@@ -745,6 +750,46 @@ def _battery_bench_checks(day):
     day.add("bench_values", "error" if bad else "ok",
             f"{len(bad)} day(s) with a negative perfect battery, over one cycle, cycles outside 0 to 3 or prices outside "
             f"-$1,000 to $10,000, e.g. {bad[:3]}" if bad else "perfect battery >= 0 and within one cycle; cycles and prices in range")
+    # top-bottom spreads: 1-hour >= 2-hour >= 4-hour >= 0 in each market (each battery's are, so
+    # their weighted averages are too, up to rounding)
+    tb_bad = [d for i, d in enumerate(bb["dates"]) for m in ("rt", "da")
+              if None not in (v := [f[f"tb_{m}{h}"][i] for h in (1, 2, 4)]) and not v[0] + 0.02 >= v[1] >= v[2] - 0.02 >= -0.02]
+    day.add("bench_spreads", "error" if tb_bad else "ok",
+            f"{len(tb_bad)} day(s) where the 1-, 2- and 4-hour spreads don't fall in order or go below zero, e.g. {tb_bad[:3]}" if tb_bad
+            else "1-hour >= 2-hour >= 4-hour >= 0 every day")
+
+
+def _renew_years_checks(day):
+    """Wind and solar across the years (renew_years.py): one value per period per field, fleet
+    size and energy never below zero, energy no more than the fleet could make, capture prices and
+    the $0-or-below share in range."""
+    import calendar
+    from .renew_years import FIELDS as RY_FIELDS, PATH as RY_PATH, TECHS as RY_TECHS
+    ry = read_json_gz(RY_PATH, default=None)
+    if ry is None:
+        return
+    bad_len, bad = [], []
+    for kind, periods in (("monthly", ry.get("months", [])), ("daily", ry.get("dates", []))):
+        for t in RY_TECHS:
+            f = (ry.get(kind) or {}).get(t) or {}
+            short = [f"{kind} {t} {k}" for k in RY_FIELDS if len(f.get(k, [])) != len(periods)]
+            bad_len += short
+            if short:
+                continue
+            for i, p in enumerate(periods):
+                r = {k: f[k][i] for k in RY_FIELDS}
+                if r["gen"] is None:
+                    continue
+                hours = 24 * (calendar.monthrange(*map(int, p.split("-")[:2]))[1] if kind == "monthly" else 1)
+                if (r["gw"] is not None and (r["gw"] < 0 or r["gen"] > r["gw"] * hours * 1.02)) or r["gen"] < 0 or r["curt"] < 0 \
+                        or (r["neg"] is not None and not 0 <= r["neg"] <= 1) \
+                        or any(r[c] is not None and not -1000 <= r[c] <= 10000 for c in ("capture", "rt_capture", "avg", "rt_avg", "hub_da", "hub_rt", "hub_da_gen", "hub_rt_gen")):
+                    bad.append(f"{t} {p}")
+    day.add("renew_years_rows", "error" if bad_len else "ok",
+            f"{bad_len[:3]} not one value per period" if bad_len else f"{len(ry.get('months', []))} months, {len(ry.get('dates', []))} days")
+    day.add("renew_years_values", "error" if bad else "ok",
+            f"{len(bad)} period(s) with negative size or energy, more energy than the fleet could make, or shares or prices "
+            f"out of range, e.g. {bad[:3]}" if bad else "sizes, energy, shares and prices in range")
 
 
 def _dam_offer_checks(day):

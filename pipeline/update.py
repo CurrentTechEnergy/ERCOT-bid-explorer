@@ -70,6 +70,7 @@ from .events import build_events
 from .series import build_series
 from .storage import build_storage
 from .battery_bench import build_battery_bench
+from .renew_years import build_renew_years
 from . import prices_years
 from . import lsl_floor
 from .unit_index import build_unit_index
@@ -553,6 +554,7 @@ def main(argv=None):
         build_series(index)
         build_storage(index)
         build_battery_bench(index)     # after series (node prices) and storage
+        build_renew_years(index)       # after series
         build_operator_days(index)
         build_peaker_oi(index)
         build_events(index)
@@ -646,6 +648,7 @@ def main(argv=None):
     build_series(index)
     build_storage(index)
     build_battery_bench(index)     # after series (node prices) and storage
+    build_renew_years(index)       # after series; reads the history release with the gh CLI
     try:
         prices_years.build()       # the Prices page, after gas and storage; past real-time years come from the Goal workflow's --full
     except Exception as e:         # a page's summary never stops the data run
