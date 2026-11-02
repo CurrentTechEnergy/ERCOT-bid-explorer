@@ -323,12 +323,13 @@ function drawDays() {
   dayChart($("days-value"), value, { bars, title: "Earned each day against the perfect battery ($M; scale stops at the 98th percentile day)", yFmt: d3.format("$,.1f"), yMax: top, tipFmt: fmtM });
   const TB = { 1: "--c7", 2: "--c7-soft", 4: "--c3" }, mk = S.tb === "da" ? "da" : "rt";
   const tbs = [1, 2, 4].flatMap((n) => [
-    { label: `${n}-hour, 7-day average`, color: TB[n], width: 2, values: rollMean(f[`tb_${mk}${n}`]), fmt: fmtPrice },
-    { label: `${n}-hour, this day`, color: TB[n], hide: true, values: f[`tb_${mk}${n}`], fmt: fmtPrice },
+    { label: `${n}-hour, 7-day average`, color: TB[n], width: 2, values: rollMean(f[`tb_${mk}${n}`] || []), fmt: fmtPrice },
+    { label: `${n}-hour, this day`, color: TB[n], hide: true, values: f[`tb_${mk}${n}`] || [], fmt: fmtPrice },
   ]);
   staticLegend($("days-tb-legend"), tbs);
   const tbtop = d3.quantile(tbs.filter((s) => s.hide).flatMap((s) => s.values).filter((v) => v != null).sort(d3.ascending), 0.98);
-  dayChart($("days-tb"), tbs, { title: `Top-bottom spread at the batteries' nodes, ${mk === "da" ? "day-ahead" : "real-time"} ($/MWh: top N hours less bottom N hours; scale stops at the 98th percentile day)`, H: 200, yFmt: d3.format("$,.0f"), yMax: tbtop, overrun: true, tipFmt: fmtPrice });
+  if (!f.tb_rt1) emptyMsg($("days-tb"), "No spreads yet. They are added by the next data update.");
+  else dayChart($("days-tb"), tbs, { title: `Top-bottom spread at the batteries' nodes, ${mk === "da" ? "day-ahead" : "real-time"} ($/MWh: top N hours less bottom N hours; scale stops at the 98th percentile day)`, H: 200, yFmt: d3.format("$,.0f"), yMax: tbtop, overrun: true, tipFmt: fmtPrice });
   const cap = [
     { label: "Each day", color: "--c3", faint: true, width: 1.2, values: ratio(f.actual, f.perfect), fmt: fmtPct },
     { label: "7-day", color: "--c3", width: 2, values: rolling(f.actual, f.perfect), fmt: fmtPct },

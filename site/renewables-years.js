@@ -100,18 +100,24 @@ function draw() {
   staticLegend($("yr-energy-legend"), bars);
   yearChart($("yr-energy"), [], { bars, title: `Energy each ${per}, ${eu}`, yFmt: d3.format(",.0f"), tipFmt: fe });
 
-  // capture rate: output-weighted price over the plain average; daily, both 7-day means first
+  // capture rate (real-time): output-weighted price at each unit's node over the plain average at
+  // the same nodes (timing only, the usual value factor), and over the hub average (timing and
+  // location: the congestion between the units' nodes and the hub, or basis); daily, 7-day means first
   const sm = (a) => (day ? rollMean(a, 7) : a);
+  const rate = (c, a) => c.map((v, i) => (v == null || !a[i] || a[i] <= 0 ? null : v / a[i]));
+  const hub = sm(D.wind.hub_rt);
   const cap = TECHS.flatMap(([t, label, color]) => {
-    const c = sm(D[t].capture), a = sm(D[t].avg);
+    const c = sm(D[t].rt_capture), a = sm(D[t].rt_avg);
     return [
-      { label, color, values: c.map((v, i) => (v == null || !a[i] || a[i] <= 0 ? null : v / a[i])), fmt: fmtPct },
-      { label: `${label} captured`, color, hide: true, values: c, fmt: fmtPrice },
+      { label: `${label}, against its own nodes`, color, values: rate(c, a), fmt: fmtPct },
+      { label: `${label}, against the hub average`, color, dash: "5 4", width: 1.6, values: rate(c, hub), fmt: fmtPct },
+      { label: `${label} earned`, color, hide: true, values: c, fmt: fmtPrice },
       { label: `${label} nodes' average`, color, hide: true, values: a, fmt: fmtPrice },
     ];
   });
+  cap.push({ label: "Hub average", color: "--c-other", hide: true, values: hub, fmt: fmtPrice });
   staticLegend($("yr-capture-legend"), cap);
-  yearChart($("yr-capture"), cap, { title: `Capture rate: price earned per MWh ÷ the average day-ahead price at the same nodes${day ? " (7-day)" : ""}; scale stops at 0% and 150%`,
+  yearChart($("yr-capture"), cap, { title: `Capture rate, real-time: price earned per MWh ÷ the plain average price${day ? " (7-day)" : ""}; scale stops at 0% and 150%`,
     yMin: 0, yMax: 1.5, ref: 1, overrun: true, yFmt: d3.format(".0%"), tipFmt: fmtPct, H: 200 });
 
   const neg = TECHS.map(([t, label, color]) => ({ label, color, values: D[t].neg, fmt: fmtPct }));
