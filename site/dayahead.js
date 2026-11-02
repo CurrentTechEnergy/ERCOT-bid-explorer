@@ -32,9 +32,11 @@ function drawKPIs() {
   const major = D.events.filter((e) => e.major).length;
   const months = Math.max(1, d3.timeMonth.count(parseDate(D.first), parseDate(D.last)));
   const k = [
-    [`${fmt0(med(ci.map((i) => F.trains_aw[i])))} of ${fmt0(med(ci.map((i) => F.trains_filed[i])))}`, "combined cycle trains kept on through the cheap stretch on a median cheap day"],
+    [`${fmt0(med(ci.map((i) => F.trains_aw[i])))} of ${fmt0(med(ci.map((i) => F.trains_filed[i])))}`, "combined cycle trains awarded through the cheap hours on a median cheap day"],
     [fmtPct(med(F.below_mw_share)), "of three-part CC and gas steam minimum output offered below its fuel cost on a median day"],
-    [`${fmt$(med(F.mk_aw))} / ${fmt$(med(F.mk_no))}`, "median CC train offer minus fuel cost on cheap days ($/MWh), DAM award through the cheap hours / none"],
+    // the pooled medians the offer-minus-fuel chart marks, so the KPI and the chart give one number
+    D.mk_hist ? [`${fmt$(D.mk_hist.med_aw)} / ${fmt$(D.mk_hist.med_no)}`, "median CC train offer minus fuel cost over every cheap train-day ($/MWh), DAM award through the cheap hours / none"]
+      : [`${fmt$(med(F.mk_aw))} / ${fmt$(med(F.mk_no))}`, "median CC train offer minus fuel cost on cheap days ($/MWh), DAM award through the cheap hours / none"],
     [fmt0(major), `major offer changes in ${months} months (${fmt0(D.events.length)} in all)`],
   ];
   $("kpis").innerHTML = k.map(([v, t]) => `<div class="kpi"><span class="v">${v}</span><span class="k">${t}</span></div>`).join("");
@@ -49,9 +51,9 @@ function drawLead() {
   });
   const p = D.params || {}, lo = p.zero_usd ?? 1, hi = p.high_usd ?? 20;
   $("lead-note").textContent = `Combined cycle trains with a three-part offer on each day with cheap hours, placed by their lowest minimum-energy offer across configurations over the cheap hours. ` +
-    `The dots count trains the DAM kept on through the cheap stretch. Gaps are days with no cheap hours (${D.cheap.filter((c) => !c).length} of ${D.dates.length}), not missing data.`;
+    `The dots count trains with a DAM award through the cheap hours. Gaps are days with no cheap hours (${D.cheap.filter((c) => !c).length} of ${D.dates.length}), not missing data.`;
   const series = [{ k: "z", color: "--c3", label: `Lowest offer ${fmt$s(lo)} or less` }, { k: "m", color: "--c-other", label: `${fmt$s(lo)} to ${fmt$s(hi)}` }, { k: "h", color: "--c2", label: `${fmt$s(hi)} or more` }];
-  staticLegend($("lead-legend"), [...series, { color: "--ink", label: "Kept on through the stretch", dot: true }]);
+  staticLegend($("lead-legend"), [...series, { color: "--ink", label: "Awarded through the cheap hours", dot: true }]);
   if (!rows.length) return emptyMsg(el, "No cheap days loaded.");
   const w = Math.max(280, el.clientWidth || 600), H = 300, m = { t: 18, r: 14, b: 28, l: 44 };
   const x = d3.scaleTime().domain(d3.extent(D.dates, parseDate)).range([m.l, w - m.r]);
@@ -75,7 +77,7 @@ function drawLead() {
       const t = x.invert(d3.pointer(ev)[0]), r = rows[d3.minIndex(rows, (q) => Math.abs(q.d - t))];
       cross.style("display", null).attr("x1", x(r.d)).attr("x2", x(r.d));
       showTip(ev, `<h4>${fmtDate(r.d)}</h4><table>${series.map((s) => `<tr><td><span class="sw" style="background:var(${s.color})"></span></td><td>${s.label}</td><td class="n">${r[s.k]}</td></tr>`).join("")}` +
-        `<tr><td></td><td>Trains filing</td><td class="n">${r.n}</td></tr><tr><td></td><td>Kept on through the stretch</td><td class="n">${r.aw}</td></tr></table>`);
+        `<tr><td></td><td>Trains filing</td><td class="n">${r.n}</td></tr><tr><td></td><td>Awarded through the cheap hours</td><td class="n">${r.aw}</td></tr></table>`);
     })
     .on("pointerleave", () => { cross.style("display", "none"); hideTip(); });
   el.replaceChildren(svg.node());
@@ -96,17 +98,17 @@ function drawBins() {
   svg.append("g").attr("class", "axis").attr("transform", `translate(${m.l},0)`).call(d3.axisLeft(y).ticks(4).tickFormat(fmtPct).tickSizeOuter(0));
   const ax = svg.append("g").attr("class", "axis").attr("transform", `translate(0,${H - m.b})`).call(d3.axisBottom(x).tickSizeOuter(0));
   ax.selectAll("text").attr("transform", "rotate(-30)").attr("text-anchor", "end").attr("dx", "-0.4em").attr("dy", "0.5em");
-  svg.append("text").attr("class", "axis-title").attr("x", m.l).attr("y", 10).text("Kept on through the cheap stretch");
+  svg.append("text").attr("class", "axis-title").attr("x", m.l).attr("y", 10).text("Awarded through the cheap hours");
   svg.append("text").attr("class", "axis-title").attr("x", w - m.r).attr("y", H - 2).attr("text-anchor", "end").text("Offer minus node price, $/MWh");
   const half = rows.length / 2;
   svg.append("g").selectAll("rect").data(rows).join("rect").attr("x", (r) => x(r.lab)).attr("width", x.bandwidth())
     .attr("y", (r) => y(r.r || 0)).attr("height", (r) => y(0) - y(r.r || 0)).attr("fill", (r, k) => css(k < half ? "--c3" : "--c2"))
-    .on("pointermove", (ev, r) => showTip(ev, `<h4>Offer minus node price ${r.lab}</h4><p class="tip-body">${fmtPct(r.r || 0)} kept on, ${fmt0(r.aw)} of ${fmt0(r.n)} configuration-days</p>`))
+    .on("pointermove", (ev, r) => showTip(ev, `<h4>Offer minus node price ${r.lab}</h4><p class="tip-body">${fmtPct(r.r || 0)} awarded through the cheap hours, ${fmt0(r.aw)} of ${fmt0(r.n)} configuration-days</p>`))
     .on("pointerleave", hideTip);
   svg.append("g").selectAll("text.v").data(rows).join("text").attr("class", "dlabel").attr("x", (r) => x(r.lab) + x.bandwidth() / 2).attr("y", (r) => y(r.r || 0) - 4)
     .attr("text-anchor", "middle").text((r) => (r.r == null ? "" : fmtPct(r.r)));
   el.replaceChildren(svg.node());
-  setCSV(el, ["offer_minus_node", "config_days", "kept_on", "share"], rows.map((r) => [r.lab, r.n, r.aw, r.r]), "Kept on by offer minus node price");
+  setCSV(el, ["offer_minus_node", "config_days", "awarded", "share"], rows.map((r) => [r.lab, r.n, r.aw, r.r]), "Awarded by offer minus node price");
 }
 
 // ---- offer minus fuel cost, awarded against not: pooled over every cheap train-day -------------
@@ -237,7 +239,7 @@ function drawTrains() {
     { h: "Train or plant", i: c.plant, t: true, csv: "train_or_plant", f: (v, r) => `<a class="u" href="${unitURL(r[c.unit] || v)}">${esc(v)}</a>${rep.has(v) ? '<span class="tag" title="Ten or more minimum-energy steps in a year">re-prices often</span>' : ""}` },
     { h: "Tech", i: c.tech, t: true, csv: "tech", f: (v) => (v === "combined_cycle" ? "CC" : TECH[v] || v) },
     { h: "Cheap days filed", i: c.cheap_days_filed, csv: "cheap_days_filed", f: fmt0 },
-    { h: "Kept on", i: c.share_awarded, csv: "share_kept_on", tip: "Share of those cheap days the DAM kept it on through the cheap stretch", f: bar },
+    { h: "Awarded", i: c.share_awarded, csv: "share_awarded", tip: "Share of those cheap days with a DAM award through the cheap hours", f: bar },
     ...(c.share_below_fuel == null ? [] : [{ h: "Below fuel cost", i: c.share_below_fuel, csv: "share_below_fuel", tip: "Share of those cheap days its offer sat below fuel cost (the awarded configuration, else the lowest)", f: bar }]),
     { h: "Median lowest offer", i: c.median_lowest_offer, csv: "median_lowest_offer", tip: "Median over cheap days of its lowest configuration's cheap-hour minimum-energy offer, $/MWh", f: fmt$ },
     { h: "Implied heat rate", i: c.median_implied_hr, csv: "median_implied_heat_rate", tip: "That offer over the hub gas price, MMBtu/MWh", f: (v) => (v == null ? "–" : d3.format(".1f")(v)) },
