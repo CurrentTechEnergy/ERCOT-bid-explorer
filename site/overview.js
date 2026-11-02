@@ -231,7 +231,7 @@ function drawHeadline() {
     const ok = ref.filter((v) => v != null), avg = d3.mean(ok), nCheap = cheapHours().length;
     el.innerHTML = `${esc(dayLabel(S.date))}: ${rt ? "real-time" : "day-ahead"} system lambda averaged <b>${fmtPrice0(avg)}/MWh</b>, from ${fmtPrice0(d3.min(ok))} to ${fmtPrice0(d3.max(ok))}.`;
     $("lede-sub").innerHTML = (nCheap ? `<b>${nCheap} hour${nCheap > 1 ? "s" : ""}</b> at ${fmtPrice0(CHEAP)} or less. ` : `No hour at ${fmtPrice0(CHEAP)} or less. `) +
-      (L === "60d" ? "Each unit's hours are in, from the 60-day disclosure: who ran and who turned off is on Commitment."
+      (L === "60d" ? "Each unit's hours are in, from the 60-day disclosure: who ran and who turned off is on Turn-ons and turn-offs."
         : `Unit detail for this day arrives with the 60-day disclosure, about ${esc(dayLabel(arrives))}; until then the page shows ERCOT's 2-day summary in total.`);
   }
   if (!ref) $("lede-sub").textContent = "";
@@ -259,8 +259,8 @@ function drawHeadline() {
   $("expect").innerHTML = tiles.join("") || `<li><div class="w">No generation data for this day yet.</div></li>`;
   $("headline-note").textContent = `${S.date} · ${L === "60d" ? "60-day disclosure" : L === "2d" ? "2-day summary" : "prices only"}`;
   $("decisions-link").innerHTML = L === "60d"
-    ? `<a href="commitment.html#date=${S.date}">Which coal and gas units turned off on ${esc(dayLabel(S.date))}, and at what loss: Commitment →</a>`
-    : `<a href="commitment.html#date=${last60()}">Unit decisions are in through ${esc(dayLabel(last60()))}: Commitment →</a>`;
+    ? `<a href="commitment.html#date=${S.date}">Which coal and gas units turned off on ${esc(dayLabel(S.date))}, and at what loss: Turn-ons and turn-offs →</a>`
+    : `<a href="commitment.html#date=${last60()}">Unit decisions are in through ${esc(dayLabel(last60()))}: Turn-ons and turn-offs →</a>`;
 }
 
 // ---- the price chart beside the headline --------------------------------------------------
@@ -626,7 +626,7 @@ function drawUnits() {
   html += rows.map((r) => `<tr>${cols.map(([k, , kind]) => `<td class="${tcls(kind)}">${fmt(r, k, kind)}</td>`).join("")}</tr>`).join("");
   el.innerHTML = html + "</tbody></table></div>";
   $("units-foot").innerHTML = (total > rows.length ? `Showing ${rows.length} of ${total} units. <button type="button" id="units-all" class="linkish">Show all</button>` : `Units: ${total}.`) +
-    ` Groups are from the full 60-day data. Which units turned off on the day, and at what loss, is on <a href="commitment.html#date=${S.date}">Commitment</a>.` +
+    ` Groups are from the full 60-day data. Which units turned off on the day, and at what loss, is on <a href="commitment.html#date=${S.date}">Turn-ons and turn-offs</a>.` +
     ` Profit is an estimate on generic costs (coal at $2/MMBtu, so lignite at its own mine reads low)${S.rtNodes ? "" : "; real-time node prices for this day are not in yet, so the real-time part settles at system lambda"}.`;
   $("units-note").textContent = `${S.date} · ${Object.keys(S.a60.units).length} thermal units`;
   const b = $("units-all");
