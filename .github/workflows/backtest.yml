@@ -8,13 +8,13 @@ on:
   workflow_dispatch:
     inputs:
       model:
-        description: "oi (operator-informed, CC and gas steam) or ct (CT turn-on)"
+        description: "oi (operator-informed, CC and gas steam), ct (CT turn-on) or cuts (CC turn-off cutoffs)"
         required: true
         default: oi
         type: choice
-        options: [oi, ct]
+        options: [oi, ct, cuts]
       variants:
-        description: "space-separated: oi base unit_hr | ct base spark"
+        description: "space-separated: oi base unit_hr | ct base spark | cuts base unit_hr"
         required: true
         default: base unit_hr
       from_month:

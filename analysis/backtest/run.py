@@ -17,6 +17,11 @@ ct  CT turn-on model (pipeline/models/peaker_oi.py), monthly expanding fits.  Va
       spark    every node price (day-ahead and real-time) less the unit's gas cost the day before
                (gascost.gas_cost: 11.0 x its own hub, Henry Hub where it has none)
 
+cuts  combined-cycle turn-off cutoffs (pipeline/decisions.py), each train's no-award days judged
+    by a cutoff chosen from its other days (leave one out, as "acc on unseen days").  Variants:
+      base     the trains' gas cost as it is (gascost: 7.548 x own hub)
+      unit_hr  each train's heat rate at minimum (pipeline/heat_rates) in place of 7.548
+
 Writes <out>/<model>-<variant>/summary.json and prints one line per technology and hour set.
 """
 import argparse
@@ -116,9 +121,51 @@ def run_ct(variant, out):
     return res, n
 
 
+def run_cuts(variant):
+    from pipeline import decisions as dc
+    if variant == "unit_hr":
+        from pipeline import heat_rates
+        _cost = gascost.cost
+
+        def cost(tech, key, date, mingen, est):
+            c, e = _cost(tech, key, date, mingen, est)
+            if e == gascost.EST and tech in gascost.HEAT_RATE:
+                c = c * heat_rates.at_min(tech, key)[0] / gascost.HEAT_RATE[tech]
+            return c, e
+        gascost.cost = cost
+    elif variant != "base":
+        raise SystemExit(f"unknown cuts variant {variant}")
+    D = dc.build_decisions(load_index(), write=False)
+    by = collections.defaultdict(list)
+    for key, d, loss, _, _, cov, shut, _ in D["days"]:
+        if (D["units"].get(key) or [None])[0] == "combined_cycle" and loss is not None:
+            by[key].append((loss, cov, shut))
+    t = collections.Counter()
+    for key, days in by.items():
+        if dc._cutoff(days) is None:
+            continue
+        t["trains"] += 1
+        free = [(l, s) for l, c, s in days if c < dc.HALF]
+        v = np.array([l for l, _ in free]); y = np.array([s for _, s in free])
+        for l, c, s in days:
+            if c >= dc.HALF:
+                t["days"] += 1; t["award_days"] += 1; t["right"] += int(s == 0)
+                t["off_n"] += s
+        keep = np.ones(len(v), bool)
+        for i in range(len(v)):
+            keep[i] = False
+            cands = np.unique(np.r_[v[keep].min() - 1, v[keep]])
+            hits = ((v[keep][None, :] > cands[:, None]) == (y[keep][None, :] == 1)).mean(axis=1)
+            call = int(v[i] > cands[int(np.argmax(hits))])
+            keep[i] = True
+            t["days"] += 1; t["right"] += int(call == y[i]); t["off_n"] += int(y[i])
+            t["off_caught"] += int(call and y[i]); t["off_false"] += int(call and not y[i])
+    return {"combined_cycle cutoffs": {k: float(x) for k, x in t.items()}}, len(D["dates"])
+
+
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("model", choices=("oi", "ct"))
+    ap.add_argument("model", choices=("oi", "ct", "cuts"))
     ap.add_argument("variants", nargs="+")
     ap.add_argument("--from", dest="frm", default="2026-02")
     ap.add_argument("--out", default="backtest")
@@ -127,10 +174,14 @@ def main():
         out = Path(a.out) / f"{a.model}-{v}"
         out.mkdir(parents=True, exist_ok=True)
         t0 = time.time()
-        res, n = run_oi(v, a.frm, out) if a.model == "oi" else run_ct(v, out)
+        res, n = run_oi(v, a.frm, out) if a.model == "oi" else run_ct(v, out) if a.model == "ct" else run_cuts(v)
         json.dump(res, open(out / "summary.json", "w"), indent=1)
         print(f"== {a.model} {v}: {n} days, {time.time() - t0:.0f}s", flush=True)
         for k, d in res.items():
+            if a.model == "cuts":
+                print(f"  {k:28s} {int(d['trains'])} trains, right {int(d['right'])}/{int(d['days'])}  "
+                      f"off {int(d['off_caught'])}/{int(d['off_n'])} false {int(d['off_false'])}", flush=True)
+                continue
             h = max(d.get("hours", 0), 1)
             print(f"  {k:28s} brier {d.get('brier', 0) / h:.4f}  off {int(d.get('off_caught', 0))}/{int(d.get('off_n', 0))} "
                   f"false {int(d.get('off_false', 0))}  on {int(d.get('on_caught', 0))}/{int(d.get('on_n', 0))} false {int(d.get('on_false', 0))}", flush=True)
