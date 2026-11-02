@@ -12,15 +12,22 @@ trains that ran through hours their own offer said were a loss; for gas steam it
 worse, so gas steam keeps its own offer.  A train's own offer still carries intent (trains that
 went on to run offered about $12-14/MWh, those that went off about $23, $6-8 over gas), which
 this drops; the spring maintenance season is where that costs most.
+
+v2 (Nov 2026): each train at its own heat rate at minimum (pipeline/heat_rates) in place of
+7.548.  Backtest of the turn-off cutoffs with the real hub prices (analysis/backtest/run.py cuts,
+each train's no-award days judged by a cutoff chosen from its other days, 44 trains, 2024-26):
+7,302 of 7,800 days called right against 7,271, shutdowns caught 1,181 of 1,474 against 1,153,
+false 205 against 208.  HEAT_RATE itself stays: the CT turn-on model reads its 11.0 (per-unit CT
+heat rates did worse there) and the operator-informed model keeps its own.
 """
 import bisect
 import datetime as dt
 
-from . import private
+from . import heat_rates, private
 from .config import DATA_DIR
 from .store import read_json_gz
 
-VERSION = "v1"
+VERSION = "v2"   # v2: combined cycles at each train's heat rate at minimum (Nov 2026)
 TECHS = ("combined_cycle",)
 HEAT_RATE = {"combined_cycle": 7.548, "gas_steam": 10.4, "combustion_turbine": 11.0}   # MMBtu/MWh
 EST = 3     # the `est` code of a cost taken from gas (0 own offer, 1 carried offer, 2 generic)
@@ -47,10 +54,14 @@ def hub_of(key):
 
 
 def gas_cost(tech, key, date):
-    """$/MWh at gas for unit or train `key` on operating day `date`, or None."""
+    """$/MWh at gas for unit or train `key` on operating day `date`, or None.  A combined-cycle
+    train at its measured heat rate at minimum (pipeline/heat_rates: EPA heat input over ERCOT net
+    output; 7.8 for a train without one, cogeneration among them); others at HEAT_RATE."""
     hr = HEAT_RATE.get(tech)
     if hr is None:
         return None
+    if tech == "combined_cycle":
+        hr = heat_rates.at_min(tech, key)[0]
     c = _load()
     ds, vs = c["gas"].get(c["hub"].get(key, "hsc"), ([], []))
     cut = (dt.date.fromisoformat(date) - dt.timedelta(days=1)).isoformat()
