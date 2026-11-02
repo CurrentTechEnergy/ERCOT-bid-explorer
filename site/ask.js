@@ -11,12 +11,6 @@ const { esc } = window.CX;
 const $ = (id) => document.getElementById(id);
 const PASS_KEY = "ask-passcode";
 const fmtDay = d3.utcFormat("%b %-d, %Y");
-const EXAMPLES = [
-  "What did Outpost Solar offer during Winter Storm Fern, and why was it dispatched to zero?",
-  "Which combined cycles shut down after a long run in August, and what were prices when they did?",
-  "How much wind was curtailed in the first week of August, by day?",
-  "How did Comanche Peak run in the cheapest hours of last month?",
-];
 const S = { url: null, history: [] };
 
 const store = {
@@ -115,8 +109,6 @@ async function ask(q) {
 
 async function boot() {
   window.CX.init();
-  $("examples").innerHTML = EXAMPLES.map((x) => `<button type="button">${esc(x)}</button>`).join("");
-  $("examples").addEventListener("click", (ev) => { const b = ev.target.closest("button"); if (b) { $("q").value = b.textContent; $("q").focus(); } });
   $("pass-row").hidden = !!store.get();
   $("new").onclick = () => { S.history = []; $("turns").innerHTML = ""; $("new").hidden = true; say(""); };
   try { const r = await fetch("ask.json", { cache: "no-store" }); S.url = r.ok ? (await r.json()).url : null; } catch (e) { S.url = null; }

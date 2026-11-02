@@ -148,7 +148,7 @@ export const TOOLS = [
     name: "find_units",
     description: "Search ERCOT generation and storage resources by resource name, plant name, other names, county, QSE or decision maker, owner/operator/developer, or a public power buyer. Returns up to 12 matches with technology, size (MW), plant, county, load zone, settlement point, timescale group (how often a thermal unit shuts down), QSE, decision-making entity, owner and buyers. Use it first to turn a plant or company name into resource names for the other tools.",
     input_schema: { type: "object", properties: {
-      query: { type: "string", description: "Words to match, e.g. 'Outpost', 'Comanche Peak', 'Vistra', 'Hormel'" },
+      query: { type: "string", description: "Words to match, e.g. a plant name, a county, a QSE or an owner" },
       tech: { type: "string", enum: TECHS, description: "Optional technology filter" },
     }, required: ["query"], additionalProperties: false },
   },
