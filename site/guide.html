@@ -290,7 +290,7 @@
       <ul>
         <li><strong>Energy revenue</strong> uses hourly mean prices and output, so it differs a little from settlement at 15-minute intervals. Node prices load a few days per update, newest first; days without them fall back to system lambda and are marked.</li>
         <li><strong>Wind and solar</strong> are counted on the two-settlement basis: the day-ahead award at the day-ahead price plus the real-time deviation at the unit's node where it has day-ahead data, real time at its node otherwise (most wind and solar), and system lambda where the node price is missing.</li>
-        <li><strong>Ancillary service revenue</strong> is the DAM award at the DAM clearing price. Real-time AS awards under real-time co-optimization are not in the disclosures yet.</li>
+        <li><strong>Ancillary service revenue</strong> is the DAM award at the DAM clearing price. Real-time AS awards are in the SCED disclosure but not counted in revenue here; they are small next to day-ahead AS.</li>
         <li><strong>Start-up costs</strong> count the hot start offer for every start. A unit off long enough for an intermediate or cold start cost more.</li>
         <li><strong>Margin</strong> is energy plus ancillary revenue minus fuel, variable and start costs on the chosen bases. It leaves out fixed costs, so it is the contribution to them.</li>
       </ul>

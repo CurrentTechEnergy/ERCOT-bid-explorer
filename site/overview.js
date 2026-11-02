@@ -379,8 +379,8 @@ function drawActual() {
     tipRows: (h, shown) => `<tr><td></td><td>Total supply</td><td class="n">${fmtGW(d3.sum(shown, (s) => s.vals[h] || 0))} GW</td></tr>` });
   $("actual-note").textContent = `${S.date} · GW · ${A.L === "60d" ? "60-day disclosure" : "2-day summary"}`;
   $("actual-sub").textContent = A.L === "60d"
-    ? "Each unit's output from the 60-day disclosure, thermal units summed by how often they turn off on price. Batteries are drawn on top while discharging and below zero while charging. Shaded hours had system lambda at $10 or less."
-    : `ERCOT's 2-day generation summary: thermal in total, wind, solar and batteries. Unit detail arrives with the 60-day disclosure, about ${dayLabel(addDays(S.date, LAG_60D))}. Shaded hours had system lambda at $10 or less.`;
+    ? "Each unit's output from the 60-day disclosure, thermal units summed by how often they turn off on price. Batteries are drawn on top while discharging and below zero while charging. Shaded hours had real-time system lambda at $10 or less (day-ahead when real-time is missing)."
+    : `ERCOT's 2-day generation summary: thermal in total, wind, solar and batteries. Unit detail arrives with the 60-day disclosure, about ${dayLabel(addDays(S.date, LAG_60D))}. Shaded hours had real-time system lambda at $10 or less (day-ahead when real-time is missing).`;
 }
 // what ran over the day, as GWh bars: the bar is what ran, the full bar the units' largest hourly
 // HSL over all 24 hours (wind and solar: their HSL hour by hour); rows without a maximum share
