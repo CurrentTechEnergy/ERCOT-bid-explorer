@@ -214,11 +214,12 @@ def run_cost(tech, train, date, gas, hubs):
     (combined cycles and gas steam: the unit's or train's measured value, else its technology's,
     pipeline/heat_rates; others GAS_HR) x the train's own hub price (Houston Ship Channel without
     one), Henry Hub standing in (estimated) where the hub has no price, plus the monthly basis for
-    Ship Channel (gas_by_hub); coal at its heat rate at minimum x heat_rates.COAL_PRICE
-    (estimated: an assumed coal price); any unit without a gas price at the generic cost
-    (estimated)."""
+    Ship Channel (gas_by_hub); coal at its heat rate at minimum x its delivered coal price that
+    month (heat_rates.coal_price: the plant's own EIA-923 price, else the Texas subbituminous
+    average, estimated); any unit without a gas price at the generic cost (estimated)."""
     if tech == "coal":
-        return heat_rates.at_min(tech, train)[0] * heat_rates.COAL_PRICE, True
+        p, own = heat_rates.coal_price(train, date)
+        return heat_rates.at_min(tech, train)[0] * p, not own
     if tech in GAS_HR:
         hr = heat_rates.at_min(tech, train)[0] if tech in ("combined_cycle", "gas_steam") else GAS_HR[tech]
         hub = hubs.get(train, "hsc")
