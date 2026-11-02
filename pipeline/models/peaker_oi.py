@@ -30,6 +30,18 @@ and solar forecast errors, and the intra-hour forecasts each traded caught start
 about one for one and left the Brier flat, so none is used.  Most CT starts are not predictable
 an hour ahead.
 
+v2 (Nov 2026): every node price the model reads, day-ahead and real-time, is net of the unit's
+gas cost (11.0 MMBtu/MWh x its own hub's price the trading day before, gascost.gas_cost; Henry
+Hub where the hub has none), a spark spread, so a $40 hour reads cheaper on a $5 gas day than on a
+$2 one.  Backtest Feb-Aug 2026 with the real hub prices (analysis/backtest/run.py ct): Brier
+from 0.0231 to 0.0223, starts caught 2,583 to 3,099-3,127 with false 1,790 to 2,116-2,142, stops
+caught 6,985 to 7,378-7,392 with false 4,152 to 3,929-3,939; DA lambda <= $10 hours: starts
+111 / 96 false to 114 / 106, stops 626 / 727 to 672-676 / 654-660 (two runs).  Each unit's
+measured heat rate (EPA hourly heat input over ERCOT output, analysis/epa_heat_rates/ct_hr.py)
+in place of 11.0 did worse: at full load 2,902 starts caught, 4,404 false stops, cheap-hour
+starts 35; at minimum 2,765 and 22.  The per-unit intercept already carries each unit's cost
+level.  turn_on and peak stay in plain $/MWh.
+
 The turn-on point, per unit and day with an hour it went into offline: every price at its node,
 day-ahead and the real-time hours before, shifted by the same $/MWh until the model's chance that
 it starts in one of those hours (1 less the product of each hour's chance of not starting)
@@ -55,16 +67,18 @@ scores in operator_scores' columns, tech "combustion_turbine", start the state g
 hour, model "operator" or "state" (stays as it was), a switch caught only in its own hour.
 Rebuilt in full each run.
 """
+import bisect
 from collections import defaultdict
 
 import numpy as np
 
+from .. import gascost
 from ..config import DATA_DIR, UNIT_DATA_DIR
 from ..parse_prices import node_hourly
 from ..store import read_json_gz, write_json_gz
 
 NAME = "peaker_oi"
-VERSION = "v1"
+VERSION = "v2"     # v2: prices read net of gas (Nov 2026)
 PATH = DATA_DIR / "peaker" / "oi.json.gz"
 COLUMNS = ("unit", "turn_on", "peak", "started", "hours_on", "hours_avail", "hours_off", "window")
 SCORE_COLUMNS = ("month", "tech", "start", "award", "cheap", "model", "hours", "right", "brier",
@@ -72,6 +86,7 @@ SCORE_COLUMNS = ("month", "tech", "start", "award", "cheap", "model", "hours", "
 FEATURES = ("da", "da_ahead", "award", "award_ahead", "status_on", "status_offqs", "lambda",
             "rt_last", "rt_last3", "rt_less_da", "sin1", "cos1", "sin2", "cos2", "run")
 SCALE = 10.0         # $/MWh in asinh(price / SCALE)
+GAS_HR = gascost.HEAT_RATE["combustion_turbine"]   # 11.0 MMBtu/MWh: the Henry Hub fallback
 HALF_LIFE = 30.0     # days
 FIT_MIN_DAYS = 45      # Jan 2026, fitted on December alone, called 1,292 false starts
 AHEAD = 4            # hours h to h + AHEAD - 1 in da_ahead and award_ahead
@@ -103,10 +118,12 @@ def _a(x):
 
 def features(R, shift=0.0):
     """[n, len(FEATURES)] from the raw rows R (a dict of arrays), every node price, day-ahead and
-    real-time, moved by `shift` $/MWh (so the real-time less day-ahead spread stays as it was)."""
+    real-time, less the unit's gas cost that day (R["gas"]) and moved by `shift` $/MWh (so the
+    real-time less day-ahead spread stays as it was)."""
     ang = 2 * np.pi * R["h"] / 24
-    return np.c_[_a(R["da"] + shift), _a(R["da_ahead"] + shift), R["award"], R["award_ahead"],
-                 R["status_on"], R["status_offqs"], _a(R["lam"]), _a(R["rt1"] + shift), _a(R["rt3"] + shift),
+    g = shift - R["gas"]
+    return np.c_[_a(R["da"] + g), _a(R["da_ahead"] + g), R["award"], R["award_ahead"],
+                 R["status_on"], R["status_offqs"], _a(R["lam"]), _a(R["rt1"] + g), _a(R["rt3"] + g),
                  _a(R["rt1"] - R["da1"]), np.sin(ang), np.cos(ang), np.sin(2 * ang),
                  np.cos(2 * ang), R["run"]]
 
@@ -154,7 +171,30 @@ def _rows(uh, cts, dates, node, lamd, ruc):
     R = {c: np.array(v) for c, v in cols.items()}
     for c in ("u", "i", "h", "prev", "on", "cheap"):
         R[c] = R.get(c, np.zeros(0)).astype(int)
+    R["gas"] = _gas(cts, dates, R["u"], R["i"])
     return R, n_ruc
+
+
+def _gas(cts, dates, u, i):
+    """The gas cost ($/MWh) of each row's unit and day: gascost.gas_cost (GAS_HR x its own hub
+    price before the day), else GAS_HR x Henry Hub, else the median of the rest, else 0 (no gas
+    price at all: the prices are read as they are)."""
+    hh = read_json_gz(DATA_DIR / "gas.json.gz", default={}) or {}
+    hd, hv = hh.get("dates") or [], hh.get("value") or []
+
+    def henry(d):
+        k = bisect.bisect_left(hd, d) - 1
+        while k >= 0 and hv[k] is None:
+            k -= 1
+        return GAS_HR * hv[k] if k >= 0 else None
+    memo = {}
+    for ui, di in set(zip(u.tolist(), i.tolist())):
+        g = gascost.gas_cost("combustion_turbine", cts[ui], dates[di])
+        memo[(ui, di)] = henry(dates[di]) if g is None else g
+    g = np.array([np.nan if memo[k] is None else memo[k] for k in zip(u.tolist(), i.tolist())], float)
+    if np.isnan(g).all():
+        return np.zeros(len(g))
+    return np.where(np.isnan(g), np.nanmedian(g), g)
 
 
 def _fit_side(X, units, y, w, n_units):
