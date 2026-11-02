@@ -451,7 +451,7 @@ def _goal_checks(day):
         return
     years = sorted(g.get("years") or {})
     bad = [] if years else ["no years"]
-    for q, rows in (("q1", g.get("q1", {}).get("rows")), ("q2", g.get("q2", {}).get("rows")),
+    for q, rows in (("q1", g.get("q1", {}).get("rows")), ("q2", g.get("q2", {}).get("cost")),
                     ("q4", g.get("q4", {}).get("years"))):
         have = {str(r[0]) for r in rows or []}
         if not set(map(str, years)) <= have:

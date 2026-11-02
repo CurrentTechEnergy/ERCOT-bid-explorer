@@ -10,16 +10,6 @@ const fmtPct = d3.format(".0%");
 const fmtPt = (v) => `${v >= 0 ? "+" : "−"}${d3.format(".1f")(Math.abs(v) * 100)} pt`;
 const fmtTWh = (mwh) => d3.format(",.2f")(mwh / 1e6);
 const TECH = { combined_cycle: "Combined cycle", gas_steam: "Gas steam", coal: "Coal", combustion_turbine: "Combustion turbine and recip", nuclear: "Nuclear" };
-// one vocabulary for why a unit at minimum stayed on (the Unit and Commitment pages use the same words)
-const REASON = {
-  coal: { label: "Coal", color: "--c8" },
-  "never off": { label: "Never off", color: "--c-other" },
-  "held by its award": { label: "Held by its award", color: "--c3" },
-  "rode through": { label: "Rode through", color: "--c1" },
-  "against the model": { label: "Stayed on, model said off", color: "--c7" },
-  "no model call": { label: "No model call", color: "--c5" },
-  combustion_turbine: { label: "Combustion turbines", color: "--c4" },
-};
 const S = { G: null, year: "all", tech: "combined_cycle", fuel: "all", q2cost: "" };
 
 function emptyMsg(el, msg) { el.innerHTML = `<p class="empty">${msg}</p>`; }
@@ -160,7 +150,7 @@ function stack(el, ys, keys, val, opts) {
     keys.forEach((k) => {
       const v = val(y, k);
       if (!v) return;
-      svg.append("rect").attr("x", x(y)).attr("width", x.bandwidth()).attr("y", yy(acc + v)).attr("height", Math.max(0, yy(acc) - yy(acc + v) - 0.5)).attr("fill", css((opts.labels || REASON)[k].color));
+      svg.append("rect").attr("x", x(y)).attr("width", x.bandwidth()).attr("y", yy(acc + v)).attr("height", Math.max(0, yy(acc) - yy(acc + v) - 0.5)).attr("fill", css(opts.labels[k].color));
       acc += v;
     });
     if (opts.mark) {
@@ -168,7 +158,7 @@ function stack(el, ys, keys, val, opts) {
       [[css("--surface"), 5.5], [css("--ink"), 2.5]].forEach(([c, sw]) => svg.append("line").attr("x1", x(y) - 4).attr("x2", x(y) + x.bandwidth() + 4).attr("y1", yy(v)).attr("y2", yy(v)).attr("stroke", c).attr("stroke-width", sw));
     }
     svg.append("rect").attr("x", x(y)).attr("width", x.bandwidth()).attr("y", m.t).attr("height", H - m.t - m.b).attr("fill", "transparent")
-      .on("pointermove", (ev) => showTip(ev, `<h4>${yearLabel(y)}</h4><table>` + keys.filter((k) => val(y, k)).reverse().map((k) => `<tr><td>${(opts.labels || REASON)[k].label}</td><td class="n">${tip(val(y, k))}</td></tr>`).join("") +
+      .on("pointermove", (ev) => showTip(ev, `<h4>${yearLabel(y)}</h4><table>` + keys.filter((k) => val(y, k)).reverse().map((k) => `<tr><td>${opts.labels[k].label}</td><td class="n">${tip(val(y, k))}</td></tr>`).join("") +
         `<tr><td><b>Total</b></td><td class="n"><b>${tip(d3.sum(keys, (k) => val(y, k)))}</b></td></tr>` + (opts.mark ? `<tr><td>${opts.markLabel}</td><td class="n">${tip(opts.mark(y))}</td></tr>` : "") + `</table>`))
       .on("pointerleave", hideTip);
   });
@@ -195,7 +185,7 @@ function drawQ2Cost() {
   S.q2cost = `Staying on at minimum through cheap hours cost ${gasOnly ? "gas" : "fossil"} units $${d3.format(",.0f")(tot(big) / 1e6)}M in ${big}` + (now !== fy.at(-1) ? ` and $${d3.format(",.0f")(tot(now) / 1e6)}M so far in ${now}` : "") +
     (gasOnly ? `; $${d3.format(",.0f")(all / 1e6)}M since ${ys[0]}, leaving out coal's $${d3.format(",.0f")(coal / 1e6)}M.` : `; coal carries $${d3.format(",.0f")(coal / 1e6)}M of the $${d3.format(",.0f")(all / 1e6)}M since ${ys[0]}.`) + ` Hours held by a day-ahead award cost about $${d3.format(",.0f")(per((r) => r.group === "award"))}/MWh, against $${d3.format(",.0f")(per((r) => r.group !== "award"))} without one.`;
   setNote($("q2c-note"), `What it cost fossil units at their minimum to stay on through cheap hours, by the same groups as the chart below. * part year.`,
-    `Coal, combined cycle and gas steam units at minimum in a cheap hour (day-ahead system lambda of $${S.G.cheap}/MWh or less). Each hour costs the unit's cost of running at minimum less its real-time node price, times its LSL; an hour where the node paid more than the cost counts as negative. Real-time in every group: a day-ahead award pays the same whether or not the unit runs, so the choice each hour is to generate or buy the energy back in real time. For gas units that cost is fuel: an EIA average heat rate (7.5 MMBtu/MWh for combined cycles, 10.4 for gas steam) times the gas price at the unit's own hub, Houston Ship Channel or Waha, on the trading day before (Ship Channel from Jul 2019; where a hub has no price, Henry Hub plus Ship Channel's median basis for the calendar month, or Henry Hub alone for Waha units). Coal is a generic $25/MWh. Units' DAM minimum-energy offers are not used: they are often set to win or avoid commitment rather than at cost. Only output up to the minimum is counted. Groups go hour by hour: a DAM energy award over 0.5 MW that hour; else self-committed when the unit's DAM resource status is on, else neither (from the 60-day DAM disclosure).`);
+    `Coal, combined cycle and gas steam units at minimum in a cheap hour (day-ahead system lambda of $${S.G.cheap}/MWh or less). Each hour costs the unit's cost of running at minimum less its real-time node price (the day-ahead node price when the real-time one is missing), times its LSL; an hour where the node paid more than the cost counts as negative. Real-time in every group: a day-ahead award pays the same whether or not the unit runs, so the choice each hour is to generate or buy the energy back in real time. For gas units that cost is fuel: an EIA average heat rate (7.5 MMBtu/MWh for combined cycles, 10.4 for gas steam) times the gas price at the unit's own hub, Houston Ship Channel or Waha, on the trading day before (Ship Channel from Jul 2019; where a hub has no price, Henry Hub plus Ship Channel's median basis for the calendar month, or Henry Hub alone for Waha units). Coal is a generic $25/MWh. Units' DAM minimum-energy offers are not used: they are often set to win or avoid commitment rather than at cost. Only output up to the minimum is counted. Groups go hour by hour: a DAM energy award over 0.5 MW that hour; else self-committed when the unit's DAM resource status is on, else neither (from the 60-day DAM disclosure).`);
 }
 function drawQ2() {
   drawQ2Cost();
