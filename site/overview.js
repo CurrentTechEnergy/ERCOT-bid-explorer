@@ -257,9 +257,10 @@ function drawHeadline() {
   const dis = a60 && a60.tech.storage ? a60.dis : gh && gh.discharging.some((v) => v != null) ? gh.discharging : null;
   const chg = a60 && a60.tech.storage ? a60.chg : gh ? gh.charging : null;
   if (dis) {
-    tiles.push(`<li><div class="k"><i class="sw" style="background:var(${STORAGE.color})"></i>${STORAGE.label}</div><div class="v">${fmtGW(d3.max(dis))} GW</div>` +
+    tiles.push(`<li><div class="k"><i class="sw" style="background:var(${STORAGE.color})"></i>${STORAGE.label}</div>` +
+      `<div class="v"><span class="nw">${fmtGWh(d3.sum(dis) / 1000)} GWh <small>(discharge)</small></span> <span class="nw">${fmtGWh(-d3.sum(chg) / 1000)} GWh <small>(charge)</small></span></div>` +
       `<div class="w"><b>${fmtGW(d3.max(dis))} GW</b> discharging at the peak hour, <b>${fmtGW(-d3.min(chg))} GW</b> charging at most (${a60 ? "60-day disclosure" : "2-day summary"})</div>` +
-      `<div class="w"><b>${fmtGWh(d3.sum(dis) / 1000)} GWh</b> discharged, <b>${fmtGWh(-d3.sum(chg) / 1000)} GWh</b> charged over the day</div><div class="w2">the whole battery fleet</div></li>`);
+      `<div class="w2">the whole battery fleet</div></li>`);
   }
   $("expect").innerHTML = tiles.join("") || `<li><div class="w">No generation data for this day yet.</div></li>`;
   $("headline-note").textContent = `${S.date} · ${L === "60d" ? "60-day disclosure" : L === "2d" ? "2-day summary" : "prices only"}`;
