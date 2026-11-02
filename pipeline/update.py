@@ -71,6 +71,7 @@ from .series import build_series
 from .storage import build_storage
 from .battery_bench import build_battery_bench
 from . import prices_years
+from . import lsl_floor
 from .unit_index import build_unit_index
 from . import share_pages
 from . import memo, qse
@@ -649,6 +650,10 @@ def main(argv=None):
         prices_years.build()       # the Prices page, after gas and storage; past real-time years come from the Goal workflow's --full
     except Exception as e:         # a page's summary never stops the data run
         warn(f"prices_years: failed: {e!r}; prices_years.json.gz left as it is")
+    try:
+        lsl_floor.build()          # Turn-ons and Turn-offs "Daily minimum floor"; 2019 to Nov 2025 come from the Goal workflow's --full
+    except Exception as e:
+        warn(f"lsl_floor: failed: {e!r}; lsl_floor.json.gz left as it is")
     if "operator" not in args.skip:
         build_operator_days(index)   # after cop: the Unit page's operator-informed row, new 60-day days only
     build_peaker_oi(index)           # the Commitment and Unit pages' combustion turbine turn-on points

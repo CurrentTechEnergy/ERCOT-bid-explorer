@@ -461,6 +461,33 @@ def _goal_checks(day):
     day.add("goal", "error" if bad else "ok", "; ".join(bad) or f"{years[0]} to {g.get('through')}")
 
 
+def _lsl_floor_checks(day):
+    """The Turn-ons and Turn-offs daily minimum floor (pipeline/lsl_floor.py): one row per day in
+    order with no repeats, hours ending 1 to 24, no negative MW, and each day's total floor and
+    fossil floor within range (a total outside it is a gap or a parsing fault)."""
+    from .lsl_floor import PATH as LF_PATH, COLUMNS as LF_COLS, TECHS as LF_TECHS, FOSSIL as LF_FOSSIL
+    f = read_json_gz(LF_PATH, default=None)
+    if f is None:
+        return
+    bad = []
+    if f.get("columns") != LF_COLS:
+        bad.append("columns changed")
+    rows = f.get("rows") or []
+    days = [r[0] for r in rows]
+    if days != sorted(set(days)):
+        bad.append("days out of order or repeated")
+    ia, jf = LF_COLS.index("he"), LF_COLS.index("he_fos")
+    for r in rows:
+        v = dict(zip(LF_COLS, r))
+        tot, fos = sum(v[t] for t in LF_TECHS), sum(v[f"{t}_fos"] for t in LF_FOSSIL)
+        if not (1 <= r[ia] <= 24 and 1 <= r[jf] <= 24) or min(r[2:]) < 0:
+            bad.append(f"{r[0]} hour or MW")
+        elif not 5000 <= tot <= 60000 or not 2000 <= fos <= 55000:
+            bad.append(f"{r[0]} floor {tot} / fossil {fos}")
+    day.add("lsl_floor", "error" if bad else "ok",
+            f"{len(bad)} problem(s), e.g. {bad[:4]}" if bad else f"{len(rows)} days, {f.get('from')} to {f.get('through')}")
+
+
 def _prices_checks(day):
     """The Prices page's data (pipeline/prices_years.py): every curve runs from high to low,
     percentiles and hour counts in order, no year with more hours than it has, ride-through
@@ -675,6 +702,7 @@ def check_files(index):
     _operator_history_checks(day)
     _goal_checks(day)
     _prices_checks(day)
+    _lsl_floor_checks(day)
     ui = read_json_gz(UNIT_INDEX_PATH, default=None)
     if ui is not None:
         rows = ui.get("rows", [])

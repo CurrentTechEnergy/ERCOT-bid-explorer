@@ -2,8 +2,9 @@ name: Goal page
 
 # The "Will fossil turn off?" page's data (pipeline/goal.py): four questions answered by year from
 # Jan 2019, from the 60-day data alone (the data branch, the history release, and main's operator
-# day files).  Writes site/data/goal.json.gz (and the Prices page's past years, prices_years_hist.json.gz)
-# and commits them to main.  Only those files are committed,
+# day files).  Writes site/data/goal.json.gz (and the Prices page's past years, prices_years_hist.json.gz,
+# and the Turn-ons and Turn-offs page's daily floor history, lsl_floor_hist.json.gz) and commits them
+# to main.  Only those files are committed,
 # so it needs no slot in the update's concurrency group; the push rebases onto whatever the update
 # wrote meanwhile.
 on:
@@ -56,11 +57,18 @@ jobs:
           PYTHONUNBUFFERED: "1"
           UNIT_DATA_DIR: unitdata
         run: python -m pipeline.prices_years --full
+      # the Turn-ons and Turn-offs page's daily minimum floor, 2019 to the last thermal month, into
+      # lsl_floor_hist.json.gz; the update run adds the 60-day days on top.
+      - name: Daily minimum floor, every day
+        continue-on-error: true     # never holds back the goal page's commit
+        env:
+          PYTHONUNBUFFERED: "1"
+        run: python -m pipeline.lsl_floor --full
       - name: Commit
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add site/data/goal.json.gz site/data/prices_years_hist.json.gz
+          git add site/data/goal.json.gz site/data/prices_years_hist.json.gz site/data/lsl_floor_hist.json.gz
           if git diff --cached --quiet; then
             echo "No change"
             exit 0
