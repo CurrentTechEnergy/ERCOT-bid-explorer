@@ -23,9 +23,6 @@
   .ask-go:disabled { opacity: 0.45; cursor: not-allowed; }
   .ask-msg { margin: 0; font-size: 13px; color: var(--ink-2); }
   .ask-msg.err { color: var(--c8); }
-  .examples { display: flex; flex-wrap: wrap; gap: 6px; }
-  .examples button { font: inherit; font-size: 12.5px; color: var(--ink-2); background: none; border: 1px solid var(--line); border-radius: 14px; padding: 3px 10px; cursor: pointer; text-align: left; }
-  .examples button:hover { color: var(--ink); background: var(--accent-soft); }
   .turn { display: flex; flex-direction: column; gap: 10px; }
   .turn .q { margin: 0; font-weight: 600; }
   .turn .a { color: var(--ink); line-height: 1.55; overflow-x: auto; }
@@ -60,8 +57,7 @@
         <label class="lbl" for="pass">Passcode</label>
         <input type="password" id="pass" autocomplete="current-password" style="max-width:240px">
       </div>
-      <textarea id="q" maxlength="1500" placeholder="e.g. What did Outpost Solar offer during Winter Storm Fern, and why was it dispatched to zero?"></textarea>
-      <div class="examples" id="examples"></div>
+      <textarea id="q" maxlength="1500" placeholder="Ask about ERCOT units, offers, operations or prices"></textarea>
       <div class="ask-row">
         <button type="submit" class="ask-go" id="go">Ask</button>
         <button type="button" class="btn" id="new" hidden>New conversation</button>
