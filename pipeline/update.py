@@ -40,6 +40,7 @@ from .dispatchable import build_dispatchable
 from .trends import build_trends
 from .intraday import build_intraday
 from .groups import build_groups
+from .min_run import build_min_run
 from .unit_hours_day import build_unit_hour_days
 from .rt_nodes import build_rt_nodes
 from .unit_curves import build_unit_curves
@@ -531,6 +532,7 @@ def main(argv=None):
         memo.run("trends", build_trends, index)
         memo.run("intraday", build_intraday, index)
         build_groups(index)
+        build_min_run(index)
         build_actual_stack(index)
         build_unit_hour_days(index)
         build_rt_nodes(index)
@@ -622,6 +624,7 @@ def main(argv=None):
     memo.run("trends", build_trends, index)
     memo.run("intraday", build_intraday, index)
     build_groups(index)
+    build_min_run(index)
     build_actual_stack(index)
     build_unit_hour_days(index)
     build_rt_nodes(index)

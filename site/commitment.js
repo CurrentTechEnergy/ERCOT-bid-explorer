@@ -59,7 +59,7 @@ const STATUS6 = [
 ];
 
 const S = { OC: null, OSC: null, scTech: "combined_cycle", scCell: "all", F: null, FIT: null, FI: null, SC: null, T: null, TH: null, I: null, UH: null, G: null, HC: null, DEC: null, SO: null, days: [], date: null,
-  floorMode: "le20_sced", floorGroup: "behaviour", floorHours: "all", hidden: { floor: new Set(), floorG: new Set() },
+  floorMode: "le20_sced", floorGroup: "behaviour", floorHours: "all", hidden: { floor: new Set(), floorG: new Set(), runs: new Set(["combustion_turbine"]) },
   capTech: "coal", cheapTech: "all", cheapThr: "0", leanRank: "fossil", leanMonth: "all", leanPer: "day",
   stTech: "all", stThr: "0", stUnit: "mw", stBase: null, costThr: "0", uTech: "all", uGroup: "all", uSort: "mw", uDir: "desc", uSeen: false };
 
@@ -1124,6 +1124,150 @@ function drawCost() {
     rows.map((r) => [r.g, r.units, r.n, Math.round(r.mwh), Math.round(r.loss), Math.round(r.start), Math.round(r.saves), +(r.paid / r.n).toFixed(3), +(r.est / r.n).toFixed(3)]), `What the decision cost, lambda below ${thr}`);
 }
 
+// ==== how long units stay on once started (data/min_run_60d.json.gz, pipeline/min_run.py) ======
+// each coal and gas unit or train at its typical shortest completed run (10th percentile), with a
+// line to its median run, by technology and by plant (units grouped on the site code before the
+// first underscore, named from the unit index's CDR plant name). Units with too few completed runs
+// are listed in a collapsed table. Dots and rows open the Unit page.
+const RUN_TECHS = ["combined_cycle", "gas_steam", "coal", "combustion_turbine"].map((id) => TECHS.find((t) => t.id === id));
+const RUN_TICKS = [1, 2, 4, 8, 12, 24, 48, 168, 720];
+const fmtRunH = (h) => (h == null ? "–" : h >= 48 ? `${d3.format(h >= 240 ? ",.0f" : ".1f")(h / 24)} d` : `${d3.format(h % 1 ? ".1f" : ".0f")(h)} h`);
+const runTick = (h) => (h === 168 ? "1 wk" : h === 720 ? "30 d" : `${h} h`);
+const plantKey = (u) => u.split("_")[0];
+function plantName(raw, key) {
+  if (!raw) return key;
+  const n = raw.replace(/\s*\(.*\)$/, "").replace(/\s+(STG|U|CTG|CT|GT|UNIT|G)\s*\w*$/i, "").trim();
+  return n.toLowerCase().replace(/\b\w/g, (c) => c.toUpperCase()) || key;
+}
+async function runUnits() {
+  if (S._runs) return S._runs;
+  if (S.UIX === undefined) S.UIX = await window.CX.unitIndex();
+  const names = new Map((S.UIX || []).map((u) => [u.unit, u.plant]));
+  const MR = S.MR, byPlant = new Map();
+  const list = Object.entries(MR.units).map(([unit, v]) => {
+    const p = plantKey(unit);
+    if (!byPlant.has(p)) byPlant.set(p, []);
+    byPlant.get(p).push(names.get(unit));
+    return { unit, plant: p, tech: v[0], mw: v[1], p10: v[2], med: v[3], n: v[4], trips: v[5], on: v[6], runs: v[7], s: v[7].length ? v[7][0] : null };
+  });
+  // the plant's name: the commonest cleaned CDR name among its units
+  const pname = new Map([...byPlant].map(([p, ns]) => {
+    const c = d3.rollup(ns.map((n) => plantName(n, p)), (v) => v.length, (n) => n);
+    return [p, [...c].sort((a, b) => b[1] - a[1])[0][0]];
+  }));
+  list.forEach((u) => { u.pname = pname.get(u.plant); });
+  return (S._runs = list);
+}
+function runTip(u) {
+  return `<h4>${esc(u.unit)}</h4>${esc(u.pname)} · ${techLabel(u.tech)}${u.mw ? ` · ${fmtMW(u.mw)} MW` : ""}<br>` +
+    `${u.n} completed run${u.n === 1 ? "" : "s"}, ${u.trips} more ended in an outage<br>` +
+    (u.p10 != null ? `Typical shortest run <b>${fmtRunH(u.p10)}</b> · median ${fmtRunH(u.med)} · single shortest ${fmtRunH(u.s)}` : `Too few completed runs to judge (fewer than ${S.MR.min_runs})`) +
+    `<br>Click to open the unit`;
+}
+function runAxis(svg, x, top, bot) {
+  const g = svg.append("g").attr("class", "axis"), narrow = x.range()[1] - x.range()[0] < 360;
+  for (const t of narrow ? [1, 4, 12, 48, 168] : RUN_TICKS) {
+    g.append("line").attr("x1", x(t)).attr("x2", x(t)).attr("y1", top).attr("y2", bot).attr("stroke", css("--grid"));
+    g.append("text").attr("x", x(t)).attr("y", bot + 14).attr("text-anchor", "middle").attr("fill", css("--muted")).style("font", "11px var(--font-data)").text(runTick(t));
+  }
+}
+async function drawRuns() {
+  const el = $("runs-tech"), pel = $("runs-plant");
+  if (!S.MR || !S.MR.units) { emptyMsg(el, "Fills in after the data update builds the run-length file."); pel.innerHTML = ""; return; }
+  const all = await runUnits(), on = RUN_TECHS.filter((t) => !S.hidden.runs.has(t.id));
+  legend($("runs-legend"), RUN_TECHS, S.hidden.runs, drawRuns);
+  const D = S.MR.dates, period = `${fmtDate(parseDate(D[0]))} to ${fmtDate(parseDate(D.at(-1)))}`;
+  const pct = S.MR.pct, minN = S.MR.min_runs;
+  const meds = on.map((t) => [t, d3.median(all.filter((u) => u.tech === t.id && u.p10 != null), (u) => u.p10)]).filter((r) => r[1] != null);
+  window.CX.setNote($("runs-note"), `How briefly each coal and gas unit has run once started: its typical shortest completed run, from start to shutting down on price. ` +
+    (meds.length ? `Median by technology: ${meds.map(([t, m]) => `${t.label.replace(" and recip", "").toLowerCase()} ${fmtRunH(m)}`).join(", ")}. ` : "") + "Click a dot to open the unit.",
+    `Each dot is one unit (a combined-cycle train counts as one) at the ${pct}th percentile of its completed runs over ${period} (${D.length} days of 60-day data, up to the last year). ` +
+    `A run is a stretch of hours online (at minimum or above) that starts from offline or outage and ends with the unit offline but available. Runs that end in an outage are left out as likely trips, and so are runs cut by missing data or by either end of the period. ` +
+    `In a combined-cycle train a single offline hour between hours online is a configuration change, not a shutdown. The ${pct}th percentile is used rather than the single shortest run, which is often an abandoned start or a test; units need ${minN} completed runs to be shown. ` +
+    `ERCOT does not publish registered minimum up times, so this is the floor the unit has chosen, not its registered limit: a unit that never ran shorter than 8 hours may be allowed 4. ` +
+    `Hourly states round each run to whole hours, so a run can read up to an hour long or short. That matters most for combustion turbines, whose minimum run is often under an hour; they start hidden. The thick line is the median across the technology's units.`);
+  // ---- by technology: a jittered strip per technology on a log hours axis
+  const w = Math.max(300, el.clientWidth || 600), narrow = w < 560, m = { t: 6, r: 16, b: 24, l: narrow ? 92 : 190 }, rowH = 56;
+  const H = m.t + m.b + on.length * rowH;
+  const x = d3.scaleLog().domain([0.8, 1500]).range([m.l, w - m.r]).clamp(true);
+  const svg = d3.create("svg").attr("viewBox", `0 0 ${w} ${H}`);
+  runAxis(svg, x, m.t, H - m.b);
+  on.forEach((t, i) => {
+    const y0 = m.t + i * rowH, us = all.filter((u) => u.tech === t.id && u.p10 != null), nr = all.filter((u) => u.tech === t.id && u.p10 == null).length;
+    svg.append("text").attr("x", 0).attr("y", y0 + rowH / 2 - 4).attr("fill", css("--ink")).style("font", "500 12px var(--font-ui)").text(narrow ? t.label.replace(" and recip", "").replace("Combustion turbine", "CT") : t.label.replace(" and recip", ""));
+    svg.append("text").attr("x", 0).attr("y", y0 + rowH / 2 + 11).attr("fill", css("--muted")).style("font", "11px var(--font-ui)").text(`${us.length} unit${us.length === 1 ? "" : "s"}${narrow ? "" : ` · ${nr} not revealed`}`);
+    us.forEach((u, j) => {
+      const jit = (((j * 0.618) % 1) - 0.5) * (rowH - 22);
+      svg.append("circle").attr("cx", x(u.p10)).attr("cy", y0 + rowH / 2 - 6 + jit).attr("r", 4).attr("fill", css(t.color)).attr("fill-opacity", 0.8)
+        .attr("stroke", css("--surface")).attr("stroke-width", 1.5).style("cursor", "pointer")
+        .on("pointermove", (ev) => showTip(ev, runTip(u))).on("pointerleave", hideTip).on("click", () => { location.href = unitHref(u.unit); });
+    });
+    const md = d3.median(us, (u) => u.p10);
+    if (md != null) {
+      svg.append("line").attr("x1", x(md)).attr("x2", x(md)).attr("y1", y0 + 4).attr("y2", y0 + rowH - 12).attr("stroke", css("--ink")).attr("stroke-width", 2).style("pointer-events", "none");
+      svg.append("text").attr("x", x(md) + 5).attr("y", y0 + rowH - 12).attr("fill", css("--ink")).attr("paint-order", "stroke").attr("stroke", css("--surface")).attr("stroke-width", 4)
+        .style("font", "500 11px var(--font-data)").style("pointer-events", "none").text(`median ${fmtRunH(md)}`);
+    }
+  });
+  if (!on.length) emptyMsg(el, "Pick a technology above."); else el.replaceChildren(svg.node());
+  const shown = all.filter((u) => u.p10 != null && on.some((t) => t.id === u.tech));
+  setCSV(el, ["unit", "plant", "technology", "capacity_mw", `p${pct}_run_h`, "median_run_h", "shortest_run_h", "completed_runs", "runs_ended_in_outage", "online_share_of_available_hours"],
+    shown.map((u) => [u.unit, u.pname, u.tech, u.mw, u.p10, u.med, u.s, u.n, u.trips, u.on]), "Typical shortest run by unit");
+  drawRunPlants(all, on, x, period);
+  drawRunsHidden(all, on);
+}
+function drawRunPlants(all, on, x0, period) {
+  const el = $("runs-plant"), pct = S.MR.pct;
+  const ids = new Set(on.map((t) => t.id));
+  $("runs-plant-legend").innerHTML = `<span><svg width="14" height="10"><circle cx="7" cy="5" r="4" fill="${css("--ink-2")}"/></svg>Typical shortest run (${pct}th percentile)</span>` +
+    `<span><svg width="24" height="10"><line x1="1" x2="23" y1="5" y2="5" stroke="${css("--ink-2")}" stroke-width="2" stroke-opacity="0.45"/></svg>On to the median run</span>` +
+    `<span><svg width="8" height="12"><line x1="4" x2="4" y1="1" y2="11" stroke="${css("--muted")}" stroke-width="1.5"/></svg>Single shortest run</span>`;
+  const byP = d3.group(all.filter((u) => ids.has(u.tech) && u.p10 != null), (u) => u.plant);
+  const ti = Object.fromEntries(RUN_TECHS.map((t, i) => [t.id, i]));
+  let ps = [...byP].map(([p, us]) => ({ p, name: us[0].pname, us: us.sort((a, b) => a.p10 - b.p10), min: d3.min(us, (u) => u.p10), mw: d3.sum(us, (u) => u.mw || 0), t: us[0].tech }));
+  const sort = $("runs-sort").value;
+  ps.sort(sort === "name" ? (a, b) => a.name.localeCompare(b.name) : sort === "mw" ? (a, b) => b.mw - a.mw : (a, b) => a.min - b.min || ti[a.t] - ti[b.t] || a.name.localeCompare(b.name));
+  const n = d3.sum(ps, (p) => p.us.length);
+  window.CX.setNote($("runs-plant-note"), `${ps.length} plants, ${n} units. Hover for the numbers; click a row to open the unit.`, `Units are grouped by the site code at the start of their ERCOT resource name, named from ERCOT's Capacity, Demand and Reserves report. ` +
+    `The dot is the unit's ${pct}th-percentile completed run over ${period}, the line runs on to its median run, and the tick marks its single shortest run when that is shorter. A plant can mix technologies.`);
+  if (!n) { emptyMsg(el, "No units to show for these technologies."); return; }
+  const w = Math.max(300, el.clientWidth || 600), narrow = w < 560, m = { t: 6, r: 16, b: 24, l: narrow ? 120 : 250 }, rh = 17, gapP = 6;
+  const H = m.t + m.b + n * rh + ps.length * gapP;
+  const x = d3.scaleLog().domain(x0.domain()).range([m.l, w - m.r]).clamp(true);
+  const svg = d3.create("svg").attr("viewBox", `0 0 ${w} ${H}`);
+  runAxis(svg, x, m.t, H - m.b);
+  let y = m.t + 2;
+  for (const P of ps) {
+    svg.append("line").attr("x1", 0).attr("x2", w - m.r).attr("y1", y - 3).attr("y2", y - 3).attr("stroke", css("--line"));
+    P.us.forEach((u, i) => {
+      const cy = y + rh / 2, col = css(TECHS.find((t) => t.id === u.tech).color);
+      if (i === 0) svg.append("text").attr("x", 0).attr("y", cy + 4).attr("fill", css("--ink")).style("font", "12px var(--font-ui)").text(P.name.length > (narrow ? 15 : 26) ? P.name.slice(0, narrow ? 14 : 25) + "…" : P.name);
+      if (!narrow) svg.append("text").attr("x", m.l - 8).attr("y", cy + 4).attr("text-anchor", "end").attr("fill", css("--muted")).style("font", "10px var(--font-data)").text(u.unit.slice(P.p.length + 1, P.p.length + 13) || u.unit);
+      svg.append("line").attr("x1", x(u.p10)).attr("x2", x(u.med)).attr("y1", cy).attr("y2", cy).attr("stroke", col).attr("stroke-width", 2).attr("stroke-opacity", 0.45);
+      if (u.s != null && u.s < u.p10) svg.append("line").attr("x1", x(u.s)).attr("x2", x(u.s)).attr("y1", cy - 5).attr("y2", cy + 5).attr("stroke", css("--muted")).attr("stroke-width", 1.5);
+      svg.append("circle").attr("cx", x(u.p10)).attr("cy", cy).attr("r", 4.5).attr("fill", col).attr("stroke", css("--surface")).attr("stroke-width", 1.5);
+      svg.append("rect").attr("x", 0).attr("y", y).attr("width", w - m.r).attr("height", rh).attr("fill", "transparent").style("cursor", "pointer")
+        .on("pointermove", (ev) => showTip(ev, runTip(u))).on("pointerleave", hideTip).on("click", () => { location.href = unitHref(u.unit); });
+      y += rh;
+    });
+    y += gapP;
+  }
+  el.replaceChildren(svg.node());
+  setCSV(el, ["plant", "unit", "technology", "capacity_mw", `p${pct}_run_h`, "median_run_h", "shortest_run_h", "completed_runs", "runs_ended_in_outage"],
+    ps.flatMap((P) => P.us.map((u) => [P.name, u.unit, u.tech, u.mw, u.p10, u.med, u.s, u.n, u.trips])), "Typical shortest run by plant");
+}
+function drawRunsHidden(all, on) {
+  const ids = new Set(on.map((t) => t.id)), minN = S.MR.min_runs;
+  const list = all.filter((u) => ids.has(u.tech) && u.p10 == null).sort((a, b) => (b.on ?? -1) - (a.on ?? -1));
+  $("runs-nr-count").textContent = `${list.length} unit${list.length === 1 ? "" : "s"}`;
+  $("runs-nr-note").textContent = `Units with fewer than ${minN} completed runs in the period. Most stay on whenever they are available, so the data never shows how short a run they would accept. Click a row to open the unit.`;
+  const el = $("runs-nr-table");
+  el.innerHTML = list.length ? `<table class="data"><thead><tr><th class="t">Unit</th><th class="t">Plant</th><th class="t">Technology</th><th>Capacity MW</th><th>Completed runs</th><th>Ended in outage</th><th>Online, share of available hours</th></tr></thead><tbody>` +
+    list.map((u) => `<tr data-unit="${esc(u.unit)}" style="cursor:pointer"><td class="t">${esc(u.unit)}</td><td class="t">${esc(u.pname)}</td><td class="t">${techLabel(u.tech)}</td><td>${u.mw ? fmtMW(u.mw) : "–"}</td><td>${u.n}</td><td>${u.trips}</td><td>${u.on == null ? "–" : fmtPct(u.on)}</td></tr>`).join("") + "</tbody></table>"
+    : `<p class="empty">None for these technologies.</p>`;
+  setCSV(el, ["unit", "plant", "technology", "capacity_mw", "completed_runs", "runs_ended_in_outage", "online_share_of_available_hours"], list.map((u) => [u.unit, u.pname, u.tech, u.mw, u.n, u.trips, u.on]), "Minimum run not revealed");
+}
+
 // ==== the units table ======================================================================
 // one row per coal and gas unit or train: its group and its operator-informed turn-off point, how its hours
 // split between states, what it did in cheap stretches and what riding through them cost,
@@ -1227,12 +1371,13 @@ const VIEW_KEYS = { fg: "floorGroup", fh: "floorHours", f: "floorMode", stt: "st
 function saveView() { window.CX.writeHash({ ...window.CX.readHash(), date: S.date, ...Object.fromEntries(Object.entries(VIEW_KEYS).map(([k, sk]) => [k, S[sk]])) }); }
 function loadView() { const v = window.CX.readHash(); Object.entries(VIEW_KEYS).forEach(([k, sk]) => { if (v[k] != null) S[sk] = v[k]; }); return v; }
 
-function drawRange() { drawStretch(); drawCapacity(); drawFloor(); drawCheap(); drawLean(); drawCost(); if (S.uSeen) drawUnits(); }
+function drawRange() { drawStretch(); drawCapacity(); drawFloor(); drawCheap(); drawLean(); drawCost(); drawRuns(); if (S.uSeen) drawUnits(); }
 function drawAll() { drawDay(); drawScores(); drawRange(); }
 
 async function boot() {
   [S.T, S.TH, S.I, S.HC, S.DEC, S.SO, S.IX, S.OC, S.OSC, S.POI] = await Promise.all([tryJSON("data/trends_60d.json.gz"), tryJSON("data/trends_hourly_60d.json.gz"), tryJSON("data/intraday_60d.json.gz"), tryJSON("data/hourly_context_60d.json.gz"),
     tryJSON("data/decisions.json.gz"), tryJSON("data/stayon_60d.json.gz"), tryJSON("data/index.json"), tryJSON("data/operator/cutoffs.json.gz"), tryJSON("data/operator/scores.json.gz"), tryJSON("data/peaker/oi.json.gz")]);
+  S.MR = await tryJSON("data/min_run_60d.json.gz");
   // the groups are small and every panel reads them, so they load up front; the hourly strips follow
   const g = await tryJSON("data/groups_60d.json.gz");
   S.G = g && g.units ? g : null;
@@ -1270,7 +1415,8 @@ async function boot() {
     if (tr) location.href = tr.dataset.href;
   });
   $("lean-table").addEventListener("click", (e) => { const tr = e.target.closest("tr[data-href]"); if (tr) location.href = tr.dataset.href; });
-  ["cheap-units", "st-changed", "st-months", "st-flags"].forEach((id) => $(id).addEventListener("click", (e) => {
+  $("runs-sort").onchange = drawRuns;
+  ["cheap-units", "st-changed", "st-months", "st-flags", "runs-nr-table"].forEach((id) => $(id).addEventListener("click", (e) => {
     const tr = e.target.closest("tr[data-unit]");
     if (tr) location.href = unitHref(tr.dataset.unit);
   }));
