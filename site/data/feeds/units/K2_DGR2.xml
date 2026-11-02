@@ -3,13 +3,20 @@
   <title>K2_DGR2: bidding and operating changes</title>
   <link href="https://ercotbids.currenttech.energy/unit.html?unit=K2_DGR2"/>
   <id>https://ercotbids.currenttech.energy/unit.html?unit=K2_DGR2</id>
-  <updated>2026-10-30T00:00:00Z</updated>
+  <updated>2026-11-02T00:00:00Z</updated>
+  <entry>
+    <title>K2_DGR2: Outage ended (2026-09-03)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=K2_DGR2"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=K2_DGR2#K2_DGR2/2026-09-03/outage_end</id>
+    <updated>2026-11-02T00:00:00Z</updated>
+    <summary>Back from a 11-day outage</summary>
+  </entry>
   <entry>
     <title>K2_DGR2: Outage started (2026-08-23)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=K2_DGR2"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=K2_DGR2#K2_DGR2/2026-08-23/outage_start</id>
     <updated>2026-10-30T00:00:00Z</updated>
-    <summary>Outage began, still on at the end of the data (10 days so far)</summary>
+    <summary>Outage began, lasting 11 days</summary>
   </entry>
   <entry>
     <title>K2_DGR2: Timescale group changed (2026-01-01)</title>
