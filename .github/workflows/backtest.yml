@@ -1,0 +1,71 @@
+name: Predictor backtest
+
+# Manual only.  Scores the operator-informed model (CC, gas steam) or the CT turn-on model on the
+# 60-day days with the real hub gas prices, which only the pipeline can read (licensed, in R2:
+# pipeline/private.py), for variants in analysis/backtest/run.py.  Commits nothing and changes
+# nothing on the site: the summaries go to the run's step summary and an artifact.
+on:
+  workflow_dispatch:
+    inputs:
+      model:
+        description: "oi (operator-informed, CC and gas steam) or ct (CT turn-on)"
+        required: true
+        default: oi
+        type: choice
+        options: [oi, ct]
+      variants:
+        description: "space-separated: oi base unit_hr | ct base spark"
+        required: true
+        default: base unit_hr
+      from_month:
+        description: "first month scored (oi)"
+        required: false
+        default: "2026-02"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: backtest-${{ inputs.model }}
+  cancel-in-progress: false
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
+        with:
+          fetch-depth: 1
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6.3.0
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install --require-hashes -r requirements.lock
+      - name: Inputs (the data branch, for the CT model's node prices)
+        if: inputs.model == 'ct'
+        run: git fetch --depth 1 origin data && git worktree add --detach unitdata FETCH_HEAD
+      - name: Backtest
+        env:
+          PYTHONUNBUFFERED: "1"
+          UNIT_DATA_DIR: unitdata
+          # read-only use: the licensed hub gas prices (pipeline/private.py)
+          R2_ENDPOINT: ${{ secrets.R2_ENDPOINT }}
+          R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          MODEL: ${{ inputs.model }}
+          VARIANTS: ${{ inputs.variants }}
+          FROM_MONTH: ${{ inputs.from_month }}
+        run: |
+          mkdir -p backtest
+          python -m analysis.backtest.run "$MODEL" $VARIANTS --from "$FROM_MONTH" --out backtest | tee backtest/log.txt
+      - name: Summary
+        if: always()
+        run: |
+          { echo '```'; cat backtest/log.txt 2>/dev/null; echo '```'; } >> "$GITHUB_STEP_SUMMARY"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        if: always()
+        with:
+          name: backtest-${{ inputs.model }}
+          path: backtest/*/summary.json
+          retention-days: 30
