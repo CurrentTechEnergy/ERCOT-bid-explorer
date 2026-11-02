@@ -51,9 +51,9 @@ async function addSpend(env, usd) {
 }
 
 async function ask(req, env) {
-  const pass = req.headers.get("X-Ask-Passcode") || "";
-  const owner = same(pass, env.ASK_OWNER_PASSCODE || "");
-  if (!owner && !same(pass, env.ASK_PASSCODE || "")) return json({ ok: false, msg: "Wrong or missing passcode." }, 401);
+  const pass = (req.headers.get("X-Ask-Passcode") || "").trim();   // a secret saved with a stray space or line break still matches
+  const owner = same(pass, (env.ASK_OWNER_PASSCODE || "").trim());
+  if (!owner && !same(pass, (env.ASK_PASSCODE || "").trim())) return json({ ok: false, msg: "Wrong or missing passcode." }, 401);
   let body;
   try { body = await req.json(); } catch (e) { return json({ ok: false, msg: "Send JSON." }, 400); }
   const question = String(body.question || "").trim();
@@ -154,7 +154,7 @@ async function log(env, { who, question, answer, used, model, rounds, tok, usd, 
 
 async function showLog(req, env) {
   const u = new URL(req.url);
-  if (!same(req.headers.get("X-Ask-Passcode") || "", env.ASK_OWNER_PASSCODE || "")) return json({ ok: false, msg: "Owner passcode needed." }, 401);
+  if (!same((req.headers.get("X-Ask-Passcode") || "").trim(), (env.ASK_OWNER_PASSCODE || "").trim())) return json({ ok: false, msg: "Owner passcode needed." }, 401);
   const n = Math.min(+u.searchParams.get("n") || 50, 500);
   const rows = (await env.DB.prepare("SELECT * FROM log ORDER BY ts DESC LIMIT ?").bind(n).all()).results;
   const spend = (await env.DB.prepare("SELECT * FROM spend ORDER BY day DESC LIMIT 40").all()).results;
