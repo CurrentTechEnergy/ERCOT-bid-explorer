@@ -126,10 +126,10 @@ function draw() {
       { label: day ? label : `${label}, monthly`, color, faint: !day, width: day ? 2 : 1.4, values: rate(c, hub), fmt: fmtPct },
     ];
     if (!day) {
-      // the year: its earned price over the hub price, both weighted by the fleet's own output, so
-      // it is the monthly rates weighted by each month's output x hub price and always sits among
-      // them (a storm month like Uri, Feb 2021, counts for more because its MWh were worth more)
-      const e = annual(D[t].rt_capture, D[t].gen), h = annual(D[t].hub_rt_gen, D[t].gen);
+      // the year: (wind or solar revenue / its MWh) / (all ERCOT generation's hub revenue / all MWh)
+      // over the whole year; the two sides weight months differently, so a year can sit outside its
+      // months (Uri, Feb 2021: ERCOT's MWh caught it more than solar's did)
+      const e = annual(D[t].rt_capture, D[t].gen), h = annual(D[t].hub_rt_gen, D[t].sys_gen);
       out.push({ label: `${label}, year`, color, width: 2.6, groups: e.groups, values: rate(e.values, h.values), fmt: fmtPct });
     }
     out.push({ label: `${label} earned`, color, hide: true, values: c, fmt: fmtPrice });
