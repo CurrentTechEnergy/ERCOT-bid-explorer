@@ -25,6 +25,11 @@
   /* the page's two halves: panels for the chosen day, and panels across every loaded 60-day day */
   .page-section { grid-column: 1 / -1; margin: 18px 0 -4px; font-size: 20px; }
   .page-section .h-note { font-size: 13px; }
+  /* the run-length panel's list of units that rarely stop, closed until opened */
+  details.runs-nr { margin-top: 1.2rem; }
+  details.runs-nr > summary { cursor: pointer; font-size: 0.95rem; font-weight: 600; }
+  details.runs-nr > summary .h-note { font-weight: 400; }
+  details.runs-nr[open] > summary { margin-bottom: 4px; }
 </style>
 </head>
 <body data-panel-links>
@@ -229,6 +234,30 @@
     <div class="legend legend-static" id="cost-legend"></div>
     <div class="chart" id="cost-chart"></div>
     <div class="units-wrap" id="cost-groups"></div>
+  </section>
+
+  <section class="panel panel-wide" id="runs-panel">
+    <div class="panel-head">
+      <div>
+        <h2>How long units stay on once started</h2>
+        <p class="note" id="runs-note"></p>
+      </div>
+      <div class="panel-tools">
+        <label class="lbl inline" for="runs-sort">Plants</label>
+        <select id="runs-sort"><option value="run">Shortest run first</option><option value="name">By name</option><option value="mw">Largest first</option></select>
+      </div>
+    </div>
+    <div class="legend" id="runs-legend"></div>
+    <div class="chart" id="runs-tech"></div>
+    <h3 class="sub-h">By plant</h3>
+    <p class="note" id="runs-plant-note"></p>
+    <div class="legend legend-static" id="runs-plant-legend"></div>
+    <div class="chart" id="runs-plant"></div>
+    <details class="runs-nr" id="runs-nr">
+      <summary>Minimum run not revealed <span class="h-note" id="runs-nr-count"></span></summary>
+      <p class="note" id="runs-nr-note"></p>
+      <div class="units-wrap" id="runs-nr-table"></div>
+    </details>
   </section>
 
   <section class="panel panel-wide" id="units-panel">

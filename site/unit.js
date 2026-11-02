@@ -644,6 +644,49 @@ function drawHours(e) {
   setCSV(el, ["date", "hour_ending", "state", "ruc"], dstr.flatMap((d, i) => d3.range(24).map((h) => [d, h + 1, STRIP_STATES[str[i * 24 + h]] || "", isRuc(d, h) ? 1 : 0])), `${e.name} hourly state`);
 }
 
+// ---- run lengths: every completed run, start to shutting down on price (data/min_run_60d.json.gz) ----
+const RUN_BINS = [[1, 1, "1"], [2, 2, "2"], [3, 3, "3"], [4, 4, "4"], [5, 6, "5–6"], [7, 8, "7–8"], [9, 12, "9–12"], [13, 16, "13–16"], [17, 24, "17–24"], [25, 48, "1–2 d"], [49, 168, "2–7 d"], [169, Infinity, "7 d+"]];
+const fmtRunH = (h) => (h == null ? "–" : h >= 48 ? `${d3.format(h >= 240 ? ",.0f" : ".1f")(h / 24)} days` : `${d3.format(h % 1 ? ".1f" : ".0f")(h)} h`);
+function drawRuns(e) {
+  const el = $("runs-chart"), show = THERMAL.includes(e.tech) && e.tech !== "nuclear";
+  ["runs-h", "runs-note", "runs-chart"].forEach((id) => { $(id).hidden = !show; });
+  if (!show) return;
+  const v = S.MR?.units?.[e.name], s = TECH_OF[e.tech] || { color: "--c-other" };
+  if (!v) { $("runs-note").textContent = ""; return emptyMsg(el, S.MR ? "No completed runs for this unit in the period." : "Fills in after the data update builds the run-length file."); }
+  const [, , p10, med, n, trips, , runs] = v, D = S.MR.dates, pct = S.MR.pct;
+  const period = `${fmtDate(parseDate(D[0]))} to ${fmtDate(parseDate(D.at(-1)))}`;
+  $("runs-note").textContent = (p10 != null
+    ? `${n} completed runs from start to shutting down on price, ${period}: typical shortest ${fmtRunH(p10)} (${pct}th percentile), median ${fmtRunH(med)}, single shortest ${fmtRunH(runs[0])}.`
+    : `${n} completed run${n === 1 ? "" : "s"} from start to shutting down on price, ${period}: too few to judge how short a run it will accept (it needs ${S.MR.min_runs}).`) +
+    (trips ? ` ${trips} more ended in an outage and are left out as likely trips.` : "") +
+    " ERCOT does not publish registered minimum up times; this is how briefly the unit has chosen to run. Hourly states round each run to whole hours" +
+    (e.configs.length > 1 ? ", and a single offline hour inside the train counts as a configuration change." : ".");
+  if (!n) return emptyMsg(el, "No completed runs in the period.");
+  const c = RUN_BINS.map(([a, b]) => runs.filter((h) => h >= a && h <= b).length);
+  const w = Math.max(280, el.clientWidth || 600), m = { t: 18, r: 12, b: 38, l: 40 }, H = 200;
+  const x = d3.scaleBand().domain(RUN_BINS.map((b) => b[2])).range([m.l, w - m.r]).paddingInner(0.12);
+  const y = d3.scaleLinear().domain([0, Math.max(1, d3.max(c))]).nice().range([H - m.b, m.t]);
+  const svg = d3.create("svg").attr("viewBox", `0 0 ${w} ${H}`);
+  svg.append("g").attr("class", "gridline").attr("transform", `translate(${m.l},0)`).call(d3.axisLeft(y).ticks(4).tickSize(-(w - m.l - m.r)).tickFormat(""));
+  svg.append("g").attr("class", "axis").attr("transform", `translate(${m.l},0)`).call(d3.axisLeft(y).ticks(4).tickFormat(d3.format("d")).tickSize(0)).select(".domain").remove();
+  svg.append("g").attr("class", "axis").attr("transform", `translate(0,${H - m.b})`).call(d3.axisBottom(x).tickSize(0).tickPadding(6)).select(".domain").remove();
+  svg.append("text").attr("class", "axis-title").attr("x", m.l).attr("y", 10).text("Completed runs by length (hours unless marked)");
+  const col = css(s.color);
+  RUN_BINS.forEach((b, i) => {
+    if (!c[i]) return;
+    const x0 = x(b[2]), bw = x.bandwidth(), yt = y(c[i]), yb = y(0), r = Math.min(4, bw / 2, yb - yt);
+    svg.append("path").attr("d", `M${x0},${yb}V${yt + r}Q${x0},${yt} ${x0 + r},${yt}H${x0 + bw - r}Q${x0 + bw},${yt} ${x0 + bw},${yt + r}V${yb}Z`).attr("fill", col)
+      .on("pointermove", (ev) => showTip(ev, `<h4>${b[2]}${b[1] <= 24 ? " h" : ""}</h4>${c[i]} run${c[i] === 1 ? "" : "s"} of ${n}`)).on("pointerleave", hideTip);
+  });
+  if (p10 != null) {
+    const bi = RUN_BINS.findIndex(([a, b]) => p10 <= b), xm = x(RUN_BINS[bi][2]) + x.bandwidth() / 2;
+    svg.append("line").attr("x1", xm).attr("x2", xm).attr("y1", m.t).attr("y2", H - m.b).attr("stroke", css("--ink")).attr("stroke-width", 1.5).attr("stroke-dasharray", "4 3").style("pointer-events", "none");
+    svg.append("text").attr("x", xm + 4).attr("y", m.t + 10).attr("fill", css("--ink")).attr("paint-order", "stroke").attr("stroke", css("--surface")).attr("stroke-width", 4).style("font", "500 11px var(--font-data)").style("pointer-events", "none").text(`typical shortest ${fmtRunH(p10)}`);
+  }
+  el.replaceChildren(svg.node());
+  setCSV(el, ["run_length_bin", "completed_runs"], RUN_BINS.map((b, i) => [b[2], c[i]]), `${e.name} run lengths`);
+}
+
 // ---- one day by hour: output, base point and limits, with lambda (data/60d-units/<date>) ----
 const dayCache = new Map();
 const loadDayUnits = (d) => { if (!dayCache.has(d)) dayCache.set(d, tryJSON(`data/60d-units/${d}.json.gz`)); return dayCache.get(d); };
@@ -863,7 +906,7 @@ function draw() {
   const e = S.list.get(S.unit);
   $("unit-empty").hidden = !!e;
   if (!e) return;
-  drawHead(e); drawForecast(e); drawDecisions(e); drawHours(e); drawDay(e); drawBidding(e);
+  drawHead(e); drawForecast(e); drawDecisions(e); drawHours(e); drawRuns(e); drawDay(e); drawBidding(e);
 }
 async function select(name, cfg, keepDay) {
   if (!S.list.has(name)) return;
@@ -880,10 +923,10 @@ async function select(name, cfg, keepDay) {
 
 async function boot() {
   const v = window.CX.readHash();
-  [S.T, S.DEC, S.UH, S.SP, S.PPA, S.OI, S.OD, S.POI, S.G] = await Promise.all([tryJSON("data/trends_60d.json.gz"), tryJSON("data/decisions.json.gz"),
+  [S.T, S.DEC, S.UH, S.SP, S.PPA, S.OI, S.OD, S.POI, S.G, S.MR] = await Promise.all([tryJSON("data/trends_60d.json.gz"), tryJSON("data/decisions.json.gz"),
     tryJSON("data/unit_hours_60d.json.gz"), tryJSON("data/summary_prices.json.gz"), tryJSON("data/ppa.json.gz"),
     tryJSON("data/operator/index.json.gz"), tryJSON("data/operator/decisions.json.gz"), tryJSON("data/peaker/oi.json.gz"),
-    tryJSON("data/groups_60d.json.gz")]);
+    tryJSON("data/groups_60d.json.gz"), tryJSON("data/min_run_60d.json.gz")]);
   S.UI = await window.CX.unitIndex();
   S.stubs = new Set((S.UI || []).map((u) => u.unit));   // every unit in the index has a unit/NAME page
   if (S.T) { S.span = [S.T.dates[0], S.T.dates.at(-1)]; S.last60 = S.T.dates.at(-1); }
