@@ -24,7 +24,9 @@ data/stack/<date>.json.gz
   group[g] / tech[t]: {mw: [24][len(prices)], min: [24], max: [24], n: [24] units online}
   fleet         {mw, min, max, n} for all thermal units online
 Days are written once (all of them again when FORMAT changes) and pruned with the 60-day data.  Groups are
-groups_60d.json.gz's (by train); nuclear, which groups.py leaves out, counts as "never".
+groups_60d.json.gz's (by train); nuclear, which groups.py leaves out, counts as "never".  A unit
+groups_60d flags as a peaker (column 9: by how it runs, whatever its technology) goes in "peakers"
+instead of its timescale group, as on A day in ERCOT.
 """
 import numpy as np
 
@@ -35,7 +37,7 @@ from .store import read_json_gz, write_json_gz
 from .units import _ffill_index
 
 OUT_DIR = DATA_DIR / "stack"
-FORMAT = 4   # 2: minimum at the -$250 floor; 3: units online with no output and no HSL left out; 4: seasonal folded into multiday
+FORMAT = 5   # 2: minimum at the -$250 floor; 3: units online with no output and no HSL left out; 4: seasonal folded into multiday; 5: peakers out of their groups
 FLOOR = -249.99
 PRICES = np.concatenate([
     [-250, -100, -75, -50, -40, -30, -25, -20, -15, -10, -5],
@@ -44,14 +46,14 @@ PRICES = np.concatenate([
     [200, 250, 300, 400, 500, 750, 1000, 1500, 2000, 3000, 5000],
 ]).astype(float)
 TECHS = ["nuclear", "coal", "combined_cycle", "gas_steam", "combustion_turbine"]
-GROUPS = ["never", "multiday", "daily1", "daily2", "daily3", "never_on", "ungrouped"]
+GROUPS = ["never", "multiday", "daily1", "daily2", "daily3", "peakers", "never_on", "ungrouped"]
 
 
 def _r(a, nd=1):
     return [None if not np.isfinite(v) else round(float(v), nd) for v in np.ravel(a)]
 
 
-def day_stack(ud: dict, group_of: dict) -> dict:
+def day_stack(ud: dict, group_of: dict, peaker: set = frozenset()) -> dict:
     n = len(ud["runs"])
     hr = np.minimum(np.array(ud["runs"], int) // 60, 23)
     n_hr = np.bincount(hr, minlength=24).astype(float)
@@ -98,6 +100,8 @@ def day_stack(ud: dict, group_of: dict) -> dict:
         w[hr[online], np.where(online)[0]] = 1.0
         mw, mn, mx, cnt = w @ rows, w @ lo_r, w @ hi_r, (w.sum(1) > 0).astype(float)
         g = group_of.get(name) or group_of.get(train_of(name)) or ("never" if u["tech"] == "nuclear" else "ungrouped")
+        if name in peaker or train_of(name) in peaker:
+            g = "peakers"
         for key in (("group", g if g in GROUPS else "ungrouped"), ("tech", u["tech"])):
             a = acc[key]
             a[0] += mw; a[1] += mn; a[2] += mx; a[3] += cnt
@@ -113,6 +117,7 @@ def build_actual_stack(index: dict) -> int:
     days = sorted(index["days"].get("60d", []))
     gr = read_json_gz(DATA_DIR / "groups_60d.json.gz", default={}) or {}
     group_of = {k: v[1] for k, v in (gr.get("units") or {}).items()}
+    peaker = {k for k, v in (gr.get("units") or {}).items() if len(v) > 9 and v[9]}
     OUT_DIR.mkdir(parents=True, exist_ok=True)
     keep = set(days)
     for p in OUT_DIR.glob("*.json.gz"):
@@ -127,7 +132,7 @@ def build_actual_stack(index: dict) -> int:
         ud = read_json_gz(UNIT_DATA_DIR / "60d" / f"{d}.json.gz", default=None)
         if not ud:
             continue
-        write_json_gz(path, day_stack(ud, group_of))
+        write_json_gz(path, day_stack(ud, group_of, peaker))
         done += 1
     have = sorted(p.name[:10] for p in OUT_DIR.glob("*.json.gz"))
     write_json_gz(DATA_DIR / "stack_index.json.gz", {"format": FORMAT, "days": have})

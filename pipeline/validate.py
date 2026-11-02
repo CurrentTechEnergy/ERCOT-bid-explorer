@@ -455,7 +455,7 @@ def _goal_checks(day):
         return
     years = sorted(g.get("years") or {})
     bad = [] if years else ["no years"]
-    for q, rows in (("q1", g.get("q1", {}).get("rows")), ("q2", g.get("q2", {}).get("rows")),
+    for q, rows in (("q1", g.get("q1", {}).get("rows")), ("q2", g.get("q2", {}).get("cost")),
                     ("q4", g.get("q4", {}).get("years"))):
         have = {str(r[0]) for r in rows or []}
         if not set(map(str, years)) <= have:
@@ -463,6 +463,39 @@ def _goal_checks(day):
     if not (g.get("q3") or {}).get("off"):
         bad.append("q3 has no off rows")
     day.add("goal", "error" if bad else "ok", "; ".join(bad) or f"{years[0]} to {g.get('through')}")
+
+
+def _prices_checks(day):
+    """The Prices page's data (pipeline/prices_years.py): every curve runs from high to low,
+    percentiles and hour counts in order, no year with more hours than it has, ride-through
+    shares and battery MW in range."""
+    from .prices_years import PATH as PY_PATH, X as PY_X, expected_hours
+    p = read_json_gz(PY_PATH, default=None)
+    if p is None:
+        return
+    bad = []
+    for key, ys in (p.get("data") or {}).items():
+        for y, r in ys.items():
+            c = [v for v in r.get("curve") or [] if v is not None]
+            if len(r.get("curve") or []) != len(PY_X) or any(a < b - 1e-6 for a, b in zip(c, c[1:])):
+                bad.append(f"{key} {y} curve")
+            q = [r.get(k) for k in ("p1", "p5", "p50", "p95", "p99")]
+            if None in q or any(a > b + 1e-6 for a, b in zip(q, q[1:])):
+                bad.append(f"{key} {y} percentiles")
+            if not 0 < r.get("n", 0) <= expected_hours(int(y)) + 1:
+                bad.append(f"{key} {y} hours {r.get('n')}")
+            n = r.get("cnt")
+            if n and not (n["ge1000"] <= n["ge500"] <= n["ge100"] <= r["n"] and n["len20"] <= n["le0"] <= n["le10"] <= r["n"]):
+                bad.append(f"{key} {y} counts")
+            if any(len(r.get(k) or []) != 24 for k in ("hod_p50", "hod_mean", "hod_p95", "hod_p05")):
+                bad.append(f"{key} {y} hour of day")
+    for r in (p.get("ride") or {}).get("rows") or []:
+        if r[3] is not None and not (r[4] and 0 <= r[3] / r[4] <= 1.5):
+            bad.append(f"ride {r[0]}")
+    if any(not 0 <= (b.get("mw") or 0) <= 100000 for b in (p.get("battery") or {}).values()):
+        bad.append("battery MW out of range")
+    day.add("prices_years", "error" if bad else "ok",
+            f"{len(bad)} problem(s), e.g. {bad[:4]}" if bad else f"{len(p.get('data') or {})} series, {len((p.get('ride') or {}).get('rows') or [])} ride-through months")
 
 
 def _storage_checks(day, st, gen, dam):
@@ -646,6 +679,7 @@ def check_files(index):
     _operator_cutoff_checks(day)
     _operator_history_checks(day)
     _goal_checks(day)
+    _prices_checks(day)
     ui = read_json_gz(UNIT_INDEX_PATH, default=None)
     if ui is not None:
         rows = ui.get("rows", [])

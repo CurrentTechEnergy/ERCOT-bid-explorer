@@ -2,12 +2,13 @@ name: Goal page
 
 # The "Will fossil turn off?" page's data (pipeline/goal.py): four questions answered by year from
 # Jan 2019, from the 60-day data alone (the data branch, the history release, and main's operator
-# day files).  Writes site/data/goal.json.gz and commits it to main.  Only that file is committed,
+# day files).  Writes site/data/goal.json.gz (and the Prices page's past years, prices_years_hist.json.gz)
+# and commits them to main.  Only those files are committed,
 # so it needs no slot in the update's concurrency group; the push rebases onto whatever the update
 # wrote meanwhile.
 on:
   schedule:
-    - cron: "23 16 4 * *"     # the 4th of each month, between the update's two runs
+    - cron: "23 8 * * 0"      # Sundays 08:23 UTC (01:23 MST / 02:23 MDT): the 05:17 MT update deploys it
   workflow_dispatch:
 
 permissions:
@@ -47,11 +48,19 @@ jobs:
           R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
           R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
         run: python -m pipeline.goal --cache goal-cache
+      # the Prices page's past years into prices_years_hist.json.gz: the real-time months are only
+      # downloaded here.  It moves the "same months" cut; the update run adds the latest year on top.
+      - name: Prices page, every year
+        continue-on-error: true     # never holds back the goal page's commit
+        env:
+          PYTHONUNBUFFERED: "1"
+          UNIT_DATA_DIR: unitdata
+        run: python -m pipeline.prices_years --full
       - name: Commit
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add site/data/goal.json.gz
+          git add site/data/goal.json.gz site/data/prices_years_hist.json.gz
           if git diff --cached --quiet; then
             echo "No change"
             exit 0
