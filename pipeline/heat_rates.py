@@ -27,12 +27,15 @@ Fallbacks (medians of the measured units, Nov 2026): gas steam 13.4, coal 11.9, 
 the fallback), combustion turbine 13.4 (EPA gross with an assumed 2% station use; not matched to
 ERCOT units).  Joint-ownership coal units (FPPYD1_FPP_G1_J01 and _J02, ...) share one value.
 """
+import bisect
 import csv
 from pathlib import Path
 
 PATH = Path(__file__).parent / "reference" / "unit_heat_rates.csv"
-COAL_PRICE = 2.00    # $/MMBtu delivered coal, as Fleet economics and A day in ERCOT use
+COAL_PATH = Path(__file__).parent / "reference" / "coal_prices.csv"
+COAL_PRICE = 2.00    # $/MMBtu delivered coal without a month in COAL_PATH (Fleet economics' flat value)
 _T = {}
+_C = {}
 
 
 def _load():
@@ -61,3 +64,44 @@ def at_min(tech, unit):
         return v[0], True
     fb = t.get((tech, "*"))
     return (fb[0], False) if fb else None
+
+
+def _coal():
+    """{EIA plant id or "*": (months, $/MMBtu)} from COAL_PATH, and {unit: plant id} for coal."""
+    if not _C:
+        by = {}
+        with open(COAL_PATH, newline="") as f:
+            for r in csv.DictReader(f):
+                by.setdefault(r["fac"], []).append((r["month"], float(r["usd_mmbtu"])))
+        _C["price"] = {k: ([m for m, _ in sorted(v)], [p for _, p in sorted(v)]) for k, v in by.items()}
+        plant = {}
+        with open(PATH, newline="") as f:
+            for r in csv.DictReader(f):
+                if r["tech"] == "coal" and r["epa"]:
+                    plant[r["unit"]] = r["epa"].split("/")[0]
+        _C["plant"] = plant
+    return _C
+
+
+def coal_price(unit, date):
+    """($/MMBtu, own) delivered coal for coal `unit` in the month of `date` (YYYY-MM-DD), from
+    EIA-923 Page 5 (Fuel Receipts and Costs, monthly by plant; pipeline/reference/coal_prices.csv):
+    the plant's own price that month (own True) where it reports one (public power: Fayette,
+    J K Spruce, San Miguel), else the month's average over the Texas plants reporting
+    subbituminous coal (the merchant plants withhold theirs).  A month after the last in the file
+    takes the latest month; before the first, the first; no file entry at all, COAL_PRICE.
+    San Miguel's own price (about $3.2 to $4/MMBtu) is its mine-mouth South Texas lignite: 10.3
+    MMBtu/ton and 30% ash, against about 17 and 5% for Powder River Basin coal, from a dedicated
+    cost-plus mine whose fixed costs are spread over a falling burn, so much of it is not saved
+    by backing down.  Oak Grove burns lignite too (13.6 MMBtu/ton) but withholds its price."""
+    c = _coal()
+    m = date[:7]
+    for key, own in ((c["plant"].get(unit), True), ("*", False)):
+        ms, ps = c["price"].get(key, ([], []))
+        if key is None or not ms:
+            continue
+        i = bisect.bisect_right(ms, m) - 1
+        if key != "*" and (i < 0 or ms[i] != m):
+            continue        # the plant reported no price that month
+        return ps[max(i, 0)], own
+    return COAL_PRICE, False

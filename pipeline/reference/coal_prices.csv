@@ -1,0 +1,674 @@
+month,fac,plant,rank,usd_mmbtu
+2019-01,*,"Texas subbituminous, reporting plants",SUB,1.945
+2019-02,*,"Texas subbituminous, reporting plants",SUB,1.881
+2019-03,*,"Texas subbituminous, reporting plants",SUB,1.817
+2019-04,*,"Texas subbituminous, reporting plants",SUB,1.789
+2019-05,*,"Texas subbituminous, reporting plants",SUB,1.836
+2019-06,*,"Texas subbituminous, reporting plants",SUB,1.886
+2019-07,*,"Texas subbituminous, reporting plants",SUB,1.873
+2019-08,*,"Texas subbituminous, reporting plants",SUB,1.858
+2019-09,*,"Texas subbituminous, reporting plants",SUB,1.802
+2019-10,*,"Texas subbituminous, reporting plants",SUB,1.766
+2019-11,*,"Texas subbituminous, reporting plants",SUB,1.749
+2019-12,*,"Texas subbituminous, reporting plants",SUB,1.712
+2020-01,*,"Texas subbituminous, reporting plants",SUB,1.719
+2020-02,*,"Texas subbituminous, reporting plants",SUB,1.669
+2020-03,*,"Texas subbituminous, reporting plants",SUB,1.661
+2020-04,*,"Texas subbituminous, reporting plants",SUB,1.688
+2020-05,*,"Texas subbituminous, reporting plants",SUB,1.785
+2020-06,*,"Texas subbituminous, reporting plants",SUB,1.714
+2020-07,*,"Texas subbituminous, reporting plants",SUB,1.63
+2020-08,*,"Texas subbituminous, reporting plants",SUB,1.677
+2020-09,*,"Texas subbituminous, reporting plants",SUB,1.739
+2020-10,*,"Texas subbituminous, reporting plants",SUB,1.663
+2020-11,*,"Texas subbituminous, reporting plants",SUB,1.711
+2020-12,*,"Texas subbituminous, reporting plants",SUB,1.662
+2021-01,*,"Texas subbituminous, reporting plants",SUB,1.671
+2021-02,*,"Texas subbituminous, reporting plants",SUB,1.659
+2021-03,*,"Texas subbituminous, reporting plants",SUB,1.707
+2021-04,*,"Texas subbituminous, reporting plants",SUB,1.722
+2021-05,*,"Texas subbituminous, reporting plants",SUB,1.763
+2021-06,*,"Texas subbituminous, reporting plants",SUB,1.79
+2021-07,*,"Texas subbituminous, reporting plants",SUB,1.851
+2021-08,*,"Texas subbituminous, reporting plants",SUB,1.835
+2021-09,*,"Texas subbituminous, reporting plants",SUB,1.889
+2021-10,*,"Texas subbituminous, reporting plants",SUB,1.731
+2021-11,*,"Texas subbituminous, reporting plants",SUB,1.724
+2021-12,*,"Texas subbituminous, reporting plants",SUB,1.742
+2022-01,*,"Texas subbituminous, reporting plants",SUB,1.901
+2022-02,*,"Texas subbituminous, reporting plants",SUB,1.889
+2022-03,*,"Texas subbituminous, reporting plants",SUB,1.821
+2022-04,*,"Texas subbituminous, reporting plants",SUB,1.884
+2022-05,*,"Texas subbituminous, reporting plants",SUB,1.973
+2022-06,*,"Texas subbituminous, reporting plants",SUB,1.991
+2022-07,*,"Texas subbituminous, reporting plants",SUB,2.029
+2022-08,*,"Texas subbituminous, reporting plants",SUB,2.027
+2022-09,*,"Texas subbituminous, reporting plants",SUB,2.066
+2022-10,*,"Texas subbituminous, reporting plants",SUB,2.017
+2022-11,*,"Texas subbituminous, reporting plants",SUB,1.977
+2022-12,*,"Texas subbituminous, reporting plants",SUB,2.026
+2023-01,*,"Texas subbituminous, reporting plants",SUB,2.042
+2023-02,*,"Texas subbituminous, reporting plants",SUB,2.008
+2023-03,*,"Texas subbituminous, reporting plants",SUB,1.942
+2023-04,*,"Texas subbituminous, reporting plants",SUB,1.92
+2023-05,*,"Texas subbituminous, reporting plants",SUB,1.901
+2023-06,*,"Texas subbituminous, reporting plants",SUB,1.909
+2023-07,*,"Texas subbituminous, reporting plants",SUB,1.92
+2023-08,*,"Texas subbituminous, reporting plants",SUB,1.933
+2023-09,*,"Texas subbituminous, reporting plants",SUB,1.942
+2023-10,*,"Texas subbituminous, reporting plants",SUB,1.939
+2023-11,*,"Texas subbituminous, reporting plants",SUB,1.934
+2023-12,*,"Texas subbituminous, reporting plants",SUB,1.925
+2024-01,*,"Texas subbituminous, reporting plants",SUB,1.865
+2024-02,*,"Texas subbituminous, reporting plants",SUB,1.895
+2024-03,*,"Texas subbituminous, reporting plants",SUB,1.81
+2024-04,*,"Texas subbituminous, reporting plants",SUB,1.813
+2024-05,*,"Texas subbituminous, reporting plants",SUB,1.852
+2024-06,*,"Texas subbituminous, reporting plants",SUB,1.933
+2024-07,*,"Texas subbituminous, reporting plants",SUB,1.879
+2024-08,*,"Texas subbituminous, reporting plants",SUB,1.853
+2024-09,*,"Texas subbituminous, reporting plants",SUB,1.824
+2024-10,*,"Texas subbituminous, reporting plants",SUB,1.934
+2024-11,*,"Texas subbituminous, reporting plants",SUB,1.798
+2024-12,*,"Texas subbituminous, reporting plants",SUB,1.83
+2025-01,*,"Texas subbituminous, reporting plants",SUB,1.848
+2025-02,*,"Texas subbituminous, reporting plants",SUB,1.831
+2025-03,*,"Texas subbituminous, reporting plants",SUB,1.871
+2025-04,*,"Texas subbituminous, reporting plants",SUB,1.778
+2025-05,*,"Texas subbituminous, reporting plants",SUB,1.656
+2025-06,*,"Texas subbituminous, reporting plants",SUB,1.648
+2025-07,*,"Texas subbituminous, reporting plants",SUB,1.716
+2025-08,*,"Texas subbituminous, reporting plants",SUB,1.661
+2025-09,*,"Texas subbituminous, reporting plants",SUB,1.731
+2025-10,*,"Texas subbituminous, reporting plants",SUB,1.687
+2025-11,*,"Texas subbituminous, reporting plants",SUB,1.627
+2025-12,*,"Texas subbituminous, reporting plants",SUB,1.796
+2026-01,*,"Texas subbituminous, reporting plants",SUB,1.763
+2026-02,*,"Texas subbituminous, reporting plants",SUB,1.634
+2026-03,*,"Texas subbituminous, reporting plants",SUB,1.602
+2026-04,*,"Texas subbituminous, reporting plants",SUB,1.649
+2026-05,*,"Texas subbituminous, reporting plants",SUB,1.769
+2026-06,*,"Texas subbituminous, reporting plants",SUB,1.913
+2026-07,*,"Texas subbituminous, reporting plants",SUB,1.953
+2026-08,*,"Texas subbituminous, reporting plants",SUB,1.896
+2019-01,127,Oklaunion,SUB,2.192
+2019-02,127,Oklaunion,SUB,2.192
+2019-03,127,Oklaunion,SUB,2.208
+2019-04,127,Oklaunion,SUB,2.168
+2019-05,127,Oklaunion,SUB,2.214
+2019-06,127,Oklaunion,SUB,2.216
+2019-07,127,Oklaunion,SUB,2.206
+2019-08,127,Oklaunion,SUB,2.21
+2019-09,127,Oklaunion,SUB,2.209
+2019-10,127,Oklaunion,SUB,2.188
+2020-05,127,Oklaunion,SUB,2.137
+2020-06,127,Oklaunion,SUB,1.945
+2020-07,127,Oklaunion,SUB,2.143
+2020-08,127,Oklaunion,SUB,2.112
+2020-09,127,Oklaunion,SUB,1.945
+2019-01,6139,Welsh,SUB,2.175
+2019-02,6139,Welsh,SUB,2.145
+2019-03,6139,Welsh,SUB,2.127
+2019-04,6139,Welsh,SUB,2.11
+2019-05,6139,Welsh,SUB,2.165
+2019-06,6139,Welsh,SUB,2.184
+2019-07,6139,Welsh,SUB,2.174
+2019-08,6139,Welsh,SUB,2.174
+2019-09,6139,Welsh,SUB,2.034
+2019-10,6139,Welsh,SUB,2.036
+2019-11,6139,Welsh,SUB,2.043
+2019-12,6139,Welsh,SUB,2.046
+2020-01,6139,Welsh,SUB,2.147
+2020-02,6139,Welsh,SUB,1.777
+2020-03,6139,Welsh,SUB,1.845
+2020-04,6139,Welsh,SUB,1.948
+2020-05,6139,Welsh,SUB,2.036
+2020-06,6139,Welsh,SUB,2.206
+2020-07,6139,Welsh,SUB,1.619
+2020-08,6139,Welsh,SUB,1.791
+2020-09,6139,Welsh,SUB,1.783
+2020-10,6139,Welsh,SUB,1.958
+2020-11,6139,Welsh,SUB,1.884
+2020-12,6139,Welsh,SUB,1.787
+2021-01,6139,Welsh,SUB,2.025
+2021-02,6139,Welsh,SUB,1.716
+2021-03,6139,Welsh,SUB,1.83
+2021-04,6139,Welsh,SUB,1.942
+2021-05,6139,Welsh,SUB,1.952
+2021-06,6139,Welsh,SUB,1.946
+2021-07,6139,Welsh,SUB,1.981
+2021-08,6139,Welsh,SUB,1.802
+2021-09,6139,Welsh,SUB,2.008
+2021-10,6139,Welsh,SUB,2.072
+2021-11,6139,Welsh,SUB,2.058
+2021-12,6139,Welsh,SUB,2.21
+2022-01,6139,Welsh,SUB,2.21
+2022-02,6139,Welsh,SUB,1.985
+2022-03,6139,Welsh,SUB,1.79
+2022-04,6139,Welsh,SUB,2.042
+2022-05,6139,Welsh,SUB,2.133
+2022-06,6139,Welsh,SUB,2.117
+2022-07,6139,Welsh,SUB,2.086
+2022-08,6139,Welsh,SUB,2.007
+2022-09,6139,Welsh,SUB,2.314
+2022-10,6139,Welsh,SUB,2.212
+2022-11,6139,Welsh,SUB,2.11
+2022-12,6139,Welsh,SUB,2.131
+2023-01,6139,Welsh,SUB,2.301
+2023-02,6139,Welsh,SUB,2.358
+2023-03,6139,Welsh,SUB,2.051
+2023-04,6139,Welsh,SUB,2.242
+2023-05,6139,Welsh,SUB,2.06
+2023-06,6139,Welsh,SUB,1.906
+2023-07,6139,Welsh,SUB,1.987
+2023-08,6139,Welsh,SUB,2.102
+2023-09,6139,Welsh,SUB,2.109
+2023-10,6139,Welsh,SUB,2.08
+2023-11,6139,Welsh,SUB,2.095
+2023-12,6139,Welsh,SUB,2.101
+2024-01,6139,Welsh,SUB,1.876
+2024-02,6139,Welsh,SUB,2.033
+2024-03,6139,Welsh,SUB,1.933
+2024-04,6139,Welsh,SUB,1.782
+2024-05,6139,Welsh,SUB,2.006
+2024-06,6139,Welsh,SUB,2.004
+2024-07,6139,Welsh,SUB,1.954
+2024-08,6139,Welsh,SUB,1.897
+2024-09,6139,Welsh,SUB,1.823
+2024-10,6139,Welsh,SUB,2.083
+2024-11,6139,Welsh,SUB,1.675
+2024-12,6139,Welsh,SUB,1.815
+2025-01,6139,Welsh,SUB,1.858
+2025-02,6139,Welsh,SUB,1.858
+2025-03,6139,Welsh,SUB,2.063
+2025-04,6139,Welsh,SUB,2.138
+2025-05,6139,Welsh,SUB,2.057
+2025-06,6139,Welsh,SUB,2.026
+2025-07,6139,Welsh,SUB,2.195
+2025-08,6139,Welsh,SUB,1.775
+2025-09,6139,Welsh,SUB,1.894
+2025-10,6139,Welsh,SUB,2.078
+2025-11,6139,Welsh,SUB,1.937
+2025-12,6139,Welsh,SUB,1.799
+2026-01,6139,Welsh,SUB,2.115
+2026-02,6139,Welsh,SUB,2.183
+2026-03,6139,Welsh,SUB,2.131
+2026-04,6139,Welsh,SUB,2.103
+2026-05,6139,Welsh,SUB,2.58
+2026-06,6139,Welsh,SUB,2.545
+2026-07,6139,Welsh,SUB,2.341
+2026-08,6139,Welsh,SUB,2.271
+2019-01,6179,Fayette Power Project,SUB,1.804
+2019-02,6179,Fayette Power Project,SUB,1.694
+2019-03,6179,Fayette Power Project,SUB,1.624
+2019-04,6179,Fayette Power Project,SUB,1.617
+2019-05,6179,Fayette Power Project,SUB,1.61
+2019-06,6179,Fayette Power Project,SUB,1.623
+2019-07,6179,Fayette Power Project,SUB,1.607
+2019-08,6179,Fayette Power Project,SUB,1.559
+2019-09,6179,Fayette Power Project,SUB,1.547
+2019-10,6179,Fayette Power Project,SUB,1.563
+2019-11,6179,Fayette Power Project,SUB,1.581
+2019-12,6179,Fayette Power Project,SUB,1.554
+2020-01,6179,Fayette Power Project,SUB,1.522
+2020-02,6179,Fayette Power Project,SUB,1.49
+2020-03,6179,Fayette Power Project,SUB,1.492
+2020-04,6179,Fayette Power Project,SUB,1.475
+2020-05,6179,Fayette Power Project,SUB,1.458
+2020-06,6179,Fayette Power Project,SUB,1.449
+2020-07,6179,Fayette Power Project,SUB,1.436
+2020-08,6179,Fayette Power Project,SUB,1.441
+2020-09,6179,Fayette Power Project,SUB,1.521
+2020-10,6179,Fayette Power Project,SUB,1.456
+2020-11,6179,Fayette Power Project,SUB,1.568
+2020-12,6179,Fayette Power Project,SUB,1.561
+2021-01,6179,Fayette Power Project,SUB,1.493
+2021-02,6179,Fayette Power Project,SUB,1.532
+2021-03,6179,Fayette Power Project,SUB,1.578
+2021-04,6179,Fayette Power Project,SUB,1.563
+2021-05,6179,Fayette Power Project,SUB,1.651
+2021-06,6179,Fayette Power Project,SUB,1.687
+2021-07,6179,Fayette Power Project,SUB,1.783
+2021-08,6179,Fayette Power Project,SUB,1.831
+2021-09,6179,Fayette Power Project,SUB,1.832
+2021-10,6179,Fayette Power Project,SUB,1.826
+2021-11,6179,Fayette Power Project,SUB,1.824
+2021-12,6179,Fayette Power Project,SUB,1.853
+2022-01,6179,Fayette Power Project,SUB,1.898
+2022-02,6179,Fayette Power Project,SUB,1.901
+2022-03,6179,Fayette Power Project,SUB,1.755
+2022-04,6179,Fayette Power Project,SUB,1.755
+2022-05,6179,Fayette Power Project,SUB,1.875
+2022-06,6179,Fayette Power Project,SUB,1.91
+2022-07,6179,Fayette Power Project,SUB,1.965
+2022-08,6179,Fayette Power Project,SUB,1.992
+2022-09,6179,Fayette Power Project,SUB,1.96
+2022-10,6179,Fayette Power Project,SUB,1.904
+2022-11,6179,Fayette Power Project,SUB,1.88
+2022-12,6179,Fayette Power Project,SUB,1.905
+2023-01,6179,Fayette Power Project,SUB,1.843
+2023-02,6179,Fayette Power Project,SUB,1.791
+2023-03,6179,Fayette Power Project,SUB,1.804
+2023-04,6179,Fayette Power Project,SUB,1.777
+2023-05,6179,Fayette Power Project,SUB,1.766
+2023-06,6179,Fayette Power Project,SUB,1.758
+2023-07,6179,Fayette Power Project,SUB,1.742
+2023-08,6179,Fayette Power Project,SUB,1.717
+2023-09,6179,Fayette Power Project,SUB,1.733
+2023-10,6179,Fayette Power Project,SUB,1.771
+2023-11,6179,Fayette Power Project,SUB,1.797
+2023-12,6179,Fayette Power Project,SUB,1.792
+2024-01,6179,Fayette Power Project,SUB,1.77
+2024-02,6179,Fayette Power Project,SUB,1.726
+2024-03,6179,Fayette Power Project,SUB,1.694
+2024-04,6179,Fayette Power Project,SUB,1.729
+2024-05,6179,Fayette Power Project,SUB,1.719
+2024-06,6179,Fayette Power Project,SUB,1.734
+2024-07,6179,Fayette Power Project,SUB,1.719
+2024-08,6179,Fayette Power Project,SUB,1.696
+2024-09,6179,Fayette Power Project,SUB,1.708
+2024-10,6179,Fayette Power Project,SUB,1.705
+2024-11,6179,Fayette Power Project,SUB,1.672
+2024-12,6179,Fayette Power Project,SUB,1.687
+2025-01,6179,Fayette Power Project,SUB,1.7
+2025-02,6179,Fayette Power Project,SUB,1.696
+2025-03,6179,Fayette Power Project,SUB,1.705
+2025-04,6179,Fayette Power Project,SUB,1.524
+2025-05,6179,Fayette Power Project,SUB,1.517
+2025-06,6179,Fayette Power Project,SUB,1.519
+2025-07,6179,Fayette Power Project,SUB,1.516
+2025-08,6179,Fayette Power Project,SUB,1.521
+2025-09,6179,Fayette Power Project,SUB,1.539
+2025-10,6179,Fayette Power Project,SUB,1.534
+2025-11,6179,Fayette Power Project,SUB,1.529
+2025-12,6179,Fayette Power Project,SUB,1.516
+2026-01,6179,Fayette Power Project,SUB,1.534
+2026-02,6179,Fayette Power Project,SUB,1.519
+2026-03,6179,Fayette Power Project,SUB,1.494
+2026-04,6179,Fayette Power Project,SUB,1.515
+2026-05,6179,Fayette Power Project,SUB,1.635
+2026-06,6179,Fayette Power Project,SUB,1.734
+2026-07,6179,Fayette Power Project,SUB,1.76
+2026-08,6179,Fayette Power Project,SUB,1.703
+2019-01,6183,San Miguel,LIG,2.77
+2019-02,6183,San Miguel,LIG,2.85
+2019-03,6183,San Miguel,LIG,2.71
+2019-04,6183,San Miguel,LIG,2.84
+2019-05,6183,San Miguel,LIG,3.42
+2019-06,6183,San Miguel,LIG,2.99
+2019-07,6183,San Miguel,LIG,2.15
+2019-08,6183,San Miguel,LIG,2.69
+2019-09,6183,San Miguel,LIG,2.01
+2019-10,6183,San Miguel,LIG,3.1
+2019-11,6183,San Miguel,LIG,2.32
+2019-12,6183,San Miguel,LIG,1.56
+2020-01,6183,San Miguel,LIG,1.59
+2020-02,6183,San Miguel,LIG,2.58
+2020-03,6183,San Miguel,LIG,2.96
+2020-04,6183,San Miguel,LIG,2.28
+2020-05,6183,San Miguel,LIG,2.8
+2020-06,6183,San Miguel,LIG,2.59
+2020-07,6183,San Miguel,LIG,1.88
+2020-08,6183,San Miguel,LIG,3.52
+2020-09,6183,San Miguel,LIG,3.97
+2020-10,6183,San Miguel,LIG,3.78
+2020-11,6183,San Miguel,LIG,3.68
+2020-12,6183,San Miguel,LIG,3.81
+2021-01,6183,San Miguel,LIG,3.53
+2021-02,6183,San Miguel,LIG,5.13
+2021-03,6183,San Miguel,LIG,3.9
+2021-04,6183,San Miguel,LIG,2.02
+2021-05,6183,San Miguel,LIG,5.57
+2021-06,6183,San Miguel,LIG,3.66
+2021-07,6183,San Miguel,LIG,2.72
+2021-08,6183,San Miguel,LIG,2.89
+2021-09,6183,San Miguel,LIG,2.75
+2021-10,6183,San Miguel,LIG,2.45
+2021-11,6183,San Miguel,LIG,2.62
+2021-12,6183,San Miguel,LIG,3.35
+2022-01,6183,San Miguel,LIG,2.76
+2022-02,6183,San Miguel,LIG,2.88
+2022-03,6183,San Miguel,LIG,2.96
+2022-04,6183,San Miguel,LIG,3.38
+2022-05,6183,San Miguel,LIG,3.03
+2022-06,6183,San Miguel,LIG,4.7
+2022-07,6183,San Miguel,LIG,3.48
+2022-08,6183,San Miguel,LIG,3.16
+2022-09,6183,San Miguel,LIG,3.24
+2022-10,6183,San Miguel,LIG,3.0
+2022-11,6183,San Miguel,LIG,3.17
+2022-12,6183,San Miguel,LIG,2.6
+2023-01,6183,San Miguel,LIG,4.4
+2023-02,6183,San Miguel,LIG,2.91
+2023-03,6183,San Miguel,LIG,0.075
+2023-04,6183,San Miguel,LIG,3.62
+2023-05,6183,San Miguel,LIG,3.44
+2023-06,6183,San Miguel,LIG,3.75
+2023-07,6183,San Miguel,LIG,3.4
+2023-08,6183,San Miguel,LIG,3.99
+2023-09,6183,San Miguel,LIG,4.49
+2023-10,6183,San Miguel,LIG,3.13
+2023-11,6183,San Miguel,LIG,5.27
+2023-12,6183,San Miguel,LIG,3.25
+2024-01,6183,San Miguel,LIG,2.81
+2024-02,6183,San Miguel,LIG,3.71
+2024-03,6183,San Miguel,LIG,4.62
+2024-05,6183,San Miguel,LIG,4.65
+2024-06,6183,San Miguel,LIG,3.81
+2024-07,6183,San Miguel,LIG,3.61
+2024-08,6183,San Miguel,LIG,2.21
+2024-09,6183,San Miguel,LIG,3.36
+2024-10,6183,San Miguel,LIG,6.85
+2024-12,6183,San Miguel,LIG,3.07
+2025-01,6183,San Miguel,LIG,6.7
+2025-02,6183,San Miguel,LIG,2.49
+2025-05,6183,San Miguel,LIG,3.23
+2025-06,6183,San Miguel,LIG,3.78
+2025-07,6183,San Miguel,LIG,3.8
+2025-08,6183,San Miguel,LIG,4.51
+2025-09,6183,San Miguel,LIG,4.24
+2025-10,6183,San Miguel,LIG,5.14
+2025-12,6183,San Miguel,LIG,2.92
+2026-01,6183,San Miguel,LIG,2.98
+2026-02,6183,San Miguel,LIG,4.46
+2026-05,6183,San Miguel,LIG,3.95
+2026-06,6183,San Miguel,LIG,4.61
+2026-07,6183,San Miguel,LIG,3.84
+2026-08,6183,San Miguel,LIG,3.96
+2019-01,6193,Harrington,SUB,1.577
+2019-02,6193,Harrington,SUB,1.568
+2019-03,6193,Harrington,SUB,1.6
+2019-04,6193,Harrington,SUB,1.612
+2019-05,6193,Harrington,SUB,1.614
+2019-06,6193,Harrington,SUB,1.614
+2019-07,6193,Harrington,SUB,1.581
+2019-08,6193,Harrington,SUB,1.596
+2019-09,6193,Harrington,SUB,1.584
+2019-10,6193,Harrington,SUB,1.598
+2019-11,6193,Harrington,SUB,1.595
+2019-12,6193,Harrington,SUB,1.595
+2020-01,6193,Harrington,SUB,1.617
+2020-02,6193,Harrington,SUB,1.618
+2020-03,6193,Harrington,SUB,1.628
+2020-05,6193,Harrington,SUB,1.605
+2020-06,6193,Harrington,SUB,1.597
+2020-07,6193,Harrington,SUB,1.59
+2020-08,6193,Harrington,SUB,1.587
+2020-09,6193,Harrington,SUB,1.602
+2020-10,6193,Harrington,SUB,1.586
+2020-11,6193,Harrington,SUB,1.572
+2020-12,6193,Harrington,SUB,1.555
+2021-01,6193,Harrington,SUB,1.541
+2021-02,6193,Harrington,SUB,1.553
+2021-03,6193,Harrington,SUB,1.567
+2021-04,6193,Harrington,SUB,1.572
+2021-05,6193,Harrington,SUB,1.598
+2021-06,6193,Harrington,SUB,1.61
+2021-07,6193,Harrington,SUB,1.634
+2021-08,6193,Harrington,SUB,1.642
+2021-09,6193,Harrington,SUB,1.64
+2021-10,6193,Harrington,SUB,1.657
+2021-11,6193,Harrington,SUB,1.64
+2021-12,6193,Harrington,SUB,1.658
+2022-01,6193,Harrington,SUB,1.683
+2022-02,6193,Harrington,SUB,1.72
+2022-03,6193,Harrington,SUB,1.783
+2022-04,6193,Harrington,SUB,1.802
+2022-05,6193,Harrington,SUB,1.831
+2022-06,6193,Harrington,SUB,1.884
+2022-07,6193,Harrington,SUB,1.922
+2022-08,6193,Harrington,SUB,1.955
+2022-09,6193,Harrington,SUB,1.982
+2022-10,6193,Harrington,SUB,1.996
+2022-11,6193,Harrington,SUB,1.982
+2022-12,6193,Harrington,SUB,1.986
+2023-01,6193,Harrington,SUB,2.012
+2023-02,6193,Harrington,SUB,2.013
+2023-03,6193,Harrington,SUB,2.008
+2023-04,6193,Harrington,SUB,2.019
+2023-05,6193,Harrington,SUB,2.048
+2023-06,6193,Harrington,SUB,2.051
+2023-07,6193,Harrington,SUB,2.006
+2023-08,6193,Harrington,SUB,1.99
+2023-09,6193,Harrington,SUB,1.993
+2023-10,6193,Harrington,SUB,1.996
+2023-11,6193,Harrington,SUB,2.004
+2023-12,6193,Harrington,SUB,1.988
+2024-01,6193,Harrington,SUB,1.992
+2024-02,6193,Harrington,SUB,1.986
+2024-03,6193,Harrington,SUB,1.953
+2024-04,6193,Harrington,SUB,1.971
+2024-05,6193,Harrington,SUB,1.949
+2024-06,6193,Harrington,SUB,2.494
+2024-07,6193,Harrington,SUB,1.956
+2024-08,6193,Harrington,SUB,1.982
+2024-09,6193,Harrington,SUB,1.973
+2024-10,6193,Harrington,SUB,1.969
+2024-11,6193,Harrington,SUB,2.039
+2024-12,6193,Harrington,SUB,1.617
+2019-01,6194,Tolk,SUB,1.824
+2019-02,6194,Tolk,SUB,1.821
+2019-03,6194,Tolk,SUB,1.809
+2019-04,6194,Tolk,SUB,1.824
+2019-05,6194,Tolk,SUB,1.826
+2019-06,6194,Tolk,SUB,1.816
+2019-07,6194,Tolk,SUB,1.801
+2019-08,6194,Tolk,SUB,1.808
+2019-09,6194,Tolk,SUB,1.842
+2019-10,6194,Tolk,SUB,1.833
+2019-11,6194,Tolk,SUB,1.824
+2019-12,6194,Tolk,SUB,1.836
+2020-01,6194,Tolk,SUB,1.844
+2020-02,6194,Tolk,SUB,1.848
+2020-03,6194,Tolk,SUB,1.854
+2020-06,6194,Tolk,SUB,1.833
+2020-07,6194,Tolk,SUB,1.833
+2020-08,6194,Tolk,SUB,1.833
+2020-09,6194,Tolk,SUB,1.814
+2020-10,6194,Tolk,SUB,1.814
+2020-11,6194,Tolk,SUB,1.783
+2021-01,6194,Tolk,SUB,1.771
+2021-02,6194,Tolk,SUB,1.779
+2021-03,6194,Tolk,SUB,1.775
+2021-04,6194,Tolk,SUB,1.78
+2021-05,6194,Tolk,SUB,1.808
+2021-06,6194,Tolk,SUB,1.806
+2021-07,6194,Tolk,SUB,1.848
+2021-08,6194,Tolk,SUB,1.833
+2021-09,6194,Tolk,SUB,1.83
+2021-10,6194,Tolk,SUB,1.843
+2021-11,6194,Tolk,SUB,1.848
+2021-12,6194,Tolk,SUB,1.864
+2022-01,6194,Tolk,SUB,1.872
+2022-02,6194,Tolk,SUB,1.933
+2022-03,6194,Tolk,SUB,1.964
+2022-04,6194,Tolk,SUB,1.995
+2022-05,6194,Tolk,SUB,2.037
+2022-06,6194,Tolk,SUB,2.06
+2022-07,6194,Tolk,SUB,2.089
+2022-08,6194,Tolk,SUB,2.116
+2022-09,6194,Tolk,SUB,2.18
+2022-10,6194,Tolk,SUB,2.21
+2022-12,6194,Tolk,SUB,2.277
+2023-01,6194,Tolk,SUB,2.198
+2023-02,6194,Tolk,SUB,2.245
+2023-03,6194,Tolk,SUB,2.23
+2023-04,6194,Tolk,SUB,2.27
+2023-05,6194,Tolk,SUB,2.331
+2023-06,6194,Tolk,SUB,2.276
+2023-07,6194,Tolk,SUB,2.264
+2023-08,6194,Tolk,SUB,2.262
+2023-09,6194,Tolk,SUB,2.28
+2023-10,6194,Tolk,SUB,2.305
+2023-11,6194,Tolk,SUB,2.299
+2023-12,6194,Tolk,SUB,2.284
+2024-01,6194,Tolk,SUB,2.291
+2024-02,6194,Tolk,SUB,2.284
+2024-04,6194,Tolk,SUB,2.328
+2024-05,6194,Tolk,SUB,2.268
+2024-06,6194,Tolk,SUB,2.25
+2024-07,6194,Tolk,SUB,2.272
+2024-08,6194,Tolk,SUB,2.265
+2024-09,6194,Tolk,SUB,2.283
+2024-10,6194,Tolk,SUB,2.261
+2024-11,6194,Tolk,SUB,2.263
+2024-12,6194,Tolk,SUB,2.278
+2025-01,6194,Tolk,SUB,2.254
+2025-02,6194,Tolk,SUB,2.233
+2025-03,6194,Tolk,SUB,2.276
+2025-04,6194,Tolk,SUB,2.272
+2025-05,6194,Tolk,SUB,2.235
+2025-07,6194,Tolk,SUB,2.204
+2025-08,6194,Tolk,SUB,2.185
+2025-09,6194,Tolk,SUB,2.092
+2025-10,6194,Tolk,SUB,1.687
+2025-11,6194,Tolk,SUB,1.549
+2025-12,6194,Tolk,SUB,3.12
+2026-01,6194,Tolk,SUB,2.216
+2026-02,6194,Tolk,SUB,1.33
+2026-03,6194,Tolk,SUB,1.13
+2026-04,6194,Tolk,SUB,1.257
+2026-05,6194,Tolk,SUB,2.269
+2026-06,6194,Tolk,SUB,2.275
+2026-07,6194,Tolk,SUB,2.328
+2026-08,6194,Tolk,SUB,2.316
+2019-01,7097,J K Spruce,SUB,1.969
+2019-02,7097,J K Spruce,SUB,1.944
+2019-03,7097,J K Spruce,SUB,1.929
+2019-04,7097,J K Spruce,SUB,1.928
+2019-05,7097,J K Spruce,SUB,1.936
+2019-06,7097,J K Spruce,SUB,1.948
+2019-07,7097,J K Spruce,SUB,1.955
+2019-08,7097,J K Spruce,SUB,1.939
+2019-09,7097,J K Spruce,SUB,1.907
+2019-10,7097,J K Spruce,SUB,1.928
+2019-11,7097,J K Spruce,SUB,1.928
+2019-12,7097,J K Spruce,SUB,1.936
+2020-01,7097,J K Spruce,SUB,1.981
+2020-02,7097,J K Spruce,SUB,1.951
+2020-03,7097,J K Spruce,SUB,1.95
+2020-04,7097,J K Spruce,SUB,1.934
+2020-05,7097,J K Spruce,SUB,1.901
+2020-06,7097,J K Spruce,SUB,1.878
+2020-07,7097,J K Spruce,SUB,1.862
+2020-08,7097,J K Spruce,SUB,1.861
+2020-09,7097,J K Spruce,SUB,1.869
+2020-10,7097,J K Spruce,SUB,1.891
+2020-11,7097,J K Spruce,SUB,1.898
+2020-12,7097,J K Spruce,SUB,1.891
+2021-01,7097,J K Spruce,SUB,1.875
+2021-02,7097,J K Spruce,SUB,1.889
+2021-03,7097,J K Spruce,SUB,1.907
+2021-04,7097,J K Spruce,SUB,1.923
+2021-05,7097,J K Spruce,SUB,1.971
+2021-06,7097,J K Spruce,SUB,1.963
+2021-07,7097,J K Spruce,SUB,1.978
+2021-08,7097,J K Spruce,SUB,1.986
+2021-09,7097,J K Spruce,SUB,1.995
+2021-10,7097,J K Spruce,SUB,1.257
+2021-11,7097,J K Spruce,SUB,1.255
+2021-12,7097,J K Spruce,SUB,1.294
+2022-01,7097,J K Spruce,SUB,1.894
+2022-02,7097,J K Spruce,SUB,1.885
+2022-03,7097,J K Spruce,SUB,1.894
+2022-04,7097,J K Spruce,SUB,1.937
+2022-05,7097,J K Spruce,SUB,2.085
+2022-06,7097,J K Spruce,SUB,2.067
+2022-07,7097,J K Spruce,SUB,2.144
+2022-08,7097,J K Spruce,SUB,2.152
+2022-09,7097,J K Spruce,SUB,2.114
+2022-10,7097,J K Spruce,SUB,2.054
+2022-11,7097,J K Spruce,SUB,2.042
+2022-12,7097,J K Spruce,SUB,2.08
+2023-01,7097,J K Spruce,SUB,2.056
+2023-02,7097,J K Spruce,SUB,1.958
+2023-03,7097,J K Spruce,SUB,1.932
+2023-04,7097,J K Spruce,SUB,1.916
+2023-05,7097,J K Spruce,SUB,1.883
+2023-06,7097,J K Spruce,SUB,1.868
+2023-07,7097,J K Spruce,SUB,1.841
+2023-08,7097,J K Spruce,SUB,1.824
+2023-09,7097,J K Spruce,SUB,1.844
+2023-10,7097,J K Spruce,SUB,1.902
+2023-11,7097,J K Spruce,SUB,1.919
+2023-12,7097,J K Spruce,SUB,1.911
+2024-01,7097,J K Spruce,SUB,1.882
+2024-02,7097,J K Spruce,SUB,1.849
+2024-03,7097,J K Spruce,SUB,1.828
+2024-04,7097,J K Spruce,SUB,1.818
+2024-05,7097,J K Spruce,SUB,1.803
+2024-06,7097,J K Spruce,SUB,1.795
+2024-07,7097,J K Spruce,SUB,1.777
+2024-08,7097,J K Spruce,SUB,1.76
+2024-09,7097,J K Spruce,SUB,1.779
+2024-11,7097,J K Spruce,SUB,1.745
+2024-12,7097,J K Spruce,SUB,1.755
+2025-01,7097,J K Spruce,SUB,1.806
+2025-02,7097,J K Spruce,SUB,1.774
+2025-03,7097,J K Spruce,SUB,1.737
+2025-04,7097,J K Spruce,SUB,1.737
+2025-05,7097,J K Spruce,SUB,1.703
+2025-06,7097,J K Spruce,SUB,1.61
+2025-07,7097,J K Spruce,SUB,1.602
+2025-08,7097,J K Spruce,SUB,1.619
+2025-09,7097,J K Spruce,SUB,1.644
+2025-10,7097,J K Spruce,SUB,1.635
+2025-11,7097,J K Spruce,SUB,1.635
+2025-12,7097,J K Spruce,SUB,1.627
+2026-01,7097,J K Spruce,SUB,1.69
+2026-02,7097,J K Spruce,SUB,1.654
+2026-03,7097,J K Spruce,SUB,1.65
+2026-04,7097,J K Spruce,SUB,1.677
+2026-05,7097,J K Spruce,SUB,1.839
+2026-06,7097,J K Spruce,SUB,1.933
+2026-07,7097,J K Spruce,SUB,1.948
+2026-08,7097,J K Spruce,SUB,1.862
+2019-01,7902,Pirkey,LIG,3.088
+2019-02,7902,Pirkey,LIG,3.092
+2019-03,7902,Pirkey,LIG,3.195
+2019-04,7902,Pirkey,LIG,3.118
+2019-05,7902,Pirkey,LIG,3.122
+2019-06,7902,Pirkey,LIG,3.151
+2019-07,7902,Pirkey,LIG,3.159
+2019-08,7902,Pirkey,LIG,3.268
+2019-09,7902,Pirkey,LIG,3.055
+2019-11,7902,Pirkey,LIG,3.107
+2019-12,7902,Pirkey,LIG,1.212
+2020-01,7902,Pirkey,LIG,3.29
+2020-02,7902,Pirkey,LIG,3.681
+2020-03,7902,Pirkey,LIG,4.206
+2020-04,7902,Pirkey,LIG,4.711
+2020-05,7902,Pirkey,LIG,6.621
+2020-06,7902,Pirkey,LIG,6.058
+2020-07,7902,Pirkey,LIG,6.164
+2020-08,7902,Pirkey,LIG,6.161
+2020-10,7902,Pirkey,LIG,5.411
+2020-11,7902,Pirkey,LIG,5.573
+2020-12,7902,Pirkey,LIG,4.47
+2021-01,7902,Pirkey,LIG,6.366
+2021-02,7902,Pirkey,LIG,6.363
+2021-03,7902,Pirkey,LIG,6.356
+2021-04,7902,Pirkey,LIG,6.507
+2021-05,7902,Pirkey,LIG,6.361
+2021-06,7902,Pirkey,LIG,5.196
+2021-07,7902,Pirkey,LIG,4.912
+2021-08,7902,Pirkey,LIG,5.009
+2021-09,7902,Pirkey,LIG,6.378
+2021-10,7902,Pirkey,LIG,3.411
+2021-11,7902,Pirkey,LIG,3.137
+2021-12,7902,Pirkey,LIG,0.613
+2022-01,7902,Pirkey,LIG,5.044
+2022-02,7902,Pirkey,LIG,5.254
+2022-03,7902,Pirkey,LIG,1.308
+2022-04,7902,Pirkey,LIG,4.765
+2022-05,7902,Pirkey,LIG,4.739
+2022-06,7902,Pirkey,LIG,4.711
+2022-07,7902,Pirkey,LIG,4.699
+2022-08,7902,Pirkey,LIG,4.437
+2022-09,7902,Pirkey,LIG,4.656
+2022-10,7902,Pirkey,LIG,4.12
+2022-11,7902,Pirkey,LIG,6.214
+2022-12,7902,Pirkey,LIG,1.325
+2023-01,7902,Pirkey,LIG,2.742
+2023-02,7902,Pirkey,LIG,4.243
+2023-03,7902,Pirkey,LIG,3.688
