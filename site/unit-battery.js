@@ -207,7 +207,7 @@ function drawDays(name) {
 }
 
 function setDay(d) {
-  S.day = d; $("batt-day").value = d;
+  S.day = S.picker.set(d);
   window.CX.writeHash({ ...window.CX.readHash(), bday: d });
   drawDay(S.U.name); drawDays(S.U.name);
 }
@@ -223,16 +223,9 @@ async function draw() {
   if (window.UNIT !== U) return;
   const days = (S.idx.days || []).filter((d) => S.idx.n_units && S.idx.n_units[d]);
   if (!days.length) { emptyMsg($("batt-day-chart"), "No battery data yet. It is built by the data update workflow."); return; }
-  const u = S.idx.units && S.idx.units[U.name];
-  // default to the last day the battery did anything
-  const want = window.CX.readHash().bday;
-  if (!days.includes(S.day)) {
-    let last = days.at(-1);
-    if (u) for (let i = S.idx.dates.length - 1; i >= 0; i--) if ((u.dis[i] || 0) + (u.chg[i] || 0) > 0) { last = S.idx.dates[i]; break; }
-    S.day = days.includes(want) ? want : last;
-  }
-  $("batt-day").innerHTML = days.slice().reverse().map((d) => `<option${d === S.day ? " selected" : ""}>${d}</option>`).join("");
-  $("batt-day").onchange = (ev) => setDay(ev.target.value);
+  // opens on the day in the link, else the latest day with 60-day data
+  if (!S.picker) S.picker = window.CX.dayPicker("batt-day", { onChange: setDay });
+  S.day = S.picker.setDays(days, days.includes(S.day) ? S.day : window.CX.readHash().bday || await window.CX.latest60());
   drawDay(U.name); drawDays(U.name);
 }
 window.addEventListener("unitchange", draw);

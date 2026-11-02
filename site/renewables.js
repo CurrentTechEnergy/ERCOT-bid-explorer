@@ -302,9 +302,10 @@ function bidWhenCurtailed(name, dates) {
 
 // ---- links ------------------------------------------------------------------------
 // the hedge-signal panels (renewables-hedge.js) keep their own keys in the same address bar
-const VIEW_KEYS = { cday: "cday", pb: "pbasis", unb: "unBy", unt: "unTech", unl: "unLam" };
-function saveView() { window.CX.writeHash({ ...window.CX.readHash(), ...Object.fromEntries(Object.entries(VIEW_KEYS).map(([k, sk]) => [k, S[sk]])) }); }
-function loadView() { const v = window.CX.readHash(); Object.entries(VIEW_KEYS).forEach(([k, sk]) => { if (v[k] != null) S[sk] = v[k]; }); }
+const VIEW_KEYS = { date: "cday", pb: "pbasis", unb: "unBy", unt: "unTech", unl: "unLam" };
+function saveView() { window.CX.writeHash({ ...window.CX.readHash(), cday: null, ...Object.fromEntries(Object.entries(VIEW_KEYS).map(([k, sk]) => [k, S[sk]])) }); }
+// links from before the shared day picker carry the day as cday
+function loadView() { const v = window.CX.readHash(); if (v.cday && !v.date) v.date = v.cday; Object.entries(VIEW_KEYS).forEach(([k, sk]) => { if (v[k] != null) S[sk] = v[k]; }); }
 
 
 // ---- unused wind and solar, by region and offer price ----------------------------------
@@ -363,13 +364,10 @@ async function boot() {
   $("status").textContent = `Wind and solar offers and curtailment ${S.span[0]} to ${S.span[1]} · 60-day data through ${S.last60 || "–"}`;
   loadView();
   staticLegend($("rs-legend"), BANDS);
-  const cdays = CX.fromStart(S.C.curt.dates).reverse();
-  if (!cdays.includes(S.cday)) S.cday = cdays[0];
-  $("cday").innerHTML = cdays.map((d) => `<option>${d}</option>`).join("");
-  $("cday").value = S.cday;
-  const step = (k) => { const i = cdays.indexOf(S.cday) - k; if (i >= 0 && i < cdays.length) { S.cday = cdays[i]; $("cday").value = S.cday; drawCurtail(); saveView(); } };
-  $("cday").onchange = (e) => { S.cday = e.target.value; drawCurtail(); saveView(); };
-  $("cday-prev").onclick = () => step(-1); $("cday-next").onclick = () => step(1);
+  const cdays = S.C.curt.dates;
+  S.picker = CX.dayPicker("cday", { days: cdays, main: true, value: cdays.includes(S.cday) ? S.cday : await CX.latest60(),
+    onChange: (d) => { S.cday = d; drawCurtail(); saveView(); } });
+  S.cday = S.picker.get();
   bindSeg("nc-basis", "pbasis", drawCurtPrice);
   [["un-by", "unBy"], ["un-tech", "unTech"], ["un-lam", "unLam"]].forEach(([id, key]) => bindSeg(id, key, drawUnused));
   $("nc-more").onclick = () => { S.ncAll = true; drawNodeCurtail(); };

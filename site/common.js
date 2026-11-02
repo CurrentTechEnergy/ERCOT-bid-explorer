@@ -435,49 +435,119 @@ function initUnitFind() {
 }
 if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", initUnitFind); else initUnitFind();
 
-// ------------------------------------------------- days that failed checks ---
-// Days with an error in data/validation.json (pipeline/validate.py) get a mark in the day picker
-// and a warning under it while selected.  Pages fill and set #date themselves, so this watches
-// the options and checks the value on each change, step click and hash change.
+// ------------------------------------------------------------ day picker ---
+// One day picker for every page:  ‹ [dropdown] ›.  ‹ is the previous day with data and › the next,
+// greyed out at the ends; the left and right arrow keys do the same (anywhere on the page for a
+// page's main picker, otherwise while the picker has focus).  Days read "Thu Sep 3, 2026", newest
+// first, none before SITE_START unless a picker asks for all.  Pages open on the latest day with
+// 60-day data (latest60) unless the address bar names a day.  A day that failed a data check
+// (data/validation.json, pipeline/validate.py) gets a mark in the list and a warning under it.
+const WD = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+const MO = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+function dayLabel(d) {
+  const t = new Date(d + "T12:00:00Z");
+  return isNaN(t) ? String(d) : `${WD[t.getUTCDay()]} ${MO[t.getUTCMonth()]} ${t.getUTCDate()}, ${t.getUTCFullYear()}`;
+}
+// the latest day with 60-day data: the day every picker opens on
+async function latest60() { const ix = await tryJSON("data/index.json"); return ix?.days?.["60d"]?.at(-1) || null; }
+// `want` if the list has it, else the latest listed day on or before it, else the newest day
+function pickDay(days, want) {
+  if (!days.length) return null;
+  if (want && days.includes(want)) return want;
+  if (want) { for (let i = days.length - 1; i >= 0; i--) if (days[i] <= want) return days[i]; return days[0]; }
+  return days.at(-1);
+}
 const FLAG_TEXT = [
   [/^base_point_thermal/, "ERCOT's 60-day report and its generation summary disagree on thermal output for this day. Fuel totals, nuclear especially, may read low."],
   [/^curve_wind/, "ERCOT's 60-day and 2-day reports disagree on wind offers for this day by more than the usual margin."],
 ];
-async function initDayFlags() {
-  const sel = document.getElementById("date");
-  if (!sel) return;
-  const v = await tryJSON("data/validation.json");
-  const flagged = {};
-  Object.entries((v && v.days) || {}).forEach(([d, r]) => {
-    if (r.level !== "error") return;
-    const msgs = (r.checks || []).filter((c) => c[1] === "error").map(([check, , detail]) =>
-      (FLAG_TEXT.find(([re]) => re.test(check)) || [, `This day failed a data check: ${detail}`])[1]);
-    flagged[d] = [...new Set(msgs)];
-  });
-  if (!Object.keys(flagged).length) return;
-  const note = document.createElement("p");
-  note.className = "day-flag";
-  note.setAttribute("role", "status");
-  note.hidden = true;
-  (sel.closest(".date-step") || sel).after(note);
-  const mark = () => {
-    for (const o of sel.options) {
-      if (flagged[o.value] && !o.dataset.flagged) { o.dataset.flagged = "1"; o.textContent += " ⚠ check failed"; }
-    }
-  };
-  const show = () => {
-    const m = flagged[sel.value];
-    note.hidden = !m;
-    if (m) note.innerHTML = `<strong>Data check failed.</strong> ${m.map(esc).join(" ")} Treat this day's numbers with care.`;
-  };
-  new MutationObserver(() => { mark(); show(); }).observe(sel, { childList: true });
-  sel.addEventListener("change", show);
-  document.addEventListener("click", (e) => { if (e.target.closest(".step")) setTimeout(show); });
-  window.addEventListener("hashchange", () => setTimeout(show));
-  mark(); show();
-  setInterval(show, 1000);   // a page can also set the value directly, which fires no event
+let flagsP = null;
+function dayFlags() {
+  return flagsP || (flagsP = tryJSON("data/validation.json").then((v) => {
+    const flagged = {};
+    Object.entries((v && v.days) || {}).forEach(([d, r]) => {
+      if (r.level !== "error") return;
+      const msgs = (r.checks || []).filter((c) => c[1] === "error").map(([check, , detail]) =>
+        (FLAG_TEXT.find(([re]) => re.test(check)) || [, `This day failed a data check: ${detail}`])[1]);
+      flagged[d] = [...new Set(msgs)];
+    });
+    return flagged;
+  }));
 }
-if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", initDayFlags); else initDayFlags();
+const mainPickers = [];
+function stepButton(dir) {
+  const b = Object.assign(document.createElement("button"), { type: "button", className: "step", innerHTML: dir < 0 ? "&#8249;" : "&#8250;" });
+  b.setAttribute("aria-label", dir < 0 ? "Previous day" : "Next day");
+  return b;
+}
+// sel: the <select> (or its id).  opts: days (ascending ISO dates), value, onChange(day),
+// note(day) → text after the date, all (keep days before SITE_START), main (arrow keys page-wide).
+// Returns { get, set(day) (no onChange), setDays(days, value), step(dir) }.
+function dayPicker(sel, opts = {}) {
+  sel = typeof sel === "string" ? $(sel) : sel;
+  let wrap = sel.closest(".date-step");
+  if (!wrap) { wrap = document.createElement("div"); wrap.className = "date-step"; sel.before(wrap); wrap.appendChild(sel); }
+  let [prev, next] = [wrap.querySelector(".step"), [...wrap.querySelectorAll(".step")][1]];
+  if (!prev) { prev = stepButton(-1); wrap.prepend(prev); }
+  if (!next) { next = stepButton(1); wrap.appendChild(next); }
+  prev.removeAttribute("id"); next.removeAttribute("id");
+  sel.classList.add("day-pick");
+  const flagNote = document.createElement("p");
+  flagNote.className = "day-flag"; flagNote.setAttribute("role", "status"); flagNote.hidden = true;
+  wrap.after(flagNote);
+  let days = [], value = null, flagged = {};
+  const sync = () => {
+    sel.value = value || "";
+    const i = days.indexOf(value);
+    prev.disabled = i <= 0; next.disabled = i < 0 || i >= days.length - 1;
+    prev.title = prev.disabled ? "No earlier day with data" : `Previous day (${dayLabel(days[i - 1])}) · ← key`;
+    next.title = next.disabled ? "No later day with data yet" : `Next day (${dayLabel(days[i + 1])}) · → key`;
+    const m = flagged[value];
+    flagNote.hidden = !m;
+    if (m) flagNote.innerHTML = `<strong>Data check failed.</strong> ${m.map(esc).join(" ")} Treat this day's numbers with care.`;
+  };
+  const fill = () => {
+    sel.innerHTML = days.slice().reverse().map((d) => {
+      const extra = opts.note ? opts.note(d) : "";
+      return `<option value="${d}">${esc(dayLabel(d))}${extra ? ` · ${esc(extra)}` : ""}${flagged[d] ? " · ⚠ check failed" : ""}</option>`;
+    }).join("");
+  };
+  const api = {
+    get: () => value,
+    set(d) { value = pickDay(days, d); sync(); return value; },
+    setDays(list, d) { days = opts.all ? list.slice() : fromStart(list); fill(); return api.set(d === undefined ? value : d); },
+    step(dir) {
+      const i = days.indexOf(value) + dir;
+      if (i < 0 || i >= days.length) return;
+      value = days[i]; sync();
+      if (opts.onChange) opts.onChange(value);
+    },
+  };
+  sel.addEventListener("change", () => { value = sel.value; sync(); if (opts.onChange) opts.onChange(value); });
+  prev.addEventListener("click", () => api.step(-1));
+  next.addEventListener("click", () => api.step(1));
+  // the dropdown itself: left/right step a day (some browsers would otherwise move the selection
+  // the other way, the list being newest first)
+  sel.addEventListener("keydown", (e) => {
+    if (e.altKey || e.ctrlKey || e.metaKey || e.shiftKey || (e.key !== "ArrowLeft" && e.key !== "ArrowRight")) return;
+    e.preventDefault(); e.stopPropagation();
+    api.step(e.key === "ArrowLeft" ? -1 : 1);
+  });
+  if (opts.main) mainPickers.push(api);
+  dayFlags().then((f) => { flagged = f || {}; if (Object.keys(flagged).length) { fill(); sync(); } });
+  api.setDays(opts.days || [], opts.value);
+  return api;
+}
+// page-wide arrow keys for the page's main picker, except while typing, on a slider, in another
+// dropdown, or with a modifier held (browser back/forward, word jumps)
+document.addEventListener("keydown", (e) => {
+  if (e.key !== "ArrowLeft" && e.key !== "ArrowRight") return;
+  if (e.defaultPrevented || e.altKey || e.ctrlKey || e.metaKey || e.shiftKey || mainPickers.length !== 1) return;
+  const t = e.target;
+  if (t && t.closest && t.closest("input, textarea, select, [contenteditable=''], [contenteditable='true'], [role='slider'], [role='radiogroup'], [role='listbox'], [role='combobox']")) return;
+  e.preventDefault();
+  mainPickers[0].step(e.key === "ArrowLeft" ? -1 : 1);
+});
 
 function init() { initPins(); addDownloads(); addPanelLinks(); initCopyLink(); }
 
@@ -586,5 +656,5 @@ const peakerNote = (G) => { const p = G?.peaker || { share: 0.3, run_h: 16 };
   return `Runs like a peaker: online under ${Math.round(p.share * 100)}% of available hours, at most ${+p.run_h} hours a day when on`; };
 const isPeaker = (G, name) => !!G?.units?.[name]?.[9];
 const peakerTag = (G, name) => (isPeaker(G, name) ? ` <span class="tag" title="${peakerNote(G)}">Peaker</span>` : "");
-window.CX = { isPeaker, peakerTag, peakerNote, onOffDot, onOffLegend, rucDays, rucRing, rucLegend, rucNote, fromStart, SITE_START, setNote, getJSON, tryJSON, showTip, hideTip, clearPins, setCSV, readHash, writeHash, init, panelFromLink, css, esc, tickFormat, fmtKind, axisFmt, unitIndex, findUnits, matchedOn, drawCurtailDay };
+window.CX = { dayPicker, dayLabel, latest60, pickDay, isPeaker, peakerTag, peakerNote, onOffDot, onOffLegend, rucDays, rucRing, rucLegend, rucNote, fromStart, SITE_START, setNote, getJSON, tryJSON, showTip, hideTip, clearPins, setCSV, readHash, writeHash, init, panelFromLink, css, esc, tickFormat, fmtKind, axisFmt, unitIndex, findUnits, matchedOn, drawCurtailDay };
 })();

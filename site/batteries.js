@@ -352,10 +352,12 @@ function drawDays() {
     `${fmtPrice(sum(f.dis_usd) / sum(f.dis_mwh))} against ${fmtPrice(sum(f.p_dis_usd) / sum(f.p_dis_mwh))}.`;
 }
 
-const VIEW_KEYS = { day: "day", win: "win", side: "side", tb: "tb" };
-function saveView() { window.CX.writeHash({ ...window.CX.readHash(), ...Object.fromEntries(Object.entries(VIEW_KEYS).map(([k, sk]) => [k, S[sk]])) }); }
-function loadView() { const v = window.CX.readHash(); Object.entries(VIEW_KEYS).forEach(([k, sk]) => { if (v[k] != null) S[sk] = v[k]; }); }
-function setDay(d) { if (d < CX.SITE_START) d = CX.fromStart(S.B.dates)[0] || d; S.day = d; $("bday").value = d; drawAll(); saveView(); }
+const VIEW_KEYS = { date: "day", win: "win", side: "side", tb: "tb" };
+function saveView() { window.CX.writeHash({ ...window.CX.readHash(), day: null, ...Object.fromEntries(Object.entries(VIEW_KEYS).map(([k, sk]) => [k, S[sk]])) }); }
+// links from before the shared day picker carry the day as day
+function loadView() { const v = window.CX.readHash(); if (v.day && !v.date) v.date = v.day; Object.entries(VIEW_KEYS).forEach(([k, sk]) => { if (v[k] != null) S[sk] = v[k]; }); }
+// d: a picker day, or any day of the series (a chart click); the picker settles it on a listed day
+function setDay(d) { S.day = S.picker.set(d); drawAll(); saveView(); }
 
 function drawAll() { ["offer-note", "bid-note", "head-note"].forEach((id) => { $(id).textContent = winLabel(); }); drawFlow(); drawSoc(); drawOffers(); drawBids(); drawHeadroom(); drawDays(); }
 
@@ -374,16 +376,11 @@ async function boot() {
   const dates = CX.fromStart(S.B.dates);    // the picker's days; the charts keep every day
   $("status").textContent = `Battery offers and dispatch ${dates[0]} to ${dates.at(-1)} · ${S.B.n_units.at(-1)} batteries on the last day`;
   loadView();
-  if (!dates.includes(S.day)) S.day = dates.at(-1);
   if (!["1", "7", "30", "all"].includes(S.win)) S.win = "1";
   if (!["chg", "dis"].includes(S.side)) S.side = "chg";
   if (!["rt", "da"].includes(S.tb)) S.tb = "rt";
-  const rev = dates.slice().reverse();
-  $("bday").innerHTML = rev.map((d) => `<option>${d}</option>`).join("");
-  $("bday").value = S.day;
-  $("bday").onchange = (e) => setDay(e.target.value);
-  const step = (k) => { const i = dates.indexOf(S.day) + k; if (i >= 0 && i < dates.length) setDay(dates[i]); };
-  $("bday-prev").onclick = () => step(-1); $("bday-next").onclick = () => step(1);
+  S.picker = CX.dayPicker("bday", { days: dates, main: true, value: dates.includes(S.day) ? S.day : await CX.latest60(), onChange: setDay });
+  S.day = S.picker.get();
   setSeg("bwin", S.win);
   bindSeg("bwin", "win", drawAll);
   bindSeg("bside", "side", drawBids);
