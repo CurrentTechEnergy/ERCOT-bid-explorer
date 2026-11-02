@@ -27,6 +27,8 @@ Per technology and period:
               unit's telemetered output in the 60-day data, storage left out; the history's
               thermal plus wind and solar months, to Nov 2025): what the average MWh sold earned
               at the hub, $/MWh (capture / this: against the average MWh)
+  sys_gen     that ERCOT generation over the period's hours with a real-time hub price, GWh (the
+              weight for averaging hub_rt_gen over a year)
   neg         share of output in hours whose DA price at the unit's settlement point was $0 or below
 
 data/renewables/years.json.gz
@@ -49,13 +51,13 @@ from .config import DATA_DIR, UNIT_DATA_DIR
 from .log import warn
 from .store import read_json_gz, write_json_gz
 
-FORMAT = 3
+FORMAT = 4
 PATH = DATA_DIR / "renewables" / "years.json.gz"
 CACHE = UNIT_DATA_DIR / "renew_years"
 HISTORY = Path("history")
 TECHS = ("wind", "solar")
 FIELDS = ["gw", "units", "gen", "curt", "capture", "avg", "neg", "rt_capture", "rt_avg", "hub_da", "hub_rt",
-          "hub_da_gen", "hub_rt_gen"]
+          "hub_da_gen", "hub_rt_gen", "sys_gen"]
 HUB = "HB_HUBAVG"
 KINDS = ("units", "rt-prices", "da-hubs", "thermal")
 WINDOW = 30
@@ -107,7 +109,9 @@ def summarize(units: dict, cap: dict, hub: dict) -> dict:
             "rt_capture": round(float(rpsum / rsum), 2) if rsum else None, "rt_avg": _mean(allr),
             "hub_da": _mean(hub.get("da", [])), "hub_rt": _mean(hub.get("rt", [])),
             "hub_da_gen": _weighted(hub["da"], hub["gen"]) if "gen" in hub and "da" in hub else None,
-            "hub_rt_gen": _weighted(hub["rt"], hub["gen"]) if "gen" in hub and "rt" in hub else None}
+            "hub_rt_gen": _weighted(hub["rt"], hub["gen"]) if "gen" in hub and "rt" in hub else None,
+            "sys_gen": round(float(np.nansum(np.where(np.isfinite(hub["rt"]), hub["gen"], 0))) / 1e3, 1)
+            if "gen" in hub and "rt" in hub else None}
 
 
 def _month_from_parquet(paths: dict, month: str) -> dict:

@@ -14,7 +14,7 @@ const S = { Y: null, by: "month" };
 
 function emptyMsg(el, msg) { el.innerHTML = `<p class="empty">${msg}</p>`; }
 function staticLegend(el, list) {
-  el.innerHTML = list.filter((s) => !s.hide).map((s) => `<span><span class="sw" style="background:var(${s.color});${s.dash ? "opacity:.55" : ""}"></span>${s.label}</span>`).join("");
+  el.innerHTML = list.filter((s) => !s.hide).map((s) => `<span><span class="sw" style="background:var(${s.color});${s.dash || s.faint ? "opacity:.55" : ""}"></span>${s.label}</span>`).join("");
 }
 function setSeg(id, value) { $(id).querySelectorAll("button").forEach((b) => b.setAttribute("aria-checked", String(b.dataset.v === value))); }
 
@@ -58,8 +58,10 @@ function yearChart(el, series, opts) {
   const line = d3.line().defined((v) => v != null).x((_, i) => x(dates[i])).y((v) => y(clamp(v)));
   const clipId = `clip-${el.id}`;
   if (opts.overrun) svg.append("clipPath").attr("id", clipId).append("rect").attr("x", m.l).attr("y", m.t - 2).attr("width", w - m.l - m.r).attr("height", H - m.t - m.b + 2);
-  series.filter((s) => !s.hide).forEach((s) => svg.append("path").attr("fill", "none").attr("stroke", css(s.color)).attr("stroke-width", s.width || 2)
-    .attr("stroke-dasharray", s.dash || null).attr("clip-path", opts.overrun ? `url(#${clipId})` : null).attr("d", line(s.values)));
+  const runs = (s) => (s.groups ? d3.groups(d3.range(s.values.length), (i) => s.groups[i]).map(([, idx]) => idx) : [d3.range(s.values.length)]);
+  series.filter((s) => !s.hide).forEach((s) => runs(s).forEach((idx) => svg.append("path").attr("fill", "none").attr("stroke", css(s.color)).attr("stroke-width", s.width || 2)
+    .attr("stroke-dasharray", s.dash || null).attr("stroke-opacity", s.faint ? 0.45 : 1)
+    .attr("clip-path", opts.overrun ? `url(#${clipId})` : null).attr("d", d3.line().defined((i) => s.values[i] != null).x((i) => x(dates[i])).y((i) => y(clamp(s.values[i])))(idx))));
   const shown = bars.concat(series), tf = opts.tipFmt || d3.format(",.1f");
   const cross = svg.append("line").attr("class", "crosshair").attr("y1", m.t).attr("y2", H - m.b).style("display", "none");
   svg.append("rect").attr("x", m.l).attr("y", m.t).attr("width", w - m.l - m.r).attr("height", H - m.t - m.b).attr("fill", "transparent")
@@ -79,6 +81,19 @@ const rollMean = (a, n) => a.map((_, i) => {
   const w = a.slice(Math.max(0, i - n + 1), i + 1).filter((v) => v != null);
   return w.length ? d3.mean(w) : null;
 });
+
+// annual averages for the monthly view: sum(value x weight) / sum(weight) over each calendar year,
+// repeated on every month of it (drawn as one flat segment a year)
+function annual(values, weights) {
+  const ys = S.Y.months.map((m) => m.slice(0, 4)), acc = new Map();
+  values.forEach((v, i) => {
+    const w = weights[i];
+    if (v == null || w == null) return;
+    const a = acc.get(ys[i]) || [0, 0];
+    a[0] += v * w; a[1] += w; acc.set(ys[i], a);
+  });
+  return { groups: ys, values: ys.map((y) => (acc.get(y) && acc.get(y)[1] ? acc.get(y)[0] / acc.get(y)[1] : null)) };
+}
 
 function draw() {
   if (!S.Y) return;
@@ -107,18 +122,26 @@ function draw() {
   const rate = (c, a) => c.map((v, i) => (v == null || !a[i] || a[i] <= 0 ? null : v / a[i]));
   const hub = sm(D.wind.hub_rt_gen);
   const cap = TECHS.flatMap(([t, label, color]) => {
-    const c = sm(D[t].rt_capture);
-    return [
-      { label, color, values: rate(c, hub), fmt: fmtPct },
-      { label: `${label} earned`, color, hide: true, values: c, fmt: fmtPrice },
+    const c = sm(D[t].rt_capture), out = [
+      { label: day ? label : `${label}, monthly`, color, faint: !day, width: day ? 2 : 1.4, values: rate(c, hub), fmt: fmtPct },
     ];
+    if (!day) {
+      // the year's earned price (weighted by the fleet's energy) over its generation-weighted hub price
+      const e = annual(D[t].rt_capture, D[t].gen), h = annual(D[t].hub_rt_gen, D[t].sys_gen);
+      out.push({ label: `${label}, year`, color, width: 2.6, groups: e.groups, values: rate(e.values, h.values), fmt: fmtPct });
+    }
+    out.push({ label: `${label} earned`, color, hide: true, values: c, fmt: fmtPrice });
+    return out;
   });
   cap.push({ label: "Average MWh at the hub", color: "--c-other", hide: true, values: hub, fmt: fmtPrice });
   staticLegend($("yr-capture-legend"), cap);
   yearChart($("yr-capture"), cap, { title: `Capture rate: real-time price earned per MWh ÷ the hub price weighted by ERCOT generation${day ? " (7-day)" : ""}; scale stops at 0% and 150%`,
     yMin: 0, yMax: 1.5, ref: 1, overrun: true, yFmt: d3.format(".0%"), tipFmt: fmtPct, H: 200 });
 
-  const neg = TECHS.map(([t, label, color]) => ({ label, color, values: D[t].neg, fmt: fmtPct }));
+  const neg = TECHS.flatMap(([t, label, color]) => (day ? [{ label, color, values: D[t].neg, fmt: fmtPct }] : [
+    { label: `${label}, monthly`, color, faint: true, width: 1.4, values: D[t].neg, fmt: fmtPct },
+    { label: `${label}, year`, color, width: 2.6, ...annual(D[t].neg, D[t].gen), fmt: fmtPct },
+  ]));
   staticLegend($("yr-neg-legend"), neg);
   yearChart($("yr-neg"), neg, { title: `Share of output in hours whose day-ahead price at the unit's node was $0 or below, each ${per}`, yFmt: d3.format(".0%"), tipFmt: fmtPct, H: 200 });
 
