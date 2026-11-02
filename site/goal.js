@@ -175,7 +175,7 @@ function stack(el, ys, keys, val, opts) {
   el.replaceChildren(svg.node());
 }
 // the day-ahead award against staying on through a cheap midday stretch, by technology
-const AWARD_GROUPS = [["award", "DAM award", "--c1"], ["self", "Self-committed, no award", "--c3"], ["neither", "Neither", "--c2"], ["no award", "No award", "--c-other"]];
+const AWARD_GROUPS = [["award", "DAM award", "--c1"], ["self", "Self-committed, no award", "--c3"], ["neither", "Neither", "--c2"], ["no award", "No DAM record", "--c-other"]];
 const Q2_TECHS = ["combined_cycle", "gas_steam", "coal", "combustion_turbine"];
 // the cost chart uses the award chart's groups and colors (AWARD_GROUPS, below)
 function drawQ2Cost() {
