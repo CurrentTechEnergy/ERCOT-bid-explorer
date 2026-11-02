@@ -20,7 +20,7 @@ ride-through-review-2026-11-02.md in the project files):
                 spell: a shutdown the unit then used for maintenance still counts)
   lsl           LSL of the configuration online going in (the last online hour before the window
                 or the shutdown), else the train's smallest DAM LSL that day; below MIN_LSL left out
-  cost          gas cost at minimum ($/MWh), GAS_HR x the train's own hub price (run_cost)
+  cost          gas cost at minimum ($/MWh), GAS_HR x MIN_LOAD x the train's own hub price (run_cost)
   loss          sum over the window of (cost - DA node price) x lsl ($): the expected loss
   min_off       the train's minimum off time: the 10th percentile of its clean off spells (every
                 hour offline-available, between online hours, OFF_MIN_H hours or more) ending in the
@@ -95,6 +95,9 @@ DA_KNOWN = 13       # hour index (HE14) by which the next day's DA prices are pu
 SLOTS = (("day", 7, 18), ("night", 19, 30))   # first hour index of a window, from the day's HE1
 FORCED = 0.5        # share of the window held by a DAM commitment, AS or RUC that takes it out
 MARGIN_H = 12       # hours before and after the window for before_per_mw / after_per_mw
+MIN_LOAD = {"gas_steam": 1.28}   # gas cost at minimum against full-load GAS_HR: gas steam's DAM offer
+                                 # price at LSL + 1 MW is a median 1.28 x GAS_HR x hub gas over its unit-days
+                                 # within 0.8 to 1.5 of it (Dec 2025 to Sep 2026); combined cycles 0.96, so none
 SEASON = {12: "winter", 1: "winter", 2: "winter", 3: "spring", 4: "spring", 5: "spring",
           6: "summer", 7: "summer", 8: "summer", 9: "fall", 10: "fall", 11: "fall"}
 CODE = {"-": 0, "o": 1, "0": 2, "m": 3, "a": 4}     # same order as decisions.RANK
@@ -209,15 +212,16 @@ def run_cost(tech, train, date, gas, hubs):
     has no price, plus the monthly basis for Ship Channel (gas_by_hub); coal, and any unit without
     a gas price, at the generic cost (estimated)."""
     if tech in GAS_HR:
+        hr = GAS_HR[tech] * MIN_LOAD.get(tech, 1.0)
         hub = hubs.get(train, "hsc")
         p = gas.get(hub, {}).get(date)
         if p is not None:
-            return GAS_HR[tech] * p, False
+            return hr * p, False
         p = gas.get(f"{hub}_fill", {}).get(date)
         if p is None:
             p = gas.get("hh", {}).get(date)
         if p is not None:
-            return GAS_HR[tech] * p, True
+            return hr * p, True
     return float(GENERIC_COSTS[tech][3]), True
 
 
