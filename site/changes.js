@@ -69,9 +69,10 @@ function row(e) {
   // wind and solar events are per plant: the link opens its first unit, whose page lists the plant's changes
   const g = groupOfEvent(e), multi = e.units && e.units.length > 1;
   const unit = e.kind === "fuel" ? `${esc(TECH_LABEL[e.tech] || e.tech)} fleet <span class="tag">${e.value} units</span>` : `<a href="${unitHref((e.units && e.units[0]) || e.unit)}">${esc(e.unit)}</a>` + (multi ? ` <span class="tag">${e.units.length} units</span>` : "");
-  return `<tr class="${e.major ? "" : "minor"}"><td class="t">${fmtDay(parseDate(e.date))}</td><td class="t">${unit}</td>` +
+  const date = e.kind === "fuel" ? fmtDay(parseDate(e.date)) : `<a href="${window.EVC.href(e)}" title="Open the unit's page on this change">${fmtDay(parseDate(e.date))}</a>`;
+  return `<tr class="${e.major ? "" : "minor"}" data-id="${esc(e.id)}"><td class="t">${date}</td><td class="t">${unit}</td>` +
     `<td class="t hide-sm">${esc(TECH_LABEL[e.tech] || e.tech)}${g ? ` <span class="tag">${esc(S.groupLabel[g] || g)}</span>` : ""}${e.kind === "fuel" ? "" : window.CX.peakerTag(S.G, S.G?.units?.[e.unit] ? e.unit : trainOf(e.unit))}</td>` +
-    `<td class="t ev"><b>${esc(S.E.kinds[e.kind] || e.kind)}</b>${isNew(e) ? ` <span class="tag new">new</span>` : ""}<br>${esc(e.title)}${numbers(e) ? `<span class="num-sm"><br>${esc(numbers(e))}</span>` : ""}</td>` +
+    `<td class="t ev"><b>${esc(S.E.kinds[e.kind] || e.kind)}</b>${isNew(e) ? ` <span class="tag new">new</span>` : ""}<br>${esc(e.title)}${window.EVC.button(e)}${numbers(e) ? `<span class="num-sm"><br>${esc(numbers(e))}</span>` : ""}</td>` +
     `<td class="t num hide-sm">${esc(numbers(e))}</td></tr>`;
 }
 
@@ -122,7 +123,7 @@ async function boot() {
   const newN = E.new_today || 0;
   $("status").textContent = `${E.n.toLocaleString()} changes, ${E.n_major.toLocaleString()} notable, ${E.first} to ${E.last} · updated ${E.updated.slice(0, 10)}` +
     (newN ? ` · ${newN} new in the latest update` : "");
-  window.CX.setNote($("feed-note"), "Grouped by week, newest first. Notable changes show by default; switch to all for the rest. New marks what the latest update found.", `Grouped by week of the operating day. Notable means a change the detectors rate as large: daily cycling starting or stopping, a shutdown after 30 days on or despite a day-ahead award, an offer shift of $20/MWh or more against peers or of half the day in how much is offered at or below $0, an outage of 30 days or more, a large wind or solar floor or formula change, a technology's median offer moving by half or more, a new unit or battery, a battery growing or shrinking by half, or a new decision maker deciding a unit's offers (from ERCOT's DME list; a new QSE alone is not notable). "New" marks changes the latest update found.`);
+  window.CX.setNote($("feed-note"), "Grouped by week, newest first. Notable changes show by default; switch to all for the rest. New marks what the latest update found. A date opens the unit on that day; Chart draws what happened around the change.", `Grouped by week of the operating day. Notable means a change the detectors rate as large: daily cycling starting or stopping, a shutdown after 30 days on or despite a day-ahead award, an offer shift of $20/MWh or more against peers or of half the day in how much is offered at or below $0, an outage of 30 days or more, a large wind or solar floor or formula change, a technology's median offer moving by half or more, a new unit or battery, a battery growing or shrinking by half, or a new decision maker deciding a unit's offers (from ERCOT's DME list; a new QSE alone is not notable). "New" marks changes the latest update found.`);
 
   const techs = [...new Set(E.events.map((e) => e.tech))].sort((a, b) => TECH_ORDER.indexOf(a) - TECH_ORDER.indexOf(b));
   options($("f-tech"), "All technologies", techs.map((t) => [t, TECH_LABEL[t] || t]));
@@ -147,6 +148,13 @@ async function boot() {
   document.querySelectorAll("#f-span button").forEach((b) => { b.onclick = () => { S.span = b.dataset.v; reset(); }; });
   document.querySelectorAll("#f-all button").forEach((b) => { b.onclick = () => { S.all = b.dataset.v; reset(); }; });
   $("feed-more").onclick = () => { S.weeks += WEEKS; draw(); };
+  // a row's Chart button opens what happened around the change under it (event-chart.js)
+  const byId = new Map(E.events.map((e) => [e.id, e]));
+  $("feed").addEventListener("click", (ev) => {
+    const b = ev.target.closest(".evc-btn"); if (!b) return;
+    const tr = b.closest("tr"), e = byId.get(tr.dataset.id);
+    if (e) window.EVC.toggle(tr, e, tr.children.length, E.kinds);
+  });
   draw();
 }
 boot();

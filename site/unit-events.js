@@ -44,8 +44,8 @@ function drawTable() {
   $("changes-more").textContent = `Show all ${evs.length}`;
   if (!evs.length) { $("changes-table").innerHTML = `<p class="empty">No changes found for this unit in the loaded data.</p>`; return; }
   $("changes-table").innerHTML = `<table class="data"><thead><tr><th class="t">Date</th><th class="t">Change</th><th class="t">Detail</th><th class="t">Numbers</th><th class="t">Found</th></tr></thead><tbody>` +
-    shown.map((e) => `<tr class="${e.major ? "" : "minor"}"><td class="t">${e.date}</td><td class="t">${esc(S.E.kinds[e.kind] || e.kind)}</td><td class="t ev">${esc(e.title)}` +
-      (e.units && e.units.length > 1 ? ` <span class="tag">${e.units.length} units</span>` : "") + `</td><td class="t">${esc(numbers(e))}</td><td class="t">${e.seen}</td></tr>`).join("") + "</tbody></table>";
+    shown.map((e) => `<tr class="${e.major ? "" : "minor"}" data-id="${esc(e.id)}"><td class="t"><a class="evc-go" href="${window.EVC.href(e)}" title="Show this day on the charts below">${e.date}</a></td><td class="t">${esc(S.E.kinds[e.kind] || e.kind)}</td><td class="t ev">${esc(e.title)}` +
+      (e.units && e.units.length > 1 ? ` <span class="tag">${e.units.length} units</span>` : "") + window.EVC.button(e) + `</td><td class="t">${esc(numbers(e))}</td><td class="t">${e.seen}</td></tr>`).join("") + "</tbody></table>";
 }
 
 // ---- subscribe ---------------------------------------------------------------------------
@@ -107,5 +107,19 @@ function draw(ev) {
   });
 }
 $("changes-more").addEventListener("click", () => { S.all = true; drawTable(); });
+// a change's date reopens this page on its day and panel; its Chart button draws what happened (event-chart.js)
+$("changes-table").addEventListener("click", (ev) => {
+  const a = ev.target.closest("a.evc-go");
+  if (a) {   // same address but the hash: the page reads its view only on load, so load it again
+    ev.preventDefault();
+    const to = new URL(a.href), here = new URL(location.href);
+    location.href = to.href;
+    if (to.pathname === here.pathname && to.search === here.search) location.reload();
+    return;
+  }
+  const b = ev.target.closest(".evc-btn"); if (!b) return;
+  const tr = b.closest("tr"), e = S.E.events.find((x) => x.id === tr.dataset.id);
+  if (e) window.EVC.toggle(tr, e, tr.children.length, S.E.kinds);
+});
 window.addEventListener("unitchange", draw);
 })();
