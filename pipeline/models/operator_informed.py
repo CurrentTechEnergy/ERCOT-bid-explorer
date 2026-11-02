@@ -19,6 +19,18 @@ the share of the last three hours it sat at minimum, and its own recent days at 
 online at h the day before, the share of the last seven days online at h, and the shares of those
 days it turned on and turned off at h.  Nothing from hour h on is used.
 
+v7 (Nov 2026) shares its facts with the decision table (pipeline/decision_table.py, the ride-through
+definition agreed with Blair): the DAM make-whole commitment (an award of at least AWARD_LSL x LSL
+while the DAM resource status is not on) at h and over the next AHEAD hours, any DAM ancillary
+service award likewise, and the net saving of going off at h (_shutdown: the best stretch at least
+the unit's minimum off time long, the 10th percentile of its clean off spells over the year before,
+less a hot or intermediate restart).  Backtest with the real hub gas (analysis/backtest/run.py),
+Feb-Aug 2026, v6 -> v7: CC Brier 0.0221 -> 0.0219, cheap-hour turn-offs caught 435 -> 437 of 564
+with 96 -> 97 false, all turn-ons false 350 -> 369; gas steam Brier 0.0407 -> 0.0395.  Two other
+parts did worse and were left out: the loss ahead reaching into the next day once its DA prices are
+out (cheap-hour turn-offs 444 caught with 91 false, but turn-ons false 394 and Brier worse), and gas
+steam at 13.3 MMBtu/MWh (10.4 x the decision table's MIN_LOAD).
+
 The recent days (v6, Oct 2026) catch the units that cycle on a daily pattern the day-ahead
 market doesn't show, such as ETCCS_CC1, off for the midday solar trough and back on in the
 afternoon on most days with its DAM status OFF.  Day mode, Feb-Aug 2026, CC turn-offs caught
@@ -98,7 +110,7 @@ from ..guide import EIA_HR
 from ..store import read_json_gz, write_json_gz
 
 NAME = "operator_informed"
-VERSION = "v6"   # v6: the unit's own recent days at each hour (_habit); v5: v4 again, with Graham really at Ship Channel (the v4 run read the hubs from before fuel_hub.REFIT); v4: Graham at Houston Ship Channel (fuel_hub.REFIT), and RUC left out of the scores as well as the fits; v3: gas at each unit's own hub (Waha or Houston Ship Channel), not Houston Ship Channel for all; v1: transitions with per-unit intercepts and slopes; v2: the COP only beside the main call, margins at gas cost
+VERSION = "v7"   # v7: aligned with the decision table (Nov 2026): DAM make-whole commitment and AS awards, the best shutdown's net saving (at least the unit's minimum off time, restart hot or intermediate), a 1 h offline blip is not a switch for any unit; v6: the unit's own recent days at each hour (_habit); v5: v4 again, with Graham really at Ship Channel (the v4 run read the hubs from before fuel_hub.REFIT); v4: Graham at Houston Ship Channel (fuel_hub.REFIT), and RUC left out of the scores as well as the fits; v3: gas at each unit's own hub (Waha or Houston Ship Channel), not Houston Ship Channel for all; v1: transitions with per-unit intercepts and slopes; v2: the COP only beside the main call, margins at gas cost
 TECHS = ("combined_cycle", "gas_steam")
 AHEAD = 6            # hours of award looked at ahead of h
 MIN_AWARD = 1.1      # an award at most this x LSL counts as holding at minimum (day mode)
@@ -121,13 +133,20 @@ FEATURES = ("margin", "loss ahead", "loss ahead against its start cost", "profit
             "COP plan on", "COP plan on ahead", "COP plan known",
             "margin at gas cost", "loss ahead at gas cost", "profit ahead at gas cost",
             "on this hour yesterday", "on this hour, last 7 days", "turned on this hour, last 7 days",
-            "turned off this hour, last 7 days")
+            "turned off this hour, last 7 days",
+            "DAM commitment", "DAM commitment ahead", "AS award", "AS award ahead",
+            "net saving of shutting", "net saving of shutting against its start cost")
 HABIT = 25           # first of the four recent-days columns (_habit)
-DRIVERS = [("price against its cost", (0, 1, 3, 4, 22, 23, 24)), ("loss against its start cost", (2,)),
-           ("DAM award", (5, 6, 7, 17, 18)), ("DAM status", (8,)), ("time in its state", (11, 12)),
+ALIGN = 29           # first of the v7 columns: make-whole commitment, AS, best shutdown (decision table)
+DRIVERS = [("price against its cost", (0, 1, 3, 4, 22, 23, 24)), ("loss against its start cost", (2, 33, 34)),
+           ("DAM award", (5, 6, 7, 17, 18, 29, 30)), ("ancillary services", (31, 32)), ("DAM status", (8,)), ("time in its state", (11, 12)),
            ("sitting at minimum", (13,)), ("hour and season", (10, 14, 15, 16)),
            ("its own COP plan", (19, 20, 21)), ("its recent days", (25, 26, 27, 28))]
-HEAT_RATE = {"combined_cycle": EIA_HR["combined_cycle"], "gas_steam": 10.4}   # MMBtu/MWh; gas steam: EIA Electric Power Annual table 8.2, approximate
+HEAT_RATE = {"combined_cycle": EIA_HR["combined_cycle"], "gas_steam": 10.4}   # MMBtu/MWh; gas steam: EIA Electric Power Annual table 8.2, approximate (x 1.28 at minimum, as the decision table, did worse: Nov 2026)
+OFF_MIN_H = 2        # offline hours a shutdown needs: a single offline hour between online hours is a blip (decision_table)
+OFF_DEFAULT = {"combined_cycle": 4.0, "gas_steam": 8.0}   # minimum off time without OFF_SPELLS clean spells (decision_table)
+OFF_SPELLS, OFF_DAYS = 3, 365
+MAX_OFF, HOT_H = 24, 8   # longest shutdown weighed; restart hot up to HOT_H hours off
 SEASON = {12: 0, 1: 0, 2: 0, 3: 1, 4: 1, 5: 1, 6: 2, 7: 2, 8: 2, 9: 3, 10: 3, 11: 3}
 
 
@@ -137,18 +156,18 @@ def _on(c):
 
 # ------------------------------------------------------------------ data --
 def _states(ctx):
-    """{train: state array} on the stats' calendar, a CC train's single offline hour between
-    online hours read as a configuration change (pipeline.decisions)."""
+    """{train: state array} on the stats' calendar, a single offline hour between online hours
+    read as online: a CC train's configuration change (pipeline.decisions), and for any unit a
+    blip, not a shutdown (the decision table's OFF_MIN_H; gas steam too from v7)."""
     cache = ctx.__dict__.setdefault("_oi_states", {})
     if not cache:
         for key, (t, st) in ctx.raw_states().items():
             if t not in TECHS:
                 continue
             st = st.copy()
-            if t == "combined_cycle":
-                run = np.isin(st, ["m", "a"])
-                gap = (~run[1:-1]) & run[:-2] & run[2:] & (st[1:-1] == "0")
-                st[1:-1][gap] = "m"
+            run = np.isin(st, ["m", "a"])
+            gap = (~run[1:-1]) & run[:-2] & run[2:] & (st[1:-1] == "0")
+            st[1:-1][gap] = "m"
             cache[key] = (t, st)
     return cache
 
@@ -166,6 +185,44 @@ def _status(dd):
         on = np.array([float(str(s).upper() in ON_STATUS) for s in (list(sh) + [""] * 24)[:24]])
         out[key] = np.maximum(out.get(key, np.zeros(24)), on)
     return out
+
+
+def _as(dd):
+    """{train: [24] MW of DAM ancillary service awards, every service and configuration}."""
+    from ..intraday import train_of
+    out = {}
+    for name, u in dd.get("units", {}).items():
+        t, a = u.get("tech"), u.get("as") or {}
+        if t not in TECHS or not a:
+            continue
+        key = train_of(name) if t == "combined_cycle" else name
+        v = out.setdefault(key, np.zeros(24))
+        for x in a.values():
+            x = list(x or [])[:24]
+            v[:len(x)] += np.array([w or 0.0 for w in x], float)
+    return out
+
+
+def _min_off(st, k0, tech, cache, key):
+    """The unit's minimum off time at hour index k0, as the decision table has it: the 10th
+    percentile of its clean off spells (every hour offline-available, between online hours,
+    OFF_MIN_H hours or more) that ended in the OFF_DAYS days before, OFF_DEFAULT without OFF_SPELLS
+    of them.  Worked out once a month (k0 the month's first hour)."""
+    if key not in cache:
+        sp, n, k = [], len(st), 1
+        while k < n:
+            if st[k] == "0" and _on(st[k - 1]):
+                j = k
+                while j < n and st[j] == "0":
+                    j += 1
+                if j < n and _on(st[j]) and j - k >= OFF_MIN_H:
+                    sp.append((j, j - k))
+                k = j
+            else:
+                k += 1
+        cache[key] = sp
+    lens = [ln for e, ln in cache[key] if k0 - OFF_DAYS * 24 < e <= k0]
+    return float(np.percentile(lens, 10)) if len(lens) >= OFF_SPELLS else OFF_DEFAULT[tech]
 
 
 def ruc_hours(ctx):
@@ -252,12 +309,12 @@ def _days(ctx):
     cache = ctx.__dict__.setdefault("_oi_days", {})
     if cache:
         return cache
-    carried, states, day0 = {}, _states(ctx), ctx.stats["day0"]
+    carried, states, day0, mcache = {}, _states(ctx), ctx.stats["day0"], {}
     for i, d in enumerate(ctx.uh.get("dates", [])):
         dd = ctx.dam(d)
         if not dd:
             continue
-        tr, stat, cop = _dam_trains(dd), _status(dd), _cop(ctx, d, dd)
+        tr, stat, cop, asw = _dam_trains(dd), _status(dd), _cop(ctx, d, dd), _as(dd)
         rec = {}
         for key, e in tr.items():
             if e["tech"] not in TECHS:
@@ -274,7 +331,13 @@ def _days(ctx):
                 mingen, hot, own = gc[3], gc[0], 0.0
             g = _gas_before(ctx, d, key)
             fuel = HEAT_RATE[e["tech"]] * g if g else mingen
-            rec[key] = dict(tech=e["tech"], spp=np.nan_to_num(e["spp"], nan=mingen), lsl=e["lsl"],
+            k0 = (C._d(d) - day0).days * 24
+            st_on = stat.get(key, np.ones(24))
+            rec[key] = dict(as_mw=asw.get(key, np.zeros(24)),
+                            commit=(e["aw"] >= AWARD_LSL * e["lsl"]) & (st_on < 0.5),
+                            min_off=_min_off(states[key][1], k0 - 24 * (C._d(d).day - 1), e["tech"], mcache, key)
+                            if key in states else OFF_DEFAULT[e["tech"]],
+                            inter=hot * GENERIC_COSTS[e["tech"]][1] / GENERIC_COSTS[e["tech"]][0],tech=e["tech"], spp=np.nan_to_num(e["spp"], nan=mingen), lsl=e["lsl"],
                             mingen=mingen, hot=hot, own=own, aw=e["aw"] >= AWARD_LSL * e["lsl"], aw_mw=e["aw"], fuel=fuel,
                             awmin=e["aw"] <= MIN_AWARD * e["lsl"], status=stat.get(key, np.ones(24)),
                             cop=cop.get(key, (np.full(24, 0.5), np.full(24, 0.5), np.zeros(24))),
@@ -321,12 +384,42 @@ def _static(r, month, plan="none"):
     X[:, 23] = np.log1p(gl / 1000.0)
     X[:, 24] = np.log1p(gg / 1000.0)
     X[:, HABIT:HABIT + 4] = r["habit"]
+    cm = r["commit"].astype(float)
+    X[:, ALIGN] = cm
+    X[:, ALIGN + 1] = [cm[h:h + AHEAD].mean() for h in range(24)]
+    asw = (r["as_mw"] > 0).astype(float)
+    X[:, ALIGN + 2] = asw
+    X[:, ALIGN + 3] = [asw[h:h + AHEAD].mean() for h in range(24)]
+    net = _shutdown(g, lsl, r["min_off"], r["hot"], r["inter"])
+    X[:, ALIGN + 4] = np.sign(net) * np.log1p(np.abs(net) / 1000.0)
+    X[:, ALIGN + 5] = np.clip(net / r["hot"], -5, 5)
     if plan != "none":
         da, lv, known = r["cop"]
         X[:, 19] = lv if plan == "live" else da
         X[:, 20] = np.array([da[h:h + AHEAD].mean() for h in range(24)])
         X[:, 21] = known
     return X
+
+
+def _shutdown(g, lsl, min_off, hot, inter):
+    """[24] the net saving of going off at h, as the decision table weighs a shutdown: the best
+    stretch from h at least min_off and at most MAX_OFF hours long, to the day's end, of (gas cost
+    - DA node price) x LSL (profitable hours it sits out count against it), less the restart (hot
+    up to HOT_H hours off, else intermediate).  Where no stretch that long fits, the longest that
+    does.  (Reaching into the next day once its DA prices are out did worse, Nov 2026.)"""
+    out = np.zeros(24)
+    lo = max(1, int(np.ceil(min_off - 1e-9)))
+    for h in range(24):
+        v = -g[h:min(24, h + MAX_OFF)] * lsl
+        v = v[:np.argmax(~np.isfinite(v))] if not np.isfinite(v).all() else v
+        if not len(v):
+            continue
+        cs = np.cumsum(v)
+        L = np.arange(1, len(cs) + 1)
+        ok = L >= min(lo, len(cs))
+        net = np.where(ok, cs - np.where(L <= HOT_H, hot, inter), -np.inf)
+        out[h] = net.max()
+    return out
 
 
 def _path(X, run, atmin):
