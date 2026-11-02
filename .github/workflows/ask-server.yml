@@ -1,0 +1,114 @@
+name: Deploy the Ask the data server
+
+# Deploys ask-worker/ (the Cloudflare Worker behind site/ask.html, which answers questions with
+# Claude over the site's published data) and sets up what it needs: the D1 database for its
+# limits and question log, and its secrets. Then it writes the Worker's address to site/ask.json,
+# which the page reads, and commits it.
+#
+# Needs repository secrets CLOUDFLARE_API_TOKEN (as for the follow server), ANTHROPIC_API_KEY
+# (a key from a Console workspace with a monthly spend limit), ASK_PASSCODE (shared with
+# testers) and ASK_OWNER_PASSCODE (yours: no per-visitor limit, and reads GET /log). Until the
+# Anthropic key is added, the run skips with a notice. Runs on every push to main that changes
+# ask-worker/, or by hand.
+on:
+  push:
+    branches: [main]
+    paths: ["ask-worker/**", ".github/workflows/ask-server.yml"]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: ask-server
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+      ASK_PASSCODE: ${{ secrets.ASK_PASSCODE }}
+      ASK_OWNER_PASSCODE: ${{ secrets.ASK_OWNER_PASSCODE }}
+      WRANGLER: npx --yes wrangler@4.151.3
+      CF: https://api.cloudflare.com/client/v4
+    steps:
+      - name: Check the secrets
+        id: secrets
+        run: |
+          missing=""
+          for s in CLOUDFLARE_API_TOKEN ANTHROPIC_API_KEY ASK_PASSCODE ASK_OWNER_PASSCODE; do
+            [ -n "${!s}" ] || missing="$missing $s"
+          done
+          if [ -n "$missing" ]; then
+            echo "::notice::Ask the data is not deployed: add the repository secrets$missing (see README, Ask the data)"
+            echo "ready=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "ready=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
+        if: steps.secrets.outputs.ready == 'true'
+      - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5.0.0
+        if: steps.secrets.outputs.ready == 'true'
+        with:
+          node-version: "22"
+
+      - name: Find the account and its workers.dev subdomain
+        if: steps.secrets.outputs.ready == 'true'
+        run: |
+          auth=(-H "Authorization: Bearer $CLOUDFLARE_API_TOKEN")
+          acct=$(curl -sf "${auth[@]}" "$CF/accounts" | jq -r '.result[0].id // empty')
+          [ -n "$acct" ] || { echo "::error::The Cloudflare token can't see an account: give it Account Settings: Read"; exit 1; }
+          echo "CLOUDFLARE_ACCOUNT_ID=$acct" >> "$GITHUB_ENV"
+          sub=$(curl -s "${auth[@]}" "$CF/accounts/$acct/workers/subdomain" | jq -r '.result.subdomain // empty')
+          [ -n "$sub" ] || { echo "::error::No workers.dev subdomain: run Deploy the follow server once first, which claims one"; exit 1; }
+          echo "SUBDOMAIN=$sub" >> "$GITHUB_ENV"
+
+      - name: Install the Worker's packages
+        if: steps.secrets.outputs.ready == 'true'
+        working-directory: ask-worker
+        run: npm ci
+
+      - name: Create the database if needed and apply the tables
+        if: steps.secrets.outputs.ready == 'true'
+        working-directory: ask-worker
+        run: |
+          id=$($WRANGLER d1 list --json | jq -r '.[] | select(.name == "ercot-ask") | .uuid')
+          if [ -z "$id" ]; then
+            $WRANGLER d1 create ercot-ask
+            id=$($WRANGLER d1 list --json | jq -r '.[] | select(.name == "ercot-ask") | .uuid')
+          fi
+          [ -n "$id" ] || { echo "::error::Couldn't create the D1 database: give the token D1: Edit"; exit 1; }
+          sed -i "s/DATABASE_ID/$id/" wrangler.toml
+          $WRANGLER d1 execute ercot-ask --remote --file schema.sql
+
+      - name: Deploy the Worker and give it its secrets
+        if: steps.secrets.outputs.ready == 'true'
+        working-directory: ask-worker
+        run: |
+          $WRANGLER deploy
+          jq -n --arg a "$ANTHROPIC_API_KEY" --arg p "$ASK_PASSCODE" --arg o "$ASK_OWNER_PASSCODE" \
+            '{ANTHROPIC_API_KEY: $a, ASK_PASSCODE: $p, ASK_OWNER_PASSCODE: $o}' > /tmp/secrets.json
+          $WRANGLER secret bulk /tmp/secrets.json
+          rm /tmp/secrets.json
+
+      - name: Record the Worker's address for the site
+        if: steps.secrets.outputs.ready == 'true'
+        run: |
+          url="https://ercot-ask.$SUBDOMAIN.workers.dev"
+          curl -sf "$url/" > /dev/null || echo "::warning::$url didn't answer yet"
+          printf '{"url":"%s"}\n' "$url" > site/ask.json
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout -- ask-worker     # drop the database id filled into wrangler.toml
+          git add site/ask.json
+          if git diff --cached --quiet; then echo "Address unchanged: $url"; exit 0; fi
+          git commit -m "Ask the data server address: $url"
+          for attempt in 1 2 3 4 5; do
+            git pull --rebase origin "${GITHUB_REF_NAME}" && git push origin "HEAD:${GITHUB_REF_NAME}" && exit 0
+            sleep $((attempt * 10))
+          done
+          echo "::error::Could not push site/ask.json"; exit 1

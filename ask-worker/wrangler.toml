@@ -1,0 +1,26 @@
+# Cloudflare Worker behind the site's "Ask the data" page (see src/index.js).
+# Deployed by .github/workflows/ask-server.yml, which fills in the database id and sets the
+# secrets ANTHROPIC_API_KEY, ASK_PASSCODE and ASK_OWNER_PASSCODE.
+name = "ercot-ask"
+main = "src/index.js"
+compatibility_date = "2025-09-01"
+compatibility_flags = ["nodejs_compat"]
+workers_dev = true
+
+[vars]
+SITE_URL = "https://ercotbids.currenttech.energy/"
+MODEL = "claude-opus-5-5"
+EFFORT = "medium"
+PER_VISITOR_PER_DAY = "5"     # questions a visitor (by IP) can ask in a UTC day; the owner passcode is exempt
+DAILY_USD = "5"               # stop answering for the rest of the UTC day once this much is spent
+MONTHLY_USD = "100"           # and for the rest of the month at this; the Anthropic Console spend limit is the hard ceiling
+QUESTION_USD = "1.5"          # stop one question's tool loop once it has cost this much
+MAX_ROUNDS = "8"              # model calls per question
+
+[limits]
+cpu_ms = 30000                # parsing the month files takes more than the free plan's 10 ms (needs Workers Paid)
+
+[[d1_databases]]
+binding = "DB"
+database_name = "ercot-ask"
+database_id = "DATABASE_ID"

@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Ask the data · ERCOT Bids</title>
+<meta name="description" content="Ask questions of the ERCOT bid explorer's data.">
+<meta name="robots" content="noindex">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/favicon.ico" sizes="48x48">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Sans+Condensed:wght@600&display=swap">
+<link rel="stylesheet" href="style.css">
+<style>
+  .ask { display: flex; flex-direction: column; gap: 16px; margin-top: 16px; }
+  .ask form { display: flex; flex-direction: column; gap: 10px; }
+  .ask textarea, .ask input[type=password] { font: inherit; color: var(--ink); background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 8px 10px; width: 100%; }
+  .ask textarea { min-height: 84px; resize: vertical; }
+  .ask textarea:focus-visible, .ask input:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .ask-row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+  .ask-go { font: 500 14px var(--font-ui); color: var(--surface); background: var(--ink); border: 1px solid var(--ink); border-radius: 6px; padding: 8px 18px; min-height: 38px; cursor: pointer; }
+  .ask-go:disabled { opacity: 0.45; cursor: not-allowed; }
+  .ask-msg { margin: 0; font-size: 13px; color: var(--ink-2); }
+  .ask-msg.err { color: var(--c8); }
+  .examples { display: flex; flex-wrap: wrap; gap: 6px; }
+  .examples button { font: inherit; font-size: 12.5px; color: var(--ink-2); background: none; border: 1px solid var(--line); border-radius: 14px; padding: 3px 10px; cursor: pointer; text-align: left; }
+  .examples button:hover { color: var(--ink); background: var(--accent-soft); }
+  .turn { display: flex; flex-direction: column; gap: 10px; }
+  .turn .q { margin: 0; font-weight: 600; }
+  .turn .a { color: var(--ink); line-height: 1.55; overflow-x: auto; }
+  .turn .a p { margin: 0 0 10px; }
+  .turn .a ul, .turn .a ol { margin: 0 0 10px; padding-left: 20px; }
+  .turn .a a { color: var(--accent); }
+  .turn .a table { margin: 4px 0 12px; }
+  .turn .meta { font-size: 12px; color: var(--muted); margin: 0; }
+  .turn h3 { margin: 6px 0 0; font: 600 13px var(--font-ui); color: var(--ink-2); }
+  .panel h2 { margin: 0; font: 600 16px var(--font-head); }
+  .pass-row[hidden] { display: none; }
+  #new { font: inherit; font-size: 13px; color: var(--ink-2); background: none; border: 1px solid var(--line); border-radius: 6px; padding: 6px 12px; cursor: pointer; }
+  #new[hidden] { display: none; }
+</style>
+</head>
+<body>
+<div class="page">
+
+<header class="masthead">
+  <div class="brand">
+    <div class="nav-row"><nav class="nav" aria-label="Pages"><a href="goal.html">Will fossil turn off?</a><a href="index.html">A day in ERCOT</a><a href="prices.html">Prices</a><a href="dayahead.html">Day-ahead offers</a><a href="commitment.html">Turn-ons and Turn-offs</a><a href="beyond.html">Real-time offers</a><a href="renewables.html">Renewables</a><a href="batteries.html">Batteries</a><a href="unit.html">Units</a><span class="nav-sep" aria-hidden="true"></span><a href="changes.html" class="aux">What's changing</a><a href="fleet.html" class="aux">Fleet economics</a><a href="guide.html" class="aux">How offers work</a></nav></div>
+    <h1>Ask the data</h1>
+    <p class="sub">Ask about how ERCOT units offered, ran and were paid, in plain words. Answers come from this site's published data, and every change an answer mentions links to its day and a chart of what happened. A test version: answers can be wrong, so check the linked pages.</p>
+  </div>
+</header>
+
+<main class="ask">
+  <section class="panel" aria-labelledby="ask-h">
+    <h2 id="ask-h">Your question</h2>
+    <form id="ask-form">
+      <div class="ask-row pass-row" id="pass-row">
+        <label class="lbl" for="pass">Passcode</label>
+        <input type="password" id="pass" autocomplete="current-password" style="max-width:240px">
+      </div>
+      <textarea id="q" maxlength="1500" placeholder="e.g. What did Outpost Solar offer during Winter Storm Fern, and why was it dispatched to zero?"></textarea>
+      <div class="examples" id="examples"></div>
+      <div class="ask-row">
+        <button type="submit" class="ask-go" id="go">Ask</button>
+        <button type="button" class="btn" id="new" hidden>New conversation</button>
+        <p class="ask-msg" id="msg" role="status"></p>
+      </div>
+    </form>
+  </section>
+  <div id="turns" class="ask"></div>
+</main>
+
+<footer class="foot">
+  <p>Answers are written by Claude (Anthropic) from the site's published data: ERCOT's 60-Day SCED and DAM disclosures (NP3-965-ER, NP3-966-ER), settlement point prices (NP6-905-CD, NP4-190-CD) and the site's detected changes. Questions and answers are logged to improve the tool. Don't enter personal information.</p>
+  <p>Made by <a href="https://currenttech.energy">currenttech.energy</a> · <a href="contact.html">Contact</a></p>
+  <p>Not affiliated with or endorsed by ERCOT. ERCOT is a registered trademark of the Electric Reliability Council of Texas, Inc.</p>
+  <p>© 2026 CurrentTech Energy. All rights reserved. For information only; not trading or investment advice. <a href="terms.html">Terms and privacy</a></p>
+</footer>
+</div>
+<script src="vendor/d3.min.js"></script>
+<script src="common.js"></script>
+<script src="event-chart.js"></script>
+<script src="ask.js"></script>
+</body>
+</html>
