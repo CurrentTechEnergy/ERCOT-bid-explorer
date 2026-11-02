@@ -259,8 +259,8 @@ function drawHeadline() {
   if (dis) {
     tiles.push(`<li><div class="k"><i class="sw" style="background:var(${STORAGE.color})"></i>${STORAGE.label}</div>` +
       `<div class="v"><span class="nw">${fmtGWh(d3.sum(dis) / 1000)} GWh <small>(discharge)</small></span> <span class="nw">${fmtGWh(-d3.sum(chg) / 1000)} GWh <small>(charge)</small></span></div>` +
-      `<div class="w"><b>${fmtGW(d3.max(dis))} GW</b> discharging at the peak hour, <b>${fmtGW(-d3.min(chg))} GW</b> charging at most</div>` +
-      `<div class="w2">the whole battery fleet</div></li>`);
+      `<div class="w"><b>${fmtGW(d3.max(dis))} GW</b> discharging at most in ${heLabel(d3.maxIndex(dis.map((v) => (v == null ? -Infinity : v))))}, ` +
+      `<b>${fmtGW(-d3.min(chg))} GW</b> charging at most in ${heLabel(d3.minIndex(chg.map((v) => (v == null ? Infinity : v))))}</div></li>`);
   }
   $("expect").innerHTML = tiles.join("") || `<li><div class="w">No generation data for this day yet.</div></li>`;
   $("headline-note").textContent = `${S.date} · ${L === "60d" ? "60-day disclosure" : L === "2d" ? "2-day summary" : "prices only"}`;
