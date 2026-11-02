@@ -343,6 +343,7 @@ const linkedPanel = new URLSearchParams(location.hash.slice(1)).get("p");
 function panelFromLink() {
   const el = linkedPanel && document.getElementById(linkedPanel);
   if (el && !el.hidden) el.scrollIntoView({ block: "start" });
+  return !!(el && !el.hidden);
 }
 
 // ---------------------------------------------------------- find a unit ---

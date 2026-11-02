@@ -308,3 +308,12 @@ body.no-pred .pred { display: none !important; }
 .data td .neg { color: var(--c8); }
 /* a small label beside a name or group, such as Peaker (common.js peakerTag) */
 .tag { display: inline-block; font-size: 11px; padding: 0 5px; border: 1px solid var(--line); border-radius: 4px; color: var(--muted); margin-left: 4px; white-space: nowrap; }
+
+/* a change's chart, opened under its row (event-chart.js) */
+.evc-btn { margin-left: 6px; padding: 1px 8px; font: inherit; font-size: 11.5px; color: var(--accent); background: none; border: 1px solid var(--line); border-radius: 4px; cursor: pointer; }
+.evc-btn:hover, .evc-btn[aria-expanded="true"] { background: var(--accent-soft); }
+table.data tr.evc-row td { white-space: normal; padding: 4px 0 12px; }
+table.data tr.evc-row:hover td { background: none; }
+.evc { position: sticky; left: 0; }
+.evc svg { display: block; }
+.units-wrap:has(.evc-row) { max-height: none; }

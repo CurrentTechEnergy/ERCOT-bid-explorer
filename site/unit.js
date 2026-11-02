@@ -943,6 +943,8 @@ async function boot() {
   S.fcDay = v.fc || null;
   S.hour = v.he ? +v.he - 1 : null;
   if (want && S.list.has(want)) select(want, v.cfg, true); else draw();
+  // a link from a change (event-chart.js) names a panel: scroll there once it has drawn, for up to 10 s
+  if (v.p) { let n = 0; const go = () => { if (!window.CX.panelFromLink() && ++n < 40) setTimeout(go, 250); else if (n < 40) setTimeout(() => window.CX.panelFromLink(), 600); }; setTimeout(go, 300); }
   let t, lastW = 0;
   new ResizeObserver((en) => { const w = Math.round(en[0].contentRect.width); if (w === lastW) return; lastW = w; clearTimeout(t); t = setTimeout(() => { draw(); window.dispatchEvent(new CustomEvent("unitresize")); }, 150); }).observe(document.querySelector("main"));
 }
