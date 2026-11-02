@@ -72,7 +72,7 @@ from .store import read_json_gz, write_json_gz
 from . import gascost
 from .trends import UNIT_TECHS
 
-OUT_MIN_H = 4        # an off spell needs this many hours to be a shutdown; see trends.js ST_OUT_MIN_H
+OUT_MIN_H = 2        # an off spell needs this many hours to be a shutdown (was 4 to Nov 2026); see commitment.js ST_OUT_MIN_H
 AWARD_LSL = 0.9      # an hour is covered by an award of at least this share of LSL
 HALF = 0.5           # award share at which a day's window counts as covered
 LOSS_LSL = "running"   # a CC train's loss at the LSL of its configurations online in HE1 (was the smallest)

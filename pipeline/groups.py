@@ -52,7 +52,7 @@ from .config import DATA_DIR
 from .store import read_json_gz, write_json_gz
 from .trends import listed_units, unit_techs
 
-OUT_MIN_H = 4
+OUT_MIN_H = 2        # offline hours an off spell needs (was 4 to Nov 2026): shorter is a configuration swap or a blip
 OUT_ANY_TECHS = ("coal",)     # any outage hour in a non-running spell makes it an outage
 GROUPS = [
     ["never", "Always on when available", "no shutdown on price in the period; off only for outages"],

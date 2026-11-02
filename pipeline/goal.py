@@ -44,7 +44,7 @@ from .intraday import train_of
 from .store import read_json_gz, write_json_gz
 
 PATH = DATA_DIR / "goal.json.gz"
-VERSION = "v7"   # v7: decision table d2 (operator's-view loss windows, buckets, coal out); v5: cheap hours on DA system lambda (was the DA hub average)
+VERSION = "v8"   # v8: 2 h off spells (were 4 h); v7: decision table d2 (operator's-view loss windows, buckets, coal out); v5: cheap hours on DA system lambda (was the DA hub average)
 START = "2019-01"
 CHEAP = 10.0          # $/MWh, day-ahead system lambda: a cheap hour
 OVER_PRICE = 5.0      # $/MWh, real-time hub average: an oversupply hour
@@ -52,7 +52,7 @@ CONGESTED = 5.0       # $/MWh: a unit's DA node this far below the DA bus averag
 CURT_MIN = 0.5        # MW: smaller unit-hour curtailment is noise
 OVER_CURT_MIN = 100.0  # MW of uncongested curtailment for an oversupply hour to count in the fossil split
 MIDDAY = (8, 19)      # hours ending of the cheap midday stretch (question 2's award chart)
-OUT_MIN_H = 4         # offline hours an off spell needs (as pipeline/groups.py)
+OUT_MIN_H = 2         # offline hours an off spell needs (as pipeline/groups.py; was 4 to Nov 2026)
 FOSSIL = ("coal", "combined_cycle", "gas_steam")
 # question 4: a CC or gas steam unit at minimum in an hour of one of its loss windows (decision table)
 # is held on (a DAM commitment, AS or RUC), losing more than a restart costs (bucket "more"), or
