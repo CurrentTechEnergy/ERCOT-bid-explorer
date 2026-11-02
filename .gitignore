@@ -10,3 +10,6 @@ __pycache__/
 /decision-model/
 /cc-sizing/
 /private/
+ask-worker/node_modules/
+ask-worker/.dev.vars
+ask-worker/.wrangler/

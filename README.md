@@ -58,6 +58,8 @@ python -m pipeline.validate --all --no-fail   # re-check every day
 
 Subscriber emails (optional): the Unit page's Subscribe box signs people up with the follow server in `worker/`, a free Cloudflare Worker that confirms each follow by email and keeps the list in a D1 database; the daily send emails each follower through [Resend](https://resend.com). Setup, once: add the repository secrets `CLOUDFLARE_API_TOKEN` (a Cloudflare API token with Workers Scripts: Edit, D1: Edit and Account Settings: Read), `RESEND_API_KEY` (with your sending domain verified in Resend) and `OWNER_EMAIL` (gets a daily digest of what went out), then run **Deploy the follow server** in the Actions tab; it creates the database, deploys the Worker and writes its address to `site/follow.json`. Set a repository *variable* `NOTIFY_DRY_RUN` = `1` to see the emails on the run summary without sending them; **Subscriber emails (manual)** in the Actions tab does the same by hand.
 
+Ask the data (optional): `site/ask.html` answers questions about the published data with Claude, through the Worker in `ask-worker/`. The Worker gives the model read-only tools over files the site already publishes (unit search, a unit's hours, a fleet's days, prices, identified changes); it never calls ERCOT. It is behind a passcode, and it limits each visitor to 5 questions a day, spending to $5 a day and $100 a month (counted from each answer's tokens), and each question to $1.50 and 8 tool rounds (`ask-worker/wrangler.toml`). Every question, answer, tool call and cost is logged in its D1 database; `GET /log` with the owner passcode shows them. Setup, once: in the Anthropic Console make a workspace with a $100 monthly spend limit (the hard ceiling) and an API key in it, add the repository secrets `ANTHROPIC_API_KEY`, `ASK_PASSCODE` (for testers) and `ASK_OWNER_PASSCODE` (no per-visitor limit, reads the log), and run **Deploy the Ask the data server** in the Actions tab; it uses the same `CLOUDFLARE_API_TOKEN`, creates the database, deploys the Worker and writes its address to `site/ask.json`. The Worker's 30-second CPU limit needs the Workers Paid plan.
+
 ### Loading history
 
 From the Actions tab, run **Update ERCOT data** with a backfill start and end date (operating days). Each run processes up to `max_files` reports per report type; run it again to continue. Locally:
@@ -190,11 +192,14 @@ site/
                    curtail_nodes.json.gz, marginal_nodes.json.gz, gas.json.gz, gas_hubs.json.gz,
                    series/, storage/, operator/
   follow.json      the follow server's address (written by Deploy the follow server)
+  ask.json         the Ask the data server's address (written by Deploy the Ask the data server)
   unit/            one link-preview page per unit (pipeline/share_pages.py): the unit's title, description
                    and Open Graph tags, and a redirect to unit.html?unit=NAME. Served at /unit/NAME
   share-card.png   the image every page's link preview shows
 worker/            the follow server: a Cloudflare Worker (src/index.js) that signs people up for a
                    unit's emails, confirms them and unsubscribes them; schema.sql is its D1 database
+ask-worker/        the Ask the data server: a Cloudflare Worker (src/index.js, tools in src/tools.js, system
+                   prompt in src/prompt.js) that answers questions with Claude; schema.sql is its D1 database
 ```
 
 ### Page titles and link previews
