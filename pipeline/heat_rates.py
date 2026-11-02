@@ -89,7 +89,11 @@ def coal_price(unit, date):
     the plant's own price that month (own True) where it reports one (public power: Fayette,
     J K Spruce, San Miguel), else the month's average over the Texas plants reporting
     subbituminous coal (the merchant plants withhold theirs).  A month after the last in the file
-    takes the latest month; before the first, the first; no file entry at all, COAL_PRICE."""
+    takes the latest month; before the first, the first; no file entry at all, COAL_PRICE.
+    San Miguel's own price (about $3.2 to $4/MMBtu) is its mine-mouth South Texas lignite: 10.3
+    MMBtu/ton and 30% ash, against about 17 and 5% for Powder River Basin coal, from a dedicated
+    cost-plus mine whose fixed costs are spread over a falling burn, so much of it is not saved
+    by backing down.  Oak Grove burns lignite too (13.6 MMBtu/ton) but withholds its price."""
     c = _coal()
     m = date[:7]
     for key, own in ((c["plant"].get(unit), True), ("*", False)):
