@@ -242,7 +242,7 @@ function drawHeadline() {
   if (!ref) $("lede-sub").textContent = "";
   const tiles = [];
   const tile = (label, color, gwh, avgLine, note, src) => `<li><div class="k"><i class="sw" style="background:var(${color})"></i>${label}</div><div class="v">${fmtGWh(gwh)} GWh</div>` +
-    `<div class="w">${avgLine} (${src})</div><div class="w2">${note}</div></li>`;
+    `<div class="w">${avgLine}</div><div class="w2">${note}</div></li>`;
   const avgOf = (vals) => { const ok = vals.filter((v) => v != null), pk = d3.max(ok), pkH = d3.maxIndex(vals.map((v) => (v == null ? -Infinity : v))); return `<b>${fmtGW(d3.sum(ok) / 24)} GW</b> on average, <b>${fmtGW(pk)} GW</b> at most in ${heLabel(pkH)}`; };
   if (a60) {
     CATS.forEach(([k, label, color, note]) => { if (a60.cat[k]) tiles.push(tile(label, color, d3.sum(a60.cat[k]) / 1000, avgOf(a60.cat[k]), note, "60-day disclosure")); });
@@ -259,7 +259,7 @@ function drawHeadline() {
   if (dis) {
     tiles.push(`<li><div class="k"><i class="sw" style="background:var(${STORAGE.color})"></i>${STORAGE.label}</div>` +
       `<div class="v"><span class="nw">${fmtGWh(d3.sum(dis) / 1000)} GWh <small>(discharge)</small></span> <span class="nw">${fmtGWh(-d3.sum(chg) / 1000)} GWh <small>(charge)</small></span></div>` +
-      `<div class="w"><b>${fmtGW(d3.max(dis))} GW</b> discharging at the peak hour, <b>${fmtGW(-d3.min(chg))} GW</b> charging at most (${a60 ? "60-day disclosure" : "2-day summary"})</div>` +
+      `<div class="w"><b>${fmtGW(d3.max(dis))} GW</b> discharging at the peak hour, <b>${fmtGW(-d3.min(chg))} GW</b> charging at most</div>` +
       `<div class="w2">the whole battery fleet</div></li>`);
   }
   $("expect").innerHTML = tiles.join("") || `<li><div class="w">No generation data for this day yet.</div></li>`;
