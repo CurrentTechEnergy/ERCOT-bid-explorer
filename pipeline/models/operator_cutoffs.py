@@ -47,12 +47,12 @@ HIST_PATH = OUT_DIR / "cutoffs_history.json.gz"
 UNIT_DIR = OUT_DIR / "cutoffs_unit"
 HISTORY_BUDGET = 60 * 60   # seconds a run may spend on history days (all of them took 53 min locally, Oct 30 2026)
 SAVE_EVERY = 60            # history days between saves, so a run cut short keeps its work
-MIN_DOWN = 3       # hours: the shortest off spell that counts, and the minimum down time until a unit has enough
+MIN_DOWN = 2       # hours: the shortest off spell that counts, and the minimum down time until a unit has enough (was 3 to Nov 2026)
 MIN_SPELLS = 3     # off spells a unit needs before its own minimum down time is used
 SHIFT = (-200.0, 400.0)   # $/MWh, the range searched
 TOL = 2.0          # $/MWh, bisection stops when the bracket is this narrow
 COLUMNS = ("unit", "tech", "lsl", "award", "saving", "turn_off", "off", "min_down")
-CUT_VERSION = "c3"   # c2: the search goes one way from the day's prices; c3: states with intraday.empty_hour
+CUT_VERSION = "c4"   # c4: 2 h minimum off spell (was 3); c2: the search goes one way from the day's prices; c3: states with intraday.empty_hour
 MEASURE = "saving from being off over the best stretch at least its minimum down time long, $/MW of LSL"
 
 
