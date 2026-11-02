@@ -1,8 +1,9 @@
 /* Beyond baseload, across days: offers against fuel (thermal offer-price quantiles, gas hubs and
-   implied heat rate), marginal generation by settled price and marginality at the node, lifted
-   from trends.js. Reads data/trends_60d.json.gz, data/curve_trends.json.gz,
-   data/gas.json.gz, data/gas_hub_avg.json.gz, data/implied_hr_60d.json.gz, data/marginal_*.json.gz, data/marginal_nodes.json.gz and
-   data/summary_prices.json.gz.
+   implied heat rate), marginal generation by settled price, marginality at the node, and the thermal
+   units above minimum in cheap hours, lifted from trends.js. Reads data/trends_60d.json.gz,
+   data/curve_trends.json.gz, data/gas.json.gz, data/gas_hub_avg.json.gz, data/implied_hr_60d.json.gz,
+   data/marginal_*.json.gz, data/marginal_nodes.json.gz, data/summary_prices.json.gz and (when its
+   panel nears view) data/intraday_60d.json.gz.
    The one-day panels on the same page are beyond-day.js, which also owns the status line and the
    shared chart controls (CX.init). */
 (() => {
@@ -20,25 +21,6 @@ const TECHS = [
   { id: "other", keys: ["hydro", "other"], label: "Other (hydro, diesel, biomass)", color: "--c-other" },
 ];
 const THERMAL = ["nuclear", "coal", "combined_cycle", "gas_steam", "combustion_turbine"];
-const FLOOR_TECHS = TECHS.filter((s) => !["wind", "solar"].includes(s.id));   // wind and solar have their own chart
-const FLOOR_NOTES = {
-  le20_sced: "MW priced at or below −$20 in the curves SCED dispatched against, hour by hour. In those curves ERCOT fills in prices a unit didn't offer. Units that offer have the MW below their first offered point, usually minimum output, at −$20 (−$50 for some units). Units with no offer curve sit at −$250 with the rest of their output schedule at −$249.99 if they are nuclear or hydro, and at −$20 or −$50 otherwise. This counts all of that, plus anything generators themselves offered at or below −$20. Storage below zero is charging bid at or below −$20.",
-  floor_sced: "MW priced at the −$250 floor (or −$249.99) in the curves SCED dispatched against, hour by hour. ERCOT puts only units with no offer curve there, mostly nuclear and hydro. Minimum output of units that offer sits at −$20 (−$50 for some units), so it is counted under ≤ −$20, as used, not here. Storage below zero is charging bid at the floor.",
-  floor_submitted: "MW the generators themselves priced at the −$250 floor in the offer curves they submitted, hour by hour.",
-  le0_sub_lsl: "MW above minimum output (LSL) that the generators themselves priced at or below $0 in the offer curves they submitted, averaged over each hour's SCED runs. Thermal technologies only. Minimum output is left out because SCED cannot dispatch below it: many curves start at 0 MW at −$250 and climb to the unit's real price, which puts MW at or below $0 by interpolation, all of it below LSL.",
-};
-// floor chart grouped by shutdown behaviour: nuclear on its own (no offer curve, never moves),
-// the other thermal units by the groups of the cheap-stretches panel (ST_GROUPS, from the
-// hourly unit strips). Only the "≤ −$20, as used" measure has per-unit values (units[i].le20).
-const FLOOR_GROUPS = [
-  { id: "nuclear", label: "Nuclear (no offer curve)", color: "--c5" },
-  { id: "never", label: "Always on when available", color: "--c1" },
-  { id: "multiday", label: "Multi-day: off a day or more", color: "--c2" },
-  { id: "daily1", label: "Daily, under 1 shutdown a week", color: "--c8" },
-  { id: "daily2", label: "Daily, 1–2 a week", color: "--c3" },
-  { id: "daily3", label: "Daily, over 2 a week", color: "--c4" },
-];
-const FLOOR_GROUP_NOTE = "MW priced at or below −$20 in the curves SCED dispatched against, summed over thermal units grouped by how they ran over the whole period (the groups of the cheap-stretches panel below; nuclear separately, since it has no offer curve and its whole output sits at the floor). For units that offer, this is almost entirely minimum output (LSL) at ERCOT's placeholder price, so the chart tracks how much minimum load is committed: day-to-day movement is which units are online: the daily groups drive the day-to-day swing and the multi-day group the slow one. Storage, hydro and other resources are left out. Each unit's MW at or below −$20 is its average over the runs it was online that day, counted in the hours it ran.";
 // wind and solar offer price bands (pipeline/curve_trends.py), ordered from cheapest
 const BANDS = [
   { id: "floor", label: "At the floor (−$250)", color: "--c8" },
@@ -75,7 +57,7 @@ const MBP_BINS = [
   [75, 100, "$75–100"], [100, 200, "$100–200"], [200, Infinity, "≥ $200"],
 ];
 
-const S = { T: null, C: null, M: {}, floorMode: "le20_sced", floorGroup: "tech", floorHours: "all", hidden: { floor: new Set(), floorG: new Set(), partial: new Set() },
+const S = { T: null, C: null, M: {}, hidden: { partial: new Set() }, aboveThr: "10", aboveTech: "all",
   pqTech: "coal", capTech: "coal", scTech: "coal", scX: "week", mSrc: "60d", mView: "smooth", mDays: "all",
   unit: null, mnMeasure: "room", mnDays: "all", mnClass: "at", mnLam: "all", mnZone: "all",
   I: null, UH: null, idx: null, summ60: null, cheapTech: "all", cheapThr: "0", shutTech: "combined_cycle", shutPrice: "any",
@@ -518,9 +500,40 @@ function drawNodeMarginal() {
 
 // ---- links ------------------------------------------------------------------------
 // the one-day panels (beyond-day.js) keep their own keys in the same address bar
-const VIEW_KEYS = { pq: "pqTech", ms: "mSrc", mv: "mView", md: "mDays", mnm: "mnMeasure", mnd: "mnDays", mnc: "mnClass", mnl: "mnLam", mnz: "mnZone" };
+const VIEW_KEYS = { abt: "aboveThr", abx: "aboveTech", pq: "pqTech", ms: "mSrc", mv: "mView", md: "mDays", mnm: "mnMeasure", mnd: "mnDays", mnc: "mnClass", mnl: "mnLam", mnz: "mnZone" };
 function saveView() { window.CX.writeHash({ ...window.CX.readHash(), ...Object.fromEntries(Object.entries(VIEW_KEYS).map(([k, sk]) => [k, S[sk]])) }); }
 function loadView() { const v = window.CX.readHash(); Object.entries(VIEW_KEYS).forEach(([k, sk]) => { if (v[k] != null) S[sk] = v[k]; }); }
+
+// ---- thermal units above minimum in cheap hours (moved from Turn-ons and Turn-offs) ---------
+// data/intraday_60d.json.gz above_units: [unit, tech, lambda threshold, hours running below it,
+// hours above minimum, MWh above minimum], all 60-day days together. Loaded when the panel nears view.
+const trainOfUnit = (u) => { const m = /^(.*_CC\d+)_/.exec(u); return m ? m[1] : u; };
+const ABOVE_TECHS = [{ id: "all", label: "All fossil" }, ...TECHS.filter((s) => THERMAL.includes(s.id) && s.id !== "nuclear")];
+async function drawAbove() {
+  const el = $("above-table");
+  if (!S.I) S.I = await tryJSON("data/intraday_60d.json.gz");
+  const I = S.I;
+  if (!I?.above_units) return emptyMsg(el, "Fills in after the data update builds the intraday file.");
+  const thr = +S.aboveThr, ts = S.aboveTech === "all" ? THERMAL.filter((t) => t !== "nuclear") : [S.aboveTech];
+  const tl = (t) => TECHS.find((x) => x.id === t)?.label || t;
+  // nuclear left out: it always runs above its reported minimum
+  const rows = I.above_units.filter((r) => r[2] === thr && ts.includes(r[1]) && r[4] > 0)
+    .map((r) => ({ unit: r[0], tech: r[1], run: r[3], above: r[4], mwh: r[5] })).sort((a, b) => b.mwh - a.mwh);
+  window.CX.setNote($("above-note"), `Units that ran above their minimum output when lambda was below ${fmtPrice0(thr)}, top 30 by energy above minimum. Click a row to open the unit.`,
+    `All 60-day days together (${I.dates[0]} to ${I.dates.at(-1)}), nuclear left out. ${rows.length} unit${rows.length === 1 ? "" : "s"} ran above minimum in at least one hour with system lambda below ${fmtPrice0(thr)}. ` +
+    `A unit counts as above minimum when its output is more than ${fmtPct(I.above_eps)} of its HSL above its LSL. Output above minimum in these hours is offered cheaply enough to be dispatched, held up by an ancillary service, or scheduled without an offer curve; cogeneration is likely here.`);
+  if (!rows.length) return emptyMsg(el, `No units ran above minimum with lambda below ${fmtPrice0(thr)}.`);
+  const cols = [
+    { h: "Unit", t: 1, f: (r) => esc(r.unit) }, { h: "Technology", t: 1, f: (r) => tl(r.tech) },
+    { h: `Hours running below ${fmtPrice0(thr)}`, f: (r) => r.run }, { h: "Hours above minimum", f: (r) => r.above },
+    { h: "Share", f: (r) => fmtPct(r.above / r.run) }, { h: "Avg MW above minimum", f: (r) => fmtMW(r.mwh / r.above) },
+    { h: "MWh above minimum", f: (r) => fmtMW(r.mwh) },
+  ];
+  el.innerHTML = `<table class="data"><thead><tr>${cols.map((c) => `<th${c.t ? ' class="t"' : ""}>${c.h}</th>`).join("")}</tr></thead><tbody>` +
+    rows.slice(0, 30).map((r) => `<tr data-href="unit.html?unit=${encodeURIComponent(trainOfUnit(r.unit))}" style="cursor:pointer">${cols.map((c) => `<td${c.t ? ' class="t"' : ""}>${c.f(r)}</td>`).join("")}</tr>`).join("") + "</tbody></table>";
+  setCSV(el, ["unit", "technology", "hours_running_below", "hours_above_minimum", "mwh_above_minimum"], rows.map((r) => [r.unit, r.tech, r.run, r.above, r.mwh]),
+    `Units above minimum with lambda below ${fmtPrice0(thr)}`);
+}
 
 // ---- boot ---------------------------------------------------------------------------
 function drawAll() { drawPriceQuantiles(); drawGas(); drawMarginal(); drawNodeMarginal(); }
@@ -539,9 +552,14 @@ async function boot() {
   loadView();
   const thermal = TECHS.filter((s) => THERMAL.includes(s.id));
   [["mbp-src", "mSrc", drawMarginal], ["mbp-view", "mView", drawMarginal], ["mbp-days", "mDays", drawMarginal],
-   ["mn-measure", "mnMeasure", drawNodeMarginal], ["mn-days", "mnDays", drawNodeMarginal], ["mn-class", "mnClass", drawNodeMarginal], ["mn-lam", "mnLam", drawNodeMarginal]]
+   ["above-thr", "aboveThr", drawAbove], ["mn-measure", "mnMeasure", drawNodeMarginal], ["mn-days", "mnDays", drawNodeMarginal], ["mn-class", "mnClass", drawNodeMarginal], ["mn-lam", "mnLam", drawNodeMarginal]]
     .forEach(([id, key, fn]) => { setSeg(id, S[key]); bindSeg(id, key, fn); });
   bindSelect("pq-tech", "pqTech", thermal.filter((s) => s.id !== "nuclear"), drawPriceQuantiles);
+  if (!["0", "10"].includes(S.aboveThr)) S.aboveThr = "10";
+  bindSelect("above-tech", "aboveTech", ABOVE_TECHS, drawAbove);
+  $("above-table").addEventListener("click", (e) => { const tr = e.target.closest("tr[data-href]"); if (tr) location.href = tr.dataset.href; });
+  // the intraday file is about 0.4 MB, so it loads only when the panel is about to be seen
+  new IntersectionObserver((es, ob) => { if (es.some((x) => x.isIntersecting)) { drawAbove(); ob.disconnect(); } }, { rootMargin: "400px" }).observe($("above-table"));
   drawAll();
   saveView();
   let t, lastW = 0;

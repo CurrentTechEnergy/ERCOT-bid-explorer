@@ -132,9 +132,6 @@
     <p class="note" id="st-month-note"></p>
     <div id="st-changed"></div>
     <div class="units-wrap scroll-x" id="st-months"></div>
-    <h3 class="sub-h">New behaviour: shutdowns that broke a unit's pattern</h3>
-    <p class="note" id="st-flags-note"></p>
-    <div class="units-wrap" id="st-flags"></div>
   </section>
 
   <section class="panel panel-wide" id="cap-panel">
@@ -150,35 +147,6 @@
     </div>
     <div class="legend" id="cap-legend"></div>
     <div class="chart" id="cap-chart"></div>
-  </section>
-
-  <section class="panel panel-wide" id="floor-panel">
-    <div class="panel-head">
-      <div>
-        <h2>Floor-priced MW</h2>
-        <p class="note" id="floor-note"></p>
-      </div>
-      <div class="panel-tools">
-        <div class="seg seg-sm" id="floor-group" role="radiogroup" aria-label="Group by">
-          <button type="button" data-v="behaviour" role="radio" title="Thermal units grouped by how often they turn off, as in the turn-off chart">By how often it turns off</button>
-          <button type="button" data-v="tech" role="radio">By technology</button>
-        </div>
-        <div class="seg seg-sm" id="floor-hours" role="radiogroup" aria-label="Hours shown">
-          <button type="button" data-v="all" role="radio">All hours</button>
-          <button type="button" data-v="10" role="radio" title="Only the hours when system lambda was below $10">Lambda below $10</button>
-          <button type="button" data-v="0" role="radio" title="Only the hours when system lambda was below $0">Below $0</button>
-        </div>
-        <div class="seg seg-sm" id="floor-mode" role="radiogroup" aria-label="Measure">
-          <button type="button" data-v="le20_sced" role="radio" title="MW at or below −$20 in the curve SCED dispatched against: everything ERCOT prices at its floor values">≤ −$20, as used</button>
-          <button type="button" data-v="floor_sced" role="radio" title="MW at −$250/−$249.99 in the curve SCED dispatched against: units with no offer curve, mostly nuclear and hydro">At floor, as used</button>
-          <button type="button" data-v="floor_submitted" role="radio" title="MW the generator itself priced at the floor">At floor, as submitted</button>
-          <button type="button" data-v="le0_sub_lsl" role="radio" title="MW above minimum output (LSL) that the generator itself priced at or below $0">≤ $0 above LSL, as submitted</button>
-        </div>
-      </div>
-    </div>
-    <div class="legend" id="floor-legend"></div>
-    <div class="chart" id="floor-chart"></div>
-    <div class="chart chart-short" id="floor-price"></div>
   </section>
 
   <section class="panel panel-wide" id="cheap-panel">
@@ -198,9 +166,6 @@
     </div>
     <div class="legend legend-static" id="cheap-legend"></div>
     <div class="chart" id="cheap-chart"></div>
-    <h3 class="sub-h">Units that stayed above minimum in those hours</h3>
-    <p class="note" id="cheap-units-note"></p>
-    <div class="units-wrap" id="cheap-units"></div>
     <h3 class="sub-h">Leanest thermal hours</h3>
     <p class="note" id="lean-note"></p>
     <div class="panel-tools">
