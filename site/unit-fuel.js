@@ -14,8 +14,8 @@ const parseDate = (d) => new Date(d + "T12:00:00");
 const fmtDate = d3.timeFormat("%a %b %-d, %Y");
 const TECH_NAME = { coal: "coal", gas_steam: "gas steam", combined_cycle: "combined cycle", combustion_turbine: "combustion turbine" };
 const SERIES = [
-  { k: "cost", label: "Cost at minimum (heat rate × 7-day hub gas)", color: "--c1" },
-  { k: "offer", label: "Its DAM minimum-energy offer", color: "--c2" },
+  { k: "cost", label: "Fuel cost at minimum output", color: "--c1" },
+  { k: "offer", label: "Day-ahead minimum-energy offer", color: "--c2" },
 ];
 const S = { data: undefined };
 
@@ -25,12 +25,14 @@ function suCell(mw, share) {
   return (mw != null ? `${fmt1(mw)} MW, ` : "") + fmtPct(share) + " of gross";
 }
 
+function outCell(g, n) { return g == null || n == null ? "–" : `${fmt0(g)} MW gross, ${fmt0(n)} MW net`; }
+
 function table(u) {
   const own = u.basis !== "fallback", s = u.su;
   const rows = [
     ["Heat rate, MMBtu per net MWh", hrCell(u.hr_min), hrCell(u.hr_full)],
     ...(s ? [["Station use", suCell(s.su_mw_min, s.su_share_min), suCell(s.su_mw_full, s.su_share_full)],
-             ["Output at minimum", `${fmt0(s.gross_min)} MW gross, ${fmt0(s.net_min)} MW net`, "–"]] : []),
+             ["Output", outCell(s.gross_min, s.net_min), outCell(s.gross_full, s.net_full)]] : []),
   ];
   $("fuel-table").innerHTML = `<table class="data fuel-tbl"><thead><tr><th class="t"></th><th>At minimum</th><th>At full load</th></tr></thead><tbody>` +
     rows.map((r) => `<tr><td class="t">${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td></tr>`).join("") + "</tbody></table>";
@@ -51,7 +53,7 @@ function lead(u, D) {
 }
 
 function chart(el, D, u) {
-  const dates = D.map(parseDate), w = Math.max(280, el.clientWidth || 600), H = 240, m = { t: 16, r: 16, b: 26, l: 60 };
+  const dates = D.map(parseDate), w = Math.max(280, el.clientWidth || 600), H = 250, m = { t: 26, r: 16, b: 26, l: 60 };
   const all = SERIES.flatMap((s) => u[s.k]).filter((v) => v != null);
   if (!all.length) { el.innerHTML = `<p class="empty">No cost or offer on these days.</p>`; return; }
   const x = d3.scaleTime().domain(d3.extent(dates)).range([m.l, w - m.r]);
@@ -102,8 +104,13 @@ async function draw() {
   if (!u) return;
   table(u);
   $("fuel-lead").innerHTML = lead(u, S.data.dates);
-  $("fuel-legend").innerHTML = SERIES.map((s) => `<span><span class="sw" style="background:var(${s.color})"></span>${s.label}</span>`).join("") +
-    `<span><span class="sw sw-dash" style="border-color:var(--c1)"></span>Estimated (Henry Hub or the Texas coal average)</span>`;
+  // the key draws each mark as the chart does: a line for the cost, a dot for each day's offer
+  const est = u.est.some((v, i) => v && u.cost[i] != null);
+  const fuel = u.tech === "coal" ? "its plant's delivered coal price that month" : "the 7-day average of its hub's gas price";
+  $("fuel-legend").innerHTML =
+    `<span><span class="sw sw-line" style="border-color:var(--c1)"></span>Fuel cost at minimum output: heat rate × ${fuel}</span>` +
+    (est ? `<span><span class="sw sw-line sw-dash" style="border-color:var(--c1)"></span>Same, ${u.tech === "coal" ? "at the Texas coal average (plant price not reported)" : "with Henry Hub filling missing hub days"}</span>` : "") +
+    `<span><span class="sw sw-dot" style="background:var(--c2)"></span>Its day-ahead minimum-energy offer that day</span>`;
   chart($("fuel-chart"), S.data.dates, u);
 }
 window.addEventListener("unitchange", draw);

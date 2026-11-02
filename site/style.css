@@ -324,5 +324,7 @@ table.data tr.evc-row:hover td { background: none; }
 .evc { position: sticky; left: 0; }
 .evc svg { display: block; }
 .units-wrap:has(.evc-row) { max-height: none; }
-.sw.sw-dash { background: none; width: 14px; height: 0; border-radius: 0; border-top: 2px dashed; vertical-align: middle; }
+.sw.sw-line { background: none; width: 16px; height: 0; border-radius: 0; border-top: 2px solid; vertical-align: middle; }
+.sw.sw-line.sw-dash { border-top-style: dashed; }
+.sw.sw-dot { width: 6px; height: 6px; border-radius: 50%; vertical-align: middle; margin: 0 5px; }
 table.data.fuel-tbl td, table.data.fuel-tbl th { white-space: normal; }

@@ -5,10 +5,10 @@ minimum-energy offer.  Needs no downloads.
   heat rate     pipeline/reference/unit_heat_rates.csv (pipeline/heat_rates): MMBtu per MWh of
                 ERCOT net output at minimum and at full load, EPA hourly heat input over ERCOT
                 telemetry; the technology median for a unit without one (basis "fallback")
-  station use   pipeline/reference/station_use.csv (analysis/epa_heat_rates): EPA gross less
-                ERCOT net output at minimum and at full load, gas steam and coal per unit, combined
-                cycles per train (share only at full load); joint-ownership units carry the plant
-                unit's numbers
+  station use   pipeline/reference/station_use.csv (analysis/epa_heat_rates): EPA gross and ERCOT
+                net output at minimum and at full load (median hour), and their difference, gas
+                steam and coal per unit, combined cycles per train, combustion turbines per matched
+                unit; joint-ownership units carry the plant unit's numbers
   cost          $/MWh at minimum on each 60-day day: the unit's heat rate at minimum (a combustion
                 turbine's measured one: the CT turn-on model itself reads 11.0) x the 7-day average
                 of its own hub's gas price (the day-before prices of the day and the 6 before it,
@@ -22,7 +22,7 @@ derived from them, reaches the file, as fuel_cost_60d does.
 
 Writes data/unit_fuel.json.gz:
   {dates, units: {unit or CC train: {tech, hr_min, hr_full, min_hours, basis, epa, note,
-   su: {gross_min, net_min, su_mw_min, su_share_min, su_mw_full, su_share_full, min_hours, epa,
+   su: {gross_min, net_min, gross_full, net_full, su_mw_min, su_share_min, su_mw_full, su_share_full, min_hours, epa,
    shared_with} | null, cost: [$/MWh | null per date], est: [0 | 1 per date], offer: [...]}}}
 """
 import csv
