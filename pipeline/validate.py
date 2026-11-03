@@ -794,9 +794,9 @@ def _renew_years_checks(day):
 
 def _dam_offer_checks(day):
     """Day-ahead offer signatures and events (dam_offers.py): the markup is the offer less the
-    fuel-cost line (at the unit's own heat rate, as the signature files record it), filing matches having an offer, awards only on cheap days, fleet counts and
+    fuel-cost line (at the unit's own heat rate at minimum, dam_offers.fuel_hr), filing matches having an offer, awards only on cheap days, fleet counts and
     shares in range, and every offer event sits on a day its units have a signature value."""
-    from .dam_offers import FIELDS, KINDS as DAM_KINDS, PATH as DO_PATH, REF_HR, SIG_DIR, _gas_lookup
+    from .dam_offers import FIELDS, KINDS as DAM_KINDS, PATH as DO_PATH, REF_HR, SIG_DIR, _gas_lookup, fuel_hr
     do = read_json_gz(DO_PATH, default=None)
     if do is None:
         return
@@ -806,7 +806,7 @@ def _dam_offer_checks(day):
     for p in sorted(SIG_DIR.glob("sig-*.json.gz")):
         s = read_json_gz(p, default={}) or {}
         for n, u in (s.get("units") or {}).items():
-            r = sig.setdefault(n, {"tech": u["tech"], "hub": u.get("hub"), "hr": u.get("hr")})
+            r = sig.setdefault(n, {"tech": u["tech"], "hub": u.get("hub")})
             for f in FIELDS["thermal"] + FIELDS["renew"]:
                 if f in u:
                     r.setdefault(f, {}).update(zip(s["dates"], u[f]))
@@ -815,12 +815,12 @@ def _dam_offer_checks(day):
     for n, r in sig.items():
         if r["tech"] not in REF_HR:
             continue
+        hr = fuel_hr(r["tech"], n)      # the builder's line (dam_offers.unit_day); the sig files don't store it
         for d, mg in r.get("mg", {}).items():
             f, mk, aw = r["f"].get(d), r["mk"].get(d), r["aw"].get(d)
             if (mg is None) != (f != 1):
                 bad_f.append(f"{n} {d}")
             g = gas(r["hub"], d) if mg is not None else None
-            hr = r["hr"] or REF_HR[r["tech"]]      # the unit's own heat rate at minimum (dam_offers.fuel_hr), EIA's before
             if g and (mk is None or abs(mg - hr * g - mk) > 0.011):
                 bad_mk.append(f"{n} {d}")
             if aw is not None and not (d in pos and cheap[pos[d]]):
