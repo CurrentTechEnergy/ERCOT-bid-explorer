@@ -283,24 +283,37 @@ def _cop(ctx, d, dd):
     return out
 
 
-def _habit(st, k0):
+def _habit(st, k0, flags=None):
     """[24, 4] the unit's own recent days at each hour of the day starting at hour index k0, all
     from the days before: online at h the day before (0.5 when unknown), the share of the last 7
-    days online at h (0.5 with none), and of those days the shares it turned on and turned off at h."""
+    days online at h (0.5 with none), and of those days the shares it turned on and turned off at h.
+    flags: _habit_flags(st), when the caller has it (it is the same for every day of a unit)."""
+    on, known = flags if flags is not None else _habit_flags(st)
+    L = len(st)
+    k = k0 + np.arange(24)
+    j = k[:, None] - 24 * np.arange(1, 8)[None, :]          # [24, 7] the same hour 1..7 days before
+    jc = np.clip(j, 1, max(L - 1, 1))
+    ok = (j >= 1) & (j < L) & known[jc] & known[jc - 1]
+    a, b = on[jc - 1], on[jc]
+    n_ok = ok.sum(1)
+    son, soff = ok & ~a, ok & a
+    n_on, n_off = son.sum(1), soff.sum(1)
+    y = k - 24
+    yc = np.clip(y, 0, max(L - 1, 0))
     H = np.zeros((24, 4))
-    for h in range(24):
-        k, ons, son, soff = k0 + h, [], [], []
-        for n in range(1, 8):
-            j = k - 24 * n
-            if j < 1 or j >= len(st) or st[j] not in "ma0" or st[j - 1] not in "ma0":
-                continue
-            a, b = _on(st[j - 1]), _on(st[j])
-            ons.append(b)
-            (son if not a else soff).append(a != b)
-        y = k - 24
-        H[h] = [float(_on(st[y])) if 1 <= y < len(st) and st[y] in "ma0" else 0.5,
-                np.mean(ons) if ons else 0.5, np.mean(son) if son else 0.0, np.mean(soff) if soff else 0.0]
+    H[:, 0] = np.where((y >= 1) & (y < L) & known[yc], on[yc].astype(float), 0.5)
+    with np.errstate(invalid="ignore", divide="ignore"):
+        H[:, 1] = np.where(n_ok > 0, (b & ok).sum(1) / n_ok, 0.5)
+        H[:, 2] = np.where(n_on > 0, ((a != b) & son).sum(1) / n_on, 0.0)
+        H[:, 3] = np.where(n_off > 0, ((a != b) & soff).sum(1) / n_off, 0.0)
     return H
+
+
+def _habit_flags(st):
+    """(online, a known state) for each hour of a state array, as _on(c) and c in "ma0" read it
+    (an empty string is in both)."""
+    st = np.asarray(st)
+    return np.isin(st, ["m", "a", ""]), np.isin(st, ["m", "a", "0", ""])
 
 
 def _days(ctx):
@@ -309,7 +322,7 @@ def _days(ctx):
     cache = ctx.__dict__.setdefault("_oi_days", {})
     if cache:
         return cache
-    carried, states, day0, mcache = {}, _states(ctx), ctx.stats["day0"], {}
+    carried, states, day0, mcache, hflags = {}, _states(ctx), ctx.stats["day0"], {}, {}
     for i, d in enumerate(ctx.uh.get("dates", [])):
         dd = ctx.dam(d)
         if not dd:
@@ -341,7 +354,9 @@ def _days(ctx):
                             mingen=mingen, hot=hot, own=own, aw=e["aw"] >= AWARD_LSL * e["lsl"], aw_mw=e["aw"], fuel=fuel,
                             awmin=e["aw"] <= MIN_AWARD * e["lsl"], status=stat.get(key, np.ones(24)),
                             cop=cop.get(key, (np.full(24, 0.5), np.full(24, 0.5), np.zeros(24))),
-                            habit=_habit(states[key][1], (C._d(d) - day0).days * 24) if key in states else np.tile([0.5, 0.5, 0.0, 0.0], (24, 1)))
+                            habit=_habit(states[key][1], (C._d(d) - day0).days * 24,
+                                               hflags[key] if key in hflags else hflags.setdefault(key, _habit_flags(states[key][1])))
+                            if key in states else np.tile([0.5, 0.5, 0.0, 0.0], (24, 1)))
         cache[d] = rec
     return cache
 

@@ -148,6 +148,17 @@ jobs:
           gh release download history -R "$GITHUB_REPOSITORY" -p 'thermal-*.parquet' -p 'da-hubs-*.parquet' -p 'da-lambda-*.parquet' -p 'dam-status-*.parquet' -p 'control-*.parquet' -D history \
             || echo "No thermal history, so the operator model skips the days before the 60-day window"
 
+      # The thermal history parsed for the operator model (operator_history._parsed): about 10
+      # minutes of pandas grouping a run otherwise, redone only when the history files or the
+      # pipeline code change.  The key changes with them; an older cache is restored, found stale
+      # by its own key and parsed again.
+      - name: Restore the parsed thermal history
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: history/parsed.pkl
+          key: history-parsed-${{ hashFiles('history/thermal-*.parquet', 'history/dam-status-*.parquet', 'pipeline/**/*.py') }}
+          restore-keys: history-parsed-
+
       - name: Fetch and process new reports
         id: fetch
         env:
