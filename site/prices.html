@@ -28,7 +28,9 @@
   :root[data-theme="dark"] { --yr-old: #c98a1e; --yr-mid: #6f7f92; --yr-new: #cfe2fa; --gas-line: #e08a4f; }
   .yrs { display: flex; flex-wrap: wrap; gap: 4px; }
   .yrs button { font: 500 12px var(--font-data); border: 1px solid var(--line); background: var(--surface); color: var(--ink-2); border-radius: 999px; padding: 3px 9px; cursor: pointer; display: inline-flex; gap: 6px; align-items: center; min-height: 28px; }
-  .yrs button i { width: 14px; height: 3px; border-radius: 2px; display: inline-block; }
+  .yrs button i { width: 14px; height: 3px; border-radius: 2px; display: inline-block; background: currentColor; }
+  .yrs button i.part { border-radius: 0; background: repeating-linear-gradient(90deg, currentColor 0 5px, transparent 5px 8px); }
+  .yrs-note { font: 12px var(--font-data); color: var(--muted); align-self: center; margin-left: 4px; }
   .yrs button[aria-pressed="false"] { opacity: 0.4; }
   .minis { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 12px; }
   .mini h3 { font: 500 13px var(--font-ui); margin: 0 0 2px; }
@@ -52,7 +54,6 @@
 <section class="controls" aria-label="Controls">
   <div class="ctl"><span class="lbl">Market</span><div class="seg" role="radiogroup" aria-label="Market" id="c-mkt"><button type="button" role="radio" data-v="rt">Real-time</button><button type="button" role="radio" data-v="da">Day-ahead</button></div></div>
   <div class="ctl"><label class="lbl" for="c-hub">Hub</label><select id="c-hub"><option value="HB_HUBAVG">Hub average</option><option value="HB_NORTH">North</option><option value="HB_WEST">West</option><option value="HB_HOUSTON">Houston</option><option value="HB_SOUTH">South</option></select></div>
-  <div class="ctl"><span class="lbl">Months</span><div class="seg" role="radiogroup" aria-label="Months" id="c-per"><button type="button" role="radio" data-v="full">Whole year</button><button type="button" role="radio" data-v="ytd" id="c-ytd">Same months every year</button></div></div>
   <div class="ctl"><span class="lbl">Units</span><div class="seg" role="radiogroup" aria-label="Units" id="c-unit"><button type="button" role="radio" data-v="usd">$/MWh</button><button type="button" role="radio" data-v="hr">÷ Ship Channel gas</button></div></div>
   <div class="ctl"><span class="lbl">Years</span><div class="yrs" id="c-years"></div></div>
 </section>
