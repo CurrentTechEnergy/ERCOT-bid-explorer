@@ -23,6 +23,8 @@ built from the 60-day day files, pipeline/decision_table.month_file):
      behind congestion (DA node within CONGESTED of the DA bus average), and the fossil minimum
      online in those hours by whether each unit was losing money (ECON, _losing), with how much of
      that curtailment shutting each group would have let run (hour by hour, the smaller of the two).
+     And where a new load could reach the curtailment, by county, over the last 12 months
+     (pipeline/load_siting.py).
 
 "Cheap" is a day-ahead system lambda (NP4-523-CD; the history release's da-lambda files, else
 data/dam_lambda.json.gz) of CHEAP $/MWh or less, as on the Commitment scorecard.  Writes data/goal.json.gz (format in build()).  Run weekly (Sunday mornings) by the Goal page workflow
@@ -44,7 +46,7 @@ from .intraday import train_of
 from .store import read_json_gz, write_json_gz
 
 PATH = DATA_DIR / "goal.json.gz"
-VERSION = "v8"   # v8: 2 h off spells (were 4 h); v7: decision table d2 (operator's-view loss windows, buckets, coal out); v5: cheap hours on DA system lambda (was the DA hub average)
+VERSION = "v9"   # v9: question 4's siting maps (pipeline/load_siting.py); v8: 2 h off spells (were 4 h); v7: decision table d2 (operator's-view loss windows, buckets, coal out); v5: cheap hours on DA system lambda (was the DA hub average)
 START = "2019-01"
 CHEAP = 10.0          # $/MWh, day-ahead system lambda: a cheap hour
 OVER_PRICE = 5.0      # $/MWh, real-time hub average: an oversupply hour
@@ -497,7 +499,8 @@ def build(cache: Path, end=None, table=None) -> dict:
               "mix": [[year, tech, windows, night, day, off_rate, median_loss_per_mw]]},
        "q4": {"years": [[year, available_mwh, curtailed_mwh, in_oversupply_mwh, uncongested_mwh,
                          oversupply_hours, counted_hours, uncongested_in_counted_mwh, uncongested_by_he[24]]],
-              "atmin": [[year, tech, ECON or the tech, mwh]], "avoid": [[year, scenario, mwh]], "scenarios", "econ"}}
+              "atmin": [[year, tech, ECON or the tech, mwh]], "avoid": [[year, scenario, mwh]], "scenarios", "econ"},
+       "siting": pipeline/load_siting.build()'s block, or absent}
     MWh sums over the year's hours; the page divides by the hours for means."""
     end = end or max((p.name[:7] for p in (UNIT_DATA_DIR / "60d").glob("20*.json.gz")), default=None) \
         or max(p.stem[8:] for p in HISTORY_DIR.glob("thermal-*.parquet"))
@@ -540,6 +543,10 @@ def build(cache: Path, end=None, table=None) -> dict:
     if nets:
         out["floor"]["median"]["all"] = _medians(np.concatenate(nets), np.concatenate(fos))
     out["q3"] = _rule(table)
+    from .load_siting import build as build_siting
+    siting = build_siting(months, cache, _hubs, CONGESTED, OVER_PRICE)
+    if siting:
+        out["siting"] = siting
     write_json_gz(PATH, out)
     return out
 

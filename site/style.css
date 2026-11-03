@@ -328,3 +328,20 @@ table.data tr.evc-row:hover td { background: none; }
 .sw.sw-line.sw-dash { border-top-style: dashed; }
 .sw.sw-dot { width: 6px; height: 6px; border-radius: 50%; vertical-align: middle; margin: 0 5px; }
 table.data.fuel-tbl td, table.data.fuel-tbl th { white-space: normal; }
+/* Goal page question 4: where a new load could use the curtailment (two county maps, a detail strip, lines) */
+.sit { border-top: 1px solid var(--line); margin-top: 18px; padding-top: 14px; display: grid; gap: 10px; }
+.sit h3 { font: 600 15px/1.2 var(--font-head); margin: 0; }
+.sit-maps { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+@media (max-width: 760px) { .sit-maps { grid-template-columns: minmax(0, 1fr); } }
+.sit-map { margin: 0; display: grid; gap: 6px; min-width: 0; }
+.sit-map figcaption { font-size: 13px; font-weight: 500; color: var(--ink-2); }
+.sit-map .county { stroke: var(--surface); stroke-width: 0.5; cursor: pointer; }
+.sit-map .county.sel { stroke: var(--c2); stroke-width: 2; }
+.sit-ramp text { fill: var(--muted); font: 10.5px var(--font-data); }
+.sit-detail { border: 1px solid var(--line); border-radius: 6px; padding: 10px 14px; display: grid; gap: 8px; }
+.sit-detail h4 { margin: 0; font-size: 14px; font-weight: 600; }
+.sit-detail h4 span { font-weight: 400; color: var(--muted); font-size: 12px; margin-left: 8px; }
+.sit-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 8px 18px; }
+.sit-stats div { display: grid; gap: 1px; min-width: 0; }
+.sit-stats b { font: 500 17px var(--font-data); font-variant-numeric: tabular-nums; }
+.sit-stats span { font-size: 12px; color: var(--ink-2); }
