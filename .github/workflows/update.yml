@@ -54,6 +54,11 @@ on:
         type: boolean
         required: false
         default: false
+      publish_held:
+        description: "Publish the data a run held back on the held-data branch when its accuracy check failed: check it again with the current code and, if it passes, commit it and deploy. Fetches nothing"
+        type: boolean
+        required: false
+        default: false
 
 # Each job gets only what it needs; nothing by default.
 permissions: {}
@@ -142,6 +147,7 @@ jobs:
       # (pipeline/models/operator_history.py), and qse.py merges the QSE/DME months into the unit
       # histories once each.  Optional: all run without them.
       - name: Fetch the thermal history
+        if: inputs.publish_held != true
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
@@ -153,6 +159,7 @@ jobs:
       # pipeline code change.  The key changes with them; an older cache is restored, found stale
       # by its own key and parsed again.
       - name: Restore the parsed thermal history
+        if: inputs.publish_held != true
         uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: history/parsed.pkl
@@ -161,6 +168,7 @@ jobs:
 
       - name: Fetch and process new reports
         id: fetch
+        if: inputs.publish_held != true
         env:
           PYTHONUNBUFFERED: "1"      # stream log lines as they happen
           ERCOT_API_USERNAME: ${{ secrets.ERCOT_API_USERNAME }}
@@ -199,10 +207,32 @@ jobs:
             python -m pipeline.update
           fi
 
+      # publish_held: the held run's data commit (see "Commit new data") applied on top of the branch
+      # as it is now.  A file the branch has changed since keeps the branch's version.
+      - name: Bring in the held data
+        if: inputs.publish_held == true
+        run: |
+          git fetch --depth 2 origin held-data || { echo "::error::No held-data branch: nothing is held"; exit 1; }
+          held=$(git rev-parse FETCH_HEAD)
+          git fetch --unshallow origin "${GITHUB_REF_NAME}" 2>/dev/null || true     # the merge base, for the 3-way apply
+          if ! git cherry-pick -n "$held"; then
+            for f in $(git diff --name-only --diff-filter=U); do
+              echo "::warning::$f changed on ${GITHUB_REF_NAME} since the held run: kept that version"
+              git checkout HEAD -- "$f" 2>/dev/null || git rm -q -f -- "$f"
+            done
+          fi
+          git reset -q        # leave the files in the work tree; "Commit new data" adds them
+          echo "Held data from $(git log -1 --format='%s (%h)' "$held")"
+
       # Compares each new or changed day with ERCOT's own aggregates and checks it for internal
-      # consistency (pipeline/validate.py). An error stops the run here, so nothing is committed;
-      # rerun with "ignore_checks" to commit anyway.
+      # consistency (pipeline/validate.py). An error fails the run, but its work is kept: the
+      # per-unit data and the builders' caches still go to the data branch, and the site data goes
+      # to the held-data branch instead of the live branch (see "Commit new data"), so after a fix a
+      # "publish_held" run checks it again and publishes it without reprocessing anything.  Rerun
+      # with "ignore_checks" to commit straight away instead.
       - name: Check accuracy
+        id: check
+        continue-on-error: true     # the last step fails the run; the steps between keep the work
         env:
           UNIT_DATA_DIR: unitdata
           IGNORE_CHECKS: ${{ github.event.inputs.ignore_checks }}
@@ -219,7 +249,7 @@ jobs:
       # NOTIFY_DRY_RUN variable set to 1; the record of what was sent (site/data/notify_sent.json)
       # goes in with the data commit below.
       - name: Send subscriber emails
-        if: github.event_name == 'schedule' && github.event.schedule == '31 19 * * *'
+        if: github.event_name == 'schedule' && github.event.schedule == '31 19 * * *' && steps.check.outcome == 'success'
         continue-on-error: true     # a failed email must not hold back the data commit or the deploy
         env:
           RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
@@ -229,6 +259,7 @@ jobs:
         run: python -m pipeline.notify
 
       - name: Commit per-unit data to the data branch
+        if: inputs.publish_held != true     # a publish run leaves the data branch as the held run left it
         working-directory: unitdata
         continue-on-error: true     # a failed push here must not hold back the site/data commit
         run: |
@@ -255,29 +286,64 @@ jobs:
       # site/data/freshness.json and keeps one "stale-data" issue open while anything is behind.
       # Runs even when an earlier step failed, and never fails the run itself.
       - name: Check data freshness
-        if: always() && !inputs.backfill_start && inputs.reprocess_60d != true && !inputs.outages_start && !inputs.mis_docs
+        if: always() && !inputs.backfill_start && inputs.reprocess_60d != true && !inputs.outages_start && !inputs.mis_docs && inputs.publish_held != true
         continue-on-error: true
         env:
           GH_TOKEN: ${{ github.token }}
           RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
         run: python -m pipeline.freshness --issues
 
+      # Passed: the data goes to the live branch, and any held data is dropped (this run's is newer).
+      # Failed: it goes to the held-data branch, one commit on the branch as this run found it, for a
+      # publish_held run to bring in after a fix.  Either way nothing this run built is thrown away.
       - name: Commit new data
+        if: steps.fetch.outcome == 'success' || steps.fetch.outcome == 'skipped'
+        env:
+          CHECK: ${{ steps.check.outcome }}
+          PUBLISH: ${{ inputs.publish_held }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
         run: |
+          if [ "$CHECK" != "success" ]; then
+            # held data goes without the failed check's record, so publish_held checks those days
+            # again and counts their errors as new (validate.py lets known errors through)
+            git checkout HEAD -- site/data/validation.json 2>/dev/null || true
+          fi
           git add site/data site/unit site/sitemap.xml     # share_pages writes the sitemap beside the unit stubs
           if git diff --cached --quiet; then
             echo "No new data"
+          elif [ "$CHECK" = "success" ]; then
+            git commit -m "Data update $(date -u +%Y-%m-%d)"
+            # Code may have been merged while this run was working: rebase onto it, then push.  A data
+            # file the merge changed too keeps the merged version (see the script).
+            .github/scripts/push-data.sh "${GITHUB_REF_NAME}"
+          else
+            if [ "$PUBLISH" = "true" ]; then
+              echo "::error::The held data still fails the accuracy check; it stays on held-data"
+              exit 0
+            fi
+            git commit -m "Held data update $(date -u +%Y-%m-%d): accuracy check failed, $RUN_URL"
+            git push -f origin "HEAD:refs/heads/held-data"
+            echo "::warning::Accuracy check failed: the site data is held on the held-data branch. After a fix, run this workflow with publish_held to check and publish it."
+            { echo "### Data held back"; echo; echo "The accuracy check failed, so this run's site data is on the **held-data** branch, not live. The per-unit data and caches were saved. After a fix, run *Update ERCOT data* with **publish_held** to check it again and publish it without reprocessing."; } >> "$GITHUB_STEP_SUMMARY"
             exit 0
           fi
-          git commit -m "Data update $(date -u +%Y-%m-%d)"
-          # Code may have been merged while this run was working: rebase onto it, then push.  A data
-          # file the merge changed too keeps the merged version (see the script).
-          .github/scripts/push-data.sh "${GITHUB_REF_NAME}"
+          # passed and published: drop any held data (this run's is newer, or it was the held data itself)
+          if [ "$CHECK" = "success" ] && git ls-remote --exit-code --heads origin held-data > /dev/null; then
+            git push origin --delete held-data || echo "::warning::Could not delete the held-data branch"
+          fi
+
+      # The run fails here, after the work above is saved, when the accuracy check failed; the
+      # deploy job then does not run.
+      - name: Fail on the accuracy check
+        if: steps.check.outcome == 'failure'
+        run: |
+          echo "::error::The accuracy check failed (see its step and the run summary); the data is held, not published"
+          exit 1
 
       # A reprocess run does max_files files; while days are left (and this run got through some),
       # it queues the next one, so one click fills a format change in.  Cancel a queued run to stop.
       - name: Queue the next reprocess run
-        if: steps.fetch.outputs.reprocess_more == 'true'
+        if: steps.fetch.outputs.reprocess_more == 'true' && steps.check.outcome == 'success'
         env:
           GH_TOKEN: ${{ github.token }}
           MAX_FILES: ${{ github.event.inputs.max_files }}
