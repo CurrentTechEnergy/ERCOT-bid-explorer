@@ -44,7 +44,7 @@ Writes data/curtail_nodes.json.gz:
 """
 import numpy as np
 
-from . import cdr
+from . import cdr, memo
 from .config import DATA_DIR, UNIT_DATA_DIR
 from .intraday import _online
 from .parse_prices import node_hourly
@@ -131,6 +131,44 @@ def settlement_points(index: dict) -> dict:
     return sp
 
 
+def _nl(a):
+    return [None if not np.isfinite(v) else float(v) for v in a]
+
+
+def _na(v):
+    return np.array([np.nan if x is None else x for x in v], float)
+
+
+def curtail_units(ud):
+    """What build_node_curtail takes from one per-unit day file (memo.per_day caches it), or
+    None without one: whether it has the override data, its runs, and per wind or solar unit
+    with base points [name, tech, hourly HSL, operator-directed MW, base point, the lowest offer
+    above base point (None where none, or for a unit with nothing curtailed)], NaN as None."""
+    if not ud:
+        return None
+    overrides = ud.get("overrides") or {}
+    runs = ud["runs"]
+    runs_h = np.bincount(np.minimum(np.array(runs) // 60, 23), minlength=24) if runs else np.zeros(24, int)
+    out = []
+    for name, u in ud["units"].items():
+        t = u.get("tech")
+        if t not in TECHS or not u.get("bp"):
+            continue
+        hsl = hourly_hsl(u, runs)
+        # operator-directed limit: HDL reduction per override run, averaged over the hour's runs
+        directed_cap = np.zeros(24)
+        for row in overrides.get(name, []):
+            m, orig, fin = row[0], row[1], row[3]
+            if m < 1440 and orig is not None and fin is not None and fin < orig and runs_h[m // 60]:
+                directed_cap[m // 60] += (orig - fin) / runs_h[m // 60]
+        bp = np.array([np.nan if v is None else v for v in u["bp"]], float)
+        curt = hsl - bp
+        curt[~np.isfinite(curt) | (curt < MIN_MW)] = 0.0
+        op = _nl(offer_above_bp(u, runs, bp, hsl)) if (curt > 0).any() else None
+        out.append([name, t, _nl(hsl), _nl(directed_cap), _nl(bp), op])
+    return {"overrides": "overrides" in ud, "units": out}
+
+
 def build_node_curtail(index: dict) -> None:
     dates = sorted(index["days"].get("60d", []))
     node_days = set(index["days"].get("nodes", []))
@@ -146,11 +184,11 @@ def build_node_curtail(index: dict) -> None:
     zone, unused = cdr.zone_lookup(), []
 
     for d in dates:
-        ud = read_json_gz(UNIT_DATA_DIR / "60d" / f"{d}.json.gz")
+        uf = UNIT_DATA_DIR / "60d" / f"{d}.json.gz"
+        ud = memo.per_day("curtail_nodes", d, [uf], lambda: curtail_units(read_json_gz(uf)), __name__)
         nodes = node_hourly(read_json_gz(UNIT_DATA_DIR / "nodes" / f"{d}.json.gz")) if d in node_days else None
         has_nodes.append(bool(nodes))
-        has_overrides.append(bool(ud) and "overrides" in ud)
-        overrides = (ud or {}).get("overrides") or {}
+        has_overrides.append(bool(ud) and ud["overrides"])
         lam = (prices.get(d) or {}).get("lambda") or [None] * 24
         lam = np.array([np.nan if v is None else v for v in lam[:24]] + [np.nan] * (24 - len(lam[:24])), float)
         day = {t: np.zeros((7, 24)) for t in TECHS}      # curt, cong, over, unmapped, value, value_lam, directed
@@ -161,25 +199,13 @@ def build_node_curtail(index: dict) -> None:
                 for k in daily[t]:
                     daily[t][k].append(None)
             continue
-        runs = ud["runs"]
-        runs_h = np.bincount(np.minimum(np.array(runs) // 60, 23), minlength=24) if runs else np.zeros(24, int)
-        for name, u in ud["units"].items():
-            t = u.get("tech")
-            if t not in TECHS or not u.get("bp"):
-                continue
-            hsl = hourly_hsl(u, runs)
-            # operator-directed limit: HDL reduction per override run, averaged over the hour's runs
-            directed_cap = np.zeros(24)
-            for row in overrides.get(name, []):
-                m, orig, fin = row[0], row[1], row[3]
-                if m < 1440 and orig is not None and fin is not None and fin < orig and runs_h[m // 60]:
-                    directed_cap[m // 60] += (orig - fin) / runs_h[m // 60]
-            bp = np.array([np.nan if v is None else v for v in u["bp"]], float)
+        for name, t, hsl, directed_cap, bp, op in ud["units"]:
+            hsl, directed_cap, bp = _na(hsl), _na(directed_cap), _na(bp)
             curt = hsl - bp
             curt[~np.isfinite(curt) | (curt < MIN_MW)] = 0.0
             avail = np.where(np.isfinite(hsl), hsl, 0.0)
             if (curt > 0).any():
-                op = offer_above_bp(u, runs, bp, hsl)
+                op = _na(op)
                 a = un.setdefault((t, zone(name, t)), np.zeros((len(UNUSED_BANDS) + 1, 24)))
                 for h in np.flatnonzero(curt > 0):
                     b = len(UNUSED_BANDS) if not np.isfinite(op[h]) else int(np.searchsorted(UNUSED_EDGES, op[h], side="left")) - 1
@@ -243,6 +269,7 @@ def build_node_curtail(index: dict) -> None:
     top = sorted(units.items(), key=lambda kv: -kv[1][2])
     out_units = [[name, r[0], r[1], _r(r[2]), _r(r[3]), _r(r[4]), _r(r[4] / r[5], 2) if r[5] > 0 else None,
                   _r(r[6]), r[7], _r(r[8])] for name, r in top]
+    memo.prune("curtail_nodes", dates)
     write_json_gz(DATA_DIR / "curtail_nodes.json.gz", {
         "dates": dates, "has_nodes": has_nodes, "has_overrides": has_overrides, "gap": CONG_GAP, "min_mw": MIN_MW,
         "daily": daily,

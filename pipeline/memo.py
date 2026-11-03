@@ -178,3 +178,55 @@ def run(name: str, fn, index: dict) -> bool:
                   "writes": writes, "writes_digest": _digest(writes)}
     store.write_json_gz(MEMO_PATH, dict(sorted(memo.items())))
     return True
+
+
+# ------------------------------------------------------------------ per-day results ---
+# A history-wide builder reads every 60-day day, but on a normal morning only one day is new.
+# per_day() keeps what a builder takes from one day in unitdata/cache/<builder>/<day>.json.gz
+# (on the data branch, so the next run has it), keyed by the builder's code and the bytes of
+# the files that day's result comes from.  A day whose files and code are unchanged is not
+# read again.  The result must come from those files only, and be JSON (NaN allowed).
+
+CACHE_DIR = UNIT_DATA_DIR / "cache"
+
+
+def _raw_hash(p: Path) -> str:
+    try:
+        return hashlib.sha1(Path(p).read_bytes()).hexdigest()
+    except FileNotFoundError:
+        return "-"
+
+
+def per_day(name: str, day: str, inputs, fn, module: str):
+    """fn() for one day, or its cached result when the code of `module` and the files `inputs`
+    are unchanged since it was cached."""
+    inputs = [Path(p) for p in inputs]
+    if store.TRACE is not None:            # the whole-builder memo still sees the inputs
+        store.TRACE["reads"].update(inputs)
+    h = hashlib.sha1(code_hash(module).encode())
+    for p in inputs:
+        h.update(f"{_rel(p)}:{_raw_hash(p)}\n".encode())
+    key = h.hexdigest()
+    path = CACHE_DIR / name / f"{day}.json.gz"
+    if path.exists() and not os.environ.get("REBUILD_ALL"):
+        try:
+            with gzip.open(path, "rb") as f:
+                c = store.loads(f.read())
+            if c.get("key") == key:
+                return c["v"]
+        except (OSError, ValueError):
+            pass
+    v = fn()
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with open(path, "wb") as f:
+        with gzip.GzipFile(fileobj=f, mode="wb", mtime=0) as gz:
+            gz.write(json.dumps({"key": key, "v": v}, separators=(",", ":")).encode())
+    return v
+
+
+def prune(name: str, days) -> None:
+    """Drop the cached days a builder no longer reads (they left the 60-day window)."""
+    keep = {f"{d}.json.gz" for d in days}
+    for p in (CACHE_DIR / name).glob("*.json.gz"):
+        if p.name not in keep:
+            p.unlink()

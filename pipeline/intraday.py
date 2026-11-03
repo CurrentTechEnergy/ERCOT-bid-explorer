@@ -44,6 +44,7 @@ import re
 
 import numpy as np
 
+from . import memo
 from .config import DATA_DIR, UNIT_DATA_DIR
 from .store import read_json_gz, write_json_gz
 from .trends import UNIT_TECHS
@@ -177,6 +178,38 @@ def unit_hours(u: dict, runs: list) -> tuple:
     return "".join(states), out, lsl_h, hsl_h, e
 
 
+def _nan_list(a):
+    return [None if not np.isfinite(v) else float(v) for v in a]
+
+
+def _arr(v):
+    return np.array([np.nan if x is None else x for x in v], float)
+
+
+def day_hours(ud):
+    """What build_intraday takes from one per-unit day file (memo.per_day caches it), or None
+    without one: the number of runs; per thermal unit [name, tech, hourly states, output, LSL,
+    HSL (None for NaN), RUC hours]; per technology the HSL summed over runs by status group; and
+    the off-spell status events (_spell_units) as [key, tech, events]."""
+    if not ud:
+        return None
+    runs = ud["runs"]
+    units, cap = [], {t: dict.fromkeys(STATUS_GROUPS, 0.0) for t in UNIT_TECHS}
+    for name, u in ud["units"].items():
+        t = u["tech"]
+        if t not in UNIT_TECHS:
+            continue
+        st, out, lsl, hsl, e = unit_hours(u, runs)
+        sacc = cap[t]
+        for s_, h_ in zip(e["status"], e["hsl"]):
+            g = status_group(s_)
+            if g and np.isfinite(h_):
+                sacc[g] += h_
+        units.append([name, t, st, _nan_list(out), _nan_list(lsl), _nan_list(hsl), ruc_hours(e["status"], runs)])
+    return {"runs": runs, "units": units, "cap": cap,
+            "spells": [[k, t, ev] for k, (t, ev) in _spell_units(ud["units"]).items()]}
+
+
 def build_intraday(index: dict) -> None:
     dates = sorted(index["days"].get("60d", []))
     prices = read_json_gz(DATA_DIR / "summary_prices.json.gz", default={})
@@ -220,7 +253,8 @@ def build_intraday(index: dict) -> None:
                        lam_window(sp["start"], NEXT_H), lam_window(sp["start"], span), sp["out"]])
 
     for di, d in enumerate(dates):
-        ud = read_json_gz(UNIT_DATA_DIR / "60d" / f"{d}.json.gz")
+        uf = UNIT_DATA_DIR / "60d" / f"{d}.json.gz"
+        ud = memo.per_day("intraday", d, [uf], lambda: day_hours(read_json_gz(uf)), __name__)
         consecutive = prev_day is not None and day_no[d] == day_no[prev_day] + 1
         if not consecutive:
             for name, sp in pending.items():
@@ -235,21 +269,12 @@ def build_intraday(index: dict) -> None:
         prev_day = d
         runs = ud["runs"]
         acc = {t: (np.zeros(24), np.zeros(24), np.zeros(24), np.zeros(24)) for t in UNIT_TECHS}
-        cap = {t: dict.fromkeys(STATUS_GROUPS, 0.0) for t in UNIT_TECHS}
+        cap = ud["cap"]
         seen, new_last = set(), {}
-        for name, u in ud["units"].items():
-            t = u["tech"]
-            if t not in UNIT_TECHS:
-                continue
+        for name, t, st, out, lsl, hsl, rh in ud["units"]:
+            out, lsl, hsl = _arr(out), _arr(lsl), _arr(hsl)
             seen.add(name)
-            st, out, lsl, hsl, e = unit_hours(u, runs)
-            sacc = cap[t]
-            for s_, h_ in zip(e["status"], e["hsl"]):
-                g = status_group(s_)
-                if g and np.isfinite(h_):
-                    sacc[g] += h_
             strips.setdefault(name, ["-" * 24] * di).append(st)
-            rh = ruc_hours(e["status"], runs)
             if rh:
                 ruc.setdefault(name, []).append([d, rh])
             hsl_run.setdefault(name, []).extend(v for v in hsl if np.isfinite(v))
@@ -272,7 +297,7 @@ def build_intraday(index: dict) -> None:
                             r[3] += out[h] - lsl[h]
         # off spells from status changes, run by run; a spell open at the end of yesterday
         # and yesterday's last status carry over when the days are consecutive
-        for name, (t, events) in _spell_units(ud["units"]).items():
+        for name, t, events in ud["spells"]:
             seen.add(name)
             sp = pending.pop(name, None)
             prev = last_status.get(name)
@@ -312,6 +337,7 @@ def build_intraday(index: dict) -> None:
     for name, sp in pending.items():
         close(name, sp, None)
 
+    memo.prune("intraday", dates)
     above_units = [[u, r[0], thr, r[1], r[2], round(r[3])] for (u, thr), r in sorted(above_acc.items())]
     write_json_gz(DATA_DIR / "intraday_60d.json.gz", {
         "dates": dates, "lambda": lam, "techs": UNIT_TECHS, "tech": tech, "cheap": CHEAP,
