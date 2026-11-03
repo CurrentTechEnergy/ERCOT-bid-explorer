@@ -34,7 +34,7 @@ cogen = t[t.epa / t.elec > COGEN]
 rows = list(csv.DictReader(open(PATH)))
 fails = []
 for r in rows:
-    if r["unit"] == "*" or r["basis"] == "fallback":
+    if r["unit"] == "*" or r["basis"] in ("fallback", "cogen"):
         continue
     lo, hi = BOUNDS[r["tech"]]
     fac = int(r["epa"].split("/")[0]) if r["epa"] else None

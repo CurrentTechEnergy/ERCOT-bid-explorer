@@ -32,32 +32,38 @@ WAP_WAP_G6,coal,13.48,10.71,9571,ercot_net,3470/WAP6,
 WAP_WAP_G7,coal,10.36,8.98,12603,ercot_net,3470/WAP7,
 WAP_WAP_G8,coal,12.35,10.47,10801,ercot_net,3470/WAP8,
 *,combined_cycle,7.8,7.2,,fallback,,technology median
+AMOCOOIL_CC1,combined_cycle,5.27,5.27,,cogen,EIA 50815,"cogeneration, fuel chargeable to power: EIA-923 2025 fuel for electricity over net generation, plant 50815 (Odyssey Energy Altura Cogen; steam 52% of its fuel)"
+AMOCOOIL_CC2,combined_cycle,5.27,5.27,,cogen,EIA 50815,"cogeneration, fuel chargeable to power: EIA-923 2025 fuel for electricity over net generation, plant 50815 (Odyssey Energy Altura Cogen; steam 52% of its fuel)"
 BASTEN_CC1,combined_cycle,7.77,6.97,4703,ercot_net,55168,
 BOSQUESW_CC1,combined_cycle,7.29,6.83,7119,ercot_net,55172,
 BOSQUESW_CC2,combined_cycle,7.41,6.92,7583,ercot_net,55172,
 BRAUNIG_CC1,combined_cycle,7.36,6.32,8162,ercot_net,3612,
-BTE_CC1,combined_cycle,7.8,7.2,3928,fallback,55327,cogeneration: net to grid excludes host load
+BTE_CC1,combined_cycle,6.69,6.69,,cogen,EIA 55327,"cogeneration, fuel chargeable to power: EIA-923 2025 fuel for electricity over net generation, plant 55327 (Baytown Energy Center; steam 25% of its fuel)"
 BVE_CC1,combined_cycle,7.57,7.28,2326,ercot_net,55357,
+BYU_CC1,combined_cycle,5.72,5.72,,cogen,EIA 10298,"cogeneration, fuel chargeable to power: EIA-923 2025 ERCOT combined heat and power plants, generation-weighted (Bayou Cogen Plant)"
 B_DAVIS_CC1,combined_cycle,8.48,7.69,4367,ercot_net,4939,
 CBECII_CC3,combined_cycle,7.64,6.78,4152,ercot_net,60122,
 CBEC_CC1,combined_cycle,8.94,8.37,6126,ercot_net,56350,
 CBEC_CC2,combined_cycle,8.56,8.04,7029,ercot_net,56350,
 CBY4_CC1,combined_cycle,7.14,6.78,8843,ercot_net,56806,
-CCEC_CC1,combined_cycle,7.8,7.2,5229,fallback,55206,cogeneration: net to grid excludes host load
-CHE_CC1,combined_cycle,7.8,7.2,2592,fallback,55299,cogeneration: net to grid excludes host load
-CVC_CC1,combined_cycle,7.8,7.2,10595,fallback,55187,cogeneration: net to grid excludes host load
-DDPEC_CC1,combined_cycle,7.8,7.2,3785,fallback,55464,cogeneration: EPA heat input includes the host's steam (measured 12.07; EIA-923 electric 6.5)
+CCEC_CC1,combined_cycle,5.57,5.57,,cogen,EIA 55206,"cogeneration, fuel chargeable to power: EIA-923 2025 fuel for electricity over net generation, plant 55206 (Corpus Christi Energy Center; steam 42% of its fuel)"
+CHE_CC1,combined_cycle,5.15,5.15,,cogen,EIA 55299,"cogeneration, fuel chargeable to power: EIA-923 2025 fuel for electricity over net generation, plant 55299 (Channel Energy Center; steam 37% of its fuel)"
+CVC_CC1,combined_cycle,6.15,6.15,,cogen,EIA 55187,"cogeneration, fuel chargeable to power: EIA-923 2025 fuel for electricity over net generation, plant 55187 (Channelview Cogeneration Plant; steam 44% of its fuel)"
+DDPEC_CC1,combined_cycle,6.50,6.50,,cogen,EIA 55464,"cogeneration, fuel chargeable to power: EIA-923 2025 fuel for electricity over net generation, plant 55464 (Deer Park Energy Center; steam 37% of its fuel)"
 DUKE_CC1,combined_cycle,7.43,6.87,5507,ercot_net,7762,
 ETCCS_CC1,combined_cycle,9.04,6.92,703,ercot_net,55223,
 FERGCC_CC1,combined_cycle,7.09,6.51,3607,ercot_net,4937,
+FORMOSA_CC1,combined_cycle,4.95,4.95,,cogen,EIA 10554,"cogeneration, fuel chargeable to power: EIA-923 2025 fuel for electricity over net generation, plant 10554 (Formosa Utility Venture; steam 43% of its fuel)"
+FORMOSA_CC2,combined_cycle,4.95,4.95,,cogen,EIA 10554,"cogeneration, fuel chargeable to power: EIA-923 2025 fuel for electricity over net generation, plant 10554 (Formosa Utility Venture; steam 43% of its fuel)"
 FREC_CC1,combined_cycle,7.3,6.86,5618,ercot_net,55226,
 FREC_CC2,combined_cycle,7.23,6.86,6976,ercot_net,55226,
 FRNYPP_CC1,combined_cycle,7.58,7.21,1125,ercot_net,55480,
 FRNYPP_CC2,combined_cycle,7.65,7.16,1331,ercot_net,55480,
 FRONT_EC_CC1,combined_cycle,7.26,6.9,4971,ercot_net,55098,
-FTR_CC1,combined_cycle,7.8,7.2,4696,fallback,55062,cogeneration: EPA heat input includes the host's steam (measured 9.66; EIA-923 electric 7.4)
+FTR_CC1,combined_cycle,7.8,7.2,4696,fallback,55062,EPA plant heat input does not match the ERCOT train: ERCOT sees about half of Tenaska Frontier's EIA net generation (measured 9.66; EIA-923 plant 7.2)
 GUADG_CC1,combined_cycle,7.76,7.44,4813,ercot_net,55153,
 GUADG_CC2,combined_cycle,7.88,7.54,5852,ercot_net,55153,
+INGLCOSW_CC1,combined_cycle,5.17,5.17,,cogen,EIA 55313,"cogeneration, fuel chargeable to power: EIA-923 2025 fuel for electricity over net generation, plant 55313 (Ingleside Cogeneration; steam 47% of its fuel)"
 JACKCNTY_CC1,combined_cycle,7.71,7.43,9624,ercot_net,55230,
 JCKCNTY2_CC1,combined_cycle,7.36,7.1,11282,ercot_net,55230,
 LGE_CC1,combined_cycle,8.87,9.02,6975,ercot_net,55086,
@@ -84,12 +90,11 @@ TGCCS_CC1,combined_cycle,8.28,7.26,6781,ercot_net,55132,
 THW_CC1,combined_cycle,9.28,8.94,1348,ercot_net,3469,
 THW_CC2,combined_cycle,9.22,9.14,2007,ercot_net,3469,
 TNSKA_CC1,combined_cycle,9.89,8.61,2167,ercot_net,50109,
-TXCTY_CC1,combined_cycle,7.8,7.2,23083,fallback,52088,cogeneration: net to grid excludes host load
+TXCTY_CC1,combined_cycle,6.12,6.12,,cogen,EIA 52088,"cogeneration, fuel chargeable to power: EIA-923 2025 fuel for electricity over net generation, plant 52088 (Texas City Power Plant; steam 39% of its fuel)"
 VICTORIA_CC1,combined_cycle,8.05,7.95,13058,ercot_net,3443,
 WCPP_CC1,combined_cycle,7.37,6.85,2836,ercot_net,55320,
 WHCCS2_CC2,combined_cycle,8.51,6.88,2967,ercot_net,59812,
 WHCCS_CC1,combined_cycle,8.55,7.27,4014,ercot_net,55139,
-*,combustion_turbine,13.4,11.1,,fallback,,technology median
 *,gas_steam,13.4,10.6,,fallback,,technology median
 BRAUNIG_VHB1,gas_steam,12.29,10.48,6136,ercot_net,3612/1,
 BRAUNIG_VHB2,gas_steam,12.51,10.62,2886,ercot_net,3612/2,
@@ -102,6 +107,9 @@ CBY_CBY_G2,gas_steam,11.0,9.66,9116,ercot_net,3460/CBY2,
 DANSBY_DANSBYG1,gas_steam,13.4,10.6,0,fallback,6243/1,Dansby: EPA gross looks wrong
 DECKER_DPG1,gas_steam,14.15,10.31,2168,ercot_net,3548/1,
 DECKER_DPG2,gas_steam,15.29,11.4,5899,ercot_net,3548/2,
+DOWGEN_DOW_ST65,gas_steam,5.72,5.72,,cogen,,"cogeneration, fuel chargeable to power: EIA-923 2025 ERCOT combined heat and power plants, generation-weighted (Dow Freeport (several EIA plants))"
+DOWGEN_DOW_ST84,gas_steam,5.72,5.72,,cogen,,"cogeneration, fuel chargeable to power: EIA-923 2025 ERCOT combined heat and power plants, generation-weighted (Dow Freeport (several EIA plants))"
+DOWGEN_DOW_ST95,gas_steam,5.72,5.72,,cogen,,"cogeneration, fuel chargeable to power: EIA-923 2025 ERCOT combined heat and power plants, generation-weighted (Dow Freeport (several EIA plants))"
 GIDEON_GIDEONG1,gas_steam,15.55,10.23,2783,ercot_net,3601/1,
 GIDEON_GIDEONG2,gas_steam,14.53,9.6,3692,ercot_net,3601/2,
 GIDEON_GIDEONG3,gas_steam,13.42,10.1,4524,ercot_net,3601/3,
@@ -131,6 +139,7 @@ WAP_WAP_G1,gas_steam,13.45,10.8,6554,ercot_net,3470/WAP1,
 WAP_WAP_G2,gas_steam,13.59,9.79,7026,ercot_net,3470/WAP2,
 WAP_WAP_G3,gas_steam,12.32,10.57,5851,ercot_net,3470/WAP3,
 WAP_WAP_G4,gas_steam,11.71,9.96,7438,ercot_net,3470/WAP4,
+*,combustion_turbine,13.4,11.1,,fallback,,technology median
 AEEC_ELK_3,combustion_turbine,12.25,9.21,235,ercot_net,57865/3,matched by hourly output
 AZ_AZ_G1,combustion_turbine,12.61,12.41,391,ercot_net,55365/GT-1,matched by hourly output
 AZ_AZ_G2,combustion_turbine,12.69,12.37,254,ercot_net,55365/GT-2,matched by hourly output
@@ -167,9 +176,30 @@ DCSES_CT10,combustion_turbine,12.45,11.81,96,ercot_net,8063/CT1,matched by hourl
 DCSES_CT20,combustion_turbine,12.71,12.05,141,ercot_net,8063/CT2,matched by hourly output
 DCSES_CT30,combustion_turbine,12.50,11.91,94,ercot_net,8063/CT3,matched by hourly output
 DCSES_CT40,combustion_turbine,12.51,11.91,57,ercot_net,8063/CT4,matched by hourly output
+DOWGEN_DOW_G61,combustion_turbine,5.72,5.72,,cogen,,"cogeneration, fuel chargeable to power: EIA-923 2025 ERCOT combined heat and power plants, generation-weighted (Dow Freeport (several EIA plants))"
+DOWGEN_DOW_G63,combustion_turbine,5.72,5.72,,cogen,,"cogeneration, fuel chargeable to power: EIA-923 2025 ERCOT combined heat and power plants, generation-weighted (Dow Freeport (several EIA plants))"
+DOWGEN_DOW_G67,combustion_turbine,5.72,5.72,,cogen,,"cogeneration, fuel chargeable to power: EIA-923 2025 ERCOT combined heat and power plants, generation-weighted (Dow Freeport (several EIA plants))"
+DOWGEN_DOW_G81,combustion_turbine,5.72,5.72,,cogen,,"cogeneration, fuel chargeable to power: EIA-923 2025 ERCOT combined heat and power plants, generation-weighted (Dow Freeport (several EIA plants))"
+DOWGEN_DOW_G82,combustion_turbine,5.72,5.72,,cogen,,"cogeneration, fuel chargeable to power: EIA-923 2025 ERCOT combined heat and power plants, generation-weighted (Dow Freeport (several EIA plants))"
+DOWGEN_DOW_G83,combustion_turbine,5.72,5.72,,cogen,,"cogeneration, fuel chargeable to power: EIA-923 2025 ERCOT combined heat and power plants, generation-weighted (Dow Freeport (several EIA plants))"
+DOWGEN_DOW_GT96,combustion_turbine,5.72,5.72,,cogen,,"cogeneration, fuel chargeable to power: EIA-923 2025 ERCOT combined heat and power plants, generation-weighted (Dow Freeport (several EIA plants))"
 ECEC_G1,combustion_turbine,13.94,11.08,164,ercot_net,58471/CT-1,matched by hourly output
 ECEC_G2,combustion_turbine,13.87,10.93,168,ercot_net,58471/CT-2,matched by hourly output
+EXN_EXN_G1,combustion_turbine,5.72,5.72,,cogen,,"cogeneration, fuel chargeable to power: EIA-923 2025 ERCOT combined heat and power plants, generation-weighted (ExxonMobil Baytown (two EIA plants))"
+EXN_EXN_G10,combustion_turbine,5.72,5.72,,cogen,,"cogeneration, fuel chargeable to power: EIA-923 2025 ERCOT combined heat and power plants, generation-weighted (ExxonMobil Baytown (two EIA plants))"
+EXN_EXN_G11,combustion_turbine,5.72,5.72,,cogen,,"cogeneration, fuel chargeable to power: EIA-923 2025 ERCOT combined heat and power plants, generation-weighted (ExxonMobil Baytown (two EIA plants))"
+EXN_EXN_G12,combustion_turbine,5.72,5.72,,cogen,,"cogeneration, fuel chargeable to power: EIA-923 2025 ERCOT combined heat and power plants, generation-weighted (ExxonMobil Baytown (two EIA plants))"
+EXN_EXN_G13,combustion_turbine,5.72,5.72,,cogen,,"cogeneration, fuel chargeable to power: EIA-923 2025 ERCOT combined heat and power plants, generation-weighted (ExxonMobil Baytown (two EIA plants))"
+EXN_EXN_G14,combustion_turbine,5.72,5.72,,cogen,,"cogeneration, fuel chargeable to power: EIA-923 2025 ERCOT combined heat and power plants, generation-weighted (ExxonMobil Baytown (two EIA plants))"
+EXN_EXN_G2,combustion_turbine,5.72,5.72,,cogen,,"cogeneration, fuel chargeable to power: EIA-923 2025 ERCOT combined heat and power plants, generation-weighted (ExxonMobil Baytown (two EIA plants))"
+EXN_EXN_G3,combustion_turbine,5.72,5.72,,cogen,,"cogeneration, fuel chargeable to power: EIA-923 2025 ERCOT combined heat and power plants, generation-weighted (ExxonMobil Baytown (two EIA plants))"
+EXN_EXN_G4,combustion_turbine,5.72,5.72,,cogen,,"cogeneration, fuel chargeable to power: EIA-923 2025 ERCOT combined heat and power plants, generation-weighted (ExxonMobil Baytown (two EIA plants))"
+EXN_EXN_G8,combustion_turbine,5.72,5.72,,cogen,,"cogeneration, fuel chargeable to power: EIA-923 2025 ERCOT combined heat and power plants, generation-weighted (ExxonMobil Baytown (two EIA plants))"
+EXN_EXN_G9,combustion_turbine,5.72,5.72,,cogen,,"cogeneration, fuel chargeable to power: EIA-923 2025 ERCOT combined heat and power plants, generation-weighted (ExxonMobil Baytown (two EIA plants))"
 FEGC_UNIT1,combustion_turbine,12.63,12.10,73,ercot_net,60468/CT-1,matched by hourly output
+FORMOSA_FORMOSG11,combustion_turbine,4.95,4.95,,cogen,EIA 10554,"cogeneration, fuel chargeable to power: EIA-923 2025 fuel for electricity over net generation, plant 10554 (Formosa Utility Venture; steam 43% of its fuel)"
+FORMOSA_FORMOSG12,combustion_turbine,4.95,4.95,,cogen,EIA 10554,"cogeneration, fuel chargeable to power: EIA-923 2025 fuel for electricity over net generation, plant 10554 (Formosa Utility Venture; steam 43% of its fuel)"
+FORMOSA_FORMOSG8,combustion_turbine,4.95,4.95,,cogen,EIA 10554,"cogeneration, fuel chargeable to power: EIA-923 2025 fuel for electricity over net generation, plant 10554 (Formosa Utility Venture; steam 43% of its fuel)"
 HAYSEN_HAYSENG1,combustion_turbine,8.18,7.41,525,ercot_net,55144/STK1,matched by hourly output
 HAYSEN_HAYSENG2,combustion_turbine,8.16,7.43,652,ercot_net,55144/STK2,matched by hourly output
 HAYSEN_HAYSENG3,combustion_turbine,8.46,7.57,471,ercot_net,55144/STK3,matched by hourly output
@@ -181,6 +211,7 @@ JAD_UNIT4,combustion_turbine,10.17,9.96,227,ercot_net,66604/CT-4,matched by hour
 JAD_UNIT5,combustion_turbine,10.17,9.97,335,ercot_net,66604/CT-5,matched by hourly output
 JAD_UNIT6,combustion_turbine,10.43,10.05,308,ercot_net,66604/CT-6,matched by hourly output
 LARDVFTN_G5,combustion_turbine,9.50,9.22,47,ercot_net,3439/5,matched by hourly output
+LHM_CVC_G4,combustion_turbine,6.15,6.15,,cogen,EIA 55187,"cogeneration, fuel chargeable to power: EIA-923 2025 fuel for electricity over net generation, plant 55187 (Channelview Cogeneration Plant; steam 44% of its fuel)"
 LIG_UNIT1,combustion_turbine,10.40,9.54,508,ercot_net,62548/CT1,matched by hourly output
 LIG_UNIT2,combustion_turbine,10.57,9.87,444,ercot_net,62548/CT2,matched by hourly output
 MDANP_CT1,combustion_turbine,7.96,7.53,189,ercot_net,55091/STK1,matched by hourly output
@@ -191,6 +222,13 @@ MDANP_CT5,combustion_turbine,8.08,7.60,186,ercot_net,55091/STK5,matched by hourl
 MDANP_CT6,combustion_turbine,8.15,7.40,316,ercot_net,55091/STK6,matched by hourly output
 MIL_MILLERG4,combustion_turbine,15.97,11.62,969,ercot_net,3628/**4,matched by hourly output
 MIL_MILLERG5,combustion_turbine,16.88,11.54,838,ercot_net,3628/**5,matched by hourly output
+NCARBIDE_NCARBIG1,combustion_turbine,5.72,5.72,,cogen,,"cogeneration, fuel chargeable to power: EIA-923 2025 ERCOT combined heat and power plants, generation-weighted (Union Carbide (several EIA plants))"
+NCARBIDE_NCARBIG2,combustion_turbine,5.72,5.72,,cogen,,"cogeneration, fuel chargeable to power: EIA-923 2025 ERCOT combined heat and power plants, generation-weighted (Union Carbide (several EIA plants))"
+NCARBIDE_NCARBIG3,combustion_turbine,5.72,5.72,,cogen,,"cogeneration, fuel chargeable to power: EIA-923 2025 ERCOT combined heat and power plants, generation-weighted (Union Carbide (several EIA plants))"
+NCARBIDE_NCARBIG5,combustion_turbine,5.72,5.72,,cogen,,"cogeneration, fuel chargeable to power: EIA-923 2025 ERCOT combined heat and power plants, generation-weighted (Union Carbide (several EIA plants))"
+NCARBIDE_NCARBIG6,combustion_turbine,5.72,5.72,,cogen,,"cogeneration, fuel chargeable to power: EIA-923 2025 ERCOT combined heat and power plants, generation-weighted (Union Carbide (several EIA plants))"
+NCARBIDE_NCARBIG7,combustion_turbine,5.72,5.72,,cogen,,"cogeneration, fuel chargeable to power: EIA-923 2025 ERCOT combined heat and power plants, generation-weighted (Union Carbide (several EIA plants))"
+NCARBIDE_NCARBIG8,combustion_turbine,5.72,5.72,,cogen,,"cogeneration, fuel chargeable to power: EIA-923 2025 ERCOT combined heat and power plants, generation-weighted (Union Carbide (several EIA plants))"
 OLINGR_OLING_4,combustion_turbine,12.53,11.36,42,ercot_net,3576/GE4,matched by hourly output
 PB2SES_CT1,combustion_turbine,13.54,12.13,273,ercot_net,3494/CT1,matched by hourly output
 PB2SES_CT2,combustion_turbine,13.79,12.12,96,ercot_net,3494/CT2,matched by hourly output
@@ -214,6 +252,10 @@ RAB_UNIT6,combustion_turbine,10.30,10.05,234,ercot_net,64383/CT-6,matched by hou
 RAB_UNIT7,combustion_turbine,10.33,9.96,333,ercot_net,64383/CT-7,matched by hourly output
 RAB_UNIT8,combustion_turbine,10.36,9.90,379,ercot_net,64383/CT-8,matched by hourly output
 SANDHSYD_SH4,combustion_turbine,9.99,9.74,37,ercot_net,7900/SH4,matched by hourly output
+SCLPCOGN_SCLPC_1,combustion_turbine,4.85,4.85,,cogen,EIA 55015,"cogeneration, fuel chargeable to power: EIA-923 2025 fuel for electricity over net generation, plant 55015 (Sweeny Cogen Facility; steam 66% of its fuel)"
+SCLPCOGN_SCLPC_2,combustion_turbine,4.85,4.85,,cogen,EIA 55015,"cogeneration, fuel chargeable to power: EIA-923 2025 fuel for electricity over net generation, plant 55015 (Sweeny Cogen Facility; steam 66% of its fuel)"
+SCLPCOGN_SCLPC_3,combustion_turbine,4.85,4.85,,cogen,EIA 55015,"cogeneration, fuel chargeable to power: EIA-923 2025 fuel for electricity over net generation, plant 55015 (Sweeny Cogen Facility; steam 66% of its fuel)"
+SCLPCOGN_SCLPC_4,combustion_turbine,4.85,4.85,,cogen,EIA 55015,"cogeneration, fuel chargeable to power: EIA-923 2025 fuel for electricity over net generation, plant 55015 (Sweeny Cogen Facility; steam 66% of its fuel)"
 SILASRAY_SILAS_10,combustion_turbine,14.26,11.29,909,ercot_net,3559/10,matched by hourly output
 SJS_SJS_G1,combustion_turbine,13.23,13.78,7541,ercot_net,7325/SJS1,matched by hourly output
 SJS_SJS_G2,combustion_turbine,13.21,12.84,8212,ercot_net,7325/SJS2,matched by hourly output
@@ -232,6 +274,7 @@ TOPAZ_UNIT6,combustion_turbine,10.05,9.89,590,ercot_net,63688/CT-6,matched by ho
 TOPAZ_UNIT7,combustion_turbine,10.35,10.19,856,ercot_net,63688/CT-7,matched by hourly output
 TOPAZ_UNIT8,combustion_turbine,10.05,9.95,583,ercot_net,63688/CT-8,matched by hourly output
 TOPAZ_UNIT9,combustion_turbine,10.25,10.04,480,ercot_net,63688/CT-9,matched by hourly output
+UCC_COGN_UCC_C_2,combustion_turbine,5.72,5.72,,cogen,,"cogeneration, fuel chargeable to power: EIA-923 2025 ERCOT combined heat and power plants, generation-weighted (Union Carbide (several EIA plants))"
 VICTPRT2_UNIT1,combustion_turbine,10.47,9.68,88,ercot_net,61966/CT1,matched by hourly output
 VICTPRT2_UNIT2,combustion_turbine,11.80,10.83,80,ercot_net,61966/CT2,matched by hourly output
 WIPOPA_WPP_G1,combustion_turbine,13.47,8.46,55,ercot_net,56674/1,matched by hourly output

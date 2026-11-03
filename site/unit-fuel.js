@@ -28,7 +28,7 @@ function suCell(mw, share) {
 function outCell(g, n) { return g == null || n == null ? "–" : `${fmt0(g)} MW gross, ${fmt0(n)} MW net`; }
 
 function table(u) {
-  const own = u.basis !== "fallback", s = u.su;
+  const s = u.su;
   const rows = [
     ["Heat rate, MMBtu per net MWh", hrCell(u.hr_min), hrCell(u.hr_full)],
     ...(s ? [["Station use", suCell(s.su_mw_min, s.su_share_min), suCell(s.su_mw_full, s.su_share_full)],
@@ -36,13 +36,14 @@ function table(u) {
   ];
   $("fuel-table").innerHTML = `<table class="data fuel-tbl"><thead><tr><th class="t"></th><th>At minimum</th><th>At full load</th></tr></thead><tbody>` +
     rows.map((r) => `<tr><td class="t">${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td></tr>`).join("") + "</tbody></table>";
-  $("fuel-title-note").textContent = own ? "measured" : `${TECH_NAME[u.tech] || u.tech} median`;
+  $("fuel-title-note").textContent = u.basis === "cogen" ? "cogeneration" : u.basis !== "fallback" ? "measured" : `${TECH_NAME[u.tech] || u.tech} median`;
 }
 
 function lead(u, D) {
-  const own = u.basis !== "fallback";
+  const own = u.basis !== "fallback" && u.basis !== "cogen";
   const cost = u.cost.filter((v) => v != null), off = u.offer.map((v, i) => [v, u.cost[i]]).filter(([o, c]) => o != null && c != null);
-  const src = own ? `measured on ${fmt0(u.min_hours)} steady hours at minimum${u.epa ? ` (EPA ${u.tech === "combined_cycle" ? "plant" : "unit"} ${esc(u.epa)})` : ""}` :
+  const src = u.basis === "cogen" ? `the fuel chargeable to its power. It is a cogeneration unit, making steam for an industrial host as well, and that steam keeps it running whatever power is worth. EPA's heat input covers both products and ERCOT sees only the power sent to the grid, so this is ${u.note ? esc(u.note.replace(/^cogeneration, fuel chargeable to power: /, "")) : "EIA-923's fuel for electricity"}, the fuel left after crediting the steam at about boiler efficiency` :
+    own ? `measured on ${fmt0(u.min_hours)} steady hours at minimum${u.epa ? ` (EPA ${u.tech === "combined_cycle" ? "plant" : "unit"} ${esc(u.epa)})` : ""}` :
     `the ${TECH_NAME[u.tech] || u.tech} median: ${u.note ? esc(u.note) : "no EPA unit matched with enough hours"}`;
   const gap = off.length ? d3.median(off, ([o, c]) => o - c) : null;
   const shared = u.su && u.su.shared_with ? ` Station use is the plant unit's, shared by ${esc(u.su.shared_with.split("+").join(", "))}.` : "";

@@ -1,0 +1,50 @@
+unit,eia_plant,plant,match
+AMOCOOIL_CC1,50815,"Odyssey Energy Altura Cogen",EPA facility (cc_map)
+AMOCOOIL_CC2,50815,"Odyssey Energy Altura Cogen",EPA facility (cc_map)
+BTE_CC1,55327,Baytown Energy Center,EPA facility (cc_map)
+BYU_CC1,10298,Bayou Cogen Plant,name and EPA facility (Air Liquide Bayport)
+CCEC_CC1,55206,Corpus Christi Energy Center,EPA facility (cc_map)
+CHE_CC1,55299,Channel Energy Center,EPA facility (cc_map)
+CVC_CC1,55187,Channelview Cogeneration Plant,EPA facility (cc_map)
+DDPEC_CC1,55464,Deer Park Energy Center,EPA facility (cc_map)
+DOWGEN_DOW_G61,,Dow Freeport (several EIA plants),name
+DOWGEN_DOW_G63,,Dow Freeport (several EIA plants),name
+DOWGEN_DOW_G67,,Dow Freeport (several EIA plants),name
+DOWGEN_DOW_G81,,Dow Freeport (several EIA plants),name
+DOWGEN_DOW_G82,,Dow Freeport (several EIA plants),name
+DOWGEN_DOW_G83,,Dow Freeport (several EIA plants),name
+DOWGEN_DOW_GT96,,Dow Freeport (several EIA plants),name
+DOWGEN_DOW_ST65,,Dow Freeport (several EIA plants),name
+DOWGEN_DOW_ST84,,Dow Freeport (several EIA plants),name
+DOWGEN_DOW_ST95,,Dow Freeport (several EIA plants),name
+EXN_EXN_G1,,ExxonMobil Baytown (two EIA plants),name
+EXN_EXN_G2,,ExxonMobil Baytown (two EIA plants),name
+EXN_EXN_G3,,ExxonMobil Baytown (two EIA plants),name
+EXN_EXN_G4,,ExxonMobil Baytown (two EIA plants),name
+EXN_EXN_G8,,ExxonMobil Baytown (two EIA plants),name
+EXN_EXN_G9,,ExxonMobil Baytown (two EIA plants),name
+EXN_EXN_G10,,ExxonMobil Baytown (two EIA plants),name
+EXN_EXN_G11,,ExxonMobil Baytown (two EIA plants),name
+EXN_EXN_G12,,ExxonMobil Baytown (two EIA plants),name
+EXN_EXN_G13,,ExxonMobil Baytown (two EIA plants),name
+EXN_EXN_G14,,ExxonMobil Baytown (two EIA plants),name
+FORMOSA_CC1,10554,Formosa Utility Venture,name
+FORMOSA_CC2,10554,Formosa Utility Venture,name
+FORMOSA_FORMOSG8,10554,Formosa Utility Venture,name
+FORMOSA_FORMOSG11,10554,Formosa Utility Venture,name
+FORMOSA_FORMOSG12,10554,Formosa Utility Venture,name
+INGLCOSW_CC1,55313,Ingleside Cogeneration,name
+LHM_CVC_G4,55187,Channelview Cogeneration Plant,EPA output match (0.94)
+NCARBIDE_NCARBIG1,,Union Carbide (several EIA plants),name
+NCARBIDE_NCARBIG2,,Union Carbide (several EIA plants),name
+NCARBIDE_NCARBIG3,,Union Carbide (several EIA plants),name
+NCARBIDE_NCARBIG5,,Union Carbide (several EIA plants),name
+NCARBIDE_NCARBIG6,,Union Carbide (several EIA plants),name
+NCARBIDE_NCARBIG7,,Union Carbide (several EIA plants),name
+NCARBIDE_NCARBIG8,,Union Carbide (several EIA plants),name
+SCLPCOGN_SCLPC_1,55015,Sweeny Cogen Facility,name
+SCLPCOGN_SCLPC_2,55015,Sweeny Cogen Facility,name
+SCLPCOGN_SCLPC_3,55015,Sweeny Cogen Facility,name
+SCLPCOGN_SCLPC_4,55015,Sweeny Cogen Facility,name
+TXCTY_CC1,52088,Texas City Power Plant,EPA facility (cc_map)
+UCC_COGN_UCC_C_2,,Union Carbide (several EIA plants),name

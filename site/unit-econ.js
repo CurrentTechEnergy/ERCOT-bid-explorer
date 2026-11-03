@@ -194,7 +194,7 @@ async function draw() {
   const days = u.mwh.filter((v) => v != null).length, mwh = sum(u.mwh), nst = sum(u.starts), margin = sum(e.margin);
   const own = u.start_hot.filter((v) => v != null).length, mg = u.mingen.filter((v) => v != null);
   const meas = FUEL[S.tech] === "gas" || FUEL[S.tech] === "coal";
-  const fuelNote = FUEL[S.tech] ? (meas ? ` Costs: fuel burned at its own measured heat rate each hour (a straight line from its heat rate at minimum to full load, as under Heat rate and fuel cost)` : ` Costs: fuel at the EIA average heat rate for the technology (${EIA_HR[S.tech]} MMBtu/MWh)`) +
+  const fuelNote = FUEL[S.tech] ? (meas ? ` Costs: fuel burned at its own measured heat rate each hour (a straight line from its heat rate at minimum to full load, as under Heat rate and fuel cost; a cogeneration unit's is the fuel chargeable to its power)` : ` Costs: fuel at the EIA average heat rate for the technology (${EIA_HR[S.tech]} MMBtu/MWh)`) +
     (FUEL[S.tech] === "gas" ? ` × ${HUBS[unitHub(u)]} gas${u.fuel_hub && unitHub(u) !== "hh" ? ` (its hub: ${HUB_METHOD[u.fuel_hub_method] || u.fuel_hub_method})` : ""}` : ` × $${S.fuel[FUEL[S.tech]]}/MMBtu`) +
     ` plus $${S.params[S.tech].vom}/MWh variable O&M, and starts at its own DAM hot-start offer where it has one, else $${fmt0(S.params[S.tech].start)}.`
     : S.tech === "storage" ? " Charging is in energy revenue as a negative (MWh bought at the same prices), so energy revenue is the arbitrage margin and there is no separate fuel cost." : " No fuel cost for wind and solar.";
