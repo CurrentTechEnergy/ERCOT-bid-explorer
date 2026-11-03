@@ -259,15 +259,9 @@ jobs:
             exit 0
           fi
           git commit -m "Data update $(date -u +%Y-%m-%d)"
-          # Code may have been pushed while this run was working: rebase onto it, then push.
-          git fetch --unshallow origin "${GITHUB_REF_NAME}"
-          for attempt in 1 2 3 4 5; do
-            git pull --rebase origin "${GITHUB_REF_NAME}" && git push origin "HEAD:${GITHUB_REF_NAME}" && exit 0
-            echo "Push attempt $attempt failed; retrying"
-            sleep $((attempt * 10))
-          done
-          echo "::error::Could not push the data commit after 5 attempts"
-          exit 1
+          # Code may have been merged while this run was working: rebase onto it, then push.  A data
+          # file the merge changed too keeps the merged version (see the script).
+          .github/scripts/push-data.sh "${GITHUB_REF_NAME}"
 
       # A reprocess run does max_files files; while days are left (and this run got through some),
       # it queues the next one, so one click fills a format change in.  Cancel a queued run to stop.
