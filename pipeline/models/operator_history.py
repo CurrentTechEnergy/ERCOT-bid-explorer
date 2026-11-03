@@ -43,6 +43,95 @@ def _l(a):
     return [None if not np.isfinite(v) else round(float(v), 2) for v in a]
 
 
+def _parse_files():
+    """The thermal and dam-status history files read into {key: {date: hourly states}},
+    {date: {unit: DAM record}} and {(date, unit): hourly DAM status}, every date.  About 10
+    minutes of pandas grouping, so _parsed keeps it between runs."""
+    import pandas as pd
+    rank = {c: i for i, c in enumerate(sorted(grp.RANK, key=grp.RANK.get))}
+    code = np.array(sorted(grp.RANK, key=grp.RANK.get))
+    states, dam, status = defaultdict(dict), defaultdict(dict), {}
+    for f in _files("thermal"):
+        df = pd.read_parquet(f, columns=COLS)
+        df = df[df["tech"].astype(str).isin(TECHS) & df["he"].between(1, 24)]
+        if df.empty:
+            continue
+        df = df.sort_values(["date", "unit", "he"])
+        t = df["tech"].astype(str)
+        key = np.where(t == "combined_cycle", df["unit"].astype(str).map(train_of), df["unit"].astype(str))
+        r = pd.DataFrame({"key": key, "date": df["date"].to_numpy(), "he": df["he"].to_numpy(),
+                          "r": df["state"].astype(str).map(rank).fillna(0).astype(int).to_numpy()})
+        w = r.groupby(["key", "date", "he"])["r"].max().unstack("he").reindex(columns=range(1, 25)).fillna(0).astype(int)
+        for (k, d), seg in zip(w.index, code[w.to_numpy()]):
+            states[k][d] = seg
+        g = df.groupby(["date", "unit"], observed=True, sort=False)
+        for (d, name), u in g:
+            h = u["he"].to_numpy() - 1
+            spp, aw = np.full(24, np.nan), np.full(24, np.nan)
+            spp[h], aw[h] = u["da_node"].to_numpy(float), u["award"].to_numpy(float)
+            lsl = u["dam_lsl"].to_numpy(float)
+            lsl = lsl[np.isfinite(lsl) & (lsl > 0)]
+            mg, hot = u["mingen"].to_numpy(float), u["hot_start"].to_numpy(float)
+            dam[d][str(name)] = {"tech": str(u["tech"].iat[0]), "sp": str(u["sp"].iat[0]),
+                                 "lsl": float(lsl.min()) if lsl.size else None,
+                                 "mingen": float(np.nanmin(mg)) if np.isfinite(mg).any() else None,
+                                 "start": [float(np.nanmin(hot))] if np.isfinite(hot).any() else [],
+                                 "spp": _l(spp), "award": [0.0 if not np.isfinite(v) else float(v) for v in aw]}
+    for f in _files("dam-status"):
+        st = pd.read_parquet(f)
+        st = st[st["tech"].astype(str).isin(TECHS) & st["he"].between(1, 24)]
+        for (d, name), u in st.groupby(["date", "unit"], observed=True, sort=False):
+            sh = [""] * 24
+            for h, v in zip(u["he"].to_numpy(), u["status"].astype(str)):
+                sh[h - 1] = v
+            status[(d, str(name))] = sh
+    return dict(states), dict(dam), status
+
+
+def _parsed(before):
+    """_parse_files() cut to the dates before `before` (the live window's first day): states,
+    DAM records with their hourly status ("status_h") where the dam-status files have it, and
+    whether any had.  The parse is kept in HISTORY_DIR/parsed.pkl (the update workflow caches it
+    between runs), keyed by this module's code and the history files' bytes, so it is redone only
+    when the history release or this code changes."""
+    import hashlib
+    import pickle
+    from .. import memo
+    h = hashlib.sha1(memo.code_hash(__name__).encode())
+    for f in _files("thermal") + _files("dam-status"):
+        h.update(f.name.encode() + b"\0" + hashlib.sha1(f.read_bytes()).digest())
+    key, path = h.hexdigest(), HISTORY_DIR / "parsed.pkl"
+    got = None
+    if path.exists():
+        try:
+            with open(path, "rb") as fh:
+                got = pickle.load(fh)
+            got = got[1] if got[0] == key else None
+        except Exception:          # a damaged or stale cache is parsed again
+            got = None
+    if got is None:
+        got = _parse_files()
+        with open(path, "wb") as fh:
+            pickle.dump((key, got), fh, protocol=pickle.HIGHEST_PROTOCOL)
+    states_all, dam_all, status = got
+    states = defaultdict(dict)
+    for k, by_d in states_all.items():
+        for d, seg in by_d.items():
+            if d < before:
+                states[k][d] = seg
+    dam = defaultdict(dict)
+    for d, units in dam_all.items():
+        if d < before:
+            dam[d] = {name: dict(rec) for name, rec in units.items()}
+    has_status = False
+    for (d, name), sh in status.items():
+        rec = dam.get(d, {}).get(name) if d < before else None
+        if rec is not None:
+            rec["status_h"] = sh
+            has_status = True
+    return states, dam, has_status
+
+
 class HistoryContext:
     """The parts of forecast.context.Context the operator model reads, over the history days
     before the live context's first 60-day day and then the live days."""
@@ -52,49 +141,7 @@ class HistoryContext:
         self.live = live
         self.live_day0 = live.stats["day0"]
         before = self.live_day0.isoformat()
-        rank = {c: i for i, c in enumerate(sorted(grp.RANK, key=grp.RANK.get))}
-        code = np.array(sorted(grp.RANK, key=grp.RANK.get))
-        states, dam = defaultdict(dict), defaultdict(dict)
-        for f in _files("thermal"):
-            df = pd.read_parquet(f, columns=COLS)
-            df = df[df["tech"].astype(str).isin(TECHS) & (df["date"] < before) & df["he"].between(1, 24)]
-            if df.empty:
-                continue
-            df = df.sort_values(["date", "unit", "he"])
-            t = df["tech"].astype(str)
-            key = np.where(t == "combined_cycle", df["unit"].astype(str).map(train_of), df["unit"].astype(str))
-            r = pd.DataFrame({"key": key, "date": df["date"].to_numpy(), "he": df["he"].to_numpy(),
-                              "r": df["state"].astype(str).map(rank).fillna(0).astype(int).to_numpy()})
-            w = r.groupby(["key", "date", "he"])["r"].max().unstack("he").reindex(columns=range(1, 25)).fillna(0).astype(int)
-            for (k, d), seg in zip(w.index, code[w.to_numpy()]):
-                states[k][d] = seg
-            # one DAM record per configuration and day, in the DAM day file's shape
-            g = df.groupby(["date", "unit"], observed=True, sort=False)
-            for (d, name), u in g:
-                h = u["he"].to_numpy() - 1
-                spp, aw = np.full(24, np.nan), np.full(24, np.nan)
-                spp[h], aw[h] = u["da_node"].to_numpy(float), u["award"].to_numpy(float)
-                lsl = u["dam_lsl"].to_numpy(float)
-                lsl = lsl[np.isfinite(lsl) & (lsl > 0)]
-                mg, hot = u["mingen"].to_numpy(float), u["hot_start"].to_numpy(float)
-                dam[d][str(name)] = {"tech": str(u["tech"].iat[0]), "sp": str(u["sp"].iat[0]),
-                                     "lsl": float(lsl.min()) if lsl.size else None,
-                                     "mingen": float(np.nanmin(mg)) if np.isfinite(mg).any() else None,
-                                     "start": [float(np.nanmin(hot))] if np.isfinite(hot).any() else [],
-                                     "spp": _l(spp), "award": [0.0 if not np.isfinite(v) else float(v) for v in aw]}
-        # DAM resource status by hour (history.py --dam-status), onto the same records
-        self.has_status = False
-        for f in _files("dam-status"):
-            st = pd.read_parquet(f)
-            st = st[st["tech"].astype(str).isin(TECHS) & (st["date"] < before) & st["he"].between(1, 24)]
-            for (d, name), u in st.groupby(["date", "unit"], observed=True, sort=False):
-                rec = dam.get(d, {}).get(str(name))
-                if rec is not None:
-                    sh = [""] * 24
-                    for h, v in zip(u["he"].to_numpy(), u["status"].astype(str)):
-                        sh[h - 1] = v
-                    rec["status_h"] = sh
-                    self.has_status = True
+        states, dam, self.has_status = _parsed(before)
         hist = sorted(dam)
         self.hist_dates = hist
         self.uh = {"dates": hist + list(live.uh.get("dates", []))}
