@@ -191,17 +191,18 @@ function drawHOD() {
 }
 
 // ==== Year by year ===========================================================================
+const GAS_FN = "Ship Channel gas filled from Henry Hub plus that month's usual difference on days with no Ship Channel price (none before Jul 15, 2019 or for most of Jun 2024 to Aug 2025).";
 function drawTable() {
   const R = cur(), C = usd(), ys = years().filter((y) => R[y]), B = S.P.battery || {}, G = S.P.gas || {};
   const head = ["Year", "Hours", "Average", "Median", "Top 1%", "Bottom 1%", "Top 1% − bottom 1%", "Daily max − min", "≥ $1,000 h", "≥ $100 h", "≤ $10 h", "≤ $0 h", "Ship Channel gas", "Batteries GW"];
-  const rows = ys.map((k) => { const r = R[k], c = C[k]?.cnt || {}; return [yrLabel(k), r.n, r.mean, r.p50, r.p99, r.p1, r.p99 - r.p1, r.sp_mean, c.ge1000, c.ge100, c.le10, c.le0, r.gas, B[k] ? B[k].mw / 1000 : null, G[k]?.filled > 0.05]; });
+  const rows = ys.map((k) => { const r = R[k], c = C[k]?.cnt || {}; return [yrLabel(k), r.n, r.mean, r.p50, r.p99, r.p1, r.p99 - r.p1, r.sp_mean, c.ge1000, c.ge100, c.le10, c.le0, r.gas, B[k] ? B[k].mw / 1000 : null, G[k]?.filled > 0.05 ? G[k].filled : 0]; });
   $("tbl").innerHTML = `<thead><tr>${head.map((t) => `<th>${t}</th>`).join("")}</tr></thead><tbody>` + rows.map((r) =>
     `<tr><td>${r[0]}</td><td>${d3.format(",")(r[1])}</td>${r.slice(2, 8).map((v) => `<td>${money(v)}</td>`).join("")}` +
-    `${r.slice(8, 12).map((v) => `<td>${v == null ? "–" : d3.format(",")(v)}</td>`).join("")}<td>${r[12] == null ? "–" : "$" + r[12].toFixed(2)}${r[14] ? "*" : ""}</td><td>${r[13] == null ? "–" : r[13].toFixed(1)}</td></tr>`).join("") + "</tbody>";
+    `${r.slice(8, 12).map((v) => `<td>${v == null ? "–" : d3.format(",")(v)}</td>`).join("")}<td>${r[12] == null ? "–" : "$" + r[12].toFixed(2)}${r[14] ? `<span class="fn" tabindex="0" data-tip="${esc(GAS_FN)} ${d3.format(".0%")(r[14])} of ${esc(r[0])}'s days filled.">*</span>` : ""}</td><td>${r[13] == null ? "–" : r[13].toFixed(1)}</td></tr>`).join("") + "</tbody>";
   setCSV($("tbl"), ["year", "hours", `mean_${S.unit}`, `median_${S.unit}`, `p99_${S.unit}`, `p1_${S.unit}`, "p99_less_p1", "daily_max_min_mean", "hours_ge_1000", "hours_ge_100", "hours_le_10", "hours_le_0", "ship_channel_gas_usd_mmbtu", "battery_gw"],
     rows.map((r) => [r[0], ...r.slice(1, 14)]), "Year by year");
-  $("table-note").textContent = `${S.mkt === "rt" ? "Real-time" : "Day-ahead"} ${$("c-hub").selectedOptions[0].text}, whole years (the latest to date), ${unitName()} for prices; hour counts always in $/MWh. ` +
-    "* Ship Channel gas filled from Henry Hub plus the usual difference on many days (none published before Jul 15, 2019 or for most of Jun 2024 to Aug 2025).";
+  $("table-note").textContent = `${S.mkt === "rt" ? "Real-time" : "Day-ahead"} ${$("c-hub").selectedOptions[0].text}, whole years (the latest to date), ${unitName()} for prices; hour counts always in $/MWh.`;
+  $("table-foot").textContent = rows.some((r) => r[14]) ? `* ${GAS_FN}` : "";
 }
 
 // ==== controls ===============================================================================
@@ -236,6 +237,10 @@ const save = () => writeHash({ m: S.mkt, h: S.hub, u: S.unit });
   const part = years().filter(partYear);
   if (part.length) yb.insertAdjacentHTML("beforeend", `<span class="yrs-note">* ${part.map((y) => esc(yrLabel(y))).join(", ")}</span>`);
   seg("c-mkt", "mkt"); seg("c-unit", "unit"); seg("c-zoom", "zoom", drawPDC); seg("c-hod", "hod", drawHOD);
+  // the table's footnote marks: the same note as a tooltip on hover, tap or focus
+  const fnTip = (ev) => { const f = ev.target.closest?.(".fn"); if (f) showTip(ev.clientX != null ? ev : { clientX: f.getBoundingClientRect().right, clientY: f.getBoundingClientRect().bottom }, esc(f.dataset.tip)); };
+  $("tbl").addEventListener("pointerover", fnTip); $("tbl").addEventListener("focusin", fnTip);
+  $("tbl").addEventListener("pointerout", (ev) => { if (ev.target.closest?.(".fn")) hideTip(); }); $("tbl").addEventListener("focusout", hideTip);
   $("c-hub").addEventListener("change", (e) => { S.hub = e.target.value; save(); drawAll(); });
   $("status").textContent = `Real-time through ${P.through.rt}, day-ahead through ${P.through.da}. Built ${P.built.slice(0, 10)}.`;
   drawAll();

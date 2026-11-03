@@ -30,6 +30,8 @@
   .yrs button { font: 500 12px var(--font-data); border: 1px solid var(--line); background: var(--surface); color: var(--ink-2); border-radius: 999px; padding: 3px 9px; cursor: pointer; display: inline-flex; gap: 6px; align-items: center; min-height: 28px; }
   .yrs button i { width: 14px; height: 3px; border-radius: 2px; display: inline-block; background: currentColor; }
   .yrs button i.part { border-radius: 0; background: repeating-linear-gradient(90deg, currentColor 0 5px, transparent 5px 8px); }
+  .fn { cursor: help; color: var(--accent); padding: 0 2px; }
+  .tbl-foot { margin-top: 8px; }
   .yrs-note { font: 12px var(--font-data); color: var(--muted); align-self: center; margin-left: 4px; }
   .yrs button[aria-pressed="false"] { opacity: 0.4; }
   .minis { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 12px; }
@@ -93,6 +95,7 @@
   <section class="panel panel-wide" id="table-panel">
     <div class="panel-head"><div><h2>Year by year</h2><p class="note" id="table-note"></p></div></div>
     <div class="table-wrap"><table class="data" id="tbl" data-csv></table></div>
+    <p class="note tbl-foot" id="table-foot"></p>
   </section>
 </main>
 
