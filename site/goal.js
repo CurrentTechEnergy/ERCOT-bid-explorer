@@ -347,6 +347,79 @@ function drawQ4() {
   $("q4-answer").innerHTML = `<b>Most curtailment is transmission, not fossil.</b> In ${y}, ${fmtTWh(r.curt)} TWh of wind and solar was curtailed. ${fmtPct((r.curt - r.over) / r.curt)} of it came while the hub price was above $${S.G.over_price}, when the system wasn't oversupplied, and another ${fmtPct((r.over - r.free) / r.curt)} at wind and solar behind congestion. The rest, ${fmtTWh(r.free)} TWh (${fmtPct(r.free / r.curt)}), came in oversupply hours where the grid could have taken it: the part fossil units could make room for. In those hours ${fmtGW(fossil)} GW of fossil sat at minimum, beside ${fmtGW(nuc(y))} GW of nuclear. <b>${fmtGW(val(y, Q4_KEYS[0]))} GW of it was losing more than a restart would cost.</b> Had those units shut, ${runs(sc[0])} of that curtailment would have run instead. Had every unit losing money shut, ${runs(sc[1])} would have; shutting all fossil at minimum, ${runs(sc[2])}.`;
   setNote($("q4-note"), `The curtailment fossil units could make room for, by year, split by the shutdown that would have let it run. Each hour counts the smaller of its curtailment and the minimum of the units shut, so a year's average fossil minimum and average curtailment can't simply be compared. * part year.`,
     `Curtailment is a wind or solar unit's HSL above its base point (0.5 MW or more), from the 60-day SCED disclosure. An oversupply hour has a real-time hub average (HB_HUBAVG) of $${S.G.over_price}/MWh or less. A unit is behind congestion when its day-ahead node price sits $5 or more below the day-ahead bus average; most curtailment is (West and Panhandle), and shutting a gas unit elsewhere does not make room for it. The fossil split covers oversupply hours with at least 100 MW curtailed not behind congestion. A combined cycle or gas steam unit is losing money in the hours of its day-ahead loss windows (as in question 3). It loses more than a restart when some shutdown of at least its minimum off time would save more than the restart, and it is held on when a DAM commitment, AS or RUC covers half the window or more. Units outside such a window are covering their costs at day-ahead prices. Coal is shown on its own: its cost is a generic one and it mostly shuts by season. "Runs" sums, hour by hour, the smaller of that curtailment and the minimum of the units shut.`);
+  drawSiting();
+}
+
+// ---- 4b. Where a new load could use it: county maps of curtailment and the pockets that reach it ----
+// S.G.siting (pipeline/load_siting.py) and vendor/tx-counties.json (US Census county outlines via
+// us-atlas, Texas only).  A tap on a county picks it for the detail strip and the line chart.
+const SIT_NAMED = [["SWISHER", "Swisher (southern Panhandle)", "--c3"], ["SCURRY", "Scurry (Rolling Plains)", "--c1"], ["PECOS", "Pecos (Permian)", "--c4"], ["KENEDY", "Kenedy (Lower Valley)", "--c7"], ["HARRIS", "Harris (Houston)", "--c-other"]];
+const titleCase = (k) => k.toLowerCase().replace(/\b\w/g, (c) => c.toUpperCase());
+function sitData() {
+  const G = S.G.siting, c = G.columns, at = (n) => c.indexOf(n);
+  const rows = {};
+  for (const r of G.rows) rows[r[at("county")]] = { curt: r[at("curtailed_mwh")], mw: r[at("wind_solar_mw")], disc: r[at("disc")], reach: r[at("reach_hours")], svc: r[at("service")], absorb: r[at("absorb_mwh")] };
+  return rows;
+}
+function drawSiting() {
+  const G = S.G.siting;
+  if (!G || !S.TX) return;
+  $("sit").hidden = false;
+  const R = sitData(), H = G.hours, Z = G.sizes, i20 = Z.indexOf(20), i1g = Z.indexOf(1000);
+  const share = (r, i) => r.absorb[i] / (Z[i] * H);
+  if (!S.sitSel || !R[S.sitSel]) S.sitSel = R.SWISHER ? "SWISHER" : Object.keys(R)[0];
+  const svcOf = (k) => G.service[k] || "ercot";
+  const best = Object.entries(R).filter(([k]) => svcOf(k) !== "none").sort((a, b) => share(b[1], i20) - share(a[1], i20))[0];
+  const hou = R.HARRIS, fmtMon = (m) => d3.timeFormat("%b %Y")(d3.timeParse("%Y-%m")(m));
+  $("sit-answer").innerHTML = `Most curtailment sits behind congestion, so a new load only uses it on the same side of the constraint. From ${fmtMon(G.months[0])} to ${fmtMon(G.months[1])}, a flexible 20 MW load in ${titleCase(best[0])} County could have taken <b>${fmtPct(share(best[1], i20))} of its energy from wind and solar that was otherwise curtailed</b>${hou ? `, against ${fmtPct(share(hou, i20))} in Houston` : ""}. The best places are the southern Panhandle and the Rolling Plains, the same pocket as the big Panhandle wind; the share falls as the load grows, and the order barely changes.`;
+  setNote($("sit-note"), `Left, curtailment at the units in each county. Right, the hours a year a load there could have run on curtailment it can reach. Tap a county for its numbers.`,
+    `Each hour, a curtailed unit whose day-ahead node sits $${G.congested} or more below the day-ahead bus average is behind congestion. It counts toward every county whose median wind and solar node price is within $${G.pocket_tol} of it, taken as the same side of the binding constraints (inferred from prices, not shift factors). Curtailment at nodes nearer the bus price, in hours the real-time hub averaged $${G.over_price} or less, is system oversupply that a load anywhere could take, and counts everywhere. A load takes at most its own size each hour and is scored as if it were the only new load; a real one would also lift the local price. "Share of a flat load" is that energy over what the load would use running every hour. Counties are from ERCOT's CDR, with units it lacks placed from EIA-860. Hatched counties have no utility in ERCOT (EIA-861 service territories, 2024): a load there would normally be served from SPP, MISO or WECC even where ERCOT wind is. Grey counties have no wind or solar node to price them. ${d3.format(",")(H)} hours with data.`);
+  const W = 520, Hh = 500, proj = d3.geoConicConformal().parallels([27.5, 35]).rotate([100, 0]).fitSize([W, Hh], S.TX), path = d3.geoPath(proj);
+  const tip = (k) => { const r = R[k]; return `<b>${titleCase(k)} County</b>` + (r ? `<br>${d3.format(",.0f")(r.curt / 1e3)} GWh curtailed here<br>${d3.format(",")(r.reach)} hours with reachable curtailment<br>${fmtPct(share(r, i20))} of a flat 20 MW load` : "<br>No wind or solar node") + (svcOf(k) === "none" ? "<br>No ERCOT utility serves it" : ""); };
+  const map = (id, value, scale, ticks, fmt) => {
+    const el = d3.select("#" + id); el.selectAll("*").remove();
+    const svg = el.append("svg").attr("viewBox", `0 0 ${W} ${Hh}`).attr("role", "img"), pid = id + "-hatch";
+    svg.append("defs").append("pattern").attr("id", pid).attr("width", 5).attr("height", 5).attr("patternUnits", "userSpaceOnUse").attr("patternTransform", "rotate(45)")
+      .append("line").attr("y2", 5).attr("stroke", css("--ink-2")).attr("stroke-opacity", 0.5).attr("stroke-width", 1.2);
+    svg.append("g").selectAll("path").data(S.TX.features).join("path").attr("d", path)
+      .attr("class", (f) => "county" + (f.properties.n === S.sitSel ? " sel" : ""))
+      .attr("fill", (f) => R[f.properties.n] ? scale(value(R[f.properties.n])) : css("--grid"))
+      .on("click", (e, f) => { if (R[f.properties.n]) { S.sitSel = f.properties.n; drawSiting(); } })
+      .on("mousemove", (e, f) => showTip(e, tip(f.properties.n))).on("mouseleave", hideTip);
+    svg.append("g").attr("pointer-events", "none").selectAll("path").data(S.TX.features.filter((f) => svcOf(f.properties.n) === "none")).join("path").attr("d", path).attr("fill", `url(#${pid})`);
+    const s = svg.select(".county.sel"); if (!s.empty()) s.raise();
+    const lg = d3.select(`#${id}-legend`); lg.selectAll("*").remove();
+    const rs = lg.append("svg").attr("class", "sit-ramp").attr("viewBox", "0 0 230 26").attr("width", 230).attr("height", 26), n = ticks.length;
+    ticks.forEach((t, i) => { rs.append("rect").attr("x", i * 230 / n).attr("width", 230 / n).attr("height", 10).attr("fill", scale(t)); rs.append("text").attr("x", i * 230 / n + 1).attr("y", 23).text(fmt(t)); });
+    lg.append("span").html(`<span class="sw" style="background:var(--grid)"></span>No wind or solar node`);
+    lg.append("span").html(`<svg width="12" height="10" aria-hidden="true"><rect width="12" height="10" fill="url(#${pid})"></rect></svg> No ERCOT utility`);
+  };
+  map("sit-a", (r) => r.curt / 1e3, d3.scaleSequentialSqrt([0, 600], d3.interpolateRgb(css("--seq-lo"), css("--seq-hi"))).clamp(true), [0, 50, 150, 300, 450, 600], d3.format(","));
+  map("sit-b", (r) => r.reach, d3.scaleSequential([0, 3500], d3.interpolateRgb(css("--seq-lo"), css("--c3"))).clamp(true), [0, 500, 1000, 1500, 2500, 3500], d3.format(","));
+  const r = R[S.sitSel], area = svcOf(S.sitSel) === "none" ? "No ERCOT utility serves it" : svcOf(S.sitSel) === "part" ? "Served partly by ERCOT utilities" : "ERCOT";
+  const st = [[d3.format(",")(r.reach), "hours a year with reachable curtailment"], [fmtPct(share(r, i20)), "of a flat 20 MW load from curtailed wind and solar"],
+    [fmtPct(share(r, i1g)), "of a flat 1 GW load"], [`${d3.format(",.0f")(r.curt / 1e3)} GWh`, `curtailed at ${d3.format(",")(r.mw)} MW of wind and solar here`],
+    [(r.disc > 0 ? "+" : "") + d3.format(".1f")(r.disc), "$/MWh, day-ahead node price against the bus average"]];
+  $("sit-detail").innerHTML = `<h4>${esc(titleCase(S.sitSel))} County<span>${area}</span></h4><div class="sit-stats">${st.map(([b, s]) => `<div><b>${b}</b><span>${s}</span></div>`).join("")}</div>`;
+  // the share of a flat load each county's reachable curtailment covers, 10 MW to 5 GW
+  const named = SIT_NAMED.filter(([k]) => R[k] && k !== S.sitSel).concat([[S.sitSel, `${titleCase(S.sitSel)} (picked)`, "--c2"]]);
+  legend("sit-lines-legend", [...named.map(([, lab, col]) => [lab, col]), ["Every other county", "--c-other", 0.35]]);
+  const el = d3.select("#sit-lines"); el.selectAll("*").remove();
+  const w = 900, h = 340, m = { l: 44, r: 16, t: 10, b: 38 };
+  const x = d3.scaleLog([Z[0], Z.at(-1)], [m.l, w - m.r]), y = d3.scaleLinear([0, 0.4], [h - m.b, m.t]);
+  const ln = d3.line().x((d) => x(d[0])).y((d) => y(Math.min(d[1], 0.4))), pts = (r) => Z.map((L, i) => [L, share(r, i)]);
+  const svg = el.append("svg").attr("viewBox", `0 0 ${w} ${h}`).attr("role", "img").attr("aria-label", "Share of a flat load from curtailed wind and solar, by load size, one line per county");
+  svg.append("g").selectAll("line").data(y.ticks(4)).join("line").attr("x1", m.l).attr("x2", w - m.r).attr("y1", y).attr("y2", y).attr("stroke", css("--grid"));
+  svg.append("g").selectAll("text").data(y.ticks(4)).join("text").attr("x", m.l - 6).attr("y", (d) => y(d) + 4).attr("text-anchor", "end").attr("class", "tick").attr("fill", css("--muted")).attr("font-size", 11).text(fmtPct);
+  svg.append("g").selectAll("text").data(Z).join("text").attr("x", x).attr("y", h - m.b + 16).attr("text-anchor", "middle").attr("fill", css("--muted")).attr("font-size", 11).text((d) => d >= 1000 ? `${d / 1000} GW` : d);
+  svg.append("text").attr("x", m.l).attr("y", h - 4).attr("fill", css("--muted")).attr("font-size", 11).text("New load, MW (log scale). Share of a flat load's energy from curtailed wind and solar.");
+  svg.append("g").selectAll("path").data(Object.values(R)).join("path").attr("d", (r) => ln(pts(r))).attr("fill", "none").attr("stroke", css("--c-other")).attr("stroke-opacity", 0.25);
+  for (const [k, lab, col] of named) {
+    svg.append("path").attr("d", ln(pts(R[k]))).attr("fill", "none").attr("stroke", css(col)).attr("stroke-width", k === S.sitSel ? 2.6 : 2)
+      .on("mousemove", (e) => showTip(e, `<b>${esc(lab)}</b><br>${Z.map((L, i) => `${d3.format(",")(L)} MW: ${fmtPct(share(R[k], i))}`).join("<br>")}`)).on("mouseleave", hideTip);
+  }
+  setCSV($("sit-lines"), ["county", "service", "curtailed_mwh", "wind_solar_mw", "reach_hours", "node_less_bus", ...Z.map((L) => `absorb_mwh_${L}mw`)],
+    Object.entries(R).map(([k, r]) => [k, svcOf(k), r.curt, r.mw, r.reach, r.disc, ...r.absorb]), "Where a new load could use curtailment");
 }
 
 function drawAll() { drawQ1(); drawQ2(); drawQ3(); drawQ4(); }
@@ -354,6 +427,7 @@ function drawAll() { drawQ1(); drawQ2(); drawQ3(); drawQ4(); }
 (async function boot() {
   window.CX.init();
   S.G = await tryJSON("data/goal.json.gz");
+  if (S.G?.siting) S.TX = await tryJSON("vendor/tx-counties.json");
   if (!S.G) { $("status").textContent = "Not built yet. The goal page's data is built weekly by its own workflow."; return; }
   const v = readHash();
   const ys = years();

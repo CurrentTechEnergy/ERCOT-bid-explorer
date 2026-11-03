@@ -1,0 +1,56 @@
+unit,county,eia_plant,match
+ANSON2_UNIT1,JONES,"ANSON Solar Center, LLC (64026)",plant name
+ARMD_SLR_UNIT1,NAVARRO,Armadillo Solar Center (64349),plant name
+ARMD_SLR_UNIT2,NAVARRO,Armadillo Solar Center (64349),plant name
+BART_SLR_SOLAR1,RAINS,Barrett Solar Project (69359),plant name
+BYNM_SLR_SOLAR1,CORYELL,Bynum Solar Project (69360),plant name
+CHAL_SLR_SOLAR1,CULBERSON,Hayhurst Texas Solar (66880),plant name
+CHAR_SLR_UNIT1,REFUGIO,Charger Solar (69877),operator
+CHAR_SLR_UNIT2,REFUGIO,Charger Solar (69877),operator
+CST1_SLR_SOLAR1,JONES,Jones City 1 Solar (66559),plant name
+CST2_SLR_SOLAR1,JONES,Jones City 1 Solar (66559),plant name
+CST2_SLR_SOLAR2,JONES,Jones City 1 Solar (66559),plant name
+DORA_SLR_SOLAR1,CALLAHAN,Enbridge Solar (Sequoia II) (69272),plant name
+DORA_SLR_SOLAR2,CALLAHAN,Enbridge Solar (Sequoia II) (69272),plant name
+ERKA_SLR_UNIT1,KAUFMAN,Kaufman Solar (69585),plant name
+GAIA_SLR_SOLAR1,NAVARRO,Gaia Hybrid (66342),plant name
+GODY_SLR_SOLAR1,LAMAR,MRG Goody Solar Project Hybrid (66390),plant name
+GODY_SLR_SOLAR2,LAMAR,MRG Goody Solar Project Hybrid (66390),plant name
+GRND_SLR_UNIT1,UPTON,King Mountain Wind Ranch 1 (55581),plant name
+HHOLLOW2_WIND1,TAYLOR,Horse Hollow Wind Energy Center (56291),plant name
+HHOLLOW3_WND_1,TAYLOR,Horse Hollow Wind Energy Center (56291),plant name
+HHOLLOW4_WND1,TAYLOR,Horse Hollow Wind Energy Center (56291),plant name
+HNY_COMB_SOLAR1,BEE,Honeycomb Solar and Storage (69351),plant name
+HONEY_WD_UNIT1,STERLING,"Honey Mesquite Wind, LLC (69579)",plant name
+H_HOLLOW_WND1,TAYLOR,Horse Hollow Wind Energy Center (56291),plant name
+JKLP_SLR_PV1,SAN PATRICIO,Peacock Energy Project (68474),plant name
+JKLP_SLR_PV2,SAN PATRICIO,Peacock Energy Project (68474),plant name
+LACASAWD_UNIT1,STEPHENS,La Casa Wind (66919),plant name
+LACASAWD_UNIT2,STEPHENS,La Casa Wind (66919),plant name
+LACASAWD_UNIT3,STEPHENS,La Casa Wind (66919),plant name
+LMWD_SLR_SOLAR1,BELL,Limewood Bell Renewables Solar (68853),operator
+LNP_SOLAR1,BRAZORIA,Long Point Solar (68998),plant name
+NHKY_SLR_UNIT1,JACKSON,New Hickory Solar (69507),operator
+NHKY_SLR_UNIT2,JACKSON,New Hickory Solar (69507),operator
+OYST_SLR_UNIT1,ELLIS,Oystercatcher Solar (69780),plant name
+OYST_SLR_UNIT2,ELLIS,Oystercatcher Solar (69780),plant name
+PDRA_SLR_SOLAR1,FREESTONE,Piedra Solar (69496),plant name
+PDRA_SLR_SOLAR2,FREESTONE,Piedra Solar (69496),plant name
+QTUM_SLR_UNIT1,HASKELL,Quantum BESS (68759),plant name
+QTUM_SLR_UNIT2,HASKELL,Quantum BESS (68759),plant name
+SEQ2_SLR_SOLAR1,CALLAHAN,Enbridge Solar (Sequoia II) (69272),plant name
+SEQ2_SLR_SOLAR2,CALLAHAN,Enbridge Solar (Sequoia II) (69272),plant name
+SHAW_SLR_UNIT1,BANDERA,Rio Lago Solar (68155),plant name
+SOLC_SLR_UNIT1,HASKELL,Quantum BESS (68759),plant name
+SOLC_SLR_UNIT2,HASKELL,Quantum BESS (68759),plant name
+SWFT_SLR_UNIT1,ECTOR,Swift Air Solar I (68537),plant name
+SYBR_SLR_UNIT1,MILAM,Sypert Branch Solar (69150),operator
+SYBR_SLR_UNIT2,MILAM,Sypert Branch Solar (69150),operator
+THREEW_S_SOLAR1,HILL,Three W Solar (69283),operator
+TROJ_SLR_PV1,COOKE,Compadre Solar (67765),plant name
+TROJ_SLR_PV2,COOKE,Compadre Solar (67765),plant name
+ULYS_SLR_PV1,COKE,Tennyson Solar (69605),operator
+YAPN_SLR_PV1,MILAM,Yaupon Solar Project (Hybrid) (66216),plant name
+YAPN_SLR_PV2,MILAM,Yaupon Solar Project (Hybrid) (66216),plant name
+YCAT_WND_UNIT1,NAVARRO,"Yellow Cat Wind, LLC (69588)",plant name
+YCAT_WND_UNIT2,NAVARRO,"Yellow Cat Wind, LLC (69588)",plant name
