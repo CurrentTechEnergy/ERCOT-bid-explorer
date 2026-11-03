@@ -19,8 +19,7 @@ Inputs (no ERCOT download; everything is already in the repository or on the `hi
                          year the site's battery HSL total on the latest day of storage/units.json.gz
 
 Two files, one writer each.  The weekly Goal workflow downloads the real-time months and runs
-`--full`: every year and month from the history release, into prices_years_hist.json.gz, and it
-moves the "same months" cut ("ytd": January to the last complete month) forward.  The update run
+`--full`: every year from the history release, into prices_years_hist.json.gz.  The update run
 starts from that file and adds what it lacks (the latest year, and any year it has no entry for)
 plus the ride-through months of the 60-day unit files, into prices_years.json.gz, which the page
 reads.  A past year with too few hours on hand is left out with a warning.
@@ -29,9 +28,9 @@ reads.  A past year with too few hours on hand is left out with a warning.
     python -m pipeline.prices_years          # the update run
 
 File:
-  {"built", "through": {"rt", "da"}, "years": [2019, ...], "ytd_month": 10,
+  {"built", "through": {"rt", "da"}, "years": [2019, ...],
    "x": [exceedance %, ...],
-   "data": {"<rt|da>|<hub>|<full|ytd>|<usd|hr>": {"<year>": {
+   "data": {"<rt|da>|<hub>|full|<usd|hr>": {"<year>": {
        "curve": [price at each x], "n", "mean", "p50", "p1", "p5", "p95", "p99", "sp_mean", "sp_med",
        "hod_p50", "hod_mean", "hod_p95", "hod_p05" (24 each, hour ending 1..24), "gas",
        "cnt": {"ge1000", "ge500", "ge100", "le10", "le0", "len20"} (usd only), "from", "to"}}},
@@ -179,11 +178,9 @@ def year_stats(v, col, unit):
     return out
 
 
-def expected_hours(year, to=None, ytd_month=None):
-    """Hours from Jan 1 to `to` (or the year's end, or the end of ytd_month)."""
+def expected_hours(year, to=None):
+    """Hours from Jan 1 to `to` (or the year's end)."""
     end = dt.date(year, 12, 31)
-    if ytd_month:
-        end = dt.date(year, ytd_month, calendar.monthrange(year, ytd_month)[1])
     if to:
         end = min(end, dt.date.fromisoformat(to))
     return ((end - dt.date(year, 1, 1)).days + 1) * 24
@@ -257,11 +254,8 @@ def build(full=False):
         return False
     gas, filled = gas_daily(max(last, today.isoformat()))
     latest_year = int(last[:4])
-    ytd_month = hist.get("ytd_month")
-    if full or not ytd_month:
-        d = dt.date.fromisoformat(markets["rt"]["date"].max() if len(markets["rt"]) else last)
-        ytd_month = d.month if d.day == calendar.monthrange(d.year, d.month)[1] else max(1, d.month - 1)
-    data = {} if full else {k: dict(v) for k, v in (hist.get("data") or {}).items()}
+    # (keys keep "full": files from before the same-months option was dropped also carry "ytd" keys)
+    data = {} if full else {k: dict(v) for k, v in (hist.get("data") or {}).items() if "|full|" in k}
     years = list(range(FIRST_YEAR, latest_year + 1))
     rebuilt, skipped = [], []
     for m, d in markets.items():
@@ -274,12 +268,12 @@ def build(full=False):
         for y in years:
             current = y == latest_year
             v_all = d[d["year"] == y]
-            for per in ("full", "ytd"):
+            for per in ("full",):
                 have = all(str(y) in (data.get(f"{m}|{h}|{per}|usd") or {}) for h in HUBS)
                 if not full and have and not current:
                     continue                     # a past year the Goal workflow built
-                need = expected_hours(y, to=last if current else None, ytd_month=ytd_month if per == "ytd" else None)
-                v_per = v_all if per == "full" else v_all[v_all["date"].str[5:7].astype(int) <= ytd_month]
+                need = expected_hours(y, to=last if current else None)
+                v_per = v_all
                 n_per = int((v_per["point"] == "HB_HUBAVG").sum())
                 if not n_per or (not current and n_per < COVER * need):
                     if n_per or full:
@@ -306,14 +300,14 @@ def build(full=False):
         if (hist.get("through") or {}).get(m) and (through[m] or "") < hist["through"][m]:
             through[m] = hist["through"][m]
     out = {"built": dt.datetime.now(dt.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
-           "through": through, "years": years, "ytd_month": ytd_month, "x": X, "hubs": HUBS, "cheap": CHEAP,
+           "through": through, "years": years, "x": X, "hubs": HUBS, "cheap": CHEAP,
            "therm_last": therm_last,
            "data": {k: dict(sorted(v.items())) for k, v in sorted(data.items())},
            "gas": gy, "battery": battery_mw(),
            "ride": {"columns": ["ym", "gas", "cheap_h", "lsl_cheap", "lsl_other"], "rows": [ride[k] for k in sorted(ride)]}}
     write_json_gz(HIST_PATH if full else PATH, out)
     print(f"prices_years{' --full' if full else ''}: built {len(rebuilt)} market-year-periods; "
-          f"{len(out['ride']['rows'])} ride-through months; ytd through month {ytd_month}", flush=True)
+          f"{len(out['ride']['rows'])} ride-through months", flush=True)
     for k in skipped:
         warn(f"prices_years: too few hours to build {k}")
     return True

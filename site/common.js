@@ -80,7 +80,7 @@ function pinAt(svg, ev) {
   const live = $("tip");
   if (live.hidden) return;
   const marks = [...svg.querySelectorAll(".crosshair")].filter((l) => l.style.display !== "none" && !l.classList.contains("pin-mark"))
-    .map((l) => { const c = l.cloneNode(); c.classList.add("pin-mark"); c.style.display = ""; svg.appendChild(c); return c; });
+    .map((l) => { const c = l.cloneNode(); c.classList.add("pin-mark"); c.style.display = ""; l.parentNode.appendChild(c); return c; });
   const tip = live.cloneNode(true);
   tip.removeAttribute("id"); tip.classList.add("tip-pinned"); tip.hidden = false;
   tip.insertAdjacentHTML("beforeend", `<p class="tip-pin-note">Pinned · click the same spot or press Esc to clear</p>`);

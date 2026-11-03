@@ -4,14 +4,13 @@
    reads and draws what the file holds. */
 const { tryJSON, showTip, hideTip, setCSV, css, esc, readHash, writeHash } = window.CX;
 const $ = (id) => document.getElementById(id);
-const S = { P: null, mkt: "rt", hub: "HB_HUBAVG", per: "full", unit: "usd", zoom: "all", hod: "hod_p50", on: new Set() };
-const MONTH = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+const S = { P: null, mkt: "rt", hub: "HB_HUBAVG", unit: "usd", zoom: "all", hod: "hod_p50", on: new Set() };
 const MIN_CHEAP = 15;      // a ride-through month needs this many cheap hours for a dot
 
 const years = () => S.P.years;
 const yc = (y) => d3.piecewise(d3.interpolateLab, [css("--yr-old"), css("--yr-mid"), css("--yr-new")])((y - years()[0]) / Math.max(1, years().length - 1));
-const cur = () => S.P.data[`${S.mkt}|${S.hub}|${S.per}|${S.unit}`] || {};
-const usd = () => S.P.data[`${S.mkt}|${S.hub}|${S.per}|usd`] || {};
+const cur = () => S.P.data[`${S.mkt}|${S.hub}|full|${S.unit}`] || {};
+const usd = () => S.P.data[`${S.mkt}|${S.hub}|full|usd`] || {};
 const isUSD = () => S.unit === "usd";
 const unitName = () => (isUSD() ? "$/MWh" : "MMBtu/MWh");
 const num = (v) => { const a = Math.abs(v); return a >= 1000 ? d3.format(",.0f")(a) : a >= 100 ? a.toFixed(0) : a.toFixed(1); };
@@ -19,8 +18,7 @@ const fmt = (v) => (v == null ? "–" : (v < 0 ? "−" : "") + num(v));
 const money = (v) => (v == null ? "–" : (v < 0 ? "−" : "") + (isUSD() ? "$" : "") + num(v));
 const tickMoney = (v) => (v < 0 ? "\u2212" : "") + (isUSD() ? "$" : "") + (Math.abs(v) >= 10 || Number.isInteger(v) ? d3.format(",")(Math.round(Math.abs(v))) : Math.abs(v).toFixed(1));
 const n125 = (v) => /^[125]0*$/.test(String(Math.round(Math.abs(v))));
-const ytdName = () => `Jan–${MONTH[S.P.ytd_month - 1]}`;
-const partYear = (y) => { const r = cur()[y]; return !!r && S.per === "full" && r.to.slice(5) !== "12-31"; };
+const partYear = (y) => { const r = cur()[y]; return !!r && r.to.slice(5) !== "12-31"; };
 const yrLabel = (y) => { const r = cur()[y]; return partYear(y) ? `${y} to ${d3.timeFormat("%b %-d")(new Date(r.to + "T12:00:00"))}` : String(y); };
 const width = (el) => Math.max(300, el.clientWidth || 640);
 function frame(el, W, H, m) {
@@ -58,7 +56,7 @@ function drawPDC() {
     const c = R[k].curve;
     g.append("path").attr("d", d3.line().x((i) => x(xs[i])).y((i) => y(c[i])).curve(d3.curveMonotoneX)(idx.filter((i) => c[i] != null)))
       .attr("fill", "none").attr("stroke", yc(k)).attr("stroke-width", k >= years()[years().length - 3] ? 2.4 : 1.5)
-      .attr("stroke-dasharray", partYear(k) && S.per === "full" ? "5 3" : null).attr("clip-path", "url(#pdc-clip)");
+      .attr("stroke-dasharray", partYear(k) ? "5 3" : null).attr("clip-path", "url(#pdc-clip)");
   });
   if (S.zoom === "all") g.append("text").attr("class", "axis-title").attr("x", w - 4).attr("y", 12).attr("text-anchor", "end").text(isUSD() ? "Clipped at $250: see Top 5% of hours" : "Clipped at 60");
   const vl = g.append("line").attr("class", "crosshair").attr("y1", 0).attr("y2", h).attr("visibility", "hidden");
@@ -71,9 +69,9 @@ function drawPDC() {
     })
     .on("pointerleave", () => { vl.attr("visibility", "hidden"); hideTip(); });
   setCSV(el, ["share_of_hours_higher_pct", ...ys.map((k) => `${k}_${S.unit === "usd" ? "usd_mwh" : "mmbtu_mwh"}`)], xs.map((v, i) => [v, ...ys.map((k) => R[k].curve[i])]),
-    `Price duration curve ${S.mkt} ${S.hub} ${S.per}`);
+    `Price duration curve ${S.mkt} ${S.hub}`);
   $("pdc-note").textContent = `Every hour of the year sorted from highest price to lowest, one line per year (${S.mkt === "rt" ? "real-time" : "day-ahead"}, ${$("c-hub").selectedOptions[0].text}). ` +
-    "A flatter left end means fewer scarcity spikes; a higher right end means fewer cheap and negative hours." + (S.per === "full" ? " The latest year is dashed: it runs to date." : "");
+    "A flatter left end means fewer scarcity spikes; a higher right end means fewer cheap and negative hours." + (years().some(partYear) ? " The latest year is dashed: it runs to date." : "");
 }
 
 // ==== Batteries, gas and hours in the tails ==================================================
@@ -96,7 +94,7 @@ function drawTails() {
     ys.forEach((k) => {
       const v = s.f(k);
       if (v == null) return;
-      const part = S.per === "full" && R[k].to.slice(5) !== "12-31";
+      const part = partYear(k);
       g.append("rect").attr("x", x(k)).attr("width", x.bandwidth()).attr("y", y(v)).attr("height", h - y(v))
         .attr("fill", s.col || yc(k)).attr("opacity", S.on.has(k) ? (part ? 0.55 : 1) : 0.2)
         .on("pointermove", (ev) => showTip(ev, `<h4>${esc(s.t)}, ${yrLabel(k)}</h4>${s.tip ? s.tip(v, k) : d3.format(",")(v)}`)).on("pointerleave", hideTip);
@@ -106,7 +104,7 @@ function drawTails() {
     setCSV(el, ["year", "battery_gw", "ship_channel_gas_usd_mmbtu", "hours_ge_1000", "hours_ge_100", "hours_le_0"], csvRows, "Batteries, gas and hours in the tails");
   });
   $("tails-note").textContent = "Hours each year at or beyond each price (always $/MWh), with battery capacity and the Ship Channel gas price on the same year axis. " +
-    (S.per === "full" ? "The latest year runs to date (lighter bars)." : `Every year counts ${ytdName()} only.`);
+    "The latest year runs to date (lighter bars).";
 }
 
 // ==== Gas units riding through cheap hours ===================================================
@@ -202,7 +200,7 @@ function drawTable() {
     `${r.slice(8, 12).map((v) => `<td>${v == null ? "–" : d3.format(",")(v)}</td>`).join("")}<td>${r[12] == null ? "–" : "$" + r[12].toFixed(2)}${r[14] ? "*" : ""}</td><td>${r[13] == null ? "–" : r[13].toFixed(1)}</td></tr>`).join("") + "</tbody>";
   setCSV($("tbl"), ["year", "hours", `mean_${S.unit}`, `median_${S.unit}`, `p99_${S.unit}`, `p1_${S.unit}`, "p99_less_p1", "daily_max_min_mean", "hours_ge_1000", "hours_ge_100", "hours_le_10", "hours_le_0", "ship_channel_gas_usd_mmbtu", "battery_gw"],
     rows.map((r) => [r[0], ...r.slice(1, 14)]), "Year by year");
-  $("table-note").textContent = `${S.mkt === "rt" ? "Real-time" : "Day-ahead"} ${$("c-hub").selectedOptions[0].text}, ${S.per === "full" ? "whole years" : ytdName() + " every year"}, ${unitName()} for prices; hour counts always in $/MWh. ` +
+  $("table-note").textContent = `${S.mkt === "rt" ? "Real-time" : "Day-ahead"} ${$("c-hub").selectedOptions[0].text}, whole years (the latest to date), ${unitName()} for prices; hour counts always in $/MWh. ` +
     "* Ship Channel gas filled from Henry Hub plus the usual difference on many days (none published before Jul 15, 2019 or for most of Jun 2024 to Aug 2025).";
 }
 
@@ -214,7 +212,7 @@ function seg(id, key, after) {
   mark();
   el.addEventListener("click", (e) => { const b = e.target.closest("button"); if (!b) return; S[key] = b.dataset.v; mark(); save(); (after || drawAll)(); });
 }
-const save = () => writeHash({ m: S.mkt, h: S.hub, p: S.per, u: S.unit });
+const save = () => writeHash({ m: S.mkt, h: S.hub, u: S.unit });
 
 (async function () {
   const P = await tryJSON("data/prices_years.json.gz");
@@ -223,26 +221,28 @@ const save = () => writeHash({ m: S.mkt, h: S.hub, p: S.per, u: S.unit });
   const v = readHash() || {};
   if (["rt", "da"].includes(v.m)) S.mkt = v.m;
   if (P.hubs.includes(v.h)) S.hub = v.h;
-  if (["full", "ytd"].includes(v.p)) S.per = v.p;
   if (["usd", "hr"].includes(v.u)) S.unit = v.u;
   $("c-hub").value = S.hub;
-  $("c-ytd").textContent = `${ytdName()} every year`;
   years().forEach((y) => S.on.add(y));
   const yb = $("c-years");
   years().forEach((y) => {
     const b = document.createElement("button"); b.type = "button"; b.setAttribute("aria-pressed", "true");
-    b.innerHTML = `<i style="background:${yc(y)}"></i>${y}`;
+    // the key: a dashed swatch and a star for a year that runs to date, as on the duration curve
+    b.innerHTML = `<i class="${partYear(y) ? "part" : ""}" style="color:${yc(y)}"></i>${y}${partYear(y) ? "*" : ""}`;
+    if (partYear(y)) b.title = `${yrLabel(y)}: the year to date`;
     b.onclick = () => { S.on.has(y) ? S.on.delete(y) : S.on.add(y); b.setAttribute("aria-pressed", String(S.on.has(y))); drawAll(); };
     yb.appendChild(b);
   });
-  seg("c-mkt", "mkt"); seg("c-per", "per"); seg("c-unit", "unit"); seg("c-zoom", "zoom", drawPDC); seg("c-hod", "hod", drawHOD);
+  const part = years().filter(partYear);
+  if (part.length) yb.insertAdjacentHTML("beforeend", `<span class="yrs-note">* ${part.map((y) => esc(yrLabel(y))).join(", ")}</span>`);
+  seg("c-mkt", "mkt"); seg("c-unit", "unit"); seg("c-zoom", "zoom", drawPDC); seg("c-hod", "hod", drawHOD);
   $("c-hub").addEventListener("change", (e) => { S.hub = e.target.value; save(); drawAll(); });
   $("status").textContent = `Real-time through ${P.through.rt}, day-ahead through ${P.through.da}. Built ${P.built.slice(0, 10)}.`;
   drawAll();
   window.CX.init();
   let rw = 0;
   addEventListener("resize", () => { clearTimeout(rw); rw = setTimeout(drawAll, 150); });
-  const recolor = () => { yb.querySelectorAll("i").forEach((i, k) => (i.style.background = yc(years()[k]))); drawAll(); };
+  const recolor = () => { yb.querySelectorAll("i").forEach((i, k) => (i.style.color = yc(years()[k]))); drawAll(); };
   matchMedia("(prefers-color-scheme: dark)").addEventListener("change", recolor);
   new MutationObserver(recolor).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
   window.CX.panelFromLink?.();
