@@ -3,13 +3,20 @@
   <title>AEEC_ANTLP_1: bidding and operating changes</title>
   <link href="https://ercotbids.currenttech.energy/unit.html?unit=AEEC_ANTLP_1"/>
   <id>https://ercotbids.currenttech.energy/unit.html?unit=AEEC_ANTLP_1</id>
-  <updated>2026-10-24T00:00:00Z</updated>
+  <updated>2026-11-03T00:00:00Z</updated>
   <entry>
     <title>AEEC_ANTLP_1: Timescale group changed (2026-08-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=AEEC_ANTLP_1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=AEEC_ANTLP_1#AEEC_ANTLP_1/2026-08-01/group</id>
     <updated>2026-10-19T00:00:00Z</updated>
     <summary>Off a week or more in 2026-07 to Daily, under 1 shutdown a week in 2026-08</summary>
+  </entry>
+  <entry>
+    <title>AEEC_ANTLP: Minimum-energy offer stepped (2026-07-31)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=AEEC_ANTLP"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=AEEC_ANTLP#AEEC_ANTLP/2026-07-31/dam_mingen_step</id>
+    <updated>2026-11-03T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $36 to $25/MWh ($7 to $1 against the fuel-cost line)</summary>
   </entry>
   <entry>
     <title>AEEC_ANTLP_1: Timescale group changed (2026-07-01)</title>

@@ -93,7 +93,7 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=AEEC_ELK_2"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=AEEC_ELK_2#AEEC_ELK_2/2026-08-28/shutdown_new</id>
     <updated>2026-10-28T00:00:00Z</updated>
-    <summary>Shut down for 147 h after 108 days without a shutdown</summary>
+    <summary>Shut down for 171 h after 108 days without a shutdown</summary>
   </entry>
   <entry>
     <title>TOPAZ_UNIT7: Shut down despite a day-ahead award (2026-08-27)</title>
@@ -1150,7 +1150,7 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=STEAM1A_STEAM_1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=STEAM1A_STEAM_1#STEAM1A_STEAM_1/2026-07-31/outage_start</id>
     <updated>2026-10-23T00:00:00Z</updated>
-    <summary>Outage began, still on at the end of the data (34 days so far)</summary>
+    <summary>Outage began, still on at the end of the data (35 days so far)</summary>
   </entry>
   <entry>
     <title>STEAM1A_STEAM_1: Outage ended (2026-07-31)</title>
@@ -1202,18 +1202,18 @@
     <summary>MW above LSL offered at or below $0: 67% to 1% of the day</summary>
   </entry>
   <entry>
+    <title>MYR_ESR2: Battery size changed (2026-07-30)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=MYR_ESR2"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=MYR_ESR2#MYR_ESR2/2026-07-30/battery_size</id>
+    <updated>2026-11-03T00:00:00Z</updated>
+    <summary>Maximum output 46 to 73 MW; Maximum state of charge 58 to 108 MWh</summary>
+  </entry>
+  <entry>
     <title>DUKE_CC1: Shut down despite a day-ahead award (2026-07-30)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=DUKE_CC1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=DUKE_CC1#DUKE_CC1/2026-07-30/shutdown_award</id>
     <updated>2026-10-26T00:00:00Z</updated>
     <summary>Shut down for 7 h although a day-ahead award covered 100% of the window</summary>
-  </entry>
-  <entry>
-    <title>MYR_ESR2: Battery size changed (2026-07-29)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=MYR_ESR2"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=MYR_ESR2#MYR_ESR2/2026-07-29/battery_size</id>
-    <updated>2026-11-02T00:00:00Z</updated>
-    <summary>Maximum output 46 to 73 MW; Maximum state of charge 58 to 104 MWh</summary>
   </entry>
   <entry>
     <title>GIDEON_GIDEONG1: Outage ended (2026-07-28)</title>
@@ -1311,7 +1311,7 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=STEAM_ENGINE_3"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=STEAM_ENGINE_3#STEAM_ENGINE_3/2026-07-23/outage_start</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Outage began, still on at the end of the data (42 days so far)</summary>
+    <summary>Outage began, still on at the end of the data (43 days so far)</summary>
   </entry>
   <entry>
     <title>SKY1_SKY1B: Shut down despite a day-ahead award (2026-07-23)</title>
