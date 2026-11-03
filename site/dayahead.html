@@ -93,7 +93,7 @@
     <dl class="terms terms2">
       <div><dt>Cheap hours</dt><dd>Hours with a DA system lambda at or below $<span class="cheap-usd">15</span>. A day with any is a cheap day; its cheap hours are the cheap stretch.</dd></div>
       <div><dt>Awarded through the cheap hours</dt><dd>The DAM awarded the unit energy in at least half of the cheap hours. This is the DAM's result, not whether the unit ran.</dd></div>
-      <div><dt>Fuel-cost line</dt><dd>EIA's average full-load heat rate for the unit type times the gas price at the unit's own hub. An offer below it is an offer below fuel cost.</dd></div>
+      <div><dt>Fuel-cost line</dt><dd>The unit's own heat rate at minimum output (measured from EPA stack data; the technology median without one) times the gas price at the unit's own hub. An offer below it is an offer below fuel cost.</dd></div>
       <div><dt>Implied heat rate</dt><dd>The minimum-energy offer divided by the hub gas price, in MMBtu/MWh.</dd></div>
       <div><dt>Configuration and train</dt><dd>A combined cycle train (say 2 gas turbines and a steam turbine) offers each running mode as a separate configuration and runs one at a time. Fleet counts are by train; unit charts show each configuration.</dd></div>
       <div><dt>Offer change</dt><dd>A minimum-energy offer that moves $5 or more and holds, a short price-out, a start-cost change, or a unit starting or stopping three-part offers. Major changes cross the fuel-cost line or fall on cheap days.</dd></div>
@@ -192,7 +192,7 @@
 
 <footer class="foot">
   <p id="ref-note"></p>
-  <p>Source: ERCOT EMIL product NP3-966-ER (60-Day DAM Disclosure: three-part offers, energy offer curves, awards and settlement point prices), DAM system lambda, gas hub prices from OilPriceAPI and the EIA, and each unit's gas hub. Built by the data update workflow from the days already loaded; the 60-day reports run about two months behind.</p>
+  <p>Source: ERCOT EMIL product NP3-966-ER (60-Day DAM Disclosure: three-part offers, energy offer curves, awards and settlement point prices), DAM system lambda, gas hub prices from OilPriceAPI and the EIA, each unit's gas hub, and heat rates from EPA CAMPD hourly emissions data. Built by the data update workflow from the days already loaded; the 60-day reports run about two months behind.</p>
   <p>Made by <a href="https://currenttech.energy">currenttech.energy</a> · <a href="contact.html">Contact</a></p>
   <p>Not affiliated with or endorsed by ERCOT. ERCOT is a registered trademark of the Electric Reliability Council of Texas, Inc.</p>
   <p>© 2026 CurrentTech Energy. All rights reserved. For information only; not trading or investment advice. <a href="terms.html">Terms and privacy</a></p>
