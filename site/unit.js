@@ -7,7 +7,7 @@
    lifted from trends.js; the decision chart marks the months its operator-informed turn-off point
    moved (data/events.json.gz) and, for a combustion turbine, is the operator-informed peaker model (data/peaker/). unit-econ.js draws revenue and cost and unit-renew.js the wind and
    solar hedge formula and bidding history, unit-battery.js a battery's day by hour, offer prices and
-   history; all redraw on the "unitchange" event this file sends. */
+   history, unit-fuel.js the heat rate and fuel cost; all redraw on the "unitchange" event this file sends. */
 (() => {
 "use strict";
 

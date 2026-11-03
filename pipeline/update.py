@@ -66,6 +66,7 @@ from .dam_offers import build_dam_offers
 from .offtakers import build_offtakers
 from .models.operator_informed import build_days as build_operator_days
 from .models.peaker_oi import build_peaker_oi
+from .unit_fuel import build_unit_fuel
 from .events import build_events
 from .series import build_series
 from .storage import build_storage
@@ -557,6 +558,7 @@ def main(argv=None):
         build_renew_years(index)       # after series
         build_operator_days(index)
         build_peaker_oi(index)
+        build_unit_fuel(index)
         build_events(index)
         save_index(index)
         return
@@ -660,6 +662,7 @@ def main(argv=None):
     if "operator" not in args.skip:
         build_operator_days(index)   # after cop: the Unit page's operator-informed row, new 60-day days only
     build_peaker_oi(index)           # the Commitment and Unit pages' combustion turbine turn-on points
+    build_unit_fuel(index)           # the Unit page's heat rate and fuel cost, after fuel hubs
     qse_lines = qse.save()
     if "entities" not in args.skip:
         fetch_entities()     # after qse.save(): DME codes are named from the codes it saved

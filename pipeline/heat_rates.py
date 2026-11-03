@@ -24,8 +24,11 @@ Columns:
 
 Fallbacks (medians of the measured units, Nov 2026): gas steam 13.4, coal 11.9, combined cycle
 7.8 (cogeneration trains excluded: their net to the grid leaves out the host's load, so they take
-the fallback), combustion turbine 13.4 (EPA gross with an assumed 2% station use; not matched to
-ERCOT units).  Joint-ownership coal units (FPPYD1_FPP_G1_J01 and _J02, ...) share one value.
+the fallback), combustion turbine 13.4 (EPA gross with an assumed 2% station use).  107
+combustion turbines have their own row (Nov 2026: matched to the EPA unit whose hourly output
+tracks theirs, 2024-25, analysis/epa_heat_rates/ct_match.py and ct_hr.py; at least 30 steady hours
+at minimum), shown on the Unit page; the CT turn-on model reads a flat 11.0 (gascost), which
+backtested better.  Joint-ownership coal units (FPPYD1_FPP_G1_J01 and _J02, ...) share one value.
 """
 import bisect
 import csv
