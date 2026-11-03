@@ -26,7 +26,10 @@ Results, Nov 2026 (2019 to Nov 2025): gas steam 13.4 at minimum (middle half 12.
 coal 11.9 (22 EPA units), CC 7.8 (52 trains). Station use is about 8% of gross at minimum for gas
 steam and 11% for coal, against 3% and 6% at full load, and about half of it is fixed MW. Cogeneration
 trains, Dansby (EPA gross implausible) and units with under 200 hours at minimum take the
-technology median.
+technology median. Deer Park (DDPEC_CC1, measured 12.07 at minimum) and FTR_CC1 (9.66) were moved
+to the median too (Nov 3 2026): checked against EIA-923's fuel for electricity, their EPA heat input
+includes the host's steam (EIA electric heat rate 6.5 and 7.4). Check against EIA-923 Page 1:
+/mnt/project-files/analysis/epa-heat-rates/burn-check-pr300/.
 
 Combustion turbines (Nov 2026): `ct_match.py` matches each ERCOT CT unit to the EPA unit (or pair)
 whose hourly gross load tracks its telemetered output (correlation at least 0.85, gross/net 0.9 to

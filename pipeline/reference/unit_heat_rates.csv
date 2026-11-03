@@ -46,7 +46,7 @@ CBY4_CC1,combined_cycle,7.14,6.78,8843,ercot_net,56806,
 CCEC_CC1,combined_cycle,7.8,7.2,5229,fallback,55206,cogeneration: net to grid excludes host load
 CHE_CC1,combined_cycle,7.8,7.2,2592,fallback,55299,cogeneration: net to grid excludes host load
 CVC_CC1,combined_cycle,7.8,7.2,10595,fallback,55187,cogeneration: net to grid excludes host load
-DDPEC_CC1,combined_cycle,12.07,9.34,3785,ercot_net,55464,
+DDPEC_CC1,combined_cycle,7.8,7.2,3785,fallback,55464,cogeneration: EPA heat input includes the host's steam (measured 12.07; EIA-923 electric 6.5)
 DUKE_CC1,combined_cycle,7.43,6.87,5507,ercot_net,7762,
 ETCCS_CC1,combined_cycle,9.04,6.92,703,ercot_net,55223,
 FERGCC_CC1,combined_cycle,7.09,6.51,3607,ercot_net,4937,
@@ -55,7 +55,7 @@ FREC_CC2,combined_cycle,7.23,6.86,6976,ercot_net,55226,
 FRNYPP_CC1,combined_cycle,7.58,7.21,1125,ercot_net,55480,
 FRNYPP_CC2,combined_cycle,7.65,7.16,1331,ercot_net,55480,
 FRONT_EC_CC1,combined_cycle,7.26,6.9,4971,ercot_net,55098,
-FTR_CC1,combined_cycle,9.66,7.17,4696,ercot_net,55062,
+FTR_CC1,combined_cycle,7.8,7.2,4696,fallback,55062,cogeneration: EPA heat input includes the host's steam (measured 9.66; EIA-923 electric 7.4)
 GUADG_CC1,combined_cycle,7.76,7.44,4813,ercot_net,55153,
 GUADG_CC2,combined_cycle,7.88,7.54,5852,ercot_net,55153,
 JACKCNTY_CC1,combined_cycle,7.71,7.43,9624,ercot_net,55230,
