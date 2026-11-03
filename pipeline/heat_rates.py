@@ -18,7 +18,10 @@ Columns:
   hr_full     heat rate in the unit's top 10% of hours by output
   min_hours   steady hours at minimum behind hr_min
   basis       ercot_net (measured on ERCOT telemetry), eia923 (EPA gross scaled by EIA-923 net,
-              where telemetry had too few hours), fallback (the technology median)
+              where telemetry had too few hours), cogen (a cogeneration unit's fuel chargeable to
+              power: its EIA plant's fuel for electricity over net generation, the steam host's
+              share taken out; pipeline/reference/cogen_units.csv, analysis/epa_heat_rates/cogen.py),
+              fallback (the technology median)
   epa         EPA facility id / unit id
   note        why a unit is on the fallback
 
@@ -37,6 +40,14 @@ from pathlib import Path
 PATH = Path(__file__).parent / "reference" / "unit_heat_rates.csv"
 COAL_PATH = Path(__file__).parent / "reference" / "coal_prices.csv"
 COAL_PRICE = 2.00    # $/MMBtu delivered coal without a month in COAL_PATH (Fleet economics' flat value)
+# plausible heat rate at minimum (MMBtu/MWh net) by technology, wide enough to keep every value EPA
+# supports (Midlothian's CTs are combined-cycle blocks at 7.8; old units at minimum reach 17): a value outside
+# is read as the technology median (analysis/epa_heat_rates/screen.py applies the same test, plus
+# a cogeneration test against EIA-923, when the file is built)
+BOUNDS = {"combined_cycle": (6.0, 13.0), "combustion_turbine": (7.0, 18.0), "gas_steam": (9.5, 20.0), "coal": (9.0, 16.0)}
+# fuel chargeable to power at a cogeneration unit (basis "cogen", analysis/epa_heat_rates/cogen.py):
+# its own bounds in place of BOUNDS, since it sits below any power-only plant
+COGEN_BOUNDS = (4.0, 8.0)
 _T = {}
 _C = {}
 
@@ -45,7 +56,10 @@ def _load():
     if not _T:
         with open(PATH, newline="") as f:
             for r in csv.DictReader(f):
-                _T[(r["tech"], r["unit"])] = (float(r["hr_min"]), float(r["hr_full"]), r["basis"])
+                v = float(r["hr_min"])
+                lo, hi = COGEN_BOUNDS if r["basis"] == "cogen" else BOUNDS.get(r["tech"], (0, float("inf")))
+                _T[(r["tech"], r["unit"])] = (v, float(r["hr_full"]),
+                                              r["basis"] if r["unit"] == "*" or lo <= v <= hi else "fallback")
     return _T
 
 
@@ -67,6 +81,26 @@ def at_min(tech, unit):
         return v[0], True
     fb = t.get((tech, "*"))
     return (fb[0], False) if fb else None
+
+
+def curve(tech, unit):
+    """(heat rate at minimum, at full load, measured) MMBtu/MWh net for `unit` (a CC train), else its
+    technology's fallback (measured False); None for a technology with no entry."""
+    t = _load()
+    v = t.get((tech, unit))
+    if v is not None and v[2] != "fallback":
+        return v[0], v[1], True
+    fb = t.get((tech, "*"))
+    return (fb[0], fb[1], False) if fb else None
+
+
+def at_load(hr, out, lsl, hsl):
+    """Heat rate (MMBtu/MWh) at output `out` MW: the curve's minimum value at or below `lsl`, its
+    full-load value at or above `hsl`, a straight line between (hr = curve())."""
+    if not lsl or not hsl or hsl <= lsl:
+        return hr[1]
+    f = min(1.0, max(0.0, (out - lsl) / (hsl - lsl)))
+    return hr[0] + (hr[1] - hr[0]) * f
 
 
 def _coal():

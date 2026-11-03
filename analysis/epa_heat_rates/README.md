@@ -26,7 +26,24 @@ Results, Nov 2026 (2019 to Nov 2025): gas steam 13.4 at minimum (middle half 12.
 coal 11.9 (22 EPA units), CC 7.8 (52 trains). Station use is about 8% of gross at minimum for gas
 steam and 11% for coal, against 3% and 6% at full load, and about half of it is fixed MW. Cogeneration
 trains, Dansby (EPA gross implausible) and units with under 200 hours at minimum take the
-technology median.
+technology median. FTR_CC1 (Tenaska Frontier, measured 9.66) was moved
+to the median too (Nov 3 2026): ERCOT sees about half the plant's EIA net generation, so EPA plant
+heat input does not match the train (EIA-923 plant heat rate 7.2).
+
+Cogeneration (Nov 3 2026): `cogen.py EIA923_Page1_YEAR.xlsx` gives each unit in
+`pipeline/reference/cogen_units.csv` (ERCOT unit to EIA plant, by EPA facility or name) its plant's
+fuel chargeable to power, EIA-923's fuel for electricity over net generation (basis "cogen", the same
+value at minimum and full load, bounded 4 to 8). Units at hosts with several EIA plants (Dow,
+ExxonMobil, Union Carbide) take the generation-weighted value over ERCOT's CHP plants. Deer Park
+moved from a measured 12.07 (EPA heat input includes the host's steam) to 6.50. Check against EIA-923 Page 1:
+/mnt/project-files/analysis/epa-heat-rates/burn-check-pr300/.
+
+`screen.py EPA.parquet EIA923_Page1_YEAR.xlsx [--write]` runs after the build and moves a unit to the
+median when its heat rate at minimum is outside `pipeline.heat_rates.BOUNDS` (CC 6 to 13, CT 7 to 18,
+gas steam 9.5 to 20, coal 9 to 16; the pipeline applies this range test too) or its EPA plant's heat
+input is over 1.2x EIA-923's fuel for electricity (cogeneration). Nov 3 2026 on EIA 2024 and 2025:
+no unit fails beyond Deer Park and FTR_CC1, already on the median. FTR's plant is not comparable
+(EPA and EIA total fuel differ by more than 20%), so the cogeneration test would not have caught it.
 
 Combustion turbines (Nov 2026): `ct_match.py` matches each ERCOT CT unit to the EPA unit (or pair)
 whose hourly gross load tracks its telemetered output (correlation at least 0.85, gross/net 0.9 to

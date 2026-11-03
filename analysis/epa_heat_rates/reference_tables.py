@@ -42,10 +42,11 @@ with open(REF / "station_use.csv", "w", newline="") as f:
     w.writerow(["unit", "tech", "gross_min", "net_min", "gross_full", "net_full", "su_mw_min", "su_share_min", "su_mw_full", "su_share_full", "min_hours", "epa", "shared_with"])
     w.writerows(sorted(rows))
 p = REF / "unit_heat_rates.csv"
-old = [r for r in csv.DictReader(open(p)) if not (r["tech"] == "combustion_turbine" and r["unit"] != "*")]
+old = [r for r in csv.DictReader(open(p)) if not (r["tech"] == "combustion_turbine" and r["unit"] != "*" and r["basis"] != "cogen")]
+cogen = {r["unit"] for r in old if r["basis"] == "cogen"}     # cogen.py's rows stay; run it after this
 add = []
 for r in csv.DictReader(open(ct)):
-    if r["hr_min"] and r["hr_full"] and int(r["min_hours"]) >= 30 and int(r["hours"]) >= 50:
+    if r["hr_min"] and r["hr_full"] and int(r["min_hours"]) >= 30 and int(r["hours"]) >= 50 and r["unit"] not in cogen:
         add.append({"unit": r["unit"], "tech": "combustion_turbine", "hr_min": f'{float(r["hr_min"]):.2f}', "hr_full": f'{float(r["hr_full"]):.2f}',
                     "min_hours": r["min_hours"], "basis": "ercot_net", "epa": r["epa"].replace(":", "/"), "note": "matched by hourly output"})
 cols = list(old[0].keys())
