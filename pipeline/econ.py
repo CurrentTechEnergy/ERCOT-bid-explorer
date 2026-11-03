@@ -59,7 +59,7 @@ is the gas fuel cost the A day in ERCOT page takes off each unit's profit.
 """
 import numpy as np
 
-from . import heat_rates, private
+from . import heat_rates, memo, private
 from .config import DATA_DIR, SIXTY_DAY_TECHS, UNIT_DATA_DIR
 from .intraday import _online, train_of
 from .parse_prices import node_hourly
@@ -178,6 +178,28 @@ def build_implied_hr(hub_files: dict, hh: dict, fh: dict) -> None:
     write_json_gz(DATA_DIR / "implied_hr_60d.json.gz", {"dates": days, "techs": techs})
 
 
+def day_units(ud):
+    """What build_econ takes from one per-unit day file (memo.per_day caches it), or None without
+    one: per unit or combined-cycle train with status events [key, first status, starts after
+    the first event, last status] (None and 0 without events; a start at the first event depends
+    on the day before, which build_econ adds), and per unit with output [name, type, tech,
+    hourly output (None as None), peak HSL]."""
+    if not ud:
+        return None
+    evs = {}
+    for name, u in ud["units"].items():
+        key = train_of(name) if u.get("tech") == "combined_cycle" else name
+        evs.setdefault(key, []).extend(ev for ev in u["status"] if ev[1])
+    starts = []
+    for key, ev in evs.items():
+        seq = [st for _, st in sorted(ev, key=lambda e: e[0])]
+        cnt = sum(1 for a, b in zip(seq, seq[1:]) if not _online(a) and _online(b))
+        starts.append([key, seq[0] if seq else None, cnt, seq[-1] if seq else None])
+    units = [[name, u.get("type"), u.get("tech"), u["out"], _peak_hsl(u, len(ud["runs"]))]
+             for name, u in ud["units"].items() if u.get("out")]
+    return {"starts": starts, "units": units}
+
+
 def build_econ(index: dict) -> None:
     dates = sorted(index["days"].get("60d", []))
     D = len(dates)
@@ -209,7 +231,8 @@ def build_econ(index: dict) -> None:
         return units[name]
 
     for di, d in enumerate(dates):
-        ud = read_json_gz(UNIT_DATA_DIR / "60d" / f"{d}.json.gz")
+        uf = UNIT_DATA_DIR / "60d" / f"{d}.json.gz"
+        ud = memo.per_day("econ", d, [uf], lambda: day_units(read_json_gz(uf)), __name__)
         if not ud:
             continue
         nodes = node_hourly(read_json_gz(UNIT_DATA_DIR / "nodes" / f"{d}.json.gz")) if d in node_days else None
@@ -218,37 +241,28 @@ def build_econ(index: dict) -> None:
         mcpc = (dam or {}).get("mcpc") or {}
         lam = (prices.get(d) or {}).get("lambda") or []
         lam = np.array([np.nan if v is None else v for v in lam[:24]] + [np.nan] * (24 - len(lam[:24])), float)
-        runs = ud["runs"]
         # starts: status events of a day, combined-cycle configurations merged into their train;
         # a start in the day's first run counts only when the previous day is known
         if prev_date is None or (np.datetime64(d) - np.datetime64(prev_date)).astype(int) != 1:
             prev_last = {}
-        evs = {}
-        for name, u in ud["units"].items():
-            key = train_of(name) if u.get("tech") == "combined_cycle" else name
-            evs.setdefault(key, []).extend(ev for ev in u["status"] if ev[1])
-        for key, ev in evs.items():
-            cnt, prev = 0, prev_last.get(key)
-            for _, st in sorted(ev, key=lambda e: e[0]):
-                if prev is not None and not _online(prev) and _online(st):
-                    cnt += 1
-                prev = st
+        for key, first, cnt, last in ud["starts"]:
+            prev = prev_last.get(key)
+            if first is not None and prev is not None and not _online(prev) and _online(first):
+                cnt += 1
             starts.setdefault(key, [None] * D)[di] = cnt
-            if prev is not None:
-                prev_last[key] = prev
+            if last is not None:
+                prev_last[key] = last
         prev_date = d
-        for name, u in ud["units"].items():
-            if not u.get("out"):
-                continue
-            r = rec(name, u)
-            out = np.array([np.nan if v is None else v for v in u["out"]], float)
+        for name, typ, tech, u_out, peak in ud["units"]:
+            r = rec(name, {"type": typ, "tech": tech})
+            out = np.array([np.nan if v is None else v for v in u_out], float)
             out = np.where(np.isfinite(out), out, 0.0)
             pos, neg = np.clip(out, 0, None), np.clip(out, None, 0)
             r["mwh"][di] = _r(pos.sum())
-            if u.get("tech") == "storage":
+            if tech == "storage":
                 r["chg"][di] = _r(-neg.sum())
             r["rev_lam"][di] = _r(np.nansum(out * lam))
-            r["hsl"][di] = _peak_hsl(u, len(runs))
+            r["hsl"][di] = peak
             du = dam_units.get(name)
             sp = (du or {}).get("sp")
             if sp:
@@ -289,7 +303,7 @@ def build_econ(index: dict) -> None:
                         inc += pos[h] * curve_price(curves[ci][0], curves[ci][1], pos[h])
                     r["cost_off"][di] = _r(cost)
                     r["cost_inc"][di] = _r(inc)
-            t = u.get("tech")
+            t = tech
             if t in FUEL_TECHS:
                 hr = heat_rates.curve(t, train_of(name) if t == "combined_cycle" else name)
                 lsl = (du or {}).get("lsl")
@@ -358,6 +372,7 @@ def build_econ(index: dict) -> None:
         us = by_tech.get(t, {})
         write_json_gz(out_dir / f"{t}.json.gz", {"dates": dates, "gas": gas_series,
                                                      "units": dict(sorted(us.items()))})
+    memo.prune("econ", dates)
     write_json_gz(DATA_DIR / "econ_index.json.gz", {
         "dates": dates, "techs": {t: sorted(by_tech.get(t, {})) for t in SIXTY_DAY_TECHS},
         "has_nodes": [d in node_days for d in dates], "has_dam": [d in dam_days for d in dates],

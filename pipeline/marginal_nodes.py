@@ -43,7 +43,7 @@ Writes data/marginal_nodes.json.gz:
 """
 import numpy as np
 
-from . import cdr
+from . import cdr, memo
 from .config import DATA_DIR, UNIT_DATA_DIR, SIXTY_DAY_TECHS
 from .intraday import _online
 from .nodes import settlement_points
@@ -187,6 +187,41 @@ def node_at(vals, minute: int):
     return np.nan if v is None else v
 
 
+def _f(v):
+    v = float(v)
+    return v if np.isfinite(v) else None
+
+
+def day_margins(ud):
+    """What build_marginal_nodes takes from one per-unit day file (memo.per_day caches it), or
+    None without one: the file format, the runs, and per unit that was online or marginal in a
+    run [name, tech, hours online, MWh of HSL online, [[run, implied price, base point, HSL]
+    for each run it was marginal in]] (NaN as None)."""
+    if not ud:
+        return None
+    runs = ud["runs"]
+    n = len(runs)
+    hr = np.minimum(np.array(runs) // 60, 23)
+    runs_h = np.bincount(hr, minlength=24).astype(float)
+    out = []
+    for name, u in ud["units"].items():
+        t = u.get("tech")
+        if t not in TECHS or not u.get("curve") or not (u.get("disp") or u.get("bp")):
+            continue
+        if t == "storage" and not u.get("disp"):
+            continue
+        marg, price, bp, _ = unit_runs(u, n, hr)
+        if t == "storage":
+            marg &= np.abs(bp) >= STEP_MW     # an idle battery sits between its bid and offer, not on a margin
+        on_runs = np.isfinite(bp) & np.array([u["lim"][i][1] is not None if i >= 0 else False for i in _ffill_index(u["lim"], n)])
+        if not marg.any() and not on_runs.any():
+            continue
+        hsl_r = np.array([u["lim"][i][1] if i >= 0 and u["lim"][i][1] is not None else np.nan for i in _ffill_index(u["lim"], n)], float)
+        out.append([name, t, float(np.sum(on_runs / runs_h[hr])), float(np.nansum(np.where(on_runs, hsl_r, 0.0) / runs_h[hr])),
+                    [[int(r), _f(price[r]), _f(bp[r]), _f(hsl_r[r])] for r in np.flatnonzero(marg)]])
+    return {"format": ud.get("format", 0), "runs": runs, "units": out}
+
+
 def build_marginal_nodes(index: dict) -> None:
     dates = sorted(index["days"].get("60d", []))
     node_days = set(index["days"].get("nodes", []))
@@ -200,7 +235,8 @@ def build_marginal_nodes(index: dict) -> None:
     diffs, sample, n_seen = {0: [], 1: [], 2: []}, [], 0
     rng = np.random.default_rng(1)
     for d in dates:
-        ud = read_json_gz(UNIT_DATA_DIR / "60d" / f"{d}.json.gz")
+        uf = UNIT_DATA_DIR / "60d" / f"{d}.json.gz"
+        ud = memo.per_day("marginal_nodes", d, [uf], lambda: day_margins(read_json_gz(uf)), __name__)
         pr = read_json_gz(DATA_DIR / "prices" / f"{d}.json.gz") if d in price_days else None
         lam = (pr or {}).get("lambda") or {}
         nodes = ((read_json_gz(UNIT_DATA_DIR / "nodes" / f"{d}.json.gz") or {}).get("points") or {}) if d in node_days else {}
@@ -208,48 +244,36 @@ def build_marginal_nodes(index: dict) -> None:
         for k in nodes:
             by_site.setdefault(k.split("_")[0], []).append(k)
         has_nodes.append(bool(nodes))
-        exact = bool(ud) and ud.get("format", 0) >= 4
+        exact = bool(ud) and ud["format"] >= 4
         exact_days.append(exact)
-        netted_days.append(bool(ud) and ud.get("format", 0) >= 5)
+        netted_days.append(bool(ud) and ud["format"] >= 5)
         if not ud or not lam.get("value"):
             continue
         runs = ud["runs"]
-        n = len(runs)
         hr = np.minimum(np.array(runs) // 60, 23)
         runs_h = np.bincount(hr, minlength=24).astype(float)
         lam_r = run_lambda(lam, runs)
         lam_h = _arr(lam.get("hourly_mean") or [], 24)
         day = {}     # (tech, zone) -> (6, 24): n_at, n_below, n_above, room_at, room_below, room_above
-        for name, u in ud["units"].items():
-            t = u.get("tech")
-            if t not in TECHS or not u.get("curve") or not (u.get("disp") or u.get("bp")):
-                continue
-            if t == "storage" and not u.get("disp"):
-                continue
-            marg, price, bp, _ = unit_runs(u, n, hr)
-            if t == "storage":
-                marg &= np.abs(bp) >= STEP_MW     # an idle battery sits between its bid and offer, not on a margin
-            on_runs = np.isfinite(bp) & np.array([u["lim"][i][1] is not None if i >= 0 else False for i in _ffill_index(u["lim"], n)])
-            if not marg.any() and not on_runs.any():
-                continue
-            hsl_r = np.array([u["lim"][i][1] if i >= 0 and u["lim"][i][1] is not None else np.nan for i in _ffill_index(u["lim"], n)], float)
-            acc = day.setdefault((t, zone(name, t)), np.zeros((6, 24))) if marg.any() else None
+        for name, t, on_h, hsl_mwh, mruns in ud["units"]:
+            acc = day.setdefault((t, zone(name, t)), np.zeros((6, 24))) if mruns else None
             rec = units.setdefault(name, [t, sp_of.get(name), 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0, 0.0])
-            rec[2] += float(np.sum(on_runs / runs_h[hr]))
-            rec[9] += float(np.nansum(np.where(on_runs, hsl_r, 0.0) / runs_h[hr]))
+            rec[2] += on_h
+            rec[9] += hsl_mwh
             sp = rec[1]
             if sp is None and t == "storage" and len(by_site.get(name.split("_")[0], [])) == 1:
                 sp = by_site[name.split("_")[0]][0]      # the site's only node
             node = nodes.get(sp) if sp else None
-            for r in np.flatnonzero(marg):
-                p, l = price[r], lam_r[r]
+            for r, p, b_r, h_r in mruns:
+                p, l = np.float64(np.nan if p is None else p), lam_r[r]
+                b_r, h_r = np.float64(np.nan if b_r is None else b_r), np.float64(np.nan if h_r is None else h_r)
                 if not np.isfinite(l):
                     continue
                 cls = 0 if abs(p - l) <= band(l) else (1 if p < l else 2)
                 h, w = hr[r], 1.0 / runs_h[hr[r]]
                 acc[cls, h] += w
-                if np.isfinite(hsl_r[r]):
-                    acc[3 + cls, h] += max(0.0, hsl_r[r] - bp[r]) * w
+                if np.isfinite(h_r):
+                    acc[3 + cls, h] += max(0.0, h_r - b_r) * w
                 rec[3 + cls] += w
                 rec[6] += p * w
                 ever[t].add(name)
@@ -272,6 +296,7 @@ def build_marginal_nodes(index: dict) -> None:
                 if a[:3, h].sum() > 0:
                     rows.append([d, h, _r(lam_h[h], 2), t, z] + [_r(v, 2) for v in a[:3, h]] + [_r(v) for v in a[3:, h]])
 
+    memo.prune("marginal_nodes", dates)
     top = sorted(units.items(), key=lambda kv: -(kv[1][4] + kv[1][5]))[:TOP_UNITS]
     out_units = [[name, r[0], r[1], _r(r[2]), _r(r[3]), _r(r[4]), _r(r[5]),
                   _r(r[6] / (r[3] + r[4] + r[5]), 2) if r[3] + r[4] + r[5] else None,

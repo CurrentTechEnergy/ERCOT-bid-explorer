@@ -45,6 +45,7 @@ data/trends_60d.json.gz
 import numpy as np
 
 from .config import DATA_DIR, PRICE_GRID, UNIT_DATA_DIR
+from . import memo
 from .store import read_json_gz, write_json_gz
 from .units import first_positive_price, le0_above_lsl, le20_sced_runs
 
@@ -166,6 +167,25 @@ def _hour_rows(rows, j):
     return out
 
 
+def day_facts(ud):
+    """What build_trends takes from one per-unit day file (memo.per_day caches it), or None
+    without one: each unit's [name, tech, top limit]; its starts within the day with its first
+    status ({unit: [first status, starts]}: a start in the day's first run depends on the day
+    before, which build_trends adds); and unit_day_facts' last statuses, first positive prices,
+    shares at or below $0, technology MW at or below $0 and MW at or below -$20."""
+    if not ud:
+        return None
+    units = [[nm, uu.get("tech"), max((x[1] or 0 for x in uu.get("lim") or []), default=0)]
+             for nm, uu in ud["units"].items()]
+    starts, last, pos, le0, tech_le0, le20 = unit_day_facts(ud, {})
+    first = {}
+    for nm, u in ud["units"].items():
+        seq = [s for _, s in u["status"] if s]
+        first[nm] = [seq[0] if seq else None, starts[nm]]
+    return {"units": units, "starts": first, "last": last, "pos": pos, "le0": le0,
+            "tech_le0": tech_le0, "le20": le20}
+
+
 def build_trends(index: dict) -> None:
     dates = sorted(index["days"].get("60d", []))
     summ = read_json_gz(DATA_DIR / "summary_60d.json.gz", default={})
@@ -192,27 +212,30 @@ def build_trends(index: dict) -> None:
         j = col("n_online")
         empty.append(not any(r and j is not None and j < len(r) and r[j] for t in UNIT_TECHS for r in st.get(t) or []))
 
-        ud = read_json_gz(UNIT_DATA_DIR / "60d" / f"{d}.json.gz")
-        if ud:
+        uf = UNIT_DATA_DIR / "60d" / f"{d}.json.gz"
+        f = memo.per_day("trends", d, [uf], lambda: day_facts(read_json_gz(uf)), __name__)
+        if f:
             n_unit_days += 1
-            for nm, uu in ud["units"].items():
-                fs = first_seen.setdefault(nm, [d, uu.get("tech"), None, 0])
-                top = max((x[1] or 0 for x in uu.get("lim") or []), default=0)
+            for nm, tech, top in f["units"]:
+                fs = first_seen.setdefault(nm, [d, tech, None, 0])
                 if top > 0:
                     fs[2] = fs[2] or d
                     fs[3] = max(fs[3], top)
             known = prev_last if prev_date and np.datetime64(prev_date) + 1 == np.datetime64(d) else {}
-            starts, prev_last, pos, le0, tech_le0, le20 = unit_day_facts(ud, known)
+            starts = {nm: n + (1 if nm in known and _online(first) and not _online(known[nm]) else 0)
+                      for nm, (first, n) in f["starts"].items()}
+            prev_last, pos, le0, tech_le0, le20 = f["last"], f["pos"], f["le0"], f["tech_le0"], f["le20"]
             prev_date = d
+            tech_of = {nm: tech for nm, tech, _ in f["units"]}
             for t in UNIT_TECHS:
-                starts_t[t].append(sum(c for nm, c in starts.items() if ud["units"][nm]["tech"] == t))
+                starts_t[t].append(sum(c for nm, c in starts.items() if tech_of[nm] == t))
                 floor["le0_sub_lsl"][t].append(tech_le0.get(t) or [0.0] * 24)
         else:
             pos, le0, le20 = {}, {}, {}
             for t in UNIT_TECHS:
                 starts_t[t].append(None)
                 floor["le0_sub_lsl"][t].append(None)
-        has_units.append(1 if ud else 0)
+        has_units.append(1 if f else 0)
         day = read_json_gz(DATA_DIR / "60d" / f"{d}.json.gz") or {}
         g = int(np.searchsorted(PRICE_GRID, -20.0))
         for t in FLOOR_TECHS:
@@ -271,6 +294,7 @@ def build_trends(index: dict) -> None:
         changes += [[name, e["tech"], dates[i], sig, b, a] for i, sig, b, a in ch]
 
     write_json_gz(DATA_DIR / "trends_hourly_60d.json.gz", {"dates": dates, "floor": floor, "run": run})
+    memo.prune("trends", dates)
     write_json_gz(DATA_DIR / "trends_60d.json.gz", {
         "dates": dates, "starts": starts_t, "has_units": has_units, "first_seen": first_seen,
         "signals": {k: v["label"] for k, v in SIGNALS.items()}, "window": K, "units": unit_out,
