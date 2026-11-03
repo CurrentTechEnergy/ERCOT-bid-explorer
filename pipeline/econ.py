@@ -27,6 +27,13 @@ For every unit in the per-unit day files (UNIT_DATA_DIR/60d/) and each 60-day da
   starts    starts that day (telemetered status moving from not online to ON), counted for a
             combined-cycle train as a whole so configuration switches are not starts
   hours_on  hours running (unit_hours_60d strips), thermal units only
+  mmbtu     fuel burned (MMBtu), gas and coal units: each hour's output x the unit's heat rate at
+            that output, a straight line from its measured heat rate at minimum (at or below its
+            DAM LSL) to its full-load one (at its day's peak HSL) (pipeline/heat_rates: EPA hourly
+            stack data against ERCOT net output; a CC configuration its train's; the technology
+            median without one)
+  fuel_meas fuel cost ($) at that burn: mmbtu x the unit's own hub gas price (gas_hub), or for
+            coal its plant's delivered EIA-923 price that month (heat_rates.coal_price)
 
 Prices are hourly means of the 15-minute (node) or 5-minute (lambda) values, so settlement
 at the real intervals differs a little.  Written per technology to data/econ/<tech>.json.gz:
@@ -52,7 +59,7 @@ is the gas fuel cost the A day in ERCOT page takes off each unit's profit.
 """
 import numpy as np
 
-from . import private
+from . import heat_rates, private
 from .config import DATA_DIR, SIXTY_DAY_TECHS, UNIT_DATA_DIR
 from .intraday import _online, train_of
 from .parse_prices import node_hourly
@@ -60,7 +67,8 @@ from .store import read_json_gz, write_json_gz
 from .units import _ffill_index
 
 SERIES = ("mwh", "chg", "rev_rt", "rev_lam", "da_mwh", "rev_da", "rev_da_rt", "rev_as", "cost_off", "cost_inc",
-          "mingen", "start_hot", "start_inter", "start_cold", "starts", "hours_on")
+          "mingen", "start_hot", "start_inter", "start_cold", "starts", "hours_on", "mmbtu")
+FUEL_TECHS = ("combined_cycle", "combustion_turbine", "gas_steam", "coal")
 GAS_TECHS = ("combined_cycle", "combustion_turbine", "gas_steam")
 # EIA average tested heat rates (Electric Power Annual table 8.2, 2024, MMBtu/MWh), as the site uses
 EIA_HR = {"combined_cycle": 7.548, "combustion_turbine": 10.999, "gas_steam": 10.337}
@@ -281,13 +289,23 @@ def build_econ(index: dict) -> None:
                         inc += pos[h] * curve_price(curves[ci][0], curves[ci][1], pos[h])
                     r["cost_off"][di] = _r(cost)
                     r["cost_inc"][di] = _r(inc)
+            t = u.get("tech")
+            if t in FUEL_TECHS:
+                hr = heat_rates.curve(t, train_of(name) if t == "combined_cycle" else name)
+                lsl = (du or {}).get("lsl")
+                r["mmbtu"][di] = _r(sum(q * heat_rates.at_load(hr, q, lsl, r["hsl"][di]) for q in pos if q > 0), 1)
             s = strips.get(name)
             if s and len(s) >= (di + 1) * 24:
                 r["hours_on"][di] = sum(1 for c in s[di * 24:(di + 1) * 24] if c in "ma")
 
     # a combined-cycle train is one plant registered as several configurations; its economics
     # are summed over them, with the DAM costs of the configuration that produced most that day
-    ADD = ("mwh", "chg", "rev_rt", "rev_lam", "da_mwh", "rev_da", "rev_da_rt", "rev_as", "cost_off", "cost_inc", "hours_on")
+    ADD = ("mwh", "chg", "rev_rt", "rev_lam", "da_mwh", "rev_da", "rev_da_rt", "rev_as", "cost_off", "cost_inc", "hours_on", "mmbtu")
+    # each gas and coal configuration's fuel cost per MWh at its measured heat rate (the day's burn
+    # over its output; a day it did not run, its full-load value), before the trains are merged
+    units_tech = {n: r["tech"] for n, r in units.items()}
+    eff = {n: [None if not m or b is None else b / m for m, b in zip(r["mwh"], r["mmbtu"])]
+           for n, r in units.items() if r["tech"] in FUEL_TECHS}
     merged = {}
     for name, r in units.items():
         key = train_of(name) if r["tech"] == "combined_cycle" else name
@@ -331,6 +349,9 @@ def build_econ(index: dict) -> None:
             r["gas_hub"] = hub if own and any(v is not None for v in own) else "hh"
             g = own if r["gas_hub"] != "hh" else gas_series
             r["gas_own"] = [None if m is None or p is None else _r(m * p, 1) for m, p in zip(r["mwh"], g)]
+            r["fuel_meas"] = [None if b is None or p is None else _r(b * p, 1) for b, p in zip(r["mmbtu"], g)]
+        elif t == "coal":
+            r["fuel_meas"] = [None if b is None else _r(b * heat_rates.coal_price(name, d)[0], 1) for b, d in zip(r["mmbtu"], dates)]
         by_tech.setdefault(t, {})[name] = r
     out_dir = DATA_DIR / "econ"
     for t in SIXTY_DAY_TECHS:
@@ -342,15 +363,20 @@ def build_econ(index: dict) -> None:
         "has_nodes": [d in node_days for d in dates], "has_dam": [d in dam_days for d in dates],
         "gas_days": sum(1 for g in gas_series if g is not None),
     })
-    # each gas configuration's fuel cost per MWh at its own hub and the EIA heat rate, for the A day
-    # in ERCOT page's unit profit (overview.js): Henry Hub where its hub has no price that day
+    # each gas and coal configuration's fuel cost per MWh at its measured heat rate (eff above) and
+    # its own hub (Henry Hub where its hub has no price that day) or its plant's coal price, for the
+    # A day in ERCOT page's unit profit and the Units table (overview.js)
     fuel = {}
-    for name, g in sorted(fh.items()):
-        if g.get("tech") in EIA_HR:
-            src = hubs.get(g.get("hub")) or [None] * D
-            fuel[name] = [None if v is None else round(EIA_HR[g["tech"]] * v, 2)
-                          for v in (h if h is not None else hh for h, hh in zip(src, gas_series))]
-    write_json_gz(DATA_DIR / "fuel_cost_60d.json.gz", {"dates": dates, "heat_rate": EIA_HR, "units": fuel})
+    for name, e in sorted(eff.items()):
+        t = units_tech[name]
+        hr = heat_rates.curve(t, train_of(name) if t == "combined_cycle" else name)
+        if t == "coal":
+            px = [heat_rates.coal_price(name, d)[0] for d in dates]
+        else:
+            src = hubs.get((fh.get(name) or {}).get("hub") or "hsc") or [None] * D
+            px = [h if h is not None else hh for h, hh in zip(src, gas_series)]
+        fuel[name] = [None if p is None else round((h if h is not None else hr[1]) * p, 2) for h, p in zip(e, px)]
+    write_json_gz(DATA_DIR / "fuel_cost_60d.json.gz", {"dates": dates, "basis": "measured", "heat_rate": EIA_HR, "units": fuel})
     build_implied_hr(hub_files, read_json_gz(DATA_DIR / "gas.json.gz", default=None) or {}, fh)
     print(f"econ: {D} days, {len(units)} units, {sum(1 for d in dates if d in node_days)} days with node prices, "
           f"{sum(1 for d in dates if d in dam_days)} with DAM")

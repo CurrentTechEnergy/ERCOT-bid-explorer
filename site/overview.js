@@ -51,9 +51,10 @@ const ESR_SPLIT_DATE = "2026-06-22";
 // the 60-day disclosure posts about this many days after the operating day
 const LAG_60D = 60;
 const PAGE_ROWS = 150;
-// profit in the Units table, on the Unit page's default bases (unit-econ.js): EIA average heat
-// rates (Electric Power Annual table 8.2, 2024, MMBtu/MWh), generic variable O&M ($/MWh) and hot
-// start ($) where the unit has no DAM start offer, coal and nuclear fuel at a flat $/MMBtu
+// profit in the Units table, on the Unit page's default bases (unit-econ.js): fuel at each gas and
+// coal unit's measured heat rate (fuel_cost_60d); EIA average heat rates (Electric Power Annual
+// table 8.2, 2024, MMBtu/MWh) as the fallback and for nuclear, generic variable O&M ($/MWh) and hot
+// start ($) where the unit has no DAM start offer, coal (fallback) and nuclear fuel at a flat $/MMBtu
 const ECON = {
   combined_cycle: { hr: 7.548, vom: 3.0, start: 15000 }, combustion_turbine: { hr: 10.999, vom: 5.0, start: 3000 },
   gas_steam: { hr: 10.337, vom: 4.0, start: 10000 }, coal: { hr: 10.018, vom: 5.0, start: 30000, fuel: 2.0 },
@@ -636,7 +637,7 @@ const UNIT_TIPS = {
   lsl: "The unit's largest minimum output (LSL) in an hour it was online.",
   online_h: "Hours the unit was online in the 60-day disclosure (at least half of the hour's SCED runs).",
   mwh: "Energy produced over the day.",
-  profit: "Energy revenue settled two-settlement (DAM award at its day-ahead price, the real-time deviation at the unit's real-time node price), plus ancillary services, less fuel at the EIA average heat rate and the unit's gas hub, variable O&M and, over the day, starts at its DAM hot start offer. The selected-hour view has no start costs. Same bases as the Unit page's revenue and cost panel; an estimate, not the unit's books.",
+  profit: "Energy revenue settled two-settlement (DAM award at its day-ahead price, the real-time deviation at the unit's real-time node price), plus ancillary services, less fuel at the unit's own measured heat rate and its gas hub (or its plant's coal price), variable O&M and, over the day, starts at its DAM hot start offer. The selected-hour view has no start costs. Same bases as the Unit page's revenue and cost panel; an estimate, not the unit's books.",
 };
 function unitRows() {
   const a60 = S.a60;
@@ -720,9 +721,10 @@ function priceOn(src, d) {
 // each thermal train's profit by hour and over the day ($), settled two-settlement as on the Unit
 // page: the DAM award at its day-ahead price plus the real-time deviation (output less award) at
 // the unit's real-time node price (system lambda where the node has no price), plus ancillary
-// service awards at their clearing prices, less fuel (EIA heat rate x the unit's gas hub, as the
-// pipeline prices it in fuel_cost_60d, the hub prices themselves being licensed; EIA heat rate x
-// Henry Hub without one) and variable O&M on the output; the day also less its starts (the DAM hot
+// service awards at their clearing prices, less fuel (the unit's measured heat rate that day x its
+// gas hub or its plant's coal price, as the pipeline prices it in fuel_cost_60d, the hub prices
+// themselves being licensed; EIA heat rate x Henry Hub, or the flat coal price, without one) and
+// variable O&M on the output; the day also less its starts (the DAM hot
 // start offer, else the generic one). Hourly profit has no start costs.
 function unitProfit() {
   const f = S.units60, a = S.a60;
@@ -740,8 +742,8 @@ function unitProfit() {
     const e = ECON[t], u = a.units[trainOf(name, t)];
     if (!e || !u) return;
     const du = dam[name] || {}, o = out[i] || HRS.map(() => 0), node = rt && du.sp ? rt[du.sp] : null;
-    const own = e.fuel != null ? null : ownFuel(name);
-    const fuelMWh = e.fuel != null ? e.fuel * e.hr : own != null ? own : hh != null ? hh * e.hr : null;
+    const own = ownFuel(name);      // $/MWh at its measured heat rate (gas and coal), from the pipeline
+    const fuelMWh = own != null ? own : e.fuel != null ? e.fuel * e.hr : hh != null ? hh * e.hr : null;
     if (fuelMWh == null) u.noFuel = true;
     if (du.start && du.start[0] != null) u.hot = Math.max(u.hot || 0, du.start[0]);
     HRS.forEach((h) => {

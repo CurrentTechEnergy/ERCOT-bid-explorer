@@ -1,5 +1,5 @@
 /* Unit page, revenue and cost: the Plant economics unit detail (economics.js) for the unit
-   unit.js has selected, on that page's defaults: costs at the EIA average heat rate and the unit's
+   unit.js has selected, on that page's defaults: costs at the unit's measured heat rate and the unit's
    own fuel hub, energy revenue settled two-settlement (DA award at the DA price plus the
    real-time deviation). Reads data/econ/<tech>.json.gz (pipeline/econ.py). */
 (() => {
@@ -36,7 +36,7 @@ const fmtDate = d3.timeFormat("%a %b %-d, %Y");
 const HUBS = { hsc: "Houston Ship Channel", waha: "Waha", hh: "Henry Hub" };
 const HUB_METHOD = { offers: "its offers follow that price", location: "by its node's location", default: "no signal, default", refit: "moved from Waha, which its node location gave it, because its on/off calls fit Ship Channel gas better" };
 // the Plant economics page's default bases; that page lets you change them
-const S = { tech: null, cost: "eia", rev: "two", hub: "unit", adder: 0, params: JSON.parse(JSON.stringify(DEFAULTS)), fuel: { ...FUEL_PRICE }, data: {} };
+const S = { tech: null, cost: "meas", rev: "two", hub: "unit", adder: 0, params: JSON.parse(JSON.stringify(DEFAULTS)), fuel: { ...FUEL_PRICE }, data: {} };
 function emptyMsg(el, msg) { el.innerHTML = `<p class="empty">${msg}</p>`; }
 
 // ---- economics of one unit on the chosen bases -------------------------------------
@@ -71,12 +71,23 @@ function unitEcon(u, D, gas) {
         else if (S.cost === "offer" && u.mingen[i] != null) fuel = mwh * u.mingen[i];
         else { const b = fuelBill(i, mwh, p.hr); fuel = b == null ? null : b + mwh * p.vom; estimated = b != null; }
         starts = n * (own != null ? own : p.start);
+      } else if (S.cost === "meas" && u.mmbtu && u.mmbtu[i] != null && (fuelKind === "gas" || fuelKind === "coal")) {
+        // the pipeline's burn on the unit's measured heat-rate curve (econ.py mmbtu), priced at its
+        // own hub (fuel_meas: the hub prices are not published) or Henry Hub, or its plant's coal price
+        const b = fuelKind === "coal" ? (u.fuel_meas ? u.fuel_meas[i] : null)
+          : gas ? (gas[i] == null ? null : u.mmbtu[i] * (gas[i] + S.adder))
+          : (u.fuel_meas && u.fuel_meas[i] != null ? u.fuel_meas[i] + u.mmbtu[i] * S.adder : null);
+        fuel = b == null ? null : b + mwh * p.vom;
+        starts = n * (own != null ? own : p.start);
+        if (own == null && n) estimated = true;
       } else {
-        const hr = S.cost === "eia" ? EIA_HR[t] : p.hr;
+        // EIA (and measured where the unit has no burn: nuclear, or a day without it), or generic
+        const eia = S.cost === "eia" || S.cost === "meas";
+        const hr = eia ? EIA_HR[t] : p.hr;
         const b = fuelBill(i, mwh, hr);
         fuel = b == null ? null : b + mwh * p.vom;
-        starts = n * (own != null && S.cost === "eia" ? own : p.start);
-        if (own == null && n) estimated = true;
+        starts = n * (own != null && eia ? own : p.start);
+        if ((own == null && n) || (S.cost === "meas" && fuelKind !== "nuclear")) estimated = true;
       }
     }
     if (fuel == null) { out.missing++; out.energy.push(energy); out.as.push(as); out.fuel.push(null); out.starts.push(starts); out.margin.push(null); continue; }
@@ -182,7 +193,8 @@ async function draw() {
   const D = T.dates.length, e = unitEcon(u, D, unitHub(u) === "hh" ? T.gas : null);
   const days = u.mwh.filter((v) => v != null).length, mwh = sum(u.mwh), nst = sum(u.starts), margin = sum(e.margin);
   const own = u.start_hot.filter((v) => v != null).length, mg = u.mingen.filter((v) => v != null);
-  const fuelNote = FUEL[S.tech] ? ` Costs: fuel at the EIA average heat rate for the technology (${EIA_HR[S.tech]} MMBtu/MWh)` +
+  const meas = FUEL[S.tech] === "gas" || FUEL[S.tech] === "coal";
+  const fuelNote = FUEL[S.tech] ? (meas ? ` Costs: fuel burned at its own measured heat rate each hour (a straight line from its heat rate at minimum to full load, as under Heat rate and fuel cost)` : ` Costs: fuel at the EIA average heat rate for the technology (${EIA_HR[S.tech]} MMBtu/MWh)`) +
     (FUEL[S.tech] === "gas" ? ` × ${HUBS[unitHub(u)]} gas${u.fuel_hub && unitHub(u) !== "hh" ? ` (its hub: ${HUB_METHOD[u.fuel_hub_method] || u.fuel_hub_method})` : ""}` : ` × $${S.fuel[FUEL[S.tech]]}/MMBtu`) +
     ` plus $${S.params[S.tech].vom}/MWh variable O&M, and starts at its own DAM hot-start offer where it has one, else $${fmt0(S.params[S.tech].start)}.`
     : S.tech === "storage" ? " Charging is in energy revenue as a negative (MWh bought at the same prices), so energy revenue is the arbitrage margin and there is no separate fuel cost." : " No fuel cost for wind and solar.";

@@ -69,6 +69,26 @@ def at_min(tech, unit):
     return (fb[0], False) if fb else None
 
 
+def curve(tech, unit):
+    """(heat rate at minimum, at full load, measured) MMBtu/MWh net for `unit` (a CC train), else its
+    technology's fallback (measured False); None for a technology with no entry."""
+    t = _load()
+    v = t.get((tech, unit))
+    if v is not None and v[2] != "fallback":
+        return v[0], v[1], True
+    fb = t.get((tech, "*"))
+    return (fb[0], fb[1], False) if fb else None
+
+
+def at_load(hr, out, lsl, hsl):
+    """Heat rate (MMBtu/MWh) at output `out` MW: the curve's minimum value at or below `lsl`, its
+    full-load value at or above `hsl`, a straight line between (hr = curve())."""
+    if not lsl or not hsl or hsl <= lsl:
+        return hr[1]
+    f = min(1.0, max(0.0, (out - lsl) / (hsl - lsl)))
+    return hr[0] + (hr[1] - hr[0]) * f
+
+
 def _coal():
     """{EIA plant id or "*": (months, $/MMBtu)} from COAL_PATH, and {unit: plant id} for coal."""
     if not _C:

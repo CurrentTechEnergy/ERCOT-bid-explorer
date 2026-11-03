@@ -32,6 +32,7 @@ const DEFAULTS = {
 };
 const FUEL_PRICE = { coal: 2.0, nuclear: 0.7 };     // $/MMBtu, user-editable
 const COST_NOTES = {
+  meas: "Fuel = each hour's output × the unit's own heat rate at that output, a straight line from its measured heat rate at minimum (at or below its LSL) to its full-load one (EPA hourly stack data against its ERCOT net output; the technology median for a unit without one), × its own hub's gas price plus the adder (Henry Hub if chosen) or its plant's delivered EIA-923 coal price, plus variable O&M per MWh. Nuclear uses the EIA heat rate. Starts cost the unit's own DAM hot-start offer where it has one, else the generic start cost.",
   eia: "Fuel = output × the EIA average tested heat rate for the technology × the fuel price (the chosen gas price plus the adder for gas; the $/MMBtu set here for coal and nuclear), plus variable O&M per MWh. Starts cost the unit's own DAM hot-start offer where it has one, else the generic start cost.",
   offer: "Energy cost = the area under the unit's own DAM energy offer curve up to each hour's output; where the unit offered no curve, its minimum-energy offer × output; where it submitted no three-part offer at all, the generic basis. Starts cost its DAM hot-start offer, else the generic start cost.",
   inc: "Energy cost = each hour's output × the price the unit's own DAM energy offer curve puts on that output level (its incremental offer, read as its marginal cost), ignoring the minimum-energy price that units set low to get committed. Units with no DAM curve use the generic basis and are counted as estimated. Starts cost the DAM hot-start offer, else the generic start cost.",
@@ -57,7 +58,7 @@ const fmtDate = d3.timeFormat("%a %b %-d, %Y");
 // prices are licensed and not published; or "hh", Henry Hub from the EIA
 const HUBS = { hsc: "Houston Ship Channel", waha: "Waha", hh: "Henry Hub" };
 const HUB_CHOICES = { unit: "each unit's own hub", hh: HUBS.hh };
-const S = { tech: "combined_cycle", cost: "eia", rev: "two", hub: "unit", adder: 0, sort: "margin", dir: -1, q: "",
+const S = { tech: "combined_cycle", cost: "meas", rev: "two", hub: "unit", adder: 0, sort: "margin", dir: -1, q: "",
   params: JSON.parse(JSON.stringify(DEFAULTS)), fuel: { ...FUEL_PRICE }, idx: null, data: {} };
 const VIEW_KEYS = { tech: "tech", cost: "cost", rev: "rev", gas: "hub", adder: "adder", sort: "sort" };
 function saveView() { window.CX.writeHash({ ...window.CX.readHash(), ...Object.fromEntries(Object.entries(VIEW_KEYS).map(([k, sk]) => [k, S[sk]])) }); }
@@ -100,12 +101,23 @@ function unitEcon(u, D, gas) {
         else if (S.cost === "offer" && u.mingen[i] != null) fuel = mwh * u.mingen[i];
         else { const b = fuelBill(i, mwh, p.hr); fuel = b == null ? null : b + mwh * p.vom; estimated = b != null; }
         starts = n * (own != null ? own : p.start);
+      } else if (S.cost === "meas" && u.mmbtu && u.mmbtu[i] != null && (fuelKind === "gas" || fuelKind === "coal")) {
+        // the pipeline's burn on the unit's measured heat-rate curve (econ.py mmbtu), priced at its
+        // own hub (fuel_meas: the hub prices are not published) or Henry Hub, or its plant's coal price
+        const b = fuelKind === "coal" ? (u.fuel_meas ? u.fuel_meas[i] : null)
+          : gas ? (gas[i] == null ? null : u.mmbtu[i] * (gas[i] + S.adder))
+          : (u.fuel_meas && u.fuel_meas[i] != null ? u.fuel_meas[i] + u.mmbtu[i] * S.adder : null);
+        fuel = b == null ? null : b + mwh * p.vom;
+        starts = n * (own != null ? own : p.start);
+        if (own == null && n) estimated = true;
       } else {
-        const hr = S.cost === "eia" ? EIA_HR[t] : p.hr;
+        // EIA (and measured where the unit has no burn: nuclear, or a day without it), or generic
+        const eia = S.cost === "eia" || S.cost === "meas";
+        const hr = eia ? EIA_HR[t] : p.hr;
         const b = fuelBill(i, mwh, hr);
         fuel = b == null ? null : b + mwh * p.vom;
-        starts = n * (own != null && S.cost === "eia" ? own : p.start);
-        if (own == null && n) estimated = true;
+        starts = n * (own != null && eia ? own : p.start);
+        if ((own == null && n) || (S.cost === "meas" && fuelKind !== "nuclear")) estimated = true;
       }
     }
     if (fuel == null) { out.missing++; out.energy.push(energy); out.as.push(as); out.fuel.push(null); out.starts.push(starts); out.margin.push(null); continue; }
@@ -233,7 +245,7 @@ function drawTotals() {
   window.CX.setNote($("tot-note"), `${names.length} units over ${D} days. Revenue up, cost down, then the running margin.`, `Node prices on ${nodeDays} days` +
     (lamDays ? ` · ${fmt0(lamDays)} unit-days priced at system lambda for want of a node price` : "") +
     (missing ? ` · ${fmt0(missing)} unit-days with no fuel price (before the first gas price)` : "") +
-    (FUEL[S.tech] === "gas" && (S.cost === "eia" || S.cost === "generic") ? ` · gas at ${gasLabel(T)}` : ""));
+    (FUEL[S.tech] === "gas" && (S.cost === "eia" || S.cost === "generic" || S.cost === "meas") ? ` · gas at ${gasLabel(T)}` : ""));
   barChart(el, T.dates, REV_SERIES.map((s) => ({ ...s, values: { energy, as }[s.k] })), COST_SERIES.map((s) => ({ ...s, values: { fuel, starts }[s.k] })),
     { ...MARGIN, values: margin }, { title: "Revenue (up) and cost (down) per day, $, all units", yFmt: fmt$k });
   let cum = 0;
@@ -249,7 +261,8 @@ function drawInputs() {
   if (!fuelKind) { el.innerHTML = `<p class="empty">No fuel or start cost is applied to ${TECHS.find((x) => x.id === t).label.toLowerCase()}; margin is revenue.</p>`; return; }
   const row = (label, key, val, step, unit, disabled) => `<span class="t">${label}</span><input type="number" data-k="${key}" value="${val}" step="${step}" ${disabled ? "disabled" : ""}><span class="lbl">${unit}</span><span></span>`;
   el.innerHTML = `<span class="lbl">Input</span><span class="lbl">Value</span><span></span><span></span>` +
-    row("Heat rate", "hr", S.cost === "eia" ? EIA_HR[t] : p.hr, 0.1, "MMBtu/MWh" + (S.cost === "eia" ? " (EIA 2024)" : ""), S.cost !== "generic") +
+    (S.cost === "meas" && t !== "nuclear" ? `<span class="t">Heat rate</span><span class="lbl">each unit's own</span><span class="lbl">measured, minimum to full load</span><span></span>`
+      : row("Heat rate", "hr", S.cost === "eia" || S.cost === "meas" ? EIA_HR[t] : p.hr, 0.1, "MMBtu/MWh" + (S.cost === "eia" || S.cost === "meas" ? " (EIA 2024)" : ""), S.cost !== "generic")) +
     row("Variable O&M", "vom", p.vom, 0.5, "$/MWh", S.cost === "offer" || S.cost === "inc") +
     row("Start cost", "start", p.start, 500, "$ per start" + (S.cost !== "generic" ? " (where no DAM offer)" : ""), false) +
     (fuelKind !== "gas" ? row("Fuel price", "fuel", S.fuel[fuelKind], 0.1, "$/MMBtu", false) : "");

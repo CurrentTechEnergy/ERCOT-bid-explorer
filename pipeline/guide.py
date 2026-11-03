@@ -26,7 +26,7 @@ Writes data/guide.json.gz:
 """
 import numpy as np
 
-from . import private
+from . import heat_rates, private
 from .config import DATA_DIR, UNIT_DATA_DIR
 from .store import read_json_gz, write_json_gz
 from .stayon import HOT_H, INTER_H
@@ -44,7 +44,13 @@ UNITS = {   # resource name -> (label, one-line note shown with the picker)
 # cost): their stay-on running cost is estimated from their gas hub instead, as the Plant
 # economics page's EIA basis does (heat rate x gas price + variable O&M).
 FUEL_EST = {"QALSW_CC1_2": "waha"}
-EIA_HR = {"combined_cycle": 7.548}     # MMBtu/MWh, EIA Electric Power Annual table 8.2
+EIA_HR = {"combined_cycle": 7.548}     # MMBtu/MWh, EIA Electric Power Annual table 8.2 (no longer used: the ride's fuel is at the train's heat rate at minimum)
+
+
+def _train(name):
+    import re
+    m = re.match(r"^(.*_CC\d+)_", name)
+    return m.group(1) if m else name
 VOM = {"combined_cycle": 3.0}          # $/MWh, the economics page's generic default
 THERMAL = ("nuclear", "coal", "combined_cycle", "gas_steam", "combustion_turbine")
 
@@ -153,11 +159,12 @@ def build():
         if ride and name in FUEL_EST:
             hub = hubs[FUEL_EST[name]]
             gas = hub["value"][hub["dates"].index(DATE)]
-            per = EIA_HR[u["tech"]] * gas + VOM[u["tech"]]
+            hr = heat_rates.at_min(u["tech"], _train(name) if u["tech"] == "combined_cycle" else name)[0]    # riding through at minimum
+            per = hr * gas + VOM[u["tech"]]
             ride["cost"] = _r(ride["mwh"] * per, 0)
             ride["loss"] = _r(ride["cost"] - ride["revenue"], 0)
             ride["saves"] = _r(ride["loss"] - ride["start"], 0)
-            ride["fuel"] = {"hub": hub["name"], "gas": gas, "hr": EIA_HR[u["tech"]], "vom": VOM[u["tech"]],
+            ride["fuel"] = {"hub": hub["name"], "gas": gas, "hr": hr, "vom": VOM[u["tech"]],
                             "per_mwh": _r(per, 2), "mingen": d.get("mingen")}
         if ride and ride["est"] == 2 and per_mw.get(u["tech"]):
             hsl = np.nanmax(e["hsl"])

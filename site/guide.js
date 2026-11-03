@@ -218,7 +218,7 @@ function drawStep5() {
     $("k5").innerHTML = k.map(([t, v, neg]) => `<div class="kpi"><span class="v${neg ? " neg" : ""}">${v}</span><span class="k">${t}</span></div>`).join("");
     const f = r.fuel;
     const run = f
-      ? `Running cost is estimated from ${f.hub} gas at ${fmtP(f.gas)}/MMBtu × the EIA heat rate of ${f.hr} MMBtu/MWh plus ${fmtP(f.vom)}/MWh variable O&M, or ${fmtP(f.per_mwh)}/MWh. Its own day-ahead minimum-energy offer was ${fmtP(f.mingen)}/MWh, a price set to get committed rather than a cost, so it is not used. Negative gas means the unit was paid to take fuel.`
+      ? `Running cost is estimated from ${f.hub} gas at ${fmtP(f.gas)}/MMBtu × its measured heat rate at minimum of ${f.hr} MMBtu/MWh plus ${fmtP(f.vom)}/MWh variable O&M, or ${fmtP(f.per_mwh)}/MWh. Its own day-ahead minimum-energy offer was ${fmtP(f.mingen)}/MWh, a price set to get committed rather than a cost, so it is not used. Negative gas means the unit was paid to take fuel.`
       : `Running cost is output × minimum-energy cost, ${r.est === 2 ? "using the technology's generic cost because the unit had no three-part offer that day" : r.est === 1 ? "from the unit's most recent three-part offer" : "from the unit's own three-part offer"}.`;
     const start = r.est === 0 ? " The restart cost is the unit's own day-ahead start-up offer."
       : r.start_range ? ` The restart cost is a generic ${r.start_kind} start; real ${r.start_kind}-start offers from other units this type suggest roughly ${fmt$k(r.start_range[0])} to ${fmt$k(r.start_range[2])} for a unit this size (middle half), so read it as an order of magnitude.`
