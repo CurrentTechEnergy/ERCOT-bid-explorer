@@ -310,8 +310,22 @@ const ECON = {
   coal: { label: "Coal", color: "--c8" },
   combustion_turbine: { label: "Combustion turbines", color: "--c4" },
 };
+const SPLIT_KEYS = ["grid", "congested", "free"];
+const SPLIT = {
+  grid: { label: "Transmission: hub price above $5, the system wasn't oversupplied", color: "--c-other" },
+  congested: { label: "Oversupply hour, but behind congestion", color: "--c4" },
+  free: { label: "Oversupply hour, not behind congestion: fossil could make room", color: "--c3" },
+};
+function drawQ4Split(Y) {
+  const ys = Y.map((r) => r.year), R = Object.fromEntries(Y.map((r) => [r.year, r]));
+  const part = (y, k) => { const r = R[y]; return k === "grid" ? r.curt - r.over : k === "congested" ? r.over - r.free : r.free; };
+  stack($("q4s-chart"), ys, SPLIT_KEYS, part, { title: "All wind and solar curtailment (TWh), by what held it back", labels: SPLIT,
+    axis: (v) => d3.format(".0f")(v / 1e6), tip: (v) => `${fmtTWh(v)} TWh` });
+  legend("q4s-legend", SPLIT_KEYS.map((k) => [SPLIT[k].label, SPLIT[k].color]));
+}
 function drawQ4() {
   const el = $("q4-chart"), Y = S.G.q4.years.map(([year, avail, curt, over, free, overH, counted, freeCounted, byHe]) => ({ year, avail, curt, over, free, overH, counted, freeCounted, byHe }));
+  drawQ4Split(Y);
   const A = S.G.q4.atmin.map(([year, tech, econ, mwh]) => ({ year, tech, econ, mwh }));
   const ys = Y.map((r) => r.year), cnt = Object.fromEntries(Y.map((r) => [r.year, r.counted || 1]));
   const val = (y, k) => d3.sum(A.filter((r) => r.year === y && r.tech !== "nuclear" && r.econ === k), (r) => r.mwh) / cnt[y];
@@ -330,7 +344,7 @@ function drawQ4() {
     Y.map((r) => [r.year, r.avail, r.curt, r.free, r.overH, r.counted, Math.round(nuc(r.year)), ...Q4_KEYS.map((k) => Math.round(val(r.year, k))), ...sc.map((s) => v(r.year, s))]), "Curtailment and fossil minimum");
   const y = fullYears().at(-1), r = Y.find((q) => q.year === y), fossil = d3.sum(Q4_KEYS, (k) => val(y, k));
   const runs = (s) => `${fmtTWh(v(y, s))} TWh (${fmtPct(v(y, s) / r.free)})`;
-  $("q4-answer").innerHTML = `In ${y}, ${fmtTWh(r.curt)} TWh of wind and solar was curtailed, and fossil units could have made room for ${fmtTWh(r.free)} TWh of it (${fmtPct(r.free / r.curt)}): the curtailment in oversupply hours at wind and solar not behind congestion. In those hours ${fmtGW(fossil)} GW of fossil sat at minimum, beside ${fmtGW(nuc(y))} GW of nuclear. <b>${fmtGW(val(y, Q4_KEYS[0]))} GW of it was losing more than a restart would cost.</b> Had those units shut, ${runs(sc[0])} of that curtailment would have run instead. Had every unit losing money shut, ${runs(sc[1])} would have; shutting all fossil at minimum, ${runs(sc[2])}.`;
+  $("q4-answer").innerHTML = `<b>Most curtailment is transmission, not fossil.</b> In ${y}, ${fmtTWh(r.curt)} TWh of wind and solar was curtailed. ${fmtPct((r.curt - r.over) / r.curt)} of it came while the hub price was above $${S.G.over_price}, when the system wasn't oversupplied, and another ${fmtPct((r.over - r.free) / r.curt)} at wind and solar behind congestion. The rest, ${fmtTWh(r.free)} TWh (${fmtPct(r.free / r.curt)}), came in oversupply hours where the grid could have taken it: the part fossil units could make room for. In those hours ${fmtGW(fossil)} GW of fossil sat at minimum, beside ${fmtGW(nuc(y))} GW of nuclear. <b>${fmtGW(val(y, Q4_KEYS[0]))} GW of it was losing more than a restart would cost.</b> Had those units shut, ${runs(sc[0])} of that curtailment would have run instead. Had every unit losing money shut, ${runs(sc[1])} would have; shutting all fossil at minimum, ${runs(sc[2])}.`;
   setNote($("q4-note"), `The curtailment fossil units could make room for, by year, split by the shutdown that would have let it run. Each hour counts the smaller of its curtailment and the minimum of the units shut, so a year's average fossil minimum and average curtailment can't simply be compared. * part year.`,
     `Curtailment is a wind or solar unit's HSL above its base point (0.5 MW or more), from the 60-day SCED disclosure. An oversupply hour has a real-time hub average (HB_HUBAVG) of $${S.G.over_price}/MWh or less. A unit is behind congestion when its day-ahead node price sits $5 or more below the day-ahead bus average; most curtailment is (West and Panhandle), and shutting a gas unit elsewhere does not make room for it. The fossil split covers oversupply hours with at least 100 MW curtailed not behind congestion. A combined cycle or gas steam unit is losing money in the hours of its day-ahead loss windows (as in question 3). It loses more than a restart when some shutdown of at least its minimum off time would save more than the restart, and it is held on when a DAM commitment, AS or RUC covers half the window or more. Units outside such a window are covering their costs at day-ahead prices. Coal is shown on its own: its cost is a generic one and it mostly shuts by season. "Runs" sums, hour by hour, the smaller of that curtailment and the minimum of the units shut.`);
 }
