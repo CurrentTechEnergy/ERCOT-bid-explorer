@@ -31,6 +31,13 @@ to the median too (Nov 3 2026): checked against EIA-923's fuel for electricity, 
 includes the host's steam (EIA electric heat rate 6.5 and 7.4). Check against EIA-923 Page 1:
 /mnt/project-files/analysis/epa-heat-rates/burn-check-pr300/.
 
+`screen.py EPA.parquet EIA923_Page1_YEAR.xlsx [--write]` runs after the build and moves a unit to the
+median when its heat rate at minimum is outside `pipeline.heat_rates.BOUNDS` (CC 6 to 13, CT 7 to 18,
+gas steam 9.5 to 20, coal 9 to 16; the pipeline applies this range test too) or its EPA plant's heat
+input is over 1.2x EIA-923's fuel for electricity (cogeneration). Nov 3 2026 on EIA 2024 and 2025:
+no unit fails beyond Deer Park and FTR_CC1, already on the median. FTR's plant is not comparable
+(EPA and EIA total fuel differ by more than 20%), so the cogeneration test would not have caught it.
+
 Combustion turbines (Nov 2026): `ct_match.py` matches each ERCOT CT unit to the EPA unit (or pair)
 whose hourly gross load tracks its telemetered output (correlation at least 0.85, gross/net 0.9 to
 1.25) over the history release's 2024-06 to 2025-11 months; `ct_hr.py` then takes heat input over

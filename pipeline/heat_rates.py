@@ -37,6 +37,11 @@ from pathlib import Path
 PATH = Path(__file__).parent / "reference" / "unit_heat_rates.csv"
 COAL_PATH = Path(__file__).parent / "reference" / "coal_prices.csv"
 COAL_PRICE = 2.00    # $/MMBtu delivered coal without a month in COAL_PATH (Fleet economics' flat value)
+# plausible heat rate at minimum (MMBtu/MWh net) by technology, wide enough to keep every value EPA
+# supports (Midlothian's CTs are combined-cycle blocks at 7.8; old units at minimum reach 17): a value outside
+# is read as the technology median (analysis/epa_heat_rates/screen.py applies the same test, plus
+# a cogeneration test against EIA-923, when the file is built)
+BOUNDS = {"combined_cycle": (6.0, 13.0), "combustion_turbine": (7.0, 18.0), "gas_steam": (9.5, 20.0), "coal": (9.0, 16.0)}
 _T = {}
 _C = {}
 
@@ -45,7 +50,10 @@ def _load():
     if not _T:
         with open(PATH, newline="") as f:
             for r in csv.DictReader(f):
-                _T[(r["tech"], r["unit"])] = (float(r["hr_min"]), float(r["hr_full"]), r["basis"])
+                v = float(r["hr_min"])
+                lo, hi = BOUNDS.get(r["tech"], (0, float("inf")))
+                _T[(r["tech"], r["unit"])] = (v, float(r["hr_full"]),
+                                              r["basis"] if r["unit"] == "*" or lo <= v <= hi else "fallback")
     return _T
 
 
