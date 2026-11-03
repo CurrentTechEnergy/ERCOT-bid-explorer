@@ -54,14 +54,7 @@ jobs:
             exit 0
           fi
           git commit -m "Bidding-change history $(date -u +%Y-%m-%d)"
-          git fetch --unshallow origin "${GITHUB_REF_NAME}"
-          for attempt in 1 2 3 4 5; do
-            git pull --rebase origin "${GITHUB_REF_NAME}" && git push origin "HEAD:${GITHUB_REF_NAME}" && exit 0
-            echo "Push attempt $attempt failed; retrying"
-            sleep $((attempt * 10))
-          done
-          echo "::error::Could not push after 5 attempts"
-          exit 1
+          .github/scripts/push-data.sh "${GITHUB_REF_NAME}"
 
   deploy:
     needs: build
