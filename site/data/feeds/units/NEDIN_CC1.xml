@@ -3,7 +3,7 @@
   <title>NEDIN_CC1: bidding and operating changes</title>
   <link href="https://ercotbids.currenttech.energy/unit.html?unit=NEDIN_CC1"/>
   <id>https://ercotbids.currenttech.energy/unit.html?unit=NEDIN_CC1</id>
-  <updated>2026-10-26T00:00:00Z</updated>
+  <updated>2026-11-03T00:00:00Z</updated>
   <entry>
     <title>NEDIN_CC1: Outage started (2026-08-17)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=NEDIN_CC1"/>
@@ -44,7 +44,7 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=NEDIN_CC1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=NEDIN_CC1#NEDIN_CC1/2026-06-01/turnoff/1</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Turn-off point with an award some hours riding through to -$24 per MW of minimum output in June</summary>
+    <summary>Turn-off point with an award some hours riding through to -$27 per MW of minimum output in June</summary>
   </entry>
   <entry>
     <title>NEDIN_CC1: Minimum-energy offer stepped (2026-05-14)</title>
@@ -65,7 +65,7 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=NEDIN_CC1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=NEDIN_CC1#NEDIN_CC1/2026-05-01/turnoff/0</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Turn-off point without an award $994 to $169 per MW of minimum output in May</summary>
+    <summary>Turn-off point without an award $1,182 to $180 per MW of minimum output in May</summary>
   </entry>
   <entry>
     <title>NEDIN_CC1: Shut down after a long run (2026-05-01)</title>
@@ -124,6 +124,13 @@
     <summary>Minimum-energy offer stepped: $40 to $31/MWh ($15 to $14 against the fuel-cost line)</summary>
   </entry>
   <entry>
+    <title>NEDIN_CC1: Timescale group changed (2026-02-01)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=NEDIN_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=NEDIN_CC1#NEDIN_CC1/2026-02-01/group</id>
+    <updated>2026-11-03T00:00:00Z</updated>
+    <summary>Daily, 1–2 a week in 2026-01 to Multi-day: off a day or more in 2026-02</summary>
+  </entry>
+  <entry>
     <title>NEDIN_CC1: Priced out of the day-ahead (2026-01-31)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=NEDIN_CC1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=NEDIN_CC1#NEDIN_CC1/2026-01-31/dam_priced_out</id>
@@ -136,13 +143,6 @@
     <id>https://ercotbids.currenttech.energy/unit.html?unit=NEDIN_CC1#NEDIN_CC1/2026-01-28/dam_priced_out</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Priced out of the day-ahead: minimum energy at $52/MWh against a usual $33 for 4 day(s)</summary>
-  </entry>
-  <entry>
-    <title>NEDIN_CC1: Timescale group changed (2026-01-01)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=NEDIN_CC1"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=NEDIN_CC1#NEDIN_CC1/2026-01-01/group</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Daily, 1–2 a week in 2025-12 to Multi-day: off a day or more in 2026-01</summary>
   </entry>
   <entry>
     <title>NEDIN_CC1: Minimum-energy offer stepped (2026-01-01)</title>

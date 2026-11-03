@@ -53,18 +53,4 @@
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Outage began, lasting 8 days</summary>
   </entry>
-  <entry>
-    <title>DOWGEN_DOW_ST95: Timescale group changed (2026-02-01)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=DOWGEN_DOW_ST95"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=DOWGEN_DOW_ST95#DOWGEN_DOW_ST95/2026-02-01/group</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Multi-day: off a day or more in 2026-01 to Daily, over 2 a week in 2026-02</summary>
-  </entry>
-  <entry>
-    <title>DOWGEN_DOW_ST95: Timescale group changed (2026-01-01)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=DOWGEN_DOW_ST95"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=DOWGEN_DOW_ST95#DOWGEN_DOW_ST95/2026-01-01/group</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Daily, under 1 shutdown a week in 2025-12 to Multi-day: off a day or more in 2026-01</summary>
-  </entry>
 </feed>

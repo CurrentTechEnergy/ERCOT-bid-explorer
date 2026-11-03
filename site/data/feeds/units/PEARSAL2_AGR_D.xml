@@ -3,7 +3,14 @@
   <title>PEARSAL2_AGR_D: bidding and operating changes</title>
   <link href="https://ercotbids.currenttech.energy/unit.html?unit=PEARSAL2_AGR_D"/>
   <id>https://ercotbids.currenttech.energy/unit.html?unit=PEARSAL2_AGR_D</id>
-  <updated>2026-10-24T00:00:00Z</updated>
+  <updated>2026-11-03T00:00:00Z</updated>
+  <entry>
+    <title>PEARSAL2_AGR_D: Shut down despite a day-ahead award (2026-08-27)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=PEARSAL2_AGR_D"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=PEARSAL2_AGR_D#PEARSAL2_AGR_D/2026-08-27/shutdown_award</id>
+    <updated>2026-11-03T00:00:00Z</updated>
+    <summary>Shut down for 2 h although a day-ahead award covered 100% of the window</summary>
+  </entry>
   <entry>
     <title>PEARSAL2_AGR_D: Shut down despite a day-ahead award (2026-07-15)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=PEARSAL2_AGR_D"/>
@@ -38,6 +45,13 @@
     <id>https://ercotbids.currenttech.energy/unit.html?unit=PEARSAL2_AGR_D#PEARSAL2_AGR_D/2026-06-16/shutdown_award</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Shut down for 16 h although a day-ahead award covered 100% of the window</summary>
+  </entry>
+  <entry>
+    <title>PEARSAL2_AGR_D: Shut down despite a day-ahead award (2026-06-15)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=PEARSAL2_AGR_D"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=PEARSAL2_AGR_D#PEARSAL2_AGR_D/2026-06-15/shutdown_award</id>
+    <updated>2026-11-03T00:00:00Z</updated>
+    <summary>Shut down for 3 h although a day-ahead award covered 100% of the window</summary>
   </entry>
   <entry>
     <title>PEARSAL2_AGR_D: Shut down despite a day-ahead award (2026-05-08)</title>

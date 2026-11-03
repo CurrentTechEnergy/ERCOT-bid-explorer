@@ -3,7 +3,7 @@
   <title>FREC_CC2: bidding and operating changes</title>
   <link href="https://ercotbids.currenttech.energy/unit.html?unit=FREC_CC2"/>
   <id>https://ercotbids.currenttech.energy/unit.html?unit=FREC_CC2</id>
-  <updated>2026-10-30T00:00:00Z</updated>
+  <updated>2026-11-03T00:00:00Z</updated>
   <entry>
     <title>FREC_CC2: Timescale group changed (2026-07-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=FREC_CC2"/>
@@ -30,7 +30,7 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=FREC_CC2"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=FREC_CC2#FREC_CC2/2026-06-01/turnoff/1</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Turn-off point with an award some hours $27 to $1,001 per MW of minimum output in June</summary>
+    <summary>Turn-off point with an award some hours $27 to $1,085 per MW of minimum output in June</summary>
   </entry>
   <entry>
     <title>FREC_CC2: Minimum-energy offer stepped (2026-05-13)</title>
@@ -84,9 +84,16 @@
   <entry>
     <title>FREC_CC2: Turn-off point moved (2026-03-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=FREC_CC2"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=FREC_CC2#FREC_CC2/2026-03-01/turnoff/2</id>
+    <updated>2026-11-03T00:00:00Z</updated>
+    <summary>Turn-off point with an award every hour $4,933 to riding through per MW of minimum output in March; the next month held it</summary>
+  </entry>
+  <entry>
+    <title>FREC_CC2: Turn-off point moved (2026-03-01)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=FREC_CC2"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=FREC_CC2#FREC_CC2/2026-03-01/turnoff/1</id>
     <updated>2026-10-30T00:00:00Z</updated>
-    <summary>Turn-off point with an award some hours -$56 to $0 per MW of minimum output in March</summary>
+    <summary>Turn-off point with an award some hours -$59 to $10 per MW of minimum output in March</summary>
   </entry>
   <entry>
     <title>FREC_CC2: Minimum-energy offer stepped (2026-02-10)</title>

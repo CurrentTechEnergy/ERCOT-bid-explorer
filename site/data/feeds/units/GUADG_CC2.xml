@@ -3,27 +3,13 @@
   <title>GUADG_CC2: bidding and operating changes</title>
   <link href="https://ercotbids.currenttech.energy/unit.html?unit=GUADG_CC2"/>
   <id>https://ercotbids.currenttech.energy/unit.html?unit=GUADG_CC2</id>
-  <updated>2026-10-31T00:00:00Z</updated>
+  <updated>2026-11-03T00:00:00Z</updated>
   <entry>
     <title>GUADG_CC2: Minimum-energy offer stepped (2026-08-13)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=GUADG_CC2"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=GUADG_CC2#GUADG_CC2/2026-08-13/dam_mingen_step</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Minimum-energy offer stepped: $1 to $10/MWh (-$16 to -$7 against the fuel-cost line)</summary>
-  </entry>
-  <entry>
-    <title>GUADG_CC2: Turn-off point moved (2026-08-01)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=GUADG_CC2"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=GUADG_CC2#GUADG_CC2/2026-08-01/turnoff/2</id>
-    <updated>2026-10-29T00:00:00Z</updated>
-    <summary>Turn-off point with an award every hour riding through to $4,604 per MW of minimum output in August</summary>
-  </entry>
-  <entry>
-    <title>GUADG_CC2: Turn-off point moved (2026-07-01)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=GUADG_CC2"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=GUADG_CC2#GUADG_CC2/2026-07-01/turnoff/2</id>
-    <updated>2026-10-31T00:00:00Z</updated>
-    <summary>Turn-off point with an award every hour $4,093 to riding through per MW of minimum output in July; the next month went back</summary>
   </entry>
   <entry>
     <title>GUADG_CC2: Shut down after a long run (2026-06-28)</title>
@@ -59,6 +45,13 @@
     <id>https://ercotbids.currenttech.energy/unit.html?unit=GUADG_CC2#GUADG_CC2/2026-05-08/dam_mingen_step</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Minimum-energy offer stepped: $0 to $21/MWh (-$17 to $2 against the fuel-cost line)</summary>
+  </entry>
+  <entry>
+    <title>GUADG_CC2: Turn-off point moved (2026-05-01)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=GUADG_CC2"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=GUADG_CC2#GUADG_CC2/2026-05-01/turnoff/2</id>
+    <updated>2026-11-03T00:00:00Z</updated>
+    <summary>Turn-off point with an award every hour $1,427 to $2,192 per MW of minimum output in May; the next month held it</summary>
   </entry>
   <entry>
     <title>GUADG_CC2: Minimum-energy offer stepped (2026-04-25)</title>

@@ -3,7 +3,14 @@
   <title>COLETO_COLETOG1: bidding and operating changes</title>
   <link href="https://ercotbids.currenttech.energy/unit.html?unit=COLETO_COLETOG1"/>
   <id>https://ercotbids.currenttech.energy/unit.html?unit=COLETO_COLETOG1</id>
-  <updated>2026-10-26T00:00:00Z</updated>
+  <updated>2026-11-03T00:00:00Z</updated>
+  <entry>
+    <title>COLETO_COLETOG1: Shut down after a long run (2026-03-18)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=COLETO_COLETOG1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=COLETO_COLETOG1#COLETO_COLETOG1/2026-03-18/shutdown_new</id>
+    <updated>2026-11-03T00:00:00Z</updated>
+    <summary>First shutdown in the record, off 2 h</summary>
+  </entry>
   <entry>
     <title>COLETO_COLETOG1: Outage ended (2026-03-16)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=COLETO_COLETOG1"/>
