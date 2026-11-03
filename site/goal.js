@@ -278,7 +278,7 @@ function drawQ3() {
   const y0 = ys[0], y1 = fullYears().at(-1), now = ys.at(-1), r0 = row(y0, "more"), r1 = row(y1, "more");
   const dir = r1.off > r0.off * 1.1 ? "more often than" : r1.off < r0.off * 0.9 ? "less often than" : "about as often as";
   const night = (y) => (M.find((r) => r.year === y) || {}).night;
-  $("q3-answer").innerHTML = `<b>${TECH[S.tech]} units turn off ${dir} than in ${y0} when shutting would pay.</b> Of the loss windows where a shutdown of at least the unit's minimum off time beat a restart, ` +
+  $("q3-answer").innerHTML = `<b>${TECH[S.tech]} units turn off ${dir} in ${y0} when shutting would pay.</b> Of the loss windows where a shutdown of at least the unit's minimum off time beat a restart, ` +
     `they turned off for ${fmtPct(r0.off)} of ${d3.format(",")(r0.n)} in ${y0} and ${fmtPct(r1.off)} of ${d3.format(",")(r1.n)} in ${y1}` +
     (now !== y1 ? ` (${fmtPct(row(now, "more").off)} so far in ${yearLabel(now)}, which leans on the spring maintenance months)` : "") +
     `, and ran through ${fmtTWh(r0.onMwh)} and ${fmtTWh(r1.onMwh)} TWh of minimum output in them. ` +
