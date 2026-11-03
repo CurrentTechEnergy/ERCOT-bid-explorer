@@ -6,12 +6,14 @@ solar units that file a DAM energy curve, from the DAM day files (parse_dam.py),
 unit's gas hub (fuel_hub.py) and hub prices (gas.py), and the wind/solar real-time floors kept by
 renew_changes.py.
 
-Fuel-cost line.  A unit's minimum-energy offer is set against REF_HR (MMBtu/MWh) times the gas
+Fuel-cost line.  A unit's minimum-energy offer is set against its own heat rate at minimum
+(pipeline/heat_rates: EPA hourly heat input over ERCOT net output while running at minimum; a CC
+configuration takes its train's; the technology median for a unit without one) times the gas
 price at its own hub, Waha or Houston Ship Channel, on the last trading day before the operating
-day.  REF_HR is EIA's average tested heat rate by prime mover for natural gas (Electric Power
-Annual, Table 8.2, 2025: full load, US utilities and IPPs, weighted by net summer capacity).  A
-unit burns more per MWh at its minimum than at full load, so an offer under the line is below fuel
-cost with room to spare.  The implied heat rate is the offer over the gas price, as on the Offers
+day (Nov 2026; before, REF_HR).  REF_HR, EIA's average tested heat rate by prime mover for natural
+gas (Electric Power Annual, Table 8.2, 2025: full load), is kept as a reference: at minimum a gas
+steam unit burns about 13.4 MMBtu/MWh against EIA's 10.3, so the EIA line put about $9/MWh of
+"markup" into every gas steam offer at $3 gas.  The implied heat rate is the offer over the gas price, as on the Offers
 page.
 
 Cheap hours are hours with DA lambda at or below CHEAP_USD.  On a day with any, a unit's
@@ -70,7 +72,7 @@ import re
 
 import numpy as np
 
-from . import private
+from . import heat_rates, private
 from .config import DATA_DIR
 from .log import warn
 from .renew_changes import plant_of as renew_plant
@@ -110,6 +112,14 @@ FIELDS = {"thermal": ["f", "mg", "mc", "ih", "mk", "ma", "aw", "ho", "ls", "iv",
 def train_of(name: str) -> str:
     m = re.match(r"^(.*_CC\d+)_", name)
     return m.group(1) if m else name
+
+
+def fuel_hr(tech: str, name: str) -> float:
+    """The heat rate (MMBtu/MWh) of the unit's fuel-cost line: its heat rate at minimum, a CC
+    configuration its train's (heat_rates.at_min, the technology median without one)."""
+    if tech not in THERMAL:
+        return 0.0
+    return heat_rates.at_min(tech, train_of(name) if tech == "combined_cycle" else name)[0]
 
 
 def plant_of(name: str, tech: str) -> str:
@@ -213,13 +223,13 @@ def build_signatures(days):
             if t not in THERMAL and t not in RENEW:
                 continue
             hub = (fh.get(n) or {}).get("hub") or "hsc"
-            r = unit_day(u, day, cheap, REF_HR.get(t, 0), gas(hub, day) if t in THERMAL else None, rt.get((n, day)))
+            r = unit_day(u, day, cheap, fuel_hr(t, n), gas(hub, day) if t in THERMAL else None, rt.get((n, day)))
             if r is None:
                 continue
             rec = units.get(n)
             if rec is None:
                 kind = "thermal" if t in THERMAL else "renew"
-                rec = units[n] = {"tech": t, "plant": plant_of(n, t), **({"hub": hub} if t in THERMAL else {}),
+                rec = units[n] = {"tech": t, "plant": plant_of(n, t), **({"hub": hub, "hr": fuel_hr(t, n)} if t in THERMAL else {}),
                                   **{f: [None] * len(days) for f in FIELDS[kind]}}
             for f, v in r.items():
                 if f in rec:
@@ -475,6 +485,16 @@ def renew_table(units):
     return rows
 
 
+def _measured(units):
+    """{tech: [units on their own heat rate, units in all]} for the page's note."""
+    out = {t: [0, 0] for t in THERMAL}
+    for n, r in units.items():
+        if r["tech"] in THERMAL:
+            out[r["tech"]][1] += 1
+            out[r["tech"]][0] += int(heat_rates.at_min(r["tech"], train_of(n) if r["tech"] == "combined_cycle" else n)[1])
+    return out
+
+
 def write_signatures(dates, units):
     by_year = collections.defaultdict(list)
     for k, d in enumerate(dates):
@@ -505,7 +525,8 @@ def build_dam_offers(index: dict) -> dict:
     fl, bins, mk_hist = fleet(dates, units, cheapdays)
     write_signatures(dates, units)
     out = {"updated": dt.datetime.now(dt.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
-           "ref": {"hr": REF_HR, **REF_SOURCE}, "cheap_usd": CHEAP_USD,
+           "ref": {"basis": "at_min", "hr": {t: heat_rates.AT_MIN[t] for t in THERMAL}, "eia_hr": REF_HR, **REF_SOURCE,
+                   "measured": _measured(units)}, "cheap_usd": CHEAP_USD,
            "params": {"step_usd": STEP_USD, "step_tol": STEP_TOL, "po_usd": PO_USD, "ep_max": EP_MAX, "start_pct": START_PCT,
                       "prior": PRIOR, "hold": HOLD, "min_held": MIN_HELD, "file_share": FILE_SHARE, "renew_off": RENEW_OFF,
                       "reprice": REPRICE, "zero_usd": ZERO_USD, "high_usd": HIGH_USD},

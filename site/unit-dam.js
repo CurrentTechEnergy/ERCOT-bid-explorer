@@ -86,7 +86,7 @@ function drawThermal(U, list) {
   $("dam-title-note").textContent = `${D.first} to ${D.last}`;
   $("dam-note").innerHTML = `Its three-part offer to the day-ahead market each day${cc ? ", one colour per configuration" : ""}. ` +
     `Large squares are cheap days (DA lambda at or below $${D.cheap_usd}) at the offer over the cheap hours: filled when a DAM award kept it on through the cheap stretch, hollow when not. Small faint squares are other days, at the day's offer. ` +
-    `The black line is its fuel cost (the EIA heat rate times its hub gas price), and dashed rules mark offer changes. ` +
+    `The black line is its fuel cost at minimum output (its heat rate at minimum, as under Heat rate and fuel cost, times its hub's gas price the day before), and dashed rules mark offer changes. ` +
     (filed.length ? `On ${filed.length} cheap days with an offer it was kept on through ${fmtPct(kept.length / filed.length)} of them; median lowest offer ${fmt$(med(lows))}/MWh. ` : "") +
     `<a href="dayahead.html">Compare it with the fleet on Day-ahead offers</a>.`;
   const sz = (s) => [s.lsl != null ? `${fmt0(s.lsl)}${s.hsl != null ? `–${fmt0(s.hsl)}` : ""} MW` : null, s.hot ? `hot start ${fmt$0(s.hot)}${s.lsl ? `, ${fmt$0(s.hot / s.lsl)}/MW` : ""}` : null].filter(Boolean).join(", ");
