@@ -3,7 +3,14 @@
   <title>TYLRWIND_UNIT1: bidding and operating changes</title>
   <link href="https://ercotbids.currenttech.energy/unit.html?unit=TYLRWIND_UNIT1"/>
   <id>https://ercotbids.currenttech.energy/unit.html?unit=TYLRWIND_UNIT1</id>
-  <updated>2026-10-18T00:00:00Z</updated>
+  <updated>2026-11-04T00:00:00Z</updated>
+  <entry>
+    <title>TYLRWIND: Episode (2026-09-04)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=TYLRWIND"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=TYLRWIND#TYLRWIND/2026-09-04/renew_episode</id>
+    <updated>2026-11-04T00:00:00Z</updated>
+    <summary>Episode: floor -$40 to $5 for the episode for 1 day(s)</summary>
+  </entry>
   <entry>
     <title>TYLRWIND: New floor (2026-07-16)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=TYLRWIND"/>
