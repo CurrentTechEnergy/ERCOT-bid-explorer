@@ -14,10 +14,12 @@ built from the 60-day day files, pipeline/decision_table.month_file):
      unit's own commitment had it on.
   3. Is behaviour changing?  The CC and gas steam loss windows of the decision table
      (pipeline/decision_table.py: the operator's view at the time, DA prices only), by bucket:
-     held on by a DAM commitment, AS or RUC; too short to cycle; losing less than a restart;
-     losing more than a restart (a shutdown of at least the unit's minimum off time would have
-     beaten the restart); the share of each the unit turned off for, and the minimum output it
-     ran through or took off; and whether the windows fall at night or in the day.
+     held on by RUC (or a DAM AS award before RTC+B); held on by the make-whole and AS a shutdown
+     would give up; too short to cycle; losing less than a restart; losing more than a restart (a
+     shutdown of at least the unit's minimum off time beats its restart and everything it gives
+     up); the share of each the unit turned off for, and the minimum output it ran through or took
+     off; whether the windows fall at night or in the day; and where shutting pays, by the unit's
+     DAM position (none, self-committed award, DAM commitment, AS award only).
   4. Where do fossil decisions slow decarbonization?  Wind and solar curtailment (HSL above base
      point), the part in oversupply hours (real-time hub average at OVER_PRICE or less) at units not
      behind congestion (DA node within CONGESTED of the DA bus average), and the fossil minimum
@@ -46,7 +48,7 @@ from .intraday import train_of
 from .store import read_json_gz, write_json_gz
 
 PATH = DATA_DIR / "goal.json.gz"
-VERSION = "v9"   # v9: question 4's siting maps (pipeline/load_siting.py); v8: 2 h off spells (were 4 h); v7: decision table d2 (operator's-view loss windows, buckets, coal out); v5: cheap hours on DA system lambda (was the DA hub average)
+VERSION = "v10"  # v10: decision table d4 (make-whole and AS netted, held = RUC), Q3 by DAM position; v9: question 4's siting maps (pipeline/load_siting.py); v8: 2 h off spells (were 4 h); v7: decision table d2 (operator's-view loss windows, buckets, coal out); v5: cheap hours on DA system lambda (was the DA hub average)
 START = "2019-01"
 CHEAP = 10.0          # $/MWh, day-ahead system lambda: a cheap hour
 OVER_PRICE = 5.0      # $/MWh, real-time hub average: an oversupply hour
@@ -57,12 +59,13 @@ MIDDAY = (8, 19)      # hours ending of the cheap midday stretch (question 2's a
 OUT_MIN_H = 2         # offline hours an off spell needs (as pipeline/groups.py; was 4 to Nov 2026)
 FOSSIL = ("coal", "combined_cycle", "gas_steam")
 # question 4: a CC or gas steam unit at minimum in an hour of one of its loss windows (decision table)
-# is held on (a DAM commitment, AS or RUC), losing more than a restart costs (bucket "more"), or
+# is held on (RUC, AS before RTC+B, or the make-whole and AS it would give up), losing more than a
+# restart and everything it gives up (bucket "more"), or
 # losing but with no shutdown that would pay ("less" and "short"); outside a window it covers its
 # costs at DA prices.  Coal is shown on its own (out of the decision table)
-ECON = ("losing more than a restart", "losing, shutting would not pay", "held on by a DAM commitment, AS or RUC",
+ECON = ("losing more than a restart", "losing, shutting would not pay", "held on by RUC or what it would give up",
         "covering its costs")
-BUCKET_ECON = {"more": 0, "less": 1, "short": 1, "held": 2}
+BUCKET_ECON = {"more": 0, "less": 1, "short": 1, "held": 2, "held_mw": 2}
 SCENARIOS = (("losing more than a restart", ECON[:1]), ("losing money", ECON[:2]))
 # question 1's floor: hours binned by net load (load less the wind and solar available), GW
 FLOOR_BIN, STUCK_BIN, MIN_BIN_HOURS = 2, 4, 10
@@ -480,7 +483,14 @@ def _rule(table):
     mix = [[int(y), t, len(g), round(float((g["slot"] == "night").mean()), 4), round(float((g["slot"] == "day").mean()), 4),
             round(float(g["shut"].mean()), 4), round(float(g["loss_per_mw"].median()), 1)]
            for (y, t), g in x.groupby(["year", "tech"])]
-    return {"off": off, "mix": mix}
+    # where shutting pays (gain > 0, RUC and pre-RTC+B AS left out), by DAM position: how often units shut, and how often it paid at RT too
+    pos = []
+    if "position" in x:
+        for (y, t, p), g in x[(x["gain"] > 0) & (x["bucket"] != "held")].groupby(["year", "tech", "position"]):
+            rt = g["gain_rt"].dropna()
+            pos.append([int(y), t, p, len(g), round(float(g["shut"].mean()), 4),
+                        round(float((rt > 0).mean()), 4) if len(rt) else None])
+    return {"off": off, "mix": mix, "position": pos}
 
 
 def build(cache: Path, end=None, table=None) -> dict:
@@ -494,8 +504,10 @@ def build(cache: Path, end=None, table=None) -> dict:
                  "hours": [[year, net load bin GW, hours]] (STUCK_BIN), "bin", "stuck_bin"},
        "q2": {"award": [[year, tech, group, stretches, stayed]],
               "cost": [[year, tech, group (as award), minimum_mwh, cost_usd]]},
-       "q3": {"off": [[year, tech, bucket (held | short | less | more), windows, off_share,
+       "q3": {"off": [[year, tech, bucket (held | held_mw | short | less | more), windows, off_share,
                         minimum_online_mwh, minimum_offline_mwh]],
+              "position": [[year, tech, position (none | self | committed | as), windows where
+                            shutting pays, off_share, paid_at_rt_share (null without RT prices)]],
               "mix": [[year, tech, windows, night, day, off_rate, median_loss_per_mw]]},
        "q4": {"years": [[year, available_mwh, curtailed_mwh, in_oversupply_mwh, uncongested_mwh,
                          oversupply_hours, counted_hours, uncongested_in_counted_mwh, uncongested_by_he[24]]],
