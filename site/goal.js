@@ -1,7 +1,7 @@
 /* Will fossil turn off? Four questions, each by year from 2019, from data/goal.json.gz
    (pipeline/goal.py, built weekly from the 60-day reports): the floor fossil output holds against
    net load and what sits at it, why the rest stays on in cheap hours and what that costs, whether
-   behaviour is changing, and where fossil minimums sit beside curtailed wind
+   behavior is changing, and where fossil minimums sit beside curtailed wind
    and solar.  The page only sums and divides what the file holds. */
 const { tryJSON, showTip, hideTip, setCSV, setNote, axisFmt, css, esc, readHash, writeHash } = window.CX;
 const $ = (id) => document.getElementById(id);
@@ -220,93 +220,136 @@ function drawQ2() {
     `Counted: unit-days online in the hour before the day's first run of two or more cheap hours (day-ahead system lambda of $${S.G.cheap}/MWh or less) between HE8 and HE19, with no outage hour in it; stayed online means no offline hour in the run (60-day SCED and DAM disclosures). DAM award: an energy award over 0.5 MW in at least half the run's hours. Self-committed: no award, and the unit's DAM resource status on at the run's first hour. The status comes from the 60-day DAM disclosure, every year from 2019.`);
 }
 
-// ==== 3. Is behaviour changing: the loss windows by bucket, and how often each was sat out ======
-const Q3_KEYS = ["off", "more", "less", "short", "held_mw", "held"];
-const Q3 = {
-  off: { label: "Turned off", color: "--c3" },
-  more: { label: "Rode through, losing more than a restart", color: "--c7" },
-  less: { label: "Rode through, losing less than a restart", color: "--c7-soft" },
-  short: { label: "Rode through, too short to cycle", color: "--c4" },
+// ==== 3. Is behavior changing: each unit where shutting pays, units that cycle by loss, the window mix ====
+const Q3_BUCKETS = ["more", "less", "short", "held_mw", "held"];
+const Q3B = {
+  more: { label: "Losing more than a restart (shutting pays)", color: "--c7" },
+  less: { label: "Losing less than a restart", color: "--c7-soft" },
+  short: { label: "Too short to cycle", color: "--c4" },
   held_mw: { label: "Held on by the make-whole and AS it would give up", color: "--c5" },
   held: { label: "Held on by RUC (or a DAM AS award before Dec 5, 2025)", color: "--c-other" },
 };
-const BUCKET_KEYS = ["more", "less", "short", "held_mw", "held"];
-const BUCKET_LABEL = { more: "Losing more than a restart", less: "Losing less than a restart", short: "Too short to cycle",
-  held_mw: "Held on by the make-whole and AS it would give up", held: "Held on by RUC (or a DAM AS award before Dec 5, 2025)" };
+const BAND_KEYS = ["over $200", "$50 to $200", "under $50"];
+const BAND_COLOR = { "over $200": "--c8", "$50 to $200": "--c2", "under $50": "--c4" };
 const POSITION_KEYS = ["none", "self", "committed", "as"];
 const POSITION = { none: "No DAM award", self: "Self-committed award", committed: "DAM-committed (make-whole)", as: "AS award only" };
+const yTick = (y) => (S.G.years[y]?.to.slice(5) === "12-31" ? y : `${y}*`);
 function drawQ3() {
   $("q3-tech").value = S.tech;
-  if (S.G.q3.off.length && typeof S.G.q3.off[0][2] !== "string") {    // a goal.json from before v7
-    $("q3-answer").textContent = "The loss-window breakdown is being rebuilt on the new definition and appears after the next Goal page run.";
-    return emptyMsg($("q3-chart"), "Rebuilding.");
+  const q = S.G.q3;
+  if (!q.units) {      // a goal.json from before v11
+    $("q3-answer").textContent = "Question 3 is being rebuilt by unit and appears after the next Goal page run.";
+    ["q3h-chart", "q3s-chart", "q3-chart"].forEach((id) => emptyMsg($(id), "Rebuilding."));
+    return;
   }
-  const el = $("q3-chart"), O = S.G.q3.off.map(([year, tech, bucket, n, off, onMwh, offMwh]) => ({ year, tech, bucket, n, off, onMwh, offMwh })).filter((r) => r.tech === S.tech);
-  const ys = [...new Set(O.map((r) => r.year))].sort();
-  if (!ys.length) return emptyMsg(el, "No loss windows.");
-  const row = (y, b) => O.find((r) => r.year === y && r.bucket === b) || { n: 0, off: NaN, onMwh: 0, offMwh: 0 };
-  const part = (y, k) => k === "off" ? d3.sum(BUCKET_KEYS, (b) => row(y, b).offMwh) : row(y, k).onMwh;
-  const nAll = (y) => d3.sum(BUCKET_KEYS, (b) => row(y, b).n);
-  const w = Math.max(300, el.clientWidth || 700), m = { t: 14, r: 14, b: 26, l: 56 };
-  stack(el, ys, Q3_KEYS, part, { title: `${TECH[S.tech]} minimum output in its day-ahead loss windows (TWh)`, labels: Q3,
-    axis: (v) => d3.format(".0f")(v / 1e6), tip: (v) => `${fmtTWh(v)} TWh` });
-  legend("q3-legend", Q3_KEYS.map((k) => [Q3[k].label, Q3[k].color]));
-  setCSV(el, ["year", ...Q3_KEYS.map((k) => `${k}_mwh`), ...BUCKET_KEYS.flatMap((b) => [`${b}_windows`, `${b}_turned_off`])],
-    ys.map((y) => [y, ...Q3_KEYS.map((k) => Math.round(part(y, k))), ...BUCKET_KEYS.flatMap((b) => [row(y, b).n, row(y, b).off])]), `Loss windows ${S.tech}`);
-  // each bucket's share of the windows, and the night share
-  const M = S.G.q3.mix.map(([year, tech, n, night, day, off, loss]) => ({ year, tech, n, night, day, off, loss })).filter((r) => r.tech === S.tech);
-  const share = (y, b) => row(y, b).n / (nAll(y) || 1);
-  const el2 = $("q3m-chart"), H2 = 190, x2 = d3.scalePoint().domain(ys).range([m.l + 20, w - m.r - 20]);
-  const y2 = d3.scaleLinear().domain([0, Math.max(0.5, d3.max(ys, (y) => Math.max(...BUCKET_KEYS.map((b) => share(y, b)))), d3.max(M, (r) => r.night) || 0)]).nice().range([H2 - m.b, m.t]);
-  const s2 = d3.create("svg").attr("viewBox", `0 0 ${w} ${H2}`);
-  s2.append("g").attr("class", "gridline").attr("transform", `translate(${m.l},0)`).call(d3.axisLeft(y2).ticks(4).tickSize(-(w - m.l - m.r)).tickFormat(""));
-  s2.append("g").attr("class", "axis").attr("transform", `translate(${m.l},0)`).call(d3.axisLeft(y2).ticks(4).tickFormat(fmtPct).tickSizeOuter(0));
-  s2.append("g").attr("class", "axis").attr("transform", `translate(0,${H2 - m.b})`).call(d3.axisBottom(x2).tickFormat((y) => (S.G.years[y]?.to.slice(5) === "12-31" ? y : `${y}*`)).tickSizeOuter(0));
-  s2.append("text").attr("class", "axis-title").attr("x", m.l).attr("y", 9).text("Share of loss windows in each bucket, and starting at night");
-  const lines = [...BUCKET_KEYS.map((b) => [b, Q3[b].color, (y) => share(y, b), null]), ["night", "--c1", (y) => (M.find((r) => r.year === y) || {}).night, "4 3"]];
-  lines.forEach(([k, c, f, dash]) => {
-    const pts = ys.map((y) => [y, f(y)]).filter((p) => p[1] != null && isFinite(p[1]));
-    s2.append("path").attr("d", d3.line().x((p) => x2(p[0])).y((p) => y2(p[1]))(pts)).attr("fill", "none").attr("stroke", css(c)).attr("stroke-width", 2).attr("stroke-dasharray", dash);
-    pts.forEach((p) => s2.append("circle").attr("cx", x2(p[0])).attr("cy", y2(p[1])).attr("r", 3).attr("fill", css(c)));
+  const t = S.tech, base = q.base_years, b0 = base[0], b1 = base.at(-1);
+  // ---- every unit, every year: share turned off of its windows where shutting pays
+  const never = new Set(q.never.filter((r) => r[1] === t).map((r) => r[0]));
+  const byT = d3.group(q.units.filter((r) => r[1] === t && r[3] >= q.unit_min), (r) => r[0]);
+  never.forEach((tr) => { if (!byT.has(tr)) byT.set(tr, []); });
+  const T = [...byT].map(([tr, rs]) => {
+    const mean = (f) => { const v = rs.filter(f); return v.length ? d3.mean(v, (r) => r[4]) : null; };
+    return { tr, lsl: d3.median(rs, (r) => r[5]) ?? null, cells: rs.map((r) => ({ y: r[2], n: r[3], v: r[4] })),
+      early: mean((r) => r[2] >= b0 && r[2] <= b1), late: mean((r) => r[2] >= 2024), never: never.has(tr) };
   });
-  ys.forEach((y) => s2.append("rect").attr("x", x2(y) - 20).attr("width", 40).attr("y", m.t).attr("height", H2 - m.t - m.b).attr("fill", "transparent")
-    .on("pointermove", (ev) => showTip(ev, `<h4>${yearLabel(y)}</h4><table><tr><td>Loss windows</td><td class="n">${d3.format(",")(nAll(y))}</td></tr>` +
-      BUCKET_KEYS.map((b) => `<tr><td>${BUCKET_LABEL[b]}</td><td class="n">${fmtPct(share(y, b))}, ${fmtPct(row(y, b).off)} turned off</td></tr>`).join("") +
-      `<tr><td>Starting at night (HE20 to HE7)</td><td class="n">${fmtPct((M.find((r) => r.year === y) || {}).night)}</td></tr></table>`))
-    .on("pointerleave", hideTip));
-  el2.replaceChildren(s2.node());
-  legend("q3m-legend", [...BUCKET_KEYS.map((b) => [BUCKET_LABEL[b], Q3[b].color]), ["Starting at night (dashed)", "--c1"]]);
-  setCSV(el2, ["year", "windows", ...BUCKET_KEYS.map((b) => `${b}_share`), "night_share", "turned_off", "median_loss_per_mw"],
-    ys.map((y) => { const r = M.find((q) => q.year === y) || {}; return [y, nAll(y), ...BUCKET_KEYS.map((b) => share(y, b)), r.night, r.off, r.loss]; }), `Loss window mix ${S.tech}`);
-  // where shutting pays, by DAM position: units holding any DAM award rarely shut
-  const P = (S.G.q3.position || []).map(([year, tech, pos, n, off, rt]) => ({ year, tech, pos, n, off, rt })).filter((r) => r.tech === S.tech);
+  const key = (r) => (r.never ? 2 : r.early == null || r.late == null ? 1 : 0);
+  T.sort((a, b) => key(a) - key(b) || ((a.late ?? 0) - (a.early ?? 0)) - ((b.late ?? 0) - (b.early ?? 0)) || a.tr.localeCompare(b.tr));
+  const ys = years();
+  {
+    const el = $("q3h-chart"), w = Math.max(320, el.clientWidth || 700), rh = 14, narrow = w < 560, m = { t: 22, r: narrow ? 44 : 64, b: 6, l: narrow ? 104 : 150 };
+    const H = m.t + rh * T.length + m.b;
+    const x = d3.scaleBand().domain(ys).range([m.l, w - m.r]).paddingInner(0.06);
+    const col = d3.scaleSequential(d3.interpolateRgb(css("--grid"), css("--c1"))).domain([0, 1]);
+    const svg = d3.create("svg").attr("viewBox", `0 0 ${w} ${H}`);
+    ys.forEach((y) => svg.append("text").attr("x", x(y) + x.bandwidth() / 2).attr("y", 14).attr("text-anchor", "middle").attr("font-size", 11).attr("fill", css("--muted")).text(narrow ? `'${String(y).slice(2)}` : yTick(y)));
+    svg.append("text").attr("x", w - m.r + 6).attr("y", 14).attr("font-size", 11).attr("fill", css("--muted")).text("change");
+    T.forEach((r, i) => {
+      const y0 = m.t + i * rh;
+      svg.append("text").attr("x", m.l - 6).attr("y", y0 + rh - 3).attr("text-anchor", "end").attr("font-size", 11).attr("fill", css("--ink-2"))
+        .text(narrow || r.lsl == null ? r.tr : `${r.tr} · ${d3.format(",")(r.lsl)} MW`);
+      r.cells.forEach((c) => svg.append("rect").attr("x", x(c.y)).attr("y", y0 + 1).attr("width", x.bandwidth()).attr("height", rh - 2).attr("fill", col(c.v))
+        .on("pointermove", (ev) => showTip(ev, `<h4>${esc(r.tr)}, ${yearLabel(c.y)}</h4><table><tr><td>Turned off for</td><td class="n">${fmtPct(c.v)} of ${c.n} windows where shutting paid</td></tr></table>`))
+        .on("pointerleave", hideTip));
+      if (r.early != null && r.late != null) {
+        const d = r.late - r.early;
+        svg.append("text").attr("x", w - m.r + 6).attr("y", y0 + rh - 3).attr("font-size", 11).attr("fill", css(d < -0.2 ? "--c8" : d > 0.2 ? "--c3" : "--muted"))
+          .text(`${d > 0 ? "+" : d < 0 ? "−" : ""}${Math.abs(Math.round(100 * d))} pt`);
+      }
+    });
+    const nb = T.findIndex((r) => key(r) === 2);
+    if (nb > 0) svg.append("line").attr("x1", m.l).attr("x2", w - m.r).attr("y1", m.t + nb * rh).attr("y2", m.t + nb * rh).attr("stroke", css("--ink")).attr("stroke-dasharray", "3 3");
+    el.replaceChildren(svg.node());
+    $("q3h-legend").innerHTML = `<span>Each cell: of the unit's loss windows where shutting would have paid, the share it turned off for (${q.unit_min} such windows or more). Light = rode through, dark = turned off. Biggest drop first; units that never turned off for any loss window below the dashed line. Change: 2024 on against ${b0} to ${b1}, in percentage points.</span>`;
+    setCSV(el, ["train", "lsl_mw", ...ys.map(String), "early", "late", "never_off"], T.map((r) => [r.tr, r.lsl, ...ys.map((y) => (r.cells.find((c) => c.y === y) || {}).v ?? ""), r.early, r.late, r.never]), `Units ${t}`);
+    const both = T.filter((r) => key(r) === 0), fell = both.filter((r) => r.late < r.early - 0.2).length, rose = both.filter((r) => r.late > r.early + 0.2).length;
+    $("q3h-text").textContent = `Of ${both.length} ${TECH[t].toLowerCase()} units with windows where shutting paid in both ${b0} to ${b1} and 2024 on, ${fell} now turn off for at least 20 points fewer of them, and ${rose} for 20 points more. ${never.size} never turned off for any loss window.`;
+  }
+  // ---- units that cycle, by size of loss
+  {
+    const B = q.bands.filter((r) => r[1] === t).map(([year, , band, n, off]) => ({ year, band, n, off }));
+    const bv = (band, y) => B.find((r) => r.band === band && r.year === y) || { n: 0, off: NaN };
+    const el = $("q3s-chart"), w = Math.max(300, el.clientWidth || 700), m = { t: 14, r: 90, b: 26, l: 56 }, H = 260;
+    const x = d3.scalePoint().domain(ys).range([m.l + 20, w - m.r - 20]);
+    const y = d3.scaleLinear().domain([0, Math.max(0.8, d3.max(B, (r) => r.off) || 0)]).nice().range([H - m.b, m.t]);
+    const svg = d3.create("svg").attr("viewBox", `0 0 ${w} ${H}`);
+    svg.append("g").attr("class", "gridline").attr("transform", `translate(${m.l},0)`).call(d3.axisLeft(y).ticks(5).tickSize(-(w - m.l - m.r)).tickFormat(""));
+    svg.append("g").attr("class", "axis").attr("transform", `translate(${m.l},0)`).call(d3.axisLeft(y).ticks(5).tickFormat(fmtPct).tickSizeOuter(0));
+    svg.append("g").attr("class", "axis").attr("transform", `translate(0,${H - m.b})`).call(d3.axisBottom(x).tickFormat((v) => (w < 560 ? `'${String(v).slice(2)}` : yTick(v))).tickSizeOuter(0));
+    svg.append("text").attr("class", "axis-title").attr("x", m.l).attr("y", 9).text(`${TECH[t]} units that cycle: share of loss windows turned off, by loss from staying on ($/MW of LSL)`);
+    BAND_KEYS.forEach((k) => {
+      const pts = ys.map((yy) => [yy, bv(k, yy)]).filter((p) => p[1].n >= 30);
+      const c = css(BAND_COLOR[k]);
+      svg.append("path").attr("d", d3.line().x((p) => x(p[0])).y((p) => y(p[1].off))(pts)).attr("fill", "none").attr("stroke", c).attr("stroke-width", 2.5);
+      pts.forEach((p) => svg.append("circle").attr("cx", x(p[0])).attr("cy", y(p[1].off)).attr("r", 3.5).attr("fill", c));
+      const lp = pts.at(-1);
+      if (lp) svg.append("text").attr("x", x(lp[0]) + 10).attr("y", y(lp[1].off) + 4).attr("fill", c).attr("font-size", 12).attr("font-weight", 600).text(k);
+    });
+    ys.forEach((yy) => svg.append("rect").attr("x", x(yy) - 20).attr("width", 40).attr("y", m.t).attr("height", H - m.t - m.b).attr("fill", "transparent")
+      .on("pointermove", (ev) => showTip(ev, `<h4>${yearLabel(yy)}</h4><table><tr><td>Loss from staying on</td><td class="n">Turned off</td><td class="n">Windows</td></tr>` +
+        BAND_KEYS.map((k) => `<tr><td>${k}/MW</td><td class="n">${fmtPct(bv(k, yy).off)}</td><td class="n">${d3.format(",")(bv(k, yy).n)}</td></tr>`).join("") + `</table>`))
+      .on("pointerleave", hideTip));
+    el.replaceChildren(svg.node());
+    legend("q3s-legend", BAND_KEYS.map((k) => [`Loss from staying on ${k}/MW of LSL over the window`, BAND_COLOR[k]]));
+    setCSV(el, ["year", ...BAND_KEYS.flatMap((k) => [`${k} turned off`, `${k} windows`])], ys.map((yy) => [yy, ...BAND_KEYS.flatMap((k) => [bv(k, yy).off, bv(k, yy).n])]), `Cycling units by loss ${t}`);
+  }
+  // ---- the windows themselves: share in each bucket
+  const O = q.off.filter((r) => r[1] === t).map(([year, , bucket, n, off]) => ({ year, bucket, n, off }));
+  const row = (y, b) => O.find((r) => r.year === y && r.bucket === b) || { n: 0, off: NaN };
+  const nAll = (y) => d3.sum(Q3_BUCKETS, (b) => row(y, b).n);
+  const yo = [...new Set(O.map((r) => r.year))].sort();
+  stack($("q3-chart"), yo, Q3_BUCKETS, (y, b) => row(y, b).n / (nAll(y) || 1), { title: `${TECH[t]} loss windows by bucket (share)`, labels: Q3B,
+    axis: (v) => `${Math.round(100 * v)}%`, tip: (v) => fmtPct(v) });
+  legend("q3-legend", Q3_BUCKETS.map((b) => [Q3B[b].label, Q3B[b].color]));
+  setCSV($("q3-chart"), ["year", "windows", ...Q3_BUCKETS.flatMap((b) => [`${b}_windows`, `${b}_turned_off`])], yo.map((y) => [y, nAll(y), ...Q3_BUCKETS.flatMap((b) => [row(y, b).n, row(y, b).off])]), `Loss windows ${t}`);
+  const M = q.mix.filter((r) => r[1] === t).map(([year, , n, night, day]) => ({ year, day }));
+  const day = (y) => (M.find((r) => r.year === y) || {}).day;
+  const yl0 = yo[0], ylast = yo.at(-1);
+  $("q3-day").textContent = `${fmtPct(day(ylast))} of loss windows start in the day (HE8 to HE19) ${ylast === fullYears().at(-1) ? "in" : "so far in"} ${ylast}, against ${fmtPct(day(yl0))} in ${yl0}. Held on falls to almost nothing from Dec 5, 2025 because DAM AS awards stop holding a unit on at RTC+B, not because units changed.`;
+  // ---- where shutting pays, by DAM position
+  const P = (q.position || []).map(([year, tech, pos, n, off, rt]) => ({ year, tech, pos, n, off, rt })).filter((r) => r.tech === t);
   const pr = (y, p) => P.find((r) => r.year === y && r.pos === p);
   const cell = (r) => r && r.n ? `${fmtPct(r.off)} of ${d3.format(",")(r.n)}` + (r.rt != null ? `<br><span class="sub">paid at RT ${fmtPct(r.rt)}</span>` : "") : "–";
   $("q3p-table").innerHTML = P.length ? `<table class="data"><caption>Windows where shutting pays: share turned off, by DAM position</caption><thead><tr><th class="t">Year</th>` +
     POSITION_KEYS.map((p) => `<th>${POSITION[p]}</th>`).join("") + `</tr></thead><tbody>` +
-    ys.filter((y) => P.some((r) => r.year === y)).reverse().map((y) => `<tr><td class="t">${yearLabel(y)}</td>` + POSITION_KEYS.map((p) => `<td>${cell(pr(y, p))}</td>`).join("") + `</tr>`).join("") + `</tbody></table>` : "";
-  // the answer: how often units sat out the windows where shutting would have paid, first year against the last full one
-  const y0 = ys[0], y1 = fullYears().at(-1), now = ys.at(-1), r0 = row(y0, "more"), r1 = row(y1, "more");
-  const dir = r1.off > r0.off * 1.1 ? "more often than" : r1.off < r0.off * 0.9 ? "less often than" : "about as often as";
-  const night = (y) => (M.find((r) => r.year === y) || {}).night;
-  $("q3-answer").innerHTML = `<b>${TECH[S.tech]} units turn off ${dir} in ${y0} when shutting would pay.</b> Of the loss windows where a shutdown of at least the unit's minimum off time beat a restart and what it gives up, ` +
-    `they turned off for ${fmtPct(r0.off)} of ${d3.format(",")(r0.n)} in ${y0} and ${fmtPct(r1.off)} of ${d3.format(",")(r1.n)} in ${y1}` +
-    (now !== y1 ? ` (${fmtPct(row(now, "more").off)} so far in ${yearLabel(now)}, which leans on the spring maintenance months)` : "") +
-    `, and ran through ${fmtTWh(r0.onMwh)} and ${fmtTWh(r1.onMwh)} TWh of minimum output in them. ` +
-    `Windows too short to cycle were ${fmtPct(share(y0, "short"))} of all loss windows in ${y0} and ${fmtPct(share(y1, "short"))} in ${y1}. ` +
-    `${fmtPct(night(y0))} of loss windows started at night (HE20 to HE7) in ${y0}, ${fmtPct(night(y1))} in ${y1}.` + posLead();
-  function posLead() {      // the DAM position split, latest year with one
-    const yp = [...new Set(P.map((r) => r.year))].sort().at(-1), none = pr(yp, "none");
-    const aw = P.filter((r) => r.year === yp && r.pos !== "none"), n = d3.sum(aw, (r) => r.n), off = d3.sum(aw, (r) => r.n * r.off) / (n || 1);
-    return yp && none && n ? ` Units holding a DAM award rarely shut even when it pays: in ${yearLabel(yp)} they turned off for ${fmtPct(off)} of ${d3.format(",")(n)} such windows, against ${fmtPct(none.off)} of ${d3.format(",")(none.n)} for units without one.` : "";
-  }
-  setNote($("q3-note"), `Each unit's day-ahead loss windows, by year: the minimum output it turned off, and what it ran through and why. * part year.`,
+    yo.filter((y) => P.some((r) => r.year === y)).reverse().map((y) => `<tr><td class="t">${yearLabel(y)}</td>` + POSITION_KEYS.map((p) => `<td>${cell(pr(y, p))}</td>`).join("") + `</tr>`).join("") + `</tbody></table>` : "";
+  // ---- the answer
+  const E = q.extra.filter((r) => r[1] === t).map(([year, , trains, on, atBase]) => ({ year, trains, on, atBase }));
+  const yf = fullYears().at(-1), e = E.find((r) => r.year === yf), more = (y) => row(y, "more");
+  const m0 = d3.sum(base, (y) => more(y).n * more(y).off) / (d3.sum(base, (y) => more(y).n) || 1);
+  const less = e && e.on > e.atBase * 1.1;
+  $("q3-answer").innerHTML = (e ? `<b>${less ? "Yes." : "Not clearly."} In ${yf}, ${TECH[t].toLowerCase()} units rode through ${fmtTWh(e.on - e.atBase)} TWh more minimum output where shutting would have paid than they would have at their own ${b0} to ${b1} habits</b>: ` +
+    `${fmtTWh(e.on)} TWh on instead of ${fmtTWh(e.atBase)}, about ${d3.format(",.0f")((e.on - e.atBase) / 8760)} MW on around the clock. ` : "") +
+    `Where shutting would have paid, they turned off for ${fmtPct(m0)} of those windows in ${b0} to ${b1} and ${fmtPct(more(yf).off)} in ${yf}. ` +
+    `Each unit is shown below.`;
+  setNote($("q3-note"), `Each unit's day-ahead loss windows: how often it turned off where shutting would have paid, year by year; units that cycle by the size of the loss; and what the windows look like. * part year.`,
     `Judged as the operator saw it before the day, with day-ahead prices only. A loss window is the worst run of hours (up to 24) where the unit's gas cost at minimum (as in question 2) is above its day-ahead node price, at most one starting in the day (HE8 to HE19) and one at night (HE20 to HE7), reaching into the next day only from HE14, when its prices are out. ` +
     `A unit is in the decision when it was online the hour before the window (or shut up to 6 hours before it). Its loss is the window's sum of gas cost less node price, times the LSL of the configuration it was running. ` +
     `A DAM award doesn't hold a unit on: shutting means buying the energy back in real time, at an expected price of the day-ahead price, and since RTC+B (Dec 5, 2025) the same holds for DAM AS awards, bought back at the real-time AS price. What a shutdown gives up is counted against it instead: the DAM make-whole a DAM-committed unit is paid only while online (ERCOT Protocols 4.6.2.3; its minimum-energy offer less the day-ahead price and AS revenue over the commitment, plus the start offer when the DAM started it), and from Dec 5, 2025 the AS revenue its capacity would carry. Held on: RUC (known from Dec 2025), or before Dec 5, 2025 a DAM AS award, over half the window's hours or more; or a shutdown beats the restart but not the restart plus what it gives up. ` +
     `The unit's minimum off time is the 10th percentile of its off spells (2 hours or more offline) in the year before, else 4 hours for combined cycles and 8 for gas steam. Losing more than a restart: some shutdown at least that long, counting any profitable hours it would sit out, saves more than the restart and what it gives up (its hot start offer up to 8 hours off, intermediate beyond; generic $15,000/$25,000 for combined cycles and $10,000/$20,000 for gas steam when none is offered). ` +
     `Too short to cycle: the window is shorter than the minimum off time and no shutdown that long pays. The table splits the windows where shutting pays by the unit's DAM position over half the window or more; "paid at RT" is the share where the same shutdown also paid at real-time node and AS prices, less the margin above LSL it would give up (a hindsight check, not used for the buckets). Turned off: an off spell at least the minimum off time long over the window. Output is the LSL times the window's hours, split by the hours online. ` +
-    `2021 and 2022 include Winter Storm Uri and the 2022 gas price spike.`);
+    `By unit: a unit's share is over its windows losing more than a restart (shutting pays), shown with ${q.unit_min} or more in the year. Never off: no shutdown for any loss window (held ones aside) in the whole record. Units that cycle: a year's units with 20 or more loss windows and none turned off are left out of that year. ` +
+    `Ridden through: each unit's minimum output (LSL times the window's hours) in windows where shutting pays that it stayed on for, against the same windows at its own ${b0} to ${b1} shut rate (units with ${q.unit_min} or more such windows in one of those years). ` +
+    `2021 and 2022 include Winter Storm Uri and the 2022 gas price spike; biggest-loss windows lean to winter, when units ride through more.`);
 }
 
 // ==== 4. Curtailment and the fossil minimum beside it ========================================

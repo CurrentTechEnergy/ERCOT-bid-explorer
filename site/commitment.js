@@ -528,14 +528,14 @@ function drawMonths(fleet, s, thr) {
     .sort((a, b) => d3.descending(Math.abs(b.c.late - b.c.early), Math.abs(a.c.late - a.c.early)));
   const win = (ix) => `${fmtM(M.months[ix[0]])}–${fmtM(M.months[ix.at(-1)])}`;
   $("st-changed").innerHTML = changed.length
-    ? `<p class="note">Changed behaviour: units whose run-through share moved by ${fmtPct(ST_CHANGE)} or more between their two most recent windows of ${ST_WINDOW} tested months.</p>` +
+    ? `<p class="note">Changed behavior: units whose run-through share moved by ${fmtPct(ST_CHANGE)} or more between their two most recent windows of ${ST_WINDOW} tested months.</p>` +
       unitRows(changed.map((x) => ({ ...x.e, unit: x.e.pick, c: x.c })), [
         { h: "Unit", t: 1, f: (r) => esc(r.unit === r.pick ? r.unit : `${r.unit} (${r.unit})`) }, { h: "Technology", t: 1, f: (r) => techLabel(r.tech) }, { h: "Group", t: 1, f: (r) => gl(r.group) + pTag(r.unit) },
         { h: "MW", f: (r) => fmtMW(r.mw) }, { h: "Earlier window", t: 1, f: (r) => win(r.c.earlyIx) }, { h: "Ran through", f: (r) => fmtPct(r.c.early) },
         { h: "Latest window", t: 1, f: (r) => win(r.c.lateIx) }, { h: "Ran through", f: (r) => fmtPct(r.c.late) },
         { h: "Change", f: (r) => (r.c.late >= r.c.early ? "+" : "−") + fmtPct(Math.abs(r.c.late - r.c.early)) },
       ])
-    : `<p class="note">No unit changed its behaviour between its two most recent windows of ${ST_WINDOW} tested months (a change is ${fmtPct(ST_CHANGE)} or more in the share of cheap hours it ran through).</p>`;
+    : `<p class="note">No unit changed its behavior between its two most recent windows of ${ST_WINDOW} tested months (a change is ${fmtPct(ST_CHANGE)} or more in the share of cheap hours it ran through).</p>`;
   if (!units.length) return emptyMsg(el, "No units match.");
   const base = d3.color(css(s.color));
   const cell = (v) => {
