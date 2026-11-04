@@ -182,10 +182,11 @@ function drawBelowFuel() {
   svg.append("text").attr("class", "axis-title").attr("x", w - m.r).attr("y", H - 4).attr("text-anchor", "end").text("Share of cheap days offered below fuel cost");
   order.forEach((g, i) => {
     const rs = rows.filter((r) => r.g === g), most = rs.filter((r) => r.b > BF_MOST);
-    const y0 = band(i), note = `${most.length} of ${rs.length} trains, ${d3.format(".1f")(d3.sum(most, (r) => r.mw) / 1e3)} of ${d3.format(".1f")(d3.sum(rs, (r) => r.mw) / 1e3)} GW mostly below`;
-    const lx = narrow ? m.l : 0, ly = narrow ? y0 - 8 : y0 + rowH / 2 - 4;
+    const y0 = band(i), note = `${most.length} of ${rs.length} trains, ${d3.format(".1f")(d3.sum(most, (r) => r.mw) / 1e3)} of ${d3.format(".1f")(d3.sum(rs, (r) => r.mw) / 1e3)} GW`;
+    const lx = narrow ? m.l : 0, ly = narrow ? y0 - 8 : y0 + rowH / 2 - 10;
     svg.append("text").attr("class", "dlabel").attr("x", lx).attr("y", ly).style("font-weight", 600).style("fill", css("--ink")).text(label[g].replace(/: .*/, "").replace(" when available", ""));
-    svg.append("text").attr("class", "axis-title").attr("x", narrow ? w - m.r : lx).attr("y", narrow ? ly : ly + 15).attr("text-anchor", narrow ? "end" : "start").text(narrow ? `${most.length} of ${rs.length} mostly below` : note);
+    svg.append("text").attr("class", "axis-title").attr("x", narrow ? w - m.r : lx).attr("y", narrow ? ly : ly + 15).attr("text-anchor", narrow ? "end" : "start").text(narrow ? `${most.length} of ${rs.length} over ${fmtPct(BF_MOST)}` : note);
+    if (!narrow) svg.append("text").attr("class", "axis-title").attr("x", lx).attr("y", ly + 29).text(`below fuel cost on over ${fmtPct(BF_MOST)} of cheap days`);
     svg.append("line").attr("x1", x(0)).attr("x2", x(1)).attr("y1", y0 + rowH / 2).attr("y2", y0 + rowH / 2).attr("stroke", css("--ink-2")).attr("stroke-opacity", 0.25);
     // spread dots up and down their row by name so they don't sit on top of each other, the same way every load
     rs.forEach((r) => { let h = 0; for (const ch of r.name) h = (h * 31 + ch.charCodeAt(0)) % 997; r.y = y0 + rowH / 2 + ((h / 997) - 0.5) * (rowH - 2 * rad(r.mw) - 6); });
