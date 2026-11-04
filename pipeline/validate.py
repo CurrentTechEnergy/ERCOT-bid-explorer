@@ -645,7 +645,7 @@ def check_files(index):
     """Checks on files built once per run rather than per day (events, per-battery daily rows,
     unit index)."""
     from .events import FUEL, KINDS, PATH as EVENTS_PATH, _train
-    from .unit_index import PATH as UNIT_INDEX_PATH, TECHS as UNIT_INDEX_TECHS
+    from .unit_index import PATH as UNIT_INDEX_PATH, TECHS as UNIT_INDEX_TECHS, THERMAL as UNIT_INDEX_THERMAL
     day = Day("events")
     ev = read_json_gz(EVENTS_PATH, default=None)
     if ev is None:
@@ -716,6 +716,19 @@ def check_files(index):
         day.add("unit_index_names", "error" if dup or not rows else "ok", f"{dup} duplicate name(s)" if dup else f"{len(rows)} units" if rows else "empty")
         bad = [r[0] for r in rows if r[1] not in UNIT_INDEX_TECHS or (r[3] is not None and not r[3] >= 0)]
         day.add("unit_index_rows", "error" if bad else "ok", f"{len(bad)} row(s) with an unknown tech or bad MW, e.g. {bad[:3]}" if bad else "techs known, MW non-negative")
+        c = ui.get("columns", [])
+        if "dam_days" in c:          # commitment shares: thermal only, each 0 to 1, over at most the window's days
+            ix = {k: c.index(k) for k in ("tech", "type", "qs", "self", "dam", "dam_days")}
+            win = (ui.get("commit_window") or [None, None, 0])[2]
+            sh = lambda r: [r[ix[k]] for k in ("qs", "self", "dam")]
+            bad = [r[0] for r in rows if (r[ix["tech"]] not in UNIT_INDEX_THERMAL and any(v is not None for v in sh(r) + [r[ix["dam_days"]]]))
+                   or any(v is not None and not 0 <= v <= 1 for v in sh(r))
+                   or (r[ix["dam_days"]] is not None and not 0 < r[ix["dam_days"]] <= win)
+                   or (r[ix["type"]] is not None and not isinstance(r[ix["type"]], str))]
+            n = sum(1 for r in rows if r[ix["qs"]] is not None)
+            day.add("unit_index_commit", "error" if bad or not n else "ok",
+                    f"{len(bad)} row(s) with a bad share, day count or type, e.g. {bad[:3]}" if bad else
+                    f"{n} thermal units with shares over {win} DAM days" if n else "no thermal unit has commitment shares")
     return day
 
 

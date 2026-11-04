@@ -20,7 +20,7 @@ match and the offtaker web search's high and medium confidence answers, see that
 
 Writes data/unit_index.json.gz:
   {updated, cdr (the CDR edition the names come from), columns: ["unit", "tech", "group", "mw", "sp", "configs", "plant", "county", "zone",
-   "match", "qse", "aliases", "qse_name", "dme", "owner", "buyers", "companies"], rows: [[...], ...]}
+   "match", "qse", "aliases", "qse_name", "dme", "owner", "buyers", "companies", "type", "qs", "self", "dam", "dam_days"], rows: [[...], ...]}
   unit     resource name (the train for combined cycle), sorted by name
   tech     config.TECH_OF_TYPE grouping
   group    the timescale group (pipeline/groups.py, data/groups_60d.json.gz; nuclear "never";
@@ -42,6 +42,16 @@ Writes data/unit_index.json.gz:
   companies  [[name, role, source], ...] from unit_companies.csv (any configuration's, for a train): role
            "operator" (EIA-860), "owner" or "developer" (web search, with its confidence), or "plant name"
            (EIA-860's plant name); [] when the file has none
+  type     ERCOT's resource type from the 60-day DAM files (SCGT90, SCLE90, DSL, CCGT90, ...; the most
+           common across a train's configurations); wind, solar and batteries not in them by name get WIND, PVGR
+           or ESR; null for a thermal unit not in them
+  qs, self, dam   how the unit is committed, thermal only (null otherwise or without DAM days): the share
+           of its days in the last COMMIT_DAYS 60-day DAM files (data/dam/) with a quick-start standby
+           (OFFQS) hour, self-committed (ON or ONOS in at least half the hours) and with a DAM energy
+           award over 0.5 MW in some hour.  A train counts a day when any configuration does.  The
+           shares are not exclusive and carry no cutoff; the Units directory filters on them.
+  dam_days the number of those DAM days the unit appears in (the shares' denominator; null with them)
+The file also carries commit_window: [first day, last day, number of days] of the DAM files used.
 """
 import csv
 import datetime as dt
@@ -61,8 +71,12 @@ PATH = DATA_DIR / "unit_index.json.gz"
 ALIASES_PATH = Path(__file__).parent / "reference" / "unit_aliases.csv"
 COMPANIES_PATH = Path(__file__).parent / "reference" / "unit_companies.csv"
 COLUMNS = ["unit", "tech", "group", "mw", "sp", "configs", "plant", "county", "zone", "match", "qse", "aliases",
-           "qse_name", "dme", "owner", "buyers", "companies"]
+           "qse_name", "dme", "owner", "buyers", "companies", "type", "qs", "self", "dam", "dam_days"]
 TECHS = ("nuclear", "coal", "combined_cycle", "gas_steam", "combustion_turbine", "wind", "solar", "storage")
+THERMAL = ("nuclear", "coal", "combined_cycle", "gas_steam", "combustion_turbine")
+TYPE_OF_TECH = {"wind": "WIND", "solar": "PVGR", "storage": "ESR"}   # for units the DAM files list under another name
+COMMIT_DAYS = 90            # DAM days behind the commitment shares
+SELF_STATUS = ("ON", "ONOS")
 _TRAIN = re.compile(r"^(.*_CC\d+)_")
 
 
@@ -102,8 +116,40 @@ def load_companies() -> dict:
     return out
 
 
+def dam_commitment(dam_days) -> tuple:
+    """dam_days: [(date, DAM day file dict), ...] oldest first.  Returns ({unit or train: [type, days,
+    quick-start days, self-committed days, awarded days]}, commit_window or None)."""
+    types, cnt = defaultdict(lambda: defaultdict(int)), defaultdict(lambda: [0, 0, 0, 0])
+    for _, d in dam_days:
+        hours = d.get("hours") or 24
+        seen = defaultdict(lambda: [0, 0, 0])
+        for name, x in (d.get("units") or {}).items():
+            key = train_of(name) if x.get("tech") == "combined_cycle" else name
+            if x.get("type"):
+                types[key][x["type"]] += 1
+            if x.get("tech") not in THERMAL:
+                continue
+            st = x.get("status_h") or [x.get("status")] * hours
+            f = seen[key]
+            f[0] |= "OFFQS" in st
+            f[1] |= sum(1 for v in st if v in SELF_STATUS) * 2 >= hours
+            f[2] |= any((a or 0) > 0.5 for a in (x.get("award") or []))
+        for key, f in seen.items():
+            c = cnt[key]
+            c[0] += 1
+            c[1] += f[0]; c[2] += f[1]; c[3] += f[2]
+    out = {k: [max(t, key=t.get), *cnt[k]] if k in cnt else [max(t, key=t.get), 0, 0, 0, 0] for k, t in types.items()}
+    window = [dam_days[0][0], dam_days[-1][0], len(dam_days)] if dam_days else None
+    return out, window
+
+
+def load_dam_days(n=COMMIT_DAYS) -> list:
+    files = sorted((DATA_DIR / "dam").glob("????-??-??.json.gz"))[-n:]
+    return [(f.name[:10], read_json_gz(f, default={}) or {}) for f in files]
+
+
 def build(trends: dict, decisions: dict, groups: dict, ppa: dict, econ: dict, cdr_rows=(), qses=None, aliases=None,
-          entities=None, buyers=None, companies=None) -> dict:
+          entities=None, buyers=None, companies=None, commit=None) -> dict:
     units = {}
 
     def add(name, tech, cfg=None):
@@ -137,7 +183,7 @@ def build(trends: dict, decisions: dict, groups: dict, ppa: dict, econ: dict, cd
             sp[u["name"]] = u["sp"]
 
     matcher, qses, aliases, ent = cdr.Matcher(list(cdr_rows)), qses or {}, aliases or {}, entities or {}
-    buyers, companies = buyers or {}, companies or {}
+    buyers, companies, commit = buyers or {}, companies or {}, commit or {}
     qse_names, dme_names, res = ent.get("qse") or {}, ent.get("dme") or {}, ent.get("resources") or {}
     rows = []
     for name in sorted(units):
@@ -152,13 +198,19 @@ def build(trends: dict, decisions: dict, groups: dict, ppa: dict, econ: dict, cd
         dcode = next((qses[k][1] for k in keys if k in qses and len(qses[k]) == 3 and qses[k][1]), None)
         r = next((res[k] for k in keys if k in res), None)
         dme = (r[1] if r and r[1] else None) or dme_names.get(dcode) or dcode
+        cm = commit.get(name)
+        if cm is None:              # a train named in the DAM files only by its configurations
+            cm = next((commit[k] for k in sorted(cfgs) if k in commit), None)
+        shares = [round(v / cm[1], 3) for v in cm[2:]] if cm and cm[1] and e["tech"] in THERMAL else [None] * 3
+        shares.append(cm[1] if shares[0] is not None else None)
         rows.append([name, e["tech"], group.get(name), round(mw) if mw else None,
                      ec.get("sp") or sp.get(name), sorted(cfgs),
                      m["name"] if m else None, m["county"] if m else None, m["zone"] if m else None, how, q,
                      sorted({a for k in keys for a in aliases.get(k, [])}),
                      (qse_names.get(q) or [None])[0] if q else None, dme, r[0] if r else None,
                      sorted({b for k in keys for b in buyers.get(k, ())}),
-                     [list(c) for c in sorted({tuple(c) for k in keys for c in companies.get(k, ())}, key=lambda c: (c[1], c[0]))]])
+                     [list(c) for c in sorted({tuple(c) for k in keys for c in companies.get(k, ())}, key=lambda c: (c[1], c[0]))],
+                     cm[0] if cm else TYPE_OF_TECH.get(e["tech"]), *shares])
     return {"updated": dt.datetime.now(dt.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"), "cdr": cdr.edition(), "columns": COLUMNS, "rows": rows}
 
 
@@ -174,7 +226,9 @@ def build_unit_index(index: dict) -> dict:
     aliases = load_aliases()
     entities = read_json_gz(ENTITIES_PATH, default={}) or {}
     companies = load_companies()
-    out = build(trends, decisions, groups, ppa, econ, cdr.load(), qses, aliases, entities, load_buyers(), companies)
+    commit, window = dam_commitment(load_dam_days())
+    out = build(trends, decisions, groups, ppa, econ, cdr.load(), qses, aliases, entities, load_buyers(), companies, commit)
+    out["commit_window"] = window
     known = {r[0] for r in out["rows"]} | {c for r in out["rows"] for c in r[5]}
     for what, d in (("unit_aliases.csv", aliases), ("unit_companies.csv", companies)):
         unknown = sorted(set(d) - known)
@@ -184,7 +238,9 @@ def build_unit_index(index: dict) -> dict:
     named = sum(1 for r in out["rows"] if r[6])
     print(f"unit index: {len(out['rows'])} units, {named} with a CDR name, {sum(1 for r in out['rows'] if r[10])} with a QSE, "
           f"{sum(1 for r in out['rows'] if r[12])} with a QSE name, {sum(1 for r in out['rows'] if r[13])} with a DME, "
-          f"{sum(1 for r in out['rows'] if r[15])} with a public buyer, {sum(1 for r in out['rows'] if r[16])} with a company")
+          f"{sum(1 for r in out['rows'] if r[15])} with a public buyer, {sum(1 for r in out['rows'] if r[16])} with a company, "
+          f"{sum(1 for r in out['rows'] if r[17])} with an ERCOT type, {sum(1 for r in out['rows'] if r[18] is not None)} with commitment shares "
+          f"({window[2] if window else 0} DAM days), {sum(1 for r in out['rows'] if r[18])} with quick-start days")
     return out
 
 
