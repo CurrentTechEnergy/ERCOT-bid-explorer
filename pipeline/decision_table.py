@@ -41,10 +41,28 @@ ride-through-review-2026-11-02.md in the project files):
                 the expected loss)
   as_share      share of the window's hours with a DAM ancillary service award
   ruc_share     share of the window's hours in RUC (from the 60-day unit files: NaN before them)
-  bucket        first that applies: "held" (commit, AS or RUC share at least FORCED), "short"
-                (window shorter than min_off and no shutdown of min_off pays: net_max <= 0),
-                "more" (net_max > 0: shutting beats the restart), "less" (the rest: losing, but
-                less than a restart)
+  position      the DAM position over the window, first that applies: "committed" (commit_share
+                at least FORCED), "as" (as_share), "self" (award_share), "none".  A split, not a
+                reason to leave the window out: every DAM position but RUC can be bought back
+  mw_given_up   the DAM make-whole the best shutdown gives up ($): make-whole of each DAM
+                commitment block it touches (contiguous committed hours of a day) staying on, less
+                the same without the hours off.  Make-whole of a block = max(0, startup + sum of
+                (minimum-energy offer - DA node) x DAM LSL - DA AS revenue) over its hours online,
+                per Protocols 4.6.2.3: energy cost only in hours online, startup only when the train
+                was off going in.  Simplified: minimum-energy offer only (no curve above LSL), no caps
+  as_given_up   from RTC+B (RTC_START): DA AS revenue over the best shutdown's hours ($), the AS
+                its capacity would have carried.  The DAM AS award itself is bought back at the RT
+                MCPC (Protocols 6.7.2.1), expected at the DA MCPC.  0 before RTC_START
+  gain          net_max - mw_given_up - as_given_up: what the best shutdown is expected to save
+                after its restart and everything it gives up (positive: shutting pays)
+  gain_rt       the same in hindsight, at the real-time node price and RT MCPC, less the margin
+                above LSL given up (max(0, RT - cost) x the train's output above LSL in hours it ran,
+                its headroom HSL - LSL going in when it was off).  NaN without RT prices.  For what
+                the call cost, never for bucketing (review item 8)
+  bucket        first that applies: "held" (RUC share at least FORCED, or before RTC_START a DAM AS
+                share at least FORCED), "held_mw" (net_max > 0 but gain <= 0: the restart is beaten
+                but not the make-whole and AS given up), "more" (gain > 0), "short" (window shorter
+                than min_off), "less" (the rest: losing, but shutting does not pay)
   shut, shut_he, off_h   the outcome: an off spell (OFF_MIN_H offline hours or more at its start)
                 at least min_off hours long overlapping the window; its first hour ending, counted
                 from the row's HE1, and its length
@@ -59,8 +77,10 @@ win_vs_off, run_lsl, size_ratio, gas_hh, hub_win, wind_win, solar_win, thermal_w
 Inputs: the monthly thermal history (pipeline/history.py, the `history` release, in HISTORY_DIR),
 and for months it does not hold yet, the same rows from the per-unit 60-day day files
 (UNIT_DATA_DIR/60d) and the DAM day files (data/dam), cached as <out>/months/; DAM resource
-status and AS awards from the release's dam-status- and as- files, else the DAM day files; RUC
-from the 60-day day files.  Gas as in gas_by_hub.  No ERCOT download.
+status and AS awards from the release's dam-status- and as- files, else the DAM day files, DAM
+MCPCs from its as-mcpc- files (else the DAM day files) and RT MCPCs from its rt-mcpc- files; RT
+node prices as pipeline/goal._rt_nodes (the release's rt-prices files, else UNIT_DATA_DIR/nodes);
+RUC from the 60-day day files.  Gas as in gas_by_hub.  No ERCOT download.
 
 Writes <out>/decision-table.parquet and <out>/summary.md.
 """
@@ -79,7 +99,7 @@ from .gascost import HEAT_RATE as GAS_HR
 from . import heat_rates
 from .intraday import train_of
 
-VERSION = "d3"      # d3: each unit's measured heat rate at minimum, coal at fuel (Nov 2026); d2: operator's-view windows; d1: HE7-to-HE6 blocks
+VERSION = "d4"      # d4: DAM commitment and (from RTC+B) AS no longer hold a window on: make-whole and AS given up netted (Nov 2026); d3: each unit's measured heat rate at minimum, coal at fuel (Nov 2026); d2: operator's-view windows; d1: HE7-to-HE6 blocks
 TECHS = ("combined_cycle", "gas_steam")      # coal is out (Blair, Nov 2 2026): generic cost, seasonal shutdowns
 HH_URL = "https://www.eia.gov/dnav/ng/hist_xls/RNGWHHDd.xls"
 AWARD_LSL = 0.9
@@ -94,7 +114,9 @@ HOT_H = 8           # a shutdown up to this long restarts hot, longer intermedia
 EARLY_H = 6         # a shutdown starting up to this many hours before the window is still for it
 DA_KNOWN = 13       # hour index (HE14) by which the next day's DA prices are published
 SLOTS = (("day", 7, 18), ("night", 19, 30))   # first hour index of a window, from the day's HE1
-FORCED = 0.5        # share of the window held by a DAM commitment, AS or RUC that takes it out
+FORCED = 0.5        # share of the window held by RUC (or AS before RTC_START) that takes it out, and the
+                    # share of a DAM position that names the window's position
+RTC_START = "2025-12-05"   # RTC+B: DAM AS awards financial from this operating day (Protocols 6.7.2.1)
 MARGIN_H = 12       # hours before and after the window for before_per_mw / after_per_mw
 MIN_LOAD = {"gas_steam": 1.28}   # gas cost at minimum against full-load GAS_HR, for callers that take one
                                  # heat rate per technology (the predictor): gas steam's DAM offer price at
@@ -278,8 +300,32 @@ def month_status(month: str, out: Path):
     return st.groupby(["train", "date", "he"])["st_on"].any().reset_index()
 
 
+def _mcpc(month: str, out: Path, kind: str):
+    """[date, he, service...]: the month's hourly MCPCs, DAM ("da": the release's as-mcpc file, else
+    the DAM day files) or real-time ("rt": the release's rt-mcpc file, its intervals averaged); None
+    without them."""
+    from .history import AS_SERVICES
+    if kind == "rt":
+        p = HISTORY_DIR / f"rt-mcpc-{month}.parquet"
+        if not p.exists():
+            return None
+        m = pd.read_parquet(p)
+        return m.groupby(["date", "he"])[[s for s in AS_SERVICES if s in m]].mean().reset_index()
+    p = HISTORY_DIR / f"as-mcpc-{month}.parquet"
+    if p.exists():
+        return pd.read_parquet(p)
+
+    def make():
+        from .history import as_rows
+        fr = [as_rows(d)[1] for d in _dam_days(month)]
+        return pd.concat(fr, ignore_index=True) if fr else None
+    return _cached(f"as-mcpc-{month}", out, make)
+
+
 def month_as(month: str, out: Path):
-    """[train, date, he, as_mw]: DAM AS awards summed over services and configurations."""
+    """[train, date, he, as_mw, as_val, as_rt]: DAM AS awards summed over services and
+    configurations, their DA revenue (MW x DAM MCPC, $) and their value at the RT MCPC ($; NaN
+    without RT MCPCs)."""
     from .history import AS_SERVICES
     p = HISTORY_DIR / f"as-{month}.parquet"
     if p.exists():
@@ -293,9 +339,25 @@ def month_as(month: str, out: Path):
     if a is None or a.empty:
         return None
     a = a[a["tech"].astype(str).isin(TECHS)]
-    a = a.assign(train=_trains(a["unit"].astype(str), a["tech"].astype(str)),
-                 as_mw=a[AS_SERVICES].fillna(0).sum(axis=1))
-    return a.groupby(["train", "date", "he"])["as_mw"].sum().reset_index()
+    mw = a[AS_SERVICES].fillna(0)
+    a = a.assign(train=_trains(a["unit"].astype(str), a["tech"].astype(str)), as_mw=mw.sum(axis=1))
+    a["he"] = a["he"].astype(int)
+    for kind, col in (("da", "as_val"), ("rt", "as_rt")):
+        m = _mcpc(month, out, kind)
+        if m is None:
+            a[col] = np.nan
+            continue
+        m = m.assign(he=m["he"].astype(int)).set_index(["date", "he"]).reindex(pd.MultiIndex.from_frame(a[["date", "he"]]))
+        a[col] = sum(mw[s].to_numpy() * m[s].fillna(0).to_numpy() if s in m else 0.0 for s in AS_SERVICES)
+    return a.groupby(["train", "date", "he"])[["as_mw", "as_val", "as_rt"]].sum(min_count=1).reset_index()
+
+
+def month_rt(month: str):
+    """[sp, date, he, rt_node]: real-time settlement point prices by hour (pipeline/goal._rt_nodes:
+    the release's rt-prices file, else the live node files); None without them."""
+    from .goal import _rt_nodes
+    r = _rt_nodes(month)
+    return None if r is None or r.empty else r
 
 
 def month_ruc(month: str, out: Path):
@@ -337,10 +399,19 @@ def train_days(f: pd.DataFrame) -> pd.DataFrame:
     f["run"] = np.where(on, f["lsl"], np.nan)
     f["hot_run"] = np.where(on, f["hot_start"], np.nan)
     f["dl"] = f["dam_lsl"].where(f["dam_lsl"] > 0)
+    awd = f["award"].fillna(0) > 0.5
+    f["aw_lsl"] = f["dl"].where(awd)                        # the awarded configuration's DAM LSL,
+    f["aw_mg"] = f["mingen"].where(awd)                     # minimum-energy offer and hot start (make-whole)
+    f["aw_hot"] = f["hot_start"].where(awd)
+    f["up"] = np.where(on, (f["out"] - f["lsl"]).clip(lower=0), 0.0)     # output above LSL
+    f["head"] = np.where(on, (f["hsl"] - f["lsl"]).clip(lower=0), np.nan)
+    if "sp" not in f:
+        f["sp"] = None
     g = f.groupby(["train", "date", "he"], sort=True)
     h = g.agg(tech=("tech", "first"), code=("code", "max"), da_node=("da_node", "first"), award=("award", "sum"),
               run=("run", "max"), dl=("dl", "min"), mingen=("mingen", "min"), hot=("hot_start", "min"),
-              hot_run=("hot_run", "min"))
+              hot_run=("hot_run", "min"), aw_lsl=("aw_lsl", "max"), aw_mg=("aw_mg", "min"), aw_hot=("aw_hot", "min"),
+              up=("up", "sum"), head=("head", "max"), sp=("sp", "first"))
     return h.reset_index()
 
 
@@ -415,7 +486,7 @@ def _windows(lpm, nd):
 
 
 def _best_shutdown(cs, cn, s, e, day, m, lsl, hot, inter):
-    """(save_max, net_max, start_cost, hours) over shutdowns overlapping [s, e]: start at most
+    """(save_max, net_max, start_cost, hours, first hour off) over shutdowns overlapping [s, e]: start at most
     EARLY_H hours before s, at least m and at most MAX_OFF hours long, inside the hours whose DA
     price was known at its start, every hour priced."""
     a = np.arange(max(1, s - EARLY_H), e + 1)[:, None]
@@ -426,18 +497,45 @@ def _best_shutdown(cs, cn, s, e, day, m, lsl, hot, inter):
     bb, aa = np.where(ok, b + 1, 0), np.where(ok, a, 0)
     ok &= (cn[bb] - cn[aa]) == 0
     if not ok.any():
-        return np.nan, np.nan, np.nan, 0
+        return np.nan, np.nan, np.nan, 0, s
     save = np.where(ok, (cs[bb] - cs[aa]) * lsl, -np.inf)
     start = np.where(L <= HOT_H, hot, inter) + 0 * a
     net = save - start
     k = np.unravel_index(np.argmax(net), net.shape)
-    return float(save.max()), float(net[k]), float(start[k]), int(L[0, k[1]])
+    return float(save.max()), float(net[k]), float(start[k]), int(L[0, k[1]]), int(a[k[0], 0])
+
+
+def _mw_given_up(committed, mw_net, aw_hot, code, a, b):
+    """The DAM make-whole ($) a shutdown over hours a..b gives up: over each DAM commitment block it
+    touches (contiguous committed hours within one operating day), make-whole staying on less
+    make-whole without the hours off.  Make-whole = max(0, startup + sum of mw_net) over the block's
+    hours online; the startup (the awarded configuration's hot start) counts only when the train was
+    off the hour before the block (Protocols 4.6.2.3 (1), (2)) and is online in some hour of it."""
+    if b < a:
+        return 0.0
+    given, i = 0.0, max(0, a - 23)
+    while i <= b:
+        if not committed[i]:
+            i += 1
+            continue
+        j = i
+        while j + 1 < len(committed) and committed[j + 1] and (j + 1) % 24:
+            j += 1
+        if j >= a:
+            su = float(aw_hot[i]) if i > 0 and code[i - 1] < 3 and np.isfinite(aw_hot[i]) else 0.0
+            blk = np.arange(i, j + 1)
+            keep = (blk < a) | (blk > b)
+            full = max(0.0, su + float(mw_net[blk].sum()))
+            left = max(0.0, (su if keep.any() else 0.0) + float(mw_net[blk[keep]].sum())) if keep.any() else 0.0
+            given += full - left
+        i = j + 1
+    return given
 
 
 def build(months, out: Path) -> pd.DataFrame:
     hh = henry_hub(out)
     by_hub, unit_hub = gas_by_hub(out), hub_of()
-    per, system, side = [], [], {"st_on": [], "as_mw": [], "ruc": []}
+    per, system, side, rts = [], [], {"st_on": [], "as_mw": [], "ruc": []}, []
     for m in months:
         f = month_file("thermal", m, out)
         if f is None:
@@ -458,13 +556,21 @@ def build(months, out: Path) -> pd.DataFrame:
             x = fn(m, out)
             if x is not None:
                 side[k].append(x)
+        r = month_rt(m)
+        if r is not None:
+            rts.append(r)
         print(f"  {m}: {per[-1]['train'].nunique()} trains", flush=True)
     h = pd.concat(per, ignore_index=True)
     for k, fr in side.items():
         if fr:
             h = h.merge(pd.concat(fr, ignore_index=True), on=["train", "date", "he"], how="left")
         else:
-            h[k] = np.nan
+            for c in {"as_mw": ("as_mw", "as_val", "as_rt")}.get(k, (k,)):
+                h[c] = np.nan
+    if rts:
+        h = h.merge(pd.concat(rts, ignore_index=True).drop_duplicates(["sp", "date", "he"]), on=["sp", "date", "he"], how="left")
+    else:
+        h["rt_node"] = np.nan
     h = h.sort_values(["train", "date", "he"])
     cal = pd.date_range(h["date"].min(), h["date"].max()).strftime("%Y-%m-%d")
     nd, T = len(cal), len(cal) * 24
@@ -490,7 +596,15 @@ def build(months, out: Path) -> pd.DataFrame:
         price, aw, run, hot_run = arr("da_node"), arr("award"), arr("run"), arr("hot_run")
         st_on = arr("st_on") if t["st_on"].notna().any() else np.full(T + PAD, np.nan)
         as_mw = np.nan_to_num(arr("as_mw"))
+        as_val, as_rt = np.nan_to_num(arr("as_val")), arr("as_rt")
         ruc = arr("ruc")
+        rt, up, head = arr("rt_node"), arr("up"), arr("head")
+        # DAM make-whole by hour: a committed hour (award >= AWARD_LSL x the awarded configuration's DAM
+        # LSL while DAM status not on) adds its minimum-energy cost less its DA energy and AS revenue
+        aw_l, aw_mg, aw_hot = arr("aw_lsl"), arr("aw_mg"), arr("aw_hot")
+        committed = np.isfinite(aw_l) & (aw >= AWARD_LSL * np.nan_to_num(aw_l)) & (st_on == 0)
+        mw_net = np.where(committed, np.nan_to_num(aw_mg) * np.nan_to_num(aw_l) - np.nan_to_num(price) * np.nan_to_num(aw_l)
+                          - as_val, 0.0)
         dl = t.groupby("date")["dl"].min()
         hotd = t.groupby("date")["hot"].min()
         mgd = t.groupby("date")["mingen"].min()
@@ -538,7 +652,7 @@ def build(months, out: Path) -> pd.DataFrame:
             hot = gen[0] if start_est else float(hot)
             inter = hot * gen[1] / gen[0]
             m = float(mo[day])
-            save, net, start, off_len = _best_shutdown(cs, cn, s, e, day, m, l, hot, inter)
+            save, net, start, off_len, a0 = _best_shutdown(cs, cn, s, e, day, m, l, hot, inter)
             if not np.isfinite(save):
                 continue
             shut = [(s0, ln) for s0, ln, _ in spells if s0 <= e and s0 + ln > s and s0 >= s - EARLY_H and ln >= m]
@@ -549,9 +663,27 @@ def build(months, out: Path) -> pd.DataFrame:
             rw = ruc[win]
             ruc_share = float(np.nanmean(rw)) if np.isfinite(rw).any() else np.nan
             as_share = float((as_mw[win] > 0).mean())
-            held = any(np.isfinite(v) and v >= FORCED for v in (commit, as_share, ruc_share))
+            post = d >= RTC_START
+            held = (np.isfinite(ruc_share) and ruc_share >= FORCED) or (not post and as_share >= FORCED)
+            off = slice(a0, a0 + off_len)
+            given = _mw_given_up(committed, mw_net, aw_hot, code, a0, a0 + off_len - 1)
+            as_given = float(as_val[off].sum()) if post else 0.0
+            gain = net - given - as_given
+            ro = rt[off]
+            if np.isfinite(ro).all() and off_len:
+                hd = head[k_in] if np.isfinite(head[k_in]) else 0.0
+                above = np.where(code[off] >= 3, np.nan_to_num(up[off]), hd)
+                ar = as_rt[off]
+                gain_rt = (float(np.sum(cost_h[off] - ro)) * l - start - given
+                           - (float(np.nansum(ar)) if post else 0.0)
+                           - float(np.sum(np.clip(ro - cost_h[off], 0, None) * above)))
+            else:
+                gain_rt = np.nan
             nh = e - s + 1
-            bucket = "held" if held else "short" if nh < m and net <= 0 else "more" if net > 0 else "less"
+            bucket = ("held" if held else "held_mw" if net > 0 and gain <= 0 else "more" if gain > 0
+                      else "short" if nh < m else "less")
+            position = ("committed" if np.isfinite(commit) and commit >= FORCED else "as" if as_share >= FORCED
+                        else "self" if awh.mean() >= FORCED else "none")
             on = code[win] >= 3
             mb, ma = -lpm[max(0, s - MARGIN_H):s], -lpm[e + 1:e + 1 + MARGIN_H]
             rl = run[win][on]
@@ -560,6 +692,7 @@ def build(months, out: Path) -> pd.DataFrame:
             rows.append((train, tech, d, slot, float(cost[day]), bool(est[day]), offer[day], float(l),
                          float(hot), bool(start_est), lw * l, s - day * 24 + 1, nh, m, bool(mo_est[day]),
                          save, net, start, off_len, bucket, commit, float(awh.mean()), as_share, ruc_share,
+                         position, given, as_given, gain, gain_rt,
                          float(np.nansum(np.where(mb > 0, mb, 0))), float(np.nansum(np.where(ma > 0, ma, 0))),
                          float(on.mean()), bool(shut), shut[0][0] - day * 24 + 1 if shut else 0, shut[0][1] if shut else 0,
                          float(np.nanmean(rl)) if rl.size and np.isfinite(rl).any() else np.nan,
@@ -567,7 +700,7 @@ def build(months, out: Path) -> pd.DataFrame:
     x = pd.DataFrame(rows, columns=["train", "tech", "date", "slot", "cost", "cost_est", "offer", "lsl", "hot_start",
                                     "start_est", "loss", "win_from", "win_h", "min_off", "min_off_est", "save_max", "net_max",
                                     "start_cost", "best_off_h", "bucket", "commit_share", "award_share", "as_share",
-                                    "ruc_share", "before_per_mw", "after_per_mw", "on_share", "shut", "shut_he", "off_h",
+                                    "ruc_share", "position", "mw_given_up", "as_given_up", "gain", "gain_rt", "before_per_mw", "after_per_mw", "on_share", "shut", "shut_he", "off_h",
                                     "run_lsl", "gas_hh", "hub_win", "wind_win", "solar_win", "thermal_win"])
     dt_ = pd.to_datetime(x["date"])
     x.insert(3, "year", dt_.dt.year.astype("int16"))
@@ -581,8 +714,12 @@ def build(months, out: Path) -> pd.DataFrame:
     return x
 
 
-BUCKETS = (("held", "Held on: DAM commitment, AS or RUC"), ("short", "Too short to cycle"),
+BUCKETS = (("held", "Held on: RUC, or a DAM AS award before RTC+B"),
+           ("held_mw", "Held on by the make-whole and AS it would give up"), ("short", "Too short to cycle"),
            ("less", "Losing, less than a restart"), ("more", "Losing more than a restart"))
+
+
+POSITIONS = ("none", "self", "committed", "as")
 
 
 def summary(x: pd.DataFrame) -> str:
@@ -598,6 +735,16 @@ def summary(x: pd.DataFrame) -> str:
             cells.append(f"{len(b):,} ({b['shut'].mean():.0%} off)" if len(b) else "–")
         lines.append(f"| {y} | {t} | {len(g):,} | {(g['slot'] == 'night').mean():.0%} | " + " | ".join(cells)
                      + f" | {g['loss_per_mw'].median():.0f} | {g['win_h'].median():.0f} | {g['min_off'].median():.1f} |")
+    lines += ["", "## Where shutting pays (gain > 0, not held), by DAM position: windows, share turned off, share where it also paid at RT", "",
+              "| Year | Tech | " + " | ".join(POSITIONS) + " |", "|---|---|" + "---|" * len(POSITIONS)]
+    for (y, t), g in x[(x["gain"] > 0) & (x["bucket"] != "held")].groupby(["year", "tech"]):
+        cells = []
+        for p_ in POSITIONS:
+            b = g[g["position"] == p_]
+            rt = b["gain_rt"].dropna()
+            cells.append(f"{len(b):,} ({b['shut'].mean():.0%} off, {(rt > 0).mean():.0%} at RT)" if len(rt) else
+                         f"{len(b):,} ({b['shut'].mean():.0%} off)" if len(b) else "–")
+        lines.append(f"| {y} | {t} | " + " | ".join(cells) + " |")
     lines += ["", "## Share of rows on an estimated cost (Henry Hub plus basis where the train's own hub has no price)", "",
               "| Tech | " + " | ".join(str(y) for y in sorted(x["year"].unique())) + " |", "|---|" + "---|" * x["year"].nunique()]
     est = x.groupby(["tech", "year"])["cost_est"].mean().unstack()
