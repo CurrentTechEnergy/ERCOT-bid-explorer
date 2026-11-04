@@ -200,7 +200,7 @@ function drawHead(e) {
   const cut = dec && dec[9];
   v.innerHTML = `<b>${esc(r[1])}, its latest decision day: ${r[6] ? `turned off${r[7] ? ` for ${r[7]} hours` : ""}` : "stayed on"}.</b>` +
     (!r[4] ? " Day-ahead prices at its node covered its costs all day, so there was no loss to ride through." :
-      ` Staying on through HE ${r[3]} to ${r[3] + r[4] - 1} would have cost ${fmt$(r[2])} at its node` +
+      ` Staying on through HE ${r[3]} to ${r[3] + r[4] - 1} would have lost ${fmt$(r[2])} at its node` +
       (cut != null ? `, against the ${fmt$(cut)} it usually turns off above.` : ".") +
       ` A day-ahead award covered ${fmtPct(r[5] || 0)} of the stretch.`) +
     ` <a href="commitment.html#date=${esc(r[1])}">Every unit that day</a>.`;
@@ -256,7 +256,7 @@ async function drawForecast(e) {
   const rucH = new Set(window.CX.rucDays(S.UH, e.configs.length ? e.configs : [e.name]).get(day) || []);   // hours ending
   $("fc-note").innerHTML = (act ? `<b>${esc(day)}: online ${hOn} of 24 hours, ${fmtMW(d3.sum(act, (x) => x.out))} MWh.</b>` : onl ? `<b>${esc(day)}: online ${hOn} of 24 hours.</b>` : `<b>${esc(day)}</b>.`) +
     (OD.reduced ? ` Before the 60-day window: judged on a fit to the 12 months before it, from the thermal history files.` : "") +
-    (dr && dr[4] ? ` It ${dr[6] ? `turned off${dr[7] ? ` for ${dr[7]} hours` : ""}` : "stayed on"} through its worst stretch, HE ${dr[3]} to ${dr[3] + dr[4] - 1}, which would have cost ${fmt$(dr[2])} to ride through at its node.` : "") +
+    (dr && dr[4] ? ` It ${dr[6] ? `turned off${dr[7] ? ` for ${dr[7]} hours` : ""}` : "stayed on"} through its worst stretch, HE ${dr[3]} to ${dr[3] + dr[4] - 1}, a loss of ${fmt$(dr[2])} at its node.` : "") +
     oiNote(e, day, o) +
     (rucH.size ? ` <br><b>ERCOT committed it by RUC</b> in ${rucH.size} hour${rucH.size === 1 ? "" : "s"} (purple rings): ERCOT's call, not the operator's, so the model is not fitted or scored on ${rucH.size === 1 ? "it" : "them"}.` : "");
   const s = TECH_OF[e.tech] || { color: "--c-other" };
@@ -355,7 +355,7 @@ function drawDecisions(e) {
   svg.append("g").attr("class", "axis").attr("transform", `translate(0,${H - m.b})`).call(d3.axisBottom(x).ticks(w < 560 ? 4 : 8).tickSizeOuter(0));
   svg.append("g").attr("class", "axis").attr("transform", `translate(${m.l},0)`).call(axisFmt(d3.axisLeft(y), 5, "$k").tickSizeOuter(0));
   if (y.domain()[0] < 0) svg.append("line").attr("class", "zero").attr("x1", m.l).attr("x2", w - m.r).attr("y1", y(0)).attr("y2", y(0));
-  svg.append("text").attr("class", "axis-title").attr("x", m.l).attr("y", 10).text("Day-ahead loss of staying on through the day's worst stretch ($)");
+  svg.append("text").attr("class", "axis-title").attr("x", m.l).attr("y", 10).text("Day-ahead loss from staying on through the day's worst stretch ($)");
   // months its operator-informed turn-off point moved (events.py "turnoff")
   const moves = svg.append("g");
   tryJSON("data/events.json.gz").then((E) => {
@@ -374,7 +374,7 @@ function drawDecisions(e) {
     .on("pointermove", (ev) => {
       const [px, py] = d3.pointer(ev);
       const i = d3.minIndex(pts, (p) => Math.hypot(x(p.t) - px, (y(p.loss) - py) / 3)), p = pts[i];
-      showTip(ev, `<h4>${fmtDate(p.t)}</h4><table><tr><td>Loss of staying on</td><td class="n">${fmt$(p.loss)}</td></tr>` +
+      showTip(ev, `<h4>${fmtDate(p.t)}</h4><table><tr><td>Loss from staying on</td><td class="n">${fmt$(p.loss)}</td></tr>` +
         `<tr><td>Worst stretch</td><td class="n">${p.h} h from HE ${p.he}</td></tr><tr><td>Day-ahead award over it</td><td class="n">${fmtPct(p.aw)}</td></tr>` +
         `<tr><td>What it did</td><td class="n">${p.shut ? `shut down, off ${p.off} h` : "stayed on"}</td></tr>` +
         (p.ruc ? `<tr><td>Committed by ERCOT (RUC) in the stretch</td><td class="n">${p.ruc} h</td></tr>` : "") + `</table>`);
@@ -445,7 +445,7 @@ async function drawDecisionsCT(e) {
 }
 
 // CC trains and gas steam: each day it started online, the operator-informed turn-off point (diamond)
-// against what being off would have saved (circle; square on a day-ahead award day), both in $ per MW
+// against its loss from staying on (circle; square on a day-ahead award day), both in $ per MW
 // of LSL (data/operator/cutoffs.json.gz rows: [unit, tech, lsl, award, saving, turn_off, off, min_down];
 // turn_off null when the model keeps it on through every shift: drawn on the "rides through" row)
 const AWARD_COND = ["no day-ahead award", "an award some hours", "an award every hour"];
@@ -481,11 +481,11 @@ async function drawDecisionsTO(e) {
   const nRed = pts.filter((p) => p.red).length;
   const says = (p) => p.c != null && p.s > p.c, bad = (p) => !p.ruc && says(p) !== p.off, J = pts.filter((p) => !p.ruc);
   const right = J.filter((p) => !bad(p)).length, nOff = J.filter((p) => p.off).length, caught = J.filter((p) => p.off && says(p)).length;
-  $("dec-note").textContent = `Each day it started online: what being off would have saved over the day's best off stretch at least its minimum down time long (its minimum-energy cost against the day-ahead price at its node, before any restart cost), and the operator-informed model's turn-off point, the saving it would need before the model turns it off. ` +
+  $("dec-note").textContent = `Each day it started online: its loss from staying on over the day's best off stretch at least its minimum down time long (its minimum-energy cost against the day-ahead price at its node, before any restart cost), and the operator-informed model's turn-off point, the loss at which the model turns it off. ` +
     `A circle above its diamond is a day the model turns it off. On ${J.length} days it shut on ${nOff}; the model called ${right} right (${fmtPct(right / J.length)}), ${caught} of the ${nOff} shutdowns.${window.CX.rucNote(pts.length - J.length)} Dashed lines mark the months its turn-off point moved, for each day-ahead condition on its own.` +
     (nRed ? ` The ${d3.format(",")(nRed)} lighter days, before the 60-day fits begin (Feb 2026), are judged by fits on the 12 months before each from the thermal history files: no RUC data, and gas at the unit's own hub where OilPriceAPI has a price (Ship Channel from Jul 2019), else Henry Hub plus Ship Channel's median basis for the calendar month (Henry Hub alone for Waha units).` : "");
   $("dec-legend").innerHTML = `<span><span class="sw" style="background:var(--c1);transform:rotate(45deg) scale(0.8)"></span>Turn-off point</span>` +
-    window.CX.onOffLegend("Saving, stayed on", "Saving, shut down") + `<span><span class="sw" style="background:var(--ink-2)"></span>Square: a day-ahead award that day</span>` +
+    window.CX.onOffLegend("Loss, stayed on", "Loss, shut down") + `<span><span class="sw" style="background:var(--ink-2)"></span>Square: a day-ahead award that day</span>` +
     `<span><span class="sw" style="background:var(--c8);height:3px"></span>Did the opposite of the model</span><span><span class="sw sw-line"></span>Turn-off point moved</span>` +
     (J.length < pts.length ? window.CX.rucLegend() : "");
   const w = Math.max(280, el.clientWidth || 600), H = 280, m = { t: 18, r: 16, b: 26, l: 76 }, TOPY = m.t + 8;
@@ -502,7 +502,7 @@ async function drawDecisionsTO(e) {
   svg.append("g").attr("class", "axis").attr("transform", `translate(${m.l},0)`).call(d3.axisLeft(y).tickValues(yT).tickFormat((v) => fmt$(v)).tickSizeOuter(0));
   svg.append("line").attr("class", "zero").attr("x1", m.l).attr("x2", w - m.r).attr("y1", y(0)).attr("y2", y(0));
   svg.append("text").attr("class", "axis-label").attr("x", m.l - 6).attr("y", TOPY + 3).attr("text-anchor", "end").attr("font-size", 10).attr("fill", css("--ink-2")).text("rides through");
-  svg.append("text").attr("class", "axis-title").attr("x", m.l).attr("y", 10).text(w < 560 ? "$ per MW of minimum output" : "$ per MW of minimum output: what being off would have saved, and the model's turn-off point");
+  svg.append("text").attr("class", "axis-title").attr("x", m.l).attr("y", 10).text(w < 560 ? "$ per MW of minimum output" : "$ per MW of minimum output: loss from staying on, and the model's turn-off point");
   const ev = ((await tryJSON("data/events.json.gz"))?.events || []).filter((v) => v.unit === e.name && v.kind === "turnoff" && v.date >= D0[0] && v.date <= D0.at(-1));
   svg.append("g").selectAll("line").data(ev).join("line").attr("class", "price-rule").attr("stroke-dasharray", "4 3")
     .attr("x1", (v) => x(parseDate(v.date))).attr("x2", (v) => x(parseDate(v.date))).attr("y1", m.t).attr("y2", H - m.b);
@@ -518,7 +518,7 @@ async function drawDecisionsTO(e) {
     .on("pointermove", (evt) => {
       const [px] = d3.pointer(evt), p = pts[d3.minIndex(pts, (q) => Math.abs(x(q.t) - px))];
       const vv = ev.filter((v) => v.date.slice(0, 7) === p.d.slice(0, 7) && v.award === p.aw);
-      showTip(evt, `<h4>${fmtDate(p.t)}</h4><table><tr><td>Being off would have saved</td><td class="n">${fmt$(p.s)}/MW (${fmt$(p.s * p.lsl)})</td></tr>` +
+      showTip(evt, `<h4>${fmtDate(p.t)}</h4><table><tr><td>Loss from staying on</td><td class="n">${fmt$(p.s)}/MW (${fmt$(p.s * p.lsl)})</td></tr>` +
         `<tr><td>Turn-off point</td><td class="n">${p.c == null ? "rides through" : `${fmt$(p.c)}/MW (${fmt$(p.c * p.lsl)})`}</td></tr>` +
         `<tr><td>Day-ahead</td><td class="n">${AWARD_COND[p.aw] || "–"}</td></tr><tr><td>Model</td><td class="n">${says(p) ? "turns it off" : "keeps it on"}</td></tr>` +
         `<tr><td>What it did</td><td class="n">${p.off ? "shut down" : "stayed on"}</td></tr>` + (p.ruc ? `<tr><td>Committed by ERCOT (RUC)</td><td class="n">${p.ruc} h</td></tr>` : "") +
@@ -562,7 +562,7 @@ function drawDecisionsOI(e, pts, x, w, shape) {
       const p = P[d3.minIndex(P, (q) => Math.hypot(x(q.t) - px, (y(q.op) - py) / 3))];
       if (!p) return;
       showTip(ev, `<h4>${fmtDate(p.t)}</h4><table><tr><td>Chance it stays online</td><td class="n">${fmtPct(p.op)}</td></tr>` +
-        `<tr><td>Loss of staying on</td><td class="n">${fmt$(p.loss)}</td></tr><tr><td>Day-ahead award over the stretch</td><td class="n">${fmtPct(p.aw)}</td></tr>` +
+        `<tr><td>Loss from staying on</td><td class="n">${fmt$(p.loss)}</td></tr><tr><td>Day-ahead award over the stretch</td><td class="n">${fmtPct(p.aw)}</td></tr>` +
         `<tr><td>COP plan on (2 pm day before)</td><td class="n">${p.plan == null ? "no plan" : fmtPct(p.plan)}</td></tr>` +
         (p.why ? `<tr><td>Biggest pull</td><td class="n">${esc(RW[p.why[0]] || p.why[0])}, toward ${p.why[1] > 0 ? "off" : "on"}</td></tr>` : "") +
         `<tr><td>What it did</td><td class="n">${p.shut ? `shut down, off ${p.off} h` : "stayed on"}</td></tr></table>`);

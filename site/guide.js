@@ -213,7 +213,7 @@ function drawStep5() {
       [r.px ? "Paid at its node price" : "Paid at the system price", fmt$k(r.revenue), r.revenue < 0],
       ["Fuel and running cost" + (r.est || r.fuel ? " (est.)" : ""), fmt$k(r.cost), r.cost < 0],
       ["Restart cost if it had cycled off" + (r.est === 2 ? " (generic)" : r.est === 0 ? " (own offer)" : " (est.)"), fmt$k(r.start)],
-      [r.saves > 0 ? "Cycling off would have saved" : "Staying on saved", fmt$k(Math.abs(r.saves))],
+      [r.saves > 0 ? "Shutting down would have paid by" : "Staying on was cheaper by", fmt$k(Math.abs(r.saves))],
     ];
     $("k5").innerHTML = k.map(([t, v, neg]) => `<div class="kpi"><span class="v${neg ? " neg" : ""}">${v}</span><span class="k">${t}</span></div>`).join("");
     const f = r.fuel;
@@ -232,8 +232,8 @@ function drawStep5() {
 function drawChoice(el, r) {
   if (!r) { el.innerHTML = ""; return; }
   const rows = [
-    { k: "Stay on", sub: "running cost minus what the price paid", v: r.loss },
-    { k: "Cycle off", sub: "restart for the evening", v: r.start },
+    { k: "Stay on", sub: "loss: running cost minus what the price paid", v: r.loss },
+    { k: "Cycle off", sub: "restart cost for the evening", v: r.start },
   ];
   const w = width(el), bh = 34, m = { t: 8, r: 70, b: 48, l: w < 480 ? 92 : 230 }, H = m.t + rows.length * (bh + 18) + m.b;
   const x = d3.scaleLinear().domain([Math.min(0, d3.min(rows, (d) => d.v) * 1.05), d3.max(rows, (d) => d.v) * 1.05]).nice().range([m.l, w - m.r]);
@@ -252,7 +252,7 @@ function drawChoice(el, r) {
   // which way is good: below $0 the owner comes out ahead, above $0 it pays
   const ax = svg.append("g").attr("transform", `translate(0,${H - 8})`);
   if (x.domain()[0] < 0) ax.append("text").attr("class", "lab-ink").attr("x", x(0) - 6).attr("text-anchor", "end").text(w < 480 ? "← better" : "← better: owner comes out ahead");
-  ax.append("text").attr("class", "lab-ink").attr("x", x(0) + 6).text(x.domain()[0] < 0 ? (w < 480 ? "worse →" : "worse: owner pays →") : "Net cost to the owner: bigger is worse →");
+  ax.append("text").attr("class", "lab-ink").attr("x", x(0) + 6).text(x.domain()[0] < 0 ? (w < 480 ? "worse →" : "worse: owner pays →") : "Loss to the owner: bigger is worse →");
 }
 
 // --------------------------------------------------- step 6: fleet curves ---

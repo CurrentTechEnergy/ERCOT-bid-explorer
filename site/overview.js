@@ -37,7 +37,7 @@ const TECHS = [
 const TECH_LABEL = Object.fromEntries(TECHS.map(([id, l]) => [id, l]));
 const CATS = [
   ["baseload", "Baseload", "--g1", "Units that never turn off on price, plus nuclear"],
-  ["price_sensitive", "Price-sensitive", "--g4", "Units outside the always-on group that run more than peakers: they turn off when staying on costs too much"],
+  ["price_sensitive", "Price-sensitive", "--g4", "Units outside the always-on group that run more than peakers: they turn off when the loss from staying on gets too big"],
   ["peakers", "Peakers", "--c2", "Units that run like peakers, whatever their technology: online under 30% of available hours, at most 16 hours a day when on"],
 ];
 const WIND = { id: "wind", label: "Wind", color: "--c3" }, SOLAR = { id: "solar", label: "Solar", color: "--c4" };
