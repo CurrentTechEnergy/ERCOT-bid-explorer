@@ -180,10 +180,6 @@ function drawBelowFuel() {
   svg.append("g").attr("class", "gridline").attr("transform", `translate(0,${H - m.b})`).call(d3.axisBottom(x).ticks(5).tickSize(-(H - m.t - m.b)).tickFormat(""));
   svg.append("g").attr("class", "axis").attr("transform", `translate(0,${H - m.b})`).call(d3.axisBottom(x).ticks(5).tickFormat(fmtPct).tickSizeOuter(0));
   svg.append("text").attr("class", "axis-title").attr("x", w - m.r).attr("y", H - 4).attr("text-anchor", "end").text("Share of cheap days offered below fuel cost");
-  // the "below on over 75% of cheap days" cutoff the row counts use
-  svg.append("line").attr("x1", x(BF_MOST)).attr("x2", x(BF_MOST)).attr("y1", m.t).attr("y2", H - m.b)
-    .attr("stroke", css("--ink-2")).attr("stroke-opacity", 0.5).attr("stroke-dasharray", "3 3");
-  if (!narrow) svg.append("text").attr("class", "axis-title").attr("x", x(BF_MOST) - 4).attr("y", m.t + 8).attr("text-anchor", "end").style("fill", css("--ink-2")).text(`${fmtPct(BF_MOST)} cutoff`);
   order.forEach((g, i) => {
     const rs = rows.filter((r) => r.g === g), most = rs.filter((r) => r.b > BF_MOST);
     const y0 = band(i), note = `${most.length} of ${rs.length} trains, ${d3.format(".1f")(d3.sum(most, (r) => r.mw) / 1e3)} of ${d3.format(".1f")(d3.sum(rs, (r) => r.mw) / 1e3)} GW`;
