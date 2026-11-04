@@ -361,6 +361,7 @@ async function unitIndex() {
   if (!ui) return null;
   const c = ui.columns;
   unitIndex.cdr = ui.cdr || "";
+  unitIndex.commitWindow = ui.commit_window || null;
   return ui.rows.map((r) => {
     const u = Object.fromEntries(c.map((k, i) => [k, r[i]]));
     u.buyers = u.buyers || []; u.companies = u.companies || [];
