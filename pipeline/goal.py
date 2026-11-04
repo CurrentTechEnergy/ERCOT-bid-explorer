@@ -12,14 +12,17 @@ built from the 60-day day files, pipeline/decision_table.month_file):
      stay on (_day_cost: gas cost at the unit's own hub, or coal's generic cost, less the real-time
      node price, times LSL; not the DAM minimum-energy offer), by whether a DAM award or the
      unit's own commitment had it on.
-  3. Is behaviour changing?  The CC and gas steam loss windows of the decision table
+  3. Is behavior changing?  The CC and gas steam loss windows of the decision table
      (pipeline/decision_table.py: the operator's view at the time, DA prices only), by bucket:
      held on by RUC (or a DAM AS award before RTC+B); held on by the make-whole and AS a shutdown
      would give up; too short to cycle; losing less than a restart; losing more than a restart (a
      shutdown of at least the unit's minimum off time beats its restart and everything it gives
      up); the share of each the unit turned off for, and the minimum output it ran through or took
      off; whether the windows fall at night or in the day; and where shutting pays, by the unit's
-     DAM position (none, self-committed award, DAM commitment, AS award only).
+     DAM position (none, self-committed award, DAM commitment, AS award only).  Then by unit: each
+     train's share turned off of its windows where shutting pays, by year; units that cycle (a
+     year's never-off units left out) by the loss from staying on per MW of LSL; and the minimum
+     output ridden through where shutting pays against each unit's own 2019 to 2021 shut rate.
   4. Where do fossil decisions slow decarbonization?  Wind and solar curtailment (HSL above base
      point), the part in oversupply hours (real-time hub average at OVER_PRICE or less) at units not
      behind congestion (DA node within CONGESTED of the DA bus average), and the fossil minimum
@@ -48,7 +51,7 @@ from .intraday import train_of
 from .store import read_json_gz, write_json_gz
 
 PATH = DATA_DIR / "goal.json.gz"
-VERSION = "v10"  # v10: decision table d4 (make-whole and AS netted, held = RUC), Q3 by DAM position; v9: question 4's siting maps (pipeline/load_siting.py); v8: 2 h off spells (were 4 h); v7: decision table d2 (operator's-view loss windows, buckets, coal out); v5: cheap hours on DA system lambda (was the DA hub average)
+VERSION = "v11"  # v11: Q3 by unit (shut rate where shutting pays, each year), cycling units by loss band, minimum output ridden through against 2019 to 2021 habits; v10: decision table d4 (make-whole and AS netted, held = RUC), Q3 by DAM position; v9: question 4's siting maps (pipeline/load_siting.py); v8: 2 h off spells (were 4 h); v7: decision table d2 (operator's-view loss windows, buckets, coal out); v5: cheap hours on DA system lambda (was the DA hub average)
 START = "2019-01"
 CHEAP = 10.0          # $/MWh, day-ahead system lambda: a cheap hour
 OVER_PRICE = 5.0      # $/MWh, real-time hub average: an oversupply hour
@@ -470,6 +473,13 @@ def _dam_status(dd):
     return out
 
 
+NEVER_MIN = 20                                  # loss windows a year before "none shut" makes a unit never-off that year
+UNIT_MIN = 8                                    # windows where shutting pays before a unit-year's share is shown
+LOSS_BANDS = [-1, 50, 200, 1e9]                 # loss from staying on, $ per MW of LSL over the window
+LOSS_BAND_LABELS = ["under $50", "$50 to $200", "over $200"]
+BASE_YEARS = (2019, 2020, 2021)                 # each unit's own shut rate then, for the ridden-through headline
+
+
 def _rule(table):
     """Question 3, from the decision table: each bucket's windows, the share turned off (an off
     spell of at least the unit's minimum off time over the window), and the minimum output over
@@ -490,7 +500,33 @@ def _rule(table):
             rt = g["gain_rt"].dropna()
             pos.append([int(y), t, p, len(g), round(float(g["shut"].mean()), 4),
                         round(float((rt > 0).mean()), 4) if len(rt) else None])
-    return {"off": off, "mix": mix, "position": pos}
+    # each unit, each year: how often it shut where shutting pays (the Q3 heatmap)
+    more = x[x["bucket"] == "more"]
+    units = [[tr, t, int(y), len(g), round(float(g["shut"].mean()), 4), round(float(g["lsl"].median()))]
+             for (tr, t, y), g in more.groupby(["train", "tech", "year"])]
+    # units free to choose (not held) that never shut for a loss window in the whole record
+    free = x[~x["bucket"].isin(["held", "held_mw"])]
+    ever = free.groupby(["train", "tech"])["shut"].sum()
+    never = [[tr, t] for (tr, t), v in ever.items() if v == 0]
+    # units that cycle: a year's never-off units (NEVER_MIN windows or more, none shut) left out; share
+    # turned off by the loss from staying on per MW of LSL
+    ty = free.groupby(["train", "year"])["shut"].agg(["size", "sum"])
+    off_yr = set(ty[(ty["size"] >= NEVER_MIN) & (ty["sum"] == 0)].index)
+    cyc = free[[(tr, y) not in off_yr for tr, y in zip(free["train"], free["year"])]]
+    band = pd.cut(cyc["loss_per_mw"], LOSS_BANDS, labels=LOSS_BAND_LABELS)
+    bands = [[int(y), t, str(b), len(g), round(float(g["shut"].mean()), 4)]
+             for (y, t, b), g in cyc.groupby(["year", "tech", band], observed=True)]
+    # minimum output ridden through where shutting pays, against each unit at its own BASE_YEARS shut rate
+    m2 = more.assign(mwh=more["lsl"] * more["win_h"])
+    rate = m2[m2["year"].isin(BASE_YEARS)].groupby(["train", "year"])["shut"].agg(["size", "mean"])
+    base = rate[rate["size"] >= UNIT_MIN].groupby(level="train")["mean"].mean()
+    extra = []
+    for (y, t), g in m2[m2["train"].isin(base.index)].groupby(["year", "tech"]):
+        r = g["train"].map(base)
+        extra.append([int(y), t, int(g["train"].nunique()), round(float((g["mwh"] * (1 - g["shut"])).sum())),
+                      round(float((g["mwh"] * (1 - r)).sum()))])
+    return {"off": off, "mix": mix, "position": pos, "units": units, "never": never, "bands": bands, "extra": extra,
+            "unit_min": UNIT_MIN, "base_years": list(BASE_YEARS)}
 
 
 def build(cache: Path, end=None, table=None) -> dict:
@@ -508,7 +544,12 @@ def build(cache: Path, end=None, table=None) -> dict:
                         minimum_online_mwh, minimum_offline_mwh]],
               "position": [[year, tech, position (none | self | committed | as), windows where
                             shutting pays, off_share, paid_at_rt_share (null without RT prices)]],
-              "mix": [[year, tech, windows, night, day, off_rate, median_loss_per_mw]]},
+              "mix": [[year, tech, windows, night, day, off_rate, median_loss_per_mw]],
+              "units": [[train, tech, year, windows where shutting pays, off_share, lsl_mw]],
+              "never": [[train, tech]] (free windows, none shut in the whole record),
+              "bands": [[year, tech, loss band, windows, off_share]] (units that cycle that year),
+              "extra": [[year, tech, trains, ridden_mwh, ridden_mwh_at_base_rates]] (where shutting pays),
+              "unit_min", "base_years"},
        "q4": {"years": [[year, available_mwh, curtailed_mwh, in_oversupply_mwh, uncongested_mwh,
                          oversupply_hours, counted_hours, uncongested_in_counted_mwh, uncongested_by_he[24]]],
               "atmin": [[year, tech, ECON or the tech, mwh]], "avoid": [[year, scenario, mwh]], "scenarios", "econ"},

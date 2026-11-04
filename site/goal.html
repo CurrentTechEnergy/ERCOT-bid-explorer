@@ -4,12 +4,12 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Will fossil turn off? · ERCOT Bids</title>
-<meta name="description" content="Whether ERCOT coal and gas units turn off as renewables and batteries grow: what turns off, why the rest stays on, whether behaviour is changing, and where it holds back curtailed wind and solar.">
+<meta name="description" content="Whether ERCOT coal and gas units turn off as renewables and batteries grow: what turns off, why the rest stays on, whether behavior is changing, and where it holds back curtailed wind and solar.">
 <link rel="canonical" href="https://ercotbids.currenttech.energy/goal.html">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="ERCOT Bids · CurrentTech Energy">
 <meta property="og:title" content="Will fossil turn off?">
-<meta property="og:description" content="Whether ERCOT coal and gas units turn off as renewables and batteries grow: what turns off, why the rest stays on, whether behaviour is changing, and where it holds back curtailed wind and solar.">
+<meta property="og:description" content="Whether ERCOT coal and gas units turn off as renewables and batteries grow: what turns off, why the rest stays on, whether behavior is changing, and where it holds back curtailed wind and solar.">
 <meta property="og:url" content="https://ercotbids.currenttech.energy/goal.html">
 <meta property="og:image" content="https://ercotbids.currenttech.energy/share-card.png">
 <meta property="og:image:width" content="1200">
@@ -25,6 +25,7 @@
   .panel .lead { font-size: 16px; line-height: 1.45; margin: 4px 0 8px; max-width: 72ch; }
   .panel .lead b { font-weight: 600; }
   .panel .sub-h { font-size: 14px; font-weight: 600; margin: 22px 0 4px; }
+  .panel .intro { font-size: 14px; line-height: 1.5; margin: 6px 0; max-width: 78ch; }
   .panel .detail { font-size: 13px; color: var(--muted); margin: 10px 0 0; }
 </style>
 </head>
@@ -81,7 +82,7 @@
   <section class="panel panel-wide" id="q3-panel">
     <div class="panel-head">
       <div>
-        <h2>3. Is behaviour changing as renewables and batteries grow?</h2>
+        <h2>3. Is behavior changing as renewables and batteries grow?</h2>
         <p class="lead" id="q3-answer"></p>
         <p class="note" id="q3-note"></p>
       </div>
@@ -90,12 +91,21 @@
         <select id="q3-tech"><option value="combined_cycle">Combined cycle</option><option value="gas_steam">Gas steam</option></select>
       </div>
     </div>
+    <h3 class="sub-h">Every unit, year by year: when shutting would have paid, how often did it shut?</h3>
+    <p class="intro">A loss window is a stretch of hours when a unit's gas cost at minimum is above its day-ahead price. The unit either turns off for it or rides through. Each row below is one unit, and each cell counts only its windows where a shutdown would have paid even after the restart and anything it gives up, so the economics are held fixed: a unit that faced more or bigger losses doesn't change its own row, only a unit that answers the same economics differently does.</p>
+    <p class="intro" id="q3h-text"></p>
+    <div class="legend" id="q3h-legend"></div>
+    <div class="chart" id="q3h-chart"></div>
+    <h3 class="sub-h">Units that cycle: share of loss windows turned off, by size of loss</h3>
+    <p class="intro">Bigger losses get turned off for more often, so the windows are grouped by the loss from staying on, per MW of the unit's minimum output. If the units that cycle behaved the same, each line would stay flat.</p>
+    <div class="legend" id="q3s-legend"></div>
+    <div class="chart" id="q3s-chart"></div>
+    <h3 class="sub-h">What the windows look like: share of loss windows in each bucket</h3>
+    <p class="intro" id="q3-day"></p>
     <div class="legend" id="q3-legend"></div>
     <div class="chart" id="q3-chart"></div>
-    <div class="legend" id="q3m-legend"></div>
-    <div class="chart" id="q3m-chart"></div>
     <div class="units-wrap" id="q3p-table"></div>
-    <p class="detail">See the detail: <a href="changes.html">What's changing</a> for unit by unit changes in offers and behaviour.</p>
+    <p class="detail">See the detail: <a href="changes.html">What's changing</a> for unit by unit changes in offers and behavior.</p>
   </section>
   <section class="panel panel-wide" id="q4-panel">
     <div class="panel-head">
