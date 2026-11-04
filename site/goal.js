@@ -304,7 +304,7 @@ const RUN = {
 };
 const ECON = {
   "losing more than a restart": { label: "Losing more than a restart costs", color: "--c7" },
-  "losing, shutting would not pay": { label: "Losing, but no shutdown would pay", color: "--c7-soft" },
+  "losing, shutting would not pay": { label: "Losing, but shutting down wouldn't pay", color: "--c7-soft" },
   "held on by a DAM commitment, AS or RUC": { label: "Held on by a DAM commitment, AS or RUC", color: "--c5" },
   "covering its costs": { label: "Covering its costs", color: "--c-other" },
   coal: { label: "Coal", color: "--c8" },
