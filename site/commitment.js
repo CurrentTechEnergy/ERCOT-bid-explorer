@@ -668,7 +668,7 @@ const fmt$ = (v) => (v == null || isNaN(v) ? "–" : (v < 0 ? "−" : "") + "$" 
 const fmtPerMW = (v) => (v == null || isNaN(v) ? "–" : (v < 0 ? "−" : "") + "$" + d3.format(",.1f")(Math.abs(v)));
 const fmtGW = (v) => d3.format(",.1f")(v / 1e3) + " GW";
 const unitHref = (u) => `unit.html?unit=${encodeURIComponent(trainOf(u))}`;   // a combined-cycle configuration opens its train
-const SAVING_NOTE = "The saving is what being off would have saved over the best stretch of the day at least the unit's minimum down time long (its shortest off spell before the month, at least 2 hours; to the end of the day if less is left), at its own node's day-ahead price against its minimum-energy cost, times its LSL, divided by its LSL so units of every size compare. Negative means staying on paid. The day stops at HE 24: the next day's prices are not known when the operator decides.";
+const SAVING_NOTE = "The loss from staying on is what running at minimum would lose over the best stretch of the day for being off, at least the unit's minimum down time long (its shortest off spell before the month, at least 2 hours; to the end of the day if less is left), at its own node's day-ahead price against its minimum-energy cost, times its LSL, divided by its LSL so units of every size compare, before any restart cost. Negative means staying on paid. The day stops at HE 24: the next day's prices are not known when the operator decides.";
 
 // decisions.json day rows: [train, date, loss, first hour ending, hours, award share, shut, hours off]
 const DAY_F = { unit: 0, date: 1, loss: 2, he: 3, hours: 4, award: 5, shut: 6, hoff: 7 };
@@ -731,10 +731,10 @@ function drawCutUnits() {
   const past = (u) => u.kind === "cut" && u.l > u.c, n = (f) => U.filter(f).length, surprise = (u) => !u.ruc && past(u) !== (u.did === "off");
   const nRuc = n((u) => u.ruc), nJ = U.length - nRuc;
   const nOff = n((u) => u.did === "off"), right = n((u) => !u.ruc && past(u) === (u.did === "off"));
-  window.CX.setNote($("cut-units-note"), `${U.length} CC and gas steam units were online going in; ${nOff} turned off. The diamond is where the operator model turns a unit off that day, the circle what being off would have saved; a hollow circle turned off; red marks a surprise. The model called ${right} of ${nJ} right.${window.CX.rucNote(nRuc, nRuc === 1 ? "unit" : "units")} Click a unit to open it.`, `${U.length} CC trains and gas steam units were online going into the day. The diamond is each unit's turn-off point that day from the operator-informed model, coloured by its day-ahead award; the circle is the saving it actually faced, and the line between them is red where the unit did the opposite of the model: stayed on past its turn-off point, or turned off short of it. An arrow at the right edge is a unit the model keeps on through every shift tested (an award every hour holds it on). ` +
-    `A filled circle stayed on through the day; a hollow one was offline in some hour (outages aside). Read at its own saving, the model called ${right} of ${nJ} units right.${window.CX.rucNote(nRuc, nRuc === 1 ? "unit" : "units")} ${SAVING_NOTE} Savings beyond the edges are drawn at the edge. Click a unit to open it.`);
-  $("cut-units-legend").innerHTML = AWARD.map((a) => `<span><span class="sw" style="background:var(${a.color});transform:rotate(45deg) scale(0.8)"></span>Turns off when savings are greater than this: ${a.label.toLowerCase()}</span>`).join("") +
-    `<span>→ rides through anything tested</span>` + window.CX.onOffLegend("Saving that day, stayed on", "Saving that day, turned off") +
+  window.CX.setNote($("cut-units-note"), `${U.length} CC and gas steam units were online going in; ${nOff} turned off. The diamond is where the operator model turns a unit off that day, the circle its loss from staying on; a hollow circle turned off; red marks a surprise. The model called ${right} of ${nJ} right.${window.CX.rucNote(nRuc, nRuc === 1 ? "unit" : "units")} Click a unit to open it.`, `${U.length} CC trains and gas steam units were online going into the day. The diamond is each unit's turn-off point that day from the operator-informed model, coloured by its day-ahead award; the circle is the loss from staying on it actually faced, and the line between them is red where the unit did the opposite of the model: stayed on past its turn-off point, or turned off short of it. An arrow at the right edge is a unit the model keeps on through every shift tested (an award every hour holds it on). ` +
+    `A filled circle stayed on through the day; a hollow one was offline in some hour (outages aside). Read at its own loss, the model called ${right} of ${nJ} units right.${window.CX.rucNote(nRuc, nRuc === 1 ? "unit" : "units")} ${SAVING_NOTE} Losses beyond the edges are drawn at the edge. Click a unit to open it.`);
+  $("cut-units-legend").innerHTML = AWARD.map((a) => `<span><span class="sw" style="background:var(${a.color});transform:rotate(45deg) scale(0.8)"></span>Turns off when the loss is above this: ${a.label.toLowerCase()}</span>`).join("") +
+    `<span>→ rides through anything tested</span>` + window.CX.onOffLegend("Loss that day, stayed on", "Loss that day, turned off") +
     `<span><span class="sw" style="background:var(--c8);height:3px"></span>Surprise: the unit did the opposite of the model</span>` + (nRuc ? window.CX.rucLegend() : "");
   const [x0, x1] = cutDomain(U);
   const w = Math.max(280, el.clientWidth || 600), narrow = w < 560, lane = 8, rowGap = 26;
@@ -755,8 +755,8 @@ function drawCutUnits() {
       const yy = top + rowGap - 4 + k * lane + lane / 2, col = css(AWARD[u.award ?? 0].color);
       const gU = svg.append("g").style("cursor", "pointer")
         .on("pointermove", (ev) => showTip(ev, `<h4>${esc(u.unit)}</h4>${techLabel(u.tech)} · ${g.label}${window.CX.isPeaker(S.G, u.unit) ? " · Peaker" : ""}<br>LSL ${fmtMW(u.lsl)} MW, minimum down time ${u.md} h<br>` +
-          `${AWARD[u.award ?? 0].label}<br>Saving from being off that day ${fmtPerMW(u.l)}/MW (${fmt$(u.l * u.lsl)})<br>` +
-          (u.kind === "cut" ? `The model turns it off once being off saves ${fmtPerMW(u.c)}/MW (${fmt$(u.c * u.lsl)})` : "The model keeps it on through every shift tested") +
+          `${AWARD[u.award ?? 0].label}<br>Loss from staying on that day ${fmtPerMW(u.l)}/MW (${fmt$(u.l * u.lsl)})<br>` +
+          (u.kind === "cut" ? `The model turns it off once the loss passes ${fmtPerMW(u.c)}/MW (${fmt$(u.c * u.lsl)})` : "The model keeps it on through every shift tested") +
           `<br><b>${DID[u.did]}</b>${u.ruc ? `<br>Committed by ERCOT (RUC) ${u.ruc} h: not counted for or against the model` : ""}<br><span class="tip-pin-note">Click to open the unit</span>`))
         .on("pointerleave", hideTip)
         .on("click", () => { location.href = unitHref(u.unit); });
@@ -769,7 +769,7 @@ function drawCutUnits() {
     });
     top += rowGap + us.length * lane;
   });
-  svg.append("text").attr("class", "axis-title").attr("x", w - m.r).attr("y", H - 2).attr("text-anchor", "end").text("Saving from being off, $ per MW of LSL");
+  svg.append("text").attr("class", "axis-title").attr("x", w - m.r).attr("y", H - 2).attr("text-anchor", "end").text("Loss from staying on, $ per MW of LSL");
   el.replaceChildren(svg.node());
   setCSV(el, ["unit", "technology", "group", "lsl_mw", "min_down_h", "award", "saving_usd_per_mw_lsl", "turn_off_usd_per_mw_lsl", "did", "ruc_hours"],
     U.map((u) => [u.unit, u.tech, u.group, u.lsl, u.md, ["none", "some hours", "every hour"][u.award ?? 0], u.l, u.c, u.did, u.ruc]), `Turn-off points ${S.date}`);
@@ -881,7 +881,7 @@ function drawGroups() {
   const nAny = V.filter((u) => u.fit).length;
   $("groups-title-note").textContent = fmtDate(parseDate(S.date));
   window.CX.setNote($("groups-note"), `Thermal units by how often they turn off on price. Coal, gas steam and combined cycles get a turn-off point; combustion turbines mostly start from off, so they get a turn-on point from the model above instead.`, `Thermal units by how often they have turned off on price over the ${S.G ? S.G.dates.length : ""} days of 60-day data (pipeline/groups.py). Minimum output is the unit's LSL; online going in and turned off count units online going into the day and offline in some hour of it (combined-cycle configurations merged into their train). ` +
-    `The turn-off rows cover coal, gas steam and combined cycles; their model columns cover the CC trains and gas steam units with a turn-off point that day: the median turn-off point and the median saving they faced, per MW of LSL, and how many the model called right (off when the saving was past its turn-off point), leaving out units ERCOT committed by RUC that day. ${SAVING_NOTE} ` +
+    `The turn-off rows cover coal, gas steam and combined cycles; their model columns cover the CC trains and gas steam units with a turn-off point that day: the median turn-off point and the median loss from staying on they faced, per MW of LSL, and how many the model called right (off when the loss was past its turn-off point), leaving out units ERCOT committed by RUC that day. ${SAVING_NOTE} ` +
     `Combustion turbines mostly start from off rather than stay on, so instead of a turn-off point their rows count the ${nAny} offline going into some hour of the day and how many started, the median of the operator-informed model's turn-on points and of the day's highest day-ahead price at their nodes, and how many the model called right (RUC left out), as in the turn-on chart above. Some units that run like peakers are gas steam or combined cycles; they stay in the turn-off rows.`);
   const tdG = (r) => `<td class="t"><span class="sw" style="background:var(${FLOOR_GROUPS.find((f) => f.id === r.g)?.color || "--c-other"});margin-right:6px"></span>${GROUP_LABEL[r.g]}<br><span class="muted">${ST_GROUPS.find((g) => g.id === r.g)?.note || "too little history to place"}</span></td>`;
   const tdS = (r) => `<td>${r.n || "–"}</td><td>${r.n ? fmtMW(r.lsl) : "–"}</td><td>${r.n ? r.nOff : "–"}</td><td>${r.n ? fmtMW(r.lslOff) : "–"}</td>`;
@@ -889,7 +889,7 @@ function drawGroups() {
   const tot = (label, rs, rest) => `<tr><td class="t">${b(label)}</td><td>${b(sum(rs, "n"))}</td><td>${b(fmtMW(sum(rs, "lsl")))}</td><td>${b(sum(rs, "nOff"))}</td><td>${b(fmtMW(sum(rs, "lslOff")))}</td>${rest}</tr>`;
   const head = (cols) => cols.map((c, i) => `<th${i ? "" : ' class="t"'} style="position:static">${c}</th>`).join("");
   const SH = ["Online going in", "Minimum output MW", "Turned off", "Minimum output turned off MW"];
-  el.innerHTML = `<table class="data"><thead><tr>${head(["Coal, gas steam and CC", ...SH, "Units the model covers", "Median turn-off point $/MW LSL", "Median saving $/MW LSL", "Model right"])}</tr></thead><tbody>` +
+  el.innerHTML = `<table class="data"><thead><tr>${head(["Coal, gas steam and CC", ...SH, "Units the model covers", "Median turn-off point $/MW LSL", "Median loss $/MW LSL", "Model right"])}</tr></thead><tbody>` +
     rows.map((r) => `<tr>${tdG(r)}${tdS(r)}<td>${r.nMod || "–"}</td><td>${fmtPerMW(r.medCut)}</td><td>${fmtPerMW(r.medSave)}</td><td>${r.nMod ? `${r.right} of ${r.nJudged}` : "–"}</td></tr>`).join("") +
     tot("Coal, gas steam and CC", rows, `<td>${b(sum(rows, "nMod") || "–")}</td><td></td><td></td><td>${b(sum(rows, "nJudged") ? `${sum(rows, "right")} of ${sum(rows, "nJudged")}` : "–")}</td>`) +
     (ctRows.length ? `<tr>${head(["Combustion turbines (start on price)", ...SH, "Offline in some hour (started)", "Median turn-on point $/MWh", "Median day's highest day-ahead $/MWh", "Model right"])}</tr>` +
@@ -972,11 +972,11 @@ function drawCost() {
   }).filter((r) => r.n);
   const nStretch = S.SO.stretches[String(thr)]?.length || 0;
   window.CX.setNote($("cost-note"), `Each time a coal or gas unit ran through hours with lambda below ${fmtPrice0(thr)}: what it lost, against what a shutdown and restart would have cost.`, `Every time a coal or gas unit ran through a stretch of hours with system lambda below ${fmtPrice0(thr)} (${nStretch} stretches of ${S.SO.min_hours} hours or more), what its output lost at its own real-time node price against its own minimum-energy cost, and what a shutdown and restart would have cost instead (hot start for stretches up to ${S.SO.hot_h} hours, intermediate up to ${S.SO.inter_h}, cold beyond). ` +
-    `Where the loss is bigger than the restart, shutting down would have paid. Costs are the unit's own day-ahead three-part offer (capped by ERCOT's cost verification, so an upper bound), its latest within ${S.SO.cost_days} days, or a generic value for the technology. Revenue is at the unit's own node, so a unit behind congestion is credited what its energy was worth where it sits; ${(() => { const n = d3.sum(rows, (r) => r.n), l = d3.sum(rows, (r) => r.lam); return l ? `${fmtPct(l / n)} of ride-throughs had no node price and are valued at system lambda` : "every ride-through here has a node price"; })()}. ` +
+    `Where the loss is bigger than the restart cost, shutting down would have paid; the difference is the loss above restart cost. Costs are the unit's own day-ahead three-part offer (capped by ERCOT's cost verification, so an upper bound), its latest within ${S.SO.cost_days} days, or a generic value for the technology. Revenue is at the unit's own node, so a unit behind congestion is credited what its energy was worth where it sits; ${(() => { const n = d3.sum(rows, (r) => r.n), l = d3.sum(rows, (r) => r.lam); return l ? `${fmtPct(l / n)} of ride-throughs had no node price and are valued at system lambda` : "every ride-through here has a node price"; })()}. ` +
     `A unit with a cutoff that keeps riding through stretches where shutting down would have paid may hold contracts, ancillary service obligations or start costs these numbers do not see; the units table puts each unit's net beside its cutoff.`);
   const S2 = [
-    { id: "loss", label: "Lost riding through (cost less revenue at its node)", color: "--c8" },
-    { id: "start", label: "Restart avoided by staying on", color: "--c1" },
+    { id: "loss", label: "Loss from staying on (cost less revenue at its node)", color: "--c8" },
+    { id: "start", label: "Restart cost", color: "--c1" },
   ];
   staticLegend($("cost-legend"), S2);
   const w = Math.max(280, el.clientWidth || 600), H = 260, m = { t: 22, r: 16, b: 60, l: 64 };
@@ -1002,12 +1002,12 @@ function drawCost() {
     const v = r[s.id];
     svg.append("rect").attr("x", x(r.g) + xi(s.id)).attr("width", xi.bandwidth()).attr("y", y(Math.max(0, v))).attr("height", Math.abs(y(v) - y(0)))
       .attr("fill", css(s.color))
-      .on("pointermove", (ev) => showTip(ev, `<h4>${GROUP_LABEL[r.g]}</h4>${r.n} ride-throughs by ${r.units} units, ${fmtMW(r.mwh)} MWh<br>Lost riding through ${fmt$(r.loss)}<br>Restart avoided ${fmt$(r.start)}<br>` +
-        `<b>Shutting down would have ${r.saves > 0 ? `saved ${fmt$(r.saves)}` : `cost ${fmt$(-r.saves)} more`}</b><br>Shutting down would have paid in ${fmtPct(r.paid / r.n)} of ride-throughs`))
+      .on("pointermove", (ev) => showTip(ev, `<h4>${GROUP_LABEL[r.g]}</h4>${r.n} ride-throughs by ${r.units} units, ${fmtMW(r.mwh)} MWh<br>Loss from staying on ${fmt$(r.loss)}<br>Restart cost ${fmt$(r.start)}<br>` +
+        `<b>${r.saves > 0 ? `Shutting down would have paid by ${fmt$(r.saves)}` : `Staying on was cheaper by ${fmt$(-r.saves)}`}</b><br>Shutting down would have paid in ${fmtPct(r.paid / r.n)} of ride-throughs`))
       .on("pointerleave", hideTip);
   }));
   el.replaceChildren(svg.node());
-  $("cost-groups").innerHTML = `<table class="data"><thead><tr><th class="t">Group</th><th>Units</th><th>Ride-throughs</th><th>MWh</th><th>Lost riding through</th><th>Lost per MWh</th><th>Restart avoided</th><th>Net: shutting down would have saved</th><th>Ride-throughs where shutting down paid</th><th>Estimated costs</th></tr></thead><tbody>` +
+  $("cost-groups").innerHTML = `<table class="data"><thead><tr><th class="t">Group</th><th>Units</th><th>Ride-throughs</th><th>MWh</th><th>Loss from staying on</th><th>Loss per MWh</th><th>Restart cost</th><th>Loss above restart cost</th><th>Ride-throughs where shutting down paid</th><th>Estimated costs</th></tr></thead><tbody>` +
     rows.map((r) => `<tr><td class="t">${GROUP_LABEL[r.g]}</td><td>${r.units}</td><td>${r.n}</td><td>${fmtMW(r.mwh)}</td><td>${fmt$(r.loss)}</td><td>${fmtPrice(r.mwh ? r.loss / r.mwh : null)}</td><td>${fmt$(r.start)}</td><td>${fmt$(r.saves)}</td><td>${fmtPct(r.paid / r.n)}</td><td>${fmtPct(r.est / r.n)}</td></tr>`).join("") + "</tbody></table>";
   setCSV(el, ["group", "units", "ride_throughs", "mwh", "loss_usd", "start_usd", "saves_usd", "share_shutdown_paid", "share_estimated_costs"],
     rows.map((r) => [r.g, r.units, r.n, Math.round(r.mwh), Math.round(r.loss), Math.round(r.start), Math.round(r.saves), +(r.paid / r.n).toFixed(3), +(r.est / r.n).toFixed(3)]), `What the decision cost, lambda below ${thr}`);
@@ -1177,7 +1177,7 @@ const UNIT_COLS = [
   { k: "offP10", h: "Min off, 10th pct (h)", f: (r) => (r.offP10 == null ? "–" : d3.format(",.0f")(r.offP10)) },
   { k: "offShare", h: "Turned off in cheap stretches", f: (r) => (r.offShare == null ? "–" : fmtPct(r.offShare)) },
   { k: "rides", h: "Ride-throughs", f: (r) => r.rides || "–" },
-  { k: "saves", h: "Net: shutting down would have saved", f: (r) => (r.rides ? fmt$(r.saves) : "–") },
+  { k: "saves", h: "Loss above restart cost", f: (r) => (r.rides ? `<span title="Loss from staying on ${fmt$(r.rLoss)}, restart cost ${fmt$(r.rStart)}">${fmt$(r.saves)}</span>` : "–") },
   { k: "vi", h: "On the day", t: 1, f: (r) => (r.did ? DID[r.did] : "–") },
 ];
 // each unit's operator-informed turn-off point, one median per day-ahead condition (no award, some
@@ -1220,7 +1220,7 @@ async function drawUnits() {
       days: dec?.days ?? null, dshut: dec?.shut ?? null,
       ...Object.fromEntries(STATE_KEYS.map(([s]) => ["st" + s, nh ? cnt[s] / nh : null])),
       shut: e.shut, offP10: e.offP10, offShare: n >= ST_MIN_N ? g.filter((z) => z.r === "B" || z.r === "D").length / n : null,
-      rides: ri?.n || 0, saves: ri ? ri.saves : null, did, vi: did ? ["off", "on"].indexOf(did) : null };
+      rides: ri?.n || 0, saves: ri ? ri.saves : null, rLoss: ri ? ri.loss : null, rStart: ri ? ri.start : null, did, vi: did ? ["off", "on"].indexOf(did) : null };
   });
   if (S.uTech !== "all") list = list.filter((r) => r.tech === S.uTech);
   if (S.uGroup !== "all") list = list.filter((r) => r.group === S.uGroup);
@@ -1233,7 +1233,7 @@ async function drawUnits() {
     return (typeof va === "string" ? va.localeCompare(vb) : va - vb) * dir;
   });
   window.CX.setNote($("units-note"), "Every coal and gas unit with its cycling pattern, usual turn-off cost and hours in each state. Click a row to open the unit.", `${list.length} coal and gas units, combined-cycle configurations merged into their train, over the ${S.UH.dates.length} days of 60-day data. ` +
-    `Turn-off point is the operator-informed model's, as in the chart at the top of the page: what being off has to save, per MW of LSL, before the model turns the unit off, the median over its days online going in, kept separate for days with no day-ahead award, an award some hours and an award every hour ("rides through" when the model keeps it on through every shift on most of them). Model right is how often the model's call at the unit's own saving matched what it did, over its days online going in, leaving out days ERCOT committed it by RUC. CC trains and gas steam units only. ` +
+    `Turn-off point is the operator-informed model's, as in the chart at the top of the page: the loss from staying on, per MW of LSL, at which the model turns the unit off, the median over its days online going in, kept separate for days with no day-ahead award, an award some hours and an award every hour ("rides through" when the model keeps it on through every shift on most of them). Model right is how often the model's call at the unit's own loss matched what it did, over its days online going in, leaving out days ERCOT committed it by RUC. CC trains and gas steam units only. ` +
     `Hot start is the start cost in the unit's latest day-ahead offer per MW of LSL, for comparison only (* marks a generic value for the technology); no model uses it. ` +
     `Hours are split between running above minimum, at minimum, offline but available and on outage (an off spell that is mostly outage counts as outage). "Turned off in cheap stretches" is the share of the stretches with lambda below ${fmtPrice0(+S.stThr)} it was running into that it turned off for (shown once it ran into ${ST_MIN_N}), as in the panel above; ride-throughs and the net are from the decision-cost panel at lambda below ${fmtPrice0(+S.costThr)}. ` +
     `"On the day" is what the unit did on the chosen day if it was online going in: turned off (offline in some hour of the day, outages aside; for units without an operator model row, coal and combustion turbines, a shutdown of 2 hours or more starting that day), or stayed on, as in the turn-off chart. Click a column to sort, a row to open the unit.`);
