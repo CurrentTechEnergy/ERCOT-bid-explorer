@@ -1,5 +1,5 @@
 {
- "checked": "2026-11-03T14:58:26Z",
+ "checked": "2026-11-04T01:06:54Z",
  "today": "2026-11-03",
  "sources": {
   "2d": {
@@ -53,16 +53,16 @@
   },
   "dam_nodes": {
    "label": "DAM node prices",
-   "latest": "2026-11-03",
-   "behind": 0,
-   "allowed": 0,
+   "latest": "2026-11-04",
+   "behind": -1,
+   "allowed": -1,
    "stale": false
   },
   "dam_lambda": {
    "label": "DAM system lambda",
-   "latest": "2026-11-03",
-   "behind": 0,
-   "allowed": 0,
+   "latest": "2026-11-04",
+   "behind": -1,
+   "allowed": -1,
    "stale": false
   },
   "gas_hsc": {
@@ -88,8 +88,8 @@
   },
   "nrc": {
    "label": "NRC reactor status",
-   "latest": "2026-11-02",
-   "behind": 1,
+   "latest": "2026-11-03",
+   "behind": 0,
    "allowed": 2,
    "stale": false
   }

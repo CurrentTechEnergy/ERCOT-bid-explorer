@@ -317,7 +317,7 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=SCSES_UNIT1A"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=SCSES_UNIT1A#SCSES_UNIT1A/2026-08-16/dam_mingen_step</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Minimum-energy offer stepped: $48 to $2/MWh ($24 to -$23 against the fuel-cost line)</summary>
+    <summary>Minimum-energy offer stepped: $48 to $2/MWh ($18 to -$30 against the fuel-cost line)</summary>
   </entry>
   <entry>
     <title>PB2SES_CT2: Bidding approach shifted (2026-08-16)</title>
@@ -359,7 +359,7 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=LHSES"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=LHSES#LHSES/2026-08-16/dam_mingen_step</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Minimum-energy offer stepped: $39 to $2/MWh ($14 to -$23 against the fuel-cost line)</summary>
+    <summary>Minimum-energy offer stepped: $39 to $2/MWh ($7 to -$30 against the fuel-cost line)</summary>
   </entry>
   <entry>
     <title>SJS_SJS_G2: Bidding approach shifted (2026-08-15)</title>
@@ -388,6 +388,13 @@
     <id>https://ercotbids.currenttech.energy/unit.html?unit=FRONT_EC_CC1#FRONT_EC_CC1/2026-08-13/dam_filing_off</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Stopped three-part offers: three-part offer to self-scheduled while on</summary>
+  </entry>
+  <entry>
+    <title>CHE_CC1: Minimum-energy offer stepped (2026-08-13)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=CHE_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=CHE_CC1#CHE_CC1/2026-08-13/dam_mingen_step</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $1 to $10/MWh (-$11 to -$2 against the fuel-cost line)</summary>
   </entry>
   <entry>
     <title>BOSQUESW_CC2: Shut down after a long run (2026-08-13)</title>
@@ -429,7 +436,7 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=FRNYPP_CC2"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=FRNYPP_CC2#FRNYPP_CC2/2026-08-11/dam_mingen_step</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Minimum-energy offer stepped: $19 to $10/MWh ($2 to -$7 against the fuel-cost line)</summary>
+    <summary>Minimum-energy offer stepped: $19 to $10/MWh ($2 to -$8 against the fuel-cost line)</summary>
   </entry>
   <entry>
     <title>SCLPCOGN_SCLPC_3: Shut down after a long run (2026-08-10)</title>
@@ -583,7 +590,7 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=WHCCS2_CC2"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=WHCCS2_CC2#WHCCS2_CC2/2026-08-02/dam_mingen_step</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Minimum-energy offer stepped: $13 to $22/MWh (-$5 to $5 against the fuel-cost line)</summary>
+    <summary>Minimum-energy offer stepped: $13 to $22/MWh (-$7 to $3 against the fuel-cost line)</summary>
   </entry>
   <entry>
     <title>SKY1_SKY1B: Shut down despite a day-ahead award (2026-08-02)</title>
@@ -1297,14 +1304,14 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=QALSW_CC2"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=QALSW_CC2#QALSW_CC2/2026-07-24/dam_mingen_step</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Minimum-energy offer stepped: $20 to $1/MWh ($7 to -$16 against the fuel-cost line)</summary>
+    <summary>Minimum-energy offer stepped: $20 to $1/MWh ($5 to -$19 against the fuel-cost line)</summary>
   </entry>
   <entry>
     <title>QALSW_CC1: Minimum-energy offer stepped (2026-07-24)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=QALSW_CC1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=QALSW_CC1#QALSW_CC1/2026-07-24/dam_mingen_step</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Minimum-energy offer stepped: $20 to $1/MWh ($7 to -$16 against the fuel-cost line)</summary>
+    <summary>Minimum-energy offer stepped: $20 to $1/MWh ($5 to -$19 against the fuel-cost line)</summary>
   </entry>
   <entry>
     <title>STEAM_ENGINE_3: Outage started (2026-07-23)</title>
@@ -1396,12 +1403,5 @@
     <id>https://ercotbids.currenttech.energy/unit.html?unit=VICTPRT2_UNIT1#VICTPRT2_UNIT1/2026-07-22/shutdown_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Shut down for 13 h after 33 days without a shutdown</summary>
-  </entry>
-  <entry>
-    <title>VERT_ESS_ESR1: Battery size changed (2026-07-22)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=VERT_ESS_ESR1"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=VERT_ESS_ESR1#VERT_ESS_ESR1/2026-07-22/battery_size</id>
-    <updated>2026-10-27T00:00:00Z</updated>
-    <summary>Maximum output 200 to 30 MW</summary>
   </entry>
 </feed>

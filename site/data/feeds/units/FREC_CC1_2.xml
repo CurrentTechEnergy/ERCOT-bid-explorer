@@ -9,21 +9,21 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=FREC_CC1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=FREC_CC1#FREC_CC1/2026-06-13/dam_mingen_step</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Minimum-energy offer stepped: $24 to $0/MWh ($4 to -$20 against the fuel-cost line)</summary>
+    <summary>Minimum-energy offer stepped: $24 to $0/MWh ($4 to -$19 against the fuel-cost line)</summary>
   </entry>
   <entry>
     <title>FREC_CC1: Minimum-energy offer stepped (2026-05-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=FREC_CC1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=FREC_CC1#FREC_CC1/2026-05-01/dam_mingen_step</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Minimum-energy offer stepped: $0 to $20/MWh (-$17 to $4 against the fuel-cost line)</summary>
+    <summary>Minimum-energy offer stepped: $0 to $20/MWh (-$16 to $5 against the fuel-cost line)</summary>
   </entry>
   <entry>
     <title>FREC_CC1: Minimum-energy offer stepped (2026-04-23)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=FREC_CC1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=FREC_CC1#FREC_CC1/2026-04-23/dam_mingen_step</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Minimum-energy offer stepped: $20 to $0/MWh ($3 to -$17 against the fuel-cost line)</summary>
+    <summary>Minimum-energy offer stepped: $20 to $0/MWh ($4 to -$17 against the fuel-cost line)</summary>
   </entry>
   <entry>
     <title>FREC_CC1: Start-up cost changed (2026-04-17)</title>
@@ -44,7 +44,7 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=FREC_CC1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=FREC_CC1#FREC_CC1/2026-01-31/dam_mingen_step</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Minimum-energy offer stepped: $3 to $25/MWh (-$56 to $7 against the fuel-cost line)</summary>
+    <summary>Minimum-energy offer stepped: $3 to $25/MWh (-$53 to $8 against the fuel-cost line)</summary>
   </entry>
   <entry>
     <title>FREC_CC1_2: Bidding approach shifted (2026-01-22)</title>
@@ -58,13 +58,13 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=FREC_CC1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=FREC_CC1#FREC_CC1/2026-01-22/dam_mingen_step</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Minimum-energy offer stepped: $11 to $3/MWh (-$6 to -$74 against the fuel-cost line)</summary>
+    <summary>Minimum-energy offer stepped: $11 to $3/MWh (-$6 to -$71 against the fuel-cost line)</summary>
   </entry>
   <entry>
     <title>FREC_CC1: Minimum-energy offer stepped (2025-12-19)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=FREC_CC1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=FREC_CC1#FREC_CC1/2025-12-19/dam_mingen_step</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Minimum-energy offer stepped: $5 to $22/MWh (-$25 to -$0 against the fuel-cost line)</summary>
+    <summary>Minimum-energy offer stepped: $5 to $22/MWh (-$24 to $1 against the fuel-cost line)</summary>
   </entry>
 </feed>

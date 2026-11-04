@@ -37,7 +37,7 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=WCPP_CC1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=WCPP_CC1#WCPP_CC1/2026-06-07/dam_mingen_step</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Minimum-energy offer stepped: $22 to $28/MWh ($2 to $7 against the fuel-cost line)</summary>
+    <summary>Minimum-energy offer stepped: $22 to $28/MWh ($2 to $8 against the fuel-cost line)</summary>
   </entry>
   <entry>
     <title>WCPP_CC1: Timescale group changed (2026-05-01)</title>
@@ -72,7 +72,7 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=WCPP_CC1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=WCPP_CC1#WCPP_CC1/2026-02-19/dam_mingen_step</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Minimum-energy offer stepped: $31 to $25/MWh ($15 to $11 against the fuel-cost line)</summary>
+    <summary>Minimum-energy offer stepped: $31 to $25/MWh ($16 to $11 against the fuel-cost line)</summary>
   </entry>
   <entry>
     <title>WCPP_CC1: Shut down despite a day-ahead award (2026-01-23)</title>
@@ -114,6 +114,6 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=WCPP_CC1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=WCPP_CC1#WCPP_CC1/2025-12-15/dam_mingen_step</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Minimum-energy offer stepped: $40 to $33/MWh ($8 to $10 against the fuel-cost line)</summary>
+    <summary>Minimum-energy offer stepped: $40 to $33/MWh ($9 to $10 against the fuel-cost line)</summary>
   </entry>
 </feed>

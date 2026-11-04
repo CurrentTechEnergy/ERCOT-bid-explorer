@@ -23,7 +23,7 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=CHE_CC1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=CHE_CC1#CHE_CC1/2026-01-29/dam_mingen_step</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Minimum-energy offer stepped: $3 to $12/MWh (-$74 to -$5 against the fuel-cost line)</summary>
+    <summary>Minimum-energy offer stepped: $3 to $12/MWh (-$49 to $1 against the fuel-cost line)</summary>
   </entry>
   <entry>
     <title>CHE_CC1: Priced out of the day-ahead (2026-01-28)</title>
@@ -37,7 +37,7 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=CHE_CC1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=CHE_CC1#CHE_CC1/2026-01-22/dam_mingen_step</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Minimum-energy offer stepped: $12 to $3/MWh (-$6 to -$74 against the fuel-cost line)</summary>
+    <summary>Minimum-energy offer stepped: $12 to $3/MWh (-$0 to -$49 against the fuel-cost line)</summary>
   </entry>
   <entry>
     <title>CHE_CC1_9: Bidding approach shifted (2026-01-21)</title>
@@ -51,6 +51,6 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=CHE_CC1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=CHE_CC1#CHE_CC1/2025-12-21/dam_mingen_step</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Minimum-energy offer stepped: $19 to $13/MWh (-$8 to -$5 against the fuel-cost line)</summary>
+    <summary>Minimum-energy offer stepped: $19 to $13/MWh ($0 to $0 against the fuel-cost line)</summary>
   </entry>
 </feed>

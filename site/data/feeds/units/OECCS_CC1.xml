@@ -37,7 +37,7 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=OECCS_CC1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=OECCS_CC1#OECCS_CC1/2026-06-18/dam_mingen_step</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Minimum-energy offer stepped: $12 to $25/MWh ($18 to $13 against the fuel-cost line)</summary>
+    <summary>Minimum-energy offer stepped: $12 to $25/MWh ($18 to $14 against the fuel-cost line)</summary>
   </entry>
   <entry>
     <title>OECCS_CC1: Shut down after a long run (2026-05-18)</title>
@@ -58,7 +58,7 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=OECCS_CC1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=OECCS_CC1#OECCS_CC1/2026-05-07/dam_mingen_step</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Minimum-energy offer stepped: $0 to $12/MWh ($32 to $42 against the fuel-cost line)</summary>
+    <summary>Minimum-energy offer stepped: $0 to $12/MWh ($31 to $41 against the fuel-cost line)</summary>
   </entry>
   <entry>
     <title>OECCS_CC1: Timescale group changed (2026-05-01)</title>
@@ -79,7 +79,7 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=OECCS_CC1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=OECCS_CC1#OECCS_CC1/2026-04-24/dam_mingen_step</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Minimum-energy offer stepped: $12 to $0/MWh ($52 to $59 against the fuel-cost line)</summary>
+    <summary>Minimum-energy offer stepped: $12 to $0/MWh ($51 to $57 against the fuel-cost line)</summary>
   </entry>
   <entry>
     <title>OECCS_CC1: Outage ended (2026-04-21)</title>
@@ -135,7 +135,7 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=OECCS_CC1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=OECCS_CC1#OECCS_CC1/2026-01-31/dam_mingen_step</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Minimum-energy offer stepped: $23 to $12/MWh ($13 to $14 against the fuel-cost line)</summary>
+    <summary>Minimum-energy offer stepped: $23 to $12/MWh ($14 to $14 against the fuel-cost line)</summary>
   </entry>
   <entry>
     <title>OECCS_CC1: Priced out of the day-ahead (2026-01-27)</title>
@@ -163,14 +163,14 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=OECCS_CC1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=OECCS_CC1#OECCS_CC1/2026-01-13/dam_mingen_step</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Minimum-energy offer stepped: $0 to $7/MWh ($3 to $11 against the fuel-cost line)</summary>
+    <summary>Minimum-energy offer stepped: $0 to $7/MWh ($3 to $10 against the fuel-cost line)</summary>
   </entry>
   <entry>
     <title>OECCS_CC1: Minimum-energy offer stepped (2026-01-06)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=OECCS_CC1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=OECCS_CC1#OECCS_CC1/2026-01-06/dam_mingen_step</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Minimum-energy offer stepped: $7 to $0/MWh ($13 to $3 against the fuel-cost line)</summary>
+    <summary>Minimum-energy offer stepped: $7 to $0/MWh ($12 to $3 against the fuel-cost line)</summary>
   </entry>
   <entry>
     <title>OECCS_CC1: Shut down after a long run (2026-01-02)</title>
@@ -191,7 +191,7 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=OECCS_CC1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=OECCS_CC1#OECCS_CC1/2025-12-30/dam_mingen_step</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Minimum-energy offer stepped: $0 to $7/MWh ($11 to $13 against the fuel-cost line)</summary>
+    <summary>Minimum-energy offer stepped: $0 to $7/MWh ($11 to $12 against the fuel-cost line)</summary>
   </entry>
   <entry>
     <title>OECCS_CC1: Minimum-energy offer stepped (2025-12-14)</title>

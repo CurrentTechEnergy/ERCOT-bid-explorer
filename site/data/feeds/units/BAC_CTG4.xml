@@ -23,14 +23,14 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=BAC_CT"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=BAC_CT#BAC_CT/2026-07-30/dam_mingen_step</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Minimum-energy offer stepped: $69 to $63/MWh ($42 to $39 against the fuel-cost line)</summary>
+    <summary>Minimum-energy offer stepped: $69 to $63/MWh ($37 to $34 against the fuel-cost line)</summary>
   </entry>
   <entry>
     <title>BAC_CT: Minimum-energy offer stepped (2026-06-02)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=BAC_CT"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=BAC_CT#BAC_CT/2026-06-02/dam_mingen_step</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Minimum-energy offer stepped: $66 to $75/MWh ($39 to $45 against the fuel-cost line)</summary>
+    <summary>Minimum-energy offer stepped: $66 to $75/MWh ($35 to $40 against the fuel-cost line)</summary>
   </entry>
   <entry>
     <title>BAC_CTG4: Timescale group changed (2026-06-01)</title>
@@ -72,14 +72,14 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=BAC_CTG4"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=BAC_CTG4#BAC_CTG4/2026-04-25/dam_mingen_step</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Minimum-energy offer stepped: $98 to $61/MWh ($53 to $37 against the fuel-cost line)</summary>
+    <summary>Minimum-energy offer stepped: $98 to $61/MWh ($46 to $33 against the fuel-cost line)</summary>
   </entry>
   <entry>
     <title>BAC_CTG4: Minimum-energy offer stepped (2026-04-25)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=BAC_CTG4"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=BAC_CTG4#BAC_CTG4/2026-04-25/dam_mingen_step</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Minimum-energy offer stepped: $98 to $61/MWh ($53 to $37 against the fuel-cost line)</summary>
+    <summary>Minimum-energy offer stepped: $98 to $61/MWh ($46 to $33 against the fuel-cost line)</summary>
   </entry>
   <entry>
     <title>BAC_CTG4: Bidding approach shifted (2026-04-13)</title>
