@@ -59,6 +59,7 @@
     <p class="sub" id="unit-who" hidden></p>
     <p class="sub" id="unit-site" hidden></p>
     <p class="verdict" id="unit-verdict"></p>
+    <p class="verdict" id="unit-outage" hidden></p>
   </div>
   <p class="status" id="status">Loading data…</p>
 </header>
@@ -176,6 +177,20 @@
     <h3 class="sub-h" id="runs-h">How long it stays on once started</h3>
     <p class="note" id="runs-note"></p>
     <div class="chart" id="runs-chart"></div>
+  </section>
+
+  <section class="panel panel-wide unit-only" id="rout-panel" hidden>
+    <div class="panel-head">
+      <div>
+        <h2>Hours available and outages</h2>
+        <p class="note" id="rout-note"></p>
+      </div>
+    </div>
+    <div class="legend legend-static" id="rout-legend"></div>
+    <div class="chart" id="rout-strip"></div>
+    <h3 class="sub-h">Outages and derates</h3>
+    <p class="note" id="rout-table-note"></p>
+    <div class="units-wrap scroll-x" id="rout-table"></div>
   </section>
 
   <section class="panel panel-wide unit-only" id="day-panel" hidden>
@@ -333,6 +348,7 @@
 <script src="unit-fuel.js"></script>
 <script src="unit-battery.js"></script>
 <script src="unit-renew.js"></script>
+<script src="unit-outage.js"></script>
 <script src="unit-dam.js"></script>
 <script src="event-chart.js"></script>
 <script src="unit-events.js"></script>

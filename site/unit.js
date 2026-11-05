@@ -751,6 +751,16 @@ function drawRuns(e) {
 }
 
 // ---- one day by hour: output, base point and limits, with lambda (data/60d-units/<date>) ----
+// wind and solar: the day's outage hours from data/renew_outages_60d.json.gz (unit-outage.js loads it)
+function renewOutNote(e, day, whole) {
+  const R = window.RENEW_OUT, str = R && R.strips[e.name], i = R ? R.dates.indexOf(day) : -1;
+  if (!str || i < 0) return "";
+  const d = str.slice(i * 24, i * 24 + 24), o = [...d].filter((c) => c === "o").length, dr = [...d].filter((c) => c === "d").length;
+  if (whole && o === 24) return `On outage all day on ${fmtDate(parseDate(day))} (ERCOT's telemetered status OUT).`;
+  const parts = (o ? ` On outage ${o} hour${o === 1 ? "" : "s"} (status OUT).` : "") + (dr ? ` Derated ${dr} hour${dr === 1 ? "" : "s"} (ERCOT outage report).` : "");
+  return whole && parts ? `Offline all day on ${fmtDate(parseDate(day))}.` + parts : parts;
+}
+window.addEventListener("renewoutloaded", () => { const e = S.list && S.list.get(S.unit); if (e && (e.tech === "wind" || e.tech === "solar")) drawDay(e); });
 const dayCache = new Map();
 const loadDayUnits = (d) => { if (!dayCache.has(d)) dayCache.set(d, tryJSON(`data/60d-units/${d}.json.gz`)); return dayCache.get(d); };
 async function drawDay(e) {
@@ -789,7 +799,7 @@ async function drawDay(e) {
     (renew ? `Bars are what it produced, averaged over ERCOT's five-minute dispatch runs (SCED); the band's top is what it could have produced (HSL), so the gap is curtailment` + (avail - made >= 0.01 * avail ? `: ${fmtMW(avail - made)} MWh, ${fmtPct((avail - made) / avail)} of what was available.` : ".")
       : `Bars are telemetered output, averaged over ERCOT's five-minute dispatch runs (SCED); the black tick is the base point (the output SCED asked for) and the band runs from its minimum (LSL) to its maximum (HSL).`) +
     ` Below, the system price (lambda) each hour. Click an hour to see the offer curve it was dispatched on.` +
-    (nDead ? ` In ${nDead} of those hours it was online with no output: SCED had it on with a minimum, but it telemetered nothing.` : "") : `Offline all day on ${fmtDate(parseDate(day))}.`);
+    (nDead ? ` In ${nDead} of those hours it was online with no output: SCED had it on with a minimum, but it telemetered nothing.` : "") + renewOutNote(e, day) : renewOutNote(e, day, true) || `Offline all day on ${fmtDate(parseDate(day))}.`);
   const s = TECH_OF[e.tech] || { color: "--c-other" };
   const w = Math.max(280, el.clientWidth || 600), Hh = 230, Hp = 110, m = { t: 18, r: 16, b: 26, l: 64 };
   const x = d3.scaleBand().domain(d3.range(24)).range([m.l, w - m.r]).padding(0.15);
