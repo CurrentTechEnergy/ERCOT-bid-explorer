@@ -43,8 +43,8 @@
 <header class="masthead">
   <div class="brand">
     <div class="nav-row"><nav class="nav" aria-label="Pages"><a href="goal.html">Will fossil turn off?</a><a href="index.html" aria-current="page">A day in ERCOT</a><a href="prices.html">Prices</a><a href="dayahead.html">Day-ahead offers</a><a href="commitment.html">Turn-ons and Turn-offs</a><a href="beyond.html">Real-time offers</a><a href="renewables.html">Renewables</a><a href="batteries.html">Batteries</a><a href="unit.html">Units</a><span class="nav-sep" aria-hidden="true"></span><a href="changes.html" class="aux">What's changing</a><a href="fleet.html" class="aux">Fleet economics</a><a href="guide.html" class="aux">How offers work</a></nav></div>
-    <h1>ERCOT Bid Stack Explorer</h1>
-    <p class="sub">A day in ERCOT, from ERCOT's own reports: what the day cost, what ran hour by hour, and which thermal units stayed on.</p>
+    <h1>A day in ERCOT</h1>
+    <p class="sub">One operating day from ERCOT's own reports: what power cost hour by hour, what ran, how much of the thermal fleet could not have come off (its minimum output), and which units stayed on. Pick a day; click any hour to drill into it.</p>
   </div>
   <p class="status" id="status">Loading data…</p>
 </header>
@@ -68,6 +68,7 @@
       <div>
         <p class="lede" id="lede"></p>
         <p class="lede-sub" id="lede-sub"></p>
+        <p class="note" id="expect-lead" hidden></p>
         <ul class="expect" id="expect"></ul>
         <p class="note step-link" id="decisions-link"></p>
       </div>
@@ -116,7 +117,7 @@
     <div class="panel-head">
       <div>
         <h2>Online minimum and maximum, by hour <span class="h-note" id="limits-note"></span></h2>
-        <p class="note">For the units online in each hour: the solid bar is their summed minimum (LSL), the light bar runs up to their summed maximum (HSL), both from SCED, and the dark line is what they ran. Peakers are the units that run like peakers, whatever their technology (online under 30% of available hours, at most 16 hours a day when on); by how often it turns off, they get their own chart and leave their groups. Wind and solar show HSL only. Shaded hours had system lambda at $10 or less. Each chart has its own scale; click an hour to pick it below.</p>
+        <p class="note">How much of each group could have come off in each hour without a shutdown. The solid bar is the online units' summed minimum output (LSL, the lowest they can run while online); the light bar runs up to their summed maximum (HSL); the dark line is what they ran. Where the line sits on the solid bar, the group was at its floor and could only cut further by turning units off. In the "by how often it turns off" view, peakers get their own chart. Wind and solar show HSL only. Shaded hours: real-time system lambda at $10/MWh or less. Each chart has its own scale; click an hour to pick it for the panels below.</p>
       </div>
       <div class="panel-tools">
         <div class="seg seg-sm" id="lim-by" role="radiogroup" aria-label="Group by">
@@ -140,7 +141,7 @@
     <div class="panel-head">
       <div>
         <h2>Units <span class="h-note" id="units-note"></span></h2>
-        <p class="note">Each thermal unit's hours online and output in the 60-day disclosure, with its group: how often it has turned off on price. Combined-cycle configurations are summed into their train. Hover a column for its meaning; click to sort.</p>
+        <p class="note">Every thermal unit on the day, so you can see which ran flat out, which sat at minimum and which stayed off: hours online and output from the 60-day disclosure, with its group (how often it has turned off on price). Combined-cycle configurations are summed into their train. Hover a column for its meaning; click to sort.</p>
       </div>
       <div class="panel-tools">
         <div class="seg seg-sm" id="unit-view" role="radiogroup" aria-label="Hours">
@@ -159,7 +160,8 @@
 </main>
 
 <footer class="foot">
-  <p>Source: ERCOT's real-time system lambda and settlement point prices (NP6-322-CD, NP6-905-CD), day-ahead system lambda (NP4-523-CD), the 2-day generation summary (NP3-910-ER) and the 60-day SCED disclosure (NP3-965-ER). Times are hour ending, Central prevailing time. Nothing on this page is a forecast: every figure is what ERCOT reported for the day.</p>
+  <p>Source: ERCOT's real-time system lambda and settlement point prices (NP6-322-CD, NP6-905-CD), day-ahead system lambda (NP4-523-CD), the 2-day generation summary (NP3-910-ER) and the 60-day SCED disclosure (NP3-965-ER). Nothing on this page is a forecast: every figure is what ERCOT reported for the day.</p>
+  <p>Hours are ERCOT hour ending in Central prevailing time: HE 13 is noon to 1 pm. Dates are operating days.</p>
   <p>Made by <a href="https://currenttech.energy">currenttech.energy</a> · <a href="contact.html">Contact</a></p>
   <p>Not affiliated with or endorsed by ERCOT. ERCOT is a registered trademark of the Electric Reliability Council of Texas, Inc.</p>
   <p>© 2026 CurrentTech Energy. All rights reserved. For information only; not trading or investment advice. <a href="terms.html">Terms and privacy</a></p>

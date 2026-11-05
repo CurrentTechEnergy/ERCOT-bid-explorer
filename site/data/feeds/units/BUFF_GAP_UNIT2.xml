@@ -16,13 +16,13 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=BUFF_GAP_UNIT2"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=BUFF_GAP_UNIT2#BUFF_GAP_UNIT2/2023-06-30/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: floor $0 to floor -$2</summary>
+    <summary>New floor: $0/MWh to −$2/MWh</summary>
   </entry>
   <entry>
     <title>BUFF_GAP_UNIT2: New floor (2023-03-29)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=BUFF_GAP_UNIT2"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=BUFF_GAP_UNIT2#BUFF_GAP_UNIT2/2023-03-29/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: floor -$2 to floor $0</summary>
+    <summary>New floor: −$2/MWh to $0/MWh</summary>
   </entry>
 </feed>

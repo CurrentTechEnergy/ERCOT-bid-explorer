@@ -24,17 +24,17 @@ const THERMAL = ["nuclear", "coal", "combined_cycle", "gas_steam", "combustion_t
 const FLOOR_GROUPS = [
   { id: "nuclear", label: "Nuclear (no offer curve)", color: "--c5" },
   { id: "never", label: "Always on when available", color: "--c1" },
-  { id: "multiday", label: "Multi-day: off a day or more", color: "--c2" },
-  { id: "daily1", label: "Daily, under 1 shutdown a week", color: "--c8" },
-  { id: "daily2", label: "Daily, 1–2 a week", color: "--c3" },
-  { id: "daily3", label: "Daily, over 2 a week", color: "--c4" },
+  { id: "multiday", label: "Off for days at a time", color: "--c2" },
+  { id: "daily1", label: "Cycles daily, under once a week", color: "--c8" },
+  { id: "daily2", label: "Cycles daily, 1 to 2 times a week", color: "--c3" },
+  { id: "daily3", label: "Cycles daily, over twice a week", color: "--c4" },
 ];
 
 
 // capacity by status from the intraday file (pipeline/intraday.py status_group)
 const STATUS6 = [
-  { id: "offer", label: "Running on an offer", color: "--c1" },
-  { id: "schedule", label: "Running without an offer curve", color: "--c4" },
+  { id: "offer", label: "Running on an offer curve", color: "--c1" },
+  { id: "schedule", label: "Running on a schedule (no offer curve)", color: "--c4" },
   { id: "ruc", label: "Committed by ERCOT (RUC)", color: "--c7" },     // purple wherever RUC is marked (CX.rucRing)
   { id: "other_on", label: "Other online states (testing, held, starting, stopping)", color: "--c7-soft" },
   { id: "quick", label: "Offline, quick start", color: "--c2" },
@@ -191,7 +191,9 @@ function drawCapacity() {
   const el = $("cap-chart"), s = TECHS.find((t) => t.id === S.capTech);
   const C = S.I && S.I.tech[S.capTech];
   if (C && C.cap_offer) {
-    window.CX.setNote($("cap-note"), "Capacity by unit status each day. Offline but available is the economic choice not to run; outages are not.", "MW of capacity (HSL) by unit status, averaged over each day's SCED runs, from the per-unit 60-day data. \"Offline but available\" is the economic choice not to run; outages are not. Units running without an offer curve (status ONOS) are held to the MW their QSE scheduled; units testing without one are under Other online states. RUC is ERCOT committing a unit for reliability, which is rare. Quick start (OFFQS) is offline capacity SCED can start within the hour; emergency only (EMR, EMRSWGR) is kept for emergencies or can be switched to another grid, so it is not economic capacity.");
+    const avgOf = (k) => d3.mean(C["cap_" + k] || [], (v) => v) || 0;
+    const run = avgOf("offer") + avgOf("schedule") + avgOf("ruc") + avgOf("other_on");
+    window.CX.setNote($("cap-note"), `How much of the ${s.label.toLowerCase()} fleet's capacity (HSL) was running each day, and how much sat offline though it could have run. Offline but available is capacity whose owner chose not to run, so its size against the running bands is the day's commitment decision in one picture; outages are not a choice. Over these days ${s.label.toLowerCase()} averaged ${fmtGW(avgOf("off"))} offline but available, against ${fmtGW(run)} running.`, "MW of capacity (HSL) by unit status, averaged over each day's SCED runs, from the per-unit 60-day data. \"Offline but available\" is the economic choice not to run; outages are not. Units running without an offer curve (status ONOS) are held to the MW their QSE scheduled; units testing without one are under Other online states. RUC is ERCOT committing a unit for reliability, which is rare. Quick start (OFFQS) is offline capacity SCED can start within the hour; emergency only (EMR, EMRSWGR) is kept for emergencies or can be switched to another grid, so it is not economic capacity.");
     staticLegend($("cap-legend"), STATUS6);
     const series = STATUS6.filter((g) => C["cap_" + g.id]).map((g) => ({ ...g, values: C["cap_" + g.id] }));
     return timeChart(el, series, { stack: true, dates: S.I.dates,
@@ -253,7 +255,7 @@ const pTag = (n) => window.CX.peakerTag(S.G, S.G?.units?.[n] ? n : trainOf(n));
 
 function drawCheap() {
   const I = S.I, el = $("cheap-chart");
-  if (!I) return emptyMsg(el, "Fills in after the data update builds the intraday file.");
+  if (!I) return emptyMsg(el, "No data for this panel yet.");
   const thr = +S.cheapThr, ts = techsOf(S.cheapTech), s = S.cheapTech === "all" ? ALL_THERMAL : TECHS.find((x) => x.id === S.cheapTech);
   const hrs = I.dates.map((_, i) => d3.range(24).filter((h) => I.lambda[i][h] != null && I.lambda[i][h] < thr && I.tech[ts[0]].at_min[i]));
   // nuclear runs flat out whatever its reported LSL, so with all thermal it is its own segment
@@ -267,7 +269,10 @@ function drawCheap() {
   ];
   $("cheap-legend").innerHTML = series.map((x) => `<span><span class="sw" style="background:var(${x.color});opacity:${x.opacity || 1}"></span>${x.label}</span>`).join("");
   const nDays = hrs.filter((h) => h.length).length;
-  window.CX.setNote($("cheap-note"), `Thermal output in hours with lambda below ${fmtPrice0(thr)}, split into minimum output and output above it.`, `Average MW of ${s.label.toLowerCase()} output in the hours each day when system lambda was below ${fmtPrice0(thr)} (${nDays} of ${I.dates.length} days had such hours), split into output up to each running unit's minimum (LSL) and output above it. A unit counts as at minimum when its output is no more than ${fmtPct(I.above_eps)} of its HSL above its LSL. Output at minimum is what the unit cannot shed without shutting down. Nuclear reports a low LSL but runs flat out, so with all thermal selected it is shown whole, and on its own nearly all of it shows as above minimum.`);
+  const pm = (v) => d3.mean(v.filter((x) => x != null)) || 0;
+  const nucAvg = split ? pm(series[0].values) : 0;
+  window.CX.setNote($("cheap-note"), `When cheap prices come, how much thermal output is online, and how much of it runs above minimum? Each bar is a day with hours of real-time system lambda below ${fmtPrice0(thr)}/MWh: the average ${S.cheapTech === "all" ? "thermal" : s.label.toLowerCase()} output in those hours, split into the part at minimum output (which cannot back down without a shutdown) and the part above minimum (running by choice at these prices). ` +
+    `Across the ${nDays} days with such hours, ${split ? `nuclear averaged ${fmtGW(nucAvg)}, other thermal ${fmtGW(pm(atMin))} at minimum and only ${fmtGW(pm(above))} above it` : `${fmtGW(pm(atMin))} ran at minimum and ${fmtGW(pm(above))} above it`}.`, `Average MW of ${s.label.toLowerCase()} output in the hours each day when system lambda was below ${fmtPrice0(thr)} (${nDays} of ${I.dates.length} days had such hours), split into output up to each running unit's minimum (LSL) and output above it. A unit counts as at minimum when its output is no more than ${fmtPct(I.above_eps)} of its HSL above its LSL. Output at minimum is what the unit cannot shed without shutting down. Nuclear reports a low LSL but runs flat out, so with all thermal selected it is shown whole, and on its own nearly all of it shows as above minimum.`);
   dayBars(el, I.dates, series, { title: `${s.label}: average MW in hours with lambda below ${fmtPrice0(thr)}`, none: `No hours with lambda below ${fmtPrice0(thr)}`,
     tipNote: (i) => ` · ${hrs[i].length} h, ${d3.format(",.0f")(n[i])} units running` });
 }
@@ -287,10 +292,10 @@ const ST_RESP = [
 const ST_NEVER_ON_DAYS = 120;              // never on needs this many days of hourly states with no running hour
 const ST_GROUPS = [
   { id: "never", label: "Always on when available", note: "no shutdown on price in the period; off only for outages" },
-  { id: "multiday", label: "Multi-day: off a day or more", note: "shortest off spell a day or more" },
-  { id: "daily1", label: "Daily, under 1 shutdown a week", note: "at least two off spells under 24 h, fewer than one shutdown a week" },
-  { id: "daily2", label: "Daily, 1–2 a week", note: "one to two shutdowns a week" },
-  { id: "daily3", label: "Daily, over 2 a week", note: "more than two shutdowns a week" },
+  { id: "multiday", label: "Off for days at a time", note: "shortest off spell a day or more" },
+  { id: "daily1", label: "Cycles daily, under once a week", note: "at least two off spells under 24 h, fewer than one shutdown a week" },
+  { id: "daily2", label: "Cycles daily, 1 to 2 times a week", note: "one to two shutdowns a week" },
+  { id: "daily3", label: "Cycles daily, over twice a week", note: "more than two shutdowns a week" },
   { id: "never_on", label: "Never on", note: `no running hour in ${ST_NEVER_ON_DAYS}+ days of states` },
 ];
 const ST_OUT_MIN_H = 2;                  // an off spell with fewer OFF hours than this, or more OUT than OFF, is an outage
@@ -520,7 +525,9 @@ function drawMonths(fleet, s, thr) {
   const units = fleet.map((e) => ({ e, r: M.rows.get(e.unit) })).filter((x) => x.r && x.r.share.some((v) => v != null))
     .sort((a, b) => d3.ascending(ST_GROUPS.findIndex((g) => g.id === a.e.group), ST_GROUPS.findIndex((g) => g.id === b.e.group)) || d3.descending(a.e.mw, b.e.mw));
   const tested = M.months.map((_, i) => M.cheapH[i] >= ST_MIN_CHEAP_H);
-  window.CX.setNote($("st-month-note"), `Share of each month's hours with lambda below ${fmtPrice0(thr)} that each unit kept running. Dark rode through, light turned off, blank is untested.`, `Each cell is the share of hours with system lambda below ${fmtPrice0(thr)} that month in which the unit kept running, out of the hours it was available (running or off but not on outage). ` +
+  const bi = d3.maxIndex(M.cheapH), atAll = units.filter((x) => x.r.share[bi] != null), at100 = atAll.filter((x) => x.r.share[bi] >= 0.999).length;
+  window.CX.setNote($("st-month-note"), `For each unit and month, the share of the hours with real-time lambda below ${fmtPrice0(thr)}/MWh that it kept running while it was available. Dark cells rode through nearly every cheap hour; light cells turned off for most; blank cells had too few cheap hours (under ${ST_MIN_CHEAP_H}) to judge. Rows are sorted by group, then capacity.` +
+    (atAll.length ? ` In ${d3.timeFormat("%B %Y")(parseDate(M.months[bi] + "-15"))}, the month with most cheap hours (${M.cheapH[bi]}), ${at100} of ${atAll.length} judged units ran through every one of them.` : ""), `Each cell is the share of hours with system lambda below ${fmtPrice0(thr)} that month in which the unit kept running, out of the hours it was available (running or off but not on outage). ` +
     `Dark means it rode through, light means it turned off. Blank cells are untested: fewer than ${ST_MIN_CHEAP_H} cheap hours while the unit was available, or the unit on outage. ` +
     `A unit's own month can be untested in a month with cheap hours if it was on outage for them. Rows are sorted by group, then capacity. Click a row to open the unit.`);
   // units whose share moved between the two most recent windows of tested months
@@ -528,14 +535,14 @@ function drawMonths(fleet, s, thr) {
     .sort((a, b) => d3.descending(Math.abs(b.c.late - b.c.early), Math.abs(a.c.late - a.c.early)));
   const win = (ix) => `${fmtM(M.months[ix[0]])}–${fmtM(M.months[ix.at(-1)])}`;
   $("st-changed").innerHTML = changed.length
-    ? `<p class="note">Changed behavior: units whose run-through share moved by ${fmtPct(ST_CHANGE)} or more between their two most recent windows of ${ST_WINDOW} tested months.</p>` +
+    ? `<p class="note">Changed behavior: units whose run-through share moved by ${Math.round(ST_CHANGE * 100)} percentage points or more between their two most recent windows of ${ST_WINDOW} tested months.</p>` +
       unitRows(changed.map((x) => ({ ...x.e, unit: x.e.pick, c: x.c })), [
         { h: "Unit", t: 1, f: (r) => esc(r.unit === r.pick ? r.unit : `${r.unit} (${r.unit})`) }, { h: "Technology", t: 1, f: (r) => techLabel(r.tech) }, { h: "Group", t: 1, f: (r) => gl(r.group) + pTag(r.unit) },
         { h: "MW", f: (r) => fmtMW(r.mw) }, { h: "Earlier window", t: 1, f: (r) => win(r.c.earlyIx) }, { h: "Ran through", f: (r) => fmtPct(r.c.early) },
         { h: "Latest window", t: 1, f: (r) => win(r.c.lateIx) }, { h: "Ran through", f: (r) => fmtPct(r.c.late) },
-        { h: "Change", f: (r) => (r.c.late >= r.c.early ? "+" : "−") + fmtPct(Math.abs(r.c.late - r.c.early)) },
+        { h: "Change, points", f: (r) => (r.c.late >= r.c.early ? "+" : "−") + Math.round(Math.abs(r.c.late - r.c.early) * 100) },
       ])
-    : `<p class="note">No unit changed its behavior between its two most recent windows of ${ST_WINDOW} tested months (a change is ${fmtPct(ST_CHANGE)} or more in the share of cheap hours it ran through).</p>`;
+    : `<p class="note">No unit changed its behavior between its two most recent windows of ${ST_WINDOW} tested months (a change is ${Math.round(ST_CHANGE * 100)} percentage points or more in the share of cheap hours it ran through).</p>`;
   if (!units.length) return emptyMsg(el, "No units match.");
   const base = d3.color(css(s.color));
   const cell = (v) => {
@@ -544,7 +551,7 @@ function drawMonths(fleet, s, thr) {
     return `<td style="background:${c.formatRgb()};color:${v > 0.55 ? "#fff" : "inherit"}">${fmtPct(v)}</td>`;
   };
   el.innerHTML = `<table class="data st-grid"><thead><tr><th class="t">Unit</th><th class="t">Group</th><th>MW</th>` +
-    M.months.map((m, i) => `<th${tested[i] ? "" : ' class="st-na"'} title="${M.cheapH[i]} hours below ${fmtPrice0(thr)}">${fmtM(m)}<br><span class="muted">${M.cheapH[i]} h</span></th>`).join("") + "</tr></thead><tbody>" +
+    M.months.map((m, i) => `<th${tested[i] ? "" : ' class="st-na"'} title="${M.cheapH[i]} hour${M.cheapH[i] === 1 ? "" : "s"} below ${fmtPrice0(thr)}/MWh">${fmtM(m)}<br><span class="muted">${M.cheapH[i]} h</span></th>`).join("") + "</tr></thead><tbody>" +
     units.map((x) => `<tr data-unit="${esc(x.e.pick)}" style="cursor:pointer"><td class="t">${esc(x.e.unit)}</td><td class="t">${gl(x.e.group)}</td><td>${fmtMW(x.e.mw)}</td>${x.r.share.map(cell).join("")}</tr>`).join("") +
     "</tbody></table>";
   setCSV(el, ["unit", "technology", "group", "mw", ...M.months.map((m) => `${m}_share_ran_through`), ...M.months.map((m) => `${m}_cheap_hours_available`)],
@@ -564,7 +571,7 @@ const decisionOf = (key) => {
 const fmtK = (v) => (v == null ? "–" : (v < 0 ? "−" : "") + "$" + d3.format(",.0f")(Math.abs(v) / 1e3) + "k");
 async function drawStretch() {
   const el = $("st-group");
-  if (!S.I) return emptyMsg(el, "Fills in after the data update builds the intraday file.");
+  if (!S.I) return emptyMsg(el, "No data for this panel yet.");
   if (!S.UH) {
     el.innerHTML = `<p class="empty">Loading hourly data…</p>`;
     await loadUnitHours();
@@ -588,11 +595,15 @@ async function drawStretch() {
     });
     return out;
   });
-  window.CX.setNote($("st-note"), `Coal and gas capacity by what it did across the ${nEps} stretches of lambda below ${fmtPrice0(thr)}: turned off before or during, or ran through.`, `A cheap stretch is a run of consecutive hours with system lambda below ${fmtPrice0(thr)}. There were ${nEps} from ${period}. ` +
+  const shown = groups.filter((g) => g.n);
+  const runIn = d3.sum(shown, (g) => g.total - g.mw.N), rode = d3.sum(shown, (g) => g.mw.M + g.mw.A);
+  const onG = groups.find((g, i) => ST_GROUPS[i].id === "never"), rodeOn = onG ? onG.mw.M + onG.mw.A : 0;
+  window.CX.setNote($("st-note"), `When the real-time price fell below ${fmtPrice0(thr)}/MWh for a run of hours (${nEps} such stretches, ${period}), what did the coal and gas fleet do: turn off in the ${ST_LEAD} hours before, turn off during, run at minimum output, or keep running above minimum? Units are grouped by how often they have shut down on price, so the bars show how much capacity sits in the groups that never respond. ` +
+    (runIn > 0 ? `Of the capacity running into these stretches, ${fmtPct(rode / runIn)} rode through${rodeOn ? `, and ${fmtPct(rodeOn / rode)} of that was in the always-on group` : ""}.` : ""), `A cheap stretch is a run of consecutive hours with system lambda below ${fmtPrice0(thr)}. There were ${nEps} from ${period}. ` +
     `Each bar is the total capacity (HSL) of one group of ${S.stTech === "all" ? "coal and gas" : s.label.toLowerCase()} units, grouped by how they ran over the whole period: ${ST_GROUPS.map((g) => `${g.label.toLowerCase()} (${g.note})`).join("; ")}. ` +
     `Each unit's capacity is split by what it did across the ${nEps} stretches: turned off in the ${ST_LEAD} hours before, turned off during, ran at minimum or above minimum (when it was already running ${ST_LEAD} hours before the stretch began), or not running going in (offline, on outage or no data). Units that never ran in the period are left out. ` +
     `Each combined-cycle train counts as one unit, so switching configuration is not a shutdown. Nuclear is left out. Lambda is the system price; a unit's own nodal price can differ.`);
-  fleetBars(el, groups, s, S.stUnit === "mw" ? "Capacity of each group, MW, split by what it did in cheap stretches" : "Share of each group's capacity, by what it did in cheap stretches");
+  fleetBars(el, groups.filter((g) => g.n), s, S.stUnit === "mw" ? "Capacity of each group, MW, split by what it did in cheap stretches" : "Share of each group's capacity, by what it did in cheap stretches");
   drawMonths(fleet, s, thr);
   // the per-unit columns (stretches, shutdowns, hours off, cutoff) are in the units table at the foot of the page
   setCSV(el, ["group", "units", "capacity_mw", ...ST_FLEET.map((r) => r.label)], groups.map((g) => [g.label, g.n, Math.round(g.total), ...ST_FLEET.map((r) => Math.round(g.mw[r.id]))]), `Cheap stretches, lambda below ${thr}`);
@@ -603,7 +614,7 @@ const FOSSIL = THERMAL.filter((t) => t !== "nuclear");
 const LEAN_N = 25;
 function drawLean() {
   const I = S.I, HC = S.HC, el = $("lean-table");
-  if (!I) return emptyMsg(el, "Fills in after the data update builds the intraday file.");
+  if (!I) return emptyMsg(el, "No data for this panel yet.");
   const fossil = S.leanRank === "fossil", ci = new Map((HC?.dates || []).map((d, i) => [d, i]));
   const months = [...new Set(I.dates.map((d) => d.slice(0, 7)))];
   bindSelect("lean-month", "leanMonth", [{ id: "all", label: "All months" },
@@ -634,19 +645,20 @@ function drawLean() {
   const mw = (v) => (v == null ? "–" : fmtMW(v));
   const cols = [
     { h: "Date", t: 1, k: "date", f: (r) => d3.timeFormat("%a %b %-d, %Y")(parseDate(r.d)) }, { h: "HE", k: "hour_ending", f: (r) => r.h + 1 },
-    { h: fossil ? "Fossil MW" : "Thermal MW", k: fossil ? "fossil_mw" : "thermal_mw", f: (r) => `<b>${mw(r.v)}</b>` },
-    { h: "Fossil above min.", k: "fossil_above_min_mw", f: (r) => mw(r.above) },
-    { h: "Fossil starting/stopping", k: "fossil_starting_stopping_mw", f: (r) => mw(r.transit) },
-    { h: "Coal", k: "coal_mw", f: (r) => mw(r.coal) }, { h: "Comb. cycle", k: "combined_cycle_mw", f: (r) => mw(r.combined_cycle) },
-    { h: "Gas steam", k: "gas_steam_mw", f: (r) => mw(r.gas_steam) }, { h: "CT", k: "combustion_turbine_mw", f: (r) => mw(r.combustion_turbine) },
-    { h: "Nuclear", k: "nuclear_mw", f: (r) => mw(r.nuc) }, { h: "Wind", k: "wind_mw", f: (r) => mw(r.wind) }, { h: "Solar", k: "solar_mw", f: (r) => mw(r.solar) },
-    { h: "Storage", k: "storage_mw", f: (r) => mw(r.storage) }, { h: "Lambda", k: "lambda", f: (r) => fmtPrice(r.lam) }, { h: "Hub avg", k: "hub_avg", f: (r) => fmtPrice(r.hub) },
+    { h: fossil ? "Fossil, MW" : "Thermal, MW", k: fossil ? "fossil_mw" : "thermal_mw", f: (r) => `<b>${mw(r.v)}</b>` },
+    { h: "Fossil above minimum, MW", k: "fossil_above_min_mw", f: (r) => mw(r.above) },
+    { h: "Fossil starting or stopping, MW", k: "fossil_starting_stopping_mw", f: (r) => mw(r.transit) },
+    { h: "Coal, MW", k: "coal_mw", f: (r) => mw(r.coal) }, { h: "Combined cycle, MW", k: "combined_cycle_mw", f: (r) => mw(r.combined_cycle) },
+    { h: "Gas steam, MW", k: "gas_steam_mw", f: (r) => mw(r.gas_steam) }, { h: "Combustion turbine, MW", k: "combustion_turbine_mw", f: (r) => mw(r.combustion_turbine) },
+    { h: "Nuclear, MW", k: "nuclear_mw", f: (r) => mw(r.nuc) }, { h: "Wind, MW", k: "wind_mw", f: (r) => mw(r.wind) }, { h: "Solar, MW", k: "solar_mw", f: (r) => mw(r.solar) },
+    { h: "Storage (net), MW", k: "storage_mw", f: (r) => mw(r.storage) }, { h: "RT lambda, $/MWh", k: "lambda", f: (r) => fmtPrice(r.lam) }, { h: "Hub average, $/MWh", k: "hub_avg", f: (r) => fmtPrice(r.hub) },
   ];
   const val = (r) => [r.d, r.h + 1, r.v, r.above, r.transit, r.coal, r.combined_cycle, r.gas_steam, r.combustion_turbine, r.nuc, r.wind, r.solar, r.storage, r.lam, r.hub];
   const scope = S.leanMonth === "all" ? "all days" : d3.timeFormat("%B %Y")(parseDate(S.leanMonth + "-15"));
-  window.CX.setNote($("lean-note"), `The ${top.length} hours with the least ${fossil ? "fossil" : "thermal"} output. Click a row to open that hour on the Real-time offers page.`, `The ${top.length} hours with the least ${fossil ? "fossil (coal, combined cycle, gas steam and combustion turbine)" : "thermal (fossil and nuclear)"} output, ${scope}` +
-    `${S.leanPer === "day" ? ", one per day" : ""}, from the 60-day disclosure. Output counts every unit's telemetered MW, including units starting up, shutting down or online for under half the hour ("starting/stopping"). ` +
-    `"Above min." is output above each running unit's LSL; the rest of the running units' output is what they could not shed without shutting down. ` +
+  window.CX.setNote($("lean-note"), `How far will the ${fossil ? "fossil" : "thermal"} fleet back down? The ${top.length} hours${S.leanPer === "day" ? " (one per day)" : ""} with the least ${fossil ? "coal and gas" : "thermal"} output, with what else was on the system. "Above minimum" is the fossil output still running by choice; the lambda column is the price it took to get there.` +
+    (top.length ? ` In these hours ${fossil ? "fossil" : "thermal"} output ran from ${fmtGW(top[0].v)} to ${fmtGW(top.at(-1).v)}, with on average ${fmtGW(d3.mean(top, (r) => r.above))} of fossil output above minimum.` : "") + ` Click a row to open that hour on the Real-time offers page.`, `The ${top.length} hours with the least ${fossil ? "fossil (coal, combined cycle, gas steam and combustion turbine)" : "thermal (fossil and nuclear)"} output, ${scope}` +
+    `${S.leanPer === "day" ? ", one per day" : ""}, from the 60-day disclosure. Output counts every unit's telemetered MW, including units starting up, shutting down or online for under half the hour ("starting or stopping"). ` +
+    `"Above minimum" is output above each running unit's LSL; the rest of the running units' output is what they could not shed without shutting down. ` +
     `Storage is net output (negative while charging); hub avg is the HB_HUBAVG settlement point price. Click a row to open that hour on the Real-time offers page.`);
   if (!top.length) { el.innerHTML = `<p class="empty">No hours in this range.</p>`; setCSV(el, [], [], "Leanest thermal hours"); return; }
   el.innerHTML = `<table class="data"><thead><tr>${cols.map((c) => `<th${c.t ? ' class="t"' : ""}>${c.h}</th>`).join("")}</tr></thead><tbody>` +
@@ -657,7 +669,7 @@ function drawLean() {
 // ==== one day: turn-off points, groups and turn-off points, what each unit did ============
 // The units online going into a 60-day day and what they did come from data/decisions.json.gz
 // (pipeline/decisions.py). Each CC train's and gas steam unit's turn-off point that day comes from
-// the operator-informed model (data/operator/cutoffs.json.gz, pipeline/models/operator_cutoffs.py):
+// the operator model (data/operator/cutoffs.json.gz, pipeline/models/operator_cutoffs.py):
 // how much being off would have to save before the model's day call turns it off. Coal is
 // drawn flat: it does not cycle within a day.
 const GROUP_LABEL = Object.fromEntries([...ST_GROUPS.map((g) => [g.id, g.label]), ["ungrouped", "Not yet grouped"]]);
@@ -668,7 +680,7 @@ const fmt$ = (v) => (v == null || isNaN(v) ? "–" : (v < 0 ? "−" : "") + "$" 
 const fmtPerMW = (v) => (v == null || isNaN(v) ? "–" : (v < 0 ? "−" : "") + "$" + d3.format(",.1f")(Math.abs(v)));
 const fmtGW = (v) => d3.format(",.1f")(v / 1e3) + " GW";
 const unitHref = (u) => `unit.html?unit=${encodeURIComponent(trainOf(u))}`;   // a combined-cycle configuration opens its train
-const SAVING_NOTE = "The loss from staying on is what running at minimum would lose over the best stretch of the day for being off, at least the unit's minimum down time long (its shortest off spell before the month, at least 2 hours; to the end of the day if less is left), at its own node's day-ahead price against its fuel cost at minimum (its measured heat rate at minimum × its own gas hub's price the trading day before; coal at the plant's EIA-923 coal price), times its LSL, divided by its LSL so units of every size compare, before any restart cost. Negative means staying on paid. The day stops at HE 24: the next day's prices are not known when the operator decides.";
+const SAVING_NOTE = "Loss from staying on: for each stretch of the day at least as long as the unit's minimum down time (its shortest off spell before the month, 2 hours at least), the cost of running at minimum output at its fuel cost (its measured heat rate at minimum × its own gas hub's price the trading day before; coal at the plant's EIA-923 coal price), less what the day-ahead price at its node would have paid for that output. The worst such stretch is the loss, shown per MW of minimum output (LSL) so units of every size compare, and before any restart cost. Negative means staying on paid. The stretch cannot run past HE 24, because the next day's prices are not known when the operator decides.";
 
 // decisions.json day rows: [train, date, loss, first hour ending, hours, award share, shut, hours off]
 const DAY_F = { unit: 0, date: 1, loss: 2, he: 3, hours: 4, award: 5, shut: 6, hoff: 7 };
@@ -727,15 +739,17 @@ function drawCutUnits() {
   if (!rowsG.length) { $("cut-units-stayed").textContent = ""; $("cut-units-note").textContent = ""; $("cut-units-legend").innerHTML = "";
     return emptyMsg(el, S.OC && !opDay(S.date) ? `The operator model's turn-off points run ${Object.keys(S.OC.days)[0]} to ${Object.keys(S.OC.days).at(-1)}; pick a day in that range.` : "No unit with a turn-off point was online going into this day."); }
   const going = d3.sum(U, (u) => u.lsl), stayed = d3.sum(U.filter((u) => u.did === "on"), (u) => u.lsl);
-  $("cut-units-stayed").textContent = ` · stayed on ${fmtMW(stayed)} of ${fmtMW(going)} MW`;
+  $("cut-units-stayed").textContent = ` · ${fmtMW(stayed)} of ${fmtMW(going)} MW of minimum output stayed on`;
   const past = (u) => u.kind === "cut" && u.l > u.c, n = (f) => U.filter(f).length, surprise = (u) => !u.ruc && past(u) !== (u.did === "off");
   const nRuc = n((u) => u.ruc), nJ = U.length - nRuc;
   const nOff = n((u) => u.did === "off"), right = n((u) => !u.ruc && past(u) === (u.did === "off"));
-  window.CX.setNote($("cut-units-note"), `${U.length} CC and gas steam units were online going in; ${nOff} turned off. The diamond is where the operator model turns a unit off that day, the circle its loss from staying on; a hollow circle turned off; red marks a surprise. The model called ${right} of ${nJ} right.${window.CX.rucNote(nRuc, nRuc === 1 ? "unit" : "units")} Click a unit to open it.`, `${U.length} CC trains and gas steam units were online going into the day. The diamond is each unit's turn-off point that day from the operator-informed model, coloured by its day-ahead award; the circle is the loss from staying on it actually faced, and the line between them is red where the unit did the opposite of the model: stayed on past its turn-off point, or turned off short of it. An arrow at the right edge is a unit the model keeps on through every shift tested (an award every hour holds it on). ` +
+  const nPast = n(past), nPastOn = n((u) => past(u) && u.did === "on");
+  window.CX.setNote($("cut-units-note"), `Did the combined-cycle and gas steam units that faced a loss turn off? Each row is a unit online going into the day. The circle is how much it stood to lose per MW of minimum output by staying on through the day's worst stretch; the diamond is the loss at which the operator model expects it to shut down instead. A circle right of its diamond is a unit the model expected to turn off; a filled one there rode through anyway. ` +
+    `On ${fmtDate(parseDate(S.date))}, ${U.length} units were online going in and ${nOff} turned off; ${nPast} faced a loss past their turn-off point and ${nPastOn} of those stayed on. The model called ${right} of ${nJ} right.${window.CX.rucNote(nRuc, nRuc === 1 ? "unit" : "units")} Hover a row for its numbers; click to open the unit.`, `${U.length} combined-cycle trains (CC) and gas steam units were online going into the day. The diamond is each unit's turn-off point that day from the operator model, coloured by its day-ahead award; the circle is the loss from staying on it actually faced, and the line between them is red where the unit did the opposite of the model: stayed on past its turn-off point, or turned off short of it. The turn-off point is found by moving the day's day-ahead prices up or down by the same amount until the model's call for the day first flips to off; the loss at that shift is the turn-off point. An arrow at the right edge is a unit no shift turned off (a day-ahead award in every hour holds a unit on). ` +
     `A filled circle stayed on through the day; a hollow one was offline in some hour (outages aside). Read at its own loss, the model called ${right} of ${nJ} units right.${window.CX.rucNote(nRuc, nRuc === 1 ? "unit" : "units")} ${SAVING_NOTE} Losses beyond the edges are drawn at the edge. Click a unit to open it.`);
-  $("cut-units-legend").innerHTML = AWARD.map((a) => `<span><span class="sw" style="background:var(${a.color});transform:rotate(45deg) scale(0.8)"></span>Turns off when the loss is above this: ${a.label.toLowerCase()}</span>`).join("") +
-    `<span>→ rides through anything tested</span>` + window.CX.onOffLegend("Loss that day, stayed on", "Loss that day, turned off") +
-    `<span><span class="sw" style="background:var(--c8);height:3px"></span>Surprise: the unit did the opposite of the model</span>` + (nRuc ? window.CX.rucLegend() : "");
+  $("cut-units-legend").innerHTML = AWARD.map((a) => `<span><span class="sw" style="background:var(${a.color});transform:rotate(45deg) scale(0.8)"></span>Turn-off point, ${["no day-ahead award", "awarded some hours", "awarded every hour"][a.id]}</span>`).join("") +
+    `<span>→ No turn-off point: the model keeps it on at any loss tried</span>` + window.CX.onOffLegend("Loss that day, stayed on", "Loss that day, turned off") +
+    `<span><span class="sw" style="background:var(--c8);height:3px"></span>Surprise: did the opposite of the model</span>` + (nRuc ? window.CX.rucLegend() : "");
   const [x0, x1] = cutDomain(U);
   const w = Math.max(280, el.clientWidth || 600), narrow = w < 560, lane = 8, rowGap = 26;
   const per = rowsG.map((g) => U.filter((u) => u.group === g.id).sort((a, b) => (a.kind === "cut" ? a.c : Infinity) - (b.kind === "cut" ? b.c : Infinity) || a.l - b.l));
@@ -756,7 +770,7 @@ function drawCutUnits() {
       const gU = svg.append("g").style("cursor", "pointer")
         .on("pointermove", (ev) => showTip(ev, `<h4>${esc(u.unit)}</h4>${techLabel(u.tech)} · ${g.label}${window.CX.isPeaker(S.G, u.unit) ? " · Peaker" : ""}<br>LSL ${fmtMW(u.lsl)} MW, minimum down time ${u.md} h<br>` +
           `${AWARD[u.award ?? 0].label}<br>Loss from staying on that day ${fmtPerMW(u.l)}/MW (${fmt$(u.l * u.lsl)})<br>` +
-          (u.kind === "cut" ? `The model turns it off once the loss passes ${fmtPerMW(u.c)}/MW (${fmt$(u.c * u.lsl)})` : "The model keeps it on through every shift tested") +
+          (u.kind === "cut" ? `The model turns it off once the loss passes ${fmtPerMW(u.c)}/MW (${fmt$(u.c * u.lsl)})` : "The model keeps it on at any loss tried") +
           `<br><b>${DID[u.did]}</b>${u.ruc ? `<br>Committed by ERCOT (RUC) ${u.ruc} h: not counted for or against the model` : ""}<br><span class="tip-pin-note">Click to open the unit</span>`))
         .on("pointerleave", hideTip)
         .on("click", () => { location.href = unitHref(u.unit); });
@@ -769,7 +783,7 @@ function drawCutUnits() {
     });
     top += rowGap + us.length * lane;
   });
-  svg.append("text").attr("class", "axis-title").attr("x", w - m.r).attr("y", H - 2).attr("text-anchor", "end").text("Loss from staying on, $ per MW of LSL");
+  svg.append("text").attr("class", "axis-title").attr("x", w - m.r).attr("y", H - 2).attr("text-anchor", "end").text("Loss from staying on, $ per MW of minimum output (LSL)");
   el.replaceChildren(svg.node());
   setCSV(el, ["unit", "technology", "group", "lsl_mw", "min_down_h", "award", "saving_usd_per_mw_lsl", "turn_off_usd_per_mw_lsl", "did", "ruc_hours"],
     U.map((u) => [u.unit, u.tech, u.group, u.lsl, u.md, ["none", "some hours", "every hour"][u.award ?? 0], u.l, u.c, u.did, u.ruc]), `Turn-off points ${S.date}`);
@@ -777,10 +791,10 @@ function drawCutUnits() {
 
 // one row per combustion turbine (and recip engine) that went into some hour of the day offline
 // (data/peaker/oi.json.gz, pipeline/models/peaker_oi.py), grouped by how often it turns off: a
-// diamond at the day's highest day-ahead node price at which the operator-informed model starts it,
+// diamond at the day's highest day-ahead node price at which the operator model starts it,
 // a circle at the day's actual highest (filled started, hollow stayed off), joined in red where it
 // did the opposite of the model; turn_on null (no shift tested starts it) drawn at the right edge
-const CT_NOTE = "Each month the model is fitted on every day before it, recent days counting most (a day 30 days back counts half), pooled over the turbines with one intercept each: the chance a unit offline in the hour before starts in an hour, from what its operator had before the hour starts: its day-ahead node price that hour and its highest over the next four, its day-ahead award and resource status, day-ahead system lambda, the real-time price at its node in the hours before and how far that ran above or below day-ahead, the hour of day and how long it has been off. Hours ERCOT had it committed by RUC, and the hour after, are left out. ";
+const CT_NOTE = "The model is refitted each month on all earlier days, recent days weighted most (a day 30 days back counts half). It estimates the chance that a turbine offline in the hour before starts in a given hour, from what its operator knew beforehand: the day-ahead price at its node that hour and the highest over the next four, its day-ahead award and status, day-ahead system lambda, the real-time price at its node in the hours before and how far it ran above or below day-ahead, the hour of day, and how long it has been off. Each turbine's own readiness to start is fitted as its own offset. Hours ERCOT committed it by RUC (a reliability commitment), and the hour after, are left out.\n\n";
 function drawCtUnits() {
   const el = $("ct-units"), P = S.POI, rows = P?.days?.[S.date];
   if (!rows || !rows.length) { $("ct-units-note").textContent = ""; $("ct-units-legend").innerHTML = "";
@@ -792,10 +806,11 @@ function drawCtUnits() {
   const rowsG = ST_GROUPS.filter((g) => U.some((u) => u.group === g.id)).concat(U.some((u) => u.group === "ungrouped") ? [{ id: "ungrouped", label: GROUP_LABEL.ungrouped }] : []);
   const nRuc = U.filter((u) => u.ruc).length, rn = window.CX.rucNote(nRuc, nRuc === 1 ? "unit" : "units");
   const nRan = U.filter((u) => u.ran).length, right = U.filter((u) => !u.ruc && !surprise(u)).length;
-  window.CX.setNote($("ct-units-note"), `${U.length} combustion turbines were offline going into some hour of the day; ${nRan} started. The diamond is the day's highest day-ahead price at its node at which the operator-informed model starts it, the circle the day's actual highest; filled started, hollow stayed off; red marks a surprise. The model called ${right} of ${U.length - nRuc} right.${rn} Click a unit to open it.`,
+  window.CX.setNote($("ct-units-note"), `Combustion turbines mostly sit off and start for a few high-priced hours, so for them the question is the price that gets them going, not the loss that turns them off. Each row is a turbine that was offline going into some hour of the day. The diamond is the peak day-ahead price at its node that the operator model needs before it expects a start; the circle is the peak that actually came (filled: it started; hollow: it stayed off). A filled circle right of its diamond is the model and the operator agreeing. ` +
+    `On ${fmtDate(parseDate(S.date))}, ${nRan} of ${U.length} started; the model called ${right} of ${U.length - nRuc} right.${rn} Click a unit to open it.`,
     `${U.length} combustion turbines were available and offline going into some hour of the day (Peaker marks the ones that run like peakers). ${CT_NOTE}` +
-    `The diamond shifts every price at the unit's node, day-ahead and real-time alike, by the same amount until the model's chance that it starts at some point in the hours it was offline going into reaches 50%, and reads it as the day's highest day-ahead price at that shift; the circle is the day's actual highest day-ahead price at its node. A diamond left of the circle means the model starts it that day. A diamond at the right edge: no shift up to $5,000/MWh starts it. ` +
-    `Most starts can't be called to the hour: Mar to Aug 2026, hour by hour, the model caught about 15% of starts in the hour they came, and three of every five starts it called happened (the real-time fit it replaced caught more by calling four false starts for every one it caught). Over the whole day it does better: Feb to Aug 2026 it called 45% of the days a unit started, and four of every five days it called a start, the unit started. Prices beyond the edges are drawn at the edge.`);
+    `To find the diamond, every price at the unit's node (day-ahead and real-time) is raised or lowered by the same amount until the model gives a 50% chance of a start in at least one of the hours the unit was offline going into; the diamond is the day's peak day-ahead price at that shift. The circle is the day's actual peak day-ahead price at its node. A diamond left of the circle means the model starts it that day; a diamond at the right edge means no shift up to $5,000/MWh produced a start.\n\n` +
+    `Hour by hour the model is weak: over Mar to Aug 2026 it caught about 15% of starts in the hour they came, and about 60% of the starts it called happened (the real-time fit it replaced caught more, but called four false starts for every real one). Over a whole day it does better: over Feb to Aug 2026 it called 45% of the days a unit started, and on about 80% of the days it called a start the unit did start. Prices beyond the edges are drawn at the edge.`);
   $("ct-units-legend").innerHTML = `<span><span class="sw" style="background:var(--c1);transform:rotate(45deg) scale(0.8)"></span>Model starts it above this day-ahead price</span>` +
     window.CX.onOffLegend("Day's highest day-ahead price, started", "Day's highest day-ahead price, stayed off") +
     `<span><span class="sw" style="background:var(--c8);height:3px"></span>Surprise: the unit did the opposite of the model</span>` + (nRuc ? window.CX.rucLegend() : "");
@@ -880,21 +895,24 @@ function drawGroups() {
   const sum = (rs, k) => d3.sum(rs, (r) => r[k]);
   const nAny = V.filter((u) => u.fit).length;
   $("groups-title-note").textContent = fmtDate(parseDate(S.date));
-  window.CX.setNote($("groups-note"), `Thermal units by how often they turn off on price. Coal, gas steam and combined cycles get a turn-off point; combustion turbines mostly start from off, so they get a turn-on point from the model above instead.`, `Thermal units by how often they have turned off on price over the ${S.G ? S.G.dates.length : ""} days of 60-day data (pipeline/groups.py). Minimum output is the unit's LSL; online going in and turned off count units online going into the day and offline in some hour of it (combined-cycle configurations merged into their train). ` +
+  const lslAll = sum(rows, "lsl"), onRow = rows.find((r) => r.g === "never");
+  window.CX.setNote($("groups-note"), `The two charts above rolled up by flexibility group (how often a unit has shut down on price), to show which groups hold the day's minimum output and whether the model's calls hold up within each. ` +
+    (onRow && lslAll ? `On ${fmtDate(parseDate(S.date))} the always-on group held ${fmtMW(onRow.lsl)} of the ${fmtMW(lslAll)} MW of coal, gas steam and combined-cycle minimum output online going in (${fmtPct(onRow.lsl / lslAll)}), and ${onRow.nOff ? `${onRow.nOff} of its units turned off` : "none of it turned off"}. ` : "") +
+    `The first block covers coal, gas steam and combined cycles (turn-off points); the second covers combustion turbines, which mostly start from off and so get turn-on points.`, `Thermal units by how often they have turned off on price over the ${S.G ? S.G.dates.length : ""} days of 60-day data (pipeline/groups.py). Minimum output is the unit's LSL; online going in and turned off count units online going into the day and offline in some hour of it (combined-cycle configurations merged into their train). ` +
     `The turn-off rows cover coal, gas steam and combined cycles; their model columns cover the CC trains and gas steam units with a turn-off point that day: the median turn-off point and the median loss from staying on they faced, per MW of LSL, and how many the model called right (off when the loss was past its turn-off point), leaving out units ERCOT committed by RUC that day. ${SAVING_NOTE} ` +
-    `Combustion turbines mostly start from off rather than stay on, so instead of a turn-off point their rows count the ${nAny} offline going into some hour of the day and how many started, the median of the operator-informed model's turn-on points and of the day's highest day-ahead price at their nodes, and how many the model called right (RUC left out), as in the turn-on chart above. Some units that run like peakers are gas steam or combined cycles; they stay in the turn-off rows.`);
+    `Combustion turbines mostly start from off rather than stay on, so instead of a turn-off point their rows count the ${nAny} offline going into some hour of the day and how many started, the median of the operator model's turn-on points and of the day's highest day-ahead price at their nodes, and how many the model called right (RUC left out), as in the turn-on chart above. Some units that run like peakers are gas steam or combined cycles; they stay in the turn-off rows.`);
   const tdG = (r) => `<td class="t"><span class="sw" style="background:var(${FLOOR_GROUPS.find((f) => f.id === r.g)?.color || "--c-other"});margin-right:6px"></span>${GROUP_LABEL[r.g]}<br><span class="muted">${ST_GROUPS.find((g) => g.id === r.g)?.note || "too little history to place"}</span></td>`;
   const tdS = (r) => `<td>${r.n || "–"}</td><td>${r.n ? fmtMW(r.lsl) : "–"}</td><td>${r.n ? r.nOff : "–"}</td><td>${r.n ? fmtMW(r.lslOff) : "–"}</td>`;
   const b = (v) => `<b>${v}</b>`;
   const tot = (label, rs, rest) => `<tr><td class="t">${b(label)}</td><td>${b(sum(rs, "n"))}</td><td>${b(fmtMW(sum(rs, "lsl")))}</td><td>${b(sum(rs, "nOff"))}</td><td>${b(fmtMW(sum(rs, "lslOff")))}</td>${rest}</tr>`;
   const head = (cols) => cols.map((c, i) => `<th${i ? "" : ' class="t"'} style="position:static">${c}</th>`).join("");
-  const SH = ["Online going in", "Minimum output MW", "Turned off", "Minimum output turned off MW"];
-  el.innerHTML = `<table class="data"><thead><tr>${head(["Coal, gas steam and CC", ...SH, "Units the model covers", "Median turn-off point $/MW LSL", "Median loss $/MW LSL", "Model right"])}</tr></thead><tbody>` +
+  const SH = ["Online going in", "Minimum output (LSL), MW", "Turned off", "LSL turned off, MW"];
+  el.innerHTML = `<table class="data"><thead><tr>${head(["Coal, gas steam and CC", ...SH, "With a turn-off point", "Median turn-off point, $/MW of LSL", "Median loss from staying on, $/MW of LSL", "Model right"])}</tr></thead><tbody>` +
     rows.map((r) => `<tr>${tdG(r)}${tdS(r)}<td>${r.nMod || "–"}</td><td>${fmtPerMW(r.medCut)}</td><td>${fmtPerMW(r.medSave)}</td><td>${r.nMod ? `${r.right} of ${r.nJudged}` : "–"}</td></tr>`).join("") +
     tot("Coal, gas steam and CC", rows, `<td>${b(sum(rows, "nMod") || "–")}</td><td></td><td></td><td>${b(sum(rows, "nJudged") ? `${sum(rows, "right")} of ${sum(rows, "nJudged")}` : "–")}</td>`) +
-    (ctRows.length ? `<tr>${head(["Combustion turbines (start on price)", ...SH, "Offline in some hour (started)", "Median turn-on point $/MWh", "Median day's highest day-ahead $/MWh", "Model right"])}</tr>` +
-      ctRows.map((r) => `<tr>${tdG(r)}${tdS(r)}<td>${r.nFit ? `${r.nFit} (${r.nRan})` : "–"}</td><td>${r.nFit ? fmt$(r.medStart) : "–"}</td><td>${r.nFit ? fmt$(r.medPeak) : "–"}</td><td>${r.nJudged ? `${r.right} of ${r.nJudged}` : "–"}</td></tr>`).join("") +
-      tot("Combustion turbines", ctRows, `<td>${b(sum(ctRows, "nFit") ? `${sum(ctRows, "nFit")} (${sum(ctRows, "nRan")})` : "–")}</td><td></td><td></td><td>${b(sum(ctRows, "nJudged") ? `${sum(ctRows, "right")} of ${sum(ctRows, "nJudged")}` : "–")}</td>`) : "") +
+    (ctRows.length ? `<tr>${head(["Combustion turbines (start on price)", ...SH, "Offline in some hour · started", "Median turn-on point, $/MWh", "Median day's peak day-ahead price, $/MWh", "Model right"])}</tr>` +
+      ctRows.map((r) => `<tr>${tdG(r)}${tdS(r)}<td>${r.nFit ? `${r.nFit} · ${r.nRan} started` : "–"}</td><td>${r.nFit ? fmt$(r.medStart) : "–"}</td><td>${r.nFit ? fmt$(r.medPeak) : "–"}</td><td>${r.nJudged ? `${r.right} of ${r.nJudged}` : "–"}</td></tr>`).join("") +
+      tot("Combustion turbines", ctRows, `<td>${b(sum(ctRows, "nFit") ? `${sum(ctRows, "nFit")} · ${sum(ctRows, "nRan")} started` : "–")}</td><td></td><td></td><td>${b(sum(ctRows, "nJudged") ? `${sum(ctRows, "right")} of ${sum(ctRows, "nJudged")}` : "–")}</td>`) : "") +
     tot("All thermal", rows.concat(ctRows), `<td></td><td></td><td></td><td></td>`) + `</tbody></table>`;
   setCSV(el, ["block", "group", "online_going_in", "lsl_mw", "turned_off", "lsl_turned_off_mw", "units_modelled", "median_turn_off_usd_per_mw_lsl", "median_saving_usd_per_mw_lsl", "model_right",
     "offline_some_hour", "started", "median_turn_on_usd_mwh", "median_day_peak_da_usd_mwh", "model_right"],
@@ -930,12 +948,16 @@ function drawScores() {
   const ev = (t, k) => (t[`${k}_n`] ? `${d3.format(",")(t[`${k}_caught`])} of ${d3.format(",")(t[`${k}_n`])}` : "–");
   const fl = (t, k) => (t[`${k}_n`] != null ? d3.format(",")(t[`${k}_false`] || 0) : "–");
   const nRuc = d3.sum([...T.values()], (t) => t.ruc_hours || 0);
-  if (ct) window.CX.setNote($("sc-note"), `How often the operator-informed model called each combustion turbine hour right, and the starts (turn-ons) and stops (turn-offs) it caught, month by month.`, `Every hour of every combustion turbine (and recip engine) that was online or offline in SCED both in it and the hour before, with its day-ahead record and the three real-time hours before at its node, scored against what it did. Unlike the CC and gas steam rows, each hour is judged from the true state before it, the decision its operator faced that hour: the call is a start (from offline) or a stop (from online) when the model's chance of one is 50% or more, and it is caught only in the hour it happened. ${CT_NOTE}${nRuc ? `${d3.format(",")(nRuc)} RUC hours in the rows shown are left out. ` : ""}Staying as it was would get about 97% of hours right and catch nothing, so the turn-ons and turn-offs are the test. "Cheap" is an hour with day-ahead system lambda at $${sc.cheap}/MWh or less; On going in and Off going in are the state before the hour. Brier is the mean squared error of the model's chance online (lower is better).`);
-  else window.CX.setNote($("sc-note"), `How often the operator-informed model called each hour right, and the turn-offs and turn-ons it caught: the months of the 60-day fits, then each year before them.`, `Every hour of every CC train or gas steam unit on a day with an operator day file, scored against what it did (outage and unknown hours left out, and days a unit went into on outage). Hours ERCOT had the unit committed by RUC are ERCOT's call, not the operator's: they are left out of the fits and of every column here, and a switch into or out of one counts neither as caught nor as false${nRuc ? ` (${d3.format(",")(nRuc)} RUC hours in the rows shown; ERCOT's unit status before Dec 2025 isn't kept, so earlier years can't leave them out)` : ""}. The model's call is on when its chance online is 50% or more; it is fitted monthly on earlier days only. From ${fmtDate(parseDate(sc.live_from || liveM + "-01"))} it is fitted on the 60-day data since Dec 2025. Before that, each month is fitted on the 12 months before it from the thermal history files and the day-ahead resource status (read from our own copies of the 60-day DAM disclosure), with Henry Hub standing in for the unit's own gas hub (Ship Channel or Waha) where none is stored. A turn-off or turn-on is caught when the call switches the same way within 1 hour of the actual switch; a call's switch that matches none is false. "Cheap" is an hour with day-ahead system lambda at $${sc.cheap}/MWh or less, and for a switch, any such hour within 3 hours of it. Brier is the mean squared error of the model's chance (lower is better).`);
-  el.innerHTML = `<table class="data"><thead><tr><th class="t">Period</th><th>Hours right</th><th>Turn-offs caught</th><th>False turn-offs</th><th>Turn-ons caught</th><th>False turn-ons</th><th>Brier</th></tr></thead><tbody>` +
+  if (ct) window.CX.setNote($("sc-note"), `A check on the model behind the turbine chart above: month by month, how often its on/off call for each hour matched what the turbine did, and how many actual starts and stops it caught against the calls it made that never happened. "Hours right" is flattered, because a unit that simply stays as it was is right about 97% of the time; the caught and false columns are the real test.`, `Every hour of every combustion turbine (and recip engine) that was online or offline in SCED both in it and the hour before, with its day-ahead record and the three real-time hours before at its node, scored against what it did. Unlike the CC and gas steam rows, each hour is judged from the true state before it, the decision its operator faced that hour: the call is a start (from offline) or a stop (from online) when the model's chance of one is 50% or more, and it is caught only in the hour it happened. ${CT_NOTE}${nRuc ? `${d3.format(",")(nRuc)} RUC hours in the rows shown are left out. ` : ""}Staying as it was would get about 97% of hours right and catch nothing, so the turn-ons and turn-offs are the test. "Cheap" is an hour with day-ahead system lambda at $${sc.cheap}/MWh or less; "Unit was on" and "Unit was off" are its state before the hour. Brier is the mean squared error of the model's chance online (lower is better).`);
+  else window.CX.setNote($("sc-note"), `A check on the model behind the turn-off chart above. For every scored hour, whether the model's on/off call matched what the unit did; and for every actual shutdown and start, whether the model called it within an hour, against how many calls it made that never happened. "Hours right" is flattered, because a unit that simply stays as it was is right about 97% of the time; the caught and false columns are the real test. The months of the 60-day fits come first, then each year before them.`, `Every hour of every CC train or gas steam unit on a day with an operator day file, scored against what it did (outage and unknown hours left out, and days a unit went into on outage). Hours ERCOT had the unit committed by RUC are ERCOT's call, not the operator's: they are left out of the fits and of every column here, and a switch into or out of one counts neither as caught nor as false${nRuc ? ` (${d3.format(",")(nRuc)} RUC hours in the rows shown; ERCOT's unit status before Dec 2025 isn't kept, so earlier years can't leave them out)` : ""}. The model's call is on when its chance online is 50% or more; it is fitted monthly on earlier days only. From ${fmtDate(parseDate(sc.live_from || liveM + "-01"))} it is fitted on the 60-day data since Dec 2025. Before that, each month is fitted on the 12 months before it from the thermal history files and the day-ahead resource status (read from our own copies of the 60-day DAM disclosure), with Henry Hub standing in for the unit's own gas hub (Ship Channel or Waha) where none is stored. A turn-off or turn-on is caught when the call switches the same way within 1 hour of the actual switch; a call's switch that matches none is false. "Cheap" is an hour with day-ahead system lambda at $${sc.cheap}/MWh or less, and for a switch, any such hour within 3 hours of it. (Day-ahead lambda here, because that is what the operator knew; the across-days panels below use real-time lambda.) Brier is the mean squared error of the model's chance (lower is better).`);
+  el.innerHTML = `<table class="data"><thead><tr><th class="t">Period</th><th>Hours right</th><th>Turn-offs caught</th><th>False turn-offs</th><th>Turn-ons caught</th><th>False turn-ons</th><th>Brier score (lower is better)</th></tr></thead><tbody>` +
     keys.map((k) => { const t = T.get(k); return `<tr><td class="t">${label(k)}</td><td>${pct(t.right, t.hours)}</td><td>${ev(t, "off")}</td><td>${fl(t, "off")}</td><td>${ev(t, "on")}</td><td>${fl(t, "on")}</td><td>${t.hours ? d3.format(".3f")(t.brier / t.hours) : "–"}</td></tr>`; }).join("") + `</tbody></table>`;
   setCSV(el, ["period", "hours", "hours_right", "off_n", "off_caught", "off_false", "on_n", "on_caught", "on_false", "brier_sum"],
     keys.map((k) => { const t = T.get(k); return [k === "live" ? span(t) : k, t.hours, t.right, t.off_n, t.off_caught, t.off_false, t.on_n, t.on_caught, t.on_false, t.brier]; }), `Operator model scorecard ${S.scTech} ${S.scCell}`);
+  // years between the first and last listed that have no rows: say so, rather than leave a gap that reads as a bug
+  const yrs = keys.filter((k) => /^\d{4}$/.test(k)).map(Number);
+  const gap = !ct && yrs.length && d3.range(d3.min(yrs), new Date().getUTCFullYear()).some((y) => !keys.includes(String(y)) && !(T.get("live")?.months || []).some((m) => m.startsWith(String(y))));
+  if (gap) el.insertAdjacentHTML("beforeend", `<p class="note">Years not listed have no scored hours for this technology yet.</p>`);
 }
 
 // ==== across days: what the decision cost ==================================================
@@ -962,7 +984,7 @@ function ridesBy(thr) {
 }
 function drawCost() {
   const el = $("cost-chart"), thr = +S.costThr, by = ridesBy(thr);
-  if (!by) { $("cost-note").textContent = ""; return emptyMsg(el, "Fills in after the data update builds the stay-on file."); }
+  if (!by) { $("cost-note").textContent = ""; return emptyMsg(el, "No data for this panel yet."); }
   const groupOf = (k) => S.G?.units?.[k]?.[1] || "ungrouped";
   const ids = [...ST_GROUPS.map((g) => g.id), "ungrouped"];
   const rows = ids.map((g) => {
@@ -971,9 +993,12 @@ function drawCost() {
     return { g, units: us.length, n: sum("n"), mwh: sum("mwh"), loss: sum("loss"), start: sum("start"), saves: sum("saves"), paid: sum("paid"), est: sum("est"), lam: sum("lam") };
   }).filter((r) => r.n);
   const nStretch = S.SO.stretches[String(thr)]?.length || 0;
-  window.CX.setNote($("cost-note"), `Each time a coal or gas unit ran through hours with lambda below ${fmtPrice0(thr)}: what it lost, against what a shutdown and restart would have cost.`, `Every time a coal or gas unit ran through a stretch of hours with system lambda below ${fmtPrice0(thr)} (${nStretch} stretches of ${S.SO.min_hours} hours or more), what its output lost at its own real-time node price against its fuel cost, and what a shutdown and restart would have cost instead (hot start for stretches up to ${S.SO.hot_h} hours, intermediate up to ${S.SO.inter_h}, cold beyond). ` +
+  const fM = (v) => (v < 0 ? "−" : "") + "$" + d3.format(",.1f")(Math.abs(v) / 1e6) + "M";
+  const tL = d3.sum(rows, (r) => r.loss), tS = d3.sum(rows, (r) => r.start), tN = d3.sum(rows, (r) => r.n), tP = d3.sum(rows, (r) => r.paid);
+  window.CX.setNote($("cost-note"), `Did staying on pay? Every time a coal or gas unit kept running through a stretch of real-time lambda below ${fmtPrice0(thr)}/MWh, what its output lost (its fuel cost less what the real-time price at its node paid), set against what shutting down and restarting would have cost instead. Where the red bar is taller than the blue, staying on was the dearer choice. ` +
+    (tN ? `Over ${nStretch} stretches, ${d3.format(",")(tN)} ride-throughs lost ${fM(tL)} against ${fM(tS)} of restarts avoided; shutting down would have paid in ${fmtPct(tP / tN)} of them.` : ""), `Every time a coal or gas unit ran through a stretch of hours with system lambda below ${fmtPrice0(thr)} (${nStretch} stretches of ${S.SO.min_hours} hours or more), what its output lost at its own real-time node price against its fuel cost, and what a shutdown and restart would have cost instead (hot start for stretches up to ${S.SO.hot_h} hours, intermediate up to ${S.SO.inter_h}, cold beyond). ` +
     `Where the loss is bigger than the restart cost, shutting down would have paid; the difference is the loss above restart cost. Fuel cost is each unit's measured heat rate at minimum (EPA hourly heat input over ERCOT net output) × its own gas hub's price the trading day before, or for coal the plant's EIA-923 delivered price; where its hub has no recent price Henry Hub stands in, and a unit with no measured heat rate takes its technology's median (both counted as estimated). Start costs are the unit's own day-ahead start-up offer, its latest within ${S.SO.cost_days} days, or a generic value for the technology. Revenue is at the unit's own node, so a unit behind congestion is credited what its energy was worth where it sits; ${(() => { const n = d3.sum(rows, (r) => r.n), l = d3.sum(rows, (r) => r.lam); return l ? `${fmtPct(l / n)} of ride-throughs had no node price and are valued at system lambda` : "every ride-through here has a node price"; })()}. ` +
-    `A unit with a cutoff that keeps riding through stretches where shutting down would have paid may hold contracts, ancillary service obligations or start costs these numbers do not see; the units table puts each unit's net beside its cutoff.`);
+    `A unit with a turn-off point that keeps riding through stretches where shutting down would have paid may hold contracts, ancillary service obligations or start costs these numbers do not see; the units table at the foot of the page puts each unit's loss above restart cost beside its turn-off point.`);
   const S2 = [
     { id: "loss", label: "Loss from staying on (cost less revenue at its node)", color: "--c8" },
     { id: "start", label: "Restart cost", color: "--c1" },
@@ -997,7 +1022,7 @@ function drawCost() {
     tx.append("tspan").attr("x", 0).attr("dy", "1.1em").text(t.slice(sp).trim());
   });
   if (lo < 0) svg.append("line").attr("class", "zero").attr("x1", m.l).attr("x2", w - m.r).attr("y1", y(0)).attr("y2", y(0));
-  svg.append("text").attr("class", "axis-title").attr("x", m.l).attr("y", 10).text(`All ride-throughs of stretches below ${fmtPrice0(thr)}, by group ($)`);
+  svg.append("text").attr("class", "axis-title").attr("x", m.l).attr("y", 10).text(`Total over all ride-throughs of stretches below ${fmtPrice0(thr)}/MWh, by group`);
   rows.forEach((r) => S2.forEach((s) => {
     const v = r[s.id];
     svg.append("rect").attr("x", x(r.g) + xi(s.id)).attr("width", xi.bandwidth()).attr("y", y(Math.max(0, v))).attr("height", Math.abs(y(v) - y(0)))
@@ -1007,8 +1032,8 @@ function drawCost() {
       .on("pointerleave", hideTip);
   }));
   el.replaceChildren(svg.node());
-  $("cost-groups").innerHTML = `<table class="data"><thead><tr><th class="t">Group</th><th>Units</th><th>Ride-throughs</th><th>MWh</th><th>Loss from staying on</th><th>Loss per MWh</th><th>Restart cost</th><th>Loss above restart cost</th><th>Ride-throughs where shutting down paid</th><th>Estimated fuel cost</th></tr></thead><tbody>` +
-    rows.map((r) => `<tr><td class="t">${GROUP_LABEL[r.g]}</td><td>${r.units}</td><td>${r.n}</td><td>${fmtMW(r.mwh)}</td><td>${fmt$(r.loss)}</td><td>${fmtPrice(r.mwh ? r.loss / r.mwh : null)}</td><td>${fmt$(r.start)}</td><td>${fmt$(r.saves)}</td><td>${fmtPct(r.paid / r.n)}</td><td>${fmtPct(r.est / r.n)}</td></tr>`).join("") + "</tbody></table>";
+  $("cost-groups").innerHTML = `<table class="data"><thead><tr><th class="t">Group</th><th>Units</th><th>Ride-throughs</th><th>MWh</th><th>Loss from staying on, $M</th><th>Loss per MWh, $/MWh</th><th>Restart cost, $M</th><th>Loss above restart cost, $M</th><th>Share where shutting down paid</th><th>Share with estimated fuel cost</th></tr></thead><tbody>` +
+    rows.map((r) => `<tr><td class="t">${GROUP_LABEL[r.g]}</td><td>${r.units}</td><td>${r.n}</td><td>${fmtMW(r.mwh)}</td><td>${fM(r.loss)}</td><td>${fmtPrice(r.mwh ? r.loss / r.mwh : null)}</td><td>${fM(r.start)}</td><td>${fM(r.saves)}</td><td>${fmtPct(r.paid / r.n)}</td><td>${fmtPct(r.est / r.n)}</td></tr>`).join("") + "</tbody></table>";
   setCSV(el, ["group", "units", "ride_throughs", "mwh", "loss_usd", "start_usd", "saves_usd", "share_shutdown_paid", "share_estimated_fuel_cost"],
     rows.map((r) => [r.g, r.units, r.n, Math.round(r.mwh), Math.round(r.loss), Math.round(r.start), Math.round(r.saves), +(r.paid / r.n).toFixed(3), +(r.est / r.n).toFixed(3)]), `What the decision cost, lambda below ${thr}`);
 }
@@ -1020,7 +1045,7 @@ function drawCost() {
 // are listed in a collapsed table. Dots and rows open the Unit page.
 const RUN_TECHS = ["combined_cycle", "gas_steam", "coal", "combustion_turbine"].map((id) => TECHS.find((t) => t.id === id));
 const RUN_TICKS = [1, 2, 4, 8, 12, 24, 48, 168, 720];
-const fmtRunH = (h) => (h == null ? "–" : h >= 48 ? `${d3.format(h >= 240 ? ",.0f" : ".1f")(h / 24)} d` : `${d3.format(h % 1 ? ".1f" : ".0f")(h)} h`);
+const fmtRunH = (h) => (h == null ? "–" : h >= 48 ? `${d3.format(h >= 240 ? ",.0f" : ".1f")(h / 24)} d` : `${d3.format(".1f")(h)} h`);
 const runTick = (h) => (h === 168 ? "1 wk" : h === 720 ? "30 d" : `${h} h`);
 const plantKey = (u) => u.split("_")[0];
 function plantName(raw, key) {
@@ -1062,13 +1087,13 @@ function runAxis(svg, x, top, bot) {
 }
 async function drawRuns() {
   const el = $("runs-tech"), pel = $("runs-plant");
-  if (!S.MR || !S.MR.units) { emptyMsg(el, "Fills in after the data update builds the run-length file."); pel.innerHTML = ""; return; }
+  if (!S.MR || !S.MR.units) { emptyMsg(el, "No data for this panel yet."); pel.innerHTML = ""; return; }
   const all = await runUnits(), on = RUN_TECHS.filter((t) => !S.hidden.runs.has(t.id));
   legend($("runs-legend"), RUN_TECHS, S.hidden.runs, drawRuns);
   const D = S.MR.dates, period = `${fmtDate(parseDate(D[0]))} to ${fmtDate(parseDate(D.at(-1)))}`;
   const pct = S.MR.pct, minN = S.MR.min_runs;
   const meds = on.map((t) => [t, d3.median(all.filter((u) => u.tech === t.id && u.p10 != null), (u) => u.p10)]).filter((r) => r[1] != null);
-  window.CX.setNote($("runs-note"), `How briefly each coal and gas unit has run once started: its typical shortest completed run, from start to shutting down on price. ` +
+  window.CX.setNote($("runs-note"), `Each coal and gas unit's minimum run time, as its own behavior shows it: the typical shortest run it has made, from start to a shutdown on price (the 10th percentile of its completed runs). A unit that has shown it will run for 6 hours can start for the evening peak and sit out a midday price dip; one that never runs under a day has to ride through. ` +
     (meds.length ? `Median by technology: ${meds.map(([t, m]) => `${t.label.replace(" and recip", "").toLowerCase()} ${fmtRunH(m)}`).join(", ")}. ` : "") + "Click a dot to open the unit.",
     `Each dot is one unit (a combined-cycle train counts as one) at the ${pct}th percentile of its completed runs over ${period} (${D.length} days of 60-day data, up to the last year). ` +
     `A run is a stretch of hours online (at minimum or above) that starts from offline or outage and ends with the unit offline but available. Runs that end in an outage are left out as likely trips, and so are runs cut by missing data or by either end of the period. ` +
@@ -1084,7 +1109,7 @@ async function drawRuns() {
   on.forEach((t, i) => {
     const y0 = m.t + i * rowH, us = all.filter((u) => u.tech === t.id && u.p10 != null), nr = all.filter((u) => u.tech === t.id && u.p10 == null).length;
     svg.append("text").attr("x", 0).attr("y", y0 + rowH / 2 - 4).attr("fill", css("--ink")).style("font", "500 12px var(--font-ui)").text(narrow ? t.label.replace(" and recip", "").replace("Combustion turbine", "CT") : t.label.replace(" and recip", ""));
-    svg.append("text").attr("x", 0).attr("y", y0 + rowH / 2 + 11).attr("fill", css("--muted")).style("font", "11px var(--font-ui)").text(`${us.length} unit${us.length === 1 ? "" : "s"}${narrow ? "" : ` · ${nr} not revealed`}`);
+    svg.append("text").attr("x", 0).attr("y", y0 + rowH / 2 + 11).attr("fill", css("--muted")).style("font", "11px var(--font-ui)").text(`${us.length} unit${us.length === 1 ? "" : "s"}${narrow ? "" : ` · ${nr} with too few runs to judge`}`);
     us.forEach((u, j) => {
       const jit = (((j * 0.618) % 1) - 0.5) * (rowH - 22);
       svg.append("circle").attr("cx", x(u.p10)).attr("cy", y0 + rowH / 2 - 6 + jit).attr("r", 4).attr("fill", css(t.color)).attr("fill-opacity", 0.8)
@@ -1117,7 +1142,7 @@ function drawRunPlants(all, on, x0, period) {
   const sort = $("runs-sort").value;
   ps.sort(sort === "name" ? (a, b) => a.name.localeCompare(b.name) : sort === "mw" ? (a, b) => b.mw - a.mw : (a, b) => a.min - b.min || ti[a.t] - ti[b.t] || a.name.localeCompare(b.name));
   const n = d3.sum(ps, (p) => p.us.length);
-  window.CX.setNote($("runs-plant-note"), `${ps.length} plants, ${n} units. Hover for the numbers; click a row to open the unit.`, `Units are grouped by the site code at the start of their ERCOT resource name, named from ERCOT's Capacity, Demand and Reserves report. ` +
+  window.CX.setNote($("runs-plant-note"), `The same units grouped by plant, to see whether sister units are run alike. ${ps.length} plants, ${n} units; hover for the numbers, click a row to open the unit.`, `Units are grouped by the site code at the start of their ERCOT resource name, named from ERCOT's Capacity, Demand and Reserves report. ` +
     `The dot is the unit's ${pct}th-percentile completed run over ${period}, the line runs on to its median run, and the tick marks its single shortest run when that is shorter. A plant can mix technologies.`);
   if (!n) { emptyMsg(el, "No units to show for these technologies."); return; }
   const w = Math.max(300, el.clientWidth || 600), narrow = w < 560, m = { t: 6, r: 16, b: 24, l: narrow ? 120 : 250 }, rh = 17, gapP = 6;
@@ -1154,7 +1179,7 @@ function drawRunsHidden(all, on) {
   el.innerHTML = list.length ? `<table class="data"><thead><tr><th class="t">Unit</th><th class="t">Plant</th><th class="t">Technology</th><th>Capacity MW</th><th>Completed runs</th><th>Ended in outage</th><th>Online, share of available hours</th></tr></thead><tbody>` +
     list.map((u) => `<tr data-unit="${esc(u.unit)}" style="cursor:pointer"><td class="t">${esc(u.unit)}</td><td class="t">${esc(u.pname)}</td><td class="t">${techLabel(u.tech)}</td><td>${u.mw ? fmtMW(u.mw) : "–"}</td><td>${u.n}</td><td>${u.trips}</td><td>${u.on == null ? "–" : fmtPct(u.on)}</td></tr>`).join("") + "</tbody></table>"
     : `<p class="empty">None for these technologies.</p>`;
-  setCSV(el, ["unit", "plant", "technology", "capacity_mw", "completed_runs", "runs_ended_in_outage", "online_share_of_available_hours"], list.map((u) => [u.unit, u.pname, u.tech, u.mw, u.n, u.trips, u.on]), "Minimum run not revealed");
+  setCSV(el, ["unit", "plant", "technology", "capacity_mw", "completed_runs", "runs_ended_in_outage", "online_share_of_available_hours"], list.map((u) => [u.unit, u.pname, u.tech, u.mw, u.n, u.trips, u.on]), "Minimum run: too few runs to tell");
 }
 
 // ==== the units table ======================================================================
@@ -1166,18 +1191,18 @@ const UNIT_COLS = [
   { k: "unit", h: "Unit", t: 1, f: (r) => esc(r.unit) },
   { k: "tech", h: "Technology", t: 1, f: (r) => techLabel(r.tech) },
   { k: "gi", h: "Group", t: 1, f: (r) => (GROUP_LABEL[r.group] || "–") + pTag(r.unit) },
-  { k: "mw", h: "Capacity MW", f: (r) => fmtMW(r.mw) },
-  { k: "lsl", h: "LSL MW", f: (r) => (r.lsl == null ? "–" : fmtMW(r.lsl)) },
-  ...["no award", "award some hours", "award every hour"].map((h, a) => ({ k: "c" + a, h: `Turn-off point, ${h}, $/MW LSL`, f: (r) => (r["c" + a] === Infinity ? "rides through" : fmtPerMW(r["c" + a])) })),
-  { k: "hs", h: "Hot start offered $/MW LSL", f: (r) => fmtPerMW(r.hs) + (r.hs != null && r.est === 2 ? "*" : "") },
-  { k: "acc", h: "Model right", f: (r) => (r.acc == null ? "–" : `${fmtPct(r.acc)} of ${r.nOp}`) },
-  { k: "days", h: "Decision days (off)", f: (r) => (r.days == null ? "–" : `${r.days} (${r.dshut})`) },
+  { k: "mw", h: "Capacity, MW", f: (r) => fmtMW(r.mw) },
+  { k: "lsl", h: "Minimum output (LSL), MW", f: (r) => (r.lsl == null ? "–" : fmtMW(r.lsl)) },
+  ...["no award", "award some hours", "award every hour"].map((h, a) => ({ k: "c" + a, h: `Turn-off point, ${h}, $/MW of LSL`, f: (r) => (r["c" + a] === Infinity ? "never" : r["c" + a] == null ? `<span title="No days under this condition">–</span>` : fmtPerMW(r["c" + a])) })),
+  { k: "hs", h: "Hot start offer, $/MW of LSL", f: (r) => fmtPerMW(r.hs) + (r.hs != null && r.est === 2 ? "*" : "") },
+  { k: "acc", h: "Model right", f: (r) => (r.acc == null ? "–" : `${fmtPct(r.acc)} (${r.nOp} days)`) },
+  { k: "days", h: "Decision days · turned off", f: (r) => (r.days == null ? "–" : `${r.days} · ${r.dshut}`) },
   ...STATE_KEYS.map(([s, h]) => ({ k: "st" + s, h: `${h}, share of hours`, f: (r) => (r["st" + s] == null ? "–" : fmtPct(r["st" + s])) })),
   { k: "shut", h: "Shutdowns", f: (r) => r.shut ?? "–" },
-  { k: "offP10", h: "Min off, 10th pct (h)", f: (r) => (r.offP10 == null ? "–" : d3.format(",.0f")(r.offP10)) },
+  { k: "offP10", h: "Shortest off spell, h (10th pct)", f: (r) => (r.offP10 == null ? "–" : d3.format(",.0f")(r.offP10)) },
   { k: "offShare", h: "Turned off in cheap stretches", f: (r) => (r.offShare == null ? "–" : fmtPct(r.offShare)) },
   { k: "rides", h: "Ride-throughs", f: (r) => r.rides || "–" },
-  { k: "saves", h: "Loss above restart cost", f: (r) => (r.rides ? `<span title="Loss from staying on ${fmt$(r.rLoss)}, restart cost ${fmt$(r.rStart)}">${fmt$(r.saves)}</span>` : "–") },
+  { k: "saves", h: "Loss above restart cost, $", f: (r) => (r.rides ? `<span title="Loss from staying on ${fmt$(r.rLoss)}, restart cost ${fmt$(r.rStart)}">${fmt$(r.saves)}</span>` : "–") },
   { k: "vi", h: "On the day", t: 1, f: (r) => (r.did ? DID[r.did] : "–") },
 ];
 // each unit's operator-informed turn-off point, one median per day-ahead condition (no award, some
@@ -1199,7 +1224,7 @@ function operatorSummary() {
 }
 async function drawUnits() {
   const el = $("units-table");
-  if (!S.I) return emptyMsg(el, "Fills in after the data update builds the intraday file.");
+  if (!S.I) return emptyMsg(el, "No data for this panel yet.");
   if (!S.UH) { emptyMsg(el, "Loading hourly data…"); await loadUnitHours(); }
   if (!S.UH.dates.length) return emptyMsg(el, "No hourly data.");
   const B = stretchBase(), { rows: resp } = stretchResponses(+S.stThr), by = d3.group(resp, (r) => r.unit);
@@ -1232,10 +1257,10 @@ async function drawUnits() {
     if (vb == null) return -1;
     return (typeof va === "string" ? va.localeCompare(vb) : va - vb) * dir;
   });
-  window.CX.setNote($("units-note"), "Every coal and gas unit with its cycling pattern, usual turn-off cost and hours in each state. Click a row to open the unit.", `${list.length} coal and gas units, combined-cycle configurations merged into their train, over the ${S.UH.dates.length} days of 60-day data. ` +
-    `Turn-off point is the operator-informed model's, as in the chart at the top of the page: the loss from staying on, per MW of LSL, at which the model turns the unit off, the median over its days online going in, kept separate for days with no day-ahead award, an award some hours and an award every hour ("rides through" when the model keeps it on through every shift on most of them). Model right is how often the model's call at the unit's own loss matched what it did, over its days online going in, leaving out days ERCOT committed it by RUC. CC trains and gas steam units only. ` +
+  window.CX.setNote($("units-note"), "One row per coal and gas unit (combined-cycle trains merged): its flexibility group, the model's turn-off point under each day-ahead award condition, how its hours split between states, what it did in cheap stretches, and what riding through them cost. Click a column to sort, a row to open the unit.", `${list.length} coal and gas units, combined-cycle configurations merged into their train, over the ${S.UH.dates.length} days of 60-day data. ` +
+    `Turn-off point is the operator model's, as in the chart at the top of the page: the loss from staying on, per MW of LSL, at which the model turns the unit off, the median over its days online going in, kept separate for days with no day-ahead award, an award some hours and an award every hour ("never" when the model keeps it on at any loss tried on most of them; "–" when it had no such days). Model right is how often the model's call at the unit's own loss matched what it did, over its days online going in, leaving out days ERCOT committed it by RUC. CC trains and gas steam units only. ` +
     `Hot start is the start cost in the unit's latest day-ahead offer per MW of LSL, for comparison only (* marks a generic value for the technology); no model uses it. ` +
-    `Hours are split between running above minimum, at minimum, offline but available and on outage (an off spell that is mostly outage counts as outage). "Turned off in cheap stretches" is the share of the stretches with lambda below ${fmtPrice0(+S.stThr)} it was running into that it turned off for (shown once it ran into ${ST_MIN_N}), as in the panel above; ride-throughs and the net are from the decision-cost panel at lambda below ${fmtPrice0(+S.costThr)}. ` +
+    `Hours are split between running above minimum, at minimum, offline but available and on outage (an off spell that is mostly outage counts as outage). "Turned off in cheap stretches" is the share of the stretches with lambda below ${fmtPrice0(+S.stThr)} it was running into that it turned off for (shown once it ran into ${ST_MIN_N}), as in the panel above; ride-throughs and the loss above restart cost are from What the decision cost, at lambda below ${fmtPrice0(+S.costThr)}. ` +
     `"On the day" is what the unit did on the chosen day if it was online going in: turned off (offline in some hour of the day, outages aside; for units without an operator model row, coal and combustion turbines, a shutdown of 2 hours or more starting that day), or stayed on, as in the turn-off chart. Click a column to sort, a row to open the unit.`);
   el.innerHTML = `<table class="data"><thead><tr>${UNIT_COLS.map((c) => `<th class="sortable${c.t ? " t" : ""}" data-k="${c.k}" aria-sort="${c.k === col.k ? (dir > 0 ? "ascending" : "descending") : "none"}">${c.h}${c.k === col.k ? (dir > 0 ? " ▲" : " ▼") : ""}</th>`).join("")}</tr></thead><tbody>` +
     list.map((r) => `<tr data-href="${unitHref(r.pick)}" style="cursor:pointer">${UNIT_COLS.map((c) => `<td${c.t ? ' class="t"' : ""}>${c.f(r)}</td>`).join("")}</tr>`).join("") + "</tbody></table>";
@@ -1249,7 +1274,7 @@ async function drawUnits() {
 // d: a day from the picker, or any day (the picker settles it on the nearest listed day on or before it)
 function setDate(d) {
   S.date = S.picker.set(d);
-  $("source-note").textContent = "60-day disclosure: each unit's loss, award and what it did";
+  $("source-note").textContent = "From the 60-day disclosures: each unit's day-ahead award, its loss from staying on, and whether it turned off.";
   saveView();
   drawDay();
   if (S.uSeen) drawUnits();
@@ -1275,8 +1300,8 @@ async function boot() {
   const D = S.T.dates;
   S.span = [D[0], D.at(-1)];
   S.last60 = D.at(-1);
-  $("status").textContent = `60-day data: ${D.length} days, ${D[0]} to ${D.at(-1)}`;
-  $("range-status").textContent = `${fmtDate(parseDate(D[0]))} to ${fmtDate(parseDate(D.at(-1)))}, the days with 60-day data`;
+  $("status").textContent = `60-day data: ${D.length} days, ${d3.timeFormat("%b %-d, %Y")(parseDate(D[0]))} to ${d3.timeFormat("%b %-d, %Y")(parseDate(D.at(-1)))}`;
+  $("range-status").textContent = `${fmtDate(parseDate(D[0]))} to ${fmtDate(parseDate(D.at(-1)))}, the days with 60-day data. Cheap hours in these panels are judged on ERCOT's real-time system price (SCED lambda), not each unit's node price; each panel sets the threshold ($0 or $10/MWh).`;
   const v = loadView();
   S.picker = window.CX.dayPicker("date", { days: S.days, main: true, onChange: setDate });
   const thermal = TECHS.filter((s) => THERMAL.includes(s.id));

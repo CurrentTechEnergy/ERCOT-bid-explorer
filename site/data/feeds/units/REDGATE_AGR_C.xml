@@ -3,7 +3,14 @@
   <title>REDGATE_AGR_C: bidding and operating changes</title>
   <link href="https://ercotbids.currenttech.energy/unit.html?unit=REDGATE_AGR_C"/>
   <id>https://ercotbids.currenttech.energy/unit.html?unit=REDGATE_AGR_C</id>
-  <updated>2026-11-04T00:00:00Z</updated>
+  <updated>2026-11-05T00:00:00Z</updated>
+  <entry>
+    <title>REDGATE_AGR_C: Shut down despite a day-ahead award (2026-09-06)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=REDGATE_AGR_C"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=REDGATE_AGR_C#REDGATE_AGR_C/2026-09-06/shutdown_award</id>
+    <updated>2026-11-05T00:00:00Z</updated>
+    <summary>Shut down for 3 h although a day-ahead award covered 100% of the window</summary>
+  </entry>
   <entry>
     <title>REDGATE_AGR_C: Shut down despite a day-ahead award (2026-09-05)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=REDGATE_AGR_C"/>
@@ -128,41 +135,41 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=REDGATE_AGR_C"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=REDGATE_AGR_C#REDGATE_AGR_C/2026-02-03/dam_mingen_step</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Minimum-energy offer stepped: $47 to $26/MWh (-$16 to -$4 against the fuel-cost line)</summary>
+    <summary>Minimum-energy offer stepped: $47 to $26/MWh (−$16 to −$4 against the fuel-cost line)</summary>
   </entry>
   <entry>
     <title>REDGATE_AGR_C: Minimum-energy offer stepped (2026-02-03)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=REDGATE_AGR_C"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=REDGATE_AGR_C#REDGATE_AGR_C/2026-02-03/dam_mingen_step</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Minimum-energy offer stepped: $47 to $26/MWh (-$16 to -$4 against the fuel-cost line)</summary>
+    <summary>Minimum-energy offer stepped: $47 to $26/MWh (−$16 to −$4 against the fuel-cost line)</summary>
   </entry>
   <entry>
     <title>REDGATE_AGR_C: Priced out of the day-ahead (2026-01-30)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=REDGATE_AGR_C"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=REDGATE_AGR_C#REDGATE_AGR_C/2026-01-30/dam_priced_out</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Priced out of the day-ahead: minimum energy at $47/MWh against a usual $29 for 2 day(s)</summary>
+    <summary>Priced out of the day-ahead: minimum energy at $47/MWh against a usual $29/MWh, for 2 days</summary>
   </entry>
   <entry>
     <title>REDGATE_AGR_C: Priced out of the day-ahead (2026-01-30)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=REDGATE_AGR_C"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=REDGATE_AGR_C#REDGATE_AGR_C/2026-01-30/dam_priced_out</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Priced out of the day-ahead: minimum energy at $47/MWh against a usual $29 for 2 day(s)</summary>
+    <summary>Priced out of the day-ahead: minimum energy at $47/MWh against a usual $29/MWh, for 2 days</summary>
   </entry>
   <entry>
     <title>REDGATE_AGR_C: Minimum-energy offer stepped (2025-12-17)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=REDGATE_AGR_C"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=REDGATE_AGR_C#REDGATE_AGR_C/2025-12-17/dam_mingen_step</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Minimum-energy offer stepped: $43 to $31/MWh (-$14 to -$8 against the fuel-cost line)</summary>
+    <summary>Minimum-energy offer stepped: $43 to $31/MWh (−$14 to −$8 against the fuel-cost line)</summary>
   </entry>
   <entry>
     <title>REDGATE_AGR_C: Minimum-energy offer stepped (2025-12-17)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=REDGATE_AGR_C"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=REDGATE_AGR_C#REDGATE_AGR_C/2025-12-17/dam_mingen_step</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Minimum-energy offer stepped: $43 to $31/MWh (-$14 to -$8 against the fuel-cost line)</summary>
+    <summary>Minimum-energy offer stepped: $43 to $31/MWh (−$14 to −$8 against the fuel-cost line)</summary>
   </entry>
 </feed>

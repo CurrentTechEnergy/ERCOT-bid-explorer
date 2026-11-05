@@ -9,13 +9,13 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=AMADEUS1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=AMADEUS1#AMADEUS1/2020-12-18/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: floor $0 to floor -$32</summary>
+    <summary>New floor: $0/MWh to −$32/MWh</summary>
   </entry>
   <entry>
     <title>AMADEUS1: Episode (2020-11-19)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=AMADEUS1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=AMADEUS1#AMADEUS1/2020-11-19/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Episode: floor $0 to -$40 for the episode for 1 day(s)</summary>
+    <summary>Episode: floor $0/MWh, briefly −$40/MWh, for 1 day</summary>
   </entry>
 </feed>

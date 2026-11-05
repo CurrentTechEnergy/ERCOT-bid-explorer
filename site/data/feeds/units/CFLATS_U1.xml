@@ -9,14 +9,14 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=CFLATS"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=CFLATS#CFLATS/2025-02-08/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: floor -$3 to floor -$5</summary>
+    <summary>New floor: −$3/MWh to −$5/MWh</summary>
   </entry>
   <entry>
     <title>CFLATS: New floor (2024-10-30)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=CFLATS"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=CFLATS#CFLATS/2024-10-30/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: floor -$5 to floor -$3</summary>
+    <summary>New floor: −$5/MWh to −$3/MWh</summary>
   </entry>
   <entry>
     <title>CFLATS_U1: Decision maker or QSE changed (2023-10-24)</title>
@@ -37,69 +37,69 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=CFLATS"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=CFLATS#CFLATS/2022-03-30/renew_floor_back</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Back to an earlier floor: floor -$32 to floor -$5</summary>
+    <summary>Back to an earlier floor: −$32/MWh to −$5/MWh</summary>
   </entry>
   <entry>
     <title>CFLATS: New floor (2022-03-17)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=CFLATS"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=CFLATS#CFLATS/2022-03-17/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: floor -$5 to floor -$32</summary>
+    <summary>New floor: −$5/MWh to −$32/MWh</summary>
   </entry>
   <entry>
     <title>CFLATS: Episode (2022-03-02)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=CFLATS"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=CFLATS#CFLATS/2022-03-02/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Episode: floor -$5 to -$32 for the episode for 1 day(s)</summary>
+    <summary>Episode: floor −$5/MWh, briefly −$32/MWh, for 1 day</summary>
   </entry>
   <entry>
     <title>CFLATS: Episode (2022-02-18)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=CFLATS"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=CFLATS#CFLATS/2022-02-18/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Episode: floor -$5 to -$18 for the episode for 1 day(s)</summary>
+    <summary>Episode: floor −$5/MWh, briefly −$18/MWh, for 1 day</summary>
   </entry>
   <entry>
     <title>CFLATS: Episode (2022-02-15)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=CFLATS"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=CFLATS#CFLATS/2022-02-15/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Episode: floor -$5 to -$32 for the episode for 2 day(s)</summary>
+    <summary>Episode: floor −$5/MWh, briefly −$32/MWh, for 2 days</summary>
   </entry>
   <entry>
     <title>CFLATS: New floor (2020-05-17)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=CFLATS"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=CFLATS#CFLATS/2020-05-17/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: floor $0 to floor -$5</summary>
+    <summary>New floor: $0/MWh to −$5/MWh</summary>
   </entry>
   <entry>
     <title>CFLATS: New floor (2019-10-25)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=CFLATS"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=CFLATS#CFLATS/2019-10-25/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: floor -$10 to floor $0</summary>
+    <summary>New floor: −$10/MWh to $0/MWh</summary>
   </entry>
   <entry>
     <title>CFLATS: Episode (2019-10-12)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=CFLATS"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=CFLATS#CFLATS/2019-10-12/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Episode: floor -$10 to -$32 for the episode for 1 day(s)</summary>
+    <summary>Episode: floor −$10/MWh, briefly −$32/MWh, for 1 day</summary>
   </entry>
   <entry>
     <title>CFLATS: New floor (2019-10-11)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=CFLATS"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=CFLATS#CFLATS/2019-10-11/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: floor -$32 to floor -$10</summary>
+    <summary>New floor: −$32/MWh to −$10/MWh</summary>
   </entry>
   <entry>
     <title>CFLATS: New floor (2019-08-20)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=CFLATS"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=CFLATS#CFLATS/2019-08-20/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: floor -$30 to floor -$32</summary>
+    <summary>New floor: −$30/MWh to −$32/MWh</summary>
   </entry>
 </feed>

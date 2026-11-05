@@ -83,6 +83,13 @@ function windowOf(e) {
   return { from: addDays(e.date, -3), to: addDays(e.date, 3) };
 }
 // event span marked on the chart
+// the kind and the title without saying either twice: a title with its own label keeps it
+function subTitle(e, kind) {
+  const t = e.title || "";
+  if (t.includes(":")) return t;
+  return kind.toLowerCase().includes(t.toLowerCase()) ? kind : `${kind}: ${t}`;
+}
+
 function markOf(e) {
   const v = +e.value || 0;
   if (e.kind === "renew_episode") return [e.date, addDays(e.date, v)];
@@ -228,7 +235,7 @@ function draw(el, rows, spec) {
       const j = Math.max(0, Math.min(rows.length - 1, d3.bisector((r) => r.t).center(rows, spec.daily ? t : new Date(t.getTime() - 18e5))));
       const r = rows[j];
       cross.forEach((c) => c.attr("x1", tx(r)).attr("x2", tx(r)).style("display", null));
-      const head = spec.daily ? `${fmtDay(parseDay(r.d))}, daily mean` : `${fmtDay(parseDay(r.d))}, hour ending ${r.h + 1}`;
+      const head = spec.daily ? `${fmtDay(parseDay(r.d))}, daily mean` : `${fmtDay(parseDay(r.d))}, HE ${r.h + 1}`;
       showTip(ev, `<h4>${head}</h4><table>${all.map((s) => `<tr><td><span class="sw" style="background:${css(s.c)};width:9px;height:9px"></span> ${esc(s.l)}</td><td class="n">${fmtV(s, r.v[s.k])}</td></tr>`).join("")}</table>`);
     })
     .on("mouseleave", () => { cross.forEach((c) => c.style("display", "none")); hideTip(); });
@@ -275,9 +282,9 @@ async function render(el, e, kinds) {
   const spec = {
     dates, daily: !!win.daily, mark: markOf(e),
     title: name,
-    sub: `${(kinds && kinds[e.kind]) || e.kind}: ${e.title.replace(/^[^:]*:\s*/, "")} · ${fmtShort(parseDay(from))}–${d3.utcFormat("%b %-d, %Y")(parseDay(to))}, ${res}`,
+    sub: `${subTitle(e, (kinds && kinds[e.kind]) || e.kind)} · ${fmtShort(parseDay(from))}–${d3.utcFormat("%b %-d, %Y")(parseDay(to))}, ${res}`,
     panels: [
-      { u: "MW", title: storage ? "Output (MW, charging below zero)" : "Available vs dispatched output (MW)", series: storage
+      { u: "MW", title: storage ? "Output (MW, charging below zero)" : "Available and dispatched output (MW)", series: storage
         ? [{ k: "out", t: "line", c: "--c1", l: "Output", u: "MW" }]
         : [{ k: "hsl", t: "area", c: "--c1", l: "Available (HSL)", u: "MW" }, { k: "bp", t: "line", c: "--c1", l: "Dispatched (base point)", u: "MW", w: 2.2 }]
           .concat(e.kind.startsWith("dam_") ? [{ k: "award", t: "dash", c: "--c4", l: "Day-ahead award", u: "MW" }] : []) },
@@ -288,7 +295,8 @@ async function render(el, e, kinds) {
         { k: "da", t: "line", c: "--c4", l: "Day-ahead price at its node", u: "$" }] },
     ],
     notes: [
-      `Shaded: the ${e.kind === "renew_episode" || e.kind.startsWith("outage") ? "event's days" : MONTHLY.has(e.kind) ? "date the change is dated to" : "event's day"}. Offer is the first price on the submitted SCED curve` +
+      "The days around the change in the unit's own numbers. Top: how much it could have run (HSL) against what SCED dispatched (base point); a gap between them is curtailment or a unit held back. Bottom: the unit's offer price against the real-time price at its node and hub and the day-ahead price at its node; an offer above the node price is a unit pricing itself out.",
+      `Shaded: the ${e.kind === "renew_episode" || e.kind.startsWith("outage") ? "event's days" : MONTHLY.has(e.kind) ? "first of the month the change is dated to, though the change covers the whole month" : "event's day"}. Offer price is the lowest price on the unit's submitted real-time (SCED) curve, the price at which it first offers output` +
         (names.length > 1 ? `, weighted by HSL across ${names.length} units` : "") + "; prices are hourly means of ERCOT's 15-minute settlement point prices.",
       "Source: ERCOT 60-Day SCED Disclosure (NP3-965-ER), 60-Day DAM Disclosure (NP3-966-ER), Settlement Point Prices (NP6-905-CD).",
     ],

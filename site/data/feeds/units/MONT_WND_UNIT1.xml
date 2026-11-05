@@ -3,26 +3,40 @@
   <title>MONT_WND_UNIT1: bidding and operating changes</title>
   <link href="https://ercotbids.currenttech.energy/unit.html?unit=MONT_WND_UNIT1"/>
   <id>https://ercotbids.currenttech.energy/unit.html?unit=MONT_WND_UNIT1</id>
-  <updated>2026-10-18T00:00:00Z</updated>
+  <updated>2026-11-05T00:00:00Z</updated>
+  <entry>
+    <title>MONT_WND_UNIT1: Outage ended (2026-05-19)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=MONT_WND_UNIT1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=MONT_WND_UNIT1#MONT_WND_UNIT1/2026-05-19/outage_end</id>
+    <updated>2026-11-05T00:00:00Z</updated>
+    <summary>Back from a 8-day outage</summary>
+  </entry>
+  <entry>
+    <title>MONT_WND_UNIT1: Outage started (2026-05-11)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=MONT_WND_UNIT1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=MONT_WND_UNIT1#MONT_WND_UNIT1/2026-05-11/outage_start</id>
+    <updated>2026-11-05T00:00:00Z</updated>
+    <summary>Outage began, lasting 8 days</summary>
+  </entry>
   <entry>
     <title>MONT_WND: New floor (2026-03-10)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=MONT_WND"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=MONT_WND#MONT_WND/2026-03-10/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: floor -$47 to floor -$48</summary>
+    <summary>New floor: −$47/MWh to −$48/MWh</summary>
   </entry>
   <entry>
     <title>MONT_WND: New floor (2026-02-06)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=MONT_WND"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=MONT_WND#MONT_WND/2026-02-06/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: floor -$45 to floor -$47</summary>
+    <summary>New floor: −$45/MWh to −$47/MWh</summary>
   </entry>
   <entry>
     <title>MONT_WND: New floor (2025-11-08)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=MONT_WND"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=MONT_WND#MONT_WND/2025-11-08/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: floor -$38 to floor -$45</summary>
+    <summary>New floor: −$38/MWh to −$45/MWh</summary>
   </entry>
 </feed>

@@ -9,20 +9,20 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=HWF_HWF"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=HWF_HWF#HWF_HWF/2026-05-07/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: floor -$6 to floor -$28</summary>
+    <summary>New floor: −$6/MWh to −$28/MWh</summary>
   </entry>
   <entry>
     <title>HWF_HWF: Episode (2024-04-02)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=HWF_HWF"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=HWF_HWF#HWF_HWF/2024-04-02/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Episode: floor -$6 to $0 for the episode for 4 day(s)</summary>
+    <summary>Episode: floor −$6/MWh, briefly $0/MWh, for 4 days</summary>
   </entry>
   <entry>
     <title>HWF_HWF: New floor (2023-12-21)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=HWF_HWF"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=HWF_HWF#HWF_HWF/2023-12-21/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: floor $0 to floor -$6</summary>
+    <summary>New floor: $0/MWh to −$6/MWh</summary>
   </entry>
 </feed>

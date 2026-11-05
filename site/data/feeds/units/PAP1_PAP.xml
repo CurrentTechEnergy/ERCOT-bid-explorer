@@ -9,13 +9,13 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=PAP1_PAP"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=PAP1_PAP#PAP1_PAP/2025-02-07/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: floor -$1 to floor -$2</summary>
+    <summary>New floor: −$1/MWh to −$2/MWh</summary>
   </entry>
   <entry>
     <title>PAP1_PAP: New floor (2025-01-13)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=PAP1_PAP"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=PAP1_PAP#PAP1_PAP/2025-01-13/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: floor $12 to floor -$1</summary>
+    <summary>New floor: $12/MWh to −$1/MWh</summary>
   </entry>
 </feed>

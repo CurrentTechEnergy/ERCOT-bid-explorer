@@ -16,7 +16,7 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=PINEFRST"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=PINEFRST#PINEFRST/2026-07-25/dam_renew_floor</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Day-ahead floor changed: -$10 to $19/MWh</summary>
+    <summary>Day-ahead floor changed: −$10 to $19/MWh</summary>
   </entry>
   <entry>
     <title>PINEFRST: Stopped day-ahead offers (2026-07-01)</title>
@@ -30,7 +30,7 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=PINEFRST"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=PINEFRST#PINEFRST/2026-02-07/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: floor -$0 to floor -$38</summary>
+    <summary>New floor: −$0/MWh to −$38/MWh</summary>
   </entry>
   <entry>
     <title>PINEFRST: Stopped day-ahead offers (2026-01-31)</title>

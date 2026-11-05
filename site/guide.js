@@ -108,7 +108,7 @@ function drawStep2() {
   $("c2-cap").textContent = `${u.label}, ${heLabel(h)}. ${S.ver === "sub"
     ? `${r.c[0].length} submitted points; ${below ? `${below} of them below LSL (hollow), drawn dashed because SCED never dispatches there` : "the first point is at LSL"}. ${first <= -249 ? "This curve starts at 0 MW and −$250, so a straight line to the next point would look like MW offered below $0 that are really minimum output." : ""}`
     : `The curve SCED dispatched against. From 0 MW to the first offered point ERCOT uses ${fmtP(first)}: that block is minimum output, not an offer.`}`;
-  $("s2-lsl").textContent = fmt0(u.lsl[h]); $("s2-hsl").textContent = fmt0(u.hsl[h]);
+  $("s2-lsl").textContent = fmt0(u.lsl[h]); $("s2-hsl").textContent = fmt0(u.hsl[h]); $("s2-name").textContent = u.label;
 }
 
 function drawStep3() {
@@ -206,7 +206,7 @@ function drawStep5() {
   const [s0, sn, mean] = g.stretch;
   if (!r) {
     $("k5").innerHTML = "";
-    $("c5-cap").textContent = `${u.label} has no Stay-on figures for this stretch.`;
+    $("c5-cap").textContent = `${u.label} has no loss-from-staying-on figures for this stretch.`;
   } else {
     const k = [
       ["Output in the stretch", fmt0(r.mwh) + " MWh"],
@@ -221,7 +221,7 @@ function drawStep5() {
       ? `Running cost is its fuel cost: its measured heat rate at minimum of ${r.hr} MMBtu/MWh × ${u.tech === "coal" ? "its plant's EIA-923 delivered coal price that month" : "its own gas hub's price the trading day before"}, or ${fmtP(perMWh)}/MWh${r.fuel ? " (estimated: a stand-in heat rate or fuel price)" : ""}. Its day-ahead minimum-energy offer is not used: owners often set it low to get committed, so it is a bid rather than a cost.`
       : `Running cost is output × ${r.fuel === 3 ? "the technology's generic cost (no fuel price or three-part offer that day)" : "the unit's day-ahead minimum-energy offer (no fuel price that day)"}.`;
     const start = r.est === 0 ? " The restart cost is the unit's own day-ahead start-up offer."
-      : r.start_range ? ` The restart cost is a generic ${r.start_kind} start; real ${r.start_kind}-start offers from other units this type suggest roughly ${fmt$k(r.start_range[0])} to ${fmt$k(r.start_range[2])} for a unit this size (middle half), so read it as an order of magnitude.`
+      : r.start_range ? ` The restart cost is a generic ${r.start_kind} start; real ${r.start_kind}-start offers from other units of this type suggest roughly ${fmt$k(r.start_range[0])} to ${fmt$k(r.start_range[2])} for a unit this size (the middle half of offers), so read it as an order of magnitude.`
       : " The restart cost is a generic estimate; too few units of this type offer start costs to give a range.";
     $("c5-cap").textContent = `${u.label}, ${heLabel(s0)} to ${heLabel(s0 + sn - 1)} (${sn} hours, average system price ${fmtP(mean)}). ${run}${start}`;
   }
@@ -232,8 +232,8 @@ function drawStep5() {
 function drawChoice(el, r) {
   if (!r) { el.innerHTML = ""; return; }
   const rows = [
-    { k: "Stay on", sub: "loss: running cost minus what the price paid", v: r.loss },
-    { k: "Cycle off", sub: "restart cost for the evening", v: r.start },
+    { k: "Stay on", sub: "loss from staying on", v: r.loss },
+    { k: "Cycle off", sub: "restart cost", v: r.start },
   ];
   const w = width(el), bh = 34, m = { t: 8, r: 70, b: 48, l: w < 480 ? 92 : 230 }, H = m.t + rows.length * (bh + 18) + m.b;
   const x = d3.scaleLinear().domain([Math.min(0, d3.min(rows, (d) => d.v) * 1.05), d3.max(rows, (d) => d.v) * 1.05]).nice().range([m.l, w - m.r]);
@@ -334,12 +334,13 @@ async function fillHedgeMethod() {
   if (D && D.hit_usd != null) $("hit-v").textContent = fmtP0(D.hit_usd);
   if (!R || !R.params) return;
   const P = R.params, fmtA = (v) => (v == null ? "–" : d3.format(".2f")(v));
-  $("chg-method").textContent = `A unit's regime is its floor (one offer price most of the day, within $${P.tol}), a day-ahead formula at one settlement point (as fitted on this step), or offers that move within the day. ` +
-    `A change is a new regime that holds on at least ${P.min_held} of the next ${P.hold} online days. A floor counts as "back" when the unit held it within the previous ${P.new_days} days. ` +
+  $("chg-method").textContent = `A unit's regime is its floor (one offer price most of the day, within $${P.tol}), a day-ahead formula at one settlement point (as fitted on this step), or offers that move within the day.\n\n` +
+    `A change is a new regime that holds on at least ${P.min_held} of the next ${P.hold} online days. A floor counts as "back" when the unit held it within the previous ${P.new_days} days.\n\n` +
     `Inside a formula regime, a step of ${fmtA(P.terms_a)} in the share, or of $${P.terms_b} in the offer the formula gives at a $${P.ref_da} DA price, is a terms change. An episode is 1 to ${P.ep_max} days with a median offer at least $${P.ep_usd} from the floor, then back to it. ` +
-    `Units of one plant changing the same way within a day are one row. A toggler has ${P.toggle} or more episodes or returns to an earlier floor within a year. ` +
-    `Moved dispatch: over every online day the unit spent in the new regime, from the change up to its next change and at most ${P.window_max || 365} days (or the episode's days), an hour counts when the unit was online and its node price fell between the old offer and the new one. Priced up, the old offer would have run, so the energy given up is HSL minus base point; priced down, the base point is energy the old offer would not have produced. Both are valued at the node price. A change moved dispatch when that comes to at least ${P.moved_mwh_day || 1} MWh per day of its window. A window still running at the last data day is marked "so far". ` +
+    `Units of one plant changing the same way within a day are one row. A toggler has ${P.toggle} or more episodes or returns to an earlier floor within a year.\n\n` +
+    `Moved dispatch is the energy a change actually shifted: over every online day the unit spent in the new regime, from the change up to its next change and at most ${P.window_max || 365} days (or the episode's days), an hour counts when the unit was online and its node price fell between the old offer and the new one. Priced up, the old offer would have run, so the energy given up is HSL minus base point; priced down, the base point is energy the old offer would not have produced. Both are valued at the node price. A change moved dispatch when that comes to at least ${P.moved_mwh_day || 1} MWh per day of its window. A window still running at the last data day is marked "so far". ` +
     `The real-time node price is used wherever it is loaded (2019 on); an estimate that falls back to the day-ahead node price for most of its hours is marked "DA price". Hourly prices smooth over SCED's 5-minute prices, so the MWh are approximate.`;
+  const cm = $("chg-method"); cm.innerHTML = cm.textContent.split("\n\n").map(window.CX.esc).join("<br><br>");
 }
 
 async function main() {

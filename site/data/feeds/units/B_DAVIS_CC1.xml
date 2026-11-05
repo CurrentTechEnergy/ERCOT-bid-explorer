@@ -9,7 +9,7 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=B_DAVIS_CC1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=B_DAVIS_CC1#B_DAVIS_CC1/2026-06-01/group</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Multi-day: off a day or more in 2026-05 to Always on when available in 2026-06</summary>
+    <summary>Off for days at a time in 2026-05 to Always on when available in 2026-06</summary>
   </entry>
   <entry>
     <title>B_DAVIS_CC1: Outage ended (2026-05-02)</title>
@@ -23,7 +23,7 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=B_DAVIS_CC1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=B_DAVIS_CC1#B_DAVIS_CC1/2026-05-01/group</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Always on when available in 2026-04 to Multi-day: off a day or more in 2026-05</summary>
+    <summary>Always on when available in 2026-04 to Off for days at a time in 2026-05</summary>
   </entry>
   <entry>
     <title>B_DAVIS_CC1: Outage started (2026-04-05)</title>
@@ -44,7 +44,7 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=B_DAVIS_CC1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=B_DAVIS_CC1#B_DAVIS_CC1/2026-04-01/group</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Multi-day: off a day or more in 2026-03 to Always on when available in 2026-04</summary>
+    <summary>Off for days at a time in 2026-03 to Always on when available in 2026-04</summary>
   </entry>
   <entry>
     <title>B_DAVIS_CC1: Shut down after a long run (2026-03-09)</title>
@@ -65,7 +65,7 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=B_DAVIS_CC1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=B_DAVIS_CC1#B_DAVIS_CC1/2026-03-01/group</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Off a week or more in 2026-02 to Multi-day: off a day or more in 2026-03</summary>
+    <summary>Off for a week or more at a time in 2026-02 to Off for days at a time in 2026-03</summary>
   </entry>
   <entry>
     <title>B_DAVIS_CC1: Minimum-energy offer stepped (2026-02-13)</title>
@@ -107,14 +107,14 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=B_DAVIS_CC1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=B_DAVIS_CC1#B_DAVIS_CC1/2026-01-01/group</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Multi-day: off a day or more in 2025-12 to Off a week or more in 2026-01</summary>
+    <summary>Off for days at a time in 2025-12 to Off for a week or more at a time in 2026-01</summary>
   </entry>
   <entry>
     <title>B_DAVIS_CC1: Priced out of the day-ahead (2025-12-31)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=B_DAVIS_CC1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=B_DAVIS_CC1#B_DAVIS_CC1/2025-12-31/dam_priced_out</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Priced out of the day-ahead: minimum energy at $48/MWh against a usual $35 for 5 day(s)</summary>
+    <summary>Priced out of the day-ahead: minimum energy at $48/MWh against a usual $35/MWh, for 5 days</summary>
   </entry>
   <entry>
     <title>B_DAVIS_CC1: Shut down despite a day-ahead award (2025-12-12)</title>

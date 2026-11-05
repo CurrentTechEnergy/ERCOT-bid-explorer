@@ -3,13 +3,13 @@
   <title>MLB_SLR_SOLAR2: bidding and operating changes</title>
   <link href="https://ercotbids.currenttech.energy/unit.html?unit=MLB_SLR_SOLAR2"/>
   <id>https://ercotbids.currenttech.energy/unit.html?unit=MLB_SLR_SOLAR2</id>
-  <updated>2026-11-04T00:00:00Z</updated>
+  <updated>2026-11-05T00:00:00Z</updated>
   <entry>
     <title>MLB_SLR: Episode (2026-09-04)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=MLB_SLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=MLB_SLR#MLB_SLR/2026-09-04/renew_episode</id>
     <updated>2026-11-04T00:00:00Z</updated>
-    <summary>Episode: floor -$42 to $5 for the episode for 1 day(s)</summary>
+    <summary>Episode: floor −$42/MWh, briefly $5/MWh, for 1 day</summary>
   </entry>
   <entry>
     <title>MLB_SLR_SOLAR2: Started day-ahead offers (2026-07-31)</title>
@@ -30,6 +30,48 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=MLB_SLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=MLB_SLR#MLB_SLR/2026-07-16/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: floor -$38 to floor -$42</summary>
+    <summary>New floor: −$38/MWh to −$42/MWh</summary>
+  </entry>
+  <entry>
+    <title>MLB_SLR_SOLAR2: Outage ended (2026-03-27)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=MLB_SLR_SOLAR2"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=MLB_SLR_SOLAR2#MLB_SLR_SOLAR2/2026-03-27/outage_end</id>
+    <updated>2026-11-05T00:00:00Z</updated>
+    <summary>Back from a 15-day outage</summary>
+  </entry>
+  <entry>
+    <title>MLB_SLR_SOLAR2: Outage started (2026-03-12)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=MLB_SLR_SOLAR2"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=MLB_SLR_SOLAR2#MLB_SLR_SOLAR2/2026-03-12/outage_start</id>
+    <updated>2026-11-05T00:00:00Z</updated>
+    <summary>Outage began, lasting 15 days</summary>
+  </entry>
+  <entry>
+    <title>MLB_SLR_SOLAR2: Outage ended (2026-01-29)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=MLB_SLR_SOLAR2"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=MLB_SLR_SOLAR2#MLB_SLR_SOLAR2/2026-01-29/outage_end</id>
+    <updated>2026-11-05T00:00:00Z</updated>
+    <summary>Back from a 8-day outage</summary>
+  </entry>
+  <entry>
+    <title>MLB_SLR_SOLAR2: Outage started (2026-01-21)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=MLB_SLR_SOLAR2"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=MLB_SLR_SOLAR2#MLB_SLR_SOLAR2/2026-01-21/outage_start</id>
+    <updated>2026-11-05T00:00:00Z</updated>
+    <summary>Outage began, lasting 8 days</summary>
+  </entry>
+  <entry>
+    <title>MLB_SLR_SOLAR2: Outage ended (2026-01-17)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=MLB_SLR_SOLAR2"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=MLB_SLR_SOLAR2#MLB_SLR_SOLAR2/2026-01-17/outage_end</id>
+    <updated>2026-11-05T00:00:00Z</updated>
+    <summary>Back from a 31-day outage</summary>
+  </entry>
+  <entry>
+    <title>MLB_SLR_SOLAR2: Outage started (2025-12-17)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=MLB_SLR_SOLAR2"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=MLB_SLR_SOLAR2#MLB_SLR_SOLAR2/2025-12-17/outage_start</id>
+    <updated>2026-11-05T00:00:00Z</updated>
+    <summary>Outage began, lasting 31 days</summary>
   </entry>
 </feed>

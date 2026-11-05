@@ -16,13 +16,13 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=BTE_CC1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=BTE_CC1#BTE_CC1/2026-04-07/dam_mingen_step</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Minimum-energy offer stepped: $15 to $9/MWh (-$2 to -$6 against the fuel-cost line)</summary>
+    <summary>Minimum-energy offer stepped: $15 to $9/MWh (−$2 to −$6 against the fuel-cost line)</summary>
   </entry>
   <entry>
     <title>BTE_CC1: Priced out of the day-ahead (2026-01-27)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=BTE_CC1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=BTE_CC1#BTE_CC1/2026-01-27/dam_priced_out</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Priced out of the day-ahead: minimum energy at $34/MWh against a usual $16 for 2 day(s)</summary>
+    <summary>Priced out of the day-ahead: minimum energy at $34/MWh against a usual $16/MWh, for 2 days</summary>
   </entry>
 </feed>

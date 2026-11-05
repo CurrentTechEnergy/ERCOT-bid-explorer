@@ -39,6 +39,7 @@ from .actual_stack import build_actual_stack
 from .dispatchable import build_dispatchable
 from .trends import build_trends
 from .intraday import build_intraday
+from .renew_outages import build_renew_outages
 from .groups import build_groups
 from .min_run import build_min_run
 from .unit_hours_day import build_unit_hour_days
@@ -535,6 +536,7 @@ def main(argv=None):
         build_marginal(index)
         memo.run("trends", build_trends, index)
         memo.run("intraday", build_intraday, index)
+        build_renew_outages(index)     # after intraday; reads every outage snapshot, so not memoized
         build_groups(index)
         build_min_run(index)
         build_actual_stack(index)
@@ -629,6 +631,7 @@ def main(argv=None):
     build_marginal(index)
     memo.run("trends", build_trends, index)
     memo.run("intraday", build_intraday, index)
+    build_renew_outages(index)     # after intraday; reads every outage snapshot, so not memoized
     build_groups(index)
     build_min_run(index)
     build_actual_stack(index)

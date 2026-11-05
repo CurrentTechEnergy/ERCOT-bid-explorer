@@ -3,12 +3,19 @@
   <title>LNP_SOLAR1: bidding and operating changes</title>
   <link href="https://ercotbids.currenttech.energy/unit.html?unit=LNP_SOLAR1"/>
   <id>https://ercotbids.currenttech.energy/unit.html?unit=LNP_SOLAR1</id>
-  <updated>2026-10-18T00:00:00Z</updated>
+  <updated>2026-11-05T00:00:00Z</updated>
   <entry>
     <title>LNP: New floor (2026-05-11)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=LNP"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=LNP#LNP/2026-05-11/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: floor $0 to floor -$50</summary>
+    <summary>New floor: $0/MWh to −$50/MWh</summary>
+  </entry>
+  <entry>
+    <title>LNP_SOLAR1: Outage ended (2025-12-11)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=LNP_SOLAR1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=LNP_SOLAR1#LNP_SOLAR1/2025-12-11/outage_end</id>
+    <updated>2026-11-05T00:00:00Z</updated>
+    <summary>Back from a 12-day outage</summary>
   </entry>
 </feed>

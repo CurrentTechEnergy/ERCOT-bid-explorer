@@ -9,7 +9,7 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=DDPEC_CC1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=DDPEC_CC1#DDPEC_CC1/2026-08-13/dam_mingen_step</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Minimum-energy offer stepped: $3 to $10/MWh (-$12 to -$5 against the fuel-cost line)</summary>
+    <summary>Minimum-energy offer stepped: $3 to $10/MWh (−$12 to −$5 against the fuel-cost line)</summary>
   </entry>
   <entry>
     <title>DDPEC_CC1: Start-up cost changed (2026-05-04)</title>
@@ -30,14 +30,14 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=DDPEC_CC1_6"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=DDPEC_CC1_6#DDPEC_CC1_6/2026-01-30/bidding</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Offer price vs peer median: -$30 to -$5/MWh</summary>
+    <summary>Offer price vs peer median: −$30 to −$5/MWh</summary>
   </entry>
   <entry>
     <title>DDPEC_CC1_6: Bidding approach shifted (2026-01-21)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=DDPEC_CC1_6"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=DDPEC_CC1_6#DDPEC_CC1_6/2026-01-21/bidding</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Offer price vs peer median: -$4 to -$30/MWh</summary>
+    <summary>Offer price vs peer median: −$4 to −$30/MWh</summary>
   </entry>
   <entry>
     <title>DDPEC_CC1: Start-up cost changed (2026-01-01)</title>
@@ -51,6 +51,6 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=DDPEC_CC1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=DDPEC_CC1#DDPEC_CC1/2025-12-26/dam_mingen_step</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Minimum-energy offer stepped: $10 to $4/MWh (-$9 to -$9 against the fuel-cost line)</summary>
+    <summary>Minimum-energy offer stepped: $10 to $4/MWh (−$9 to −$9 against the fuel-cost line)</summary>
   </entry>
 </feed>

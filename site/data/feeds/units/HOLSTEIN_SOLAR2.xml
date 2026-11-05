@@ -9,7 +9,7 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=HOLSTEIN"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=HOLSTEIN#HOLSTEIN/2025-11-01/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: floor $0 to floor -$35</summary>
+    <summary>New floor: $0/MWh to −$35/MWh</summary>
   </entry>
   <entry>
     <title>HOLSTEIN: Decision maker or QSE changed (2025-03-18)</title>
@@ -23,6 +23,6 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=HOLSTEIN"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=HOLSTEIN#HOLSTEIN/2021-11-09/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Episode: floor $0 to -$40 for the episode for 1 day(s)</summary>
+    <summary>Episode: floor $0/MWh, briefly −$40/MWh, for 1 day</summary>
   </entry>
 </feed>

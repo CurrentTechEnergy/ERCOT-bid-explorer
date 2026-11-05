@@ -16,6 +16,9 @@ const unitName = () => (isUSD() ? "$/MWh" : "MMBtu/MWh");
 const num = (v) => { const a = Math.abs(v); return a >= 1000 ? d3.format(",.0f")(a) : a >= 100 ? a.toFixed(0) : a.toFixed(1); };
 const fmt = (v) => (v == null ? "–" : (v < 0 ? "−" : "") + num(v));
 const money = (v) => (v == null ? "–" : (v < 0 ? "−" : "") + (isUSD() ? "$" : "") + num(v));
+// numbers in one comparison share their decimals (site writing standard)
+const same = (vs) => window.CX.fmtPair(vs, isUSD() ? "$/MWh" : "MMBtu/MWh", { dp: d3.max(vs, (v) => Math.abs(v ?? 0)) >= 100 ? 0 : 1 });
+const sub = (a, b) => { const [x, y, z] = same([a, b, a - b]); return `${x} − ${y} = ${z}`; };
 const tickMoney = (v) => (v < 0 ? "\u2212" : "") + (isUSD() ? "$" : "") + (Math.abs(v) >= 10 || Number.isInteger(v) ? d3.format(",")(Math.round(Math.abs(v))) : Math.abs(v).toFixed(1));
 const n125 = (v) => /^[125]0*$/.test(String(Math.round(Math.abs(v))));
 const partYear = (y) => { const r = cur()[y]; return !!r && r.to.slice(5) !== "12-31"; };
@@ -79,10 +82,11 @@ function drawTails() {
   const box = $("tails"); box.innerHTML = "";
   const R = usd(), ys = years().filter((y) => R[y]), B = S.P.battery || {}, G = S.P.gas || {};
   const specs = [
-    { t: "Battery capacity (GW)", f: (y) => (B[y] ? B[y].mw / 1000 : null), col: css("--c7"), lab: (v) => (v >= 1 ? v.toFixed(0) : v.toFixed(1)), tip: (v, y) => `${v.toFixed(1)} GW<br><span class="note">${esc(B[y]?.source || "")}</span>` },
+    { t: "Battery capacity at year end (GW)", f: (y) => (B[y] ? B[y].mw / 1000 : null), col: css("--c7"), lab: (v) => v.toFixed(1), tip: (v, y) => `${v.toFixed(1)} GW<br><span class="note">${esc(B[y]?.source || "")}</span>` },
     { t: "Ship Channel gas ($/MMBtu)", f: (y) => R[y].gas, col: css("--gas-line"), lab: (v) => v.toFixed(1), tip: (v, y) => `$${v.toFixed(2)}/MMBtu${G[y]?.filled > 0.05 ? `<br><span class="note">${d3.format(".0%")(G[y].filled)} of days on Henry Hub plus the usual Ship Channel difference</span>` : ""}` },
     { t: "Hours at $1,000 or more", f: (y) => R[y].cnt.ge1000 },
     { t: "Hours at $100 or more", f: (y) => R[y].cnt.ge100 },
+    { t: "Hours at $10 or less", f: (y) => R[y].cnt.le10 },
     { t: "Hours at $0 or below", f: (y) => R[y].cnt.le0 },
   ];
   const csvRows = ys.map((y) => [y, ...specs.map((s) => s.f(y))]);
@@ -101,10 +105,12 @@ function drawTails() {
       g.append("text").attr("class", "axis-title").attr("x", x(k) + x.bandwidth() / 2).attr("y", y(v) - 3).attr("text-anchor", "middle").style("font-size", "10px").text(s.lab ? s.lab(v) : d3.format(",")(v));
       g.append("text").attr("class", "axis-title").attr("x", x(k) + x.bandwidth() / 2).attr("y", h + 13).attr("text-anchor", "middle").style("font-size", "10px").text("'" + String(k).slice(2));
     });
-    setCSV(el, ["year", "battery_gw", "ship_channel_gas_usd_mmbtu", "hours_ge_1000", "hours_ge_100", "hours_le_0"], csvRows, "Batteries, gas and hours in the tails");
+    setCSV(el, ["year", "battery_gw", "ship_channel_gas_usd_mmbtu", "hours_ge_1000", "hours_ge_100", "hours_le_10", "hours_le_0"], csvRows, "Batteries, gas and hours in the tails");
   });
-  $("tails-note").textContent = "Hours each year at or beyond each price (always $/MWh), with battery capacity and the Ship Channel gas price on the same year axis. " +
-    "The latest year runs to date (lighter bars).";
+  const bLast = ys.filter((y) => B[y]).at(-1);
+  $("tails-note").textContent = "Are the tails shrinking as batteries grow? Battery capacity and the gas price sit beside the hours each year spent at the extremes, so the years line up: more batteries should mean fewer hours at $1,000/MWh and fewer at or below $0/MWh. " +
+    "Hour counts are always against $/MWh thresholds. The latest year runs to date (lighter bars)." +
+    (bLast && /CDR/.test(B[bLast]?.source || "") ? ` ${bLast} battery capacity uses expected in-service dates (${String(B[bLast].source).split(":")[0]}), so it is partly planned.` : bLast && partYear(bLast) ? ` ${bLast} battery capacity is the latest reading: ${B[bLast]?.source || ""}.` : "");
 }
 
 // ==== Gas units riding through cheap hours ===================================================
@@ -132,15 +138,20 @@ function drawRide() {
   const rs = d3.scaleSqrt().domain([MIN_CHEAP, d3.max(pts, (r) => r.cheap_h) || MIN_CHEAP + 1]).range([2.5, 8]);
   const mon = d3.timeFormat("%b %Y");
   few.forEach((r) => g.append("rect").attr("x", x(r.d) - 2).attr("width", 4).attr("y", h - 9).attr("height", 9).attr("fill", css("--muted")).attr("opacity", 0.55)
-    .on("pointermove", (ev) => showTip(ev, `<h4>${mon(r.d)}</h4>${r.cheap_h ? `Only ${r.cheap_h} hour${r.cheap_h === 1 ? "" : "s"}` : "No hours"} at $${S.P.cheap} or below<br>Ship Channel gas $${r.gas?.toFixed(2)}`)).on("pointerleave", hideTip));
+    .on("pointermove", (ev) => showTip(ev, `<h4>${mon(r.d)}</h4>${r.cheap_h ? `Only ${r.cheap_h} hour${r.cheap_h === 1 ? "" : "s"}` : "No hours"} at $${S.P.cheap}/MWh or less<br>Ship Channel gas $${r.gas?.toFixed(2)}/MMBtu`)).on("pointerleave", hideTip));
   pts.forEach((r) => g.append("circle").attr("cx", x(r.d)).attr("cy", yr(r.ratio)).attr("r", rs(r.cheap_h)).attr("fill", yc(+r.ym.slice(0, 4))).attr("fill-opacity", 0.85).attr("stroke", css("--surface"))
     .on("pointermove", (ev) => showTip(ev, `<h4>${mon(r.d)}</h4>` + tipRows([[null, "Kept on in cheap hours", d3.format(".0%")(r.ratio)],
       [null, "Gas minimum online, cheap hours", `${(r.lsl_cheap / 1000).toFixed(1)} GW`], [null, "Gas minimum online, other hours", `${(r.lsl_other / 1000).toFixed(1)} GW`],
-      [null, `Hours at $${S.P.cheap} or below`, r.cheap_h], [null, "Ship Channel gas", `$${r.gas?.toFixed(2)}`]]))).on("pointerleave", hideTip));
+      [null, `Hours at $${S.P.cheap}/MWh or less`, r.cheap_h], [null, "Ship Channel gas", `$${r.gas?.toFixed(2)}/MMBtu`]]))).on("pointerleave", hideTip));
   setCSV(el, ["month", "ship_channel_gas_usd_mmbtu", "cheap_hours", "gas_lsl_online_cheap_mw", "gas_lsl_online_other_mw", "share_kept_on"],
     rows.map((r) => [r.ym, r.gas, r.cheap_h, r.lsl_cheap, r.lsl_other, r.ratio == null ? null : +r.ratio.toFixed(3)]), "Gas units riding through cheap hours");
-  $("ride-note").textContent = `Combined-cycle and gas steam minimum output (LSL) online in hours at $${S.P.cheap} or below, as a share of what is online in the month's other hours. ` +
-    `100% means none of it came off for the cheap hours. Cheap hours are real-time Hub average, whatever the controls above say. Runs to ${mon(d3.max(rows, (r) => r.d))}, about two months behind, as the 60-day disclosure does.` +
+  const recent = pts.slice(-12), first = pts.filter((r) => r.ym.startsWith(String(years()[0])));
+  const mR = d3.mean(recent, (r) => r.ratio), m0 = d3.mean(first, (r) => r.ratio), dm = mR - m0;
+  const trend = recent.length && first.length ? ` Over the last ${recent.length} months with enough cheap hours the share averaged ${d3.format(".0%")(mR)}, against ${d3.format(".0%")(m0)} in ${years()[0]}: ` +
+    (Math.abs(dm) < 0.05 ? "the gas fleet is not coming off for cheap hours any more than it did." : dm < 0 ? "more of the gas fleet now comes off for cheap hours." : "less of the gas fleet now comes off for cheap hours.") : "";
+  $("ride-note").textContent = `The link from cheap hours to the fossil fleet: when prices are at or below $${S.P.cheap}/MWh, how much of the gas fleet's minimum output stays online compared with the rest of the month? ` +
+    `Combined-cycle and gas steam minimum output (LSL) online in those hours, as a share of what is online in the month's other hours. ` +
+    `100% means none of it came off for the cheap hours. Cheap hours are real-time Hub average, whatever the controls above say. Runs to ${mon(d3.max(rows, (r) => r.d))}, about two months behind, as the 60-day disclosure does.` + trend +
     (w < 560 ? ` Dot size is the month's cheap hours; a grey tick marks a month with fewer than ${MIN_CHEAP}.` : "");
 }
 
@@ -148,8 +159,8 @@ function drawRide() {
 function drawSpread() {
   const el = $("spread"), W = width(el), H = 280, m = { l: 52, r: 124, t: 12, b: 26 }, { g, w, h } = frame(el, W, H, m), R = cur();
   const ys = years().filter((y) => R[y]);
-  const ser = [{ k: "top − bottom 1%", f: (y) => R[y].p99 - R[y].p1, c: css("--ink") }, { k: "top − bottom 5%", f: (y) => R[y].p95 - R[y].p5, c: css("--accent") },
-    { k: "daily max − min", f: (y) => R[y].sp_mean, c: css("--muted"), dash: "4 3" }];
+  const ser = [{ k: "99th − 1st pct", f: (y) => R[y].p99 - R[y].p1, c: css("--ink") }, { k: "95th − 5th pct", f: (y) => R[y].p95 - R[y].p5, c: css("--accent") },
+    { k: "day's high − low", f: (y) => R[y].sp_mean, c: css("--muted"), dash: "4 3" }];
   const x = d3.scalePoint().domain(ys).range([0, w]).padding(0.3);
   const allv = ys.flatMap((y) => ser.map((s) => s.f(y))).filter((v) => v > 0);
   const lo = isUSD() ? 1 : 0.1;
@@ -160,8 +171,8 @@ function drawSpread() {
   ser.forEach((s) => {
     g.append("path").attr("d", d3.line().x((k) => x(k)).y((k) => y(Math.max(lo, s.f(k))))(ys)).attr("fill", "none").attr("stroke", s.c).attr("stroke-width", 2).attr("stroke-dasharray", s.dash || null);
     ys.forEach((k) => g.append("circle").attr("cx", x(k)).attr("cy", y(Math.max(lo, s.f(k)))).attr("r", 3.5).attr("fill", s.c)
-      .on("pointermove", (ev) => showTip(ev, `<h4>${yrLabel(k)}</h4>` + tipRows([[null, "Top 1% − bottom 1%", `${money(R[k].p99)} − ${money(R[k].p1)} = ${fmt(R[k].p99 - R[k].p1)}`],
-        [null, "Top 5% − bottom 5%", `${money(R[k].p95)} − ${money(R[k].p5)} = ${fmt(R[k].p95 - R[k].p5)}`], [null, "Average daily max − min", `${fmt(R[k].sp_mean)} (median ${fmt(R[k].sp_med)})`]])))
+      .on("pointermove", (ev) => showTip(ev, `<h4>${yrLabel(k)}</h4>` + tipRows([[null, "99th − 1st percentile", sub(R[k].p99, R[k].p1)],
+        [null, "95th − 5th percentile", sub(R[k].p95, R[k].p5)], [null, "Average day's high − low", same([R[k].sp_mean, R[k].sp_med]).join(" (median ") + ")"]])))
       .on("pointerleave", hideTip));
   });
   const last = ys[ys.length - 1], labs = ser.map((s) => ({ s, y: y(Math.max(lo, s.f(last))) + 4 })).sort((a, b) => a.y - b.y);
@@ -184,7 +195,7 @@ function drawHOD() {
   g.append("rect").attr("width", w).attr("height", h).attr("fill", "transparent")
     .on("pointermove", (ev) => {
       const he = Math.max(1, Math.min(24, Math.round(x.invert(d3.pointer(ev)[0]))));
-      showTip(ev, `<h4>Hour ending ${he}</h4>` + tipRows(ys.slice().reverse().map((k) => [yc(k), yrLabel(k), money(R[k][S.hod][he - 1])])));
+      showTip(ev, `<h4>HE ${he}</h4>` + tipRows(ys.slice().reverse().map((k) => [yc(k), yrLabel(k), money(R[k][S.hod][he - 1])])));
     })
     .on("pointerleave", hideTip);
   setCSV(el, ["hour_ending", ...ys.map(String)], d3.range(24).map((i) => [i + 1, ...ys.map((k) => R[k][S.hod][i])]), `Price by hour of day ${S.hod.slice(4)}`);
@@ -194,14 +205,15 @@ function drawHOD() {
 const GAS_FN = "Ship Channel gas filled from Henry Hub plus that month's usual difference on days with no Ship Channel price (none before Jul 15, 2019 or for most of Jun 2024 to Aug 2025).";
 function drawTable() {
   const R = cur(), C = usd(), ys = years().filter((y) => R[y]), B = S.P.battery || {}, G = S.P.gas || {};
-  const head = ["Year", "Hours", "Average", "Median", "Top 1%", "Bottom 1%", "Top 1% − bottom 1%", "Daily max − min", "≥ $1,000 h", "≥ $100 h", "≤ $10 h", "≤ $0 h", "Ship Channel gas", "Batteries GW"];
+  const head = ["Year", "Hours", "Average", "Median", "99th pct", "1st pct", "99th − 1st", "Average day's high − low", "Hours ≥ $1,000", "Hours ≥ $100", "Hours ≤ $10", "Hours ≤ $0", "Ship Channel gas, $/MMBtu", "Batteries at year end, GW"];
+  const dec = (v) => (v == null ? "–" : (v < 0 ? "−" : "") + (isUSD() ? "$" : "") + d3.format(",.1f")(Math.abs(v)));
   const rows = ys.map((k) => { const r = R[k], c = C[k]?.cnt || {}; return [yrLabel(k), r.n, r.mean, r.p50, r.p99, r.p1, r.p99 - r.p1, r.sp_mean, c.ge1000, c.ge100, c.le10, c.le0, r.gas, B[k] ? B[k].mw / 1000 : null, G[k]?.filled > 0.05 ? G[k].filled : 0]; });
   $("tbl").innerHTML = `<thead><tr>${head.map((t) => `<th>${t}</th>`).join("")}</tr></thead><tbody>` + rows.map((r) =>
-    `<tr><td>${r[0]}</td><td>${d3.format(",")(r[1])}</td>${r.slice(2, 8).map((v) => `<td>${money(v)}</td>`).join("")}` +
+    `<tr><td>${r[0]}</td><td>${d3.format(",")(r[1])}</td>${r.slice(2, 8).map((v) => `<td>${dec(v)}</td>`).join("")}` +
     `${r.slice(8, 12).map((v) => `<td>${v == null ? "–" : d3.format(",")(v)}</td>`).join("")}<td>${r[12] == null ? "–" : "$" + r[12].toFixed(2)}${r[14] ? `<span class="fn" tabindex="0" data-tip="${esc(GAS_FN)} ${d3.format(".0%")(r[14])} of ${esc(r[0])}'s days filled.">*</span>` : ""}</td><td>${r[13] == null ? "–" : r[13].toFixed(1)}</td></tr>`).join("") + "</tbody>";
   setCSV($("tbl"), ["year", "hours", `mean_${S.unit}`, `median_${S.unit}`, `p99_${S.unit}`, `p1_${S.unit}`, "p99_less_p1", "daily_max_min_mean", "hours_ge_1000", "hours_ge_100", "hours_le_10", "hours_le_0", "ship_channel_gas_usd_mmbtu", "battery_gw"],
     rows.map((r) => [r[0], ...r.slice(1, 14)]), "Year by year");
-  $("table-note").textContent = `${S.mkt === "rt" ? "Real-time" : "Day-ahead"} ${$("c-hub").selectedOptions[0].text}, whole years (the latest to date), ${unitName()} for prices; hour counts always in $/MWh.`;
+  $("table-note").textContent = `${S.mkt === "rt" ? "Real-time" : "Day-ahead"} ${$("c-hub").selectedOptions[0].text}, whole years (the latest to date). Prices in ${unitName()}, all to one decimal; the hour counts are always against $/MWh thresholds.`;
   $("table-foot").textContent = rows.some((r) => r[14]) ? `* ${GAS_FN}` : "";
 }
 

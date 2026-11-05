@@ -9,7 +9,7 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=QALSW_CC1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=QALSW_CC1#QALSW_CC1/2026-07-24/dam_mingen_step</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Minimum-energy offer stepped: $20 to $1/MWh ($5 to -$19 against the fuel-cost line)</summary>
+    <summary>Minimum-energy offer stepped: $20 to $1/MWh ($5 to −$19 against the fuel-cost line)</summary>
   </entry>
   <entry>
     <title>QALSW_CC1: Minimum-energy offer stepped (2026-07-15)</title>
@@ -37,7 +37,7 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=QALSW_CC1_2"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=QALSW_CC1_2#QALSW_CC1_2/2026-06-16/bidding</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Offer price vs peer median: -$16 to $0/MWh</summary>
+    <summary>Offer price vs peer median: −$16 to $0/MWh</summary>
   </entry>
   <entry>
     <title>QALSW_CC1_2: Bidding approach shifted (2026-06-14)</title>
@@ -65,7 +65,7 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=QALSW_CC1_2"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=QALSW_CC1_2#QALSW_CC1_2/2026-01-31/bidding</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Offer price vs peer median: -$5 to -$16/MWh</summary>
+    <summary>Offer price vs peer median: −$5 to −$16/MWh</summary>
   </entry>
   <entry>
     <title>QALSW_CC1_2: Bidding approach shifted (2026-01-22)</title>
@@ -100,7 +100,7 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=QALSW_CC1_2"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=QALSW_CC1_2#QALSW_CC1_2/2025-12-19/bidding</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Offer price vs peer median: -$25 to -$14/MWh</summary>
+    <summary>Offer price vs peer median: −$25 to −$14/MWh</summary>
   </entry>
   <entry>
     <title>QALSW_CC1_2: Bidding approach shifted (2025-12-11)</title>

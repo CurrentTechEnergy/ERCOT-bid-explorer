@@ -9,7 +9,7 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=SHANNONW"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=SHANNONW#SHANNONW/2026-07-20/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: floor $0 to floor -$2</summary>
+    <summary>New floor: $0/MWh to −$2/MWh</summary>
   </entry>
   <entry>
     <title>SHANNONW_UNIT_1: Decision maker or QSE changed (2026-06-21)</title>
@@ -30,13 +30,13 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=SHANNONW"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=SHANNONW#SHANNONW/2021-02-14/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Episode: floor $0 to -$35 for the episode for 3 day(s)</summary>
+    <summary>Episode: floor $0/MWh, briefly −$35/MWh, for 3 days</summary>
   </entry>
   <entry>
     <title>SHANNONW: New floor (2021-02-05)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=SHANNONW"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=SHANNONW#SHANNONW/2021-02-05/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: floor -$30 to floor $0</summary>
+    <summary>New floor: −$30/MWh to $0/MWh</summary>
   </entry>
 </feed>

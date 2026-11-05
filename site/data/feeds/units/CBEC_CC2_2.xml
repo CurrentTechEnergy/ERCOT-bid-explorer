@@ -9,7 +9,7 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=CBEC_CC2_2"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=CBEC_CC2_2#CBEC_CC2_2/2026-02-03/bidding</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Offer price vs peer median: -$6 to $4/MWh</summary>
+    <summary>Offer price vs peer median: −$6 to $4/MWh</summary>
   </entry>
   <entry>
     <title>CBEC_CC2: Minimum-energy offer stepped (2026-02-01)</title>
@@ -23,7 +23,7 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=CBEC_CC2"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=CBEC_CC2#CBEC_CC2/2026-01-22/dam_priced_out</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Priced out of the day-ahead: minimum energy at $60/MWh against a usual $32 for 3 day(s)</summary>
+    <summary>Priced out of the day-ahead: minimum energy at $60/MWh against a usual $32/MWh, for 3 days</summary>
   </entry>
   <entry>
     <title>CBEC_CC2: Minimum-energy offer stepped (2026-01-08)</title>

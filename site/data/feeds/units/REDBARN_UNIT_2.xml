@@ -9,27 +9,27 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=REDBARN"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=REDBARN#REDBARN/2026-07-22/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: floor -$10 to floor -$11</summary>
+    <summary>New floor: −$10/MWh to −$11/MWh</summary>
   </entry>
   <entry>
     <title>REDBARN: New floor (2025-06-06)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=REDBARN"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=REDBARN#REDBARN/2025-06-06/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: floor -$5 to floor -$10</summary>
+    <summary>New floor: −$5/MWh to −$10/MWh</summary>
   </entry>
   <entry>
     <title>REDBARN: New floor (2024-05-10)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=REDBARN"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=REDBARN#REDBARN/2024-05-10/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: floor $0 to floor -$5</summary>
+    <summary>New floor: $0/MWh to −$5/MWh</summary>
   </entry>
   <entry>
     <title>REDBARN: Episode (2021-04-29)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=REDBARN"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=REDBARN#REDBARN/2021-04-29/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Episode: floor $0 to -$50 for the episode for 5 day(s)</summary>
+    <summary>Episode: floor $0/MWh, briefly −$50/MWh, for 5 days</summary>
   </entry>
 </feed>

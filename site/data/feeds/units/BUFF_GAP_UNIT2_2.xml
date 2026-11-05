@@ -3,7 +3,98 @@
   <title>BUFF_GAP_UNIT2_2: bidding and operating changes</title>
   <link href="https://ercotbids.currenttech.energy/unit.html?unit=BUFF_GAP_UNIT2_2"/>
   <id>https://ercotbids.currenttech.energy/unit.html?unit=BUFF_GAP_UNIT2_2</id>
-  <updated>2026-10-18T00:00:00Z</updated>
+  <updated>2026-11-05T00:00:00Z</updated>
+  <entry>
+    <title>BUFF_GAP_UNIT2_2: Outage started (2026-06-29)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=BUFF_GAP_UNIT2_2"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=BUFF_GAP_UNIT2_2#BUFF_GAP_UNIT2_2/2026-06-29/outage_start</id>
+    <updated>2026-11-05T00:00:00Z</updated>
+    <summary>Outage began, still on at the end of the data (70 days so far)</summary>
+  </entry>
+  <entry>
+    <title>BUFF_GAP_UNIT2_2: Outage ended (2026-06-29)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=BUFF_GAP_UNIT2_2"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=BUFF_GAP_UNIT2_2#BUFF_GAP_UNIT2_2/2026-06-29/outage_end</id>
+    <updated>2026-11-05T00:00:00Z</updated>
+    <summary>Back from a 21-day outage</summary>
+  </entry>
+  <entry>
+    <title>BUFF_GAP_UNIT2_2: Outage started (2026-06-08)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=BUFF_GAP_UNIT2_2"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=BUFF_GAP_UNIT2_2#BUFF_GAP_UNIT2_2/2026-06-08/outage_start</id>
+    <updated>2026-11-05T00:00:00Z</updated>
+    <summary>Outage began, lasting 21 days</summary>
+  </entry>
+  <entry>
+    <title>BUFF_GAP_UNIT2_2: Outage ended (2026-06-08)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=BUFF_GAP_UNIT2_2"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=BUFF_GAP_UNIT2_2#BUFF_GAP_UNIT2_2/2026-06-08/outage_end</id>
+    <updated>2026-11-05T00:00:00Z</updated>
+    <summary>Back from a 61-day outage</summary>
+  </entry>
+  <entry>
+    <title>BUFF_GAP_UNIT2_2: Outage started (2026-04-08)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=BUFF_GAP_UNIT2_2"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=BUFF_GAP_UNIT2_2#BUFF_GAP_UNIT2_2/2026-04-08/outage_start</id>
+    <updated>2026-11-05T00:00:00Z</updated>
+    <summary>Outage began, lasting 61 days</summary>
+  </entry>
+  <entry>
+    <title>BUFF_GAP_UNIT2_2: Outage ended (2026-04-08)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=BUFF_GAP_UNIT2_2"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=BUFF_GAP_UNIT2_2#BUFF_GAP_UNIT2_2/2026-04-08/outage_end</id>
+    <updated>2026-11-05T00:00:00Z</updated>
+    <summary>Back from a 31-day outage</summary>
+  </entry>
+  <entry>
+    <title>BUFF_GAP_UNIT2_2: Outage started (2026-03-08)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=BUFF_GAP_UNIT2_2"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=BUFF_GAP_UNIT2_2#BUFF_GAP_UNIT2_2/2026-03-08/outage_start</id>
+    <updated>2026-11-05T00:00:00Z</updated>
+    <summary>Outage began, lasting 31 days</summary>
+  </entry>
+  <entry>
+    <title>BUFF_GAP_UNIT2_2: Outage ended (2026-03-08)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=BUFF_GAP_UNIT2_2"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=BUFF_GAP_UNIT2_2#BUFF_GAP_UNIT2_2/2026-03-08/outage_end</id>
+    <updated>2026-11-05T00:00:00Z</updated>
+    <summary>Back from a 8-day outage</summary>
+  </entry>
+  <entry>
+    <title>BUFF_GAP_UNIT2_2: Outage started (2026-02-28)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=BUFF_GAP_UNIT2_2"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=BUFF_GAP_UNIT2_2#BUFF_GAP_UNIT2_2/2026-02-28/outage_start</id>
+    <updated>2026-11-05T00:00:00Z</updated>
+    <summary>Outage began, lasting 8 days</summary>
+  </entry>
+  <entry>
+    <title>BUFF_GAP_UNIT2_2: Outage ended (2026-02-19)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=BUFF_GAP_UNIT2_2"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=BUFF_GAP_UNIT2_2#BUFF_GAP_UNIT2_2/2026-02-19/outage_end</id>
+    <updated>2026-11-05T00:00:00Z</updated>
+    <summary>Back from a 40-day outage</summary>
+  </entry>
+  <entry>
+    <title>BUFF_GAP_UNIT2_2: Outage started (2026-01-09)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=BUFF_GAP_UNIT2_2"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=BUFF_GAP_UNIT2_2#BUFF_GAP_UNIT2_2/2026-01-09/outage_start</id>
+    <updated>2026-11-05T00:00:00Z</updated>
+    <summary>Outage began, lasting 40 days</summary>
+  </entry>
+  <entry>
+    <title>BUFF_GAP_UNIT2_2: Outage ended (2026-01-09)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=BUFF_GAP_UNIT2_2"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=BUFF_GAP_UNIT2_2#BUFF_GAP_UNIT2_2/2026-01-09/outage_end</id>
+    <updated>2026-11-05T00:00:00Z</updated>
+    <summary>Back from a 9-day outage</summary>
+  </entry>
+  <entry>
+    <title>BUFF_GAP_UNIT2_2: Outage started (2026-01-01)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=BUFF_GAP_UNIT2_2"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=BUFF_GAP_UNIT2_2#BUFF_GAP_UNIT2_2/2026-01-01/outage_start</id>
+    <updated>2026-11-05T00:00:00Z</updated>
+    <summary>Outage began, lasting 9 days</summary>
+  </entry>
   <entry>
     <title>BUFF_GAP_UNIT2: Stopped day-ahead offers (2026-01-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=BUFF_GAP_UNIT2"/>
@@ -16,14 +107,14 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=BUFF_GAP_UNIT2"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=BUFF_GAP_UNIT2#BUFF_GAP_UNIT2/2023-06-30/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: floor $0 to floor -$2</summary>
+    <summary>New floor: $0/MWh to −$2/MWh</summary>
   </entry>
   <entry>
     <title>BUFF_GAP_UNIT2: New floor (2023-03-29)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=BUFF_GAP_UNIT2"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=BUFF_GAP_UNIT2#BUFF_GAP_UNIT2/2023-03-29/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: floor -$2 to floor $0</summary>
+    <summary>New floor: −$2/MWh to $0/MWh</summary>
   </entry>
   <entry>
     <title>BUFF: Decision maker or QSE changed (2023-03-28)</title>

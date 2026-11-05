@@ -39,7 +39,7 @@
   <div class="brand">
     <div class="nav-row"><nav class="nav" aria-label="Pages"><a href="goal.html">Will fossil turn off?</a><a href="index.html">A day in ERCOT</a><a href="prices.html">Prices</a><a href="dayahead.html">Day-ahead offers</a><a href="commitment.html" aria-current="page">Turn-ons and Turn-offs</a><a href="beyond.html">Real-time offers</a><a href="renewables.html">Renewables</a><a href="batteries.html">Batteries</a><a href="unit.html">Units</a><span class="nav-sep" aria-hidden="true"></span><a href="changes.html" class="aux">What's changing</a><a href="fleet.html" class="aux">Fleet economics</a><a href="guide.html" class="aux">How offers work</a></nav></div>
     <h1>Turn-ons and Turn-offs</h1>
-    <p class="sub">Which coal and gas units stay on through cheap hours, and the call for each one today.</p>
+    <p class="sub">Which coal and gas units stay on through cheap hours, what staying on cost them, and what an operator-behavior model says each one should have done on the chosen day (the latest day with 60-day data, about two months back).</p>
   </div>
   <p class="status" id="status">Loading data…</p>
 </header>
@@ -62,13 +62,13 @@
   <section class="panel panel-wide" id="cutoff-panel">
     <div class="panel-head">
       <div>
-        <h2>CC and gas steam: where the model turns each unit off<span id="cut-units-stayed"></span> <span class="h-note" id="cut-title-note"></span></h2>
+        <h2>Combined cycle and gas steam: the loss at which the model turns each unit off<span id="cut-units-stayed"></span> <span class="h-note" id="cut-title-note"></span></h2>
         <p class="note" id="cut-units-note"></p>
       </div>
     </div>
     <div class="legend legend-static" id="cut-units-legend"></div>
     <div class="chart" id="cut-units"></div>
-    <h3 class="sub-h">Each combustion turbine: the day-ahead price at its node where the operator model starts it, and the day's highest there</h3>
+    <h3 class="sub-h">Combustion turbines: the day-ahead price at which the model expects each one to start, against the day's actual peak at its node</h3>
     <p class="note" id="ct-units-note"></p>
     <div class="legend legend-static" id="ct-units-legend"></div>
     <div class="chart" id="ct-units"></div>
@@ -96,9 +96,9 @@
         <div class="seg seg-sm" id="sc-cell" role="radiogroup" aria-label="Hours">
           <button type="button" data-v="all" role="radio">All hours</button>
           <button type="button" data-v="cheap" role="radio">Cheap hours</button>
-          <button type="button" data-v="noaward" role="radio">Unawarded hours</button>
-          <button type="button" data-v="on" role="radio">On going in</button>
-          <button type="button" data-v="off" role="radio">Off going in</button>
+          <button type="button" data-v="noaward" role="radio">No day-ahead award</button>
+          <button type="button" data-v="on" role="radio">Unit was on</button>
+          <button type="button" data-v="off" role="radio">Unit was off</button>
         </div>
       </div>
     </div>
@@ -117,7 +117,7 @@
         <label class="lbl inline" for="st-tech">Technology</label>
         <select id="st-tech"></select>
         <div class="seg seg-sm" id="st-thr" role="radiogroup" aria-label="Cheap means lambda below">
-          <button type="button" data-v="0" role="radio">Lambda below $0</button>
+          <button type="button" data-v="0" role="radio">Below $0</button>
           <button type="button" data-v="10" role="radio">Below $10</button>
         </div>
         <div class="seg seg-sm" id="st-unit" role="radiogroup" aria-label="Show as">
@@ -159,8 +159,8 @@
         <label class="lbl inline" for="cheap-tech">Technology</label>
         <select id="cheap-tech"></select>
         <div class="seg seg-sm" id="cheap-thr" role="radiogroup" aria-label="Hours">
-          <button type="button" data-v="0" role="radio">Lambda below $0</button>
-          <button type="button" data-v="10" role="radio">Lambda below $10</button>
+          <button type="button" data-v="0" role="radio">Below $0</button>
+          <button type="button" data-v="10" role="radio">Below $10</button>
         </div>
       </div>
     </div>
@@ -191,7 +191,7 @@
       </div>
       <div class="panel-tools">
         <div class="seg seg-sm" id="cost-thr" role="radiogroup" aria-label="Cheap means lambda below">
-          <button type="button" data-v="0" role="radio">Lambda below $0</button>
+          <button type="button" data-v="0" role="radio">Below $0</button>
           <button type="button" data-v="10" role="radio">Below $10</button>
         </div>
       </div>
@@ -219,7 +219,7 @@
     <div class="legend legend-static" id="runs-plant-legend"></div>
     <div class="chart" id="runs-plant"></div>
     <details class="runs-nr" id="runs-nr">
-      <summary>Minimum run not revealed <span class="h-note" id="runs-nr-count"></span></summary>
+      <summary>Units with too few completed runs to judge <span class="h-note" id="runs-nr-count"></span></summary>
       <p class="note" id="runs-nr-note"></p>
       <div class="units-wrap" id="runs-nr-table"></div>
     </details>
@@ -281,7 +281,8 @@
 </main>
 
 <footer class="foot">
-  <p>Source: ERCOT EMIL products NP3-965-ER (60-Day SCED Disclosure), NP3-966-ER (60-Day DAM Disclosure), NP4-190-CD (DAM Settlement Point Prices), NP4-523-CD (DAM System Lambda), NP6-905-CD (Settlement Point Prices at Resource Nodes, Hubs and Load Zones), NP6-322-CD (SCED System Lambda) and NP3-908-ER (2-Day SCED Energy Curves). Times are hour ending, Central prevailing time. The 60-day reports run about two months behind, so the panels across days end there.</p>
+  <p>Source: ERCOT EMIL products NP3-965-ER (60-Day SCED Disclosure), NP3-966-ER (60-Day DAM Disclosure), NP4-190-CD (DAM Settlement Point Prices), NP4-523-CD (DAM System Lambda), NP6-905-CD (Settlement Point Prices at Resource Nodes, Hubs and Load Zones), NP6-322-CD (SCED System Lambda) and NP3-908-ER (2-Day SCED Energy Curves). The 60-day reports run about two months behind, so the panels across days end there.</p>
+  <p>Hours are ERCOT hour ending in Central prevailing time: HE 13 is noon to 1 pm. Dates are operating days.</p>
   <p>Made by <a href="https://currenttech.energy">currenttech.energy</a> · <a href="contact.html">Contact</a></p>
   <p>Not affiliated with or endorsed by ERCOT. ERCOT is a registered trademark of the Electric Reliability Council of Texas, Inc.</p>
   <p>© 2026 CurrentTech Energy. All rights reserved. For information only; not trading or investment advice. <a href="terms.html">Terms and privacy</a></p>

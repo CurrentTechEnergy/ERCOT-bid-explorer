@@ -9,28 +9,28 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=LHORN_N"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=LHORN_N#LHORN_N/2026-05-05/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: floor -$5 to floor -$2</summary>
+    <summary>New floor: −$5/MWh to −$2/MWh</summary>
   </entry>
   <entry>
     <title>LHORN_N: New floor (2025-07-31)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=LHORN_N"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=LHORN_N#LHORN_N/2025-07-31/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: floor -$35 to floor -$5</summary>
+    <summary>New floor: −$35/MWh to −$5/MWh</summary>
   </entry>
   <entry>
     <title>LHORN_N: Episode (2025-06-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=LHORN_N"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=LHORN_N#LHORN_N/2025-06-01/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Episode: floor -$35 to -$5 for the episode for 4 day(s)</summary>
+    <summary>Episode: floor −$35/MWh, briefly −$5/MWh, for 4 days</summary>
   </entry>
   <entry>
     <title>LHORN_N: New floor (2023-07-14)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=LHORN_N"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=LHORN_N#LHORN_N/2023-07-14/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: floor -$33 to floor -$35</summary>
+    <summary>New floor: −$33/MWh to −$35/MWh</summary>
   </entry>
   <entry>
     <title>LHORN: Decision maker or QSE changed (2022-07-19)</title>
@@ -44,27 +44,27 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=LHORN_N"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=LHORN_N#LHORN_N/2022-05-11/renew_floor_back</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Back to an earlier floor: floor -$34 to floor -$33</summary>
+    <summary>Back to an earlier floor: −$34/MWh to −$33/MWh</summary>
   </entry>
   <entry>
     <title>LHORN_N: New floor (2022-04-20)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=LHORN_N"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=LHORN_N#LHORN_N/2022-04-20/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: floor -$33 to floor -$34</summary>
+    <summary>New floor: −$33/MWh to −$34/MWh</summary>
   </entry>
   <entry>
     <title>LHORN_N: New floor (2022-01-19)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=LHORN_N"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=LHORN_N#LHORN_N/2022-01-19/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: floor -$32 to floor -$33</summary>
+    <summary>New floor: −$32/MWh to −$33/MWh</summary>
   </entry>
   <entry>
     <title>LHORN_N: New floor (2019-06-11)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=LHORN_N"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=LHORN_N#LHORN_N/2019-06-11/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: floor -$30 to floor -$32</summary>
+    <summary>New floor: −$30/MWh to −$32/MWh</summary>
   </entry>
 </feed>

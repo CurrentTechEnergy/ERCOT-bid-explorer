@@ -9,27 +9,27 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=DRCK_SLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=DRCK_SLR#DRCK_SLR/2026-06-05/renew_floor_back</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Back to an earlier floor: floor $0 to floor -$20</summary>
+    <summary>Back to an earlier floor: $0/MWh to −$20/MWh</summary>
   </entry>
   <entry>
     <title>DRCK_SLR: New floor (2026-04-15)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=DRCK_SLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=DRCK_SLR#DRCK_SLR/2026-04-15/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: floor -$20 to floor $0</summary>
+    <summary>New floor: −$20/MWh to $0/MWh</summary>
   </entry>
   <entry>
     <title>DRCK_SLR: New floor (2026-02-18)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=DRCK_SLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=DRCK_SLR#DRCK_SLR/2026-02-18/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: floor -$10 to floor -$20</summary>
+    <summary>New floor: −$10/MWh to −$20/MWh</summary>
   </entry>
   <entry>
     <title>DRCK_SLR: New floor (2025-10-29)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=DRCK_SLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=DRCK_SLR#DRCK_SLR/2025-10-29/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: floor -$4 to floor -$10</summary>
+    <summary>New floor: −$4/MWh to −$10/MWh</summary>
   </entry>
 </feed>

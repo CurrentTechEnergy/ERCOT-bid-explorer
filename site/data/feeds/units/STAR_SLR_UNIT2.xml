@@ -9,20 +9,20 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=STAR_SLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=STAR_SLR#STAR_SLR/2026-04-16/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: floor $0 to floor -$2</summary>
+    <summary>New floor: $0/MWh to −$2/MWh</summary>
   </entry>
   <entry>
     <title>STAR_SLR: New floor (2025-09-04)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=STAR_SLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=STAR_SLR#STAR_SLR/2025-09-04/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: floor -$125 to floor $0</summary>
+    <summary>New floor: −$125/MWh to $0/MWh</summary>
   </entry>
   <entry>
     <title>STAR_SLR: New floor (2025-04-10)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=STAR_SLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=STAR_SLR#STAR_SLR/2025-04-10/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: floor $0 to floor -$125</summary>
+    <summary>New floor: $0/MWh to −$125/MWh</summary>
   </entry>
 </feed>

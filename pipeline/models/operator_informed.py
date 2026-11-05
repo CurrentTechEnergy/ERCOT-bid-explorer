@@ -106,7 +106,6 @@ from ..config import DATA_DIR, GENERIC_COSTS
 from ..cop import COP_DIR
 from ..decisions import AWARD_LSL, COST_DAYS, _dam_trains
 from ..forecast import context as C
-from ..guide import EIA_HR
 from ..store import read_json_gz, write_json_gz
 
 NAME = "operator_informed"
@@ -142,7 +141,7 @@ DRIVERS = [("price against its cost", (0, 1, 3, 4, 22, 23, 24)), ("loss against 
            ("DAM award", (5, 6, 7, 17, 18, 29, 30)), ("ancillary services", (31, 32)), ("DAM status", (8,)), ("time in its state", (11, 12)),
            ("sitting at minimum", (13,)), ("hour and season", (10, 14, 15, 16)),
            ("its own COP plan", (19, 20, 21)), ("its recent days", (25, 26, 27, 28))]
-HEAT_RATE = {"combined_cycle": EIA_HR["combined_cycle"], "gas_steam": 10.4}   # MMBtu/MWh; gas steam: EIA Electric Power Annual table 8.2, approximate (x 1.28 at minimum, as the decision table, did worse: Nov 2026)
+HEAT_RATE = {"combined_cycle": 7.548, "gas_steam": 10.4}   # MMBtu/MWh, the model's gas scaling, not a unit's cost (per-unit heat rates: CC neutral, gas steam worse, Nov 2026); CC: EIA Electric Power Annual table 8.2; gas steam: EIA Electric Power Annual table 8.2, approximate (x 1.28 at minimum, as the decision table, did worse: Nov 2026)
 OFF_MIN_H = 2        # offline hours a shutdown needs: a single offline hour between online hours is a blip (decision_table)
 OFF_DEFAULT = {"combined_cycle": 4.0, "gas_steam": 8.0}   # minimum off time without OFF_SPELLS clean spells (decision_table)
 OFF_SPELLS, OFF_DAYS = 3, 365

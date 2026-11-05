@@ -150,11 +150,14 @@ function drawFlow() {
   ];
   staticLegend($("flow-legend"), [...list, ...dam]);
   const rt = rtHub(), da = daHub();
-  hourChart($("flow-chart"), { bars: list, lines: dam, title: "Fleet MW by hour (GW; charging below zero)", yFmt: fmtGW, tipFmt: (v) => `${fmtGW(v)} GW`,
+  hourChart($("flow-chart"), { bars: list, lines: dam, title: "Fleet charging and discharging by hour, GW (charging below zero)", yFmt: fmtGW, tipFmt: (v) => `${fmtGW(v)} GW`,
     tipExtra: priceTip(rt, da), csvName: "Battery charging and discharging" });
   const gwh = (a) => d3.sum(a, (v) => Math.abs(v || 0));
-  $("flow-note").textContent = `${winLabel()} · ${fmtGW(gwh(chg))} GWh charged, ${fmtGW(gwh(dis))} GWh discharged a day` +
-    (dDis.some((v) => v != null) ? ` · day-ahead ${fmtGW(gwh(dChg))} and ${fmtGW(gwh(dDis))}` : "");
+  $("flow-note").textContent = winLabel();
+  const hc = d3.minIndex(chg, (v) => v ?? Infinity), hd = d3.maxIndex(dis, (v) => v ?? -Infinity), per = S.win === "1" ? "" : " a day";
+  $("flow-sum").textContent = `The fleet charged ${fmtGW(gwh(chg))} GWh and discharged ${fmtGW(gwh(dis))} GWh${per}` +
+    (dDis.some((v) => v != null) ? `; only ${fmtGW(gwh(dChg))} GWh of the charging and ${fmtGW(gwh(dDis))} GWh of the discharging was awarded day-ahead, and the rest was bought and sold in real time` : "") +
+    (hc >= 0 && hd >= 0 ? `. Charging peaked in ${heLabel(hc)} (${fmtGW(Math.abs(chg[hc]))} GW) and discharging in ${heLabel(hd)} (${fmtGW(dis[hd])} GW).` : ".");
 }
 
 function drawSoc() {
@@ -167,7 +170,7 @@ function drawSoc() {
     H: 220, yMin: 1, title: "Fleet state of charge, share of its maximum", yFmt: fmtPct, tipFmt: fmtPct,
     lines: [
       { label: "State of charge", color: "--c7", values: share },
-      { label: "Minimum state of charge", color: "--c-other", dash: "4 3", width: 1.5, values: floor },
+      { label: "Operating floor (the minimum state of charge owners keep)", color: "--c-other", dash: "4 3", width: 1.5, values: floor },
     ],
     tipExtra: (h) => `<p class="tip-body">${soc[h] == null ? "–" : fmtGW(soc[h] / 1000)} GWh of ${mx[h] == null ? "–" : fmtGW(mx[h] / 1000)} GWh</p>`,
     csvName: "Battery fleet state of charge",
@@ -175,15 +178,15 @@ function drawSoc() {
   const top = d3.maxIndex(share, (v) => v ?? -1), low = d3.minIndex(share, (v) => v ?? 2);
   const full = share.findIndex((v) => v != null && v >= 0.9 * share[top]);
   $("soc-note").textContent = winLabel();
-  $("soc-text").textContent = `Emptiest at ${heLabel(low)} (${fmtPct(share[low])}), fullest at ${heLabel(top)} (${fmtPct(share[top])} of ${fmtGW(mx[top] / 1000)} GWh). ` +
-    (full >= 0 && full !== top ? `The fleet is within 10% of that peak from ${heLabel(full)}.` : "");
+  $("soc-text").textContent = `The fleet was emptiest in ${heLabel(low)} (${fmtPct(share[low])} full) and fullest in ${heLabel(top)} (${fmtPct(share[top])} full, ${fmtGW(soc[top] / 1000)} of ${fmtGW(mx[top] / 1000)} GWh). ` +
+    (full >= 0 && full !== top ? `It was already above ${fmtPct(0.9 * share[top])}, nine-tenths of that peak, from ${heLabel(full)}: after that it has little room left to buy.` : "");
 }
 
 const OFFERS = [
-  { id: "chg50", label: "Half the charging (bid at or below)", color: "--c1", dash: "5 3" },
-  { id: "chg0", label: "Charging stops", color: "--c1" },
-  { id: "dis0", label: "Discharge starts", color: "--c7" },
-  { id: "dis50", label: "Half the discharge (offered at or below)", color: "--c7", dash: "5 3" },
+  { id: "chg50", label: "Charging: price below which it bids half its range", color: "--c1", dash: "5 3" },
+  { id: "chg0", label: "Charging: highest price it still bids to charge", color: "--c1" },
+  { id: "dis0", label: "Discharge: lowest price it offers any", color: "--c7" },
+  { id: "dis50", label: "Discharge: price at which it offers half its range", color: "--c7", dash: "5 3" },
 ];
 function drawOffers() {
   const rt = rtHub(), da = daHub();
@@ -194,6 +197,8 @@ function drawOffers() {
   ];
   staticLegend($("offer-legend"), lines);
   hourChart($("offer-chart"), { lines, yScale: "price", H: 300, title: "Fleet offer prices by hour ($/MWh)", yFmt: d3.format("$,.0f"), tipFmt: fmtPrice, csvName: "Battery offer prices" });
+  const c0 = F("chg0", "median"), d0 = F("dis0", "median"), hh = 11;
+  $("offer-sum").textContent = c0[hh] != null && d0[hh] != null ? `In ${heLabel(hh)} the fleet stopped bidding to charge above about ${fmtPrice(c0[hh])}/MWh and started offering to discharge at about ${fmtPrice(d0[hh])}/MWh.` : "";
 }
 
 const BID_PRICES = { chg: ["-20", "0", "10", "20", "30", "50"], dis: ["20", "30", "50", "100", "250"] };
@@ -215,6 +220,7 @@ function drawBids() {
 }
 
 function drawHeadroom() {
+  if (!$("head-panel").open) return;
   const gw = (a) => a.map((v) => (v == null ? null : v / 1000));
   const hd = F("head_dis"), hc = F("head_chg"), au = F("as_up"), ad = F("as_dn");
   const pos = (a, b) => HOURS.map((h) => (a[h] == null ? null : Math.max(0, a[h] - (b[h] || 0))));
@@ -226,7 +232,7 @@ function drawHeadroom() {
   ];
   staticLegend($("head-legend"), bars);
   const rt = rtHub(), da = daHub();
-  hourChart($("head-chart"), { bars, title: "Unused room by hour (GW; charging below zero)", yFmt: fmtGW,
+  hourChart($("head-chart"), { bars, title: "Unused room by hour, GW (charging below zero)", yFmt: fmtGW,
     tipFmt: (v) => `${fmtGW(Math.abs(v))} GW`, tipExtra: priceTip(rt, da), csvName: "Battery unused room" });
 }
 
@@ -329,13 +335,13 @@ function drawDays() {
   staticLegend($("days-tb-legend"), tbs);
   const tbtop = d3.quantile(tbs.filter((s) => s.hide).flatMap((s) => s.values).filter((v) => v != null).sort(d3.ascending), 0.98);
   if (!f.tb_rt1) emptyMsg($("days-tb"), "No spreads yet. They are added by the next data update.");
-  else dayChart($("days-tb"), tbs, { title: `Top-bottom spread at the batteries' nodes, ${mk === "da" ? "day-ahead" : "real-time"} ($/MWh: top N hours less bottom N hours; scale stops at the 98th percentile day)`, H: 200, yFmt: d3.format("$,.0f"), yMax: tbtop, overrun: true, tipFmt: fmtPrice });
+  else dayChart($("days-tb"), tbs, { title: `What a 1-, 2- or 4-hour battery could make per MWh in one cycle, $/MWh (top N hours minus bottom N at each battery's node, ${mk === "da" ? "day-ahead" : "real-time"}; scale cut at the 98th percentile day)`, H: 200, yFmt: d3.format("$,.0f"), yMax: tbtop, overrun: true, tipFmt: fmtPrice });
   const cap = [
     { label: "Each day", color: "--c3", faint: true, width: 1.2, values: ratio(f.actual, f.perfect), fmt: fmtPct },
-    { label: "7-day", color: "--c3", width: 2, values: rolling(f.actual, f.perfect), fmt: fmtPct },
+    { label: "7-day average", color: "--c3", width: 2, values: rolling(f.actual, f.perfect), fmt: fmtPct },
   ];
   staticLegend($("days-capture-legend"), cap);
-  dayChart($("days-capture"), cap, { title: "Share of the perfect battery's energy revenue earned (scale stops at -50% and 150%)", H: 170, yMin: -0.5, yMax: 1.5, yFmt: d3.format(".0%"), tipFmt: fmtPct });
+  dayChart($("days-capture"), cap, { title: "Share of the perfect battery's energy revenue earned (scale cut at −50% and 150%)", H: 170, yMin: -0.5, yMax: 1.5, yFmt: d3.format(".0%"), tipFmt: fmtPct });
   const prices = [
     { label: "Charged at", color: "--c1", values: ratio(f.chg_usd, f.chg_mwh) },
     { label: "Discharged at", color: "--c7", values: ratio(f.dis_usd, f.dis_mwh) },
@@ -347,9 +353,10 @@ function drawDays() {
   dayChart($("days-price"), prices, { title: "Average price paid to charge and earned discharging ($/MWh, real-time at each battery's node)", yFmt: d3.format("$,.0f"), yMax: ptop, tipFmt: fmtPrice, H: 220 });
   const sum = (a) => d3.sum(a.filter((v) => v != null));
   const tot = (a) => sum(a.filter((_, i) => f.perfect[i] != null && f.actual[i] != null));
-  $("days-note").textContent = `Over ${bb.fleet.perfect.filter((v) => v != null).length} days: batteries earned ${fmtPct(tot(f.actual) / tot(f.perfect))} of what a perfect battery would have on energy, ` +
-    `charging at ${fmtPrice(sum(f.chg_usd) / sum(f.chg_mwh))} against ${fmtPrice(sum(f.p_chg_usd) / sum(f.p_chg_mwh))} and discharging at ` +
-    `${fmtPrice(sum(f.dis_usd) / sum(f.dis_mwh))} against ${fmtPrice(sum(f.p_dis_usd) / sum(f.p_dis_mwh))}.`;
+  const pc = sum(f.chg_usd) / sum(f.chg_mwh), ppc = sum(f.p_chg_usd) / sum(f.p_chg_mwh), pd = sum(f.dis_usd) / sum(f.dis_mwh), ppd = sum(f.p_dis_usd) / sum(f.p_dis_mwh);
+  $("days-note").textContent = `Over ${bb.fleet.perfect.filter((v) => v != null).length} days batteries earned ${fmtPct(tot(f.actual) / tot(f.perfect))} of what a perfect battery would have on energy. ` +
+    `They charged at an average ${fmtPrice(pc)}/MWh (a perfect battery: ${fmtPrice(ppc)}/MWh) and discharged at ${fmtPrice(pd)}/MWh (perfect: ${fmtPrice(ppd)}/MWh)` +
+    (pc > ppc && pd < ppd ? `: they bought ${pc - ppc > ppd - pd ? "well" : "a little"} too high and sold ${ppd - pd > pc - ppc ? "well" : "a little"} below the peak.` : ".");
 }
 
 const VIEW_KEYS = { date: "day", win: "win", side: "side", tb: "tb" };
@@ -392,6 +399,7 @@ async function boot() {
   let t, lastW = 0;
   new ResizeObserver((e) => { const w = Math.round(e[0].contentRect.width); if (w === lastW) return; lastW = w; clearTimeout(t); t = setTimeout(drawAll, 120); }).observe(document.querySelector("main"));
   window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", drawAll);
+  $("head-panel").addEventListener("toggle", drawHeadroom);
 }
 boot();
 })();

@@ -32,7 +32,7 @@ const DEFAULTS = {
 };
 const FUEL_PRICE = { coal: 2.0, nuclear: 0.7 };     // $/MMBtu, user-editable
 const COST_NOTES = {
-  meas: "Fuel = each hour's output × the unit's own heat rate at that output, a straight line from its measured heat rate at minimum (at or below its LSL) to its full-load one (EPA hourly stack data against its ERCOT net output; for a cogeneration unit, its plant's EIA-923 fuel for electricity per MWh, the steam host's share taken out; the technology median for a unit without one), × its own hub's gas price plus the adder (Henry Hub if chosen) or its plant's delivered EIA-923 coal price, plus variable O&M per MWh. Nuclear uses the EIA heat rate. Starts cost the unit's own DAM hot-start offer where it has one, else the generic start cost.",
+  meas: "Fuel cost = each hour's output × the unit's own heat rate at that output × its fuel price, plus variable O&M per MWh. The heat rate runs in a straight line from the unit's measured heat rate at minimum output to its full-load one, both from EPA hourly stack data against its ERCOT net output. A cogeneration unit uses its plant's EIA-923 fuel for electricity with the steam host's share taken out; a unit with no measurement takes its technology's median. Gas is the unit's own hub price plus the adder (or Henry Hub if chosen); coal is the plant's delivered EIA-923 price; nuclear uses the EIA heat rate. Starts cost the unit's own day-ahead hot-start offer, else the generic start cost below.",
   eia: "Fuel = output × the EIA average tested heat rate for the technology × the fuel price (the chosen gas price plus the adder for gas; the $/MMBtu set here for coal and nuclear), plus variable O&M per MWh. Starts cost the unit's own DAM hot-start offer where it has one, else the generic start cost.",
   offer: "Energy cost = the area under the unit's own DAM energy offer curve up to each hour's output; where the unit offered no curve, its minimum-energy offer × output; where it submitted no three-part offer at all, the generic basis. Starts cost its DAM hot-start offer, else the generic start cost.",
   inc: "Energy cost = each hour's output × the price the unit's own DAM energy offer curve puts on that output level (its incremental offer, read as its marginal cost), ignoring the minimum-energy price that units set low to get committed. Units with no DAM curve use the generic basis and are counted as estimated. Starts cost the DAM hot-start offer, else the generic start cost.",
@@ -204,6 +204,8 @@ function barChart(el, dstr, up, down, lineS, opts) {
 const REV_SERIES = [{ k: "energy", label: "Energy revenue", color: "--c1" }, { k: "as", label: "Ancillary services", color: "--c4" }];
 const COST_SERIES = [{ k: "fuel", label: "Fuel & variable cost", color: "--c8" }, { k: "starts", label: "Start-up cost", color: "--c2" }];
 const MARGIN = { label: "Margin", color: "--c5" };
+const COST_NAME = { meas: "each unit's measured heat rate", eia: "the EIA average heat rate", offer: "each unit's own day-ahead offer", inc: "each unit's incremental day-ahead offer", generic: "the generic heat rate set below" };
+const REV_NAME = { two: "on the two-settlement basis", rt: "at the real-time node price", lam: "at system lambda" };
 function legendHTML(el) {
   el.innerHTML = [...REV_SERIES, ...COST_SERIES, MARGIN].map((s) => `<span><span class="sw" style="background:var(${s.color})"></span>${s.label}</span>`).join("");
 }
@@ -238,16 +240,21 @@ function drawTotals() {
   const mwh = T.dates.map((_, i) => d3.sum(names, (n) => T.units[n].mwh[i] || 0));
   const E = sum(energy), A = sum(as), F = sum(fuel), ST = sum(starts), M = sum(margin), MWH = d3.sum(mwh);
   const lamDays = d3.sum(names, (n) => ECON[n].lamDays), missing = d3.sum(names, (n) => ECON[n].missing);
-  $("kpis").innerHTML = [["Energy revenue", fmt$k(E)], ["Ancillary services", fmt$k(A)], ["Fuel & variable", fmt$k(F)], ["Start-ups", fmt$k(ST)],
-    ["Margin", fmt$k(M), M < 0], ["Margin per MWh", MWH ? fmt$2(M / MWH) : "–", M < 0], ["Energy", fmt0(MWH / 1000) + " GWh"]]
+  $("kpis").innerHTML = [["Energy revenue", fmt$k(E)], ["Ancillary services", fmt$k(A)], ["Fuel & variable cost", fmt$k(F)], ["Start-up cost", fmt$k(ST)],
+    ["Margin", fmt$k(M), M < 0], ["Margin per MWh", MWH ? fmt$2(M / MWH) + "/MWh" : "–", M < 0], ["Energy", fmt0(MWH / 1000) + " GWh"]]
     .map(([k, v, neg]) => `<div class="kpi"><span class="v${neg ? " neg" : ""}">${v}</span><span class="k">${k}</span></div>`).join("");
   const nodeDays = S.idx.has_nodes.filter(Boolean).length;
-  window.CX.setNote($("tot-note"), `${names.length} units over ${D} days. Revenue up, cost down, then the running margin.`, `Node prices on ${nodeDays} days` +
-    (lamDays ? ` · ${fmt0(lamDays)} unit-days priced at system lambda for want of a node price` : "") +
-    (missing ? ` · ${fmt0(missing)} unit-days with no fuel price (before the first gas price)` : "") +
-    (FUEL[S.tech] === "gas" && (S.cost === "eia" || S.cost === "generic" || S.cost === "meas") ? ` · gas at ${gasLabel(T)}` : ""));
+  const fd = (d) => d3.timeFormat("%b %-d, %Y")(parseDate(d)), lossDays = margin.filter((v) => v != null && v < 0).length;
+  const iMax = d3.maxIndex(energy, (v) => v ?? -Infinity);
+  window.CX.setNote($("tot-note"), `Does the ${t.label.toLowerCase()} fleet cover its running costs? For the ${names.length} units with 60-day data: what the fleet earned each day (energy ${REV_NAME[S.rev] || ""} plus day-ahead ancillary awards, drawn upward) against what it cost to run (fuel and variable O&M on ${COST_NAME[S.cost] || "the chosen basis"}, plus start-ups, drawn downward), with the daily margin as a line; then the margin added up over the period, and the margin per MWh produced. Margin is what is left for fixed costs; the controls test how much of it depends on the cost basis. ` +
+    `From ${fd(T.dates[0])} to ${fd(T.dates[D - 1])} the fleet earned ${fmt$k(E + A)} and spent ${fmt$k(F + ST)}, a margin of ${fmt$k(M)} or ${MWH ? fmt$2(M / MWH) + "/MWh" : "–"}; ${lossDays} of ${D} days ran at a loss.` +
+    (iMax >= 0 && energy[iMax] > 3 * (d3.median(energy.filter((v) => v != null)) || Infinity) ? ` The biggest day, ${fd(T.dates[iMax])}, brought in ${fmt$k(energy[iMax])} of energy revenue on its own.` : ""),
+    `Energy revenue on the two-settlement basis = day-ahead award × day-ahead node price + (output − award) × real-time node price; days without a node price fall back to real-time at the node, then to system lambda (node prices on ${nodeDays} days` +
+    (lamDays ? `; ${fmt0(lamDays)} unit-days priced at system lambda, counted in the table's last column` : "") + `). Costs follow the Cost assumptions panel below.` +
+    (FUEL[S.tech] === "gas" && (S.cost === "eia" || S.cost === "generic" || S.cost === "meas") ? ` Gas is priced at ${gasLabel(T)}.` : "") +
+    (missing ? ` ${fmt0(missing)} unit-days before the first gas price have no fuel cost.` : ""));
   barChart(el, T.dates, REV_SERIES.map((s) => ({ ...s, values: { energy, as }[s.k] })), COST_SERIES.map((s) => ({ ...s, values: { fuel, starts }[s.k] })),
-    { ...MARGIN, values: margin }, { title: "Revenue (up) and cost (down) per day, $, all units", yFmt: fmt$k });
+    { ...MARGIN, values: margin }, { title: "Daily revenue (up) and cost (down), all units", yFmt: fmt$k });
   let cum = 0;
   const cumv = margin.map((v) => (v == null ? null : (cum += v)));
   lineChart(mel, T.dates, [{ label: "Cumulative margin", color: "--c5", values: cumv }], { H: 200, title: "Cumulative margin ($)", yFmt: fmt$k, tipFmt: fmt$ });
@@ -274,18 +281,18 @@ function drawInputs() {
 }
 
 const ALL_COLS = [
-  { k: "unit", h: "Unit", t: true, f: (r) => `<a href="unit.html?unit=${encodeURIComponent(r.unit)}">${esc(r.unit)}</a>` + (r.configs ? ` <span class="h-note">${r.configs} configs</span>` : "") },
+  { k: "unit", h: "Unit", t: true, f: (r) => `<a href="unit.html?unit=${encodeURIComponent(r.unit)}">${esc(r.unit)}</a>` + (r.configs ? ` <span class="h-note">${r.configs} config${r.configs === 1 ? "" : "s"}</span>` : "") },
   { k: "sp", h: "Settlement point", t: true, f: (r) => esc(r.sp || "–") },
   { k: "hub", h: "Fuel hub", t: true, gas: true, f: (r) => (r.hub ? esc(HUBS[r.hub]) : "–") },
-  { k: "mwh", h: "GWh", f: (r) => fmt1(r.mwh / 1000) },
+  { k: "mwh", h: "Energy, GWh", f: (r) => fmt1(r.mwh / 1000) },
   { k: "cf", h: "Capacity factor", f: (r) => (r.cf == null ? "–" : fmtPct(r.cf)) },
   { k: "energy", h: "Energy revenue", f: (r) => fmt$k(r.energy) },
-  { k: "as", h: "Ancillary", f: (r) => fmt$k(r.as) },
-  { k: "fuel", h: "Fuel & variable", f: (r) => fmt$k(r.fuel) },
-  { k: "starts", h: "Starts", f: (r) => `${r.nstarts} · ${fmt$k(r.starts)}` },
+  { k: "as", h: "Ancillary services", f: (r) => fmt$k(r.as) },
+  { k: "fuel", h: "Fuel & variable cost", f: (r) => fmt$k(r.fuel) },
+  { k: "starts", h: "Starts · start-up cost", f: (r) => `${r.nstarts} · ${fmt$k(r.starts)}` },
   { k: "margin", h: "Margin", f: (r) => `<span class="${r.margin < 0 ? "neg" : ""}">${fmt$k(r.margin)}</span>` },
-  { k: "mpm", h: "Margin $/MWh", f: (r) => (r.mpm == null ? "–" : fmt$2(r.mpm)) },
-  { k: "lamDays", h: "Days at lambda", f: (r) => r.lamDays || "" },
+  { k: "mpm", h: "Margin, $/MWh", f: (r) => (r.mpm == null ? "–" : fmt$2(r.mpm)) },
+  { k: "lamDays", h: "Days priced at lambda", lam: true, f: (r) => r.lamDays || "" },
 ];
 function unitRows() {
   const T = S.data[S.tech];
@@ -299,14 +306,16 @@ function unitRows() {
   });
 }
 function drawUnits() {
-  const COLS = ALL_COLS.filter((c) => !c.gas || FUEL[S.tech] === "gas");
   const el = $("units-table"), rows = unitRows().filter((r) => !S.q || r.unit.toLowerCase().includes(S.q) || (r.sp || "").toLowerCase().includes(S.q));
+  const COLS = ALL_COLS.filter((c) => (!c.gas || FUEL[S.tech] === "gas") && (!c.lam || rows.some((r) => r.lamDays)));
   $("units-note").textContent = rows.length ? `${rows.length} units` : "";
   if (!rows.length) return emptyMsg(el, "No units.");
   rows.sort((a, b) => { const x = a[S.sort], y = b[S.sort]; if (x == null) return 1; if (y == null) return -1; return (typeof x === "string" ? x.localeCompare(y) : x - y) * S.dir; });
   el.innerHTML = `<table class="data"><thead><tr>${COLS.map((c) => `<th class="sortable${c.t ? " t" : ""}" data-k="${c.k}">${c.h}${S.sort === c.k ? (S.dir < 0 ? " ▾" : " ▴") : ""}</th>`).join("")}</tr></thead><tbody>` +
     rows.map((r) => `<tr>${COLS.map((c) => `<td${c.t ? ' class="t"' : ""}>${c.f(r)}</td>`).join("")}</tr>`).join("") + "</tbody></table>";
   el.querySelectorAll("th[data-k]").forEach((th) => th.addEventListener("click", () => { const k = th.dataset.k; if (S.sort === k) S.dir = -S.dir; else { S.sort = k; S.dir = k === "unit" || k === "sp" ? 1 : -1; } drawUnits(); saveView(); }));
+  const negFuel = rows.filter((r) => r.fuel < 0).length;
+  if (negFuel) el.insertAdjacentHTML("beforeend", `<p class="note">${negFuel} unit${negFuel === 1 ? " shows" : "s show"} a negative fuel cost: Waha gas traded below $0/MMBtu on many days in the period, so ${negFuel === 1 ? "it was" : "they were"} paid to burn it.</p>`);
   setCSV(el, COLS.map((c) => c.k), rows.map((r) => COLS.map((c) => (c.k === "unit" ? r.unit : r[c.k]))), "Unit economics");
 }
 
@@ -317,7 +326,8 @@ function redraw() { compute(); drawTotals(); drawInputs(); drawUnits(); }
 async function changeTech() { $("status").textContent = "Loading…"; await loadTech(); status(); redraw(); }
 function status() {
   const I = S.idx, D = I.dates;
-  $("status").textContent = `60-day data: ${D.length} days, ${D[0]} to ${D[D.length - 1]} · node prices on ${I.has_nodes.filter(Boolean).length} days · DAM on ${I.has_dam.filter(Boolean).length} · Henry Hub gas prices on ${I.gas_days} days`;
+  const fd = (d) => d3.utcFormat("%b %-d, %Y")(new Date(d + "T00:00:00Z"));
+  $("status").textContent = `60-day data: ${D.length} days, ${fd(D[0])} to ${fd(D[D.length - 1])} · node prices on ${I.has_nodes.filter(Boolean).length} days · day-ahead awards on ${I.has_dam.filter(Boolean).length} days · Henry Hub gas on ${I.gas_days} days`;
 }
 
 async function boot() {

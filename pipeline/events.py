@@ -70,8 +70,9 @@ Sources (each already computed by its own module; nothing is detected twice):
                    change alone is a new scheduling agent for the same decision maker
   outage_start, outage_end
                    an outage spell of OUTAGE_DAYS days or more in the hourly states
-                   (unit_hours_60d, outages rewritten as groups.py does), when it started and
-                   when it ended; major from OUTAGE_MAJOR days
+                   (unit_hours_60d, outages rewritten as groups.py does; wind and solar from the
+                   OUT hours in renew_outages_60d), when it started and when it ended; major
+                   from OUTAGE_MAJOR days
 
 Every event:
   id        "<unit>|<date>|<kind>", stable across runs
@@ -142,6 +143,7 @@ KIND_REV = {"turnoff": "c3", "shutdown_new": "s2", "shutdown_award": "s2", "grou
             "dam_renew_floor": "d2"}
 BACKFILL_NEWS_DAYS = 75    # a control event older than this, found by a history merge, is not news
 TURNOFF_AWARD = {0: "without an award", 1: "with an award some hours", 2: "with an award every hour"}
+TURNOFF_TAG = {0: "no award", 1: "award some hours", 2: "award every hour"}
 # rt_price (combustion turbines; see the docstring)
 RUN_MONTH_DAYS, RUN_BEFORE = 20, 60            # days of states the month needs; days before it compared
 RUN_MIN_NOW, RUN_MIN_BEFORE, RUN_MIN_NEXT = 30, 60, 20   # available hours a price bin needs
@@ -151,14 +153,32 @@ FEED_UNIT = 30        # entries in a unit's feed
 DAILY = ("daily1", "daily2", "daily3")
 FAMILY = {"never": "on", "multiday": "multiday", "daily1": "daily", "daily2": "daily", "daily3": "daily"}
 GROUP_LABEL = {g[0]: g[1] for g in GROUPS}
-WEEK_LABEL = "Off a week or more"       # a multi-day month whose every off spell lasted a week or more
+WEEK_LABEL = "Off for a week or more at a time"       # a multi-day month whose every off spell lasted a week or more
+# wind and solar kinds as the feed names them (the Renewables page keeps renew_changes' own names)
+RENEW_FEED = {
+    "floor_new": "Wind/solar: offer floor changed", "floor_back": "Wind/solar: back to an earlier floor",
+    "formula_on": "Wind/solar: hedge formula on", "formula_off": "Wind/solar: hedge formula off",
+    "terms": "Wind/solar: hedge formula terms changed", "moving_on": "Wind/solar: offer started moving within the day",
+    "moving_off": "Wind/solar: offer stopped moving within the day", "episode": "Wind/solar: short episode at a different floor",
+}
+RENEW_TITLE = {
+    "floor_new": "Floor moved", "floor_back": "Back to an earlier floor", "formula_on": "Hedge formula on",
+    "formula_off": "Hedge formula off", "terms": "Hedge formula terms changed", "moving_on": "Started moving within the day",
+    "moving_off": "Stopped moving within the day", "episode": "Short episode",
+}
+DAM_FEED = {
+    "mingen_step": "Day-ahead: minimum-energy offer stepped", "priced_out": "Day-ahead: priced out",
+    "start_change": "Day-ahead: start-up cost changed", "filing_off": "Day-ahead: stopped three-part offers",
+    "filing_on": "Day-ahead: started three-part offers", "renew_floor": "Day-ahead: wind/solar floor changed",
+    "renew_off": "Day-ahead: wind/solar stopped offering", "renew_on": "Day-ahead: wind/solar started offering",
+}
 KINDS = {
     "shutdown_new": "Shut down after a long run",
     "shutdown_award": "Shut down despite a day-ahead award",
-    "group": "Timescale group changed",
+    "group": "How often it turns off changed",
     "bidding": "Bidding approach shifted",
     "turnoff": "Turn-off point moved",
-    "rt_price": "Running at a new price",
+    "rt_price": "Peaker: running at a new real-time price",
     "fuel": "Fleet median offer shifted",
     "battery_size": "Battery size changed",
     "battery_new": "New battery",
@@ -166,8 +186,8 @@ KINDS = {
     "control": "Decision maker or QSE changed",
     "outage_start": "Outage started",
     "outage_end": "Outage ended",
-    **{f"renew_{k}": v for k, v in RENEW_KINDS.items()},
-    **{f"dam_{k}": v for k, v in DAM_KINDS.items()},
+    **{f"renew_{k}": v for k, v in RENEW_FEED.items()},
+    **{f"dam_{k}": DAM_FEED.get(k, "Day-ahead: " + v[0].lower() + v[1:]) for k, v in DAM_KINDS.items()},
 }
 _SAFE = re.compile(r"[^A-Za-z0-9_.-]")
 
@@ -180,7 +200,11 @@ def _ev(unit, date, kind, tech, title, major, before=None, after=None, value=Non
 
 
 def _usd(x):
-    return f"-${abs(x):,.0f}" if x < 0 else f"${x:,.0f}"
+    return f"\u2212${abs(x):,.0f}" if x < 0 else f"${x:,.0f}"
+
+
+def _days(n):
+    return f"{n} day" if n == 1 else f"{n} days"
 
 
 # ------------------------------------------------------------------ sources ---
@@ -195,7 +219,7 @@ def shutdown_events(dec):
                            since=since, off_h=off_h))
         else:
             out.append(_ev(key, date, "shutdown_award", tech,
-                           f"Shut down for {off_h} h although a day-ahead award covered {cov:.0%} of the window",
+                           f"Shut down for {off_h} h although a day-ahead award covered {cov:.0%} of the stretch",
                            True, value=loss, field="stay-on loss $", award=cov, off_h=off_h))
     return out
 
@@ -206,6 +230,11 @@ def _family(e) -> str:
     if e["group"] == "multiday" and e["week"]:
         return "on"
     return FAMILY[e["group"]]
+
+
+def _month(ym):
+    """'2026-07' -> 'July 2026'."""
+    return dt.date.fromisoformat(ym + "-01").strftime("%B %Y")
 
 
 def group_events(uh, tech_of):
@@ -232,7 +261,7 @@ def group_events(uh, tech_of):
                 continue
             major = "daily" in (p[2], fam)
             out.append(_ev(key, by_month[m] and dates[by_month[m][0]], "group", tech,
-                           f"{p[3]} in {prev} to {label} in {m}", major,
+                           f"{p[3]} ({_month(prev)}) to {label} ({_month(m)})", major,
                            before=p[0], after=g, field="timescale group", month=m))
     return out
 
@@ -313,8 +342,12 @@ def turnoff_events(oc):
         v = by[k].get(m, [])
         return float(np.median(v)) if len(v) >= TURNOFF_MIN_DAYS else None
 
-    def fmt(x):
-        return "riding through" if np.isinf(x) else _usd(x)
+    def move(a, b):
+        if np.isinf(a):
+            return f"from never turning off to {_usd(b)} per MW of minimum output"
+        if np.isinf(b):
+            return f"from {_usd(a)} per MW of minimum output to never turning off"
+        return f"{_usd(a)} to {_usd(b)} per MW of minimum output"
     out = []
     for k in by:
         u, aw = k
@@ -334,7 +367,7 @@ def turnoff_events(oc):
             L = float(np.median(lsl[u]))
             usd = lambda x: None if np.isinf(x) else round(x * L)
             e = _ev(u, months[j] + "-01", "turnoff", tech[u],
-                    f"Turn-off point {cond} {fmt(a)} to {fmt(b)} per MW of minimum output in {mon}{tail}", True,
+                    f"Turn-off point ({TURNOFF_TAG[aw]}) in {mon}: {move(a, b)}{tail}", True,
                     before=None if np.isinf(a) else round(a, 1), after=None if np.isinf(b) else round(b, 1),
                     value=len(by[k][months[j]]), field=f"$ per MW of LSL, median over the month's days {cond} (null: rides through); value: days",
                     status=status, before_usd=usd(a), after_usd=usd(b), award=aw)
@@ -388,10 +421,10 @@ def run_price_events(uh, tech_of):
                         s2 = O2[k] / A2[k]
                         status = "confirmed" if abs(s2 - s1) < abs(s2 - s0) else "contradicted"
                 lab = BIN_LABELS[k]
-                price = {"<0": "below $0", "100+": "above $100"}.get(lab, "$" + lab.replace("-", "–$"))
+                price = {"<0": "below $0/MWh", "100+": "above $100/MWh"}.get(lab, "$" + lab.replace("-", "–$") + "/MWh")
                 mon = dt.date.fromisoformat(m + "-01").strftime("%B")
-                title = (f"Online {s1:.0%} of its hours at {price} real-time at its node in {mon}, up from {s0:.0%}" if up
-                         else f"Online {s1:.0%} of its hours at {price} real-time at its node in {mon}, down from {s0:.0%}")
+                title = (f"Online {s1:.0%} of its available hours at {price} real-time at its node in {mon}, up from {s0:.0%}" if up
+                         else f"Online {s1:.0%} of its available hours at {price} real-time at its node in {mon}, down from {s0:.0%}")
                 out.append(_ev(n, m + "-01", "rt_price", "combustion_turbine", title, True,
                                before=round(s0, 3), after=round(s1, 3), value=lab,
                                field="online share of available hours in the real-time node price bin; value: the bin",
@@ -403,17 +436,36 @@ def run_price_events(uh, tech_of):
 
 def _regime(r):
     if not r:
-        return "?"
+        return "an unknown offer"
     k, v = r.get("k"), r.get("v")
     if k == "f":
-        return f"floor {_usd(v)}" if v is not None else "floor"
+        return f"a floor of {_usd(v)}/MWh" if v is not None else "a fixed floor"
     if k == "x":
-        return "formula"
-    if k == "m":
-        return "moving within the day"
+        return "a price formula"
+    if k in ("m", "v"):
+        return "prices that move within the day"
     if k == "peak":
-        return f"{_usd(v)} for the episode" if v is not None else "episode"
+        return f"{_usd(v)}/MWh at the episode's peak" if v is not None else "an episode"
     return str(k)
+
+
+def _renew_title(kind, before, after):
+    """'New floor: −$38/MWh to −$39/MWh', 'Stopped moving within the day: now a floor of $0/MWh'."""
+    bk, ak = (before or {}).get("k"), (after or {}).get("k")
+    bv, av = (before or {}).get("v"), (after or {}).get("v")
+    name = RENEW_TITLE.get(kind, RENEW_KINDS[kind])
+    if bk == "f" and ak == "f" and bv is not None and av is not None:
+        return f"{name}: {_usd(bv)}/MWh to {_usd(av)}/MWh"
+    if bk == "f" and ak == "peak" and bv is not None and av is not None:
+        return f"{name}: floor {_usd(bv)}/MWh, briefly {_usd(av)}/MWh"
+    rb, ra = _regime(before), _regime(after)
+    if kind in ("moving_on", "formula_on"):
+        return f"{name}: was {rb}"
+    if kind in ("moving_off", "formula_off"):
+        return f"{name}: now {ra}"
+    if rb == ra:
+        return name
+    return f"{name}: from {rb} to {ra}"
 
 
 def renew_events(rc):
@@ -425,9 +477,9 @@ def renew_events(rc):
         av = after.get("v") if isinstance(after, dict) else None
         big = bv is not None and av is not None and abs(av - bv) >= 10
         major = (not e.get("toggler")) and (kind in ("formula_on", "formula_off", "terms") or (kind in ("floor_new", "floor_back") and big))
-        title = f"{RENEW_KINDS[kind]}: {_regime(before)} to {_regime(after)}"
+        title = _renew_title(kind, before, after)
         if kind == "episode" and e.get("days"):
-            title += f" for {e['days']} day(s)"
+            title += f", for {_days(e['days'])}"
         out.append(_ev(e["plant"], e["date"], f"renew_{kind}", e["tech"], title, major,
                        before=bv, after=av, value=e.get("days"), field="offer $/MWh; value: days",
                        units=e.get("units") or [], toggler=bool(e.get("toggler"))))
@@ -443,10 +495,10 @@ def dam_events(do):
         if kind == "mingen_step":
             title = f"{DAM_KINDS[kind]}: {_usd(b)} to {_usd(a)}/MWh"
             if e.get("mk_before") is not None and e.get("mk_after") is not None:
-                title += f" ({_usd(e['mk_before'])} to {_usd(e['mk_after'])} against the fuel-cost line)"
+                title += f" (offer minus fuel cost: {_usd(e['mk_before'])} to {_usd(e['mk_after'])}/MWh)"
             field = "minimum-energy offer $/MWh"
         elif kind == "priced_out":
-            title = f"{DAM_KINDS[kind]}: minimum energy at {_usd(a)}/MWh against a usual {_usd(b)} for {e.get('days')} day(s)"
+            title = f"{DAM_KINDS[kind]}: minimum energy at {_usd(a)}/MWh against a usual {_usd(b)}/MWh, for {_days(e.get('days'))}"
             field = "minimum-energy offer $/MWh; value: days"
         elif kind == "start_change":
             title = f"{DAM_KINDS[kind]}: hot start {_usd(b)} to {_usd(a)}"
@@ -467,7 +519,6 @@ def outage_events(uh, tech_of):
     dates = uh.get("dates") or []
     if not dates:
         return []
-    out = []
     # thermal units with a group (CC trains merged), plus nuclear from the raw strips
     _, units = assign_groups(uh, {n: t for n, t in tech_of.items() if t in GROUPED_TECHS})
     strips = {k: (e["tech"], e["st"]) for k, e in units.items()}
@@ -477,6 +528,21 @@ def outage_events(uh, tech_of):
             s = uh["units"][n]
             strips[n] = (t, [s[i * 24 + h] if i * 24 + h < len(s) else "-"
                              for i, d in enumerate(dates) for h in range(24)])
+    return _outage_spell_events(strips, d0)
+
+
+def renew_outage_events(ro):
+    """Outage started / ended for wind and solar units: runs of OUT hours in the 60-day status
+    (data/renew_outages_60d.json.gz strips; derated hours do not count as outage here)."""
+    dates = ro.get("dates") or []
+    if not dates:
+        return []
+    strips = {u: (ro["tech"].get(u), s) for u, s in (ro.get("strips") or {}).items() if ro["tech"].get(u)}
+    return _outage_spell_events(strips, dt.date.fromisoformat(dates[0]))
+
+
+def _outage_spell_events(strips, d0):
+    out = []
     for key, (tech, st) in strips.items():
         N, k = len(st), 0
         while k < N:
@@ -576,7 +642,8 @@ def new_unit_events(tr):
             continue
         on = min((r[2] for r in rows if r[2]), default=None)
         top = max(r[3] for r in rows)     # a train: its largest configuration
-        title = "First day in SCED" + (f", first HSL above zero {on}" if on and on != d else "") + (f"; up to {top:,.0f} MW so far" if top else ", no HSL yet")
+        title = ("First day in ERCOT's real-time dispatch (SCED)" + (f", first output capacity (HSL) reported {on}" if on and on != d else "")
+                 + (f"; up to {top:,.0f} MW so far" if top else "; capacity not reported yet"))
         out.append(_ev(key, d, "new_unit", tech, title, True, value=round(top) if top else None, field="MW",
                        online=on))
     return out
@@ -601,7 +668,10 @@ def control_events(qh, ent, tech_of):
         if dme:
             title = f"Offers now decided by {name(d1, dme_names)}, was {', '.join(name(d, dme_names) for d in d0s)}"
         else:
-            title = f"Scheduled by {name(q1, qse_names)}, was {', '.join(name(q, qse_names) for q in q0s) or 'unknown'}"
+            n1 = name(q1, qse_names)
+            co = lambda n: re.sub(r"\s*\(SQ\d+\)$", "", n)     # the company, without its sub-QSE number
+            title = (f"QSE code changed: {', '.join(q0s)} to {q1} ({n1})" if q0s and {co(name(q, qse_names)) for q in q0s} == {co(n1)}
+                     else f"Scheduled by {n1}, was {', '.join(name(q, qse_names) for q in q0s) or 'unknown'}")
         key = units[0] if len(units) == 1 else plant
         tech = next((tech_of[u] for u in units if u in tech_of), "other")
         out.append(_ev(key, date, "control", tech, title, dme, before=[q0s, d0s], after=[q1, d1], field="QSE, DME codes",
@@ -669,6 +739,7 @@ def build_events(index: dict) -> dict:
     uh = read_json_gz(DATA_DIR / "unit_hours_60d.json.gz", default={}) or {}
     tr = read_json_gz(DATA_DIR / "trends_60d.json.gz", default={}) or {}
     rc = read_json_gz(DATA_DIR / "renew_changes.json.gz", default={}) or {}
+    ro = read_json_gz(DATA_DIR / "renew_outages_60d.json.gz", default={}) or {}
     do = read_json_gz(DATA_DIR / "dam_offers.json.gz", default={}) or {}
     oc = read_json_gz(OPERATOR_DIR / "cutoffs.json.gz", default={}) or {}
     hubs = private.read("gas_hubs.json.gz", default={}) or {}
@@ -684,7 +755,7 @@ def build_events(index: dict) -> dict:
     tech_all.update({_train(u["unit"]): u["tech"] for u in tr.get("units", [])})
     tech_all.update({u: "storage" for u in (su.get("units") or {})})
     events = (shutdown_events(dec) + group_events(uh, tech_of) + bidding_events(tr) + turnoff_events(oc) + run_price_events(uh, tech_of)
-              + renew_events(rc) + dam_events(do) + outage_events(uh, tech_of) + fuel_events(tr, hubs) + battery_events(su)
+              + renew_events(rc) + dam_events(do) + outage_events(uh, tech_of) + renew_outage_events(ro) + fuel_events(tr, hubs) + battery_events(su)
               + new_unit_events(tr) + control_events(qh, ent, tech_all))
     old = read_json_gz(PATH, default=None) or {}
     seen = {e["id"]: e["seen"] for e in old.get("events", [])}

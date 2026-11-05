@@ -3,7 +3,7 @@
   <title>HOVEY_UNIT2: bidding and operating changes</title>
   <link href="https://ercotbids.currenttech.energy/unit.html?unit=HOVEY_UNIT2"/>
   <id>https://ercotbids.currenttech.energy/unit.html?unit=HOVEY_UNIT2</id>
-  <updated>2026-10-18T00:00:00Z</updated>
+  <updated>2026-11-05T00:00:00Z</updated>
   <entry>
     <title>HOVEY_UNIT2: Started day-ahead offers (2026-07-08)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=HOVEY_UNIT2"/>
@@ -17,13 +17,27 @@
     <id>https://ercotbids.currenttech.energy/unit.html?unit=HOVEY_UNIT2#HOVEY_UNIT2/2026-07-08/dam_renew_on</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Started day-ahead offers: none to day-ahead curve</summary>
+  </entry>
+  <entry>
+    <title>HOVEY_UNIT2: Outage ended (2026-06-02)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=HOVEY_UNIT2"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=HOVEY_UNIT2#HOVEY_UNIT2/2026-06-02/outage_end</id>
+    <updated>2026-11-05T00:00:00Z</updated>
+    <summary>Back from a 87-day outage</summary>
+  </entry>
+  <entry>
+    <title>HOVEY_UNIT2: Outage started (2026-03-08)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=HOVEY_UNIT2"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=HOVEY_UNIT2#HOVEY_UNIT2/2026-03-08/outage_start</id>
+    <updated>2026-11-05T00:00:00Z</updated>
+    <summary>Outage began, lasting 87 days</summary>
   </entry>
   <entry>
     <title>HOVEY: New floor (2025-08-07)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=HOVEY"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=HOVEY#HOVEY/2025-08-07/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: floor -$4 to floor -$2</summary>
+    <summary>New floor: −$4/MWh to −$2/MWh</summary>
   </entry>
   <entry>
     <title>HOVEY: Decision maker or QSE changed (2025-07-29)</title>
@@ -37,20 +51,20 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=HOVEY"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=HOVEY#HOVEY/2022-11-05/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: floor -$5 to floor -$4</summary>
+    <summary>New floor: −$5/MWh to −$4/MWh</summary>
   </entry>
   <entry>
     <title>HOVEY: Episode (2022-10-30)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=HOVEY"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=HOVEY#HOVEY/2022-10-30/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Episode: floor -$5 to $10 for the episode for 1 day(s)</summary>
+    <summary>Episode: floor −$5/MWh, briefly $10/MWh, for 1 day</summary>
   </entry>
   <entry>
     <title>HOVEY: New floor (2022-03-12)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=HOVEY"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=HOVEY#HOVEY/2022-03-12/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: floor -$1 to floor -$5</summary>
+    <summary>New floor: −$1/MWh to −$5/MWh</summary>
   </entry>
 </feed>

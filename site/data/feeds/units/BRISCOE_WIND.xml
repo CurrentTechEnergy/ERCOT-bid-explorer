@@ -9,69 +9,69 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=BRISCOE_WIND"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=BRISCOE_WIND#BRISCOE_WIND/2026-08-27/renew_episode</id>
     <updated>2026-10-28T00:00:00Z</updated>
-    <summary>Episode: floor $0 to -$5 for the episode for 1 day(s)</summary>
+    <summary>Episode: floor $0/MWh, briefly −$5/MWh, for 1 day</summary>
   </entry>
   <entry>
     <title>BRISCOE_WIND: Episode (2026-08-27)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=BRISCOE_WIND"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=BRISCOE_WIND#BRISCOE_WIND/2026-08-27/renew_episode</id>
     <updated>2026-10-28T00:00:00Z</updated>
-    <summary>Episode: floor $0 to -$5 for the episode for 1 day(s)</summary>
+    <summary>Episode: floor $0/MWh, briefly −$5/MWh, for 1 day</summary>
   </entry>
   <entry>
     <title>BRISCOE_WIND: Episode (2026-08-21)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=BRISCOE_WIND"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=BRISCOE_WIND#BRISCOE_WIND/2026-08-21/renew_episode</id>
     <updated>2026-10-21T00:00:00Z</updated>
-    <summary>Episode: floor $0 to -$10 for the episode for 1 day(s)</summary>
+    <summary>Episode: floor $0/MWh, briefly −$10/MWh, for 1 day</summary>
   </entry>
   <entry>
     <title>BRISCOE_WIND: Episode (2026-08-21)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=BRISCOE_WIND"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=BRISCOE_WIND#BRISCOE_WIND/2026-08-21/renew_episode</id>
     <updated>2026-10-21T00:00:00Z</updated>
-    <summary>Episode: floor $0 to -$10 for the episode for 1 day(s)</summary>
+    <summary>Episode: floor $0/MWh, briefly −$10/MWh, for 1 day</summary>
   </entry>
   <entry>
     <title>BRISCOE_WIND: New floor (2025-12-03)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=BRISCOE_WIND"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=BRISCOE_WIND#BRISCOE_WIND/2025-12-03/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: floor -$10 to floor $0</summary>
+    <summary>New floor: −$10/MWh to $0/MWh</summary>
   </entry>
   <entry>
     <title>BRISCOE_WIND: New floor (2025-12-03)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=BRISCOE_WIND"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=BRISCOE_WIND#BRISCOE_WIND/2025-12-03/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: floor -$10 to floor $0</summary>
+    <summary>New floor: −$10/MWh to $0/MWh</summary>
   </entry>
   <entry>
     <title>BRISCOE_WIND: New floor (2022-01-21)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=BRISCOE_WIND"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=BRISCOE_WIND#BRISCOE_WIND/2022-01-21/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: floor -$6 to floor -$10</summary>
+    <summary>New floor: −$6/MWh to −$10/MWh</summary>
   </entry>
   <entry>
     <title>BRISCOE_WIND: New floor (2022-01-21)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=BRISCOE_WIND"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=BRISCOE_WIND#BRISCOE_WIND/2022-01-21/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: floor -$6 to floor -$10</summary>
+    <summary>New floor: −$6/MWh to −$10/MWh</summary>
   </entry>
   <entry>
     <title>BRISCOE_WIND: Episode (2021-02-17)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=BRISCOE_WIND"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=BRISCOE_WIND#BRISCOE_WIND/2021-02-17/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Episode: floor -$6 to -$50 for the episode for 3 day(s)</summary>
+    <summary>Episode: floor −$6/MWh, briefly −$50/MWh, for 3 days</summary>
   </entry>
   <entry>
     <title>BRISCOE_WIND: Episode (2021-02-17)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=BRISCOE_WIND"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=BRISCOE_WIND#BRISCOE_WIND/2021-02-17/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Episode: floor -$6 to -$50 for the episode for 3 day(s)</summary>
+    <summary>Episode: floor −$6/MWh, briefly −$50/MWh, for 3 days</summary>
   </entry>
 </feed>

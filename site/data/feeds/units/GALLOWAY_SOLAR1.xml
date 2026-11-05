@@ -9,13 +9,13 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=GALLOWAY"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=GALLOWAY#GALLOWAY/2021-10-30/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: floor -$15 to floor $0</summary>
+    <summary>New floor: −$15/MWh to $0/MWh</summary>
   </entry>
   <entry>
     <title>GALLOWAY: New floor (2021-07-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=GALLOWAY"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=GALLOWAY#GALLOWAY/2021-07-01/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: floor $0 to floor -$15</summary>
+    <summary>New floor: $0/MWh to −$15/MWh</summary>
   </entry>
 </feed>

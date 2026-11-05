@@ -15,12 +15,12 @@ const TECHS = [
   { id: "storage", label: "Battery storage" },
 ];
 const TECH_LABEL = Object.fromEntries(TECHS.map((t) => [t.id, t.label]));
-const GROUP_SHORT = { never: "Always on when available", seasonal: "Seasonal", multiday: "Multi-day", daily1: "Daily, under once a week", daily2: "Daily, 1 to 2 a week", daily3: "Daily, over 2 a week", never_on: "Never on", ungrouped: "Not yet grouped" };
+const GROUP_SHORT = { never: "Always on when available", seasonal: "Seasonal", multiday: "Off for days at a time", daily1: "Cycles daily, under once a week", daily2: "Cycles daily, 1 to 2 times a week", daily3: "Cycles daily, over twice a week", never_on: "Never on", ungrouped: "Not yet grouped" };
 const GROUP_ORDER = Object.keys(GROUP_SHORT);
-const COMMIT = [{ k: "qs", label: "Quick-start" }, { k: "self", label: "Self-committed" }, { k: "dam", label: "DAM award" }];
-const MINS = [[0, "Any day"], [0.1, "10% of days"], [0.25, "25% of days"], [0.5, "50% of days"], [0.75, "75% of days"], [0.9, "90% of days"]];
+const COMMIT = [{ k: "qs", label: "Quick-start standby" }, { k: "self", label: "Self-committed" }, { k: "dam", label: "Day-ahead award" }];
+const MINS = [[0, "any day"], [0.1, "10% of days"], [0.25, "25% of days"], [0.5, "50% of days"], [0.75, "75% of days"], [0.9, "90% of days"]];
 const pct = (v) => (v == null ? "–" : v === 0 ? "0%" : v < 0.01 ? "<1%" : d3.format(".0%")(v));
-const shareCol = (c) => ({ k: c.k, h: c.label, f: (u) => (u[c.k] == null ? "–" : `<span title="${Math.round(u[c.k] * u.dam_days)} of ${u.dam_days} DAM days">${pct(u[c.k])}</span>`), opt: 1 });
+const shareCol = (c) => ({ k: c.k, h: `${c.label}, % of DAM days`, f: (u) => (u[c.k] == null ? "–" : `<span title="${Math.round(u[c.k] * u.dam_days)} of ${u.dam_days} DAM days">${pct(u[c.k])}</span>`), opt: 1 });
 const COLS = [
   { k: "unit", h: "Unit", t: 1, f: (u) => `<a href="unit.html?unit=${encodeURIComponent(u.unit)}">${esc(u.unit)}</a>` },
   { k: "tech", h: "Technology", t: 1, f: (u) => TECH_LABEL[u.tech] || esc(u.tech) },
@@ -32,7 +32,7 @@ const COLS = [
     (u.aliases?.length ? `<br><span class="muted">also ${esc(u.aliases.join(", "))}</span>` : "") },
   { k: "county", h: "County", t: 1, f: (u) => esc(u.county || "–") },
   { k: "zone", h: "Zone", t: 1, f: (u) => esc(u.zone || "–") },
-  { k: "dme", h: "Decides offers", t: 1, f: (u) => esc(u.dme || "–") + (u.owner && u.owner !== u.dme ? `<br><span class="muted">owner ${esc(u.owner)}</span>` : ""), opt: 1 },
+  { k: "dme", h: "Offers decided by", t: 1, f: (u) => esc(u.dme || "–") + (u.owner && u.owner !== u.dme ? `<br><span class="muted">owner ${esc(u.owner)}</span>` : ""), opt: 1 },
   { k: "qse", h: "QSE", t: 1, f: (u) => (u.qse_name ? esc(u.qse_name) + `<br><span class="muted">${esc(u.qse)}</span>` : esc(u.qse || "–")), opt: 1 },
   { k: "sp", h: "Settlement point", t: 1, f: (u) => esc(u.sp || "–") },
   { k: "configs", h: "Configurations", t: 1, f: (u) => (u.configs.length ? esc(u.configs.join(", ")) : "") },

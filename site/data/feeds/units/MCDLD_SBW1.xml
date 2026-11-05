@@ -9,41 +9,41 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=MCDLD_SBW"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=MCDLD_SBW#MCDLD_SBW/2022-03-11/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: floor $1 to floor -$25</summary>
+    <summary>New floor: $1/MWh to −$25/MWh</summary>
   </entry>
   <entry>
     <title>MCDLD_SBW: New floor (2021-08-04)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=MCDLD_SBW"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=MCDLD_SBW#MCDLD_SBW/2021-08-04/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: floor $3 to floor $1</summary>
+    <summary>New floor: $3/MWh to $1/MWh</summary>
   </entry>
   <entry>
     <title>MCDLD_SBW: New floor (2021-04-09)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=MCDLD_SBW"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=MCDLD_SBW#MCDLD_SBW/2021-04-09/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: floor $4 to floor $3</summary>
+    <summary>New floor: $4/MWh to $3/MWh</summary>
   </entry>
   <entry>
     <title>MCDLD_SBW: Back to an earlier floor (2020-11-08)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=MCDLD_SBW"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=MCDLD_SBW#MCDLD_SBW/2020-11-08/renew_floor_back</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Back to an earlier floor: floor -$1 to floor $4</summary>
+    <summary>Back to an earlier floor: −$1/MWh to $4/MWh</summary>
   </entry>
   <entry>
     <title>MCDLD_SBW: Back to an earlier floor (2020-11-02)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=MCDLD_SBW"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=MCDLD_SBW#MCDLD_SBW/2020-11-02/renew_floor_back</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Back to an earlier floor: floor $4 to floor -$1</summary>
+    <summary>Back to an earlier floor: $4/MWh to −$1/MWh</summary>
   </entry>
   <entry>
     <title>MCDLD_SBW: New floor (2020-09-30)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=MCDLD_SBW"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=MCDLD_SBW#MCDLD_SBW/2020-09-30/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: floor -$1 to floor $4</summary>
+    <summary>New floor: −$1/MWh to $4/MWh</summary>
   </entry>
 </feed>

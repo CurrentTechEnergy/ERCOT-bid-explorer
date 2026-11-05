@@ -46,7 +46,7 @@
   <div class="brand">
     <div class="nav-row"><nav class="nav" aria-label="Pages"><a href="goal.html">Will fossil turn off?</a><a href="index.html">A day in ERCOT</a><a href="prices.html">Prices</a><a href="dayahead.html">Day-ahead offers</a><a href="commitment.html">Turn-ons and Turn-offs</a><a href="beyond.html">Real-time offers</a><a href="renewables.html" aria-current="page">Renewables</a><a href="batteries.html">Batteries</a><a href="unit.html">Units</a><span class="nav-sep" aria-hidden="true"></span><a href="changes.html" class="aux">What's changing</a><a href="fleet.html" class="aux">Fleet economics</a><a href="guide.html" class="aux">How offers work</a></nav></div>
     <h1>Renewables</h1>
-    <p class="sub">How fast wind and solar have grown, how they offer, how much SCED held back and where, and what their offers say about their hedges.</p>
+    <p class="sub">Wind and solar are the supply behind ERCOT's cheap hours. This page shows how much of it there is, how low it bids (tax-credit bids keep units running well below $0/MWh), how much SCED turns away and where that energy sits, and which units bid as if they held a day-ahead hedge, which decides whether they keep producing when prices go negative.</p>
   </div>
   <p class="status" id="status">Loading data…</p>
 </header>
@@ -56,7 +56,7 @@
     <div class="panel-head">
       <div>
         <h2>Across the years</h2>
-        <p class="note">How fast wind and solar have grown, how much they make and how much is held back, what price they actually earn against the average at their nodes, and how much of their output lands in hours priced at $0 or below.</p>
+        <p class="note">Seven years of wind and solar in four charts: fleet size; energy produced and curtailed; what their MWh earned against the average MWh (the capture rate, below 100% when their output lands in cheap hours or behind congestion); and the share of their output in hours priced at $0/MWh or below, energy a flexible load could have had for next to nothing. The capture rate divides by the hub price weighted by all ERCOT generation, so it compares a wind or solar MWh with what the average generator received; published value factors (Hirth; LBNL) divide by the time-weighted average price instead, so the rates here read lower than those.</p>
         <details class="how"><summary>How it's built</summary><p class="note">Every wind and solar unit in ERCOT's 60-day disclosure, hour by hour: monthly from January 2019 from the site's hourly history (built from ERCOT's archive), and daily (and each whole month) since the 60-day data loaded here starts. <b>Fleet size</b> sums each unit's highest hourly HSL in the month (daily: over the last 30 days, so a calm or cloudy day doesn't shrink it); HSL is what SCED saw the unit could produce, a little under nameplate. <b>Energy</b> is telemetered output; <b>curtailed</b> is HSL above base point, the energy SCED held back. A few history months are missing a day or two; their energy is scaled up to the whole month. <b>Capture rate</b> is the price wind or solar earned per MWh (the real-time price at each unit's settlement point, weighted by its output) over the ERCOT hub average price (HB_HUBAVG, real-time) weighted by each hour's ERCOT generation (every unit's output in the 60-day data, storage left out): what the average MWh sold earned at the hub. Below 100% means a wind or solar MWh earns less than the average MWh, from when it produces (more in cheap hours) and where (congestion between its node and the hub). Daily, both are 7-day averages first. In the monthly view the thick flat lines are each calendar year (the current year so far): for the capture rate, the year's revenue per MWh over the whole year divided by all ERCOT generation's hub revenue per MWh over the whole year. The two sides spread their MWh over the months differently, so a year can sit outside its months: in 2021 ERCOT's generation caught more of Winter Storm Uri's prices than solar's did; for the $0 share, the year's output in those hours over all of it. <b>$0 or below</b> is the share of output in hours whose day-ahead price at the unit's node was $0 or less: energy a flexible load at those nodes could have taken for free or been paid to take. The $0-or-below share uses day-ahead prices, which the history carries for every unit and year.</p></details>
         <p class="note" id="yr-note"></p>
       </div>
@@ -80,8 +80,8 @@
     <div class="panel-head">
       <div>
         <h2>Curtailment by hour, one day <span class="h-note" id="curt-title-note"></span></h2>
-        <p class="note">What wind and solar could have produced minus what SCED dispatched, by hour. Opens on the latest day.</p>
-        <details class="how"><summary>How it's built</summary><p class="note">MW wind and solar could have produced (HSL) minus the base point SCED sent them, averaged over each hour: the output SCED held back, for price or for congestion. From the 60-day disclosure where the day has it, otherwise the 2-day estimate. Opens on the latest day.</p></details>
+        <p class="note">Wind and solar MW that SCED held back each hour of one day: the shape of the energy a flexible load could absorb, which peaks with solar at midday and, on windy nights, overnight. Opens on the latest day.</p>
+        <details class="how"><summary>How it's built</summary><p class="note">MW wind and solar could have produced (HSL) minus the base point SCED sent them, averaged over each hour: the output SCED held back, for price or for congestion. From the 60-day disclosure where the day has it, otherwise the 2-day estimate.</p></details>
       </div>
     </div>
     <div class="ctl-row">
@@ -102,7 +102,7 @@
     <div class="panel-head">
       <div>
         <h2>Wind and solar offer prices</h2>
-        <p class="note">Share of wind and solar MW offered in each price band, day by day. Tax-credit bids sit between about −$50 and −$20.</p>
+        <p class="note">Share of wind and solar MW offered in each price band, day by day. Tax-credit bids mostly sit between about −$50 and −$25, so the bands below −$20 are where they show up.</p>
         <details class="how"><summary>How it's built</summary><p class="note">Share of the MW wind and solar offered each day that was priced in each band, weighted by MW over the day's hours. Tax-credit bids cluster between about −$50 and −$25 with little between −$25 and −$5, so −$20 separates them from shallow negatives. Below −$20 is split into −$250 to −$50, −$50 to −$35 and −$35 to −$20, since most of it sits between −$50 and −$30. Almost nothing is offered at the −$250 floor itself. Uses the 2-day curves where the day has them, otherwise the 60-day curves.</p></details>
       </div>
     </div>
@@ -115,12 +115,13 @@
     <div class="panel-head">
       <div>
         <h2>Wind and solar curtailment <span class="h-note" id="nc-note"></span></h2>
-        <p class="note">Curtailed energy by day, split into operator-directed, congestion (node at least $5 under lambda) and oversupply.</p>
+        <p class="note">How much wind and solar SCED turned away each day, by cause. Congestion (the node price at least $5/MWh below system lambda) is energy stuck behind a transmission constraint, which only a load on the same side could use; oversupply is energy the whole system did not want, available to a load anywhere; operator-directed is ERCOT manually lowering a unit's limit.</p>
         <details class="how"><summary>How it's built</summary><p class="note">Energy wind and solar could have produced (HSL) minus what SCED dispatched them to (base point), hour by hour, from the 60-day disclosure unit by unit. Each curtailed hour is priced at the unit's own settlement point and counted as <b>operator-directed</b> where ERCOT's HDL/LDL Manual Override Summary shows an operator lowering the unit's HDL (curtailment up to that reduction, averaged over the hour's runs), as <b>congestion</b> when the node price is at least $5/MWh below system lambda (the energy was worth less where the unit sits, often negative) and as <b>oversupply</b> otherwise (the system as a whole did not want it at the unit's offer). The split is by price, so it says what the energy was worth at the node, not which constraint SCED was managing. Units are matched to nodes through the DAM disclosure; hours with no node price are priced at lambda and counted as unmatched. The price chart groups the curtailed energy by each hour's system lambda (hover for the average curtailed MW over those hours) or by the price at the unit's node, which leaves out operator-directed energy. Recent days with no 60-day data yet show a dashed total estimated from ERCOT's 2-day reports (generation summary base points against the 2-day offer curves' HSL); where both exist the 2-day estimate runs a few percent higher, because the 2-day base points run a little lower.</p></details>
       </div>
     </div>
     <div class="legend legend-static" id="nc-legend"></div>
     <div class="chart" id="nc-daily"></div>
+    <p class="note" id="nc-value"></p>
     <div class="ctl-row">
       <div class="ctl">
         <span class="lbl" id="lbl-pbasis">Priced at</span>
@@ -132,7 +133,7 @@
     </div>
     <div class="legend legend-static" id="nc-bins-legend"></div>
     <div class="chart" id="nc-bins"></div>
-    <div class="chart" id="nc-value"></div>
+
     <h3 class="sub-h">Units</h3>
     <div class="units-wrap" id="nc-units"></div>
     <p><button type="button" class="more" id="nc-more" hidden>Show all</button></p>
@@ -143,6 +144,7 @@
       <div>
         <h2>Unused wind and solar, by region and offer price <span class="h-note" id="un-note"></span></h2>
         <p class="note">Wind and solar energy that was available but not dispatched, by where it sat and the price it was offered at: what a flexible load in each region could have taken, and roughly at what price.</p>
+        <p class="note" id="un-sum"></p>
         <details class="how"><summary>How it's built</summary><p class="note">The same energy as the curtailment chart above: each wind and solar unit's hourly HSL minus its base point, from the 60-day disclosure, unit by unit. Each unit-hour is placed in the unit's zone in ERCOT's Capacity, Demand and Reserves report (Bexar counted as South; newer units the report does not list have no zone), and priced at the unit's submitted offer for the next MW above its base point, at the middle SCED run of the hour (past the last point of its curve, the curve's last price). That is the price it would come back at if the load were there to take it, on the same side of any constraint. Bands run from just above the lower price up to and including the higher one, so an offer at exactly $0 is in "−$5 to $0". HSL is what the operator reports, so a unit that curtails by lowering its HSL hides part of what it could produce. The lambda filter uses each hour's average system lambda.</p></details>
       </div>
       <div class="panel-tools">
@@ -266,6 +268,7 @@
 
 <footer class="foot">
   <p>Source: ERCOT EMIL products NP3-965-ER (60-Day SCED Disclosure), NP3-966-ER (60-Day DAM Disclosure), NP3-908-ER (2-Day SCED Energy Curves), NP3-911-ER (2-Day Generation Summary), NP6-322-CD (SCED System Lambda), the DAM and real-time settlement point prices and the HDL/LDL Manual Override Summary, and for the across-the-years charts and bidding changes before the loaded 60-day days, the hourly history built from ERCOT's archive (2019 on). Built by the data update workflow from the days already loaded; the 60-day reports run about two months behind.</p>
+  <p>Hours are ERCOT hour ending in Central prevailing time: HE 13 is noon to 1 pm. Dates are operating days.</p>
   <p>Made by <a href="https://currenttech.energy">currenttech.energy</a> · <a href="contact.html">Contact</a></p>
   <p>Not affiliated with or endorsed by ERCOT. ERCOT is a registered trademark of the Electric Reliability Council of Texas, Inc.</p>
   <p>© 2026 CurrentTech Energy. All rights reserved. For information only; not trading or investment advice. <a href="terms.html">Terms and privacy</a></p>

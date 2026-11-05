@@ -25,8 +25,8 @@ const TECHS = [
 const THERMAL = ["nuclear", "coal", "combined_cycle", "gas_steam", "combustion_turbine"];
 const TECH_OF = Object.fromEntries(TECHS.map((t) => [t.id, t]));
 const techLabel = (t) => (TECH_OF[t] ? TECH_OF[t].label : t === "storage" ? "Storage (ESR)" : t === "hydro" ? "Hydro" : t || "–");
-const SIG_FMT = { le0: (v) => d3.format(".0%")(v), noff: (v) => d3.format(".0%")(v), rel: (v) => (v >= 0 ? "+" : "−") + d3.format("$,.0f")(Math.abs(v)) };
-const GROUP_SHORT = { never: "Always on when available", seasonal: "Seasonal", multiday: "Multi-day", daily1: "Daily, under once a week", daily2: "Daily, 1 to 2 a week", daily3: "Daily, over 2 a week", never_on: "Never on", ungrouped: "Not yet grouped" };
+const SIG_FMT = { le0: (v) => d3.format(".0%")(v), noff: (v) => d3.format(".0%")(v), rel: (v) => (Math.round(v) === 0 ? "" : v > 0 ? "+" : "−") + d3.format("$,.0f")(Math.abs(v)) + "/MWh" };
+const GROUP_SHORT = { never: "Always on when available", seasonal: "Seasonal", multiday: "Off for days at a time", daily1: "Cycles daily, under once a week", daily2: "Cycles daily, 1 to 2 times a week", daily3: "Cycles daily, over twice a week", never_on: "Never on", ungrouped: "Not yet grouped" };
 const S = { econ: {}, day: null, hour: null, T: null, DEC: null, UH: null, SP: null, OI: null, OD: null, fcDay: null, PPA: null, list: new Map(), stubs: new Set(), unit: null, cfg: null, span: null, last60: null };
 const { tryJSON, showTip, hideTip, setCSV, tickFormat, fmtKind, axisFmt, css, esc } = window.CX;
 const $ = (id) => document.getElementById(id);
@@ -180,28 +180,35 @@ function drawHead(e) {
   document.title = `${named ? `${displayName(who.plant)} (${e.name})` : e.name} · ERCOT Bids`;
   const dec = S.DEC?.units?.[e.name], ppa = (S.PPA?.units || []).find((u) => u.name === e.name);
   const bits = [techLabel(e.tech)];
-  if (window.CX.isPeaker(S.G, e.name)) bits.push(window.CX.peakerNote(S.G).replace("Runs like", "runs like"));
   if (e.configs.length > 1) bits.push(`${e.configs.length} configurations: ${e.configs.join(", ")}`);
-  if (dec && dec[1]) bits.push(`${fmtMW(dec[1])} MW minimum output (LSL)`);
+  if (dec && dec[1]) bits.push(`${fmtMW(dec[1])} MW minimum output (LSL)${e.configs.length > 1 ? " in the configuration it usually runs" : ""}`);
   if (ppa && ppa.sp) bits.push(`node ${ppa.sp}`);
   const ui = e.tech === "storage" && who;
   if (ui) bits.push(...[ui.mw && `${fmtMW(ui.mw)} MW`, ui.sp && `node ${ui.sp}`].filter(Boolean));
   if (who && who.plant && !named) bits.push(`at the ${displayName(who.plant)} site`);
   if (who && who.aliases?.length) bits.push(`also known as ${who.aliases.join(", ")}`);
+  if (window.CX.isPeaker(S.G, e.name)) bits.push(window.CX.peakerNote(S.G).replace("Runs like", "runs like"));
   $("unit-meta").textContent = bits.join(" · ");
   // who decides how it is offered, who schedules it, who owns it (ERCOT's DME and QSE lists)
-  const wb = who ? [who.dme && `Offers decided by ${who.dme}`, who.qse && `scheduled by QSE ${who.qse_name ? `${who.qse_name} (${who.qse})` : who.qse}`,
-    who.owner && who.owner !== who.dme && `owned by ${who.owner}`].filter(Boolean) : [];
+  const same = who && who.dme && who.qse_name && who.dme.toUpperCase() === who.qse_name.toUpperCase();
+  const wb = !who ? [] : same ? [`Offers decided and scheduled by ${who.dme} (its QSE, the company that submits to ERCOT; code ${who.qse})`, who.owner && who.owner !== who.dme && `owned by ${who.owner}`].filter(Boolean)
+    : [who.dme && `Offers decided by ${who.dme}`, who.qse && `scheduled by ${who.qse_name ? `${who.qse_name} (its QSE, the company that submits to ERCOT; code ${who.qse})` : `QSE ${who.qse}`}`,
+      who.owner && who.owner !== who.dme && `owned by ${who.owner}`].filter(Boolean);
   $("unit-who").textContent = wb.join(" · ");
   $("unit-who").hidden = !wb.length;
   drawSite(e);
   const v = $("unit-verdict"), r = lastDecision(e.name);
-  if (!r) { v.textContent = THERMAL.includes(e.tech) && S.last60 ? `No decision day in the 60-day data (to ${S.last60}): it was not online going into any day with a DAM file.` : ""; return; }
-  const cut = dec && dec[9];
-  v.innerHTML = `<b>${esc(r[1])}, its latest decision day: ${r[6] ? `turned off${r[7] ? ` for ${r[7]} hours` : ""}` : "stayed on"}.</b>` +
+  if (!r) {
+    v.textContent = e.tech === "nuclear" ? "Nuclear units run at full output whatever the price, so they have no daily turn-off decisions to show."
+      : THERMAL.includes(e.tech) && S.last60 ? `No decision day in the 60-day data (to ${S.last60}): on no day with a day-ahead record did it start the day online with a loss to ride through.` : "";
+    return;
+  }
+  const cut = dec && dec[9], L = dec && dec[1];
+  const perMW = (v) => (L ? `${fmt$(v / L)} per MW of minimum (${fmt$(v)} for the day at ${fmtMW(L)} MW)` : fmt$(v));
+  v.innerHTML = `<b>${esc(r[1])}, its latest decision day (a day it started online): ${r[6] ? `turned off${r[7] ? ` for ${r[7]} hours` : ""}` : "stayed on"}.</b>` +
     (!r[4] ? " Day-ahead prices at its node covered its costs all day, so there was no loss to ride through." :
-      ` Staying on through HE ${r[3]} to ${r[3] + r[4] - 1} would have lost ${fmt$(r[2])} at its node` +
-      (cut != null ? `, against the ${fmt$(cut)} it usually turns off above.` : ".") +
+      ` Day-ahead prices at its node fell below its cost at minimum output for hours ending ${r[3]} to ${r[3] + r[4] - 1}; staying on through them would have lost ${perMW(r[2])}` +
+      (cut != null ? `, against ${L ? `${fmt$(cut / L)} per MW` : fmt$(cut)}, the loss above which it usually turns off.` : ".") +
       ` A day-ahead award covered ${fmtPct(r[5] || 0)} of the stretch.`) +
     ` <a href="commitment.html#date=${esc(r[1])}">Every unit that day</a>.`;
 }
@@ -223,9 +230,9 @@ function oiNote(e, day, o) {
   const str = (v) => (Math.abs(v) >= 2 ? "strongly " : Math.abs(v) >= 0.75 ? "" : "slightly ");
   const h = o.why_h - 1, aside = { "DAM award": o.award[h] ? " (awarded that hour)" : " (none that hour)" };
   const why = o.why.filter(([, v]) => Math.abs(v) >= 0.1).slice(0, 2).map(([k, v]) => `${esc(OI_DRIVER[k] || k)}${aside[k] || ""} ${str(v)}toward off`.replace(/toward off$/, v > 0 ? "toward off" : "toward on"));
-  return ` <br><b>With operator info:</b> it went into the day ${START_WORD[o.start] || o.start}, with a day-ahead award in ${aw} of 24 hours; called on for ${on} of 24 hours.` +
-    (why.length ? ` At HE ${o.why_h}, ${START_WORD[o.why_from] || o.why_from} the hour before, it put the unit ${fmtPct(o.p[h])} likely online; the biggest pulls: ${why.join("; ")}.` : "") +
-    (known ? ` Its COP plan at 2 pm the day before had it on for ${pl} of 24 hours.` : o.state ? "" : " No COP plan was filed for it.");
+  return ` <br><b>With operator info:</b> it went into the day ${START_WORD[o.start] || o.start}, with a day-ahead award in ${aw} of 24 hours, and the model called it on in ${on} of 24 hours.` +
+    (why.length ? ` In hour ending ${o.why_h}, ${START_WORD[o.why_from] || o.why_from} the hour before, the model put it at ${fmtPct(o.p[h])} likely online; what moved it most: ${why.join(", and ")}.` : "") +
+    (known ? ` Its Current Operating Plan (COP), filed by 2 pm Central the day before, had it on for ${pl} of 24 hours.` : o.state ? "" : " No Current Operating Plan (COP) was filed for it.");
 }
 async function drawForecast(e) {
   const el = $("fc-chart");
@@ -236,7 +243,7 @@ async function drawForecast(e) {
   const day = S.fcDay, [A, OD] = await Promise.all([S.T && S.T.dates.includes(day) ? loadDayUnits(day) : null, loadOI(day)]);
   if (S.unit !== e.name || S.fcDay !== day) return;
   const o = OD && OD.units[e.name];
-  if (!o) { $("fc-note").textContent = ""; $("fc-legend").innerHTML = ""; return emptyMsg(el, `${e.name} has no operator-informed call for ${day}.`); }
+  if (!o) { $("fc-note").textContent = ""; $("fc-legend").innerHTML = ""; return emptyMsg(el, `${e.name} has no operator-model call for ${day}.`); }
   // the actual, from the 60-day unit file: online (at least half the hour) and output, configurations summed
   let act = null;
   if (A) {
@@ -254,9 +261,9 @@ async function drawForecast(e) {
   const hOn = onl ? onl.filter((v) => v === true).length : null;
   const dr = (S.DEC?.days || []).find((r) => r[0] === e.name && r[1] === day);
   const rucH = new Set(window.CX.rucDays(S.UH, e.configs.length ? e.configs : [e.name]).get(day) || []);   // hours ending
-  $("fc-note").innerHTML = (act ? `<b>${esc(day)}: online ${hOn} of 24 hours, ${fmtMW(d3.sum(act, (x) => x.out))} MWh.</b>` : onl ? `<b>${esc(day)}: online ${hOn} of 24 hours.</b>` : `<b>${esc(day)}</b>.`) +
+  $("fc-note").innerHTML = (act ? `<b>On ${esc(day)} it was online ${hOn === 24 ? "all 24 hours" : `${hOn} of 24 hours`} and produced ${fmtMW(d3.sum(act, (x) => x.out))} MWh.</b>` : onl ? `<b>On ${esc(day)} it was online ${hOn} of 24 hours.</b>` : `<b>${esc(day)}</b>.`) +
     (OD.reduced ? ` Before the 60-day window: judged on a fit to the 12 months before it, from the thermal history files.` : "") +
-    (dr && dr[4] ? ` It ${dr[6] ? `turned off${dr[7] ? ` for ${dr[7]} hours` : ""}` : "stayed on"} through its worst stretch, HE ${dr[3]} to ${dr[3] + dr[4] - 1}, a loss of ${fmt$(dr[2])} at its node.` : "") +
+    (dr && dr[4] ? ` Its worst stretch was hours ending ${dr[3]} to ${dr[3] + dr[4] - 1}, where staying on would lose ${fmt$(dr[2])} at its node; it ${dr[6] ? `turned off${dr[7] ? ` for ${dr[7]} hours` : ""}` : "stayed on"}.` : "") +
     oiNote(e, day, o) +
     (rucH.size ? ` <br><b>ERCOT committed it by RUC</b> in ${rucH.size} hour${rucH.size === 1 ? "" : "s"} (purple rings): ERCOT's call, not the operator's, so the model is not fitted or scored on ${rucH.size === 1 ? "it" : "them"}.` : "");
   const s = TECH_OF[e.tech] || { color: "--c-other" };
@@ -278,7 +285,7 @@ async function drawForecast(e) {
   }
   svg.append("g").attr("class", "axis").attr("transform", `translate(${m.l},0)`).call(d3.axisLeft(yo).tickValues([0, 0.5, 1]).tickFormat(d3.format(".0%")).tickSizeOuter(0));
   svg.append("g").attr("class", "axis").attr("transform", `translate(0,${HT - m.b})`).call(d3.axisBottom(x).tickValues(tickH).tickFormat((h) => `HE ${h + 1}`).tickSizeOuter(0));
-  svg.append("text").attr("class", "axis-title").attr("x", m.l).attr("y", H1 + 10).text("With operator info: chance online and the call" + (onl ? ", actual online" : "") + ", COP plan");
+  svg.append("text").attr("class", "axis-title").attr("x", m.l).attr("y", H1 + 10).text("Chance online (line), the model's call (bar)" + (onl ? ", what it did (dots)" : "") + " and its COP plan (diamonds)");
   d3.range(24).forEach((h) => {
     if (act) {
       svg.append("rect").attr("x", x(h)).attr("width", bw).attr("y", y(act[h].out)).attr("height", Math.max(0, y(0) - y(act[h].out))).attr("fill", css(s.color)).attr("fill-opacity", 0.3);
@@ -319,32 +326,38 @@ function drawSite(e) {
   const mates = me && me.sp ? S.UI.filter((u) => u.sp === me.sp && u.unit !== e.name) : [];
   $("unit-site").hidden = !mates.length;
   if (!mates.length) return;
-  $("unit-site").innerHTML = `Same node (${esc(me.sp)}): ` + mates.map((u) =>
-    `<a href="unit.html?unit=${encodeURIComponent(u.unit)}">${esc(u.unit)}</a> ${esc(u.tech === "storage" ? "battery" : techLabel(u.tech).toLowerCase())}` +
-    (u.mw ? ` ${fmtMW(u.mw)} MW` : "")).join(", ");
+  const tl = (t, n) => (t === "storage" ? (n === 1 ? "battery" : `${n} batteries`) : n === 1 ? techLabel(t).toLowerCase() : `${n} ${techLabel(t).toLowerCase()} units`);
+  $("unit-site").innerHTML = `Same node (${esc(me.sp)}): ` + d3.groups(mates, (u) => u.tech).map(([t, us]) => `${esc(tl(t, us.length))}${us.length > 1 ? "," : ""} ` +
+    us.map((u) => `<a href="unit.html?unit=${encodeURIComponent(u.unit)}">${esc(u.unit)}</a>${u.mw ? ` (${fmtMW(u.mw)} MW)` : ""}`).join(", ")).join("; ");
 }
 
 // ---- decision history: every day the unit started online, its loss and what it did ----------
 // data/decisions.json.gz days rows: [train, date, loss, first HE of the window, hours, award share, shut, hours off]
+const DEC_HOW_COAL = "Each point is a day the unit started online. The loss is what the day-ahead prices at its node said it would lose by staying on through the day's worst stretch (energy at its node price against its costs at minimum output), as a total for the day; a square marks a day-ahead award that covered the stretch. Dashed lines mark any months its turn-off point moved (the same changes as under Recent changes).";
 const DEC_U = { tech: 0, lsl: 1, mingen: 2, hot: 3, est: 4, days: 5, shut: 6, award: 7, base: 8, cutoff: 9, acc: 10, stayMax: 11, shutMin: 12, accNew: 13 };
 function drawDecisions(e) {
   const el = $("dec-chart"), D = S.DEC, u = D && D.units[e.name];
   const rows = D ? D.days.filter((r) => r[0] === e.name && r[2] != null) : [];
   $("dec-panel").hidden = !THERMAL.includes(e.tech) || e.tech === "nuclear";
   if ($("dec-panel").hidden) return;
-  $("dec-lead").hidden = $("dec-how").hidden = e.tech === "combustion_turbine";
+  $("dec-lead").hidden = $("dec-how").hidden = false;
   $("dec-range-row").hidden = true;
   drawDecYears(e);
   if (e.tech === "combustion_turbine") { $("dec-oi").hidden = true; return drawDecisionsCT(e); }
-  if (e.tech === "combined_cycle" || e.tech === "gas_steam") { $("dec-oi").hidden = true; $("dec-lead").hidden = $("dec-how").hidden = true; return drawDecisionsTO(e); }
+  if (e.tech === "combined_cycle" || e.tech === "gas_steam") { $("dec-oi").hidden = true; return drawDecisionsTO(e); }
+  $("dec-lead").textContent = "What this shows: for every day the unit started online, what the day-ahead prices at its node said it would lose by staying on through the day's worst stretch, and what it did. A unit that stays on through large losses is paying to avoid a shutdown and restart.";
+  $("dec-how-text").textContent = DEC_HOW_COAL;
   if (!u || !rows.length) { $("dec-note").textContent = ""; return emptyMsg(el, "No decision days for this unit in the loaded 60-day data."); }
   const g = (k) => u[DEC_U[k]];
-  $("dec-note").textContent = `${g("days")} days it had to choose, ${g("shut")} shutdowns, a day-ahead award over the cheap stretch on ${fmtPct(g("award") || 0)} of them. ` +
-    (g("shut") && g("days") > g("shut") ? `Most it stayed on through: ${fmt$(g("stayMax"))}; least it shut on: ${fmt$(g("shutMin"))}. ` : "") +
-    "Its turn-off point comes from the operator-informed model below; dashed lines mark the months it moved. " +
+  const nd = g("days"), ns = g("shut");
+  const aw = g("award") || 0;
+  $("dec-note").textContent = `On ${nd} days it started online with a loss to ride through. It shut down on ${ns} and stayed on through the other ${nd - ns}, ` +
+    `with a day-ahead award over the cheap stretch on ${aw ? fmtPct(aw) : "none"} of them. ` +
+    (ns && nd > ns && g("stayMax") != null && g("shutMin") != null ? `The biggest loss it stayed on through was ${fmt$(g("stayMax"))} for the day; the smallest it shut down for was ${fmt$(g("shutMin"))}. ` : "") +
+    (e.tech === "coal" && ns <= 0.05 * nd ? "Coal units almost never shut down for price: a short cheap stretch rarely beats their restart cost. " : "") +
     (g("est") === 3 ? " Its cost at minimum is its fuel cost (measured heat rate at minimum × its gas hub's price the day before, or its plant's coal price)."
       : g("est") === 2 ? " Its cost at minimum is the technology's generic cost (no fuel price or three-part offer of its own in the window)."
-      : " Its cost at minimum is its own day-ahead minimum-energy offer, as for every gas steam unit here.");
+      : " Its cost at minimum is its own day-ahead minimum-energy offer.");
   const w = Math.max(280, el.clientWidth || 600), H = 240, m = { t: 18, r: 16, b: 26, l: 70 };
   const ruc = window.CX.rucDays(S.UH, e.configs.length ? e.configs : [e.name]);
   const pts = rows.map((r) => ({ d: r[1], t: parseDate(r[1]), loss: r[2], he: r[3], h: r[4], aw: r[5], shut: r[6], off: r[7],
@@ -357,7 +370,7 @@ function drawDecisions(e) {
   svg.append("g").attr("class", "axis").attr("transform", `translate(0,${H - m.b})`).call(d3.axisBottom(x).ticks(w < 560 ? 4 : 8).tickSizeOuter(0));
   svg.append("g").attr("class", "axis").attr("transform", `translate(${m.l},0)`).call(axisFmt(d3.axisLeft(y), 5, "$k").tickSizeOuter(0));
   if (y.domain()[0] < 0) svg.append("line").attr("class", "zero").attr("x1", m.l).attr("x2", w - m.r).attr("y1", y(0)).attr("y2", y(0));
-  svg.append("text").attr("class", "axis-title").attr("x", m.l).attr("y", 10).text("Day-ahead loss from staying on through the day's worst stretch ($)");
+  svg.append("text").attr("class", "axis-title").attr("x", m.l).attr("y", 10).text("Loss from staying on through the day's worst stretch, $ for the day (day-ahead prices)");
   // months its operator-informed turn-off point moved (events.py "turnoff")
   const moves = svg.append("g");
   tryJSON("data/events.json.gz").then((E) => {
@@ -390,7 +403,7 @@ function drawDecisions(e) {
     `<span><span class="sw sw-line"></span>Turn-off point moved</span>` + (pts.some((p) => p.ruc) ? window.CX.rucLegend() : "");
 }
 
-// combustion turbines: each day it went into some hour offline, the operator-informed model's
+// combustion turbines: each day it went into some hour offline, the operator model's
 // turn-on point against the day's highest day-ahead price at its node (data/peaker/oi.json.gz,
 // pipeline/models/peaker_oi.py), with its "Running at a new price" changes marked; turn_on null
 // when no shift tested starts it (drawn on the "no start" row at the top)
@@ -423,8 +436,8 @@ async function drawDecYears(e) {
       .text(`${narrow ? `'${String(y).slice(2)}` : y}${part(y) ? "*" : ""}`);
     svg.append("rect").attr("x", x(y)).attr("y", m.t).attr("width", x.bandwidth()).attr("height", H - m.t - m.b)
       .attr("fill", ok(y) ? col(c.v) : css("--surface")).attr("stroke", ok(y) ? "none" : css("--grid"))
-      .on("pointermove", (ev) => showTip(ev, `<h4>${y}${part(y) ? ` (to ${esc(part(y))})` : ""}</h4>` + (!c ? "No windows where shutting would have paid."
-        : `<table><tr><td>Windows where shutting paid</td><td class="n">${c.n}</td></tr><tr><td>Turned off for</td><td class="n">${fmtPct(c.v)}</td></tr></table>${c.n < min ? `Fewer than ${min} windows: not shaded.` : ""}`)))
+      .on("pointermove", (ev) => showTip(ev, `<h4>${y}${part(y) ? ` (to ${esc(part(y))})` : ""}</h4>` + (!c ? "No stretches where shutting would have paid."
+        : `<table><tr><td>Stretches where shutting paid</td><td class="n">${c.n}</td></tr><tr><td>Turned off for</td><td class="n">${fmtPct(c.v)}</td></tr></table>${c.n < min ? `Fewer than ${min} stretches: not shaded.` : ""}`)))
       .on("pointerleave", hideTip);
     svg.append("text").attr("x", cx).attr("y", m.t + (H - m.t - m.b) / 2 + 4).attr("text-anchor", "middle").attr("font-size", narrow ? 10 : 12)
       .attr("pointer-events", "none").attr("fill", ok(y) ? css(c.v > 0.55 ? "--surface" : "--ink") : css("--muted"))
@@ -432,9 +445,9 @@ async function drawDecYears(e) {
   });
   el.replaceChildren(svg.node());
   const d = early != null && late != null ? late - early : null;
-  $("dec-years-note").innerHTML = `Each year, of the windows where shutting would have paid (the loss from staying on beats the restart, and nothing held it on), the share it turned off for. Darker is more often off; a dash is a year with fewer than ${min} such windows.` +
-    (d != null ? ` <b>${fmtPct(early)} in ${b0} to ${b1}, ${fmtPct(late)} from 2024 on (${d > 0 ? "+" : d < 0 ? "−" : ""}${Math.abs(Math.round(100 * d))} points).</b>` : "") +
-    (never ? " It has never turned off for a loss window it was free to choose." : "") +
+  $("dec-years-note").innerHTML = `Each year, the share of loss stretches where shutting down would have paid (the loss from staying on beat the restart cost and nothing held it on) that it actually turned off for. Darker is more often off; a dash is a year with fewer than ${min} such stretches.` +
+    (d != null ? ` <b>It turned off for ${fmtPct(early)} of them in ${b0} to ${b1} and ${fmtPct(late)} from 2024 on, ${Math.abs(Math.round(100 * d))} points ${d < 0 ? "less" : "more"} often.</b>` : !ys.some(ok) ? " Too few such stretches in any year to judge." : "") +
+    (never ? " It has never turned off for a loss stretch it was free to choose." : "") +
     (ys.some(part) ? " * Part year." : "") + ` Every unit side by side: <a href="goal.html#q3-panel">Will fossil turn off?</a>, question 3.`;
   setCSV(el, ["year", "windows_where_shutting_pays", "share_turned_off"], ys.map((y) => [y, cell.get(y)?.n ?? 0, cell.get(y)?.v ?? ""]), `${e.name} shut rate by year`);
 }
@@ -443,14 +456,17 @@ async function drawDecisionsCT(e) {
   const el = $("dec-chart"), P = S.POI;
   const C = P ? Object.fromEntries(P.columns.map((c, i) => [c, i])) : {};
   const pts = P ? Object.entries(P.days).flatMap(([d, rs]) => rs.filter((r) => r[C.unit] === e.name).map((r) => ({ d, t: parseDate(d), s: r[C.turn_on], p: r[C.peak], ran: !!r[C.started], on: r[C.hours_on], av: r[C.hours_avail], off: r[C.hours_off], win: r[C.window] }))) : [];
-  if (!pts.length) { $("dec-note").textContent = ""; $("dec-legend").innerHTML = ""; return emptyMsg(el, "No operator-informed turn-on points for this unit: it needs a day-ahead record, real-time prices at its node and an hour it went into offline, in a month with 45 days before it."); }
+  if (!pts.length) { $("dec-note").textContent = ""; $("dec-legend").innerHTML = ""; return emptyMsg(el, "No operator-model turn-on points for this unit: it needs a day-ahead record, real-time prices at its node and an hour it went into offline, in a month with 45 days before it."); }
   const ruc = window.CX.rucDays(S.UH, e.configs.length ? e.configs : [e.name]);
   pts.forEach((p) => { p.ruc = ruc.get(p.d)?.length || 0; });
   const J = pts.filter((p) => !p.ruc);
   const says = (p) => p.s != null && p.s <= p.p, bad = (p) => !p.ruc && says(p) !== p.ran, right = J.filter((p) => !bad(p)).length, ran = J.filter((p) => p.ran).length;
   const caught = J.filter((p) => p.ran && says(p)).length;
-  $("dec-note").textContent = `Each day it went into some hour offline: the operator-informed model's turn-on point, the day's highest day-ahead price at its node at which the model starts it (every price at its node, day-ahead and real-time, shifted by the same amount until its chance of starting at some point in those hours reaches 50%), and the day's actual highest day-ahead price there. ` +
-    `The model reads only what its operator had before each hour: the day-ahead market, the real-time price at its node up to the hour before, and the gas price at its hub the day before (every price is read less 11 MMBtu/MWh of gas). On ${J.length} days it started on ${ran}; the model called ${right} right (${fmtPct(right / J.length)}), ${caught} of the ${ran} days it started.${window.CX.rucNote(pts.length - J.length)} Most combustion turbine starts can't be called an hour ahead.`;
+  $("dec-lead").textContent = "What this shows: for each day this peaker went into offline, the day-ahead price at its node above which the operator model expects it to start (diamond), against the day's actual highest day-ahead price there (circle, filled when it started). A circle above its diamond is a day the model expected a start.";
+  $("dec-how-text").textContent = "The model reads only what the operator had before each hour: the day-ahead market, the real-time price at its node up to the hour before, and the gas price at its hub the trading day before; every price is read net of gas cost at 11 MMBtu/MWh. The turn-on point is found by shifting every price at its node, day-ahead and real-time, by the same amount until the chance of a start somewhere in its offline hours reaches 50%.";
+  $("dec-note").textContent = `On ${J.length} days it started on ${ran}. The model was right on ${right} days (${fmtPct(right / J.length)})` +
+    (caught === 0 && ran ? ` but caught none of the ${ran} starts: most combustion turbine starts cannot be called an hour ahead from prices alone.` : `, and caught ${caught} of the ${ran} starts. Most combustion turbine starts cannot be called an hour ahead from prices alone.`) +
+    window.CX.rucNote(pts.length - J.length);
   $("dec-legend").innerHTML = `<span><span class="sw" style="background:var(--c1);transform:rotate(45deg) scale(0.8)"></span>Model starts it above this day-ahead price</span>` +
     window.CX.onOffLegend("Day's highest day-ahead price, started", "Day's highest day-ahead price, stayed off") +
     `<span><span class="sw" style="background:var(--c8);height:3px"></span>Did the opposite of the model</span><span><span class="sw sw-line"></span>Running at a new price</span>` +
@@ -469,7 +485,7 @@ async function drawDecisionsCT(e) {
   svg.append("g").attr("class", "axis").attr("transform", `translate(0,${H - m.b})`).call(d3.axisBottom(x).ticks(w < 560 ? 4 : 8).tickSizeOuter(0));
   svg.append("g").attr("class", "axis").attr("transform", `translate(${m.l},0)`).call(d3.axisLeft(y).tickValues(yT).tickFormat((v) => fmt$(v)).tickSizeOuter(0));
   svg.append("text").attr("class", "axis-title").attr("x", m.l).attr("y", 10).text("Day-ahead price at its node ($/MWh): where the model starts it, and the day's highest");
-  if (noS) svg.append("text").attr("class", "axis-label").attr("x", m.l - 6).attr("y", TOPY + 3).attr("text-anchor", "end").attr("font-size", 10).attr("fill", css("--ink-2")).text("no start");
+  if (noS) svg.append("text").attr("class", "axis-label").attr("x", m.l - 6).attr("y", TOPY + 3).attr("text-anchor", "end").attr("font-size", 10).attr("fill", css("--ink-2")).text("no price starts it");
   const ev = ((await tryJSON("data/events.json.gz"))?.events || []).filter((v) => v.unit === e.name && v.kind === "rt_price");
   svg.append("g").selectAll("line").data(ev).join("line").attr("class", "price-rule").attr("stroke-dasharray", "4 3")
     .attr("x1", (v) => x(parseDate(v.date))).attr("x2", (v) => x(parseDate(v.date))).attr("y1", m.t).attr("y2", H - m.b);
@@ -512,7 +528,7 @@ async function drawDecisionsTO(e) {
   const hist = HU ? HU.rows.filter((r) => r[HC.date] < first).map((r) => ({ d: r[HC.date], t: parseDate(r[HC.date]),
     s: r[HC.saving], c: r[HC.turn_off], aw: r[HC.award], off: !!r[HC.off], lsl: r[HC.lsl], md: r[HC.min_down], red: true })) : [];
   const all = [...hist, ...live];
-  if (!all.length) { $("dec-note").textContent = ""; $("dec-legend").innerHTML = ""; return emptyMsg(el, "No operator-informed turn-off points for this unit."); }
+  if (!all.length) { $("dec-note").textContent = ""; $("dec-legend").innerHTML = ""; return emptyMsg(el, "No operator-model turn-off points for this unit."); }
   // range: the last 12 months, a calendar year, or all
   const years = [...new Set(all.map((p) => p.d.slice(0, 4)))].sort().reverse();
   const opts = [[DEC_RANGE_12, "Last 12 months"], ...years.map((y) => [y, y]), [DEC_RANGE_ALL, "All"]];
@@ -528,11 +544,12 @@ async function drawDecisionsTO(e) {
   const nRed = pts.filter((p) => p.red).length;
   const says = (p) => p.c != null && p.s > p.c, bad = (p) => !p.ruc && says(p) !== p.off, J = pts.filter((p) => !p.ruc);
   const right = J.filter((p) => !bad(p)).length, nOff = J.filter((p) => p.off).length, caught = J.filter((p) => p.off && says(p)).length;
-  $("dec-note").textContent = `Each day it started online: its loss from staying on over the day's best off stretch at least its minimum down time long (its fuel cost at minimum, its measured heat rate × its gas hub's price the day before, against the day-ahead price at its node, before any restart cost), and the operator-informed model's turn-off point, the loss at which the model turns it off. ` +
-    `A circle above its diamond is a day the model turns it off. On ${J.length} days it shut on ${nOff}; the model called ${right} right (${fmtPct(right / J.length)}), ${caught} of the ${nOff} shutdowns.${window.CX.rucNote(pts.length - J.length)} Dashed lines mark the months its turn-off point moved, for each day-ahead condition on its own.` +
-    (nRed ? ` The ${d3.format(",")(nRed)} lighter days, before the 60-day fits begin (Feb 2026), are judged by fits on the 12 months before each from the thermal history files: no RUC data, and gas at the unit's own hub where OilPriceAPI has a price (Ship Channel from Jul 2019), else Henry Hub plus Ship Channel's median basis for the calendar month (Henry Hub alone for Waha units).` : "");
+  $("dec-lead").textContent = "What this shows: for every day the unit started online, what it would have lost by staying on through the day's cheapest stretch, in $ per MW of minimum output (circle), against the loss at which the operator model expects it to turn off (diamond). When the circle sits above the diamond the model says shut down; a red stem is a day it did the opposite.";
+  $("dec-how-text").textContent = (e.tech === "gas_steam" ? "The loss is its day-ahead minimum-energy offer" : "The loss is its fuel cost at minimum (its measured heat rate × its gas hub's price the day before)") + " against the day-ahead price at its node, over the longest stretch it could have been off given its usual minimum down time, before any restart cost. Dashed lines mark the months the turn-off point moved, tracked separately for days with no day-ahead award, an award some hours and an award every hour (the same changes as under Recent changes)." +
+    (nRed ? ` The ${d3.format(",")(nRed)} lighter days, before the 60-day fits begin (Feb 2026), are judged by yearly fits on the thermal history files: no RUC data, and gas at the unit's own hub where OilPriceAPI has it (Ship Channel from Jul 2019), else Henry Hub plus Ship Channel's usual premium that calendar month (Henry Hub alone for Waha units).` : "");
+  $("dec-note").textContent = `Over ${J.length} days it shut down on ${nOff}. The model called ${right} days right (${fmtPct(right / J.length)}) and caught ${caught} of the ${nOff} shutdowns.${window.CX.rucNote(pts.length - J.length)}`;
   $("dec-legend").innerHTML = `<span><span class="sw" style="background:var(--c1);transform:rotate(45deg) scale(0.8)"></span>Turn-off point</span>` +
-    window.CX.onOffLegend("Loss, stayed on", "Loss, shut down") + `<span><span class="sw" style="background:var(--ink-2)"></span>Square: a day-ahead award that day</span>` +
+    window.CX.onOffLegend("Loss, stayed on", "Loss, shut down") + `<span><span class="sw" style="background:var(--ink-2)"></span>Square: a day-ahead award in some or all hours</span>` +
     `<span><span class="sw" style="background:var(--c8);height:3px"></span>Did the opposite of the model</span><span><span class="sw sw-line"></span>Turn-off point moved</span>` +
     (J.length < pts.length ? window.CX.rucLegend() : "");
   const w = Math.max(280, el.clientWidth || 600), H = 280, m = { t: 18, r: 16, b: 26, l: 76 }, TOPY = m.t + 8;
@@ -565,8 +582,8 @@ async function drawDecisionsTO(e) {
     .on("pointermove", (evt) => {
       const [px] = d3.pointer(evt), p = pts[d3.minIndex(pts, (q) => Math.abs(x(q.t) - px))];
       const vv = ev.filter((v) => v.date.slice(0, 7) === p.d.slice(0, 7) && v.award === p.aw);
-      showTip(evt, `<h4>${fmtDate(p.t)}</h4><table><tr><td>Loss from staying on</td><td class="n">${fmt$(p.s)}/MW (${fmt$(p.s * p.lsl)})</td></tr>` +
-        `<tr><td>Turn-off point</td><td class="n">${p.c == null ? "rides through" : `${fmt$(p.c)}/MW (${fmt$(p.c * p.lsl)})`}</td></tr>` +
+      showTip(evt, `<h4>${fmtDate(p.t)}</h4><table><tr><td>Loss from staying on</td><td class="n">${fmt$(p.s)}/MW (${fmt$(p.s * p.lsl)} on ${fmtMW(p.lsl)} MW)</td></tr>` +
+        `<tr><td>Turn-off point</td><td class="n">${p.c == null ? "rides through" : `${fmt$(p.c)}/MW (${fmt$(p.c * p.lsl)} on ${fmtMW(p.lsl)} MW)`}</td></tr>` +
         `<tr><td>Day-ahead</td><td class="n">${AWARD_COND[p.aw] || "–"}</td></tr><tr><td>Model</td><td class="n">${says(p) ? "turns it off" : "keeps it on"}</td></tr>` +
         `<tr><td>What it did</td><td class="n">${p.off ? "shut down" : "stayed on"}</td></tr>` + (p.ruc ? `<tr><td>Committed by ERCOT (RUC)</td><td class="n">${p.ruc} h</td></tr>` : "") +
         `</table>${bad(p) ? "Did the opposite of the model" : p.ruc ? "RUC day: not counted for or against the model" : ""}${p.red ? `${bad(p) ? "<br>" : ""}History-file fit` : ""}${vv.map((v) => `<br><b>${esc(v.title)}</b>`).join("")}`);
@@ -577,7 +594,7 @@ async function drawDecisionsTO(e) {
     pts.map((p) => [p.d, p.s, p.c, ["none", "some hours", "every hour"][p.aw], p.off ? 1 : 0, p.lsl, p.md, p.ruc, p.red ? "history" : "60-day"]), `${e.name} turn-off points`);
 }
 
-// the decision days again, judged by the operator-informed model (data/operator/decisions.json.gz rows:
+// the decision days again, judged by the operator model (data/operator/decisions.json.gz rows:
 // [date, average chance online over the stretch, share of it the COP plan had on or null, [top reason, push]])
 function drawDecisionsOI(e, pts, x, w, shape) {
   const rows = S.OD && S.OD.units[e.name];
@@ -642,7 +659,7 @@ function drawHours(e) {
   $("hours-legend").innerHTML = [["--grid", 1, "Offline"], ["--ink-2", 0.35, "On outage"], [s.color, 0.4, "Running at minimum (LSL)"], [s.color, 1, "Running above minimum"]]
     .concat(ruc.size ? [["--c7", 1, "Committed by ERCOT (RUC)"]] : [])
     .map(([c, o, l]) => `<span><span class="sw" style="background:var(${c});opacity:${o}"></span>${l}</span>`).join("") +
-    `<span><span class="sw sw-neg"></span>Hour with lambda below $0</span>`;
+    `<span><span class="sw sw-neg"></span>Hour with system price (lambda) below $0</span>`;
   if (!str) { $("hours-note").textContent = ""; return emptyMsg(el, "No hourly data for this unit."); }
   const dstr = S.UH.dates, dates = dstr.map(parseDate), D = dstr.length;
   // starts per day from data/econ/<tech> (pipeline/econ.py): telemetered status moving from not
@@ -652,9 +669,10 @@ function drawHours(e) {
   const startsByDay = dstr.map((d) => (eu && ei.has(d) ? eu.starts[ei.get(d)] || 0 : 0));
   const nStarts = d3.sum(startsByDay), twoShift = startsByDay.filter((n) => n >= 2).length;
   const hrs = (c) => [...str].filter((x) => x === c).length;
-  $("hours-note").textContent = `Over ${D} days: ${fmtMW(hrs("a") + hrs("m"))} hours online (${fmtMW(hrs("m"))} of them at minimum), ${fmtMW(hrs("0"))} offline, ${fmtMW(hrs("o"))} on outage. ` +
-    `${nStarts} start${nStarts === 1 ? "" : "s"}${twoShift ? `, with two or more starts on ${twoShift} day${twoShift === 1 ? "" : "s"} (two-shifting)` : ""}.` +
-    (e.configs.length > 1 ? " Configurations are merged: the train counts as online when any of them is." : "");
+  const nOn = hrs("a") + hrs("m"), nAll = nOn + hrs("0") + hrs("o");
+  $("hours-note").textContent = `When it ran: each column is a day and each row an hour (hour ending 1 at the top). Over ${D} days it was online ${fmtMW(nOn)} of ${fmtMW(nAll)} hours (${fmtPct(nOn / (nAll || 1))}), ${fmtMW(hrs("m"))} of them at minimum output; ${fmtMW(hrs("0"))} hours it was offline and available, ${fmtMW(hrs("o"))} on outage. ` +
+    `It started ${nStarts} time${nStarts === 1 ? "" : "s"}${twoShift ? `, twice or more on ${twoShift} day${twoShift === 1 ? "" : "s"} (two-shifting)` : ""}. Thin ticks mark hours the system price (lambda) was below $0, hours a unit pays to run.` +
+    (e.configs.length > 1 ? " A train counts as online when any configuration is." : "");
   const lam = new Map(Object.entries(S.SP || {}).map(([d, v]) => [d, v.lambda]));
   const w = Math.max(280, el.clientWidth || 600), m = { t: 16, r: 16, b: 26, l: 64 }, ch = 7, H = m.t + m.b + ch * 24;
   const x = d3.scaleTime().domain([d3.timeHour.offset(dates[0], -12), d3.timeHour.offset(dates[D - 1], 12)]).range([m.l, w - m.r]);
@@ -692,7 +710,7 @@ function drawHours(e) {
 
 // ---- run lengths: every completed run, start to shutting down on price (data/min_run_60d.json.gz) ----
 const RUN_BINS = [[1, 1, "1"], [2, 2, "2"], [3, 3, "3"], [4, 4, "4"], [5, 6, "5–6"], [7, 8, "7–8"], [9, 12, "9–12"], [13, 16, "13–16"], [17, 24, "17–24"], [25, 48, "1–2 d"], [49, 168, "2–7 d"], [169, Infinity, "7 d+"]];
-const fmtRunH = (h) => (h == null ? "–" : h >= 48 ? `${d3.format(h >= 240 ? ",.0f" : ".1f")(h / 24)} days` : `${d3.format(h % 1 ? ".1f" : ".0f")(h)} h`);
+const fmtRunH = (h) => (h == null ? "–" : `${d3.format(h % 1 ? ",.1f" : ",.0f")(h)} h` + (h >= 48 ? ` (${d3.format(h >= 240 ? ",.0f" : ".1f")(h / 24)} days)` : ""));
 function drawRuns(e) {
   const el = $("runs-chart"), show = THERMAL.includes(e.tech) && e.tech !== "nuclear";
   ["runs-h", "runs-note", "runs-chart"].forEach((id) => { $(id).hidden = !show; });
@@ -701,7 +719,7 @@ function drawRuns(e) {
   if (!v) { $("runs-note").textContent = ""; return emptyMsg(el, S.MR ? "No completed runs for this unit in the period." : "Fills in after the data update builds the run-length file."); }
   const [, , p10, med, n, trips, , runs] = v, D = S.MR.dates, pct = S.MR.pct;
   const period = `${fmtDate(parseDate(D[0]))} to ${fmtDate(parseDate(D.at(-1)))}`;
-  $("runs-note").textContent = (p10 != null
+  $("runs-note").textContent = "How short a run its operator will accept, which sets how long a cheap stretch must be before shutting down pays. " + (p10 != null
     ? `${n} completed runs from start to shutting down on price, ${period}: typical shortest ${fmtRunH(p10)} (${pct}th percentile), median ${fmtRunH(med)}, single shortest ${fmtRunH(runs[0])}.`
     : `${n} completed run${n === 1 ? "" : "s"} from start to shutting down on price, ${period}: too few to judge how short a run it will accept (it needs ${S.MR.min_runs}).`) +
     (trips ? ` ${trips} more ended in an outage and are left out as likely trips.` : "") +
@@ -734,6 +752,16 @@ function drawRuns(e) {
 }
 
 // ---- one day by hour: output, base point and limits, with lambda (data/60d-units/<date>) ----
+// wind and solar: the day's outage hours from data/renew_outages_60d.json.gz (unit-outage.js loads it)
+function renewOutNote(e, day, whole) {
+  const R = window.RENEW_OUT, str = R && R.strips[e.name], i = R ? R.dates.indexOf(day) : -1;
+  if (!str || i < 0) return "";
+  const d = str.slice(i * 24, i * 24 + 24), o = [...d].filter((c) => c === "o").length, dr = [...d].filter((c) => c === "d").length;
+  if (whole && o === 24) return `On outage all day on ${fmtDate(parseDate(day))} (ERCOT's telemetered status OUT).`;
+  const parts = (o ? ` On outage ${o} hour${o === 1 ? "" : "s"} (status OUT).` : "") + (dr ? ` Derated ${dr} hour${dr === 1 ? "" : "s"} (ERCOT outage report).` : "");
+  return whole && parts ? `Offline all day on ${fmtDate(parseDate(day))}.` + parts : parts;
+}
+window.addEventListener("renewoutloaded", () => { const e = S.list && S.list.get(S.unit); if (e && (e.tech === "wind" || e.tech === "solar")) drawDay(e); });
 const dayCache = new Map();
 const loadDayUnits = (d) => { if (!dayCache.has(d)) dayCache.set(d, tryJSON(`data/60d-units/${d}.json.gz`)); return dayCache.get(d); };
 async function drawDay(e) {
@@ -741,7 +769,14 @@ async function drawDay(e) {
   $("day-panel").hidden = !THERMAL.includes(e.tech) && e.tech !== "wind" && e.tech !== "solar";
   if ($("day-panel").hidden || !S.UH) return;
   const dates = S.UH.dates;
-  S.day = S.dayPicker.setDays(dates, S.day || S.last60);
+  // a peaker opens on the last day it ran rather than an empty latest day
+  let lastOn = null;
+  if (THERMAL.includes(e.tech)) {
+    const str = trainStrip(e);
+    if (str) for (let i = dates.length - 1; i >= 0; i--) if (/[am]/.test(str.slice(i * 24, i * 24 + 24))) { lastOn = dates[i]; break; }
+  }
+  S.day = S.dayPicker.setDays(dates, S.day || (lastOn && lastOn !== S.last60 ? lastOn : null) || S.last60);
+  const shownLast = lastOn && lastOn === S.day && lastOn !== S.last60;
   const day = S.day, f = await loadDayUnits(day);
   if (S.unit !== e.name || S.day !== day) return;
   if (!f) { $("day-note").textContent = ""; return emptyMsg(el, `No hourly unit file for ${day}.`); }
@@ -760,9 +795,12 @@ async function drawDay(e) {
   const on = H.filter((x) => x.n);
   const dead = (v) => v.n && (v.lsl || 0) > 0 && (v.out || 0) <= 0;   // online with a minimum but no output
   const nDead = H.filter(dead).length;
-  $("day-note").textContent = on.length ? `Online ${on.length} of 24 hours on ${fmtDate(parseDate(day))}: ${fmtMW(d3.sum(on, (x) => x.out || 0))} MWh` + (THERMAL.includes(e.tech) ? `, against ${fmtMW(d3.sum(on, (x) => x.lsl || 0))} MWh at minimum. ` : ". ") +
-    `Hourly means over the SCED runs it was online; telemetered output, the base point SCED sent, and its limits.` +
-    (nDead ? ` In ${nDead} of those hours it was online with no output: SCED had it on with a minimum, but it telemetered nothing.` : "") : `Offline all day on ${fmtDate(parseDate(day))}.`;
+  const renew = e.tech === "wind" || e.tech === "solar", avail = d3.sum(on, (x) => x.hsl || 0), made = d3.sum(on, (x) => x.out || 0);
+  $("day-note").textContent = (shownLast ? `Offline all day on ${fmtDate(parseDate(S.last60))}, the latest day; showing ${fmtDate(parseDate(day))}, its last day online. ` : "") + (on.length ? `What it did on ${fmtDate(parseDate(day))}: online ${on.length === 24 ? "all 24 hours" : `${on.length} of 24 hours`}, ${fmtMW(made)} MWh` + (THERMAL.includes(e.tech) ? `, of which ${fmtMW(d3.sum(on, (x) => x.lsl || 0))} MWh was just its minimum output. ` : ". ") +
+    (renew ? `Bars are what it produced, averaged over ERCOT's five-minute dispatch runs (SCED); the band's top is what it could have produced (HSL), so the gap is curtailment` + (avail - made >= 0.01 * avail ? `: ${fmtMW(avail - made)} MWh, ${fmtPct((avail - made) / avail)} of what was available.` : ".")
+      : `Bars are telemetered output, averaged over ERCOT's five-minute dispatch runs (SCED); the black tick is the base point (the output SCED asked for) and the band runs from its minimum (LSL) to its maximum (HSL).`) +
+    ` Below, the system price (lambda) each hour. Click an hour to see the offer curve it was dispatched on.` +
+    (nDead ? ` In ${nDead} of those hours it was online with no output: SCED had it on with a minimum, but it telemetered nothing.` : "") + renewOutNote(e, day) : renewOutNote(e, day, true) || `Offline all day on ${fmtDate(parseDate(day))}.`);
   const s = TECH_OF[e.tech] || { color: "--c-other" };
   const w = Math.max(280, el.clientWidth || 600), Hh = 230, Hp = 110, m = { t: 18, r: 16, b: 26, l: 64 };
   const x = d3.scaleBand().domain(d3.range(24)).range([m.l, w - m.r]).padding(0.15);
@@ -820,7 +858,7 @@ async function drawCurve(e, day, v, lam) {
   $("curve-block").hidden = !thermal;
   if (!thermal) return;
   $("curve-title").textContent = `Offer curve in HE ${h + 1}`;
-  if (!v.n) { $("curve-note").textContent = ""; $("curve-legend").innerHTML = ""; return emptyMsg(el, `Offline in HE ${h + 1}. Click an hour it ran in the chart above.`); }
+  if (!v.n) { $("curve-note").textContent = ""; $("curve-legend").innerHTML = ""; return emptyMsg(el, `Offline in hour ending ${h + 1}. Click an hour it ran in the chart above.`); }
   const f = await loadCurves(day);
   if (S.unit !== e.name || S.day !== day || S.hour !== h) return;
   const u = f && f.units[v.cfg || e.name];
@@ -879,8 +917,8 @@ async function drawCurve(e, day, v, lam) {
   setCSV(el, ["curve", "mw", "price"], [...A.map((q) => ["submitted", ...q]), ...B.map((q) => ["used", ...q])], `${v.cfg || e.name} ${day} HE ${h + 1} offer curve`);
   const off = all.filter((q) => q[1] < y.domain()[0] || q[1] > y.domain()[1]).length;
   const diff = sub && used && JSON.stringify(sub) !== JSON.stringify(used);
-  $("curve-note").textContent = `${v.cfg && v.cfg !== e.name ? `${v.cfg}, the configuration online. ` : ""}Base point ${v.bp == null ? "–" : fmtMW(v.bp) + " MW"} against minimum ${fmtMW(lim[1])} and maximum ${fmtMW(lim[0])} MW. ` +
-    (!used ? "The disclosure for this day has no SCED-used curve. " : !sub ? "No submitted curve this hour: SCED used ERCOT's curve. " : diff ? "SCED's curve differs from the submitted one: ERCOT extends the curve to the unit's limits and applies mitigation. " : "SCED used the curve as submitted. ") +
+  $("curve-note").textContent = `The price it asked for each MW in hour ending ${h + 1}${v.cfg && v.cfg !== e.name ? ` (${v.cfg} was the configuration online)` : ""}: base point ${v.bp == null ? "–" : fmtMW(v.bp) + " MW"}, between its ${fmtMW(lim[1])} MW minimum and ${fmtMW(lim[0])} MW maximum. ` +
+    (!used ? "The disclosure for this day has no SCED-used curve. " : !sub ? "No curve was submitted this hour, so SCED used ERCOT's default curve for the unit. " : diff ? "SCED's curve differs from the one submitted: ERCOT extends every curve to the unit's limits and caps prices where it holds market power (mitigation). " : "SCED used the curve as submitted. ") +
     (off ? "Points beyond the price axis sit at its edge; the download has them all. " : "") + "Click another hour in the chart above to change it.";
   $("curve-legend").innerHTML = `<span><span class="sw sw-line" style="border-top-color:var(${s.color})"></span>As used by SCED</span><span><span class="sw sw-line" style="border-top:2px dashed var(--ink-2)"></span>As submitted</span>` +
     `<span><span class="sw" style="background:var(--ink);border-radius:50%"></span>Base point</span><span><span class="sw sw-line" style="border-top-color:var(--ink-2)"></span>System lambda</span>`;
@@ -892,21 +930,21 @@ function drawUnit(u) {
   const T = S.T, s = TECHS.find((x) => x.id === u.tech);
   const ch = T.changes.filter((c) => c[0] === u.unit);
   const marks = ch.map((c) => ({ d: c[2], color: SIG_COLOR[c[3]] }));
-  $("bid-title-note").textContent = `${u.unit} · ${u.type}`;
-  $("bid-note").innerHTML = (ch.length ? `${ch.length} bidding change${ch.length === 1 ? "" : "s"} detected, marked on every chart by a line colored by the kind of change: ` +
+  $("bid-title-note").textContent = `${u.unit} (ERCOT type ${u.type})`;
+  $("bid-note").innerHTML = "Two checks on how the unit offers in real time. The first line is the first price above $0/MWh it asks for output above its minimum, a read on its cost per MWh, against the median of similar units (above the median: priced dearer than its peers). The second is the share of that output offered at $0/MWh or below, which is effectively self-committed: it will run whatever the price. " + (ch.length ? `${ch.length} bidding change${ch.length === 1 ? "" : "s"} detected, marked on every chart by a line colored by the kind of change: ` +
     Object.entries(T.signals).map(([k, l]) => `<span class="mk" style="border-color:var(${SIG_COLOR[k]})"></span>${l}`).join(", ") + "." : "No bidding changes detected.") + " Days offline are gaps in the line charts.";
   $("bid-changes").innerHTML = ch.length ? `<table class="data"><thead><tr><th class="t">Date</th><th class="t">Change</th><th>Before</th><th>After</th></tr></thead><tbody>` +
-    ch.map((c) => `<tr><td class="t">${c[2]}</td><td class="t"><span class="mk" style="border-color:var(${SIG_COLOR[c[3]]})"></span>${T.signals[c[3]]}</td><td>${SIG_FMT[c[3]](c[4])}</td><td>${SIG_FMT[c[3]](c[5])}</td></tr>`).join("") + "</tbody></table>" : "";
+    ch.map((c) => `<tr><td class="t">${c[2]}</td><td class="t"><span class="mk" style="border-color:var(${SIG_COLOR[c[3]]})"></span>${T.signals[c[3]]}${c[3] === "rel" ? " (against the peer median)" : ""}</td><td>${SIG_FMT[c[3]](c[4])}</td><td>${SIG_FMT[c[3]](c[5])}</td></tr>`).join("") + "</tbody></table>" : "";
   const median = u.first.map((v, i) => (v == null || u.rel[i] == null ? null : v - u.rel[i]));
   timeChart($("bid-price"), [
-    { label: "First offer price above $0, at or above LSL", color: s.color, values: u.first },
+    { label: "First offer price above $0/MWh for output above minimum", color: s.color, values: u.first },
     { label: "Peer median", color: "--muted", values: median, dash: "4 3", width: 1.5 },
-  ], { title: "First offer price above $0 at or above LSL ($/MWh), and the median of its peers", H: 170, yFmt: d3.format("$,.0f"), tipFmt: fmtPrice, markers: marks, dots: true,
+  ], { title: "Cost per MWh it asks for output above minimum: first offer price above $0, $/MWh, against its peers' median", H: 170, yFmt: d3.format("$,.0f"), tipFmt: fmtPrice, markers: marks, dots: true,
     tipNote: (i) => (u.peer && u.peer[i] != null ? ` · peers: ${u.peer[i] ? `${u.type} units` : `all ${s.label.toLowerCase()}`}` : "") });
   timeChart($("bid-share"), [
-    { label: "Share of MW above LSL offered ≤ $0", color: s.color, values: u.le0 },
+    { label: "Share of MW above minimum offered at $0/MWh or below (self-committed)", color: s.color, values: u.le0 },
     { label: "Share of day without an offer curve", color: "--muted", values: u.noff, dash: "4 3", width: 1.5 },
-  ], { title: "Share of MW above LSL offered ≤ $0, and share of day without an offer curve", H: 150, yFmt: d3.format(".0%"), markers: marks, dots: true });
+  ], { title: "Share of its output above minimum that runs whatever the price (offered at $0/MWh or below), and share of the day with no offer curve", H: 150, yFmt: d3.format(".0%"), markers: marks, dots: true });
 }
 
 function drawBidding(e) {
@@ -971,7 +1009,7 @@ async function boot() {
   S.stubs = new Set((S.UI || []).map((u) => u.unit));   // every unit in the index has a unit/NAME page
   if (S.T) { S.span = [S.T.dates[0], S.T.dates.at(-1)]; S.last60 = S.T.dates.at(-1); }
   buildList();
-  $("status").textContent = `${S.list.size} units · 60-day data ${S.T ? `${S.T.dates[0]} to ${S.T.dates.at(-1)}` : "not loaded"}`;
+  $("status").textContent = S.T ? `Unit-level (60-day) data from ${S.T.dates[0]} to ${S.T.dates.at(-1)}` : "Unit-level (60-day) data not loaded";
   const pick = $("unit-pick");
   pick.addEventListener("change", () => select(pick.value.trim()));
   pick.addEventListener("input", () => { if (S.list.has(pick.value)) select(pick.value); });

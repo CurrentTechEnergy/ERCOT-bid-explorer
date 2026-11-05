@@ -22,7 +22,7 @@ const S = { data: undefined };
 function hrCell(v) { return v == null ? "–" : fmt2(v); }
 function suCell(mw, share) {
   if (share == null) return "–";
-  return (mw != null ? `${fmt1(mw)} MW, ` : "") + fmtPct(share) + " of gross";
+  return mw != null ? `${fmt1(mw)} MW, ${fmtPct(share)} of gross` : `– MW (${fmtPct(share)} of gross)`;
 }
 
 function outCell(g, n) { return g == null || n == null ? "–" : `${fmt0(g)} MW gross, ${fmt0(n)} MW net`; }
@@ -36,7 +36,7 @@ function table(u) {
   ];
   $("fuel-table").innerHTML = `<table class="data fuel-tbl"><thead><tr><th class="t"></th><th>At minimum</th><th>At full load</th></tr></thead><tbody>` +
     rows.map((r) => `<tr><td class="t">${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td></tr>`).join("") + "</tbody></table>";
-  $("fuel-title-note").textContent = u.basis === "cogen" ? "cogeneration" : u.basis !== "fallback" ? "measured" : `${TECH_NAME[u.tech] || u.tech} median`;
+  $("fuel-title-note").textContent = u.basis === "cogen" ? "(cogeneration basis)" : u.basis !== "fallback" ? "(measured)" : "(technology median)";
 }
 
 function lead(u, D) {
@@ -44,12 +44,12 @@ function lead(u, D) {
   const cost = u.cost.filter((v) => v != null), off = u.offer.map((v, i) => [v, u.cost[i]]).filter(([o, c]) => o != null && c != null);
   const src = u.basis === "cogen" ? `fuel chargeable to power: it is a cogeneration unit that also makes steam for an industrial host, so EPA's heat input covers both and ERCOT sees only the power sent to the grid. This is ${u.note ? esc(u.note.replace(/^cogeneration, fuel chargeable to power: /, "")) : "EIA-923's fuel for electricity"}, which credits the steam at about boiler efficiency` :
     own ? `measured on ${fmt0(u.min_hours)} steady hours at minimum${u.epa ? ` (EPA ${u.tech === "combined_cycle" ? "plant" : "unit"} ${esc(u.epa)})` : ""}` :
-    `the ${TECH_NAME[u.tech] || u.tech} median: ${u.note ? esc(u.note) : "no EPA unit matched with enough hours"}`;
+    `the ${TECH_NAME[u.tech] || u.tech} median (${u.note && !/^technology median$/i.test(u.note) ? esc(u.note) : "no EPA unit matched with enough hours"})`;
   const gap = off.length ? d3.median(off, ([o, c]) => o - c) : null;
   const shared = u.su && u.su.shared_with ? ` Station use is the plant unit's, shared by ${esc(u.su.shared_with.split("+").join(", "))}.` : "";
   return `Heat rate at minimum ${fmt2(u.hr_min)} and at full load ${fmt2(u.hr_full)} MMBtu per MWh of net output, ${src}.${shared} ` +
     (cost.length ? `Its cost of running at minimum averaged ${fmt$2(d3.mean(cost))}/MWh over the ${cost.length} days it was in the day-ahead market (${D[0]} to ${D[D.length - 1]}). ` : "") +
-    (gap != null ? `On the ${off.length} days it made a three-part offer, its minimum-energy offer was ${fmt$2(Math.abs(gap))}/MWh ${gap >= 0 ? "above" : "below"} that cost at the median.` :
+    (gap != null ? `On the ${off.length} days it filed a three-part offer, its minimum-energy offer sat ${fmt$2(Math.abs(gap))}/MWh ${gap >= 0 ? "above" : "below"} that cost at the median.` :
       "It made no three-part offer with a minimum-energy price on these days (self-committed or not offered).");
 }
 

@@ -16,7 +16,7 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=TXCTY_CC1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=TXCTY_CC1#TXCTY_CC1/2026-06-30/dam_mingen_step</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Minimum-energy offer stepped: $16 to $1/MWh ($4 to -$15 against the fuel-cost line)</summary>
+    <summary>Minimum-energy offer stepped: $16 to $1/MWh ($4 to −$15 against the fuel-cost line)</summary>
   </entry>
   <entry>
     <title>TXCTY_CC1: Outage ended (2026-06-06)</title>
@@ -100,6 +100,6 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=TXCTY_CC1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=TXCTY_CC1#TXCTY_CC1/2026-02-03/dam_mingen_step</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Minimum-energy offer stepped: $3 to $17/MWh (-$26 to $2 against the fuel-cost line)</summary>
+    <summary>Minimum-energy offer stepped: $3 to $17/MWh (−$26 to $2 against the fuel-cost line)</summary>
   </entry>
 </feed>

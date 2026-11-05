@@ -148,26 +148,34 @@ function drawUnit() {
     return;
   }
   const floorIsCap = u.cap != null && u.floor != null && Math.abs(u.floor - u.cap) < 0.05;
-  const habit = `${floorIsCap ? `Its most common offer, ${fmt$(u.floor)}, is the cap, not a floor` : `Usual floor offer ${fmt$(u.floor)}`}. Day-ahead: ${u.da_share == null ? "no data" : `awards equal to ${fmtPct(u.da_share)} of its real-time energy, with an award on ${fmtPct(u.da_days || 0)} of ${u.avail_days} days`}.`;
+  // what the floor says: the tax-credit band, just below zero, or at or above zero
+  const band = floorIsCap || u.floor == null ? "" : u.floor <= -15 ? ", inside the band a unit earning a production tax credit can afford to run down to"
+    : u.floor < 0 ? ": it keeps running through small negative prices but backs off before the deeper ones, which is what a unit with no tax credit and a contract paying for delivered energy looks like" : ": it backs off as soon as the price goes negative";
+  const nDA = u.da_days == null ? null : Math.round(u.da_days * u.avail_days);
+  const habit = `${floorIsCap ? `Its most common offer, ${fmt$(u.floor)}/MWh, is the cap, not a floor.` : `It usually offers a flat floor of ${fmt$(u.floor)}/MWh${band}.`} ` +
+    (u.da_share == null ? "No day-ahead data." : nDA === 0 ? `It takes no day-ahead position (an award on 0 of ${u.avail_days} days), so its output is sold in real time, with any contract settled off-market.`
+      : `Its day-ahead awards equal ${fmtPct(u.da_share)} of its real-time energy, with an award on ${nDA} of ${u.avail_days} days.`);
   if (u.tier === "hints") {
-    $("unit-formula").textContent = "No day-ahead formula in its offers.";
+    $("unit-formula").textContent = "No such formula in its offers.";
     $("ppa-note").textContent = habit;
     $("fit-legend").innerHTML = "";
     emptyMsg($("fit-chart"), "Its offers never moved hour by hour with a DA price on enough hours to fit.");
-    emptyMsg($("daily-chart"), "No formula days.");
+    $("daily-chart").innerHTML = "";
+    $("daily-h").hidden = $("daily-p").hidden = true;
     return;
   }
+  $("daily-h").hidden = $("daily-p").hidden = false;
   const strikeTxt = u.strike_lo == null
     ? `If the intercept is all strike, the strike is ${fmt$(u.strike_hi)}/MWh (a $${S.data.credit} credit would leave nothing for a strike, so the bidder likely counts none).`
-    : `Implied strike ${fmt$(u.strike_lo)} to ${fmt$(u.strike_hi)}/MWh: ${fmt$(u.strike_hi)} if the intercept is all strike, ${fmt$(u.strike_lo)} if the operator also counts a $${S.data.credit}/MWh credit such as the PTC.`;
+    : `Read as a strike, the constant means a contract at ${fmt$(u.strike_hi)}/MWh, or ${fmt$(u.strike_lo)}/MWh if the operator also counts a $${S.data.credit}/MWh credit such as the PTC.`;
   const fx = `${fmtA(u.a)} × DA(${POINT_LABEL(u.point, u)}) ${u.b < 0 ? "−" : "+"} ${fmt$(Math.abs(u.b))}`;
   $("unit-formula").textContent = u.cap != null ? `offer = min(${fx}, ${fmt$(u.cap)})` : `offer = ${fx}`;
   const capTxt = u.cap != null
     ? `Capped at ${fmt$(u.cap)}: on ${fmt0(u.cap_hours)} formula-day hours the formula was higher and the offer sat at the cap, so it runs at any price above ${fmt$(u.cap)} even when the formula says it loses money.`
     : u.capped === false ? "Uncapped: its offers followed the formula above $0." : "No cap tested: the formula never rose high enough to show one.";
   const alt = (u.alt || []).map(([p, h]) => `${POINT_LABEL(p, u)} ${fmtPct(h)}`).join(", ");
-  $("ppa-note").textContent = `${TIER[u.tier].label}. The formula predicts ${fmtPct(u.hit)} of ${fmt0(u.hours)} formula hours within $${S.data.hit_usd}, on ${u.days} days from ${u.first} to ${u.last}` +
-    `${alt ? ` (next best: ${alt})` : ""}. ${capTxt} ${strikeTxt} ${habit}` + (u.group ? ` Bid on the same rule as ${S.data.units.filter((v) => v.group === u.group && v.name !== u.name).map((v) => v.name).join(", ")}.` : "");
+  $("ppa-note").textContent = `${TIER[u.tier].label}: the formula above fits ${fmtPct(u.hit)} of its ${fmt0(u.hours)} formula hours within $${S.data.hit_usd}/MWh, on ${u.days} days from ${u.first} to ${u.last}` +
+    `${alt ? `; the next best settlement points fit ${alt}` : ""}. ${capTxt} ${strikeTxt} ${habit}` + (u.group ? ` Bid on the same rule as ${S.data.units.filter((v) => v.group === u.group && v.name !== u.name).map((v) => v.name).join(", ")}.` : "");
   fitChart($("fit-chart"), u, S.data.fits[u.name]);
   dailyChart($("daily-chart"), u);
 }
@@ -205,18 +213,19 @@ function impactText(e) {
   const parts = [];
   if (im.up) parts.push(`gave up ${fmtMWh(im.up)}`);
   if (im.dn) parts.push(`ran ${fmtMWh(im.dn)} more`);
-  return `<span class="moved">${parts.join(", ")}</span> <span class="muted">${win ? `over ${win} (${fmt0(perDay(im))} MWh/day), ` : ""}${im.hours} h${da}</span>`;
+  return `<span class="moved">${parts.join(", ")}</span> <span class="muted">${win ? `over the next ${win} (${fmt0(perDay(im))} MWh a day, ` : "("}${im.hours} hours affected${da})</span>`;
 }
 function valueText(e) {
   const im = e.impact;
   if (!im || !e.moved) return "–";
   const v = [];
-  if (im.up) v.push(fmt$0(im.v_up));
-  if (im.dn) v.push(fmt$0(im.v_dn));
-  return im.days ? `<span title="${esc(`Over ${winText(im)}: ${fmt$0(((im.v_up || 0) + (im.v_dn || 0)) / im.days)} a day`)}">${v.join(" / ")}</span>` : v.join(" / ");
+  const both = im.up && im.dn;
+  if (im.up) v.push(`${both ? "gave up: " : ""}${fmt$0(im.v_up)}`);
+  if (im.dn) v.push(`${both ? "ran more: " : ""}${fmt$0(im.v_dn)}`);
+  return im.days ? `<span title="${esc(`Over ${winText(im)}: ${fmt$0(((im.v_up || 0) + (im.v_dn || 0)) / im.days)} a day`)}">${v.join(" · ")}</span>` : v.join(" · ");
 }
 const pct = (v) => (v == null ? "–" : fmtPct(v));
-const ctxText = (e) => (e.ctx ? `DA ${pct(e.ctx[0])} → ${pct(e.ctx[1])} · curtailed ${pct(e.ctx[2])} → ${pct(e.ctx[3])}` : "–");
+const ctxText = (e) => (e.ctx ? `day-ahead ${pct(e.ctx[0])} → ${pct(e.ctx[1])}; curtailed ${pct(e.ctx[2])} → ${pct(e.ctx[3])}` : "–");
 
 // one unit's daily offers over time, with its changes marked
 const sigCache = new Map();
@@ -256,11 +265,11 @@ async function drawHistory(name) {
   const evs = R.events.filter((e) => e.units.includes(name));
   const evIn = evs.filter((e) => (!t0 || parseDate(e.date) >= t0) && years.includes(e.date.slice(0, 4)));
   $("hist-note").textContent = `${evs.length} change${evs.length === 1 ? "" : "s"} since ${R.first.slice(0, 4)}`;
-  $("hist-text").textContent = `Each mark is a day's median offer while online: a dash on a floor day, a square on a formula day or one whose offer moved within the day; the vertical lines mark detected changes, solid where the change moved dispatch. Days with offers beyond the axis are drawn as triangles at its edge (hover for the value). ` +
-    (R.togglers[name] ? `This unit is a toggler: ${R.togglers[name]} returns or episodes within a year. ` : "") + "Click a line to jump to the change in the table below.";
+  $("hist-text").textContent = `How its offer floor has changed since ${R.first.slice(0, 4)}, and whether each change changed what it ran. Each mark is a day's median offer while online (a dash on a floor day, a square when the offer moved with price); vertical lines are detected changes, solid where the change moved dispatch, that is, where hours with the node price between the old and new offer made it run more or less. Points beyond the axis sit at its edge as triangles (hover for the value). ` +
+    (R.togglers[name] ? `It switches back and forth: ${R.togglers[name]} short episodes or returns to an earlier offer within a year. ` : "") + "Click a line to jump to the change in the table below.";
   if (!P.length) { emptyMsg(el, "No online days with an offer in this range."); }
   else histChart(el, name, P, evIn);
-  $("unit-changes").innerHTML = evs.length ? `<table class="data"><thead><tr><th class="t">Date</th><th class="t">Change</th><th class="t">Before → after</th><th class="t">Moved dispatch</th><th>Worth at node price</th><th class="t">Context, 7 days before → after</th></tr></thead><tbody>` +
+  $("unit-changes").innerHTML = evs.length ? `<table class="data"><thead><tr><th class="t">Date</th><th class="t">Change</th><th class="t">Offer before → after ($/MWh)</th><th class="t">Effect on dispatch</th><th title="The energy times the node price in those hours: negative when the hours were priced below $0">Value at its node price, $</th><th class="t">Day-ahead share and curtailment, 7 days before → after</th></tr></thead><tbody>` +
     evs.map((e) => `<tr id="uc-${e.date}-${e.kind}"><td class="t">${e.date}</td><td class="t">${esc(R.kinds[e.kind])}${ptcTag(e)}${e.days ? ` <span class="muted">${e.days} day${e.days > 1 ? "s" : ""}</span>` : ""}${e.units.length > 1 ? ` <span class="muted">with ${esc(e.units.filter((u) => u !== name).join(", "))}</span>` : ""}</td>` +
       `<td class="t">${regime(e.before)} → ${regime(e.after)}</td><td class="t">${impactText(e)}</td><td>${valueText(e)}</td><td class="t muted">${ctxText(e)}</td></tr>`).join("") + "</tbody></table>"
     : `<p class="empty">No bidding changes detected for this unit.</p>`;

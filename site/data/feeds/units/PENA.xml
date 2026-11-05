@@ -9,55 +9,55 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=PENA"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=PENA#PENA/2024-09-18/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: floor -$4 to floor -$2</summary>
+    <summary>New floor: −$4/MWh to −$2/MWh</summary>
   </entry>
   <entry>
     <title>PENA: New floor (2024-08-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=PENA"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=PENA#PENA/2024-08-01/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: floor $0 to floor -$3</summary>
+    <summary>New floor: $0/MWh to −$3/MWh</summary>
   </entry>
   <entry>
     <title>PENA: Episode (2022-12-22)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=PENA"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=PENA#PENA/2022-12-22/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Episode: floor $0 to -$250 for the episode for 2 day(s)</summary>
+    <summary>Episode: floor $0/MWh, briefly −$250/MWh, for 2 days</summary>
   </entry>
   <entry>
     <title>PENA: Episode (2022-08-26)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=PENA"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=PENA#PENA/2022-08-26/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Episode: floor $0 to -$250 for the episode for 1 day(s)</summary>
+    <summary>Episode: floor $0/MWh, briefly −$250/MWh, for 1 day</summary>
   </entry>
   <entry>
     <title>PENA: Episode (2022-08-10)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=PENA"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=PENA#PENA/2022-08-10/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Episode: floor $0 to -$250 for the episode for 4 day(s)</summary>
+    <summary>Episode: floor $0/MWh, briefly −$250/MWh, for 4 days</summary>
   </entry>
   <entry>
     <title>PENA: Episode (2022-07-09)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=PENA"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=PENA#PENA/2022-07-09/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Episode: floor $0 to -$250 for the episode for 5 day(s)</summary>
+    <summary>Episode: floor $0/MWh, briefly −$250/MWh, for 5 days</summary>
   </entry>
   <entry>
     <title>PENA: Episode (2022-06-23)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=PENA"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=PENA#PENA/2022-06-23/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Episode: floor $0 to -$250 for the episode for 1 day(s)</summary>
+    <summary>Episode: floor $0/MWh, briefly −$250/MWh, for 1 day</summary>
   </entry>
   <entry>
     <title>PENA: Episode (2022-06-21)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=PENA"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=PENA#PENA/2022-06-21/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Episode: floor $0 to -$125 for the episode for 1 day(s)</summary>
+    <summary>Episode: floor $0/MWh, briefly −$125/MWh, for 1 day</summary>
   </entry>
 </feed>

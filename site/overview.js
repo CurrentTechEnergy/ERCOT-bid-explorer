@@ -22,11 +22,11 @@ const addDays = (d, n) => { const t = new Date(d + "T12:00:00"); t.setDate(t.get
 const GROUP_COLORS = { never: "--g1", multiday: "--g3", daily1: "--g4", daily2: "--g5", daily3: "--g6", peakers: "--c2", never_on: "--c-other", ungrouped: "--c-other" };
 const GROUP_NOTES = {
   never: "off only for outages, never on price, plus nuclear", multiday: "shortest time off is a day or more",
-  daily1: "turns off within a day, under once a week", daily2: "turns off within a day, 1 to 2 a week", daily3: "turns off within a day, over 2 a week",
+  daily1: "turns off within a day, under once a week", daily2: "turns off within a day, 1 to 2 times a week", daily3: "turns off within a day, over twice a week",
   peakers: "run like peakers: online under 30% of available hours, at most 16 hours a day when on",
   never_on: "no running hour in the 60-day history (mothballed or on a long outage)", ungrouped: "no hourly history yet",
 };
-const GROUP_SHORT = { never: "Always on when available", multiday: "Multi-day", daily1: "Daily, under once a week", daily2: "Daily, 1 to 2 a week", daily3: "Daily, over 2 a week", peakers: "Peakers", never_on: "Never on", ungrouped: "Not yet grouped" };
+const GROUP_SHORT = { never: "Always on when available", multiday: "Off for days at a time", daily1: "Cycles daily, under once a week", daily2: "Cycles daily, 1 to 2 times a week", daily3: "Cycles daily, over twice a week", peakers: "Peakers", never_on: "Never on", ungrouped: "Not yet grouped" };
 // "peakers" is not a timescale group: the units groups_60d flags as peakers by how they run, taken out of
 // their groups wherever thermal output is shown by group
 const GROUPS = ["never", "multiday", "daily1", "daily2", "daily3", "peakers", "never_on", "ungrouped"];
@@ -36,9 +36,9 @@ const TECHS = [
 ];
 const TECH_LABEL = Object.fromEntries(TECHS.map(([id, l]) => [id, l]));
 const CATS = [
-  ["baseload", "Baseload", "--g1", "Units that never turn off on price, plus nuclear"],
-  ["price_sensitive", "Price-sensitive", "--g4", "Units outside the always-on group that run more than peakers: they turn off when the loss from staying on gets too big"],
-  ["peakers", "Peakers", "--c2", "Units that run like peakers, whatever their technology: online under 30% of available hours, at most 16 hours a day when on"],
+  ["baseload", "Baseload", "--g1", "Nuclear plus units that only ever stop for outages"],
+  ["price_sensitive", "Price-sensitive", "--g4", "Turn off when the loss from staying on gets too big"],
+  ["peakers", "Peakers", "--c2", "Online under 30% of available hours and at most 16 hours a day when on, whatever the technology"],
 ];
 const WIND = { id: "wind", label: "Wind", color: "--c3" }, SOLAR = { id: "solar", label: "Solar", color: "--c4" };
 const STORAGE = { id: "storage", label: "Batteries", color: "--c7" };
@@ -235,9 +235,12 @@ function drawHeadline() {
   if (!ref) el.innerHTML = `${esc(dayLabel(S.date))} has no prices loaded yet.`;
   else {
     const ok = ref.filter((v) => v != null), avg = d3.mean(ok), nCheap = cheapHours().length;
-    el.innerHTML = `${esc(dayLabel(S.date))}: ${rt ? "real-time" : "day-ahead"} system lambda averaged <b>${fmtPrice0(avg)}/MWh</b>, from ${fmtPrice0(d3.min(ok))} to ${fmtPrice0(d3.max(ok))}.`;
-    $("lede-sub").innerHTML = (nCheap ? `<b>${nCheap} hour${nCheap > 1 ? "s" : ""}</b> at ${fmtPrice0(CHEAP)} or less. ` : `No hour at ${fmtPrice0(CHEAP)} or less. `) +
-      (L === "60d" ? "Each unit's hours are in, from the 60-day disclosure: who ran and who turned off is on Turn-ons and Turn-offs."
+    const [pAvg, pMin, pMax] = window.CX.fmtPair([avg, d3.min(ok), d3.max(ok)], "$/MWh", { dp: 0 });
+    const runs = cheapRuns().map((r) => (r.from === r.to ? heLabel(r.from) : `${heLabel(r.from)} to ${heLabel(r.to)}`));
+    const cheapAvg = nCheap ? d3.mean(cheapHours(), (h) => ref[h]) : null;
+    el.innerHTML = `${esc(dayLabel(S.date))}: ${rt ? "real-time" : "day-ahead"} system lambda averaged <b>${pAvg}</b>, ranging from ${pMin} to ${pMax}.`;
+    $("lede-sub").innerHTML = (nCheap ? `<b>${nCheap} hour${nCheap > 1 ? "s" : ""}</b> at ${fmtPrice0(CHEAP)}/MWh or less (${runs.join(" and ")}), averaging ${window.CX.fmtPair([cheapAvg], "$/MWh", { dp: 2 })[0]}. ` : `No hour at ${fmtPrice0(CHEAP)}/MWh or less. `) +
+      (L === "60d" ? "Unit-by-unit hours are in (ERCOT's 60-day disclosure). Who turned off, and at what loss, is on Turn-ons and Turn-offs."
         : `Unit detail for this day arrives with the 60-day disclosure, about ${esc(dayLabel(arrives))}; until then the page shows ERCOT's 2-day summary in total.`);
   }
   if (!ref) $("lede-sub").textContent = "";
@@ -248,12 +251,12 @@ function drawHeadline() {
   if (a60) {
     CATS.forEach(([k, label, color, note]) => { if (a60.cat[k]) tiles.push(tile(label, color, d3.sum(a60.cat[k]) / 1000, avgOf(a60.cat[k]), note, "60-day disclosure")); });
   } else if (gh && gh.nonIrr.some((v) => v != null)) {
-    tiles.push(tile("Thermal (non-IRR)", "--g3", d3.sum(gh.nonIrr.filter((v) => v != null)) / 1000, avgOf(gh.nonIrr), "ERCOT's non-intermittent renewable resources: the gas, coal and other dispatchable units, by base point", "2-day summary"));
-    tiles.push(tile("Remaining resources", "--c-other", d3.sum(gh.remaining.filter((v) => v != null)) / 1000, avgOf(gh.remaining), "ERCOT's remaining resources: nuclear, hydro and the rest outside the other categories, by base point", "2-day summary"));
+    tiles.push(tile("Thermal (non-IRR)", "--g3", d3.sum(gh.nonIrr.filter((v) => v != null)) / 1000, avgOf(gh.nonIrr), "ERCOT's \"non-IRR\": everything that is not an intermittent renewable, so gas, coal and other dispatchable units, by base point", "2-day summary"));
+    tiles.push(tile("Remaining resources", "--c-other", d3.sum(gh.remaining.filter((v) => v != null)) / 1000, avgOf(gh.remaining), "ERCOT's catch-all for nuclear, hydro and anything not in the other categories, by base point", "2-day summary"));
   }
   [WIND, SOLAR].forEach((s) => {
     const vals = a60 && a60.tech[s.id] ? a60.tech[s.id] : gh ? gh[s.id] : null;
-    if (vals && vals.some((v) => v != null)) tiles.push(tile(s.label, s.color, d3.sum(vals.filter((v) => v != null)) / 1000, avgOf(vals), s.id === "wind" ? "the weather sets what is available; the offer sets what runs" : "same, over the daylight hours", a60 ? "60-day disclosure" : "2-day summary"));
+    if (vals && vals.some((v) => v != null)) tiles.push(tile(s.label, s.color, d3.sum(vals.filter((v) => v != null)) / 1000, avgOf(vals), s.id === "wind" ? "The weather set what was available; the offer set what ran" : "Sunshine set what was available; the offer set what ran", a60 ? "60-day disclosure" : "2-day summary"));
   });
   const dis = a60 && a60.tech.storage ? a60.dis : gh && gh.discharging.some((v) => v != null) ? gh.discharging : null;
   const chg = a60 && a60.tech.storage ? a60.chg : gh ? gh.charging : null;
@@ -264,6 +267,9 @@ function drawHeadline() {
       `<b>${fmtGW(-d3.min(chg))} GW</b> charging at most in ${heLabel(d3.minIndex(chg.map((v) => (v == null ? Infinity : v))))}</div></li>`);
   }
   $("expect").innerHTML = tiles.join("") || `<li><div class="w">No generation data for this day yet.</div></li>`;
+  const thermal = a60 ? d3.sum(CATS, ([k]) => (a60.cat[k] ? d3.sum(a60.cat[k]) : 0)) / 1000 : null, base = a60 && a60.cat.baseload ? d3.sum(a60.cat.baseload) / 1000 : null;
+  $("expect-lead").hidden = !(thermal && base != null);
+  if (thermal && base != null) $("expect-lead").innerHTML = `Thermal plants produced <b>${fmtGWh(thermal)} GWh</b>. Of that, <b>${fmtGWh(base)} GWh (${d3.format(".0%")(base / thermal)})</b> came from nuclear and units that never turn off on price, so it would have run whatever the price.`;
   $("headline-note").textContent = `${S.date} · ${L === "60d" ? "60-day disclosure" : L === "2d" ? "2-day summary" : "prices only"}`;
   $("decisions-link").innerHTML = L === "60d"
     ? `<a href="commitment.html#date=${S.date}">Which coal and gas units turned off on ${esc(dayLabel(S.date))}, and at what loss: Turn-ons and Turn-offs →</a>`
@@ -294,13 +300,13 @@ function drawSpark() {
     .on("pointermove", (ev) => {
       const h = Math.max(0, Math.min(23, Math.round(x.invert(d3.pointer(ev)[0])) - 1));
       cross.style("display", null).attr("x1", x(h + 1)).attr("x2", x(h + 1));
-      showTip(ev, `<h4>${heLabel(h)}</h4><table>` + (rt ? `<tr><td>Real-time system lambda</td><td class="n">${fmtPrice(rt[h])}</td></tr>` : "") +
-        (da ? `<tr><td>Day-ahead system lambda</td><td class="n">${fmtPrice(da[h])}</td></tr>` : "") + `</table>`);
+      showTip(ev, `<h4>${heLabel(h)}</h4><table>` + (rt ? `<tr><td>Real-time system lambda</td><td class="n">${fmtPrice(rt[h])}/MWh</td></tr>` : "") +
+        (da ? `<tr><td>Day-ahead system lambda</td><td class="n">${fmtPrice(da[h])}/MWh</td></tr>` : "") + `</table>`);
     }).on("pointerleave", () => { cross.style("display", "none"); hideTip(); })
     .on("click", (ev) => pickHour(Math.round(x.invert(d3.pointer(ev)[0])) - 1)).style("cursor", "pointer");
   el.replaceChildren(svg.node());
   setCSV(el, ["hour_ending", "rt_lambda", "da_lambda"], HRS.map((h) => [h + 1, rt ? rt[h] : null, da ? da[h] : null]), `System lambda ${S.date}`);
-  $("spark-note").textContent = `Shaded hours averaged ${fmtPrice0(CHEAP)}/MWh or less${rt ? " in real time" : ""}.` + (rt && da ? " The dashed line is the day-ahead system lambda, as cleared the day before." : "");
+  $("spark-note").textContent = `Shaded hours: ${rt ? "real-time" : "day-ahead"} system lambda at ${fmtPrice0(CHEAP)}/MWh or less.` + (rt && da ? " The dashed line is the day-ahead system lambda, as cleared the day before." : "");
 }
 
 // ---------------------------------------------------------------- what ran by hour ---
@@ -326,7 +332,7 @@ function areaChart({ el, legendEl, areas, below = [], prefix, tipRows, csvName }
   const runs = cheapRuns(), { ref } = dayPrices();
   runs.forEach((r) => svg.append("rect").attr("class", "price-band").attr("x", x(r.from + 1) - 4).attr("width", x(r.to + 1) - x(r.from + 1) + 8).attr("y", m.t).attr("height", Hh - m.t - m.b));
   const longest = runs.reduce((a, r) => (!a || r.to - r.from > a.to - a.from ? r : a), null);
-  if (longest && longest.to > longest.from) svg.append("text").attr("class", "axis-title").attr("x", (x(longest.from + 1) + x(longest.to + 1)) / 2).attr("y", m.t + 12).attr("text-anchor", "middle").text(`lambda ${fmtPrice0(CHEAP)} or less`);
+  if (longest && longest.to > longest.from) svg.append("text").attr("class", "axis-title").attr("x", (x(longest.from + 1) + x(longest.to + 1)) / 2).attr("y", m.t + 12).attr("text-anchor", "middle").text(`≤ ${fmtPrice0(CHEAP)}/MWh`);
   svg.append("g").attr("class", "gridline").attr("transform", `translate(${m.l},0)`).call(d3.axisLeft(y).ticks(6).tickSize(-(w - m.l - m.r)).tickFormat(""));
   svg.append("g").attr("class", "axis").attr("transform", `translate(${m.l},0)`).call(d3.axisLeft(y).ticks(6).tickFormat((v) => d3.format(",")(v / 1000)).tickSizeOuter(0));
   svg.append("g").attr("class", "axis").attr("transform", `translate(0,${Hh - m.b})`).call(d3.axisBottom(x).tickValues([1, 4, 8, 12, 16, 20, 24]).tickFormat((d) => "HE" + d).tickSizeOuter(0));
@@ -350,7 +356,7 @@ function areaChart({ el, legendEl, areas, below = [], prefix, tipRows, csvName }
     .on("pointermove", (ev) => {
       const h = Math.max(0, Math.min(23, Math.round(x.invert(d3.pointer(ev)[0])) - 1));
       cross.style("display", null).attr("x1", x(h + 1)).attr("x2", x(h + 1));
-      showTip(ev, `<h4>${heLabel(h)} · lambda ${ref ? fmtPrice(ref[h]) : "–"}</h4><table>` +
+      showTip(ev, `<h4>${heLabel(h)} · system lambda ${ref ? `${fmtPrice(ref[h])}/MWh` : "–"}</h4><table>` +
         [...shown].reverse().map((s) => `<tr><td><span class="sw" style="background:var(${s.color})"></span></td><td>${s.label}</td><td class="n">${fmtGW(s.vals[h])} GW</td></tr>`).join("") +
         shownBelow.map((s) => `<tr><td><span class="sw" style="background:var(${s.color})"></span></td><td>${s.label}</td><td class="n">${fmtGW(s.vals[h])} GW</td></tr>`).join("") +
         (tipRows ? tipRows(h, shown) : "") + `</table>`);
@@ -386,54 +392,66 @@ function drawActual() {
     tipRows: (h, shown) => `<tr><td></td><td>Total supply</td><td class="n">${fmtGW(d3.sum(shown, (s) => s.vals[h] || 0))} GW</td></tr>` });
   $("actual-note").textContent = `${S.date} · GW · ${A.L === "60d" ? "60-day disclosure" : "2-day summary"}`;
   $("actual-sub").textContent = A.L === "60d"
-    ? "Each unit's output from the 60-day disclosure, thermal units summed by how often they turn off on price. Batteries are drawn on top while discharging and below zero while charging. Shaded hours had real-time system lambda at $10 or less (day-ahead when real-time is missing)."
-    : `ERCOT's 2-day generation summary: thermal in total, wind, solar and batteries. Unit detail arrives with the 60-day disclosure, about ${dayLabel(addDays(S.date, LAG_60D))}. Shaded hours had real-time system lambda at $10 or less (day-ahead when real-time is missing).`;
+    ? "How the day's supply was built up, hour by hour. Thermal units are grouped by how often they turn off on price, so the bottom bands are the part of the fleet that does not move when power is cheap. Each unit's output is from ERCOT's 60-day disclosure. Batteries are drawn on top while discharging and below zero while charging. " + "Shaded hours: real-time system lambda at $10/MWh or less (day-ahead where real-time is missing)."
+    : `ERCOT's 2-day generation summary: thermal in total, wind, solar and batteries. Unit detail arrives with the 60-day disclosure, about ${dayLabel(addDays(S.date, LAG_60D))}. Shaded hours: real-time system lambda at $10/MWh or less (day-ahead where real-time is missing).`;
 }
 // what ran over the day, as GWh bars: the bar is what ran, the full bar the units' largest hourly
 // HSL over all 24 hours (wind and solar: their HSL hour by hour); rows without a maximum share
 // `scale` (GWh) with the rest of their section
-function actRow(name, note, color, act, tip, scale, seg) {
-  // seg: wind and solar {ren, light: available from the weather}; thermal {light: online HSL,
-  // max: online HSL + offline available, out: GWh on outage, nOut}; batteries and the 2-day view none
-  const og = seg && seg.out >= 0.5 ? seg.out : 0, max = seg && !seg.ren ? seg.max : null;
-  const capG = max ? max + og : scale || Math.max(act || 0, 1) * 1.1, w = (v) => Math.min(100, ((v || 0) / capG) * 100);
+function actRow(name, note, color, act, tip, scale, seg, verb) {
+  // seg: wind and solar {ren, light: available from the weather, pot: full potential (capacity x
+  // hours in the data), out: GWh outages took, nOut}; thermal {light: online HSL, max: online HSL +
+  // offline available, out: GWh on outage, nOut}; batteries and the 2-day view none
+  const og = seg && seg.out >= 0.5 ? seg.out : 0, max = seg && !seg.ren ? seg.max : null, pot = seg && seg.ren && seg.pot ? seg.pot : null;
+  const capG = pot || (max ? max + og : scale || Math.max(act || 0, 1) * 1.1), w = (v) => Math.min(100, ((v || 0) / capG) * 100);
   const f1 = d3.format(",.1f"), f0 = d3.format(",.0f");
+  // wind and solar to full potential: ran, curtailed (light), on outage (hatched), and the gray
+  // track beyond, not available from the weather
+  const outAt = seg && seg.ren ? seg.light || 0 : max;
   return `<div class="lab"><span class="sw" style="background:var(${color})"></span><div>${esc(name)}<small>${esc(note)}</small></div></div>` +
     `<div class="bar" data-tip-html="${esc(`<h4>${esc(name)}</h4><p class="tip-body">${tip}</p>`)}">` +
     (seg && seg.light != null ? `<i style="left:0;width:${w(seg.light)}%;background:var(${color});opacity:${seg.ren ? 0.35 : 0.2}"></i>` : "") +
     (act != null ? `<i style="left:0;width:${w(act)}%;background:var(${color})"></i>` : "") +
-    (og ? `<i class="outage" style="left:${w(max)}%;width:${100 - w(max)}%;color:var(${color})"></i>` : "") + `</div>` +
-    `<div class="val"><b>${act != null ? f1(act) + " GWh" : "–"}</b> ran` +
-    (seg && seg.ren && seg.light != null ? `, ${f1(Math.max(0, seg.light - (act || 0)))} GWh curtailed<br>of ${f0(seg.light)} GWh available` : "") +
-    (max ? `<br>of ${f0(max)} GWh max available` : "") +
-    (og ? `<br>${fmtGWh(og)} GWh max on outage (${seg.nOut} unit${seg.nOut === 1 ? "" : "s"})` : "") + `</div>`;
+    (og ? `<i class="outage" style="left:${w(outAt)}%;width:${seg.ren ? Math.min(w(og), 100 - w(outAt)) : 100 - w(max)}%;color:var(${color})"></i>` : "") + `</div>` +
+    `<div class="val"><b>${act != null ? f1(act) + " GWh" : "–"}</b> ${verb || "ran"}` +
+    (seg && seg.ren && seg.light != null ? `, ${f1(Math.max(0, seg.light - (act || 0)))} GWh curtailed<br>of ${f0(seg.light)} GWh available` + (pot ? ` (${f0(pot)} GWh potential)` : "") : "") +
+    (max ? `<br>of ${f0(max)} GWh available` : "") +
+    (og ? `<br>${fmtGWh(og)} GWh lost to outages (${seg.nOut} unit${seg.nOut === 1 ? "" : "s"})` : "") + `</div>`;
 }
 // "x–y units online" over the day's hours, for a group's or technology's trains online
-const onRange = (on, n) => { if (!on) return ""; const a = d3.min(on), b = d3.max(on); return `${a === b ? a : `${a}–${b}`}${n ? ` of ${n}` : ""} unit${(n || b) === 1 ? "" : "s"} online`; };
+const onRange = (on, n) => { if (!on) return ""; const a = d3.min(on), b = d3.max(on); return `${a === b ? a : `${a} to ${b}`}${n ? ` of ${n}` : ""} unit${(n || b) === 1 ? "" : "s"} online`; };
 function drawActualBars() {
   const panel = $("actual-bars-panel"), el = $("actual-rows"), L = lead();
   panel.hidden = !L;
   if (!L) return;
   $("actual-bar-legend").innerHTML = `<span><span class="sw" style="background:var(--g3)"></span>What ran</span>` +
-    (L === "60d" ? `<span><span class="sw" style="background:var(--g3);opacity:.2"></span>Thermal: online, not used (HSL each hour)</span><span><span class="sw" style="background:var(--g3);opacity:.35"></span>Wind and solar: curtailed</span><span><span class="sw" style="background:var(--track)"></span>Thermal: offline but available</span><span><span class="sw outage" style="color:var(--g3)"></span>Thermal: max on outage</span>` : "");
-  $("actual-bars-sub").textContent = L === "60d" ? "ERCOT's reported energy for the day. The solid bar is what ran. For thermal, the light bar runs to the online units' maximum (HSL) each hour, summed over the day; the gray beyond it is units offline but available, at full output (their HSL when running, as the 60-day data gives no HSL while offline); together they are the max available. The hatched segment is the most outages took: each unit's hours reporting OUT, at full output. For wind and solar, the full bar is what the weather made available (their HSL each hour), and the light part of it was curtailed. Peakers are the units that run like peakers (online under 30% of available hours, at most 16 hours a day when on), shown on their own. Online minimum and maximum hour by hour are in the next panel." : "ERCOT's reported energy, from the 2-day summary. Thermal is reported in total until the 60-day disclosure.";
+    (L === "60d" ? `<span><span class="sw" style="background:var(--g3);opacity:.2"></span>Thermal: online headroom (up to HSL)</span><span><span class="sw" style="background:var(--g3);opacity:.35"></span>Wind and solar: curtailed</span><span><span class="sw" style="background:var(--track)"></span>Thermal: offline but available</span><span><span class="sw outage" style="color:var(--g3)"></span>On outage</span><span><span class="sw" style="background:var(--track)"></span>Wind and solar: not available from the weather</span>` : "");
+  window.CX.setNote($("actual-bars-sub"), L === "60d"
+    ? "How much of each group's capacity the day used. A full solid bar is a group that ran flat out; a short solid bar on a long light one is capacity that was online but held back; gray is capacity that sat offline though available. For wind and solar the light part is what was curtailed, the hatched part what outages took, and the gray rest what the weather did not provide."
+    : "ERCOT's reported energy, from the 2-day summary. Thermal is reported in total until the 60-day disclosure.",
+    L === "60d" ? "The solid bar is what ran. For thermal, the light bar runs to the online units' maximum (HSL) each hour, summed over the day; the gray beyond it is units offline but available, at full output (their HSL when running, as the 60-day data gives no HSL while offline); together they are the most the group could have made. The hatched segment is the most outages took: each unit's hours reporting an outage, at full output. For wind and solar, the full bar is their full potential (wind: each unit's largest hourly HSL in the 60-day data, every hour; solar: a clear-sky envelope, each unit's 95th-percentile HSL at that hour over its 30 nearest days, so night is not counted as lost): the light part was available from the weather (their HSL each hour) but curtailed, the hatched part is what outages took (hours ERCOT's status reads OUT, and derates from ERCOT's outage report past its limits, at the unit's typical output for that hour), and the gray rest was not available from the weather. Peakers are defined under the tiles above. Online minimum and maximum hour by hour are in the next panel." : "");
   const csv = [], gwhOf = (mw) => d3.sum(mw.filter((v) => v != null)) / 1000, sumOf = (a) => (a ? d3.sum(a) / 1000 : null);
   let html = "";
-  const push = (sect, name, note, color, cap, act, lsl, hsl, scale, off) => {
+  const push = (sect, name, note, color, cap, act, lsl, hsl, scale, off, verb) => {
     // wind and solar: the HSL each hour is what the weather made available, and what was available
     // but did not run was curtailed. Thermal: the most it could have made is the online units' HSL
     // each hour plus the offline-but-available units at full output; outages come on top
     const ren = sect === "wind" || sect === "solar", thermal = sect === "group" || sect === "tech";
     const avail = ren && hsl != null && act != null ? Math.max(hsl, act) : null;
     const onH = thermal && hsl != null ? Math.max(hsl, act || 0) : null, offA = off ? off.off : 0;
-    const seg = ren ? { ren: true, light: avail } : thermal && onH != null ? { light: onH, max: onH + offA, out: off ? off.gwh : 0, nOut: off ? off.units.length : 0 } : null;
-    const tip = `${act != null ? `${fmtGWh(act)} GWh ran (${fmtGW(act / 24 * 1000)} GW on average)` : "no data"}` +
+    const ro = ren && S.RO && S.RO.days && S.RO.days[S.date] ? S.RO.days[S.date][sect] : null;
+    const rOut = ro ? (ro.out + ro.der) / 1000 : 0;
+    const seg = ren ? { ren: true, light: avail, pot: ro && ro.pot ? Math.max(ro.pot / 1000, (avail || 0) + rOut) : null, out: rOut, nOut: ro ? ro.n : 0 } : thermal && onH != null ? { light: onH, max: onH + offA, out: off ? off.gwh : 0, nOut: off ? off.units.length : 0 } : null;
+    const tip = `${act != null ? `${fmtGWh(act)} GWh ${verb || "ran"} (${fmtGW(act / 24 * 1000)} GW on average)` : "no data"}` +
       (avail != null ? `<br>${fmtGWh(avail)} GWh available from the weather (HSL each hour), ${fmtGWh(avail - act)} GWh curtailed` : "") +
-      (seg && !ren ? `<br>${fmtGWh(seg.max)} GWh max available: ${fmtGWh(onH)} GWh online (the online units' HSL each hour)` +
-        `, ${fmtGWh(offA)} GWh offline but available (${off ? off.nOff : 0} unit${off && off.nOff === 1 ? "" : "s"}, at full output: HSL when running)` : "") +
-      (off && off.gwh >= 0.5 ? `<br>${fmtGWh(off.gwh)} GWh max on outage: ${off.units.length} unit${off.units.length === 1 ? "" : "s"} reporting OUT, at full output<br>` +
+      (ro && ro.pot ? `<br>${fmtGWh(seg.pot)} GWh full potential (${sect === "solar" ? "clear-sky: each unit's 95th-percentile HSL at the hour over its 30 nearest days" : "each unit's largest HSL, every hour"})` +
+        (rOut >= 0.05 ? `<br>${fmtGWh(rOut)} GWh lost to outages: ${ro.n} unit${ro.n === 1 ? "" : "s"} out (status OUT) or derated (ERCOT outage report), at their typical output for the hour` +
+          ro.top.map(([u, h, mwh]) => `<br>${esc(u)}: ${h ? `${h} h out, ` : "derated, "}${d3.format(",.0f")(mwh)} MWh`).join("") + (ro.n > ro.top.length ? `<br>and ${ro.n - ro.top.length} more` : "") : "") +
+        `<br>${fmtGWh(Math.max(0, seg.pot - avail - rOut))} GWh not available from the weather${sect === "solar" ? " (clouds)" : ""}` : "") +
+      (seg && !ren ? `<br>${fmtGWh(seg.max)} GWh available: ${fmtGWh(onH)} GWh from units online, ${fmtGWh(offA)} GWh from ${off ? off.nOff : 0} unit${off && off.nOff === 1 ? "" : "s"} offline but available` : "") +
+      (off && off.gwh >= 0.5 ? `<br>${fmtGWh(off.gwh)} GWh lost to outages at ${off.units.length} unit${off.units.length === 1 ? "" : "s"}, at full output:<br>` +
         off.units.slice(0, 5).map((u) => `${esc(u.name)}: ${u.h} h × ${d3.format(",.0f")(u.mw)} MW`).join("<br>") + (off.units.length > 5 ? `<br>and ${off.units.length - 5} more` : "") : "");
-    html += actRow(name, note, color, act, tip, scale, seg);
+    html += actRow(name, note, color, act, tip, scale, seg, verb);
     csv.push([sect, name, act, lsl, hsl, seg && !ren ? offA : null, seg && !ren ? seg.max : null, off ? off.gwh : null]);
   };
   const a60 = S.a60, gh = genHourly(), o60 = S.off60 || { group: {}, tech: {} };
@@ -456,8 +474,8 @@ function drawActualBars() {
   if (dis != null) {
     html += `<div class="sect">Batteries · GWh (${a60 ? "60-day disclosure" : "2-day summary"})</div>`;
     const batScale = Math.max(dis, chg || 0, 0.1) * 1.1;
-    push("storage", "Discharged", "supply", STORAGE.color, null, dis, null, null, batScale);
-    push("storage", "Charged", "load", STORAGE.color, null, chg, null, null, batScale);
+    push("storage", "Discharged", "supply", STORAGE.color, null, dis, null, null, batScale, null, "discharged");
+    push("storage", "Charged", "load", STORAGE.color, null, chg, null, null, batScale, null, "charged");
   }
   el.innerHTML = html;
   $("actual-bars-note").textContent = `${S.date} · GWh · ${L === "60d" ? "60-day disclosure" : "2-day summary"}`;
@@ -476,9 +494,9 @@ function limitSeries() {
 function limitChart(s, w0) {
   const zero = HRS.map(() => 0), lsl = s.lsl || zero, hsl = s.hsl || zero;
   const wrap = document.createElement("div"); wrap.className = "mult";
-  const fmtMW = d3.format(",.0f"), rng = (a) => `${fmtMW(d3.min(a))}–${fmtMW(d3.max(a))} MW`;
+  const rng = (a) => `${fmtGW(d3.min(a))} to ${fmtGW(d3.max(a))} GW`;
   wrap.innerHTML = `<h3><span class="sw" style="background:var(${s.color})"></span>${esc(s.label)}</h3>` +
-    `<p class="sub">${s.lsl ? `${onRange(s.on, s.n)} · LSL ${rng(lsl)}` : `${onRange(s.on, s.n).replace("online", "producing")} · ${fmtGWh(d3.sum(s.out) / 1000)} GWh ran · online HSL ${rng(hsl)}`}</p>`;
+    `<p class="sub">${s.lsl ? `${onRange(s.on, s.n)} · summed minimum ${rng(lsl)}` : `${onRange(s.on, s.n).replace("online", "producing")} · ${fmtGWh(d3.sum(s.out) / 1000)} GWh ran · available ${rng(hsl)}`}</p>`;
   const w = Math.max(240, w0 || 320), Hh = 170, m = { t: 8, r: 6, b: 24, l: 40 };
   const x = d3.scaleBand().domain(HRS).range([m.l, w - m.r]).paddingInner(0.12);
   const y = d3.scaleLinear().domain([0, d3.max([...hsl, ...s.out]) * 1.04 || 1]).nice().range([Hh - m.b, m.t]);
@@ -486,7 +504,7 @@ function limitChart(s, w0) {
   const { ref } = dayPrices();
   cheapRuns().forEach((r) => svg.append("rect").attr("class", "price-band").attr("x", x(r.from) - 1).attr("width", x(r.to) + x.bandwidth() - x(r.from) + 2).attr("y", m.t).attr("height", Hh - m.t - m.b));
   svg.append("g").attr("class", "gridline").attr("transform", `translate(${m.l},0)`).call(d3.axisLeft(y).ticks(4).tickSize(-(w - m.l - m.r)).tickFormat(""));
-  svg.append("g").attr("class", "axis").attr("transform", `translate(${m.l},0)`).call(d3.axisLeft(y).ticks(4).tickFormat((v) => (v >= 1000 ? d3.format(",")(v / 1000) + "k" : v)).tickSizeOuter(0));
+  svg.append("g").attr("class", "axis").attr("transform", `translate(${m.l},0)`).call(d3.axisLeft(y).ticks(4).tickFormat((v) => `${d3.format(",")(v / 1000)} GW`).tickSizeOuter(0));
   svg.append("g").attr("class", "axis").attr("transform", `translate(0,${Hh - m.b})`).call(d3.axisBottom(x).tickValues([0, 5, 11, 17, 23]).tickFormat((h) => h + 1).tickSizeOuter(0));
   const col = css(s.color), bw = x.bandwidth();
   HRS.forEach((h) => {
@@ -502,7 +520,7 @@ function limitChart(s, w0) {
     .on("pointermove", (ev) => {
       const h = Math.max(0, Math.min(23, Math.floor((d3.pointer(ev)[0] - m.l) / x.step())));
       const row = (l, v) => `<tr><td>${l}</td><td class="n">${v}</td></tr>`;
-      showTip(ev, `<h4>${esc(s.label)} · ${heLabel(h)} · lambda ${ref ? fmtPrice(ref[h]) : "–"}</h4><table>` +
+      showTip(ev, `<h4>${esc(s.label)} · ${heLabel(h)} · system lambda ${ref ? `${fmtPrice(ref[h])}/MWh` : "–"}</h4><table>` +
         (s.on ? row(s.lsl ? "Units online" : "Units producing", `${s.on[h] || 0}${s.n ? ` of ${s.n} (${d3.format(".0%")((s.on[h] || 0) / s.n)})` : ""}`) : "") +
         (s.lsl ? row("Online LSL", `${fmtMW(lsl[h])} MW`) : "") + row("Online HSL", `${fmtMW(hsl[h])} MW`) +
         row("What ran", `${fmtMW(s.out[h] || 0)} MW`) + (s.lsl ? row("Above LSL", `${fmtMW((s.out[h] || 0) - lsl[h])} MW`) : "") + `</table>`);
@@ -552,15 +570,19 @@ function drawFloor() {
     .on("pointermove", (ev) => {
       const h = Math.max(0, Math.min(23, Math.floor((d3.pointer(ev)[0] - m.l) / x.step())));
       const row = (l, v) => `<tr><td>${l}</td><td class="n">${v}</td></tr>`;
-      showTip(ev, `<h4>System floor · ${heLabel(h)} · lambda ${ref ? fmtPrice(ref[h]) : "–"}</h4><table>` +
+      showTip(ev, `<h4>System floor · ${heLabel(h)} · system lambda ${ref ? `${fmtPrice(ref[h])}/MWh` : "–"}</h4><table>` +
         [...FLOOR_ORDER].reverse().map((t) => row(`${TECH_LABEL[t]}${t === "nuclear" ? " (output)" : " LSL"}`, `${fmtMW(F[t][h])} MW`)).join("") +
         row("<b>Fossil floor</b>", `<b>${fmtMW(fos[h])} MW</b>`) + row("Floor with nuclear", `${fmtMW(tot[h])} MW`) +
         row("What thermal ran", `${fmtMW(ran[h])} MW`) + row("Above the floor", `${fmtMW(ran[h] - tot[h])} MW`) + `</table>`);
     }).on("pointerleave", hideTip)
     .on("click", (ev) => pickHour(Math.floor((d3.pointer(ev)[0] - m.l) / x.step())));
   el.replaceChildren(svg.node());
+  const ch = cheapHours().filter((h) => fos[h] != null && ran[h] != null);
   $("floor-sub").textContent = lo == null ? "Too many hours missing to pick the lowest hour." :
-    `Lowest fossil floor ${fmtGW(fos[lo])} GW at ${heLabel(lo)}${ref && ref[lo] != null ? ` (lambda ${fmtPrice0(ref[lo])})` : ""}, ${fmtGW(tot[lo])} GW with nuclear; thermal ran ${fmtGW(ran[lo] - tot[lo])} GW above it.`;
+    `At its lowest, ${heLabel(lo)}${ref && ref[lo] != null ? ` (system lambda ${fmtPrice0(ref[lo])}/MWh)` : ""}, the online fossil fleet could not have gone below ${fmtGW(fos[lo])} GW without shutting units down ` +
+    `(${fmtGW(tot[lo])} GW with nuclear); it actually ran ${fmtGW(ran[lo] - tot[lo])} GW above that floor. ` +
+    (ch.length ? `In the ${ch.length} cheap hour${ch.length > 1 ? "s" : ""} the floor with nuclear was ${fmtGW(d3.min(ch, (h) => tot[h]))} GW to ${fmtGW(d3.max(ch, (h) => tot[h]))} GW and thermal ran ${fmtGW(d3.mean(ch, (h) => ran[h] - tot[h]))} GW above it on average.`
+      : "No hour was cheap, so the floor was never tested.");
   const csv = HRS.map((h) => [h + 1, ...FLOOR_ORDER.map((t) => Math.round(F[t][h])), Math.round(fos[h]), Math.round(tot[h]), Math.round(ran[h])]);
   setCSV(el, ["hour_ending", "nuclear_output_mw", ...FLOOR_ORDER.slice(1).map((t) => `${t}_lsl_mw`), "fossil_floor_mw", "floor_with_nuclear_mw", "thermal_output_mw"], csv, `System floor ${S.date}`);
 }
@@ -574,7 +596,7 @@ function drawLimits() {
   el.replaceChildren(...series.map((s) => limitChart(s)));
   const cells = [...el.querySelectorAll(".mult")];
   el.replaceChildren(...series.map((s, i) => limitChart(s, cells[i].clientWidth)));
-  $("limits-note").textContent = `${S.date} · MW · hour ending · 60-day disclosure`;
+  $("limits-note").textContent = `${S.date} · GW · 60-day disclosure`;
   const csv = [];
   series.forEach((s) => HRS.forEach((h) => csv.push([S.limBy, s.id, h + 1, s.on ? s.on[h] : null, s.lsl ? s.lsl[h] : null, s.hsl ? s.hsl[h] : null, s.out[h] || 0])));
   setCSV(el, ["by", "name", "hour_ending", "units_online", "online_lsl_mw", "online_hsl_mw", "output_mw"], csv, `Online minimum and maximum ${S.date}`);
@@ -586,13 +608,13 @@ function mixRows(h) {
   if (a60) {
     const rows = TECHS.filter(([t]) => a60.tech[t]).map(([t, label, color]) => ({ id: t, label, color, act: a60.tech[t][h] }));
     [WIND, SOLAR].forEach((s) => { if (a60.tech[s.id]) rows.push({ ...s, act: a60.tech[s.id][h] }); });
-    if (a60.tech.storage) rows.push({ id: "storage", label: "Batteries, net", color: "--c7", act: a60.tech.storage[h] });
+    if (a60.tech.storage) rows.push({ id: "storage", label: a60.tech.storage[h] < 0 ? "Batteries, net (charging)" : "Batteries, net (discharging)", color: "--c7", act: a60.tech.storage[h] });
     ["hydro", "other"].forEach((t) => { if (a60.tech[t]) rows.push({ id: t, label: t === "hydro" ? "Hydro" : "Other", color: "--c-other", act: a60.tech[t][h] }); });
     return rows;
   }
   if (!gh) return null;
   const rows = [{ id: "thermal", label: "Thermal and other", color: "--g3", act: gh.thermal[h] }, { ...WIND, act: gh.wind[h] }, { ...SOLAR, act: gh.solar[h] }];
-  if (gh.discharging[h] != null) rows.push({ id: "storage", label: "Batteries, net", color: "--c7", act: gh.discharging[h] + (gh.charging[h] || 0) });
+  if (gh.discharging[h] != null) { const net = gh.discharging[h] + (gh.charging[h] || 0); rows.push({ id: "storage", label: net < 0 ? "Batteries, net (charging)" : "Batteries, net (discharging)", color: "--c7", act: net }); }
   return rows;
 }
 function drawMix() {
@@ -615,11 +637,11 @@ function drawMix() {
     if (r.act != null && Math.abs(x(r.act) - x(0)) > 0.5) g.append("rect").attr("x", Math.min(x(0), x(r.act))).attr("y", y0).attr("width", Math.abs(x(r.act) - x(0))).attr("height", bh).attr("fill", css(r.color)).attr("rx", 3);
     g.append("text").attr("class", "mix-label").attr("x", narrow ? m.l : m.l - 10).attr("y", narrow ? y0 - 5 : y0 + bh / 2).attr("dy", narrow ? 0 : "0.35em").attr("text-anchor", narrow ? "start" : "end").text(r.label);
     g.append("text").attr("class", "mix-value").attr("x", Math.max(x(0), x(r.act ?? 0)) + 6).attr("y", y0 + bh / 2).attr("dy", "0.35em")
-      .text(r.act != null ? `${fmtMW(r.act)} MW` + (r.share != null ? ` · ${fmtPct(r.share)}` : "") : "no data");
+      .text(r.act != null ? `${fmtGW(r.act)} GW` + (r.share != null ? ` · ${fmtPct(r.share)}` : "") : "no data");
   });
   if (x.domain()[0] < 0) svg.append("line").attr("class", "zero").attr("x1", x(0)).attr("x2", x(0)).attr("y1", m.t).attr("y2", Hh - m.b);
   el.replaceChildren(svg.node());
-  el.insertAdjacentHTML("beforeend", `<p class="note">Generation ${fmtMW(total)} MW in the hour from the ${S.a60 ? "60-day disclosure (output averaged over the hour's SCED runs)" : "2-day summary (base points), with thermal in total"}.</p>`);
+  el.insertAdjacentHTML("beforeend", `<p class="note">${fmtGW(total)} GW generated in ${heLabel(h)}, ${S.a60 ? "each unit averaged over ERCOT's 5-minute dispatch runs (SCED), from the 60-day disclosure" : "from the 2-day summary (base points), with thermal in total"}.</p>`);
   tel.innerHTML = `<table class="data"><thead><tr><th class="t">Technology</th><th>Output (MW)</th><th>Share</th></tr></thead><tbody>` +
     rows.map((r) => `<tr><td class="t">${r.label}</td><td>${r.act != null ? fmtMW(r.act) : "–"}</td><td>${r.share != null ? d3.format(".1%")(r.share) : "–"}</td></tr>`).join("") +
     `<tr><td class="t"><b>Total</b></td><td><b>${fmtMW(total)}</b></td><td></td></tr></tbody></table>`;
@@ -628,7 +650,7 @@ function drawMix() {
 
 // ---------------------------------------------------------------- drill-down: units ---
 const UNIT_COLS = [
-  ["unit", "Unit", "t"], ["tech", "Technology", "tech"], ["group", "Group", "group"], ["hsl", "HSL (MW)"], ["lsl", "LSL online (MW)"],
+  ["unit", "Unit", "t"], ["tech", "Technology", "tech"], ["group", "Group", "group"], ["hsl", "HSL (MW)"], ["lsl", "Online LSL (MW)"],
   ["online_h", "Hours online"], ["mwh", "Output (MWh)"], ["profit", "Profit ($)", "usd"],
 ];
 const UNIT_TIPS = {
@@ -688,7 +710,7 @@ function drawUnits() {
   el.innerHTML = html + "</tbody></table></div>";
   $("units-foot").innerHTML = (total > rows.length ? `Showing ${rows.length} of ${total} units. <button type="button" id="units-all" class="linkish">Show all</button>` : `Units: ${total}.`) +
     ` Groups are from the full 60-day data. Which units turned off on the day, and at what loss, is on <a href="commitment.html#date=${S.date}">Turn-ons and Turn-offs</a>.` +
-    ` Profit is an estimate on generic costs (coal at $2/MMBtu, so lignite at its own mine reads low)${S.rtNodes ? "" : "; real-time node prices for this day are not in yet, so the real-time part settles at system lambda"}.`;
+    ` Profit is an estimate: fuel at each unit's measured heat rate and its own gas hub price or its plant's coal price, with technology averages where a unit has none. It is not the unit's own accounts${S.rtNodes ? "" : "; real-time node prices for this day are not in yet, so the real-time part settles at system lambda"}.`;
   $("units-note").textContent = `${S.date} · ${Object.keys(S.a60.units).length} thermal units`;
   const b = $("units-all");
   if (b) b.onclick = () => { S.unitShowAll = true; drawUnits(); };
@@ -707,7 +729,7 @@ function drawOffersLinks() {
 }
 function drawSource() {
   const d = S.date;
-  $("source-note").textContent = has("60d") ? "60-day disclosure: each unit's hours" : has("2dgen") ? `2-day summary; unit detail about ${dayLabel(addDays(d, LAG_60D))}` : "Prices only so far";
+  $("source-note").textContent = has("60d") ? "Unit-by-unit detail is in (ERCOT's 60-day disclosure)." : has("2dgen") ? `Totals only, from ERCOT's 2-day summary; unit detail arrives about ${dayLabel(addDays(d, LAG_60D))}.` : "Prices only so far.";
 }
 
 // ---------------------------------------------------------------- profit ---
@@ -806,8 +828,9 @@ function loadView() {
 }
 
 async function boot() {
-  [S.index, S.dalam, S.groups, S.fuelCost, S.gasHH, S.unitHours] = await Promise.all([tryJSON("data/index.json"), tryJSON("data/dam_lambda.json.gz"), tryJSON("data/groups_60d.json.gz"),
-    tryJSON("data/fuel_cost_60d.json.gz"), tryJSON("data/gas.json.gz"), tryJSON("data/unit_hours_60d.json.gz")]);
+  [S.index, S.dalam, S.groups, S.fuelCost, S.gasHH, S.unitHours, S.RO] = await Promise.all([tryJSON("data/index.json"), tryJSON("data/dam_lambda.json.gz"), tryJSON("data/groups_60d.json.gz"),
+    tryJSON("data/fuel_cost_60d.json.gz"), tryJSON("data/gas.json.gz"), tryJSON("data/unit_hours_60d.json.gz"),
+    tryJSON("data/renew_outages_60d.json.gz")]);
   S.index = S.index || { days: {} };
   // every day with ERCOT data for it: prices, the 2-day summary or the 60-day disclosure
   const days = [...new Set(["prices", "2dgen", "60d"].flatMap((k) => S.index.days[k] || []))].sort();
@@ -819,7 +842,7 @@ async function boot() {
     note: (d) => (has("60d", d) ? "unit detail" : has("2dgen", d) ? "2-day" : ""),
     onChange: async (d) => { S.date = d; await changeDay(); } });
   S.date = S.picker.get();
-  $("status").textContent = `${days.length} days, ${days[0]} to ${days.at(-1)} · unit detail through ${last60()} · updated ${(S.index.updated || "").replace("T", " ").replace("Z", " UTC")}`;
+  $("status").textContent = `${days.length} days, ${days[0]} to ${days.at(-1)} · unit detail through ${last60()} · updated ${(S.index.updated || "").slice(0, 10)}`;
   $("unit-tech").innerHTML = `<option value="all">All</option>` + TECHS.map(([id, l]) => `<option value="${id}">${l}</option>`).join("");
   $("unit-tech").value = S.unitTech;
   $("hour").value = S.hour;

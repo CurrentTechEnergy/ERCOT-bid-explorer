@@ -9,14 +9,14 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=HLSES_UNIT3"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=HLSES_UNIT3#HLSES_UNIT3/2026-08-07/dam_priced_out</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Priced out of the day-ahead: minimum energy at $71/MWh against a usual $43 for 1 day(s)</summary>
+    <summary>Priced out of the day-ahead: minimum energy at $71/MWh against a usual $43/MWh, for 1 day</summary>
   </entry>
   <entry>
     <title>HLSES_UNIT3: Priced out of the day-ahead (2026-08-07)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=HLSES_UNIT3"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=HLSES_UNIT3#HLSES_UNIT3/2026-08-07/dam_priced_out</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Priced out of the day-ahead: minimum energy at $71/MWh against a usual $43 for 1 day(s)</summary>
+    <summary>Priced out of the day-ahead: minimum energy at $71/MWh against a usual $43/MWh, for 1 day</summary>
   </entry>
   <entry>
     <title>HLSES_UNIT3: Minimum-energy offer stepped (2026-07-28)</title>
@@ -51,7 +51,7 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=HLSES_UNIT3"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=HLSES_UNIT3#HLSES_UNIT3/2026-06-14/bidding</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Offer price vs peer median: $12 to -$4/MWh</summary>
+    <summary>Offer price vs peer median: $12 to −$4/MWh</summary>
   </entry>
   <entry>
     <title>HLSES_UNIT3: Minimum-energy offer stepped (2026-05-15)</title>
@@ -86,7 +86,7 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=HLSES_UNIT3"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=HLSES_UNIT3#HLSES_UNIT3/2026-05-01/group</id>
     <updated>2026-10-23T00:00:00Z</updated>
-    <summary>Off a week or more in 2026-04 to Multi-day: off a day or more in 2026-05</summary>
+    <summary>Off for a week or more at a time in 2026-04 to Off for days at a time in 2026-05</summary>
   </entry>
   <entry>
     <title>HLSES_UNIT3: Bidding approach shifted (2026-04-29)</title>
@@ -100,7 +100,7 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=HLSES_UNIT3"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=HLSES_UNIT3#HLSES_UNIT3/2026-04-15/bidding</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Offer price vs peer median: -$0 to $36/MWh</summary>
+    <summary>Offer price vs peer median: −$0 to $36/MWh</summary>
   </entry>
   <entry>
     <title>HLSES_UNIT3: Minimum-energy offer stepped (2026-04-04)</title>
@@ -170,7 +170,7 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=HLSES_UNIT3"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=HLSES_UNIT3#HLSES_UNIT3/2026-02-01/group</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Multi-day: off a day or more in 2026-01 to Off a week or more in 2026-02</summary>
+    <summary>Off for days at a time in 2026-01 to Off for a week or more at a time in 2026-02</summary>
   </entry>
   <entry>
     <title>HLSES_UNIT3: Shut down after a long run (2026-01-26)</title>
@@ -184,7 +184,7 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=HLSES_UNIT3"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=HLSES_UNIT3#HLSES_UNIT3/2026-01-25/bidding</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Offer price vs peer median: $16 to -$0/MWh</summary>
+    <summary>Offer price vs peer median: $16 to −$0/MWh</summary>
   </entry>
   <entry>
     <title>HLSES_UNIT3: Minimum-energy offer stepped (2025-12-25)</title>

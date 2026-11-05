@@ -9,7 +9,7 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=PORT_SLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=PORT_SLR#PORT_SLR/2026-07-22/renew_formula_on</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Formula on: floor $0 to formula</summary>
+    <summary>Formula on (was a floor of $0/MWh)</summary>
   </entry>
   <entry>
     <title>PORT_SLR_UNIT1: Stopped day-ahead offers (2026-04-30)</title>
@@ -30,41 +30,41 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=PORT_SLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=PORT_SLR#PORT_SLR/2026-04-08/renew_formula_off</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Formula off: formula to floor $0</summary>
+    <summary>Formula off: now a floor of $0/MWh</summary>
   </entry>
   <entry>
     <title>PORT_SLR: Formula on (2026-03-09)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=PORT_SLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=PORT_SLR#PORT_SLR/2026-03-09/renew_formula_on</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Formula on: floor $0 to formula</summary>
+    <summary>Formula on (was a floor of $0/MWh)</summary>
   </entry>
   <entry>
     <title>PORT_SLR: Formula off (2025-12-21)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=PORT_SLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=PORT_SLR#PORT_SLR/2025-12-21/renew_formula_off</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Formula off: formula to floor $0</summary>
+    <summary>Formula off: now a floor of $0/MWh</summary>
   </entry>
   <entry>
     <title>PORT_SLR: Formula on (2025-12-04)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=PORT_SLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=PORT_SLR#PORT_SLR/2025-12-04/renew_formula_on</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Formula on: floor $0 to formula</summary>
+    <summary>Formula on (was a floor of $0/MWh)</summary>
   </entry>
   <entry>
     <title>PORT_SLR: Formula off (2025-11-02)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=PORT_SLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=PORT_SLR#PORT_SLR/2025-11-02/renew_formula_off</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Formula off: formula to floor $0</summary>
+    <summary>Formula off: now a floor of $0/MWh</summary>
   </entry>
   <entry>
     <title>PORT_SLR: Formula on (2025-02-27)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=PORT_SLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=PORT_SLR#PORT_SLR/2025-02-27/renew_formula_on</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Formula on: floor $0 to formula</summary>
+    <summary>Formula on (was a floor of $0/MWh)</summary>
   </entry>
 </feed>

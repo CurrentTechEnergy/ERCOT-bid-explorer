@@ -9,20 +9,20 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=LV2_LV"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=LV2_LV#LV2_LV/2024-10-14/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Episode: floor $0 to -$36 for the episode for 1 day(s)</summary>
+    <summary>Episode: floor $0/MWh, briefly −$36/MWh, for 1 day</summary>
   </entry>
   <entry>
     <title>LV2_LV: New floor (2023-01-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=LV2_LV"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=LV2_LV#LV2_LV/2023-01-01/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: floor -$33 to floor $0</summary>
+    <summary>New floor: −$33/MWh to $0/MWh</summary>
   </entry>
   <entry>
     <title>LV2_LV: New floor (2022-08-03)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=LV2_LV"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=LV2_LV#LV2_LV/2022-08-03/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: floor -$32 to floor -$33</summary>
+    <summary>New floor: −$32/MWh to −$33/MWh</summary>
   </entry>
 </feed>

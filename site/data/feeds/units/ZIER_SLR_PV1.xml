@@ -9,7 +9,7 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=ZIER_SLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=ZIER_SLR#ZIER_SLR/2026-02-21/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Episode: floor -$4 to -$12 for the episode for 3 day(s)</summary>
+    <summary>Episode: floor −$4/MWh, briefly −$12/MWh, for 3 days</summary>
   </entry>
   <entry>
     <title>ZIER: Decision maker or QSE changed (2024-11-12)</title>
@@ -23,6 +23,6 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=ZIER_SLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=ZIER_SLR#ZIER_SLR/2024-05-04/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: floor $0 to floor -$4</summary>
+    <summary>New floor: $0/MWh to −$4/MWh</summary>
   </entry>
 </feed>

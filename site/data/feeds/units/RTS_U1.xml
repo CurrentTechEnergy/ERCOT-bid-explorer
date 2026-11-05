@@ -9,14 +9,14 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=RTS"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=RTS#RTS/2024-07-03/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: floor -$33 to floor -$38</summary>
+    <summary>New floor: −$33/MWh to −$38/MWh</summary>
   </entry>
   <entry>
     <title>RTS: New floor (2021-05-12)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=RTS"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=RTS#RTS/2021-05-12/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: floor -$32 to floor -$33</summary>
+    <summary>New floor: −$32/MWh to −$33/MWh</summary>
   </entry>
   <entry>
     <title>RTS_U1: Decision maker or QSE changed (2021-05-11)</title>
@@ -37,41 +37,41 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=RTS"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=RTS#RTS/2019-04-15/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: floor -$8 to floor -$32</summary>
+    <summary>New floor: −$8/MWh to −$32/MWh</summary>
   </entry>
   <entry>
     <title>RTS: Episode (2019-04-08)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=RTS"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=RTS#RTS/2019-04-08/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Episode: floor -$8 to -$32 for the episode for 5 day(s)</summary>
+    <summary>Episode: floor −$8/MWh, briefly −$32/MWh, for 5 days</summary>
   </entry>
   <entry>
     <title>RTS: Episode (2019-04-04)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=RTS"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=RTS#RTS/2019-04-04/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Episode: floor -$8 to -$32 for the episode for 1 day(s)</summary>
+    <summary>Episode: floor −$8/MWh, briefly −$32/MWh, for 1 day</summary>
   </entry>
   <entry>
     <title>RTS: Episode (2019-03-28)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=RTS"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=RTS#RTS/2019-03-28/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Episode: floor -$8 to -$32 for the episode for 3 day(s)</summary>
+    <summary>Episode: floor −$8/MWh, briefly −$32/MWh, for 3 days</summary>
   </entry>
   <entry>
     <title>RTS: Episode (2019-03-14)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=RTS"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=RTS#RTS/2019-03-14/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Episode: floor -$8 to -$32 for the episode for 1 day(s)</summary>
+    <summary>Episode: floor −$8/MWh, briefly −$32/MWh, for 1 day</summary>
   </entry>
   <entry>
     <title>RTS: Episode (2019-01-18)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=RTS"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=RTS#RTS/2019-01-18/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Episode: floor -$8 to -$32 for the episode for 1 day(s)</summary>
+    <summary>Episode: floor −$8/MWh, briefly −$32/MWh, for 1 day</summary>
   </entry>
 </feed>

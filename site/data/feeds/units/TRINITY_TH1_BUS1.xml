@@ -9,20 +9,20 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=TRINITY_TH1_BUS"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=TRINITY_TH1_BUS#TRINITY_TH1_BUS/2024-09-13/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: floor -$36 to floor -$58</summary>
+    <summary>New floor: −$36/MWh to −$58/MWh</summary>
   </entry>
   <entry>
     <title>TRINITY_TH1_BUS: New floor (2024-03-13)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=TRINITY_TH1_BUS"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=TRINITY_TH1_BUS#TRINITY_TH1_BUS/2024-03-13/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: floor -$32 to floor -$36</summary>
+    <summary>New floor: −$32/MWh to −$36/MWh</summary>
   </entry>
   <entry>
     <title>TRINITY_TH1_BUS: New floor (2020-09-29)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=TRINITY_TH1_BUS"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=TRINITY_TH1_BUS#TRINITY_TH1_BUS/2020-09-29/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: floor $0 to floor -$32</summary>
+    <summary>New floor: $0/MWh to −$32/MWh</summary>
   </entry>
 </feed>

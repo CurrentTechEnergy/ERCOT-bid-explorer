@@ -3,12 +3,26 @@
   <title>JAY_UNIT1: bidding and operating changes</title>
   <link href="https://ercotbids.currenttech.energy/unit.html?unit=JAY_UNIT1"/>
   <id>https://ercotbids.currenttech.energy/unit.html?unit=JAY_UNIT1</id>
-  <updated>2026-10-18T00:00:00Z</updated>
+  <updated>2026-11-05T00:00:00Z</updated>
+  <entry>
+    <title>JAY_UNIT1: Outage ended (2026-05-27)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=JAY_UNIT1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=JAY_UNIT1#JAY_UNIT1/2026-05-27/outage_end</id>
+    <updated>2026-11-05T00:00:00Z</updated>
+    <summary>Back from a 7-day outage</summary>
+  </entry>
+  <entry>
+    <title>JAY_UNIT1: Outage started (2026-05-20)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=JAY_UNIT1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=JAY_UNIT1#JAY_UNIT1/2026-05-20/outage_start</id>
+    <updated>2026-11-05T00:00:00Z</updated>
+    <summary>Outage began, lasting 7 days</summary>
+  </entry>
   <entry>
     <title>JAY: New floor (2022-06-10)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=JAY"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=JAY#JAY/2022-06-10/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: floor -$6 to floor $0</summary>
+    <summary>New floor: −$6/MWh to $0/MWh</summary>
   </entry>
 </feed>

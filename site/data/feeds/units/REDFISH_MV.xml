@@ -9,132 +9,132 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=REDFISH_MV"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=REDFISH_MV#REDFISH_MV/2024-06-05/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: floor $0 to floor -$2</summary>
+    <summary>New floor: $0/MWh to −$2/MWh</summary>
   </entry>
   <entry>
     <title>REDFISH_MV: New floor (2024-02-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=REDFISH_MV"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=REDFISH_MV#REDFISH_MV/2024-02-01/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: floor -$7 to floor $0</summary>
+    <summary>New floor: −$7/MWh to $0/MWh</summary>
   </entry>
   <entry>
     <title>REDFISH_MV: New floor (2023-12-05)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=REDFISH_MV"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=REDFISH_MV#REDFISH_MV/2023-12-05/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: floor -$4 to floor -$7</summary>
+    <summary>New floor: −$4/MWh to −$7/MWh</summary>
   </entry>
   <entry>
     <title>REDFISH_MV: New floor (2023-09-02)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=REDFISH_MV"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=REDFISH_MV#REDFISH_MV/2023-09-02/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: floor -$1 to floor -$4</summary>
+    <summary>New floor: −$1/MWh to −$4/MWh</summary>
   </entry>
   <entry>
     <title>REDFISH_MV: New floor (2023-07-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=REDFISH_MV"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=REDFISH_MV#REDFISH_MV/2023-07-01/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: floor -$2 to floor -$1</summary>
+    <summary>New floor: −$2/MWh to −$1/MWh</summary>
   </entry>
   <entry>
     <title>REDFISH_MV: Back to an earlier floor (2023-04-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=REDFISH_MV"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=REDFISH_MV#REDFISH_MV/2023-04-01/renew_floor_back</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Back to an earlier floor: floor -$4 to floor -$2</summary>
+    <summary>Back to an earlier floor: −$4/MWh to −$2/MWh</summary>
   </entry>
   <entry>
     <title>REDFISH_MV: Episode (2023-03-13)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=REDFISH_MV"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=REDFISH_MV#REDFISH_MV/2023-03-13/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Episode: floor -$4 to -$25 for the episode for 2 day(s)</summary>
+    <summary>Episode: floor −$4/MWh, briefly −$25/MWh, for 2 days</summary>
   </entry>
   <entry>
     <title>REDFISH_MV: New floor (2023-03-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=REDFISH_MV"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=REDFISH_MV#REDFISH_MV/2023-03-01/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: floor -$1 to floor -$4</summary>
+    <summary>New floor: −$1/MWh to −$4/MWh</summary>
   </entry>
   <entry>
     <title>REDFISH_MV: New floor (2023-01-04)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=REDFISH_MV"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=REDFISH_MV#REDFISH_MV/2023-01-04/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: floor -$2 to floor -$1</summary>
+    <summary>New floor: −$2/MWh to −$1/MWh</summary>
   </entry>
   <entry>
     <title>REDFISH_MV: New floor (2022-10-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=REDFISH_MV"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=REDFISH_MV#REDFISH_MV/2022-10-01/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: floor -$1 to floor -$2</summary>
+    <summary>New floor: −$1/MWh to −$2/MWh</summary>
   </entry>
   <entry>
     <title>REDFISH_MV: New floor (2022-08-02)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=REDFISH_MV"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=REDFISH_MV#REDFISH_MV/2022-08-02/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: floor -$12 to floor -$1</summary>
+    <summary>New floor: −$12/MWh to −$1/MWh</summary>
   </entry>
   <entry>
     <title>REDFISH_MV: New floor (2022-07-07)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=REDFISH_MV"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=REDFISH_MV#REDFISH_MV/2022-07-07/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: floor -$25 to floor -$12</summary>
+    <summary>New floor: −$25/MWh to −$12/MWh</summary>
   </entry>
   <entry>
     <title>REDFISH_MV: New floor (2022-06-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=REDFISH_MV"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=REDFISH_MV#REDFISH_MV/2022-06-01/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: floor -$35 to floor -$25</summary>
+    <summary>New floor: −$35/MWh to −$25/MWh</summary>
   </entry>
   <entry>
     <title>REDFISH_MV: New floor (2022-05-03)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=REDFISH_MV"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=REDFISH_MV#REDFISH_MV/2022-05-03/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: floor -$33 to floor -$35</summary>
+    <summary>New floor: −$33/MWh to −$35/MWh</summary>
   </entry>
   <entry>
     <title>REDFISH_MV: New floor (2022-03-09)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=REDFISH_MV"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=REDFISH_MV#REDFISH_MV/2022-03-09/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: floor -$38 to floor -$33</summary>
+    <summary>New floor: −$38/MWh to −$33/MWh</summary>
   </entry>
   <entry>
     <title>REDFISH_MV: New floor (2021-08-04)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=REDFISH_MV"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=REDFISH_MV#REDFISH_MV/2021-08-04/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: floor -$37 to floor -$38</summary>
+    <summary>New floor: −$37/MWh to −$38/MWh</summary>
   </entry>
   <entry>
     <title>REDFISH_MV: New floor (2021-05-05)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=REDFISH_MV"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=REDFISH_MV#REDFISH_MV/2021-05-05/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: floor -$35 to floor -$37</summary>
+    <summary>New floor: −$35/MWh to −$37/MWh</summary>
   </entry>
   <entry>
     <title>REDFISH_MV: New floor (2021-02-03)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=REDFISH_MV"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=REDFISH_MV#REDFISH_MV/2021-02-03/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: floor -$34 to floor -$35</summary>
+    <summary>New floor: −$34/MWh to −$35/MWh</summary>
   </entry>
   <entry>
     <title>REDFISH_MV: New floor (2019-10-16)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=REDFISH_MV"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=REDFISH_MV#REDFISH_MV/2019-10-16/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: floor -$32 to floor -$34</summary>
+    <summary>New floor: −$32/MWh to −$34/MWh</summary>
   </entry>
 </feed>
