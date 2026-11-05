@@ -272,7 +272,7 @@ function drawPTC() {
   const [lo, hi] = R.ptc_band;
   const lev = R.events.filter((e) => e.ptc === "level").length, exp = R.events.filter((e) => e.ptc === "expired").length;
   $("ptc-note").textContent = `${T.months[0]} to ${T.months[T.months.length - 1]}`;
-  window.CX.setNote($("ptc-text"), "The typical wind and solar floor offer each month. A floor between about −$60 and −$15 prices in a per-MWh credit such as the PTC.", `A floor between ${fmt$0(lo)} and ${fmt$0(hi)} prices a per-MWh credit such as the PTC: the unit would rather be paid less than not produce. Each line is the median, across units, of each unit's typical floor that month. ` +
+  window.CX.setNote($("ptc-text"), "The typical wind and solar floor offer each month. The change log counts any floor between −$60 and −$15 as pricing in a per-MWh credit such as the PTC; that band is wider than the −$50 to −$25 where most such bids sit, so small moves at its edges are still caught.", `A floor between ${fmt$0(lo)} and ${fmt$0(hi)} prices a per-MWh credit such as the PTC: the unit would rather be paid less than not produce. Each line is the median, across units, of each unit's typical floor that month. ` +
     `Few units move their floor on the day the yearly inflation adjustment takes effect, but the median drifts lower year by year. In the change log, ${fmt0(lev)} changes are tagged PTC level (a move inside the band of $5 or less) and ${fmt0(exp)} PTC may have expired (the floor left the band for about $0 and never came back).`);
   const ts = T.months.map((m) => new Date(m + "-15T12:00:00"));
   const w = Math.max(280, el.clientWidth || 600), H = 220, m = { t: 18, r: 16, b: 26, l: 56 };

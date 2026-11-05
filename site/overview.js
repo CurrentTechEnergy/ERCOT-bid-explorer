@@ -698,7 +698,7 @@ function drawUnits() {
   el.innerHTML = html + "</tbody></table></div>";
   $("units-foot").innerHTML = (total > rows.length ? `Showing ${rows.length} of ${total} units. <button type="button" id="units-all" class="linkish">Show all</button>` : `Units: ${total}.`) +
     ` Groups are from the full 60-day data. Which units turned off on the day, and at what loss, is on <a href="commitment.html#date=${S.date}">Turn-ons and Turn-offs</a>.` +
-    ` Profit is an estimate on generic costs (coal at $2/MMBtu, so lignite at its own mine reads low)${S.rtNodes ? "" : "; real-time node prices for this day are not in yet, so the real-time part settles at system lambda"}.`;
+    ` Profit is an estimate: fuel at each unit's measured heat rate and its own gas hub price or its plant's coal price, with technology averages where a unit has none. It is not the unit's own accounts${S.rtNodes ? "" : "; real-time node prices for this day are not in yet, so the real-time part settles at system lambda"}.`;
   $("units-note").textContent = `${S.date} · ${Object.keys(S.a60.units).length} thermal units`;
   const b = $("units-all");
   if (b) b.onclick = () => { S.unitShowAll = true; drawUnits(); };

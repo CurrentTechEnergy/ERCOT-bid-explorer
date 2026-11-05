@@ -181,7 +181,11 @@ def _ev(unit, date, kind, tech, title, major, before=None, after=None, value=Non
 
 
 def _usd(x):
-    return f"-${abs(x):,.0f}" if x < 0 else f"${x:,.0f}"
+    return f"\u2212${abs(x):,.0f}" if x < 0 else f"${x:,.0f}"
+
+
+def _days(n):
+    return f"{n} day" if n == 1 else f"{n} days"
 
 
 # ------------------------------------------------------------------ sources ---
@@ -404,17 +408,36 @@ def run_price_events(uh, tech_of):
 
 def _regime(r):
     if not r:
-        return "?"
+        return "an unknown offer"
     k, v = r.get("k"), r.get("v")
     if k == "f":
-        return f"floor {_usd(v)}" if v is not None else "floor"
+        return f"a floor of {_usd(v)}/MWh" if v is not None else "a fixed floor"
     if k == "x":
-        return "formula"
-    if k == "m":
-        return "moving within the day"
+        return "a price formula"
+    if k in ("m", "v"):
+        return "prices that move within the day"
     if k == "peak":
-        return f"{_usd(v)} for the episode" if v is not None else "episode"
+        return f"{_usd(v)}/MWh at the episode's peak" if v is not None else "an episode"
     return str(k)
+
+
+def _renew_title(kind, before, after):
+    """'New floor: −$38/MWh to −$39/MWh', 'Stopped moving within the day: now a floor of $0/MWh'."""
+    bk, ak = (before or {}).get("k"), (after or {}).get("k")
+    bv, av = (before or {}).get("v"), (after or {}).get("v")
+    name = RENEW_KINDS[kind]
+    if bk == "f" and ak == "f" and bv is not None and av is not None:
+        return f"{name}: {_usd(bv)}/MWh to {_usd(av)}/MWh"
+    if bk == "f" and ak == "peak" and bv is not None and av is not None:
+        return f"{name}: floor {_usd(bv)}/MWh, briefly {_usd(av)}/MWh"
+    rb, ra = _regime(before), _regime(after)
+    if kind in ("moving_on", "formula_on"):
+        return f"{name} (was {rb})"
+    if kind in ("moving_off", "formula_off"):
+        return f"{name}: now {ra}"
+    if rb == ra:
+        return name
+    return f"{name}: from {rb} to {ra}"
 
 
 def renew_events(rc):
@@ -426,9 +449,9 @@ def renew_events(rc):
         av = after.get("v") if isinstance(after, dict) else None
         big = bv is not None and av is not None and abs(av - bv) >= 10
         major = (not e.get("toggler")) and (kind in ("formula_on", "formula_off", "terms") or (kind in ("floor_new", "floor_back") and big))
-        title = f"{RENEW_KINDS[kind]}: {_regime(before)} to {_regime(after)}"
+        title = _renew_title(kind, before, after)
         if kind == "episode" and e.get("days"):
-            title += f" for {e['days']} day(s)"
+            title += f", for {_days(e['days'])}"
         out.append(_ev(e["plant"], e["date"], f"renew_{kind}", e["tech"], title, major,
                        before=bv, after=av, value=e.get("days"), field="offer $/MWh; value: days",
                        units=e.get("units") or [], toggler=bool(e.get("toggler"))))
@@ -447,7 +470,7 @@ def dam_events(do):
                 title += f" ({_usd(e['mk_before'])} to {_usd(e['mk_after'])} against the fuel-cost line)"
             field = "minimum-energy offer $/MWh"
         elif kind == "priced_out":
-            title = f"{DAM_KINDS[kind]}: minimum energy at {_usd(a)}/MWh against a usual {_usd(b)} for {e.get('days')} day(s)"
+            title = f"{DAM_KINDS[kind]}: minimum energy at {_usd(a)}/MWh against a usual {_usd(b)}/MWh, for {_days(e.get('days'))}"
             field = "minimum-energy offer $/MWh; value: days"
         elif kind == "start_change":
             title = f"{DAM_KINDS[kind]}: hot start {_usd(b)} to {_usd(a)}"

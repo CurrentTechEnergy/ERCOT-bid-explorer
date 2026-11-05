@@ -174,7 +174,7 @@
       <p class="step-num">STEP 3</p>
       <h2>What SCED can actually move</h2>
       <p>SCED reads the curve from LSL up. Drag the price: the dot is where SCED would put the unit at that price. It follows the curve above LSL and stops at LSL however low the price goes.</p>
-      <p>In each five-minute run SCED also respects ramp limits, so the real range is a little narrower than LSL to HSL: <strong>LDL</strong> and <strong>HDL</strong> (low and high dispatch limits). The chart below shows the whole day: from HE 10 to HE 17 the price was negative and Rio Nogales sat at its minimum output, because SCED had no lower point to send it to.</p>
+      <p>In each five-minute run SCED also respects ramp limits, so the real range is a little narrower than LSL to HSL: <strong>LDL</strong> and <strong>HDL</strong> (low and high dispatch limits). The chart below shows the whole day: the price was negative from HE 9 to HE 17. Rio Nogales ramped down through HE 9 and sat at its minimum output from HE 10 to HE 17, because SCED had no lower point to send it to.</p>
       <p class="key">Price can only move an online unit between its LSL and HSL. When the price falls, SCED backs each unit down toward LSL until it reaches MW the unit offered at or below that price. So at negative prices, the thermal MW still running above LSL are only those offered at or below the negative price (or held up for a few minutes by ramp limits). Everything else is minimum output that SCED cannot touch.</p>
     </div>
     <div class="fig">
@@ -233,7 +233,7 @@
         <li><strong>Offer curves (Real-time offers page):</strong> "From LSL" is the default. "As ERCOT prices it" shows the curves SCED saw, with minimum output at the placeholder price.</li>
         <li><strong>Marginal generation by price and Thermal offers and fuel prices (Real-time offers page):</strong> count only MW above LSL, since only those can be marginal.</li>
         <li><strong>Unit metrics:</strong> "≤ $0 as submitted" is a share of the range from LSL to HSL. "First offer price above $0", implied heat rate and the bidding-change signals read the curve from LSL up.</li>
-        <li><strong>Charts that keep LSL on purpose:</strong> the Floor chart's "≤ −$20, as used", "≤ $0 as used", thermal output in cheap hours and Stay-on. These are about who is running, so minimum output belongs in them.</li>
+        <li><strong>Charts that keep LSL on purpose:</strong> Thermal output in cheap hours, the Daily minimum floor and What the decision cost, all on Turn-ons and Turn-offs. These are about who is running, so minimum output belongs in them.</li>
         <li><strong>2-day days</strong> (the most recent two months) have no unit limits, so they show curves as ERCOT prices them and the "From LSL" button is off. The steps at −$50 and −$20 in their thermal curve are minimum output, and some minimum output is also priced between $0 and about $25.</li>
       </ul>
       <p class="see"><a id="s6-link" href="beyond.html#p=curves-panel">Open this hour on the Real-time offers page →</a></p>
