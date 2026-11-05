@@ -184,7 +184,7 @@ function drawHOD() {
   g.append("rect").attr("width", w).attr("height", h).attr("fill", "transparent")
     .on("pointermove", (ev) => {
       const he = Math.max(1, Math.min(24, Math.round(x.invert(d3.pointer(ev)[0]))));
-      showTip(ev, `<h4>Hour ending ${he}</h4>` + tipRows(ys.slice().reverse().map((k) => [yc(k), yrLabel(k), money(R[k][S.hod][he - 1])])));
+      showTip(ev, `<h4>HE ${he}</h4>` + tipRows(ys.slice().reverse().map((k) => [yc(k), yrLabel(k), money(R[k][S.hod][he - 1])])));
     })
     .on("pointerleave", hideTip);
   setCSV(el, ["hour_ending", ...ys.map(String)], d3.range(24).map((i) => [i + 1, ...ys.map((k) => R[k][S.hod][i])]), `Price by hour of day ${S.hod.slice(4)}`);

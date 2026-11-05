@@ -60,7 +60,7 @@ function drawDaily() {
     .on("pointermove", (ev) => {
       const d = rows[bis(rows, x.invert(d3.pointer(ev)[0]))];
       vl.attr("x1", x(d.d)).attr("x2", x(d.d)).attr("visibility", "visible");
-      const sub = n > 1 ? `${n}-day average to this day; this day's low was HE${d.he}` : `Lowest hour: HE${d.he}`;
+      const sub = n > 1 ? `${n}-day average to this day; this day's low was HE ${d.he}` : `Lowest hour: HE ${d.he}`;
       showTip(ev, `<h4>${d3.timeFormat("%a %b %-d, %Y")(d.d)}</h4><p class="note">${sub}</p>` +
         tipRows([...T].reverse().map((t) => [css(t.color), t.label, gw(d[t.id])]).concat([[null, "Total", gw(d.total), true]])));
     })
@@ -121,7 +121,7 @@ function drawHours() {
   const cells = ys.flatMap((yr) => { const s = D.filter((d) => d.y === yr), c = d3.rollup(s, (v) => v.length, (d) => d.he); return d3.range(1, 25).map((he) => ({ yr, he, n: c.get(he) || 0, N: s.length, s: (c.get(he) || 0) / s.length })); });
   const col = d3.scaleSequential(d3.interpolateRgb(css("--seq-lo"), css("--seq-hi"))).domain([0, 0.3]).clamp(true);
   g.selectAll("rect").data(cells).join("rect").attr("x", (d) => x(d.he)).attr("y", (d) => y(d.yr)).attr("width", x.bandwidth()).attr("height", y.bandwidth()).attr("rx", 2).attr("fill", (d) => col(d.s))
-    .on("pointermove", (ev, d) => showTip(ev, `<h4>${yName(d.yr)}, hour ending ${d.he}</h4>${d.n} of ${d.N} days (${Math.round(d.s * 100)}%) had their lowest floor in this hour`)).on("pointerleave", hideTip);
+    .on("pointermove", (ev, d) => showTip(ev, `<h4>${yName(d.yr)}, HE ${d.he}</h4>${d.n} of ${d.N} days (${Math.round(d.s * 100)}%) had their lowest floor in this hour`)).on("pointerleave", hideTip);
   g.append("g").attr("class", "axis").call(d3.axisLeft(y).tickFormat(yName).tickSize(0)).call((a) => a.select(".domain").remove());
   g.append("g").attr("class", "axis").attr("transform", `translate(0,${h})`).call(d3.axisBottom(x).tickSize(0).tickFormat((v) => (w < 520 && v % 3 ? "" : v))).call((a) => a.select(".domain").remove());
   svg.append("text").attr("class", "axis-title").attr("x", W - m.r).attr("y", H - 4).attr("text-anchor", "end").text("Hour ending, Central");

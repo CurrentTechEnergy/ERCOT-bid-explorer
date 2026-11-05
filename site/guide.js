@@ -206,7 +206,7 @@ function drawStep5() {
   const [s0, sn, mean] = g.stretch;
   if (!r) {
     $("k5").innerHTML = "";
-    $("c5-cap").textContent = `${u.label} has no Stay-on figures for this stretch.`;
+    $("c5-cap").textContent = `${u.label} has no loss-from-staying-on figures for this stretch.`;
   } else {
     const k = [
       ["Output in the stretch", fmt0(r.mwh) + " MWh"],

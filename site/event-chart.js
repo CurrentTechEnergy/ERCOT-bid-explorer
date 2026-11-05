@@ -228,7 +228,7 @@ function draw(el, rows, spec) {
       const j = Math.max(0, Math.min(rows.length - 1, d3.bisector((r) => r.t).center(rows, spec.daily ? t : new Date(t.getTime() - 18e5))));
       const r = rows[j];
       cross.forEach((c) => c.attr("x1", tx(r)).attr("x2", tx(r)).style("display", null));
-      const head = spec.daily ? `${fmtDay(parseDay(r.d))}, daily mean` : `${fmtDay(parseDay(r.d))}, hour ending ${r.h + 1}`;
+      const head = spec.daily ? `${fmtDay(parseDay(r.d))}, daily mean` : `${fmtDay(parseDay(r.d))}, HE ${r.h + 1}`;
       showTip(ev, `<h4>${head}</h4><table>${all.map((s) => `<tr><td><span class="sw" style="background:${css(s.c)};width:9px;height:9px"></span> ${esc(s.l)}</td><td class="n">${fmtV(s, r.v[s.k])}</td></tr>`).join("")}</table>`);
     })
     .on("mouseleave", () => { cross.forEach((c) => c.style("display", "none")); hideTip(); });

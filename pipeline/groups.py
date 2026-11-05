@@ -56,10 +56,10 @@ OUT_MIN_H = 2        # offline hours an off spell needs (was 4 to Nov 2026): sho
 OUT_ANY_TECHS = ("coal",)     # any outage hour in a non-running spell makes it an outage
 GROUPS = [
     ["never", "Always on when available", "no shutdown on price in the period; off only for outages"],
-    ["multiday", "Multi-day: off a day or more", "shortest off spell a day or more"],
-    ["daily1", "Daily, under 1 shutdown a week", "at least two off spells under 24 h, fewer than one shutdown a week"],
-    ["daily2", "Daily, 1–2 a week", "one to two shutdowns a week"],
-    ["daily3", "Daily, over 2 a week", "more than two shutdowns a week"],
+    ["multiday", "Off for days at a time", "shortest off spell a day or more"],
+    ["daily1", "Daily, under once a week", "at least two off spells under 24 h, fewer than one shutdown a week"],
+    ["daily2", "Daily, 1 to 2 times a week", "one to two shutdowns a week"],
+    ["daily3", "Daily, over twice a week", "more than two shutdowns a week"],
     ["never_on", "Never on", "no running hour in the period"],
 ]
 NEVER_ON_DAYS = 120

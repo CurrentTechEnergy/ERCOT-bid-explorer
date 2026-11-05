@@ -22,11 +22,11 @@ const addDays = (d, n) => { const t = new Date(d + "T12:00:00"); t.setDate(t.get
 const GROUP_COLORS = { never: "--g1", multiday: "--g3", daily1: "--g4", daily2: "--g5", daily3: "--g6", peakers: "--c2", never_on: "--c-other", ungrouped: "--c-other" };
 const GROUP_NOTES = {
   never: "off only for outages, never on price, plus nuclear", multiday: "shortest time off is a day or more",
-  daily1: "turns off within a day, under once a week", daily2: "turns off within a day, 1 to 2 a week", daily3: "turns off within a day, over 2 a week",
+  daily1: "turns off within a day, under once a week", daily2: "turns off within a day, 1 to 2 times a week", daily3: "turns off within a day, over twice a week",
   peakers: "run like peakers: online under 30% of available hours, at most 16 hours a day when on",
   never_on: "no running hour in the 60-day history (mothballed or on a long outage)", ungrouped: "no hourly history yet",
 };
-const GROUP_SHORT = { never: "Always on when available", multiday: "Multi-day", daily1: "Daily, under once a week", daily2: "Daily, 1 to 2 a week", daily3: "Daily, over 2 a week", peakers: "Peakers", never_on: "Never on", ungrouped: "Not yet grouped" };
+const GROUP_SHORT = { never: "Always on when available", multiday: "Off for days at a time", daily1: "Daily, under once a week", daily2: "Daily, 1 to 2 times a week", daily3: "Daily, over twice a week", peakers: "Peakers", never_on: "Never on", ungrouped: "Not yet grouped" };
 // "peakers" is not a timescale group: the units groups_60d flags as peakers by how they run, taken out of
 // their groups wherever thermal output is shown by group
 const GROUPS = ["never", "multiday", "daily1", "daily2", "daily3", "peakers", "never_on", "ungrouped"];

@@ -657,5 +657,21 @@ const peakerNote = (G) => { const p = G?.peaker || { share: 0.3, run_h: 16 };
   return `Runs like a peaker: online under ${Math.round(p.share * 100)}% of available hours, at most ${+p.run_h} hours a day when on`; };
 const isPeaker = (G, name) => !!G?.units?.[name]?.[9];
 const peakerTag = (G, name) => (isPeaker(G, name) ? ` <span class="tag" title="${peakerNote(G)}">Peaker</span>` : "");
-window.CX = { dayPicker, dayLabel, latest60, pickDay, isPeaker, peakerTag, peakerNote, onOffDot, onOffLegend, rucDays, rucRing, rucLegend, rucNote, fromStart, SITE_START, setNote, getJSON, tryJSON, showTip, hideTip, clearPins, setCSV, readHash, writeHash, init, panelFromLink, css, esc, tickFormat, fmtKind, axisFmt, unitIndex, findUnits, matchedOn, drawCurtailDay };
+// Numbers that are compared share one unit and one number of decimals (site writing standard):
+// fmtPair([35.2, 21, 53.4], "$/MWh") -> ["$35/MWh", "$21/MWh", "$53/MWh"]; fmtPair([0.377, 0.12], "%") -> ["38%", "12%"].
+// unit: "$/MWh" | "$/MMBtu" | "$/MW" | "$" | "%" (values are fractions) | any other suffix ("GW", "MW", "GWh", "TWh", "h").
+// Decimals: opts.dp, else 0 when the largest magnitude is 10 or more, otherwise 1. Negatives get a true minus sign.
+function fmtPair(vals, unit, opts = {}) {
+  const pct = unit === "%", xs = vals.map((v) => (v == null || isNaN(v) ? null : pct ? v * 100 : +v));
+  const big = d3.max(xs, (v) => (v == null ? null : Math.abs(v))) || 0;
+  const dp = opts.dp ?? (big >= 10 ? 0 : 1), num = d3.format(`,.${dp}f`);
+  return xs.map((v) => {
+    if (v == null) return "–";
+    const n = num(Math.abs(v)), sign = v < 0 && +n.replace(/,/g, "") !== 0 ? "−" : "";
+    if (unit.startsWith("$")) return `${sign}$${n}${unit.slice(1)}`;
+    if (pct) return `${sign}${n}%`;
+    return `${sign}${n}${unit ? ` ${unit}` : ""}`;
+  });
+}
+window.CX = { fmtPair, dayPicker, dayLabel, latest60, pickDay, isPeaker, peakerTag, peakerNote, onOffDot, onOffLegend, rucDays, rucRing, rucLegend, rucNote, fromStart, SITE_START, setNote, getJSON, tryJSON, showTip, hideTip, clearPins, setCSV, readHash, writeHash, init, panelFromLink, css, esc, tickFormat, fmtKind, axisFmt, unitIndex, findUnits, matchedOn, drawCurtailDay };
 })();
