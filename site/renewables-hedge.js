@@ -105,7 +105,9 @@ function drawKpis() {
     [fmt0(n("revealed")), "Revealed"], [fmt0(n("unclear")), "Location unclear"], [fmt0(n("partial")), "Partial"],
     [fmt0(standing), "Formula on 30+ days"],
   ].map(([v, k]) => `<div class="kpi"><span class="v">${v}</span><span class="k">${k}</span></div>`).join("");
-  window.CX.setNote($("kpi-note"), "What the scan found: units whose offers follow a day-ahead price formula, and how consistently.", `A formula found on many days is a standing bidding rule; one found only on a few high-price days is a policy the operator switched on. DA hub and load zone prices cover ${D.hub_days.length ? `${D.hub_days[0]} to ${D.hub_days[D.hub_days.length - 1]}` : "no days yet"}; outside that range only the unit's own node can be tested.`);
+  const nF = n("revealed") + n("unclear") + n("partial");
+  window.CX.setNote($("kpi-note"), `Which wind and solar units bid as if they hold a fixed-price hedge. A unit that has sold its output forward tends to offer in real time at a formula of the day-ahead price (share × DA price − a constant, roughly its strike less any tax credit), and keeps producing through negative prices for as long as the formula says so: these are the units least likely to curtail. ` +
+    `Of ${fmt0(us.length)} units scanned, ${fmt0(nF)} follow such a formula: ${fmt0(n("revealed"))} clearly at an identifiable settlement point ("Revealed"), ${fmt0(n("unclear"))} clearly but at an unclear point, and ${fmt0(n("partial"))} on only part of their hours. ${fmt0(standing)} have followed it for 30 days or more, a standing rule rather than a one-off.`, `A formula found on many days is a standing bidding rule; one found only on a few high-price days is a policy the operator switched on. DA hub and load zone prices cover ${D.hub_days.length ? `${D.hub_days[0]} to ${D.hub_days[D.hub_days.length - 1]}` : "no days yet"}; outside that range only the unit's own node can be tested.`);
   $("credit-v").textContent = fmt$0(D.credit);
   $("tier-legend").innerHTML = Object.entries(TIER).map(([, t]) => `<span class="has-tip" data-tip="${esc(t.tip)}"><span class="sw" style="background:var(${t.color})"></span>${t.label}</span>`).join("");
   $("tier-legend").querySelectorAll("[data-tip]").forEach((el) => {
@@ -272,7 +274,11 @@ function drawPTC() {
   const [lo, hi] = R.ptc_band;
   const lev = R.events.filter((e) => e.ptc === "level").length, exp = R.events.filter((e) => e.ptc === "expired").length;
   $("ptc-note").textContent = `${T.months[0]} to ${T.months[T.months.length - 1]}`;
-  window.CX.setNote($("ptc-text"), "The typical wind and solar floor offer each month. The change log counts any floor between −$60 and −$15 as pricing in a per-MWh credit such as the PTC; that band is wider than the −$50 to −$25 where most such bids sit, so small moves at its edges are still caught.", `A floor between ${fmt$0(lo)} and ${fmt$0(hi)} prices a per-MWh credit such as the PTC: the unit would rather be paid less than not produce. Each line is the median, across units, of each unit's typical floor that month. ` +
+  const ends = (id) => { const v = T[id].median, i0 = v.findIndex((x) => x != null), i1 = v.length - 1 - [...v].reverse().findIndex((x) => x != null); return i0 >= 0 ? [i0, i1] : null; };
+  const mon = (i) => d3.timeFormat("%b %Y")(new Date(T.months[i] + "-15T12:00:00"));
+  const drift = PTC_SERIES.map((p) => { const e = ends(p.id); return e ? `${p.label.toLowerCase()}'s from ${fmt$0(T[p.id].median[e[0]])}/MWh in ${mon(e[0])} to ${fmt$0(T[p.id].median[e[1]])}/MWh in ${mon(e[1])}` : null; }).filter(Boolean);
+  window.CX.setNote($("ptc-text"), `The typical wind and solar floor offer each month, among units bidding in the tax-credit band (${fmt$0(lo)} to ${fmt$0(hi)}/MWh, wider than the −$50 to −$25 where most such bids sit, so small moves at its edges are still caught).` +
+    (drift.length ? ` The median floor moved: ${drift.join("; ")}. The credit is indexed to inflation, and the bids follow it.` : ""), `A floor between ${fmt$0(lo)} and ${fmt$0(hi)} prices a per-MWh credit such as the PTC: the unit would rather be paid less than not produce. Each line is the median, across units, of each unit's typical floor that month. ` +
     `Few units move their floor on the day the yearly inflation adjustment takes effect, but the median drifts lower year by year. In the change log, ${fmt0(lev)} changes are tagged PTC level (a move inside the band of $5 or less) and ${fmt0(exp)} PTC may have expired (the floor left the band for about $0 and never came back).`);
   const ts = T.months.map((m) => new Date(m + "-15T12:00:00"));
   const w = Math.max(280, el.clientWidth || 600), H = 220, m = { t: 18, r: 16, b: 26, l: 56 };

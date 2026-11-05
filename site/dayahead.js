@@ -33,10 +33,10 @@ function drawKPIs() {
   const months = Math.max(1, d3.timeMonth.count(parseDate(D.first), parseDate(D.last)));
   const k = [
     [`${fmt0(med(ci.map((i) => F.trains_aw[i])))} of ${fmt0(med(ci.map((i) => F.trains_filed[i])))}`, "combined cycle trains awarded through the cheap hours on a median cheap day"],
-    [fmtPct(med(F.below_mw_share)), "of three-part CC and gas steam minimum output offered below its fuel cost on a median day"],
+    [fmtPct(med(F.below_mw_share)), "of the minimum output filed by combined cycles and gas steam units was offered below its fuel cost on a median day"],
     // the pooled medians the offer-minus-fuel chart marks, so the KPI and the chart give one number
-    D.mk_hist ? [`${fmt$(D.mk_hist.med_aw)} / ${fmt$(D.mk_hist.med_no)}`, "median CC train offer minus fuel cost over every cheap train-day ($/MWh), DAM award through the cheap hours / none"]
-      : [`${fmt$(med(F.mk_aw))} / ${fmt$(med(F.mk_no))}`, "median CC train offer minus fuel cost on cheap days ($/MWh), DAM award through the cheap hours / none"],
+    [`${fmt$(D.mk_hist ? D.mk_hist.med_aw : med(F.mk_aw))}/MWh`, "median combined cycle offer minus fuel cost on cheap days, trains awarded through the cheap hours"],
+    [`${fmt$(D.mk_hist ? D.mk_hist.med_no : med(F.mk_no))}/MWh`, "median combined cycle offer minus fuel cost on cheap days, trains not awarded"],
     [fmt0(major), `major offer changes in ${months} months (${fmt0(D.events.length)} in all)`],
   ];
   $("kpis").innerHTML = k.map(([v, t]) => `<div class="kpi"><span class="v">${v}</span><span class="k">${t}</span></div>`).join("");
@@ -50,8 +50,9 @@ function drawLead() {
     return { i, d: parseDate(D.dates[i]), n, z, m: n - z - h, h, aw: F.trains_aw[i] };
   });
   const p = D.params || {}, lo = p.zero_usd ?? 1, hi = p.high_usd ?? 20;
-  $("lead-note").textContent = `Combined cycle trains with a three-part offer on each day with cheap hours, placed by their lowest minimum-energy offer across configurations over the cheap hours. ` +
-    `The dots count trains with a DAM award through the cheap hours. Gaps are days with no cheap hours (${D.cheap.filter((c) => !c).length} of ${D.dates.length}), not missing data.`;
+  $("lead-note").textContent = `On each cheap day, how many combined cycle trains offered to ride through at ${fmt$s(lo)}/MWh or less (green), priced themselves out at ${fmt$s(hi)}/MWh or more (red), or sat between, placed by their lowest minimum-energy offer across configurations over the cheap hours. The dot is how many the DAM awarded through the cheap hours. The green bar is the fleet that has decided to stay on whatever the price; the dot tracking it is the DAM agreeing. ` +
+    (rows.length ? `On the median cheap day ${fmt0(d3.median(rows, (r) => r.n))} trains filed, ${fmt0(d3.median(rows, (r) => r.z))} offered ${fmt$s(lo)}/MWh or less and ${fmt0(d3.median(rows, (r) => r.aw))} were awarded through the cheap hours. ` : "") +
+    `Gaps are days with no cheap hours (${D.cheap.filter((c) => !c).length} of ${D.dates.length}), not missing data.`;
   const series = [{ k: "z", color: "--c3", label: `Lowest offer ${fmt$s(lo)} or less` }, { k: "m", color: "--c-other", label: `${fmt$s(lo)} to ${fmt$s(hi)}` }, { k: "h", color: "--c2", label: `${fmt$s(hi)} or more` }];
   staticLegend($("lead-legend"), [...series, { color: "--ink", label: "Awarded through the cheap hours", dot: true }]);
   if (!rows.length) return emptyMsg(el, "No cheap days loaded.");
@@ -117,8 +118,9 @@ function drawMarkup() {
   const sets = [{ k: "aw", med: "med_aw", color: "--c3", label: "DAM award through the cheap hours" }, { k: "no", med: "med_no", color: "--c2", label: "No DAM award" }];
   if (!Hm || !Hm.edges) { $("mk-legend").innerHTML = ""; return emptyMsg(el, "The distribution appears after the next data update."); }
   const e = Hm.edges, nb = e.length - 1, tot = Object.fromEntries(sets.map((s) => [s.k, d3.sum(Hm[s.k])]));
-  staticLegend($("mk-legend"), [...sets.map((s) => ({ ...s, label: `${s.label} (${fmt0(tot[s.k])} train-days, median ${fmt$s(Math.round(Hm[s.med]))})` })),
+  staticLegend($("mk-legend"), [...sets.map((s) => ({ ...s, label: `${s.label} (${fmt0(tot[s.k])} train-days, median ${fmt$(Hm[s.med])}/MWh)` })),
     { color: "--ink-2", label: "Offer equals fuel cost", line: true, dash: true }]);
+  $("mk-sum").textContent = `Trains that were awarded typically offered ${fmt$(Math.abs(Hm.med_aw))}/MWh ${Hm.med_aw < 0 ? "below" : "above"} fuel cost; those left out typically offered ${fmt$(Math.abs(Hm.med_no))}/MWh ${Hm.med_no < 0 ? "below" : "above"} it. The award follows the offer, not the fuel.`;
   if (!tot.aw && !tot.no) return emptyMsg(el, "No cheap days loaded.");
   const share = (s, k) => (tot[s.k] ? Hm[s.k][k] / tot[s.k] : 0);
   const w = Math.max(280, el.clientWidth || 500), H = 280, m = { t: 22, r: 12, b: 40, l: 44 };
@@ -166,7 +168,7 @@ function drawBelowFuel() {
     .map((r) => ({ name: r[c.plant], unit: r[c.unit] || r[c.plant], b: r[c.share_below_fuel], aw: r[c.share_awarded], days: r[c.cheap_days_filed],
       hub: r[c.hub], g: (G.units[r[c.plant]] || [])[1], mw: (G.units[r[c.plant]] || [])[2] || 0 }))
     .filter((r) => order.includes(r.g));
-  const legend = [{ color: "--c3", label: "DAM award through the cheap hours on most cheap days", dot: true }, { color: "--c2", label: "On fewer than half", dot: true }];
+  const legend = [{ color: "--c3", label: "Awarded through the cheap hours on half or more of its cheap days", dot: true }, { color: "--c2", label: "On fewer than half", dot: true }];
   staticLegend($("bf-legend"), legend);
   $("bf-legend").insertAdjacentHTML("beforeend", `<span><span class="sw" style="border:1.5px solid var(--ink);border-radius:50%;width:8px;height:8px;background:none"></span>Priced off Waha gas</span>`);
   if (!rows.length) return emptyMsg(el, "No combined cycle trains with three-part offers on cheap days.");
@@ -207,9 +209,13 @@ function drawBelowFuel() {
     if (rs.length < 2) return;
     const x0 = d3.max(rs, (r) => x(r.b) + Math.max(3, rad(r.mw))) + 10, y0 = band(i) + rowH / 2;
     svg.append("text").attr("class", "axis-title").attr("x", x0).attr("y", y0 + 4).style("fill", css("--ink-2"))
-      .text(`← awarded without bidding below fuel cost: ${rs.filter((r) => r.hub === "waha").length ? "Waha gas or a high node price" : "a high node price"}`);
+      .text(`← awarded without underbidding fuel: ${rs.filter((r) => r.hub === "waha").length ? "cheap Waha gas or a high node price did it" : "a high node price did it"}`);
   });
   el.replaceChildren(svg.node());
+  // the rows in one sentence: who makes a habit of it
+  const sumOf = (g) => { const rs = rows.filter((r) => r.g === g), most = rs.filter((r) => r.b > BF_MOST); return { n: rs.length, k: most.length, gw: d3.sum(most, (r) => r.mw) / 1e3 }; };
+  const a0 = sumOf("never"), d3x = sumOf("daily2"), d4 = sumOf("daily3");
+  $("bf-sum").textContent = a0.n ? `${a0.k} of ${a0.n} always-on trains (${d3.format(".1f")(a0.gw)} GW) offered below fuel cost on over ${fmtPct(BF_MOST)} of their cheap days; among the trains that shut down more than once a week, ${d3x.k + d4.k} of ${d3x.n + d4.n} did.${a0.k >= 0.75 * a0.n && d3x.k + d4.k <= 0.25 * (d3x.n + d4.n) ? " Staying on is a bidding policy, not a day-by-day call." : ""}` : "";
   setCSV(el, ["train", "group", "share_below_fuel", "share_awarded", "cheap_days_filed", "mw", "gas_hub"],
     rows.map((r) => [r.name, r.g, r.b, r.aw, r.days, r.mw, r.hub]), "Below fuel cost by flexibility group");
 }
@@ -269,10 +275,10 @@ function drawRenew() {
 const KIND_COLOR = { mingen_step: "--c1", priced_out: "--c2", start_change: "--c7-soft", filing_off: "--c8", filing_on: "--c5", renew_floor: "--c3", renew_off: "--c6", renew_on: "--c4" };
 const CH = { kind: "all", tech: "all", major: false, hideRep: false, limit: 200 };
 function evText(e) {
-  if (e.kind === "mingen_step") return `${fmt$(e.before)} to ${fmt$(e.after)}/MWh${e.mk_before != null && e.mk_after != null ? ` (${fmt$(e.mk_before)} to ${fmt$(e.mk_after)} against fuel cost)` : ""}`;
+  if (e.kind === "mingen_step") return `${fmt$(e.before)} → ${fmt$(e.after)}/MWh${e.mk_before != null && e.mk_after != null ? ` (offer minus fuel cost ${fmt$(e.mk_before)} → ${fmt$(e.mk_after)}/MWh)` : ""}`;
   if (e.kind === "priced_out") return `${fmt$(e.after)}/MWh against a usual ${fmt$(e.before)} for ${e.days} day${e.days === 1 ? "" : "s"}`;
-  if (e.kind === "start_change") return `hot start ${fmt$s(Math.round(e.before))} to ${fmt$s(Math.round(e.after))}`;
-  if (e.kind === "renew_floor") return `DA floor ${fmt$(e.before)} to ${fmt$(e.after)}/MWh`;
+  if (e.kind === "start_change") return `hot start ${fmt$s(Math.round(e.before))} → ${fmt$s(Math.round(e.after))} per start`;
+  if (e.kind === "renew_floor") return `DA floor ${fmt$(e.before)} → ${fmt$(e.after)}/MWh`;
   return `${e.before} to ${e.after}`;
 }
 // the Unit page a change opens: the train for a combined cycle, else its (first) unit
@@ -352,7 +358,8 @@ async function boot() {
   const D = S.D;
   if (!D || !D.renew) { $("status").textContent = "Day-ahead offer data not loaded yet."; return; }
   const nCheap = D.cheap.filter(Boolean).length;
-  $("status").textContent = `60-day DAM disclosure · ${D.first} to ${D.last} · ${nCheap} days with cheap hours`;
+  const fdd = (d) => d3.timeFormat("%b %-d, %Y")(parseDate(d));
+  $("status").textContent = `60-day DAM disclosure, ${fdd(D.first)} to ${fdd(D.last)}: ${nCheap} of ${D.dates.length} days had cheap hours (day-ahead lambda at or below $${D.cheap_usd}/MWh)`;
   document.querySelectorAll(".cheap-usd").forEach((s) => { s.textContent = D.cheap_usd; });
   const hr = D.ref.hr, eia = D.ref.eia_hr, ms = D.ref.measured || {};
   const cnt = (t) => (ms[t] ? ` (${ms[t][0]} of ${ms[t][1]} measured)` : "");

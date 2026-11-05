@@ -130,6 +130,7 @@
       <div>
         <h2>Offer minus fuel cost</h2>
         <p class="note">Every combined cycle train on every cheap day, pooled: its minimum-energy offer over the cheap hours minus fuel cost. A train with a DAM award in at least half the cheap hours counts at the configuration that won; one without, at its lowest configuration offer. Below zero, the offer is under fuel cost. Dotted lines mark each group's median, and the end bins hold everything beyond them. The award is the DAM's result, not whether the train ran.</p>
+        <p class="note" id="mk-sum"></p>
       </div>
     </div>
     <div class="legend legend-static" id="mk-legend"></div>
@@ -140,7 +141,8 @@
     <div class="panel-head">
       <div>
         <h2>Who offers below fuel cost</h2>
-        <p class="note">Each dot is a combined cycle train with a three-part offer on at least 10 cheap days, placed by the share of those days its minimum-energy offer sat below fuel cost (the awarded configuration, else its lowest) and grouped by how often it shuts down, as on the Turn-ons and Turn-offs page. Dot size is the train's MW. A ringed dot is priced off Waha gas: it can offer $0 and still sit above fuel cost when Waha trades below zero. Green dots on the left were awarded without bidding below fuel cost. Each row's count is the trains offering below fuel cost on over 75% of their cheap days. Click a dot for its Unit page.</p>
+        <p class="note">Which trains make a habit of underbidding fuel, by how often they shut down. Each dot is a combined cycle train with three-part offers on at least 10 cheap days, placed by the share of those days its minimum-energy offer sat below its fuel cost (the awarded configuration, else its lowest); rows are the Turn-ons and Turn-offs groups and dot size is MW. Green dots were awarded through the cheap hours on half or more of their cheap days. A ringed dot is priced off Waha gas, where a $0 offer can still be above fuel cost. Each row's count is the trains below fuel cost on over 75% of their cheap days. Click a dot to open the train.</p>
+        <p class="note" id="bf-sum"></p>
       </div>
     </div>
     <div class="legend legend-static" id="bf-legend"></div>
@@ -182,11 +184,11 @@
     <div class="panel-head">
       <div>
         <h2>Wind and solar day-ahead offers</h2>
-        <p class="note">The wind and solar units that file a DAM energy curve: their usual day-ahead floor against their real-time floor, and the share of their available energy awarded day-ahead. Click a name for its Unit page.</p>
+        <p class="note">Wind and solar units that file a day-ahead energy curve: the price below which they will not sell day-ahead (DA floor) against the floor they bid in real time, and how much of their available energy the DAM awarded. A DA floor well above the RT floor is a unit that only sells day-ahead when the price is worth it and lets the rest clear in real time; a DA floor at or below the RT floor with a high award share is a unit selling forward. The gap column is the median of each day's gap, so it need not equal the two medians' difference. Click a name for its Unit page.</p>
       </div>
     </div>
     <div class="units-wrap scroll-x" id="renew-table" data-csv></div>
-    <p class="note">Day-ahead sales through energy-only offers at the plant's node are not included, so this undercounts the plant's day-ahead exposure. Three-part awards are about 5% of availability; adding the plant's own energy-only sales brings it to about 13.5% (9-day sample).</p>
+    <p class="note">Day-ahead sales through energy-only offers at the plant's node are not included, so this undercounts the plant's day-ahead exposure. Fleet-wide, awards on these curves cover about 5% of available energy; adding energy-only sales raises that to about 14% (9-day sample).</p>
   </section>
 </main>
 
