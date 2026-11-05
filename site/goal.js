@@ -136,7 +136,7 @@ function drawQ1() {
 // ==== 2. Why the rest stays on: minimum online in cheap hours, by reason, by year =============
 function stack(el, ys, keys, val, opts) {
   const tip = opts.tip || ((v) => `${d3.format(",.0f")(v)} MW`);
-  const w = Math.max(300, el.clientWidth || 700), m = { t: 14, r: 14, b: 26, l: 56 }, H = 260;
+  const w = Math.max(300, el.clientWidth || 700), m = { t: 14, r: 14, b: 26, l: 56 }, H = opts.height || 260;
   const x = d3.scaleBand().domain(ys).range([m.l, w - m.r]).padding(0.25);
   const tops = ys.map((y) => d3.sum(keys, (k) => val(y, k)));
   const yy = d3.scaleLinear().domain([0, Math.max(d3.max(tops) || 1, opts.mark ? d3.max(ys, opts.mark) || 0 : 0)]).nice().range([H - m.b, m.t]);
@@ -175,7 +175,7 @@ function drawQ2Cost() {
   if (!Q.length) return emptyMsg(el, "No cost yet.");
   const ys = years(), keys = AWARD_GROUPS.map((g) => g[0]), labels = Object.fromEntries(AWARD_GROUPS.map(([k, label, color]) => [k, { label, color }]));
   const val = (y, k) => d3.sum(Q.filter((r) => r.year === y && r.group === k), (r) => r.cost);
-  stack(el, ys, keys, val, { title: `What staying on at minimum lost ${gasOnly ? "gas units" : "fossil units"} in cheap hours ($ million)`, labels, axis: (v) => d3.format(",.0f")(v / 1e6), tip: (v) => `$${d3.format(",.1f")(v / 1e6)}M` });
+  stack(el, ys, keys, val, { title: `What staying on at minimum lost ${gasOnly ? "gas units" : "fossil units"} in cheap hours ($ million)`, labels, axis: (v) => d3.format(",.0f")(v / 1e6), tip: (v) => `$${d3.format(",.1f")(v / 1e6)}M`, height: 200 });
   legend("q2c-legend", AWARD_GROUPS.filter(([k]) => Q.some((r) => r.group === k)).map(([, label, c]) => [label, c]));
   setCSV(el, ["year", "tech", "group", "minimum_mwh", "cost_usd"], Q.map((r) => [r.year, r.tech, r.group, r.mwh, r.cost]), "Loss from staying on");
   const tot = (y) => d3.sum(keys, (k) => val(y, k)), fy = fullYears(), now = ys.at(-1);
@@ -196,21 +196,26 @@ function drawQ2() {
   const get = (t, k) => R.find((r) => r.year === y && r.tech === t && r.group === k) || { n: 0, stayed: 0 };
   const rows = Q2_TECHS.flatMap((t) => AWARD_GROUPS.filter(([k]) => get(t, k).n).map(([k, label, c]) => ({ t, k, label, c, ...get(t, k) })));
   $("q2a-title").textContent = `Units online going into a cheap midday stretch, ${yearLabel(y)}: share that stayed online through it`;
-  const w = Math.max(300, el.clientWidth || 700), m = { t: 6, r: 60, b: 26, l: 160 }, band = 40, gap = 30;
-  let yy = m.t;
-  const pos = rows.map((r, i) => { if (i === 0 || rows[i - 1].t !== r.t) yy += gap; const p = yy; yy += band; return p; });
-  const H = yy + m.b, x = d3.scaleLinear().domain([0, 1]).range([m.l, w - m.r]);
-  const svg = d3.create("svg").attr("viewBox", `0 0 ${w} ${H}`);
-  svg.append("g").attr("class", "gridline").attr("transform", `translate(0,${H - m.b})`).call(d3.axisBottom(x).ticks(w < 500 ? 2 : 4).tickSize(-(H - m.t - m.b)).tickFormat(""));
-  svg.append("g").attr("class", "axis").attr("transform", `translate(0,${H - m.b})`).call(d3.axisBottom(x).ticks(w < 500 ? 2 : 4).tickFormat(fmtPct).tickSizeOuter(0));
-  rows.forEach((r, i) => {
-    if (i === 0 || rows[i - 1].t !== r.t) svg.append("text").attr("x", 0).attr("y", pos[i] - 10).attr("class", "axis-label").style("font-weight", 600).text(TECH[r.t]);
-    const v = r.stayed / r.n, top = pos[i] + 4, bh = band - 10;
-    svg.append("rect").attr("x", x(0)).attr("y", top).attr("width", x(v) - x(0)).attr("height", bh).attr("fill", css(r.c));
-    svg.append("text").attr("x", x(v) + 6).attr("y", top + bh / 2).attr("dy", "0.35em").attr("class", "bar-val").style("font-weight", 600).text(d3.format(".1%")(v));
-    const t = svg.append("text").attr("x", m.l - 8).attr("y", top + bh / 2).attr("text-anchor", "end").attr("class", "axis-label");
-    t.append("tspan").attr("x", m.l - 8).attr("dy", "-0.2em").text(r.label);
-    t.append("tspan").attr("x", m.l - 8).attr("dy", "1.2em").attr("fill", css("--muted")).text(`${d3.format(",")(r.n)} unit-days`);
+  // one small panel per technology: two columns on a wide screen, stacked on a narrow one
+  const W = Math.max(300, el.clientWidth || 700), cols = W >= 900 ? 2 : 1, cg = 40, w = (W - cg * (cols - 1)) / cols;
+  const m = { t: 22, r: 52, b: 22, l: 166 }, band = 30, bh = 20;
+  const x = d3.scaleLinear().domain([0, 1]).range([m.l, w - m.r]);
+  const per = Q2_TECHS.map((t) => rows.filter((r) => r.t === t)).filter((g) => g.length);
+  const ph = m.t + d3.max(per, (g) => g.length) * band + m.b, nr = Math.ceil(per.length / cols), H = nr * ph + (nr - 1) * 14;
+  const svg = d3.create("svg").attr("viewBox", `0 0 ${W} ${H}`);
+  per.forEach((g, gi) => {
+    const p = svg.append("g").attr("transform", `translate(${(gi % cols) * (w + cg)},${Math.floor(gi / cols) * (ph + 14)})`), base = ph - m.b;
+    p.append("text").attr("x", 0).attr("y", 12).attr("class", "axis-label").style("font-weight", 600).text(TECH[g[0].t]);
+    p.append("g").attr("class", "gridline").attr("transform", `translate(0,${base})`).call(d3.axisBottom(x).ticks(w < 500 ? 2 : 4).tickSize(-(base - m.t)).tickFormat(""));
+    p.append("g").attr("class", "axis").attr("transform", `translate(0,${base})`).call(d3.axisBottom(x).ticks(w < 500 ? 2 : 4).tickFormat(fmtPct).tickSizeOuter(0));
+    g.forEach((r, i) => {
+      const v = r.stayed / r.n, top = m.t + i * band + (band - bh) / 2;
+      p.append("rect").attr("x", x(0)).attr("y", top).attr("width", x(v) - x(0)).attr("height", bh).attr("fill", css(r.c));
+      p.append("text").attr("x", x(v) + 6).attr("y", top + bh / 2).attr("dy", "0.35em").attr("class", "bar-val").style("font-weight", 600).text(d3.format(".1%")(v));
+      const t = p.append("text").attr("x", m.l - 8).attr("y", top + bh / 2).attr("text-anchor", "end").attr("class", "axis-label");
+      t.append("tspan").attr("x", m.l - 8).attr("dy", "-0.15em").text(r.label);
+      t.append("tspan").attr("x", m.l - 8).attr("dy", "1.1em").attr("fill", css("--muted")).style("font-size", "0.85em").text(`${d3.format(",")(r.n)} unit-days`);
+    });
   });
   el.replaceChildren(svg.node());
   setCSV(el, ["year", "tech", "group", "unit_days", "stayed_online"], R.map((r) => [r.year, r.tech, r.group, r.n, r.stayed]), "Award and staying on");
