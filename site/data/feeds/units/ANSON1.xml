@@ -9,62 +9,62 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=ANSON1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=ANSON1#ANSON1/2024-12-31/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: floor -$0 to floor -$18</summary>
+    <summary>New floor: −$0/MWh to −$18/MWh</summary>
   </entry>
   <entry>
     <title>ANSON1: Stopped moving within the day (2023-08-19)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=ANSON1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=ANSON1#ANSON1/2023-08-19/renew_moving_off</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Stopped moving within the day: v to floor -$0</summary>
+    <summary>Stopped moving within the day: now a floor of −$0/MWh</summary>
   </entry>
   <entry>
     <title>ANSON1: Started moving within the day (2023-06-22)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=ANSON1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=ANSON1#ANSON1/2023-06-22/renew_moving_on</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Started moving within the day: floor -$0 to v</summary>
+    <summary>Started moving within the day (was a floor of −$0/MWh)</summary>
   </entry>
   <entry>
     <title>ANSON1: Stopped moving within the day (2023-06-16)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=ANSON1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=ANSON1#ANSON1/2023-06-16/renew_moving_off</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Stopped moving within the day: v to floor -$0</summary>
+    <summary>Stopped moving within the day: now a floor of −$0/MWh</summary>
   </entry>
   <entry>
     <title>ANSON1: Started moving within the day (2023-04-15)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=ANSON1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=ANSON1#ANSON1/2023-04-15/renew_moving_on</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Started moving within the day: floor -$0 to v</summary>
+    <summary>Started moving within the day (was a floor of −$0/MWh)</summary>
   </entry>
   <entry>
     <title>ANSON1: Started moving within the day (2023-04-10)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=ANSON1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=ANSON1#ANSON1/2023-04-10/renew_moving_on</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Started moving within the day: floor -$0 to v</summary>
+    <summary>Started moving within the day (was a floor of −$0/MWh)</summary>
   </entry>
   <entry>
     <title>ANSON1: New floor (2022-04-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=ANSON1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=ANSON1#ANSON1/2022-04-01/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: floor -$4 to floor -$0</summary>
+    <summary>New floor: −$4/MWh to −$0/MWh</summary>
   </entry>
   <entry>
     <title>ANSON1: New floor (2021-06-04)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=ANSON1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=ANSON1#ANSON1/2021-06-04/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: floor -$1 to floor -$4</summary>
+    <summary>New floor: −$1/MWh to −$4/MWh</summary>
   </entry>
   <entry>
     <title>ANSON1: New floor (2021-02-22)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=ANSON1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=ANSON1#ANSON1/2021-02-22/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: floor -$250 to floor -$1</summary>
+    <summary>New floor: −$250/MWh to −$1/MWh</summary>
   </entry>
 </feed>

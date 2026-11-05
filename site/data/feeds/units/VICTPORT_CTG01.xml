@@ -37,7 +37,7 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=VICTPORT_CTG01"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=VICTPORT_CTG01#VICTPORT_CTG01/2026-02-26/bidding</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Offer price vs peer median: $4 to -$8/MWh</summary>
+    <summary>Offer price vs peer median: $4 to −$8/MWh</summary>
   </entry>
   <entry>
     <title>VICTPORT_CTG01: Minimum-energy offer stepped (2026-02-05)</title>
@@ -58,42 +58,42 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=VICTPORT_CTG01"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=VICTPORT_CTG01#VICTPORT_CTG01/2026-02-01/bidding</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Offer price vs peer median: -$82 to $0/MWh</summary>
+    <summary>Offer price vs peer median: −$82 to $0/MWh</summary>
   </entry>
   <entry>
     <title>VICTPORT_CTG01: Priced out of the day-ahead (2026-01-30)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=VICTPORT_CTG01"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=VICTPORT_CTG01#VICTPORT_CTG01/2026-01-30/dam_priced_out</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Priced out of the day-ahead: minimum energy at $67/MWh against a usual $49 for 4 day(s)</summary>
+    <summary>Priced out of the day-ahead: minimum energy at $67/MWh against a usual $49/MWh, for 4 days</summary>
   </entry>
   <entry>
     <title>VICTPORT_CTG01: Priced out of the day-ahead (2026-01-30)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=VICTPORT_CTG01"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=VICTPORT_CTG01#VICTPORT_CTG01/2026-01-30/dam_priced_out</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Priced out of the day-ahead: minimum energy at $67/MWh against a usual $49 for 4 day(s)</summary>
+    <summary>Priced out of the day-ahead: minimum energy at $67/MWh against a usual $49/MWh, for 4 days</summary>
   </entry>
   <entry>
     <title>VICTPORT_CTG01: Bidding approach shifted (2026-01-25)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=VICTPORT_CTG01"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=VICTPORT_CTG01#VICTPORT_CTG01/2026-01-25/bidding</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Offer price vs peer median: $1 to -$82/MWh</summary>
+    <summary>Offer price vs peer median: $1 to −$82/MWh</summary>
   </entry>
   <entry>
     <title>VICTPORT_CTG01: Priced out of the day-ahead (2026-01-23)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=VICTPORT_CTG01"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=VICTPORT_CTG01#VICTPORT_CTG01/2026-01-23/dam_priced_out</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Priced out of the day-ahead: minimum energy at $78/MWh against a usual $50 for 1 day(s)</summary>
+    <summary>Priced out of the day-ahead: minimum energy at $78/MWh against a usual $50/MWh, for 1 day</summary>
   </entry>
   <entry>
     <title>VICTPORT_CTG01: Priced out of the day-ahead (2026-01-23)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=VICTPORT_CTG01"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=VICTPORT_CTG01#VICTPORT_CTG01/2026-01-23/dam_priced_out</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Priced out of the day-ahead: minimum energy at $78/MWh against a usual $50 for 1 day(s)</summary>
+    <summary>Priced out of the day-ahead: minimum energy at $78/MWh against a usual $50/MWh, for 1 day</summary>
   </entry>
   <entry>
     <title>VICTPORT_CTG01: Minimum-energy offer stepped (2025-12-25)</title>

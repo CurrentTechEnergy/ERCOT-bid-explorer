@@ -3,103 +3,117 @@
   <title>BORDAS2_JAVEL2_C: bidding and operating changes</title>
   <link href="https://ercotbids.currenttech.energy/unit.html?unit=BORDAS2_JAVEL2_C"/>
   <id>https://ercotbids.currenttech.energy/unit.html?unit=BORDAS2_JAVEL2_C</id>
-  <updated>2026-10-18T00:00:00Z</updated>
+  <updated>2026-11-05T00:00:00Z</updated>
   <entry>
-    <title>BORDAS2_JAVEL2_C: New floor (2026-02-12)</title>
+    <title>BORDAS2_JAVEL2_C: Outage ended (2026-02-27)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=BORDAS2_JAVEL2_C"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=BORDAS2_JAVEL2_C#BORDAS2_JAVEL2_C/2026-02-12/renew_floor_new</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: floor -$38 to floor -$40</summary>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=BORDAS2_JAVEL2_C#BORDAS2_JAVEL2_C/2026-02-27/outage_end</id>
+    <updated>2026-11-05T00:00:00Z</updated>
+    <summary>Back from a 11-day outage</summary>
+  </entry>
+  <entry>
+    <title>BORDAS2_JAVEL2_C: Outage started (2026-02-16)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=BORDAS2_JAVEL2_C"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=BORDAS2_JAVEL2_C#BORDAS2_JAVEL2_C/2026-02-16/outage_start</id>
+    <updated>2026-11-05T00:00:00Z</updated>
+    <summary>Outage began, lasting 11 days</summary>
   </entry>
   <entry>
     <title>BORDAS2_JAVEL2_C: New floor (2026-02-12)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=BORDAS2_JAVEL2_C"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=BORDAS2_JAVEL2_C#BORDAS2_JAVEL2_C/2026-02-12/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: floor -$38 to floor -$40</summary>
+    <summary>New floor: −$38/MWh to −$40/MWh</summary>
+  </entry>
+  <entry>
+    <title>BORDAS2_JAVEL2_C: New floor (2026-02-12)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=BORDAS2_JAVEL2_C"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=BORDAS2_JAVEL2_C#BORDAS2_JAVEL2_C/2026-02-12/renew_floor_new</id>
+    <updated>2026-10-18T00:00:00Z</updated>
+    <summary>New floor: −$38/MWh to −$40/MWh</summary>
   </entry>
   <entry>
     <title>BORDAS2_JAVEL2_C: New floor (2025-02-22)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=BORDAS2_JAVEL2_C"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=BORDAS2_JAVEL2_C#BORDAS2_JAVEL2_C/2025-02-22/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: floor -$37 to floor -$38</summary>
+    <summary>New floor: −$37/MWh to −$38/MWh</summary>
   </entry>
   <entry>
     <title>BORDAS2_JAVEL2_C: New floor (2025-02-22)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=BORDAS2_JAVEL2_C"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=BORDAS2_JAVEL2_C#BORDAS2_JAVEL2_C/2025-02-22/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: floor -$37 to floor -$38</summary>
+    <summary>New floor: −$37/MWh to −$38/MWh</summary>
   </entry>
   <entry>
     <title>BORDAS2_JAVEL2_C: New floor (2024-02-06)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=BORDAS2_JAVEL2_C"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=BORDAS2_JAVEL2_C#BORDAS2_JAVEL2_C/2024-02-06/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: floor -$36 to floor -$37</summary>
+    <summary>New floor: −$36/MWh to −$37/MWh</summary>
   </entry>
   <entry>
     <title>BORDAS2_JAVEL2_C: New floor (2024-02-06)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=BORDAS2_JAVEL2_C"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=BORDAS2_JAVEL2_C#BORDAS2_JAVEL2_C/2024-02-06/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: floor -$36 to floor -$37</summary>
+    <summary>New floor: −$36/MWh to −$37/MWh</summary>
   </entry>
   <entry>
     <title>BORDAS2_JAVEL2_C: New floor (2023-07-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=BORDAS2_JAVEL2_C"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=BORDAS2_JAVEL2_C#BORDAS2_JAVEL2_C/2023-07-01/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: floor -$37 to floor -$36</summary>
+    <summary>New floor: −$37/MWh to −$36/MWh</summary>
   </entry>
   <entry>
     <title>BORDAS2_JAVEL2_C: New floor (2023-07-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=BORDAS2_JAVEL2_C"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=BORDAS2_JAVEL2_C#BORDAS2_JAVEL2_C/2023-07-01/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: floor -$37 to floor -$36</summary>
+    <summary>New floor: −$37/MWh to −$36/MWh</summary>
   </entry>
   <entry>
     <title>BORDAS2_JAVEL2_C: New floor (2022-02-09)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=BORDAS2_JAVEL2_C"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=BORDAS2_JAVEL2_C#BORDAS2_JAVEL2_C/2022-02-09/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: floor -$32 to floor -$37</summary>
+    <summary>New floor: −$32/MWh to −$37/MWh</summary>
   </entry>
   <entry>
     <title>BORDAS2_JAVEL2_C: New floor (2022-02-09)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=BORDAS2_JAVEL2_C"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=BORDAS2_JAVEL2_C#BORDAS2_JAVEL2_C/2022-02-09/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: floor -$32 to floor -$37</summary>
+    <summary>New floor: −$32/MWh to −$37/MWh</summary>
   </entry>
   <entry>
     <title>BORDAS2_JAVEL2_C: New floor (2020-01-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=BORDAS2_JAVEL2_C"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=BORDAS2_JAVEL2_C#BORDAS2_JAVEL2_C/2020-01-01/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: floor -$35 to floor -$32</summary>
+    <summary>New floor: −$35/MWh to −$32/MWh</summary>
   </entry>
   <entry>
     <title>BORDAS2_JAVEL2_C: New floor (2020-01-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=BORDAS2_JAVEL2_C"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=BORDAS2_JAVEL2_C#BORDAS2_JAVEL2_C/2020-01-01/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: floor -$35 to floor -$32</summary>
+    <summary>New floor: −$35/MWh to −$32/MWh</summary>
   </entry>
   <entry>
     <title>BORDAS2_JAVEL2_C: New floor (2019-01-17)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=BORDAS2_JAVEL2_C"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=BORDAS2_JAVEL2_C#BORDAS2_JAVEL2_C/2019-01-17/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: floor -$34 to floor -$35</summary>
+    <summary>New floor: −$34/MWh to −$35/MWh</summary>
   </entry>
   <entry>
     <title>BORDAS2_JAVEL2_C: New floor (2019-01-17)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=BORDAS2_JAVEL2_C"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=BORDAS2_JAVEL2_C#BORDAS2_JAVEL2_C/2019-01-17/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: floor -$34 to floor -$35</summary>
+    <summary>New floor: −$34/MWh to −$35/MWh</summary>
   </entry>
 </feed>

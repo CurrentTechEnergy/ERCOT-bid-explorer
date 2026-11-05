@@ -23,7 +23,7 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=AEEC_ELK_3"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=AEEC_ELK_3#AEEC_ELK_3/2026-08-01/group</id>
     <updated>2026-10-19T00:00:00Z</updated>
-    <summary>Daily, over 2 a week in 2026-07 to Multi-day: off a day or more in 2026-08</summary>
+    <summary>Cycles daily, over twice a week in 2026-07 to Off for days at a time in 2026-08</summary>
   </entry>
   <entry>
     <title>AEEC_ELK_3: Shut down despite a day-ahead award (2026-07-22)</title>
@@ -37,14 +37,14 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=AEEC_ELK_3"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=AEEC_ELK_3#AEEC_ELK_3/2026-07-14/dam_mingen_step</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Minimum-energy offer stepped: $20 to $27/MWh (-$10 to -$1 against the fuel-cost line)</summary>
+    <summary>Minimum-energy offer stepped: $20 to $27/MWh (−$10 to −$1 against the fuel-cost line)</summary>
   </entry>
   <entry>
     <title>AEEC_ELK_3: Minimum-energy offer stepped (2026-07-14)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=AEEC_ELK_3"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=AEEC_ELK_3#AEEC_ELK_3/2026-07-14/dam_mingen_step</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Minimum-energy offer stepped: $20 to $27/MWh (-$10 to -$1 against the fuel-cost line)</summary>
+    <summary>Minimum-energy offer stepped: $20 to $27/MWh (−$10 to −$1 against the fuel-cost line)</summary>
   </entry>
   <entry>
     <title>AEEC_ELK_3: Running at a new price (2026-07-01)</title>
@@ -58,14 +58,14 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=AEEC_ELK_3"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=AEEC_ELK_3#AEEC_ELK_3/2026-07-01/group</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Multi-day: off a day or more in 2026-06 to Daily, over 2 a week in 2026-07</summary>
+    <summary>Off for days at a time in 2026-06 to Cycles daily, over twice a week in 2026-07</summary>
   </entry>
   <entry>
     <title>AEEC_ELK_3: Bidding approach shifted (2026-06-27)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=AEEC_ELK_3"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=AEEC_ELK_3#AEEC_ELK_3/2026-06-27/bidding</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Offer price vs peer median: $10 to -$3/MWh</summary>
+    <summary>Offer price vs peer median: $10 to −$3/MWh</summary>
   </entry>
   <entry>
     <title>AEEC_ELK_3: Outage ended (2026-06-26)</title>
@@ -79,7 +79,7 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=AEEC_ELK_3"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=AEEC_ELK_3#AEEC_ELK_3/2026-06-01/group</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Off a week or more in 2026-05 to Multi-day: off a day or more in 2026-06</summary>
+    <summary>Off for a week or more at a time in 2026-05 to Off for days at a time in 2026-06</summary>
   </entry>
   <entry>
     <title>AEEC_ELK_3: Outage started (2026-05-06)</title>
@@ -93,7 +93,7 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=AEEC_ELK_3"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=AEEC_ELK_3#AEEC_ELK_3/2026-05-01/group</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Multi-day: off a day or more in 2026-04 to Off a week or more in 2026-05</summary>
+    <summary>Off for days at a time in 2026-04 to Off for a week or more at a time in 2026-05</summary>
   </entry>
   <entry>
     <title>AEEC_ELK_3: Outage ended (2026-04-17)</title>
@@ -114,14 +114,14 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=AEEC_ELK_3"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=AEEC_ELK_3#AEEC_ELK_3/2026-02-21/dam_priced_out</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Priced out of the day-ahead: minimum energy at $41/MWh against a usual $0 for 2 day(s)</summary>
+    <summary>Priced out of the day-ahead: minimum energy at $41/MWh against a usual $0/MWh, for 2 days</summary>
   </entry>
   <entry>
     <title>AEEC_ELK_3: Priced out of the day-ahead (2026-02-21)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=AEEC_ELK_3"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=AEEC_ELK_3#AEEC_ELK_3/2026-02-21/dam_priced_out</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Priced out of the day-ahead: minimum energy at $41/MWh against a usual $0 for 2 day(s)</summary>
+    <summary>Priced out of the day-ahead: minimum energy at $41/MWh against a usual $0/MWh, for 2 days</summary>
   </entry>
   <entry>
     <title>AEEC_ELK_3: Bidding approach shifted (2026-02-20)</title>
@@ -135,14 +135,14 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=AEEC_ELK_3"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=AEEC_ELK_3#AEEC_ELK_3/2026-02-19/dam_priced_out</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Priced out of the day-ahead: minimum energy at $41/MWh against a usual $0 for 1 day(s)</summary>
+    <summary>Priced out of the day-ahead: minimum energy at $41/MWh against a usual $0/MWh, for 1 day</summary>
   </entry>
   <entry>
     <title>AEEC_ELK_3: Priced out of the day-ahead (2026-02-19)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=AEEC_ELK_3"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=AEEC_ELK_3#AEEC_ELK_3/2026-02-19/dam_priced_out</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Priced out of the day-ahead: minimum energy at $41/MWh against a usual $0 for 1 day(s)</summary>
+    <summary>Priced out of the day-ahead: minimum energy at $41/MWh against a usual $0/MWh, for 1 day</summary>
   </entry>
   <entry>
     <title>AEEC_ELK_3: Bidding approach shifted (2026-02-07)</title>
@@ -156,21 +156,21 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=AEEC_ELK_3"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=AEEC_ELK_3#AEEC_ELK_3/2026-02-01/dam_mingen_step</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Minimum-energy offer stepped: $29 to $0/MWh (-$30 to -$29 against the fuel-cost line)</summary>
+    <summary>Minimum-energy offer stepped: $29 to $0/MWh (−$30 to −$29 against the fuel-cost line)</summary>
   </entry>
   <entry>
     <title>AEEC_ELK_3: Minimum-energy offer stepped (2026-02-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=AEEC_ELK_3"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=AEEC_ELK_3#AEEC_ELK_3/2026-02-01/dam_mingen_step</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Minimum-energy offer stepped: $29 to $0/MWh (-$30 to -$29 against the fuel-cost line)</summary>
+    <summary>Minimum-energy offer stepped: $29 to $0/MWh (−$30 to −$29 against the fuel-cost line)</summary>
   </entry>
   <entry>
     <title>AEEC_ELK_3: Bidding approach shifted (2026-01-31)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=AEEC_ELK_3"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=AEEC_ELK_3#AEEC_ELK_3/2026-01-31/bidding</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Offer price vs peer median: $101 to -$5/MWh</summary>
+    <summary>Offer price vs peer median: $101 to −$5/MWh</summary>
   </entry>
   <entry>
     <title>AEEC_ELK_3: Bidding approach shifted (2026-01-22)</title>
@@ -191,27 +191,27 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=AEEC_ELK_3"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=AEEC_ELK_3#AEEC_ELK_3/2026-01-16/dam_mingen_step</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Minimum-energy offer stepped: $59 to $0/MWh ($16 to -$33 against the fuel-cost line)</summary>
+    <summary>Minimum-energy offer stepped: $59 to $0/MWh ($16 to −$33 against the fuel-cost line)</summary>
   </entry>
   <entry>
     <title>AEEC_ELK_3: Minimum-energy offer stepped (2026-01-16)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=AEEC_ELK_3"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=AEEC_ELK_3#AEEC_ELK_3/2026-01-16/dam_mingen_step</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Minimum-energy offer stepped: $59 to $0/MWh ($16 to -$33 against the fuel-cost line)</summary>
+    <summary>Minimum-energy offer stepped: $59 to $0/MWh ($16 to −$33 against the fuel-cost line)</summary>
   </entry>
   <entry>
     <title>AEEC_ELK_3: Bidding approach shifted (2026-01-15)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=AEEC_ELK_3"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=AEEC_ELK_3#AEEC_ELK_3/2026-01-15/bidding</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Offer price vs peer median: -$10 to $14/MWh</summary>
+    <summary>Offer price vs peer median: −$10 to $14/MWh</summary>
   </entry>
   <entry>
     <title>AEEC_ELK_3: Timescale group changed (2026-01-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=AEEC_ELK_3"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=AEEC_ELK_3#AEEC_ELK_3/2026-01-01/group</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Off a week or more in 2025-12 to Daily, over 2 a week in 2026-01</summary>
+    <summary>Off for a week or more at a time in 2025-12 to Cycles daily, over twice a week in 2026-01</summary>
   </entry>
 </feed>

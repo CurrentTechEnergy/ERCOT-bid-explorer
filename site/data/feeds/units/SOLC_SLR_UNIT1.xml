@@ -3,12 +3,26 @@
   <title>SOLC_SLR_UNIT1: bidding and operating changes</title>
   <link href="https://ercotbids.currenttech.energy/unit.html?unit=SOLC_SLR_UNIT1"/>
   <id>https://ercotbids.currenttech.energy/unit.html?unit=SOLC_SLR_UNIT1</id>
-  <updated>2026-10-18T00:00:00Z</updated>
+  <updated>2026-11-05T00:00:00Z</updated>
   <entry>
     <title>SOLC_SLR: New floor (2026-06-27)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=SOLC_SLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=SOLC_SLR#SOLC_SLR/2026-06-27/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: floor -$2 to floor -$42</summary>
+    <summary>New floor: −$2/MWh to −$42/MWh</summary>
+  </entry>
+  <entry>
+    <title>SOLC_SLR_UNIT1: Outage ended (2026-03-30)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=SOLC_SLR_UNIT1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=SOLC_SLR_UNIT1#SOLC_SLR_UNIT1/2026-03-30/outage_end</id>
+    <updated>2026-11-05T00:00:00Z</updated>
+    <summary>Back from a 10-day outage</summary>
+  </entry>
+  <entry>
+    <title>SOLC_SLR_UNIT1: Outage started (2026-03-20)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=SOLC_SLR_UNIT1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=SOLC_SLR_UNIT1#SOLC_SLR_UNIT1/2026-03-20/outage_start</id>
+    <updated>2026-11-05T00:00:00Z</updated>
+    <summary>Outage began, lasting 10 days</summary>
   </entry>
 </feed>

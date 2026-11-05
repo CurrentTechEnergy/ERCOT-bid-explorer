@@ -9,20 +9,20 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=STLHS_SL"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=STLHS_SL#STLHS_SL/2025-10-27/renew_formula_on</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Formula on: floor -$2 to formula</summary>
+    <summary>Formula on (was a floor of −$2/MWh)</summary>
   </entry>
   <entry>
     <title>STLHS_SL: New floor (2025-09-11)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=STLHS_SL"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=STLHS_SL#STLHS_SL/2025-09-11/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: floor -$1 to floor -$2</summary>
+    <summary>New floor: −$1/MWh to −$2/MWh</summary>
   </entry>
   <entry>
     <title>STLHS_SL: New floor (2025-08-13)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=STLHS_SL"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=STLHS_SL#STLHS_SL/2025-08-13/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: floor $0 to floor -$1</summary>
+    <summary>New floor: $0/MWh to −$1/MWh</summary>
   </entry>
 </feed>

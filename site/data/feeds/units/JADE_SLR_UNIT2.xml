@@ -9,7 +9,7 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=JADE_SLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=JADE_SLR#JADE_SLR/2026-05-12/dam_renew_floor</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Day-ahead floor changed: $4 to -$2/MWh</summary>
+    <summary>Day-ahead floor changed: $4 to −$2/MWh</summary>
   </entry>
   <entry>
     <title>JADE: Decision maker or QSE changed (2026-04-17)</title>
@@ -37,13 +37,13 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=JADE_SLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=JADE_SLR#JADE_SLR/2025-09-01/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Episode: floor -$2 to $31 for the episode for 1 day(s)</summary>
+    <summary>Episode: floor −$2/MWh, briefly $31/MWh, for 1 day</summary>
   </entry>
   <entry>
     <title>JADE_SLR: New floor (2024-10-28)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=JADE_SLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=JADE_SLR#JADE_SLR/2024-10-28/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: floor -$4 to floor -$2</summary>
+    <summary>New floor: −$4/MWh to −$2/MWh</summary>
   </entry>
 </feed>

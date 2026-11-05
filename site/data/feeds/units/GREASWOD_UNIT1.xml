@@ -9,34 +9,34 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=GREASWOD"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=GREASWOD#GREASWOD/2026-08-06/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: floor $0 to floor -$1</summary>
+    <summary>New floor: $0/MWh to −$1/MWh</summary>
   </entry>
   <entry>
     <title>GREASWOD: New floor (2022-05-26)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=GREASWOD"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=GREASWOD#GREASWOD/2022-05-26/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: floor -$6 to floor $0</summary>
+    <summary>New floor: −$6/MWh to $0/MWh</summary>
   </entry>
   <entry>
     <title>GREASWOD: New floor (2021-08-12)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=GREASWOD"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=GREASWOD#GREASWOD/2021-08-12/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: floor $0 to floor -$6</summary>
+    <summary>New floor: $0/MWh to −$6/MWh</summary>
   </entry>
   <entry>
     <title>GREASWOD: Back to an earlier floor (2020-12-21)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=GREASWOD"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=GREASWOD#GREASWOD/2020-12-21/renew_floor_back</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Back to an earlier floor: floor -$35 to floor $0</summary>
+    <summary>Back to an earlier floor: −$35/MWh to $0/MWh</summary>
   </entry>
   <entry>
     <title>GREASWOD: New floor (2020-12-08)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=GREASWOD"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=GREASWOD#GREASWOD/2020-12-08/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: floor $0 to floor -$35</summary>
+    <summary>New floor: $0/MWh to −$35/MWh</summary>
   </entry>
 </feed>

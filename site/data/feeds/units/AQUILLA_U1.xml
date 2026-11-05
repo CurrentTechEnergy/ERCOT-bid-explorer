@@ -9,90 +9,90 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=AQUILLA_U1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=AQUILLA_U1#AQUILLA_U1/2026-08-28/renew_moving_off</id>
     <updated>2026-11-01T00:00:00Z</updated>
-    <summary>Stopped moving within the day: v to floor -$40</summary>
+    <summary>Stopped moving within the day: now a floor of −$40/MWh</summary>
   </entry>
   <entry>
     <title>AQUILLA_U1: Started moving within the day (2026-07-23)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=AQUILLA_U1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=AQUILLA_U1#AQUILLA_U1/2026-07-23/renew_moving_on</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Started moving within the day: floor -$55 to v</summary>
+    <summary>Started moving within the day (was a floor of −$55/MWh)</summary>
   </entry>
   <entry>
     <title>AQUILLA_U1: Stopped moving within the day (2026-07-02)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=AQUILLA_U1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=AQUILLA_U1#AQUILLA_U1/2026-07-02/renew_moving_off</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Stopped moving within the day: v to floor -$55</summary>
+    <summary>Stopped moving within the day: now a floor of −$55/MWh</summary>
   </entry>
   <entry>
     <title>AQUILLA_U1: Started moving within the day (2026-06-19)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=AQUILLA_U1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=AQUILLA_U1#AQUILLA_U1/2026-06-19/renew_moving_on</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Started moving within the day: floor -$55 to v</summary>
+    <summary>Started moving within the day (was a floor of −$55/MWh)</summary>
   </entry>
   <entry>
     <title>AQUILLA_U1: Stopped moving within the day (2026-06-12)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=AQUILLA_U1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=AQUILLA_U1#AQUILLA_U1/2026-06-12/renew_moving_off</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Stopped moving within the day: v to floor -$55</summary>
+    <summary>Stopped moving within the day: now a floor of −$55/MWh</summary>
   </entry>
   <entry>
     <title>AQUILLA_U1: Started moving within the day (2026-06-06)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=AQUILLA_U1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=AQUILLA_U1#AQUILLA_U1/2026-06-06/renew_moving_on</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Started moving within the day: floor -$55 to v</summary>
+    <summary>Started moving within the day (was a floor of −$55/MWh)</summary>
   </entry>
   <entry>
     <title>AQUILLA_U1: Episode (2026-05-26)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=AQUILLA_U1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=AQUILLA_U1#AQUILLA_U1/2026-05-26/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Episode: floor -$55 to -$12 for the episode for 1 day(s)</summary>
+    <summary>Episode: floor −$55/MWh, briefly −$12/MWh, for 1 day</summary>
   </entry>
   <entry>
     <title>AQUILLA_U1: New floor (2026-05-11)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=AQUILLA_U1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=AQUILLA_U1#AQUILLA_U1/2026-05-11/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: floor -$40 to floor -$55</summary>
+    <summary>New floor: −$40/MWh to −$55/MWh</summary>
   </entry>
   <entry>
     <title>AQUILLA_U1: New floor (2026-02-12)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=AQUILLA_U1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=AQUILLA_U1#AQUILLA_U1/2026-02-12/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: floor -$38 to floor -$40</summary>
+    <summary>New floor: −$38/MWh to −$40/MWh</summary>
   </entry>
   <entry>
     <title>AQUILLA_U1: New floor (2025-02-23)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=AQUILLA_U1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=AQUILLA_U1#AQUILLA_U1/2025-02-23/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: floor -$37 to floor -$38</summary>
+    <summary>New floor: −$37/MWh to −$38/MWh</summary>
   </entry>
   <entry>
     <title>AQUILLA_U1: New floor (2024-03-23)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=AQUILLA_U1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=AQUILLA_U1#AQUILLA_U1/2024-03-23/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: floor -$35 to floor -$37</summary>
+    <summary>New floor: −$35/MWh to −$37/MWh</summary>
   </entry>
   <entry>
     <title>AQUILLA_U1: New floor (2023-01-18)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=AQUILLA_U1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=AQUILLA_U1#AQUILLA_U1/2023-01-18/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: floor -$32 to floor -$35</summary>
+    <summary>New floor: −$32/MWh to −$35/MWh</summary>
   </entry>
   <entry>
     <title>AQUILLA_U1: New floor (2022-02-08)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=AQUILLA_U1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=AQUILLA_U1#AQUILLA_U1/2022-02-08/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: floor -$31 to floor -$32</summary>
+    <summary>New floor: −$31/MWh to −$32/MWh</summary>
   </entry>
 </feed>

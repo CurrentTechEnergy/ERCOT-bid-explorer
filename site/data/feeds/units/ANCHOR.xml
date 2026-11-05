@@ -9,63 +9,63 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=ANCHOR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=ANCHOR#ANCHOR/2026-01-06/renew_floor_back</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Back to an earlier floor: floor -$42 to floor -$40</summary>
+    <summary>Back to an earlier floor: −$42/MWh to −$40/MWh</summary>
   </entry>
   <entry>
     <title>ANCHOR: New floor (2025-11-06)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=ANCHOR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=ANCHOR#ANCHOR/2025-11-06/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: floor -$40 to floor -$42</summary>
+    <summary>New floor: −$40/MWh to −$42/MWh</summary>
   </entry>
   <entry>
     <title>ANCHOR: New floor (2025-11-03)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=ANCHOR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=ANCHOR#ANCHOR/2025-11-03/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: floor -$40 to floor -$42</summary>
+    <summary>New floor: −$40/MWh to −$42/MWh</summary>
   </entry>
   <entry>
     <title>ANCHOR: Back to an earlier floor (2025-01-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=ANCHOR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=ANCHOR#ANCHOR/2025-01-01/renew_floor_back</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Back to an earlier floor: floor -$41 to floor -$40</summary>
+    <summary>Back to an earlier floor: −$41/MWh to −$40/MWh</summary>
   </entry>
   <entry>
     <title>ANCHOR: New floor (2024-11-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=ANCHOR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=ANCHOR#ANCHOR/2024-11-01/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: floor -$40 to floor -$41</summary>
+    <summary>New floor: −$40/MWh to −$41/MWh</summary>
   </entry>
   <entry>
     <title>ANCHOR: New floor (2024-09-04)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=ANCHOR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=ANCHOR#ANCHOR/2024-09-04/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: floor -$38 to floor -$40</summary>
+    <summary>New floor: −$38/MWh to −$40/MWh</summary>
   </entry>
   <entry>
     <title>ANCHOR: New floor (2023-08-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=ANCHOR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=ANCHOR#ANCHOR/2023-08-01/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: floor -$36 to floor -$38</summary>
+    <summary>New floor: −$36/MWh to −$38/MWh</summary>
   </entry>
   <entry>
     <title>ANCHOR: New floor (2023-06-08)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=ANCHOR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=ANCHOR#ANCHOR/2023-06-08/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: floor -$33 to floor -$36</summary>
+    <summary>New floor: −$33/MWh to −$36/MWh</summary>
   </entry>
   <entry>
     <title>ANCHOR: New floor (2023-06-06)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=ANCHOR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=ANCHOR#ANCHOR/2023-06-06/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: floor -$33 to floor -$36</summary>
+    <summary>New floor: −$33/MWh to −$36/MWh</summary>
   </entry>
   <entry>
     <title>ANCHOR: Decision maker or QSE changed (2023-02-28)</title>
@@ -79,6 +79,6 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=ANCHOR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=ANCHOR#ANCHOR/2023-02-13/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: floor -$6 to floor -$33</summary>
+    <summary>New floor: −$6/MWh to −$33/MWh</summary>
   </entry>
 </feed>

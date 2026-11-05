@@ -9,55 +9,55 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=FERMI"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=FERMI#FERMI/2026-01-03/renew_floor_back</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Back to an earlier floor: floor $0 to floor -$25</summary>
+    <summary>Back to an earlier floor: $0/MWh to −$25/MWh</summary>
   </entry>
   <entry>
     <title>FERMI: New floor (2025-12-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=FERMI"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=FERMI#FERMI/2025-12-01/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: floor -$25 to floor $0</summary>
+    <summary>New floor: −$25/MWh to $0/MWh</summary>
   </entry>
   <entry>
     <title>FERMI: New floor (2025-01-08)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=FERMI"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=FERMI#FERMI/2025-01-08/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: floor $0 to floor -$25</summary>
+    <summary>New floor: $0/MWh to −$25/MWh</summary>
   </entry>
   <entry>
     <title>FERMI: New floor (2024-04-20)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=FERMI"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=FERMI#FERMI/2024-04-20/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: floor -$25 to floor $0</summary>
+    <summary>New floor: −$25/MWh to $0/MWh</summary>
   </entry>
   <entry>
     <title>FERMI: New floor (2023-01-12)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=FERMI"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=FERMI#FERMI/2023-01-12/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: floor $0 to floor -$25</summary>
+    <summary>New floor: $0/MWh to −$25/MWh</summary>
   </entry>
   <entry>
     <title>FERMI: New floor (2022-06-10)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=FERMI"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=FERMI#FERMI/2022-06-10/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: floor -$25 to floor $0</summary>
+    <summary>New floor: −$25/MWh to $0/MWh</summary>
   </entry>
   <entry>
     <title>FERMI: New floor (2022-01-15)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=FERMI"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=FERMI#FERMI/2022-01-15/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: floor -$32 to floor -$25</summary>
+    <summary>New floor: −$32/MWh to −$25/MWh</summary>
   </entry>
   <entry>
     <title>FERMI: New floor (2020-08-20)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=FERMI"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=FERMI#FERMI/2020-08-20/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: floor -$30 to floor -$32</summary>
+    <summary>New floor: −$30/MWh to −$32/MWh</summary>
   </entry>
 </feed>

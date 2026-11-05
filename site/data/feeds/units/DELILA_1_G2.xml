@@ -3,33 +3,47 @@
   <title>DELILA_1_G2: bidding and operating changes</title>
   <link href="https://ercotbids.currenttech.energy/unit.html?unit=DELILA_1_G2"/>
   <id>https://ercotbids.currenttech.energy/unit.html?unit=DELILA_1_G2</id>
-  <updated>2026-10-18T00:00:00Z</updated>
+  <updated>2026-11-05T00:00:00Z</updated>
+  <entry>
+    <title>DELILA_1_G2: Outage ended (2026-07-29)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=DELILA_1_G2"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=DELILA_1_G2#DELILA_1_G2/2026-07-29/outage_end</id>
+    <updated>2026-11-05T00:00:00Z</updated>
+    <summary>Back from a 8-day outage</summary>
+  </entry>
+  <entry>
+    <title>DELILA_1_G2: Outage started (2026-07-21)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=DELILA_1_G2"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=DELILA_1_G2#DELILA_1_G2/2026-07-21/outage_start</id>
+    <updated>2026-11-05T00:00:00Z</updated>
+    <summary>Outage began, lasting 8 days</summary>
+  </entry>
   <entry>
     <title>DELILA_1: Back to an earlier floor (2026-01-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=DELILA_1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=DELILA_1#DELILA_1/2026-01-01/renew_floor_back</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Back to an earlier floor: floor -$48 to floor -$44</summary>
+    <summary>Back to an earlier floor: −$48/MWh to −$44/MWh</summary>
   </entry>
   <entry>
     <title>DELILA_1: New floor (2025-10-17)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=DELILA_1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=DELILA_1#DELILA_1/2025-10-17/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: floor -$44 to floor -$48</summary>
+    <summary>New floor: −$44/MWh to −$48/MWh</summary>
   </entry>
   <entry>
     <title>DELILA_1: New floor (2025-01-08)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=DELILA_1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=DELILA_1#DELILA_1/2025-01-08/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: floor -$42 to floor -$44</summary>
+    <summary>New floor: −$42/MWh to −$44/MWh</summary>
   </entry>
   <entry>
     <title>DELILA_1: New floor (2024-12-18)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=DELILA_1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=DELILA_1#DELILA_1/2024-12-18/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: floor $0 to floor -$42</summary>
+    <summary>New floor: $0/MWh to −$42/MWh</summary>
   </entry>
 </feed>

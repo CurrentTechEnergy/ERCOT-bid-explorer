@@ -9,13 +9,13 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=SAMSON_3"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=SAMSON_3#SAMSON_3/2025-11-07/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: floor $0 to floor -$30</summary>
+    <summary>New floor: $0/MWh to −$30/MWh</summary>
   </entry>
   <entry>
     <title>SAMSON_3: New floor (2023-01-21)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=SAMSON_3"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=SAMSON_3#SAMSON_3/2023-01-21/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: floor -$4 to floor $0</summary>
+    <summary>New floor: −$4/MWh to $0/MWh</summary>
   </entry>
 </feed>

@@ -9,13 +9,13 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=PHO"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=PHO#PHO/2025-07-01/renew_formula_on</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Formula on: floor -$2 to formula</summary>
+    <summary>Formula on (was a floor of −$2/MWh)</summary>
   </entry>
   <entry>
     <title>PHO: New floor (2025-03-18)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=PHO"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=PHO#PHO/2025-03-18/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: floor $0 to floor -$2</summary>
+    <summary>New floor: $0/MWh to −$2/MWh</summary>
   </entry>
 </feed>

@@ -9,41 +9,41 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=EBELLSLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=EBELLSLR#EBELLSLR/2025-12-10/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: floor -$20 to floor -$30</summary>
+    <summary>New floor: −$20/MWh to −$30/MWh</summary>
   </entry>
   <entry>
     <title>EBELLSLR: Episode (2025-12-05)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=EBELLSLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=EBELLSLR#EBELLSLR/2025-12-05/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Episode: floor -$20 to -$15 for the episode for 1 day(s)</summary>
+    <summary>Episode: floor −$20/MWh, briefly −$15/MWh, for 1 day</summary>
   </entry>
   <entry>
     <title>EBELLSLR: New floor (2025-06-24)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=EBELLSLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=EBELLSLR#EBELLSLR/2025-06-24/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: floor -$15 to floor -$20</summary>
+    <summary>New floor: −$15/MWh to −$20/MWh</summary>
   </entry>
   <entry>
     <title>EBELLSLR: New floor (2025-04-29)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=EBELLSLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=EBELLSLR#EBELLSLR/2025-04-29/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: floor -$3 to floor -$15</summary>
+    <summary>New floor: −$3/MWh to −$15/MWh</summary>
   </entry>
   <entry>
     <title>EBELLSLR: Back to an earlier floor (2024-04-08)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=EBELLSLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=EBELLSLR#EBELLSLR/2024-04-08/renew_floor_back</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Back to an earlier floor: floor -$4 to floor -$3</summary>
+    <summary>Back to an earlier floor: −$4/MWh to −$3/MWh</summary>
   </entry>
   <entry>
     <title>EBELLSLR: New floor (2024-03-28)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=EBELLSLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=EBELLSLR#EBELLSLR/2024-03-28/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: floor -$3 to floor -$4</summary>
+    <summary>New floor: −$3/MWh to −$4/MWh</summary>
   </entry>
 </feed>

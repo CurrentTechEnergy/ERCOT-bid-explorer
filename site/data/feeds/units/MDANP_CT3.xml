@@ -9,28 +9,28 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=MDANP"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=MDANP#MDANP/2026-07-18/dam_mingen_step</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Minimum-energy offer stepped: $17 to $10/MWh (-$2 to -$8 against the fuel-cost line)</summary>
+    <summary>Minimum-energy offer stepped: $17 to $10/MWh (−$2 to −$8 against the fuel-cost line)</summary>
   </entry>
   <entry>
     <title>MDANP_CT3: Timescale group changed (2026-07-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=MDANP_CT3"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=MDANP_CT3#MDANP_CT3/2026-07-01/group</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Daily, under 1 shutdown a week in 2026-06 to Always on when available in 2026-07</summary>
+    <summary>Cycles daily, under once a week in 2026-06 to Always on when available in 2026-07</summary>
   </entry>
   <entry>
     <title>MDANP_CT3: Minimum-energy offer stepped (2026-06-22)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=MDANP_CT3"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=MDANP_CT3#MDANP_CT3/2026-06-22/dam_mingen_step</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Minimum-energy offer stepped: $16 to $23/MWh (-$4 to $2 against the fuel-cost line)</summary>
+    <summary>Minimum-energy offer stepped: $16 to $23/MWh (−$4 to $2 against the fuel-cost line)</summary>
   </entry>
   <entry>
     <title>MDANP_CT3: Minimum-energy offer stepped (2026-06-22)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=MDANP_CT3"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=MDANP_CT3#MDANP_CT3/2026-06-22/dam_mingen_step</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Minimum-energy offer stepped: $16 to $23/MWh (-$4 to $2 against the fuel-cost line)</summary>
+    <summary>Minimum-energy offer stepped: $16 to $23/MWh (−$4 to $2 against the fuel-cost line)</summary>
   </entry>
   <entry>
     <title>MDANP_CT3: Shut down despite a day-ahead award (2026-05-31)</title>
@@ -51,14 +51,14 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=MDANP_CT3"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=MDANP_CT3#MDANP_CT3/2026-04-23/bidding</id>
     <updated>2026-10-24T00:00:00Z</updated>
-    <summary>Offer price vs peer median: -$15 to -$1/MWh</summary>
+    <summary>Offer price vs peer median: −$15 to −$1/MWh</summary>
   </entry>
   <entry>
     <title>MDANP: Minimum-energy offer stepped (2026-04-21)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=MDANP"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=MDANP#MDANP/2026-04-21/dam_mingen_step</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Minimum-energy offer stepped: $18 to $8/MWh (-$0 to -$10 against the fuel-cost line)</summary>
+    <summary>Minimum-energy offer stepped: $18 to $8/MWh (−$0 to −$10 against the fuel-cost line)</summary>
   </entry>
   <entry>
     <title>MDANP_CT3: Shut down despite a day-ahead award (2026-04-16)</title>
@@ -72,7 +72,7 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=MDANP_CT3"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=MDANP_CT3#MDANP_CT3/2026-04-16/bidding</id>
     <updated>2026-10-24T00:00:00Z</updated>
-    <summary>Offer price vs peer median: -$1 to -$15/MWh</summary>
+    <summary>Offer price vs peer median: −$1 to −$15/MWh</summary>
   </entry>
   <entry>
     <title>MDANP_CT3: Shut down after a long run (2026-04-05)</title>
@@ -100,7 +100,7 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=MDANP_CT3"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=MDANP_CT3#MDANP_CT3/2026-04-01/group</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Always on when available in 2026-03 to Daily, over 2 a week in 2026-04</summary>
+    <summary>Always on when available in 2026-03 to Cycles daily, over twice a week in 2026-04</summary>
   </entry>
   <entry>
     <title>MDANP_CT3: Outage ended (2026-03-30)</title>
@@ -128,7 +128,7 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=MDANP_CT3"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=MDANP_CT3#MDANP_CT3/2026-03-01/group</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Daily, over 2 a week in 2026-02 to Always on when available in 2026-03</summary>
+    <summary>Cycles daily, over twice a week in 2026-02 to Always on when available in 2026-03</summary>
   </entry>
   <entry>
     <title>MDANP_CT3: Outage started (2026-02-27)</title>
@@ -149,7 +149,7 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=MDANP"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=MDANP#MDANP/2026-02-03/dam_mingen_step</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Minimum-energy offer stepped: $8 to $35/MWh (-$27 to $15 against the fuel-cost line)</summary>
+    <summary>Minimum-energy offer stepped: $8 to $35/MWh (−$27 to $15 against the fuel-cost line)</summary>
   </entry>
   <entry>
     <title>MDANP_CT3: Running at a new price (2026-02-01)</title>
@@ -163,34 +163,34 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=MDANP_CT3"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=MDANP_CT3#MDANP_CT3/2026-01-01/group</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Multi-day: off a day or more in 2025-12 to Daily, 1–2 a week in 2026-01</summary>
+    <summary>Off for days at a time in 2025-12 to Cycles daily, 1 to 2 times a week in 2026-01</summary>
   </entry>
   <entry>
     <title>MDANP_CT3: Minimum-energy offer stepped (2025-12-19)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=MDANP_CT3"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=MDANP_CT3#MDANP_CT3/2025-12-19/dam_mingen_step</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Minimum-energy offer stepped: $23 to $32/MWh (-$4 to $9 against the fuel-cost line)</summary>
+    <summary>Minimum-energy offer stepped: $23 to $32/MWh (−$4 to $9 against the fuel-cost line)</summary>
   </entry>
   <entry>
     <title>MDANP_CT3: Minimum-energy offer stepped (2025-12-19)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=MDANP_CT3"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=MDANP_CT3#MDANP_CT3/2025-12-19/dam_mingen_step</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Minimum-energy offer stepped: $23 to $32/MWh (-$4 to $9 against the fuel-cost line)</summary>
+    <summary>Minimum-energy offer stepped: $23 to $32/MWh (−$4 to $9 against the fuel-cost line)</summary>
   </entry>
   <entry>
     <title>MDANP_CT3: Priced out of the day-ahead (2025-12-10)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=MDANP_CT3"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=MDANP_CT3#MDANP_CT3/2025-12-10/dam_priced_out</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Priced out of the day-ahead: minimum energy at $38/MWh against a usual $16 for 3 day(s)</summary>
+    <summary>Priced out of the day-ahead: minimum energy at $38/MWh against a usual $16/MWh, for 3 days</summary>
   </entry>
   <entry>
     <title>MDANP_CT3: Priced out of the day-ahead (2025-12-10)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=MDANP_CT3"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=MDANP_CT3#MDANP_CT3/2025-12-10/dam_priced_out</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Priced out of the day-ahead: minimum energy at $38/MWh against a usual $16 for 3 day(s)</summary>
+    <summary>Priced out of the day-ahead: minimum energy at $38/MWh against a usual $16/MWh, for 3 days</summary>
   </entry>
 </feed>

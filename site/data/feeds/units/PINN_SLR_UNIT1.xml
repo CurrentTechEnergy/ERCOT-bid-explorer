@@ -3,13 +3,41 @@
   <title>PINN_SLR_UNIT1: bidding and operating changes</title>
   <link href="https://ercotbids.currenttech.energy/unit.html?unit=PINN_SLR_UNIT1"/>
   <id>https://ercotbids.currenttech.energy/unit.html?unit=PINN_SLR_UNIT1</id>
-  <updated>2026-10-18T00:00:00Z</updated>
+  <updated>2026-11-05T00:00:00Z</updated>
+  <entry>
+    <title>PINN_SLR_UNIT1: Outage ended (2026-09-03)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=PINN_SLR_UNIT1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=PINN_SLR_UNIT1#PINN_SLR_UNIT1/2026-09-03/outage_end</id>
+    <updated>2026-11-05T00:00:00Z</updated>
+    <summary>Back from a 8-day outage</summary>
+  </entry>
+  <entry>
+    <title>PINN_SLR_UNIT1: Outage started (2026-08-25)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=PINN_SLR_UNIT1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=PINN_SLR_UNIT1#PINN_SLR_UNIT1/2026-08-25/outage_start</id>
+    <updated>2026-11-05T00:00:00Z</updated>
+    <summary>Outage began, lasting 8 days</summary>
+  </entry>
+  <entry>
+    <title>PINN_SLR_UNIT1: Outage ended (2026-08-14)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=PINN_SLR_UNIT1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=PINN_SLR_UNIT1#PINN_SLR_UNIT1/2026-08-14/outage_end</id>
+    <updated>2026-11-05T00:00:00Z</updated>
+    <summary>Back from a 11-day outage</summary>
+  </entry>
   <entry>
     <title>PINN_SLR: Started day-ahead offers (2026-08-04)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=PINN_SLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=PINN_SLR#PINN_SLR/2026-08-04/dam_renew_on</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Started day-ahead offers: none to day-ahead curve</summary>
+  </entry>
+  <entry>
+    <title>PINN_SLR_UNIT1: Outage started (2026-08-03)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=PINN_SLR_UNIT1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=PINN_SLR_UNIT1#PINN_SLR_UNIT1/2026-08-03/outage_start</id>
+    <updated>2026-11-05T00:00:00Z</updated>
+    <summary>Outage began, lasting 11 days</summary>
   </entry>
   <entry>
     <title>PINN_SLR: Stopped day-ahead offers (2026-06-24)</title>
@@ -30,6 +58,6 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=PINN_SLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=PINN_SLR#PINN_SLR/2025-11-22/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: floor $0 to floor -$30</summary>
+    <summary>New floor: $0/MWh to −$30/MWh</summary>
   </entry>
 </feed>

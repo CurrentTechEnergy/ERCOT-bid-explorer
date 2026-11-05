@@ -44,7 +44,7 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=LOSTPI_CC1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=LOSTPI_CC1#LOSTPI_CC1/2026-03-01/turnoff/1</id>
     <updated>2026-11-03T00:00:00Z</updated>
-    <summary>Turn-off point with an award some hours -$22 to $56 per MW of minimum output in March</summary>
+    <summary>Turn-off point with an award some hours −$22 to $56 per MW of minimum output in March</summary>
   </entry>
   <entry>
     <title>LOSTPI_CC1: Minimum-energy offer stepped (2026-02-08)</title>
@@ -58,14 +58,14 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=LOSTPI_CC1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=LOSTPI_CC1#LOSTPI_CC1/2026-01-31/dam_priced_out</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Priced out of the day-ahead: minimum energy at $39/MWh against a usual $26 for 3 day(s)</summary>
+    <summary>Priced out of the day-ahead: minimum energy at $39/MWh against a usual $26/MWh, for 3 days</summary>
   </entry>
   <entry>
     <title>LOSTPI_CC1: Priced out of the day-ahead (2026-01-28)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=LOSTPI_CC1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=LOSTPI_CC1#LOSTPI_CC1/2026-01-28/dam_priced_out</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Priced out of the day-ahead: minimum energy at $86/MWh against a usual $26 for 2 day(s)</summary>
+    <summary>Priced out of the day-ahead: minimum energy at $86/MWh against a usual $26/MWh, for 2 days</summary>
   </entry>
   <entry>
     <title>LOSTPI_CC1: Outage ended (2026-01-20)</title>

@@ -23,14 +23,14 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=OLINGR_OLING_3"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=OLINGR_OLING_3#OLINGR_OLING_3/2026-07-01/group</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Off a week or more in 2026-06 to Daily, 1–2 a week in 2026-07</summary>
+    <summary>Off for a week or more at a time in 2026-06 to Cycles daily, 1 to 2 times a week in 2026-07</summary>
   </entry>
   <entry>
     <title>OLINGR_OLING_3: Timescale group changed (2026-06-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=OLINGR_OLING_3"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=OLINGR_OLING_3#OLINGR_OLING_3/2026-06-01/group</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Multi-day: off a day or more in 2026-05 to Off a week or more in 2026-06</summary>
+    <summary>Off for days at a time in 2026-05 to Off for a week or more at a time in 2026-06</summary>
   </entry>
   <entry>
     <title>OLINGR_OLIN: Minimum-energy offer stepped (2026-04-03)</title>
@@ -65,28 +65,28 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=OLINGR_OLING_3"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=OLINGR_OLING_3#OLINGR_OLING_3/2026-02-26/dam_priced_out</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Priced out of the day-ahead: minimum energy at $94/MWh against a usual $80 for 1 day(s)</summary>
+    <summary>Priced out of the day-ahead: minimum energy at $94/MWh against a usual $80/MWh, for 1 day</summary>
   </entry>
   <entry>
     <title>OLINGR_OLING_3: Priced out of the day-ahead (2026-02-26)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=OLINGR_OLING_3"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=OLINGR_OLING_3#OLINGR_OLING_3/2026-02-26/dam_priced_out</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Priced out of the day-ahead: minimum energy at $94/MWh against a usual $80 for 1 day(s)</summary>
+    <summary>Priced out of the day-ahead: minimum energy at $94/MWh against a usual $80/MWh, for 1 day</summary>
   </entry>
   <entry>
     <title>OLINGR_OLING_3: Priced out of the day-ahead (2026-02-24)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=OLINGR_OLING_3"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=OLINGR_OLING_3#OLINGR_OLING_3/2026-02-24/dam_priced_out</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Priced out of the day-ahead: minimum energy at $110/MWh against a usual $80 for 1 day(s)</summary>
+    <summary>Priced out of the day-ahead: minimum energy at $110/MWh against a usual $80/MWh, for 1 day</summary>
   </entry>
   <entry>
     <title>OLINGR_OLING_3: Priced out of the day-ahead (2026-02-24)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=OLINGR_OLING_3"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=OLINGR_OLING_3#OLINGR_OLING_3/2026-02-24/dam_priced_out</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Priced out of the day-ahead: minimum energy at $110/MWh against a usual $80 for 1 day(s)</summary>
+    <summary>Priced out of the day-ahead: minimum energy at $110/MWh against a usual $80/MWh, for 1 day</summary>
   </entry>
   <entry>
     <title>OLINGR_OLIN: Minimum-energy offer stepped (2026-02-17)</title>

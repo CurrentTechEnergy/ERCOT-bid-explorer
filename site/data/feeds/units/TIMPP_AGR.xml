@@ -65,7 +65,7 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=TIMPP_AGR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=TIMPP_AGR#TIMPP_AGR/2026-01-23/dam_priced_out</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Priced out of the day-ahead: minimum energy at $125/MWh against a usual $53 for 5 day(s)</summary>
+    <summary>Priced out of the day-ahead: minimum energy at $125/MWh against a usual $53/MWh, for 5 days</summary>
   </entry>
   <entry>
     <title>TIMPP_AGR: Minimum-energy offer stepped (2026-01-10)</title>

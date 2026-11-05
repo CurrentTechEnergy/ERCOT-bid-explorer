@@ -44,7 +44,7 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=PYOTE_UNIT1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=PYOTE_UNIT1#PYOTE_UNIT1/2026-07-01/group</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Always on when available in 2026-06 to Daily, over 2 a week in 2026-07</summary>
+    <summary>Always on when available in 2026-06 to Cycles daily, over twice a week in 2026-07</summary>
   </entry>
   <entry>
     <title>PYOTE_UNIT1: Running at a new price (2026-06-01)</title>
@@ -58,7 +58,7 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=PYOTE_UNIT1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=PYOTE_UNIT1#PYOTE_UNIT1/2026-06-01/group</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Daily, 1–2 a week in 2026-05 to Always on when available in 2026-06</summary>
+    <summary>Cycles daily, 1 to 2 times a week in 2026-05 to Always on when available in 2026-06</summary>
   </entry>
   <entry>
     <title>PYOTE_UNIT1: Outage ended (2026-05-01)</title>

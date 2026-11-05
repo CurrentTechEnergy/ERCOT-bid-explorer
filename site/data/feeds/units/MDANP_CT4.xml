@@ -9,7 +9,7 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=MDANP"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=MDANP#MDANP/2026-08-17/dam_mingen_step</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Minimum-energy offer stepped: $20 to $15/MWh ($2 to -$4 against the fuel-cost line)</summary>
+    <summary>Minimum-energy offer stepped: $20 to $15/MWh ($2 to −$4 against the fuel-cost line)</summary>
   </entry>
   <entry>
     <title>MDANP_CT4: Shut down after a long run (2026-08-12)</title>
@@ -23,7 +23,7 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=MDANP"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=MDANP#MDANP/2026-05-10/dam_mingen_step</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Minimum-energy offer stepped: $17 to $23/MWh (-$1 to $4 against the fuel-cost line)</summary>
+    <summary>Minimum-energy offer stepped: $17 to $23/MWh (−$1 to $4 against the fuel-cost line)</summary>
   </entry>
   <entry>
     <title>MDANP_CT4: Outage ended (2026-04-23)</title>
@@ -65,14 +65,14 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=MDANP_CT4"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=MDANP_CT4#MDANP_CT4/2026-01-29/dam_priced_out</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Priced out of the day-ahead: minimum energy at $45/MWh against a usual $26 for 6 day(s)</summary>
+    <summary>Priced out of the day-ahead: minimum energy at $45/MWh against a usual $26/MWh, for 6 days</summary>
   </entry>
   <entry>
     <title>MDANP_CT4: Priced out of the day-ahead (2026-01-29)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=MDANP_CT4"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=MDANP_CT4#MDANP_CT4/2026-01-29/dam_priced_out</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Priced out of the day-ahead: minimum energy at $45/MWh against a usual $26 for 6 day(s)</summary>
+    <summary>Priced out of the day-ahead: minimum energy at $45/MWh against a usual $26/MWh, for 6 days</summary>
   </entry>
   <entry>
     <title>MDANP_CT4: Shut down despite a day-ahead award (2026-01-22)</title>

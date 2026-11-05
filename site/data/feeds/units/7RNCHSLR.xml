@@ -9,41 +9,41 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=7RNCHSLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=7RNCHSLR#7RNCHSLR/2025-11-12/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: floor -$3 to floor -$10</summary>
+    <summary>New floor: −$3/MWh to −$10/MWh</summary>
   </entry>
   <entry>
     <title>7RNCHSLR: Episode (2025-06-07)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=7RNCHSLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=7RNCHSLR#7RNCHSLR/2025-06-07/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Episode: floor -$3 to -$10 for the episode for 1 day(s)</summary>
+    <summary>Episode: floor −$3/MWh, briefly −$10/MWh, for 1 day</summary>
   </entry>
   <entry>
     <title>7RNCHSLR: Back to an earlier floor (2025-06-02)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=7RNCHSLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=7RNCHSLR#7RNCHSLR/2025-06-02/renew_floor_back</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Back to an earlier floor: floor -$10 to floor -$3</summary>
+    <summary>Back to an earlier floor: −$10/MWh to −$3/MWh</summary>
   </entry>
   <entry>
     <title>7RNCHSLR: New floor (2025-04-10)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=7RNCHSLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=7RNCHSLR#7RNCHSLR/2025-04-10/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: floor -$5 to floor -$10</summary>
+    <summary>New floor: −$5/MWh to −$10/MWh</summary>
   </entry>
   <entry>
     <title>7RNCHSLR: New floor (2025-03-18)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=7RNCHSLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=7RNCHSLR#7RNCHSLR/2025-03-18/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: floor -$3 to floor -$5</summary>
+    <summary>New floor: −$3/MWh to −$5/MWh</summary>
   </entry>
   <entry>
     <title>7RNCHSLR: New floor (2025-03-05)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=7RNCHSLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=7RNCHSLR#7RNCHSLR/2025-03-05/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: floor $0 to floor -$3</summary>
+    <summary>New floor: $0/MWh to −$3/MWh</summary>
   </entry>
 </feed>

@@ -3,26 +3,40 @@
   <title>MERCURY_PV1: bidding and operating changes</title>
   <link href="https://ercotbids.currenttech.energy/unit.html?unit=MERCURY_PV1"/>
   <id>https://ercotbids.currenttech.energy/unit.html?unit=MERCURY_PV1</id>
-  <updated>2026-10-18T00:00:00Z</updated>
+  <updated>2026-11-05T00:00:00Z</updated>
+  <entry>
+    <title>MERCURY_PV1: Outage ended (2026-05-26)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=MERCURY_PV1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=MERCURY_PV1#MERCURY_PV1/2026-05-26/outage_end</id>
+    <updated>2026-11-05T00:00:00Z</updated>
+    <summary>Back from a 15-day outage</summary>
+  </entry>
+  <entry>
+    <title>MERCURY_PV1: Outage started (2026-05-11)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=MERCURY_PV1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=MERCURY_PV1#MERCURY_PV1/2026-05-11/outage_start</id>
+    <updated>2026-11-05T00:00:00Z</updated>
+    <summary>Outage began, lasting 15 days</summary>
+  </entry>
   <entry>
     <title>MERCURY: New floor (2026-02-12)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=MERCURY"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=MERCURY#MERCURY/2026-02-12/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: floor -$43 to floor -$39</summary>
+    <summary>New floor: −$43/MWh to −$39/MWh</summary>
   </entry>
   <entry>
     <title>MERCURY: New floor (2025-02-22)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=MERCURY"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=MERCURY#MERCURY/2025-02-22/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: floor -$38 to floor -$43</summary>
+    <summary>New floor: −$38/MWh to −$43/MWh</summary>
   </entry>
   <entry>
     <title>MERCURY: New floor (2023-12-14)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=MERCURY"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=MERCURY#MERCURY/2023-12-14/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: floor -$36 to floor -$38</summary>
+    <summary>New floor: −$36/MWh to −$38/MWh</summary>
   </entry>
 </feed>

@@ -9,20 +9,20 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=THREEW_S"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=THREEW_S#THREEW_S/2026-08-12/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: floor -$3 to floor -$7</summary>
+    <summary>New floor: −$3/MWh to −$7/MWh</summary>
   </entry>
   <entry>
     <title>THREEW_S: New floor (2026-07-18)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=THREEW_S"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=THREEW_S#THREEW_S/2026-07-18/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: floor $0 to floor -$3</summary>
+    <summary>New floor: $0/MWh to −$3/MWh</summary>
   </entry>
   <entry>
     <title>THREEW_S: New floor (2026-04-17)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=THREEW_S"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=THREEW_S#THREEW_S/2026-04-17/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: floor -$35 to floor $0</summary>
+    <summary>New floor: −$35/MWh to $0/MWh</summary>
   </entry>
 </feed>

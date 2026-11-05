@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>MUENSTER_ESR1: bidding and operating changes</title>
+  <link href="https://ercotbids.currenttech.energy/unit.html?unit=MUENSTER_ESR1"/>
+  <id>https://ercotbids.currenttech.energy/unit.html?unit=MUENSTER_ESR1</id>
+  <updated>2026-11-05T00:00:00Z</updated>
+  <entry>
+    <title>MUENSTER_ESR1: Battery size changed (2026-08-01)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=MUENSTER_ESR1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=MUENSTER_ESR1#MUENSTER_ESR1/2026-08-01/battery_size</id>
+    <updated>2026-11-05T00:00:00Z</updated>
+    <summary>Maximum output 10 to 5 MW</summary>
+  </entry>
+</feed>

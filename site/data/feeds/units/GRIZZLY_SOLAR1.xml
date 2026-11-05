@@ -3,12 +3,82 @@
   <title>GRIZZLY_SOLAR1: bidding and operating changes</title>
   <link href="https://ercotbids.currenttech.energy/unit.html?unit=GRIZZLY_SOLAR1"/>
   <id>https://ercotbids.currenttech.energy/unit.html?unit=GRIZZLY_SOLAR1</id>
-  <updated>2026-10-18T00:00:00Z</updated>
+  <updated>2026-11-05T00:00:00Z</updated>
+  <entry>
+    <title>GRIZZLY_SOLAR1: Outage ended (2026-08-28)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=GRIZZLY_SOLAR1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=GRIZZLY_SOLAR1#GRIZZLY_SOLAR1/2026-08-28/outage_end</id>
+    <updated>2026-11-05T00:00:00Z</updated>
+    <summary>Back from a 60-day outage</summary>
+  </entry>
+  <entry>
+    <title>GRIZZLY_SOLAR1: Outage started (2026-06-29)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=GRIZZLY_SOLAR1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=GRIZZLY_SOLAR1#GRIZZLY_SOLAR1/2026-06-29/outage_start</id>
+    <updated>2026-11-05T00:00:00Z</updated>
+    <summary>Outage began, lasting 60 days</summary>
+  </entry>
+  <entry>
+    <title>GRIZZLY_SOLAR1: Outage ended (2026-06-29)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=GRIZZLY_SOLAR1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=GRIZZLY_SOLAR1#GRIZZLY_SOLAR1/2026-06-29/outage_end</id>
+    <updated>2026-11-05T00:00:00Z</updated>
+    <summary>Back from a 33-day outage</summary>
+  </entry>
+  <entry>
+    <title>GRIZZLY_SOLAR1: Outage started (2026-05-27)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=GRIZZLY_SOLAR1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=GRIZZLY_SOLAR1#GRIZZLY_SOLAR1/2026-05-27/outage_start</id>
+    <updated>2026-11-05T00:00:00Z</updated>
+    <summary>Outage began, lasting 33 days</summary>
+  </entry>
+  <entry>
+    <title>GRIZZLY_SOLAR1: Outage ended (2026-05-27)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=GRIZZLY_SOLAR1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=GRIZZLY_SOLAR1#GRIZZLY_SOLAR1/2026-05-27/outage_end</id>
+    <updated>2026-11-05T00:00:00Z</updated>
+    <summary>Back from a 80-day outage</summary>
+  </entry>
+  <entry>
+    <title>GRIZZLY_SOLAR1: Outage started (2026-03-08)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=GRIZZLY_SOLAR1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=GRIZZLY_SOLAR1#GRIZZLY_SOLAR1/2026-03-08/outage_start</id>
+    <updated>2026-11-05T00:00:00Z</updated>
+    <summary>Outage began, lasting 80 days</summary>
+  </entry>
+  <entry>
+    <title>GRIZZLY_SOLAR1: Outage ended (2026-03-08)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=GRIZZLY_SOLAR1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=GRIZZLY_SOLAR1#GRIZZLY_SOLAR1/2026-03-08/outage_end</id>
+    <updated>2026-11-05T00:00:00Z</updated>
+    <summary>Back from a 56-day outage</summary>
+  </entry>
+  <entry>
+    <title>GRIZZLY_SOLAR1: Outage started (2026-01-11)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=GRIZZLY_SOLAR1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=GRIZZLY_SOLAR1#GRIZZLY_SOLAR1/2026-01-11/outage_start</id>
+    <updated>2026-11-05T00:00:00Z</updated>
+    <summary>Outage began, lasting 56 days</summary>
+  </entry>
+  <entry>
+    <title>GRIZZLY_SOLAR1: Outage ended (2026-01-05)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=GRIZZLY_SOLAR1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=GRIZZLY_SOLAR1#GRIZZLY_SOLAR1/2026-01-05/outage_end</id>
+    <updated>2026-11-05T00:00:00Z</updated>
+    <summary>Back from a 32-day outage</summary>
+  </entry>
+  <entry>
+    <title>GRIZZLY_SOLAR1: Outage started (2025-12-05)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=GRIZZLY_SOLAR1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=GRIZZLY_SOLAR1#GRIZZLY_SOLAR1/2025-12-05/outage_start</id>
+    <updated>2026-11-05T00:00:00Z</updated>
+    <summary>Outage began, lasting 32 days</summary>
+  </entry>
   <entry>
     <title>GRIZZLY: New floor (2024-02-27)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=GRIZZLY"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=GRIZZLY#GRIZZLY/2024-02-27/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: floor -$5 to floor $2</summary>
+    <summary>New floor: −$5/MWh to $2/MWh</summary>
   </entry>
 </feed>

@@ -9,13 +9,13 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=EXGNWTL"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=EXGNWTL#EXGNWTL/2023-01-01/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: floor -$32 to floor $0</summary>
+    <summary>New floor: −$32/MWh to $0/MWh</summary>
   </entry>
   <entry>
     <title>EXGNWTL: New floor (2019-06-20)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=EXGNWTL"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=EXGNWTL#EXGNWTL/2019-06-20/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: floor -$30 to floor -$32</summary>
+    <summary>New floor: −$30/MWh to −$32/MWh</summary>
   </entry>
 </feed>

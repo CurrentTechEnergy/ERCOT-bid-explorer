@@ -9,20 +9,20 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=GOODNIT1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=GOODNIT1#GOODNIT1/2026-01-17/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: floor -$28 to floor -$33</summary>
+    <summary>New floor: −$28/MWh to −$33/MWh</summary>
   </entry>
   <entry>
     <title>GOODNIT1: Back to an earlier floor (2024-01-10)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=GOODNIT1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=GOODNIT1#GOODNIT1/2024-01-10/renew_floor_back</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Back to an earlier floor: floor -$100 to floor -$28</summary>
+    <summary>Back to an earlier floor: −$100/MWh to −$28/MWh</summary>
   </entry>
   <entry>
     <title>GOODNIT1: New floor (2023-12-09)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=GOODNIT1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=GOODNIT1#GOODNIT1/2023-12-09/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: floor -$28 to floor -$100</summary>
+    <summary>New floor: −$28/MWh to −$100/MWh</summary>
   </entry>
 </feed>

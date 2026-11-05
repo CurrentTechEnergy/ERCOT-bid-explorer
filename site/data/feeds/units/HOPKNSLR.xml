@@ -9,13 +9,13 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=HOPKNSLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=HOPKNSLR#HOPKNSLR/2026-02-06/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: floor -$36 to floor -$40</summary>
+    <summary>New floor: −$36/MWh to −$40/MWh</summary>
   </entry>
   <entry>
     <title>HOPKNSLR: New floor (2024-12-31)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=HOPKNSLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=HOPKNSLR#HOPKNSLR/2024-12-31/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: floor $0 to floor -$36</summary>
+    <summary>New floor: $0/MWh to −$36/MWh</summary>
   </entry>
 </feed>

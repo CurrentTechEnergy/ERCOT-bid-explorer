@@ -9,14 +9,14 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=SPNCER_SPNCE_5"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=SPNCER_SPNCE_5#SPNCER_SPNCE_5/2026-08-28/outage_start</id>
     <updated>2026-11-02T00:00:00Z</updated>
-    <summary>Outage began, still on at the end of the data (9 days so far)</summary>
+    <summary>Outage began, still on at the end of the data (10 days so far)</summary>
   </entry>
   <entry>
     <title>SPNCER_SPNCE_5: Turn-off point moved (2026-08-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=SPNCER_SPNCE_5"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=SPNCER_SPNCE_5#SPNCER_SPNCE_5/2026-08-01/turnoff/0</id>
     <updated>2026-10-29T00:00:00Z</updated>
-    <summary>Turn-off point without an award -$84 to -$6 per MW of minimum output in August</summary>
+    <summary>Turn-off point without an award −$84 to −$6 per MW of minimum output in August</summary>
   </entry>
   <entry>
     <title>SPNCER_SPNCE_5: Bidding approach shifted (2026-07-21)</title>
@@ -37,27 +37,27 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=SPNCER_SPNCE_5"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=SPNCER_SPNCE_5#SPNCER_SPNCE_5/2026-07-01/group</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Multi-day: off a day or more in 2026-06 to Daily, 1–2 a week in 2026-07</summary>
+    <summary>Off for days at a time in 2026-06 to Cycles daily, 1 to 2 times a week in 2026-07</summary>
   </entry>
   <entry>
     <title>SPNCER_SPNCE_5: Timescale group changed (2026-06-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=SPNCER_SPNCE_5"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=SPNCER_SPNCE_5#SPNCER_SPNCE_5/2026-06-01/group</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Daily, 1–2 a week in 2026-05 to Multi-day: off a day or more in 2026-06</summary>
+    <summary>Cycles daily, 1 to 2 times a week in 2026-05 to Off for days at a time in 2026-06</summary>
   </entry>
   <entry>
     <title>SPNCER_SPNCE_5: Timescale group changed (2026-05-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=SPNCER_SPNCE_5"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=SPNCER_SPNCE_5#SPNCER_SPNCE_5/2026-05-01/group</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Multi-day: off a day or more in 2026-04 to Daily, 1–2 a week in 2026-05</summary>
+    <summary>Off for days at a time in 2026-04 to Cycles daily, 1 to 2 times a week in 2026-05</summary>
   </entry>
   <entry>
     <title>SPNCER_SPNCE_5: Timescale group changed (2026-04-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=SPNCER_SPNCE_5"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=SPNCER_SPNCE_5#SPNCER_SPNCE_5/2026-04-01/group</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Off a week or more in 2026-03 to Multi-day: off a day or more in 2026-04</summary>
+    <summary>Off for a week or more at a time in 2026-03 to Off for days at a time in 2026-04</summary>
   </entry>
 </feed>

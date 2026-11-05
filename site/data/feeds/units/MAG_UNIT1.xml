@@ -9,13 +9,13 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=MAG"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=MAG#MAG/2026-01-10/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: floor -$40 to floor -$44</summary>
+    <summary>New floor: −$40/MWh to −$44/MWh</summary>
   </entry>
   <entry>
     <title>MAG: New floor (2025-11-08)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=MAG"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=MAG#MAG/2025-11-08/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: floor $6 to floor -$40</summary>
+    <summary>New floor: $6/MWh to −$40/MWh</summary>
   </entry>
 </feed>

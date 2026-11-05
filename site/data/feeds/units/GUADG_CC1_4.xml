@@ -9,21 +9,21 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=GUADG_CC1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=GUADG_CC1#GUADG_CC1/2026-05-16/dam_mingen_step</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Minimum-energy offer stepped: $21 to $0/MWh ($2 to -$19 against the fuel-cost line)</summary>
+    <summary>Minimum-energy offer stepped: $21 to $0/MWh ($2 to −$19 against the fuel-cost line)</summary>
   </entry>
   <entry>
     <title>GUADG_CC1: Minimum-energy offer stepped (2026-05-07)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=GUADG_CC1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=GUADG_CC1#GUADG_CC1/2026-05-07/dam_mingen_step</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Minimum-energy offer stepped: $0 to $21/MWh (-$17 to $2 against the fuel-cost line)</summary>
+    <summary>Minimum-energy offer stepped: $0 to $21/MWh (−$17 to $2 against the fuel-cost line)</summary>
   </entry>
   <entry>
     <title>GUADG_CC1: Minimum-energy offer stepped (2026-04-25)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=GUADG_CC1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=GUADG_CC1#GUADG_CC1/2026-04-25/dam_mingen_step</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Minimum-energy offer stepped: $20 to $0/MWh ($2 to -$17 against the fuel-cost line)</summary>
+    <summary>Minimum-energy offer stepped: $20 to $0/MWh ($2 to −$17 against the fuel-cost line)</summary>
   </entry>
   <entry>
     <title>GUADG_CC1: Start-up cost changed (2026-04-10)</title>
@@ -37,13 +37,13 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=GUADG_CC1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=GUADG_CC1#GUADG_CC1/2026-02-03/dam_mingen_step</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Minimum-energy offer stepped: $0 to $21/MWh (-$34 to $2 against the fuel-cost line)</summary>
+    <summary>Minimum-energy offer stepped: $0 to $21/MWh (−$34 to $2 against the fuel-cost line)</summary>
   </entry>
   <entry>
     <title>GUADG_CC1: Minimum-energy offer stepped (2026-01-23)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=GUADG_CC1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=GUADG_CC1#GUADG_CC1/2026-01-23/dam_mingen_step</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Minimum-energy offer stepped: $11 to $3/MWh (-$10 to -$76 against the fuel-cost line)</summary>
+    <summary>Minimum-energy offer stepped: $11 to $3/MWh (−$10 to −$76 against the fuel-cost line)</summary>
   </entry>
 </feed>

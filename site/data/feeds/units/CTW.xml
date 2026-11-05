@@ -9,55 +9,55 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=CTW"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=CTW#CTW/2026-04-07/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: floor -$23 to floor -$19</summary>
+    <summary>New floor: −$23/MWh to −$19/MWh</summary>
   </entry>
   <entry>
     <title>CTW: Episode (2025-11-23)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=CTW"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=CTW#CTW/2025-11-23/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Episode: floor -$23 to -$5 for the episode for 1 day(s)</summary>
+    <summary>Episode: floor −$23/MWh, briefly −$5/MWh, for 1 day</summary>
   </entry>
   <entry>
     <title>CTW: New floor (2025-11-22)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=CTW"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=CTW#CTW/2025-11-22/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: floor -$5 to floor -$23</summary>
+    <summary>New floor: −$5/MWh to −$23/MWh</summary>
   </entry>
   <entry>
     <title>CTW: New floor (2025-06-18)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=CTW"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=CTW#CTW/2025-06-18/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: floor -$2 to floor -$5</summary>
+    <summary>New floor: −$2/MWh to −$5/MWh</summary>
   </entry>
   <entry>
     <title>CTW: Episode (2024-11-29)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=CTW"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=CTW#CTW/2024-11-29/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Episode: floor -$2 to -$30 for the episode for 1 day(s)</summary>
+    <summary>Episode: floor −$2/MWh, briefly −$30/MWh, for 1 day</summary>
   </entry>
   <entry>
     <title>CTW: New floor (2024-10-20)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=CTW"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=CTW#CTW/2024-10-20/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: floor -$30 to floor -$2</summary>
+    <summary>New floor: −$30/MWh to −$2/MWh</summary>
   </entry>
   <entry>
     <title>CTW: New floor (2024-08-16)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=CTW"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=CTW#CTW/2024-08-16/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: floor -$30 to floor -$2</summary>
+    <summary>New floor: −$30/MWh to −$2/MWh</summary>
   </entry>
   <entry>
     <title>CTW: Episode (2024-08-16)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=CTW"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=CTW#CTW/2024-08-16/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Episode: floor -$30 to -$2 for the episode for 1 day(s)</summary>
+    <summary>Episode: floor −$30/MWh, briefly −$2/MWh, for 1 day</summary>
   </entry>
 </feed>

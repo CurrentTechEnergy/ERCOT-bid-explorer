@@ -9,7 +9,7 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=ANDMDSLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=ANDMDSLR#ANDMDSLR/2026-05-12/dam_renew_floor</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Day-ahead floor changed: $4 to -$4/MWh</summary>
+    <summary>Day-ahead floor changed: $4 to −$4/MWh</summary>
   </entry>
   <entry>
     <title>ANDMDSLR: Decision maker or QSE changed (2026-04-17)</title>
@@ -37,13 +37,13 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=ANDMDSLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=ANDMDSLR#ANDMDSLR/2025-07-25/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: floor -$4 to floor -$8</summary>
+    <summary>New floor: −$4/MWh to −$8/MWh</summary>
   </entry>
   <entry>
     <title>ANDMDSLR: Episode (2025-04-05)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=ANDMDSLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=ANDMDSLR#ANDMDSLR/2025-04-05/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Episode: floor -$4 to -$10 for the episode for 4 day(s)</summary>
+    <summary>Episode: floor −$4/MWh, briefly −$10/MWh, for 4 days</summary>
   </entry>
 </feed>

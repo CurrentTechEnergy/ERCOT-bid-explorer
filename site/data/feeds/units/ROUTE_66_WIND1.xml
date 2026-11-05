@@ -9,34 +9,34 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=ROUTE_66"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=ROUTE_66#ROUTE_66/2024-11-01/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: floor -$18 to floor -$3</summary>
+    <summary>New floor: −$18/MWh to −$3/MWh</summary>
   </entry>
   <entry>
     <title>ROUTE_66: New floor (2024-07-06)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=ROUTE_66"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=ROUTE_66#ROUTE_66/2024-07-06/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: floor -$3 to floor -$18</summary>
+    <summary>New floor: −$3/MWh to −$18/MWh</summary>
   </entry>
   <entry>
     <title>ROUTE_66: New floor (2024-06-25)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=ROUTE_66"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=ROUTE_66#ROUTE_66/2024-06-25/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: floor -$6 to floor -$3</summary>
+    <summary>New floor: −$6/MWh to −$3/MWh</summary>
   </entry>
   <entry>
     <title>ROUTE_66: Back to an earlier floor (2021-03-02)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=ROUTE_66"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=ROUTE_66#ROUTE_66/2021-03-02/renew_floor_back</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Back to an earlier floor: floor $0 to floor -$6</summary>
+    <summary>Back to an earlier floor: $0/MWh to −$6/MWh</summary>
   </entry>
   <entry>
     <title>ROUTE_66: New floor (2021-02-20)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=ROUTE_66"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=ROUTE_66#ROUTE_66/2021-02-20/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: floor -$7 to floor $0</summary>
+    <summary>New floor: −$7/MWh to $0/MWh</summary>
   </entry>
 </feed>
