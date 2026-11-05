@@ -26,7 +26,7 @@ const THERMAL = ["nuclear", "coal", "combined_cycle", "gas_steam", "combustion_t
 const TECH_OF = Object.fromEntries(TECHS.map((t) => [t.id, t]));
 const techLabel = (t) => (TECH_OF[t] ? TECH_OF[t].label : t === "storage" ? "Storage (ESR)" : t === "hydro" ? "Hydro" : t || "–");
 const SIG_FMT = { le0: (v) => d3.format(".0%")(v), noff: (v) => d3.format(".0%")(v), rel: (v) => (v >= 0 ? "+" : "−") + d3.format("$,.0f")(Math.abs(v)) };
-const GROUP_SHORT = { never: "Always on when available", seasonal: "Seasonal", multiday: "Off for days at a time", daily1: "Daily, under once a week", daily2: "Daily, 1 to 2 times a week", daily3: "Daily, over twice a week", never_on: "Never on", ungrouped: "Not yet grouped" };
+const GROUP_SHORT = { never: "Always on when available", seasonal: "Seasonal", multiday: "Off for days at a time", daily1: "Cycles daily, under once a week", daily2: "Cycles daily, 1 to 2 times a week", daily3: "Cycles daily, over twice a week", never_on: "Never on", ungrouped: "Not yet grouped" };
 const S = { econ: {}, day: null, hour: null, T: null, DEC: null, UH: null, SP: null, OI: null, OD: null, fcDay: null, PPA: null, list: new Map(), stubs: new Set(), unit: null, cfg: null, span: null, last60: null };
 const { tryJSON, showTip, hideTip, setCSV, tickFormat, fmtKind, axisFmt, css, esc } = window.CX;
 const $ = (id) => document.getElementById(id);

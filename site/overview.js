@@ -26,7 +26,7 @@ const GROUP_NOTES = {
   peakers: "run like peakers: online under 30% of available hours, at most 16 hours a day when on",
   never_on: "no running hour in the 60-day history (mothballed or on a long outage)", ungrouped: "no hourly history yet",
 };
-const GROUP_SHORT = { never: "Always on when available", multiday: "Off for days at a time", daily1: "Daily, under once a week", daily2: "Daily, 1 to 2 times a week", daily3: "Daily, over twice a week", peakers: "Peakers", never_on: "Never on", ungrouped: "Not yet grouped" };
+const GROUP_SHORT = { never: "Always on when available", multiday: "Off for days at a time", daily1: "Cycles daily, under once a week", daily2: "Cycles daily, 1 to 2 times a week", daily3: "Cycles daily, over twice a week", peakers: "Peakers", never_on: "Never on", ungrouped: "Not yet grouped" };
 // "peakers" is not a timescale group: the units groups_60d flags as peakers by how they run, taken out of
 // their groups wherever thermal output is shown by group
 const GROUPS = ["never", "multiday", "daily1", "daily2", "daily3", "peakers", "never_on", "ungrouped"];
