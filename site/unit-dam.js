@@ -62,9 +62,9 @@ function changesTable(evs) {
     evs.map((e) => [e.date, e.kind, e.major, e.before, e.after, e.mk_before ?? null, e.mk_after ?? null, e.days ?? null, (e.units || []).join(" ")]), "Day-ahead offer changes");
 }
 function evText(e) {
-  if (e.kind === "mingen_step") return `${fmt$(e.before)} to ${fmt$(e.after)}/MWh${e.mk_before != null && e.mk_after != null ? ` (${fmt$(e.mk_before)} to ${fmt$(e.mk_after)} against fuel cost)` : ""}`;
+  if (e.kind === "mingen_step") return `${fmt$(e.before)} to ${fmt$(e.after)}/MWh${e.mk_before != null && e.mk_after != null ? ` (offer minus fuel cost: ${fmt$(e.mk_before)} to ${fmt$(e.mk_after)}/MWh)` : ""}`;
   if (e.kind === "priced_out") return `${fmt$(e.after)}/MWh against a usual ${fmt$(e.before)} for ${e.days} day${e.days === 1 ? "" : "s"}`;
-  if (e.kind === "start_change") return `hot start ${fmt$0(e.before)} to ${fmt$0(e.after)}`;
+  if (e.kind === "start_change") return `hot start ${fmt$0(e.before)} to ${fmt$0(e.after)} per start`;
   if (e.kind === "renew_floor") return `DA floor ${fmt$(e.before)} to ${fmt$(e.after)}/MWh`;
   return "";
 }
@@ -84,15 +84,15 @@ function drawThermal(U, list) {
   const lows = filed.map((i) => d3.min(list, ([, r]) => r.mc[i] ?? undefined));
   const cc = U.tech === "combined_cycle";
   $("dam-title-note").textContent = `${D.first} to ${D.last}`;
-  $("dam-note").innerHTML = `Its three-part offer to the day-ahead market each day${cc ? ", one colour per configuration" : ""}. ` +
-    `Large squares are cheap days (DA lambda at or below $${D.cheap_usd}) at the offer over the cheap hours: filled when a DAM award kept it on through the cheap stretch, hollow when not. Small faint squares are other days, at the day's offer. ` +
-    `The black line is its fuel cost at minimum output (its heat rate at minimum, as under Heat rate and fuel cost, times its hub's gas price the day before), and dashed rules mark offer changes. ` +
-    (filed.length ? `On ${filed.length} cheap days with an offer it was kept on through ${fmtPct(kept.length / filed.length)} of them; median lowest offer ${fmt$(med(lows))}/MWh. ` : "") +
+  $("dam-note").innerHTML = `What it asked the day-ahead market to pay for running at minimum each day (its minimum-energy offer, part of the three-part offer of start cost, minimum-energy price and energy curve${cc ? "; one colour per configuration" : ""}) against its fuel cost at minimum (black line). ` +
+    `On cheap days, when the day-ahead system price (lambda) dropped to $${D.cheap_usd}/MWh or below in some hour, the large square is its offer over those hours: filled when a day-ahead award kept it on through them, hollow when not; small faint squares are other days. Offering below fuel cost on a cheap day is paying to stay on, usually to avoid a restart. ` +
+    `The fuel cost is its heat rate at minimum, as under Heat rate and fuel cost, times its hub's gas price the trading day before (not the 7-day average used there); dashed rules mark offer changes. ` +
+    (filed.length ? `On ${filed.length} cheap days with an offer, an award kept it on through ${kept.length} (${fmtPct(kept.length / filed.length)}); the median of its lowest ${cc ? "configuration's " : ""}offer over those cheap hours was ${fmt$(med(lows))}/MWh. ` : "") +
     `<a href="dayahead.html">Compare it with the fleet on Day-ahead offers</a>.`;
-  const sz = (s) => [s.lsl != null ? `${fmt0(s.lsl)}${s.hsl != null ? `–${fmt0(s.hsl)}` : ""} MW` : null, s.hot ? `hot start ${fmt$0(s.hot)}${s.lsl ? `, ${fmt$0(s.hot / s.lsl)}/MW` : ""}` : null].filter(Boolean).join(", ");
+  const sz = (s) => [s.lsl != null ? `${fmt0(s.lsl)}${s.hsl != null ? ` to ${fmt0(s.hsl)}` : ""} MW` : null, s.hot ? `hot start ${fmt$0(s.hot)}${s.lsl ? `, ${fmt$0(s.hot / s.lsl)} per MW of minimum` : ""}` : null].filter(Boolean).join("; ");
   $("dam-legend").innerHTML = list.map(([k], j) => `<span><span class="sw" style="background:${col(j)};border-radius:50%"></span>${esc(k)}${sz(size[j]) ? ` <span class="muted">(${sz(size[j])})</span>` : ""}</span>`).join("") +
     `<span><span class="sw-line" style="border-top:2px solid var(--ink)"></span>Fuel cost</span>` +
-    `<span><span class="sw" style="background:var(--ink-2);width:9px;height:9px;border-radius:1px"></span>Cheap day, DAM award kept it on</span>` +
+    `<span><span class="sw" style="background:var(--ink-2);width:9px;height:9px;border-radius:1px"></span>Cheap day, day-ahead award kept it on</span>` +
     `<span><span class="sw" style="border:1.5px solid var(--ink-2);width:9px;height:9px;border-radius:1px;background:none;box-sizing:border-box"></span>Cheap day, no award</span>` +
     `<span><span class="mk" style="border-color:var(--c8)"></span>Offer change</span>`;
   const pts = [];
@@ -156,7 +156,7 @@ function drawRenew(U, r) {
   $("dam-title-note").textContent = `${D.first} to ${D.last}`;
   $("dam-note").innerHTML = `Wind and solar three-part offers carry no start-up or minimum-energy cost, so the day-ahead offer is just the energy curve. ` +
     `Dots are its day-ahead floor (the first price of the day's most used curve), the line its real-time offer floor. ` +
-    `Day-ahead curve filed on ${days.length} days; median floor ${fmt$(med(days.map((i) => r.fl[i])))}/MWh, ${fmt$(med(gap))} above its real-time floor. ` +
+    `Day-ahead curve filed on ${days.length} days; median floor ${fmt$(med(days.map((i) => r.fl[i])))}/MWh, ${Math.abs(med(gap)) < 0.005 ? "the same as its real-time floor" : `${fmt$(Math.abs(med(gap)))}/MWh ${med(gap) > 0 ? "above" : "below"} its real-time floor`}. ` +
     `<a href="dayahead.html#p=renew-panel">Compare it with other wind and solar units on Day-ahead offers</a>.`;
   $("dam-legend").innerHTML = `<span><span class="sw" style="background:var(--c1);border-radius:50%"></span>Day-ahead floor</span>` +
     `<span><span class="sw-line" style="border-top:2px solid var(--c2)"></span>Real-time floor</span>` +

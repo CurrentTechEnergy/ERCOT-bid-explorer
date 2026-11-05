@@ -510,7 +510,7 @@ function dayPicker(sel, opts = {}) {
   const fill = () => {
     sel.innerHTML = days.slice().reverse().map((d) => {
       const extra = opts.note ? opts.note(d) : "";
-      return `<option value="${d}">${esc(dayLabel(d))}${extra ? ` · ${esc(extra)}` : ""}${flagged[d] ? " · ⚠ check failed" : ""}</option>`;
+      return `<option value="${d}">${esc(dayLabel(d))}${extra ? ` · ${esc(extra)}` : ""}${flagged[d] ? " · ⚠ data check failed" : ""}</option>`;
     }).join("");
   };
   const api = {

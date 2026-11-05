@@ -219,7 +219,7 @@ def shutdown_events(dec):
                            since=since, off_h=off_h))
         else:
             out.append(_ev(key, date, "shutdown_award", tech,
-                           f"Shut down for {off_h} h although a day-ahead award covered {cov:.0%} of the window",
+                           f"Shut down for {off_h} h although a day-ahead award covered {cov:.0%} of the stretch",
                            True, value=loss, field="stay-on loss $", award=cov, off_h=off_h))
     return out
 
@@ -495,7 +495,7 @@ def dam_events(do):
         if kind == "mingen_step":
             title = f"{DAM_KINDS[kind]}: {_usd(b)} to {_usd(a)}/MWh"
             if e.get("mk_before") is not None and e.get("mk_after") is not None:
-                title += f" ({_usd(e['mk_before'])} to {_usd(e['mk_after'])} against the fuel-cost line)"
+                title += f" (offer minus fuel cost: {_usd(e['mk_before'])} to {_usd(e['mk_after'])}/MWh)"
             field = "minimum-energy offer $/MWh"
         elif kind == "priced_out":
             title = f"{DAM_KINDS[kind]}: minimum energy at {_usd(a)}/MWh against a usual {_usd(b)}/MWh, for {_days(e.get('days'))}"

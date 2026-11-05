@@ -35,7 +35,7 @@ function numbers(e) {
   if (k === "turnoff") {
     const perMW = (v) => (v == null ? "never turns off" : fmt$(v));
     const lsl = e.after ? e.after_usd / e.after : e.before ? e.before_usd / e.before : null;
-    return `${perMW(e.before)} → ${perMW(e.after)}/MW of minimum` + (lsl ? ` (${e.before_usd == null ? "never" : fmt$(e.before_usd)} → ${e.after_usd == null ? "never" : fmt$(e.after_usd)} a day at its ${d3.format(",.0f")(lsl)} MW minimum)` : "");
+    return `${perMW(e.before)} → ${perMW(e.after)}/MW of minimum` + (lsl ? ` (${e.before_usd == null ? "never" : fmt$(e.before_usd)} → ${e.after_usd == null ? "never" : fmt$(e.after_usd)} a day at its ${e.tech === "combined_cycle" ? "smallest configuration's " : ""}${d3.format(",.0f")(lsl)} MW minimum)` : "");
   }
   if (k === "rt_price") return `online ${fmtPct(e.before)} → ${fmtPct(e.after)} of its available hours at that price`;
   if (k === "bidding") return e.field === "rel" ? `${fmt$(e.before)} → ${fmt$(e.after)}/MWh against peers` : `${fmtPct(e.before)} → ${fmtPct(e.after)}`;

@@ -83,8 +83,8 @@ async function drawDay(name) {
   hourChart(els[0], bars, lines, { title: "Base point by hour (MW; charging below zero)", yFmt: fmtMW, tipFmt: (v) => `${fmt1(v)} MW`, csv: `${name} ${day} by hour` });
   const dis = d3.sum(bp, (v) => Math.max(0, v || 0)), chg = d3.sum(bp, (v) => Math.max(0, -(v || 0)));
   const dam = u.dam ? [d3.sum(u.dam, (v) => Math.max(0, v || 0)), d3.sum(u.dam, (v) => Math.max(0, -(v || 0)))] : null;
-  $("batt-day-note").textContent = `${fmtDate(parseDate(day))} · ${fmtMW(chg)} MWh charged, ${fmtMW(dis)} MWh discharged` +
-    (dam ? ` · day-ahead ${fmtMW(dam[1])} and ${fmtMW(dam[0])}` : " · no day-ahead energy award");
+  $("batt-day-note").textContent = `${fmtDate(parseDate(day))} · charged ${fmtMW(chg)} MWh, discharged ${fmtMW(dis)} MWh` +
+    (dam && (dam[0] || dam[1]) ? ` · day-ahead award: charge ${fmtMW(dam[1])} MWh, discharge ${fmtMW(dam[0])} MWh` : " · no day-ahead energy award");
   if (u.soc) {
     const flat = (v) => HOURS.map(() => v);
     hourChart(els[1], [], [
@@ -176,13 +176,13 @@ function drawDays(name) {
   ];
   legend($("batt-value-legend"), bars.concat(value));
   const top = d3.quantile(K(c.perfect).filter((v) => v != null).sort(d3.ascending), 0.98);
-  dayChart($("batt-value-chart"), dates, value, { bars, title: "Earned each day against the perfect battery ($ thousand; scale stops at the 98th percentile day)", yFmt: d3.format("$,.0f"), yMax: top, tipFmt: fmtK });
+  dayChart($("batt-value-chart"), dates, value, { bars, title: "Earned each day against the perfect battery ($ thousand; scale cut at the 98th percentile day)", yFmt: d3.format("$,.0f"), yMax: top, tipFmt: fmtK });
   const cap = [
     { label: "Each day", color: "--c3", faint: true, width: 1.2, values: ratio(c.actual, c.perfect), fmt: fmtPct },
     { label: "7-day", color: "--c3", width: 2, values: rolling(c.actual, c.perfect), fmt: fmtPct },
   ];
   legend($("batt-capture-legend"), cap);
-  dayChart($("batt-capture-chart"), dates, cap, { title: "Share of the perfect battery's energy revenue earned (scale stops at -50% and 150%)", H: 170, yMin: -0.5, yMax: 1.5, yFmt: d3.format(".0%"), tipFmt: fmtPct });
+  dayChart($("batt-capture-chart"), dates, cap, { title: "Share of the perfect battery's energy revenue earned (scale cut at −50% and 150%)", H: 170, yMin: -0.5, yMax: 1.5, yFmt: d3.format(".0%"), tipFmt: fmtPct });
   const fmtC = d3.format(".2f");
   const cycles = [
     { label: "Each day", color: "--c7", faint: true, width: 1.2, values: ratio(c.dis_mwh, c.mwh), fmt: fmtC },
@@ -202,7 +202,7 @@ function drawDays(name) {
   const sum = (a) => d3.sum(a.filter((v) => v != null));
   const both = (a) => sum(a.filter((_, i) => c.perfect[i] != null && c.actual[i] != null));
   const n = c.perfect.filter((v) => v != null).length;
-  $("batt-days-note").textContent = `${n} days from ${dates[0]} · earned ${fmtPct(both(c.actual) / both(c.perfect))} of the perfect battery` +
+  $("batt-days-note").textContent = `${n} days from ${dates[0]} · earned ${fmtPct(both(c.actual) / both(c.perfect))} of what a perfect battery of its size would have on energy` +
     ` · about ${fmt1(sum(c.dis_mwh) / sum(c.mwh))} full cycles a day`;
 }
 
