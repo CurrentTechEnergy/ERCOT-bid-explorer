@@ -196,7 +196,11 @@ function drawHead(e) {
   $("unit-who").hidden = !wb.length;
   drawSite(e);
   const v = $("unit-verdict"), r = lastDecision(e.name);
-  if (!r) { v.textContent = THERMAL.includes(e.tech) && S.last60 ? `No decision day in the 60-day data (to ${S.last60}): it was not online going into any day with a DAM file.` : ""; return; }
+  if (!r) {
+    v.textContent = e.tech === "nuclear" ? "Nuclear units run at full output whatever the price, so they have no daily turn-off decisions to show."
+      : THERMAL.includes(e.tech) && S.last60 ? `No decision day in the 60-day data (to ${S.last60}): it was not online going into any day with a DAM file.` : "";
+    return;
+  }
   const cut = dec && dec[9];
   v.innerHTML = `<b>${esc(r[1])}, its latest decision day: ${r[6] ? `turned off${r[7] ? ` for ${r[7]} hours` : ""}` : "stayed on"}.</b>` +
     (!r[4] ? " Day-ahead prices at its node covered its costs all day, so there was no loss to ride through." :
@@ -339,9 +343,11 @@ function drawDecisions(e) {
   if (e.tech === "combined_cycle" || e.tech === "gas_steam") { $("dec-oi").hidden = true; $("dec-lead").hidden = $("dec-how").hidden = true; return drawDecisionsTO(e); }
   if (!u || !rows.length) { $("dec-note").textContent = ""; return emptyMsg(el, "No decision days for this unit in the loaded 60-day data."); }
   const g = (k) => u[DEC_U[k]];
-  $("dec-note").textContent = `${g("days")} days it had to choose, ${g("shut")} shutdowns, a day-ahead award over the cheap stretch on ${fmtPct(g("award") || 0)} of them. ` +
-    (g("shut") && g("days") > g("shut") ? `Most it stayed on through: ${fmt$(g("stayMax"))}; least it shut on: ${fmt$(g("shutMin"))}. ` : "") +
-    "Its turn-off point comes from the operator-informed model below; dashed lines mark the months it moved. " +
+  const nd = g("days"), ns = g("shut");
+  $("dec-note").textContent = `On ${nd} days it started online with a loss to ride through. It shut down on ${ns} and stayed on through the other ${nd - ns}, ` +
+    `and a day-ahead award covered the cheap stretch on ${fmtPct(g("award") || 0)} of them. ` +
+    (ns && nd > ns && g("stayMax") != null && g("shutMin") != null ? `The biggest loss it stayed on through was ${fmt$(g("stayMax"))}; the smallest it shut down for was ${fmt$(g("shutMin"))}. ` : "") +
+    "Dashed lines mark any months its turn-off point moved." +
     (g("est") === 2 ? " Costs are the technology's generic costs (no three-part offer of its own in the window)."
       : g("est") === 3 ? " Its minimum-energy cost is its gas cost (heat rate × its gas hub's price the day before), not its own offer." : "");
   const w = Math.max(280, el.clientWidth || 600), H = 240, m = { t: 18, r: 16, b: 26, l: 70 };
@@ -970,7 +976,7 @@ async function boot() {
   S.stubs = new Set((S.UI || []).map((u) => u.unit));   // every unit in the index has a unit/NAME page
   if (S.T) { S.span = [S.T.dates[0], S.T.dates.at(-1)]; S.last60 = S.T.dates.at(-1); }
   buildList();
-  $("status").textContent = `${S.list.size} units · 60-day data ${S.T ? `${S.T.dates[0]} to ${S.T.dates.at(-1)}` : "not loaded"}`;
+  $("status").textContent = S.T ? `Unit-level (60-day) data from ${S.T.dates[0]} to ${S.T.dates.at(-1)}` : "Unit-level (60-day) data not loaded";
   const pick = $("unit-pick");
   pick.addEventListener("change", () => select(pick.value.trim()));
   pick.addEventListener("input", () => { if (S.list.has(pick.value)) select(pick.value); });
