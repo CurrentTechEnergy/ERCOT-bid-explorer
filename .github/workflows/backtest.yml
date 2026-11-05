@@ -14,7 +14,7 @@ on:
         type: choice
         options: [oi, ct, cuts]
       variants:
-        description: "space-separated: oi base unit_hr | ct base nogas | cuts base flat"
+        description: "space-separated: oi base unit_hr | ct base nogas | cuts base flat measured"
         required: true
         default: base unit_hr
       from_month:
