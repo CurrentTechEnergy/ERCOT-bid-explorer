@@ -5,17 +5,17 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=ZIER_SLR</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
-    <title>ZIER_SLR: Episode (2026-02-21)</title>
+    <title>ZIER_SLR: Wind/solar: short episode at a different floor (2026-02-21)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=ZIER_SLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=ZIER_SLR#ZIER_SLR/2026-02-21/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Episode: floor −$4/MWh, briefly −$12/MWh, for 3 days</summary>
+    <summary>Short episode: floor −$4/MWh, briefly −$12/MWh, for 3 days</summary>
   </entry>
   <entry>
-    <title>ZIER_SLR: New floor (2024-05-04)</title>
+    <title>ZIER_SLR: Wind/solar: offer floor changed (2024-05-04)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=ZIER_SLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=ZIER_SLR#ZIER_SLR/2024-05-04/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: $0/MWh to −$4/MWh</summary>
+    <summary>Floor moved: $0/MWh to −$4/MWh</summary>
   </entry>
 </feed>

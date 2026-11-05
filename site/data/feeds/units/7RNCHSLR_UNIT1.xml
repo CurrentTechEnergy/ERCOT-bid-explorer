@@ -5,45 +5,45 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=7RNCHSLR_UNIT1</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
-    <title>7RNCHSLR: New floor (2025-11-12)</title>
+    <title>7RNCHSLR: Wind/solar: offer floor changed (2025-11-12)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=7RNCHSLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=7RNCHSLR#7RNCHSLR/2025-11-12/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$3/MWh to −$10/MWh</summary>
+    <summary>Floor moved: −$3/MWh to −$10/MWh</summary>
   </entry>
   <entry>
-    <title>7RNCHSLR: Episode (2025-06-07)</title>
+    <title>7RNCHSLR: Wind/solar: short episode at a different floor (2025-06-07)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=7RNCHSLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=7RNCHSLR#7RNCHSLR/2025-06-07/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Episode: floor −$3/MWh, briefly −$10/MWh, for 1 day</summary>
+    <summary>Short episode: floor −$3/MWh, briefly −$10/MWh, for 1 day</summary>
   </entry>
   <entry>
-    <title>7RNCHSLR: Back to an earlier floor (2025-06-02)</title>
+    <title>7RNCHSLR: Wind/solar: back to an earlier floor (2025-06-02)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=7RNCHSLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=7RNCHSLR#7RNCHSLR/2025-06-02/renew_floor_back</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Back to an earlier floor: −$10/MWh to −$3/MWh</summary>
   </entry>
   <entry>
-    <title>7RNCHSLR: New floor (2025-04-10)</title>
+    <title>7RNCHSLR: Wind/solar: offer floor changed (2025-04-10)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=7RNCHSLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=7RNCHSLR#7RNCHSLR/2025-04-10/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$5/MWh to −$10/MWh</summary>
+    <summary>Floor moved: −$5/MWh to −$10/MWh</summary>
   </entry>
   <entry>
-    <title>7RNCHSLR: New floor (2025-03-18)</title>
+    <title>7RNCHSLR: Wind/solar: offer floor changed (2025-03-18)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=7RNCHSLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=7RNCHSLR#7RNCHSLR/2025-03-18/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$3/MWh to −$5/MWh</summary>
+    <summary>Floor moved: −$3/MWh to −$5/MWh</summary>
   </entry>
   <entry>
-    <title>7RNCHSLR: New floor (2025-03-05)</title>
+    <title>7RNCHSLR: Wind/solar: offer floor changed (2025-03-05)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=7RNCHSLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=7RNCHSLR#7RNCHSLR/2025-03-05/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: $0/MWh to −$3/MWh</summary>
+    <summary>Floor moved: $0/MWh to −$3/MWh</summary>
   </entry>
 </feed>

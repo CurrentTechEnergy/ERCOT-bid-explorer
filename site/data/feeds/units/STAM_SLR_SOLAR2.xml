@@ -5,17 +5,17 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=STAM_SLR_SOLAR2</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
-    <title>STAM_SLR: New floor (2026-06-12)</title>
+    <title>STAM_SLR: Wind/solar: offer floor changed (2026-06-12)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=STAM_SLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=STAM_SLR#STAM_SLR/2026-06-12/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$2/MWh to −$4/MWh</summary>
+    <summary>Floor moved: −$2/MWh to −$4/MWh</summary>
   </entry>
   <entry>
-    <title>STAM_SLR: New floor (2025-03-20)</title>
+    <title>STAM_SLR: Wind/solar: offer floor changed (2025-03-20)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=STAM_SLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=STAM_SLR#STAM_SLR/2025-03-20/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$4/MWh to −$2/MWh</summary>
+    <summary>Floor moved: −$4/MWh to −$2/MWh</summary>
   </entry>
 </feed>

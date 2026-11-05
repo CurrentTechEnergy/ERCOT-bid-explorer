@@ -96,25 +96,25 @@
     <summary>Outage began, lasting 9 days</summary>
   </entry>
   <entry>
-    <title>BUFF_GAP_UNIT2: Stopped day-ahead offers (2026-01-01)</title>
+    <title>BUFF_GAP_UNIT2: Day-ahead: wind/solar stopped offering (2026-01-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=BUFF_GAP_UNIT2"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=BUFF_GAP_UNIT2#BUFF_GAP_UNIT2/2026-01-01/dam_renew_off</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Stopped day-ahead offers: day-ahead curve to none</summary>
   </entry>
   <entry>
-    <title>BUFF_GAP_UNIT2: New floor (2023-06-30)</title>
+    <title>BUFF_GAP_UNIT2: Wind/solar: offer floor changed (2023-06-30)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=BUFF_GAP_UNIT2"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=BUFF_GAP_UNIT2#BUFF_GAP_UNIT2/2023-06-30/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: $0/MWh to −$2/MWh</summary>
+    <summary>Floor moved: $0/MWh to −$2/MWh</summary>
   </entry>
   <entry>
-    <title>BUFF_GAP_UNIT2: New floor (2023-03-29)</title>
+    <title>BUFF_GAP_UNIT2: Wind/solar: offer floor changed (2023-03-29)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=BUFF_GAP_UNIT2"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=BUFF_GAP_UNIT2#BUFF_GAP_UNIT2/2023-03-29/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$2/MWh to $0/MWh</summary>
+    <summary>Floor moved: −$2/MWh to $0/MWh</summary>
   </entry>
   <entry>
     <title>BUFF: Decision maker or QSE changed (2023-03-28)</title>

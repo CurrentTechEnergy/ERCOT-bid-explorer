@@ -5,10 +5,10 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=KELAM_SL_UNIT1</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
-    <title>KELAM_SL: New floor (2025-01-27)</title>
+    <title>KELAM_SL: Wind/solar: offer floor changed (2025-01-27)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=KELAM_SL"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=KELAM_SL#KELAM_SL/2025-01-27/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: $0/MWh to −$2/MWh</summary>
+    <summary>Floor moved: $0/MWh to −$2/MWh</summary>
   </entry>
 </feed>

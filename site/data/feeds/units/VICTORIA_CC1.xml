@@ -5,11 +5,11 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=VICTORIA_CC1</id>
   <updated>2026-10-24T00:00:00Z</updated>
   <entry>
-    <title>VICTORIA_CC1: Timescale group changed (2026-06-01)</title>
+    <title>VICTORIA_CC1: How often it turns off changed (2026-06-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=VICTORIA_CC1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=VICTORIA_CC1#VICTORIA_CC1/2026-06-01/group</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Off for days at a time in 2026-05 to Always on when available in 2026-06</summary>
+    <summary>Off for days at a time (May 2026) to Always on when available (June 2026)</summary>
   </entry>
   <entry>
     <title>VICTORIA_CC1: Outage ended (2026-05-15)</title>

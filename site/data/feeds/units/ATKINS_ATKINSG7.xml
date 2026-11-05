@@ -5,87 +5,87 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=ATKINS_ATKINSG7</id>
   <updated>2026-10-19T00:00:00Z</updated>
   <entry>
-    <title>ATKINS_ATKINSG7: Timescale group changed (2026-08-01)</title>
+    <title>ATKINS_ATKINSG7: How often it turns off changed (2026-08-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=ATKINS_ATKINSG7"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=ATKINS_ATKINSG7#ATKINS_ATKINSG7/2026-08-01/group</id>
     <updated>2026-10-19T00:00:00Z</updated>
-    <summary>Off for a week or more at a time in 2026-07 to Off for days at a time in 2026-08</summary>
+    <summary>Off for a week or more at a time (July 2026) to Off for days at a time (August 2026)</summary>
   </entry>
   <entry>
-    <title>ATKINS_ATKINSG7: Timescale group changed (2026-04-01)</title>
+    <title>ATKINS_ATKINSG7: How often it turns off changed (2026-04-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=ATKINS_ATKINSG7"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=ATKINS_ATKINSG7#ATKINS_ATKINSG7/2026-04-01/group</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Off for a week or more at a time in 2026-03 to Off for days at a time in 2026-04</summary>
+    <summary>Off for a week or more at a time (March 2026) to Off for days at a time (April 2026)</summary>
   </entry>
   <entry>
-    <title>ATKINS_ATKINSG7: Minimum-energy offer stepped (2026-03-26)</title>
+    <title>ATKINS_ATKINSG7: Day-ahead: minimum-energy offer stepped (2026-03-26)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=ATKINS_ATKINSG7"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=ATKINS_ATKINSG7#ATKINS_ATKINSG7/2026-03-26/dam_mingen_step</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Minimum-energy offer stepped: $430 to $419/MWh ($396 to $386 against the fuel-cost line)</summary>
+    <summary>Minimum-energy offer stepped: $430 to $419/MWh (offer minus fuel cost: $396 to $386/MWh)</summary>
   </entry>
   <entry>
-    <title>ATKINS_ATKINSG7: Minimum-energy offer stepped (2026-03-26)</title>
+    <title>ATKINS_ATKINSG7: Day-ahead: minimum-energy offer stepped (2026-03-26)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=ATKINS_ATKINSG7"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=ATKINS_ATKINSG7#ATKINS_ATKINSG7/2026-03-26/dam_mingen_step</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Minimum-energy offer stepped: $430 to $419/MWh ($396 to $386 against the fuel-cost line)</summary>
+    <summary>Minimum-energy offer stepped: $430 to $419/MWh (offer minus fuel cost: $396 to $386/MWh)</summary>
   </entry>
   <entry>
-    <title>ATKINS_ATKINSG7: Minimum-energy offer stepped (2026-03-17)</title>
+    <title>ATKINS_ATKINSG7: Day-ahead: minimum-energy offer stepped (2026-03-17)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=ATKINS_ATKINSG7"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=ATKINS_ATKINSG7#ATKINS_ATKINSG7/2026-03-17/dam_mingen_step</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Minimum-energy offer stepped: $66 to $431/MWh ($31 to $396 against the fuel-cost line)</summary>
+    <summary>Minimum-energy offer stepped: $66 to $431/MWh (offer minus fuel cost: $31 to $396/MWh)</summary>
   </entry>
   <entry>
-    <title>ATKINS_ATKINSG7: Minimum-energy offer stepped (2026-03-17)</title>
+    <title>ATKINS_ATKINSG7: Day-ahead: minimum-energy offer stepped (2026-03-17)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=ATKINS_ATKINSG7"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=ATKINS_ATKINSG7#ATKINS_ATKINSG7/2026-03-17/dam_mingen_step</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Minimum-energy offer stepped: $66 to $431/MWh ($31 to $396 against the fuel-cost line)</summary>
+    <summary>Minimum-energy offer stepped: $66 to $431/MWh (offer minus fuel cost: $31 to $396/MWh)</summary>
   </entry>
   <entry>
-    <title>ATKINS_ATKINSG7: Minimum-energy offer stepped (2026-02-03)</title>
+    <title>ATKINS_ATKINSG7: Day-ahead: minimum-energy offer stepped (2026-02-03)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=ATKINS_ATKINSG7"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=ATKINS_ATKINSG7#ATKINS_ATKINSG7/2026-02-03/dam_mingen_step</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Minimum-energy offer stepped: $567 to $66/MWh ($489 to $34 against the fuel-cost line)</summary>
+    <summary>Minimum-energy offer stepped: $567 to $66/MWh (offer minus fuel cost: $489 to $34/MWh)</summary>
   </entry>
   <entry>
-    <title>ATKINS_ATKINSG7: Minimum-energy offer stepped (2026-02-03)</title>
+    <title>ATKINS_ATKINSG7: Day-ahead: minimum-energy offer stepped (2026-02-03)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=ATKINS_ATKINSG7"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=ATKINS_ATKINSG7#ATKINS_ATKINSG7/2026-02-03/dam_mingen_step</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Minimum-energy offer stepped: $567 to $66/MWh ($489 to $34 against the fuel-cost line)</summary>
+    <summary>Minimum-energy offer stepped: $567 to $66/MWh (offer minus fuel cost: $489 to $34/MWh)</summary>
   </entry>
   <entry>
-    <title>ATKINS_ATKINSG7: Minimum-energy offer stepped (2026-01-13)</title>
+    <title>ATKINS_ATKINSG7: Day-ahead: minimum-energy offer stepped (2026-01-13)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=ATKINS_ATKINSG7"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=ATKINS_ATKINSG7#ATKINS_ATKINSG7/2026-01-13/dam_mingen_step</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Minimum-energy offer stepped: $83 to $61/MWh ($55 to $25 against the fuel-cost line)</summary>
+    <summary>Minimum-energy offer stepped: $83 to $61/MWh (offer minus fuel cost: $55 to $25/MWh)</summary>
   </entry>
   <entry>
-    <title>ATKINS_ATKINSG7: Minimum-energy offer stepped (2026-01-13)</title>
+    <title>ATKINS_ATKINSG7: Day-ahead: minimum-energy offer stepped (2026-01-13)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=ATKINS_ATKINSG7"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=ATKINS_ATKINSG7#ATKINS_ATKINSG7/2026-01-13/dam_mingen_step</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Minimum-energy offer stepped: $83 to $61/MWh ($55 to $25 against the fuel-cost line)</summary>
+    <summary>Minimum-energy offer stepped: $83 to $61/MWh (offer minus fuel cost: $55 to $25/MWh)</summary>
   </entry>
   <entry>
-    <title>ATKINS_ATKINSG7: Minimum-energy offer stepped (2025-12-31)</title>
+    <title>ATKINS_ATKINSG7: Day-ahead: minimum-energy offer stepped (2025-12-31)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=ATKINS_ATKINSG7"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=ATKINS_ATKINSG7#ATKINS_ATKINSG7/2025-12-31/dam_mingen_step</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Minimum-energy offer stepped: $372 to $83/MWh ($338 to $55 against the fuel-cost line)</summary>
+    <summary>Minimum-energy offer stepped: $372 to $83/MWh (offer minus fuel cost: $338 to $55/MWh)</summary>
   </entry>
   <entry>
-    <title>ATKINS_ATKINSG7: Minimum-energy offer stepped (2025-12-31)</title>
+    <title>ATKINS_ATKINSG7: Day-ahead: minimum-energy offer stepped (2025-12-31)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=ATKINS_ATKINSG7"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=ATKINS_ATKINSG7#ATKINS_ATKINSG7/2025-12-31/dam_mingen_step</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Minimum-energy offer stepped: $372 to $83/MWh ($338 to $55 against the fuel-cost line)</summary>
+    <summary>Minimum-energy offer stepped: $372 to $83/MWh (offer minus fuel cost: $338 to $55/MWh)</summary>
   </entry>
 </feed>

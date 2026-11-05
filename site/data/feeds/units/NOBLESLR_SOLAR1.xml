@@ -5,52 +5,52 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=NOBLESLR_SOLAR1</id>
   <updated>2026-10-24T00:00:00Z</updated>
   <entry>
-    <title>NOBLESLR: Back to an earlier floor (2026-05-22)</title>
+    <title>NOBLESLR: Wind/solar: back to an earlier floor (2026-05-22)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=NOBLESLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=NOBLESLR#NOBLESLR/2026-05-22/renew_floor_back</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Back to an earlier floor: $0/MWh to −$2/MWh</summary>
   </entry>
   <entry>
-    <title>NOBLESLR: New floor (2026-04-28)</title>
+    <title>NOBLESLR: Wind/solar: offer floor changed (2026-04-28)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=NOBLESLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=NOBLESLR#NOBLESLR/2026-04-28/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$5/MWh to $0/MWh</summary>
+    <summary>Floor moved: −$5/MWh to $0/MWh</summary>
   </entry>
   <entry>
-    <title>NOBLESLR: Back to an earlier floor (2026-03-05)</title>
+    <title>NOBLESLR: Wind/solar: back to an earlier floor (2026-03-05)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=NOBLESLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=NOBLESLR#NOBLESLR/2026-03-05/renew_floor_back</id>
     <updated>2026-10-24T00:00:00Z</updated>
     <summary>Back to an earlier floor: −$2/MWh to −$5/MWh</summary>
   </entry>
   <entry>
-    <title>NOBLESLR: New floor (2026-02-24)</title>
+    <title>NOBLESLR: Wind/solar: offer floor changed (2026-02-24)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=NOBLESLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=NOBLESLR#NOBLESLR/2026-02-24/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$5/MWh to −$2/MWh</summary>
+    <summary>Floor moved: −$5/MWh to −$2/MWh</summary>
   </entry>
   <entry>
-    <title>NOBLESLR: New floor (2023-05-25)</title>
+    <title>NOBLESLR: Wind/solar: offer floor changed (2023-05-25)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=NOBLESLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=NOBLESLR#NOBLESLR/2023-05-25/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$7/MWh to −$5/MWh</summary>
+    <summary>Floor moved: −$7/MWh to −$5/MWh</summary>
   </entry>
   <entry>
-    <title>NOBLESLR: Episode (2023-05-18)</title>
+    <title>NOBLESLR: Wind/solar: short episode at a different floor (2023-05-18)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=NOBLESLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=NOBLESLR#NOBLESLR/2023-05-18/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Episode: floor −$7/MWh, briefly −$15/MWh, for 2 days</summary>
+    <summary>Short episode: floor −$7/MWh, briefly −$15/MWh, for 2 days</summary>
   </entry>
   <entry>
-    <title>NOBLESLR: New floor (2023-04-22)</title>
+    <title>NOBLESLR: Wind/solar: offer floor changed (2023-04-22)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=NOBLESLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=NOBLESLR#NOBLESLR/2023-04-22/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: $0/MWh to −$7/MWh</summary>
+    <summary>Floor moved: $0/MWh to −$7/MWh</summary>
   </entry>
 </feed>

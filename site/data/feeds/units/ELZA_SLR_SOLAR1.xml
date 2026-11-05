@@ -5,17 +5,17 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=ELZA_SLR_SOLAR1</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
-    <title>ELZA_SLR: Formula on (2025-07-01)</title>
+    <title>ELZA_SLR: Wind/solar: hedge formula on (2025-07-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=ELZA_SLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=ELZA_SLR#ELZA_SLR/2025-07-01/renew_formula_on</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Formula on (was a floor of −$2/MWh)</summary>
+    <summary>Hedge formula on: was a floor of −$2/MWh</summary>
   </entry>
   <entry>
-    <title>ELZA_SLR: New floor (2025-03-18)</title>
+    <title>ELZA_SLR: Wind/solar: offer floor changed (2025-03-18)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=ELZA_SLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=ELZA_SLR#ELZA_SLR/2025-03-18/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: $0/MWh to −$2/MWh</summary>
+    <summary>Floor moved: $0/MWh to −$2/MWh</summary>
   </entry>
 </feed>

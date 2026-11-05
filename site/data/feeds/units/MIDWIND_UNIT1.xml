@@ -19,10 +19,10 @@
     <summary>Outage began, lasting 9 days</summary>
   </entry>
   <entry>
-    <title>MIDWIND: New floor (2023-07-26)</title>
+    <title>MIDWIND: Wind/solar: offer floor changed (2023-07-26)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=MIDWIND"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=MIDWIND#MIDWIND/2023-07-26/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$33/MWh to −$36/MWh</summary>
+    <summary>Floor moved: −$33/MWh to −$36/MWh</summary>
   </entry>
 </feed>

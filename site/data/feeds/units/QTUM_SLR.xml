@@ -5,10 +5,10 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=QTUM_SLR</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
-    <title>QTUM_SLR: New floor (2026-06-27)</title>
+    <title>QTUM_SLR: Wind/solar: offer floor changed (2026-06-27)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=QTUM_SLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=QTUM_SLR#QTUM_SLR/2026-06-27/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$2/MWh to −$45/MWh</summary>
+    <summary>Floor moved: −$2/MWh to −$45/MWh</summary>
   </entry>
 </feed>

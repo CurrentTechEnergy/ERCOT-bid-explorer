@@ -5,31 +5,31 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=HRNT_SLR_UNIT3</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
-    <title>HRNT_SLR: Back to an earlier floor (2025-04-11)</title>
+    <title>HRNT_SLR: Wind/solar: back to an earlier floor (2025-04-11)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=HRNT_SLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=HRNT_SLR#HRNT_SLR/2025-04-11/renew_floor_back</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Back to an earlier floor: −$62/MWh to −$31/MWh</summary>
   </entry>
   <entry>
-    <title>HRNT_SLR: New floor (2025-02-28)</title>
+    <title>HRNT_SLR: Wind/solar: offer floor changed (2025-02-28)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=HRNT_SLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=HRNT_SLR#HRNT_SLR/2025-02-28/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$31/MWh to −$62/MWh</summary>
+    <summary>Floor moved: −$31/MWh to −$62/MWh</summary>
   </entry>
   <entry>
-    <title>HRNT_SLR: New floor (2024-12-11)</title>
+    <title>HRNT_SLR: Wind/solar: offer floor changed (2024-12-11)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=HRNT_SLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=HRNT_SLR#HRNT_SLR/2024-12-11/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$2/MWh to −$31/MWh</summary>
+    <summary>Floor moved: −$2/MWh to −$31/MWh</summary>
   </entry>
   <entry>
-    <title>HRNT_SLR: New floor (2024-10-18)</title>
+    <title>HRNT_SLR: Wind/solar: offer floor changed (2024-10-18)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=HRNT_SLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=HRNT_SLR#HRNT_SLR/2024-10-18/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: $0/MWh to −$2/MWh</summary>
+    <summary>Floor moved: $0/MWh to −$2/MWh</summary>
   </entry>
 </feed>

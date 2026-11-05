@@ -5,66 +5,66 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=ANCHOR_WIND4</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
-    <title>ANCHOR: Back to an earlier floor (2026-01-06)</title>
+    <title>ANCHOR: Wind/solar: back to an earlier floor (2026-01-06)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=ANCHOR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=ANCHOR#ANCHOR/2026-01-06/renew_floor_back</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Back to an earlier floor: −$42/MWh to −$40/MWh</summary>
   </entry>
   <entry>
-    <title>ANCHOR: New floor (2025-11-06)</title>
+    <title>ANCHOR: Wind/solar: offer floor changed (2025-11-06)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=ANCHOR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=ANCHOR#ANCHOR/2025-11-06/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$40/MWh to −$42/MWh</summary>
+    <summary>Floor moved: −$40/MWh to −$42/MWh</summary>
   </entry>
   <entry>
-    <title>ANCHOR: Back to an earlier floor (2025-01-01)</title>
+    <title>ANCHOR: Wind/solar: back to an earlier floor (2025-01-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=ANCHOR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=ANCHOR#ANCHOR/2025-01-01/renew_floor_back</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Back to an earlier floor: −$41/MWh to −$40/MWh</summary>
   </entry>
   <entry>
-    <title>ANCHOR: New floor (2024-11-01)</title>
+    <title>ANCHOR: Wind/solar: offer floor changed (2024-11-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=ANCHOR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=ANCHOR#ANCHOR/2024-11-01/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$40/MWh to −$41/MWh</summary>
+    <summary>Floor moved: −$40/MWh to −$41/MWh</summary>
   </entry>
   <entry>
-    <title>ANCHOR: New floor (2024-09-04)</title>
+    <title>ANCHOR: Wind/solar: offer floor changed (2024-09-04)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=ANCHOR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=ANCHOR#ANCHOR/2024-09-04/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$38/MWh to −$40/MWh</summary>
+    <summary>Floor moved: −$38/MWh to −$40/MWh</summary>
   </entry>
   <entry>
-    <title>ANCHOR: New floor (2023-08-01)</title>
+    <title>ANCHOR: Wind/solar: offer floor changed (2023-08-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=ANCHOR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=ANCHOR#ANCHOR/2023-08-01/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$36/MWh to −$38/MWh</summary>
+    <summary>Floor moved: −$36/MWh to −$38/MWh</summary>
   </entry>
   <entry>
-    <title>ANCHOR: New floor (2023-06-06)</title>
+    <title>ANCHOR: Wind/solar: offer floor changed (2023-06-06)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=ANCHOR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=ANCHOR#ANCHOR/2023-06-06/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$33/MWh to −$36/MWh</summary>
+    <summary>Floor moved: −$33/MWh to −$36/MWh</summary>
   </entry>
   <entry>
     <title>ANCHOR: Decision maker or QSE changed (2023-02-28)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=ANCHOR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=ANCHOR#ANCHOR/2023-02-28/control</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Scheduled by ENEL TRADING NORTH AMERICA LLC (SQ11), was ENEL TRADING NORTH AMERICA LLC</summary>
+    <summary>QSE code changed: QENELT to QENE11 (ENEL TRADING NORTH AMERICA LLC (SQ11))</summary>
   </entry>
   <entry>
-    <title>ANCHOR: New floor (2023-02-13)</title>
+    <title>ANCHOR: Wind/solar: offer floor changed (2023-02-13)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=ANCHOR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=ANCHOR#ANCHOR/2023-02-13/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$6/MWh to −$33/MWh</summary>
+    <summary>Floor moved: −$6/MWh to −$33/MWh</summary>
   </entry>
 </feed>

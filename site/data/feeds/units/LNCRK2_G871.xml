@@ -5,17 +5,17 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=LNCRK2_G871</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
-    <title>LNCRK2: New floor (2026-01-21)</title>
+    <title>LNCRK2: Wind/solar: offer floor changed (2026-01-21)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=LNCRK2"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=LNCRK2#LNCRK2/2026-01-21/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$4/MWh to −$2/MWh</summary>
+    <summary>Floor moved: −$4/MWh to −$2/MWh</summary>
   </entry>
   <entry>
-    <title>LNCRK2: New floor (2022-04-15)</title>
+    <title>LNCRK2: Wind/solar: offer floor changed (2022-04-15)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=LNCRK2"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=LNCRK2#LNCRK2/2022-04-15/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$5/MWh to −$4/MWh</summary>
+    <summary>Floor moved: −$5/MWh to −$4/MWh</summary>
   </entry>
 </feed>

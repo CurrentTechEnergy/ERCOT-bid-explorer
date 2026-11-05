@@ -5,32 +5,32 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=LIG_UNIT1</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
-    <title>LIG_UNIT1: Timescale group changed (2026-06-01)</title>
+    <title>LIG_UNIT1: How often it turns off changed (2026-06-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=LIG_UNIT1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=LIG_UNIT1#LIG_UNIT1/2026-06-01/group</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Off for days at a time in 2026-05 to Cycles daily, over twice a week in 2026-06</summary>
+    <summary>Off for days at a time (May 2026) to Cycles daily, over twice a week (June 2026)</summary>
   </entry>
   <entry>
-    <title>LIG_UNIT1: Timescale group changed (2026-05-01)</title>
+    <title>LIG_UNIT1: How often it turns off changed (2026-05-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=LIG_UNIT1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=LIG_UNIT1#LIG_UNIT1/2026-05-01/group</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Cycles daily, over twice a week in 2026-04 to Off for days at a time in 2026-05</summary>
+    <summary>Cycles daily, over twice a week (April 2026) to Off for days at a time (May 2026)</summary>
   </entry>
   <entry>
-    <title>LIG_UNIT1: Timescale group changed (2026-03-01)</title>
+    <title>LIG_UNIT1: How often it turns off changed (2026-03-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=LIG_UNIT1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=LIG_UNIT1#LIG_UNIT1/2026-03-01/group</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Off for days at a time in 2026-02 to Cycles daily, over twice a week in 2026-03</summary>
+    <summary>Off for days at a time (February 2026) to Cycles daily, over twice a week (March 2026)</summary>
   </entry>
   <entry>
-    <title>LIG_UNIT1: Timescale group changed (2026-02-01)</title>
+    <title>LIG_UNIT1: How often it turns off changed (2026-02-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=LIG_UNIT1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=LIG_UNIT1#LIG_UNIT1/2026-02-01/group</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Cycles daily, 1 to 2 times a week in 2026-01 to Off for days at a time in 2026-02</summary>
+    <summary>Cycles daily, 1 to 2 times a week (January 2026) to Off for days at a time (February 2026)</summary>
   </entry>
   <entry>
     <title>LIG: Decision maker or QSE changed (2025-07-08)</title>
@@ -51,6 +51,6 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=LIG"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=LIG#LIG/2024-11-19/control</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Scheduled by SHELL ENERGY NORTH AMERICA (US) LP (SQ19), was SHELL ENERGY NORTH AMERICA (US) LP (SQ2)</summary>
+    <summary>QSE code changed: QSHEL2 to QSHE19 (SHELL ENERGY NORTH AMERICA (US) LP (SQ19))</summary>
   </entry>
 </feed>

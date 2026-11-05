@@ -5,10 +5,10 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=LNP</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
-    <title>LNP: New floor (2026-05-11)</title>
+    <title>LNP: Wind/solar: offer floor changed (2026-05-11)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=LNP"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=LNP#LNP/2026-05-11/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: $0/MWh to −$50/MWh</summary>
+    <summary>Floor moved: $0/MWh to −$50/MWh</summary>
   </entry>
 </feed>

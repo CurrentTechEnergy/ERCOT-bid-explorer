@@ -5,11 +5,11 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=CITYVICT_CTG01</id>
   <updated>2026-10-26T00:00:00Z</updated>
   <entry>
-    <title>CITYVICT_CTG01: Timescale group changed (2026-08-01)</title>
+    <title>CITYVICT_CTG01: How often it turns off changed (2026-08-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=CITYVICT_CTG01"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=CITYVICT_CTG01#CITYVICT_CTG01/2026-08-01/group</id>
     <updated>2026-10-26T00:00:00Z</updated>
-    <summary>Off for days at a time in 2026-07 to Cycles daily, over twice a week in 2026-08</summary>
+    <summary>Off for days at a time (July 2026) to Cycles daily, over twice a week (August 2026)</summary>
   </entry>
   <entry>
     <title>CITYVICT_CTG01: Outage ended (2026-07-13)</title>

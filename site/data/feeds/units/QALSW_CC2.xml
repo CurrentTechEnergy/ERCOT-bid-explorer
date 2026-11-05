@@ -3,51 +3,44 @@
   <title>QALSW_CC2: bidding and operating changes</title>
   <link href="https://ercotbids.currenttech.energy/unit.html?unit=QALSW_CC2"/>
   <id>https://ercotbids.currenttech.energy/unit.html?unit=QALSW_CC2</id>
-  <updated>2026-10-31T00:00:00Z</updated>
+  <updated>2026-10-24T00:00:00Z</updated>
   <entry>
-    <title>QALSW_CC2: Turn-off point moved (2026-08-01)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=QALSW_CC2"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=QALSW_CC2#QALSW_CC2/2026-08-01/turnoff/1</id>
-    <updated>2026-10-31T00:00:00Z</updated>
-    <summary>Turn-off point with an award some hours $5,510 to $2,407 per MW of minimum output in August</summary>
-  </entry>
-  <entry>
-    <title>QALSW_CC2: Minimum-energy offer stepped (2026-07-24)</title>
+    <title>QALSW_CC2: Day-ahead: minimum-energy offer stepped (2026-07-24)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=QALSW_CC2"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=QALSW_CC2#QALSW_CC2/2026-07-24/dam_mingen_step</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Minimum-energy offer stepped: $20 to $1/MWh ($5 to −$19 against the fuel-cost line)</summary>
+    <summary>Minimum-energy offer stepped: $20 to $1/MWh (offer minus fuel cost: $5 to −$19/MWh)</summary>
   </entry>
   <entry>
-    <title>QALSW_CC2: Minimum-energy offer stepped (2026-07-15)</title>
+    <title>QALSW_CC2: Day-ahead: minimum-energy offer stepped (2026-07-15)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=QALSW_CC2"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=QALSW_CC2#QALSW_CC2/2026-07-15/dam_mingen_step</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Minimum-energy offer stepped: $14 to $19/MWh ($5 to $5 against the fuel-cost line)</summary>
+    <summary>Minimum-energy offer stepped: $14 to $19/MWh (offer minus fuel cost: $5 to $5/MWh)</summary>
   </entry>
   <entry>
     <title>QALSW_CC2: Turn-off point moved (2026-07-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=QALSW_CC2"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=QALSW_CC2#QALSW_CC2/2026-07-01/turnoff/1</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Turn-off point with an award some hours riding through to $5,510 per MW of minimum output in July; the next month held it</summary>
+    <summary>Turn-off point (award some hours) in July: from never turning off to $2,813 per MW of minimum output; the next month held it</summary>
   </entry>
   <entry>
-    <title>QALSW_CC2: Minimum-energy offer stepped (2026-06-30)</title>
+    <title>QALSW_CC2: Day-ahead: minimum-energy offer stepped (2026-06-30)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=QALSW_CC2"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=QALSW_CC2#QALSW_CC2/2026-06-30/dam_mingen_step</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Minimum-energy offer stepped: $19 to $14/MWh ($5 to $8 against the fuel-cost line)</summary>
+    <summary>Minimum-energy offer stepped: $19 to $14/MWh (offer minus fuel cost: $5 to $8/MWh)</summary>
   </entry>
   <entry>
-    <title>QALSW_CC2: Minimum-energy offer stepped (2026-06-23)</title>
+    <title>QALSW_CC2: Day-ahead: minimum-energy offer stepped (2026-06-23)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=QALSW_CC2"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=QALSW_CC2#QALSW_CC2/2026-06-23/dam_mingen_step</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Minimum-energy offer stepped: $6 to $19/MWh ($8 to $5 against the fuel-cost line)</summary>
+    <summary>Minimum-energy offer stepped: $6 to $19/MWh (offer minus fuel cost: $8 to $5/MWh)</summary>
   </entry>
   <entry>
-    <title>QALSW_CC2: Start-up cost changed (2026-06-18)</title>
+    <title>QALSW_CC2: Day-ahead: start-up cost changed (2026-06-18)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=QALSW_CC2"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=QALSW_CC2#QALSW_CC2/2026-06-18/dam_start_change</id>
     <updated>2026-10-18T00:00:00Z</updated>
@@ -61,14 +54,14 @@
     <summary>First shutdown in the record, off 4 h</summary>
   </entry>
   <entry>
-    <title>QALSW_CC2: Timescale group changed (2026-06-01)</title>
+    <title>QALSW_CC2: How often it turns off changed (2026-06-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=QALSW_CC2"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=QALSW_CC2#QALSW_CC2/2026-06-01/group</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Always on when available in 2026-05 to Cycles daily, 1 to 2 times a week in 2026-06</summary>
+    <summary>Always on when available (May 2026) to Cycles daily, 1 to 2 times a week (June 2026)</summary>
   </entry>
   <entry>
-    <title>QALSW_CC2: Start-up cost changed (2026-04-07)</title>
+    <title>QALSW_CC2: Day-ahead: start-up cost changed (2026-04-07)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=QALSW_CC2"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=QALSW_CC2#QALSW_CC2/2026-04-07/dam_start_change</id>
     <updated>2026-10-18T00:00:00Z</updated>
@@ -79,7 +72,7 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=QALSW_CC2"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=QALSW_CC2#QALSW_CC2/2026-04-01/turnoff/0</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Turn-off point without an award $678 to $1,255 per MW of minimum output in April; the next month went back</summary>
+    <summary>Turn-off point (no award) in April: $88 to $174 per MW of minimum output; the next month held it</summary>
   </entry>
   <entry>
     <title>QALSW_CC2: Outage ended (2026-03-23)</title>
@@ -96,28 +89,28 @@
     <summary>Outage began, lasting 9 days</summary>
   </entry>
   <entry>
-    <title>QALSW_CC2: Stopped three-part offers (2026-03-10)</title>
+    <title>QALSW_CC2: Day-ahead: stopped three-part offers (2026-03-10)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=QALSW_CC2"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=QALSW_CC2#QALSW_CC2/2026-03-10/dam_filing_off</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Stopped three-part offers: three-part offer to self-scheduled while on</summary>
   </entry>
   <entry>
-    <title>QALSW_CC2: Stopped three-part offers (2026-03-10)</title>
+    <title>QALSW_CC2: Day-ahead: stopped three-part offers (2026-03-10)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=QALSW_CC2"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=QALSW_CC2#QALSW_CC2/2026-03-10/dam_filing_off</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Stopped three-part offers: three-part offer to self-scheduled while on</summary>
   </entry>
   <entry>
-    <title>QALSW_CC2: Started three-part offers (2026-01-06)</title>
+    <title>QALSW_CC2: Day-ahead: started three-part offers (2026-01-06)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=QALSW_CC2"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=QALSW_CC2#QALSW_CC2/2026-01-06/dam_filing_on</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Started three-part offers: no three-part offer to three-part offer</summary>
   </entry>
   <entry>
-    <title>QALSW_CC2: Started three-part offers (2026-01-06)</title>
+    <title>QALSW_CC2: Day-ahead: started three-part offers (2026-01-06)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=QALSW_CC2"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=QALSW_CC2#QALSW_CC2/2026-01-06/dam_filing_on</id>
     <updated>2026-10-18T00:00:00Z</updated>

@@ -5,24 +5,24 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=BART_SLR</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
-    <title>BART_SLR: Back to an earlier floor (2026-07-21)</title>
+    <title>BART_SLR: Wind/solar: back to an earlier floor (2026-07-21)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=BART_SLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=BART_SLR#BART_SLR/2026-07-21/renew_floor_back</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Back to an earlier floor: −$43/MWh to −$42/MWh</summary>
   </entry>
   <entry>
-    <title>BART_SLR: New floor (2026-07-03)</title>
+    <title>BART_SLR: Wind/solar: offer floor changed (2026-07-03)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=BART_SLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=BART_SLR#BART_SLR/2026-07-03/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$42/MWh to −$43/MWh</summary>
+    <summary>Floor moved: −$42/MWh to −$43/MWh</summary>
   </entry>
   <entry>
-    <title>BART_SLR: New floor (2026-04-30)</title>
+    <title>BART_SLR: Wind/solar: offer floor changed (2026-04-30)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=BART_SLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=BART_SLR#BART_SLR/2026-04-30/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$4/MWh to −$42/MWh</summary>
+    <summary>Floor moved: −$4/MWh to −$42/MWh</summary>
   </entry>
 </feed>

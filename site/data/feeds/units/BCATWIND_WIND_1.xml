@@ -5,94 +5,94 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=BCATWIND_WIND_1</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
-    <title>BCATWIND_WIND_1: Day-ahead floor changed (2026-08-20)</title>
+    <title>BCATWIND_WIND_1: Day-ahead: wind/solar floor changed (2026-08-20)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=BCATWIND_WIND_1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=BCATWIND_WIND_1#BCATWIND_WIND_1/2026-08-20/dam_renew_floor</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Day-ahead floor changed: $21 to $26/MWh</summary>
   </entry>
   <entry>
-    <title>BCATWIND_WIND_1: Day-ahead floor changed (2026-08-20)</title>
+    <title>BCATWIND_WIND_1: Day-ahead: wind/solar floor changed (2026-08-20)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=BCATWIND_WIND_1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=BCATWIND_WIND_1#BCATWIND_WIND_1/2026-08-20/dam_renew_floor</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Day-ahead floor changed: $21 to $26/MWh</summary>
   </entry>
   <entry>
-    <title>BCATWIND_WIND_1: Day-ahead floor changed (2026-08-04)</title>
+    <title>BCATWIND_WIND_1: Day-ahead: wind/solar floor changed (2026-08-04)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=BCATWIND_WIND_1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=BCATWIND_WIND_1#BCATWIND_WIND_1/2026-08-04/dam_renew_floor</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Day-ahead floor changed: $28 to $21/MWh</summary>
   </entry>
   <entry>
-    <title>BCATWIND_WIND_1: Day-ahead floor changed (2026-08-04)</title>
+    <title>BCATWIND_WIND_1: Day-ahead: wind/solar floor changed (2026-08-04)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=BCATWIND_WIND_1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=BCATWIND_WIND_1#BCATWIND_WIND_1/2026-08-04/dam_renew_floor</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Day-ahead floor changed: $28 to $21/MWh</summary>
   </entry>
   <entry>
-    <title>BCATWIND: New floor (2026-07-13)</title>
+    <title>BCATWIND: Wind/solar: offer floor changed (2026-07-13)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=BCATWIND"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=BCATWIND#BCATWIND/2026-07-13/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$38/MWh to −$39/MWh</summary>
+    <summary>Floor moved: −$38/MWh to −$39/MWh</summary>
   </entry>
   <entry>
-    <title>BCATWIND: New floor (2025-06-27)</title>
+    <title>BCATWIND: Wind/solar: offer floor changed (2025-06-27)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=BCATWIND"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=BCATWIND#BCATWIND/2025-06-27/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$35/MWh to −$38/MWh</summary>
+    <summary>Floor moved: −$35/MWh to −$38/MWh</summary>
   </entry>
   <entry>
-    <title>BCATWIND: New floor (2023-07-08)</title>
+    <title>BCATWIND: Wind/solar: offer floor changed (2023-07-08)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=BCATWIND"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=BCATWIND#BCATWIND/2023-07-08/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$33/MWh to −$35/MWh</summary>
+    <summary>Floor moved: −$33/MWh to −$35/MWh</summary>
   </entry>
   <entry>
-    <title>BCATWIND: Back to an earlier floor (2022-05-11)</title>
+    <title>BCATWIND: Wind/solar: back to an earlier floor (2022-05-11)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=BCATWIND"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=BCATWIND#BCATWIND/2022-05-11/renew_floor_back</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Back to an earlier floor: −$34/MWh to −$33/MWh</summary>
   </entry>
   <entry>
-    <title>BCATWIND: New floor (2022-04-22)</title>
+    <title>BCATWIND: Wind/solar: offer floor changed (2022-04-22)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=BCATWIND"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=BCATWIND#BCATWIND/2022-04-22/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$33/MWh to −$34/MWh</summary>
+    <summary>Floor moved: −$33/MWh to −$34/MWh</summary>
   </entry>
   <entry>
-    <title>BCATWIND: New floor (2022-01-20)</title>
+    <title>BCATWIND: Wind/solar: offer floor changed (2022-01-20)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=BCATWIND"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=BCATWIND#BCATWIND/2022-01-20/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$32/MWh to −$33/MWh</summary>
+    <summary>Floor moved: −$32/MWh to −$33/MWh</summary>
   </entry>
   <entry>
-    <title>BCATWIND: Back to an earlier floor (2021-05-05)</title>
+    <title>BCATWIND: Wind/solar: back to an earlier floor (2021-05-05)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=BCATWIND"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=BCATWIND#BCATWIND/2021-05-05/renew_floor_back</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Back to an earlier floor: −$5/MWh to −$32/MWh</summary>
   </entry>
   <entry>
-    <title>BCATWIND: New floor (2021-02-23)</title>
+    <title>BCATWIND: Wind/solar: offer floor changed (2021-02-23)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=BCATWIND"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=BCATWIND#BCATWIND/2021-02-23/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$32/MWh to −$5/MWh</summary>
+    <summary>Floor moved: −$32/MWh to −$5/MWh</summary>
   </entry>
   <entry>
-    <title>BCATWIND: New floor (2019-12-04)</title>
+    <title>BCATWIND: Wind/solar: offer floor changed (2019-12-04)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=BCATWIND"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=BCATWIND#BCATWIND/2019-12-04/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$0/MWh to −$32/MWh</summary>
+    <summary>Floor moved: −$0/MWh to −$32/MWh</summary>
   </entry>
 </feed>

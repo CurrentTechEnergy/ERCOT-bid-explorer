@@ -5,45 +5,45 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=ASTRA</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
-    <title>ASTRA: New floor (2022-03-08)</title>
+    <title>ASTRA: Wind/solar: offer floor changed (2022-03-08)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=ASTRA"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=ASTRA#ASTRA/2022-03-08/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$6/MWh to −$1/MWh</summary>
+    <summary>Floor moved: −$6/MWh to −$1/MWh</summary>
   </entry>
   <entry>
-    <title>ASTRA: New floor (2020-10-14)</title>
+    <title>ASTRA: Wind/solar: offer floor changed (2020-10-14)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=ASTRA"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=ASTRA#ASTRA/2020-10-14/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$1/MWh to −$6/MWh</summary>
+    <summary>Floor moved: −$1/MWh to −$6/MWh</summary>
   </entry>
   <entry>
-    <title>ASTRA: New floor (2019-04-15)</title>
+    <title>ASTRA: Wind/solar: offer floor changed (2019-04-15)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=ASTRA"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=ASTRA#ASTRA/2019-04-15/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$30/MWh to −$1/MWh</summary>
+    <summary>Floor moved: −$30/MWh to −$1/MWh</summary>
   </entry>
   <entry>
-    <title>ASTRA: Episode (2019-04-08)</title>
+    <title>ASTRA: Wind/solar: short episode at a different floor (2019-04-08)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=ASTRA"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=ASTRA#ASTRA/2019-04-08/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Episode: floor −$30/MWh, briefly −$1/MWh, for 5 days</summary>
+    <summary>Short episode: floor −$30/MWh, briefly −$1/MWh, for 5 days</summary>
   </entry>
   <entry>
-    <title>ASTRA: Episode (2019-03-13)</title>
+    <title>ASTRA: Wind/solar: short episode at a different floor (2019-03-13)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=ASTRA"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=ASTRA#ASTRA/2019-03-13/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Episode: floor −$30/MWh, briefly −$1/MWh, for 2 days</summary>
+    <summary>Short episode: floor −$30/MWh, briefly −$1/MWh, for 2 days</summary>
   </entry>
   <entry>
-    <title>ASTRA: Episode (2019-02-12)</title>
+    <title>ASTRA: Wind/solar: short episode at a different floor (2019-02-12)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=ASTRA"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=ASTRA#ASTRA/2019-02-12/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Episode: floor −$30/MWh, briefly −$1/MWh, for 2 days</summary>
+    <summary>Short episode: floor −$30/MWh, briefly −$1/MWh, for 2 days</summary>
   </entry>
 </feed>

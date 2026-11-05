@@ -9,14 +9,14 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=WAP_WAP_G1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=WAP_WAP_G1#WAP_WAP_G1/2026-08-01/turnoff/0</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Turn-off point without an award $13 to $199 per MW of minimum output in August</summary>
+    <summary>Turn-off point (no award) in August: −$4 to $164 per MW of minimum output</summary>
   </entry>
   <entry>
-    <title>WAP_WAP_G1: Timescale group changed (2026-03-01)</title>
+    <title>WAP_WAP_G1: How often it turns off changed (2026-03-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=WAP_WAP_G1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=WAP_WAP_G1#WAP_WAP_G1/2026-03-01/group</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Off for a week or more at a time in 2026-02 to Cycles daily, over twice a week in 2026-03</summary>
+    <summary>Off for a week or more at a time (February 2026) to Cycles daily, over twice a week (March 2026)</summary>
   </entry>
   <entry>
     <title>WAP_WAP_G1: Shut down after a long run (2026-02-01)</title>
@@ -26,10 +26,10 @@
     <summary>Shut down for 791 h after 33 days without a shutdown</summary>
   </entry>
   <entry>
-    <title>WAP_WAP_G1: Timescale group changed (2026-01-01)</title>
+    <title>WAP_WAP_G1: How often it turns off changed (2026-01-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=WAP_WAP_G1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=WAP_WAP_G1#WAP_WAP_G1/2026-01-01/group</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Off for days at a time in 2025-12 to Off for a week or more at a time in 2026-01</summary>
+    <summary>Off for days at a time (December 2025) to Off for a week or more at a time (January 2026)</summary>
   </entry>
 </feed>

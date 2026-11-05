@@ -5,17 +5,17 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=MAVCRK_W</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
-    <title>MAVCRK_W: New floor (2024-02-28)</title>
+    <title>MAVCRK_W: Wind/solar: offer floor changed (2024-02-28)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=MAVCRK_W"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=MAVCRK_W#MAVCRK_W/2024-02-28/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$31/MWh to −$38/MWh</summary>
+    <summary>Floor moved: −$31/MWh to −$38/MWh</summary>
   </entry>
   <entry>
-    <title>MAVCRK_W: New floor (2023-07-26)</title>
+    <title>MAVCRK_W: Wind/solar: offer floor changed (2023-07-26)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=MAVCRK_W"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=MAVCRK_W#MAVCRK_W/2023-07-26/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$32/MWh to −$31/MWh</summary>
+    <summary>Floor moved: −$32/MWh to −$31/MWh</summary>
   </entry>
 </feed>

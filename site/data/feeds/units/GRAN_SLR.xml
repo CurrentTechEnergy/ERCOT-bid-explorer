@@ -5,59 +5,59 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=GRAN_SLR</id>
   <updated>2026-10-25T00:00:00Z</updated>
   <entry>
-    <title>GRAN_SLR: New floor (2026-08-21)</title>
+    <title>GRAN_SLR: Wind/solar: offer floor changed (2026-08-21)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=GRAN_SLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=GRAN_SLR#GRAN_SLR/2026-08-21/renew_floor_new</id>
     <updated>2026-10-25T00:00:00Z</updated>
-    <summary>New floor: −$5/MWh to −$3/MWh</summary>
+    <summary>Floor moved: −$5/MWh to −$3/MWh</summary>
   </entry>
   <entry>
-    <title>GRAN_SLR: New floor (2026-07-01)</title>
+    <title>GRAN_SLR: Wind/solar: offer floor changed (2026-07-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=GRAN_SLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=GRAN_SLR#GRAN_SLR/2026-07-01/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: $0/MWh to −$5/MWh</summary>
+    <summary>Floor moved: $0/MWh to −$5/MWh</summary>
   </entry>
   <entry>
-    <title>GRAN_SLR: Formula off (2026-04-08)</title>
+    <title>GRAN_SLR: Wind/solar: hedge formula off (2026-04-08)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=GRAN_SLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=GRAN_SLR#GRAN_SLR/2026-04-08/renew_formula_off</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Formula off: now a floor of $0/MWh</summary>
+    <summary>Hedge formula off: now a floor of $0/MWh</summary>
   </entry>
   <entry>
-    <title>GRAN_SLR: Formula on (2026-03-09)</title>
+    <title>GRAN_SLR: Wind/solar: hedge formula on (2026-03-09)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=GRAN_SLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=GRAN_SLR#GRAN_SLR/2026-03-09/renew_formula_on</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Formula on (was a floor of $0/MWh)</summary>
+    <summary>Hedge formula on: was a floor of $0/MWh</summary>
   </entry>
   <entry>
-    <title>GRAN_SLR: Formula off (2025-12-21)</title>
+    <title>GRAN_SLR: Wind/solar: hedge formula off (2025-12-21)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=GRAN_SLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=GRAN_SLR#GRAN_SLR/2025-12-21/renew_formula_off</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Formula off: now a floor of $0/MWh</summary>
+    <summary>Hedge formula off: now a floor of $0/MWh</summary>
   </entry>
   <entry>
-    <title>GRAN_SLR: Formula on (2025-12-05)</title>
+    <title>GRAN_SLR: Wind/solar: hedge formula on (2025-12-05)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=GRAN_SLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=GRAN_SLR#GRAN_SLR/2025-12-05/renew_formula_on</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Formula on (was a floor of $0/MWh)</summary>
+    <summary>Hedge formula on: was a floor of $0/MWh</summary>
   </entry>
   <entry>
-    <title>GRAN_SLR: Formula off (2025-11-02)</title>
+    <title>GRAN_SLR: Wind/solar: hedge formula off (2025-11-02)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=GRAN_SLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=GRAN_SLR#GRAN_SLR/2025-11-02/renew_formula_off</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Formula off: now a floor of $0/MWh</summary>
+    <summary>Hedge formula off: now a floor of $0/MWh</summary>
   </entry>
   <entry>
-    <title>GRAN_SLR: Formula on (2025-03-25)</title>
+    <title>GRAN_SLR: Wind/solar: hedge formula on (2025-03-25)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=GRAN_SLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=GRAN_SLR#GRAN_SLR/2025-03-25/renew_formula_on</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Formula on (was a floor of $0/MWh)</summary>
+    <summary>Hedge formula on: was a floor of $0/MWh</summary>
   </entry>
 </feed>

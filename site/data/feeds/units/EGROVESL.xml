@@ -5,31 +5,31 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=EGROVESL</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
-    <title>EGROVESL: New floor (2023-02-08)</title>
+    <title>EGROVESL: Wind/solar: offer floor changed (2023-02-08)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=EGROVESL"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=EGROVESL#EGROVESL/2023-02-08/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$4/MWh to −$20/MWh</summary>
+    <summary>Floor moved: −$4/MWh to −$20/MWh</summary>
   </entry>
   <entry>
-    <title>EGROVESL: Back to an earlier floor (2022-06-21)</title>
+    <title>EGROVESL: Wind/solar: back to an earlier floor (2022-06-21)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=EGROVESL"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=EGROVESL#EGROVESL/2022-06-21/renew_floor_back</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Back to an earlier floor: −$5/MWh to −$4/MWh</summary>
   </entry>
   <entry>
-    <title>EGROVESL: New floor (2022-04-18)</title>
+    <title>EGROVESL: Wind/solar: offer floor changed (2022-04-18)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=EGROVESL"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=EGROVESL#EGROVESL/2022-04-18/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$4/MWh to −$5/MWh</summary>
+    <summary>Floor moved: −$4/MWh to −$5/MWh</summary>
   </entry>
   <entry>
-    <title>EGROVESL: New floor (2022-03-07)</title>
+    <title>EGROVESL: Wind/solar: offer floor changed (2022-03-07)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=EGROVESL"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=EGROVESL#EGROVESL/2022-03-07/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$6/MWh to −$4/MWh</summary>
+    <summary>Floor moved: −$6/MWh to −$4/MWh</summary>
   </entry>
 </feed>

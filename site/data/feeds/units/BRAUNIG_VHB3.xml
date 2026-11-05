@@ -5,11 +5,11 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=BRAUNIG_VHB3</id>
   <updated>2026-10-24T00:00:00Z</updated>
   <entry>
-    <title>BRAUNIG_VHB3: Timescale group changed (2026-08-01)</title>
+    <title>BRAUNIG_VHB3: How often it turns off changed (2026-08-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=BRAUNIG_VHB3"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=BRAUNIG_VHB3#BRAUNIG_VHB3/2026-08-01/group</id>
     <updated>2026-10-19T00:00:00Z</updated>
-    <summary>Off for days at a time in 2026-07 to Off for a week or more at a time in 2026-08</summary>
+    <summary>Off for days at a time (July 2026) to Off for a week or more at a time (August 2026)</summary>
   </entry>
   <entry>
     <title>BRAUNIG_VHB3: Shut down after a long run (2026-07-23)</title>

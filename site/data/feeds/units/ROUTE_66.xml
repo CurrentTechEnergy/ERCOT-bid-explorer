@@ -5,38 +5,38 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=ROUTE_66</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
-    <title>ROUTE_66: New floor (2024-11-01)</title>
+    <title>ROUTE_66: Wind/solar: offer floor changed (2024-11-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=ROUTE_66"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=ROUTE_66#ROUTE_66/2024-11-01/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$18/MWh to −$3/MWh</summary>
+    <summary>Floor moved: −$18/MWh to −$3/MWh</summary>
   </entry>
   <entry>
-    <title>ROUTE_66: New floor (2024-07-06)</title>
+    <title>ROUTE_66: Wind/solar: offer floor changed (2024-07-06)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=ROUTE_66"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=ROUTE_66#ROUTE_66/2024-07-06/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$3/MWh to −$18/MWh</summary>
+    <summary>Floor moved: −$3/MWh to −$18/MWh</summary>
   </entry>
   <entry>
-    <title>ROUTE_66: New floor (2024-06-25)</title>
+    <title>ROUTE_66: Wind/solar: offer floor changed (2024-06-25)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=ROUTE_66"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=ROUTE_66#ROUTE_66/2024-06-25/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$6/MWh to −$3/MWh</summary>
+    <summary>Floor moved: −$6/MWh to −$3/MWh</summary>
   </entry>
   <entry>
-    <title>ROUTE_66: Back to an earlier floor (2021-03-02)</title>
+    <title>ROUTE_66: Wind/solar: back to an earlier floor (2021-03-02)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=ROUTE_66"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=ROUTE_66#ROUTE_66/2021-03-02/renew_floor_back</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Back to an earlier floor: $0/MWh to −$6/MWh</summary>
   </entry>
   <entry>
-    <title>ROUTE_66: New floor (2021-02-20)</title>
+    <title>ROUTE_66: Wind/solar: offer floor changed (2021-02-20)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=ROUTE_66"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=ROUTE_66#ROUTE_66/2021-02-20/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$7/MWh to $0/MWh</summary>
+    <summary>Floor moved: −$7/MWh to $0/MWh</summary>
   </entry>
 </feed>

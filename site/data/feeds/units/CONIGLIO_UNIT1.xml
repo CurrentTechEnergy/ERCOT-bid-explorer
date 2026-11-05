@@ -5,39 +5,39 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=CONIGLIO_UNIT1</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
-    <title>CONIGLIO: Back to an earlier floor (2025-03-12)</title>
+    <title>CONIGLIO: Wind/solar: back to an earlier floor (2025-03-12)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=CONIGLIO"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=CONIGLIO#CONIGLIO/2025-03-12/renew_floor_back</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Back to an earlier floor: $0/MWh to −$3/MWh</summary>
   </entry>
   <entry>
-    <title>CONIGLIO: New floor (2025-03-05)</title>
+    <title>CONIGLIO: Wind/solar: offer floor changed (2025-03-05)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=CONIGLIO"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=CONIGLIO#CONIGLIO/2025-03-05/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$3/MWh to $0/MWh</summary>
+    <summary>Floor moved: −$3/MWh to $0/MWh</summary>
   </entry>
   <entry>
-    <title>CONIGLIO: New floor (2022-07-27)</title>
+    <title>CONIGLIO: Wind/solar: offer floor changed (2022-07-27)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=CONIGLIO"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=CONIGLIO#CONIGLIO/2022-07-27/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$4/MWh to −$3/MWh</summary>
+    <summary>Floor moved: −$4/MWh to −$3/MWh</summary>
   </entry>
   <entry>
-    <title>CONIGLIO: New floor (2022-04-01)</title>
+    <title>CONIGLIO: Wind/solar: offer floor changed (2022-04-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=CONIGLIO"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=CONIGLIO#CONIGLIO/2022-04-01/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$5/MWh to −$4/MWh</summary>
+    <summary>Floor moved: −$5/MWh to −$4/MWh</summary>
   </entry>
   <entry>
-    <title>CONIGLIO: New floor (2022-02-15)</title>
+    <title>CONIGLIO: Wind/solar: offer floor changed (2022-02-15)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=CONIGLIO"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=CONIGLIO#CONIGLIO/2022-02-15/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: $0/MWh to −$5/MWh</summary>
+    <summary>Floor moved: $0/MWh to −$5/MWh</summary>
   </entry>
   <entry>
     <title>CONIGLIO_UNIT1: Decision maker or QSE changed (2021-04-14)</title>

@@ -5,17 +5,17 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=APPALOSA_UNIT2</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
-    <title>APPALOSA: New floor (2024-03-23)</title>
+    <title>APPALOSA: Wind/solar: offer floor changed (2024-03-23)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=APPALOSA"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=APPALOSA#APPALOSA/2024-03-23/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$35/MWh to −$38/MWh</summary>
+    <summary>Floor moved: −$35/MWh to −$38/MWh</summary>
   </entry>
   <entry>
-    <title>APPALOSA: New floor (2023-01-18)</title>
+    <title>APPALOSA: Wind/solar: offer floor changed (2023-01-18)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=APPALOSA"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=APPALOSA#APPALOSA/2023-01-18/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$32/MWh to −$35/MWh</summary>
+    <summary>Floor moved: −$32/MWh to −$35/MWh</summary>
   </entry>
 </feed>

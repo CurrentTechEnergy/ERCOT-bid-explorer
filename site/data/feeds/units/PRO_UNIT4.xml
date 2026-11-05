@@ -19,11 +19,11 @@
     <summary>Offer price vs peer median: $2 to $12/MWh</summary>
   </entry>
   <entry>
-    <title>PRO: Minimum-energy offer stepped (2026-03-12)</title>
+    <title>PRO: Day-ahead: minimum-energy offer stepped (2026-03-12)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=PRO"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=PRO#PRO/2026-03-12/dam_mingen_step</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Minimum-energy offer stepped: $28 to $37/MWh ($9 to $9 against the fuel-cost line)</summary>
+    <summary>Minimum-energy offer stepped: $28 to $37/MWh (offer minus fuel cost: $9 to $9/MWh)</summary>
   </entry>
   <entry>
     <title>PRO_UNIT4: Outage ended (2026-03-08)</title>
@@ -40,11 +40,11 @@
     <summary>Outage began, lasting 8 days</summary>
   </entry>
   <entry>
-    <title>PRO: Minimum-energy offer stepped (2026-02-15)</title>
+    <title>PRO: Day-ahead: minimum-energy offer stepped (2026-02-15)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=PRO"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=PRO#PRO/2026-02-15/dam_mingen_step</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Minimum-energy offer stepped: $34 to $28/MWh ($10 to $9 against the fuel-cost line)</summary>
+    <summary>Minimum-energy offer stepped: $34 to $28/MWh (offer minus fuel cost: $10 to $9/MWh)</summary>
   </entry>
   <entry>
     <title>PRO_UNIT4: Bidding approach shifted (2026-02-04)</title>
@@ -54,11 +54,11 @@
     <summary>Offer price vs peer median: $593 to $4/MWh</summary>
   </entry>
   <entry>
-    <title>PRO: Minimum-energy offer stepped (2026-02-03)</title>
+    <title>PRO: Day-ahead: minimum-energy offer stepped (2026-02-03)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=PRO"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=PRO#PRO/2026-02-03/dam_mingen_step</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Minimum-energy offer stepped: $54 to $34/MWh ($10 to $10 against the fuel-cost line)</summary>
+    <summary>Minimum-energy offer stepped: $54 to $34/MWh (offer minus fuel cost: $10 to $10/MWh)</summary>
   </entry>
   <entry>
     <title>PRO_UNIT4: Bidding approach shifted (2026-01-28)</title>
@@ -68,25 +68,25 @@
     <summary>Offer price vs peer median: $4 to $593/MWh</summary>
   </entry>
   <entry>
-    <title>PRO: Minimum-energy offer stepped (2026-01-15)</title>
+    <title>PRO: Day-ahead: minimum-energy offer stepped (2026-01-15)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=PRO"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=PRO#PRO/2026-01-15/dam_mingen_step</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Minimum-energy offer stepped: $32 to $37/MWh ($9 to $9 against the fuel-cost line)</summary>
+    <summary>Minimum-energy offer stepped: $32 to $37/MWh (offer minus fuel cost: $9 to $9/MWh)</summary>
   </entry>
   <entry>
-    <title>PRO: Minimum-energy offer stepped (2025-12-27)</title>
+    <title>PRO: Day-ahead: minimum-energy offer stepped (2025-12-27)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=PRO"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=PRO#PRO/2025-12-27/dam_mingen_step</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Minimum-energy offer stepped: $39 to $31/MWh ($10 to $9 against the fuel-cost line)</summary>
+    <summary>Minimum-energy offer stepped: $39 to $31/MWh (offer minus fuel cost: $10 to $9/MWh)</summary>
   </entry>
   <entry>
-    <title>PRO: Minimum-energy offer stepped (2025-12-17)</title>
+    <title>PRO: Day-ahead: minimum-energy offer stepped (2025-12-17)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=PRO"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=PRO#PRO/2025-12-17/dam_mingen_step</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Minimum-energy offer stepped: $52 to $39/MWh ($10 to $10 against the fuel-cost line)</summary>
+    <summary>Minimum-energy offer stepped: $52 to $39/MWh (offer minus fuel cost: $10 to $10/MWh)</summary>
   </entry>
   <entry>
     <title>PRO: Decision maker or QSE changed (2025-09-25)</title>

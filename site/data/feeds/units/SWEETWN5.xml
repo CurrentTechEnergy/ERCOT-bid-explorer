@@ -5,38 +5,38 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=SWEETWN5</id>
   <updated>2026-10-24T00:00:00Z</updated>
   <entry>
-    <title>SWEETWN5: Episode (2026-06-24)</title>
+    <title>SWEETWN5: Wind/solar: short episode at a different floor (2026-06-24)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=SWEETWN5"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=SWEETWN5#SWEETWN5/2026-06-24/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Episode: floor −$2/MWh, briefly $9/MWh, for 1 day</summary>
+    <summary>Short episode: floor −$2/MWh, briefly $9/MWh, for 1 day</summary>
   </entry>
   <entry>
-    <title>SWEETWN5: Episode (2026-06-18)</title>
+    <title>SWEETWN5: Wind/solar: short episode at a different floor (2026-06-18)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=SWEETWN5"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=SWEETWN5#SWEETWN5/2026-06-18/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Episode: floor −$2/MWh, briefly $8/MWh, for 1 day</summary>
+    <summary>Short episode: floor −$2/MWh, briefly $8/MWh, for 1 day</summary>
   </entry>
   <entry>
-    <title>SWEETWN5: Episode (2026-03-14)</title>
+    <title>SWEETWN5: Wind/solar: short episode at a different floor (2026-03-14)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=SWEETWN5"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=SWEETWN5#SWEETWN5/2026-03-14/renew_episode</id>
     <updated>2026-10-24T00:00:00Z</updated>
-    <summary>Episode: floor −$2/MWh, briefly $225/MWh, for 1 day</summary>
+    <summary>Short episode: floor −$2/MWh, briefly $225/MWh, for 1 day</summary>
   </entry>
   <entry>
-    <title>SWEETWN5: New floor (2022-09-22)</title>
+    <title>SWEETWN5: Wind/solar: offer floor changed (2022-09-22)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=SWEETWN5"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=SWEETWN5#SWEETWN5/2022-09-22/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$3/MWh to −$2/MWh</summary>
+    <summary>Floor moved: −$3/MWh to −$2/MWh</summary>
   </entry>
   <entry>
-    <title>SWEETWN5: New floor (2021-04-22)</title>
+    <title>SWEETWN5: Wind/solar: offer floor changed (2021-04-22)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=SWEETWN5"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=SWEETWN5#SWEETWN5/2021-04-22/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$1/MWh to −$3/MWh</summary>
+    <summary>Floor moved: −$1/MWh to −$3/MWh</summary>
   </entry>
 </feed>

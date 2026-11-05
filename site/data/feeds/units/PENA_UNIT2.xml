@@ -5,10 +5,10 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=PENA_UNIT2</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
-    <title>PENA: New floor (2024-09-18)</title>
+    <title>PENA: Wind/solar: offer floor changed (2024-09-18)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=PENA"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=PENA#PENA/2024-09-18/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$4/MWh to −$2/MWh</summary>
+    <summary>Floor moved: −$4/MWh to −$2/MWh</summary>
   </entry>
 </feed>

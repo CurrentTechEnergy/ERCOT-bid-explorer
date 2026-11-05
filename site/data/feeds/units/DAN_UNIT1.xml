@@ -5,87 +5,87 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=DAN_UNIT1</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
-    <title>DAN: Episode (2026-02-28)</title>
+    <title>DAN: Wind/solar: short episode at a different floor (2026-02-28)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=DAN"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=DAN#DAN/2026-02-28/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Episode: floor −$41/MWh, briefly −$82/MWh, for 2 days</summary>
+    <summary>Short episode: floor −$41/MWh, briefly −$82/MWh, for 2 days</summary>
   </entry>
   <entry>
-    <title>DAN: Episode (2026-02-16)</title>
+    <title>DAN: Wind/solar: short episode at a different floor (2026-02-16)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=DAN"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=DAN#DAN/2026-02-16/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Episode: floor −$41/MWh, briefly −$82/MWh, for 1 day</summary>
+    <summary>Short episode: floor −$41/MWh, briefly −$82/MWh, for 1 day</summary>
   </entry>
   <entry>
-    <title>DAN_UNIT1: Day-ahead floor changed (2026-02-10)</title>
+    <title>DAN_UNIT1: Day-ahead: wind/solar floor changed (2026-02-10)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=DAN_UNIT1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=DAN_UNIT1#DAN_UNIT1/2026-02-10/dam_renew_floor</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Day-ahead floor changed: −$41 to −$82/MWh</summary>
   </entry>
   <entry>
-    <title>DAN_UNIT1: Day-ahead floor changed (2026-02-10)</title>
+    <title>DAN_UNIT1: Day-ahead: wind/solar floor changed (2026-02-10)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=DAN_UNIT1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=DAN_UNIT1#DAN_UNIT1/2026-02-10/dam_renew_floor</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Day-ahead floor changed: −$41 to −$82/MWh</summary>
   </entry>
   <entry>
-    <title>DAN: New floor (2025-11-21)</title>
+    <title>DAN: Wind/solar: offer floor changed (2025-11-21)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=DAN"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=DAN#DAN/2025-11-21/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$40/MWh to −$41/MWh</summary>
+    <summary>Floor moved: −$40/MWh to −$41/MWh</summary>
   </entry>
   <entry>
-    <title>DAN: New floor (2025-04-17)</title>
+    <title>DAN: Wind/solar: offer floor changed (2025-04-17)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=DAN"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=DAN#DAN/2025-04-17/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$10/MWh to −$40/MWh</summary>
+    <summary>Floor moved: −$10/MWh to −$40/MWh</summary>
   </entry>
   <entry>
-    <title>DAN: Episode (2025-02-04)</title>
+    <title>DAN: Wind/solar: short episode at a different floor (2025-02-04)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=DAN"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=DAN#DAN/2025-02-04/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Episode: floor −$10/MWh, briefly $0/MWh, for 1 day</summary>
+    <summary>Short episode: floor −$10/MWh, briefly $0/MWh, for 1 day</summary>
   </entry>
   <entry>
-    <title>DAN: New floor (2025-02-01)</title>
+    <title>DAN: Wind/solar: offer floor changed (2025-02-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=DAN"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=DAN#DAN/2025-02-01/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: $0/MWh to −$10/MWh</summary>
+    <summary>Floor moved: $0/MWh to −$10/MWh</summary>
   </entry>
   <entry>
-    <title>DAN: New floor (2024-08-13)</title>
+    <title>DAN: Wind/solar: offer floor changed (2024-08-13)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=DAN"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=DAN#DAN/2024-08-13/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$7/MWh to $0/MWh</summary>
+    <summary>Floor moved: −$7/MWh to $0/MWh</summary>
   </entry>
   <entry>
-    <title>DAN: Episode (2024-08-09)</title>
+    <title>DAN: Wind/solar: short episode at a different floor (2024-08-09)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=DAN"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=DAN#DAN/2024-08-09/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Episode: floor −$7/MWh, briefly −$30/MWh, for 1 day</summary>
+    <summary>Short episode: floor −$7/MWh, briefly −$30/MWh, for 1 day</summary>
   </entry>
   <entry>
-    <title>DAN: New floor (2024-03-07)</title>
+    <title>DAN: Wind/solar: offer floor changed (2024-03-07)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=DAN"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=DAN#DAN/2024-03-07/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$30/MWh to −$7/MWh</summary>
+    <summary>Floor moved: −$30/MWh to −$7/MWh</summary>
   </entry>
   <entry>
-    <title>DAN: Episode (2024-02-29)</title>
+    <title>DAN: Wind/solar: short episode at a different floor (2024-02-29)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=DAN"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=DAN#DAN/2024-02-29/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Episode: floor −$30/MWh, briefly −$7/MWh, for 1 day</summary>
+    <summary>Short episode: floor −$30/MWh, briefly −$7/MWh, for 1 day</summary>
   </entry>
 </feed>

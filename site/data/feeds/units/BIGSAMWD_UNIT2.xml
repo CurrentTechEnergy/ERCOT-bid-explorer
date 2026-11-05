@@ -5,10 +5,10 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=BIGSAMWD_UNIT2</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
-    <title>BIGSAMWD: New floor (2026-01-20)</title>
+    <title>BIGSAMWD: Wind/solar: offer floor changed (2026-01-20)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=BIGSAMWD"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=BIGSAMWD#BIGSAMWD/2026-01-20/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$38/MWh to −$82/MWh</summary>
+    <summary>Floor moved: −$38/MWh to −$82/MWh</summary>
   </entry>
 </feed>

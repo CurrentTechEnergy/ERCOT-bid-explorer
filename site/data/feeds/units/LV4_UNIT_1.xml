@@ -5,11 +5,11 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=LV4_UNIT_1</id>
   <updated>2026-11-05T00:00:00Z</updated>
   <entry>
-    <title>LV4: New floor (2026-07-08)</title>
+    <title>LV4: Wind/solar: offer floor changed (2026-07-08)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=LV4"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=LV4#LV4/2026-07-08/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$36/MWh to $0/MWh</summary>
+    <summary>Floor moved: −$36/MWh to $0/MWh</summary>
   </entry>
   <entry>
     <title>LV4_UNIT_1: Outage ended (2026-02-23)</title>
@@ -26,24 +26,24 @@
     <summary>Outage began, lasting 7 days</summary>
   </entry>
   <entry>
-    <title>LV4: New floor (2023-11-15)</title>
+    <title>LV4: Wind/solar: offer floor changed (2023-11-15)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=LV4"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=LV4#LV4/2023-11-15/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$33/MWh to −$36/MWh</summary>
+    <summary>Floor moved: −$33/MWh to −$36/MWh</summary>
   </entry>
   <entry>
-    <title>LV4: New floor (2022-08-03)</title>
+    <title>LV4: Wind/solar: offer floor changed (2022-08-03)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=LV4"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=LV4#LV4/2022-08-03/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$32/MWh to −$33/MWh</summary>
+    <summary>Floor moved: −$32/MWh to −$33/MWh</summary>
   </entry>
   <entry>
-    <title>LV4: New floor (2019-06-20)</title>
+    <title>LV4: Wind/solar: offer floor changed (2019-06-20)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=LV4"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=LV4#LV4/2019-06-20/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$30/MWh to −$32/MWh</summary>
+    <summary>Floor moved: −$30/MWh to −$32/MWh</summary>
   </entry>
 </feed>

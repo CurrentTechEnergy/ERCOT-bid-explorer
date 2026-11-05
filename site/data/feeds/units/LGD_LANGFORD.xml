@@ -5,116 +5,116 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=LGD_LANGFORD</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
-    <title>LGD_LANGFORD: Started day-ahead offers (2026-07-25)</title>
+    <title>LGD_LANGFORD: Day-ahead: wind/solar started offering (2026-07-25)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=LGD_LANGFORD"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=LGD_LANGFORD#LGD_LANGFORD/2026-07-25/dam_renew_on</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Started day-ahead offers: none to day-ahead curve</summary>
   </entry>
   <entry>
-    <title>LGD_LANGFORD: Started day-ahead offers (2026-07-25)</title>
+    <title>LGD_LANGFORD: Day-ahead: wind/solar started offering (2026-07-25)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=LGD_LANGFORD"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=LGD_LANGFORD#LGD_LANGFORD/2026-07-25/dam_renew_on</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Started day-ahead offers: none to day-ahead curve</summary>
   </entry>
   <entry>
-    <title>LGD_LANGFORD: Stopped day-ahead offers (2026-06-12)</title>
+    <title>LGD_LANGFORD: Day-ahead: wind/solar stopped offering (2026-06-12)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=LGD_LANGFORD"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=LGD_LANGFORD#LGD_LANGFORD/2026-06-12/dam_renew_off</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Stopped day-ahead offers: day-ahead curve to none</summary>
   </entry>
   <entry>
-    <title>LGD_LANGFORD: Stopped day-ahead offers (2026-06-12)</title>
+    <title>LGD_LANGFORD: Day-ahead: wind/solar stopped offering (2026-06-12)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=LGD_LANGFORD"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=LGD_LANGFORD#LGD_LANGFORD/2026-06-12/dam_renew_off</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Stopped day-ahead offers: day-ahead curve to none</summary>
   </entry>
   <entry>
-    <title>LGD_LANGFORD: Day-ahead floor changed (2026-05-14)</title>
+    <title>LGD_LANGFORD: Day-ahead: wind/solar floor changed (2026-05-14)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=LGD_LANGFORD"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=LGD_LANGFORD#LGD_LANGFORD/2026-05-14/dam_renew_floor</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Day-ahead floor changed: $16 to −$5/MWh</summary>
   </entry>
   <entry>
-    <title>LGD_LANGFORD: Day-ahead floor changed (2026-05-14)</title>
+    <title>LGD_LANGFORD: Day-ahead: wind/solar floor changed (2026-05-14)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=LGD_LANGFORD"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=LGD_LANGFORD#LGD_LANGFORD/2026-05-14/dam_renew_floor</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Day-ahead floor changed: $16 to −$5/MWh</summary>
   </entry>
   <entry>
-    <title>LGD_LANGFORD: New floor (2026-03-11)</title>
+    <title>LGD_LANGFORD: Wind/solar: offer floor changed (2026-03-11)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=LGD_LANGFORD"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=LGD_LANGFORD#LGD_LANGFORD/2026-03-11/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$38/MWh to −$39/MWh</summary>
+    <summary>Floor moved: −$38/MWh to −$39/MWh</summary>
   </entry>
   <entry>
-    <title>LGD_LANGFORD: New floor (2026-03-11)</title>
+    <title>LGD_LANGFORD: Wind/solar: offer floor changed (2026-03-11)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=LGD_LANGFORD"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=LGD_LANGFORD#LGD_LANGFORD/2026-03-11/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$38/MWh to −$39/MWh</summary>
+    <summary>Floor moved: −$38/MWh to −$39/MWh</summary>
   </entry>
   <entry>
-    <title>LGD_LANGFORD: Episode (2026-01-25)</title>
+    <title>LGD_LANGFORD: Wind/solar: short episode at a different floor (2026-01-25)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=LGD_LANGFORD"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=LGD_LANGFORD#LGD_LANGFORD/2026-01-25/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Episode: floor −$38/MWh, briefly −$45/MWh, for 1 day</summary>
+    <summary>Short episode: floor −$38/MWh, briefly −$45/MWh, for 1 day</summary>
   </entry>
   <entry>
-    <title>LGD_LANGFORD: Episode (2026-01-25)</title>
+    <title>LGD_LANGFORD: Wind/solar: short episode at a different floor (2026-01-25)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=LGD_LANGFORD"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=LGD_LANGFORD#LGD_LANGFORD/2026-01-25/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Episode: floor −$38/MWh, briefly −$45/MWh, for 1 day</summary>
+    <summary>Short episode: floor −$38/MWh, briefly −$45/MWh, for 1 day</summary>
   </entry>
   <entry>
-    <title>LGD_LANGFORD: New floor (2025-02-05)</title>
+    <title>LGD_LANGFORD: Wind/solar: offer floor changed (2025-02-05)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=LGD_LANGFORD"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=LGD_LANGFORD#LGD_LANGFORD/2025-02-05/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$32/MWh to −$38/MWh</summary>
+    <summary>Floor moved: −$32/MWh to −$38/MWh</summary>
   </entry>
   <entry>
-    <title>LGD_LANGFORD: New floor (2025-02-05)</title>
+    <title>LGD_LANGFORD: Wind/solar: offer floor changed (2025-02-05)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=LGD_LANGFORD"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=LGD_LANGFORD#LGD_LANGFORD/2025-02-05/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$32/MWh to −$38/MWh</summary>
+    <summary>Floor moved: −$32/MWh to −$38/MWh</summary>
   </entry>
   <entry>
-    <title>LGD_LANGFORD: New floor (2021-01-21)</title>
+    <title>LGD_LANGFORD: Wind/solar: offer floor changed (2021-01-21)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=LGD_LANGFORD"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=LGD_LANGFORD#LGD_LANGFORD/2021-01-21/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$26/MWh to −$32/MWh</summary>
+    <summary>Floor moved: −$26/MWh to −$32/MWh</summary>
   </entry>
   <entry>
-    <title>LGD_LANGFORD: New floor (2021-01-21)</title>
+    <title>LGD_LANGFORD: Wind/solar: offer floor changed (2021-01-21)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=LGD_LANGFORD"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=LGD_LANGFORD#LGD_LANGFORD/2021-01-21/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$26/MWh to −$32/MWh</summary>
+    <summary>Floor moved: −$26/MWh to −$32/MWh</summary>
   </entry>
   <entry>
-    <title>LGD_LANGFORD: New floor (2020-12-06)</title>
+    <title>LGD_LANGFORD: Wind/solar: offer floor changed (2020-12-06)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=LGD_LANGFORD"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=LGD_LANGFORD#LGD_LANGFORD/2020-12-06/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$1/MWh to −$26/MWh</summary>
+    <summary>Floor moved: −$1/MWh to −$26/MWh</summary>
   </entry>
   <entry>
-    <title>LGD_LANGFORD: New floor (2020-12-06)</title>
+    <title>LGD_LANGFORD: Wind/solar: offer floor changed (2020-12-06)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=LGD_LANGFORD"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=LGD_LANGFORD#LGD_LANGFORD/2020-12-06/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$1/MWh to −$26/MWh</summary>
+    <summary>Floor moved: −$1/MWh to −$26/MWh</summary>
   </entry>
   <entry>
     <title>LGD_LANGFORD: Decision maker or QSE changed (2020-12-01)</title>
@@ -131,17 +131,17 @@
     <summary>Scheduled by TRQ21 (SQ21), was TENASKA POWER SERVICES CO</summary>
   </entry>
   <entry>
-    <title>LGD_LANGFORD: New floor (2020-01-22)</title>
+    <title>LGD_LANGFORD: Wind/solar: offer floor changed (2020-01-22)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=LGD_LANGFORD"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=LGD_LANGFORD#LGD_LANGFORD/2020-01-22/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$2/MWh to −$1/MWh</summary>
+    <summary>Floor moved: −$2/MWh to −$1/MWh</summary>
   </entry>
   <entry>
-    <title>LGD_LANGFORD: New floor (2020-01-22)</title>
+    <title>LGD_LANGFORD: Wind/solar: offer floor changed (2020-01-22)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=LGD_LANGFORD"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=LGD_LANGFORD#LGD_LANGFORD/2020-01-22/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$2/MWh to −$1/MWh</summary>
+    <summary>Floor moved: −$2/MWh to −$1/MWh</summary>
   </entry>
 </feed>

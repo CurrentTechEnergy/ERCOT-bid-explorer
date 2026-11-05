@@ -5,31 +5,31 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=TAV_UNIT1</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
-    <title>TAV: New floor (2026-08-10)</title>
+    <title>TAV: Wind/solar: offer floor changed (2026-08-10)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=TAV"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=TAV#TAV/2026-08-10/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$38/MWh to −$40/MWh</summary>
+    <summary>Floor moved: −$38/MWh to −$40/MWh</summary>
   </entry>
   <entry>
-    <title>TAV: New floor (2025-08-23)</title>
+    <title>TAV: Wind/solar: offer floor changed (2025-08-23)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=TAV"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=TAV#TAV/2025-08-23/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$35/MWh to −$38/MWh</summary>
+    <summary>Floor moved: −$35/MWh to −$38/MWh</summary>
   </entry>
   <entry>
-    <title>TAV: Back to an earlier floor (2023-07-06)</title>
+    <title>TAV: Wind/solar: back to an earlier floor (2023-07-06)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=TAV"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=TAV#TAV/2023-07-06/renew_floor_back</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Back to an earlier floor: $0/MWh to −$35/MWh</summary>
   </entry>
   <entry>
-    <title>TAV: New floor (2023-06-05)</title>
+    <title>TAV: Wind/solar: offer floor changed (2023-06-05)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=TAV"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=TAV#TAV/2023-06-05/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$35/MWh to $0/MWh</summary>
+    <summary>Floor moved: −$35/MWh to $0/MWh</summary>
   </entry>
 </feed>

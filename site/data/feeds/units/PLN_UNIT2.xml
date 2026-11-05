@@ -5,67 +5,67 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=PLN_UNIT2</id>
   <updated>2026-11-05T00:00:00Z</updated>
   <entry>
-    <title>PLN: New floor (2026-08-14)</title>
+    <title>PLN: Wind/solar: offer floor changed (2026-08-14)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=PLN"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=PLN#PLN/2026-08-14/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$10/MWh to −$8/MWh</summary>
+    <summary>Floor moved: −$10/MWh to −$8/MWh</summary>
   </entry>
   <entry>
-    <title>PLN: Episode (2026-08-11)</title>
+    <title>PLN: Wind/solar: short episode at a different floor (2026-08-11)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=PLN"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=PLN#PLN/2026-08-11/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Episode: floor −$10/MWh, briefly −$20/MWh, for 2 days</summary>
+    <summary>Short episode: floor −$10/MWh, briefly −$20/MWh, for 2 days</summary>
   </entry>
   <entry>
-    <title>PLN: Back to an earlier floor (2026-07-30)</title>
+    <title>PLN: Wind/solar: back to an earlier floor (2026-07-30)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=PLN"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=PLN#PLN/2026-07-30/renew_floor_back</id>
     <updated>2026-10-24T00:00:00Z</updated>
     <summary>Back to an earlier floor: −$15/MWh to −$10/MWh</summary>
   </entry>
   <entry>
-    <title>PLN: New floor (2026-07-16)</title>
+    <title>PLN: Wind/solar: offer floor changed (2026-07-16)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=PLN"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=PLN#PLN/2026-07-16/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$10/MWh to −$15/MWh</summary>
+    <summary>Floor moved: −$10/MWh to −$15/MWh</summary>
   </entry>
   <entry>
-    <title>PLN: New floor (2026-07-09)</title>
+    <title>PLN: Wind/solar: offer floor changed (2026-07-09)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=PLN"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=PLN#PLN/2026-07-09/renew_floor_new</id>
     <updated>2026-10-24T00:00:00Z</updated>
-    <summary>New floor: −$5/MWh to −$10/MWh</summary>
+    <summary>Floor moved: −$5/MWh to −$10/MWh</summary>
   </entry>
   <entry>
-    <title>PLN: Episode (2026-06-28)</title>
+    <title>PLN: Wind/solar: short episode at a different floor (2026-06-28)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=PLN"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=PLN#PLN/2026-06-28/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Episode: floor −$5/MWh, briefly −$10/MWh, for 4 days</summary>
+    <summary>Short episode: floor −$5/MWh, briefly −$10/MWh, for 4 days</summary>
   </entry>
   <entry>
-    <title>PLN: New floor (2026-06-12)</title>
+    <title>PLN: Wind/solar: offer floor changed (2026-06-12)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=PLN"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=PLN#PLN/2026-06-12/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$31/MWh to −$5/MWh</summary>
+    <summary>Floor moved: −$31/MWh to −$5/MWh</summary>
   </entry>
   <entry>
-    <title>PLN: Episode (2026-05-29)</title>
+    <title>PLN: Wind/solar: short episode at a different floor (2026-05-29)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=PLN"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=PLN#PLN/2026-05-29/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Episode: floor −$31/MWh, briefly $0/MWh, for 1 day</summary>
+    <summary>Short episode: floor −$31/MWh, briefly $0/MWh, for 1 day</summary>
   </entry>
   <entry>
-    <title>PLN: New floor (2026-03-04)</title>
+    <title>PLN: Wind/solar: offer floor changed (2026-03-04)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=PLN"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=PLN#PLN/2026-03-04/renew_floor_new</id>
     <updated>2026-10-24T00:00:00Z</updated>
-    <summary>New floor: −$21/MWh to −$31/MWh</summary>
+    <summary>Floor moved: −$21/MWh to −$31/MWh</summary>
   </entry>
   <entry>
     <title>PLN_UNIT2: Outage ended (2026-02-20)</title>
@@ -82,17 +82,17 @@
     <summary>Outage began, lasting 25 days</summary>
   </entry>
   <entry>
-    <title>PLN: New floor (2026-01-14)</title>
+    <title>PLN: Wind/solar: offer floor changed (2026-01-14)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=PLN"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=PLN#PLN/2026-01-14/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$10/MWh to −$21/MWh</summary>
+    <summary>Floor moved: −$10/MWh to −$21/MWh</summary>
   </entry>
   <entry>
-    <title>PLN: New floor (2025-07-11)</title>
+    <title>PLN: Wind/solar: offer floor changed (2025-07-11)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=PLN"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=PLN#PLN/2025-07-11/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: $0/MWh to −$10/MWh</summary>
+    <summary>Floor moved: $0/MWh to −$10/MWh</summary>
   </entry>
 </feed>

@@ -5,24 +5,24 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=FENCESLR_SOLAR2</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
-    <title>FENCESLR: New floor (2025-03-18)</title>
+    <title>FENCESLR: Wind/solar: offer floor changed (2025-03-18)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=FENCESLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=FENCESLR#FENCESLR/2025-03-18/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$4/MWh to −$2/MWh</summary>
+    <summary>Floor moved: −$4/MWh to −$2/MWh</summary>
   </entry>
   <entry>
-    <title>FENCESLR: New floor (2024-02-27)</title>
+    <title>FENCESLR: Wind/solar: offer floor changed (2024-02-27)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=FENCESLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=FENCESLR#FENCESLR/2024-02-27/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: $0/MWh to −$4/MWh</summary>
+    <summary>Floor moved: $0/MWh to −$4/MWh</summary>
   </entry>
   <entry>
     <title>FENCESLR: Decision maker or QSE changed (2023-05-02)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=FENCESLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=FENCESLR#FENCESLR/2023-05-02/control</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Scheduled by ENEL TRADING NORTH AMERICA LLC (SQ13), was ENEL TRADING NORTH AMERICA LLC (SQ5)</summary>
+    <summary>QSE code changed: QENEL5 to QENE13 (ENEL TRADING NORTH AMERICA LLC (SQ13))</summary>
   </entry>
 </feed>

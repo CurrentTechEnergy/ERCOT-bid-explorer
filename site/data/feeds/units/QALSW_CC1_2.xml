@@ -5,28 +5,28 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=QALSW_CC1_2</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
-    <title>QALSW_CC1: Minimum-energy offer stepped (2026-07-24)</title>
+    <title>QALSW_CC1: Day-ahead: minimum-energy offer stepped (2026-07-24)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=QALSW_CC1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=QALSW_CC1#QALSW_CC1/2026-07-24/dam_mingen_step</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Minimum-energy offer stepped: $20 to $1/MWh ($5 to −$19 against the fuel-cost line)</summary>
+    <summary>Minimum-energy offer stepped: $20 to $1/MWh (offer minus fuel cost: $5 to −$19/MWh)</summary>
   </entry>
   <entry>
-    <title>QALSW_CC1: Minimum-energy offer stepped (2026-07-15)</title>
+    <title>QALSW_CC1: Day-ahead: minimum-energy offer stepped (2026-07-15)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=QALSW_CC1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=QALSW_CC1#QALSW_CC1/2026-07-15/dam_mingen_step</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Minimum-energy offer stepped: $14 to $19/MWh ($5 to $5 against the fuel-cost line)</summary>
+    <summary>Minimum-energy offer stepped: $14 to $19/MWh (offer minus fuel cost: $5 to $5/MWh)</summary>
   </entry>
   <entry>
-    <title>QALSW_CC1: Minimum-energy offer stepped (2026-06-23)</title>
+    <title>QALSW_CC1: Day-ahead: minimum-energy offer stepped (2026-06-23)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=QALSW_CC1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=QALSW_CC1#QALSW_CC1/2026-06-23/dam_mingen_step</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Minimum-energy offer stepped: $6 to $19/MWh ($8 to $5 against the fuel-cost line)</summary>
+    <summary>Minimum-energy offer stepped: $6 to $19/MWh (offer minus fuel cost: $8 to $5/MWh)</summary>
   </entry>
   <entry>
-    <title>QALSW_CC1: Start-up cost changed (2026-06-18)</title>
+    <title>QALSW_CC1: Day-ahead: start-up cost changed (2026-06-18)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=QALSW_CC1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=QALSW_CC1#QALSW_CC1/2026-06-18/dam_start_change</id>
     <updated>2026-10-18T00:00:00Z</updated>
@@ -47,7 +47,7 @@
     <summary>MW above LSL offered at or below $0: 85% to 0% of the day</summary>
   </entry>
   <entry>
-    <title>QALSW_CC1: Start-up cost changed (2026-04-07)</title>
+    <title>QALSW_CC1: Day-ahead: start-up cost changed (2026-04-07)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=QALSW_CC1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=QALSW_CC1#QALSW_CC1/2026-04-07/dam_start_change</id>
     <updated>2026-10-18T00:00:00Z</updated>

@@ -5,17 +5,17 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=HKSN_SLR_UNIT3</id>
   <updated>2026-11-01T00:00:00Z</updated>
   <entry>
-    <title>HKSN_SLR: Stopped moving within the day (2026-08-28)</title>
+    <title>HKSN_SLR: Wind/solar: offer stopped moving within the day (2026-08-28)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=HKSN_SLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=HKSN_SLR#HKSN_SLR/2026-08-28/renew_moving_off</id>
     <updated>2026-11-01T00:00:00Z</updated>
     <summary>Stopped moving within the day: now a floor of $0/MWh</summary>
   </entry>
   <entry>
-    <title>HKSN_SLR: Started moving within the day (2025-12-08)</title>
+    <title>HKSN_SLR: Wind/solar: offer started moving within the day (2025-12-08)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=HKSN_SLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=HKSN_SLR#HKSN_SLR/2025-12-08/renew_moving_on</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Started moving within the day (was a floor of −$24/MWh)</summary>
+    <summary>Started moving within the day: was a floor of −$24/MWh</summary>
   </entry>
 </feed>

@@ -5,45 +5,45 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=EBELLSLR</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
-    <title>EBELLSLR: New floor (2025-12-10)</title>
+    <title>EBELLSLR: Wind/solar: offer floor changed (2025-12-10)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=EBELLSLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=EBELLSLR#EBELLSLR/2025-12-10/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$20/MWh to −$30/MWh</summary>
+    <summary>Floor moved: −$20/MWh to −$30/MWh</summary>
   </entry>
   <entry>
-    <title>EBELLSLR: Episode (2025-12-05)</title>
+    <title>EBELLSLR: Wind/solar: short episode at a different floor (2025-12-05)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=EBELLSLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=EBELLSLR#EBELLSLR/2025-12-05/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Episode: floor −$20/MWh, briefly −$15/MWh, for 1 day</summary>
+    <summary>Short episode: floor −$20/MWh, briefly −$15/MWh, for 1 day</summary>
   </entry>
   <entry>
-    <title>EBELLSLR: New floor (2025-06-24)</title>
+    <title>EBELLSLR: Wind/solar: offer floor changed (2025-06-24)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=EBELLSLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=EBELLSLR#EBELLSLR/2025-06-24/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$15/MWh to −$20/MWh</summary>
+    <summary>Floor moved: −$15/MWh to −$20/MWh</summary>
   </entry>
   <entry>
-    <title>EBELLSLR: New floor (2025-04-29)</title>
+    <title>EBELLSLR: Wind/solar: offer floor changed (2025-04-29)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=EBELLSLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=EBELLSLR#EBELLSLR/2025-04-29/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$3/MWh to −$15/MWh</summary>
+    <summary>Floor moved: −$3/MWh to −$15/MWh</summary>
   </entry>
   <entry>
-    <title>EBELLSLR: Back to an earlier floor (2024-04-08)</title>
+    <title>EBELLSLR: Wind/solar: back to an earlier floor (2024-04-08)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=EBELLSLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=EBELLSLR#EBELLSLR/2024-04-08/renew_floor_back</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Back to an earlier floor: −$4/MWh to −$3/MWh</summary>
   </entry>
   <entry>
-    <title>EBELLSLR: New floor (2024-03-28)</title>
+    <title>EBELLSLR: Wind/solar: offer floor changed (2024-03-28)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=EBELLSLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=EBELLSLR#EBELLSLR/2024-03-28/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$3/MWh to −$4/MWh</summary>
+    <summary>Floor moved: −$3/MWh to −$4/MWh</summary>
   </entry>
 </feed>

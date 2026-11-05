@@ -5,25 +5,25 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=CAMWIND</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
-    <title>CAMWIND: New floor (2025-12-16)</title>
+    <title>CAMWIND: Wind/solar: offer floor changed (2025-12-16)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=CAMWIND"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=CAMWIND#CAMWIND/2025-12-16/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$30/MWh to −$2/MWh</summary>
+    <summary>Floor moved: −$30/MWh to −$2/MWh</summary>
   </entry>
   <entry>
-    <title>CAMWIND: New floor (2023-11-29)</title>
+    <title>CAMWIND: Wind/solar: offer floor changed (2023-11-29)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=CAMWIND"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=CAMWIND#CAMWIND/2023-11-29/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$41/MWh to −$30/MWh</summary>
+    <summary>Floor moved: −$41/MWh to −$30/MWh</summary>
   </entry>
   <entry>
-    <title>CAMWIND: Episode (2023-05-23)</title>
+    <title>CAMWIND: Wind/solar: short episode at a different floor (2023-05-23)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=CAMWIND"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=CAMWIND#CAMWIND/2023-05-23/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Episode: floor −$41/MWh, briefly −$23/MWh, for 1 day</summary>
+    <summary>Short episode: floor −$41/MWh, briefly −$23/MWh, for 1 day</summary>
   </entry>
   <entry>
     <title>CAMWIND: Decision maker or QSE changed (2023-05-09)</title>
@@ -33,17 +33,17 @@
     <summary>Scheduled by TRQ26 (SQ26), was TENASKA POWER SERVICES CO</summary>
   </entry>
   <entry>
-    <title>CAMWIND: New floor (2022-01-28)</title>
+    <title>CAMWIND: Wind/solar: offer floor changed (2022-01-28)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=CAMWIND"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=CAMWIND#CAMWIND/2022-01-28/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$30/MWh to −$41/MWh</summary>
+    <summary>Floor moved: −$30/MWh to −$41/MWh</summary>
   </entry>
   <entry>
-    <title>CAMWIND: New floor (2019-04-24)</title>
+    <title>CAMWIND: Wind/solar: offer floor changed (2019-04-24)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=CAMWIND"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=CAMWIND#CAMWIND/2019-04-24/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$35/MWh to −$30/MWh</summary>
+    <summary>Floor moved: −$35/MWh to −$30/MWh</summary>
   </entry>
 </feed>

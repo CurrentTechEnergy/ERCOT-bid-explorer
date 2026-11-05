@@ -5,10 +5,10 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=SAMSON_1_G3</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
-    <title>SAMSON_1: New floor (2025-10-31)</title>
+    <title>SAMSON_1: Wind/solar: offer floor changed (2025-10-31)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=SAMSON_1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=SAMSON_1#SAMSON_1/2025-10-31/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: $0/MWh to −$44/MWh</summary>
+    <summary>Floor moved: $0/MWh to −$44/MWh</summary>
   </entry>
 </feed>

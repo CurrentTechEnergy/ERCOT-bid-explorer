@@ -5,17 +5,17 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=MOZART</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
-    <title>MOZART: New floor (2023-07-01)</title>
+    <title>MOZART: Wind/solar: offer floor changed (2023-07-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=MOZART"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=MOZART#MOZART/2023-07-01/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$4/MWh to −$2/MWh</summary>
+    <summary>Floor moved: −$4/MWh to −$2/MWh</summary>
   </entry>
   <entry>
-    <title>MOZART: New floor (2021-12-17)</title>
+    <title>MOZART: Wind/solar: offer floor changed (2021-12-17)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=MOZART"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=MOZART#MOZART/2021-12-17/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$0/MWh to −$4/MWh</summary>
+    <summary>Floor moved: −$0/MWh to −$4/MWh</summary>
   </entry>
 </feed>

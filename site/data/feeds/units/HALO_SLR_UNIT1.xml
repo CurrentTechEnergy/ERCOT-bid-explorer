@@ -5,32 +5,32 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=HALO_SLR_UNIT1</id>
   <updated>2026-10-26T00:00:00Z</updated>
   <entry>
-    <title>HALO_SLR: New floor (2026-04-09)</title>
+    <title>HALO_SLR: Wind/solar: offer floor changed (2026-04-09)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=HALO_SLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=HALO_SLR#HALO_SLR/2026-04-09/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$33/MWh to −$37/MWh</summary>
+    <summary>Floor moved: −$33/MWh to −$37/MWh</summary>
   </entry>
   <entry>
-    <title>HALO_SLR: Episode (2026-02-24)</title>
+    <title>HALO_SLR: Wind/solar: short episode at a different floor (2026-02-24)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=HALO_SLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=HALO_SLR#HALO_SLR/2026-02-24/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Episode: floor −$33/MWh, briefly −$2/MWh, for 1 day</summary>
+    <summary>Short episode: floor −$33/MWh, briefly −$2/MWh, for 1 day</summary>
   </entry>
   <entry>
-    <title>HALO_SLR: Episode (2026-02-21)</title>
+    <title>HALO_SLR: Wind/solar: short episode at a different floor (2026-02-21)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=HALO_SLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=HALO_SLR#HALO_SLR/2026-02-21/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Episode: floor −$33/MWh, briefly −$2/MWh, for 1 day</summary>
+    <summary>Short episode: floor −$33/MWh, briefly −$2/MWh, for 1 day</summary>
   </entry>
   <entry>
-    <title>HALO_SLR: Episode (2026-02-16)</title>
+    <title>HALO_SLR: Wind/solar: short episode at a different floor (2026-02-16)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=HALO_SLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=HALO_SLR#HALO_SLR/2026-02-16/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Episode: floor −$33/MWh, briefly −$2/MWh, for 1 day</summary>
+    <summary>Short episode: floor −$33/MWh, briefly −$2/MWh, for 1 day</summary>
   </entry>
   <entry>
     <title>HALO_SLR_UNIT1: Decision maker or QSE changed (2026-01-27)</title>
@@ -47,52 +47,52 @@
     <summary>Scheduled by TRQ39 (SQ39), was TENASKA POWER SERVICES CO</summary>
   </entry>
   <entry>
-    <title>HALO_SLR: Episode (2025-10-19)</title>
+    <title>HALO_SLR: Wind/solar: short episode at a different floor (2025-10-19)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=HALO_SLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=HALO_SLR#HALO_SLR/2025-10-19/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Episode: floor −$33/MWh, briefly −$2/MWh, for 1 day</summary>
+    <summary>Short episode: floor −$33/MWh, briefly −$2/MWh, for 1 day</summary>
   </entry>
   <entry>
-    <title>HALO_SLR: Stopped moving within the day (2025-09-23)</title>
+    <title>HALO_SLR: Wind/solar: offer stopped moving within the day (2025-09-23)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=HALO_SLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=HALO_SLR#HALO_SLR/2025-09-23/renew_moving_off</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Stopped moving within the day: now a floor of −$33/MWh</summary>
   </entry>
   <entry>
-    <title>HALO_SLR: Started moving within the day (2025-08-21)</title>
+    <title>HALO_SLR: Wind/solar: offer started moving within the day (2025-08-21)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=HALO_SLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=HALO_SLR#HALO_SLR/2025-08-21/renew_moving_on</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Started moving within the day (was a floor of −$33/MWh)</summary>
+    <summary>Started moving within the day: was a floor of −$33/MWh</summary>
   </entry>
   <entry>
-    <title>HALO_SLR: Episode (2025-05-06)</title>
+    <title>HALO_SLR: Wind/solar: short episode at a different floor (2025-05-06)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=HALO_SLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=HALO_SLR#HALO_SLR/2025-05-06/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Episode: floor −$33/MWh, briefly −$17/MWh, for 1 day</summary>
+    <summary>Short episode: floor −$33/MWh, briefly −$17/MWh, for 1 day</summary>
   </entry>
   <entry>
-    <title>HALO_SLR: Episode (2025-03-02)</title>
+    <title>HALO_SLR: Wind/solar: short episode at a different floor (2025-03-02)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=HALO_SLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=HALO_SLR#HALO_SLR/2025-03-02/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Episode: floor −$33/MWh, briefly −$2/MWh, for 5 days</summary>
+    <summary>Short episode: floor −$33/MWh, briefly −$2/MWh, for 5 days</summary>
   </entry>
   <entry>
-    <title>HALO_SLR: New floor (2024-12-18)</title>
+    <title>HALO_SLR: Wind/solar: offer floor changed (2024-12-18)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=HALO_SLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=HALO_SLR#HALO_SLR/2024-12-18/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$38/MWh to −$33/MWh</summary>
+    <summary>Floor moved: −$38/MWh to −$33/MWh</summary>
   </entry>
   <entry>
-    <title>HALO_SLR: New floor (2024-10-23)</title>
+    <title>HALO_SLR: Wind/solar: offer floor changed (2024-10-23)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=HALO_SLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=HALO_SLR#HALO_SLR/2024-10-23/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$2/MWh to −$38/MWh</summary>
+    <summary>Floor moved: −$2/MWh to −$38/MWh</summary>
   </entry>
 </feed>

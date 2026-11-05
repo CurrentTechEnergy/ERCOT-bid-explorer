@@ -5,52 +5,52 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=SPLAIN2_WIND22</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
-    <title>SPLAIN2: New floor (2026-06-11)</title>
+    <title>SPLAIN2: Wind/solar: offer floor changed (2026-06-11)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=SPLAIN2"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=SPLAIN2#SPLAIN2/2026-06-11/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$12/MWh to −$8/MWh</summary>
+    <summary>Floor moved: −$12/MWh to −$8/MWh</summary>
   </entry>
   <entry>
-    <title>SPLAIN2: New floor (2026-05-02)</title>
+    <title>SPLAIN2: Wind/solar: offer floor changed (2026-05-02)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=SPLAIN2"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=SPLAIN2#SPLAIN2/2026-05-02/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$17/MWh to −$12/MWh</summary>
+    <summary>Floor moved: −$17/MWh to −$12/MWh</summary>
   </entry>
   <entry>
-    <title>SPLAIN2: New floor (2026-04-01)</title>
+    <title>SPLAIN2: Wind/solar: offer floor changed (2026-04-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=SPLAIN2"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=SPLAIN2#SPLAIN2/2026-04-01/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$22/MWh to −$17/MWh</summary>
+    <summary>Floor moved: −$22/MWh to −$17/MWh</summary>
   </entry>
   <entry>
-    <title>SPLAIN2: New floor (2026-03-25)</title>
+    <title>SPLAIN2: Wind/solar: offer floor changed (2026-03-25)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=SPLAIN2"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=SPLAIN2#SPLAIN2/2026-03-25/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$36/MWh to −$22/MWh</summary>
+    <summary>Floor moved: −$36/MWh to −$22/MWh</summary>
   </entry>
   <entry>
-    <title>SPLAIN2: New floor (2023-04-26)</title>
+    <title>SPLAIN2: Wind/solar: offer floor changed (2023-04-26)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=SPLAIN2"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=SPLAIN2#SPLAIN2/2023-04-26/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$32/MWh to −$36/MWh</summary>
+    <summary>Floor moved: −$32/MWh to −$36/MWh</summary>
   </entry>
   <entry>
-    <title>SPLAIN2: Episode (2021-02-20)</title>
+    <title>SPLAIN2: Wind/solar: short episode at a different floor (2021-02-20)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=SPLAIN2"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=SPLAIN2#SPLAIN2/2021-02-20/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Episode: floor −$32/MWh, briefly −$1/MWh, for 6 days</summary>
+    <summary>Short episode: floor −$32/MWh, briefly −$1/MWh, for 6 days</summary>
   </entry>
   <entry>
-    <title>SPLAIN2: New floor (2019-06-08)</title>
+    <title>SPLAIN2: Wind/solar: offer floor changed (2019-06-08)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=SPLAIN2"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=SPLAIN2#SPLAIN2/2019-06-08/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$30/MWh to −$32/MWh</summary>
+    <summary>Floor moved: −$30/MWh to −$32/MWh</summary>
   </entry>
 </feed>

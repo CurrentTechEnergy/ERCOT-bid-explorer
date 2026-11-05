@@ -26,25 +26,11 @@
     <summary>Offer price vs peer median: $24 to $92/MWh</summary>
   </entry>
   <entry>
-    <title>GRSES_UNIT1: Turn-off point moved (2026-08-01)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=GRSES_UNIT1"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=GRSES_UNIT1#GRSES_UNIT1/2026-08-01/turnoff/0</id>
-    <updated>2026-10-30T00:00:00Z</updated>
-    <summary>Turn-off point without an award $161 to $257 per MW of minimum output in August</summary>
-  </entry>
-  <entry>
     <title>GRSES_UNIT1: Bidding approach shifted (2026-07-20)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=GRSES_UNIT1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=GRSES_UNIT1#GRSES_UNIT1/2026-07-20/bidding</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Offer price vs peer median: $102 to −$5/MWh</summary>
-  </entry>
-  <entry>
-    <title>GRSES_UNIT1: Turn-off point moved (2026-07-01)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=GRSES_UNIT1"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=GRSES_UNIT1#GRSES_UNIT1/2026-07-01/turnoff/0</id>
-    <updated>2026-10-31T00:00:00Z</updated>
-    <summary>Turn-off point without an award $77 to $161 per MW of minimum output in July; the next month held it</summary>
   </entry>
   <entry>
     <title>GRSES_UNIT1: Bidding approach shifted (2026-06-03)</title>
@@ -72,7 +58,7 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=GRSES_UNIT1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=GRSES_UNIT1#GRSES_UNIT1/2026-05-01/turnoff/0</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Turn-off point without an award $258 to $78 per MW of minimum output in May; the next month held it</summary>
+    <summary>Turn-off point (no award) in May: $179 to $53 per MW of minimum output; the next month held it</summary>
   </entry>
   <entry>
     <title>GRSES_UNIT1: Outage ended (2026-04-14)</title>
@@ -89,11 +75,11 @@
     <summary>Outage began, lasting 29 days</summary>
   </entry>
   <entry>
-    <title>GRSES_UNIT1: Timescale group changed (2026-02-01)</title>
+    <title>GRSES_UNIT1: How often it turns off changed (2026-02-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=GRSES_UNIT1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=GRSES_UNIT1#GRSES_UNIT1/2026-02-01/group</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Off for days at a time in 2026-01 to Off for a week or more at a time in 2026-02</summary>
+    <summary>Off for days at a time (January 2026) to Off for a week or more at a time (February 2026)</summary>
   </entry>
   <entry>
     <title>GRSES_UNIT1: Bidding approach shifted (2026-01-30)</title>

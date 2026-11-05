@@ -12,11 +12,11 @@
     <summary>Offer price vs peer median: −$8 to $12/MWh</summary>
   </entry>
   <entry>
-    <title>PB2SES_CT4: Running at a new price (2026-07-01)</title>
+    <title>PB2SES_CT4: Peaker: running at a new real-time price (2026-07-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=PB2SES_CT4"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=PB2SES_CT4#PB2SES_CT4/2026-07-01/rt_price</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Online 9% of its hours at $35–$50 real-time at its node in July, down from 52%</summary>
+    <summary>Online 9% of its available hours at $35–$50/MWh real-time at its node in July, down from 52%</summary>
   </entry>
   <entry>
     <title>PB2SES_CT4: Bidding approach shifted (2026-06-12)</title>
@@ -26,11 +26,11 @@
     <summary>Offer price vs peer median: −$26 to −$5/MWh</summary>
   </entry>
   <entry>
-    <title>PB2SES_CT4: Running at a new price (2026-06-01)</title>
+    <title>PB2SES_CT4: Peaker: running at a new real-time price (2026-06-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=PB2SES_CT4"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=PB2SES_CT4#PB2SES_CT4/2026-06-01/rt_price</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Online 1% of its hours at below $0 real-time at its node in June, down from 64%</summary>
+    <summary>Online 1% of its available hours at below $0/MWh real-time at its node in June, down from 64%</summary>
   </entry>
   <entry>
     <title>PB2SES_CT4: Bidding approach shifted (2026-06-01)</title>
@@ -82,11 +82,11 @@
     <summary>Offer price vs peer median: −$28 to −$11/MWh</summary>
   </entry>
   <entry>
-    <title>PB2SES_CT4: Running at a new price (2026-05-01)</title>
+    <title>PB2SES_CT4: Peaker: running at a new real-time price (2026-05-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=PB2SES_CT4"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=PB2SES_CT4#PB2SES_CT4/2026-05-01/rt_price</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Online 15% of its hours at below $0 real-time at its node in May, down from 54%</summary>
+    <summary>Online 15% of its available hours at below $0/MWh real-time at its node in May, down from 54%</summary>
   </entry>
   <entry>
     <title>PB2SES_CT4: Bidding approach shifted (2026-04-24)</title>
@@ -131,18 +131,18 @@
     <summary>Back from a 20-day outage</summary>
   </entry>
   <entry>
-    <title>PB2SES_CT4: Running at a new price (2026-04-01)</title>
+    <title>PB2SES_CT4: Peaker: running at a new real-time price (2026-04-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=PB2SES_CT4"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=PB2SES_CT4#PB2SES_CT4/2026-04-01/rt_price</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Online 89% of its hours at below $0 real-time at its node in April, up from 0%</summary>
+    <summary>Online 89% of its available hours at below $0/MWh real-time at its node in April, up from 0%</summary>
   </entry>
   <entry>
-    <title>PB2SES_CT4: Timescale group changed (2026-04-01)</title>
+    <title>PB2SES_CT4: How often it turns off changed (2026-04-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=PB2SES_CT4"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=PB2SES_CT4#PB2SES_CT4/2026-04-01/group</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Off for days at a time in 2026-03 to Cycles daily, under once a week in 2026-04</summary>
+    <summary>Off for days at a time (March 2026) to Cycles daily, under once a week (April 2026)</summary>
   </entry>
   <entry>
     <title>PB2SES_CT4: Outage started (2026-03-14)</title>
@@ -159,11 +159,11 @@
     <summary>Offer price vs peer median: −$6 to −$21/MWh</summary>
   </entry>
   <entry>
-    <title>PB2SES_CT4: Timescale group changed (2026-03-01)</title>
+    <title>PB2SES_CT4: How often it turns off changed (2026-03-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=PB2SES_CT4"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=PB2SES_CT4#PB2SES_CT4/2026-03-01/group</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Cycles daily, 1 to 2 times a week in 2026-02 to Off for days at a time in 2026-03</summary>
+    <summary>Cycles daily, 1 to 2 times a week (February 2026) to Off for days at a time (March 2026)</summary>
   </entry>
   <entry>
     <title>PB2SES_CT4: Bidding approach shifted (2026-01-31)</title>

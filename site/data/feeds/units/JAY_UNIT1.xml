@@ -19,10 +19,10 @@
     <summary>Outage began, lasting 7 days</summary>
   </entry>
   <entry>
-    <title>JAY: New floor (2022-06-10)</title>
+    <title>JAY: Wind/solar: offer floor changed (2022-06-10)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=JAY"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=JAY#JAY/2022-06-10/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$6/MWh to $0/MWh</summary>
+    <summary>Floor moved: −$6/MWh to $0/MWh</summary>
   </entry>
 </feed>

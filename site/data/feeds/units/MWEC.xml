@@ -5,45 +5,45 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=MWEC</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
-    <title>MWEC: Episode (2026-01-24)</title>
+    <title>MWEC: Wind/solar: short episode at a different floor (2026-01-24)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=MWEC"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=MWEC#MWEC/2026-01-24/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Episode: floor $2/MWh, briefly −$10/MWh, for 4 days</summary>
+    <summary>Short episode: floor $2/MWh, briefly −$10/MWh, for 4 days</summary>
   </entry>
   <entry>
-    <title>MWEC: New floor (2023-07-19)</title>
+    <title>MWEC: Wind/solar: offer floor changed (2023-07-19)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=MWEC"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=MWEC#MWEC/2023-07-19/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: $0/MWh to $2/MWh</summary>
+    <summary>Floor moved: $0/MWh to $2/MWh</summary>
   </entry>
   <entry>
-    <title>MWEC: Back to an earlier floor (2023-02-04)</title>
+    <title>MWEC: Wind/solar: back to an earlier floor (2023-02-04)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=MWEC"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=MWEC#MWEC/2023-02-04/renew_floor_back</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Back to an earlier floor: $2/MWh to $0/MWh</summary>
   </entry>
   <entry>
-    <title>MWEC: New floor (2022-11-29)</title>
+    <title>MWEC: Wind/solar: offer floor changed (2022-11-29)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=MWEC"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=MWEC#MWEC/2022-11-29/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: $0/MWh to $2/MWh</summary>
+    <summary>Floor moved: $0/MWh to $2/MWh</summary>
   </entry>
   <entry>
-    <title>MWEC: New floor (2022-04-04)</title>
+    <title>MWEC: Wind/solar: offer floor changed (2022-04-04)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=MWEC"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=MWEC#MWEC/2022-04-04/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: $2/MWh to $0/MWh</summary>
+    <summary>Floor moved: $2/MWh to $0/MWh</summary>
   </entry>
   <entry>
-    <title>MWEC: New floor (2019-05-09)</title>
+    <title>MWEC: Wind/solar: offer floor changed (2019-05-09)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=MWEC"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=MWEC#MWEC/2019-05-09/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: $0/MWh to $2/MWh</summary>
+    <summary>Floor moved: $0/MWh to $2/MWh</summary>
   </entry>
 </feed>

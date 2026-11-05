@@ -5,31 +5,31 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=TTWEC_G1</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
-    <title>TTWEC: Back to an earlier floor (2023-02-04)</title>
+    <title>TTWEC: Wind/solar: back to an earlier floor (2023-02-04)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=TTWEC"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=TTWEC#TTWEC/2023-02-04/renew_floor_back</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Back to an earlier floor: $2/MWh to $0/MWh</summary>
   </entry>
   <entry>
-    <title>TTWEC: New floor (2022-11-29)</title>
+    <title>TTWEC: Wind/solar: offer floor changed (2022-11-29)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=TTWEC"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=TTWEC#TTWEC/2022-11-29/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: $0/MWh to $2/MWh</summary>
+    <summary>Floor moved: $0/MWh to $2/MWh</summary>
   </entry>
   <entry>
-    <title>TTWEC: New floor (2020-07-23)</title>
+    <title>TTWEC: Wind/solar: offer floor changed (2020-07-23)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=TTWEC"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=TTWEC#TTWEC/2020-07-23/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: $3/MWh to $0/MWh</summary>
+    <summary>Floor moved: $3/MWh to $0/MWh</summary>
   </entry>
   <entry>
-    <title>TTWEC: New floor (2019-05-09)</title>
+    <title>TTWEC: Wind/solar: offer floor changed (2019-05-09)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=TTWEC"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=TTWEC#TTWEC/2019-05-09/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: $0/MWh to $3/MWh</summary>
+    <summary>Floor moved: $0/MWh to $3/MWh</summary>
   </entry>
 </feed>

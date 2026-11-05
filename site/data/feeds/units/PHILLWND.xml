@@ -5,66 +5,66 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=PHILLWND</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
-    <title>PHILLWND: New floor (2025-07-19)</title>
+    <title>PHILLWND: Wind/solar: offer floor changed (2025-07-19)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=PHILLWND"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=PHILLWND#PHILLWND/2025-07-19/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$40/MWh to −$32/MWh</summary>
+    <summary>Floor moved: −$40/MWh to −$32/MWh</summary>
   </entry>
   <entry>
-    <title>PHILLWND: Episode (2025-06-07)</title>
+    <title>PHILLWND: Wind/solar: short episode at a different floor (2025-06-07)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=PHILLWND"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=PHILLWND#PHILLWND/2025-06-07/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Episode: floor −$40/MWh, briefly −$31/MWh, for 1 day</summary>
+    <summary>Short episode: floor −$40/MWh, briefly −$31/MWh, for 1 day</summary>
   </entry>
   <entry>
-    <title>PHILLWND: Back to an earlier floor (2025-06-02)</title>
+    <title>PHILLWND: Wind/solar: back to an earlier floor (2025-06-02)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=PHILLWND"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=PHILLWND#PHILLWND/2025-06-02/renew_floor_back</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Back to an earlier floor: −$31/MWh to −$40/MWh</summary>
   </entry>
   <entry>
-    <title>PHILLWND: New floor (2025-03-08)</title>
+    <title>PHILLWND: Wind/solar: offer floor changed (2025-03-08)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=PHILLWND"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=PHILLWND#PHILLWND/2025-03-08/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$40/MWh to −$31/MWh</summary>
+    <summary>Floor moved: −$40/MWh to −$31/MWh</summary>
   </entry>
   <entry>
-    <title>PHILLWND: New floor (2024-12-31)</title>
+    <title>PHILLWND: Wind/solar: offer floor changed (2024-12-31)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=PHILLWND"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=PHILLWND#PHILLWND/2024-12-31/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$28/MWh to −$40/MWh</summary>
+    <summary>Floor moved: −$28/MWh to −$40/MWh</summary>
   </entry>
   <entry>
-    <title>PHILLWND: New floor (2024-01-03)</title>
+    <title>PHILLWND: Wind/solar: offer floor changed (2024-01-03)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=PHILLWND"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=PHILLWND#PHILLWND/2024-01-03/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$35/MWh to −$28/MWh</summary>
+    <summary>Floor moved: −$35/MWh to −$28/MWh</summary>
   </entry>
   <entry>
-    <title>PHILLWND: New floor (2023-07-28)</title>
+    <title>PHILLWND: Wind/solar: offer floor changed (2023-07-28)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=PHILLWND"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=PHILLWND#PHILLWND/2023-07-28/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$33/MWh to −$35/MWh</summary>
+    <summary>Floor moved: −$33/MWh to −$35/MWh</summary>
   </entry>
   <entry>
-    <title>PHILLWND: New floor (2022-05-12)</title>
+    <title>PHILLWND: Wind/solar: offer floor changed (2022-05-12)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=PHILLWND"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=PHILLWND#PHILLWND/2022-05-12/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$34/MWh to −$33/MWh</summary>
+    <summary>Floor moved: −$34/MWh to −$33/MWh</summary>
   </entry>
   <entry>
-    <title>PHILLWND: New floor (2022-05-03)</title>
+    <title>PHILLWND: Wind/solar: offer floor changed (2022-05-03)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=PHILLWND"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=PHILLWND#PHILLWND/2022-05-03/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$32/MWh to −$34/MWh</summary>
+    <summary>Floor moved: −$32/MWh to −$34/MWh</summary>
   </entry>
 </feed>

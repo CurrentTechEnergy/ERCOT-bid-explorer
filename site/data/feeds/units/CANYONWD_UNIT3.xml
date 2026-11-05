@@ -5,38 +5,38 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=CANYONWD_UNIT3</id>
   <updated>2026-10-31T00:00:00Z</updated>
   <entry>
-    <title>CANYONWD: Stopped moving within the day (2026-08-26)</title>
+    <title>CANYONWD: Wind/solar: offer stopped moving within the day (2026-08-26)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=CANYONWD"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=CANYONWD#CANYONWD/2026-08-26/renew_moving_off</id>
     <updated>2026-10-31T00:00:00Z</updated>
     <summary>Stopped moving within the day: now a floor of −$42/MWh</summary>
   </entry>
   <entry>
-    <title>CANYONWD: Started moving within the day (2025-08-14)</title>
+    <title>CANYONWD: Wind/solar: offer started moving within the day (2025-08-14)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=CANYONWD"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=CANYONWD#CANYONWD/2025-08-14/renew_moving_on</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Started moving within the day (was a floor of −$42/MWh)</summary>
+    <summary>Started moving within the day: was a floor of −$42/MWh</summary>
   </entry>
   <entry>
-    <title>CANYONWD: Stopped moving within the day (2025-08-08)</title>
+    <title>CANYONWD: Wind/solar: offer stopped moving within the day (2025-08-08)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=CANYONWD"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=CANYONWD#CANYONWD/2025-08-08/renew_moving_off</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Stopped moving within the day: now a floor of −$42/MWh</summary>
   </entry>
   <entry>
-    <title>CANYONWD: Started moving within the day (2025-07-08)</title>
+    <title>CANYONWD: Wind/solar: offer started moving within the day (2025-07-08)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=CANYONWD"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=CANYONWD#CANYONWD/2025-07-08/renew_moving_on</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Started moving within the day (was a floor of −$42/MWh)</summary>
+    <summary>Started moving within the day: was a floor of −$42/MWh</summary>
   </entry>
   <entry>
-    <title>CANYONWD: New floor (2025-02-22)</title>
+    <title>CANYONWD: Wind/solar: offer floor changed (2025-02-22)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=CANYONWD"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=CANYONWD#CANYONWD/2025-02-22/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$38/MWh to −$42/MWh</summary>
+    <summary>Floor moved: −$38/MWh to −$42/MWh</summary>
   </entry>
 </feed>

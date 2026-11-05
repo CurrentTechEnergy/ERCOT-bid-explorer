@@ -5,17 +5,17 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=SWFT_SLR</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
-    <title>SWFT_SLR: New floor (2026-02-17)</title>
+    <title>SWFT_SLR: Wind/solar: offer floor changed (2026-02-17)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=SWFT_SLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=SWFT_SLR#SWFT_SLR/2026-02-17/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$26/MWh to −$3/MWh</summary>
+    <summary>Floor moved: −$26/MWh to −$3/MWh</summary>
   </entry>
   <entry>
-    <title>SWFT_SLR: New floor (2025-04-18)</title>
+    <title>SWFT_SLR: Wind/solar: offer floor changed (2025-04-18)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=SWFT_SLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=SWFT_SLR#SWFT_SLR/2025-04-18/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: $0/MWh to −$26/MWh</summary>
+    <summary>Floor moved: $0/MWh to −$26/MWh</summary>
   </entry>
 </feed>

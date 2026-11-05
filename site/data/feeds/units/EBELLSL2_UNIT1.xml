@@ -5,31 +5,31 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=EBELLSL2_UNIT1</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
-    <title>EBELLSL2: New floor (2025-12-10)</title>
+    <title>EBELLSL2: Wind/solar: offer floor changed (2025-12-10)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=EBELLSL2"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=EBELLSL2#EBELLSL2/2025-12-10/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$20/MWh to −$30/MWh</summary>
+    <summary>Floor moved: −$20/MWh to −$30/MWh</summary>
   </entry>
   <entry>
-    <title>EBELLSL2: Episode (2025-12-05)</title>
+    <title>EBELLSL2: Wind/solar: short episode at a different floor (2025-12-05)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=EBELLSL2"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=EBELLSL2#EBELLSL2/2025-12-05/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Episode: floor −$20/MWh, briefly −$15/MWh, for 1 day</summary>
+    <summary>Short episode: floor −$20/MWh, briefly −$15/MWh, for 1 day</summary>
   </entry>
   <entry>
-    <title>EBELLSL2: New floor (2025-06-24)</title>
+    <title>EBELLSL2: Wind/solar: offer floor changed (2025-06-24)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=EBELLSL2"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=EBELLSL2#EBELLSL2/2025-06-24/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$15/MWh to −$20/MWh</summary>
+    <summary>Floor moved: −$15/MWh to −$20/MWh</summary>
   </entry>
   <entry>
-    <title>EBELLSL2: New floor (2025-04-29)</title>
+    <title>EBELLSL2: Wind/solar: offer floor changed (2025-04-29)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=EBELLSL2"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=EBELLSL2#EBELLSL2/2025-04-29/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$3/MWh to −$15/MWh</summary>
+    <summary>Floor moved: −$3/MWh to −$15/MWh</summary>
   </entry>
 </feed>

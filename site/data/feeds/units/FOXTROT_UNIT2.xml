@@ -5,24 +5,24 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=FOXTROT_UNIT2</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
-    <title>FOXTROT: New floor (2024-08-16)</title>
+    <title>FOXTROT: Wind/solar: offer floor changed (2024-08-16)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=FOXTROT"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=FOXTROT#FOXTROT/2024-08-16/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$35/MWh to −$38/MWh</summary>
+    <summary>Floor moved: −$35/MWh to −$38/MWh</summary>
   </entry>
   <entry>
-    <title>FOXTROT: New floor (2022-10-29)</title>
+    <title>FOXTROT: Wind/solar: offer floor changed (2022-10-29)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=FOXTROT"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=FOXTROT#FOXTROT/2022-10-29/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$33/MWh to −$35/MWh</summary>
+    <summary>Floor moved: −$33/MWh to −$35/MWh</summary>
   </entry>
   <entry>
-    <title>FOXTROT: New floor (2022-06-23)</title>
+    <title>FOXTROT: Wind/solar: offer floor changed (2022-06-23)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=FOXTROT"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=FOXTROT#FOXTROT/2022-06-23/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$25/MWh to −$33/MWh</summary>
+    <summary>Floor moved: −$25/MWh to −$33/MWh</summary>
   </entry>
 </feed>

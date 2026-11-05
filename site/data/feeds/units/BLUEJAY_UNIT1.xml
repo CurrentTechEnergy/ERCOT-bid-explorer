@@ -5,38 +5,38 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=BLUEJAY_UNIT1</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
-    <title>BLUEJAY: New floor (2025-03-18)</title>
+    <title>BLUEJAY: Wind/solar: offer floor changed (2025-03-18)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=BLUEJAY"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=BLUEJAY#BLUEJAY/2025-03-18/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$4/MWh to −$2/MWh</summary>
+    <summary>Floor moved: −$4/MWh to −$2/MWh</summary>
   </entry>
   <entry>
-    <title>BLUEJAY: New floor (2024-12-16)</title>
+    <title>BLUEJAY: Wind/solar: offer floor changed (2024-12-16)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=BLUEJAY"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=BLUEJAY#BLUEJAY/2024-12-16/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: $0/MWh to −$4/MWh</summary>
+    <summary>Floor moved: $0/MWh to −$4/MWh</summary>
   </entry>
   <entry>
-    <title>BLUEJAY: New floor (2023-06-06)</title>
+    <title>BLUEJAY: Wind/solar: offer floor changed (2023-06-06)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=BLUEJAY"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=BLUEJAY#BLUEJAY/2023-06-06/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$3/MWh to $0/MWh</summary>
+    <summary>Floor moved: −$3/MWh to $0/MWh</summary>
   </entry>
   <entry>
-    <title>BLUEJAY: New floor (2023-04-19)</title>
+    <title>BLUEJAY: Wind/solar: offer floor changed (2023-04-19)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=BLUEJAY"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=BLUEJAY#BLUEJAY/2023-04-19/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$6/MWh to −$3/MWh</summary>
+    <summary>Floor moved: −$6/MWh to −$3/MWh</summary>
   </entry>
   <entry>
     <title>BLUEJAY: Decision maker or QSE changed (2021-09-21)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=BLUEJAY"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=BLUEJAY#BLUEJAY/2021-09-21/control</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Scheduled by ENEL TRADING NORTH AMERICA LLC (SQ7), was ENEL TRADING NORTH AMERICA LLC</summary>
+    <summary>QSE code changed: QENELT to QENEL7 (ENEL TRADING NORTH AMERICA LLC (SQ7))</summary>
   </entry>
 </feed>

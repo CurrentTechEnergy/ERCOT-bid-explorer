@@ -5,129 +5,129 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=INDL_INADALE</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
-    <title>INDL_INADALE: Episode (2026-03-10)</title>
+    <title>INDL_INADALE: Wind/solar: short episode at a different floor (2026-03-10)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=INDL_INADALE"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=INDL_INADALE#INDL_INADALE/2026-03-10/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Episode: floor $3/MWh, briefly −$2/MWh, for 2 days</summary>
+    <summary>Short episode: floor $3/MWh, briefly −$2/MWh, for 2 days</summary>
   </entry>
   <entry>
-    <title>INDL_INADALE: Back to an earlier floor (2025-07-04)</title>
+    <title>INDL_INADALE: Wind/solar: back to an earlier floor (2025-07-04)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=INDL_INADALE"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=INDL_INADALE#INDL_INADALE/2025-07-04/renew_floor_back</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Back to an earlier floor: −$3/MWh to $3/MWh</summary>
   </entry>
   <entry>
-    <title>INDL_INADALE: New floor (2025-06-19)</title>
+    <title>INDL_INADALE: Wind/solar: offer floor changed (2025-06-19)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=INDL_INADALE"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=INDL_INADALE#INDL_INADALE/2025-06-19/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: $3/MWh to −$3/MWh</summary>
+    <summary>Floor moved: $3/MWh to −$3/MWh</summary>
   </entry>
   <entry>
-    <title>INDL_INADALE: New floor (2025-01-13)</title>
+    <title>INDL_INADALE: Wind/solar: offer floor changed (2025-01-13)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=INDL_INADALE"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=INDL_INADALE#INDL_INADALE/2025-01-13/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: $5/MWh to $3/MWh</summary>
+    <summary>Floor moved: $5/MWh to $3/MWh</summary>
   </entry>
   <entry>
-    <title>INDL_INADALE: New floor (2024-10-08)</title>
+    <title>INDL_INADALE: Wind/solar: offer floor changed (2024-10-08)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=INDL_INADALE"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=INDL_INADALE#INDL_INADALE/2024-10-08/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$2/MWh to $5/MWh</summary>
+    <summary>Floor moved: −$2/MWh to $5/MWh</summary>
   </entry>
   <entry>
-    <title>INDL_INADALE: New floor (2024-06-05)</title>
+    <title>INDL_INADALE: Wind/solar: offer floor changed (2024-06-05)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=INDL_INADALE"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=INDL_INADALE#INDL_INADALE/2024-06-05/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: $0/MWh to −$2/MWh</summary>
+    <summary>Floor moved: $0/MWh to −$2/MWh</summary>
   </entry>
   <entry>
-    <title>INDL_INADALE: New floor (2024-02-01)</title>
+    <title>INDL_INADALE: Wind/solar: offer floor changed (2024-02-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=INDL_INADALE"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=INDL_INADALE#INDL_INADALE/2024-02-01/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$4/MWh to $0/MWh</summary>
+    <summary>Floor moved: −$4/MWh to $0/MWh</summary>
   </entry>
   <entry>
-    <title>INDL_INADALE: New floor (2023-09-02)</title>
+    <title>INDL_INADALE: Wind/solar: offer floor changed (2023-09-02)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=INDL_INADALE"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=INDL_INADALE#INDL_INADALE/2023-09-02/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$1/MWh to −$4/MWh</summary>
+    <summary>Floor moved: −$1/MWh to −$4/MWh</summary>
   </entry>
   <entry>
-    <title>INDL_INADALE: New floor (2023-07-01)</title>
+    <title>INDL_INADALE: Wind/solar: offer floor changed (2023-07-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=INDL_INADALE"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=INDL_INADALE#INDL_INADALE/2023-07-01/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$2/MWh to −$1/MWh</summary>
+    <summary>Floor moved: −$2/MWh to −$1/MWh</summary>
   </entry>
   <entry>
-    <title>INDL_INADALE: Back to an earlier floor (2023-04-01)</title>
+    <title>INDL_INADALE: Wind/solar: back to an earlier floor (2023-04-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=INDL_INADALE"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=INDL_INADALE#INDL_INADALE/2023-04-01/renew_floor_back</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Back to an earlier floor: −$4/MWh to −$2/MWh</summary>
   </entry>
   <entry>
-    <title>INDL_INADALE: New floor (2023-03-01)</title>
+    <title>INDL_INADALE: Wind/solar: offer floor changed (2023-03-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=INDL_INADALE"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=INDL_INADALE#INDL_INADALE/2023-03-01/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$1/MWh to −$4/MWh</summary>
+    <summary>Floor moved: −$1/MWh to −$4/MWh</summary>
   </entry>
   <entry>
-    <title>INDL_INADALE: New floor (2023-01-04)</title>
+    <title>INDL_INADALE: Wind/solar: offer floor changed (2023-01-04)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=INDL_INADALE"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=INDL_INADALE#INDL_INADALE/2023-01-04/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$2/MWh to −$1/MWh</summary>
+    <summary>Floor moved: −$2/MWh to −$1/MWh</summary>
   </entry>
   <entry>
-    <title>INDL_INADALE: Back to an earlier floor (2022-10-01)</title>
+    <title>INDL_INADALE: Wind/solar: back to an earlier floor (2022-10-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=INDL_INADALE"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=INDL_INADALE#INDL_INADALE/2022-10-01/renew_floor_back</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Back to an earlier floor: −$1/MWh to −$2/MWh</summary>
   </entry>
   <entry>
-    <title>INDL_INADALE: Back to an earlier floor (2022-07-07)</title>
+    <title>INDL_INADALE: Wind/solar: back to an earlier floor (2022-07-07)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=INDL_INADALE"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=INDL_INADALE#INDL_INADALE/2022-07-07/renew_floor_back</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Back to an earlier floor: −$3/MWh to −$1/MWh</summary>
   </entry>
   <entry>
-    <title>INDL_INADALE: New floor (2022-06-01)</title>
+    <title>INDL_INADALE: Wind/solar: offer floor changed (2022-06-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=INDL_INADALE"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=INDL_INADALE#INDL_INADALE/2022-06-01/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$1/MWh to −$3/MWh</summary>
+    <summary>Floor moved: −$1/MWh to −$3/MWh</summary>
   </entry>
   <entry>
-    <title>INDL_INADALE: New floor (2022-03-09)</title>
+    <title>INDL_INADALE: Wind/solar: offer floor changed (2022-03-09)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=INDL_INADALE"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=INDL_INADALE#INDL_INADALE/2022-03-09/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$5/MWh to −$1/MWh</summary>
+    <summary>Floor moved: −$5/MWh to −$1/MWh</summary>
   </entry>
   <entry>
-    <title>INDL_INADALE: New floor (2021-08-04)</title>
+    <title>INDL_INADALE: Wind/solar: offer floor changed (2021-08-04)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=INDL_INADALE"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=INDL_INADALE#INDL_INADALE/2021-08-04/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$2/MWh to −$5/MWh</summary>
+    <summary>Floor moved: −$2/MWh to −$5/MWh</summary>
   </entry>
   <entry>
-    <title>INDL_INADALE: New floor (2021-04-08)</title>
+    <title>INDL_INADALE: Wind/solar: offer floor changed (2021-04-08)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=INDL_INADALE"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=INDL_INADALE#INDL_INADALE/2021-04-08/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$1/MWh to −$2/MWh</summary>
+    <summary>Floor moved: −$1/MWh to −$2/MWh</summary>
   </entry>
 </feed>

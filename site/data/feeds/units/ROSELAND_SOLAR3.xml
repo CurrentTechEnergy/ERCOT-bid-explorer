@@ -5,24 +5,24 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=ROSELAND_SOLAR3</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
-    <title>ROSELAND: New floor (2024-12-18)</title>
+    <title>ROSELAND: Wind/solar: offer floor changed (2024-12-18)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=ROSELAND"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=ROSELAND#ROSELAND/2024-12-18/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: $0/MWh to −$4/MWh</summary>
+    <summary>Floor moved: $0/MWh to −$4/MWh</summary>
   </entry>
   <entry>
-    <title>ROSELAND: New floor (2023-06-06)</title>
+    <title>ROSELAND: Wind/solar: offer floor changed (2023-06-06)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=ROSELAND"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=ROSELAND#ROSELAND/2023-06-06/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$3/MWh to $0/MWh</summary>
+    <summary>Floor moved: −$3/MWh to $0/MWh</summary>
   </entry>
   <entry>
     <title>ROSELAND: Decision maker or QSE changed (2022-09-13)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=ROSELAND"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=ROSELAND#ROSELAND/2022-09-13/control</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Scheduled by ENEL TRADING NORTH AMERICA LLC (SQ9), was ENEL TRADING NORTH AMERICA LLC (SQ5)</summary>
+    <summary>QSE code changed: QENEL5 to QENEL9 (ENEL TRADING NORTH AMERICA LLC (SQ9))</summary>
   </entry>
 </feed>

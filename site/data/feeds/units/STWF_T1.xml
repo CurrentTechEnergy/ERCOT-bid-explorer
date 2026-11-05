@@ -5,24 +5,24 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=STWF_T1</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
-    <title>STWF_T: New floor (2021-07-09)</title>
+    <title>STWF_T: Wind/solar: offer floor changed (2021-07-09)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=STWF_T"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=STWF_T#STWF_T/2021-07-09/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$2/MWh to −$5/MWh</summary>
+    <summary>Floor moved: −$2/MWh to −$5/MWh</summary>
   </entry>
   <entry>
-    <title>STWF_T: New floor (2021-04-15)</title>
+    <title>STWF_T: Wind/solar: offer floor changed (2021-04-15)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=STWF_T"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=STWF_T#STWF_T/2021-04-15/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$1/MWh to −$2/MWh</summary>
+    <summary>Floor moved: −$1/MWh to −$2/MWh</summary>
   </entry>
   <entry>
-    <title>STWF_T: New floor (2020-07-28)</title>
+    <title>STWF_T: Wind/solar: offer floor changed (2020-07-28)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=STWF_T"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=STWF_T#STWF_T/2020-07-28/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$31/MWh to −$1/MWh</summary>
+    <summary>Floor moved: −$31/MWh to −$1/MWh</summary>
   </entry>
 </feed>

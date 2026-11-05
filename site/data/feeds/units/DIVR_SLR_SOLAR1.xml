@@ -5,24 +5,24 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=DIVR_SLR_SOLAR1</id>
   <updated>2026-11-01T00:00:00Z</updated>
   <entry>
-    <title>DIVR_SLR: Stopped moving within the day (2026-08-28)</title>
+    <title>DIVR_SLR: Wind/solar: offer stopped moving within the day (2026-08-28)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=DIVR_SLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=DIVR_SLR#DIVR_SLR/2026-08-28/renew_moving_off</id>
     <updated>2026-11-01T00:00:00Z</updated>
     <summary>Stopped moving within the day: now a floor of $0/MWh</summary>
   </entry>
   <entry>
-    <title>DIVR_SLR: Started moving within the day (2026-01-15)</title>
+    <title>DIVR_SLR: Wind/solar: offer started moving within the day (2026-01-15)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=DIVR_SLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=DIVR_SLR#DIVR_SLR/2026-01-15/renew_moving_on</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Started moving within the day (was a floor of −$20/MWh)</summary>
+    <summary>Started moving within the day: was a floor of −$20/MWh</summary>
   </entry>
   <entry>
-    <title>DIVR_SLR: New floor (2025-08-27)</title>
+    <title>DIVR_SLR: Wind/solar: offer floor changed (2025-08-27)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=DIVR_SLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=DIVR_SLR#DIVR_SLR/2025-08-27/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: $0/MWh to −$20/MWh</summary>
+    <summary>Floor moved: $0/MWh to −$20/MWh</summary>
   </entry>
 </feed>

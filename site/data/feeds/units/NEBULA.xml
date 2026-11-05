@@ -5,31 +5,31 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=NEBULA</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
-    <title>NEBULA: Episode (2025-04-24)</title>
+    <title>NEBULA: Wind/solar: short episode at a different floor (2025-04-24)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=NEBULA"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=NEBULA#NEBULA/2025-04-24/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Episode: floor −$26/MWh, briefly $0/MWh, for 5 days</summary>
+    <summary>Short episode: floor −$26/MWh, briefly $0/MWh, for 5 days</summary>
   </entry>
   <entry>
-    <title>NEBULA: Episode (2025-04-02)</title>
+    <title>NEBULA: Wind/solar: short episode at a different floor (2025-04-02)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=NEBULA"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=NEBULA#NEBULA/2025-04-02/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Episode: floor −$26/MWh, briefly −$2/MWh, for 6 days</summary>
+    <summary>Short episode: floor −$26/MWh, briefly −$2/MWh, for 6 days</summary>
   </entry>
   <entry>
-    <title>NEBULA: Back to an earlier floor (2025-02-12)</title>
+    <title>NEBULA: Wind/solar: back to an earlier floor (2025-02-12)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=NEBULA"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=NEBULA#NEBULA/2025-02-12/renew_floor_back</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Back to an earlier floor: $0/MWh to −$26/MWh</summary>
   </entry>
   <entry>
-    <title>NEBULA: New floor (2025-02-05)</title>
+    <title>NEBULA: Wind/solar: offer floor changed (2025-02-05)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=NEBULA"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=NEBULA#NEBULA/2025-02-05/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$26/MWh to $0/MWh</summary>
+    <summary>Floor moved: −$26/MWh to $0/MWh</summary>
   </entry>
 </feed>

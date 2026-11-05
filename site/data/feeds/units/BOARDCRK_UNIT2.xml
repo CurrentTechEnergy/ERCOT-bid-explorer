@@ -5,24 +5,24 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=BOARDCRK_UNIT2</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
-    <title>BOARDCRK: New floor (2026-06-09)</title>
+    <title>BOARDCRK: Wind/solar: offer floor changed (2026-06-09)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=BOARDCRK"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=BOARDCRK#BOARDCRK/2026-06-09/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$54/MWh to −$61/MWh</summary>
+    <summary>Floor moved: −$54/MWh to −$61/MWh</summary>
   </entry>
   <entry>
-    <title>BOARDCRK: New floor (2024-12-31)</title>
+    <title>BOARDCRK: Wind/solar: offer floor changed (2024-12-31)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=BOARDCRK"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=BOARDCRK#BOARDCRK/2024-12-31/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$35/MWh to −$54/MWh</summary>
+    <summary>Floor moved: −$35/MWh to −$54/MWh</summary>
   </entry>
   <entry>
-    <title>BOARDCRK: New floor (2023-07-28)</title>
+    <title>BOARDCRK: Wind/solar: offer floor changed (2023-07-28)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=BOARDCRK"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=BOARDCRK#BOARDCRK/2023-07-28/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$2/MWh to −$35/MWh</summary>
+    <summary>Floor moved: −$2/MWh to −$35/MWh</summary>
   </entry>
 </feed>

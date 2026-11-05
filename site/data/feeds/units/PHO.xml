@@ -5,17 +5,17 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=PHO</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
-    <title>PHO: Formula on (2025-07-01)</title>
+    <title>PHO: Wind/solar: hedge formula on (2025-07-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=PHO"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=PHO#PHO/2025-07-01/renew_formula_on</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Formula on (was a floor of −$2/MWh)</summary>
+    <summary>Hedge formula on: was a floor of −$2/MWh</summary>
   </entry>
   <entry>
-    <title>PHO: New floor (2025-03-18)</title>
+    <title>PHO: Wind/solar: offer floor changed (2025-03-18)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=PHO"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=PHO#PHO/2025-03-18/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: $0/MWh to −$2/MWh</summary>
+    <summary>Floor moved: $0/MWh to −$2/MWh</summary>
   </entry>
 </feed>

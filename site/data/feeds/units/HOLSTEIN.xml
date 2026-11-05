@@ -5,11 +5,11 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=HOLSTEIN</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
-    <title>HOLSTEIN: New floor (2025-11-01)</title>
+    <title>HOLSTEIN: Wind/solar: offer floor changed (2025-11-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=HOLSTEIN"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=HOLSTEIN#HOLSTEIN/2025-11-01/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: $0/MWh to −$35/MWh</summary>
+    <summary>Floor moved: $0/MWh to −$35/MWh</summary>
   </entry>
   <entry>
     <title>HOLSTEIN: Decision maker or QSE changed (2025-03-18)</title>
@@ -19,10 +19,10 @@
     <summary>Scheduled by TENASKA POWER SERVICES CO, was DERIVA ENERGY SERVICES LLC (SQ4)</summary>
   </entry>
   <entry>
-    <title>HOLSTEIN: Episode (2021-11-09)</title>
+    <title>HOLSTEIN: Wind/solar: short episode at a different floor (2021-11-09)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=HOLSTEIN"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=HOLSTEIN#HOLSTEIN/2021-11-09/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Episode: floor $0/MWh, briefly −$40/MWh, for 1 day</summary>
+    <summary>Short episode: floor $0/MWh, briefly −$40/MWh, for 1 day</summary>
   </entry>
 </feed>

@@ -5,17 +5,17 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=TREB_SLR</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
-    <title>TREB_SLR: New floor (2026-01-22)</title>
+    <title>TREB_SLR: Wind/solar: offer floor changed (2026-01-22)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=TREB_SLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=TREB_SLR#TREB_SLR/2026-01-22/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$1/MWh to −$2/MWh</summary>
+    <summary>Floor moved: −$1/MWh to −$2/MWh</summary>
   </entry>
   <entry>
-    <title>TREB_SLR: New floor (2024-02-26)</title>
+    <title>TREB_SLR: Wind/solar: offer floor changed (2024-02-26)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=TREB_SLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=TREB_SLR#TREB_SLR/2024-02-26/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: $0/MWh to −$1/MWh</summary>
+    <summary>Floor moved: $0/MWh to −$1/MWh</summary>
   </entry>
 </feed>

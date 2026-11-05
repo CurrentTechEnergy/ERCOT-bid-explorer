@@ -5,11 +5,11 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=INDNENR_INDNENR_2</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
-    <title>INDNENR_INDNENR: New floor (2022-01-05)</title>
+    <title>INDNENR_INDNENR: Wind/solar: offer floor changed (2022-01-05)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=INDNENR_INDNENR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=INDNENR_INDNENR#INDNENR_INDNENR/2022-01-05/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$31/MWh to −$33/MWh</summary>
+    <summary>Floor moved: −$31/MWh to −$33/MWh</summary>
   </entry>
   <entry>
     <title>INDNENR: Decision maker or QSE changed (2022-01-04)</title>
@@ -19,10 +19,10 @@
     <summary>Scheduled by AMERICAN ELECTRIC POWER SERVICE CORP (SQ3), was CPS ENERGY WIND (SQ1)</summary>
   </entry>
   <entry>
-    <title>INDNENR_INDNENR: New floor (2020-07-22)</title>
+    <title>INDNENR_INDNENR: Wind/solar: offer floor changed (2020-07-22)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=INDNENR_INDNENR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=INDNENR_INDNENR#INDNENR_INDNENR/2020-07-22/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$3/MWh to −$31/MWh</summary>
+    <summary>Floor moved: −$3/MWh to −$31/MWh</summary>
   </entry>
 </feed>

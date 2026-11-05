@@ -5,53 +5,53 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=MCLNSLR_UNIT1</id>
   <updated>2026-10-30T00:00:00Z</updated>
   <entry>
-    <title>MCLNSLR: Started moving within the day (2026-08-26)</title>
+    <title>MCLNSLR: Wind/solar: offer started moving within the day (2026-08-26)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=MCLNSLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=MCLNSLR#MCLNSLR/2026-08-26/renew_moving_on</id>
     <updated>2026-10-30T00:00:00Z</updated>
-    <summary>Started moving within the day (was a floor of −$2/MWh)</summary>
+    <summary>Started moving within the day: was a floor of −$2/MWh</summary>
   </entry>
   <entry>
-    <title>MCLNSLR: Stopped moving within the day (2026-06-20)</title>
+    <title>MCLNSLR: Wind/solar: offer stopped moving within the day (2026-06-20)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=MCLNSLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=MCLNSLR#MCLNSLR/2026-06-20/renew_moving_off</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Stopped moving within the day: now a floor of −$2/MWh</summary>
   </entry>
   <entry>
-    <title>MCLNSLR: Started moving within the day (2026-06-02)</title>
+    <title>MCLNSLR: Wind/solar: offer started moving within the day (2026-06-02)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=MCLNSLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=MCLNSLR#MCLNSLR/2026-06-02/renew_moving_on</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Started moving within the day (was a floor of −$2/MWh)</summary>
+    <summary>Started moving within the day: was a floor of −$2/MWh</summary>
   </entry>
   <entry>
-    <title>MCLNSLR: Episode (2026-04-20)</title>
+    <title>MCLNSLR: Wind/solar: short episode at a different floor (2026-04-20)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=MCLNSLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=MCLNSLR#MCLNSLR/2026-04-20/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Episode: floor −$2/MWh, briefly $5/MWh, for 1 day</summary>
+    <summary>Short episode: floor −$2/MWh, briefly $5/MWh, for 1 day</summary>
   </entry>
   <entry>
-    <title>MCLNSLR: Episode (2026-01-24)</title>
+    <title>MCLNSLR: Wind/solar: short episode at a different floor (2026-01-24)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=MCLNSLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=MCLNSLR#MCLNSLR/2026-01-24/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Episode: floor −$2/MWh, briefly $68/MWh, for 5 days</summary>
+    <summary>Short episode: floor −$2/MWh, briefly $68/MWh, for 5 days</summary>
   </entry>
   <entry>
-    <title>MCLNSLR: Episode (2025-11-25)</title>
+    <title>MCLNSLR: Wind/solar: short episode at a different floor (2025-11-25)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=MCLNSLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=MCLNSLR#MCLNSLR/2025-11-25/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Episode: floor −$2/MWh, briefly $4/MWh, for 1 day</summary>
+    <summary>Short episode: floor −$2/MWh, briefly $4/MWh, for 1 day</summary>
   </entry>
   <entry>
-    <title>MCLNSLR: Episode (2025-11-18)</title>
+    <title>MCLNSLR: Wind/solar: short episode at a different floor (2025-11-18)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=MCLNSLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=MCLNSLR#MCLNSLR/2025-11-18/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Episode: floor −$2/MWh, briefly $4/MWh, for 2 days</summary>
+    <summary>Short episode: floor −$2/MWh, briefly $4/MWh, for 2 days</summary>
   </entry>
   <entry>
     <title>MCLNSLR_UNIT1: Decision maker or QSE changed (2024-11-12)</title>
@@ -68,24 +68,24 @@
     <summary>Scheduled by TRQ19 (SQ19), was TENASKA POWER SERVICES CO</summary>
   </entry>
   <entry>
-    <title>MCLNSLR: New floor (2024-03-21)</title>
+    <title>MCLNSLR: Wind/solar: offer floor changed (2024-03-21)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=MCLNSLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=MCLNSLR#MCLNSLR/2024-03-21/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: $0/MWh to −$2/MWh</summary>
+    <summary>Floor moved: $0/MWh to −$2/MWh</summary>
   </entry>
   <entry>
-    <title>MCLNSLR: Back to an earlier floor (2023-09-01)</title>
+    <title>MCLNSLR: Wind/solar: back to an earlier floor (2023-09-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=MCLNSLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=MCLNSLR#MCLNSLR/2023-09-01/renew_floor_back</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Back to an earlier floor: −$40/MWh to $0/MWh</summary>
   </entry>
   <entry>
-    <title>MCLNSLR: New floor (2023-08-17)</title>
+    <title>MCLNSLR: Wind/solar: offer floor changed (2023-08-17)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=MCLNSLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=MCLNSLR#MCLNSLR/2023-08-17/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: $0/MWh to −$40/MWh</summary>
+    <summary>Floor moved: $0/MWh to −$40/MWh</summary>
   </entry>
 </feed>

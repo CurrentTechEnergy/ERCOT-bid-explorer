@@ -5,73 +5,73 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=RAMBLER</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
-    <title>RAMBLER: New floor (2026-06-01)</title>
+    <title>RAMBLER: Wind/solar: offer floor changed (2026-06-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=RAMBLER"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=RAMBLER#RAMBLER/2026-06-01/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: $0/MWh to −$200/MWh</summary>
+    <summary>Floor moved: $0/MWh to −$200/MWh</summary>
   </entry>
   <entry>
-    <title>RAMBLER: Episode (2025-09-30)</title>
+    <title>RAMBLER: Wind/solar: short episode at a different floor (2025-09-30)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=RAMBLER"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=RAMBLER#RAMBLER/2025-09-30/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Episode: floor $0/MWh, briefly −$73/MWh, for 1 day</summary>
+    <summary>Short episode: floor $0/MWh, briefly −$73/MWh, for 1 day</summary>
   </entry>
   <entry>
-    <title>RAMBLER: Stopped moving within the day (2025-09-29)</title>
+    <title>RAMBLER: Wind/solar: offer stopped moving within the day (2025-09-29)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=RAMBLER"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=RAMBLER#RAMBLER/2025-09-29/renew_moving_off</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Stopped moving within the day: now a floor of $0/MWh</summary>
   </entry>
   <entry>
-    <title>RAMBLER: Started moving within the day (2025-06-03)</title>
+    <title>RAMBLER: Wind/solar: offer started moving within the day (2025-06-03)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=RAMBLER"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=RAMBLER#RAMBLER/2025-06-03/renew_moving_on</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Started moving within the day (was a floor of $0/MWh)</summary>
+    <summary>Started moving within the day: was a floor of $0/MWh</summary>
   </entry>
   <entry>
-    <title>RAMBLER: Episode (2025-06-01)</title>
+    <title>RAMBLER: Wind/solar: short episode at a different floor (2025-06-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=RAMBLER"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=RAMBLER#RAMBLER/2025-06-01/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Episode: floor $0/MWh, briefly −$73/MWh, for 1 day</summary>
+    <summary>Short episode: floor $0/MWh, briefly −$73/MWh, for 1 day</summary>
   </entry>
   <entry>
-    <title>RAMBLER: Stopped moving within the day (2024-10-01)</title>
+    <title>RAMBLER: Wind/solar: offer stopped moving within the day (2024-10-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=RAMBLER"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=RAMBLER#RAMBLER/2024-10-01/renew_moving_off</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Stopped moving within the day: now a floor of $0/MWh</summary>
   </entry>
   <entry>
-    <title>RAMBLER: Started moving within the day (2024-06-01)</title>
+    <title>RAMBLER: Wind/solar: offer started moving within the day (2024-06-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=RAMBLER"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=RAMBLER#RAMBLER/2024-06-01/renew_moving_on</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Started moving within the day (was a floor of $0/MWh)</summary>
+    <summary>Started moving within the day: was a floor of $0/MWh</summary>
   </entry>
   <entry>
-    <title>RAMBLER: Stopped moving within the day (2020-11-04)</title>
+    <title>RAMBLER: Wind/solar: offer stopped moving within the day (2020-11-04)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=RAMBLER"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=RAMBLER#RAMBLER/2020-11-04/renew_moving_off</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Stopped moving within the day: now a floor of $0/MWh</summary>
   </entry>
   <entry>
-    <title>RAMBLER: Started moving within the day (2020-07-22)</title>
+    <title>RAMBLER: Wind/solar: offer started moving within the day (2020-07-22)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=RAMBLER"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=RAMBLER#RAMBLER/2020-07-22/renew_moving_on</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Started moving within the day (was a floor of −$6/MWh)</summary>
+    <summary>Started moving within the day: was a floor of −$6/MWh</summary>
   </entry>
   <entry>
-    <title>RAMBLER: New floor (2020-04-28)</title>
+    <title>RAMBLER: Wind/solar: offer floor changed (2020-04-28)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=RAMBLER"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=RAMBLER#RAMBLER/2020-04-28/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: $0/MWh to −$6/MWh</summary>
+    <summary>Floor moved: $0/MWh to −$6/MWh</summary>
   </entry>
 </feed>

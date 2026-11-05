@@ -5,31 +5,31 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=HRFDWIND_JRDWIND2</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
-    <title>HRFDWIND_JRD: New floor (2025-04-23)</title>
+    <title>HRFDWIND_JRD: Wind/solar: offer floor changed (2025-04-23)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=HRFDWIND_JRD"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=HRFDWIND_JRD#HRFDWIND_JRD/2025-04-23/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$36/MWh to $0/MWh</summary>
+    <summary>Floor moved: −$36/MWh to $0/MWh</summary>
   </entry>
   <entry>
-    <title>HRFDWIND_JRD: New floor (2023-11-15)</title>
+    <title>HRFDWIND_JRD: Wind/solar: offer floor changed (2023-11-15)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=HRFDWIND_JRD"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=HRFDWIND_JRD#HRFDWIND_JRD/2023-11-15/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$33/MWh to −$36/MWh</summary>
+    <summary>Floor moved: −$33/MWh to −$36/MWh</summary>
   </entry>
   <entry>
-    <title>HRFDWIND_JRD: New floor (2023-01-01)</title>
+    <title>HRFDWIND_JRD: Wind/solar: offer floor changed (2023-01-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=HRFDWIND_JRD"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=HRFDWIND_JRD#HRFDWIND_JRD/2023-01-01/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$32/MWh to −$33/MWh</summary>
+    <summary>Floor moved: −$32/MWh to −$33/MWh</summary>
   </entry>
   <entry>
-    <title>HRFDWIND_JRD: New floor (2019-06-20)</title>
+    <title>HRFDWIND_JRD: Wind/solar: offer floor changed (2019-06-20)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=HRFDWIND_JRD"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=HRFDWIND_JRD#HRFDWIND_JRD/2019-06-20/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$31/MWh to −$32/MWh</summary>
+    <summary>Floor moved: −$31/MWh to −$32/MWh</summary>
   </entry>
 </feed>

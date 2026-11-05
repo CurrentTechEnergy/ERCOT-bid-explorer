@@ -5,17 +5,17 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=PAR_UNIT2</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
-    <title>PAR: Episode (2025-12-24)</title>
+    <title>PAR: Wind/solar: short episode at a different floor (2025-12-24)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=PAR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=PAR#PAR/2025-12-24/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Episode: floor −$50/MWh, briefly −$0/MWh, for 1 day</summary>
+    <summary>Short episode: floor −$50/MWh, briefly −$0/MWh, for 1 day</summary>
   </entry>
   <entry>
-    <title>PAR: New floor (2025-12-19)</title>
+    <title>PAR: Wind/solar: offer floor changed (2025-12-19)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=PAR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=PAR#PAR/2025-12-19/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: $0/MWh to −$50/MWh</summary>
+    <summary>Floor moved: $0/MWh to −$50/MWh</summary>
   </entry>
 </feed>

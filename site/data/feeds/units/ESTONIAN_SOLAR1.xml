@@ -5,31 +5,31 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=ESTONIAN_SOLAR1</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
-    <title>ESTONIAN: Stopped moving within the day (2026-05-12)</title>
+    <title>ESTONIAN: Wind/solar: offer stopped moving within the day (2026-05-12)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=ESTONIAN"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=ESTONIAN#ESTONIAN/2026-05-12/renew_moving_off</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Stopped moving within the day: now a floor of −$34/MWh</summary>
   </entry>
   <entry>
-    <title>ESTONIAN: Started moving within the day (2026-01-02)</title>
+    <title>ESTONIAN: Wind/solar: offer started moving within the day (2026-01-02)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=ESTONIAN"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=ESTONIAN#ESTONIAN/2026-01-02/renew_moving_on</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Started moving within the day (was a floor of −$5/MWh)</summary>
+    <summary>Started moving within the day: was a floor of −$5/MWh</summary>
   </entry>
   <entry>
-    <title>ESTONIAN: New floor (2025-01-31)</title>
+    <title>ESTONIAN: Wind/solar: offer floor changed (2025-01-31)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=ESTONIAN"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=ESTONIAN#ESTONIAN/2025-01-31/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: $0/MWh to −$5/MWh</summary>
+    <summary>Floor moved: $0/MWh to −$5/MWh</summary>
   </entry>
   <entry>
     <title>ESTONIAN: Decision maker or QSE changed (2023-07-06)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=ESTONIAN"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=ESTONIAN#ESTONIAN/2023-07-06/control</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Scheduled by ENEL TRADING NORTH AMERICA LLC (SQ14), was ENEL TRADING NORTH AMERICA LLC (SQ5)</summary>
+    <summary>QSE code changed: QENEL5 to QENE14 (ENEL TRADING NORTH AMERICA LLC (SQ14))</summary>
   </entry>
 </feed>

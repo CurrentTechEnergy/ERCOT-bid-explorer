@@ -5,150 +5,150 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=EUNICE</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
-    <title>EUNICE: Episode (2026-06-08)</title>
+    <title>EUNICE: Wind/solar: short episode at a different floor (2026-06-08)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=EUNICE"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=EUNICE#EUNICE/2026-06-08/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Episode: floor −$12/MWh, briefly $1/MWh, for 1 day</summary>
+    <summary>Short episode: floor −$12/MWh, briefly $1/MWh, for 1 day</summary>
   </entry>
   <entry>
-    <title>EUNICE: New floor (2026-06-02)</title>
+    <title>EUNICE: Wind/solar: offer floor changed (2026-06-02)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=EUNICE"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=EUNICE#EUNICE/2026-06-02/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$4/MWh to −$12/MWh</summary>
+    <summary>Floor moved: −$4/MWh to −$12/MWh</summary>
   </entry>
   <entry>
-    <title>EUNICE: Back to an earlier floor (2026-05-19)</title>
+    <title>EUNICE: Wind/solar: back to an earlier floor (2026-05-19)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=EUNICE"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=EUNICE#EUNICE/2026-05-19/renew_floor_back</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Back to an earlier floor: $0/MWh to −$4/MWh</summary>
   </entry>
   <entry>
-    <title>EUNICE: New floor (2026-05-13)</title>
+    <title>EUNICE: Wind/solar: offer floor changed (2026-05-13)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=EUNICE"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=EUNICE#EUNICE/2026-05-13/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$4/MWh to $0/MWh</summary>
+    <summary>Floor moved: −$4/MWh to $0/MWh</summary>
   </entry>
   <entry>
-    <title>EUNICE: New floor (2025-01-22)</title>
+    <title>EUNICE: Wind/solar: offer floor changed (2025-01-22)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=EUNICE"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=EUNICE#EUNICE/2025-01-22/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: $0/MWh to −$4/MWh</summary>
+    <summary>Floor moved: $0/MWh to −$4/MWh</summary>
   </entry>
   <entry>
-    <title>EUNICE: Episode (2024-04-03)</title>
+    <title>EUNICE: Wind/solar: short episode at a different floor (2024-04-03)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=EUNICE"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=EUNICE#EUNICE/2024-04-03/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Episode: floor $0/MWh, briefly −$10/MWh, for 1 day</summary>
+    <summary>Short episode: floor $0/MWh, briefly −$10/MWh, for 1 day</summary>
   </entry>
   <entry>
-    <title>EUNICE: Formula off (2023-01-01)</title>
+    <title>EUNICE: Wind/solar: hedge formula off (2023-01-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=EUNICE"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=EUNICE#EUNICE/2023-01-01/renew_formula_off</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Formula off: now a floor of $0/MWh</summary>
+    <summary>Hedge formula off: now a floor of $0/MWh</summary>
   </entry>
   <entry>
-    <title>EUNICE: Formula on (2022-01-01)</title>
+    <title>EUNICE: Wind/solar: hedge formula on (2022-01-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=EUNICE"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=EUNICE#EUNICE/2022-01-01/renew_formula_on</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Formula on (was a floor of $0/MWh)</summary>
+    <summary>Hedge formula on: was a floor of $0/MWh</summary>
   </entry>
   <entry>
-    <title>EUNICE: Stopped moving within the day (2021-09-01)</title>
+    <title>EUNICE: Wind/solar: offer stopped moving within the day (2021-09-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=EUNICE"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=EUNICE#EUNICE/2021-09-01/renew_moving_off</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Stopped moving within the day: now a floor of $0/MWh</summary>
   </entry>
   <entry>
-    <title>EUNICE: Started moving within the day (2021-07-29)</title>
+    <title>EUNICE: Wind/solar: offer started moving within the day (2021-07-29)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=EUNICE"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=EUNICE#EUNICE/2021-07-29/renew_moving_on</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Started moving within the day (was a floor of $0/MWh)</summary>
+    <summary>Started moving within the day: was a floor of $0/MWh</summary>
   </entry>
   <entry>
-    <title>EUNICE: Episode (2021-07-22)</title>
+    <title>EUNICE: Wind/solar: short episode at a different floor (2021-07-22)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=EUNICE"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=EUNICE#EUNICE/2021-07-22/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Episode: floor $0/MWh, briefly $27/MWh, for 6 days</summary>
+    <summary>Short episode: floor $0/MWh, briefly $27/MWh, for 6 days</summary>
   </entry>
   <entry>
-    <title>EUNICE: Back to an earlier floor (2021-04-28)</title>
+    <title>EUNICE: Wind/solar: back to an earlier floor (2021-04-28)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=EUNICE"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=EUNICE#EUNICE/2021-04-28/renew_floor_back</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Back to an earlier floor: −$35/MWh to $0/MWh</summary>
   </entry>
   <entry>
-    <title>EUNICE: New floor (2021-04-19)</title>
+    <title>EUNICE: Wind/solar: offer floor changed (2021-04-19)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=EUNICE"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=EUNICE#EUNICE/2021-04-19/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$3/MWh to −$35/MWh</summary>
+    <summary>Floor moved: −$3/MWh to −$35/MWh</summary>
   </entry>
   <entry>
-    <title>EUNICE: New floor (2021-04-03)</title>
+    <title>EUNICE: Wind/solar: offer floor changed (2021-04-03)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=EUNICE"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=EUNICE#EUNICE/2021-04-03/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: $0/MWh to −$3/MWh</summary>
+    <summary>Floor moved: $0/MWh to −$3/MWh</summary>
   </entry>
   <entry>
-    <title>EUNICE: New floor (2021-03-30)</title>
+    <title>EUNICE: Wind/solar: offer floor changed (2021-03-30)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=EUNICE"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=EUNICE#EUNICE/2021-03-30/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: $0/MWh to −$3/MWh</summary>
+    <summary>Floor moved: $0/MWh to −$3/MWh</summary>
   </entry>
   <entry>
-    <title>EUNICE: Episode (2021-03-26)</title>
+    <title>EUNICE: Wind/solar: short episode at a different floor (2021-03-26)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=EUNICE"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=EUNICE#EUNICE/2021-03-26/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Episode: floor $0/MWh, briefly −$50/MWh, for 3 days</summary>
+    <summary>Short episode: floor $0/MWh, briefly −$50/MWh, for 3 days</summary>
   </entry>
   <entry>
-    <title>EUNICE: Episode (2021-03-22)</title>
+    <title>EUNICE: Wind/solar: short episode at a different floor (2021-03-22)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=EUNICE"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=EUNICE#EUNICE/2021-03-22/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Episode: floor $0/MWh, briefly −$50/MWh, for 1 day</summary>
+    <summary>Short episode: floor $0/MWh, briefly −$50/MWh, for 1 day</summary>
   </entry>
   <entry>
-    <title>EUNICE: Back to an earlier floor (2021-03-19)</title>
+    <title>EUNICE: Wind/solar: back to an earlier floor (2021-03-19)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=EUNICE"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=EUNICE#EUNICE/2021-03-19/renew_floor_back</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Back to an earlier floor: −$50/MWh to $0/MWh</summary>
   </entry>
   <entry>
-    <title>EUNICE: Back to an earlier floor (2021-03-15)</title>
+    <title>EUNICE: Wind/solar: back to an earlier floor (2021-03-15)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=EUNICE"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=EUNICE#EUNICE/2021-03-15/renew_floor_back</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Back to an earlier floor: −$50/MWh to $0/MWh</summary>
   </entry>
   <entry>
-    <title>EUNICE: Episode (2021-03-15)</title>
+    <title>EUNICE: Wind/solar: short episode at a different floor (2021-03-15)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=EUNICE"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=EUNICE#EUNICE/2021-03-15/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Episode: floor −$50/MWh, briefly $0/MWh, for 2 days</summary>
+    <summary>Short episode: floor −$50/MWh, briefly $0/MWh, for 2 days</summary>
   </entry>
   <entry>
-    <title>EUNICE: New floor (2021-02-25)</title>
+    <title>EUNICE: Wind/solar: offer floor changed (2021-02-25)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=EUNICE"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=EUNICE#EUNICE/2021-02-25/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: $0/MWh to −$50/MWh</summary>
+    <summary>Floor moved: $0/MWh to −$50/MWh</summary>
   </entry>
 </feed>

@@ -5,11 +5,11 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=SHANNONW_UNIT_1</id>
   <updated>2026-10-24T00:00:00Z</updated>
   <entry>
-    <title>SHANNONW: New floor (2026-07-20)</title>
+    <title>SHANNONW: Wind/solar: offer floor changed (2026-07-20)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=SHANNONW"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=SHANNONW#SHANNONW/2026-07-20/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: $0/MWh to −$2/MWh</summary>
+    <summary>Floor moved: $0/MWh to −$2/MWh</summary>
   </entry>
   <entry>
     <title>SHANNONW_UNIT_1: Decision maker or QSE changed (2026-06-21)</title>
@@ -26,17 +26,17 @@
     <summary>Offers now decided by 1370 SHANNON LLC, was INNERGEX RENEWABLE ENERGY INC</summary>
   </entry>
   <entry>
-    <title>SHANNONW: Episode (2021-02-14)</title>
+    <title>SHANNONW: Wind/solar: short episode at a different floor (2021-02-14)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=SHANNONW"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=SHANNONW#SHANNONW/2021-02-14/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Episode: floor $0/MWh, briefly −$35/MWh, for 3 days</summary>
+    <summary>Short episode: floor $0/MWh, briefly −$35/MWh, for 3 days</summary>
   </entry>
   <entry>
-    <title>SHANNONW: New floor (2021-02-05)</title>
+    <title>SHANNONW: Wind/solar: offer floor changed (2021-02-05)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=SHANNONW"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=SHANNONW#SHANNONW/2021-02-05/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$30/MWh to $0/MWh</summary>
+    <summary>Floor moved: −$30/MWh to $0/MWh</summary>
   </entry>
 </feed>

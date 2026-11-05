@@ -5,38 +5,38 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=GREASWOD_UNIT1</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
-    <title>GREASWOD: New floor (2026-08-06)</title>
+    <title>GREASWOD: Wind/solar: offer floor changed (2026-08-06)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=GREASWOD"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=GREASWOD#GREASWOD/2026-08-06/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: $0/MWh to −$1/MWh</summary>
+    <summary>Floor moved: $0/MWh to −$1/MWh</summary>
   </entry>
   <entry>
-    <title>GREASWOD: New floor (2022-05-26)</title>
+    <title>GREASWOD: Wind/solar: offer floor changed (2022-05-26)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=GREASWOD"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=GREASWOD#GREASWOD/2022-05-26/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$6/MWh to $0/MWh</summary>
+    <summary>Floor moved: −$6/MWh to $0/MWh</summary>
   </entry>
   <entry>
-    <title>GREASWOD: New floor (2021-08-12)</title>
+    <title>GREASWOD: Wind/solar: offer floor changed (2021-08-12)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=GREASWOD"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=GREASWOD#GREASWOD/2021-08-12/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: $0/MWh to −$6/MWh</summary>
+    <summary>Floor moved: $0/MWh to −$6/MWh</summary>
   </entry>
   <entry>
-    <title>GREASWOD: Back to an earlier floor (2020-12-21)</title>
+    <title>GREASWOD: Wind/solar: back to an earlier floor (2020-12-21)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=GREASWOD"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=GREASWOD#GREASWOD/2020-12-21/renew_floor_back</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Back to an earlier floor: −$35/MWh to $0/MWh</summary>
   </entry>
   <entry>
-    <title>GREASWOD: New floor (2020-12-08)</title>
+    <title>GREASWOD: Wind/solar: offer floor changed (2020-12-08)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=GREASWOD"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=GREASWOD#GREASWOD/2020-12-08/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: $0/MWh to −$35/MWh</summary>
+    <summary>Floor moved: $0/MWh to −$35/MWh</summary>
   </entry>
 </feed>

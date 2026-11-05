@@ -5,59 +5,59 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=LHORN_N</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
-    <title>LHORN_N: New floor (2026-05-05)</title>
+    <title>LHORN_N: Wind/solar: offer floor changed (2026-05-05)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=LHORN_N"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=LHORN_N#LHORN_N/2026-05-05/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$5/MWh to −$2/MWh</summary>
+    <summary>Floor moved: −$5/MWh to −$2/MWh</summary>
   </entry>
   <entry>
-    <title>LHORN_N: New floor (2025-07-31)</title>
+    <title>LHORN_N: Wind/solar: offer floor changed (2025-07-31)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=LHORN_N"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=LHORN_N#LHORN_N/2025-07-31/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$35/MWh to −$5/MWh</summary>
+    <summary>Floor moved: −$35/MWh to −$5/MWh</summary>
   </entry>
   <entry>
-    <title>LHORN_N: Episode (2025-06-01)</title>
+    <title>LHORN_N: Wind/solar: short episode at a different floor (2025-06-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=LHORN_N"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=LHORN_N#LHORN_N/2025-06-01/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Episode: floor −$35/MWh, briefly −$5/MWh, for 4 days</summary>
+    <summary>Short episode: floor −$35/MWh, briefly −$5/MWh, for 4 days</summary>
   </entry>
   <entry>
-    <title>LHORN_N: New floor (2023-07-14)</title>
+    <title>LHORN_N: Wind/solar: offer floor changed (2023-07-14)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=LHORN_N"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=LHORN_N#LHORN_N/2023-07-14/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$33/MWh to −$35/MWh</summary>
+    <summary>Floor moved: −$33/MWh to −$35/MWh</summary>
   </entry>
   <entry>
-    <title>LHORN_N: Back to an earlier floor (2022-05-11)</title>
+    <title>LHORN_N: Wind/solar: back to an earlier floor (2022-05-11)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=LHORN_N"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=LHORN_N#LHORN_N/2022-05-11/renew_floor_back</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Back to an earlier floor: −$34/MWh to −$33/MWh</summary>
   </entry>
   <entry>
-    <title>LHORN_N: New floor (2022-04-20)</title>
+    <title>LHORN_N: Wind/solar: offer floor changed (2022-04-20)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=LHORN_N"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=LHORN_N#LHORN_N/2022-04-20/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$33/MWh to −$34/MWh</summary>
+    <summary>Floor moved: −$33/MWh to −$34/MWh</summary>
   </entry>
   <entry>
-    <title>LHORN_N: New floor (2022-01-19)</title>
+    <title>LHORN_N: Wind/solar: offer floor changed (2022-01-19)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=LHORN_N"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=LHORN_N#LHORN_N/2022-01-19/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$32/MWh to −$33/MWh</summary>
+    <summary>Floor moved: −$32/MWh to −$33/MWh</summary>
   </entry>
   <entry>
-    <title>LHORN_N: New floor (2019-06-11)</title>
+    <title>LHORN_N: Wind/solar: offer floor changed (2019-06-11)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=LHORN_N"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=LHORN_N#LHORN_N/2019-06-11/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$30/MWh to −$32/MWh</summary>
+    <summary>Floor moved: −$30/MWh to −$32/MWh</summary>
   </entry>
 </feed>

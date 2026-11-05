@@ -5,14 +5,14 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=MISAE</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
-    <title>MISAE: Day-ahead floor changed (2026-04-24)</title>
+    <title>MISAE: Day-ahead: wind/solar floor changed (2026-04-24)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=MISAE"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=MISAE#MISAE/2026-04-24/dam_renew_floor</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Day-ahead floor changed: $16 to $21/MWh</summary>
   </entry>
   <entry>
-    <title>MISAE: Started day-ahead offers (2026-04-01)</title>
+    <title>MISAE: Day-ahead: wind/solar started offering (2026-04-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=MISAE"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=MISAE#MISAE/2026-04-01/dam_renew_on</id>
     <updated>2026-10-18T00:00:00Z</updated>

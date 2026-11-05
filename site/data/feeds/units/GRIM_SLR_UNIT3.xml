@@ -5,10 +5,10 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=GRIM_SLR_UNIT3</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
-    <title>GRIM_SLR: New floor (2025-07-14)</title>
+    <title>GRIM_SLR: Wind/solar: offer floor changed (2025-07-14)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=GRIM_SLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=GRIM_SLR#GRIM_SLR/2025-07-14/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$2/MWh to −$10/MWh</summary>
+    <summary>Floor moved: −$2/MWh to −$10/MWh</summary>
   </entry>
 </feed>

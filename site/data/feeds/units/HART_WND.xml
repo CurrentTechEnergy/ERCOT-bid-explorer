@@ -5,17 +5,17 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=HART_WND</id>
   <updated>2026-11-01T00:00:00Z</updated>
   <entry>
-    <title>HART_WND: Stopped moving within the day (2026-08-28)</title>
+    <title>HART_WND: Wind/solar: offer stopped moving within the day (2026-08-28)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=HART_WND"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=HART_WND#HART_WND/2026-08-28/renew_moving_off</id>
     <updated>2026-11-01T00:00:00Z</updated>
     <summary>Stopped moving within the day: now a floor of −$46/MWh</summary>
   </entry>
   <entry>
-    <title>HART_WND: Started moving within the day (2025-12-08)</title>
+    <title>HART_WND: Wind/solar: offer started moving within the day (2025-12-08)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=HART_WND"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=HART_WND#HART_WND/2025-12-08/renew_moving_on</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Started moving within the day (was a floor of −$46/MWh)</summary>
+    <summary>Started moving within the day: was a floor of −$46/MWh</summary>
   </entry>
 </feed>

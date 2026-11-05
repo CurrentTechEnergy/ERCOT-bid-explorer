@@ -5,66 +5,66 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=PORT_SLR_UNIT1</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
-    <title>PORT_SLR: Formula on (2026-07-22)</title>
+    <title>PORT_SLR: Wind/solar: hedge formula on (2026-07-22)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=PORT_SLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=PORT_SLR#PORT_SLR/2026-07-22/renew_formula_on</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Formula on (was a floor of $0/MWh)</summary>
+    <summary>Hedge formula on: was a floor of $0/MWh</summary>
   </entry>
   <entry>
-    <title>PORT_SLR_UNIT1: Stopped day-ahead offers (2026-04-30)</title>
+    <title>PORT_SLR_UNIT1: Day-ahead: wind/solar stopped offering (2026-04-30)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=PORT_SLR_UNIT1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=PORT_SLR_UNIT1#PORT_SLR_UNIT1/2026-04-30/dam_renew_off</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Stopped day-ahead offers: day-ahead curve to none</summary>
   </entry>
   <entry>
-    <title>PORT_SLR_UNIT1: Stopped day-ahead offers (2026-04-30)</title>
+    <title>PORT_SLR_UNIT1: Day-ahead: wind/solar stopped offering (2026-04-30)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=PORT_SLR_UNIT1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=PORT_SLR_UNIT1#PORT_SLR_UNIT1/2026-04-30/dam_renew_off</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Stopped day-ahead offers: day-ahead curve to none</summary>
   </entry>
   <entry>
-    <title>PORT_SLR: Formula off (2026-04-08)</title>
+    <title>PORT_SLR: Wind/solar: hedge formula off (2026-04-08)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=PORT_SLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=PORT_SLR#PORT_SLR/2026-04-08/renew_formula_off</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Formula off: now a floor of $0/MWh</summary>
+    <summary>Hedge formula off: now a floor of $0/MWh</summary>
   </entry>
   <entry>
-    <title>PORT_SLR: Formula on (2026-03-09)</title>
+    <title>PORT_SLR: Wind/solar: hedge formula on (2026-03-09)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=PORT_SLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=PORT_SLR#PORT_SLR/2026-03-09/renew_formula_on</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Formula on (was a floor of $0/MWh)</summary>
+    <summary>Hedge formula on: was a floor of $0/MWh</summary>
   </entry>
   <entry>
-    <title>PORT_SLR: Formula off (2025-12-21)</title>
+    <title>PORT_SLR: Wind/solar: hedge formula off (2025-12-21)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=PORT_SLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=PORT_SLR#PORT_SLR/2025-12-21/renew_formula_off</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Formula off: now a floor of $0/MWh</summary>
+    <summary>Hedge formula off: now a floor of $0/MWh</summary>
   </entry>
   <entry>
-    <title>PORT_SLR: Formula on (2025-12-04)</title>
+    <title>PORT_SLR: Wind/solar: hedge formula on (2025-12-04)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=PORT_SLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=PORT_SLR#PORT_SLR/2025-12-04/renew_formula_on</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Formula on (was a floor of $0/MWh)</summary>
+    <summary>Hedge formula on: was a floor of $0/MWh</summary>
   </entry>
   <entry>
-    <title>PORT_SLR: Formula off (2025-11-02)</title>
+    <title>PORT_SLR: Wind/solar: hedge formula off (2025-11-02)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=PORT_SLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=PORT_SLR#PORT_SLR/2025-11-02/renew_formula_off</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Formula off: now a floor of $0/MWh</summary>
+    <summary>Hedge formula off: now a floor of $0/MWh</summary>
   </entry>
   <entry>
-    <title>PORT_SLR: Formula on (2025-02-27)</title>
+    <title>PORT_SLR: Wind/solar: hedge formula on (2025-02-27)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=PORT_SLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=PORT_SLR#PORT_SLR/2025-02-27/renew_formula_on</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Formula on (was a floor of $0/MWh)</summary>
+    <summary>Hedge formula on: was a floor of $0/MWh</summary>
   </entry>
 </feed>

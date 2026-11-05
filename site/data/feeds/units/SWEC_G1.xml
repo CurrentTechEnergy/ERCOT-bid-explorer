@@ -5,31 +5,31 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=SWEC_G1</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
-    <title>SWEC: New floor (2024-04-10)</title>
+    <title>SWEC: Wind/solar: offer floor changed (2024-04-10)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=SWEC"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=SWEC#SWEC/2024-04-10/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: $1/MWh to $3/MWh</summary>
+    <summary>Floor moved: $1/MWh to $3/MWh</summary>
   </entry>
   <entry>
-    <title>SWEC: Back to an earlier floor (2023-02-04)</title>
+    <title>SWEC: Wind/solar: back to an earlier floor (2023-02-04)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=SWEC"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=SWEC#SWEC/2023-02-04/renew_floor_back</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Back to an earlier floor: $3/MWh to $1/MWh</summary>
   </entry>
   <entry>
-    <title>SWEC: New floor (2022-11-30)</title>
+    <title>SWEC: Wind/solar: offer floor changed (2022-11-30)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=SWEC"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=SWEC#SWEC/2022-11-30/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: $1/MWh to $3/MWh</summary>
+    <summary>Floor moved: $1/MWh to $3/MWh</summary>
   </entry>
   <entry>
-    <title>SWEC: New floor (2022-04-04)</title>
+    <title>SWEC: Wind/solar: offer floor changed (2022-04-04)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=SWEC"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=SWEC#SWEC/2022-04-04/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: $2/MWh to $1/MWh</summary>
+    <summary>Floor moved: $2/MWh to $1/MWh</summary>
   </entry>
 </feed>

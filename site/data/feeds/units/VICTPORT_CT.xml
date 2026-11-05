@@ -5,17 +5,17 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=VICTPORT_CT</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
-    <title>VICTPORT_CT: Minimum-energy offer stepped (2026-08-20)</title>
+    <title>VICTPORT_CT: Day-ahead: minimum-energy offer stepped (2026-08-20)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=VICTPORT_CT"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=VICTPORT_CT#VICTPORT_CT/2026-08-20/dam_mingen_step</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Minimum-energy offer stepped: $57 to $37/MWh ($26 to $6 against the fuel-cost line)</summary>
+    <summary>Minimum-energy offer stepped: $57 to $37/MWh (offer minus fuel cost: $26 to $6/MWh)</summary>
   </entry>
   <entry>
-    <title>VICTPORT_CT: Minimum-energy offer stepped (2026-08-01)</title>
+    <title>VICTPORT_CT: Day-ahead: minimum-energy offer stepped (2026-08-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=VICTPORT_CT"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=VICTPORT_CT#VICTPORT_CT/2026-08-01/dam_mingen_step</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Minimum-energy offer stepped: $39 to $57/MWh ($7 to $27 against the fuel-cost line)</summary>
+    <summary>Minimum-energy offer stepped: $39 to $57/MWh (offer minus fuel cost: $7 to $27/MWh)</summary>
   </entry>
 </feed>

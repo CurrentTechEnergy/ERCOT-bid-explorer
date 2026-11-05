@@ -5,32 +5,32 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=MLB_SLR_SOLAR2</id>
   <updated>2026-11-05T00:00:00Z</updated>
   <entry>
-    <title>MLB_SLR: Episode (2026-09-04)</title>
+    <title>MLB_SLR: Wind/solar: short episode at a different floor (2026-09-04)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=MLB_SLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=MLB_SLR#MLB_SLR/2026-09-04/renew_episode</id>
     <updated>2026-11-04T00:00:00Z</updated>
-    <summary>Episode: floor −$42/MWh, briefly $5/MWh, for 1 day</summary>
+    <summary>Short episode: floor −$42/MWh, briefly $5/MWh, for 1 day</summary>
   </entry>
   <entry>
-    <title>MLB_SLR_SOLAR2: Started day-ahead offers (2026-07-31)</title>
+    <title>MLB_SLR_SOLAR2: Day-ahead: wind/solar started offering (2026-07-31)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=MLB_SLR_SOLAR2"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=MLB_SLR_SOLAR2#MLB_SLR_SOLAR2/2026-07-31/dam_renew_on</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Started day-ahead offers: none to day-ahead curve</summary>
   </entry>
   <entry>
-    <title>MLB_SLR_SOLAR2: Started day-ahead offers (2026-07-31)</title>
+    <title>MLB_SLR_SOLAR2: Day-ahead: wind/solar started offering (2026-07-31)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=MLB_SLR_SOLAR2"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=MLB_SLR_SOLAR2#MLB_SLR_SOLAR2/2026-07-31/dam_renew_on</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Started day-ahead offers: none to day-ahead curve</summary>
   </entry>
   <entry>
-    <title>MLB_SLR: New floor (2026-07-16)</title>
+    <title>MLB_SLR: Wind/solar: offer floor changed (2026-07-16)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=MLB_SLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=MLB_SLR#MLB_SLR/2026-07-16/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$38/MWh to −$42/MWh</summary>
+    <summary>Floor moved: −$38/MWh to −$42/MWh</summary>
   </entry>
   <entry>
     <title>MLB_SLR_SOLAR2: Outage ended (2026-03-27)</title>

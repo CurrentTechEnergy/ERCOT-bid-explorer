@@ -5,10 +5,10 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=GRYH_SLR_SOLAR1</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
-    <title>GRYH_SLR: New floor (2026-06-02)</title>
+    <title>GRYH_SLR: Wind/solar: offer floor changed (2026-06-02)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=GRYH_SLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=GRYH_SLR#GRYH_SLR/2026-06-02/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: $0/MWh to −$46/MWh</summary>
+    <summary>Floor moved: $0/MWh to −$46/MWh</summary>
   </entry>
 </feed>

@@ -5,32 +5,32 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=CORALSLR_SOLAR1</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
-    <title>CORALSLR: Formula on (2026-07-27)</title>
+    <title>CORALSLR: Wind/solar: hedge formula on (2026-07-27)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=CORALSLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=CORALSLR#CORALSLR/2026-07-27/renew_formula_on</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Formula on (was a floor of −$2/MWh)</summary>
+    <summary>Hedge formula on: was a floor of −$2/MWh</summary>
   </entry>
   <entry>
-    <title>CORALSLR: Stopped moving within the day (2026-05-21)</title>
+    <title>CORALSLR: Wind/solar: offer stopped moving within the day (2026-05-21)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=CORALSLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=CORALSLR#CORALSLR/2026-05-21/renew_moving_off</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Stopped moving within the day: now a floor of −$2/MWh</summary>
   </entry>
   <entry>
-    <title>CORALSLR: Started moving within the day (2026-05-15)</title>
+    <title>CORALSLR: Wind/solar: offer started moving within the day (2026-05-15)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=CORALSLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=CORALSLR#CORALSLR/2026-05-15/renew_moving_on</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Started moving within the day (was a floor of −$2/MWh)</summary>
+    <summary>Started moving within the day: was a floor of −$2/MWh</summary>
   </entry>
   <entry>
-    <title>CORALSLR: New floor (2024-03-07)</title>
+    <title>CORALSLR: Wind/solar: offer floor changed (2024-03-07)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=CORALSLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=CORALSLR#CORALSLR/2024-03-07/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: $0/MWh to −$2/MWh</summary>
+    <summary>Floor moved: $0/MWh to −$2/MWh</summary>
   </entry>
   <entry>
     <title>CORALSLR: Decision maker or QSE changed (2023-08-01)</title>

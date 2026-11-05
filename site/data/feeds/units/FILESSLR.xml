@@ -5,24 +5,24 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=FILESSLR</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
-    <title>FILESSLR: New floor (2026-07-22)</title>
+    <title>FILESSLR: Wind/solar: offer floor changed (2026-07-22)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=FILESSLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=FILESSLR#FILESSLR/2026-07-22/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$31/MWh to −$27/MWh</summary>
+    <summary>Floor moved: −$31/MWh to −$27/MWh</summary>
   </entry>
   <entry>
-    <title>FILESSLR: New floor (2025-10-24)</title>
+    <title>FILESSLR: Wind/solar: offer floor changed (2025-10-24)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=FILESSLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=FILESSLR#FILESSLR/2025-10-24/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$27/MWh to −$31/MWh</summary>
+    <summary>Floor moved: −$27/MWh to −$31/MWh</summary>
   </entry>
   <entry>
-    <title>FILESSLR: New floor (2023-06-28)</title>
+    <title>FILESSLR: Wind/solar: offer floor changed (2023-06-28)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=FILESSLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=FILESSLR#FILESSLR/2023-06-28/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$18/MWh to −$27/MWh</summary>
+    <summary>Floor moved: −$18/MWh to −$27/MWh</summary>
   </entry>
 </feed>

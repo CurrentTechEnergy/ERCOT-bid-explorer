@@ -5,11 +5,11 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=FEGC_UNIT1</id>
   <updated>2026-10-24T00:00:00Z</updated>
   <entry>
-    <title>FEGC_UNIT1: Timescale group changed (2026-07-01)</title>
+    <title>FEGC_UNIT1: How often it turns off changed (2026-07-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=FEGC_UNIT1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=FEGC_UNIT1#FEGC_UNIT1/2026-07-01/group</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Always on when available in 2026-06 to Cycles daily, 1 to 2 times a week in 2026-07</summary>
+    <summary>Always on when available (June 2026) to Cycles daily, 1 to 2 times a week (July 2026)</summary>
   </entry>
   <entry>
     <title>FEGC_UNIT1: Outage ended (2026-06-27)</title>
@@ -44,13 +44,13 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=FEGC_UNIT1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=FEGC_UNIT1#FEGC_UNIT1/2024-09-24/control</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Scheduled by SHELL ENERGY NORTH AMERICA (US) LP (SQ17), was SHELL ENERGY NORTH AMERICA (US) LP (SQ2)</summary>
+    <summary>QSE code changed: QSHEL2 to QSHE17 (SHELL ENERGY NORTH AMERICA (US) LP (SQ17))</summary>
   </entry>
   <entry>
     <title>FEGC_UNIT1: Decision maker or QSE changed (2024-09-24)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=FEGC_UNIT1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=FEGC_UNIT1#FEGC_UNIT1/2024-09-24/control</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Scheduled by SHELL ENERGY NORTH AMERICA (US) LP (SQ17), was SHELL ENERGY NORTH AMERICA (US) LP (SQ2)</summary>
+    <summary>QSE code changed: QSHEL2 to QSHE17 (SHELL ENERGY NORTH AMERICA (US) LP (SQ17))</summary>
   </entry>
 </feed>

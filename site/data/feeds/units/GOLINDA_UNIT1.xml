@@ -5,25 +5,25 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=GOLINDA_UNIT1</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
-    <title>GOLINDA: New floor (2026-07-22)</title>
+    <title>GOLINDA: Wind/solar: offer floor changed (2026-07-22)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=GOLINDA"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=GOLINDA#GOLINDA/2026-07-22/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$31/MWh to −$27/MWh</summary>
+    <summary>Floor moved: −$31/MWh to −$27/MWh</summary>
   </entry>
   <entry>
-    <title>GOLINDA: New floor (2025-10-24)</title>
+    <title>GOLINDA: Wind/solar: offer floor changed (2025-10-24)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=GOLINDA"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=GOLINDA#GOLINDA/2025-10-24/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$27/MWh to −$31/MWh</summary>
+    <summary>Floor moved: −$27/MWh to −$31/MWh</summary>
   </entry>
   <entry>
-    <title>GOLINDA: New floor (2023-06-21)</title>
+    <title>GOLINDA: Wind/solar: offer floor changed (2023-06-21)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=GOLINDA"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=GOLINDA#GOLINDA/2023-06-21/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$18/MWh to −$27/MWh</summary>
+    <summary>Floor moved: −$18/MWh to −$27/MWh</summary>
   </entry>
   <entry>
     <title>GOLINDA_UNIT1: Decision maker or QSE changed (2023-06-20)</title>

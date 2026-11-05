@@ -5,17 +5,17 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=WILDWIND</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
-    <title>WILDWIND: New floor (2025-12-10)</title>
+    <title>WILDWIND: Wind/solar: offer floor changed (2025-12-10)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=WILDWIND"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=WILDWIND#WILDWIND/2025-12-10/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$35/MWh to −$40/MWh</summary>
+    <summary>Floor moved: −$35/MWh to −$40/MWh</summary>
   </entry>
   <entry>
-    <title>WILDWIND: New floor (2022-04-15)</title>
+    <title>WILDWIND: Wind/solar: offer floor changed (2022-04-15)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=WILDWIND"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=WILDWIND#WILDWIND/2022-04-15/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$32/MWh to −$35/MWh</summary>
+    <summary>Floor moved: −$32/MWh to −$35/MWh</summary>
   </entry>
 </feed>

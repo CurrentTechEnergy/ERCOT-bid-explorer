@@ -5,11 +5,11 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=SBE_UNIT1</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
-    <title>SBE: New floor (2024-12-31)</title>
+    <title>SBE: Wind/solar: offer floor changed (2024-12-31)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=SBE"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=SBE#SBE/2024-12-31/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: $0/MWh to −$47/MWh</summary>
+    <summary>Floor moved: $0/MWh to −$47/MWh</summary>
   </entry>
   <entry>
     <title>SBE_UNIT1: Decision maker or QSE changed (2024-11-19)</title>

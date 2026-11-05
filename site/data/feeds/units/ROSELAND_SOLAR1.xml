@@ -5,52 +5,52 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=ROSELAND_SOLAR1</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
-    <title>ROSELAND: Formula on (2026-01-01)</title>
+    <title>ROSELAND: Wind/solar: hedge formula on (2026-01-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=ROSELAND"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=ROSELAND#ROSELAND/2026-01-01/renew_formula_on</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Formula on (was a floor of −$5/MWh)</summary>
+    <summary>Hedge formula on: was a floor of −$5/MWh</summary>
   </entry>
   <entry>
-    <title>ROSELAND: New floor (2025-06-01)</title>
+    <title>ROSELAND: Wind/solar: offer floor changed (2025-06-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=ROSELAND"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=ROSELAND#ROSELAND/2025-06-01/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$2/MWh to −$5/MWh</summary>
+    <summary>Floor moved: −$2/MWh to −$5/MWh</summary>
   </entry>
   <entry>
-    <title>ROSELAND: New floor (2025-03-18)</title>
+    <title>ROSELAND: Wind/solar: offer floor changed (2025-03-18)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=ROSELAND"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=ROSELAND#ROSELAND/2025-03-18/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: $0/MWh to −$2/MWh</summary>
+    <summary>Floor moved: $0/MWh to −$2/MWh</summary>
   </entry>
   <entry>
-    <title>ROSELAND: Episode (2025-02-19)</title>
+    <title>ROSELAND: Wind/solar: short episode at a different floor (2025-02-19)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=ROSELAND"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=ROSELAND#ROSELAND/2025-02-19/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Episode: floor $0/MWh, briefly $400/MWh, for 1 day</summary>
+    <summary>Short episode: floor $0/MWh, briefly $400/MWh, for 1 day</summary>
   </entry>
   <entry>
-    <title>ROSELAND: New floor (2023-06-06)</title>
+    <title>ROSELAND: Wind/solar: offer floor changed (2023-06-06)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=ROSELAND"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=ROSELAND#ROSELAND/2023-06-06/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$3/MWh to $0/MWh</summary>
+    <summary>Floor moved: −$3/MWh to $0/MWh</summary>
   </entry>
   <entry>
-    <title>ROSELAND: New floor (2023-04-18)</title>
+    <title>ROSELAND: Wind/solar: offer floor changed (2023-04-18)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=ROSELAND"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=ROSELAND#ROSELAND/2023-04-18/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$5/MWh to −$3/MWh</summary>
+    <summary>Floor moved: −$5/MWh to −$3/MWh</summary>
   </entry>
   <entry>
     <title>ROSELAND: Decision maker or QSE changed (2022-09-13)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=ROSELAND"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=ROSELAND#ROSELAND/2022-09-13/control</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Scheduled by ENEL TRADING NORTH AMERICA LLC (SQ9), was ENEL TRADING NORTH AMERICA LLC (SQ5)</summary>
+    <summary>QSE code changed: QENEL5 to QENEL9 (ENEL TRADING NORTH AMERICA LLC (SQ9))</summary>
   </entry>
 </feed>

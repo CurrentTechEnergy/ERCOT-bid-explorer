@@ -5,24 +5,24 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=NOVA2SLR</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
-    <title>NOVA2SLR: Episode (2025-02-26)</title>
+    <title>NOVA2SLR: Wind/solar: short episode at a different floor (2025-02-26)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=NOVA2SLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=NOVA2SLR#NOVA2SLR/2025-02-26/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Episode: floor −$54/MWh, briefly $0/MWh, for 2 days</summary>
+    <summary>Short episode: floor −$54/MWh, briefly $0/MWh, for 2 days</summary>
   </entry>
   <entry>
-    <title>NOVA2SLR: New floor (2024-04-09)</title>
+    <title>NOVA2SLR: Wind/solar: offer floor changed (2024-04-09)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=NOVA2SLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=NOVA2SLR#NOVA2SLR/2024-04-09/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$35/MWh to −$54/MWh</summary>
+    <summary>Floor moved: −$35/MWh to −$54/MWh</summary>
   </entry>
   <entry>
-    <title>NOVA2SLR: New floor (2024-03-13)</title>
+    <title>NOVA2SLR: Wind/solar: offer floor changed (2024-03-13)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=NOVA2SLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=NOVA2SLR#NOVA2SLR/2024-03-13/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: $0/MWh to −$35/MWh</summary>
+    <summary>Floor moved: $0/MWh to −$35/MWh</summary>
   </entry>
 </feed>

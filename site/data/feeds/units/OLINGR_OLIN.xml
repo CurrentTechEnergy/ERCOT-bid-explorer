@@ -5,42 +5,42 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=OLINGR_OLIN</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
-    <title>OLINGR_OLIN: Minimum-energy offer stepped (2026-07-12)</title>
+    <title>OLINGR_OLIN: Day-ahead: minimum-energy offer stepped (2026-07-12)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=OLINGR_OLIN"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=OLINGR_OLIN#OLINGR_OLIN/2026-07-12/dam_mingen_step</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Minimum-energy offer stepped: $87 to $78/MWh ($54 to $49 against the fuel-cost line)</summary>
+    <summary>Minimum-energy offer stepped: $87 to $78/MWh (offer minus fuel cost: $54 to $49/MWh)</summary>
   </entry>
   <entry>
-    <title>OLINGR_OLIN: Minimum-energy offer stepped (2026-04-03)</title>
+    <title>OLINGR_OLIN: Day-ahead: minimum-energy offer stepped (2026-04-03)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=OLINGR_OLIN"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=OLINGR_OLIN#OLINGR_OLIN/2026-04-03/dam_mingen_step</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Minimum-energy offer stepped: $82 to $76/MWh ($51 to $48 against the fuel-cost line)</summary>
+    <summary>Minimum-energy offer stepped: $82 to $76/MWh (offer minus fuel cost: $51 to $48/MWh)</summary>
   </entry>
   <entry>
-    <title>OLINGR_OLIN: Minimum-energy offer stepped (2026-03-04)</title>
+    <title>OLINGR_OLIN: Day-ahead: minimum-energy offer stepped (2026-03-04)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=OLINGR_OLIN"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=OLINGR_OLIN#OLINGR_OLIN/2026-03-04/dam_mingen_step</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Minimum-energy offer stepped: $77 to $83/MWh ($45 to $45 against the fuel-cost line)</summary>
+    <summary>Minimum-energy offer stepped: $77 to $83/MWh (offer minus fuel cost: $45 to $45/MWh)</summary>
   </entry>
   <entry>
-    <title>OLINGR_OLIN: Minimum-energy offer stepped (2026-02-17)</title>
+    <title>OLINGR_OLIN: Day-ahead: minimum-energy offer stepped (2026-02-17)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=OLINGR_OLIN"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=OLINGR_OLIN#OLINGR_OLIN/2026-02-17/dam_mingen_step</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Minimum-energy offer stepped: $84 to $78/MWh ($55 to $55 against the fuel-cost line)</summary>
+    <summary>Minimum-energy offer stepped: $84 to $78/MWh (offer minus fuel cost: $55 to $55/MWh)</summary>
   </entry>
   <entry>
-    <title>OLINGR_OLIN: Stopped three-part offers (2026-01-24)</title>
+    <title>OLINGR_OLIN: Day-ahead: stopped three-part offers (2026-01-24)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=OLINGR_OLIN"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=OLINGR_OLIN#OLINGR_OLIN/2026-01-24/dam_filing_off</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Stopped three-part offers: three-part offer to self-scheduled while on</summary>
   </entry>
   <entry>
-    <title>OLINGR_OLIN: Stopped three-part offers (2026-01-24)</title>
+    <title>OLINGR_OLIN: Day-ahead: stopped three-part offers (2026-01-24)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=OLINGR_OLIN"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=OLINGR_OLIN#OLINGR_OLIN/2026-01-24/dam_filing_off</id>
     <updated>2026-10-18T00:00:00Z</updated>

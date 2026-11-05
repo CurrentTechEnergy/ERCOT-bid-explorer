@@ -117,11 +117,11 @@
     <summary>Offer price vs peer median: −$9 to −$20/MWh</summary>
   </entry>
   <entry>
-    <title>FLCNS_UNIT2: Timescale group changed (2026-01-01)</title>
+    <title>FLCNS_UNIT2: How often it turns off changed (2026-01-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=FLCNS_UNIT2"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=FLCNS_UNIT2#FLCNS_UNIT2/2026-01-01/group</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Cycles daily, 1 to 2 times a week in 2025-12 to Always on when available in 2026-01</summary>
+    <summary>Cycles daily, 1 to 2 times a week (December 2025) to Always on when available (January 2026)</summary>
   </entry>
   <entry>
     <title>FLCNS_UNIT2: Bidding approach shifted (2025-12-16)</title>

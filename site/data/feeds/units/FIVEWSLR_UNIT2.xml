@@ -5,24 +5,24 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=FIVEWSLR_UNIT2</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
-    <title>FIVEWSLR: New floor (2026-06-16)</title>
+    <title>FIVEWSLR: Wind/solar: offer floor changed (2026-06-16)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=FIVEWSLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=FIVEWSLR#FIVEWSLR/2026-06-16/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$76/MWh to −$69/MWh</summary>
+    <summary>Floor moved: −$76/MWh to −$69/MWh</summary>
   </entry>
   <entry>
-    <title>FIVEWSLR: New floor (2024-12-31)</title>
+    <title>FIVEWSLR: Wind/solar: offer floor changed (2024-12-31)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=FIVEWSLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=FIVEWSLR#FIVEWSLR/2024-12-31/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$35/MWh to −$76/MWh</summary>
+    <summary>Floor moved: −$35/MWh to −$76/MWh</summary>
   </entry>
   <entry>
     <title>FIVEWSLR: Decision maker or QSE changed (2023-12-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=FIVEWSLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=FIVEWSLR#FIVEWSLR/2023-12-01/control</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Scheduled by ENGIE ENERGY MARKETING NA INC (SQ54), was ENGIE ENERGY MARKETING NA INC (SQ61)</summary>
+    <summary>QSE code changed: QSUE61 to QSUE54 (ENGIE ENERGY MARKETING NA INC (SQ54))</summary>
   </entry>
 </feed>

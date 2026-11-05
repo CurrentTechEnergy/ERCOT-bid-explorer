@@ -3,7 +3,7 @@
   <title>CBY_CBY_G2: bidding and operating changes</title>
   <link href="https://ercotbids.currenttech.energy/unit.html?unit=CBY_CBY_G2"/>
   <id>https://ercotbids.currenttech.energy/unit.html?unit=CBY_CBY_G2</id>
-  <updated>2026-11-04T00:00:00Z</updated>
+  <updated>2026-11-05T00:00:00Z</updated>
   <entry>
     <title>CBY_CBY_G2: Outage ended (2026-09-05)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=CBY_CBY_G2"/>
@@ -26,11 +26,11 @@
     <summary>Running without an offer curve: 0% to 100% of the day</summary>
   </entry>
   <entry>
-    <title>CBY_CBY_G2: Turn-off point moved (2026-07-01)</title>
+    <title>CBY_CBY_G2: Turn-off point moved (2026-08-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=CBY_CBY_G2"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=CBY_CBY_G2#CBY_CBY_G2/2026-07-01/turnoff/0</id>
-    <updated>2026-11-03T00:00:00Z</updated>
-    <summary>Turn-off point without an award $4,099 to riding through per MW of minimum output in July; the next month held it</summary>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=CBY_CBY_G2#CBY_CBY_G2/2026-08-01/turnoff/0</id>
+    <updated>2026-11-05T00:00:00Z</updated>
+    <summary>Turn-off point (no award) in August: from $4,749 per MW of minimum output to never turning off</summary>
   </entry>
   <entry>
     <title>CBY_CBY_G2: Shut down after a long run (2026-06-01)</title>
@@ -45,13 +45,6 @@
     <id>https://ercotbids.currenttech.energy/unit.html?unit=CBY_CBY_G2#CBY_CBY_G2/2026-05-21/outage_end</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Back from a 21-day outage</summary>
-  </entry>
-  <entry>
-    <title>CBY_CBY_G2: Turn-off point moved (2026-05-01)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=CBY_CBY_G2"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=CBY_CBY_G2#CBY_CBY_G2/2026-05-01/turnoff/0</id>
-    <updated>2026-10-30T00:00:00Z</updated>
-    <summary>Turn-off point without an award $2,785 to $4,882 per MW of minimum output in May; the next month held it</summary>
   </entry>
   <entry>
     <title>CBY_CBY_G2: Outage started (2026-05-01)</title>

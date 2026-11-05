@@ -5,31 +5,31 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=THW_THWGT56</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
-    <title>THW_THWGT56: Timescale group changed (2026-07-01)</title>
+    <title>THW_THWGT56: How often it turns off changed (2026-07-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=THW_THWGT56"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=THW_THWGT56#THW_THWGT56/2026-07-01/group</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Off for a week or more at a time in 2026-06 to Cycles daily, 1 to 2 times a week in 2026-07</summary>
+    <summary>Off for a week or more at a time (June 2026) to Cycles daily, 1 to 2 times a week (July 2026)</summary>
   </entry>
   <entry>
-    <title>THW_THWGT56: Timescale group changed (2026-06-01)</title>
+    <title>THW_THWGT56: How often it turns off changed (2026-06-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=THW_THWGT56"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=THW_THWGT56#THW_THWGT56/2026-06-01/group</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Off for days at a time in 2026-05 to Off for a week or more at a time in 2026-06</summary>
+    <summary>Off for days at a time (May 2026) to Off for a week or more at a time (June 2026)</summary>
   </entry>
   <entry>
-    <title>THW_THWGT56: Timescale group changed (2026-04-01)</title>
+    <title>THW_THWGT56: How often it turns off changed (2026-04-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=THW_THWGT56"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=THW_THWGT56#THW_THWGT56/2026-04-01/group</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Cycles daily, under once a week in 2026-03 to Off for days at a time in 2026-04</summary>
+    <summary>Cycles daily, under once a week (March 2026) to Off for days at a time (April 2026)</summary>
   </entry>
   <entry>
-    <title>THW_THWGT56: Timescale group changed (2026-03-01)</title>
+    <title>THW_THWGT56: How often it turns off changed (2026-03-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=THW_THWGT56"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=THW_THWGT56#THW_THWGT56/2026-03-01/group</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Off for days at a time in 2026-02 to Cycles daily, under once a week in 2026-03</summary>
+    <summary>Off for days at a time (February 2026) to Cycles daily, under once a week (March 2026)</summary>
   </entry>
 </feed>

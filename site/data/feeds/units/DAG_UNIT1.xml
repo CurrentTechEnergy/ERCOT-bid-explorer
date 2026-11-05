@@ -5,10 +5,10 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=DAG_UNIT1</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
-    <title>DAG: New floor (2024-12-16)</title>
+    <title>DAG: Wind/solar: offer floor changed (2024-12-16)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=DAG"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=DAG#DAG/2024-12-16/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: $0/MWh to −$5/MWh</summary>
+    <summary>Floor moved: $0/MWh to −$5/MWh</summary>
   </entry>
 </feed>

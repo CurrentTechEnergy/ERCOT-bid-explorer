@@ -5,38 +5,38 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=MRKM_SLR</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
-    <title>MRKM_SLR: Episode (2026-04-08)</title>
+    <title>MRKM_SLR: Wind/solar: short episode at a different floor (2026-04-08)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=MRKM_SLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=MRKM_SLR#MRKM_SLR/2026-04-08/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Episode: floor −$12/MWh, briefly −$20/MWh, for 1 day</summary>
+    <summary>Short episode: floor −$12/MWh, briefly −$20/MWh, for 1 day</summary>
   </entry>
   <entry>
-    <title>MRKM_SLR: Episode (2026-02-21)</title>
+    <title>MRKM_SLR: Wind/solar: short episode at a different floor (2026-02-21)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=MRKM_SLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=MRKM_SLR#MRKM_SLR/2026-02-21/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Episode: floor −$12/MWh, briefly −$20/MWh, for 1 day</summary>
+    <summary>Short episode: floor −$12/MWh, briefly −$20/MWh, for 1 day</summary>
   </entry>
   <entry>
-    <title>MRKM_SLR: Episode (2026-01-16)</title>
+    <title>MRKM_SLR: Wind/solar: short episode at a different floor (2026-01-16)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=MRKM_SLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=MRKM_SLR#MRKM_SLR/2026-01-16/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Episode: floor −$12/MWh, briefly −$20/MWh, for 1 day</summary>
+    <summary>Short episode: floor −$12/MWh, briefly −$20/MWh, for 1 day</summary>
   </entry>
   <entry>
-    <title>MRKM_SLR: New floor (2025-10-30)</title>
+    <title>MRKM_SLR: Wind/solar: offer floor changed (2025-10-30)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=MRKM_SLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=MRKM_SLR#MRKM_SLR/2025-10-30/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$5/MWh to −$12/MWh</summary>
+    <summary>Floor moved: −$5/MWh to −$12/MWh</summary>
   </entry>
   <entry>
-    <title>MRKM_SLR: Episode (2024-10-22)</title>
+    <title>MRKM_SLR: Wind/solar: short episode at a different floor (2024-10-22)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=MRKM_SLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=MRKM_SLR#MRKM_SLR/2024-10-22/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Episode: floor −$5/MWh, briefly −$30/MWh, for 2 days</summary>
+    <summary>Short episode: floor −$5/MWh, briefly −$30/MWh, for 2 days</summary>
   </entry>
 </feed>

@@ -5,24 +5,24 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=KEO_SHRBINO2</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
-    <title>KEO_SHRBINO: New floor (2024-09-13)</title>
+    <title>KEO_SHRBINO: Wind/solar: offer floor changed (2024-09-13)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=KEO_SHRBINO"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=KEO_SHRBINO#KEO_SHRBINO/2024-09-13/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$36/MWh to −$76/MWh</summary>
+    <summary>Floor moved: −$36/MWh to −$76/MWh</summary>
   </entry>
   <entry>
-    <title>KEO_SHRBINO: New floor (2024-03-13)</title>
+    <title>KEO_SHRBINO: Wind/solar: offer floor changed (2024-03-13)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=KEO_SHRBINO"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=KEO_SHRBINO#KEO_SHRBINO/2024-03-13/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$32/MWh to −$36/MWh</summary>
+    <summary>Floor moved: −$32/MWh to −$36/MWh</summary>
   </entry>
   <entry>
-    <title>KEO_SHRBINO: New floor (2020-11-19)</title>
+    <title>KEO_SHRBINO: Wind/solar: offer floor changed (2020-11-19)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=KEO_SHRBINO"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=KEO_SHRBINO#KEO_SHRBINO/2020-11-19/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: $0/MWh to −$32/MWh</summary>
+    <summary>Floor moved: $0/MWh to −$32/MWh</summary>
   </entry>
 </feed>

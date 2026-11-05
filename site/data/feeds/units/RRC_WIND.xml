@@ -5,38 +5,38 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=RRC_WIND</id>
   <updated>2026-11-01T00:00:00Z</updated>
   <entry>
-    <title>RRC_WIND: Stopped moving within the day (2026-08-28)</title>
+    <title>RRC_WIND: Wind/solar: offer stopped moving within the day (2026-08-28)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=RRC_WIND"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=RRC_WIND#RRC_WIND/2026-08-28/renew_moving_off</id>
     <updated>2026-11-01T00:00:00Z</updated>
     <summary>Stopped moving within the day: now a floor of −$44/MWh</summary>
   </entry>
   <entry>
-    <title>RRC_WIND: Started moving within the day (2025-09-25)</title>
+    <title>RRC_WIND: Wind/solar: offer started moving within the day (2025-09-25)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=RRC_WIND"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=RRC_WIND#RRC_WIND/2025-09-25/renew_moving_on</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Started moving within the day (was a floor of −$44/MWh)</summary>
+    <summary>Started moving within the day: was a floor of −$44/MWh</summary>
   </entry>
   <entry>
-    <title>RRC_WIND: Stopped moving within the day (2025-09-17)</title>
+    <title>RRC_WIND: Wind/solar: offer stopped moving within the day (2025-09-17)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=RRC_WIND"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=RRC_WIND#RRC_WIND/2025-09-17/renew_moving_off</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Stopped moving within the day: now a floor of −$44/MWh</summary>
   </entry>
   <entry>
-    <title>RRC_WIND: Started moving within the day (2025-04-09)</title>
+    <title>RRC_WIND: Wind/solar: offer started moving within the day (2025-04-09)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=RRC_WIND"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=RRC_WIND#RRC_WIND/2025-04-09/renew_moving_on</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Started moving within the day (was a floor of −$44/MWh)</summary>
+    <summary>Started moving within the day: was a floor of −$44/MWh</summary>
   </entry>
   <entry>
-    <title>RRC_WIND: New floor (2025-02-22)</title>
+    <title>RRC_WIND: Wind/solar: offer floor changed (2025-02-22)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=RRC_WIND"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=RRC_WIND#RRC_WIND/2025-02-22/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$38/MWh to −$44/MWh</summary>
+    <summary>Floor moved: −$38/MWh to −$44/MWh</summary>
   </entry>
 </feed>

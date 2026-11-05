@@ -5,38 +5,38 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=MROW_SLR</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
-    <title>MROW_SLR: Episode (2026-08-05)</title>
+    <title>MROW_SLR: Wind/solar: short episode at a different floor (2026-08-05)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=MROW_SLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=MROW_SLR#MROW_SLR/2026-08-05/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Episode: floor −$20/MWh, briefly −$38/MWh, for 1 day</summary>
+    <summary>Short episode: floor −$20/MWh, briefly −$38/MWh, for 1 day</summary>
   </entry>
   <entry>
-    <title>MROW_SLR: Stopped moving within the day (2025-06-24)</title>
+    <title>MROW_SLR: Wind/solar: offer stopped moving within the day (2025-06-24)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=MROW_SLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=MROW_SLR#MROW_SLR/2025-06-24/renew_moving_off</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Stopped moving within the day: now a floor of −$20/MWh</summary>
   </entry>
   <entry>
-    <title>MROW_SLR: Started moving within the day (2025-06-06)</title>
+    <title>MROW_SLR: Wind/solar: offer started moving within the day (2025-06-06)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=MROW_SLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=MROW_SLR#MROW_SLR/2025-06-06/renew_moving_on</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Started moving within the day (was a floor of −$20/MWh)</summary>
+    <summary>Started moving within the day: was a floor of −$20/MWh</summary>
   </entry>
   <entry>
-    <title>MROW_SLR: Episode (2025-04-06)</title>
+    <title>MROW_SLR: Wind/solar: short episode at a different floor (2025-04-06)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=MROW_SLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=MROW_SLR#MROW_SLR/2025-04-06/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Episode: floor −$20/MWh, briefly −$0/MWh, for 1 day</summary>
+    <summary>Short episode: floor −$20/MWh, briefly −$0/MWh, for 1 day</summary>
   </entry>
   <entry>
-    <title>MROW_SLR: New floor (2024-10-01)</title>
+    <title>MROW_SLR: Wind/solar: offer floor changed (2024-10-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=MROW_SLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=MROW_SLR#MROW_SLR/2024-10-01/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: $0/MWh to −$20/MWh</summary>
+    <summary>Floor moved: $0/MWh to −$20/MWh</summary>
   </entry>
 </feed>

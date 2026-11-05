@@ -9,14 +9,14 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=WAP_WAP_G2"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=WAP_WAP_G2#WAP_WAP_G2/2026-09-01/turnoff/0</id>
     <updated>2026-11-04T00:00:00Z</updated>
-    <summary>Turn-off point without an award $136 to $234 per MW of minimum output in September</summary>
+    <summary>Turn-off point (no award) in September: $93 to $236 per MW of minimum output</summary>
   </entry>
   <entry>
     <title>WAP_WAP_G2: Turn-off point moved (2026-08-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=WAP_WAP_G2"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=WAP_WAP_G2#WAP_WAP_G2/2026-08-01/turnoff/0</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Turn-off point without an award $33 to $136 per MW of minimum output in August; the next month held it</summary>
+    <summary>Turn-off point (no award) in August: $38 to $93 per MW of minimum output; the next month held it</summary>
   </entry>
   <entry>
     <title>WAP_WAP_G2: Outage ended (2026-04-21)</title>
@@ -47,11 +47,11 @@
     <summary>Outage began, lasting 35 days</summary>
   </entry>
   <entry>
-    <title>WAP_WAP_G2: Timescale group changed (2026-02-01)</title>
+    <title>WAP_WAP_G2: How often it turns off changed (2026-02-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=WAP_WAP_G2"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=WAP_WAP_G2#WAP_WAP_G2/2026-02-01/group</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Off for days at a time in 2026-01 to Off for a week or more at a time in 2026-02</summary>
+    <summary>Off for days at a time (January 2026) to Off for a week or more at a time (February 2026)</summary>
   </entry>
   <entry>
     <title>WAP_WAP_G2: Shut down after a long run (2026-01-28)</title>

@@ -5,17 +5,17 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=LV1_LV</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
-    <title>LV1_LV: New floor (2024-03-20)</title>
+    <title>LV1_LV: Wind/solar: offer floor changed (2024-03-20)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=LV1_LV"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=LV1_LV#LV1_LV/2024-03-20/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$24/MWh to −$2/MWh</summary>
+    <summary>Floor moved: −$24/MWh to −$2/MWh</summary>
   </entry>
   <entry>
-    <title>LV1_LV: New floor (2019-06-20)</title>
+    <title>LV1_LV: Wind/solar: offer floor changed (2019-06-20)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=LV1_LV"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=LV1_LV#LV1_LV/2019-06-20/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$30/MWh to −$32/MWh</summary>
+    <summary>Floor moved: −$30/MWh to −$32/MWh</summary>
   </entry>
 </feed>

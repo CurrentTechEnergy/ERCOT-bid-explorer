@@ -5,66 +5,66 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=AZURE_SOLAR1</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
-    <title>AZURE: New floor (2026-05-07)</title>
+    <title>AZURE: Wind/solar: offer floor changed (2026-05-07)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=AZURE"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=AZURE#AZURE/2026-05-07/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$2/MWh to −$4/MWh</summary>
+    <summary>Floor moved: −$2/MWh to −$4/MWh</summary>
   </entry>
   <entry>
-    <title>AZURE: Episode (2025-06-03)</title>
+    <title>AZURE: Wind/solar: short episode at a different floor (2025-06-03)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=AZURE"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=AZURE#AZURE/2025-06-03/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Episode: floor −$2/MWh, briefly $15/MWh, for 1 day</summary>
+    <summary>Short episode: floor −$2/MWh, briefly $15/MWh, for 1 day</summary>
   </entry>
   <entry>
-    <title>AZURE: Episode (2025-05-24)</title>
+    <title>AZURE: Wind/solar: short episode at a different floor (2025-05-24)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=AZURE"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=AZURE#AZURE/2025-05-24/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Episode: floor −$2/MWh, briefly $33/MWh, for 1 day</summary>
+    <summary>Short episode: floor −$2/MWh, briefly $33/MWh, for 1 day</summary>
   </entry>
   <entry>
-    <title>AZURE: Episode (2025-05-22)</title>
+    <title>AZURE: Wind/solar: short episode at a different floor (2025-05-22)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=AZURE"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=AZURE#AZURE/2025-05-22/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Episode: floor −$2/MWh, briefly $4/MWh, for 1 day</summary>
+    <summary>Short episode: floor −$2/MWh, briefly $4/MWh, for 1 day</summary>
   </entry>
   <entry>
-    <title>AZURE: Episode (2025-05-10)</title>
+    <title>AZURE: Wind/solar: short episode at a different floor (2025-05-10)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=AZURE"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=AZURE#AZURE/2025-05-10/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Episode: floor −$2/MWh, briefly $5/MWh, for 1 day</summary>
+    <summary>Short episode: floor −$2/MWh, briefly $5/MWh, for 1 day</summary>
   </entry>
   <entry>
-    <title>AZURE: New floor (2025-03-18)</title>
+    <title>AZURE: Wind/solar: offer floor changed (2025-03-18)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=AZURE"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=AZURE#AZURE/2025-03-18/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$4/MWh to −$2/MWh</summary>
+    <summary>Floor moved: −$4/MWh to −$2/MWh</summary>
   </entry>
   <entry>
-    <title>AZURE: New floor (2024-12-16)</title>
+    <title>AZURE: Wind/solar: offer floor changed (2024-12-16)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=AZURE"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=AZURE#AZURE/2024-12-16/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: $0/MWh to −$4/MWh</summary>
+    <summary>Floor moved: $0/MWh to −$4/MWh</summary>
   </entry>
   <entry>
-    <title>AZURE: New floor (2023-06-06)</title>
+    <title>AZURE: Wind/solar: offer floor changed (2023-06-06)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=AZURE"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=AZURE#AZURE/2023-06-06/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$3/MWh to $0/MWh</summary>
+    <summary>Floor moved: −$3/MWh to $0/MWh</summary>
   </entry>
   <entry>
-    <title>AZURE: New floor (2023-04-19)</title>
+    <title>AZURE: Wind/solar: offer floor changed (2023-04-19)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=AZURE"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=AZURE#AZURE/2023-04-19/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$5/MWh to −$3/MWh</summary>
+    <summary>Floor moved: −$5/MWh to −$3/MWh</summary>
   </entry>
 </feed>

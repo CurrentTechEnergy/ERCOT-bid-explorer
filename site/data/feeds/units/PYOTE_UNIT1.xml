@@ -5,11 +5,11 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=PYOTE_UNIT1</id>
   <updated>2026-10-24T00:00:00Z</updated>
   <entry>
-    <title>PYOTE_UNIT1: Running at a new price (2026-08-01)</title>
+    <title>PYOTE_UNIT1: Peaker: running at a new real-time price (2026-08-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=PYOTE_UNIT1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=PYOTE_UNIT1#PYOTE_UNIT1/2026-08-01/rt_price</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Online 16% of its hours at $0–$15 real-time at its node in August, down from 67%</summary>
+    <summary>Online 16% of its available hours at $0–$15/MWh real-time at its node in August, down from 67%</summary>
   </entry>
   <entry>
     <title>PYOTE_UNIT1: Outage ended (2026-07-23)</title>
@@ -40,25 +40,25 @@
     <summary>Shut down for 5 h after 42 days without a shutdown</summary>
   </entry>
   <entry>
-    <title>PYOTE_UNIT1: Timescale group changed (2026-07-01)</title>
+    <title>PYOTE_UNIT1: How often it turns off changed (2026-07-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=PYOTE_UNIT1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=PYOTE_UNIT1#PYOTE_UNIT1/2026-07-01/group</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Always on when available in 2026-06 to Cycles daily, over twice a week in 2026-07</summary>
+    <summary>Always on when available (June 2026) to Cycles daily, over twice a week (July 2026)</summary>
   </entry>
   <entry>
-    <title>PYOTE_UNIT1: Running at a new price (2026-06-01)</title>
+    <title>PYOTE_UNIT1: Peaker: running at a new real-time price (2026-06-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=PYOTE_UNIT1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=PYOTE_UNIT1#PYOTE_UNIT1/2026-06-01/rt_price</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Online 100% of its hours at below $0 real-time at its node in June, up from 0%</summary>
+    <summary>Online 100% of its available hours at below $0/MWh real-time at its node in June, up from 0%</summary>
   </entry>
   <entry>
-    <title>PYOTE_UNIT1: Timescale group changed (2026-06-01)</title>
+    <title>PYOTE_UNIT1: How often it turns off changed (2026-06-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=PYOTE_UNIT1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=PYOTE_UNIT1#PYOTE_UNIT1/2026-06-01/group</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Cycles daily, 1 to 2 times a week in 2026-05 to Always on when available in 2026-06</summary>
+    <summary>Cycles daily, 1 to 2 times a week (May 2026) to Always on when available (June 2026)</summary>
   </entry>
   <entry>
     <title>PYOTE_UNIT1: Outage ended (2026-05-01)</title>
@@ -93,6 +93,6 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=PYOTE_UNIT1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=PYOTE_UNIT1#PYOTE_UNIT1/2026-01-07/new_unit</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>First day in SCED, first HSL above zero 2026-05-01; up to 10 MW so far</summary>
+    <summary>First day in ERCOT&#x27;s real-time dispatch (SCED), first output capacity (HSL) reported 2026-05-01; up to 10 MW so far</summary>
   </entry>
 </feed>

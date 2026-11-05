@@ -5,25 +5,25 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=EIFSLR_UNIT1</id>
   <updated>2026-10-26T00:00:00Z</updated>
   <entry>
-    <title>EIFSLR: Episode (2026-02-24)</title>
+    <title>EIFSLR: Wind/solar: short episode at a different floor (2026-02-24)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=EIFSLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=EIFSLR#EIFSLR/2026-02-24/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Episode: floor −$21/MWh, briefly −$2/MWh, for 1 day</summary>
+    <summary>Short episode: floor −$21/MWh, briefly −$2/MWh, for 1 day</summary>
   </entry>
   <entry>
-    <title>EIFSLR: Episode (2026-02-21)</title>
+    <title>EIFSLR: Wind/solar: short episode at a different floor (2026-02-21)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=EIFSLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=EIFSLR#EIFSLR/2026-02-21/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Episode: floor −$21/MWh, briefly −$2/MWh, for 1 day</summary>
+    <summary>Short episode: floor −$21/MWh, briefly −$2/MWh, for 1 day</summary>
   </entry>
   <entry>
-    <title>EIFSLR: Episode (2026-02-16)</title>
+    <title>EIFSLR: Wind/solar: short episode at a different floor (2026-02-16)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=EIFSLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=EIFSLR#EIFSLR/2026-02-16/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Episode: floor −$21/MWh, briefly −$2/MWh, for 1 day</summary>
+    <summary>Short episode: floor −$21/MWh, briefly −$2/MWh, for 1 day</summary>
   </entry>
   <entry>
     <title>EIFSLR_UNIT1: Decision maker or QSE changed (2026-01-27)</title>
@@ -40,115 +40,115 @@
     <summary>Scheduled by TRQ39 (SQ39), was TENASKA POWER SERVICES CO</summary>
   </entry>
   <entry>
-    <title>EIFSLR: Episode (2026-01-24)</title>
+    <title>EIFSLR: Wind/solar: short episode at a different floor (2026-01-24)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=EIFSLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=EIFSLR#EIFSLR/2026-01-24/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Episode: floor −$21/MWh, briefly $94/MWh, for 1 day</summary>
+    <summary>Short episode: floor −$21/MWh, briefly $94/MWh, for 1 day</summary>
   </entry>
   <entry>
-    <title>EIFSLR: New floor (2025-05-14)</title>
+    <title>EIFSLR: Wind/solar: offer floor changed (2025-05-14)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=EIFSLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=EIFSLR#EIFSLR/2025-05-14/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$26/MWh to −$21/MWh</summary>
+    <summary>Floor moved: −$26/MWh to −$21/MWh</summary>
   </entry>
   <entry>
-    <title>EIFSLR: New floor (2025-05-06)</title>
+    <title>EIFSLR: Wind/solar: offer floor changed (2025-05-06)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=EIFSLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=EIFSLR#EIFSLR/2025-05-06/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$32/MWh to −$26/MWh</summary>
+    <summary>Floor moved: −$32/MWh to −$26/MWh</summary>
   </entry>
   <entry>
-    <title>EIFSLR: Episode (2025-03-02)</title>
+    <title>EIFSLR: Wind/solar: short episode at a different floor (2025-03-02)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=EIFSLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=EIFSLR#EIFSLR/2025-03-02/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Episode: floor −$32/MWh, briefly −$2/MWh, for 5 days</summary>
+    <summary>Short episode: floor −$32/MWh, briefly −$2/MWh, for 5 days</summary>
   </entry>
   <entry>
-    <title>EIFSLR: New floor (2024-12-18)</title>
+    <title>EIFSLR: Wind/solar: offer floor changed (2024-12-18)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=EIFSLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=EIFSLR#EIFSLR/2024-12-18/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$2/MWh to −$32/MWh</summary>
+    <summary>Floor moved: −$2/MWh to −$32/MWh</summary>
   </entry>
   <entry>
-    <title>EIFSLR: Back to an earlier floor (2024-10-19)</title>
+    <title>EIFSLR: Wind/solar: back to an earlier floor (2024-10-19)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=EIFSLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=EIFSLR#EIFSLR/2024-10-19/renew_floor_back</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Back to an earlier floor: $1/MWh to −$2/MWh</summary>
   </entry>
   <entry>
-    <title>EIFSLR: New floor (2024-10-05)</title>
+    <title>EIFSLR: Wind/solar: offer floor changed (2024-10-05)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=EIFSLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=EIFSLR#EIFSLR/2024-10-05/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$1/MWh to $1/MWh</summary>
+    <summary>Floor moved: −$1/MWh to $1/MWh</summary>
   </entry>
   <entry>
-    <title>EIFSLR: New floor (2024-09-21)</title>
+    <title>EIFSLR: Wind/solar: offer floor changed (2024-09-21)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=EIFSLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=EIFSLR#EIFSLR/2024-09-21/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$2/MWh to −$1/MWh</summary>
+    <summary>Floor moved: −$2/MWh to −$1/MWh</summary>
   </entry>
   <entry>
-    <title>EIFSLR: Back to an earlier floor (2024-09-07)</title>
+    <title>EIFSLR: Wind/solar: back to an earlier floor (2024-09-07)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=EIFSLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=EIFSLR#EIFSLR/2024-09-07/renew_floor_back</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Back to an earlier floor: $4/MWh to −$2/MWh</summary>
   </entry>
   <entry>
-    <title>EIFSLR: New floor (2024-08-31)</title>
+    <title>EIFSLR: Wind/solar: offer floor changed (2024-08-31)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=EIFSLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=EIFSLR#EIFSLR/2024-08-31/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: $9/MWh to $4/MWh</summary>
+    <summary>Floor moved: $9/MWh to $4/MWh</summary>
   </entry>
   <entry>
-    <title>EIFSLR: New floor (2024-07-26)</title>
+    <title>EIFSLR: Wind/solar: offer floor changed (2024-07-26)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=EIFSLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=EIFSLR#EIFSLR/2024-07-26/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$2/MWh to $9/MWh</summary>
+    <summary>Floor moved: −$2/MWh to $9/MWh</summary>
   </entry>
   <entry>
-    <title>EIFSLR: Back to an earlier floor (2023-10-15)</title>
+    <title>EIFSLR: Wind/solar: back to an earlier floor (2023-10-15)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=EIFSLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=EIFSLR#EIFSLR/2023-10-15/renew_floor_back</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Back to an earlier floor: $3/MWh to −$2/MWh</summary>
   </entry>
   <entry>
-    <title>EIFSLR: New floor (2023-08-30)</title>
+    <title>EIFSLR: Wind/solar: offer floor changed (2023-08-30)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=EIFSLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=EIFSLR#EIFSLR/2023-08-30/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$2/MWh to $3/MWh</summary>
+    <summary>Floor moved: −$2/MWh to $3/MWh</summary>
   </entry>
   <entry>
-    <title>EIFSLR: Episode (2023-08-19)</title>
+    <title>EIFSLR: Wind/solar: short episode at a different floor (2023-08-19)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=EIFSLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=EIFSLR#EIFSLR/2023-08-19/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Episode: floor −$2/MWh, briefly $4/MWh, for 6 days</summary>
+    <summary>Short episode: floor −$2/MWh, briefly $4/MWh, for 6 days</summary>
   </entry>
   <entry>
-    <title>EIFSLR: Episode (2023-06-16)</title>
+    <title>EIFSLR: Wind/solar: short episode at a different floor (2023-06-16)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=EIFSLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=EIFSLR#EIFSLR/2023-06-16/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Episode: floor −$2/MWh, briefly −$26/MWh, for 1 day</summary>
+    <summary>Short episode: floor −$2/MWh, briefly −$26/MWh, for 1 day</summary>
   </entry>
   <entry>
-    <title>EIFSLR: Episode (2023-06-05)</title>
+    <title>EIFSLR: Wind/solar: short episode at a different floor (2023-06-05)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=EIFSLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=EIFSLR#EIFSLR/2023-06-05/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Episode: floor −$2/MWh, briefly −$38/MWh, for 1 day</summary>
+    <summary>Short episode: floor −$2/MWh, briefly −$38/MWh, for 1 day</summary>
   </entry>
 </feed>

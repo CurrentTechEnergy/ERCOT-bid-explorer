@@ -5,115 +5,115 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=SANROMAN</id>
   <updated>2026-10-24T00:00:00Z</updated>
   <entry>
-    <title>SANROMAN: Episode (2026-08-11)</title>
+    <title>SANROMAN: Wind/solar: short episode at a different floor (2026-08-11)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=SANROMAN"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=SANROMAN#SANROMAN/2026-08-11/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Episode: floor −$29/MWh, briefly −$38/MWh, for 2 days</summary>
+    <summary>Short episode: floor −$29/MWh, briefly −$38/MWh, for 2 days</summary>
   </entry>
   <entry>
-    <title>SANROMAN: New floor (2026-03-04)</title>
+    <title>SANROMAN: Wind/solar: offer floor changed (2026-03-04)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=SANROMAN"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=SANROMAN#SANROMAN/2026-03-04/renew_floor_new</id>
     <updated>2026-10-24T00:00:00Z</updated>
-    <summary>New floor: −$40/MWh to −$29/MWh</summary>
+    <summary>Floor moved: −$40/MWh to −$29/MWh</summary>
   </entry>
   <entry>
-    <title>SANROMAN: New floor (2025-07-22)</title>
+    <title>SANROMAN: Wind/solar: offer floor changed (2025-07-22)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=SANROMAN"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=SANROMAN#SANROMAN/2025-07-22/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$38/MWh to −$40/MWh</summary>
+    <summary>Floor moved: −$38/MWh to −$40/MWh</summary>
   </entry>
   <entry>
-    <title>SANROMAN: New floor (2025-05-16)</title>
+    <title>SANROMAN: Wind/solar: offer floor changed (2025-05-16)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=SANROMAN"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=SANROMAN#SANROMAN/2025-05-16/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$34/MWh to −$38/MWh</summary>
+    <summary>Floor moved: −$34/MWh to −$38/MWh</summary>
   </entry>
   <entry>
-    <title>SANROMAN: New floor (2022-12-23)</title>
+    <title>SANROMAN: Wind/solar: offer floor changed (2022-12-23)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=SANROMAN"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=SANROMAN#SANROMAN/2022-12-23/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$33/MWh to −$34/MWh</summary>
+    <summary>Floor moved: −$33/MWh to −$34/MWh</summary>
   </entry>
   <entry>
-    <title>SANROMAN: New floor (2022-05-07)</title>
+    <title>SANROMAN: Wind/solar: offer floor changed (2022-05-07)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=SANROMAN"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=SANROMAN#SANROMAN/2022-05-07/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$34/MWh to −$33/MWh</summary>
+    <summary>Floor moved: −$34/MWh to −$33/MWh</summary>
   </entry>
   <entry>
-    <title>SANROMAN: New floor (2022-04-22)</title>
+    <title>SANROMAN: Wind/solar: offer floor changed (2022-04-22)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=SANROMAN"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=SANROMAN#SANROMAN/2022-04-22/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$32/MWh to −$34/MWh</summary>
+    <summary>Floor moved: −$32/MWh to −$34/MWh</summary>
   </entry>
   <entry>
-    <title>SANROMAN: Stopped moving within the day (2022-02-16)</title>
+    <title>SANROMAN: Wind/solar: offer stopped moving within the day (2022-02-16)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=SANROMAN"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=SANROMAN#SANROMAN/2022-02-16/renew_moving_off</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Stopped moving within the day: now a floor of −$32/MWh</summary>
   </entry>
   <entry>
-    <title>SANROMAN: Started moving within the day (2021-10-09)</title>
+    <title>SANROMAN: Wind/solar: offer started moving within the day (2021-10-09)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=SANROMAN"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=SANROMAN#SANROMAN/2021-10-09/renew_moving_on</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Started moving within the day (was a floor of −$24/MWh)</summary>
+    <summary>Started moving within the day: was a floor of −$24/MWh</summary>
   </entry>
   <entry>
-    <title>SANROMAN: Stopped moving within the day (2021-10-02)</title>
+    <title>SANROMAN: Wind/solar: offer stopped moving within the day (2021-10-02)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=SANROMAN"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=SANROMAN#SANROMAN/2021-10-02/renew_moving_off</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Stopped moving within the day: now a floor of −$24/MWh</summary>
   </entry>
   <entry>
-    <title>SANROMAN: Started moving within the day (2021-06-23)</title>
+    <title>SANROMAN: Wind/solar: offer started moving within the day (2021-06-23)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=SANROMAN"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=SANROMAN#SANROMAN/2021-06-23/renew_moving_on</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Started moving within the day (was a floor of −$24/MWh)</summary>
+    <summary>Started moving within the day: was a floor of −$24/MWh</summary>
   </entry>
   <entry>
-    <title>SANROMAN: Stopped moving within the day (2021-06-12)</title>
+    <title>SANROMAN: Wind/solar: offer stopped moving within the day (2021-06-12)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=SANROMAN"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=SANROMAN#SANROMAN/2021-06-12/renew_moving_off</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Stopped moving within the day: now a floor of −$24/MWh</summary>
   </entry>
   <entry>
-    <title>SANROMAN: Started moving within the day (2021-05-26)</title>
+    <title>SANROMAN: Wind/solar: offer started moving within the day (2021-05-26)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=SANROMAN"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=SANROMAN#SANROMAN/2021-05-26/renew_moving_on</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Started moving within the day (was a floor of −$24/MWh)</summary>
+    <summary>Started moving within the day: was a floor of −$24/MWh</summary>
   </entry>
   <entry>
-    <title>SANROMAN: New floor (2021-05-19)</title>
+    <title>SANROMAN: Wind/solar: offer floor changed (2021-05-19)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=SANROMAN"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=SANROMAN#SANROMAN/2021-05-19/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: $0/MWh to −$24/MWh</summary>
+    <summary>Floor moved: $0/MWh to −$24/MWh</summary>
   </entry>
   <entry>
-    <title>SANROMAN: New floor (2021-04-10)</title>
+    <title>SANROMAN: Wind/solar: offer floor changed (2021-04-10)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=SANROMAN"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=SANROMAN#SANROMAN/2021-04-10/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$30/MWh to $0/MWh</summary>
+    <summary>Floor moved: −$30/MWh to $0/MWh</summary>
   </entry>
   <entry>
-    <title>SANROMAN: New floor (2021-03-15)</title>
+    <title>SANROMAN: Wind/solar: offer floor changed (2021-03-15)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=SANROMAN"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=SANROMAN#SANROMAN/2021-03-15/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$24/MWh to −$30/MWh</summary>
+    <summary>Floor moved: −$24/MWh to −$30/MWh</summary>
   </entry>
 </feed>

@@ -5,66 +5,66 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=W_PECOS</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
-    <title>W_PECOS: New floor (2024-06-05)</title>
+    <title>W_PECOS: Wind/solar: offer floor changed (2024-06-05)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=W_PECOS"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=W_PECOS#W_PECOS/2024-06-05/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: $0/MWh to −$2/MWh</summary>
+    <summary>Floor moved: $0/MWh to −$2/MWh</summary>
   </entry>
   <entry>
-    <title>W_PECOS: New floor (2024-02-01)</title>
+    <title>W_PECOS: Wind/solar: offer floor changed (2024-02-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=W_PECOS"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=W_PECOS#W_PECOS/2024-02-01/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$4/MWh to $0/MWh</summary>
+    <summary>Floor moved: −$4/MWh to $0/MWh</summary>
   </entry>
   <entry>
-    <title>W_PECOS: New floor (2023-12-05)</title>
+    <title>W_PECOS: Wind/solar: offer floor changed (2023-12-05)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=W_PECOS"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=W_PECOS#W_PECOS/2023-12-05/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$2/MWh to −$4/MWh</summary>
+    <summary>Floor moved: −$2/MWh to −$4/MWh</summary>
   </entry>
   <entry>
-    <title>W_PECOS: Back to an earlier floor (2022-07-07)</title>
+    <title>W_PECOS: Wind/solar: back to an earlier floor (2022-07-07)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=W_PECOS"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=W_PECOS#W_PECOS/2022-07-07/renew_floor_back</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Back to an earlier floor: −$3/MWh to −$2/MWh</summary>
   </entry>
   <entry>
-    <title>W_PECOS: New floor (2022-05-20)</title>
+    <title>W_PECOS: Wind/solar: offer floor changed (2022-05-20)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=W_PECOS"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=W_PECOS#W_PECOS/2022-05-20/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$1/MWh to −$3/MWh</summary>
+    <summary>Floor moved: −$1/MWh to −$3/MWh</summary>
   </entry>
   <entry>
-    <title>W_PECOS: New floor (2022-03-09)</title>
+    <title>W_PECOS: Wind/solar: offer floor changed (2022-03-09)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=W_PECOS"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=W_PECOS#W_PECOS/2022-03-09/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$5/MWh to −$1/MWh</summary>
+    <summary>Floor moved: −$5/MWh to −$1/MWh</summary>
   </entry>
   <entry>
-    <title>W_PECOS: New floor (2021-08-05)</title>
+    <title>W_PECOS: Wind/solar: offer floor changed (2021-08-05)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=W_PECOS"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=W_PECOS#W_PECOS/2021-08-05/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$3/MWh to −$5/MWh</summary>
+    <summary>Floor moved: −$3/MWh to −$5/MWh</summary>
   </entry>
   <entry>
-    <title>W_PECOS: New floor (2021-05-05)</title>
+    <title>W_PECOS: Wind/solar: offer floor changed (2021-05-05)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=W_PECOS"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=W_PECOS#W_PECOS/2021-05-05/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$2/MWh to −$3/MWh</summary>
+    <summary>Floor moved: −$2/MWh to −$3/MWh</summary>
   </entry>
   <entry>
-    <title>W_PECOS: New floor (2021-02-03)</title>
+    <title>W_PECOS: Wind/solar: offer floor changed (2021-02-03)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=W_PECOS"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=W_PECOS#W_PECOS/2021-02-03/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$1/MWh to −$2/MWh</summary>
+    <summary>Floor moved: −$1/MWh to −$2/MWh</summary>
   </entry>
 </feed>

@@ -5,10 +5,10 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=AZSP_SLR</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
-    <title>AZSP_SLR: New floor (2025-12-10)</title>
+    <title>AZSP_SLR: Wind/solar: offer floor changed (2025-12-10)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=AZSP_SLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=AZSP_SLR#AZSP_SLR/2025-12-10/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$3/MWh to −$47/MWh</summary>
+    <summary>Floor moved: −$3/MWh to −$47/MWh</summary>
   </entry>
 </feed>

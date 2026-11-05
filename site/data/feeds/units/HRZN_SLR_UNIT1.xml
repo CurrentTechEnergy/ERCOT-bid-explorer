@@ -5,81 +5,81 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=HRZN_SLR_UNIT1</id>
   <updated>2026-10-26T00:00:00Z</updated>
   <entry>
-    <title>HRZN_SLR_UNIT1: Day-ahead floor changed (2026-05-17)</title>
+    <title>HRZN_SLR_UNIT1: Day-ahead: wind/solar floor changed (2026-05-17)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=HRZN_SLR_UNIT1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=HRZN_SLR_UNIT1#HRZN_SLR_UNIT1/2026-05-17/dam_renew_floor</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Day-ahead floor changed: −$10 to $0/MWh</summary>
   </entry>
   <entry>
-    <title>HRZN_SLR_UNIT1: Day-ahead floor changed (2026-05-17)</title>
+    <title>HRZN_SLR_UNIT1: Day-ahead: wind/solar floor changed (2026-05-17)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=HRZN_SLR_UNIT1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=HRZN_SLR_UNIT1#HRZN_SLR_UNIT1/2026-05-17/dam_renew_floor</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Day-ahead floor changed: −$10 to $0/MWh</summary>
   </entry>
   <entry>
-    <title>HRZN_SLR_UNIT1: Day-ahead floor changed (2026-05-10)</title>
+    <title>HRZN_SLR_UNIT1: Day-ahead: wind/solar floor changed (2026-05-10)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=HRZN_SLR_UNIT1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=HRZN_SLR_UNIT1#HRZN_SLR_UNIT1/2026-05-10/dam_renew_floor</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Day-ahead floor changed: −$2 to −$10/MWh</summary>
   </entry>
   <entry>
-    <title>HRZN_SLR_UNIT1: Day-ahead floor changed (2026-05-10)</title>
+    <title>HRZN_SLR_UNIT1: Day-ahead: wind/solar floor changed (2026-05-10)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=HRZN_SLR_UNIT1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=HRZN_SLR_UNIT1#HRZN_SLR_UNIT1/2026-05-10/dam_renew_floor</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Day-ahead floor changed: −$2 to −$10/MWh</summary>
   </entry>
   <entry>
-    <title>HRZN_SLR: Episode (2026-03-14)</title>
+    <title>HRZN_SLR: Wind/solar: short episode at a different floor (2026-03-14)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=HRZN_SLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=HRZN_SLR#HRZN_SLR/2026-03-14/renew_episode</id>
     <updated>2026-10-24T00:00:00Z</updated>
-    <summary>Episode: floor −$20/MWh, briefly −$3/MWh, for 1 day</summary>
+    <summary>Short episode: floor −$20/MWh, briefly −$3/MWh, for 1 day</summary>
   </entry>
   <entry>
-    <title>HRZN_SLR: Episode (2026-03-07)</title>
+    <title>HRZN_SLR: Wind/solar: short episode at a different floor (2026-03-07)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=HRZN_SLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=HRZN_SLR#HRZN_SLR/2026-03-07/renew_episode</id>
     <updated>2026-10-24T00:00:00Z</updated>
-    <summary>Episode: floor −$20/MWh, briefly $3/MWh, for 1 day</summary>
+    <summary>Short episode: floor −$20/MWh, briefly $3/MWh, for 1 day</summary>
   </entry>
   <entry>
-    <title>HRZN_SLR_UNIT1: Day-ahead floor changed (2026-02-23)</title>
+    <title>HRZN_SLR_UNIT1: Day-ahead: wind/solar floor changed (2026-02-23)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=HRZN_SLR_UNIT1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=HRZN_SLR_UNIT1#HRZN_SLR_UNIT1/2026-02-23/dam_renew_floor</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Day-ahead floor changed: −$2 to −$10/MWh</summary>
   </entry>
   <entry>
-    <title>HRZN_SLR_UNIT1: Day-ahead floor changed (2026-02-23)</title>
+    <title>HRZN_SLR_UNIT1: Day-ahead: wind/solar floor changed (2026-02-23)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=HRZN_SLR_UNIT1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=HRZN_SLR_UNIT1#HRZN_SLR_UNIT1/2026-02-23/dam_renew_floor</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Day-ahead floor changed: −$2 to −$10/MWh</summary>
   </entry>
   <entry>
-    <title>HRZN_SLR_UNIT1: Day-ahead floor changed (2026-02-12)</title>
+    <title>HRZN_SLR_UNIT1: Day-ahead: wind/solar floor changed (2026-02-12)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=HRZN_SLR_UNIT1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=HRZN_SLR_UNIT1#HRZN_SLR_UNIT1/2026-02-12/dam_renew_floor</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Day-ahead floor changed: −$5 to $0/MWh</summary>
   </entry>
   <entry>
-    <title>HRZN_SLR_UNIT1: Day-ahead floor changed (2026-02-12)</title>
+    <title>HRZN_SLR_UNIT1: Day-ahead: wind/solar floor changed (2026-02-12)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=HRZN_SLR_UNIT1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=HRZN_SLR_UNIT1#HRZN_SLR_UNIT1/2026-02-12/dam_renew_floor</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Day-ahead floor changed: −$5 to $0/MWh</summary>
   </entry>
   <entry>
-    <title>HRZN_SLR: Episode (2026-02-11)</title>
+    <title>HRZN_SLR: Wind/solar: short episode at a different floor (2026-02-11)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=HRZN_SLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=HRZN_SLR#HRZN_SLR/2026-02-11/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Episode: floor −$20/MWh, briefly −$1/MWh, for 1 day</summary>
+    <summary>Short episode: floor −$20/MWh, briefly −$1/MWh, for 1 day</summary>
   </entry>
   <entry>
     <title>HRZN_SLR_UNIT1: Decision maker or QSE changed (2025-12-16)</title>
@@ -96,94 +96,94 @@
     <summary>Scheduled by LRE ENERGY SERVICES LLC (SQ4), was TENASKA POWER SERVICES CO</summary>
   </entry>
   <entry>
-    <title>HRZN_SLR: Episode (2025-06-24)</title>
+    <title>HRZN_SLR: Wind/solar: short episode at a different floor (2025-06-24)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=HRZN_SLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=HRZN_SLR#HRZN_SLR/2025-06-24/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Episode: floor −$20/MWh, briefly $4/MWh, for 1 day</summary>
+    <summary>Short episode: floor −$20/MWh, briefly $4/MWh, for 1 day</summary>
   </entry>
   <entry>
-    <title>HRZN_SLR: Episode (2025-04-06)</title>
+    <title>HRZN_SLR: Wind/solar: short episode at a different floor (2025-04-06)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=HRZN_SLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=HRZN_SLR#HRZN_SLR/2025-04-06/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Episode: floor −$20/MWh, briefly −$0/MWh, for 1 day</summary>
+    <summary>Short episode: floor −$20/MWh, briefly −$0/MWh, for 1 day</summary>
   </entry>
   <entry>
-    <title>HRZN_SLR: New floor (2025-02-20)</title>
+    <title>HRZN_SLR: Wind/solar: offer floor changed (2025-02-20)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=HRZN_SLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=HRZN_SLR#HRZN_SLR/2025-02-20/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$25/MWh to −$20/MWh</summary>
+    <summary>Floor moved: −$25/MWh to −$20/MWh</summary>
   </entry>
   <entry>
-    <title>HRZN_SLR: New floor (2024-10-03)</title>
+    <title>HRZN_SLR: Wind/solar: offer floor changed (2024-10-03)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=HRZN_SLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=HRZN_SLR#HRZN_SLR/2024-10-03/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$20/MWh to −$25/MWh</summary>
+    <summary>Floor moved: −$20/MWh to −$25/MWh</summary>
   </entry>
   <entry>
-    <title>HRZN_SLR: Episode (2024-10-01)</title>
+    <title>HRZN_SLR: Wind/solar: short episode at a different floor (2024-10-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=HRZN_SLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=HRZN_SLR#HRZN_SLR/2024-10-01/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Episode: floor −$20/MWh, briefly $16/MWh, for 1 day</summary>
+    <summary>Short episode: floor −$20/MWh, briefly $16/MWh, for 1 day</summary>
   </entry>
   <entry>
-    <title>HRZN_SLR: Episode (2024-09-25)</title>
+    <title>HRZN_SLR: Wind/solar: short episode at a different floor (2024-09-25)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=HRZN_SLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=HRZN_SLR#HRZN_SLR/2024-09-25/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Episode: floor −$20/MWh, briefly $77/MWh, for 1 day</summary>
+    <summary>Short episode: floor −$20/MWh, briefly $77/MWh, for 1 day</summary>
   </entry>
   <entry>
-    <title>HRZN_SLR: Stopped moving within the day (2024-08-01)</title>
+    <title>HRZN_SLR: Wind/solar: offer stopped moving within the day (2024-08-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=HRZN_SLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=HRZN_SLR#HRZN_SLR/2024-08-01/renew_moving_off</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Stopped moving within the day: now a floor of −$20/MWh</summary>
   </entry>
   <entry>
-    <title>HRZN_SLR: Started moving within the day (2024-07-25)</title>
+    <title>HRZN_SLR: Wind/solar: offer started moving within the day (2024-07-25)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=HRZN_SLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=HRZN_SLR#HRZN_SLR/2024-07-25/renew_moving_on</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Started moving within the day (was a floor of −$20/MWh)</summary>
+    <summary>Started moving within the day: was a floor of −$20/MWh</summary>
   </entry>
   <entry>
-    <title>HRZN_SLR: Episode (2024-07-06)</title>
+    <title>HRZN_SLR: Wind/solar: short episode at a different floor (2024-07-06)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=HRZN_SLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=HRZN_SLR#HRZN_SLR/2024-07-06/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Episode: floor −$20/MWh, briefly $82/MWh, for 1 day</summary>
+    <summary>Short episode: floor −$20/MWh, briefly $82/MWh, for 1 day</summary>
   </entry>
   <entry>
-    <title>HRZN_SLR: Stopped moving within the day (2024-06-16)</title>
+    <title>HRZN_SLR: Wind/solar: offer stopped moving within the day (2024-06-16)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=HRZN_SLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=HRZN_SLR#HRZN_SLR/2024-06-16/renew_moving_off</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Stopped moving within the day: now a floor of −$20/MWh</summary>
   </entry>
   <entry>
-    <title>HRZN_SLR: Started moving within the day (2024-06-07)</title>
+    <title>HRZN_SLR: Wind/solar: offer started moving within the day (2024-06-07)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=HRZN_SLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=HRZN_SLR#HRZN_SLR/2024-06-07/renew_moving_on</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Started moving within the day (was a floor of −$22/MWh)</summary>
+    <summary>Started moving within the day: was a floor of −$22/MWh</summary>
   </entry>
   <entry>
-    <title>HRZN_SLR: New floor (2024-04-19)</title>
+    <title>HRZN_SLR: Wind/solar: offer floor changed (2024-04-19)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=HRZN_SLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=HRZN_SLR#HRZN_SLR/2024-04-19/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$38/MWh to −$22/MWh</summary>
+    <summary>Floor moved: −$38/MWh to −$22/MWh</summary>
   </entry>
   <entry>
-    <title>HRZN_SLR: New floor (2024-02-02)</title>
+    <title>HRZN_SLR: Wind/solar: offer floor changed (2024-02-02)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=HRZN_SLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=HRZN_SLR#HRZN_SLR/2024-02-02/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: $0/MWh to −$38/MWh</summary>
+    <summary>Floor moved: $0/MWh to −$38/MWh</summary>
   </entry>
 </feed>

@@ -5,38 +5,38 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=CAPRIDG4_BB2_PV2</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
-    <title>CAPRIDG4_BB2: New floor (2025-08-13)</title>
+    <title>CAPRIDG4_BB2: Wind/solar: offer floor changed (2025-08-13)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=CAPRIDG4_BB2"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=CAPRIDG4_BB2#CAPRIDG4_BB2/2025-08-13/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$1/MWh to −$4/MWh</summary>
+    <summary>Floor moved: −$1/MWh to −$4/MWh</summary>
   </entry>
   <entry>
-    <title>CAPRIDG4_BB2: Back to an earlier floor (2022-11-18)</title>
+    <title>CAPRIDG4_BB2: Wind/solar: back to an earlier floor (2022-11-18)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=CAPRIDG4_BB2"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=CAPRIDG4_BB2#CAPRIDG4_BB2/2022-11-18/renew_floor_back</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Back to an earlier floor: −$4/MWh to −$1/MWh</summary>
   </entry>
   <entry>
-    <title>CAPRIDG4_BB2: New floor (2022-11-12)</title>
+    <title>CAPRIDG4_BB2: Wind/solar: offer floor changed (2022-11-12)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=CAPRIDG4_BB2"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=CAPRIDG4_BB2#CAPRIDG4_BB2/2022-11-12/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$1/MWh to −$4/MWh</summary>
+    <summary>Floor moved: −$1/MWh to −$4/MWh</summary>
   </entry>
   <entry>
-    <title>CAPRIDG4_BB2: New floor (2021-03-30)</title>
+    <title>CAPRIDG4_BB2: Wind/solar: offer floor changed (2021-03-30)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=CAPRIDG4_BB2"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=CAPRIDG4_BB2#CAPRIDG4_BB2/2021-03-30/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$18/MWh to −$1/MWh</summary>
+    <summary>Floor moved: −$18/MWh to −$1/MWh</summary>
   </entry>
   <entry>
-    <title>CAPRIDG4_BB2: New floor (2020-12-02)</title>
+    <title>CAPRIDG4_BB2: Wind/solar: offer floor changed (2020-12-02)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=CAPRIDG4_BB2"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=CAPRIDG4_BB2#CAPRIDG4_BB2/2020-12-02/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$0/MWh to −$18/MWh</summary>
+    <summary>Floor moved: −$0/MWh to −$18/MWh</summary>
   </entry>
 </feed>

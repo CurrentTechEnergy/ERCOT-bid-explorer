@@ -5,7 +5,7 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=ANDMDSLR_UNIT1</id>
   <updated>2026-10-24T00:00:00Z</updated>
   <entry>
-    <title>ANDMDSLR: Day-ahead floor changed (2026-05-12)</title>
+    <title>ANDMDSLR: Day-ahead: wind/solar floor changed (2026-05-12)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=ANDMDSLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=ANDMDSLR#ANDMDSLR/2026-05-12/dam_renew_floor</id>
     <updated>2026-10-18T00:00:00Z</updated>
@@ -19,31 +19,31 @@
     <summary>Offers now decided by IPX POWER USA LLC, was ERCOT code YIPLU2</summary>
   </entry>
   <entry>
-    <title>ANDMDSLR: Day-ahead floor changed (2026-04-03)</title>
+    <title>ANDMDSLR: Day-ahead: wind/solar floor changed (2026-04-03)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=ANDMDSLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=ANDMDSLR#ANDMDSLR/2026-04-03/dam_renew_floor</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Day-ahead floor changed: $8 to $0/MWh</summary>
   </entry>
   <entry>
-    <title>ANDMDSLR: Day-ahead floor changed (2026-02-17)</title>
+    <title>ANDMDSLR: Day-ahead: wind/solar floor changed (2026-02-17)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=ANDMDSLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=ANDMDSLR#ANDMDSLR/2026-02-17/dam_renew_floor</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Day-ahead floor changed: $20 to $0/MWh</summary>
   </entry>
   <entry>
-    <title>ANDMDSLR: New floor (2025-07-25)</title>
+    <title>ANDMDSLR: Wind/solar: offer floor changed (2025-07-25)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=ANDMDSLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=ANDMDSLR#ANDMDSLR/2025-07-25/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$4/MWh to −$8/MWh</summary>
+    <summary>Floor moved: −$4/MWh to −$8/MWh</summary>
   </entry>
   <entry>
-    <title>ANDMDSLR: Episode (2025-04-05)</title>
+    <title>ANDMDSLR: Wind/solar: short episode at a different floor (2025-04-05)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=ANDMDSLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=ANDMDSLR#ANDMDSLR/2025-04-05/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Episode: floor −$4/MWh, briefly −$10/MWh, for 4 days</summary>
+    <summary>Short episode: floor −$4/MWh, briefly −$10/MWh, for 4 days</summary>
   </entry>
 </feed>

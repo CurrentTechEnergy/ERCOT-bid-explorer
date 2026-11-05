@@ -5,39 +5,39 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=BAC_CTG2</id>
   <updated>2026-10-25T00:00:00Z</updated>
   <entry>
-    <title>BAC_CTG2: Timescale group changed (2026-08-01)</title>
+    <title>BAC_CTG2: How often it turns off changed (2026-08-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=BAC_CTG2"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=BAC_CTG2#BAC_CTG2/2026-08-01/group</id>
     <updated>2026-10-19T00:00:00Z</updated>
-    <summary>Off for a week or more at a time in 2026-07 to Cycles daily, 1 to 2 times a week in 2026-08</summary>
+    <summary>Off for a week or more at a time (July 2026) to Cycles daily, 1 to 2 times a week (August 2026)</summary>
   </entry>
   <entry>
-    <title>BAC_CT: Minimum-energy offer stepped (2026-07-30)</title>
+    <title>BAC_CT: Day-ahead: minimum-energy offer stepped (2026-07-30)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=BAC_CT"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=BAC_CT#BAC_CT/2026-07-30/dam_mingen_step</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Minimum-energy offer stepped: $69 to $63/MWh ($37 to $34 against the fuel-cost line)</summary>
+    <summary>Minimum-energy offer stepped: $69 to $63/MWh (offer minus fuel cost: $37 to $34/MWh)</summary>
   </entry>
   <entry>
-    <title>BAC_CT: Minimum-energy offer stepped (2026-07-20)</title>
+    <title>BAC_CT: Day-ahead: minimum-energy offer stepped (2026-07-20)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=BAC_CT"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=BAC_CT#BAC_CT/2026-07-20/dam_mingen_step</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Minimum-energy offer stepped: $64 to $69/MWh ($34 to $36 against the fuel-cost line)</summary>
+    <summary>Minimum-energy offer stepped: $64 to $69/MWh (offer minus fuel cost: $34 to $36/MWh)</summary>
   </entry>
   <entry>
-    <title>BAC_CT: Minimum-energy offer stepped (2026-07-11)</title>
+    <title>BAC_CT: Day-ahead: minimum-energy offer stepped (2026-07-11)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=BAC_CT"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=BAC_CT#BAC_CT/2026-07-11/dam_mingen_step</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Minimum-energy offer stepped: $73 to $64/MWh ($39 to $34 against the fuel-cost line)</summary>
+    <summary>Minimum-energy offer stepped: $73 to $64/MWh (offer minus fuel cost: $39 to $34/MWh)</summary>
   </entry>
   <entry>
-    <title>BAC_CTG2: Timescale group changed (2026-07-01)</title>
+    <title>BAC_CTG2: How often it turns off changed (2026-07-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=BAC_CTG2"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=BAC_CTG2#BAC_CTG2/2026-07-01/group</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Cycles daily, over twice a week in 2026-06 to Off for a week or more at a time in 2026-07</summary>
+    <summary>Cycles daily, over twice a week (June 2026) to Off for a week or more at a time (July 2026)</summary>
   </entry>
   <entry>
     <title>BAC_CTG2: Bidding approach shifted (2026-06-14)</title>
@@ -54,11 +54,11 @@
     <summary>Back from a 15-day outage</summary>
   </entry>
   <entry>
-    <title>BAC_CT: Minimum-energy offer stepped (2026-05-30)</title>
+    <title>BAC_CT: Day-ahead: minimum-energy offer stepped (2026-05-30)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=BAC_CT"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=BAC_CT#BAC_CT/2026-05-30/dam_mingen_step</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Minimum-energy offer stepped: $66 to $72/MWh ($35 to $38 against the fuel-cost line)</summary>
+    <summary>Minimum-energy offer stepped: $66 to $72/MWh (offer minus fuel cost: $35 to $38/MWh)</summary>
   </entry>
   <entry>
     <title>BAC_CTG2: Outage started (2026-05-15)</title>
@@ -68,31 +68,31 @@
     <summary>Outage began, lasting 15 days</summary>
   </entry>
   <entry>
-    <title>BAC_CTG2: Minimum-energy offer stepped (2026-05-12)</title>
+    <title>BAC_CTG2: Day-ahead: minimum-energy offer stepped (2026-05-12)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=BAC_CTG2"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=BAC_CTG2#BAC_CTG2/2026-05-12/dam_mingen_step</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Minimum-energy offer stepped: $62 to $67/MWh ($33 to $35 against the fuel-cost line)</summary>
+    <summary>Minimum-energy offer stepped: $62 to $67/MWh (offer minus fuel cost: $33 to $35/MWh)</summary>
   </entry>
   <entry>
-    <title>BAC_CTG2: Minimum-energy offer stepped (2026-05-12)</title>
+    <title>BAC_CTG2: Day-ahead: minimum-energy offer stepped (2026-05-12)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=BAC_CTG2"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=BAC_CTG2#BAC_CTG2/2026-05-12/dam_mingen_step</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Minimum-energy offer stepped: $62 to $67/MWh ($33 to $35 against the fuel-cost line)</summary>
+    <summary>Minimum-energy offer stepped: $62 to $67/MWh (offer minus fuel cost: $33 to $35/MWh)</summary>
   </entry>
   <entry>
-    <title>BAC_CTG2: Timescale group changed (2026-04-01)</title>
+    <title>BAC_CTG2: How often it turns off changed (2026-04-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=BAC_CTG2"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=BAC_CTG2#BAC_CTG2/2026-04-01/group</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Off for days at a time in 2026-03 to Cycles daily, over twice a week in 2026-04</summary>
+    <summary>Off for days at a time (March 2026) to Cycles daily, over twice a week (April 2026)</summary>
   </entry>
   <entry>
-    <title>BAC_CTG2: Timescale group changed (2026-01-01)</title>
+    <title>BAC_CTG2: How often it turns off changed (2026-01-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=BAC_CTG2"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=BAC_CTG2#BAC_CTG2/2026-01-01/group</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Off for a week or more at a time in 2025-12 to Off for days at a time in 2026-01</summary>
+    <summary>Off for a week or more at a time (December 2025) to Off for days at a time (January 2026)</summary>
   </entry>
 </feed>

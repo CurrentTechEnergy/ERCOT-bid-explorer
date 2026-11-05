@@ -5,10 +5,10 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=BAKE_SLR_UNIT2</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
-    <title>BAKE_SLR: New floor (2025-04-08)</title>
+    <title>BAKE_SLR: Wind/solar: offer floor changed (2025-04-08)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=BAKE_SLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=BAKE_SLR#BAKE_SLR/2025-04-08/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$30/MWh to −$42/MWh</summary>
+    <summary>Floor moved: −$30/MWh to −$42/MWh</summary>
   </entry>
 </feed>

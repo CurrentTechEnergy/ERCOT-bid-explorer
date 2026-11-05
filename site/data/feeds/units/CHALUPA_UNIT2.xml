@@ -5,115 +5,115 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=CHALUPA_UNIT2</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
-    <title>CHALUPA: New floor (2026-08-10)</title>
+    <title>CHALUPA: Wind/solar: offer floor changed (2026-08-10)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=CHALUPA"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=CHALUPA#CHALUPA/2026-08-10/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$40/MWh to −$41/MWh</summary>
+    <summary>Floor moved: −$40/MWh to −$41/MWh</summary>
   </entry>
   <entry>
-    <title>CHALUPA: New floor (2025-07-22)</title>
+    <title>CHALUPA: Wind/solar: offer floor changed (2025-07-22)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=CHALUPA"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=CHALUPA#CHALUPA/2025-07-22/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$38/MWh to −$40/MWh</summary>
+    <summary>Floor moved: −$38/MWh to −$40/MWh</summary>
   </entry>
   <entry>
-    <title>CHALUPA: New floor (2025-05-16)</title>
+    <title>CHALUPA: Wind/solar: offer floor changed (2025-05-16)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=CHALUPA"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=CHALUPA#CHALUPA/2025-05-16/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$34/MWh to −$38/MWh</summary>
+    <summary>Floor moved: −$34/MWh to −$38/MWh</summary>
   </entry>
   <entry>
-    <title>CHALUPA: Back to an earlier floor (2022-07-22)</title>
+    <title>CHALUPA: Wind/solar: back to an earlier floor (2022-07-22)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=CHALUPA"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=CHALUPA#CHALUPA/2022-07-22/renew_floor_back</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Back to an earlier floor: −$33/MWh to −$34/MWh</summary>
   </entry>
   <entry>
-    <title>CHALUPA: Back to an earlier floor (2022-05-07)</title>
+    <title>CHALUPA: Wind/solar: back to an earlier floor (2022-05-07)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=CHALUPA"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=CHALUPA#CHALUPA/2022-05-07/renew_floor_back</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Back to an earlier floor: −$34/MWh to −$33/MWh</summary>
   </entry>
   <entry>
-    <title>CHALUPA: New floor (2022-04-22)</title>
+    <title>CHALUPA: Wind/solar: offer floor changed (2022-04-22)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=CHALUPA"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=CHALUPA#CHALUPA/2022-04-22/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$33/MWh to −$34/MWh</summary>
+    <summary>Floor moved: −$33/MWh to −$34/MWh</summary>
   </entry>
   <entry>
-    <title>CHALUPA: New floor (2022-03-30)</title>
+    <title>CHALUPA: Wind/solar: offer floor changed (2022-03-30)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=CHALUPA"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=CHALUPA#CHALUPA/2022-03-30/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$32/MWh to −$33/MWh</summary>
+    <summary>Floor moved: −$32/MWh to −$33/MWh</summary>
   </entry>
   <entry>
-    <title>CHALUPA: Stopped moving within the day (2022-02-12)</title>
+    <title>CHALUPA: Wind/solar: offer stopped moving within the day (2022-02-12)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=CHALUPA"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=CHALUPA#CHALUPA/2022-02-12/renew_moving_off</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Stopped moving within the day: now a floor of −$32/MWh</summary>
   </entry>
   <entry>
-    <title>CHALUPA: Started moving within the day (2021-05-25)</title>
+    <title>CHALUPA: Wind/solar: offer started moving within the day (2021-05-25)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=CHALUPA"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=CHALUPA#CHALUPA/2021-05-25/renew_moving_on</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Started moving within the day (was a floor of −$24/MWh)</summary>
+    <summary>Started moving within the day: was a floor of −$24/MWh</summary>
   </entry>
   <entry>
-    <title>CHALUPA: New floor (2021-05-19)</title>
+    <title>CHALUPA: Wind/solar: offer floor changed (2021-05-19)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=CHALUPA"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=CHALUPA#CHALUPA/2021-05-19/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: $0/MWh to −$24/MWh</summary>
+    <summary>Floor moved: $0/MWh to −$24/MWh</summary>
   </entry>
   <entry>
-    <title>CHALUPA: Episode (2021-04-19)</title>
+    <title>CHALUPA: Wind/solar: short episode at a different floor (2021-04-19)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=CHALUPA"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=CHALUPA#CHALUPA/2021-04-19/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Episode: floor $0/MWh, briefly −$5/MWh, for 1 day</summary>
+    <summary>Short episode: floor $0/MWh, briefly −$5/MWh, for 1 day</summary>
   </entry>
   <entry>
-    <title>CHALUPA: Episode (2021-04-13)</title>
+    <title>CHALUPA: Wind/solar: short episode at a different floor (2021-04-13)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=CHALUPA"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=CHALUPA#CHALUPA/2021-04-13/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Episode: floor $0/MWh, briefly −$8/MWh, for 1 day</summary>
+    <summary>Short episode: floor $0/MWh, briefly −$8/MWh, for 1 day</summary>
   </entry>
   <entry>
-    <title>CHALUPA: New floor (2021-04-10)</title>
+    <title>CHALUPA: Wind/solar: offer floor changed (2021-04-10)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=CHALUPA"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=CHALUPA#CHALUPA/2021-04-10/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$32/MWh to $0/MWh</summary>
+    <summary>Floor moved: −$32/MWh to $0/MWh</summary>
   </entry>
   <entry>
-    <title>CHALUPA: New floor (2021-04-02)</title>
+    <title>CHALUPA: Wind/solar: offer floor changed (2021-04-02)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=CHALUPA"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=CHALUPA#CHALUPA/2021-04-02/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$25/MWh to −$32/MWh</summary>
+    <summary>Floor moved: −$25/MWh to −$32/MWh</summary>
   </entry>
   <entry>
-    <title>CHALUPA: Episode (2021-02-17)</title>
+    <title>CHALUPA: Wind/solar: short episode at a different floor (2021-02-17)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=CHALUPA"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=CHALUPA#CHALUPA/2021-02-17/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Episode: floor −$25/MWh, briefly −$42/MWh, for 3 days</summary>
+    <summary>Short episode: floor −$25/MWh, briefly −$42/MWh, for 3 days</summary>
   </entry>
   <entry>
-    <title>CHALUPA: New floor (2020-12-24)</title>
+    <title>CHALUPA: Wind/solar: offer floor changed (2020-12-24)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=CHALUPA"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=CHALUPA#CHALUPA/2020-12-24/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: $0/MWh to −$25/MWh</summary>
+    <summary>Floor moved: $0/MWh to −$25/MWh</summary>
   </entry>
 </feed>

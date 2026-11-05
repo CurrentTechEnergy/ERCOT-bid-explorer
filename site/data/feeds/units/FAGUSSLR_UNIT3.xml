@@ -5,10 +5,10 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=FAGUSSLR_UNIT3</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
-    <title>FAGUSSLR: New floor (2025-11-13)</title>
+    <title>FAGUSSLR: Wind/solar: offer floor changed (2025-11-13)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=FAGUSSLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=FAGUSSLR#FAGUSSLR/2025-11-13/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: $0/MWh to −$40/MWh</summary>
+    <summary>Floor moved: $0/MWh to −$40/MWh</summary>
   </entry>
 </feed>

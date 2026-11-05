@@ -5,17 +5,17 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=EXGNWTL_WIND_1</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
-    <title>EXGNWTL: New floor (2023-01-01)</title>
+    <title>EXGNWTL: Wind/solar: offer floor changed (2023-01-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=EXGNWTL"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=EXGNWTL#EXGNWTL/2023-01-01/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$32/MWh to $0/MWh</summary>
+    <summary>Floor moved: −$32/MWh to $0/MWh</summary>
   </entry>
   <entry>
-    <title>EXGNWTL: New floor (2019-06-20)</title>
+    <title>EXGNWTL: Wind/solar: offer floor changed (2019-06-20)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=EXGNWTL"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=EXGNWTL#EXGNWTL/2019-06-20/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$30/MWh to −$32/MWh</summary>
+    <summary>Floor moved: −$30/MWh to −$32/MWh</summary>
   </entry>
 </feed>

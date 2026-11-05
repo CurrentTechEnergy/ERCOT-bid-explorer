@@ -5,17 +5,17 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=PENA3_UNIT3_J</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
-    <title>PENA3_UNIT3_J: New floor (2026-01-19)</title>
+    <title>PENA3_UNIT3_J: Wind/solar: offer floor changed (2026-01-19)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=PENA3_UNIT3_J"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=PENA3_UNIT3_J#PENA3_UNIT3_J/2026-01-19/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$2/MWh to −$3/MWh</summary>
+    <summary>Floor moved: −$2/MWh to −$3/MWh</summary>
   </entry>
   <entry>
-    <title>PENA3_UNIT3_J: New floor (2024-09-18)</title>
+    <title>PENA3_UNIT3_J: Wind/solar: offer floor changed (2024-09-18)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=PENA3_UNIT3_J"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=PENA3_UNIT3_J#PENA3_UNIT3_J/2024-09-18/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: $0/MWh to −$2/MWh</summary>
+    <summary>Floor moved: $0/MWh to −$2/MWh</summary>
   </entry>
 </feed>

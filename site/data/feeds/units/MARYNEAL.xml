@@ -5,45 +5,45 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=MARYNEAL</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
-    <title>MARYNEAL: Episode (2026-04-14)</title>
+    <title>MARYNEAL: Wind/solar: short episode at a different floor (2026-04-14)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=MARYNEAL"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=MARYNEAL#MARYNEAL/2026-04-14/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Episode: floor −$18/MWh, briefly −$8/MWh, for 1 day</summary>
+    <summary>Short episode: floor −$18/MWh, briefly −$8/MWh, for 1 day</summary>
   </entry>
   <entry>
-    <title>MARYNEAL: Episode (2025-06-11)</title>
+    <title>MARYNEAL: Wind/solar: short episode at a different floor (2025-06-11)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=MARYNEAL"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=MARYNEAL#MARYNEAL/2025-06-11/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Episode: floor −$18/MWh, briefly −$40/MWh, for 1 day</summary>
+    <summary>Short episode: floor −$18/MWh, briefly −$40/MWh, for 1 day</summary>
   </entry>
   <entry>
-    <title>MARYNEAL: Episode (2025-06-09)</title>
+    <title>MARYNEAL: Wind/solar: short episode at a different floor (2025-06-09)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=MARYNEAL"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=MARYNEAL#MARYNEAL/2025-06-09/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Episode: floor −$18/MWh, briefly −$40/MWh, for 1 day</summary>
+    <summary>Short episode: floor −$18/MWh, briefly −$40/MWh, for 1 day</summary>
   </entry>
   <entry>
-    <title>MARYNEAL: New floor (2025-06-01)</title>
+    <title>MARYNEAL: Wind/solar: offer floor changed (2025-06-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=MARYNEAL"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=MARYNEAL#MARYNEAL/2025-06-01/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$40/MWh to −$18/MWh</summary>
+    <summary>Floor moved: −$40/MWh to −$18/MWh</summary>
   </entry>
   <entry>
-    <title>MARYNEAL: Episode (2025-05-29)</title>
+    <title>MARYNEAL: Wind/solar: short episode at a different floor (2025-05-29)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=MARYNEAL"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=MARYNEAL#MARYNEAL/2025-05-29/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Episode: floor −$40/MWh, briefly −$18/MWh, for 1 day</summary>
+    <summary>Short episode: floor −$40/MWh, briefly −$18/MWh, for 1 day</summary>
   </entry>
   <entry>
-    <title>MARYNEAL: New floor (2021-11-09)</title>
+    <title>MARYNEAL: Wind/solar: offer floor changed (2021-11-09)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=MARYNEAL"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=MARYNEAL#MARYNEAL/2021-11-09/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$16/MWh to −$40/MWh</summary>
+    <summary>Floor moved: −$16/MWh to −$40/MWh</summary>
   </entry>
 </feed>

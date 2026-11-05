@@ -5,66 +5,66 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=VENADO_UNIT1</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
-    <title>VENADO: New floor (2026-02-24)</title>
+    <title>VENADO: Wind/solar: offer floor changed (2026-02-24)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=VENADO"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=VENADO#VENADO/2026-02-24/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$37/MWh to −$38/MWh</summary>
+    <summary>Floor moved: −$37/MWh to −$38/MWh</summary>
   </entry>
   <entry>
-    <title>VENADO: New floor (2024-12-31)</title>
+    <title>VENADO: Wind/solar: offer floor changed (2024-12-31)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=VENADO"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=VENADO#VENADO/2024-12-31/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$35/MWh to −$37/MWh</summary>
+    <summary>Floor moved: −$35/MWh to −$37/MWh</summary>
   </entry>
   <entry>
-    <title>VENADO: New floor (2024-06-06)</title>
+    <title>VENADO: Wind/solar: offer floor changed (2024-06-06)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=VENADO"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=VENADO#VENADO/2024-06-06/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$28/MWh to −$35/MWh</summary>
+    <summary>Floor moved: −$28/MWh to −$35/MWh</summary>
   </entry>
   <entry>
-    <title>VENADO: New floor (2024-01-03)</title>
+    <title>VENADO: Wind/solar: offer floor changed (2024-01-03)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=VENADO"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=VENADO#VENADO/2024-01-03/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$35/MWh to −$28/MWh</summary>
+    <summary>Floor moved: −$35/MWh to −$28/MWh</summary>
   </entry>
   <entry>
-    <title>VENADO: New floor (2023-07-28)</title>
+    <title>VENADO: Wind/solar: offer floor changed (2023-07-28)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=VENADO"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=VENADO#VENADO/2023-07-28/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$33/MWh to −$35/MWh</summary>
+    <summary>Floor moved: −$33/MWh to −$35/MWh</summary>
   </entry>
   <entry>
-    <title>VENADO: New floor (2022-05-12)</title>
+    <title>VENADO: Wind/solar: offer floor changed (2022-05-12)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=VENADO"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=VENADO#VENADO/2022-05-12/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$34/MWh to −$33/MWh</summary>
+    <summary>Floor moved: −$34/MWh to −$33/MWh</summary>
   </entry>
   <entry>
-    <title>VENADO: New floor (2022-05-05)</title>
+    <title>VENADO: Wind/solar: offer floor changed (2022-05-05)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=VENADO"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=VENADO#VENADO/2022-05-05/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$32/MWh to −$34/MWh</summary>
+    <summary>Floor moved: −$32/MWh to −$34/MWh</summary>
   </entry>
   <entry>
-    <title>VENADO: Back to an earlier floor (2021-01-07)</title>
+    <title>VENADO: Wind/solar: back to an earlier floor (2021-01-07)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=VENADO"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=VENADO#VENADO/2021-01-07/renew_floor_back</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Back to an earlier floor: −$250/MWh to −$32/MWh</summary>
   </entry>
   <entry>
-    <title>VENADO: New floor (2020-12-26)</title>
+    <title>VENADO: Wind/solar: offer floor changed (2020-12-26)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=VENADO"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=VENADO#VENADO/2020-12-26/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$32/MWh to −$250/MWh</summary>
+    <summary>Floor moved: −$32/MWh to −$250/MWh</summary>
   </entry>
 </feed>

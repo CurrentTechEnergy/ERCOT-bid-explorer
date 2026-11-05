@@ -5,45 +5,45 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=MCDLD_SBW</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
-    <title>MCDLD_SBW: New floor (2022-03-11)</title>
+    <title>MCDLD_SBW: Wind/solar: offer floor changed (2022-03-11)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=MCDLD_SBW"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=MCDLD_SBW#MCDLD_SBW/2022-03-11/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: $1/MWh to −$25/MWh</summary>
+    <summary>Floor moved: $1/MWh to −$25/MWh</summary>
   </entry>
   <entry>
-    <title>MCDLD_SBW: New floor (2021-08-04)</title>
+    <title>MCDLD_SBW: Wind/solar: offer floor changed (2021-08-04)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=MCDLD_SBW"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=MCDLD_SBW#MCDLD_SBW/2021-08-04/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: $3/MWh to $1/MWh</summary>
+    <summary>Floor moved: $3/MWh to $1/MWh</summary>
   </entry>
   <entry>
-    <title>MCDLD_SBW: New floor (2021-04-09)</title>
+    <title>MCDLD_SBW: Wind/solar: offer floor changed (2021-04-09)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=MCDLD_SBW"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=MCDLD_SBW#MCDLD_SBW/2021-04-09/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: $4/MWh to $3/MWh</summary>
+    <summary>Floor moved: $4/MWh to $3/MWh</summary>
   </entry>
   <entry>
-    <title>MCDLD_SBW: Back to an earlier floor (2020-11-08)</title>
+    <title>MCDLD_SBW: Wind/solar: back to an earlier floor (2020-11-08)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=MCDLD_SBW"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=MCDLD_SBW#MCDLD_SBW/2020-11-08/renew_floor_back</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Back to an earlier floor: −$1/MWh to $4/MWh</summary>
   </entry>
   <entry>
-    <title>MCDLD_SBW: Back to an earlier floor (2020-11-02)</title>
+    <title>MCDLD_SBW: Wind/solar: back to an earlier floor (2020-11-02)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=MCDLD_SBW"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=MCDLD_SBW#MCDLD_SBW/2020-11-02/renew_floor_back</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Back to an earlier floor: $4/MWh to −$1/MWh</summary>
   </entry>
   <entry>
-    <title>MCDLD_SBW: New floor (2020-09-30)</title>
+    <title>MCDLD_SBW: Wind/solar: offer floor changed (2020-09-30)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=MCDLD_SBW"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=MCDLD_SBW#MCDLD_SBW/2020-09-30/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$1/MWh to $4/MWh</summary>
+    <summary>Floor moved: −$1/MWh to $4/MWh</summary>
   </entry>
 </feed>

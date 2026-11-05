@@ -5,11 +5,11 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=OECCS_CC1_4</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
-    <title>OECCS_CC1: Minimum-energy offer stepped (2026-06-20)</title>
+    <title>OECCS_CC1: Day-ahead: minimum-energy offer stepped (2026-06-20)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=OECCS_CC1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=OECCS_CC1#OECCS_CC1/2026-06-20/dam_mingen_step</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Minimum-energy offer stepped: $0 to $19/MWh ($4 to $7 against the fuel-cost line)</summary>
+    <summary>Minimum-energy offer stepped: $0 to $19/MWh (offer minus fuel cost: $4 to $7/MWh)</summary>
   </entry>
   <entry>
     <title>OECCS_CC1_4: Bidding approach shifted (2026-06-19)</title>
@@ -19,21 +19,21 @@
     <summary>MW above LSL offered at or below $0: 99% to 0% of the day</summary>
   </entry>
   <entry>
-    <title>OECCS_CC1: Start-up cost changed (2026-03-15)</title>
+    <title>OECCS_CC1: Day-ahead: start-up cost changed (2026-03-15)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=OECCS_CC1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=OECCS_CC1#OECCS_CC1/2026-03-15/dam_start_change</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Start-up cost changed: hot start $7,500 to $9,500</summary>
   </entry>
   <entry>
-    <title>OECCS_CC1: Start-up cost changed (2026-03-04)</title>
+    <title>OECCS_CC1: Day-ahead: start-up cost changed (2026-03-04)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=OECCS_CC1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=OECCS_CC1#OECCS_CC1/2026-03-04/dam_start_change</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Start-up cost changed: hot start $8,000 to $4,303</summary>
   </entry>
   <entry>
-    <title>OECCS_CC1: Start-up cost changed (2026-02-23)</title>
+    <title>OECCS_CC1: Day-ahead: start-up cost changed (2026-02-23)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=OECCS_CC1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=OECCS_CC1#OECCS_CC1/2026-02-23/dam_start_change</id>
     <updated>2026-10-18T00:00:00Z</updated>
@@ -54,21 +54,21 @@
     <summary>Offer price vs peer median: −$28 to −$14/MWh</summary>
   </entry>
   <entry>
-    <title>OECCS_CC1: Start-up cost changed (2026-01-31)</title>
+    <title>OECCS_CC1: Day-ahead: start-up cost changed (2026-01-31)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=OECCS_CC1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=OECCS_CC1#OECCS_CC1/2026-01-31/dam_start_change</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Start-up cost changed: hot start $4,868 to $2,158</summary>
   </entry>
   <entry>
-    <title>OECCS_CC1: Minimum-energy offer stepped (2026-01-31)</title>
+    <title>OECCS_CC1: Day-ahead: minimum-energy offer stepped (2026-01-31)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=OECCS_CC1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=OECCS_CC1#OECCS_CC1/2026-01-31/dam_mingen_step</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Minimum-energy offer stepped: $23 to $12/MWh ($14 to $14 against the fuel-cost line)</summary>
+    <summary>Minimum-energy offer stepped: $23 to $12/MWh (offer minus fuel cost: $14 to $14/MWh)</summary>
   </entry>
   <entry>
-    <title>OECCS_CC1: Priced out of the day-ahead (2026-01-27)</title>
+    <title>OECCS_CC1: Day-ahead: priced out (2026-01-27)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=OECCS_CC1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=OECCS_CC1#OECCS_CC1/2026-01-27/dam_priced_out</id>
     <updated>2026-10-18T00:00:00Z</updated>
@@ -82,7 +82,7 @@
     <summary>Offer price vs peer median: −$14 to −$28/MWh</summary>
   </entry>
   <entry>
-    <title>OECCS_CC1: Start-up cost changed (2026-01-24)</title>
+    <title>OECCS_CC1: Day-ahead: start-up cost changed (2026-01-24)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=OECCS_CC1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=OECCS_CC1#OECCS_CC1/2026-01-24/dam_start_change</id>
     <updated>2026-10-18T00:00:00Z</updated>
@@ -96,7 +96,7 @@
     <summary>MW above LSL offered at or below $0: 100% to 0% of the day</summary>
   </entry>
   <entry>
-    <title>OECCS_CC1: Priced out of the day-ahead (2026-01-22)</title>
+    <title>OECCS_CC1: Day-ahead: priced out (2026-01-22)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=OECCS_CC1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=OECCS_CC1#OECCS_CC1/2026-01-22/dam_priced_out</id>
     <updated>2026-10-18T00:00:00Z</updated>
@@ -110,11 +110,11 @@
     <summary>MW above LSL offered at or below $0: 59% to 100% of the day</summary>
   </entry>
   <entry>
-    <title>OECCS_CC1: Minimum-energy offer stepped (2026-01-13)</title>
+    <title>OECCS_CC1: Day-ahead: minimum-energy offer stepped (2026-01-13)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=OECCS_CC1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=OECCS_CC1#OECCS_CC1/2026-01-13/dam_mingen_step</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Minimum-energy offer stepped: $0 to $7/MWh ($3 to $10 against the fuel-cost line)</summary>
+    <summary>Minimum-energy offer stepped: $0 to $7/MWh (offer minus fuel cost: $3 to $10/MWh)</summary>
   </entry>
   <entry>
     <title>OECCS_CC1_4: Bidding approach shifted (2026-01-08)</title>
@@ -124,11 +124,11 @@
     <summary>MW above LSL offered at or below $0: 100% to 59% of the day</summary>
   </entry>
   <entry>
-    <title>OECCS_CC1: Minimum-energy offer stepped (2026-01-06)</title>
+    <title>OECCS_CC1: Day-ahead: minimum-energy offer stepped (2026-01-06)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=OECCS_CC1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=OECCS_CC1#OECCS_CC1/2026-01-06/dam_mingen_step</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Minimum-energy offer stepped: $7 to $0/MWh ($12 to $3 against the fuel-cost line)</summary>
+    <summary>Minimum-energy offer stepped: $7 to $0/MWh (offer minus fuel cost: $12 to $3/MWh)</summary>
   </entry>
   <entry>
     <title>OECCS_CC1_4: Bidding approach shifted (2025-12-30)</title>
@@ -138,11 +138,11 @@
     <summary>Offer price vs peer median: −$25 to −$14/MWh</summary>
   </entry>
   <entry>
-    <title>OECCS_CC1: Minimum-energy offer stepped (2025-12-30)</title>
+    <title>OECCS_CC1: Day-ahead: minimum-energy offer stepped (2025-12-30)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=OECCS_CC1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=OECCS_CC1#OECCS_CC1/2025-12-30/dam_mingen_step</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Minimum-energy offer stepped: $0 to $7/MWh ($11 to $12 against the fuel-cost line)</summary>
+    <summary>Minimum-energy offer stepped: $0 to $7/MWh (offer minus fuel cost: $11 to $12/MWh)</summary>
   </entry>
   <entry>
     <title>OECCS_CC1_4: Bidding approach shifted (2025-12-20)</title>
@@ -152,11 +152,11 @@
     <summary>Offer price vs peer median: −$25 to −$14/MWh</summary>
   </entry>
   <entry>
-    <title>OECCS_CC1: Minimum-energy offer stepped (2025-12-14)</title>
+    <title>OECCS_CC1: Day-ahead: minimum-energy offer stepped (2025-12-14)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=OECCS_CC1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=OECCS_CC1#OECCS_CC1/2025-12-14/dam_mingen_step</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Minimum-energy offer stepped: $7 to $0/MWh ($7 to $6 against the fuel-cost line)</summary>
+    <summary>Minimum-energy offer stepped: $7 to $0/MWh (offer minus fuel cost: $7 to $6/MWh)</summary>
   </entry>
   <entry>
     <title>OECCS_CC1_4: Bidding approach shifted (2025-12-07)</title>

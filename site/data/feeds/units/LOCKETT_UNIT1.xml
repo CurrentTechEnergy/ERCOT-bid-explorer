@@ -33,45 +33,45 @@
     <summary>Outage began, lasting 10 days</summary>
   </entry>
   <entry>
-    <title>LOCKETT: New floor (2025-03-27)</title>
+    <title>LOCKETT: Wind/solar: offer floor changed (2025-03-27)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=LOCKETT"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=LOCKETT#LOCKETT/2025-03-27/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$37/MWh to −$40/MWh</summary>
+    <summary>Floor moved: −$37/MWh to −$40/MWh</summary>
   </entry>
   <entry>
-    <title>LOCKETT: New floor (2023-12-02)</title>
+    <title>LOCKETT: Wind/solar: offer floor changed (2023-12-02)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=LOCKETT"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=LOCKETT#LOCKETT/2023-12-02/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$33/MWh to −$37/MWh</summary>
+    <summary>Floor moved: −$33/MWh to −$37/MWh</summary>
   </entry>
   <entry>
-    <title>LOCKETT: Back to an earlier floor (2022-11-16)</title>
+    <title>LOCKETT: Wind/solar: back to an earlier floor (2022-11-16)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=LOCKETT"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=LOCKETT#LOCKETT/2022-11-16/renew_floor_back</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Back to an earlier floor: −$35/MWh to −$33/MWh</summary>
   </entry>
   <entry>
-    <title>LOCKETT: New floor (2022-10-31)</title>
+    <title>LOCKETT: Wind/solar: offer floor changed (2022-10-31)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=LOCKETT"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=LOCKETT#LOCKETT/2022-10-31/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$33/MWh to −$35/MWh</summary>
+    <summary>Floor moved: −$33/MWh to −$35/MWh</summary>
   </entry>
   <entry>
-    <title>LOCKETT: New floor (2022-06-23)</title>
+    <title>LOCKETT: Wind/solar: offer floor changed (2022-06-23)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=LOCKETT"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=LOCKETT#LOCKETT/2022-06-23/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$32/MWh to −$33/MWh</summary>
+    <summary>Floor moved: −$32/MWh to −$33/MWh</summary>
   </entry>
   <entry>
-    <title>LOCKETT: New floor (2019-08-01)</title>
+    <title>LOCKETT: Wind/solar: offer floor changed (2019-08-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=LOCKETT"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=LOCKETT#LOCKETT/2019-08-01/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: $0/MWh to −$32/MWh</summary>
+    <summary>Floor moved: $0/MWh to −$32/MWh</summary>
   </entry>
 </feed>

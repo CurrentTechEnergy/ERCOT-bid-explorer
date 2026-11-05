@@ -5,10 +5,10 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=LASSO_UNIT1</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
-    <title>LASSO: New floor (2020-12-21)</title>
+    <title>LASSO: Wind/solar: offer floor changed (2020-12-21)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=LASSO"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=LASSO#LASSO/2020-12-21/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$50/MWh to −$250/MWh</summary>
+    <summary>Floor moved: −$50/MWh to −$250/MWh</summary>
   </entry>
 </feed>

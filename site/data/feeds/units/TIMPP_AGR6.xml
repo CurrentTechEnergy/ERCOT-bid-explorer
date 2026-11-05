@@ -5,21 +5,21 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=TIMPP_AGR6</id>
   <updated>2026-10-24T00:00:00Z</updated>
   <entry>
-    <title>TIMPP_AGR: Minimum-energy offer stepped (2026-07-14)</title>
+    <title>TIMPP_AGR: Day-ahead: minimum-energy offer stepped (2026-07-14)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=TIMPP_AGR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=TIMPP_AGR#TIMPP_AGR/2026-07-14/dam_mingen_step</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Minimum-energy offer stepped: $58 to $53/MWh ($23 to $20 against the fuel-cost line)</summary>
+    <summary>Minimum-energy offer stepped: $58 to $53/MWh (offer minus fuel cost: $23 to $20/MWh)</summary>
   </entry>
   <entry>
-    <title>TIMPP_AGR: Start-up cost changed (2026-05-12)</title>
+    <title>TIMPP_AGR: Day-ahead: start-up cost changed (2026-05-12)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=TIMPP_AGR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=TIMPP_AGR#TIMPP_AGR/2026-05-12/dam_start_change</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Start-up cost changed: hot start $167 to $85</summary>
   </entry>
   <entry>
-    <title>TIMPP_AGR: Start-up cost changed (2026-05-06)</title>
+    <title>TIMPP_AGR: Day-ahead: start-up cost changed (2026-05-06)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=TIMPP_AGR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=TIMPP_AGR#TIMPP_AGR/2026-05-06/dam_start_change</id>
     <updated>2026-10-18T00:00:00Z</updated>
@@ -33,11 +33,11 @@
     <summary>Running without an offer curve: 100% to 0% of the day</summary>
   </entry>
   <entry>
-    <title>TIMPP_AGR6: Timescale group changed (2026-04-01)</title>
+    <title>TIMPP_AGR6: How often it turns off changed (2026-04-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=TIMPP_AGR6"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=TIMPP_AGR6#TIMPP_AGR6/2026-04-01/group</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Always on when available in 2026-03 to Cycles daily, over twice a week in 2026-04</summary>
+    <summary>Always on when available (March 2026) to Cycles daily, over twice a week (April 2026)</summary>
   </entry>
   <entry>
     <title>TIMPP_AGR6: Outage ended (2026-02-13)</title>

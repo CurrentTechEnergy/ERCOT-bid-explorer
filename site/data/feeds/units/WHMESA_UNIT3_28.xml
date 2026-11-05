@@ -5,31 +5,31 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=WHMESA_UNIT3_28</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
-    <title>WHMESA_UNIT3: New floor (2026-02-12)</title>
+    <title>WHMESA_UNIT3: Wind/solar: offer floor changed (2026-02-12)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=WHMESA_UNIT3"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=WHMESA_UNIT3#WHMESA_UNIT3/2026-02-12/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$38/MWh to −$40/MWh</summary>
+    <summary>Floor moved: −$38/MWh to −$40/MWh</summary>
   </entry>
   <entry>
-    <title>WHMESA_UNIT3: New floor (2025-02-22)</title>
+    <title>WHMESA_UNIT3: Wind/solar: offer floor changed (2025-02-22)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=WHMESA_UNIT3"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=WHMESA_UNIT3#WHMESA_UNIT3/2025-02-22/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$37/MWh to −$38/MWh</summary>
+    <summary>Floor moved: −$37/MWh to −$38/MWh</summary>
   </entry>
   <entry>
-    <title>WHMESA_UNIT3: New floor (2024-03-23)</title>
+    <title>WHMESA_UNIT3: Wind/solar: offer floor changed (2024-03-23)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=WHMESA_UNIT3"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=WHMESA_UNIT3#WHMESA_UNIT3/2024-03-23/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$35/MWh to −$37/MWh</summary>
+    <summary>Floor moved: −$35/MWh to −$37/MWh</summary>
   </entry>
   <entry>
-    <title>WHMESA_UNIT3: New floor (2023-01-18)</title>
+    <title>WHMESA_UNIT3: Wind/solar: offer floor changed (2023-01-18)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=WHMESA_UNIT3"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=WHMESA_UNIT3#WHMESA_UNIT3/2023-01-18/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$31/MWh to −$35/MWh</summary>
+    <summary>Floor moved: −$31/MWh to −$35/MWh</summary>
   </entry>
 </feed>

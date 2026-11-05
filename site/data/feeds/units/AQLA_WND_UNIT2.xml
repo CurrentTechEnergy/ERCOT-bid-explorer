@@ -5,11 +5,11 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=AQLA_WND_UNIT2</id>
   <updated>2026-11-05T00:00:00Z</updated>
   <entry>
-    <title>AQLA_WND: New floor (2026-07-22)</title>
+    <title>AQLA_WND: Wind/solar: offer floor changed (2026-07-22)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=AQLA_WND"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=AQLA_WND#AQLA_WND/2026-07-22/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$38/MWh to −$47/MWh</summary>
+    <summary>Floor moved: −$38/MWh to −$47/MWh</summary>
   </entry>
   <entry>
     <title>AQLA_WND_UNIT2: Outage ended (2026-07-09)</title>
@@ -30,6 +30,6 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=AQLA_WND_UNIT2"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=AQLA_WND_UNIT2#AQLA_WND_UNIT2/2026-05-01/new_unit</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>First day in SCED, first HSL above zero 2026-07-14; up to 95 MW so far</summary>
+    <summary>First day in ERCOT&#x27;s real-time dispatch (SCED), first output capacity (HSL) reported 2026-07-14; up to 95 MW so far</summary>
   </entry>
 </feed>

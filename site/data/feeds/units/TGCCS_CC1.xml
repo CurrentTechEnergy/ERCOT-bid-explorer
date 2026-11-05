@@ -3,41 +3,41 @@
   <title>TGCCS_CC1: bidding and operating changes</title>
   <link href="https://ercotbids.currenttech.energy/unit.html?unit=TGCCS_CC1"/>
   <id>https://ercotbids.currenttech.energy/unit.html?unit=TGCCS_CC1</id>
-  <updated>2026-10-31T00:00:00Z</updated>
+  <updated>2026-11-05T00:00:00Z</updated>
   <entry>
     <title>TGCCS_CC1: Turn-off point moved (2026-07-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=TGCCS_CC1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=TGCCS_CC1#TGCCS_CC1/2026-07-01/turnoff/2</id>
     <updated>2026-10-31T00:00:00Z</updated>
-    <summary>Turn-off point with an award every hour $7,084 to riding through per MW of minimum output in July; the next month held it</summary>
+    <summary>Turn-off point (award every hour) in July: from $6,839 per MW of minimum output to never turning off; the next month held it</summary>
   </entry>
   <entry>
-    <title>TGCCS_CC1: Timescale group changed (2026-07-01)</title>
+    <title>TGCCS_CC1: How often it turns off changed (2026-07-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=TGCCS_CC1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=TGCCS_CC1#TGCCS_CC1/2026-07-01/group</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Off for days at a time in 2026-06 to Always on when available in 2026-07</summary>
+    <summary>Off for days at a time (June 2026) to Always on when available (July 2026)</summary>
   </entry>
   <entry>
-    <title>TGCCS_CC1: Turn-off point moved (2026-06-01)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=TGCCS_CC1"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=TGCCS_CC1#TGCCS_CC1/2026-06-01/turnoff/2</id>
-    <updated>2026-10-31T00:00:00Z</updated>
-    <summary>Turn-off point with an award every hour riding through to $7,084 per MW of minimum output in June; the next month went back</summary>
-  </entry>
-  <entry>
-    <title>TGCCS_CC1: Timescale group changed (2026-06-01)</title>
+    <title>TGCCS_CC1: How often it turns off changed (2026-06-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=TGCCS_CC1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=TGCCS_CC1#TGCCS_CC1/2026-06-01/group</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Off for a week or more at a time in 2026-05 to Off for days at a time in 2026-06</summary>
+    <summary>Off for a week or more at a time (May 2026) to Off for days at a time (June 2026)</summary>
   </entry>
   <entry>
-    <title>TGCCS_CC1: Timescale group changed (2026-05-01)</title>
+    <title>TGCCS_CC1: Turn-off point moved (2026-05-01)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=TGCCS_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=TGCCS_CC1#TGCCS_CC1/2026-05-01/turnoff/2</id>
+    <updated>2026-11-05T00:00:00Z</updated>
+    <summary>Turn-off point (award every hour) in May: from never turning off to $7,945 per MW of minimum output; the next month held it</summary>
+  </entry>
+  <entry>
+    <title>TGCCS_CC1: How often it turns off changed (2026-05-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=TGCCS_CC1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=TGCCS_CC1#TGCCS_CC1/2026-05-01/group</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Off for days at a time in 2026-04 to Off for a week or more at a time in 2026-05</summary>
+    <summary>Off for days at a time (April 2026) to Off for a week or more at a time (May 2026)</summary>
   </entry>
   <entry>
     <title>TGCCS_CC1: Outage ended (2026-03-27)</title>
@@ -68,11 +68,11 @@
     <summary>Outage began, lasting 7 days</summary>
   </entry>
   <entry>
-    <title>TGCCS_CC1: Timescale group changed (2026-01-01)</title>
+    <title>TGCCS_CC1: How often it turns off changed (2026-01-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=TGCCS_CC1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=TGCCS_CC1#TGCCS_CC1/2026-01-01/group</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Off for a week or more at a time in 2025-12 to Off for days at a time in 2026-01</summary>
+    <summary>Off for a week or more at a time (December 2025) to Off for days at a time (January 2026)</summary>
   </entry>
   <entry>
     <title>TGCCS_CC1: Decision maker or QSE changed (2024-01-24)</title>

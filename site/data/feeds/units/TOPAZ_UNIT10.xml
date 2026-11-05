@@ -12,18 +12,18 @@
     <summary>Offer price vs peer median: −$0 to $539/MWh</summary>
   </entry>
   <entry>
-    <title>TOPAZ_UNIT10: Timescale group changed (2026-08-01)</title>
+    <title>TOPAZ_UNIT10: How often it turns off changed (2026-08-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=TOPAZ_UNIT10"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=TOPAZ_UNIT10#TOPAZ_UNIT10/2026-08-01/group</id>
     <updated>2026-10-19T00:00:00Z</updated>
-    <summary>Off for a week or more at a time in 2026-07 to Cycles daily, 1 to 2 times a week in 2026-08</summary>
+    <summary>Off for a week or more at a time (July 2026) to Cycles daily, 1 to 2 times a week (August 2026)</summary>
   </entry>
   <entry>
-    <title>TOPAZ_UNIT10: Timescale group changed (2026-07-01)</title>
+    <title>TOPAZ_UNIT10: How often it turns off changed (2026-07-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=TOPAZ_UNIT10"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=TOPAZ_UNIT10#TOPAZ_UNIT10/2026-07-01/group</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Off for days at a time in 2026-06 to Off for a week or more at a time in 2026-07</summary>
+    <summary>Off for days at a time (June 2026) to Off for a week or more at a time (July 2026)</summary>
   </entry>
   <entry>
     <title>TOPAZ_UNIT10: Bidding approach shifted (2026-06-04)</title>
@@ -33,46 +33,46 @@
     <summary>Offer price vs peer median: $0 to $400/MWh</summary>
   </entry>
   <entry>
-    <title>TOPAZ_UNIT10: Timescale group changed (2026-05-01)</title>
+    <title>TOPAZ_UNIT10: How often it turns off changed (2026-05-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=TOPAZ_UNIT10"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=TOPAZ_UNIT10#TOPAZ_UNIT10/2026-05-01/group</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Cycles daily, 1 to 2 times a week in 2026-04 to Off for days at a time in 2026-05</summary>
+    <summary>Cycles daily, 1 to 2 times a week (April 2026) to Off for days at a time (May 2026)</summary>
   </entry>
   <entry>
-    <title>TOPAZ_UNIT10: Minimum-energy offer stepped (2026-04-16)</title>
+    <title>TOPAZ_UNIT10: Day-ahead: minimum-energy offer stepped (2026-04-16)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=TOPAZ_UNIT10"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=TOPAZ_UNIT10#TOPAZ_UNIT10/2026-04-16/dam_mingen_step</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Minimum-energy offer stepped: $54 to $60/MWh ($30 to $37 against the fuel-cost line)</summary>
+    <summary>Minimum-energy offer stepped: $54 to $60/MWh (offer minus fuel cost: $30 to $37/MWh)</summary>
   </entry>
   <entry>
-    <title>TOPAZ_UNIT10: Minimum-energy offer stepped (2026-04-16)</title>
+    <title>TOPAZ_UNIT10: Day-ahead: minimum-energy offer stepped (2026-04-16)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=TOPAZ_UNIT10"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=TOPAZ_UNIT10#TOPAZ_UNIT10/2026-04-16/dam_mingen_step</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Minimum-energy offer stepped: $54 to $60/MWh ($30 to $37 against the fuel-cost line)</summary>
+    <summary>Minimum-energy offer stepped: $54 to $60/MWh (offer minus fuel cost: $30 to $37/MWh)</summary>
   </entry>
   <entry>
-    <title>TOPAZ_UNIT10: Timescale group changed (2026-04-01)</title>
+    <title>TOPAZ_UNIT10: How often it turns off changed (2026-04-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=TOPAZ_UNIT10"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=TOPAZ_UNIT10#TOPAZ_UNIT10/2026-04-01/group</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Off for days at a time in 2026-03 to Cycles daily, 1 to 2 times a week in 2026-04</summary>
+    <summary>Off for days at a time (March 2026) to Cycles daily, 1 to 2 times a week (April 2026)</summary>
   </entry>
   <entry>
-    <title>TOPAZ_UNIT10: Timescale group changed (2026-03-01)</title>
+    <title>TOPAZ_UNIT10: How often it turns off changed (2026-03-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=TOPAZ_UNIT10"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=TOPAZ_UNIT10#TOPAZ_UNIT10/2026-03-01/group</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Off for a week or more at a time in 2026-02 to Off for days at a time in 2026-03</summary>
+    <summary>Off for a week or more at a time (February 2026) to Off for days at a time (March 2026)</summary>
   </entry>
   <entry>
-    <title>TOPAZ_UNIT10: Timescale group changed (2026-02-01)</title>
+    <title>TOPAZ_UNIT10: How often it turns off changed (2026-02-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=TOPAZ_UNIT10"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=TOPAZ_UNIT10#TOPAZ_UNIT10/2026-02-01/group</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Cycles daily, 1 to 2 times a week in 2026-01 to Off for a week or more at a time in 2026-02</summary>
+    <summary>Cycles daily, 1 to 2 times a week (January 2026) to Off for a week or more at a time (February 2026)</summary>
   </entry>
   <entry>
     <title>TOPAZ: Decision maker or QSE changed (2025-09-25)</title>

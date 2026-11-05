@@ -3,27 +3,27 @@
   <title>ETCCS_CC1: bidding and operating changes</title>
   <link href="https://ercotbids.currenttech.energy/unit.html?unit=ETCCS_CC1"/>
   <id>https://ercotbids.currenttech.energy/unit.html?unit=ETCCS_CC1</id>
-  <updated>2026-10-29T00:00:00Z</updated>
+  <updated>2026-11-05T00:00:00Z</updated>
   <entry>
-    <title>ETCCS_CC1: Turn-off point moved (2026-08-01)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=ETCCS_CC1"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=ETCCS_CC1#ETCCS_CC1/2026-08-01/turnoff/0</id>
-    <updated>2026-10-29T00:00:00Z</updated>
-    <summary>Turn-off point without an award $56 to $112 per MW of minimum output in August; the next month held it</summary>
-  </entry>
-  <entry>
-    <title>ETCCS_CC1: Timescale group changed (2026-07-01)</title>
+    <title>ETCCS_CC1: How often it turns off changed (2026-07-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=ETCCS_CC1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=ETCCS_CC1#ETCCS_CC1/2026-07-01/group</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Cycles daily, over twice a week in 2026-06 to Always on when available in 2026-07</summary>
+    <summary>Cycles daily, over twice a week (June 2026) to Always on when available (July 2026)</summary>
   </entry>
   <entry>
-    <title>ETCCS_CC1: Timescale group changed (2026-05-01)</title>
+    <title>ETCCS_CC1: Turn-off point moved (2026-06-01)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=ETCCS_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=ETCCS_CC1#ETCCS_CC1/2026-06-01/turnoff/0</id>
+    <updated>2026-11-05T00:00:00Z</updated>
+    <summary>Turn-off point (no award) in June: $56 to $112 per MW of minimum output; the next month went back</summary>
+  </entry>
+  <entry>
+    <title>ETCCS_CC1: How often it turns off changed (2026-05-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=ETCCS_CC1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=ETCCS_CC1#ETCCS_CC1/2026-05-01/group</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Off for days at a time in 2026-04 to Cycles daily, over twice a week in 2026-05</summary>
+    <summary>Off for days at a time (April 2026) to Cycles daily, over twice a week (May 2026)</summary>
   </entry>
   <entry>
     <title>ETCCS_CC1: Outage ended (2026-04-19)</title>
@@ -33,11 +33,11 @@
     <summary>Back from a 25-day outage</summary>
   </entry>
   <entry>
-    <title>ETCCS_CC1: Timescale group changed (2026-04-01)</title>
+    <title>ETCCS_CC1: How often it turns off changed (2026-04-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=ETCCS_CC1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=ETCCS_CC1#ETCCS_CC1/2026-04-01/group</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Cycles daily, over twice a week in 2026-03 to Off for days at a time in 2026-04</summary>
+    <summary>Cycles daily, over twice a week (March 2026) to Off for days at a time (April 2026)</summary>
   </entry>
   <entry>
     <title>ETCCS_CC1: Outage started (2026-03-25)</title>
@@ -45,5 +45,12 @@
     <id>https://ercotbids.currenttech.energy/unit.html?unit=ETCCS_CC1#ETCCS_CC1/2026-03-25/outage_start</id>
     <updated>2026-10-24T00:00:00Z</updated>
     <summary>Outage began, lasting 25 days</summary>
+  </entry>
+  <entry>
+    <title>ETCCS_CC1: Turn-off point moved (2026-03-01)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=ETCCS_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=ETCCS_CC1#ETCCS_CC1/2026-03-01/turnoff/0</id>
+    <updated>2026-11-05T00:00:00Z</updated>
+    <summary>Turn-off point (no award) in March: $33 to $85 per MW of minimum output; the next month held it</summary>
   </entry>
 </feed>

@@ -5,80 +5,80 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=BRIGHTSD_UNIT1</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
-    <title>BRIGHTSD: Stopped moving within the day (2025-10-05)</title>
+    <title>BRIGHTSD: Wind/solar: offer stopped moving within the day (2025-10-05)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=BRIGHTSD"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=BRIGHTSD#BRIGHTSD/2025-10-05/renew_moving_off</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Stopped moving within the day: now a floor of −$20/MWh</summary>
   </entry>
   <entry>
-    <title>BRIGHTSD: Started moving within the day (2025-09-17)</title>
+    <title>BRIGHTSD: Wind/solar: offer started moving within the day (2025-09-17)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=BRIGHTSD"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=BRIGHTSD#BRIGHTSD/2025-09-17/renew_moving_on</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Started moving within the day (was a floor of −$20/MWh)</summary>
+    <summary>Started moving within the day: was a floor of −$20/MWh</summary>
   </entry>
   <entry>
-    <title>BRIGHTSD: Stopped moving within the day (2025-03-14)</title>
+    <title>BRIGHTSD: Wind/solar: offer stopped moving within the day (2025-03-14)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=BRIGHTSD"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=BRIGHTSD#BRIGHTSD/2025-03-14/renew_moving_off</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Stopped moving within the day: now a floor of −$20/MWh</summary>
   </entry>
   <entry>
-    <title>BRIGHTSD: Started moving within the day (2025-03-07)</title>
+    <title>BRIGHTSD: Wind/solar: offer started moving within the day (2025-03-07)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=BRIGHTSD"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=BRIGHTSD#BRIGHTSD/2025-03-07/renew_moving_on</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Started moving within the day (was a floor of −$20/MWh)</summary>
+    <summary>Started moving within the day: was a floor of −$20/MWh</summary>
   </entry>
   <entry>
-    <title>BRIGHTSD: Stopped moving within the day (2024-07-24)</title>
+    <title>BRIGHTSD: Wind/solar: offer stopped moving within the day (2024-07-24)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=BRIGHTSD"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=BRIGHTSD#BRIGHTSD/2024-07-24/renew_moving_off</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Stopped moving within the day: now a floor of −$20/MWh</summary>
   </entry>
   <entry>
-    <title>BRIGHTSD: Started moving within the day (2024-07-15)</title>
+    <title>BRIGHTSD: Wind/solar: offer started moving within the day (2024-07-15)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=BRIGHTSD"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=BRIGHTSD#BRIGHTSD/2024-07-15/renew_moving_on</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Started moving within the day (was a floor of −$20/MWh)</summary>
+    <summary>Started moving within the day: was a floor of −$20/MWh</summary>
   </entry>
   <entry>
-    <title>BRIGHTSD: New floor (2024-02-13)</title>
+    <title>BRIGHTSD: Wind/solar: offer floor changed (2024-02-13)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=BRIGHTSD"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=BRIGHTSD#BRIGHTSD/2024-02-13/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$25/MWh to −$20/MWh</summary>
+    <summary>Floor moved: −$25/MWh to −$20/MWh</summary>
   </entry>
   <entry>
-    <title>BRIGHTSD: New floor (2023-02-08)</title>
+    <title>BRIGHTSD: Wind/solar: offer floor changed (2023-02-08)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=BRIGHTSD"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=BRIGHTSD#BRIGHTSD/2023-02-08/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$3/MWh to −$25/MWh</summary>
+    <summary>Floor moved: −$3/MWh to −$25/MWh</summary>
   </entry>
   <entry>
-    <title>BRIGHTSD: New floor (2023-01-27)</title>
+    <title>BRIGHTSD: Wind/solar: offer floor changed (2023-01-27)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=BRIGHTSD"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=BRIGHTSD#BRIGHTSD/2023-01-27/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: $10/MWh to −$3/MWh</summary>
+    <summary>Floor moved: $10/MWh to −$3/MWh</summary>
   </entry>
   <entry>
-    <title>BRIGHTSD: Episode (2022-01-26)</title>
+    <title>BRIGHTSD: Wind/solar: short episode at a different floor (2022-01-26)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=BRIGHTSD"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=BRIGHTSD#BRIGHTSD/2022-01-26/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Episode: floor $10/MWh, briefly −$20/MWh, for 1 day</summary>
+    <summary>Short episode: floor $10/MWh, briefly −$20/MWh, for 1 day</summary>
   </entry>
   <entry>
-    <title>BRIGHTSD: New floor (2022-01-07)</title>
+    <title>BRIGHTSD: Wind/solar: offer floor changed (2022-01-07)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=BRIGHTSD"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=BRIGHTSD#BRIGHTSD/2022-01-07/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$6/MWh to $10/MWh</summary>
+    <summary>Floor moved: −$6/MWh to $10/MWh</summary>
   </entry>
 </feed>

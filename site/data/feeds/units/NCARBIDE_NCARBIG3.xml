@@ -5,25 +5,25 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=NCARBIDE_NCARBIG3</id>
   <updated>2026-10-24T00:00:00Z</updated>
   <entry>
-    <title>NCARBIDE_NCARBIG3: Timescale group changed (2026-08-01)</title>
+    <title>NCARBIDE_NCARBIG3: How often it turns off changed (2026-08-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=NCARBIDE_NCARBIG3"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=NCARBIDE_NCARBIG3#NCARBIDE_NCARBIG3/2026-08-01/group</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Cycles daily, 1 to 2 times a week in 2026-07 to Off for days at a time in 2026-08</summary>
+    <summary>Cycles daily, 1 to 2 times a week (July 2026) to Off for days at a time (August 2026)</summary>
   </entry>
   <entry>
-    <title>NCARBIDE_NCARBIG3: Running at a new price (2026-05-01)</title>
+    <title>NCARBIDE_NCARBIG3: Peaker: running at a new real-time price (2026-05-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=NCARBIDE_NCARBIG3"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=NCARBIDE_NCARBIG3#NCARBIDE_NCARBIG3/2026-05-01/rt_price</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Online 13% of its hours at $0–$15 real-time at its node in May, down from 81%</summary>
+    <summary>Online 13% of its available hours at $0–$15/MWh real-time at its node in May, down from 81%</summary>
   </entry>
   <entry>
-    <title>NCARBIDE_NCARBIG3: Timescale group changed (2026-04-01)</title>
+    <title>NCARBIDE_NCARBIG3: How often it turns off changed (2026-04-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=NCARBIDE_NCARBIG3"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=NCARBIDE_NCARBIG3#NCARBIDE_NCARBIG3/2026-04-01/group</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Always on when available in 2026-03 to Cycles daily, 1 to 2 times a week in 2026-04</summary>
+    <summary>Always on when available (March 2026) to Cycles daily, 1 to 2 times a week (April 2026)</summary>
   </entry>
   <entry>
     <title>NCARBIDE_NCARBIG3: Outage ended (2026-03-08)</title>

@@ -3,76 +3,90 @@
   <title>MDANP_CT1: bidding and operating changes</title>
   <link href="https://ercotbids.currenttech.energy/unit.html?unit=MDANP_CT1"/>
   <id>https://ercotbids.currenttech.energy/unit.html?unit=MDANP_CT1</id>
-  <updated>2026-10-30T00:00:00Z</updated>
+  <updated>2026-11-05T00:00:00Z</updated>
   <entry>
     <title>MDANP_CT1: Shut down despite a day-ahead award (2026-08-30)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=MDANP_CT1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=MDANP_CT1#MDANP_CT1/2026-08-30/shutdown_award</id>
     <updated>2026-10-30T00:00:00Z</updated>
-    <summary>Shut down for 11 h although a day-ahead award covered 100% of the window</summary>
+    <summary>Shut down for 11 h although a day-ahead award covered 100% of the stretch</summary>
   </entry>
   <entry>
     <title>MDANP_CT1: Shut down despite a day-ahead award (2026-08-24)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=MDANP_CT1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=MDANP_CT1#MDANP_CT1/2026-08-24/shutdown_award</id>
     <updated>2026-10-23T00:00:00Z</updated>
-    <summary>Shut down for 4 h although a day-ahead award covered 100% of the window</summary>
+    <summary>Shut down for 4 h although a day-ahead award covered 100% of the stretch</summary>
   </entry>
   <entry>
     <title>MDANP_CT1: Shut down despite a day-ahead award (2026-08-14)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=MDANP_CT1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=MDANP_CT1#MDANP_CT1/2026-08-14/shutdown_award</id>
     <updated>2026-10-23T00:00:00Z</updated>
-    <summary>Shut down for 11 h although a day-ahead award covered 100% of the window</summary>
+    <summary>Shut down for 11 h although a day-ahead award covered 100% of the stretch</summary>
   </entry>
   <entry>
     <title>MDANP_CT1: Shut down despite a day-ahead award (2026-08-06)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=MDANP_CT1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=MDANP_CT1#MDANP_CT1/2026-08-06/shutdown_award</id>
     <updated>2026-10-23T00:00:00Z</updated>
-    <summary>Shut down for 11 h although a day-ahead award covered 100% of the window</summary>
+    <summary>Shut down for 11 h although a day-ahead award covered 100% of the stretch</summary>
+  </entry>
+  <entry>
+    <title>MDANP_CT1: Shut down despite a day-ahead award (2026-08-05)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=MDANP_CT1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=MDANP_CT1#MDANP_CT1/2026-08-05/shutdown_award</id>
+    <updated>2026-11-05T00:00:00Z</updated>
+    <summary>Shut down for 10 h although a day-ahead award covered 100% of the stretch</summary>
   </entry>
   <entry>
     <title>MDANP_CT1: Shut down despite a day-ahead award (2026-08-03)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=MDANP_CT1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=MDANP_CT1#MDANP_CT1/2026-08-03/shutdown_award</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Shut down for 9 h although a day-ahead award covered 100% of the window</summary>
+    <summary>Shut down for 9 h although a day-ahead award covered 100% of the stretch</summary>
   </entry>
   <entry>
     <title>MDANP_CT1: Shut down despite a day-ahead award (2026-07-18)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=MDANP_CT1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=MDANP_CT1#MDANP_CT1/2026-07-18/shutdown_award</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Shut down for 6 h although a day-ahead award covered 100% of the window</summary>
+    <summary>Shut down for 6 h although a day-ahead award covered 100% of the stretch</summary>
   </entry>
   <entry>
     <title>MDANP_CT1: Shut down despite a day-ahead award (2026-07-09)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=MDANP_CT1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=MDANP_CT1#MDANP_CT1/2026-07-09/shutdown_award</id>
     <updated>2026-10-24T00:00:00Z</updated>
-    <summary>Shut down for 11 h although a day-ahead award covered 100% of the window</summary>
+    <summary>Shut down for 11 h although a day-ahead award covered 100% of the stretch</summary>
+  </entry>
+  <entry>
+    <title>MDANP_CT1: Shut down despite a day-ahead award (2026-07-04)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=MDANP_CT1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=MDANP_CT1#MDANP_CT1/2026-07-04/shutdown_award</id>
+    <updated>2026-11-05T00:00:00Z</updated>
+    <summary>Shut down for 10 h although a day-ahead award covered 100% of the stretch</summary>
   </entry>
   <entry>
     <title>MDANP_CT1: Shut down despite a day-ahead award (2026-06-26)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=MDANP_CT1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=MDANP_CT1#MDANP_CT1/2026-06-26/shutdown_award</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Shut down for 12 h although a day-ahead award covered 100% of the window</summary>
+    <summary>Shut down for 12 h although a day-ahead award covered 100% of the stretch</summary>
   </entry>
   <entry>
-    <title>MDANP_CT1: Minimum-energy offer stepped (2026-06-07)</title>
+    <title>MDANP_CT1: Day-ahead: minimum-energy offer stepped (2026-06-07)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=MDANP_CT1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=MDANP_CT1#MDANP_CT1/2026-06-07/dam_mingen_step</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Minimum-energy offer stepped: $22 to $27/MWh ($2 to $5 against the fuel-cost line)</summary>
+    <summary>Minimum-energy offer stepped: $22 to $27/MWh (offer minus fuel cost: $2 to $5/MWh)</summary>
   </entry>
   <entry>
-    <title>MDANP_CT1: Minimum-energy offer stepped (2026-06-07)</title>
+    <title>MDANP_CT1: Day-ahead: minimum-energy offer stepped (2026-06-07)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=MDANP_CT1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=MDANP_CT1#MDANP_CT1/2026-06-07/dam_mingen_step</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Minimum-energy offer stepped: $22 to $27/MWh ($2 to $5 against the fuel-cost line)</summary>
+    <summary>Minimum-energy offer stepped: $22 to $27/MWh (offer minus fuel cost: $2 to $5/MWh)</summary>
   </entry>
   <entry>
     <title>MDANP_CT1: Outage ended (2026-04-23)</title>
@@ -89,11 +103,11 @@
     <summary>Outage began, lasting 12 days</summary>
   </entry>
   <entry>
-    <title>MDANP_CT1: Running at a new price (2026-04-01)</title>
+    <title>MDANP_CT1: Peaker: running at a new real-time price (2026-04-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=MDANP_CT1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=MDANP_CT1#MDANP_CT1/2026-04-01/rt_price</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Online 60% of its hours at $0–$15 real-time at its node in April, up from 16%</summary>
+    <summary>Online 60% of its available hours at $0–$15/MWh real-time at its node in April, up from 16%</summary>
   </entry>
   <entry>
     <title>MDANP_CT1: Bidding approach shifted (2026-02-03)</title>
@@ -103,11 +117,11 @@
     <summary>Offer price vs peer median: −$12 to $1/MWh</summary>
   </entry>
   <entry>
-    <title>MDANP: Minimum-energy offer stepped (2026-02-03)</title>
+    <title>MDANP: Day-ahead: minimum-energy offer stepped (2026-02-03)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=MDANP"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=MDANP#MDANP/2026-02-03/dam_mingen_step</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Minimum-energy offer stepped: $8 to $35/MWh (−$27 to $15 against the fuel-cost line)</summary>
+    <summary>Minimum-energy offer stepped: $8 to $35/MWh (offer minus fuel cost: −$27 to $15/MWh)</summary>
   </entry>
   <entry>
     <title>MDANP_CT1: Bidding approach shifted (2026-01-26)</title>
@@ -117,24 +131,24 @@
     <summary>Offer price vs peer median: $1 to −$12/MWh</summary>
   </entry>
   <entry>
-    <title>MDANP: Minimum-energy offer stepped (2026-01-10)</title>
+    <title>MDANP: Day-ahead: minimum-energy offer stepped (2026-01-10)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=MDANP"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=MDANP#MDANP/2026-01-10/dam_mingen_step</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Minimum-energy offer stepped: $30 to $25/MWh ($12 to $6 against the fuel-cost line)</summary>
+    <summary>Minimum-energy offer stepped: $30 to $25/MWh (offer minus fuel cost: $12 to $6/MWh)</summary>
   </entry>
   <entry>
     <title>MDANP_CT1: Shut down despite a day-ahead award (2025-12-15)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=MDANP_CT1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=MDANP_CT1#MDANP_CT1/2025-12-15/shutdown_award</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Shut down for 16 h although a day-ahead award covered 100% of the window</summary>
+    <summary>Shut down for 16 h although a day-ahead award covered 100% of the stretch</summary>
   </entry>
   <entry>
-    <title>MDANP: Minimum-energy offer stepped (2025-12-15)</title>
+    <title>MDANP: Day-ahead: minimum-energy offer stepped (2025-12-15)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=MDANP"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=MDANP#MDANP/2025-12-15/dam_mingen_step</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Minimum-energy offer stepped: $38 to $31/MWh ($6 to $7 against the fuel-cost line)</summary>
+    <summary>Minimum-energy offer stepped: $38 to $31/MWh (offer minus fuel cost: $6 to $7/MWh)</summary>
   </entry>
 </feed>

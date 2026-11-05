@@ -5,35 +5,35 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=PRO_UNIT8</id>
   <updated>2026-10-24T00:00:00Z</updated>
   <entry>
-    <title>PRO_UNIT8: Running at a new price (2026-06-01)</title>
+    <title>PRO_UNIT8: Peaker: running at a new real-time price (2026-06-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=PRO_UNIT8"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=PRO_UNIT8#PRO_UNIT8/2026-06-01/rt_price</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Online 16% of its hours at $50–$100 real-time at its node in June, down from 56%</summary>
+    <summary>Online 16% of its available hours at $50–$100/MWh real-time at its node in June, down from 56%</summary>
   </entry>
   <entry>
-    <title>PRO_UNIT8: Priced out of the day-ahead (2026-05-02)</title>
+    <title>PRO_UNIT8: Day-ahead: priced out (2026-05-02)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=PRO_UNIT8"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=PRO_UNIT8#PRO_UNIT8/2026-05-02/dam_priced_out</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Priced out of the day-ahead: minimum energy at $50/MWh against a usual $33/MWh, for 2 days</summary>
   </entry>
   <entry>
-    <title>PRO_UNIT8: Priced out of the day-ahead (2026-05-02)</title>
+    <title>PRO_UNIT8: Day-ahead: priced out (2026-05-02)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=PRO_UNIT8"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=PRO_UNIT8#PRO_UNIT8/2026-05-02/dam_priced_out</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Priced out of the day-ahead: minimum energy at $50/MWh against a usual $33/MWh, for 2 days</summary>
   </entry>
   <entry>
-    <title>PRO_UNIT8: Priced out of the day-ahead (2026-04-08)</title>
+    <title>PRO_UNIT8: Day-ahead: priced out (2026-04-08)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=PRO_UNIT8"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=PRO_UNIT8#PRO_UNIT8/2026-04-08/dam_priced_out</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Priced out of the day-ahead: minimum energy at $54/MWh against a usual $37/MWh, for 1 day</summary>
   </entry>
   <entry>
-    <title>PRO_UNIT8: Priced out of the day-ahead (2026-04-08)</title>
+    <title>PRO_UNIT8: Day-ahead: priced out (2026-04-08)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=PRO_UNIT8"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=PRO_UNIT8#PRO_UNIT8/2026-04-08/dam_priced_out</id>
     <updated>2026-10-18T00:00:00Z</updated>

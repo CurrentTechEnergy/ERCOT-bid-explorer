@@ -5,17 +5,17 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=V2_DGR3</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
-    <title>V2_DGR3: Timescale group changed (2026-02-01)</title>
+    <title>V2_DGR3: How often it turns off changed (2026-02-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=V2_DGR3"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=V2_DGR3#V2_DGR3/2026-02-01/group</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Off for days at a time in 2026-01 to Off for a week or more at a time in 2026-02</summary>
+    <summary>Off for days at a time (January 2026) to Off for a week or more at a time (February 2026)</summary>
   </entry>
   <entry>
-    <title>V2_DGR3: Timescale group changed (2026-01-01)</title>
+    <title>V2_DGR3: How often it turns off changed (2026-01-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=V2_DGR3"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=V2_DGR3#V2_DGR3/2026-01-01/group</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Off for a week or more at a time in 2025-12 to Off for days at a time in 2026-01</summary>
+    <summary>Off for a week or more at a time (December 2025) to Off for days at a time (January 2026)</summary>
   </entry>
 </feed>

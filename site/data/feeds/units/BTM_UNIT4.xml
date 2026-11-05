@@ -12,66 +12,66 @@
     <summary>Offers now decided by SOUTH TEXAS ELECTRIC CO OP INC, was ERCOT code YWATTB, ERCOT code YWATTX</summary>
   </entry>
   <entry>
-    <title>BTM_UNIT4: Timescale group changed (2026-04-01)</title>
+    <title>BTM_UNIT4: How often it turns off changed (2026-04-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=BTM_UNIT4"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=BTM_UNIT4#BTM_UNIT4/2026-04-01/group</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Off for a week or more at a time in 2026-03 to Cycles daily, over twice a week in 2026-04</summary>
+    <summary>Off for a week or more at a time (March 2026) to Cycles daily, over twice a week (April 2026)</summary>
   </entry>
   <entry>
-    <title>BTM_UNIT4: Timescale group changed (2026-03-01)</title>
+    <title>BTM_UNIT4: How often it turns off changed (2026-03-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=BTM_UNIT4"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=BTM_UNIT4#BTM_UNIT4/2026-03-01/group</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Off for days at a time in 2026-02 to Off for a week or more at a time in 2026-03</summary>
+    <summary>Off for days at a time (February 2026) to Off for a week or more at a time (March 2026)</summary>
   </entry>
   <entry>
-    <title>BTM: Minimum-energy offer stepped (2026-02-06)</title>
+    <title>BTM: Day-ahead: minimum-energy offer stepped (2026-02-06)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=BTM"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=BTM#BTM/2026-02-06/dam_mingen_step</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Minimum-energy offer stepped: $57 to $34/MWh ($13 to $11 against the fuel-cost line)</summary>
+    <summary>Minimum-energy offer stepped: $57 to $34/MWh (offer minus fuel cost: $13 to $11/MWh)</summary>
   </entry>
   <entry>
-    <title>BTM_UNIT4: Timescale group changed (2026-02-01)</title>
+    <title>BTM_UNIT4: How often it turns off changed (2026-02-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=BTM_UNIT4"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=BTM_UNIT4#BTM_UNIT4/2026-02-01/group</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Cycles daily, 1 to 2 times a week in 2026-01 to Off for days at a time in 2026-02</summary>
+    <summary>Cycles daily, 1 to 2 times a week (January 2026) to Off for days at a time (February 2026)</summary>
   </entry>
   <entry>
-    <title>BTM: Minimum-energy offer stepped (2026-01-14)</title>
+    <title>BTM: Day-ahead: minimum-energy offer stepped (2026-01-14)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=BTM"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=BTM#BTM/2026-01-14/dam_mingen_step</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Minimum-energy offer stepped: $33 to $38/MWh ($11 to $11 against the fuel-cost line)</summary>
+    <summary>Minimum-energy offer stepped: $33 to $38/MWh (offer minus fuel cost: $11 to $11/MWh)</summary>
   </entry>
   <entry>
-    <title>BTM_UNIT4: Timescale group changed (2026-01-01)</title>
+    <title>BTM_UNIT4: How often it turns off changed (2026-01-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=BTM_UNIT4"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=BTM_UNIT4#BTM_UNIT4/2026-01-01/group</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Off for days at a time in 2025-12 to Cycles daily, 1 to 2 times a week in 2026-01</summary>
+    <summary>Off for days at a time (December 2025) to Cycles daily, 1 to 2 times a week (January 2026)</summary>
   </entry>
   <entry>
-    <title>BTM: Minimum-energy offer stepped (2025-12-25)</title>
+    <title>BTM: Day-ahead: minimum-energy offer stepped (2025-12-25)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=BTM"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=BTM#BTM/2025-12-25/dam_mingen_step</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Minimum-energy offer stepped: $40 to $32/MWh ($11 to $11 against the fuel-cost line)</summary>
+    <summary>Minimum-energy offer stepped: $40 to $32/MWh (offer minus fuel cost: $11 to $11/MWh)</summary>
   </entry>
   <entry>
-    <title>BTM: Minimum-energy offer stepped (2025-12-17)</title>
+    <title>BTM: Day-ahead: minimum-energy offer stepped (2025-12-17)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=BTM"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=BTM#BTM/2025-12-17/dam_mingen_step</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Minimum-energy offer stepped: $53 to $40/MWh ($11 to $11 against the fuel-cost line)</summary>
+    <summary>Minimum-energy offer stepped: $53 to $40/MWh (offer minus fuel cost: $11 to $11/MWh)</summary>
   </entry>
   <entry>
     <title>BTM: Decision maker or QSE changed (2025-11-18)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=BTM"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=BTM#BTM/2025-11-18/control</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Scheduled by EDF NORTH AMERICA (SQ31), was EDF NORTH AMERICA (SQ21)</summary>
+    <summary>QSE code changed: QEDF21 to QEDF31 (EDF NORTH AMERICA (SQ31))</summary>
   </entry>
 </feed>

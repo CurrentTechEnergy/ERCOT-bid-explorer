@@ -5,31 +5,31 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=BUZI_SLR_UNIT1</id>
   <updated>2026-10-31T00:00:00Z</updated>
   <entry>
-    <title>BUZI_SLR: Episode (2026-08-27)</title>
+    <title>BUZI_SLR: Wind/solar: short episode at a different floor (2026-08-27)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=BUZI_SLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=BUZI_SLR#BUZI_SLR/2026-08-27/renew_episode</id>
     <updated>2026-10-31T00:00:00Z</updated>
-    <summary>Episode: floor $0/MWh, briefly −$10/MWh, for 1 day</summary>
+    <summary>Short episode: floor $0/MWh, briefly −$10/MWh, for 1 day</summary>
   </entry>
   <entry>
-    <title>BUZI_SLR: Stopped moving within the day (2026-08-26)</title>
+    <title>BUZI_SLR: Wind/solar: offer stopped moving within the day (2026-08-26)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=BUZI_SLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=BUZI_SLR#BUZI_SLR/2026-08-26/renew_moving_off</id>
     <updated>2026-10-31T00:00:00Z</updated>
     <summary>Stopped moving within the day: now a floor of $0/MWh</summary>
   </entry>
   <entry>
-    <title>BUZI_SLR: Started moving within the day (2026-01-30)</title>
+    <title>BUZI_SLR: Wind/solar: offer started moving within the day (2026-01-30)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=BUZI_SLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=BUZI_SLR#BUZI_SLR/2026-01-30/renew_moving_on</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Started moving within the day (was a floor of −$21/MWh)</summary>
+    <summary>Started moving within the day: was a floor of −$21/MWh</summary>
   </entry>
   <entry>
-    <title>BUZI_SLR: New floor (2025-11-05)</title>
+    <title>BUZI_SLR: Wind/solar: offer floor changed (2025-11-05)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=BUZI_SLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=BUZI_SLR#BUZI_SLR/2025-11-05/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$42/MWh to −$21/MWh</summary>
+    <summary>Floor moved: −$42/MWh to −$21/MWh</summary>
   </entry>
 </feed>

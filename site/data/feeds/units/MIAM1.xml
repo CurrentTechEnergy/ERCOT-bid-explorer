@@ -5,59 +5,59 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=MIAM1</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
-    <title>MIAM1: Episode (2026-01-24)</title>
+    <title>MIAM1: Wind/solar: short episode at a different floor (2026-01-24)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=MIAM1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=MIAM1#MIAM1/2026-01-24/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Episode: floor −$2/MWh, briefly −$10/MWh, for 4 days</summary>
+    <summary>Short episode: floor −$2/MWh, briefly −$10/MWh, for 4 days</summary>
   </entry>
   <entry>
-    <title>MIAM1: New floor (2024-09-12)</title>
+    <title>MIAM1: Wind/solar: offer floor changed (2024-09-12)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=MIAM1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=MIAM1#MIAM1/2024-09-12/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$38/MWh to −$2/MWh</summary>
+    <summary>Floor moved: −$38/MWh to −$2/MWh</summary>
   </entry>
   <entry>
-    <title>MIAM1: Episode (2024-09-11)</title>
+    <title>MIAM1: Wind/solar: short episode at a different floor (2024-09-11)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=MIAM1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=MIAM1#MIAM1/2024-09-11/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Episode: floor −$2/MWh, briefly −$11/MWh, for 1 day</summary>
+    <summary>Short episode: floor −$2/MWh, briefly −$11/MWh, for 1 day</summary>
   </entry>
   <entry>
-    <title>MIAM1: New floor (2024-09-09)</title>
+    <title>MIAM1: Wind/solar: offer floor changed (2024-09-09)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=MIAM1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=MIAM1#MIAM1/2024-09-09/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$38/MWh to −$2/MWh</summary>
+    <summary>Floor moved: −$38/MWh to −$2/MWh</summary>
   </entry>
   <entry>
-    <title>MIAM1: New floor (2024-02-08)</title>
+    <title>MIAM1: Wind/solar: offer floor changed (2024-02-08)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=MIAM1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=MIAM1#MIAM1/2024-02-08/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$37/MWh to −$38/MWh</summary>
+    <summary>Floor moved: −$37/MWh to −$38/MWh</summary>
   </entry>
   <entry>
-    <title>MIAM1: New floor (2023-06-29)</title>
+    <title>MIAM1: Wind/solar: offer floor changed (2023-06-29)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=MIAM1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=MIAM1#MIAM1/2023-06-29/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$36/MWh to −$37/MWh</summary>
+    <summary>Floor moved: −$36/MWh to −$37/MWh</summary>
   </entry>
   <entry>
-    <title>MIAM1: New floor (2022-11-29)</title>
+    <title>MIAM1: Wind/solar: offer floor changed (2022-11-29)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=MIAM1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=MIAM1#MIAM1/2022-11-29/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$32/MWh to −$36/MWh</summary>
+    <summary>Floor moved: −$32/MWh to −$36/MWh</summary>
   </entry>
   <entry>
-    <title>MIAM1: New floor (2019-06-08)</title>
+    <title>MIAM1: Wind/solar: offer floor changed (2019-06-08)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=MIAM1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=MIAM1#MIAM1/2019-06-08/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$30/MWh to −$32/MWh</summary>
+    <summary>Floor moved: −$30/MWh to −$32/MWh</summary>
   </entry>
 </feed>

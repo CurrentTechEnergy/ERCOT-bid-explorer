@@ -5,31 +5,31 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=SPARTA_UNIT2</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
-    <title>SPARTA: New floor (2026-07-16)</title>
+    <title>SPARTA: Wind/solar: offer floor changed (2026-07-16)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=SPARTA"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=SPARTA#SPARTA/2026-07-16/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$44/MWh to −$42/MWh</summary>
+    <summary>Floor moved: −$44/MWh to −$42/MWh</summary>
   </entry>
   <entry>
-    <title>SPARTA: New floor (2025-04-09)</title>
+    <title>SPARTA: Wind/solar: offer floor changed (2025-04-09)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=SPARTA"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=SPARTA#SPARTA/2025-04-09/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$42/MWh to −$44/MWh</summary>
+    <summary>Floor moved: −$42/MWh to −$44/MWh</summary>
   </entry>
   <entry>
-    <title>SPARTA: New floor (2024-08-16)</title>
+    <title>SPARTA: Wind/solar: offer floor changed (2024-08-16)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=SPARTA"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=SPARTA#SPARTA/2024-08-16/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$30/MWh to −$42/MWh</summary>
+    <summary>Floor moved: −$30/MWh to −$42/MWh</summary>
   </entry>
   <entry>
-    <title>SPARTA: New floor (2024-04-18)</title>
+    <title>SPARTA: Wind/solar: offer floor changed (2024-04-18)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=SPARTA"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=SPARTA#SPARTA/2024-04-18/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$3/MWh to −$30/MWh</summary>
+    <summary>Floor moved: −$3/MWh to −$30/MWh</summary>
   </entry>
 </feed>

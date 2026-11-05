@@ -5,17 +5,17 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=MAG_UNIT1</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
-    <title>MAG: New floor (2026-01-10)</title>
+    <title>MAG: Wind/solar: offer floor changed (2026-01-10)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=MAG"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=MAG#MAG/2026-01-10/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$40/MWh to −$44/MWh</summary>
+    <summary>Floor moved: −$40/MWh to −$44/MWh</summary>
   </entry>
   <entry>
-    <title>MAG: New floor (2025-11-08)</title>
+    <title>MAG: Wind/solar: offer floor changed (2025-11-08)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=MAG"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=MAG#MAG/2025-11-08/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: $6/MWh to −$40/MWh</summary>
+    <summary>Floor moved: $6/MWh to −$40/MWh</summary>
   </entry>
 </feed>

@@ -19,10 +19,10 @@
     <summary>Outage began, lasting 8 days</summary>
   </entry>
   <entry>
-    <title>BELM_SLR: New floor (2024-12-31)</title>
+    <title>BELM_SLR: Wind/solar: offer floor changed (2024-12-31)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=BELM_SLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=BELM_SLR#BELM_SLR/2024-12-31/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: $0/MWh to −$38/MWh</summary>
+    <summary>Floor moved: $0/MWh to −$38/MWh</summary>
   </entry>
 </feed>

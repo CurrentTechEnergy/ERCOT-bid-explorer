@@ -5,17 +5,17 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=PITTSDDK</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
-    <title>PITTSDDK: New floor (2025-10-17)</title>
+    <title>PITTSDDK: Wind/solar: offer floor changed (2025-10-17)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=PITTSDDK"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=PITTSDDK#PITTSDDK/2025-10-17/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$20/MWh to −$10/MWh</summary>
+    <summary>Floor moved: −$20/MWh to −$10/MWh</summary>
   </entry>
   <entry>
-    <title>PITTSDDK: New floor (2025-09-30)</title>
+    <title>PITTSDDK: Wind/solar: offer floor changed (2025-09-30)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=PITTSDDK"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=PITTSDDK#PITTSDDK/2025-09-30/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$32/MWh to −$20/MWh</summary>
+    <summary>Floor moved: −$32/MWh to −$20/MWh</summary>
   </entry>
 </feed>

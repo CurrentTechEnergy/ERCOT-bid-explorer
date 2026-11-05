@@ -5,31 +5,31 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=MUSTNGCK</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
-    <title>MUSTNGCK: New floor (2024-02-27)</title>
+    <title>MUSTNGCK: Wind/solar: offer floor changed (2024-02-27)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=MUSTNGCK"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=MUSTNGCK#MUSTNGCK/2024-02-27/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: $0/MWh to −$5/MWh</summary>
+    <summary>Floor moved: $0/MWh to −$5/MWh</summary>
   </entry>
   <entry>
-    <title>MUSTNGCK: New floor (2023-06-06)</title>
+    <title>MUSTNGCK: Wind/solar: offer floor changed (2023-06-06)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=MUSTNGCK"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=MUSTNGCK#MUSTNGCK/2023-06-06/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$3/MWh to $0/MWh</summary>
+    <summary>Floor moved: −$3/MWh to $0/MWh</summary>
   </entry>
   <entry>
-    <title>MUSTNGCK: New floor (2023-04-19)</title>
+    <title>MUSTNGCK: Wind/solar: offer floor changed (2023-04-19)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=MUSTNGCK"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=MUSTNGCK#MUSTNGCK/2023-04-19/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$5/MWh to −$3/MWh</summary>
+    <summary>Floor moved: −$5/MWh to −$3/MWh</summary>
   </entry>
   <entry>
     <title>MUSTNGCK: Decision maker or QSE changed (2023-01-24)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=MUSTNGCK"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=MUSTNGCK#MUSTNGCK/2023-01-24/control</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Scheduled by ENEL TRADING NORTH AMERICA LLC (SQ10), was ENEL TRADING NORTH AMERICA LLC (SQ5)</summary>
+    <summary>QSE code changed: QENEL5 to QENE10 (ENEL TRADING NORTH AMERICA LLC (SQ10))</summary>
   </entry>
 </feed>

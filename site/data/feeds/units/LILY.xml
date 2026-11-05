@@ -5,31 +5,31 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=LILY</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
-    <title>LILY: New floor (2025-03-18)</title>
+    <title>LILY: Wind/solar: offer floor changed (2025-03-18)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=LILY"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=LILY#LILY/2025-03-18/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$4/MWh to −$2/MWh</summary>
+    <summary>Floor moved: −$4/MWh to −$2/MWh</summary>
   </entry>
   <entry>
-    <title>LILY: New floor (2025-01-10)</title>
+    <title>LILY: Wind/solar: offer floor changed (2025-01-10)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=LILY"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=LILY#LILY/2025-01-10/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: $0/MWh to −$4/MWh</summary>
+    <summary>Floor moved: $0/MWh to −$4/MWh</summary>
   </entry>
   <entry>
-    <title>LILY: New floor (2023-06-06)</title>
+    <title>LILY: Wind/solar: offer floor changed (2023-06-06)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=LILY"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=LILY#LILY/2023-06-06/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$3/MWh to $0/MWh</summary>
+    <summary>Floor moved: −$3/MWh to $0/MWh</summary>
   </entry>
   <entry>
-    <title>LILY: New floor (2023-04-19)</title>
+    <title>LILY: Wind/solar: offer floor changed (2023-04-19)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=LILY"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=LILY#LILY/2023-04-19/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$5/MWh to −$3/MWh</summary>
+    <summary>Floor moved: −$5/MWh to −$3/MWh</summary>
   </entry>
 </feed>

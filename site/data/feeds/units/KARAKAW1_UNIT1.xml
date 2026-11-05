@@ -5,17 +5,17 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=KARAKAW1_UNIT1</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
-    <title>KARAKAW1: New floor (2025-05-17)</title>
+    <title>KARAKAW1: Wind/solar: offer floor changed (2025-05-17)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=KARAKAW1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=KARAKAW1#KARAKAW1/2025-05-17/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$47/MWh to −$50/MWh</summary>
+    <summary>Floor moved: −$47/MWh to −$50/MWh</summary>
   </entry>
   <entry>
-    <title>KARAKAW1: New floor (2019-12-04)</title>
+    <title>KARAKAW1: Wind/solar: offer floor changed (2019-12-04)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=KARAKAW1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=KARAKAW1#KARAKAW1/2019-12-04/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$32/MWh to −$47/MWh</summary>
+    <summary>Floor moved: −$32/MWh to −$47/MWh</summary>
   </entry>
 </feed>

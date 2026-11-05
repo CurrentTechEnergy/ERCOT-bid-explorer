@@ -5,17 +5,17 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=SHEEPCRK_UNIT1</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
-    <title>SHEEPCRK: New floor (2026-06-16)</title>
+    <title>SHEEPCRK: Wind/solar: offer floor changed (2026-06-16)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=SHEEPCRK"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=SHEEPCRK#SHEEPCRK/2026-06-16/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$75/MWh to −$65/MWh</summary>
+    <summary>Floor moved: −$75/MWh to −$65/MWh</summary>
   </entry>
   <entry>
-    <title>SHEEPCRK: New floor (2024-12-31)</title>
+    <title>SHEEPCRK: Wind/solar: offer floor changed (2024-12-31)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=SHEEPCRK"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=SHEEPCRK#SHEEPCRK/2024-12-31/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$35/MWh to −$75/MWh</summary>
+    <summary>Floor moved: −$35/MWh to −$75/MWh</summary>
   </entry>
 </feed>

@@ -19,59 +19,59 @@
     <summary>Outage began, lasting 11 days</summary>
   </entry>
   <entry>
-    <title>ANSON1: New floor (2024-12-31)</title>
+    <title>ANSON1: Wind/solar: offer floor changed (2024-12-31)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=ANSON1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=ANSON1#ANSON1/2024-12-31/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$0/MWh to −$18/MWh</summary>
+    <summary>Floor moved: −$0/MWh to −$18/MWh</summary>
   </entry>
   <entry>
-    <title>ANSON1: Stopped moving within the day (2023-08-19)</title>
+    <title>ANSON1: Wind/solar: offer stopped moving within the day (2023-08-19)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=ANSON1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=ANSON1#ANSON1/2023-08-19/renew_moving_off</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Stopped moving within the day: now a floor of −$0/MWh</summary>
   </entry>
   <entry>
-    <title>ANSON1: Started moving within the day (2023-06-22)</title>
+    <title>ANSON1: Wind/solar: offer started moving within the day (2023-06-22)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=ANSON1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=ANSON1#ANSON1/2023-06-22/renew_moving_on</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Started moving within the day (was a floor of −$0/MWh)</summary>
+    <summary>Started moving within the day: was a floor of −$0/MWh</summary>
   </entry>
   <entry>
-    <title>ANSON1: Stopped moving within the day (2023-06-16)</title>
+    <title>ANSON1: Wind/solar: offer stopped moving within the day (2023-06-16)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=ANSON1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=ANSON1#ANSON1/2023-06-16/renew_moving_off</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Stopped moving within the day: now a floor of −$0/MWh</summary>
   </entry>
   <entry>
-    <title>ANSON1: Started moving within the day (2023-04-10)</title>
+    <title>ANSON1: Wind/solar: offer started moving within the day (2023-04-10)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=ANSON1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=ANSON1#ANSON1/2023-04-10/renew_moving_on</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Started moving within the day (was a floor of −$0/MWh)</summary>
+    <summary>Started moving within the day: was a floor of −$0/MWh</summary>
   </entry>
   <entry>
-    <title>ANSON1: New floor (2022-04-01)</title>
+    <title>ANSON1: Wind/solar: offer floor changed (2022-04-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=ANSON1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=ANSON1#ANSON1/2022-04-01/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$4/MWh to −$0/MWh</summary>
+    <summary>Floor moved: −$4/MWh to −$0/MWh</summary>
   </entry>
   <entry>
-    <title>ANSON1: New floor (2021-06-04)</title>
+    <title>ANSON1: Wind/solar: offer floor changed (2021-06-04)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=ANSON1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=ANSON1#ANSON1/2021-06-04/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$1/MWh to −$4/MWh</summary>
+    <summary>Floor moved: −$1/MWh to −$4/MWh</summary>
   </entry>
   <entry>
-    <title>ANSON1: New floor (2021-02-22)</title>
+    <title>ANSON1: Wind/solar: offer floor changed (2021-02-22)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=ANSON1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=ANSON1#ANSON1/2021-02-22/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$250/MWh to −$1/MWh</summary>
+    <summary>Floor moved: −$250/MWh to −$1/MWh</summary>
   </entry>
 </feed>

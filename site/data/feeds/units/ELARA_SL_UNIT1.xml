@@ -5,10 +5,10 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=ELARA_SL_UNIT1</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
-    <title>ELARA_SL: New floor (2022-06-01)</title>
+    <title>ELARA_SL: Wind/solar: offer floor changed (2022-06-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=ELARA_SL"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=ELARA_SL#ELARA_SL/2022-06-01/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: $0/MWh to −$1/MWh</summary>
+    <summary>Floor moved: $0/MWh to −$1/MWh</summary>
   </entry>
 </feed>

@@ -5,31 +5,31 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=LV3_UNIT_1</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
-    <title>LV3: New floor (2025-04-23)</title>
+    <title>LV3: Wind/solar: offer floor changed (2025-04-23)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=LV3"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=LV3#LV3/2025-04-23/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$36/MWh to $0/MWh</summary>
+    <summary>Floor moved: −$36/MWh to $0/MWh</summary>
   </entry>
   <entry>
-    <title>LV3: New floor (2023-11-17)</title>
+    <title>LV3: Wind/solar: offer floor changed (2023-11-17)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=LV3"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=LV3#LV3/2023-11-17/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$33/MWh to −$36/MWh</summary>
+    <summary>Floor moved: −$33/MWh to −$36/MWh</summary>
   </entry>
   <entry>
-    <title>LV3: New floor (2022-08-03)</title>
+    <title>LV3: Wind/solar: offer floor changed (2022-08-03)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=LV3"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=LV3#LV3/2022-08-03/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$32/MWh to −$33/MWh</summary>
+    <summary>Floor moved: −$32/MWh to −$33/MWh</summary>
   </entry>
   <entry>
-    <title>LV3: New floor (2019-06-20)</title>
+    <title>LV3: Wind/solar: offer floor changed (2019-06-20)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=LV3"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=LV3#LV3/2019-06-20/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$30/MWh to −$32/MWh</summary>
+    <summary>Floor moved: −$30/MWh to −$32/MWh</summary>
   </entry>
 </feed>

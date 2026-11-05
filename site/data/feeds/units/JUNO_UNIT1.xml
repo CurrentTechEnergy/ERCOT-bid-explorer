@@ -5,52 +5,52 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=JUNO_UNIT1</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
-    <title>JUNO: Back to an earlier floor (2024-07-16)</title>
+    <title>JUNO: Wind/solar: back to an earlier floor (2024-07-16)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=JUNO"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=JUNO#JUNO/2024-07-16/renew_floor_back</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Back to an earlier floor: −$3/MWh to −$6/MWh</summary>
   </entry>
   <entry>
-    <title>JUNO: New floor (2024-05-22)</title>
+    <title>JUNO: Wind/solar: offer floor changed (2024-05-22)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=JUNO"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=JUNO#JUNO/2024-05-22/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$6/MWh to −$3/MWh</summary>
+    <summary>Floor moved: −$6/MWh to −$3/MWh</summary>
   </entry>
   <entry>
-    <title>JUNO: New floor (2021-11-30)</title>
+    <title>JUNO: Wind/solar: offer floor changed (2021-11-30)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=JUNO"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=JUNO#JUNO/2021-11-30/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$250/MWh to −$6/MWh</summary>
+    <summary>Floor moved: −$250/MWh to −$6/MWh</summary>
   </entry>
   <entry>
-    <title>JUNO: New floor (2021-09-23)</title>
+    <title>JUNO: Wind/solar: offer floor changed (2021-09-23)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=JUNO"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=JUNO#JUNO/2021-09-23/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$5/MWh to −$250/MWh</summary>
+    <summary>Floor moved: −$5/MWh to −$250/MWh</summary>
   </entry>
   <entry>
-    <title>JUNO: New floor (2021-06-25)</title>
+    <title>JUNO: Wind/solar: offer floor changed (2021-06-25)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=JUNO"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=JUNO#JUNO/2021-06-25/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$45/MWh to −$5/MWh</summary>
+    <summary>Floor moved: −$45/MWh to −$5/MWh</summary>
   </entry>
   <entry>
-    <title>JUNO: New floor (2021-03-17)</title>
+    <title>JUNO: Wind/solar: offer floor changed (2021-03-17)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=JUNO"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=JUNO#JUNO/2021-03-17/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$0/MWh to −$45/MWh</summary>
+    <summary>Floor moved: −$0/MWh to −$45/MWh</summary>
   </entry>
   <entry>
-    <title>JUNO: New floor (2021-02-20)</title>
+    <title>JUNO: Wind/solar: offer floor changed (2021-02-20)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=JUNO"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=JUNO#JUNO/2021-02-20/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$22/MWh to −$0/MWh</summary>
+    <summary>Floor moved: −$22/MWh to −$0/MWh</summary>
   </entry>
 </feed>

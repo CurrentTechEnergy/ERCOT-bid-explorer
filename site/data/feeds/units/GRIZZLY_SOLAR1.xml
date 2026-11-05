@@ -75,10 +75,10 @@
     <summary>Outage began, lasting 32 days</summary>
   </entry>
   <entry>
-    <title>GRIZZLY: New floor (2024-02-27)</title>
+    <title>GRIZZLY: Wind/solar: offer floor changed (2024-02-27)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=GRIZZLY"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=GRIZZLY#GRIZZLY/2024-02-27/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$5/MWh to $2/MWh</summary>
+    <summary>Floor moved: −$5/MWh to $2/MWh</summary>
   </entry>
 </feed>

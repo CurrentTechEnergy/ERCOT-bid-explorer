@@ -5,31 +5,31 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=BUFF_GAP</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
-    <title>BUFF_GAP: New floor (2023-06-30)</title>
+    <title>BUFF_GAP: Wind/solar: offer floor changed (2023-06-30)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=BUFF_GAP"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=BUFF_GAP#BUFF_GAP/2023-06-30/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: $0/MWh to −$2/MWh</summary>
+    <summary>Floor moved: $0/MWh to −$2/MWh</summary>
   </entry>
   <entry>
-    <title>BUFF_GAP: New floor (2023-03-29)</title>
+    <title>BUFF_GAP: Wind/solar: offer floor changed (2023-03-29)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=BUFF_GAP"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=BUFF_GAP#BUFF_GAP/2023-03-29/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$2/MWh to $0/MWh</summary>
+    <summary>Floor moved: −$2/MWh to $0/MWh</summary>
   </entry>
   <entry>
-    <title>BUFF_GAP: New floor (2022-01-06)</title>
+    <title>BUFF_GAP: Wind/solar: offer floor changed (2022-01-06)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=BUFF_GAP"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=BUFF_GAP#BUFF_GAP/2022-01-06/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$35/MWh to −$2/MWh</summary>
+    <summary>Floor moved: −$35/MWh to −$2/MWh</summary>
   </entry>
   <entry>
-    <title>BUFF_GAP: New floor (2019-06-07)</title>
+    <title>BUFF_GAP: Wind/solar: offer floor changed (2019-06-07)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=BUFF_GAP"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=BUFF_GAP#BUFF_GAP/2019-06-07/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$23/MWh to −$2/MWh</summary>
+    <summary>Floor moved: −$23/MWh to −$2/MWh</summary>
   </entry>
 </feed>

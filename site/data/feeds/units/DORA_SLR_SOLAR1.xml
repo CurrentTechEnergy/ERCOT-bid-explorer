@@ -5,10 +5,10 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=DORA_SLR_SOLAR1</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
-    <title>DORA_SLR: New floor (2026-01-07)</title>
+    <title>DORA_SLR: Wind/solar: offer floor changed (2026-01-07)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=DORA_SLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=DORA_SLR#DORA_SLR/2026-01-07/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: $0/MWh to −$40/MWh</summary>
+    <summary>Floor moved: $0/MWh to −$40/MWh</summary>
   </entry>
 </feed>

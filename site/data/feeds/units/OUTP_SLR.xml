@@ -5,94 +5,94 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=OUTP_SLR</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
-    <title>OUTP_SLR: Day-ahead floor changed (2026-07-04)</title>
+    <title>OUTP_SLR: Day-ahead: wind/solar floor changed (2026-07-04)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=OUTP_SLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=OUTP_SLR#OUTP_SLR/2026-07-04/dam_renew_floor</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Day-ahead floor changed: −$14 to −$2/MWh</summary>
   </entry>
   <entry>
-    <title>OUTP_SLR: Day-ahead floor changed (2026-03-17)</title>
+    <title>OUTP_SLR: Day-ahead: wind/solar floor changed (2026-03-17)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=OUTP_SLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=OUTP_SLR#OUTP_SLR/2026-03-17/dam_renew_floor</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Day-ahead floor changed: −$0 to −$14/MWh</summary>
   </entry>
   <entry>
-    <title>OUTP_SLR: Episode (2026-01-23)</title>
+    <title>OUTP_SLR: Wind/solar: short episode at a different floor (2026-01-23)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=OUTP_SLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=OUTP_SLR#OUTP_SLR/2026-01-23/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Episode: floor −$32/MWh, briefly $195/MWh, for 5 days</summary>
+    <summary>Short episode: floor −$32/MWh, briefly $195/MWh, for 5 days</summary>
   </entry>
   <entry>
-    <title>OUTP_SLR: New floor (2026-01-13)</title>
+    <title>OUTP_SLR: Wind/solar: offer floor changed (2026-01-13)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=OUTP_SLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=OUTP_SLR#OUTP_SLR/2026-01-13/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$30/MWh to −$32/MWh</summary>
+    <summary>Floor moved: −$30/MWh to −$32/MWh</summary>
   </entry>
   <entry>
-    <title>OUTP_SLR: Episode (2025-07-09)</title>
+    <title>OUTP_SLR: Wind/solar: short episode at a different floor (2025-07-09)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=OUTP_SLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=OUTP_SLR#OUTP_SLR/2025-07-09/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Episode: floor −$30/MWh, briefly −$0/MWh, for 2 days</summary>
+    <summary>Short episode: floor −$30/MWh, briefly −$0/MWh, for 2 days</summary>
   </entry>
   <entry>
-    <title>OUTP_SLR: Back to an earlier floor (2025-06-14)</title>
+    <title>OUTP_SLR: Wind/solar: back to an earlier floor (2025-06-14)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=OUTP_SLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=OUTP_SLR#OUTP_SLR/2025-06-14/renew_floor_back</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Back to an earlier floor: −$22/MWh to −$30/MWh</summary>
   </entry>
   <entry>
-    <title>OUTP_SLR: Episode (2025-05-30)</title>
+    <title>OUTP_SLR: Wind/solar: short episode at a different floor (2025-05-30)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=OUTP_SLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=OUTP_SLR#OUTP_SLR/2025-05-30/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Episode: floor −$30/MWh, briefly −$0/MWh, for 2 days</summary>
+    <summary>Short episode: floor −$30/MWh, briefly −$0/MWh, for 2 days</summary>
   </entry>
   <entry>
-    <title>OUTP_SLR: Episode (2025-05-28)</title>
+    <title>OUTP_SLR: Wind/solar: short episode at a different floor (2025-05-28)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=OUTP_SLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=OUTP_SLR#OUTP_SLR/2025-05-28/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Episode: floor −$22/MWh, briefly −$9/MWh, for 1 day</summary>
+    <summary>Short episode: floor −$22/MWh, briefly −$9/MWh, for 1 day</summary>
   </entry>
   <entry>
-    <title>OUTP_SLR: New floor (2025-05-22)</title>
+    <title>OUTP_SLR: Wind/solar: offer floor changed (2025-05-22)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=OUTP_SLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=OUTP_SLR#OUTP_SLR/2025-05-22/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$25/MWh to −$22/MWh</summary>
+    <summary>Floor moved: −$25/MWh to −$22/MWh</summary>
   </entry>
   <entry>
-    <title>OUTP_SLR: New floor (2025-05-17)</title>
+    <title>OUTP_SLR: Wind/solar: offer floor changed (2025-05-17)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=OUTP_SLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=OUTP_SLR#OUTP_SLR/2025-05-17/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: $0/MWh to −$30/MWh</summary>
+    <summary>Floor moved: $0/MWh to −$30/MWh</summary>
   </entry>
   <entry>
-    <title>OUTP_SLR: New floor (2025-05-08)</title>
+    <title>OUTP_SLR: Wind/solar: offer floor changed (2025-05-08)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=OUTP_SLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=OUTP_SLR#OUTP_SLR/2025-05-08/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$30/MWh to −$25/MWh</summary>
+    <summary>Floor moved: −$30/MWh to −$25/MWh</summary>
   </entry>
   <entry>
-    <title>OUTP_SLR: Episode (2025-04-27)</title>
+    <title>OUTP_SLR: Wind/solar: short episode at a different floor (2025-04-27)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=OUTP_SLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=OUTP_SLR#OUTP_SLR/2025-04-27/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Episode: floor −$30/MWh, briefly −$22/MWh, for 3 days</summary>
+    <summary>Short episode: floor −$30/MWh, briefly −$22/MWh, for 3 days</summary>
   </entry>
   <entry>
-    <title>OUTP_SLR: New floor (2025-04-18)</title>
+    <title>OUTP_SLR: Wind/solar: offer floor changed (2025-04-18)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=OUTP_SLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=OUTP_SLR#OUTP_SLR/2025-04-18/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: $0/MWh to −$30/MWh</summary>
+    <summary>Floor moved: $0/MWh to −$30/MWh</summary>
   </entry>
 </feed>

@@ -5,17 +5,17 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=STEAM_STEAM</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
-    <title>STEAM_STEAM: Minimum-energy offer stepped (2026-03-10)</title>
+    <title>STEAM_STEAM: Day-ahead: minimum-energy offer stepped (2026-03-10)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=STEAM_STEAM"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=STEAM_STEAM#STEAM_STEAM/2026-03-10/dam_mingen_step</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Minimum-energy offer stepped: $72 to $386/MWh ($40 to $351 against the fuel-cost line)</summary>
+    <summary>Minimum-energy offer stepped: $72 to $386/MWh (offer minus fuel cost: $40 to $351/MWh)</summary>
   </entry>
   <entry>
-    <title>STEAM_STEAM: Minimum-energy offer stepped (2026-02-11)</title>
+    <title>STEAM_STEAM: Day-ahead: minimum-energy offer stepped (2026-02-11)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=STEAM_STEAM"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=STEAM_STEAM#STEAM_STEAM/2026-02-11/dam_mingen_step</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Minimum-energy offer stepped: $92 to $72/MWh ($58 to $46 against the fuel-cost line)</summary>
+    <summary>Minimum-energy offer stepped: $92 to $72/MWh (offer minus fuel cost: $58 to $46/MWh)</summary>
   </entry>
 </feed>

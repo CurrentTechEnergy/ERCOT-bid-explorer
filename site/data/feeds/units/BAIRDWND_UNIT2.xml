@@ -5,45 +5,45 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=BAIRDWND_UNIT2</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
-    <title>BAIRDWND: Started day-ahead offers (2026-07-25)</title>
+    <title>BAIRDWND: Day-ahead: wind/solar started offering (2026-07-25)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=BAIRDWND"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=BAIRDWND#BAIRDWND/2026-07-25/dam_renew_on</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Started day-ahead offers: none to day-ahead curve</summary>
   </entry>
   <entry>
-    <title>BAIRDWND: Stopped day-ahead offers (2026-05-01)</title>
+    <title>BAIRDWND: Day-ahead: wind/solar stopped offering (2026-05-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=BAIRDWND"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=BAIRDWND#BAIRDWND/2026-05-01/dam_renew_off</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Stopped day-ahead offers: day-ahead curve to none</summary>
   </entry>
   <entry>
-    <title>BAIRDWND: Day-ahead floor changed (2026-04-28)</title>
+    <title>BAIRDWND: Day-ahead: wind/solar floor changed (2026-04-28)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=BAIRDWND"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=BAIRDWND#BAIRDWND/2026-04-28/dam_renew_floor</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Day-ahead floor changed: $7 to $19/MWh</summary>
   </entry>
   <entry>
-    <title>BAIRDWND: New floor (2026-03-11)</title>
+    <title>BAIRDWND: Wind/solar: offer floor changed (2026-03-11)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=BAIRDWND"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=BAIRDWND#BAIRDWND/2026-03-11/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$38/MWh to −$39/MWh</summary>
+    <summary>Floor moved: −$38/MWh to −$39/MWh</summary>
   </entry>
   <entry>
-    <title>BAIRDWND: New floor (2025-02-05)</title>
+    <title>BAIRDWND: Wind/solar: offer floor changed (2025-02-05)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=BAIRDWND"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=BAIRDWND#BAIRDWND/2025-02-05/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$33/MWh to −$38/MWh</summary>
+    <summary>Floor moved: −$33/MWh to −$38/MWh</summary>
   </entry>
   <entry>
-    <title>BAIRDWND: New floor (2021-10-18)</title>
+    <title>BAIRDWND: Wind/solar: offer floor changed (2021-10-18)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=BAIRDWND"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=BAIRDWND#BAIRDWND/2021-10-18/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: $0/MWh to −$33/MWh</summary>
+    <summary>Floor moved: $0/MWh to −$33/MWh</summary>
   </entry>
 </feed>

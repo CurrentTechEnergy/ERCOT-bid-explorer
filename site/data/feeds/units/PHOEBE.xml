@@ -5,11 +5,11 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=PHOEBE</id>
   <updated>2026-10-26T00:00:00Z</updated>
   <entry>
-    <title>PHOEBE: New floor (2026-04-10)</title>
+    <title>PHOEBE: Wind/solar: offer floor changed (2026-04-10)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=PHOEBE"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=PHOEBE#PHOEBE/2026-04-10/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: $0/MWh to −$2/MWh</summary>
+    <summary>Floor moved: $0/MWh to −$2/MWh</summary>
   </entry>
   <entry>
     <title>PHOEBE: Decision maker or QSE changed (2026-03-31)</title>
@@ -23,6 +23,6 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=PHOEBE"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=PHOEBE#PHOEBE/2024-09-24/control</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Scheduled by SHELL ENERGY NORTH AMERICA (US) LP (SQ18), was SHELL ENERGY NORTH AMERICA (US) LP (SQ7)</summary>
+    <summary>QSE code changed: QSHEL7 to QSHE18 (SHELL ENERGY NORTH AMERICA (US) LP (SQ18))</summary>
   </entry>
 </feed>

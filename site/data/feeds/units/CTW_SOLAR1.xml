@@ -5,45 +5,45 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=CTW_SOLAR1</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
-    <title>CTW: New floor (2026-04-07)</title>
+    <title>CTW: Wind/solar: offer floor changed (2026-04-07)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=CTW"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=CTW#CTW/2026-04-07/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$23/MWh to −$19/MWh</summary>
+    <summary>Floor moved: −$23/MWh to −$19/MWh</summary>
   </entry>
   <entry>
-    <title>CTW: Episode (2025-11-23)</title>
+    <title>CTW: Wind/solar: short episode at a different floor (2025-11-23)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=CTW"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=CTW#CTW/2025-11-23/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Episode: floor −$23/MWh, briefly −$5/MWh, for 1 day</summary>
+    <summary>Short episode: floor −$23/MWh, briefly −$5/MWh, for 1 day</summary>
   </entry>
   <entry>
-    <title>CTW: New floor (2025-11-22)</title>
+    <title>CTW: Wind/solar: offer floor changed (2025-11-22)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=CTW"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=CTW#CTW/2025-11-22/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$5/MWh to −$23/MWh</summary>
+    <summary>Floor moved: −$5/MWh to −$23/MWh</summary>
   </entry>
   <entry>
-    <title>CTW: New floor (2025-06-18)</title>
+    <title>CTW: Wind/solar: offer floor changed (2025-06-18)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=CTW"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=CTW#CTW/2025-06-18/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$2/MWh to −$5/MWh</summary>
+    <summary>Floor moved: −$2/MWh to −$5/MWh</summary>
   </entry>
   <entry>
-    <title>CTW: Episode (2024-11-29)</title>
+    <title>CTW: Wind/solar: short episode at a different floor (2024-11-29)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=CTW"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=CTW#CTW/2024-11-29/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Episode: floor −$2/MWh, briefly −$30/MWh, for 1 day</summary>
+    <summary>Short episode: floor −$2/MWh, briefly −$30/MWh, for 1 day</summary>
   </entry>
   <entry>
-    <title>CTW: New floor (2024-08-16)</title>
+    <title>CTW: Wind/solar: offer floor changed (2024-08-16)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=CTW"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=CTW#CTW/2024-08-16/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$30/MWh to −$2/MWh</summary>
+    <summary>Floor moved: −$30/MWh to −$2/MWh</summary>
   </entry>
 </feed>

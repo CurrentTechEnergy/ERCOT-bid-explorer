@@ -12,94 +12,94 @@
     <summary>Outage began, still on at the end of the data (12 days so far)</summary>
   </entry>
   <entry>
-    <title>BRTSW_BCW1: Started day-ahead offers (2026-02-05)</title>
+    <title>BRTSW_BCW1: Day-ahead: wind/solar started offering (2026-02-05)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=BRTSW_BCW1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=BRTSW_BCW1#BRTSW_BCW1/2026-02-05/dam_renew_on</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Started day-ahead offers: none to day-ahead curve</summary>
   </entry>
   <entry>
-    <title>BRTSW_BCW1: Started day-ahead offers (2026-02-05)</title>
+    <title>BRTSW_BCW1: Day-ahead: wind/solar started offering (2026-02-05)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=BRTSW_BCW1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=BRTSW_BCW1#BRTSW_BCW1/2026-02-05/dam_renew_on</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Started day-ahead offers: none to day-ahead curve</summary>
   </entry>
   <entry>
-    <title>BRTSW_BCW: Episode (2025-04-25)</title>
+    <title>BRTSW_BCW: Wind/solar: short episode at a different floor (2025-04-25)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=BRTSW_BCW"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=BRTSW_BCW#BRTSW_BCW/2025-04-25/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Episode: floor −$0/MWh, briefly −$35/MWh, for 2 days</summary>
+    <summary>Short episode: floor −$0/MWh, briefly −$35/MWh, for 2 days</summary>
   </entry>
   <entry>
-    <title>BRTSW_BCW: New floor (2025-01-16)</title>
+    <title>BRTSW_BCW: Wind/solar: offer floor changed (2025-01-16)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=BRTSW_BCW"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=BRTSW_BCW#BRTSW_BCW/2025-01-16/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$2/MWh to −$0/MWh</summary>
+    <summary>Floor moved: −$2/MWh to −$0/MWh</summary>
   </entry>
   <entry>
-    <title>BRTSW_BCW: Back to an earlier floor (2023-03-27)</title>
+    <title>BRTSW_BCW: Wind/solar: back to an earlier floor (2023-03-27)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=BRTSW_BCW"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=BRTSW_BCW#BRTSW_BCW/2023-03-27/renew_floor_back</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Back to an earlier floor: −$0/MWh to −$2/MWh</summary>
   </entry>
   <entry>
-    <title>BRTSW_BCW: Back to an earlier floor (2023-03-10)</title>
+    <title>BRTSW_BCW: Wind/solar: back to an earlier floor (2023-03-10)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=BRTSW_BCW"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=BRTSW_BCW#BRTSW_BCW/2023-03-10/renew_floor_back</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Back to an earlier floor: −$2/MWh to −$0/MWh</summary>
   </entry>
   <entry>
-    <title>BRTSW_BCW: New floor (2023-02-08)</title>
+    <title>BRTSW_BCW: Wind/solar: offer floor changed (2023-02-08)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=BRTSW_BCW"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=BRTSW_BCW#BRTSW_BCW/2023-02-08/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: $0/MWh to −$2/MWh</summary>
+    <summary>Floor moved: $0/MWh to −$2/MWh</summary>
   </entry>
   <entry>
-    <title>BRTSW_BCW: Episode (2022-12-23)</title>
+    <title>BRTSW_BCW: Wind/solar: short episode at a different floor (2022-12-23)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=BRTSW_BCW"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=BRTSW_BCW#BRTSW_BCW/2022-12-23/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Episode: floor $0/MWh, briefly −$250/MWh, for 1 day</summary>
+    <summary>Short episode: floor $0/MWh, briefly −$250/MWh, for 1 day</summary>
   </entry>
   <entry>
-    <title>BRTSW_BCW: Episode (2022-08-11)</title>
+    <title>BRTSW_BCW: Wind/solar: short episode at a different floor (2022-08-11)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=BRTSW_BCW"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=BRTSW_BCW#BRTSW_BCW/2022-08-11/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Episode: floor $0/MWh, briefly −$250/MWh, for 1 day</summary>
+    <summary>Short episode: floor $0/MWh, briefly −$250/MWh, for 1 day</summary>
   </entry>
   <entry>
-    <title>BRTSW_BCW: Episode (2022-07-12)</title>
+    <title>BRTSW_BCW: Wind/solar: short episode at a different floor (2022-07-12)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=BRTSW_BCW"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=BRTSW_BCW#BRTSW_BCW/2022-07-12/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Episode: floor $0/MWh, briefly −$250/MWh, for 1 day</summary>
+    <summary>Short episode: floor $0/MWh, briefly −$250/MWh, for 1 day</summary>
   </entry>
   <entry>
-    <title>BRTSW_BCW: Episode (2022-07-10)</title>
+    <title>BRTSW_BCW: Wind/solar: short episode at a different floor (2022-07-10)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=BRTSW_BCW"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=BRTSW_BCW#BRTSW_BCW/2022-07-10/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Episode: floor $0/MWh, briefly −$250/MWh, for 1 day</summary>
+    <summary>Short episode: floor $0/MWh, briefly −$250/MWh, for 1 day</summary>
   </entry>
   <entry>
-    <title>BRTSW_BCW: Episode (2022-05-27)</title>
+    <title>BRTSW_BCW: Wind/solar: short episode at a different floor (2022-05-27)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=BRTSW_BCW"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=BRTSW_BCW#BRTSW_BCW/2022-05-27/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Episode: floor $0/MWh, briefly −$250/MWh, for 1 day</summary>
+    <summary>Short episode: floor $0/MWh, briefly −$250/MWh, for 1 day</summary>
   </entry>
   <entry>
-    <title>BRTSW_BCW: Episode (2022-05-13)</title>
+    <title>BRTSW_BCW: Wind/solar: short episode at a different floor (2022-05-13)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=BRTSW_BCW"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=BRTSW_BCW#BRTSW_BCW/2022-05-13/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Episode: floor $0/MWh, briefly −$250/MWh, for 1 day</summary>
+    <summary>Short episode: floor $0/MWh, briefly −$250/MWh, for 1 day</summary>
   </entry>
 </feed>

@@ -5,17 +5,17 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=GALLOWAY</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
-    <title>GALLOWAY: New floor (2021-10-30)</title>
+    <title>GALLOWAY: Wind/solar: offer floor changed (2021-10-30)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=GALLOWAY"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=GALLOWAY#GALLOWAY/2021-10-30/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$15/MWh to $0/MWh</summary>
+    <summary>Floor moved: −$15/MWh to $0/MWh</summary>
   </entry>
   <entry>
-    <title>GALLOWAY: New floor (2021-07-01)</title>
+    <title>GALLOWAY: Wind/solar: offer floor changed (2021-07-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=GALLOWAY"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=GALLOWAY#GALLOWAY/2021-07-01/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: $0/MWh to −$15/MWh</summary>
+    <summary>Floor moved: $0/MWh to −$15/MWh</summary>
   </entry>
 </feed>

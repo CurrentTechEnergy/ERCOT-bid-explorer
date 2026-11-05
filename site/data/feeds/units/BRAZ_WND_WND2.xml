@@ -5,11 +5,11 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=BRAZ_WND_WND2</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
-    <title>BRAZ_WND: New floor (2023-11-22)</title>
+    <title>BRAZ_WND: Wind/solar: offer floor changed (2023-11-22)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=BRAZ_WND"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=BRAZ_WND#BRAZ_WND/2023-11-22/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$1/MWh to −$35/MWh</summary>
+    <summary>Floor moved: −$1/MWh to −$35/MWh</summary>
   </entry>
   <entry>
     <title>BRAZ: Decision maker or QSE changed (2020-12-29)</title>

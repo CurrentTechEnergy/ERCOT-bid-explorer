@@ -5,17 +5,17 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=AMADEUS1</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
-    <title>AMADEUS1: New floor (2020-12-18)</title>
+    <title>AMADEUS1: Wind/solar: offer floor changed (2020-12-18)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=AMADEUS1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=AMADEUS1#AMADEUS1/2020-12-18/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: $0/MWh to −$32/MWh</summary>
+    <summary>Floor moved: $0/MWh to −$32/MWh</summary>
   </entry>
   <entry>
-    <title>AMADEUS1: Episode (2020-11-19)</title>
+    <title>AMADEUS1: Wind/solar: short episode at a different floor (2020-11-19)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=AMADEUS1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=AMADEUS1#AMADEUS1/2020-11-19/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Episode: floor $0/MWh, briefly −$40/MWh, for 1 day</summary>
+    <summary>Short episode: floor $0/MWh, briefly −$40/MWh, for 1 day</summary>
   </entry>
 </feed>

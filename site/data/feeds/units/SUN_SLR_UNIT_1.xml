@@ -5,10 +5,10 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=SUN_SLR_UNIT_1</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
-    <title>SUN_SLR: New floor (2025-04-24)</title>
+    <title>SUN_SLR: Wind/solar: offer floor changed (2025-04-24)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=SUN_SLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=SUN_SLR#SUN_SLR/2025-04-24/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: $0/MWh to −$1/MWh</summary>
+    <summary>Floor moved: $0/MWh to −$1/MWh</summary>
   </entry>
 </feed>

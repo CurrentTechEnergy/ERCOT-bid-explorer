@@ -5,25 +5,25 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=TROJ_SLR_PV1</id>
   <updated>2026-11-05T00:00:00Z</updated>
   <entry>
-    <title>TROJ_SLR: Stopped moving within the day (2026-08-28)</title>
+    <title>TROJ_SLR: Wind/solar: offer stopped moving within the day (2026-08-28)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=TROJ_SLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=TROJ_SLR#TROJ_SLR/2026-08-28/renew_moving_off</id>
     <updated>2026-11-01T00:00:00Z</updated>
     <summary>Stopped moving within the day: now a floor of $0/MWh</summary>
   </entry>
   <entry>
-    <title>TROJ_SLR: Started moving within the day (2026-02-26)</title>
+    <title>TROJ_SLR: Wind/solar: offer started moving within the day (2026-02-26)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=TROJ_SLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=TROJ_SLR#TROJ_SLR/2026-02-26/renew_moving_on</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Started moving within the day (was a floor of −$23/MWh)</summary>
+    <summary>Started moving within the day: was a floor of −$23/MWh</summary>
   </entry>
   <entry>
-    <title>TROJ_SLR: New floor (2026-02-12)</title>
+    <title>TROJ_SLR: Wind/solar: offer floor changed (2026-02-12)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=TROJ_SLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=TROJ_SLR#TROJ_SLR/2026-02-12/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$3/MWh to −$23/MWh</summary>
+    <summary>Floor moved: −$3/MWh to −$23/MWh</summary>
   </entry>
   <entry>
     <title>TROJ_SLR_PV1: Outage ended (2026-01-05)</title>

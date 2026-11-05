@@ -5,31 +5,31 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=HICKMAN_G2_J</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
-    <title>HICKMAN_G2_J: New floor (2024-09-04)</title>
+    <title>HICKMAN_G2_J: Wind/solar: offer floor changed (2024-09-04)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=HICKMAN_G2_J"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=HICKMAN_G2_J#HICKMAN_G2_J/2024-09-04/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$53/MWh to −$59/MWh</summary>
+    <summary>Floor moved: −$53/MWh to −$59/MWh</summary>
   </entry>
   <entry>
-    <title>HICKMAN_G2_J: Episode (2024-08-31)</title>
+    <title>HICKMAN_G2_J: Wind/solar: short episode at a different floor (2024-08-31)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=HICKMAN_G2_J"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=HICKMAN_G2_J#HICKMAN_G2_J/2024-08-31/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Episode: floor −$53/MWh, briefly −$59/MWh, for 1 day</summary>
+    <summary>Short episode: floor −$53/MWh, briefly −$59/MWh, for 1 day</summary>
   </entry>
   <entry>
-    <title>HICKMAN_G2_J: Episode (2022-10-31)</title>
+    <title>HICKMAN_G2_J: Wind/solar: short episode at a different floor (2022-10-31)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=HICKMAN_G2_J"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=HICKMAN_G2_J#HICKMAN_G2_J/2022-10-31/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Episode: floor −$30/MWh, briefly −$39/MWh, for 1 day</summary>
+    <summary>Short episode: floor −$30/MWh, briefly −$39/MWh, for 1 day</summary>
   </entry>
   <entry>
-    <title>HICKMAN_G2_J: New floor (2019-07-17)</title>
+    <title>HICKMAN_G2_J: Wind/solar: offer floor changed (2019-07-17)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=HICKMAN_G2_J"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=HICKMAN_G2_J#HICKMAN_G2_J/2019-07-17/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$52/MWh to −$53/MWh</summary>
+    <summary>Floor moved: −$52/MWh to −$53/MWh</summary>
   </entry>
 </feed>

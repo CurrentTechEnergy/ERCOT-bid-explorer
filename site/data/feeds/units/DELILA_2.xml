@@ -5,10 +5,10 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=DELILA_2</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
-    <title>DELILA_2: New floor (2025-10-31)</title>
+    <title>DELILA_2: Wind/solar: offer floor changed (2025-10-31)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=DELILA_2"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=DELILA_2#DELILA_2/2025-10-31/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: $0/MWh to −$42/MWh</summary>
+    <summary>Floor moved: $0/MWh to −$42/MWh</summary>
   </entry>
 </feed>

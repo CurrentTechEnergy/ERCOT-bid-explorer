@@ -5,24 +5,24 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=MONT_WND</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
-    <title>MONT_WND: New floor (2026-03-10)</title>
+    <title>MONT_WND: Wind/solar: offer floor changed (2026-03-10)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=MONT_WND"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=MONT_WND#MONT_WND/2026-03-10/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$47/MWh to −$48/MWh</summary>
+    <summary>Floor moved: −$47/MWh to −$48/MWh</summary>
   </entry>
   <entry>
-    <title>MONT_WND: New floor (2026-02-06)</title>
+    <title>MONT_WND: Wind/solar: offer floor changed (2026-02-06)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=MONT_WND"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=MONT_WND#MONT_WND/2026-02-06/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$45/MWh to −$47/MWh</summary>
+    <summary>Floor moved: −$45/MWh to −$47/MWh</summary>
   </entry>
   <entry>
-    <title>MONT_WND: New floor (2025-11-08)</title>
+    <title>MONT_WND: Wind/solar: offer floor changed (2025-11-08)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=MONT_WND"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=MONT_WND#MONT_WND/2025-11-08/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$38/MWh to −$45/MWh</summary>
+    <summary>Floor moved: −$38/MWh to −$45/MWh</summary>
   </entry>
 </feed>

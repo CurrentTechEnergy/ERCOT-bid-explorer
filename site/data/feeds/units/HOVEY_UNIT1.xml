@@ -5,11 +5,11 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=HOVEY_UNIT1</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
-    <title>HOVEY: New floor (2025-07-31)</title>
+    <title>HOVEY: Wind/solar: offer floor changed (2025-07-31)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=HOVEY"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=HOVEY#HOVEY/2025-07-31/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$4/MWh to −$2/MWh</summary>
+    <summary>Floor moved: −$4/MWh to −$2/MWh</summary>
   </entry>
   <entry>
     <title>HOVEY: Decision maker or QSE changed (2025-07-29)</title>
@@ -19,24 +19,24 @@
     <summary>Scheduled by LRE ENERGY SERVICES LLC, was MP2 ENERGY LLC</summary>
   </entry>
   <entry>
-    <title>HOVEY: New floor (2022-11-05)</title>
+    <title>HOVEY: Wind/solar: offer floor changed (2022-11-05)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=HOVEY"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=HOVEY#HOVEY/2022-11-05/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$5/MWh to −$4/MWh</summary>
+    <summary>Floor moved: −$5/MWh to −$4/MWh</summary>
   </entry>
   <entry>
-    <title>HOVEY: Episode (2022-10-30)</title>
+    <title>HOVEY: Wind/solar: short episode at a different floor (2022-10-30)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=HOVEY"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=HOVEY#HOVEY/2022-10-30/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Episode: floor −$5/MWh, briefly $10/MWh, for 1 day</summary>
+    <summary>Short episode: floor −$5/MWh, briefly $10/MWh, for 1 day</summary>
   </entry>
   <entry>
-    <title>HOVEY: New floor (2022-03-12)</title>
+    <title>HOVEY: Wind/solar: offer floor changed (2022-03-12)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=HOVEY"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=HOVEY#HOVEY/2022-03-12/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$1/MWh to −$5/MWh</summary>
+    <summary>Floor moved: −$1/MWh to −$5/MWh</summary>
   </entry>
 </feed>

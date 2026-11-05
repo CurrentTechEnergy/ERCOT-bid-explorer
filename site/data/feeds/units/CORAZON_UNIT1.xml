@@ -5,24 +5,24 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=CORAZON_UNIT1</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
-    <title>CORAZON: New floor (2021-08-19)</title>
+    <title>CORAZON: Wind/solar: offer floor changed (2021-08-19)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=CORAZON"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=CORAZON#CORAZON/2021-08-19/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$5/MWh to −$6/MWh</summary>
+    <summary>Floor moved: −$5/MWh to −$6/MWh</summary>
   </entry>
   <entry>
-    <title>CORAZON: Episode (2021-08-14)</title>
+    <title>CORAZON: Wind/solar: short episode at a different floor (2021-08-14)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=CORAZON"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=CORAZON#CORAZON/2021-08-14/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Episode: floor −$5/MWh, briefly −$40/MWh, for 3 days</summary>
+    <summary>Short episode: floor −$5/MWh, briefly −$40/MWh, for 3 days</summary>
   </entry>
   <entry>
-    <title>CORAZON: Episode (2021-08-11)</title>
+    <title>CORAZON: Wind/solar: short episode at a different floor (2021-08-11)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=CORAZON"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=CORAZON#CORAZON/2021-08-11/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Episode: floor −$5/MWh, briefly −$40/MWh, for 1 day</summary>
+    <summary>Short episode: floor −$5/MWh, briefly −$40/MWh, for 1 day</summary>
   </entry>
 </feed>

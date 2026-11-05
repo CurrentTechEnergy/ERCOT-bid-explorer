@@ -5,38 +5,38 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=BR_ARROW</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
-    <title>BR_ARROW: New floor (2026-02-06)</title>
+    <title>BR_ARROW: Wind/solar: offer floor changed (2026-02-06)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=BR_ARROW"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=BR_ARROW#BR_ARROW/2026-02-06/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$43/MWh to −$44/MWh</summary>
+    <summary>Floor moved: −$43/MWh to −$44/MWh</summary>
   </entry>
   <entry>
-    <title>BR_ARROW: Back to an earlier floor (2025-10-17)</title>
+    <title>BR_ARROW: Wind/solar: back to an earlier floor (2025-10-17)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=BR_ARROW"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=BR_ARROW#BR_ARROW/2025-10-17/renew_floor_back</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Back to an earlier floor: −$41/MWh to −$43/MWh</summary>
   </entry>
   <entry>
-    <title>BR_ARROW: Back to an earlier floor (2025-10-05)</title>
+    <title>BR_ARROW: Wind/solar: back to an earlier floor (2025-10-05)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=BR_ARROW"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=BR_ARROW#BR_ARROW/2025-10-05/renew_floor_back</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Back to an earlier floor: −$43/MWh to −$41/MWh</summary>
   </entry>
   <entry>
-    <title>BR_ARROW: New floor (2025-09-04)</title>
+    <title>BR_ARROW: Wind/solar: offer floor changed (2025-09-04)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=BR_ARROW"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=BR_ARROW#BR_ARROW/2025-09-04/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$41/MWh to −$43/MWh</summary>
+    <summary>Floor moved: −$41/MWh to −$43/MWh</summary>
   </entry>
   <entry>
-    <title>BR_ARROW: New floor (2025-08-05)</title>
+    <title>BR_ARROW: Wind/solar: offer floor changed (2025-08-05)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=BR_ARROW"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=BR_ARROW#BR_ARROW/2025-08-05/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$35/MWh to −$41/MWh</summary>
+    <summary>Floor moved: −$35/MWh to −$41/MWh</summary>
   </entry>
 </feed>

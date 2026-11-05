@@ -12,24 +12,24 @@
     <summary>Outage began, still on at the end of the data (24 days so far)</summary>
   </entry>
   <entry>
-    <title>MESQCRK: New floor (2026-03-26)</title>
+    <title>MESQCRK: Wind/solar: offer floor changed (2026-03-26)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=MESQCRK"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=MESQCRK#MESQCRK/2026-03-26/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$30/MWh to −$2/MWh</summary>
+    <summary>Floor moved: −$30/MWh to −$2/MWh</summary>
   </entry>
   <entry>
-    <title>MESQCRK: New floor (2023-07-04)</title>
+    <title>MESQCRK: Wind/solar: offer floor changed (2023-07-04)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=MESQCRK"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=MESQCRK#MESQCRK/2023-07-04/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$15/MWh to −$30/MWh</summary>
+    <summary>Floor moved: −$15/MWh to −$30/MWh</summary>
   </entry>
   <entry>
-    <title>MESQCRK: New floor (2020-01-10)</title>
+    <title>MESQCRK: Wind/solar: offer floor changed (2020-01-10)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=MESQCRK"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=MESQCRK#MESQCRK/2020-01-10/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$35/MWh to −$15/MWh</summary>
+    <summary>Floor moved: −$35/MWh to −$15/MWh</summary>
   </entry>
 </feed>

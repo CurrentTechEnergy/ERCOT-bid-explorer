@@ -5,21 +5,21 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=VICTPRT2</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
-    <title>VICTPRT2: Minimum-energy offer stepped (2026-07-12)</title>
+    <title>VICTPRT2: Day-ahead: minimum-energy offer stepped (2026-07-12)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=VICTPRT2"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=VICTPRT2#VICTPRT2/2026-07-12/dam_mingen_step</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Minimum-energy offer stepped: $46 to $40/MWh ($18 to $16 against the fuel-cost line)</summary>
+    <summary>Minimum-energy offer stepped: $46 to $40/MWh (offer minus fuel cost: $18 to $16/MWh)</summary>
   </entry>
   <entry>
-    <title>VICTPRT2: Started three-part offers (2026-06-24)</title>
+    <title>VICTPRT2: Day-ahead: started three-part offers (2026-06-24)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=VICTPRT2"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=VICTPRT2#VICTPRT2/2026-06-24/dam_filing_on</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Started three-part offers: no three-part offer to three-part offer</summary>
   </entry>
   <entry>
-    <title>VICTPRT2: Started three-part offers (2026-06-24)</title>
+    <title>VICTPRT2: Day-ahead: started three-part offers (2026-06-24)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=VICTPRT2"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=VICTPRT2#VICTPRT2/2026-06-24/dam_filing_on</id>
     <updated>2026-10-18T00:00:00Z</updated>
@@ -44,6 +44,6 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=VICTPRT2"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=VICTPRT2#VICTPRT2/2024-11-19/control</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Scheduled by SHELL ENERGY NORTH AMERICA (US) LP (SQ19), was SHELL ENERGY NORTH AMERICA (US) LP (SQ2)</summary>
+    <summary>QSE code changed: QSHEL2 to QSHE19 (SHELL ENERGY NORTH AMERICA (US) LP (SQ19))</summary>
   </entry>
 </feed>

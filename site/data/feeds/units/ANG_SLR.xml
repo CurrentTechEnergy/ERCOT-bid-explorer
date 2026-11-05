@@ -5,24 +5,24 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=ANG_SLR</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
-    <title>ANG_SLR: New floor (2024-07-26)</title>
+    <title>ANG_SLR: Wind/solar: offer floor changed (2024-07-26)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=ANG_SLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=ANG_SLR#ANG_SLR/2024-07-26/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$35/MWh to −$38/MWh</summary>
+    <summary>Floor moved: −$35/MWh to −$38/MWh</summary>
   </entry>
   <entry>
-    <title>ANG_SLR: New floor (2024-06-18)</title>
+    <title>ANG_SLR: Wind/solar: offer floor changed (2024-06-18)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=ANG_SLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=ANG_SLR#ANG_SLR/2024-06-18/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: $0/MWh to −$35/MWh</summary>
+    <summary>Floor moved: $0/MWh to −$35/MWh</summary>
   </entry>
   <entry>
-    <title>ANG_SLR: New floor (2024-05-13)</title>
+    <title>ANG_SLR: Wind/solar: offer floor changed (2024-05-13)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=ANG_SLR"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=ANG_SLR#ANG_SLR/2024-05-13/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: $5,000/MWh to $0/MWh</summary>
+    <summary>Floor moved: $5,000/MWh to $0/MWh</summary>
   </entry>
 </feed>

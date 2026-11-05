@@ -5,31 +5,31 @@
   <id>https://ercotbids.currenttech.energy/unit.html?unit=REDBARN_UNIT_2</id>
   <updated>2026-10-18T00:00:00Z</updated>
   <entry>
-    <title>REDBARN: New floor (2026-07-22)</title>
+    <title>REDBARN: Wind/solar: offer floor changed (2026-07-22)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=REDBARN"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=REDBARN#REDBARN/2026-07-22/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$10/MWh to −$11/MWh</summary>
+    <summary>Floor moved: −$10/MWh to −$11/MWh</summary>
   </entry>
   <entry>
-    <title>REDBARN: New floor (2025-06-06)</title>
+    <title>REDBARN: Wind/solar: offer floor changed (2025-06-06)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=REDBARN"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=REDBARN#REDBARN/2025-06-06/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: −$5/MWh to −$10/MWh</summary>
+    <summary>Floor moved: −$5/MWh to −$10/MWh</summary>
   </entry>
   <entry>
-    <title>REDBARN: New floor (2024-05-10)</title>
+    <title>REDBARN: Wind/solar: offer floor changed (2024-05-10)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=REDBARN"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=REDBARN#REDBARN/2024-05-10/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>New floor: $0/MWh to −$5/MWh</summary>
+    <summary>Floor moved: $0/MWh to −$5/MWh</summary>
   </entry>
   <entry>
-    <title>REDBARN: Episode (2021-04-29)</title>
+    <title>REDBARN: Wind/solar: short episode at a different floor (2021-04-29)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=REDBARN"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=REDBARN#REDBARN/2021-04-29/renew_episode</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Episode: floor $0/MWh, briefly −$50/MWh, for 5 days</summary>
+    <summary>Short episode: floor $0/MWh, briefly −$50/MWh, for 5 days</summary>
   </entry>
 </feed>
