@@ -24,6 +24,7 @@ const fmtDay = d3.utcFormat("%b %-d");
 const fmtLong = d3.utcFormat("%b %-d, %Y");
 const isoDay = d3.utcFormat("%Y-%m-%d");
 const weekOf = (d) => isoDay(d3.utcMonday.floor(parseDate(d)));
+const lc1 = (t) => (/^[A-Z]{2}/.test(t) ? t : t.charAt(0).toLowerCase() + t.slice(1));   // "QSE" stays upper case
 
 const S = { E: null, G: null, groupOf: new Map(), groupLabel: {}, latestSeen: null, weeks: WEEKS,
   tech: "", group: "", kind: "", span: "90", all: "major", q: "" };
@@ -31,14 +32,18 @@ const S = { E: null, G: null, groupOf: new Map(), groupLabel: {}, latestSeen: nu
 // the numbers behind a change, in the kind's own terms (as on the Unit page)
 function numbers(e) {
   const k = e.kind;
-  if (k === "turnoff") return `${e.before_usd == null ? "rides through" : fmt$(e.before_usd)} → ${e.after_usd == null ? "rides through" : fmt$(e.after_usd)} for the day`;
-  if (k === "rt_price") return `online ${fmtPct(e.before)} → ${fmtPct(e.after)} of its hours at that real-time node price`;
+  if (k === "turnoff") {
+    const perMW = (v) => (v == null ? "never turns off" : fmt$(v));
+    const lsl = e.after ? e.after_usd / e.after : e.before ? e.before_usd / e.before : null;
+    return `${perMW(e.before)} → ${perMW(e.after)}/MW of minimum` + (lsl ? ` (${e.before_usd == null ? "never" : fmt$(e.before_usd)} → ${e.after_usd == null ? "never" : fmt$(e.after_usd)} a day at its ${d3.format(",.0f")(lsl)} MW minimum)` : "");
+  }
+  if (k === "rt_price") return `online ${fmtPct(e.before)} → ${fmtPct(e.after)} of its available hours at that price`;
   if (k === "bidding") return e.field === "rel" ? `${fmt$(e.before)} → ${fmt$(e.after)}/MWh against peers` : `${fmtPct(e.before)} → ${fmtPct(e.after)}`;
-  if (k.startsWith("shutdown")) return `loss from staying on ${fmt$(e.value)}` + (e.award != null ? `, award over ${fmtPct(e.award)} of the window` : "");
+  if (k.startsWith("shutdown")) return `avoided a ${fmt$(e.value)} loss from staying on`;   // the title gives the award
   if (k.startsWith("renew_")) return e.before != null && e.after != null ? `${fmt$(e.before)} → ${fmt$(e.after)}/MWh` : "";
   if (k.startsWith("outage")) return `${e.value} days`;
   if (k === "battery_size") return (e.signals || []).map(([f, b, a]) => `${d3.format(",")(b)} → ${d3.format(",")(a)} ${f === "hsl" ? "MW" : "MWh"}`).join(", ");
-  if (k === "fuel") return `${fmt$(e.before)} → ${fmt$(e.after)}/MWh` + (e.gas_before != null && e.gas_after != null ? `, gas $${e.gas_before.toFixed(2)} → $${e.gas_after.toFixed(2)}` : "");
+  if (k === "fuel") return `${fmt$(e.before)} → ${fmt$(e.after)}/MWh` + (e.gas_before != null && e.gas_after != null ? `, gas $${e.gas_before.toFixed(2)} → $${e.gas_after.toFixed(2)}/MMBtu` : "");
   return "";
 }
 
@@ -60,7 +65,7 @@ function drawCounts(evs) {
   const n = d3.rollup(evs, (v) => v.length, (e) => e.kind);
   const kinds = Object.keys(S.E.kinds).filter((k) => n.get(k));
   $("kind-counts").innerHTML = kinds.length > 1
-    ? kinds.sort((a, b) => n.get(b) - n.get(a)).map((k) => `<button type="button" data-k="${k}" title="Show only this kind"><b>${n.get(k)}</b> ${esc(S.E.kinds[k].toLowerCase())}</button>`).join("")
+    ? kinds.sort((a, b) => n.get(b) - n.get(a)).map((k) => `<button type="button" data-k="${k}" title="Show only this kind"><b>${n.get(k)}</b> ${esc(lc1(S.E.kinds[k]))}</button>`).join("")
     : "";
   $("kind-counts").querySelectorAll("button").forEach((b) => { b.onclick = () => { S.kind = b.dataset.k; $("f-kind").value = S.kind; draw(); }; });
 }
@@ -82,7 +87,8 @@ function draw() {
   document.querySelectorAll("#f-all button").forEach((b) => b.setAttribute("aria-checked", b.dataset.v === S.all));
   const inView = filtered(), evs = S.all === "all" ? inView : inView.filter((e) => e.major);
   const nMajor = inView.filter((e) => e.major).length;
-  $("feed-count").textContent = S.all === "all" ? `${inView.length} changes, ${nMajor} notable` : `${nMajor} notable of ${inView.length}`;
+  const per = S.span === "all" ? "in the whole record" : `in the last ${S.span} days`;
+  $("feed-count").textContent = S.all === "all" ? `${inView.length} changes ${per}, ${nMajor} of them notable` : `${nMajor} notable changes of ${inView.length} ${per}`;
   drawCounts(evs);
   if (!evs.length) {
     $("feed").innerHTML = `<p class="empty">No ${S.all === "all" ? "" : "notable "}changes match these filters.` +
@@ -94,7 +100,7 @@ function draw() {
   const head = `<thead><tr><th class="t w-date">Date</th><th class="t w-unit">Unit</th><th class="t hide-sm w-tech">Technology</th><th class="t">Change</th><th class="t hide-sm w-num">Numbers</th></tr></thead>`;
   $("feed").innerHTML = weeks.slice(0, S.weeks).map(([wk, list]) => {
     const kinds = d3.rollups(list, (v) => v.length, (e) => e.kind).sort((a, b) => b[1] - a[1]);
-    const summary = kinds.map(([k, n]) => `${n} ${S.E.kinds[k].toLowerCase()}`).join(", ");
+    const summary = kinds.map(([k, n]) => `${lc1(S.E.kinds[k])} (${n})`).join(", ");
     return `<h3 class="week">Week of ${fmtLong(parseDate(wk))} <span class="h-note">${list.length} change${list.length > 1 ? "s" : ""}: ${esc(summary)}</span></h3>` +
       `<div class="units-wrap"><table class="data">${head}<tbody>${list.map(row).join("")}</tbody></table></div>`;
   }).join("");
@@ -123,7 +129,7 @@ async function boot() {
   const newN = E.new_today || 0;
   $("status").textContent = `${E.n.toLocaleString()} changes, ${E.n_major.toLocaleString()} notable, ${E.first} to ${E.last} · updated ${E.updated.slice(0, 10)}` +
     (newN ? ` · ${newN} new in the latest update` : "");
-  window.CX.setNote($("feed-note"), "Grouped by week, newest first. Notable changes show by default; switch to all for the rest. New marks what the latest update found. A date opens the unit on that day; Chart draws what happened around the change.", `Grouped by week of the operating day. Notable means a change the detectors rate as large: daily cycling starting or stopping, a shutdown after 30 days on or despite a day-ahead award, an offer shift of $20/MWh or more against peers or of half the day in how much is offered at or below $0, an outage of 30 days or more, a large wind or solar floor or formula change, a technology's median offer moving by half or more, a new unit or battery, a battery growing or shrinking by half, or a new decision maker deciding a unit's offers (from ERCOT's DME list; a new QSE alone is not notable). "New" marks changes the latest update found.`);
+  window.CX.setNote($("feed-note"), "Changes are grouped by week, newest first, and only the notable ones show unless you choose All changes. A \u201cnew\u201d tag marks what the latest update found. Click a date to open the unit's page on that day, or Chart to see its output and prices around the change.", `Grouped by week of the operating day. Notable means a change the detectors rate as large: daily cycling starting or stopping, a shutdown after 30 days on or despite a day-ahead award, an offer shift of $20/MWh or more against peers or of half the day in how much is offered at or below $0, an outage of 30 days or more, a large wind or solar floor or formula change, a technology's median offer moving by half or more, a new unit or battery, a battery growing or shrinking by half, or a new decision maker deciding a unit's offers (from ERCOT's DME list; a new QSE alone is not notable). "New" marks changes the latest update found.`);
 
   const techs = [...new Set(E.events.map((e) => e.tech))].sort((a, b) => TECH_ORDER.indexOf(a) - TECH_ORDER.indexOf(b));
   options($("f-tech"), "All technologies", techs.map((t) => [t, TECH_LABEL[t] || t]));
