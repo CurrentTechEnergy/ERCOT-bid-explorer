@@ -733,6 +733,16 @@ function drawRuns(e) {
 }
 
 // ---- one day by hour: output, base point and limits, with lambda (data/60d-units/<date>) ----
+// wind and solar: the day's outage hours from data/renew_outages_60d.json.gz (unit-outage.js loads it)
+function renewOutNote(e, day, whole) {
+  const R = window.RENEW_OUT, str = R && R.strips[e.name], i = R ? R.dates.indexOf(day) : -1;
+  if (!str || i < 0) return "";
+  const d = str.slice(i * 24, i * 24 + 24), o = [...d].filter((c) => c === "o").length, dr = [...d].filter((c) => c === "d").length;
+  if (whole && o === 24) return `On outage all day on ${fmtDate(parseDate(day))} (ERCOT's telemetered status OUT).`;
+  const parts = (o ? ` On outage ${o} hour${o === 1 ? "" : "s"} (status OUT).` : "") + (dr ? ` Derated ${dr} hour${dr === 1 ? "" : "s"} (ERCOT outage report).` : "");
+  return whole && parts ? `Offline all day on ${fmtDate(parseDate(day))}.` + parts : parts;
+}
+window.addEventListener("renewoutloaded", () => { const e = S.list && S.list.get(S.unit); if (e && (e.tech === "wind" || e.tech === "solar")) drawDay(e); });
 const dayCache = new Map();
 const loadDayUnits = (d) => { if (!dayCache.has(d)) dayCache.set(d, tryJSON(`data/60d-units/${d}.json.gz`)); return dayCache.get(d); };
 async function drawDay(e) {
@@ -761,7 +771,7 @@ async function drawDay(e) {
   const nDead = H.filter(dead).length;
   $("day-note").textContent = on.length ? `Online ${on.length} of 24 hours on ${fmtDate(parseDate(day))}: ${fmtMW(d3.sum(on, (x) => x.out || 0))} MWh` + (THERMAL.includes(e.tech) ? `, against ${fmtMW(d3.sum(on, (x) => x.lsl || 0))} MWh at minimum. ` : ". ") +
     `Hourly means over the SCED runs it was online; telemetered output, the base point SCED sent, and its limits.` +
-    (nDead ? ` In ${nDead} of those hours it was online with no output: SCED had it on with a minimum, but it telemetered nothing.` : "") : `Offline all day on ${fmtDate(parseDate(day))}.`;
+    (nDead ? ` In ${nDead} of those hours it was online with no output: SCED had it on with a minimum, but it telemetered nothing.` : "") + renewOutNote(e, day) : renewOutNote(e, day, true) || `Offline all day on ${fmtDate(parseDate(day))}.`;
   const s = TECH_OF[e.tech] || { color: "--c-other" };
   const w = Math.max(280, el.clientWidth || 600), Hh = 230, Hp = 110, m = { t: 18, r: 16, b: 26, l: 64 };
   const x = d3.scaleBand().domain(d3.range(24)).range([m.l, w - m.r]).padding(0.15);
