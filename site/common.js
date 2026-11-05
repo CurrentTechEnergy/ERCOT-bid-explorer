@@ -565,7 +565,13 @@ function setNote(el, caption, how) {
     el.after(d);
   }
   d.hidden = !how;
-  if (how) d.querySelector("p").textContent = how;
+  if (!how) return;
+  // a blank line in the text starts a new paragraph
+  const paras = how.split(/\n\s*\n/);
+  d.querySelectorAll("p.note").forEach((p, i) => { if (i) p.remove(); });
+  const first = d.querySelector("p.note");
+  first.textContent = paras[0];
+  paras.slice(1).forEach((t) => { const p = document.createElement("p"); p.className = "note"; p.textContent = t; d.append(p); });
 }
 
 // ---- wind and solar curtailment by hour, one day ---------------------------------------

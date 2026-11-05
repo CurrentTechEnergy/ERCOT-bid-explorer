@@ -36,7 +36,7 @@
   <div class="brand">
     <div class="nav-row"><nav class="nav" aria-label="Pages"><a href="goal.html" aria-current="page">Will fossil turn off?</a><a href="index.html">A day in ERCOT</a><a href="prices.html">Prices</a><a href="dayahead.html">Day-ahead offers</a><a href="commitment.html">Turn-ons and Turn-offs</a><a href="beyond.html">Real-time offers</a><a href="renewables.html">Renewables</a><a href="batteries.html">Batteries</a><a href="unit.html">Units</a><span class="nav-sep" aria-hidden="true"></span><a href="changes.html" class="aux">What's changing</a><a href="fleet.html" class="aux">Fleet economics</a><a href="guide.html" class="aux">How offers work</a></nav></div>
     <h1>Will fossil turn off?</h1>
-    <p class="sub">As wind, solar and batteries grow, do Texas coal and gas units turn off when power is cheap? Four questions, each answered by year from 2019.</p>
+    <p class="sub">As wind, solar and batteries grow, do Texas coal and gas units turn off when power is cheap? Four questions, each answered by year from 2019: <a href="#q1-panel">what turns off</a>, <a href="#q2-panel">why the rest stays on</a>, <a href="#q3-panel">whether that is changing</a>, and <a href="#q4-panel">what it costs in curtailed wind and solar</a>.</p>
   </div>
   <p class="status" id="status">Loading data…</p>
 </header>
@@ -57,6 +57,7 @@
     <div class="legend" id="q1-legend"></div>
     <div class="chart" id="q1-chart"></div>
     <h3 class="sub-h">What is stuck on</h3>
+    <p class="note">The same hours grouped by the load left for fossil. The dark part of each bar is output from units at their minimum: it cannot fall further without a shutdown. The light part is output above minimum, which dispatch (SCED) can cut when the price falls.</p>
     <div class="legend" id="q1s-legend"></div>
     <div class="chart" id="q1s-chart"></div>
     <p class="detail">See the detail: <a href="commitment.html">Turn-ons and Turn-offs</a> for each unit's group and today's call, and <a href="unit.html">Units</a> for any one unit.</p>
@@ -97,7 +98,7 @@
     <div class="legend" id="q3h-legend"></div>
     <div class="chart" id="q3h-chart"></div>
     <h3 class="sub-h">Units that cycle: share of loss windows turned off, by size of loss</h3>
-    <p class="intro">Bigger losses get turned off for more often, so the windows are grouped by the loss from staying on, per MW of the unit's minimum output. If the units that cycle behaved the same, each line would stay flat.</p>
+    <p class="intro">Bigger losses get turned off for more often, so the windows are grouped by the loss from staying on, per MW of the unit's minimum output. If units that do cycle had kept the same habits year to year, each line would be flat; a falling line means they now ride through losses they used to shut down for.</p>
     <div class="legend" id="q3s-legend"></div>
     <div class="chart" id="q3s-chart"></div>
     <h3 class="sub-h">What the windows look like: share of loss windows in each bucket</h3>
@@ -126,7 +127,7 @@
       <p class="lead" id="sit-answer"></p>
       <p class="note" id="sit-note"></p>
       <div class="sit-maps">
-        <figure class="sit-map"><figcaption>Where wind and solar was curtailed, GWh</figcaption><div class="chart" id="sit-a"></div><div class="legend" id="sit-a-legend"></div></figure>
+        <figure class="sit-map"><figcaption>Where wind and solar were curtailed, GWh</figcaption><div class="chart" id="sit-a"></div><div class="legend" id="sit-a-legend"></div></figure>
         <figure class="sit-map"><figcaption>Hours a year a new load there could run on curtailed wind and solar</figcaption><div class="chart" id="sit-b"></div><div class="legend" id="sit-b-legend"></div></figure>
       </div>
       <div class="sit-detail" id="sit-detail" aria-live="polite"></div>
