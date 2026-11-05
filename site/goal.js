@@ -265,10 +265,18 @@ function drawQ3() {
     svg.append("text").attr("x", w - m.r + 6).attr("y", 14).attr("font-size", 11).attr("fill", css("--muted")).text("change");
     T.forEach((r, i) => {
       const y0 = m.t + i * rh;
-      svg.append("text").attr("x", m.l - 6).attr("y", y0 + rh - 3).attr("text-anchor", "end").attr("font-size", 11).attr("fill", css("--ink-2"))
+      // the unit's name opens its Unit page (decision history and its own yearly strip)
+      const a = svg.append("a").attr("href", `unit.html?unit=${encodeURIComponent(r.tr)}`).attr("class", "q3h-unit");
+      a.append("title").text(`Open ${r.tr}'s unit page`);
+      a.append("text").attr("x", m.l - 6).attr("y", y0 + rh - 3).attr("text-anchor", "end").attr("font-size", 11).attr("fill", css("--accent"))
         .text(narrow || r.lsl == null ? r.tr : `${r.tr} · ${d3.format(",")(r.lsl)} MW`);
+      const d = r.early != null && r.late != null ? r.late - r.early : null;
       r.cells.forEach((c) => svg.append("rect").attr("x", x(c.y)).attr("y", y0 + 1).attr("width", x.bandwidth()).attr("height", rh - 2).attr("fill", col(c.v))
-        .on("pointermove", (ev) => showTip(ev, `<h4>${esc(r.tr)}, ${yearLabel(c.y)}</h4><table><tr><td>Turned off for</td><td class="n">${fmtPct(c.v)} of ${c.n} windows where shutting paid</td></tr></table>`))
+        .on("pointermove", (ev) => showTip(ev, `<h4>${esc(r.tr)}, ${c.y}${yearLabel(c.y) === String(c.y) ? "" : "*"}</h4><table>` +
+          `<tr><td>Turned off for</td><td class="n">${fmtPct(c.v)}</td></tr><tr><td>Windows where shutting paid</td><td class="n">${c.n}</td></tr>` +
+          (r.lsl != null ? `<tr><td>Minimum output</td><td class="n">${d3.format(",")(r.lsl)} MW</td></tr>` : "") +
+          (d != null ? `<tr><td>Change, ${b0}–${String(b1).slice(2)} to 2024 on</td><td class="n">${d > 0 ? "+" : d < 0 ? "−" : ""}${Math.abs(Math.round(100 * d))} pt</td></tr>` : "") +
+          `</table>${yearLabel(c.y) === String(c.y) ? "" : `<p class="tip-pin-note">* ${esc(yearLabel(c.y).slice(5, -1))}</p>`}<p class="tip-pin-note">Click the name for its unit page</p>`))
         .on("pointerleave", hideTip));
       if (r.early != null && r.late != null) {
         const d = r.late - r.early;
