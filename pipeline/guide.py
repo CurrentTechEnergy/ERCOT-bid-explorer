@@ -19,14 +19,13 @@ Writes data/guide.json.gz:
                              sced: same for the SCED2 curve (as ERCOT used it), sced_h,
                              dam_award, dam_spp: [24], dam_curve: [[prices], [MW]] or null,
                              ride: stay-on figures for the stretch (pipeline/stayon.py) or null;
-                                  with "fuel" when the running cost is re-estimated from gas
-                                  (FUEL_EST), and "start_range" [p25, p50, p75] $ when the start
+                                  "fuel" is the running cost's basis and "hr" the heat rate at
+                                  minimum it used (stayon rides), and "start_range" [p25, p50, p75] $ when the start
                                   cost is generic: the technology's real offers per MW of HSL, median per unit, at
                                   least 10 units}
 """
 import numpy as np
 
-from . import heat_rates, private
 from .config import DATA_DIR, UNIT_DATA_DIR
 from .store import read_json_gz, write_json_gz
 from .stayon import HOT_H, INTER_H
@@ -40,18 +39,7 @@ UNITS = {   # resource name -> (label, one-line note shown with the picker)
     "SANMIGL_G1": ("San Miguel (lignite)", "Lignite unit whose curve starts at 0 MW and −$250"),
     "QALSW_CC1_2": ("Quail Run combined cycle (Odessa)", "West Texas gas combined cycle that offered below −$30 and ran above its minimum all afternoon"),
 }
-# Units whose day-ahead minimum-energy offer is a token price (a bid to be committed, not a
-# cost): their stay-on running cost is estimated from their gas hub instead, as the Plant
-# economics page's EIA basis does (heat rate x gas price + variable O&M).
-FUEL_EST = {"QALSW_CC1_2": "waha"}
-EIA_HR = {"combined_cycle": 7.548}     # MMBtu/MWh, EIA Electric Power Annual table 8.2 (no longer used: the ride's fuel is at the train's heat rate at minimum)
 
-
-def _train(name):
-    import re
-    m = re.match(r"^(.*_CC\d+)_", name)
-    return m.group(1) if m else name
-VOM = {"combined_cycle": 3.0}          # $/MWh, the economics page's generic default
 THERMAL = ("nuclear", "coal", "combined_cycle", "gas_steam", "combustion_turbine")
 
 
@@ -116,7 +104,8 @@ def build():
     for r in stay.get("rides", []):
         if r[2] == 0 and r[3] in si:
             rides[r[0]] = {"mwh": r[4], "revenue": r[5], "cost": r[6], "loss": r[7], "start": r[8],
-                           "saves": r[9], "est": r[10], "px": r[11] if len(r) > 11 else 0}
+                           "saves": r[9], "est": r[10], "px": r[11] if len(r) > 11 else 0,
+                           "fuel": r[12] if len(r) > 12 else 2, "hr": r[13] if len(r) > 13 else None}
 
     # fleet: thermal units online in every run of the stretch, and how much of their LSL a DAM
     # energy award covered
@@ -145,7 +134,6 @@ def build():
                 per_mw.setdefault(v.get("tech"), {}).setdefault(unit, []).append(st[kind] / v["hsl"])
     # one value per unit (its median), and only where enough units offer one to call it a range
     per_mw = {t: [float(np.median(x)) for x in us.values()] for t, us in per_mw.items() if len(us) >= 10}
-    hubs = (private.read("gas_hubs.json.gz") or {}).get("hubs", {})
 
     units = []
     for name, (label, note) in UNITS.items():
@@ -156,16 +144,6 @@ def build():
         d = dam.get(name) or {}
         dc = d.get("curves") or []
         ride = rides.get(name)
-        if ride and name in FUEL_EST:
-            hub = hubs[FUEL_EST[name]]
-            gas = hub["value"][hub["dates"].index(DATE)]
-            hr = heat_rates.at_min(u["tech"], _train(name) if u["tech"] == "combined_cycle" else name)[0]    # riding through at minimum
-            per = hr * gas + VOM[u["tech"]]
-            ride["cost"] = _r(ride["mwh"] * per, 0)
-            ride["loss"] = _r(ride["cost"] - ride["revenue"], 0)
-            ride["saves"] = _r(ride["loss"] - ride["start"], 0)
-            ride["fuel"] = {"hub": hub["name"], "gas": gas, "hr": hr, "vom": VOM[u["tech"]],
-                            "per_mwh": _r(per, 2), "mingen": d.get("mingen")}
         if ride and ride["est"] == 2 and per_mw.get(u["tech"]):
             hsl = np.nanmax(e["hsl"])
             ride["start_range"] = [_r(q * hsl, -3) for q in np.percentile(per_mw[u["tech"]], [25, 50, 75])]

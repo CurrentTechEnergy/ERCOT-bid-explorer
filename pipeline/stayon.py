@@ -11,9 +11,12 @@ every hour of it and in the hour before and the hour after.  For each such unit 
             disclosure).  A ride with no node price for every hour of it (no node file that
             day, or a unit with no settlement point) is priced at system lambda instead, and
             marked (px 0)
-  cost      sum of output x minimum-energy cost ($): the DAM three-part offer's $/MWh at
-            minimum output, applied to all MW produced (output above minimum is usually small
-            in these hours; the unit's incremental offer would be a closer cost for it)
+  cost      sum of output x fuel cost at minimum ($): gascost.fuel_cost, the unit's (a CC
+            train's) measured heat rate at minimum x its own hub's gas price the trading day
+            before D - 1 (coal: x the plant's EIA-923 price), applied to all MW produced (output
+            above minimum is usually small in these hours).  Without a fuel price (nuclear, or
+            no gas price at all) the DAM minimum-energy offer, else the generic value (Nov 5
+            2026; the offer was the cost before)
   loss      cost - revenue (positive when running through lost money at its node)
   start     the cost of restarting after the stretch: the DAM hot start cost when the stretch
             is at most HOT_H hours, intermediate up to INTER_H, cold beyond (ERCOT's own
@@ -21,19 +24,25 @@ every hour of it and in the hour before and the hour after.  For each such unit 
   saves     loss - start: what shutting down for the stretch would have saved (negative when
             staying on was the cheaper choice)
 
-Costs come from the unit's DAM three-part offer that day (data/dam/).  A unit with none that
-day uses its own most recent offer within COST_DAYS days (est = 1), or the technology's
+Start costs come from the unit's DAM three-part offer that day (data/dam/).  A unit with none
+that day uses its own most recent offer within COST_DAYS days (est = 1), or the technology's
 generic value from config.GENERIC_COSTS (est = 2).  Revenue is at the unit's own node, so a
 unit behind congestion is credited what its energy was worth where it sits.
 
 Writes data/stayon_60d.json.gz:
   dates, cheap (thresholds), min_hours, hot_h, inter_h
   stretches[thr]      [start date, start hour ending, hours, mean lambda]
-  rides               [unit, tech, thr, stretch index, MWh, revenue, cost, loss, start, saves, est, px]
+  rides               [unit, tech, thr, stretch index, MWh, revenue, cost, loss, start, saves, est, px,
+                       fuel, hr]
+                      est: where the start cost came from (0 own offer, 1 carried, 2 generic)
                       px: 1 revenue at the unit's node, 0 at system lambda (no node price)
+                      fuel: the cost's basis: 0 measured heat rate x own hub (or plant coal price),
+                      1 the same with a stand-in (technology heat rate, Henry Hub, Texas coal
+                      average), 2 the unit's DAM minimum-energy offer, 3 generic
+                      hr: the heat rate at minimum used (MMBtu/MWh; null for fuel 2 and 3)
   tech[thr][tech]     {n: ride-throughs, mwh, loss, saves_pos: total of positive saves,
                        share_saves_pos: share of ride-throughs where shutting down would have
-                       paid, est_share: share using estimated costs, lam_share: share priced
+                       paid, est_share: share whose fuel cost is not fully measured (fuel >= 1), lam_share: share priced
                        at system lambda for want of a node price}
   costs               daily medians by technology from the DAM summaries:
                       {tech: {start_hot: [day], start_inter: [day], start_cold: [day],
@@ -41,8 +50,9 @@ Writes data/stayon_60d.json.gz:
 """
 import numpy as np
 
+from . import gascost, heat_rates
 from .config import DATA_DIR, GENERIC_COSTS, UNIT_DATA_DIR
-from .intraday import CHEAP
+from .intraday import CHEAP, train_of
 from .parse_prices import node_hourly
 from .store import read_json_gz, write_json_gz
 from .trends import UNIT_TECHS
@@ -199,11 +209,17 @@ def build_stayon(index: dict) -> None:
                 if c is None:
                     continue
                 hot, inter, cold, mingen, est = c
-                cost = mwh * mingen
+                key = train_of(name) if tech == "combined_cycle" else name
+                f = gascost.fuel_cost(tech, key, dates[i0])
+                if f is not None:
+                    cost, fuel, hr = mwh * f[0], int(f[1]), heat_rates.at_min(tech, key)[0]
+                else:
+                    cost, fuel, hr = mwh * mingen, 3 if est == 2 else 2, None
                 loss = cost - rev
                 start = hot if n_h <= HOT_H else inter if n_h <= INTER_H else cold
                 saves = loss - start
-                rides.append([name, tech, thr, si, _r(mwh), _r(rev), _r(cost), _r(loss), _r(start), _r(saves), est, px])
+                rides.append([name, tech, thr, si, _r(mwh), _r(rev), _r(cost), _r(loss), _r(start), _r(saves), est, px,
+                              fuel, None if hr is None else round(hr, 2)])
                 a = agg[thr][tech]
                 a[0] += 1
                 a[1] += mwh
@@ -211,7 +227,7 @@ def build_stayon(index: dict) -> None:
                 if saves > 0:
                     a[3] += saves
                     a[4] += 1
-                if est:
+                if fuel:
                     a[5] += 1
                 if not px:
                     a[6] += 1

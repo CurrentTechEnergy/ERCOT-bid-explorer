@@ -31,7 +31,7 @@ about one for one and left the Brier flat, so none is used.  Most CT starts are 
 an hour ahead.
 
 v2 (Nov 2026): every node price the model reads, day-ahead and real-time, is net of the unit's
-gas cost (11.0 MMBtu/MWh x its own hub's price the trading day before, gascost.gas_cost; Henry
+gas cost (11.0 MMBtu/MWh x its own hub's price the trading day before, gascost.hub_price; Henry
 Hub where the hub has none), a spark spread, so a $40 hour reads cheaper on a $5 gas day than on a
 $2 one.  Backtest Feb-Aug 2026 with the real hub prices (analysis/backtest/run.py ct): Brier
 from 0.0231 to 0.0223, starts caught 2,583 to 3,099-3,127 with false 1,790 to 2,116-2,142, stops
@@ -86,7 +86,7 @@ SCORE_COLUMNS = ("month", "tech", "start", "award", "cheap", "model", "hours", "
 FEATURES = ("da", "da_ahead", "award", "award_ahead", "status_on", "status_offqs", "lambda",
             "rt_last", "rt_last3", "rt_less_da", "sin1", "cos1", "sin2", "cos2", "run")
 SCALE = 10.0         # $/MWh in asinh(price / SCALE)
-GAS_HR = gascost.HEAT_RATE["combustion_turbine"]   # 11.0 MMBtu/MWh: the Henry Hub fallback
+GAS_HR = 11.0   # MMBtu/MWh: the model's gas scaling, not a unit's cost (per-unit heat rates backtested worse, above)
 HALF_LIFE = 30.0     # days
 FIT_MIN_DAYS = 45      # Jan 2026, fitted on December alone, called 1,292 false starts
 AHEAD = 4            # hours h to h + AHEAD - 1 in da_ahead and award_ahead
@@ -176,8 +176,8 @@ def _rows(uh, cts, dates, node, lamd, ruc):
 
 
 def _gas(cts, dates, u, i):
-    """The gas cost ($/MWh) of each row's unit and day: gascost.gas_cost (GAS_HR x its own hub
-    price before the day), else GAS_HR x Henry Hub, else the median of the rest, else 0 (no gas
+    """The gas cost ($/MWh) of each row's unit and day: GAS_HR x its own hub's price
+    before the day (gascost.hub_price), else GAS_HR x Henry Hub, else the median of the rest, else 0 (no gas
     price at all: the prices are read as they are)."""
     hh = read_json_gz(DATA_DIR / "gas.json.gz", default={}) or {}
     hd, hv = hh.get("dates") or [], hh.get("value") or []
@@ -189,8 +189,8 @@ def _gas(cts, dates, u, i):
         return GAS_HR * hv[k] if k >= 0 else None
     memo = {}
     for ui, di in set(zip(u.tolist(), i.tolist())):
-        g = gascost.gas_cost("combustion_turbine", cts[ui], dates[di])
-        memo[(ui, di)] = henry(dates[di]) if g is None else g
+        g = gascost.hub_price(cts[ui], dates[di], gap=None)
+        memo[(ui, di)] = henry(dates[di]) if g is None else GAS_HR * g
     g = np.array([np.nan if memo[k] is None else memo[k] for k in zip(u.tolist(), i.tolist())], float)
     if np.isnan(g).all():
         return np.zeros(len(g))

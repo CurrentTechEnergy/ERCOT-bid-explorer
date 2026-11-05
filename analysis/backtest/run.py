@@ -119,7 +119,7 @@ def run_cuts(variant):
         def cost(tech, key, date, mingen, est):
             c, e = _cost(tech, key, date, mingen, est)
             if e == gascost.EST and tech == "combined_cycle":
-                c = c * gascost.HEAT_RATE[tech] / heat_rates.at_min(tech, key)[0]
+                c = c * 7.548 / heat_rates.at_min(tech, key)[0]
             return c, e
         gascost.cost = cost
     elif variant != "base":

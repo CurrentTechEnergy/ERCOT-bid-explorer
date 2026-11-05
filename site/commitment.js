@@ -668,7 +668,7 @@ const fmt$ = (v) => (v == null || isNaN(v) ? "–" : (v < 0 ? "−" : "") + "$" 
 const fmtPerMW = (v) => (v == null || isNaN(v) ? "–" : (v < 0 ? "−" : "") + "$" + d3.format(",.1f")(Math.abs(v)));
 const fmtGW = (v) => d3.format(",.1f")(v / 1e3) + " GW";
 const unitHref = (u) => `unit.html?unit=${encodeURIComponent(trainOf(u))}`;   // a combined-cycle configuration opens its train
-const SAVING_NOTE = "The loss from staying on is what running at minimum would lose over the best stretch of the day for being off, at least the unit's minimum down time long (its shortest off spell before the month, at least 2 hours; to the end of the day if less is left), at its own node's day-ahead price against its minimum-energy cost, times its LSL, divided by its LSL so units of every size compare, before any restart cost. Negative means staying on paid. The day stops at HE 24: the next day's prices are not known when the operator decides.";
+const SAVING_NOTE = "The loss from staying on is what running at minimum would lose over the best stretch of the day for being off, at least the unit's minimum down time long (its shortest off spell before the month, at least 2 hours; to the end of the day if less is left), at its own node's day-ahead price against its fuel cost at minimum (its measured heat rate at minimum × its own gas hub's price the trading day before; coal at the plant's EIA-923 coal price), times its LSL, divided by its LSL so units of every size compare, before any restart cost. Negative means staying on paid. The day stops at HE 24: the next day's prices are not known when the operator decides.";
 
 // decisions.json day rows: [train, date, loss, first hour ending, hours, award share, shut, hours off]
 const DAY_F = { unit: 0, date: 1, loss: 2, he: 3, hours: 4, award: 5, shut: 6, hoff: 7 };
@@ -940,9 +940,9 @@ function drawScores() {
 
 // ==== across days: what the decision cost ==================================================
 // pipeline/stayon.py: each ride-through of a cheap stretch, what it lost at its own real-time node
-// price against its minimum-energy cost, and the restart a shutdown would have needed instead
+// price against its fuel cost at minimum, and the restart a shutdown would have needed instead
 // (px 0: no node price for the ride, priced at system lambda)
-const RIDE = { unit: 0, tech: 1, thr: 2, stretch: 3, mwh: 4, rev: 5, cost: 6, loss: 7, start: 8, saves: 9, est: 10, px: 11 };
+const RIDE = { unit: 0, tech: 1, thr: 2, stretch: 3, mwh: 4, rev: 5, cost: 6, loss: 7, start: 8, saves: 9, est: 10, px: 11, fuel: 12, hr: 13 };
 function ridesBy(thr) {
   const SO = S.SO;
   if (!SO) return null;
@@ -955,7 +955,7 @@ function ridesBy(thr) {
     if (!e) out.set(key, (e = { unit: key, tech: r[RIDE.tech], n: 0, mwh: 0, loss: 0, start: 0, saves: 0, paid: 0, est: 0, lam: 0 }));
     e.n++; e.mwh += r[RIDE.mwh]; e.loss += r[RIDE.loss]; e.start += r[RIDE.start]; e.saves += r[RIDE.saves];
     if (r[RIDE.saves] > 0) e.paid++;
-    if (r[RIDE.est]) e.est++;
+    if (r[RIDE.fuel] == null ? r[RIDE.est] : r[RIDE.fuel]) e.est++;
     if (r[RIDE.px] === 0) e.lam++;
   }
   return out;
@@ -971,8 +971,8 @@ function drawCost() {
     return { g, units: us.length, n: sum("n"), mwh: sum("mwh"), loss: sum("loss"), start: sum("start"), saves: sum("saves"), paid: sum("paid"), est: sum("est"), lam: sum("lam") };
   }).filter((r) => r.n);
   const nStretch = S.SO.stretches[String(thr)]?.length || 0;
-  window.CX.setNote($("cost-note"), `Each time a coal or gas unit ran through hours with lambda below ${fmtPrice0(thr)}: what it lost, against what a shutdown and restart would have cost.`, `Every time a coal or gas unit ran through a stretch of hours with system lambda below ${fmtPrice0(thr)} (${nStretch} stretches of ${S.SO.min_hours} hours or more), what its output lost at its own real-time node price against its own minimum-energy cost, and what a shutdown and restart would have cost instead (hot start for stretches up to ${S.SO.hot_h} hours, intermediate up to ${S.SO.inter_h}, cold beyond). ` +
-    `Where the loss is bigger than the restart cost, shutting down would have paid; the difference is the loss above restart cost. Costs are the unit's own day-ahead three-part offer (capped by ERCOT's cost verification, so an upper bound), its latest within ${S.SO.cost_days} days, or a generic value for the technology. Revenue is at the unit's own node, so a unit behind congestion is credited what its energy was worth where it sits; ${(() => { const n = d3.sum(rows, (r) => r.n), l = d3.sum(rows, (r) => r.lam); return l ? `${fmtPct(l / n)} of ride-throughs had no node price and are valued at system lambda` : "every ride-through here has a node price"; })()}. ` +
+  window.CX.setNote($("cost-note"), `Each time a coal or gas unit ran through hours with lambda below ${fmtPrice0(thr)}: what it lost, against what a shutdown and restart would have cost.`, `Every time a coal or gas unit ran through a stretch of hours with system lambda below ${fmtPrice0(thr)} (${nStretch} stretches of ${S.SO.min_hours} hours or more), what its output lost at its own real-time node price against its fuel cost, and what a shutdown and restart would have cost instead (hot start for stretches up to ${S.SO.hot_h} hours, intermediate up to ${S.SO.inter_h}, cold beyond). ` +
+    `Where the loss is bigger than the restart cost, shutting down would have paid; the difference is the loss above restart cost. Fuel cost is each unit's measured heat rate at minimum (EPA hourly heat input over ERCOT net output) × its own gas hub's price the trading day before, or for coal the plant's EIA-923 delivered price; where its hub has no recent price Henry Hub stands in, and a unit with no measured heat rate takes its technology's median (both counted as estimated). Start costs are the unit's own day-ahead start-up offer, its latest within ${S.SO.cost_days} days, or a generic value for the technology. Revenue is at the unit's own node, so a unit behind congestion is credited what its energy was worth where it sits; ${(() => { const n = d3.sum(rows, (r) => r.n), l = d3.sum(rows, (r) => r.lam); return l ? `${fmtPct(l / n)} of ride-throughs had no node price and are valued at system lambda` : "every ride-through here has a node price"; })()}. ` +
     `A unit with a cutoff that keeps riding through stretches where shutting down would have paid may hold contracts, ancillary service obligations or start costs these numbers do not see; the units table puts each unit's net beside its cutoff.`);
   const S2 = [
     { id: "loss", label: "Loss from staying on (cost less revenue at its node)", color: "--c8" },
@@ -1007,9 +1007,9 @@ function drawCost() {
       .on("pointerleave", hideTip);
   }));
   el.replaceChildren(svg.node());
-  $("cost-groups").innerHTML = `<table class="data"><thead><tr><th class="t">Group</th><th>Units</th><th>Ride-throughs</th><th>MWh</th><th>Loss from staying on</th><th>Loss per MWh</th><th>Restart cost</th><th>Loss above restart cost</th><th>Ride-throughs where shutting down paid</th><th>Estimated costs</th></tr></thead><tbody>` +
+  $("cost-groups").innerHTML = `<table class="data"><thead><tr><th class="t">Group</th><th>Units</th><th>Ride-throughs</th><th>MWh</th><th>Loss from staying on</th><th>Loss per MWh</th><th>Restart cost</th><th>Loss above restart cost</th><th>Ride-throughs where shutting down paid</th><th>Estimated fuel cost</th></tr></thead><tbody>` +
     rows.map((r) => `<tr><td class="t">${GROUP_LABEL[r.g]}</td><td>${r.units}</td><td>${r.n}</td><td>${fmtMW(r.mwh)}</td><td>${fmt$(r.loss)}</td><td>${fmtPrice(r.mwh ? r.loss / r.mwh : null)}</td><td>${fmt$(r.start)}</td><td>${fmt$(r.saves)}</td><td>${fmtPct(r.paid / r.n)}</td><td>${fmtPct(r.est / r.n)}</td></tr>`).join("") + "</tbody></table>";
-  setCSV(el, ["group", "units", "ride_throughs", "mwh", "loss_usd", "start_usd", "saves_usd", "share_shutdown_paid", "share_estimated_costs"],
+  setCSV(el, ["group", "units", "ride_throughs", "mwh", "loss_usd", "start_usd", "saves_usd", "share_shutdown_paid", "share_estimated_fuel_cost"],
     rows.map((r) => [r.g, r.units, r.n, Math.round(r.mwh), Math.round(r.loss), Math.round(r.start), Math.round(r.saves), +(r.paid / r.n).toFixed(3), +(r.est / r.n).toFixed(3)]), `What the decision cost, lambda below ${thr}`);
 }
 

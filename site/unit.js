@@ -342,8 +342,9 @@ function drawDecisions(e) {
   $("dec-note").textContent = `${g("days")} days it had to choose, ${g("shut")} shutdowns, a day-ahead award over the cheap stretch on ${fmtPct(g("award") || 0)} of them. ` +
     (g("shut") && g("days") > g("shut") ? `Most it stayed on through: ${fmt$(g("stayMax"))}; least it shut on: ${fmt$(g("shutMin"))}. ` : "") +
     "Its turn-off point comes from the operator-informed model below; dashed lines mark the months it moved. " +
-    (g("est") === 2 ? " Costs are the technology's generic costs (no three-part offer of its own in the window)."
-      : g("est") === 3 ? " Its minimum-energy cost is its gas cost (heat rate × its gas hub's price the day before), not its own offer." : "");
+    (g("est") === 3 ? " Its cost at minimum is its fuel cost (measured heat rate at minimum × its gas hub's price the day before, or its plant's coal price)."
+      : g("est") === 2 ? " Its cost at minimum is the technology's generic cost (no fuel price or three-part offer of its own in the window)."
+      : " Its cost at minimum is its own day-ahead minimum-energy offer, as for every gas steam unit here.");
   const w = Math.max(280, el.clientWidth || 600), H = 240, m = { t: 18, r: 16, b: 26, l: 70 };
   const ruc = window.CX.rucDays(S.UH, e.configs.length ? e.configs : [e.name]);
   const pts = rows.map((r) => ({ d: r[1], t: parseDate(r[1]), loss: r[2], he: r[3], h: r[4], aw: r[5], shut: r[6], off: r[7],
@@ -527,7 +528,7 @@ async function drawDecisionsTO(e) {
   const nRed = pts.filter((p) => p.red).length;
   const says = (p) => p.c != null && p.s > p.c, bad = (p) => !p.ruc && says(p) !== p.off, J = pts.filter((p) => !p.ruc);
   const right = J.filter((p) => !bad(p)).length, nOff = J.filter((p) => p.off).length, caught = J.filter((p) => p.off && says(p)).length;
-  $("dec-note").textContent = `Each day it started online: its loss from staying on over the day's best off stretch at least its minimum down time long (its minimum-energy cost against the day-ahead price at its node, before any restart cost), and the operator-informed model's turn-off point, the loss at which the model turns it off. ` +
+  $("dec-note").textContent = `Each day it started online: its loss from staying on over the day's best off stretch at least its minimum down time long (its fuel cost at minimum, its measured heat rate × its gas hub's price the day before, against the day-ahead price at its node, before any restart cost), and the operator-informed model's turn-off point, the loss at which the model turns it off. ` +
     `A circle above its diamond is a day the model turns it off. On ${J.length} days it shut on ${nOff}; the model called ${right} right (${fmtPct(right / J.length)}), ${caught} of the ${nOff} shutdowns.${window.CX.rucNote(pts.length - J.length)} Dashed lines mark the months its turn-off point moved, for each day-ahead condition on its own.` +
     (nRed ? ` The ${d3.format(",")(nRed)} lighter days, before the 60-day fits begin (Feb 2026), are judged by fits on the 12 months before each from the thermal history files: no RUC data, and gas at the unit's own hub where OilPriceAPI has a price (Ship Channel from Jul 2019), else Henry Hub plus Ship Channel's median basis for the calendar month (Henry Hub alone for Waha units).` : "");
   $("dec-legend").innerHTML = `<span><span class="sw" style="background:var(--c1);transform:rotate(45deg) scale(0.8)"></span>Turn-off point</span>` +
