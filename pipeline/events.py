@@ -152,7 +152,7 @@ FEED_UNIT = 30        # entries in a unit's feed
 DAILY = ("daily1", "daily2", "daily3")
 FAMILY = {"never": "on", "multiday": "multiday", "daily1": "daily", "daily2": "daily", "daily3": "daily"}
 GROUP_LABEL = {g[0]: g[1] for g in GROUPS}
-WEEK_LABEL = "Off a week or more"       # a multi-day month whose every off spell lasted a week or more
+WEEK_LABEL = "Off for a week or more at a time"       # a multi-day month whose every off spell lasted a week or more
 KINDS = {
     "shutdown_new": "Shut down after a long run",
     "shutdown_award": "Shut down despite a day-ahead award",

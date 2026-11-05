@@ -106,7 +106,7 @@
       <div>
         <h2>Recent changes <span class="h-note" id="changes-count"></span></h2>
         <p class="note">Changes found in how this unit bids or runs, newest first. Unit data runs about 60 days behind.</p>
-        <details class="how"><summary>How it's built</summary><p class="note">What the site's detectors found changed for this unit: shutdowns that broke its pattern, moves in or out of daily cycling, shifts in how it bids, operator-informed turn-off point moves (CC and gas steam), peakers running at a new real-time price at their node, wind and solar floor or formula changes, long outages, and for batteries lasting size changes and the first day online. A unit's first day in SCED shows here too. "Found" is the day the update first saw it; unit data runs about sixty days behind the operating day.</p></details>
+        <details class="how"><summary>How it's built</summary><p class="note">What the site's detectors found changed for this unit: shutdowns that broke its pattern, moves in or out of daily cycling, shifts in how it bids, operator-model turn-off point moves (CC and gas steam), peakers running at a new real-time price at their node, wind and solar floor or formula changes, long outages, and for batteries lasting size changes and the first day online. A unit's first day in SCED shows here too. "Found" is the day the update first saw it; unit data runs about sixty days behind the operating day.</p></details>
       </div>
       <div class="panel-tools" id="sub-tools"></div>
     </div>
@@ -124,7 +124,7 @@
     <div class="panel-head">
       <div>
         <h2>With operator info, by hour</h2>
-        <p class="note">The operator-informed call for this unit by hour, against what it actually did. It needs the 60-day data, so it runs about two months behind.</p>
+        <p class="note">The operator model's call for this unit by hour, against what it actually did. It needs the 60-day data, so it runs about two months behind.</p>
         <details class="how"><summary>How it's built</summary><p class="note">For combined cycle and gas steam units, the call made with what the operator knew going in: whether the unit was running at the end of the day before and how long it had been, its day-ahead award and resource status, the day-ahead price against its own costs and against gas cost, and its own habit. Each hour uses only what came before it. The line is the chance the unit is online and the bar is the call, on at 50% or more. Hours with a day-ahead award are shaded. The diamonds are the unit's Current Operating Plan as of 2 pm the day before. They are shown beside the call rather than used in it, since the plan is the operator writing down the decision itself. The top chart is what the unit did from the 60-day disclosure: output, and the minimum output of what was online. The wide shaded band is the day's worst stretch for staying on, the hours the decision is about. The reasons are for one hour: the unit's first actual switch that day, else the hour the call switches, else its cheapest hour.</p></details>
         <p class="note" id="fc-note"></p>
       </div>
@@ -138,7 +138,7 @@
       <div>
         <h2>Decision history</h2>
         <p class="note" id="dec-lead">Each point is a day the unit started online: its loss from staying on through the cheap stretch, and whether it stayed on or shut down.</p>
-        <details class="how" id="dec-how"><summary>How it's built</summary><p class="note">Each point is a day the unit started online, with what the day-ahead prices at its node said it would lose by staying on through the day's worst stretch (energy at its node price against its costs at minimum output), and what it did. The operator-informed model below gives its turn-off point; the dashed lines mark the months that point moved, tracked separately for days with no day-ahead award, an award some hours and an award every hour (the same changes as under Recent changes).</p></details>
+        <details class="how" id="dec-how"><summary>How it's built</summary><p class="note">Each point is a day the unit started online, with what the day-ahead prices at its node said it would lose by staying on through the day's worst stretch (energy at its node price against its costs at minimum output), and what it did. The operator model below gives its turn-off point; the dashed lines mark the months that point moved, tracked separately for days with no day-ahead award, an award some hours and an award every hour (the same changes as under Recent changes).</p></details>
         <p class="note" id="dec-note"></p>
       </div>
     </div>
@@ -157,7 +157,7 @@
     <div class="chart" id="dec-chart"></div>
     <div id="dec-oi" hidden>
       <h3>With operator info</h3>
-      <p class="note">The same days judged with what the operator knew going in (its state, day-ahead award and status, the price against its own cost and its gas cost, and its own habit): the chance it stays online through the stretch. A shutdown (hollow) above 50% or a stay (filled) below it is a day the operator-informed call got wrong.</p>
+      <p class="note">The same days judged with what the operator knew going in (its state, day-ahead award and status, the price against its own cost and its gas cost, and its own habit): the chance it stays online through the stretch. A shutdown (hollow) above 50% or a stay (filled) below it is a day the operator model got wrong.</p>
       <p class="note" id="dec-oi-note"></p>
       <div class="legend legend-static" id="dec-oi-legend"></div>
       <div class="chart" id="dec-oi-chart"></div>
@@ -329,7 +329,8 @@
 </main>
 
 <footer class="foot">
-  <p>Source: ERCOT EMIL products NP3-965-ER (60-Day SCED Disclosure), NP3-966-ER (60-Day DAM Disclosure), NP4-190-CD (DAM Settlement Point Prices), NP6-905-CD (Settlement Point Prices at Resource Nodes, Hubs and Load Zones) and NP6-322-CD (SCED System Lambda), gas prices from OilPriceAPI and the EIA, and the operator-informed model built from them. Built by the data update workflow from the days already loaded; the 60-day reports run about two months behind.</p>
+  <p>Source: ERCOT EMIL products NP3-965-ER (60-Day SCED Disclosure), NP3-966-ER (60-Day DAM Disclosure), NP4-190-CD (DAM Settlement Point Prices), NP6-905-CD (Settlement Point Prices at Resource Nodes, Hubs and Load Zones) and NP6-322-CD (SCED System Lambda), gas prices from OilPriceAPI and the EIA, and the operator model built from them. Built by the data update workflow from the days already loaded; the 60-day reports run about two months behind.</p>
+  <p>Hours are ERCOT hour ending in Central prevailing time: HE 13 is noon to 1 pm. Dates are operating days.</p>
   <p>Made by <a href="https://currenttech.energy">currenttech.energy</a> · <a href="contact.html">Contact</a></p>
   <p>Not affiliated with or endorsed by ERCOT. ERCOT is a registered trademark of the Electric Reliability Council of Texas, Inc.</p>
   <p>© 2026 CurrentTech Energy. All rights reserved. For information only; not trading or investment advice. <a href="terms.html">Terms and privacy</a></p>

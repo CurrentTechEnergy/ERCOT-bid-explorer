@@ -26,7 +26,7 @@ const THERMAL = ["nuclear", "coal", "combined_cycle", "gas_steam", "combustion_t
 const TECH_OF = Object.fromEntries(TECHS.map((t) => [t.id, t]));
 const techLabel = (t) => (TECH_OF[t] ? TECH_OF[t].label : t === "storage" ? "Storage (ESR)" : t === "hydro" ? "Hydro" : t || "–");
 const SIG_FMT = { le0: (v) => d3.format(".0%")(v), noff: (v) => d3.format(".0%")(v), rel: (v) => (v >= 0 ? "+" : "−") + d3.format("$,.0f")(Math.abs(v)) };
-const GROUP_SHORT = { never: "Always on when available", seasonal: "Seasonal", multiday: "Multi-day", daily1: "Daily, under once a week", daily2: "Daily, 1 to 2 a week", daily3: "Daily, over 2 a week", never_on: "Never on", ungrouped: "Not yet grouped" };
+const GROUP_SHORT = { never: "Always on when available", seasonal: "Seasonal", multiday: "Off for days at a time", daily1: "Cycles daily, under once a week", daily2: "Cycles daily, 1 to 2 times a week", daily3: "Cycles daily, over twice a week", never_on: "Never on", ungrouped: "Not yet grouped" };
 const S = { econ: {}, day: null, hour: null, T: null, DEC: null, UH: null, SP: null, OI: null, OD: null, fcDay: null, PPA: null, list: new Map(), stubs: new Set(), unit: null, cfg: null, span: null, last60: null };
 const { tryJSON, showTip, hideTip, setCSV, tickFormat, fmtKind, axisFmt, css, esc } = window.CX;
 const $ = (id) => document.getElementById(id);
@@ -240,7 +240,7 @@ async function drawForecast(e) {
   const day = S.fcDay, [A, OD] = await Promise.all([S.T && S.T.dates.includes(day) ? loadDayUnits(day) : null, loadOI(day)]);
   if (S.unit !== e.name || S.fcDay !== day) return;
   const o = OD && OD.units[e.name];
-  if (!o) { $("fc-note").textContent = ""; $("fc-legend").innerHTML = ""; return emptyMsg(el, `${e.name} has no operator-informed call for ${day}.`); }
+  if (!o) { $("fc-note").textContent = ""; $("fc-legend").innerHTML = ""; return emptyMsg(el, `${e.name} has no operator-model call for ${day}.`); }
   // the actual, from the 60-day unit file: online (at least half the hour) and output, configurations summed
   let act = null;
   if (A) {
@@ -395,7 +395,7 @@ function drawDecisions(e) {
     `<span><span class="sw sw-line"></span>Turn-off point moved</span>` + (pts.some((p) => p.ruc) ? window.CX.rucLegend() : "");
 }
 
-// combustion turbines: each day it went into some hour offline, the operator-informed model's
+// combustion turbines: each day it went into some hour offline, the operator model's
 // turn-on point against the day's highest day-ahead price at its node (data/peaker/oi.json.gz,
 // pipeline/models/peaker_oi.py), with its "Running at a new price" changes marked; turn_on null
 // when no shift tested starts it (drawn on the "no start" row at the top)
@@ -448,13 +448,13 @@ async function drawDecisionsCT(e) {
   const el = $("dec-chart"), P = S.POI;
   const C = P ? Object.fromEntries(P.columns.map((c, i) => [c, i])) : {};
   const pts = P ? Object.entries(P.days).flatMap(([d, rs]) => rs.filter((r) => r[C.unit] === e.name).map((r) => ({ d, t: parseDate(d), s: r[C.turn_on], p: r[C.peak], ran: !!r[C.started], on: r[C.hours_on], av: r[C.hours_avail], off: r[C.hours_off], win: r[C.window] }))) : [];
-  if (!pts.length) { $("dec-note").textContent = ""; $("dec-legend").innerHTML = ""; return emptyMsg(el, "No operator-informed turn-on points for this unit: it needs a day-ahead record, real-time prices at its node and an hour it went into offline, in a month with 45 days before it."); }
+  if (!pts.length) { $("dec-note").textContent = ""; $("dec-legend").innerHTML = ""; return emptyMsg(el, "No operator-model turn-on points for this unit: it needs a day-ahead record, real-time prices at its node and an hour it went into offline, in a month with 45 days before it."); }
   const ruc = window.CX.rucDays(S.UH, e.configs.length ? e.configs : [e.name]);
   pts.forEach((p) => { p.ruc = ruc.get(p.d)?.length || 0; });
   const J = pts.filter((p) => !p.ruc);
   const says = (p) => p.s != null && p.s <= p.p, bad = (p) => !p.ruc && says(p) !== p.ran, right = J.filter((p) => !bad(p)).length, ran = J.filter((p) => p.ran).length;
   const caught = J.filter((p) => p.ran && says(p)).length;
-  $("dec-note").textContent = `Each day it went into some hour offline: the operator-informed model's turn-on point, the day's highest day-ahead price at its node at which the model starts it (every price at its node, day-ahead and real-time, shifted by the same amount until its chance of starting at some point in those hours reaches 50%), and the day's actual highest day-ahead price there. ` +
+  $("dec-note").textContent = `Each day it went into some hour offline: the operator model's turn-on point, the day's highest day-ahead price at its node at which the model starts it (every price at its node, day-ahead and real-time, shifted by the same amount until its chance of starting at some point in those hours reaches 50%), and the day's actual highest day-ahead price there. ` +
     `The model reads only what its operator had before each hour: the day-ahead market, the real-time price at its node up to the hour before, and the gas price at its hub the day before (every price is read less 11 MMBtu/MWh of gas). On ${J.length} days it started on ${ran}; the model called ${right} right (${fmtPct(right / J.length)}), ${caught} of the ${ran} days it started.${window.CX.rucNote(pts.length - J.length)} Most combustion turbine starts can't be called an hour ahead.`;
   $("dec-legend").innerHTML = `<span><span class="sw" style="background:var(--c1);transform:rotate(45deg) scale(0.8)"></span>Model starts it above this day-ahead price</span>` +
     window.CX.onOffLegend("Day's highest day-ahead price, started", "Day's highest day-ahead price, stayed off") +
@@ -517,7 +517,7 @@ async function drawDecisionsTO(e) {
   const hist = HU ? HU.rows.filter((r) => r[HC.date] < first).map((r) => ({ d: r[HC.date], t: parseDate(r[HC.date]),
     s: r[HC.saving], c: r[HC.turn_off], aw: r[HC.award], off: !!r[HC.off], lsl: r[HC.lsl], md: r[HC.min_down], red: true })) : [];
   const all = [...hist, ...live];
-  if (!all.length) { $("dec-note").textContent = ""; $("dec-legend").innerHTML = ""; return emptyMsg(el, "No operator-informed turn-off points for this unit."); }
+  if (!all.length) { $("dec-note").textContent = ""; $("dec-legend").innerHTML = ""; return emptyMsg(el, "No operator-model turn-off points for this unit."); }
   // range: the last 12 months, a calendar year, or all
   const years = [...new Set(all.map((p) => p.d.slice(0, 4)))].sort().reverse();
   const opts = [[DEC_RANGE_12, "Last 12 months"], ...years.map((y) => [y, y]), [DEC_RANGE_ALL, "All"]];
@@ -533,7 +533,7 @@ async function drawDecisionsTO(e) {
   const nRed = pts.filter((p) => p.red).length;
   const says = (p) => p.c != null && p.s > p.c, bad = (p) => !p.ruc && says(p) !== p.off, J = pts.filter((p) => !p.ruc);
   const right = J.filter((p) => !bad(p)).length, nOff = J.filter((p) => p.off).length, caught = J.filter((p) => p.off && says(p)).length;
-  $("dec-note").textContent = `Each day it started online: its loss from staying on over the day's best off stretch at least its minimum down time long (its minimum-energy cost against the day-ahead price at its node, before any restart cost), and the operator-informed model's turn-off point, the loss at which the model turns it off. ` +
+  $("dec-note").textContent = `Each day it started online: its loss from staying on over the day's best off stretch at least its minimum down time long (its minimum-energy cost against the day-ahead price at its node, before any restart cost), and the operator model's turn-off point, the loss at which the model turns it off. ` +
     `A circle above its diamond is a day the model turns it off. On ${J.length} days it shut on ${nOff}; the model called ${right} right (${fmtPct(right / J.length)}), ${caught} of the ${nOff} shutdowns.${window.CX.rucNote(pts.length - J.length)} Dashed lines mark the months its turn-off point moved, for each day-ahead condition on its own.` +
     (nRed ? ` The ${d3.format(",")(nRed)} lighter days, before the 60-day fits begin (Feb 2026), are judged by fits on the 12 months before each from the thermal history files: no RUC data, and gas at the unit's own hub where OilPriceAPI has a price (Ship Channel from Jul 2019), else Henry Hub plus Ship Channel's median basis for the calendar month (Henry Hub alone for Waha units).` : "");
   $("dec-legend").innerHTML = `<span><span class="sw" style="background:var(--c1);transform:rotate(45deg) scale(0.8)"></span>Turn-off point</span>` +
@@ -582,7 +582,7 @@ async function drawDecisionsTO(e) {
     pts.map((p) => [p.d, p.s, p.c, ["none", "some hours", "every hour"][p.aw], p.off ? 1 : 0, p.lsl, p.md, p.ruc, p.red ? "history" : "60-day"]), `${e.name} turn-off points`);
 }
 
-// the decision days again, judged by the operator-informed model (data/operator/decisions.json.gz rows:
+// the decision days again, judged by the operator model (data/operator/decisions.json.gz rows:
 // [date, average chance online over the stretch, share of it the COP plan had on or null, [top reason, push]])
 function drawDecisionsOI(e, pts, x, w, shape) {
   const rows = S.OD && S.OD.units[e.name];

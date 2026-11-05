@@ -15,7 +15,7 @@ const TECHS = [
   { id: "storage", label: "Battery storage" },
 ];
 const TECH_LABEL = Object.fromEntries(TECHS.map((t) => [t.id, t.label]));
-const GROUP_SHORT = { never: "Always on when available", seasonal: "Seasonal", multiday: "Multi-day", daily1: "Daily, under once a week", daily2: "Daily, 1 to 2 a week", daily3: "Daily, over 2 a week", never_on: "Never on", ungrouped: "Not yet grouped" };
+const GROUP_SHORT = { never: "Always on when available", seasonal: "Seasonal", multiday: "Off for days at a time", daily1: "Cycles daily, under once a week", daily2: "Cycles daily, 1 to 2 times a week", daily3: "Cycles daily, over twice a week", never_on: "Never on", ungrouped: "Not yet grouped" };
 const GROUP_ORDER = Object.keys(GROUP_SHORT);
 const COMMIT = [{ k: "qs", label: "Quick-start" }, { k: "self", label: "Self-committed" }, { k: "dam", label: "DAM award" }];
 const MINS = [[0, "Any day"], [0.1, "10% of days"], [0.25, "25% of days"], [0.5, "50% of days"], [0.75, "75% of days"], [0.9, "90% of days"]];
