@@ -67,10 +67,17 @@ function drawDaily() {
     .on("pointerleave", () => { vl.attr("visibility", "hidden"); hideTip(); });
   setCSV(el, ["date", "hour_ending", ...T.map((t) => `${t.id}_mw`), "total_mw"], rows.map((d) => [d.date, d.he, ...T.map((t) => Math.round(d[t.id])), Math.round(d.total)]),
     `Daily minimum floor ${S.fleet === "fos" ? "fossil only" : "with nuclear"}${n > 1 ? ` ${n}-day average` : ""}`);
-  $("lf-note").textContent = "For each day, the hour when the online thermal fleet's minimum output was lowest: the LSL of every online coal, combined-cycle, gas steam and combustion turbine unit" +
-    (S.fleet === "fos" ? ". Fossil only picks that hour, and the lowest days below, on the fossil floor alone, so a nuclear refuelling outage cannot pull a day in." :
-      ", plus nuclear at its output, since it has no offer curve and does not back down. This is the generation SCED cannot back down without units turning off.") +
-    " A combined-cycle train counts only its running configuration; units starting up or shutting down are left out.";
+  // the latest value against the same day a year earlier, in the smoothing shown
+  const last = rows.at(-1), yAgo = last && rows[bis(rows, d3.timeDay.offset(last.d, -365))];
+  const cmp = last && yAgo && Math.abs(yAgo.d - d3.timeDay.offset(last.d, -365)) < 7 * 864e5
+    ? ` The latest ${n > 1 ? `${n}-day average` : "day"} is ${gw(last.total)}, against ${gw(yAgo.total)} a year earlier.` : "";
+  window.CX.setNote($("lf-note"), "Is the inflexible thermal floor shrinking? For each day since 2019, the hour when the online thermal fleet's minimum output (LSL) was lowest" +
+    (S.fleet === "fos" ? ", counting coal and gas only." : ", plus nuclear at its output.") +
+    " This is the generation SCED cannot back down without units turning off, so it is the floor that wind, solar and storage must price under in the cheapest hour of the day." + cmp,
+    "The floor is the LSL of every online coal, combined-cycle, gas steam and combustion turbine unit" +
+    (S.fleet === "fos" ? ". Fossil only picks the low hour, and the lowest days below, on the fossil floor alone, so a nuclear refuelling outage cannot pull a day in." :
+      ", plus nuclear at its output, since it has no offer curve and does not back down.") +
+    " A combined-cycle train counts only its running configuration; units starting up or shutting down are left out.");
 }
 
 // ==== By year ================================================================================
@@ -105,11 +112,11 @@ function drawYears() {
     .on("pointerleave", hideTip);
   const cols = ["Year", ...T.map((t) => t.label), "Total", "Lowest day"];
   $("lf-table").innerHTML = `<table class="data"><thead><tr>${cols.map((c, i) => `<th${i ? "" : ' class="t"'}>${esc(c)}</th>`).join("")}</tr></thead><tbody>` +
-    R.map((r) => `<tr><td class="t">${yName(r.y)}</td>${T.map((t) => `<td>${(r[t.id] / 1000).toFixed(2)}</td>`).join("")}<td><b>${(r.total / 1000).toFixed(2)}</b></td><td>${(r.min / 1000).toFixed(1)}</td></tr>`).join("") + "</tbody></table>";
+    R.map((r) => `<tr><td class="t">${yName(r.y)}</td>${T.map((t) => `<td>${(r[t.id] / 1000).toFixed(1)}</td>`).join("")}<td><b>${(r.total / 1000).toFixed(1)}</b></td><td>${(r.min / 1000).toFixed(1)}</td></tr>`).join("") + "</tbody></table>";
   setCSV(el, ["year", ...T.map((t) => `${t.id}_mw`), "total_mw", "lowest_day_mw"], R.map((r) => [r.y, ...T.map((t) => Math.round(r[t.id])), Math.round(r.total), Math.round(r.min)]),
     `Floor by year ${S.stat} ${S.fleet}`);
-  $("lf-year-note").textContent = (S.stat === "mean" ? "The average of each day's minimum, by technology, whole years. " : "The average of each year's lowest 5% of days, by technology, whole years. ") +
-    "GW, with the lowest single day in the last column.";
+  $("lf-year-note").textContent = (S.stat === "mean" ? "Each year's average daily floor by technology, in GW" : "The average of each year's lowest 5% of days by technology, in GW") +
+    "; the last column is the single lowest day of the year.";
   $("lf-foot").textContent = S.through && partial(+S.through.slice(0, 4)) ? `* ${S.through.slice(0, 4)} runs to ${d3.timeFormat("%b %-d")(new Date(S.through + "T12:00:00"))}, the latest 60-day day.` : "";
 }
 
@@ -126,7 +133,10 @@ function drawHours() {
   g.append("g").attr("class", "axis").attr("transform", `translate(0,${h})`).call(d3.axisBottom(x).tickSize(0).tickFormat((v) => (w < 520 && v % 3 ? "" : v))).call((a) => a.select(".domain").remove());
   svg.append("text").attr("class", "axis-title").attr("x", W - m.r).attr("y", H - 4).attr("text-anchor", "end").text("Hour ending, Central");
   setCSV(el, ["year", "hour_ending", "days", "share"], cells.map((c) => [c.yr, c.he, c.n, +c.s.toFixed(3)]), `Hour the floor bottoms out ${S.fleet}`);
-  $("lf-hour-note").textContent = "Share of each year's days whose lowest-floor hour fell in each hour. Until 2023 it was overnight; from 2024 it moves to midday, as units sit at LSL under solar.";
+  const modal = (yr) => d3.greatest(cells.filter((c) => c.yr === yr), (c) => c.n)?.he;
+  const h0 = modal(ys[0]), h1 = modal(ys.at(-1)), mid = (he) => he >= 10 && he <= 17;
+  $("lf-hour-note").textContent = `Share of each year's days whose lowest-floor hour fell in each hour. The commonest hour was HE ${h0} in ${ys[0]} and HE ${h1} in ${ys.at(-1)}${partial(ys.at(-1)) ? " so far" : ""}` +
+    (!mid(h0) && mid(h1) ? ": the floor used to bottom out overnight and now bottoms out at midday, as units sit at minimum under solar." : ".");
 }
 
 function drawAll() { if (!S.A.length) return; drawDaily(); drawYears(); drawHours(); $("lf-legend").innerHTML = techs().map((t) => `<span><span class="sw" style="background:var(${t.color})"></span>${esc(t.label)}</span>`).join(""); }

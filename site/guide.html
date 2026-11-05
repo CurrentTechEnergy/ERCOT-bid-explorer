@@ -152,7 +152,7 @@
       <p class="step-num">STEP 2</p>
       <h2>Anatomy of an offer curve</h2>
       <p>An energy offer curve is a list of price and MW points. Each point says: "once the price reaches this level, I am willing to run at this many MW." ERCOT draws straight lines between the points, so a price between two points maps to an output between them. The curve sets the most SCED will ask of the unit at a given price; SCED can still run it lower than that, for example when its ramp limits or local congestion hold it back.</p>
-      <p>Two limits matter. <strong>HSL</strong> (high sustained limit) is the most the unit can produce right now. <strong>LSL</strong> (low sustained limit) is the least it can produce and stay online: its minimum output. Rio Nogales' LSL is about <span id="s2-lsl">475</span> MW out of <span id="s2-hsl">800</span> MW.</p>
+      <p>Two limits matter. <strong>HSL</strong> (high sustained limit) is the most the unit can produce right now. <strong>LSL</strong> (low sustained limit) is the least it can produce and stay online: its minimum output. <span id="s2-name">Rio Nogales combined cycle</span>'s LSL is about <span id="s2-lsl">475</span> MW out of <span id="s2-hsl">800</span> MW.</p>
       <p>The shaded block from 0 MW to LSL is <strong>not a bid</strong>. While the unit is on, those MW run at any price; the only way to stop them is to turn the unit off (step 1). Whatever prices the curve shows below LSL never set dispatch or the market price.</p>
       <p>Switch to <strong>"As ERCOT uses it"</strong> to see the curve SCED actually ran on. ERCOT fills the space from 0 MW up to the first offered point with a placeholder price (usually −$20), so in ERCOT's version the LSL block looks like MW offered at −$20. It is minimum output, not an offer to run at −$20.</p>
       <p class="see"><a id="s2-link" href="beyond.html#p=curves-panel">See the technology totals in the Offer curves chart on Real-time offers →</a></p>
@@ -174,7 +174,7 @@
       <p class="step-num">STEP 3</p>
       <h2>What SCED can actually move</h2>
       <p>SCED reads the curve from LSL up. Drag the price: the dot is where SCED would put the unit at that price. It follows the curve above LSL and stops at LSL however low the price goes.</p>
-      <p>In each five-minute run SCED also respects ramp limits, so the real range is a little narrower than LSL to HSL: <strong>LDL</strong> and <strong>HDL</strong> (low and high dispatch limits). The chart below shows the whole day: the price was negative from HE 9 to HE 17. Rio Nogales ramped down through HE 9 and sat at its minimum output from HE 10 to HE 17, because SCED had no lower point to send it to.</p>
+      <p>In each five-minute run SCED also respects ramp limits, so the real range is a little narrower than LSL to HSL: <strong>LDL</strong> and <strong>HDL</strong> (low and high dispatch limits). The chart below shows the whole day: the price was negative from HE 9 to HE 17. Rio Nogales, the first example unit, ramped down through HE 9 and sat at its minimum output from HE 10 to HE 17, because SCED had no lower point to send it to.</p>
       <p class="key">Price can only move an online unit between its LSL and HSL. When the price falls, SCED backs each unit down toward LSL until it reaches MW the unit offered at or below that price. So at negative prices, the thermal MW still running above LSL are only those offered at or below the negative price (or held up for a few minutes by ramp limits). Everything else is minimum output that SCED cannot touch.</p>
     </div>
     <div class="fig">
@@ -213,7 +213,7 @@
       <p class="step-num">SIDEQUEST</p>
       <h2>Doesn't the day-ahead market decide who runs?</h2>
       <p>Not directly. The day-ahead market (DAM) is financial and voluntary. A QSE can offer a <strong>three-part offer</strong>: a start-up cost, a minimum-energy cost (for running at LSL) and an energy curve above it. If it clears, the unit gets an hourly energy award, a promise to deliver at the day-ahead price or buy back the difference in real time.</p>
-      <p>A DAM award is not a commitment instruction, and many units run without one. Rio Nogales had awards overnight and in the evening but <strong>none from HE 11 to HE 17</strong>, and it ran at minimum output through those hours anyway.</p>
+      <p>A DAM award is not a commitment instruction, and many units run without one. Rio Nogales, the first example unit, had awards overnight and in the evening but <strong>none from HE 11 to HE 17</strong>, and it ran at minimum output through those hours anyway.</p>
       <p id="s4-fleet">Across the fleet that day…</p>
       <p>Some plants never use the day-ahead market at all. On every day loaded on this site, W.A. Parish, Limestone and Oak Grove submitted no DAM energy offer, so their on/off schedule is set entirely by their owners.</p>
     </div>
@@ -288,10 +288,10 @@
       <h2>How revenue is counted</h2>
       <p>The revenue and cost figures on <a href="fleet.html">Fleet economics</a> and on each unit's page are rebuilt from the public disclosures, so they are close to what a unit settled but not the same thing.</p>
       <ul>
-        <li><strong>Energy revenue</strong> uses hourly mean prices and output, so it differs a little from settlement at 15-minute intervals. Node prices load a few days per update, newest first; days without them fall back to system lambda and are marked.</li>
+        <li><strong>Energy revenue</strong> uses hourly mean prices and output, so it differs a little from settlement at 15-minute intervals. Days without a node price fall back to system lambda and are marked ("days priced at lambda").</li>
         <li><strong>Wind and solar</strong> are counted on the two-settlement basis: the day-ahead award at the day-ahead price plus the real-time deviation at the unit's node where it has day-ahead data, real time at its node otherwise (most wind and solar), and system lambda where the node price is missing.</li>
-        <li><strong>Ancillary service revenue</strong> is the DAM award at the DAM clearing price. Real-time AS awards are in the SCED disclosure but not counted in revenue here; they are small next to day-ahead AS.</li>
-        <li><strong>Start-up costs</strong> count the hot start offer for every start. A unit off long enough for an intermediate or cold start cost more.</li>
+        <li><strong>Ancillary service revenue</strong> is the day-ahead award at the day-ahead clearing price. Since real-time co-optimization began in December 2025, day-ahead awards are bought back at the real-time clearing price and real-time awards are paid there; neither real-time leg is counted here, so AS revenue is overstated or understated on days the two prices diverge.</li>
+        <li><strong>Start-up costs</strong> count the hot start offer for every start. A unit off long enough for an intermediate or cold start would have cost more than is counted here.</li>
         <li><strong>Margin</strong> is energy plus ancillary revenue minus fuel, variable and start costs on the chosen bases. It leaves out fixed costs, so it is the contribution to them.</li>
       </ul>
       <p class="key">Submitted offers are capped by ERCOT's cost verification, so the offer basis is an upper bound on what the unit said its energy was worth, not an audited cost.</p>

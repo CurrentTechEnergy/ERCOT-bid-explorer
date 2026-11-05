@@ -58,9 +58,9 @@ function drawEcoMonths() {
   const y = d3.scaleLinear().domain([0, d3.max(mos, (mo) => get(mo, "wind").rev + get(mo, "solar").rev) / 1e6 || 1]).nice().range([H - m.b, m.t]);
   const svg = d3.create("svg").attr("viewBox", `0 0 ${w} ${H}`);
   svg.append("g").attr("class", "gridline").attr("transform", `translate(${m.l},0)`).call(d3.axisLeft(y).ticks(5).tickSize(-(w - m.l - m.r)).tickFormat(""));
-  svg.append("g").attr("class", "axis").attr("transform", `translate(${m.l},0)`).call(axisFmt(d3.axisLeft(y), 5, "$").tickSizeOuter(0));
+  svg.append("g").attr("class", "axis").attr("transform", `translate(${m.l},0)`).call(d3.axisLeft(y).ticks(5).tickFormat((v) => `$${d3.format(",")(v)}M`).tickSizeOuter(0));
   svg.append("g").attr("class", "axis").attr("transform", `translate(0,${H - m.b})`).call(d3.axisBottom(x).tickFormat((mo) => d3.timeFormat(w < 560 ? "%b" : "%b %y")(new Date(mo + "-15T12:00:00"))).tickSizeOuter(0));
-  svg.append("text").attr("class", "axis-title").attr("x", m.l).attr("y", 10).text("Revenue by month ($ million)");
+  svg.append("text").attr("class", "axis-title").attr("x", m.l).attr("y", 10).text("Revenue by month");
   mos.forEach((mo) => {
     let acc = 0;
     TECHS.forEach((t) => { const v = get(mo, t.id).rev / 1e6; if (v > 0) svg.append("rect").attr("x", x(mo)).attr("width", x.bandwidth()).attr("y", y(acc + v)).attr("height", Math.max(0, y(acc) - y(acc + v) - 1)).attr("fill", css(t.color)); acc += v; });
@@ -81,7 +81,7 @@ const ECO_COLS = [
   { k: "pmwh", h: "Realised $/MWh", f: (u) => fmtPrice(u.pmwh) },
   { k: "mwh", h: "GWh", f: (u) => d3.format(",.1f")(u.mwh / 1000) },
   { k: "rev", h: "Revenue", f: (u) => "$" + d3.format(",.2f")(u.rev / 1e6) + "M" },
-  { k: "cf", h: "Capacity factor", f: (u) => (u.cf == null ? "–" : fmtPct(u.cf)) },
+  { k: "cf", h: "Capacity factor", f: (u) => (u.cf == null ? "–" : d3.format(".1%")(u.cf)) },
   { k: "curt", h: "Curtailed share", f: (u) => (u.curt == null ? "–" : d3.format(".1%")(u.curt)) },
 ];
 function drawEcoUnits() {
@@ -91,7 +91,11 @@ function drawEcoUnits() {
   const all = ECO.units.filter((u) => S.ecoTech === "all" || u.tech === S.ecoTech);
   let us = all.filter((u) => u.mwh >= 1000);
   const E0 = S.E.wind || S.E.solar;
-  $("eco-note").textContent = E0 ? `${E0.dates[0]} to ${E0.dates.at(-1)} (every loaded 60-day day), ${us.length} units` + (all.length > us.length ? `, leaving out ${all.length - us.length} with under 1 GWh` : "") : "";
+  const fd = (d) => d3.timeFormat("%b %-d, %Y")(new Date(d + "T12:00:00"));
+  $("eco-note").textContent = E0 ? `${fd(E0.dates[0])} to ${fd(E0.dates.at(-1))} (every loaded 60-day day), ${us.length} units` + (all.length > us.length ? `; ${all.length - us.length} with under 1 GWh left out` : "") : "";
+  const meds = TECHS.map((t) => [t, d3.median(us.filter((u) => u.tech === t.id), (u) => u.pmwh)]).filter(([, v]) => v != null);
+  $("eco-lead").textContent = "The spread of revenue per MWh across every wind and solar unit, with each unit's curtailed share. The spread is mostly location (node price and congestion) and curtailment: a low $/MWh with a high curtailed share points at a congested node. " +
+    (meds.length ? `Median ${meds.map(([t, v]) => `${t.label.toLowerCase()} ${fmtPrice(v)}/MWh`).join(", ")}. ` : "") + "Dashed lines mark the medians; click a unit to open it.";
   if (!us.length) { emptyMsg(el, "No units."); hel.innerHTML = ""; return; }
   // distribution: units by realised $/MWh, wind and solar side by side
   const vals = us.map((u) => u.pmwh), lo = Math.floor(d3.quantile([...vals].sort(d3.ascending), 0.005) / 2) * 2, hi = Math.ceil(d3.quantile([...vals].sort(d3.ascending), 0.995) / 2) * 2;
@@ -104,7 +108,7 @@ function drawEcoUnits() {
   svg.append("g").attr("class", "gridline").attr("transform", `translate(${m.l},0)`).call(d3.axisLeft(y).ticks(4).tickSize(-(w - m.l - m.r)).tickFormat(""));
   svg.append("g").attr("class", "axis").attr("transform", `translate(${m.l},0)`).call(d3.axisLeft(y).ticks(4).tickFormat(d3.format(",d")).tickSizeOuter(0));
   svg.append("g").attr("class", "axis").attr("transform", `translate(0,${H - m.b})`).call(axisFmt(d3.axisBottom(x), w < 560 ? 5 : 10, "$").tickSizeOuter(0));
-  svg.append("text").attr("class", "axis-title").attr("x", m.l).attr("y", 10).text("Units by realised revenue per MWh");
+  svg.append("text").attr("class", "axis-title").attr("x", m.l).attr("y", 10).text("Units by realised $/MWh (count)");
   svg.append("text").attr("class", "axis-title").attr("x", w - m.r).attr("y", H - 2).attr("text-anchor", "end").text("$/MWh over the loaded days");
   groups.forEach((g, j) => g.b.forEach((b) => {
     const bw = (x(b.x1) - x(b.x0)) / groups.length;
