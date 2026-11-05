@@ -33,6 +33,12 @@ Writes
       any.  Combined cycles by configuration, as the strips.  The operator model leaves these
       hours out of its fits and its scorecard, and the decision charts mark them.
 
+  {UNIT_DATA_DIR}/renew_hours_60d.json.gz   (data branch: too big for the site)
+    dates, tech: {unit: "wind"|"solar"}, units: {unit: one character per hour, 24 per day:
+      "-" no data, "r" available (online), "o" on outage (OUT), "0" offline otherwise},
+    hsl: {unit: [day: [24 hourly mean HSL while online, None otherwise] or None]}
+    Read by pipeline/renew_outages.py.
+
 A unit runs in an hour when most of its SCED runs in that hour have an online status (ON...),
 unless a thermal unit has nothing to give: no output and no HSL that hour (empty_hour; an
 industrial unit netted against its site's load, or a train left "online" at 0/0 limits after a
@@ -56,6 +62,8 @@ RAMP = ("STARTUP", "SHUTDOWN", "")    # not online, but making power when the ou
 SHUT_TO = ("OFF", "SHUTDOWN", "OFFQS")   # an online unit going to one of these is a shutdown
 NEXT_H = 4                # hours after a shutdown averaged for "price when it went off"
 MAX_OFF_H = 24            # hours of an off spell averaged for "price while off"
+RENEW_TECHS = ("wind", "solar")
+RENEW_HOURS_PATH = UNIT_DATA_DIR / "renew_hours_60d.json.gz"   # big (hourly HSL): data branch, not the site
 
 
 # A combined-cycle train is registered as one resource per configuration, and each SCED run lists
@@ -186,17 +194,47 @@ def _arr(v):
     return np.array([np.nan if x is None else x for x in v], float)
 
 
+def renew_hours(u: dict, runs: list) -> tuple:
+    """Wind or solar, per hour of the day: a state char ("r" available: online in most of the
+    hour's runs; "o" on outage: OUT in most of them; "0" otherwise; "-" absent) and the mean HSL
+    over the hour's online runs (None where not available)."""
+    e = expand(u, len(runs))
+    hr = np.minimum(np.array(runs) // 60, 23)
+    st = e["status"]
+    states, hsl = [], []
+    for h in range(24):
+        idx = np.flatnonzero(hr == h)
+        present = [st[i] for i in idx if st[i] is not None]
+        if not present:
+            states.append("-")
+            hsl.append(None)
+            continue
+        on = [i for i in idx if _online(st[i])]
+        if len(on) >= 0.5 * len(present):
+            states.append("r")
+            v = e["hsl"][on]
+            hsl.append(round(float(np.nanmean(v)), 1) if np.isfinite(v).any() else None)
+            continue
+        states.append("o" if sum(s == "OUT" for s in present) > 0.5 * len(present) else "0")
+        hsl.append(None)
+    return "".join(states), hsl
+
+
 def day_hours(ud):
     """What build_intraday takes from one per-unit day file (memo.per_day caches it), or None
     without one: the number of runs; per thermal unit [name, tech, hourly states, output, LSL,
-    HSL (None for NaN), RUC hours]; per technology the HSL summed over runs by status group; and
-    the off-spell status events (_spell_units) as [key, tech, events]."""
+    HSL (None for NaN), RUC hours]; per technology the HSL summed over runs by status group; the
+    off-spell status events (_spell_units) as [key, tech, events]; and per wind and solar unit
+    [name, tech, hourly states, hourly HSL] (renew_hours)."""
     if not ud:
         return None
     runs = ud["runs"]
-    units, cap = [], {t: dict.fromkeys(STATUS_GROUPS, 0.0) for t in UNIT_TECHS}
+    units, cap, renew = [], {t: dict.fromkeys(STATUS_GROUPS, 0.0) for t in UNIT_TECHS}, []
     for name, u in ud["units"].items():
         t = u["tech"]
+        if t in RENEW_TECHS:
+            renew.append([name, t, *renew_hours(u, runs)])
+            continue
         if t not in UNIT_TECHS:
             continue
         st, out, lsl, hsl, e = unit_hours(u, runs)
@@ -206,7 +244,7 @@ def day_hours(ud):
             if g and np.isfinite(h_):
                 sacc[g] += h_
         units.append([name, t, st, _nan_list(out), _nan_list(lsl), _nan_list(hsl), ruc_hours(e["status"], runs)])
-    return {"runs": runs, "units": units, "cap": cap,
+    return {"runs": runs, "units": units, "cap": cap, "renew": renew,
             "spells": [[k, t, ev] for k, (t, ev) in _spell_units(ud["units"]).items()]}
 
 
@@ -225,6 +263,7 @@ def build_intraday(index: dict) -> None:
     tech = {t: {k: [None] * D for k in ["at_min", "above", "n", "transit"] + ["cap_" + g for g in STATUS_GROUPS]}
             for t in UNIT_TECHS}
     strips = {}
+    rstrips, rhsl, rtech = {}, {}, {}   # wind and solar: unit -> [day strings], [day HSL lists]; tech
     ruc = {}                  # unit -> [[date, [hour ending, ...]], ...]
     hsl_run = {}              # unit -> list of hourly HSL while running
     above_acc = {}            # (unit, thr) -> [tech, hours running, hours above, MWh above]
@@ -264,6 +303,9 @@ def build_intraday(index: dict) -> None:
             prev_day = None
             for name in strips:
                 strips[name].append("-" * 24)
+            for name in rstrips:
+                rstrips[name].append("-" * 24)
+                rhsl[name].append(None)
             continue
         n_files += 1
         prev_day = d
@@ -325,6 +367,14 @@ def build_intraday(index: dict) -> None:
         for name in strips:
             if len(strips[name]) < di + 1:
                 strips[name].append("-" * 24)
+        for name, t, st, hs in ud.get("renew") or []:
+            rtech[name] = t
+            rstrips.setdefault(name, ["-" * 24] * di).append(st)
+            rhsl.setdefault(name, [None] * di).append(hs)
+        for name in rstrips:
+            if len(rstrips[name]) < di + 1:
+                rstrips[name].append("-" * 24)
+                rhsl[name].append(None)
         last_status = new_last
         for t in UNIT_TECHS:
             a_min, a_above, a_n, a_tr = acc[t]
@@ -348,6 +398,11 @@ def build_intraday(index: dict) -> None:
         "dates": dates, "units": {k: "".join(v) for k, v in sorted(strips.items())},
         "hsl": {k: round(float(np.median(v))) for k, v in sorted(hsl_run.items()) if v},
         "ruc": dict(sorted(ruc.items())),
+    })
+    write_json_gz(RENEW_HOURS_PATH, {
+        "dates": dates, "tech": dict(sorted(rtech.items())),
+        "units": {k: "".join(v) for k, v in sorted(rstrips.items())},
+        "hsl": {k: v for k, v in sorted(rhsl.items())},
     })
     print(f"intraday_60d: {D} days, {n_files} per-unit day file(s), {len(spells)} off spells, "
           f"{len(strips)} unit strips")
