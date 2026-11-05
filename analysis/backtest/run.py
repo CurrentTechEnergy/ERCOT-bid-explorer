@@ -17,10 +17,12 @@ ct  CT turn-on model (pipeline/models/peaker_oi.py), monthly expanding fits.  Va
       base     the model as it is (v2: prices net of 11.0 x its own hub's gas price)
       nogas    prices as they are, the v1 model
 
-cuts  combined-cycle turn-off cutoffs (pipeline/decisions.py), each train's no-award days judged
+cuts  turn-off cutoffs (pipeline/decisions.py), each train's no-award days judged
     by a cutoff chosen from its other days (leave one out, as "acc on unseen days").  Variants:
       base     as it is (gascost v2: each train's heat rate at minimum x own hub)
       flat     every train at 7.548 (gascost v1)
+      measured gas steam and CTs at their measured heat rate at minimum x own hub, coal at its
+               heat rate x the plant's EIA-923 price (CCs as base); scored for every technology
 
 Writes <out>/<model>-<variant>/summary.json and prints one line per technology and hour set.
 """
@@ -122,17 +124,42 @@ def run_cuts(variant):
                 c = c * gascost.HEAT_RATE[tech] / heat_rates.at_min(tech, key)[0]
             return c, e
         gascost.cost = cost
+    elif variant == "measured":   # every unit at measured heat rate at minimum x own hub (coal: x EIA-923)
+        import bisect as _b
+        import datetime as _dt
+        from pipeline import heat_rates
+        _cost = gascost.cost
+
+        def cost(tech, key, date, mingen, est):
+            if tech == "combined_cycle":
+                return _cost(tech, key, date, mingen, est)
+            if tech == "coal":
+                p, _own = heat_rates.coal_price(key, date)
+                return heat_rates.at_min(tech, key)[0] * p, gascost.EST
+            if tech not in ("gas_steam", "combustion_turbine"):
+                return mingen, est
+            c = gascost._load()
+            ds, vs = c["gas"].get(c["hub"].get(key, "hsc"), ([], []))
+            cut = (_dt.date.fromisoformat(date) - _dt.timedelta(days=1)).isoformat()
+            i = _b.bisect_left(ds, cut) - 1
+            while i >= 0 and vs[i] is None:
+                i -= 1
+            if i < 0:
+                return mingen, est
+            return heat_rates.at_min(tech, key)[0] * vs[i], gascost.EST
+        gascost.cost = cost
     elif variant != "base":
         raise SystemExit(f"unknown cuts variant {variant}")
     D = dc.build_decisions(load_index(), write=False)
     by = collections.defaultdict(list)
     for key, d, loss, _, _, cov, shut, _ in D["days"]:
-        if (D["units"].get(key) or [None])[0] == "combined_cycle" and loss is not None:
+        if (D["units"].get(key) or [None])[0] in CUT_TECHS and loss is not None:
             by[key].append((loss, cov, shut))
-    t = collections.Counter()
+    res = {f"{tech} cutoffs": collections.Counter() for tech in CUT_TECHS}
     for key, days in by.items():
         if dc._cutoff(days) is None:
             continue
+        t = res[f"{D['units'][key][0]} cutoffs"]
         t["trains"] += 1
         free = [(l, s) for l, c, s in days if c < dc.HALF]
         v = np.array([l for l, _ in free]); y = np.array([s for _, s in free])
@@ -149,7 +176,10 @@ def run_cuts(variant):
             keep[i] = True
             t["days"] += 1; t["right"] += int(call == y[i]); t["off_n"] += int(y[i])
             t["off_caught"] += int(call and y[i]); t["off_false"] += int(call and not y[i])
-    return {"combined_cycle cutoffs": {k: float(x) for k, x in t.items()}}, len(D["dates"])
+    return {k: {a: float(x) for a, x in t.items()} for k, t in res.items() if t}, len(D["dates"])
+
+
+CUT_TECHS = ("combined_cycle", "gas_steam", "coal", "combustion_turbine")
 
 
 def main():
