@@ -21,8 +21,9 @@ cuts  turn-off cutoffs (pipeline/decisions.py), each train's no-award days judge
     by a cutoff chosen from its other days (leave one out, as "acc on unseen days").  Variants:
       base     as it is (gascost v2: each train's heat rate at minimum x own hub)
       flat     every train at 7.548 (gascost v1)
-      measured gas steam and CTs at their measured heat rate at minimum x own hub, coal at its
-               heat rate x the plant's EIA-923 price (CCs as base); scored for every technology
+      gs_measured  gas steam at fuel cost too (base keeps its own offer)
+      offer    CTs and coal on their own offer or generic, as before gascost v3
+    Every variant is scored for each technology with cutoffs.
 
 Writes <out>/<model>-<variant>/summary.json and prints one line per technology and hour set.
 """
@@ -112,8 +113,13 @@ def run_ct(variant, out):
     return res, n
 
 
+_CUT_TECHS = gascost.CUT_TECHS
+_COST = gascost.cost
+
+
 def run_cuts(variant):
     from pipeline import decisions as dc
+    gascost.CUT_TECHS, gascost.cost = _CUT_TECHS, _COST     # each variant from the code as it is
     if variant == "flat":       # gascost v1: every train at 7.548
         from pipeline import heat_rates
         _cost = gascost.cost
@@ -124,30 +130,10 @@ def run_cuts(variant):
                 c = c * 7.548 / heat_rates.at_min(tech, key)[0]
             return c, e
         gascost.cost = cost
-    elif variant == "measured":   # every unit at measured heat rate at minimum x own hub (coal: x EIA-923)
-        import bisect as _b
-        import datetime as _dt
-        from pipeline import heat_rates
-        _cost = gascost.cost
-
-        def cost(tech, key, date, mingen, est):
-            if tech == "combined_cycle":
-                return _cost(tech, key, date, mingen, est)
-            if tech == "coal":
-                p, _own = heat_rates.coal_price(key, date)
-                return heat_rates.at_min(tech, key)[0] * p, gascost.EST
-            if tech not in ("gas_steam", "combustion_turbine"):
-                return mingen, est
-            c = gascost._load()
-            ds, vs = c["gas"].get(c["hub"].get(key, "hsc"), ([], []))
-            cut = (_dt.date.fromisoformat(date) - _dt.timedelta(days=1)).isoformat()
-            i = _b.bisect_left(ds, cut) - 1
-            while i >= 0 and vs[i] is None:
-                i -= 1
-            if i < 0:
-                return mingen, est
-            return heat_rates.at_min(tech, key)[0] * vs[i], gascost.EST
-        gascost.cost = cost
+    elif variant == "gs_measured":   # gas steam at fuel cost too (gascost.CUT_TECHS + gas steam)
+        gascost.CUT_TECHS = gascost.CUT_TECHS + ("gas_steam",)
+    elif variant == "offer":         # before gascost v3: CTs and coal on their own offer or generic
+        gascost.CUT_TECHS = ("combined_cycle",)
     elif variant != "base":
         raise SystemExit(f"unknown cuts variant {variant}")
     D = dc.build_decisions(load_index(), write=False)
