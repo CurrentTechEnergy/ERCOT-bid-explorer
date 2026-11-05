@@ -284,7 +284,7 @@ async function render(el, e, kinds) {
     title: name,
     sub: `${subTitle(e, (kinds && kinds[e.kind]) || e.kind)} · ${fmtShort(parseDay(from))}–${d3.utcFormat("%b %-d, %Y")(parseDay(to))}, ${res}`,
     panels: [
-      { u: "MW", title: storage ? "Output (MW, charging below zero)" : "Available vs dispatched output (MW)", series: storage
+      { u: "MW", title: storage ? "Output (MW, charging below zero)" : "Available and dispatched output (MW)", series: storage
         ? [{ k: "out", t: "line", c: "--c1", l: "Output", u: "MW" }]
         : [{ k: "hsl", t: "area", c: "--c1", l: "Available (HSL)", u: "MW" }, { k: "bp", t: "line", c: "--c1", l: "Dispatched (base point)", u: "MW", w: 2.2 }]
           .concat(e.kind.startsWith("dam_") ? [{ k: "award", t: "dash", c: "--c4", l: "Day-ahead award", u: "MW" }] : []) },
@@ -295,6 +295,7 @@ async function render(el, e, kinds) {
         { k: "da", t: "line", c: "--c4", l: "Day-ahead price at its node", u: "$" }] },
     ],
     notes: [
+      "The days around the change in the unit's own numbers. Top: how much it could have run (HSL) against what SCED dispatched (base point); a gap between them is curtailment or a unit held back. Bottom: the unit's offer price against the real-time price at its node and hub and the day-ahead price at its node; an offer above the node price is a unit pricing itself out.",
       `Shaded: the ${e.kind === "renew_episode" || e.kind.startsWith("outage") ? "event's days" : MONTHLY.has(e.kind) ? "first of the month the change is dated to, though the change covers the whole month" : "event's day"}. Offer price is the lowest price on the unit's submitted real-time (SCED) curve, the price at which it first offers output` +
         (names.length > 1 ? `, weighted by HSL across ${names.length} units` : "") + "; prices are hourly means of ERCOT's 15-minute settlement point prices.",
       "Source: ERCOT 60-Day SCED Disclosure (NP3-965-ER), 60-Day DAM Disclosure (NP3-966-ER), Settlement Point Prices (NP6-905-CD).",

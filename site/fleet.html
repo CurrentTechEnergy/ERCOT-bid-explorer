@@ -41,7 +41,7 @@
 <header class="masthead">
   <div class="brand">
     <div class="nav-row"><nav class="nav" aria-label="Pages"><a href="goal.html">Will fossil turn off?</a><a href="index.html">A day in ERCOT</a><a href="prices.html">Prices</a><a href="dayahead.html">Day-ahead offers</a><a href="commitment.html">Turn-ons and Turn-offs</a><a href="beyond.html">Real-time offers</a><a href="renewables.html">Renewables</a><a href="batteries.html">Batteries</a><a href="unit.html">Units</a><span class="nav-sep" aria-hidden="true"></span><a href="changes.html" class="aux">What's changing</a><a href="fleet.html" class="aux" aria-current="page">Fleet economics</a><a href="guide.html" class="aux">How offers work</a></nav><button type="button" class="copy-link" id="copy-link" title="Copy a link to exactly this view">Copy link</button></div>
-    <h1>ERCOT Fleet Economics</h1>
+    <h1>Fleet economics</h1>
     <p class="sub">What each technology's fleet earned and what it cost to run, day by day, on the cost basis you choose.</p>
   </div>
   <p class="status" id="status">Loading data…</p>
@@ -73,7 +73,7 @@
   <div class="ctl">
     <span class="lbl" id="lbl-hub">Gas price</span>
     <div class="seg" role="radiogroup" aria-labelledby="lbl-hub" id="hub">
-      <button type="button" data-v="unit" role="radio" title="Each unit at its own fuel hub: Waha where its offers follow the Waha price or, failing a clear signal, where its node sits in West Texas or the Panhandle; Houston Ship Channel otherwise">By unit</button>
+      <button type="button" data-v="unit" role="radio" title="Each unit at its own fuel hub: Waha where its offers follow the Waha price or, failing a clear signal, where its node sits in West Texas or the Panhandle; Houston Ship Channel otherwise">Unit's own hub</button>
       <button type="button" data-v="hh" role="radio" title="Henry Hub daily spot price from the EIA">Henry Hub</button>
     </div>
   </div>
@@ -112,7 +112,7 @@
     <div class="panel-head">
       <div>
         <h2>Units <span class="h-note" id="units-note"></span><a class="help-q" href="guide.html#revenue" title="How revenue is counted" aria-label="How revenue is counted">?</a></h2>
-        <p class="note">Every unit of the technology. Margin is revenue less fuel, variable and start costs, before fixed costs. Click a unit to open it.</p>
+        <p class="note">Every unit of the technology on the bases chosen above, so you can see which units made money and which did not. Margin is revenue less fuel, variable and start costs, before fixed costs. Click a column to sort, a unit to open it.</p>
       </div>
       <div class="panel-tools">
         <input type="search" id="unit-search" placeholder="Find a unit" aria-label="Find a unit">
@@ -126,7 +126,7 @@
     <div class="panel-head">
       <div>
         <h2>Revenue by month<a class="help-q" href="guide.html#revenue" title="How revenue is counted" aria-label="How revenue is counted">?</a></h2>
-        <p class="note">Wind and solar revenue by month, day-ahead awards plus real-time at each unit's node. Hover a month for $/MWh. Curtailment is on <a href="renewables.html">Renewables</a>.</p>
+        <p class="note" id="renew-month-note">What the wind and solar fleets earned each month: energy on the two-settlement basis at each unit's node, plus ancillary awards. Against the thermal panels above, this is the revenue side of the units that set the low prices; hover a month for the realised $/MWh, which is where curtailment and negative prices show up. Curtailment itself is on <a href="renewables.html">Renewables</a>.</p>
         <details class="how"><summary>How it's built</summary><p class="note">Energy revenue on the two-settlement basis, whatever the controls above say: the day-ahead award at the DA price plus the real-time deviation at the unit's node where it has day-ahead data, real-time at its node otherwise (most wind and solar), and system lambda where the node price is missing; plus ancillary services. Curtailed energy and its worth at the node are from the curtailment panel on <a href="renewables.html">Renewables</a>. Hover a month for the split.</p></details>
       </div>
     </div>
@@ -138,7 +138,7 @@
     <div class="panel-head">
       <div>
         <h2>Realised $/MWh by unit <span class="h-note" id="eco-note"></span><a class="help-q" href="guide.html#revenue" title="How revenue is counted" aria-label="How revenue is counted">?</a></h2>
-        <p class="note">Each wind and solar unit's revenue per MWh produced, with its curtailed share. Dashed lines are each technology's median. Click a unit to open it.</p>
+        <p class="note" id="eco-lead">The spread of revenue per MWh across every wind and solar unit, with each unit's curtailed share. The spread is mostly location (node price and congestion) and curtailment: a low $/MWh with a high curtailed share points at a congested node. Dashed lines mark each technology's median; click a unit to open it.</p>
         <details class="how"><summary>How it's built</summary><p class="note">Revenue as above over the unit's energy, for every wind and solar unit over every loaded 60-day day. The dashed lines are each technology's median. Curtailed share is the unit's curtailed energy (HSL minus base point, hour by hour) over its available energy, the same figure as "Of available" in the curtailment table on Renewables. Click a column to sort and a unit to open its page.</p></details>
       </div>
       <div class="panel-tools">
@@ -156,7 +156,7 @@
 </main>
 
 <footer class="foot">
-  <p>Source: ERCOT EMIL products NP3-965-ER (60-Day SCED Disclosure), NP3-966-ER (60-Day DAM Disclosure), NP4-190-CD (DAM Settlement Point Prices), NP6-905-CD (Settlement Point Prices) and NP6-322-CD (SCED System Lambda); Henry Hub spot price from the EIA; gas costs at Houston Ship Channel and Waha from OilPriceAPI daily prices, which are licensed and not published here. Built by the data update workflow from the days already loaded; the 60-day reports run about two months behind.</p>
+  <p>Source: ERCOT EMIL products NP3-965-ER (60-Day SCED Disclosure), NP3-966-ER (60-Day DAM Disclosure), NP4-190-CD (DAM Settlement Point Prices), NP6-905-CD (Settlement Point Prices) and NP6-322-CD (SCED System Lambda); Henry Hub spot price from the EIA; gas costs at Houston Ship Channel and Waha from OilPriceAPI daily prices, which are licensed and not published here. Rebuilt with each data update from the days already loaded; the 60-day reports run about two months behind.</p>
   <p>Hours are ERCOT hour ending in Central prevailing time: HE 13 is noon to 1 pm. Dates are operating days.</p>
   <p>Made by <a href="https://currenttech.energy">currenttech.energy</a> · <a href="contact.html">Contact</a></p>
   <p>Not affiliated with or endorsed by ERCOT. ERCOT is a registered trademark of the Electric Reliability Council of Texas, Inc.</p>
