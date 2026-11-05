@@ -24,8 +24,13 @@ Output each one took (MWh)
   solar derate at night takes nothing).  Telemetered HSL already falls with a derate, so the
   derate's share comes out of what would otherwise read as "not available from the weather".
 
-Potential: each unit's capacity is its largest hourly HSL over the loaded days (the repository's CDR
-extract has no MW column); a unit counts for the hours it is in the data ("-" hours are left out).
+Potential (Blair, Nov 5 2026), for the hours a unit is in the data ("-" hours are left out):
+  wind   its capacity every hour: the largest hourly HSL over the loaded days (the repository's
+         CDR extract has no MW column); calm hours are weather;
+  solar  a clear-sky envelope: per day and hour, the CLEAR_Q-th percentile of the unit's HSL at
+         that hour over its CLEAR_DAYS nearest available days, never below that hour's HSL plus
+         what outages took, capped at capacity.  Night and low sun are not counted as lost; the
+         rest of the gap below the envelope is clouds.
 
 Writes data/renew_outages_60d.json.gz
   {dates,
@@ -54,6 +59,8 @@ FUELS = {"Wind": "wind", "Solar": "solar"}
 DERATE_SHARE = 0.10       # of the unit's max MW
 DERATE_MW = 5.0
 DERATE_HOURS = 4.0
+CLEAR_DAYS = 30           # solar potential: nearest available days for the clear-sky envelope
+CLEAR_Q = 95              # ... and the percentile of their HSL at the hour taken as clear sky
 TYP_DAYS = 14             # nearest available days averaged for the typical HSL at an hour
 TOP_UNITS = 8
 NIGHT_SHARE = 0.05        # typical HSL under this share of capacity: the unit makes nothing then
@@ -118,21 +125,32 @@ def counts(sp) -> bool:
     return mw_max > 0 and mw_out >= max(DERATE_MW, DERATE_SHARE * mw_max) and hours >= DERATE_HOURS
 
 
-def typical_hsl(hsl_days: list, D: int) -> np.ndarray:
-    """[D, 24] typical HSL: per hour, the median over the TYP_DAYS nearest days available then."""
+def _hsl_matrix(hsl_days: list, D: int) -> np.ndarray:
     m = np.full((D, 24), np.nan)
     for i, row in enumerate(hsl_days):
         if row:
             m[i] = [np.nan if v is None else v for v in row]
-    typ = np.full((D, 24), np.nan)
+    return m
+
+
+def near_stat(m: np.ndarray, k: int, q: float) -> np.ndarray:
+    """[D, 24]: per day and hour, the q-th percentile of the unit's HSL at that hour over the k
+    nearest days (before or after) on which it was available then; 0 where it never was."""
+    D = m.shape[0]
+    out = np.full((D, 24), np.nan)
     for h in range(24):
         avail = np.flatnonzero(np.isfinite(m[:, h]))
         if not len(avail):
             continue
         for i in range(D):
-            near = avail[np.argsort(np.abs(avail - i), kind="stable")[:TYP_DAYS]]
-            typ[i, h] = np.median(m[near, h])
-    return np.nan_to_num(typ)
+            near = avail[np.argsort(np.abs(avail - i), kind="stable")[:k]]
+            out[i, h] = np.percentile(m[near, h], q)
+    return np.nan_to_num(out)
+
+
+def typical_hsl(hsl_days: list, D: int) -> np.ndarray:
+    """[D, 24] typical HSL: per hour, the median over the TYP_DAYS nearest days available then."""
+    return near_stat(_hsl_matrix(hsl_days, D), TYP_DAYS, 50)
 
 
 def _daylight_runs(o: np.ndarray, typ: np.ndarray, cap: float) -> np.ndarray:
@@ -198,7 +216,15 @@ def build_renew_outages(index: dict = None) -> None:
         d_on = (dr > 0) & (st == "r") if dr is not None else np.zeros((D, 24), bool)
         out_mwh = np.where(o, typ, 0.0)
         der_mwh = np.where(d_on, typ * (dr if dr is not None else 0), 0.0)
-        pot = (st != "-").sum(axis=1) * c
+        if t == "solar":
+            # clear-sky envelope: what the unit makes on a clear day at that hour and season;
+            # never below what it had available or what an outage took that hour
+            m = _hsl_matrix(hsl[unit], D)
+            env = np.maximum(near_stat(m, CLEAR_DAYS, CLEAR_Q), np.nan_to_num(m))
+            env = np.maximum(env, out_mwh + np.nan_to_num(m) + der_mwh)
+            pot = np.where(st != "-", np.minimum(env, c), 0.0).sum(axis=1)
+        else:
+            pot = (st != "-").sum(axis=1) * c
         for i, d in enumerate(dates):
             if not pot[i]:
                 continue
