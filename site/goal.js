@@ -276,7 +276,7 @@ function drawQ3() {
           `<tr><td>Turned off for</td><td class="n">${fmtPct(c.v)}</td></tr><tr><td>Windows where shutting paid</td><td class="n">${c.n}</td></tr>` +
           (r.lsl != null ? `<tr><td>Minimum output</td><td class="n">${d3.format(",")(r.lsl)} MW</td></tr>` : "") +
           (d != null ? `<tr><td>Change, ${b0}–${String(b1).slice(2)} to 2024 on</td><td class="n">${d > 0 ? "+" : d < 0 ? "−" : ""}${Math.abs(Math.round(100 * d))} pt</td></tr>` : "") +
-          `</table>${yearLabel(c.y) === String(c.y) ? "" : `<p class="tip-pin-note">* ${esc(yearLabel(c.y).slice(5, -1))}</p>`}<p class="tip-pin-note">Click the name for its unit page</p>`))
+          `</table>${yearLabel(c.y) === String(c.y) ? "" : `<p class="tip-pin-note">* ${esc(yearLabel(c.y).slice(6, -1))}</p>`}<p class="tip-pin-note">Click the name for its unit page</p>`))
         .on("pointerleave", hideTip));
       if (r.early != null && r.late != null) {
         const d = r.late - r.early;
