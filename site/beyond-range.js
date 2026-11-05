@@ -103,7 +103,7 @@ function legend(el, list, hidden, redraw) {
 
 // a unit's own page; a combined-cycle configuration opens its train
 const unitLink = (u) => { const m = /^(.*_CC\d+)_/.exec(u); return `<a href="unit.html?unit=${encodeURIComponent(m ? m[1] : u)}">${esc(u)}</a>`; };
-const techLabel = (t) => TECHS.find((x) => x.id === t)?.label || t;
+const techLabel = (t) => TECHS.find((x) => x.id === t)?.label || (t === "storage" ? "Storage (ESR)" : t);
 const HOUR_MS = 36e5;
 const hourTime = (d, h) => new Date(parseDate(d).getTime() + (h - 11.5) * HOUR_MS);   // middle of hour ending h + 1
 const heLabel = (h) => `HE ${String(h + 1).padStart(2, "0")}`;
@@ -230,7 +230,8 @@ function drawGas() {
     const on = (g) => { const by = new Map(g.dates.map((d, i) => [d, g.value[i]])); return dates.map((d) => (by.has(d) ? by.get(d) : null)); };
     const lines = GAS_LINES.filter((l) => src[l.key]);
     staticLegend($("gas-legend"), lines);
-    $("gas-note").textContent = lines.map((l) => `${l.label} through ${src[l.key].dates.at(-1)}`).join(" · ");
+    const ends = [...new Set(lines.map((l) => src[l.key].dates.at(-1)))], fdg = (d) => d3.timeFormat("%b %-d, %Y")(new Date(d + "T12:00:00"));
+    $("gas-note").textContent = ends.length === 1 ? `Gas prices through ${fdg(ends[0])}` : lines.map((l) => `${l.label} through ${fdg(src[l.key].dates.at(-1))}`).join(" · ");
     timeChart(el, lines.map((l) => ({ label: l.label, color: l.color, dash: l.dash, values: on(src[l.key]) })),
       { dates, H: 220, title: "Natural gas prices ($/MMBtu): Henry Hub daily, the Texas hubs as a 7-trading-day average", yFmt: d3.format("$,.2f"), tipFmt: d3.format("$,.2f"), noCSV: true });
   }
@@ -396,7 +397,7 @@ function drawNodeMarginal() {
   const sel = $("mn-zone");
   if (!D || !D.hours.rows.length || !D.hours.columns.includes("zone")) {
     emptyMsg(el, "No data on who sets price yet. It is built by the data update workflow.");
-    gel.innerHTML = zel.innerHTML = uel.innerHTML = vel.innerHTML = $("mn-valid-note").textContent = $("mn-note").textContent = ""; return;
+    gel.innerHTML = zel.innerHTML = uel.innerHTML = vel.innerHTML = $("mn-valid-note").textContent = $("mn-note").textContent = $("mn-sum").textContent = ""; return;
   }
   const zones = D.zones || [];
   if (!sel.options.length) {
@@ -438,9 +439,9 @@ function drawNodeMarginal() {
   const what = room ? "room above base point" : "marginal unit-hours";
   const where = S.mnZone === "all" ? "" : ` · ${MN_ZONE_LABEL[S.mnZone] || S.mnZone}`;
   const top = MN_GEN.filter((t) => tot[t.id] > 0).sort((a, b) => tot[b.id] - tot[a.id]).slice(0, 3);
-  $("mn-note").textContent = `${dts.length} days, ${nH.toLocaleString()} hours${where} · generators' ${what} ${klass.label}: ` +
-    (gTot ? top.map((t) => `${t.label.split(" (")[0]} ${fmtPct(tot[t.id] / gTot)}`).join(", ") : "none") +
-    (gTot && tot.storage ? ` · batteries ${d3.format(".1f")(tot.storage / gTot)}× the generators'` : "");
+  $("mn-note").textContent = `${dts.length} days, ${nH.toLocaleString()} hours${where}`;
+  $("mn-sum").textContent = gTot ? `${top.map((t, i) => `${i ? t.label.split(" (")[0].toLowerCase() : t.label.split(" (")[0]} ${fmtPct(tot[t.id] / gTot)}`).join(", ")}: the generators' shares of the ${what} ${klass.label}.` +
+    (tot.storage ? ` Batteries had ${d3.format(".1f")(tot.storage / gTot)} ${room ? "MW of room" : "marginal unit-hours"} for every 1 the generators had, so they are drawn separately.` : "") : "";
   timeChart(el, MN_GEN.map((t) => ({ ...t, values: dts.map((d) => { const a = day.get(d) || {}, g = gen(a); return g ? (a[t.id] || 0) / g : null; }) })),
     { dates: dts, stack: true, H: 260, yFmt: fmtPct, tipFmt: d3.format(".1%"), empty: "No marginal generators in this selection.",
       title: `Generators' share of ${what}, ${klass.label}${where}` });
@@ -453,11 +454,11 @@ function drawNodeMarginal() {
 
   // by region: each zone's generator shares and batteries against generators, over the selection
   const zcols = MN_GEN.filter((t) => zones.some((z) => (zoneTot.get(z) || {})[t.id] > 0));
-  zel.innerHTML = `<table class="data"><thead><tr><th class="t">Region</th>${zcols.map((t) => `<th>${t.label.split(" (")[0]}</th>`).join("")}<th>Generators, ${room ? "GW" : "units"}</th><th>Batteries ÷ generators</th></tr></thead><tbody>` +
+  zel.innerHTML = `<table class="data"><thead><tr><th class="t">Region</th>${zcols.map((t) => `<th>${t.label.split(" (")[0]}</th>`).join("")}<th>Generators' ${room ? "room, MW" : "marginal units"} (hourly average)</th><th>Batteries' ${room ? "room, MW" : "marginal units"} (hourly average)</th></tr></thead><tbody>` +
     zones.map((z) => {
       const a = zoneTot.get(z) || {}, g = gen(a);
       return `<tr><td class="t">${MN_ZONE_LABEL[z] || z}</td>${zcols.map((t) => `<td>${g && a[t.id] ? fmtPct(a[t.id] / g) : "–"}</td>`).join("")}` +
-        `<td>${g ? (room ? d3.format(",.2f")(g / nH / 1000) : d3.format(",.1f")(g / nH)) : "–"}</td><td>${g && a.storage ? d3.format(".1f")(a.storage / g) + "×" : "–"}</td></tr>`;
+        `<td>${g ? d3.format(room ? ",.0f" : ",.1f")(g / nH) : "–"}</td><td>${a.storage ? d3.format(room ? ",.0f" : ",.1f")(a.storage / nH) : "–"}</td></tr>`;
     }).join("") + "</tbody></table>";
   setCSV(zel, ["region", ...zcols.map((t) => `${t.label} share of generators`), room ? "generators_gw" : "generators_units", "batteries_over_generators"],
     zones.map((z) => { const a = zoneTot.get(z) || {}, g = gen(a); return [z, ...zcols.map((t) => (g ? (a[t.id] || 0) / g : null)), g / nH / (room ? 1000 : 1), g ? (a.storage || 0) / g : null]; }), "Who sets price by region");
@@ -466,11 +467,11 @@ function drawNodeMarginal() {
   const urows = D.units.map((r) => ({ unit: r[0], tech: r[1], sp: r[2], on: r[3], at: r[4], below: r[5], above: r[6], implied: r[7], node: r[8], nn: r[9], hsl: r[10] }));
   const cols = [
     { h: "Unit", t: true, f: (r) => unitLink(r.unit) }, { h: "Technology", t: true, f: (r) => techLabel(r.tech) }, { h: "Settlement point", t: true, f: (r) => esc(r.sp || "–") },
-    { h: "Mean HSL", f: (r) => fmtMW(r.hsl) }, { h: "Hours online", f: (r) => fmtMW(r.on) }, { h: "Marginal at lambda", f: (r) => fmtMW(r.at) },
-    { h: "Below lambda", f: (r) => fmtMW(r.below) }, { h: "Above lambda", f: (r) => fmtMW(r.above) },
+    { h: "Mean HSL (MW)", f: (r) => fmtMW(r.hsl) }, { h: "Hours online", f: (r) => fmtMW(r.on) }, { h: "Hours marginal at lambda", f: (r) => fmtMW(r.at) },
+    { h: "Hours below lambda", f: (r) => fmtMW(r.below) }, { h: "Hours above lambda", f: (r) => fmtMW(r.above) },
     { h: "Mean implied price", f: (r) => fmtPrice(r.implied) }, { h: "Mean node price, same runs", f: (r) => (r.nn ? fmtPrice(r.node) : "–") }, { h: "Runs with node price", f: (r) => r.nn.toLocaleString() },
   ];
-  uel.innerHTML = `<p class="note">Units most often on the margin away from lambda, over all days.</p><table class="data"><thead><tr>${cols.map((c) => `<th${c.t ? ' class="t"' : ""}>${c.h}</th>`).join("")}</tr></thead><tbody>` +
+  uel.innerHTML = `<p class="note">Units most often on the margin at a price other than system lambda, over all days (unit-hours).</p><table class="data"><thead><tr>${cols.map((c) => `<th${c.t ? ' class="t"' : ""}>${c.h}</th>`).join("")}</tr></thead><tbody>` +
     urows.map((r) => `<tr>${cols.map((c) => `<td${c.t ? ' class="t"' : ""}>${c.f(r)}</td>`).join("")}</tr>`).join("") + "</tbody></table>";
   setCSV(uel, ["unit", "technology", "settlement_point", "mean_hsl", "hours_online", "hours_at_lambda", "hours_below", "hours_above", "mean_implied_price", "mean_node_price", "hours_with_node_price"],
     urows.map((r) => [r.unit, r.tech, r.sp, r.hsl, r.on, r.at, r.below, r.above, r.implied, r.node, r.nn]), "Units marginal away from lambda");
@@ -513,20 +514,23 @@ async function drawAbove() {
   const el = $("above-table");
   if (!S.I) S.I = await tryJSON("data/intraday_60d.json.gz");
   const I = S.I;
-  if (!I?.above_units) return emptyMsg(el, "Fills in after the data update builds the intraday file.");
+  if (!I?.above_units) return emptyMsg(el, "No data for this panel yet.");
   const thr = +S.aboveThr, ts = S.aboveTech === "all" ? THERMAL.filter((t) => t !== "nuclear") : [S.aboveTech];
   const tl = (t) => TECHS.find((x) => x.id === t)?.label || t;
   // nuclear left out: it always runs above its reported minimum
   const rows = I.above_units.filter((r) => r[2] === thr && ts.includes(r[1]) && r[4] > 0)
     .map((r) => ({ unit: r[0], tech: r[1], run: r[3], above: r[4], mwh: r[5] })).sort((a, b) => b.mwh - a.mwh);
-  window.CX.setNote($("above-note"), `Units that ran above their minimum output when lambda was below ${fmtPrice0(thr)}, top 30 by energy above minimum. Click a row to open the unit.`,
+  const top = rows.slice(0, 30), byT = d3.rollups(top, (v) => v.length, (r) => r.tech).sort((a, b) => b[1] - a[1]);
+  const plant = top.length ? d3.rollups(top, (v) => d3.sum(v, (r) => r.mwh), (r) => r.unit.split("_")[0]).sort((a, b) => b[1] - a[1])[0] : null;
+  window.CX.setNote($("above-note"), `The thermal units whose output did not respond to price: those that kept producing above their minimum when system lambda was below ${fmtPrice0(thr)}/MWh, ranked by the energy they produced above minimum in those hours. Usually the offer is below the threshold, an ancillary-service award holds the unit up, or it runs on a schedule with no offer curve (cogeneration plants supplying steam to a host are the usual case).` +
+    (top.length ? ` Of the top ${top.length}, ${byT.map(([t, n]) => `${n} ${n === 1 ? "is" : "are"} ${tl(t).toLowerCase()}`).slice(0, 3).join(", ")}; the ${plant[0]} units alone produced ${d3.format(",.0f")(plant[1] / 1000)} GWh above minimum.` : "") + " Click a row to open the unit.",
     `All 60-day days together (${I.dates[0]} to ${I.dates.at(-1)}), nuclear left out. ${rows.length} unit${rows.length === 1 ? "" : "s"} ran above minimum in at least one hour with system lambda below ${fmtPrice0(thr)}. ` +
     `A unit counts as above minimum when its output is more than ${fmtPct(I.above_eps)} of its HSL above its LSL. Output above minimum in these hours is offered cheaply enough to be dispatched, held up by an ancillary service, or scheduled without an offer curve; cogeneration is likely here.`);
   if (!rows.length) return emptyMsg(el, `No units ran above minimum with lambda below ${fmtPrice0(thr)}.`);
   const cols = [
     { h: "Unit", t: 1, f: (r) => esc(r.unit) }, { h: "Technology", t: 1, f: (r) => tl(r.tech) },
     { h: `Hours running below ${fmtPrice0(thr)}`, f: (r) => r.run }, { h: "Hours above minimum", f: (r) => r.above },
-    { h: "Share", f: (r) => fmtPct(r.above / r.run) }, { h: "Avg MW above minimum", f: (r) => fmtMW(r.mwh / r.above) },
+    { h: "Share of those hours above minimum", f: (r) => fmtPct(r.above / r.run) }, { h: "Average MW above minimum", f: (r) => fmtMW(r.mwh / r.above) },
     { h: "MWh above minimum", f: (r) => fmtMW(r.mwh) },
   ];
   el.innerHTML = `<table class="data"><thead><tr>${cols.map((c) => `<th${c.t ? ' class="t"' : ""}>${c.h}</th>`).join("")}</tr></thead><tbody>` +
@@ -548,7 +552,8 @@ async function boot() {
   const spans = [D, S.C?.pq?.dates].filter((d) => d && d.length);
   S.span = [d3.min(spans, (d) => d[0]), d3.max(spans, (d) => d.at(-1))];
   S.last60 = D.at(-1);
-  $("range-status").textContent = `Across days: 60-day data ${D[0]} to ${D.at(-1)}, ${S.T.units.length} thermal units.`;
+  const fdr = (d) => d3.timeFormat("%b %-d, %Y")(new Date(d + "T12:00:00"));
+  $("range-status").textContent = `Every 60-day day loaded, ${fdr(D[0])} to ${fdr(D.at(-1))} (${D.length} days, ${S.T.units.length} thermal units)`;
   loadView();
   const thermal = TECHS.filter((s) => THERMAL.includes(s.id));
   [["mbp-src", "mSrc", drawMarginal], ["mbp-view", "mView", drawMarginal], ["mbp-days", "mDays", drawMarginal],

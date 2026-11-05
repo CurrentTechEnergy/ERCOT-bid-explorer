@@ -186,8 +186,8 @@ function syncSource() {
   const src = S.date ? sourceFor(S.date) : S.source;
   if (src !== S.source) { S.source = src; S.hidden.clear(); fillTechSelects(); }
   $("source-note").textContent = S.source === "60d"
-    ? "Data: 60-day disclosure, per unit"
-    : "Data: 2-day report. Per-unit detail arrives about 60 days later.";
+    ? "This day has the per-unit 60-day disclosure."
+    : "This day has only the 2-day report; per-unit detail arrives about 60 days after the operating day.";
 }
 
 function fillLocations() {
@@ -330,7 +330,9 @@ function drawStack() {
   el.replaceChildren(svg.node());
   setCSV(el, ["price", ...list.map((s) => `${s.label} (MW)`), "All thermal online (MW)"],
     P.map((p, i) => [p, ...list.map((s) => s.mw[i]), fl[i]]), `Thermal dispatch stack ${S.date} ${heLabel(h)}`);
-  $("stack-foot").textContent = `${D.fleet.n[h]} thermal units online in ${heLabel(h)} (combined-cycle configurations counted one by one).`;
+  const iP = price != null ? d3.bisectRight(P, price) - 1 : -1;
+  $("stack-foot").textContent = `${D.fleet.n[h]} thermal units online in ${heLabel(h)} (combined-cycle configurations counted one by one): ${fmtMW(minAll)} MW of minimum output ran at any price` +
+    (iP >= 0 ? `, ${fmtMW(fl[iP])} MW was offered at or below the hour's system lambda of ${fmtPrice(price)}/MWh` : "") + `, out of ${fmtMW(D.fleet.max[h])} MW available.`;
 }
 
 // curve_trends.json.gz is the file beyond-range.js also reads, fetched once through the shared cache
@@ -746,7 +748,7 @@ function drawMarginal() {
   if (!rows.length && chgMW < 1) return clear(`No MW offered within ${heLabel(h)}'s cleared price range.`);
   const win = `${fmtPrice(lo)} to ${fmtPrice(hi)}`;
   // battery charging is drawn on the other side of zero: it is demand that drops out as price rises
-  const bars = rows.concat(chg && chgMW >= 1 ? [{ ...chg, mw: -chgMW, valText: `${fmtMW(chgMW)} MW · ${d3.format(".0%")(chg.share)}` }] : []);
+  const bars = rows.concat(chg && chgMW >= 1 ? [{ ...chg, mw: -chgMW, valText: `${fmtMW(chgMW)} MW · ${d3.format(".1%")(chg.share)}` }] : []);
   el.replaceChildren(hBars(el, bars, (r) => r.s.part === "chg"
     ? `<h4>${r.s.label} · ${heLabel(h)}</h4><table>
       <tr><td>Charging that stops from ${win}</td><td class="n">${fmtMW(chgMW)} MW</td></tr>
@@ -755,7 +757,12 @@ function drawMarginal() {
     : `<h4>${r.s.label} · ${heLabel(h)}</h4><table>
       <tr><td>Offered from ${win}</td><td class="n">${fmtMW(r.mw)} MW</td></tr>
       <tr><td>Share of all marginal MW</td><td class="n">${r.share != null ? d3.format(".1%")(r.share) : "–"}</td></tr></table>`));
-  el.insertAdjacentHTML("beforeend", `<p class="note">${fmtMW(total)} MW of supply offered from ${win}${chgMW >= 1 ? `, and ${fmtMW(chgMW)} MW of battery charging that stops in the same window` : ""} (${pname} averaged ${fmtPrice(hp.mean)} in ${heLabel(h)}).</p>`);
+  const top2 = rows.slice(0, 2).filter((r) => r.share != null);
+  const lead = chg && chg.share >= 0.5
+    ? `Battery charging was the margin in ${heLabel(h)}: ${fmtMW(chgMW)} MW of charging would stop (${d3.format(".0%")(chg.share)} of what moves), against ${fmtMW(total)} MW of supply offered in the window, so the price was set by what batteries would pay to charge.`
+    : top2.length ? `${top2.map((r, i) => `${i ? r.s.label.toLowerCase() : r.s.label} (${d3.format(".0%")(r.share)})`).join(" and ")} ${top2.length > 1 ? "were" : "was"} at the margin in ${heLabel(h)}: ${fmtMW(total)} MW of supply was offered from ${win}/MWh` +
+      (chgMW >= 1 ? `, plus ${fmtMW(chgMW)} MW of battery charging that would stop (${d3.format(".0%")(chg.share)} of what moves)` : "") + "." : "";
+  el.insertAdjacentHTML("beforeend", `<p class="note">${lead} ${pname[0].toUpperCase() + pname.slice(1)} averaged ${fmtPrice(hp.mean)}/MWh in ${heLabel(h)}.</p>`);
   tel.innerHTML = barTable(all.concat(chg ? [chg] : []), `MW ${win}`, "Share of all marginal MW", "Total (supply + charging that stops)", moved);
   setCSV(el, ["technology", `MW from ${lo} to ${hi}`, "share_of_all_marginal_mw"], all.map((r) => [r.s.label, r.mw, r.share])
     .concat(chg ? [[chg.s.label, chgMW, chg.share]] : []), `Marginal supply ${S.date} ${heLabel(h)}`);
@@ -978,7 +985,8 @@ async function boot() {
   S.curt = await tryJSON("data/curve_trends.json.gz").then((c) => c && c.curt);
   const D = S.index.days;
   const last = (a) => (a.length ? [...a].sort().at(-1) : "none");
-  $("status").textContent = `2-day: ${D["2d"].length} day(s), latest ${last(D["2d"])} · 60-day: ${D["60d"].length} day(s), latest ${last(D["60d"])} · prices: ${D.prices.length} day(s) · updated ${S.index.updated.replace("T", " ").replace("Z", " UTC")}`;
+  const fd = (d) => (d === "none" ? "none" : d3.timeFormat("%b %-d, %Y")(new Date(d + "T12:00:00")));
+  $("status").textContent = `Per-unit 60-day data to ${fd(last(D["60d"]))} (${D["60d"].length} days); recent days to ${fd(last(D["2d"]))} from the 2-day report, which has no unit detail. Prices for ${D.prices.length} days. Updated ${S.index.updated.slice(0, 10)}.`;
 
   loadView();
   $("hour").value = S.hour;

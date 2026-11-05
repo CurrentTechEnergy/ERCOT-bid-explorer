@@ -192,18 +192,17 @@ function drawNodeCurtail() {
   const est = c ? CURT.map((t) => ({ label: `${t.label}, total (2-day estimate)`, color: t.color, dash: "2 2", width: 1.5,
     values: c.dates.map((d, i) => (ni.has(d) && N.daily[t.id].curt[ni.get(d)] != null ? null : gwh(c[t.id].c2d[i]))) })).filter((s) => s.values.some((v) => v != null)) : [];
   timeChart(el, [...NC_SERIES.filter((s) => N.daily[s.tech][s.key]).map((s) => ({ label: s.label, color: s.color, dash: s.dash, width: s.width, values: onAxis(N.daily[s.tech][s.key]) })), ...est],
-    { dates, H: 240, title: "Curtailed energy by what it was worth at the node (GWh per day)", yFmt: d3.format(",.1f"), tipFmt: d3.format(",.1f"), dots: true,
+    { dates, H: 240, title: "Curtailed energy by cause, GWh per day", yFmt: d3.format(",.1f"), tipFmt: d3.format(",.1f"), dots: true,
       tipNote: (i) => { const j = ni.get(dates[i]); if (j == null) return " · 2-day estimate"; const u = (N.daily.wind.unmapped[j] || 0) + (N.daily.solar.unmapped[j] || 0);
         const share = c ? CURT.map((t) => { const k = c.dates.indexOf(dates[i]), a = k < 0 ? null : c[t.id].a60[k], v = N.daily[t.id].curt[j]; return a ? `${t.label} ${fmtPct(v / a)}` : null; }).filter(Boolean) : [];
         return (share.length ? ` · of available: ${share.join(", ")}` : "") + (u ? ` · ${fmtMW(u)} MWh unmatched` : ""); } });
-  // value of the curtailed energy: at the node against at system lambda
-  const k$ = (v) => (v == null ? null : v / 1000);
-  timeChart(vel, [
-    { label: "Wind, at the node", color: "--c3", values: N.daily.wind.value.map(k$) },
-    { label: "Wind, at system lambda", color: "--c3", dash: "5 3", values: N.daily.wind.value_lam.map(k$) },
-    { label: "Solar, at the node", color: "--c4", values: N.daily.solar.value.map(k$) },
-    { label: "Solar, at system lambda", color: "--c4", dash: "5 3", values: N.daily.solar.value_lam.map(k$) },
-  ], { dates: N.dates, H: 240, title: "What the curtailed energy would have earned ($ thousand per day; negative when the price was below zero)", yFmt: d3.format(",.0f"), tipFmt: d3.format(",.1f"), dots: true });
+  // the totals by cause, and how much was curtailed while the node paid something
+  const tot = (k) => d3.sum(CURT, (t) => d3.sum(N.daily[t.id][k] || [], (v) => v || 0)) / 1000;
+  const all = tot("curt"), cong = tot("cong"), over = tot("over"), dir = tot("directed");
+  const ed = N.bins.edges, pos = d3.sum(N.bins.labels, (_, i) => (ed[i] != null && ed[i] >= 0 ? (N.bins.wind.mwh[i] || 0) + (N.bins.solar.mwh[i] || 0) : 0)) / 1000;
+  const nAll = d3.sum(N.bins.labels, (_, i) => (N.bins.wind.mwh[i] || 0) + (N.bins.solar.mwh[i] || 0)) / 1000;
+  vel.textContent = all ? `Over ${N.dates.length} days, ${d3.format(",.0f")(all)} GWh of wind and solar was curtailed: ${fmtPct(cong / all)} congestion, ${fmtPct(over / all)} oversupply and ${fmtPct(dir / all)} operator-directed. ` +
+    (nAll ? `${d3.format(",.0f")(pos)} GWh (${fmtPct(pos / nAll)} of the curtailment priced at a node) was curtailed while the price at the unit's node was $0/MWh or more, energy the unit gave up although its node would have paid for it.` : "") : "";
 
   drawCurtPrice();
 
@@ -211,11 +210,11 @@ function drawNodeCurtail() {
   const rows = N.units.slice(0, S.ncAll ? undefined : 40).map((r) => ({ unit: r[0], tech: r[1], sp: r[2], curt: r[3], cong: r[4], value: r[5], node: r[6], avail: r[7], days: r[8], dir: r[9], bid: bidWhenCurtailed(r[0], N.dates) }));
   const cols = [
     { h: "Unit", t: true, f: (r) => `<a href="unit.html?unit=${encodeURIComponent(r.unit)}">${esc(r.unit)}</a>` }, { h: "Technology", t: true, f: (r) => techLabel(r.tech) }, { h: "Settlement point", t: true, f: (r) => esc(r.sp || "–") },
-    { h: "Curtailed GWh", f: (r) => d3.format(",.1f")(r.curt / 1000) }, { h: "Of available", f: (r) => (r.avail ? fmtPct(r.curt / r.avail) : "–") },
+    { h: "Curtailed, GWh", f: (r) => d3.format(",.1f")(r.curt / 1000) }, { h: "Share of available", f: (r) => (r.avail ? fmtPct(r.curt / r.avail) : "–") },
     { h: "Congestion share", f: (r) => (r.cong != null && r.curt ? fmtPct(r.cong / r.curt) : "–") },
-    { h: "Operator-directed", f: (r) => (r.dir != null && r.curt ? fmtPct(r.dir / r.curt) : "–") },
-    { h: "Mean node price when curtailed", f: (r) => fmtPrice(r.node) },
-    { h: "Average offer on curtailed days", f: (r) => (r.bid === undefined ? "…" : fmtPrice(r.bid)) }, { h: "Worth at the node", f: (r) => (r.value == null ? "–" : fmtPrice0(r.value)) }, { h: "Days priced", f: (r) => r.days },
+    { h: "Operator-directed share", f: (r) => (r.dir != null && r.curt ? fmtPct(r.dir / r.curt) : "–") },
+    { h: "Mean node price when curtailed, $/MWh", f: (r) => fmtPrice(r.node) },
+    { h: "Average offer on curtailed days, $/MWh", f: (r) => (r.bid === undefined ? "…" : fmtPrice(r.bid)) }, { h: "Worth at the node, $ over the period", f: (r) => (r.value == null ? "–" : fmtPrice0(r.value)) }, { h: "Days with a node price", f: (r) => r.days },
   ];
   $("nc-more").hidden = S.ncAll || N.units.length <= 40;
   $("nc-more").textContent = `Show all ${N.units.length}`;
@@ -338,7 +337,11 @@ function drawUnused() {
   const dts = S.N.dates.filter((d) => day.has(d));
   const total = d3.sum([...cell.values()], (c) => d3.sum(c));
   const what = S.unTech === "all" ? "wind and solar" : S.unTech;
-  $("un-note").textContent = `${dts.length} days · ${d3.format(",.0f")(total)} GWh unused ${what}` + (S.unLam === "all" ? "" : ` in hours with λ ${S.unLam === "le10" ? "≤" : ">"} $10`);
+  $("un-note").textContent = `${d3.format(",.0f")(total)} GWh of ${what} went unused over ${dts.length} days` + (S.unLam === "all" ? "" : ` in hours with lambda ${S.unLam === "le10" ? "≤" : ">"} $10/MWh`);
+  const zSum = [...cell.entries()].map(([z, c]) => [z, d3.sum(c)]).sort((a, b) => b[1] - a[1]);
+  const bSum = d3.range(nb).map((i) => d3.sum([...cell.values()], (c) => c[i]));
+  const bTop = d3.maxIndex(bSum);
+  $("un-sum").textContent = total && zSum.length ? `${(UN_ZONES[zSum[0][0]] || [zSum[0][0]])[0]} held ${d3.format(",.0f")(zSum[0][1])} of the ${d3.format(",.0f")(total)} GWh (${fmtPct(zSum[0][1] / total)}). Across all regions the largest share, ${fmtPct(bSum[bTop] / total)}, was offered at ${U.bands[bTop]}.` : "";
   staticLegend($("un-legend"), groups);
   const series = groups.map((g, j) => ({ ...g, values: dts.map((d) => day.get(d)[j]) }));
   timeChart(el, series, { dates: dts, stack: true, stackMax: Math.max(1, d3.max(dts, (d) => d3.sum(day.get(d)))) * 1.05, H: 240,

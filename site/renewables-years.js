@@ -137,20 +137,21 @@ function draw() {
   });
   cap.push({ label: "Average MWh at the hub", color: "--c-other", hide: true, values: hub, fmt: fmtPrice });
   staticLegend($("yr-capture-legend"), cap);
-  yearChart($("yr-capture"), cap, { title: `Capture rate: real-time price earned per MWh ÷ the hub price weighted by ERCOT generation${day ? " (7-day)" : ""}; scale stops at 0% and 150%`,
+  yearChart($("yr-capture"), cap, { title: `Capture rate, %: price earned per MWh ÷ the average MWh's hub price${day ? " (7-day)" : ""}; scale cut at 150%`,
     yMin: 0, yMax: 1.5, ref: 1, overrun: true, yFmt: d3.format(".0%"), tipFmt: fmtPct, H: 200 });
 
   const neg = TECHS.flatMap(([t, label, color]) => (day ? [{ label, color, values: D[t].neg, fmt: fmtPct }] : [
-    { label: `${label}, monthly`, color, faint: true, width: 1.4, values: D[t].neg, fmt: fmtPct },
-    { label: `${label}, year`, color, width: 2.6, ...annual(D[t].neg, D[t].gen), fmt: fmtPct },
+    { label: `${label}, each month`, color, faint: true, width: 1.4, values: D[t].neg, fmt: fmtPct },
+    { label: `${label}, calendar year`, color, width: 2.6, ...annual(D[t].neg, D[t].gen), fmt: fmtPct },
   ]));
   staticLegend($("yr-neg-legend"), neg);
   yearChart($("yr-neg"), neg, { title: `Share of output in hours whose day-ahead price at the unit's node was $0 or below, each ${per}`, yFmt: d3.format(".0%"), tipFmt: fmtPct, H: 200 });
 
   const Y = S.Y, mi = Y.months.length - 1, first = Y.months[0];
   const at = (t, f, i) => Y.monthly[t][f][i];
-  $("yr-note").textContent = `Wind ${d3.format(",.0f")(at("wind", "gw", 0))} GW and solar ${d3.format(",.1f")(at("solar", "gw", 0))} GW in ${d3.timeFormat("%b %Y")(new Date(first + "-15"))}; `
-    + `${d3.format(",.0f")(at("wind", "gw", mi))} GW and ${d3.format(",.0f")(at("solar", "gw", mi))} GW in ${d3.timeFormat("%b %Y")(new Date(Y.months[mi] + "-15"))}.`;
+  const m0 = d3.timeFormat("%b %Y")(new Date(first + "-15")), m1 = d3.timeFormat("%b %Y")(new Date(Y.months[mi] + "-15"));
+  const [w0, w1] = window.CX.fmtPair([at("wind", "gw", 0), at("wind", "gw", mi)], "GW"), [s0, s1] = window.CX.fmtPair([at("solar", "gw", 0), at("solar", "gw", mi)], "GW");
+  $("yr-note").textContent = `Between ${m0} and ${m1}, wind grew from ${w0} to ${w1} and solar from ${s0} to ${s1}.`;
 }
 
 async function boot() {
