@@ -143,6 +143,7 @@ KIND_REV = {"turnoff": "c3", "shutdown_new": "s2", "shutdown_award": "s2", "grou
             "dam_renew_floor": "d2"}
 BACKFILL_NEWS_DAYS = 75    # a control event older than this, found by a history merge, is not news
 TURNOFF_AWARD = {0: "without an award", 1: "with an award some hours", 2: "with an award every hour"}
+TURNOFF_TAG = {0: "no award", 1: "award some hours", 2: "award every hour"}
 # rt_price (combustion turbines; see the docstring)
 RUN_MONTH_DAYS, RUN_BEFORE = 20, 60            # days of states the month needs; days before it compared
 RUN_MIN_NOW, RUN_MIN_BEFORE, RUN_MIN_NEXT = 30, 60, 20   # available hours a price bin needs
@@ -153,13 +154,31 @@ DAILY = ("daily1", "daily2", "daily3")
 FAMILY = {"never": "on", "multiday": "multiday", "daily1": "daily", "daily2": "daily", "daily3": "daily"}
 GROUP_LABEL = {g[0]: g[1] for g in GROUPS}
 WEEK_LABEL = "Off for a week or more at a time"       # a multi-day month whose every off spell lasted a week or more
+# wind and solar kinds as the feed names them (the Renewables page keeps renew_changes' own names)
+RENEW_FEED = {
+    "floor_new": "Wind/solar: offer floor changed", "floor_back": "Wind/solar: back to an earlier floor",
+    "formula_on": "Wind/solar: hedge formula on", "formula_off": "Wind/solar: hedge formula off",
+    "terms": "Wind/solar: hedge formula terms changed", "moving_on": "Wind/solar: offer started moving within the day",
+    "moving_off": "Wind/solar: offer stopped moving within the day", "episode": "Wind/solar: short episode at a different floor",
+}
+RENEW_TITLE = {
+    "floor_new": "Floor moved", "floor_back": "Back to an earlier floor", "formula_on": "Hedge formula on",
+    "formula_off": "Hedge formula off", "terms": "Hedge formula terms changed", "moving_on": "Started moving within the day",
+    "moving_off": "Stopped moving within the day", "episode": "Short episode",
+}
+DAM_FEED = {
+    "mingen_step": "Day-ahead: minimum-energy offer stepped", "priced_out": "Day-ahead: priced out",
+    "start_change": "Day-ahead: start-up cost changed", "filing_off": "Day-ahead: stopped three-part offers",
+    "filing_on": "Day-ahead: started three-part offers", "renew_floor": "Day-ahead: wind/solar floor changed",
+    "renew_off": "Day-ahead: wind/solar stopped offering", "renew_on": "Day-ahead: wind/solar started offering",
+}
 KINDS = {
     "shutdown_new": "Shut down after a long run",
     "shutdown_award": "Shut down despite a day-ahead award",
-    "group": "Timescale group changed",
+    "group": "How often it turns off changed",
     "bidding": "Bidding approach shifted",
     "turnoff": "Turn-off point moved",
-    "rt_price": "Running at a new price",
+    "rt_price": "Peaker: running at a new real-time price",
     "fuel": "Fleet median offer shifted",
     "battery_size": "Battery size changed",
     "battery_new": "New battery",
@@ -167,8 +186,8 @@ KINDS = {
     "control": "Decision maker or QSE changed",
     "outage_start": "Outage started",
     "outage_end": "Outage ended",
-    **{f"renew_{k}": v for k, v in RENEW_KINDS.items()},
-    **{f"dam_{k}": v for k, v in DAM_KINDS.items()},
+    **{f"renew_{k}": v for k, v in RENEW_FEED.items()},
+    **{f"dam_{k}": DAM_FEED.get(k, "Day-ahead: " + v[0].lower() + v[1:]) for k, v in DAM_KINDS.items()},
 }
 _SAFE = re.compile(r"[^A-Za-z0-9_.-]")
 
@@ -213,6 +232,11 @@ def _family(e) -> str:
     return FAMILY[e["group"]]
 
 
+def _month(ym):
+    """'2026-07' -> 'July 2026'."""
+    return dt.date.fromisoformat(ym + "-01").strftime("%B %Y")
+
+
 def group_events(uh, tech_of):
     """Each unit's group month by month, and an event where it differs from the month before."""
     dates = uh.get("dates") or []
@@ -237,7 +261,7 @@ def group_events(uh, tech_of):
                 continue
             major = "daily" in (p[2], fam)
             out.append(_ev(key, by_month[m] and dates[by_month[m][0]], "group", tech,
-                           f"{p[3]} in {prev} to {label} in {m}", major,
+                           f"{p[3]} ({_month(prev)}) to {label} ({_month(m)})", major,
                            before=p[0], after=g, field="timescale group", month=m))
     return out
 
@@ -318,8 +342,12 @@ def turnoff_events(oc):
         v = by[k].get(m, [])
         return float(np.median(v)) if len(v) >= TURNOFF_MIN_DAYS else None
 
-    def fmt(x):
-        return "riding through" if np.isinf(x) else _usd(x)
+    def move(a, b):
+        if np.isinf(a):
+            return f"from never turning off to {_usd(b)} per MW of minimum output"
+        if np.isinf(b):
+            return f"from {_usd(a)} per MW of minimum output to never turning off"
+        return f"{_usd(a)} to {_usd(b)} per MW of minimum output"
     out = []
     for k in by:
         u, aw = k
@@ -339,7 +367,7 @@ def turnoff_events(oc):
             L = float(np.median(lsl[u]))
             usd = lambda x: None if np.isinf(x) else round(x * L)
             e = _ev(u, months[j] + "-01", "turnoff", tech[u],
-                    f"Turn-off point {cond} {fmt(a)} to {fmt(b)} per MW of minimum output in {mon}{tail}", True,
+                    f"Turn-off point ({TURNOFF_TAG[aw]}) in {mon}: {move(a, b)}{tail}", True,
                     before=None if np.isinf(a) else round(a, 1), after=None if np.isinf(b) else round(b, 1),
                     value=len(by[k][months[j]]), field=f"$ per MW of LSL, median over the month's days {cond} (null: rides through); value: days",
                     status=status, before_usd=usd(a), after_usd=usd(b), award=aw)
@@ -393,10 +421,10 @@ def run_price_events(uh, tech_of):
                         s2 = O2[k] / A2[k]
                         status = "confirmed" if abs(s2 - s1) < abs(s2 - s0) else "contradicted"
                 lab = BIN_LABELS[k]
-                price = {"<0": "below $0", "100+": "above $100"}.get(lab, "$" + lab.replace("-", "–$"))
+                price = {"<0": "below $0/MWh", "100+": "above $100/MWh"}.get(lab, "$" + lab.replace("-", "–$") + "/MWh")
                 mon = dt.date.fromisoformat(m + "-01").strftime("%B")
-                title = (f"Online {s1:.0%} of its hours at {price} real-time at its node in {mon}, up from {s0:.0%}" if up
-                         else f"Online {s1:.0%} of its hours at {price} real-time at its node in {mon}, down from {s0:.0%}")
+                title = (f"Online {s1:.0%} of its available hours at {price} real-time at its node in {mon}, up from {s0:.0%}" if up
+                         else f"Online {s1:.0%} of its available hours at {price} real-time at its node in {mon}, down from {s0:.0%}")
                 out.append(_ev(n, m + "-01", "rt_price", "combustion_turbine", title, True,
                                before=round(s0, 3), after=round(s1, 3), value=lab,
                                field="online share of available hours in the real-time node price bin; value: the bin",
@@ -425,14 +453,14 @@ def _renew_title(kind, before, after):
     """'New floor: −$38/MWh to −$39/MWh', 'Stopped moving within the day: now a floor of $0/MWh'."""
     bk, ak = (before or {}).get("k"), (after or {}).get("k")
     bv, av = (before or {}).get("v"), (after or {}).get("v")
-    name = RENEW_KINDS[kind]
+    name = RENEW_TITLE.get(kind, RENEW_KINDS[kind])
     if bk == "f" and ak == "f" and bv is not None and av is not None:
         return f"{name}: {_usd(bv)}/MWh to {_usd(av)}/MWh"
     if bk == "f" and ak == "peak" and bv is not None and av is not None:
         return f"{name}: floor {_usd(bv)}/MWh, briefly {_usd(av)}/MWh"
     rb, ra = _regime(before), _regime(after)
     if kind in ("moving_on", "formula_on"):
-        return f"{name} (was {rb})"
+        return f"{name}: was {rb}"
     if kind in ("moving_off", "formula_off"):
         return f"{name}: now {ra}"
     if rb == ra:
@@ -614,7 +642,8 @@ def new_unit_events(tr):
             continue
         on = min((r[2] for r in rows if r[2]), default=None)
         top = max(r[3] for r in rows)     # a train: its largest configuration
-        title = "First day in SCED" + (f", first HSL above zero {on}" if on and on != d else "") + (f"; up to {top:,.0f} MW so far" if top else ", no HSL yet")
+        title = ("First day in ERCOT's real-time dispatch (SCED)" + (f", first output capacity (HSL) reported {on}" if on and on != d else "")
+                 + (f"; up to {top:,.0f} MW so far" if top else "; capacity not reported yet"))
         out.append(_ev(key, d, "new_unit", tech, title, True, value=round(top) if top else None, field="MW",
                        online=on))
     return out
@@ -639,7 +668,10 @@ def control_events(qh, ent, tech_of):
         if dme:
             title = f"Offers now decided by {name(d1, dme_names)}, was {', '.join(name(d, dme_names) for d in d0s)}"
         else:
-            title = f"Scheduled by {name(q1, qse_names)}, was {', '.join(name(q, qse_names) for q in q0s) or 'unknown'}"
+            n1 = name(q1, qse_names)
+            co = lambda n: re.sub(r"\s*\(SQ\d+\)$", "", n)     # the company, without its sub-QSE number
+            title = (f"QSE code changed: {', '.join(q0s)} to {q1} ({n1})" if q0s and {co(name(q, qse_names)) for q in q0s} == {co(n1)}
+                     else f"Scheduled by {n1}, was {', '.join(name(q, qse_names) for q in q0s) or 'unknown'}")
         key = units[0] if len(units) == 1 else plant
         tech = next((tech_of[u] for u in units if u in tech_of), "other")
         out.append(_ev(key, date, "control", tech, title, dme, before=[q0s, d0s], after=[q1, d1], field="QSE, DME codes",

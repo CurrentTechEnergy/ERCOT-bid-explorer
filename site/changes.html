@@ -59,7 +59,7 @@
   <div class="brand">
     <div class="nav-row"><nav class="nav" aria-label="Pages"><a href="goal.html">Will fossil turn off?</a><a href="index.html">A day in ERCOT</a><a href="prices.html">Prices</a><a href="dayahead.html">Day-ahead offers</a><a href="commitment.html">Turn-ons and Turn-offs</a><a href="beyond.html">Real-time offers</a><a href="renewables.html">Renewables</a><a href="batteries.html">Batteries</a><a href="unit.html">Units</a><span class="nav-sep" aria-hidden="true"></span><a href="changes.html" class="aux" aria-current="page">What's changing</a><a href="fleet.html" class="aux">Fleet economics</a><a href="guide.html" class="aux">How offers work</a></nav></div>
     <h1>What's changing</h1>
-    <p class="sub">Units that changed how they bid or run, newest first. Unit data runs about 60 days behind.</p>
+    <p class="sub">A dated feed of every unit that changed how it bids or runs: shutdowns that break a habit, turn-off points moving, offer floors and formulas changing, outages and new units. Use it to catch a change at one plant before it shows up in the fleet totals; filter by technology, group or kind, or search for a unit. Unit data runs about 60 days behind.</p>
   </div>
   <p class="status" id="status">Loading data…</p>
 </header>
@@ -70,7 +70,7 @@
     <select id="f-tech"></select>
   </div>
   <div class="ctl">
-    <label class="lbl" for="f-group">Timescale group</label>
+    <label class="lbl" for="f-group">How often it turns off</label>
     <select id="f-group"></select>
   </div>
   <div class="ctl">
@@ -117,7 +117,8 @@
 </main>
 
 <footer class="foot">
-  <p>Source: ERCOT EMIL products NP3-965-ER (60-Day SCED Disclosure) and NP3-966-ER (60-Day DAM Disclosure), through the site's own detectors: shutdown flags, timescale groups, bidding shifts against peers, operator-informed turn-off points (CC and gas steam), peakers running at a new real-time price at their node, outages, the wind and solar offer changes, battery sizes and each unit's first day in SCED (combined-cycle units by train; units in the first two weeks of the record are not counted as new). Offer shifts are measured against each unit's peer median on the same day, so a fuel-price move that lifts every gas unit together shows instead as a shift in that technology's median offer (combined cycle, gas steam and peakers from a 20% and $5/MWh move between one week of online days and the one before; coal only from 60% and $12/MWh, above its usual swings), beside the Houston Ship Channel gas price over the same weeks.</p>
+  <p>Source: ERCOT EMIL products NP3-965-ER (60-Day SCED Disclosure) and NP3-966-ER (60-Day DAM Disclosure), through the site's own detectors: shutdown flags, how often each unit turns off, bidding shifts against peers, turn-off points from the operator model (combined cycle and gas steam), peakers running at a new real-time price at their node, outages, wind and solar offer changes, battery sizes and each unit's first day in real-time dispatch (combined-cycle units by train; units in the first two weeks of the record are not counted as new).</p>
+  <p>Offer shifts are measured against each unit's peer median on the same day, so a fuel-price move that lifts every gas unit together shows instead as a shift in that technology's median offer (combined cycle, gas steam and peakers from a 20% and $5/MWh move between one week of online days and the one before; coal only from 60% and $12/MWh, above its usual swings), beside the Houston Ship Channel gas price over the same weeks.</p>
   <p>Hours are ERCOT hour ending in Central prevailing time: HE 13 is noon to 1 pm. Dates are operating days.</p>
   <p>Made by <a href="https://currenttech.energy">currenttech.energy</a> · <a href="contact.html">Contact</a></p>
   <p>Not affiliated with or endorsed by ERCOT. ERCOT is a registered trademark of the Electric Reliability Council of Texas, Inc.</p>
