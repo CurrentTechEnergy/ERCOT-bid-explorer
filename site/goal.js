@@ -43,7 +43,7 @@ function drawQ1() {
   svg.append("g").attr("class", "axis").attr("transform", `translate(${m.l},0)`).call(d3.axisLeft(y).ticks(6).tickSizeOuter(0));
   svg.append("g").attr("class", "axis").attr("transform", `translate(0,${H - m.b})`).call(d3.axisBottom(x).ticks(w < 560 ? 5 : 10).tickSizeOuter(0));
   svg.append("text").attr("class", "axis-title").attr("x", m.l).attr("y", 9).text("Fossil output (GW), each hour");
-  svg.append("text").attr("class", "axis-title").attr("x", w - m.r).attr("y", H - 6).attr("text-anchor", "end").text("Load less wind and solar HSL less nuclear (GW)");
+  svg.append("text").attr("class", "axis-title").attr("x", w - m.r).attr("y", H - 6).attr("text-anchor", "end").text("Load left for fossil, GW (load − wind and solar available − nuclear)");
   const cw = x(1) - x(0), ch = y(0) - y(1), col = isAll() ? css("--ink") : css("--c1");
   const op = (n, mx) => 0.12 + 0.88 * Math.log1p(n) / Math.log1p(mx);
   const back = svg.append("g"), front = svg.append("g");
@@ -73,7 +73,7 @@ function drawQ1() {
     .on("pointerleave", hideTip);
   el.replaceChildren(svg.node());
   legend("q1-legend", [[isAll() ? "Hours, all years (darker: more hours)" : `Hours in ${sel} (other years grey)`, isAll() ? "--ink" : "--c1"], ["Median fossil output", "--c2"]]);
-  $("q1-legend").insertAdjacentHTML("beforeend", `<span><span class="sw sw-line"></span>Fossil equal to the load left for it</span>`);
+  $("q1-legend").insertAdjacentHTML("beforeend", `<span><span class="sw sw-line"></span>Where fossil would sit if it followed the load left for it</span>`);
   // what is stuck on: average fossil output by net load, at minimum and above it
   const sb = F.stuck_bin, pick = (r) => isAll() || r[0] === sel;
   const hours = d3.rollup(F.hours.filter(pick), (v) => d3.sum(v, (r) => r[2]), (r) => r[1]);
@@ -96,7 +96,7 @@ function drawQ1() {
   const every = Math.ceil(allBins.length / (w < 560 ? 6 : 12));
   s2.append("g").attr("class", "axis").attr("transform", `translate(0,${H2 - m2.b})`).call(d3.axisBottom(xb).tickValues(allBins.filter((_, i) => i % every === 0)).tickFormat((b) => `${b}`).tickSizeOuter(0));
   s2.append("text").attr("class", "axis-title").attr("x", m2.l).attr("y", 9).text(`Average fossil output (GW) by load left for fossil, ${yearName(sel)}`);
-  s2.append("text").attr("class", "axis-title").attr("x", w - m2.r).attr("y", H2 - 6).attr("text-anchor", "end").text(`Load less wind and solar HSL less nuclear (GW), ${sb} GW bins`);
+  s2.append("text").attr("class", "axis-title").attr("x", w - m2.r).attr("y", H2 - 6).attr("text-anchor", "end").text(`Load left for fossil, GW (load − wind and solar available − nuclear), ${sb} GW bands`);
   bins.forEach((b) => {
     let acc = 0;
     keys.forEach(([t, k, o]) => {
@@ -125,11 +125,17 @@ function drawQ1() {
   const yrs = years().filter((q) => floorOf(String(q)) != null);
   const f = floorOf(isAll() ? "all" : String(sel));
   // while the years play the text holds still, so the chart below it doesn't move
+  const noFloor = years().filter((q) => floorOf(String(q)) == null), fy = fullYears().filter((q) => floorOf(String(q)) != null);
+  const trend = fy.length > 1 ? floorOf(String(fy.at(-1))) - floorOf(String(fy[0])) : 0;
+  const yrText = yrs.map((q) => `${fmtGW(floorOf(String(q)))} GW ${fullYears().includes(q) ? "in" : "so far in"} ${q}`);
   if (!S.playing) $("q1-answer").innerHTML = f == null ? `Too few hours with under ${LOW_NET} GW of load left for fossil in ${yearName(sel)} to say.` :
-    `<b>Fossil output has a floor it doesn't go below.</b> In hours when the load left for fossil (load less wind and solar available, less nuclear) was under ${LOW_NET} GW, fossil still ran a median of about ${fmtGW(f)} GW (${yearName(sel)}), ` +
-    `and in those hours ${fmtGW(atMin)} GW of it was units at their minimum, against ${fmtGW(above)} GW above it: coal ${fmtGW(lowPart("coal", 3))} GW and combined cycles ${fmtGW(lowPart("combined_cycle", 3))} GW. ` +
-    `By year the floor was ${yrs.map((q) => `${fmtGW(floorOf(String(q)))} GW in ${q}`).join(", ")}.`;
-  setNote($("q1-note"), `Every hour since ${d3.timeFormat("%b %Y")(new Date(S.G.years[years()[0]].from + "T12:00:00"))}: fossil output against the load left for it: load less what wind and solar could have supplied (their HSL), less nuclear, which runs flat at about 5 GW. Where fossil could turn off, its output would follow that load down the dashed line; instead it flattens, and runs above the line into the hours where it pushes wind and solar off. Below, the average fossil output in each band of that load, split into units at their minimum and output above it.`,
+    `<b>Fossil output has a floor it doesn't go below.</b> In hours when the load left for fossil (load less wind and solar available, less nuclear) was under ${LOW_NET} GW, ` +
+    `fossil still ran about ${fmtGW(atMin + above)} GW on average (median ${fmtGW(f)} GW, ${yearName(sel)}). ` +
+    `${fmtGW(atMin)} GW of that was units sitting at their minimum output, which cannot come down without a shutdown: ${fmtGW(lowPart("combined_cycle", 3))} GW of combined cycles and ${fmtGW(lowPart("coal", 3))} GW of coal among them. ` +
+    `Only ${fmtGW(above)} GW was output above minimum that could have been cut without one. ` +
+    `${Math.abs(trend) >= 500 ? `The floor has ${trend > 0 ? "risen, not fallen" : "fallen"}` : "The median floor by year"}: ${yrText.join(", ")}` +
+    `${noFloor.length ? ` (${noFloor.join(" and ")} had too few such hours)` : ""}.`;
+  setNote($("q1-note"), `Every hour since ${d3.timeFormat("%b %Y")(new Date(S.G.years[years()[0]].from + "T12:00:00"))}: fossil output against the load left for it: load less what wind and solar could have supplied (their HSL), less nuclear, which runs flat at about 5 GW. Where fossil could turn off, its output would follow that load down the dashed line; instead it flattens, and runs above the line into the hours where it pushes wind and solar off. How far a point sits above the dashed line is exactly the wind and solar curtailed in that hour, because the load left for fossil is fossil output less that curtailment. Points left of zero are hours when wind, solar and nuclear together could have met the load. Below, the average fossil output in each band of that load, split into units at their minimum and output above it.`,
     `From the 60-day SCED disclosure, hour by hour. Fossil is coal, combined cycle, gas steam and combustion turbines. The load left for fossil is the output of every fossil unit plus wind and solar output, less the wind and solar available (their HSL): load less what wind and solar could have supplied and less each hour's actual nuclear output; storage and imports are left out. The median line uses ${F.bin} GW bands of it with at least 10 hours. At minimum is the smaller of a running unit's output and its LSL (combined-cycle configurations merged into their train). The dashed line is fossil output equal to the load left for it.`);
 }
 
@@ -182,10 +188,14 @@ function drawQ2Cost() {
   const big = fy.reduce((a, b) => (tot(b) > tot(a) ? b : a), fy[0]), all = d3.sum(ys, tot);
   const coal = d3.sum((S.G.q2.cost || []).filter((r) => r[1] === "coal"), (r) => r[4]);
   const per = (f) => d3.sum(Q.filter(f), (r) => r.cost) / (d3.sum(Q.filter(f), (r) => r.mwh) || 1);
-  S.q2cost = `Staying on at minimum through cheap hours lost ${gasOnly ? "gas" : "fossil"} units $${d3.format(",.0f")(tot(big) / 1e6)}M in ${big}` + (now !== fy.at(-1) ? ` and $${d3.format(",.0f")(tot(now) / 1e6)}M so far in ${now}` : "") +
-    (gasOnly ? `; $${d3.format(",.0f")(all / 1e6)}M since ${ys[0]}, leaving out coal's $${d3.format(",.0f")(coal / 1e6)}M.` : `; coal carries $${d3.format(",.0f")(coal / 1e6)}M of the $${d3.format(",.0f")(all / 1e6)}M since ${ys[0]}.`) + ` Hours held by a day-ahead award lost about $${d3.format(",.0f")(per((r) => r.group === "award"))}/MWh, against $${d3.format(",.0f")(per((r) => r.group !== "award"))} without one.`;
-  setNote($("q2c-note"), `What fossil units lost at their minimum by staying on through cheap hours, by the same groups as the chart below. * part year.`,
-    `Coal, combined cycle and gas steam units at minimum in a cheap hour (day-ahead system lambda of $${S.G.cheap}/MWh or less). Each hour's loss is the unit's cost of running at minimum less its real-time node price (the day-ahead node price when the real-time one is missing), times its LSL; an hour where the node paid more than the cost counts as negative. Real-time in every group: a day-ahead award pays the same whether or not the unit runs, so the choice each hour is to generate or buy the energy back in real time. For gas units that cost is fuel: the unit's own heat rate at minimum, measured from EPA's hourly stack data as fuel burned per MWh of the unit's ERCOT net output when it ran at minimum (2019 to Nov 2025; a median 13.4 MMBtu/MWh for gas steam and 7.8 for combined cycles, used for units without enough hours), times the gas price at the unit's own hub, Houston Ship Channel or Waha, on the trading day before (Ship Channel from Jul 2019; where a hub has no price, Henry Hub plus Ship Channel's median basis for the calendar month, or Henry Hub alone for Waha units). Coal is its heat rate at minimum (a median 11.9) times its delivered coal price that month from EIA-923: the plant's own where it reports one (Fayette, J K Spruce, San Miguel), else the average of the Texas plants that report subbituminous coal (about $1.80/MMBtu), so about $22/MWh for most units. Units' DAM minimum-energy offers are not used: they are often set to win or avoid commitment rather than at cost. Only output up to the minimum is counted. Groups go hour by hour: a DAM energy award over 0.5 MW that hour; else self-committed when the unit's DAM resource status is on, else neither (from the 60-day DAM disclosure).`);
+  const M = (v) => `$${d3.format(",.0f")(v / 1e6)}M`, last = fy.at(-1);
+  const [pa, pn] = window.CX.fmtPair([per((r) => r.group === "award"), per((r) => r.group !== "award")], "$/MWh");
+  S.q2cost = `Staying on at minimum through cheap hours cost ${gasOnly ? "gas" : "fossil"} units ${M(tot(last))} in ${last}` +
+    (now !== last ? ` and ${M(tot(now))} so far in ${now}` : "") + (big !== last ? `, with ${big} the worst year at ${M(tot(big))}` : "") +
+    (gasOnly ? `; ${M(all)} since ${ys[0]}, leaving out coal's ${M(coal)}.` : `; coal carries ${M(coal)} of the ${M(all)} since ${ys[0]}.`) +
+    ` Hours held on by a day-ahead award lost about as much at real-time prices (${pa}) as hours without one (${pn}).`;
+  setNote($("q2c-note"), `The loss from staying on: what fossil units at minimum paid, in running cost above the real-time price, by staying on through cheap hours rather than shutting down. It is the money a unit willing to cycle would have kept. Grouped as the chart below. * part year.`,
+    `Coal, combined cycle and gas steam units at minimum in a cheap hour (day-ahead system lambda of $${S.G.cheap}/MWh or less). Each hour's loss is the unit's cost of running at minimum less its real-time node price (the day-ahead node price when the real-time one is missing), times its LSL; an hour where the node paid more than the cost counts as negative. Real-time in every group: a day-ahead award pays the same whether or not the unit runs, so the choice each hour is to generate or buy the energy back in real time. For gas units that cost is fuel: the unit's own heat rate at minimum, measured from EPA's hourly stack data as fuel burned per MWh of the unit's ERCOT net output when it ran at minimum (2019 to Nov 2025; a median 13.4 MMBtu/MWh for gas steam and 7.8 for combined cycles, used for units without enough hours), times the gas price at the unit's own hub, Houston Ship Channel or Waha, on the trading day before (Ship Channel from Jul 2019; where a hub has no price, Henry Hub plus Ship Channel's median basis for the calendar month, or Henry Hub alone for Waha units). Coal is its heat rate at minimum (a median 11.9) times its delivered coal price that month from EIA-923: the plant's own where it reports one (Fayette, J K Spruce, San Miguel), else the average of the Texas plants that report subbituminous coal (about $1.80/MMBtu), so about $22/MWh for most units. Units' DAM minimum-energy offers are not used: they are often set to win or avoid commitment rather than at cost. Only output up to the minimum is counted. Groups go hour by hour: a DAM energy award over 0.5 MW that hour; else self-committed when the unit's DAM resource status is on, else neither (from the 60-day DAM disclosure). No DAM record: hours with no day-ahead status for the unit at all.`);
 }
 function drawQ2() {
   drawQ2Cost();
@@ -220,24 +230,24 @@ function drawQ2() {
   el.replaceChildren(svg.node());
   setCSV(el, ["year", "tech", "group", "unit_days", "stayed_online"], R.map((r) => [r.year, r.tech, r.group, r.n, r.stayed]), "Award and staying on");
   const p = (t, k) => d3.format(".1%")(get(t, k).stayed / Math.max(1, get(t, k).n));
-  $("q2-answer").innerHTML = (S.q2cost ? `${S.q2cost} ` : "") + `<b>A day-ahead award or a self-commitment keeps a unit on.</b> In ${yearLabel(y)}, combined cycles going into a cheap midday stretch with a DAM award stayed online through it ${p("combined_cycle", "award")} of the time, and self-committed ones ${p("combined_cycle", "self")}. With neither, only ${p("combined_cycle", "neither")} did. Coal and gas steam stay on almost regardless: ${p("coal", "self")} of self-committed coal and ${p("gas_steam", "self")} of gas steam rode through.`;
-  setNote($("q2-note"), `Units online going into the day's first cheap midday stretch, by whether a day-ahead award or their own commitment had them on, and the share that stayed online through it. Combined-cycle configurations count as one train. * part year.`,
+  $("q2-answer").innerHTML = `<b>A day-ahead award or a self-commitment keeps a unit on; the price does not turn it off.</b> In ${yearLabel(y)}, combined cycles going into a cheap midday stretch with a day-ahead award stayed online through it ${p("combined_cycle", "award")} of the time, self-committed ones ${p("combined_cycle", "self")}, and those with neither only ${p("combined_cycle", "neither")}. Coal and gas steam stay on almost regardless: ${p("coal", "self")} of self-committed coal and ${p("gas_steam", "self")} of self-committed gas steam rode through.` + (S.q2cost ? ` ${S.q2cost}` : "");
+  setNote($("q2-note"), `Two views of the same groups: first what staying on through cheap hours cost, by year; then, for units online going into the day's first cheap midday stretch, the share that stayed online through it, by whether a day-ahead award, their own commitment or neither had them on. Combined-cycle configurations count as one train. * part year.`,
     `Counted: unit-days online in the hour before the day's first run of two or more cheap hours (day-ahead system lambda of $${S.G.cheap}/MWh or less) between HE 8 and HE 19, with no outage hour in it; stayed online means no offline hour in the run (60-day SCED and DAM disclosures). DAM award: an energy award over 0.5 MW in at least half the run's hours. Self-committed: no award, and the unit's DAM resource status on at the run's first hour. The status comes from the 60-day DAM disclosure, every year from 2019.`);
 }
 
 // ==== 3. Is behavior changing: each unit where shutting pays, units that cycle by loss, the window mix ====
 const Q3_BUCKETS = ["more", "less", "short", "held_mw", "held"];
 const Q3B = {
-  more: { label: "Losing more than a restart (shutting pays)", color: "--c7" },
-  less: { label: "Losing less than a restart", color: "--c7-soft" },
+  more: { label: "Loss above restart cost (shutting would have paid)", color: "--c7" },
+  less: { label: "Loss below restart cost", color: "--c7-soft" },
   short: { label: "Too short to cycle", color: "--c4" },
-  held_mw: { label: "Held on by the make-whole and AS it would give up", color: "--c5" },
-  held: { label: "Held on by RUC (or a DAM AS award before Dec 5, 2025)", color: "--c-other" },
+  held_mw: { label: "Held on by the make-whole and ancillary-service pay it would give up", color: "--c5" },
+  held: { label: "Held on by ERCOT (RUC), or by a day-ahead AS award before Dec 5, 2025", color: "--c-other" },
 };
 const BAND_KEYS = ["over $200", "$50 to $200", "under $50"];
 const BAND_COLOR = { "over $200": "--c8", "$50 to $200": "--c2", "under $50": "--c4" };
 const POSITION_KEYS = ["none", "self", "committed", "as"];
-const POSITION = { none: "No DAM award", self: "Self-committed award", committed: "DAM-committed (make-whole)", as: "AS award only" };
+const POSITION = { none: "No day-ahead award", self: "Self-committed, with an award", committed: "Committed by the DAM (make-whole)", as: "Ancillary-service award only" };
 const yTick = (y) => (S.G.years[y]?.to.slice(5) === "12-31" ? y : `${y}*`);
 function drawQ3() {
   $("q3-tech").value = S.tech;
@@ -267,7 +277,7 @@ function drawQ3() {
     const col = d3.scaleSequential(d3.interpolateRgb(css("--grid"), css("--c1"))).domain([0, 1]);
     const svg = d3.create("svg").attr("viewBox", `0 0 ${w} ${H}`);
     ys.forEach((y) => svg.append("text").attr("x", x(y) + x.bandwidth() / 2).attr("y", 14).attr("text-anchor", "middle").attr("font-size", 11).attr("fill", css("--muted")).text(narrow ? `'${String(y).slice(2)}` : yTick(y)));
-    svg.append("text").attr("x", w - m.r + 6).attr("y", 14).attr("font-size", 11).attr("fill", css("--muted")).text("change");
+    svg.append("text").attr("x", w - m.r + 6).attr("y", 14).attr("font-size", 11).attr("fill", css("--muted")).text("change, pt");
     T.forEach((r, i) => {
       const y0 = m.t + i * rh;
       // the unit's name opens its Unit page (decision history and its own yearly strip)
@@ -292,10 +302,10 @@ function drawQ3() {
     const nb = T.findIndex((r) => key(r) === 2);
     if (nb > 0) svg.append("line").attr("x1", m.l).attr("x2", w - m.r).attr("y1", m.t + nb * rh).attr("y2", m.t + nb * rh).attr("stroke", css("--ink")).attr("stroke-dasharray", "3 3");
     el.replaceChildren(svg.node());
-    $("q3h-legend").innerHTML = `<span>Each cell: of the unit's loss windows where shutting would have paid, the share it turned off for (${q.unit_min} such windows or more). Light = rode through, dark = turned off. Biggest drop first; units that never turned off for any loss window below the dashed line. Change: 2024 on against ${b0} to ${b1}, in percentage points.</span>`;
+    $("q3h-legend").innerHTML = `<span>Each cell: of the unit's loss windows where shutting would have paid, the share it turned off for (${q.unit_min} such windows or more). Light = rode through, dark = turned off. Biggest drop first; units that never turned off for any loss window below the dashed line. Beside each name, its minimum output (LSL). Change: 2024 on against ${b0} to ${b1}, in percentage points.</span>`;
     setCSV(el, ["train", "lsl_mw", ...ys.map(String), "early", "late", "never_off"], T.map((r) => [r.tr, r.lsl, ...ys.map((y) => (r.cells.find((c) => c.y === y) || {}).v ?? ""), r.early, r.late, r.never]), `Units ${t}`);
     const both = T.filter((r) => key(r) === 0), fell = both.filter((r) => r.late < r.early - 0.2).length, rose = both.filter((r) => r.late > r.early + 0.2).length;
-    $("q3h-text").textContent = `Of ${both.length} ${TECH[t].toLowerCase()} units with windows where shutting paid in both ${b0} to ${b1} and 2024 on, ${fell} now turn off for at least 20 points fewer of them, and ${rose} for 20 points more. ${never.size} never turned off for any loss window.`;
+    $("q3h-text").textContent = `Of the ${both.length} ${TECH[t].toLowerCase()} units with such windows in both ${b0} to ${b1} and 2024 on, ${fell} now turn off at least 20 percentage points less often than they did, ${rose} at least 20 points more often, and ${both.length - fell - rose} are within 20 points. ${never.size} ${never.size === 1 ? "unit has" : "units have"} never turned off for any loss window.`;
   }
   // ---- units that cycle, by size of loss
   {
@@ -322,7 +332,7 @@ function drawQ3() {
         BAND_KEYS.map((k) => `<tr><td>${k}/MW</td><td class="n">${fmtPct(bv(k, yy).off)}</td><td class="n">${d3.format(",")(bv(k, yy).n)}</td></tr>`).join("") + `</table>`))
       .on("pointerleave", hideTip));
     el.replaceChildren(svg.node());
-    legend("q3s-legend", BAND_KEYS.map((k) => [`Loss from staying on ${k}/MW of LSL over the window`, BAND_COLOR[k]]));
+    legend("q3s-legend", BAND_KEYS.map((k) => [k, BAND_COLOR[k]])); $("q3s-legend").insertAdjacentHTML("afterbegin", "<span>Loss from staying on, per MW of minimum output over the window:</span>");
     setCSV(el, ["year", ...BAND_KEYS.flatMap((k) => [`${k} turned off`, `${k} windows`])], ys.map((yy) => [yy, ...BAND_KEYS.flatMap((k) => [bv(k, yy).off, bv(k, yy).n])]), `Cycling units by loss ${t}`);
   }
   // ---- the windows themselves: share in each bucket
@@ -337,12 +347,12 @@ function drawQ3() {
   const M = q.mix.filter((r) => r[1] === t).map(([year, , n, night, day]) => ({ year, day }));
   const day = (y) => (M.find((r) => r.year === y) || {}).day;
   const yl0 = yo[0], ylast = yo.at(-1);
-  $("q3-day").textContent = `${fmtPct(day(ylast))} of loss windows start in the day (HE 8 to HE 19) ${ylast === fullYears().at(-1) ? "in" : "so far in"} ${ylast}, against ${fmtPct(day(yl0))} in ${yl0}. Held on falls to almost nothing from Dec 5, 2025 because DAM AS awards stop holding a unit on at RTC+B, not because units changed.`;
+  $("q3-day").textContent = `Loss windows have moved from night to midday: ${fmtPct(day(ylast))} start in the day (HE 8 to HE 19) ${ylast === fullYears().at(-1) ? "in" : "so far in"} ${ylast}, against ${fmtPct(day(yl0))} in ${yl0}, because solar growth moved the cheap hours to midday. "Held on" falls to almost nothing from Dec 5, 2025 because, under real-time co-optimization (RTC+B), a day-ahead ancillary-service award no longer holds a unit on: a market rule change, not a change in how units behave.`;
   // ---- where shutting pays, by DAM position
   const P = (q.position || []).map(([year, tech, pos, n, off, rt]) => ({ year, tech, pos, n, off, rt })).filter((r) => r.tech === t);
   const pr = (y, p) => P.find((r) => r.year === y && r.pos === p);
-  const cell = (r) => r && r.n ? `${fmtPct(r.off)} of ${d3.format(",")(r.n)}` + (r.rt != null ? `<br><span class="sub">paid at RT ${fmtPct(r.rt)}</span>` : "") : "–";
-  $("q3p-table").innerHTML = P.length ? `<table class="data"><caption>Windows where shutting pays: share turned off, by DAM position</caption><thead><tr><th class="t">Year</th>` +
+  const cell = (r) => r && r.n ? `${fmtPct(r.off)} turned off (${d3.format(",")(r.n)} windows)` + (r.rt != null ? `<br><span class="sub">${fmtPct(r.rt)} would also have paid at real-time prices</span>` : "") : "–";
+  $("q3p-table").innerHTML = P.length ? `<table class="data"><caption>Windows where shutting would have paid, by the unit's day-ahead position: how often it turned off, and how often the same shutdown would also have paid at real-time prices (a hindsight check)</caption><thead><tr><th class="t">Year</th>` +
     POSITION_KEYS.map((p) => `<th>${POSITION[p]}</th>`).join("") + `</tr></thead><tbody>` +
     yo.filter((y) => P.some((r) => r.year === y)).reverse().map((y) => `<tr><td class="t">${yearLabel(y)}</td>` + POSITION_KEYS.map((p) => `<td>${cell(pr(y, p))}</td>`).join("") + `</tr>`).join("") + `</tbody></table>` : "";
   // ---- the answer
@@ -350,17 +360,19 @@ function drawQ3() {
   const yf = fullYears().at(-1), e = E.find((r) => r.year === yf), more = (y) => row(y, "more");
   const m0 = d3.sum(base, (y) => more(y).n * more(y).off) / (d3.sum(base, (y) => more(y).n) || 1);
   const less = e && e.on > e.atBase * 1.1;
-  $("q3-answer").innerHTML = (e ? `<b>${less ? "Yes." : "Not clearly."} In ${yf}, ${TECH[t].toLowerCase()} units rode through ${fmtTWh(e.on - e.atBase)} TWh more minimum output where shutting would have paid than they would have at their own ${b0} to ${b1} habits</b>: ` +
-    `${fmtTWh(e.on)} TWh on instead of ${fmtTWh(e.atBase)}, about ${d3.format(",.0f")((e.on - e.atBase) / 8760)} MW on around the clock. ` : "") +
-    `Where shutting would have paid, they turned off for ${fmtPct(m0)} of those windows in ${b0} to ${b1} and ${fmtPct(more(yf).off)} in ${yf}. ` +
+  const offNow = more(yf).off, dir = offNow < m0 - 0.05 ? "less" : offNow > m0 + 0.05 ? "more" : "same";
+  const [tOn, tBase, tMore] = e ? window.CX.fmtPair([e.on / 1e6, e.atBase / 1e6, Math.abs(e.on - e.atBase) / 1e6], "TWh", { dp: 2 }) : [];
+  $("q3-answer").innerHTML = `<b>${dir === "less" ? `Yes, and in the wrong direction: ${TECH[t].toLowerCase()} units turn off less often than they used to.` : dir === "more" ? `Yes: ${TECH[t].toLowerCase()} units turn off more often than they used to.` : "Not clearly."}</b> ` +
+    `Where a shutdown would have paid even after the restart, they turned off for ${fmtPct(m0)} of such windows in ${b0} to ${b1} and ${fmtPct(offNow)} in ${yf}. ` +
+    (e ? `At their ${b0} to ${b1} habits they would have kept ${tBase} of minimum output on through those windows in ${yf}; they actually kept on ${tOn}, ${tMore} ${e.on >= e.atBase ? "more" : "less"}, about ${d3.format(",.0f")(Math.abs(e.on - e.atBase) / 8760)} MW around the clock. ` : "") +
     `Each unit is shown below.`;
   setNote($("q3-note"), `Each unit's day-ahead loss windows: how often it turned off where shutting would have paid, year by year; units that cycle by the size of the loss; and what the windows look like. * part year.`,
-    `Judged as the operator saw it before the day, with day-ahead prices only. A loss window is the worst run of hours (up to 24) where the unit's gas cost at minimum (as in question 2) is above its day-ahead node price, at most one starting in the day (HE 8 to HE 19) and one at night (HE20 to HE7), reaching into the next day only from HE14, when its prices are out. ` +
-    `A unit is in the decision when it was online the hour before the window (or shut up to 6 hours before it). Its loss is the window's sum of gas cost less node price, times the LSL of the configuration it was running. ` +
-    `A DAM award doesn't hold a unit on: shutting means buying the energy back in real time, at an expected price of the day-ahead price, and since RTC+B (Dec 5, 2025) the same holds for DAM AS awards, bought back at the real-time AS price. What a shutdown gives up is counted against it instead: the DAM make-whole a DAM-committed unit is paid only while online (ERCOT Protocols 4.6.2.3; its minimum-energy offer less the day-ahead price and AS revenue over the commitment, plus the start offer when the DAM started it), and from Dec 5, 2025 the AS revenue its capacity would carry. Held on: RUC (known from Dec 2025), or before Dec 5, 2025 a DAM AS award, over half the window's hours or more; or a shutdown beats the restart but not the restart plus what it gives up. ` +
-    `The unit's minimum off time is the 10th percentile of its off spells (2 hours or more offline) in the year before, else 4 hours for combined cycles and 8 for gas steam. Losing more than a restart: some shutdown at least that long, counting any profitable hours it would sit out, saves more than the restart and what it gives up (its hot start offer up to 8 hours off, intermediate beyond; generic $15,000/$25,000 for combined cycles and $10,000/$20,000 for gas steam when none is offered). ` +
-    `Too short to cycle: the window is shorter than the minimum off time and no shutdown that long pays. The table splits the windows where shutting pays by the unit's DAM position over half the window or more; "paid at RT" is the share where the same shutdown also paid at real-time node and AS prices, less the margin above LSL it would give up (a hindsight check, not used for the buckets). Turned off: an off spell at least the minimum off time long over the window. Output is the LSL times the window's hours, split by the hours online. ` +
-    `By unit: a unit's share is over its windows losing more than a restart (shutting pays), shown with ${q.unit_min} or more in the year. Never off: no shutdown for any loss window (held ones aside) in the whole record. Units that cycle: a year's units with 20 or more loss windows and none turned off are left out of that year. ` +
+    `Judged as the operator saw it before the day, with day-ahead prices only. A loss window is the worst run of hours (up to 24) where the unit's gas cost at minimum (as in question 2) is above its day-ahead node price, at most one starting in the day (HE 8 to HE 19) and one at night (HE 20 to HE 7), reaching into the next day only from HE 14, when its prices are out. ` +
+    `\n\nA unit is in the decision when it was online the hour before the window (or shut up to 6 hours before it). Its loss is the window's sum of gas cost less node price, times the LSL of the configuration it was running. ` +
+    `\n\nA DAM award doesn't hold a unit on: shutting means buying the energy back in real time, at an expected price of the day-ahead price, and since RTC+B (Dec 5, 2025) the same holds for DAM AS awards, bought back at the real-time AS price. What a shutdown gives up is counted against it instead: the DAM make-whole a DAM-committed unit is paid only while online (ERCOT Protocols 4.6.2.3; its minimum-energy offer less the day-ahead price and AS revenue over the commitment, plus the start offer when the DAM started it), and from Dec 5, 2025 the AS revenue its capacity would carry. Held on: RUC (known from Dec 2025), or before Dec 5, 2025 a DAM AS award, over half the window's hours or more; or a shutdown beats the restart but not the restart plus what it gives up. ` +
+    `\n\nThe unit's minimum off time is the 10th percentile of its off spells (2 hours or more offline) in the year before, else 4 hours for combined cycles and 8 for gas steam. Loss above restart cost: some shutdown at least that long, counting any profitable hours it would sit out, saves more than the restart and what it gives up (its hot start offer up to 8 hours off, intermediate beyond; generic $15,000/$25,000 for combined cycles and $10,000/$20,000 for gas steam when none is offered). ` +
+    `\n\nToo short to cycle: the window is shorter than the minimum off time and no shutdown that long pays. The table splits the windows where shutting pays by the unit's DAM position over half the window or more; "paid at RT" is the share where the same shutdown also paid at real-time node and AS prices, less the margin above LSL it would give up (a hindsight check, not used for the buckets). \n\nTurned off: an off spell at least the minimum off time long over the window. Output is the LSL times the window's hours, split by the hours online. ` +
+    `By unit: a unit's share is over its windows with a loss above restart cost (shutting would have paid), shown with ${q.unit_min} or more in the year. Never off: no shutdown for any loss window (held ones aside) in the whole record. Units that cycle: a year's units with 20 or more loss windows and none turned off are left out of that year. ` +
     `Ridden through: each unit's minimum output (LSL times the window's hours) in windows where shutting pays that it stayed on for, against the same windows at its own ${b0} to ${b1} shut rate (units with ${q.unit_min} or more such windows in one of those years). ` +
     `2021 and 2022 include Winter Storm Uri and the 2022 gas price spike; biggest-loss windows lean to winter, when units ride through more.`);
 }
@@ -370,10 +382,10 @@ const Q4_KEYS = ["losing more than a restart", "losing, shutting would not pay",
 const Q4_OLD = { "held on by a DAM commitment, AS or RUC": "held on by RUC or what it would give up" };    // goal.json before v10
 const RUN_KEYS = ["restart", "losing", "all", "none"];
 const RUN = {
-  restart: { label: "Runs if units losing more than a restart shut", color: "--c3" },
-  losing: { label: "… if every unit losing money shut", color: "--c1" },
-  all: { label: "… only if all fossil at minimum shut", color: "--c-other" },
-  none: { label: "Stays curtailed", color: "--c8" },
+  restart: { label: "Would run if the units losing more than a restart shut", color: "--c3" },
+  losing: { label: "Would also run if every losing unit shut", color: "--c1" },
+  all: { label: "Would run only if all fossil at minimum shut", color: "--c-other" },
+  none: { label: "Stays curtailed even then", color: "--c8" },
 };
 const ECON = {
   "losing more than a restart": { label: "Losing more than a restart costs", color: "--c7" },
@@ -385,9 +397,9 @@ const ECON = {
 };
 const SPLIT_KEYS = ["grid", "congested", "free"];
 const SPLIT = {
-  grid: { label: "Transmission: hub price above $5, the system wasn't oversupplied", color: "--c-other" },
-  congested: { label: "Oversupply hour, but behind congestion", color: "--c4" },
-  free: { label: "Oversupply hour, not behind congestion: fossil could make room", color: "--c3" },
+  grid: { label: "Transmission (hub price above $5/MWh, so the system wasn't oversupplied)", color: "--c-other" },
+  congested: { label: "Oversupply hour, plant behind a constraint", color: "--c4" },
+  free: { label: "Oversupply hour, no constraint: fossil minimums were the only thing in the way", color: "--c3" },
 };
 function drawQ4Split(Y) {
   const ys = Y.map((r) => r.year), R = Object.fromEntries(Y.map((r) => [r.year, r]));
@@ -410,15 +422,19 @@ function drawQ4() {
   legend("q4-legend", RUN_KEYS.map((k) => [RUN[k].label, RUN[k].color]));
   const nuc = (y) => d3.sum(A.filter((r) => r.year === y && r.tech === "nuclear"), (r) => r.mwh) / cnt[y];
   const v = (y, s) => (V.find((r) => r.year === y && r.s === s) || { mwh: 0 }).mwh;
-  $("q4-table").innerHTML = `<table class="data"><thead><tr><th class="t">Year</th><th>Curtailed</th><th>Fossil could make room for</th><th>Would run: units losing more than a restart shut</th><th>Would run: every unit losing money shut</th><th>Would run: all fossil at minimum shut</th></tr></thead><tbody>` +
+  $("q4-table").innerHTML = `<table class="data"><thead><tr><th class="t">Year</th><th>Curtailed, TWh (share of available)</th><th>Fossil could make room for, TWh (share of curtailed), oversupply hours</th><th>Would run if units losing more than a restart shut, TWh (share of the make-room part)</th><th>… if every losing unit shut</th><th>… if all fossil at minimum shut</th></tr></thead><tbody>` +
     Y.slice().reverse().map((r) => `<tr><td class="t">${yearLabel(r.year)}</td><td>${fmtTWh(r.curt)} TWh (${fmtPct(r.curt / r.avail)})</td><td>${fmtTWh(r.free)} TWh (${fmtPct(r.free / r.curt)}), ${d3.format(",")(r.overH)} hours</td>` +
       sc.map((s) => `<td>${fmtTWh(v(r.year, s))} TWh (${fmtPct(v(r.year, s) / (r.free || 1))})</td>`).join("") + `</tr>`).join("") + `</tbody></table>`;
   setCSV(el, ["year", "available_mwh", "curtailed_mwh", "uncongested_oversupply_mwh", "oversupply_hours", "counted_hours", "nuclear_mw", ...Q4_KEYS.map((k) => `${k.replace(/[ ,]+/g, "_")}_mw`), ...sc.map((s) => `would_run_${s.replace(/[ ,]+/g, "_")}_mwh`)],
     Y.map((r) => [r.year, r.avail, r.curt, r.free, r.overH, r.counted, Math.round(nuc(r.year)), ...Q4_KEYS.map((k) => Math.round(val(r.year, k))), ...sc.map((s) => v(r.year, s))]), "Curtailment and fossil minimum");
   const y = fullYears().at(-1), r = Y.find((q) => q.year === y), fossil = d3.sum(Q4_KEYS, (k) => val(y, k));
-  const runs = (s) => `${fmtTWh(v(y, s))} TWh (${fmtPct(v(y, s) / r.free)})`;
-  $("q4-answer").innerHTML = `<b>Most curtailment is transmission, not fossil.</b> In ${y}, ${fmtTWh(r.curt)} TWh of wind and solar was curtailed. ${fmtPct((r.curt - r.over) / r.curt)} of it came while the hub price was above $${S.G.over_price}, when the system wasn't oversupplied, and another ${fmtPct((r.over - r.free) / r.curt)} at wind and solar behind congestion. The rest, ${fmtTWh(r.free)} TWh (${fmtPct(r.free / r.curt)}), came in oversupply hours where the grid could have taken it: the part fossil units could make room for. In those hours ${fmtGW(fossil)} GW of fossil sat at minimum, beside ${fmtGW(nuc(y))} GW of nuclear. <b>${fmtGW(val(y, Q4_KEYS[0]))} GW of it was losing more than a restart would cost.</b> Had those units shut, ${runs(sc[0])} of that curtailment would have run instead. Had every unit losing money shut, ${runs(sc[1])} would have; shutting all fossil at minimum, ${runs(sc[2])}.`;
-  setNote($("q4-note"), `The curtailment fossil units could make room for, by year, split by the shutdown that would have let it run. Each hour counts the smaller of its curtailment and the minimum of the units shut, so a year's average fossil minimum and average curtailment can't simply be compared. * part year.`,
+  const [tCurt, tGrid, tCong, tFree] = window.CX.fmtPair([r.curt, r.curt - r.over, r.over - r.free, r.free].map((x) => x / 1e6), "TWh", { dp: 2 });
+  const runs = (s, all) => `${fmtTWh(v(y, s))} TWh (${fmtPct(v(y, s) / r.free)} of the ${tFree}${all ? `, ${fmtPct(v(y, s) / r.curt)} of all curtailment` : ""})`;
+  $("q4-answer").innerHTML = `<b>Most curtailment is transmission, not fossil.</b> In ${y}, ${tCurt} of wind and solar was curtailed: ${tGrid} (${fmtPct((r.curt - r.over) / r.curt)}) in hours when the hub price was above $${S.G.over_price}/MWh, so the system was not oversupplied; ` +
+    `${tCong} (${fmtPct((r.over - r.free) / r.curt)}) in oversupply hours but at plants behind a transmission constraint; and ${tFree} (${fmtPct(r.free / r.curt)}) in oversupply hours where the grid could have taken it. Only that last part is fossil's to fix. ` +
+    `In those hours ${fmtGW(fossil)} GW of fossil sat at minimum, beside ${fmtGW(nuc(y))} GW of nuclear, and <b>${fmtGW(val(y, Q4_KEYS[0]))} GW of it was losing more than a restart would have cost.</b> ` +
+    `Had those units shut, ${runs(sc[0], true)} would have run instead; had every losing unit shut, ${runs(sc[1])}; had all fossil at minimum shut, ${runs(sc[2])}.`;
+  setNote($("q4-note"), `Two charts. First, all wind and solar curtailment by what held it back: the system not being oversupplied, a transmission constraint at the plant, or nothing but fossil minimums. Second, that last part by year, split by the shutdown that would have let it run. Each hour counts the smaller of its curtailment and the minimum of the units shut, so a year's average fossil minimum and average curtailment can't simply be compared. * part year.`,
     `Curtailment is a wind or solar unit's HSL above its base point (0.5 MW or more), from the 60-day SCED disclosure. An oversupply hour has a real-time hub average (HB_HUBAVG) of $${S.G.over_price}/MWh or less. A unit is behind congestion when its day-ahead node price sits $5 or more below the day-ahead bus average; most curtailment is (West and Panhandle), and shutting a gas unit elsewhere does not make room for it. The fossil split covers oversupply hours with at least 100 MW curtailed not behind congestion. A combined cycle or gas steam unit is losing money in the hours of its day-ahead loss windows (as in question 3). It loses more than a restart when some shutdown of at least its minimum off time would save more than the restart and the DAM make-whole and AS it gives up, and it is held on when RUC (or before Dec 5, 2025 a DAM AS award) covers half the window or more, or when what a shutdown gives up outweighs its saving. Units outside such a window are covering their costs at day-ahead prices. Coal is shown on its own because it mostly shuts by season rather than for a day's cheap stretch; its cost is its heat rate at minimum times its plant's monthly EIA-923 coal price, as in Q2. "Runs" sums, hour by hour, the smaller of that curtailment and the minimum of the units shut.`);
   drawSiting();
 }
@@ -444,7 +460,7 @@ function drawSiting() {
   const svcOf = (k) => G.service[k] || "ercot";
   const best = Object.entries(R).filter(([k]) => svcOf(k) !== "none").sort((a, b) => share(b[1], i20) - share(a[1], i20))[0];
   const hou = R.HARRIS, fmtMon = (m) => d3.timeFormat("%b %Y")(d3.timeParse("%Y-%m")(m));
-  $("sit-answer").innerHTML = `Most curtailment sits behind congestion, so a new load only uses it on the same side of the constraint. From ${fmtMon(G.months[0])} to ${fmtMon(G.months[1])}, a flexible 20 MW load in ${titleCase(best[0])} County could have taken <b>${fmtPct(share(best[1], i20))} of its energy from wind and solar that was otherwise curtailed</b>${hou ? `, against ${fmtPct(share(hou, i20))} in Houston` : ""}. The best places are the southern Panhandle and the Rolling Plains, the same pocket as the big Panhandle wind; the share falls as the load grows, and the order barely changes.`;
+  $("sit-answer").innerHTML = `Most curtailment sits behind congestion, so a new load only uses it on the same side of the constraint. From ${fmtMon(G.months[0])} to ${fmtMon(G.months[1])}, a flexible 20 MW load in ${titleCase(best[0])} County could have taken <b>${fmtPct(share(best[1], i20))} of its energy from wind and solar that was otherwise curtailed</b>${hou ? `, against ${fmtPct(share(hou, i20))} in Houston` : ""}. The best places are the southern Panhandle and the Rolling Plains, the same pocket as the big Panhandle wind; the share falls as the load grows, and the order barely changes. ${titleCase(best[0])} County had ${d3.format(",")(best[1].reach)} hours with curtailment within reach over those months, about ${fmtPct(best[1].reach / 8760)} of a year.`;
   setNote($("sit-note"), `Left, curtailment at the units in each county. Right, the hours a year a load there could have run on curtailment it can reach. Tap a county for its numbers.`,
     `Each hour, a curtailed unit whose day-ahead node sits $${G.congested} or more below the day-ahead bus average is behind congestion. It counts toward every county whose median wind and solar node price is within $${G.pocket_tol} of it, taken as the same side of the binding constraints (inferred from prices, not shift factors). Curtailment at nodes nearer the bus price, in hours the real-time hub averaged $${G.over_price} or less, is system oversupply that a load anywhere could take, and counts everywhere. A load takes at most its own size each hour and is scored as if it were the only new load; a real one would also lift the local price. "Share of a flat load" is that energy over what the load would use running every hour. Counties are from ERCOT's CDR, with units it lacks placed from EIA-860. Hatched counties have no utility in ERCOT (EIA-861 service territories, 2024): a load there would normally be served from SPP, MISO or WECC even where ERCOT wind is. Grey counties have no wind or solar node to price them. ${d3.format(",")(H)} hours with data.`);
   const W = 520, Hh = 500, proj = d3.geoConicConformal().parallels([27.5, 35]).rotate([100, 0]).fitSize([W, Hh], S.TX), path = d3.geoPath(proj);
@@ -472,7 +488,7 @@ function drawSiting() {
   const r = R[S.sitSel], area = svcOf(S.sitSel) === "none" ? "No ERCOT utility serves it" : svcOf(S.sitSel) === "part" ? "Served partly by ERCOT utilities" : "ERCOT";
   const st = [[d3.format(",")(r.reach), "hours a year with reachable curtailment"], [fmtPct(share(r, i20)), "of a flat 20 MW load from curtailed wind and solar"],
     [fmtPct(share(r, i1g)), "of a flat 1 GW load"], [`${d3.format(",.0f")(r.curt / 1e3)} GWh`, `curtailed at ${d3.format(",")(r.mw)} MW of wind and solar here`],
-    [(r.disc > 0 ? "+" : "") + d3.format(".1f")(r.disc), "$/MWh, day-ahead node price against the bus average"]];
+    [`${r.disc > 0 ? "+" : r.disc < 0 ? "\u2212" : ""}$${d3.format(".1f")(Math.abs(r.disc))}/MWh`, "day-ahead node price against the bus average"]];
   $("sit-detail").innerHTML = `<h4>${esc(titleCase(S.sitSel))} County<span>${area}</span></h4><div class="sit-stats">${st.map(([b, s]) => `<div><b>${b}</b><span>${s}</span></div>`).join("")}</div>`;
   // the share of a flat load each county's reachable curtailment covers, 10 MW to 5 GW
   const named = SIT_NAMED.filter(([k]) => R[k] && k !== S.sitSel).concat([[S.sitSel, `${titleCase(S.sitSel)} (picked)`, "--c2"]]);
@@ -484,7 +500,7 @@ function drawSiting() {
   const svg = el.append("svg").attr("viewBox", `0 0 ${w} ${h}`).attr("role", "img").attr("aria-label", "Share of a flat load from curtailed wind and solar, by load size, one line per county");
   svg.append("g").selectAll("line").data(y.ticks(4)).join("line").attr("x1", m.l).attr("x2", w - m.r).attr("y1", y).attr("y2", y).attr("stroke", css("--grid"));
   svg.append("g").selectAll("text").data(y.ticks(4)).join("text").attr("x", m.l - 6).attr("y", (d) => y(d) + 4).attr("text-anchor", "end").attr("class", "tick").attr("fill", css("--muted")).attr("font-size", 11).text(fmtPct);
-  svg.append("g").selectAll("text").data(Z).join("text").attr("x", x).attr("y", h - m.b + 16).attr("text-anchor", "middle").attr("fill", css("--muted")).attr("font-size", 11).text((d) => d >= 1000 ? `${d / 1000} GW` : d);
+  svg.append("g").selectAll("text").data(Z).join("text").attr("x", x).attr("y", h - m.b + 16).attr("text-anchor", "middle").attr("fill", css("--muted")).attr("font-size", 11).text((d) => (d === Z[0] || d === Z.at(-1) ? `${d3.format(",")(d)} MW` : d3.format(",")(d)));
   svg.append("text").attr("x", m.l).attr("y", h - 4).attr("fill", css("--muted")).attr("font-size", 11).text("New load, MW (log scale). Share of a flat load's energy from curtailed wind and solar.");
   svg.append("g").selectAll("path").data(Object.values(R)).join("path").attr("d", (r) => ln(pts(r))).attr("fill", "none").attr("stroke", css("--c-other")).attr("stroke-opacity", 0.25);
   for (const [k, lab, col] of named) {
