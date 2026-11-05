@@ -197,7 +197,7 @@
         <li><strong>Stay on:</strong> run at LSL through the stretch, paying fuel for every MWh and being paid the (negative) price for it.</li>
         <li><strong>Cycle off:</strong> shut down and restart for the evening, paying a start cost, accepting a minimum time offline, and risking a failed or late start.</li>
       </ul>
-      <p>The figures here use the site's loss-from-staying-on calculation. Most example units had no three-part offer that day, so their costs are generic and only a rough guide. They say cycling off would have been cheaper, and those units stayed on anyway. Common reasons are start risk and wear, minimum off times, gas already bought, ancillary service awards and the cost of being wrong about the evening ramp.</p>
+      <p>The figures here use the site's loss-from-staying-on calculation: running cost is each unit's fuel cost, its measured heat rate at minimum × its own gas hub's price the day before (coal at its plant's EIA-923 price), not its day-ahead minimum-energy offer, which owners often set low to get committed. They say cycling off would have been cheaper, and those units stayed on anyway. Common reasons are start risk and wear, minimum off times, gas already bought, ancillary service awards and the cost of being wrong about the evening ramp.</p>
       <p><strong>Quail Run</strong> is the counterexample. It is in West Texas, where Waha gas traded at −$3.21/MMBtu that day, so burning gas earned money. It offered its output below −$30, ran above its minimum through the whole stretch, and came out ahead by staying on, even before the restart it avoided.</p>
       <p class="see"><a href="commitment.html">Turn-ons and Turn-offs has each unit's call for the day and how often the fleet rides through cheap hours →</a></p>
     </div>
@@ -317,7 +317,7 @@
 </main>
 
 <footer class="foot">
-  <p>Example data: ERCOT 60-Day SCED Disclosure (NP3-965-ER) and 60-Day DAM Disclosure (NP3-966-ER) for the example day, with SCED system lambda (NP6-322-CD). Unit curves are the curves in force at the middle SCED run of each hour. Loss-from-staying-on figures follow the method of What the decision cost on the Turn-ons and Turn-offs page; costs are generic where the unit had no three-part offer. Descriptions of ERCOT's rules are simplified for a general reader; the ERCOT Nodal Protocols are the authority.</p>
+  <p>Example data: ERCOT 60-Day SCED Disclosure (NP3-965-ER) and 60-Day DAM Disclosure (NP3-966-ER) for the example day, with SCED system lambda (NP6-322-CD). Unit curves are the curves in force at the middle SCED run of each hour. Loss-from-staying-on figures follow the method of What the decision cost on the Turn-ons and Turn-offs page: fuel cost at each unit's measured heat rate and own gas hub (coal at EIA-923 prices); start costs are generic where the unit had no three-part offer. Descriptions of ERCOT's rules are simplified for a general reader; the ERCOT Nodal Protocols are the authority.</p>
   <p>Hours are ERCOT hour ending in Central prevailing time: HE 13 is noon to 1 pm. Dates are operating days.</p>
   <p>Made by <a href="https://currenttech.energy">currenttech.energy</a> · <a href="contact.html">Contact</a></p>
   <p>Not affiliated with or endorsed by ERCOT. ERCOT is a registered trademark of the Electric Reliability Council of Texas, Inc.</p>

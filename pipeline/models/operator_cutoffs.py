@@ -5,8 +5,10 @@ have to save before the model's day call turns the unit off.
 
 The saving (SAVING): the most the unit saves by being off over one stretch of the day at least its
 minimum down time long (or to the end of the day, if less is left), at its own day-ahead node price
-against its minimum-energy cost, times its LSL: sum over the stretch of (min-energy cost - price)
-x LSL.  Its minimum down time is its shortest off spell of at least MIN_DOWN hours before the month,
+against its fuel cost at minimum (gascost.fuel_cost: its measured heat rate at minimum x its own
+hub's gas price the trading day before D - 1; its DAM minimum-energy offer only without a gas
+price), times its LSL: sum over the stretch of (fuel cost - price) x LSL.  Until c5 (Nov 5 2026)
+the cost was the minimum-energy offer.  Its minimum down time is its shortest off spell of at least MIN_DOWN hours before the month,
 from the 60-day states, once it has MIN_SPELLS of them; MIN_DOWN until then.  The day ends at HE24:
 the next day's prices are not known when the operator decides.
 
@@ -19,7 +21,7 @@ only at prices far above the day's (JCKCNTY2_CC1 in summer 2026: off at +$200, o
 below) reads "never", not the bottom of SHIFT.  "never" when it stays on through the top of SHIFT
 (an award all day holds it on), and below 0 when the model turns it off even with nothing saved.  An Oct 2026 check on 8,731 decision days: the saving ranks CC days
 that shut above those that stayed on better than the loss over the worst stretch (0.861 against
-0.835); subtracting the hot start, or costing at gas, does worse.
+0.835); subtracting the hot start, or costing at gas at a flat 7.548, did worse; the cost is at measured fuel cost all the same since c5, so the curve reads in the same dollars as the rest of the site.
 
 Writes data/operator/cutoffs.json.gz:
   {"model", "version", "measure", "columns": [...], "days": {date: [[train, tech, lsl, award,
@@ -39,6 +41,7 @@ At most HISTORY_BUDGET seconds a run, newest first (Oct 30 2026, locally: 2019 t
 """
 import numpy as np
 
+from .. import gascost
 from ..store import read_json_gz, write_json_gz
 from .operator_informed import HISTORY_VERSION, NAME, OUT_DIR, VERSION, _days, _on, _p_day, _states, fit
 
@@ -52,7 +55,7 @@ MIN_SPELLS = 3     # off spells a unit needs before its own minimum down time is
 SHIFT = (-200.0, 400.0)   # $/MWh, the range searched
 TOL = 2.0          # $/MWh, bisection stops when the bracket is this narrow
 COLUMNS = ("unit", "tech", "lsl", "award", "saving", "turn_off", "off", "min_down")
-CUT_VERSION = "c4"   # c4: 2 h minimum off spell (was 3); c2: the search goes one way from the day's prices; c3: states with intraday.empty_hour
+CUT_VERSION = "c5"   # c5: saving at fuel cost (gascost.fuel_cost) in place of the minimum-energy offer, Nov 5 2026; c4: 2 h minimum off spell (was 3); c2: the search goes one way from the day's prices; c3: states with intraday.empty_hour
 MEASURE = "saving from being off over the best stretch at least its minimum down time long, $/MW of LSL"
 
 
@@ -126,8 +129,10 @@ def day_rows(ctx, date):
         seg = st[k0:k0 + 24]
         aw = r["aw"].astype(bool)
         lsl = r["lsl"]
-        sv = saving(r["spp"], r["mingen"], lsl, md)
-        t = None if x is None else saving(r["spp"] - x, r["mingen"], lsl, md)
+        fc = gascost.gas_cost(r["tech"], key, date)
+        cost = r["mingen"] if fc is None else fc
+        sv = saving(r["spp"], cost, lsl, md)
+        t = None if x is None else saving(r["spp"] - x, cost, lsl, md)
         out.append([key, r["tech"], round(lsl, 1), 2 if aw.all() else int(aw.any()), round(sv / lsl, 1),
                     None if t is None else round(t / lsl, 1), int((seg == "0").any()), md])
     return out

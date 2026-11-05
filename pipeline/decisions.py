@@ -6,11 +6,14 @@ cutoff and tomorrow's day-ahead node prices then give the units expected to turn
 Needs no downloads.  Read by commitment.html and unit.html.
 
 Decision days use only what was known when the day-ahead market cleared: the DAM price at the
-unit's settlement point (data/dam/), its minimum-energy cost and LSL from its three-part offer
-(its most recent one within COST_DAYS days, else the technology's generic cost), and its DAM
-energy award.  For a unit online in hour ending 1:
+unit's settlement point (data/dam/), its cost at minimum and LSL, and its DAM energy award.
+The cost is its fuel cost at minimum (gascost.cost: measured heat rate at minimum x own hub gas
+the trading day before, coal x the plant's EIA-923 price) for combined cycles, combustion
+turbines and coal (gascost.CUT_TECHS); gas steam, and any unit without a fuel price, keep the
+minimum-energy cost from its three-part offer (its most recent one within COST_DAYS days, else
+the technology's generic cost).  For a unit online in hour ending 1:
 
-  loss      the worst contiguous window of the day of (minimum-energy cost - DAM node price)
+  loss      the worst contiguous window of the day of (cost at minimum - DAM node price)
             x LSL, in $: what staying on at minimum through those hours loses day-ahead,
             before any start cost
   award     the share of the window's hours with an energy award of at least AWARD_LSL x LSL
@@ -50,7 +53,7 @@ Writes data/decisions.json.gz:
   units             {train: [tech, lsl (a CC train's: the median LSL its losses were taken at), mingen, hot start, est, days, shutdowns, award share,
                      base, cutoff ($), acc, highest loss stayed, lowest loss shut, acc on unseen days]}
                     cutoff, both accs, highest and lowest are null for a unit without a cutoff;
-                    est is 0 when the costs are the unit's own latest offer, 2 when generic
+                    est is 0 when the costs are the unit's own latest offer, 2 when generic, 3 at fuel cost
   days              [[train, date, loss, first hour ending of the window, hours, award share,
                      shut, hours off]]
   tomorrow          {date, rows: [[train, tech, lsl, loss, first hour ending, hours, cutoff,

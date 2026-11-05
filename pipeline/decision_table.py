@@ -95,7 +95,7 @@ import pandas as pd
 from .config import DATA_DIR, GENERIC_COSTS, HISTORY_DIR, UNIT_DATA_DIR
 from .decisions import COST_DAYS
 from .gas import monthly_basis
-from .gascost import HEAT_RATE as GAS_HR
+from .gascost import GAS_TECHS
 from . import heat_rates
 from .intraday import train_of
 
@@ -118,9 +118,9 @@ FORCED = 0.5        # share of the window held by RUC (or AS before RTC_START) t
                     # share of a DAM position that names the window's position
 RTC_START = "2025-12-05"   # RTC+B: DAM AS awards financial from this operating day (Protocols 6.7.2.1)
 MARGIN_H = 12       # hours before and after the window for before_per_mw / after_per_mw
-MIN_LOAD = {"gas_steam": 1.28}   # gas cost at minimum against full-load GAS_HR, for callers that take one
+MIN_LOAD = {"gas_steam": 1.28}   # gas cost at minimum against a full-load 10.4, for callers that take one
                                  # heat rate per technology (the predictor): gas steam's DAM offer price at
-                                 # LSL + 1 MW is a median 1.28 x GAS_HR x hub gas (Dec 2025 to Sep 2026); EPA
+                                 # LSL + 1 MW is a median 1.28 x 10.4 x hub gas (Dec 2025 to Sep 2026); EPA
                                  # heat input over ERCOT net gives 1.29 (pipeline/heat_rates, Nov 2026).
                                  # run_cost uses each unit's own measured value instead.
 SEASON = {12: "winter", 1: "winter", 2: "winter", 3: "spring", 4: "spring", 5: "spring",
@@ -234,7 +234,7 @@ def hub_of() -> dict:
 def run_cost(tech, train, date, gas, hubs):
     """($/MWh, estimated) of running at minimum on `date`: gas units at their heat rate at minimum
     (combined cycles and gas steam: the unit's or train's measured value, else its technology's,
-    pipeline/heat_rates; others GAS_HR) x the train's own hub price (Houston Ship Channel without
+    pipeline/heat_rates; combustion turbines too since Nov 5 2026, 11.0 before) x the train's own hub price (Houston Ship Channel without
     one), Henry Hub standing in (estimated) where the hub has no price, plus the monthly basis for
     Ship Channel (gas_by_hub); coal at its heat rate at minimum x its delivered coal price that
     month (heat_rates.coal_price: the plant's own EIA-923 price, else the Texas subbituminous
@@ -242,8 +242,8 @@ def run_cost(tech, train, date, gas, hubs):
     if tech == "coal":
         p, own = heat_rates.coal_price(train, date)
         return heat_rates.at_min(tech, train)[0] * p, not own
-    if tech in GAS_HR:
-        hr = heat_rates.at_min(tech, train)[0] if tech in ("combined_cycle", "gas_steam") else GAS_HR[tech]
+    if tech in GAS_TECHS:
+        hr = heat_rates.at_min(tech, train)[0]
         hub = hubs.get(train, "hsc")
         p = gas.get(hub, {}).get(date)
         if p is not None:

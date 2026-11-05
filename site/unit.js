@@ -355,8 +355,9 @@ function drawDecisions(e) {
     `with a day-ahead award over the cheap stretch on ${aw ? fmtPct(aw) : "none"} of them. ` +
     (ns && nd > ns && g("stayMax") != null && g("shutMin") != null ? `The biggest loss it stayed on through was ${fmt$(g("stayMax"))} for the day; the smallest it shut down for was ${fmt$(g("shutMin"))}. ` : "") +
     (e.tech === "coal" && ns <= 0.05 * nd ? "Coal units almost never shut down for price: a short cheap stretch rarely beats their restart cost. " : "") +
-    (g("est") === 2 ? " Costs are the technology's generic costs (no three-part offer of its own in the window)."
-      : g("est") === 3 ? " Its minimum-energy cost is its gas cost (heat rate × its gas hub's price the day before), not its own offer." : "");
+    (g("est") === 3 ? " Its cost at minimum is its fuel cost (measured heat rate at minimum × its gas hub's price the day before, or its plant's coal price)."
+      : g("est") === 2 ? " Its cost at minimum is the technology's generic cost (no fuel price or three-part offer of its own in the window)."
+      : " Its cost at minimum is its own day-ahead minimum-energy offer.");
   const w = Math.max(280, el.clientWidth || 600), H = 240, m = { t: 18, r: 16, b: 26, l: 70 };
   const ruc = window.CX.rucDays(S.UH, e.configs.length ? e.configs : [e.name]);
   const pts = rows.map((r) => ({ d: r[1], t: parseDate(r[1]), loss: r[2], he: r[3], h: r[4], aw: r[5], shut: r[6], off: r[7],
@@ -544,7 +545,7 @@ async function drawDecisionsTO(e) {
   const says = (p) => p.c != null && p.s > p.c, bad = (p) => !p.ruc && says(p) !== p.off, J = pts.filter((p) => !p.ruc);
   const right = J.filter((p) => !bad(p)).length, nOff = J.filter((p) => p.off).length, caught = J.filter((p) => p.off && says(p)).length;
   $("dec-lead").textContent = "What this shows: for every day the unit started online, what it would have lost by staying on through the day's cheapest stretch, in $ per MW of minimum output (circle), against the loss at which the operator model expects it to turn off (diamond). When the circle sits above the diamond the model says shut down; a red stem is a day it did the opposite.";
-  $("dec-how-text").textContent = "The loss is its day-ahead minimum-energy offer against the day-ahead price at its node, over the longest stretch it could have been off given its usual minimum down time, before any restart cost. Dashed lines mark the months the turn-off point moved, tracked separately for days with no day-ahead award, an award some hours and an award every hour (the same changes as under Recent changes)." +
+  $("dec-how-text").textContent = (e.tech === "gas_steam" ? "The loss is its day-ahead minimum-energy offer" : "The loss is its fuel cost at minimum (its measured heat rate × its gas hub's price the day before)") + " against the day-ahead price at its node, over the longest stretch it could have been off given its usual minimum down time, before any restart cost. Dashed lines mark the months the turn-off point moved, tracked separately for days with no day-ahead award, an award some hours and an award every hour (the same changes as under Recent changes)." +
     (nRed ? ` The ${d3.format(",")(nRed)} lighter days, before the 60-day fits begin (Feb 2026), are judged by yearly fits on the thermal history files: no RUC data, and gas at the unit's own hub where OilPriceAPI has it (Ship Channel from Jul 2019), else Henry Hub plus Ship Channel's usual premium that calendar month (Henry Hub alone for Waha units).` : "");
   $("dec-note").textContent = `Over ${J.length} days it shut down on ${nOff}. The model called ${right} days right (${fmtPct(right / J.length)}) and caught ${caught} of the ${nOff} shutdowns.${window.CX.rucNote(pts.length - J.length)}`;
   $("dec-legend").innerHTML = `<span><span class="sw" style="background:var(--c1);transform:rotate(45deg) scale(0.8)"></span>Turn-off point</span>` +
