@@ -70,8 +70,9 @@ Sources (each already computed by its own module; nothing is detected twice):
                    change alone is a new scheduling agent for the same decision maker
   outage_start, outage_end
                    an outage spell of OUTAGE_DAYS days or more in the hourly states
-                   (unit_hours_60d, outages rewritten as groups.py does), when it started and
-                   when it ended; major from OUTAGE_MAJOR days
+                   (unit_hours_60d, outages rewritten as groups.py does; wind and solar from the
+                   OUT hours in renew_outages_60d), when it started and when it ended; major
+                   from OUTAGE_MAJOR days
 
 Every event:
   id        "<unit>|<date>|<kind>", stable across runs
@@ -467,7 +468,6 @@ def outage_events(uh, tech_of):
     dates = uh.get("dates") or []
     if not dates:
         return []
-    out = []
     # thermal units with a group (CC trains merged), plus nuclear from the raw strips
     _, units = assign_groups(uh, {n: t for n, t in tech_of.items() if t in GROUPED_TECHS})
     strips = {k: (e["tech"], e["st"]) for k, e in units.items()}
@@ -477,6 +477,21 @@ def outage_events(uh, tech_of):
             s = uh["units"][n]
             strips[n] = (t, [s[i * 24 + h] if i * 24 + h < len(s) else "-"
                              for i, d in enumerate(dates) for h in range(24)])
+    return _outage_spell_events(strips, d0)
+
+
+def renew_outage_events(ro):
+    """Outage started / ended for wind and solar units: runs of OUT hours in the 60-day status
+    (data/renew_outages_60d.json.gz strips; derated hours do not count as outage here)."""
+    dates = ro.get("dates") or []
+    if not dates:
+        return []
+    strips = {u: (ro["tech"].get(u), s) for u, s in (ro.get("strips") or {}).items() if ro["tech"].get(u)}
+    return _outage_spell_events(strips, dt.date.fromisoformat(dates[0]))
+
+
+def _outage_spell_events(strips, d0):
+    out = []
     for key, (tech, st) in strips.items():
         N, k = len(st), 0
         while k < N:
@@ -669,6 +684,7 @@ def build_events(index: dict) -> dict:
     uh = read_json_gz(DATA_DIR / "unit_hours_60d.json.gz", default={}) or {}
     tr = read_json_gz(DATA_DIR / "trends_60d.json.gz", default={}) or {}
     rc = read_json_gz(DATA_DIR / "renew_changes.json.gz", default={}) or {}
+    ro = read_json_gz(DATA_DIR / "renew_outages_60d.json.gz", default={}) or {}
     do = read_json_gz(DATA_DIR / "dam_offers.json.gz", default={}) or {}
     oc = read_json_gz(OPERATOR_DIR / "cutoffs.json.gz", default={}) or {}
     hubs = private.read("gas_hubs.json.gz", default={}) or {}
@@ -684,7 +700,7 @@ def build_events(index: dict) -> dict:
     tech_all.update({_train(u["unit"]): u["tech"] for u in tr.get("units", [])})
     tech_all.update({u: "storage" for u in (su.get("units") or {})})
     events = (shutdown_events(dec) + group_events(uh, tech_of) + bidding_events(tr) + turnoff_events(oc) + run_price_events(uh, tech_of)
-              + renew_events(rc) + dam_events(do) + outage_events(uh, tech_of) + fuel_events(tr, hubs) + battery_events(su)
+              + renew_events(rc) + dam_events(do) + outage_events(uh, tech_of) + renew_outage_events(ro) + fuel_events(tr, hubs) + battery_events(su)
               + new_unit_events(tr) + control_events(qh, ent, tech_all))
     old = read_json_gz(PATH, default=None) or {}
     seen = {e["id"]: e["seen"] for e in old.get("events", [])}
