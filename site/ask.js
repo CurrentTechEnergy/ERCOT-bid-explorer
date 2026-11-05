@@ -75,7 +75,7 @@ function showTurn(q, d) {
         `<td class="t ev"><b>${esc((d.kinds || {})[e.kind] || e.kind)}</b><br>${esc(e.title)}${window.EVC.button(e)}</td></tr>`).join("") + "</tbody></table></div>"
     : "";
   el.innerHTML = `<p class="q">${esc(q)}</p><div class="a">${markdown(d.answer, refs)}</div>${changes}` +
-    `<p class="meta">${d.usd != null ? `Cost about $${d.usd.toFixed(2)}` : ""}${d.remaining != null ? ` · ${d.remaining} question${d.remaining === 1 ? "" : "s"} left today` : ""}</p>`;
+    `<p class="meta">${d.usd != null ? `This answer cost about $${d.usd.toFixed(2)} to generate` : ""}${d.remaining != null ? ` · ${d.remaining} question${d.remaining === 1 ? "" : "s"} left today` : ""}</p>`;
   el.addEventListener("click", (ev) => {
     const b = ev.target.closest(".evc-btn"); if (!b) return;
     const tr = b.closest("tr"), e = refs.get(tr.dataset.id);
@@ -86,7 +86,7 @@ function showTurn(q, d) {
 
 async function ask(q) {
   const pass = $("pass").value.trim() || store.get();
-  if (!pass) { say("Enter the passcode.", true); $("pass-row").hidden = false; $("pass").focus(); return; }
+  if (!pass) { say("Enter the passcode. This test is invite-only; ask for one via Contact.", true); $("pass-row").hidden = false; $("pass").focus(); return; }
   $("go").disabled = true;
   say("Looking through the data… this usually takes 20 to 60 seconds.");
   try {

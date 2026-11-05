@@ -29,7 +29,7 @@ function numbers(e) {
   if (k === "turnoff") {
     const perMW = (v) => (v == null ? "never turns off" : fmt$(v));
     const lsl = e.after ? e.after_usd / e.after : e.before ? e.before_usd / e.before : null;
-    return `${perMW(e.before)} → ${perMW(e.after)}/MW of minimum` + (lsl ? ` (${e.before_usd == null ? "never" : fmt$(e.before_usd)} → ${e.after_usd == null ? "never" : fmt$(e.after_usd)} a day at its ${d3.format(",.0f")(lsl)} MW minimum)` : "");
+    return `${perMW(e.before)} → ${perMW(e.after)}/MW of minimum` + (lsl ? ` (${e.before_usd == null ? "never" : fmt$(e.before_usd)} → ${e.after_usd == null ? "never" : fmt$(e.after_usd)} a day at its ${e.tech === "combined_cycle" ? "smallest configuration's " : ""}${d3.format(",.0f")(lsl)} MW minimum)` : "");
   }
   if (k === "rt_price") return `online ${d3.format(".0%")(e.before)} → ${d3.format(".0%")(e.after)} of its available hours at that price`;
   if (k === "bidding") return e.field === "rel" ? `${fmt$(e.before)} → ${fmt$(e.after)}/MWh` : `${d3.format(".0%")(e.before)} → ${d3.format(".0%")(e.after)}`;
@@ -41,14 +41,15 @@ function numbers(e) {
 }
 
 function drawTable() {
-  const evs = eventsFor(S.unit), shown = S.all ? evs : evs.filter((e) => e.major).slice(0, SHOW);
-  const nMajor = evs.filter((e) => e.major).length;
-  $("changes-count").textContent = evs.length ? `${nMajor} notable, ${evs.length} in all` : "";
+  const evs = eventsFor(S.unit), nMajor = evs.filter((e) => e.major).length;
+  // with nothing notable, the minor changes are the list rather than an empty table and a button
+  const shown = S.all || !nMajor ? evs.slice(0, S.all ? evs.length : SHOW) : evs.filter((e) => e.major).slice(0, SHOW);
+  $("changes-count").textContent = !evs.length ? "" : nMajor ? `${nMajor} notable, ${evs.length} in all` : `${evs.length} minor change${evs.length === 1 ? "" : "s"} (none notable)`;
   $("changes-more").hidden = S.all || shown.length >= evs.length;
   $("changes-more").textContent = `Show all ${evs.length}`;
   if (!evs.length) { $("changes-table").innerHTML = `<p class="empty">No changes found for this unit in the loaded data.</p>`; return; }
   $("changes-table").innerHTML = `<table class="data"><thead><tr><th class="t">Date</th><th class="t">Change</th><th class="t">Detail</th><th class="t">Numbers</th><th class="t">Found</th></tr></thead><tbody>` +
-    shown.map((e) => `<tr class="${e.major ? "" : "minor"}" data-id="${esc(e.id)}"><td class="t"><a class="evc-go" href="${window.EVC.href(e)}" title="Show this day on the charts below">${e.date}</a></td><td class="t">${esc(S.E.kinds[e.kind] || e.kind)}</td><td class="t ev">${esc(e.title)}` +
+    shown.map((e) => `<tr class="${e.major ? "" : "minor"}" data-id="${esc(e.id)}"><td class="t"><a class="evc-go" href="${window.EVC.href(e)}" title="Show this day on the charts below">${e.date}</a></td><td class="t">${esc(S.E.kinds[e.kind] || e.kind)}</td><td class="t ev">${esc(e.title.startsWith((S.E.kinds[e.kind] || e.kind) + ": ") ? e.title.slice((S.E.kinds[e.kind] || e.kind).length + 2) : e.title)}` +
       (e.units && e.units.length > 1 ? ` <span class="tag">${e.units.length} units</span>` : "") + window.EVC.button(e) + `</td><td class="t">${esc(numbers(e))}</td><td class="t">${e.seen}</td></tr>`).join("") + "</tbody></table>";
 }
 

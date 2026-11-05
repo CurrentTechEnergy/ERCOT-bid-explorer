@@ -194,15 +194,20 @@ async function draw() {
   const days = u.mwh.filter((v) => v != null).length, mwh = sum(u.mwh), nst = sum(u.starts), margin = sum(e.margin);
   const own = u.start_hot.filter((v) => v != null).length, mg = u.mingen.filter((v) => v != null);
   const meas = FUEL[S.tech] === "gas" || FUEL[S.tech] === "coal";
-  const fuelNote = FUEL[S.tech] ? (meas ? ` Costs: fuel burned at its own measured heat rate each hour (a straight line from its heat rate at minimum to full load, as under Heat rate and fuel cost; a cogeneration unit's is the fuel chargeable to its power)` : ` Costs: fuel at the EIA average heat rate for the technology (${EIA_HR[S.tech]} MMBtu/MWh)`) +
-    (FUEL[S.tech] === "gas" ? ` × ${HUBS[unitHub(u)]} gas${u.fuel_hub && unitHub(u) !== "hh" ? ` (its hub: ${HUB_METHOD[u.fuel_hub_method] || u.fuel_hub_method})` : ""}` : ` × $${S.fuel[FUEL[S.tech]]}/MMBtu`) +
-    ` plus $${S.params[S.tech].vom}/MWh variable O&M, and starts at its own DAM hot-start offer where it has one, else $${fmt0(S.params[S.tech].start)}.`
+  const fuelNote = FUEL[S.tech] ? (meas ? ` Fuel is burned at its own measured heat rate each hour (a straight line from its heat rate at minimum to full load, as under Heat rate and fuel cost; cogeneration units at the fuel chargeable to power)` : ` Fuel is at the EIA average heat rate for the technology (${EIA_HR[S.tech]} MMBtu/MWh)`) +
+    (FUEL[S.tech] === "gas" ? ` × ${HUBS[unitHub(u)]} gas${u.fuel_hub && unitHub(u) !== "hh" ? ` (its hub: ${HUB_METHOD[u.fuel_hub_method] || u.fuel_hub_method})` : ""}` : ` × $${d3.format(".2f")(S.fuel[FUEL[S.tech]])}/MMBtu`) +
+    `, plus $${d3.format(".2f")(S.params[S.tech].vom)}/MWh variable operating cost. Starts cost its own day-ahead hot-start offer where it filed one, else $${fmt0(S.params[S.tech].start)}.`
     : S.tech === "storage" ? " Charging is in energy revenue as a negative (MWh bought at the same prices), so energy revenue is the arbitrage margin and there is no separate fuel cost." : " No fuel cost for wind and solar.";
-  $("econ-note").innerHTML = `${days} days, ${fmt1(mwh / 1000)} GWh${S.tech === "storage" ? ` discharged, ${fmt1(sum(u.chg) / 1000)} GWh charged` : `, ${fmt0(nst)} starts`}. Margin ${fmt$(margin)}${mwh ? ` (${fmt$2(margin / mwh)} per MWh)` : ""}. ` +
-    `Revenue is settled two-settlement: the DA award at the DA price plus the real-time deviation at its node.` + fuelNote +
-    (own ? ` DAM three-part offer on ${own} days (hot start ${fmt$(d3.median(u.start_hot.filter((v) => v != null)))}, minimum-energy ${fmt$2(d3.median(mg))}/MWh).` : "") +
-    (e.est ? ` ${e.est} day${e.est === 1 ? "" : "s"} use generic start costs.` : "") +
+  const en = (v) => (Math.abs(v) < 1000 ? `${fmt0(v)} MWh` : Math.abs(v) >= 1e5 ? `${fmt0(v / 1000)} GWh` : `${fmt1(v / 1000)} GWh`), $M = (v) => (Math.abs(v) >= 1e6 ? `$${d3.format(",.1f")(v / 1e6)}M` : fmt$(v));
+  const tot = (k) => Math.abs(sum(e[k]));
+  $("econ-note").innerHTML = `What it earned and what it cost over ${days} days: ` +
+    (S.tech === "storage" ? `${en(mwh)} discharged and ${en(sum(u.chg))} charged` : `${en(mwh)}${FUEL[S.tech] ? ` and ${fmt0(nst)} start${nst === 1 ? "" : "s"}` : ""}`) +
+    ` for a margin of ${$M(margin)}${mwh ? `, ${fmt$2(margin / mwh)} per MWh` : ""}. Energy revenue was ${$M(sum(e.energy))}${tot("as") ? ` and ancillary services ${$M(sum(e.as))}` : ""}` +
+    (FUEL[S.tech] ? `, against ${$M(tot("fuel"))} of fuel and variable cost and ${$M(tot("starts"))} of start-ups.` : ".") +
     ` <a href="fleet.html#tech=${S.tech}">Compare it with its technology on Fleet economics</a>, where the cost and revenue bases can be changed.`;
+  $("econ-how").innerHTML = `Revenue is two-settlement: the day-ahead award at the day-ahead price plus the real-time deviation at its node.` + fuelNote +
+    (own ? ` Its own day-ahead offers are medians over its ${own} offer days: hot start ${fmt$(d3.median(u.start_hot.filter((v) => v != null)))}, minimum-energy ${fmt$2(d3.median(mg))}/MWh.` : "") +
+    (e.est ? ` ${e.est} day${e.est === 1 ? "" : "s"} use the generic start cost.` : "");
   legendHTML($("econ-legend"));
   barChart($("econ-chart"), T.dates, REV_SERIES.map((s) => ({ ...s, values: e[s.k] })), COST_SERIES.map((s) => ({ ...s, values: e[s.k] })),
     { ...MARGIN, values: e.margin }, { title: "Revenue (up) and cost (down) per day, $", yFmt: fmt$k,
