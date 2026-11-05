@@ -25,9 +25,9 @@ const FLOOR_GROUPS = [
   { id: "nuclear", label: "Nuclear (no offer curve)", color: "--c5" },
   { id: "never", label: "Always on when available", color: "--c1" },
   { id: "multiday", label: "Off for days at a time", color: "--c2" },
-  { id: "daily1", label: "Daily, under once a week", color: "--c8" },
-  { id: "daily2", label: "Daily, 1 to 2 times a week", color: "--c3" },
-  { id: "daily3", label: "Daily, over twice a week", color: "--c4" },
+  { id: "daily1", label: "Cycles daily, under once a week", color: "--c8" },
+  { id: "daily2", label: "Cycles daily, 1 to 2 times a week", color: "--c3" },
+  { id: "daily3", label: "Cycles daily, over twice a week", color: "--c4" },
 ];
 
 
@@ -293,9 +293,9 @@ const ST_NEVER_ON_DAYS = 120;              // never on needs this many days of h
 const ST_GROUPS = [
   { id: "never", label: "Always on when available", note: "no shutdown on price in the period; off only for outages" },
   { id: "multiday", label: "Off for days at a time", note: "shortest off spell a day or more" },
-  { id: "daily1", label: "Daily, under once a week", note: "at least two off spells under 24 h, fewer than one shutdown a week" },
-  { id: "daily2", label: "Daily, 1 to 2 times a week", note: "one to two shutdowns a week" },
-  { id: "daily3", label: "Daily, over twice a week", note: "more than two shutdowns a week" },
+  { id: "daily1", label: "Cycles daily, under once a week", note: "at least two off spells under 24 h, fewer than one shutdown a week" },
+  { id: "daily2", label: "Cycles daily, 1 to 2 times a week", note: "one to two shutdowns a week" },
+  { id: "daily3", label: "Cycles daily, over twice a week", note: "more than two shutdowns a week" },
   { id: "never_on", label: "Never on", note: `no running hour in ${ST_NEVER_ON_DAYS}+ days of states` },
 ];
 const ST_OUT_MIN_H = 2;                  // an off spell with fewer OFF hours than this, or more OUT than OFF, is an outage
