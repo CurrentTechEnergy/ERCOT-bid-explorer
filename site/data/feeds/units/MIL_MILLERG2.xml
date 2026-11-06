@@ -3,7 +3,14 @@
   <title>MIL_MILLERG2: bidding and operating changes</title>
   <link href="https://ercotbids.currenttech.energy/unit.html?unit=MIL_MILLERG2"/>
   <id>https://ercotbids.currenttech.energy/unit.html?unit=MIL_MILLERG2</id>
-  <updated>2026-11-05T00:00:00Z</updated>
+  <updated>2026-11-06T00:00:00Z</updated>
+  <entry>
+    <title>MIL_MILLERG2: Turn-off point moved (2026-09-01)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=MIL_MILLERG2"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=MIL_MILLERG2#MIL_MILLERG2/2026-09-01/turnoff/0</id>
+    <updated>2026-11-06T00:00:00Z</updated>
+    <summary>Turn-off point (no award) in September: $359 to $831 per MW of minimum output</summary>
+  </entry>
   <entry>
     <title>MIL_MILLERG2: Shut down after a long run (2026-08-29)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=MIL_MILLERG2"/>
@@ -16,7 +23,7 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=MIL_MILLERG2"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=MIL_MILLERG2#MIL_MILLERG2/2026-08-01/turnoff/0</id>
     <updated>2026-11-05T00:00:00Z</updated>
-    <summary>Turn-off point (no award) in August: $212 to $359 per MW of minimum output</summary>
+    <summary>Turn-off point (no award) in August: $212 to $359 per MW of minimum output; the next month held it</summary>
   </entry>
   <entry>
     <title>MIL_MILLERG2: How often it turns off changed (2026-07-01)</title>
