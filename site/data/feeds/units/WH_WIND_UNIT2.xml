@@ -3,7 +3,14 @@
   <title>WH_WIND_UNIT2: bidding and operating changes</title>
   <link href="https://ercotbids.currenttech.energy/unit.html?unit=WH_WIND_UNIT2"/>
   <id>https://ercotbids.currenttech.energy/unit.html?unit=WH_WIND_UNIT2</id>
-  <updated>2026-10-18T00:00:00Z</updated>
+  <updated>2026-11-07T00:00:00Z</updated>
+  <entry>
+    <title>WH_WIND: Day-ahead: wind/solar floor changed (2026-09-02)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=WH_WIND"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=WH_WIND#WH_WIND/2026-09-02/dam_renew_floor</id>
+    <updated>2026-11-07T00:00:00Z</updated>
+    <summary>Day-ahead floor changed: $23 to $29/MWh</summary>
+  </entry>
   <entry>
     <title>WH_WIND: Day-ahead: wind/solar floor changed (2026-07-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=WH_WIND"/>
