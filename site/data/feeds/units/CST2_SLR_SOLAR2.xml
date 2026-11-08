@@ -3,12 +3,40 @@
   <title>CST2_SLR_SOLAR2: bidding and operating changes</title>
   <link href="https://ercotbids.currenttech.energy/unit.html?unit=CST2_SLR_SOLAR2"/>
   <id>https://ercotbids.currenttech.energy/unit.html?unit=CST2_SLR_SOLAR2</id>
-  <updated>2026-10-18T00:00:00Z</updated>
+  <updated>2026-11-08T00:00:00Z</updated>
+  <entry>
+    <title>CST2_SLR_SOLAR2: Outage ended (2026-09-03)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=CST2_SLR_SOLAR2"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=CST2_SLR_SOLAR2#CST2_SLR_SOLAR2/2026-09-03/outage_end</id>
+    <updated>2026-11-08T00:00:00Z</updated>
+    <summary>Back from a 9-day outage</summary>
+  </entry>
+  <entry>
+    <title>CST2_SLR_SOLAR2: Outage started (2026-08-25)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=CST2_SLR_SOLAR2"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=CST2_SLR_SOLAR2#CST2_SLR_SOLAR2/2026-08-25/outage_start</id>
+    <updated>2026-11-08T00:00:00Z</updated>
+    <summary>Outage began, lasting 9 days</summary>
+  </entry>
+  <entry>
+    <title>CST2_SLR_SOLAR2: Outage ended (2026-08-24)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=CST2_SLR_SOLAR2"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=CST2_SLR_SOLAR2#CST2_SLR_SOLAR2/2026-08-24/outage_end</id>
+    <updated>2026-11-08T00:00:00Z</updated>
+    <summary>Back from a 24-day outage</summary>
+  </entry>
+  <entry>
+    <title>CST2_SLR_SOLAR2: Outage started (2026-07-31)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=CST2_SLR_SOLAR2"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=CST2_SLR_SOLAR2#CST2_SLR_SOLAR2/2026-07-31/outage_start</id>
+    <updated>2026-11-08T00:00:00Z</updated>
+    <summary>Outage began, lasting 24 days</summary>
+  </entry>
   <entry>
     <title>CST2_SLR_SOLAR2: New unit (2026-04-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=CST2_SLR_SOLAR2"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=CST2_SLR_SOLAR2#CST2_SLR_SOLAR2/2026-04-01/new_unit</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>First day in ERCOT&#x27;s real-time dispatch (SCED), first output capacity (HSL) reported 2026-09-03; up to 11 MW so far</summary>
+    <summary>First day in ERCOT&#x27;s real-time dispatch (SCED), first output capacity (HSL) reported 2026-09-03; up to 12 MW so far</summary>
   </entry>
 </feed>

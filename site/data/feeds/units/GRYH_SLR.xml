@@ -3,7 +3,14 @@
   <title>GRYH_SLR: bidding and operating changes</title>
   <link href="https://ercotbids.currenttech.energy/unit.html?unit=GRYH_SLR"/>
   <id>https://ercotbids.currenttech.energy/unit.html?unit=GRYH_SLR</id>
-  <updated>2026-10-18T00:00:00Z</updated>
+  <updated>2026-11-08T00:00:00Z</updated>
+  <entry>
+    <title>GRYH_SLR: Wind/solar: offer floor changed (2026-09-04)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=GRYH_SLR"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=GRYH_SLR#GRYH_SLR/2026-09-04/renew_floor_new</id>
+    <updated>2026-11-08T00:00:00Z</updated>
+    <summary>Floor moved: −$3/MWh to −$20/MWh</summary>
+  </entry>
   <entry>
     <title>GRYH_SLR: Wind/solar: offer floor changed (2026-06-02)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=GRYH_SLR"/>
