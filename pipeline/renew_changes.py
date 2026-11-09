@@ -41,10 +41,10 @@ with prevailing wage and apprenticeship).  Solar could not take the PTC before t
 solar placed in service from 2022 can bid it.  Its pre-tax value, the floor an operator offers at to
 break even on the after-tax credit, is credit / (1 - TAX_RATE): about -$31.65 in 2019, -$39.24 for
 pre-2022 wind in 2026.
-  Inflation steps are dropped from the events: a floor change inside the band whose new floor sits
-  within STEP_USD of that year's (or the next's) pre-tax credit, or whose new floor over the old is
-  one year's credit over the year before's within STEP_RATIO (the yearly adjustment, at whatever
-  gross-up the operator uses).  They re-price the credit and say nothing about how the unit bids.
+  "update" tags a floor change inside the band that follows the yearly inflation adjustment, in a
+  year whose credit rose (2019, 2022 to 2026 so far): the floor goes deeper and lands within
+  STEP_USD of the year's pre-tax credit, or moves by the credit's own step (new / old within
+  STEP_RATIO of this year's credit over last year's, for operators who gross up differently).
   "expired" tags a floor leaving the band for PTC_OFF or above and never returning to it: the
   credit runs 10 years from the plant's start, which the data does not give, so it is inferred,
   and only for wind units already in the data at its first month (start unknown) or first seen
@@ -83,7 +83,6 @@ Writes:
   data/renew_changes.json.gz    params, kinds, first, last, years, n_units, togglers,
                                  ptc_band, ptc_credit {year: [pre2022, post2021] cents/kWh},
                                  tax_rate,
-                                 n_inflation (inflation steps dropped),
                                  events: [{date, plant, units, tech, kind, before, after, days, ptc,
                                  gap, ctx [dam before, dam after, cur before, cur after],
                                  impact {hours, up, dn, v_up, v_dn, est, days, open, capped} or null}],
@@ -125,8 +124,8 @@ PTC_BAND = [-60.0, -15.0]   # floors here price a per-MWh credit such as the PTC
 PTC_OFF = -5.0     # a floor leaving the band for this or higher, for good, may be the PTC running out
 PTC_YEARS = 9      # years in the data before a wind unit's floor leaving the band can be the PTC ending
 TAX_RATE = 0.21    # federal corporate rate: the credit's pre-tax value is credit / (1 - TAX_RATE)
-STEP_USD = 0.5     # $/MWh: a new floor this close to the year's pre-tax credit is an inflation step
-STEP_RATIO = 0.01  # new floor / old within this of one year's credit / the year before's: an inflation step
+STEP_USD = 0.5     # $/MWh: a new floor this close to the year's pre-tax credit is a PTC update
+STEP_RATIO = 0.005  # new floor / old within this of the year's credit / last year's: a PTC update
 KINDS = {
     "floor_new": "New floor", "floor_back": "Back to an earlier floor",
     "formula_on": "Formula on", "formula_off": "Formula off", "terms": "Formula terms changed",
@@ -613,20 +612,18 @@ def _pretax(credit: dict, year: int) -> list:
     return [-10.0 * c / (1 - TAX_RATE) for c in credit.get(year, []) if c]
 
 
-def _inflation_step(e, credit: dict) -> bool:
-    """A floor change inside the band that only re-prices the credit for its yearly adjustment:
-    the new floor at the year's (or next year's) pre-tax credit, or new / old at one year's credit
-    over the year before's."""
+def _ptc_update(e, credit: dict) -> bool:
+    """A floor change inside the band that follows the PTC's yearly inflation adjustment: in a year
+    whose credit rose, the floor goes deeper and lands within STEP_USD of the year's pre-tax credit,
+    or moves by the credit's own step (new / old within STEP_RATIO of this year's credit over last
+    year's), which catches operators who gross the credit up differently."""
     if e["kind"] not in ("floor_new", "floor_back") or not (_in_band(e["before"]) and _in_band(e["after"])):
         return False
     y, b, a = int(e["date"][:4]), e["before"]["v"], e["after"]["v"]
-    if a >= b:
+    steps = {q / p for p in credit.get(y - 1, []) if p for q in credit.get(y, []) if q and q != p}
+    if a >= b or not steps:
         return False                    # the credit only grows, so its floor only goes down
-    if any(abs(a - g) <= STEP_USD for g in _pretax(credit, y) + _pretax(credit, y + 1)):
-        return True
-    ratios = {q / p for y0 in (y - 1, y) for p in credit.get(y0, []) if p
-              for q in credit.get(y0 + 1, []) if q and q != p}
-    return any(abs(a / b - r) <= STEP_RATIO for r in ratios)
+    return any(abs(a - g) <= STEP_USD for g in _pretax(credit, y)) or any(abs(a / b - r) <= STEP_RATIO for r in steps)
 
 
 def _tag_ptc(events, tech, first_seen, data_first) -> None:
@@ -723,12 +720,12 @@ def write_events(detected, seq, tech, src) -> None:
         e["moved"] = None if im is None else bool(_num(im["up"]) + _num(im["dn"]) >= MOVED_MWH_DAY * max(im["days"], 1))
         e["toggler"] = any(u in toggle for u in e["units"])
     credit = ptc_credit()
-    n_infl = len(events)
-    events = [e for e in events if not _inflation_step(e, credit)]
-    n_infl -= len(events)
     dates = sorted(src)
     first_seen = {n: days[0][0] for n, days in seq.items() if days}
     _tag_ptc(events, tech, first_seen, dates[0] if dates else None)
+    for e in events:
+        if _ptc_update(e, credit):
+            e["ptc"] = "update"
     events.sort(key=lambda e: (e["date"], e["plant"]), reverse=True)
     n_units = Counter(tech.get(n) for n, days in seq.items() if any(s[0] >= MIN_HOURS for _, s in days))
     out = {
@@ -740,14 +737,12 @@ def write_events(detected, seq, tech, src) -> None:
         "live_first": min((d for d in dates if src[d] == "l"), default=None),
         "years": sorted({d[:4] for d in dates}), "n_units": dict(n_units), "togglers": toggle,
         "ptc_band": PTC_BAND, "ptc_credit": credit, "tax_rate": TAX_RATE,
-        "n_inflation": n_infl,
         "events": events,
     }
     write_json_gz(DATA_DIR / "renew_changes.json.gz", out)
     k = Counter(e["kind"] for e in events)
     print(f"renew_changes: {len(events)} plant event(s) from {sum(len(v) for v in detected.values())} unit "
-          f"event(s), {sum(1 for e in events if e['moved'])} moved dispatch, {len(toggle)} toggler(s), {n_infl} PTC inflation step(s) "
-          f"dropped; " + ", ".join(f"{KINDS[x]} {k.get(x, 0)}" for x in KINDS))
+          f"event(s), {sum(1 for e in events if e['moved'])} moved dispatch, {len(toggle)} toggler(s); " + ", ".join(f"{KINDS[x]} {k.get(x, 0)}" for x in KINDS))
 
 
 def _finish(store: Store, tag: str, points: list) -> None:

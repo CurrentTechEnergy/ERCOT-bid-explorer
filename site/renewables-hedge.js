@@ -157,7 +157,8 @@ function sortChanges(rs) {
     return a.e.date < b.e.date ? 1 : a.e.date > b.e.date ? -1 : 0;
   }).map((o) => o.e);
 }
-const PTC_TAG = { expired: { label: "PTC may have expired", tip: "A wind floor left the PTC band for about $0 and never came back to it. The PTC runs 10 years from the plant's start, so this is what its end looks like. Inferred, since the data has no start dates: only for wind units already in the data in January 2019, or first seen 9 or more years before the change. Solar is never tagged: solar could only take the PTC from 2022, so none has run out yet." } };
+const PTC_TAG = { update: { label: "PTC update", tip: "The floor moved to follow the PTC's yearly inflation adjustment: in a year the credit rose, it landed within $0.50 of the year's credit grossed up for the 21% corporate tax (credit / 0.79), or moved by the credit's own step." },
+  expired: { label: "PTC may have expired", tip: "A wind floor left the PTC band for about $0 and never came back to it. The PTC runs 10 years from the plant's start, so this is what its end looks like. Inferred, since the data has no start dates: only for wind units already in the data in January 2019, or first seen 9 or more years before the change. Solar is never tagged: solar could only take the PTC from 2022, so none has run out yet." } };
 const ptcTag = (e) => (PTC_TAG[e.ptc] ? ` <span class="tag" title="${esc(PTC_TAG[e.ptc].tip)}">${PTC_TAG[e.ptc].label}</span>` : "");
 const MOVED = [
   { id: "yes", label: "Moved dispatch", color: "--c1" },
@@ -219,7 +220,7 @@ function chgRows(R) {
     && (CH.kind === "all" || e.kind === CH.kind)
     && (CH.year === "all" || e.date.slice(0, 4) === CH.year)
     && (CH.moved === "all" || (CH.moved === "yes" ? e.moved === true : !e.da && e.moved !== true))
-    && (CH.ptc !== "expired" || e.ptc === "expired")
+    && (CH.ptc === "all" || (CH.ptc === "hide" ? e.ptc !== "update" : e.ptc === CH.ptc))
     && (!CH.hideTog || !e.toggler)
     && (!q || e.plant.toLowerCase().includes(q) || e.units.some((u) => u.toLowerCase().includes(q))));
 }
@@ -234,7 +235,7 @@ function drawChanges() {
     `${fmt0(rs.length)} change${rs.length === 1 ? "" : "s"} in this selection, ${fmt0(rs.filter((e) => e.moved).length)} of which moved dispatch. ` +
     `Most offer changes happen below any price the unit's node reaches, so they say something about the bidder without changing what it produced. ` +
     `Moved dispatch is counted from each change to the unit's next one, up to a year, and needs 1 MWh or more a day on average to count. ` +
-    (R.n_inflation ? `Left out: ${fmt0(R.n_inflation)} floor moves that only follow the PTC's yearly inflation adjustment (the new floor at that year's credit grossed up for tax, or moved in proportion to the credit). ` : "") +
+    `A PTC update is a floor move that follows the credit's yearly inflation adjustment; hide them with the PTC filter. ` +
     `Click a row to open the unit's page.`);
   drawChangeMonths(chart, rs);
   const shown = sortChanges(rs).slice(0, CH.limit);
@@ -301,7 +302,7 @@ function initChanges() {
   $("chg-market").value = CH.market;
   $("chg-market").addEventListener("change", (e) => { CH.market = e.target.value; CH.limit = 200; drawChanges(); saveView(); });
   $("chg-year").innerHTML = `<option value="all">All years</option>` + R.years.slice().reverse().map((y) => `<option value="${y}">${y}</option>`).join("");
-  $("chg-kind").value = CH.kind; $("chg-year").value = CH.year; if (CH.ptc !== "expired") CH.ptc = "all";
+  $("chg-kind").value = CH.kind; $("chg-year").value = CH.year; if (!["hide", "update", "expired"].includes(CH.ptc)) CH.ptc = "all";
   $("chg-ptc").value = CH.ptc; $("chg-tog").checked = CH.hideTog;
   $("chg-ptc").addEventListener("change", (e) => { CH.ptc = e.target.value; CH.limit = 200; drawChanges(); saveView(); });
   $("chg-kind").addEventListener("change", (e) => { CH.kind = e.target.value; CH.limit = 200; drawChanges(); saveView(); });
