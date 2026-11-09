@@ -33,11 +33,29 @@ Units of one plant (name up to its unit number) changing the same way within a d
 are one event.  A unit with TOGGLE or more floor_back events or episodes in some 365 days is a
 "toggler" (Frye moves between two fixed floors all year); its events are still listed.
 
-PTC.  A floor between PTC_BAND prices a per-MWh credit.  A floor change inside the band of
-PTC_STEP or less is tagged "level" (re-pricing the credit, as the yearly inflation adjustment
-does); a floor leaving the band for PTC_OFF or above and never returning to it is tagged
-"expired" (inferred: the credit runs 10 years from the plant's start, which the data does
-not give).  ptc_trend is the monthly median of those floors by technology.
+PTC.  A floor between PTC_BAND prices a per-MWh credit such as the PTC.  The credit itself is in
+reference/ptc_credit.csv, cents/kWh by calendar year: pre2022 for facilities placed in service before
+2022 (1.5 cents x the IRS's inflation adjustment factor for the year, rounded to 0.1 cent), post2021
+for those placed in service after 2021 (the IRA's 0.3 cents x the factor, rounded to 0.05 cent, x 5
+with prevailing wage and apprenticeship).  Solar could not take the PTC before the IRA, so only
+solar placed in service from 2022 can bid it.  Its pre-tax value, the floor an operator offers at to
+break even on the after-tax credit, is credit / (1 - TAX_RATE): about -$31.65 in 2019, -$39.24 for
+pre-2022 wind in 2026.
+  Inflation steps are dropped from the events: a floor change inside the band whose new floor sits
+  within STEP_USD of that year's (or the next's) pre-tax credit, or whose new floor over the old is
+  one year's credit over the year before's within STEP_RATIO (the yearly adjustment, at whatever
+  gross-up the operator uses).  They re-price the credit and say nothing about how the unit bids.
+  "expired" tags a floor leaving the band for PTC_OFF or above and never returning to it: the
+  credit runs 10 years from the plant's start, which the data does not give, so it is inferred,
+  and only for wind units already in the data at its first month (start unknown) or first seen
+  PTC_YEARS or more before the change.  Solar is never tagged: any solar on the PTC started in 2022
+  or later, and solar that started before 2022 never had it.
+  ptc_share is the share of each fleet's MW bidding in the band: monthly (months) and daily over
+  the live days (dates).  A unit counts in a period when its offer sat in the band on at least half
+  of its online days (a floor day's floor, or a moving day's median offer; formula days do not
+  count); weighted by the unit index's mw (econ's HSL, the 95th percentile of each
+  day's highest), else the median mw of the unit's technology.  Solar starts in 2022 and counts
+  only units first seen in 2022 or later.
 
 Moved dispatch.  A change's window is every online day the unit spent in the new regime, from the
 change up to its next change (episodes left out), at most WINDOW_MAX calendar days; an episode's
@@ -69,7 +87,10 @@ Writes:
                                  build replaces only the chunks it has hourly data for and a
                                  window may cross years and the history/live boundary
   data/renew_changes.json.gz    params, kinds, first, last, years, n_units, togglers,
-                                 ptc_band, ptc_trend {months, wind/solar: {median, units}},
+                                 ptc_band, ptc_credit {year: [pre2022, post2021] cents/kWh},
+                                 tax_rate, ptc_share {months, dates, wind/solar: {month, day}
+                                 (shares, null for none), mw: {wind, solar} (monthly fleet MW)},
+                                 n_inflation (inflation steps dropped),
                                  events: [{date, plant, units, tech, kind, before, after, days, ptc,
                                  gap, ctx [dam before, dam after, cur before, cur after],
                                  impact {hours, up, dn, v_up, v_dn, est, days, open, capped} or null}],
@@ -77,6 +98,7 @@ Writes:
   monthly counts are left to the page.
 """
 import argparse
+import csv
 import datetime as dt
 import glob
 import re
@@ -107,8 +129,12 @@ MOVED_MWH_DAY = 1.0   # an event moved dispatch when its window has at least thi
 WINDOW_MAX = 365   # calendar days a change's moved-dispatch window may run
 CLAMP_SHARE = 0.8  # share of a day's hours the clamped year formula must explain
 PTC_BAND = [-60.0, -15.0]   # floors here price a per-MWh credit such as the PTC
-PTC_STEP = 5.0     # a floor change inside the band of this much or less is "PTC level"
 PTC_OFF = -5.0     # a floor leaving the band for this or higher, for good, may be the PTC running out
+PTC_YEARS = 9      # years in the data before a wind unit's floor leaving the band can be the PTC ending
+TAX_RATE = 0.21    # federal corporate rate: the credit's pre-tax value is credit / (1 - TAX_RATE)
+STEP_USD = 0.5     # $/MWh: a new floor this close to the year's pre-tax credit is an inflation step
+STEP_RATIO = 0.01  # new floor / old within this of one year's credit / the year before's: an inflation step
+SOLAR_PTC_FROM = "2022-01-01"   # solar placed in service from here on can take the PTC
 KINDS = {
     "floor_new": "New floor", "floor_back": "Back to an earlier floor",
     "formula_on": "Formula on", "formula_off": "Formula off", "terms": "Formula terms changed",
@@ -580,46 +606,102 @@ def _in_band(r) -> bool:
     return r.get("k") == "f" and r.get("v") is not None and PTC_BAND[0] <= r["v"] <= PTC_BAND[1]
 
 
-def _tag_ptc(events) -> None:
-    """e["ptc"]: "level" for a floor change inside the PTC band of PTC_STEP or less (re-pricing
-    the credit), "expired" for a floor leaving the band for PTC_OFF or above that never returns
-    to the band in the data (the credit running out after 10 years, inferred)."""
+def ptc_credit() -> dict:
+    """{year: [pre2022, post2021]} cents/kWh from reference/ptc_credit.csv (post2021 None before
+    the IRA)."""
+    out = {}
+    with open(Path(__file__).parent / "reference" / "ptc_credit.csv", newline="") as f:
+        for r in csv.DictReader(f):
+            out[int(r["year"])] = [float(r["pre2022_cents"]), float(r["post2021_cents"]) if r["post2021_cents"] else None]
+    return out
+
+
+def _pretax(credit: dict, year: int) -> list:
+    """The year's credits as pre-tax offer floors, $/MWh (negative)."""
+    return [-10.0 * c / (1 - TAX_RATE) for c in credit.get(year, []) if c]
+
+
+def _inflation_step(e, credit: dict) -> bool:
+    """A floor change inside the band that only re-prices the credit for its yearly adjustment:
+    the new floor at the year's (or next year's) pre-tax credit, or new / old at one year's credit
+    over the year before's."""
+    if e["kind"] not in ("floor_new", "floor_back") or not (_in_band(e["before"]) and _in_band(e["after"])):
+        return False
+    y, b, a = int(e["date"][:4]), e["before"]["v"], e["after"]["v"]
+    if a >= b:
+        return False                    # the credit only grows, so its floor only goes down
+    if any(abs(a - g) <= STEP_USD for g in _pretax(credit, y) + _pretax(credit, y + 1)):
+        return True
+    ratios = {q / p for y0 in (y - 1, y) for p in credit.get(y0, []) if p
+              for q in credit.get(y0 + 1, []) if q and q != p}
+    return any(abs(a / b - r) <= STEP_RATIO for r in ratios)
+
+
+def _tag_ptc(events, tech, first_seen, data_first) -> None:
+    """e["ptc"]: "expired" for a wind floor leaving the PTC band for PTC_OFF or above that never
+    returns to the band in the data (the credit running out after 10 years, inferred), for units
+    whose start is unknown (in the data from its first month) or PTC_YEARS or more before."""
     by_unit = defaultdict(list)
     for e in events:
         for u in e["units"]:
             by_unit[u].append(e)
+    early = (dt.date.fromisoformat(data_first) + dt.timedelta(days=31)).isoformat() if data_first else ""
     for e in events:
         e["ptc"] = None
-        if e["kind"] not in ("floor_new", "floor_back"):
+        if e["kind"] not in ("floor_new", "floor_back") or e["tech"] != "wind":
             continue
         b, a = e["before"], e["after"]
-        if _in_band(b) and _in_band(a) and abs(a["v"] - b["v"]) <= PTC_STEP:
-            e["ptc"] = "level"
-        elif _in_band(b) and a.get("k") == "f" and a["v"] >= PTC_OFF:
-            back = any(o["date"] > e["date"] and _in_band(o["after"]) and o["kind"] != "episode"
-                       for u in e["units"] for o in by_unit[u])
-            if not back:
-                e["ptc"] = "expired"
+        if not (_in_band(b) and a.get("k") == "f" and a["v"] >= PTC_OFF):
+            continue
+        d = dt.date.fromisoformat(e["date"])
+        if not any(first_seen.get(u, "") <= early
+                   or first_seen.get(u, "9") <= d.replace(year=d.year - PTC_YEARS).isoformat() for u in e["units"]):
+            continue
+        back = any(o["date"] > e["date"] and _in_band(o["after"]) and o["kind"] != "episode"
+                   for u in e["units"] for o in by_unit[u])
+        if not back:
+            e["ptc"] = "expired"
 
 
-def ptc_trend(seq, tech) -> dict:
-    """Monthly median, over units, of each unit's median floor on floor days inside the PTC
-    band, by technology, with the number of units behind each value."""
-    per = defaultdict(list)             # (tech, month, unit) -> floors
+def ptc_share(seq, tech, src) -> dict:
+    """Share of each fleet's MW bidding in the PTC band, monthly and daily over the live days."""
+    ui = read_json_gz(DATA_DIR / "unit_index.json.gz", default={}) or {}
+    c = ui.get("columns") or []
+    mw = {r[c.index("unit")]: r[c.index("mw")] for r in ui.get("rows", [])} if "mw" in c else {}
+    med = {t: float(np.median([mw[n] for n in seq if tech.get(n) == t and mw.get(n)] or [1.0])) for t in ("wind", "solar")}
+    live = {d for d, s in src.items() if s == "l"}
+    month = defaultdict(lambda: [0, 0])   # (tech, month, unit) -> [online days, band floor days]
+    day = defaultdict(lambda: [0.0, 0.0])  # (tech, date) -> [MW online, MW in the band]
     for name, days in seq.items():
         t = tech.get(name)
+        if t not in ("wind", "solar") or not days:
+            continue
+        can = t == "wind" or days[0][0] >= SOLAR_PTC_FROM
+        w = mw.get(name) or med[t]
         for d, s in days:
-            if s[0] >= MIN_HOURS and s[1] == "f" and PTC_BAND[0] <= s[2] <= PTC_BAND[1]:
-                per[(t, d[:7], name)].append(s[2])
-    months = sorted({k[1] for k in per})
-    out = {"months": months}
+            if s[0] < MIN_HOURS:
+                continue
+            v = s[2] if s[1] == "f" else s[3] if s[1] == "v" else None   # a floor, or a moving day's median
+            inb = can and v is not None and PTC_BAND[0] <= v <= PTC_BAND[1]
+            m = month[(t, d[:7], name)]
+            m[0] += 1
+            m[1] += inb
+            if d in live:
+                day[(t, d)][0] += w
+                day[(t, d)][1] += w * inb
+    months = sorted({k[1] for k in month})
+    dates = sorted({k[1] for k in day})
+    tot = defaultdict(lambda: [0.0, 0.0])
+    for (t, mo, name), (n, k) in month.items():
+        w = mw.get(name) or med[t]
+        tot[(t, mo)][0] += w
+        tot[(t, mo)][1] += w * (k * 2 >= n)
+    out = {"months": months, "dates": dates, "mw": {}}
     for t in ("wind", "solar"):
-        med, n = [], []
-        for m in months:
-            v = [float(np.median(f)) for (tt, mm, _), f in per.items() if tt == t and mm == m]
-            med.append(_r(float(np.median(v))) if len(v) >= 3 else None)
-            n.append(len(v))
-        out[t] = {"median": med, "units": n}
+        start = "" if t == "wind" else SOLAR_PTC_FROM
+        out[t] = {"month": [_r(tot[(t, mo)][1] / tot[(t, mo)][0], 4) if tot[(t, mo)][0] and mo >= start[:7] else None for mo in months],
+                  "day": [_r(day[(t, d)][1] / day[(t, d)][0], 4) if day[(t, d)][0] and d >= start else None for d in dates]}
+        out["mw"][t] = [_r(tot[(t, mo)][0], 0) for mo in months]
     return out
 
 
@@ -690,9 +772,14 @@ def write_events(detected, seq, tech, src) -> None:
         im = e["impact"]
         e["moved"] = None if im is None else bool(_num(im["up"]) + _num(im["dn"]) >= MOVED_MWH_DAY * max(im["days"], 1))
         e["toggler"] = any(u in toggle for u in e["units"])
-    _tag_ptc(events)
-    events.sort(key=lambda e: (e["date"], e["plant"]), reverse=True)
+    credit = ptc_credit()
+    n_infl = len(events)
+    events = [e for e in events if not _inflation_step(e, credit)]
+    n_infl -= len(events)
     dates = sorted(src)
+    first_seen = {n: days[0][0] for n, days in seq.items() if days}
+    _tag_ptc(events, tech, first_seen, dates[0] if dates else None)
+    events.sort(key=lambda e: (e["date"], e["plant"]), reverse=True)
     n_units = Counter(tech.get(n) for n, days in seq.items() if any(s[0] >= MIN_HOURS for _, s in days))
     out = {
         "updated": dt.datetime.now(dt.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
@@ -702,14 +789,15 @@ def write_events(detected, seq, tech, src) -> None:
         "kinds": KINDS, "first": dates[0] if dates else None, "last": dates[-1] if dates else None,
         "live_first": min((d for d in dates if src[d] == "l"), default=None),
         "years": sorted({d[:4] for d in dates}), "n_units": dict(n_units), "togglers": toggle,
-        "ptc_band": PTC_BAND, "ptc_trend": ptc_trend(seq, tech),
+        "ptc_band": PTC_BAND, "ptc_credit": credit, "tax_rate": TAX_RATE,
+        "ptc_share": ptc_share(seq, tech, src), "n_inflation": n_infl,
         "events": events,
     }
     write_json_gz(DATA_DIR / "renew_changes.json.gz", out)
     k = Counter(e["kind"] for e in events)
     print(f"renew_changes: {len(events)} plant event(s) from {sum(len(v) for v in detected.values())} unit "
-          f"event(s), {sum(1 for e in events if e['moved'])} moved dispatch, {len(toggle)} toggler(s); "
-          + ", ".join(f"{KINDS[x]} {k.get(x, 0)}" for x in KINDS))
+          f"event(s), {sum(1 for e in events if e['moved'])} moved dispatch, {len(toggle)} toggler(s), {n_infl} PTC inflation step(s) "
+          f"dropped; " + ", ".join(f"{KINDS[x]} {k.get(x, 0)}" for x in KINDS))
 
 
 def _finish(store: Store, tag: str, points: list) -> None:
