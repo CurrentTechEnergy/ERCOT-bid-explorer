@@ -47,11 +47,12 @@ import pandas as pd
 
 from .config import DATA_DIR, HISTORY_DIR, UNIT_DATA_DIR
 from .decision_table import _months, month_file
+from .hours import hour_weight
 from .intraday import train_of
 from .store import read_json_gz, write_json_gz
 
 PATH = DATA_DIR / "goal.json.gz"
-VERSION = "v11"  # v11: Q3 by unit (shut rate where shutting pays, each year), cycling units by loss band, minimum output ridden through against 2019 to 2021 habits; v10: decision table d4 (make-whole and AS netted, held = RUC), Q3 by DAM position; v9: question 4's siting maps (pipeline/load_siting.py); v8: 2 h off spells (were 4 h); v7: decision table d2 (operator's-view loss windows, buckets, coal out); v5: cheap hours on DA system lambda (was the DA hub average)
+VERSION = "v12"  # v12: the fall-back Sunday's folded HE2 counts as two hours (pipeline/hours.py); v11: Q3 by unit (shut rate where shutting pays, each year), cycling units by loss band, minimum output ridden through against 2019 to 2021 habits; v10: decision table d4 (make-whole and AS netted, held = RUC), Q3 by DAM position; v9: question 4's siting maps (pipeline/load_siting.py); v8: 2 h off spells (were 4 h); v7: decision table d2 (operator's-view loss windows, buckets, coal out); v5: cheap hours on DA system lambda (was the DA hub average)
 START = "2019-01"
 CHEAP = 10.0          # $/MWh, day-ahead system lambda: a cheap hour
 OVER_PRICE = 5.0      # $/MWh, real-time hub average: an oversupply hour
@@ -251,13 +252,16 @@ def _floor(year, h, r):
     x = pd.concat([th.rename("thermal"), fo.rename("fossil"), nuc.rename("nuclear")], axis=1).join(r.set_index(["date", "he"])[["out", "avail"]], how="inner")
     x["net"] = x["thermal"] - x["nuclear"].fillna(0.0) + x["out"] - x["avail"]
     x = x[x["fossil"] >= FOSSIL_MIN].reset_index()      # an hour with almost no fossil is missing rows
-    grid = x.assign(gx=np.floor(x["net"] / 1000).astype(int), gy=np.floor(x["fossil"] / 1000).astype(int)).groupby(["gx", "gy"]).size()
+    x["w"] = hour_weight(x["date"].to_numpy(), x["he"].to_numpy())     # the fall-back HE2 is two hours
+    grid = x.assign(gx=np.floor(x["net"] / 1000).astype(int), gy=np.floor(x["fossil"] / 1000).astype(int)).groupby(["gx", "gy"])["w"].sum()
     sb = (np.floor(x["net"] / 1000 / STUCK_BIN) * STUCK_BIN).astype(int)
-    st = fos.merge(x[["date", "he"]].assign(sb=sb), on=["date", "he"]).groupby(["sb", "tech"])[["min", "above"]].sum()
+    fw = fos.drop(columns="w", errors="ignore").merge(x[["date", "he", "w"]].assign(sb=sb), on=["date", "he"])
+    fw["min"], fw["above"] = fw["min"] * fw["w"], fw["above"] * fw["w"]
+    st = fw.groupby(["sb", "tech"])[["min", "above"]].sum()
     return {"net": x["net"].to_numpy(), "fossil": x["fossil"].to_numpy(),
             "grid": [[year, int(a), int(b), int(n)] for (a, b), n in grid.items()],
             "stuck": [[year, int(b), t, round(float(v["min"])), round(float(v["above"]))] for (b, t), v in st.iterrows()],
-            "hours": [[year, int(b), int(n)] for b, n in sb.value_counts().sort_index().items()]}
+            "hours": [[year, int(b), int(n)] for b, n in x["w"].groupby(sb).sum().sort_index().items()]}
 
 
 def _medians(net, fossil):
@@ -291,6 +295,7 @@ def _year(year, months, cache, before=None, losing=None, gas=None):
     h["da"] = [hubs.get(k, [np.nan] * 4)[3] for k in key]       # DA system lambda
     h["rt"] = [hubs.get(k, [np.nan] * 4)[2] for k in key]
     h["cheap"] = h["da"] <= CHEAP
+    h["w"] = hour_weight(h["date"].to_numpy(), h["he"].to_numpy())     # the fall-back HE2 is two hours (pipeline/hours.py)
     # each fossil train's group, capacity and typical minimum over the year
     info = {}
     span = h[h["tech"].isin(FOSSIL)][["train", "date", "he", "state"]]
@@ -317,8 +322,9 @@ def _year(year, months, cache, before=None, losing=None, gas=None):
         recent = np.convolve(run, np.ones(24, int))[:len(run)]          # running hours in the 24 up to each hour
         prior = np.r_[0, recent[:-1]] > 0
         off = (st == "0") & prior & inside[tr] & g["cheap"].to_numpy()
-        q1[tr] = float(off.sum()) * info[tr][3]
-    cheap_hours = int(h.drop_duplicates(["date", "he"])["cheap"].sum())
+        q1[tr] = float((off * g["w"].to_numpy()).sum()) * info[tr][3]
+    hu = h.drop_duplicates(["date", "he"])
+    cheap_hours = int((hu["cheap"] * hu["w"]).sum())
     rows1 = defaultdict(lambda: [0, 0.0, 0.0])
     for tr, (t, grp, cap, lsl) in info.items():
         r = rows1[(t, grp)]
@@ -334,7 +340,7 @@ def _year(year, months, cache, before=None, losing=None, gas=None):
     c = h[h["cheap"] & atmin].copy()
     dc = _day_cost(h, *(gas or ({}, {})))
     node = c["rt_node"].fillna(c["da_node"]).to_numpy()
-    c["cost"] = (np.array([dc.get(k, np.nan) for k in zip(c["train"], c["date"])]) - node) * c["lsl"].to_numpy()
+    c["cost"] = (np.array([dc.get(k, np.nan) for k in zip(c["train"], c["date"])]) - node) * c["lsl"].to_numpy() * c["w"].to_numpy()
     # ... and by the same groups as the award chart, hour by hour: a DAM award over 0.5 MW that
     # hour; else self-committed (DAM resource status on) or neither (_status_for)
     status = _status_for(c["date"].unique())
@@ -345,7 +351,7 @@ def _year(year, months, cache, before=None, losing=None, gas=None):
         sd = status[d]
         return "no award" if sd is None else "self" if tr in sd and sd[tr][he - 1] else "neither"
     c["grp"] = [grp(*k) for k in zip(c["train"], c["date"], c["he"], c["award"])]
-    q2cost = [[year, t, k, round(float(g["lsl"].sum())), round(float(g["cost"].sum()))]
+    q2cost = [[year, t, k, round(float((g["lsl"] * g["w"]).sum())), round(float(g["cost"].sum()))]
               for (t, k), g in c[c["tech"].isin(FOSSIL)].groupby(["tech", "grp"])]
     q2award = _award_stretches(year, h)
     # question 4: curtailment, and fossil at minimum in oversupply hours
@@ -354,28 +360,30 @@ def _year(year, months, cache, before=None, losing=None, gas=None):
         r = pd.concat(ren, ignore_index=True)
         floor = _floor(year, h, r)
         r["rt"] = [hubs.get((d, int(he)), [np.nan] * 4)[2] for d, he in zip(r["date"], r["he"])]
+        r["w"] = hour_weight(r["date"].to_numpy(), r["he"].to_numpy())
         r["over"] = r["rt"] <= OVER_PRICE
         r["free"] = r["free"].where(r["over"], 0.0)
-        oh = r[r["over"] & (r["free"] >= OVER_CURT_MIN)][["date", "he", "free"]]
+        oh = r[r["over"] & (r["free"] >= OVER_CURT_MIN)][["date", "he", "free", "w"]]
         s = h[atmin].merge(oh[["date", "he"]], on=["date", "he"])
         nuc = h[(h["tech"] == "nuclear") & h["state"].isin(["m", "a"])].merge(oh[["date", "he"]], on=["date", "he"])
         s["econ"] = [t if t not in ("combined_cycle", "gas_steam") else ECON[(losing or {}).get((tr, d, he), 3)]
                      for tr, d, he, t in zip(s["train"], s["date"], s["he"], s["tech"])]
-        by = s.groupby(["tech", "econ"])["lsl"].sum()
+        by = (s["lsl"] * s["w"]).groupby([s["tech"], s["econ"]]).sum()
         atm = [[year, t, w, round(float(v))] for (t, w), v in by.items() if t != "nuclear"]
-        atm.append([year, "nuclear", "nuclear output", round(float(nuc["out"].sum()))])
+        atm.append([year, "nuclear", "nuclear output", round(float((nuc["out"] * nuc["w"]).sum()))])
         avoid = []
         for name, whys in SCENARIOS:
             mw = s[s["econ"].isin(whys)].groupby(["date", "he"])["lsl"].sum()
             j = oh.set_index(["date", "he"]).join(mw.rename("x")).fillna({"x": 0.0})
-            avoid.append([year, name, round(float(np.minimum(j["free"], j["x"]).sum()))])
+            avoid.append([year, name, round(float((np.minimum(j["free"], j["x"]) * j["w"]).sum()))])
         mw = s[s["tech"].isin(FOSSIL + ("combustion_turbine",))].groupby(["date", "he"])["lsl"].sum()
         j = oh.set_index(["date", "he"]).join(mw.rename("x")).fillna({"x": 0.0})
-        avoid.append([year, "all fossil at minimum", round(float(np.minimum(j["free"], j["x"]).sum()))])
-        q4 = {"year": [year, round(float(r["avail"].sum())), round(float(r["curt"].sum())),
-                       round(float(r["curt"].where(r["over"], 0.0).sum())), round(float(r["free"].sum())),
-                       int(r["over"].sum()), len(oh), round(float(oh["free"].sum())), [round(float(v)) for v in
-                       r[r["over"]].groupby("he")["free"].sum().reindex(range(1, 25), fill_value=0.0)]],
+        avoid.append([year, "all fossil at minimum", round(float((np.minimum(j["free"], j["x"]) * j["w"]).sum()))])
+        rw = r["w"]
+        q4 = {"year": [year, round(float((r["avail"] * rw).sum())), round(float((r["curt"] * rw).sum())),
+                       round(float((r["curt"].where(r["over"], 0.0) * rw).sum())), round(float((r["free"] * rw).sum())),
+                       int(rw[r["over"]].sum()), int(oh["w"].sum()), round(float((oh["free"] * oh["w"]).sum())), [round(float(v)) for v in
+                       (r["free"] * rw)[r["over"]].groupby(r["he"][r["over"]]).sum().reindex(range(1, 25), fill_value=0.0)]],
               "atmin": atm, "avoid": avoid}
     days = sorted(h["date"].unique())
     return {"q1": q1rows, "q2award": q2award, "q2cost": q2cost, "q4": q4, "floor": floor, "cheap_hours": cheap_hours, "from": days[0], "to": days[-1],
