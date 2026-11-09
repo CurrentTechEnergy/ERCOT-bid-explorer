@@ -2,7 +2,7 @@
    with its changes, lifted from the Hedge signals unit detail (contracts.js) for the unit unit.js
    has selected. Reads data/ppa.json.gz (pipeline/ppa.py), data/renew_changes.json.gz and
    data/renew/sig-YYYY.json.gz (pipeline/renew_changes.py), and the buyers named in public
-   announcements from data/offtakers.json.gz (pipeline/offtakers.py). */
+   announcements from data/offtakers.json.gz (pipeline/offtakers.py), drawn in the page's top section. */
 (() => {
 "use strict";
 
@@ -141,9 +141,9 @@ function drawOfftakers(name) {
 function drawUnit() {
   const box = $("renew-panel"), u = S.data && S.data.units.find((v) => v.name === S.unit);
   const inR = S.R && S.R.events.some((e) => e.units.includes(S.unit));
+  drawOfftakers(S.unit); // in the page's top section, so drawn even when the hedge panel has nothing
   if (!u && !inR) { box.hidden = true; return; }
   box.hidden = false;
-  drawOfftakers(S.unit);
   drawHistory(S.unit);
   $("ppa-part").hidden = !u;
   if (!u) {
@@ -353,7 +353,7 @@ async function draw() {
   const U = window.UNIT;
   if (!U) return;
   const renew = U.tech === "wind" || U.tech === "solar";
-  $("renew-panel").hidden = true;
+  $("renew-panel").hidden = $("offtake-part").hidden = true;
   if (!renew) return;
   if (!loaded) loaded = Promise.all([tryJSON("data/ppa.json.gz"), tryJSON("data/renew_changes.json.gz"), tryJSON("data/offtakers.json.gz")]).then(([a, b, o]) => {
     S.data = a; S.R = b; S.O = o;
