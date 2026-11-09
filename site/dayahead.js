@@ -364,11 +364,11 @@ async function boot() {
   const hr = D.ref.hr, eia = D.ref.eia_hr, ms = D.ref.measured || {};
   const cnt = (t) => (ms[t] ? ` (${ms[t][0]} of ${ms[t][1]} measured)` : "");
   $("ref-note").innerHTML = D.ref.basis === "at_min"
-    ? `Fuel-cost line: each unit's own heat rate at minimum output, measured from EPA hourly stack data against its ERCOT net output while running at minimum (a combined-cycle configuration takes its train's)${cnt("combined_cycle") ? `: combined cycle${cnt("combined_cycle")}, gas steam${cnt("gas_steam")}, gas turbine${cnt("combustion_turbine")}` : ""}; ` +
-      `units without one take the technology median (combined cycle ${hr.combined_cycle}, gas steam ${hr.gas_steam}, gas turbine ${hr.combustion_turbine} MMBtu/MWh). ` +
+    ? `Fuel-cost line: each unit's own heat rate at minimum output, measured from EPA hourly stack data against its ERCOT net output while running at minimum (a combined-cycle configuration takes its train's)${cnt("combined_cycle") ? `: combined cycle${cnt("combined_cycle")}, gas steam${cnt("gas_steam")}, combustion turbine${cnt("combustion_turbine")}` : ""}; ` +
+      `units without one take the technology median (combined cycle ${hr.combined_cycle}, gas steam ${hr.gas_steam}, combustion turbine ${hr.combustion_turbine} MMBtu/MWh). ` +
       `That times the gas price at the unit's own hub (Waha or Houston Ship Channel) on the last trading day before the operating day. ` +
       `For comparison, <a href="${esc(D.ref.url)}">EIA's average tested heat rates</a>, a full-load measure, are ${eia.combined_cycle}, ${eia.gas_steam} and ${eia.combustion_turbine}: a line at those would put about 3 MMBtu/MWh of gas into every gas steam offer's "markup".`
-    : `Fuel-cost line: <a href="${esc(D.ref.url)}">${esc(D.ref.name)}</a>: combined cycle ${hr.combined_cycle}, steam ${hr.gas_steam} and gas turbine ${hr.combustion_turbine} MMBtu/MWh at full load, ` +
+    : `Fuel-cost line: <a href="${esc(D.ref.url)}">${esc(D.ref.name)}</a>: combined cycle ${hr.combined_cycle}, gas steam ${hr.gas_steam} and combustion turbine ${hr.combustion_turbine} MMBtu/MWh at full load, ` +
       `times the gas price at the unit's own hub (Waha or Houston Ship Channel) on the last trading day before the operating day. Units burn more per MWh at minimum load, so an offer below the line is below fuel cost with room to spare.`;
   initChanges();
   drawAll();

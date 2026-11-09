@@ -4,12 +4,12 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Fleet economics · ERCOT Bids</title>
-<meta name="description" content="Revenue, costs and realised $/MWh by ERCOT technology and unit, including wind and solar revenue by month.">
+<meta name="description" content="Revenue, costs and realized $/MWh by ERCOT technology and unit, including wind and solar revenue by month.">
 <link rel="canonical" href="https://ercotbids.currenttech.energy/fleet.html">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="ERCOT Bids · CurrentTech Energy">
 <meta property="og:title" content="Fleet economics">
-<meta property="og:description" content="Revenue, costs and realised $/MWh by ERCOT technology and unit, including wind and solar revenue by month.">
+<meta property="og:description" content="Revenue, costs and realized $/MWh by ERCOT technology and unit, including wind and solar revenue by month.">
 <meta property="og:url" content="https://ercotbids.currenttech.energy/fleet.html">
 <meta property="og:image" content="https://ercotbids.currenttech.energy/share-card.png">
 <meta property="og:image:width" content="1200">
@@ -126,7 +126,7 @@
     <div class="panel-head">
       <div>
         <h2>Revenue by month<a class="help-q" href="guide.html#revenue" title="How revenue is counted" aria-label="How revenue is counted">?</a></h2>
-        <p class="note" id="renew-month-note">What the wind and solar fleets earned each month: energy on the two-settlement basis at each unit's node, plus ancillary awards. Against the thermal panels above, this is the revenue side of the units that set the low prices; hover a month for the realised $/MWh, which is where curtailment and negative prices show up. Curtailment itself is on <a href="renewables.html">Renewables</a>.</p>
+        <p class="note" id="renew-month-note">What the wind and solar fleets earned each month: energy on the two-settlement basis at each unit's node, plus ancillary awards. Against the thermal panels above, this is the revenue side of the units that set the low prices; hover a month for the realized $/MWh, which is where curtailment and negative prices show up. Curtailment itself is on <a href="renewables.html">Renewables</a>.</p>
         <details class="how"><summary>How it's built</summary><p class="note">Energy revenue on the two-settlement basis, whatever the controls above say: the day-ahead award at the DA price plus the real-time deviation at the unit's node where it has day-ahead data, real-time at its node otherwise (most wind and solar), and system lambda where the node price is missing; plus ancillary services. Curtailed energy and its worth at the node are from the curtailment panel on <a href="renewables.html">Renewables</a>. Hover a month for the split.</p></details>
       </div>
     </div>
@@ -137,7 +137,7 @@
   <section class="panel panel-wide" id="eco-units-panel">
     <div class="panel-head">
       <div>
-        <h2>Realised $/MWh by unit <span class="h-note" id="eco-note"></span><a class="help-q" href="guide.html#revenue" title="How revenue is counted" aria-label="How revenue is counted">?</a></h2>
+        <h2>Realized $/MWh by unit <span class="h-note" id="eco-note"></span><a class="help-q" href="guide.html#revenue" title="How revenue is counted" aria-label="How revenue is counted">?</a></h2>
         <p class="note" id="eco-lead">The spread of revenue per MWh across every wind and solar unit, with each unit's curtailed share. The spread is mostly location (node price and congestion) and curtailment: a low $/MWh with a high curtailed share points at a congested node. Dashed lines mark each technology's median; click a unit to open it.</p>
         <details class="how"><summary>How it's built</summary><p class="note">Revenue as above over the unit's energy, for every wind and solar unit over every loaded 60-day day. The dashed lines are each technology's median. Curtailed share is the unit's curtailed energy (HSL minus base point, hour by hour) over its available energy, the same figure as "Of available" in the curtailment table on Renewables. Click a column to sort and a unit to open its page.</p></details>
       </div>

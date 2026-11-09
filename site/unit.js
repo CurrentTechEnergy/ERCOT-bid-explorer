@@ -208,10 +208,10 @@ function drawHead(e) {
     return;
   }
   const cut = dec && dec[9], L = dec && dec[1];
-  const perMW = (v) => (L ? `${fmt$(v / L)} per MW of minimum (${fmt$(v)} for the day at ${fmtMW(L)} MW)` : fmt$(v));
+  const perMW = (v) => (L ? `${Math.abs(v / L) < 0.5 && v ? "under $1" : fmt$(v / L)} per MW of minimum (${fmt$(v)} for the day at ${fmtMW(L)} MW)` : fmt$(v));
   v.innerHTML = `<b>${esc(r[1])}, its latest decision day (a day it started online): ${r[6] ? `turned off${r[7] ? ` for ${r[7]} hours` : ""}` : "stayed on"}.</b>` +
     (!r[4] ? " Day-ahead prices at its node covered its costs all day, so there was no loss to ride through." :
-      ` Day-ahead prices at its node fell below its cost at minimum output for hours ending ${r[3]} to ${r[3] + r[4] - 1}; staying on through them would have lost ${perMW(r[2])}` +
+      ` Day-ahead prices at its node fell below its cost at minimum output for ${r[4] === 1 ? `hour ending ${r[3]}` : `hours ending ${r[3]} to ${r[3] + r[4] - 1}`}; staying on through ${r[4] === 1 ? "it" : "them"} would have lost ${perMW(r[2])}` +
       (cut != null ? `, against ${L ? `${fmt$(cut / L)} per MW` : fmt$(cut)}, the loss above which it usually turns off.` : ".") +
       ` A day-ahead award covered ${fmtPct(r[5] || 0)} of the stretch.`) +
     ` <a href="commitment.html#date=${esc(r[1])}">Every unit that day</a>.`;
@@ -251,7 +251,7 @@ async function drawForecast(e) {
   // the actual, from the 60-day unit file: online (at least half the hour) and output, configurations summed
   let act = null;
   if (A) {
-    const names = new Set(e.configs.length ? e.configs : [e.name]), ci = Object.fromEntries(A.columns.map((c, i) => [c, i + 2]));
+    const names = dayNames(e, A), ci = Object.fromEntries(A.columns.map((c, i) => [c, i + 2]));
     act = d3.range(24).map(() => ({ on: false, out: 0, lsl: 0 }));
     A.rows.forEach((r) => {
       if (!names.has(A.units[r[0]][0])) return;
@@ -267,7 +267,7 @@ async function drawForecast(e) {
   const rucH = new Set(window.CX.rucDays(S.UH, e.configs.length ? e.configs : [e.name]).get(day) || []);   // hours ending
   $("fc-note").innerHTML = (act ? `<b>On ${esc(day)} it was online ${hOn === 24 ? "all 24 hours" : `${hOn} of 24 hours`} and produced ${fmtMW(d3.sum(act, (x) => x.out))} MWh.</b>` : onl ? `<b>On ${esc(day)} it was online ${hOn} of 24 hours.</b>` : `<b>${esc(day)}</b>.`) +
     (OD.reduced ? ` Before the 60-day window: judged on a fit to the 12 months before it, from the thermal history files.` : "") +
-    (dr && dr[4] ? ` Its worst stretch was hours ending ${dr[3]} to ${dr[3] + dr[4] - 1}, where staying on would lose ${fmt$(dr[2])} at its node; it ${dr[6] ? `turned off${dr[7] ? ` for ${dr[7]} hours` : ""}` : "stayed on"}.` : "") +
+    (dr && dr[4] ? ` Its worst stretch was ${dr[4] === 1 ? `hour ending ${dr[3]}` : `hours ending ${dr[3]} to ${dr[3] + dr[4] - 1}`}, where staying on would lose ${fmt$(dr[2])} at its node; it ${dr[6] ? `turned off${dr[7] ? ` for ${dr[7]} hours` : ""}` : "stayed on"}.` : "") +
     oiNote(e, day, o) +
     (rucH.size ? ` <br><b>ERCOT committed it by RUC</b> in ${rucH.size} hour${rucH.size === 1 ? "" : "s"} (purple rings): ERCOT's call, not the operator's, so the model is not fitted or scored on ${rucH.size === 1 ? "it" : "them"}.` : "");
   const s = TECH_OF[e.tech] || { color: "--c-other" };
@@ -409,7 +409,7 @@ function drawDecisions(e) {
 
 // the unit's row of the goal page's Q3 heatmap (data/goal.json.gz q3.units rows: [train, tech, year,
 // windows where shutting pays, share shut, LSL]): each year, the share of those windows it stayed on
-// through, darker in the unit's own colour for more often on (as the hours-online strip); coal gets
+// through, darker in the unit's own color for more often on (as the hours-online strip); coal gets
 // drawCoalYears instead
 async function drawDecYears(e) {
   const box = $("dec-years");
@@ -452,7 +452,7 @@ async function drawDecYears(e) {
   });
   el.replaceChildren(svg.node());
   const d = early != null && late != null ? late - early : null;
-  $("dec-years-note").innerHTML = `Each year, of the loss stretches where shutting down would have paid (the loss from staying on beat the restart cost and nothing held it on), the share it stayed online through. Darker is more often on, in the unit's colour as on the hours-online strip; a dash is a year with fewer than ${min} such stretches.` +
+  $("dec-years-note").innerHTML = `Each year, of the loss stretches where shutting down would have paid (the loss from staying on beat the restart cost and nothing held it on), the share it stayed online through. Darker is more often on, in the unit's color as on the hours-online strip; a dash is a year with fewer than ${min} such stretches.` +
     (d != null ? ` <b>It stayed on through ${fmtPct(early)} of them in ${b0} to ${b1} and ${fmtPct(late)} from 2024 on, ${Math.abs(Math.round(100 * d))} points ${d < 0 ? "less" : "more"} often.</b>` : !ys.some(ok) ? " Too few such stretches in any year to judge." : "") +
     (never ? " It has never turned off for a loss stretch it was free to choose." : "") +
     (ys.some(part) ? " * Part year." : "") + ` Every unit side by side: <a href="goal.html#q3-panel">Will fossil turn off?</a>, question 3.`;
@@ -891,7 +891,12 @@ function renewOutNote(e, day, whole) {
 }
 window.addEventListener("renewoutloaded", () => { const e = S.list && S.list.get(S.unit); if (e && (e.tech === "wind" || e.tech === "solar")) drawDay(e); });
 const dayCache = new Map();
-const loadDayUnits = (d) => { if (!dayCache.has(d)) dayCache.set(d, tryJSON(`data/60d-units/${d}.json.gz`)); return dayCache.get(d); };
+// a train's rows are made safe to add in hours it changed configuration (common.js trainHours)
+const loadDayUnits = (d) => { if (!dayCache.has(d)) dayCache.set(d, tryJSON(`data/60d-units/${d}.json.gz`).then(window.CX.trainHours)); return dayCache.get(d); };
+// the unit's names in a day file: its configurations, with any the day has that the list lacks
+// (a configuration a train only passes through while starting or shutting down)
+const dayNames = (e, f) => new Set((e.configs.length ? e.configs : [e.name])
+  .concat(e.tech === "combined_cycle" ? f.units.map((u) => u[0]).filter((n) => trainOf(n) === e.name) : []));
 async function drawDay(e) {
   const el = $("day-chart");
   $("day-panel").hidden = !THERMAL.includes(e.tech) && e.tech !== "wind" && e.tech !== "solar";
@@ -908,7 +913,7 @@ async function drawDay(e) {
   const day = S.day, f = await loadDayUnits(day);
   if (S.unit !== e.name || S.day !== day) return;
   if (!f) { $("day-note").textContent = ""; return emptyMsg(el, `No hourly unit file for ${day}.`); }
-  const names = new Set(e.configs.length ? e.configs : [e.name]), ci = Object.fromEntries(f.columns.map((c, i) => [c, i + 2]));
+  const names = dayNames(e, f), ci = Object.fromEntries(f.columns.map((c, i) => [c, i + 2]));
   const idx = new Set(f.units.map((u, i) => (names.has(u[0]) ? i : -1)).filter((i) => i >= 0));
   // a combined-cycle train sums its configurations (only one is online in an hour, bar a changeover)
   const H = d3.range(24).map((h) => ({ h, out: null, bp: null, hsl: null, lsl: null, n: 0 }));

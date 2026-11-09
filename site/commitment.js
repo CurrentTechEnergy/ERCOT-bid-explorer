@@ -19,7 +19,7 @@ const TECHS = [
   { id: "other", keys: ["hydro", "other"], label: "Other (hydro, biomass)", color: "--c-other" },
 ];
 const THERMAL = ["nuclear", "coal", "combined_cycle", "gas_steam", "combustion_turbine"];
-// group colours for the tables: nuclear on its own (no offer curve, never moves), the other
+// group colors for the tables: nuclear on its own (no offer curve, never moves), the other
 // thermal units by the groups of the cheap-stretches panel (ST_GROUPS, from the hourly unit strips)
 const FLOOR_GROUPS = [
   { id: "nuclear", label: "Nuclear (no offer curve)", color: "--c5" },
@@ -710,7 +710,7 @@ function dayUnits(d) {
       award: o ? o[3] : null, md: o ? o[7] : null,
       // "cut": a turn-off point; "flat": on at any saving in this chart (the model says it rides
       // through anything tested, or it is coal); "none": a CC or gas steam
-      // unit without a model row that day (its own grey band)
+      // unit without a model row that day (its own gray band)
       kind: o ? (o[5] != null ? "cut" : "flat") : modelled ? "none" : "flat",
       c: o ? o[5] : null, l: o ? o[4] : null,
     };
@@ -729,7 +729,7 @@ function cutDomain(U) {
 const cutTicks = (x0, x1, narrow) => (narrow ? [-250, -50, 0, 10, 50, 250, 1000] : [-500, -250, -100, -25, 0, 10, 25, 50, 100, 250, 500, 1000, 2500]).filter((v) => v >= x0 && v <= x1);
 
 // one row per unit the model covers, grouped by how often it turns off: a diamond at its turn-off
-// point (coloured by its day-ahead award), a circle at the day's saving (hollow where it turned
+// point (colored by its day-ahead award), a circle at the day's saving (hollow where it turned
 // off), joined in red where the unit did the opposite of what the model expected
 function drawCutUnits() {
   const el = $("cut-units");
@@ -745,7 +745,7 @@ function drawCutUnits() {
   const nOff = n((u) => u.did === "off"), right = n((u) => !u.ruc && past(u) === (u.did === "off"));
   const nPast = n(past), nPastOn = n((u) => past(u) && u.did === "on");
   window.CX.setNote($("cut-units-note"), `Did the combined-cycle and gas steam units that faced a loss turn off? Each row is a unit online going into the day. The circle is how much it stood to lose per MW of minimum output by staying on through the day's worst stretch; the diamond is the loss at which the operator model expects it to shut down instead. A circle right of its diamond is a unit the model expected to turn off; a filled one there rode through anyway. ` +
-    `On ${fmtDate(parseDate(S.date))}, ${U.length} units were online going in and ${nOff} turned off; ${nPast} faced a loss past their turn-off point and ${nPastOn} of those stayed on. The model called ${right} of ${nJ} right.${window.CX.rucNote(nRuc, nRuc === 1 ? "unit" : "units")} Hover a row for its numbers; click to open the unit.`, `${U.length} combined-cycle trains (CC) and gas steam units were online going into the day. The diamond is each unit's turn-off point that day from the operator model, coloured by its day-ahead award; the circle is the loss from staying on it actually faced, and the line between them is red where the unit did the opposite of the model: stayed on past its turn-off point, or turned off short of it. The turn-off point is found by moving the day's day-ahead prices up or down by the same amount until the model's call for the day first flips to off; the loss at that shift is the turn-off point. An arrow at the right edge is a unit no shift turned off (a day-ahead award in every hour holds a unit on). ` +
+    `On ${fmtDate(parseDate(S.date))}, ${U.length} units were online going in and ${nOff} turned off; ${nPast} faced a loss past their turn-off point and ${nPastOn} of those stayed on. The model called ${right} of ${nJ} right.${window.CX.rucNote(nRuc, nRuc === 1 ? "unit" : "units")} Hover a row for its numbers; click to open the unit.`, `${U.length} combined-cycle trains (CC) and gas steam units were online going into the day. The diamond is each unit's turn-off point that day from the operator model, colored by its day-ahead award; the circle is the loss from staying on it actually faced, and the line between them is red where the unit did the opposite of the model: stayed on past its turn-off point, or turned off short of it. The turn-off point is found by moving the day's day-ahead prices up or down by the same amount until the model's call for the day first flips to off; the loss at that shift is the turn-off point. An arrow at the right edge is a unit no shift turned off (a day-ahead award in every hour holds a unit on). ` +
     `A filled circle stayed on through the day; a hollow one was offline in some hour (outages aside). Read at its own loss, the model called ${right} of ${nJ} units right.${window.CX.rucNote(nRuc, nRuc === 1 ? "unit" : "units")} ${SAVING_NOTE} Losses beyond the edges are drawn at the edge. Click a unit to open it.`);
   $("cut-units-legend").innerHTML = AWARD.map((a) => `<span><span class="sw" style="background:var(${a.color});transform:rotate(45deg) scale(0.8)"></span>Turn-off point, ${["no day-ahead award", "awarded some hours", "awarded every hour"][a.id]}</span>`).join("") +
     `<span>→ No turn-off point: the model keeps it on at any loss tried</span>` + window.CX.onOffLegend("Loss that day, stayed on", "Loss that day, turned off") +
@@ -897,7 +897,7 @@ function drawGroups() {
   $("groups-title-note").textContent = fmtDate(parseDate(S.date));
   const lslAll = sum(rows, "lsl"), onRow = rows.find((r) => r.g === "never");
   window.CX.setNote($("groups-note"), `The two charts above rolled up by flexibility group (how often a unit has shut down on price), to show which groups hold the day's minimum output and whether the model's calls hold up within each. ` +
-    (onRow && lslAll ? `On ${fmtDate(parseDate(S.date))} the always-on group held ${fmtMW(onRow.lsl)} of the ${fmtMW(lslAll)} MW of coal, gas steam and combined-cycle minimum output online going in (${fmtPct(onRow.lsl / lslAll)}), and ${onRow.nOff ? `${onRow.nOff} of its units turned off` : "none of it turned off"}. ` : "") +
+    (onRow && lslAll ? `On ${fmtDate(parseDate(S.date))} the always-on group held ${fmtMW(onRow.lsl)} of the ${fmtMW(lslAll)} MW of coal, gas steam and combined-cycle minimum output online going in (${fmtPct(onRow.lsl / lslAll)}), and ${onRow.nOff ? `${onRow.nOff} of its units turned off that day, which is unusual for this group` : "none of it turned off"}. ` : "") +
     `The first block covers coal, gas steam and combined cycles (turn-off points); the second covers combustion turbines, which mostly start from off and so get turn-on points.`, `Thermal units by how often they have turned off on price over the ${S.G ? S.G.dates.length : ""} days of 60-day data (pipeline/groups.py). Minimum output is the unit's LSL; online going in and turned off count units online going into the day and offline in some hour of it (combined-cycle configurations merged into their train). ` +
     `The turn-off rows cover coal, gas steam and combined cycles; their model columns cover the CC trains and gas steam units with a turn-off point that day: the median turn-off point and the median loss from staying on they faced, per MW of LSL, and how many the model called right (off when the loss was past its turn-off point), leaving out units ERCOT committed by RUC that day. ${SAVING_NOTE} ` +
     `Combustion turbines mostly start from off rather than stay on, so instead of a turn-off point their rows count the ${nAny} offline going into some hour of the day and how many started, the median of the operator model's turn-on points and of the day's highest day-ahead price at their nodes, and how many the model called right (RUC left out), as in the turn-on chart above. Some units that run like peakers are gas steam or combined cycles; they stay in the turn-off rows.`);

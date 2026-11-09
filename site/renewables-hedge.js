@@ -194,7 +194,7 @@ const perDay = (im) => (im.days ? ((im.up || 0) + (im.dn || 0)) / im.days : null
 function impactText(e) {
   const im = e.impact;
   if (e.da) return `<span class="muted">day-ahead, not estimated</span>`;
-  if (!im) return `<span class="muted">${e.before.k === "v" ? "no fixed old offer" : "no hourly data"}</span>`;
+  if (!im) return `<span class="muted">${e.before.k === "v" ? "not estimated, old offer moved within the day" : "no hourly data"}</span>`;
   const da = im.est > 0.5 ? ", DA price" : "", win = winText(im);
   if (!e.moved) return `<span class="muted">no${win ? `, ${win}` : ""}${da}</span>`;
   const parts = [];

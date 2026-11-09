@@ -1,7 +1,7 @@
 /* Unit page, no unit picked: the Units directory, every unit the page can open (data/unit_index.json.gz,
    pipeline/unit_index.py) with its CDR name, county, zone, decision maker, QSE, ERCOT type and how it behaves in the DAM (share
    of its last 90 DAM days in quick-start standby, self-committed, with a three-part offer, awarded and on outage), filtered
-   by technology, by the dropdowns (type, group, zone, QSE), by the DAM behaviour chips (each Any, Yes or No; Yes means at
+   by technology, by the dropdowns (type, group, zone, QSE), by the DAM behavior chips (each Any, Yes or No; Yes means at
    least the "On at least" share of days, No less than it; every chip narrows) and by the text in the page's Unit box,
    sorted by any column. The filters are kept in the address (?tech=&type=&group=&zone=&qse=&qs=yes&dam=no&min=0.25) so a
    view can be shared; the older ?commit=qs,self links read as those chips set to Yes.
