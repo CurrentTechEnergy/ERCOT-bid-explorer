@@ -306,13 +306,13 @@ function drawStack() {
     .text(narrow ? `system floor ${fmtMW(floorAll)} MW` : `system floor: ${fmtMW(floorAll)} MW (fossil LSL plus nuclear output)`);
   if (hub != null && hub >= lo && hub <= hi) {
     svg.append("line").attr("class", "price-rule").attr("x1", x(hub)).attr("x2", x(hub)).attr("y1", m.t).attr("y2", H - m.b);
-    const j = d3.bisectLeft(P, hub);
+    const j = Math.max(0, d3.bisectRight(P, hub) - 1);   // the last price step at or below lambda, as the note under the chart
     const right = x(hub) > (m.l + w - m.r) / 2;   // label on the side with room
     svg.append("text").attr("class", "axis-title").attr("x", x(hub) + (right ? -5 : 5)).attr("y", m.t + 10)
       .attr("text-anchor", right ? "end" : "start")
       .attr("paint-order", "stroke").attr("stroke", css("--surface")).attr("stroke-width", 3)
       .text(narrow ? `λ ${fmtPrice(hub)} · ${fmtMW(fl[Math.min(j, P.length - 1)])} MW`
-        : `${rt ? "real-time" : "day-ahead"} lambda ${fmtPrice(hub)} · ${fmtMW(fl[Math.min(j, P.length - 1)])} MW offered below it`);
+        : `${rt ? "real-time" : "day-ahead"} lambda ${fmtPrice(hub)} · ${fmtMW(fl[Math.min(j, P.length - 1)])} MW offered at or below it`);
   }
   svg.append("g").attr("class", "axis").attr("transform", `translate(0,${H - m.b})`).call(axisFmt(d3.axisBottom(x), narrow ? 4 : 8, "$").tickSizeOuter(0));
   svg.append("g").attr("class", "axis").attr("transform", `translate(${m.l},0)`).call(axisFmt(d3.axisLeft(y), 5).tickSizeOuter(0));

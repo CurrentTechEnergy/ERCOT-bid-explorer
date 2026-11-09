@@ -192,6 +192,11 @@ KINDS = {
 _SAFE = re.compile(r"[^A-Za-z0-9_.-]")
 
 
+def _an(n: float) -> str:
+    """'an' before a number read with a vowel sound (8, 11, 18, 80 to 89), else 'a'."""
+    t = f"{n:.0f}"
+    return "an" if t in ("11", "18") or (t[0] == "8" and len(t) <= 2) else "a"
+
 def _ev(unit, date, kind, tech, title, major, before=None, after=None, value=None, field=None, **extra):
     e = {"id": f"{unit}|{date}|{kind}", "date": date, "unit": unit, "tech": tech, "kind": kind,
          "major": bool(major), "title": title, "before": before, "after": after, "value": value, "field": field}
@@ -561,7 +566,7 @@ def _outage_spell_events(strips, d0):
                                    days >= OUTAGE_MAJOR, value=round(days), field="days"))
                 if j < N:
                     end = (d0 + dt.timedelta(days=(j - 1) // 24)).isoformat()
-                    out.append(_ev(key, end, "outage_end", tech, f"Back from a {days:.0f}-day outage",
+                    out.append(_ev(key, end, "outage_end", tech, f"Back from {_an(days)} {days:.0f}-day outage",
                                    days >= OUTAGE_MAJOR, value=round(days), field="days"))
             k = j
     return out

@@ -379,9 +379,10 @@ async function boot() {
     Object.keys(S.B.fleet).forEach((k) => { S.B.fleet[k] = cut(S.B.fleet[k]); });
     ["chg_ge", "dis_le"].forEach((k) => Object.keys(S.B[k]).forEach((p) => { S.B[k][p] = cut(S.B[k][p]); }));
     S.B.n_units = cut(S.B.n_units);
+    if (S.B.n_online) S.B.n_online = cut(S.B.n_online);
   }
   const dates = CX.fromStart(S.B.dates);    // the picker's days; the charts keep every day
-  $("status").textContent = `Battery offers and dispatch ${dates[0]} to ${dates.at(-1)} · ${S.B.n_units.at(-1)} batteries on the last day`;
+  $("status").textContent = `Battery offers and dispatch ${dates[0]} to ${dates.at(-1)} · ${S.B.n_online ? `${S.B.n_online.at(-1)} batteries online on the last day, of ${S.B.n_units.at(-1)} in ERCOT's dispatch file` : `${S.B.n_units.at(-1)} batteries on the last day`}`;
   loadView();
   if (!["1", "7", "30", "all"].includes(S.win)) S.win = "1";
   if (!["chg", "dis"].includes(S.side)) S.side = "chg";

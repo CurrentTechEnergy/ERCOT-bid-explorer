@@ -18,7 +18,7 @@ const fmtPct = d3.format(".0%");
 const dayLabel = (d) => d3.timeFormat("%a %b %-d, %Y")(new Date(d + "T12:00:00"));
 const addDays = (d, n) => { const t = new Date(d + "T12:00:00"); t.setDate(t.getDate() + n); return t.toISOString().slice(0, 10); };
 
-// ---- series: colours are fixed per group, technology and category -----------------------
+// ---- series: colors are fixed per group, technology and category -----------------------
 const GROUP_COLORS = { never: "--g1", multiday: "--g3", daily1: "--g4", daily2: "--g5", daily3: "--g6", peakers: "--c2", never_on: "--c-other", ungrouped: "--c-other" };
 const GROUP_NOTES = {
   never: "off only for outages, never on price, plus nuclear", multiday: "shortest time off is a day or more",
@@ -242,7 +242,7 @@ function drawHeadline() {
     const cheapAvg = nCheap ? d3.mean(cheapHours(), (h) => ref[h]) : null;
     el.innerHTML = `${esc(dayLabel(S.date))}: ${rt ? "real-time" : "day-ahead"} system lambda averaged <b>${pAvg}</b>, ranging from ${pMin} to ${pMax}.`;
     $("lede-sub").innerHTML = (nCheap ? `<b>${nCheap} hour${nCheap > 1 ? "s" : ""}</b> at ${fmtPrice0(CHEAP)}/MWh or less (${runs.join(" and ")}), averaging ${window.CX.fmtPair([cheapAvg], "$/MWh", { dp: 2 })[0]}. ` : `No hour at ${fmtPrice0(CHEAP)}/MWh or less. `) +
-      (L === "60d" ? "Unit-by-unit hours are in (ERCOT's 60-day disclosure). Who turned off, and at what loss, is on Turn-ons and Turn-offs."
+      (L === "60d" ? "Unit-by-unit hours are from ERCOT's 60-day disclosure. Who turned off, and at what loss, is on Turn-ons and Turn-offs."
         : `Unit detail for this day arrives with the 60-day disclosure, about ${esc(dayLabel(arrives))}; until then the page shows ERCOT's 2-day summary in total.`);
   }
   if (!ref) $("lede-sub").textContent = "";
@@ -266,7 +266,8 @@ function drawHeadline() {
     tiles.push(`<li><div class="k"><i class="sw" style="background:var(${STORAGE.color})"></i>${STORAGE.label}</div>` +
       `<div class="v"><span class="nw">${fmtGWh(d3.sum(dis) / 1000)} GWh <small>(discharge)</small></span> <span class="nw">${fmtGWh(-d3.sum(chg) / 1000)} GWh <small>(charge)</small></span></div>` +
       `<div class="w"><b>${fmtGW(d3.max(dis))} GW</b> discharging at most in ${heLabel(d3.maxIndex(dis.map((v) => (v == null ? -Infinity : v))))}, ` +
-      `<b>${fmtGW(-d3.min(chg))} GW</b> charging at most in ${heLabel(d3.minIndex(chg.map((v) => (v == null ? Infinity : v))))}</div></li>`);
+      `<b>${fmtGW(-d3.min(chg))} GW</b> charging at most in ${heLabel(d3.minIndex(chg.map((v) => (v == null ? Infinity : v))))}` +
+      (a60 && a60.tech.storage ? `. By measured output; the <a href="batteries.html#date=${S.date}">Batteries</a> page counts what ERCOT dispatched, so its totals differ a little.` : "") + `</div></li>`);
   }
   $("expect").innerHTML = tiles.join("") || `<li><div class="w">No generation data for this day yet.</div></li>`;
   const thermal = a60 ? d3.sum(CATS, ([k]) => (a60.cat[k] ? d3.sum(a60.cat[k]) : 0)) / 1000 : null, base = a60 && a60.cat.baseload ? d3.sum(a60.cat.baseload) / 1000 : null;
@@ -731,7 +732,7 @@ function drawOffersLinks() {
 }
 function drawSource() {
   const d = S.date;
-  $("source-note").textContent = has("60d") ? "Unit-by-unit detail is in (ERCOT's 60-day disclosure)." : has("2dgen") ? `Totals only, from ERCOT's 2-day summary; unit detail arrives about ${dayLabel(addDays(d, LAG_60D))}.` : "Prices only so far.";
+  $("source-note").textContent = has("60d") ? "Unit-by-unit detail is from ERCOT's 60-day disclosure." : has("2dgen") ? `Totals only, from ERCOT's 2-day summary; unit detail arrives about ${dayLabel(addDays(d, LAG_60D))}.` : "Prices only so far.";
 }
 
 // ---------------------------------------------------------------- profit ---
@@ -814,7 +815,7 @@ async function loadDay() {
     has("60d") ? tryJSON(`data/rt-nodes/${d}.json.gz`) : null,
   ]);
   if (d !== S.date) return;    // a newer pick took over
-  S.gen = gen; S.units60 = units60; S.prices = prices; S.dam = dam; S.rtNodes = rtNodes;
+  S.gen = gen; S.units60 = window.CX.trainHours(units60); S.prices = prices; S.dam = dam; S.rtNodes = rtNodes;
   S.a60 = actual60(); S.off60 = S.a60 ? offline60() : null;
   unitProfit();
   S.unitShowAll = false;

@@ -132,7 +132,7 @@ function drawRide() {
   g.append("text").attr("class", "axis-title").attr("x", 6).attr("y", top + 10).text("Gas minimum output kept on in cheap hours");
   if (w >= 560) {     // on a phone the key moves into the caption
     g.append("text").attr("class", "axis-title").attr("x", w).attr("y", top + 10).attr("text-anchor", "end").text("Dot size = cheap hours in the month");
-    g.append("text").attr("class", "axis-title").attr("x", w).attr("y", top + 24).attr("text-anchor", "end").text(`Grey tick = fewer than ${MIN_CHEAP} cheap hours`);
+    g.append("text").attr("class", "axis-title").attr("x", w).attr("y", top + 24).attr("text-anchor", "end").text(`Gray tick = fewer than ${MIN_CHEAP} cheap hours`);
   }
   const pts = rows.filter((r) => r.ratio != null && r.cheap_h >= MIN_CHEAP), few = rows.filter((r) => !(r.ratio != null && r.cheap_h >= MIN_CHEAP));
   const rs = d3.scaleSqrt().domain([MIN_CHEAP, d3.max(pts, (r) => r.cheap_h) || MIN_CHEAP + 1]).range([2.5, 8]);
@@ -152,7 +152,7 @@ function drawRide() {
   $("ride-note").textContent = `The link from cheap hours to the fossil fleet: when prices are at or below $${S.P.cheap}/MWh, how much of the gas fleet's minimum output stays online compared with the rest of the month? ` +
     `Combined-cycle and gas steam minimum output (LSL) online in those hours, as a share of what is online in the month's other hours. ` +
     `100% means none of it came off for the cheap hours. Cheap hours are real-time Hub average, whatever the controls above say. Runs to ${mon(d3.max(rows, (r) => r.d))}, about two months behind, as the 60-day disclosure does.` + trend +
-    (w < 560 ? ` Dot size is the month's cheap hours; a grey tick marks a month with fewer than ${MIN_CHEAP}.` : "");
+    (w < 560 ? ` Dot size is the month's cheap hours; a gray tick marks a month with fewer than ${MIN_CHEAP}.` : "");
 }
 
 // ==== Spread between the tails ===============================================================

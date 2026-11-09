@@ -84,7 +84,7 @@ function drawThermal(U, list) {
   const lows = filed.map((i) => d3.min(list, ([, r]) => r.mc[i] ?? undefined));
   const cc = U.tech === "combined_cycle";
   $("dam-title-note").textContent = `${D.first} to ${D.last}`;
-  $("dam-note").innerHTML = `What it asked the day-ahead market to pay for running at minimum each day (its minimum-energy offer, part of the three-part offer of start cost, minimum-energy price and energy curve${cc ? "; one colour per configuration" : ""}) against its fuel cost at minimum (black line). ` +
+  $("dam-note").innerHTML = `What it asked the day-ahead market to pay for running at minimum each day (its minimum-energy offer, part of the three-part offer of start cost, minimum-energy price and energy curve${cc ? "; one color per configuration" : ""}) against its fuel cost at minimum (black line). ` +
     `On cheap days, when the day-ahead system price (lambda) dropped to $${D.cheap_usd}/MWh or below in some hour, the large square is its offer over those hours: filled when a day-ahead award kept it on through them, hollow when not; small faint squares are other days. Offering below fuel cost on a cheap day is paying to stay on, usually to avoid a restart. ` +
     `The fuel cost is its heat rate at minimum, as under Heat rate and fuel cost, times its hub's gas price the trading day before (not the 7-day average used there); dashed rules mark offer changes. ` +
     (filed.length ? `On ${filed.length} cheap days with an offer, an award kept it on through ${kept.length} (${fmtPct(kept.length / filed.length)}); the median of its lowest ${cc ? "configuration's " : ""}offer over those cheap hours was ${fmt$(med(lows))}/MWh. ` : "") +

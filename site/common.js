@@ -679,5 +679,40 @@ function fmtPair(vals, unit, opts = {}) {
     return `${sign}${n}${unit ? ` ${unit}` : ""}`;
   });
 }
-window.CX = { fmtPair, dayPicker, dayLabel, latest60, pickDay, isPeaker, peakerTag, peakerNote, onOffDot, onOffLegend, rucDays, rucRing, rucLegend, rucNote, fromStart, SITE_START, setNote, getJSON, tryJSON, showTip, hideTip, clearPins, setCSV, readHash, writeHash, init, panelFromLink, css, esc, tickFormat, fmtKind, axisFmt, unitIndex, findUnits, matchedOn, drawCurtailDay };
+// The hourly unit file (data/60d-units/<date>) has one row per combined-cycle configuration, each
+// with its output and limits averaged over the SCED runs that configuration was in.  In an hour a
+// train changes configuration it has several rows, and adding them counts the train more than once
+// (two or three sets of limits, each configuration's output as if it ran the whole hour).  This
+// returns the file with those hours' rows rewritten so that adding a train's rows is right: each
+// configuration's output and base point weighted by its share of the hour's runs, and the limits,
+// online share and ramping share carried once, on the configuration that ran most of the hour.
+function trainHours(f) {
+  if (!f || !f.rows || f._trainHours) return f;
+  const ci = Object.fromEntries(f.columns.map((c, i) => [c, i + 2]));
+  const by = new Map();
+  f.rows.forEach((r, i) => {
+    const m = /^(.*_CC\d+)_/.exec(f.units[r[0]][0]);
+    if (!m) return;
+    const k = m[1] + "|" + r[1];
+    (by.get(k) || by.set(k, []).get(k)).push(i);
+  });
+  const rows = f.rows.slice();
+  by.forEach((ix) => {
+    if (ix.length < 2) return;
+    const sh = ix.map((i) => f.rows[i][ci.online_share] || 0), tot = d3.sum(sh), norm = Math.max(1, tot);
+    let top = 0;
+    ix.forEach((i, j) => { if (sh[j] > sh[top] || (sh[j] === sh[top] && (f.rows[i][ci.output] || 0) > (f.rows[ix[top]][ci.output] || 0))) top = j; });
+    const ramp = d3.sum(ix, (i) => f.rows[i][ci.ramp_share] || 0);
+    ix.forEach((i, j) => {
+      const r = f.rows[i].slice(), w = sh[j] / norm;
+      ["output", "base_point"].forEach((c) => { if (r[ci[c]] != null) r[ci[c]] = r[ci[c]] * w; });
+      if (j === top) { r[ci.online_share] = Math.min(1, tot); r[ci.ramp_share] = Math.min(1, ramp); }
+      else { r[ci.online_share] = 0; r[ci.ramp_share] = 0; r[ci.hsl] = null; r[ci.lsl] = null; }
+      rows[i] = r;
+    });
+  });
+  return { ...f, rows, _trainHours: true };
+}
+
+window.CX = { trainHours, fmtPair, dayPicker, dayLabel, latest60, pickDay, isPeaker, peakerTag, peakerNote, onOffDot, onOffLegend, rucDays, rucRing, rucLegend, rucNote, fromStart, SITE_START, setNote, getJSON, tryJSON, showTip, hideTip, clearPins, setCSV, readHash, writeHash, init, panelFromLink, css, esc, tickFormat, fmtKind, axisFmt, unitIndex, findUnits, matchedOn, drawCurtailDay };
 })();

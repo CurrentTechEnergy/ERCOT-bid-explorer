@@ -1,4 +1,4 @@
-/* Fleet economics, wind and solar: revenue by month and realised $/MWh by unit (curtailment itself is on Renewables),
+/* Fleet economics, wind and solar: revenue by month and realized $/MWh by unit (curtailment itself is on Renewables),
    moved from the Renewables page. Reads data/econ/wind and solar (pipeline/econ.py) and
    data/curtail_nodes.json.gz (curtailed energy, its worth at the node and each unit's curtailed
    share). fleet.js owns the status line and CX.init; this file keeps its own keys in the address
@@ -78,7 +78,7 @@ const ECO_COLS = [
   { k: "name", h: "Unit", t: 1, f: (u) => `<a href="unit.html?unit=${encodeURIComponent(u.name)}">${esc(u.name)}</a>` },
   { k: "tech", h: "Tech", t: 1, f: (u) => techLabel(u.tech) },
   { k: "sp", h: "Settlement point", t: 1, f: (u) => esc(u.sp || "–") },
-  { k: "pmwh", h: "Realised $/MWh", f: (u) => fmtPrice(u.pmwh) },
+  { k: "pmwh", h: "Realized $/MWh", f: (u) => fmtPrice(u.pmwh) },
   { k: "mwh", h: "GWh", f: (u) => d3.format(",.1f")(u.mwh / 1000) },
   { k: "rev", h: "Revenue", f: (u) => "$" + d3.format(",.2f")(u.rev / 1e6) + "M" },
   { k: "cf", h: "Capacity factor", f: (u) => (u.cf == null ? "–" : d3.format(".1%")(u.cf)) },
@@ -97,7 +97,7 @@ function drawEcoUnits() {
   $("eco-lead").textContent = "The spread of revenue per MWh across every wind and solar unit, with each unit's curtailed share. The spread is mostly location (node price and congestion) and curtailment: a low $/MWh with a high curtailed share points at a congested node. " +
     (meds.length ? `Median ${meds.map(([t, v]) => `${t.label.toLowerCase()} ${fmtPrice(v)}/MWh`).join(", ")}. ` : "") + "Dashed lines mark the medians; click a unit to open it.";
   if (!us.length) { emptyMsg(el, "No units."); hel.innerHTML = ""; return; }
-  // distribution: units by realised $/MWh, wind and solar side by side
+  // distribution: units by realized $/MWh, wind and solar side by side
   const vals = us.map((u) => u.pmwh), lo = Math.floor(d3.quantile([...vals].sort(d3.ascending), 0.005) / 2) * 2, hi = Math.ceil(d3.quantile([...vals].sort(d3.ascending), 0.995) / 2) * 2;
   const bin = d3.bin().domain([lo, hi]).thresholds(d3.range(lo, hi + 0.001, Math.max(1, Math.round((hi - lo) / 30))));
   const w = Math.max(280, hel.clientWidth || 600), H = 220, m = { t: 18, r: 16, b: 34, l: 48 };
@@ -108,7 +108,7 @@ function drawEcoUnits() {
   svg.append("g").attr("class", "gridline").attr("transform", `translate(${m.l},0)`).call(d3.axisLeft(y).ticks(4).tickSize(-(w - m.l - m.r)).tickFormat(""));
   svg.append("g").attr("class", "axis").attr("transform", `translate(${m.l},0)`).call(d3.axisLeft(y).ticks(4).tickFormat(d3.format(",d")).tickSizeOuter(0));
   svg.append("g").attr("class", "axis").attr("transform", `translate(0,${H - m.b})`).call(axisFmt(d3.axisBottom(x), w < 560 ? 5 : 10, "$").tickSizeOuter(0));
-  svg.append("text").attr("class", "axis-title").attr("x", m.l).attr("y", 10).text("Units by realised $/MWh (count)");
+  svg.append("text").attr("class", "axis-title").attr("x", m.l).attr("y", 10).text("Units by realized $/MWh (count)");
   svg.append("text").attr("class", "axis-title").attr("x", w - m.r).attr("y", H - 2).attr("text-anchor", "end").text("$/MWh over the loaded days");
   groups.forEach((g, j) => g.b.forEach((b) => {
     const bw = (x(b.x1) - x(b.x0)) / groups.length;
@@ -125,7 +125,7 @@ function drawEcoUnits() {
     })
     .on("pointerleave", hideTip);
   hel.replaceChildren(svg.node());
-  setCSV(hel, ["unit", "tech", "realised_usd_per_mwh"], us.map((u) => [u.name, u.tech, u.pmwh]), "Realised $/MWh distribution");
+  setCSV(hel, ["unit", "tech", "realized_usd_per_mwh"], us.map((u) => [u.name, u.tech, u.pmwh]), "Realized $/MWh distribution");
   // ranked table
   const k = S.ecoSort === "rank" ? "pmwh" : S.ecoSort;
   us = [...us].sort((a, b) => { const p = a[k], q = b[k]; if (p == null) return 1; if (q == null) return -1; return (typeof p === "string" ? p.localeCompare(q) : p - q) * S.ecoDir; });
@@ -138,7 +138,7 @@ function drawEcoUnits() {
     const kk = th.dataset.k; if (S.ecoSort === kk) S.ecoDir = -S.ecoDir; else { S.ecoSort = kk; S.ecoDir = ["name", "tech", "sp"].includes(kk) ? 1 : -1; }
     drawEcoUnits(); saveView();
   }));
-  setCSV(el, ["unit", "tech", "settlement_point", "realised_usd_per_mwh", "mwh", "revenue", "capacity_factor", "curtailed_share", "days"], us.map((u) => [u.name, u.tech, u.sp, u.pmwh, u.mwh, u.rev, u.cf, u.curt, u.days]), "Wind and solar realised revenue");
+  setCSV(el, ["unit", "tech", "settlement_point", "realized_usd_per_mwh", "mwh", "revenue", "capacity_factor", "curtailed_share", "days"], us.map((u) => [u.name, u.tech, u.sp, u.pmwh, u.mwh, u.rev, u.cf, u.curt, u.days]), "Wind and solar realized revenue");
 }
 
 // ---- links and boot --------------------------------------------------------------------

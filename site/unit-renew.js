@@ -27,8 +27,8 @@ const S = { unit: null, data: null, R: null, O: null };
 const CH = { range: null };
 function emptyMsg(el, msg) { el.innerHTML = `<p class="empty">${msg}</p>`; }
 
-// offer against the DA price at the best point, one dot per formula hour, coloured by date; formula
-// hours before the current formula regime (u.since) faded grey and left out of the fit
+// offer against the DA price at the best point, one dot per formula hour, colored by date; formula
+// hours before the current formula regime (u.since) faded gray and left out of the fit
 function fitChart(el, u, pts, old) {
   const D = S.data, w = Math.max(280, el.clientWidth || 600), H = 340, m = { t: 18, r: 16, b: 38, l: 64 };
   if (!pts || !pts.length) return emptyMsg(el, "No formula hours to plot.");
@@ -213,7 +213,7 @@ function winText(im) {
 const perDay = (im) => (im.days ? ((im.up || 0) + (im.dn || 0)) / im.days : null);
 function impactText(e) {
   const im = e.impact;
-  if (!im) return `<span class="muted">${e.before.k === "v" ? "no fixed old offer" : "no hourly data"}</span>`;
+  if (!im) return `<span class="muted">${e.before.k === "v" ? "not estimated, old offer moved within the day" : "no hourly data"}</span>`;
   const da = im.est > 0.5 ? ", DA price" : "", win = winText(im);
   if (!e.moved) return `<span class="muted">no${win ? `, ${win}` : ""}${da}</span>`;
   const parts = [];
@@ -311,7 +311,7 @@ function histChart(el, name, P, evs) {
     .attr("d", (p) => (p.md > y1 ? "M0,-4L4,3L-4,3Z" : "M0,4L4,-3L-4,-3Z"))
     .attr("transform", (p) => `translate(${x(p.t)},${p.md > y1 ? m.t + 4 : H - m.b - 4})`)
     .attr("fill", (p) => (p.k === "x" ? css("--c3") : p.k === "v" ? css("--c4") : css("--ink-2")));
-  // floor days a short grey dash (a flat price), formula and moving days coloured squares: circles
+  // floor days a short gray dash (a flat price), formula and moving days colored squares: circles
   // on this site mean online (filled) or offline (hollow), so none here
   const inP = P.filter((p) => p.md != null && inside(p.md));
   svg.append("g").selectAll("line").data(inP.filter((p) => p.k === "f")).join("line")
