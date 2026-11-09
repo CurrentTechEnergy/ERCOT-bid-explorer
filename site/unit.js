@@ -1132,7 +1132,8 @@ function drawBare(e) {
       if (S.unit !== e.name) return;
       const has = !$("dec-years").hidden;
       $("dec-panel").hidden = !has;
-      if (has) $("unit-verdict").textContent = $("unit-verdict").textContent.replace(", so there is nothing to chart.", ".") + " How it spent each year since 2019 is below.";
+      const v = $("unit-verdict"), line = " How it spent each year since 2019 is below.";   // draw can run twice (resize): add the line once
+      if (has && !v.textContent.includes(line)) v.textContent = v.textContent.replace(", so there is nothing to chart.", ".") + line;
     });
   }
 }
