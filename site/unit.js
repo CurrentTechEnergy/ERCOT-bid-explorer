@@ -521,7 +521,8 @@ async function drawCoalYears(e) {
 
 // combustion turbines: each calendar year from 2019, the day-ahead price at its node over the hours it
 // was online, divided by that day's Ship Channel gas price (an implied heat rate), as a box (25th to
-// 75th percentile), whisker (10th to 90th) and median, with the 10th percentile dotted
+// 75th percentile) and median, with a stem down to the 10th percentile dot (the cheap end; the top
+// tenth is left off, as how high it would run says little)
 // (data/ct_years.json.gz, pipeline/ct_years.py; rows [unit, year, hours, p10, p25, p50, p75, p90])
 const CT_MIN_HOURS = 100, CT_TOP = 40;      // fewer hours online: no box; the histogram stops at 40 MMBtu/MWh
 async function drawCTYears(e) {
@@ -554,14 +555,14 @@ async function drawCTYears(e) {
     svg.append("text").attr("x", cx).attr("y", H - m.b + 27).attr("text-anchor", "middle").attr("font-size", 10).attr("fill", css("--muted")).text(narrow ? d3.format("~s")(c.n) : `${d3.format(",")(c.n)} h`);
     if (!ok(yr)) { svg.append("text").attr("x", cx).attr("y", y((lo + CT_TOP) / 2)).attr("text-anchor", "middle").attr("font-size", 11).attr("fill", css("--muted")).text("–"); return; }
     const g = svg.append("g");
-    g.append("line").attr("x1", cx).attr("x2", cx).attr("y1", cap(c.p90)).attr("y2", cap(c.p10)).attr("stroke", col).attr("stroke-width", 1.5);
+    g.append("line").attr("x1", cx).attr("x2", cx).attr("y1", cap(c.p25)).attr("y2", cap(c.p10)).attr("stroke", col).attr("stroke-width", 1.5);
     g.append("rect").attr("x", x(yr)).attr("width", bw).attr("y", cap(c.p75)).attr("height", Math.max(1, cap(c.p25) - cap(c.p75))).attr("fill", col).attr("fill-opacity", 0.35);
     g.append("line").attr("x1", x(yr)).attr("x2", x(yr) + bw).attr("y1", cap(c.p50)).attr("y2", cap(c.p50)).attr("stroke", css("--ink")).attr("stroke-width", 2);
     g.append("circle").attr("cx", cx).attr("cy", cap(c.p10)).attr("r", 3.5).attr("fill", css("--ink"));
     const f = (v) => (v >= CT_TOP ? `${CT_TOP}+` : d3.format(".1f")(v));
     g.append("rect").attr("x", x(yr) - 4).attr("width", bw + 8).attr("y", m.t).attr("height", H - m.b - m.t).attr("fill", "transparent")
       .on("pointermove", (ev) => showTip(ev, `<h4>${yr}${part(yr) ? ` (to ${esc(part(yr))})` : ""}</h4><table><tr><td>Hours online</td><td class="n">${d3.format(",")(c.n)}</td></tr>` +
-        [["Cheapest tenth below", c.p10], ["Quarter below", c.p25], ["Median", c.p50], ["Quarter above", c.p75], ["Top tenth above", c.p90]].map(([l, v]) => `<tr><td>${l}</td><td class="n">${f(v)}</td></tr>`).join("") + "</table>MMBtu/MWh: its node's day-ahead price ÷ Ship Channel gas."))
+        [["Cheapest tenth below", c.p10], ["Quarter below", c.p25], ["Median", c.p50], ["Quarter above", c.p75]].map(([l, v]) => `<tr><td>${l}</td><td class="n">${f(v)}</td></tr>`).join("") + "</table>MMBtu/MWh: its node's day-ahead price ÷ Ship Channel gas."))
       .on("pointerleave", hideTip);
   });
   el.replaceChildren(svg.node());
