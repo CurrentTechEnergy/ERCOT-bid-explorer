@@ -8,7 +8,7 @@
    Enter in the Unit box opens the first unit listed. */
 (() => {
 "use strict";
-const { setCSV, esc, unitIndex, findUnits } = window.CX;
+const { setCSV, esc, unitIndex, findUnits, tryJSON } = window.CX;
 const $ = (id) => document.getElementById(id);
 const TECHS = [
   { id: "all", label: "All" }, { id: "nuclear", label: "Nuclear" }, { id: "coal", label: "Coal & lignite" },
@@ -38,6 +38,7 @@ const COLS = [
   { k: "group", h: "Group", t: 1, f: (u) => (u.group ? GROUP_SHORT[u.group] || esc(u.group) : "–") },
   { k: "mw", h: "Capacity (MW)", f: (u) => (u.mw == null ? "–" : d3.format(",")(u.mw)) },
   ...COMMIT.map(shareCol),
+  { k: "shut_chg", h: "Shut rate where shutting paid", show: () => S.shut && (S.tech === "all" || S.tech === "combined_cycle" || S.tech === "gas_steam"), f: (u) => shutCell(u) },
   { k: "plant", h: "Name (CDR)", t: 1, f: (u) => (u.plant ? esc(u.plant) + (u.match === "site" ? ' <span class="tag" title="Matched by plant, not by unit">plant</span>' : "") : "–") +
     (u.aliases?.length ? `<br><span class="muted">also ${esc(u.aliases.join(", "))}</span>` : "") },
   { k: "county", h: "County", t: 1, f: (u) => esc(u.county || "–") },
@@ -47,11 +48,36 @@ const COLS = [
   { k: "sp", h: "Settlement point", t: 1, f: (u) => esc(u.sp || "–") },
   { k: "configs", h: "Configurations", t: 1, f: (u) => (u.configs.length ? esc(u.configs.join(", ")) : "") },
 ];
-const S = { units: null, tech: "all", sort: "unit", dir: 1, shown: [], f: { type: "", group: "", zone: "", qse: "" }, chip: {}, min: 0 };
+// each CC and gas steam unit's shut rate where shutting paid (goal.json.gz q3.units rows: [train, tech, year, windows, share
+// shut, LSL]), averaged over the base years and over 2024 on, years with at least q3.unit_min windows only; the same
+// numbers as the Unit page's year-by-year strip (unit.js drawDecYears)
+function shutRates(G) {
+  const q = G?.q3;
+  if (!q?.units?.length) return null;
+  const min = q.unit_min, b0 = q.base_years[0], b1 = q.base_years.at(-1), by = new Map();
+  for (const r of q.units) { if (r[3] < min) continue; if (!by.has(r[0])) by.set(r[0], []); by.get(r[0]).push(r); }
+  const out = new Map();
+  for (const [u, rs] of by) {
+    const avg = (f) => { const v = rs.filter((r) => f(r[2])).map((r) => r[4]); return v.length ? d3.mean(v) : null; };
+    const early = avg((y) => y >= b0 && y <= b1), late = avg((y) => y >= 2024);
+    out.set(u, { early, late, chg: early != null && late != null ? late - early : null });
+  }
+  out.min = min;
+  out.base = b0 === b1 ? `${b0}` : `${b0}–${String(b1).slice(2)}`;
+  return out;
+}
+const shutCell = (u) => {
+  const r = S.shut?.get(u.unit);
+  if (!r || (r.early == null && r.late == null)) return "–";
+  const pt = (v) => (v == null ? "–" : `${Math.round(100 * v)}%`);
+  return `<span title="Turned off for ${pt(r.early)} of stretches where shutting paid in ${S.shut.base}, ${pt(r.late)} from 2024 on">${pt(r.early)} → ${pt(r.late)}` +
+    (r.chg != null ? ` <span class="muted">(${r.chg > 0 ? "+" : r.chg < 0 ? "−" : "±"}${Math.abs(Math.round(100 * r.chg))})</span>` : "") + "</span>";
+};
+const S = { units: null, shut: null, tech: "all", sort: "unit", dir: 1, shown: [], f: { type: "", group: "", zone: "", qse: "" }, chip: {}, min: 0 };
 const chipsOn = () => COMMIT.filter((c) => S.chip[c.k] === "yes" || S.chip[c.k] === "no");
 const SELECTS = ["type", "group", "zone", "qse"];
 const qseOf = (u) => u.qse || "";
-const sortVal = (u, k) => (k === "group" ? (u.group ? GROUP_ORDER.indexOf(u.group) : null) : k === "configs" ? u.configs.length : k === "qse" ? u.qse_name || u.qse : u[k]);
+const sortVal = (u, k) => (k === "shut_chg" ? S.shut?.get(u.unit)?.chg ?? null : k === "group" ? (u.group ? GROUP_ORDER.indexOf(u.group) : null) : k === "configs" ? u.configs.length : k === "qse" ? u.qse_name || u.qse : u[k]);
 
 // every filter but the text search; each dropdown lists only values present under the other filters
 function passes(u, skip) {
@@ -78,7 +104,7 @@ function draw() {
   if (!S.units) return;
   if (!S.units.length) { el.innerHTML = `<p class="empty">The unit list is not available.</p>`; return; }
   const us = S.shown = rows();
-  const cols = COLS.filter((c) => !c.opt || S.units.some((u) => u[c.k]));      // QSE and decision maker only once the data has them
+  const cols = COLS.filter((c) => (c.show ? c.show() : !c.opt || S.units.some((u) => u[c.k])));      // QSE and decision maker only once the data has them
   const q = $("unit-pick").value.trim(), of = S.units.filter((u) => S.tech === "all" || u.tech === S.tech).length;
   const more = SELECTS.some((k) => S.f[k]) || chipsOn().length;
   $("dir-note").textContent = (q || more ? `${us.length} of ${of}` : `${of}`) + (S.tech === "all" ? " units" : ` ${TECH_LABEL[S.tech].toLowerCase()} units`) +
@@ -88,11 +114,11 @@ function draw() {
     us.map((u) => `<tr>${cols.map((c) => `<td${c.t ? ' class="t"' : ""}>${c.f(u)}</td>`).join("")}</tr>`).join("") + "</tbody></table>"
     : `<p class="empty">No unit matches. Try part of the name or the settlement point.</p>`;
   el.querySelectorAll("th[data-k]").forEach((th) => th.addEventListener("click", () => {
-    const k = th.dataset.k; if (S.sort === k) S.dir = -S.dir; else { S.sort = k; S.dir = ["mw", "configs", "qs", "self", "offer", "dam", "out"].includes(k) ? -1 : 1; }
+    const k = th.dataset.k; if (S.sort === k) S.dir = -S.dir; else if (k === "shut_chg") { S.sort = k; S.dir = 1; } else { S.sort = k; S.dir = ["mw", "configs", "qs", "self", "offer", "dam", "out"].includes(k) ? -1 : 1; }
     draw();
   }));
-  setCSV(el, ["unit", "technology", "ercot_type", "group", "capacity_mw", "quick_start_share", "self_committed_share", "three_part_offer_share", "dam_award_share", "outage_share", "dam_days", "cdr_name", "cdr_match", "other_names", "county", "zone", "decision_maker", "owner", "qse", "qse_name", "settlement_point", "configurations"],
-    us.map((u) => [u.unit, u.tech, u.type, u.group, u.mw, u.qs, u.self, u.offer, u.dam, u.out, u.dam_days, u.plant, u.match, (u.aliases || []).join("; "), u.county, u.zone, u.dme, u.owner, u.qse, u.qse_name, u.sp, u.configs.join(" ")]), "Units");
+  setCSV(el, ["unit", "technology", "ercot_type", "group", "capacity_mw", "quick_start_share", "self_committed_share", "three_part_offer_share", "dam_award_share", "outage_share", "dam_days", "cdr_name", "cdr_match", "other_names", "county", "zone", "decision_maker", "owner", "qse", "qse_name", "settlement_point", "configurations", "shut_rate_base_years", "shut_rate_2024_on", "shut_rate_change"],
+    us.map((u) => { const r = S.shut?.get(u.unit); return [u.unit, u.tech, u.type, u.group, u.mw, u.qs, u.self, u.offer, u.dam, u.out, u.dam_days, u.plant, u.match, (u.aliases || []).join("; "), u.county, u.zone, u.dme, u.owner, u.qse, u.qse_name, u.sp, u.configs.join(" "), r?.early ?? "", r?.late ?? "", r?.chg ?? ""]; }), "Units");
 }
 
 // the dropdowns: values present among the units passing every other filter, with counts; a picked value always stays listed
@@ -187,6 +213,9 @@ async function boot() {
   for (const c of COMMIT) if (!has(c.k)) { cm.querySelector(`[data-k="${c.k}"]`).closest(".chip").hidden = true; delete S.chip[c.k]; }   // shares the next update adds
   $("dir-presets").querySelectorAll("button").forEach((b) => { b.hidden = Object.keys(PRESETS[+b.dataset.i].chips).some((k) => !has(k)); }); $("dir-type").closest(".ctl").hidden = !has("type");
   draw();
+  // the shut-rate column: the goal page's data, after the table is up
+  S.shut = shutRates(await tryJSON("data/goal.json.gz"));
+  if (S.shut) { COLS.find((c) => c.k === "shut_chg").h = `Shut rate where shutting paid, ${S.shut.base} → 2024 on`; $("dir-shut-base").textContent = S.shut.base; $("dir-shut-min").textContent = S.shut.min; draw(); }
 }
 boot();
 })();
