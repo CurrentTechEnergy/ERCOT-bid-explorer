@@ -76,6 +76,7 @@ from .renew_years import build_renew_years
 from . import prices_years
 from . import lsl_floor
 from . import coal_years
+from . import ct_years
 from .unit_index import build_unit_index
 from . import share_pages
 from . import memo, qse
@@ -674,6 +675,10 @@ def main(argv=None):
         coal_years.build()         # coal Unit page "Year by year"; 2019 to Nov 2025 come from the Goal workflow's --full
     except Exception as e:
         warn(f"coal_years: failed: {e!r}; coal_years.json.gz left as it is")
+    try:
+        ct_years.build()           # CT Unit page "the prices it ran at"; 2019 to Nov 2025 come from the Goal workflow's --full
+    except Exception as e:
+        warn(f"ct_years: failed: {e!r}; ct_years.json.gz left as it is")
     if "operator" not in args.skip:
         build_operator_days(index)   # after cop: the Unit page's operator-informed row, new 60-day days only
     build_peaker_oi(index)           # the Commitment and Unit pages' combustion turbine turn-on points

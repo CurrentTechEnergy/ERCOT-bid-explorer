@@ -413,6 +413,7 @@ async function drawDecYears(e) {
   const box = $("dec-years");
   $("dec-years-legend").hidden = true;
   if (e.tech === "coal") return drawCoalYears(e);
+  if (e.tech === "combustion_turbine") return drawCTYears(e);
   if (e.tech !== "combined_cycle" && e.tech !== "gas_steam") { box.hidden = true; return; }
   $("dec-years-h").textContent = "Year by year: when shutting would have paid, how often it stayed on";
   if (S.GOAL === undefined) S.GOAL = await tryJSON("data/goal.json.gz");
@@ -516,6 +517,61 @@ async function drawCoalYears(e) {
     (d != null ? ` <b>It was online in ${fmtPct(early)} of them in 2019 to 2021 and ${fmtPct(late)} from 2024 on, ${Math.abs(Math.round(100 * d))} points ${d < 0 ? "less" : "more"} often.</b>` : "") +
     (ys.some(part) ? " * Part year." : "");
   setCSV(el, ["year", "hours", "online", "offline", "outage", "cheap_hours_available", "cheap_hours_online"], ys.filter((y) => by.has(y)).map((y) => { const c = by.get(y); return [y, c.hours, c.on, c.off, c.out, c.ca, c.co]; }), `${e.name} year by year`);
+}
+
+// combustion turbines: each calendar year from 2019, the day-ahead price at its node over the hours it
+// was online, divided by that day's Ship Channel gas price (an implied heat rate), as a box (25th to
+// 75th percentile) and median, with the 10th percentile as a dot (the cheap end; no whiskers)
+// (data/ct_years.json.gz, pipeline/ct_years.py; rows [unit, year, hours, p10, p25, p50, p75, p90])
+const CT_MIN_HOURS = 100, CT_TOP = 40;      // fewer hours online: no box; the histogram stops at 40 MMBtu/MWh
+async function drawCTYears(e) {
+  const box = $("dec-years");
+  $("dec-years-h").textContent = "Year by year: the prices it ran at";
+  if (S.CTY === undefined) S.CTY = await tryJSON("data/ct_years.json.gz");
+  if (S.unit !== e.name) return;
+  const C = S.CTY, rows = C?.rows ? C.rows.filter((r) => r[0] === e.name) : [];
+  box.hidden = !rows.some((r) => r[2] >= CT_MIN_HOURS);
+  if (box.hidden) return;
+  const by = new Map(rows.map((r) => [r[1], { n: r[2], p10: r[3], p25: r[4], p50: r[5], p75: r[6], p90: r[7] }]));
+  const y1 = d3.max(C.rows, (r) => r[1]), ys = d3.range(2019, y1 + 1);
+  const part = (y) => (C.through && +C.through.slice(0, 4) === y && C.through.slice(5) !== "12-31" ? C.through : null);
+  const ok = (y) => by.has(y) && by.get(y).n >= CT_MIN_HOURS;
+  const el = $("dec-years-chart"), w = Math.max(280, el.clientWidth || 600), narrow = w < 560, H = 200, m = { t: 8, r: 4, b: 34, l: narrow ? 40 : 52 };
+  const x = d3.scaleBand().domain(ys).range([m.l, w - m.r]).paddingInner(0.3);
+  const lo = Math.min(0, Math.floor(d3.min(ys.filter(ok), (yr) => by.get(yr).p10) / 5) * 5);
+  const y = d3.scaleLinear().domain([lo, CT_TOP]).range([H - m.b, m.t]);
+  const col = css((TECH_OF[e.tech] || {}).color || "--c2"), svg = d3.create("svg").attr("viewBox", `0 0 ${w} ${H}`);
+  svg.append("g").attr("transform", `translate(${m.l},0)`).call(d3.axisLeft(y).ticks(5).tickSize(-(w - m.l - m.r)).tickFormat((v) => (v >= CT_TOP ? `${v}+` : v)))
+    .call((g) => { g.select(".domain").remove(); g.selectAll("line").attr("stroke", css("--grid")); g.selectAll("text").attr("fill", css("--muted")); });
+  svg.append("text").attr("transform", `translate(11,${(H - m.b + m.t) / 2}) rotate(-90)`).attr("text-anchor", "middle").attr("font-size", 11).attr("fill", css("--muted"))
+    .text(narrow ? "Implied heat rate" : "Implied heat rate (MMBtu/MWh)");
+  const cap = (v) => y(Math.min(v, CT_TOP));
+  ys.forEach((yr) => {
+    const c = by.get(yr), cx = x(yr) + x.bandwidth() / 2, bw = x.bandwidth();
+    svg.append("text").attr("x", cx).attr("y", H - m.b + 14).attr("text-anchor", "middle").attr("font-size", narrow ? 10 : 11).attr("fill", css("--muted"))
+      .text(`${narrow ? `'${String(yr).slice(2)}` : yr}${part(yr) ? "*" : ""}`);
+    if (!c) return;
+    svg.append("text").attr("x", cx).attr("y", H - m.b + 27).attr("text-anchor", "middle").attr("font-size", 10).attr("fill", css("--muted")).text(narrow ? d3.format("~s")(c.n) : `${d3.format(",")(c.n)} h`);
+    if (!ok(yr)) { svg.append("text").attr("x", cx).attr("y", y((lo + CT_TOP) / 2)).attr("text-anchor", "middle").attr("font-size", 11).attr("fill", css("--muted")).text("–"); return; }
+    const g = svg.append("g");
+    g.append("rect").attr("x", x(yr)).attr("width", bw).attr("y", cap(c.p75)).attr("height", Math.max(1, cap(c.p25) - cap(c.p75))).attr("fill", col).attr("fill-opacity", 0.35);
+    g.append("line").attr("x1", x(yr)).attr("x2", x(yr) + bw).attr("y1", cap(c.p50)).attr("y2", cap(c.p50)).attr("stroke", css("--ink")).attr("stroke-width", 2);
+    g.append("circle").attr("cx", cx).attr("cy", cap(c.p10)).attr("r", 3.5).attr("fill", css("--ink"));
+    const f = (v) => (v >= CT_TOP ? `${CT_TOP}+` : d3.format(".1f")(v));
+    g.append("rect").attr("x", x(yr) - 4).attr("width", bw + 8).attr("y", m.t).attr("height", H - m.b - m.t).attr("fill", "transparent")
+      .on("pointermove", (ev) => showTip(ev, `<h4>${yr}${part(yr) ? ` (to ${esc(part(yr))})` : ""}</h4><table><tr><td>Hours online</td><td class="n">${d3.format(",")(c.n)}</td></tr>` +
+        [["Cheapest tenth below", c.p10], ["Quarter below", c.p25], ["Median", c.p50], ["Quarter above", c.p75]].map(([l, v]) => `<tr><td>${l}</td><td class="n">${f(v)}</td></tr>`).join("") + "</table>MMBtu/MWh: its node's day-ahead price ÷ Ship Channel gas."))
+      .on("pointerleave", hideTip);
+  });
+  el.replaceChildren(svg.node());
+  const lg = $("dec-years-legend");
+  lg.hidden = false;
+  lg.innerHTML = `<span><span class="sw" style="background:var(${(TECH_OF[e.tech] || {}).color || "--c2"});opacity:.35"></span>Middle half of its hours online</span><span><span class="sw sw-line" style="border-top:2px solid var(--ink)"></span>Median</span><span><span class="sw sw-on"></span>Cheapest tenth of its hours</span>`;
+  const full = ys.filter((yr) => ok(yr) && !part(yr)), a = full[0], b = full.at(-1);
+  $("dec-years-note").innerHTML = `Each year, the day-ahead price at its node in the hours it ran, divided by that day's Houston Ship Channel gas price, so years with different gas prices compare. A combustion turbine burns about 10 to 11 MMBtu per MWh, so below that it ran under its fuel cost.` +
+    (a != null && b != null && a !== b ? ` <b>It was willing to run down to a heat rate of about ${d3.format(".1f")(by.get(a).p10)} in ${a} and ${d3.format(".1f")(by.get(b).p10)} in ${b}.</b>` : "") +
+    (ys.some(part) ? " * Part year." : "");
+  setCSV(el, ["year", "hours_online", "p10", "p25", "median", "p75", "p90"], ys.filter((yr) => by.has(yr)).map((yr) => { const c = by.get(yr); return [yr, c.n, c.p10, c.p25, c.p50, c.p75, c.p90]; }), `${e.name} prices it ran at by year`);
 }
 
 // combustion turbines: each day it went into some hour offline, the operator model's
