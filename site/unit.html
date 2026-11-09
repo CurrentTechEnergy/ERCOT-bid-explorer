@@ -31,7 +31,10 @@
   .dot-legend { display: inline-flex; align-items: center; gap: 6px; }
   .dot-legend .ramp { width: 120px; height: 10px; border-radius: 3px; }
   .ctl-row { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 10px 18px; margin: 4px 0 10px; }
-  body.bare-unit main > section.panel:not(#unit-empty) { display: none !important; }
+  body.bare-unit main > section.panel:not(#unit-empty):not(.bare-keep) { display: none !important; }
+  /* a bare coal unit keeps its year-by-year history (drawBare): only that part of Decision history shows */
+  body.bare-unit #dec-panel.bare-keep > :not(.panel-head):not(#dec-years),
+  body.bare-unit #dec-panel.bare-keep .panel-head :is(p, details) { display: none !important; }
   .chips { display: flex; flex-wrap: wrap; gap: 8px 14px; }
   .chip { display: inline-flex; align-items: center; gap: 6px; }
   .chip-l { font-size: 13px; color: var(--ink-2); }
@@ -158,8 +161,9 @@
       </div>
     </div>
     <div id="dec-years" hidden>
-      <h3 class="sub-h">Year by year: when shutting would have paid, how often it shut</h3>
+      <h3 class="sub-h" id="dec-years-h">Year by year: when shutting would have paid, how often it stayed on</h3>
       <p class="note" id="dec-years-note"></p>
+      <div class="legend legend-static" id="dec-years-legend" hidden></div>
       <div class="chart" id="dec-years-chart" style="min-height: 0"></div>
     </div>
     <div class="ctl-row" id="dec-range-row" hidden>
