@@ -14,15 +14,20 @@ clipped to [0, HSL]), then raised to its LSL, since SCED cannot take it below th
 averaged over each hour's runs.  `min` is what the units online run at whatever the price: their
 MW offered just above the -$250 offer floor (FLOOR), at least their LSL.  That is more than the
 LSL alone for units that offer their whole output at the floor, such as nuclear (LSL about 1,450
-MW in all, about 5,000 MW offered at -$249.99), so the line meets the stack's left edge.  `max`
-is the online maximum.
+MW in all, about 5,000 MW offered at -$249.99), so it meets the stack's left edge.  `floor` is the
+system floor, defined as on A day in ERCOT and Turn-ons and Turn-offs (pipeline/lsl_floor.py): each
+online fossil unit at its LSL and nuclear at its hourly output, per SCED run, so a unit online for a
+third of the hour adds a third.  It is `min` except where a unit offers less than its output at the
+floor; nuclear offering part of its output between -$250 and $0 (Comanche Peak on a few days in
+2025-26, about 1,000 MW a unit) puts `floor` above the stack's left edge by those MW.  `max` is the
+online maximum.
 
 data/stack/<date>.json.gz
   date, format
   prices        the price grid ($/MWh)
   groups, techs the keys below, in display order
-  group[g] / tech[t]: {mw: [24][len(prices)], min: [24], max: [24], n: [24] units online}
-  fleet         {mw, min, max, n} for all thermal units online
+  group[g] / tech[t]: {mw: [24][len(prices)], min: [24], floor: [24], max: [24], n: [24] units online}
+  fleet         {mw, min, floor, max, n} for all thermal units online
 Days are written once (all of them again when FORMAT changes) and pruned with the 60-day data.  Groups are
 groups_60d.json.gz's (by train); nuclear, which groups.py leaves out, counts as "never".  A unit
 groups_60d flags as a peaker (column 9: by how it runs, whatever its technology) goes in "peakers"
@@ -37,7 +42,7 @@ from .store import read_json_gz, write_json_gz
 from .units import _ffill_index
 
 OUT_DIR = DATA_DIR / "stack"
-FORMAT = 5   # 2: minimum at the -$250 floor; 3: units online with no output and no HSL left out; 4: seasonal folded into multiday; 5: peakers out of their groups
+FORMAT = 6   # 2: minimum at the -$250 floor; 3: units online with no output and no HSL left out; 4: seasonal folded into multiday; 5: peakers out of their groups; 6: floor (the system floor)
 FLOOR = -249.99
 PRICES = np.concatenate([
     [-250, -100, -75, -50, -40, -30, -25, -20, -15, -10, -5],
@@ -58,8 +63,8 @@ def day_stack(ud: dict, group_of: dict, peaker: set = frozenset()) -> dict:
     hr = np.minimum(np.array(ud["runs"], int) // 60, 23)
     n_hr = np.bincount(hr, minlength=24).astype(float)
     G = PRICES.size
-    acc = {("group", g): [np.zeros((24, G)), np.zeros(24), np.zeros(24), np.zeros(24)] for g in GROUPS}
-    acc.update({("tech", t): [np.zeros((24, G)), np.zeros(24), np.zeros(24), np.zeros(24)] for t in TECHS})
+    acc = {("group", g): [np.zeros((24, G)), np.zeros(24), np.zeros(24), np.zeros(24), np.zeros(24)] for g in GROUPS}
+    acc.update({("tech", t): [np.zeros((24, G)), np.zeros(24), np.zeros(24), np.zeros(24), np.zeros(24)] for t in TECHS})
     for name, u in ud["units"].items():
         if u["tech"] not in TECHS:
             continue
@@ -98,16 +103,17 @@ def day_stack(ud: dict, group_of: dict, peaker: set = frozenset()) -> dict:
         lo_r, hi_r = np.where(has, floor, flat), np.where(has, np.maximum(hsl, lsl), flat)
         w = np.zeros((24, n))
         w[hr[online], np.where(online)[0]] = 1.0
-        mw, mn, mx, cnt = w @ rows, w @ lo_r, w @ hi_r, (w.sum(1) > 0).astype(float)
+        sys_r = flat if u["tech"] == "nuclear" else lsl         # the system floor (pipeline/lsl_floor.py)
+        mw, mn, mx, cnt, fl = w @ rows, w @ lo_r, w @ hi_r, (w.sum(1) > 0).astype(float), w @ sys_r
         g = group_of.get(name) or group_of.get(train_of(name)) or ("never" if u["tech"] == "nuclear" else "ungrouped")
         if name in peaker or train_of(name) in peaker:
             g = "peakers"
         for key in (("group", g if g in GROUPS else "ungrouped"), ("tech", u["tech"])):
             a = acc[key]
-            a[0] += mw; a[1] += mn; a[2] += mx; a[3] += cnt
+            a[0] += mw; a[1] += mn; a[2] += mx; a[3] += cnt; a[4] += fl
     div = np.where(n_hr > 0, n_hr, np.nan)
-    blk = lambda a: {"mw": [_r(row) for row in a[0] / div[:, None]], "min": _r(a[1] / div), "max": _r(a[2] / div), "n": [int(v) for v in a[3]]}
-    fleet = [sum(acc[("tech", t)][i] for t in TECHS) for i in range(4)]
+    blk = lambda a: {"mw": [_r(row) for row in a[0] / div[:, None]], "min": _r(a[1] / div), "max": _r(a[2] / div), "n": [int(v) for v in a[3]], "floor": _r(a[4] / div)}
+    fleet = [sum(acc[("tech", t)][i] for t in TECHS) for i in range(5)]
     return {"date": ud.get("date"), "format": FORMAT, "prices": PRICES.tolist(), "groups": GROUPS, "techs": TECHS,
             "group": {g: blk(acc[("group", g)]) for g in GROUPS}, "tech": {t: blk(acc[("tech", t)]) for t in TECHS},
             "fleet": blk(fleet)}

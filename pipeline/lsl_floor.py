@@ -13,8 +13,11 @@ An hour whose total is under LOW_SHARE of the day's median is a gap in the data 
 
 Inputs (no ERCOT download; both are already on hand):
   history release thermal-YYYY-MM.parquet   state m/a counts as online; lsl, out (to Nov 2025)
-  data/60d-units/{date}.json.gz             online when online_share less ramp_share is at least
-                                            ONLINE (not starting up or shutting down); lsl, output;
+  data/60d-units/{date}.json.gz             each unit weighted by the share of the hour's SCED runs
+                                            it was online and not starting up or shutting down
+                                            (online_share less ramp_share), so a unit online for a
+                                            third of the hour adds a third of its LSL, as the Real-time
+                                            offers stack does (pipeline/actual_stack.py); lsl, output;
                                             for days after the last thermal month
 
 Two files, one writer each, as pipeline/prices_years.py: the weekly Goal workflow runs `--full`
@@ -44,7 +47,6 @@ HIST_PATH = DATA_DIR / "lsl_floor_hist.json.gz"  # 2019 on from the history rele
 FOSSIL = ["coal", "combined_cycle", "gas_steam", "combustion_turbine"]
 TECHS = ["nuclear"] + FOSSIL
 COLUMNS = ["date", "he", *TECHS, "he_fos", *[f"{t}_fos" for t in FOSSIL]]
-ONLINE = 0.5           # share of the hour's SCED runs online, not ramping (60-day unit files)
 LOW_SHARE = 0.4        # an hour under this share of the day's median total is missing rows
 MIN_HOURS = 20         # a day needs this many usable hours to be kept
 
@@ -81,8 +83,9 @@ def _unit_file_hours(after_month):
                 continue
             on = (r[ix["online_share"]] or 0) - ((r[ix["ramp_share"]] or 0) if "ramp_share" in ix else 0)
             mw = r[ix["output"]] if t == "nuclear" else r[ix["lsl"]]
-            if on >= ONLINE and mw is not None:
-                rows.append((day, int(r[1]), t, float(mw)))
+            on = min(max(on, 0.0), 1.0)
+            if on > 0 and mw is not None:
+                rows.append((day, int(r[1]), t, float(mw) * on))
     return pd.DataFrame(rows, columns=["date", "he", "tech", "mw"])
 
 
