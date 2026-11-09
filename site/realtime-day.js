@@ -1,6 +1,6 @@
-/* Beyond baseload, one day: the Day view's price-setting charts (offer curves, marginal offer
+/* Real-time offers, one day: the Day view's price-setting charts (offer curves, marginal offer
    stack, marginal supply, through the day), lifted from the retired Day view. The across-days panels on the same
-   page are beyond-range.js. */
+   page are realtime-range.js. */
 (() => {
 "use strict";
 
@@ -340,7 +340,7 @@ function drawStack() {
     (nucOffered >= 100 ? ` Nuclear offered ${fmtMW(nucOffered)} MW of its output between -$250 and $0 this hour: it counts in the system floor at its output, and in the stack at the prices it was offered.` : "");
 }
 
-// curve_trends.json.gz is the file beyond-range.js also reads, fetched once through the shared cache
+// curve_trends.json.gz is the file realtime-range.js also reads, fetched once through the shared cache
 function drawCurtailDay() {
   CX.drawCurtailDay($("curt-chart"), $("curt-day-legend"), $("curt-title-note"), S.curt, S.date,
     { hour: S.hour, onPick: (h) => { S.hour = h; $("hour").value = h; render(); } });
@@ -353,7 +353,7 @@ const VIEW_KEYS = { loc: "location", xr: "xrange", xmin: "xMin", xmax: "xMax", o
 const HIDE_KEY = { xMin: () => S.xrange !== "custom", xMax: () => S.xrange !== "custom",
   osMin: () => S.osMin === OS_DEFAULT[0] && S.osMax === OS_DEFAULT[1], osMax: () => S.osMin === OS_DEFAULT[0] && S.osMax === OS_DEFAULT[1] };
 function saveView() {
-  // the across-days panels (beyond-range.js) keep their own keys in the same address bar
+  // the across-days panels (realtime-range.js) keep their own keys in the same address bar
   window.CX.writeHash({ ...window.CX.readHash(), date: S.date, he: S.hour + 1, ...Object.fromEntries(Object.entries(VIEW_KEYS)
     .filter(([, sk]) => !(HIDE_KEY[sk] && HIDE_KEY[sk]())).map(([k, sk]) => [k, S[sk]])) });
 }

@@ -723,7 +723,7 @@ function drawUnits() {
 // Offers page on the newest day with curves, on or before this one
 function offersHref(he) {
   const ds = (S.index && S.index.days["2d"]) || [], d = [...ds].reverse().find((x) => x <= S.date) || ds.at(-1);
-  return d ? { href: `beyond.html#date=${d}&he=${he}`, d } : null;
+  return d ? { href: `realtime.html#date=${d}&he=${he}`, d } : null;
 }
 function drawOffersLinks() {
   const b = offersHref(S.hour + 1);
