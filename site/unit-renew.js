@@ -27,11 +27,13 @@ const S = { unit: null, data: null, R: null, O: null };
 const CH = { range: null };
 function emptyMsg(el, msg) { el.innerHTML = `<p class="empty">${msg}</p>`; }
 
-// offer against the DA price at the best point, one dot per formula hour, coloured by date
-function fitChart(el, u, pts) {
+// offer against the DA price at the best point, one dot per formula hour, coloured by date; formula
+// hours before the current formula regime (u.since) faded grey and left out of the fit
+function fitChart(el, u, pts, old) {
   const D = S.data, w = Math.max(280, el.clientWidth || 600), H = 340, m = { t: 18, r: 16, b: 38, l: 64 };
   if (!pts || !pts.length) return emptyMsg(el, "No formula hours to plot.");
-  const xs = pts.map((p) => p[1]), ys = pts.map((p) => p[2]);
+  old = old || [];
+  const all = [...old, ...pts], xs = all.map((p) => p[1]), ys = all.map((p) => p[2]);
   const x = d3.scaleLinear().domain(d3.extent(xs)).nice().range([m.l, w - m.r]);
   const y = d3.scaleLinear().domain(d3.extent([...ys, u.a * x.domain()[0] + u.b, u.a * x.domain()[1] + u.b])).nice().range([H - m.b, m.t]);
   const di = pts.map((p) => p[0]), col = d3.scaleSequential(d3.interpolateRgb(css("--seq-lo"), css("--seq-hi"))).domain([d3.min(di), Math.max(d3.min(di) + 1, d3.max(di))]);
@@ -42,6 +44,8 @@ function fitChart(el, u, pts) {
   if (y.domain()[0] < 0 && y.domain()[1] > 0) svg.append("line").attr("class", "zero").attr("x1", m.l).attr("x2", w - m.r).attr("y1", y(0)).attr("y2", y(0));
   svg.append("text").attr("class", "axis-title").attr("x", m.l).attr("y", 10).text("Offer, $/MWh");
   svg.append("text").attr("class", "axis-title").attr("x", w - m.r).attr("y", H - 4).attr("text-anchor", "end").text(`DA price at ${POINT_LABEL(u.point, u)}, $/MWh`);
+  svg.append("g").selectAll("circle").data(old).join("circle")
+    .attr("cx", (p) => x(p[1])).attr("cy", (p) => y(p[2])).attr("r", 2.5).attr("fill", "none").attr("stroke", css("--c-other")).attr("stroke-opacity", 0.6);
   svg.append("g").selectAll("circle").data(pts).join("circle")
     .attr("cx", (p) => x(p[1])).attr("cy", (p) => y(p[2])).attr("r", 3).attr("fill", (p) => col(p[0])).attr("fill-opacity", 0.85)
     .attr("stroke", css("--surface")).attr("stroke-width", 0.5);
@@ -51,14 +55,14 @@ function fitChart(el, u, pts) {
   svg.append("path").attr("d", d3.line()(line)).attr("fill", "none")
     .attr("stroke", css("--c8")).attr("stroke-width", 1.5).attr("stroke-dasharray", "5 3");
   const ring = svg.append("circle").attr("r", 6).attr("fill", "none").attr("stroke", css("--ink")).style("display", "none");
-  const tree = d3.quadtree(pts, (p) => x(p[1]), (p) => y(p[2]));
+  const isOld = new Set(old), tree = d3.quadtree(all, (p) => x(p[1]), (p) => y(p[2]));
   svg.append("rect").attr("x", m.l).attr("y", m.t).attr("width", w - m.l - m.r).attr("height", H - m.t - m.b).attr("fill", "transparent")
     .on("pointermove", (ev) => {
       const [px, py] = d3.pointer(ev), p = tree.find(px, py, 30);
       if (!p) { ring.style("display", "none"); hideTip(); return; }
       ring.style("display", null).attr("cx", x(p[1])).attr("cy", y(p[2]));
       const pred = fy(p[1]);
-      showTip(ev, `<h4>${fmtDate(parseDate(D.dates[p[0]]))}</h4><table>` +
+      showTip(ev, `<h4>${fmtDate(parseDate(D.dates[p[0]]))}</h4>${isOld.has(p) ? `<p class="muted">Before the current formula, not in the fit</p>` : ""}<table>` +
         `<tr><td>DA at ${esc(POINT_LABEL(u.point, u))}</td><td class="n">${fmt$(p[1])}</td></tr>` +
         `<tr><td>Offer</td><td class="n">${fmt$(p[2])}</td></tr>` +
         `<tr><td>Formula</td><td class="n">${fmt$(pred)}</td></tr>` +
@@ -66,9 +70,10 @@ function fitChart(el, u, pts) {
     })
     .on("pointerleave", () => { ring.style("display", "none"); hideTip(); });
   el.replaceChildren(svg.node());
-  setCSV(el, ["date", "da_price", "offer"], pts.map((p) => [D.dates[p[0]], p[1], p[2]]), `${u.name} offer vs DA`);
+  setCSV(el, ["date", "da_price", "offer", "in_fit"], all.map((p) => [D.dates[p[0]], p[1], p[2], !isOld.has(p)]), `${u.name} offer vs DA`);
   const d0 = D.dates[d3.min(di)], d1 = D.dates[d3.max(di)];
   $("fit-legend").innerHTML = `<span class="dot-legend">Formula hours, by date <span class="muted">${d0}</span><span class="ramp" style="background:linear-gradient(90deg, ${css("--seq-lo")}, ${css("--seq-hi")})"></span><span class="muted">${d1}</span></span>` +
+    (old.length ? `<span><span class="sw" style="background:none;border:1px solid var(--c-other);border-radius:50%;opacity:0.7"></span>Earlier, non-current fits (before ${u.since}): not in the formula</span>` : "") +
     `<span><span class="sw-line" style="border-top-color:var(--c8)"></span>Fitted formula${u.cap != null ? `, capped at ${fmt$(u.cap)}` : ""}</span>`;
 }
 
@@ -175,8 +180,9 @@ function drawUnit() {
     : u.capped === false ? "Uncapped: its offers followed the formula above $0." : "No cap tested: the formula never rose high enough to show one.";
   const alt = (u.alt || []).map(([p, h]) => `${POINT_LABEL(p, u)} ${fmtPct(h)}`).join(", ");
   $("ppa-note").textContent = `${TIER[u.tier].label}: the formula above fits ${fmtPct(u.hit)} of its ${fmt0(u.hours)} formula hours within $${S.data.hit_usd}/MWh, on ${u.days} days from ${u.first} to ${u.last}` +
-    `${alt ? `; the next best settlement points fit ${alt}` : ""}. ${capTxt} ${strikeTxt} ${habit}` + (u.group ? ` Bid on the same rule as ${S.data.units.filter((v) => v.group === u.group && v.name !== u.name).map((v) => v.name).join(", ")}.` : "");
-  fitChart($("fit-chart"), u, S.data.fits[u.name]);
+    `${alt ? `; the next best settlement points fit ${alt}` : ""}. ` +
+    (u.since ? `Only its current formula is fitted, from ${u.since}, the change dated in the bidding history below; the faded rings are earlier, non-current fits. ` : "") + `${capTxt} ${strikeTxt} ${habit}` + (u.group ? ` Bid on the same rule as ${S.data.units.filter((v) => v.group === u.group && v.name !== u.name).map((v) => v.name).join(", ")}.` : "");
+  fitChart($("fit-chart"), u, S.data.fits[u.name], (S.data.fits_old || {})[u.name]);
   dailyChart($("daily-chart"), u);
 }
 

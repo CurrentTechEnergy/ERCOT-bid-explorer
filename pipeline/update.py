@@ -550,8 +550,8 @@ def main(argv=None):
         memo.run("curtail_nodes", build_node_curtail, index)
         memo.run("marginal_nodes", build_marginal_nodes, index)
         memo.run("econ", build_econ, index)
-        build_ppa(index)
         build_renew_changes(index)
+        build_ppa(index)               # after the bidding changes: fits the current formula regime
         build_dam_offers(index)
         build_offtakers(index)
         build_series(index)
@@ -646,8 +646,8 @@ def main(argv=None):
     memo.run("marginal_nodes", build_marginal_nodes, index)
     build_fuel_hubs(index)
     memo.run("econ", build_econ, index)
-    build_ppa(index)
     build_renew_changes(index)
+    build_ppa(index)               # after the bidding changes: fits the current formula regime
     build_dam_offers(index)       # after fuel hubs and the renewable signatures
     build_offtakers(index)
     build_series(index)

@@ -23,6 +23,10 @@ Method, per unit:
      zone), fit offer = a x DA + b on each formula day; the point's (a, b) is the median over
      days, and its hit rate is the share of formula-day hours that (a, b) predicts within
      HIT_USD.  The best point has the highest hit rate.
+     Only the unit's current formula regime is fitted: the days from its latest bidding
+     change (renew_changes.py, built first) when that change was to a formula, as the Unit
+     page's change table dates it.  Formula-day hours before it, at the chosen point, are kept
+     in fits_old and drawn faded.
   4. Tier:
        revealed          >= 3 formula days, >= 24 hours, hit >= 0.8, 0.2 <= a <= 1.3, and the
                          next point's hit rate at least 0.1 lower
@@ -52,12 +56,14 @@ Writes data/ppa.json.gz:
   first, last (date range scanned), tiers {tier: label}
   units: [{name, tech, sp, tier, floor, da_share, da_days, avail_days,
            and when a formula was found: point, a, b, hit, alt [[point, hit], ...] (next best),
-           near [points within 0.1 of the best hit rate], days (formula days), hours, first,
-           last, strike_hi, strike_lo, group (units sharing point, a and b),
+           near [points within 0.1 of the best hit rate], days (formula days at point), hours,
+           first, last (first and last of them), since (start of the current formula regime when
+           earlier days were left out, else null), strike_hi, strike_lo, group (units sharing point, a and b),
            cap (price the offer stops at when the formula is above it, or null), cap_hours,
            capped (true: cap found; false: formula hours ran above $0 unclamped; null: untested),
            daily [[date, a, b, rmse, hours], ...]}]
   fits: {name: [[date index, DA price at the best point, offer], ...]}   (revealed / partial)
+  fits_old: {name: [...]}  the same, for formula-day hours before the unit's current formula
   dates: the dates the fit date indices refer to
 """
 import datetime as dt
@@ -180,10 +186,10 @@ def _fit(x, y):
     return float(a), float(b), float(np.sqrt(np.mean((y - (a * x + b)) ** 2)))
 
 
-def infer_unit(rows, points, floor=None):
+def formula_days(rows, points, floor=None):
     """rows: [(date index, offer [24], spread [24], hsl [24], {point: DA [24]})] for one unit.
     Hours at the unit's usual floor offer or at $0 (a common cap) are left out as clamped.
-    Returns the formula-day fits and the best settlement point, or None."""
+    Returns [(date index, hour mask, {point: (a, b, rmse, hours)}, offer, DA)] for its formula days."""
     days = []
     for di, off, spread, hsl, da in rows:
         av = np.isfinite(off) & (hsl >= MIN_HSL) & (np.nan_to_num(spread, nan=99) <= FLAT_USD)
@@ -209,6 +215,24 @@ def infer_unit(rows, points, floor=None):
             fits[p] = _fit(x[ok], off[ok]) + (int(ok.sum()),)
         if fits:
             days.append((di, m, fits, off, da))
+    return days
+
+
+def points_at(days, p):
+    """[(date index, DA, offer)] for the formula-day hours fitted at point p."""
+    pts = []
+    for di, m, _, off, da in days:
+        x = da.get(p)
+        if x is None:
+            continue
+        ok = m & np.isfinite(x)
+        pts += [(di, float(xv), float(yv)) for xv, yv in zip(x[ok], off[ok])]
+    return pts
+
+
+def infer_unit(rows, points, floor=None):
+    """Formula-day fits (formula_days) and the best settlement point, or None."""
+    days = formula_days(rows, points, floor)
     if len(days) < 2:
         return None
     score = []
@@ -256,6 +280,21 @@ def find_cap(rows, days, p, a, b):
     return None, 0, (False if top is not None and top > HIT_USD else None)
 
 
+def formula_starts() -> dict:
+    """{unit: date its current formula regime began}, from the bidding changes
+    (data/renew_changes.json.gz, built first): the unit's latest change that is not an episode,
+    when that change was to a formula (formula_on, or terms at the same or another point).
+    Units whose latest change left the formula, or that have none, are absent."""
+    rc = read_json_gz(DATA_DIR / "renew_changes.json.gz", default={}) or {}
+    latest = {}
+    for e in sorted(rc.get("events", []), key=lambda e: e["date"], reverse=True):
+        if e.get("kind") == "episode":
+            continue
+        for n in e.get("units", []):
+            latest.setdefault(n, e)
+    return {n: e["date"] for n, e in latest.items() if (e.get("after") or {}).get("k") == "x"}
+
+
 def build_ppa(index: dict) -> None:
     dates = sorted(index["days"].get("60d", []))
     dam_days = set(index["days"].get("dam", []))
@@ -290,7 +329,8 @@ def build_ppa(index: dict) -> None:
                 h[2] += int(award > 0)
                 h[3] += 1
 
-    units, fits = [], {}
+    starts = formula_starts()
+    units, fits, fits_old = [], {}, {}
     for name, rows in per_unit.items():
         off_all = np.concatenate([r[1][(r[3] >= MIN_HSL)] for r in rows]) if rows else np.array([])
         off_all = off_all[np.isfinite(off_all)]
@@ -302,13 +342,18 @@ def build_ppa(index: dict) -> None:
         rec = {"name": name, "tech": tech_of[name], "sp": sp_of.get(name), "tier": "hints",
                "floor": _r(floor), "da_share": _r(h[0] / h[1], 3) if h[1] > 0 else None,
                "da_days": _r(h[2] / h[3], 3) if h[3] else None, "avail_days": h[3]}
-        res = infer_unit(rows, points, floor)
+        # fit only the current formula regime; earlier days are kept as faded points
+        since = starts.get(name)
+        since = since if since and dates and since > dates[0] else None
+        cur = [r for r in rows if dates[r[0]] >= since] if since else rows
+        res = infer_unit(cur, points, floor)
         if res:
             hit, p, a, b, n_h, pts = res["best"]
             others = res["others"]
             slope_ok = SLOPE[0] <= a <= SLOPE[1]
             near = [o[1] for o in others if o[0] >= hit - 0.1]
-            if slope_ok and len(res["days"]) >= 3 and n_h >= 24 and hit >= 0.8:
+            daily = res["daily"]
+            if slope_ok and len(daily) >= 3 and n_h >= 24 and hit >= 0.8:
                 tier = "unclear" if near else "revealed"
             elif slope_ok and hit >= 0.5:
                 tier = "partial"
@@ -318,16 +363,21 @@ def build_ppa(index: dict) -> None:
                 rec.update({
                     "tier": tier, "point": p, "a": _r(a, 3), "b": _r(b), "hit": _r(hit, 3),
                     "alt": [[o[1], _r(o[0], 3)] for o in others[:3]], "near": near,
-                    "days": len(res["days"]), "hours": n_h,
-                    "first": dates[res["days"][0]], "last": dates[res["days"][-1]],
+                    "days": len(daily), "hours": n_h, "since": since,
+                    "first": dates[daily[0][0]], "last": dates[daily[-1][0]],
                     "strike_hi": _r(-b / a), "strike_lo": _r((-b - CREDIT) / a) if -b - CREDIT > 0 else None,
-                    "daily": [[dates[di], _r(da_, 3), _r(db), _r(dr), n] for di, da_, db, dr, n in res["daily"]],
+                    "daily": [[dates[di], _r(da_, 3), _r(db), _r(dr), n] for di, da_, db, dr, n in daily],
                 })
-                cap, cap_h, capped = find_cap(rows, res["days"], p, a, b)
+                cap, cap_h, capped = find_cap(cur, res["days"], p, a, b)
                 rec.update({"cap": _r(cap), "cap_hours": cap_h, "capped": capped})
                 if len(pts) > MAX_FIT_POINTS:
                     pts = [pts[i] for i in np.linspace(0, len(pts) - 1, MAX_FIT_POINTS).astype(int)]
                 fits[name] = [[di, _r(x), _r(y)] for di, x, y in pts]
+                old = points_at(formula_days([r for r in rows if dates[r[0]] < since], [p], floor), p) if since else []
+                if len(old) > MAX_FIT_POINTS:
+                    old = [old[i] for i in np.linspace(0, len(old) - 1, MAX_FIT_POINTS).astype(int)]
+                if old:
+                    fits_old[name] = [[di, _r(x), _r(y)] for di, x, y in old]
         units.append(rec)
 
     # units bid on the same rule: same point, slope within 0.02 and intercept within $1.50
@@ -350,7 +400,7 @@ def build_ppa(index: dict) -> None:
         "hit_usd": HIT_USD, "credit": CREDIT, "points": points, "tiers": TIERS,
         "n_days": len(dates), "first": dates[0] if dates else None, "last": dates[-1] if dates else None,
         "hub_days": [d for d in dates if d in hubs["days"]][:1] + [d for d in dates if d in hubs["days"]][-1:],
-        "dates": dates, "units": units, "fits": fits,
+        "dates": dates, "units": units, "fits": fits, "fits_old": fits_old,
     }
     write_json_gz(DATA_DIR / "ppa.json.gz", out)
     n = Counter(u["tier"] for u in units)
