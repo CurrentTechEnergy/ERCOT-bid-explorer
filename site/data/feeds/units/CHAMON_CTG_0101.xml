@@ -9,7 +9,7 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=CHAMON_CTG_0101"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=CHAMON_CTG_0101#CHAMON_CTG_0101/2026-08-18/outage_start</id>
     <updated>2026-10-24T00:00:00Z</updated>
-    <summary>Outage began, still on at the end of the data (22 days so far)</summary>
+    <summary>Outage began, still on at the end of the data (23 days so far)</summary>
   </entry>
   <entry>
     <title>CHAMON_CTG_0101: How often it turns off changed (2026-08-01)</title>
@@ -44,7 +44,7 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=CHAMON_CTG_0101"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=CHAMON_CTG_0101#CHAMON_CTG_0101/2026-06-09/outage_end</id>
     <updated>2026-10-24T00:00:00Z</updated>
-    <summary>Back from a 18-day outage</summary>
+    <summary>Back from an 18-day outage</summary>
   </entry>
   <entry>
     <title>CHAMON_CTG_0101: How often it turns off changed (2026-06-01)</title>
@@ -65,7 +65,7 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=CHAMON_CTG_0101"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=CHAMON_CTG_0101#CHAMON_CTG_0101/2026-05-17/outage_end</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Back from a 18-day outage</summary>
+    <summary>Back from an 18-day outage</summary>
   </entry>
   <entry>
     <title>CHAMON_CTG_0101: Outage started (2026-04-29)</title>
@@ -142,7 +142,7 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=CHAMON_CTG_0101"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=CHAMON_CTG_0101#CHAMON_CTG_0101/2025-12-11/outage_end</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Back from a 11-day outage</summary>
+    <summary>Back from an 11-day outage</summary>
   </entry>
   <entry>
     <title>CHAMON: Decision maker or QSE changed (2025-07-08)</title>

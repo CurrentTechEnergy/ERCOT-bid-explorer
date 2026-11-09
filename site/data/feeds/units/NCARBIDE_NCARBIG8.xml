@@ -9,14 +9,14 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=NCARBIDE_NCARBIG8"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=NCARBIDE_NCARBIG8#NCARBIDE_NCARBIG8/2026-03-20/outage_start</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Outage began, still on at the end of the data (173 days so far)</summary>
+    <summary>Outage began, still on at the end of the data (174 days so far)</summary>
   </entry>
   <entry>
     <title>NCARBIDE_NCARBIG8: Outage ended (2026-03-19)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=NCARBIDE_NCARBIG8"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=NCARBIDE_NCARBIG8#NCARBIDE_NCARBIG8/2026-03-19/outage_end</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Back from a 11-day outage</summary>
+    <summary>Back from an 11-day outage</summary>
   </entry>
   <entry>
     <title>NCARBIDE_NCARBIG8: Outage started (2026-03-08)</title>
@@ -30,7 +30,7 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=NCARBIDE_NCARBIG8"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=NCARBIDE_NCARBIG8#NCARBIDE_NCARBIG8/2026-03-08/outage_end</id>
     <updated>2026-10-24T00:00:00Z</updated>
-    <summary>Back from a 11-day outage</summary>
+    <summary>Back from an 11-day outage</summary>
   </entry>
   <entry>
     <title>NCARBIDE_NCARBIG8: How often it turns off changed (2026-03-01)</title>
@@ -51,7 +51,7 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=NCARBIDE_NCARBIG8"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=NCARBIDE_NCARBIG8#NCARBIDE_NCARBIG8/2026-02-15/outage_end</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Back from a 18-day outage</summary>
+    <summary>Back from an 18-day outage</summary>
   </entry>
   <entry>
     <title>NCARBIDE_NCARBIG8: Peaker: running at a new real-time price (2026-02-01)</title>

@@ -9,14 +9,14 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=CALHOUN_UNIT1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=CALHOUN_UNIT1#CALHOUN_UNIT1/2026-06-02/outage_start</id>
     <updated>2026-10-24T00:00:00Z</updated>
-    <summary>Outage began, still on at the end of the data (99 days so far)</summary>
+    <summary>Outage began, still on at the end of the data (100 days so far)</summary>
   </entry>
   <entry>
     <title>CALHOUN_UNIT1: Outage ended (2026-06-02)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=CALHOUN_UNIT1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=CALHOUN_UNIT1#CALHOUN_UNIT1/2026-06-02/outage_end</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Back from a 8-day outage</summary>
+    <summary>Back from an 8-day outage</summary>
   </entry>
   <entry>
     <title>CALHOUN_UNIT1: How often it turns off changed (2026-06-01)</title>

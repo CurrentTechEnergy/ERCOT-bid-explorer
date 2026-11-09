@@ -3,7 +3,14 @@
   <title>LYNX_ESS_ESR1: bidding and operating changes</title>
   <link href="https://ercotbids.currenttech.energy/unit.html?unit=LYNX_ESS_ESR1"/>
   <id>https://ercotbids.currenttech.energy/unit.html?unit=LYNX_ESS_ESR1</id>
-  <updated>2026-10-18T00:00:00Z</updated>
+  <updated>2026-11-09T00:00:00Z</updated>
+  <entry>
+    <title>LYNX_ESS_ESR1: Battery size changed (2026-08-05)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=LYNX_ESS_ESR1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=LYNX_ESS_ESR1#LYNX_ESS_ESR1/2026-08-05/battery_size</id>
+    <updated>2026-11-09T00:00:00Z</updated>
+    <summary>Maximum state of charge 184 to 250 MWh</summary>
+  </entry>
   <entry>
     <title>LYNX_ESS_ESR1: New battery (2026-04-13)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=LYNX_ESS_ESR1"/>

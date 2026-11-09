@@ -9,7 +9,7 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=YAPN_SLR_PV2"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=YAPN_SLR_PV2#YAPN_SLR_PV2/2026-08-14/outage_end</id>
     <updated>2026-11-05T00:00:00Z</updated>
-    <summary>Back from a 18-day outage</summary>
+    <summary>Back from an 18-day outage</summary>
   </entry>
   <entry>
     <title>YAPN_SLR_PV2: Outage started (2026-07-27)</title>
@@ -37,6 +37,6 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=YAPN_SLR_PV2"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=YAPN_SLR_PV2#YAPN_SLR_PV2/2026-04-01/new_unit</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>First day in ERCOT&#x27;s real-time dispatch (SCED), first output capacity (HSL) reported 2026-08-14; up to 65 MW so far</summary>
+    <summary>First day in ERCOT&#x27;s real-time dispatch (SCED), first output capacity (HSL) reported 2026-08-14; up to 70 MW so far</summary>
   </entry>
 </feed>

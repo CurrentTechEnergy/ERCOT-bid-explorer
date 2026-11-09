@@ -37,7 +37,7 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=TIMPP_AGR8"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=TIMPP_AGR8#TIMPP_AGR8/2026-04-08/outage_end</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Back from a 8-day outage</summary>
+    <summary>Back from an 8-day outage</summary>
   </entry>
   <entry>
     <title>TIMPP_AGR8: How often it turns off changed (2026-04-01)</title>
@@ -58,6 +58,6 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=TIMPP_AGR8"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=TIMPP_AGR8#TIMPP_AGR8/2026-02-19/outage_end</id>
     <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Back from a 81-day outage</summary>
+    <summary>Back from an 81-day outage</summary>
   </entry>
 </feed>
