@@ -149,6 +149,8 @@ function buildList() {
   Object.entries(S.DEC?.units || {}).forEach(([n, r]) => add(n, r[0]));
   (S.PPA?.units || []).forEach((u) => add(u.name, u.tech));
   (S.UI || []).filter((u) => u.tech === "storage").forEach((u) => add(u.unit, "storage"));
+  // a unit in the index with none of the data above (a unit on long outage, say) still opens: a short page that says so
+  (S.UI || []).filter((u) => !S.list.has(u.unit)).forEach((u) => { add(u.unit, u.tech); S.list.get(u.unit).bare = true; });
   S.list.forEach((e) => e.configs.sort());
   $("unit-list").innerHTML = [...S.list.values()].sort((a, b) => a.name.localeCompare(b.name))
     .map((e) => `<option value="${esc(e.name)}">${techLabel(e.tech)}</option>`).join("");
@@ -980,10 +982,25 @@ function saveView() {
   window.CX.writeHash({ cfg: S.cfg && S.list.get(S.unit)?.configs.length > 1 ? S.cfg : null, day: S.day, he: S.hour == null ? null : S.hour + 1,
     fc: S.fcDay && S.OI && S.fcDay !== CX.pickDay(oiDays(), S.last60) ? S.fcDay : null });
 }
+// a unit with no running, offer or decision data: its heading, who runs it, and one note on what the DAM files show
+function drawBare(e) {
+  drawHead(e);
+  const u = (S.UI || []).find((x) => x.unit === e.name), w = window.CX.unitIndex.commitWindow;
+  const more = u ? [u.type && `ERCOT type ${u.type}`, u.mw && `${fmtMW(u.mw)} MW`, u.zone && `${u.zone} zone`, u.county && `${u.county} county`].filter(Boolean) : [];
+  if (more.length) $("unit-meta").textContent += " · " + more.join(" · ");
+  const n = u?.dam_days, out = u?.out != null && n ? Math.round(u.out * n) : null;
+  const dam = n ? (out === n ? ` It was on outage all day on every one of its ${n} days in the day-ahead (DAM) files${w ? ` from ${w[0]} to ${w[1]}` : ""}.`
+    : out != null ? ` In the day-ahead (DAM) files${w ? ` from ${w[0]} to ${w[1]}` : ""} it was on outage all day on ${out} of its ${n} days.` : "")
+    : w ? ` It does not appear in the day-ahead (DAM) files from ${w[0]} to ${w[1]}.` : "";
+  $("unit-verdict").textContent = `No running, offer or decision history for this unit in the site's data${S.span ? ` (${S.span[0]} to ${S.span[1]})` : ""}, so there is nothing to chart.` + dam;
+}
 function draw() {
   const e = S.list.get(S.unit);
   $("unit-empty").hidden = !!e;
   if (!e) return;
+  // a bare unit hides every panel through the class, so panels other scripts draw on resize stay hidden too
+  document.body.classList.toggle("bare-unit", !!e.bare);
+  if (e.bare) { drawBare(e); return; }
   drawHead(e); drawForecast(e); drawDecisions(e); drawHours(e); drawRuns(e); drawDay(e); drawBidding(e);
 }
 async function select(name, cfg, keepDay) {
@@ -996,6 +1013,7 @@ async function select(name, cfg, keepDay) {
   if (S.unit !== name) return;
   window.UNIT = { ...e, econ: S.econ[e.tech] };
   draw(); saveView();
+  if (e.bare) return;                    // nothing for the other panels to draw
   window.dispatchEvent(new CustomEvent("unitchange", { detail: window.UNIT }));
 }
 
