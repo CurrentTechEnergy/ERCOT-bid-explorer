@@ -52,30 +52,8 @@
 </header>
 
 <main>
-  <section class="panel panel-wide" id="years-panel">
-    <div class="panel-head">
-      <div>
-        <h2>Across the years</h2>
-        <p class="note">Seven years of wind and solar in four charts: fleet size; energy produced and curtailed; what their MWh earned against the average MWh (the capture rate, below 100% when their output lands in cheap hours or behind congestion); and the share of their output in hours priced at $0/MWh or below, energy a flexible load could have had for next to nothing. The capture rate divides by the hub price weighted by all ERCOT generation, so it compares a wind or solar MWh with what the average generator received; published value factors (Hirth; LBNL) divide by the time-weighted average price instead, so the rates here read lower than those.</p>
-        <details class="how"><summary>How it's built</summary><p class="note">Every wind and solar unit in ERCOT's 60-day disclosure, hour by hour: monthly from January 2019 from the site's hourly history (built from ERCOT's archive), and daily (and each whole month) since the 60-day data loaded here starts. <b>Fleet size</b> sums each unit's highest hourly HSL in the month (daily: over the last 30 days, so a calm or cloudy day doesn't shrink it); HSL is what SCED saw the unit could produce, a little under nameplate. <b>Energy</b> is telemetered output; <b>curtailed</b> is HSL above base point, the energy SCED held back. A few history months are missing a day or two; their energy is scaled up to the whole month. <b>Capture rate</b> is the price wind or solar earned per MWh (the real-time price at each unit's settlement point, weighted by its output) over the ERCOT hub average price (HB_HUBAVG, real-time) weighted by each hour's ERCOT generation (every unit's output in the 60-day data, storage left out): what the average MWh sold earned at the hub. Below 100% means a wind or solar MWh earns less than the average MWh, from when it produces (more in cheap hours) and where (congestion between its node and the hub). Daily, both are 7-day averages first. In the monthly view the thick flat lines are each calendar year (the current year so far): for the capture rate, the year's revenue per MWh over the whole year divided by all ERCOT generation's hub revenue per MWh over the whole year. The two sides spread their MWh over the months differently, so a year can sit outside its months: in 2021 ERCOT's generation caught more of Winter Storm Uri's prices than solar's did; for the $0 share, the year's output in those hours over all of it. <b>$0 or below</b> is the share of output in hours whose day-ahead price at the unit's node was $0 or less: energy a flexible load at those nodes could have taken for free or been paid to take. The $0-or-below share uses day-ahead prices, which the history carries for every unit and year.</p></details>
-        <p class="note" id="yr-note"></p>
-      </div>
-      <div class="panel-tools">
-        <div class="seg seg-sm" id="yr-by" role="radiogroup" aria-label="Periods">
-          <button type="button" data-v="month" role="radio">Monthly since 2019</button>
-          <button type="button" data-v="day" role="radio">Daily, recent</button>
-        </div>
-      </div>
-    </div>
-    <div class="legend legend-static" id="yr-size-legend"></div>
-    <div class="chart" id="yr-size"></div>
-    <div class="legend legend-static" id="yr-energy-legend"></div>
-    <div class="chart" id="yr-energy"></div>
-    <div class="legend legend-static" id="yr-capture-legend"></div>
-    <div class="chart" id="yr-capture"></div>
-    <div class="legend legend-static" id="yr-neg-legend"></div>
-    <div class="chart" id="yr-neg"></div>
-  </section>
+  <h2 class="page-section">One day <span class="h-note">pick the day in the panel</span></h2>
+
   <section class="panel panel-wide" id="day-panel">
     <div class="panel-head">
       <div>
@@ -97,6 +75,8 @@
     <div class="legend legend-static" id="curt-day-legend"></div>
     <div class="chart" id="curt-chart"></div>
   </section>
+
+  <h2 class="page-section">Across days <span class="h-note">every 60-day day loaded</span></h2>
 
   <section class="panel panel-wide">
     <div class="panel-head">
@@ -263,6 +243,33 @@
     <div class="chart chart-short" id="ptc-chart"></div>
   </section>
 
+
+  <h2 class="page-section" id="years">Since 2019 <span class="h-note">monthly from January 2019</span></h2>
+
+  <section class="panel panel-wide" id="years-panel">
+    <div class="panel-head">
+      <div>
+        <h2>Across the years</h2>
+        <p class="note">Seven years of wind and solar in four charts: fleet size; energy produced and curtailed; what their MWh earned against the average MWh (the capture rate, below 100% when their output lands in cheap hours or behind congestion); and the share of their output in hours priced at $0/MWh or below, energy a flexible load could have had for next to nothing. The capture rate divides by the hub price weighted by all ERCOT generation, so it compares a wind or solar MWh with what the average generator received; published value factors (Hirth; LBNL) divide by the time-weighted average price instead, so the rates here read lower than those.</p>
+        <details class="how"><summary>How it's built</summary><p class="note">Every wind and solar unit in ERCOT's 60-day disclosure, hour by hour: monthly from January 2019 from the site's hourly history (built from ERCOT's archive), and daily (and each whole month) since the 60-day data loaded here starts. <b>Fleet size</b> sums each unit's highest hourly HSL in the month (daily: over the last 30 days, so a calm or cloudy day doesn't shrink it); HSL is what SCED saw the unit could produce, a little under nameplate. <b>Energy</b> is telemetered output; <b>curtailed</b> is HSL above base point, the energy SCED held back. A few history months are missing a day or two; their energy is scaled up to the whole month. <b>Capture rate</b> is the price wind or solar earned per MWh (the real-time price at each unit's settlement point, weighted by its output) over the ERCOT hub average price (HB_HUBAVG, real-time) weighted by each hour's ERCOT generation (every unit's output in the 60-day data, storage left out): what the average MWh sold earned at the hub. Below 100% means a wind or solar MWh earns less than the average MWh, from when it produces (more in cheap hours) and where (congestion between its node and the hub). Daily, both are 7-day averages first. In the monthly view the thick flat lines are each calendar year (the current year so far): for the capture rate, the year's revenue per MWh over the whole year divided by all ERCOT generation's hub revenue per MWh over the whole year. The two sides spread their MWh over the months differently, so a year can sit outside its months: in 2021 ERCOT's generation caught more of Winter Storm Uri's prices than solar's did; for the $0 share, the year's output in those hours over all of it. <b>$0 or below</b> is the share of output in hours whose day-ahead price at the unit's node was $0 or less: energy a flexible load at those nodes could have taken for free or been paid to take. The $0-or-below share uses day-ahead prices, which the history carries for every unit and year.</p></details>
+        <p class="note" id="yr-note"></p>
+      </div>
+      <div class="panel-tools">
+        <div class="seg seg-sm" id="yr-by" role="radiogroup" aria-label="Periods">
+          <button type="button" data-v="month" role="radio">Monthly since 2019</button>
+          <button type="button" data-v="day" role="radio">Daily, recent</button>
+        </div>
+      </div>
+    </div>
+    <div class="legend legend-static" id="yr-size-legend"></div>
+    <div class="chart" id="yr-size"></div>
+    <div class="legend legend-static" id="yr-energy-legend"></div>
+    <div class="chart" id="yr-energy"></div>
+    <div class="legend legend-static" id="yr-capture-legend"></div>
+    <div class="chart" id="yr-capture"></div>
+    <div class="legend legend-static" id="yr-neg-legend"></div>
+    <div class="chart" id="yr-neg"></div>
+  </section>
 
 </main>
 
