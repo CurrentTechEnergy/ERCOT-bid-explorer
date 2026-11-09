@@ -247,7 +247,13 @@ const Q3B = {
 const BAND_KEYS = ["over $200", "$50 to $200", "under $50"];
 const BAND_COLOR = { "over $200": "--c8", "$50 to $200": "--c2", "under $50": "--c4" };
 const POSITION_KEYS = ["none", "self", "committed", "as"];
-const POSITION = { none: "No day-ahead award", self: "Self-committed, with an award", committed: "Committed by the DAM (make-whole)", as: "Ancillary-service award only" };
+const POSITION = {
+  none: ["No day-ahead award", "Sold nothing day-ahead; free to shut."],
+  self: ["Sold energy day-ahead", "Self-committed (status ON) with an energy award near its minimum or more: no make-whole; shutting means buying it back in real time."],
+  committed: ["DAM committed", "The day-ahead market committed it on its offer. Its energy could be bought back in real time, but shutting would forgo any make-whole payment, if applicable."],
+  as: ["Ancillary services only", "Holds a day-ahead AS award, bought back at the real-time price (from Dec 5, 2025)."]
+};
+const POS_THIN = 30;     // windows: a cell with fewer is greyed
 const yTick = (y) => (S.G.years[y]?.to.slice(5) === "12-31" ? y : `${y}*`);
 function drawQ3() {
   $("q3-tech").value = S.tech;
@@ -348,13 +354,33 @@ function drawQ3() {
   const day = (y) => (M.find((r) => r.year === y) || {}).day;
   const yl0 = yo[0], ylast = yo.at(-1);
   $("q3-day").textContent = `Loss windows have moved from night to midday: ${fmtPct(day(ylast))} start in the day (HE 8 to HE 19) ${ylast === fullYears().at(-1) ? "in" : "so far in"} ${ylast}, against ${fmtPct(day(yl0))} in ${yl0}, because solar growth moved the cheap hours to midday. "Held on" falls to almost nothing from Dec 5, 2025 because, under real-time co-optimization (RTC+B), a day-ahead ancillary-service award no longer holds a unit on: a market rule change, not a change in how units behave.`;
-  // ---- where shutting pays, by DAM position
+  // ---- where shutting pays, by DAM position: positions down, years across (base years pooled), share turned off
   const P = (q.position || []).map(([year, tech, pos, n, off, rt]) => ({ year, tech, pos, n, off, rt })).filter((r) => r.tech === t);
-  const pr = (y, p) => P.find((r) => r.year === y && r.pos === p);
-  const cell = (r) => r && r.n ? `${fmtPct(r.off)} turned off (${d3.format(",")(r.n)} windows)` + (r.rt != null ? `<br><span class="sub">${fmtPct(r.rt)} would also have paid at real-time prices</span>` : "") : "–";
-  $("q3p-table").innerHTML = P.length ? `<table class="data"><caption>Windows where shutting would have paid, by the unit's day-ahead position: how often it turned off, and how often the same shutdown would also have paid at real-time prices (a hindsight check)</caption><thead><tr><th class="t">Year</th>` +
-    POSITION_KEYS.map((p) => `<th>${POSITION[p]}</th>`).join("") + `</tr></thead><tbody>` +
-    yo.filter((y) => P.some((r) => r.year === y)).reverse().map((y) => `<tr><td class="t">${yearLabel(y)}</td>` + POSITION_KEYS.map((p) => `<td>${cell(pr(y, p))}</td>`).join("") + `</tr>`).join("") + `</tbody></table>` : "";
+  const pool = (rs) => {
+    const n = d3.sum(rs, (r) => r.n), k = rs.filter((r) => r.rt != null), nk = d3.sum(k, (r) => r.n);
+    return n ? { n, off: d3.sum(rs, (r) => r.n * r.off) / n, rt: nk ? d3.sum(k, (r) => r.n * r.rt) / nk : null } : null;
+  };
+  const pcell = (y, p) => pool(P.filter((r) => r.pos === p && (y === "base" ? base.includes(r.year) : r.year === y)));
+  const pYears = ["base", ...[...new Set(P.map((r) => r.year))].filter((y) => y > b1).sort()];
+  const pKeys = POSITION_KEYS.filter((p) => P.some((r) => r.pos === p));
+  const pLabel = (y) => (y === "base" ? `${b0}–${String(b1).slice(2)}` : yearLabel(y) === String(y) ? String(y) : `${y}*`);
+  if (P.length) {
+    const yp = fullYears().at(-1), none = pcell(yp, "none"), none0 = pcell("base", "none");
+    const aw = pKeys.filter((p) => p !== "none").map((p) => pcell(yp, p)).filter((c) => c && c.n >= POS_THIN).map((c) => c.off);
+    const all = pool(P.filter((r) => r.year === yp)), per = pKeys.map((p) => pcell(yp, p)).filter((c) => c && c.n >= POS_THIN && c.rt != null).map((c) => c.rt);
+    const tl = TECH[t].toLowerCase();
+    $("q3p-table").innerHTML =
+      `<h3 class="sub-h">Does a day-ahead position keep units on?</h3>` +
+      (none && aw.length ? `<p class="intro"><b>${aw.every((v) => v < 0.15) ? "Yes. A day-ahead position almost always keeps a unit on." : "Partly."}</b> With no award, ${tl} units turned off for ${fmtPct(none.off)} of these windows in ${yp}${none0 ? ` (${fmtPct(none0.off)} in ${b0} to ${b1})` : ""}. With any award they turned off for ${aw.length > 1 ? `${fmtPct(d3.min(aw))} to ${fmtPct(d3.max(aw))}` : fmtPct(aw[0])}, even though the award could have been bought back.</p>` : "") +
+      `<div class="q3p-scroll"><table class="data q3p"><thead><tr><th class="t">Day-ahead position</th>` + pYears.map((y) => `<th>${pLabel(y)}</th>`).join("") + `</tr></thead><tbody>` +
+      pKeys.map((p) => `<tr><td class="t q3p-pos"><b>${POSITION[p][0]}</b><span>${POSITION[p][1]}</span></td>` + pYears.map((y) => {
+        const c = pcell(y, p);
+        return c ? `<td class="${c.n < POS_THIN ? "thin" : ""}"><span class="v">${fmtPct(c.off)}</span><span class="n">${d3.format(",")(c.n)}</span><span class="bar"><i style="width:${(100 * c.off).toFixed(1)}%"></i></span></td>` : `<td class="thin">–</td>`;
+      }).join("") + `</tr>`).join("") + `</tbody></table></div>` +
+      `<p class="legend">Each cell: the share of windows where the unit actually shut down when shutting would have had positive economics (after the restart and any other financial benefits a shutdown gives up). The small number is how many such windows there were; grey under ${POS_THIN}. ${b0} to ${b1} pooled as the baseline. * part year.</p>` +
+      (all && all.rt != null && per.length ? `<p class="day-flag q3p-check">Hindsight check: the same shutdown would also have paid at real-time prices in ${fmtPct(all.rt)} of ${yp}'s windows (${fmtPct(d3.min(per))} to ${fmtPct(d3.max(per))} across positions), so the day-ahead loss was usually a fair guide.</p>` : "");
+    setCSV($("q3p-table"), ["year", "position", "windows", "turned_off", "paid_at_rt"], P.map((r) => [r.year, r.pos, r.n, r.off, r.rt ?? ""]), `Positions ${t}`);
+  } else $("q3p-table").innerHTML = "";
   // ---- the answer
   const E = q.extra.filter((r) => r[1] === t).map(([year, , trains, on, atBase]) => ({ year, trains, on, atBase }));
   const yf = fullYears().at(-1), e = E.find((r) => r.year === yf), more = (y) => row(y, "more");
@@ -371,7 +397,7 @@ function drawQ3() {
     `\n\nA unit is in the decision when it was online the hour before the window (or shut up to 6 hours before it). Its loss is the window's sum of gas cost less node price, times the LSL of the configuration it was running. ` +
     `\n\nA DAM award doesn't hold a unit on: shutting means buying the energy back in real time, at an expected price of the day-ahead price, and since RTC+B (Dec 5, 2025) the same holds for DAM AS awards, bought back at the real-time AS price. What a shutdown gives up is counted against it instead: the DAM make-whole a DAM-committed unit is paid only while online (ERCOT Protocols 4.6.2.3; its minimum-energy offer less the day-ahead price and AS revenue over the commitment, plus the start offer when the DAM started it), and from Dec 5, 2025 the AS revenue its capacity would carry. Held on: RUC (known from Dec 2025), or before Dec 5, 2025 a DAM AS award, over half the window's hours or more; or a shutdown beats the restart but not the restart plus what it gives up. ` +
     `\n\nThe unit's minimum off time is the 10th percentile of its off spells (2 hours or more offline) in the year before, else 4 hours for combined cycles and 8 for gas steam. Loss above restart cost: some shutdown at least that long, counting any profitable hours it would sit out, saves more than the restart and what it gives up (its hot start offer up to 8 hours off, intermediate beyond; generic $15,000/$25,000 for combined cycles and $10,000/$20,000 for gas steam when none is offered). ` +
-    `\n\nToo short to cycle: the window is shorter than the minimum off time and no shutdown that long pays. The table splits the windows where shutting pays by the unit's DAM position over half the window or more; "paid at RT" is the share where the same shutdown also paid at real-time node and AS prices, less the margin above LSL it would give up (a hindsight check, not used for the buckets). \n\nTurned off: an off spell at least the minimum off time long over the window. Output is the LSL times the window's hours, split by the hours online. ` +
+    `\n\nToo short to cycle: the window is shorter than the minimum off time and no shutdown that long pays. The day-ahead position table splits the windows where shutting pays by the unit's DAM position over half the window or more (DAM committed first, then AS only, then an energy award). The hindsight check under it is the share of all those windows, turned off or not, where the same shutdown also paid at real-time node and AS prices, less the margin above LSL it would give up; it is not used for the buckets. \n\nTurned off: an off spell at least the minimum off time long over the window. Output is the LSL times the window's hours, split by the hours online. ` +
     `By unit: a unit's share is over its windows with a loss above restart cost (shutting would have paid), shown with ${q.unit_min} or more in the year. Never off: no shutdown in any window where shutting would have paid over the whole record, with 20 or more of them. An off spell that is mostly outage (or has under 2 offline hours around an outage) is maintenance, not a shutdown, as on the rest of the site. Units that cycle: a year's units with 20 or more loss windows and none turned off are left out of that year. ` +
     `Ridden through: each unit's minimum output (LSL times the window's hours) in windows where shutting pays that it stayed on for, against the same windows at its own ${b0} to ${b1} shut rate (units with ${q.unit_min} or more such windows in one of those years). ` +
     `2021 and 2022 include Winter Storm Uri and the 2022 gas price spike; biggest-loss windows lean to winter, when units ride through more.`);
