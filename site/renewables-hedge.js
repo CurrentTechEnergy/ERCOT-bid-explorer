@@ -2,7 +2,7 @@
    whose units now open the Unit page (unit.html?unit=NAME). Reads data/ppa.json.gz (pipeline/ppa.py):
    for every wind and solar unit, whether its real-time offers follow share x DA price - constant at
    some settlement point. Also reads data/renew_changes.json.gz (pipeline/renew_changes.py): every
-   change in how each unit bids, whether it moved dispatch, and the PTC floor level. And
+   change in how each unit bids and whether it moved dispatch. And
    data/offtakers.json.gz (pipeline/offtakers.py): buyers named in public announcements. The
    bidding changes also list day-ahead offer changes from data/dam_offers.json.gz
    (pipeline/dam_offers.py): a wind or solar DA floor moving, or a unit stopping or starting DA curves.
@@ -157,9 +157,9 @@ function sortChanges(rs) {
     return a.e.date < b.e.date ? 1 : a.e.date > b.e.date ? -1 : 0;
   }).map((o) => o.e);
 }
-const PTC_TAG = { level: { label: "PTC level", tip: "A floor change inside the PTC band of $5 or less: re-pricing the credit (the yearly inflation adjustment does this), not a change of approach." },
-  expired: { label: "PTC may have expired", tip: "The floor left the PTC band for about $0 and never came back to it. The PTC runs 10 years from the plant's start, so this is what its end looks like; inferred, since the data has no start dates." } };
-const ptcTag = (e) => (e.ptc ? ` <span class="tag" title="${esc(PTC_TAG[e.ptc].tip)}">${PTC_TAG[e.ptc].label}</span>` : "");
+const PTC_TAG = { update: { label: "PTC update", tip: "The floor moved to follow the PTC's yearly inflation adjustment: in a year the credit rose, it landed within $0.50 of the year's credit grossed up for the 21% corporate tax (credit / 0.79), or moved by the credit's own step." },
+  expired: { label: "PTC may have expired", tip: "A wind floor left the PTC band for about $0 and never came back to it, 9 or more years after the plant went into service (EIA-860's operating year, the latest of its phases). The PTC runs 10 years from the plant's start, so this is what its end looks like. A few plants with no EIA match that were already running in January 2019 are tagged on the move alone. EIA keeps a repowered plant's original year. Solar is never tagged: solar could only take the PTC from 2022, so none has run out yet." } };
+const ptcTag = (e) => (PTC_TAG[e.ptc] ? ` <span class="tag" title="${esc(PTC_TAG[e.ptc].tip)}">${PTC_TAG[e.ptc].label}</span>` : "");
 const MOVED = [
   { id: "yes", label: "Moved dispatch", color: "--c1" },
   { id: "no", label: "Did not move dispatch", color: "--c-other" },
@@ -220,7 +220,7 @@ function chgRows(R) {
     && (CH.kind === "all" || e.kind === CH.kind)
     && (CH.year === "all" || e.date.slice(0, 4) === CH.year)
     && (CH.moved === "all" || (CH.moved === "yes" ? e.moved === true : !e.da && e.moved !== true))
-    && (CH.ptc === "all" || (CH.ptc === "hide" ? e.ptc !== "level" : e.ptc === CH.ptc))
+    && (CH.ptc === "all" || (CH.ptc === "hide" ? e.ptc !== "update" : e.ptc === CH.ptc))
     && (!CH.hideTog || !e.toggler)
     && (!q || e.plant.toLowerCase().includes(q) || e.units.some((u) => u.toLowerCase().includes(q))));
 }
@@ -234,7 +234,9 @@ function drawChanges() {
     `Day-ahead offer changes (from ${S.DA ? S.DA.first : "the DAM disclosure"} on) are the units that file a DAM energy curve: its floor moving $5 or more and holding, or the unit stopping or starting day-ahead curves; dispatch is not estimated for them. ` +
     `${fmt0(rs.length)} change${rs.length === 1 ? "" : "s"} in this selection, ${fmt0(rs.filter((e) => e.moved).length)} of which moved dispatch. ` +
     `Most offer changes happen below any price the unit's node reaches, so they say something about the bidder without changing what it produced. ` +
-    `Moved dispatch is counted from each change to the unit's next one, up to a year, and needs 1 MWh or more a day on average to count. Click a row to open the unit's page.`);
+    `Moved dispatch is counted from each change to the unit's next one, up to a year, and needs 1 MWh or more a day on average to count. ` +
+    `A PTC update is a floor move that follows the credit's yearly inflation adjustment; hide them with the PTC filter. ` +
+    `Click a row to open the unit's page.`);
   drawChangeMonths(chart, rs);
   const shown = sortChanges(rs).slice(0, CH.limit);
   tbl.innerHTML = rs.length ? `<table class="data"><thead><tr>${CHG_COLS.map((c) => `<th class="${c.v ? "sortable" : ""}${c.n ? "" : " t"}"${c.v ? ` data-k="${c.k}"` : ""}${c.tip ? ` title="${esc(c.tip)}"` : ""}>${c.h}${c.v && CH.sort === c.k ? (CH.dir < 0 ? " ▾" : " ▴") : ""}</th>`).join("")}</tr></thead><tbody>` +
@@ -292,48 +294,6 @@ function drawChangeMonths(el, rs) {
   $("chg-legend").innerHTML = MOVED.map((s) => `<span><span class="sw" style="background:var(${s.color})"></span>${s.label}</span>`).join("");
 }
 
-// monthly median of floors in the PTC band, wind and solar
-const PTC_SERIES = [{ id: "wind", label: "Wind", color: "--c3" }, { id: "solar", label: "Solar", color: "--c4" }];
-function drawPTC() {
-  const R = S.R, el = $("ptc-chart"), T = R && R.ptc_trend;
-  if (!T || !T.months.length) { emptyMsg(el, "No PTC floor data yet."); return; }
-  const [lo, hi] = R.ptc_band;
-  const lev = R.events.filter((e) => e.ptc === "level").length, exp = R.events.filter((e) => e.ptc === "expired").length;
-  $("ptc-note").textContent = `${T.months[0]} to ${T.months[T.months.length - 1]}`;
-  const ends = (id) => { const v = T[id].median, i0 = v.findIndex((x) => x != null), i1 = v.length - 1 - [...v].reverse().findIndex((x) => x != null); return i0 >= 0 ? [i0, i1] : null; };
-  const mon = (i) => d3.timeFormat("%b %Y")(new Date(T.months[i] + "-15T12:00:00"));
-  const drift = PTC_SERIES.map((p) => { const e = ends(p.id); return e ? `${p.label.toLowerCase()}'s from ${fmt$0(T[p.id].median[e[0]])}/MWh in ${mon(e[0])} to ${fmt$0(T[p.id].median[e[1]])}/MWh in ${mon(e[1])}` : null; }).filter(Boolean);
-  window.CX.setNote($("ptc-text"), `The typical wind and solar floor offer each month, among units bidding in the tax-credit band (${fmt$0(lo)} to ${fmt$0(hi)}/MWh, wider than the −$50 to −$25 where most such bids sit, so small moves at its edges are still caught).` +
-    (drift.length ? ` The median floor moved: ${drift.join("; ")}. The credit is indexed to inflation, and the bids follow it.` : ""), `A floor between ${fmt$0(lo)} and ${fmt$0(hi)} prices a per-MWh credit such as the PTC: the unit would rather be paid less than not produce. Each line is the median, across units, of each unit's typical floor that month. ` +
-    `Few units move their floor on the day the yearly inflation adjustment takes effect, but the median drifts lower year by year. In the change log, ${fmt0(lev)} changes are tagged PTC level (a move inside the band of $5 or less) and ${fmt0(exp)} PTC may have expired (the floor left the band for about $0 and never came back).`);
-  const ts = T.months.map((m) => new Date(m + "-15T12:00:00"));
-  const w = Math.max(280, el.clientWidth || 600), H = 220, m = { t: 18, r: 16, b: 26, l: 56 };
-  const all = PTC_SERIES.flatMap((s) => T[s.id].median).filter((v) => v != null);
-  const x = d3.scaleTime().domain(d3.extent(ts)).range([m.l, w - m.r]);
-  const y = d3.scaleLinear().domain(d3.extent(all)).nice().range([H - m.b, m.t]);
-  const svg = d3.create("svg").attr("viewBox", `0 0 ${w} ${H}`);
-  svg.append("g").attr("class", "gridline").attr("transform", `translate(${m.l},0)`).call(d3.axisLeft(y).ticks(5).tickSize(-(w - m.l - m.r)).tickFormat(""));
-  svg.append("g").attr("class", "axis").attr("transform", `translate(0,${H - m.b})`).call(d3.axisBottom(x).ticks(w < 560 ? 4 : 8).tickSizeOuter(0));
-  svg.append("g").attr("class", "axis").attr("transform", `translate(${m.l},0)`).call(axisFmt(d3.axisLeft(y), 5, "$").tickSizeOuter(0));
-  svg.append("text").attr("class", "axis-title").attr("x", m.l).attr("y", 10).text("Median PTC-band floor, $/MWh");
-  PTC_SERIES.forEach((s) => {
-    const line = d3.line().defined((d) => d != null).x((d, i) => x(ts[i])).y((d) => y(d));
-    svg.append("path").attr("d", line(T[s.id].median)).attr("fill", "none").attr("stroke", css(s.color)).attr("stroke-width", 2);
-  });
-  const cross = svg.append("line").attr("class", "crosshair").attr("y1", m.t).attr("y2", H - m.b).style("display", "none");
-  svg.append("rect").attr("x", m.l).attr("y", m.t).attr("width", w - m.l - m.r).attr("height", H - m.t - m.b).attr("fill", "transparent")
-    .on("pointermove", (ev) => {
-      const t = x.invert(d3.pointer(ev)[0]), i = d3.minIndex(ts, (d) => Math.abs(d - t));
-      cross.style("display", null).attr("x1", x(ts[i])).attr("x2", x(ts[i]));
-      showTip(ev, `<h4>${d3.timeFormat("%B %Y")(ts[i])}</h4><table>` + PTC_SERIES.map((s) =>
-        `<tr><td><span class="sw" style="background:var(${s.color})"></span></td><td>${s.label}</td><td class="n">${fmt$(T[s.id].median[i])}</td><td class="n muted">${T[s.id].units[i]} units</td></tr>`).join("") + "</table>");
-    })
-    .on("pointerleave", () => { cross.style("display", "none"); hideTip(); });
-  el.replaceChildren(svg.node());
-  $("ptc-legend").innerHTML = PTC_SERIES.map((s) => `<span><span class="sw" style="background:var(${s.color})"></span>${s.label}</span>`).join("");
-  setCSV(el, ["month", "wind_median_floor", "wind_units", "solar_median_floor", "solar_units"], T.months.map((mo, i) => [mo, T.wind.median[i], T.wind.units[i], T.solar.median[i], T.solar.units[i]]), "PTC floor level");
-}
-
 function initChanges() {
   const R = S.R;
   if (!R) return;
@@ -342,7 +302,8 @@ function initChanges() {
   $("chg-market").value = CH.market;
   $("chg-market").addEventListener("change", (e) => { CH.market = e.target.value; CH.limit = 200; drawChanges(); saveView(); });
   $("chg-year").innerHTML = `<option value="all">All years</option>` + R.years.slice().reverse().map((y) => `<option value="${y}">${y}</option>`).join("");
-  $("chg-kind").value = CH.kind; $("chg-year").value = CH.year; $("chg-ptc").value = CH.ptc; $("chg-tog").checked = CH.hideTog;
+  $("chg-kind").value = CH.kind; $("chg-year").value = CH.year; if (!["hide", "update", "expired"].includes(CH.ptc)) CH.ptc = "all";
+  $("chg-ptc").value = CH.ptc; $("chg-tog").checked = CH.hideTog;
   $("chg-ptc").addEventListener("change", (e) => { CH.ptc = e.target.value; CH.limit = 200; drawChanges(); saveView(); });
   $("chg-kind").addEventListener("change", (e) => { CH.kind = e.target.value; CH.limit = 200; drawChanges(); saveView(); });
   $("chg-year").addEventListener("change", (e) => { CH.year = e.target.value; CH.limit = 200; drawChanges(); saveView(); });
@@ -355,7 +316,7 @@ function initChanges() {
   });
 }
 
-function redraw() { drawKpis(); drawUnits(); drawChanges(); drawPTC(); }
+function redraw() { drawKpis(); drawUnits(); drawChanges(); }
 
 async function boot() {
   let O;
@@ -370,7 +331,7 @@ async function boot() {
   initChanges();
   redraw();
   saveView();
-  let tm; window.addEventListener("resize", () => { clearTimeout(tm); tm = setTimeout(() => { drawChanges(); drawPTC(); }, 150); });
+  let tm; window.addEventListener("resize", () => { clearTimeout(tm); tm = setTimeout(drawChanges, 150); });
 }
 boot();
 })();
