@@ -19,13 +19,6 @@
     <summary>Minimum-energy offer stepped: $41 to $35/MWh (offer minus fuel cost: $5 to $4/MWh)</summary>
   </entry>
   <entry>
-    <title>PPEC_GT8: Peaker: running at a new real-time price (2026-07-01)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=PPEC_GT8"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=PPEC_GT8#PPEC_GT8/2026-07-01/rt_price</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Online 58% of its available hours at $25–$35/MWh real-time at its node in July, up from 19%</summary>
-  </entry>
-  <entry>
     <title>PPEC_GT8: Shut down despite a day-ahead award (2026-06-16)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=PPEC_GT8"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=PPEC_GT8#PPEC_GT8/2026-06-16/shutdown_award</id>
