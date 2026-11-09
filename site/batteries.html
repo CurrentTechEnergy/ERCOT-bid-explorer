@@ -170,6 +170,41 @@
     <div class="legend legend-static" id="days-price-legend"></div>
     <div class="chart" id="days-price"></div>
   </section>
+  <section class="panel panel-wide" id="bu-panel">
+    <div class="panel-head">
+      <div>
+        <h2>Units <span class="h-note" id="bu-note"></span></h2>
+        <p class="note" id="bu-sum"></p>
+        <details class="how"><summary>How it's built</summary><p class="note">The same benchmark as Across days, battery by battery, over the last 30 or 90 days it covers or every day since Dec 5, 2025 (the 60-day reports run about two months behind, so the period ends there, not on the day picked above). Batteries priced on fewer than 7 days in the period are left out. Click a column to sort, again to flip it, and a battery to open its page. <b>MW</b> is its largest HSL in the period; <b>MWh</b> its usable state of charge range on the median day; <b>Hours</b> MWh over MW. <b>Energy $</b> is two-settlement (day-ahead award at the day-ahead node price plus output less the award at the real-time node price); <b>DAM AS $</b> is day-ahead AS awards at the clearing price, with real-time AS left out. <b>$/kW-month</b> is both over the battery's MW, per 30.4 days. <b>AS share</b> is AS revenue over energy revenue (a loss counted as zero) plus AS revenue, and sets the <b>Category</b>: Arbitrage under 25%, Mixed 25% to 50%, Mostly AS over 50%, and Idle for under 0.1 full cycles a day whatever the revenue. <b>% of perfect</b> is energy revenue over the perfect battery's at the same node, summed over the period. <b>Cycles a day</b> is MWh discharged over MWh, per day. <b>Discharged at</b> and <b>Charged at</b> are the MWh-weighted real-time node prices of its output; <b>Spread</b> is the difference, before losses.</p></details>
+      </div>
+    </div>
+    <div class="ctl-row">
+      <div class="ctl">
+        <span class="lbl" id="lbl-bu-win">Period</span>
+        <div class="seg seg-sm" role="radiogroup" aria-labelledby="lbl-bu-win" id="bu-win">
+          <button type="button" data-v="30" role="radio">Last 30 days</button>
+          <button type="button" data-v="90" role="radio">Last 90 days</button>
+          <button type="button" data-v="all" role="radio">Since Dec 5</button>
+        </div>
+      </div>
+      <div class="ctl">
+        <span class="lbl" id="lbl-bu-cat">Category</span>
+        <div class="seg seg-sm" role="radiogroup" aria-labelledby="lbl-bu-cat" id="bu-cat">
+          <button type="button" data-v="all" role="radio">All</button>
+          <button type="button" data-v="arb" role="radio">Arbitrage</button>
+          <button type="button" data-v="mixed" role="radio">Mixed</button>
+          <button type="button" data-v="as" role="radio">Mostly AS</button>
+          <button type="button" data-v="idle" role="radio">Idle</button>
+        </div>
+      </div>
+      <div class="ctl">
+        <label class="lbl" for="bu-search">Find a battery</label>
+        <input type="search" id="bu-search" placeholder="Unit, QSE, zone or settlement point" aria-label="Find a battery">
+      </div>
+    </div>
+    <div class="legend legend-static" id="bu-legend"></div>
+    <div class="units-wrap" id="bu-table"></div>
+  </section>
 </main>
 
 <footer class="foot">
@@ -184,5 +219,6 @@
 <script src="vendor/d3.min.js"></script>
 <script src="common.js"></script>
 <script src="batteries.js"></script>
+<script src="batteries-units.js"></script>
 </body>
 </html>
