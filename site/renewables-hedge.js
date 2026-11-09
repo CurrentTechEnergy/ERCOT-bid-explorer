@@ -158,7 +158,7 @@ function sortChanges(rs) {
   }).map((o) => o.e);
 }
 const PTC_TAG = { update: { label: "PTC update", tip: "The floor moved to follow the PTC's yearly inflation adjustment: in a year the credit rose, it landed within $0.50 of the year's credit grossed up for the 21% corporate tax (credit / 0.79), or moved by the credit's own step." },
-  expired: { label: "PTC may have expired", tip: "A wind floor left the PTC band for about $0 and never came back to it. The PTC runs 10 years from the plant's start, so this is what its end looks like. Inferred, since the data has no start dates: only for wind units already in the data in January 2019, or first seen 9 or more years before the change. Solar is never tagged: solar could only take the PTC from 2022, so none has run out yet." } };
+  expired: { label: "PTC may have expired", tip: "A wind floor left the PTC band for about $0 and never came back to it, 9 or more years after the plant went into service (EIA-860's operating year, the latest of its phases). The PTC runs 10 years from the plant's start, so this is what its end looks like. A few plants with no EIA match that were already running in January 2019 are tagged on the move alone. EIA keeps a repowered plant's original year. Solar is never tagged: solar could only take the PTC from 2022, so none has run out yet." } };
 const ptcTag = (e) => (PTC_TAG[e.ptc] ? ` <span class="tag" title="${esc(PTC_TAG[e.ptc].tip)}">${PTC_TAG[e.ptc].label}</span>` : "");
 const MOVED = [
   { id: "yes", label: "Moved dispatch", color: "--c1" },

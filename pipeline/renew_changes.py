@@ -45,11 +45,14 @@ pre-2022 wind in 2026.
   year whose credit rose (2019, 2022 to 2026 so far): the floor goes deeper and lands within
   STEP_USD of the year's pre-tax credit, or moves by the credit's own step (new / old within
   STEP_RATIO of this year's credit over last year's, for operators who gross up differently).
-  "expired" tags a floor leaving the band for PTC_OFF or above and never returning to it: the
-  credit runs 10 years from the plant's start, which the data does not give, so it is inferred,
-  and only for wind units already in the data at its first month (start unknown) or first seen
-  PTC_YEARS or more before the change.  Solar is never tagged: any solar on the PTC started in 2022
-  or later, and solar that started before 2022 never had it.
+  "expired" tags a wind floor leaving the band for PTC_OFF or above and never returning to it: the
+  credit runs 10 years from the plant's start.  The start is EIA-860's operating year
+  (reference/unit_in_service.csv, in_service.py; the latest of a phased plant's years, and a unit
+  missing there takes another unit of its plant's), else the unit's first day in the data; the tag
+  needs the change PTC_YEARS or more after it, or a unit in the data from its first month with no
+  EIA match (start unknown).  EIA keeps a repowered plant's original year, so a repowered plant can
+  be tagged while its new credit runs.  Solar is never tagged: solar could only take the PTC from
+  2022, and none has run out.  An expired event carries "start", the year used (null: unknown).
 
 Moved dispatch.  A change's window is every online day the unit spent in the new regime, from the
 change up to its next change (episodes left out), at most WINDOW_MAX calendar days; an episode's
@@ -83,7 +86,7 @@ Writes:
   data/renew_changes.json.gz    params, kinds, first, last, years, n_units, togglers,
                                  ptc_band, ptc_credit {year: [pre2022, post2021] cents/kWh},
                                  tax_rate,
-                                 events: [{date, plant, units, tech, kind, before, after, days, ptc,
+                                 events: [{date, plant, units, tech, kind, before, after, days, ptc, start,
                                  gap, ctx [dam before, dam after, cur before, cur after],
                                  impact {hours, up, dn, v_up, v_dn, est, days, open, capped} or null}],
                                  newest first
@@ -103,6 +106,7 @@ from .config import DATA_DIR, UNIT_DATA_DIR
 from .dam_prices import load as load_dam_prices
 from .ppa import HIT_USD, MIN_HSL, SLOPE, _arr, day_offers, fill_cache, infer_unit
 from .parse_prices import node_hourly
+from .in_service import load as load_in_service
 from .store import read_json_gz, write_json_gz
 
 OUT_DIR = DATA_DIR / "renew"
@@ -626,15 +630,35 @@ def _ptc_update(e, credit: dict) -> bool:
     return any(abs(a - g) <= STEP_USD for g in _pretax(credit, y)) or any(abs(a / b - r) <= STEP_RATIO for r in steps)
 
 
-def _tag_ptc(events, tech, first_seen, data_first) -> None:
+def started(units, in_service: dict, first_seen: dict, data_first: str):
+    """The latest start year among the units, from EIA-860 (in_service.py; a unit missing there
+    takes another unit of its plant's), else from its first day in the data when that is after the
+    data's first month; None when a unit's start is unknown."""
+    by_plant = {}
+    for n, ys in in_service.items():
+        by_plant.setdefault(plant_of(n), ys)
+    early = (dt.date.fromisoformat(data_first) + dt.timedelta(days=31)).isoformat() if data_first else ""
+    out = []
+    for u in units:
+        ys = in_service.get(u) or by_plant.get(plant_of(u))
+        if ys:
+            out.append(ys[1])
+        elif first_seen.get(u, "") > early:
+            out.append(int(first_seen[u][:4]))
+        else:
+            return None
+    return max(out) if out else None
+
+
+def _tag_ptc(events, first_seen, data_first, in_service) -> None:
     """e["ptc"]: "expired" for a wind floor leaving the PTC band for PTC_OFF or above that never
-    returns to the band in the data (the credit running out after 10 years, inferred), for units
-    whose start is unknown (in the data from its first month) or PTC_YEARS or more before."""
+    returns to the band in the data (the credit running out after 10 years), when the plant
+    started PTC_YEARS or more before (EIA-860's operating year; the latest of its phases), or its
+    start is unknown."""
     by_unit = defaultdict(list)
     for e in events:
         for u in e["units"]:
             by_unit[u].append(e)
-    early = (dt.date.fromisoformat(data_first) + dt.timedelta(days=31)).isoformat() if data_first else ""
     for e in events:
         e["ptc"] = None
         if e["kind"] not in ("floor_new", "floor_back") or e["tech"] != "wind":
@@ -642,14 +666,14 @@ def _tag_ptc(events, tech, first_seen, data_first) -> None:
         b, a = e["before"], e["after"]
         if not (_in_band(b) and a.get("k") == "f" and a["v"] >= PTC_OFF):
             continue
-        d = dt.date.fromisoformat(e["date"])
-        if not any(first_seen.get(u, "") <= early
-                   or first_seen.get(u, "9") <= d.replace(year=d.year - PTC_YEARS).isoformat() for u in e["units"]):
+        y = started(e["units"], in_service, first_seen, data_first)
+        if y is not None and int(e["date"][:4]) < y + PTC_YEARS:
             continue
         back = any(o["date"] > e["date"] and _in_band(o["after"]) and o["kind"] != "episode"
                    for u in e["units"] for o in by_unit[u])
         if not back:
             e["ptc"] = "expired"
+            e["start"] = y
 
 
 def _close(a, b) -> bool:
@@ -722,7 +746,7 @@ def write_events(detected, seq, tech, src) -> None:
     credit = ptc_credit()
     dates = sorted(src)
     first_seen = {n: days[0][0] for n, days in seq.items() if days}
-    _tag_ptc(events, tech, first_seen, dates[0] if dates else None)
+    _tag_ptc(events, first_seen, dates[0] if dates else None, load_in_service())
     for e in events:
         if _ptc_update(e, credit):
             e["ptc"] = "update"

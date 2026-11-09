@@ -189,6 +189,8 @@ function drawHead(e) {
   if (ui) bits.push(...[ui.mw && `${fmtMW(ui.mw)} MW`, ui.sp && `node ${ui.sp}`].filter(Boolean));
   if (who && who.plant && !named) bits.push(`at the ${displayName(who.plant)} site`);
   if (who && who.aliases?.length) bits.push(`also known as ${who.aliases.join(", ")}`);
+  const yrs = who && who.in_service;   // EIA-860 operating years (pipeline/in_service.py)
+  if (yrs) bits.push(`in service ${yrs[0] === yrs[1] ? yrs[0] : `${yrs[0]} to ${yrs[1]}`} (EIA-860)`);
   if (window.CX.isPeaker(S.G, e.name)) bits.push(window.CX.peakerNote(S.G).replace("Runs like", "runs like"));
   $("unit-meta").textContent = bits.join(" · ");
   // who decides how it is offered, who schedules it, who owns it (ERCOT's DME and QSE lists)
