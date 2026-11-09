@@ -268,13 +268,18 @@ function drawQ3() {
   const never = new Set(q.never.filter((r) => r[1] === t).map((r) => r[0]));
   const byT = d3.group(q.units.filter((r) => r[1] === t && r[3] >= q.unit_min), (r) => r[0]);
   never.forEach((tr) => { if (!byT.has(tr)) byT.set(tr, []); });
+  const almost = new Map((q.almost || []).filter((r) => r[1] === t).map((r) => [r[0], { n: r[2], off: r[3] }]));
+  almost.forEach((_, tr) => { if (!byT.has(tr)) byT.set(tr, []); });
+  const everN = d3.rollup(q.units.filter((r) => r[1] === t), (v) => d3.sum(v, (r) => r[3]), (r) => r[0]);
   const T = [...byT].map(([tr, rs]) => {
     const mean = (f) => { const v = rs.filter(f); return v.length ? d3.mean(v, (r) => r[4]) : null; };
     return { tr, lsl: d3.median(rs, (r) => r[5]) ?? null, cells: rs.map((r) => ({ y: r[2], n: r[3], v: r[4] })),
-      early: mean((r) => r[2] >= b0 && r[2] <= b1), late: mean((r) => r[2] >= 2024), never: never.has(tr) };
+      early: mean((r) => r[2] >= b0 && r[2] <= b1), late: mean((r) => r[2] >= 2024), never: never.has(tr), almost: almost.get(tr) };
   });
-  const key = (r) => (r.never ? 2 : r.early == null || r.late == null ? 1 : 0);
-  T.sort((a, b) => key(a) - key(b) || ((a.late ?? 0) - (a.early ?? 0)) - ((b.late ?? 0) - (b.early ?? 0)) || a.tr.localeCompare(b.tr));
+  // groups top to bottom: units that cycle, too few windows early or late, almost never off, never off
+  const key = (r) => (r.never ? 3 : r.almost ? 2 : r.early == null || r.late == null ? 1 : 0);
+  T.sort((a, b) => key(a) - key(b) || (key(a) >= 2 ? (a.almost ? a.almost.off / a.almost.n : 0) - (b.almost ? b.almost.off / b.almost.n : 0) :
+    ((a.late ?? 0) - (a.early ?? 0)) - ((b.late ?? 0) - (b.early ?? 0))) || a.tr.localeCompare(b.tr));
   const ys = years();
   {
     const el = $("q3h-chart"), w = Math.max(320, el.clientWidth || 700), rh = 14, narrow = w < 560, m = { t: 22, r: narrow ? 44 : 64, b: 6, l: narrow ? 104 : 150 };
@@ -299,19 +304,27 @@ function drawQ3() {
           (d != null ? `<tr><td>Change, ${b0}–${String(b1).slice(2)} to 2024 on</td><td class="n">${d > 0 ? "+" : d < 0 ? "−" : ""}${Math.abs(Math.round(100 * d))} pt</td></tr>` : "") +
           `</table>${yearLabel(c.y) === String(c.y) ? "" : `<p class="tip-pin-note">* ${esc(yearLabel(c.y).slice(6, -1))}</p>`}<p class="tip-pin-note">Click the name for its unit page</p>`))
         .on("pointerleave", hideTip));
-      if (r.early != null && r.late != null) {
+      if (r.almost || r.never) {
+        const n = r.almost ? r.almost.n : everN.get(r.tr) || 0;
+        svg.append("text").attr("x", w - m.r + 6).attr("y", y0 + rh - 3).attr("font-size", 11).attr("fill", css("--muted"))
+          .text(`${r.almost ? r.almost.off : 0} of ${d3.format(",")(n)}`).append("title").text(`Turned off for ${r.almost ? r.almost.off : 0} of its ${d3.format(",")(n)} windows where shutting would have paid, whole record`);
+      } else if (r.early != null && r.late != null) {
         const d = r.late - r.early;
         svg.append("text").attr("x", w - m.r + 6).attr("y", y0 + rh - 3).attr("font-size", 11).attr("fill", css(d < -0.2 ? "--c8" : d > 0.2 ? "--c3" : "--muted"))
           .text(`${d > 0 ? "+" : d < 0 ? "−" : ""}${Math.abs(Math.round(100 * d))} pt`);
       }
     });
-    const nb = T.findIndex((r) => key(r) === 2);
+    const na = T.findIndex((r) => key(r) >= 2), nb = T.findIndex((r) => key(r) === 3);
+    if (na > 0 && na !== nb) svg.append("line").attr("x1", m.l).attr("x2", w - m.r).attr("y1", m.t + na * rh).attr("y2", m.t + na * rh).attr("stroke", css("--muted")).attr("stroke-dasharray", "1 3");
     if (nb > 0) svg.append("line").attr("x1", m.l).attr("x2", w - m.r).attr("y1", m.t + nb * rh).attr("y2", m.t + nb * rh).attr("stroke", css("--ink")).attr("stroke-dasharray", "3 3");
     el.replaceChildren(svg.node());
-    $("q3h-legend").innerHTML = `<span>Each cell: of the unit's loss windows where shutting would have paid, the share it turned off for (${q.unit_min} such windows or more). Light = rode through, dark = turned off. Biggest drop first; units that never turned off where shutting would have paid (20 or more such windows over the record) below the dashed line. Beside each name, its minimum output (LSL). Change: 2024 on against ${b0} to ${b1}, in percentage points.</span>`;
-    setCSV(el, ["train", "lsl_mw", ...ys.map(String), "early", "late", "never_off"], T.map((r) => [r.tr, r.lsl, ...ys.map((y) => (r.cells.find((c) => c.y === y) || {}).v ?? ""), r.early, r.late, r.never]), `Units ${t}`);
+    $("q3h-legend").innerHTML = `<span>Each cell: of the unit's loss windows where shutting would have paid, the share it turned off for (${q.unit_min} such windows or more). Light = rode through, dark = turned off. Biggest drop first. Below the dotted line, almost never off: turned off for 2% or fewer of 20 or more such windows over the record; below the dashed line, never off: none of 20 or more. For both, the last column gives the times turned off of those windows. Beside each name, its minimum output (LSL). Change: 2024 on against ${b0} to ${b1}, in percentage points.</span>`;
+    setCSV(el, ["train", "lsl_mw", ...ys.map(String), "early", "late", "never_off", "almost_never_off"], T.map((r) => [r.tr, r.lsl, ...ys.map((y) => (r.cells.find((c) => c.y === y) || {}).v ?? ""), r.early, r.late, r.never, !!r.almost]), `Units ${t}`);
     const both = T.filter((r) => key(r) === 0), fell = both.filter((r) => r.late < r.early - 0.2).length, rose = both.filter((r) => r.late > r.early + 0.2).length;
-    $("q3h-text").textContent = `Of the ${both.length} ${TECH[t].toLowerCase()} units with such windows in both ${b0} to ${b1} and 2024 on, ${fell} now turn off at least 20 percentage points less often than they did, ${rose} at least 20 points more often, and ${both.length - fell - rose} are within 20 points. ${never.size} ${never.size === 1 ? "unit has" : "units have"} never turned off where shutting would have paid.`;
+    $("q3h-text").textContent = `Of the ${both.length} ${TECH[t].toLowerCase()} units with such windows in both ${b0} to ${b1} and 2024 on, ${fell} now turn off at least 20 percentage points less often than they did, ${rose} at least 20 points more often, and ${both.length - fell - rose} are within 20 points. ${never.size} ${never.size === 1 ? "unit has" : "units have"} never turned off where shutting would have paid, and ${almost.size} almost never.`;
+    const un = (q.untested || []).filter((r) => r[1] === t).sort((a, b) => a[0].localeCompare(b[0]));
+    $("q3h-untested").innerHTML = un.length ? `Never turned off, but never had 20 windows where shutting paid, so not judged: ` +
+      un.map((r) => `<a href="unit.html?unit=${encodeURIComponent(r[0])}">${esc(r[0])}</a> (${r[2]})`).join(", ") + `.` : "";
   }
   // ---- units that cycle, by size of loss
   {

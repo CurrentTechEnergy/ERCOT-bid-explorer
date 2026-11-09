@@ -52,7 +52,7 @@ from .intraday import train_of
 from .store import read_json_gz, write_json_gz
 
 PATH = DATA_DIR / "goal.json.gz"
-VERSION = "v13"  # v13: decision table d5 (outage-like off spells are outages, as the rest of the site), never off judged on the windows where shutting pays (NEVER_ALL_MIN of them or more), as the heatmap; v12: the fall-back Sunday's folded HE2 counts as two hours (pipeline/hours.py); v11: Q3 by unit (shut rate where shutting pays, each year), cycling units by loss band, minimum output ridden through against 2019 to 2021 habits; v10: decision table d4 (make-whole and AS netted, held = RUC), Q3 by DAM position; v9: question 4's siting maps (pipeline/load_siting.py); v8: 2 h off spells (were 4 h); v7: decision table d2 (operator's-view loss windows, buckets, coal out); v5: cheap hours on DA system lambda (was the DA hub average)
+VERSION = "v14"  # v14: Q3 almost never off (ALMOST_MAX or less of NEVER_ALL_MIN+ paid windows) and never shut but too few paid windows to judge (untested); v13: decision table d5 (outage-like off spells are outages, as the rest of the site), never off judged on the windows where shutting pays (NEVER_ALL_MIN of them or more), as the heatmap; v12: the fall-back Sunday's folded HE2 counts as two hours (pipeline/hours.py); v11: Q3 by unit (shut rate where shutting pays, each year), cycling units by loss band, minimum output ridden through against 2019 to 2021 habits; v10: decision table d4 (make-whole and AS netted, held = RUC), Q3 by DAM position; v9: question 4's siting maps (pipeline/load_siting.py); v8: 2 h off spells (were 4 h); v7: decision table d2 (operator's-view loss windows, buckets, coal out); v5: cheap hours on DA system lambda (was the DA hub average)
 START = "2019-01"
 CHEAP = 10.0          # $/MWh, day-ahead system lambda: a cheap hour
 OVER_PRICE = 5.0      # $/MWh, real-time hub average: an oversupply hour
@@ -482,6 +482,7 @@ def _dam_status(dd):
 
 
 NEVER_MIN = 20                                  # loss windows a year before "none shut" makes a unit never-off that year
+ALMOST_MAX = 0.02                               # share of those windows turned off, at most, for "almost never off"
 NEVER_ALL_MIN = 20                              # windows where shutting pays, whole record, before "none shut" makes a unit never off
 UNIT_MIN = 8                                    # windows where shutting pays before a unit-year's share is shown
 LOSS_BANDS = [-1, 50, 200, 1e9]                 # loss from staying on, $ per MW of LSL over the window
@@ -518,6 +519,14 @@ def _rule(table):
     free = x[~x["bucket"].isin(["held", "held_mw"])]
     ever = more.groupby(["train", "tech"])["shut"].agg(["size", "sum"])
     never = [[tr, t] for (tr, t), v in ever.iterrows() if v["sum"] == 0 and v["size"] >= NEVER_ALL_MIN]
+    # almost never off: NEVER_ALL_MIN+ such windows, turned off for ALMOST_MAX of them or fewer (at least once)
+    almost = [[tr, t, int(v["size"]), int(v["sum"])] for (tr, t), v in ever.iterrows()
+              if v["size"] >= NEVER_ALL_MIN and 0 < v["sum"] <= ALMOST_MAX * v["size"]]
+    # never turned off for any free window, but too few windows where shutting pays to judge (steam hosts and the like)
+    shut_free = free.groupby(["train", "tech"])["shut"].sum()
+    paid = ever["size"].to_dict()
+    untested = [[tr, t, int(paid.get((tr, t), 0))] for (tr, t), v in shut_free.items()
+                if v == 0 and paid.get((tr, t), 0) < NEVER_ALL_MIN]
     # units that cycle: a year's never-off units (NEVER_MIN windows or more, none shut) left out; share
     # turned off by the loss from staying on per MW of LSL
     ty = free.groupby(["train", "year"])["shut"].agg(["size", "sum"])
@@ -535,7 +544,7 @@ def _rule(table):
         r = g["train"].map(base)
         extra.append([int(y), t, int(g["train"].nunique()), round(float((g["mwh"] * (1 - g["shut"])).sum())),
                       round(float((g["mwh"] * (1 - r)).sum()))])
-    return {"off": off, "mix": mix, "position": pos, "units": units, "never": never, "bands": bands, "extra": extra,
+    return {"off": off, "mix": mix, "position": pos, "units": units, "never": never, "almost": almost, "untested": untested, "bands": bands, "extra": extra,
             "unit_min": UNIT_MIN, "base_years": list(BASE_YEARS)}
 
 
@@ -557,6 +566,8 @@ def build(cache: Path, end=None, table=None) -> dict:
               "mix": [[year, tech, windows, night, day, off_rate, median_loss_per_mw]],
               "units": [[train, tech, year, windows where shutting pays, off_share, lsl_mw]],
               "never": [[train, tech]] (NEVER_ALL_MIN+ windows where shutting pays, none shut in the whole record),
+              "almost": [[train, tech, windows where shutting pays, turned off]] (NEVER_ALL_MIN+, ALMOST_MAX or less turned off),
+              "untested": [[train, tech, windows where shutting pays]] (no free window shut, under NEVER_ALL_MIN paid),
               "bands": [[year, tech, loss band, windows, off_share]] (units that cycle that year),
               "extra": [[year, tech, trains, ridden_mwh, ridden_mwh_at_base_rates]] (where shutting pays),
               "unit_min", "base_years"},
