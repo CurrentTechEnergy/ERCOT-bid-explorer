@@ -10,9 +10,21 @@ how much of their output landed in hours priced at $0 or below.  Read by the Ren
     two in a few months, so a history month short of days has its energy scaled up to the month
 
 Per technology and period:
-  gw          fleet size: each unit's highest hourly HSL summed (monthly: over the month; daily: over
-              the 30 days ending that day, so a calm day doesn't shrink the fleet; null for the
-              first 29 days), GW
+  gw          fleet size: the units with any HSL in the period (daily: in the 30 days ending that
+              day), each at its highest hourly HSL over the 12 months ending with the period, summed,
+              GW.  Monthly the window is the month and the 11 before it; daily, the day's month up to
+              the day and the 11 months before.  Wind's HSL is what the wind lets it make, so a month's
+              own highest hour runs 2-3 GW under the fleet's in a calm summer; over 12 months every
+              unit has had its windy (or clear) hours.  Monthly, the first 11 months (2019) have less
+              than a year behind them: "gw_months" gives each month's window length.  Daily, null for
+              the first 29 days.
+  nameplate   the same units at their installed capacity in ERCOT's CDR report (pipeline/cdr.py,
+              reference/cdr_units.csv: one edition, applied to every year, so a repowered unit
+              carries today's rating back), GW.  Matched on the unit code (cdr.Matcher, "unit"
+              matches only); where several of our units match one CDR unit (a jointly owned unit
+              SCED splits, _J01/_J02), its MW is shared by their highest HSL.  A unit the CDR doesn't
+              have (newer than the edition, or gone before it) counts at its 12-month HSL, as in gw.
+  np_fallback the part of nameplate counted at HSL for want of a CDR rating, GW
   units       units with any HSL in the period (that 30-day window, daily)
   gen         energy generated (telemetered output), GWh
   curt        curtailed: HSL above base point, summed over hours, GWh
@@ -33,9 +45,12 @@ Per technology and period:
 
 data/renewables/years.json.gz
   {"format", "months": [YYYY-MM], "monthly": {tech: {field: [month]}}, "monthly_source": [month]
-   ("h" history, "s" series), "dates": [YYYY-MM-DD], "daily": {tech: {field: [day]}}}
+   ("h" history, "s" series), "gw_months": [months in each month's fleet-size window, 1-12],
+   "dates": [YYYY-MM-DD], "daily": {tech: {field: [day]}}}
 Monthly summaries from the history are cached on the data branch under renew_years/, keyed on the
-release assets' ids and sizes, so a run only fetches months that are new or rebuilt.
+release assets' ids and sizes, so a run only fetches months that are new or rebuilt; each unit's
+highest HSL in a history month is cached apart, under renew_years/maxes/, keyed on the units asset
+alone (so adding it didn't rebuild the summaries).
 
   python -m pipeline.renew_years
 """
@@ -47,28 +62,32 @@ from pathlib import Path
 
 import numpy as np
 
+from .cdr import edition
 from .config import DATA_DIR, UNIT_DATA_DIR
 from .hours import day_weights, hour_weight
 from .log import warn
 from .store import read_json_gz, write_json_gz
 
-FORMAT = 5      # 5: the fall-back Sunday's folded HE2 weighs two hours (pipeline/hours.py)
+FORMAT = 6      # 5: the fall-back Sunday's folded HE2 weighs two hours (pipeline/hours.py); 6: fleet size over 12 months
+SUMMARY_FORMAT = 5      # the cached month summaries' format (6 changed only how gw is put together)
 
 
 def _cache_ok(c: dict, month: str) -> bool:
     """A cached month is current at FORMAT; one built at 4 differs only in a November (the
     fall-back Sunday), so other months at 4 are kept rather than rebuilt."""
     f = (c or {}).get("format")
-    return f == FORMAT or (f == 4 and month[5:] != "11")
+    return f == SUMMARY_FORMAT or (f == 4 and month[5:] != "11")
 PATH = DATA_DIR / "renewables" / "years.json.gz"
 CACHE = UNIT_DATA_DIR / "renew_years"
 HISTORY = Path("history")
 TECHS = ("wind", "solar")
 FIELDS = ["gw", "units", "gen", "curt", "capture", "avg", "neg", "rt_capture", "rt_avg", "hub_da", "hub_rt",
-          "hub_da_gen", "hub_rt_gen", "sys_gen"]
+          "hub_da_gen", "hub_rt_gen", "sys_gen", "nameplate", "np_fallback"]
 HUB = "HB_HUBAVG"
 KINDS = ("units", "rt-prices", "da-hubs", "thermal")
-WINDOW = 30
+WINDOW = 30     # days a unit counts as in the fleet after its last HSL (daily)
+YEAR = 12       # months over which each unit's highest HSL is its size
+MAXES = CACHE / "maxes"
 REPO = os.environ.get("GITHUB_REPOSITORY", "CurrentTechEnergy/ERCOT-bid-explorer")
 
 
@@ -170,55 +189,82 @@ def _gh(*args) -> str:
     return subprocess.run(["gh", *args], check=True, capture_output=True, text=True).stdout
 
 
-def history_months() -> dict:
-    """{YYYY-MM: {tech: FIELDS}} from the history release's units months (cached)."""
+def _unit_maxes(units_path) -> dict:
+    """{tech: {unit: highest hourly HSL, MW}} in a history units month (units with none left out)."""
+    import pandas as pd
+    d = pd.read_parquet(units_path, columns=["unit", "tech", "hsl"])
+    d = d[d.tech.isin(TECHS) & (d.hsl > 0)]
+    return {t: {u: round(float(v), 1) for u, v in d[d.tech == t].groupby("unit").hsl.max().items()} for t in TECHS}
+
+
+def _fetch(a: dict) -> Path:
+    path = HISTORY / a["name"]
+    if not path.exists() or path.stat().st_size != a["size"]:
+        HISTORY.mkdir(exist_ok=True)
+        _gh("release", "download", "history", "-R", REPO, "-p", a["name"], "-D", str(HISTORY), "--clobber")
+    return path
+
+
+def history_months() -> tuple:
+    """-> ({YYYY-MM: {tech: FIELDS}}, {YYYY-MM: {tech: {unit: highest HSL}}}) from the history
+    release's units months (both cached)."""
     try:
         assets = json.loads(_gh("api", f"repos/{REPO}/releases/tags/history", "--jq",
                                 '[.assets[] | select(.name | test("^(units|rt-prices|da-hubs|thermal)-[0-9]{4}-[0-9]{2}\\\\.parquet$")) | {id, name, size}]'))
     except (OSError, subprocess.CalledProcessError, ValueError) as e:
         warn(f"renew_years: can't list the history release ({e}); using cached months only")
         assets = None
-    out = {}
+    out, maxes = {}, {}
     if assets is None:
         for p in sorted(CACHE.glob("*.json.gz")):
             c = read_json_gz(p) or {}
             if _cache_ok(c, c.get("month") or ""):
                 out[c["month"]] = c["techs"]
-        return out
+        for p in sorted(MAXES.glob("*.json.gz")):
+            c = read_json_gz(p) or {}
+            if c.get("month"):
+                maxes[c["month"]] = c["maxes"]
+        return out, maxes
     by = {}     # month -> kind -> asset
     for a in assets:
         kind, month = a["name"][:-16], a["name"][-15:-8]
         by.setdefault(month, {})[kind] = a
     for month in sorted(m for m, k in by.items() if "units" in k):
         have = by[month]
+        mkey = [have["units"]["id"], have["units"]["size"]]
+        c = read_json_gz(MAXES / f"{month}.json.gz")
+        if c and c.get("key") == mkey:
+            maxes[month] = c["maxes"]
+        else:
+            try:
+                maxes[month] = _unit_maxes(_fetch(have["units"]))
+                write_json_gz(MAXES / f"{month}.json.gz", {"month": month, "key": mkey, "maxes": maxes[month]})
+            except (OSError, subprocess.CalledProcessError, ValueError, KeyError) as e:
+                warn(f"renew_years: no unit maxima for {month} ({e})")
         key = [[have[k]["id"], have[k]["size"]] if k in have else None for k in KINDS]
         c = read_json_gz(CACHE / f"{month}.json.gz")
         if c and _cache_ok(c, month) and c.get("key") == key:
             out[month] = c["techs"]
             continue
         try:
-            paths = {}
-            for kind, a in have.items():
-                path = paths[kind] = HISTORY / a["name"]
-                if not path.exists() or path.stat().st_size != a["size"]:
-                    HISTORY.mkdir(exist_ok=True)
-                    _gh("release", "download", "history", "-R", REPO, "-p", a["name"], "-D", str(HISTORY), "--clobber")
+            paths = {kind: _fetch(a) for kind, a in have.items()}
             techs = _month_from_parquet(paths, month)
         except (OSError, subprocess.CalledProcessError, ValueError, KeyError) as e:
             warn(f"renew_years: skipped {month} ({e})")
             continue
-        write_json_gz(CACHE / f"{month}.json.gz", {"month": month, "format": FORMAT, "key": key, "techs": techs})
+        write_json_gz(CACHE / f"{month}.json.gz", {"month": month, "format": SUMMARY_FORMAT, "key": key, "techs": techs})
         out[month] = techs
-    return out
+    return out, maxes
 
 
 def series_days() -> tuple:
-    """-> (dates, {tech: {field: [day]}}, {YYYY-MM: {tech: FIELDS}} for complete months) from the
-    series month files."""
+    """-> (dates, {tech: {field: [day]}}, {YYYY-MM: {tech: FIELDS}} for complete months,
+    {tech: {date: {unit: highest hourly HSL}}}) from the series month files.  The fleet size (gw)
+    here is the period's own highest HSL; build_renew_years replaces it with the 12-month one."""
     idx = read_json_gz(DATA_DIR / "series" / "index.json.gz") or {}
     sps = {u: v[1] for u, v in (idx.get("units") or {}).items()}
     dam_hubs = (read_json_gz(DATA_DIR / "dam_hubs.json.gz") or {}).get("days") or {}
-    dates, daily, months = [], {t: {k: [] for k in FIELDS} for t in TECHS}, {}
+    dates, daily, months, dmaxes = [], {t: {k: [] for k in FIELDS} for t in TECHS}, {}, {}
     per = {t: {} for t in TECHS}     # tech -> month -> (dates, {unit: (hsl, bp, out, da) per day})
     for month in idx.get("months", []):
         for t in TECHS:
@@ -258,7 +304,7 @@ def series_days() -> tuple:
                 arr["rt"] = np.array([np.nan if x is None else x for x in rt], float) if rt else np.full(n, np.nan)
                 for i, d in enumerate(f["dates"]):
                     days.setdefault(d, {})[u] = tuple(arr[k][24 * i:24 * i + 24] for k in ("hsl", "bp", "out", "da", "rt")) + (day_weights(d),)
-        dmax = {d: {u: (float(np.nanmax(x[0])) if np.isfinite(x[0]).any() else 0.0) for u, x in us.items()} for d, us in days.items()}
+        dmax = dmaxes[t] = {d: {u: (float(np.nanmax(x[0])) if np.isfinite(x[0]).any() else 0.0) for u, x in us.items()} for d, us in days.items()}
         for j, d in enumerate(all_dates):
             if d not in days:
                 for k in FIELDS:
@@ -272,7 +318,7 @@ def series_days() -> tuple:
             if j < WINDOW - 1:      # not 30 days behind it yet: the fleet would read small
                 s["gw"] = s["units"] = None
             for k in FIELDS:
-                daily[t][k].append(s[k])
+                daily[t][k].append(s.get(k))
         for month in sorted({d[:7] for d in days}):
             ds = [d for d in days if d.startswith(month)]
             y, m = map(int, month.split("-"))
@@ -289,24 +335,109 @@ def series_days() -> tuple:
                 hub["gen"] = np.concatenate([hubs[d]["gen"] for d in sorted(ds)])
             months.setdefault(month, {})[t] = summarize(units, cap, hub)
     dates = all_dates
-    return dates, daily, {m: v for m, v in months.items() if all(t in v for t in TECHS)}
+    return dates, daily, {m: v for m, v in months.items() if all(t in v for t in TECHS)}, dmaxes
+
+
+def _prev_months(month: str, n: int) -> list:
+    """The n months before YYYY-MM, oldest first."""
+    y, m = map(int, month.split("-"))
+    k = y * 12 + m - 1
+    return [f"{(k - i) // 12}-{(k - i) % 12 + 1:02d}" for i in range(n, 0, -1)]
+
+
+def _month_maxes(hmax: dict, dmaxes: dict) -> dict:
+    """{tech: {YYYY-MM: {unit: highest HSL}}}: the history's months and the series' (whole or not),
+    the higher where both have a unit."""
+    out = {t: {} for t in TECHS}
+    for m, techs in hmax.items():
+        for t in TECHS:
+            out[t].setdefault(m, {}).update((techs or {}).get(t) or {})
+    for t in TECHS:
+        for d, us in (dmaxes.get(t) or {}).items():
+            mm = out[t].setdefault(d[:7], {})
+            for u, v in us.items():
+                if v > mm.get(u, 0.0):
+                    mm[u] = v
+    return out
+
+
+def _year_mw(present, month: str, mmax: dict, extra: dict = None) -> dict:
+    """{unit: MW}: each unit in `present` at its highest HSL over the YEAR - 1 months before
+    `month` (mmax: {YYYY-MM: {unit: MW}}) and `extra` ({unit: MW}, the period's own)."""
+    prev = [mmax.get(m) or {} for m in _prev_months(month, YEAR - 1)]
+    extra = extra or {}
+    return {u: max([extra.get(u, 0.0)] + [p.get(u, 0.0) for p in prev]) for u in present}
+
+
+def cdr_mw(tech: str, peak: dict) -> dict:
+    """{unit: installed MW from the CDR} for the units of `peak` ({unit: highest HSL ever}) the CDR
+    has; a CDR unit several of ours match is shared by their highest HSL."""
+    from .cdr import Matcher, load
+    rows = [r for r in load() if r.get("mw")]
+    if not rows:
+        return {}
+    matcher, by = Matcher(rows), {}
+    for u in peak:
+        r, kind = matcher.match(u, tech)
+        if kind == "unit" and r.get("mw"):
+            by.setdefault(r["code"], (float(r["mw"]), []))[1].append(u)
+    out = {}
+    for mw, us in by.values():
+        tot = sum(peak[u] for u in us)
+        for u in us:
+            out[u] = mw * (peak[u] / tot if tot > 0 else 1 / len(us))
+    return out
+
+
+def _sizes(year: dict, cdr: dict) -> tuple:
+    """-> (gw, nameplate, np_fallback) from {unit: 12-month HSL} and {unit: CDR MW}."""
+    fb = sum(v for u, v in year.items() if u not in cdr)
+    return (round(sum(year.values()) / 1e3, 3), round((sum(cdr[u] for u in year if u in cdr) + fb) / 1e3, 3),
+            round(fb / 1e3, 3))
 
 
 def build_renew_years(index: dict = None) -> None:
-    hist = history_months()
-    dates, daily, smonths = series_days()
+    hist, hmax = history_months()
+    dates, daily, smonths, dmaxes = series_days()
     months = sorted(set(hist) | set(smonths))
     if not months and not dates:
         return
+    mmax = _month_maxes(hmax, dmaxes)
+    cdr = {}
+    for t in TECHS:
+        peak = {}
+        for us in mmax[t].values():
+            for u, v in us.items():
+                peak[u] = max(peak.get(u, 0.0), v)
+        cdr[t] = cdr_mw(t, peak)
     monthly = {t: {k: [] for k in FIELDS} for t in TECHS}
     for m in months:
         src = smonths.get(m) or hist[m]
         for t in TECHS:
             for k in FIELDS:
                 monthly[t][k].append((src.get(t) or {}).get(k))
+            own = mmax[t].get(m)
+            if own:     # each unit in the month at its highest HSL over the month and the 11 before
+                year = _year_mw([u for u, v in own.items() if v > 0], m, mmax[t], own)
+                for k, v in zip(("gw", "nameplate", "np_fallback"), _sizes(year, cdr[t])):
+                    monthly[t][k][-1] = v
+    gw_months = [min(YEAR, len(set(_prev_months(m, YEAR - 1)) & set(months)) + 1) for m in months]
+    for t in TECHS:     # daily: the units in the 30-day window, each at its highest HSL over the day's
+        dm = dmaxes.get(t) or {}    # month so far and the 11 months before
+        for j, d in enumerate(dates):
+            if daily[t]["gw"][j] is None:
+                continue
+            present = {u for dd in dates[max(0, j - WINDOW + 1):j + 1] for u, v in (dm.get(dd) or {}).items() if v > 0}
+            own = {}
+            for dd in dates[:j + 1]:
+                if dd[:7] == d[:7]:
+                    for u, v in (dm.get(dd) or {}).items():
+                        own[u] = max(own.get(u, 0.0), v)
+            for k, v in zip(("gw", "nameplate", "np_fallback"), _sizes(_year_mw(present, d[:7], mmax[t], own), cdr[t])):
+                daily[t][k][j] = v
     write_json_gz(PATH, {"format": FORMAT, "months": months, "monthly": monthly,
-                         "monthly_source": ["s" if m in smonths else "h" for m in months],
-                         "dates": dates, "daily": daily})
+                         "monthly_source": ["s" if m in smonths else "h" for m in months], "gw_months": gw_months,
+                         "dates": dates, "daily": daily, "cdr_edition": edition()})
     last = {t: monthly[t]["gw"][-1] for t in TECHS} if months else {}
     print(f"renew_years: {len(months)} months ({len(set(months) - set(smonths))} from the history), {len(dates)} days; "
           + ", ".join(f"{t} {v:.1f} GW" for t, v in last.items() if v is not None))
