@@ -492,6 +492,34 @@ def _lsl_floor_checks(day):
             f"{len(bad)} problem(s), e.g. {bad[:4]}" if bad else f"{len(rows)} days, {f.get('from')} to {f.get('through')}")
 
 
+def _commit_mix_checks(day):
+    """Turn-ons and Turn-offs "How thermal is committed" (pipeline/commit_mix.py): known positions,
+    bands and technologies, hours ending 1 to 24, no negative MW, a band's hours never more than
+    all hours, and the average online minimum output in all hours within range."""
+    from collections import defaultdict
+    from .commit_mix import PATH as CM_PATH, POSITIONS, BANDS, TECHS as CM_TECHS
+    f = read_json_gz(CM_PATH, default=None)
+    if f is None:
+        return
+    bad = []
+    hrs = {(m, he, b): n for m, he, b, n in f.get("hours", [])}
+    for (m, he, b), n in hrs.items():
+        if b not in BANDS or not 1 <= he <= 24 or n < 0 or n > hrs.get((m, he, "all"), 0):
+            bad.append(f"hours {m} HE{he} {b}")
+    tot = defaultdict(float)
+    for m, he, t, p_, b, lsl, out in f.get("rows", []):
+        if t not in CM_TECHS or p_ not in POSITIONS or b not in BANDS or not 1 <= he <= 24 or lsl < 0 or out < 0:
+            bad.append(f"row {m} HE{he} {t} {p_} {b}")
+        if b == "all":
+            tot[m] += lsl
+    for m, v in tot.items():
+        n = sum(n for (mm, _, b), n in hrs.items() if mm == m and b == "all")
+        if n and not 5000 <= v / n <= 60000:
+            bad.append(f"{m} average online LSL {v / n:.0f} MW")
+    day.add("commit_mix", "error" if bad else "ok",
+            f"{len(bad)} problem(s), e.g. {bad[:4]}" if bad else f"{f.get('from')} to {f.get('through')}")
+
+
 def _prices_checks(day):
     """The Prices page's data (pipeline/prices_years.py): every curve runs from high to low,
     percentiles and hour counts in order, no year with more hours than it has, ride-through
@@ -708,6 +736,7 @@ def check_files(index):
     _goal_checks(day)
     _prices_checks(day)
     _lsl_floor_checks(day)
+    _commit_mix_checks(day)
     ui = read_json_gz(UNIT_INDEX_PATH, default=None)
     if ui is not None:
         rows = ui.get("rows", [])

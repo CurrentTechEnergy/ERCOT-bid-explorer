@@ -75,6 +75,7 @@ from .battery_bench import build_battery_bench
 from .renew_years import build_renew_years
 from . import prices_years
 from . import lsl_floor
+from . import commit_mix
 from . import coal_years
 from . import ct_years
 from .unit_index import build_unit_index
@@ -671,6 +672,10 @@ def main(argv=None):
         lsl_floor.build()          # Turn-ons and Turn-offs "Daily minimum floor"; 2019 to Nov 2025 come from the Goal workflow's --full
     except Exception as e:
         warn(f"lsl_floor: failed: {e!r}; lsl_floor.json.gz left as it is")
+    try:
+        commit_mix.build()         # Turn-ons and Turn-offs "How thermal is committed", from the DAM and 60-day unit files
+    except Exception as e:
+        warn(f"commit_mix: failed: {e!r}; commit_mix.json.gz left as it is")
     try:
         coal_years.build()         # coal Unit page "Year by year"; 2019 to Nov 2025 come from the Goal workflow's --full
     except Exception as e:
