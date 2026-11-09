@@ -140,8 +140,9 @@ function actual60() {
   // wind and solar: each unit's largest hourly HSL over the day
   const renMax = {}, onT = {};
   // the system floor, as the Turn-ons and Turn-offs page's daily minimum (pipeline/lsl_floor.py):
-  // online and not starting up or shutting down (online_share less ramp_share at least half the
-  // hour's runs), fossil units at their LSL, nuclear at its output
+  // fossil units at their LSL, nuclear at its output, each weighted by the share of the hour's SCED
+  // runs it was online and not starting up or shutting down (online_share less ramp_share), as the
+  // Real-time offers stack's system floor line (pipeline/actual_stack.py)
   const floorT = {};
   // per train and hour: online (any configuration online at least half the hour's runs), output, HSL, LSL
   const units = {};
@@ -152,7 +153,8 @@ function actual60() {
     if (t === "storage") (out >= 0 ? dis : chg)[h] += out;
     const online = (r[ci.online_share] || 0) >= 0.5;
     if (online && t !== "storage") { add(lslT, t, h, r[ci.lsl]); add(hslT, t, h, r[ci.hsl]); }
-    if (THERMAL.has(t) && (r[ci.online_share] || 0) - (r[ci.ramp_share] || 0) >= 0.5) add(floorT, t, h, t === "nuclear" ? out : r[ci.lsl]);
+    const onRun = Math.min(1, Math.max(0, (r[ci.online_share] || 0) - (r[ci.ramp_share] || 0)));
+    if (THERMAL.has(t) && onRun > 0) add(floorT, t, h, (t === "nuclear" ? out : r[ci.lsl] || 0) * onRun);
     if (t === "wind" || t === "solar") {
       const m = renMax[t] = renMax[t] || {}; m[name0] = Math.max(m[name0] || 0, r[ci.hsl] || 0);
       if (out > 0) add(onT, t, h, 1);    // wind and solar: a unit counts as running in an hour with output

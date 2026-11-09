@@ -76,8 +76,9 @@ function drawDaily() {
     " This is the generation SCED cannot back down without units turning off, so it is the floor that wind, solar and storage must price under in the cheapest hour of the day." + cmp,
     "The floor is the LSL of every online coal, combined-cycle, gas steam and combustion turbine unit" +
     (S.fleet === "fos" ? ". Fossil only picks the low hour, and the lowest days below, on the fossil floor alone, so a nuclear refuelling outage cannot pull a day in." :
-      ", plus nuclear at its output, since it has no offer curve and does not back down.") +
-    " A combined-cycle train counts only its running configuration; units starting up or shutting down are left out.");
+      ", plus nuclear at its output, since it rarely backs down.") +
+    " A combined-cycle train counts only its running configuration; units starting up or shutting down are left out." +
+    " In the 60-day window each unit counts for the share of the hour's SCED runs it was online, as on A day in ERCOT and the Real-time offers stack; earlier days use each unit's hourly online state.");
 }
 
 // ==== By year ================================================================================
