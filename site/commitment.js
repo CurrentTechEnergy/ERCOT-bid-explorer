@@ -23,24 +23,24 @@ const THERMAL = ["nuclear", "coal", "combined_cycle", "gas_steam", "combustion_t
 // thermal units by the groups of the cheap-stretches panel (ST_GROUPS, from the hourly unit strips)
 const FLOOR_GROUPS = [
   { id: "nuclear", label: "Nuclear (no offer curve)", color: "--c5" },
-  { id: "never", label: "Always on when available", color: "--c1" },
-  { id: "multiday", label: "Off for days at a time", color: "--c2" },
-  { id: "daily1", label: "Cycles daily, under once a week", color: "--c8" },
-  { id: "daily2", label: "Cycles daily, 1 to 2 times a week", color: "--c3" },
-  { id: "daily3", label: "Cycles daily, over twice a week", color: "--c4" },
+  { id: "never", label: "Always on when available", color: "--g1" },
+  { id: "multiday", label: "Off for days at a time", color: "--g3" },
+  { id: "daily1", label: "Cycles daily, under once a week", color: "--g4" },
+  { id: "daily2", label: "Cycles daily, 1 to 2 times a week", color: "--g5" },
+  { id: "daily3", label: "Cycles daily, over twice a week", color: "--g6" },
 ];
 
 
 // capacity by status from the intraday file (pipeline/intraday.py status_group)
 const STATUS6 = [
-  { id: "offer", label: "Running on an offer curve", color: "--c1" },
-  { id: "schedule", label: "Running on a schedule (no offer curve)", color: "--c4" },
+  { id: "offer", label: "Running on an offer curve", color: null },            // null: the technology's own color
+  { id: "schedule", label: "Running on a schedule (no offer curve)", color: null, opacity: 0.6 },
   { id: "ruc", label: "Committed by ERCOT (RUC)", color: "--c7" },     // purple wherever RUC is marked (CX.rucRing)
-  { id: "other_on", label: "Other online states (testing, held, starting, stopping)", color: "--c7-soft" },
-  { id: "quick", label: "Offline, quick start", color: "--c2" },
-  { id: "off", label: "Offline but available", color: "--c-other" },
-  { id: "emr", label: "Emergency only", color: "--c5" },
-  { id: "out", label: "On outage", color: "--ink-2" },
+  { id: "other_on", label: "Other online states (testing, held, starting, stopping)", color: null, opacity: 0.3 },
+  { id: "quick", label: "Offline, quick start", color: "--c-other" },
+  { id: "off", label: "Offline but available", color: "--grid" },
+  { id: "emr", label: "Emergency only", color: "--c-other", opacity: 0.5 },
+  { id: "out", label: "On outage", color: "--ink-2", opacity: 0.35 },
 ];
 
 const S = { OC: null, OSC: null, scTech: "combined_cycle", scCell: "all", F: null, FIT: null, FI: null, SC: null, T: null, TH: null, I: null, UH: null, G: null, HC: null, DEC: null, SO: null, days: [], date: null,
@@ -75,7 +75,7 @@ function bindSelect(id, key, options, after) {
   $(id).onchange = (e) => { S[key] = e.target.value; after(); saveView(); };
 }
 function emptyMsg(el, msg) { el.innerHTML = `<p class="empty">${msg}</p>`; }
-function staticLegend(el, list) { el.innerHTML = list.map((s) => `<span><span class="sw" style="background:var(${s.color})"></span>${s.label}</span>`).join(""); }
+function staticLegend(el, list) { el.innerHTML = list.map((s) => `<span><span class="sw" style="background:var(${s.color});opacity:${s.opacity || 1}"></span>${s.label}</span>`).join(""); }
 
 function legend(el, list, hidden, redraw) {
   el.innerHTML = list.map((s) => `<button type="button" data-id="${s.id}" aria-pressed="${!hidden.has(s.id)}"><span class="sw" style="background:var(${s.color})"></span>${s.label}</button>`).join("");
@@ -150,7 +150,7 @@ function timeChart(el, series, opts) {
     let base = dates.map(() => 0);
     series.forEach((s) => {
       const lo = base, hi = lo.map((b, i) => b + (s.values[i] || 0));
-      svg.append("path").attr("fill", css(s.color))
+      svg.append("path").attr("fill", css(s.color)).attr("fill-opacity", s.opacity || 1)
         .attr("d", d3.area().defined((_, i) => ok[i]).x((_, i) => x(dates[i])).y0((_, i) => y(lo[i])).y1((_, i) => y(hi[i]))(dates));
       base = hi;
     });
@@ -177,7 +177,7 @@ function timeChart(el, series, opts) {
       const rows = series.filter((s) => s.values[i] != null);
       if (!opts.stack) rows.sort((a, b) => b.values[i] - a.values[i]);
       showTip(ev, `<h4>${when(i)}${opts.tipNote ? opts.tipNote(i) : ""}</h4><table>` + (opts.stack ? [...rows].reverse() : rows).map((s) =>
-        `<tr><td><span class="sw" style="background:var(${s.color})"></span></td><td>${s.label}</td><td class="n">${tf(s.values[i])}</td></tr>`).join("") + "</table>");
+        `<tr><td><span class="sw" style="background:var(${s.color});opacity:${opts.stack ? s.opacity || 1 : 1}"></span></td><td>${s.label}</td><td class="n">${tf(s.values[i])}</td></tr>`).join("") + "</table>");
     })
     .on("pointerleave", () => { cross.style("display", "none"); hideTip(); });
   el.replaceChildren(svg.node());
@@ -194,8 +194,9 @@ function drawCapacity() {
     const avgOf = (k) => d3.mean(C["cap_" + k] || [], (v) => v) || 0;
     const run = avgOf("offer") + avgOf("schedule") + avgOf("ruc") + avgOf("other_on");
     window.CX.setNote($("cap-note"), `How much of the ${s.label.toLowerCase()} fleet's capacity (HSL) was running each day, and how much sat offline though it could have run. Offline but available is capacity whose owner chose not to run, so its size against the running bands is the day's commitment decision in one picture; outages are not a choice. Over these days ${s.label.toLowerCase()} averaged ${fmtGW(avgOf("off"))} offline but available, against ${fmtGW(run)} running.`, "MW of capacity (HSL) by unit status, averaged over each day's SCED runs, from the per-unit 60-day data. \"Offline but available\" is the economic choice not to run; outages are not. Units running without an offer curve (status ONOS) are held to the MW their QSE scheduled; units testing without one are under Other online states. RUC is ERCOT committing a unit for reliability, which is rare. Quick start (OFFQS) is offline capacity SCED can start within the hour; emergency only (EMR, EMRSWGR) is kept for emergencies or can be switched to another grid, so it is not economic capacity.");
-    staticLegend($("cap-legend"), STATUS6);
-    const series = STATUS6.filter((g) => C["cap_" + g.id]).map((g) => ({ ...g, values: C["cap_" + g.id] }));
+    const status = STATUS6.map((g) => ({ ...g, color: g.color || s.color }));
+    staticLegend($("cap-legend"), status);
+    const series = status.filter((g) => C["cap_" + g.id]).map((g) => ({ ...g, values: C["cap_" + g.id] }));
     return timeChart(el, series, { stack: true, dates: S.I.dates,
       stackMax: d3.max(S.I.dates, (_, i) => d3.sum(series, (x) => x.values[i] || 0)) || 1,
       H: 280, title: `${s.label}: capacity by status (MW)`, yFmt: d3.format(",.0f") });
