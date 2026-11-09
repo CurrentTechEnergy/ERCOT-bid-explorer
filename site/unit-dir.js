@@ -1,8 +1,10 @@
 /* Unit page, no unit picked: the Units directory, every unit the page can open (data/unit_index.json.gz,
-   pipeline/unit_index.py) with its CDR name, county, zone, decision maker, QSE, ERCOT type and how it is committed (share of
-   its last 90 DAM days in quick-start standby, self-committed and awarded), filtered by technology, by the dropdowns (type,
-   group, zone, QSE, commitment style with a minimum share) and by the text in the page's Unit box, sorted by any column.
-   The filters are kept in the address (?tech=&type=&group=&zone=&qse=&commit=qs,self&min=0.25) so a view can be shared.
+   pipeline/unit_index.py) with its CDR name, county, zone, decision maker, QSE, ERCOT type and how it behaves in the DAM (share
+   of its last 90 DAM days in quick-start standby, self-committed, with a three-part offer, awarded and on outage), filtered
+   by technology, by the dropdowns (type, group, zone, QSE), by the DAM behaviour chips (each Any, Yes or No; Yes means at
+   least the "On at least" share of days, No less than it; every chip narrows) and by the text in the page's Unit box,
+   sorted by any column. The filters are kept in the address (?tech=&type=&group=&zone=&qse=&qs=yes&dam=no&min=0.25) so a
+   view can be shared; the older ?commit=qs,self links read as those chips set to Yes.
    Enter in the Unit box opens the first unit listed. */
 (() => {
 "use strict";
@@ -17,7 +19,15 @@ const TECHS = [
 const TECH_LABEL = Object.fromEntries(TECHS.map((t) => [t.id, t.label]));
 const GROUP_SHORT = { never: "Always on when available", seasonal: "Seasonal", multiday: "Off for days at a time", daily1: "Cycles daily, under once a week", daily2: "Cycles daily, 1 to 2 times a week", daily3: "Cycles daily, over twice a week", never_on: "Never on", ungrouped: "Not yet grouped" };
 const GROUP_ORDER = Object.keys(GROUP_SHORT);
-const COMMIT = [{ k: "qs", label: "Quick-start standby" }, { k: "self", label: "Self-committed" }, { k: "dam", label: "Day-ahead award" }];
+const COMMIT = [{ k: "qs", label: "Quick-start standby" }, { k: "self", label: "Self-committed" }, { k: "offer", label: "Three-part offer" },
+  { k: "dam", label: "Day-ahead award" }, { k: "out", label: "On outage" }];
+// quick links: common questions as chip settings
+const PRESETS = [
+  { label: "Sitting out of the DAM", chips: { dam: "no", offer: "no", self: "no", out: "no" }, min: 0 },
+  { label: "Self-committed, no award", chips: { self: "yes", dam: "no" }, min: 0.5 },
+  { label: "Quick-start", chips: { qs: "yes" }, min: 0 },
+  { label: "Long outage", chips: { out: "yes" }, min: 0.5 },
+];
 const MINS = [[0, "any day"], [0.1, "10% of days"], [0.25, "25% of days"], [0.5, "50% of days"], [0.75, "75% of days"], [0.9, "90% of days"]];
 const pct = (v) => (v == null ? "–" : v === 0 ? "0%" : v < 0.01 ? "<1%" : d3.format(".0%")(v));
 const shareCol = (c) => ({ k: c.k, h: `${c.label}, % of DAM days`, f: (u) => (u[c.k] == null ? "–" : `<span title="${Math.round(u[c.k] * u.dam_days)} of ${u.dam_days} DAM days">${pct(u[c.k])}</span>`), opt: 1 });
@@ -37,7 +47,8 @@ const COLS = [
   { k: "sp", h: "Settlement point", t: 1, f: (u) => esc(u.sp || "–") },
   { k: "configs", h: "Configurations", t: 1, f: (u) => (u.configs.length ? esc(u.configs.join(", ")) : "") },
 ];
-const S = { units: null, tech: "all", sort: "unit", dir: 1, shown: [], f: { type: "", group: "", zone: "", qse: "" }, commit: new Set(), min: 0 };
+const S = { units: null, tech: "all", sort: "unit", dir: 1, shown: [], f: { type: "", group: "", zone: "", qse: "" }, chip: {}, min: 0 };
+const chipsOn = () => COMMIT.filter((c) => S.chip[c.k] === "yes" || S.chip[c.k] === "no");
 const SELECTS = ["type", "group", "zone", "qse"];
 const qseOf = (u) => u.qse || "";
 const sortVal = (u, k) => (k === "group" ? (u.group ? GROUP_ORDER.indexOf(u.group) : null) : k === "configs" ? u.configs.length : k === "qse" ? u.qse_name || u.qse : u[k]);
@@ -46,10 +57,14 @@ const sortVal = (u, k) => (k === "group" ? (u.group ? GROUP_ORDER.indexOf(u.grou
 function passes(u, skip) {
   if (S.tech !== "all" && u.tech !== S.tech) return false;
   for (const k of SELECTS) if (k !== skip && S.f[k] && (k === "qse" ? qseOf(u) : u[k] || "") !== S.f[k]) return false;
-  if (skip !== "commit" && S.commit.size && ![...S.commit].some((k) => u[k] != null && (S.min ? u[k] >= S.min : u[k] > 0))) return false;
+  for (const c of chipsOn()) {
+    const v = u[c.k];
+    if (v == null) return false;                          // no DAM days (or not thermal): no answer either way
+    if ((S.min ? v >= S.min : v > 0) !== (S.chip[c.k] === "yes")) return false;
+  }
   return true;
 }
-const filtered = () => S.tech !== "all" || S.commit.size || SELECTS.some((k) => S.f[k]);
+const filtered = () => S.tech !== "all" || chipsOn().length || SELECTS.some((k) => S.f[k]);
 function rows() {
   const q = $("unit-pick").value.trim();
   let us = S.units.filter((u) => passes(u));
@@ -65,7 +80,7 @@ function draw() {
   const us = S.shown = rows();
   const cols = COLS.filter((c) => !c.opt || S.units.some((u) => u[c.k]));      // QSE and decision maker only once the data has them
   const q = $("unit-pick").value.trim(), of = S.units.filter((u) => S.tech === "all" || u.tech === S.tech).length;
-  const more = SELECTS.some((k) => S.f[k]) || S.commit.size;
+  const more = SELECTS.some((k) => S.f[k]) || chipsOn().length;
   $("dir-note").textContent = (q || more ? `${us.length} of ${of}` : `${of}`) + (S.tech === "all" ? " units" : ` ${TECH_LABEL[S.tech].toLowerCase()} units`) +
     (more ? " with these filters" : "") + (q ? ` matching “${q}”` : "");
   fillSelects(); writeURL();
@@ -73,11 +88,11 @@ function draw() {
     us.map((u) => `<tr>${cols.map((c) => `<td${c.t ? ' class="t"' : ""}>${c.f(u)}</td>`).join("")}</tr>`).join("") + "</tbody></table>"
     : `<p class="empty">No unit matches. Try part of the name or the settlement point.</p>`;
   el.querySelectorAll("th[data-k]").forEach((th) => th.addEventListener("click", () => {
-    const k = th.dataset.k; if (S.sort === k) S.dir = -S.dir; else { S.sort = k; S.dir = ["mw", "configs", "qs", "self", "dam"].includes(k) ? -1 : 1; }
+    const k = th.dataset.k; if (S.sort === k) S.dir = -S.dir; else { S.sort = k; S.dir = ["mw", "configs", "qs", "self", "offer", "dam", "out"].includes(k) ? -1 : 1; }
     draw();
   }));
-  setCSV(el, ["unit", "technology", "ercot_type", "group", "capacity_mw", "quick_start_share", "self_committed_share", "dam_award_share", "dam_days", "cdr_name", "cdr_match", "other_names", "county", "zone", "decision_maker", "owner", "qse", "qse_name", "settlement_point", "configurations"],
-    us.map((u) => [u.unit, u.tech, u.type, u.group, u.mw, u.qs, u.self, u.dam, u.dam_days, u.plant, u.match, (u.aliases || []).join("; "), u.county, u.zone, u.dme, u.owner, u.qse, u.qse_name, u.sp, u.configs.join(" ")]), "Units");
+  setCSV(el, ["unit", "technology", "ercot_type", "group", "capacity_mw", "quick_start_share", "self_committed_share", "three_part_offer_share", "dam_award_share", "outage_share", "dam_days", "cdr_name", "cdr_match", "other_names", "county", "zone", "decision_maker", "owner", "qse", "qse_name", "settlement_point", "configurations"],
+    us.map((u) => [u.unit, u.tech, u.type, u.group, u.mw, u.qs, u.self, u.offer, u.dam, u.out, u.dam_days, u.plant, u.match, (u.aliases || []).join("; "), u.county, u.zone, u.dme, u.owner, u.qse, u.qse_name, u.sp, u.configs.join(" ")]), "Units");
 }
 
 // the dropdowns: values present among the units passing every other filter, with counts; a picked value always stays listed
@@ -98,14 +113,16 @@ function fillSelects() {
     const lab = (v) => (k === "qse" && names.get(v) ? `${names.get(v)} (${v})` : LABEL[k](v));
     $(`dir-${k}`).innerHTML = `<option value="">All</option>` + vals.map((v) => `<option value="${esc(v)}"${v === S.f[k] ? " selected" : ""}>${esc(lab(v))} · ${n.get(v)}</option>`).join("");
   }
-  $("dir-min-ctl").hidden = !S.commit.size;
+  $("dir-min-ctl").hidden = !chipsOn().length;
   $("dir-clear").hidden = !filtered();
 }
 function readURL() {
   const p = new URLSearchParams(location.search);
   if (TECHS.some((t) => t.id === p.get("tech"))) S.tech = p.get("tech");
   for (const k of SELECTS) S.f[k] = p.get(k) || "";
-  S.commit = new Set((p.get("commit") || "").split(",").filter((k) => COMMIT.some((c) => c.k === k)));
+  S.chip = {};
+  for (const k of (p.get("commit") || "").split(",")) if (COMMIT.some((c) => c.k === k)) S.chip[k] = "yes";   // older links
+  for (const c of COMMIT) if (["yes", "no"].includes(p.get(c.k))) S.chip[c.k] = p.get(c.k);
   const m = +p.get("min"); S.min = MINS.some(([v]) => v === m) ? m : 0;
 }
 function writeURL() {
@@ -114,7 +131,9 @@ function writeURL() {
   const set = (k, v) => (v ? p.set(k, v) : p.delete(k));
   set("tech", S.tech === "all" ? "" : S.tech);
   for (const k of SELECTS) set(k, S.f[k]);
-  set("commit", [...S.commit].join(",")); set("min", S.commit.size && S.min ? String(S.min) : "");
+  p.delete("commit");
+  for (const c of COMMIT) set(c.k, chipsOn().includes(c) ? S.chip[c.k] : "");
+  set("min", chipsOn().length && S.min ? String(S.min) : "");
   const s = p.toString(), at = location.pathname + (s ? "?" + s : "") + location.hash;
   if (at !== location.pathname + location.search + location.hash) history.replaceState(null, "", at);
 }
@@ -133,15 +152,19 @@ async function boot() {
     seg.querySelectorAll("button").forEach((x) => x.setAttribute("aria-checked", String(x === b))); draw(); });
   for (const k of SELECTS) $(`dir-${k}`).addEventListener("change", (e) => { S.f[k] = e.target.value; draw(); });
   const cm = $("dir-commit");
-  const paintCommit = () => cm.querySelectorAll("button").forEach((x) => x.setAttribute("aria-pressed", String(S.commit.has(x.dataset.v))));
-  cm.innerHTML = COMMIT.map((c) => `<button type="button" data-v="${c.k}" aria-pressed="false">${c.label}</button>`).join("");
+  cm.innerHTML = COMMIT.map((c) => `<div class="chip" role="radiogroup" aria-label="${c.label}"><span class="chip-l">${c.label}</span><span class="seg seg-sm">` +
+    ["any", "yes", "no"].map((v) => `<button type="button" role="radio" data-k="${c.k}" data-v="${v}">${v[0].toUpperCase() + v.slice(1)}</button>`).join("") + "</span></div>").join("");
+  const paintCommit = () => cm.querySelectorAll("button").forEach((x) => x.setAttribute("aria-checked", String((S.chip[x.dataset.k] || "any") === x.dataset.v)));
   cm.addEventListener("click", (e) => { const b = e.target.closest("button"); if (!b) return;
-    S.commit.has(b.dataset.v) ? S.commit.delete(b.dataset.v) : S.commit.add(b.dataset.v); paintCommit(); draw(); });
+    if (b.dataset.v === "any") delete S.chip[b.dataset.k]; else S.chip[b.dataset.k] = b.dataset.v; paintCommit(); draw(); });
+  $("dir-presets").innerHTML = PRESETS.map((q, i) => `<button type="button" class="dir-preset" data-i="${i}">${q.label}</button>`).join("");
+  $("dir-presets").addEventListener("click", (e) => { const b = e.target.closest("button"); if (!b) return;
+    const q = PRESETS[+b.dataset.i]; S.chip = { ...q.chips }; S.min = q.min; $("dir-min").value = String(S.min); paintCommit(); draw(); });
   $("dir-min").innerHTML = MINS.map(([v, l]) => `<option value="${v}">${l}</option>`).join("");
   $("dir-min").value = String(S.min);
   $("dir-min").addEventListener("change", (e) => { S.min = +e.target.value; draw(); });
   $("dir-clear").addEventListener("click", () => {
-    S.tech = "all"; S.commit.clear(); S.min = 0; $("dir-min").value = "0"; for (const k of SELECTS) S.f[k] = "";
+    S.tech = "all"; S.chip = {}; S.min = 0; $("dir-min").value = "0"; for (const k of SELECTS) S.f[k] = "";
     seg.querySelectorAll("button").forEach((x) => x.setAttribute("aria-checked", String(x.dataset.v === "all"))); paintCommit(); draw();
   });
   paintCommit();

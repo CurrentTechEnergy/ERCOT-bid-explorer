@@ -31,7 +31,12 @@
   .dot-legend { display: inline-flex; align-items: center; gap: 6px; }
   .dot-legend .ramp { width: 120px; height: 10px; border-radius: 3px; }
   .ctl-row { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 10px 18px; margin: 4px 0 10px; }
-  #dir-commit button[aria-pressed="true"] { background: var(--ink); color: var(--surface); }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px 14px; }
+  .chip { display: inline-flex; align-items: center; gap: 6px; }
+  .chip-l { font-size: 13px; color: var(--ink-2); }
+  .presets { font-size: 13px; margin-top: 6px; display: flex; flex-wrap: wrap; gap: 4px 10px; align-items: baseline; }
+  #dir-presets { display: inline-flex; flex-wrap: wrap; gap: 4px 14px; }
+  .dir-preset { font: inherit; font-size: 13px; color: var(--link, var(--ink)); background: none; border: 0; padding: 2px 0; cursor: pointer; text-decoration: underline; text-underline-offset: 2px; }
   .dir-clear { font: inherit; font-size: 13px; color: var(--ink-2); background: transparent; border: 1px solid var(--line); border-radius: 6px; padding: 6px 10px; min-height: 34px; cursor: pointer; }
   #dir-filters select { max-width: min(220px, 100%); }
   .tag { display: inline-block; font-size: 11px; padding: 0 5px; border: 1px solid var(--line); border-radius: 4px; color: var(--muted); margin-left: 4px; }
@@ -78,7 +83,7 @@
       <div>
         <h2>All units <span class="h-note" id="dir-note"></span></h2>
         <p class="note">Every generator and battery the site follows, one row each (a combined-cycle train is one row; searching a configuration name finds its train). Type part of a name, plant, county or settlement point in the Unit box above to filter, pick a technology or use the dropdowns, then click a unit to open its page. Sort by any column; the CSV has every column.</p>
-        <details class="how"><summary>How the columns are built</summary><p class="note"><b>Group</b> is the unit's timescale group in the latest forecast (how often it shuts down; thermal only). <b>Capacity</b> is the 95th percentile of each day's highest HSL (high sustained limit, the most it told ERCOT it could run). <b>ERCOT type</b> is the resource type in ERCOT's DAM files (SCGT90 and SCLE90 are gas turbines over and under 90 MW, DSL diesel and gas engines). <b>Quick-start standby</b>, <b>Self-committed</b> and <b>Day-ahead award</b> are thermal only: the share of the unit's days in the last 90 days of DAM data<span id="dir-window"></span> with an hour in quick-start standby (OFFQS), with the unit self-committed (resource status ON or ONOS for at least half the day), and with a day-ahead energy award. A unit can score on several, and a combined-cycle train counts a day when any configuration does. "Commitment style" shows units at or above the "On at least" share in any style picked. <b>Name</b>, county and zone come from ERCOT's Capacity, Demand and Reserves report<span id="dir-cdr"></span>, matched on the unit code; <span class="tag">plant</span> marks a unit matched only to its plant, which is how combined-cycle trains match, since the report lists each turbine. The Unit box also searches these names. Batteries renamed for RTC+B (names ending _ESR1) mostly match the report only by plant.</p></details>
+        <details class="how"><summary>How the columns are built</summary><p class="note"><b>Group</b> is the unit's timescale group in the latest forecast (how often it shuts down; thermal only). <b>Capacity</b> is the 95th percentile of each day's highest HSL (high sustained limit, the most it told ERCOT it could run). <b>ERCOT type</b> is the resource type in ERCOT's DAM files (SCGT90 and SCLE90 are gas turbines over and under 90 MW, DSL diesel and gas engines). <b>Quick-start standby</b>, <b>Self-committed</b>, <b>Three-part offer</b>, <b>Day-ahead award</b> and <b>On outage</b> are thermal only: the share of the unit's days in the last 90 days of DAM data<span id="dir-window"></span> with an hour in quick-start standby (OFFQS), with the unit self-committed (resource status ON or ONOS for at least half the day), with a three-part offer (a start-up or minimum-energy cost offered), with a day-ahead energy award, and on outage (status OUT all day). A unit can score on several, and a combined-cycle train counts a day when any configuration does. Each DAM behaviour chip narrows the list: Yes keeps units on at or above the chosen share of days, No those below it (at "any day", Yes is at least one day and No is none). <b>Name</b>, county and zone come from ERCOT's Capacity, Demand and Reserves report<span id="dir-cdr"></span>, matched on the unit code; <span class="tag">plant</span> marks a unit matched only to its plant, which is how combined-cycle trains match, since the report lists each turbine. The Unit box also searches these names. Batteries renamed for RTC+B (names ending _ESR1) mostly match the report only by plant.</p></details>
       </div>
     </div>
     <div class="ctl-row">
@@ -92,12 +97,15 @@
       <div class="ctl"><label class="lbl" for="dir-group">Group</label><select id="dir-group"></select></div>
       <div class="ctl"><label class="lbl" for="dir-zone">Zone</label><select id="dir-zone"></select></div>
       <div class="ctl"><label class="lbl" for="dir-qse">QSE</label><select id="dir-qse"></select></div>
-      <div class="ctl" id="dir-commit-ctl">
-        <span class="lbl" id="lbl-dir-commit">Commitment style</span>
-        <div class="seg" role="group" aria-labelledby="lbl-dir-commit" id="dir-commit"></div>
-      </div>
-      <div class="ctl" id="dir-min-ctl"><label class="lbl" for="dir-min">On at least … of its DAM days</label><select id="dir-min"></select></div>
       <div class="ctl"><button type="button" class="dir-clear" id="dir-clear" hidden>Clear filters</button></div>
+    </div>
+    <div class="ctl-row" id="dir-commit-ctl">
+      <div class="ctl">
+        <span class="lbl" id="lbl-dir-commit">DAM behaviour</span>
+        <div class="chips" role="group" aria-labelledby="lbl-dir-commit" id="dir-commit"></div>
+        <div class="presets"><span class="muted">Quick links:</span> <span id="dir-presets"></span></div>
+      </div>
+      <div class="ctl" id="dir-min-ctl"><label class="lbl" for="dir-min">"Yes" means on at least … of its DAM days</label><select id="dir-min"></select></div>
     </div>
     <div class="units-wrap" id="dir-table" data-csv><p class="empty">Loading units…</p></div>
   </section>
