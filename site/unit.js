@@ -1061,6 +1061,17 @@ function drawBare(e) {
     : out != null ? ` In the day-ahead (DAM) files${w ? ` from ${w[0]} to ${w[1]}` : ""} it was on outage all day on ${out} of its ${n} days.` : "")
     : w ? ` It does not appear in the day-ahead (DAM) files from ${w[0]} to ${w[1]}.` : "";
   $("unit-verdict").textContent = `No running, offer or decision history for this unit in the site's data${S.span ? ` (${S.span[0]} to ${S.span[1]})` : ""}, so there is nothing to chart.` + dam;
+  // coal: its years from 2019 (history release) can still show a layup or a long outage
+  if (e.tech === "coal") {
+    $("dec-panel").classList.add("bare-keep");
+    $("dec-panel").hidden = false;
+    drawCoalYears(e).then(() => {
+      if (S.unit !== e.name) return;
+      const has = !$("dec-years").hidden;
+      $("dec-panel").hidden = !has;
+      if (has) $("unit-verdict").textContent = $("unit-verdict").textContent.replace(", so there is nothing to chart.", ".") + " How it spent each year since 2019 is below.";
+    });
+  }
 }
 function draw() {
   const e = S.list.get(S.unit);
@@ -1068,6 +1079,7 @@ function draw() {
   if (!e) return;
   // a bare unit hides every panel through the class, so panels other scripts draw on resize stay hidden too
   document.body.classList.toggle("bare-unit", !!e.bare);
+  $("dec-panel").classList.remove("bare-keep");
   if (e.bare) { drawBare(e); return; }
   drawHead(e); drawForecast(e); drawDecisions(e); drawHours(e); drawRuns(e); drawDay(e); drawBidding(e);
 }
