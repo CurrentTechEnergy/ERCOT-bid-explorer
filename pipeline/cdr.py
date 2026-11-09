@@ -26,7 +26,7 @@ from pathlib import Path
 
 PATH = Path(__file__).parent / "reference" / "cdr_units.csv"
 EDITION_PATH = PATH.with_name("cdr_edition.txt")     # "December 2025", from the workbook's file name
-COLUMNS = ["code", "name", "tech", "fuel", "status", "county", "zone"]
+COLUMNS = ["code", "name", "tech", "fuel", "status", "county", "zone", "mw", "in_service"]   # mw: installed capacity
 # CDR technology codes to the site's techs (ST covers nuclear, coal and gas steam alike)
 TECH = {"CC": {"combined_cycle"}, "GT": {"combustion_turbine"}, "IC": {"combustion_turbine"}, "WT": {"wind"}, "PV": {"solar"},
         "ST": {"nuclear", "coal", "gas_steam"}, "BA": {"storage"}}
@@ -47,7 +47,8 @@ def extract(xlsx: str) -> list:
             break
     if hdr is None:
         raise ValueError("no UNIT NAME header row on the Unit Details tab")
-    i = {k: hdr.index(k) for k in ("UNIT NAME", "UNIT CODE", "TECHNOLOGY", "FUEL", "CDR STATUS", "COUNTY", "ZONE")}
+    i = {k: hdr.index(k) for k in ("UNIT NAME", "UNIT CODE", "TECHNOLOGY", "FUEL", "CDR STATUS", "COUNTY", "ZONE",
+                                   "INSTALLED CAPACITY", "IN-SERVICE")}
     out, seen = [], set()
     for r in rows:
         code = str(r[i["UNIT CODE"]] or "").strip()
@@ -55,8 +56,20 @@ def extract(xlsx: str) -> list:
             continue
         seen.add(code)
         out.append([code, _NOTE.sub("", str(r[i["UNIT NAME"]] or "")).strip(), str(r[i["TECHNOLOGY"]] or "").strip(), str(r[i["FUEL"]] or "").strip(),
-                    str(r[i["CDR STATUS"]] or "").strip(), str(r[i["COUNTY"]] or "").strip(), str(r[i["ZONE"]] or "").strip()])
+                    str(r[i["CDR STATUS"]] or "").strip(), str(r[i["COUNTY"]] or "").strip(), str(r[i["ZONE"]] or "").strip(),
+                    _mw(r[i["INSTALLED CAPACITY"]]), _date(r[i["IN-SERVICE"]])])
     return out
+
+
+def _mw(v) -> str:
+    try:
+        return f"{float(v):g}" if v not in (None, "") else ""
+    except (TypeError, ValueError):
+        return ""
+
+
+def _date(v) -> str:
+    return v.strftime("%Y-%m-%d") if hasattr(v, "strftime") else str(v or "").strip()[:10]
 
 
 def edition() -> str:

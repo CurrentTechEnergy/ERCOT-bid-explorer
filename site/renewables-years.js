@@ -99,11 +99,18 @@ function draw() {
   if (!S.Y) return;
   const day = S.by === "day", per = day ? "day" : "month", D = Object.fromEntries(TECHS.map(([t]) => [t, data(t)]));
   const gw = (v) => `${d3.format(",.1f")(v)} GW`;
-  const size = TECHS.map(([t, label, color]) => ({ label, color, values: D[t].gw, fmt: gw }));
+  // monthly, the first months have under a year of HSL behind them: drawn dotted, up to the first full one
+  const gm = !day && S.Y.gw_months, short = (i) => gm && gm[i] != null && gm[i] < 12;
+  const full = (a) => a.map((v, i) => (short(i) ? null : v)), part = (a) => a.map((v, i) => (short(i) || (i > 0 && short(i - 1)) ? v : null));
+  const size = TECHS.flatMap(([t, label, color]) => [
+    { label, color, values: full(D[t].gw), fmt: gw },
+    { label: `${label}, under a year of data`, color, dash: "2 3", width: 1.6, values: part(D[t].gw), fmt: gw, hide: !gm || !D[t].gw.some((_, i) => short(i)) },
+    { label: `${label} nameplate (ERCOT CDR)`, color, faint: true, width: 1.4, values: D[t].nameplate || [], fmt: gw, hide: !D[t].nameplate },
+  ]);
   const both = D.wind.gw.map((v, i) => (v == null || D.solar.gw[i] == null ? null : v + D.solar.gw[i]));
   size.push({ label: "Wind and solar", color: "--c-other", dash: "5 4", width: 1.4, values: both, fmt: gw });
   staticLegend($("yr-size-legend"), size);
-  yearChart($("yr-size"), size, { title: day ? "Fleet size, GW (each unit's highest hourly HSL over the last 30 days, summed)" : "Fleet size, GW (each unit's highest hourly HSL in the month, summed)", yFmt: d3.format(",.0f"), tipFmt: gw });
+  yearChart($("yr-size"), size, { title: `Fleet size, GW: each unit's highest hourly HSL over the last 12 months, summed; faint: installed capacity (ERCOT CDR${S.Y.cdr_edition ? ", " + S.Y.cdr_edition : ""})`, yFmt: d3.format(",.0f"), tipFmt: gw });
 
   const scale = day ? 1 : 1e3, eu = day ? "GWh" : "TWh", fe = (v) => `${d3.format(",.1f")(v)} ${eu}`;
   const k = (a) => a.map((v) => (v == null ? null : v / scale));
