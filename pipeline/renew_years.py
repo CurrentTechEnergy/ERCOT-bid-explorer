@@ -48,10 +48,18 @@ from pathlib import Path
 import numpy as np
 
 from .config import DATA_DIR, UNIT_DATA_DIR
+from .hours import day_weights, hour_weight
 from .log import warn
 from .store import read_json_gz, write_json_gz
 
-FORMAT = 4
+FORMAT = 5      # 5: the fall-back Sunday's folded HE2 weighs two hours (pipeline/hours.py)
+
+
+def _cache_ok(c: dict, month: str) -> bool:
+    """A cached month is current at FORMAT; one built at 4 differs only in a November (the
+    fall-back Sunday), so other months at 4 are kept rather than rebuilt."""
+    f = (c or {}).get("format")
+    return f == FORMAT or (f == 4 and month[5:] != "11")
 PATH = DATA_DIR / "renewables" / "years.json.gz"
 CACHE = UNIT_DATA_DIR / "renew_years"
 HISTORY = Path("history")
@@ -84,33 +92,42 @@ def _weighted(p, w) -> float:
 
 
 def summarize(units: dict, cap: dict, hub: dict) -> dict:
-    """{unit: (hsl, bp, out, da, rt) arrays over the period's hours}, {unit: fleet-size MW},
+    """{unit: (hsl, bp, out, da, rt[, w]) arrays over the period's hours}, {unit: fleet-size MW},
     {"da", "rt": the hub average's hourly prices over the period, "gen": ERCOT generation in the
-    same hours (optional)} -> FIELDS."""
+    same hours (optional), "w": hour weights (optional)} -> FIELDS.  w is each slot's hours
+    (pipeline/hours.py: 2 for the fall-back Sunday's folded hour ending 2, else 1); missing, 1."""
     gen = curt = wsum = psum = neg = rsum = rpsum = 0.0
-    for hsl, bp, out, da, rt in units.values():
-        o = np.clip(np.nan_to_num(out), 0, None)
-        curt += np.nansum(np.clip(hsl - bp, 0, None))
+    ap, aw, rp, rw = [], [], [], []
+    for v in units.values():
+        hsl, bp, out, da, rt = v[:5]
+        w = v[5] if len(v) > 5 else np.ones(len(out))
+        o = np.clip(np.nan_to_num(out), 0, None) * w
+        curt += np.nansum(np.clip(hsl - bp, 0, None) * w)
         gen += o.sum()
         ok = np.isfinite(da)
         wsum += o[ok].sum()
         psum += (o[ok] * da[ok]).sum()
         neg += o[ok & (da <= 0)].sum()
+        ap.append(da[ok]); aw.append(w[ok])
         ok = np.isfinite(rt)
         rsum += o[ok].sum()
         rpsum += (o[ok] * rt[ok]).sum()
-    allp = np.concatenate([u[3][np.isfinite(u[3])] for u in units.values()]) if units else np.array([])
-    allr = np.concatenate([u[4][np.isfinite(u[4])] for u in units.values()]) if units else np.array([])
+        rp.append(rt[ok]); rw.append(w[ok])
+    cat = lambda xs: np.concatenate(xs) if xs else np.array([])
+    hw = hub.get("w")
+    if hw is None:
+        hw = np.ones(len(hub.get("rt", hub.get("da", []))))
     return {"gw": round(sum(cap.values()) / 1e3, 3), "units": sum(1 for v in cap.values() if v > 0),
             "gen": round(float(gen) / 1e3, 1), "curt": round(float(curt) / 1e3, 1),
             "capture": round(float(psum / wsum), 2) if wsum else None,
-            "avg": _mean(allp),
+            "avg": _weighted(cat(ap), cat(aw)),
             "neg": round(float(neg / wsum), 4) if wsum else None,
-            "rt_capture": round(float(rpsum / rsum), 2) if rsum else None, "rt_avg": _mean(allr),
-            "hub_da": _mean(hub.get("da", [])), "hub_rt": _mean(hub.get("rt", [])),
-            "hub_da_gen": _weighted(hub["da"], hub["gen"]) if "gen" in hub and "da" in hub else None,
-            "hub_rt_gen": _weighted(hub["rt"], hub["gen"]) if "gen" in hub and "rt" in hub else None,
-            "sys_gen": round(float(np.nansum(np.where(np.isfinite(hub["rt"]), hub["gen"], 0))) / 1e3, 1)
+            "rt_capture": round(float(rpsum / rsum), 2) if rsum else None, "rt_avg": _weighted(cat(rp), cat(rw)),
+            "hub_da": _weighted(hub["da"], hw) if "da" in hub else None,
+            "hub_rt": _weighted(hub["rt"], hw) if "rt" in hub else None,
+            "hub_da_gen": _weighted(hub["da"], hub["gen"] * hw) if "gen" in hub and "da" in hub else None,
+            "hub_rt_gen": _weighted(hub["rt"], hub["gen"] * hw) if "gen" in hub and "rt" in hub else None,
+            "sys_gen": round(float(np.nansum(np.where(np.isfinite(hub["rt"]), hub["gen"] * hw, 0))) / 1e3, 1)
             if "gen" in hub and "rt" in hub else None}
 
 
@@ -135,12 +152,14 @@ def _month_from_parquet(paths: dict, month: str) -> dict:
         gen = pd.concat([th, d[["date", "he", "out"]]]).assign(out=lambda x: x.out.clip(lower=0))
         hours["gen"] = gen.groupby(["date", "he"]).out.sum()
     hub = {k: hours[k].to_numpy(float) for k in ("rt", "da", "gen") if k in hours}
+    hub["w"] = hour_weight(hours.index.get_level_values("date"), hours.index.get_level_values("he"))
+    d["w"] = hour_weight(d["date"].to_numpy(), d["he"].to_numpy())
     y, m = map(int, month.split("-"))
     scale = calendar.monthrange(y, m)[1] / max(d.date.nunique(), 1)
     out = {}
     for t in TECHS:
         g = d[d.tech == t]
-        units = {u: tuple(x[c].to_numpy(float) for c in ("hsl", "bp", "out", "da_node", "rt")) for u, x in g.groupby("unit")}
+        units = {u: tuple(x[c].to_numpy(float) for c in ("hsl", "bp", "out", "da_node", "rt", "w")) for u, x in g.groupby("unit")}
         cap = {u: float(np.nanmax(v[0])) if np.isfinite(v[0]).any() else 0.0 for u, v in units.items()}
         out[t] = summarize(units, cap, hub)
         out[t]["gen"], out[t]["curt"] = round(out[t]["gen"] * scale, 1), round(out[t]["curt"] * scale, 1)
@@ -163,7 +182,7 @@ def history_months() -> dict:
     if assets is None:
         for p in sorted(CACHE.glob("*.json.gz")):
             c = read_json_gz(p) or {}
-            if c.get("format") == FORMAT:
+            if _cache_ok(c, c.get("month") or ""):
                 out[c["month"]] = c["techs"]
         return out
     by = {}     # month -> kind -> asset
@@ -174,7 +193,7 @@ def history_months() -> dict:
         have = by[month]
         key = [[have[k]["id"], have[k]["size"]] if k in have else None for k in KINDS]
         c = read_json_gz(CACHE / f"{month}.json.gz")
-        if c and c.get("format") == FORMAT and c.get("key") == key:
+        if c and _cache_ok(c, month) and c.get("key") == key:
             out[month] = c["techs"]
             continue
         try:
@@ -225,7 +244,7 @@ def series_days() -> tuple:
         da = (dam_hubs.get(d) or {}).get(HUB)
         rt = ((read_json_gz(DATA_DIR / "prices" / f"{d}.json.gz") or {}).get("spp15") or {}).get(HUB)
         hubs[d] = {"da": np.array([np.nan if x is None else x for x in da], float) if da else np.full(24, np.nan),
-                   "rt": _hourly(rt) if rt and len(rt) == 96 else np.full(24, np.nan)}
+                   "rt": _hourly(rt) if rt and len(rt) == 96 else np.full(24, np.nan), "w": day_weights(d)}
         if d in gen:
             hubs[d]["gen"] = gen[d]
     for t in TECHS:
@@ -238,7 +257,7 @@ def series_days() -> tuple:
                 rt = (f.get("rt") or {}).get(sps.get(u))
                 arr["rt"] = np.array([np.nan if x is None else x for x in rt], float) if rt else np.full(n, np.nan)
                 for i, d in enumerate(f["dates"]):
-                    days.setdefault(d, {})[u] = tuple(arr[k][24 * i:24 * i + 24] for k in ("hsl", "bp", "out", "da", "rt"))
+                    days.setdefault(d, {})[u] = tuple(arr[k][24 * i:24 * i + 24] for k in ("hsl", "bp", "out", "da", "rt")) + (day_weights(d),)
         dmax = {d: {u: (float(np.nanmax(x[0])) if np.isfinite(x[0]).any() else 0.0) for u, x in us.items()} for d, us in days.items()}
         for j, d in enumerate(all_dates):
             if d not in days:
@@ -263,9 +282,9 @@ def series_days() -> tuple:
             for d in sorted(ds):
                 for u, x in days[d].items():
                     units.setdefault(u, []).append(x)
-            units = {u: tuple(np.concatenate([x[i] for x in xs]) for i in range(5)) for u, xs in units.items()}
+            units = {u: tuple(np.concatenate([x[i] for x in xs]) for i in range(6)) for u, xs in units.items()}
             cap = {u: float(np.nanmax(v[0])) if np.isfinite(v[0]).any() else 0.0 for u, v in units.items()}
-            hub = {k: np.concatenate([hubs[d][k] for d in sorted(ds)]) for k in ("da", "rt")}
+            hub = {k: np.concatenate([hubs[d][k] for d in sorted(ds)]) for k in ("da", "rt", "w")}
             if all("gen" in hubs[d] for d in ds):
                 hub["gen"] = np.concatenate([hubs[d]["gen"] for d in sorted(ds)])
             months.setdefault(month, {})[t] = summarize(units, cap, hub)
