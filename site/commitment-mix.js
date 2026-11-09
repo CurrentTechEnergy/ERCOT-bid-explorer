@@ -6,11 +6,15 @@
 "use strict";
 const { tryJSON, showTip, hideTip, setCSV, css, esc } = window.CX;
 const $ = (id) => document.getElementById(id);
+// colors: a ramp of the site's sequential blue, so no position borrows a technology's color on a page
+// colored by technology; RUC in purple, as everywhere the site marks RUC (CX.rucRing)
 const POS = [
-  { id: "self", label: "Self-committed (status ON)", color: "--c1" },
-  { id: "dam", label: "DAM committed", color: "--c2" },
-  { id: "rt", label: "Neither (after the DAM, or RUC)", color: "--c-other" },
+  { id: "self", label: "Self-committed (status ON)", color: "--seq-hi" },
+  { id: "dam", label: "DAM committed", ramp: 0.6 },
+  { id: "rt", label: "Committed after the day-ahead market", ramp: 0.3 },
+  { id: "ruc", label: "Committed by ERCOT (RUC)", color: "--c7" },
 ];
+const col = (p) => (p.color ? css(p.color) : d3.interpolateRgb(css("--seq-lo"), css("--seq-hi"))(p.ramp));
 const TECH = { all: "All thermal", combined_cycle: "Combined cycle", combustion_turbine: "Combustion turbine", gas_steam: "Gas steam", coal: "Coal & lignite" };
 const TECH_LC = { all: "thermal", combined_cycle: "combined-cycle", combustion_turbine: "combustion turbine", gas_steam: "gas steam", coal: "coal" };
 const BAND = { all: "all hours", lt10: "hours under $10", lt0: "hours under $0" };
@@ -53,13 +57,13 @@ function bars(el, data, xl) {
     let y0 = 0;
     POS.forEach((p) => {
       const v = d[p.id]; if (!v) return;
-      g.append("rect").attr("x", x(d.key)).attr("width", x.bandwidth()).attr("y", y(y0 + v)).attr("height", y(y0) - y(y0 + v)).attr("fill", css(p.color));
+      g.append("rect").attr("x", x(d.key)).attr("width", x.bandwidth()).attr("y", y(y0 + v)).attr("height", y(y0) - y(y0 + v)).attr("fill", col(p));
       y0 += v;
     });
     if (!d.h) g.append("text").attr("x", x(d.key) + x.bandwidth() / 2).attr("y", h - 3).attr("text-anchor", "middle").attr("font-size", 10).attr("fill", css("--muted")).text("–");
     g.append("rect").attr("x", x(d.key)).attr("width", x.bandwidth()).attr("y", 0).attr("height", h).attr("fill", "transparent")
       .on("pointermove", (ev) => showTip(ev, `<h4>${esc(xl(d.key))}: ${d3.format(",")(d.h)} hour${d.h === 1 ? "" : "s"}</h4>` + (d.h ? `<table>` +
-        POS.map((p) => `<tr><td><span class="sw" style="background:var(${p.color})"></span> ${esc(p.label)}</td><td class="n">${d3.format(".1f")(d[p.id])} GW</td><td class="n">${d3.format(".0%")(d.total ? d[p.id] / d.total : 0)}</td></tr>`).join("") +
+        POS.map((p) => `<tr><td><span class="sw" style="background:${col(p)}"></span> ${esc(p.label)}</td><td class="n">${d3.format(".1f")(d[p.id])} GW</td><td class="n">${d3.format(".0%")(d.total ? d[p.id] / d.total : 0)}</td></tr>`).join("") +
         `<tr><td><b>Total</b></td><td class="n"><b>${d3.format(".1f")(d.total)} GW</b></td><td></td></tr></table>` : `<p>No such hours.</p>`)))
       .on("pointerleave", hideTip);
     if (i % every === 0) g.append("text").attr("x", x(d.key) + x.bandwidth() / 2).attr("y", h + 16).attr("text-anchor", "middle").attr("font-size", 11).attr("fill", css("--muted")).text(xl(d.key));
@@ -76,9 +80,9 @@ function drawAll() {
   const tot = d3.sum(POS, (p) => avg[p.id]), pct = (id) => d3.format(".0%")(tot ? avg[id] / tot : 0);
   const ml = S.meas === "1" ? "output" : "minimum output";
   $("cm-answer").innerHTML = n
-    ? `<b>In ${BAND[S.band]}, ${pct("self")} of online ${TECH_LC[S.tech]} ${ml} was self-committed and ${pct("dam")} DAM committed</b>; ${pct("rt")} had neither. The ${ml} was ${d3.format(".1f")(tot)} GW on average over ${d3.format(",")(n)} hours.`
+    ? `<b>In ${BAND[S.band]}, ${pct("self")} of online ${TECH_LC[S.tech]} ${ml} was self-committed and ${pct("dam")} DAM committed</b>; ${pct("rt")} committed after it and ${pct("ruc")} by ERCOT (RUC). The ${ml} was ${d3.format(".1f")(tot)} GW on average over ${d3.format(",")(n)} hours.`
     : `No ${BAND[S.band]} in this period.`;
-  $("cm-legend").innerHTML = POS.map((p) => `<span><span class="sw" style="background:var(${p.color})"></span>${esc(p.label)}</span>`).join("");
+  $("cm-legend").innerHTML = POS.map((p) => `<span><span class="sw" style="background:${col(p)}"></span>${esc(p.label)}</span>`).join("");
   setCSV($("cm-month"), ["month", ...POS.map((p) => `${p.id}_gw`), "hours"], mm.map((d) => [d.key, ...POS.map((p) => +d[p.id].toFixed(3)), d.h]), `Thermal by commitment, ${S.tech}, ${S.band}`);
   setCSV($("cm-hour"), ["he", ...POS.map((p) => `${p.id}_gw`), "hours"], hh.map((d) => [d.key, ...POS.map((p) => +d[p.id].toFixed(3)), d.h]), `Thermal by commitment by hour, ${S.tech}, ${S.band}`);
 }
@@ -89,8 +93,8 @@ function drawAll() {
   S.f = f;
   const fmt = d3.timeFormat("%b %-d, %Y");
   $("cm-status").textContent = `${fmt(new Date(f.from + "T12:00:00"))} to ${fmt(new Date(f.through + "T12:00:00"))}`;
-  window.CX.setNote($("cm-note"), "Who decided that the thermal units online would run: the owner, the day-ahead market, or a later commitment. Each hour, every unit online in real time is split by its day-ahead position that hour.",
-    "Self-committed: the unit's DAM resource status was ON (the owner put it on in its current operating plan before the day-ahead market). DAM committed: its status was not ON and it held a DAM energy award of at least 95% of its minimum, so the day-ahead market committed it on its three-part offer (eligible for make-whole). Neither: online in real time with neither, so committed after the day-ahead market or by RUC. " +
+  window.CX.setNote($("cm-note"), "Who decided that the thermal units online would run: the owner, the day-ahead market, a later commitment, or ERCOT. Each hour, every unit online in real time is split by its day-ahead position that hour.",
+    "Self-committed: the unit's DAM resource status was ON (the owner put it on in its current operating plan before the day-ahead market). DAM committed: its status was not ON and it held a DAM energy award of at least 95% of its minimum, so the day-ahead market committed it on its three-part offer (eligible for make-whole). Committed by ERCOT: RUC hours (purple, as everywhere on the site), whatever the day-ahead position. Committed after the day-ahead market: online in real time with none of these. " +
     "\n\nOnline: online in at least half the hour's SCED runs. Minimum output is the unit's LSL, output its base point. Hours under $10 and under $0 are on the day-ahead system lambda, the site's cheap-hour price. The status is the DAM file's hourly status where it has one, else the day's. From the 60-day files, so the latest 60 days are not in yet.");
   $("cm-tech").innerHTML = Object.entries(TECH).map(([k, v]) => `<option value="${k}">${esc(v)}</option>`).join("");
   $("cm-tech").value = S.tech;

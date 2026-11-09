@@ -5,7 +5,9 @@ data/commit_mix.json.gz.
   self   DAM resource status ON (or another on status): the owner committed it in the COP
   dam    status not on and a DAM energy award of at least AWARD_LSL x its DAM LSL: committed by
          the day-ahead market on its three-part offer (make-whole eligible)
-  rt     online with neither: committed after the DAM (real-time self-commitment) or by RUC
+  ruc    committed by ERCOT (RUC) that hour, from data/unit_hours_60d.json.gz; first, whatever its DAM
+         position, since RUC is ERCOT's call (and purple wherever the site marks RUC)
+  rt     online with none of these: committed after the DAM (real-time self-commitment)
 
 Online: online in at least half the hour's SCED runs (online_share >= 0.5), as elsewhere on the
 site.  Each hour is also put in price bands on the DA system lambda (the site's cheap-hour price):
@@ -16,11 +18,12 @@ Inputs (no ERCOT download; all already on hand, the update run's own files):
   data/dam/{date}.json.gz         DAM status, energy award and LSL per resource
   data/60d-units/{date}.json.gz   online share, LSL and base point per resource and hour
   data/dam_lambda.json.gz         DA system lambda per hour
+  data/unit_hours_60d.json.gz     RUC hours per unit
 
 File:
   {"built", "from", "through",
    "hours": [[month, he, band, hours]],
-   "rows":  [[month, he, tech, position (self | dam | rt), band, lsl_mw_sum, output_mw_sum]]}
+   "rows":  [[month, he, tech, position (self | dam | ruc | rt), band, lsl_mw_sum, output_mw_sum]]}
   MW sums over the month's hours in that band; the page divides by the hours for an average.
 
     python -m pipeline.commit_mix
@@ -35,7 +38,7 @@ from .store import read_json_gz, write_json_gz
 
 PATH = DATA_DIR / "commit_mix.json.gz"
 TECHS = ("combined_cycle", "gas_steam", "coal", "combustion_turbine")
-POSITIONS = ("self", "dam", "rt")
+POSITIONS = ("self", "dam", "ruc", "rt")
 BANDS = ("all", "lt10", "lt0")
 AWARD_LSL = 0.95       # an award this share of the DAM LSL or more is a commitment (as make-whole/implied-make-whole.md)
 ONLINE = 0.5
@@ -65,6 +68,10 @@ def position(u, he):
 
 def build():
     lam = (read_json_gz(DATA_DIR / "dam_lambda.json.gz", default=None) or {}).get("days", {})
+    ruc = set()
+    for unit, spans in ((read_json_gz(DATA_DIR / "unit_hours_60d.json.gz", default=None) or {}).get("ruc") or {}).items():
+        for day, hes in spans:
+            ruc.update((unit, day, he) for he in hes)
     agg = defaultdict(lambda: [0.0, 0.0])
     hours = defaultdict(int)
     days = []
@@ -90,7 +97,7 @@ def build():
             he = r[1]
             if tech not in TECHS or not 1 <= he <= 24 or (r[io] or 0) < ONLINE:
                 continue
-            pos = position(units.get(nm), he)
+            pos = "ruc" if (nm, day, he) in ruc else position(units.get(nm), he)
             for b in bands[he - 1]:
                 a = agg[(month, he, tech, pos, b)]
                 a[0] += r[il] or 0
