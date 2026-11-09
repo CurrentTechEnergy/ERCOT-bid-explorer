@@ -27,14 +27,14 @@ const TIER = {
 const ORDER = { revealed: 0, unclear: 1, partial: 2, hints: 3 };
 const POINT_LABEL = (p, u) => (p === "node" ? `own node${u && u.sp ? ` (${u.sp})` : ""}` : p);
 
-const S = { tech: "all", show: "found", q: "", sort: "tier", dir: 1, data: null };
+const S = { tech: "all", show: "found", q: "", sort: "name", dir: 1, data: null };
 // the other panels on the page (renewables.js) keep their own keys in the same address bar
 const VIEW_KEYS = { htech: "tech", hshow: "show", hsort: "sort" };
-const CH_KEYS = { ckind: "kind", cyear: "year", cmoved: "moved", cptc: "ptc", cmkt: "market" };
+const CH_KEYS = { ckind: "kind", cyear: "year", cmoved: "moved", cptc: "ptc", cmkt: "market", csort: "sort" };
 function saveView() {
   window.CX.writeHash({ ...window.CX.readHash(), ...Object.fromEntries(Object.entries(VIEW_KEYS).map(([k, sk]) => [k, S[sk]])),
-    ...Object.fromEntries(Object.entries(CH_KEYS).map(([k, ck]) => [k, CH[ck] === "all" || CH[ck] === "12m" ? null : CH[ck]])),
-    ctog: CH.hideTog ? 1 : null });
+    ...Object.fromEntries(Object.entries(CH_KEYS).map(([k, ck]) => [k, CH[ck] === "all" || CH[ck] === "12m" || (ck === "sort" && CH[ck] === "date") ? null : CH[ck]])),
+    ctog: CH.hideTog ? 1 : null, cdir: CH.dir === (CHG_TEXT.includes(CH.sort) ? 1 : -1) ? null : CH.dir });
 }
 const openUnit = (name) => { location.href = `unit.html?unit=${encodeURIComponent(name)}`; };
 function loadView() {
@@ -42,6 +42,7 @@ function loadView() {
   Object.entries(VIEW_KEYS).forEach(([k, sk]) => { if (v[k] != null) S[sk] = v[k]; });
   Object.entries(CH_KEYS).forEach(([k, ck]) => { if (v[k] != null) CH[ck] = v[k]; });
   CH.hideTog = v.ctog === "1";
+  CH.dir = v.cdir != null ? (+v.cdir < 0 ? -1 : 1) : CHG_TEXT.includes(CH.sort) ? 1 : -1;
 }
 function setSeg(id, value) { $(id).querySelectorAll("button").forEach((b) => b.setAttribute("aria-checked", String(b.dataset.v === value))); }
 function bindSeg(id, key, after) {
@@ -134,7 +135,28 @@ function drawUnits() {
 }
 
 // ---- bidding changes (data/renew_changes.json.gz, pipeline/renew_changes.py) ----------------
-const CH = { kind: "all", year: "all", moved: "all", ptc: "all", market: "all", hideTog: false, limit: 200, range: null };
+const CH = { kind: "all", year: "all", moved: "all", ptc: "all", market: "all", hideTog: false, limit: 200, range: null, sort: "date", dir: -1 };
+// sortable columns of the bidding changes table; ties fall back to newest first
+const CHG_COLS = [
+  { k: "date", h: "Date", v: (e) => e.date },
+  { k: "plant", h: "Plant", v: (e) => e.plant },
+  { k: "tech", h: "Tech", v: (e) => e.tech },
+  { k: "kind", h: "Change", v: (e) => (S.R.kinds[e.kind] || DA_KINDS[e.kind.slice(3)] || e.kind) },
+  { k: "ba", h: "Before → after" },
+  { k: "moved", h: "Moved dispatch", v: (e) => (e.moved && e.impact ? perDay(e.impact) : null), tip: "Sorts by MWh a day moved" },
+  { k: "worth", h: "Worth at node price", n: 1, v: (e) => (e.moved && e.impact ? (e.impact.v_up || 0) + (e.impact.v_dn || 0) : null) },
+  { k: "ctx", h: "Context, 7 days before → after" },
+];
+const CHG_TEXT = ["plant", "tech", "kind"];
+function sortChanges(rs) {
+  const col = CHG_COLS.find((c) => c.k === CH.sort && c.v);
+  if (!col || (col.k === "date" && CH.dir < 0)) return rs;
+  return rs.map((e) => ({ e, x: col.v(e) })).sort((a, b) => {
+    const x = a.x, y = b.x;
+    if (x !== y) { if (x == null) return 1; if (y == null) return -1; const c = (typeof x === "string" ? x.localeCompare(y) : x - y) * CH.dir; if (c) return c; }
+    return a.e.date < b.e.date ? 1 : a.e.date > b.e.date ? -1 : 0;
+  }).map((o) => o.e);
+}
 const PTC_TAG = { level: { label: "PTC level", tip: "A floor change inside the PTC band of $5 or less: re-pricing the credit (the yearly inflation adjustment does this), not a change of approach." },
   expired: { label: "PTC may have expired", tip: "The floor left the PTC band for about $0 and never came back to it. The PTC runs 10 years from the plant's start, so this is what its end looks like; inferred, since the data has no start dates." } };
 const ptcTag = (e) => (e.ptc ? ` <span class="tag" title="${esc(PTC_TAG[e.ptc].tip)}">${PTC_TAG[e.ptc].label}</span>` : "");
@@ -214,13 +236,17 @@ function drawChanges() {
     `Most offer changes happen below any price the unit's node reaches, so they say something about the bidder without changing what it produced. ` +
     `Moved dispatch is counted from each change to the unit's next one, up to a year, and needs 1 MWh or more a day on average to count. Click a row to open the unit's page.`);
   drawChangeMonths(chart, rs);
-  const shown = rs.slice(0, CH.limit);
-  tbl.innerHTML = rs.length ? `<table class="data"><thead><tr><th class="t">Date</th><th class="t">Plant</th><th class="t">Tech</th><th class="t">Change</th><th class="t">Before → after</th><th class="t">Moved dispatch</th><th>Worth at node price</th><th class="t">Context, 7 days before → after</th></tr></thead><tbody>` +
+  const shown = sortChanges(rs).slice(0, CH.limit);
+  tbl.innerHTML = rs.length ? `<table class="data"><thead><tr>${CHG_COLS.map((c) => `<th class="${c.v ? "sortable" : ""}${c.n ? "" : " t"}"${c.v ? ` data-k="${c.k}"` : ""}${c.tip ? ` title="${esc(c.tip)}"` : ""}>${c.h}${c.v && CH.sort === c.k ? (CH.dir < 0 ? " ▾" : " ▴") : ""}</th>`).join("")}</tr></thead><tbody>` +
     shown.map((e) => `<tr data-unit="${esc(e.units[0])}" style="cursor:pointer">` +
       `<td class="t">${e.date}</td><td class="t">${esc(e.plant)}${e.units.length > 1 ? ` <span class="muted">${e.units.length} units</span>` : ""}${e.toggler ? ' <span class="tag" title="Moves between fixed offers often">toggler</span>' : ""}</td>` +
       `<td class="t">${e.tech === "wind" ? "Wind" : "Solar"}</td><td class="t">${esc(R.kinds[e.kind] || DA_KINDS[e.kind.slice(3)])}${ptcTag(e)}${e.days ? ` <span class="muted">${e.days} day${e.days > 1 ? "s" : ""}</span>` : ""}${e.gap ? ` <span class="muted">after ${e.gap} days off</span>` : ""}</td>` +
       `<td class="t">${regime(e.before)} → ${regime(e.after)}</td><td class="t">${impactText(e)}</td><td>${valueText(e)}</td><td class="t muted">${ctxText(e)}</td></tr>`).join("") +
     "</tbody></table>" : `<p class="empty">No changes match.</p>`;
+  tbl.querySelectorAll("th[data-k]").forEach((th) => th.addEventListener("click", () => {
+    const k = th.dataset.k; if (CH.sort === k) CH.dir = -CH.dir; else { CH.sort = k; CH.dir = CHG_TEXT.includes(k) ? 1 : -1; }
+    drawChanges(); saveView();
+  }));
   $("chg-more").hidden = rs.length <= CH.limit;
   $("chg-more").textContent = `Show more (${fmt0(rs.length - CH.limit)} not shown)`;
   setCSV(tbl, ["date", "plant", "units", "tech", "kind", "before", "after", "episode_days", "moved", "hours", "mwh_given_up", "mwh_gained", "value_given_up", "value_gained", "share_hours_da_price", "window_days", "window_open", "window_capped", "mwh_per_day", "dam_before", "dam_after", "curtailed_before", "curtailed_after", "toggler"],

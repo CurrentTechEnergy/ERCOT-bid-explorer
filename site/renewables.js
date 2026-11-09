@@ -22,7 +22,7 @@ const BANDS = [
   { id: "zero", label: "About $0 (−$1 to $0)", color: "--c-other" },
   { id: "pos", label: "Above $0", color: "--c1" },
 ];
-const S = { C: null, N: null, SIG: [], cday: null, span: null, last60: null, ncAll: false, pbasis: "lambda", unBy: "zone", unTech: "all", unLam: "all" };
+const S = { C: null, N: null, SIG: [], cday: null, span: null, last60: null, ncAll: false, ncSort: "curt", ncDir: -1, pbasis: "lambda", unBy: "zone", unTech: "all", unLam: "all" };
 const { tryJSON, showTip, hideTip, setCSV, tickFormat, fmtKind, axisFmt, css, esc } = window.CX;
 const $ = (id) => document.getElementById(id);
 const fmtMW = d3.format(",.0f");
@@ -206,22 +206,46 @@ function drawNodeCurtail() {
 
   drawCurtPrice();
 
-  // most curtailed units (the file holds every unit, most curtailed first)
-  const rows = N.units.slice(0, S.ncAll ? undefined : 40).map((r) => ({ unit: r[0], tech: r[1], sp: r[2], curt: r[3], cong: r[4], value: r[5], node: r[6], avail: r[7], days: r[8], dir: r[9], bid: bidWhenCurtailed(r[0], N.dates) }));
-  const cols = [
-    { h: "Unit", t: true, f: (r) => `<a href="unit.html?unit=${encodeURIComponent(r.unit)}">${esc(r.unit)}</a>` }, { h: "Technology", t: true, f: (r) => techLabel(r.tech) }, { h: "Settlement point", t: true, f: (r) => esc(r.sp || "–") },
-    { h: "Curtailed, GWh", f: (r) => d3.format(",.1f")(r.curt / 1000) }, { h: "Share of available", f: (r) => (r.avail ? fmtPct(r.curt / r.avail) : "–") },
-    { h: "Congestion share", f: (r) => (r.cong != null && r.curt ? fmtPct(r.cong / r.curt) : "–") },
-    { h: "Operator-directed share", f: (r) => (r.dir != null && r.curt ? fmtPct(r.dir / r.curt) : "–") },
-    { h: "Mean node price when curtailed, $/MWh", f: (r) => fmtPrice(r.node) },
-    { h: "Average offer on curtailed days, $/MWh", f: (r) => (r.bid === undefined ? "…" : fmtPrice(r.bid)) }, { h: "Worth at the node, $ over the period", f: (r) => (r.value == null ? "–" : fmtPrice0(r.value)) }, { h: "Days with a node price", f: (r) => r.days },
-  ];
+  drawNcUnits();
+}
+
+// most curtailed units (the file holds every unit, most curtailed first). Sorts the whole list, then
+// shows the first 40 unless "Show all"; ties fall back to curtailed energy.
+const NC_COLS = [
+  { k: "unit", h: "Unit", t: true, f: (r) => `<a href="unit.html?unit=${encodeURIComponent(r.unit)}">${esc(r.unit)}</a>` },
+  { k: "tech", h: "Technology", t: true, f: (r) => techLabel(r.tech), v: (r) => techLabel(r.tech) },
+  { k: "sp", h: "Settlement point", t: true, f: (r) => esc(r.sp || "–") },
+  { k: "curt", h: "Curtailed, GWh", f: (r) => d3.format(",.1f")(r.curt / 1000) },
+  { k: "shr", h: "Share of available", f: (r) => (r.avail ? fmtPct(r.curt / r.avail) : "–"), v: (r) => (r.avail ? r.curt / r.avail : null) },
+  { k: "cong", h: "Congestion share", f: (r) => (r.cong != null && r.curt ? fmtPct(r.cong / r.curt) : "–"), v: (r) => (r.cong != null && r.curt ? r.cong / r.curt : null) },
+  { k: "dir", h: "Operator-directed share", f: (r) => (r.dir != null && r.curt ? fmtPct(r.dir / r.curt) : "–"), v: (r) => (r.dir != null && r.curt ? r.dir / r.curt : null) },
+  { k: "node", h: "Mean node price when curtailed, $/MWh", f: (r) => fmtPrice(r.node) },
+  { k: "bid", h: "Average offer on curtailed days, $/MWh", f: (r) => (r.bid === undefined ? "…" : fmtPrice(r.bid)) },
+  { k: "value", h: "Worth at the node, $ over the period", f: (r) => (r.value == null ? "–" : fmtPrice0(r.value)) },
+  { k: "days", h: "Days with a node price", f: (r) => r.days },
+];
+const NC_TEXT = ["unit", "tech", "sp"];
+function drawNcUnits() {
+  const N = S.N, uel = $("nc-units");
+  if (!N || !N.dates.length) { uel.innerHTML = ""; return; }
+  const all = N.units.map((r) => ({ unit: r[0], tech: r[1], sp: r[2], curt: r[3], cong: r[4], value: r[5], node: r[6], avail: r[7], days: r[8], dir: r[9], bid: bidWhenCurtailed(r[0], N.dates) }));
+  const col = NC_COLS.find((c) => c.k === S.ncSort) || NC_COLS[3], val = col.v || ((r) => r[col.k]);
+  const sorted = all.map((r) => ({ r, x: val(r) })).sort((a, b) => {
+    const x = a.x, y = b.x;
+    if (x !== y) { if (x == null) return 1; if (y == null) return -1; const c = (typeof x === "string" ? x.localeCompare(y) : x - y) * S.ncDir; if (c) return c; }
+    return b.r.curt - a.r.curt;
+  }).map((o) => o.r);
+  const rows = S.ncAll ? sorted : sorted.slice(0, 40);
   $("nc-more").hidden = S.ncAll || N.units.length <= 40;
   $("nc-more").textContent = `Show all ${N.units.length}`;
-  uel.innerHTML = rows.length ? `<table class="data"><thead><tr>${cols.map((c) => `<th${c.t ? ' class="t"' : ""}>${c.h}</th>`).join("")}</tr></thead><tbody>` +
-    rows.map((r) => `<tr>${cols.map((c) => `<td${c.t ? ' class="t"' : ""}>${c.f(r)}</td>`).join("")}</tr>`).join("") + "</tbody></table>" : "";
+  uel.innerHTML = rows.length ? `<table class="data"><thead><tr>${NC_COLS.map((c) => `<th class="sortable${c.t ? " t" : ""}" data-k="${c.k}">${c.h}${S.ncSort === c.k ? (S.ncDir < 0 ? " ▾" : " ▴") : ""}</th>`).join("")}</tr></thead><tbody>` +
+    rows.map((r) => `<tr>${NC_COLS.map((c) => `<td${c.t ? ' class="t"' : ""}>${c.f(r)}</td>`).join("")}</tr>`).join("") + "</tbody></table>" : "";
+  uel.querySelectorAll("th[data-k]").forEach((th) => th.addEventListener("click", () => {
+    const k = th.dataset.k; if (S.ncSort === k) S.ncDir = -S.ncDir; else { S.ncSort = k; S.ncDir = NC_TEXT.includes(k) ? 1 : -1; }
+    drawNcUnits(); saveView();
+  }));
   setCSV(uel, ["unit", "technology", "settlement_point", "curtailed_mwh", "available_mwh", "congestion_mwh", "directed_mwh", "value_at_node", "mean_node_price", "avg_offer_curtailed_days", "days"],
-    N.units.map((r) => [r[0], r[1], r[2], r[3], r[7], r[4], r[9], r[5], r[6], bidWhenCurtailed(r[0], N.dates) ?? null, r[8]]), "Curtailed units");
+    sorted.map((r) => [r.unit, r.tech, r.sp, r.curt, r.avail, r.cong, r.dir, r.value, r.node, r.bid ?? null, r.days]), "Curtailed units");
 }
 
 
@@ -301,10 +325,11 @@ function bidWhenCurtailed(name, dates) {
 
 // ---- links ------------------------------------------------------------------------
 // the hedge-signal panels (renewables-hedge.js) keep their own keys in the same address bar
-const VIEW_KEYS = { date: "cday", pb: "pbasis", unb: "unBy", unt: "unTech", unl: "unLam" };
-function saveView() { window.CX.writeHash({ ...window.CX.readHash(), cday: null, ...Object.fromEntries(Object.entries(VIEW_KEYS).map(([k, sk]) => [k, S[sk]])) }); }
+const VIEW_KEYS = { date: "cday", pb: "pbasis", unb: "unBy", unt: "unTech", unl: "unLam", ncs: "ncSort" };
+function saveView() { window.CX.writeHash({ ...window.CX.readHash(), cday: null, ...Object.fromEntries(Object.entries(VIEW_KEYS).map(([k, sk]) => [k, S[sk]])), ncd: S.ncDir === (NC_TEXT.includes(S.ncSort) ? 1 : -1) ? null : S.ncDir }); }
 // links from before the shared day picker carry the day as cday
-function loadView() { const v = window.CX.readHash(); if (v.cday && !v.date) v.date = v.cday; Object.entries(VIEW_KEYS).forEach(([k, sk]) => { if (v[k] != null) S[sk] = v[k]; }); }
+function loadView() { const v = window.CX.readHash(); if (v.cday && !v.date) v.date = v.cday; Object.entries(VIEW_KEYS).forEach(([k, sk]) => { if (v[k] != null) S[sk] = v[k]; });
+  S.ncDir = v.ncd != null ? (+v.ncd < 0 ? -1 : 1) : NC_TEXT.includes(S.ncSort) ? 1 : -1; }
 
 
 // ---- unused wind and solar, by region and offer price ----------------------------------
@@ -373,7 +398,7 @@ async function boot() {
   S.cday = S.picker.get();
   bindSeg("nc-basis", "pbasis", drawCurtPrice);
   [["un-by", "unBy"], ["un-tech", "unTech"], ["un-lam", "unLam"]].forEach(([id, key]) => bindSeg(id, key, drawUnused));
-  $("nc-more").onclick = () => { S.ncAll = true; drawNodeCurtail(); };
+  $("nc-more").onclick = () => { S.ncAll = true; drawNcUnits(); };
   drawAll();
   window.CX.init();
   saveView();
