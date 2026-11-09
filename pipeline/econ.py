@@ -26,6 +26,12 @@ For every unit in the per-unit day files (UNIT_DATA_DIR/60d/) and each 60-day da
   start     [hot, intermediate, cold] DAM start-up offers ($ per start, null without one)
   starts    starts that day (telemetered status moving from not online to ON), counted for a
             combined-cycle train as a whole so configuration switches are not starts
+  starts_inter, starts_cold
+            of those, the starts after more than HOT_H hours offline (intermediate) and more than
+            INTER_H (cold), timed from the SCED run it went offline in to the run it came back
+            (carried across days); the rest are hot, and so is a start whose time offline isn't
+            known (the first day loaded, or after a day missing).  Fleet economics prices each
+            class at its own start offer
   hours_on  hours running (unit_hours_60d strips), thermal units only
   mmbtu     fuel burned (MMBtu), gas and coal units: each hour's output x the unit's heat rate at
             that output, a straight line from its measured heat rate at minimum (at or below its
@@ -67,7 +73,8 @@ from .store import read_json_gz, write_json_gz
 from .units import _ffill_index
 
 SERIES = ("mwh", "chg", "rev_rt", "rev_lam", "da_mwh", "rev_da", "rev_da_rt", "rev_as", "cost_off", "cost_inc",
-          "mingen", "start_hot", "start_inter", "start_cold", "starts", "hours_on", "mmbtu")
+          "mingen", "start_hot", "start_inter", "start_cold", "starts", "starts_inter", "starts_cold", "hours_on", "mmbtu")
+HOT_H, INTER_H = 8, 24     # hours offline: a hot start at most HOT_H, intermediate at most INTER_H, else cold (as wear.py)
 FUEL_TECHS = ("combined_cycle", "combustion_turbine", "gas_steam", "coal")
 GAS_TECHS = ("combined_cycle", "combustion_turbine", "gas_steam")
 # EIA average tested heat rates (Electric Power Annual table 8.2, 2024, MMBtu/MWh), as the site uses
@@ -181,20 +188,32 @@ def build_implied_hr(hub_files: dict, hh: dict, fh: dict) -> None:
 def day_units(ud):
     """What build_econ takes from one per-unit day file (memo.per_day caches it), or None without
     one: per unit or combined-cycle train with status events [key, first status, starts after
-    the first event, last status] (None and 0 without events; a start at the first event depends
+    the first event, last status, [[minute of the start, minute it went offline that day or None
+    when it was offline since before the day], ...] for those starts, minute of the day it last
+    went offline (None without one), minute of its first event] (None and 0 without events; a start at the first event depends
     on the day before, which build_econ adds), and per unit with output [name, type, tech,
     hourly output (None as None), peak HSL]."""
     if not ud:
         return None
+    runs = ud.get("runs") or []
+    minute = lambda r: runs[r] if 0 <= r < len(runs) else None
     evs = {}
     for name, u in ud["units"].items():
         key = train_of(name) if u.get("tech") == "combined_cycle" else name
         evs.setdefault(key, []).extend(ev for ev in u["status"] if ev[1])
     starts = []
     for key, ev in evs.items():
-        seq = [st for _, st in sorted(ev, key=lambda e: e[0])]
-        cnt = sum(1 for a, b in zip(seq, seq[1:]) if not _online(a) and _online(b))
-        starts.append([key, seq[0] if seq else None, cnt, seq[-1] if seq else None])
+        ev = sorted(ev, key=lambda e: e[0])
+        seq = [st for _, st in ev]
+        cnt, offs, off_at = 0, [], None
+        for (_, a), (r, b) in zip(ev, ev[1:]):
+            if _online(a) and not _online(b):
+                off_at = minute(r)
+            elif not _online(a) and _online(b):
+                cnt += 1
+                offs.append([minute(r), off_at])      # off_at None: offline since before the day
+        starts.append([key, seq[0] if seq else None, cnt, seq[-1] if seq else None, offs, off_at,
+                       minute(ev[0][0]) if ev else None])
     units = [[name, u.get("type"), u.get("tech"), u["out"], _peak_hsl(u, len(ud["runs"]))]
              for name, u in ud["units"].items() if u.get("out")]
     return {"starts": starts, "units": units}
@@ -222,7 +241,9 @@ def build_econ(index: dict) -> None:
 
     units = {}      # name -> {"type", "tech", "sp", "hsl": [D] daily peak HSL, series: [D]}
     starts = {}     # unit, or combined-cycle train -> [D]
+    s_inter, s_cold = {}, {}     # of those, intermediate and cold starts -> [D]
     prev_last, prev_date = {}, None
+    off_since = {}  # key -> absolute minute (day number x 1440 + minute) it last went offline
 
     def rec(name, u):
         if name not in units:
@@ -244,12 +265,28 @@ def build_econ(index: dict) -> None:
         # starts: status events of a day, combined-cycle configurations merged into their train;
         # a start in the day's first run counts only when the previous day is known
         if prev_date is None or (np.datetime64(d) - np.datetime64(prev_date)).astype(int) != 1:
-            prev_last = {}
-        for key, first, cnt, last in ud["starts"]:
-            prev = prev_last.get(key)
+            prev_last, off_since = {}, {}
+        base = int(np.datetime64(d).astype("datetime64[D]").astype(int)) * 1440
+        for key, first, cnt, last, *more in ud["starts"]:
+            offs, off_at, first_min = more if len(more) == 3 else ([], None, None)
+            prev, carried = prev_last.get(key), off_since.get(key)
+            # hours offline before each start: from the run it went offline (that day, or carried
+            # from an earlier one) to the run it came back; None when not known
+            hours = [(m - o) / 60 if m is not None and o is not None
+                     else (base + m - carried) / 60 if m is not None and carried is not None else None
+                     for m, o in offs]
             if first is not None and prev is not None and not _online(prev) and _online(first):
                 cnt += 1
+                hours.append(None if carried is None or first_min is None else (base + first_min - carried) / 60)
             starts.setdefault(key, [None] * D)[di] = cnt
+            s_inter.setdefault(key, [None] * D)[di] = sum(1 for h in hours if h is not None and HOT_H < h <= INTER_H)
+            s_cold.setdefault(key, [None] * D)[di] = sum(1 for h in hours if h is not None and h > INTER_H)
+            if last is not None and _online(last):
+                off_since.pop(key, None)
+            elif off_at is not None:
+                off_since[key] = base + off_at
+            elif last is not None and prev is not None and _online(prev) and first is not None and not _online(first):
+                off_since[key] = base + (first_min or 0)     # went offline at the turn of the day
             if last is not None:
                 prev_last[key] = last
         prev_date = d
@@ -344,6 +381,8 @@ def build_econ(index: dict) -> None:
     for key, r in units.items():
         if r["tech"] in SIXTY_DAY_TECHS and r["tech"] not in ("wind", "solar", "storage", "hydro", "other") and key in starts:
             r["starts"] = starts[key]
+            r["starts_inter"] = s_inter[key]
+            r["starts_cold"] = s_cold[key]
     fh = (read_json_gz(DATA_DIR / "fuel_hubs.json.gz", default=None) or {}).get("units", {})
     for name, r in units.items():
         got = [fh[c] for c in (r.get("configs") or [name]) if c in fh]

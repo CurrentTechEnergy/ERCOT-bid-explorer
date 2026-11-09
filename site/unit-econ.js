@@ -8,14 +8,15 @@
 const FUEL = { combined_cycle: "gas", combustion_turbine: "gas", gas_steam: "gas", coal: "coal", nuclear: "nuclear" };
 // EIA Electric Power Annual, table 8.2 (average tested heat rates, 2024), MMBtu per MWh
 const EIA_HR = { combined_cycle: 7.548, combustion_turbine: 10.999, gas_steam: 10.337, coal: 10.018, nuclear: 10.443 };
-// generic defaults: heat rate (MMBtu/MWh), variable O&M ($/MWh), hot start ($), fuel price for
+// generic defaults: heat rate (MMBtu/MWh), variable O&M ($/MWh), hot, intermediate and cold start ($,
+// the site's GENERIC_COSTS; a start is intermediate after more than 8 hours offline, cold after 24), fuel price for
 // non-gas fuels ($/MMBtu). Edit them in the Cost assumptions panel.
 const DEFAULTS = {
-  combined_cycle: { hr: 7.0, vom: 3.0, start: 15000 },
-  combustion_turbine: { hr: 11.0, vom: 5.0, start: 3000 },
-  gas_steam: { hr: 10.5, vom: 4.0, start: 10000 },
-  coal: { hr: 10.5, vom: 5.0, start: 30000 },
-  nuclear: { hr: 10.4, vom: 2.5, start: 0 },
+  combined_cycle: { hr: 7.0, vom: 3.0, start: 15000, start_inter: 25000, start_cold: 40000 },
+  combustion_turbine: { hr: 11.0, vom: 5.0, start: 3000, start_inter: 4000, start_cold: 5000 },
+  gas_steam: { hr: 10.5, vom: 4.0, start: 10000, start_inter: 20000, start_cold: 30000 },
+  coal: { hr: 10.5, vom: 5.0, start: 30000, start_inter: 60000, start_cold: 90000 },
+  nuclear: { hr: 10.4, vom: 2.5, start: 0, start_inter: 0, start_cold: 0 },
 };
 const FUEL_PRICE = { coal: 2.0, nuclear: 0.7 };     // $/MMBtu, user-editable
 const { tryJSON, showTip, hideTip, setCSV, css, esc, axisFmt, fmtKind } = window.CX;
@@ -63,14 +64,13 @@ function unitEcon(u, D, gas) {
     const as = u.rev_as[i] || 0;
     let fuel = 0, starts = 0, estimated = false;
     if (fuelKind) {
-      const n = u.starts[i] || 0;
-      const own = u.start_hot[i] != null ? u.start_hot[i] : null;
+      const sc = (useOwn) => window.CX.startCost(u, i, p, useOwn);
       if (S.cost === "offer" || S.cost === "inc") {
         const own_cost = S.cost === "inc" ? u.cost_inc[i] : u.cost_off[i];
         if (own_cost != null) fuel = own_cost;
         else if (S.cost === "offer" && u.mingen[i] != null) fuel = mwh * u.mingen[i];
         else { const b = fuelBill(i, mwh, p.hr); fuel = b == null ? null : b + mwh * p.vom; estimated = b != null; }
-        starts = n * (own != null ? own : p.start);
+        starts = sc(true).cost;
       } else if (S.cost === "meas" && u.mmbtu && u.mmbtu[i] != null && (fuelKind === "gas" || fuelKind === "coal")) {
         // the pipeline's burn on the unit's measured heat-rate curve (econ.py mmbtu), priced at its
         // own hub (fuel_meas: the hub prices are not published) or Henry Hub, or its plant's coal price
@@ -78,16 +78,18 @@ function unitEcon(u, D, gas) {
           : gas ? (gas[i] == null ? null : u.mmbtu[i] * (gas[i] + S.adder))
           : (u.fuel_meas && u.fuel_meas[i] != null ? u.fuel_meas[i] + u.mmbtu[i] * S.adder : null);
         fuel = b == null ? null : b + mwh * p.vom;
-        starts = n * (own != null ? own : p.start);
-        if (own == null && n) estimated = true;
+        const st = sc(true);
+        starts = st.cost;
+        if (st.estimated) estimated = true;
       } else {
         // EIA (and measured where the unit has no burn: nuclear, or a day without it), or generic
         const eia = S.cost === "eia" || S.cost === "meas";
         const hr = eia ? EIA_HR[t] : p.hr;
         const b = fuelBill(i, mwh, hr);
         fuel = b == null ? null : b + mwh * p.vom;
-        starts = n * (own != null && eia ? own : p.start);
-        if ((own == null && n) || (S.cost === "meas" && fuelKind !== "nuclear")) estimated = true;
+        const st = sc(eia);
+        starts = st.cost;
+        if ((st.n && sc(true).estimated) || (S.cost === "meas" && fuelKind !== "nuclear")) estimated = true;
       }
     }
     if (fuel == null) { out.missing++; out.energy.push(energy); out.as.push(as); out.fuel.push(null); out.starts.push(starts); out.margin.push(null); continue; }
@@ -196,7 +198,7 @@ async function draw() {
   const meas = FUEL[S.tech] === "gas" || FUEL[S.tech] === "coal";
   const fuelNote = FUEL[S.tech] ? (meas ? ` Fuel is burned at its own measured heat rate each hour (a straight line from its heat rate at minimum to full load, as under Heat rate and fuel cost; cogeneration units at the fuel chargeable to power)` : ` Fuel is at the EIA average heat rate for the technology (${EIA_HR[S.tech]} MMBtu/MWh)`) +
     (FUEL[S.tech] === "gas" ? ` × ${HUBS[unitHub(u)]} gas${u.fuel_hub && unitHub(u) !== "hh" ? ` (its hub: ${HUB_METHOD[u.fuel_hub_method] || u.fuel_hub_method})` : ""}` : ` × $${d3.format(".2f")(S.fuel[FUEL[S.tech]])}/MMBtu`) +
-    `, plus $${d3.format(".2f")(S.params[S.tech].vom)}/MWh variable operating cost. Starts cost its own day-ahead hot-start offer where it filed one, else $${fmt0(S.params[S.tech].start)}.`
+    `, plus $${d3.format(".2f")(S.params[S.tech].vom)}/MWh variable operating cost. Each start costs its own day-ahead start offer for its class where it filed one (hot after 8 hours offline or fewer, intermediate up to 24, cold beyond), else $${fmt0(S.params[S.tech].start)}, $${fmt0(S.params[S.tech].start_inter)} or $${fmt0(S.params[S.tech].start_cold)}.`
     : S.tech === "storage" ? " Charging is in energy revenue as a negative (MWh bought at the same prices), so energy revenue is the arbitrage margin and there is no separate fuel cost." : " No fuel cost for wind and solar.";
   const en = (v) => (Math.abs(v) < 1000 ? `${fmt0(v)} MWh` : Math.abs(v) >= 1e5 ? `${fmt0(v / 1000)} GWh` : `${fmt1(v / 1000)} GWh`), $M = (v) => (Math.abs(v) >= 1e6 ? `$${d3.format(",.1f")(v / 1e6)}M` : fmt$(v));
   const tot = (k) => Math.abs(sum(e[k]));
@@ -206,6 +208,7 @@ async function draw() {
     (FUEL[S.tech] ? `, against ${$M(tot("fuel"))} of fuel and variable cost and ${$M(tot("starts"))} of start-ups.` : ".") +
     ` <a href="fleet.html#tech=${S.tech}">Compare it with its technology on Fleet economics</a>, where the cost and revenue bases can be changed.`;
   $("econ-how").innerHTML = `Revenue is two-settlement: the day-ahead award at the day-ahead price plus the real-time deviation at its node.` + fuelNote +
+    (nst && u.starts_inter ? ` Of its ${fmt0(nst)} starts, ${fmt0(sum(u.starts_inter))} were intermediate and ${fmt0(sum(u.starts_cold))} cold.` : "") +
     (own ? ` Its own day-ahead offers are medians over its ${own} offer days: hot start ${fmt$(d3.median(u.start_hot.filter((v) => v != null)))}, minimum-energy ${fmt$2(d3.median(mg))}/MWh.` : "") +
     (e.est ? ` ${e.est} day${e.est === 1 ? "" : "s"} use the generic start cost.` : "");
   legendHTML($("econ-legend"));

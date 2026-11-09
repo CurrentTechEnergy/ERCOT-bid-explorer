@@ -714,5 +714,64 @@ function trainHours(f) {
   return { ...f, rows, _trainHours: true };
 }
 
-window.CX = { trainHours, fmtPair, dayPicker, dayLabel, latest60, pickDay, isPeaker, peakerTag, peakerNote, onOffDot, onOffLegend, rucDays, rucRing, rucLegend, rucNote, fromStart, SITE_START, setNote, getJSON, tryJSON, showTip, hideTip, clearPins, setCSV, readHash, writeHash, init, panelFromLink, css, esc, tickFormat, fmtKind, axisFmt, unitIndex, findUnits, matchedOn, drawCurtailDay };
+// The site's outage rule (pipeline/groups.py rewrite_outages, outage_ruled): on one unit's hourly
+// states ("m"/"a" running, "0" offline, "o" outage, "-" no data, as an array), a single offline
+// hour inside a combined-cycle train is a configuration change, and any non-running spell that is
+// mostly outage, or has fewer than OUT_MIN_H OFF hours around an outage, is an outage throughout
+// (for coal any outage hour does it). Returns a new array; the OFF hours it turned into outage are
+// what a unit reported around an outage, so a return from them is not a decision.
+const OUT_MIN_H = 2, OUT_ANY = new Set(["coal"]);
+function ruleOutages(src, tech) {
+  const st = Array.from(src), N = st.length, run = (c) => c === "m" || c === "a";
+  if (tech === "combined_cycle") for (let k = 1; k < N - 1; k++) if (st[k] === "0" && run(st[k - 1]) && run(st[k + 1])) st[k] = "m";
+  for (let k = 0; k < N;) {
+    if (run(st[k])) { k++; continue; }
+    let j = k, off = 0, out = 0;
+    while (j < N && !run(st[j])) { if (st[j] === "0") off++; else if (st[j] === "o") out++; j++; }
+    if (out && (off < OUT_MIN_H || out > off || OUT_ANY.has(tech))) for (let i = k; i < j; i++) if (st[i] === "0") st[i] = "o";
+    k = j;
+  }
+  return st;
+}
+
+// Starts on outage-ruled hourly states (pipeline/wear.py, the same rule): each non-running spell
+// that follows a running hour and ends in one is a start by choice when it holds at least OUT_MIN_H
+// OFF hours and no more missing hours than OFF hours, else a return from an outage when it holds an
+// outage hour (anything else, a blip or a gap in the data, is not counted). -> [{k, kind: "choice" |
+// "outage", off: hours offline before it}] with k the index of the first running hour.
+function hourlyStarts(st) {
+  const out = [], N = st.length, run = (c) => c === "m" || c === "a";
+  for (let k = 1; k < N;) {
+    if (run(st[k]) || !run(st[k - 1])) { k++; continue; }
+    let j = k, off = 0, o = 0, gap = 0;
+    while (j < N && !run(st[j])) { if (st[j] === "0") off++; else if (st[j] === "o") o++; else gap++; j++; }
+    if (j < N) {
+      if (off >= OUT_MIN_H && gap <= off) out.push({ k: j, kind: "choice", off: j - k });
+      else if (o) out.push({ k: j, kind: "outage", off: j - k });
+    }
+    k = j;
+  }
+  return out;
+}
+
+// One day's start-up cost for a unit in data/econ/<tech> (pipeline/econ.py): its starts split by how
+// long it was offline (starts_inter after more than 8 hours, starts_cold after more than 24, the rest
+// hot), each class at the unit's own day-ahead start offer for it when `own` and it filed one, else
+// the generic cost p.start (hot), p.start_inter, p.start_cold. -> {cost, n, estimated: a generic
+// cost was used for at least one start}
+function startCost(u, i, p, own) {
+  const n = (u.starts && u.starts[i]) || 0;
+  if (!n) return { cost: 0, n: 0, estimated: false };
+  const ni = (u.starts_inter && u.starts_inter[i]) || 0, nc = (u.starts_cold && u.starts_cold[i]) || 0, nh = Math.max(0, n - ni - nc);
+  let cost = 0, estimated = false;
+  for (const [k, gen, cnt] of [["start_hot", p.start, nh], ["start_inter", p.start_inter ?? p.start, ni], ["start_cold", p.start_cold ?? p.start, nc]]) {
+    if (!cnt) continue;
+    const o = own && u[k] ? u[k][i] : null;
+    if (o == null) estimated = true;
+    cost += cnt * (o != null ? o : gen);
+  }
+  return { cost, n, estimated };
+}
+
+window.CX = { ruleOutages, hourlyStarts, startCost, OUT_MIN_H, trainHours, fmtPair, dayPicker, dayLabel, latest60, pickDay, isPeaker, peakerTag, peakerNote, onOffDot, onOffLegend, rucDays, rucRing, rucLegend, rucNote, fromStart, SITE_START, setNote, getJSON, tryJSON, showTip, hideTip, clearPins, setCSV, readHash, writeHash, init, panelFromLink, css, esc, tickFormat, fmtKind, axisFmt, unitIndex, findUnits, matchedOn, drawCurtailDay };
 })();
