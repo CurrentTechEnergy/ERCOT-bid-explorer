@@ -180,13 +180,13 @@ site/
                    model's turn-off points and scorecard (data/operator/), groups and cutoffs, the
                    thermal panels lifted from Trends, what riding through cheap stretches cost from
                    data/stayon_60d.json.gz, and one row per unit),
-  beyond.html, renewables.html, fleet.html, unit.html and their scripts
+  realtime.html, renewables.html, fleet.html, unit.html and their scripts
                    (unit.html with no unit shows the Units directory, unit-dir.js; common.js adds
                    the "Find a unit" box to every page's nav row),
   guide.html, guide.js (How offers work, including how revenue is counted and how hedge signals are found),
-  trends.html, day.html, economics.html, contracts.html
-                   (retired pages, kept as redirects to commitment.html, beyond.html, fleet.html
-                   and renewables.html#hedge so old links still open),
+  trends.html, day.html, economics.html, contracts.html, beyond.html
+                   (retired pages, kept as redirects to commitment.html, realtime.html, fleet.html,
+                   renewables.html#hedge and realtime.html so old links still open),
   style.css, vendor/d3.min.js
   data/            generated: index.json, summary_*.json.gz, marginal_*.json.gz, 2d/, 60d/, dam/, prices/,
                    curtail_nodes.json.gz, marginal_nodes.json.gz, gas.json.gz, gas_hubs.json.gz,

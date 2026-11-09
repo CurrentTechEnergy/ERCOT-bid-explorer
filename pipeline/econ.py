@@ -127,7 +127,7 @@ HR_MIN_UNITS, HR_CARRY_DAYS = 10, 14
 
 
 def build_implied_hr(hub_files: dict, hh: dict, fh: dict) -> None:
-    """The heat rate gas units' offers imply, for Beyond the range (beyond-range.js), written to
+    """The heat rate gas units' offers imply, for Real-time offers, across days (realtime-range.js), written to
     data/implied_hr_60d.json.gz {dates (trends_60d's), techs: {tech: [MMBtu/MWh or null]}}.
 
     Each unit's first offer price above $0 at or above LSL (trends_60d "first") over the gas at its

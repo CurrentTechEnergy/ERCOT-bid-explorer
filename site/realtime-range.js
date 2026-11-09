@@ -1,10 +1,10 @@
-/* Beyond baseload, across days: offers against fuel (thermal offer-price quantiles, gas hubs and
+/* Real-time offers, across days: offers against fuel (thermal offer-price quantiles, gas hubs and
    implied heat rate), marginal generation by settled price, marginality at the node, and the thermal
    units above minimum in cheap hours, lifted from trends.js. Reads data/trends_60d.json.gz,
    data/curve_trends.json.gz, data/gas.json.gz, data/gas_hub_avg.json.gz, data/implied_hr_60d.json.gz,
    data/marginal_*.json.gz, data/marginal_nodes.json.gz, data/summary_prices.json.gz and (when its
    panel nears view) data/intraday_60d.json.gz.
-   The one-day panels on the same page are beyond-day.js, which also owns the status line and the
+   The one-day panels on the same page are realtime-day.js, which also owns the status line and the
    shared chart controls (CX.init). */
 (() => {
 "use strict";
@@ -500,7 +500,7 @@ function drawNodeMarginal() {
 }
 
 // ---- links ------------------------------------------------------------------------
-// the one-day panels (beyond-day.js) keep their own keys in the same address bar
+// the one-day panels (realtime-day.js) keep their own keys in the same address bar
 const VIEW_KEYS = { abt: "aboveThr", abx: "aboveTech", pq: "pqTech", ms: "mSrc", mv: "mView", md: "mDays", mnm: "mnMeasure", mnd: "mnDays", mnc: "mnClass", mnl: "mnLam", mnz: "mnZone" };
 function saveView() { window.CX.writeHash({ ...window.CX.readHash(), ...Object.fromEntries(Object.entries(VIEW_KEYS).map(([k, sk]) => [k, S[sk]])) }); }
 function loadView() { const v = window.CX.readHash(); Object.entries(VIEW_KEYS).forEach(([k, sk]) => { if (v[k] != null) S[sk] = v[k]; }); }

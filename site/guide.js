@@ -306,7 +306,7 @@ function drawStep6() {
   $("c6-cap").textContent = S.mode === "from_lsl"
     ? `${S.g.date}, ${heLabel(h)}. Each line starts at its technology's online LSL (combined cycle: ${fmt0(cc.lsl)} MW) and rises only with MW offered above it. At this hour's price, combined cycles offered ${fmt0(at(cc, Math.round(lam)) - cc.lsl)} MW above LSL.`
     : `${S.g.date}, ${heLabel(h)}. As ERCOT prices it: combined cycle shows ${fmt0(at(cc, -20))} MW at or below −$20, almost all of it the ${fmt0(cc.lsl)} MW of LSL placed at the placeholder price.`;
-  $("s6-link").href = `beyond.html#date=${S.g.date}&he=${h + 1}&lsl=${S.mode}&p=curves-panel`;
+  $("s6-link").href = `realtime.html#date=${S.g.date}&he=${h + 1}&lsl=${S.mode}&p=curves-panel`;
 }
 
 // ------------------------------------------------------------------ wiring ---
@@ -314,7 +314,7 @@ function drawAll() {
   const u = U();
   $("unit-note").textContent = u.note;
   $("hour-out").textContent = heLabel(S.hour);
-  $("s2-link").href = `beyond.html#date=${S.g.date}&he=${S.hour + 1}&lsl=ercot&p=curves-panel`;
+  $("s2-link").href = `realtime.html#date=${S.g.date}&he=${S.hour + 1}&lsl=ercot&p=curves-panel`;
   drawStep2(); drawStep3(); drawStep4(); drawStep5(); drawStep6();
 }
 function bindSeg(id, key) {

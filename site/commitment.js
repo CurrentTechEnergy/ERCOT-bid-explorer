@@ -662,7 +662,7 @@ function drawLean() {
     `Storage is net output (negative while charging); hub avg is the HB_HUBAVG settlement point price. Click a row to open that hour on the Real-time offers page.`);
   if (!top.length) { el.innerHTML = `<p class="empty">No hours in this range.</p>`; setCSV(el, [], [], "Leanest thermal hours"); return; }
   el.innerHTML = `<table class="data"><thead><tr>${cols.map((c) => `<th${c.t ? ' class="t"' : ""}>${c.h}</th>`).join("")}</tr></thead><tbody>` +
-    top.map((r) => `<tr data-href="beyond.html#date=${r.d}&he=${r.h + 1}&p=curves-panel" style="cursor:pointer">${cols.map((c) => `<td${c.t ? ' class="t"' : ""}>${c.f(r)}</td>`).join("")}</tr>`).join("") + "</tbody></table>";
+    top.map((r) => `<tr data-href="realtime.html#date=${r.d}&he=${r.h + 1}&p=curves-panel" style="cursor:pointer">${cols.map((c) => `<td${c.t ? ' class="t"' : ""}>${c.f(r)}</td>`).join("")}</tr>`).join("") + "</tbody></table>";
   setCSV(el, cols.map((c) => c.k), top.map(val), "Leanest thermal hours");
 }
 
