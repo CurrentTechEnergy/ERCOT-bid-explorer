@@ -501,6 +501,10 @@ def main(argv=None):
     ap.add_argument("--mis-docs", nargs="+", type=int, metavar="ID",
                     help="download these report files from ERCOT's public website (MIS document ids) in "
                          "place of the API's report fetch; the rest of the run is as usual")
+    ap.add_argument("--refill-prices", nargs="+", metavar="DATE",
+                    help="refill these operating days' real-time and day-ahead hub prices where they have "
+                         "gaps: the raw store first, then the ERCOT API, then ERCOT's website "
+                         "(pipeline/refill_prices.py), in place of the API's report fetch")
     ap.add_argument("--reprocess-60d", nargs="?", const="missing", choices=["missing", "all"],
                     help="re-download and reparse 60-day SCED and DAM days already in the index: those "
                          "whose file is missing or predates the current format (default), or all")
@@ -573,6 +577,9 @@ def main(argv=None):
 
     if args.mis_docs:
         fetch_mis_docs(args.mis_docs, index)
+    elif args.refill_prices:
+        from .refill_prices import refill_prices
+        refill_prices(api, [_d(x).isoformat() for x in args.refill_prices], index)
     elif args.backfill:
         start, end = _d(args.backfill[0]), _d(args.backfill[1])
         want = {(start + dt.timedelta(days=i)).isoformat() for i in range((end - start).days + 1)}

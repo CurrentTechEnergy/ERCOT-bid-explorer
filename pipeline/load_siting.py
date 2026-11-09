@@ -38,6 +38,7 @@ import pandas as pd
 
 from .config import DATA_DIR
 from .decision_table import month_file
+from .hours import hour_weight
 from .store import read_json_gz
 
 TRAIL_MONTHS = 12
@@ -74,8 +75,7 @@ def _service():
 
 def _weight(dates, he):
     """1 per hour, 2 for HE2 on the fall-back Sunday (the data merges the repeated hour)."""
-    d = pd.to_datetime(dates)
-    return np.where((d.dt.month == 11) & (d.dt.dayofweek == 6) & (d.dt.day <= 7) & (he == 2), 2.0, 1.0)
+    return hour_weight(np.asarray(dates), np.asarray(he))
 
 
 def build(months, cache: Path, hubs, congested: float, over_price: float):

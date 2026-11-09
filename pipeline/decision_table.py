@@ -17,7 +17,10 @@ ride-through-review-2026-11-02.md in the project files):
   in the decision   online in the hour before the window, or an off spell overlapping the window
                 that began at most EARLY_H hours before it (the unit shut a little early for it);
                 and available through the window (no outage or missing hour, except inside an off
-                spell: a shutdown the unit then used for maintenance still counts)
+                spell: an economic shutdown with a shorter outage slotted inside it still counts).
+                A non-running spell that is mostly outage, or has fewer than OFF_MIN_H OFF hours
+                around an outage, is an outage throughout (outage_like; the site-wide rule of
+                pipeline/groups.py): maintenance, not a shutdown, and not in the decision
   lsl           LSL of the configuration online going in (the last online hour before the window
                 or the shutdown), else the train's smallest DAM LSL that day; below MIN_LSL left out
   cost          gas cost at minimum ($/MWh), the train's heat rate at minimum (pipeline/heat_rates) x its own hub price (run_cost)
@@ -99,7 +102,7 @@ from .gascost import GAS_TECHS
 from . import heat_rates
 from .intraday import train_of
 
-VERSION = "d4"      # d4: DAM commitment and (from RTC+B) AS no longer hold a window on: make-whole and AS given up netted (Nov 2026); d3: each unit's measured heat rate at minimum, coal at fuel (Nov 2026); d2: operator's-view windows; d1: HE7-to-HE6 blocks
+VERSION = "d5"      # d5: an off spell that is mostly outage (or has under OFF_MIN_H OFF hours around one) is an outage, not a shutdown, as pipeline/groups.py (Nov 2026); d4: DAM commitment and (from RTC+B) AS no longer hold a window on: make-whole and AS given up netted (Nov 2026); d3: each unit's measured heat rate at minimum, coal at fuel (Nov 2026); d2: operator's-view windows; d1: HE7-to-HE6 blocks
 TECHS = ("combined_cycle", "gas_steam")      # coal is out (Blair, Nov 2 2026): generic cost, seasonal shutdowns
 HH_URL = "https://www.eia.gov/dnav/ng/hist_xls/RNGWHHDd.xls"
 AWARD_LSL = 0.9
@@ -415,6 +418,29 @@ def train_days(f: pd.DataFrame) -> pd.DataFrame:
     return h.reset_index()
 
 
+def outage_like(code):
+    """code with each outage-like non-running spell's offline-available hours set to outage (a copy):
+    a spell that is mostly outage, or has fewer than OFF_MIN_H offline-available hours, around an
+    outage hour.  The site-wide rule (pipeline/groups.py rewrite_outages, decisions.py): a unit that
+    goes OFF for a few hours and then on outage for weeks went on maintenance, it did not shut on
+    price.  An economic shutdown with a shorter outage slotted inside it still counts."""
+    c = code.copy()
+    n, k = len(c), 0
+    while k < n:
+        if c[k] >= 3:
+            k += 1
+            continue
+        j = k
+        while j < n and c[j] < 3:
+            j += 1
+        seg = c[k:j]
+        off, out = int((seg == 2).sum()), int((seg == 1).sum())
+        if out and (off < OFF_MIN_H or out > off):
+            seg[seg == 2] = 1
+        k = j
+    return c
+
+
 def off_spells(code):
     """[(start, length, clean)] of off spells: from an offline-available hour after an online
     hour, through offline, outage or no-data hours, to the next online hour (or the end); kept
@@ -592,7 +618,7 @@ def build(months, out: Path) -> pd.DataFrame:
             a = np.full(T + PAD, fill, dtype=dtype)
             a[k] = t[col].to_numpy(dtype)
             return a
-        code = arr("code", 0, np.int8)
+        code = outage_like(arr("code", 0, np.int8))     # maintenance outages are not shutdowns
         price, aw, run, hot_run = arr("da_node"), arr("award"), arr("run"), arr("hot_run")
         st_on = arr("st_on") if t["st_on"].notna().any() else np.full(T + PAD, np.nan)
         as_mw = np.nan_to_num(arr("as_mw"))
