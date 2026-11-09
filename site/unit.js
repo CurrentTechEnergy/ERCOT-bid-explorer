@@ -405,15 +405,16 @@ function drawDecisions(e) {
     `<span><span class="sw sw-line"></span>Turn-off point moved</span>` + (pts.some((p) => p.ruc) ? window.CX.rucLegend() : "");
 }
 
-// combustion turbines: each day it went into some hour offline, the operator model's
-// turn-on point against the day's highest day-ahead price at its node (data/peaker/oi.json.gz,
-// pipeline/models/peaker_oi.py), with its "Running at a new price" changes marked; turn_on null
-// when no shift tested starts it (drawn on the "no start" row at the top)
 // the unit's row of the goal page's Q3 heatmap (data/goal.json.gz q3.units rows: [train, tech, year,
-// windows where shutting pays, share shut, LSL]): each year, the share of those windows it turned off for
+// windows where shutting pays, share shut, LSL]): each year, the share of those windows it stayed on
+// through, darker in the unit's own colour for more often on (as the hours-online strip); coal gets
+// drawCoalYears instead
 async function drawDecYears(e) {
   const box = $("dec-years");
+  $("dec-years-legend").hidden = true;
+  if (e.tech === "coal") return drawCoalYears(e);
   if (e.tech !== "combined_cycle" && e.tech !== "gas_steam") { box.hidden = true; return; }
+  $("dec-years-h").textContent = "Year by year: when shutting would have paid, how often it stayed on";
   if (S.GOAL === undefined) S.GOAL = await tryJSON("data/goal.json.gz");
   if (S.unit !== e.name) return;
   const G = S.GOAL, q = G?.q3;
@@ -423,14 +424,15 @@ async function drawDecYears(e) {
   const min = q.unit_min, base = q.base_years, b0 = base[0], b1 = base.at(-1);
   const ys = Object.keys(G.years || {}).map(Number).filter((y) => y >= 2019).sort((a, b) => a - b);
   const part = (y) => (G.years[y] && G.years[y].to.slice(5) !== "12-31" ? G.years[y].to : null);
-  const cell = new Map(rows.map((r) => [r[2], { n: r[3], v: r[4] }]));
+  const cell = new Map(rows.map((r) => [r[2], { n: r[3], v: 1 - r[4] }]));      // v: share stayed on
   const ok = (y) => cell.has(y) && cell.get(y).n >= min;
   const avg = (f) => { const v = ys.filter((y) => f(y) && ok(y)).map((y) => cell.get(y).v); return v.length ? d3.mean(v) : null; };
   const early = avg((y) => y >= b0 && y <= b1), late = avg((y) => y >= 2024);
   const never = (q.never || []).some((r) => r[0] === e.name);
   const el = $("dec-years-chart"), w = Math.max(280, el.clientWidth || 600), narrow = w < 560, H = 52, m = { t: 16, r: 4, b: 4, l: 4 };
   const x = d3.scaleBand().domain(ys).range([m.l, w - m.r]).paddingInner(0.06);
-  const col = d3.scaleSequential(d3.interpolateRgb(css("--grid"), css("--c1"))).domain([0, 1]);
+  const unitCol = css((TECH_OF[e.tech] || {}).color || "--c1");
+  const col = d3.scaleSequential(d3.interpolateRgb(css("--grid"), unitCol)).domain([0, 1]);
   const svg = d3.create("svg").attr("viewBox", `0 0 ${w} ${H}`);
   ys.forEach((y) => {
     const c = cell.get(y), cx = x(y) + x.bandwidth() / 2;
@@ -439,7 +441,7 @@ async function drawDecYears(e) {
     svg.append("rect").attr("x", x(y)).attr("y", m.t).attr("width", x.bandwidth()).attr("height", H - m.t - m.b)
       .attr("fill", ok(y) ? col(c.v) : css("--surface")).attr("stroke", ok(y) ? "none" : css("--grid"))
       .on("pointermove", (ev) => showTip(ev, `<h4>${y}${part(y) ? ` (to ${esc(part(y))})` : ""}</h4>` + (!c ? "No stretches where shutting would have paid."
-        : `<table><tr><td>Stretches where shutting paid</td><td class="n">${c.n}</td></tr><tr><td>Turned off for</td><td class="n">${fmtPct(c.v)}</td></tr></table>${c.n < min ? `Fewer than ${min} stretches: not shaded.` : ""}`)))
+        : `<table><tr><td>Stretches where shutting paid</td><td class="n">${c.n}</td></tr><tr><td>Stayed on through</td><td class="n">${fmtPct(c.v)}</td></tr><tr><td>Turned off for</td><td class="n">${fmtPct(1 - c.v)}</td></tr></table>${c.n < min ? `Fewer than ${min} stretches: not shaded.` : ""}`)))
       .on("pointerleave", hideTip);
     svg.append("text").attr("x", cx).attr("y", m.t + (H - m.t - m.b) / 2 + 4).attr("text-anchor", "middle").attr("font-size", narrow ? 10 : 12)
       .attr("pointer-events", "none").attr("fill", ok(y) ? css(c.v > 0.55 ? "--surface" : "--ink") : css("--muted"))
@@ -447,13 +449,79 @@ async function drawDecYears(e) {
   });
   el.replaceChildren(svg.node());
   const d = early != null && late != null ? late - early : null;
-  $("dec-years-note").innerHTML = `Each year, the share of loss stretches where shutting down would have paid (the loss from staying on beat the restart cost and nothing held it on) that it actually turned off for. Darker is more often off; a dash is a year with fewer than ${min} such stretches.` +
-    (d != null ? ` <b>It turned off for ${fmtPct(early)} of them in ${b0} to ${b1} and ${fmtPct(late)} from 2024 on, ${Math.abs(Math.round(100 * d))} points ${d < 0 ? "less" : "more"} often.</b>` : !ys.some(ok) ? " Too few such stretches in any year to judge." : "") +
+  $("dec-years-note").innerHTML = `Each year, of the loss stretches where shutting down would have paid (the loss from staying on beat the restart cost and nothing held it on), the share it stayed online through. Darker is more often on, in the unit's colour as on the hours-online strip; a dash is a year with fewer than ${min} such stretches.` +
+    (d != null ? ` <b>It stayed on through ${fmtPct(early)} of them in ${b0} to ${b1} and ${fmtPct(late)} from 2024 on, ${Math.abs(Math.round(100 * d))} points ${d < 0 ? "less" : "more"} often.</b>` : !ys.some(ok) ? " Too few such stretches in any year to judge." : "") +
     (never ? " It has never turned off for a loss stretch it was free to choose." : "") +
     (ys.some(part) ? " * Part year." : "") + ` Every unit side by side: <a href="goal.html#q3-panel">Will fossil turn off?</a>, question 3.`;
-  setCSV(el, ["year", "windows_where_shutting_pays", "share_turned_off"], ys.map((y) => [y, cell.get(y)?.n ?? 0, cell.get(y)?.v ?? ""]), `${e.name} shut rate by year`);
+  setCSV(el, ["year", "windows_where_shutting_pays", "share_stayed_on", "share_turned_off"], ys.map((y) => [y, cell.get(y)?.n ?? 0, cell.get(y)?.v ?? "", cell.has(y) ? 1 - cell.get(y).v : ""]), `${e.name} stayed on by year`);
 }
 
+// coal: each calendar year from 2019, hours online, offline by choice and on outage (ERCOT status OUT,
+// how most seasonal layups are filed) as a stacked bar, and above it the share of the cheap hours
+// (day-ahead lambda at or below the cut) it was online in, of the cheap hours it was not on outage
+// (data/coal_years.json.gz, pipeline/coal_years.py; rows [unit, year, hours, on, off, out, cheap_avail, cheap_on])
+const COAL_MIN_CHEAP = 50;     // fewer available cheap hours than this: no cheap-hour share
+async function drawCoalYears(e) {
+  const box = $("dec-years");
+  $("dec-years-h").textContent = "Year by year: how it spent the year";
+  if (S.COALY === undefined) S.COALY = await tryJSON("data/coal_years.json.gz");
+  if (S.unit !== e.name) return;
+  const C = S.COALY, rows = C?.rows ? C.rows.filter((r) => r[0] === e.name && r[2] > 0) : [];
+  box.hidden = !rows.length;
+  if (!rows.length) return;
+  const by = new Map(rows.map((r) => [r[1], { hours: r[2], on: r[3], off: r[4], out: r[5], ca: r[6], co: r[7] }]));
+  const y1 = d3.max(C.rows, (r) => r[1]), ys = d3.range(2019, y1 + 1);
+  const part = (y) => (C.through && +C.through.slice(0, 4) === y && C.through.slice(5) !== "12-31" ? C.through : null);
+  const share = (c) => (c && c.ca >= COAL_MIN_CHEAP ? c.co / c.ca : null);
+  const avg = (f) => { const v = ys.filter(f).map((y) => share(by.get(y))).filter((v) => v != null); return v.length ? d3.mean(v) : null; };
+  const early = avg((y) => y <= 2021), late = avg((y) => y >= 2024);
+  const el = $("dec-years-chart"), w = Math.max(280, el.clientWidth || 600), narrow = w < 560, H = 150, m = { t: 22, r: 4, b: 18, l: 4 };
+  const x = d3.scaleBand().domain(ys).range([m.l, w - m.r]).paddingInner(narrow ? 0.12 : 0.2);
+  const bh = H - m.t - m.b, svg = d3.create("svg").attr("viewBox", `0 0 ${w} ${H}`);
+  const hid = `coal-hatch-${e.name.replace(/\W/g, "")}`;
+  const pat = svg.append("defs").append("pattern").attr("id", hid).attr("width", 5).attr("height", 5).attr("patternUnits", "userSpaceOnUse").attr("patternTransform", "rotate(45)");
+  pat.append("rect").attr("width", 5).attr("height", 5).attr("fill", css("--ink-2")).attr("fill-opacity", 0.18);
+  pat.append("line").attr("y2", 5).attr("stroke", css("--ink-2")).attr("stroke-opacity", 0.55).attr("stroke-width", 1.4);
+  const segs = [["on", css("--c8"), "Online"], ["off", css("--grid"), "Offline by choice"], ["out", `url(#${hid})`, "On outage"]];
+  const pct1 = (v, n) => (n ? fmtPct(v / n) : "–");
+  ys.forEach((y) => {
+    const c = by.get(y), x0 = x(y), cx = x0 + x.bandwidth() / 2;
+    svg.append("text").attr("x", cx).attr("y", H - 4).attr("text-anchor", "middle").attr("font-size", narrow ? 10 : 11).attr("fill", css("--muted"))
+      .text(`${narrow ? `'${String(y).slice(2)}` : y}${part(y) ? "*" : ""}`);
+    if (!c) { svg.append("text").attr("x", cx).attr("y", m.t + bh / 2).attr("text-anchor", "middle").attr("font-size", 11).attr("fill", css("--muted")).text("–"); return; }
+    const g = svg.append("g");
+    let yy = m.t;
+    for (const [k, fill] of segs) {
+      const h = (bh * c[k]) / c.hours;
+      if (h > 0) g.append("rect").attr("x", x0).attr("y", yy).attr("width", x.bandwidth()).attr("height", h).attr("fill", fill);
+      yy += h;
+    }
+    const s = share(c);
+    svg.append("text").attr("x", cx).attr("y", m.t - 7).attr("text-anchor", "middle").attr("font-size", narrow ? 10 : 12).attr("fill", css("--ink"))
+      .text(s == null ? "–" : `${Math.round(100 * s)}%`);
+    g.append("rect").attr("x", x0).attr("y", m.t).attr("width", x.bandwidth()).attr("height", bh).attr("fill", "transparent")
+      .on("pointermove", (ev) => showTip(ev, `<h4>${y}${part(y) ? ` (to ${esc(part(y))})` : ""}</h4><table>` +
+        `<tr><td>Online</td><td class="n">${pct1(c.on, c.hours)}</td></tr><tr><td>Offline by choice</td><td class="n">${pct1(c.off, c.hours)}</td></tr><tr><td>On outage</td><td class="n">${pct1(c.out, c.hours)}</td></tr>` +
+        `<tr><td>Cheap hours not on outage</td><td class="n">${d3.format(",")(c.ca)}</td></tr><tr><td>Online in them</td><td class="n">${s == null ? "–" : fmtPct(s)}</td></tr></table>` +
+        (s == null ? `Fewer than ${COAL_MIN_CHEAP} cheap hours off outage: no share.` : "")))
+      .on("pointerleave", hideTip);
+  });
+  el.replaceChildren(svg.node());
+  const lg = $("dec-years-legend");
+  lg.hidden = false;
+  lg.innerHTML = `<span><span class="sw" style="background:var(--c8)"></span>Online</span><span><span class="sw" style="background:var(--grid)"></span>Offline by choice</span>` +
+    `<span><span class="sw" style="background:repeating-linear-gradient(45deg, color-mix(in srgb, var(--ink-2) 55%, transparent) 0 1.4px, color-mix(in srgb, var(--ink-2) 18%, transparent) 1.4px 3.5px)"></span>On outage (most seasonal layups are filed this way)</span>`;
+  const d = early != null && late != null ? late - early : null, cut = C.cheap ?? 10;
+  $("dec-years-note").innerHTML = `Each bar is a calendar year: hours online, offline by choice and on outage. The number above is the share of cheap hours (day-ahead system lambda at or below $${cut}) it was online in, counting only the cheap hours it was not on outage; a dash is a year with fewer than ${COAL_MIN_CHEAP} of them.` +
+    (d != null ? ` <b>It was online in ${fmtPct(early)} of them in 2019 to 2021 and ${fmtPct(late)} from 2024 on, ${Math.abs(Math.round(100 * d))} points ${d < 0 ? "less" : "more"} often.</b>` : "") +
+    (ys.some(part) ? " * Part year." : "");
+  setCSV(el, ["year", "hours", "online", "offline", "outage", "cheap_hours_available", "cheap_hours_online"], ys.filter((y) => by.has(y)).map((y) => { const c = by.get(y); return [y, c.hours, c.on, c.off, c.out, c.ca, c.co]; }), `${e.name} year by year`);
+}
+
+// combustion turbines: each day it went into some hour offline, the operator model's
+// turn-on point against the day's highest day-ahead price at its node (data/peaker/oi.json.gz,
+// pipeline/models/peaker_oi.py), with its "Running at a new price" changes marked; turn_on null
+// when no shift tested starts it (drawn on the "no start" row at the top)
 async function drawDecisionsCT(e) {
   const el = $("dec-chart"), P = S.POI;
   const C = P ? Object.fromEntries(P.columns.map((c, i) => [c, i])) : {};
