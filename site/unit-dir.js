@@ -183,7 +183,9 @@ async function boot() {
   if (w) $("dir-window").textContent = ` (${w[0]} to ${w[1]})`;
   // before the pipeline writes the new columns, hide the controls that need them
   const has = (k) => S.units.some((u) => u[k] != null);
-  $("dir-commit-ctl").hidden = !has("qs"); $("dir-type").closest(".ctl").hidden = !has("type");
+  $("dir-commit-ctl").hidden = !has("qs");
+  for (const c of COMMIT) if (!has(c.k)) { cm.querySelector(`[data-k="${c.k}"]`).closest(".chip").hidden = true; delete S.chip[c.k]; }   // shares the next update adds
+  $("dir-presets").querySelectorAll("button").forEach((b) => { b.hidden = Object.keys(PRESETS[+b.dataset.i].chips).some((k) => !has(k)); }); $("dir-type").closest(".ctl").hidden = !has("type");
   draw();
 }
 boot();
