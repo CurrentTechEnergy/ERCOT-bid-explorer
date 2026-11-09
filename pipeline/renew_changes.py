@@ -50,13 +50,6 @@ pre-2022 wind in 2026.
   and only for wind units already in the data at its first month (start unknown) or first seen
   PTC_YEARS or more before the change.  Solar is never tagged: any solar on the PTC started in 2022
   or later, and solar that started before 2022 never had it.
-  ptc_share is the share of each fleet's MW offering at the PTC, within PTC_WIN of the year's or
-  the year before's pre-tax credit (the IRS notice comes out mid-year), and, as band_*, anywhere in
-  PTC_BAND: monthly (months) and daily over the live days (dates).  A unit counts in a period when
-  its offer was there on at least half of its online days (a floor day's floor, or a moving day's
-  median offer; formula days do not count); weighted by the unit index's mw (econ's HSL, the 95th
-  percentile of each day's highest), else the median mw of the unit's technology.  Solar starts in
-  2022 and counts only units first seen in 2022 or later.
 
 Moved dispatch.  A change's window is every online day the unit spent in the new regime, from the
 change up to its next change (episodes left out), at most WINDOW_MAX calendar days; an episode's
@@ -89,9 +82,7 @@ Writes:
                                  window may cross years and the history/live boundary
   data/renew_changes.json.gz    params, kinds, first, last, years, n_units, togglers,
                                  ptc_band, ptc_credit {year: [pre2022, post2021] cents/kWh},
-                                 tax_rate, ptc_share {months, dates, win, wind/solar: {month, day,
-                                 band_month, band_day} (shares, null for none), mw: {wind, solar}
-                                 (monthly fleet MW)},
+                                 tax_rate,
                                  n_inflation (inflation steps dropped),
                                  events: [{date, plant, units, tech, kind, before, after, days, ptc,
                                  gap, ctx [dam before, dam after, cur before, cur after],
@@ -134,10 +125,8 @@ PTC_BAND = [-60.0, -15.0]   # floors here price a per-MWh credit such as the PTC
 PTC_OFF = -5.0     # a floor leaving the band for this or higher, for good, may be the PTC running out
 PTC_YEARS = 9      # years in the data before a wind unit's floor leaving the band can be the PTC ending
 TAX_RATE = 0.21    # federal corporate rate: the credit's pre-tax value is credit / (1 - TAX_RATE)
-PTC_WIN = 3.0      # $/MWh: an offer this close to the year's (or the year before's) pre-tax credit is at the PTC
 STEP_USD = 0.5     # $/MWh: a new floor this close to the year's pre-tax credit is an inflation step
 STEP_RATIO = 0.01  # new floor / old within this of one year's credit / the year before's: an inflation step
-SOLAR_PTC_FROM = "2022-01-01"   # solar placed in service from here on can take the PTC
 KINDS = {
     "floor_new": "New floor", "floor_back": "Back to an earlier floor",
     "formula_on": "Formula on", "formula_off": "Formula off", "terms": "Formula terms changed",
@@ -666,59 +655,6 @@ def _tag_ptc(events, tech, first_seen, data_first) -> None:
             e["ptc"] = "expired"
 
 
-def ptc_share(seq, tech, src, credit) -> dict:
-    """Share of each fleet's MW offering at the PTC (within PTC_WIN of the year's or the year
-    before's pre-tax credit) and anywhere in the PTC band, monthly and daily over the live days."""
-    ui = read_json_gz(DATA_DIR / "unit_index.json.gz", default={}) or {}
-    c = ui.get("columns") or []
-    mw = {r[c.index("unit")]: r[c.index("mw")] for r in ui.get("rows", [])} if "mw" in c else {}
-    med = {t: float(np.median([mw[n] for n in seq if tech.get(n) == t and mw.get(n)] or [1.0])) for t in ("wind", "solar")}
-    near = {y: _pretax(credit, y) + _pretax(credit, y - 1) for y in range(2000, 2100)}
-    live = {d for d, s in src.items() if s == "l"}
-    month = defaultdict(lambda: [0, 0, 0])      # (tech, month, unit) -> [online days, at the PTC, in the band]
-    day = defaultdict(lambda: [0.0, 0.0, 0.0])  # (tech, date) -> [MW online, at the PTC, in the band]
-    for name, days in seq.items():
-        t = tech.get(name)
-        if t not in ("wind", "solar") or not days:
-            continue
-        can = t == "wind" or days[0][0] >= SOLAR_PTC_FROM
-        w = mw.get(name) or med[t]
-        for d, s in days:
-            if s[0] < MIN_HOURS:
-                continue
-            v = s[2] if s[1] == "f" else s[3] if s[1] == "v" else None   # a floor, or a moving day's median
-            inb = can and v is not None and PTC_BAND[0] <= v <= PTC_BAND[1]
-            atp = inb and any(abs(v - g) <= PTC_WIN for g in near[int(d[:4])])
-            m = month[(t, d[:7], name)]
-            m[0] += 1
-            m[1] += atp
-            m[2] += inb
-            if d in live:
-                q = day[(t, d)]
-                q[0] += w
-                q[1] += w * atp
-                q[2] += w * inb
-    months = sorted({k[1] for k in month})
-    dates = sorted({k[1] for k in day})
-    tot = defaultdict(lambda: [0.0, 0.0, 0.0])
-    for (t, mo, name), (n, kp, kb) in month.items():
-        w = mw.get(name) or med[t]
-        q = tot[(t, mo)]
-        q[0] += w
-        q[1] += w * (kp * 2 >= n)
-        q[2] += w * (kb * 2 >= n)
-    out = {"months": months, "dates": dates, "win": PTC_WIN, "mw": {}}
-    for t in ("wind", "solar"):
-        start = "" if t == "wind" else SOLAR_PTC_FROM
-        sh = lambda q, i, ok: _r(q[i] / q[0], 4) if q[0] and ok else None
-        out[t] = {"month": [sh(tot[(t, mo)], 1, mo >= start[:7]) for mo in months],
-                  "day": [sh(day[(t, d)], 1, d >= start) for d in dates],
-                  "band_month": [sh(tot[(t, mo)], 2, mo >= start[:7]) for mo in months],
-                  "band_day": [sh(day[(t, d)], 2, d >= start) for d in dates]}
-        out["mw"][t] = [_r(tot[(t, mo)][0], 0) for mo in months]
-    return out
-
-
 def _close(a, b) -> bool:
     """Two regime descriptions alike enough for units of one plant to share an event."""
     if a["k"] == "f":
@@ -804,7 +740,7 @@ def write_events(detected, seq, tech, src) -> None:
         "live_first": min((d for d in dates if src[d] == "l"), default=None),
         "years": sorted({d[:4] for d in dates}), "n_units": dict(n_units), "togglers": toggle,
         "ptc_band": PTC_BAND, "ptc_credit": credit, "tax_rate": TAX_RATE,
-        "ptc_share": ptc_share(seq, tech, src, credit), "n_inflation": n_infl,
+        "n_inflation": n_infl,
         "events": events,
     }
     write_json_gz(DATA_DIR / "renew_changes.json.gz", out)

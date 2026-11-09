@@ -1,8 +1,7 @@
 /* Renewables, across the years: wind and solar fleet size, energy and curtailment, the price they
    captured against the average at their nodes, and the share of their output in hours priced at
-   $0 or below, and the share of each fleet offering at its tax-credit floor. Monthly from 2019 or
-   daily since the 60-day data starts. Reads data/renewables/years.json.gz (pipeline/renew_years.py)
-   and the ptc_share and ptc_credit of data/renew_changes.json.gz (pipeline/renew_changes.py). renewables.js owns the status line and
+   $0 or below. Monthly from 2019 or daily since the 60-day data starts. Reads
+   data/renewables/years.json.gz (pipeline/renew_years.py). renewables.js owns the status line and
    the shared chart controls (CX.init). */
 (() => {
 "use strict";
@@ -11,7 +10,7 @@ const { tryJSON, showTip, hideTip, setCSV, css, axisFmt, fmtKind } = window.CX;
 const $ = (id) => document.getElementById(id);
 const fmtPct = d3.format(".0%"), fmtPrice = (v) => (v == null || isNaN(v) ? "–" : d3.format("$,.2f")(v));
 const TECHS = [["wind", "Wind", "--c3"], ["solar", "Solar", "--c4"]];
-const S = { Y: null, R: null, by: "month" };
+const S = { Y: null, by: "month" };
 
 function emptyMsg(el, msg) { el.innerHTML = `<p class="empty">${msg}</p>`; }
 function staticLegend(el, list) {
@@ -148,8 +147,6 @@ function draw() {
   staticLegend($("yr-neg-legend"), neg);
   yearChart($("yr-neg"), neg, { title: `Share of output in hours whose day-ahead price at the unit's node was $0 or below, each ${per}`, yFmt: d3.format(".0%"), tipFmt: fmtPct, H: 200 });
 
-  drawPTC(day);
-
   const Y = S.Y, mi = Y.months.length - 1, first = Y.months[0];
   const at = (t, f, i) => Y.monthly[t][f][i];
   const m0 = d3.timeFormat("%b %Y")(new Date(first + "-15")), m1 = d3.timeFormat("%b %Y")(new Date(Y.months[mi] + "-15"));
@@ -157,42 +154,10 @@ function draw() {
   $("yr-note").textContent = `Between ${m0} and ${m1}, wind grew from ${w0} to ${w1} and solar from ${s0} to ${s1}.`;
 }
 
-// share of each fleet's MW offering at its tax-credit floor (renew_changes ptc_share), on the
-// panel's own periods; solar from 2022, when it could first take the PTC
-function drawPTC(day) {
-  const el = $("yr-ptc"), T = S.R && S.R.ptc_share;
-  if (!T || !T.months || !T.months.length) { emptyMsg(el, "Not built yet. It is built by the data update workflow."); $("yr-ptc-note").textContent = ""; return; }
-  const keys = periods().keys, src = day ? T.dates : T.months, f = day ? "day" : "month";
-  const pos = new Map(src.map((k, i) => [k, i]));
-  const at = (t, field) => keys.map((k) => (pos.has(k) ? T[t][field][pos.get(k)] : null));
-  const win = `$${T.win || 3}`;
-  const series = TECHS.flatMap(([t, label, color]) => [
-    { label: `${label}, at the PTC (±${win})`, color, width: 2.4, values: at(t, f), fmt: fmtPct },
-    { label: `${label}, anywhere −$60 to −$15`, color, faint: true, dash: "4 3", width: 1.4, values: at(t, `band_${f}`), fmt: fmtPct },
-  ]);
-  staticLegend($("yr-ptc-legend"), series);
-  yearChart(el, series, { title: `Share of MW offering at the PTC, each ${day ? "day" : "month"}`, yMin: 0, yFmt: d3.format(".0%"), tipFmt: fmtPct, H: 200 });
-  // the latest month with both, and this year's credit grossed up for tax
-  const C = S.R.ptc_credit || {}, yrs = Object.keys(C).sort(), cy = yrs.at(-1), tax = S.R.tax_rate || 0.21;
-  const full = new Set(S.Y.months);   // the panel's months: a month the 60-day data only starts is left out
-  const last = d3.range(T.months.length).reverse().find((i) => full.has(T.months[i]) && T.wind.month[i] != null && T.solar.month[i] != null);
-  const peak = d3.maxIndex(T.wind.month, (v) => (v == null ? -1 : v));
-  const neg = (v) => `−⁠${v}`;   // a word joiner keeps the minus on the same line as the amount
-  const floor = (c) => neg(`$${d3.format(".2f")((10 * c) / (1 - tax))}`);
-  const mon = (m) => d3.timeFormat("%B %Y")(new Date(m + "-15T12:00:00"));
-  const parts = [];
-  if (last != null) parts.push(`In ${mon(T.months[last])}, ${fmtPct(T.wind.month[last])} of wind MW and ${fmtPct(T.solar.month[last])} of solar MW offered at the PTC, within ${win} of the credit grossed up for tax; ${fmtPct(T.wind.band_month[last])} and ${fmtPct(T.solar.band_month[last])} offered anywhere from ${neg("$60")} to ${neg("$15")}/MWh. The gap between the lines is other deep negative offers, clustered near ${neg("$45")} and ${neg("$30")}: a credit plus something else, or a fixed contract floor. Wind at the PTC peaked at ${fmtPct(T.wind.month[peak])} in ${mon(T.months[peak])}.`);
-  if (cy && C[cy]) {
-    const [pre, post] = C[cy], ct = (c) => (Number.isInteger(c * 10) ? c.toFixed(1) : String(c));
-    parts.push(`The ${cy} PTC is ${ct(pre)}¢/kWh for wind placed in service before 2022${post ? ` and ${ct(post)}¢ for wind and solar placed in service after` : ""}, so a unit that breaks even after the ${fmtPct(tax)} corporate tax offers at about ${floor(pre)}${post && post !== pre ? ` or ${floor(post)}` : ""}/MWh.`);
-  }
-  $("yr-ptc-note").textContent = parts.join(" ");
-}
-
 async function boot() {
-  [S.Y, S.R] = await Promise.all([tryJSON("data/renewables/years.json.gz"), tryJSON("data/renew_changes.json.gz")]);
+  S.Y = await tryJSON("data/renewables/years.json.gz");
   if (!S.Y || !S.Y.months.length) {
-    ["yr-size", "yr-energy", "yr-capture", "yr-neg", "yr-ptc"].forEach((id) => emptyMsg($(id), "Not built yet. It is built by the data update workflow."));
+    ["yr-size", "yr-energy", "yr-capture", "yr-neg"].forEach((id) => emptyMsg($(id), "Not built yet. It is built by the data update workflow."));
     return;
   }
   const v = window.CX.readHash();
