@@ -75,6 +75,8 @@ from .battery_bench import build_battery_bench
 from .renew_years import build_renew_years
 from . import prices_years
 from . import lsl_floor
+from . import coal_years
+from . import ct_years
 from .unit_index import build_unit_index
 from . import share_pages
 from . import memo, qse
@@ -499,6 +501,10 @@ def main(argv=None):
     ap.add_argument("--mis-docs", nargs="+", type=int, metavar="ID",
                     help="download these report files from ERCOT's public website (MIS document ids) in "
                          "place of the API's report fetch; the rest of the run is as usual")
+    ap.add_argument("--refill-prices", nargs="+", metavar="DATE",
+                    help="refill these operating days' real-time and day-ahead hub prices where they have "
+                         "gaps: the raw store first, then the ERCOT API, then ERCOT's website "
+                         "(pipeline/refill_prices.py), in place of the API's report fetch")
     ap.add_argument("--reprocess-60d", nargs="?", const="missing", choices=["missing", "all"],
                     help="re-download and reparse 60-day SCED and DAM days already in the index: those "
                          "whose file is missing or predates the current format (default), or all")
@@ -571,6 +577,9 @@ def main(argv=None):
 
     if args.mis_docs:
         fetch_mis_docs(args.mis_docs, index)
+    elif args.refill_prices:
+        from .refill_prices import refill_prices
+        refill_prices(api, [_d(x).isoformat() for x in args.refill_prices], index)
     elif args.backfill:
         start, end = _d(args.backfill[0]), _d(args.backfill[1])
         want = {(start + dt.timedelta(days=i)).isoformat() for i in range((end - start).days + 1)}
@@ -662,6 +671,14 @@ def main(argv=None):
         lsl_floor.build()          # Turn-ons and Turn-offs "Daily minimum floor"; 2019 to Nov 2025 come from the Goal workflow's --full
     except Exception as e:
         warn(f"lsl_floor: failed: {e!r}; lsl_floor.json.gz left as it is")
+    try:
+        coal_years.build()         # coal Unit page "Year by year"; 2019 to Nov 2025 come from the Goal workflow's --full
+    except Exception as e:
+        warn(f"coal_years: failed: {e!r}; coal_years.json.gz left as it is")
+    try:
+        ct_years.build()           # CT Unit page "the prices it ran at"; 2019 to Nov 2025 come from the Goal workflow's --full
+    except Exception as e:
+        warn(f"ct_years: failed: {e!r}; ct_years.json.gz left as it is")
     if "operator" not in args.skip:
         build_operator_days(index)   # after cop: the Unit page's operator-informed row, new 60-day days only
     build_peaker_oi(index)           # the Commitment and Unit pages' combustion turbine turn-on points

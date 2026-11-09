@@ -38,6 +38,8 @@ File:
    "ride": {"columns": ["ym", "gas", "cheap_h", "lsl_cheap", "lsl_other"], "rows": [...]},
    "therm_last": last thermal history month (later ride months come from the 60-day unit files),
    "battery": {"<year>": {"mw", "source"}}}
+Hours: the fall-back Sunday's folded hour ending 2 counts twice (pipeline/hours.py), so a whole
+year has 8,760 (8,784 leap) and its stats and counts weigh that hour as the two it stands for.
 "usd" is $/MWh, "hr" is price divided by the day's gas price (MMBtu/MWh).  Cheap hours for riding
 through are real-time Hub average at or below CHEAP ($/MWh); LSL in MW, means over the hours.
 """
@@ -52,6 +54,7 @@ import numpy as np
 import pandas as pd
 
 from .config import DATA_DIR, HISTORY_DIR
+from .hours import is_fallback, repeat_folded
 from .log import warn
 from .store import read_json_gz, write_json_gz
 
@@ -223,11 +226,12 @@ def ride_rows(rt_hub, gas, therm_last=None):
         if day not in rt_days or (day, he) not in cheap:
             continue
         ym = day[:7]
+        w = 2 if he == 2 and is_fallback(day) else 1   # the fall-back HE2 is two hours (pipeline/hours.py)
         b = by.setdefault(ym, [0, 0.0, 0, 0.0, set()])
         if cheap[(day, he)]:
-            b[0] += 1; b[1] += mw
+            b[0] += w; b[1] += w * mw
         else:
-            b[2] += 1; b[3] += mw
+            b[2] += w; b[3] += w * mw
         b[4].add(day)
     out = {}
     for ym, (nc, sc, no, so, days) in by.items():
@@ -235,7 +239,7 @@ def ride_rows(rt_hub, gas, therm_last=None):
         if len(days) < calendar.monthrange(y, m)[1] * 0.9:
             continue      # a month mostly missing (the end of the 60-day record): left out until it fills
         g = gas[gas.index.str[:7] == ym]
-        out[ym] = [ym, r2(g.mean()), nc, r2(sc / nc) if nc else None, r2(so / no) if no else None]
+        out[ym] = [ym, r2(g.mean()), int(nc), r2(sc / nc) if nc else None, r2(so / no) if no else None]
     return out, therm_last
 
 
@@ -261,7 +265,7 @@ def build(full=False):
     for m, d in markets.items():
         if not len(d):
             continue
-        d = d.copy()
+        d = repeat_folded(d.copy()).reset_index(drop=True)   # the fall-back HE2 counts as its two hours
         d["year"] = d["date"].str[:4].astype(int)
         d["gas"] = gas.reindex(d["date"]).to_numpy()
         d["hr"] = d["price"] / d["gas"]

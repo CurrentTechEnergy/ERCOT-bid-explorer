@@ -49,6 +49,9 @@ on:
       mis_docs:
         description: "Instead of the API's report fetch, download these report files from ERCOT's website (MIS document ids, space separated), for days the API doesn't serve"
         required: false
+      refill_prices:
+        description: "Instead of the API's report fetch, refill gaps in these days' real-time and day-ahead hub prices (YYYY-MM-DD, space separated): the raw store first, then the ERCOT API, then ERCOT's website"
+        required: false
       rebuild_all:
         description: "Rerun every builder, even those whose inputs are unchanged since the last build (pipeline/memo.py)"
         type: boolean
@@ -192,11 +195,15 @@ jobs:
           UNIT_DATA_DIR: unitdata
           REBUILD_ALL: ${{ github.event.inputs.rebuild_all == 'true' && '1' || '' }}
           MIS_DOCS: ${{ github.event.inputs.mis_docs }}
+          REFILL_PRICES: ${{ github.event.inputs.refill_prices }}
         run: |
           if [ -n "$MIS_DOCS" ]; then
             # ids only: digits and spaces
             [[ "$MIS_DOCS" =~ ^[0-9\ ]+$ ]] || { echo "::error::mis_docs takes document ids separated by spaces"; exit 1; }
             python -m pipeline.update --mis-docs $MIS_DOCS
+          elif [ -n "$REFILL_PRICES" ]; then
+            [[ "$REFILL_PRICES" =~ ^[0-9\ -]+$ ]] || { echo "::error::refill_prices takes dates (YYYY-MM-DD) separated by spaces"; exit 1; }
+            python -m pipeline.update --refill-prices $REFILL_PRICES
           elif [ "$REPROCESS_60D" = "true" ]; then
             python -m pipeline.update --reprocess-60d --max-files "${MAX_FILES:-60}" $([ "$STORE_ONLY" != "false" ] && echo --store-only)
           elif [ -n "$BACKFILL_START" ]; then
@@ -286,7 +293,7 @@ jobs:
       # site/data/freshness.json and keeps one "stale-data" issue open while anything is behind.
       # Runs even when an earlier step failed, and never fails the run itself.
       - name: Check data freshness
-        if: always() && !inputs.backfill_start && inputs.reprocess_60d != true && !inputs.outages_start && !inputs.mis_docs && inputs.publish_held != true
+        if: always() && !inputs.backfill_start && inputs.reprocess_60d != true && !inputs.outages_start && !inputs.mis_docs && !inputs.refill_prices && inputs.publish_held != true
         continue-on-error: true
         env:
           GH_TOKEN: ${{ github.token }}

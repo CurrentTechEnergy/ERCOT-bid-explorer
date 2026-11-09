@@ -31,7 +31,10 @@
   .dot-legend { display: inline-flex; align-items: center; gap: 6px; }
   .dot-legend .ramp { width: 120px; height: 10px; border-radius: 3px; }
   .ctl-row { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 10px 18px; margin: 4px 0 10px; }
-  body.bare-unit main > section.panel:not(#unit-empty) { display: none !important; }
+  body.bare-unit main > section.panel:not(#unit-empty):not(.bare-keep) { display: none !important; }
+  /* a bare coal unit keeps its year-by-year history (drawBare): only that part of Decision history shows */
+  body.bare-unit #dec-panel.bare-keep > :not(.panel-head):not(#dec-years),
+  body.bare-unit #dec-panel.bare-keep .panel-head :is(p, details) { display: none !important; }
   .chips { display: flex; flex-wrap: wrap; gap: 8px 14px; }
   .chip { display: inline-flex; align-items: center; gap: 6px; }
   .chip-l { font-size: 13px; color: var(--ink-2); }
@@ -89,7 +92,7 @@
       <div>
         <h2>All units <span class="h-note" id="dir-note"></span></h2>
         <p class="note">Every generator and battery the site follows, one row each (a combined-cycle train is one row; searching a configuration name finds its train). Type part of a name, plant, county or settlement point in the Unit box above to filter, pick a technology or use the dropdowns, then click a unit to open its page. Sort by any column; the CSV has every column.</p>
-        <details class="how"><summary>How the columns are built</summary><p class="note"><b>Group</b> is the unit's timescale group in the latest forecast (how often it shuts down; thermal only). <b>Capacity</b> is the 95th percentile of each day's highest HSL (high sustained limit, the most it told ERCOT it could run). <b>ERCOT type</b> is the resource type in ERCOT's DAM files (SCGT90 and SCLE90 are gas turbines over and under 90 MW, DSL diesel and gas engines). <b>Quick-start standby</b>, <b>Self-committed</b>, <b>Three-part offer</b>, <b>Day-ahead award</b> and <b>On outage</b> are thermal only: the share of the unit's days in the last 90 days of DAM data<span id="dir-window"></span> with an hour in quick-start standby (OFFQS), with the unit self-committed (resource status ON or ONOS for at least half the day), with a three-part offer (a start-up or minimum-energy cost offered), with a day-ahead energy award, and on outage (status OUT all day). A unit can score on several, and a combined-cycle train counts a day when any configuration does. Each DAM behaviour chip narrows the list: Yes keeps units on at or above the chosen share of days, No those below it (at "any day", Yes is at least one day and No is none). <b>Name</b>, county and zone come from ERCOT's Capacity, Demand and Reserves report<span id="dir-cdr"></span>, matched on the unit code; <span class="tag">plant</span> marks a unit matched only to its plant, which is how combined-cycle trains match, since the report lists each turbine. The Unit box also searches these names. Batteries renamed for RTC+B (names ending _ESR1) mostly match the report only by plant.</p></details>
+        <details class="how"><summary>How the columns are built</summary><p class="note"><b>Group</b> is the unit's timescale group in the latest forecast (how often it shuts down; thermal only). <b>Capacity</b> is the 95th percentile of each day's highest HSL (high sustained limit, the most it told ERCOT it could run). <b>ERCOT type</b> is the resource type in ERCOT's DAM files (SCGT90 and SCLE90 are gas turbines over and under 90 MW, DSL diesel and gas engines). <b>Quick-start standby</b>, <b>Self-committed</b>, <b>Three-part offer</b>, <b>Day-ahead award</b> and <b>On outage</b> are thermal only: the share of the unit's days in the last 90 days of DAM data<span id="dir-window"></span> with an hour in quick-start standby (OFFQS), with the unit self-committed (resource status ON or ONOS for at least half the day), with a three-part offer (a start-up or minimum-energy cost offered), with a day-ahead energy award, and on outage (status OUT all day). A unit can score on several, and a combined-cycle train counts a day when any configuration does. Each DAM behaviour chip narrows the list: Yes keeps units on at or above the chosen share of days, No those below it (at "any day", Yes is at least one day and No is none). <b>Name</b>, county and zone come from ERCOT's Capacity, Demand and Reserves report<span id="dir-cdr"></span>, matched on the unit code; <span class="tag">plant</span> marks a unit matched only to its plant, which is how combined-cycle trains match, since the report lists each turbine. The Unit box also searches these names. Batteries renamed for RTC+B (names ending _ESR1) mostly match the report only by plant. <b>Shut rate where shutting paid</b> is combined cycle and gas steam only: of the stretches where shutting down would have paid at the day-ahead node price (the loss from staying on beat the restart cost and nothing held it on), the share the unit turned off for, averaged over <span id="dir-shut-base">2019–21</span> and over 2024 on, counting only years with at least <span id="dir-shut-min">8</span> such stretches; the bracket is the change in percentage points. Sorting on it lists the biggest drops first. Each year is on the unit's own page under Decision history, and every unit side by side on <a href="goal.html#q3-panel">Will fossil turn off?</a>, question 3.</p></details>
       </div>
     </div>
     <div class="ctl-row">
@@ -291,8 +294,9 @@
       </div>
     </div>
     <div id="dec-years" hidden>
-      <h3 class="sub-h">Year by year: when shutting would have paid, how often it shut</h3>
+      <h3 class="sub-h" id="dec-years-h">Year by year: when shutting would have paid, how often it stayed on</h3>
       <p class="note" id="dec-years-note"></p>
+      <div class="legend legend-static" id="dec-years-legend" hidden></div>
       <div class="chart" id="dec-years-chart" style="min-height: 0"></div>
     </div>
     <div class="ctl-row" id="dec-range-row" hidden>

@@ -350,3 +350,17 @@ table.data.fuel-tbl td, table.data.fuel-tbl th { white-space: normal; }
 .sit-stats div { display: grid; gap: 1px; min-width: 0; }
 .sit-stats b { font: 500 17px var(--font-data); font-variant-numeric: tabular-nums; }
 .sit-stats span { font-size: 12px; color: var(--ink-2); }
+
+/* Goal Q3: windows where shutting pays, by day-ahead position */
+.q3p-scroll { overflow-x: auto; }
+table.data.q3p td { vertical-align: top; min-width: 64px; }
+table.data.q3p td.q3p-pos { white-space: normal; min-width: 190px; max-width: 320px; }
+.q3p-pos b { display: block; font-weight: 600; }
+.q3p-pos span { display: block; font-size: 11.5px; color: var(--muted); line-height: 1.35; }
+table.data.q3p .v { display: block; font-size: 13px; }
+table.data.q3p .n { display: block; font-size: 10.5px; color: var(--muted); }
+table.data.q3p .bar { display: block; height: 4px; background: var(--grid); margin-top: 3px; }
+table.data.q3p .bar i { display: block; height: 100%; background: var(--c1); }
+table.data.q3p td.thin .v, table.data.q3p td.thin { color: var(--muted); }
+table.data.q3p td.thin .bar i { background: var(--muted); }
+.q3p-check { max-width: none; }
