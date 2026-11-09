@@ -164,10 +164,14 @@ function drawPTC(day) {
   if (!T || !T.months || !T.months.length) { emptyMsg(el, "Not built yet. It is built by the data update workflow."); $("yr-ptc-note").textContent = ""; return; }
   const keys = periods().keys, src = day ? T.dates : T.months, f = day ? "day" : "month";
   const pos = new Map(src.map((k, i) => [k, i]));
-  const series = TECHS.map(([t, label, color]) => ({ label, color, fmt: fmtPct,
-    values: keys.map((k) => (pos.has(k) ? T[t][f][pos.get(k)] : null)) }));
+  const at = (t, field) => keys.map((k) => (pos.has(k) ? T[t][field][pos.get(k)] : null));
+  const win = `$${T.win || 3}`;
+  const series = TECHS.flatMap(([t, label, color]) => [
+    { label: `${label}, at the PTC (±${win})`, color, width: 2.4, values: at(t, f), fmt: fmtPct },
+    { label: `${label}, anywhere −$60 to −$15`, color, faint: true, dash: "4 3", width: 1.4, values: at(t, `band_${f}`), fmt: fmtPct },
+  ]);
   staticLegend($("yr-ptc-legend"), series);
-  yearChart(el, series, { title: `Share of MW at the tax-credit floor, each ${day ? "day" : "month"}`, yMin: 0, yFmt: d3.format(".0%"), tipFmt: fmtPct, H: 200 });
+  yearChart(el, series, { title: `Share of MW offering at the PTC, each ${day ? "day" : "month"}`, yMin: 0, yFmt: d3.format(".0%"), tipFmt: fmtPct, H: 200 });
   // the latest month with both, and this year's credit grossed up for tax
   const C = S.R.ptc_credit || {}, yrs = Object.keys(C).sort(), cy = yrs.at(-1), tax = S.R.tax_rate || 0.21;
   const full = new Set(S.Y.months);   // the panel's months: a month the 60-day data only starts is left out
@@ -177,7 +181,7 @@ function drawPTC(day) {
   const floor = (c) => neg(`$${d3.format(".2f")((10 * c) / (1 - tax))}`);
   const mon = (m) => d3.timeFormat("%B %Y")(new Date(m + "-15T12:00:00"));
   const parts = [];
-  if (last != null) parts.push(`In ${mon(T.months[last])}, ${fmtPct(T.wind.month[last])} of wind MW and ${fmtPct(T.solar.month[last])} of solar MW offered at the tax-credit floor, between ${neg("$60")} and ${neg("$15")}/MWh. Wind's share peaked at ${fmtPct(T.wind.month[peak])} in ${mon(T.months[peak])} and has slipped since, as older plants' 10 years of credit run out.`);
+  if (last != null) parts.push(`In ${mon(T.months[last])}, ${fmtPct(T.wind.month[last])} of wind MW and ${fmtPct(T.solar.month[last])} of solar MW offered at the PTC, within ${win} of the credit grossed up for tax; ${fmtPct(T.wind.band_month[last])} and ${fmtPct(T.solar.band_month[last])} offered anywhere from ${neg("$60")} to ${neg("$15")}/MWh. The gap between the lines is other deep negative offers, clustered near ${neg("$45")} and ${neg("$30")}: a credit plus something else, or a fixed contract floor. Wind at the PTC peaked at ${fmtPct(T.wind.month[peak])} in ${mon(T.months[peak])}.`);
   if (cy && C[cy]) {
     const [pre, post] = C[cy], ct = (c) => (Number.isInteger(c * 10) ? c.toFixed(1) : String(c));
     parts.push(`The ${cy} PTC is ${ct(pre)}¢/kWh for wind placed in service before 2022${post ? ` and ${ct(post)}¢ for wind and solar placed in service after` : ""}, so a unit that breaks even after the ${fmtPct(tax)} corporate tax offers at about ${floor(pre)}${post && post !== pre ? ` or ${floor(post)}` : ""}/MWh.`);
