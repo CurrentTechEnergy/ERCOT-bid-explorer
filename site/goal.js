@@ -22,7 +22,7 @@ function legend(id, items) {
 }
 
 // ==== 1. What turns off: the floor fossil output does not go below, and what sits at it ========
-const TECH_COLOR = { coal: "--c8", combined_cycle: "--c1", gas_steam: "--c7", combustion_turbine: "--c4" };
+const TECH_COLOR = { coal: "--c8", combined_cycle: "--c1", gas_steam: "--c6", combustion_turbine: "--c2" };
 const STUCK_TECHS = ["coal", "combined_cycle", "gas_steam", "combustion_turbine"];
 const LOW_NET = 4;             // GW: low load left for fossil, in the answer
 const MIN_STUCK_HOURS = 15;    // a stuck-on bar needs this many hours
@@ -238,11 +238,11 @@ function drawQ2() {
 // ==== 3. Is behavior changing: each unit where shutting pays, units that cycle by loss, the window mix ====
 const Q3_BUCKETS = ["more", "less", "short", "held_mw", "held"];
 const Q3B = {
-  more: { label: "Loss above restart cost (shutting would have paid)", color: "--c7" },
-  less: { label: "Loss below restart cost", color: "--c7-soft" },
+  more: { label: "Loss above restart cost (shutting would have paid)", color: "--g1" },
+  less: { label: "Loss below restart cost", color: "--g5" },
   short: { label: "Too short to cycle", color: "--c4" },
-  held_mw: { label: "Held on by the make-whole and ancillary-service pay it would give up", color: "--c5" },
-  held: { label: "Held on by ERCOT (RUC), or by a day-ahead AS award before Dec 5, 2025", color: "--c-other" },
+  held_mw: { label: "Held on by the make-whole and ancillary-service pay it would give up", color: "--c7-soft" },
+  held: { label: "Held on by ERCOT (RUC), or by a day-ahead AS award before Dec 5, 2025", color: "--c7" },     // purple wherever RUC is marked
 };
 const BAND_KEYS = ["over $200", "$50 to $200", "under $50"];
 const BAND_COLOR = { "over $200": "--c8", "$50 to $200": "--c2", "under $50": "--c4" };
@@ -427,12 +427,12 @@ const RUN = {
   none: { label: "Stays curtailed even then", color: "--c8" },
 };
 const ECON = {
-  "losing more than a restart": { label: "Losing more than a restart costs", color: "--c7" },
-  "losing, shutting would not pay": { label: "Losing, but shutting down wouldn't pay", color: "--c7-soft" },
-  "held on by RUC or what it would give up": { label: "Held on by RUC, or by the make-whole and AS it would give up", color: "--c5" },
+  "losing more than a restart": { label: "Losing more than a restart costs", color: "--g1" },
+  "losing, shutting would not pay": { label: "Losing, but shutting down wouldn't pay", color: "--g5" },
+  "held on by RUC or what it would give up": { label: "Held on by RUC, or by the make-whole and AS it would give up", color: "--c7" },
   "covering its costs": { label: "Covering its costs", color: "--c-other" },
   coal: { label: "Coal", color: "--c8" },
-  combustion_turbine: { label: "Combustion turbines", color: "--c4" },
+  combustion_turbine: { label: "Combustion turbines", color: "--c2" },
 };
 const SPLIT_KEYS = ["grid", "congested", "free"];
 const SPLIT = {

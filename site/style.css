@@ -158,6 +158,10 @@ table.data { border-collapse: collapse; width: 100%; font-size: 12.5px; }
 table.data th, table.data td { padding: 6px 10px; border-bottom: 1px solid var(--line); text-align: right; white-space: nowrap; }
 table.data th:first-child, table.data td:first-child, table.data td.t, table.data th.t { text-align: left; }
 table.data th { font-size: 11px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: var(--muted); position: sticky; top: 0; background: var(--surface); }
+/* headers and text cells wrap so a wide table fits its panel; numbers stay on one line */
+table.data th { white-space: normal; vertical-align: bottom; min-width: 4.5em; }
+table.data td.t { white-space: normal; min-width: 7em; }
+table.data td:first-child { white-space: nowrap; }
 table.data th.sortable { cursor: pointer; }
 table.data th.sortable:hover { color: var(--ink); }
 table.data td { font-family: var(--font-data); font-variant-numeric: tabular-nums; }
