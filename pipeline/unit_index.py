@@ -20,7 +20,7 @@ match and the offtaker web search's high and medium confidence answers, see that
 
 Writes data/unit_index.json.gz:
   {updated, cdr (the CDR edition the names come from), columns: ["unit", "tech", "group", "mw", "sp", "configs", "plant", "county", "zone",
-   "match", "qse", "aliases", "qse_name", "dme", "owner", "buyers", "companies", "type", "qs", "self", "dam", "dam_days"], rows: [[...], ...]}
+   "match", "qse", "aliases", "qse_name", "dme", "owner", "buyers", "companies", "type", "qs", "self", "dam", "dam_days", "out", "offer"], rows: [[...], ...]}
   unit     resource name (the train for combined cycle), sorted by name
   tech     config.TECH_OF_TYPE grouping
   group    the timescale group (pipeline/groups.py, data/groups_60d.json.gz; nuclear "never";
@@ -51,6 +51,9 @@ Writes data/unit_index.json.gz:
            award over 0.5 MW in some hour.  A train counts a day when any configuration does.  The
            shares are not exclusive and carry no cutoff; the Units directory filters on them.
   dam_days the number of those DAM days the unit appears in (the shares' denominator; null with them)
+  out, offer   two more shares over the same days: on outage (resource status OUT in every hour) and with
+           a three-part offer (a minimum-energy or start-up cost offered); a train counts a day when any
+           configuration does, so a train is "out" only when one configuration is OUT all day
 The file also carries commit_window: [first day, last day, number of days] of the DAM files used.
 """
 import csv
@@ -71,7 +74,7 @@ PATH = DATA_DIR / "unit_index.json.gz"
 ALIASES_PATH = Path(__file__).parent / "reference" / "unit_aliases.csv"
 COMPANIES_PATH = Path(__file__).parent / "reference" / "unit_companies.csv"
 COLUMNS = ["unit", "tech", "group", "mw", "sp", "configs", "plant", "county", "zone", "match", "qse", "aliases",
-           "qse_name", "dme", "owner", "buyers", "companies", "type", "qs", "self", "dam", "dam_days"]
+           "qse_name", "dme", "owner", "buyers", "companies", "type", "qs", "self", "dam", "dam_days", "out", "offer"]
 TECHS = ("nuclear", "coal", "combined_cycle", "gas_steam", "combustion_turbine", "wind", "solar", "storage")
 THERMAL = ("nuclear", "coal", "combined_cycle", "gas_steam", "combustion_turbine")
 TYPE_OF_TECH = {"wind": "WIND", "solar": "PVGR", "storage": "ESR"}   # for units the DAM files list under another name
@@ -118,11 +121,11 @@ def load_companies() -> dict:
 
 def dam_commitment(dam_days) -> tuple:
     """dam_days: [(date, DAM day file dict), ...] oldest first.  Returns ({unit or train: [type, days,
-    quick-start days, self-committed days, awarded days]}, commit_window or None)."""
-    types, cnt = defaultdict(lambda: defaultdict(int)), defaultdict(lambda: [0, 0, 0, 0])
+    quick-start days, self-committed days, awarded days, outage days, three-part offer days]}, commit_window or None)."""
+    types, cnt = defaultdict(lambda: defaultdict(int)), defaultdict(lambda: [0] * 6)
     for _, d in dam_days:
         hours = d.get("hours") or 24
-        seen = defaultdict(lambda: [0, 0, 0])
+        seen = defaultdict(lambda: [0] * 5)
         for name, x in (d.get("units") or {}).items():
             key = train_of(name) if x.get("tech") == "combined_cycle" else name
             if x.get("type"):
@@ -134,11 +137,14 @@ def dam_commitment(dam_days) -> tuple:
             f[0] |= "OFFQS" in st
             f[1] |= sum(1 for v in st if v in SELF_STATUS) * 2 >= hours
             f[2] |= any((a or 0) > 0.5 for a in (x.get("award") or []))
+            f[3] |= bool(st) and all(v == "OUT" for v in st)
+            f[4] |= x.get("mingen") is not None or any(v is not None for v in (x.get("start") or []))
         for key, f in seen.items():
             c = cnt[key]
             c[0] += 1
-            c[1] += f[0]; c[2] += f[1]; c[3] += f[2]
-    out = {k: [max(t, key=t.get), *cnt[k]] if k in cnt else [max(t, key=t.get), 0, 0, 0, 0] for k, t in types.items()}
+            for i in range(5):
+                c[i + 1] += f[i]
+    out = {k: [max(t, key=t.get), *cnt[k]] if k in cnt else [max(t, key=t.get), 0, 0, 0, 0, 0, 0] for k, t in types.items()}
     window = [dam_days[0][0], dam_days[-1][0], len(dam_days)] if dam_days else None
     return out, window
 
@@ -201,8 +207,9 @@ def build(trends: dict, decisions: dict, groups: dict, ppa: dict, econ: dict, cd
         cm = commit.get(name)
         if cm is None:              # a train named in the DAM files only by its configurations
             cm = next((commit[k] for k in sorted(cfgs) if k in commit), None)
-        shares = [round(v / cm[1], 3) for v in cm[2:]] if cm and cm[1] and e["tech"] in THERMAL else [None] * 3
-        shares.append(cm[1] if shares[0] is not None else None)
+        ok = cm and cm[1] and e["tech"] in THERMAL
+        sh = [round(v / cm[1], 3) for v in cm[2:]] if ok else [None] * 5
+        shares = [*sh[:3], cm[1] if ok else None, *sh[3:]]     # qs, self, dam, dam_days, out, offer
         rows.append([name, e["tech"], group.get(name), round(mw) if mw else None,
                      ec.get("sp") or sp.get(name), sorted(cfgs),
                      m["name"] if m else None, m["county"] if m else None, m["zone"] if m else None, how, q,

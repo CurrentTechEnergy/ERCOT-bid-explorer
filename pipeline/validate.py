@@ -718,9 +718,9 @@ def check_files(index):
         day.add("unit_index_rows", "error" if bad else "ok", f"{len(bad)} row(s) with an unknown tech or bad MW, e.g. {bad[:3]}" if bad else "techs known, MW non-negative")
         c = ui.get("columns", [])
         if "dam_days" in c:          # commitment shares: thermal only, each 0 to 1, over at most the window's days
-            ix = {k: c.index(k) for k in ("tech", "type", "qs", "self", "dam", "dam_days")}
+            ix = {k: c.index(k) for k in ("tech", "type", "qs", "self", "dam", "dam_days", *(k for k in ("out", "offer") if k in c))}
             win = (ui.get("commit_window") or [None, None, 0])[2]
-            sh = lambda r: [r[ix[k]] for k in ("qs", "self", "dam")]
+            sh = lambda r: [r[ix[k]] for k in ("qs", "self", "dam", "out", "offer") if k in ix]
             bad = [r[0] for r in rows if (r[ix["tech"]] not in UNIT_INDEX_THERMAL and any(v is not None for v in sh(r) + [r[ix["dam_days"]]]))
                    or any(v is not None and not 0 <= v <= 1 for v in sh(r))
                    or (r[ix["dam_days"]] is not None and not 0 < r[ix["dam_days"]] <= win)
