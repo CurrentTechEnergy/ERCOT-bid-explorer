@@ -20,6 +20,7 @@ const TECHS = [
   { id: "coal", keys: ["coal"], label: "Coal & lignite", color: "--c8" },
   { id: "other", keys: ["hydro", "other"], label: "Other (hydro, diesel, biomass)", color: "--c-other" },
 ];
+const THERMAL = ["nuclear", "coal", "combined_cycle", "gas_steam", "combustion_turbine"];
 // marginal supply series per report; storage is split into charging (demand) and discharging
 const MSERIES = {
   "60d": [
