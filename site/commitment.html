@@ -211,6 +211,36 @@
     <div class="chart" id="cm-hour"></div>
   </section>
 
+  <section class="panel panel-wide" id="ds-panel">
+    <div class="panel-head">
+      <div>
+        <h2>How the output was sold day-ahead <span class="h-note" id="ds-status"></span></h2>
+        <p class="note" id="ds-note"></p>
+      </div>
+      <div class="panel-tools">
+        <div class="seg seg-sm" id="ds-band" role="radiogroup" aria-label="Hours">
+          <button type="button" data-v="all" role="radio">All hours</button>
+          <button type="button" data-v="lt10" role="radio">Under $10</button>
+          <button type="button" data-v="lt0" role="radio">Under $0</button>
+        </div>
+        <label class="lbl inline" for="ds-sel">Technology</label>
+        <select id="ds-sel"></select>
+        <div class="seg seg-sm" id="ds-meas" role="radiogroup" aria-label="Measure">
+          <button type="button" data-v="gw" role="radio">GW</button>
+          <button type="button" data-v="share" role="radio">Share</button>
+        </div>
+      </div>
+    </div>
+    <p class="intro" id="ds-answer"></p>
+    <div class="legend legend-static" id="ds-legend"></div>
+    <h3 class="sub-h">By technology: average GW of output over the chosen hours, whole period</h3>
+    <div class="chart" id="ds-tech"></div>
+    <h3 class="sub-h">By month, chosen technology</h3>
+    <div class="chart" id="ds-month"></div>
+    <h3 class="sub-h">By hour of day, chosen technology, whole period</h3>
+    <div class="chart" id="ds-hour"></div>
+  </section>
+
   <section class="panel panel-wide" id="cost-panel">
     <div class="panel-head">
       <div>
@@ -322,5 +352,6 @@
 <script src="commitment.js"></script>
 <script src="commitment-floor.js"></script>
 <script src="commitment-mix.js"></script>
+<script src="commitment-sold.js"></script>
 </body>
 </html>
