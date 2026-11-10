@@ -473,12 +473,12 @@ async function drawDecYears(e) {
 
 // coal: each calendar year from 2019, hours online, offline by choice and on outage (ERCOT status OUT,
 // how most seasonal layups are filed) as a stacked bar, and above it the share of the cheap hours
-// (day-ahead lambda at or below the cut) it was online in, of the cheap hours it was not on outage
+// (day-ahead lambda at or below the cut) it was offline by choice in, of the cheap hours it was not on outage
 // (data/coal_years.json.gz, pipeline/coal_years.py; rows [unit, year, hours, on, off, out, cheap_avail, cheap_on])
 const COAL_MIN_CHEAP = 50;     // fewer available cheap hours than this: no cheap-hour share
 async function drawCoalYears(e) {
   const box = $("dec-years");
-  $("dec-years-h").textContent = "Year by year: how it spent the year";
+  $("dec-years-h").textContent = "Year by year: how it spent the year, and how often it was off in cheap hours";
   if (S.COALY === undefined) S.COALY = await tryJSON("data/coal_years.json.gz");
   if (S.unit !== e.name) return;
   const C = S.COALY, rows = C?.rows ? C.rows.filter((r) => r[0] === e.name && r[2] > 0) : [];
@@ -487,7 +487,7 @@ async function drawCoalYears(e) {
   const by = new Map(rows.map((r) => [r[1], { hours: r[2], on: r[3], off: r[4], out: r[5], ca: r[6], co: r[7] }]));
   const y1 = d3.max(C.rows, (r) => r[1]), ys = d3.range(2019, y1 + 1);
   const part = (y) => (C.through && +C.through.slice(0, 4) === y && C.through.slice(5) !== "12-31" ? C.through : null);
-  const share = (c) => (c && c.ca >= COAL_MIN_CHEAP ? c.co / c.ca : null);
+  const share = (c) => (c && c.ca >= COAL_MIN_CHEAP ? 1 - c.co / c.ca : null);     // share turned off, as the gas units' strip
   const avg = (f) => { const v = ys.filter(f).map((y) => share(by.get(y))).filter((v) => v != null); return v.length ? d3.mean(v) : null; };
   const early = avg((y) => y <= 2021), late = avg((y) => y >= 2024);
   const el = $("dec-years-chart"), w = Math.max(280, el.clientWidth || 600), narrow = w < 560, H = 150, m = { t: 22, r: 4, b: 18, l: 4 };
@@ -517,7 +517,7 @@ async function drawCoalYears(e) {
     g.append("rect").attr("x", x0).attr("y", m.t).attr("width", x.bandwidth()).attr("height", bh).attr("fill", "transparent")
       .on("pointermove", (ev) => showTip(ev, `<h4>${y}${part(y) ? ` (to ${esc(part(y))})` : ""}</h4><table>` +
         `<tr><td>Online</td><td class="n">${pct1(c.on, c.hours)}</td></tr><tr><td>Offline by choice</td><td class="n">${pct1(c.off, c.hours)}</td></tr><tr><td>On outage</td><td class="n">${pct1(c.out, c.hours)}</td></tr>` +
-        `<tr><td>Cheap hours not on outage</td><td class="n">${d3.format(",")(c.ca)}</td></tr><tr><td>Online in them</td><td class="n">${s == null ? "–" : fmtPct(s)}</td></tr></table>` +
+        `<tr><td>Cheap hours not on outage</td><td class="n">${d3.format(",")(c.ca)}</td></tr><tr><td>Off in them</td><td class="n">${s == null ? "–" : fmtPct(s)}</td></tr></table>` +
         (s == null ? `Fewer than ${COAL_MIN_CHEAP} cheap hours off outage: no share.` : "")))
       .on("pointerleave", hideTip);
   });
@@ -527,10 +527,10 @@ async function drawCoalYears(e) {
   lg.innerHTML = `<span><span class="sw" style="background:var(--c8)"></span>Online</span><span><span class="sw" style="background:var(--grid)"></span>Offline by choice</span>` +
     `<span><span class="sw" style="background:repeating-linear-gradient(45deg, color-mix(in srgb, var(--ink-2) 55%, transparent) 0 1.4px, color-mix(in srgb, var(--ink-2) 18%, transparent) 1.4px 3.5px)"></span>On outage (most seasonal layups are filed this way)</span>`;
   const d = early != null && late != null ? late - early : null, cut = C.cheap ?? 10;
-  $("dec-years-note").innerHTML = `Each bar is a calendar year: hours online, offline by choice and on outage. The number above is the share of cheap hours (day-ahead system lambda at or below $${cut}) it was online in, counting only the cheap hours it was not on outage; a dash is a year with fewer than ${COAL_MIN_CHEAP} of them.` +
-    (d != null ? ` <b>It was online in ${fmtPct(early)} of them in 2019 to 2021 and ${fmtPct(late)} from 2024 on, ${ptChange(early, late)}.</b>` : "") +
+  $("dec-years-note").innerHTML = `Each bar is a calendar year: hours online, offline by choice and on outage. The number above is the share of cheap hours (day-ahead system lambda at or below $${cut}) it was turned off for, counting only the cheap hours it was not on outage; a dash is a year with fewer than ${COAL_MIN_CHEAP} of them.` +
+    (d != null ? ` <b>It was off for ${fmtPct(early)} of them in 2019 to 2021 and ${fmtPct(late)} from 2024 on, ${ptChange(early, late)}.</b>` : "") +
     (ys.some(part) ? " * Part year." : "");
-  setCSV(el, ["year", "hours", "online", "offline", "outage", "cheap_hours_available", "cheap_hours_online"], ys.filter((y) => by.has(y)).map((y) => { const c = by.get(y); return [y, c.hours, c.on, c.off, c.out, c.ca, c.co]; }), `${e.name} year by year`);
+  setCSV(el, ["year", "hours", "online", "offline", "outage", "cheap_hours_available", "cheap_hours_online", "share_cheap_hours_off"], ys.filter((y) => by.has(y)).map((y) => { const c = by.get(y), s = share(c); return [y, c.hours, c.on, c.off, c.out, c.ca, c.co, s == null ? "" : +s.toFixed(4)]; }), `${e.name} year by year`);
 }
 
 // combustion turbines: each calendar year from 2019, the day-ahead price at its node over the hours it

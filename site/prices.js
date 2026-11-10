@@ -1,6 +1,6 @@
 /* Prices: ERCOT hub prices by year from 2019, from data/prices_years.json.gz (pipeline/prices_years.py):
-   duration curves, hours in the tails beside battery capacity and Ship Channel gas, gas units riding
-   through cheap hours, tail spreads, price by hour of day and a year-by-year table.  The page only
+   duration curves, hours in the tails beside battery capacity and Ship Channel gas, gas units coming
+   off in cheap hours, tail spreads, price by hour of day and a year-by-year table.  The page only
    reads and draws what the file holds. */
 const { tryJSON, showTip, hideTip, setCSV, css, esc, readHash, writeHash } = window.CX;
 const $ = (id) => document.getElementById(id);
@@ -113,15 +113,15 @@ function drawTails() {
     (bLast && /CDR/.test(B[bLast]?.source || "") ? ` ${bLast} battery capacity uses expected in-service dates (${String(B[bLast].source).split(":")[0]}), so it is partly planned.` : bLast && partYear(bLast) ? ` ${bLast} battery capacity is the latest reading: ${B[bLast]?.source || ""}.` : "");
 }
 
-// ==== Gas units riding through cheap hours ===================================================
+// ==== Gas units coming off in cheap hours ====================================================
 function drawRide() {
   const el = $("ride"), W = width(el), H = 330, m = { l: 52, r: 14, t: 14, b: 26 }, { g, w, h, svg } = frame(el, W, H, m);
-  const C = S.P.ride.columns, rows = S.P.ride.rows.map((r) => Object.fromEntries(C.map((c, i) => [c, r[i]]))).map((r) => ({ ...r, d: new Date(r.ym + "-15T12:00:00"), ratio: r.lsl_cheap == null || !r.lsl_other ? null : r.lsl_cheap / r.lsl_other }));
+  const C = S.P.ride.columns, rows = S.P.ride.rows.map((r) => Object.fromEntries(C.map((c, i) => [c, r[i]]))).map((r) => ({ ...r, d: new Date(r.ym + "-15T12:00:00"), ratio: r.lsl_cheap == null || !r.lsl_other ? null : 1 - r.lsl_cheap / r.lsl_other }));     // share of the gas minimum that came off for the cheap hours
   if (!rows.length) { el.innerHTML = '<p class="empty">No data yet.</p>'; return; }
   const x = d3.scaleTime().domain([new Date(`${years()[0]}-01-01`), d3.max(rows, (r) => r.d)]).range([0, w]);
   const h1 = Math.round(h * 0.32), gap = 22, top = h1 + gap;
   const yg = d3.scaleLinear().domain([0, d3.max(rows, (r) => r.gas) || 1]).nice().range([h1, 0]);
-  const yr = d3.scaleLinear().domain([0.3, 1]).range([h, top]).clamp(true);
+  const yr = d3.scaleLinear().domain([0, 0.7]).range([h, top]).clamp(true);
   g.append("g").attr("class", "gridline").call(d3.axisLeft(yg).ticks(3).tickSize(-w).tickFormat(""));
   g.append("g").attr("class", "axis").call(d3.axisLeft(yg).ticks(3).tickFormat((v) => "$" + v).tickSizeOuter(0));
   g.append("path").attr("d", d3.line().x((r) => x(r.d)).y((r) => yg(r.gas)).defined((r) => r.gas != null)(rows)).attr("fill", "none").attr("stroke", css("--gas-line")).attr("stroke-width", 2);
@@ -129,7 +129,7 @@ function drawRide() {
   g.append("g").attr("class", "gridline").call(d3.axisLeft(yr).ticks(5).tickSize(-w).tickFormat(""));
   g.append("g").attr("class", "axis").call(d3.axisLeft(yr).ticks(5).tickFormat(d3.format(".0%")).tickSizeOuter(0));
   g.append("g").attr("class", "axis").attr("transform", `translate(0,${h})`).call(d3.axisBottom(x).ticks(d3.timeYear.every(1)).tickFormat(w < 560 ? d3.timeFormat("'%y") : d3.timeFormat("%Y")).tickSizeOuter(0));
-  g.append("text").attr("class", "axis-title").attr("x", 6).attr("y", top + 10).text("Gas minimum output kept on in cheap hours");
+  g.append("text").attr("class", "axis-title").attr("x", 6).attr("y", top + 10).text("Gas minimum output that came off in cheap hours");
   if (w >= 560) {     // on a phone the key moves into the caption
     g.append("text").attr("class", "axis-title").attr("x", w).attr("y", top + 10).attr("text-anchor", "end").text("Dot size = cheap hours in the month");
     g.append("text").attr("class", "axis-title").attr("x", w).attr("y", top + 24).attr("text-anchor", "end").text(`Gray tick = fewer than ${MIN_CHEAP} cheap hours`);
@@ -140,18 +140,18 @@ function drawRide() {
   few.forEach((r) => g.append("rect").attr("x", x(r.d) - 2).attr("width", 4).attr("y", h - 9).attr("height", 9).attr("fill", css("--muted")).attr("opacity", 0.55)
     .on("pointermove", (ev) => showTip(ev, `<h4>${mon(r.d)}</h4>${r.cheap_h ? `Only ${r.cheap_h} hour${r.cheap_h === 1 ? "" : "s"}` : "No hours"} at $${S.P.cheap}/MWh or less<br>Ship Channel gas $${r.gas?.toFixed(2)}/MMBtu`)).on("pointerleave", hideTip));
   pts.forEach((r) => g.append("circle").attr("cx", x(r.d)).attr("cy", yr(r.ratio)).attr("r", rs(r.cheap_h)).attr("fill", yc(+r.ym.slice(0, 4))).attr("fill-opacity", 0.85).attr("stroke", css("--surface"))
-    .on("pointermove", (ev) => showTip(ev, `<h4>${mon(r.d)}</h4>` + tipRows([[null, "Kept on in cheap hours", d3.format(".0%")(r.ratio)],
+    .on("pointermove", (ev) => showTip(ev, `<h4>${mon(r.d)}</h4>` + tipRows([[null, "Came off in cheap hours", d3.format(".0%")(r.ratio)],
       [null, "Gas minimum online, cheap hours", `${(r.lsl_cheap / 1000).toFixed(1)} GW`], [null, "Gas minimum online, other hours", `${(r.lsl_other / 1000).toFixed(1)} GW`],
       [null, `Hours at $${S.P.cheap}/MWh or less`, r.cheap_h], [null, "Ship Channel gas", `$${r.gas?.toFixed(2)}/MMBtu`]]))).on("pointerleave", hideTip));
-  setCSV(el, ["month", "ship_channel_gas_usd_mmbtu", "cheap_hours", "gas_lsl_online_cheap_mw", "gas_lsl_online_other_mw", "share_kept_on"],
-    rows.map((r) => [r.ym, r.gas, r.cheap_h, r.lsl_cheap, r.lsl_other, r.ratio == null ? null : +r.ratio.toFixed(3)]), "Gas units riding through cheap hours");
+  setCSV(el, ["month", "ship_channel_gas_usd_mmbtu", "cheap_hours", "gas_lsl_online_cheap_mw", "gas_lsl_online_other_mw", "share_came_off"],
+    rows.map((r) => [r.ym, r.gas, r.cheap_h, r.lsl_cheap, r.lsl_other, r.ratio == null ? null : +r.ratio.toFixed(3)]), "Gas units coming off in cheap hours");
   const recent = pts.slice(-12), first = pts.filter((r) => r.ym.startsWith(String(years()[0])));
   const mR = d3.mean(recent, (r) => r.ratio), m0 = d3.mean(first, (r) => r.ratio), dm = mR - m0;
   const trend = recent.length && first.length ? ` Over the last ${recent.length} months with enough cheap hours the share averaged ${d3.format(".0%")(mR)}, against ${d3.format(".0%")(m0)} in ${years()[0]}: ` +
-    (Math.abs(dm) < 0.05 ? "the gas fleet is not coming off for cheap hours any more than it did." : dm < 0 ? "more of the gas fleet now comes off for cheap hours." : "less of the gas fleet now comes off for cheap hours.") : "";
-  $("ride-note").textContent = `The link from cheap hours to the fossil fleet: when prices are at or below $${S.P.cheap}/MWh, how much of the gas fleet's minimum output stays online compared with the rest of the month? ` +
-    `Combined-cycle and gas steam minimum output (LSL) online in those hours, as a share of what is online in the month's other hours. ` +
-    `100% means none of it came off for the cheap hours. Cheap hours are real-time Hub average, whatever the controls above say. Runs to ${mon(d3.max(rows, (r) => r.d))}, about two months behind, as the 60-day disclosure does.` + trend +
+    (Math.abs(dm) < 0.05 ? "the gas fleet is not coming off for cheap hours any more than it did." : dm > 0 ? "more of the gas fleet now comes off for cheap hours." : "less of the gas fleet now comes off for cheap hours.") : "";
+  $("ride-note").textContent = `The link from cheap hours to the fossil fleet: when prices are at or below $${S.P.cheap}/MWh, how much of the gas fleet's minimum output comes off compared with the rest of the month? ` +
+    `One minus combined-cycle and gas steam minimum output (LSL) online in those hours as a share of what is online in the month's other hours. ` +
+    `0% means none of it came off for the cheap hours. Cheap hours are real-time Hub average, whatever the controls above say. Runs to ${mon(d3.max(rows, (r) => r.d))}, about two months behind, as the 60-day disclosure does.` + trend +
     (w < 560 ? ` Dot size is the month's cheap hours; a gray tick marks a month with fewer than ${MIN_CHEAP}.` : "");
 }
 
