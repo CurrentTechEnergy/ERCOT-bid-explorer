@@ -3,7 +3,14 @@
   <title>VICTPRT2: bidding and operating changes</title>
   <link href="https://ercotbids.currenttech.energy/unit.html?unit=VICTPRT2"/>
   <id>https://ercotbids.currenttech.energy/unit.html?unit=VICTPRT2</id>
-  <updated>2026-10-18T00:00:00Z</updated>
+  <updated>2026-11-10T00:00:00Z</updated>
+  <entry>
+    <title>VICTPRT2: Day-ahead: minimum-energy offer stepped (2026-09-05)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=VICTPRT2"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=VICTPRT2#VICTPRT2/2026-09-05/dam_mingen_step</id>
+    <updated>2026-11-10T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $40 to $47/MWh (offer minus fuel cost: $15 to $19/MWh)</summary>
+  </entry>
   <entry>
     <title>VICTPRT2: Day-ahead: minimum-energy offer stepped (2026-07-12)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=VICTPRT2"/>

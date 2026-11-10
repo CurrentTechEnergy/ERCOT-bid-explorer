@@ -3,13 +3,27 @@
   <title>OLINGR_OLING_2: bidding and operating changes</title>
   <link href="https://ercotbids.currenttech.energy/unit.html?unit=OLINGR_OLING_2"/>
   <id>https://ercotbids.currenttech.energy/unit.html?unit=OLINGR_OLING_2</id>
-  <updated>2026-11-06T00:00:00Z</updated>
+  <updated>2026-11-10T00:00:00Z</updated>
   <entry>
     <title>OLINGR_OLING_2: Outage ended (2026-09-07)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=OLINGR_OLING_2"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=OLINGR_OLING_2#OLINGR_OLING_2/2026-09-07/outage_end</id>
     <updated>2026-11-06T00:00:00Z</updated>
     <summary>Back from an 18-day outage</summary>
+  </entry>
+  <entry>
+    <title>OLINGR_OLING_2: Day-ahead: minimum-energy offer stepped (2026-09-05)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=OLINGR_OLING_2"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=OLINGR_OLING_2#OLINGR_OLING_2/2026-09-05/dam_mingen_step</id>
+    <updated>2026-11-10T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $77 to $83/MWh (offer minus fuel cost: $44 to $46/MWh)</summary>
+  </entry>
+  <entry>
+    <title>OLINGR_OLING_2: Day-ahead: minimum-energy offer stepped (2026-09-05)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=OLINGR_OLING_2"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=OLINGR_OLING_2#OLINGR_OLING_2/2026-09-05/dam_mingen_step</id>
+    <updated>2026-11-10T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $77 to $83/MWh (offer minus fuel cost: $44 to $46/MWh)</summary>
   </entry>
   <entry>
     <title>OLINGR_OLING_2: Outage started (2026-08-20)</title>

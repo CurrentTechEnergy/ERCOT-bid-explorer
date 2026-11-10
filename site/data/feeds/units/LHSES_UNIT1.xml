@@ -3,12 +3,19 @@
   <title>LHSES_UNIT1: bidding and operating changes</title>
   <link href="https://ercotbids.currenttech.energy/unit.html?unit=LHSES_UNIT1"/>
   <id>https://ercotbids.currenttech.energy/unit.html?unit=LHSES_UNIT1</id>
-  <updated>2026-11-04T00:00:00Z</updated>
+  <updated>2026-11-10T00:00:00Z</updated>
   <entry>
-    <title>LHSES_UNIT1: Bidding approach shifted (2026-08-27)</title>
+    <title>LHSES_UNIT1: Bidding approach shifted (2026-09-05)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=LHSES_UNIT1"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=LHSES_UNIT1#LHSES_UNIT1/2026-08-27/bidding</id>
-    <updated>2026-11-04T00:00:00Z</updated>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=LHSES_UNIT1#LHSES_UNIT1/2026-09-05/bidding</id>
+    <updated>2026-11-10T00:00:00Z</updated>
+    <summary>Offer price vs peer median: −$0 to $13/MWh</summary>
+  </entry>
+  <entry>
+    <title>LHSES_UNIT1: Bidding approach shifted (2026-08-26)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=LHSES_UNIT1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=LHSES_UNIT1#LHSES_UNIT1/2026-08-26/bidding</id>
+    <updated>2026-11-10T00:00:00Z</updated>
     <summary>Offer price vs peer median: $10 to −$0/MWh</summary>
   </entry>
   <entry>

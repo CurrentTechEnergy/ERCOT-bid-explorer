@@ -3,7 +3,14 @@
   <title>SKY1_SKY1B: bidding and operating changes</title>
   <link href="https://ercotbids.currenttech.energy/unit.html?unit=SKY1_SKY1B"/>
   <id>https://ercotbids.currenttech.energy/unit.html?unit=SKY1_SKY1B</id>
-  <updated>2026-11-09T00:00:00Z</updated>
+  <updated>2026-11-10T00:00:00Z</updated>
+  <entry>
+    <title>SKY1_SKY1B: Shut down despite a day-ahead award (2026-09-11)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=SKY1_SKY1B"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=SKY1_SKY1B#SKY1_SKY1B/2026-09-11/shutdown_award</id>
+    <updated>2026-11-10T00:00:00Z</updated>
+    <summary>Shut down for 4 h although a day-ahead award covered 100% of the stretch</summary>
+  </entry>
   <entry>
     <title>SKY1_SKY1B: Shut down despite a day-ahead award (2026-09-10)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=SKY1_SKY1B"/>

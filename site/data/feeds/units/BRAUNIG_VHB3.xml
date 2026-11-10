@@ -3,7 +3,14 @@
   <title>BRAUNIG_VHB3: bidding and operating changes</title>
   <link href="https://ercotbids.currenttech.energy/unit.html?unit=BRAUNIG_VHB3"/>
   <id>https://ercotbids.currenttech.energy/unit.html?unit=BRAUNIG_VHB3</id>
-  <updated>2026-10-24T00:00:00Z</updated>
+  <updated>2026-11-10T00:00:00Z</updated>
+  <entry>
+    <title>BRAUNIG_VHB3: Shut down after a long run (2026-09-11)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=BRAUNIG_VHB3"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=BRAUNIG_VHB3#BRAUNIG_VHB3/2026-09-11/shutdown_new</id>
+    <updated>2026-11-10T00:00:00Z</updated>
+    <summary>Shut down for 21 h after 40 days without a shutdown</summary>
+  </entry>
   <entry>
     <title>BRAUNIG_VHB3: How often it turns off changed (2026-08-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=BRAUNIG_VHB3"/>
