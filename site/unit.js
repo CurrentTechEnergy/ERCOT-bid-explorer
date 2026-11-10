@@ -408,8 +408,8 @@ function drawDecisions(e) {
 }
 
 // the unit's row of the goal page's Q3 heatmap (data/goal.json.gz q3.units rows: [train, tech, year,
-// windows where shutting pays, share shut, LSL]): each year, the share of those windows it stayed on
-// through, darker in the unit's own color for more often on (as the hours-online strip); coal gets
+// windows where shutting pays, share shut, LSL]): each year, the share of those windows it turned off
+// for, darker for more often off, in the same color and direction as the goal page's heatmap; coal gets
 // drawCoalYears instead
 async function drawDecYears(e) {
   const box = $("dec-years");
@@ -417,7 +417,7 @@ async function drawDecYears(e) {
   if (e.tech === "coal") return drawCoalYears(e);
   if (e.tech === "combustion_turbine") return drawCTYears(e);
   if (e.tech !== "combined_cycle" && e.tech !== "gas_steam") { box.hidden = true; return; }
-  $("dec-years-h").textContent = "Year by year: when shutting would have paid, how often it stayed on";
+  $("dec-years-h").textContent = "Year by year: when shutting would have paid, how often it turned off";
   if (S.GOAL === undefined) S.GOAL = await tryJSON("data/goal.json.gz");
   if (S.unit !== e.name) return;
   const G = S.GOAL, q = G?.q3;
@@ -427,15 +427,14 @@ async function drawDecYears(e) {
   const min = q.unit_min, base = q.base_years, b0 = base[0], b1 = base.at(-1);
   const ys = Object.keys(G.years || {}).map(Number).filter((y) => y >= 2019).sort((a, b) => a - b);
   const part = (y) => (G.years[y] && G.years[y].to.slice(5) !== "12-31" ? G.years[y].to : null);
-  const cell = new Map(rows.map((r) => [r[2], { n: r[3], v: 1 - r[4] }]));      // v: share stayed on
+  const cell = new Map(rows.map((r) => [r[2], { n: r[3], v: r[4] }]));      // v: share turned off (as goal.html q3)
   const ok = (y) => cell.has(y) && cell.get(y).n >= min;
   const avg = (f) => { const v = ys.filter((y) => f(y) && ok(y)).map((y) => cell.get(y).v); return v.length ? d3.mean(v) : null; };
   const early = avg((y) => y >= b0 && y <= b1), late = avg((y) => y >= 2024);
   const never = (q.never || []).some((r) => r[0] === e.name);
   const el = $("dec-years-chart"), w = Math.max(280, el.clientWidth || 600), narrow = w < 560, H = 52, m = { t: 16, r: 4, b: 4, l: 4 };
   const x = d3.scaleBand().domain(ys).range([m.l, w - m.r]).paddingInner(0.06);
-  const unitCol = css((TECH_OF[e.tech] || {}).color || "--c1");
-  const col = d3.scaleSequential(d3.interpolateRgb(css("--grid"), unitCol)).domain([0, 1]);
+  const col = d3.scaleSequential(d3.interpolateRgb(css("--grid"), css("--c1"))).domain([0, 1]);   // as the goal page's Q3 heatmap
   const svg = d3.create("svg").attr("viewBox", `0 0 ${w} ${H}`);
   ys.forEach((y) => {
     const c = cell.get(y), cx = x(y) + x.bandwidth() / 2;
@@ -444,7 +443,7 @@ async function drawDecYears(e) {
     svg.append("rect").attr("x", x(y)).attr("y", m.t).attr("width", x.bandwidth()).attr("height", H - m.t - m.b)
       .attr("fill", ok(y) ? col(c.v) : css("--surface")).attr("stroke", ok(y) ? "none" : css("--grid"))
       .on("pointermove", (ev) => showTip(ev, `<h4>${y}${part(y) ? ` (to ${esc(part(y))})` : ""}</h4>` + (!c ? "No stretches where shutting would have paid."
-        : `<table><tr><td>Stretches where shutting paid</td><td class="n">${c.n}</td></tr><tr><td>Stayed on through</td><td class="n">${fmtPct(c.v)}</td></tr><tr><td>Turned off for</td><td class="n">${fmtPct(1 - c.v)}</td></tr></table>${c.n < min ? `Fewer than ${min} stretches: not shaded.` : ""}`)))
+        : `<table><tr><td>Stretches where shutting paid</td><td class="n">${c.n}</td></tr><tr><td>Turned off for</td><td class="n">${fmtPct(c.v)}</td></tr><tr><td>Stayed on through</td><td class="n">${fmtPct(1 - c.v)}</td></tr></table>${c.n < min ? `Fewer than ${min} stretches: not shaded.` : ""}`)))
       .on("pointerleave", hideTip);
     svg.append("text").attr("x", cx).attr("y", m.t + (H - m.t - m.b) / 2 + 4).attr("text-anchor", "middle").attr("font-size", narrow ? 10 : 12)
       .attr("pointer-events", "none").attr("fill", ok(y) ? css(c.v > 0.55 ? "--surface" : "--ink") : css("--muted"))
@@ -452,11 +451,11 @@ async function drawDecYears(e) {
   });
   el.replaceChildren(svg.node());
   const d = early != null && late != null ? late - early : null;
-  $("dec-years-note").innerHTML = `Each year, of the loss stretches where shutting down would have paid (the loss from staying on beat the restart cost and nothing held it on), the share it stayed online through. Darker is more often on, in the unit's color as on the hours-online strip; a dash is a year with fewer than ${min} such stretches.` +
-    (d != null ? ` <b>It stayed on through ${fmtPct(early)} of them in ${b0} to ${b1} and ${fmtPct(late)} from 2024 on, ${Math.abs(Math.round(100 * d))} points ${d < 0 ? "less" : "more"} often.</b>` : !ys.some(ok) ? " Too few such stretches in any year to judge." : "") +
+  $("dec-years-note").innerHTML = `Each year, of the loss stretches where shutting down would have paid (the loss from staying on beat the restart cost and nothing held it on), the share it turned off for. Stronger blue is more often off, as on the Goal page's question 3; a dash is a year with fewer than ${min} such stretches.` +
+    (d != null ? ` <b>It turned off for ${fmtPct(early)} of them in ${b0} to ${b1} and ${fmtPct(late)} from 2024 on, ${Math.abs(Math.round(100 * d))} points ${d < 0 ? "less" : "more"} often.</b>` : !ys.some(ok) ? " Too few such stretches in any year to judge." : "") +
     (never ? " It has never turned off for a loss stretch it was free to choose." : "") +
     (ys.some(part) ? " * Part year." : "") + ` Every unit side by side: <a href="goal.html#q3-panel">Will fossil turn off?</a>, question 3.`;
-  setCSV(el, ["year", "windows_where_shutting_pays", "share_stayed_on", "share_turned_off"], ys.map((y) => [y, cell.get(y)?.n ?? 0, cell.get(y)?.v ?? "", cell.has(y) ? 1 - cell.get(y).v : ""]), `${e.name} stayed on by year`);
+  setCSV(el, ["year", "windows_where_shutting_pays", "share_turned_off", "share_stayed_on"], ys.map((y) => [y, cell.get(y)?.n ?? 0, cell.get(y)?.v ?? "", cell.has(y) ? 1 - cell.get(y).v : ""]), `${e.name} turned off by year`);
 }
 
 // coal: each calendar year from 2019, hours online, offline by choice and on outage (ERCOT status OUT,
