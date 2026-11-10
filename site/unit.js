@@ -440,7 +440,7 @@ async function drawDecYears(e) {
   const min = q.unit_min, base = q.base_years, b0 = base[0], b1 = base.at(-1);
   const ys = Object.keys(G.years || {}).map(Number).filter((y) => y >= 2019).sort((a, b) => a - b);
   const part = (y) => (G.years[y] && G.years[y].to.slice(5) !== "12-31" ? G.years[y].to : null);
-  const cell = new Map(rows.map((r) => [r[2], { n: r[3], v: r[4] }]));      // v: share turned off (as goal.html q3)
+  const cell = new Map(rows.map((r) => [r[2], { n: r[3], v: r[4] }]));      // v: share turned off (as the Goal page q3)
   const ok = (y) => cell.has(y) && cell.get(y).n >= min;
   const avg = (f) => { const v = ys.filter((y) => f(y) && ok(y)).map((y) => cell.get(y).v); return v.length ? d3.mean(v) : null; };
   const early = avg((y) => y >= b0 && y <= b1), late = avg((y) => y >= 2024);
@@ -467,7 +467,7 @@ async function drawDecYears(e) {
   $("dec-years-note").innerHTML = `Each year, of the loss stretches where shutting down would have paid (the loss from staying on beat the restart cost and nothing held it on), the share it turned off for. Stronger blue is more often off, as on the Goal page's question 3; a dash is a year with fewer than ${min} such stretches.` +
     (d != null ? ` <b>It turned off for ${fmtPct(early)} of them in ${b0} to ${b1} and ${fmtPct(late)} from 2024 on, ${ptChange(early, late)}.</b>` : !ys.some(ok) ? " Too few such stretches in any year to judge." : "") +
     (never ? " It has never turned off for a loss stretch it was free to choose." : "") +
-    (ys.some(part) ? " * Part year." : "") + ` Every unit side by side: <a href="goal.html#q3-panel">Will fossil turn off?</a>, question 3.`;
+    (ys.some(part) ? " * Part year." : "") + ` Every unit side by side: <a href="./#q3-panel">Will fossil turn off?</a>, question 3.`;
   setCSV(el, ["year", "windows_where_shutting_pays", "share_turned_off", "share_stayed_on"], ys.map((y) => [y, cell.get(y)?.n ?? 0, cell.get(y)?.v ?? "", cell.has(y) ? 1 - cell.get(y).v : ""]), `${e.name} turned off by year`);
 }
 

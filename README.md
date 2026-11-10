@@ -174,8 +174,9 @@ pipeline/
   ercot_api.py     ERCOT Public API client (token, archive listing, downloads)
   update.py        command line entry point
 site/
-  index.html, overview.js (A day in ERCOT, the landing page: one past day's prices, generation and
-                   units; overview.html redirects here),
+  index.html, goal.js (Will fossil turn off?, the landing page; goal.html redirects here),
+  day-in-ercot.html, overview.js (A day in ERCOT: one past day's prices, generation and
+                   units; overview.html and old /#date= links redirect here),
   commitment.html, commitment.js (which thermal units stay on when power is cheap: the operator
                    model's turn-off points and scorecard (data/operator/), groups and cutoffs, the
                    thermal panels lifted from Trends, what riding through cheap stretches cost from

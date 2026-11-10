@@ -1,4 +1,4 @@
-"""The goal page (site/goal.html): will fossil units turn off as renewables and batteries grow?
+"""The goal page (site/index.html, the front page): will fossil units turn off as renewables and batteries grow?
 Four questions, each answered by year from Jan 2019, from the 60-day data alone (the `history`
 release's monthly files, pipeline/history.py, and for months it does not hold yet, the same rows
 built from the 60-day day files, pipeline/decision_table.month_file):
