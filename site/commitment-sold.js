@@ -7,14 +7,14 @@
 "use strict";
 const { tryJSON, showTip, hideTip, setCSV, css, esc } = window.CX;
 const $ = (id) => document.getElementById(id);
-// a ramp of the site's sequential blue for the two day-ahead ways, neutral for real-time only, so no
-// way borrows a technology's color (the by-technology chart labels technologies on its axis)
+// two teals for the day-ahead ways (their own tokens, so they never read as the sequential blues of
+// "How thermal is committed" just above), neutral for real-time only; no way borrows a technology's color
 const WAYS = [
-  { id: "3p", label: "Three-part DAM award", ramp: 1 },
-  { id: "eo", label: "Owner's energy-only sale at its node", ramp: 0.55 },
+  { id: "3p", label: "Three-part DAM award", color: "--sold-3p" },
+  { id: "eo", label: "Owner's energy-only sale at its node", color: "--sold-eo" },
   { id: "rt", label: "Real-time only (no day-ahead sale at the plant)", color: "--c-other" },
 ];
-const col = (w) => (w.color ? css(w.color) : d3.interpolateRgb(css("--seq-lo"), css("--seq-hi"))(w.ramp));
+const col = (w) => css(w.color);
 const TECHS = ["nuclear", "coal", "combined_cycle", "gas_steam", "combustion_turbine", "wind", "solar"];
 const THERMAL = ["nuclear", "coal", "combined_cycle", "gas_steam", "combustion_turbine"];
 const NAME = { nuclear: "Nuclear", coal: "Coal & lignite", combined_cycle: "Combined cycle", gas_steam: "Gas steam", combustion_turbine: "Combustion turbine", wind: "Wind", solar: "Solar" };
