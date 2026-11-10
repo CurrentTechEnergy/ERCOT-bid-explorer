@@ -95,7 +95,7 @@ function drawAll() {
   const hub = cn ? d3.sum(ctx, (r) => r[3]) / cn / 1000 : 0, oth = cn ? d3.sum(ctx, (r) => r[4]) / cn / 1000 : 0;
   $("ds-answer").innerHTML = n && tot
     ? `<b>In ${BAND[S.band]}, ${pct(avg["3p"] + avg.eo)} of ${who} output was sold day-ahead at the plant</b>: ${pct(avg["3p"])} through three-part awards and ${pct(avg.eo)} through the owner's energy-only sales at its node. The other ${pct(avg.rt)} settled at the real-time price with no day-ahead sale at the plant. Output averaged ${d3.format(".1f")(tot)} GW over ${d3.format(",")(n)} hours. ` +
-      `<span class="muted">Beside these, energy-only sales at hubs and load zones averaged ${d3.format(".1f")(hub)} GW and other QSEs' sales at these plants' nodes ${d3.format(".1f")(oth)} GW, neither tied to a plant.</span>`
+      `<span class="muted">Not counted above, because the DAM files can't tie them to a plant: ${d3.format(".1f")(hub)} GW of energy-only sales at hubs and load zones, mostly virtual supply from traders and banks with no plants, plus hedges by large generation-and-retail portfolios (mainly fossil; renewable-only QSEs sell almost none there); and ${d3.format(".1f")(oth)} GW sold at these plants' own nodes by other QSEs, usually traders or a PPA offtaker selling the plant's output. Some of this may hedge the output shown here, so "real-time only" is an upper bound on what is truly unhedged.</span>`
     : `No ${BAND[S.band]} in this period.`;
   $("ds-legend").innerHTML = WAYS.map((p) => `<span><span class="sw" style="background:${col(p)}"></span>${esc(p.label)}</span>`).join("");
   const cols = ["key", ...WAYS.map((p) => `${p.id}_gw`), "over_gw", "hours"];
