@@ -263,12 +263,19 @@ async function drawForecast(e) {
   // a history day (before the 60-day window) has no unit file: its hourly state comes with the call
   const onl = act ? act.map((x) => x.on) : o.state ? [...o.state].map((c) => (c === "m" || c === "a" ? true : c === "0" ? false : null)) : null;
   const hOn = onl ? onl.filter((v) => v === true).length : null;
+  // hours it reported OFF that the site's outage rule reads as outage (common.js ruleOutages): a
+  // return from them is not a decision, so the scorecard leaves them out; drawn as grey dots
+  const di = S.UH ? S.UH.dates.indexOf(day) : -1, ts = di >= 0 ? trainStrip(e) : null;
+  const ruled = ts ? window.CX.ruleOutages(ts, e.tech).slice(di * 24, di * 24 + 24) : null;
+  const olike = d3.range(24).map((h) => !!(ruled && onl && onl[h] === false && ruled[h] === "o"));
+  const nOl = olike.filter(Boolean).length;
   const dr = (S.DEC?.days || []).find((r) => r[0] === e.name && r[1] === day);
   const rucH = new Set(window.CX.rucDays(S.UH, e.configs.length ? e.configs : [e.name]).get(day) || []);   // hours ending
   $("fc-note").innerHTML = (act ? `<b>On ${esc(day)} it was online ${hOn === 24 ? "all 24 hours" : `${hOn} of 24 hours`} and produced ${fmtMW(d3.sum(act, (x) => x.out))} MWh.</b>` : onl ? `<b>On ${esc(day)} it was online ${hOn} of 24 hours.</b>` : `<b>${esc(day)}</b>.`) +
     (OD.reduced ? ` Before the 60-day window: judged on a fit to the 12 months before it, from the thermal history files.` : "") +
     (dr && dr[4] ? ` Its worst stretch was ${dr[4] === 1 ? `hour ending ${dr[3]}` : `hours ending ${dr[3]} to ${dr[3] + dr[4] - 1}`}, where staying on would lose ${fmt$(dr[2])} at its node; it ${dr[6] ? `turned off${dr[7] ? ` for ${dr[7]} hours` : ""}` : "stayed on"}.` : "") +
     oiNote(e, day, o) +
+    (nOl ? ` <br><b>Offline around an outage</b> in ${nOl} hour${nOl === 1 ? "" : "s"} (grey dots): the site counts OFF hours reported around an outage as outage, so going off or coming back in them is not scored for or against the model.` : "") +
     (rucH.size ? ` <br><b>ERCOT committed it by RUC</b> in ${rucH.size} hour${rucH.size === 1 ? "" : "s"} (purple rings): ERCOT's call, not the operator's, so the model is not fitted or scored on ${rucH.size === 1 ? "it" : "them"}.` : "");
   const s = TECH_OF[e.tech] || { color: "--c-other" };
   const w = Math.max(280, el.clientWidth || 600), Hm = act ? 170 : 0, Ho = 122, m = { t: 18, r: 16, b: 26, l: 64 };
@@ -298,7 +305,8 @@ async function drawForecast(e) {
         .attr("fill", dead ? "none" : css(s.color)).attr("stroke", dead ? css("--c8") : null).attr("stroke-dasharray", dead ? "3 2" : null);
     }
     svg.append("line").attr("x1", x(h)).attr("x2", x(h) + bw).attr("y1", yo(o.p[h] >= 0.5 ? 1 : 0)).attr("y2", yo(o.p[h] >= 0.5 ? 1 : 0)).attr("stroke", css("--c2")).attr("stroke-width", 4).attr("opacity", 0.6);
-    if (onl && onl[h] != null) window.CX.onOffDot(svg.append("circle").attr("cx", x(h) + bw / 2).attr("cy", yo(onl[h] ? 1 : 0)), onl[h]);
+    if (olike[h]) svg.append("circle").attr("cx", x(h) + bw / 2).attr("cy", yo(0)).attr("r", 3.5).attr("fill", css("--ink-2")).attr("fill-opacity", 0.35).attr("stroke", css("--ink-2")).attr("stroke-width", 1);
+    else if (onl && onl[h] != null) window.CX.onOffDot(svg.append("circle").attr("cx", x(h) + bw / 2).attr("cy", yo(onl[h] ? 1 : 0)), onl[h]);
     if (rucH.has(h + 1)) window.CX.rucRing(svg.append("circle").attr("cx", x(h) + bw / 2).attr("cy", yo(onl && onl[h] === false ? 0 : 1)), 7);
     if (o.plan[h] != null) svg.append("path").attr("d", d3.symbol(d3.symbolDiamond, 30)()).attr("transform", `translate(${x(h) + bw / 2},${yo(o.plan[h]) + (o.plan[h] ? -9 : 9)})`).attr("fill", css("--ink-2"));
   });
@@ -310,7 +318,7 @@ async function drawForecast(e) {
         `<tr><td>With operator info</td><td class="n">${fmtPct(o.p[h])}, ${o.p[h] >= 0.5 ? "on" : "off"}</td></tr><tr><td>Day-ahead award</td><td class="n">${o.award[h] ? "yes" : "no"}</td></tr>` +
         `<tr><td>COP plan (2 pm day before)</td><td class="n">${o.plan[h] == null ? "none" : o.plan[h] ? "on" : "off"}</td></tr>` +
         (rucH.has(h + 1) ? `<tr><td>Committed by ERCOT (RUC)</td><td class="n">yes: not fitted or scored</td></tr>` : "") +
-        (act ? `<tr><td>Actual</td><td class="n">${act[h].on ? (act[h].lsl > 0 && act[h].out <= 0 ? `online with no output (minimum ${fmtMW(act[h].lsl)} MW)` : `online, ${fmtMW(act[h].out)} MW`) : "offline"}</td></tr>` : onl ? `<tr><td>Actual</td><td class="n">${onl[h] == null ? "outage or no data" : onl[h] ? "online" : "offline"}</td></tr>` : "") + `</table>`);
+        (act ? `<tr><td>Actual</td><td class="n">${act[h].on ? (act[h].lsl > 0 && act[h].out <= 0 ? `online with no output (minimum ${fmtMW(act[h].lsl)} MW)` : `online, ${fmtMW(act[h].out)} MW`) : olike[h] ? "offline around an outage: not scored" : "offline"}</td></tr>` : onl ? `<tr><td>Actual</td><td class="n">${onl[h] == null ? "outage or no data" : onl[h] ? "online" : "offline"}</td></tr>` : "") + `</table>`);
     })
     .on("pointerleave", hideTip);
   el.replaceChildren(svg.node());
@@ -318,6 +326,7 @@ async function drawForecast(e) {
     d3.range(24).map((h) => [h + 1, o.p[h], o.p[h] >= 0.5 ? 1 : 0, o.p_cop ? o.p_cop[h] : null, o.award[h], o.plan[h], ...(act ? [act[h].on ? 1 : 0, act[h].out, act[h].lsl] : onl ? [onl[h] == null ? null : +onl[h], null, null] : [])]), `${e.name} with operator info ${day} by hour`);
   $("fc-legend").innerHTML = (act ? `<span><span class="sw" style="background:var(${s.color})"></span>Minimum output online</span><span><span class="sw" style="background:var(${s.color});opacity:0.3"></span>Output</span>` : "") +
     (act && act.some((v) => v.on && v.lsl > 0 && v.out <= 0) ? `<span><span class="sw" style="border:1px dashed var(--c8);background:none"></span>Online with no output</span>` : "") + (onl ? window.CX.onOffLegend("Online (actual)", "Offline (actual)") : "") +
+    (nOl ? `<span><span class="sw" style="background:var(--ink-2);opacity:0.35;border-radius:50%"></span>Offline around an outage (not scored)</span>` : "") +
     `<span><span class="sw sw-line" style="border-top-color:var(--c2)"></span>Chance online, with operator info</span><span><span class="sw" style="background:var(--c2);opacity:0.6"></span>Call: on at 50% or more, off below</span>` +
     `<span><span class="sw" style="background:var(--c3);opacity:0.18"></span>Day-ahead award</span><span>◆ COP plan on (top) or off (bottom)</span>` + (dr && dr[4] ? `<span><span class="sw" style="background:var(--band)"></span>Worst stretch for staying on</span>` : "") +
     (rucH.size ? window.CX.rucLegend("Committed by ERCOT (RUC)") : "");
@@ -781,24 +790,28 @@ function drawHours(e) {
   $("hours-panel").hidden = !THERMAL.includes(e.tech);
   if ($("hours-panel").hidden) return;
   if (!S.UH) return emptyMsg(el, "No hourly data loaded.");
-  const str = trainStrip(e), ruc = window.CX.rucDays(S.UH, e.configs.length ? e.configs : [e.name]);
+  let str = trainStrip(e); const ruc = window.CX.rucDays(S.UH, e.configs.length ? e.configs : [e.name]);
   const isRuc = (d, h) => (ruc.get(d) || []).includes(h + 1);
-  $("hours-legend").innerHTML = [["--grid", 1, "Offline"], ["--ink-2", 0.35, "On outage"], [s.color, 0.4, "Running at minimum (LSL)"], [s.color, 1, "Running above minimum"]]
+  $("hours-legend").innerHTML = [["--grid", 1, "Offline by choice"], ["--ink-2", 0.35, "On outage (with OFF hours reported around one)"], [s.color, 0.4, "Running at minimum (LSL)"], [s.color, 1, "Running above minimum"]]
     .concat(ruc.size ? [["--c7", 1, "Committed by ERCOT (RUC)"]] : [])
     .map(([c, o, l]) => `<span><span class="sw" style="background:var(${c});opacity:${o}"></span>${l}</span>`).join("") +
     `<span><span class="sw sw-neg"></span>Hour with system price (lambda) below $0</span>`;
   if (!str) { $("hours-note").textContent = ""; return emptyMsg(el, "No hourly data for this unit."); }
   const dstr = S.UH.dates, dates = dstr.map(parseDate), D = dstr.length;
-  // starts per day from data/econ/<tech> (pipeline/econ.py): telemetered status moving from not
-  // online to on, run by run, with a combined-cycle train counted whole so configuration switches
-  // are not starts; the same counts Revenue and cost prices
-  const E = S.econ[e.tech], eu = E && E.units[e.name], ei = E ? new Map(E.dates.map((d, i) => [d, i])) : new Map();
-  const startsByDay = dstr.map((d) => (eu && ei.has(d) ? eu.starts[ei.get(d)] || 0 : 0));
-  const nStarts = d3.sum(startsByDay), twoShift = startsByDay.filter((n) => n >= 2).length;
-  const hrs = (c) => [...str].filter((x) => x === c).length;
+  // the site's outage rule (common.js ruleOutages, pipeline/groups.py): OFF hours reported around
+  // an outage are shown and counted as outage. Starts from these hourly states, split into starts
+  // by choice and returns from an outage (common.js hourlyStarts, the same count as pipeline/wear.py)
+  const rawStr = str;
+  str = window.CX.ruleOutages(rawStr, e.tech);
+  const hs = window.CX.hourlyStarts(str), choiceByDay = new Array(D).fill(0), backByDay = new Array(D).fill(0);
+  hs.forEach((x) => { const i = Math.floor(x.k / 24); if (i < D) (x.kind === "choice" ? choiceByDay : backByDay)[i]++; });
+  const nStarts = d3.sum(choiceByDay), nBack = d3.sum(backByDay), twoShift = choiceByDay.filter((n) => n >= 2).length;
+  const hrs = (c) => str.filter((x) => x === c).length, nRuled = str.filter((c, k) => c === "o" && rawStr[k] === "0").length;
   const nOn = hrs("a") + hrs("m"), nAll = nOn + hrs("0") + hrs("o");
-  $("hours-note").textContent = `When it ran: each column is a day and each row an hour (hour ending 1 at the top). Over ${D} days it was online ${fmtMW(nOn)} of ${fmtMW(nAll)} hours (${fmtPct(nOn / (nAll || 1))}), ${fmtMW(hrs("m"))} of them at minimum output; ${fmtMW(hrs("0"))} hours it was offline and available, ${fmtMW(hrs("o"))} on outage. ` +
-    `It started ${nStarts} time${nStarts === 1 ? "" : "s"}${twoShift ? `, twice or more on ${twoShift} day${twoShift === 1 ? "" : "s"} (two-shifting)` : ""}. Thin ticks mark hours the system price (lambda) was below $0, hours a unit pays to run.` +
+  $("hours-note").textContent = `When it ran: each column is a day and each row an hour (hour ending 1 at the top). Over ${D} days it was online ${fmtMW(nOn)} of ${fmtMW(nAll)} hours (${fmtPct(nOn / (nAll || 1))}), ${fmtMW(hrs("m"))} of them at minimum output; ${fmtMW(hrs("0"))} hours it was offline by choice, ${fmtMW(hrs("o"))} on outage` +
+    (nRuled ? ` (${fmtMW(nRuled)} of them reported OFF around an outage, which the site counts as outage)` : "") + `. ` +
+    `It started ${nStarts} time${nStarts === 1 ? "" : "s"} after shutting down by choice${twoShift ? `, twice or more on ${twoShift} day${twoShift === 1 ? "" : "s"} (two-shifting)` : ""}` +
+    (nBack ? `, and came back from an outage ${nBack} time${nBack === 1 ? "" : "s"}` : "") + `. Thin ticks mark hours the system price (lambda) was below $0, hours a unit pays to run.` +
     (e.configs.length > 1 ? " A train counts as online when any configuration is." : "");
   const lam = new Map(Object.entries(S.SP || {}).map(([d, v]) => [d, v.lambda]));
   const w = Math.max(280, el.clientWidth || 600), m = { t: 16, r: 16, b: 26, l: 64 }, ch = 7, H = m.t + m.b + ch * 24;
@@ -828,11 +841,39 @@ function drawHours(e) {
       const i = d3.minIndex(dates, (d) => Math.abs(d - x.invert(px))), h = Math.max(0, Math.min(23, Math.floor((py - m.t) / ch)));
       const L = (lam.get(dstr[i]) || [])[h];
       showTip(ev, `<h4>${fmtDate(dates[i])} · HE ${h + 1}</h4>${STRIP_STATES[str[i * 24 + h]] || "No data"}${isRuc(dstr[i], h) ? ", committed by ERCOT (RUC)" : ""}<br>Lambda ${fmtPrice(L)}` +
-        (startsByDay[i] ? `<br>${startsByDay[i]} start${startsByDay[i] === 1 ? "" : "s"} this day` : ""));
+        (choiceByDay[i] ? `<br>${choiceByDay[i]} start${choiceByDay[i] === 1 ? "" : "s"} by choice this day` : "") +
+        (backByDay[i] ? `<br>Came back from an outage this day` : "") +
+        (str[i * 24 + h] === "o" && rawStr[i * 24 + h] === "0" ? "<br>Reported OFF, counted as outage (around an outage)" : ""));
     })
     .on("pointerleave", hideTip);
   el.replaceChildren(svg.node());
   setCSV(el, ["date", "hour_ending", "state", "ruc"], dstr.flatMap((d, i) => d3.range(24).map((h) => [d, h + 1, STRIP_STATES[str[i * 24 + h]] || "", isRuc(d, h) ? 1 : 0])), `${e.name} hourly state`);
+}
+
+// ---- run hours and starts by year, 2019 on (data/wear.json.gz, pipeline/wear.py): wear and tear,
+// with starts after a shutdown by choice apart from returns from an outage (the site's outage rule)
+async function drawWear(e) {
+  const box = $("wear-box");
+  box.hidden = true;
+  if (!THERMAL.includes(e.tech) || e.tech === "nuclear") return;
+  if (S.WEAR === undefined) S.WEAR = await tryJSON("data/wear.json.gz");
+  if (S.unit !== e.name) return;
+  const W = S.WEAR, ci = W ? Object.fromEntries(W.columns.map((c, i) => [c, i])) : null;
+  const rows = W ? W.rows.filter((r) => r[ci.unit] === e.name).map((r) => Object.fromEntries(W.columns.map((c, i) => [c, r[i]]))).sort((a, b) => b.year - a.year) : [];
+  if (!rows.length) return;
+  box.hidden = false;
+  const thru = W.through || "", part = (y) => +thru.slice(0, 4) === y && thru.slice(5) !== "12-31";
+  const fmtN = d3.format(","), per = (r) => (r.starts ? fmtN(Math.round(r.run_h / r.starts)) : "–");
+  $("wear-table").innerHTML = `<table class="data"><thead><tr><th class="t">Year</th><th>Hours online</th><th>Share online</th><th>Starts by choice</th><th>Hot</th><th>Intermediate</th><th>Cold</th><th>Returns from outage</th><th>Hours on outage</th><th>Run hours per start</th></tr></thead><tbody>` +
+    rows.map((r) => `<tr><td class="t">${r.year}${part(r.year) ? "*" : ""}</td><td>${fmtN(r.run_h)}</td><td>${fmtPct(r.run_h / (r.hours || 1))}</td><td><b>${fmtN(r.starts)}</b></td><td>${fmtN(r.hot)}</td><td>${fmtN(r.inter)}</td><td>${fmtN(r.cold)}</td><td>${fmtN(r.returns)}</td><td>${fmtN(r.out_h)}</td><td>${per(r)}</td></tr>`).join("") + `</tbody></table>`;
+  const full = rows.filter((r) => !part(r.year) && r.hours >= 8000), a = full.at(-1), b = full[0];
+  window.CX.setNote($("wear-note"), `Wear and tear: hours online and starts in each calendar year, with starts after a shutdown by choice counted apart from returns from an outage.` +
+    (a && b && a !== b ? ` In ${b.year} it ran ${fmtN(b.run_h)} hours and started ${fmtN(b.starts)} times by choice, against ${fmtN(a.run_h)} hours and ${fmtN(a.starts)} starts in ${a.year}.` : "") +
+    (rows.some((r) => part(r.year)) ? ` * Part year, to ${thru}.` : ""),
+    `From the hourly states (history files from 2019, the 60-day data after Nov 2025)${e.tech === "combined_cycle" ? ", the train counted as one unit (online when any configuration is)" : ""}. The site's outage rule comes first: OFF hours reported around an outage (an off spell that is mostly outage, or has fewer than ${W.out_min_h} OFF hours around one${e.tech === "coal" ? "; for coal, any outage hour in the spell" : ""}) count as outage. ` +
+    `A start by choice ends an off spell with at least ${W.out_min_h} OFF hours; it is hot after ${W.hot_h} hours off or fewer, intermediate up to ${W.inter_h}, cold beyond. A return from an outage ends an off spell that is outage. A start and stop inside one hour isn't seen, so this can count fewer starts than the run-by-run count Revenue and cost prices.`);
+  setCSV($("wear-table"), ["year", "hours", "run_h", "off_h", "out_h", "starts_by_choice", "hot", "intermediate", "cold", "returns_from_outage"],
+    rows.map((r) => [r.year, r.hours, r.run_h, r.off_h, r.out_h, r.starts, r.hot, r.inter, r.cold, r.returns]), `${e.name} run hours and starts by year`);
 }
 
 // ---- run lengths: every completed run, start to shutting down on price (data/min_run_60d.json.gz) ----
@@ -1144,7 +1185,7 @@ function draw() {
   document.body.classList.toggle("bare-unit", !!e.bare);
   $("dec-panel").classList.remove("bare-keep");
   if (e.bare) { drawBare(e); return; }
-  drawHead(e); drawForecast(e); drawDecisions(e); drawHours(e); drawRuns(e); drawDay(e); drawBidding(e);
+  drawHead(e); drawForecast(e); drawDecisions(e); drawHours(e); drawRuns(e); drawWear(e); drawDay(e); drawBidding(e);
 }
 async function select(name, cfg, keepDay) {
   if (!S.list.has(name)) return;

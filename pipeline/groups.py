@@ -140,6 +140,14 @@ def rewrite_outages(e: dict) -> list:
     return st
 
 
+def outage_ruled(st, tech: str) -> np.ndarray:
+    """A copy of one unit's hourly states (list or array of "m"/"a"/"0"/"o"/"-") with the outage
+    rule above applied: configuration changes filled (combined cycle) and the OFF hours of
+    outage-like spells set to "o".  The one rule the scorecards, the starts count (wear.py) and
+    the groups share, so a return from an outage is never read as a decision."""
+    return np.array(rewrite_outages({"tech": tech, "st": list(st)}), dtype="<U1")
+
+
 def lead_off(st) -> int:
     """Length of the off stretch open at the window start when it lasts a week or more (else 0).
     It is not a shutdown, but a unit that started late is multi-day rather than always-on."""

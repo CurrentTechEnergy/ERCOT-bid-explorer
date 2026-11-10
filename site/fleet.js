@@ -21,22 +21,23 @@ const TECHS = [
 const FUEL = { combined_cycle: "gas", combustion_turbine: "gas", gas_steam: "gas", coal: "coal", nuclear: "nuclear" };
 // EIA Electric Power Annual, table 8.2 (average tested heat rates, 2024), MMBtu per MWh
 const EIA_HR = { combined_cycle: 7.548, combustion_turbine: 10.999, gas_steam: 10.337, coal: 10.018, nuclear: 10.443 };
-// generic defaults: heat rate (MMBtu/MWh), variable O&M ($/MWh), hot start ($), fuel price for
+// generic defaults: heat rate (MMBtu/MWh), variable O&M ($/MWh), hot, intermediate and cold start ($,
+// the site's GENERIC_COSTS; a start is intermediate after more than 8 hours offline, cold after 24), fuel price for
 // non-gas fuels ($/MMBtu). Edit them in the Cost assumptions panel.
 const DEFAULTS = {
-  combined_cycle: { hr: 7.0, vom: 3.0, start: 15000 },
-  combustion_turbine: { hr: 11.0, vom: 5.0, start: 3000 },
-  gas_steam: { hr: 10.5, vom: 4.0, start: 10000 },
-  coal: { hr: 10.5, vom: 5.0, start: 30000 },
-  nuclear: { hr: 10.4, vom: 2.5, start: 0 },
+  combined_cycle: { hr: 7.0, vom: 3.0, start: 15000, start_inter: 25000, start_cold: 40000 },
+  combustion_turbine: { hr: 11.0, vom: 5.0, start: 3000, start_inter: 4000, start_cold: 5000 },
+  gas_steam: { hr: 10.5, vom: 4.0, start: 10000, start_inter: 20000, start_cold: 30000 },
+  coal: { hr: 10.5, vom: 5.0, start: 30000, start_inter: 60000, start_cold: 90000 },
+  nuclear: { hr: 10.4, vom: 2.5, start: 0, start_inter: 0, start_cold: 0 },
 };
 const FUEL_PRICE = { coal: 2.0, nuclear: 0.7 };     // $/MMBtu, user-editable
 const COST_NOTES = {
-  meas: "Fuel cost = each hour's output × the unit's own heat rate at that output × its fuel price, plus variable O&M per MWh. The heat rate runs in a straight line from the unit's measured heat rate at minimum output to its full-load one, both from EPA hourly stack data against its ERCOT net output. A cogeneration unit uses its plant's EIA-923 fuel for electricity with the steam host's share taken out; a unit with no measurement takes its technology's median. Gas is the unit's own hub price plus the adder (or Henry Hub if chosen); coal is the plant's delivered EIA-923 price; nuclear uses the EIA heat rate. Starts cost the unit's own day-ahead hot-start offer, else the generic start cost below.",
-  eia: "Fuel = output × the EIA average tested heat rate for the technology × the fuel price (the chosen gas price plus the adder for gas; the $/MMBtu set here for coal and nuclear), plus variable O&M per MWh. Starts cost the unit's own DAM hot-start offer where it has one, else the generic start cost.",
-  offer: "Energy cost = the area under the unit's own DAM energy offer curve up to each hour's output; where the unit offered no curve, its minimum-energy offer × output; where it submitted no three-part offer at all, the generic basis. Starts cost its DAM hot-start offer, else the generic start cost.",
-  inc: "Energy cost = each hour's output × the price the unit's own DAM energy offer curve puts on that output level (its incremental offer, read as its marginal cost), ignoring the minimum-energy price that units set low to get committed. Units with no DAM curve use the generic basis and are counted as estimated. Starts cost the DAM hot-start offer, else the generic start cost.",
-  generic: "Fuel = output × the heat rate set here × the fuel price (the chosen gas price plus the adder for gas; the $/MMBtu set here for coal and nuclear), plus variable O&M per MWh and the start cost per start.",
+  meas: "Fuel cost = each hour's output × the unit's own heat rate at that output × its fuel price, plus variable O&M per MWh. The heat rate runs in a straight line from the unit's measured heat rate at minimum output to its full-load one, both from EPA hourly stack data against its ERCOT net output. A cogeneration unit uses its plant's EIA-923 fuel for electricity with the steam host's share taken out; a unit with no measurement takes its technology's median. Gas is the unit's own hub price plus the adder (or Henry Hub if chosen); coal is the plant's delivered EIA-923 price; nuclear uses the EIA heat rate. Each start costs the unit's own day-ahead start offer for its class (hot after 8 hours offline or fewer, intermediate up to 24, cold beyond, timed run by run), else the generic cost below.",
+  eia: "Fuel = output × the EIA average tested heat rate for the technology × the fuel price (the chosen gas price plus the adder for gas; the $/MMBtu set here for coal and nuclear), plus variable O&M per MWh. Each start costs the unit's own DAM start offer for its class (hot, intermediate or cold by hours offline) where it has one, else the generic cost.",
+  offer: "Energy cost = the area under the unit's own DAM energy offer curve up to each hour's output; where the unit offered no curve, its minimum-energy offer × output; where it submitted no three-part offer at all, the generic basis. Each start costs its DAM start offer for its class (hot, intermediate or cold by hours offline), else the generic cost.",
+  inc: "Energy cost = each hour's output × the price the unit's own DAM energy offer curve puts on that output level (its incremental offer, read as its marginal cost), ignoring the minimum-energy price that units set low to get committed. Units with no DAM curve use the generic basis and are counted as estimated. Each start costs its DAM start offer for its class (hot, intermediate or cold by hours offline), else the generic cost.",
+  generic: "Fuel = output × the heat rate set here × the fuel price (the chosen gas price plus the adder for gas; the $/MMBtu set here for coal and nuclear), plus variable O&M per MWh and the hot, intermediate or cold start cost per start by hours offline.",
 };
 const { getJSON, tryJSON, showTip, hideTip, setCSV, css, esc, axisFmt, fmtKind } = window.CX;
 const $ = (id) => document.getElementById(id);
@@ -93,14 +94,13 @@ function unitEcon(u, D, gas) {
     const as = u.rev_as[i] || 0;
     let fuel = 0, starts = 0, estimated = false;
     if (fuelKind) {
-      const n = u.starts[i] || 0;
-      const own = u.start_hot[i] != null ? u.start_hot[i] : null;
+      const sc = (useOwn) => window.CX.startCost(u, i, p, useOwn);
       if (S.cost === "offer" || S.cost === "inc") {
         const own_cost = S.cost === "inc" ? u.cost_inc[i] : u.cost_off[i];
         if (own_cost != null) fuel = own_cost;
         else if (S.cost === "offer" && u.mingen[i] != null) fuel = mwh * u.mingen[i];
         else { const b = fuelBill(i, mwh, p.hr); fuel = b == null ? null : b + mwh * p.vom; estimated = b != null; }
-        starts = n * (own != null ? own : p.start);
+        starts = sc(true).cost;
       } else if (S.cost === "meas" && u.mmbtu && u.mmbtu[i] != null && (fuelKind === "gas" || fuelKind === "coal")) {
         // the pipeline's burn on the unit's measured heat-rate curve (econ.py mmbtu), priced at its
         // own hub (fuel_meas: the hub prices are not published) or Henry Hub, or its plant's coal price
@@ -108,16 +108,18 @@ function unitEcon(u, D, gas) {
           : gas ? (gas[i] == null ? null : u.mmbtu[i] * (gas[i] + S.adder))
           : (u.fuel_meas && u.fuel_meas[i] != null ? u.fuel_meas[i] + u.mmbtu[i] * S.adder : null);
         fuel = b == null ? null : b + mwh * p.vom;
-        starts = n * (own != null ? own : p.start);
-        if (own == null && n) estimated = true;
+        const st = sc(true);
+        starts = st.cost;
+        if (st.estimated) estimated = true;
       } else {
         // EIA (and measured where the unit has no burn: nuclear, or a day without it), or generic
         const eia = S.cost === "eia" || S.cost === "meas";
         const hr = eia ? EIA_HR[t] : p.hr;
         const b = fuelBill(i, mwh, hr);
         fuel = b == null ? null : b + mwh * p.vom;
-        starts = n * (own != null && eia ? own : p.start);
-        if ((own == null && n) || (S.cost === "meas" && fuelKind !== "nuclear")) estimated = true;
+        const st = sc(eia);
+        starts = st.cost;
+        if ((st.n && sc(true).estimated) || (S.cost === "meas" && fuelKind !== "nuclear")) estimated = true;
       }
     }
     if (fuel == null) { out.missing++; out.energy.push(energy); out.as.push(as); out.fuel.push(null); out.starts.push(starts); out.margin.push(null); continue; }
@@ -271,7 +273,9 @@ function drawInputs() {
     (S.cost === "meas" && t !== "nuclear" ? `<span class="t">Heat rate</span><span class="lbl">each unit's own</span><span class="lbl">measured, minimum to full load</span><span></span>`
       : row("Heat rate", "hr", S.cost === "eia" || S.cost === "meas" ? EIA_HR[t] : p.hr, 0.1, "MMBtu/MWh" + (S.cost === "eia" || S.cost === "meas" ? " (EIA 2024)" : ""), S.cost !== "generic")) +
     row("Variable O&M", "vom", p.vom, 0.5, "$/MWh", S.cost === "offer" || S.cost === "inc") +
-    row("Start cost", "start", p.start, 500, "$ per start" + (S.cost !== "generic" ? " (where no DAM offer)" : ""), false) +
+    row("Hot start", "start", p.start, 500, "$ per start, off 8 h or less" + (S.cost !== "generic" ? " (where no DAM offer)" : ""), false) +
+    row("Intermediate start", "start_inter", p.start_inter, 500, "$ per start, off 8 to 24 h" + (S.cost !== "generic" ? " (where no DAM offer)" : ""), false) +
+    row("Cold start", "start_cold", p.start_cold, 500, "$ per start, off over 24 h" + (S.cost !== "generic" ? " (where no DAM offer)" : ""), false) +
     (fuelKind !== "gas" ? row("Fuel price", "fuel", S.fuel[fuelKind], 0.1, "$/MMBtu", false) : "");
   el.querySelectorAll("input").forEach((inp) => inp.addEventListener("change", () => {
     const v = +inp.value; if (isNaN(v)) return;
@@ -322,7 +326,38 @@ function drawUnits() {
 async function loadTech() {
   if (!S.data[S.tech] && S.data[S.tech] !== null) S.data[S.tech] = await tryJSON(`data/econ/${S.tech}.json.gz`);
 }
-function redraw() { compute(); drawTotals(); drawInputs(); drawUnits(); }
+// ---- run hours and starts by year, 2019 on, for the chosen technology (data/wear.json.gz, pipeline/wear.py):
+// wear and tear, with starts after a shutdown by choice apart from returns from an outage
+async function drawWear() {
+  const t = S.tech, box = $("wear-panel");
+  if (!["combined_cycle", "combustion_turbine", "gas_steam", "coal"].includes(t)) { box.hidden = true; return; }
+  if (S.WEAR === undefined) S.WEAR = await tryJSON("data/wear.json.gz");
+  if (S.tech !== t) return;
+  const W = S.WEAR;
+  if (!W?.rows?.length) { box.hidden = true; return; }
+  box.hidden = false;
+  const ci = Object.fromEntries(W.columns.map((c, i) => [c, i]));
+  const rows = W.rows.filter((r) => r[ci.tech] === t && r[ci.run_h] > 0);
+  const by = d3.group(rows, (r) => r[ci.year]), years = [...by.keys()].sort((a, b) => b - a);
+  const thru = W.through || "", part = (y) => +thru.slice(0, 4) === y && thru.slice(5) !== "12-31";
+  const fmtN = d3.format(","), med = (rs, k) => d3.median(rs, (r) => r[ci[k]]), tot = (rs, k) => d3.sum(rs, (r) => r[ci[k]]);
+  const Y = years.map((y) => { const rs = by.get(y), st = tot(rs, "starts");
+    return { y, n: rs.length, run: med(rs, "run_h"), stm: med(rs, "starts"), st, hot: tot(rs, "hot") / (st || 1), inter: tot(rs, "inter") / (st || 1), cold: tot(rs, "cold") / (st || 1), back: tot(rs, "returns"), out: med(rs, "out_h"), perStart: st ? tot(rs, "run_h") / st : null }; });
+  const label = TECHS.find((x) => x.id === t).label;
+  $("wear-title").textContent = label;
+  $("wear-table").innerHTML = `<table class="data"><thead><tr><th class="t">Year</th><th>Units that ran</th><th>Hours online, median unit</th><th>Starts by choice, median unit</th><th>Starts by choice, all units</th><th>Hot</th><th>Intermediate</th><th>Cold</th><th>Returns from outage, all units</th><th>Hours on outage, median unit</th><th>Run hours per start</th></tr></thead><tbody>` +
+    Y.map((r) => `<tr><td class="t">${r.y}${part(r.y) ? "*" : ""}</td><td>${r.n}</td><td>${fmtN(Math.round(r.run))}</td><td><b>${fmtN(Math.round(r.stm))}</b></td><td>${fmtN(r.st)}</td><td>${fmtPct(r.hot)}</td><td>${fmtPct(r.inter)}</td><td>${fmtPct(r.cold)}</td><td>${fmtN(r.back)}</td><td>${fmtN(Math.round(r.out))}</td><td>${r.perStart == null ? "–" : fmtN(Math.round(r.perStart))}</td></tr>`).join("") + `</tbody></table>`;
+  const full = Y.filter((r) => !part(r.y)), a = full.at(-1), b = full[0];
+  window.CX.setNote($("wear-note"), `Wear and tear for ${label.toLowerCase()} units, year by year: hours online and starts, with starts after a shutdown by choice counted apart from returns from an outage. Open a unit for its own rows.` +
+    (a && b && a !== b ? ` The median unit ran ${fmtN(Math.round(b.run))} hours and started ${fmtN(Math.round(b.stm))} times by choice in ${b.y}, against ${fmtN(Math.round(a.run))} hours and ${fmtN(Math.round(a.stm))} starts in ${a.y}.` : "") +
+    (years.some(part) ? ` * Part year, to ${thru}.` : ""),
+    `Each ${t === "combined_cycle" ? "combined-cycle train (its configurations merged, online when any is)" : "unit"} that ran that year, from its hourly states (history files from 2019, the 60-day data after Nov 2025). The site's outage rule comes first: OFF hours reported around an outage (an off spell that is mostly outage, or has fewer than ${W.out_min_h} OFF hours around one${t === "coal" ? "; for coal, any outage hour in the spell" : ""}) count as outage. ` +
+    `A start by choice ends an off spell with at least ${W.out_min_h} OFF hours: hot after ${W.hot_h} hours off or fewer, intermediate up to ${W.inter_h}, cold beyond. A return from an outage ends an off spell that is outage. Starts inside one hour are not seen, so the counts can sit below the run-by-run starts the units table prices.`);
+  setCSV($("wear-table"), ["year", "units_ran", "median_hours_online", "median_starts_by_choice", "starts_by_choice", "hot_share", "intermediate_share", "cold_share", "returns_from_outage", "median_hours_on_outage"],
+    Y.map((r) => [r.y, r.n, r.run, r.stm, r.st, +r.hot.toFixed(3), +r.inter.toFixed(3), +r.cold.toFixed(3), r.back, r.out]), `${label} run hours and starts by year`);
+}
+
+function redraw() { compute(); drawTotals(); drawInputs(); drawUnits(); drawWear(); }
 async function changeTech() { $("status").textContent = "Loading…"; await loadTech(); status(); redraw(); }
 function status() {
   const I = S.idx, D = I.dates;

@@ -299,8 +299,7 @@ const ST_GROUPS = [
   { id: "daily3", label: "Cycles daily, over twice a week", note: "more than two shutdowns a week" },
   { id: "never_on", label: "Never on", note: `no running hour in ${ST_NEVER_ON_DAYS}+ days of states` },
 ];
-const ST_OUT_MIN_H = 2;                  // an off spell with fewer OFF hours than this, or more OUT than OFF, is an outage
-const ST_OUT_ANY = new Set(["coal"]);    // for these any outage hour makes the spell an outage (pipeline/groups.py OUT_ANY_TECHS)
+const ST_OUT_MIN_H = window.CX.OUT_MIN_H;   // an off spell with fewer OFF hours than this, or more OUT than OFF, is an outage (common.js ruleOutages)
 const ST_FLEET = [...ST_RESP, { id: "N", label: "Not running going in", color: "--grid", o: 1 }];
 const ST_RANK = { a: 4, m: 3, "0": 2, o: 1, "-": 0 };
 const trainOf = (u) => { const m = /^(.*_CC\d+)_/.exec(u); return m ? m[1] : u; };
@@ -360,16 +359,7 @@ function stretchBase() {
   // hour inside a combined-cycle train is a configuration change, not a shutdown. A spell still
   // open at the end of the period counts once it is a day long.
   for (const e of units.values()) {
-    const st = e.st; e.off = []; e.shut = 0;
-    if (e.tech === "combined_cycle") for (let k = 1; k < N - 1; k++)
-      if (st[k] === "0" && "ma".includes(st[k - 1]) && "ma".includes(st[k + 1])) st[k] = "m";
-    for (let k = 0; k < N;) {
-      if (st[k] === "m" || st[k] === "a") { k++; continue; }
-      let j = k, off = 0, out = 0;
-      while (j < N && st[j] !== "m" && st[j] !== "a") { if (st[j] === "0") off++; else if (st[j] === "o") out++; j++; }
-      if (out && (off < ST_OUT_MIN_H || out > off || ST_OUT_ANY.has(e.tech))) for (let i = k; i < j; i++) if (st[i] === "0") st[i] = "o";
-      k = j;
-    }
+    const st = (e.st = window.CX.ruleOutages(e.st, e.tech)); e.off = []; e.shut = 0;
     let k = 0, short = 0, long = [];
     while (k < N) {
       if (st[k] === "0" && k > 0 && (st[k - 1] === "m" || st[k - 1] === "a")) {
@@ -674,7 +664,28 @@ function drawLean() {
 // how much being off would have to save before the model's day call turns it off. Coal is
 // drawn flat: it does not cycle within a day.
 const GROUP_LABEL = Object.fromEntries([...ST_GROUPS.map((g) => [g.id, g.label]), ["ungrouped", "Not yet grouped"]]);
-const DID = { off: "Turned off", on: "Stayed on" };
+const DID = { off: "Turned off", on: "Stayed on", outage: "Went offline around an outage: not a decision, so not counted for or against the model" };
+// one unit's (train's) hourly states on day d with the outage rule applied (common.js ruleOutages,
+// via stretchBase), or null outside the hourly data
+const hoursReady = () => !!(S.UH?.dates?.length && S.T && S.I);
+function ruledDay(unit, d) {
+  if (!hoursReady()) return null;
+  const B = stretchBase(), e = B.units.get(unit);
+  if (!e) return null;
+  const k0 = Math.round((parseDate(d) - B.day0) / 864e5) * 24;
+  return k0 >= 0 && k0 + 24 <= e.st.length ? e.st.slice(k0, k0 + 24) : null;
+}
+// starts on day d that came straight from an outage-like spell (the hour before reads as outage
+// under the rule): returns from an outage, not decisions
+function outageReturns(unit, d) {
+  if (!hoursReady()) return 0;
+  const B = stretchBase(), e = B.units.get(unit);
+  if (!e) return 0;
+  const k0 = Math.round((parseDate(d) - B.day0) / 864e5) * 24, run = (c) => c === "m" || c === "a";
+  let n = 0;
+  for (let k = Math.max(1, k0); k < Math.min(k0 + 24, e.st.length); k++) if (run(e.st[k]) && e.st[k - 1] === "o") n++;
+  return n;
+}
 // the day-ahead award in the day: none, some hours, every hour (operator_cutoffs "award")
 const AWARD = [{ id: 0, label: "No day-ahead award that day", color: "--c1" }, { id: 1, label: "Awarded some hours", color: "--c3" }, { id: 2, label: "Awarded every hour", color: "--c2" }];
 const fmt$ = (v) => (v == null || isNaN(v) ? "–" : (v < 0 ? "−" : "") + "$" + d3.format(",.0f")(Math.abs(v)));
@@ -707,7 +718,10 @@ function dayUnits(d) {
     const o = op?.get(r[DAY_F.unit]), modelled = ["combined_cycle", "gas_steam"].includes(dec.tech);
     return {
       unit: r[DAY_F.unit], tech: dec.tech, group, lsl: o ? o[2] : dec.lsl, he: r[DAY_F.he], hours: r[DAY_F.hours],
-      did: (o ? o[6] : r[DAY_F.shut]) ? "off" : "on", hoff: r[DAY_F.hoff],
+      // the operator file's off flag reads the raw states; offline hours that the outage rule
+      // reads as outage (no OFF hour left that day) are not a decision (decisions.py's shut flag
+      // already applies the rule)
+      did: (o ? o[6] : r[DAY_F.shut]) ? (o && !(ruledDay(r[DAY_F.unit], d) || ["0"]).includes("0") ? "outage" : "off") : "on", hoff: r[DAY_F.hoff],
       award: o ? o[3] : null, md: o ? o[7] : null,
       // "cut": a turn-off point; "flat": on at any saving in this chart (the model says it rides
       // through anything tested, or it is coal); "none": a CC or gas steam
@@ -741,15 +755,18 @@ function drawCutUnits() {
     return emptyMsg(el, S.OC && !opDay(S.date) ? `The operator model's turn-off points run ${Object.keys(S.OC.days)[0]} to ${Object.keys(S.OC.days).at(-1)}; pick a day in that range.` : "No unit with a turn-off point was online going into this day."); }
   const going = d3.sum(U, (u) => u.lsl), stayed = d3.sum(U.filter((u) => u.did === "on"), (u) => u.lsl);
   $("cut-units-stayed").textContent = ` · ${fmtMW(stayed)} of ${fmtMW(going)} MW of minimum output stayed on`;
-  const past = (u) => u.kind === "cut" && u.l > u.c, n = (f) => U.filter(f).length, surprise = (u) => !u.ruc && past(u) !== (u.did === "off");
-  const nRuc = n((u) => u.ruc), nJ = U.length - nRuc;
-  const nOff = n((u) => u.did === "off"), right = n((u) => !u.ruc && past(u) === (u.did === "off"));
+  const judged = (u) => !u.ruc && u.did !== "outage";
+  const past = (u) => u.kind === "cut" && u.l > u.c, n = (f) => U.filter(f).length, surprise = (u) => judged(u) && past(u) !== (u.did === "off");
+  const nRuc = n((u) => u.ruc), nOut = n((u) => !u.ruc && u.did === "outage"), nJ = U.length - nRuc - nOut;
+  const nOff = n((u) => u.did === "off"), right = n((u) => judged(u) && past(u) === (u.did === "off"));
+  const outNote = nOut ? ` ${nOut} ${nOut === 1 ? "unit" : "units"} went offline around an outage (grey circle): not a decision, so left out of these counts.` : "";
   const nPast = n(past), nPastOn = n((u) => past(u) && u.did === "on");
   window.CX.setNote($("cut-units-note"), `Did the combined-cycle and gas steam units that faced a loss turn off? Each row is a unit online going into the day. The circle is how much it stood to lose per MW of minimum output by staying on through the day's worst stretch; the diamond is the loss at which the operator model expects it to shut down instead. A circle right of its diamond is a unit the model expected to turn off; a filled one there rode through anyway. ` +
-    `On ${fmtDate(parseDate(S.date))}, ${U.length} units were online going in and ${nOff} turned off; ${nPast} faced a loss past their turn-off point and ${nPastOn} of those stayed on. The model called ${right} of ${nJ} right.${window.CX.rucNote(nRuc, nRuc === 1 ? "unit" : "units")} Hover a row for its numbers; click to open the unit.`, `${U.length} combined-cycle trains (CC) and gas steam units were online going into the day. The diamond is each unit's turn-off point that day from the operator model, colored by its day-ahead award; the circle is the loss from staying on it actually faced, and the line between them is red where the unit did the opposite of the model: stayed on past its turn-off point, or turned off short of it. The turn-off point is found by moving the day's day-ahead prices up or down by the same amount until the model's call for the day first flips to off; the loss at that shift is the turn-off point. An arrow at the right edge is a unit no shift turned off (a day-ahead award in every hour holds a unit on). ` +
-    `A filled circle stayed on through the day; a hollow one was offline in some hour (outages aside). Read at its own loss, the model called ${right} of ${nJ} units right.${window.CX.rucNote(nRuc, nRuc === 1 ? "unit" : "units")} ${SAVING_NOTE} Losses beyond the edges are drawn at the edge. Click a unit to open it.`);
+    `On ${fmtDate(parseDate(S.date))}, ${U.length} units were online going in and ${nOff} turned off; ${nPast} faced a loss past their turn-off point and ${nPastOn} of those stayed on. The model called ${right} of ${nJ} right.${window.CX.rucNote(nRuc, nRuc === 1 ? "unit" : "units")}${outNote} Hover a row for its numbers; click to open the unit.`, `${U.length} combined-cycle trains (CC) and gas steam units were online going into the day. The diamond is each unit's turn-off point that day from the operator model, colored by its day-ahead award; the circle is the loss from staying on it actually faced, and the line between them is red where the unit did the opposite of the model: stayed on past its turn-off point, or turned off short of it. The turn-off point is found by moving the day's day-ahead prices up or down by the same amount until the model's call for the day first flips to off; the loss at that shift is the turn-off point. An arrow at the right edge is a unit no shift turned off (a day-ahead award in every hour holds a unit on). ` +
+    `A filled circle stayed on through the day; a hollow one was offline in some hour; a grey one went offline only around an outage (the site's outage rule: an off spell that is mostly outage, or has fewer than ${window.CX.OUT_MIN_H} OFF hours around an outage, is outage throughout), which is not a decision. Read at its own loss, the model called ${right} of ${nJ} units right.${window.CX.rucNote(nRuc, nRuc === 1 ? "unit" : "units")}${outNote} ${SAVING_NOTE} Losses beyond the edges are drawn at the edge. Click a unit to open it.`);
   $("cut-units-legend").innerHTML = AWARD.map((a) => `<span><span class="sw" style="background:var(${a.color});transform:rotate(45deg) scale(0.8)"></span>Turn-off point, ${["no day-ahead award", "awarded some hours", "awarded every hour"][a.id]}</span>`).join("") +
     `<span>→ No turn-off point: the model keeps it on at any loss tried</span>` + window.CX.onOffLegend("Loss that day, stayed on", "Loss that day, turned off") +
+    (nOut ? `<span><span class="sw" style="background:var(--ink-2);opacity:0.35;border-radius:50%"></span>Offline around an outage (not judged)</span>` : "") +
     `<span><span class="sw" style="background:var(--c8);height:3px"></span>Surprise: did the opposite of the model</span>` + (nRuc ? window.CX.rucLegend() : "");
   const [x0, x1] = cutDomain(U);
   const w = Math.max(280, el.clientWidth || 600), narrow = w < 560, lane = 8, rowGap = 26;
@@ -779,7 +796,8 @@ function drawCutUnits() {
       gU.append("line").attr("x1", x(Math.min(end, u.l))).attr("x2", x(Math.max(end, u.l))).attr("y1", yy).attr("y2", yy).attr("stroke", css(surprise(u) ? "--c8" : "--line")).attr("stroke-width", surprise(u) ? 1.8 : 1.2);
       if (u.kind === "cut") gU.append("path").attr("d", diamond).attr("transform", `translate(${x(u.c)},${yy})`).attr("fill", col);
       else gU.append("path").attr("d", `M${x(x1) - 12},${yy}h10m-4,-3l4,3l-4,3`).attr("fill", "none").attr("stroke", col).attr("stroke-width", 1.5);
-      window.CX.onOffDot(gU.append("circle").attr("cx", x(u.l)).attr("cy", yy), u.did !== "off");
+      if (u.did === "outage") gU.append("circle").attr("cx", x(u.l)).attr("cy", yy).attr("r", 3.5).attr("fill", css("--ink-2")).attr("fill-opacity", 0.35).attr("stroke", css("--ink-2")).attr("stroke-width", 1);
+      else window.CX.onOffDot(gU.append("circle").attr("cx", x(u.l)).attr("cy", yy), u.did !== "off");
       if (u.ruc) window.CX.rucRing(gU.append("circle").attr("cx", x(u.l)).attr("cy", yy), 6);
     });
     top += rowGap + us.length * lane;
@@ -807,8 +825,12 @@ function drawCtUnits() {
   const rowsG = ST_GROUPS.filter((g) => U.some((u) => u.group === g.id)).concat(U.some((u) => u.group === "ungrouped") ? [{ id: "ungrouped", label: GROUP_LABEL.ungrouped }] : []);
   const nRuc = U.filter((u) => u.ruc).length, rn = window.CX.rucNote(nRuc, nRuc === 1 ? "unit" : "units");
   const nRan = U.filter((u) => u.ran).length, right = U.filter((u) => !u.ruc && !surprise(u)).length;
+  // turbines that came back from an outage this day: the model is not judged on those hours
+  // (pipeline/models/peaker_oi.py leaves the outage rule's hours out), so they are named here
+  const back = !hoursReady() ? [] : [...stretchBase().units.values()].filter((e) => e.tech === "combustion_turbine" && outageReturns(e.unit, S.date)).map((e) => e.unit);
+  const backNote = back.length ? ` ${back.length} ${back.length === 1 ? "turbine" : "turbines"} came back from an outage this day (${back.slice(0, 6).join(", ")}${back.length > 6 ? ", …" : ""}): a return from an outage is not a start the model should call, so ${back.length === 1 ? "it is" : "they are"} not judged on ${back.length === 1 ? "it" : "them"}.` : "";
   window.CX.setNote($("ct-units-note"), `Combustion turbines mostly sit off and start for a few high-priced hours, so for them the question is the price that gets them going, not the loss that turns them off. Each row is a turbine that was offline going into some hour of the day. The diamond is the peak day-ahead price at its node that the operator model needs before it expects a start; the circle is the peak that actually came (filled: it started; hollow: it stayed off). A filled circle right of its diamond is the model and the operator agreeing. ` +
-    `On ${fmtDate(parseDate(S.date))}, ${nRan} of ${U.length} started; the model called ${right} of ${U.length - nRuc} right.${rn} Click a unit to open it.`,
+    `On ${fmtDate(parseDate(S.date))}, ${nRan} of ${U.length} started; the model called ${right} of ${U.length - nRuc} right.${rn}${backNote} Click a unit to open it.`,
     `${U.length} combustion turbines were available and offline going into some hour of the day (Peaker marks the ones that run like peakers). ${CT_NOTE}` +
     `To find the diamond, every price at the unit's node (day-ahead and real-time) is raised or lowered by the same amount until the model gives a 50% chance of a start in at least one of the hours the unit was offline going into; the diamond is the day's peak day-ahead price at that shift. The circle is the day's actual peak day-ahead price at its node. A diamond left of the circle means the model starts it that day; a diamond at the right edge means no shift up to $5,000/MWh produced a start.\n\n` +
     `Hour by hour the model is weak: over Mar to Aug 2026 it caught about 15% of starts in the hour they came, and about 60% of the starts it called happened (the real-time fit it replaced caught more, but called four false starts for every real one). Over a whole day it does better: over Feb to Aug 2026 it called 45% of the days a unit started, and on about 80% of the days it called a start the unit did start. Prices beyond the edges are drawn at the edge.`);
@@ -948,9 +970,9 @@ function drawScores() {
   const pct = (a, b) => (b ? d3.format(".1%")(a / b) : "–");
   const ev = (t, k) => (t[`${k}_n`] ? `${d3.format(",")(t[`${k}_caught`])} of ${d3.format(",")(t[`${k}_n`])}` : "–");
   const fl = (t, k) => (t[`${k}_n`] != null ? d3.format(",")(t[`${k}_false`] || 0) : "–");
-  const nRuc = d3.sum([...T.values()], (t) => t.ruc_hours || 0);
-  if (ct) window.CX.setNote($("sc-note"), `A check on the model behind the turbine chart above: month by month, how often its on/off call for each hour matched what the turbine did, and how many actual starts and stops it caught against the calls it made that never happened. "Hours right" is flattered, because a unit that simply stays as it was is right about 97% of the time; the caught and false columns are the real test.`, `Every hour of every combustion turbine (and recip engine) that was online or offline in SCED both in it and the hour before, with its day-ahead record and the three real-time hours before at its node, scored against what it did. Unlike the CC and gas steam rows, each hour is judged from the true state before it, the decision its operator faced that hour: the call is a start (from offline) or a stop (from online) when the model's chance of one is 50% or more, and it is caught only in the hour it happened. ${CT_NOTE}${nRuc ? `${d3.format(",")(nRuc)} RUC hours in the rows shown are left out. ` : ""}Staying as it was would get about 97% of hours right and catch nothing, so the turn-ons and turn-offs are the test. "Cheap" is an hour with day-ahead system lambda at $${sc.cheap}/MWh or less; "Unit was on" and "Unit was off" are its state before the hour. Brier is the mean squared error of the model's chance online (lower is better).`);
-  else window.CX.setNote($("sc-note"), `A check on the model behind the turn-off chart above. For every scored hour, whether the model's on/off call matched what the unit did; and for every actual shutdown and start, whether the model called it within an hour, against how many calls it made that never happened. "Hours right" is flattered, because a unit that simply stays as it was is right about 97% of the time; the caught and false columns are the real test. The months of the 60-day fits come first, then each year before them.`, `Every hour of every CC train or gas steam unit on a day with an operator day file, scored against what it did (outage and unknown hours left out, and days a unit went into on outage). Hours ERCOT had the unit committed by RUC are ERCOT's call, not the operator's: they are left out of the fits and of every column here, and a switch into or out of one counts neither as caught nor as false${nRuc ? ` (${d3.format(",")(nRuc)} RUC hours in the rows shown; ERCOT's unit status before Dec 2025 isn't kept, so earlier years can't leave them out)` : ""}. The model's call is on when its chance online is 50% or more; it is fitted monthly on earlier days only. From ${fmtDate(parseDate(sc.live_from || liveM + "-01"))} it is fitted on the 60-day data since Dec 2025. Before that, each month is fitted on the 12 months before it from the thermal history files and the day-ahead resource status (read from our own copies of the 60-day DAM disclosure), with Henry Hub standing in for the unit's own gas hub (Ship Channel or Waha) where none is stored. A turn-off or turn-on is caught when the call switches the same way within 1 hour of the actual switch; a call's switch that matches none is false. "Cheap" is an hour with day-ahead system lambda at $${sc.cheap}/MWh or less, and for a switch, any such hour within 3 hours of it. (Day-ahead lambda here, because that is what the operator knew; the across-days panels below use real-time lambda.) Brier is the mean squared error of the model's chance (lower is better).`);
+  const nRuc = d3.sum([...T.values()], (t) => t.ruc_hours || 0), lo = ct ? null : S.OSC?.left_out?.[S.scTech];
+  if (ct) window.CX.setNote($("sc-note"), `A check on the model behind the turbine chart above: month by month, how often its on/off call for each hour matched what the turbine did, and how many actual starts and stops it caught against the calls it made that never happened. "Hours right" is flattered, because a unit that simply stays as it was is right about 97% of the time; the caught and false columns are the real test.`, `Every hour of every combustion turbine (and recip engine) that was online or offline in SCED both in it and the hour before, with its day-ahead record and the three real-time hours before at its node, scored against what it did. Unlike the CC and gas steam rows, each hour is judged from the true state before it, the decision its operator faced that hour: the call is a start (from offline) or a stop (from online) when the model's chance of one is 50% or more, and it is caught only in the hour it happened. ${CT_NOTE}${nRuc ? `${d3.format(",")(nRuc)} RUC hours in the rows shown are left out. ` : ""}Hours the site's outage rule reads as outage (OFF hours reported around an outage) are fitted but not scored, so a return from an outage is neither caught nor missed. Staying as it was would get about 97% of hours right and catch nothing, so the turn-ons and turn-offs are the test. "Cheap" is an hour with day-ahead system lambda at $${sc.cheap}/MWh or less; "Unit was on" and "Unit was off" are its state before the hour. Brier is the mean squared error of the model's chance online (lower is better).`);
+  else window.CX.setNote($("sc-note"), `A check on the model behind the turn-off chart above. For every scored hour, whether the model's on/off call matched what the unit did; and for every actual shutdown and start, whether the model called it within an hour, against how many calls it made that never happened. "Hours right" is flattered, because a unit that simply stays as it was is right about 97% of the time; the caught and false columns are the real test. The months of the 60-day fits come first, then each year before them.`, `Every hour of every CC train or gas steam unit on a day with an operator day file, scored against what it did (outage and unknown hours left out, and days a unit went into on outage). Outage is read with the site's outage rule: the OFF hours a unit reports around an outage (an off spell that is mostly outage, or has fewer than ${window.CX.OUT_MIN_H} OFF hours around one) count as outage, so a return from an outage, or a trip into one, is neither caught nor missed${lo ? ` (${d3.format(",")(lo.on)} turn-ons and ${d3.format(",")(lo.off)} turn-offs left out this way for ${S.scTech === "gas_steam" ? "gas steam" : "combined cycles"})` : ""}. Hours ERCOT had the unit committed by RUC are ERCOT's call, not the operator's: they are left out of the fits and of every column here, and a switch into or out of one counts neither as caught nor as false${nRuc ? ` (${d3.format(",")(nRuc)} RUC hours in the rows shown; ERCOT's unit status before Dec 2025 isn't kept, so earlier years can't leave them out)` : ""}. The model's call is on when its chance online is 50% or more; it is fitted monthly on earlier days only. From ${fmtDate(parseDate(sc.live_from || liveM + "-01"))} it is fitted on the 60-day data since Dec 2025. Before that, each month is fitted on the 12 months before it from the thermal history files and the day-ahead resource status (read from our own copies of the 60-day DAM disclosure), with Henry Hub standing in for the unit's own gas hub (Ship Channel or Waha) where none is stored. A turn-off or turn-on is caught when the call switches the same way within 1 hour of the actual switch; a call's switch that matches none is false. "Cheap" is an hour with day-ahead system lambda at $${sc.cheap}/MWh or less, and for a switch, any such hour within 3 hours of it. (Day-ahead lambda here, because that is what the operator knew; the across-days panels below use real-time lambda.) Brier is the mean squared error of the model's chance (lower is better).`);
   el.innerHTML = `<table class="data"><thead><tr><th class="t">Period</th><th>Hours right</th><th>Turn-offs caught</th><th>False turn-offs</th><th>Turn-ons caught</th><th>False turn-ons</th><th>Brier score (lower is better)</th></tr></thead><tbody>` +
     keys.map((k) => { const t = T.get(k); return `<tr><td class="t">${label(k)}</td><td>${pct(t.right, t.hours)}</td><td>${ev(t, "off")}</td><td>${fl(t, "off")}</td><td>${ev(t, "on")}</td><td>${fl(t, "on")}</td><td>${t.hours ? d3.format(".3f")(t.brier / t.hours) : "–"}</td></tr>`; }).join("") + `</tbody></table>`;
   setCSV(el, ["period", "hours", "hours_right", "off_n", "off_caught", "off_false", "on_n", "on_caught", "on_false", "brier_sum"],

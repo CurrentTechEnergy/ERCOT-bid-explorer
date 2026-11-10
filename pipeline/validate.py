@@ -34,6 +34,9 @@ consistency:
                     (pipeline/models/operator_cutoffs.py): the known columns, a row set for
                     every operator day, award 0 to 2, off 0 or 1, a positive LSL and minimum
                     down time
+  wear              run hours and starts by year (pipeline/wear.py), checked once per run under
+                    the pseudo-day "events": hours add up, starts split into hot, intermediate
+                    and cold
   unit_curves       thermal offer curves by hour (pipeline/unit_curves.py): every hourly index
                     points at a stored curve, each curve's prices and MW never fall, and the
                     unit-hours with a curve file entry are the thermal unit-hours online in the
@@ -492,6 +495,29 @@ def _lsl_floor_checks(day):
             f"{len(bad)} problem(s), e.g. {bad[:4]}" if bad else f"{len(rows)} days, {f.get('from')} to {f.get('through')}")
 
 
+def _wear_checks(day):
+    """Run hours and starts by year (pipeline/wear.py): the known columns, one row per unit and
+    year, run + offline + outage hours equal to the hours with a state, at most the hours in a
+    year, and the starts by choice split exactly into hot, intermediate and cold."""
+    from .wear import PATH as W_PATH, COLUMNS as W_COLS
+    f = read_json_gz(W_PATH, default=None)
+    if f is None:
+        return
+    bad = []
+    if f.get("columns") != W_COLS:
+        bad.append("columns changed")
+    rows = f.get("rows") or []
+    if len({(r[0], r[2]) for r in rows}) != len(rows):
+        bad.append("a unit-year repeated")
+    for r in rows:
+        v = dict(zip(W_COLS, r))
+        if v["run_h"] + v["off_h"] + v["out_h"] != v["hours"] or not 0 < v["hours"] <= 8784 \
+                or v["starts"] != v["hot"] + v["inter"] + v["cold"] or min(r[3:]) < 0:
+            bad.append(f"{r[0]} {r[2]}")
+    day.add("wear", "error" if bad else "ok",
+            f"{len(bad)} problem(s), e.g. {bad[:4]}" if bad else f"{len(rows)} unit-years through {f.get('through')}")
+
+
 def _commit_mix_checks(day):
     """Turn-ons and Turn-offs "How thermal is committed" (pipeline/commit_mix.py): known positions,
     bands and technologies, hours ending 1 to 24, no negative MW, a band's hours never more than
@@ -737,6 +763,7 @@ def check_files(index):
     _prices_checks(day)
     _lsl_floor_checks(day)
     _commit_mix_checks(day)
+    _wear_checks(day)
     ui = read_json_gz(UNIT_INDEX_PATH, default=None)
     if ui is not None:
         rows = ui.get("rows", [])

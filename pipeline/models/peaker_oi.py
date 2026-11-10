@@ -61,7 +61,9 @@ Writes data/peaker/oi.json.gz:
    "score_columns": [...], "scores": [[month, tech, start, award, cheap, model, hours, right,
    brier, off_n, off_caught, off_false, on_n, on_caught, on_false, ruc_hours], ...]}
 turn_on and peak in $/MWh (day-ahead at the unit's node, highest hour of the day); started 1
-when it went from offline to online in some hour judged (RUC left out); hours_off the hours it
+when it went from offline to online in some hour judged (RUC left out, and from Nov 2026 the OFF
+hours the outage rule reads as outage, groups.outage_ruled: a return from an outage is not a start
+the model should catch, so those hours are fitted but neither scored nor in the day rows); hours_off the hours it
 went into offline (the ones a start could come in); window the days the month's fit used.
 scores in operator_scores' columns, tech "combustion_turbine", start the state going into the
 hour, model "operator" or "state" (stays as it was), a switch caught only in its own hour.
@@ -74,6 +76,7 @@ import numpy as np
 
 from .. import gascost
 from ..config import DATA_DIR, UNIT_DATA_DIR
+from ..groups import outage_ruled
 from ..parse_prices import node_hourly
 from ..store import read_json_gz, write_json_gz
 
@@ -134,6 +137,10 @@ def _rows(uh, cts, dates, node, lamd, ruc):
     node and three real-time hours before)."""
     N = len(dates)
     cols = defaultdict(list)
+    # hours the outage rule (groups.outage_ruled) reads as outage though the unit reported OFF:
+    # fitted as before, but neither scored nor counted in the day rows (a return from an outage
+    # is not a decision)
+    olike = {u: outage_ruled(uh["units"][u], "combustion_turbine") == "o" for u in cts}
     n_ruc = defaultdict(int)       # (unit index, k, state before) -> RUC hours left out
     for i, d in enumerate(dates):
         du = (read_json_gz(DATA_DIR / "dam" / f"{d}.json.gz", default=None) or {}).get("units") or {}
@@ -148,6 +155,7 @@ def _rows(uh, cts, dates, node, lamd, ruc):
             aw = np.array([(x or 0) > 0 for x in ((e.get("award") or []) + [0] * 24)[:24]], float)
             st = str(e.get("status") or "").upper()
             s, P, rk = uh["units"][u], node[u].ravel(), ruc.get(u, ())
+            ol = olike[u]
             for h in range(24):
                 k = i * 24 + h
                 if k < 3 or k >= len(s) or s[k - 1] not in "ma0" or s[k] not in "ma0":
@@ -166,10 +174,11 @@ def _rows(uh, cts, dates, node, lamd, ruc):
                              ("award_ahead", aw[h:h + AHEAD].mean()), ("status_on", float(st in ON_STATUS)),
                              ("status_offqs", float(st == "OFFQS")), ("lam", 0.0 if np.isnan(lam[h]) else lam[h]),
                              ("cheap", int(lam[h] <= CHEAP)), ("rt1", P[k - 1]), ("rt3", P[k - 3:k].max()),
-                             ("da1", DA[h - 1] if h else DA[0]), ("run", np.log1p(run) / 4.0), ("peak", DA.max())):
+                             ("da1", DA[h - 1] if h else DA[0]), ("run", np.log1p(run) / 4.0), ("peak", DA.max()),
+                             ("olike", int(ol[k - 1] or ol[k]))):
                     cols[c].append(v)
     R = {c: np.array(v) for c, v in cols.items()}
-    for c in ("u", "i", "h", "prev", "on", "cheap"):
+    for c in ("u", "i", "h", "prev", "on", "cheap", "olike"):
         R[c] = R.get(c, np.zeros(0)).astype(int)
     R["gas"] = _gas(cts, dates, R["u"], R["i"])
     return R, n_ruc
@@ -266,8 +275,8 @@ def build_peaker_oi(index=None) -> int:
         for side in (0, 1):
             sel = test & (R["prev"] == side)
             p[sel] = _p(fits[side], X[sel], R["u"][sel])
-        # scores
-        for j in np.flatnonzero(test):
+        # scores: outage-like hours left out (a start there is a return from an outage)
+        for j in np.flatnonzero(test & (R["olike"] == 0)):
             prev, on, sw = R["prev"][j], R["on"][j], R["on"][j] != R["prev"][j]
             key = (m, "combustion_turbine", "on" if prev else "off", int(R["award"][j]), int(R["cheap"][j]))
             call_sw = p[j] >= 0.5
@@ -288,14 +297,14 @@ def build_peaker_oi(index=None) -> int:
                 for name in ("operator", "state"):
                     T[(m, "combustion_turbine", "on" if prev else "off", aw, int(lam is not None and lam <= CHEAP), name)][9] += n
         # per unit and day: the turn-on point from the hours it went into offline
-        off = test & (R["prev"] == 0)
+        off = test & (R["prev"] == 0) & (R["olike"] == 0)
         S = _start_by_shift(fits[0], R, off)
         jo = np.flatnonzero(off)
         groups = defaultdict(list)
         for r, j in enumerate(jo):
             groups[(R["i"][j], R["u"][j])].append(r)
         day_rows = defaultdict(list)
-        for j in np.flatnonzero(test):
+        for j in np.flatnonzero(test & (R["olike"] == 0)):
             day_rows[(R["i"][j], R["u"][j])].append(j)
         for (i, ui), rs in sorted(groups.items()):
             js = np.array(day_rows[(i, ui)])

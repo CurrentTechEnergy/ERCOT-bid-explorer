@@ -14,7 +14,10 @@ times its LSL, from the same day records the model uses.
 
 Scored hour by hour on the days with an operator day file, in day mode (the model's call is on
 at a chance of 0.5 or more).  Outage and unknown hours never count, and a day whose unit went in
-on outage is left out.  Hours ERCOT had the unit committed by RUC (operator_informed.ruc_hours)
+on outage is left out.  Outage is read with the site's outage rule (groups.outage_ruled, Nov 2026):
+the OFF hours of a spell that is mostly outage, or has fewer than OUT_MIN_H OFF hours around an
+outage, count as outage, so a return from an outage (or a trip into one) is neither caught nor
+missed.  The fits are unchanged.  `left_out` counts those switches by technology.  Hours ERCOT had the unit committed by RUC (operator_informed.ruc_hours)
 are not the operator's decision: they count only in ruc_hours, and a switch into or out of one
 (actual or called) is neither caught nor false.  A turn-off or turn-on counts as caught when the call switches the same way
 within MATCH hours of the actual switch; a call's switch that matches none is false.
@@ -24,7 +27,8 @@ switch), cheap (DAM system lambda at CHEAP $/MWh or less that hour, or within CH
 of the switch).
 
 Writes data/operator/scores.json.gz:
-  {"model", "version", "cheap", "models": [...], "live_from", "columns": [...], "rows": [[month, tech, start,
+  {"model", "version", "cheap", "models": [...], "live_from", "left_out": {tech: {"on": n, "off": n}},
+   "columns": [...], "rows": [[month, tech, start,
    award, cheap, model, hours, right, brier, off_n, off_caught, off_false, on_n, on_caught,
    on_false, ruc_hours], ...]}
 brier is the summed squared error of the chance (the model only; null for the baselines).
@@ -38,6 +42,7 @@ import numpy as np
 
 from ..decisions import PATH as DECISIONS_PATH, _cutoff
 from ..forecast import context as C
+from ..groups import outage_ruled
 from ..store import read_json_gz, write_json_gz
 from .operator_informed import NAME, OUT_DIR, VERSION, _days, _on, _states, ruc_hours
 
@@ -100,8 +105,10 @@ def _cutoffs():
 
 def build_scores(ctx, days) -> int:
     """Write the score file for the operator day files `days`; returns the unit-days scored."""
-    states, recs, day0, cutoff, ruc = _states(ctx), _days(ctx), ctx.stats["day0"], _cutoffs(), ruc_hours(ctx)
+    raw, recs, day0, cutoff, ruc = _states(ctx), _days(ctx), ctx.stats["day0"], _cutoffs(), ruc_hours(ctx)
+    states = {k: (t, outage_ruled(st, t)) for k, (t, st) in raw.items()}
     T = defaultdict(lambda: np.zeros(len(COLUMNS) - 6))   # (month, tech, start, award, cheap, model) -> counts
+    left = defaultdict(lambda: {"on": 0, "off": 0})       # tech -> switches left out as outage
     n = 0
     for d in days:
         units = (read_json_gz(OUT_DIR / f"{d}.json.gz", default=None) or {}).get("units", {})
@@ -114,11 +121,20 @@ def build_scores(ctx, days) -> int:
                 continue
             t, st = states[key]
             k0 = (C._d(d) - day0).days * 24
+            rk = ruc.get(key, ())
+            if k0 >= 1:     # the raw state's switches the outage rule takes out of scoring
+                rs = raw[key][1]
+                if rs[k0 - 1] in "ma0":
+                    rseg = rs[k0:k0 + 24]
+                    keep = set(_switches(_on(st[k0 - 1]), np.isin(st[k0:k0 + 24], list("ma")), np.isin(st[k0:k0 + 24], list("ma0")))) \
+                        if st[k0 - 1] in "ma0" else set()
+                    for h, kind in _switches(_on(rs[k0 - 1]), np.isin(rseg, list("ma")), np.isin(rseg, list("ma0"))):
+                        if (h, kind) not in keep and k0 + h not in rk and k0 + h - 1 not in rk:
+                            left[t][kind] += 1
             if k0 < 1 or st[k0 - 1] not in "ma0":
                 continue
             seg = st[k0:k0 + 24]
             valid, truth, on0 = np.isin(seg, list("ma0")), np.isin(seg, list("ma")), _on(st[k0 - 1])
-            rk = ruc.get(key, ())
             in_ruc = np.array([k0 + h in rk for h in range(24)]) & valid
             near_ruc = in_ruc | np.array([k0 + h - 1 in rk for h in range(24)])     # a switch into or out of RUC
             if not valid.any():
@@ -160,7 +176,8 @@ def build_scores(ctx, days) -> int:
             for k, v in sorted(T.items())]
     live = (read_json_gz(OUT_DIR / "index.json.gz", default=None) or {}).get("days") or [None]
     write_json_gz(PATH, {"model": NAME, "version": VERSION, "cheap": CHEAP, "models": list(MODELS),
-                         "live_from": live[0], "columns": list(COLUMNS), "rows": rows})
+                         "live_from": live[0], "left_out": {t: dict(v) for t, v in sorted(left.items())},
+                         "columns": list(COLUMNS), "rows": rows})
     return n
 
 
