@@ -547,7 +547,7 @@ def _commit_mix_checks(day):
 
 
 def _da_sold_checks(day):
-    """Turn-ons and Turn-offs "How the output was sold day-ahead" (pipeline/da_sold.py): known ways,
+    """Turn-ons and Turn-offs "How the output was sold: day-ahead or real time" (pipeline/da_sold.py): known ways,
     bands and technologies, hours ending 1 to 24, no negative MW, a band's hours never more than all
     hours, and the share of wind and solar output sold day-ahead in all hours between 1% and 60%."""
     from collections import defaultdict

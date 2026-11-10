@@ -1,4 +1,4 @@
-/* Turn-ons and Turn-offs, "How the output was sold day-ahead": real-time output of thermal, wind and
+/* Turn-ons and Turn-offs, "How the output was sold: day-ahead or real time": real-time output of thermal, wind and
    solar split into what the unit's three-part DAM award covered, what its owner's energy-only
    sale at its node covered, and the rest settled at the real-time price, from data/da_sold.json.gz
    (pipeline/da_sold.py).  By technology, by month and by hour of day, over all hours, hours under
