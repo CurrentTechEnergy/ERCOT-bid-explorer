@@ -287,7 +287,7 @@ async function render(el, e, kinds) {
       { u: "MW", title: storage ? "Output (MW, charging below zero)" : "Available and dispatched output (MW)", series: storage
         ? [{ k: "out", t: "line", c: "--c1", l: "Output", u: "MW" }]
         : [{ k: "hsl", t: "area", c: "--c1", l: "Available (HSL)", u: "MW" }, { k: "bp", t: "line", c: "--c1", l: "Dispatched (base point)", u: "MW", w: 2.2 }]
-          .concat(e.kind.startsWith("dam_") ? [{ k: "award", t: "dash", c: "--c4", l: "Day-ahead award", u: "MW" }] : []) },
+          .concat(e.kind.startsWith("dam_") ? [{ k: "award", t: "dash", c: "--award", l: "Day-ahead award", u: "MW" }] : []) },
       { u: "$", title: "Prices ($/MWh)", series: [
         { k: "off", t: "line", c: "--c2", l: "Offer price", u: "$", w: 2.4 },
         { k: "rt", t: "line", c: "--c3", l: "Real-time price at its node", u: "$" },

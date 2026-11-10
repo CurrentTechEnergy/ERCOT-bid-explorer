@@ -173,7 +173,7 @@ function barChart(el, dstr, up, down, lineS, opts) {
   setCSV(el, ["date", ...all.map((s) => s.label)], dstr.map((d, i) => [d, ...all.map((s) => s.values[i])]), opts.title);
 }
 
-const REV_SERIES = [{ k: "energy", label: "Energy revenue", color: "--c1" }, { k: "as", label: "Ancillary services", color: "--c4" }];
+const REV_SERIES = [{ k: "energy", label: "Energy revenue", color: "--c1" }, { k: "as", label: "Ancillary services", color: "--as" }];
 const COST_SERIES = [{ k: "fuel", label: "Fuel & variable cost", color: "--c8" }, { k: "starts", label: "Start-up cost", color: "--c2" }];
 const MARGIN = { label: "Margin", color: "--c5" };
 function legendHTML(el) {

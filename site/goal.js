@@ -171,7 +171,7 @@ function stack(el, ys, keys, val, opts) {
   el.replaceChildren(svg.node());
 }
 // the day-ahead award against staying on through a cheap midday stretch, by technology
-const AWARD_GROUPS = [["award", "DAM award", "--c1"], ["self", "Self-committed, no award", "--c3"], ["neither", "Neither", "--c2"], ["no award", "No DAM record", "--c-other"]];
+const AWARD_GROUPS = [["award", "DAM award", "--award"], ["self", "Self-committed, no award", "--seq-hi"], ["neither", "Neither", "--c-other"], ["no award", "No DAM record", "--grid"]];
 const Q2_TECHS = ["combined_cycle", "gas_steam", "coal", "combustion_turbine"];
 // the cost chart uses the award chart's groups and colors (AWARD_GROUPS, below)
 function drawQ2Cost() {
@@ -238,8 +238,8 @@ function drawQ2() {
 // ==== 3. Is behavior changing: each unit where shutting pays, units that cycle by loss, the window mix ====
 const Q3_BUCKETS = ["more", "less", "short", "held_mw", "held"];
 const Q3B = {
-  more: { label: "Loss above restart cost (shutting would have paid)", color: "--g1" },
-  less: { label: "Loss below restart cost", color: "--g5" },
+  more: { label: "Loss above restart cost (shutting would have paid)", color: "--loss" },
+  less: { label: "Loss below restart cost", color: "--loss-soft" },
   short: { label: "Too short to cycle", color: "--c4" },
   held_mw: { label: "Held on by the make-whole and ancillary-service pay it would give up", color: "--c7-soft" },
   held: { label: "Held on by ERCOT (RUC), or by a day-ahead AS award before Dec 5, 2025", color: "--c7" },     // purple wherever RUC is marked
@@ -427,8 +427,8 @@ const RUN = {
   none: { label: "Stays curtailed even then", color: "--c8" },
 };
 const ECON = {
-  "losing more than a restart": { label: "Losing more than a restart costs", color: "--g1" },
-  "losing, shutting would not pay": { label: "Losing, but shutting down wouldn't pay", color: "--g5" },
+  "losing more than a restart": { label: "Losing more than a restart costs", color: "--loss" },
+  "losing, shutting would not pay": { label: "Losing, but shutting down wouldn't pay", color: "--loss-soft" },
   "held on by RUC or what it would give up": { label: "Held on by RUC, or by the make-whole and AS it would give up", color: "--c7" },
   "covering its costs": { label: "Covering its costs", color: "--c-other" },
   coal: { label: "Coal", color: "--c8" },

@@ -253,7 +253,7 @@ function drawHeadline() {
   if (a60) {
     CATS.forEach(([k, label, color, note]) => { if (a60.cat[k]) tiles.push(tile(label, color, d3.sum(a60.cat[k]) / 1000, avgOf(a60.cat[k]), note, "60-day disclosure")); });
   } else if (gh && gh.nonIrr.some((v) => v != null)) {
-    tiles.push(tile("Thermal (non-IRR)", "--g3", d3.sum(gh.nonIrr.filter((v) => v != null)) / 1000, avgOf(gh.nonIrr), "ERCOT's \"non-IRR\": everything that is not an intermittent renewable, so gas, coal and other dispatchable units, by base point", "2-day summary"));
+    tiles.push(tile("Thermal (non-IRR)", "--thermal", d3.sum(gh.nonIrr.filter((v) => v != null)) / 1000, avgOf(gh.nonIrr), "ERCOT's \"non-IRR\": everything that is not an intermittent renewable, so gas, coal and other dispatchable units, by base point", "2-day summary"));
     tiles.push(tile("Remaining resources", "--c-other", d3.sum(gh.remaining.filter((v) => v != null)) / 1000, avgOf(gh.remaining), "ERCOT's catch-all for nuclear, hydro and anything not in the other categories, by base point", "2-day summary"));
   }
   [WIND, SOLAR].forEach((s) => {
@@ -381,7 +381,7 @@ function actualSeries() {
     [WIND, SOLAR].forEach((s) => { if (a60.tech[s.id]) areas.push({ ...s, vals: a60.tech[s.id] }); });
     if (a60.tech.storage) { areas.push({ ...STORAGE, id: "storage_dis", label: "Batteries discharging", vals: a60.dis }); below.push({ ...STORAGE, id: "storage_chg", label: "Batteries charging (load)", vals: a60.chg }); }
   } else {
-    areas.push({ id: "thermal", label: "Thermal and other", color: "--g3", vals: gh.thermal });
+    areas.push({ id: "thermal", label: "Thermal and other", color: "--thermal", vals: gh.thermal });
     areas.push({ ...WIND, vals: gh.wind }); areas.push({ ...SOLAR, vals: gh.solar });
     if (gh.discharging.some((v) => v != null)) { areas.push({ ...STORAGE, id: "storage_dis", label: "Batteries discharging", vals: gh.discharging }); below.push({ ...STORAGE, id: "storage_chg", label: "Batteries charging (load)", vals: gh.charging }); }
   }
@@ -466,7 +466,7 @@ function drawActualBars() {
   } else {
     html += `<div class="sect">Thermal · GWh (2-day summary, reported in total)</div>`;
     const th = gwhOf(gh.thermal);
-    push("thermal", "Thermal and other", "non-IRR plus remaining resources; by-group output arrives with the 60-day disclosure", "--g3", null, th, null, null, th * 1.1);
+    push("thermal", "Thermal and other", "non-IRR plus remaining resources; by-group output arrives with the 60-day disclosure", "--thermal", null, th, null, null, th * 1.1);
   }
   html += `<div class="sect">Wind and solar · GWh (${a60 ? "60-day disclosure" : "2-day summary"})</div>`;
   const ren = [WIND, SOLAR].map((s) => { const vals = a60 && a60.tech[s.id] ? a60.tech[s.id] : gh ? gh[s.id] : null; return [s, vals ? gwhOf(vals) : null]; });
@@ -616,7 +616,7 @@ function mixRows(h) {
     return rows;
   }
   if (!gh) return null;
-  const rows = [{ id: "thermal", label: "Thermal and other", color: "--g3", act: gh.thermal[h] }, { ...WIND, act: gh.wind[h] }, { ...SOLAR, act: gh.solar[h] }];
+  const rows = [{ id: "thermal", label: "Thermal and other", color: "--thermal", act: gh.thermal[h] }, { ...WIND, act: gh.wind[h] }, { ...SOLAR, act: gh.solar[h] }];
   if (gh.discharging[h] != null) { const net = gh.discharging[h] + (gh.charging[h] || 0); rows.push({ id: "storage", label: net < 0 ? "Batteries, net (charging)" : "Batteries, net (discharging)", color: "--c7", act: net }); }
   return rows;
 }

@@ -284,10 +284,10 @@ function drawCheap() {
 // in each hour the train takes the "most running" state of its configurations.
 const ST_LEAD = 6;                       // hours before a stretch a unit must already be running
 const ST_RESP = [
-  { id: "B", label: `Turned off in the ${ST_LEAD} h before`, color: "--c8", o: 1 },
-  { id: "D", label: "Turned off during the stretch", color: "--c8", o: 0.45 },
-  { id: "M", label: "Ran at minimum", color: null, o: 0.4 },
-  { id: "A", label: "Ran above minimum", color: null, o: 1 },
+  { id: "B", label: `Turned off in the ${ST_LEAD} h before`, color: "--off", o: 1 },     // turned off: the site-wide --off blue
+  { id: "D", label: "Turned off during the stretch", color: "--off", o: 0.45 },
+  { id: "M", label: "Ran at minimum", color: "--c-other", o: 0.4 },     // running in neutral gray, so only turning off carries color
+  { id: "A", label: "Ran above minimum", color: "--ink-2", o: 0.75 },
 ];
 // Groups by the finest timescale a unit has shown it will shut down on: its shortest off spell.
 const ST_NEVER_ON_DAYS = 120;              // never on needs this many days of hourly states with no running hour
@@ -535,10 +535,10 @@ function drawMonths(fleet, s, thr) {
       ])
     : `<p class="note">No unit changed its behavior between its two most recent windows of ${ST_WINDOW} tested months (a change is ${Math.round(ST_CHANGE * 100)} percentage points or more in the share of cheap hours it turned off for).</p>`;
   if (!units.length) return emptyMsg(el, "No units match.");
-  const base = d3.color(css(s.color));
+  const offRamp = d3.interpolateRgb(css("--grid"), css("--off"));     // as the Goal page's Q3 and the Unit page's year strip
   const cell = (v) => {
     if (v == null) return `<td class="st-na" title="Untested"></td>`;
-    const off = 1 - v, c = base.copy({ opacity: 0.08 + 0.92 * off });     // shade and print the share turned off, as the rest of the site
+    const off = 1 - v, c = d3.color(offRamp(off));     // shade and print the share turned off, as the rest of the site
     return `<td style="background:${c.formatRgb()};color:${off > 0.55 ? "#fff" : "inherit"}">${fmtPct(off)}</td>`;
   };
   el.innerHTML = `<table class="data st-grid"><thead><tr><th class="t">Unit</th><th class="t">Group</th><th>MW</th>` +
@@ -687,7 +687,7 @@ function outageReturns(unit, d) {
   return n;
 }
 // the day-ahead award in the day: none, some hours, every hour (operator_cutoffs "award")
-const AWARD = [{ id: 0, label: "No day-ahead award that day", color: "--c1" }, { id: 1, label: "Awarded some hours", color: "--c3" }, { id: 2, label: "Awarded every hour", color: "--c2" }];
+const AWARD = [{ id: 0, label: "No day-ahead award that day", color: "--c-other" }, { id: 1, label: "Awarded some hours", color: "--award-part" }, { id: 2, label: "Awarded every hour", color: "--award" }];
 const fmt$ = (v) => (v == null || isNaN(v) ? "–" : (v < 0 ? "−" : "") + "$" + d3.format(",.0f")(Math.abs(v)));
 const fmtPerMW = (v) => (v == null || isNaN(v) ? "–" : (v < 0 ? "−" : "") + "$" + d3.format(",.1f")(Math.abs(v)));
 const fmtGW = (v) => d3.format(",.1f")(v / 1e3) + " GW";
@@ -1018,13 +1018,13 @@ function drawCost() {
   const nStretch = S.SO.stretches[String(thr)]?.length || 0;
   const fM = (v) => (v < 0 ? "−" : "") + "$" + d3.format(",.1f")(Math.abs(v) / 1e6) + "M";
   const tL = d3.sum(rows, (r) => r.loss), tS = d3.sum(rows, (r) => r.start), tN = d3.sum(rows, (r) => r.n), tP = d3.sum(rows, (r) => r.paid);
-  window.CX.setNote($("cost-note"), `Did staying on pay? Every time a coal or gas unit kept running through a stretch of real-time lambda below ${fmtPrice0(thr)}/MWh, what its output lost (its fuel cost less what the real-time price at its node paid), set against what shutting down and restarting would have cost instead. Where the red bar is taller than the blue, staying on was the dearer choice. ` +
+  window.CX.setNote($("cost-note"), `Did staying on pay? Every time a coal or gas unit kept running through a stretch of real-time lambda below ${fmtPrice0(thr)}/MWh, what its output lost (its fuel cost less what the real-time price at its node paid), set against what shutting down and restarting would have cost instead. Where the navy bar is taller than the gray, staying on was the dearer choice. ` +
     (tN ? `Over ${nStretch} stretches, ${d3.format(",")(tN)} ride-throughs lost ${fM(tL)} against ${fM(tS)} of restarts avoided; shutting down would have paid in ${fmtPct(tP / tN)} of them.` : ""), `Every time a coal or gas unit ran through a stretch of hours with system lambda below ${fmtPrice0(thr)} (${nStretch} stretches of ${S.SO.min_hours} hours or more), what its output lost at its own real-time node price against its fuel cost, and what a shutdown and restart would have cost instead (hot start for stretches up to ${S.SO.hot_h} hours, intermediate up to ${S.SO.inter_h}, cold beyond). ` +
     `Where the loss is bigger than the restart cost, shutting down would have paid; the difference is the loss above restart cost. Fuel cost is each unit's measured heat rate at minimum (EPA hourly heat input over ERCOT net output) × its own gas hub's price the trading day before, or for coal the plant's EIA-923 delivered price; where its hub has no recent price Henry Hub stands in, and a unit with no measured heat rate takes its technology's median (both counted as estimated). Start costs are the unit's own day-ahead start-up offer, its latest within ${S.SO.cost_days} days, or a generic value for the technology. Revenue is at the unit's own node, so a unit behind congestion is credited what its energy was worth where it sits; ${(() => { const n = d3.sum(rows, (r) => r.n), l = d3.sum(rows, (r) => r.lam); return l ? `${fmtPct(l / n)} of ride-throughs had no node price and are valued at system lambda` : "every ride-through here has a node price"; })()}. ` +
     `A unit with a turn-off point that keeps riding through stretches where shutting down would have paid may hold contracts, ancillary service obligations or start costs these numbers do not see; the units table at the foot of the page puts each unit's loss above restart cost beside its turn-off point.`);
   const S2 = [
-    { id: "loss", label: "Loss from staying on (cost less revenue at its node)", color: "--c8" },
-    { id: "start", label: "Restart cost", color: "--c1" },
+    { id: "loss", label: "Loss from staying on (cost less revenue at its node)", color: "--loss" },
+    { id: "start", label: "Restart cost", color: "--c-other" },
   ];
   staticLegend($("cost-legend"), S2);
   const w = Math.max(280, el.clientWidth || 600), H = 260, m = { t: 22, r: 16, b: 60, l: 64 };
