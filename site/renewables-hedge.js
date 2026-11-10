@@ -99,16 +99,14 @@ function rows() {
 function drawKpis() {
   const D = S.data, us = D.units.filter((u) => S.tech === "all" || u.tech === S.tech);
   const n = (t) => us.filter((u) => u.tier === t).length;
-  const standing = us.filter((u) => u.tier !== "hints" && u.days >= 30).length;
   $("scan-note").textContent = `${D.n_days} days, ${D.first} to ${D.last}`;
   $("kpis").innerHTML = [
     [fmt0(us.length), "Units scanned"],
-    [fmt0(n("revealed")), "Revealed"], [fmt0(n("unclear")), "Location unclear"], [fmt0(n("partial")), "Partial"],
-    [fmt0(standing), "Formula on 30+ days"],
+    [fmt0(n("revealed") + n("unclear") + n("partial")), "With a formula"],
   ].map(([v, k]) => `<div class="kpi"><span class="v">${v}</span><span class="k">${k}</span></div>`).join("");
   const nF = n("revealed") + n("unclear") + n("partial");
   window.CX.setNote($("kpi-note"), `Which wind and solar units bid as if they hold a fixed-price hedge. A unit that has sold its output forward tends to offer in real time at a formula of the day-ahead price (share × DA price − a constant, roughly its strike less any tax credit), and keeps producing through negative prices for as long as the formula says so: these are the units least likely to curtail. ` +
-    `Of ${fmt0(us.length)} units scanned, ${fmt0(nF)} follow such a formula: ${fmt0(n("revealed"))} clearly at an identifiable settlement point ("Revealed"), ${fmt0(n("unclear"))} clearly but at an unclear point, and ${fmt0(n("partial"))} on only part of their hours. ${fmt0(standing)} have followed it for 30 days or more, a standing rule rather than a one-off.`, `A formula found on many days is a standing bidding rule; one found only on a few high-price days is a policy the operator switched on. DA hub and load zone prices cover ${D.hub_days.length ? `${D.hub_days[0]} to ${D.hub_days[D.hub_days.length - 1]}` : "no days yet"}; outside that range only the unit's own node can be tested.`);
+    `Of ${fmt0(us.length)} units scanned, ${fmt0(nF)} follow such a formula. The table shows how firmly each one fits in its Tier column.`, `A formula found on many days is a standing bidding rule; one found only on a few high-price days is a policy the operator switched on. DA hub and load zone prices cover ${D.hub_days.length ? `${D.hub_days[0]} to ${D.hub_days[D.hub_days.length - 1]}` : "no days yet"}; outside that range only the unit's own node can be tested.`);
   $("credit-v").textContent = fmt$0(D.credit);
   $("tier-legend").innerHTML = Object.entries(TIER).map(([, t]) => `<span class="has-tip" data-tip="${esc(t.tip)}"><span class="sw" style="background:var(${t.color})"></span>${t.label}</span>`).join("");
   $("tier-legend").querySelectorAll("[data-tip]").forEach((el) => {
