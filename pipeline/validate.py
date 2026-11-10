@@ -57,7 +57,9 @@ consistency:
                     (thermal_years.py): one value per day per field for every thermal technology,
                     no negative energy, starts or start cost, the realised $/MWh within -$1,000 to
                     $10,000 on a day with real output, and no technology missing from a day the
-                    file covers
+                    file covers; and renewables/earned.json.gz (renew_earned.py): one value per
+                    day per field for wind and solar, no negative energy or curtailment, the
+                    realised $/MWh within -$1,000 to $10,000 on a day with real output
 
 A check is an "error" when the numbers cannot both be right (a parsing or mapping bug), a
 "warning" when something is worth a look, and "info" when it is only recorded.  Results that did not pass are kept per day in data/validation.json.
@@ -788,6 +790,7 @@ def check_files(index):
     _battery_bench_checks(day)
     _renew_years_checks(day)
     _thermal_years_checks(day)
+    _renew_earned_checks(day)
     _dam_offer_checks(day)
     _operator_score_checks(day)
     _operator_cutoff_checks(day)
@@ -893,6 +896,34 @@ def _thermal_years_checks(day):
             f"e.g. {bad[:3]}" if bad else "energy, starts and realised prices in range")
     day.add("thermal_years_days", "warning" if missing else "ok",
             f"{len(missing)} technology-day(s) with no units, e.g. {missing[:3]}" if missing else "every technology on every day")
+
+
+def _renew_earned_checks(day):
+    """What wind and solar earned (renew_earned.py): one value per day per field, energy and
+    curtailment never below zero, realised $/MWh in range on a day with real output."""
+    from .renew_earned import FIELDS as RE_FIELDS, PATH as RE_PATH, TECHS as RE_TECHS
+    f = read_json_gz(RE_PATH, default=None)
+    if f is None:
+        return
+    dates = f.get("dates", [])
+    n = len(dates)
+    bad_len = [t for t in RE_TECHS if any(len(((f.get("techs") or {}).get(t) or {}).get(k, [])) != n for k in RE_FIELDS)]
+    bad_len += [k for k in ("src", "hub_rt", "sys_gen", "sys_rev") if len(f.get(k) or []) != n]
+    bad = []
+    if not bad_len:
+        for t in RE_TECHS:
+            x = f["techs"][t]
+            for i, d in enumerate(dates):
+                g = x["gen"][i]
+                if g is None:
+                    continue
+                if g < 0 or (x["curt"][i] or 0) < 0 or (g >= 1000 and not -1000 <= (x["rev"][i] or 0) / g <= 10000):
+                    bad.append(f"{t} {d}")
+    day.add("renew_earned_rows", "error" if bad_len else "ok",
+            f"{bad_len[:3]} not one value per day" if bad_len else f"{n} days, {dates[0] if dates else '-'} to {dates[-1] if dates else '-'}")
+    day.add("renew_earned_values", "error" if bad else "ok",
+            f"{len(bad)} technology-day(s) with negative energy or curtailment, or a realised price out of range, e.g. {bad[:3]}"
+            if bad else "energy, curtailment and realised prices in range")
 
 
 def _renew_years_checks(day):
