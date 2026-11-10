@@ -282,15 +282,18 @@ function drawQ3() {
     ((a.late ?? 0) - (a.early ?? 0)) - ((b.late ?? 0) - (b.early ?? 0))) || a.tr.localeCompare(b.tr));
   const ys = years();
   {
-    const el = $("q3h-chart"), w = Math.max(320, el.clientWidth || 700), rh = 14, narrow = w < 560, m = { t: 22, r: narrow ? 44 : 64, b: 6, l: narrow ? 104 : 150 };
-    const H = m.t + rh * T.length + m.b;
+    const el = $("q3h-chart"), w = Math.max(320, el.clientWidth || 700), rh = 14, narrow = w < 560, m = { t: 22, r: narrow ? (T.some((r) => r.almost || r.never) ? 62 : 44) : 64, b: 6, l: narrow ? 104 : 150 };
+    // a one-row gap at the almost-never-off break carries the last column's second header ("times off")
+    const na = T.findIndex((r) => key(r) >= 2), nb = T.findIndex((r) => key(r) === 3), gapAt = na;
+    const rowY = (i) => m.t + i * rh + (gapAt >= 0 && i >= gapAt ? rh : 0);
+    const H = m.t + rh * (T.length + (gapAt >= 0 ? 1 : 0)) + m.b;
     const x = d3.scaleBand().domain(ys).range([m.l, w - m.r]).paddingInner(0.06);
     const col = d3.scaleSequential(d3.interpolateRgb(css("--grid"), css("--c1"))).domain([0, 1]);
     const svg = d3.create("svg").attr("viewBox", `0 0 ${w} ${H}`);
     ys.forEach((y) => svg.append("text").attr("x", x(y) + x.bandwidth() / 2).attr("y", 14).attr("text-anchor", "middle").attr("font-size", 11).attr("fill", css("--muted")).text(narrow ? `'${String(y).slice(2)}` : yTick(y)));
     svg.append("text").attr("x", w - m.r + 6).attr("y", 14).attr("font-size", 11).attr("fill", css("--muted")).text("change, pt");
     T.forEach((r, i) => {
-      const y0 = m.t + i * rh;
+      const y0 = rowY(i);
       // the unit's name opens its Unit page (decision history and its own yearly strip)
       const a = svg.append("a").attr("href", `unit.html?unit=${encodeURIComponent(r.tr)}`).attr("class", "q3h-unit");
       a.append("title").text(`Open ${r.tr}'s unit page`);
@@ -301,6 +304,7 @@ function drawQ3() {
         .on("pointermove", (ev) => showTip(ev, `<h4>${esc(r.tr)}, ${c.y}${yearLabel(c.y) === String(c.y) ? "" : "*"}</h4><table>` +
           `<tr><td>Turned off for</td><td class="n">${fmtPct(c.v)}</td></tr><tr><td>Windows where shutting paid</td><td class="n">${c.n}</td></tr>` +
           (r.lsl != null ? `<tr><td>Minimum output</td><td class="n">${d3.format(",")(r.lsl)} MW</td></tr>` : "") +
+          (r.almost || r.never ? `<tr><td>Turned off, whole record</td><td class="n">${r.almost ? r.almost.off : 0} of ${d3.format(",")(r.almost ? r.almost.n : everN.get(r.tr) || 0)}</td></tr>` : "") +
           (d != null ? `<tr><td>Change, ${b0}–${String(b1).slice(2)} to 2024 on</td><td class="n">${d > 0 ? "+" : d < 0 ? "−" : ""}${Math.abs(Math.round(100 * d))} pt</td></tr>` : "") +
           `</table>${yearLabel(c.y) === String(c.y) ? "" : `<p class="tip-pin-note">* ${esc(yearLabel(c.y).slice(6, -1))}</p>`}<p class="tip-pin-note">Click the name for its unit page</p>`))
         .on("pointerleave", hideTip));
@@ -314,11 +318,12 @@ function drawQ3() {
           .text(`${d > 0 ? "+" : d < 0 ? "−" : ""}${Math.abs(Math.round(100 * d))} pt`);
       }
     });
-    const na = T.findIndex((r) => key(r) >= 2), nb = T.findIndex((r) => key(r) === 3);
-    if (na > 0 && na !== nb) svg.append("line").attr("x1", m.l).attr("x2", w - m.r).attr("y1", m.t + na * rh).attr("y2", m.t + na * rh).attr("stroke", css("--muted")).attr("stroke-dasharray", "1 3");
-    if (nb > 0) svg.append("line").attr("x1", m.l).attr("x2", w - m.r).attr("y1", m.t + nb * rh).attr("y2", m.t + nb * rh).attr("stroke", css("--ink")).attr("stroke-dasharray", "3 3");
+    if (gapAt >= 0) svg.append("text").attr("x", w - m.r + 6).attr("y", rowY(gapAt) - 4).attr("font-size", 11).attr("fill", css("--muted")).text("times off");
+    if (na > 0 && na !== nb) svg.append("line").attr("x1", m.l).attr("x2", w - m.r).attr("y1", rowY(na) - rh / 2).attr("y2", rowY(na) - rh / 2).attr("stroke", css("--muted")).attr("stroke-dasharray", "1 3");
+    if (nb > 0) { const yb = nb === na ? rowY(nb) - rh / 2 : rowY(nb); svg.append("line").attr("x1", m.l).attr("x2", w - m.r).attr("y1", yb).attr("y2", yb).attr("stroke", css("--ink")).attr("stroke-dasharray", "3 3"); }
     el.replaceChildren(svg.node());
-    $("q3h-legend").innerHTML = `<span>Each cell: of the unit's loss windows where shutting would have paid, the share it turned off for (${q.unit_min} such windows or more). Light = rode through, dark = turned off. Biggest drop first. Below the dotted line, almost never off: turned off for 2% or fewer of 20 or more such windows over the record; below the dashed line, never off: none of 20 or more. For both, the last column gives the times turned off of those windows. Beside each name, its minimum output (LSL). Change: 2024 on against ${b0} to ${b1}, in percentage points.</span>`;
+    const ex = T.find((r) => r.almost);
+    $("q3h-legend").innerHTML = `<span>Each cell: of the unit's loss windows where shutting would have paid, the share it turned off for (${q.unit_min} such windows or more). Light = rode through, dark = turned off. Biggest drop first. Below the dotted line, almost never off: turned off for 2% or fewer of 20 or more such windows over the record; below the dashed line, never off: none of 20 or more. For units below the dotted line, the last column is the number of times it turned off out of its windows where shutting would have paid, over the whole record${ex ? ` (${esc(ex.tr)}: ${ex.almost.off} of ${d3.format(",")(ex.almost.n)})` : ""}; a change in points means little for a unit that is almost always on. Beside each name, its minimum output (LSL). Change: 2024 on against ${b0} to ${b1}, in percentage points.</span>`;
     setCSV(el, ["train", "lsl_mw", ...ys.map(String), "early", "late", "never_off", "almost_never_off"], T.map((r) => [r.tr, r.lsl, ...ys.map((y) => (r.cells.find((c) => c.y === y) || {}).v ?? ""), r.early, r.late, r.never, !!r.almost]), `Units ${t}`);
     const both = T.filter((r) => key(r) === 0), fell = both.filter((r) => r.late < r.early - 0.2).length, rose = both.filter((r) => r.late > r.early + 0.2).length;
     $("q3h-text").textContent = `Of the ${both.length} ${TECH[t].toLowerCase()} units with such windows in both ${b0} to ${b1} and 2024 on, ${fell} now turn off at least 20 percentage points less often than they did, ${rose} ${rose === 1 ? "turns" : "turn"} off at least 20 points more often, and ${both.length - fell - rose} are within 20 points. ${never.size} ${never.size === 1 ? "unit has" : "units have"} never turned off where shutting would have paid, and ${almost.size} almost never.`;
