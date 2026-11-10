@@ -517,36 +517,36 @@ function drawMonths(fleet, s, thr) {
     .sort((a, b) => d3.ascending(ST_GROUPS.findIndex((g) => g.id === a.e.group), ST_GROUPS.findIndex((g) => g.id === b.e.group)) || d3.descending(a.e.mw, b.e.mw));
   const tested = M.months.map((_, i) => M.cheapH[i] >= ST_MIN_CHEAP_H);
   const bi = d3.maxIndex(M.cheapH), atAll = units.filter((x) => x.r.share[bi] != null), at100 = atAll.filter((x) => x.r.share[bi] >= 0.999).length;
-  window.CX.setNote($("st-month-note"), `For each unit and month, the share of the hours with real-time lambda below ${fmtPrice0(thr)}/MWh that it kept running while it was available. Dark cells rode through nearly every cheap hour; light cells turned off for most; blank cells had too few cheap hours (under ${ST_MIN_CHEAP_H}) to judge. Rows are sorted by group, then capacity.` +
-    (atAll.length ? ` In ${d3.timeFormat("%B %Y")(parseDate(M.months[bi] + "-15"))}, the month with most cheap hours (${M.cheapH[bi]}), ${at100} of ${atAll.length} judged units ran through every one of them.` : ""), `Each cell is the share of hours with system lambda below ${fmtPrice0(thr)} that month in which the unit kept running, out of the hours it was available (running or off but not on outage). ` +
-    `Dark means it rode through, light means it turned off. Blank cells are untested: fewer than ${ST_MIN_CHEAP_H} cheap hours while the unit was available, or the unit on outage. ` +
+  window.CX.setNote($("st-month-note"), `For each unit and month, the share of the hours with real-time lambda below ${fmtPrice0(thr)}/MWh that it was turned off for while it was available. Dark cells turned off for most cheap hours; light cells rode through nearly all of them; blank cells had too few cheap hours (under ${ST_MIN_CHEAP_H}) to judge. Rows are sorted by group, then capacity.` +
+    (atAll.length ? ` In ${d3.timeFormat("%B %Y")(parseDate(M.months[bi] + "-15"))}, the month with most cheap hours (${M.cheapH[bi]}), ${at100} of ${atAll.length} judged units never turned off for any of them.` : ""), `Each cell is the share of hours with system lambda below ${fmtPrice0(thr)} that month in which the unit was offline by choice, out of the hours it was available (running or off but not on outage). ` +
+    `Dark means it turned off, light means it rode through. Blank cells are untested: fewer than ${ST_MIN_CHEAP_H} cheap hours while the unit was available, or the unit on outage. ` +
     `A unit's own month can be untested in a month with cheap hours if it was on outage for them. Rows are sorted by group, then capacity. Click a row to open the unit.`);
   // units whose share moved between the two most recent windows of tested months
   const changed = units.map((x) => ({ ...x, c: monthChange(x.r) })).filter((x) => x.c && Math.abs(x.c.late - x.c.early) >= ST_CHANGE)
     .sort((a, b) => d3.descending(Math.abs(b.c.late - b.c.early), Math.abs(a.c.late - a.c.early)));
   const win = (ix) => `${fmtM(M.months[ix[0]])}–${fmtM(M.months[ix.at(-1)])}`;
   $("st-changed").innerHTML = changed.length
-    ? `<p class="note">Changed behavior: units whose run-through share moved by ${Math.round(ST_CHANGE * 100)} percentage points or more between their two most recent windows of ${ST_WINDOW} tested months.</p>` +
+    ? `<p class="note">Changed behavior: units whose turned-off share moved by ${Math.round(ST_CHANGE * 100)} percentage points or more between their two most recent windows of ${ST_WINDOW} tested months.</p>` +
       unitRows(changed.map((x) => ({ ...x.e, unit: x.e.pick, c: x.c })), [
         { h: "Unit", t: 1, f: (r) => esc(r.unit === r.pick ? r.unit : `${r.unit} (${r.unit})`) }, { h: "Technology", t: 1, f: (r) => techLabel(r.tech) }, { h: "Group", t: 1, f: (r) => gl(r.group) + pTag(r.unit) },
-        { h: "MW", f: (r) => fmtMW(r.mw) }, { h: "Earlier window", t: 1, f: (r) => win(r.c.earlyIx) }, { h: "Ran through", f: (r) => fmtPct(r.c.early) },
-        { h: "Latest window", t: 1, f: (r) => win(r.c.lateIx) }, { h: "Ran through", f: (r) => fmtPct(r.c.late) },
-        { h: "Change, points", f: (r) => (r.c.late >= r.c.early ? "+" : "−") + Math.round(Math.abs(r.c.late - r.c.early) * 100) },
+        { h: "MW", f: (r) => fmtMW(r.mw) }, { h: "Earlier window", t: 1, f: (r) => win(r.c.earlyIx) }, { h: "Turned off", f: (r) => fmtPct(1 - r.c.early) },
+        { h: "Latest window", t: 1, f: (r) => win(r.c.lateIx) }, { h: "Turned off", f: (r) => fmtPct(1 - r.c.late) },
+        { h: "Change, points", f: (r) => (r.c.late <= r.c.early ? "+" : "−") + Math.round(Math.abs(r.c.late - r.c.early) * 100) },
       ])
-    : `<p class="note">No unit changed its behavior between its two most recent windows of ${ST_WINDOW} tested months (a change is ${Math.round(ST_CHANGE * 100)} percentage points or more in the share of cheap hours it ran through).</p>`;
+    : `<p class="note">No unit changed its behavior between its two most recent windows of ${ST_WINDOW} tested months (a change is ${Math.round(ST_CHANGE * 100)} percentage points or more in the share of cheap hours it turned off for).</p>`;
   if (!units.length) return emptyMsg(el, "No units match.");
   const base = d3.color(css(s.color));
   const cell = (v) => {
     if (v == null) return `<td class="st-na" title="Untested"></td>`;
-    const c = base.copy({ opacity: 0.08 + 0.92 * v });
-    return `<td style="background:${c.formatRgb()};color:${v > 0.55 ? "#fff" : "inherit"}">${fmtPct(v)}</td>`;
+    const off = 1 - v, c = base.copy({ opacity: 0.08 + 0.92 * off });     // shade and print the share turned off, as the rest of the site
+    return `<td style="background:${c.formatRgb()};color:${off > 0.55 ? "#fff" : "inherit"}">${fmtPct(off)}</td>`;
   };
   el.innerHTML = `<table class="data st-grid"><thead><tr><th class="t">Unit</th><th class="t">Group</th><th>MW</th>` +
     M.months.map((m, i) => `<th${tested[i] ? "" : ' class="st-na"'} title="${M.cheapH[i]} hour${M.cheapH[i] === 1 ? "" : "s"} below ${fmtPrice0(thr)}/MWh">${fmtM(m)}<br><span class="muted">${M.cheapH[i]} h</span></th>`).join("") + "</tr></thead><tbody>" +
     units.map((x) => `<tr data-unit="${esc(x.e.pick)}" style="cursor:pointer"><td class="t">${esc(x.e.unit)}</td><td class="t">${gl(x.e.group)}</td><td>${fmtMW(x.e.mw)}</td>${x.r.share.map(cell).join("")}</tr>`).join("") +
     "</tbody></table>";
-  setCSV(el, ["unit", "technology", "group", "mw", ...M.months.map((m) => `${m}_share_ran_through`), ...M.months.map((m) => `${m}_cheap_hours_available`)],
-    units.map((x) => [x.e.unit, x.e.tech, x.e.group, Math.round(x.e.mw), ...x.r.share.map((v) => (v == null ? "" : v.toFixed(3))), ...x.r.avail]), `cheap-hours-month-by-month-${thr}`);
+  setCSV(el, ["unit", "technology", "group", "mw", ...M.months.map((m) => `${m}_share_turned_off`), ...M.months.map((m) => `${m}_cheap_hours_available`)],
+    units.map((x) => [x.e.unit, x.e.tech, x.e.group, Math.round(x.e.mw), ...x.r.share.map((v) => (v == null ? "" : (1 - v).toFixed(3))), ...x.r.avail]), `cheap-hours-month-by-month-${thr}`);
 }
 // pipeline/decisions.py: a unit's shutdown decisions scored day-ahead (see decisionOf)
 const DEC_F = { tech: 0, lsl: 1, mingen: 2, hot: 3, est: 4, days: 5, shut: 6, award: 7, base: 8, cutoff: 9, acc: 10, stayMax: 11, shutMin: 12, accNew: 13 };

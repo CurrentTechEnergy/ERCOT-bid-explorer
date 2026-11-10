@@ -205,7 +205,7 @@ function drawQ2() {
   const y = d3.max(R.filter((r) => r.group === "self"), (r) => r.year) || d3.max(R, (r) => r.year);
   const get = (t, k) => R.find((r) => r.year === y && r.tech === t && r.group === k) || { n: 0, stayed: 0 };
   const rows = Q2_TECHS.flatMap((t) => AWARD_GROUPS.filter(([k]) => get(t, k).n).map(([k, label, c]) => ({ t, k, label, c, ...get(t, k) })));
-  $("q2a-title").textContent = `Units online going into a cheap midday stretch, ${yearLabel(y)}: share that stayed online through it`;
+  $("q2a-title").textContent = `Units online going into a cheap midday stretch, ${yearLabel(y)}: share that turned off during it`;
   // one small panel per technology: two columns on a wide screen, stacked on a narrow one
   const W = Math.max(300, el.clientWidth || 700), cols = W >= 900 ? 2 : 1, cg = 40, w = (W - cg * (cols - 1)) / cols;
   const m = { t: 22, r: 52, b: 22, l: 166 }, band = 30, bh = 20;
@@ -219,7 +219,7 @@ function drawQ2() {
     p.append("g").attr("class", "gridline").attr("transform", `translate(0,${base})`).call(d3.axisBottom(x).ticks(w < 500 ? 2 : 4).tickSize(-(base - m.t)).tickFormat(""));
     p.append("g").attr("class", "axis").attr("transform", `translate(0,${base})`).call(d3.axisBottom(x).ticks(w < 500 ? 2 : 4).tickFormat(fmtPct).tickSizeOuter(0));
     g.forEach((r, i) => {
-      const v = r.stayed / r.n, top = m.t + i * band + (band - bh) / 2;
+      const v = 1 - r.stayed / r.n, top = m.t + i * band + (band - bh) / 2;
       p.append("rect").attr("x", x(0)).attr("y", top).attr("width", x(v) - x(0)).attr("height", bh).attr("fill", css(r.c));
       p.append("text").attr("x", x(v) + 6).attr("y", top + bh / 2).attr("dy", "0.35em").attr("class", "bar-val").style("font-weight", 600).text(d3.format(".1%")(v));
       const t = p.append("text").attr("x", m.l - 8).attr("y", top + bh / 2).attr("text-anchor", "end").attr("class", "axis-label");
@@ -228,11 +228,11 @@ function drawQ2() {
     });
   });
   el.replaceChildren(svg.node());
-  setCSV(el, ["year", "tech", "group", "unit_days", "stayed_online"], R.map((r) => [r.year, r.tech, r.group, r.n, r.stayed]), "Award and staying on");
-  const p = (t, k) => d3.format(".1%")(get(t, k).stayed / Math.max(1, get(t, k).n));
-  $("q2-answer").innerHTML = `<b>A day-ahead award or a self-commitment keeps a unit on; the price does not turn it off.</b> In ${yearLabel(y)}, combined cycles going into a cheap midday stretch with a day-ahead award stayed online through it ${p("combined_cycle", "award")} of the time, self-committed ones ${p("combined_cycle", "self")}, and those with neither only ${p("combined_cycle", "neither")}. Coal and gas steam stay on almost regardless: ${p("coal", "self")} of self-committed coal and ${p("gas_steam", "self")} of self-committed gas steam rode through.` + (S.q2cost ? ` ${S.q2cost}` : "");
-  setNote($("q2-note"), `Two views of the same groups: first what staying on through cheap hours cost, by year; then, for units online going into the day's first cheap midday stretch, the share that stayed online through it, by whether a day-ahead award, their own commitment or neither had them on. Combined-cycle configurations count as one train. * part year.`,
-    `Counted: unit-days online in the hour before the day's first run of two or more cheap hours (day-ahead system lambda of $${S.G.cheap}/MWh or less) between HE 8 and HE 19, with no outage hour in it; stayed online means no offline hour in the run (60-day SCED and DAM disclosures). DAM award: an energy award over 0.5 MW in at least half the run's hours. Self-committed: no award, and the unit's DAM resource status on at the run's first hour. The status comes from the 60-day DAM disclosure, every year from 2019.`);
+  setCSV(el, ["year", "tech", "group", "unit_days", "turned_off", "share_turned_off"], R.map((r) => [r.year, r.tech, r.group, r.n, r.n - r.stayed, r.n ? +(1 - r.stayed / r.n).toFixed(4) : null]), "Award and turning off");
+  const p = (t, k) => d3.format(".1%")(1 - get(t, k).stayed / Math.max(1, get(t, k).n));
+  $("q2-answer").innerHTML = `<b>A day-ahead award or a self-commitment keeps a unit on; the price does not turn it off.</b> In ${yearLabel(y)}, combined cycles going into a cheap midday stretch with a day-ahead award turned off during it only ${p("combined_cycle", "award")} of the time, self-committed ones ${p("combined_cycle", "self")}, and those with neither ${p("combined_cycle", "neither")}. Coal and gas steam stay on almost regardless: only ${p("coal", "self")} of self-committed coal and ${p("gas_steam", "self")} of self-committed gas steam turned off.` + (S.q2cost ? ` ${S.q2cost}` : "");
+  setNote($("q2-note"), `Two views of the same groups: first what staying on through cheap hours cost, by year; then, for units online going into the day's first cheap midday stretch, the share that turned off during it, by whether a day-ahead award, their own commitment or neither had them on. Combined-cycle configurations count as one train. * part year.`,
+    `Counted: unit-days online in the hour before the day's first run of two or more cheap hours (day-ahead system lambda of $${S.G.cheap}/MWh or less) between HE 8 and HE 19, with no outage hour in it; turned off means at least one offline hour in the run (60-day SCED and DAM disclosures). DAM award: an energy award over 0.5 MW in at least half the run's hours. Self-committed: no award, and the unit's DAM resource status on at the run's first hour. The status comes from the 60-day DAM disclosure, every year from 2019.`);
 }
 
 // ==== 3. Is behavior changing: each unit where shutting pays, units that cycle by loss, the window mix ====
