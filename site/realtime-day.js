@@ -8,7 +8,7 @@
 // Colors are fixed per technology (never re-assigned when series are hidden).
 const SERIES = {
   "2d": [
-    { id: "non_irr", keys: ["non_irr"], label: "Thermal & other (non-IRR)", color: "--c1" },
+    { id: "non_irr", keys: ["non_irr"], label: "Thermal & other (non-IRR)", color: "--thermal" },
     { id: "wind", keys: ["wind"], label: "Wind", color: "--c3" },
     { id: "solar", keys: ["solar"], label: "Solar", color: "--c4" },
     { id: "storage", keys: ["storage"], label: "Storage (ESR)", color: "--c7" },

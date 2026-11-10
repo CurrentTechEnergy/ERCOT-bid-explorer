@@ -172,7 +172,7 @@ function drawDays(name) {
   const value = [{ label: "Perfect battery, energy", color: "--ink-2", width: 1.4, values: K(c.perfect), fmt: fmtK }];
   const bars = [
     { label: "Energy earned", color: "--c7", values: K(c.actual), fmt: fmtK },
-    { label: "Day-ahead AS earned", color: "--c7-soft", values: K(c.dam_as), fmt: fmtK },
+    { label: "Day-ahead AS earned", color: "--as", values: K(c.dam_as), fmt: fmtK },
   ];
   legend($("batt-value-legend"), bars.concat(value));
   const top = d3.quantile(K(c.perfect).filter((v) => v != null).sort(d3.ascending), 0.98);

@@ -20,6 +20,13 @@
   --c-other: #9a9891;
   --seq-lo: #eef4fc; --seq-hi: #0d366b;
   --sold-3p: #0b5c63; --sold-eo: #6fb7b4;   /* "How the output was sold": day-ahead ways, teal so they never read as the commitment blues */
+  /* one meaning, one color, on every page (site color audit, Nov 2026) */
+  --award: #0b5c63; --award-part: #6fb7b4;   /* day-ahead award: every hour / some hours (no award: --c-other); self-committed: --seq-hi */
+  --off: #2a78d6;                            /* turned off; shares shade from --grid to --off */
+  --loss: #0d366b; --loss-soft: #7fb0ec;     /* loss from staying on: above / below restart cost; restart cost: --c-other */
+  --as: #eda100;                             /* ancillary services */
+  --thermal: #52514e;                        /* thermal total (non-IRR), never a group or technology color */
+  --bid1: #0d366b; --bid2: #2f6fc4; --bid3: #6fa3e6; --bid4: #b5d0f3; --bid-pos: #eb6834;   /* offer price: deepest negative darkest blue, about $0 --c-other, above $0 orange */
   --font-ui: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
   --font-head: "IBM Plex Sans Condensed", "IBM Plex Sans", system-ui, sans-serif;
   --font-data: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
@@ -34,6 +41,8 @@
     --c5: #d55181; --c6: #008300; --c7: #9085e9; --c7-soft: #5a48c0; --c8: #e66767; --c-other: #77756f;
     --seq-lo: #1d2633; --seq-hi: #9ec5f4;
     --sold-3p: #7fd0c9; --sold-eo: #2c7a77;
+    --award: #7fd0c9; --award-part: #2c7a77; --off: #3987e5; --loss: #9ec5f4; --loss-soft: #2a5a9c; --as: #c98500; --thermal: #c3c2b7;
+    --bid1: #9ec5f4; --bid2: #5a95e0; --bid3: #3b78c8; --bid4: #1d4274; --bid-pos: #d95926;
   }
 }
 :root[data-theme="dark"] {
@@ -45,6 +54,8 @@
   --c5: #d55181; --c6: #008300; --c7: #9085e9; --c7-soft: #5a48c0; --c8: #e66767; --c-other: #77756f;
   --seq-lo: #1d2633; --seq-hi: #9ec5f4;
   --sold-3p: #7fd0c9; --sold-eo: #2c7a77;
+  --award: #7fd0c9; --award-part: #2c7a77; --off: #3987e5; --loss: #9ec5f4; --loss-soft: #2a5a9c; --as: #c98500; --thermal: #c3c2b7;
+  --bid1: #9ec5f4; --bid2: #5a95e0; --bid3: #3b78c8; --bid4: #1d4274; --bid-pos: #d95926;
 }
 
 * { box-sizing: border-box; }

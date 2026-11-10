@@ -225,9 +225,9 @@ function drawHeadroom() {
   const hd = F("head_dis"), hc = F("head_chg"), au = F("as_up"), ad = F("as_dn");
   const pos = (a, b) => HOURS.map((h) => (a[h] == null ? null : Math.max(0, a[h] - (b[h] || 0))));
   const bars = [
-    { label: "Discharge room held for AS", color: "--c2", values: gw(au.map((v, h) => (v == null || hd[h] == null ? null : Math.min(v, hd[h])))) },
+    { label: "Discharge room held for AS", color: "--as", values: gw(au.map((v, h) => (v == null || hd[h] == null ? null : Math.min(v, hd[h])))) },
     { label: "Discharge room free, not used", color: "--c7", values: gw(pos(hd, au)) },
-    { label: "Charging room held for AS (Reg-Down)", color: "--c4", values: gw(ad.map((v, h) => (v == null || hc[h] == null ? null : -Math.min(v, hc[h])))) },
+    { label: "Charging room held for AS (Reg-Down)", color: "--as", values: gw(ad.map((v, h) => (v == null || hc[h] == null ? null : -Math.min(v, hc[h])))) },
     { label: "Charging room free, not used", color: "--c7-soft", values: gw(pos(hc, ad).map((v) => (v == null ? null : -v))) },
   ];
   staticLegend($("head-legend"), bars);
@@ -322,7 +322,7 @@ function drawDays() {
   const value = [{ label: "Perfect battery, energy", color: "--ink-2", width: 1.4, values: M(f.perfect), fmt: fmtM }];
   const bars = [
     { label: "Energy earned", color: "--c7", values: M(f.actual), fmt: fmtM },
-    { label: "Day-ahead AS earned", color: "--c7-soft", values: M(f.dam_as), fmt: fmtM },
+    { label: "Day-ahead AS earned", color: "--as", values: M(f.dam_as), fmt: fmtM },
   ];
   staticLegend($("days-value-legend"), bars.concat(value));
   const top = d3.quantile(M(f.perfect).filter((v) => v != null).sort(d3.ascending), 0.98);

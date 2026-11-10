@@ -20,22 +20,6 @@ const TECHS = [
   { id: "coal", keys: ["coal"], label: "Coal & lignite", color: "--c8" },
   { id: "other", keys: ["hydro", "other"], label: "Other (hydro, diesel, biomass)", color: "--c-other" },
 ];
-const THERMAL = ["nuclear", "coal", "combined_cycle", "gas_steam", "combustion_turbine"];
-// wind and solar offer price bands (pipeline/curve_trends.py), ordered from cheapest
-const BANDS = [
-  { id: "floor", label: "At the floor (−$250)", color: "--c8" },
-  { id: "ptc", label: "Below −$20 (tax-credit range)", color: "--c2" },
-  { id: "neg", label: "−$20 to −$1", color: "--c4" },
-  { id: "zero", label: "About $0 (−$1 to $0)", color: "--c-other" },
-  { id: "pos", label: "Above $0", color: "--c1" },
-];
-// capacity by status (needs the per-unit status data from the reprocessing run)
-const STATUS = [
-  { id: "self", label: "Running, self-committed", color: "--c1" },
-  { id: "ruc", label: "Running, committed by ERCOT (RUC)", color: "--c4" },
-  { id: "off", label: "Offline but available", color: "--c-other" },
-  { id: "out", label: "On outage", color: "--c8" },
-];
 // marginal supply series per report; storage is split into charging (demand) and discharging
 const MSERIES = {
   "60d": [
@@ -44,7 +28,7 @@ const MSERIES = {
     TECHS.find((s) => s.id === "other"),
   ],
   "2d": [
-    { id: "non_irr", keys: ["non_irr"], label: "Thermal & other (non-IRR)", color: "--c1" },
+    { id: "non_irr", keys: ["non_irr"], label: "Thermal & other (non-IRR)", color: "--thermal" },
     { id: "wind", keys: ["wind"], label: "Wind", color: "--c3" },
     { id: "solar", keys: ["solar"], label: "Solar", color: "--c4" },
     { id: "storage_discharging", keys: ["storage_discharging"], label: "Storage discharging", color: "--c7" },
@@ -258,15 +242,6 @@ function drawPriceQuantiles() {
     title: `${s.label}: offer price at which 25%, 50% and 90% of submitted MW above LSL is available ($/MWh)${pq.full && pq.full.length ? ` · ${pq.full.length} day${pq.full.length === 1 ? "" : "s"} not yet reprocessed use the whole curves` : ""}` });
 }
 
-// capacity by status from the intraday file (pipeline/intraday.py status_group)
-const STATUS6 = [
-  { id: "offer", label: "Running on an offer", color: "--c1" },
-  { id: "schedule", label: "Running without an offer curve", color: "--c4" },
-  { id: "ruc", label: "Committed by ERCOT (RUC)", color: "--c8" },
-  { id: "other_on", label: "Other online states (testing, emergency, starting, stopping)", color: "--c7-soft" },
-  { id: "off", label: "Offline but available", color: "--c-other" },
-  { id: "out", label: "On outage", color: "--ink-2" },
-];
 // ---- marginal supply by settled price ----------------------------------------------
 async function drawMarginal() {
   const el = $("mbp-chart"), src = S.mSrc;

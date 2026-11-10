@@ -18,9 +18,9 @@ const pct = (v) => (v == null || isNaN(v) ? "–" : fmtPct(v));
 const MIN_DAYS = 7;          // fewer priced days than this in the period and a battery is left out
 const IDLE_CYCLES = 0.1;     // full cycles a day below which a battery counts as idle
 const CATS = {
-  arb: { label: "Arbitrage", color: "--c3", tip: "Day-ahead AS under 25% of revenue: earns mostly by moving energy." },
-  mixed: { label: "Mixed", color: "--c4", tip: "Day-ahead AS 25% to 50% of revenue." },
-  as: { label: "Mostly AS", color: "--c1", tip: "Day-ahead AS over half of revenue: mostly paid to hold capacity." },
+  arb: { label: "Arbitrage", color: "--c7", tip: "Day-ahead AS under 25% of revenue: earns mostly by moving energy." },
+  mixed: { label: "Mixed", color: "--c7-soft", tip: "Day-ahead AS 25% to 50% of revenue." },
+  as: { label: "Mostly AS", color: "--as", tip: "Day-ahead AS over half of revenue: mostly paid to hold capacity." },
   idle: { label: "Idle", color: "--c-other", tip: `Under ${IDLE_CYCLES} full cycles a day over the period.` },
 };
 const CAT_ORDER = { arb: 0, mixed: 1, as: 2, idle: 3 };

@@ -16,12 +16,12 @@ const TECHS = [
 const techLabel = (t) => TECHS.find((x) => x.id === t)?.label || t;
 // wind and solar offer price bands (pipeline/curve_trends.py), ordered from cheapest
 const BANDS = [
-  { id: "deep", label: "−$250 to −$50", color: "--c2" },
-  { id: "ptc_mid", label: "−$50 to −$35", color: "--c6" },
-  { id: "ptc_low", label: "−$35 to −$20 (shallow tax-credit bids)", color: "--c7" },
-  { id: "neg", label: "−$20 to −$1", color: "--c4" },
+  { id: "deep", label: "−$250 to −$50", color: "--bid1" },     // the site's offer-price ramp (style.css --bid*), as Real-time offers
+  { id: "ptc_mid", label: "−$50 to −$35", color: "--bid2" },
+  { id: "ptc_low", label: "−$35 to −$20 (shallow tax-credit bids)", color: "--bid3" },
+  { id: "neg", label: "−$20 to −$1", color: "--bid4" },
   { id: "zero", label: "About $0 (−$1 to $0)", color: "--c-other" },
-  { id: "pos", label: "Above $0", color: "--c1" },
+  { id: "pos", label: "Above $0", color: "--bid-pos" },
 ];
 const S = { C: null, N: null, SIG: [], cday: null, span: null, last60: null, ncAll: false, ncSort: "curt", ncDir: -1, pbasis: "lambda", unBy: "zone", unTech: "all", unLam: "all" };
 const { tryJSON, showTip, hideTip, setCSV, tickFormat, fmtKind, axisFmt, css, esc } = window.CX;

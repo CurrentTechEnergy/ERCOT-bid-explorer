@@ -103,7 +103,7 @@ function drawBins() {
   svg.append("text").attr("class", "axis-title").attr("x", w - m.r).attr("y", H - 2).attr("text-anchor", "end").text("Offer minus node price, $/MWh");
   const half = rows.length / 2;
   svg.append("g").selectAll("rect").data(rows).join("rect").attr("x", (r) => x(r.lab)).attr("width", x.bandwidth())
-    .attr("y", (r) => y(r.r || 0)).attr("height", (r) => y(0) - y(r.r || 0)).attr("fill", (r, k) => css(k < half ? "--c3" : "--c2"))
+    .attr("y", (r) => y(r.r || 0)).attr("height", (r) => y(0) - y(r.r || 0)).attr("fill", css("--award"))
     .on("pointermove", (ev, r) => showTip(ev, `<h4>Offer minus node price ${r.lab}</h4><p class="tip-body">${fmtPct(r.r || 0)} awarded through the cheap hours, ${fmt0(r.aw)} of ${fmt0(r.n)} configuration-days</p>`))
     .on("pointerleave", hideTip);
   svg.append("g").selectAll("text.v").data(rows).join("text").attr("class", "dlabel").attr("x", (r) => x(r.lab) + x.bandwidth() / 2).attr("y", (r) => y(r.r || 0) - 4)
@@ -115,7 +115,7 @@ function drawBins() {
 // ---- offer minus fuel cost, awarded against not: pooled over every cheap train-day -------------
 function drawMarkup() {
   const D = S.D, Hm = D.mk_hist, el = $("mk-chart");
-  const sets = [{ k: "aw", med: "med_aw", color: "--c3", label: "DAM award through the cheap hours" }, { k: "no", med: "med_no", color: "--c2", label: "No DAM award" }];
+  const sets = [{ k: "aw", med: "med_aw", color: "--award", label: "DAM award through the cheap hours" }, { k: "no", med: "med_no", color: "--c-other", label: "No DAM award" }];
   if (!Hm || !Hm.edges) { $("mk-legend").innerHTML = ""; return emptyMsg(el, "The distribution appears after the next data update."); }
   const e = Hm.edges, nb = e.length - 1, tot = Object.fromEntries(sets.map((s) => [s.k, d3.sum(Hm[s.k])]));
   staticLegend($("mk-legend"), [...sets.map((s) => ({ ...s, label: `${s.label} (${fmt0(tot[s.k])} train-days, median ${fmt$(Hm[s.med])}/MWh)` })),
@@ -168,7 +168,7 @@ function drawBelowFuel() {
     .map((r) => ({ name: r[c.plant], unit: r[c.unit] || r[c.plant], b: r[c.share_below_fuel], aw: r[c.share_awarded], days: r[c.cheap_days_filed],
       hub: r[c.hub], g: (G.units[r[c.plant]] || [])[1], mw: (G.units[r[c.plant]] || [])[2] || 0 }))
     .filter((r) => order.includes(r.g));
-  const legend = [{ color: "--c3", label: "Awarded through the cheap hours on half or more of its cheap days", dot: true }, { color: "--c2", label: "On fewer than half", dot: true }];
+  const legend = [{ color: "--award", label: "Awarded through the cheap hours on half or more of its cheap days", dot: true }, { color: "--c-other", label: "On fewer than half", dot: true }];
   staticLegend($("bf-legend"), legend);
   $("bf-legend").insertAdjacentHTML("beforeend", `<span><span class="sw" style="border:1.5px solid var(--ink);border-radius:50%;width:8px;height:8px;background:none"></span>Priced off Waha gas</span>`);
   if (!rows.length) return emptyMsg(el, "No combined cycle trains with three-part offers on cheap days.");
@@ -195,7 +195,7 @@ function drawBelowFuel() {
   });
   svg.append("g").selectAll("circle").data(rows.sort((a, b) => b.mw - a.mw)).join("circle")
     .attr("cx", (r) => x(r.b)).attr("cy", (r) => r.y).attr("r", (r) => Math.max(3, rad(r.mw)))
-    .attr("fill", (r) => css(r.aw >= 0.5 ? "--c3" : "--c2")).attr("fill-opacity", 0.8).attr("stroke", css("--surface")).attr("stroke-width", 1).style("cursor", "pointer")
+    .attr("fill", (r) => css(r.aw >= 0.5 ? "--award" : "--c-other")).attr("fill-opacity", 0.8).attr("stroke", css("--surface")).attr("stroke-width", 1).style("cursor", "pointer")
     .on("pointermove", (ev, r) => showTip(ev, `<h4>${esc(r.name)}</h4><table><tr><td>Group</td><td class="n">${esc(label[r.g])}</td></tr>` +
       `<tr><td>Cheap days below fuel cost</td><td class="n">${fmtPct(r.b)}</td></tr><tr><td>DAM award through the cheap hours</td><td class="n">${fmtPct(r.aw)}</td></tr>` +
       `<tr><td>Cheap days filed</td><td class="n">${fmt0(r.days)}</td></tr><tr><td>Size</td><td class="n">${fmt0(r.mw)} MW</td></tr>` +
