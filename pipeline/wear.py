@@ -1,6 +1,6 @@
 """Wear and tear: hours run and starts per thermal unit and calendar year from 2019, with every
 start split into a start by choice and a return from an outage.  Read by the Unit page ("Run
-hours and starts by year") and Fleet economics ("Run hours and starts by year", by technology).
+hours and starts by year") and the Thermal page ("Run hours and starts by year", by technology).
 Writes data/wear.json.gz.  Needs no ERCOT download.
 
 States are the hourly ones (intraday.unit_hours): "m"/"a" running, "0" offline, "o" outage, "-" no

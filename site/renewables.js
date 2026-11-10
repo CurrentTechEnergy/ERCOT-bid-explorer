@@ -1,8 +1,9 @@
 /* Renewables: one day's curtailment by hour, wind and solar offer prices and curtailment (one
    panel: daily by cause, by price at lambda or at the node, value, units). Lifted from trends.js
    (drawRenewBands, drawCurtailment, drawNodeCurtail) and the retired Day view (drawCurtail). Reads
-   data/curve_trends.json.gz, data/curtail_nodes.json.gz and data/renew/sig-YYYY.json.gz (each
-   unit's offer on its curtailed days). Fleet economics moved to fleet.html. The hedge signals on
+   data/curve_trends.json.gz, data/curtail_nodes.json.gz, data/renewables/unit_revenue.json.gz
+   (each unit's revenue and MWh, pipeline/econ.py: the units table's realised $/MWh) and
+   data/renew/sig-YYYY.json.gz (each unit's offer on its curtailed days). The hedge signals on
    the same page are renewables-hedge.js. This file owns the status line and the shared chart
    controls (CX.init). */
 (() => {
@@ -29,6 +30,7 @@ const fmtMW = d3.format(",.0f");
 const fmtPct = d3.format(".0%");
 const fmtPrice = (v) => (v == null || isNaN(v) ? "–" : d3.format("$,.2f")(v));
 const fmtPrice0 = (v) => d3.format("$,.0f")(v);
+const fmtM = (v) => (Math.abs(v) >= 1e6 ? d3.format("$,.2f")(v / 1e6) + "M" : d3.format("$,.0f")(v / 1e3) + "k");
 const parseDate = (d) => new Date(d + "T12:00:00");
 const fmtDate = d3.timeFormat("%a %b %-d, %Y");
 
@@ -215,6 +217,8 @@ const NC_COLS = [
   { k: "unit", h: "Unit", t: true, f: (r) => `<a href="unit.html?unit=${encodeURIComponent(r.unit)}">${esc(r.unit)}</a>` },
   { k: "tech", h: "Technology", t: true, f: (r) => techLabel(r.tech), v: (r) => techLabel(r.tech) },
   { k: "sp", h: "Settlement point", t: true, f: (r) => esc(r.sp || "–") },
+  { k: "pmwh", h: "Realized $/MWh", f: (r) => fmtPrice(r.pmwh), v: (r) => r.pmwh },
+  { k: "rev", h: "Revenue", f: (r) => (r.rev == null ? "–" : fmtM(r.rev)) },
   { k: "curt", h: "Curtailed, GWh", f: (r) => d3.format(",.1f")(r.curt / 1000) },
   { k: "shr", h: "Share of available", f: (r) => (r.avail ? fmtPct(r.curt / r.avail) : "–"), v: (r) => (r.avail ? r.curt / r.avail : null) },
   { k: "cong", h: "Congestion share", f: (r) => (r.cong != null && r.curt ? fmtPct(r.cong / r.curt) : "–"), v: (r) => (r.cong != null && r.curt ? r.cong / r.curt : null) },
@@ -228,7 +232,12 @@ const NC_TEXT = ["unit", "tech", "sp"];
 function drawNcUnits() {
   const N = S.N, uel = $("nc-units");
   if (!N || !N.dates.length) { uel.innerHTML = ""; return; }
-  const all = N.units.map((r) => ({ unit: r[0], tech: r[1], sp: r[2], curt: r[3], cong: r[4], value: r[5], node: r[6], avail: r[7], days: r[8], dir: r[9], bid: bidWhenCurtailed(r[0], N.dates) }));
+  const RV = (S.RV && S.RV.units) || {}, MIN_MWH = 10000;   // realised $/MWh shown from 10 GWh up (a small or new unit's is noise)
+  const all = N.units.map((r) => {
+    const v = RV[r[0]], rev = v ? v[0] : null, mwh = v ? v[1] : null;
+    return { unit: r[0], tech: r[1], sp: r[2], curt: r[3], cong: r[4], value: r[5], node: r[6], avail: r[7], days: r[8], dir: r[9], bid: bidWhenCurtailed(r[0], N.dates),
+      rev, mwh, pmwh: mwh >= MIN_MWH ? rev / mwh : null };
+  });
   const col = NC_COLS.find((c) => c.k === S.ncSort) || NC_COLS[3], val = col.v || ((r) => r[col.k]);
   const sorted = all.map((r) => ({ r, x: val(r) })).sort((a, b) => {
     const x = a.x, y = b.x;
@@ -244,8 +253,8 @@ function drawNcUnits() {
     const k = th.dataset.k; if (S.ncSort === k) S.ncDir = -S.ncDir; else { S.ncSort = k; S.ncDir = NC_TEXT.includes(k) ? 1 : -1; }
     drawNcUnits(); saveView();
   }));
-  setCSV(uel, ["unit", "technology", "settlement_point", "curtailed_mwh", "available_mwh", "congestion_mwh", "directed_mwh", "value_at_node", "mean_node_price", "avg_offer_curtailed_days", "days"],
-    sorted.map((r) => [r.unit, r.tech, r.sp, r.curt, r.avail, r.cong, r.dir, r.value, r.node, r.bid ?? null, r.days]), "Curtailed units");
+  setCSV(uel, ["unit", "technology", "settlement_point", "revenue", "mwh", "curtailed_mwh", "available_mwh", "congestion_mwh", "directed_mwh", "value_at_node", "mean_node_price", "avg_offer_curtailed_days", "days"],
+    sorted.map((r) => [r.unit, r.tech, r.sp, r.rev, r.mwh, r.curt, r.avail, r.cong, r.dir, r.value, r.node, r.bid ?? null, r.days]), "Curtailed units");
 }
 
 
@@ -384,7 +393,7 @@ function drawUnused() {
 function drawAll() { drawRenewBands(); drawCurtail(); drawNodeCurtail(); drawUnused(); }
 
 async function boot() {
-  [S.C, S.N] = await Promise.all([tryJSON("data/curve_trends.json.gz"), tryJSON("data/curtail_nodes.json.gz")]);
+  [S.C, S.N, S.RV] = await Promise.all([tryJSON("data/curve_trends.json.gz"), tryJSON("data/curtail_nodes.json.gz"), tryJSON("data/renewables/unit_revenue.json.gz")]);
   if (!S.C) { $("status").textContent = "No renewables data yet. It is built by the data update workflow."; return; }
   const spans = [S.C?.rs?.dates, S.C?.curt?.dates, S.N?.dates].filter((d) => d && d.length);
   S.span = [d3.min(spans, (d) => d[0]), d3.max(spans, (d) => d.at(-1))];

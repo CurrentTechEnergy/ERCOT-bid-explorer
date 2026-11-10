@@ -87,7 +87,7 @@
 
 <header class="masthead">
   <div class="brand">
-    <div class="nav-row"><nav class="nav" aria-label="Pages"><a href="goal.html">Will fossil turn off?</a><a href="index.html">A day in ERCOT</a><a href="prices.html">Prices</a><a href="dayahead.html">Day-ahead offers</a><a href="commitment.html">Turn-ons and Turn-offs</a><a href="realtime.html">Real-time offers</a><a href="renewables.html">Renewables</a><a href="batteries.html">Batteries</a><a href="unit.html">Units</a><span class="nav-sep" aria-hidden="true"></span><a href="changes.html" class="aux">What's changing</a><a href="fleet.html" class="aux">Fleet economics</a><a href="guide.html" class="aux" aria-current="page">How offers work</a></nav></div>
+    <div class="nav-row"><nav class="nav" aria-label="Pages"><a href="goal.html">Will fossil turn off?</a><a href="index.html">A day in ERCOT</a><a href="prices.html">Prices</a><a href="dayahead.html">Day-ahead offers</a><a href="commitment.html">Turn-ons and Turn-offs</a><a href="realtime.html">Real-time offers</a><a href="thermal.html">Thermal</a><a href="renewables.html">Renewables</a><a href="batteries.html">Batteries</a><a href="unit.html">Units</a><span class="nav-sep" aria-hidden="true"></span><a href="changes.html" class="aux">What's changing</a><a href="guide.html" class="aux" aria-current="page">How offers work</a></nav></div>
     <h1>How offers work</h1>
     <p class="sub">Why thermal plants keep running when prices go negative. A walk through offer curves, minimum output (LSL), real-time dispatch (SCED), the day-ahead market (DAM) and on/off decisions, using one real day and real units from ERCOT's 60-day disclosures, then how the site counts revenue and reads hedges from wind and solar offers.</p>
   </div>
@@ -265,7 +265,7 @@
           <li><a href="./">A day in ERCOT</a>: who ran on a past day, by how often each group turns off and by technology</li>
           <li><a href="commitment.html">Turn-ons and Turn-offs</a>: each unit's loss from staying on, where the operator model turns it off, and how well the model calls it</li>
           <li><a href="commitment.html#p=cap-panel">Capacity by state</a>, <a href="commitment.html#p=cheap-panel">Thermal output in cheap hours</a>, <a href="commitment.html#p=stretch-panel">Who turns off for cheap stretches</a></li>
-          <li><a href="fleet.html">Fleet economics</a> and each unit's page: what running cost and earned (<a href="#revenue">step 6</a>)</li>
+          <li><a href="thermal.html">Thermal</a> and each unit's page: what running cost and earned (<a href="#revenue">step 6</a>)</li>
         </ul>
       </div>
       <div>
@@ -286,7 +286,7 @@
     <div class="prose">
       <p class="step-num">STEP 6</p>
       <h2>How revenue is counted</h2>
-      <p>The revenue and cost figures on <a href="fleet.html">Fleet economics</a> and on each unit's page are rebuilt from the public disclosures, so they are close to what a unit settled but not the same thing.</p>
+      <p>The revenue and cost figures on <a href="thermal.html">Thermal</a>, in the Renewables units table and on each unit's page are rebuilt from the public disclosures, so they are close to what a unit settled but not the same thing.</p>
       <ul>
         <li><strong>Energy revenue</strong> uses hourly mean prices and output, so it differs a little from settlement at 15-minute intervals. Days without a node price fall back to system lambda and are marked ("days priced at lambda").</li>
         <li><strong>Wind and solar</strong> are counted on the two-settlement basis: the day-ahead award at the day-ahead price plus the real-time deviation at the unit's node where it has day-ahead data, real time at its node otherwise (most wind and solar), and system lambda where the node price is missing.</li>

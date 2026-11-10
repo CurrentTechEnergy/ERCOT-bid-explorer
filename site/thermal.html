@@ -1,0 +1,185 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Thermal · ERCOT Bids</title>
+<meta name="description" content="What nuclear, coal and gas units in ERCOT earned, the average price they got, what they cost to run and the margin left, year by year since 2019.">
+<link rel="canonical" href="https://ercotbids.currenttech.energy/thermal.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="ERCOT Bids · CurrentTech Energy">
+<meta property="og:title" content="Thermal">
+<meta property="og:description" content="What nuclear, coal and gas units in ERCOT earned, the average price they got, what they cost to run and the margin left, year by year since 2019.">
+<meta property="og:url" content="https://ercotbids.currenttech.energy/thermal.html">
+<meta property="og:image" content="https://ercotbids.currenttech.energy/share-card.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/favicon.ico" sizes="48x48">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Sans+Condensed:wght@600&display=swap">
+<link rel="stylesheet" href="style.css">
+<style>
+  .inputs { display: grid; grid-template-columns: auto repeat(3, minmax(70px, 100px)); gap: 4px 10px; align-items: center; font-size: 12.5px; }
+  .inputs .lbl { font-size: 10px; }
+  .inputs input[type="number"] { font: inherit; font-family: var(--font-data); color: var(--ink); background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 4px 6px; width: 100%; min-height: 30px; }
+  .inputs .t { font-family: var(--font-ui); }
+  .ctl-gas input[type="number"] { font: inherit; font-family: var(--font-data); color: var(--ink); background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 6px 8px; min-height: 34px; width: 90px; }
+  .kpis { display: flex; flex-wrap: wrap; gap: 8px 28px; }
+  .kpi { display: flex; flex-direction: column; gap: 2px; }
+  .kpi .v { font: 500 20px var(--font-data); font-variant-numeric: tabular-nums; }
+  .kpi .k { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; }
+  .neg { color: var(--c8); }
+  button.more { font: inherit; color: var(--ink); background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 6px 12px; cursor: pointer; }
+  .yr-pick select { min-height: 30px; }
+  .kinds-key { font-size: 12px; color: var(--muted); }
+</style>
+</head>
+<body>
+<div class="page">
+
+<header class="masthead">
+  <div class="brand">
+    <div class="nav-row"><nav class="nav" aria-label="Pages"><a href="goal.html">Will fossil turn off?</a><a href="index.html">A day in ERCOT</a><a href="prices.html">Prices</a><a href="dayahead.html">Day-ahead offers</a><a href="commitment.html">Turn-ons and Turn-offs</a><a href="realtime.html">Real-time offers</a><a href="thermal.html" aria-current="page">Thermal</a><a href="renewables.html">Renewables</a><a href="batteries.html">Batteries</a><a href="unit.html">Units</a><span class="nav-sep" aria-hidden="true"></span><a href="changes.html" class="aux">What's changing</a><a href="guide.html" class="aux">How offers work</a></nav><button type="button" class="copy-link" id="copy-link" title="Copy a link to exactly this view">Copy link</button></div>
+    <h1>Thermal</h1>
+    <p class="sub">What nuclear, coal and gas units earned, the average price they got, what they cost to run and the margin left, from 2019. The thermal side of the money, to set beside Renewables and Batteries.</p>
+  </div>
+  <p class="status" id="status">Loading data…</p>
+  <p class="status" id="status-years"></p>
+</header>
+
+
+
+<section class="controls" aria-label="Controls">
+  <div class="ctl yr-pick">
+    <label class="lbl" for="ty-period">Period</label>
+    <select id="ty-period"></select>
+  </div>
+  <div class="ctl">
+    <label class="lbl" for="tech">Technology (charts and units below)</label>
+    <select id="tech"></select>
+  </div>
+</section>
+
+<main>
+  <section class="panel panel-wide" id="ty-head-panel">
+    <div class="panel-head">
+      <div>
+        <h2>What thermal earned <span class="h-note" id="ty-head-period"></span><a class="help-q" href="guide.html#revenue" title="How revenue is counted" aria-label="How revenue is counted">?</a></h2>
+        <p class="note" id="ty-head-note"></p>
+      </div>
+    </div>
+    <div class="units-wrap scroll-x" id="ty-head-table"></div>
+  </section>
+
+  <section class="panel panel-wide" id="ty-kinds-panel">
+    <div class="panel-head">
+      <div>
+        <h2>Where the margin comes from <span class="h-note" id="ty-kinds-period"></span></h2>
+        <p class="note" id="ty-kinds-note"></p>
+      </div>
+    </div>
+    <div class="legend legend-static" id="ty-kinds-legend"></div>
+    <div class="chart" id="ty-kinds"></div>
+  </section>
+
+  <h2 class="page-section">Across the years</h2>
+
+  <section class="panel panel-wide" id="ty-years-panel">
+    <div class="panel-head">
+      <div>
+        <h2>Price earned and margin, year by year</h2>
+        <p class="note" id="ty-years-note"></p>
+      </div>
+      <div class="panel-tools">
+        <div class="seg seg-sm" id="ty-by" role="radiogroup" aria-label="Period">
+          <button type="button" data-v="year" role="radio">Yearly</button>
+          <button type="button" data-v="month" role="radio">Monthly</button>
+        </div>
+      </div>
+    </div>
+    <div class="legend legend-static" id="ty-price-legend"></div>
+    <div class="chart" id="ty-price"></div>
+    <div class="legend legend-static" id="ty-margin-legend"></div>
+    <div class="chart" id="ty-margin"></div>
+  </section>
+
+  <section class="panel panel-wide" id="wear-panel" hidden>
+    <div class="panel-head">
+      <div>
+        <h2>Run hours and starts by year <span class="h-note" id="wear-title"></span></h2>
+        <p class="note" id="wear-note"></p>
+      </div>
+    </div>
+    <div class="units-wrap scroll-x" id="wear-table"></div>
+  </section>
+
+  <h2 class="page-section">Units, the 60-day days</h2>
+
+  <section class="panel panel-wide">
+    <div class="panel-head">
+      <div>
+        <h2>Units <span class="h-note" id="units-note"></span><a class="help-q" href="guide.html#revenue" title="How revenue is counted" aria-label="How revenue is counted">?</a></h2>
+        <p class="note" id="tot-note"></p>
+      </div>
+      <div class="panel-tools">
+        <input type="search" id="unit-search" placeholder="Find a unit" aria-label="Find a unit">
+      </div>
+    </div>
+    <details class="how" id="basis-box"><summary>Cost and revenue basis</summary>
+<div class="controls" aria-label="Cost and revenue basis">
+  
+  <div class="ctl">
+    <span class="lbl" id="lbl-cost">Cost basis</span>
+    <div class="seg" role="radiogroup" aria-labelledby="lbl-cost" id="cost">
+      <button type="button" data-v="meas" role="radio" title="Each unit's own heat rate, measured from EPA hourly stack data against its ERCOT net output, from its value at minimum to full load, times its own hub's gas price or its plant's coal price, plus a variable O&amp;M allowance">Measured heat rate</button>
+      <button type="button" data-v="eia" role="radio" title="EIA average tested heat rate for the technology (Electric Power Annual table 8.2, 2024) times the gas price, plus a variable O&amp;M allowance">EIA heat rate</button>
+      <button type="button" data-v="offer" role="radio" title="The unit's own DAM energy offer curve integrated up to its output, or its minimum-energy offer, with its own start-up offer">Unit's DAM offer</button>
+      <button type="button" data-v="inc" role="radio" title="The price the unit's DAM energy offer curve puts on each hour's output, applied to all of that hour's MWh, ignoring the minimum-energy price; generic where the unit submitted no curve">Incremental offer</button>
+      <button type="button" data-v="generic" role="radio" title="Heat rate, variable O&amp;M and start cost you set per technology">Generic</button>
+    </div>
+  </div>
+  <div class="ctl">
+    <span class="lbl" id="lbl-rev">Energy revenue</span>
+    <div class="seg" role="radiogroup" aria-labelledby="lbl-rev" id="rev">
+      <button type="button" data-v="two" role="radio" title="Day-ahead award at the day-ahead price, plus the real-time deviation at the real-time node price (falls back to real-time at the node, then lambda, where data is missing)">Two-settlement</button>
+      <button type="button" data-v="rt" role="radio" title="All output at the real-time node price">Real-time at node</button>
+      <button type="button" data-v="lam" role="radio" title="All output at system lambda, ignoring the unit's location">At system lambda</button>
+    </div>
+  </div>
+  <div class="ctl">
+    <span class="lbl" id="lbl-hub">Gas price</span>
+    <div class="seg" role="radiogroup" aria-labelledby="lbl-hub" id="hub">
+      <button type="button" data-v="unit" role="radio" title="Each unit at its own fuel hub: Waha where its offers follow the Waha price or, failing a clear signal, where its node sits in West Texas or the Panhandle; Houston Ship Channel otherwise">Unit's own hub</button>
+      <button type="button" data-v="hh" role="radio" title="Henry Hub daily spot price from the EIA">Henry Hub</button>
+    </div>
+  </div>
+  <div class="ctl ctl-gas">
+    <label class="lbl" for="gas-adder">Gas adder ($/MMBtu)</label>
+    <input type="number" id="gas-adder" step="0.05" value="0">
+  </div>
+</div>
+      <p class="note" id="cost-note"></p>
+      <div class="inputs" id="inputs"></div>
+    </details>
+    <div class="units-wrap" id="units-table"></div>
+  </section>
+</main>
+
+<footer class="foot">
+  <p>Source: ERCOT EMIL products NP3-965-ER (60-Day SCED Disclosure), NP3-966-ER (60-Day DAM Disclosure), NP4-190-CD (DAM Settlement Point Prices), NP6-905-CD (Settlement Point Prices) and NP6-322-CD (SCED System Lambda); Henry Hub spot price from the EIA; gas costs at Houston Ship Channel and Waha from OilPriceAPI daily prices, which are licensed and not published here. Before Dec 2025 the figures come from ERCOT's hourly 60-day archive back to 2019 (the same reports), with Henry Hub from the EIA filling hub gas gaps. Rebuilt with each data update from the days already loaded; the 60-day reports run about two months behind.</p>
+  <p>Hours are ERCOT hour ending in Central prevailing time: HE 13 is noon to 1 pm. Dates are operating days.</p>
+  <p>Made by <a href="https://currenttech.energy">currenttech.energy</a> · <a href="contact.html">Contact</a></p>
+  <p>Not affiliated with or endorsed by ERCOT. ERCOT is a registered trademark of the Electric Reliability Council of Texas, Inc.</p>
+  <p>© 2026 CurrentTech Energy. All rights reserved. For information only; not trading or investment advice. <a href="terms.html">Terms and privacy</a></p>
+</footer>
+</div>
+<div class="tip" id="tip" hidden></div>
+<script src="vendor/d3.min.js"></script>
+<script src="common.js"></script>
+<script src="thermal-units.js"></script>
+<script src="thermal-years.js"></script>
+</body>
+</html>
