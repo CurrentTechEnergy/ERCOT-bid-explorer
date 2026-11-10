@@ -89,7 +89,7 @@ function drawAll() {
   bars($("ds-hour"), hh, (k) => `HE${k}`, (d) => `HE${d.key}: ${hrs(d)}`);
   const n = d3.sum(mm, (d) => d.h), avg = {};
   WAYS.concat([{ id: "over" }]).forEach((p) => (avg[p.id] = n ? d3.sum(mm, (d) => d[p.id] * d.h) / n : 0));
-  const tot = d3.sum(WAYS, (p) => avg[p.id]), pct = (v) => d3.format(".0%")(tot ? v / tot : 0);
+  const tot = d3.sum(WAYS, (p) => avg[p.id]), pct = (v) => `${d3.format(".0%")(tot ? v / tot : 0)} (${d3.format(".1f")(v)} GW)`;
   const who = LC[S.tech] || NAME[S.tech].toLowerCase();
   const ctx = S.f.ctx.filter((r) => r[2] === S.band), cn = d3.sum(S.f.hours.filter((r) => r[2] === S.band), (r) => r[3]);
   const hub = cn ? d3.sum(ctx, (r) => r[3]) / cn / 1000 : 0, oth = cn ? d3.sum(ctx, (r) => r[4]) / cn / 1000 : 0;
