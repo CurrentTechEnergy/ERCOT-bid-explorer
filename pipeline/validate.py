@@ -546,6 +546,34 @@ def _commit_mix_checks(day):
             f"{len(bad)} problem(s), e.g. {bad[:4]}" if bad else f"{f.get('from')} to {f.get('through')}")
 
 
+def _da_sold_checks(day):
+    """Turn-ons and Turn-offs "How the output was sold: day-ahead or real time" (pipeline/da_sold.py): known ways,
+    bands and technologies, hours ending 1 to 24, no negative MW, a band's hours never more than all
+    hours, and the share of wind and solar output sold day-ahead in all hours between 1% and 60%."""
+    from collections import defaultdict
+    from .da_sold import PATH as DS_PATH, WAYS, TECHS as DS_TECHS
+    from .commit_mix import BANDS
+    f = read_json_gz(DS_PATH, default=None)
+    if f is None:
+        return
+    bad = []
+    hrs = {(m, he, b): n for m, he, b, n in f.get("hours", [])}
+    for (m, he, b), n in hrs.items():
+        if b not in BANDS or not 1 <= he <= 24 or n < 0 or n > hrs.get((m, he, "all"), 0):
+            bad.append(f"hours {m} HE{he} {b}")
+    ren = defaultdict(float)
+    for m, he, t, w, b, mw in f.get("rows", []):
+        if t not in DS_TECHS or w not in WAYS or b not in BANDS or not 1 <= he <= 24 or mw < 0:
+            bad.append(f"row {m} HE{he} {t} {w} {b}")
+        if b == "all" and t in ("wind", "solar") and w != "over":
+            ren[w] += mw
+    tot = ren["3p"] + ren["eo"] + ren["rt"]
+    if tot and not 0.01 <= (ren["3p"] + ren["eo"]) / tot <= 0.6:
+        bad.append(f"wind and solar sold day-ahead {(ren['3p'] + ren['eo']) / tot:.1%}")
+    day.add("da_sold", "error" if bad else "ok",
+            f"{len(bad)} problem(s), e.g. {bad[:4]}" if bad else f"{f.get('from')} to {f.get('through')}")
+
+
 def _prices_checks(day):
     """The Prices page's data (pipeline/prices_years.py): every curve runs from high to low,
     percentiles and hour counts in order, no year with more hours than it has, ride-through
@@ -763,6 +791,7 @@ def check_files(index):
     _prices_checks(day)
     _lsl_floor_checks(day)
     _commit_mix_checks(day)
+    _da_sold_checks(day)
     _wear_checks(day)
     ui = read_json_gz(UNIT_INDEX_PATH, default=None)
     if ui is not None:

@@ -19,6 +19,7 @@
   --c5: #e87ba4; --c6: #008300; --c7: #4a3aa7; --c7-soft: #a58ff7; --c8: #e34948;
   --c-other: #9a9891;
   --seq-lo: #eef4fc; --seq-hi: #0d366b;
+  --sold-3p: #0b5c63; --sold-eo: #6fb7b4;   /* "How the output was sold": day-ahead ways, teal so they never read as the commitment blues */
   --font-ui: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
   --font-head: "IBM Plex Sans Condensed", "IBM Plex Sans", system-ui, sans-serif;
   --font-data: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
@@ -32,6 +33,7 @@
     --c1: #3987e5; --c2: #d95926; --c3: #199e70; --c4: #c98500;
     --c5: #d55181; --c6: #008300; --c7: #9085e9; --c7-soft: #5a48c0; --c8: #e66767; --c-other: #77756f;
     --seq-lo: #1d2633; --seq-hi: #9ec5f4;
+    --sold-3p: #7fd0c9; --sold-eo: #2c7a77;
   }
 }
 :root[data-theme="dark"] {
@@ -42,6 +44,7 @@
   --c1: #3987e5; --c2: #d95926; --c3: #199e70; --c4: #c98500;
   --c5: #d55181; --c6: #008300; --c7: #9085e9; --c7-soft: #5a48c0; --c8: #e66767; --c-other: #77756f;
   --seq-lo: #1d2633; --seq-hi: #9ec5f4;
+  --sold-3p: #7fd0c9; --sold-eo: #2c7a77;
 }
 
 * { box-sizing: border-box; }

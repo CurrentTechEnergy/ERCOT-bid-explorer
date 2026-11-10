@@ -45,6 +45,15 @@ Writes data/dam/{date}.json.gz:
       "curves": [[[p1..pn], [mw1..mwn]], ...],   # distinct submitted offer curves this day
       "curve": [24]                 # index into "curves" per hour, null = no offer that hour
     }, ...
+  },
+  "eo": {                           # energy-only offer awards (format 4 on; the zip's
+                                    # 60d_DAM_EnergyOnlyOfferAwards file), MW per hour
+    "hub": [24],                    # at hubs and load zones (HB_*, LZ_*)
+    "rest": [24],                   # at settlement points with no generation resource
+    "nodes": {"<SP>": [[own x24], [other x24]]}
+                                    # at a resource's settlement point: "own" by a QSE that
+                                    # represents a resource at that point in this file (stands
+                                    # in for the plant's own day-ahead sale), "other" by any other
   }
 }
 and a summary entry: per technology, awarded MW by hour, units with a three-part offer, and
@@ -70,8 +79,10 @@ ESR_FROM = "2025-12-06"              # first RTC+B day-ahead market: an ESR file
 # (update.reprocess_60d redoes older files).  2: hourly resource status ("status_h"), diesel /
 # recip engines (DSL) under combustion_turbine, and ESR rows for days parsed before they were read.
 # 3: hourly start-up and minimum-energy costs ("start_h", "mingen_h") on days they change, read by
-# dam_offers.py for the cheap-hour offer.
-DAM_FORMAT = 3
+# dam_offers.py for the cheap-hour offer.  4: energy-only offer awards ("eo"), read by da_sold.py.
+DAM_FORMAT = 4
+EO_FILE = "60d_dam_energyonlyofferawards"
+HUB_PREFIXES = ("HB_", "LZ_")
 AS_SERVICES = {
     # key -> candidate normalised award column names (summed when several match)
     "regup": ["regupawarded"],
@@ -310,11 +321,49 @@ def is_esr_data(name: str) -> bool:
     return n.startswith(ESR_FILE) and "offer" not in n
 
 
+def parse_eo_awards(csv_bytes: bytes, frame: pd.DataFrame, n_hours: int):
+    """Energy-only offer awards -> the day file's "eo" block (see the module doc), or None when the
+    file can't be read.  `frame` is the generation (and ESR) resource frame: which QSEs represent a
+    resource at each settlement point."""
+    f = pd.read_csv(io.BytesIO(csv_bytes), low_memory=False)
+    norm = {_norm(c): c for c in f.columns}
+    c_he, c_sp = _pick(norm, "hourending"), _pick(norm, "settlementpoint", "settlementpointname")
+    c_q = _pick(norm, "qsename", "qse")
+    c_mw = next((c for n, c in norm.items() if n.startswith("energyonlyofferaward")), None)
+    if None in (c_he, c_sp, c_q, c_mw):
+        warn(f"DAM energy-only offer awards: columns not found; header: {list(f.columns)[:8]}")
+        return None
+    gn = {_norm(c): c for c in frame.columns}
+    g_sp, g_q = _pick(gn, "settlementpointname", "settlementpoint"), _pick(gn, "qse")
+    owners = {}
+    if g_sp and g_q:
+        for sp_, q in zip(frame[g_sp].astype(str).str.strip(), frame[g_q].astype(str).str.strip()):
+            owners.setdefault(sp_, set()).add(q)
+    he = _hour_ending(f[c_he])
+    mw = pd.to_numeric(f[c_mw], errors="coerce").fillna(0).values
+    sps = f[c_sp].astype(str).str.strip().values
+    qs = f[c_q].astype(str).str.strip().values
+    hub, rest, nodes = np.zeros(n_hours), np.zeros(n_hours), {}
+    for h, v, sp_, q in zip(he, mw, sps, qs):
+        if not (1 <= h <= n_hours) or v <= 0:
+            continue
+        if sp_.startswith(HUB_PREFIXES):
+            hub[h - 1] += v
+        elif sp_ in owners:
+            nodes.setdefault(sp_, np.zeros((2, n_hours)))[0 if q in owners[sp_] else 1, h - 1] += v
+        else:
+            rest[h - 1] += v
+    r1 = lambda a: [round(float(x), 1) for x in a]
+    return {"hub": r1(hub), "rest": r1(rest), "nodes": {k: [r1(v[0]), r1(v[1])] for k, v in sorted(nodes.items())}}
+
+
 def parse_dam_zip(blob: bytes):
     """-> (date, day file, summary entry)"""
-    frames, files = [], {"gen": 0, "esr": 0}
+    frames, files, eo_bytes = [], {"gen": 0, "esr": 0}, None
     for name, data in iter_csvs(blob, "x.zip"):
-        if name.lower().startswith(GEN_FILE):
+        if name.lower().startswith(EO_FILE):
+            eo_bytes = data
+        elif name.lower().startswith(GEN_FILE):
             frames.append(read_dam_gen(data))
             files["gen"] += 1
         elif is_esr_data(name):
@@ -323,4 +372,15 @@ def parse_dam_zip(blob: bytes):
     if not files["gen"]:
         raise ValueError("No DAM generation resource file in the 60-day DAM zip")
     # the two files share most columns; a column one of them lacks is NaN for its rows
-    return parse_dam_frame(pd.concat(frames, ignore_index=True) if len(frames) > 1 else frames[0], files)
+    frame = pd.concat(frames, ignore_index=True) if len(frames) > 1 else frames[0]
+    date, day, summary = parse_dam_frame(frame, files)
+    if eo_bytes is None:
+        warn(f"DAM {date}: no energy-only offer award file in the zip")
+    else:
+        try:
+            eo = parse_eo_awards(eo_bytes, frame, day["hours"])
+            if eo:
+                day["eo"] = eo
+        except Exception as e:
+            warn(f"DAM {date}: energy-only offer awards not read: {type(e).__name__}: {e}")
+    return date, day, summary

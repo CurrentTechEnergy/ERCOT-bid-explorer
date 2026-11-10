@@ -76,6 +76,7 @@ from .renew_years import build_renew_years
 from . import prices_years
 from . import lsl_floor
 from . import commit_mix
+from . import da_sold
 from . import coal_years
 from . import wear
 from . import ct_years
@@ -677,6 +678,10 @@ def main(argv=None):
         commit_mix.build()         # Turn-ons and Turn-offs "How thermal is committed", from the DAM and 60-day unit files
     except Exception as e:
         warn(f"commit_mix: failed: {e!r}; commit_mix.json.gz left as it is")
+    try:
+        da_sold.build()            # Turn-ons and Turn-offs "How the output was sold: day-ahead or real time", from the DAM and 60-day unit files
+    except Exception as e:
+        warn(f"da_sold: failed: {e!r}; da_sold.json.gz left as it is")
     try:
         coal_years.build()         # coal Unit page "Year by year"; 2019 to Nov 2025 come from the Goal workflow's --full
     except Exception as e:
