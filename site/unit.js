@@ -32,6 +32,10 @@ const { tryJSON, showTip, hideTip, setCSV, tickFormat, fmtKind, axisFmt, css, es
 const $ = (id) => document.getElementById(id);
 const fmtMW = d3.format(",.0f");
 const fmtPct = d3.format(".0%");
+// the change between two shares as the notes word it, from the rounded percentages shown beside it:
+// "no change", "1 point less often", "12 points more often"
+const ptChange = (a, b) => { const n = Math.round(100 * b) - Math.round(100 * a);
+  return n === 0 ? "no change" : `${Math.abs(n)} point${Math.abs(n) === 1 ? "" : "s"} ${n < 0 ? "less" : "more"} often`; };
 const fmtPrice = (v) => (v == null || isNaN(v) ? "–" : d3.format("$,.2f")(v));
 const fmtPrice0 = (v) => d3.format("$,.0f")(v);
 const fmt$ = (v) => (v == null || isNaN(v) ? "–" : (v < 0 ? "−" : "") + "$" + d3.format(",.0f")(Math.abs(v)));
@@ -452,7 +456,7 @@ async function drawDecYears(e) {
   el.replaceChildren(svg.node());
   const d = early != null && late != null ? late - early : null;
   $("dec-years-note").innerHTML = `Each year, of the loss stretches where shutting down would have paid (the loss from staying on beat the restart cost and nothing held it on), the share it turned off for. Stronger blue is more often off, as on the Goal page's question 3; a dash is a year with fewer than ${min} such stretches.` +
-    (d != null ? ` <b>It turned off for ${fmtPct(early)} of them in ${b0} to ${b1} and ${fmtPct(late)} from 2024 on, ${Math.abs(Math.round(100 * d))} points ${d < 0 ? "less" : "more"} often.</b>` : !ys.some(ok) ? " Too few such stretches in any year to judge." : "") +
+    (d != null ? ` <b>It turned off for ${fmtPct(early)} of them in ${b0} to ${b1} and ${fmtPct(late)} from 2024 on, ${ptChange(early, late)}.</b>` : !ys.some(ok) ? " Too few such stretches in any year to judge." : "") +
     (never ? " It has never turned off for a loss stretch it was free to choose." : "") +
     (ys.some(part) ? " * Part year." : "") + ` Every unit side by side: <a href="goal.html#q3-panel">Will fossil turn off?</a>, question 3.`;
   setCSV(el, ["year", "windows_where_shutting_pays", "share_turned_off", "share_stayed_on"], ys.map((y) => [y, cell.get(y)?.n ?? 0, cell.get(y)?.v ?? "", cell.has(y) ? 1 - cell.get(y).v : ""]), `${e.name} turned off by year`);
@@ -515,7 +519,7 @@ async function drawCoalYears(e) {
     `<span><span class="sw" style="background:repeating-linear-gradient(45deg, color-mix(in srgb, var(--ink-2) 55%, transparent) 0 1.4px, color-mix(in srgb, var(--ink-2) 18%, transparent) 1.4px 3.5px)"></span>On outage (most seasonal layups are filed this way)</span>`;
   const d = early != null && late != null ? late - early : null, cut = C.cheap ?? 10;
   $("dec-years-note").innerHTML = `Each bar is a calendar year: hours online, offline by choice and on outage. The number above is the share of cheap hours (day-ahead system lambda at or below $${cut}) it was online in, counting only the cheap hours it was not on outage; a dash is a year with fewer than ${COAL_MIN_CHEAP} of them.` +
-    (d != null ? ` <b>It was online in ${fmtPct(early)} of them in 2019 to 2021 and ${fmtPct(late)} from 2024 on, ${Math.abs(Math.round(100 * d))} points ${d < 0 ? "less" : "more"} often.</b>` : "") +
+    (d != null ? ` <b>It was online in ${fmtPct(early)} of them in 2019 to 2021 and ${fmtPct(late)} from 2024 on, ${ptChange(early, late)}.</b>` : "") +
     (ys.some(part) ? " * Part year." : "");
   setCSV(el, ["year", "hours", "online", "offline", "outage", "cheap_hours_available", "cheap_hours_online"], ys.filter((y) => by.has(y)).map((y) => { const c = by.get(y); return [y, c.hours, c.on, c.off, c.out, c.ca, c.co]; }), `${e.name} year by year`);
 }
