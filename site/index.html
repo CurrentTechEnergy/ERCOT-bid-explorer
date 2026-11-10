@@ -3,13 +3,14 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>A day in ERCOT · ERCOT Bids</title>
-<meta name="description" content="What ran in ERCOT on a day, hour by hour: prices, thermal output by how often units turn off, wind, solar and batteries, and every thermal unit's hours, from ERCOT's own reports. ERCOT Bid Stack Explorer by CurrentTech Energy.">
+<script>if (/(^#|&)(date|he|lb|uv)=/.test(location.hash)) location.replace("day-in-ercot.html" + location.hash); // old links to A day in ERCOT, the front page until Nov 2026</script>
+<title>Will fossil turn off? · ERCOT Bids</title>
+<meta name="description" content="Whether ERCOT coal and gas units turn off as renewables and batteries grow: what turns off, why the rest stays on, whether behavior is changing, and where it holds back curtailed wind and solar.">
 <link rel="canonical" href="https://ercotbids.currenttech.energy/">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="ERCOT Bids · CurrentTech Energy">
-<meta property="og:title" content="A day in ERCOT">
-<meta property="og:description" content="What ran in ERCOT on a day, hour by hour: prices, thermal output by how often units turn off, wind, solar and batteries, and every thermal unit's hours, from ERCOT's own reports. ERCOT Bid Stack Explorer by CurrentTech Energy.">
+<meta property="og:title" content="Will fossil turn off?">
+<meta property="og:description" content="Whether ERCOT coal and gas units turn off as renewables and batteries grow: what turns off, why the rest stays on, whether behavior is changing, and where it holds back curtailed wind and solar.">
 <meta property="og:url" content="https://ercotbids.currenttech.energy/">
 <meta property="og:image" content="https://ercotbids.currenttech.energy/share-card.png">
 <meta property="og:image:width" content="1200">
@@ -18,149 +19,129 @@
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="/favicon.ico" sizes="48x48">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
-<script type="application/ld+json">
-{"@context": "https://schema.org", "@graph": [
-  {"@type": "WebSite", "@id": "https://ercotbids.currenttech.energy/#site", "url": "https://ercotbids.currenttech.energy/",
-   "name": "ERCOT Bids", "alternateName": "ERCOT Bid Stack Explorer", "publisher": {"@id": "https://ercotbids.currenttech.energy/#org"}},
-  {"@type": "Organization", "@id": "https://ercotbids.currenttech.energy/#org", "name": "CurrentTech Energy",
-   "url": "https://currenttech.energy/", "logo": "https://ercotbids.currenttech.energy/apple-touch-icon.png"},
-  {"@type": "Dataset", "name": "ERCOT generator offers, commitment and shutdown decisions",
-   "description": "Daily ERCOT generator and battery offer curves, dispatch, commitment at low and negative prices, curtailment and shutdown decisions, unit by unit, built from ERCOT's public 60-day SCED and DAM disclosures and price reports.",
-   "url": "https://ercotbids.currenttech.energy/", "creator": {"@id": "https://ercotbids.currenttech.energy/#org"},
-   "isAccessibleForFree": true, "license": "https://ercotbids.currenttech.energy/terms.html",
-   "keywords": ["ERCOT", "bid stack", "offer curves", "SCED", "day-ahead market", "negative prices", "curtailment", "battery storage", "Texas electricity"],
-   "spatialCoverage": {"@type": "Place", "name": "ERCOT, Texas, United States"}, "temporalCoverage": "2025-12-05/..",
-   "isBasedOn": "https://www.ercot.com/mp/data-products"}
-]}
-</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Sans+Condensed:wght@600&display=swap">
 <link rel="stylesheet" href="style.css">
+<style>
+  .panel .lead { font-size: 16px; line-height: 1.45; margin: 4px 0 8px; max-width: 72ch; }
+  .panel .lead b { font-weight: 600; }
+  .panel .sub-h { font-size: 14px; font-weight: 600; margin: 22px 0 4px; }
+  .panel .intro { font-size: 14px; line-height: 1.5; margin: 6px 0; max-width: 78ch; }
+  .panel .detail { font-size: 13px; color: var(--muted); margin: 10px 0 0; }
+</style>
 </head>
 <body data-panel-links>
 <div class="page">
 
 <header class="masthead">
   <div class="brand">
-    <div class="nav-row"><nav class="nav" aria-label="Pages"><a href="goal.html">Will fossil turn off?</a><a href="index.html" aria-current="page">A day in ERCOT</a><a href="prices.html">Prices</a><a href="dayahead.html">Day-ahead offers</a><a href="commitment.html">Turn-ons and Turn-offs</a><a href="realtime.html">Real-time offers</a><a href="thermal.html">Thermal</a><a href="renewables.html">Renewables</a><a href="batteries.html">Batteries</a><a href="unit.html">Units</a><span class="nav-sep" aria-hidden="true"></span><a href="changes.html" class="aux">What's changing</a><a href="guide.html" class="aux">How offers work</a></nav></div>
-    <h1>A day in ERCOT</h1>
-    <p class="sub">One operating day from ERCOT's own reports: what power cost hour by hour, what ran, how much of the thermal fleet could not have come off (its minimum output), and which units stayed on. Pick a day; click any hour to drill into it.</p>
+    <div class="nav-row"><nav class="nav" aria-label="Pages"><a href="./" aria-current="page">Will fossil turn off?</a><a href="day-in-ercot.html">A day in ERCOT</a><a href="prices.html">Prices</a><a href="dayahead.html">Day-ahead offers</a><a href="commitment.html">Turn-ons and Turn-offs</a><a href="realtime.html">Real-time offers</a><a href="thermal.html">Thermal</a><a href="renewables.html">Renewables</a><a href="batteries.html">Batteries</a><a href="unit.html">Units</a><span class="nav-sep" aria-hidden="true"></span><a href="changes.html" class="aux">What's changing</a><a href="guide.html" class="aux">How offers work</a></nav></div>
+    <h1>Will fossil turn off?</h1>
+    <p class="sub">As wind, solar and batteries grow, do Texas coal and gas units turn off when power is cheap? Four questions, each answered by year from 2019: <a href="#q1-panel">what turns off</a>, <a href="#q2-panel">why the rest stays on</a>, <a href="#q3-panel">whether that is changing</a>, and <a href="#q4-panel">what it costs in curtailed wind and solar</a>.</p>
   </div>
   <p class="status" id="status">Loading data…</p>
 </header>
-
-<section class="controls" aria-label="Controls">
-  <div class="ctl">
-    <label class="lbl" for="date">Operating day</label>
-    <div class="date-step">
-      <button type="button" class="step" id="date-prev" aria-label="Previous day" title="Previous day">&#8249;</button>
-      <select id="date"></select>
-      <button type="button" class="step" id="date-next" aria-label="Next day" title="Next day">&#8250;</button>
-    </div>
-    <p class="source-note" id="source-note"></p>
-  </div>
-</section>
-
 <main>
-  <section class="panel panel-wide" id="headline-panel">
-    <div class="panel-head"><div><h2>The day at a glance <span class="h-note" id="headline-note"></span></h2></div></div>
-    <div class="headline headline-solo">
-      <div>
-        <p class="lede" id="lede"></p>
-        <p class="lede-sub" id="lede-sub"></p>
-        <p class="note" id="expect-lead" hidden></p>
-        <ul class="expect" id="expect"></ul>
-        <p class="note step-link" id="decisions-link"></p>
-      </div>
-    </div>
-  </section>
-
-  <section class="panel panel-wide" id="actual-panel" hidden>
+  <section class="panel panel-wide" id="q1-panel">
     <div class="panel-head">
       <div>
-        <h2>What ran, by hour <span class="h-note" id="actual-note"></span></h2>
-        <p class="note" id="actual-sub"></p>
-      </div>
-      <div class="panel-tools ctl-hour">
-        <label class="lbl" for="hour">Hour <output id="hour-out">HE 13</output></label>
-        <input type="range" id="hour" min="0" max="23" step="1" value="12">
-      </div>
-    </div>
-    <div class="sparkwrap">
-      <h3 id="spark-title">System lambda by hour ending ($/MWh)</h3>
-      <div class="chart chart-short" id="spark"></div>
-      <p class="note" id="spark-note"></p>
-    </div>
-    <div class="legend" id="actual-legend"></div>
-    <div class="chart" id="actual-chart"></div>
-    <div class="sub-panel" id="mix-panel">
-      <h3>Generation mix <span class="h-note" id="mix-title-note"></span></h3>
-      <p class="note" id="mix-sub">Output by technology in the hour picked on the chart above (click an hour, or use the slider), as ERCOT reported it. The hour also sets the hourly view of the units table.</p>
-      <p class="note step-link" id="offers-hour"></p>
-      <div class="chart" id="mix-chart"></div>
-      <details class="table-view"><summary>Table view</summary><div id="mix-table" class="scroll-x"></div></details>
-    </div>
-  </section>
-
-  <section class="panel panel-wide" id="actual-bars-panel" hidden>
-    <div class="panel-head">
-      <div>
-        <h2>What ran, over the day <span class="h-note" id="actual-bars-note"></span></h2>
-        <p class="note" id="actual-bars-sub"></p>
-      </div>
-    </div>
-    <div class="legend legend-static" id="actual-bar-legend"></div>
-    <div class="rows" id="actual-rows" data-csv></div>
-  </section>
-
-  <section class="panel panel-wide" id="limits-panel" hidden>
-    <div class="panel-head">
-      <div>
-        <h2>Online minimum and maximum, by hour <span class="h-note" id="limits-note"></span></h2>
-        <p class="note">How much of each group could have come off in each hour without a shutdown. The solid bar is the online units' summed minimum output (LSL, the lowest they can run while online); the light bar runs up to their summed maximum (HSL); the dark line is what they ran. Where the line sits on the solid bar, the group was at its floor and could only cut further by turning units off. In the "by how often it turns off" view, peakers get their own chart. Wind and solar show HSL only. Shaded hours: real-time system lambda at $10/MWh or less. Each chart has its own scale; click an hour to pick it for the panels below.</p>
+        <h2>1. What turns off, and what doesn't?</h2>
+        <p class="lead" id="q1-answer"></p>
+        <p class="note" id="q1-note"></p>
       </div>
       <div class="panel-tools">
-        <div class="seg seg-sm" id="lim-by" role="radiogroup" aria-label="Group by">
-          <button type="button" data-v="group" role="radio">By how often it turns off</button>
-          <button type="button" data-v="tech" role="radio">By technology</button>
-        </div>
+        <label class="lbl inline" for="q1-year">Year</label>
+        <select id="q1-year"></select>
+        <button type="button" class="step" id="q1-play" aria-label="Play the years from 2019" title="Play the years from 2019">&#9654;</button>
       </div>
     </div>
-    <div class="floor-block">
-      <h3>System floor</h3>
-      <p class="note">The least the online thermal fleet could run in each hour: every coal, combined-cycle, gas steam and combustion turbine unit online at its LSL, on top of nuclear at its output. Each unit counts for the share of the hour's SCED runs it was online and not starting up or shutting down, so a unit on for 20 minutes adds a third of its LSL. It is the same system floor the Thermal dispatch stack on <a href="realtime.html#stack-panel">Real-time offers</a> draws. The dark line is what those units ran. The outlined bar is the day's lowest fossil hour, the hour the Daily minimum floor on <a href="commitment.html#lf-panel">Turn-ons and Turn-offs</a> records for this day.</p>
-      <p class="sub" id="floor-sub"></p>
-      <div class="legend legend-static"><span><span class="sw" style="background:var(--c5)"></span>Nuclear output</span><span><span class="sw" style="background:var(--c8)"></span>Coal</span><span><span class="sw" style="background:var(--c1)"></span>Combined cycle</span><span><span class="sw" style="background:var(--c6)"></span>Gas steam</span><span><span class="sw" style="background:var(--c2)"></span>Combustion turbine</span><span><span class="sw" style="background:var(--ink);height:3px"></span>What thermal ran</span><span><span class="sw price-band-sw"></span>Lambda $10 or less</span></div>
-      <div class="chart" id="floor-chart" data-csv></div>
-    </div>
-    <div class="legend legend-static"><span><span class="sw" style="background:var(--g3)"></span>Online LSL</span><span><span class="sw" style="background:var(--g3);opacity:.3"></span>Online HSL</span><span><span class="sw" style="background:var(--ink);height:3px"></span>What ran</span><span><span class="sw price-band-sw"></span>Lambda $10 or less</span></div>
-    <div class="mults" id="limits-grid" data-csv></div>
+    <div class="legend" id="q1-legend"></div>
+    <div class="chart" id="q1-chart"></div>
+    <h3 class="sub-h">What is stuck on</h3>
+    <p class="note">The same hours grouped by the load left for fossil. The dark part of each bar is output from units at their minimum: it cannot fall further without a shutdown. The light part is output above minimum, which dispatch (SCED) can cut when the price falls.</p>
+    <div class="legend" id="q1s-legend"></div>
+    <div class="chart" id="q1s-chart"></div>
+    <p class="detail">See the detail: <a href="commitment.html">Turn-ons and Turn-offs</a> for each unit's group and each day's call, and <a href="unit.html">Units</a> for any one unit.</p>
   </section>
-
-  <section class="panel panel-wide" id="units-panel">
+  <section class="panel panel-wide" id="q2-panel">
     <div class="panel-head">
       <div>
-        <h2>Units <span class="h-note" id="units-note"></span></h2>
-        <p class="note">Every thermal unit on the day, so you can see which ran flat out, which sat at minimum and which stayed off: hours online and output from the 60-day disclosure, with its group (how often it has turned off on price). Combined-cycle configurations are summed into their train. Hover a column for its meaning; click to sort.</p>
+        <h2>2. Why does the rest stay on?</h2>
+        <p class="lead" id="q2-answer"></p>
+        <p class="note" id="q2-note"></p>
+      </div>
+      <div class="panel-tools"></div>
+    </div>
+    <h3 class="sub-h">The loss from staying on</h3>
+    <div class="seg" role="radiogroup" aria-label="Units" id="q2c-fuel" style="width: fit-content"><button type="button" data-v="all" role="radio">All fossil</button><button type="button" data-v="gas" role="radio">Gas only</button></div>
+    <p class="note" id="q2c-note"></p>
+    <div class="legend" id="q2c-legend"></div>
+    <div class="chart" id="q2c-chart"></div>
+    <h3 class="sub-h" id="q2a-title"></h3>
+    <div class="chart" id="q2a-chart"></div>
+    <p class="detail">See the detail: <a href="commitment.html">Turn-ons and Turn-offs</a> for which units stay on, and <a href="dayahead.html">Day-ahead offers</a> for the awards that hold them.</p>
+  </section>
+  <section class="panel panel-wide" id="q3-panel">
+    <div class="panel-head">
+      <div>
+        <h2>3. Is behavior changing as renewables and batteries grow?</h2>
+        <p class="lead" id="q3-answer"></p>
+        <p class="note" id="q3-note"></p>
       </div>
       <div class="panel-tools">
-        <div class="seg seg-sm" id="unit-view" role="radiogroup" aria-label="Hours">
-          <button type="button" data-v="day" role="radio">Day</button>
-          <button type="button" data-v="hour" role="radio">Selected hour</button>
-        </div>
-        <label class="lbl inline" for="unit-tech">Technology</label>
-        <select id="unit-tech"></select>
-        <label class="lbl inline" for="unit-search">Search</label>
-        <input type="search" id="unit-search" placeholder="Unit name">
+        <label class="lbl inline" for="q3-tech">Technology</label>
+        <select id="q3-tech"><option value="combined_cycle">Combined cycle</option><option value="gas_steam">Gas steam</option></select>
       </div>
     </div>
-    <div class="scroll-x" id="units-table" data-csv></div>
-    <p class="note" id="units-foot"></p>
+    <h3 class="sub-h">Every unit, year by year: when shutting would have paid, how often did it shut?</h3>
+    <p class="intro">A loss window is a stretch of hours when a unit's gas cost at minimum is above its day-ahead price. The unit either turns off for it or rides through. Each row below is one unit, and each cell counts only its windows where a shutdown would have paid even after the restart and anything it gives up, so the economics are held fixed: a unit that faced more or bigger losses doesn't change its own row, only a unit that answers the same economics differently does.</p>
+    <p class="intro" id="q3h-text"></p>
+    <div class="legend" id="q3h-legend"></div>
+    <div class="chart" id="q3h-chart"></div>
+    <p class="note" id="q3h-untested"></p>
+    <h3 class="sub-h">Units that cycle: share of loss windows turned off, by size of loss</h3>
+    <p class="intro">Bigger losses get turned off for more often, so the windows are grouped by the loss from staying on, per MW of the unit's minimum output. If units that do cycle had kept the same habits year to year, each line would be flat; a falling line means they now ride through losses they used to shut down for.</p>
+    <div class="legend" id="q3s-legend"></div>
+    <div class="chart" id="q3s-chart"></div>
+    <h3 class="sub-h">What the windows look like: share of loss windows in each bucket</h3>
+    <p class="intro" id="q3-day"></p>
+    <div class="legend" id="q3-legend"></div>
+    <div class="chart" id="q3-chart"></div>
+    <div class="units-wrap" id="q3p-table"></div>
+    <p class="detail">See the detail: <a href="changes.html">What's changing</a> for unit by unit changes in offers and behavior.</p>
+  </section>
+  <section class="panel panel-wide" id="q4-panel">
+    <div class="panel-head">
+      <div>
+        <h2>4. Where do fossil decisions slow decarbonization?</h2>
+        <p class="lead" id="q4-answer"></p>
+        <p class="note" id="q4-note"></p>
+      </div>
+      <div class="panel-tools"></div>
+    </div>
+    <div class="legend" id="q4s-legend"></div>
+    <div class="chart" id="q4s-chart"></div>
+    <div class="legend" id="q4-legend"></div>
+    <div class="chart" id="q4-chart"></div>
+    <div class="units-wrap" id="q4-table"></div>
+    <div class="sit" id="sit" hidden>
+      <h3>Where a new load could use it</h3>
+      <p class="lead" id="sit-answer"></p>
+      <p class="note" id="sit-note"></p>
+      <div class="sit-maps">
+        <figure class="sit-map"><figcaption>Where wind and solar were curtailed, GWh</figcaption><div class="chart" id="sit-a"></div><div class="legend" id="sit-a-legend"></div></figure>
+        <figure class="sit-map"><figcaption>Hours a year a new load there could run on curtailed wind and solar</figcaption><div class="chart" id="sit-b"></div><div class="legend" id="sit-b-legend"></div></figure>
+      </div>
+      <div class="sit-detail" id="sit-detail" aria-live="polite"></div>
+      <div class="legend" id="sit-lines-legend"></div>
+      <div class="chart" id="sit-lines"></div>
+    </div>
+    <p class="detail">See the detail: <a href="renewables.html">Renewables</a> for curtailment by unit, and <a href="day-in-ercot.html">A day in ERCOT</a> for the hours it happens.</p>
   </section>
 </main>
 
 <footer class="foot">
-  <p>Source: ERCOT's real-time system lambda and settlement point prices (NP6-322-CD, NP6-905-CD), day-ahead system lambda (NP4-523-CD), the 2-day generation summary (NP3-910-ER) and the 60-day SCED disclosure (NP3-965-ER). Nothing on this page is a forecast: every figure is what ERCOT reported for the day.</p>
+  <p>Source: ERCOT EMIL products NP3-965-ER (60-Day SCED Disclosure), NP3-966-ER (60-Day DAM Disclosure), NP4-190-CD (DAM Settlement Point Prices), NP4-523-CD (DAM System Lambda) and NP6-905-CD (Settlement Point Prices at Resource Nodes, Hubs and Load Zones), Jan 2019 on; Henry Hub from EIA; gas at Houston Ship Channel and Waha from OilPriceAPI daily prices, which are licensed and not published here. Built weekly, on Sunday mornings. Every unit-level number comes from the 60-day reports, so the page runs about two months behind.</p>
   <p>Hours are ERCOT hour ending in Central prevailing time: HE 13 is noon to 1 pm. Dates are operating days.</p>
   <p>Made by <a href="https://currenttech.energy">currenttech.energy</a> · <a href="contact.html">Contact</a></p>
   <p>Not affiliated with or endorsed by ERCOT. ERCOT is a registered trademark of the Electric Reliability Council of Texas, Inc.</p>
@@ -170,6 +151,6 @@
 <div class="tip" id="tip" hidden></div>
 <script src="vendor/d3.min.js"></script>
 <script src="common.js"></script>
-<script src="overview.js"></script>
+<script src="goal.js"></script>
 </body>
 </html>
