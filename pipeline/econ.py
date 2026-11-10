@@ -1,5 +1,5 @@
 """Plant economics: what each unit earned and what it cost to run, day by day, from the data
-already loaded.  Needs no downloads.  Read by Fleet economics (fleet.html) and the Unit page.
+already loaded.  Needs no downloads.  Read by the Thermal page (thermal.html, units table) and the Unit page; writes the Renewables units table's per-unit revenue (renewables/unit_revenue.json.gz).
 
 For every unit in the per-unit day files (UNIT_DATA_DIR/60d/) and each 60-day date:
 
@@ -30,7 +30,7 @@ For every unit in the per-unit day files (UNIT_DATA_DIR/60d/) and each 60-day da
             of those, the starts after more than HOT_H hours offline (intermediate) and more than
             INTER_H (cold), timed from the SCED run it went offline in to the run it came back
             (carried across days); the rest are hot, and so is a start whose time offline isn't
-            known (the first day loaded, or after a day missing).  Fleet economics prices each
+            known (the first day loaded, or after a day missing).  the Thermal units table prices each
             class at its own start offer
   hours_on  hours running (unit_hours_60d strips), thermal units only
   mmbtu     fuel burned (MMBtu), gas and coal units: each hour's output x the unit's heat rate at
@@ -217,6 +217,31 @@ def day_units(ud):
     units = [[name, u.get("type"), u.get("tech"), u["out"], _peak_hsl(u, len(ud["runs"]))]
              for name, u in ud["units"].items() if u.get("out")]
     return {"starts": starts, "units": units}
+
+
+def write_renew_revenue(dates, by_tech) -> None:
+    """data/renewables/unit_revenue.json.gz {from, to, days, units: {name: [revenue $, MWh]}} for every
+    wind and solar unit over the loaded 60-day days: energy on the two-settlement basis where the unit
+    has day-ahead data, real-time at its node otherwise, system lambda where the node price is missing,
+    plus ancillary services.  The Renewables page's units table divides one by the other (realised
+    $/MWh) beside each unit's curtailment."""
+    units = {}
+    for t in ("wind", "solar"):
+        for name, r in by_tech.get(t, {}).items():
+            rev = mwh = 0.0
+            for i in range(len(dates)):
+                q = r["mwh"][i]
+                if q is None:
+                    continue
+                da, rt, dart = r["rev_da"][i], r["rev_rt"][i], r["rev_da_rt"][i]
+                e = da + rt - dart if None not in (da, rt, dart) else rt if rt is not None else r["rev_lam"][i]
+                if e is None:
+                    continue
+                rev += e + (r["rev_as"][i] or 0)
+                mwh += q
+            units[name] = [round(rev), round(mwh, 1)]
+    write_json_gz(DATA_DIR / "renewables" / "unit_revenue.json.gz",
+                  {"from": dates[0] if dates else None, "to": dates[-1] if dates else None, "days": len(dates), "units": units})
 
 
 def build_econ(index: dict) -> None:
@@ -412,6 +437,7 @@ def build_econ(index: dict) -> None:
         write_json_gz(out_dir / f"{t}.json.gz", {"dates": dates, "gas": gas_series,
                                                      "units": dict(sorted(us.items()))})
     memo.prune("econ", dates)
+    write_renew_revenue(dates, by_tech)
     write_json_gz(DATA_DIR / "econ_index.json.gz", {
         "dates": dates, "techs": {t: sorted(by_tech.get(t, {})) for t in SIXTY_DAY_TECHS},
         "has_nodes": [d in node_days for d in dates], "has_dam": [d in dam_days for d in dates],

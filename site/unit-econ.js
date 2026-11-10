@@ -206,7 +206,9 @@ async function draw() {
     (S.tech === "storage" ? `${en(mwh)} discharged and ${en(sum(u.chg))} charged` : `${en(mwh)}${FUEL[S.tech] ? ` and ${fmt0(nst)} start${nst === 1 ? "" : "s"}` : ""}`) +
     ` for a margin of ${$M(margin)}${mwh ? `, ${fmt$2(margin / mwh)} per MWh` : ""}. Energy revenue was ${$M(sum(e.energy))}${tot("as") ? ` and ancillary services ${$M(sum(e.as))}` : ""}` +
     (FUEL[S.tech] ? `, against ${$M(tot("fuel"))} of fuel and variable cost and ${$M(tot("starts"))} of start-ups.` : ".") +
-    ` <a href="fleet.html#tech=${S.tech}">Compare it with its technology on Fleet economics</a>, where the cost and revenue bases can be changed.`;
+    (FUEL[S.tech] ? ` <a href="thermal.html#tech=${S.tech}">Compare it with its technology on Thermal</a>, where the cost and revenue bases can be changed.`
+      : S.tech === "wind" || S.tech === "solar" ? ` <a href="renewables.html#curt-panel">Compare its realized $/MWh with other wind and solar units on Renewables</a>.`
+      : S.tech === "storage" ? ` <a href="batteries.html">Compare it with the fleet on Batteries</a>.` : "");
   $("econ-how").innerHTML = `Revenue is two-settlement: the day-ahead award at the day-ahead price plus the real-time deviation at its node.` + fuelNote +
     (nst && u.starts_inter ? ` Of its ${fmt0(nst)} starts, ${fmt0(sum(u.starts_inter))} were intermediate and ${fmt0(sum(u.starts_cold))} cold.` : "") +
     (own ? ` Its own day-ahead offers are medians over its ${own} offer days: hot start ${fmt$(d3.median(u.start_hot.filter((v) => v != null)))}, minimum-energy ${fmt$2(d3.median(mg))}/MWh.` : "") +

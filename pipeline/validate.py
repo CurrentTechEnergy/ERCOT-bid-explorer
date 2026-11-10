@@ -53,7 +53,11 @@ consistency:
                     4-hour top-bottom spreads in that order and never below zero; and
                     renewables/years.json.gz (renew_years.py): one value per month and day per
                     field, no negative size or energy, no more energy than the fleet could make,
-                    capture prices and the $0-or-below share in range
+                    capture prices and the $0-or-below share in range; and thermal/years.json.gz
+                    (thermal_years.py): one value per day per field for every thermal technology,
+                    no negative energy, starts or start cost, the realised $/MWh within -$1,000 to
+                    $10,000 on a day with real output, and no technology missing from a day the
+                    file covers
 
 A check is an "error" when the numbers cannot both be right (a parsing or mapping bug), a
 "warning" when something is worth a look, and "info" when it is only recorded.  Results that did not pass are kept per day in data/validation.json.
@@ -783,6 +787,7 @@ def check_files(index):
                 f"e.g. {(bad + neg)[:3]}" if bad or neg else f"{len(su.get('units', {}))} batteries, {n} days")
     _battery_bench_checks(day)
     _renew_years_checks(day)
+    _thermal_years_checks(day)
     _dam_offer_checks(day)
     _operator_score_checks(day)
     _operator_cutoff_checks(day)
@@ -855,6 +860,39 @@ def _battery_bench_checks(day):
     day.add("bench_spreads", "error" if tb_bad else "ok",
             f"{len(tb_bad)} day(s) where the 1-, 2- and 4-hour spreads don't fall in order or go below zero, e.g. {tb_bad[:3]}" if tb_bad
             else "1-hour >= 2-hour >= 4-hour >= 0 every day")
+
+
+def _thermal_years_checks(day):
+    """Thermal across the years (thermal_years.py): one value per day per field, energy, starts and
+    start cost never below zero, realised $/MWh in range on a day with real output, every
+    technology present on every day."""
+    from .thermal_years import FIELDS as TY_FIELDS, PATH as TY_PATH, TECHS as TY_TECHS
+    ty = read_json_gz(TY_PATH, default=None)
+    if ty is None:
+        return
+    dates = ty.get("dates", [])
+    n = len(dates)
+    bad_len = [t for t in TY_TECHS if any(len(((ty.get("techs") or {}).get(t) or {}).get(k, [])) != n for k in TY_FIELDS)]
+    bad_len += [k for k in ("src", "hub_rt") if len(ty.get(k) or []) != n]
+    bad, missing = [], []
+    if not bad_len:
+        for t in TY_TECHS:
+            f = ty["techs"][t]
+            for i, d in enumerate(dates):
+                g = f["gen"][i]
+                if g is None:
+                    missing.append(f"{t} {d}")
+                    continue
+                if g < 0 or (f["starts"][i] or 0) < 0 or (f["start"][i] or 0) < 0 \
+                        or (g >= 1000 and not -1000 <= (f["rev"][i] or 0) / g <= 10000):
+                    bad.append(f"{t} {d}")
+    day.add("thermal_years_rows", "error" if bad_len else "ok",
+            f"{bad_len[:3]} not one value per day" if bad_len else f"{n} days, {dates[0] if dates else '-'} to {dates[-1] if dates else '-'}")
+    day.add("thermal_years_values", "error" if bad else "ok",
+            f"{len(bad)} technology-day(s) with negative energy, starts or start cost, or a realised price out of range, "
+            f"e.g. {bad[:3]}" if bad else "energy, starts and realised prices in range")
+    day.add("thermal_years_days", "warning" if missing else "ok",
+            f"{len(missing)} technology-day(s) with no units, e.g. {missing[:3]}" if missing else "every technology on every day")
 
 
 def _renew_years_checks(day):

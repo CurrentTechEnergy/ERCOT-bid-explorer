@@ -44,7 +44,7 @@
 
 <header class="masthead">
   <div class="brand">
-    <div class="nav-row"><nav class="nav" aria-label="Pages"><a href="goal.html">Will fossil turn off?</a><a href="index.html">A day in ERCOT</a><a href="prices.html">Prices</a><a href="dayahead.html">Day-ahead offers</a><a href="commitment.html">Turn-ons and Turn-offs</a><a href="realtime.html">Real-time offers</a><a href="renewables.html" aria-current="page">Renewables</a><a href="batteries.html">Batteries</a><a href="unit.html">Units</a><span class="nav-sep" aria-hidden="true"></span><a href="changes.html" class="aux">What's changing</a><a href="fleet.html" class="aux">Fleet economics</a><a href="guide.html" class="aux">How offers work</a></nav></div>
+    <div class="nav-row"><nav class="nav" aria-label="Pages"><a href="goal.html">Will fossil turn off?</a><a href="index.html">A day in ERCOT</a><a href="prices.html">Prices</a><a href="dayahead.html">Day-ahead offers</a><a href="commitment.html">Turn-ons and Turn-offs</a><a href="realtime.html">Real-time offers</a><a href="thermal.html">Thermal</a><a href="renewables.html" aria-current="page">Renewables</a><a href="batteries.html">Batteries</a><a href="unit.html">Units</a><span class="nav-sep" aria-hidden="true"></span><a href="changes.html" class="aux">What's changing</a><a href="guide.html" class="aux">How offers work</a></nav></div>
     <h1>Renewables</h1>
     <p class="sub">Wind and solar are the supply behind ERCOT's cheap hours. This page shows how much of it there is, how low it bids (tax-credit bids keep units running well below $0/MWh), how much SCED turns away and where that energy sits, and which units bid as if they held a day-ahead hedge, which decides whether they keep producing when prices go negative.</p>
   </div>
@@ -115,6 +115,8 @@
     <div class="chart" id="nc-bins"></div>
 
     <h3 class="sub-h">Units</h3>
+    <p class="note">Each unit's curtailment beside what it earned per MWh. A low realized $/MWh with a high curtailed or congestion share points at a congested node. Sort by any column; click a unit to open it.</p>
+    <details class="how"><summary>How it's built</summary><p class="note">Realized $/MWh is the unit's revenue over its energy across the loaded 60-day days: energy on the two-settlement basis where it has day-ahead data (the award at the day-ahead price plus the real-time deviation at its node), real-time at its node otherwise, and system lambda where the node price is missing, plus ancillary services. It is left blank under 10 GWh, where a small or new unit's figure is noise. The Unit page has each unit's revenue day by day.</p></details>
     <div class="units-wrap" id="nc-units"></div>
     <p><button type="button" class="more" id="nc-more" hidden>Show all</button></p>
   </section>
