@@ -219,8 +219,10 @@ site/
                    series/, storage/, operator/
   follow.json      the follow server's address (written by Deploy the follow server)
   ask.json         the Ask the data server's address (written by Deploy the Ask the data server)
-  unit/            one link-preview page per unit (pipeline/share_pages.py): the unit's title, description
-                   and Open Graph tags, and a redirect to unit.html?unit=NAME. Served at /unit/NAME
+  unit/            one stub per unit (pipeline/share_pages.py): the unit's title, description, Open Graph
+                   tags, heading and a few sentences, and a redirect to unit.html?unit=NAME. The deploy
+                   turns each into the full Unit page (pipeline/unit_pages.py, never committed), served
+                   at /unit/NAME
   share-card.png   the image every page's link preview shows
 worker/            the follow server: a Cloudflare Worker (src/index.js) that signs people up for a
                    unit's emails, confirms them and unsubscribes them; schema.sql is its D1 database

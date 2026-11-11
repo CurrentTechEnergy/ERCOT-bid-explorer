@@ -7,6 +7,11 @@ title, description and Open Graph tags, plus a redirect to unit.html?unit=<UNIT>
 #day=… part. The Unit page then shows /unit/<UNIT> in the address bar, so a link copied from it
 previews with the unit's name.
 
+Each stub also carries the unit's heading and a few sentences about it (summary). At deploy,
+pipeline/unit_pages.py turns every stub into the full Unit page in the deployed copy, so search
+engines index /unit/<UNIT> as its own page; the committed stub keeps working on its own through
+its redirect.
+
 The stubs hold none of the page itself, so changes to unit.html never touch them. A stub is
 written only when its text would change: a new unit, or a unit whose name, technology, county or
 zone changed, or whose capacity moved by more than MW_TOLERANCE from the MW its stub shows (the
@@ -31,7 +36,7 @@ SITE_NAME = "ERCOT Bids"
 OG_SITE_NAME = "ERCOT Bids · CurrentTech Energy"
 SHARE_IMAGE = f"{SITE_URL}/share-card.png"
 OUT_DIR = SITE_DIR / "unit"
-TEMPLATE_VERSION = "1"
+TEMPLATE_VERSION = "2"
 MW_TOLERANCE = 0.10
 SITEMAP_PATH = SITE_DIR / "sitemap.xml"
 # the pages in the nav, plus the reference pages; retired pages (redirects) are left out
@@ -44,11 +49,16 @@ ABOUT = {"storage": "How it charges and discharges, what it offers and bids, and
          "wind": "How it offers into ERCOT, how much is curtailed at low prices, and the hedge signals in its bids.",
          "solar": "How it offers into ERCOT, how much is curtailed at low prices, and the hedge signals in its bids."}
 ABOUT_THERMAL = "How it offers into ERCOT, when it runs and turns off at low prices, and tomorrow's forecast."
+# the timescale groups (site/unit-dir.js GROUP_SHORT) as what the unit did
+GROUP_TEXT = {"never": "stayed on whenever it was available", "seasonal": "turned off for a season at a time",
+              "multiday": "turned off for days at a time", "daily1": "turned off within a day, under once a week",
+              "daily2": "turned off within a day, 1 to 2 times a week", "daily3": "turned off within a day, over twice a week",
+              "never_on": "did not run"}
 
 # CDR names are in capitals; these stay that way when the name is title-cased
 ACRONYMS = {"BESS", "ESS", "CTG", "STG", "CT", "CC", "GT", "BRP", "DGR", "SLF", "TNP", "PHR", "IC", "OCI", "CSG", "SES",
             "RTS", "SMT", "LLC", "LP", "LCP", "BAC", "RMR", "BNB", "DJ", "WP", "FS", "SP", "TG", "RE", "XE", "LCRA", "CPS",
-            "NRG", "AEP", "ERCOT", "TX", "USA"}
+            "NRG", "AEP", "ERCOT", "TX", "USA", "NA"}
 LOWER = {"OF", "AND", "AT", "THE"}
 _ROMAN = re.compile(r"^(?=[IVX]+$)X{0,3}(IX|IV|V?I{0,3})$")
 
@@ -115,6 +125,41 @@ def card(u: dict, mw) -> dict:
     return {"title": f"{head} · {size} · {SITE_NAME}", "og_title": f"{head} · {size}", "description": " ".join(bits)}
 
 
+def _a(word: str) -> str:
+    return ("an " if word[:1].lower() in "aeiou" else "a ") + word
+
+
+def summary(u: dict, mw) -> str:
+    """A few plain sentences about the unit from its unit-index row: what and where it is, who
+    offers it, its group. Written into the page's HTML so search engines and anything that does
+    not run the page's scripts see the unit, not an empty shell; unit.js replaces it on load."""
+    tech = {"wind": "wind farm", "solar": "solar farm", "storage": "battery"}.get(u["tech"], TECH_LABEL.get(u["tech"], u["tech"]).lower() + " unit")
+    what = f"{mw:,} MW {tech}" if mw else tech
+    where = ", ".join(x for x in [u.get("county") and f"{u['county'].title()} County", u.get("zone") and f"{u['zone'].title()} zone"] if x)
+    yrs = u.get("in_service")
+    s = [f"{label(u)} is {_a(what)} in ERCOT{', in ' + where if where else ''}"
+         + (f", in service since {yrs[0]}" if yrs and yrs[0] else "") + "."]
+    if u.get("plant") and not _names_unit(u):
+        s.append(f"It is at the {display_name(u['plant'])} site.")
+    if u.get("aliases"):
+        s.append(f"Also known as {', '.join(u['aliases'])}.")
+    dme, qse = u.get("dme"), u.get("qse_name")
+    if dme and qse and dme.upper() != qse.upper():
+        s.append(f"Its offers are decided by {display_name(dme)} and scheduled by {display_name(qse)}.")
+    elif dme or qse:
+        s.append(f"Its offers are decided and scheduled by {display_name(dme or qse)}.")
+    if u.get("owner") and (u["owner"] or "").upper() != (dme or "").upper():
+        s.append(f"Owned by {display_name(u['owner'])}.")
+    if u.get("buyers"):
+        s.append(f"Public buyers of its output: {', '.join(u['buyers'])}.")
+    if u.get("group") in GROUP_TEXT:
+        s.append(f"Over the last 60 days of unit data it {GROUP_TEXT[u['group']]}.")
+    if len(u.get("configs") or []) > 1:
+        s.append(f"It offers in {len(u['configs'])} configurations: {', '.join(u['configs'])}.")
+    s.append(ABOUT.get(u["tech"], ABOUT_THERMAL))
+    return " ".join(s)
+
+
 def render(u: dict, mw) -> str:
     c, name = card(u, mw), u["unit"]
     e = lambda s: html.escape(s, quote=True)
@@ -140,7 +185,11 @@ def render(u: dict, mw) -> str:
 <script>location.replace("{target}" + location.hash);</script>
 <noscript><meta http-equiv="refresh" content="0; url={target}"></noscript>
 </head>
-<body><p><a href="{target}">Open {e(name)} on {SITE_NAME}</a></p></body>
+<body>
+<h1 id="unit-title">{e(display_name(u['plant'])) + ' <span class="unit-code">' + e(name) + '</span>' if _names_unit(u) else e(name)}</h1>
+<p class="sub" id="unit-meta">{e(summary(u, mw))}</p>
+<p><a href="{target}">Open {e(name)} on {SITE_NAME}</a></p>
+</body>
 </html>
 """
 

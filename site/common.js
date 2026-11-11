@@ -355,6 +355,9 @@ function panelFromLink() {
 // own picker and directory, so it gets no box here.
 const TECH_SHORT = { nuclear: "Nuclear", coal: "Coal", combined_cycle: "Combined cycle", gas_steam: "Gas steam", combustion_turbine: "Combustion turbine and recip", wind: "Wind", solar: "Solar", storage: "Battery storage ESR" };
 const unitURL = (name) => `unit.html?unit=${encodeURIComponent(name)}`;
+// a unit in the unit index has its own page at unit/NAME (pipeline/share_pages.py, unit_pages.py): link
+// there, the address search engines know it by; any other name opens through the query
+const unitPageURL = (name) => /^[A-Za-z0-9_]+$/.test(name) ? `unit/${name}` : unitURL(name);
 // rows of the unit index as objects, each with the lowercase text a search matches against
 async function unitIndex() {
   const ui = await tryJSON("data/unit_index.json.gz");
@@ -419,7 +422,7 @@ function wireUnitFind(box) {
     hits = findUnits(units, input.value);
     at = hits.length ? 0 : -1;
     let why;
-    list.innerHTML = hits.length ? hits.map((u, i) => `<li role="option" id="unit-find-${i}"><a href="${unitURL(u.unit)}"><span class="unit-find-name">${esc(u.unit)}${u.plant || u.aliases?.length ? `<small>${esc([u.plant, ...(u.aliases || [])].filter(Boolean).join(" · "))}</small>` : ""}` +
+    list.innerHTML = hits.length ? hits.map((u, i) => `<li role="option" id="unit-find-${i}"><a href="${unitPageURL(u.unit)}"><span class="unit-find-name">${esc(u.unit)}${u.plant || u.aliases?.length ? `<small>${esc([u.plant, ...(u.aliases || [])].filter(Boolean).join(" · "))}</small>` : ""}` +
       `${(why = matchedOn(u, input.value)) ? `<small class="unit-find-why">${esc(why)}</small>` : ""}</span>` +
       `<span class="unit-find-meta">${TECH_SHORT[u.tech] || esc(u.tech)}${u.mw ? ` · ${u.mw} MW` : ""}</span></a></li>`).join("")
       : `<li class="unit-find-none">No unit matches. <a href="unit.html">Browse all units</a></li>`;
@@ -436,7 +439,7 @@ function wireUnitFind(box) {
       at = (at + (e.key === "ArrowDown" ? 1 : -1) + hits.length) % hits.length; mark();
       input.setAttribute("aria-activedescendant", `unit-find-${at}`);
     } else if (e.key === "Enter") {
-      if (at >= 0 && hits[at]) { e.preventDefault(); location.href = unitURL(hits[at].unit); }
+      if (at >= 0 && hits[at]) { e.preventDefault(); location.href = unitPageURL(hits[at].unit); }
     } else if (e.key === "Escape") { close(); }
   });
   document.addEventListener("click", (e) => { if (!box.contains(e.target)) close(); });
@@ -780,5 +783,5 @@ function startCost(u, i, p, own) {
   return { cost, n, estimated };
 }
 
-window.CX = { ruleOutages, hourlyStarts, startCost, OUT_MIN_H, trainHours, fmtPair, dayPicker, dayLabel, latest60, pickDay, isPeaker, peakerTag, peakerNote, onOffDot, onOffLegend, rucDays, rucRing, rucLegend, rucNote, fromStart, SITE_START, setNote, getJSON, tryJSON, showTip, hideTip, clearPins, setCSV, readHash, writeHash, init, panelFromLink, css, esc, tickFormat, fmtKind, axisFmt, unitIndex, findUnits, matchedOn, drawCurtailDay };
+window.CX = { ruleOutages, hourlyStarts, startCost, OUT_MIN_H, trainHours, fmtPair, dayPicker, dayLabel, latest60, pickDay, isPeaker, peakerTag, peakerNote, onOffDot, onOffLegend, rucDays, rucRing, rucLegend, rucNote, fromStart, SITE_START, setNote, getJSON, tryJSON, showTip, hideTip, clearPins, setCSV, readHash, writeHash, init, panelFromLink, css, esc, tickFormat, fmtKind, axisFmt, unitIndex, unitPageURL, findUnits, matchedOn, drawCurtailDay };
 })();
