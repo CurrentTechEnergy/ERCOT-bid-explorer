@@ -224,6 +224,7 @@ site/
                    turns each into the full Unit page (pipeline/unit_pages.py, never committed), served
                    at /unit/NAME
   share-card.png   the image every page's link preview shows
+  llms.txt         a plain-text guide to the site for AI tools (hand-written)
 worker/            the follow server: a Cloudflare Worker (src/index.js) that signs people up for a
                    unit's emails, confirms them and unsubscribes them; schema.sql is its D1 database
 ask-worker/        the Ask the data server: a Cloudflare Worker (src/index.js, tools in src/tools.js, system
@@ -232,7 +233,9 @@ ask-worker/        the Ask the data server: a Cloudflare Worker (src/index.js, t
 
 ### Page titles and link previews
 
-Every page carries a title in the form "Page · ERCOT Bids", a description and Open Graph / Twitter card tags with `share-card.png`, so links preview with a name, a line about the page and an image. Chat and social apps read those tags from the HTML a link returns, without running scripts, and GitHub Pages serves the same `unit.html` whatever its `?unit=` query says, so a unit's own preview comes from `site/unit/<NAME>.html`, a 1.5 KB stub with that unit's title (CDR plant name, resource name, technology and MW) that sends the browser on to the Unit page. The Unit page then shows `/unit/<NAME>` in the address bar, so a copied or shared link previews with the unit's name; a `<base>` element in `unit.html` keeps its relative URLs pointing at the site root. The update writes a stub only for a new unit or one whose name, technology, county or zone changed, or whose capacity moved by more than 10%, and commits it with the data; stubs of units that leave the index stay, so links already sent keep working. Old `unit.html?unit=NAME` links still open, with the generic Units preview.
+Every page carries a title in the form "Page · ERCOT Bids", a description and Open Graph / Twitter card tags with `share-card.png`, so links preview with a name, a line about the page and an image. Chat and social apps read those tags from the HTML a link returns, without running scripts, and GitHub Pages serves the same `unit.html` whatever its `?unit=` query says, so each unit has its own page at `/unit/<NAME>`. The update writes `site/unit/<NAME>.html`, a small stub with that unit's title (CDR plant name, resource name, technology and MW), description, heading and a few sentences about it, plus a redirect to `unit.html?unit=NAME`; at deploy, `pipeline/unit_pages.py` turns each stub into the full Unit page (in the deployed copy only), so search engines and AI crawlers index `/unit/<NAME>` as its own page. The update writes a stub only for a new unit or one whose name, technology, county or zone changed, or whose capacity moved by more than 10%, and commits it with the data; stubs of units that leave the index stay, so links already sent keep working. Old `unit.html?unit=NAME` links still open and show `/unit/<NAME>` in the address bar.
+
+The front page's four answers and Day-ahead offers' two cheap-hour lines carry hand-written default sentences in the HTML (no live numbers) for crawlers that don't run scripts; the page's script replaces them with the full answer. Update a sentence if its finding changes. `site/llms.txt` is a plain-text guide to the site for AI tools, with the same findings and a line per page: keep it in step when pages are added, renamed or retired.
 
 ### Day-ahead offers and costs
 
