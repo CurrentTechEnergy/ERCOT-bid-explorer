@@ -1,5 +1,5 @@
 {
- "checked": "2026-11-11T18:39:19Z",
+ "checked": "2026-11-11T19:12:49Z",
  "today": "2026-11-11",
  "sources": {
   "2d": {
@@ -53,15 +53,15 @@
   },
   "dam_nodes": {
    "label": "DAM node prices",
-   "latest": "2026-11-11",
-   "behind": 0,
+   "latest": "2026-11-12",
+   "behind": -1,
    "allowed": 0,
    "stale": false
   },
   "dam_lambda": {
    "label": "DAM system lambda",
-   "latest": "2026-11-11",
-   "behind": 0,
+   "latest": "2026-11-12",
+   "behind": -1,
    "allowed": 0,
    "stale": false
   },
