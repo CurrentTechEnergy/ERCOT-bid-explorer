@@ -3,13 +3,27 @@
   <title>AEEC_ELK_3: bidding and operating changes</title>
   <link href="https://ercotbids.currenttech.energy/unit.html?unit=AEEC_ELK_3"/>
   <id>https://ercotbids.currenttech.energy/unit.html?unit=AEEC_ELK_3</id>
-  <updated>2026-11-10T00:00:00Z</updated>
+  <updated>2026-11-11T00:00:00Z</updated>
   <entry>
     <title>AEEC_ELK_3: Shut down despite a day-ahead award (2026-09-11)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=AEEC_ELK_3"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=AEEC_ELK_3#AEEC_ELK_3/2026-09-11/shutdown_award</id>
     <updated>2026-11-10T00:00:00Z</updated>
-    <summary>Shut down for 2 h although a day-ahead award covered 100% of the stretch</summary>
+    <summary>Shut down for 20 h although a day-ahead award covered 100% of the stretch</summary>
+  </entry>
+  <entry>
+    <title>AEEC_ELK_3: Day-ahead: minimum-energy offer stepped (2026-09-06)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=AEEC_ELK_3"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=AEEC_ELK_3#AEEC_ELK_3/2026-09-06/dam_mingen_step</id>
+    <updated>2026-11-11T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $29 to $39/MWh (offer minus fuel cost: $0 to $6/MWh)</summary>
+  </entry>
+  <entry>
+    <title>AEEC_ELK_3: Day-ahead: minimum-energy offer stepped (2026-09-06)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=AEEC_ELK_3"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=AEEC_ELK_3#AEEC_ELK_3/2026-09-06/dam_mingen_step</id>
+    <updated>2026-11-11T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $29 to $39/MWh (offer minus fuel cost: $0 to $6/MWh)</summary>
   </entry>
   <entry>
     <title>AEEC_ELK_3: Shut down despite a day-ahead award (2026-08-02)</title>
@@ -199,19 +213,5 @@
     <id>https://ercotbids.currenttech.energy/unit.html?unit=AEEC_ELK_3#AEEC_ELK_3/2026-01-21/bidding</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>MW above LSL offered at or below $0: 97% to 0% of the day</summary>
-  </entry>
-  <entry>
-    <title>AEEC_ELK_3: Day-ahead: minimum-energy offer stepped (2026-01-16)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=AEEC_ELK_3"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=AEEC_ELK_3#AEEC_ELK_3/2026-01-16/dam_mingen_step</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Minimum-energy offer stepped: $59 to $0/MWh (offer minus fuel cost: $16 to −$33/MWh)</summary>
-  </entry>
-  <entry>
-    <title>AEEC_ELK_3: Day-ahead: minimum-energy offer stepped (2026-01-16)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=AEEC_ELK_3"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=AEEC_ELK_3#AEEC_ELK_3/2026-01-16/dam_mingen_step</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Minimum-energy offer stepped: $59 to $0/MWh (offer minus fuel cost: $16 to −$33/MWh)</summary>
   </entry>
 </feed>

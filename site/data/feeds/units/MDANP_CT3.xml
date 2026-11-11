@@ -3,7 +3,14 @@
   <title>MDANP_CT3: bidding and operating changes</title>
   <link href="https://ercotbids.currenttech.energy/unit.html?unit=MDANP_CT3"/>
   <id>https://ercotbids.currenttech.energy/unit.html?unit=MDANP_CT3</id>
-  <updated>2026-11-05T00:00:00Z</updated>
+  <updated>2026-11-11T00:00:00Z</updated>
+  <entry>
+    <title>MDANP_CT3: Shut down after a long run (2026-09-12)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=MDANP_CT3"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=MDANP_CT3#MDANP_CT3/2026-09-12/shutdown_new</id>
+    <updated>2026-11-11T00:00:00Z</updated>
+    <summary>Shut down for 12 h after 76 days without a shutdown</summary>
+  </entry>
   <entry>
     <title>MDANP: Day-ahead: minimum-energy offer stepped (2026-07-18)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=MDANP"/>

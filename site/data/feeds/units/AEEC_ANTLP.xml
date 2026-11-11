@@ -3,7 +3,14 @@
   <title>AEEC_ANTLP: bidding and operating changes</title>
   <link href="https://ercotbids.currenttech.energy/unit.html?unit=AEEC_ANTLP"/>
   <id>https://ercotbids.currenttech.energy/unit.html?unit=AEEC_ANTLP</id>
-  <updated>2026-11-03T00:00:00Z</updated>
+  <updated>2026-11-11T00:00:00Z</updated>
+  <entry>
+    <title>AEEC_ANTLP: Day-ahead: minimum-energy offer stepped (2026-09-06)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=AEEC_ANTLP"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=AEEC_ANTLP#AEEC_ANTLP/2026-09-06/dam_mingen_step</id>
+    <updated>2026-11-11T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $27 to $37/MWh (offer minus fuel cost: −$4 to $3/MWh)</summary>
+  </entry>
   <entry>
     <title>AEEC_ANTLP: Day-ahead: minimum-energy offer stepped (2026-07-31)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=AEEC_ANTLP"/>
