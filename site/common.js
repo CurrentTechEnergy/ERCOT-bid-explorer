@@ -370,7 +370,7 @@ async function unitIndex() {
     return u;
   });
 }
-const COMPANY_ROLE = { operator: "Operator (EIA)", owner: "Owner (web search)", developer: "Developer (web search)", "plant name": "Plant (EIA)" };
+const COMPANY_ROLE = { operator: "Operator (EIA)", owner: "Owner (web search, unverified)", developer: "Developer (web search, unverified)", "plant name": "Plant (EIA)" };
 // what a hit matched on, as "Label: value", when the query is not in the name, CDR plant name or other names
 // the result row already shows; the field matching the most query words wins, in this order on a tie
 function matchedOn(u, q) {
