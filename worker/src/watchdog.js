@@ -8,8 +8,8 @@
      - once a slot's start time has passed (Central time, SLOTS), and no run of that slot has
        succeeded or is under way today, it starts one through GitHub's workflow_dispatch API with
        the slot as an input (at most MAX_DISPATCHES a day per slot: the start and one retry);
-     - when a slot still hasn't succeeded ALERT_AFTER_MIN after its start, or GitHub refuses a
-       dispatch (an expired token, say), it emails OWNER_EMAIL once that day.
+     - when a slot still hasn't succeeded ALERT_AFTER_MIN after its start and no run of it is under
+       way, or GitHub refuses a dispatch (an expired token, say), it emails OWNER_EMAIL once that day.
 
    update.yml names each run after its slot ("Update ERCOT data (morning)"), so the runs GitHub's
    own backup crons start count too, and its "when" job skips a slot run that another run has
@@ -85,17 +85,18 @@ async function checkSlot(env, { slot, at }, now, sendEmail) {
       .bind(...keys.map((k) => fields[k]), day, slot).run();
   };
 
-  let runs = [], note;
+  let runs = [], note, going = false;   // going: a run of the slot is under way, or was just started
   try {
     runs = await slotRuns(env, slot, day, now);
     if (runs.some((r) => r.did)) return `${slot}: done`;
-    if (runs.some((r) => r.status !== "completed")) note = `${slot}: a run is under way`;
+    if (runs.some((r) => r.status !== "completed")) { going = true; note = `${slot}: a run is under way`; }
     else if (st.dispatches < MAX_DISPATCHES) {
       await gh(env, `/actions/workflows/${WORKFLOW}/dispatches`, {
         method: "POST", headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ ref: env.BRANCH || "main", inputs: { slot } }),
       });
       st.dispatches += 1;
+      going = true;
       await save({ dispatches: st.dispatches, last_dispatch: now.toISOString(), error: null });
       note = `${slot}: started run ${st.dispatches} of ${MAX_DISPATCHES}`;
     } else note = `${slot}: ${MAX_DISPATCHES} runs started today and none succeeded`;
@@ -105,7 +106,9 @@ async function checkSlot(env, { slot, at }, now, sendEmail) {
     note = `${slot}: ${st.error}`;
   }
 
-  const late = min >= at + ALERT_AFTER_MIN;
+  // late: overdue with nothing under way, so an update that is merely running late (or was just
+  // started, say on the day the watchdog is deployed) doesn't send a false alarm
+  const late = min >= at + ALERT_AFTER_MIN && !going;
   if (!st.alerted && (late || st.error) && env.OWNER_EMAIL) {
     const why = st.error ? `The watchdog couldn't check or start it: ${st.error}`
                          : `It was due at ${hhmm(at)} Central (${hhmm(at - 60)} MT) and hasn't succeeded ${ALERT_AFTER_MIN / 60} hours later.`;
