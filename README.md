@@ -64,6 +64,26 @@ Subscriber emails (optional): the Unit page's Subscribe box signs people up with
 
 Ask the data (optional): `site/ask.html` answers questions about the published data with Claude, through the Worker in `ask-worker/`. The Worker gives the model read-only tools over files the site already publishes (unit search, a unit's hours, a fleet's days, prices, identified changes); it never calls ERCOT. It is behind a passcode, and it limits each visitor to 5 questions a day, spending to $5 a day and $100 a month (counted from each answer's tokens), and each question to $1.50 and 8 tool rounds (`ask-worker/wrangler.toml`). Every question, answer, tool call and cost is logged in its D1 database; `GET /log` with the owner passcode shows them. Setup, once: in the Anthropic Console make a workspace with a $100 monthly spend limit (the hard ceiling) and an API key in it, add the repository secrets `ANTHROPIC_API_KEY`, `ASK_PASSCODE` (for testers) and `ASK_OWNER_PASSCODE` (no per-visitor limit, reads the log), and run **Deploy the Ask the data server** in the Actions tab; it uses the same `CLOUDFLARE_API_TOKEN`, creates the database, deploys the Worker and writes its address to `site/ask.json`. The Worker's 30-second CPU limit needs the Workers Paid plan.
 
+### Backups
+
+The `data` branch, the `history` and `behaviour` releases, the private files in `ercot-raw` and the two D1 databases each exist only once, and several were built from ERCOT files that are not in the raw store, so **Back up data** (`.github/workflows/backup.yml`) copies them every Sunday at 02:00 MST into a separate private R2 bucket, one folder per run (`backups/YYYY-MM-DD-HHMM/`, with a `manifest.txt` of sizes and SHA-256). It makes no ERCOT calls, and without its secrets it does nothing.
+
+Setup, once, in Cloudflare:
+1. Create a private R2 bucket named `ercot-backup` (or set the repository variable `BACKUP_R2_BUCKET` to another name).
+2. In the bucket's **Settings**, add a **Bucket lock rule** with retention 28 days for all objects, and an **Object lifecycle rule** that deletes objects 35 days after upload. Each snapshot then can't be deleted or overwritten for four weeks and is removed after five.
+3. Create an R2 API token with **Object Read & Write** on `ercot-backup` only, and add its keys as the repository secrets `BACKUP_R2_ACCESS_KEY_ID` and `BACKUP_R2_SECRET_ACCESS_KEY`. The run also uses the existing `R2_ENDPOINT`, `R2_ACCESS_KEY_ID` / `R2_SECRET_ACCESS_KEY` and `CLOUDFLARE_API_TOKEN`.
+4. Run **Back up data** once from the Actions tab and check its summary.
+
+Recommended for `ercot-raw` too: a bucket lock rule on the prefix `raw/` with no expiry, so no token can delete or overwrite a raw ERCOT file (the pipeline only adds new ones; the **Check raw store** test file is written under `check/`). Leave `private/` unlocked: the pipeline overwrites those files every run.
+
+Restoring, from a snapshot folder downloaded with `aws s3 cp --recursive --endpoint-url "$R2_ENDPOINT" s3://ercot-backup/backups/<folder>/ snap/`:
+- `data` branch: `git fetch snap/data.bundle data:restored-data`, check it, then `git push --force origin restored-data:data`.
+- A release: `gh release upload history snap/history/history/* --clobber` (likewise `behaviour`).
+- `ercot-raw` private files: `aws s3 cp --recursive --endpoint-url "$R2_ENDPOINT" snap/ercot-raw-private/ s3://ercot-raw/private/`.
+- A D1 database: Cloudflare's Time Travel restores to any minute in the last 30 days (`wrangler d1 time-travel restore ercot-follows --timestamp=...`); for older states, or a new database, run `wrangler d1 execute ercot-follows --remote --file snap/d1/ercot-follows.sql` on an empty database.
+
+None of this protects against losing the Cloudflare account itself: keep an occasional copy of a snapshot somewhere else as well.
+
 ### Loading history
 
 From the Actions tab, run **Update ERCOT data** with a backfill start and end date (operating days). Each run processes up to `max_files` reports per report type; run it again to continue. Locally:
