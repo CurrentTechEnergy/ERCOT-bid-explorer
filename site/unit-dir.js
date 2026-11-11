@@ -2,10 +2,11 @@
    pipeline/unit_index.py) with its CDR name, county, zone, decision maker, QSE, ERCOT type and how it behaves in the DAM (share
    of its last 90 DAM days in quick-start standby, self-committed, with a three-part offer, awarded and on outage), filtered
    by technology, by the dropdowns (type, group, zone, QSE), by the DAM behavior chips (each Any, Yes or No; Yes means at
-   least the "On at least" share of days, No less than it; every chip narrows) and by the text in the page's Unit box,
+   least the "On at least" share of days, No less than it; every chip narrows) and by the text in the panel's Search box,
    sorted by any column. The filters are kept in the address (?tech=&type=&group=&zone=&qse=&qs=yes&dam=no&min=0.25) so a
    view can be shared; the older ?commit=qs,self links read as those chips set to Yes.
-   Enter in the Unit box opens the first unit listed. */
+   The dropdowns and chips sit behind "More filters", which shows how many are set and opens by itself when a link sets any.
+   Enter in the Search box opens the first unit listed. */
 (() => {
 "use strict";
 const { setCSV, esc, unitIndex, findUnits, tryJSON } = window.CX;
@@ -90,9 +91,10 @@ function passes(u, skip) {
   }
   return true;
 }
-const filtered = () => S.tech !== "all" || chipsOn().length || SELECTS.some((k) => S.f[k]);
+const moreSet = () => SELECTS.filter((k) => S.f[k]).length + chipsOn().length;     // filters behind "More filters"
+const filtered = () => S.tech !== "all" || moreSet() || !!$("dir-search").value.trim();
 function rows() {
-  const q = $("unit-pick").value.trim();
+  const q = $("dir-search").value.trim();
   let us = S.units.filter((u) => passes(u));
   if (q) { const hit = new Set(findUnits(us, q, Infinity)); us = us.filter((u) => hit.has(u)); }
   const k = S.sort;
@@ -105,7 +107,7 @@ function draw() {
   if (!S.units.length) { el.innerHTML = `<p class="empty">The unit list is not available.</p>`; return; }
   const us = S.shown = rows();
   const cols = COLS.filter((c) => (c.show ? c.show() : !c.opt || S.units.some((u) => u[c.k])));      // QSE and decision maker only once the data has them
-  const q = $("unit-pick").value.trim(), of = S.units.filter((u) => S.tech === "all" || u.tech === S.tech).length;
+  const q = $("dir-search").value.trim(), of = S.units.filter((u) => S.tech === "all" || u.tech === S.tech).length;
   const more = SELECTS.some((k) => S.f[k]) || chipsOn().length;
   $("dir-note").textContent = (q || more ? `${us.length} of ${of}` : `${of}`) + (S.tech === "all" ? " units" : ` ${TECH_LABEL[S.tech].toLowerCase()} units`) +
     (more ? " with these filters" : "") + (q ? ` matching “${q}”` : "");
@@ -141,6 +143,8 @@ function fillSelects() {
   }
   $("dir-min-ctl").hidden = !chipsOn().length;
   $("dir-clear").hidden = !filtered();
+  const n = moreSet();
+  $("dir-more").textContent = n ? `More filters (${n})` : "More filters";
 }
 function readURL() {
   const p = new URLSearchParams(location.search);
@@ -190,18 +194,21 @@ async function boot() {
   $("dir-min").value = String(S.min);
   $("dir-min").addEventListener("change", (e) => { S.min = +e.target.value; draw(); });
   $("dir-clear").addEventListener("click", () => {
-    S.tech = "all"; S.chip = {}; S.min = 0; $("dir-min").value = "0"; for (const k of SELECTS) S.f[k] = "";
+    S.tech = "all"; S.chip = {}; S.min = 0; $("dir-min").value = "0"; for (const k of SELECTS) S.f[k] = ""; $("dir-search").value = "";
     seg.querySelectorAll("button").forEach((x) => x.setAttribute("aria-checked", String(x.dataset.v === "all"))); paintCommit(); draw();
   });
   paintCommit();
-  const pick = $("unit-pick");
+  const more = $("dir-more"), body = $("dir-more-body");
+  const openMore = (on) => { body.hidden = !on; more.setAttribute("aria-expanded", String(on)); };
+  more.addEventListener("click", () => openMore(body.hidden));
+  openMore(moreSet() > 0);                                     // a shared link with filters set shows them
+  const pick = $("dir-search");
   pick.addEventListener("input", draw);
   pick.addEventListener("keydown", (e) => {
-    if (e.key !== "Enter" || $("unit-empty").hidden || !S.shown.length) return;
-    if (S.shown.some((u) => u.unit === pick.value.trim())) return;    // an exact name: unit.js opens it
+    if (e.key !== "Enter" || $("unit-empty").hidden || !S.shown.length || !pick.value.trim()) return;
     e.preventDefault();
-    pick.value = S.shown[0].unit;
-    pick.dispatchEvent(new Event("change"));
+    const q = pick.value.trim(), hit = S.shown.find((u) => u.unit === q) || S.shown[0];   // an exact name, else the first row
+    location.href = `unit.html?unit=${encodeURIComponent(hit.unit)}`;
   });
   S.units = (await unitIndex()) || [];
   if (unitIndex.cdr) $("dir-cdr").textContent = ` (${unitIndex.cdr})`;

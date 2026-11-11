@@ -156,8 +156,6 @@ function buildList() {
   // a unit in the index with none of the data above (a unit on long outage, say) still opens: a short page that says so
   (S.UI || []).filter((u) => !S.list.has(u.unit)).forEach((u) => { add(u.unit, u.tech); S.list.get(u.unit).bare = true; });
   S.list.forEach((e) => e.configs.sort());
-  $("unit-list").innerHTML = [...S.list.values()].sort((a, b) => a.name.localeCompare(b.name))
-    .map((e) => `<option value="${esc(e.name)}">${techLabel(e.tech)}</option>`).join("");
 }
 
 // ---- header: what the unit is and its latest decision ----------------------------------
@@ -1184,6 +1182,7 @@ function drawBare(e) {
 function draw() {
   const e = S.list.get(S.unit);
   $("unit-empty").hidden = !!e;
+  $("unit-find-ctl").hidden = !e;          // "Find another unit" (common.js) on a unit's page; the Units list has its own search
   if (!e) return;
   // a bare unit hides every panel through the class, so panels other scripts draw on resize stay hidden too
   document.body.classList.toggle("bare-unit", !!e.bare);
@@ -1195,7 +1194,6 @@ async function select(name, cfg, keepDay) {
   if (!S.list.has(name)) return;
   S.unit = name; S.cfg = cfg || null;
   if (!keepDay) { S.day = null; S.hour = null; }
-  $("unit-pick").value = name;
   const e = S.list.get(name);
   if (!(e.tech in S.econ)) S.econ[e.tech] = await tryJSON(`data/econ/${e.tech}.json.gz`);
   if (S.unit !== name) return;
@@ -1216,9 +1214,6 @@ async function boot() {
   if (S.T) { S.span = [S.T.dates[0], S.T.dates.at(-1)]; S.last60 = S.T.dates.at(-1); }
   buildList();
   $("status").textContent = S.T ? `Unit-level (60-day) data from ${S.T.dates[0]} to ${S.T.dates.at(-1)}` : "Unit-level (60-day) data not loaded";
-  const pick = $("unit-pick");
-  pick.addEventListener("change", () => select(pick.value.trim()));
-  pick.addEventListener("input", () => { if (S.list.has(pick.value)) select(pick.value); });
   window.CX.init();
   // two pickers can show at once here, so the arrow keys step a picker only while it has focus;
   // the forecast panel keeps its backtest days from 2019

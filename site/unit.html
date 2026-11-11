@@ -24,7 +24,16 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Sans+Condensed:wght@600&display=swap">
 <link rel="stylesheet" href="style.css">
 <style>
-  .unit-pick { min-width: min(320px, 100%); }
+  .dir-search-ctl { flex: 1 1 320px; max-width: 480px; }
+  .dir-search-ctl input { width: 100%; }
+  .dir-more { font: inherit; font-size: 13px; color: var(--ink); background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 6px 12px; min-height: 34px; cursor: pointer; }
+  .dir-more::after { content: " ▾"; color: var(--muted); }
+  .dir-more[aria-expanded="true"]::after { content: " ▴"; }
+  .dir-more-row { align-items: center; }
+  #dir-more-body { border-left: 2px solid var(--line); padding-left: 12px; margin-bottom: 10px; }
+  .unit-find-page { margin-left: 0; flex: 1 1 320px; max-width: 480px; }
+  .unit-find-page input { width: 100%; font-size: 14px; border-radius: 6px; padding: 6px 8px; min-height: 34px; }
+  .unit-find-page .unit-find-list { left: 0; right: auto; width: 100%; }
   .verdict { font-size: 15px; margin: 6px 0 0; max-width: 72ch; }
   .muted { color: var(--muted); }
   .formula { font: 500 14px var(--font-data); margin: 2px 0 0; }
@@ -78,11 +87,11 @@
   <p class="status" id="status">Loading data…</p>
 </header>
 
-<section class="controls" aria-label="Unit">
-  <div class="ctl">
-    <label class="lbl" for="unit-pick">Unit</label>
-    <input type="search" class="unit-pick" id="unit-pick" list="unit-list" placeholder="Unit, plant, county, QSE, company or buyer" autocomplete="off">
-    <datalist id="unit-list"></datalist>
+<section class="controls" id="unit-find-ctl" aria-label="Find another unit" hidden>
+  <div class="ctl unit-find unit-find-page" id="unit-find-here">
+    <label class="lbl" for="unit-find">Find another unit</label>
+    <input type="search" id="unit-find" placeholder="Name, plant, county, QSE, company or buyer" autocomplete="off" spellcheck="false" role="combobox" aria-expanded="false" aria-controls="unit-find-list" aria-autocomplete="list">
+    <ul class="unit-find-list" id="unit-find-list" role="listbox" hidden></ul>
   </div>
 </section>
 
@@ -91,9 +100,12 @@
     <div class="panel-head">
       <div>
         <h2>All units <span class="h-note" id="dir-note"></span></h2>
-        <p class="note">Every generator and battery the site follows, one row each (a combined-cycle train is one row; searching a configuration name finds its train). Type part of a name, plant, county or settlement point in the Unit box above to filter, pick a technology or use the dropdowns, then click a unit to open its page. Sort by any column; the CSV has every column.</p>
-        <details class="how"><summary>How the columns are built</summary><p class="note">The list has every unit seen in ERCOT's disclosures since the site's data begins, so it counts more units than were online on any one day (batteries especially: many are new or run only some days). <b>Group</b> is the unit's timescale group in the latest forecast (how often it shuts down; thermal only). <b>Capacity</b> is the 95th percentile of each day's highest HSL (high sustained limit, the most it told ERCOT it could run). <b>ERCOT type</b> is the resource type in ERCOT's DAM files (SCGT90 and SCLE90 are gas turbines over and under 90 MW, DSL diesel and gas engines). <b>Quick-start standby</b>, <b>Self-committed</b>, <b>Three-part offer</b>, <b>Day-ahead award</b> and <b>On outage</b> are thermal only: the share of the unit's days in the last 90 days of DAM data<span id="dir-window"></span> with an hour in quick-start standby (OFFQS), with the unit self-committed (resource status ON or ONOS for at least half the day), with a three-part offer (a start-up or minimum-energy cost offered), with a day-ahead energy award, and on outage (status OUT all day). A unit can score on several, and a combined-cycle train counts a day when any configuration does. Each DAM behavior chip narrows the list: Yes keeps units on at or above the chosen share of days, No those below it (at "any day", Yes is at least one day and No is none). <b>Name</b>, county and zone come from ERCOT's Capacity, Demand and Reserves report<span id="dir-cdr"></span>, matched on the unit code; <span class="tag">plant</span> marks a unit matched only to its plant, which is how combined-cycle trains match, since the report lists each turbine. The Unit box also searches these names. Batteries renamed for RTC+B (names ending _ESR1) mostly match the report only by plant. <b>Shut rate where shutting paid</b> is combined cycle and gas steam only: of the stretches where shutting down would have paid at the day-ahead node price (the loss from staying on beat the restart cost and nothing held it on), the share the unit turned off for, averaged over <span id="dir-shut-base">2019–21</span> and over 2024 on, counting only years with at least <span id="dir-shut-min">8</span> such stretches; the bracket is the change in percentage points. Sorting on it lists the biggest drops first. Each year is on the unit's own page under Decision history, and every unit side by side on <a href="goal.html#q3-panel">Will fossil turn off?</a>, question 3.</p></details>
+        <p class="note">Every generator and battery the site follows, one row each (a combined-cycle train is one row; searching a configuration name finds its train). Search by name, plant, county, settlement point, QSE, company or buyer, pick a technology, or open More filters for type, group, zone, QSE and DAM behavior, then click a unit to open its page. Sort by any column; the CSV has every column.</p>
+        <details class="how"><summary>How the columns are built</summary><p class="note">The list has every unit seen in ERCOT's disclosures since the site's data begins, so it counts more units than were online on any one day (batteries especially: many are new or run only some days). <b>Group</b> is the unit's timescale group in the latest forecast (how often it shuts down; thermal only). <b>Capacity</b> is the 95th percentile of each day's highest HSL (high sustained limit, the most it told ERCOT it could run). <b>ERCOT type</b> is the resource type in ERCOT's DAM files (SCGT90 and SCLE90 are gas turbines over and under 90 MW, DSL diesel and gas engines). <b>Quick-start standby</b>, <b>Self-committed</b>, <b>Three-part offer</b>, <b>Day-ahead award</b> and <b>On outage</b> are thermal only: the share of the unit's days in the last 90 days of DAM data<span id="dir-window"></span> with an hour in quick-start standby (OFFQS), with the unit self-committed (resource status ON or ONOS for at least half the day), with a three-part offer (a start-up or minimum-energy cost offered), with a day-ahead energy award, and on outage (status OUT all day). A unit can score on several, and a combined-cycle train counts a day when any configuration does. Each DAM behavior chip narrows the list: Yes keeps units on at or above the chosen share of days, No those below it (at "any day", Yes is at least one day and No is none). <b>Name</b>, county and zone come from ERCOT's Capacity, Demand and Reserves report<span id="dir-cdr"></span>, matched on the unit code; <span class="tag">plant</span> marks a unit matched only to its plant, which is how combined-cycle trains match, since the report lists each turbine. The search box also searches these names. Batteries renamed for RTC+B (names ending _ESR1) mostly match the report only by plant. <b>Shut rate where shutting paid</b> is combined cycle and gas steam only: of the stretches where shutting down would have paid at the day-ahead node price (the loss from staying on beat the restart cost and nothing held it on), the share the unit turned off for, averaged over <span id="dir-shut-base">2019–21</span> and over 2024 on, counting only years with at least <span id="dir-shut-min">8</span> such stretches; the bracket is the change in percentage points. Sorting on it lists the biggest drops first. Each year is on the unit's own page under Decision history, and every unit side by side on <a href="goal.html#q3-panel">Will fossil turn off?</a>, question 3.</p></details>
       </div>
+    </div>
+    <div class="ctl-row">
+      <div class="ctl dir-search-ctl"><label class="lbl" for="dir-search">Search</label><input type="search" id="dir-search" placeholder="Name, plant, county, QSE, company or buyer" autocomplete="off" spellcheck="false"></div>
     </div>
     <div class="ctl-row">
       <div class="ctl">
@@ -101,12 +113,16 @@
         <div class="seg" role="radiogroup" aria-labelledby="lbl-dir-tech" id="dir-tech"></div>
       </div>
     </div>
+    <div class="ctl-row dir-more-row">
+      <button type="button" class="dir-more" id="dir-more" aria-expanded="false" aria-controls="dir-more-body">More filters</button>
+      <button type="button" class="dir-clear" id="dir-clear" hidden>Clear filters</button>
+    </div>
+    <div id="dir-more-body" hidden>
     <div class="ctl-row" id="dir-filters">
       <div class="ctl"><label class="lbl" for="dir-type">ERCOT type</label><select id="dir-type"></select></div>
       <div class="ctl"><label class="lbl" for="dir-group">Group</label><select id="dir-group"></select></div>
       <div class="ctl"><label class="lbl" for="dir-zone">Zone</label><select id="dir-zone"></select></div>
       <div class="ctl"><label class="lbl" for="dir-qse">QSE</label><select id="dir-qse"></select></div>
-      <div class="ctl"><button type="button" class="dir-clear" id="dir-clear" hidden>Clear filters</button></div>
     </div>
     <div class="ctl-row" id="dir-commit-ctl">
       <div class="ctl">
@@ -115,6 +131,7 @@
         <div class="presets"><span class="muted">Quick links:</span> <span id="dir-presets"></span></div>
       </div>
       <div class="ctl" id="dir-min-ctl"><label class="lbl" for="dir-min">"Yes" means on at least … of its DAM days</label><select id="dir-min"></select></div>
+    </div>
     </div>
     <div class="units-wrap" id="dir-table" data-csv><p class="empty">Loading units…</p></div>
   </section>
