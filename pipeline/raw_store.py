@@ -258,8 +258,9 @@ def check() -> int:
         print("raw store: R2_ENDPOINT, R2_ACCESS_KEY_ID or R2_SECRET_ACCESS_KEY is not set")
         return 1
     test = b"PK raw store check " + dt.datetime.now(dt.timezone.utc).isoformat().encode()
-    store.put("_check", "test", test)
-    back = store.get("_check", "test")
+    # outside raw/, which a bucket lock rule may keep from being overwritten (README, Backups)
+    store.put_object("check/test", test)
+    back = store.get_object("check/test")
     print(f"write and read back a test object: {'ok' if back == test else 'FAILED'}")
     if back != test:
         return 1
