@@ -105,21 +105,38 @@ jobs:
           node-version: "22"
 
       # wrangler finds the database through the Worker's wrangler.toml, so fill in its id the way
-      # the deploy workflows do (the change is never committed).
+      # the deploy workflows do (the change is never committed).  Its output stays out of the log:
+      # `d1 export` prints a signed download link to the export, and this repository's logs are
+      # public.  Only its error lines are shown, with any link removed.  Each export is tried three
+      # times (D1 sometimes fails to start the export), and a failure here doesn't stop the upload:
+      # the run is marked failed at the end instead.
       - name: Export the D1 databases
+        id: d1
         if: steps.secrets.outputs.ready == 'true' && env.CLOUDFLARE_API_TOKEN != ''
+        continue-on-error: true
         run: |
           mkdir -p "$RUNNER_TEMP/snap/d1"
           failed=""
           for pair in worker:ercot-follows ask-worker:ercot-ask; do
             dir=${pair%%:*}; db=${pair#*:}
-            id=$(cd "$dir" && $WRANGLER d1 list --json | jq -r --arg n "$db" '.[] | select(.name == $n) | .uuid')
+            id=$(cd "$dir" && $WRANGLER d1 list --json 2>/dev/null | jq -r --arg n "$db" '.[] | select(.name == $n) | .uuid')
             if [ -z "$id" ]; then echo "$db: no such database, skipped"; continue; fi
             sed -i "s/DATABASE_ID/$id/" "$dir/wrangler.toml"
-            (cd "$dir" && $WRANGLER d1 export "$db" --remote --output "$RUNNER_TEMP/snap/d1/$db.sql") || failed="$failed $db"
+            ok=""
+            for attempt in 1 2 3; do
+              if (cd "$dir" && $WRANGLER d1 export "$db" --remote --output "$RUNNER_TEMP/snap/d1/$db.sql") > "$RUNNER_TEMP/d1.log" 2>&1; then
+                ok=1; echo "$db: exported ($(stat -c %s "$RUNNER_TEMP/snap/d1/$db.sql") bytes)"; break
+              fi
+              echo "$db: export attempt $attempt failed:"
+              grep -iE 'error|✘' "$RUNNER_TEMP/d1.log" | sed -E 's#https?://[^[:space:]]*#<link removed>#g' | head -5
+              rm -f "$RUNNER_TEMP/snap/d1/$db.sql"
+              [ "$attempt" = 3 ] || sleep 30
+            done
+            rm -f "$RUNNER_TEMP/d1.log"
+            [ -n "$ok" ] || failed="$failed $db"
           done
           git checkout -- worker ask-worker
-          [ -z "$failed" ] || { echo "::error::D1 export failed for:$failed"; exit 1; }
+          [ -z "$failed" ] || { echo "::error::D1 export failed for:$failed (the rest of the snapshot is still uploaded)"; exit 1; }
 
       - name: Upload the snapshot
         if: steps.secrets.outputs.ready == 'true'
@@ -155,3 +172,9 @@ jobs:
               [ -e "$d" ] && echo "| $d | $(find "$d" -type f | wc -l) | $(du -sh "$d" | cut -f1) |"
             done
           } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Fail when a D1 export failed
+        if: steps.d1.outcome == 'failure'
+        run: |
+          echo "::error::The snapshot was uploaded without every D1 export (see Export the D1 databases)"
+          exit 1
