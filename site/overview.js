@@ -243,7 +243,8 @@ function drawHeadline() {
     el.innerHTML = `${esc(dayLabel(S.date))}: ${rt ? "real-time" : "day-ahead"} system lambda averaged <b>${pAvg}</b>, ranging from ${pMin} to ${pMax}.`;
     $("lede-sub").innerHTML = (nCheap ? `<b>${nCheap} hour${nCheap > 1 ? "s" : ""}</b> at ${fmtPrice0(CHEAP)}/MWh or less (${runs.join(" and ")}), averaging ${window.CX.fmtPair([cheapAvg], "$/MWh", { dp: 2 })[0]}. ` : `No hour at ${fmtPrice0(CHEAP)}/MWh or less. `) +
       (L === "60d" ? "Unit-by-unit hours are from ERCOT's 60-day disclosure. Who turned off, and at what loss, is on Turn-ons and Turn-offs."
-        : `Unit detail for this day arrives with the 60-day disclosure, about ${esc(dayLabel(arrives))}; until then the page shows ERCOT's 2-day summary in total.`);
+        : `Unit detail for this day arrives with the 60-day disclosure, about ${esc(dayLabel(arrives))}; until then the page shows ERCOT's 2-day summary in total.`) +
+      (S.corr && S.corr.rt ? ` ${esc(window.CX.correctionNote(S.corr, true))}` : "");
   }
   if (!ref) $("lede-sub").textContent = "";
   const tiles = [];
@@ -807,14 +808,16 @@ function renderHour() {
 }
 async function loadDay() {
   const d = S.date;
-  const [gen, units60, prices, dam, rtNodes] = await Promise.all([
+  const [gen, units60, prices, dam, rtNodes, corr] = await Promise.all([
     has("2dgen") ? tryJSON(`data/2dgen/${d}.json.gz`) : null,
     has("60d") ? tryJSON(`data/60d-units/${d}.json.gz`) : null,
     has("prices") ? tryJSON(`data/prices/${d}.json.gz`) : null,
     has("60d") && has("dam") ? tryJSON(`data/dam/${d}.json.gz`) : null,
     has("60d") ? tryJSON(`data/rt-nodes/${d}.json.gz`) : null,
+    window.CX.priceCorrection(d),
   ]);
   if (d !== S.date) return;    // a newer pick took over
+  S.corr = corr;
   S.gen = gen; S.units60 = window.CX.trainHours(units60); S.prices = prices; S.dam = dam; S.rtNodes = rtNodes;
   S.a60 = actual60(); S.off60 = S.a60 ? offline60() : null;
   unitProfit();

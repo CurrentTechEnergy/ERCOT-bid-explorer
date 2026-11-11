@@ -50,6 +50,39 @@ function getJSON(url) {
 }
 const tryJSON = (url) => getJSON(url).catch(() => null);
 
+// ---------------------------------------------------- price corrections ---
+// ERCOT corrects a price by publishing a correction report (NP4-197-M real time, NP4-196-M day
+// ahead), not by reposting the prices; the pipeline patches the stored prices and logs each
+// corrected day in data/price_corrections.json.gz (pipeline/price_corrections.py).
+// -> { rt, da } for a day whose prices were changed, each null or { posted, maxHub }; null otherwise
+async function priceCorrection(date) {
+  const log = await tryJSON("data/price_corrections.json.gz");
+  const e = log && log.days && log.days[date];
+  if (!e) return null;
+  const one = (x) => {
+    if (!x || !(x.hub_cells || x.node_cells)) return null;
+    const posted = (x.docs || []).map((id) => (log.docs[id] || {}).posted).filter(Boolean).sort().pop();
+    return { posted: posted ? posted.slice(0, 10) : null, maxHub: x.max_hub_change || 0 };
+  };
+  const out = { rt: one(e.rt), da: one(e.da) };
+  return out.rt || out.da ? out : null;
+}
+// the days whose real-time ("rt") or day-ahead ("da") prices were corrected, oldest first
+async function correctedDays(market) {
+  const log = await tryJSON("data/price_corrections.json.gz");
+  return Object.entries((log && log.days) || {})
+    .filter(([, e]) => e[market] && (e[market].hub_cells || e[market].node_cells)).map(([d]) => d).sort();
+}
+// one sentence for a corrected day's real-time prices; `lambda` when the chart shows system lambda
+function correctionNote(c, lambda) {
+  if (!c || !c.rt) return "";
+  const when = c.rt.posted ? ` posted ${dayLabel(c.rt.posted)}` : "";
+  return lambda
+    ? `ERCOT corrected this day's real-time hub, load zone and node prices after the fact (correction${when}); the site shows the corrected prices. System lambda is not part of ERCOT's corrections and is shown as first published.`
+    : `These prices include ERCOT's price correction${when}` +
+      (c.rt.maxHub ? `, which moved hub and load zone prices by up to $${c.rt.maxHub.toFixed(2)}/MWh in a 15-minute interval.` : ".");
+}
+
 // -------------------------------------------------------------- tooltip ---
 function showTip(ev, html) {
   const t = $("tip");
@@ -783,5 +816,5 @@ function startCost(u, i, p, own) {
   return { cost, n, estimated };
 }
 
-window.CX = { ruleOutages, hourlyStarts, startCost, OUT_MIN_H, trainHours, fmtPair, dayPicker, dayLabel, latest60, pickDay, isPeaker, peakerTag, peakerNote, onOffDot, onOffLegend, rucDays, rucRing, rucLegend, rucNote, fromStart, SITE_START, setNote, getJSON, tryJSON, showTip, hideTip, clearPins, setCSV, readHash, writeHash, init, panelFromLink, css, esc, tickFormat, fmtKind, axisFmt, unitIndex, unitPageURL, findUnits, matchedOn, drawCurtailDay };
+window.CX = { ruleOutages, hourlyStarts, startCost, OUT_MIN_H, trainHours, fmtPair, dayPicker, dayLabel, latest60, pickDay, isPeaker, peakerTag, peakerNote, onOffDot, onOffLegend, rucDays, rucRing, rucLegend, rucNote, fromStart, SITE_START, setNote, getJSON, tryJSON, priceCorrection, correctedDays, correctionNote, showTip, hideTip, clearPins, setCSV, readHash, writeHash, init, panelFromLink, css, esc, tickFormat, fmtKind, axisFmt, unitIndex, unitPageURL, findUnits, matchedOn, drawCurtailDay };
 })();
