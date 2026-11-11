@@ -1,0 +1,38 @@
+# ERCOT Bids
+
+> ERCOT Bids (https://ercotbids.currenttech.energy) shows how Texas (ERCOT) generators and batteries offer into the wholesale power market and get dispatched, unit by unit. It focuses on what happens at low and negative prices: whether coal and gas units turn off when wind and solar make power cheap, what keeps them on, and how wind, solar and batteries bid. Built by CurrentTech Energy from ERCOT's public market disclosures. Free to view; you may link to any page and quote individual figures with credit to ERCOT Bids (see the terms page).
+
+Data comes from ERCOT's public reports: the 60-day SCED disclosure (every unit's real-time offer curve, limits and output), the 60-day DAM disclosure (day-ahead three-part offers and awards), the 2-day aggregate SCED energy curves, settlement point prices, and ERCOT's resource lists. Unit-level data runs about 60 days behind; aggregate curves and prices run about 2 days behind. The site updates daily, and covers 2019 on.
+
+## Main findings
+
+These are summarised without numbers; the front page gives the current figures, year by year.
+
+- Fossil output has a floor it doesn't go below. Even in hours when wind, solar and nuclear leave very little load for fossil, coal and gas still run roughly 8 to 12 GW, most of it units sitting at their minimum output. The floor has risen since 2021, not fallen.
+- A day-ahead award or a self-commitment keeps a unit on; the price does not turn it off. Combined cycles with a day-ahead award almost never turn off in a cheap midday stretch, while most with neither do. Coal and gas steam stay on almost regardless.
+- Combined cycle units turn off less often than they used to in windows where a shutdown would have paid, compared with 2019 to 2021.
+- Most curtailment of wind and solar is transmission, not fossil: most is lost in hours that were not oversupplied, or behind a transmission constraint. Only a small share could have run had fossil units at minimum shut.
+- A flexible load soaks up the most otherwise-curtailed wind and solar in the southern Panhandle and the Rolling Plains, far more than in Houston.
+
+## Pages
+
+- [Will fossil turn off?](https://ercotbids.currenttech.energy/): the front page. Four questions, each answered by year from 2019: what turns off at low prices, why the rest stays on, whether that is changing, and what it costs in curtailed wind and solar; plus where a flexible load could use curtailed energy.
+- [A day in ERCOT](https://ercotbids.currenttech.energy/day-in-ercot.html): one day hour by hour: prices, thermal output by how often units turn off, wind, solar, batteries, and every thermal unit's hours.
+- [Prices](https://ercotbids.currenttech.energy/prices.html): how often power is very cheap or very expensive, year by year since 2019, beside battery growth and gas prices.
+- [Day-ahead offers](https://ercotbids.currenttech.energy/dayahead.html): what thermal units ask the day-ahead market for in their three-part offers against fuel cost, what commits the minimum output online in cheap hours, and how much wind and solar is sold day-ahead.
+- [Turn-ons and Turn-offs](https://ercotbids.currenttech.energy/turn-ons-and-turn-offs.html): which thermal units stay online through cheap and negative-price hours, the price that turns each one off, and what they lose by staying on.
+- [Real-time offers](https://ercotbids.currenttech.energy/realtime.html): real-time offer curves by technology, who is at the margin and sets price, and thermal offers against fuel prices.
+- [Thermal](https://ercotbids.currenttech.energy/thermal.html): what nuclear, coal and gas units earned, the average price they got, their running cost and margin, year by year.
+- [Renewables](https://ercotbids.currenttech.energy/renewables.html): how wind and solar offer by hour, curtailment against price and by node, hedge signals in their bids, public power buyers, and what each plant earned.
+- [Batteries](https://ercotbids.currenttech.energy/batteries.html): battery charging and discharging against day-ahead awards, state of charge, offer prices and charging bids, and earnings against a perfect-foresight benchmark.
+- [Units](https://ercotbids.currenttech.energy/unit.html): every ERCOT generator and battery, searchable by name, plant, county, owner, QSE or buyer. Each unit has its own page at https://ercotbids.currenttech.energy/unit/NAME (for example /unit/FRNYPP_CC1), listed in the sitemap.
+- [What's changing](https://ercotbids.currenttech.energy/changes.html): new units, bidding shifts, turn-off point moves and battery size changes as they show up in the offer data.
+- [How offers work](https://ercotbids.currenttech.energy/guide.html): a plain guide to ERCOT offer curves, minimum output, SCED dispatch, revenue and hedge signals.
+
+## Optional
+
+- [Sitemap](https://ercotbids.currenttech.energy/sitemap.xml): every page and unit page.
+- [Terms and privacy](https://ercotbids.currenttech.energy/terms.html)
+- [Contact](https://ercotbids.currenttech.energy/contact.html)
+
+When quoting a figure, credit "ERCOT Bids" (CurrentTech Energy) and link the page it comes from. Figures are estimates built from ERCOT's disclosures and can change as later data arrives.
