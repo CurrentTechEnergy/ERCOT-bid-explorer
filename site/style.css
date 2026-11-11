@@ -350,6 +350,8 @@ table.data tr.evc-row:hover td { background: none; }
 .sw.sw-line { background: none; width: 16px; height: 0; border-radius: 0; border-top: 2px solid; vertical-align: middle; }
 .sw.sw-line.sw-dash { border-top-style: dashed; }
 .sw.sw-dot { width: 6px; height: 6px; border-radius: 50%; vertical-align: middle; margin: 0 5px; }
+.sw.sw-mark { width: 10px; height: 10px; border-radius: 50%; vertical-align: middle; box-sizing: border-box; }
+.foot-lead { display: block; margin-bottom: 6px; }
 table.data.fuel-tbl td, table.data.fuel-tbl th { white-space: normal; }
 /* Goal page question 4: where a new load could use the curtailment (two county maps, a detail strip, lines) */
 .sit { border-top: 1px solid var(--line); margin-top: 18px; padding-top: 14px; display: grid; gap: 10px; }

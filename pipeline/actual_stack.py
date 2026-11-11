@@ -27,7 +27,19 @@ data/stack/<date>.json.gz
   prices        the price grid ($/MWh)
   groups, techs the keys below, in display order
   group[g] / tech[t]: {mw: [24][len(prices)], min: [24], floor: [24], max: [24], n: [24] units online}
-  fleet         {mw, min, floor, max, n} for all thermal units online
+  fleet         {mw, min, floor, max, n} for all thermal units online, plus (format 7):
+                lim [24][len(prices)]   the limited stack, as `mw` but each unit held to the range SCED
+                                        could use for energy in the run: no higher than HDL less the
+                                        AS up it was awarded, no lower than LDL plus the AS down
+                                        (HDL and LDL are its ramp rate's reach in that run); units
+                                        without `disp` fall back to LSL..HSL
+                bp [24]                 actual output: the units' base points summed
+                off_at, res_at, lim_at [24]   MW at each run's own real-time system lambda on the
+                                        offered stack, on the offered stack less AS up only, and on
+                                        the limited stack (averaged over the runs with a lambda),
+                                        so the page can say how much offered MW was out of reach
+                                        because of ramp rates and how much because of reserves
+  group[g] / tech[t] also carry `lim` (format 7).
 Days are written once (all of them again when FORMAT changes) and pruned with the 60-day data.  Groups are
 groups_60d.json.gz's (by train); nuclear, which groups.py leaves out, counts as "never".  A unit
 groups_60d flags as a peaker (column 9: by how it runs, whatever its technology) goes in "peakers"
@@ -42,7 +54,7 @@ from .store import read_json_gz, write_json_gz
 from .units import _ffill_index
 
 OUT_DIR = DATA_DIR / "stack"
-FORMAT = 6   # 2: minimum at the -$250 floor; 3: units online with no output and no HSL left out; 4: seasonal folded into multiday; 5: peakers out of their groups; 6: floor (the system floor)
+FORMAT = 7   # 7: limited stack, base points and crossings at each run's lambda; 2: minimum at the -$250 floor; 3: units online with no output and no HSL left out; 4: seasonal folded into multiday; 5: peakers out of their groups; 6: floor (the system floor)
 FLOOR = -249.99
 PRICES = np.concatenate([
     [-250, -100, -75, -50, -40, -30, -25, -20, -15, -10, -5],
@@ -58,13 +70,48 @@ def _r(a, nd=1):
     return [None if not np.isfinite(v) else round(float(v), nd) for v in np.ravel(a)]
 
 
-def day_stack(ud: dict, group_of: dict, peaker: set = frozenset()) -> dict:
+def run_lambda(prices: dict, runs) -> np.ndarray:
+    """Each SCED run's real-time system lambda from a data/prices day file (NaN where none)."""
+    lam = (prices or {}).get("lambda") or {}
+    by = {int(t[:2]) * 60 + int(t[3:5]): v for t, v in zip(lam.get("time") or [], lam.get("value") or []) if v is not None}
+    return np.array([by.get(int(r), np.nan) for r in runs], float)
+
+
+def _disp(u: dict, n: int, hsl, lsl):
+    """Per-run base point, HDL, LDL, AS up and AS down from the unit's `disp` events (NaN where none)."""
+    out = {k: np.full(n, np.nan) for k in ("bp", "hdl", "ldl", "asup", "asdn")}
+    if u.get("disp"):
+        di = _ffill_index(u["disp"], n)
+        for j, k in enumerate(("bp", "hdl", "ldl", "asup", "asdn"), 1):
+            out[k] = np.array([u["disp"][i][j] if i >= 0 and j < len(u["disp"][i]) and u["disp"][i][j] is not None
+                               else np.nan for i in di], float)
+    return out
+
+
+def limited_range(hsl, lsl, d):
+    """(low, high) MW SCED could use for energy in each run: LDL plus AS down up to HDL less AS up,
+    LSL..HSL where the file has no dispatch limits."""
+    hdl = np.where(np.isfinite(d["hdl"]), d["hdl"], hsl)
+    ldl = np.where(np.isfinite(d["ldl"]), d["ldl"], lsl)
+    up, dn = np.nan_to_num(d["asup"]), np.nan_to_num(d["asdn"])
+    top = np.maximum(hdl - up, ldl)
+    low = np.minimum(ldl + dn, top)
+    return low, np.maximum(top, low)
+
+
+def day_stack(ud: dict, group_of: dict, peaker: set = frozenset(), lam=None) -> dict:
     n = len(ud["runs"])
     hr = np.minimum(np.array(ud["runs"], int) // 60, 23)
     n_hr = np.bincount(hr, minlength=24).astype(float)
+    lam = np.full(n, np.nan) if lam is None else np.asarray(lam, float)
+    has_lam = np.isfinite(lam)
+    n_lam = np.bincount(hr[has_lam], minlength=24).astype(float)
+    LG = np.unique(lam[has_lam]) if has_lam.any() else np.array([0.0])
+    li_of = np.searchsorted(LG, np.where(has_lam, lam, LG[0]))
     G = PRICES.size
-    acc = {("group", g): [np.zeros((24, G)), np.zeros(24), np.zeros(24), np.zeros(24), np.zeros(24)] for g in GROUPS}
-    acc.update({("tech", t): [np.zeros((24, G)), np.zeros(24), np.zeros(24), np.zeros(24), np.zeros(24)] for t in TECHS})
+    acc = {("group", g): [np.zeros((24, G)), np.zeros(24), np.zeros(24), np.zeros(24), np.zeros(24), np.zeros((24, G))] for g in GROUPS}
+    acc.update({("tech", t): [np.zeros((24, G)), np.zeros(24), np.zeros(24), np.zeros(24), np.zeros(24), np.zeros((24, G))] for t in TECHS})
+    fl_x = {k: np.zeros(24) for k in ("bp", "off_at", "res_at", "lim_at")}
     for name, u in ud["units"].items():
         if u["tech"] not in TECHS:
             continue
@@ -83,7 +130,11 @@ def day_stack(ud: dict, group_of: dict, peaker: set = frozenset()) -> dict:
             continue
         cv = u.get("curve2") or u.get("curve") or []
         ci = _ffill_index(cv, n) if cv else np.full(n, -1)
-        rows, floor = np.zeros((n, G)), lsl.copy()
+        d = _disp(u, n, hsl, lsl)
+        lo_l, hi_l = limited_range(np.maximum(hsl, lsl), lsl, d)
+        bp = np.where(np.isfinite(d["bp"]), d["bp"], flat)
+        rows, floor, lrows = np.zeros((n, G)), lsl.copy(), np.zeros((n, G))
+        off_at, res_at, lim_at = flat.copy(), flat.copy(), flat.copy()
         has = np.array([ci[r] >= 0 and cv[ci[r]][1] is not None for r in range(n)])
         idx = np.where(online & has)[0]
         if idx.size:
@@ -97,26 +148,44 @@ def day_stack(ud: dict, group_of: dict, peaker: set = frozenset()) -> dict:
                 r0 = idx[np.argmax(inv == j)]
                 P[j, :len(ev[1])] = ev[1]
                 M[j, :len(ev[2])] = np.array(ev[2], float) * (hsl[r0] if u.get("frac") else 1.0)
-            ev = np.clip(mw_at_prices(P, M, np.append(PRICES, FLOOR), "zero")[inv], lsl[idx][:, None], np.maximum(hsl[idx], lsl[idx])[:, None])
+            raw = mw_at_prices(P, M, np.append(PRICES, FLOOR), "zero")[inv]
+            top = np.maximum(hsl[idx], lsl[idx])
+            ev = np.clip(raw, lsl[idx][:, None], top[:, None])
             rows[idx], floor[idx] = ev[:, :-1], ev[:, -1]
+            lrows[idx] = np.clip(raw[:, :-1], lo_l[idx][:, None], hi_l[idx][:, None])
+            # the MW at each run's own lambda: offered, less AS up only, and limited
+            at = mw_at_prices(P, M, LG, "zero")[inv, li_of[idx]]
+            off_at[idx] = np.clip(at, lsl[idx], top)
+            res_at[idx] = np.clip(at, lsl[idx], np.maximum(top - np.nan_to_num(d["asup"][idx]), lsl[idx]))
+            lim_at[idx] = np.clip(at, lo_l[idx], hi_l[idx])
         rows[online & ~has] = flat[online & ~has][:, None]
+        lrows[online & ~has] = flat[online & ~has][:, None]
         lo_r, hi_r = np.where(has, floor, flat), np.where(has, np.maximum(hsl, lsl), flat)
         w = np.zeros((24, n))
         w[hr[online], np.where(online)[0]] = 1.0
         sys_r = flat if u["tech"] == "nuclear" else lsl         # the system floor (pipeline/lsl_floor.py)
-        mw, mn, mx, cnt, fl = w @ rows, w @ lo_r, w @ hi_r, (w.sum(1) > 0).astype(float), w @ sys_r
+        mw, mn, mx, cnt, fl, lm = w @ rows, w @ lo_r, w @ hi_r, (w.sum(1) > 0).astype(float), w @ sys_r, w @ lrows
+        fl_x["bp"] += w @ np.where(online, bp, 0.0)
+        wl = w * has_lam[None, :]
+        for k, v in (("off_at", off_at), ("res_at", res_at), ("lim_at", lim_at)):
+            fl_x[k] += wl @ np.where(online, v, 0.0)
         g = group_of.get(name) or group_of.get(train_of(name)) or ("never" if u["tech"] == "nuclear" else "ungrouped")
         if name in peaker or train_of(name) in peaker:
             g = "peakers"
         for key in (("group", g if g in GROUPS else "ungrouped"), ("tech", u["tech"])):
             a = acc[key]
-            a[0] += mw; a[1] += mn; a[2] += mx; a[3] += cnt; a[4] += fl
+            a[0] += mw; a[1] += mn; a[2] += mx; a[3] += cnt; a[4] += fl; a[5] += lm
     div = np.where(n_hr > 0, n_hr, np.nan)
-    blk = lambda a: {"mw": [_r(row) for row in a[0] / div[:, None]], "min": _r(a[1] / div), "max": _r(a[2] / div), "n": [int(v) for v in a[3]], "floor": _r(a[4] / div)}
-    fleet = [sum(acc[("tech", t)][i] for t in TECHS) for i in range(5)]
+    dl = np.where(n_lam > 0, n_lam, np.nan)
+    blk = lambda a: {"mw": [_r(row) for row in a[0] / div[:, None]], "min": _r(a[1] / div), "max": _r(a[2] / div), "n": [int(v) for v in a[3]],
+                     "floor": _r(a[4] / div), "lim": [_r(row) for row in a[5] / div[:, None]]}
+    fleet = blk([sum(acc[("tech", t)][i] for t in TECHS) for i in range(6)])
+    fleet["bp"] = _r(fl_x["bp"] / div)
+    for k in ("off_at", "res_at", "lim_at"):
+        fleet[k] = _r(fl_x[k] / dl)
     return {"date": ud.get("date"), "format": FORMAT, "prices": PRICES.tolist(), "groups": GROUPS, "techs": TECHS,
             "group": {g: blk(acc[("group", g)]) for g in GROUPS}, "tech": {t: blk(acc[("tech", t)]) for t in TECHS},
-            "fleet": blk(fleet)}
+            "fleet": fleet}
 
 
 def build_actual_stack(index: dict) -> int:
@@ -138,7 +207,8 @@ def build_actual_stack(index: dict) -> int:
         ud = read_json_gz(UNIT_DATA_DIR / "60d" / f"{d}.json.gz", default=None)
         if not ud:
             continue
-        write_json_gz(path, day_stack(ud, group_of, peaker))
+        lam = run_lambda(read_json_gz(DATA_DIR / "prices" / f"{d}.json.gz", default=None), ud["runs"])
+        write_json_gz(path, day_stack(ud, group_of, peaker, lam))
         done += 1
     have = sorted(p.name[:10] for p in OUT_DIR.glob("*.json.gz"))
     write_json_gz(DATA_DIR / "stack_index.json.gz", {"format": FORMAT, "days": have})

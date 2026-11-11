@@ -274,7 +274,11 @@ function drawStack() {
     .map((k) => ({ id: k, label: (names[k] || [k])[0], color: (names[k] || [k, "--c-other"])[1], mw: block[k].mw[h], n: block[k].n[h] }));
   $("stack-legend").innerHTML = list.map((s) => `<span><span class="sw" style="background:var(${s.color})"></span>${s.label}</span>`).join("") +
     `<span><span class="sw" style="height:2px;background:var(--price)"></span>${rt ? "Real-time system lambda" : "Day-ahead system lambda"}</span>` +
-    `<span><span class="sw sw-line"></span>System floor</span>`;
+    `<span><span class="sw sw-line"></span>System floor</span>` +
+    (D.fleet.lim ? `<span><span class="sw" style="height:3px;background:var(--award)"></span>Could be dispatched this hour (ramp rates and reserves)</span>` +
+      `<span><span class="sw" style="height:0;border-top:2px dotted var(--ink)"></span>Actual thermal output</span>` +
+      `<span><span class="sw sw-mark" style="background:var(--award)"></span>Lambda meets what could be dispatched</span>` +
+      `<span><span class="sw sw-mark" style="border:1.5px solid var(--ink);background:var(--surface)"></span>Lambda meets the offers</span>` : "");
   const P = D.prices, hub = price;
   const hi = Math.min(P.at(-1), Math.max(150, hub != null ? Math.ceil((hub + 40) / 50) * 50 : 150)), lo = -30;
   const idx = P.map((p, i) => i).filter((i) => P[i] >= lo && P[i] <= hi);
@@ -304,7 +308,8 @@ function drawStack() {
   svg.append("text").attr("class", "axis-title").attr("x", m.l + 4).attr("y", y(floorAll) - 5)
     .attr("paint-order", "stroke").attr("stroke", css("--surface")).attr("stroke-width", 3)
     .text(narrow ? `system floor ${fmtMW(floorAll)} MW` : `system floor: ${fmtMW(floorAll)} MW (fossil LSL plus nuclear output)`);
-  if (hub != null && hub >= lo && hub <= hi) {
+  const LM = D.fleet.lim && D.fleet.lim[h] ? D.fleet : null;   // format 7: the limited stack and the crossings
+  if (hub != null && hub >= lo && hub <= hi && !LM) {
     svg.append("line").attr("class", "price-rule").attr("x1", x(hub)).attr("x2", x(hub)).attr("y1", m.t).attr("y2", H - m.b);
     const j = Math.max(0, d3.bisectRight(P, hub) - 1);   // the last price step at or below lambda, as the note under the chart
     const right = x(hub) > (m.l + w - m.r) / 2;   // label on the side with room
@@ -313,6 +318,22 @@ function drawStack() {
       .attr("paint-order", "stroke").attr("stroke", css("--surface")).attr("stroke-width", 3)
       .text(narrow ? `λ ${fmtPrice(hub)} · ${fmtMW(fl[Math.min(j, P.length - 1)])} MW`
         : `${rt ? "real-time" : "day-ahead"} lambda ${fmtPrice(hub)} · ${fmtMW(fl[Math.min(j, P.length - 1)])} MW offered at or below it`);
+  }
+  // the limited stack: what SCED could use for energy (each unit's ramp rate's reach in the run, less
+  // the reserves it carried); lambda is read against it, and actual output is the dotted line
+  if (LM) {
+    const teal = css("--award"), ink = css("--ink");
+    svg.append("path").attr("fill", "none").attr("stroke", teal).attr("stroke-width", 2.5)
+      .attr("d", d3.line().defined((i) => LM.lim[h][i] != null).x((i) => x(P[i])).y((i) => y(LM.lim[h][i]))(idx));
+    if (LM.bp[h] != null) svg.append("line").attr("stroke", ink).attr("stroke-dasharray", "2 3").attr("x1", m.l).attr("x2", w - m.r).attr("y1", y(LM.bp[h])).attr("y2", y(LM.bp[h]));
+    if (hub != null && hub >= lo && hub <= hi) {
+      svg.append("line").attr("class", "price-rule").attr("x1", x(hub)).attr("x2", x(hub)).attr("y1", m.t).attr("y2", H - m.b);
+      if (LM.off_at[h] != null) svg.append("circle").attr("cx", x(hub)).attr("cy", y(LM.off_at[h])).attr("r", 4.5).attr("fill", css("--surface")).attr("stroke", ink).attr("stroke-width", 1.5);
+      if (LM.lim_at[h] != null) svg.append("circle").attr("cx", x(hub)).attr("cy", y(LM.lim_at[h])).attr("r", 5.5).attr("fill", teal).attr("stroke", css("--surface")).attr("stroke-width", 1.5);
+      const right = x(hub) > (m.l + w - m.r) / 2;
+      svg.append("text").attr("class", "axis-title").attr("x", x(hub) + (right ? -7 : 7)).attr("y", m.t + 10).attr("text-anchor", right ? "end" : "start")
+        .attr("paint-order", "stroke").attr("stroke", css("--surface")).attr("stroke-width", 3).text(`λ ${fmtPrice(hub)}`);
+    }
   }
   svg.append("g").attr("class", "axis").attr("transform", `translate(0,${H - m.b})`).call(axisFmt(d3.axisBottom(x), narrow ? 4 : 8, "$").tickSizeOuter(0));
   svg.append("g").attr("class", "axis").attr("transform", `translate(${m.l},0)`).call(axisFmt(d3.axisLeft(y), 5).tickSizeOuter(0));
@@ -332,12 +353,21 @@ function drawStack() {
     })
     .on("pointerleave", () => { cross.style("display", "none"); hideTip(); });
   el.replaceChildren(svg.node());
-  setCSV(el, ["price", ...list.map((s) => `${s.label} (MW)`), "All thermal online (MW)"],
-    P.map((p, i) => [p, ...list.map((s) => s.mw[i]), fl[i]]), `Thermal dispatch stack ${S.date} ${heLabel(h)}`);
+  setCSV(el, ["price", ...list.map((s) => `${s.label} (MW)`), "All thermal online (MW)", ...(LM ? ["Could be dispatched this hour (MW)"] : [])],
+    P.map((p, i) => [p, ...list.map((s) => s.mw[i]), fl[i], ...(LM ? [LM.lim[h][i]] : [])]), `Thermal dispatch stack ${S.date} ${heLabel(h)}`);
   const iP = price != null ? d3.bisectRight(P, price) - 1 : -1;
-  $("stack-foot").textContent = `${D.fleet.n[h]} thermal units online in ${heLabel(h)} (combined-cycle configurations counted one by one): a system floor of ${fmtMW(floorAll)} MW, ${fmtMW(minAll)} MW of it offered at the -$250 floor` +
-    (iP >= 0 ? `, ${fmtMW(fl[iP])} MW offered at or below the hour's system lambda of ${fmtPrice(price)}/MWh` : "") + `, out of ${fmtMW(D.fleet.max[h])} MW available.` +
+  const unitsNote = `${D.fleet.n[h]} thermal units online in ${heLabel(h)} (combined-cycle configurations counted one by one): a system floor of ${fmtMW(floorAll)} MW, ${fmtMW(minAll)} MW of it offered at the -$250 floor` +
+    (iP >= 0 && !LM ? `, ${fmtMW(fl[iP])} MW offered at or below the hour's system lambda of ${fmtPrice(price)}/MWh` : "") + `, out of ${fmtMW(D.fleet.max[h])} MW available.` +
     (nucOffered >= 100 ? ` Nuclear offered ${fmtMW(nucOffered)} MW of its output between -$250 and $0 this hour: it counts in the system floor at its output, and in the stack at the prices it was offered.` : "");
+  const foot = $("stack-foot");
+  if (LM && price != null && LM.lim_at[h] != null) {
+    const gap = LM.off_at[h] - LM.lim_at[h], ramp = LM.res_at[h] - LM.lim_at[h], resv = LM.off_at[h] - LM.res_at[h], diff = LM.bp[h] - LM.lim_at[h];
+    const parts = [ramp >= 100 ? `ramp rates ${fmtMW(ramp)}` : "", resv >= 100 ? `reserves ${fmtMW(resv)}` : ""].filter(Boolean).join(", ");
+    foot.innerHTML = `<span class="foot-lead"><b>At a real-time lambda of ${fmtPrice(price)}/MWh:</b> offered ${fmtMW(LM.off_at[h])} MW` +
+      (gap >= 100 ? ` · out of reach ${fmtMW(gap)} MW (${parts})` : "") + ` · <b>could be dispatched ${fmtMW(LM.lim_at[h])} MW</b>` +
+      (LM.bp[h] != null ? ` · actual output ${fmtMW(LM.bp[h])} MW` + (Math.abs(diff) >= 100 ? ` (${fmtMW(Math.abs(diff))} MW ${diff < 0 ? "less" : "more"}, mostly congestion)` : "") : "") +
+      `.</span>${esc(unitsNote)}`;
+  } else foot.textContent = unitsNote;
 }
 
 // curve_trends.json.gz is the file realtime-range.js also reads, fetched once through the shared cache
