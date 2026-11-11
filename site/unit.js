@@ -1219,7 +1219,8 @@ async function boot() {
   // the forecast panel keeps its backtest days from 2019
   S.fcPicker = CX.dayPicker("fc-pick", { all: true, onChange: (d) => { S.fcDay = d; saveView(); drawForecast(S.list.get(S.unit)); } });
   S.dayPicker = CX.dayPicker("day-pick", { onChange: (d) => { S.day = d; S.hour = null; saveView(); drawDay(S.list.get(S.unit)); } });
-  const want = new URLSearchParams(location.search).get("unit") || v.unit;
+  // the unit: unit.html?unit=NAME, or the /unit/NAME page itself (pipeline/unit_pages.py builds it from this page)
+  const want = new URLSearchParams(location.search).get("unit") || (location.pathname.match(/\/unit\/([A-Za-z0-9_]+)(?:\.html)?\/?$/) || [])[1] || v.unit;
   S.day = v.day || null;
   S.fcDay = v.fc || null;
   S.hour = v.he ? +v.he - 1 : null;

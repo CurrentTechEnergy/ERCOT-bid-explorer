@@ -9,7 +9,7 @@
    Enter in the Search box opens the first unit listed. */
 (() => {
 "use strict";
-const { setCSV, esc, unitIndex, findUnits, tryJSON } = window.CX;
+const { setCSV, esc, unitIndex, unitPageURL, findUnits, tryJSON } = window.CX;
 const $ = (id) => document.getElementById(id);
 const TECHS = [
   { id: "all", label: "All" }, { id: "nuclear", label: "Nuclear" }, { id: "coal", label: "Coal & lignite" },
@@ -33,7 +33,7 @@ const MINS = [[0, "any day"], [0.1, "10% of days"], [0.25, "25% of days"], [0.5,
 const pct = (v) => (v == null ? "–" : v === 0 ? "0%" : v < 0.01 ? "<1%" : d3.format(".0%")(v));
 const shareCol = (c) => ({ k: c.k, h: `${c.label}, % of DAM days`, f: (u) => (u[c.k] == null ? "–" : `<span title="${Math.round(u[c.k] * u.dam_days)} of ${u.dam_days} DAM days">${pct(u[c.k])}</span>`), opt: 1 });
 const COLS = [
-  { k: "unit", h: "Unit", t: 1, f: (u) => `<a href="unit.html?unit=${encodeURIComponent(u.unit)}">${esc(u.unit)}</a>` },
+  { k: "unit", h: "Unit", t: 1, f: (u) => `<a href="${unitPageURL(u.unit)}">${esc(u.unit)}</a>` },
   { k: "tech", h: "Technology", t: 1, f: (u) => TECH_LABEL[u.tech] || esc(u.tech) },
   { k: "type", h: "ERCOT type", t: 1, f: (u) => esc(u.type || "–"), opt: 1 },
   { k: "group", h: "Group", t: 1, f: (u) => (u.group ? GROUP_SHORT[u.group] || esc(u.group) : "–") },
@@ -208,7 +208,7 @@ async function boot() {
     if (e.key !== "Enter" || $("unit-empty").hidden || !S.shown.length || !pick.value.trim()) return;
     e.preventDefault();
     const q = pick.value.trim(), hit = S.shown.find((u) => u.unit === q) || S.shown[0];   // an exact name, else the first row
-    location.href = `unit.html?unit=${encodeURIComponent(hit.unit)}`;
+    location.href = unitPageURL(hit.unit);
   });
   S.units = (await unitIndex()) || [];
   if (unitIndex.cdr) $("dir-cdr").textContent = ` (${unitIndex.cdr})`;
