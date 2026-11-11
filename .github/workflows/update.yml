@@ -410,10 +410,9 @@ jobs:
     needs: update
     if: vars.ENABLE_PAGES == 'true'
     concurrency:
-      group: pages-deploy     # shared with renew-history.yml: one Pages deploy at a time
+      group: update-deploy
       cancel-in-progress: false
     runs-on: ubuntu-latest
-    timeout-minutes: 45
     permissions:
       contents: read
       pages: write
@@ -426,14 +425,10 @@ jobs:
         with:
           ref: ${{ github.ref_name }}     # include the data commit made by the update job
       - uses: actions/configure-pages@45bfe0192ca1faeb007ade9deae92b16b8254a0d # v6.0.0
-      - id: upload
-        uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
+      - uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
         with:
           path: site
-      # In place of actions/deploy-pages, which caps its wait at 10 minutes and reuses a cancelled
-      # deployment when two runs start from the same commit (see the script).  If this times out,
-      # "Re-run failed jobs" redeploys without redoing the update.
       - id: deployment
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: .github/scripts/deploy-pages.sh "${{ steps.upload.outputs.artifact_id }}"
+        uses: actions/deploy-pages@368f82528645a54fb793d4d04e342629a3f51346 # v5.0.1
+        with:
+          timeout: 1800000   # 30 min: Pages sometimes queues and syncs slowly (Nov 6 timed out at the 10 min default)
