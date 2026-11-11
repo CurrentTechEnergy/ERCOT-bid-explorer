@@ -60,7 +60,8 @@ jobs:
             echo "ready=false" >> "$GITHUB_OUTPUT"
           else
             echo "ready=true" >> "$GITHUB_OUTPUT"
-            echo "DAY=$(date -u +%Y-%m-%d-%H%M)"   # a re-run gets its own folder: locked objects can't be overwritten >> "$GITHUB_ENV"
+            # a re-run gets its own folder: locked objects can't be overwritten
+            echo "DAY=$(date -u +%Y-%m-%d-%H%M)" >> "$GITHUB_ENV"
             mkdir -p "$RUNNER_TEMP/snap"
           fi
 
@@ -149,6 +150,7 @@ jobs:
           AWS_ACCESS_KEY_ID=$(printf %s "$AWS_ACCESS_KEY_ID" | tr -d '[:space:]')
           AWS_SECRET_ACCESS_KEY=$(printf %s "$AWS_SECRET_ACCESS_KEY" | tr -d '[:space:]')
           export AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY
+          [ -n "$DAY" ] || { echo "::error::No snapshot folder name (DAY): refusing to upload into backups/ itself"; exit 1; }
           cd "$RUNNER_TEMP/snap"
           find . -type f -printf '%P\n' | sort | while read -r f; do
             printf '%s  %s  %s\n' "$(sha256sum "$f" | cut -c1-64)" "$(stat -c %s "$f")" "$f"
