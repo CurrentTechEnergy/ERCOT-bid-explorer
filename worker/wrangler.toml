@@ -1,4 +1,5 @@
-# Cloudflare Worker that records who follows which unit (see src/index.js).
+# Cloudflare Worker that records who follows which unit (see src/index.js), and the update
+# watchdog that starts the data update on time (src/watchdog.js).
 # Deployed by .github/workflows/follow-server.yml, which fills in the database id.
 name = "ercot-follows"
 main = "src/index.js"
@@ -8,6 +9,11 @@ workers_dev = true
 [vars]
 SITE_URL = "https://ercotbids.currenttech.energy/"
 FROM = "ERCOT bid explorer <alerts@currenttech.energy>"
+REPO = "CurrentTechEnergy/ercot-bid-explorer"   # the watchdog starts this repository's update.yml
+
+# every 15 minutes, in UTC: the watchdog works out the Central time itself
+[triggers]
+crons = ["*/15 * * * *"]
 
 [[d1_databases]]
 binding = "DB"
