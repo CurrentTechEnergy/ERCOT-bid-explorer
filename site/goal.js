@@ -215,14 +215,14 @@ function drawQ2() {
   const svg = d3.create("svg").attr("viewBox", `0 0 ${W} ${H}`);
   per.forEach((g, gi) => {
     const p = svg.append("g").attr("transform", `translate(${(gi % cols) * (w + cg)},${Math.floor(gi / cols) * (ph + 14)})`), base = ph - m.b;
-    p.append("text").attr("x", 0).attr("y", 12).attr("class", "axis-label").style("font-weight", 600).text(TECH[g[0].t]);
+    p.append("text").attr("x", 0).attr("y", 12).attr("class", "axis-label").attr("fill", css("--ink")).style("font-weight", 600).text(TECH[g[0].t]);
     p.append("g").attr("class", "gridline").attr("transform", `translate(0,${base})`).call(d3.axisBottom(x).ticks(w < 500 ? 2 : 4).tickSize(-(base - m.t)).tickFormat(""));
     p.append("g").attr("class", "axis").attr("transform", `translate(0,${base})`).call(d3.axisBottom(x).ticks(w < 500 ? 2 : 4).tickFormat(fmtPct).tickSizeOuter(0));
     g.forEach((r, i) => {
       const v = 1 - r.stayed / r.n, top = m.t + i * band + (band - bh) / 2;
       p.append("rect").attr("x", x(0)).attr("y", top).attr("width", x(v) - x(0)).attr("height", bh).attr("fill", css(r.c));
-      p.append("text").attr("x", x(v) + 6).attr("y", top + bh / 2).attr("dy", "0.35em").attr("class", "bar-val").style("font-weight", 600).text(d3.format(".1%")(v));
-      const t = p.append("text").attr("x", m.l - 8).attr("y", top + bh / 2).attr("text-anchor", "end").attr("class", "axis-label");
+      p.append("text").attr("x", x(v) + 6).attr("y", top + bh / 2).attr("dy", "0.35em").attr("class", "bar-val").attr("fill", css("--ink")).style("font-weight", 600).text(d3.format(".1%")(v));
+      const t = p.append("text").attr("x", m.l - 8).attr("y", top + bh / 2).attr("text-anchor", "end").attr("class", "axis-label").attr("fill", css("--ink"));
       t.append("tspan").attr("x", m.l - 8).attr("dy", "-0.15em").text(r.label);
       t.append("tspan").attr("x", m.l - 8).attr("dy", "1.1em").attr("fill", css("--muted")).style("font-size", "0.85em").text(`${d3.format(",")(r.n)} unit-days`);
     });
