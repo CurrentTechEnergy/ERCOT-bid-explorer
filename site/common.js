@@ -395,14 +395,21 @@ function findUnits(units, q, n = 8) {
   const lq = q.trim().toLowerCase(), rank = (u) => (u.unit.toLowerCase() === lq ? 0 : u.unit.toLowerCase().startsWith(lq) ? 1 : 2);
   return hits.sort((a, b) => rank(a) - rank(b) || a.unit.localeCompare(b.unit)).slice(0, n);
 }
+// the unit finder: the search box in the nav on every page, and the Unit page's own "Find another unit" box
+// (#unit-find-here, which takes the nav box's place there); both list the top matches of findUnits as links
 function initUnitFind() {
+  const here = $("unit-find-here");
+  if (here) { wireUnitFind(here); return; }
   const row = document.querySelector(".nav-row");
-  if (!row || $("unit-pick")) return;
+  if (!row) return;
   const box = document.createElement("div");
   box.className = "unit-find";
   box.innerHTML = `<input type="search" id="unit-find" placeholder="Unit, QSE, company, buyer" aria-label="Find a unit by name, plant, county, settlement point, QSE, decision maker, owner, operator, developer or buyer" autocomplete="off" spellcheck="false" role="combobox" aria-expanded="false" aria-controls="unit-find-list" aria-autocomplete="list">` +
     `<ul class="unit-find-list" id="unit-find-list" role="listbox" hidden></ul>`;
   row.appendChild(box);
+  wireUnitFind(box);
+}
+function wireUnitFind(box) {
   const input = box.querySelector("input"), list = box.querySelector("ul");
   let units = null, hits = [], at = -1;
   const close = () => { list.hidden = true; input.setAttribute("aria-expanded", "false"); at = -1; };
