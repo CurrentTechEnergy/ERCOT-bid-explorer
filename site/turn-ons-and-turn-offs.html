@@ -1,0 +1,297 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Turn-ons and Turn-offs: who stays on at low prices · ERCOT Bids</title>
+<meta name="description" content="Which ERCOT thermal units stay online through cheap and negative-price hours, the price that turns them off, and what they lose by staying on.">
+<link rel="canonical" href="https://ercotbids.currenttech.energy/turn-ons-and-turn-offs.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="ERCOT Bids · CurrentTech Energy">
+<meta property="og:title" content="Turn-ons and Turn-offs: who stays on at low prices">
+<meta property="og:description" content="Which ERCOT thermal units stay online through cheap and negative-price hours, the price that turns them off, and what they lose by staying on.">
+<meta property="og:url" content="https://ercotbids.currenttech.energy/turn-ons-and-turn-offs.html">
+<meta property="og:image" content="https://ercotbids.currenttech.energy/share-card.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/favicon.ico" sizes="48x48">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Sans+Condensed:wght@600&display=swap">
+<link rel="stylesheet" href="style.css">
+<style>
+  /* the page's two halves: panels for the chosen day, and panels across every loaded 60-day day */
+  .page-section { grid-column: 1 / -1; margin: 18px 0 -4px; font-size: 20px; }
+  .page-section .h-note { font-size: 13px; }
+  /* the run-length panel's list of units that rarely stop, closed until opened */
+  details.runs-nr { margin-top: 1.2rem; }
+  details.runs-nr > summary { cursor: pointer; font-size: 0.95rem; font-weight: 600; }
+  details.runs-nr > summary .h-note { font-weight: 400; }
+  details.runs-nr[open] > summary { margin-bottom: 4px; }
+</style>
+</head>
+<body data-panel-links>
+<div class="page">
+
+<header class="masthead">
+  <div class="brand">
+    <div class="nav-row"><nav class="nav" aria-label="Pages"><a href="./">Will fossil turn off?</a><a href="day-in-ercot.html">A day in ERCOT</a><a href="prices.html">Prices</a><a href="dayahead.html">Day-ahead offers</a><a href="turn-ons-and-turn-offs.html" aria-current="page">Turn-ons and Turn-offs</a><a href="realtime.html">Real-time offers</a><a href="thermal.html">Thermal</a><a href="renewables.html">Renewables</a><a href="batteries.html">Batteries</a><a href="unit.html">Units</a><span class="nav-sep" aria-hidden="true"></span><a href="changes.html" class="aux">What's changing</a><a href="guide.html" class="aux">How offers work</a></nav></div>
+    <h1>Turn-ons and Turn-offs</h1>
+    <p class="sub">Which coal and gas units stay on through cheap hours, what staying on cost them, and what an operator-behavior model says each one should have done on the chosen day (the latest day with 60-day data, about two months back).</p>
+  </div>
+  <p class="status" id="status">Loading data…</p>
+</header>
+
+<section class="controls" aria-label="Filters">
+  <div class="ctl">
+    <label class="lbl" for="date">Operating day</label>
+    <div class="date-step">
+      <button type="button" class="step" id="date-prev" aria-label="Previous day" title="Previous day">&#8249;</button>
+      <select id="date"></select>
+      <button type="button" class="step" id="date-next" aria-label="Next day" title="Next day">&#8250;</button>
+    </div>
+    <p class="source-note" id="source-note"></p>
+  </div>
+</section>
+
+<main>
+  <h2 class="page-section">One day <span class="h-note">set by the operating day above</span></h2>
+
+  <section class="panel panel-wide" id="cutoff-panel">
+    <div class="panel-head">
+      <div>
+        <h2>Combined cycle and gas steam: the loss at which the model turns each unit off<span id="cut-units-stayed"></span> <span class="h-note" id="cut-title-note"></span></h2>
+        <p class="note" id="cut-units-note"></p>
+      </div>
+    </div>
+    <div class="legend legend-static" id="cut-units-legend"></div>
+    <div class="chart" id="cut-units"></div>
+    <h3 class="sub-h">Combustion turbines: the day-ahead price at which the model expects each one to start, against the day's actual peak at its node</h3>
+    <p class="note" id="ct-units-note"></p>
+    <div class="legend legend-static" id="ct-units-legend"></div>
+    <div class="chart" id="ct-units"></div>
+  </section>
+
+  <section class="panel panel-wide" id="groups-panel">
+    <div class="panel-head">
+      <div>
+        <h2>Groups and turn-off points <span class="h-note" id="groups-title-note"></span></h2>
+        <p class="note" id="groups-note"></p>
+      </div>
+    </div>
+    <div class="units-wrap" id="groups-table"></div>
+  </section>
+
+  <section class="panel panel-wide" id="sc-panel">
+    <div class="panel-head">
+      <div>
+        <h2>How well the operator model calls it</h2>
+        <p class="note" id="sc-note"></p>
+      </div>
+      <div class="panel-tools">
+        <label class="lbl inline" for="sc-tech">Technology</label>
+        <select id="sc-tech"></select>
+        <div class="seg seg-sm" id="sc-cell" role="radiogroup" aria-label="Hours">
+          <button type="button" data-v="all" role="radio">All hours</button>
+          <button type="button" data-v="cheap" role="radio">Cheap hours</button>
+          <button type="button" data-v="noaward" role="radio">No day-ahead award</button>
+          <button type="button" data-v="on" role="radio">Unit was on</button>
+          <button type="button" data-v="off" role="radio">Unit was off</button>
+        </div>
+      </div>
+    </div>
+    <div class="units-wrap" id="sc-table"></div>
+  </section>
+
+  <h2 class="page-section">Across days <span class="h-note" id="range-status"></span></h2>
+
+  <section class="panel panel-wide" id="stretch-panel">
+    <div class="panel-head">
+      <div>
+        <h2>Who turns off for cheap stretches</h2>
+        <p class="note" id="st-note"></p>
+      </div>
+      <div class="panel-tools">
+        <label class="lbl inline" for="st-tech">Technology</label>
+        <select id="st-tech"></select>
+        <div class="seg seg-sm" id="st-thr" role="radiogroup" aria-label="Cheap means lambda below">
+          <button type="button" data-v="0" role="radio">Below $0</button>
+          <button type="button" data-v="10" role="radio">Below $10</button>
+        </div>
+        <div class="seg seg-sm" id="st-unit" role="radiogroup" aria-label="Show as">
+          <button type="button" data-v="mw" role="radio">MW</button>
+          <button type="button" data-v="share" role="radio">Share</button>
+        </div>
+      </div>
+    </div>
+    <div class="legend legend-static" id="st-legend"></div>
+    <div class="chart" id="st-group"></div>
+    <h3 class="sub-h">Inflexibility tracker: did each unit keep running through cheap hours, month by month?</h3>
+    <p class="note" id="st-month-note"></p>
+    <div id="st-changed"></div>
+    <div class="units-wrap scroll-x" id="st-months"></div>
+  </section>
+
+  <section class="panel panel-wide" id="cap-panel">
+    <div class="panel-head">
+      <div>
+        <h2>Capacity by state</h2>
+        <p class="note" id="cap-note"></p>
+      </div>
+      <div class="panel-tools">
+        <label class="lbl inline" for="cap-tech">Technology</label>
+        <select id="cap-tech"></select>
+      </div>
+    </div>
+    <div class="legend" id="cap-legend"></div>
+    <div class="chart" id="cap-chart"></div>
+  </section>
+
+  <section class="panel panel-wide" id="cheap-panel">
+    <div class="panel-head">
+      <div>
+        <h2>Thermal output in cheap hours</h2>
+        <p class="note" id="cheap-note"></p>
+      </div>
+      <div class="panel-tools">
+        <label class="lbl inline" for="cheap-tech">Technology</label>
+        <select id="cheap-tech"></select>
+        <div class="seg seg-sm" id="cheap-thr" role="radiogroup" aria-label="Hours">
+          <button type="button" data-v="0" role="radio">Below $0</button>
+          <button type="button" data-v="10" role="radio">Below $10</button>
+        </div>
+      </div>
+    </div>
+    <div class="legend legend-static" id="cheap-legend"></div>
+    <div class="chart" id="cheap-chart"></div>
+    <h3 class="sub-h">Leanest thermal hours</h3>
+    <p class="note" id="lean-note"></p>
+    <div class="panel-tools">
+      <div class="seg seg-sm" id="lean-rank" role="radiogroup" aria-label="Rank by">
+        <button type="button" data-v="fossil" role="radio" title="Coal, combined cycle, gas steam and combustion turbines">Fossil (no nuclear)</button>
+        <button type="button" data-v="all" role="radio">All thermal</button>
+      </div>
+      <label class="lbl inline" for="lean-month">Month</label>
+      <select id="lean-month"></select>
+      <div class="seg seg-sm" id="lean-per" role="radiogroup" aria-label="Rows">
+        <button type="button" data-v="day" role="radio" title="Only each day's leanest hour">One per day</button>
+        <button type="button" data-v="hour" role="radio">Every hour</button>
+      </div>
+    </div>
+    <div class="chart units-wrap" id="lean-table"></div>
+  </section>
+
+  <section class="panel panel-wide" id="cost-panel">
+    <div class="panel-head">
+      <div>
+        <h2>What the decision cost</h2>
+        <p class="note" id="cost-note"></p>
+      </div>
+      <div class="panel-tools">
+        <div class="seg seg-sm" id="cost-thr" role="radiogroup" aria-label="Cheap means lambda below">
+          <button type="button" data-v="0" role="radio">Below $0</button>
+          <button type="button" data-v="10" role="radio">Below $10</button>
+        </div>
+      </div>
+    </div>
+    <div class="legend legend-static" id="cost-legend"></div>
+    <div class="chart" id="cost-chart"></div>
+    <div class="units-wrap" id="cost-groups"></div>
+  </section>
+
+  <section class="panel panel-wide" id="runs-panel">
+    <div class="panel-head">
+      <div>
+        <h2>How long units stay on once started</h2>
+        <p class="note" id="runs-note"></p>
+      </div>
+      <div class="panel-tools">
+        <label class="lbl inline" for="runs-sort">Plants</label>
+        <select id="runs-sort"><option value="run">Shortest run first</option><option value="name">By name</option><option value="mw">Largest first</option></select>
+      </div>
+    </div>
+    <div class="legend" id="runs-legend"></div>
+    <div class="chart" id="runs-tech"></div>
+    <h3 class="sub-h">By plant</h3>
+    <p class="note" id="runs-plant-note"></p>
+    <div class="legend legend-static" id="runs-plant-legend"></div>
+    <div class="chart" id="runs-plant"></div>
+    <details class="runs-nr" id="runs-nr">
+      <summary>Units with too few completed runs to judge <span class="h-note" id="runs-nr-count"></span></summary>
+      <p class="note" id="runs-nr-note"></p>
+      <div class="units-wrap" id="runs-nr-table"></div>
+    </details>
+  </section>
+
+  <section class="panel panel-wide" id="units-panel">
+    <div class="panel-head">
+      <div>
+        <h2>Units</h2>
+        <p class="note" id="units-note"></p>
+      </div>
+      <div class="panel-tools">
+        <label class="lbl inline" for="u-tech">Technology</label>
+        <select id="u-tech"></select>
+        <label class="lbl inline" for="u-group">Group</label>
+        <select id="u-group"></select>
+      </div>
+    </div>
+    <div class="units-wrap" id="units-table"></div>
+  </section>
+  <h2 class="page-section">Since 2019 <span class="h-note" id="lf-status"></span></h2>
+
+  <section class="panel panel-wide" id="lf-panel">
+    <div class="panel-head">
+      <div>
+        <h2>Daily minimum floor</h2>
+        <p class="note" id="lf-note"></p>
+      </div>
+      <div class="panel-tools">
+        <div class="seg seg-sm" id="lf-fleet" role="radiogroup" aria-label="Fleet">
+          <button type="button" data-v="all" role="radio" title="Nuclear output plus the LSL of online fossil units">With nuclear</button>
+          <button type="button" data-v="fos" role="radio" title="Each day's low hour, and the lowest days, picked on the fossil floor alone">Fossil only</button>
+        </div>
+        <div class="seg seg-sm" id="lf-smooth" role="radiogroup" aria-label="Show">
+          <button type="button" data-v="1" role="radio">Daily</button>
+          <button type="button" data-v="30" role="radio">30-day average</button>
+        </div>
+        <label class="lbl inline" for="lf-period">Period</label>
+        <select id="lf-period"></select>
+      </div>
+    </div>
+    <div class="legend legend-static" id="lf-legend"></div>
+    <div class="chart" id="lf-chart"></div>
+    <h3 class="sub-h">The floor by year</h3>
+    <p class="note" id="lf-year-note"></p>
+    <div class="panel-tools">
+      <div class="seg seg-sm" id="lf-stat" role="radiogroup" aria-label="Measure">
+        <button type="button" data-v="mean" role="radio">Average day</button>
+        <button type="button" data-v="p5" role="radio" title="The average of each year's lowest 5% of days">Lowest 5% of days</button>
+      </div>
+    </div>
+    <div class="chart" id="lf-years"></div>
+    <div class="units-wrap scroll-x" id="lf-table"></div>
+    <p class="note" id="lf-foot"></p>
+    <h3 class="sub-h">When the floor bottoms out</h3>
+    <p class="note" id="lf-hour-note"></p>
+    <div class="chart" id="lf-hours"></div>
+  </section>
+</main>
+
+<footer class="foot">
+  <p>Source: ERCOT EMIL products NP3-965-ER (60-Day SCED Disclosure), NP3-966-ER (60-Day DAM Disclosure), NP4-190-CD (DAM Settlement Point Prices), NP4-523-CD (DAM System Lambda), NP6-905-CD (Settlement Point Prices at Resource Nodes, Hubs and Load Zones), NP6-322-CD (SCED System Lambda) and NP3-908-ER (2-Day SCED Energy Curves). The 60-day reports run about two months behind, so the panels across days end there.</p>
+  <p>Hours are ERCOT hour ending in Central prevailing time: HE 13 is noon to 1 pm. Dates are operating days.</p>
+  <p>Made by <a href="https://currenttech.energy">currenttech.energy</a> · <a href="contact.html">Contact</a></p>
+  <p>Not affiliated with or endorsed by ERCOT. ERCOT is a registered trademark of the Electric Reliability Council of Texas, Inc.</p>
+  <p>© 2026 CurrentTech Energy. All rights reserved. For information only; not trading or investment advice. <a href="terms.html">Terms and privacy</a></p>
+</footer>
+</div>
+<div class="tip" id="tip" hidden></div>
+<script src="vendor/d3.min.js"></script>
+<script src="common.js"></script>
+<script src="commitment.js"></script>
+<script src="commitment-floor.js"></script>
+</body>
+</html>

@@ -1,4 +1,4 @@
-/* Turn-ons and Turn-offs, "How thermal is committed": online thermal minimum output (or output) split
+/* Day-ahead offers, "How thermal is committed" (moved from Turn-ons and Turn-offs Nov 11): online thermal minimum output (or output) split
    by the day-ahead position that hour, from data/commit_mix.json.gz (pipeline/commit_mix.py).
    By month and by hour of day, over all hours, hours under $10 or under $0 (DA system lambda).
    The page only reads and draws. */

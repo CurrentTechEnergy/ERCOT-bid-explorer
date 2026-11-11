@@ -1,6 +1,6 @@
 """Flexibility timescale groups: every thermal unit (combined-cycle configurations merged into
 their train) by the finest timescale it has shown it will shut down on, from the hourly
-per-unit strips in data/unit_hours_60d.json.gz.  Needs no downloads.  Read by commitment.html (the
+per-unit strips in data/unit_hours_60d.json.gz.  Needs no downloads.  Read by turn-ons-and-turn-offs.html (the
 cheap-stretches panel, its month grid and the floor chart's behaviour view).
 
 Writes data/groups_60d.json.gz:

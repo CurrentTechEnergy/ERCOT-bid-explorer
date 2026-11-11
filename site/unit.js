@@ -218,7 +218,7 @@ function drawHead(e) {
       ` Day-ahead prices at its node fell below its cost at minimum output for ${r[4] === 1 ? `hour ending ${r[3]}` : `hours ending ${r[3]} to ${r[3] + r[4] - 1}`}; staying on through ${r[4] === 1 ? "it" : "them"} would have lost ${perMW(r[2])}` +
       (cut != null ? `, against ${L ? `${fmt$(cut / L)} per MW` : fmt$(cut)}, the loss above which it usually turns off.` : ".") +
       ` A day-ahead award covered ${fmtPct(r[5] || 0)} of the stretch.`) +
-    ` <a href="commitment.html#date=${esc(r[1])}">Every unit that day</a>.`;
+    ` <a href="turn-ons-and-turn-offs.html#date=${esc(r[1])}">Every unit that day</a>.`;
 }
 
 // ---- with operator info, by hour: the operator-informed call against what the unit did ----

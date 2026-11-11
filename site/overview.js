@@ -275,8 +275,8 @@ function drawHeadline() {
   if (thermal && base != null) $("expect-lead").innerHTML = `Thermal plants produced <b>${fmtGWh(thermal)} GWh</b>. Of that, <b>${fmtGWh(base)} GWh (${d3.format(".0%")(base / thermal)})</b> came from nuclear and units that never turn off on price, so it would have run whatever the price.`;
   $("headline-note").textContent = `${S.date} · ${L === "60d" ? "60-day disclosure" : L === "2d" ? "2-day summary" : "prices only"}`;
   $("decisions-link").innerHTML = L === "60d"
-    ? `<a href="commitment.html#date=${S.date}">Which coal and gas units turned off on ${esc(dayLabel(S.date))}, and at what loss: Turn-ons and Turn-offs →</a>`
-    : `<a href="commitment.html#date=${last60()}">Unit decisions are in through ${esc(dayLabel(last60()))}: Turn-ons and Turn-offs →</a>`;
+    ? `<a href="turn-ons-and-turn-offs.html#date=${S.date}">Which coal and gas units turned off on ${esc(dayLabel(S.date))}, and at what loss: Turn-ons and Turn-offs →</a>`
+    : `<a href="turn-ons-and-turn-offs.html#date=${last60()}">Unit decisions are in through ${esc(dayLabel(last60()))}: Turn-ons and Turn-offs →</a>`;
 }
 
 // ---- the price chart beside the headline --------------------------------------------------
@@ -712,7 +712,7 @@ function drawUnits() {
   html += rows.map((r) => `<tr>${cols.map(([k, , kind]) => `<td class="${tcls(kind)}">${fmt(r, k, kind)}</td>`).join("")}</tr>`).join("");
   el.innerHTML = html + "</tbody></table></div>";
   $("units-foot").innerHTML = (total > rows.length ? `Showing ${rows.length} of ${total} units. <button type="button" id="units-all" class="linkish">Show all</button>` : `Units: ${total}.`) +
-    ` Groups are from the full 60-day data. Which units turned off on the day, and at what loss, is on <a href="commitment.html#date=${S.date}">Turn-ons and Turn-offs</a>.` +
+    ` Groups are from the full 60-day data. Which units turned off on the day, and at what loss, is on <a href="turn-ons-and-turn-offs.html#date=${S.date}">Turn-ons and Turn-offs</a>.` +
     ` Profit is an estimate: fuel at each unit's measured heat rate and its own gas hub price or its plant's coal price, with technology averages where a unit has none. It is not the unit's own accounts${S.rtNodes ? "" : "; real-time node prices for this day are not in yet, so the real-time part settles at system lambda"}.`;
   $("units-note").textContent = `${S.date} · ${Object.keys(S.a60.units).length} thermal units`;
   const b = $("units-all");

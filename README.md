@@ -201,7 +201,7 @@ site/
   index.html, goal.js (Will fossil turn off?, the landing page; goal.html redirects here),
   day-in-ercot.html, overview.js (A day in ERCOT: one past day's prices, generation and
                    units; overview.html and old /#date= links redirect here),
-  commitment.html, commitment.js (which thermal units stay on when power is cheap: the operator
+  turn-ons-and-turn-offs.html, commitment.js (which thermal units stay on when power is cheap: the operator
                    model's turn-off points and scorecard (data/operator/), groups and cutoffs, the
                    thermal panels lifted from Trends, what riding through cheap stretches cost from
                    data/stayon_60d.json.gz, and one row per unit),
@@ -209,9 +209,10 @@ site/
                    (unit.html with no unit shows the Units directory, unit-dir.js; common.js adds
                    the "Find a unit" box to every page's nav row),
   guide.html, guide.js (How offers work, including how revenue is counted and how hedge signals are found),
-  trends.html, day.html, economics.html, fleet.html, contracts.html, beyond.html
-                   (retired pages, kept as redirects to commitment.html, realtime.html, thermal.html, thermal.html,
-                   renewables.html#hedge and realtime.html so old links still open),
+  trends.html, day.html, economics.html, fleet.html, contracts.html, beyond.html, commitment.html
+                   (retired pages, kept as redirects to turn-ons-and-turn-offs.html, realtime.html, thermal.html, thermal.html,
+                   renewables.html#hedge, realtime.html and turn-ons-and-turn-offs.html so old links still open;
+                   commitment.html sends links to cm-panel and ds-panel to dayahead.html),
   style.css, vendor/d3.min.js
   data/            generated: index.json, summary_*.json.gz, marginal_*.json.gz, 2d/, 60d/, dam/, prices/,
                    curtail_nodes.json.gz, marginal_nodes.json.gz, gas.json.gz, gas_hubs.json.gz,
@@ -273,7 +274,7 @@ The regular update rebuilds the loaded 60-day days. Years before that come from 
 
 Changes are held steps of $5 in the minimum-energy offer (tested on the offer, so a gas move alone is not one; major when it crosses the fuel-cost line), price-outs (1 to 6 days $10 or more above the unit's 30-day median), start-cost changes of 25%, a train or unit stopping or starting three-part offers, and wind and solar DA floor steps and filing. Combustion turbine events are never major. Daily signatures are kept per year in `site/data/dam_offers/sig-YYYY.json.gz`.
 
-The **Day-ahead offers** page (`site/dayahead.html`, `dayahead.js`) shows the fleet view: combined cycle trains on each cheap day by their lowest offer and how many were kept on through the stretch, the award rate by offer less node price, the median train offer less fuel cost (kept on at the configuration that won, left out at the lowest), the trains and plants table, the wind and solar DA floor table and the recent major changes. The Unit page's **Day-ahead offer** panel (`unit-dam.js`) charts one unit's offers against its fuel-cost line by configuration, with each configuration's typical LSL, HSL and hot start, or for wind and solar the DA floor against the RT floor and the DA award share.
+The **Day-ahead offers** page (`site/dayahead.html`, `dayahead.js`) shows the fleet view: combined cycle trains on each cheap day by their lowest offer and how many were kept on through the stretch, the award rate by offer less node price, the median train offer less fuel cost (kept on at the configuration that won, left out at the lowest), the trains and plants table, the wind and solar DA floor table, the recent major changes, and two panels moved from Turn-ons and Turn-offs: "How thermal is committed" (`dayahead-mix.js`, `data/commit_mix.json.gz`) and "How the output was sold: day-ahead or real time" (`dayahead-sold.js`, `data/da_sold.json.gz`). The Unit page's **Day-ahead offer** panel (`unit-dam.js`) charts one unit's offers against its fuel-cost line by configuration, with each configuration's typical LSL, HSL and hot start, or for wind and solar the DA floor against the RT floor and the DA award share.
 
 DAM format 3 adds the hourly start-up and minimum-energy costs. A **reprocess_60d** run fills it in for older days; such runs read the raw store only (`reprocess_store_only`, on by default) and leave a day whose file is not there, since ERCOT's terms limit downloading the same report again.
 

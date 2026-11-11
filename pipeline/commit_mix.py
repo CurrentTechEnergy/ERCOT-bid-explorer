@@ -1,4 +1,4 @@
-"""The Turn-ons and Turn-offs page's "How thermal is committed" panel: online thermal minimum output
+"""The Day-ahead offers page's "How thermal is committed" panel: online thermal minimum output
 (LSL) and output each hour, split by the unit's day-ahead position that hour.  Writes
 data/commit_mix.json.gz.
 
