@@ -56,6 +56,7 @@ from .fuel_hub import build_fuel_hubs
 from .econ import build_econ
 from .dam_lambda import fetch_dam_lambda
 from .dam_prices import fetch_dam_prices, fetch_dam_node_prices
+from . import price_corrections
 from .shadow import fetch_shadow
 from .outages import fetch_outages
 from .cop import fetch_cop
@@ -630,6 +631,11 @@ def main(argv=None):
         fetch_dam_prices(api, index["days"]["60d"], index)
         fetch_dam_node_prices(api, index)
         fetch_dam_lambda(api)
+        try:      # after every price fetch, so a day loaded this run gets its corrections too
+            price_corrections.apply_all(api, index)
+        except Exception as e:   # a correction problem must not lose the rest of the run
+            warn(f"price corrections: failed: {type(e).__name__}: {e}")
+        save_index(index)
         fetch_shadow(api, index)
     if "outages" not in args.skip:
         fetch_outages(api, index, backfill=args.outages_backfill)
