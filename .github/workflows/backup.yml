@@ -90,6 +90,11 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
         run: |
+          # the R2 secrets may end in a newline, which the AWS CLI rejects (pipeline/raw_store.py strips it too)
+          R2_ENDPOINT=$(printf %s "$R2_ENDPOINT" | tr -d '[:space:]')
+          AWS_ACCESS_KEY_ID=$(printf %s "$AWS_ACCESS_KEY_ID" | tr -d '[:space:]')
+          AWS_SECRET_ACCESS_KEY=$(printf %s "$AWS_SECRET_ACCESS_KEY" | tr -d '[:space:]')
+          export AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY
           aws s3 cp --recursive --only-show-errors --endpoint-url "$R2_ENDPOINT" \
             s3://ercot-raw/private/ "$RUNNER_TEMP/snap/ercot-raw-private/"
           echo "private files: $(find "$RUNNER_TEMP/snap/ercot-raw-private" -type f 2>/dev/null | wc -l)"
@@ -122,6 +127,11 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.BACKUP_R2_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.BACKUP_R2_SECRET_ACCESS_KEY }}
         run: |
+          # the R2 secrets may end in a newline, which the AWS CLI rejects (pipeline/raw_store.py strips it too)
+          R2_ENDPOINT=$(printf %s "$R2_ENDPOINT" | tr -d '[:space:]')
+          AWS_ACCESS_KEY_ID=$(printf %s "$AWS_ACCESS_KEY_ID" | tr -d '[:space:]')
+          AWS_SECRET_ACCESS_KEY=$(printf %s "$AWS_SECRET_ACCESS_KEY" | tr -d '[:space:]')
+          export AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY
           cd "$RUNNER_TEMP/snap"
           find . -type f -printf '%P\n' | sort | while read -r f; do
             printf '%s  %s  %s\n' "$(sha256sum "$f" | cut -c1-64)" "$(stat -c %s "$f")" "$f"
