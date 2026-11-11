@@ -208,13 +208,14 @@ async function loadDay() {
   const has = (k) => (S.index.days[k] || []).includes(S.date);
   // a day uses the 60-day report whenever it has it, so curtailment needs the 2-day files only
   // for days without it
-  const [day, prices, gen, stack] = await Promise.all([
+  const [day, prices, gen, stack, corr] = await Promise.all([
     tryJSON(`data/${S.source}/${S.date}.json.gz`),
     tryJSON(`data/prices/${S.date}.json.gz`),
     S.source === "2d" && has("2dgen") ? tryJSON(`data/2dgen/${S.date}.json.gz`) : null,
     S.source === "60d" ? tryJSON(`data/stack/${S.date}.json.gz`) : null,
+    window.CX.priceCorrection(S.date),
   ]);
-  S.day = day; S.prices = prices; S.stack = stack;
+  S.day = day; S.prices = prices; S.stack = stack; S.corr = corr;
   S.day60 = S.source === "60d" ? day : null; S.day2 = S.source === "60d" ? null : day; S.gen = gen;
 }
 
@@ -678,6 +679,8 @@ function drawDay() {
   if (sel && sel.mean != null) s2.append("circle").attr("cx", xc(S.hour + 1)).attr("cy", y2(sel.mean)).attr("r", 4).attr("fill", css("--price")).attr("stroke", css("--surface")).attr("stroke-width", 2);
   hoverHours(s2, xc, m, H2, tip);
   pel.replaceChildren(s2.node());
+  const cn = window.CX.correctionNote(S.corr, S.location === "lambda");     // ERCOT corrected this day's prices
+  if (cn) pel.insertAdjacentHTML("beforeend", `<p class="note">${esc(cn)}</p>`);
 }
 
 // ---- generation mix ----------------------------------------------------------

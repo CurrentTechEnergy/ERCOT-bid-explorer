@@ -214,7 +214,9 @@ function drawTable() {
   setCSV($("tbl"), ["year", "hours", `mean_${S.unit}`, `median_${S.unit}`, `p99_${S.unit}`, `p1_${S.unit}`, "p99_less_p1", "daily_max_min_mean", "hours_ge_1000", "hours_ge_100", "hours_le_10", "hours_le_0", "ship_channel_gas_usd_mmbtu", "battery_gw"],
     rows.map((r) => [r[0], ...r.slice(1, 14)]), "Year by year");
   $("table-note").textContent = `${S.mkt === "rt" ? "Real-time" : "Day-ahead"} ${$("c-hub").selectedOptions[0].text}, whole years (the latest to date). Prices in ${unitName()}, all to one decimal; the hour counts are always against $/MWh thresholds.`;
-  $("table-foot").textContent = rows.some((r) => r[14]) ? `* ${GAS_FN}` : "";
+  const fixed = S.corrected ? S.corrected[S.mkt] : [];
+  $("table-foot").textContent = (rows.some((r) => r[14]) ? `* ${GAS_FN} ` : "") +
+    (fixed.length ? `${S.mkt === "rt" ? "Real-time" : "Day-ahead"} prices include ERCOT's after-the-fact price corrections on ${fixed.length} day${fixed.length > 1 ? "s" : ""}: ${shortDays(fixed)}.` : "");
 }
 
 // ==== controls ===============================================================================
@@ -225,10 +227,17 @@ function seg(id, key, after) {
   mark();
   el.addEventListener("click", (e) => { const b = e.target.closest("button"); if (!b) return; S[key] = b.dataset.v; mark(); save(); (after || drawAll)(); });
 }
+// "Jan 10, Jan 22 and Aug 30, 2026": the year after each run of days in it
+function shortDays(days) {
+  const parts = days.map((d) => { const t = new Date(d + "T12:00:00Z"); return { y: t.getUTCFullYear(), s: t.toLocaleDateString("en-US", { month: "short", day: "numeric", timeZone: "UTC" }) }; });
+  const out = parts.map((p, i) => p.s + (i === parts.length - 1 || parts[i + 1].y !== p.y ? `, ${p.y}` : ""));
+  return out.length > 1 ? `${out.slice(0, -1).join("; ")} and ${out[out.length - 1]}`.replace(/; /g, ", ") : out[0];
+}
 const save = () => writeHash({ m: S.mkt, h: S.hub, u: S.unit });
 
 (async function () {
-  const P = await tryJSON("data/prices_years.json.gz");
+  const [P, rtFixed, daFixed] = await Promise.all([tryJSON("data/prices_years.json.gz"), window.CX.correctedDays("rt"), window.CX.correctedDays("da")]);
+  S.corrected = { rt: rtFixed, da: daFixed };
   if (!P) { $("status").textContent = "Price data is not available yet."; return; }
   S.P = P;
   const v = readHash() || {};
