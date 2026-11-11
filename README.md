@@ -16,6 +16,7 @@ An interactive dashboard of how ERCOT resources offer energy into real-time disp
 | SCED System Lambda | NP6-322-CD | real time | System energy price for each SCED run |
 | Settlement Point Prices | NP6-905-CD | real time | 15-minute prices at hubs and load zones; hourly prices at every resource node (kept on the data branch, for days with per-unit data) |
 | DAM Settlement Point Prices | NP4-190-CD | day ahead | Hourly day-ahead prices at hubs and load zones, for the hedge signals page (history can be loaded from the yearly NP4-180-ER workbook), and at thermal resource nodes for the last two weeks, for tomorrow's shutdown verdicts |
+| RTM / DAM Price Corrections | NP4-197-M, NP4-196-M | when ERCOT corrects | Corrected settlement point prices. ERCOT does not repost NP6-905-CD or NP4-190-CD when it corrects a price; each run lists these reports on ercot.com, fetches each new SPP correction file once (raw store first, kept there) and patches the hub, load-zone and node prices already loaded where they still hold the original value (`pipeline/price_corrections.py`; log in `data/price_corrections.json.gz`) |
 | Resource Decision-Making Entity List | NP3-988-ER | daily | Each resource's decision-making entity (who decides how it is offered) and owning entity, by name; read from ercot.com (no key) to name the DME codes in the 60-day files |
 | Qualified Scheduling Entity List | NP16-474-M | daily | QSE names for the QSE codes in the 60-day files; read from ercot.com (no key). Only name, code and registration date are kept, not the contact columns |
 | EIA Henry Hub spot price | RNGWHHD | daily | Natural gas price, $/MMBtu, from the EIA open data API (needs an `EIA_API_KEY` secret; skipped without one) |
@@ -133,6 +134,8 @@ pipeline/
   marginal.py      day files + prices -> hourly marginal MW by technology (no downloads)
   dam_prices.py    NP4-190-CD (or the yearly NP4-180-ER workbook) -> day-ahead hub and load zone prices
                    (data/dam_hubs.json.gz); thermal node prices for the last two weeks (data/dam_nodes.json.gz)
+  price_corrections.py  NP4-197-M, NP4-196-M -> corrected RT and DA prices patched into the files above
+                   (data/prices/, summary_prices, node files, dam_hubs, dam_nodes); log in data/price_corrections.json.gz
   ppa.py           per-unit day files + DA prices -> wind and solar offers that follow
                    share x DA price - constant: settlement point, share, implied strike (data/ppa.json.gz)
   renew_changes.py ppa cache + DAM day files + node prices (and the history release) -> every change in
