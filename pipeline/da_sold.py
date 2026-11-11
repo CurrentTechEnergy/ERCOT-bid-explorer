@@ -1,4 +1,4 @@
-"""The Turn-ons and Turn-offs page's "How the output was sold: day-ahead or real time" panel: each hour's real-time
+"""The Day-ahead offers page's "How the output was sold: day-ahead or real time" panel: each hour's real-time
 output of thermal, wind and solar units, split by how much of it was sold in the day-ahead market.
 Writes data/da_sold.json.gz.
 

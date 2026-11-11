@@ -677,11 +677,11 @@ def main(argv=None):
     except Exception as e:
         warn(f"lsl_floor: failed: {e!r}; lsl_floor.json.gz left as it is")
     try:
-        commit_mix.build()         # Turn-ons and Turn-offs "How thermal is committed", from the DAM and 60-day unit files
+        commit_mix.build()         # Day-ahead offers "How thermal is committed", from the DAM and 60-day unit files
     except Exception as e:
         warn(f"commit_mix: failed: {e!r}; commit_mix.json.gz left as it is")
     try:
-        da_sold.build()            # Turn-ons and Turn-offs "How the output was sold: day-ahead or real time", from the DAM and 60-day unit files
+        da_sold.build()            # Day-ahead offers "How the output was sold: day-ahead or real time", from the DAM and 60-day unit files
     except Exception as e:
         warn(f"da_sold: failed: {e!r}; da_sold.json.gz left as it is")
     try:

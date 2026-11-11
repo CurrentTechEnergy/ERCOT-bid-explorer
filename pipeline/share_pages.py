@@ -35,7 +35,7 @@ TEMPLATE_VERSION = "1"
 MW_TOLERANCE = 0.10
 SITEMAP_PATH = SITE_DIR / "sitemap.xml"
 # the pages in the nav, plus the reference pages; retired pages (redirects) are left out
-SITEMAP_PAGES = ["", "day-in-ercot.html", "prices.html", "realtime.html", "thermal.html", "commitment.html", "dayahead.html", "renewables.html", "batteries.html", "unit.html",
+SITEMAP_PAGES = ["", "day-in-ercot.html", "prices.html", "realtime.html", "thermal.html", "turn-ons-and-turn-offs.html", "dayahead.html", "renewables.html", "batteries.html", "unit.html",
                  "changes.html", "guide.html", "contact.html", "terms.html"]
 
 TECH_LABEL = {"nuclear": "Nuclear", "coal": "Coal", "combined_cycle": "Combined cycle", "gas_steam": "Gas steam",

@@ -1,6 +1,6 @@
 """Minimum run times as observed: how long each coal and gas unit stays on once started, from the
 hourly per-unit strips in data/unit_hours_60d.json.gz (combined-cycle configurations merged into
-their train, as pipeline/groups.py does).  Needs no downloads.  Read by commitment.html (the
+their train, as pipeline/groups.py does).  Needs no downloads.  Read by turn-ons-and-turn-offs.html (the
 "How long units stay on once started" panel) and unit.html (run lengths under Hours online).
 
 ERCOT does not publish registered minimum up times, so this is what the units chose to do: the

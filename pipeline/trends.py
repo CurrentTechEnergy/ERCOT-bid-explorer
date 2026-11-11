@@ -1,6 +1,6 @@
 """Long-term trends from the 60-day data already in data/: hourly floor-priced MW and capacity
 running by technology, starts per day, per-unit daily offer behaviour for thermal units, and
-detected changes in each unit's bidding approach.  Needs no downloads.  Read by commitment.html, unit.html, the Offers page and pipeline/events.py.
+detected changes in each unit's bidding approach.  Needs no downloads.  Read by turn-ons-and-turn-offs.html, unit.html, the Offers page and pipeline/events.py.
 
 data/trends_hourly_60d.json.gz   {"dates", "floor", "run"}, every series [day][24] (MW, null where
                                  missing; a day with no thermal unit online is null throughout)

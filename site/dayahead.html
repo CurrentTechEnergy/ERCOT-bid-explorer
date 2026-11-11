@@ -50,7 +50,7 @@
 
 <header class="masthead">
   <div class="brand">
-    <div class="nav-row"><nav class="nav" aria-label="Pages"><a href="./">Will fossil turn off?</a><a href="day-in-ercot.html">A day in ERCOT</a><a href="prices.html">Prices</a><a href="dayahead.html" aria-current="page">Day-ahead offers</a><a href="commitment.html">Turn-ons and Turn-offs</a><a href="realtime.html">Real-time offers</a><a href="thermal.html">Thermal</a><a href="renewables.html">Renewables</a><a href="batteries.html">Batteries</a><a href="unit.html">Units</a><span class="nav-sep" aria-hidden="true"></span><a href="changes.html" class="aux">What's changing</a><a href="guide.html" class="aux">How offers work</a></nav></div>
+    <div class="nav-row"><nav class="nav" aria-label="Pages"><a href="./">Will fossil turn off?</a><a href="day-in-ercot.html">A day in ERCOT</a><a href="prices.html">Prices</a><a href="dayahead.html" aria-current="page">Day-ahead offers</a><a href="turn-ons-and-turn-offs.html">Turn-ons and Turn-offs</a><a href="realtime.html">Real-time offers</a><a href="thermal.html">Thermal</a><a href="renewables.html">Renewables</a><a href="batteries.html">Batteries</a><a href="unit.html">Units</a><span class="nav-sep" aria-hidden="true"></span><a href="changes.html" class="aux">What's changing</a><a href="guide.html" class="aux">How offers work</a></nav></div>
     <h1>Day-ahead offers</h1>
     <p class="sub">What thermal units ask the day-ahead market for, and whether it keeps them on through cheap hours. A combined cycle that wants to ride through a cheap stretch offers its minimum energy near $0; one that wants out offers around $20 to $30 and loses the award.</p>
   </div>
@@ -190,11 +190,69 @@
     <div class="units-wrap scroll-x" id="renew-table" data-csv></div>
     <p class="note">Day-ahead sales through energy-only offers at the plant's node are not included, so this undercounts the plant's day-ahead exposure. Fleet-wide, awards on these curves cover about 5% of available energy; adding energy-only sales raises that to about 14% (9-day sample).</p>
   </section>
+
+  <section class="panel panel-wide" id="cm-panel">
+    <div class="panel-head">
+      <div>
+        <h2>How thermal is committed <span class="h-note" id="cm-status"></span></h2>
+        <p class="note" id="cm-note"></p>
+      </div>
+      <div class="panel-tools">
+        <div class="seg seg-sm" id="cm-band" role="radiogroup" aria-label="Hours">
+          <button type="button" data-v="all" role="radio">All hours</button>
+          <button type="button" data-v="lt10" role="radio">Under $10</button>
+          <button type="button" data-v="lt0" role="radio">Under $0</button>
+        </div>
+        <label class="lbl inline" for="cm-tech">Technology</label>
+        <select id="cm-tech"></select>
+        <div class="seg seg-sm" id="cm-meas" role="radiogroup" aria-label="Measure">
+          <button type="button" data-v="0" role="radio">Minimum output</button>
+          <button type="button" data-v="1" role="radio">Output</button>
+        </div>
+      </div>
+    </div>
+    <p class="intro" id="cm-answer"></p>
+    <div class="legend legend-static" id="cm-legend"></div>
+    <h3 class="sub-h">By month: average GW online over the chosen hours</h3>
+    <div class="chart" id="cm-month"></div>
+    <h3 class="sub-h">By hour of day, whole period</h3>
+    <div class="chart" id="cm-hour"></div>
+  </section>
+
+  <section class="panel panel-wide" id="ds-panel">
+    <div class="panel-head">
+      <div>
+        <h2>How the output was sold: day-ahead or real time <span class="h-note" id="ds-status"></span></h2>
+        <p class="note" id="ds-note"></p>
+      </div>
+      <div class="panel-tools">
+        <div class="seg seg-sm" id="ds-band" role="radiogroup" aria-label="Hours">
+          <button type="button" data-v="all" role="radio">All hours</button>
+          <button type="button" data-v="lt10" role="radio">Under $10</button>
+          <button type="button" data-v="lt0" role="radio">Under $0</button>
+        </div>
+        <label class="lbl inline" for="ds-sel">Technology</label>
+        <select id="ds-sel"></select>
+        <div class="seg seg-sm" id="ds-meas" role="radiogroup" aria-label="Measure">
+          <button type="button" data-v="gw" role="radio">GW</button>
+          <button type="button" data-v="share" role="radio">Share</button>
+        </div>
+      </div>
+    </div>
+    <p class="intro" id="ds-answer"></p>
+    <div class="legend legend-static" id="ds-legend"></div>
+    <h3 class="sub-h">By technology: average GW of output over the chosen hours, whole period</h3>
+    <div class="chart" id="ds-tech"></div>
+    <h3 class="sub-h">By month, chosen technology</h3>
+    <div class="chart" id="ds-month"></div>
+    <h3 class="sub-h">By hour of day, chosen technology, whole period</h3>
+    <div class="chart" id="ds-hour"></div>
+  </section>
 </main>
 
 <footer class="foot">
   <p id="ref-note"></p>
-  <p>Source: ERCOT EMIL product NP3-966-ER (60-Day DAM Disclosure: three-part offers, energy offer curves, awards and settlement point prices), DAM system lambda, gas hub prices from OilPriceAPI and the EIA, each unit's gas hub, and heat rates from EPA CAMPD hourly emissions data. Built by the data update workflow from the days already loaded; the 60-day reports run about two months behind.</p>
+  <p>Source: ERCOT EMIL products NP3-966-ER (60-Day DAM Disclosure: three-part offers, energy offer curves, awards and settlement point prices) and NP3-965-ER (60-Day SCED Disclosure: each unit's real-time status and output, for how thermal is committed and how the output was sold), DAM system lambda, gas hub prices from OilPriceAPI and the EIA, each unit's gas hub, and heat rates from EPA CAMPD hourly emissions data. Built by the data update workflow from the days already loaded; the 60-day reports run about two months behind.</p>
   <p>Hours are ERCOT hour ending in Central prevailing time: HE 13 is noon to 1 pm. Dates are operating days.</p>
   <p>Made by <a href="https://currenttech.energy">currenttech.energy</a> · <a href="contact.html">Contact</a></p>
   <p>Not affiliated with or endorsed by ERCOT. ERCOT is a registered trademark of the Electric Reliability Council of Texas, Inc.</p>
@@ -205,5 +263,7 @@
 <script src="vendor/d3.min.js"></script>
 <script src="common.js"></script>
 <script src="dayahead.js"></script>
+<script src="dayahead-mix.js"></script>
+<script src="dayahead-sold.js"></script>
 </body>
 </html>
