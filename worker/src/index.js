@@ -12,10 +12,15 @@
    The daily send (pipeline/notify.py) reads active follows straight from the D1 database
    through Cloudflare's API, so there is no endpoint that lists addresses.
 
+   The same Worker's cron trigger runs the update watchdog (watchdog.js): it starts the
+   twice-daily data update on time and emails the owner when one hasn't succeeded.
+
    Abuse limits: a hidden "website" field bots fill in, units that have a page on the site only,
    at most SIGNUPS_PER_IP sign-ups per IP address per day, at most CONFIRMS_PER_EMAIL
    confirmation emails per email address per day, and at most one confirmation email per follow
    per RESEND_AFTER_MIN. */
+
+import { watchdog } from "./watchdog.js";
 
 const SIGNUPS_PER_IP = 20;
 const CONFIRMS_PER_EMAIL = 10;        // confirmation emails one address can be sent in a day
@@ -144,6 +149,10 @@ async function unsubscribe(req, url, env) {
 }
 
 export default {
+  async scheduled(event, env, ctx) {
+    ctx.waitUntil(watchdog(env, new Date(event.scheduledTime), sendEmail).catch((e) => console.log("watchdog: " + String(e && e.stack || e))));
+  },
+
   async fetch(req, env) {
     const url = new URL(req.url);
     try {

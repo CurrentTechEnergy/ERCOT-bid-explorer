@@ -24,3 +24,14 @@ CREATE TABLE IF NOT EXISTS confirms (
   n     INTEGER NOT NULL DEFAULT 0,
   PRIMARY KEY (email, day)
 );
+-- the update watchdog (watchdog.js): per Central day and slot, how many runs it started and
+-- when it emailed the owner; rows older than 30 days are dropped
+CREATE TABLE IF NOT EXISTS watchdog (
+  day           TEXT NOT NULL,
+  slot          TEXT NOT NULL,          -- morning or afternoon
+  dispatches    INTEGER NOT NULL DEFAULT 0,
+  last_dispatch TEXT,
+  alerted       TEXT,
+  error         TEXT,                   -- the last GitHub error, if any
+  PRIMARY KEY (day, slot)
+);
