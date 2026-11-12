@@ -10,7 +10,7 @@ const { tryJSON, showTip, hideTip, setCSV, css, axisFmt, fmtKind } = window.CX;
 const $ = (id) => document.getElementById(id);
 const fmtPct = d3.format(".0%"), fmtPrice = (v) => (v == null || isNaN(v) ? "–" : d3.format("$,.2f")(v));
 const TECHS = [["wind", "Wind", "--c3"], ["solar", "Solar", "--c4"]];
-const S = { Y: null, by: "month" };
+const S = { Y: null, by: "month", cu: "pct" };
 
 function emptyMsg(el, msg) { el.innerHTML = `<p class="empty">${msg}</p>`; }
 function staticLegend(el, list) {
@@ -127,25 +127,33 @@ function draw() {
   // hub (the fleet's timing and the units' location); daily, 7-day means first
   const sm = (a) => (day ? rollMean(a, 7) : a);
   const rate = (c, a) => c.map((v, i) => (v == null || !a[i] || a[i] <= 0 ? null : v / a[i]));
-  const hub = sm(D.wind.hub_rt_gen);
+  const hub = sm(D.wind.hub_rt_gen), usd = S.cu === "usd";
   const cap = TECHS.flatMap(([t, label, color]) => {
     const c = sm(D[t].rt_capture), out = [
-      { label: day ? label : `${label}, monthly`, color, faint: !day, width: day ? 2 : 1.4, values: rate(c, hub), fmt: fmtPct },
+      { label: day ? label : `${label}, monthly`, color, faint: !day, width: day ? 2 : 1.4, values: usd ? c : rate(c, hub), fmt: usd ? fmtPrice : fmtPct },
     ];
     if (!day) {
       // the year: (wind or solar revenue / its MWh) / (all ERCOT generation's hub revenue / all MWh)
       // over the whole year; the two sides weight months differently, so a year can sit outside its
-      // months (Uri, Feb 2021: ERCOT's MWh caught it more than solar's did)
+      // months (Uri, Feb 2021: ERCOT's MWh caught it more than solar's did). The $/MWh view draws
+      // the two sides themselves.
       const e = annual(D[t].rt_capture, D[t].gen), h = annual(D[t].hub_rt_gen, D[t].sys_gen);
-      out.push({ label: `${label}, year`, color, width: 2.6, groups: e.groups, values: rate(e.values, h.values), fmt: fmtPct });
+      out.push({ label: `${label}, year`, color, width: 2.6, groups: e.groups, values: usd ? e.values : rate(e.values, h.values), fmt: usd ? fmtPrice : fmtPct });
     }
-    out.push({ label: `${label} earned`, color, hide: true, values: c, fmt: fmtPrice });
+    if (!usd) out.push({ label: `${label} earned`, color, hide: true, values: c, fmt: fmtPrice });
+    else out.push({ label: `${label} capture rate`, color, hide: true, values: rate(c, hub), fmt: fmtPct });
     return out;
   });
-  cap.push({ label: "Average MWh at the hub", color: "--c-other", hide: true, values: hub, fmt: fmtPrice });
+  if (usd) {
+    cap.push({ label: day ? "Average MWh at the hub" : "Average MWh at the hub, monthly", color: "--c-other", faint: !day, width: day ? 2 : 1.4, dash: "5 4", values: hub, fmt: fmtPrice });
+    if (!day) { const h = annual(D.wind.hub_rt_gen, D.wind.sys_gen); cap.push({ label: "Average MWh at the hub, year", color: "--c-other", width: 2.6, dash: "5 4", groups: h.groups, values: h.values, fmt: fmtPrice }); }
+  } else cap.push({ label: "Average MWh at the hub", color: "--c-other", hide: true, values: hub, fmt: fmtPrice });
   staticLegend($("yr-capture-legend"), cap);
-  yearChart($("yr-capture"), cap, { title: `Capture rate, %: price earned per MWh ÷ the average MWh's hub price${day ? " (7-day)" : ""}; scale cut at 150%`,
-    yMin: 0, yMax: 1.5, ref: 1, overrun: true, yFmt: d3.format(".0%"), tipFmt: fmtPct, H: 200 });
+  yearChart($("yr-capture"), cap, usd
+    ? { title: `Price earned, $/MWh; grey: the average MWh's hub price${day ? " (7-day)" : ""}; scale cut at $150`,
+      yMin: 0, yMax: 150, overrun: true, yFmt: d3.format("$,.0f"), tipFmt: fmtPrice, H: 200 }
+    : { title: `Capture rate, %: price earned per MWh ÷ the average MWh's hub price${day ? " (7-day)" : ""}; scale cut at 150%`,
+      yMin: 0, yMax: 1.5, ref: 1, overrun: true, yFmt: d3.format(".0%"), tipFmt: fmtPct, H: 200 });
 
   const neg = TECHS.flatMap(([t, label, color]) => (day ? [{ label, color, values: D[t].neg, fmt: fmtPct }] : [
     { label: `${label}, each month`, color, faint: true, width: 1.4, values: D[t].neg, fmt: fmtPct },
@@ -169,7 +177,14 @@ async function boot() {
   }
   const v = window.CX.readHash();
   if (v.yby === "day" || v.yby === "month") S.by = v.yby;
-  setSeg("yr-by", S.by);
+  if (v.ycu === "usd") S.cu = "usd";
+  setSeg("yr-by", S.by); setSeg("yr-cu", S.cu);
+  $("yr-cu").addEventListener("click", (e) => {
+    const b = e.target.closest("button");
+    if (!b) return;
+    S.cu = b.dataset.v; setSeg("yr-cu", S.cu); draw();
+    window.CX.writeHash({ ...window.CX.readHash(), ycu: S.cu });
+  });
   $("yr-by").addEventListener("click", (e) => {
     const b = e.target.closest("button");
     if (!b) return;
