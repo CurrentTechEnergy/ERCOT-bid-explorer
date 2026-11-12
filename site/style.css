@@ -384,3 +384,5 @@ table.data.q3p .bar i { display: block; height: 100%; background: var(--c1); }
 table.data.q3p td.thin .v, table.data.q3p td.thin { color: var(--muted); }
 table.data.q3p td.thin .bar i { background: var(--muted); }
 .q3p-check { max-width: none; }
+.dl-menu [hidden] { display: none; }
+.dl-none { font-size: 13px; color: var(--muted); padding: 7px 10px; }

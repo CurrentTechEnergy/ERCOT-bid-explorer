@@ -1,5 +1,5 @@
-/* Shared helpers for every page: data loading, tooltips that pin on click, chart downloads
-   (PNG, SVG, CSV), links that reopen the current view and the nav row's find-a-unit box. Exposed as window.CX. */
+/* Shared helpers for every page: data loading, tooltips that pin on click, chart and table
+   downloads (PNG, CSV), links that reopen the current view and the nav row's find-a-unit box. Exposed as window.CX. */
 (() => {
 "use strict";
 const $ = (id) => document.getElementById(id);
@@ -157,9 +157,11 @@ function panelActions(panel) {
 }
 
 // ------------------------------------------------------------ downloads ---
-// Each chart can register the data it plots: CX.setCSV(chartEl, header, rows, name).
+// Each chart or table can register the data it shows: CX.setCSV(el, header, rows, name). The element
+// is marked data-csv so its panel's Download menu finds it; a table with nothing registered is
+// downloaded from its cells.
 const csvData = new WeakMap();
-function setCSV(el, header, rows, name) { csvData.set(el, { header, rows, name }); }
+function setCSV(el, header, rows, name) { if (!el) return; csvData.set(el, { header, rows, name }); el.setAttribute("data-csv", ""); }
 const STYLE_PROPS = ["fill", "fill-opacity", "stroke", "stroke-width", "stroke-dasharray", "stroke-opacity", "opacity",
   "font-family", "font-size", "font-weight", "font-variant-numeric", "display", "visibility"];
 function inlined(svg) {
@@ -172,71 +174,182 @@ function inlined(svg) {
   clone.querySelectorAll(".pin-mark").forEach((n) => n.remove());
   return clone;
 }
-// a panel's name: its heading without the date/hour note
-function panelName(panel) {
+// a panel's heading as shown, without the "?" help links (with = keep the date/hour note)
+function headingText(panel, withNote = true) {
   const h = panel.querySelector("h2");
-  if (!h) return "chart";
-  return [...h.childNodes].filter((n) => !(n.classList && n.classList.contains("h-note"))).map((n) => n.textContent).join("").trim();
+  if (!h) return "";
+  const c = h.cloneNode(true);
+  c.querySelectorAll(".help-q" + (withNote ? "" : ", .h-note")).forEach((n) => n.remove());
+  return c.textContent.trim().replace(/\s+/g, " ");
 }
+// a panel's name: its heading without the date/hour note
+function panelName(panel) { return headingText(panel, false) || "chart"; }
 function slug(s) { return s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 60); }
 
-// One SVG for a panel: title, description, legend, every chart in it, and a source line.
+const shown = (el) => { const r = el.getBoundingClientRect(); return r.width > 0 && r.height > 0; };
+// what a panel's image draws, in page order: its visible charts and visible tables
+function panelParts(panel) {
+  return [...panel.querySelectorAll(".chart svg, table")].filter((el) => {
+    if (el.closest(".panel-actions, .legend, .tip")) return false;
+    if (el.tagName === "svg" || el.tagName === "SVG") { if (el.parentElement.closest("svg") || el.closest("table")) return false; }
+    else if (el.parentElement.closest("table")) return false;
+    return el.closest("section.panel") === panel && shown(el);
+  });
+}
+const TABLE_ROWS = 15, PANEL_ROWS = 30, MAX_W = 1800; // rows drawn per table and per panel image; the CSV has them all
+// a cell's text as laid out: lines inside a cell (a label over a detail line) joined with " · ";
+// buttons, help links and hidden bits left out
+function cellText(c) {
+  const walk = (n) => {
+    if (n.nodeType === 3) return n.textContent;
+    if (n.nodeType !== 1 || n.matches("button, .help-q, .sr-only, svg")) return "";
+    if (n.tagName === "BR") return "\n";
+    const d = n.isConnected ? getComputedStyle(n).display : "inline";
+    if (d === "none") return "";
+    const t = [...n.childNodes].map(walk).join("");
+    return d === "inline" || d === "inline-block" || d === "inline-flex" || d === "table-cell" ? t : `\n${t}\n`;
+  };
+  return walk(c).split(/\n+/).map((l) => l.replace(/[▾▴]/g, "").replace(/\s+/g, " ").trim()).filter(Boolean).join(" · ");
+}
+function tableRows(t) {
+  const all = [...t.rows];
+  const head = all.filter((r) => r.parentElement.tagName === "THEAD" || (!r.closest("tbody") && [...r.cells].every((c) => c.tagName === "TH")));
+  const body = all.filter((r) => !head.includes(r) && r.parentElement.tagName !== "TFOOT" && shown(r));
+  return { head: head.at(-1) || null, body };
+}
+
+// One SVG for a panel: title, description, legend, every chart and table in it (tables cut to their
+// first TABLE_ROWS rows), and a source line with the view.
 function panelSVG(panel) {
-  const title = (panel.querySelector("h2")?.textContent || "chart").trim().replace(/\s+/g, " ");
-  const svgs = [...panel.querySelectorAll(".chart svg")].filter((s) => s.getBoundingClientRect().width > 0);
-  const W = Math.max(600, ...svgs.map((s) => +s.getAttribute("viewBox").split(" ")[2]));
   const NS = "http://www.w3.org/2000/svg";
-  const out = document.createElementNS(NS, "svg");
   const font = "IBM Plex Sans, Helvetica, Arial, sans-serif";
-  const ink = css("--ink"), muted = css("--muted");
+  const ink = css("--ink"), muted = css("--muted"), line = css("--line") || muted;
+  const ctx = document.createElement("canvas").getContext("2d");
+  const measure = (s, size, weight = 400) => { ctx.font = `${weight} ${size}px ${font}`; return ctx.measureText(s).width; };
+  const fit = (s, w, size, weight) => { if (measure(s, size, weight) <= w) return s; while (s.length > 1 && measure(s + "…", size, weight) > w) s = s.slice(0, -1); return s + "…"; };
+  const wrap = (s, w, size, weight) => {
+    const lines = []; let cur = "";
+    s.split(" ").forEach((word) => { const next = cur ? `${cur} ${word}` : word; if (cur && measure(next, size, weight) > w) { lines.push(cur); cur = word; } else cur = next; });
+    if (cur) lines.push(cur);
+    return lines;
+  };
+
+  // lay out each part first: charts keep their size (widened to any label running past the edge);
+  // tables get column widths from their text
+  let budget = PANEL_ROWS;
+  const parts = panelParts(panel).map((el) => {
+    if (el.tagName !== "TABLE") {
+      const [, , w0, h] = el.getAttribute("viewBox").split(" ").map(Number);
+      let w = w0;
+      try { const b = el.getBBox(); w = Math.min(w0 + 320, Math.max(w0, Math.ceil(b.x + b.width) + 6)); } catch (e) { /* not rendered */ }
+      return { kind: "svg", el, w, w0, h };
+    }
+    const { head, body } = tableRows(el);
+    if ((!body.length && !head) || budget <= 0) return null;
+    const rows = body.slice(0, Math.max(0, Math.min(TABLE_ROWS, budget))); budget -= rows.length;
+    // a table that shows only part of its data counts the rows it registered for the CSV
+    const reg = el.closest("[data-csv]"), regRows = reg && csvData.get(reg)?.rows?.length;
+    const total = regRows && regRows > body.length && reg.querySelectorAll("table").length === 1 ? regRows : body.length;
+    const ncol = Math.max(head ? head.cells.length : 0, ...rows.map((r) => r.cells.length));
+    if (!ncol) return null;
+    const grid = (r) => { const c = [...r.cells].map(cellText); while (c.length < ncol) c.unshift(""); return c; };
+    const hd = head ? grid(head) : null, bd = rows.map(grid);
+    const ref = rows[0] ? [...rows[0].cells] : [];
+    const align = d3.range(ncol).map((j) => { const c = ref[j - (ncol - ref.length)]; const a = c ? getComputedStyle(c).textAlign : "left"; return a === "right" || a === "end" ? "end" : a === "center" ? "middle" : "start"; });
+    let cw = d3.range(ncol).map((j) => Math.min(280, Math.max(36, d3.max(bd, (r) => measure(r[j], 12)) || 0, hd ? Math.min(150, measure(hd[j], 11, 600)) : 0)) + 16);
+    // columns past the widest image are left to the CSV
+    let keep = 0, run = 32;
+    while (keep < ncol && run + cw[keep] <= MAX_W) run += cw[keep++];
+    keep = Math.max(1, keep);
+    const cut = ncol - keep;
+    cw = cw.slice(0, keep);
+    return { kind: "table", el, hd: hd && hd.slice(0, keep), bd: bd.map((r) => r.slice(0, keep)), align: align.slice(0, keep), cw, w: d3.sum(cw) + 32, total, cut, shownRows: rows.length };
+  }).filter(Boolean).filter((p) => p.kind === "svg" || p.shownRows || p.hd);
+  const W = Math.min(MAX_W, Math.max(600, ...parts.map((p) => p.w)));
+
+  const out = document.createElementNS(NS, "svg");
   let y = 28;
-  const text = (x, yy, s, size, color, weight = 400) => {
+  const text = (x, yy, s, size, color, weight = 400, anchor = "start") => {
     const t = document.createElementNS(NS, "text");
     t.setAttribute("x", x); t.setAttribute("y", yy); t.textContent = s;
-    t.setAttribute("style", `font-family:${font};font-size:${size}px;fill:${color};font-weight:${weight}`);
+    t.setAttribute("style", `font-family:${font};font-size:${size}px;fill:${color};font-weight:${weight};text-anchor:${anchor}`);
     out.appendChild(t); return t;
   };
-  text(16, y, title, 16, ink, 600);
+  const rule = (x1, x2, yy, color, width = 1) => {
+    const l = document.createElementNS(NS, "line");
+    l.setAttribute("x1", x1); l.setAttribute("x2", x2); l.setAttribute("y1", yy); l.setAttribute("y2", yy);
+    l.setAttribute("style", `stroke:${color};stroke-width:${width}`); out.appendChild(l);
+  };
+  wrap(headingText(panel) || "chart", W - 32, 16, 600).forEach((l, i) => { if (i) y += 20; text(16, y, l, 16, ink, 600); });
   // the panel's description under the title, wrapped to the image width
   const note = (panel.querySelector(".panel-head .note")?.textContent || "").trim().replace(/\s+/g, " ");
-  if (note) {
-    const ctx = document.createElement("canvas").getContext("2d");
-    ctx.font = `12px ${font}`;
-    let line = "";
-    const lines = [];
-    note.split(" ").forEach((word) => {
-      const next = line ? `${line} ${word}` : word;
-      if (line && ctx.measureText(next).width > W - 32) { lines.push(line); line = word; } else line = next;
-    });
-    if (line) lines.push(line);
-    y += 6;
-    lines.forEach((l) => { y += 16; text(16, y, l, 12, muted); });
-  }
+  if (note) { y += 6; wrap(note, W - 32, 12).forEach((l) => { y += 16; text(16, y, l, 12, muted); }); }
   y += 10;
-  // legend: swatches and labels of the visible series
-  const items = [...panel.querySelectorAll(".legend > *")].filter((b) => b.getAttribute("aria-pressed") !== "false")
-    .map((b) => ({ color: getComputedStyle(b.querySelector(".sw") || b).backgroundColor, label: b.textContent.trim() })).filter((i) => i.label);
+  // legend: swatches and labels of the visible series; a line swatch is drawn as a line
+  const items = [...panel.querySelectorAll(".legend > *")].filter((b) => b.getAttribute("aria-pressed") !== "false" && shown(b))
+    .map((b) => ({ sw: b.querySelector(".sw, svg") || null, el: b, label: b.textContent.trim() })).filter((i) => i.label);
   if (items.length) {
     let x = 16; y += 16;
     items.forEach((it) => {
-      const wEst = 18 + it.label.length * 6.4;
+      const wEst = 22 + measure(it.label, 12);
       if (x + wEst > W - 16) { x = 16; y += 18; }
-      const r = document.createElementNS(NS, "rect");
-      r.setAttribute("x", x); r.setAttribute("y", y - 9); r.setAttribute("width", 10); r.setAttribute("height", 10); r.setAttribute("rx", 2);
-      r.setAttribute("style", `fill:${it.color}`); out.appendChild(r);
-      text(x + 15, y, it.label, 12, muted);
+      const s = it.sw ? getComputedStyle(it.sw) : getComputedStyle(it.el);
+      if (it.sw && it.sw.tagName.toLowerCase() === "svg") {
+        const c = inlined(it.sw); c.setAttribute("x", x); c.setAttribute("y", y - 10); c.setAttribute("width", 12); c.setAttribute("height", 12); out.appendChild(c);
+      } else if (it.sw && parseFloat(s.height) < 2 && parseFloat(s.borderTopWidth) > 0) {
+        const l = document.createElementNS(NS, "line");
+        l.setAttribute("x1", x); l.setAttribute("x2", x + 14); l.setAttribute("y1", y - 4); l.setAttribute("y2", y - 4);
+        l.setAttribute("style", `stroke:${s.borderTopColor};stroke-width:${s.borderTopWidth};${s.borderTopStyle === "dashed" ? "stroke-dasharray:4 2" : s.borderTopStyle === "dotted" ? "stroke-dasharray:1 2" : ""}`);
+        out.appendChild(l);
+      } else if (it.sw) {
+        const bw = parseFloat(s.borderTopWidth) || 0, round = s.borderRadius.includes("50%") || parseFloat(s.borderRadius) >= 5;
+        const r = document.createElementNS(NS, "rect");
+        const w = Math.min(12, parseFloat(s.width) || 10), h = Math.min(12, parseFloat(s.height) || 10);
+        r.setAttribute("x", x + (12 - w) / 2); r.setAttribute("y", y - 4 - h / 2); r.setAttribute("width", w); r.setAttribute("height", h); r.setAttribute("rx", round ? w / 2 : 2);
+        const bg = s.backgroundColor;
+        r.setAttribute("style", `fill:${bg && bg !== "rgba(0, 0, 0, 0)" ? bg : "none"};${bw ? `stroke:${s.borderTopColor};stroke-width:${bw}` : ""}`);
+        out.appendChild(r);
+      }
+      text(x + 17, y, it.label, 12, muted);
       x += wEst + 14;
     });
   }
   y += 10;
-  svgs.forEach((s) => {
-    const [, , w, h] = s.getAttribute("viewBox").split(" ").map(Number);
-    const c = inlined(s);
-    c.setAttribute("x", 0); c.setAttribute("y", y); c.setAttribute("width", w); c.setAttribute("height", h);
-    out.appendChild(c); y += h + 8;
+  parts.forEach((p) => {
+    if (p.kind === "svg") {
+      const c = inlined(p.el);
+      c.setAttribute("viewBox", `0 0 ${p.w} ${p.h}`); c.setAttribute("overflow", "visible");
+      c.setAttribute("x", 0); c.setAttribute("y", y); c.setAttribute("width", p.w); c.setAttribute("height", p.h);
+      out.appendChild(c); y += p.h + 8;
+      return;
+    }
+    // a table: header in bold over a rule, then its first rows, then how many there are in all
+    y += 8;
+    const xs = [16]; p.cw.forEach((w) => xs.push(xs.at(-1) + w));
+    const cellX = (j) => (p.align[j] === "end" ? xs[j + 1] - 8 : p.align[j] === "middle" ? (xs[j] + xs[j + 1]) / 2 : xs[j] + 8);
+    if (p.hd) {
+      const lines = p.hd.map((h, j) => wrap(h, p.cw[j] - 12, 11, 600).slice(0, 3));
+      const n = d3.max(lines, (l) => l.length) || 1;
+      lines.forEach((ls, j) => ls.forEach((l, k) => text(cellX(j), y + 12 + (n - ls.length + k) * 14, fit(l, p.cw[j] - 12, 11, 600), 11, muted, 600, p.align[j])));
+      y += n * 14 + 6; rule(16, xs.at(-1), y, ink);
+    }
+    p.bd.forEach((r) => {
+      y += 20;
+      r.forEach((v, j) => text(cellX(j), y - 6, fit(v, p.cw[j] - 12, 12), 12, ink, 400, p.align[j]));
+      rule(16, xs.at(-1), y, line, 0.6);
+    });
+    const more = [p.total > p.shownRows ? `First ${p.shownRows} of ${p.total.toLocaleString("en-US")} rows` : "", p.cut ? `${p.cut} more column${p.cut > 1 ? "s" : ""}` : ""].filter(Boolean);
+    if (more.length) { y += 16; text(16, y, `${more.join(" · ")} · full data in the CSV download`, 11, muted); }
+    y += 10;
   });
   y += 12;
-  text(16, y, `${document.title} · ${location.href.split("#")[0]} · Source: ERCOT`, 11, muted);
+  text(16, y, `${document.title} · Source: ERCOT`, 11, muted);
+  // the link reopens this view; long ones wrap at the image width
+  let url = location.href;
+  if (panel.id && document.body.hasAttribute("data-panel-links")) { const q = new URLSearchParams(location.hash.slice(1)); q.set("p", panel.id); url = `${location.origin}${location.pathname}${location.search}#${q}`; }
+  ctx.font = `400 11px ${font}`;
+  let rest = url;
+  while (rest) { let n = rest.length; while (n > 20 && ctx.measureText(rest.slice(0, n)).width > W - 32) n--; y += 15; text(16, y, rest.slice(0, n), 11, muted); rest = rest.slice(n); }
   y += 12;
   out.setAttribute("xmlns", NS);
   out.setAttribute("viewBox", `0 0 ${W} ${y}`); out.setAttribute("width", W); out.setAttribute("height", y);
@@ -251,10 +364,13 @@ function save(blob, filename) {
   document.body.appendChild(a); a.click(); a.remove();
   setTimeout(() => URL.revokeObjectURL(a.href), 2000);
 }
-function stamp() { return (location.hash.match(/date=([\d-]+)/) || [])[1] || new Date().toISOString().slice(0, 10); }
-function downloadSVG(panel) {
-  const p = panelSVG(panel);
-  save(new Blob([new XMLSerializer().serializeToString(p.svg)], { type: "image/svg+xml" }), `${p.name}-${stamp()}.svg`);
+// the data date for file names: the view's day, else the last date in the panel's heading, else the
+// newest day in the data, else today
+let dataDay = null;
+function stamp(panel) {
+  const h = readHash();
+  const heading = panel ? headingText(panel).match(/\d{4}-\d{2}-\d{2}/g) : null;
+  return h.date || h.day || (heading && heading.at(-1)) || dataDay || new Date().toISOString().slice(0, 10);
 }
 function downloadPNG(panel) {
   const p = panelSVG(panel);
@@ -265,42 +381,71 @@ function downloadPNG(panel) {
     c.width = p.W * k; c.height = p.H * k;
     const ctx = c.getContext("2d"); ctx.scale(k, k); ctx.drawImage(img, 0, 0);
     URL.revokeObjectURL(url);
-    c.toBlob((b) => save(b, `${p.name}-${stamp()}.png`), "image/png");
+    c.toBlob((b) => save(b, `${p.name}-${stamp(panel)}.png`), "image/png");
   };
   img.src = url;
 }
+// the data behind a panel: what its charts and tables registered, and the cells of any shown table
+// that registered nothing
+function csvParts(panel) {
+  const reg = [...panel.querySelectorAll("[data-csv]")].filter((el) => el.closest("section.panel") === panel && csvData.get(el)?.header?.length);
+  const parts = reg.map((el) => csvData.get(el));
+  // tables with the same columns (a list split by week) become one
+  panelParts(panel).filter((t) => t.tagName === "TABLE" && !reg.some((el) => el.contains(t) || el === t)).forEach((t) => {
+    const { head, body } = tableRows(t);
+    if (!body.length) return;
+    const header = head ? [...head.cells].map(cellText) : [], rows = body.map((r) => [...r.cells].map(cellText));
+    const same = parts.find((p) => p.scraped && p.header.join("|") === header.join("|"));
+    if (same) same.rows.push(...rows); else parts.push({ header, rows, name: "", scraped: true });
+  });
+  return parts;
+}
 function downloadCSV(panel) {
-  const parts = [...panel.querySelectorAll(".chart, [data-csv]")].map((el) => csvData.get(el)).filter(Boolean);
+  const parts = csvParts(panel);
   if (!parts.length) return;
   const cell = (v) => (v == null ? "" : typeof v === "number" ? String(Math.round(v * 1e4) / 1e4) : /[",\n]/.test(v) ? `"${String(v).replace(/"/g, '""')}"` : v);
-  const text = parts.map((p) => (parts.length > 1 ? `# ${p.name}\n` : "") + [p.header, ...p.rows].map((r) => r.map(cell).join(",")).join("\n")).join("\n\n");
-  save(new Blob([text + "\n"], { type: "text/csv" }), `${slug(panelName(panel))}-${stamp()}.csv`);
+  const text = parts.map((p, i) => (parts.length > 1 ? `# ${p.name || `Table ${i + 1}`}\n` : "") + [p.header, ...p.rows].filter((r) => r.length).map((r) => r.map(cell).join(",")).join("\n")).join("\n\n");
+  save(new Blob([text + "\n"], { type: "text/csv" }), `${slug(panelName(panel))}-${stamp(panel)}.csv`);
 }
-// a small Download menu at the top right of every panel that holds a chart (or a table marked
-// data-csv, which offers its data only)
+// a Download menu at the top right of every panel that holds a chart, a table or registered data:
+// Image (PNG) of what the panel shows, and Data (CSV). Options with nothing to give are hidden when
+// the menu opens (a "no data" chart has no image). Panels filled in later get theirs as they fill.
 function addDownloads() {
   document.querySelectorAll("section.panel").forEach((panel) => {
-    const chart = !!panel.querySelector(".chart");
-    if ((!chart && !panel.querySelector("[data-csv]")) || panel.querySelector(".dl")) return;
+    if (panel.querySelector(".dl") || !panel.querySelector(".chart, table, [data-csv]")) return;
     const box = document.createElement("details");
     box.className = "dl";
-    box.innerHTML = `<summary class="icon-btn" aria-label="Download this ${chart ? "chart" : "table"}" title="Download this ${chart ? "chart" : "table"}">${ICON.download}</summary><div class="dl-menu">` +
-      (chart ? `<button type="button" data-f="png">Image (PNG)</button><button type="button" data-f="svg">Vector (SVG)</button>` : "") +
-      `<button type="button" data-f="csv">Data (CSV${chart ? "" : ", all columns"})</button></div>`;
+    box.innerHTML = `<summary class="icon-btn" aria-label="Download" title="Download">${ICON.download}</summary><div class="dl-menu">` +
+      `<button type="button" data-f="png">Image (PNG)</button><button type="button" data-f="csv">Data (CSV)</button><span class="dl-none" hidden>Nothing to download for this view</span></div>`;
     panelActions(panel).appendChild(box);
-    box.addEventListener("toggle", () => {
-      const has = [...panel.querySelectorAll(".chart, [data-csv]")].some((el) => csvData.get(el));
-      box.querySelector('[data-f="csv"]').disabled = !has;
-    });
+    const refresh = () => {
+      const png = panelParts(panel).length > 0, csv = csvParts(panel).length > 0;
+      box.querySelector('[data-f="png"]').hidden = !png;
+      box.querySelector('[data-f="csv"]').hidden = !csv;
+      box.querySelector(".dl-none").hidden = png || csv;
+    };
+    box.querySelector("summary").addEventListener("click", refresh);
+    box.addEventListener("toggle", () => { if (box.open) refresh(); });
     box.addEventListener("click", (e) => {
       const b = e.target.closest("button[data-f]");
       if (!b) return;
       box.open = false;
-      ({ png: downloadPNG, svg: downloadSVG, csv: downloadCSV })[b.dataset.f](panel);
+      ({ png: downloadPNG, csv: downloadCSV })[b.dataset.f](panel);
     });
   });
+}
+let downloadsWatched = false;
+function watchDownloads() {
+  if (downloadsWatched) return;
+  downloadsWatched = true;
+  addDownloads();
+  latest60().then((d) => { dataDay = d; }).catch(() => {});
+  let queued = false;
+  new MutationObserver(() => { if (!queued) { queued = true; requestAnimationFrame(() => { queued = false; addDownloads(); }); } })
+    .observe(document.body, { childList: true, subtree: true });
   document.addEventListener("click", (e) => document.querySelectorAll("details.dl[open]").forEach((d) => { if (!d.contains(e.target)) d.open = false; }));
 }
+if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", watchDownloads); else setTimeout(watchDownloads);
 
 // ------------------------------------------------------------- links ---
 // The address bar carries the view (#date=…&hour=…); it is rewritten in place, so the
@@ -593,7 +738,7 @@ document.addEventListener("keydown", (e) => {
   mainPickers[0].step(e.key === "ArrowLeft" ? -1 : 1);
 });
 
-function init() { initPins(); addDownloads(); addPanelLinks(); initCopyLink(); }
+function init() { initPins(); watchDownloads(); addPanelLinks(); initCopyLink(); }
 
 // a chart's one-line caption, with the method kept behind "How it's built" (a details element after it)
 function setNote(el, caption, how) {
