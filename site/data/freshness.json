@@ -1,5 +1,5 @@
 {
- "checked": "2026-11-11T22:10:23Z",
+ "checked": "2026-11-12T01:58:42Z",
  "today": "2026-11-11",
  "sources": {
   "2d": {
@@ -67,15 +67,15 @@
   },
   "gas_hsc": {
    "label": "Gas price, Houston Ship Channel",
-   "latest": "2026-11-09",
-   "behind": 2,
+   "latest": "2026-11-10",
+   "behind": 1,
    "allowed": 3,
    "stale": false
   },
   "gas_waha": {
    "label": "Gas price, Waha",
-   "latest": "2026-11-09",
-   "behind": 2,
+   "latest": "2026-11-10",
+   "behind": 1,
    "allowed": 3,
    "stale": false
   },
