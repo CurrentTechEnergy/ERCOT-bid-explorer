@@ -260,8 +260,9 @@ async function drawMarginal() {
     rows = rows.filter((r) => r[0] >= from);
   }
   const full = src === "60d" ? (data.full_curve_days || []).filter((d) => !rows.length || d >= rows[0][0]).length : 0;
+  const lim = src === "60d" ? (data.limited_days || []).filter((d) => !rows.length || d >= rows[0][0]).length : 0;
   $("mbp-title-note").textContent = `${src === "60d" ? "60-day" : "2-day"} data · ${rows.length ? rows[0][0] : ""} to ${last} · ${rows.length.toLocaleString()} hours` +
-    (src === "60d" ? (full ? ` · ${full} day${full === 1 ? "" : "s"} not yet reprocessed still include minimum output` : " · MW above minimum output (LSL)") : "");
+    (src === "60d" ? (full ? ` · ${full} day${full === 1 ? "" : "s"} not yet reprocessed still include minimum output` : lim ? ` · MW SCED could move at each run's lambda${lim < rows.length / 24 - 1 ? ` (${lim} of the days; the rest MW above minimum output)` : ""}` : " · MW above minimum output (LSL)") : "");
   // per hour: supply MW per series, and charging MW that stops in the hour's price window
   const H = rows.map((r) => ({ p: r[2], v: list.map((s) => d3.sum(s.keys, (k) => r[ci[k]] || 0)), c: r[ci.storage_charging] || 0 }))
     .filter((h) => d3.sum(h.v) + h.c > 0).sort((a, b) => a.p - b.p);
@@ -365,7 +366,7 @@ const MN_ZONE_LABEL = { WEST: "West", PANHANDLE: "Panhandle", NORTH: "North", SO
 const MN_LAM = { all: () => true, le10: (l) => l != null && l <= 10, gt10: (l) => l != null && l > 10 };
 // Who sets price: generators' share of the marginal room above base point (or of marginal
 // unit-hours) by technology, day by day, for one class (at, below or above lambda), with
-// batteries on their own line since their room runs from charging all the way up to HSL
+// batteries on their own line since their room runs from charging all the way up to HDL less reserves
 function drawNodeMarginal() {
   const D = S.MN, el = $("mn-share"), gel = $("mn-gw"), zel = $("mn-zones"), uel = $("mn-units"), vel = $("mn-valid");
   staticLegend($("mn-legend"), MN_GEN);

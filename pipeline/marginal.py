@@ -4,7 +4,9 @@ the hour's cleared system lambda range (widened to at least ±$1 around the aver
 Built from the day files and price files already in data/, so it needs no downloads.
 The dashboard's "Marginality by price" chart groups these hours by price.
 
-60-day days use the "dispatchable" curves (each unit's minimum output taken out, see
+60-day days with a stack file in format 8 or later (pipeline/actual_stack.py) are read from its
+`at` block instead: each run's own lambda against curves limited to what SCED could dispatch,
+with the band widened by the reserve price (limited_rows).  Other 60-day days use the "dispatchable" curves (each unit's minimum output taken out, see
 pipeline/dispatchable.py) when the day file has them, so minimum output that ERCOT prices at
 -$20/-$50 does not read as marginal in hours when lambda sits there.  The output notes how
 many days still fall back to the full curves ("full_curve_days").
@@ -71,11 +73,40 @@ def hour_rows(day: dict, prices: dict, techs) -> list:
     return out
 
 
+def limited_rows(date: str, at: dict, techs) -> list:
+    """60-day hours from the stack file's `at` block (pipeline/actual_stack.tech_at): the MW each
+    technology offers inside the margin band around each SCED run's own lambda, on curves held to
+    the range SCED could use for energy (LDL plus AS down to HDL less AS up), averaged over the
+    hour's runs.  The band is $2 or 5% of lambda, plus that interval's highest up-reserve price."""
+    out = []
+    lam = at.get("lambda") or [None] * 24
+    for h in range(24):
+        if lam[h] is None:
+            continue
+        mw = []
+        for t in techs:
+            e = at.get(t) or {}
+            if t == "storage":
+                mw += [(e.get("m_lim_chg") or [0] * 24)[h] or 0.0, (e.get("m_lim_dis") or [0] * 24)[h] or 0.0]
+            else:
+                mw.append((e.get("m_lim") or [0] * 24)[h] or 0.0)
+        out.append([date, h, lam[h]] + [round(v, 1) for v in mw])
+    return out
+
+
 def build_marginal(index: dict) -> None:
     have_prices = set(index["days"].get("prices", []))
     for source, techs in TECHS.items():
-        rows, full_days = [], []
+        rows, full_days, limited, reserve = [], [], [], []
         for date in sorted(set(index["days"].get(source, [])) & have_prices):
+            if source == "60d":
+                at = (read_json_gz(DATA_DIR / "stack" / f"{date}.json.gz", default=None) or {}).get("at")
+                if at:
+                    rows += limited_rows(date, at, techs)
+                    limited.append(date)
+                    if at.get("reserve_priced"):
+                        reserve.append(date)
+                    continue
             day = read_json_gz(DATA_DIR / source / f"{date}.json.gz")
             prices = read_json_gz(DATA_DIR / "prices" / f"{date}.json.gz")
             if day and prices:
@@ -85,5 +116,8 @@ def build_marginal(index: dict) -> None:
         out = {"columns": ["date", "hour", "lambda"] + columns(techs), "rows": rows}
         if source == "60d":
             out["full_curve_days"] = full_days
+            out["limited_days"] = limited       # read from the limited curves at each run's lambda
+            out["reserve_days"] = reserve       # ... with the reserve price in the band
         write_json_gz(DATA_DIR / f"marginal_{source}.json.gz", out)
-        print(f"marginal_{source}: {len(rows)} hours" + (f", {len(full_days)} day(s) on full curves" if full_days else ""))
+        print(f"marginal_{source}: {len(rows)} hours" + (f", {len(full_days)} day(s) on full curves" if full_days else "")
+              + (f", {len(limited)} day(s) on limited curves ({len(reserve)} with reserve prices)" if source == "60d" else ""))

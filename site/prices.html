@@ -39,6 +39,11 @@
   .mini .chart { min-height: 150px; }
   @media (max-width: 900px) { .minis { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
   .table-wrap { overflow-x: auto; }
+  .kpis { display: flex; flex-wrap: wrap; gap: 10px 32px; margin-bottom: 10px; }
+  .kpi { display: flex; flex-direction: column; gap: 2px; max-width: 34ch; }
+  .kpi .v { font: 500 20px var(--font-data); font-variant-numeric: tabular-nums; }
+  .kpi .k { font-size: 12px; color: var(--ink-2); }
+  #cap-tbl td.pts { text-align: left; white-space: normal; min-width: 22ch; }
 </style>
 </head>
 <body data-panel-links>
@@ -74,6 +79,14 @@
     <div class="minis" id="tails"></div>
   </section>
 
+  <section class="panel panel-wide" id="cap-panel">
+    <div class="panel-head"><div><h2>Intervals at the price cap</h2><p class="note" id="cap-note"></p></div></div>
+    <div class="kpis" id="cap-kpis"></div>
+    <div class="chart" id="cap"></div>
+    <div class="table-wrap"><table class="data" id="cap-tbl" data-csv></table></div>
+    <p class="note tbl-foot" id="cap-foot"></p>
+  </section>
+
   <section class="panel panel-wide" id="ride-panel">
     <div class="panel-head"><div><h2>Gas units coming off in cheap hours</h2><p class="note" id="ride-note"></p></div></div>
     <div class="chart" id="ride"></div>
@@ -100,7 +113,7 @@
 </main>
 
 <footer class="foot">
-  <p>Source: ERCOT EMIL products NP6-905-CD (Settlement Point Prices at Resource Nodes, Hubs and Load Zones), NP4-190-CD (DAM Settlement Point Prices), NP3-965-ER (60-Day SCED Disclosure) and the Capacity, Demand and Reserves report (December 2025), Jan 2019 on; Henry Hub from EIA; gas at Houston Ship Channel from OilPriceAPI daily prices, which are licensed and not published here (only 7-day, monthly and yearly averages and price divided by gas). Real-time prices are hourly means of the 15-minute hub prices. Updated with every data run; earlier years are rebuilt weekly.</p>
+  <p>Source: ERCOT EMIL products NP6-905-CD (Settlement Point Prices at Resource Nodes, Hubs and Load Zones), NP4-190-CD (DAM Settlement Point Prices), NP6-785-ER and NP4-180-ER (yearly hub and load zone prices, for the price cap before the site's own data), NP3-965-ER (60-Day SCED Disclosure) and the Capacity, Demand and Reserves report (December 2025), Jan 2019 on; Henry Hub from EIA; gas at Houston Ship Channel from OilPriceAPI daily prices, which are licensed and not published here (only 7-day, monthly and yearly averages and price divided by gas). Real-time prices are hourly means of the 15-minute hub prices, except in the price cap panel, which counts 15-minute intervals. Updated with every data run; earlier years are rebuilt weekly.</p>
   <p>Hours are ERCOT hour ending in Central prevailing time: HE 13 is noon to 1 pm. Dates are operating days.</p>
   <p>Made by <a href="https://currenttech.energy">currenttech.energy</a> · <a href="contact.html">Contact</a></p>
   <p>Not affiliated with or endorsed by ERCOT. ERCOT is a registered trademark of the Electric Reliability Council of Texas, Inc.</p>

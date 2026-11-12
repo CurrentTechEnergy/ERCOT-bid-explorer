@@ -75,6 +75,8 @@ from .storage import build_storage
 from .battery_bench import build_battery_bench
 from .renew_years import build_renew_years
 from . import prices_years
+from . import price_cap
+from .reserve_prices import fetch_reserve_prices
 from . import lsl_floor
 from . import commit_mix
 from . import da_sold
@@ -545,13 +547,13 @@ def main(argv=None):
             dates = set(lam["date"]) | set(spp["date"])
             print("prices:", process_price_blobs(price_blobs, dates, index))
         build_dispatchable(index)
-        build_marginal(index)
         memo.run("trends", build_trends, index)
         memo.run("intraday", build_intraday, index)
         build_renew_outages(index)     # after intraday; reads every outage snapshot, so not memoized
         build_groups(index)
         build_min_run(index)
         build_actual_stack(index)
+        build_marginal(index)      # after the stack: 60-day days read its limited curves at lambda
         build_unit_hour_days(index)
         build_rt_nodes(index)
         build_unit_curves(index)
@@ -635,6 +637,14 @@ def main(argv=None):
             price_corrections.apply_all(api, index)
         except Exception as e:   # a correction problem must not lose the rest of the run
             warn(f"price corrections: failed: {type(e).__name__}: {e}")
+        try:      # past years of the price-cap tracker, read once each from the yearly workbooks in the raw store
+            price_cap.fetch_hist(api)
+        except Exception as e:
+            warn(f"price cap history: failed: {type(e).__name__}: {e}")
+        try:      # real-time reserve prices for the margin charts' reserve-price band, raw store first
+            fetch_reserve_prices(api, index["days"]["60d"])
+        except Exception as e:
+            warn(f"reserve prices: failed: {type(e).__name__}: {e}")
         save_index(index)
         fetch_shadow(api, index)
     if "outages" not in args.skip:
@@ -648,13 +658,13 @@ def main(argv=None):
         write_hub_averages()
 
     build_dispatchable(index)
-    build_marginal(index)
     memo.run("trends", build_trends, index)
     memo.run("intraday", build_intraday, index)
     build_renew_outages(index)     # after intraday; reads every outage snapshot, so not memoized
     build_groups(index)
     build_min_run(index)
     build_actual_stack(index)
+    build_marginal(index)          # after the stack: 60-day days read its limited curves at lambda
     build_unit_hour_days(index)
     build_rt_nodes(index)
     build_unit_curves(index)
@@ -678,6 +688,10 @@ def main(argv=None):
         prices_years.build()       # the Prices page, after gas and storage; past real-time years come from the Goal workflow's --full
     except Exception as e:         # a page's summary never stops the data run
         warn(f"prices_years: failed: {e!r}; prices_years.json.gz left as it is")
+    try:
+        price_cap.build()          # Prices page "Hours at the price cap", from the yearly workbooks and the site's own prices
+    except Exception as e:
+        warn(f"price_cap: failed: {e!r}; price_cap.json.gz left as it is")
     try:
         lsl_floor.build()          # Turn-ons and Turn-offs "Daily minimum floor"; 2019 to Nov 2025 come from the Goal workflow's --full
     except Exception as e:

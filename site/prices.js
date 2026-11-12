@@ -4,7 +4,7 @@
    reads and draws what the file holds. */
 const { tryJSON, showTip, hideTip, setCSV, css, esc, readHash, writeHash } = window.CX;
 const $ = (id) => document.getElementById(id);
-const S = { P: null, mkt: "rt", hub: "HB_HUBAVG", unit: "usd", zoom: "all", hod: "hod_p50", on: new Set() };
+const S = { P: null, C: null, mkt: "rt", hub: "HB_HUBAVG", unit: "usd", zoom: "all", hod: "hod_p50", on: new Set() };
 const MIN_CHEAP = 15;      // a ride-through month needs this many cheap hours for a dot
 
 const years = () => S.P.years;
@@ -219,8 +219,112 @@ function drawTable() {
     (fixed.length ? `${S.mkt === "rt" ? "Real-time" : "Day-ahead"} prices include ERCOT's after-the-fact price corrections on ${fixed.length} day${fixed.length > 1 ? "s" : ""}: ${shortDays(fixed)}.` : "");
 }
 
+// ==== Intervals at the price cap =============================================================
+// data/price_cap.json.gz (pipeline/price_cap.py): 15-minute real-time and hourly day-ahead prices
+// against the cap in effect, for the Hub average and every hub and load zone.
+const PT_NAME = { HB_HUBAVG: "Hub average", HB_BUSAVG: "Bus average", HB_NORTH: "North hub", HB_HOUSTON: "Houston hub", HB_SOUTH: "South hub",
+  HB_WEST: "West hub", HB_PAN: "Panhandle hub", LZ_NORTH: "North zone", LZ_HOUSTON: "Houston zone", LZ_SOUTH: "South zone", LZ_WEST: "West zone",
+  LZ_AEN: "Austin Energy zone", LZ_CPS: "CPS Energy zone", LZ_LCRA: "LCRA zone", LZ_RAYBN: "Rayburn zone" };
+const ptName = (p) => PT_NAME[p] || p;
+const capOn = (d) => { let c = S.C.caps[0].cap; S.C.caps.forEach((e) => { if (d >= e.from) c = e.cap; }); return c; };
+const dFmt = (d) => d3.timeFormat("%b %-d, %Y")(new Date(d + "T12:00:00"));
+const ampm = (h, mi) => `${((h + 11) % 12) + 1}:${String(mi).padStart(2, "0")}${h < 12 ? " am" : " pm"}`;
+// real time: "HH:MM" interval start -> "8:00 to 8:15 pm"; day ahead: hour ending -> "HE 20 (7 to 8 pm)"
+function slotTxt(t) {
+  if (t == null) return "";
+  if (typeof t === "string") { const [h, mi] = t.split(":").map(Number), e = h * 60 + mi + 15; return `${ampm(h, mi).replace(/ (am|pm)$/, (h < 12) === (e / 60 % 24 < 12) ? "" : " $1")} to ${ampm(Math.floor(e / 60) % 24, e % 60)}`; }
+  return `HE ${t} (${ampm(t - 1, 0).replace(":00", "")} to ${ampm(t % 24, 0).replace(":00", "")})`;
+}
+const usd0 = (v) => (v == null ? "–" : (v < 0 ? "−$" : "$") + d3.format(",.0f")(Math.abs(v)));
+function drawCap() {
+  const C = S.C, P = $("cap-panel");
+  if (!C) { P.hidden = true; return; }
+  const mk = S.mkt, MK = mk === "rt" ? "Real-time" : "Day-ahead", unitTxt = mk === "rt" ? "15-minute intervals" : "hours";
+  const col = (k) => C.days.columns.indexOf(k);
+  const iD = 0, iM = col(`${mk}_max`), iT = col(mk === "rt" ? "rt_time" : "da_he"), iA = col(`${mk}_any_max`), iP = col(`${mk}_any_point`), iN = col(`${mk}_any_at`);
+  const rows = C.days.rows.filter((r) => r[iM] != null || r[iA] != null);
+  const last = C.last[mk], lastAny = (C.last_any || {})[mk];
+  const k = [];
+  k.push([last ? `${dFmt(last[0])}` : "Not since 2019", last ? `Last time the ${mk === "rt" ? "real-time" : "day-ahead"} Hub average reached the cap: ${slotTxt(last[2])} Central, ${usd0(last[3])}/MWh` : `${MK} Hub average has not reached the cap in the data`]);
+  if (lastAny && (!last || lastAny[0] > last[0])) k.push([dFmt(lastAny[0]), `Last time any hub or load zone did: ${ptName(lastAny[3])}, ${slotTxt(lastAny[1])}, ${usd0(lastAny[2])}/MWh`]);
+  const since = last ? rows.filter((r) => r[iD] > last[0]) : rows;
+  const top = since.length ? since.reduce((a, b) => ((b[iM] ?? -1e9) > (a[iM] ?? -1e9) ? b : a)) : null;
+  if (top && last) k.push([usd0(top[iM]), `Highest Hub average ${mk === "rt" ? "15-minute price" : "hour"} since then, on ${dFmt(top[iD])}`]);
+  $("cap-kpis").innerHTML = k.map(([v, t]) => `<div class="kpi"><span class="v">${esc(v)}</span><span class="k">${esc(t)}</span></div>`).join("");
+
+  // the day's highest price, log scale, with the cap as a step
+  const el = $("cap"), W = width(el), H = Math.round(Math.min(340, Math.max(240, W * 0.3)));
+  const m = { l: 58, r: 14, t: 22, b: 30 }, { g, w, h, svg } = frame(el, W, H, m);
+  const t0 = new Date(rows[0][iD] + "T00:00:00"), t1 = new Date(rows[rows.length - 1][iD] + "T23:59:00");
+  const x = d3.scaleTime().domain([t0, t1]).range([0, w]);
+  const FLOORP = 100;      // days whose highest price stayed under this are not drawn: they are most days, and say nothing about the cap
+  const y = d3.scaleLog().domain([FLOORP, 12000]).range([h, 0]).clamp(true);
+  const dt = (d) => new Date(d + "T12:00:00");
+  g.append("g").attr("class", "gridline").call(d3.axisLeft(y).tickValues([100, 200, 500, 1000, 2000, 5000, 10000]).tickSize(-w).tickFormat(""));
+  g.append("g").attr("class", "axis").call(d3.axisLeft(y).tickValues([100, 200, 500, 1000, 2000, 5000, 10000]).tickFormat((v) => "$" + d3.format(",")(v)).tickSizeOuter(0));
+  g.append("g").attr("class", "axis").attr("transform", `translate(0,${h})`).call(d3.axisBottom(x).ticks(d3.timeYear.every(1)).tickFormat(d3.timeFormat("%Y")).tickSizeOuter(0));
+  svg.append("text").attr("class", "axis-title").attr("x", m.l).attr("y", 12).text(W < 560 ? `Day's highest price, $/MWh (log; under $${FLOORP} not drawn)` : `Highest ${mk === "rt" ? "15-minute" : "hourly"} price of each day, $/MWh (log scale; days under $${FLOORP} not drawn)`);
+  const capPts = []; C.caps.forEach((c, i) => { const a = new Date(Math.max(+t0, +new Date(c.from + "T00:00:00"))), b = C.caps[i + 1] ? new Date(C.caps[i + 1].from + "T00:00:00") : t1; if (b > t0) capPts.push([a, c.cap], [b, c.cap]); });
+  g.append("path").attr("d", d3.line().x((p) => x(p[0])).y((p) => y(p[1])).curve(d3.curveStepAfter)(capPts)).attr("fill", "none").attr("stroke", css("--c8")).attr("stroke-width", 1.5).attr("stroke-dasharray", "5 3");
+  C.caps.forEach((c, i) => { const a = Math.max(+t0, +new Date(c.from + "T00:00:00")); if (a < +t1) g.append("text").attr("class", "axis-title").attr("x", x(new Date(a)) + 4).attr("y", y(c.cap) - 5).style("fill", css("--c8")).text(`Cap $${d3.format(",")(c.cap)}`); });
+  const any = rows.filter((r) => r[iA] != null && r[iA] >= FLOORP && r[iA] > (r[iM] ?? -1e9) + 0.5);
+  // a hub or load zone at the cap on a day the Hub average was not: a red ring, so the plot shows it
+  const capAny = (r) => r[iA] >= C.at_cap * capOn(r[iD]) && !(r[iM] >= C.at_cap * capOn(r[iD]));
+  g.selectAll(null).data(any.filter((r) => !capAny(r))).join("circle").attr("cx", (r) => x(dt(r[iD]))).attr("cy", (r) => y(r[iA])).attr("r", 1.6).attr("fill", css("--c-other")).attr("opacity", 0.5);
+  g.selectAll(null).data(any.filter(capAny)).join("circle").attr("cx", (r) => x(dt(r[iD]))).attr("cy", (r) => y(r[iA])).attr("r", 3.4)
+    .attr("fill", "none").attr("stroke", css("--c8")).attr("stroke-width", 1.5);
+  const hub = rows.filter((r) => r[iM] != null && r[iM] >= FLOORP);
+  g.selectAll(null).data(hub).join("circle").attr("cx", (r) => x(dt(r[iD]))).attr("cy", (r) => y(r[iM])).attr("r", (r) => (r[iM] >= C.at_cap * capOn(r[iD]) ? 3.6 : 1.8))
+    .attr("fill", (r) => (r[iM] >= C.at_cap * capOn(r[iD]) ? css("--c8") : css("--ink"))).attr("opacity", (r) => (r[iM] >= C.at_cap * capOn(r[iD]) ? 1 : 0.45));
+  const vl = g.append("line").attr("class", "crosshair").attr("y1", 0).attr("y2", h).attr("visibility", "hidden");
+  const bis = d3.bisector((r) => dt(r[iD])).center;
+  g.append("rect").attr("width", w).attr("height", h).attr("fill", "transparent")
+    .on("pointermove", (ev) => {
+      const r = rows[bis(rows, x.invert(d3.pointer(ev)[0]))]; if (!r) return;
+      vl.attr("x1", x(dt(r[iD]))).attr("x2", x(dt(r[iD]))).attr("visibility", "visible");
+      const tr = [[css("--ink"), "Hub average", r[iM] == null ? "–" : `${usd0(r[iM])} at ${slotTxt(r[iT])}`]];
+      if (r[iA] != null) tr.push([css("--c-other"), `Highest hub or zone (${ptName(r[iP])})`, usd0(r[iA])]);
+      if (r[iN]) tr.push([css("--c8"), "Hubs and zones at the cap", String(r[iN])]);
+      tr.push([null, "Cap", usd0(capOn(r[iD]))]);
+      showTip(ev, `<h4>${dFmt(r[iD])}</h4>` + tipRows(tr));
+    })
+    .on("pointerleave", () => { vl.attr("visibility", "hidden"); hideTip(); });
+  setCSV(el, ["date", `${mk}_hub_average_max_usd_mwh`, mk === "rt" ? "interval_start_central" : "hour_ending", "highest_hub_or_zone_usd_mwh", "highest_hub_or_zone", "hubs_and_zones_at_cap", "cap_usd_mwh"],
+    rows.map((r) => [r[iD], r[iM], r[iT], r[iA], r[iP], r[iN], capOn(r[iD])]), `Daily highest price ${mk}`);
+
+  // year by year: the Hub average, and every hub and load zone that reached the cap
+  const ys = Object.keys(C.years).sort();
+  const tr = ys.map((yr) => {
+    const Y = C.years[yr], c = Y[mk] || {}, pts = (Y.points || {})[mk] || {};
+    const hit = Object.entries(pts).filter(([p, v]) => p !== C.hub && v.at > 0).sort((a, b) => b[1].at - a[1].at);
+    const part = c.to && c.to.slice(5) !== "12-31";
+    return { sp: (Y.spread || {})[mk], np: Object.keys(pts).filter((p) => p !== C.hub).length, yr: part ? `${yr} to ${d3.timeFormat("%b %-d")(new Date(c.to + "T12:00:00"))}` : yr, cap: capOn(`${yr}-12-31`), c, hit };
+  }).filter((r) => r.c.n);
+  const unitT = MK === "Real-time" ? "Intervals" : "Hours";
+  const head = ["Year", "Cap", `${unitT} with every hub and load zone at the cap`, `${unitT} with only some at the cap`, "Hub average: at half the cap or more", "Hub average: at $1,000 or more", "Hub average: highest"];
+  const n0 = (v) => (v == null ? "–" : d3.format(",")(v));
+  // only some at the cap: which hubs and zones, with each one's own count, on hover, tap or focus
+  const spTd = (r, k) => {
+    const v = (r.sp || {})[k];
+    if (k !== "some" || !v || !r.hit.length) return n0(v);
+    return `<span class="fn" tabindex="0" data-tip="${esc("Intervals each reached the cap: " + r.hit.map(([p, x]) => `${ptName(p)} ${n0(x.at)}`).join(" · "))}">${n0(v)}</span>`;
+  };
+  $("cap-tbl").innerHTML = `<thead><tr>${head.map((t) => `<th>${t}</th>`).join("")}</tr></thead><tbody>` + tr.map((r) =>
+    `<tr><td>${esc(r.yr)}</td><td>${usd0(r.cap)}</td><td>${spTd(r, "all")}</td><td>${spTd(r, "some")}</td><td>${n0(r.c.half)}</td><td>${n0(r.c.ge1000)}</td><td>${usd0(r.c.max)}</td></tr>`).join("") + "</tbody>";
+  setCSV($("cap-tbl"), ["year", "cap_usd_mwh", "all_hubs_and_zones_at_cap", "only_some_at_cap", "hub_average_at_half_cap_or_more", "hub_average_at_1000_or_more", "hub_average_highest_usd_mwh", "points_at_cap"],
+    tr.map((r) => [r.yr, r.cap, (r.sp || {}).all, (r.sp || {}).some, r.c.half, r.c.ge1000, r.c.max, r.hit.map(([p, v]) => `${p}:${v.at}`).join(" ")]), `Price cap by year ${mk}`);
+  $("cap-note").textContent = `How often ERCOT's ${mk === "rt" ? "real-time" : "day-ahead"} prices reached the system-wide offer cap: $9,000/MWh through 2021, $5,000/MWh from 2022. ` +
+    `Counted in ${unitTxt}${mk === "rt" ? ", because a single interval at the cap disappears into an hourly average" : ""}. ` +
+    `The dark dots are the Hub average's highest price each day, red where it reached the cap; grey dots mark days a single hub or load zone went higher, usually from congestion in one area, with a red ring where that hub or zone reached the cap and the Hub average did not. ` +
+    `A price counts as at the cap at ${d3.format(".0%")(C.at_cap)} of it or more, and that includes prices above it. The cap limits offers and the system price (lambda), but a settlement point price adds congestion and losses, so a hub or load zone, and the Hub average with it, can settle above the cap (dots above the dashed line; the Hub average reached $5,102 on Jul 13, 2022) or just under it. Follows the Market control above; always in $/MWh.`;
+  const loc = ((C.local || {}).rows || []).filter((r) => r[1] === mk && r[0] >= "2022");
+  $("cap-foot").textContent = (loc.length ? `Days since 2022 when a hub or load zone reached the cap but the Hub average did not: ${loc.map((r) => `${dFmt(r[0])} (${r[5].length <= 3 ? r[5].map(ptName).join(", ") : `${r[5].length} hubs and load zones, highest ${ptName(r[3])} at ${usd0(r[2])}`})`).join("; ")}. ` : "") +
+    "Checked against news reports of the same days: Jul 13, 2022 (S&P Global), Jun 20, 2023 and May 8, 2024 (Bloomberg). " +
+    "The cap's $2,000 low level applies only after generators' peaker net margin passes its yearly threshold, which has not happened since the cap moved to $5,000.";
+}
+
 // ==== controls ===============================================================================
-function drawAll() { drawPDC(); drawTails(); drawRide(); drawSpread(); drawHOD(); drawTable(); }
+function drawAll() { drawPDC(); drawTails(); drawCap(); drawRide(); drawSpread(); drawHOD(); drawTable(); }
 function seg(id, key, after) {
   const el = $(id);
   const mark = () => el.querySelectorAll("button").forEach((b) => b.setAttribute("aria-checked", String(b.dataset.v === S[key])));
@@ -240,6 +344,7 @@ const save = () => writeHash({ m: S.mkt, h: S.hub, u: S.unit });
   S.corrected = { rt: rtFixed, da: daFixed };
   if (!P) { $("status").textContent = "Price data is not available yet."; return; }
   S.P = P;
+  S.C = await tryJSON("data/price_cap.json.gz");
   const v = readHash() || {};
   if (["rt", "da"].includes(v.m)) S.mkt = v.m;
   if (P.hubs.includes(v.h)) S.hub = v.h;
@@ -260,8 +365,10 @@ const save = () => writeHash({ m: S.mkt, h: S.hub, u: S.unit });
   seg("c-mkt", "mkt"); seg("c-unit", "unit"); seg("c-zoom", "zoom", drawPDC); seg("c-hod", "hod", drawHOD);
   // the table's footnote marks: the same note as a tooltip on hover, tap or focus
   const fnTip = (ev) => { const f = ev.target.closest?.(".fn"); if (f) showTip(ev.clientX != null ? ev : { clientX: f.getBoundingClientRect().right, clientY: f.getBoundingClientRect().bottom }, esc(f.dataset.tip)); };
-  $("tbl").addEventListener("pointerover", fnTip); $("tbl").addEventListener("focusin", fnTip);
-  $("tbl").addEventListener("pointerout", (ev) => { if (ev.target.closest?.(".fn")) hideTip(); }); $("tbl").addEventListener("focusout", hideTip);
+  ["tbl", "cap-tbl"].forEach((id) => {
+    $(id).addEventListener("pointerover", fnTip); $(id).addEventListener("focusin", fnTip);
+    $(id).addEventListener("pointerout", (ev) => { if (ev.target.closest?.(".fn")) hideTip(); }); $(id).addEventListener("focusout", hideTip);
+  });
   $("c-hub").addEventListener("change", (e) => { S.hub = e.target.value; save(); drawAll(); });
   $("status").textContent = `Real-time through ${P.through.rt}, day-ahead through ${P.through.da}. Built ${P.built.slice(0, 10)}.`;
   drawAll();
