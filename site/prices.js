@@ -298,11 +298,12 @@ function drawCap() {
     const part = c.to && c.to.slice(5) !== "12-31";
     return { np: Object.keys(pts).filter((p) => p !== C.hub).length, yr: part ? `${yr} to ${d3.timeFormat("%b %-d")(new Date(c.to + "T12:00:00"))}` : yr, cap: capOn(`${yr}-12-31`), c, hit };
   }).filter((r) => r.c.n);
-  const head = ["Year", "Cap", `${MK === "Real-time" ? "Intervals" : "Hours"} at the cap`, "At half the cap or more", "At $1,000 or more", "Highest", "Hubs and load zones that also reached the cap (of 14)"];
+  const head = ["Year", "Cap", `${MK === "Real-time" ? "Intervals" : "Hours"} at the cap`, "At half the cap or more", "At $1,000 or more", "Highest", "Other hubs and load zones at the cap"];
   const n0 = (v) => (v == null ? "–" : d3.format(",")(v));
   $("cap-tbl").innerHTML = `<thead><tr>${head.map((t) => `<th>${t}</th>`).join("")}</tr></thead><tbody>` + tr.map((r) =>
     `<tr><td>${esc(r.yr)}</td><td>${usd0(r.cap)}</td><td>${n0(r.c.at)}</td><td>${n0(r.c.half)}</td><td>${n0(r.c.ge1000)}</td><td>${usd0(r.c.max)}</td>` +
-    `<td class="pts">${r.hit.length ? `${r.hit.length === r.np ? "All" : r.hit.length}; most often ${esc(ptName(r.hit[0][0]))}, ${n0(r.hit[0][1].at)} ${MK === "Real-time" ? "intervals" : "hours"}` : "–"}</td></tr>`).join("") + "</tbody>";
+    // the count, with each hub and zone's own count on hover, tap or focus
+    `<td class="pts">${r.hit.length ? `<span class="fn" tabindex="0" data-tip="${esc(r.hit.map(([p, v]) => `${ptName(p)}: ${n0(v.at)}`).join(" · "))}">${r.hit.length === r.np ? `All ${r.np}` : `${r.hit.length} of ${r.np}`}</span>` : "None"}</td></tr>`).join("") + "</tbody>";
   setCSV($("cap-tbl"), ["year", "cap_usd_mwh", `hub_average_${mk}_at_cap`, "at_half_cap_or_more", "at_1000_or_more", "highest_usd_mwh", "other_points_at_cap"],
     tr.map((r) => [r.yr, r.cap, r.c.at, r.c.half, r.c.ge1000, r.c.max, r.hit.map(([p, v]) => `${p}:${v.at}`).join(" ")]), `Price cap by year ${mk}`);
   $("cap-note").textContent = `How often ERCOT's ${mk === "rt" ? "real-time" : "day-ahead"} prices reached the system-wide offer cap: $9,000/MWh through 2021, $5,000/MWh from 2022. ` +
@@ -350,8 +351,10 @@ const save = () => writeHash({ m: S.mkt, h: S.hub, u: S.unit });
   seg("c-mkt", "mkt"); seg("c-unit", "unit"); seg("c-zoom", "zoom", drawPDC); seg("c-hod", "hod", drawHOD);
   // the table's footnote marks: the same note as a tooltip on hover, tap or focus
   const fnTip = (ev) => { const f = ev.target.closest?.(".fn"); if (f) showTip(ev.clientX != null ? ev : { clientX: f.getBoundingClientRect().right, clientY: f.getBoundingClientRect().bottom }, esc(f.dataset.tip)); };
-  $("tbl").addEventListener("pointerover", fnTip); $("tbl").addEventListener("focusin", fnTip);
-  $("tbl").addEventListener("pointerout", (ev) => { if (ev.target.closest?.(".fn")) hideTip(); }); $("tbl").addEventListener("focusout", hideTip);
+  ["tbl", "cap-tbl"].forEach((id) => {
+    $(id).addEventListener("pointerover", fnTip); $(id).addEventListener("focusin", fnTip);
+    $(id).addEventListener("pointerout", (ev) => { if (ev.target.closest?.(".fn")) hideTip(); }); $(id).addEventListener("focusout", hideTip);
+  });
   $("c-hub").addEventListener("change", (e) => { S.hub = e.target.value; save(); drawAll(); });
   $("status").textContent = `Real-time through ${P.through.rt}, day-ahead through ${P.through.da}. Built ${P.built.slice(0, 10)}.`;
   drawAll();
