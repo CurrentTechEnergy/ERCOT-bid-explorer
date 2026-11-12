@@ -298,11 +298,11 @@ function drawCap() {
     const part = c.to && c.to.slice(5) !== "12-31";
     return { np: Object.keys(pts).filter((p) => p !== C.hub).length, yr: part ? `${yr} to ${d3.timeFormat("%b %-d")(new Date(c.to + "T12:00:00"))}` : yr, cap: capOn(`${yr}-12-31`), c, hit };
   }).filter((r) => r.c.n);
-  const head = ["Year", "Cap", `${MK === "Real-time" ? "Intervals" : "Hours"} at the cap`, "At half the cap or more", "At $1,000 or more", "Highest", "Other hubs and load zones that reached it"];
+  const head = ["Year", "Cap", `${MK === "Real-time" ? "Intervals" : "Hours"} at the cap`, "At half the cap or more", "At $1,000 or more", "Highest", "Hubs and load zones that also reached the cap (of 14)"];
   const n0 = (v) => (v == null ? "–" : d3.format(",")(v));
   $("cap-tbl").innerHTML = `<thead><tr>${head.map((t) => `<th>${t}</th>`).join("")}</tr></thead><tbody>` + tr.map((r) =>
     `<tr><td>${esc(r.yr)}</td><td>${usd0(r.cap)}</td><td>${n0(r.c.at)}</td><td>${n0(r.c.half)}</td><td>${n0(r.c.ge1000)}</td><td>${usd0(r.c.max)}</td>` +
-    `<td class="pts">${r.hit.length ? `${r.hit.length} of ${r.np} · most ${esc(ptName(r.hit[0][0]))} (${n0(r.hit[0][1].at)})` : "–"}</td></tr>`).join("") + "</tbody>";
+    `<td class="pts">${r.hit.length ? `${r.hit.length === r.np ? "All" : r.hit.length}; most often ${esc(ptName(r.hit[0][0]))}, ${n0(r.hit[0][1].at)} ${MK === "Real-time" ? "intervals" : "hours"}` : "–"}</td></tr>`).join("") + "</tbody>";
   setCSV($("cap-tbl"), ["year", "cap_usd_mwh", `hub_average_${mk}_at_cap`, "at_half_cap_or_more", "at_1000_or_more", "highest_usd_mwh", "other_points_at_cap"],
     tr.map((r) => [r.yr, r.cap, r.c.at, r.c.half, r.c.ge1000, r.c.max, r.hit.map(([p, v]) => `${p}:${v.at}`).join(" ")]), `Price cap by year ${mk}`);
   $("cap-note").textContent = `How often ERCOT's ${mk === "rt" ? "real-time" : "day-ahead"} prices reached the system-wide offer cap: $9,000/MWh through 2021, $5,000/MWh from 2022. ` +
