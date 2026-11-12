@@ -309,11 +309,16 @@ jobs:
         run: python -m pipeline.notify
 
       - name: Commit per-unit data to the data branch
+        id: unitdata
         if: inputs.publish_held != true     # a publish run leaves the data branch as the held run left it
         working-directory: unitdata
         continue-on-error: true     # a failed push here must not hold back the site/data commit
         run: |
           git add -A
+          # a new 60-day day starts the Goal page run once everything is pushed ("Start the Goal page run")
+          if [ -n "$(git diff --cached --name-only --diff-filter=A -- 60d/)" ]; then
+            echo "new_60d=true" >> "$GITHUB_OUTPUT"
+          fi
           if git diff --cached --quiet; then
             echo "No new per-unit data"
           else
@@ -381,6 +386,16 @@ jobs:
           if [ "$CHECK" = "success" ] && git ls-remote --exit-code --heads origin held-data > /dev/null; then
             git push origin --delete held-data || echo "::warning::Could not delete the held-data branch"
           fi
+
+      # A new 60-day day went in (the data branch and the published site data, its DAM day included):
+      # rebuild the Goal page and its year-by-year histories with it (goal.yml, about 15 minutes).  Its
+      # commit goes live with the next update's deploy.  Never fails this run.
+      - name: Start the Goal page run
+        if: github.ref_name == 'main' && steps.unitdata.outputs.new_60d == 'true' && steps.unitdata.outcome == 'success' && steps.check.outcome == 'success' && (steps.fetch.outcome == 'success' || steps.fetch.outcome == 'skipped')
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run goal.yml -R "$GITHUB_REPOSITORY" --ref main
 
       # The run fails here, after the work above is saved, when the accuracy check failed; the
       # deploy job then does not run.

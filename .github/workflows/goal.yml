@@ -7,9 +7,10 @@ name: Goal page
 # to main.  Only those files are committed,
 # so it needs no slot in the update's concurrency group; the push rebases onto whatever the update
 # wrote meanwhile.
+# Started by the Update ERCOT data run whenever it adds a new 60-day day ("Start the Goal page
+# run" there), so the page follows each day in; the next update deploys it (the afternoon one, for
+# a day the morning run brought).  Run it by hand after a change to its code.
 on:
-  schedule:
-    - cron: "23 8 * * 0"      # Sundays 08:23 UTC (01:23 MST / 02:23 MDT): the 05:17 MT update deploys it
   workflow_dispatch:
 
 permissions:
