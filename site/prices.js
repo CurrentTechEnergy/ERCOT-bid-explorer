@@ -266,7 +266,11 @@ function drawCap() {
   g.append("path").attr("d", d3.line().x((p) => x(p[0])).y((p) => y(p[1])).curve(d3.curveStepAfter)(capPts)).attr("fill", "none").attr("stroke", css("--c8")).attr("stroke-width", 1.5).attr("stroke-dasharray", "5 3");
   C.caps.forEach((c, i) => { const a = Math.max(+t0, +new Date(c.from + "T00:00:00")); if (a < +t1) g.append("text").attr("class", "axis-title").attr("x", x(new Date(a)) + 4).attr("y", y(c.cap) - 5).style("fill", css("--c8")).text(`Cap $${d3.format(",")(c.cap)}`); });
   const any = rows.filter((r) => r[iA] != null && r[iA] >= FLOORP && r[iA] > (r[iM] ?? -1e9) + 0.5);
-  g.selectAll(null).data(any).join("circle").attr("cx", (r) => x(dt(r[iD]))).attr("cy", (r) => y(r[iA])).attr("r", 1.6).attr("fill", css("--c-other")).attr("opacity", 0.5);
+  // a hub or load zone at the cap on a day the Hub average was not: a red ring, so the plot shows it
+  const capAny = (r) => r[iA] >= C.at_cap * capOn(r[iD]) && !(r[iM] >= C.at_cap * capOn(r[iD]));
+  g.selectAll(null).data(any.filter((r) => !capAny(r))).join("circle").attr("cx", (r) => x(dt(r[iD]))).attr("cy", (r) => y(r[iA])).attr("r", 1.6).attr("fill", css("--c-other")).attr("opacity", 0.5);
+  g.selectAll(null).data(any.filter(capAny)).join("circle").attr("cx", (r) => x(dt(r[iD]))).attr("cy", (r) => y(r[iA])).attr("r", 3.4)
+    .attr("fill", "none").attr("stroke", css("--c8")).attr("stroke-width", 1.5);
   const hub = rows.filter((r) => r[iM] != null && r[iM] >= FLOORP);
   g.selectAll(null).data(hub).join("circle").attr("cx", (r) => x(dt(r[iD]))).attr("cy", (r) => y(r[iM])).attr("r", (r) => (r[iM] >= C.at_cap * capOn(r[iD]) ? 3.6 : 1.8))
     .attr("fill", (r) => (r[iM] >= C.at_cap * capOn(r[iD]) ? css("--c8") : css("--ink"))).attr("opacity", (r) => (r[iM] >= C.at_cap * capOn(r[iD]) ? 1 : 0.45));
@@ -303,8 +307,8 @@ function drawCap() {
     tr.map((r) => [r.yr, r.cap, r.c.at, r.c.half, r.c.ge1000, r.c.max, r.hit.map(([p, v]) => `${p}:${v.at}`).join(" ")]), `Price cap by year ${mk}`);
   $("cap-note").textContent = `How often ERCOT's ${mk === "rt" ? "real-time" : "day-ahead"} prices reached the system-wide offer cap: $9,000/MWh through 2021, $5,000/MWh from 2022. ` +
     `Counted in ${unitTxt}${mk === "rt" ? ", because a single interval at the cap disappears into an hourly average" : ""}. ` +
-    `The dark dots are the Hub average's highest price each day, red where it reached the cap; grey dots mark days a single hub or load zone went higher, usually from congestion in one area. ` +
-    `A price counts as at the cap at ${d3.format(".0%")(C.at_cap)} of it or more, since settlement prices add congestion and losses and can land a little either side. Follows the Market control above; always in $/MWh.`;
+    `The dark dots are the Hub average's highest price each day, red where it reached the cap; grey dots mark days a single hub or load zone went higher, usually from congestion in one area, with a red ring where that hub or zone reached the cap and the Hub average did not. ` +
+    `A price counts as at the cap at ${d3.format(".0%")(C.at_cap)} of it or more, and that includes prices above it. The cap limits offers and the system price (lambda), but a settlement point price adds congestion and losses, so a hub or load zone, and the Hub average with it, can settle above the cap (dots above the dashed line; the Hub average reached $5,102 on Jul 13, 2022) or just under it. Follows the Market control above; always in $/MWh.`;
   const loc = ((C.local || {}).rows || []).filter((r) => r[1] === mk && r[0] >= "2022");
   $("cap-foot").textContent = (loc.length ? `Days since 2022 when a hub or load zone reached the cap but the Hub average did not: ${loc.map((r) => `${dFmt(r[0])} (${r[5].length <= 3 ? r[5].map(ptName).join(", ") : `${r[5].length} hubs and load zones, highest ${ptName(r[3])} at ${usd0(r[2])}`})`).join("; ")}. ` : "") +
     "Checked against news reports of the same days: Jul 13, 2022 (S&P Global), Jun 20, 2023 and May 8, 2024 (Bloomberg). " +

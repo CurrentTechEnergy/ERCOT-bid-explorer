@@ -34,7 +34,8 @@ Files:
                            "years": {"<year>": {"rt": counts, "da": counts}},
                            "hits": [[date, "rt"|"da", "HH:MM" | he, price], ...]  newest first,
                            "last": {"rt": hit or null, "da": hit or null}}
-  counts: {"n" intervals (rt: 15-minute, da: hours), "at" at the cap, "half" at half the cap or more,
+  counts: {"n" intervals (rt: 15-minute, da: hours), "at" at the cap (at or above AT_CAP of it,
+           so including any above it), "over" above the cap itself, "half" at half the cap or more,
            "ge1000" at $1,000 or more, "max", "from", "to"}
 """
 import datetime as dt
@@ -74,7 +75,7 @@ def _counts(dates, prices) -> dict:
         return {"n": 0}
     caps = np.array([cap_on(d) for d in dates], float)
     d = [x for x, k in zip(dates, ok) if k]
-    return {"n": int(ok.sum()), "at": int((p[ok] >= AT_CAP * caps[ok]).sum()), "half": int((p[ok] >= 0.5 * caps[ok]).sum()),
+    return {"n": int(ok.sum()), "at": int((p[ok] >= AT_CAP * caps[ok]).sum()), "over": int((p[ok] > caps[ok]).sum()), "half": int((p[ok] >= 0.5 * caps[ok]).sum()),
             "ge1000": int((p[ok] >= 1000).sum()), "max": round(float(p[ok].max()), 2), "from": min(d), "to": max(d)}
 
 
@@ -196,7 +197,7 @@ def _add(old: dict, c: dict) -> dict:
     if not c.get("n"):
         return old
     return {"n": old["n"] + c["n"], "at": old["at"] + c["at"], "half": old["half"] + c["half"],
-            "ge1000": old["ge1000"] + c["ge1000"], "max": max(old["max"], c["max"]),
+            "ge1000": old["ge1000"] + c["ge1000"], "over": old.get("over", 0) + c.get("over", 0), "max": max(old["max"], c["max"]),
             "from": min(old["from"], c["from"]), "to": max(old["to"], c["to"])}
 
 
