@@ -574,32 +574,6 @@ function drawCurves() {
     prices.map((p, j) => [p, ...rows.map((r) => r.vals[j]), ...(demand ? [demand.vals[j]] : [])]), `Offer curves ${S.date} ${heLabel(h)}`);
   if (!hp) el.insertAdjacentHTML("beforeend", `<p class="note">No cleared price loaded for this day yet.</p>`);
   drawCurveTable(rows);
-  drawCurveAt(h);
-}
-
-// under the curves, 60-day days: each technology read at lambda, offered against what SCED could
-// dispatch that run and what it actually ran (the stack file's `at` block)
-function drawCurveAt(h) {
-  const el = $("curve-at");
-  if (!el) return;
-  const A = limitedAt(h);
-  if (!A) { el.innerHTML = ""; el.hidden = true; return; }
-  const v = (k, f) => ((A[k] || {})[f] || [])[h];
-  const rows = seriesList().map((s) => {
-    const sum = (f) => (s.keys.some((k) => v(k, f) != null) ? d3.sum(s.keys, (k) => v(k, f) || 0) : null);
-    return { s, off: sum("off_at"), lim: sum("lim_at"), bp: sum("bp") };
-  }).filter((r) => r.off != null && (Math.abs(r.off) >= 1 || Math.abs(r.bp) >= 1));
-  if (!rows.length) { el.innerHTML = ""; el.hidden = true; return; }
-  const f = (x) => (x == null ? "–" : (x < 0 ? "−" : "") + fmtMW(Math.abs(x)));
-  const tot = (k) => d3.sum(rows, (r) => r[k] || 0);
-  el.hidden = false;
-  el.innerHTML = `<p class="note"><b>At lambda (${fmtPrice(A.lambda[h])}/MWh), ${heLabel(h)}:</b> what each technology offered at or below each SCED run's lambda, how much of that was out of reach within its ramp rate or held for reserves, and what it actually ran. Storage charging counts negative.</p>` +
-    `<table class="data"><thead><tr><th>Technology</th><th>Offered at λ (MW)</th><th>Out of reach (MW)</th><th>Could be dispatched (MW)</th><th>Actual output (MW)</th></tr></thead><tbody>` +
-    rows.map((r) => `<tr><td><span class="sw" style="background:var(${r.s.color})"></span> ${r.s.label}</td><td>${f(r.off)}</td><td>${f(r.off - r.lim)}</td><td>${f(r.lim)}</td><td>${f(r.bp)}</td></tr>`).join("") +
-    `<tr><td><b>All</b></td><td><b>${f(tot("off"))}</b></td><td><b>${f(tot("off") - tot("lim"))}</b></td><td><b>${f(tot("lim"))}</b></td><td><b>${f(tot("bp"))}</b></td></tr></tbody></table>` +
-    `<p class="note">Out of reach is offered minus could be dispatched. Actual output lands off the could-be-dispatched figure mostly because of congestion: SCED dispatches each unit against the price at its own node, not lambda. Batteries' charge level is not modelled separately; their offers and ERCOT's limits already carry most of it.</p>`;
-  setCSV(el, ["technology", "offered_at_lambda_mw", "out_of_reach_mw", "could_be_dispatched_mw", "actual_output_mw"],
-    rows.map((r) => [r.s.label, r.off, r.off - r.lim, r.lim, r.bp]), `At lambda ${S.date} ${heLabel(h)}`);
 }
 
 function drawCurveTable(rows) {

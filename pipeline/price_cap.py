@@ -56,7 +56,7 @@ AT_CAP = 0.99
 FIRST_YEAR = 2019
 CAPS = [{"from": "2019-01-01", "cap": 9000.0}, {"from": "2022-01-01", "cap": 5000.0}]
 HIST = DATA_DIR / "price_cap_hist.json.gz"
-HIST_V = 2          # bump to read every past year again (2: every hub and load zone, not only HUB)
+HIST_V = 4          # bump to read every past year again (2: every hub and load zone; 3: spread; 4: load zone LZ and LZEW rows averaged)
 OUT = DATA_DIR / "price_cap.json.gz"
 
 
@@ -99,6 +99,11 @@ def summarise(frame: pd.DataFrame, market: str) -> dict:
         out[f"{market}_hits"] = [[r.date, slot(r.slot), round(float(r.price), 2)] for r in hits.itertuples()]
         out[f"{market}_counts"] = _counts(f.date.tolist(), f.price.to_numpy())
     out[f"{market}_points"] = {pt: _counts(g.date.tolist(), g.price.to_numpy()) for pt, g in frame.groupby("point")}
+    # each interval (hour, day ahead) by how many hubs and load zones were at the cap: all of them,
+    # or only some (congestion splitting the system)
+    k = frame.assign(at=frame.price >= AT_CAP * frame.date.map(cap_on)).groupby(["date", "slot"]).at.agg(["sum", "count"])
+    out[f"{market}_spread"] = {"all": int(((k["sum"] == k["count"]) & (k["count"] > 0)).sum()),
+                               "some": int(((k["sum"] > 0) & (k["sum"] < k["count"])).sum())}
     # the highest price at any hub or load zone each day, and how many of them reached the cap
     i = frame.groupby("date").price.idxmax()
     top = frame.loc[i].set_index("date")
@@ -135,7 +140,11 @@ def workbook_frame(f: pd.DataFrame, market: str) -> pd.DataFrame:
                        for h, q in zip(he, k)]
     else:
         out["slot"] = he
-    return out.dropna(subset=["slot", "date"])[["date", "slot", "point", "price"]]
+    # a load zone has two rows per interval (types LZ and LZEW, the energy-weighted price) and the
+    # fall-back day's repeated hour two more: one price per point and interval, their mean, as
+    # parse_prices builds spp15
+    out = out.dropna(subset=["slot", "date"])
+    return out.groupby(["date", "slot", "point"], as_index=False).price.mean()[["date", "slot", "point", "price"]]
 
 
 def fetch_hist(api, last_year: int = None) -> None:
@@ -216,7 +225,9 @@ def build(hist: dict = None) -> dict:
             for d, p, pt, t, at in e.get(f"{m}_any", []):
                 anyp[m][d] = (p, pt, t, at)
             hits.extend([d, m, t, p] for d, t, p in e.get(f"{m}_hits", []))
-            yr = years.setdefault(y, {"rt": {}, "da": {}, "points": {"rt": {}, "da": {}}})
+            yr = years.setdefault(y, {"rt": {}, "da": {}, "points": {"rt": {}, "da": {}}, "spread": {"rt": {}, "da": {}}})
+            sp = e.get(f"{m}_spread") or {}
+            yr["spread"][m] = {k: yr["spread"][m].get(k, 0) + sp.get(k, 0) for k in ("all", "some")}
             yr[m] = _add(yr[m], e.get(f"{m}_counts", {}))
             for pt, c in e.get(f"{m}_points", {}).items():
                 yr["points"][m][pt] = _add(yr["points"][m].get(pt, {}), c)

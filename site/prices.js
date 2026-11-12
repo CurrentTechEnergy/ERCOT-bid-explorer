@@ -296,16 +296,21 @@ function drawCap() {
     const Y = C.years[yr], c = Y[mk] || {}, pts = (Y.points || {})[mk] || {};
     const hit = Object.entries(pts).filter(([p, v]) => p !== C.hub && v.at > 0).sort((a, b) => b[1].at - a[1].at);
     const part = c.to && c.to.slice(5) !== "12-31";
-    return { np: Object.keys(pts).filter((p) => p !== C.hub).length, yr: part ? `${yr} to ${d3.timeFormat("%b %-d")(new Date(c.to + "T12:00:00"))}` : yr, cap: capOn(`${yr}-12-31`), c, hit };
+    return { sp: (Y.spread || {})[mk], np: Object.keys(pts).filter((p) => p !== C.hub).length, yr: part ? `${yr} to ${d3.timeFormat("%b %-d")(new Date(c.to + "T12:00:00"))}` : yr, cap: capOn(`${yr}-12-31`), c, hit };
   }).filter((r) => r.c.n);
-  const head = ["Year", "Cap", `${MK === "Real-time" ? "Intervals" : "Hours"} at the cap`, "At half the cap or more", "At $1,000 or more", "Highest", "Other hubs and load zones at the cap"];
+  const unitT = MK === "Real-time" ? "Intervals" : "Hours";
+  const head = ["Year", "Cap", `${unitT} with every hub and load zone at the cap`, `${unitT} with only some at the cap`, "Hub average: at half the cap or more", "Hub average: at $1,000 or more", "Hub average: highest"];
   const n0 = (v) => (v == null ? "–" : d3.format(",")(v));
+  // only some at the cap: which hubs and zones, with each one's own count, on hover, tap or focus
+  const spTd = (r, k) => {
+    const v = (r.sp || {})[k];
+    if (k !== "some" || !v || !r.hit.length) return n0(v);
+    return `<span class="fn" tabindex="0" data-tip="${esc("Intervals each reached the cap: " + r.hit.map(([p, x]) => `${ptName(p)} ${n0(x.at)}`).join(" · "))}">${n0(v)}</span>`;
+  };
   $("cap-tbl").innerHTML = `<thead><tr>${head.map((t) => `<th>${t}</th>`).join("")}</tr></thead><tbody>` + tr.map((r) =>
-    `<tr><td>${esc(r.yr)}</td><td>${usd0(r.cap)}</td><td>${n0(r.c.at)}</td><td>${n0(r.c.half)}</td><td>${n0(r.c.ge1000)}</td><td>${usd0(r.c.max)}</td>` +
-    // the count, with each hub and zone's own count on hover, tap or focus
-    `<td class="pts">${r.hit.length ? `<span class="fn" tabindex="0" data-tip="${esc(r.hit.map(([p, v]) => `${ptName(p)}: ${n0(v.at)}`).join(" · "))}">${r.hit.length === r.np ? `All ${r.np}` : `${r.hit.length} of ${r.np}`}</span>` : "None"}</td></tr>`).join("") + "</tbody>";
-  setCSV($("cap-tbl"), ["year", "cap_usd_mwh", `hub_average_${mk}_at_cap`, "at_half_cap_or_more", "at_1000_or_more", "highest_usd_mwh", "other_points_at_cap"],
-    tr.map((r) => [r.yr, r.cap, r.c.at, r.c.half, r.c.ge1000, r.c.max, r.hit.map(([p, v]) => `${p}:${v.at}`).join(" ")]), `Price cap by year ${mk}`);
+    `<tr><td>${esc(r.yr)}</td><td>${usd0(r.cap)}</td><td>${spTd(r, "all")}</td><td>${spTd(r, "some")}</td><td>${n0(r.c.half)}</td><td>${n0(r.c.ge1000)}</td><td>${usd0(r.c.max)}</td></tr>`).join("") + "</tbody>";
+  setCSV($("cap-tbl"), ["year", "cap_usd_mwh", "all_hubs_and_zones_at_cap", "only_some_at_cap", "hub_average_at_half_cap_or_more", "hub_average_at_1000_or_more", "hub_average_highest_usd_mwh", "points_at_cap"],
+    tr.map((r) => [r.yr, r.cap, (r.sp || {}).all, (r.sp || {}).some, r.c.half, r.c.ge1000, r.c.max, r.hit.map(([p, v]) => `${p}:${v.at}`).join(" ")]), `Price cap by year ${mk}`);
   $("cap-note").textContent = `How often ERCOT's ${mk === "rt" ? "real-time" : "day-ahead"} prices reached the system-wide offer cap: $9,000/MWh through 2021, $5,000/MWh from 2022. ` +
     `Counted in ${unitTxt}${mk === "rt" ? ", because a single interval at the cap disappears into an hourly average" : ""}. ` +
     `The dark dots are the Hub average's highest price each day, red where it reached the cap; grey dots mark days a single hub or load zone went higher, usually from congestion in one area, with a red ring where that hub or zone reached the cap and the Hub average did not. ` +
