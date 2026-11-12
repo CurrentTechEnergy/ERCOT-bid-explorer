@@ -88,6 +88,7 @@ RUC from the 60-day day files.  Gas as in gas_by_hub.  No ERCOT download.
 Writes <out>/decision-table.parquet and <out>/summary.md.
 """
 import argparse
+import functools
 import io
 import math
 from pathlib import Path
@@ -146,12 +147,15 @@ def month_file(kind: str, month: str, out: Path):
     if p.exists():
         return pd.read_parquet(p)
     cache = out / "months" / f"{kind}-{month}.parquet"
-    if cache.exists():
+    stamp = cache.with_suffix(".src")
+    days = sorted((UNIT_DATA_DIR / "60d").glob(f"{month}-*.json.gz"))
+    src = _month_sources(tuple(days))
+    if cache.exists() and stamp.exists() and stamp.read_text() == src:
         return pd.read_parquet(cache)
     from .history import thermal_rows, unit_rows
     from .store import read_json_gz
     frames = []
-    for day in sorted((UNIT_DATA_DIR / "60d").glob(f"{month}-*.json.gz")):
+    for day in days:
         ud = read_json_gz(day)
         dam = read_json_gz(DATA_DIR / "dam" / day.name)
         if ud and dam:
@@ -161,8 +165,30 @@ def month_file(kind: str, month: str, out: Path):
     f = pd.concat(frames, ignore_index=True)
     cache.parent.mkdir(parents=True, exist_ok=True)
     f.to_parquet(cache)
+    stamp.write_text(src)
     print(f"  built {kind}-{month} from {len(frames)} day files", flush=True)
     return f
+
+
+# the code behind history.thermal_rows and history.unit_rows (and what they import)
+ROW_CODE = ("history.py", "intraday.py", "ppa.py", "config.py")
+
+
+@functools.lru_cache(maxsize=None)
+def _month_sources(days: tuple) -> str:
+    """A fingerprint of what a month built from the day files was built from: the 60-day and DAM
+    day files' names and contents, and the code that turns them into rows (ROW_CODE).  A cached
+    month (the Goal workflow keeps <out>/months/ between runs) is rebuilt when any of it changed:
+    a day added or corrected, or the row code edited.  Kept per run: a month is read many times."""
+    import hashlib
+    h = hashlib.sha256()
+    for name in ROW_CODE:
+        h.update(Path(__file__).with_name(name).read_bytes())
+    for day in days:
+        for p in (day, DATA_DIR / "dam" / day.name):
+            h.update(p.name.encode())
+            h.update(hashlib.sha256(p.read_bytes()).digest() if p.exists() else b"-")
+    return h.hexdigest()
 
 
 def henry_hub(out: Path) -> pd.Series:
