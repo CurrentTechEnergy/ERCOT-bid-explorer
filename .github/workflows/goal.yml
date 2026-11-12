@@ -41,6 +41,16 @@ jobs:
           gh release download history -R "$GITHUB_REPOSITORY" -p 'thermal-*.parquet' -p 'units-*.parquet' \
             -p 'da-hubs-*.parquet' -p 'da-lambda-*.parquet' -p 'rt-prices-*.parquet' -p 'dam-status-*.parquet' \
             -p 'as-*.parquet' -p 'rt-mcpc-*.parquet' -D history
+      # The months the history release lacks, built from the day files (decision_table.month_file),
+      # kept between runs: about a minute each otherwise.  Each month carries a fingerprint of its
+      # day files and row code, so a new or corrected day rebuilds only its month.  A new key every
+      # run (the cache is immutable) restoring the latest one.
+      - name: Restore the months built from the day files
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: goal-cache/months
+          key: goal-months-${{ github.run_id }}
+          restore-keys: goal-months-
       - name: Build
         env:
           PYTHONUNBUFFERED: "1"
