@@ -574,6 +574,32 @@ function drawCurves() {
     prices.map((p, j) => [p, ...rows.map((r) => r.vals[j]), ...(demand ? [demand.vals[j]] : [])]), `Offer curves ${S.date} ${heLabel(h)}`);
   if (!hp) el.insertAdjacentHTML("beforeend", `<p class="note">No cleared price loaded for this day yet.</p>`);
   drawCurveTable(rows);
+  drawCurveAt(h);
+}
+
+// under the curves, 60-day days: each technology read at lambda, offered against what SCED could
+// dispatch that run and what it actually ran (the stack file's `at` block)
+function drawCurveAt(h) {
+  const el = $("curve-at");
+  if (!el) return;
+  const A = limitedAt(h);
+  if (!A) { el.innerHTML = ""; el.hidden = true; return; }
+  const v = (k, f) => ((A[k] || {})[f] || [])[h];
+  const rows = seriesList().map((s) => {
+    const sum = (f) => (s.keys.some((k) => v(k, f) != null) ? d3.sum(s.keys, (k) => v(k, f) || 0) : null);
+    return { s, off: sum("off_at"), lim: sum("lim_at"), bp: sum("bp") };
+  }).filter((r) => r.off != null && (Math.abs(r.off) >= 1 || Math.abs(r.bp) >= 1));
+  if (!rows.length) { el.innerHTML = ""; el.hidden = true; return; }
+  const f = (x) => (x == null ? "–" : (x < 0 ? "−" : "") + fmtMW(Math.abs(x)));
+  const tot = (k) => d3.sum(rows, (r) => r[k] || 0);
+  el.hidden = false;
+  el.innerHTML = `<p class="note"><b>At lambda (${fmtPrice(A.lambda[h])}/MWh), ${heLabel(h)}:</b> what each technology offered at or below each SCED run's lambda, how much of that was out of reach within its ramp rate or held for reserves, and what it actually ran. Storage charging counts negative.</p>` +
+    `<table class="data"><thead><tr><th>Technology</th><th>Offered at λ (MW)</th><th>Out of reach (MW)</th><th>Could be dispatched (MW)</th><th>Actual output (MW)</th></tr></thead><tbody>` +
+    rows.map((r) => `<tr><td><span class="sw" style="background:var(${r.s.color})"></span> ${r.s.label}</td><td>${f(r.off)}</td><td>${f(r.off - r.lim)}</td><td>${f(r.lim)}</td><td>${f(r.bp)}</td></tr>`).join("") +
+    `<tr><td><b>All</b></td><td><b>${f(tot("off"))}</b></td><td><b>${f(tot("off") - tot("lim"))}</b></td><td><b>${f(tot("lim"))}</b></td><td><b>${f(tot("bp"))}</b></td></tr></tbody></table>` +
+    `<p class="note">Out of reach is offered minus could be dispatched. Actual output lands off the could-be-dispatched figure mostly because of congestion: SCED dispatches each unit against the price at its own node, not lambda. Batteries' charge level is not modelled separately; their offers and ERCOT's limits already carry most of it.</p>`;
+  setCSV(el, ["technology", "offered_at_lambda_mw", "out_of_reach_mw", "could_be_dispatched_mw", "actual_output_mw"],
+    rows.map((r) => [r.s.label, r.off, r.off - r.lim, r.lim, r.bp]), `At lambda ${S.date} ${heLabel(h)}`);
 }
 
 function drawCurveTable(rows) {
@@ -746,7 +772,26 @@ const STORAGE_SPLIT = [
 const CHG_AXIS_MAX = 1;
 function marginalSeries(list) { return list.flatMap((s) => (s.id === "storage" ? STORAGE_SPLIT : [s])); }
 
+// 60-day days read against system lambda use the stack file's `at` block (pipeline/actual_stack.tech_at):
+// each SCED run's own lambda against curves held to what SCED could dispatch in that run (LDL plus
+// reserves down to HDL less reserves up), in a band of $2 or 5% plus that interval's reserve price
+const limitedAt = (h) => {
+  const A = S.source === "60d" && S.location === "lambda" && S.stack && S.stack.at;
+  return A && A.lambda && A.lambda[h] != null ? A : null;
+};
+function limitedMarginRows(h, A) {
+  const v = (k, f) => ((A[k] || {})[f] || [])[h] || 0;
+  const rows = marginalSeries(seriesList()).map((s) => ({ s, mw: d3.sum(s.keys, (k) => v(k, s.part === "chg" ? "m_lim_chg" : s.part === "dis" ? "m_lim_dis" : "m_lim")) }));
+  const supply = rows.filter((r) => r.s.part !== "chg"), chg = rows.find((r) => r.s.part === "chg");
+  const total = d3.sum(supply, (r) => r.mw), chgMW = chg ? chg.mw : 0, moved = total + chgMW;
+  rows.forEach((r) => (r.share = moved > 0 ? r.mw / moved : null));
+  const lam = A.lambda[h], b = (A.band || [])[h] ?? 2;
+  return { rows, supply, chg, total, chgMW, moved, lo: lam - b, hi: lam + b, limited: true, band: b, reserve: !!A.reserve_priced };
+}
+
 function marginalRows(h, hp) {
+  const A = limitedAt(h);
+  if (A) return limitedMarginRows(h, A);
   const grid = S.index.grid;
   const [lo, hi] = priceWindow(hp);
   const iHi = d3.bisectRight(grid, hi) - 1, iLo = d3.bisectLeft(grid, lo) - 1;   // last point <= hi, last point < lo
@@ -797,7 +842,10 @@ function drawMarginal() {
     ? `Battery charging was the margin in ${heLabel(h)}: ${fmtMW(chgMW)} MW of charging would stop (${d3.format(".0%")(chg.share)} of what moves), against ${fmtMW(total)} MW of supply offered in the window, so the price was set by what batteries would pay to charge.`
     : top2.length ? `${top2.map((r, i) => `${i ? r.s.label.toLowerCase() : r.s.label} (${d3.format(".0%")(r.share)})`).join(" and ")} ${top2.length > 1 ? "were" : "was"} at the margin in ${heLabel(h)}: ${fmtMW(total)} MW of supply was offered from ${win}/MWh` +
       (chgMW >= 1 ? `, plus ${fmtMW(chgMW)} MW of battery charging that would stop (${d3.format(".0%")(chg.share)} of what moves)` : "") + "." : "";
-  el.insertAdjacentHTML("beforeend", `<p class="note">${lead} ${pname[0].toUpperCase() + pname.slice(1)} averaged ${fmtPrice(hp.mean)}/MWh in ${heLabel(h)}.</p>`);
+  const how = m0.limited
+    ? ` Read at each SCED run's own lambda, counting only MW each unit could actually move that run (ramp rates and reserves taken out), within ${fmtPrice(m0.band)} of lambda on average${m0.reserve && m0.band > 2.5 + 0.05 * Math.abs(hp.mean) ? ", widened by the hour's reserve prices" : ""}.`
+    : S.source === "60d" ? "" : " The 2-day report has no unit limits, so this counts all MW offered in the window, including MW a unit could not reach within its ramp rate.";
+  el.insertAdjacentHTML("beforeend", `<p class="note">${lead} ${pname[0].toUpperCase() + pname.slice(1)} averaged ${fmtPrice(hp.mean)}/MWh in ${heLabel(h)}.${how}</p>`);
   tel.innerHTML = barTable(all.concat(chg ? [chg] : []), `MW ${win}`, "Share of all marginal MW", "Total (supply + charging that stops)", moved);
   setCSV(el, ["technology", `MW from ${lo} to ${hi}`, "share_of_all_marginal_mw"], all.map((r) => [r.s.label, r.mw, r.share])
     .concat(chg ? [[chg.s.label, chgMW, chg.share]] : []), `Marginal supply ${S.date} ${heLabel(h)}`);

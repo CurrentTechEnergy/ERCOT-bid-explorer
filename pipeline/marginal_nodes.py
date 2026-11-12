@@ -10,8 +10,10 @@ so it is pinned, not marginal.  The curve's price at that base point is then the
 saw at the unit's node, so every marginal run carries an implied LMP without the price file.
 
 The implied price is compared with the system lambda of the same run:
-  at lambda   within BAND of it ($2, or 5% of lambda when larger): the unit is setting the
-              system price
+  at lambda   within BAND of it ($2, or 5% of lambda when larger), plus that interval's highest
+              real-time up-reserve price where the day has one (pipeline/reserve_prices.py:
+              under RTC+B lambda sits above the marginal energy offer by about the reserve price
+              a unit gives up): the unit is setting the system price
   below       below it: the unit sits behind an export constraint (its node is cheaper than
               the system; wind and solar at negative prices are the usual case)
   above       above it: the unit is on the load side of a constraint (its node is dearer)
@@ -27,7 +29,8 @@ Writes data/marginal_nodes.json.gz:
   hours      columns / rows: [date, hour, lambda, tech, zone, n_at, n_below, n_above,
              room_at, room_below, room_above]: unit-hours on the margin (a unit marginal for
              a third of the hour's runs counts a third) and their room above base point
-             (HSL minus base point: the MW they can still add at about their own price;
+             (the top of the energy range, HDL less AS up and at most HSL, minus base point: the
+             MW they can still add at about their own price within the run;
              for storage the whole range from charging up to HSL), averaged over the hour.
              zone is the unit's CDR zone (cdr.zone_lookup: BEXAR counted as SOUTH,
              "unmapped" without a match)
@@ -43,7 +46,7 @@ Writes data/marginal_nodes.json.gz:
 """
 import numpy as np
 
-from . import cdr, memo
+from . import cdr, memo, reserve_prices
 from .config import DATA_DIR, UNIT_DATA_DIR, SIXTY_DAY_TECHS
 from .intraday import _online
 from .nodes import settlement_points
@@ -138,9 +141,12 @@ def unit_runs(u: dict, n: int, hr: np.ndarray):
         tol_scale = 5          # hourly means are blurrier: 5% of HSL, at least 2 MW
     marg = np.zeros(n, bool)
     price = np.full(n, np.nan)
+    # the top of the energy range: HDL (less AS up, as above), never above HSL
+    top = np.fmin(np.where(np.isfinite(hdl), hdl, np.inf), np.where(np.isfinite(hsl), hsl, np.inf))
+    top[~np.isfinite(top)] = np.nan
     ok = on & has_curve & np.isfinite(bp) & (li >= 0)
     if not ok.any():
-        return marg, price, bp, exact
+        return marg, price, bp, exact, top
     idx = np.flatnonzero(ok)
     events = sorted(set(ci[idx]))
     kmax = max(len(cv[c][1]) for c in events)
@@ -162,7 +168,7 @@ def unit_runs(u: dict, n: int, hr: np.ndarray):
     interior &= (b > lo + tol) & (b < hi - tol) & np.isfinite(pr)
     marg[idx] = interior
     price[idx[interior]] = pr[interior]
-    return marg, price, bp, exact
+    return marg, price, bp, exact, top
 
 
 def run_lambda(lam: dict, runs: list) -> np.ndarray:
@@ -210,7 +216,7 @@ def day_margins(ud):
             continue
         if t == "storage" and not u.get("disp"):
             continue
-        marg, price, bp, _ = unit_runs(u, n, hr)
+        marg, price, bp, _, top = unit_runs(u, n, hr)
         if t == "storage":
             marg &= np.abs(bp) >= STEP_MW     # an idle battery sits between its bid and offer, not on a margin
         on_runs = np.isfinite(bp) & np.array([u["lim"][i][1] is not None if i >= 0 else False for i in _ffill_index(u["lim"], n)])
@@ -218,7 +224,7 @@ def day_margins(ud):
             continue
         hsl_r = np.array([u["lim"][i][1] if i >= 0 and u["lim"][i][1] is not None else np.nan for i in _ffill_index(u["lim"], n)], float)
         out.append([name, t, float(np.sum(on_runs / runs_h[hr])), float(np.nansum(np.where(on_runs, hsl_r, 0.0) / runs_h[hr])),
-                    [[int(r), _f(price[r]), _f(bp[r]), _f(hsl_r[r])] for r in np.flatnonzero(marg)]])
+                    [[int(r), _f(price[r]), _f(bp[r]), _f(top[r])] for r in np.flatnonzero(marg)]])
     return {"format": ud.get("format", 0), "runs": runs, "units": out}
 
 
@@ -229,7 +235,8 @@ def build_marginal_nodes(index: dict) -> None:
     sp_of = settlement_points(index)
     zone = cdr.zone_lookup()
 
-    rows, has_nodes, exact_days, netted_days = [], [], [], []
+    rows, has_nodes, exact_days, netted_days, reserve_days = [], [], [], [], []
+    res_days = reserve_prices.load()
     units = {}        # name -> [tech, sp, h_on, h_at, h_below, h_above, sum implied, sum node, n node, sum hsl]
     ever = {t: set() for t in TECHS}
     diffs, sample, n_seen = {0: [], 1: [], 2: []}, [], 0
@@ -253,6 +260,10 @@ def build_marginal_nodes(index: dict) -> None:
         hr = np.minimum(np.array(runs) // 60, 23)
         runs_h = np.bincount(hr, minlength=24).astype(float)
         lam_r = run_lambda(lam, runs)
+        up = reserve_prices.up_price(res_days, d)
+        res_r = reserve_prices.at_runs(up, runs)        # 0 without reserve prices (before RTC+B, or not fetched)
+        if up is not None:
+            reserve_days.append(d)
         lam_h = _arr(lam.get("hourly_mean") or [], 24)
         day = {}     # (tech, zone) -> (6, 24): n_at, n_below, n_above, room_at, room_below, room_above
         for name, t, on_h, hsl_mwh, mruns in ud["units"]:
@@ -269,7 +280,7 @@ def build_marginal_nodes(index: dict) -> None:
                 b_r, h_r = np.float64(np.nan if b_r is None else b_r), np.float64(np.nan if h_r is None else h_r)
                 if not np.isfinite(l):
                     continue
-                cls = 0 if abs(p - l) <= band(l) else (1 if p < l else 2)
+                cls = 0 if abs(p - l) <= band(l) + res_r[r] else (1 if p < l else 2)
                 h, w = hr[r], 1.0 / runs_h[hr[r]]
                 acc[cls, h] += w
                 if np.isfinite(h_r):
@@ -309,7 +320,7 @@ def build_marginal_nodes(index: dict) -> None:
     valid = {**stats(diffs[0] + diffs[1] + diffs[2]), "by_class": {k: stats(diffs[i]) for i, k in enumerate(("at", "below", "above"))},
              "sample": sample}
     write_json_gz(DATA_DIR / "marginal_nodes.json.gz", {
-        "dates": dates, "exact": exact_days, "as_netted": netted_days, "has_nodes": has_nodes, "band": BAND, "band_rel": BAND_REL, "tol": TOL, "tol_mw": TOL_MW,
+        "dates": dates, "exact": exact_days, "as_netted": netted_days, "has_nodes": has_nodes, "band": BAND, "band_rel": BAND_REL, "reserve_days": reserve_days, "tol": TOL, "tol_mw": TOL_MW,
         "hours": {"columns": ["date", "hour", "lambda", "tech", "zone", "n_at", "n_below", "n_above", "room_at", "room_below", "room_above"],
                   "rows": rows},
         "zones": ZONES,

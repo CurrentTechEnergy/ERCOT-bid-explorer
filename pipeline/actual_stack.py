@@ -40,6 +40,11 @@ data/stack/<date>.json.gz
                                         so the page can say how much offered MW was out of reach
                                         because of ramp rates and how much because of reserves
   group[g] / tech[t] also carry `lim` (format 7).
+  at            (format 8) every technology, storage included, read at each run's own lambda:
+                {tech: {off_at, lim_at, bp, m_off, m_lim (storage also m_*_chg, m_*_dis), n}: [24]},
+                lambda [24], band [24] (the margin band's mean half-width), reserve_priced
+                (whether the band includes reserve prices: false before RTC+B or before that day's
+                prices were fetched; such a day is built again once they are).  See tech_at().
 Days are written once (all of them again when FORMAT changes) and pruned with the 60-day data.  Groups are
 groups_60d.json.gz's (by train); nuclear, which groups.py leaves out, counts as "never".  A unit
 groups_60d flags as a peaker (column 9: by how it runs, whatever its technology) goes in "peakers"
@@ -47,14 +52,15 @@ instead of its timescale group, as on A day in ERCOT.
 """
 import numpy as np
 
-from .config import DATA_DIR, UNIT_DATA_DIR
+from .config import DATA_DIR, UNIT_DATA_DIR, SIXTY_DAY_TECHS
 from .curves import mw_at_prices
+from . import reserve_prices
 from .groups import train_of
 from .store import read_json_gz, write_json_gz
 from .units import _ffill_index
 
 OUT_DIR = DATA_DIR / "stack"
-FORMAT = 7   # 7: limited stack, base points and crossings at each run's lambda; 2: minimum at the -$250 floor; 3: units online with no output and no HSL left out; 4: seasonal folded into multiday; 5: peakers out of their groups; 6: floor (the system floor)
+FORMAT = 8   # 8: every technology read at lambda (`at`), margin band with reserve prices; 7: limited stack, base points and crossings at each run's lambda; 2: minimum at the -$250 floor; 3: units online with no output and no HSL left out; 4: seasonal folded into multiday; 5: peakers out of their groups; 6: floor (the system floor)
 FLOOR = -249.99
 PRICES = np.concatenate([
     [-250, -100, -75, -50, -40, -30, -25, -20, -15, -10, -5],
@@ -97,6 +103,103 @@ def limited_range(hsl, lsl, d):
     top = np.maximum(hdl - up, ldl)
     low = np.minimum(ldl + dn, top)
     return low, np.maximum(top, low)
+
+
+BAND, BAND_REL = 2.0, 0.05    # the margin band either side of lambda, as pipeline/marginal_nodes.band(), plus the reserve price
+
+
+def margin_band(lam, res=None):
+    """Half-width of the margin band at each run: $2 or 5% of lambda when larger, plus the run's
+    highest up-reserve price (pipeline/reserve_prices.py; 0 where none)."""
+    lam = np.asarray(lam, float)
+    return np.maximum(BAND, BAND_REL * np.abs(lam)) + (0.0 if res is None else np.nan_to_num(np.asarray(res, float)))
+
+
+def tech_at(ud: dict, lam, res=None) -> dict:
+    """Every technology's units read at each SCED run's own lambda (format 8), for the Offer
+    curves readout and the margin charts (pipeline/marginal.py):
+      off_at   MW offered at or below lambda, within LSL..HSL (as the page's curves read it)
+      lim_at   the same within the limited range (limited_range: LDL plus AS down to HDL less AS up)
+      bp       actual output, the base points summed
+      m_off / m_lim   MW offered inside the margin band around lambda (margin_band: $2 or 5%,
+               plus that interval's highest up-reserve price), on the offered and the limited
+               curves.  Storage is split: m_*_chg (charging side, MW below zero) and m_*_dis.
+    Hourly means over the runs with a lambda; storage charging counts negative in off_at, lim_at
+    and bp.  A unit online without a curve counts at its base point and adds no margin."""
+    n = len(ud["runs"])
+    hr = np.minimum(np.array(ud["runs"], int) // 60, 23)
+    lam = np.asarray(lam, float)
+    ok_l = np.isfinite(lam)
+    b = margin_band(lam, res)
+    grid = np.unique(np.concatenate([lam[ok_l], (lam - b)[ok_l], (lam + b)[ok_l]])) if ok_l.any() else np.array([0.0])
+    gi = {k: np.searchsorted(grid, np.where(ok_l, v, grid[0])) for k, v in (("lo", lam - b), ("at", lam), ("hi", lam + b))}
+    keys = ["off_at", "lim_at", "bp", "m_off", "m_lim", "m_off_chg", "m_off_dis", "m_lim_chg", "m_lim_dis", "n"]
+    acc = {t: {k: np.zeros(24) for k in keys} for t in SIXTY_DAY_TECHS}
+    w = np.zeros((24, n))
+    w[hr[ok_l], np.where(ok_l)[0]] = 1.0
+    n_l = w.sum(1)
+    for name, u in ud["units"].items():
+        t = u.get("tech")
+        if t not in acc or not u.get("lim"):
+            continue
+        si = _ffill_index(u["status"], n)
+        online = np.array([si[r] >= 0 and bool(u["status"][si[r]][1]) and u["status"][si[r]][1].startswith("ON") for r in range(n)]) & ok_l
+        if not online.any():
+            continue
+        li = _ffill_index(u["lim"], n)
+        hsl = np.array([float(u["lim"][i][1] or 0.0) if i >= 0 else 0.0 for i in li])
+        lsl = np.array([float(u["lim"][i][2] or 0.0) if i >= 0 else 0.0 for i in li])
+        out = u.get("out") or [None] * 24
+        flat = np.array([out[h] or 0.0 for h in hr])
+        d = _disp(u, n, hsl, lsl)
+        bp = np.where(np.isfinite(d["bp"]), d["bp"], flat)
+        online &= ~((hsl <= 0) & (lsl >= 0) & (np.abs(bp) <= 0))
+        if not online.any():
+            continue
+        top = np.maximum(hsl, lsl)
+        lo_l, hi_l = limited_range(top, lsl, d)
+        cv = u.get("curve2") or u.get("curve") or []
+        ci = _ffill_index(cv, n) if cv else np.full(n, -1)
+        has = np.array([ci[r] >= 0 and cv[ci[r]][1] is not None for r in range(n)]) & online
+        v = {k: np.zeros(n) for k in keys}
+        v["off_at"] = np.where(online, bp, 0.0)
+        v["lim_at"] = v["off_at"].copy()
+        v["bp"] = np.where(online, bp, 0.0)
+        v["n"] = online.astype(float)
+        idx = np.where(has)[0]
+        if idx.size:
+            combo = ci[idx] * (len(u["lim"]) + 1) + li[idx] + 1
+            codes, inv = np.unique(combo, return_inverse=True)
+            k = max(len(cv[c // (len(u["lim"]) + 1)][1]) for c in codes)
+            P, M = np.full((len(codes), k), np.nan), np.full((len(codes), k), np.nan)
+            for j, c in enumerate(codes):
+                ev = cv[c // (len(u["lim"]) + 1)]
+                r0 = idx[np.argmax(inv == j)]
+                P[j, :len(ev[1])] = ev[1]
+                M[j, :len(ev[2])] = np.array(ev[2], float) * (hsl[r0] if u.get("frac") else 1.0)
+            raw = mw_at_prices(P, M, grid, "first" if t == "storage" else "zero")[inv]       # (runs, grid)
+            pick = {g: raw[np.arange(idx.size), gi[g][idx]] for g in gi}
+            for tag, lo, hi in (("off", lsl[idx], top[idx]), ("lim", lo_l[idx], hi_l[idx])):
+                c = {g: np.clip(pick[g], lo, hi) for g in pick}
+                v[f"{tag}_at"][idx] = c["at"]
+                v[f"m_{tag}"][idx] = np.maximum(0.0, c["hi"] - c["lo"])
+                v[f"m_{tag}_chg"][idx] = np.maximum(0.0, np.minimum(c["hi"], 0) - np.minimum(c["lo"], 0))
+                v[f"m_{tag}_dis"][idx] = np.maximum(0.0, np.maximum(c["hi"], 0) - np.maximum(c["lo"], 0))
+        a = acc[t]
+        for kk in keys:
+            a[kk] += w @ v[kk]
+    div = np.where(n_l > 0, n_l, np.nan)
+    res_blk = {}
+    for t, a in acc.items():
+        if not a["n"].any():
+            continue
+        e = {kk: _r(a[kk] / div) for kk in keys if kk != "n" and (t == "storage" or not kk.endswith(("_chg", "_dis")))}
+        e["n"] = _r(a["n"] / div)
+        res_blk[t] = e
+    res_blk["lambda"] = _r(np.array([np.nanmean(lam[(hr == h) & ok_l]) if ((hr == h) & ok_l).any() else np.nan for h in range(24)]), 2)
+    res_blk["band"] = _r(np.array([np.nanmean(b[(hr == h) & ok_l]) if ((hr == h) & ok_l).any() else np.nan for h in range(24)]), 2)
+    res_blk["reserve_priced"] = res is not None
+    return res_blk
 
 
 def day_stack(ud: dict, group_of: dict, peaker: set = frozenset(), lam=None) -> dict:
@@ -199,16 +302,21 @@ def build_actual_stack(index: dict) -> int:
         if p.name[:10] not in keep:
             p.unlink()
     done = 0
+    res_days = reserve_prices.load()
     for d in days:
         path = OUT_DIR / f"{d}.json.gz"
         old = read_json_gz(path, default=None) if path.exists() else None
-        if old and old.get("format") == FORMAT:
+        up = reserve_prices.up_price(res_days, d)
+        # a day built before its reserve prices arrived is built again once they have
+        if old and old.get("format") == FORMAT and ((old.get("at") or {}).get("reserve_priced") or up is None):
             continue
         ud = read_json_gz(UNIT_DATA_DIR / "60d" / f"{d}.json.gz", default=None)
         if not ud:
             continue
         lam = run_lambda(read_json_gz(DATA_DIR / "prices" / f"{d}.json.gz", default=None), ud["runs"])
-        write_json_gz(path, day_stack(ud, group_of, peaker, lam))
+        out = day_stack(ud, group_of, peaker, lam)
+        out["at"] = tech_at(ud, lam, None if up is None else reserve_prices.at_runs(up, ud["runs"]))
+        write_json_gz(path, out)
         done += 1
     have = sorted(p.name[:10] for p in OUT_DIR.glob("*.json.gz"))
     write_json_gz(DATA_DIR / "stack_index.json.gz", {"format": FORMAT, "days": have})
