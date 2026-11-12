@@ -3,7 +3,21 @@
   <title>SWEETWN5_WND5: bidding and operating changes</title>
   <link href="https://ercotbids.currenttech.energy/unit.html?unit=SWEETWN5_WND5"/>
   <id>https://ercotbids.currenttech.energy/unit.html?unit=SWEETWN5_WND5</id>
-  <updated>2026-10-24T00:00:00Z</updated>
+  <updated>2026-11-12T00:00:00Z</updated>
+  <entry>
+    <title>SWEETWN5_WND5: Day-ahead: wind/solar floor changed (2026-09-07)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=SWEETWN5_WND5"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=SWEETWN5_WND5#SWEETWN5_WND5/2026-09-07/dam_renew_floor</id>
+    <updated>2026-11-12T00:00:00Z</updated>
+    <summary>Day-ahead floor changed: −$5 to $95/MWh</summary>
+  </entry>
+  <entry>
+    <title>SWEETWN5_WND5: Day-ahead: wind/solar floor changed (2026-09-07)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=SWEETWN5_WND5"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=SWEETWN5_WND5#SWEETWN5_WND5/2026-09-07/dam_renew_floor</id>
+    <updated>2026-11-12T00:00:00Z</updated>
+    <summary>Day-ahead floor changed: −$5 to $95/MWh</summary>
+  </entry>
   <entry>
     <title>SWEETWN5: Wind/solar: short episode at a different floor (2026-06-24)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=SWEETWN5"/>

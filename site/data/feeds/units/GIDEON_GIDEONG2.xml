@@ -3,7 +3,14 @@
   <title>GIDEON_GIDEONG2: bidding and operating changes</title>
   <link href="https://ercotbids.currenttech.energy/unit.html?unit=GIDEON_GIDEONG2"/>
   <id>https://ercotbids.currenttech.energy/unit.html?unit=GIDEON_GIDEONG2</id>
-  <updated>2026-10-24T00:00:00Z</updated>
+  <updated>2026-11-12T00:00:00Z</updated>
+  <entry>
+    <title>GIDEON_GIDEONG2: Shut down after a long run (2026-09-13)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=GIDEON_GIDEONG2"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=GIDEON_GIDEONG2#GIDEON_GIDEONG2/2026-09-13/shutdown_new</id>
+    <updated>2026-11-12T00:00:00Z</updated>
+    <summary>Shut down for 23 h after 35 days without a shutdown</summary>
+  </entry>
   <entry>
     <title>GIDEON_GIDEONG2: How often it turns off changed (2026-08-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=GIDEON_GIDEONG2"/>
