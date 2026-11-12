@@ -88,7 +88,7 @@ function drawQ1() {
         const rows = ys.map((q) => [q, (F.median[String(q)] || []).find((r) => r[0] === b)]).filter(([, r]) => r);
         if (!rows.length) return hideTip();
         return showTip(ev, `<h4>Load left for fossil ${b} to ${b + F.bin} GW</h4><table><tr><td></td><td class="n">Median fossil, GW</td><td class="n">Hours</td></tr>` +
-          rows.slice().reverse().map(([q, r]) => `<tr><td><span class="sw" style="background:${yc(q)}"></span> ${q}${partYr(q) ? "*" : ""}</td><td class="n">${fmtGW(r[1])}</td><td class="n">${d3.format(",")(r[2])}</td></tr>`).join("") + `</table>`);
+          rows.slice().reverse().map(([q, r]) => `<tr><td><span class="sw" style="background:${yc(q)}"></span> ${q}${partYr(q) ? " so far" : ""}</td><td class="n">${fmtGW(r[1])}</td><td class="n">${d3.format(",")(r[2])}</td></tr>`).join("") + `</table>`);
       }
       const r = med.find((q) => q[0] === b);
       if (!r) return hideTip();
@@ -98,9 +98,9 @@ function drawQ1() {
   el.replaceChildren(svg.node());
   if (isAll()) {
     legend("q1-legend", [["Hours, all years (darker: more hours)", "--c-other"]]);
-    $("q1-legend").insertAdjacentHTML("beforeend", `<span>Median fossil output:</span>` + ys.map((q) => `<span><span class="sw" style="background:${yc(q)}"></span>${q}${partYr(q) ? "*" : ""}</span>`).join(""));
+    $("q1-legend").insertAdjacentHTML("beforeend", `<span>Median fossil output:</span>` + ys.map((q) => `<span><span class="sw sw-line${partYr(q) ? " sw-dash" : ""}" style="border-top-color:${yc(q)};border-top-width:3px"></span>${q}${partYr(q) ? " so far" : ""}</span>`).join(""));
   } else legend("q1-legend", [[`Hours in ${sel} (other years gray)`, "--c1"], ["Median fossil output", "--c2"]]);
-  $("q1-legend").insertAdjacentHTML("beforeend", `<span><span class="sw sw-line"></span>Where fossil would sit if it followed the load left for it</span>`);
+  $("q1-legend").insertAdjacentHTML("beforeend", `<span><span class="sw sw-line sw-dash" style="border-top-color:var(--muted)"></span>No renewable curtailment line</span>`);
   // what is stuck on: average fossil output by net load, at minimum and above it
   const sb = F.stuck_bin, pick = (r) => isAll() || r[0] === sel;
   const hours = d3.rollup(F.hours.filter(pick), (v) => d3.sum(v, (r) => r[2]), (r) => r[1]);
