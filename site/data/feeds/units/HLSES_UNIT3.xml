@@ -3,7 +3,7 @@
   <title>HLSES_UNIT3: bidding and operating changes</title>
   <link href="https://ercotbids.currenttech.energy/unit.html?unit=HLSES_UNIT3"/>
   <id>https://ercotbids.currenttech.energy/unit.html?unit=HLSES_UNIT3</id>
-  <updated>2026-11-12T00:00:00Z</updated>
+  <updated>2026-11-13T00:00:00Z</updated>
   <entry>
     <title>HLSES_UNIT3: Day-ahead: priced out (2026-09-11)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=HLSES_UNIT3"/>
@@ -17,6 +17,20 @@
     <id>https://ercotbids.currenttech.energy/unit.html?unit=HLSES_UNIT3#HLSES_UNIT3/2026-09-11/dam_priced_out</id>
     <updated>2026-11-12T00:00:00Z</updated>
     <summary>Priced out of the day-ahead: minimum energy at $61/MWh against a usual $40/MWh, for 2 days</summary>
+  </entry>
+  <entry>
+    <title>HLSES_UNIT3: Day-ahead: minimum-energy offer stepped (2026-09-08)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=HLSES_UNIT3"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=HLSES_UNIT3#HLSES_UNIT3/2026-09-08/dam_mingen_step</id>
+    <updated>2026-11-13T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $38 to $44/MWh (offer minus fuel cost: $9 to $12/MWh)</summary>
+  </entry>
+  <entry>
+    <title>HLSES_UNIT3: Day-ahead: minimum-energy offer stepped (2026-09-08)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=HLSES_UNIT3"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=HLSES_UNIT3#HLSES_UNIT3/2026-09-08/dam_mingen_step</id>
+    <updated>2026-11-13T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $38 to $44/MWh (offer minus fuel cost: $9 to $12/MWh)</summary>
   </entry>
   <entry>
     <title>HLSES_UNIT3: Day-ahead: priced out (2026-08-07)</title>
@@ -199,19 +213,5 @@
     <id>https://ercotbids.currenttech.energy/unit.html?unit=HLSES_UNIT3#HLSES_UNIT3/2026-01-25/bidding</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Offer price vs peer median: $16 to −$0/MWh</summary>
-  </entry>
-  <entry>
-    <title>HLSES_UNIT3: Day-ahead: minimum-energy offer stepped (2025-12-25)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=HLSES_UNIT3"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=HLSES_UNIT3#HLSES_UNIT3/2025-12-25/dam_mingen_step</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Minimum-energy offer stepped: $70 to $64/MWh (offer minus fuel cost: $30 to $38/MWh)</summary>
-  </entry>
-  <entry>
-    <title>HLSES_UNIT3: Day-ahead: minimum-energy offer stepped (2025-12-25)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=HLSES_UNIT3"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=HLSES_UNIT3#HLSES_UNIT3/2025-12-25/dam_mingen_step</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Minimum-energy offer stepped: $70 to $64/MWh (offer minus fuel cost: $30 to $38/MWh)</summary>
   </entry>
 </feed>

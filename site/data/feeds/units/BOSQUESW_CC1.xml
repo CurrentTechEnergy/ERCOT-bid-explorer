@@ -3,7 +3,14 @@
   <title>BOSQUESW_CC1: bidding and operating changes</title>
   <link href="https://ercotbids.currenttech.energy/unit.html?unit=BOSQUESW_CC1"/>
   <id>https://ercotbids.currenttech.energy/unit.html?unit=BOSQUESW_CC1</id>
-  <updated>2026-10-18T00:00:00Z</updated>
+  <updated>2026-11-13T00:00:00Z</updated>
+  <entry>
+    <title>BOSQUESW_CC1: Shut down after a long run (2026-09-14)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=BOSQUESW_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=BOSQUESW_CC1#BOSQUESW_CC1/2026-09-14/shutdown_new</id>
+    <updated>2026-11-13T00:00:00Z</updated>
+    <summary>Shut down for 4 h after 93 days without a shutdown</summary>
+  </entry>
   <entry>
     <title>BOSQUESW_CC1: How often it turns off changed (2026-07-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=BOSQUESW_CC1"/>

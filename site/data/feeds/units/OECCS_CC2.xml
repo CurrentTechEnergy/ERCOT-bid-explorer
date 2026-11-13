@@ -3,7 +3,14 @@
   <title>OECCS_CC2: bidding and operating changes</title>
   <link href="https://ercotbids.currenttech.energy/unit.html?unit=OECCS_CC2"/>
   <id>https://ercotbids.currenttech.energy/unit.html?unit=OECCS_CC2</id>
-  <updated>2026-10-24T00:00:00Z</updated>
+  <updated>2026-11-13T00:00:00Z</updated>
+  <entry>
+    <title>OECCS_CC2: Shut down after a long run (2026-09-14)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=OECCS_CC2"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=OECCS_CC2#OECCS_CC2/2026-09-14/shutdown_new</id>
+    <updated>2026-11-13T00:00:00Z</updated>
+    <summary>Shut down for 9 h after 34 days without a shutdown</summary>
+  </entry>
   <entry>
     <title>OECCS_CC2: Day-ahead: priced out (2026-08-13)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=OECCS_CC2"/>
