@@ -3,13 +3,20 @@
   <title>CHAMON_CTG_0101: bidding and operating changes</title>
   <link href="https://ercotbids.currenttech.energy/unit.html?unit=CHAMON_CTG_0101"/>
   <id>https://ercotbids.currenttech.energy/unit.html?unit=CHAMON_CTG_0101</id>
-  <updated>2026-10-24T00:00:00Z</updated>
+  <updated>2026-11-14T00:00:00Z</updated>
+  <entry>
+    <title>CHAMON_CTG_0101: Outage ended (2026-09-15)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=CHAMON_CTG_0101"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=CHAMON_CTG_0101#CHAMON_CTG_0101/2026-09-15/outage_end</id>
+    <updated>2026-11-14T00:00:00Z</updated>
+    <summary>Back from a 28-day outage</summary>
+  </entry>
   <entry>
     <title>CHAMON_CTG_0101: Outage started (2026-08-18)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=CHAMON_CTG_0101"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=CHAMON_CTG_0101#CHAMON_CTG_0101/2026-08-18/outage_start</id>
     <updated>2026-10-24T00:00:00Z</updated>
-    <summary>Outage began, still on at the end of the data (27 days so far)</summary>
+    <summary>Outage began, lasting 28 days</summary>
   </entry>
   <entry>
     <title>CHAMON_CTG_0101: How often it turns off changed (2026-08-01)</title>

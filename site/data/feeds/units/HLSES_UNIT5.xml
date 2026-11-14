@@ -3,7 +3,7 @@
   <title>HLSES_UNIT5: bidding and operating changes</title>
   <link href="https://ercotbids.currenttech.energy/unit.html?unit=HLSES_UNIT5"/>
   <id>https://ercotbids.currenttech.energy/unit.html?unit=HLSES_UNIT5</id>
-  <updated>2026-11-09T00:00:00Z</updated>
+  <updated>2026-11-14T00:00:00Z</updated>
   <entry>
     <title>HLSES_UNIT5: Day-ahead: minimum-energy offer stepped (2026-09-03)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=HLSES_UNIT5"/>
@@ -17,6 +17,13 @@
     <id>https://ercotbids.currenttech.energy/unit.html?unit=HLSES_UNIT5#HLSES_UNIT5/2026-09-03/dam_mingen_step</id>
     <updated>2026-11-09T00:00:00Z</updated>
     <summary>Minimum-energy offer stepped: $48 to $54/MWh (offer minus fuel cost: $15 to $17/MWh)</summary>
+  </entry>
+  <entry>
+    <title>HLSES_UNIT5: Bidding approach shifted (2026-09-02)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=HLSES_UNIT5"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=HLSES_UNIT5#HLSES_UNIT5/2026-09-02/bidding</id>
+    <updated>2026-11-14T00:00:00Z</updated>
+    <summary>Offer price vs peer median: $3 to −$7/MWh</summary>
   </entry>
   <entry>
     <title>HLSES_UNIT5: Day-ahead: priced out (2026-08-20)</title>
