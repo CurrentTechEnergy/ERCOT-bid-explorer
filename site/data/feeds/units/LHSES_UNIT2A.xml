@@ -3,7 +3,21 @@
   <title>LHSES_UNIT2A: bidding and operating changes</title>
   <link href="https://ercotbids.currenttech.energy/unit.html?unit=LHSES_UNIT2A"/>
   <id>https://ercotbids.currenttech.energy/unit.html?unit=LHSES_UNIT2A</id>
-  <updated>2026-11-04T00:00:00Z</updated>
+  <updated>2026-11-15T00:00:00Z</updated>
+  <entry>
+    <title>LHSES_UNIT2A: Day-ahead: priced out (2026-09-12)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=LHSES_UNIT2A"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=LHSES_UNIT2A#LHSES_UNIT2A/2026-09-12/dam_priced_out</id>
+    <updated>2026-11-15T00:00:00Z</updated>
+    <summary>Priced out of the day-ahead: minimum energy at $72/MWh against a usual $2/MWh, for 4 days</summary>
+  </entry>
+  <entry>
+    <title>LHSES_UNIT2A: Day-ahead: priced out (2026-09-12)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=LHSES_UNIT2A"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=LHSES_UNIT2A#LHSES_UNIT2A/2026-09-12/dam_priced_out</id>
+    <updated>2026-11-15T00:00:00Z</updated>
+    <summary>Priced out of the day-ahead: minimum energy at $72/MWh against a usual $2/MWh, for 4 days</summary>
+  </entry>
   <entry>
     <title>LHSES_UNIT2A: Day-ahead: priced out (2026-09-02)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=LHSES_UNIT2A"/>

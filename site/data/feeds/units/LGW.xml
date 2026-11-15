@@ -3,7 +3,14 @@
   <title>LGW: bidding and operating changes</title>
   <link href="https://ercotbids.currenttech.energy/unit.html?unit=LGW"/>
   <id>https://ercotbids.currenttech.energy/unit.html?unit=LGW</id>
-  <updated>2026-10-24T00:00:00Z</updated>
+  <updated>2026-11-15T00:00:00Z</updated>
+  <entry>
+    <title>LGW: Wind/solar: short episode at a different floor (2026-09-14)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=LGW"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=LGW#LGW/2026-09-14/renew_episode</id>
+    <updated>2026-11-15T00:00:00Z</updated>
+    <summary>Short episode: floor −$13/MWh, briefly −$5/MWh, for 2 days</summary>
+  </entry>
   <entry>
     <title>LGW: Wind/solar: short episode at a different floor (2026-08-17)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=LGW"/>
@@ -206,12 +213,5 @@
     <id>https://ercotbids.currenttech.energy/unit.html?unit=LGW#LGW/2022-12-15/renew_floor_new</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Floor moved: −$26/MWh to −$3/MWh</summary>
-  </entry>
-  <entry>
-    <title>LGW: Wind/solar: offer floor changed (2022-07-01)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=LGW"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=LGW#LGW/2022-07-01/renew_floor_new</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Floor moved: −$25/MWh to −$26/MWh</summary>
   </entry>
 </feed>
