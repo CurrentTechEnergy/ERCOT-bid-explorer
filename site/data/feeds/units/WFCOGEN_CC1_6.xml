@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>WFCOGEN_CC1_6: bidding and operating changes</title>
+  <link href="https://ercotbids.currenttech.energy/unit.html?unit=WFCOGEN_CC1_6"/>
+  <id>https://ercotbids.currenttech.energy/unit.html?unit=WFCOGEN_CC1_6</id>
+  <updated>2026-11-17T00:00:00Z</updated>
+  <entry>
+    <title>WFCOGEN_CC1_6: Bidding approach shifted (2026-09-08)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=WFCOGEN_CC1_6"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=WFCOGEN_CC1_6#WFCOGEN_CC1_6/2026-09-08/bidding</id>
+    <updated>2026-11-17T00:00:00Z</updated>
+    <summary>Offer price vs peer median: $14 to −$10/MWh</summary>
+  </entry>
+</feed>
