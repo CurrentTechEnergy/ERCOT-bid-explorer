@@ -3,13 +3,20 @@
   <title>PB2SES_CT4: bidding and operating changes</title>
   <link href="https://ercotbids.currenttech.energy/unit.html?unit=PB2SES_CT4"/>
   <id>https://ercotbids.currenttech.energy/unit.html?unit=PB2SES_CT4</id>
-  <updated>2026-11-10T00:00:00Z</updated>
+  <updated>2026-11-18T00:00:00Z</updated>
   <entry>
-    <title>PB2SES_CT4: Bidding approach shifted (2026-09-05)</title>
+    <title>PB2SES_CT4: Bidding approach shifted (2026-09-09)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=PB2SES_CT4"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=PB2SES_CT4#PB2SES_CT4/2026-09-05/bidding</id>
-    <updated>2026-11-10T00:00:00Z</updated>
-    <summary>Offer price vs peer median: $4 to −$13/MWh</summary>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=PB2SES_CT4#PB2SES_CT4/2026-09-09/bidding</id>
+    <updated>2026-11-18T00:00:00Z</updated>
+    <summary>Offer price vs peer median: −$13 to $8/MWh</summary>
+  </entry>
+  <entry>
+    <title>PB2SES_CT4: Bidding approach shifted (2026-09-02)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=PB2SES_CT4"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=PB2SES_CT4#PB2SES_CT4/2026-09-02/bidding</id>
+    <updated>2026-11-18T00:00:00Z</updated>
+    <summary>Offer price vs peer median: $2 to −$13/MWh</summary>
   </entry>
   <entry>
     <title>PB2SES_CT4: Bidding approach shifted (2026-07-21)</title>
