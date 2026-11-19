@@ -3,13 +3,20 @@
   <title>AEEC_ANTLP_2: bidding and operating changes</title>
   <link href="https://ercotbids.currenttech.energy/unit.html?unit=AEEC_ANTLP_2"/>
   <id>https://ercotbids.currenttech.energy/unit.html?unit=AEEC_ANTLP_2</id>
-  <updated>2026-11-11T00:00:00Z</updated>
+  <updated>2026-11-19T00:00:00Z</updated>
   <entry>
     <title>AEEC_ANTLP: Day-ahead: minimum-energy offer stepped (2026-09-06)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=AEEC_ANTLP"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=AEEC_ANTLP#AEEC_ANTLP/2026-09-06/dam_mingen_step</id>
     <updated>2026-11-11T00:00:00Z</updated>
     <summary>Minimum-energy offer stepped: $27 to $37/MWh (offer minus fuel cost: −$4 to $3/MWh)</summary>
+  </entry>
+  <entry>
+    <title>AEEC_ANTLP_2: Peaker: running at a new real-time price (2026-09-01)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=AEEC_ANTLP_2"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=AEEC_ANTLP_2#AEEC_ANTLP_2/2026-09-01/rt_price</id>
+    <updated>2026-11-19T00:00:00Z</updated>
+    <summary>Online 78% of its available hours at $35–$50/MWh real-time at its node in September, up from 10%</summary>
   </entry>
   <entry>
     <title>AEEC_ANTLP_2: Peaker: running at a new real-time price (2026-08-01)</title>

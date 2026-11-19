@@ -3,7 +3,14 @@
   <title>DOWGEN_DOW_G67: bidding and operating changes</title>
   <link href="https://ercotbids.currenttech.energy/unit.html?unit=DOWGEN_DOW_G67"/>
   <id>https://ercotbids.currenttech.energy/unit.html?unit=DOWGEN_DOW_G67</id>
-  <updated>2026-10-24T00:00:00Z</updated>
+  <updated>2026-11-19T00:00:00Z</updated>
+  <entry>
+    <title>DOWGEN_DOW_G67: How often it turns off changed (2026-09-01)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=DOWGEN_DOW_G67"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=DOWGEN_DOW_G67#DOWGEN_DOW_G67/2026-09-01/group</id>
+    <updated>2026-11-19T00:00:00Z</updated>
+    <summary>Off for a week or more at a time (August 2026) to Off for days at a time (September 2026)</summary>
+  </entry>
   <entry>
     <title>DOWGEN_DOW_G67: Outage ended (2026-07-16)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=DOWGEN_DOW_G67"/>

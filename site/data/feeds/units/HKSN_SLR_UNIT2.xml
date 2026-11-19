@@ -3,7 +3,14 @@
   <title>HKSN_SLR_UNIT2: bidding and operating changes</title>
   <link href="https://ercotbids.currenttech.energy/unit.html?unit=HKSN_SLR_UNIT2"/>
   <id>https://ercotbids.currenttech.energy/unit.html?unit=HKSN_SLR_UNIT2</id>
-  <updated>2026-11-01T00:00:00Z</updated>
+  <updated>2026-11-19T00:00:00Z</updated>
+  <entry>
+    <title>HKSN_SLR: Wind/solar: offer started moving within the day (2026-09-15)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=HKSN_SLR"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=HKSN_SLR#HKSN_SLR/2026-09-15/renew_moving_on</id>
+    <updated>2026-11-19T00:00:00Z</updated>
+    <summary>Started moving within the day: was a floor of $0/MWh</summary>
+  </entry>
   <entry>
     <title>HKSN_SLR: Wind/solar: offer stopped moving within the day (2026-08-28)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=HKSN_SLR"/>

@@ -3,7 +3,14 @@
   <title>INRT_W_UNIT1: bidding and operating changes</title>
   <link href="https://ercotbids.currenttech.energy/unit.html?unit=INRT_W_UNIT1"/>
   <id>https://ercotbids.currenttech.energy/unit.html?unit=INRT_W_UNIT1</id>
-  <updated>2026-11-01T00:00:00Z</updated>
+  <updated>2026-11-19T00:00:00Z</updated>
+  <entry>
+    <title>INRT_W: Wind/solar: offer started moving within the day (2026-09-15)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=INRT_W"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=INRT_W#INRT_W/2026-09-15/renew_moving_on</id>
+    <updated>2026-11-19T00:00:00Z</updated>
+    <summary>Started moving within the day: was a floor of −$38/MWh</summary>
+  </entry>
   <entry>
     <title>INRT_W: Wind/solar: offer stopped moving within the day (2026-08-28)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=INRT_W"/>

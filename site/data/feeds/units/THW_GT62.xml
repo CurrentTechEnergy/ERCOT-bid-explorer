@@ -3,7 +3,21 @@
   <title>THW_GT62: bidding and operating changes</title>
   <link href="https://ercotbids.currenttech.energy/unit.html?unit=THW_GT62"/>
   <id>https://ercotbids.currenttech.energy/unit.html?unit=THW_GT62</id>
-  <updated>2026-10-24T00:00:00Z</updated>
+  <updated>2026-11-19T00:00:00Z</updated>
+  <entry>
+    <title>THW_GT62: Peaker: running at a new real-time price (2026-09-01)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=THW_GT62"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=THW_GT62#THW_GT62/2026-09-01/rt_price</id>
+    <updated>2026-11-19T00:00:00Z</updated>
+    <summary>Online 17% of its available hours at $50–$100/MWh real-time at its node in September, down from 59%</summary>
+  </entry>
+  <entry>
+    <title>THW_GT62: How often it turns off changed (2026-09-01)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=THW_GT62"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=THW_GT62#THW_GT62/2026-09-01/group</id>
+    <updated>2026-11-19T00:00:00Z</updated>
+    <summary>Cycles daily, over twice a week (August 2026) to Off for days at a time (September 2026)</summary>
+  </entry>
   <entry>
     <title>THW_GT62: Outage ended (2026-08-05)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=THW_GT62"/>

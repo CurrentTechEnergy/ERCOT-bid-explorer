@@ -3,7 +3,14 @@
   <title>DCSES_CT30: bidding and operating changes</title>
   <link href="https://ercotbids.currenttech.energy/unit.html?unit=DCSES_CT30"/>
   <id>https://ercotbids.currenttech.energy/unit.html?unit=DCSES_CT30</id>
-  <updated>2026-10-23T00:00:00Z</updated>
+  <updated>2026-11-19T00:00:00Z</updated>
+  <entry>
+    <title>DCSES_CT30: Bidding approach shifted (2026-08-07)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=DCSES_CT30"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=DCSES_CT30#DCSES_CT30/2026-08-07/bidding</id>
+    <updated>2026-11-19T00:00:00Z</updated>
+    <summary>Offer price vs peer median: $20 to $890/MWh</summary>
+  </entry>
   <entry>
     <title>DCSES_CT30: How often it turns off changed (2026-08-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=DCSES_CT30"/>
