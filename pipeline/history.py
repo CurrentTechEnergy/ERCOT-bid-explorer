@@ -64,6 +64,14 @@ One pair of Parquet files per calendar month:
                            the resource appears and the days its pair changes.  qse.py merges them into
                            the dated history in data/unit_qse.json.gz.
 
+  load-res-, as-share-YYYY-MM.parquet  (--load-res, from the 60-day DAM disclosure alone) every Load
+                           Resource's DAM AS awards by hour with its QSE, and each service's MW from Load
+                           Resources, batteries and generators with the MCPC; pipeline/load_hist.py
+                           documents them.
+  dam-bids-, dam-cheap-demand-YYYY-MM.parquet  (--dam-bids, from the 60-day DAM disclosure alone) every
+                           DAM energy-only bid and offer award, and the bid MW that buys only at $0 or
+                           $15/MWh or less, by point and QSE; pipeline/load_hist.py documents them.
+
   da-lambda-YYYY-MM.parquet  (--da-lambda, from NP4-523-CD alone) date, he, price: the DAM system
                            lambda by hour, for the cheap-hour test (DA system lambda <= $10)
 
@@ -72,7 +80,7 @@ One pair of Parquet files per calendar month:
                            the hourly mean of the four 15-minute prices, as parse_prices.node_hourly
                            gives the live node files.  Joins units-* and thermal-* on sp = point.
 
-    python -m pipeline.history 2019-01 [2019-02 ...] [--out history] [--force] [--thermal | --as | --rt | --rtas [--days N] | --dam-status | --control | --da-lambda]
+    python -m pipeline.history 2019-01 [2019-02 ...] [--out history] [--force] [--thermal | --as | --rt | --rtas [--days N] | --dam-status | --control | --load-res | --dam-bids | --da-lambda]
 """
 import argparse
 import calendar
@@ -299,6 +307,9 @@ def _parse(blob: bytes, source: str, dam: dict, thermal: bool = False, ancillary
         return sced_awards(blob)
     if ancillary == "control":
         return control_day(blob)
+    if ancillary in ("load-res", "dam-bids"):
+        from .load_hist import dam_bids_day, load_res_day
+        return (load_res_day if ancillary == "load-res" else dam_bids_day)(blob)
     parsed = found[1](blob)
     if source == "dam":
         if ancillary == "status":
@@ -526,6 +537,34 @@ def build_control_month(api, month: str, out: Path = OUT, force: bool = False) -
         print(f"  no DME column in {month}; the generation resource file's columns: {header}")
 
 
+def build_load_month(api, month: str, kind: str, out: Path = OUT, force: bool = False) -> None:
+    """--load-res / --dam-bids: the load-side tables (pipeline/load_hist.py), one Parquet file per table."""
+    out.mkdir(parents=True, exist_ok=True)
+    paths = {k: out / f"{k}-{month}.parquet" for k in
+             (("load-res", "as-share") if kind == "load-res" else ("dam-bids", "dam-cheap-demand"))}
+    if all(p.exists() for p in paths.values()) and not force:
+        print(f"{kind}-{month}: already there")
+        return
+    t0 = time.time()
+    got = {k: [] for k in paths}
+    for _, r in _disclosures(api, EMIL_DAM, _days(month), "dam", ancillary=kind):
+        for k in paths:
+            got[k].append(r[k])
+    if not got[next(iter(paths))]:
+        warn(f"{month}: no DAM days found; nothing written")
+        return
+    for k, p in paths.items():
+        f = pd.concat(got[k], ignore_index=True)
+        for c in ("unit", "qse", "point", "side", "service"):
+            if c in f:
+                f[c] = f[c].astype("category")
+        f.to_parquet(p, index=False)
+        print(f"{p.name}: {len(f):,} rows, {f['date'].nunique()} days, {p.stat().st_size / 1e6:.1f} MB"
+              + (f", {f['unit'].nunique()} Load Resources, QSE known {f['qse'].notna().mean():.0%}" if "unit" in f else "")
+              + (f", {f['qse'].nunique()} QSEs" if "qse" in f and "unit" not in f else ""))
+    print(f"{kind}-{month}: {time.time() - t0:.0f}s")
+
+
 def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("months", nargs="+", help="YYYY-MM")
@@ -542,6 +581,10 @@ def main(argv=None):
                       help="build the thermal DAM resource status files instead (60-day DAM disclosure alone)")
     kind.add_argument("--control", action="store_true",
                       help="build each resource's QSE and DME files instead (60-day DAM disclosure alone)")
+    kind.add_argument("--load-res", action="store_true",
+                      help="build the Load Resource award and AS share files instead (60-day DAM disclosure alone)")
+    kind.add_argument("--dam-bids", action="store_true",
+                      help="build the DAM energy-only award and cheap-only demand files instead (60-day DAM disclosure alone)")
     kind.add_argument("--da-lambda", action="store_true",
                       help="build the DAM system lambda files instead (NP4-523-CD)")
     ap.add_argument("--store-only", action="store_true",
@@ -560,6 +603,9 @@ def main(argv=None):
             continue
         if args.control:
             build_control_month(api, m, Path(args.out), args.force)
+            continue
+        if args.load_res or args.dam_bids:
+            build_load_month(api, m, "load-res" if args.load_res else "dam-bids", Path(args.out), args.force)
             continue
         if args.ancillary:
             build_as_month(api, m, Path(args.out), args.force)
