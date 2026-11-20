@@ -25,6 +25,7 @@ These are summarised without numbers; the front page gives the current figures, 
 - [Thermal](https://ercotbids.currenttech.energy/thermal.html): what nuclear, coal and gas units earned, the average price they got, their running cost and margin, year by year.
 - [Renewables](https://ercotbids.currenttech.energy/renewables.html): how wind and solar offer by hour, curtailment against price and by node, hedge signals in their bids, public power buyers, and what each plant earned.
 - [Batteries](https://ercotbids.currenttech.energy/batteries.html): battery charging and discharging against day-ahead awards, state of charge, offer prices and charging bids, and earnings against a perfect-foresight benchmark.
+- [Load](https://ercotbids.currenttech.energy/load.html): ERCOT's day-ahead load forecast against actual load by hour, net load as forecast, potential (no wind or solar curtailed) and served, and the forecast's bias by real-time price.
 - [Units](https://ercotbids.currenttech.energy/unit.html): every ERCOT generator and battery, searchable by name, plant, county, owner, QSE or buyer. Each unit has its own page at https://ercotbids.currenttech.energy/unit/NAME (for example /unit/FRNYPP_CC1), listed in the sitemap.
 - [What's changing](https://ercotbids.currenttech.energy/changes.html): new units, bidding shifts, turn-off point moves and battery size changes as they show up in the offer data.
 - [How offers work](https://ercotbids.currenttech.energy/guide.html): a plain guide to ERCOT offer curves, minimum output, SCED dispatch, revenue and hedge signals.
