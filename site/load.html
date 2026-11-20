@@ -43,7 +43,7 @@
   <div class="brand">
     <div class="nav-row"><nav class="nav" aria-label="Pages"><a href="./">Will fossil turn off?</a><a href="day-in-ercot.html">A day in ERCOT</a><a href="prices.html">Prices</a><a href="dayahead.html">Day-ahead offers</a><a href="turn-ons-and-turn-offs.html">Turn-ons and Turn-offs</a><a href="realtime.html">Real-time offers</a><a href="thermal.html">Thermal</a><a href="renewables.html">Renewables</a><a href="batteries.html">Batteries</a><a href="load.html" aria-current="page">Load</a><a href="unit.html">Units</a><span class="nav-sep" aria-hidden="true"></span><a href="changes.html" class="aux">What's changing</a><a href="guide.html" class="aux">How offers work</a></nav></div>
     <h1>Load</h1>
-    <p class="sub">ERCOT's day-ahead load forecast against what load turned out to be, and net load (load less wind and solar), the part thermal units and batteries have to cover. In cheap hours the forecast tends to run high, and an over-forecast keeps extra gas online.</p>
+    <p class="sub">ERCOT's day-ahead load forecast against actual load, and net load: load minus wind and solar, the part thermal units and batteries serve.</p>
   </div>
   <p class="status" id="status">Loading data…</p>
 </header>
@@ -60,6 +60,8 @@
     </div>
   </section>
 
+  <div class="section-h"><h2>One day</h2></div>
+
   <section class="panel panel-wide" id="load-panel">
     <div class="panel-head"><div><h2>Load: day-ahead forecast against actual</h2><p class="note" id="load-note"></p></div></div>
     <div class="kpis" id="load-kpis"></div>
@@ -74,9 +76,11 @@
     <div class="chart" id="net-chart"></div>
   </section>
 
+  <div class="section-h"><h2>Across days</h2></div>
+
   <section class="panel panel-wide" id="bias-panel">
     <div class="panel-head">
-      <div><h2>Forecast bias by price</h2><p class="note" id="bias-note"></p></div>
+      <div><h2>Load forecast bias by price</h2><p class="note" id="bias-note"></p></div>
       <div class="panel-tools"><div class="seg seg-sm" role="radiogroup" aria-label="Period" id="c-win"><button type="button" role="radio" data-v="30">Last 30 days</button><button type="button" role="radio" data-v="90">Last 90 days</button><button type="button" role="radio" data-v="all">All</button></div></div>
     </div>
     <div class="pair">

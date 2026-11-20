@@ -36,8 +36,8 @@ function net(d) {
   });
 }
 
-// A one-day hourly chart: lines over hour ending, optional shaded gap between two series
-function hourChart(el, series, band, tip, csv) {
+// A one-day hourly chart: lines over hour ending, plus optional shaded bands between pairs of series
+function hourChart(el, series, bands, tip, csv) {
   const W = width(el), H = Math.round(Math.min(380, Math.max(260, W * 0.36)));
   const m = { l: 56, r: 14, t: 18, b: 34 }, { g, w, h, svg } = frame(el, W, H, m);
   const vals = series.flatMap((s) => s.v).filter((v) => v != null);
@@ -49,11 +49,11 @@ function hourChart(el, series, band, tip, csv) {
   g.append("g").attr("class", "axis").attr("transform", `translate(0,${h})`).call(d3.axisBottom(x).ticks(w < 500 ? 6 : 12).tickFormat((v) => v).tickSizeOuter(0));
   svg.append("text").attr("class", "axis-title").attr("x", m.l).attr("y", 12).text("GW");
   svg.append("text").attr("class", "axis-title").attr("x", m.l).attr("y", H - 4).text("Hour ending (Central) →");
-  if (band) {
+  (bands || []).forEach((band) => {
     const pts = HOURS.map((hh, i) => [hh, band.a[i], band.b[i]]).filter((p) => p[1] != null && p[2] != null);
     g.append("path").attr("d", d3.area().x((p) => x(p[0])).y0((p) => y(p[1])).y1((p) => y(p[2])).curve(d3.curveMonotoneX)(pts))
       .attr("fill", band.color).attr("opacity", 0.28);
-  }
+  });
   series.forEach((s) => {
     const pts = HOURS.map((hh, i) => [hh, s.v[i]]).filter((p) => p[1] != null);
     g.append("path").attr("d", d3.line().x((p) => x(p[0])).y((p) => y(p[1])).curve(d3.curveMonotoneX)(pts))
@@ -80,15 +80,16 @@ function drawLoad() {
     [have.length ? mw(d3.mean(have, Math.abs)) : "–", "average size of the miss"],
     [cheap.length ? mw(d3.mean(cheap, (h) => err[h - 1]), true) : "–", cheap.length ? `average error in the ${cheap.length} hour${cheap.length > 1 ? "s" : ""} with the hub at $${CHEAP} or less` : `no hours with the hub at $${CHEAP} or less`],
   ]);
-  const cF = css("--c1"), cA = css("--ink");
-  legend("load-legend", [[cF, "Forecast as of the day-ahead market", "dash"], [cA, "Actual load"], [css("--c2"), "Gap between forecast and actual", "area"]]);
-  hourChart($("load-chart"), [{ v: d.fc || [], color: cF, dash: true }, { v: d.act || [], color: cA }],
-    { a: d.fc || [], b: d.act || [], color: css("--c2") },
+  const cF = css("--muted"), cA = css("--ink"), cHi = css("--c2"), cLo = css("--c1");
+  const fc = d.fc || [], act = d.act || [];
+  const clamp = (f) => HOURS.map((h) => (fc[h - 1] == null || act[h - 1] == null ? null : f(fc[h - 1], act[h - 1])));
+  legend("load-legend", [[cF, "Forecast as of the day-ahead market", "dash"], [cA, "Actual load"], [cHi, "Forecast too high", "area"], [cLo, "Forecast too low", "area"]]);
+  hourChart($("load-chart"), [{ v: fc, color: cF, dash: true }, { v: act, color: cA }],
+    [{ a: act, b: clamp(Math.max), color: cHi }, { a: act, b: clamp(Math.min), color: cLo }],
     (h) => `<h4>${CX.dayLabel(S.day)}, HE ${h}</h4>` + tipRows([[cF, "Forecast", gw(d.fc?.[h - 1]), 1], [cA, "Actual", gw(d.act?.[h - 1])], [null, "Forecast − actual", mw(err[h - 1], true)], [null, "RT hub price", price(h - 1) == null ? "–" : "$" + price(h - 1).toFixed(2)]]),
     [["hour_ending", "load_forecast_mw", "load_actual_mw", "forecast_minus_actual_mw", "rt_hub_usd_mwh"], HOURS.map((h) => [h, d.fc?.[h - 1], d.act?.[h - 1], err[h - 1], price(h - 1)]), `Load forecast and actual ${S.day}`]);
-  $("load-note").textContent = "ERCOT's load forecast (the model it was using, as posted before the day-ahead market) against actual load, ERCOT total. " +
-    "Where the dashed line sits above the solid one, the market planned for more load than came; shaded gaps show the miss either way. " +
-    (d.act ? "" : "Actual load for this day is not posted yet.");
+  $("load-note").textContent = "ERCOT's load forecast as posted before the day-ahead market, against actual load, ERCOT total." +
+    (d.act ? "" : " Actual load for this day is not posted yet.");
 }
 
 function drawNet() {
@@ -103,7 +104,7 @@ function drawNet() {
   legend("net-legend", [[cF, "Forecast net load", "dash"], [cP, "Potential: had no wind or solar been curtailed"], [cS, "Served by thermal and batteries"], [cC, "Curtailed wind and solar", "area"]]);
   const series = [{ v: N.map((r) => r.fc), color: cF, dash: true }, { v: N.map((r) => r.srv), color: cS }];
   if (hasPot) series.splice(1, 0, { v: N.map((r) => r.pot), color: cP });
-  hourChart($("net-chart"), series, hasPot ? { a: N.map((r) => r.pot), b: N.map((r) => r.srv), color: cC } : null,
+  hourChart($("net-chart"), series, hasPot ? [{ a: N.map((r) => r.pot), b: N.map((r) => r.srv), color: cC }] : null,
     (h) => { const r = N[h - 1]; return `<h4>${CX.dayLabel(S.day)}, HE ${h}</h4>` + tipRows([[cF, "Forecast", gw(r.fc), 1], [cP, "Potential", gw(r.pot)], [cS, "Served", gw(r.srv)], [cC, "Curtailed", r.cur == null ? "–" : mw(r.cur)], [null, "Forecast − potential", mw(sub(r.fc, r.pot), true)]]); },
     [["hour_ending", "net_load_forecast_mw", "net_load_potential_mw", "net_load_served_mw", "curtailed_mw"], N.map((r) => [r.h, r.fc, r.pot, r.srv, r.cur]), `Net load ${S.day}`]);
   $("net-note").textContent = "Net load is load less wind and solar. Forecast: the load forecast less ERCOT's wind and solar forecasts, all as of the day-ahead market. " +
