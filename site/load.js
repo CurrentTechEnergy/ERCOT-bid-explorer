@@ -6,8 +6,8 @@ const CX = window.CX;
 const { tryJSON, showTip, hideTip, setCSV, css, esc } = CX;
 const $ = (id) => document.getElementById(id);
 const S = { P: null, day: null, win: "90", picker: null };
-const CHEAP = 15;                                   // $/MWh: about a gas boiler's cost of heat
-const BANDS = [["≤ $0", -Infinity, 0], ["$0–15", 0, 15], ["$15–40", 15, 40], ["> $40", 40, Infinity]];
+const CHEAP = 10;                                   // $/MWh: the site's cheap-hour cut
+const BANDS = [["≤ $0", -Infinity, 0], ["$0–10", 0, 10], ["$10–40", 10, 40], ["> $40", 40, Infinity]];
 const HOURS = d3.range(1, 25);
 
 const gw = (v) => (v == null ? "–" : d3.format(",.1f")(v / 1000) + " GW");
@@ -117,7 +117,7 @@ function windowDays() {
   const ds = S.P.dates.filter((d) => S.P.days[d].hub && S.P.days[d].fc && S.P.days[d].act);
   return S.win === "all" ? ds : ds.slice(-Number(S.win));
 }
-function barChart(el, rows, label, tip, csv) {
+function barChart(el, rows, label, tip, csv, opt = {}) {
   const W = width(el), H = Math.round(Math.min(300, Math.max(220, W * 0.5)));
   const m = { l: 56, r: 10, t: 18, b: 40 }, { g, w, h, svg } = frame(el, W, H, m);
   const ok = rows.filter((r) => r.v != null);
@@ -129,11 +129,11 @@ function barChart(el, rows, label, tip, csv) {
   g.append("g").attr("class", "axis").call(d3.axisLeft(y).ticks(5).tickFormat(d3.format(",")).tickSizeOuter(0));
   g.append("g").attr("class", "axis").attr("transform", `translate(0,${h})`).call(d3.axisBottom(x).tickValues(rows.length > 12 && w < 500 ? rows.filter((r, i) => i % 3 === 0).map((r) => r.k) : rows.map((r) => r.k)).tickSizeOuter(0));
   g.append("line").attr("class", "zero").attr("x1", 0).attr("x2", w).attr("y1", y(0)).attr("y2", y(0));
-  svg.append("text").attr("class", "axis-title").attr("x", m.l).attr("y", 12).text("MW, + = forecast too high");
+  svg.append("text").attr("class", "axis-title").attr("x", m.l).attr("y", 12).text(opt.ylab || "MW, + = forecast too high");
   svg.append("text").attr("class", "axis-title").attr("x", m.l).attr("y", H - 4).text(label);
   const up = css("--c2"), dn = css("--c1");
   g.selectAll("rect.b").data(ok).join("rect").attr("class", "b").attr("x", (r) => x(r.k)).attr("width", x.bandwidth())
-    .attr("y", (r) => y(Math.max(0, r.v))).attr("height", (r) => Math.abs(y(r.v) - y(0))).attr("rx", 2).attr("fill", (r) => (r.v >= 0 ? up : dn))
+    .attr("y", (r) => y(Math.max(0, r.v))).attr("height", (r) => Math.abs(y(r.v) - y(0))).attr("rx", 2).attr("fill", (r) => opt.color || (r.v >= 0 ? up : dn))
     .on("pointermove", (ev, r) => showTip(ev, tip(r))).on("pointerleave", hideTip);
   setCSV(el, csv[0], csv[1], csv[2]);
 }
@@ -149,10 +149,35 @@ function drawBias() {
   barChart($("bias-hour"), hr, "Hour ending (Central)",
     (r) => `<h4>HE ${r.k}, hub at $${CHEAP} or less</h4>` + tipRows([[null, "Hours", d3.format(",")(r.n)], [null, "Average error", mw(r.v, true)]]),
     [["hour_ending", "cheap_hours", "mean_error_mw"], hr.map((r) => [r.k, r.n, r.v]), `Cheap-hour load forecast bias by hour ${S.win}`]);
+  drawThermal(ds);
   $("bias-hour-h").textContent = `Hours with the hub at $${CHEAP} or less: average error by hour`;
   $("bias-note").textContent = `Load forecast minus actual load, averaged by real-time hub price, over ${d3.format(",")(rows.length)} hours (${CX.dayLabel(ds[0])} to ${CX.dayLabel(ds.at(-1))}). ` +
-    `Orange bars: the forecast was too high on average; blue: too low. $${CHEAP}/MWh is about what a gas boiler's heat costs. ` +
+    `Orange bars: the forecast was too high on average; blue: too low. $${CHEAP}/MWh is the site's cheap-hour cut. ` +
     "Over-forecasts and cheap hours go together partly because an over-forecast itself commits extra units and lowers prices. Hours with fewer than three cheap days are left blank.";
+}
+
+// Thermal left online beyond served net load, in cheap hours, by how far the load forecast missed
+const ERR_BINS = [["Low by 1 GW+", -Infinity, -1000], ["Low by 0–1 GW", -1000, 0], ["High by 0–1 GW", 0, 1000], ["High by 1–2 GW", 1000, 2000], ["High by 2 GW+", 2000, Infinity]];
+function drawThermal(ds) {
+  const rows = [];
+  ds.forEach((dd) => {
+    const d = S.P.days[dd];
+    if (!d.thon || !d.wact || !d.sact) return;
+    HOURS.forEach((h) => {
+      const i = h - 1, p = d.hub[i], e = sub(d.fc[i], d.act[i]);
+      if (p == null || p > CHEAP || e == null || d.thon[i] == null || d.wact[i] == null || d.sact[i] == null) return;
+      rows.push({ e, x: d.thon[i] - (d.act[i] - d.wact[i] - d.sact[i]) });
+    });
+  });
+  const base = rows.length ? d3.mean(rows, (q) => q.x) : null;
+  const bins = ERR_BINS.map(([k, lo, hi]) => { const r = rows.filter((q) => q.e > lo && q.e <= hi); const a = r.length >= 5 ? d3.mean(r, (q) => q.x) : null; return { k, a, v: a == null ? null : a - base, n: r.length }; });
+  barChart($("bias-thermal"), bins, "Load forecast against actual",
+    (r) => `<h4>Forecast ${esc(r.k.toLowerCase())}</h4>` + tipRows([[null, "Cheap hours", d3.format(",")(r.n)], [null, "Against the average cheap hour", mw(r.v, true)], [null, "Thermal online beyond net load", mw(r.a)]]),
+    [["load_forecast_error_bin", "cheap_hours", "thermal_hsl_online_minus_served_net_load_mw", "vs_average_cheap_hour_mw"], bins.map((r) => [r.k, r.n, r.a, r.v]), `Thermal online beyond net load in cheap hours ${S.win}`],
+    { ylab: "MW more (+) or less (−) thermal online than the average cheap hour" });
+  $("bias-thermal-note").textContent = rows.length
+    ? `${d3.format(",")(rows.length)} hours with the hub at $${CHEAP} or less that have 60-day data. Thermal left online is thermal capacity online (nuclear, coal and gas HSL) less served net load: ${mw(base)} in the average cheap hour. Bars show each bin against that average. Bins with fewer than five hours are left blank.`
+    : "No cheap hours with 60-day data in this period.";
 }
 
 function drawAll() { drawLoad(); drawNet(); drawBias(); }
