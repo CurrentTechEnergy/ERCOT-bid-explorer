@@ -46,6 +46,7 @@ from .unit_hours_day import build_unit_hour_days
 from .rt_nodes import build_rt_nodes
 from .unit_curves import build_unit_curves
 from .hourly_context import build_hourly_context
+from .load_page import build_load_page
 from .stayon import build_stayon
 from .decisions import build_decisions
 from .curve_trends import build_curve_trends
@@ -560,6 +561,7 @@ def main(argv=None):
         build_rt_nodes(index)
         build_unit_curves(index)
         build_hourly_context(index)
+        build_load_page(index)
         build_stayon(index)
         build_decisions(index)
         build_curve_trends(index)
@@ -673,6 +675,7 @@ def main(argv=None):
     build_rt_nodes(index)
     build_unit_curves(index)
     build_hourly_context(index)
+    build_load_page(index)
     build_stayon(index)
     build_decisions(index)
     build_curve_trends(index)
