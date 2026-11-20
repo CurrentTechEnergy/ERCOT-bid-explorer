@@ -10,7 +10,7 @@ const fmtPct = d3.format(".0%");
 const fmtPt = (v) => `${v >= 0 ? "+" : "−"}${d3.format(".1f")(Math.abs(v) * 100)} pt`;
 const fmtTWh = (mwh) => d3.format(",.2f")(mwh / 1e6);
 const TECH = { combined_cycle: "Combined cycle", gas_steam: "Gas steam", coal: "Coal", combustion_turbine: "Combustion turbine and recip", nuclear: "Nuclear" };
-const S = { G: null, zoom: true, year: "all", tech: "combined_cycle", fuel: "all", q2cost: "" };
+const S = { G: null, zoom: true, year: "all", tech: "combined_cycle", fuel: "all", q2cost: "", clYear: null };
 
 function emptyMsg(el, msg) { el.innerHTML = `<p class="empty">${msg}</p>`; }
 const yearLabel = (y) => { const r = S.G.years[y]; return r && r.to.slice(5) !== "12-31" ? `${y} (Jan 1 to ${d3.timeFormat("%b %-d")(new Date(r.to + "T12:00:00"))})` : String(y); };
@@ -582,7 +582,144 @@ function drawSiting() {
     Object.entries(R).map(([k, r]) => [k, svcOf(k), r.curt, r.mw, r.reach, r.disc, ...r.absorb]), "Where a new load could use curtailment");
 }
 
-function drawAll() { drawQ1(); drawQ2(); drawQ3(); drawQ4(); }
+// ==== Which fossil units can price reach: the fossil classes (pipeline/fossil_class.py) =========
+const CL_KEYS = ["3", "2", "1", "ruc", "0"];          // bottom to top
+const CL = {
+  "3": { label: "Insensitive, never shown it can shut down", color: "--bid1" },
+  "2": { label: "Insensitive, has shown it can shut down", color: "--bid2" },
+  "1": { label: "Price-sensitive", color: "--bid4" },
+  ruc: { label: "Held on by RUC", color: "--c7" },
+  "0": { label: "No class (not run in the last two years)", color: "--c-other" },
+};
+const CL_TECHS = ["coal", "combined_cycle", "gas_steam", "combustion_turbine"];
+const CL_MIN_HOURS = 5;     // cheap hours an hour of day needs to be drawn
+function clData() {
+  const C = S.G.classes;
+  const hrs = d3.rollup(C.hours, (v) => d3.sum(v, (r) => r[2]), (r) => r[0], (r) => r[1]);
+  const tot = (y) => d3.sum([...(hrs.get(y) || new Map()).values()]);
+  const M = C.mw.map(([year, tech, cls, he, min, above]) => ({ year, tech, cls: String(cls), he, min, above }));
+  return { C, hrs, tot, M, ys: [...hrs.keys()].sort() };
+}
+function hatch(svg, id) {
+  svg.append("defs").append("pattern").attr("id", id).attr("width", 5).attr("height", 5).attr("patternUnits", "userSpaceOnUse").attr("patternTransform", "rotate(45)")
+    .append("line").attr("y2", 5).attr("stroke", css("--surface")).attr("stroke-opacity", 0.75).attr("stroke-width", 1.6);
+}
+function clWhy(u, C) {
+  const [, tech, cls, , n, off, ever, share, low, lowY, grp] = u, lb = C.lookback, r = C.rules;
+  const yrs = lb.length > 1 ? `${lb[0]} to ${lb.at(-1)}` : String(lb[0]);
+  const sp = grp && grp !== "never off" ? `; latest year: ${grp}` : grp === "never off" ? "; no off spell in the latest year" : "";
+  if (n != null) {
+    if (n >= r.min_win) return `Turned off for ${off} of ${n} windows where shutting paid, ${yrs}` + (cls === 1 ? "" : `; ${ever} such turn-off${ever === 1 ? "" : "s"} since 2019`) + sp;
+    return `${n} window${n === 1 ? "" : "s"} where shutting paid, ${yrs}: too few to judge, so classed by its off spells` + sp;
+  }
+  const s = share == null ? "too few available cheap hours" : `${fmtPct(share)} of its available cheap hours, ${yrs}`;
+  if (tech === "coal") return `Ran through ${s}` + (low != null ? `; lowest year ${fmtPct(low)} (${lowY})` : "");
+  return `Online in ${s}` + sp;
+}
+function drawClasses() {
+  if (!S.G.classes) {
+    $("classes-panel").hidden = true;     // until the first Goal page run that builds them
+    return;
+  }
+  const { C, hrs, tot, M, ys } = clData();
+  const y = ys.includes(S.clYear) ? S.clYear : ys.at(-1);
+  S.clYear = y;
+  const T = tot(y), MY = M.filter((r) => r.year === y);
+  const sum = (f) => d3.sum(MY.filter(f), (r) => r.min + r.above) / (T || 1);
+  const by = Object.fromEntries(CL_KEYS.map((k) => [k, sum((r) => r.cls === k)]));
+  const all = d3.sum(CL_KEYS, (k) => by[k]), lb = C.lookback, yrs = lb.length > 1 ? `${lb[0]} to ${lb.at(-1)}` : String(lb[0]);
+  const insens = by["2"] + by["3"];
+  $("cl-answer").innerHTML = `<b>${fmtPct(insens / (all || 1))} of the fossil minimum output online in ${yearLabel(y)}'s cheap hours was at units that don't turn off for price.</b> ` +
+    `In an average cheap hour, ${fmtGW(all)} GW of minimum output (LSL) was online: ${fmtGW(by["3"])} GW at units that have never shown they can shut down, ${fmtGW(by["2"])} GW at units that can shut down but rarely do it for price, and ${fmtGW(by["1"])} GW at price-sensitive units` +
+    (by["0"] > 50 ? `, plus ${fmtGW(by["0"])} GW at units that have not run since` : "") + (by.ruc > 50 ? ` and ${fmtGW(by.ruc)} GW held on by RUC` : "") + `.`;
+  const r = C.rules;
+  setNote($("cl-note"), `Each unit is classed on ${yrs}. Cheap hours: day-ahead system lambda at $${S.G.cheap} or less, ${d3.format(",")(Math.round(T))} in ${yearLabel(y)}.`,
+    `Combined cycle and gas steam use the same windows as the heatmap above: day-ahead loss windows where a shutdown would have paid after the restart, the make-whole and the ancillary services it gives up. Windows held by RUC are left out, and outages are not windows. Price-sensitive: turned off for ${fmtPct(r.rate_cut)} or more of them over ${yrs} (at least ${r.min_win}). Has shown it can shut down: less often, but turned off where shutting paid ${r.ever_min} or more times since 2019, or had an off spell (2 or more hours offline while available, not mostly outage) in ${yrs}. With fewer than ${r.min_win} windows, a unit that cycled daily at least once a week is price-sensitive.\n\n` +
+    `Coal: price-sensitive if it ran through under ${fmtPct(r.coal_sensitive)} of its available cheap hours over ${yrs}; has shown it can shut down if under ${fmtPct(r.coal_shown)} in any year since 2019. Combustion turbines: price-sensitive if online in under ${fmtPct(r.ct_sensitive)} of their available cheap hours over ${yrs}; has shown it can shut down with any off spell.\n\n` +
+    `Each bar sums the minimum output (LSL) of the units online, combined-cycle configurations merged into their train, divided by the cheap hours. A unit above minimum counts at its minimum, the part a shutdown would remove. RUC hours are known from the 60-day files only (Nov 2025 on).`);
+  legend("cl-legend", CL_KEYS.filter((k) => M.some((m) => m.cls === k && m.min + m.above > 0)).reverse().map((k) => [CL[k].label, CL[k].color]));
+  const tipRows = (rows) => `<table>${rows.map(([l, v]) => `<tr><td>${l}</td><td class="n">${v}</td></tr>`).join("")}</table>`;
+  // by technology
+  {
+    const el = $("cl-tech"), w = Math.max(300, el.clientWidth || 700), narrow = w < 560, m = { t: 6, r: 24, b: 26, l: narrow ? 92 : 110 }, rh = 30, H = m.t + m.b + rh * CL_TECHS.length;
+    const v = (t, k) => sum((q) => q.tech === t && q.cls === k);
+    const x = d3.scaleLinear().domain([0, d3.max(CL_TECHS, (t) => d3.sum(CL_KEYS, (k) => v(t, k))) || 1]).nice().range([m.l, w - m.r]);
+    const yb = d3.scaleBand().domain(CL_TECHS).range([m.t, H - m.b]).padding(0.25);
+    const svg = d3.create("svg").attr("viewBox", `0 0 ${w} ${H}`);
+    svg.append("g").attr("class", "gridline").attr("transform", `translate(0,${H - m.b})`).call(d3.axisBottom(x).ticks(narrow ? 3 : 5).tickSize(-(H - m.t - m.b)).tickFormat(""));
+    svg.append("g").attr("class", "axis").attr("transform", `translate(0,${H - m.b})`).call(d3.axisBottom(x).ticks(narrow ? 3 : 5).tickFormat((d) => `${d3.format(",.1f")(d / 1000)} GW`).tickSizeOuter(0));
+    svg.append("g").attr("class", "axis").attr("transform", `translate(${m.l},0)`).call(d3.axisLeft(yb).tickFormat((t) => (t === "combustion_turbine" ? "CT and recip" : TECH[t])).tickSizeOuter(0));
+    CL_TECHS.forEach((t) => {
+      let acc = 0;
+      CL_KEYS.forEach((k) => {
+        const val = v(t, k);
+        if (val <= 0) return;
+        const x0 = x(acc), x1 = x(acc + val);
+        svg.append("rect").attr("x", x0).attr("y", yb(t)).attr("width", Math.max(0, x1 - x0 - 1)).attr("height", yb.bandwidth()).attr("fill", css(CL[k].color))
+          .on("pointermove", (ev) => showTip(ev, `<h4>${TECH[t]}, ${yearLabel(y)}</h4>` + tipRows([[CL[k].label, `${d3.format(",.0f")(val)} MW`], ["Share of the technology", fmtPct(val / (d3.sum(CL_KEYS, (q) => v(t, q)) || 1))]])))
+          .on("pointerleave", hideTip);
+        if (x1 - x0 > 34) svg.append("text").attr("class", "bar-val").attr("x", (x0 + x1) / 2).attr("y", yb(t) + yb.bandwidth() / 2 + 4).attr("text-anchor", "middle").attr("pointer-events", "none")
+          .attr("fill", css(["3", "2"].includes(k) ? "--surface" : "--ink")).style("font-size", "11px").text(d3.format(",.1f")(val / 1000));
+        acc += val;
+      });
+    });
+    el.replaceChildren(svg.node());
+    setCSV(el, ["year", "tech", "class", "mean_mw"], CL_TECHS.flatMap((t) => CL_KEYS.map((k) => [y, t, k, Math.round(v(t, k))])), `Fossil classes by technology ${y}`);
+  }
+  // by hour of day: at minimum solid, above minimum hatched
+  {
+    const el = $("cl-hour"), w = Math.max(300, el.clientWidth || 700), m = { t: 14, r: 14, b: 26, l: 56 }, H = 260;
+    const hm = hrs.get(y) || new Map(), hes = d3.range(1, 25);
+    const cell = (he, k, part) => { const n = hm.get(he) || 0; return n >= CL_MIN_HOURS ? d3.sum(MY.filter((q) => q.he === he && q.cls === k), (q) => q[part]) / n : 0; };
+    const x = d3.scaleBand().domain(hes).range([m.l, w - m.r]).padding(0.2);
+    const top = d3.max(hes, (he) => d3.sum(CL_KEYS, (k) => cell(he, k, "min") + cell(he, k, "above"))) || 1;
+    const yy = d3.scaleLinear().domain([0, top]).nice().range([H - m.b, m.t]);
+    const svg = d3.create("svg").attr("viewBox", `0 0 ${w} ${H}`), pid = "cl-hatch";
+    hatch(svg, pid);
+    svg.append("g").attr("class", "gridline").attr("transform", `translate(${m.l},0)`).call(d3.axisLeft(yy).ticks(5).tickSize(-(w - m.l - m.r)).tickFormat(""));
+    svg.append("g").attr("class", "axis").attr("transform", `translate(${m.l},0)`).call(d3.axisLeft(yy).ticks(5).tickFormat((v) => d3.format(",.0f")(v / 1000)).tickSizeOuter(0));
+    svg.append("g").attr("class", "axis").attr("transform", `translate(0,${H - m.b})`).call(d3.axisBottom(x).tickValues(w < 560 ? hes.filter((h) => h % 3 === 0) : hes).tickSizeOuter(0));
+    svg.append("text").attr("class", "axis-title").attr("x", m.l).attr("y", 9).text("GW of minimum output online, by hour ending");
+    hes.forEach((he) => {
+      const n = hm.get(he) || 0;
+      if (n < CL_MIN_HOURS) return;
+      let acc = 0;
+      CL_KEYS.forEach((k) => ["min", "above"].forEach((part) => {
+        const val = cell(he, k, part);
+        if (val <= 0) return;
+        const yt = yy(acc + val), hgt = Math.max(0, yy(acc) - yt - 0.5);
+        svg.append("rect").attr("x", x(he)).attr("width", x.bandwidth()).attr("y", yt).attr("height", hgt).attr("fill", css(CL[k].color));
+        if (part === "above") svg.append("rect").attr("x", x(he)).attr("width", x.bandwidth()).attr("y", yt).attr("height", hgt).attr("fill", `url(#${pid})`);
+        acc += val;
+      }));
+      svg.append("rect").attr("x", x(he)).attr("width", x.bandwidth()).attr("y", m.t).attr("height", H - m.t - m.b).attr("fill", "transparent")
+        .on("pointermove", (ev) => showTip(ev, `<h4>Hour ending ${he}, ${yearLabel(y)}</h4><table>` + CL_KEYS.filter((k) => cell(he, k, "min") + cell(he, k, "above") > 0).reverse()
+          .map((k) => `<tr><td>${CL[k].label}</td><td class="n">${d3.format(",.0f")(cell(he, k, "min") + cell(he, k, "above"))} MW</td><td class="n">${d3.format(",.0f")(cell(he, k, "min"))} at min</td></tr>`).join("") +
+          `<tr><td><b>Total</b></td><td class="n"><b>${d3.format(",.0f")(d3.sum(CL_KEYS, (k) => cell(he, k, "min") + cell(he, k, "above")))} MW</b></td><td></td></tr><tr><td>Cheap hours</td><td class="n">${d3.format(",")(Math.round(n))}</td><td></td></tr></table>`))
+        .on("pointerleave", hideTip);
+    });
+    el.replaceChildren(svg.node());
+    setCSV(el, ["year", "hour_ending", "cheap_hours", ...CL_KEYS.flatMap((k) => [`class_${k}_at_min_mw`, `class_${k}_above_min_mw`])],
+      hes.map((he) => [y, he, Math.round(hm.get(he) || 0), ...CL_KEYS.flatMap((k) => [Math.round(cell(he, k, "min")), Math.round(cell(he, k, "above"))])]), `Fossil classes by hour ${y}`);
+  }
+  // every year, today's classes
+  {
+    const yv = ys.filter((q) => S.G.years[q]);
+    const val = (q, k) => d3.sum(M.filter((m) => m.year === q && m.cls === k), (m) => m.min + m.above) / (tot(q) || 1);
+    stack($("cl-years"), yv, CL_KEYS, val, { title: "GW of minimum output online, average cheap hour", labels: CL, tip: (v) => `${d3.format(",.1f")(v / 1000)} GW` });
+    setCSV($("cl-years"), ["year", "cheap_hours", ...CL_KEYS.map((k) => `class_${k}_mw`)], yv.map((q) => [q, Math.round(tot(q)), ...CL_KEYS.map((k) => Math.round(val(q, k)))]), "Fossil classes by year");
+  }
+  // every unit
+  const U = C.units.slice().sort((a, b) => a[2] - b[2] || (b[3] || 0) - (a[3] || 0));
+  const cnt = d3.rollup(U, (v) => v.length, (u) => u[2]);
+  $("cl-units-note").textContent = `${U.length} units: ${[1, 2, 3].map((k) => `${cnt.get(k) || 0} ${CL[k].label.toLowerCase()}`).join(", ")}`;
+  $("cl-units").innerHTML = `<table class="data cl-units"><thead><tr><th class="t">Unit, and why</th><th class="t">Class</th><th>Minimum (LSL), MW</th></tr></thead><tbody>` +
+    U.map((u) => `<tr><td class="t"><a href="unit.html?unit=${encodeURIComponent(u[0])}">${esc(u[0])}</a> <span class="cl-tech">${TECH[u[1]] || esc(u[1])}</span><span class="cl-why">${esc(clWhy(u, C))}</span></td>` +
+      `<td class="t"><span class="sw" style="background:var(${CL[u[2]].color})"></span> ${CL[u[2]].label}</td><td>${u[3] == null ? "–" : d3.format(",")(u[3])}</td></tr>`).join("") + `</tbody></table>`;
+  setCSV($("cl-units"), ["unit", "tech", "class", "lsl_mw", "windows", "turned_off", "turned_off_since_2019", "cheap_run_share", "lowest_yearly_cheap_run_share", "lowest_year", "latest_group"], U, "Fossil classes by unit");
+}
+
+function drawAll() { drawQ1(); drawQ2(); drawQ3(); drawClasses(); drawQ4(); }
 
 (async function boot() {
   window.CX.init();
@@ -618,6 +755,12 @@ function drawAll() { drawQ1(); drawQ2(); drawQ3(); drawQ4(); }
   $("q1-year").addEventListener("mousedown", stop);
   $("q2c-fuel").addEventListener("click", (e) => { const b = e.target.closest("button"); if (!b) return; S.fuel = b.dataset.v; drawQ2(); });
   $("q3-tech").addEventListener("change", (e) => { S.tech = e.target.value; writeHash({ y: S.year, t: S.tech }); drawQ3(); });
+  if (S.G.classes) {
+    const cy = [...new Set(S.G.classes.hours.map((r) => r[0]))].filter((q) => S.G.years[q]).sort();
+    S.clYear = cy.at(-1);
+    $("cl-year").innerHTML = cy.slice().reverse().map((q) => `<option value="${q}">${yearLabel(q)}</option>`).join("");
+    $("cl-year").addEventListener("change", (e) => { S.clYear = +e.target.value; drawClasses(); });
+  }
   drawAll();
   let rw = 0;
   addEventListener("resize", () => { clearTimeout(rw); rw = setTimeout(drawAll, 150); });
