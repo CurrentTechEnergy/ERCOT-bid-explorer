@@ -3,7 +3,21 @@
   <title>BRAUNIG_VHB6CT7: bidding and operating changes</title>
   <link href="https://ercotbids.currenttech.energy/unit.html?unit=BRAUNIG_VHB6CT7"/>
   <id>https://ercotbids.currenttech.energy/unit.html?unit=BRAUNIG_VHB6CT7</id>
-  <updated>2026-11-12T00:00:00Z</updated>
+  <updated>2026-11-20T00:00:00Z</updated>
+  <entry>
+    <title>BRAUNIG_VHB6CT7: Day-ahead: minimum-energy offer stepped (2026-09-15)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=BRAUNIG_VHB6CT7"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=BRAUNIG_VHB6CT7#BRAUNIG_VHB6CT7/2026-09-15/dam_mingen_step</id>
+    <updated>2026-11-20T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $13 to $31/MWh (offer minus fuel cost: −$18 to −$4/MWh)</summary>
+  </entry>
+  <entry>
+    <title>BRAUNIG_VHB6CT7: Day-ahead: minimum-energy offer stepped (2026-09-15)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=BRAUNIG_VHB6CT7"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=BRAUNIG_VHB6CT7#BRAUNIG_VHB6CT7/2026-09-15/dam_mingen_step</id>
+    <updated>2026-11-20T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $13 to $31/MWh (offer minus fuel cost: −$18 to −$4/MWh)</summary>
+  </entry>
   <entry>
     <title>BRAUNIG_VHB6CT7: Outage ended (2026-09-09)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=BRAUNIG_VHB6CT7"/>

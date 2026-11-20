@@ -3,7 +3,21 @@
   <title>HOVEY_UNIT1: bidding and operating changes</title>
   <link href="https://ercotbids.currenttech.energy/unit.html?unit=HOVEY_UNIT1"/>
   <id>https://ercotbids.currenttech.energy/unit.html?unit=HOVEY_UNIT1</id>
-  <updated>2026-10-18T00:00:00Z</updated>
+  <updated>2026-11-20T00:00:00Z</updated>
+  <entry>
+    <title>HOVEY_UNIT1: Day-ahead: wind/solar floor changed (2026-09-15)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=HOVEY_UNIT1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=HOVEY_UNIT1#HOVEY_UNIT1/2026-09-15/dam_renew_floor</id>
+    <updated>2026-11-20T00:00:00Z</updated>
+    <summary>Day-ahead floor changed: $20 to −$5/MWh</summary>
+  </entry>
+  <entry>
+    <title>HOVEY_UNIT1: Day-ahead: wind/solar floor changed (2026-09-15)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=HOVEY_UNIT1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=HOVEY_UNIT1#HOVEY_UNIT1/2026-09-15/dam_renew_floor</id>
+    <updated>2026-11-20T00:00:00Z</updated>
+    <summary>Day-ahead floor changed: $20 to −$5/MWh</summary>
+  </entry>
   <entry>
     <title>HOVEY: Wind/solar: offer floor changed (2025-07-31)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=HOVEY"/>
