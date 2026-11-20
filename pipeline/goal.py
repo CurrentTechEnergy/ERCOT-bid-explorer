@@ -45,6 +45,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
+from . import fossil_class
 from .config import DATA_DIR, HISTORY_DIR, UNIT_DATA_DIR
 from .decision_table import _months, month_file
 from .hours import hour_weight
@@ -52,7 +53,7 @@ from .intraday import train_of
 from .store import read_json_gz, write_json_gz
 
 PATH = DATA_DIR / "goal.json.gz"
-VERSION = "v14"  # v14: Q3 almost never off (ALMOST_MAX or less of NEVER_ALL_MIN+ paid windows) and never shut but too few paid windows to judge (untested); v13: decision table d5 (outage-like off spells are outages, as the rest of the site), never off judged on the windows where shutting pays (NEVER_ALL_MIN of them or more), as the heatmap; v12: the fall-back Sunday's folded HE2 counts as two hours (pipeline/hours.py); v11: Q3 by unit (shut rate where shutting pays, each year), cycling units by loss band, minimum output ridden through against 2019 to 2021 habits; v10: decision table d4 (make-whole and AS netted, held = RUC), Q3 by DAM position; v9: question 4's siting maps (pipeline/load_siting.py); v8: 2 h off spells (were 4 h); v7: decision table d2 (operator's-view loss windows, buckets, coal out); v5: cheap hours on DA system lambda (was the DA hub average)
+VERSION = "v15"  # v15: the fossil classes (pipeline/fossil_class.py); v14: Q3 almost never off (ALMOST_MAX or less of NEVER_ALL_MIN+ paid windows) and never shut but too few paid windows to judge (untested); v13: decision table d5 (outage-like off spells are outages, as the rest of the site), never off judged on the windows where shutting pays (NEVER_ALL_MIN of them or more), as the heatmap; v12: the fall-back Sunday's folded HE2 counts as two hours (pipeline/hours.py); v11: Q3 by unit (shut rate where shutting pays, each year), cycling units by loss band, minimum output ridden through against 2019 to 2021 habits; v10: decision table d4 (make-whole and AS netted, held = RUC), Q3 by DAM position; v9: question 4's siting maps (pipeline/load_siting.py); v8: 2 h off spells (were 4 h); v7: decision table d2 (operator's-view loss windows, buckets, coal out); v5: cheap hours on DA system lambda (was the DA hub average)
 START = "2019-01"
 CHEAP = 10.0          # $/MWh, day-ahead system lambda: a cheap hour
 OVER_PRICE = 5.0      # $/MWh, real-time hub average: an oversupply hour
@@ -385,8 +386,16 @@ def _year(year, months, cache, before=None, losing=None, gas=None):
                        int(rw[r["over"]].sum()), int(oh["w"].sum()), round(float((oh["free"] * oh["w"]).sum())), [round(float(v)) for v in
                        (r["free"] * rw)[r["over"]].groupby(r["he"][r["over"]]).sum().reindex(range(1, 25), fill_value=0.0)]],
               "atmin": atm, "avoid": avoid}
+    # the fossil classes (pipeline/fossil_class.py): each train's cheap-hour facts and its minimum
+    # output online in cheap hours; CTs take their group from this year's states alone
+    grp = {tr: v[1] for tr, v in info.items()}
+    for tr, g in h[h["tech"] == "combustion_turbine"].groupby("train", sort=False):
+        grp[tr] = _group(g["state"].to_numpy())[0]
+    from .decision_table import month_ruc
+    rucs = [r for r in (month_ruc(m, cache) for m in months) if r is not None]
+    classes = fossil_class.year_facts(year, h, grp, pd.concat(rucs, ignore_index=True) if rucs else None)
     days = sorted(h["date"].unique())
-    return {"q1": q1rows, "q2award": q2award, "q2cost": q2cost, "q4": q4, "floor": floor, "cheap_hours": cheap_hours, "from": days[0], "to": days[-1],
+    return {"classes": classes, "q1": q1rows, "q2award": q2award, "q2cost": q2cost, "q4": q4, "floor": floor, "cheap_hours": cheap_hours, "from": days[0], "to": days[-1],
             "states": h[h["tech"].isin(FOSSIL)][["train", "date", "he", "state"]]}
 
 
@@ -574,6 +583,7 @@ def build(cache: Path, end=None, table=None) -> dict:
        "q4": {"years": [[year, available_mwh, curtailed_mwh, in_oversupply_mwh, uncongested_mwh,
                          oversupply_hours, counted_hours, uncongested_in_counted_mwh, uncongested_by_he[24]]],
               "atmin": [[year, tech, ECON or the tech, mwh]], "avoid": [[year, scenario, mwh]], "scenarios", "econ"},
+       "classes": pipeline/fossil_class.build()'s block (the fossil classes, under Q3),
        "siting": pipeline/load_siting.build()'s block, or absent}
     MWh sums over the year's hours; the page divides by the hours for means."""
     end = end or max((p.name[:7] for p in (UNIT_DATA_DIR / "60d").glob("20*.json.gz")), default=None) \
@@ -592,6 +602,7 @@ def build(cache: Path, end=None, table=None) -> dict:
     from .decision_table import gas_by_hub, hub_of
     gas = (gas_by_hub(cache), hub_of())
     before, nets, fos = None, [], []
+    cfacts, ctally, chours = [], [], []
     for y in sorted({m[:4] for m in months}):
         r = _year(int(y), [m for m in months if m[:4] == y], cache, before, losing, gas)
         if r is None:
@@ -614,9 +625,13 @@ def build(cache: Path, end=None, table=None) -> dict:
             out["q4"]["atmin"] += r["q4"]["atmin"]
             out["q4"]["avoid"] += r["q4"]["avoid"]
         out["through"] = r["to"]
+        cfacts += r["classes"][0]
+        ctally += r["classes"][1]
+        chours += r["classes"][2]
     if nets:
         out["floor"]["median"]["all"] = _medians(np.concatenate(nets), np.concatenate(fos))
     out["q3"] = _rule(table)
+    out["classes"] = fossil_class.build(table, cfacts, ctally, chours)
     from .load_siting import build as build_siting
     siting = build_siting(months, cache, _hubs, CONGESTED, OVER_PRICE)
     if siting:

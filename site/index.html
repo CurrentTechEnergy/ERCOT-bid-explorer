@@ -132,6 +132,33 @@
     <div class="units-wrap" id="q3p-table"></div>
     <p class="detail">See the detail: <a href="changes.html">What's changing</a> for unit by unit changes in offers and behavior.</p>
   </section>
+  <section class="panel panel-wide" id="classes-panel">
+    <div class="panel-head">
+      <div>
+        <h2>Which fossil units can price reach?</h2>
+        <!-- default text for crawlers that do not run scripts; goal.js replaces it with the full answer. Hand-written, no live numbers: update it if the finding changes. -->
+        <p class="lead" id="cl-answer"><b>Most fossil minimum output running in cheap hours belongs to units that don't respond to price.</b> Each coal, combined cycle, gas steam and combustion turbine unit is put in one of three classes from what it did over the last two years: price-sensitive, price-insensitive but has shown it can shut down, or price-insensitive and never shown it can shut down.</p>
+        <p class="note" id="cl-note"></p>
+      </div>
+      <div class="panel-tools">
+        <label class="lbl inline" for="cl-year">Year</label>
+        <select id="cl-year"></select>
+      </div>
+    </div>
+    <div class="legend" id="cl-legend"></div>
+    <h3 class="sub-h">Minimum output online in an average cheap hour, by technology</h3>
+    <div class="chart" id="cl-tech"></div>
+    <h3 class="sub-h">By hour of day</h3>
+    <p class="intro">Solid: units sitting at their minimum output (LSL). Hatched: units online above minimum, counted at their minimum, the part a shutdown would take off.</p>
+    <div class="chart" id="cl-hour"></div>
+    <h3 class="sub-h">Every year, with today's classes</h3>
+    <p class="intro">Each year's cheap hours, with every unit in the class it holds now. Units with no class did not run in the last two years, mostly coal and gas steam since retired.</p>
+    <div class="chart" id="cl-years"></div>
+    <details class="sub-panel" id="cl-units-wrap">
+      <summary><b>Every unit and its class</b> <span class="h-note" id="cl-units-note"></span></summary>
+      <div class="units-wrap" id="cl-units"></div>
+    </details>
+  </section>
   <section class="panel panel-wide" id="q4-panel">
     <div class="panel-head">
       <div>
