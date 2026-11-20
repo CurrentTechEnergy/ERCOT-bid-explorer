@@ -49,6 +49,8 @@ INDEX_SOURCES = {
 FORWARD_SOURCES = {
     "dam_nodes.json.gz": "DAM node prices",
     "dam_lambda.json.gz": "DAM system lambda",
+    "load.json.gz": "Load forecast",
+    "renew_forecast.json.gz": "Wind and solar forecast",
 }
 
 
