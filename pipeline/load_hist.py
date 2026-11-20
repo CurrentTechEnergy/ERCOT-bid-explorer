@@ -14,7 +14,7 @@ dam_bids_day(blob) -> (date, {"dam-bids": frame, "dam-cheap-demand": frame})
   dam-bids          every non-zero DAM energy-only bid or offer award:
                     date, he, point, qse, side ("buy" / "sell"), mw (positive), da_price
   dam-cheap-demand  energy-only bids summed by date, he, point and qse: total_mw (the bid's
-                    largest MW), le0_mw and le15_mw (MW the bid buys only at $0 or $15/MWh or less:
+                    largest MW), le0_mw, le10_mw and le15_mw (MW the bid buys only at $0, $10 or $15/MWh or less:
                     total MW less what it still buys above that price)
 """
 import io
@@ -27,7 +27,7 @@ from .curves import to_iso_date
 from .store import iter_csvs
 
 SERVICES = {"regup": "regup", "regdown": "regdn", "rrs": "rrs", "ecrs": "ecrs", "nonspin": "nspin"}
-CHEAP = (0, 15)
+CHEAP = (0, 10, 15)
 
 
 def _norm(c: str) -> str:
@@ -158,7 +158,7 @@ def dam_bids_day(blob: bytes):
     awards.insert(0, "date", date)
 
     bids = _pick(files, "60d_dam_energybids-")
-    cheap = pd.DataFrame(columns=["date", "he", "point", "qse", "total_mw", "le0_mw", "le15_mw"])
+    cheap = pd.DataFrame(columns=["date", "he", "point", "qse", "total_mw", "le0_mw", "le10_mw", "le15_mw"])
     if bids is not None:
         B = pd.read_csv(io.BytesIO(bids), dtype=str)
         M, P = _curve(B, "bid")

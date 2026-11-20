@@ -69,7 +69,7 @@ One pair of Parquet files per calendar month:
                            Resources, batteries and generators with the MCPC; pipeline/load_hist.py
                            documents them.
   dam-bids-, dam-cheap-demand-YYYY-MM.parquet  (--dam-bids, from the 60-day DAM disclosure alone) every
-                           DAM energy-only bid and offer award, and the bid MW that buys only at $0 or
+                           DAM energy-only bid and offer award, and the bid MW that buys only at $0, $10 or
                            $15/MWh or less, by point and QSE; pipeline/load_hist.py documents them.
 
   da-lambda-YYYY-MM.parquet  (--da-lambda, from NP4-523-CD alone) date, he, price: the DAM system
