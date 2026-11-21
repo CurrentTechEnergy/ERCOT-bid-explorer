@@ -84,14 +84,18 @@
       <div class="panel-tools"><div class="seg seg-sm" role="radiogroup" aria-label="Period" id="c-win"><button type="button" role="radio" data-v="30">Last 30 days</button><button type="button" role="radio" data-v="90">Last 90 days</button><button type="button" role="radio" data-v="all">All</button></div></div>
     </div>
     <div class="pair">
-      <div><h3>Average load forecast error by real-time hub price</h3><div class="chart" id="bias-band"></div></div>
+      <div><h3>Mean load forecast error by DA system lambda</h3><div class="chart" id="bias-band"></div></div>
       <div><h3 id="bias-hour-h">Cheap hours: average error by hour</h3><div class="chart" id="bias-hour"></div></div>
     </div>
+    <h3>Cheap hours: every load forecast miss</h3>
+    <p class="note" id="miss-note"></p>
+    <div class="legend" id="miss-legend"></div>
+    <div class="chart" id="bias-miss"></div>
   </section>
 </main>
 
 <footer class="foot">
-  <p>Source: ERCOT EMIL products NP3-565-CD (Seven-Day Load Forecast by Model and Weather Zone: the model ERCOT was using, as posted before the day-ahead market), NP6-345-CD (Actual System Load by Weather Zone), NP4-732-CD and NP4-737-CD (wind and solar forecasts as of the day-ahead market, and actual output), NP3-965-ER (60-Day SCED Disclosure: wind and solar HSL, what the plants could have produced) and NP6-905-CD (real-time hub average price). System totals. Updated with every data run; potential net load arrives with the 60-day data, about two months behind.</p>
+  <p>Source: ERCOT EMIL products NP3-565-CD (Seven-Day Load Forecast by Model and Weather Zone: the model ERCOT was using, as posted before the day-ahead market), NP6-345-CD (Actual System Load by Weather Zone), NP4-732-CD and NP4-737-CD (wind and solar forecasts as of the day-ahead market, and actual output), NP3-965-ER (60-Day SCED Disclosure: wind and solar HSL, what the plants could have produced) and NP4-523-CD (DAM system lambda). System totals. Updated with every data run; potential net load arrives with the 60-day data, about two months behind.</p>
   <p>Hours are ERCOT hour ending in Central prevailing time: HE 13 is noon to 1 pm. Dates are operating days.</p>
   <p>Made by <a href="https://currenttech.energy">currenttech.energy</a> · <a href="contact.html">Contact</a></p>
   <p>Not affiliated with or endorsed by ERCOT. ERCOT is a registered trademark of the Electric Reliability Council of Texas, Inc.</p>

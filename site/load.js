@@ -6,8 +6,8 @@ const CX = window.CX;
 const { tryJSON, showTip, hideTip, setCSV, css, esc } = CX;
 const $ = (id) => document.getElementById(id);
 const S = { P: null, day: null, win: "90", picker: null };
-const CHEAP = 15;                                   // $/MWh: about a gas boiler's cost of heat
-const BANDS = [["≤ $0", -Infinity, 0], ["$0–15", 0, 15], ["$15–40", 15, 40], ["> $40", 40, Infinity]];
+const CHEAP = 10;                                   // $/MWh: the site's cheap-hour cut
+const BANDS = [["≤ $0", -Infinity, 0], ["$0–10", 0, 10], ["$10–40", 10, 40], ["> $40", 40, Infinity]];
 const HOURS = d3.range(1, 25);
 
 const gw = (v) => (v == null ? "–" : d3.format(",.1f")(v / 1000) + " GW");
@@ -71,14 +71,14 @@ function hourChart(el, series, bands, tip, csv) {
 }
 
 function drawLoad() {
-  const d = day(), price = (i) => (d.hub ? d.hub[i] : null);
+  const d = day(), price = (i) => (d.lam ? d.lam[i] : null);
   const err = HOURS.map((h) => sub(d.fc?.[h - 1], d.act?.[h - 1]));
   const have = err.filter((v) => v != null);
   const cheap = HOURS.filter((h) => price(h - 1) != null && price(h - 1) <= CHEAP && err[h - 1] != null);
   kpis("load-kpis", [
     [have.length ? mw(d3.mean(have), true) : "–", "average error (forecast − actual)"],
     [have.length ? mw(d3.mean(have, Math.abs)) : "–", "average size of the miss"],
-    [cheap.length ? mw(d3.mean(cheap, (h) => err[h - 1]), true) : "–", cheap.length ? `average error in the ${cheap.length} hour${cheap.length > 1 ? "s" : ""} with the hub at $${CHEAP} or less` : `no hours with the hub at $${CHEAP} or less`],
+    [cheap.length ? mw(d3.mean(cheap, (h) => err[h - 1]), true) : "–", cheap.length ? `average error in the ${cheap.length} hour${cheap.length > 1 ? "s" : ""} with DA system lambda at $${CHEAP} or less` : `no hours with DA system lambda at $${CHEAP} or less`],
   ]);
   const cF = css("--muted"), cA = css("--ink"), cHi = css("--c2"), cLo = css("--c1");
   const fc = d.fc || [], act = d.act || [];
@@ -86,8 +86,8 @@ function drawLoad() {
   legend("load-legend", [[cF, "Forecast as of the day-ahead market", "dash"], [cA, "Actual load"], [cHi, "Forecast too high", "area"], [cLo, "Forecast too low", "area"]]);
   hourChart($("load-chart"), [{ v: fc, color: cF, dash: true }, { v: act, color: cA }],
     [{ a: act, b: clamp(Math.max), color: cHi }, { a: act, b: clamp(Math.min), color: cLo }],
-    (h) => `<h4>${CX.dayLabel(S.day)}, HE ${h}</h4>` + tipRows([[cF, "Forecast", gw(d.fc?.[h - 1]), 1], [cA, "Actual", gw(d.act?.[h - 1])], [null, "Forecast − actual", mw(err[h - 1], true)], [null, "RT hub price", price(h - 1) == null ? "–" : "$" + price(h - 1).toFixed(2)]]),
-    [["hour_ending", "load_forecast_mw", "load_actual_mw", "forecast_minus_actual_mw", "rt_hub_usd_mwh"], HOURS.map((h) => [h, d.fc?.[h - 1], d.act?.[h - 1], err[h - 1], price(h - 1)]), `Load forecast and actual ${S.day}`]);
+    (h) => `<h4>${CX.dayLabel(S.day)}, HE ${h}</h4>` + tipRows([[cF, "Forecast", gw(d.fc?.[h - 1]), 1], [cA, "Actual", gw(d.act?.[h - 1])], [null, "Forecast − actual", mw(err[h - 1], true)], [null, "DA system lambda", price(h - 1) == null ? "–" : "$" + price(h - 1).toFixed(2)]]),
+    [["hour_ending", "load_forecast_mw", "load_actual_mw", "forecast_minus_actual_mw", "da_system_lambda_usd_mwh"], HOURS.map((h) => [h, d.fc?.[h - 1], d.act?.[h - 1], err[h - 1], price(h - 1)]), `Load forecast and actual ${S.day}`]);
   $("load-note").textContent = "ERCOT's load forecast as posted before the day-ahead market, against actual load, ERCOT total." +
     (d.act ? "" : " Actual load for this day is not posted yet.");
 }
@@ -114,10 +114,10 @@ function drawNet() {
 }
 
 function windowDays() {
-  const ds = S.P.dates.filter((d) => S.P.days[d].hub && S.P.days[d].fc && S.P.days[d].act);
+  const ds = S.P.dates.filter((d) => S.P.days[d].lam && S.P.days[d].fc && S.P.days[d].act);
   return S.win === "all" ? ds : ds.slice(-Number(S.win));
 }
-function barChart(el, rows, label, tip, csv) {
+function barChart(el, rows, label, tip, csv, opt = {}) {
   const W = width(el), H = Math.round(Math.min(300, Math.max(220, W * 0.5)));
   const m = { l: 56, r: 10, t: 18, b: 40 }, { g, w, h, svg } = frame(el, W, H, m);
   const ok = rows.filter((r) => r.v != null);
@@ -129,31 +129,70 @@ function barChart(el, rows, label, tip, csv) {
   g.append("g").attr("class", "axis").call(d3.axisLeft(y).ticks(5).tickFormat(d3.format(",")).tickSizeOuter(0));
   g.append("g").attr("class", "axis").attr("transform", `translate(0,${h})`).call(d3.axisBottom(x).tickValues(rows.length > 12 && w < 500 ? rows.filter((r, i) => i % 3 === 0).map((r) => r.k) : rows.map((r) => r.k)).tickSizeOuter(0));
   g.append("line").attr("class", "zero").attr("x1", 0).attr("x2", w).attr("y1", y(0)).attr("y2", y(0));
-  svg.append("text").attr("class", "axis-title").attr("x", m.l).attr("y", 12).text("MW, + = forecast too high");
+  svg.append("text").attr("class", "axis-title").attr("x", m.l).attr("y", 12).text(opt.ylab || "MW, + = forecast too high");
   svg.append("text").attr("class", "axis-title").attr("x", m.l).attr("y", H - 4).text(label);
   const up = css("--c2"), dn = css("--c1");
   g.selectAll("rect.b").data(ok).join("rect").attr("class", "b").attr("x", (r) => x(r.k)).attr("width", x.bandwidth())
-    .attr("y", (r) => y(Math.max(0, r.v))).attr("height", (r) => Math.abs(y(r.v) - y(0))).attr("rx", 2).attr("fill", (r) => (r.v >= 0 ? up : dn))
+    .attr("y", (r) => y(Math.max(0, r.v))).attr("height", (r) => Math.abs(y(r.v) - y(0))).attr("rx", 2).attr("fill", (r) => opt.color || (r.v >= 0 ? up : dn))
     .on("pointermove", (ev, r) => showTip(ev, tip(r))).on("pointerleave", hideTip);
   setCSV(el, csv[0], csv[1], csv[2]);
 }
 function drawBias() {
   const ds = windowDays(), rows = [];
-  ds.forEach((dd) => { const d = S.P.days[dd]; HOURS.forEach((h) => { const p = d.hub[h - 1], e = sub(d.fc[h - 1], d.act[h - 1]); if (p != null && e != null) rows.push({ h, p, e }); }); });
+  ds.forEach((dd) => { const d = S.P.days[dd]; HOURS.forEach((h) => { const p = d.lam[h - 1], e = sub(d.fc[h - 1], d.act[h - 1]); if (p != null && e != null) rows.push({ h, p, e }); }); });
   const band = BANDS.map(([k, lo, hi]) => { const r = rows.filter((x) => x.p > lo && x.p <= hi); return { k: `${k} (${d3.format(",")(r.length)} h)`, v: r.length ? d3.mean(r, (x) => x.e) : null, n: r.length, hi: r.length ? d3.mean(r, (x) => (x.e > 0 ? 1 : 0)) : null, mae: r.length ? d3.mean(r, (x) => Math.abs(x.e)) : null }; });
-  barChart($("bias-band"), band, "Real-time hub average price",
-    (r) => `<h4>Hub ${esc(r.k)}</h4>` + tipRows([[null, "Hours", d3.format(",")(r.n)], [null, "Average error", mw(r.v, true)], [null, "Average size of miss", mw(r.mae)], [null, "Hours forecast too high", d3.format(".0%")(r.hi)]]),
-    [["hub_price_band", "hours", "mean_error_mw", "mean_abs_error_mw", "share_forecast_high"], band.map((r) => [r.k, r.n, r.v, r.mae, r.hi]), `Load forecast bias by price ${S.win}`]);
+  barChart($("bias-band"), band, "DA system lambda",
+    (r) => `<h4>Lambda ${esc(r.k)}</h4>` + tipRows([[null, "Hours", d3.format(",")(r.n)], [null, "Average error", mw(r.v, true)], [null, "Average size of miss", mw(r.mae)], [null, "Hours forecast too high", d3.format(".0%")(r.hi)]]),
+    [["da_lambda_band", "hours", "mean_error_mw", "mean_abs_error_mw", "share_forecast_high"], band.map((r) => [r.k, r.n, r.v, r.mae, r.hi]), `Load forecast bias by price ${S.win}`]);
   const cheap = rows.filter((x) => x.p <= CHEAP);
   const hr = HOURS.map((h) => { const r = cheap.filter((x) => x.h === h); return { k: h, v: r.length >= 3 ? d3.mean(r, (x) => x.e) : null, n: r.length }; });
   barChart($("bias-hour"), hr, "Hour ending (Central)",
-    (r) => `<h4>HE ${r.k}, hub at $${CHEAP} or less</h4>` + tipRows([[null, "Hours", d3.format(",")(r.n)], [null, "Average error", mw(r.v, true)]]),
+    (r) => `<h4>HE ${r.k}, lambda at $${CHEAP} or less</h4>` + tipRows([[null, "Hours", d3.format(",")(r.n)], [null, "Average error", mw(r.v, true)]]),
     [["hour_ending", "cheap_hours", "mean_error_mw"], hr.map((r) => [r.k, r.n, r.v]), `Cheap-hour load forecast bias by hour ${S.win}`]);
-  $("bias-hour-h").textContent = `Hours with the hub at $${CHEAP} or less: average error by hour`;
-  $("bias-note").textContent = `Load forecast minus actual load, averaged by real-time hub price, over ${d3.format(",")(rows.length)} hours (${CX.dayLabel(ds[0])} to ${CX.dayLabel(ds.at(-1))}). ` +
-    `Orange bars: the forecast was too high on average; blue: too low. $${CHEAP}/MWh is about what a gas boiler's heat costs. ` +
-    "Over-forecasts and cheap hours go together partly because an over-forecast itself commits extra units and lowers prices. Hours with fewer than three cheap days are left blank.";
+  drawMiss(ds);
+  $("bias-hour-h").textContent = `Hours with DA system lambda at $${CHEAP} or less: mean error by hour`;
+  $("bias-note").textContent = `Each hour's load forecast error (forecast minus actual), grouped by that hour's day-ahead system lambda. Bars are the mean error in each group; orange means the forecast was too high. ${d3.format(",")(rows.length)} hours, ${CX.dayLabel(ds[0])} to ${CX.dayLabel(ds.at(-1))}.`;
 }
+
+// The load forecast miss in every cheap hour, against that hour's DA system lambda
+function drawMiss(ds) {
+  const el = $("bias-miss"), rows = [];
+  ds.forEach((dd) => {
+    const d = S.P.days[dd];
+    HOURS.forEach((h) => {
+      const i = h - 1, p = d.lam[i], e = sub(d.fc[i], d.act[i]);
+      if (p == null || p > CHEAP || e == null) return;
+      rows.push({ d: dd, h, p, e, fc: d.fc[i], act: d.act[i] });
+    });
+  });
+  if (!rows.length) { el.innerHTML = `<p class="note">No cheap hours in this period.</p>`; $("miss-note").textContent = ""; $("miss-legend").innerHTML = ""; return; }
+  const cN = css("--c7"), cD = css("--c4"), cL = css("--ink");
+  const night = rows.filter((q) => NIGHT(q.h)), day = rows.filter((q) => !NIGHT(q.h));
+  legend("miss-legend", [[cN, `Overnight hour (HE 22–8): mean ${mw(night.length ? d3.mean(night, (q) => q.e) : null, true)}`], [cD, `Daytime hour (HE 9–21): mean ${mw(day.length ? d3.mean(day, (q) => q.e) : null, true)}`]]);
+  const W = width(el), H = Math.round(Math.min(380, Math.max(280, W * 0.42)));
+  const m = { l: 56, r: 14, t: 18, b: 38 }, { g, w, h, svg } = frame(el, W, H, m);
+  const ey = d3.extent(rows, (q) => q.e);
+  // a few very negative lambdas would squash the rest: hours below the 1st percentile sit at the left edge
+  const lo = Math.min(0, d3.quantile(rows.map((q) => q.p).sort(d3.ascending), 0.01)), edge = rows.filter((q) => q.p < lo).length;
+  const x = d3.scaleLinear().domain([lo, CHEAP]).nice().range([0, w]).clamp(true);
+  const y = d3.scaleLinear().domain([Math.min(ey[0], 0), Math.max(ey[1], 0)]).nice().range([h, 0]);
+  g.append("g").attr("class", "gridline").call(d3.axisLeft(y).ticks(5).tickSize(-w).tickFormat(""));
+  g.append("g").attr("class", "axis").call(d3.axisLeft(y).ticks(5).tickFormat((v) => d3.format(",")(v / 1000)).tickSizeOuter(0));
+  g.append("g").attr("class", "axis").attr("transform", `translate(0,${h})`).call(d3.axisBottom(x).ticks(w < 500 ? 5 : 8).tickFormat((v) => (v < 0 ? "−$" : "$") + Math.abs(v)).tickSizeOuter(0));
+  g.append("line").attr("class", "zero").attr("x1", 0).attr("x2", w).attr("y1", y(0)).attr("y2", y(0));
+  svg.append("text").attr("class", "axis-title").attr("x", m.l).attr("y", 12).text("GW, + = forecast too high");
+  svg.append("text").attr("class", "axis-title").attr("x", m.l).attr("y", H - 4).text("DA system lambda ($/MWh) →");
+  g.selectAll("circle").data(rows).join("circle").attr("cx", (q) => x(q.p)).attr("cy", (q) => y(q.e)).attr("r", w < 500 ? 2.5 : 3.2)
+    .attr("fill", (q) => (NIGHT(q.h) ? cN : cD)).attr("fill-opacity", 0.55).style("cursor", "pointer")
+    .on("pointermove", (ev, q) => showTip(ev, `<h4>${CX.dayLabel(q.d)}, HE ${q.h}</h4>` + tipRows([[null, "Forecast", gw(q.fc)], [null, "Actual", gw(q.act)], [null, "Forecast − actual", mw(q.e, true)], [null, "DA system lambda", "$" + q.p.toFixed(2)]]) + `<p class="note">Click to show this day above</p>`))
+    .on("pointerleave", hideTip)
+    .on("click", (ev, q) => { hideTip(); setDay(S.picker.set(q.d)); $("load-panel").scrollIntoView({ behavior: "smooth", block: "start" }); });
+  setCSV(el, ["date", "hour_ending", "da_system_lambda", "load_forecast_mw", "load_actual_mw", "forecast_minus_actual_mw"],
+    rows.map((q) => [q.d, q.h, q.p, q.fc, q.act, q.e]), `Load forecast error in cheap hours ${S.win}`);
+  $("miss-note").textContent = `One dot per hour with DA system lambda at $${CHEAP} or less (${d3.format(",")(rows.length)} hours)${edge ? `; ${edge} hour${edge > 1 ? "s" : ""} below ${(x.domain()[0] < 0 ? "−$" : "$") + Math.abs(x.domain()[0])} sit at the left edge` : ""}. Click a dot to see that day above.`;
+}
+
+const NIGHT = (h) => h <= 8 || h >= 22;
 
 function drawAll() { drawLoad(); drawNet(); drawBias(); }
 function setDay(d) { S.day = d; drawLoad(); drawNet(); }

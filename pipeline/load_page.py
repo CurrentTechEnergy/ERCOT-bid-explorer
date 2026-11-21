@@ -7,7 +7,7 @@ downloads.
                                (pipeline/renew_forecast.py)
   data/summary_60d.json.gz     wind and solar HSL (what the plants could have produced) per hour,
                                60-day days only
-  data/summary_prices.json.gz  real-time hub average price per hour
+  data/dam_lambda.json.gz      DA system lambda per hour (the site's cheap-hour price)
 
 Net load = load less wind and solar:
   forecast    load forecast - wind forecast - solar forecast (all as of the DAM)
@@ -20,7 +20,7 @@ an error.
 
 Writes data/load_page.json.gz:
   {"built", "dates": [...],
-   "days": {date: {"fc", "act", "wfc", "sfc", "wact", "sact", "whsl", "shsl", "hub": [24] or null}}}
+   "days": {date: {"fc", "act", "wfc", "sfc", "wact", "sact", "whsl", "shsl", "lam": [24] or null}}}
 MW rounded to whole numbers, prices to cents.
 """
 import datetime as dt
@@ -30,7 +30,6 @@ from .store import read_json_gz, write_json_gz
 
 PATH = DATA_DIR / "load_page.json.gz"
 SITE_START = "2025-11-30"
-HUB = "HB_HUBAVG"
 
 
 def _arr(v, nd=0):
@@ -41,28 +40,32 @@ def _arr(v, nd=0):
     return out if any(x is not None for x in out) else None
 
 
+def _stat(s: dict, name: str, techs) -> list:
+    """[24] sum of one hourly stat over techs from a summary_60d day; null in an hour any lacks."""
+    names = s.get("stat_names") or []
+    if name not in names:
+        return None
+    i, stats = names.index(name), s.get("stats") or {}
+    rows = [stats.get(t) or [] for t in techs]
+    val = lambda r, h: r[h][i] if h < len(r) and r[h] else None
+    return _arr([None if any(val(r, h) is None for r in rows) else sum(val(r, h) for r in rows) for h in range(24)])
+
+
 def build_load_page(index: dict = None) -> None:
     load = (read_json_gz(DATA_DIR / "load.json.gz", default=None) or {}).get("days") or {}
     renew = (read_json_gz(DATA_DIR / "renew_forecast.json.gz", default=None) or {}).get("days") or {}
     summ = read_json_gz(DATA_DIR / "summary_60d.json.gz", default={}) or {}
-    prices = read_json_gz(DATA_DIR / "summary_prices.json.gz", default={}) or {}
+    lam = (read_json_gz(DATA_DIR / "dam_lambda.json.gz", default={}) or {}).get("days") or {}
     days = {}
     for d in sorted(set(load) | set(renew)):
         if d < SITE_START:
             continue
-        L, R = load.get(d) or {}, renew.get(d) or {}
+        L, R, s = load.get(d) or {}, renew.get(d) or {}, summ.get(d) or {}
         e = {"fc": _arr(L.get("fc")), "act": _arr(L.get("actual")),
              "wfc": _arr(R.get("wind")), "sfc": _arr(R.get("solar")),
              "wact": _arr(R.get("wind_actual")), "sact": _arr(R.get("solar_actual")),
-             "whsl": None, "shsl": None,
-             "hub": _arr(((prices.get(d) or {}).get("spp") or {}).get(HUB), 2)}
-        s = summ.get(d) or {}
-        names = s.get("stat_names") or []
-        if "hsl" in names:
-            i = names.index("hsl")
-            for tech, k in (("wind", "whsl"), ("solar", "shsl")):
-                rows = (s.get("stats") or {}).get(tech) or []
-                e[k] = _arr([r[i] if r else None for r in rows])
+             "whsl": _stat(s, "hsl", ("wind",)), "shsl": _stat(s, "hsl", ("solar",)),
+             "lam": _arr(lam.get(d), 2)}
         if e["fc"] or e["act"]:
             days[d] = e
     write_json_gz(PATH, {"built": dt.datetime.now(dt.timezone.utc).strftime("%Y-%m-%dT%H:%MZ"),
