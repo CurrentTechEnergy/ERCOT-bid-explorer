@@ -547,9 +547,11 @@ def build_load_month(api, month: str, kind: str, out: Path = OUT, force: bool = 
         return
     t0 = time.time()
     got = {k: [] for k in paths}
+    note = None
     for _, r in _disclosures(api, EMIL_DAM, _days(month), "dam", ancillary=kind):
         for k in paths:
             got[k].append(r[k])
+            note = note or r[k].attrs.get("note")
     if not got[next(iter(paths))]:
         warn(f"{month}: no DAM days found; nothing written")
         return
@@ -563,6 +565,8 @@ def build_load_month(api, month: str, kind: str, out: Path = OUT, force: bool = 
               + (f", {f['unit'].nunique()} Load Resources, QSE known {f['qse'].notna().mean():.0%}" if "unit" in f else "")
               + (f", {f['qse'].nunique()} QSEs" if "qse" in f and "unit" not in f else ""))
     print(f"{kind}-{month}: {time.time() - t0:.0f}s")
+    if note:
+        print(f"  {note}")
 
 
 def main(argv=None):

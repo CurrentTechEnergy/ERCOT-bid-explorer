@@ -28,6 +28,8 @@ from .store import iter_csvs
 
 SERVICES = {"regup": "regup", "regdown": "regdn", "rrs": "rrs", "ecrs": "ecrs", "nonspin": "nspin"}
 CHEAP = (0, 10, 15)
+QSE_COLS = ("qse", "qsename", "qsecode")
+NAME_COLS = ("loadresourcename", "resourcename")
 
 
 def _norm(c: str) -> str:
@@ -51,7 +53,9 @@ def _files(blob: bytes):
 
 
 def _pick(files: dict, prefix: str):
-    return next((d for n, d in files.items() if n.startswith(prefix)), None)
+    """The zip's file whose name starts with prefix, ignoring case, spaces and underscores."""
+    want = _norm(prefix)
+    return next((d for n, d in files.items() if _norm(n).startswith(want)), None)
 
 
 def _date(f: pd.DataFrame) -> str:
@@ -88,10 +92,15 @@ def load_res_day(blob: bytes):
     qse = {}
     off = _pick(files, "60d_dam_load_resource_asoffers")
     if off is not None:
-        O = pd.read_csv(io.BytesIO(off), dtype=str, usecols=lambda c: _norm(c) in ("qse", "loadresourcename"))
-        if len(O.columns) == 2:
-            qc, nc = _col(O, "QSE"), _col(O, "Load Resource Name")
-            qse = O.dropna().drop_duplicates(nc, keep="last").set_index(nc)[qc].str.strip().to_dict()
+        O = pd.read_csv(io.BytesIO(off), dtype=str, usecols=lambda c: _norm(c) in QSE_COLS + NAME_COLS)
+        qc, nc = _col(O, *QSE_COLS), _col(O, *NAME_COLS)
+        if qc and nc:
+            qse = O[[nc, qc]].dropna().drop_duplicates(nc, keep="last").set_index(nc)[qc].str.strip().to_dict()
+    if not qse:     # shown in the month build: which files and columns the zip had
+        out_cols = list(pd.read_csv(io.BytesIO(off), nrows=0).columns) if off is not None else None
+        qse_note = f"no Load Resource QSE: files {sorted(files)}; AS offer columns {out_cols}"
+    else:
+        qse_note = None
     out["unit"] = out["unit"].str.strip()
     out["qse"] = out["unit"].map(qse)
     out["he"] = pd.to_numeric(out["he"], errors="coerce").astype("Int64")
@@ -118,7 +127,9 @@ def load_res_day(blob: bytes):
     share["mcpc"] = [price[mcpc[s]].get(h, np.nan) if s in mcpc else np.nan for h, s in share.index]
     share = share.reset_index()
     share.insert(0, "date", date)
-    return date, {"load-res": out.reset_index(drop=True), "as-share": share}
+    out = out.reset_index(drop=True)
+    out.attrs["note"] = qse_note
+    return date, {"load-res": out, "as-share": share}
 
 
 def _curve(f: pd.DataFrame, kind: str):
