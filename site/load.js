@@ -151,31 +151,38 @@ function drawBias() {
     [["hour_ending", "cheap_hours", "mean_error_mw"], hr.map((r) => [r.k, r.n, r.v]), `Cheap-hour load forecast bias by hour ${S.win}`]);
   drawThermal(ds);
   $("bias-hour-h").textContent = `Hours with the hub at $${CHEAP} or less: average error by hour`;
-  $("bias-note").textContent = `Load forecast minus actual load, averaged by real-time hub price. Orange means the forecast was too high. ${d3.format(",")(rows.length)} hours, ${CX.dayLabel(ds[0])} to ${CX.dayLabel(ds.at(-1))}.`;
+  $("bias-note").textContent = `Each hour's load forecast error (forecast minus actual), grouped by that hour's real-time price at the ERCOT Hub Average (HB_HUBAVG). Bars are the mean error in each group; orange means the forecast was too high. ${d3.format(",")(rows.length)} hours, ${CX.dayLabel(ds[0])} to ${CX.dayLabel(ds.at(-1))}.`;
 }
 
-// Thermal left online beyond served net load, in cheap hours, by how far the load forecast missed
+// Extra thermal minimum output (LSL) online in cheap hours, by how far the load forecast missed,
+// after adjusting for served net load: residual of a straight-line fit of LSL on net load.
 const ERR_BINS = [["Low by 1 GW+", -Infinity, -1000], ["Low by 0–1 GW", -1000, 0], ["High by 0–1 GW", 0, 1000], ["High by 1–2 GW", 1000, 2000], ["High by 2 GW+", 2000, Infinity]];
 function drawThermal(ds) {
   const rows = [];
   ds.forEach((dd) => {
     const d = S.P.days[dd];
-    if (!d.thon || !d.wact || !d.sact) return;
+    if (!d.thlsl || !d.wact || !d.sact) return;
     HOURS.forEach((h) => {
       const i = h - 1, p = d.hub[i], e = sub(d.fc[i], d.act[i]);
-      if (p == null || p > CHEAP || e == null || d.thon[i] == null || d.wact[i] == null || d.sact[i] == null) return;
-      rows.push({ e, x: d.thon[i] - (d.act[i] - d.wact[i] - d.sact[i]) });
+      if (p == null || p > CHEAP || e == null || d.thlsl[i] == null || d.wact[i] == null || d.sact[i] == null) return;
+      rows.push({ e, y: d.thlsl[i], n: d.act[i] - d.wact[i] - d.sact[i] });
     });
   });
-  const base = rows.length ? d3.mean(rows, (q) => q.x) : null;
-  const bins = ERR_BINS.map(([k, lo, hi]) => { const r = rows.filter((q) => q.e > lo && q.e <= hi); const a = r.length >= 5 ? d3.mean(r, (q) => q.x) : null; return { k, a, v: a == null ? null : a - base, n: r.length }; });
+  let fit = null;
+  if (rows.length >= 20) {
+    const mn = d3.mean(rows, (q) => q.n), my = d3.mean(rows, (q) => q.y);
+    const vx = d3.sum(rows, (q) => (q.n - mn) ** 2), b = vx ? d3.sum(rows, (q) => (q.n - mn) * (q.y - my)) / vx : 0;
+    fit = { mn, my, b };
+    rows.forEach((q) => { q.r = q.y - (my + b * (q.n - mn)); });
+  }
+  const bins = ERR_BINS.map(([k, lo, hi]) => { const r = fit ? rows.filter((q) => q.e > lo && q.e <= hi) : []; return { k, v: r.length >= 5 ? d3.mean(r, (q) => q.r) : null, n: r.length, y: r.length ? d3.mean(r, (q) => q.y) : null }; });
   barChart($("bias-thermal"), bins, "Load forecast against actual",
-    (r) => `<h4>Forecast ${esc(r.k.toLowerCase())}</h4>` + tipRows([[null, "Cheap hours", d3.format(",")(r.n)], [null, "Against the average cheap hour", mw(r.v, true)], [null, "Thermal online beyond net load", mw(r.a)]]),
-    [["load_forecast_error_bin", "cheap_hours", "thermal_hsl_online_minus_served_net_load_mw", "vs_average_cheap_hour_mw"], bins.map((r) => [r.k, r.n, r.a, r.v]), `Thermal online beyond net load in cheap hours ${S.win}`],
-    { ylab: "MW more (+) or less (−) thermal online than the average cheap hour" });
-  $("bias-thermal-note").textContent = rows.length
-    ? `Thermal capacity online (nuclear, coal and gas) minus net load, compared with the average cheap hour (${mw(base)}). ${d3.format(",")(rows.length)} hours with the hub at $${CHEAP} or less.`
-    : "No cheap hours with 60-day data in this period.";
+    (r) => `<h4>Forecast ${esc(r.k.toLowerCase())}</h4>` + tipRows([[null, "Cheap hours", d3.format(",")(r.n)], [null, "Extra minimum output online", mw(r.v, true)], [null, "Thermal minimum output online", mw(r.y)]]),
+    [["load_forecast_error_bin", "cheap_hours", "thermal_lsl_online_mw", "extra_lsl_adjusted_for_net_load_mw"], bins.map((r) => [r.k, r.n, r.y, r.v]), `Extra thermal minimum output in cheap hours ${S.win}`],
+    { ylab: "MW of minimum output online, adjusted for net load" });
+  $("bias-thermal-note").textContent = fit
+    ? `Thermal minimum output (LSL) online, compared with what the hour's net load would predict. ${d3.format(",")(rows.length)} hours with the hub at $${CHEAP} or less.`
+    : "Too few cheap hours with 60-day data in this period.";
 }
 
 function drawAll() { drawLoad(); drawNet(); drawBias(); }
