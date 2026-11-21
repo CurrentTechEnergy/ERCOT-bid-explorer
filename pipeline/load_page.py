@@ -8,7 +8,7 @@ downloads.
   data/summary_60d.json.gz     per hour, 60-day days only: wind and solar HSL (what the plants could
                                have produced) and the LSL of thermal units online (nuclear, coal,
                                combined cycle, gas steam, combustion turbine)
-  data/summary_prices.json.gz  real-time hub average price per hour
+  data/dam_lambda.json.gz      DA system lambda per hour (the site's cheap-hour price)
 
 Net load = load less wind and solar:
   forecast    load forecast - wind forecast - solar forecast (all as of the DAM)
@@ -21,7 +21,7 @@ an error.
 
 Writes data/load_page.json.gz:
   {"built", "dates": [...],
-   "days": {date: {"fc", "act", "wfc", "sfc", "wact", "sact", "whsl", "shsl", "thlsl", "hub": [24] or null}}}
+   "days": {date: {"fc", "act", "wfc", "sfc", "wact", "sact", "whsl", "shsl", "thlsl", "lam": [24] or null}}}
 thlsl is the thermal minimum output online (sum of LSL), for the across-days chart of extra
 minimum output when load is over-forecast.  MW rounded to whole numbers, prices to cents.
 """
@@ -32,7 +32,6 @@ from .store import read_json_gz, write_json_gz
 
 PATH = DATA_DIR / "load_page.json.gz"
 SITE_START = "2025-11-30"
-HUB = "HB_HUBAVG"
 THERMAL = ("nuclear", "coal", "combined_cycle", "gas_steam", "combustion_turbine")
 
 
@@ -59,7 +58,7 @@ def build_load_page(index: dict = None) -> None:
     load = (read_json_gz(DATA_DIR / "load.json.gz", default=None) or {}).get("days") or {}
     renew = (read_json_gz(DATA_DIR / "renew_forecast.json.gz", default=None) or {}).get("days") or {}
     summ = read_json_gz(DATA_DIR / "summary_60d.json.gz", default={}) or {}
-    prices = read_json_gz(DATA_DIR / "summary_prices.json.gz", default={}) or {}
+    lam = (read_json_gz(DATA_DIR / "dam_lambda.json.gz", default={}) or {}).get("days") or {}
     days = {}
     for d in sorted(set(load) | set(renew)):
         if d < SITE_START:
@@ -70,7 +69,7 @@ def build_load_page(index: dict = None) -> None:
              "wact": _arr(R.get("wind_actual")), "sact": _arr(R.get("solar_actual")),
              "whsl": _stat(s, "hsl", ("wind",)), "shsl": _stat(s, "hsl", ("solar",)),
              "thlsl": _stat(s, "lsl", THERMAL),
-             "hub": _arr(((prices.get(d) or {}).get("spp") or {}).get(HUB), 2)}
+             "lam": _arr(lam.get(d), 2)}
         if e["fc"] or e["act"]:
             days[d] = e
     write_json_gz(PATH, {"built": dt.datetime.now(dt.timezone.utc).strftime("%Y-%m-%dT%H:%MZ"),

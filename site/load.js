@@ -71,14 +71,14 @@ function hourChart(el, series, bands, tip, csv) {
 }
 
 function drawLoad() {
-  const d = day(), price = (i) => (d.hub ? d.hub[i] : null);
+  const d = day(), price = (i) => (d.lam ? d.lam[i] : null);
   const err = HOURS.map((h) => sub(d.fc?.[h - 1], d.act?.[h - 1]));
   const have = err.filter((v) => v != null);
   const cheap = HOURS.filter((h) => price(h - 1) != null && price(h - 1) <= CHEAP && err[h - 1] != null);
   kpis("load-kpis", [
     [have.length ? mw(d3.mean(have), true) : "–", "average error (forecast − actual)"],
     [have.length ? mw(d3.mean(have, Math.abs)) : "–", "average size of the miss"],
-    [cheap.length ? mw(d3.mean(cheap, (h) => err[h - 1]), true) : "–", cheap.length ? `average error in the ${cheap.length} hour${cheap.length > 1 ? "s" : ""} with the hub at $${CHEAP} or less` : `no hours with the hub at $${CHEAP} or less`],
+    [cheap.length ? mw(d3.mean(cheap, (h) => err[h - 1]), true) : "–", cheap.length ? `average error in the ${cheap.length} hour${cheap.length > 1 ? "s" : ""} with DA system lambda at $${CHEAP} or less` : `no hours with DA system lambda at $${CHEAP} or less`],
   ]);
   const cF = css("--muted"), cA = css("--ink"), cHi = css("--c2"), cLo = css("--c1");
   const fc = d.fc || [], act = d.act || [];
@@ -86,8 +86,8 @@ function drawLoad() {
   legend("load-legend", [[cF, "Forecast as of the day-ahead market", "dash"], [cA, "Actual load"], [cHi, "Forecast too high", "area"], [cLo, "Forecast too low", "area"]]);
   hourChart($("load-chart"), [{ v: fc, color: cF, dash: true }, { v: act, color: cA }],
     [{ a: act, b: clamp(Math.max), color: cHi }, { a: act, b: clamp(Math.min), color: cLo }],
-    (h) => `<h4>${CX.dayLabel(S.day)}, HE ${h}</h4>` + tipRows([[cF, "Forecast", gw(d.fc?.[h - 1]), 1], [cA, "Actual", gw(d.act?.[h - 1])], [null, "Forecast − actual", mw(err[h - 1], true)], [null, "RT hub price", price(h - 1) == null ? "–" : "$" + price(h - 1).toFixed(2)]]),
-    [["hour_ending", "load_forecast_mw", "load_actual_mw", "forecast_minus_actual_mw", "rt_hub_usd_mwh"], HOURS.map((h) => [h, d.fc?.[h - 1], d.act?.[h - 1], err[h - 1], price(h - 1)]), `Load forecast and actual ${S.day}`]);
+    (h) => `<h4>${CX.dayLabel(S.day)}, HE ${h}</h4>` + tipRows([[cF, "Forecast", gw(d.fc?.[h - 1]), 1], [cA, "Actual", gw(d.act?.[h - 1])], [null, "Forecast − actual", mw(err[h - 1], true)], [null, "DA system lambda", price(h - 1) == null ? "–" : "$" + price(h - 1).toFixed(2)]]),
+    [["hour_ending", "load_forecast_mw", "load_actual_mw", "forecast_minus_actual_mw", "da_system_lambda_usd_mwh"], HOURS.map((h) => [h, d.fc?.[h - 1], d.act?.[h - 1], err[h - 1], price(h - 1)]), `Load forecast and actual ${S.day}`]);
   $("load-note").textContent = "ERCOT's load forecast as posted before the day-ahead market, against actual load, ERCOT total." +
     (d.act ? "" : " Actual load for this day is not posted yet.");
 }
@@ -114,7 +114,7 @@ function drawNet() {
 }
 
 function windowDays() {
-  const ds = S.P.dates.filter((d) => S.P.days[d].hub && S.P.days[d].fc && S.P.days[d].act);
+  const ds = S.P.dates.filter((d) => S.P.days[d].lam && S.P.days[d].fc && S.P.days[d].act);
   return S.win === "all" ? ds : ds.slice(-Number(S.win));
 }
 function barChart(el, rows, label, tip, csv, opt = {}) {
@@ -139,19 +139,19 @@ function barChart(el, rows, label, tip, csv, opt = {}) {
 }
 function drawBias() {
   const ds = windowDays(), rows = [];
-  ds.forEach((dd) => { const d = S.P.days[dd]; HOURS.forEach((h) => { const p = d.hub[h - 1], e = sub(d.fc[h - 1], d.act[h - 1]); if (p != null && e != null) rows.push({ h, p, e }); }); });
+  ds.forEach((dd) => { const d = S.P.days[dd]; HOURS.forEach((h) => { const p = d.lam[h - 1], e = sub(d.fc[h - 1], d.act[h - 1]); if (p != null && e != null) rows.push({ h, p, e }); }); });
   const band = BANDS.map(([k, lo, hi]) => { const r = rows.filter((x) => x.p > lo && x.p <= hi); return { k: `${k} (${d3.format(",")(r.length)} h)`, v: r.length ? d3.mean(r, (x) => x.e) : null, n: r.length, hi: r.length ? d3.mean(r, (x) => (x.e > 0 ? 1 : 0)) : null, mae: r.length ? d3.mean(r, (x) => Math.abs(x.e)) : null }; });
-  barChart($("bias-band"), band, "Real-time hub average price",
-    (r) => `<h4>Hub ${esc(r.k)}</h4>` + tipRows([[null, "Hours", d3.format(",")(r.n)], [null, "Average error", mw(r.v, true)], [null, "Average size of miss", mw(r.mae)], [null, "Hours forecast too high", d3.format(".0%")(r.hi)]]),
-    [["hub_price_band", "hours", "mean_error_mw", "mean_abs_error_mw", "share_forecast_high"], band.map((r) => [r.k, r.n, r.v, r.mae, r.hi]), `Load forecast bias by price ${S.win}`]);
+  barChart($("bias-band"), band, "DA system lambda",
+    (r) => `<h4>Lambda ${esc(r.k)}</h4>` + tipRows([[null, "Hours", d3.format(",")(r.n)], [null, "Average error", mw(r.v, true)], [null, "Average size of miss", mw(r.mae)], [null, "Hours forecast too high", d3.format(".0%")(r.hi)]]),
+    [["da_lambda_band", "hours", "mean_error_mw", "mean_abs_error_mw", "share_forecast_high"], band.map((r) => [r.k, r.n, r.v, r.mae, r.hi]), `Load forecast bias by price ${S.win}`]);
   const cheap = rows.filter((x) => x.p <= CHEAP);
   const hr = HOURS.map((h) => { const r = cheap.filter((x) => x.h === h); return { k: h, v: r.length >= 3 ? d3.mean(r, (x) => x.e) : null, n: r.length }; });
   barChart($("bias-hour"), hr, "Hour ending (Central)",
-    (r) => `<h4>HE ${r.k}, hub at $${CHEAP} or less</h4>` + tipRows([[null, "Hours", d3.format(",")(r.n)], [null, "Average error", mw(r.v, true)]]),
+    (r) => `<h4>HE ${r.k}, lambda at $${CHEAP} or less</h4>` + tipRows([[null, "Hours", d3.format(",")(r.n)], [null, "Average error", mw(r.v, true)]]),
     [["hour_ending", "cheap_hours", "mean_error_mw"], hr.map((r) => [r.k, r.n, r.v]), `Cheap-hour load forecast bias by hour ${S.win}`]);
   drawThermal(ds);
-  $("bias-hour-h").textContent = `Hours with the hub at $${CHEAP} or less: average error by hour`;
-  $("bias-note").textContent = `Each hour's load forecast error (forecast minus actual), grouped by that hour's real-time price at the ERCOT Hub Average (HB_HUBAVG). Bars are the mean error in each group; orange means the forecast was too high. ${d3.format(",")(rows.length)} hours, ${CX.dayLabel(ds[0])} to ${CX.dayLabel(ds.at(-1))}.`;
+  $("bias-hour-h").textContent = `Hours with DA system lambda at $${CHEAP} or less: mean error by hour`;
+  $("bias-note").textContent = `Each hour's load forecast error (forecast minus actual), grouped by that hour's day-ahead system lambda. Bars are the mean error in each group; orange means the forecast was too high. ${d3.format(",")(rows.length)} hours, ${CX.dayLabel(ds[0])} to ${CX.dayLabel(ds.at(-1))}.`;
 }
 
 // Extra thermal minimum output (LSL) online in cheap hours, by how far the load forecast missed,
@@ -163,7 +163,7 @@ function drawThermal(ds) {
     const d = S.P.days[dd];
     if (!d.thlsl || !d.wact || !d.sact) return;
     HOURS.forEach((h) => {
-      const i = h - 1, p = d.hub[i], e = sub(d.fc[i], d.act[i]);
+      const i = h - 1, p = d.lam[i], e = sub(d.fc[i], d.act[i]);
       if (p == null || p > CHEAP || e == null || d.thlsl[i] == null || d.wact[i] == null || d.sact[i] == null) return;
       rows.push({ e, y: d.thlsl[i], n: d.act[i] - d.wact[i] - d.sact[i] });
     });
@@ -181,7 +181,7 @@ function drawThermal(ds) {
     [["load_forecast_error_bin", "cheap_hours", "thermal_lsl_online_mw", "extra_lsl_adjusted_for_net_load_mw"], bins.map((r) => [r.k, r.n, r.y, r.v]), `Extra thermal minimum output in cheap hours ${S.win}`],
     { ylab: "MW of minimum output online, adjusted for net load" });
   $("bias-thermal-note").textContent = fit
-    ? `Thermal minimum output (LSL) online, compared with what the hour's net load would predict. ${d3.format(",")(rows.length)} hours with the hub at $${CHEAP} or less.`
+    ? `Thermal minimum output (LSL) online, compared with what the hour's net load would predict. ${d3.format(",")(rows.length)} hours with DA system lambda at $${CHEAP} or less.`
     : "Too few cheap hours with 60-day data in this period.";
 }
 
