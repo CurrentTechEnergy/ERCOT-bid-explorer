@@ -216,7 +216,8 @@ async function boot() {
   const l60 = await CX.latest60();
   const start = dates.includes(S.day) ? S.day : [...dates].reverse().find((d) => (!l60 || d <= l60) && S.P.days[d].whsl) || dates.at(-1);
   $("status").textContent = `Load forecast and actual ${CX.dayLabel(dates[0])} to ${CX.dayLabel(dates.at(-1))} · potential net load through ${CX.dayLabel([...dates].reverse().find((d) => S.P.days[d].whsl) || dates[0])}`;
-  S.picker = CX.dayPicker("lday", { days: dates, main: true, value: start, onChange: setDay });
+  S.picker = CX.dayPicker("lday", { days: dates, main: true, value: start, onChange: setDay,
+    note: (d) => { const x = S.P.days[d]; return !x.act ? "forecast only" : !x.whsl ? "no potential net load yet" : ""; } });
   S.day = S.picker.get();
   if (!["30", "90", "all"].includes(S.win)) S.win = "90";
   bindSeg("c-win", "win", () => { drawBias(); saveView(); });
