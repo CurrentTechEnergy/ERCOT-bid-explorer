@@ -149,9 +149,48 @@ function drawBias() {
   barChart($("bias-hour"), hr, "Hour ending (Central)",
     (r) => `<h4>HE ${r.k}, lambda at $${CHEAP} or less</h4>` + tipRows([[null, "Hours", d3.format(",")(r.n)], [null, "Average error", mw(r.v, true)]]),
     [["hour_ending", "cheap_hours", "mean_error_mw"], hr.map((r) => [r.k, r.n, r.v]), `Cheap-hour load forecast bias by hour ${S.win}`]);
+  drawMiss(ds);
   drawThermal(ds);
   $("bias-hour-h").textContent = `Hours with DA system lambda at $${CHEAP} or less: mean error by hour`;
   $("bias-note").textContent = `Each hour's load forecast error (forecast minus actual), grouped by that hour's day-ahead system lambda. Bars are the mean error in each group; orange means the forecast was too high. ${d3.format(",")(rows.length)} hours, ${CX.dayLabel(ds[0])} to ${CX.dayLabel(ds.at(-1))}.`;
+}
+
+// The load forecast miss in every cheap hour, against that hour's DA system lambda
+function drawMiss(ds) {
+  const el = $("bias-miss"), rows = [];
+  ds.forEach((dd) => {
+    const d = S.P.days[dd];
+    HOURS.forEach((h) => {
+      const i = h - 1, p = d.lam[i], e = sub(d.fc[i], d.act[i]);
+      if (p == null || p > CHEAP || e == null) return;
+      rows.push({ d: dd, h, p, e, fc: d.fc[i], act: d.act[i] });
+    });
+  });
+  if (!rows.length) { el.innerHTML = `<p class="note">No cheap hours in this period.</p>`; $("miss-note").textContent = ""; $("miss-legend").innerHTML = ""; return; }
+  const cN = css("--c7"), cD = css("--c4"), cL = css("--ink");
+  const night = rows.filter((q) => NIGHT(q.h)), day = rows.filter((q) => !NIGHT(q.h));
+  legend("miss-legend", [[cN, `Overnight hour (HE 22–8): mean ${mw(night.length ? d3.mean(night, (q) => q.e) : null, true)}`], [cD, `Daytime hour (HE 9–21): mean ${mw(day.length ? d3.mean(day, (q) => q.e) : null, true)}`]]);
+  const W = width(el), H = Math.round(Math.min(380, Math.max(280, W * 0.42)));
+  const m = { l: 56, r: 14, t: 18, b: 38 }, { g, w, h, svg } = frame(el, W, H, m);
+  const ey = d3.extent(rows, (q) => q.e);
+  // a few very negative lambdas would squash the rest: hours below the 1st percentile sit at the left edge
+  const lo = Math.min(0, d3.quantile(rows.map((q) => q.p).sort(d3.ascending), 0.01)), edge = rows.filter((q) => q.p < lo).length;
+  const x = d3.scaleLinear().domain([lo, CHEAP]).nice().range([0, w]).clamp(true);
+  const y = d3.scaleLinear().domain([Math.min(ey[0], 0), Math.max(ey[1], 0)]).nice().range([h, 0]);
+  g.append("g").attr("class", "gridline").call(d3.axisLeft(y).ticks(5).tickSize(-w).tickFormat(""));
+  g.append("g").attr("class", "axis").call(d3.axisLeft(y).ticks(5).tickFormat((v) => d3.format(",")(v / 1000)).tickSizeOuter(0));
+  g.append("g").attr("class", "axis").attr("transform", `translate(0,${h})`).call(d3.axisBottom(x).ticks(w < 500 ? 5 : 8).tickFormat((v) => (v < 0 ? "−$" : "$") + Math.abs(v)).tickSizeOuter(0));
+  g.append("line").attr("class", "zero").attr("x1", 0).attr("x2", w).attr("y1", y(0)).attr("y2", y(0));
+  svg.append("text").attr("class", "axis-title").attr("x", m.l).attr("y", 12).text("GW, + = forecast too high");
+  svg.append("text").attr("class", "axis-title").attr("x", m.l).attr("y", H - 4).text("DA system lambda ($/MWh) →");
+  g.selectAll("circle").data(rows).join("circle").attr("cx", (q) => x(q.p)).attr("cy", (q) => y(q.e)).attr("r", w < 500 ? 2.5 : 3.2)
+    .attr("fill", (q) => (NIGHT(q.h) ? cN : cD)).attr("fill-opacity", 0.55).style("cursor", "pointer")
+    .on("pointermove", (ev, q) => showTip(ev, `<h4>${CX.dayLabel(q.d)}, HE ${q.h}</h4>` + tipRows([[null, "Forecast", gw(q.fc)], [null, "Actual", gw(q.act)], [null, "Forecast − actual", mw(q.e, true)], [null, "DA system lambda", "$" + q.p.toFixed(2)]]) + `<p class="note">Click to show this day above</p>`))
+    .on("pointerleave", hideTip)
+    .on("click", (ev, q) => { hideTip(); setDay(S.picker.set(q.d)); $("load-panel").scrollIntoView({ behavior: "smooth", block: "start" }); });
+  setCSV(el, ["date", "hour_ending", "da_system_lambda", "load_forecast_mw", "load_actual_mw", "forecast_minus_actual_mw"],
+    rows.map((q) => [q.d, q.h, q.p, q.fc, q.act, q.e]), `Load forecast error in cheap hours ${S.win}`);
+  $("miss-note").textContent = `One dot per hour with DA system lambda at $${CHEAP} or less (${d3.format(",")(rows.length)} hours)${edge ? `; ${edge} hour${edge > 1 ? "s" : ""} below ${(x.domain()[0] < 0 ? "−$" : "$") + Math.abs(x.domain()[0])} sit at the left edge` : ""}. Click a dot to see that day above.`;
 }
 
 // Extra thermal minimum output (LSL) online in cheap hours against the load forecast miss: one dot
