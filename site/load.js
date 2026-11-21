@@ -151,9 +151,7 @@ function drawBias() {
     [["hour_ending", "cheap_hours", "mean_error_mw"], hr.map((r) => [r.k, r.n, r.v]), `Cheap-hour load forecast bias by hour ${S.win}`]);
   drawThermal(ds);
   $("bias-hour-h").textContent = `Hours with the hub at $${CHEAP} or less: average error by hour`;
-  $("bias-note").textContent = `Load forecast minus actual load, averaged by real-time hub price, over ${d3.format(",")(rows.length)} hours (${CX.dayLabel(ds[0])} to ${CX.dayLabel(ds.at(-1))}). ` +
-    `Orange bars: the forecast was too high on average; blue: too low. $${CHEAP}/MWh is the site's cheap-hour cut. ` +
-    "Over-forecasts and cheap hours go together partly because an over-forecast itself commits extra units and lowers prices. Hours with fewer than three cheap days are left blank.";
+  $("bias-note").textContent = `Load forecast minus actual load, averaged by real-time hub price. Orange means the forecast was too high. ${d3.format(",")(rows.length)} hours, ${CX.dayLabel(ds[0])} to ${CX.dayLabel(ds.at(-1))}.`;
 }
 
 // Thermal left online beyond served net load, in cheap hours, by how far the load forecast missed
@@ -176,7 +174,7 @@ function drawThermal(ds) {
     [["load_forecast_error_bin", "cheap_hours", "thermal_hsl_online_minus_served_net_load_mw", "vs_average_cheap_hour_mw"], bins.map((r) => [r.k, r.n, r.a, r.v]), `Thermal online beyond net load in cheap hours ${S.win}`],
     { ylab: "MW more (+) or less (−) thermal online than the average cheap hour" });
   $("bias-thermal-note").textContent = rows.length
-    ? `${d3.format(",")(rows.length)} hours with the hub at $${CHEAP} or less that have 60-day data. Thermal left online is thermal capacity online (nuclear, coal and gas HSL) less served net load: ${mw(base)} in the average cheap hour. Bars show each bin against that average. Bins with fewer than five hours are left blank.`
+    ? `Thermal capacity online (nuclear, coal and gas) minus net load, compared with the average cheap hour (${mw(base)}). ${d3.format(",")(rows.length)} hours with the hub at $${CHEAP} or less.`
     : "No cheap hours with 60-day data in this period.";
 }
 
