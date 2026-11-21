@@ -4,8 +4,10 @@ them.  Read only from the raw store in the workflow (--store-only), so nothing i
 
 load_res_day(blob) -> (date, {"load-res": frame, "as-share": frame})
   load-res   one row per Load Resource and hour:
-             date, he, unit, qse, max_mw, low_mw, regup, regdn, rrs, ecrs, nspin (MW awarded);
+             date, he, unit, qse, nclr, max_mw, low_mw, regup, regdn, rrs, ecrs, nspin (MW awarded);
              qse comes from the AS offer file, so it is null on days the resource offered no AS
+             and in the early files, which have no QSE column (2019 does not); nclr is that file's
+             NCLR Flag ("Y" for a non-controllable Load Resource), null where it has none
   as-share   one row per hour and service: date, he, service, lr, esr, gen (MW awarded by Load
              Resources, batteries (ESR file, Dec 2025 on; before that inside gen) and generators),
              mcpc ($/MW per hour)
@@ -89,23 +91,23 @@ def load_res_day(blob: bytes):
     out = _awards(L, [he, name]).rename(columns={he: "he", name: "unit"})
     out["max_mw"] = pd.to_numeric(L[mx], errors="coerce") if mx else np.nan
     out["low_mw"] = pd.to_numeric(L[lo], errors="coerce") if lo else np.nan
-    qse = {}
+    qse, nclr = {}, {}
     off = _pick(files, "60d_dam_load_resource_asoffers")
     if off is not None:
-        O = pd.read_csv(io.BytesIO(off), dtype=str, usecols=lambda c: _norm(c) in QSE_COLS + NAME_COLS)
-        qc, nc = _col(O, *QSE_COLS), _col(O, *NAME_COLS)
+        O = pd.read_csv(io.BytesIO(off), dtype=str, usecols=lambda c: _norm(c) in QSE_COLS + NAME_COLS + ("nclrflag",))
+        qc, nc, fc = _col(O, *QSE_COLS), _col(O, *NAME_COLS), _col(O, "NCLR Flag")
         if qc and nc:
             qse = O[[nc, qc]].dropna().drop_duplicates(nc, keep="last").set_index(nc)[qc].str.strip().to_dict()
-    if not qse:     # shown in the month build: which files and columns the zip had
-        out_cols = list(pd.read_csv(io.BytesIO(off), nrows=0).columns) if off is not None else None
-        qse_note = f"no Load Resource QSE: files {sorted(files)}; AS offer columns {out_cols}"
-    else:
-        qse_note = None
+        if fc and nc:
+            nclr = O[[nc, fc]].dropna().drop_duplicates(nc, keep="last").set_index(nc)[fc].str.strip().str.upper().to_dict()
+    # the early files have no QSE column (2019 does not); the analysis carries QSEs back by unit name
+    qse_note = None if qse else "no Load Resource QSE column in the AS offer file"
     out["unit"] = out["unit"].str.strip()
     out["qse"] = out["unit"].map(qse)
+    out["nclr"] = out["unit"].map(nclr)
     out["he"] = pd.to_numeric(out["he"], errors="coerce").astype("Int64")
     out.insert(0, "date", date)
-    out = out[["date", "he", "unit", "qse", "max_mw", "low_mw", *SERVICES.values()]]
+    out = out[["date", "he", "unit", "qse", "nclr", "max_mw", "low_mw", *SERVICES.values()]]
 
     # shares: Load Resources against batteries and generators, plus the clearing price
     mcpc = {s: c for c in L.columns if _norm(c).endswith("mcpc") and (s := _svc(c))}

@@ -562,7 +562,7 @@ def build_load_month(api, month: str, kind: str, out: Path = OUT, force: bool = 
                 f[c] = f[c].astype("category")
         f.to_parquet(p, index=False)
         print(f"{p.name}: {len(f):,} rows, {f['date'].nunique()} days, {p.stat().st_size / 1e6:.1f} MB"
-              + (f", {f['unit'].nunique()} Load Resources, QSE known {f['qse'].notna().mean():.0%}" if "unit" in f else "")
+              + (f", {f['unit'].nunique()} Load Resources, QSE known {f['qse'].notna().mean():.0%}, NCLR flag known {f['nclr'].notna().mean():.0%}" if "unit" in f else "")
               + (f", {f['qse'].nunique()} QSEs" if "qse" in f and "unit" not in f else ""))
     print(f"{kind}-{month}: {time.time() - t0:.0f}s")
     if note:
