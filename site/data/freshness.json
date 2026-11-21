@@ -1,5 +1,5 @@
 {
- "checked": "2026-11-21T13:20:06Z",
+ "checked": "2026-11-21T20:07:18Z",
  "today": "2026-11-21",
  "sources": {
   "2d": {
@@ -53,30 +53,30 @@
   },
   "dam_nodes": {
    "label": "DAM node prices",
-   "latest": "2026-11-21",
-   "behind": 0,
-   "allowed": 0,
+   "latest": "2026-11-22",
+   "behind": -1,
+   "allowed": -1,
    "stale": false
   },
   "dam_lambda": {
    "label": "DAM system lambda",
-   "latest": "2026-11-21",
-   "behind": 0,
-   "allowed": 0,
+   "latest": "2026-11-22",
+   "behind": -1,
+   "allowed": -1,
    "stale": false
   },
   "load": {
    "label": "Load forecast",
    "latest": "2026-11-22",
    "behind": -1,
-   "allowed": 0,
+   "allowed": -1,
    "stale": false
   },
   "renew_forecast": {
    "label": "Wind and solar forecast",
    "latest": "2026-11-22",
    "behind": -1,
-   "allowed": 0,
+   "allowed": -1,
    "stale": false
   },
   "gas_hsc": {
