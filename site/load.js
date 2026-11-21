@@ -195,7 +195,11 @@ function drawMiss(ds) {
 const NIGHT = (h) => h <= 8 || h >= 22;
 
 function drawAll() { drawLoad(); drawNet(); drawBias(); }
-function setDay(d) { S.day = d; drawLoad(); drawNet(); }
+// the view in the URL (#date=…&win=…), as on the other pages
+const VIEW_KEYS = { date: "day", win: "win" };
+function saveView() { CX.writeHash({ ...CX.readHash(), ...Object.fromEntries(Object.entries(VIEW_KEYS).map(([k, sk]) => [k, S[sk]])) }); }
+function loadView() { const v = CX.readHash(); Object.entries(VIEW_KEYS).forEach(([k, sk]) => { if (v[k] != null) S[sk] = v[k]; }); }
+function setDay(d) { S.day = d; drawLoad(); drawNet(); saveView(); }
 function bindSeg(id, key, fn) {
   const el = $(id);
   const sync = () => el.querySelectorAll("button").forEach((b) => b.setAttribute("aria-checked", String(b.dataset.v === S[key])));
@@ -207,11 +211,16 @@ async function boot() {
   S.P = await tryJSON("data/load_page.json.gz");
   if (!S.P || !S.P.dates.length) { $("status").textContent = "No load data yet. It is built by the data update workflow."; return; }
   const dates = CX.fromStart(S.P.dates);
-  const last = [...dates].reverse().find((d) => S.P.days[d].act) || dates.at(-1);
+  loadView();
+  // opens on the latest day with 60-day data, as the other pages do (potential net load needs it)
+  const l60 = await CX.latest60();
+  const start = dates.includes(S.day) ? S.day : [...dates].reverse().find((d) => (!l60 || d <= l60) && S.P.days[d].whsl) || dates.at(-1);
   $("status").textContent = `Load forecast and actual ${CX.dayLabel(dates[0])} to ${CX.dayLabel(dates.at(-1))} · potential net load through ${CX.dayLabel([...dates].reverse().find((d) => S.P.days[d].whsl) || dates[0])}`;
-  S.picker = CX.dayPicker("lday", { days: dates, main: true, value: last, onChange: setDay });
+  S.picker = CX.dayPicker("lday", { days: dates, main: true, value: start, onChange: setDay });
   S.day = S.picker.get();
-  bindSeg("c-win", "win", drawBias);
+  if (!["30", "90", "all"].includes(S.win)) S.win = "90";
+  bindSeg("c-win", "win", () => { drawBias(); saveView(); });
+  saveView();
   drawAll();
   CX.init();
   let t, lastW = 0;
