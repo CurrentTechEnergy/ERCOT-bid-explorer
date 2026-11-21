@@ -5,6 +5,7 @@ name: Build hourly history
 # real-time AS awards and prices with every technology's DAM AS awards (kind: rtas, Dec 2025 on)
 # or each resource's QSE and decision-making entity (kind: control, read only from the raw store)
 # or the DAM system lambda (kind: da-lambda, read only from the raw store)
+# or the load-side tables (kinds: load-res and dam-bids, read only from the raw store)
 # from ERCOT's
 # archive (pipeline/history.py), one month per job,
 # uploaded as Parquet files to the `history` release.  Kept apart from the site data and the
@@ -14,9 +15,9 @@ on:
   workflow_dispatch:
     inputs:
       kind:
-        description: "renewables (units-*), thermal (thermal-*), as (as-*, as-mcpc-*), rt (rt-prices-*), rtas (rt-as-*, rt-mcpc-*, dam-as-*) dam-status (dam-status-*, read only from the raw store), control (control-*, read only from the raw store) or da-lambda (da-lambda-*, read only from the raw store)"
+        description: "renewables (units-*), thermal (thermal-*), as (as-*, as-mcpc-*), rt (rt-prices-*), rtas (rt-as-*, rt-mcpc-*, dam-as-*) dam-status (dam-status-*, read only from the raw store), control (control-*, read only from the raw store) da-lambda (da-lambda-*), load-res (load-res-*, as-share-*) or dam-bids (dam-bids-*, dam-cheap-demand-*); the last four read only from the raw store"
         type: choice
-        options: [renewables, thermal, as, rt, rtas, dam-status, control, da-lambda]
+        options: [renewables, thermal, as, rt, rtas, dam-status, control, da-lambda, load-res, dam-bids]
         required: false
         default: renewables
       start:
@@ -39,6 +40,7 @@ on:
     paths:
       - pipeline/history.py
       - pipeline/rt_as.py
+      - pipeline/load_hist.py
       - .github/workflows/history.yml
 
 permissions:
@@ -62,7 +64,7 @@ jobs:
           MAX: ${{ inputs.max_months || '24' }}
           FORCE: ${{ inputs.force || false }}
           EVENT: ${{ github.event_name }}
-          PREFIX: ${{ inputs.kind == 'thermal' && 'thermal' || inputs.kind == 'as' && 'as' || inputs.kind == 'rt' && 'rt-prices' || inputs.kind == 'rtas' && 'rt-as' || inputs.kind == 'dam-status' && 'dam-status' || inputs.kind == 'control' && 'control' || inputs.kind == 'da-lambda' && 'da-lambda' || 'units' }}
+          PREFIX: ${{ inputs.kind == 'thermal' && 'thermal' || inputs.kind == 'as' && 'as' || inputs.kind == 'rt' && 'rt-prices' || inputs.kind == 'rtas' && 'rt-as' || inputs.kind == 'dam-status' && 'dam-status' || inputs.kind == 'control' && 'control' || inputs.kind == 'da-lambda' && 'da-lambda' || inputs.kind == 'load-res' && 'load-res' || inputs.kind == 'dam-bids' && 'dam-bids' || 'units' }}
           KIND: ${{ inputs.kind }}
         run: |
           if [ "$EVENT" = "pull_request" ]; then echo 'months=["2019-01"]' >> "$GITHUB_OUTPUT"; exit 0; fi
@@ -115,7 +117,7 @@ jobs:
           R2_ENDPOINT: ${{ secrets.R2_ENDPOINT }}
           R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
           R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
-        run: python -m pipeline.history "${{ matrix.month }}" --out out ${{ inputs.kind == 'thermal' && '--thermal' || inputs.kind == 'as' && '--as' || inputs.kind == 'rt' && '--rt' || inputs.kind == 'rtas' && '--rtas' || inputs.kind == 'dam-status' && '--dam-status --store-only' || inputs.kind == 'control' && '--control --store-only' || inputs.kind == 'da-lambda' && '--da-lambda --store-only' || github.event_name == 'pull_request' && '--store-only' || '' }}
+        run: python -m pipeline.history "${{ matrix.month }}" --out out ${{ inputs.kind == 'thermal' && '--thermal' || inputs.kind == 'as' && '--as' || inputs.kind == 'rt' && '--rt' || inputs.kind == 'rtas' && '--rtas' || inputs.kind == 'dam-status' && '--dam-status --store-only' || inputs.kind == 'control' && '--control --store-only' || inputs.kind == 'da-lambda' && '--da-lambda --store-only' || inputs.kind == 'load-res' && '--load-res --store-only' || inputs.kind == 'dam-bids' && '--dam-bids --store-only' || github.event_name == 'pull_request' && '--store-only' || '' }}
       - name: QSE and DME, 2019-01 (smoke test, raw store only)
         if: github.event_name == 'pull_request'
         env:
@@ -126,6 +128,18 @@ jobs:
           R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
           R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
         run: python -m pipeline.history 2019-01 --out out --control --store-only
+      - name: Load Resources and DAM bids, 2019-01 (smoke test, raw store only)
+        if: github.event_name == 'pull_request'
+        env:
+          ERCOT_API_USERNAME: ${{ secrets.ERCOT_API_USERNAME }}
+          ERCOT_API_PASSWORD: ${{ secrets.ERCOT_API_PASSWORD }}
+          ERCOT_API_SUBSCRIPTION_KEY: ${{ secrets.ERCOT_API_SUBSCRIPTION_KEY }}
+          R2_ENDPOINT: ${{ secrets.R2_ENDPOINT }}
+          R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+        run: |
+          python -m pipeline.history 2019-01 --out out --load-res --store-only
+          python -m pipeline.history 2019-01 --out out --dam-bids --store-only
       # No RT settlement point price smoke test: those files come in bulk downloads that the raw
       # store does not keep, so every PR run would download the same month from ERCOT again.
       - name: RT AS, first 2 days of Dec 2025 (smoke test)
