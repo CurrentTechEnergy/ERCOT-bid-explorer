@@ -1,0 +1,58 @@
+name: Move load-side history to its own release
+
+# One-off: GitHub allows 1,000 files per release and `history` is full.  Moves the load-side
+# tables (load-res-*, as-share-*, dam-bids-*, dam-cheap-demand-*) from `history` to
+# `history-load`, which the Build hourly history workflow now uses for those kinds.  Copies
+# between releases only; reads nothing from ERCOT.  Deletes from `history` only files that are
+# on `history-load` with the same size.  Safe to run again.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write     # release assets only
+
+concurrency:
+  group: history
+  cancel-in-progress: false
+
+jobs:
+  move:
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ github.token }}
+      R: ${{ github.repository }}
+    steps:
+      - name: Create history-load if missing
+        run: |
+          if ! gh release view history-load -R "$R" > /dev/null 2>&1; then
+            gh release create history-load -R "$R" --title "Hourly history (history-load)" --latest=false \
+              --notes "Load-side history tables (load-res, as-share, dam-bids, dam-cheap-demand) built from ERCOT's 60-day DAM archive, read only from the raw store, by the Build hourly history workflow (pipeline/history.py and pipeline/load_hist.py document the files). Kept apart from the history release because GitHub allows 1,000 files per release. Data only."
+          fi
+      - name: Copy
+        run: |
+          mkdir -p mv
+          gh release download history -R "$R" -D mv \
+            -p 'load-res-*.parquet' -p 'as-share-*.parquet' -p 'dam-bids-*.parquet' -p 'dam-cheap-demand-*.parquet' || true
+          ls mv | wc -l
+          if ls mv/*.parquet > /dev/null 2>&1; then gh release upload history-load mv/*.parquet --clobber -R "$R"; fi
+      - name: Delete from history what history-load now holds
+        run: |
+          gh api "repos/$R/releases/tags/history-load" --jq '.id' > /dev/null
+          python3 - <<'PY'
+          import json, os, subprocess
+          R = os.environ["R"]
+          def assets(tag):
+              rid = json.loads(subprocess.check_output(["gh", "api", f"repos/{R}/releases/tags/{tag}"]))["id"]
+              out = subprocess.check_output(["gh", "api", "--paginate", f"repos/{R}/releases/{rid}/assets?per_page=100", "--jq", ".[] | [.id, .name, .size] | @tsv"], text=True)
+              return [l.split("\t") for l in out.splitlines() if l]
+          keep = {n: s for _, n, s in assets("history-load")}
+          moved = 0
+          for i, n, s in assets("history"):
+              if n.startswith(("load-res-", "as-share-", "dam-bids-", "dam-cheap-demand-")):
+                  if keep.get(n) == s:
+                      subprocess.check_call(["gh", "api", "-X", "DELETE", f"repos/{R}/releases/assets/{i}"])
+                      moved += 1
+                  else:
+                      print(f"kept {n}: not on history-load with the same size")
+          print(f"moved {moved} files; history-load holds {len(keep)}")
+          PY

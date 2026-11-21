@@ -64,6 +64,9 @@ One pair of Parquet files per calendar month:
                            the resource appears and the days its pair changes.  qse.py merges them into
                            the dated history in data/unit_qse.json.gz.
 
+  The load-side files below go to their own release, `history-load` (GitHub allows 1,000 files per
+  release):  gh release download history-load -D history/
+
   load-res-, as-share-YYYY-MM.parquet  (--load-res, from the 60-day DAM disclosure alone) every Load
                            Resource's DAM AS awards by hour with its QSE, and each service's MW from Load
                            Resources, batteries and generators with the MCPC; pipeline/load_hist.py
