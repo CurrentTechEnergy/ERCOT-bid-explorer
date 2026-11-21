@@ -3,13 +3,27 @@
   <title>GRSES_UNIT1: bidding and operating changes</title>
   <link href="https://ercotbids.currenttech.energy/unit.html?unit=GRSES_UNIT1"/>
   <id>https://ercotbids.currenttech.energy/unit.html?unit=GRSES_UNIT1</id>
-  <updated>2026-11-20T00:00:00Z</updated>
+  <updated>2026-11-21T00:00:00Z</updated>
   <entry>
-    <title>GRSES_UNIT1: Bidding approach shifted (2026-09-11)</title>
+    <title>GRSES_UNIT1: Bidding approach shifted (2026-09-16)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=GRSES_UNIT1"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=GRSES_UNIT1#GRSES_UNIT1/2026-09-11/bidding</id>
-    <updated>2026-11-20T00:00:00Z</updated>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=GRSES_UNIT1#GRSES_UNIT1/2026-09-16/bidding</id>
+    <updated>2026-11-21T00:00:00Z</updated>
     <summary>Offer price vs peer median: $34 to −$4/MWh</summary>
+  </entry>
+  <entry>
+    <title>GRSES_UNIT1: Bidding approach shifted (2026-09-05)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=GRSES_UNIT1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=GRSES_UNIT1#GRSES_UNIT1/2026-09-05/bidding</id>
+    <updated>2026-11-21T00:00:00Z</updated>
+    <summary>Offer price vs peer median: $12 to $34/MWh</summary>
+  </entry>
+  <entry>
+    <title>GRSES_UNIT1: Turn-off point moved (2026-09-01)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=GRSES_UNIT1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=GRSES_UNIT1#GRSES_UNIT1/2026-09-01/turnoff/0</id>
+    <updated>2026-11-21T00:00:00Z</updated>
+    <summary>Turn-off point (no award) in September: $180 to $276 per MW of minimum output</summary>
   </entry>
   <entry>
     <title>GRSES_UNIT1: How often it turns off changed (2026-09-01)</title>

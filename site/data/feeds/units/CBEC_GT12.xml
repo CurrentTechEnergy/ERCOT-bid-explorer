@@ -3,7 +3,21 @@
   <title>CBEC_GT12: bidding and operating changes</title>
   <link href="https://ercotbids.currenttech.energy/unit.html?unit=CBEC_GT12"/>
   <id>https://ercotbids.currenttech.energy/unit.html?unit=CBEC_GT12</id>
-  <updated>2026-10-19T00:00:00Z</updated>
+  <updated>2026-11-21T00:00:00Z</updated>
+  <entry>
+    <title>CBEC_GT12: Day-ahead: minimum-energy offer stepped (2026-09-10)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=CBEC_GT12"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=CBEC_GT12#CBEC_GT12/2026-09-10/dam_mingen_step</id>
+    <updated>2026-11-21T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $38 to $44/MWh (offer minus fuel cost: $5 to $9/MWh)</summary>
+  </entry>
+  <entry>
+    <title>CBEC_GT12: Day-ahead: minimum-energy offer stepped (2026-09-10)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=CBEC_GT12"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=CBEC_GT12#CBEC_GT12/2026-09-10/dam_mingen_step</id>
+    <updated>2026-11-21T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $38 to $44/MWh (offer minus fuel cost: $5 to $9/MWh)</summary>
+  </entry>
   <entry>
     <title>CBEC_GT12: How often it turns off changed (2026-08-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=CBEC_GT12"/>
