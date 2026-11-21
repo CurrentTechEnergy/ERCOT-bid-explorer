@@ -150,7 +150,6 @@ function drawBias() {
     (r) => `<h4>HE ${r.k}, lambda at $${CHEAP} or less</h4>` + tipRows([[null, "Hours", d3.format(",")(r.n)], [null, "Average error", mw(r.v, true)]]),
     [["hour_ending", "cheap_hours", "mean_error_mw"], hr.map((r) => [r.k, r.n, r.v]), `Cheap-hour load forecast bias by hour ${S.win}`]);
   drawMiss(ds);
-  drawThermal(ds);
   $("bias-hour-h").textContent = `Hours with DA system lambda at $${CHEAP} or less: mean error by hour`;
   $("bias-note").textContent = `Each hour's load forecast error (forecast minus actual), grouped by that hour's day-ahead system lambda. Bars are the mean error in each group; orange means the forecast was too high. ${d3.format(",")(rows.length)} hours, ${CX.dayLabel(ds[0])} to ${CX.dayLabel(ds.at(-1))}.`;
 }
@@ -193,54 +192,7 @@ function drawMiss(ds) {
   $("miss-note").textContent = `One dot per hour with DA system lambda at $${CHEAP} or less (${d3.format(",")(rows.length)} hours)${edge ? `; ${edge} hour${edge > 1 ? "s" : ""} below ${(x.domain()[0] < 0 ? "−$" : "$") + Math.abs(x.domain()[0])} sit at the left edge` : ""}. Click a dot to see that day above.`;
 }
 
-// Extra thermal minimum output (LSL) online in cheap hours against the load forecast miss: one dot
-// per cheap hour; y is the residual of a straight-line fit of LSL on served net load, and the line
-// is the fit of that residual on the miss.
 const NIGHT = (h) => h <= 8 || h >= 22;
-function drawThermal(ds) {
-  const el = $("bias-thermal"), rows = [];
-  ds.forEach((dd) => {
-    const d = S.P.days[dd];
-    if (!d.thlsl || !d.wact || !d.sact) return;
-    HOURS.forEach((h) => {
-      const i = h - 1, p = d.lam[i], e = sub(d.fc[i], d.act[i]);
-      if (p == null || p > CHEAP || e == null || d.thlsl[i] == null || d.wact[i] == null || d.sact[i] == null) return;
-      rows.push({ d: dd, h, p, e, y: d.thlsl[i], n: d.act[i] - d.wact[i] - d.sact[i] });
-    });
-  });
-  const ols = (xs, ys) => { const mx = d3.mean(xs), my = d3.mean(ys), vx = d3.sum(xs, (x) => (x - mx) ** 2); const b = vx ? d3.sum(xs, (x, i) => (x - mx) * (ys[i] - my)) / vx : 0; return { b, a: my - b * mx }; };
-  if (rows.length < 20) { el.innerHTML = `<p class="note">Too few cheap hours with 60-day data in this period.</p>`; $("bias-thermal-note").textContent = ""; $("thermal-legend").innerHTML = ""; return; }
-  const f1 = ols(rows.map((q) => q.n), rows.map((q) => q.y));
-  rows.forEach((q) => { q.r = q.y - (f1.a + f1.b * q.n); });
-  const f2 = ols(rows.map((q) => q.e), rows.map((q) => q.r));
-  const cN = css("--c7"), cD = css("--c4"), cL = css("--ink");
-  legend("thermal-legend", [[cN, "Overnight hour (HE 22–8)"], [cD, "Daytime hour (HE 9–21)"], [cL, `Fitted line: ${f2.b >= 0 ? "+" : "−"}${d3.format(".2f")(Math.abs(f2.b))} MW per MW the forecast was too high`]]);
-
-  const W = width(el), H = Math.round(Math.min(380, Math.max(280, W * 0.42)));
-  const m = { l: 56, r: 14, t: 18, b: 38 }, { g, w, h, svg } = frame(el, W, H, m);
-  const ex = d3.extent(rows, (q) => q.e), ey = d3.extent(rows, (q) => q.r);
-  const x = d3.scaleLinear().domain([Math.min(ex[0], 0), Math.max(ex[1], 0)]).nice().range([0, w]);
-  const y = d3.scaleLinear().domain([Math.min(ey[0], 0), Math.max(ey[1], 0)]).nice().range([h, 0]);
-  const k = (v) => d3.format(",")(v / 1000);
-  g.append("g").attr("class", "gridline").call(d3.axisLeft(y).ticks(5).tickSize(-w).tickFormat(""));
-  g.append("g").attr("class", "axis").call(d3.axisLeft(y).ticks(5).tickFormat(k).tickSizeOuter(0));
-  g.append("g").attr("class", "axis").attr("transform", `translate(0,${h})`).call(d3.axisBottom(x).ticks(w < 500 ? 5 : 9).tickFormat(k).tickSizeOuter(0));
-  g.append("line").attr("class", "zero").attr("x1", 0).attr("x2", w).attr("y1", y(0)).attr("y2", y(0));
-  g.append("line").attr("class", "zero").attr("x1", x(0)).attr("x2", x(0)).attr("y1", 0).attr("y2", h);
-  svg.append("text").attr("class", "axis-title").attr("x", m.l).attr("y", 12).text("GW of extra thermal minimum output online");
-  svg.append("text").attr("class", "axis-title").attr("x", m.l).attr("y", H - 4).text("GW the load forecast was too high (+) or too low (−) →");
-  g.selectAll("circle").data(rows).join("circle").attr("cx", (q) => x(q.e)).attr("cy", (q) => y(q.r)).attr("r", w < 500 ? 2.5 : 3.2)
-    .attr("fill", (q) => (NIGHT(q.h) ? cN : cD)).attr("fill-opacity", 0.55).style("cursor", "pointer")
-    .on("pointermove", (ev, q) => showTip(ev, `<h4>${CX.dayLabel(q.d)}, HE ${q.h}</h4>` + tipRows([[null, "Forecast − actual", mw(q.e, true)], [null, "Extra minimum output", mw(q.r, true)], [null, "Thermal minimum output online", mw(q.y)], [null, "DA system lambda", "$" + q.p.toFixed(2)]]) + `<p class="note">Click to show this day above</p>`))
-    .on("pointerleave", hideTip)
-    .on("click", (ev, q) => { hideTip(); setDay(S.picker.set(q.d)); $("load-panel").scrollIntoView({ behavior: "smooth", block: "start" }); });
-  const [x0, x1] = x.domain();
-  g.append("line").attr("x1", x(x0)).attr("x2", x(x1)).attr("y1", y(f2.a + f2.b * x0)).attr("y2", y(f2.a + f2.b * x1))
-    .attr("stroke", cL).attr("stroke-width", 2).attr("pointer-events", "none");
-  setCSV(el, ["date", "hour_ending", "da_system_lambda", "load_forecast_minus_actual_mw", "thermal_lsl_online_mw", "served_net_load_mw", "extra_lsl_adjusted_for_net_load_mw"],
-    rows.map((q) => [q.d, q.h, q.p, q.e, q.y, q.n, Math.round(q.r)]), `Extra thermal minimum output in cheap hours ${S.win}`);
-  $("bias-thermal-note").textContent = `One dot per hour with DA system lambda at $${CHEAP} or less (${d3.format(",")(rows.length)} hours). Extra minimum output is the thermal LSL online less what the hour's net load would predict.`;
-}
 
 function drawAll() { drawLoad(); drawNet(); drawBias(); }
 function setDay(d) { S.day = d; drawLoad(); drawNet(); }

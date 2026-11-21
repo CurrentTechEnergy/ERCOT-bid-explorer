@@ -5,9 +5,8 @@ downloads.
   data/load.json.gz            in-use load forecast as of the DAM, actual load (pipeline/load.py)
   data/renew_forecast.json.gz  STWPF / STPPF as of the DAM, actual wind and solar output
                                (pipeline/renew_forecast.py)
-  data/summary_60d.json.gz     per hour, 60-day days only: wind and solar HSL (what the plants could
-                               have produced) and the LSL of thermal units online (nuclear, coal,
-                               combined cycle, gas steam, combustion turbine)
+  data/summary_60d.json.gz     wind and solar HSL (what the plants could have produced) per hour,
+                               60-day days only
   data/dam_lambda.json.gz      DA system lambda per hour (the site's cheap-hour price)
 
 Net load = load less wind and solar:
@@ -21,9 +20,8 @@ an error.
 
 Writes data/load_page.json.gz:
   {"built", "dates": [...],
-   "days": {date: {"fc", "act", "wfc", "sfc", "wact", "sact", "whsl", "shsl", "thlsl", "lam": [24] or null}}}
-thlsl is the thermal minimum output online (sum of LSL), for the across-days chart of extra
-minimum output when load is over-forecast.  MW rounded to whole numbers, prices to cents.
+   "days": {date: {"fc", "act", "wfc", "sfc", "wact", "sact", "whsl", "shsl", "lam": [24] or null}}}
+MW rounded to whole numbers, prices to cents.
 """
 import datetime as dt
 
@@ -32,7 +30,6 @@ from .store import read_json_gz, write_json_gz
 
 PATH = DATA_DIR / "load_page.json.gz"
 SITE_START = "2025-11-30"
-THERMAL = ("nuclear", "coal", "combined_cycle", "gas_steam", "combustion_turbine")
 
 
 def _arr(v, nd=0):
@@ -68,7 +65,6 @@ def build_load_page(index: dict = None) -> None:
              "wfc": _arr(R.get("wind")), "sfc": _arr(R.get("solar")),
              "wact": _arr(R.get("wind_actual")), "sact": _arr(R.get("solar_actual")),
              "whsl": _stat(s, "hsl", ("wind",)), "shsl": _stat(s, "hsl", ("solar",)),
-             "thlsl": _stat(s, "lsl", THERMAL),
              "lam": _arr(lam.get(d), 2)}
         if e["fc"] or e["act"]:
             days[d] = e
