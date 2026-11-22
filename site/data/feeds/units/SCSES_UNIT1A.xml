@@ -3,7 +3,28 @@
   <title>SCSES_UNIT1A: bidding and operating changes</title>
   <link href="https://ercotbids.currenttech.energy/unit.html?unit=SCSES_UNIT1A"/>
   <id>https://ercotbids.currenttech.energy/unit.html?unit=SCSES_UNIT1A</id>
-  <updated>2026-11-19T00:00:00Z</updated>
+  <updated>2026-11-22T00:00:00Z</updated>
+  <entry>
+    <title>SCSES_UNIT1A: Day-ahead: minimum-energy offer stepped (2026-09-17)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=SCSES_UNIT1A"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=SCSES_UNIT1A#SCSES_UNIT1A/2026-09-17/dam_mingen_step</id>
+    <updated>2026-11-22T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $51 to $2/MWh (offer minus fuel cost: $17 to −$32/MWh)</summary>
+  </entry>
+  <entry>
+    <title>SCSES_UNIT1A: Day-ahead: minimum-energy offer stepped (2026-09-17)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=SCSES_UNIT1A"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=SCSES_UNIT1A#SCSES_UNIT1A/2026-09-17/dam_mingen_step</id>
+    <updated>2026-11-22T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $51 to $2/MWh (offer minus fuel cost: $17 to −$32/MWh)</summary>
+  </entry>
+  <entry>
+    <title>SCSES_UNIT1A: Bidding approach shifted (2026-09-17)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=SCSES_UNIT1A"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=SCSES_UNIT1A#SCSES_UNIT1A/2026-09-17/bidding</id>
+    <updated>2026-11-22T00:00:00Z</updated>
+    <summary>Offer price vs peer median: $74 to $54/MWh</summary>
+  </entry>
   <entry>
     <title>SCSES_UNIT1A: Day-ahead: priced out (2026-09-11)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=SCSES_UNIT1A"/>
@@ -192,26 +213,5 @@
     <id>https://ercotbids.currenttech.energy/unit.html?unit=SCSES_UNIT1A#SCSES_UNIT1A/2026-03-01/group</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>Off for a week or more at a time (February 2026) to Off for days at a time (March 2026)</summary>
-  </entry>
-  <entry>
-    <title>SCSES_UNIT1A: How often it turns off changed (2026-02-01)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=SCSES_UNIT1A"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=SCSES_UNIT1A#SCSES_UNIT1A/2026-02-01/group</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Off for days at a time (January 2026) to Off for a week or more at a time (February 2026)</summary>
-  </entry>
-  <entry>
-    <title>SCSES_UNIT1A: Bidding approach shifted (2026-01-27)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=SCSES_UNIT1A"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=SCSES_UNIT1A#SCSES_UNIT1A/2026-01-27/bidding</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Offer price vs peer median: $208 to $8/MWh</summary>
-  </entry>
-  <entry>
-    <title>SCSES_UNIT1A: Bidding approach shifted (2025-12-31)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=SCSES_UNIT1A"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=SCSES_UNIT1A#SCSES_UNIT1A/2025-12-31/bidding</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Offer price vs peer median: −$14 to $208/MWh</summary>
   </entry>
 </feed>

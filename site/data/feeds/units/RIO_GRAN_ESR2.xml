@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>RIO_GRAN_ESR2: bidding and operating changes</title>
+  <link href="https://ercotbids.currenttech.energy/unit.html?unit=RIO_GRAN_ESR2"/>
+  <id>https://ercotbids.currenttech.energy/unit.html?unit=RIO_GRAN_ESR2</id>
+  <updated>2026-11-22T00:00:00Z</updated>
+  <entry>
+    <title>RIO_GRAN_ESR2: Battery size changed (2026-08-18)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=RIO_GRAN_ESR2"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=RIO_GRAN_ESR2#RIO_GRAN_ESR2/2026-08-18/battery_size</id>
+    <updated>2026-11-22T00:00:00Z</updated>
+    <summary>Maximum state of charge 16 to 23 MWh</summary>
+  </entry>
+</feed>

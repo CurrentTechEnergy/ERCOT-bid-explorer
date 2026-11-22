@@ -3,13 +3,20 @@
   <title>DUKE_CC1: bidding and operating changes</title>
   <link href="https://ercotbids.currenttech.energy/unit.html?unit=DUKE_CC1"/>
   <id>https://ercotbids.currenttech.energy/unit.html?unit=DUKE_CC1</id>
-  <updated>2026-11-19T00:00:00Z</updated>
+  <updated>2026-11-22T00:00:00Z</updated>
+  <entry>
+    <title>DUKE_CC1: Outage ended (2026-09-23)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=DUKE_CC1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=DUKE_CC1#DUKE_CC1/2026-09-23/outage_end</id>
+    <updated>2026-11-22T00:00:00Z</updated>
+    <summary>Back from a 13-day outage</summary>
+  </entry>
   <entry>
     <title>DUKE_CC1: Outage started (2026-09-10)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=DUKE_CC1"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=DUKE_CC1#DUKE_CC1/2026-09-10/outage_start</id>
     <updated>2026-11-16T00:00:00Z</updated>
-    <summary>Outage began, still on at the end of the data (12 days so far)</summary>
+    <summary>Outage began, lasting 13 days</summary>
   </entry>
   <entry>
     <title>DUKE_CC1: How often it turns off changed (2026-09-01)</title>

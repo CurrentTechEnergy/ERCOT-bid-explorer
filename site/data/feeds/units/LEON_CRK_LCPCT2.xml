@@ -3,7 +3,14 @@
   <title>LEON_CRK_LCPCT2: bidding and operating changes</title>
   <link href="https://ercotbids.currenttech.energy/unit.html?unit=LEON_CRK_LCPCT2"/>
   <id>https://ercotbids.currenttech.energy/unit.html?unit=LEON_CRK_LCPCT2</id>
-  <updated>2026-11-05T00:00:00Z</updated>
+  <updated>2026-11-22T00:00:00Z</updated>
+  <entry>
+    <title>LEON_CRK_LCP: Day-ahead: minimum-energy offer stepped (2026-09-17)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=LEON_CRK_LCP"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=LEON_CRK_LCP#LEON_CRK_LCP/2026-09-17/dam_mingen_step</id>
+    <updated>2026-11-22T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $29 to $35/MWh (offer minus fuel cost: −$5 to $0/MWh)</summary>
+  </entry>
   <entry>
     <title>LEON_CRK_LCP: Day-ahead: minimum-energy offer stepped (2026-08-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=LEON_CRK_LCP"/>
