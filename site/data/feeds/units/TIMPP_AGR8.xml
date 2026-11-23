@@ -3,13 +3,20 @@
   <title>TIMPP_AGR8: bidding and operating changes</title>
   <link href="https://ercotbids.currenttech.energy/unit.html?unit=TIMPP_AGR8"/>
   <id>https://ercotbids.currenttech.energy/unit.html?unit=TIMPP_AGR8</id>
-  <updated>2026-11-20T00:00:00Z</updated>
+  <updated>2026-11-23T00:00:00Z</updated>
   <entry>
     <title>TIMPP_AGR8: Shut down despite a day-ahead award (2026-09-21)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=TIMPP_AGR8"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=TIMPP_AGR8#TIMPP_AGR8/2026-09-21/shutdown_award</id>
     <updated>2026-11-20T00:00:00Z</updated>
     <summary>Shut down for 2 h although a day-ahead award covered 100% of the stretch</summary>
+  </entry>
+  <entry>
+    <title>TIMPP_AGR: Day-ahead: minimum-energy offer stepped (2026-09-18)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=TIMPP_AGR"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=TIMPP_AGR#TIMPP_AGR/2026-09-18/dam_mingen_step</id>
+    <updated>2026-11-23T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $56 to $42/MWh (offer minus fuel cost: $20 to $8/MWh)</summary>
   </entry>
   <entry>
     <title>TIMPP_AGR: Day-ahead: minimum-energy offer stepped (2026-07-14)</title>

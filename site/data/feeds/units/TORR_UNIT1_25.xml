@@ -3,7 +3,14 @@
   <title>TORR_UNIT1_25: bidding and operating changes</title>
   <link href="https://ercotbids.currenttech.energy/unit.html?unit=TORR_UNIT1_25"/>
   <id>https://ercotbids.currenttech.energy/unit.html?unit=TORR_UNIT1_25</id>
-  <updated>2026-11-01T00:00:00Z</updated>
+  <updated>2026-11-23T00:00:00Z</updated>
+  <entry>
+    <title>TORR_UNIT1: Wind/solar: offer started moving within the day (2026-09-19)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=TORR_UNIT1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=TORR_UNIT1#TORR_UNIT1/2026-09-19/renew_moving_on</id>
+    <updated>2026-11-23T00:00:00Z</updated>
+    <summary>Started moving within the day: was a floor of −$40/MWh</summary>
+  </entry>
   <entry>
     <title>TORR_UNIT1: Wind/solar: offer stopped moving within the day (2026-08-28)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=TORR_UNIT1"/>

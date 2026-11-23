@@ -3,7 +3,7 @@
   <title>QUEEN_SL: bidding and operating changes</title>
   <link href="https://ercotbids.currenttech.energy/unit.html?unit=QUEEN_SL"/>
   <id>https://ercotbids.currenttech.energy/unit.html?unit=QUEEN_SL</id>
-  <updated>2026-10-18T00:00:00Z</updated>
+  <updated>2026-11-23T00:00:00Z</updated>
   <entry>
     <title>QUEEN_SL: Wind/solar: offer floor changed (2026-07-02)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=QUEEN_SL"/>
@@ -16,6 +16,13 @@
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=QUEEN_SL"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=QUEEN_SL#QUEEN_SL/2026-01-25/renew_terms</id>
     <updated>2026-10-18T00:00:00Z</updated>
+    <summary>Hedge formula terms changed</summary>
+  </entry>
+  <entry>
+    <title>QUEEN_SL: Wind/solar: hedge formula terms changed (2026-01-20)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=QUEEN_SL"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=QUEEN_SL#QUEEN_SL/2026-01-20/renew_terms</id>
+    <updated>2026-11-23T00:00:00Z</updated>
     <summary>Hedge formula terms changed</summary>
   </entry>
   <entry>

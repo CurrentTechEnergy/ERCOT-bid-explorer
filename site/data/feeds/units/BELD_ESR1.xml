@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>BELD_ESR1: bidding and operating changes</title>
+  <link href="https://ercotbids.currenttech.energy/unit.html?unit=BELD_ESR1"/>
+  <id>https://ercotbids.currenttech.energy/unit.html?unit=BELD_ESR1</id>
+  <updated>2026-11-23T00:00:00Z</updated>
+  <entry>
+    <title>BELD_ESR1: Battery size changed (2026-08-19)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=BELD_ESR1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=BELD_ESR1#BELD_ESR1/2026-08-19/battery_size</id>
+    <updated>2026-11-23T00:00:00Z</updated>
+    <summary>Maximum state of charge 11 to 17 MWh</summary>
+  </entry>
+</feed>

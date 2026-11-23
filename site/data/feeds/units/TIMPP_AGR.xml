@@ -3,7 +3,14 @@
   <title>TIMPP_AGR: bidding and operating changes</title>
   <link href="https://ercotbids.currenttech.energy/unit.html?unit=TIMPP_AGR"/>
   <id>https://ercotbids.currenttech.energy/unit.html?unit=TIMPP_AGR</id>
-  <updated>2026-10-18T00:00:00Z</updated>
+  <updated>2026-11-23T00:00:00Z</updated>
+  <entry>
+    <title>TIMPP_AGR: Day-ahead: minimum-energy offer stepped (2026-09-18)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=TIMPP_AGR"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=TIMPP_AGR#TIMPP_AGR/2026-09-18/dam_mingen_step</id>
+    <updated>2026-11-23T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $56 to $42/MWh (offer minus fuel cost: $20 to $8/MWh)</summary>
+  </entry>
   <entry>
     <title>TIMPP_AGR: Day-ahead: minimum-energy offer stepped (2026-07-14)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=TIMPP_AGR"/>

@@ -3,13 +3,27 @@
   <title>MGSES_CT6: bidding and operating changes</title>
   <link href="https://ercotbids.currenttech.energy/unit.html?unit=MGSES_CT6"/>
   <id>https://ercotbids.currenttech.energy/unit.html?unit=MGSES_CT6</id>
-  <updated>2026-10-26T00:00:00Z</updated>
+  <updated>2026-11-23T00:00:00Z</updated>
+  <entry>
+    <title>MGSES_CT6: How often it turns off changed (2026-09-01)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=MGSES_CT6"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=MGSES_CT6#MGSES_CT6/2026-09-01/group</id>
+    <updated>2026-11-23T00:00:00Z</updated>
+    <summary>Off for days at a time (August 2026) to Off for a week or more at a time (September 2026)</summary>
+  </entry>
   <entry>
     <title>MGSES_CT6: How often it turns off changed (2026-08-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=MGSES_CT6"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=MGSES_CT6#MGSES_CT6/2026-08-01/group</id>
     <updated>2026-10-20T00:00:00Z</updated>
     <summary>Off for a week or more at a time (July 2026) to Off for days at a time (August 2026)</summary>
+  </entry>
+  <entry>
+    <title>MGSES_CT6: Bidding approach shifted (2026-07-21)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=MGSES_CT6"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=MGSES_CT6#MGSES_CT6/2026-07-21/bidding</id>
+    <updated>2026-11-23T00:00:00Z</updated>
+    <summary>Offer price vs peer median: $196 to $300/MWh</summary>
   </entry>
   <entry>
     <title>MGSES_CT6: Outage ended (2026-05-14)</title>
@@ -31,13 +45,6 @@
     <id>https://ercotbids.currenttech.energy/unit.html?unit=MGSES_CT6#MGSES_CT6/2026-04-28/outage_start</id>
     <updated>2026-10-23T00:00:00Z</updated>
     <summary>Outage began, lasting 17 days</summary>
-  </entry>
-  <entry>
-    <title>MGSES_CT6: Bidding approach shifted (2026-04-27)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=MGSES_CT6"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=MGSES_CT6#MGSES_CT6/2026-04-27/bidding</id>
-    <updated>2026-10-26T00:00:00Z</updated>
-    <summary>Offer price vs peer median: $196 to $300/MWh</summary>
   </entry>
   <entry>
     <title>MGSES_CT6: How often it turns off changed (2026-01-01)</title>
