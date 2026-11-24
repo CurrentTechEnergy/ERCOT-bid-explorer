@@ -3,7 +3,14 @@
   <title>FRNYPP_CC2: bidding and operating changes</title>
   <link href="https://ercotbids.currenttech.energy/unit.html?unit=FRNYPP_CC2"/>
   <id>https://ercotbids.currenttech.energy/unit.html?unit=FRNYPP_CC2</id>
-  <updated>2026-11-19T00:00:00Z</updated>
+  <updated>2026-11-24T00:00:00Z</updated>
+  <entry>
+    <title>FRNYPP_CC2: Day-ahead: priced out (2026-09-24)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=FRNYPP_CC2"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=FRNYPP_CC2#FRNYPP_CC2/2026-09-24/dam_priced_out</id>
+    <updated>2026-11-24T00:00:00Z</updated>
+    <summary>Priced out of the day-ahead: minimum energy at $22/MWh against a usual $11/MWh, for 1 day</summary>
+  </entry>
   <entry>
     <title>FRNYPP_CC2: Day-ahead: minimum-energy offer stepped (2026-09-09)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=FRNYPP_CC2"/>

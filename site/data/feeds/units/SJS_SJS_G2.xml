@@ -3,7 +3,14 @@
   <title>SJS_SJS_G2: bidding and operating changes</title>
   <link href="https://ercotbids.currenttech.energy/unit.html?unit=SJS_SJS_G2"/>
   <id>https://ercotbids.currenttech.energy/unit.html?unit=SJS_SJS_G2</id>
-  <updated>2026-11-16T00:00:00Z</updated>
+  <updated>2026-11-24T00:00:00Z</updated>
+  <entry>
+    <title>SJS_SJS_G2: Bidding approach shifted (2026-09-19)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=SJS_SJS_G2"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=SJS_SJS_G2#SJS_SJS_G2/2026-09-19/bidding</id>
+    <updated>2026-11-24T00:00:00Z</updated>
+    <summary>Running without an offer curve: 100% to 0% of the day</summary>
+  </entry>
   <entry>
     <title>SJS_SJS_G2: Outage ended (2026-09-17)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=SJS_SJS_G2"/>
