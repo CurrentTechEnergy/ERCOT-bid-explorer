@@ -3,7 +3,21 @@
   <title>HAYSEN_HAYSENG1: bidding and operating changes</title>
   <link href="https://ercotbids.currenttech.energy/unit.html?unit=HAYSEN_HAYSENG1"/>
   <id>https://ercotbids.currenttech.energy/unit.html?unit=HAYSEN_HAYSENG1</id>
-  <updated>2026-11-21T00:00:00Z</updated>
+  <updated>2026-11-25T00:00:00Z</updated>
+  <entry>
+    <title>HAYSEN_HAYSENG1: Day-ahead: priced out (2026-09-25)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=HAYSEN_HAYSENG1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=HAYSEN_HAYSENG1#HAYSEN_HAYSENG1/2026-09-25/dam_priced_out</id>
+    <updated>2026-11-25T00:00:00Z</updated>
+    <summary>Priced out of the day-ahead: minimum energy at $12/MWh against a usual $1/MWh, for 1 day</summary>
+  </entry>
+  <entry>
+    <title>HAYSEN_HAYSENG1: Day-ahead: priced out (2026-09-25)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=HAYSEN_HAYSENG1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=HAYSEN_HAYSENG1#HAYSEN_HAYSENG1/2026-09-25/dam_priced_out</id>
+    <updated>2026-11-25T00:00:00Z</updated>
+    <summary>Priced out of the day-ahead: minimum energy at $12/MWh against a usual $1/MWh, for 1 day</summary>
+  </entry>
   <entry>
     <title>HAYSEN_HAYSENG1: Day-ahead: priced out (2026-09-18)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=HAYSEN_HAYSENG1"/>

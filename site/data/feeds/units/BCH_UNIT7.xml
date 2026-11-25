@@ -3,7 +3,21 @@
   <title>BCH_UNIT7: bidding and operating changes</title>
   <link href="https://ercotbids.currenttech.energy/unit.html?unit=BCH_UNIT7"/>
   <id>https://ercotbids.currenttech.energy/unit.html?unit=BCH_UNIT7</id>
-  <updated>2026-10-18T00:00:00Z</updated>
+  <updated>2026-11-25T00:00:00Z</updated>
+  <entry>
+    <title>BCH_UNIT7: Day-ahead: minimum-energy offer stepped (2026-09-20)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=BCH_UNIT7"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=BCH_UNIT7#BCH_UNIT7/2026-09-20/dam_mingen_step</id>
+    <updated>2026-11-25T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $54 to $34/MWh (offer minus fuel cost: $27 to $7/MWh)</summary>
+  </entry>
+  <entry>
+    <title>BCH_UNIT7: Day-ahead: minimum-energy offer stepped (2026-09-20)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=BCH_UNIT7"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=BCH_UNIT7#BCH_UNIT7/2026-09-20/dam_mingen_step</id>
+    <updated>2026-11-25T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $54 to $34/MWh (offer minus fuel cost: $27 to $7/MWh)</summary>
+  </entry>
   <entry>
     <title>BCH_UNIT7: Peaker: running at a new real-time price (2026-03-01)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=BCH_UNIT7"/>
