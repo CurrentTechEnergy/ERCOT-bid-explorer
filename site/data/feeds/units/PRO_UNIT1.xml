@@ -3,13 +3,20 @@
   <title>PRO_UNIT1: bidding and operating changes</title>
   <link href="https://ercotbids.currenttech.energy/unit.html?unit=PRO_UNIT1"/>
   <id>https://ercotbids.currenttech.energy/unit.html?unit=PRO_UNIT1</id>
-  <updated>2026-11-21T00:00:00Z</updated>
+  <updated>2026-11-26T00:00:00Z</updated>
   <entry>
     <title>PRO: Day-ahead: priced out (2026-09-20)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=PRO"/>
     <id>https://ercotbids.currenttech.energy/unit.html?unit=PRO#PRO/2026-09-20/dam_priced_out</id>
     <updated>2026-11-21T00:00:00Z</updated>
     <summary>Priced out of the day-ahead: minimum energy at $62/MWh against a usual $33/MWh, for 2 days</summary>
+  </entry>
+  <entry>
+    <title>PRO_UNIT1: Peaker: running at a new real-time price (2026-09-01)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=PRO_UNIT1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=PRO_UNIT1#PRO_UNIT1/2026-09-01/rt_price</id>
+    <updated>2026-11-26T00:00:00Z</updated>
+    <summary>Online 18% of its available hours at $50–$100/MWh real-time at its node in September, down from 68%</summary>
   </entry>
   <entry>
     <title>PRO: Day-ahead: minimum-energy offer stepped (2026-03-12)</title>
