@@ -1,0 +1,48 @@
+name: Check CLR tagging
+
+# One-off check of whether the 60-day SCED disclosure separates controllable Load Resources
+# (bid curve in SCED) from non-controllable ones (pipeline/clr_check.py).  Reads the SCED zips
+# only from the raw store; never downloads from ERCOT.  Writes nothing; results are in the run
+# summary.  Runs on a PR that changes it, so the result is on the PR before merge.
+on:
+  pull_request:
+    paths:
+      - pipeline/clr_check.py
+      - .github/workflows/clr-check.yml
+  workflow_dispatch:
+    inputs:
+      days:
+        description: "Operating days to check, space separated"
+        required: false
+        default: "2019-06-15 2022-06-15 2024-06-15 2026-08-15"
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6.3.0
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install --require-hashes -r requirements.lock
+      - name: Check sample days from the raw store
+        env:
+          ERCOT_API_USERNAME: ${{ secrets.ERCOT_API_USERNAME }}
+          ERCOT_API_PASSWORD: ${{ secrets.ERCOT_API_PASSWORD }}
+          ERCOT_API_SUBSCRIPTION_KEY: ${{ secrets.ERCOT_API_SUBSCRIPTION_KEY }}
+          R2_ENDPOINT: ${{ secrets.R2_ENDPOINT }}
+          R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          DAYS: ${{ inputs.days || '2019-06-15 2022-06-15 2024-06-15 2026-08-15' }}
+        run: python -m pipeline.clr_check $DAYS
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        if: always()
+        with:
+          name: clr-check
+          path: clr-check/
+          if-no-files-found: ignore
