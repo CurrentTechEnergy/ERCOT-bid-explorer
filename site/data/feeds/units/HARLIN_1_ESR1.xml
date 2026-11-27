@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>HARLIN_1_ESR1: bidding and operating changes</title>
+  <link href="https://ercotbids.currenttech.energy/unit.html?unit=HARLIN_1_ESR1"/>
+  <id>https://ercotbids.currenttech.energy/unit.html?unit=HARLIN_1_ESR1</id>
+  <updated>2026-11-27T00:00:00Z</updated>
+  <entry>
+    <title>HARLIN_1_ESR1: New battery (2026-09-28)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=HARLIN_1_ESR1"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=HARLIN_1_ESR1#HARLIN_1_ESR1/2026-09-28/battery_new</id>
+    <updated>2026-11-27T00:00:00Z</updated>
+    <summary>First day charging or discharging: 10 MW</summary>
+  </entry>
+</feed>

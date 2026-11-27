@@ -3,27 +3,27 @@
   <title>PRO_UNIT7: bidding and operating changes</title>
   <link href="https://ercotbids.currenttech.energy/unit.html?unit=PRO_UNIT7"/>
   <id>https://ercotbids.currenttech.energy/unit.html?unit=PRO_UNIT7</id>
-  <updated>2026-11-25T00:00:00Z</updated>
+  <updated>2026-11-27T00:00:00Z</updated>
   <entry>
-    <title>PRO_UNIT7: Day-ahead: minimum-energy offer stepped (2026-09-20)</title>
+    <title>PRO_UNIT7: Bidding approach shifted (2026-09-21)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=PRO_UNIT7"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=PRO_UNIT7#PRO_UNIT7/2026-09-20/dam_mingen_step</id>
-    <updated>2026-11-25T00:00:00Z</updated>
-    <summary>Minimum-energy offer stepped: $55 to $34/MWh (offer minus fuel cost: $29 to $9/MWh)</summary>
-  </entry>
-  <entry>
-    <title>PRO_UNIT7: Day-ahead: minimum-energy offer stepped (2026-09-20)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=PRO_UNIT7"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=PRO_UNIT7#PRO_UNIT7/2026-09-20/dam_mingen_step</id>
-    <updated>2026-11-25T00:00:00Z</updated>
-    <summary>Minimum-energy offer stepped: $55 to $34/MWh (offer minus fuel cost: $29 to $9/MWh)</summary>
-  </entry>
-  <entry>
-    <title>PRO_UNIT7: Bidding approach shifted (2026-09-19)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=PRO_UNIT7"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=PRO_UNIT7#PRO_UNIT7/2026-09-19/bidding</id>
-    <updated>2026-11-24T00:00:00Z</updated>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=PRO_UNIT7#PRO_UNIT7/2026-09-21/bidding</id>
+    <updated>2026-11-27T00:00:00Z</updated>
     <summary>Offer price vs peer median: $0 to $491/MWh</summary>
+  </entry>
+  <entry>
+    <title>PRO_UNIT7: Day-ahead: minimum-energy offer stepped (2026-09-20)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=PRO_UNIT7"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=PRO_UNIT7#PRO_UNIT7/2026-09-20/dam_mingen_step</id>
+    <updated>2026-11-25T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $55 to $34/MWh (offer minus fuel cost: $29 to $9/MWh)</summary>
+  </entry>
+  <entry>
+    <title>PRO_UNIT7: Day-ahead: minimum-energy offer stepped (2026-09-20)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=PRO_UNIT7"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=PRO_UNIT7#PRO_UNIT7/2026-09-20/dam_mingen_step</id>
+    <updated>2026-11-25T00:00:00Z</updated>
+    <summary>Minimum-energy offer stepped: $55 to $34/MWh (offer minus fuel cost: $29 to $9/MWh)</summary>
   </entry>
   <entry>
     <title>PRO_UNIT7: Bidding approach shifted (2026-07-21)</title>

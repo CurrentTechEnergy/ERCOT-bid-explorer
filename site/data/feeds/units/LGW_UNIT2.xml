@@ -3,7 +3,14 @@
   <title>LGW_UNIT2: bidding and operating changes</title>
   <link href="https://ercotbids.currenttech.energy/unit.html?unit=LGW_UNIT2"/>
   <id>https://ercotbids.currenttech.energy/unit.html?unit=LGW_UNIT2</id>
-  <updated>2026-11-15T00:00:00Z</updated>
+  <updated>2026-11-27T00:00:00Z</updated>
+  <entry>
+    <title>LGW: Wind/solar: short episode at a different floor (2026-09-27)</title>
+    <link href="https://ercotbids.currenttech.energy/unit.html?unit=LGW"/>
+    <id>https://ercotbids.currenttech.energy/unit.html?unit=LGW#LGW/2026-09-27/renew_episode</id>
+    <updated>2026-11-27T00:00:00Z</updated>
+    <summary>Short episode: floor −$13/MWh, briefly −$8/MWh, for 1 day</summary>
+  </entry>
   <entry>
     <title>LGW: Wind/solar: short episode at a different floor (2026-09-14)</title>
     <link href="https://ercotbids.currenttech.energy/unit.html?unit=LGW"/>
@@ -206,12 +213,5 @@
     <id>https://ercotbids.currenttech.energy/unit.html?unit=LGW#LGW/2022-05-03/control</id>
     <updated>2026-10-18T00:00:00Z</updated>
     <summary>QSE code changed: QPATTE to QPATT3 (PATTERN ENERGY MANAGEMENT SERVICES LLC (SQ3))</summary>
-  </entry>
-  <entry>
-    <title>LGW: Decision maker or QSE changed (2022-02-01)</title>
-    <link href="https://ercotbids.currenttech.energy/unit.html?unit=LGW"/>
-    <id>https://ercotbids.currenttech.energy/unit.html?unit=LGW#LGW/2022-02-01/control</id>
-    <updated>2026-10-18T00:00:00Z</updated>
-    <summary>Scheduled by PATTERN ENERGY MANAGEMENT SERVICES LLC, was TRQ13 (SQ13)</summary>
   </entry>
 </feed>
